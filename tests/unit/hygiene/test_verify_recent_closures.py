@@ -10,6 +10,8 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
+import pytest
+
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts" / "hygiene"))
 
 from verify_recent_closures import (  # noqa: E402
@@ -164,7 +166,9 @@ def test_both_drift_types_at_once():
 
 def test_make_repo_path_checker(tmp_path: Path):
     (tmp_path / "scripts" / "hygiene").mkdir(parents=True)
-    (tmp_path / "scripts" / "hygiene" / "x.py").write_text("# hi")
+    (tmp_path / "scripts" / "hygiene" / "x.py").write_text(
+        "# hi", encoding="utf-8", newline="\n"
+    )
     checker = make_repo_path_checker(tmp_path)
     assert checker("scripts/hygiene/x.py") is True
     assert checker("scripts/hygiene/nope.py") is False
@@ -176,11 +180,78 @@ def _symlink_issue(body: str) -> IssueRef:
     return IssueRef(number=368, title="Symlink presence", body=body)
 
 
+@pytest.mark.parametrize(
+    "claim",
+    ["Symlinks `data/link` are present", "Symbolic links `data/link` exist"],
+)
+def test_plural_symlink_claims_remain_unverified(tmp_path: Path, claim: str):
+    from verify_recent_closures import make_repo_link_checker
+
+    (tmp_path / "data").mkdir()
+    (tmp_path / "data" / "link").write_text(
+        "regular file", encoding="utf-8", newline="\n"
+    )
+    finding = analyze_issue(
+        _symlink_issue(f"- [x] {claim}"),
+        make_repo_path_checker(tmp_path),
+        make_repo_link_checker(tmp_path),
+    )
+    assert finding.unverified_symlink_claims == (claim,)
+    assert finding.missing_paths == ()
+    assert finding.missing_symlinks == ()
+    assert finding.has_drift
+
+
+@pytest.mark.parametrize(
+    "claim, path",
+    [
+        ("Created `data/symlink`", "data/symlink"),
+        ("Created `data/result` using `symbolic link`", "data/result"),
+    ],
+)
+@pytest.mark.parametrize("present", [True, False])
+def test_inline_code_terms_preserve_generic_path_checks(
+    tmp_path: Path, claim: str, path: str, present: bool
+):
+    from verify_recent_closures import make_repo_link_checker
+
+    (tmp_path / "data").mkdir()
+    if present:
+        (tmp_path / path).write_text("regular file", encoding="utf-8", newline="\n")
+    finding = analyze_issue(
+        _symlink_issue(f"- [x] {claim}"),
+        make_repo_path_checker(tmp_path),
+        make_repo_link_checker(tmp_path),
+    )
+    assert finding.unverified_symlink_claims == ()
+    assert finding.missing_paths == (() if present else (path,))
+    assert finding.missing_symlinks == ()
+    assert finding.has_drift is not present
+
+
+def test_link_checker_recognizes_platform_junction(tmp_path: Path, monkeypatch):
+    from verify_recent_closures import make_repo_link_checker
+
+    (tmp_path / "data").mkdir()
+    junction = tmp_path / "data" / "link"
+    junction.mkdir()
+    (tmp_path / "data" / "regular").mkdir()
+    # Exercise the platform predicate without requiring Windows privileges.
+    monkeypatch.setattr(
+        Path, "is_junction", lambda path: path == junction, raising=False
+    )
+    checker = make_repo_link_checker(tmp_path)
+    assert checker("data/link") is True
+    assert checker("data/regular") is False
+
+
 def test_symlink_claim_distinguishes_regular_and_dangling_paths(tmp_path: Path):
     from verify_recent_closures import make_repo_link_checker
 
     (tmp_path / "data").mkdir()
-    (tmp_path / "data" / "regular").write_text("present")
+    (tmp_path / "data" / "regular").write_text(
+        "present", encoding="utf-8", newline="\n"
+    )
     (tmp_path / "data" / "valid").symlink_to("regular")
     (tmp_path / "data" / "dangling").symlink_to("absent")
     exists = make_repo_path_checker(tmp_path)
@@ -360,6 +431,54 @@ def test_main_injects_link_checker_without_live_github(
     )
     assert verifier.main(["--repo-root", str(tmp_path), "--no-report"]) == 1
     assert "Claimed symlink missing or not a symlink" in capsys.readouterr().out
+
+
+def test_report_write_uses_utf8_and_explicit_lf(tmp_path: Path, monkeypatch, capsys):
+    import verify_recent_closures as verifier
+
+    original_write = Path.write_text
+
+    def windows_default_write(path, text, **kwargs):
+        # Emulate Windows newline translation when the caller omits its policy.
+        kwargs.setdefault("newline", "\r\n")
+        return original_write(path, text, **kwargs)
+
+    monkeypatch.setattr(Path, "write_text", windows_default_write)
+    monkeypatch.setattr(verifier, "fetch_recent_closed_issues", lambda *args: [])
+    reports = tmp_path / "reports"
+    assert (
+        verifier.main(
+            ["--repo-root", tmp_path.as_posix(), "--report-dir", reports.as_posix()]
+        )
+        == 0
+    )
+    output = next(reports.glob("*.md")).read_bytes()
+    assert b"\r\n" not in output
+    assert output.decode("utf-8") + "\n" == capsys.readouterr().out
+
+
+def test_report_diagnostic_uses_posix_path(tmp_path: Path, monkeypatch, capsys):
+    import verify_recent_closures as verifier
+
+    original_as_posix = Path.as_posix
+
+    def display_path(path):
+        return "reports/closure.md" if path.suffix == ".md" else original_as_posix(path)
+
+    monkeypatch.setattr(Path, "as_posix", display_path)
+    monkeypatch.setattr(verifier, "fetch_recent_closed_issues", lambda *args: [])
+    assert (
+        verifier.main(
+            [
+                "--repo-root",
+                tmp_path.as_posix(),
+                "--report-dir",
+                (tmp_path / "reports").as_posix(),
+            ]
+        )
+        == 0
+    )
+    assert capsys.readouterr().err == "Report written to reports/closure.md\n"
 
 
 # --------------------------------------------------------------------------- #

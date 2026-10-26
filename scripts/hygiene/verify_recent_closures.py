@@ -59,7 +59,7 @@ _BACKTICK_RE = re.compile(r"`([^`\n]+)`")
 # Only explicit presence statements are interpreted; other symlink checkbox
 # wording remains unverified. Inline commands are never executed.
 _SYMLINK_CHECKBOX_RE = re.compile(
-    r"^\s*[-*]\s+\[[ xX]\]\s+(?P<claim>.*\b(?:symlink|symbolic link)\b.*)$",
+    r"^\s*[-*]\s+\[[ xX]\]\s+(?P<claim>.*\b(?:symlinks?|symbolic links?)\b.*)$",
     re.IGNORECASE,
 )
 _SYMLINK_PRESENCE_RE = re.compile(
@@ -223,7 +223,9 @@ def analyze_issue(
     unverified: list[str] = []
     for line in (issue.body or "").splitlines():
         checkbox = _SYMLINK_CHECKBOX_RE.fullmatch(line)
-        if checkbox is None:
+        # Code spans contain literal paths or commands, not claim terminology.
+        prose = _BACKTICK_RE.sub(" ", line)
+        if checkbox is None or _SYMLINK_CHECKBOX_RE.fullmatch(prose) is None:
             ordinary_lines.append(line)
             continue
         claim = checkbox.group("claim").strip()
@@ -285,7 +287,9 @@ def make_repo_link_checker(repo_root: Path) -> Callable[[str], bool]:
         try:
             parent = candidate.parent.resolve(strict=True)
             parent.relative_to(root)
-            return (parent / candidate.name).is_symlink()
+            link = parent / candidate.name
+            is_junction = getattr(link, "is_junction", None)
+            return link.is_symlink() or bool(is_junction and is_junction())
         except (ValueError, OSError, RuntimeError):
             # Escapes, missing parents, inaccessible paths and symlink loops.
             return False
@@ -437,7 +441,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     )
     parser.add_argument(
         "--report-dir",
-        default=str(REPORT_DIR),
+        default=REPORT_DIR.as_posix(),
         help="Directory to write the markdown report into.",
     )
     parser.add_argument(
@@ -469,8 +473,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         report_dir = Path(args.report_dir)
         report_dir.mkdir(parents=True, exist_ok=True)
         out = report_dir / f"verify_recent_closures_{date.today().isoformat()}.md"
-        out.write_text(report, encoding="utf-8")
-        print(f"Report written to {out}", file=sys.stderr)
+        out.write_text(report, encoding="utf-8", newline="\n")
+        print(f"Report written to {out.as_posix()}", file=sys.stderr)
 
     print(report)
 
