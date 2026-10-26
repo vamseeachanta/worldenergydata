@@ -4,6 +4,7 @@ import copy
 import json
 import os
 import re
+import socket
 import subprocess
 import sys
 from pathlib import Path
@@ -206,6 +207,7 @@ def test_documented_example_runs_offline():
         env=environment,
         capture_output=True,
         text=True,
+        encoding="utf-8",
         check=True,
     )
     assert json.loads(result.stdout) == expected
@@ -221,6 +223,7 @@ def test_cli_valid_metadata_prints_summary(metadata):
         input=json.dumps([metadata]),
         capture_output=True,
         text=True,
+        encoding="utf-8",
         check=True,
     )
     # Independent hand tally of the single synthetic regulator fixture.
@@ -245,7 +248,226 @@ def test_cli_invalid_metadata_exits_with_error(metadata):
         input=json.dumps([metadata]),
         capture_output=True,
         text=True,
+        encoding="utf-8",
         check=False,
     )
     assert result.returncode != 0
     assert "missing metadata" in result.stderr
+
+
+def _run_cli(payload, *, env=None):
+    return subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "worldenergydata.modules.state_regulators.arkansas_aogc.source_inventory",
+        ],
+        input=payload,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        env=env,
+        check=False,
+    )
+
+
+def _assert_invalid_cli(result):
+    assert result.returncode == 2
+    assert result.stdout == ""
+    assert result.stderr.splitlines()[-1].endswith(
+        "error: invalid inventory: missing metadata or invalid field values"
+    )
+    assert "example.invalid" not in result.stderr
+    assert "synthetic-conflict" not in result.stderr
+    assert "rights_status" not in result.stderr
+
+
+@pytest.mark.parametrize(
+    "field",
+    (
+        "source_url",
+        "source_category",
+        "dataset_type",
+        "access_method",
+        "format",
+        "rights_status",
+        "verification_status",
+        "verification_time",
+    ),
+)
+@pytest.mark.parametrize("conflicting", [False, True], ids=["identical", "conflicting"])
+def test_cli_rejects_duplicate_metadata_keys(metadata, field, conflicting):
+    first_value = "synthetic-conflict" if conflicting else metadata[field]
+    # The final occurrence is valid, so ordinary last-key-wins decoding hides
+    # both a conflicting earlier value and an identical duplicate.
+    first = json.dumps({field: first_value})
+    payload = "[" + first[:-1] + ", " + json.dumps(metadata)[1:] + "]"
+    _assert_invalid_cli(_run_cli(payload))
+
+
+def test_cli_rejects_escaped_duplicate_key(metadata):
+    payload = '[{"\\u0072ights_status":"restricted",' + json.dumps(metadata)[1:] + "]"
+    _assert_invalid_cli(_run_cli(payload))
+
+
+MALFORMED_URLS = [
+    "https://example.invalid\\other/",
+    "https://%/",
+    "https://%65xample.invalid/",
+    "https://example.invalid/%",
+    "https://example.invalid/%0",
+    "https://example.invalid/%gg",
+    "https://example.invalid/a b",
+    "https://example .invalid/",
+    "https://example.invalid/<invalid>",
+    'https://example.invalid/"invalid"',
+    "https://example.invalid/?",
+    "https://example.invalid/#",
+    "https://-example.invalid/",
+    "https://example-.invalid/",
+    "https://example..invalid/",
+    "https://example.invalid../",
+    "https://example_invalid/",
+    "https://" + "a" * 64 + ".invalid/",
+    "https://" + ".".join(["a" * 63] * 4) + "/",
+    "https://999.0.2.1/",
+    "https://127.1/",
+    "https://192.0.2/",
+    "https://192.0.2.1./",
+    "https://0192.0.2.1/",
+    "https://0xc0000201/",
+    "https://0x/",
+    "https://0X./",
+    "https://example.0x/",
+    "https://example.0x01/",
+    "https://[192.0.2.1]/",
+    "https://[2001:db8::1]suffix/",
+    "https://[2001:db8::1%25zone]/",
+    "https://example.invalid:+80/",
+    "https://example.invalid:-1/",
+    "https://example.invalid:65536/",
+    "https://example.invalid:/",
+    "https://example.invalid:\u0668\u0660/",
+]
+
+
+@pytest.mark.parametrize("url", MALFORMED_URLS)
+def test_source_url_rejects_malformed_syntax(metadata, url):
+    metadata["source_url"] = url
+    with pytest.raises(ValueError, match="source_url"):
+        validate_inventory([metadata])
+
+
+@pytest.mark.parametrize("url", MALFORMED_URLS)
+def test_cli_rejects_malformed_url_without_disclosure(metadata, url):
+    metadata["source_url"] = url
+    result = _run_cli(json.dumps([metadata]))
+    _assert_invalid_cli(result)
+    assert url not in result.stderr
+
+
+@pytest.mark.parametrize(
+    "control",
+    [chr(code) for code in range(32)] + ["\x7f", "\x85", "\x9b", "\xa0", "\u3000"],
+    ids=lambda char: f"u{ord(char):04x}",
+)
+@pytest.mark.parametrize("position", ["leading", "hostname", "path", "trailing"])
+def test_source_url_rejects_controls_before_normalization(metadata, control, position):
+    urls = {
+        "leading": control + "https://example.invalid/",
+        "hostname": "https://example" + control + ".invalid/",
+        "path": "https://example.invalid/" + control + "source",
+        "trailing": "https://example.invalid/" + control,
+    }
+    metadata["source_url"] = urls[position]
+    with pytest.raises(ValueError, match="source_url"):
+        validate_inventory([metadata])
+
+
+@pytest.mark.parametrize(
+    "url",
+    [
+        "\x00https://example.invalid/",
+        "\thttps://example.invalid/",
+        "https://example\x00.invalid/",
+        "https://example.invalid/\x00source",
+        "https://example.invalid/\x7fsource",
+        "https://example.invalid/\x85source",
+        "https://example.invalid/\x9bsource",
+        "https://example.invalid/\x1f",
+        "\xa0https://example.invalid/",
+    ],
+)
+def test_cli_rejects_url_controls_without_disclosure(metadata, url):
+    metadata["source_url"] = url
+    _assert_invalid_cli(_run_cli(json.dumps([metadata])))
+
+
+@pytest.mark.parametrize(
+    "url",
+    [
+        "http://example.invalid/",
+        "https://source1/",
+        "https://source1.example.invalid/",
+        "https://example.invalid./",
+        "https://xn--bcher-kva.invalid/",
+        "https://192.0.2.1/",
+        "https://[2001:db8::1]/",
+        "https://[2001:DB8::1]:443/source",
+        "https://example.invalid:0/",
+        "https://example.invalid:65535/",
+        "https://example.invalid/%2Fsource%20page%25",
+        "https://example.invalid/a!$&'()*+,;=:@_-~.json",
+        "  https://example.invalid/source  ",
+    ],
+)
+def test_source_url_valid_syntax_remains_accepted(metadata, url):
+    metadata["source_url"] = url
+    assert validate_inventory([metadata])[0]["source_url"] == url.strip(" ")
+    result = _run_cli(json.dumps([metadata]))
+    assert result.returncode == 0
+    assert result.stderr == ""
+    assert json.loads(result.stdout)["total_sources"] == 1
+
+
+def test_cli_reads_utf8_metadata_with_ascii_standard_streams(metadata):
+    metadata["format"] = "synthetic \u00e9"
+    environment = {**os.environ, "PYTHONIOENCODING": "ascii", "PYTHONUTF8": "0"}
+    result = _run_cli(json.dumps([metadata], ensure_ascii=False), env=environment)
+    assert result.returncode == 0
+    assert result.stderr == ""
+    assert json.loads(result.stdout)["total_sources"] == 1
+
+
+def test_cli_rejects_deeply_nested_json_without_traceback():
+    _assert_invalid_cli(_run_cli("[" * 10000))
+
+
+@pytest.mark.parametrize(
+    "payload", [b"\xff", b"\xef\xbb\xbf[]"], ids=["invalid-utf8", "bom"]
+)
+def test_cli_rejects_invalid_utf8_or_bom_without_traceback(payload):
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "worldenergydata.modules.state_regulators.arkansas_aogc.source_inventory",
+        ],
+        input=payload,
+        capture_output=True,
+        check=False,
+    )
+    assert result.returncode == 2
+    assert result.stdout == b""
+    assert result.stderr.splitlines()[-1].endswith(
+        b"error: invalid inventory: missing metadata or invalid field values"
+    )
+
+
+def test_validation_and_summary_do_not_open_network_connections(metadata, monkeypatch):
+    def reject_connection(*args, **kwargs):
+        raise AssertionError("metadata validation attempted a network connection")
+
+    monkeypatch.setattr(socket, "socket", reject_connection)
+    assert validate_inventory([metadata]) == [metadata]
+    assert summarize_inventory([metadata])["total_sources"] == 1

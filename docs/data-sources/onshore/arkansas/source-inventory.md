@@ -12,6 +12,7 @@ offline using the Python standard library.
 | Revision | Date | What changed and why |
 | --- | --- | --- |
 | Initial | 2026-10-26 | Added metadata checks, explicit uncertainty and an offline example to bound discovery before acquisition. |
+| Validation update | 2026-10-26 | Rejected ambiguous JSON fields and malformed locators; clarified text encoding and syntax limits. |
 
 ## Evidence and boundaries
 
@@ -39,11 +40,14 @@ access, licensing or redistribution permission.
 Each row requires `source_url`, `source_category`, `dataset_type`, `access_method`,
 `format`, `rights_status`, `verification_status` and `verification_time`.
 Missing fields, blank values, non-string values and unexpected fields are
-rejected. Values are trimmed; inputs are copied rather than mutated.
+rejected. Values are trimmed; inputs are copied rather than mutated. For
+`source_url`, only leading and trailing ASCII spaces are trimmed; controls and
+other whitespace are rejected before parsing. The CLI rejects duplicate JSON
+fields, including identical or escaped-equivalent keys, before constructing rows.
 
 | Field | Meaning and accepted values |
 | --- | --- |
-| `source_url` | HTTP(S) landing URL without credentials, query or fragment; syntax validation does not authenticate the publisher or establish reachability. |
+| `source_url` | ASCII HTTP(S) landing URL with DNS, IPv4 or bracketed IPv6 host, without credentials, query or fragment. Non-ASCII paths require percent-encoding and international DNS names require punycode. Syntax validation does not authenticate the publisher or establish reachability. |
 | `source_category` | `regulator` or `county_title`; categories cannot be combined. |
 | `dataset_type` | Regulator: `wells`, `production`, `permits`, `fields`, `spacing_pooling_orders`. County/title: `county_directory`, `recorded_leases`, `mineral_title`. A mismatched category is rejected. |
 | `access_method` | `unknown`, `landing_page`, `interactive_lookup`, `bulk_download`, `api` or `manual_request`; describes dataset access evidence, not merely the ability to open the source page. |
@@ -191,6 +195,11 @@ The same validator is available as
 with a JSON array on standard input and `PYTHONPATH=src`. Invalid metadata exits
 unsuccessfully without echoing supplied values. Neither interface performs
 network requests or produces a redistribution approval.
+
+CLI input is UTF-8 without a byte-order mark. Invalid encoding, duplicate fields
+and excessively nested JSON receive the same generic error as invalid metadata.
+Port checks cover syntax and the range 0 through 65535; port zero and leading
+zeros do not establish that a landing page can be reached.
 
 ## Open work
 
