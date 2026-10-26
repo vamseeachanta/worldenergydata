@@ -232,10 +232,10 @@ def write_chart_bundle(chart: ChartBundle, json_path: str | Path) -> tuple[Path,
     stream = io.StringIO(newline="")
     writer = csv.writer(stream)
     writer.writerows(_csv_rows(chart))
-    csv_text = stream.getvalue()
+    csv_bytes = stream.getvalue().encode("utf-8")
     json_path.parent.mkdir(parents=True, exist_ok=True)
-    csv_path.write_text(csv_text, encoding="utf-8", newline="")
-    json_path.write_text(json_text, encoding="utf-8")
+    csv_path.write_bytes(csv_bytes)
+    json_path.write_text(json_text, encoding="utf-8", newline="\n")
     return json_path, csv_path
 
 

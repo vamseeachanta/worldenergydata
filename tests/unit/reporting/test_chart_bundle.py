@@ -57,7 +57,7 @@ def payload():
 def _write_unchecked(tmp_path, payload, rows=None):
     """Create independent files, so validator tests cannot trust the writer."""
     json_path = tmp_path / "chart.json"
-    json_path.write_text(json.dumps(payload), encoding="utf-8")
+    json_path.write_text(json.dumps(payload), encoding="utf-8", newline="\n")
     if rows is None:
         rows = [
             ["period", "primary", "secondary"],
@@ -66,7 +66,7 @@ def _write_unchecked(tmp_path, payload, rows=None):
             ["third", "-2.5", "5"],
         ]
     with (tmp_path / "synthetic-energy.csv").open(
-        "w", encoding="utf-8", newline=""
+        "w", encoding="utf-8", newline="\n"
     ) as stream:
         csv.writer(stream).writerows(rows)
     return json_path
@@ -361,7 +361,7 @@ def test_chart_bundle_accepts_explicit_utc_offset(api, payload, tmp_path):
 
 def test_chart_bundle_requires_csv_file(api, payload, tmp_path):
     path = tmp_path / "chart.json"
-    path.write_text(json.dumps(payload), encoding="utf-8")
+    path.write_text(json.dumps(payload), encoding="utf-8", newline="\n")
     with pytest.raises(ValueError, match="CSV"):
         api.validate_chart_bundle(path)
 
@@ -372,6 +372,7 @@ def test_chart_bundle_rejects_json_precision_mismatch(api, payload, tmp_path):
     path.write_text(
         path.read_text(encoding="utf-8").replace("1.25", "1.25000000000000001"),
         encoding="utf-8",
+        newline="\n",
     )
     with pytest.raises(ValueError):
         api.validate_chart_bundle(path)
@@ -384,6 +385,7 @@ def test_chart_bundle_rejects_duplicate_json_fields(api, payload, tmp_path):
             '"unit": "MWh"', '"unit": "wrong", "unit": "MWh"'
         ),
         encoding="utf-8",
+        newline="\n",
     )
     with pytest.raises(ValueError, match="Duplicate"):
         api.validate_chart_bundle(path)
@@ -468,6 +470,7 @@ def _write_numeric_bundle(tmp_path, payload, token, location):
         target.write_text(
             target.read_text(encoding="utf-8").replace(marker, token),
             encoding="utf-8",
+            newline="\n",
         )
     return path
 
@@ -564,3 +567,49 @@ def test_chart_bundle_rejects_oversized_write_without_touching_outputs(
             api.write_chart_bundle(invalid, target)
     assert (path.read_bytes(), csv_path.read_bytes()) == original
     assert not (tmp_path / "new").exists()
+
+
+@pytest.mark.parametrize("field", ["x", "series", "header"])
+@pytest.mark.parametrize("codepoint", [0xD800, 0xDFFF])
+def test_chart_bundle_unencodable_csv_preserves_existing_pair(
+    api, payload, tmp_path, field, codepoint
+):
+    chart = api.ChartBundle.from_dict(payload)
+    path, csv_path = api.write_chart_bundle(chart, tmp_path / "chart.json")
+    original = path.read_bytes(), csv_path.read_bytes()
+    _set_csv_text(payload, field, chr(codepoint))
+    invalid = api.ChartBundle.from_dict(payload)
+
+    with pytest.raises(UnicodeEncodeError):
+        api.write_chart_bundle(invalid, path)
+
+    assert (path.read_bytes(), csv_path.read_bytes()) == original
+    assert api.validate_chart_bundle(path) == chart
+
+
+@pytest.mark.parametrize("field", ["x", "series", "header"])
+@pytest.mark.parametrize("codepoint", [0xD800, 0xDFFF])
+def test_chart_bundle_unencodable_csv_does_not_create_directory(
+    api, payload, tmp_path, field, codepoint
+):
+    _set_csv_text(payload, field, chr(codepoint))
+    invalid = api.ChartBundle.from_dict(payload)
+    directory = tmp_path / "new"
+
+    with pytest.raises(UnicodeEncodeError):
+        api.write_chart_bundle(invalid, directory / "chart.json")
+
+    assert not directory.exists()
+
+
+@pytest.mark.parametrize("field", ["x", "series", "header"])
+def test_chart_bundle_utf8_csv_round_trip(api, payload, tmp_path, field):
+    _set_csv_text(payload, field, 'é,\n"測定 \U0001f30d')
+    chart = api.ChartBundle.from_dict(payload)
+    path, csv_path = api.write_chart_bundle(chart, tmp_path / "new" / "chart.json")
+
+    assert api.validate_chart_bundle(path) == chart
+    assert "é".encode("utf-8") in csv_path.read_bytes()
+    assert "\U0001f30d".encode("utf-8") in csv_path.read_bytes()
+    assert path.read_bytes().endswith(b"\n")
+    assert b"\r\n" not in path.read_bytes()
