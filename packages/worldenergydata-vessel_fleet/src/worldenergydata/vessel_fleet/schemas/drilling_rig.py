@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from math import isfinite
 from typing import Optional
 
 from pydantic import field_validator
@@ -212,8 +213,8 @@ class DrillingRigSchema(BaseVesselSchema):
     )
     @classmethod
     def _validate_non_negative_rig_floats(cls, v: Optional[float]) -> Optional[float]:
-        if v is not None and v < 0:
-            raise ValueError("Value must be >= 0")
+        if v is not None and (not isfinite(v) or v < 0):
+            raise ValueError("Value must be >= 0 and finite")
         return v
 
     @field_validator(
