@@ -287,3 +287,70 @@ def test_war_spreadsheet_dispatches_to_excel(matrix, tmp_path, monkeypatch, suff
     assert calls == [path]
     assert result["API_WELL_NUMBER"].tolist() == ["101"]
     assert result["LEASE_KEY"].tolist() == ["1"]
+
+
+@pytest.mark.parametrize("suffix", [".csv", ".xlsx"])
+@pytest.mark.parametrize(
+    "water,split_files,expected",
+    [
+        pytest.param([None], False, None, id="missing-month"),
+        pytest.param([None, None], False, None, id="missing-daily"),
+        pytest.param([3, None], False, None, id="partial-daily"),
+        pytest.param([3, None], True, None, id="partial-across-files"),
+        pytest.param([3, 4], False, 7, id="complete"),
+        pytest.param([0], False, 0, id="measured-zero"),
+    ],
+)
+def test_b9_matrix_header_water_to_workbook(
+    matrix, tmp_path, suffix, water, split_files, expected
+):
+    """Unknown observations propagate; supplied complete volumes sum to 7 bbl."""
+    records = pd.DataFrame(
+        {
+            "API_WELL_NUMBER": [101] * len(water),
+            "MONTH": ["2025-01-01"] * len(water),
+            "OIL_BBL": [10] * len(water),
+            "WATER_BBL": water,
+            "DAYS_ON_PROD": [1] * len(water),
+        }
+    )
+    sources = []
+    frames = (
+        [records.iloc[[i]] for i in range(len(records))] if split_files else [records]
+    )
+    for i, frame in enumerate(frames):
+        path = tmp_path / f"production-{i}{suffix}"
+        if suffix == ".csv":
+            frame.to_csv(path, index=False, encoding="utf-8", lineterminator="\n")
+        else:
+            frame.to_excel(path, index=False)
+        sources.append(path)
+
+    prod = matrix.load_ogora_production(sources)
+    assert len(prod) == 1
+    if expected is None:
+        assert prod["WATER_BBL"].isna().all()
+    else:
+        assert prod["WATER_BBL"].tolist() == [expected]
+
+    war = pd.DataFrame(
+        {
+            "API_WELL_NUMBER": ["101"],
+            "LEASE_NAME": ["A"],
+            "SURF_LEASE_NUM": ["1"],
+            "WELL_NAME": ["w1"],
+            "LEASE_KEY": ["A"],
+        }
+    )
+    out = tmp_path / "matrix.xlsx"
+    matrix.build_workbook(prod, war, pd.DataFrame(), out)
+    result = pd.read_excel(out, sheet_name="A__water")
+    assert result["API_WELL_NUMBER"].tolist() == [101]
+    if expected is None:
+        assert result["2025-01"].isna().all()
+    else:
+        assert result["2025-01"].tolist() == [expected]
+    assert pd.read_excel(out, sheet_name="A__bbl")["2025-01"].tolist() == [
+        10 * len(water)
+    ]
+    assert pd.read_excel(out, sheet_name="A__days")["2025-01"].tolist() == [len(water)]
