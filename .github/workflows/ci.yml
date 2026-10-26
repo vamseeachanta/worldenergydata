@@ -78,13 +78,16 @@ jobs:
   # worldenergydata#530). wed's conventions match the reusable defaults exactly
   # (selector scripts/ci/select_test_targets.py, uv sync --all-extras, quarantine
   # scripts/ci/quarantine.txt, python-setup uv, max-parallel 10), so the caller
-  # passes no `with:` overrides.
+  # opts into the core selector; broad integration/performance suites remain
+  # auxiliary on main/nightly (#466), with reporting contracts kept in core.
   domain-tests:
     needs: [mode]
     if: >-
       !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && github.event_name
       == 'pull_request'
     uses: vamseeachanta/workspace-hub/.github/workflows/domain-matrix.yml@main
+    with:
+      selector: scripts/ci/select_core_test_targets.py
 
   # ------------------------------------------------------------ full matrix --
   test:
@@ -224,6 +227,55 @@ jobs:
           verbose: true
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+  # Issue #466: auxiliary failures are visible after merge without adding a
+  # dependency to any PR gate. An open tracking issue prevents repeat reports.
+  auxiliary-failure:
+    name: Report auxiliary test failure
+    needs: [test]
+    if: >-
+      ${{ !cancelled() && needs.test.result == 'failure' && (
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      github.event_name == 'schedule' ||
+      (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main')) }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    concurrency:
+      group: auxiliary-failure-report
+      cancel-in-progress: false
+    steps:
+      - name: Report full-suite regression
+        uses: actions/github-script@v9
+        with:
+          # actions/github-script README, v9: injected github/context clients
+          # and github.paginate are supported without imports.
+          script: |
+            const title = 'Auxiliary CI test failure';
+            const issues = await github.paginate(github.rest.issues.listForRepo, {
+              ...context.repo,
+              state: 'open',
+            });
+            if (issues.some(issue => !issue.pull_request && issue.title === title)) {
+              core.notice('An open issue already tracks auxiliary test failures.');
+              return;
+            }
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}` +
+              `/actions/runs/${context.runId}`;
+            await github.rest.issues.create({
+              ...context.repo,
+              title,
+              body: [
+                'The full auxiliary test matrix failed. Check the run for failed tests.',
+                '',
+                `Run: ${runUrl}`,
+                `Commit: ${context.sha}`,
+                `Branch: ${context.ref}`,
+                '',
+                'Subsequent failures are available in the CI workflow history.',
+              ].join('\n'),
+            });
 
   lint:
     name: Lint (full)
