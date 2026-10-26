@@ -109,7 +109,7 @@ def _architecture_for(field_id: str) -> dict:
     return {
         "svg": render_layout(concept),
         "source": "render_layout",
-        "caption": _ARCH_CAPTION[field_id],
+        "caption": _ARCH_CAPTION.get(field_id, concept.name),
     }
 
 
