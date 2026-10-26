@@ -1,7 +1,9 @@
 """Report classification, reproducibility and publication agreement."""
 
+import csv
 import importlib.util
-from pathlib import Path
+import io
+from pathlib import Path, PurePosixPath, PureWindowsPath
 
 import pytest
 
@@ -141,6 +143,29 @@ def test_deterministic_output(tmp_path):
     second = module.inventory_bytes(tmp_path, BUILDER)
     assert first == second
     assert b"\r" not in first
+
+
+@pytest.mark.parametrize("path_order", [PurePosixPath, PureWindowsPath])
+def test_inventory_order_is_platform_independent(tmp_path, path_order):
+    """Mixed-case paths retain POSIX string order under Windows comparisons."""
+    module = inventory_module()
+
+    class OrderedPath(type(tmp_path)):
+        def __lt__(self, other):
+            return path_order(self.as_posix()) < path_order(other.as_posix())
+
+    paths = [
+        "reports/Z.html",
+        "reports/a.html",
+        "reports/nested/B.html",
+        "reports/nested/a.html",
+    ]
+    for path in paths:
+        put(tmp_path, path)
+    output = module.inventory_bytes(OrderedPath(tmp_path), BUILDER)
+    rows = list(csv.DictReader(io.StringIO(output.decode("utf-8"))))
+    assert [row["path"] for row in rows] == sorted(paths)
+    assert b"\r" not in output
 
 
 def test_check_rejects_stale_csv(tmp_path, monkeypatch):

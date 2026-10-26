@@ -226,11 +226,16 @@ def classify_tree(root, builder=BUILDER):
     selected = {}
     for pattern, gates, evidence in selection_rows(root, builder):
         if all((root / gate).exists() for gate in gates):
-            for path in sorted(root.glob(pattern)):
+            for path in sorted(
+                root.glob(pattern), key=lambda path: path.relative_to(root).as_posix()
+            ):
                 if path.is_file():
                     selected.setdefault(path.relative_to(root).as_posix(), evidence)
     rows = []
-    for path in sorted((root / "reports").rglob("*.html")):
+    for path in sorted(
+        (root / "reports").rglob("*.html"),
+        key=lambda path: path.relative_to(root).as_posix(),
+    ):
         if not path.is_file():
             continue
         relative = path.relative_to(root).as_posix()
