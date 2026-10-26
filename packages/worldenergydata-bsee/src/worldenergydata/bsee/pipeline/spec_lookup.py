@@ -6,10 +6,13 @@ containing that CSV and a per-row sources.yml; no standards table is bundled.
 
 from __future__ import annotations
 
+import csv
 import logging
 import math
 import re
 from datetime import date
+from decimal import Decimal
+from io import StringIO
 from pathlib import Path
 from typing import Optional
 from urllib.parse import urlparse
@@ -79,7 +82,7 @@ _UniqueSourceLoader.add_constructor(
 
 def _load_sources(path: Path, row_count: int, allow_synthetic: bool) -> dict:
     try:
-        loader = _UniqueSourceLoader(path.read_text())
+        loader = _UniqueSourceLoader(path.read_text(encoding="utf-8"))
         try:
             manifest = loader.get_single_data()
         finally:
@@ -157,8 +160,16 @@ def _validate_dimensions(df: pd.DataFrame) -> None:
     if (2 * df["wt_mm"] >= df["od_mm"]).any():
         raise ValueError("Pipe wall thickness must leave a positive internal diameter")
     for prefix in ("od", "wt"):
-        # Inch conversion only, with a 0.02 mm allowance for rounded input.
-        if ((df[f"{prefix}_in"] * 25.4 - df[f"{prefix}_mm"]).abs() > 0.02).any():
+        # NIST SP 811 (2008), Appendix B.8, "Factors for Units Listed
+        # Alphabetically": 1 in = 25.4 mm exactly. Assumed rounding to
+        # 0.01 mm / 0.001 in gives 0.005 + 25.4 * 0.0005 = 0.0177 mm;
+        # rounding that envelope up to 0.01 mm retains the 0.02 mm allowance.
+        # Decimal comparison includes exact endpoints without a float epsilon.
+        errors = (
+            abs(Decimal(str(inches)) * Decimal("25.4") - Decimal(str(mm)))
+            for inches, mm in zip(df[f"{prefix}_in"], df[f"{prefix}_mm"])
+        )
+        if any(error > Decimal("0.02") for error in errors):
             raise ValueError("Pipe inch and millimetre dimensions must agree")
     if df["schedule"].isna().any() or not df["schedule"].astype(str).str.strip().all():
         raise ValueError("Each pipe row requires a schedule label")
@@ -193,14 +204,23 @@ class PipelineSpecLookup:
             self._df = pd.DataFrame(columns=_COLUMNS)
             return self._df
         try:
-            df = pd.read_csv(csv_path)
-        except (pd.errors.ParserError, pd.errors.EmptyDataError) as exc:
+            # Validate the same snapshot pandas consumes; never infer row indices.
+            text = csv_path.read_text(encoding="utf-8")
+            records = list(csv.reader(StringIO(text), strict=True))
+            if not records or len(records[0]) != len(set(records[0])):
+                raise ValueError("Pipe CSV requires a unique compatibility header")
+            if any(len(record) != len(records[0]) for record in records[1:]):
+                raise ValueError("Pipe CSV records must match the header field count")
+            df = pd.read_csv(StringIO(text), index_col=False)
+        except (csv.Error, pd.errors.ParserError, pd.errors.EmptyDataError) as exc:
             raise ValueError("Pipe CSV must contain the compatibility header") from exc
         _validate_dimensions(df)
         sources = _load_sources(
             self._data_dir / "sources.yml", len(df), self._allow_synthetic
         )
-        self._sources = sources
+        self._sources = {
+            index: sources[number] for number, index in enumerate(df.index, start=1)
+        }
         self._df = df
         logger.info("Loaded %d caller-supplied pipe entries", len(df))
         return self._df
@@ -287,7 +307,7 @@ class PipelineSpecLookup:
                 str(row["domain_hint"]) if pd.notna(row["domain_hint"]) else None
             ),
             "source": "worldenergydata.bsee.pipeline.PipelineSpecLookup",
-            "provenance": self._sources[int(row.name) + 1].copy(),
+            "provenance": self._sources[row.name].copy(),
         }
         logger.debug(
             'PipelineSpecLookup: OD=%.1fmm → NPS %.1f" %s (%s)',

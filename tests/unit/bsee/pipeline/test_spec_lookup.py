@@ -43,7 +43,9 @@ def write_sources(folder, count=5):
             for row in range(1, count + 1)
         ],
     }
-    (folder / "sources.yml").write_text(yaml.safe_dump(sources))
+    (folder / "sources.yml").write_text(
+        yaml.safe_dump(sources), encoding="utf-8", newline="\n"
+    )
     return sources
 
 
@@ -75,7 +77,10 @@ def sample_schedule_data(tmp_path):
             )
         )
     pd.DataFrame(rows, columns=COLUMNS).to_csv(
-        tmp_path / "api_5l_pipe_schedule.csv", index=False
+        tmp_path / "api_5l_pipe_schedule.csv",
+        index=False,
+        encoding="utf-8",
+        lineterminator="\n",
     )
     write_sources(tmp_path)
     return tmp_path
@@ -166,7 +171,9 @@ class TestPipelineSpecLookupIntegration:
     """The distributed template must never silently supply engineering values."""
 
     def test_distributed_csv_is_header_only(self):
-        assert pd.read_csv(DATA_DIR / "api_5l_pipe_schedule.csv").empty
+        assert pd.read_csv(
+            DATA_DIR / "api_5l_pipe_schedule.csv", encoding="utf-8"
+        ).empty
 
     def test_default_match_requires_supplied_data(self):
         assert PipelineSpecLookup().match_od_wt(0.201, 0.008) is None
@@ -183,7 +190,9 @@ class TestPipelineSpecLookupIntegration:
         from worldenergydata.bsee.pipeline.spec_lookup import validate_source_label
 
         df = pd.read_csv(DATA_DIR / "api_5l_pipe_schedule.csv")
-        manifest = yaml.safe_load((DATA_DIR / "sources.yml").read_text())
+        manifest = yaml.safe_load(
+            (DATA_DIR / "sources.yml").read_text(encoding="utf-8")
+        )
         for label in df["standard"]:
             validate_source_label(label)
         for source in manifest["rows"]:
@@ -218,9 +227,9 @@ class TestPipelineSpecLookupIntegration:
 )
 def test_invalid_rows_are_rejected(sample_schedule_data, column, value):
     path = sample_schedule_data / "api_5l_pipe_schedule.csv"
-    df = pd.read_csv(path).astype({column: object})
+    df = pd.read_csv(path, encoding="utf-8").astype({column: object})
     df.loc[0, column] = value
-    df.to_csv(path, index=False)
+    df.to_csv(path, index=False, encoding="utf-8", lineterminator="\n")
     with pytest.raises(ValueError):
         fixture_lookup(sample_schedule_data).load()
 
@@ -232,7 +241,9 @@ def test_invalid_rows_are_rejected(sample_schedule_data, column, value):
 def test_missing_provenance_is_rejected(sample_schedule_data, field):
     manifest = write_sources(sample_schedule_data)
     del manifest["rows"][0][field]
-    (sample_schedule_data / "sources.yml").write_text(yaml.safe_dump(manifest))
+    (sample_schedule_data / "sources.yml").write_text(
+        yaml.safe_dump(manifest), encoding="utf-8", newline="\n"
+    )
     with pytest.raises(ValueError):
         fixture_lookup(sample_schedule_data).load()
 
@@ -255,7 +266,9 @@ def test_missing_provenance_is_rejected(sample_schedule_data, field):
 def test_standards_attribution_is_rejected(sample_schedule_data, label):
     manifest = write_sources(sample_schedule_data)
     manifest["rows"][0]["title"] = label
-    (sample_schedule_data / "sources.yml").write_text(yaml.safe_dump(manifest))
+    (sample_schedule_data / "sources.yml").write_text(
+        yaml.safe_dump(manifest), encoding="utf-8", newline="\n"
+    )
     with pytest.raises(ValueError, match="standard"):
         fixture_lookup(sample_schedule_data).load()
 
@@ -281,9 +294,11 @@ def test_invalid_manifest_is_rejected(sample_schedule_data, case):
     if case == "absent":
         path.rename(sample_schedule_data / "unused.yml")
     elif case == "malformed":
-        path.write_text("rows: [")
+        path.write_text("rows: [", encoding="utf-8", newline="\n")
     elif case == "duplicate_key":
-        path.write_text("version: 1\nrows: []\nrows: []\n")
+        path.write_text(
+            "version: 1\nrows: []\nrows: []\n", encoding="utf-8", newline="\n"
+        )
     else:
         if case == "missing_row":
             manifest["rows"].pop()
@@ -300,14 +315,16 @@ def test_invalid_manifest_is_rejected(sample_schedule_data, case):
             manifest["rows"][0]["kind"] = "standard"
         elif case == "bad_version":
             manifest["version"] = 2
-        path.write_text(yaml.safe_dump(manifest))
+        path.write_text(yaml.safe_dump(manifest), encoding="utf-8", newline="\n")
     with pytest.raises(ValueError):
         fixture_lookup(sample_schedule_data).load()
 
 
 def test_missing_column_is_rejected(sample_schedule_data):
     path = sample_schedule_data / "api_5l_pipe_schedule.csv"
-    pd.read_csv(path).drop(columns="od_mm").to_csv(path, index=False)
+    pd.read_csv(path, encoding="utf-8").drop(columns="od_mm").to_csv(
+        path, index=False, encoding="utf-8", lineterminator="\n"
+    )
     with pytest.raises(ValueError):
         fixture_lookup(sample_schedule_data).load()
 
@@ -323,16 +340,18 @@ def test_caller_supplied_provenance_is_returned(sample_schedule_data, kind):
     manifest = write_sources(sample_schedule_data)
     for source in manifest["rows"]:
         source["kind"] = kind
-    (sample_schedule_data / "sources.yml").write_text(yaml.safe_dump(manifest))
+    (sample_schedule_data / "sources.yml").write_text(
+        yaml.safe_dump(manifest), encoding="utf-8", newline="\n"
+    )
     result = PipelineSpecLookup(data_dir=sample_schedule_data).match_od_wt(0.201)
     assert result["provenance"]["kind"] == kind
 
 
 def test_optional_values_remain_optional(sample_schedule_data):
     path = sample_schedule_data / "api_5l_pipe_schedule.csv"
-    df = pd.read_csv(path)
+    df = pd.read_csv(path, encoding="utf-8")
     df.loc[0, ["weight_kgm", "grade_range", "domain_hint", "standard"]] = None
-    df.to_csv(path, index=False)
+    df.to_csv(path, index=False, encoding="utf-8", lineterminator="\n")
     result = fixture_lookup(sample_schedule_data).match_od_wt(0.201)
     assert result["weight_kgm"] is None
     assert result["grade_range"] == []
@@ -345,6 +364,82 @@ def test_wt_fallback_is_preserved(sample_schedule_data):
 
 
 def test_manifest_rejects_python_object_tags(sample_schedule_data):
-    (sample_schedule_data / "sources.yml").write_text("!!python/tuple [1, 2]")
+    (sample_schedule_data / "sources.yml").write_text(
+        "!!python/tuple [1, 2]", encoding="utf-8", newline="\n"
+    )
     with pytest.raises(ValueError):
         fixture_lookup(sample_schedule_data).load()
+
+
+@pytest.mark.parametrize(
+    "case", ["leading_fields", "missing_trailing", "blank_record", "duplicate_header"]
+)
+def test_malformed_csv_cannot_reassign_provenance(sample_schedule_data, case):
+    path = sample_schedule_data / "api_5l_pipe_schedule.csv"
+    lines = path.read_text(encoding="utf-8").splitlines()
+    if case == "leading_fields":
+        # These unheaded fields became pandas indices and swapped sources 1/2.
+        lines[1:] = [
+            f"{index},{line}" for index, line in zip([1, 0, 2, 3, 4], lines[1:])
+        ]
+    elif case == "missing_trailing":
+        lines[-1] = lines[-1].rsplit(",", 1)[0]
+    elif case == "blank_record":
+        lines.insert(2, "")
+    else:
+        lines = [line + "," + line.rsplit(",", 1)[-1] for line in lines]
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
+    with pytest.raises(ValueError, match="CSV"):
+        fixture_lookup(sample_schedule_data).load()
+
+
+def test_provenance_follows_csv_record_order(sample_schedule_data):
+    path = sample_schedule_data / "api_5l_pipe_schedule.csv"
+    df = pd.read_csv(path, encoding="utf-8").iloc[[1, 0, 2, 3, 4]]
+    df.loc[1, "domain_hint"] = "Synthetic, multiline\nclassification"
+    df.to_csv(path, index=False, encoding="utf-8", lineterminator="\n")
+    manifest = write_sources(sample_schedule_data)
+    manifest["rows"][1]["title"] = "Synthetic dimension π"
+    manifest["rows"].reverse()
+    (sample_schedule_data / "sources.yml").write_text(
+        yaml.safe_dump(manifest, allow_unicode=True), encoding="utf-8", newline="\n"
+    )
+    lookup = fixture_lookup(sample_schedule_data)
+    first = lookup.match_od_wt(0.201, 0.014)
+    second = lookup.match_od_wt(0.201, 0.008)
+    assert first["provenance"]["row"] == 1
+    assert first["domain_hint"] == "Synthetic, multiline\nclassification"
+    assert second["provenance"]["row"] == 2
+    assert second["provenance"]["title"] == "Synthetic dimension π"
+
+
+@pytest.mark.parametrize("prefix", ["od", "wt"])
+@pytest.mark.parametrize(
+    "millimetres,accepted",
+    [
+        (25.379999, False),
+        (25.38, True),
+        (25.380001, True),
+        (25.4, True),
+        (25.419999, True),
+        (25.42, True),
+        (25.420001, False),
+    ],
+)
+def test_conversion_acceptance_boundaries(
+    sample_schedule_data, prefix, millimetres, accepted
+):
+    # Hand calculation: 1 in = 25.4 mm exactly; 25.42 - 25.4 = 0.02 mm,
+    # 25.4 - 25.38 = 0.02 mm, and 25.420001 - 25.4 = 0.020001 mm.
+    # The two 0.02 endpoints pass; either 0.020001 difference fails.
+    path = sample_schedule_data / "api_5l_pipe_schedule.csv"
+    df = pd.read_csv(path, encoding="utf-8").astype({f"{prefix}_mm": float})
+    df.loc[0, f"{prefix}_in"] = 1.0
+    df.loc[0, f"{prefix}_mm"] = millimetres
+    df.to_csv(path, index=False, encoding="utf-8", lineterminator="\n")
+    lookup = fixture_lookup(sample_schedule_data)
+    if accepted:
+        assert lookup.load().loc[0, f"{prefix}_mm"] == pytest.approx(millimetres)
+    else:
+        with pytest.raises(ValueError, match="inch and millimetre"):
+            lookup.load()

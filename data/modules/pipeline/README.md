@@ -10,6 +10,7 @@ standard document was opened. Empty default lookups return no match.
 | Revision | Date | What changed and why |
 | --- | --- | --- |
 | 1 | 2026-10-26 | Removed standards-sourced rows and required independent row provenance. |
+| 2 | 2026-10-26 | Rejected malformed CSV records to preserve source association and documented the rounding basis and boundary. |
 
 ## Caller input contract
 
@@ -21,7 +22,10 @@ legacy `standard` column is an optional caller classification label, never
 permission to copy a standards table or a claim of compliance.
 
 Each CSV data row requires one source record. `row: 1` identifies the first
-data row after the header, rather than the physical file line. The manifest
+data record after the header, rather than the physical file line. Headers must
+be unique and every record must have the header's field count; blank records
+are rejected. Quoted commas and newlines remain part of a single CSV record.
+Source records are associated with this validated record order. The manifest
 has `version: 1` and a `rows` list. Each entry requires:
 
 | Field | Meaning |
@@ -47,6 +51,17 @@ provenance, duplicate row records or YAML keys, and standards-attributed source
 labels are rejected before matching. Invalid inputs raise `ValueError`; a
 missing CSV retains the existing empty-result behavior. Sources are included
 in the matched result as `provenance`, alongside the existing result keys.
+
+The allowance assumes millimetre inputs rounded to the nearest 0.01 mm and
+inch inputs to the nearest 0.001 in, or finer. The independent half-step errors
+sum to `0.005 mm + 0.0005 in × 25.4 mm/in = 0.0177 mm`. Rounding this envelope
+up to the next 0.01 mm gives the retained 0.02 mm allowance. Both endpoints
+are included using decimal arithmetic. This is an input consistency screen,
+not a manufacturing tolerance or a measurement uncertainty assessment. Coarser
+inputs require the original, more precise source dimensions before reuse.
+The exact conversion is `1 in = 0.0254 m = 25.4 mm`, from NIST SP 811,
+*Guide for the Use of the International System of Units (SI)*, 2008 edition,
+[Appendix B.8, "Factors for Units Listed Alphabetically", inch entry](https://www.nist.gov/pml/special-publication-811/nist-guide-si-appendix-b-conversion-factors/nist-guide-si-appendix-b8).
 
 The source-label guard rejects common standards-body labels in the legacy
 classification field and in source title, publisher, URL and catalogue number.
