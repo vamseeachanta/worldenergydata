@@ -422,7 +422,7 @@
         }
       ],
       "default": null,
-      "description": "Supplied reservoir true vertical depth (TVD) in metres, not water depth; finite and nonnegative. None when unavailable.",
+      "description": "Proposed convention: supplied reservoir true vertical depth in metres below mean sea level (TVDSS), positive downward, not water depth; finite and nonnegative. None when unavailable or datum unknown.",
       "title": "Reservoir Depth Tvd M"
     },
     "reservoir_distribution": {
@@ -447,7 +447,7 @@
         }
       ],
       "default": null,
-      "description": "Supplied reservoir pressure in psi, not a pressure gradient; finite and nonnegative. None when unavailable.",
+      "description": "Proposed convention: supplied reservoir absolute pressure in psi (psia), not gauge pressure or a pressure gradient; finite and nonnegative. None when unavailable or reference unknown.",
       "title": "Reservoir Pressure Psi"
     },
     "reservoir_temperature_f": {
@@ -460,7 +460,7 @@
         }
       ],
       "default": null,
-      "description": "Supplied reservoir temperature in degrees Fahrenheit; finite subzero values are allowed. None when unavailable.",
+      "description": "Proposed convention: supplied reservoir temperature in degrees Fahrenheit; finite subzero values are allowed. None when unavailable.",
       "title": "Reservoir Temperature F"
     },
     "riser_type": {

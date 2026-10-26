@@ -1,10 +1,11 @@
 """Reservoir measurement contract using synthetic identity examples.
 
-The example below supplies TVD 1250.5 m, pressure 2500.25 psi and temperature
--40.5 degF; the expected JSON values are those same literals, without conversion.
-Zero is the nonnegative boundary required by the input contract (issue #761);
--0.5 is a synthetic value just below it. NaN and signed infinities are rejection
-cases, not engineering thresholds. No example represents a real reservoir.
+The example below supplies TVDSS 1250.5 m below mean sea level, absolute pressure
+2500.25 psia and temperature -40.5 degF; the expected JSON values are those same
+literals, without conversion. Zero is the proposed nonnegative input boundary
+described in data_dictionary.md, not a bound specified by issue #761; -0.5 is a
+synthetic value just below it. NaN and signed infinities are rejection cases,
+not engineering thresholds. No example represents a real reservoir.
 """
 
 import json

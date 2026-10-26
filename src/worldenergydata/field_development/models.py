@@ -65,14 +65,15 @@ class FieldConcept(BaseModel):
     region: Optional[str] = Field(None, description="Basin / geographic area.")
 
     # --- Reservoir / fluid ---
-    # Nonnegative depth/pressure boundaries follow the input contract (issue #761).
+    # Proposed input conventions; rationale and source limits: data_dictionary.md.
     reservoir_depth_tvd_m: Optional[float] = Field(
         None,
         ge=0,
         allow_inf_nan=False,
         description=(
-            "Supplied reservoir true vertical depth (TVD) in metres, not water "
-            "depth; finite and nonnegative. None when unavailable."
+            "Proposed convention: supplied reservoir true vertical depth in "
+            "metres below mean sea level (TVDSS), positive downward, not water "
+            "depth; finite and nonnegative. None when unavailable or datum unknown."
         ),
     )
     reservoir_pressure_psi: Optional[float] = Field(
@@ -80,16 +81,17 @@ class FieldConcept(BaseModel):
         ge=0,
         allow_inf_nan=False,
         description=(
-            "Supplied reservoir pressure in psi, not a pressure gradient; "
-            "finite and nonnegative. None when unavailable."
+            "Proposed convention: supplied reservoir absolute pressure in psi "
+            "(psia), not gauge pressure or a pressure gradient; finite and "
+            "nonnegative. None when unavailable or reference unknown."
         ),
     )
     reservoir_temperature_f: Optional[float] = Field(
         None,
         allow_inf_nan=False,
         description=(
-            "Supplied reservoir temperature in degrees Fahrenheit; finite "
-            "subzero values are allowed. None when unavailable."
+            "Proposed convention: supplied reservoir temperature in degrees "
+            "Fahrenheit; finite subzero values are allowed. None when unavailable."
         ),
     )
     recoverable_reserves_mmboe: Optional[float] = None
