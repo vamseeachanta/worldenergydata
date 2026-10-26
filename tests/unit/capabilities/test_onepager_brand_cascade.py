@@ -83,11 +83,15 @@ def test_brand_stylesheet_follows_default_tokens(
     assert document.index(default_tokens) < document.index(brand_css)
 
 
-def test_theme_selectors_survive_inlining(branded_card, brand_css):
-    # Exact UTF-8 bytes from the independent fixture include both theme selectors,
+@pytest.mark.parametrize("line_ending", [b"\n", b"\r\n"], ids=["lf", "crlf"])
+def test_theme_selectors_survive_inlining(branded_card, brand_css, line_ending):
+    # Exercise both platform newline conventions in the generated document.
+    document = branded_card.read_bytes().replace(b"\r\n", b"\n")
+    branded_card.write_bytes(document.replace(b"\n", line_ending))
+    # Exact UTF-8 text from the independent fixture includes both theme selectors,
     # their quote forms, declarations, blank lines and the trailing newline.
-    expected_block = f"<style>{brand_css}</style>".encode("utf-8")
-    assert expected_block in branded_card.read_bytes()
+    expected_block = f"<style>{brand_css}</style>"
+    assert expected_block in branded_card.read_text(encoding="utf-8")
 
 
 @pytest.mark.parametrize("explicit_empty", [False, True], ids=["omitted", "empty"])
