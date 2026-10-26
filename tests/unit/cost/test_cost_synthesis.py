@@ -80,8 +80,12 @@ def test_range_residual_and_percentage(project, basis):
     ],
 )
 def test_basis_mismatch_fails_closed(project, basis, field, value):
+    changes = {field: value}
+    if field == "price_basis":
+        changes["basis_year"] = 2020
+    incompatible = row(replace(basis, **changes))
     with pytest.raises(ValueError, match="basis"):
-        synthesize(project, (row(replace(basis, **{field: value})),))
+        synthesize(project, (incompatible,))
 
 
 @pytest.mark.parametrize(

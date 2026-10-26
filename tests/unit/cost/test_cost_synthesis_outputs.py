@@ -301,15 +301,13 @@ def test_deterministic_cost_map_and_manifest(tmp_path):
     expected = {
         "Disclosed target": (Decimal(100),),
         "Eligible subtotal": (Decimal(20), Decimal(30)),
+        "Excluded compatible subtotal": (Decimal(50),),
+        "Overlap compatible subtotal": (Decimal(0),),
         "Residual": (Decimal(70), Decimal(80)),
         "Coverage": (Decimal(20), Decimal(30)),
         "Residual percentage": (Decimal(70), Decimal(80)),
     }
-    for label, values in expected.items():
-        assert len(observed[label]) == len(values)
-        assert all(
-            abs(a - b) <= Decimal("0.000001") for a, b in zip(observed[label], values)
-        )
+    assert observed == expected
     assert "Revision history" in html
     csv = (tmp_path / "first/project_cost_map.csv").read_text(encoding="utf-8")
     assert "residual_fraction" in csv
@@ -331,26 +329,12 @@ def test_deterministic_cost_map_and_manifest(tmp_path):
 def test_committed_cost_map_matches_fresh_build(tmp_path):
     fresh = build(EXAMPLE, tmp_path / "fresh")
     committed = ROOT / "reports/cost"
-    saved = json.loads(
-        (committed / "cost_synthesis_manifest.v3.json").read_text(encoding="utf-8")
-    )
-    assert saved == fresh, REBUILD
-    for item in fresh["outputs"]:
-        assert (
-            hashlib.sha256((committed / item["path"]).read_bytes()).hexdigest()
-            == item["sha256"]
-        ), REBUILD
-    # Rebuilt accounting numbers agree within a millionth of a monetary unit.
-    for label, values in observed_values(
-        (tmp_path / "fresh/project_cost_map.html").read_text(encoding="utf-8")
-    ).items():
-        stored = observed_values(
-            (committed / "project_cost_map.html").read_text(encoding="utf-8")
-        )[label]
-        assert len(stored) == len(values), REBUILD
-        assert all(
-            abs(a - b) <= Decimal("0.000001") for a, b in zip(stored, values)
-        ), REBUILD
+    for name in ["cost_synthesis_manifest.v3.json"] + [
+        item["path"] for item in fresh["outputs"]
+    ]:
+        assert (committed / name).read_bytes() == (
+            tmp_path / "fresh" / name
+        ).read_bytes(), REBUILD
 
 
 def test_csv_metric_sources_follow_the_contributing_evidence(tmp_path):
