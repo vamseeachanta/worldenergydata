@@ -5,6 +5,9 @@ issue #942; SVG strings are sentinels, independent of rendering geometry.
 """
 
 import importlib.util
+import json
+import subprocess
+from html.parser import HTMLParser
 from pathlib import Path
 from unittest.mock import Mock
 
@@ -90,3 +93,108 @@ def test_missing_concept_remains_placeholder(builder, monkeypatch):
     }
     lookup.assert_called_once_with(SYNTHETIC_ID)
     render.assert_not_called()
+
+
+class _PosterParser(HTMLParser):
+    """Inspect the HTML parsing boundaries, independently of serialization."""
+
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.scripts = []
+        self.headings = []
+        self.tags = []
+        self._in_script = False
+        self._in_heading = False
+
+    def handle_starttag(self, tag, attrs):
+        self.tags.append(tag)
+        if tag == "script":
+            self.scripts.append("")
+            self._in_script = True
+        if tag == "h3":
+            self.headings.append("")
+            self._in_heading = True
+
+    def handle_endtag(self, tag):
+        if tag == "script":
+            self._in_script = False
+        if tag == "h3":
+            self._in_heading = False
+
+    def handle_data(self, data):
+        if self._in_script:
+            self.scripts[-1] += data
+        if self._in_heading:
+            self.headings[-1] += data
+
+
+def _synthetic_field(builder, monkeypatch, name):
+    concept = FieldConcept(name=name)
+    monkeypatch.setattr(builder, "concept_for", lambda field_id: concept)
+    return {
+        "id": SYNTHETIC_ID,
+        "name": "Synthetic field",
+        "architecture": builder._architecture_for(SYNTHETIC_ID),
+    }
+
+
+@pytest.mark.parametrize(
+    "name",
+    [
+        '</script><script>void "synthetic"</script>',
+        '</ScRiPt ><img src=x onerror="void 0">',
+        "<!--<script>synthetic</script>",
+        'Synthetic café & <layout> "caption"',
+    ],
+)
+def test_concept_name_cannot_break_script_embedding(builder, monkeypatch, name):
+    field = _synthetic_field(builder, monkeypatch, name)
+    parser = _PosterParser()
+
+    parser.feed(builder.render(field))
+
+    assert len(parser.scripts) == 1
+    embedded = parser.scripts[0].split("const FIELD = ", 1)[1]
+    decoded, _ = json.JSONDecoder().raw_decode(embedded)
+    assert decoded["architecture"]["caption"] == name
+    assert decoded["architecture"]["svg"] == field["architecture"]["svg"]
+    assert "<svg" in decoded["architecture"]["svg"]
+
+
+@pytest.mark.parametrize(
+    "name",
+    [
+        "Synthetic <b>concept</b>",
+        'Synthetic <img src=x onerror="void 0">',
+        'Synthetic &amp; < > "quotes" café',
+    ],
+)
+def test_architecture_caption_is_literal_text(builder, monkeypatch, name):
+    field = _synthetic_field(builder, monkeypatch, name)
+    page = _PosterParser()
+    page.feed(builder.render(field))
+    script = page.scripts[0]
+    start = script.index("if (FIELD.architecture) {")
+    end = script.index("// Lease & landman panel", start)
+    # Execute the real panel renderer; only its DOM insertion target is replaced.
+    program = (
+        "const FIELD = JSON.parse(process.argv[2]);\n"
+        'const panel = {innerHTML: ""};\n'
+        'const $ = id => { if (id !== "f-arch") throw Error(id); return panel; };\n'
+        + script[start:end]
+        + "\nprocess.stdout.write(panel.innerHTML);\n"
+    )
+    result = subprocess.run(
+        ["node", "-", json.dumps(field)],
+        input=program,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        check=True,
+    )
+    panel = _PosterParser()
+    panel.feed(result.stdout)
+
+    assert panel.headings == [f"Architecture — {name}"]
+    assert not {"b", "img", "script"}.intersection(panel.tags)
+    assert field["architecture"]["svg"] in result.stdout

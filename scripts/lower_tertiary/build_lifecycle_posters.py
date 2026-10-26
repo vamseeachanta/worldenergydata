@@ -69,7 +69,11 @@ _DECOM_CSV = (
 def _load_decom_rows() -> list[dict]:
     if not _DECOM_CSV.exists():
         return []
-    lines = [ln for ln in _DECOM_CSV.read_text().splitlines() if not ln.startswith("#")]
+    lines = [
+        ln
+        for ln in _DECOM_CSV.read_text(encoding="utf-8").splitlines()
+        if not ln.startswith("#")
+    ]
     return list(csv.DictReader(lines))
 
 
@@ -460,10 +464,15 @@ def facts_to_field(f: dict) -> dict:
 
 
 def render(field: dict) -> str:
-    tpl = TEMPLATE.read_text()
-    html = tpl.replace(
-        "__FIELD_JSON__", json.dumps(field, indent=2, ensure_ascii=False)
+    tpl = TEMPLATE.read_text(encoding="utf-8")
+    # JSON strings remain data when embedded in an HTML script element.
+    payload = (
+        json.dumps(field, indent=2, ensure_ascii=False)
+        .replace("&", "\\u0026")
+        .replace("<", "\\u003c")
+        .replace(">", "\\u003e")
     )
+    html = tpl.replace("__FIELD_JSON__", payload)
     return site_nav.inject_for(
         html, "poster", {"field_id": field["id"], "field_name": field["name"]}
     )
@@ -550,7 +559,7 @@ def main():
     facts = (
         [BIG_FOOT_FACTS]
         if (args.self_test or not FACTS.exists())
-        else json.loads(FACTS.read_text())
+        else json.loads(FACTS.read_text(encoding="utf-8"))
     )
     # Phase-norm chips (issue #848): attach per-field vs-norm strip data when
     # the norms contract exists (build_phase_norms.py writes it). Posters stay
@@ -558,7 +567,7 @@ def main():
     norms_chips = {}
     norms_path = HERE / "_norms.json"
     if norms_path.exists():
-        norms_chips = json.loads(norms_path.read_text()).get("chips", {})
+        norms_chips = json.loads(norms_path.read_text(encoding="utf-8")).get("chips", {})
 
     # Field-performance stats (issue #756): attach the per-field BSEE
     # life-to-date contract when present. Only the 7 producing fields have a
@@ -566,7 +575,7 @@ def main():
     perf_fields = {}
     perf_path = HERE / "_performance.json"
     if perf_path.exists():
-        perf_fields = json.loads(perf_path.read_text()).get("fields", {})
+        perf_fields = json.loads(perf_path.read_text(encoding="utf-8")).get("fields", {})
 
     fields = []
     for f in facts:
@@ -574,13 +583,15 @@ def main():
         field["norms"] = norms_chips.get(f["id"], [])
         field["performance"] = perf_fields.get(f["id"])
         out = HERE / f"{f['id']}_lifecycle.html"
-        out.write_text(render(field))
+        out.write_text(render(field), encoding="utf-8", newline="\n")
         fields.append(field)
         print(
             f"  wrote {out.name}  ({field['statusLabel']}, "
             f"phase={field['currentPhase']}, gates={len(field['gates'])})"
         )
-    (HERE / "index.html").write_text(build_index(fields))
+    (HERE / "index.html").write_text(
+        build_index(fields), encoding="utf-8", newline="\n"
+    )
     print(f"  wrote index.html  ({len(fields)} fields)")
 
     # Explorer sidecar (issue #946): the SAME post-enrichment payloads the
@@ -591,7 +602,7 @@ def main():
     wells_contract = {}
     wells_facts = HERE / "wells" / "_wells.json"
     if wells_facts.exists():
-        wells_contract = json.loads(wells_facts.read_text())
+        wells_contract = json.loads(wells_facts.read_text(encoding="utf-8"))
     (HERE / "_explorer.json").write_text(
         json.dumps(
             {
@@ -605,7 +616,9 @@ def main():
             indent=2,
             ensure_ascii=False,
         )
-        + "\n"
+        + "\n",
+        encoding="utf-8",
+        newline="\n",
     )
     print(f"  wrote _explorer.json  ({len(fields)} fields)")
 
