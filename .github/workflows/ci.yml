@@ -596,6 +596,14 @@ jobs:
         # build job exercises the full workspace, not just the root package.
         run: uv build --all-packages
 
+      - name: Test wheel ownership checker
+        run: >-
+          uv run python -m pytest --noconftest -o addopts=''
+          tests/unit/packaging/test_wheel_ownership.py -q
+
+      - name: Check wheel namespace ownership
+        run: python scripts/ci/check_wheel_ownership.py dist/*.whl
+
       - name: Upload build artifacts
         uses: actions/upload-artifact@v7
         with:
