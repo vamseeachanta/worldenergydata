@@ -2,6 +2,8 @@
 
 import math
 
+import pytest
+
 from worldenergydata.sodir.utils.coordinates import CoordinateTransformer
 
 
@@ -85,6 +87,23 @@ class TestWGS84toUTMInternal:
 
 
 class TestRoundtrip:
+    @pytest.mark.parametrize(
+        ("latitude", "longitude", "expected_zone"),
+        [(0.0, 3.0, 31), (59.91, 10.75, 32), (-33.86, 151.21, 56)],
+    )
+    def test_public_roundtrip(self, latitude, longitude, expected_zone):
+        """Public conversions preserve axis order and the UTM hemisphere."""
+        ct = CoordinateTransformer()
+        easting, northing, zone = ct.wgs84_to_utm(latitude, longitude)
+        assert zone == expected_zone
+        lat_back, lon_back = ct.utm_to_wgs84(
+            easting, northing, zone, northern_hemisphere=latitude >= 0
+        )
+        assert abs(lat_back - latitude) < 0.01
+        assert abs(lon_back - longitude) < 0.01
+        assert ct.conversions_count == 2
+        assert ct.error_count == 0
+
     def test_roundtrip_oslo(self):
         ct = CoordinateTransformer()
         lat_orig, lon_orig = 59.91, 10.75
