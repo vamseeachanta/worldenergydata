@@ -87,6 +87,60 @@ def test_current_series_and_full_history_preserve_restatement(scope):
     assert revised.provenance["review"]["verified"] is False
 
 
+@pytest.mark.parametrize("scope", ["project", "operator"])
+@pytest.mark.parametrize("currency", ["EUR", None])
+@pytest.mark.parametrize("identity", ["versioned", "mixed", "legacy"])
+def test_annual_views_reject_ambiguous_same_year_points(scope, currency, identity):
+    """Synthetic 100 USD and 200 EUR/unknown are two points, not a YoY change."""
+    first = record(scope=scope, project_name="asset" if scope == "project" else None)
+    second = record(
+        "other-original",
+        logical_disclosure_key="other-annual-capex",
+        scope=scope,
+        project_name=first.project_name,
+        currency=currency,
+        reported_capex_usd_mm=200.0,
+    )
+    if identity == "legacy":
+        first = replace(first, revision=None)
+    if identity != "versioned":
+        second = replace(second, revision=None)
+    loader = (
+        load_project_cost_revision_view
+        if scope == "project"
+        else load_operator_annual_capex_view
+    )
+    for ordered in permutations([first, second]):
+        # History and current selection preserve both separate evidence records.
+        assert len(load_disclosure_revision_history(iter(ordered))) == 2
+        assert len(load_current_effective_disclosure_rows(iter(ordered))) == 2
+        with pytest.raises(ValueError, match="ambiguous annual disclosure"):
+            loader(iter(ordered))
+
+
+@pytest.mark.parametrize("scope", ["project", "operator"])
+def test_same_year_points_in_separate_annual_groups_remain_available(scope):
+    """Synthetic 100 and 200 in separate groups have no prior-year comparison."""
+    first = record(scope=scope, project_name="asset" if scope == "project" else None)
+    second = record(
+        "other-original",
+        logical_disclosure_key="other-annual-capex",
+        scope=scope,
+        project_name="other-asset" if scope == "project" else None,
+        operator=first.operator if scope == "project" else "other-operator",
+        currency="EUR",
+        reported_capex_usd_mm=200.0,
+    )
+    loader = (
+        load_project_cost_revision_view
+        if scope == "project"
+        else load_operator_annual_capex_view
+    )
+    view = loader(iter([first, second]))
+    assert sorted(r.reported_capex_usd_mm for r in view) == [100.0, 200.0]
+    assert all(r.yoy_delta_usd_mm is None and r.yoy_delta_pct is None for r in view)
+
+
 def test_selection_precedence_is_depth_then_dates_then_lexical_id():
     """Follow edges: deep wins over newer shallow; equal-depth ties use dates then ID."""
     root = record()

@@ -25,7 +25,9 @@ differences and carry the selected revision metadata.</p>
 <table>
 <thead><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr></thead>
 <tbody><tr><td>1</td><td>2026-10-20</td><td>Define append-only lineage, ingest
-classification and current/history selection for annual restatements.</td></tr></tbody>
+classification and current/history selection for annual restatements.</td></tr>
+<tr><td>2</td><td>2026-10-25</td><td>Reject ambiguous same-year annual points
+before differences so separate currency records cannot become a YoY change.</td></tr></tbody>
 <caption>Table 1. Document revision history.</caption>
 </table>
 <h2>Identity and validation</h2>
@@ -99,6 +101,12 @@ currency conversion, inflation adjustment or comparability approval is implied.
 The existing previous-observation difference method is retained; a fiscal-year
 gap is not interpolated. Legacy rows receive no invented revision label and
 unrelated legacy series remain available.</p>
+<p>After current selection, each annual group must contain at most one point per
+fiscal year. Both annual views raise <code>ValueError</code> for an ambiguous
+year, including separate currency records, missing currencies and legacy rows.
+Project groups use (operator, project name); operator groups use operator.
+No currency conversion or aggregation is inferred. The current and history APIs
+still retain separate evidence records.</p>
 <h2>Worked example: inputs, method and answer</h2>
 <p>The runnable <a href="../../../examples/cost/disclosure_revisions.py">synthetic
 example</a> validates raw dictionaries, retains all evidence, then projects the

@@ -214,6 +214,19 @@ def _yoy(current: float, prior: float | None) -> tuple[float | None, float | Non
     return delta, pct
 
 
+def _unique_annual_rows(rows: list[DisclosureRecord]) -> list[DisclosureRecord]:
+    """Reject multiple current points per fiscal year in one annual group."""
+    years: set[int] = set()
+    for row in rows:
+        if row.fiscal_year in years:
+            raise ValueError(
+                f"ambiguous annual disclosure: multiple current points for "
+                f"fiscal year {row.fiscal_year} in the same annual group"
+            )
+        years.add(row.fiscal_year)
+    return sorted(rows, key=lambda row: row.fiscal_year)
+
+
 def load_project_cost_revision_view(
     records: Iterable[DisclosureRecord],
 ) -> list[ProjectRevisionRow]:
@@ -222,7 +235,9 @@ def load_project_cost_revision_view(
     Groups by ``(operator, project_name)``, sorts by ``fiscal_year``, and emits
     a derived row per current logical version, carrying revision metadata.
     Differences use the previous observed fiscal year in the same group;
-    missing years are not interpolated. Legacy rows retain existing behavior.
+    missing years are not interpolated. Multiple current points in the same
+    group and fiscal year raise ValueError, including different currencies or
+    legacy rows; no currency conversion or aggregation is inferred.
 
     Operator-scope rows and rows missing ``project_name`` are excluded — they
     belong to the operator view, never this one.
@@ -238,7 +253,7 @@ def load_project_cost_revision_view(
 
     result: list[ProjectRevisionRow] = []
     for rows in groups.values():
-        rows_sorted = sorted(rows, key=lambda x: x.fiscal_year)
+        rows_sorted = _unique_annual_rows(rows)
         prior_capex: float | None = None
         for r in rows_sorted:
             delta, pct = _yoy(r.reported_capex_usd_mm, prior_capex)
@@ -266,8 +281,9 @@ def load_operator_annual_capex_view(
 
     Groups by ``operator``, sorts by ``fiscal_year``, and emits a derived row
     per current logical version with differences computed within-group only.
-    Revision metadata is retained. Missing years are not interpolated; legacy
-    rows retain existing behavior.
+    Revision metadata is retained. Missing years are not interpolated. Multiple
+    current points for one operator and fiscal year raise ValueError, including
+    different currencies or legacy rows; no conversion or aggregation is inferred.
 
     Project-scope rows are excluded.
     """
@@ -282,7 +298,7 @@ def load_operator_annual_capex_view(
 
     result: list[OperatorCapexRow] = []
     for rows in groups.values():
-        rows_sorted = sorted(rows, key=lambda x: x.fiscal_year)
+        rows_sorted = _unique_annual_rows(rows)
         prior_capex: float | None = None
         for r in rows_sorted:
             delta, pct = _yoy(r.reported_capex_usd_mm, prior_capex)
