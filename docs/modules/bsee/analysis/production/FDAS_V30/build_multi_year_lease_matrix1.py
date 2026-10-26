@@ -379,7 +379,7 @@ def load_ogora_production(ogora_source):
             prod["has_prod"] = ((prod["OIL_BBL"].fillna(0) > 0) | (prod["WATER_BBL"].fillna(0) > 0)).astype(int)
             grouped = prod.groupby(["API_WELL_NUMBER", "MONTH"], as_index=False).agg({
                 "OIL_BBL": "sum",
-                "WATER_BBL": "sum",
+                "WATER_BBL": lambda values: values.sum(skipna=False),
                 "DAYS": "sum",
                 "has_prod": "sum"
             })
@@ -392,7 +392,7 @@ def load_ogora_production(ogora_source):
         else:
             monthly = prod.groupby(["API_WELL_NUMBER", "MONTH"], as_index=False).agg({
                 "OIL_BBL": "sum",
-                "WATER_BBL": "sum",
+                "WATER_BBL": lambda values: values.sum(skipna=False),
                 "DAYS": "sum"
             }).rename(columns={"DAYS": "DAYS_ON_PROD"})
         # Ensure fallback column exists

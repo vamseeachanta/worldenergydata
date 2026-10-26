@@ -21,7 +21,9 @@ Matching the golden header establishes schema agreement, not agreement with its 
 <tbody><tr><td>Initial</td><td>2026-10-22</td><td>Record reference-reader corrections,
 financial input guards and unresolved basis choices to prevent silent reuse.</td></tr>
 <tr><td>1</td><td>2026-10-25</td><td>Document required count inputs and spreadsheet
-dispatch coverage so synthetic checks are not treated as design qualification.</td></tr></tbody>
+dispatch coverage so synthetic checks are not treated as design qualification.</td></tr>
+<tr><td>2</td><td>2026-10-25</td><td>Preserve unknown water through both
+header-based matrix aggregations and document CSV/XLSX workbook regressions.</td></tr></tbody>
 <caption>Table 1. Revision record.</caption></table>
 <h2>Finding register</h2>
 <p>Test names below are in <code>tests/unit/fdas/reference/</code>, except the
@@ -48,7 +50,10 @@ rather than losing spending before the index start.</td><td><code>test_b7_outsid
 column 7 as water. The chronological reader's condensate label is corrected;
 the matrix's water interpretation agrees with that layout.</td><td><code>test_b3_matrix_oil_filter_and_b8_documented_water</code></td></tr>
 <tr><td>B9</td><td>FIXED: documented water is read; missing or partially missing
-water remains missing with NOT_EVALUATED status.</td><td><code>test_b9_absent_water_is_not_zero</code>, <code>test_b9_partial_water_is_not_a_complete_total</code></td></tr>
+water remains missing. Chronological output carries NOT_EVALUATED status;
+matrix water cells remain blank, including header-based CSV/XLSX input and
+observations combined across files. Complete totals and measured zeros are
+retained.</td><td><code>test_b9_absent_water_is_not_zero</code>, <code>test_b9_partial_water_is_not_a_complete_total</code>, <code>test_b9_matrix_header_water_to_workbook</code></td></tr>
 <tr><td>B10</td><td>FIXED: no implicit price substitution. Chronological output
 without a price is NOT_EVALUATED; financial generation requires every indexed
 price and rejects duplicate months.</td><td><code>test_b10_omitted_price_is_not_zero</code>, <code>test_b10_missing_month_raises</code></td></tr>
