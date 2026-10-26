@@ -109,6 +109,23 @@ def test_tracked_public_text_and_paths_use_neutral_wording():
     assert not failures, f"Public wording violations: {failures}"
 
 
+@pytest.mark.parametrize(
+    "relative_path",
+    [
+        "docs/data-sources/bsee/analysis/field/field_layout.md",
+        "docs/data-sources/bsee/data/drilling_data_rev1.md",
+        "docs/data-sources/bsee/data/well/well_count.md",
+    ],
+)
+def test_reviewed_correspondence_uses_roles_instead_of_addresses(relative_path):
+    address = re.compile(r"[\w.+-]+@[\w.-]+\.[a-zA-Z]{2,}")
+    lines = (ROOT / relative_path).read_text().splitlines()
+    violations = [
+        number for number, line in enumerate(lines, 1) if address.search(line)
+    ]
+    assert not violations, f"Address found in {relative_path} at lines {violations}"
+
+
 def test_office_documents_use_neutral_wording():
     failures = []
     for path in tracked_files():
