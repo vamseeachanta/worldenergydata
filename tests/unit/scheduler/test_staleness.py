@@ -116,6 +116,34 @@ def _assert_synthetic_staleness(status, expected_hours, expected_stale):
     }
 
 
+@pytest.mark.parametrize("timestamp_key", ["start_time", "last_run"])
+@pytest.mark.parametrize(
+    "timestamp, expected_hours, expected_stale",
+    [
+        # Hand calculation: noon UTC minus 07:00/05:00 UTC = five/seven hours.
+        ("2026-03-25T07:00:00", 5.0, False),
+        ("2026-03-25T05:00:00", 7.0, True),
+    ],
+)
+def test_legacy_naive_status_is_utc_without_tzset(
+    synthetic_utc_cadence,
+    monkeypatch,
+    timestamp_key,
+    timestamp,
+    expected_hours,
+    expected_stale,
+):
+    """Both legacy timestamp keys mean UTC even when timezone control is absent."""
+    monkeypatch.delattr(time, "tzset", raising=False)
+    entry = _job_entry(None)
+    entry[timestamp_key] = timestamp
+    status = _make_status({"synthetic_refresh": entry})
+    _assert_synthetic_staleness(status, expected_hours, expected_stale)
+
+
+@pytest.mark.skipif(
+    not hasattr(time, "tzset"), reason="Requires POSIX timezone control"
+)
 @pytest.mark.parametrize("local_zone", ["UTC0", "EST5"])
 @pytest.mark.parametrize("timestamp_key", ["start_time", "last_run"])
 @pytest.mark.parametrize(
