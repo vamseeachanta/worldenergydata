@@ -29,7 +29,7 @@ Example usage:
         logger.error(f"Data error: {e}")
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
 class WorldEnergyDataError(Exception):
@@ -51,10 +51,10 @@ class WorldEnergyDataError(Exception):
     def __init__(
         self,
         message: str,
-        code: Optional[str] = None,
-        context: Optional[Dict[str, Any]] = None,
-        cause: Optional[Exception] = None,
-    ):
+        code: str | None = None,
+        context: dict[str, Any] | None = None,
+        cause: Exception | None = None,
+    ) -> None:
         """
         Initialize the exception.
 
@@ -91,9 +91,9 @@ class WorldEnergyDataError(Exception):
             f"context={self.context!r})"
         )
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert exception to dictionary for serialization."""
-        result = {
+        result: dict[str, Any] = {
             "error": self.__class__.__name__,
             "code": self.code,
             "message": self.message,
@@ -159,10 +159,10 @@ class DataSourceError(DataError):
         self,
         message: str,
         source: str,
-        code: Optional[str] = None,
-        context: Optional[Dict[str, Any]] = None,
-        cause: Optional[Exception] = None,
-    ):
+        code: str | None = None,
+        context: dict[str, Any] | None = None,
+        cause: Exception | None = None,
+    ) -> None:
         """
         Initialize data source error.
 
@@ -210,11 +210,11 @@ class ValidationError(DataError):
     def __init__(
         self,
         message: str,
-        errors: Optional[List[Dict[str, Any]]] = None,
-        code: Optional[str] = None,
-        context: Optional[Dict[str, Any]] = None,
-        cause: Optional[Exception] = None,
-    ):
+        errors: list[dict[str, Any]] | None = None,
+        code: str | None = None,
+        context: dict[str, Any] | None = None,
+        cause: Exception | None = None,
+    ) -> None:
         """
         Initialize validation error.
 
@@ -249,7 +249,7 @@ class ValidationError(DataError):
         """Check if there are any validation errors."""
         return len(self.errors) > 0
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary including all validation errors."""
         result = super().to_dict()
         if self.errors:
@@ -257,7 +257,7 @@ class ValidationError(DataError):
         return result
 
     @classmethod
-    def from_errors(cls, errors: List[Dict[str, Any]]) -> "ValidationError":
+    def from_errors(cls, errors: list[dict[str, Any]]) -> "ValidationError":
         """Create validation error from list of error details."""
         error_count = len(errors)
         return cls(
@@ -303,10 +303,10 @@ class ProcessingError(DataError):
         self,
         message: str,
         operation: str,
-        code: Optional[str] = None,
-        context: Optional[Dict[str, Any]] = None,
-        cause: Optional[Exception] = None,
-    ):
+        code: str | None = None,
+        context: dict[str, Any] | None = None,
+        cause: Exception | None = None,
+    ) -> None:
         """
         Initialize processing error.
 
@@ -324,7 +324,7 @@ class ProcessingError(DataError):
 
     @classmethod
     def failed(
-        cls, operation: str, reason: str, cause: Optional[Exception] = None
+        cls, operation: str, reason: str, cause: Exception | None = None
     ) -> "ProcessingError":
         """Create error for failed processing operation."""
         return cls(
@@ -348,11 +348,11 @@ class APIError(WorldEnergyDataError):
         self,
         message: str,
         api_name: str,
-        status_code: Optional[int] = None,
-        code: Optional[str] = None,
-        context: Optional[Dict[str, Any]] = None,
-        cause: Optional[Exception] = None,
-    ):
+        status_code: int | None = None,
+        code: str | None = None,
+        context: dict[str, Any] | None = None,
+        cause: Exception | None = None,
+    ) -> None:
         """
         Initialize API error.
 
@@ -389,9 +389,7 @@ class APIError(WorldEnergyDataError):
         )
 
     @classmethod
-    def rate_limited(
-        cls, api_name: str, retry_after: Optional[int] = None
-    ) -> "APIError":
+    def rate_limited(cls, api_name: str, retry_after: int | None = None) -> "APIError":
         """Create error for rate limiting."""
         context = {}
         if retry_after:
@@ -415,10 +413,10 @@ class ModuleError(WorldEnergyDataError):
     def __init__(
         self,
         message: str,
-        code: Optional[str] = None,
-        context: Optional[Dict[str, Any]] = None,
-        cause: Optional[Exception] = None,
-    ):
+        code: str | None = None,
+        context: dict[str, Any] | None = None,
+        cause: Exception | None = None,
+    ) -> None:
         context = context or {}
         context["module"] = self.module_name
         super().__init__(message, code, context, cause)
