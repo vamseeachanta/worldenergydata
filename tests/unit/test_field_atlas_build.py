@@ -53,7 +53,7 @@ def country_feed():
     return {
         "countries": [
             {
-                "country": "Country South",
+                "country": "Country South é",
                 "fields": 1,
                 "badge": "SAMPLE",
                 "module": None,
@@ -69,24 +69,36 @@ def country_feed():
     }
 
 
-def build_embedded(atlas, roster, feed=None):
+def build_embedded(atlas, roster, feed=None, *, via_main=False):
     """Run the real builder, parse both payloads and check immutable inputs."""
-    atlas.ROSTER.write_text(json.dumps(roster, ensure_ascii=False), encoding="utf-8")
+    atlas.ROSTER.write_text(
+        json.dumps(roster, ensure_ascii=False), encoding="utf-8", newline="\n"
+    )
     atlas.TEMPLATE_PATH.write_text(
-        "<!doctype html><html><body>\n"
+        "<!doctype html><html><title>Example atlas é</title><body>\n"
         '<script id="roster" type="application/json">__ROSTER_JSON__</script>\n'
         '<script id="countries" type="application/json">__COUNTRIES_JSON__</script>\n'
         "</body></html>\n",
         encoding="utf-8",
+        newline="\n",
     )
     inputs = [atlas.ROSTER, atlas.TEMPLATE_PATH]
     if feed is not None:
-        atlas.FEED.write_text(json.dumps(feed, ensure_ascii=False), encoding="utf-8")
+        atlas.FEED.write_text(
+            json.dumps(feed, ensure_ascii=False), encoding="utf-8", newline="\n"
+        )
         inputs.append(atlas.FEED)
     original_bytes = {path: path.read_bytes() for path in inputs}
 
-    html = atlas.build()
+    if via_main:
+        atlas.main()
+        output = (atlas.HERE / "index.html").read_bytes()
+        assert b"\r\n" not in output
+        html = output.decode("utf-8")
+    else:
+        html = atlas.build()
 
+    assert "<title>Example atlas é</title>" in html
     assert {path: path.read_bytes() for path in inputs} == original_bytes
     if feed is None:
         assert not atlas.FEED.exists()
@@ -105,7 +117,8 @@ def build_embedded(atlas, roster, feed=None):
     return payloads
 
 
-def test_atlas_missing_feed_keeps_roster(atlas):
+@pytest.mark.parametrize("via_main", [False, True], ids=["build", "main"])
+def test_atlas_missing_feed_keeps_roster(atlas, via_main, capsys):
     roster = [
         {
             "name": "Example field é",
@@ -115,7 +128,9 @@ def test_atlas_missing_feed_keeps_roster(atlas):
         }
     ]
 
-    embedded = build_embedded(atlas, roster)
+    embedded = build_embedded(atlas, roster, via_main=via_main)
+    if via_main:
+        assert "(1 fields)" in capsys.readouterr().out
 
     assert embedded["roster"] == [
         {
