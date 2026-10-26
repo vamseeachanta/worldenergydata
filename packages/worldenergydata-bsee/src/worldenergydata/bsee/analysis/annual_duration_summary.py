@@ -19,8 +19,9 @@ quartiles and a valid count of zero. No rounding or quantization is applied.
 from __future__ import annotations
 
 from collections.abc import Iterable, Mapping
+from fractions import Fraction
 from math import floor, isfinite
-from numbers import Integral, Real
+from numbers import Integral, Rational, Real
 from typing import Any
 
 _REQUIRED = (
@@ -59,6 +60,14 @@ def _duration(value: object, field: str) -> float | None:
         raise ValueError(message)
     # Canonicalize signed zero so duplicate order cannot change serialized output.
     return 0.0 if days == 0 else days
+
+
+def _exact_duration(value: Real | None) -> Fraction | None:
+    if value is None:
+        return None
+    if isinstance(value, Rational):
+        return Fraction(int(value.numerator), int(value.denominator))
+    return Fraction(*value.as_integer_ratio())
 
 
 def _metric(values: Iterable[float | None]) -> dict[str, int | float | None]:
@@ -101,9 +110,9 @@ def annual_duration_summary(
     Labels are opaque and retained verbatim; extra row fields are ignored.
 
     Duplicate identity is (year, basis, well_id). Identical consumed band and
-    duration values count once, including nulls. Numeric equality is checked
-    before float conversion; disagreements raise ValueError. Thus a well
-    cannot occupy two bands under the same annual basis. The same well may
+    duration values count once, including nulls. Exact rational representations
+    of the original scalars are compared; disagreements raise ValueError. Thus a
+    well cannot occupy two bands under the same annual basis. The same well may
     appear in different years or under different bases.
 
     Cells are sorted by (year, water_depth_band, basis). ``well_count`` counts
@@ -131,7 +140,7 @@ def annual_duration_summary(
         if caveat is not None and not isinstance(caveat, str):
             raise ValueError(f"{name} must be a string or None")
 
-    seen: dict[tuple[int, str, str], tuple[str, object, object]] = {}
+    seen: dict[tuple[int, str, str], tuple[str, Fraction | None, Fraction | None]] = {}
     groups: dict[tuple[int, str, str], list[tuple[float | None, float | None]]] = {}
     for row in rows:
         for field in _REQUIRED:
@@ -144,7 +153,11 @@ def annual_duration_summary(
         calendar = _duration(row["calendar_days"], "calendar_days")
         rig = _duration(row["rig_days"], "rig_days")
         identity = (year, basis, well_id)
-        observation = (band, row["calendar_days"], row["rig_days"])
+        observation = (
+            band,
+            _exact_duration(row["calendar_days"]),
+            _exact_duration(row["rig_days"]),
+        )
         if identity in seen:
             if seen[identity] != observation:
                 raise ValueError("conflicting duplicate well row within year and basis")

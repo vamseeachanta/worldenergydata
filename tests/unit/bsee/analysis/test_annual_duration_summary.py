@@ -9,9 +9,11 @@ Years and band labels are arbitrary caller declarations.
 """
 
 from copy import deepcopy
+from fractions import Fraction
 from itertools import permutations
 from sys import float_info
 
+import numpy as np
 import pytest
 
 from worldenergydata.bsee.analysis.annual_duration_summary import (
@@ -277,3 +279,55 @@ def test_distinct_numeric_duplicates_cannot_merge_after_float_rounding():
         annual_duration_summary(
             [row(calendar_days=large), row(calendar_days=large + 1)], 1
         )
+
+
+@pytest.mark.parametrize("metric", ["calendar_days", "rig_days"])
+@pytest.mark.parametrize("reverse", [False, True])
+@pytest.mark.parametrize(
+    "first, second",
+    [
+        (np.float16(1000.1), 1000.1),
+        (np.float32(1000.1), 1000.1),
+        (np.float64(2**53), 2**53 + 1),
+        (np.float64(2**53), np.int64(2**53 + 1)),
+    ],
+    ids=["float16-python", "float32-python", "float64-python-int", "float64-int64"],
+)
+def test_distinct_mixed_scalar_duplicates_are_rejected(metric, reverse, first, second):
+    # The first two stored binary values differ from the Python float; adjacent
+    # integers above 2**53 differ even when scalar equality rounds them together.
+    rows = [row(**{metric: first}), row(**{metric: second})]
+    if reverse:
+        rows.reverse()
+    with pytest.raises(ValueError, match="conflicting duplicate well"):
+        annual_duration_summary(rows, 1)
+
+
+@pytest.mark.parametrize("metric", ["calendar_days", "rig_days"])
+@pytest.mark.parametrize("reverse", [False, True])
+@pytest.mark.parametrize(
+    "first, second, expected",
+    [
+        (np.float16(1000), 1000.0, 1000.0),
+        (np.float32(0.5), Fraction(1, 2), 0.5),
+        (np.int64(2**53 + 1), 2**53 + 1, 9007199254740992.0),
+        (np.float16(-0.0), 0, 0.0),
+    ],
+    ids=["float16-python", "float32-fraction", "int64-python-int", "signed-zero"],
+)
+def test_equal_mixed_scalar_duplicates_count_once(
+    metric, reverse, first, second, expected
+):
+    # One exact observation gives identical quartiles; 2**53 + 1 rounds to 2**53
+    # only in the reported float, after duplicate identity has been established.
+    rows = [row(**{metric: first}), row(**{metric: second})]
+    if reverse:
+        rows.reverse()
+    cell = annual_duration_summary(rows, 1)["cells"][0]
+    assert cell["well_count"] == 1
+    assert cell[metric] == {
+        "valid_count": 1,
+        "q1": expected,
+        "median": expected,
+        "q3": expected,
+    }
