@@ -87,6 +87,99 @@ def test_missing_citation_fails_before_writing(report, tmp_path, render):
     assert not output.exists()
 
 
+# Issue #377, Acceptance criteria: failed citation resolution must fail the build.
+# docs/plans/2026-05-03-issue-377-lt-comprehensive-report-assembly.md,
+# "Citations panel": each numeric input traces to publisher + code_id + revision.
+# The text-cell requirement is also documented in the module contract of
+# tests/unit/lower_tertiary/test_report_citation_gate.py. These structural cases
+# are specified independently of the production validation constants.
+@pytest.mark.parametrize("render", [builder.render_markdown, builder.render_html])
+@pytest.mark.parametrize("column", ["input", "publisher", "code_id", "revision"])
+@pytest.mark.parametrize(
+    "case,value",
+    [
+        pytest.param("missing-column", None, id="missing-column"),
+        pytest.param("cell", None, id="null"),
+        pytest.param("cell", "", id="empty-string"),
+        pytest.param("cell", " \t\n", id="whitespace-only"),
+        pytest.param("cell", False, id="non-string"),
+    ],
+)
+def test_invalid_citation_metadata_preserves_existing_output(
+    report, tmp_path, render, column, case, value
+):
+    broken = deepcopy(report)
+    citations = next(iter(broken.economics_run.results)).citations
+    if case == "missing-column":
+        citations.drop(columns=column, inplace=True)
+    else:
+        # Preserve the supplied scalar type with pandas string-backed columns.
+        citations[column] = citations[column].astype(object)
+        citations.loc[next(iter(citations.index)), column] = value
+    output = tmp_path / "report"
+    sentinel = b"Existing report\r\nPreserve these bytes: \x00\xff"
+    output.write_bytes(sentinel)
+
+    with pytest.raises(ValueError, match=f"citation {column}"):
+        render(broken, output)
+
+    assert output.read_bytes() == sentinel
+
+
+@pytest.mark.parametrize("render", [builder.render_markdown, builder.render_html])
+def test_unresolved_citation_preserves_existing_output(report, tmp_path, render):
+    """Issue #377 rejects a nonblank locator whose symbol does not exist."""
+    broken = deepcopy(report)
+    citations = next(iter(broken.economics_run.results)).citations
+    # The file exists; by inspection it defines no missing_citation_symbol.
+    citations.loc[next(iter(citations.index)), "code_id"] = (
+        "tests/integration/reporting/test_comprehensive_delivery.py"
+        "#missing_citation_symbol"
+    )
+    output = tmp_path / "report"
+    sentinel = b"Existing report\r\nPreserve these bytes: \x00\xff"
+    output.write_bytes(sentinel)
+
+    with pytest.raises(ValueError, match="Unresolved citation"):
+        render(broken, output)
+
+    assert output.read_bytes() == sentinel
+
+
+@pytest.mark.parametrize(
+    "render,suffix,prefix,summary_heading",
+    [
+        (
+            builder.render_markdown,
+            "md",
+            "# Lower Tertiary Comprehensive Field Report\n",
+            "## Executive Summary",
+        ),
+        (
+            builder.render_html,
+            "html",
+            "<!DOCTYPE html>",
+            "<h2>Executive Summary</h2>",
+        ),
+    ],
+)
+def test_valid_citation_metadata_replaces_existing_output(
+    report, tmp_path, render, suffix, prefix, summary_heading
+):
+    """The existing valid fixture must still render the requested text format."""
+    valid = deepcopy(report)
+    output = tmp_path / f"report.{suffix}"
+    sentinel = b"Existing report\r\nPreserve these bytes: \x00\xff"
+    output.write_bytes(sentinel)
+
+    assert render(valid, output) == output
+
+    assert output.read_bytes() != sentinel
+    text = output.read_text(encoding="utf-8")
+    assert text.startswith(prefix)
+    assert summary_heading in text
+
+
 def test_incomplete_roster_is_rejected(report):
     broken = deepcopy(report.economics_run)
     broken.results.pop()
