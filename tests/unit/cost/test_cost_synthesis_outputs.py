@@ -123,6 +123,86 @@ def test_csv_quantity_kinds_distinguish_requirements_from_buckets(
         assert all(Decimal(r["high"]) == Decimal(r["low"]) for r in group)
 
 
+@pytest.mark.parametrize("flag", [False, True])
+@pytest.mark.parametrize("endpoint", ["low", "high"])
+@pytest.mark.parametrize("quantity", ["project_total", "award_amount"])
+def test_boolean_monetary_bounds_are_rejected(tmp_path, flag, endpoint, quantity):
+    value = json.loads(EXAMPLE.read_text(encoding="utf-8"))
+    value["scenarios"] = []
+    project = value["projects"][0]
+    if quantity == "project_total":
+        project["contributions"] = []
+        interval = project["total"] = {"low": 0, "high": 1}
+    else:
+        interval = project["contributions"][0]["amount"] = {"low": 0, "high": 1}
+    # Either boolean coerces to an ordered bound in [0, 1]; only its type is wrong.
+    interval[endpoint] = flag
+    path = tmp_path / "input.json"
+    path.write_text(json.dumps(value), encoding="utf-8", newline="\n")
+    with pytest.raises(TypeError, match="boolean"):
+        load_portfolio(path)
+
+
+@pytest.mark.parametrize("flag", [False, True])
+@pytest.mark.parametrize("share", ["req-host", "req-wells", "unallocated_share"])
+def test_boolean_allocation_shares_are_rejected(tmp_path, flag, share):
+    value = json.loads(EXAMPLE.read_text(encoding="utf-8"))
+    scenario = value["scenarios"][0]
+    # 1 + 0 + 0 = 1 in each case, so conservation cannot mask boolean coercion.
+    scenario["shares"] = {"req-host": 0, "req-wells": 0}
+    if share == "unallocated_share":
+        scenario["shares"]["req-host"] = 1 - int(flag)
+        scenario["unallocated_share"] = flag
+    else:
+        scenario["shares"][share] = flag
+        scenario["unallocated_share"] = 1 - int(flag)
+    path = tmp_path / "input.json"
+    path.write_text(json.dumps(value), encoding="utf-8", newline="\n")
+    with pytest.raises(TypeError, match="boolean"):
+        load_portfolio(path)
+
+
+@pytest.mark.parametrize(
+    "total,amount,shares,unallocated,expected",
+    [
+        (100, 20, (1, 0), 0, ("80", "100", "0", "0")),
+        (100.5, 20.25, (0.6, 0.3), 0.1, ("80.25", "60.30", "30.15", "10.05")),
+        (
+            "100.5",
+            "20.25",
+            ("0.6", "0.3"),
+            "0.1",
+            ("80.25", "60.30", "30.15", "10.05"),
+        ),
+    ],
+    ids=["integer", "fractional-json", "decimal-string"],
+)
+def test_numeric_bounds_and_shares_remain_supported(
+    tmp_path, total, amount, shares, unallocated, expected
+):
+    value = json.loads(EXAMPLE.read_text(encoding="utf-8"))
+    project = value["projects"][0]
+    project["total"] = {"low": total, "high": total}
+    project["contributions"] = project["contributions"][:1]
+    project["contributions"][0]["amount"] = {"low": amount, "high": amount}
+    scenario = value["scenarios"][0]
+    scenario["shares"] = dict(zip(project["requirement_ids"], shares))
+    scenario["unallocated_share"] = unallocated
+    value["scenarios"] = [scenario]
+    path = tmp_path / "input.json"
+    path.write_text(json.dumps(value), encoding="utf-8", newline="\n")
+    _, (result,) = load_portfolio(path)
+    # 100-20=80 and 100*(1,0,0)=(100,0,0); 100.5-20.25=80.25,
+    # 100.5*(.6,.3,.1)=(60.30,30.15,10.05), with no rounding loss.
+    allocation = result.allocations[0]
+    assert result.residual.low == result.residual.high == Decimal(expected[0])
+    assert dict(allocation.amounts) == {
+        "req-host": Decimal(expected[1]),
+        "req-wells": Decimal(expected[2]),
+    }
+    assert allocation.unallocated == Decimal(expected[3])
+
+
 @pytest.mark.parametrize("numeric_field", ["amount", "shares", "quantum"])
 def test_numeric_json_preserves_exact_decimal_accounting(tmp_path, numeric_field):
     """100 - 0.1 = 99.90; .6 + .3 + .1 = 1; quantum .01 divides 100."""

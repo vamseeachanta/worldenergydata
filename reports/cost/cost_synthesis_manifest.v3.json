@@ -40,7 +40,7 @@
     },
     {
       "path": "reporting.py",
-      "sha256": "90c5cd528b155f5c11139f758c939dcdac20387105b7cbca1fff56ef14fec261"
+      "sha256": "3a1cc0413451d1f51a4c6cc7aea0e52254706fade22589a6c075dc3e33296a89"
     },
     {
       "path": "scenarios.py",
@@ -78,7 +78,7 @@
   ],
   "schema": {
     "path": "reporting.py",
-    "sha256": "90c5cd528b155f5c11139f758c939dcdac20387105b7cbca1fff56ef14fec261",
+    "sha256": "3a1cc0413451d1f51a4c6cc7aea0e52254706fade22589a6c075dc3e33296a89",
     "version": "1.0"
   },
   "upstream_manifest_sha256": null

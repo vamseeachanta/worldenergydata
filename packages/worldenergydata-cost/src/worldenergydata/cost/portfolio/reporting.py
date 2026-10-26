@@ -71,14 +71,20 @@ def _preflight(
         raise ValueError("synthesis input is not pinned by manifest")
 
 
+def _decimal(value: str | int | Decimal) -> Decimal:
+    if isinstance(value, bool):
+        raise TypeError("boolean values are not valid amounts or shares")
+    return Decimal(value)
+
+
 def _interval(value: dict) -> Interval:
     if any(
         type(value.get(key, False)) is not bool for key in ("low_open", "high_open")
     ):
         raise ValueError("interval open flags must be boolean")
     return Interval(
-        Decimal(value["low"]),
-        Decimal(value["high"]),
+        _decimal(value["low"]),
+        _decimal(value["high"]),
         value.get("low_open", False),
         value.get("high_open", False),
     )
@@ -111,8 +117,8 @@ def load_portfolio(
         Scenario(
             s["scenario_id"],
             s["architecture"],
-            tuple((k, Decimal(v)) for k, v in s["shares"].items()),
-            Decimal(s["unallocated_share"]),
+            tuple((k, _decimal(v)) for k, v in s["shares"].items()),
+            _decimal(s["unallocated_share"]),
             s["source"],
             s["derivation"],
         )
