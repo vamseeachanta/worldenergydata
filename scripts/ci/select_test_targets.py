@@ -77,7 +77,10 @@ CORE_PREFIXES = (
 # Exact non-module paths that should run a specific contract suite.
 CONTRACT_ROUTES = {
     "config/repo_structure.yml": "tests/repo_structure",
-    "scripts/capabilities/build_onepagers.py": "tests/test_capability_onepagers.py",
+    "scripts/capabilities/build_onepagers.py": (
+        "tests/test_capability_onepagers.py",
+        "tests/unit/capabilities",
+    ),
     "tests/test_capability_onepagers.py": "tests/test_capability_onepagers.py",
     "reports/capabilities/pdf/benchmark.html": "tests/test_capability_onepagers.py",
     "reports/capabilities/pdf/completion.html": "tests/test_capability_onepagers.py",
@@ -186,7 +189,8 @@ def select(changed: list[str], root: Path) -> dict:
 
     for p in changed:
         if p in CONTRACT_ROUTES:
-            contracts.add(CONTRACT_ROUTES[p])
+            route = CONTRACT_ROUTES[p]
+            contracts.update((route,) if isinstance(route, str) else route)
             relevant = True
             continue
         if p.startswith(WORKFLOW_PREFIXES):

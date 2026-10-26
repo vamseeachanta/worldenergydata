@@ -257,6 +257,25 @@ def test_capability_contract_paths_select_test_file(path: str) -> None:
     )
 
 
+@pytest.mark.parametrize("include_test_change", [False, True])
+def test_renderer_change_selects_both_onepager_suites(include_test_change):
+    changed = ["scripts/capabilities/build_onepagers.py"]
+    if include_test_change:
+        changed.append("tests/unit/capabilities/test_onepager_brand_cascade.py")
+    result = select(changed, REPO_ROOT)
+    matrix = to_matrix(changed, REPO_ROOT)
+    assert result["scope"] == matrix["scope"] == "modules"
+    matrix_targets = [
+        target for shard in matrix["include"] for target in shard["targets"].split()
+    ]
+    for suite in (
+        "tests/test_capability_onepagers.py",
+        "tests/unit/capabilities",
+    ):
+        assert result["xdist"].count(suite) == 1
+        assert matrix_targets.count(suite) == 1
+
+
 @pytest.mark.parametrize(
     "path",
     [
