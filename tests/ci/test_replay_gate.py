@@ -2,6 +2,8 @@
 
 import importlib.util
 import json
+import socket
+from http.client import HTTPConnection
 from pathlib import Path
 from types import SimpleNamespace
 from urllib.parse import parse_qs, urlsplit
@@ -70,7 +72,7 @@ class FakeAPI:
         if url.path.endswith("/artifacts"):
             return {"artifacts": self.artifacts.get(run_id, []) if page == 1 else []}
         if url.path.endswith("/jobs"):
-            return {"jobs": self.jobs.get(run_id, []) if page == 1 else []}
+            return {"jobs": self.jobs.get(run_id, [])[(page - 1) * 100 : page * 100]}
         raise AssertionError(path)
 
     def sleep(self, seconds):
@@ -429,7 +431,7 @@ def test_wait_times_out_without_older_green(replay):
         sleep=api.sleep,
     )
     assert result["decision"] == "FAIL"
-    assert result["reason"] == "newer full run in progress"
+    assert result["reason"] == "replay wait timed out"
     assert result["run_id"] is None
     assert api.elapsed == 45
 
@@ -495,13 +497,20 @@ def test_cli_waits_for_full_evidence(replay, tmp_path, monkeypatch, capsys):
                     "base": {"ref": "main", "repo": {"id": 1}},
                 }
             }
-        )
+        ),
+        encoding="utf-8",
+        newline="\n",
     )
     monkeypatch.setenv("GITHUB_EVENT_PATH", str(event))
     monkeypatch.setenv("GITHUB_REPOSITORY", CONTEXT["repository"])
     monkeypatch.setenv("GITHUB_RUN_ID", str(CONTEXT["run_id"]))
     monkeypatch.setattr(replay.sys, "argv", [str(SCRIPT), "Lint"])
-    monkeypatch.setattr(replay, "request_json", api)
+
+    def request(path, *, budget):
+        budget.request()
+        return api(path)
+
+    monkeypatch.setattr(replay, "request_json", request)
     monkeypatch.setattr(
         replay,
         "time",
@@ -512,7 +521,7 @@ def test_cli_waits_for_full_evidence(replay, tmp_path, monkeypatch, capsys):
     )
     assert replay.main() == 0
     assert json.loads(capsys.readouterr().out)["job_id"] == 3
-    assert api.elapsed == 30
+    assert api.elapsed == 120
 
 
 def test_wait_cannot_copy_a_superseded_run(replay):
@@ -537,3 +546,310 @@ def test_wait_cannot_copy_a_superseded_run(replay):
     assert result["decision"] == "FAIL"
     assert result["run_id"] == 95
     assert result["job_id"] == 4
+
+
+def test_wait_rejects_success_after_oversleep(replay):
+    """A source completing after expiry cannot turn the replay green."""
+    api = FakeAPI()
+    api.runs[0].update(status="in_progress", conclusion=None)
+
+    def oversleep(seconds):
+        api.elapsed += 90
+        api.runs[0].update(status="completed", conclusion="success")
+
+    result = replay.wait_for_decision(
+        api, CONTEXT, "Lint", timeout=60, clock=lambda: api.elapsed, sleep=oversleep
+    )
+    assert result["decision"] == "FAIL"
+    assert result["reason"] == "replay wait timed out"
+    assert len(api.calls) == 3
+
+
+@pytest.mark.parametrize("latency, calls", [(15, 4), (20, 3)])
+def test_wait_rejects_success_at_or_after_api_deadline(replay, latency, calls):
+    """Request latency counts toward expiry, including the live-base lookup."""
+    api = FakeAPI()
+
+    def slow(path):
+        api.elapsed += latency
+        return api(path)
+
+    result = replay.wait_for_decision(
+        slow, CONTEXT, "Lint", timeout=60, clock=lambda: api.elapsed, sleep=api.sleep
+    )
+    assert result["decision"] == "FAIL"
+    assert result["reason"] == "replay wait timed out"
+    assert len(api.calls) == calls
+
+
+def test_five_gates_share_repository_request_quota(replay):
+    """Five long waits retain capacity under the shared repository allowance."""
+    remaining = 1000
+    for name in (
+        "Lint",
+        "Type Check",
+        "Security Scan",
+        "Documentation",
+        "Test (PR gate)",
+    ):
+        api = FakeAPI()
+        api.runs[0].update(status="queued", conclusion=None)
+        api.jobs[90][0]["name"] = name
+
+        def limited(path):
+            nonlocal remaining
+            if remaining <= 0:
+                raise OSError("request quota exhausted")
+            remaining -= 1
+            return api(path)
+
+        def finish():
+            if api.elapsed >= 3300:
+                api.runs[0].update(status="completed", conclusion="success")
+
+        api.on_sleep = finish
+        result = replay.wait_for_decision(
+            limited, CONTEXT, name, clock=lambda: api.elapsed, sleep=api.sleep
+        )
+        assert result["decision"] == "PASS"
+        assert len(api.calls) <= 180
+    # 28 unfinished polls * 3 reads + 4 final reads = 88 per gate; 5 * 88 = 440.
+    assert remaining == 560
+
+
+@pytest.fixture
+def transport(replay, monkeypatch):
+    """Replace only HTTPS I/O, retaining real retry and decision code."""
+    api = FakeAPI()
+    state = SimpleNamespace(
+        replies=[],
+        calls=[],
+        timeouts=[],
+        read_delay=0,
+        header_delay=0,
+        read_size=None,
+        closed=0,
+    )
+    monkeypatch.setenv("GH_TOKEN", "synthetic-token")
+    monkeypatch.delenv("GITHUB_API_URL", raising=False)
+    monkeypatch.setattr(
+        replay,
+        "time",
+        SimpleNamespace(
+            monotonic=lambda: api.elapsed,
+            sleep=api.sleep,
+            time=lambda: 1000 + api.elapsed,
+        ),
+    )
+
+    class Connection:
+        def __init__(self, host, timeout):
+            state.timeouts.append(timeout)
+            self.sock = self
+
+        def settimeout(self, timeout):
+            state.timeouts.append(timeout)
+
+        def connect(self):
+            pass
+
+        def request(self, method, path, headers):
+            self.path = path.lstrip("/")
+            state.calls.append(self.path)
+
+        def getresponse(self):
+            api.elapsed += state.header_delay
+            status, headers = state.replies.pop(0) if state.replies else (200, {})
+            payload = (
+                json.dumps(api(self.path)).encode("utf-8") if status == 200 else b""
+            )
+
+            class Response:
+                def __init__(self):
+                    self.status = status
+                    self.body = payload
+                    self.length = len(payload)
+
+                def getheader(self, name, default=None):
+                    return headers.get(name.lower(), default)
+
+                def read1(self, size):
+                    api.elapsed += state.read_delay
+                    count = state.read_size or size
+                    data, self.body = self.body[:count], self.body[count:]
+                    self.length -= len(data)
+                    return data
+
+                def isclosed(self):
+                    return not self.body
+
+            return Response()
+
+        def close(self):
+            state.closed += 1
+
+    monkeypatch.setattr(replay, "HTTPSConnection", Connection)
+    return api, state
+
+
+@pytest.mark.parametrize(
+    "status, headers, elapsed",
+    [
+        (429, {"retry-after": "10"}, 10),
+        (403, {"retry-after": "10"}, 10),
+        (403, {"x-ratelimit-remaining": "0", "x-ratelimit-reset": "1015"}, 15),
+        (
+            429,
+            {
+                "retry-after": "5",
+                "x-ratelimit-remaining": "0",
+                "x-ratelimit-reset": "1020",
+            },
+            20,
+        ),
+        (429, {}, 60),
+    ],
+)
+def test_transport_recovers_from_rate_limit(
+    replay, transport, status, headers, elapsed
+):
+    """Rate limits wait for the server's delay before retrying evidence."""
+    api, state = transport
+    state.replies = [(status, headers)]
+    result = replay.wait_for_decision(None, CONTEXT, "Lint")
+    assert result["decision"] == "PASS"
+    assert api.elapsed == elapsed
+    assert len(state.calls) == state.closed == 5
+
+
+@pytest.mark.parametrize("status", [401, 403])
+def test_transport_does_not_retry_auth_rejection(replay, transport, status):
+    """An authorization failure without quota evidence remains decisive."""
+    api, state = transport
+    state.replies = [(status, {})]
+    result = replay.wait_for_decision(None, CONTEXT, "Lint")
+    assert result["decision"] == "FAIL"
+    assert api.elapsed == 0
+    assert len(state.calls) == state.closed == 1
+
+
+@pytest.mark.parametrize("status", [429, 502, 503, 504])
+def test_transport_retry_cannot_outlive_deadline(replay, transport, status):
+    """Retry delays consume the same deadline as the polling loop."""
+    api, state = transport
+    state.replies = [(status, {"retry-after": "120"})]
+    result = replay.wait_for_decision(None, CONTEXT, "Lint", timeout=45)
+    assert result["decision"] == "FAIL"
+    assert result["reason"] == "replay wait timed out"
+    assert api.elapsed == 45
+    assert len(state.calls) == state.closed == 1
+
+
+def test_transport_bounds_socket_phases_and_late_reads(replay, transport):
+    """Header and body latency reduce each subsequent socket timeout."""
+    api, state = transport
+    state.header_delay = 5
+    state.read_delay = 5
+    state.read_size = 1
+    result = replay.wait_for_decision(None, CONTEXT, "Lint", timeout=12)
+    assert result["decision"] == "FAIL"
+    assert result["reason"] == "replay wait timed out"
+    assert state.timeouts[:4] == [12, 12, 12, 7]
+    assert state.timeouts[-1] == 2
+    assert len(state.calls) == state.closed == 1
+
+
+def test_transport_retries_use_the_gate_request_budget(replay, transport):
+    """Pagination and retries share the allowance, never bypassing the cap."""
+    api, state = transport
+    api.runs[0].update(status="queued", conclusion=None)
+    api.jobs[90] *= 201
+    state.replies = [(503, {})]
+    result = replay.wait_for_decision(None, CONTEXT, "Lint", interval=1)
+    assert result["decision"] == "FAIL"
+    assert result["reason"] == "replay API request budget exhausted"
+    assert len(state.calls) == state.closed == 180
+
+
+@pytest.mark.parametrize("value", [0, -1, float("nan"), float("inf")])
+@pytest.mark.parametrize("parameter", ["timeout", "interval"])
+def test_invalid_wait_timing_is_rejected(replay, value, parameter):
+    """Invalid timing must never permit success or an unbounded wait."""
+    api = FakeAPI()
+    with pytest.raises(ValueError, match="positive finite"):
+        replay.wait_for_decision(api, CONTEXT, "Lint", **{parameter: value})
+    assert api.calls == []
+
+
+@pytest.mark.parametrize(
+    "headers",
+    [
+        {"retry-after": "nan"},
+        {"retry-after": "inf"},
+        {"retry-after": "-1"},
+        {"x-ratelimit-remaining": "0"},
+        {"x-ratelimit-remaining": "0", "x-ratelimit-reset": "nan"},
+        {"x-ratelimit-remaining": "0", "x-ratelimit-reset": "inf"},
+        {
+            "retry-after": "nan",
+            "x-ratelimit-remaining": "0",
+            "x-ratelimit-reset": "1015",
+        },
+    ],
+)
+def test_transport_rejects_invalid_rate_limit_timing(replay, transport, headers):
+    """Invalid server timing fails without accepting the following success."""
+    api, state = transport
+    state.replies = [(429, headers)]
+    result = replay.wait_for_decision(None, CONTEXT, "Lint")
+    assert result["decision"] == "FAIL"
+    assert api.elapsed == 0
+    assert len(state.calls) == state.closed == 1
+
+
+def test_transport_waits_after_last_available_request(replay, transport):
+    """A successful response with no remaining quota defers the next read."""
+    api, state = transport
+    state.replies = [(200, {"x-ratelimit-remaining": "0", "x-ratelimit-reset": "1020"})]
+    result = replay.wait_for_decision(None, CONTEXT, "Lint")
+    assert result["decision"] == "PASS"
+    assert api.elapsed == 20
+    assert len(state.calls) == state.closed == 4
+
+
+def test_transport_bounds_transient_retries(replay, transport):
+    """Repeated server errors fail after six attempts with bounded backoff."""
+    api, state = transport
+    state.replies = [(503, {})] * 6
+    result = replay.wait_for_decision(None, CONTEXT, "Lint")
+    assert result["decision"] == "FAIL"
+    # Five pauses: 60 + 120 + 240 + 480 + 960 = 1860 seconds.
+    assert api.elapsed == 1860
+    assert len(state.calls) == state.closed == 6
+
+
+@pytest.mark.parametrize("truncated", [False, True])
+def test_transport_accepts_connection_close_response(
+    replay, transport, monkeypatch, truncated
+):
+    """A real HTTP response can close its socket after its last body chunk."""
+    api, state = transport
+
+    class ClosingConnection(HTTPConnection):
+        def connect(self):
+            self.sock, self.peer = socket.socketpair()
+
+        def request(self, method, path, headers):
+            super().request(method, path, headers=headers)
+            payload = json.dumps(api(path.lstrip("/"))).encode("utf-8")
+            header = (
+                "HTTP/1.1 200 OK\r\nConnection: close\r\n"
+                f"Content-Length: {len(payload) + int(truncated)}\r\n\r\n"
+            ).encode("ascii")
+            self.peer.sendall(header + payload)
+            self.peer.close()
+
+    monkeypatch.setattr(replay, "HTTPSConnection", ClosingConnection)
+    result = replay.wait_for_decision(None, CONTEXT, "Lint")
+    assert result["decision"] == ("FAIL" if truncated else "PASS")
+    assert len(api.calls) == (1 if truncated else 4)

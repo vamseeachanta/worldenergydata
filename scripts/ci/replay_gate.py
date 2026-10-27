@@ -2,6 +2,7 @@
 """Copy a required check from a decisive full run of the exact PR head."""
 
 import json
+import math
 import os
 import re
 import sys
@@ -12,6 +13,44 @@ from typing import Any
 from urllib.parse import quote, urlencode, urlsplit
 
 API = Callable[[str], dict[str, Any]]
+
+
+class ReplayBudget:
+    """Share one deadline and request allowance across polling and retries.
+
+    Five replay gates reserve 180 requests each: 5 * 180 = 900, leaving 100
+    of GitHub's shared 1000 requests/hour for other repository API consumers.
+    See GitHub REST API docs, "Primary rate limit for GITHUB_TOKEN".
+    """
+
+    def __init__(self, timeout, clock, sleep):
+        self.clock = clock
+        self.sleep = sleep
+        self.deadline = clock() + timeout
+        self.requests = 0
+        self.resume_at = 0.0
+
+    def remaining(self) -> float:
+        """Reject expiry before another operation or acceptance of evidence."""
+        remaining = self.deadline - self.clock()
+        if remaining <= 0:
+            raise TimeoutError("replay wait timed out")
+        return remaining
+
+    def pause(self, seconds: float) -> None:
+        """Clip all sleeps to the common deadline and reject oversleep."""
+        self.sleep(min(seconds, self.remaining()))
+        self.remaining()
+
+    def request(self) -> float:
+        """Charge each HTTP attempt, including retries and pagination."""
+        self.remaining()
+        if self.resume_at > self.clock():
+            self.pause(self.resume_at - self.clock())
+        if self.requests >= 180:
+            raise ValueError("replay API request budget exhausted")
+        self.requests += 1
+        return min(30, self.remaining())
 
 
 def pages(api: API, path: str, key: str) -> list[dict[str, Any]]:
@@ -145,44 +184,82 @@ def decide(
             str(error)
             if isinstance(error, ValueError)
             and str(error)
-            in ("full run without base-tip evidence", "newer full run in progress")
+            in (
+                "full run without base-tip evidence",
+                "newer full run in progress",
+                "replay API request budget exhausted",
+            )
             else "API evidence unavailable or malformed"
         )
         return result
 
 
 def wait_for_decision(
-    api: API,
+    api: API | None,
     context: dict[str, Any],
     job_name: str,
     *,
     timeout: float = 3600,
-    interval: float = 30,
+    interval: float = 120,
     clock: Callable[[], float] | None = None,
     sleep: Callable[[float], None] | None = None,
 ) -> dict[str, Any]:
-    """Wait at most one hour for active full evidence, retaining every guard.
+    """Reject evidence arriving at or after the one-hour replay deadline.
 
     Metadata edits can arrive before a full run completes. Re-read all evidence
     after each wait so a newer run or a changed live base cannot expose stale
     success. Decisive failures and invalid evidence still fail immediately.
+    At 120 seconds, 30 three-request active polls across five gates use 450
+    requests/hour, before final evidence, pagination and bounded retries.
     """
+    if any(not math.isfinite(value) or value <= 0 for value in (timeout, interval)):
+        raise ValueError("replay timing must be positive finite numbers")
     clock = clock or time.monotonic
     sleep = sleep or time.sleep
-    deadline = clock() + timeout
-    while True:
-        result = decide(api, context, job_name)
-        remaining = deadline - clock()
-        if result["reason"] != "newer full run in progress" or remaining <= 0:
-            return result
-        sleep(min(interval, remaining))
+    budget = ReplayBudget(timeout, clock, sleep)
+
+    def fetch(path):
+        if api is None:
+            return request_json(path, budget=budget)
+        budget.request()
+        value = api(path)
+        budget.remaining()
+        return value
+
+    result = {"decision": "FAIL"}
+    try:
+        while True:
+            budget.remaining()
+            result = decide(fetch, context, job_name)
+            budget.remaining()
+            if result["reason"] != "newer full run in progress":
+                return result
+            budget.pause(interval)
+    except TimeoutError:
+        result.update(decision="FAIL", reason="replay wait timed out")
+        return result
 
 
-def request_json(path: str) -> dict[str, Any]:
+def retry_delay(response, attempt: int) -> float:
+    """Honor server quota/reset headers; otherwise back off exponentially."""
+    retry_after = response.getheader("retry-after")
+    delay = float(retry_after) if retry_after is not None else 60 * 2**attempt
+    if not math.isfinite(delay) or delay < 0:
+        raise ValueError("invalid API retry delay")
+    if response.getheader("x-ratelimit-remaining") == "0":
+        reset = float(response.getheader("x-ratelimit-reset"))
+        if not math.isfinite(reset) or reset < 0:
+            raise ValueError("invalid API retry delay")
+        delay = max(float(retry_after or 0), reset - time.time(), 0)
+    return delay
+
+
+def request_json(path: str, *, budget: ReplayBudget | None = None) -> dict[str, Any]:
     """Use the workflow's read-only token for a bounded GitHub REST request."""
     base = urlsplit(os.environ.get("GITHUB_API_URL", "https://api.github.com"))
     if base.scheme != "https" or base.netloc != "api.github.com" or base.path:
         raise ValueError("unsupported API endpoint")
+    budget = budget or ReplayBudget(3600, time.monotonic, time.sleep)
     headers = {
         "Authorization": f"Bearer {os.environ['GH_TOKEN']}",
         "Accept": "application/vnd.github+json",
@@ -190,18 +267,45 @@ def request_json(path: str) -> dict[str, Any]:
         "User-Agent": "gate-replay",
     }
     for attempt in range(6):
-        connection = HTTPSConnection(base.netloc, timeout=30)
+        connection = HTTPSConnection(base.netloc, timeout=budget.request())
         try:
+            connection.connect()
+            sock = connection.sock
+            sock.settimeout(min(30, budget.remaining()))
             connection.request("GET", f"/{path}", headers=headers)
+            sock.settimeout(min(30, budget.remaining()))
             response = connection.getresponse()
             if response.status == 200:
-                return json.loads(response.read())
-            retry = response.status in (502, 503, 504) and attempt < 5
-            if not retry:
+                chunks = []
+                while True:
+                    sock.settimeout(min(30, budget.remaining()))
+                    chunk = response.read1(65536)
+                    budget.remaining()
+                    if not chunk:
+                        if response.length not in (None, 0):
+                            raise HTTPException("incomplete API response")
+                        break
+                    chunks.append(chunk)
+                    if response.isclosed():
+                        if response.length not in (None, 0):
+                            raise HTTPException("incomplete API response")
+                        break
+                if response.getheader("x-ratelimit-remaining") == "0":
+                    budget.resume_at = budget.clock() + retry_delay(response, 0)
+                return json.loads(b"".join(chunks))
+            rate_limited = response.status == 429 or (
+                response.status == 403
+                and (
+                    response.getheader("x-ratelimit-remaining") == "0"
+                    or response.getheader("retry-after") is not None
+                )
+            )
+            if not (rate_limited or response.status in (502, 503, 504)) or attempt == 5:
                 raise OSError("GitHub API request failed")
+            delay = retry_delay(response, attempt)
         finally:
             connection.close()
-        time.sleep(60)
+        budget.pause(delay)
     raise OSError("GitHub API retries exhausted")
 
 
@@ -219,7 +323,7 @@ def main() -> int:
             base_ref=pr["base"]["ref"],
             base_repository_id=pr["base"]["repo"]["id"],
         )
-        result = wait_for_decision(request_json, context, sys.argv[1])
+        result = wait_for_decision(None, context, sys.argv[1])
     except (OSError, ValueError, KeyError, IndexError, TypeError):
         result = {"decision": "FAIL", "reason": "invalid replay context"}
     print(json.dumps(result, sort_keys=True))

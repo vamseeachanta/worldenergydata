@@ -98,12 +98,14 @@ def history(tmp_path_factory):
     """Create a live base and older event/head snapshots around helper adoption."""
     source = tmp_path_factory.mktemp("replay-history")
     _git(source, "init", "-q")
-    (source / "README.md").write_text("fixture\n", encoding="utf-8")
+    (source / "README.md").write_text("fixture\n", encoding="utf-8", newline="\n")
     without_helper = _snapshot(source)
     helper = source / HELPER
     helper.parent.mkdir(parents=True)
     helper.write_text(
-        "raise RuntimeError('PR helper must not execute')\n", encoding="utf-8"
+        "raise RuntimeError('PR helper must not execute')\n",
+        encoding="utf-8",
+        newline="\n",
     )
     with_helper = _snapshot(source)
     # The helper is unchanged by this PR; use its bytes as the base fixture.
@@ -115,7 +117,9 @@ def history(tmp_path_factory):
 
 def _wrapper(job_id):
     """Read the actual checkout and command for each required wrapper."""
-    workflow = yaml.safe_load((ROOT / ".github/workflows/ci.yml").read_text())
+    workflow = yaml.safe_load(
+        (ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
+    )
     job = workflow["jobs"][job_id]
     assert job["name"] == REQUIRED[job_id]
     assert job["permissions"] == {"contents": "read", "actions": "read"}
@@ -137,7 +141,9 @@ def test_replay_command_logs_revision_and_preserves_failure(tmp_path, history, j
     """Run each wrapper command; log the helper SHA and retain the CLI exit code."""
     config, name = _wrapper(job_id)
     runner = _checkout(tmp_path, history, False, False, config)
-    workflow = yaml.safe_load((ROOT / ".github/workflows/ci.yml").read_text())
+    workflow = yaml.safe_load(
+        (ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
+    )
     command = workflow["jobs"][job_id]["steps"][1]["run"]
     env = os.environ.copy()
     # Invalid context exercises the real CLI's failure without any API request.
@@ -200,7 +206,8 @@ def _evidence(base, head, name, condition):
     artifact = {"name": f"gate-tip-{base}-attempt-2", "expired": condition == "expired"}
     job = {"id": 3, "name": name, "conclusion": "success"}
 
-    def request(path):
+    def request(path, *, budget):
+        budget.request()
         if "/branches/" in path:
             return {"commit": {"sha": "c" * 40 if condition == "stale" else base}}
         if "/workflows/ci.yml/runs?" in path:
@@ -273,6 +280,7 @@ def test_metadata_replay_checkout(
             }
         ),
         encoding="utf-8",
+        newline="\n",
     )
     monkeypatch.setenv("GITHUB_EVENT_PATH", str(event_path))
     monkeypatch.setenv("GITHUB_REPOSITORY", "example/base")
