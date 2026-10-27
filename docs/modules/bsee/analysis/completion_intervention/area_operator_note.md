@@ -13,6 +13,7 @@ coverage reporting; it does not describe the complete offshore population.
 | 1 | 2026-10-19 | Added area distributions and explicit operator-class coverage to expose missing classifications. |
 | 2 | 2026-10-21 | Corrected classification requirements and digest labels, added reproducible fixture generation and independent CSV counts, and omitted unevaluated operator charts. |
 | 3 | 2026-10-25 | Recorded a fresh focused test run and the completed hosted check rollup to bound verification claims. |
+| 4 | 2026-10-27 | Separated historical hosted observations from the later review and retained the unresolved implementation selection. |
 
 ## Method and sources
 
@@ -99,7 +100,9 @@ reproductions of the delivered fixture example and rejection of a modified
 projection before output is written. No new test cases were added for this
 verification record.
 
-The hosted check rollup at that revision has 106 successes, 11 failures and
+### Historical hosted observations
+
+The hosted check rollup at revision `abb89b7f` has 106 successes, 11 failures and
 8 skips, with none queued. Five failures are replay refusals with the reason
 "newer full run in progress"; they do not report execution of lint, type,
 security, documentation or test tools. Four domain checks failed (Australia,
@@ -108,6 +111,24 @@ and full test gate also failed. These results do not establish a passing
 repository-wide suite. The second-provider verdict at that revision is
 CHANGES-REQUESTED. Maintainer selection between drafts #1436 and #1432,
 including closure of the unselected draft, remains required before merging.
+
+### Review at the later revision
+
+The second-provider review at `f0edebf8`, posted on 2026-10-25, records
+CHANGES-REQUESTED. It reports 59 focused tests
+passed, with zero failures and zero skips: 25 area/operator-class cases and
+34 existing characterisation cases. Its hosted observation was one success,
+eight queued checks and no visible failures. Queued checks are incomplete;
+that observation supplies no completed BSEE or full-suite result at this
+revision. Neither historical rollup establishes the hosted status of a later
+revision.
+
+The review confirms the independent CSV/set tally and the earlier digest,
+classification, chart and example corrections. Maintainer selection between
+drafts #1436 and #1432 remains unresolved. The description finding remains OPEN
+until the stale check and pending-review statements in the pull request
+description are replaced and the published text is read back. A prepared
+replacement or a comment alone does not complete that correction.
 
 WAR rows remain reporting records; EOR years remain borehole-status years.
 Completion codes describe status, not completion design. Snapshot area
