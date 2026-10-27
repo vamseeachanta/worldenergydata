@@ -145,6 +145,77 @@ def test_receipt_metadata_must_match_source(manifest, tmp_path, field, value):
     assert (output / "report.pdf").read_bytes() == payload
 
 
+@pytest.mark.parametrize(
+    "content", [None, b"not json\n", b""], ids=["valid", "invalid", "empty"]
+)
+def test_orphaned_receipt_preserved_without_download(manifest, tmp_path, content):
+    path, payload = manifest
+    output = tmp_path / "raw"
+    output.mkdir()
+    receipt_path = output / "report.pdf.receipt.json"
+    if content is None:
+        content = json.dumps(
+            {
+                "url": "https://example.org/report.pdf",
+                "http_status": 200,
+                "retrieved_at": "2026-10-01T12:00:00Z",
+                "sha256": hashlib.sha256(payload).hexdigest(),
+                "size_bytes": len(payload),
+            }
+        ).encode("utf-8")
+    receipt_path.write_bytes(content)
+    with patch(
+        "worldenergydata.vessel_fleet.source_fetch.subprocess.run",
+        side_effect=fake_download(payload),
+    ) as run:
+        with pytest.raises(FileExistsError, match="receipt"):
+            fetch_sources(output, path)
+        run.assert_not_called()
+    assert receipt_path.read_bytes() == content
+    assert not (output / "report.pdf").exists()
+    assert not (output / "report.pdf.part").exists()
+
+
+def test_orphaned_receipt_directory_preserved_without_download(manifest, tmp_path):
+    path, payload = manifest
+    output = tmp_path / "raw"
+    receipt_path = output / "report.pdf.receipt.json"
+    receipt_path.mkdir(parents=True)
+    retained = receipt_path / "retained.json"
+    retained.write_bytes(b"retained evidence\n")
+    with patch(
+        "worldenergydata.vessel_fleet.source_fetch.subprocess.run",
+        side_effect=fake_download(payload),
+    ) as run:
+        with pytest.raises(FileExistsError, match="receipt"):
+            fetch_sources(output, path)
+        run.assert_not_called()
+    assert receipt_path.is_dir()
+    assert retained.read_bytes() == b"retained evidence\n"
+    assert not (output / "report.pdf").exists()
+    assert not (output / "report.pdf.part").exists()
+
+
+def test_orphaned_receipt_link_preserved_without_download(manifest, tmp_path):
+    path, payload = manifest
+    output = tmp_path / "raw"
+    output.mkdir()
+    receipt_path = output / "report.pdf.receipt.json"
+    receipt_path.symlink_to("missing-receipt.json")
+    with patch(
+        "worldenergydata.vessel_fleet.source_fetch.subprocess.run",
+        side_effect=fake_download(payload),
+    ) as run:
+        with pytest.raises(FileExistsError, match="receipt"):
+            fetch_sources(output, path)
+        run.assert_not_called()
+    assert receipt_path.is_symlink()
+    assert receipt_path.readlink().as_posix() == "missing-receipt.json"
+    assert not (output / "missing-receipt.json").exists()
+    assert not (output / "report.pdf").exists()
+    assert not (output / "report.pdf.part").exists()
+
+
 def test_existing_digest_mismatch_stops_without_overwrite(manifest, tmp_path):
     path, _ = manifest
     output = tmp_path / "raw"

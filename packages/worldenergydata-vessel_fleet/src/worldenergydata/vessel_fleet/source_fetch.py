@@ -11,6 +11,7 @@ import hashlib
 import json
 import subprocess
 from datetime import datetime, timezone
+from os.path import lexists
 from pathlib import Path
 
 from worldenergydata.vessel_fleet.loaders.liftboat_loader import LiftboatLoader
@@ -60,7 +61,7 @@ def fetch_sources(
     """Fetch public documents once, verifying existing bytes on subsequent runs.
 
     Existing files require both matching bytes and a valid retrieval receipt.
-    Missing or invalid receipts, different digests and leftover partial files
+    Orphaned receipts, missing or invalid receipts, different digests and partial files
     stop the operation without overwriting or removing evidence. Local seed
     records and inaccessible index pages are excluded. Changed upstream bytes
     require a reviewed manifest update; no digest is silently refreshed.
@@ -94,11 +95,17 @@ def fetch_sources(
     for identity in selected:
         source = sources[identity]
         target = destination / source["raw_file"]
+        receipt_path = target.with_suffix(target.suffix + ".receipt.json")
         if target.exists():
             _verify(target, source)
             _verify_receipt(target, source)
             completed.append(identity)
             continue
+        if lexists(receipt_path):
+            raise FileExistsError(
+                "source receipt exists without raw source; inspect retained provenance "
+                "before resuming"
+            )
         partial = target.with_suffix(target.suffix + ".part")
         if partial.exists():
             raise FileExistsError(
@@ -139,7 +146,7 @@ def fetch_sources(
             "sha256": source["sha256"],
             "size_bytes": source["size_bytes"],
         }
-        target.with_suffix(target.suffix + ".receipt.json").write_text(
+        receipt_path.write_text(
             json.dumps(receipt, indent=2) + "\n", encoding="utf-8", newline="\n"
         )
         completed.append(identity)

@@ -169,7 +169,10 @@ explicit. Curl is used serially over HTTPS; no login or credentials are needed.
 Verified files are reused only when their retrieval receipts match the source
 URL, HTTP status, digest and size and contain a timestamp with a timezone.
 A missing, malformed or inconsistent receipt, differing digest or retained
-`.part` file stops the fetch without overwriting evidence. A failed receipt
+`.part` file stops the fetch without overwriting evidence. A retained receipt
+without its raw document stops the fetch before download, preserving the receipt
+and absent-document state. This includes directories and dangling links at the
+receipt path. A failed receipt
 write leaves the verified raw bytes retained but incomplete; resumption rejects
 that state rather than inventing the original retrieval time. Retrieval receipts
 include URL, UTC time, HTTP status, digest and size. Upstream revisions require a
