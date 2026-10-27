@@ -34,7 +34,7 @@ verified current configuration, engineering suitability or field allocation.
 
 Normalized, worldenergydata-native reference tables covering global oil & gas
 **fields**, **production facilities**, **host vessels**, **drilling rigs** and
-**jackups**. Re-expressed in clean relational tables from a legacy reference
+**jackups**. Except for jackups, re-expressed in clean relational tables from a legacy reference
 extraction; the valuable attributes (water depth, operator, block, status,
 vessel specifications, discovery date) were parsed out of semi-structured
 `"Key : Value"` JSON cells into proper typed columns.
@@ -53,7 +53,8 @@ performed here — names differ in formatting between the two sources).
 
 ## Facts-only policy
 
-These are factual reference attributes only. Source-link / URL columns from the
+These are factual reference attributes only. Jackups retain public contractor
+source URLs as described below. For the other tables, source-link / URL columns from the
 legacy extraction were **dropped entirely**; no free-text narrative or
 description prose is carried over (only discrete factual attributes); no
 third-party site names or attribution appear anywhere. No personal data.
@@ -119,14 +120,68 @@ CLASSIFICATION_SOCIETY, MAX_WATER_DEPTH_RATING_FT, MAX_DRILLING_DEPTH_FT,
 TOTAL_VESSEL_POWER_HP, QUARTERS_CAPACITY, LENGTH_FT, WIDTH_FT, OPERATING_DRAFT_FT,
 MAX_VARIABLE_LOAD_ST, DERRICK_RATING_KIPS, DRAWWORKS_HP, BOP_OPERATING_PRESSURE_KSI.
 
-### `jackups.csv` — 134 rows
-Jackup drilling rigs.
+### `jackups.csv` — 163 rows
+
+Jackup drilling rigs rebuilt solely from public contractor specification pages
+and contractor overview pages, retrieved **27 Oct 2026**. The previous table was replaced
+because source redistribution was not cleared. No previous row values were used.
 
 Columns: RIG_NAME, RIG_DESIGN_MODEL, YEAR_DELIVERED, COUNTRY_BUILT,
 CLASSIFICATION_SOCIETY, MAX_WATER_DEPTH_RATING_FT, MIN_WATER_DEPTH_FT,
 OVERALL_LEG_LENGTH_FT, SPUD_CAN_DIAMETER_FT, MAX_DRILLING_DEPTH_FT,
 QUARTERS_CAPACITY, OVERALL_HULL_LENGTH_FT, DERRICK_RATING_KIPS, DRAWWORKS_HP,
-BOP_OPERATING_PRESSURE_KSI.
+BOP_OPERATING_PRESSURE_KSI, source_url.
+
+The following mapping is the complete input basis; additional contractor fields
+are not imported. The collection digest, output digest and row count are recorded
+in the `jackups.csv` entry of `_metadata.json`.
+
+| Output column | Contractor collection field | Transformation |
+|---|---|---|
+| RIG_NAME | rig | unchanged |
+| RIG_DESIGN_MODEL | design | unchanged |
+| YEAR_DELIVERED | year | unchanged; mixed year basis described below |
+| MAX_WATER_DEPTH_RATING_FT | max_water_depth_m | metres to feet |
+| OVERALL_LEG_LENGTH_FT | leg_length_m | metres to feet |
+| SPUD_CAN_DIAMETER_FT | spudcan_diameter_m | metres to feet |
+| MAX_DRILLING_DEPTH_FT | drilling_depth_m | metres to feet |
+| OVERALL_HULL_LENGTH_FT | hull_length_m | metres to feet |
+| source_url | source_url | unchanged; multiple URLs separated by semicolons |
+
+Lengths are divided by exactly 0.3048 and rounded to one decimal foot. Decimal
+places describe conversion, not measurement accuracy. A blank source value
+stays blank. COUNTRY_BUILT, CLASSIFICATION_SOCIETY, MIN_WATER_DEPTH_FT,
+QUARTERS_CAPACITY, DERRICK_RATING_KIPS, DRAWWORKS_HP and
+BOP_OPERATING_PRESSURE_KSI are entirely blank because the collection has no
+corresponding fields. Consumers must accept empty cells as unknown, never zero.
+
+`YEAR_DELIVERED` retains its column name for compatibility but the collection
+mixes build, delivery and entered-service years; it is not a uniform delivery
+date. Water-depth limits may describe design or operating conditions, and source
+vintages vary. Spudcan diameter is populated only when explicitly labelled as
+a diameter. Total leg length excludes explicitly below-hull or deployable
+lengths; some source totals include spudcans. Hull lengths may use the source's
+overall dimensions. No suitability or current configuration is established.
+
+The collection covers 13 contractor groups and is a sample, not a global census.
+Fourteen rows depend partly or wholly on indexed official specifications whose
+direct sheets could not be read: nine from ARO Drilling, four from
+Northern Offshore, and one from COSL. Their URLs identify the reported public
+sources; direct-source readback is not established. Missing or conflicting
+particulars remain empty. Source links may redirect or become unavailable.
+
+To rebuild from the supplied collection, take its SHA-256 from `_metadata.json`
+and run:
+
+```sh
+python scripts/field_development/build_contractor_jackups.py \
+  <contractor-collection.csv> <replacement.csv> --source-sha256 <digest>
+```
+
+The importer validates the input digest before writing and never reads an
+existing output. The source collection is retained separately; URLs and a digest
+do not constitute an archived copy of the source pages. This replacement does
+not rewrite the old file in git history.
 
 ### `country_centroids.csv` — 205 rows
 Country → centroid latitude/longitude lookup (COUNTRY, LATITUDE, LONGITUDE) for
@@ -140,6 +195,8 @@ FACILITIES_COUNT. See `COVERAGE_SUMMARY.md` for the narrative breakdown. This is
 new derived artifact, not a copy of any source.
 
 ## Parsing notes
+
+These legacy parsing notes apply to the tables other than `jackups.csv`.
 
 - Source attributes lived as JSON arrays of `"Key : Value"` strings inside a
   single `Details` / `data` cell. These were split on `" : "`, empty values and
@@ -161,4 +218,4 @@ US-flagged (BSEE cross-ref candidates): 333.
 By host type: Fixed Platform 465, FPSO 152, Subsea Tieback 54, FSO/FSU 42,
 FPU/FPS 32, Semisub 20, TLP 20, SPAR 19, FLNG 8, MOPU 8, others 16.
 
-**Rigs:** drilling rigs 163, jackups 134, host vessels 245.
+**Rigs:** drilling rigs 163, jackups 163, host vessels 245.
