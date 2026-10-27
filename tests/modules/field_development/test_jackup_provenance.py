@@ -5,6 +5,8 @@ import hashlib
 import importlib.util
 import io
 import json
+import os
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -142,24 +144,101 @@ def test_pinned_input_digest_and_output_independence(builder, tmp_path):
     assert source.read_bytes() == raw
 
 
-def test_committed_dataset_matches_schema_and_provenance():
+def checkout_dataset(tmp_path, autocrlf):
+    """Exercise Git's real checkout conversion in a disposable repository."""
+    repository = tmp_path / "checkout"
+    repository.mkdir(parents=True)
+    environment = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
+    environment.update(GIT_CONFIG_NOSYSTEM="1", GIT_CONFIG_GLOBAL=os.devnull)
+
+    def git(*arguments, input=None):
+        return subprocess.run(
+            ["git", "-C", repository.as_posix(), *arguments],
+            input=input,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            env=environment,
+            check=True,
+        ).stdout
+
+    git("init", "--quiet")
+    for name in ("curated/jackups.csv", "schema.yaml", "_metadata.json"):
+        raw = (DATA / name).read_bytes().replace(b"\r\n", b"\n")
+        digest = git("hash-object", "-w", "--stdin", input=raw).decode("ascii").strip()
+        git("update-index", "--add", "--cacheinfo", f"100644,{digest},{name}")
+    git("-c", f"core.autocrlf={autocrlf}", "checkout-index", "--all")
+    raw = (repository / "curated/jackups.csv").read_bytes()
+    assert (b"\r\n" in raw) == (autocrlf == "true")
+    return repository
+
+
+@pytest.mark.parametrize("autocrlf", [None, "false", "true"])
+def test_committed_dataset_matches_schema_and_provenance(tmp_path, autocrlf):
+    data = DATA if autocrlf is None else checkout_dataset(tmp_path, autocrlf)
+    assert_dataset_contract(data)
+
+
+@pytest.mark.parametrize("autocrlf", ["false", "true"])
+def test_checkout_ignores_inherited_git_bindings(tmp_path, monkeypatch, autocrlf):
+    caller = checkout_dataset(tmp_path / "caller", "false")
+
+    def snapshot(root):
+        result = {}
+        for path in root.rglob("*"):
+            if path.is_file():
+                relative = path.relative_to(root).as_posix()
+                result[relative] = hashlib.sha256(path.read_bytes()).hexdigest()
+        return result
+
+    before = snapshot(caller)
+    source_before = snapshot(DATA)
+    monkeypatch.setenv("GIT_DIR", (caller / ".git").as_posix())
+    monkeypatch.setenv("GIT_COMMON_DIR", (caller / ".git").as_posix())
+    monkeypatch.setenv("GIT_WORK_TREE", caller.as_posix())
+    data = checkout_dataset(tmp_path / "child", autocrlf)
+    assert_dataset_contract(data)
+    assert snapshot(caller) == before
+    assert snapshot(DATA) == source_before
+
+
+@pytest.mark.parametrize("autocrlf", ["false", "true"])
+@pytest.mark.parametrize("damage", ["same_length", "truncated"])
+def test_dataset_contract_rejects_corruption(tmp_path, autocrlf, damage):
+    data = checkout_dataset(tmp_path, autocrlf)
+    path = data / "curated/jackups.csv"
+    raw = path.read_bytes()
+    if damage == "same_length":
+        header, rows = raw.split(b"\n", 1)
+        corrupted = header + b"\n" + bytes([rows[0] ^ 1]) + rows[1:]
+    else:
+        corrupted = raw[:-1]
+    path.write_bytes(corrupted)
+    with pytest.raises(AssertionError, match="rebuilding with:"):
+        assert_dataset_contract(data)
+
+
+def assert_dataset_contract(data):
     rebuild = (
         "python scripts/field_development/build_contractor_jackups.py "
         "<contractor-collection.csv> <replacement.csv> --source-sha256 <digest>"
     )
-    path = DATA / "curated/jackups.csv"
-    raw = path.read_bytes()
+    path = data / "curated/jackups.csv"
+    # Git may expand line endings during checkout; retain every other byte.
+    raw = path.read_bytes().replace(b"\r\n", b"\n")
     rows = list(csv.DictReader(io.StringIO(raw.decode("utf-8"))))
-    schema = yaml.safe_load((DATA / "schema.yaml").read_text(encoding="utf-8"))
+    schema = yaml.safe_load((data / "schema.yaml").read_text(encoding="utf-8"))
     contract = next(d for d in schema["datasets"] if d["name"] == path.name)
-    metadata = json.loads((DATA / "_metadata.json").read_text(encoding="utf-8"))
+    metadata = json.loads((data / "_metadata.json").read_text(encoding="utf-8"))
     entry = next(d for d in metadata["files"] if d["name"] == path.name)
     assert len(rows) == contract["row_count"] == entry["row_count"] == 163
     assert len({r["RIG_NAME"].casefold() for r in rows}) == len(rows)
     assert list(rows[0]) == [c["name"] for c in contract["columns"]]
     assert all(r["source_url"] for r in rows)
     assert all(r[key] == "" for r in rows for key in UNAVAILABLE)
-    assert contract["size_bytes"] == entry["size_bytes"] == len(raw)
+    size = len(raw)
+    assert (
+        contract["size_bytes"] == entry["size_bytes"] == size
+    ), f"Verify the retained input before rebuilding with: {rebuild}"
     assert (
         entry["sha256"] == hashlib.sha256(raw).hexdigest()
     ), f"Verify the retained input before rebuilding with: {rebuild}"

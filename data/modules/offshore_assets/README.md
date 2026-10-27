@@ -136,6 +136,12 @@ The following mapping is the complete input basis; additional contractor fields
 are not imported. The collection digest, output digest and row count are recorded
 in the `jackups.csv` entry of `_metadata.json`.
 
+The output size and SHA-256 describe UTF-8 CSV bytes with LF line endings.
+The integrity check normalizes checkout CRLF pairs to LF before checking both;
+all other bytes remain significant. Tests exercise actual Git checkouts with
+automatic CRLF conversion enabled and disabled, and reject same-length cell
+changes and truncated output in both modes. Git attributes remain unchanged.
+
 | Output column | Contractor collection field | Transformation |
 |---|---|---|
 | RIG_NAME | rig | unchanged |

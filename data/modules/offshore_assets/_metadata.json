@@ -4,7 +4,7 @@
   "last_refresh": "2026-10-27",
   "record_count": 3896,
   "file_count": 10,
-  "total_size_bytes": 360911,
+  "total_size_bytes": 361296,
   "source_url": null,
   "format": ".csv,.md,.yaml",
   "has_external_data": false,
@@ -54,6 +54,7 @@
       "modified": "2026-10-27",
       "row_count": 163,
       "sha256": "8c095769a0a5c16cf2dfb360dc7d6028fd33641f9fc44b03888371887d5d5087",
+      "byte_basis": "UTF-8 CSV with LF line endings; normalize checkout CRLF pairs to LF before checking size and SHA-256",
       "provenance": {
         "source": "Public contractor specification pages and overview pages",
         "retrieved": "2026-10-27",
@@ -83,7 +84,7 @@
     {
       "name": "README.md",
       "path": "README.md",
-      "size_bytes": 12377,
+      "size_bytes": 12762,
       "modified": "2026-10-27"
     },
     {
