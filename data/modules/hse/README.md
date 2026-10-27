@@ -7,4 +7,4 @@
   NCHRP Synthesis 669. DOI: 10.17226/29546.
   This reference can inform HSE data analysis of PPE programme practice, injury
   and incident categories, and policy comparisons.
-  Licence: National Academy of Sciences copyright; linked, not redistributed.
+  Copyright: National Academy of Sciences copyright; linked, not redistributed.
