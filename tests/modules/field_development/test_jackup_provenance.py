@@ -64,10 +64,17 @@ def test_maps_only_contractor_fields_and_converts_metres(builder):
     assert row["RIG_NAME"] == "Synthetic rig"
     assert row["RIG_DESIGN_MODEL"] == "Synthetic design"
     assert row["YEAR_DELIVERED"] == "2016"
+    # NIST SP 811 (2008), Appendix B.6, "U.S. survey foot and mile":
+    # the international foot gives metres * 1250 / 381, independently by hand.
+    # 121.9200 * 1250 = 152400; 152400 / 381 = 400.0.
     assert row["MAX_WATER_DEPTH_RATING_FT"] == "400.0"
+    # 157.5816 * 1250 = 196977; 196977 / 381 = 517.0.
     assert row["OVERALL_LEG_LENGTH_FT"] == "517.0"
+    # 13.8074 * 1250 = 17259.25, between 381 * 45.25 and 381 * 45.35.
     assert row["SPUD_CAN_DIAMETER_FT"] == "45.3"
+    # 9144.0000 * 1250 = 11430000; 11430000 / 381 = 30000.0.
     assert row["MAX_DRILLING_DEPTH_FT"] == "30000.0"
+    # 65.2272 * 1250 = 81534; 81534 / 381 = 214.0.
     assert row["OVERALL_HULL_LENGTH_FT"] == "214.0"
     assert all(row[key] == "" for key in UNAVAILABLE)
     assert row["source_url"] == (
@@ -122,7 +129,7 @@ def test_pinned_input_digest_and_output_independence(builder, tmp_path):
     output = tmp_path / "jackups.csv"
     raw = source_csv(builder)
     source.write_bytes(raw)
-    output.write_text("Unrelated previous output\n")
+    output.write_text("Unrelated previous output\n", encoding="utf-8", newline="\n")
     digest = hashlib.sha256(raw).hexdigest()
     assert builder.main([str(source), str(output), "--source-sha256", digest]) == 0
     assert output.read_bytes() == builder.build_csv(raw)
@@ -136,12 +143,16 @@ def test_pinned_input_digest_and_output_independence(builder, tmp_path):
 
 
 def test_committed_dataset_matches_schema_and_provenance():
+    rebuild = (
+        "python scripts/field_development/build_contractor_jackups.py "
+        "<contractor-collection.csv> <replacement.csv> --source-sha256 <digest>"
+    )
     path = DATA / "curated/jackups.csv"
     raw = path.read_bytes()
     rows = list(csv.DictReader(io.StringIO(raw.decode("utf-8"))))
-    schema = yaml.safe_load((DATA / "schema.yaml").read_text())
+    schema = yaml.safe_load((DATA / "schema.yaml").read_text(encoding="utf-8"))
     contract = next(d for d in schema["datasets"] if d["name"] == path.name)
-    metadata = json.loads((DATA / "_metadata.json").read_text())
+    metadata = json.loads((DATA / "_metadata.json").read_text(encoding="utf-8"))
     entry = next(d for d in metadata["files"] if d["name"] == path.name)
     assert len(rows) == contract["row_count"] == entry["row_count"] == 163
     assert len({r["RIG_NAME"].casefold() for r in rows}) == len(rows)
@@ -149,12 +160,15 @@ def test_committed_dataset_matches_schema_and_provenance():
     assert all(r["source_url"] for r in rows)
     assert all(r[key] == "" for r in rows for key in UNAVAILABLE)
     assert contract["size_bytes"] == entry["size_bytes"] == len(raw)
-    assert entry["sha256"] == hashlib.sha256(raw).hexdigest()
+    assert (
+        entry["sha256"] == hashlib.sha256(raw).hexdigest()
+    ), f"Verify the retained input before rebuilding with: {rebuild}"
     provenance = entry["provenance"]
     assert provenance["retrieved"] == "2026-10-27"
-    assert provenance["source_sha256"] == (
-        "1618e8f01b438221919fb5e3c5f7d33b945743d9d992d018a1489a91430e34b9"
-    )
+    assert (
+        provenance["source_sha256"]
+        == "1618e8f01b438221919fb5e3c5f7d33b945743d9d992d018a1489a91430e34b9"
+    ), f"Verify the original collection digest before running: {rebuild}"
     assert provenance["source_row_count"] == len(rows)
     assert sorted(provenance["unavailable_columns"]) == sorted(UNAVAILABLE)
     assert "source_url" not in UNAVAILABLE

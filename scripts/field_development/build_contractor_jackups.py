@@ -72,6 +72,9 @@ def metres_to_feet(value: str) -> str:
         number = Decimal(value)
         if not number.is_finite() or number <= 0:
             raise ValueError("Length must be finite and positive")
+        # NIST SP 811, 2008 edition, Appendix B.6, "U.S. survey foot and mile".
+        # https://www.nist.gov/pml/special-publication-811/nist-guide-si-appendix-b-conversion-factors
+        # The international-foot definition is exact; half-up rounding is local policy.
         return str((number / Decimal("0.3048")).quantize(Decimal("0.1"), ROUND_HALF_UP))
     except InvalidOperation as error:
         raise ValueError("Invalid length") from error

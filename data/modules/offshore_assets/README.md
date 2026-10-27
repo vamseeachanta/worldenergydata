@@ -148,8 +148,13 @@ in the `jackups.csv` entry of `_metadata.json`.
 | OVERALL_HULL_LENGTH_FT | hull_length_m | metres to feet |
 | source_url | source_url | unchanged; multiple URLs separated by semicolons |
 
-Lengths are divided by exactly 0.3048 and rounded to one decimal foot. Decimal
-places describe conversion, not measurement accuracy. A blank source value
+Lengths use the international-foot definition in
+[NIST SP 811, 2008 edition, Appendix B.6, "U.S. survey foot and mile"](https://www.nist.gov/pml/special-publication-811/nist-guide-si-appendix-b-conversion-factors).
+Lengths are divided by exactly 0.3048 m/ft. Rounding half up to one decimal foot
+is the dataset's serialization policy; it is not the rounding rule in that
+reference. Decimal places describe conversion, not measurement accuracy. The
+conversion tests document five independent rational hand calculations beside
+their expected values. A blank source value
 stays blank. COUNTRY_BUILT, CLASSIFICATION_SOCIETY, MIN_WATER_DEPTH_FT,
 QUARTERS_CAPACITY, DERRICK_RATING_KIPS, DRAWWORKS_HP and
 BOP_OPERATING_PRESSURE_KSI are entirely blank because the collection has no
@@ -179,9 +184,14 @@ python scripts/field_development/build_contractor_jackups.py \
 ```
 
 The importer validates the input digest before writing and never reads an
-existing output. The source collection is retained separately; URLs and a digest
-do not constitute an archived copy of the source pages. This replacement does
-not rewrite the old file in git history.
+existing output. The source collection is absent from this checkout, and no
+immutable retrievable locator or field-level extraction record is recorded.
+The recorded input digest has not been checked against retained input bytes
+here. A complete rebuild and the numerical source claims remain unverified
+until a public-redistribution-cleared collection matching that digest and
+field-level extraction evidence are supplied. URLs and a digest do not
+constitute an archived copy of the source pages. This replacement does not
+rewrite the old file in git history.
 
 ### `country_centroids.csv` — 205 rows
 Country → centroid latitude/longitude lookup (COUNTRY, LATITUDE, LONGITUDE) for

@@ -1,10 +1,10 @@
 {
   "module": "offshore_assets",
-  "generated_at": "2026-10-27T14:51:53.356418+00:00",
+  "generated_at": "2026-10-27T16:00:52.576427+00:00",
   "last_refresh": "2026-10-27",
   "record_count": 3896,
   "file_count": 10,
-  "total_size_bytes": 360136,
+  "total_size_bytes": 360911,
   "source_url": null,
   "format": ".csv,.md,.yaml",
   "has_external_data": false,
@@ -71,7 +71,7 @@
           "DRAWWORKS_HP",
           "BOP_OPERATING_PRESSURE_KSI"
         ],
-        "limitations": "Sample only; fourteen rows include indexed official particulars without direct-sheet readback. Not qualified for engineering use."
+        "limitations": "Sample only; fourteen rows include indexed official particulars without direct-sheet readback. No retrievable input artifact or field-level extraction record is recorded; a complete rebuild and numerical source claims remain unverified. Not qualified for engineering use."
       }
     },
     {
@@ -83,7 +83,7 @@
     {
       "name": "README.md",
       "path": "README.md",
-      "size_bytes": 11602,
+      "size_bytes": 12377,
       "modified": "2026-10-27"
     },
     {
