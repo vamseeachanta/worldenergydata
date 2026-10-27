@@ -1,0 +1,198 @@
+{
+  "schema_version": 1,
+  "revision": "2026-10-27",
+  "sources": {
+    "ntsb-mir2226": {
+      "url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/MIR2226.pdf",
+      "retrieved_at": "2026-10-27T20:00:50Z",
+      "http_status": 200,
+      "sha256": "2bac4c9ef5c39aa8ff53f5a8dd64a8e2567e85b08edb77d0a35cc336c99e66a2",
+      "size_bytes": 4448375,
+      "title": "NTSB MIR-22/26: Capsizing of Liftboat SEACOR Power",
+      "terms": "US federal factual report; factual observations only. Third-party images and attributed material are not reproduced.",
+      "terms_url": "https://www.ntsb.gov/about/Pages/privacy.aspx",
+      "source_vintage": "Adopted 2022-10-18; reissued 2022-11-16",
+      "digest_scope": "source-bytes",
+      "raw_file": "MIR2226.pdf",
+      "raw_committed": false,
+      "kind": "public_document"
+    },
+    "aries-130": {
+      "url": "https://ariesmarine.com/wp-content/uploads/Class130RamIRamIIIRamIVRamVandRamVI.pdf",
+      "retrieved_at": "2026-10-27T20:02:22.099456+00:00",
+      "http_status": 200,
+      "sha256": "efab52c8c2a13edff05cb58aac78dd27ba7b824ae21381b483eca3271d35f4de",
+      "size_bytes": 1267906,
+      "title": "RAM I, III, IV, V and VI: Class 130 leg",
+      "terms": "Operator copyright; no express open licence found. Only attributed factual specifications are curated; original sheets are not redistributed.",
+      "terms_url": "https://ariesmarine.com/liftboats/",
+      "source_vintage": "Undated sheet; not evidence of current certification or availability",
+      "digest_scope": "source-bytes",
+      "raw_file": "ram130.pdf",
+      "raw_committed": false,
+      "kind": "public_document"
+    },
+    "aries-145": {
+      "url": "https://ariesmarine.com/wp-content/uploads/Class145RamVII.pdf",
+      "retrieved_at": "2026-10-27T20:02:22.275859+00:00",
+      "http_status": 200,
+      "sha256": "abf579386f2dfd530aa8ebc66d8ede9ca496290908d695bb200c19152cce8d76",
+      "size_bytes": 653898,
+      "title": "RAM VII: Class 145 leg",
+      "terms": "Operator copyright; no express open licence found. Only attributed factual specifications are curated; original sheets are not redistributed.",
+      "terms_url": "https://ariesmarine.com/liftboats/",
+      "source_vintage": "Undated sheet; not evidence of current certification or availability",
+      "digest_scope": "source-bytes",
+      "raw_file": "ram145.pdf",
+      "raw_committed": false,
+      "kind": "public_document"
+    },
+    "aries-175": {
+      "url": "https://ariesmarine.com/wp-content/uploads/Class175RamVIIIRamXandRamXI.pdf",
+      "retrieved_at": "2026-10-27T20:02:22.528978+00:00",
+      "http_status": 200,
+      "sha256": "20d670a7e716c55c6b19fb12bce23a24e32451f6da9d5a83cfdbbfb97368440a",
+      "size_bytes": 540486,
+      "title": "RAM VIII, X and XI: Class 175 leg",
+      "terms": "Operator copyright; no express open licence found. Only attributed factual specifications are curated; original sheets are not redistributed.",
+      "terms_url": "https://ariesmarine.com/liftboats/",
+      "source_vintage": "Undated sheet; not evidence of current certification or availability",
+      "digest_scope": "source-bytes",
+      "raw_file": "ram175.pdf",
+      "raw_committed": false,
+      "kind": "public_document"
+    },
+    "aries-200": {
+      "url": "https://ariesmarine.com/wp-content/uploads/Class200RamXIIandRamXIV.pdf",
+      "retrieved_at": "2026-10-27T20:02:22.757401+00:00",
+      "http_status": 200,
+      "sha256": "f200a13671e687fa957bbf5ae5b8b9614504d1388c9f746fe1753c24d6963e02",
+      "size_bytes": 464251,
+      "title": "RAM XII and XIV: Class 200 leg",
+      "terms": "Operator copyright; no express open licence found. Only attributed factual specifications are curated; original sheets are not redistributed.",
+      "terms_url": "https://ariesmarine.com/liftboats/",
+      "source_vintage": "Undated sheet; not evidence of current certification or availability",
+      "digest_scope": "source-bytes",
+      "raw_file": "ram200.pdf",
+      "raw_committed": false,
+      "kind": "public_document"
+    },
+    "bsee-sa498": {
+      "url": "https://www.bsee.gov/sites/bsee.gov/files/2025-04/BSEE%20Safety%20Alert%20498%20-%20Explosion%20and%20Fire%20Incident_3APR25.pdf",
+      "retrieved_at": "2026-10-27T20:02:48.737346+00:00",
+      "http_status": 200,
+      "sha256": "10ecccbf4edb95ee2d19ea9c4a7177bfd463ebec911f03c2f51b8295e82fdda4",
+      "size_bytes": 475139,
+      "title": "BSEE Safety Alert 498: Explosion and Fire on Liftboat Injure Workers",
+      "terms": "BSEE website public information may be copied or distributed with credit. Only factual text is curated.",
+      "terms_url": "https://www.bsee.gov/disclaimer",
+      "source_vintage": "2025-04-03",
+      "digest_scope": "source-bytes",
+      "raw_file": "bsee498.pdf",
+      "raw_committed": false,
+      "kind": "public_document"
+    },
+    "seed": {
+      "kind": "repository_seed",
+      "title": "Packaged drilling rig seed: lift_boat rows",
+      "url": "https://www.data.bsee.gov/Well/WellActivity/Default.aspx",
+      "terms": "Existing repository seed derived from public BSEE well activity records; identity labels only. Repository licence applies to the packaged derivative; upstream public-information terms are linked.",
+      "terms_url": "https://www.bsee.gov/disclaimer",
+      "retrieved_at": "2026-10-27T20:08:42.773313+00:00",
+      "http_status": 200,
+      "sha256": "9a38304b32fef1ca92ab598fba6d4388c71901030aad2f8c7eb00542471e5899",
+      "size_bytes": 394681,
+      "digest_scope": "repository-file",
+      "source_vintage": "Existing packaged seed; historical activity labels, not a current vessel register",
+      "local_path": "packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/_data/curated/drilling_rigs.csv",
+      "landing_page_receipt": {
+        "url": "https://www.data.bsee.gov/Well/WellActivity/Default.aspx",
+        "retrieved_at": "2026-10-27T20:06:13.127512+00:00",
+        "http_status": 200,
+        "sha256": "6799a97bc79a5a3e09d7930d27d9db32524644c6cda16ad3c0c1ceaaced8f193",
+        "size_bytes": 28186
+      },
+      "raw_committed": true
+    }
+  },
+  "tables": {
+    "liftboats.csv": {
+      "sha256": "907465cc3a509746dc9a646e28563f30e1df89a26c5e8aedf262eeb45787d4ca",
+      "row_count": 74
+    },
+    "incidents.csv": {
+      "sha256": "644125fc2a69bdf0b4e7cbad3bf798a71f9766de4e5232647dad88c265831a52",
+      "row_count": 4
+    },
+    "seed_crosswalk.csv": {
+      "sha256": "5ca6c4ca13c27cad1ecc5df4dd6a719754401236ff636bf9ae4cab0a99d45b60",
+      "row_count": 158
+    }
+  },
+  "seed": {
+    "path": "packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/_data/curated/drilling_rigs.csv",
+    "sha256": "9a38304b32fef1ca92ab598fba6d4388c71901030aad2f8c7eb00542471e5899",
+    "selection": {
+      "RIG_TYPE": "lift_boat"
+    },
+    "selected_rows": 158
+  },
+  "coverage": {
+    "named_vessels": 74,
+    "seed_named_vessels": 72,
+    "seed_matched_rows": 105,
+    "seed_unresolved_rows": 53,
+    "vessels_with_specifications": 8,
+    "incident_records": 4,
+    "ntsb_records": 3,
+    "uscg_records": 0,
+    "bsee_records": 1,
+    "historical_incident_only_vessels": 2
+  },
+  "confidence": {
+    "high": "Explicitly stated in a retrieved government report; not independently certified.",
+    "medium": "Operator sheet or conservative interpretation/normalization of published text; may be undated.",
+    "low": "Historical seed name only; physical identity not independently confirmed."
+  },
+  "access_gaps": [
+    {
+      "url": "https://www.dco.uscg.mil/Our-Organization/Assistant-Commandant-for-Prevention-Policy-CG-5P/Inspections-Compliance-CG-5PC-/Office-of-Investigations-Casualty-Analysis/Marine-Casualty-Reports/",
+      "retrieved_at": "2026-10-27T20:01:04Z",
+      "http_status": 403,
+      "reason": "USCG marine casualty report index denied access. No USCG findings or casualty counts were inferred."
+    },
+    {
+      "url": "https://www.uscg.mil/foia/FOIA_Library/MarineCasualtyInvestigations/",
+      "retrieved_at": "2026-10-27T20:02:24.391260+00:00",
+      "http_status": 403,
+      "sha256": "6e51b15ab1184975808e3a1d8e3153f0bb8a91fe10f696a8a9fc1011ee4b6dbd",
+      "size_bytes": 427,
+      "reason": "USCG public casualty library denied access."
+    },
+    {
+      "url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/MAR8510.pdf",
+      "retrieved_at": "2026-10-27T20:02:23.850933+00:00",
+      "http_status": 200,
+      "sha256": "7d4b0fbaf20275e409542831fa704fa979df15bcfe0a795dd5b5fda1e0a98437",
+      "size_bytes": 48571,
+      "reason": "Response is an HTML page-not-found document, not the original report. Historical incident uses the explicitly labelled summary in MIR-22/26."
+    },
+    {
+      "url": "https://www.ntsb.gov/investigations/AccidentReports/Reports/MAR9102.pdf",
+      "retrieved_at": "2026-10-27T20:02:24.189397+00:00",
+      "http_status": 200,
+      "sha256": "0ecd7b37692884c17428f994686f28972944350c33d83e87be7e24d709b3cca8",
+      "size_bytes": 48571,
+      "reason": "Response is an HTML page-not-found document, not the original report. Historical incident uses the explicitly labelled summary in MIR-22/26."
+    }
+  ],
+  "limitations": [
+    "Not a complete vessel census or casualty census. Seed names are not verified physical identities.",
+    "No variable deck load values were found; advertised maximum deck cargo is a separate field.",
+    "USCG is not recorded as a classification society. Undated operator sheets are historical evidence only.",
+    "Crane capacity uses the largest advertised single crane; it is not a capacity at a specified radius. Ton definitions are retained without assumed conversions.",
+    "Historical incident summaries are secondary coverage within MIR-22/26, not retrieved original investigations.",
+    "Anonymous BSEE alert retains blank vessel key, date, phase and fatalities. Its publication date is not its incident date.",
+    "Source indexes referenced by the shared data contract were unavailable; no absence claim is made."
+  ]
+}
