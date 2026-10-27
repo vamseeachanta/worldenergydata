@@ -244,7 +244,9 @@ def main(argv=None):
             parser.exit(2, "output must not overwrite metadata evidence\n")
         summary = summarize(*(path.read_bytes() for path in inputs))
         args.out.write_text(
-            json.dumps(summary, sort_keys=True, indent=2) + "\n", encoding="utf-8"
+            json.dumps(summary, sort_keys=True, indent=2) + "\n",
+            encoding="utf-8",
+            newline="\n",
         )
     except (ValueError, OSError):
         parser.exit(

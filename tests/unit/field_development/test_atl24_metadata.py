@@ -4,6 +4,7 @@ import copy
 import hashlib
 import json
 import socket
+from pathlib import Path
 
 import pytest
 
@@ -262,16 +263,38 @@ def test_entities_rejected(evidence):
         run((c, g, '<!DOCTYPE feed [<!ENTITY x "84.37">]>' + a.replace("84.37", "&x;")))
 
 
-def test_cli_readback_and_input_preservation(evidence, tmp_path):
+@pytest.mark.parametrize("default_newline", [None, "\r\n"])
+def test_cli_readback_and_input_preservation(
+    evidence, tmp_path, monkeypatch, default_newline
+):
+    original_open = Path.open
+
+    def platform_open(
+        path, mode="r", buffering=-1, encoding=None, errors=None, newline=None
+    ):
+        # Model Windows text writes even when this test runs on another platform.
+        if "w" in mode and "b" not in mode and newline is None:
+            newline = default_newline
+        return original_open(path, mode, buffering, encoding, errors, newline)
+
+    monkeypatch.setattr(Path, "open", platform_open)
     args = []
-    bodies = [json.dumps(evidence[0]), json.dumps(evidence[1]), evidence[2]]
+    bodies = [
+        json.dumps(evidence[0]).encode("utf-8"),
+        json.dumps(evidence[1]).encode("utf-8"),
+        evidence[2].encode("utf-8"),
+    ]
     for name, body in zip(("collections", "granules", "atom"), bodies):
         path = tmp_path / name
-        path.write_text(body, encoding="utf-8")
+        path.write_bytes(body)
         args.extend(["--" + name, str(path)])
     output = tmp_path / "summary.json"
     main(args + ["--out", str(output)])
     first = output.read_bytes()
+    assert first == (json.dumps(run(evidence), sort_keys=True, indent=2) + "\n").encode(
+        "utf-8"
+    )
+    assert b"\r" not in first
     main(args + ["--out", str(output)])
     assert first == output.read_bytes()
     assert json.loads(first) == run(evidence)
@@ -282,7 +305,10 @@ def test_cli_readback_and_input_preservation(evidence, tmp_path):
     with pytest.raises(SystemExit) as error:
         main(args + ["--out", str(tmp_path / "collections")])
     assert error.value.code == 2
-    assert (tmp_path / "collections").read_text(encoding="utf-8") == bodies[0]
+    assert all(
+        (tmp_path / name).read_bytes() == body
+        for name, body in zip(("collections", "granules", "atom"), bodies)
+    )
 
 
 @pytest.mark.parametrize("input_name", ["collections", "granules", "atom"])
