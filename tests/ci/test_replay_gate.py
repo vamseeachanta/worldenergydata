@@ -828,12 +828,35 @@ def test_transport_bounds_transient_retries(replay, transport):
     assert len(state.calls) == state.closed == 6
 
 
+def _close_drained_peer(peer):
+    """Reject unread requests that can reset a connection when its peer closes."""
+    peer.setblocking(False)
+    try:
+        try:
+            unread = peer.recv(65536)
+        except BlockingIOError:
+            unread = b""
+    finally:
+        peer.close()
+    unread_size = len(unread)
+    assert unread_size == 0, "fixture peer closed with unread request headers"
+
+
 @pytest.mark.parametrize("truncated", [False, True])
 def test_transport_accepts_connection_close_response(
     replay, transport, monkeypatch, truncated
 ):
     """A real HTTP response can close its socket after its last body chunk."""
     api, state = transport
+    request_json = replay.request_json
+    errors = []
+
+    def record_request_error(*args, **kwargs):
+        try:
+            return request_json(*args, **kwargs)
+        except replay.HTTPException as error:
+            errors.append(str(error))
+            raise
 
     class ClosingConnection(HTTPConnection):
         def connect(self):
@@ -841,15 +864,23 @@ def test_transport_accepts_connection_close_response(
 
         def request(self, method, path, headers):
             super().request(method, path, headers=headers)
+            self.peer.settimeout(1)
+            request = b""
+            while not request.endswith(b"\r\n\r\n"):
+                chunk = self.peer.recv(4096)
+                assert chunk, "fixture request headers ended prematurely"
+                request += chunk
             payload = json.dumps(api(path.lstrip("/"))).encode("utf-8")
             header = (
                 "HTTP/1.1 200 OK\r\nConnection: close\r\n"
                 f"Content-Length: {len(payload) + int(truncated)}\r\n\r\n"
             ).encode("ascii")
             self.peer.sendall(header + payload)
-            self.peer.close()
+            _close_drained_peer(self.peer)
 
     monkeypatch.setattr(replay, "HTTPSConnection", ClosingConnection)
+    monkeypatch.setattr(replay, "request_json", record_request_error)
     result = replay.wait_for_decision(None, CONTEXT, "Lint")
     assert result["decision"] == ("FAIL" if truncated else "PASS")
     assert len(api.calls) == (1 if truncated else 4)
+    assert errors == (["incomplete API response"] if truncated else [])
