@@ -11,7 +11,7 @@ permissions:
 jobs:
   pr-title:
     name: Validate PR Title
-    runs-on: ubuntu-latest
+    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
 
     steps:
       - name: Check PR title format
@@ -39,7 +39,7 @@ jobs:
 
   file-size:
     name: Check File Sizes
-    runs-on: ubuntu-latest
+    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
 
     steps:
       - name: Checkout repository
@@ -67,7 +67,7 @@ jobs:
 
   sensitive-files:
     name: Check Sensitive Files
-    runs-on: ubuntu-latest
+    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
 
     steps:
       - name: Checkout repository
@@ -127,7 +127,7 @@ jobs:
 
   changelog-check:
     name: Changelog Check
-    runs-on: ubuntu-latest
+    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
     # NOTE: This job must ALWAYS run. "Changelog Check" is a required status check
     # in the main branch ruleset, and a required check that is skipped (via a
     # job-level `if:`) is never "satisfied" — it deadlocks the PR at BLOCKED
@@ -150,7 +150,7 @@ jobs:
 
   code-owners:
     name: Code Owners Check
-    runs-on: ubuntu-latest
+    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
 
     steps:
       - name: Checkout repository
@@ -166,7 +166,7 @@ jobs:
 
   pack-lint:
     name: Lint Changed Knowledge Packs
-    runs-on: ubuntu-latest
+    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
     permissions:
       contents: read
 

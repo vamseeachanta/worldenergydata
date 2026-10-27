@@ -27,7 +27,7 @@ env:
 jobs:
   validate:
     name: Validate Release
-    runs-on: ubuntu-latest
+    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
     outputs:
       version: ${{ steps.version.outputs.version }}
 
@@ -58,7 +58,7 @@ jobs:
 
   test:
     name: Run Tests
-    runs-on: ubuntu-latest
+    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
     needs: validate
 
     steps:
@@ -81,7 +81,7 @@ jobs:
 
   build:
     name: Build Package
-    runs-on: ubuntu-latest
+    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
     needs: [validate, test]
 
     steps:
@@ -121,7 +121,7 @@ jobs:
 
   publish-testpypi:
     name: Publish to Test PyPI
-    runs-on: ubuntu-latest
+    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
     needs: build
     if: |
       (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')) ||
@@ -159,7 +159,7 @@ jobs:
 
   publish-pypi:
     name: Publish to PyPI
-    runs-on: ubuntu-latest
+    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
     needs: [build, publish-testpypi]
     if: |
       always() &&
@@ -193,7 +193,7 @@ jobs:
 
   github-release:
     name: Create GitHub Release
-    runs-on: ubuntu-latest
+    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
     needs: [validate, build, publish-pypi]
     if: |
       always() &&
