@@ -4,13 +4,17 @@ from __future__ import annotations
 
 import json
 import re
-import tomllib
 from pathlib import Path
 
 import pandas as pd
 import pytest
 
 from worldenergydata.spain.production.cores_live import CoresLiveProductionLoader
+
+try:
+    import tomllib
+except ModuleNotFoundError:  # Python 3.10
+    import tomli as tomllib
 
 
 def test_load_report_source_validates_scheduler_cache_and_counts(tmp_path):

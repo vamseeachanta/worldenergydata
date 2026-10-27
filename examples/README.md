@@ -5,6 +5,8 @@
 | File | Safety Class | Notes |
 |------|-------------|-------|
 | `fdas_complete_workflow.py` | `fixture-only` | Pure financial calculations, no data or network |
+| `offshore_hse_review.py` | `bounded-safe` | Synthetic review inputs; requires an explicit output directory |
+| `hse/reporting_incidence_rates.py` | `bounded-safe` | Synthetic incidence-rate calculations |
 | `validation_examples.py` | `fixture-only` | Validation logic only, no external I/O |
 | `marine_safety_cause_visualization_demo.py` | `data-required` | Requires local marine safety DB |
 | `llm_classification_demo.py` | `unsafe-unbounded` | Downloads ~1.6 GB BART model; set `WORLDENERGYDATA_RUN_LLM_EXAMPLES=1` |

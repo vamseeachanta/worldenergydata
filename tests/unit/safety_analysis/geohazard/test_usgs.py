@@ -4,9 +4,11 @@ from __future__ import annotations
 
 import importlib
 import json
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 from types import ModuleType as Module
+from types import SimpleNamespace
 from typing import NoReturn
 from urllib.error import HTTPError
 from urllib.parse import parse_qs, urlparse
@@ -28,7 +30,12 @@ def api(monkeypatch: Patch) -> Module:
         raise AssertionError("Network forbidden in offline tests")
 
     monkeypatch.setattr(urllib.request.OpenerDirector, "open", blocked)
-    return importlib.import_module(MODULE)
+    module = importlib.import_module(MODULE)
+    # Patch a client-local clock rather than Python's process-wide time module.
+    monkeypatch.setattr(
+        module, "time", SimpleNamespace(monotonic=time.monotonic, sleep=time.sleep)
+    )
+    return module
 
 
 def synthetic_payload(
@@ -59,6 +66,11 @@ def box(api, client, limit=10):
     return client.query_box(
         36, 38, 136, 138, start=START, end=END, min_magnitude=5, limit=limit
     )
+
+
+def test_clock_is_local_to_client(api: Module) -> None:
+    """Clock mocks must not alter pytest or the performance recorder's clock."""
+    assert api.time is not time
 
 
 def test_module_exists() -> None:

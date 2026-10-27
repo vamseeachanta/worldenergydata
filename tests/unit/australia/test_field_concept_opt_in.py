@@ -24,7 +24,9 @@ def test_omitted_wells_match_recorded_main(case: Dict[str, Any]) -> None:
     inputs = copy.deepcopy(case["input"])
     for build in (australia_field_to_concept, build_australia_field_concept):
         concept = build(inputs)
-        assert concept.model_dump(mode="json") == case["output"]
+        # The schema now exposes this optional field; recorded inputs omit it.
+        expected = {**case["output"], "flowline_liquid_rate_bpd": None}
+        assert concept.model_dump(mode="json") == expected
         assert sorted(concept.model_fields_set) == case["fields_set"]
         assert concept.__pydantic_private__ == case["private_attributes"]
         assert inputs == case["input"]

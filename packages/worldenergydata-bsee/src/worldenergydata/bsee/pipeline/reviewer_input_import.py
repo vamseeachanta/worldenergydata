@@ -6,7 +6,7 @@ import hashlib
 import html
 import json
 import sqlite3
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -92,7 +92,7 @@ def import_reviewer_ready_inputs(
     }
     manifest = {
         "product": "bsee_reviewer_input_import",
-        "generated_at": datetime.now(UTC).isoformat(),
+        "generated_at": datetime.now(timezone.utc).isoformat(),
         "inputs": {
             "ready_input": str(Path(ready_input_path)),
             "decision_log": str(Path(decision_log_path)),

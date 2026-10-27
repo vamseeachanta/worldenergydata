@@ -510,6 +510,10 @@
             "classification": "candidate_requires_review"
           },
           {
+            "path": "packages/worldenergydata-canada/src/worldenergydata/canada/production/cnsoer_loader.py",
+            "classification": "candidate_requires_review"
+          },
+          {
             "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/international/country_production.py",
             "classification": "in_package"
           },
@@ -610,11 +614,19 @@
             "classification": "test_consumer"
           },
           {
+            "path": "tests/unit/canada/production/test_cnloer_annual.py",
+            "classification": "test_consumer"
+          },
+          {
             "path": "tests/unit/canada/production/test_cnloer_html.py",
             "classification": "test_consumer"
           },
           {
             "path": "tests/unit/canada/production/test_cnloer_loader.py",
+            "classification": "test_consumer"
+          },
+          {
+            "path": "tests/unit/canada/production/test_cnsoer_loader.py",
             "classification": "test_consumer"
           },
           {

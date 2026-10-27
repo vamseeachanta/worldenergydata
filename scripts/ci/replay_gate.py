@@ -151,6 +151,33 @@ def decide(
         return result
 
 
+def wait_for_decision(
+    api: API,
+    context: dict[str, Any],
+    job_name: str,
+    *,
+    timeout: float = 3600,
+    interval: float = 30,
+    clock: Callable[[], float] | None = None,
+    sleep: Callable[[float], None] | None = None,
+) -> dict[str, Any]:
+    """Wait at most one hour for active full evidence, retaining every guard.
+
+    Metadata edits can arrive before a full run completes. Re-read all evidence
+    after each wait so a newer run or a changed live base cannot expose stale
+    success. Decisive failures and invalid evidence still fail immediately.
+    """
+    clock = clock or time.monotonic
+    sleep = sleep or time.sleep
+    deadline = clock() + timeout
+    while True:
+        result = decide(api, context, job_name)
+        remaining = deadline - clock()
+        if result["reason"] != "newer full run in progress" or remaining <= 0:
+            return result
+        sleep(min(interval, remaining))
+
+
 def request_json(path: str) -> dict[str, Any]:
     """Use the workflow's read-only token for a bounded GitHub REST request."""
     base = urlsplit(os.environ.get("GITHUB_API_URL", "https://api.github.com"))
@@ -192,7 +219,7 @@ def main() -> int:
             base_ref=pr["base"]["ref"],
             base_repository_id=pr["base"]["repo"]["id"],
         )
-        result = decide(request_json, context, sys.argv[1])
+        result = wait_for_decision(request_json, context, sys.argv[1])
     except (OSError, ValueError, KeyError, IndexError, TypeError):
         result = {"decision": "FAIL", "reason": "invalid replay context"}
     print(json.dumps(result, sort_keys=True))

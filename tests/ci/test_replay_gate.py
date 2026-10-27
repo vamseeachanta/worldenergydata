@@ -1,7 +1,9 @@
 """Fail-closed replay decisions using an in-memory API and clock."""
 
 import importlib.util
+import json
 from pathlib import Path
+from types import SimpleNamespace
 from urllib.parse import parse_qs, urlsplit
 
 import pytest
@@ -381,3 +383,157 @@ def test_transport_rejects_non_https_before_auth(replay, monkeypatch):
     monkeypatch.delenv("GH_TOKEN", raising=False)
     with pytest.raises(ValueError):
         replay.request_json("repos/example/repository")
+
+
+@pytest.mark.parametrize(
+    "name", ["Lint", "Type Check", "Security Scan", "Documentation", "Test (PR gate)"]
+)
+@pytest.mark.parametrize("conclusion", ["success", "failure"])
+def test_wait_for_active_full_run(replay, name, conclusion):
+    """Metadata edits wait for exact evidence and preserve the completed result."""
+    api = FakeAPI()
+    api.runs[0].update(status="in_progress", conclusion=None)
+    api.jobs[90][0].update(name=name, conclusion=None)
+
+    def finish():
+        api.runs[0].update(status="completed", conclusion=conclusion)
+        api.jobs[90][0]["conclusion"] = conclusion
+
+    api.on_sleep = finish
+    result = replay.wait_for_decision(
+        api,
+        CONTEXT,
+        name,
+        timeout=60,
+        interval=30,
+        clock=lambda: api.elapsed,
+        sleep=api.sleep,
+    )
+    assert result["decision"] == ("PASS" if conclusion == "success" else "FAIL")
+    assert result["run_id"] == 90
+    assert result["job_id"] == 3
+    assert api.elapsed == 30
+
+
+def test_wait_times_out_without_older_green(replay):
+    """A newer unfinished full run blocks older success until the deadline."""
+    api = FakeAPI()
+    api.runs.insert(0, run(95, None, "queued"))
+    result = replay.wait_for_decision(
+        api,
+        CONTEXT,
+        "Lint",
+        timeout=45,
+        interval=30,
+        clock=lambda: api.elapsed,
+        sleep=api.sleep,
+    )
+    assert result["decision"] == "FAIL"
+    assert result["reason"] == "newer full run in progress"
+    assert result["run_id"] is None
+    assert api.elapsed == 45
+
+
+def test_wait_rechecks_live_base_after_completion(replay):
+    """Completion cannot bless a result whose recorded base is now stale."""
+    api = FakeAPI()
+    api.runs[0].update(status="in_progress", conclusion=None)
+
+    def finish():
+        api.runs[0].update(status="completed", conclusion="success")
+        api.tip = "c" * 40
+
+    api.on_sleep = finish
+    result = replay.wait_for_decision(
+        api,
+        CONTEXT,
+        "Lint",
+        clock=lambda: api.elapsed,
+        sleep=api.sleep,
+    )
+    assert result["decision"] == "FAIL"
+    assert "base moved" in result["reason"]
+
+
+@pytest.mark.parametrize("condition", ["failed", "missing", "malformed"])
+def test_wait_does_not_retry_decisive_or_invalid_evidence(replay, condition):
+    """Only an active full run is retryable; invalid evidence fails closed."""
+    api = FakeAPI()
+    if condition == "failed":
+        api.jobs[90][0]["conclusion"] = "failure"
+    elif condition == "missing":
+        api.runs = []
+    else:
+        api.artifacts = {}
+    result = replay.wait_for_decision(
+        api,
+        CONTEXT,
+        "Lint",
+        clock=lambda: api.elapsed,
+        sleep=api.sleep,
+    )
+    assert result["decision"] == "FAIL"
+    assert api.elapsed == 0
+
+
+def test_cli_waits_for_full_evidence(replay, tmp_path, monkeypatch, capsys):
+    """The workflow entry point waits, then emits the completed audit result."""
+    api = FakeAPI()
+    api.runs[0].update(status="in_progress", conclusion=None)
+
+    def finish():
+        api.runs[0].update(status="completed", conclusion="success")
+
+    api.on_sleep = finish
+    event = tmp_path / "event.json"
+    event.write_text(
+        json.dumps(
+            {
+                "pull_request": {
+                    "number": CONTEXT["pr"],
+                    "head": {"sha": HEAD},
+                    "base": {"ref": "main", "repo": {"id": 1}},
+                }
+            }
+        )
+    )
+    monkeypatch.setenv("GITHUB_EVENT_PATH", str(event))
+    monkeypatch.setenv("GITHUB_REPOSITORY", CONTEXT["repository"])
+    monkeypatch.setenv("GITHUB_RUN_ID", str(CONTEXT["run_id"]))
+    monkeypatch.setattr(replay.sys, "argv", [str(SCRIPT), "Lint"])
+    monkeypatch.setattr(replay, "request_json", api)
+    monkeypatch.setattr(
+        replay,
+        "time",
+        SimpleNamespace(
+            monotonic=lambda: api.elapsed,
+            sleep=api.sleep,
+        ),
+    )
+    assert replay.main() == 0
+    assert json.loads(capsys.readouterr().out)["job_id"] == 3
+    assert api.elapsed == 30
+
+
+def test_wait_cannot_copy_a_superseded_run(replay):
+    """A newer failed full run arriving while waiting supersedes older green."""
+    api = FakeAPI()
+    api.runs[0].update(status="in_progress", conclusion=None)
+
+    def finish():
+        api.runs[0].update(status="completed", conclusion="success")
+        api.runs.insert(0, run(95, "failure"))
+        api.artifacts[95] = api.artifacts[90]
+        api.jobs[95] = [{"id": 4, "name": "Lint", "conclusion": "failure"}]
+
+    api.on_sleep = finish
+    result = replay.wait_for_decision(
+        api,
+        CONTEXT,
+        "Lint",
+        clock=lambda: api.elapsed,
+        sleep=api.sleep,
+    )
+    assert result["decision"] == "FAIL"
+    assert result["run_id"] == 95
+    assert result["job_id"] == 4
