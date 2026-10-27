@@ -24,7 +24,9 @@ def manifest(tmp_path):
     path.write_text(
         json.dumps(
             {"sources": {"report": document, "seed": {"kind": "repository_seed"}}}
-        )
+        ),
+        encoding="utf-8",
+        newline="\n",
     )
     return path, payload
 
@@ -49,7 +51,9 @@ def test_download_digest_receipt_and_resume(manifest, tmp_path):
         assert fetch_sources(output, path) == ["report"]
         assert run.call_count == 1
         assert "--proto-redir" in run.call_args.args[0]
-    receipt = json.loads((output / "report.pdf.receipt.json").read_text())
+    receipt_path = output / "report.pdf.receipt.json"
+    original_receipt = receipt_path.read_bytes()
+    receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
     assert receipt["sha256"] == hashlib.sha256(payload).hexdigest()
     assert receipt["http_status"] == 200
     assert receipt["url"] == "https://example.org/report.pdf"
@@ -57,6 +61,88 @@ def test_download_digest_receipt_and_resume(manifest, tmp_path):
     with patch("worldenergydata.vessel_fleet.source_fetch.subprocess.run") as run:
         assert fetch_sources(output, path) == ["report"]
         run.assert_not_called()
+    assert receipt_path.read_bytes() == original_receipt
+
+
+def test_receipt_write_failure_cannot_resume_as_complete(manifest, tmp_path):
+    path, payload = manifest
+    output = tmp_path / "raw"
+    with (
+        patch(
+            "worldenergydata.vessel_fleet.source_fetch.subprocess.run",
+            side_effect=fake_download(payload),
+        ),
+        patch.object(Path, "write_text", side_effect=OSError("receipt write failed")),
+    ):
+        with pytest.raises(OSError, match="receipt write failed"):
+            fetch_sources(output, path)
+    assert (output / "report.pdf").read_bytes() == payload
+    assert not (output / "report.pdf.receipt.json").exists()
+    with patch("worldenergydata.vessel_fleet.source_fetch.subprocess.run") as run:
+        with pytest.raises(ValueError, match="receipt"):
+            fetch_sources(output, path)
+        run.assert_not_called()
+    assert (output / "report.pdf").read_bytes() == payload
+    assert not (output / "report.pdf.receipt.json").exists()
+
+
+@pytest.mark.parametrize(
+    "content",
+    [
+        "not json",
+        "[]",
+        "{}",
+        '{"retrieved_at": "2026-10-01T12:00:00Z"}',
+    ],
+)
+def test_existing_invalid_receipt_is_rejected_without_overwrite(
+    manifest, tmp_path, content
+):
+    path, payload = manifest
+    output = tmp_path / "raw"
+    output.mkdir()
+    (output / "report.pdf").write_bytes(payload)
+    receipt = output / "report.pdf.receipt.json"
+    receipt.write_text(content, encoding="utf-8", newline="\n")
+    with patch("worldenergydata.vessel_fleet.source_fetch.subprocess.run") as run:
+        with pytest.raises(ValueError, match="receipt"):
+            fetch_sources(output, path)
+        run.assert_not_called()
+    assert receipt.read_text(encoding="utf-8") == content
+    assert (output / "report.pdf").read_bytes() == payload
+
+
+@pytest.mark.parametrize(
+    "field,value",
+    [
+        ("url", "https://example.org/other.pdf"),
+        ("http_status", 404),
+        ("sha256", "0" * 64),
+        ("size_bytes", 0),
+        ("retrieved_at", None),
+        ("retrieved_at", "not a timestamp"),
+        ("retrieved_at", "2026-10-01T12:00:00"),
+    ],
+)
+def test_receipt_metadata_must_match_source(manifest, tmp_path, field, value):
+    path, payload = manifest
+    output = tmp_path / "raw"
+    with patch(
+        "worldenergydata.vessel_fleet.source_fetch.subprocess.run",
+        side_effect=fake_download(payload),
+    ):
+        fetch_sources(output, path)
+    receipt_path = output / "report.pdf.receipt.json"
+    receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+    receipt[field] = value
+    receipt_path.write_text(json.dumps(receipt), encoding="utf-8", newline="\n")
+    original = receipt_path.read_bytes()
+    with patch("worldenergydata.vessel_fleet.source_fetch.subprocess.run") as run:
+        with pytest.raises(ValueError, match="receipt"):
+            fetch_sources(output, path)
+        run.assert_not_called()
+    assert receipt_path.read_bytes() == original
+    assert (output / "report.pdf").read_bytes() == payload
 
 
 def test_existing_digest_mismatch_stops_without_overwrite(manifest, tmp_path):
@@ -86,9 +172,9 @@ def test_download_digest_mismatch_is_not_promoted(manifest, tmp_path):
 @pytest.mark.parametrize("name", ["../report.pdf", "folder/report.pdf", "/report.pdf"])
 def test_unsafe_raw_filenames_rejected(manifest, tmp_path, name):
     path, _ = manifest
-    data = json.loads(path.read_text())
+    data = json.loads(path.read_text(encoding="utf-8"))
     data["sources"]["report"]["raw_file"] = name
-    path.write_text(json.dumps(data))
+    path.write_text(json.dumps(data), encoding="utf-8", newline="\n")
     with patch("worldenergydata.vessel_fleet.source_fetch.subprocess.run") as run:
         with pytest.raises(ValueError, match="filename"):
             fetch_sources(tmp_path / "raw", path)

@@ -1,7 +1,8 @@
 # Public liftboat database
 
-The initial collection contains 74 named records, eight with technical
-specifications, and four incident records. The seed crosswalk accounts for all
+The initial collection contains 74 records: 72 named seed records and two
+anonymized historical records. Eight records have technical specifications;
+four incident records are included. The seed crosswalk accounts for all
 158 rows marked `RIG_TYPE=lift_boat` in the packaged drilling rig CSV: 105 labels
 map to 72 named records and 53 remain unresolved. Two historical vessels appear
 only because an NTSB report describes their casualties. These are historical
@@ -12,6 +13,7 @@ observations, not a current vessel register or a complete casualty census.
 | Revision | Date | Change and reason |
 | --- | --- | --- |
 | 1 | 2026-10-27 | Add attributed specifications, seed identity crosswalk and public incident records so unknown values and source limits remain visible. |
+| 2 | 2026-10-27 | Anonymize historical identities, reject incomplete retrieval receipts and document import limits to preserve traceability without implying engineering acceptance. |
 
 ## Load and query
 
@@ -42,6 +44,11 @@ Distinct historical names may still denote the same hull; an identity register
 is needed to resolve those cases. No uniqueness claim extends beyond the recorded
 keys, normalized names and populated IMO numbers.
 
+The two incident-only historical records use assigned labels `HISTORICAL RECORD 1`
+and `HISTORICAL RECORD 2` and neutral keys in both tables. These labels are not
+published names; their medium confidence denotes curation. Source section
+references retain the evidence link without reproducing the historical identities.
+
 ## Files and schema
 
 Data ships inside the existing package at
@@ -49,7 +56,7 @@ Data ships inside the existing package at
 
 | File | Key | Purpose |
 | --- | --- | --- |
-| `liftboats.csv` | `liftboat_id` | One named record per curated identity |
+| `liftboats.csv` | `liftboat_id` | One named or anonymized record per curated identity |
 | `incidents.csv` | `incident_id` | One record per reported event in this collection |
 | `seed_crosswalk.csv` | `seed_name` | Every selected seed label and its resolution |
 | `manifest.json` | Source and table identifiers | URLs, terms, timestamps, byte sizes, SHA-256, counts and coverage gaps |
@@ -65,7 +72,7 @@ confidence; it does not create an incident.
 
 | Vessel field | Unit or interpretation |
 | --- | --- |
-| `vessel_name`, `imo_number` | Published name and IMO number when verified |
+| `vessel_name`, `imo_number` | Published name or assigned historical label; IMO number when verified |
 | `leg_length_ft`, `leg_count` | Feet and number of legs |
 | `deck_area_sq_ft` | Advertised open deck area in square feet |
 | `variable_deck_load_lb` | Variable deck load in pounds, only when explicitly reported |
@@ -107,6 +114,23 @@ dangling foreign keys. Confidence is qualitative:
 - `medium`: operator specifications or conservative interpretation/normalization.
 - `low`: historical seed label without independently confirmed physical identity.
 
+## Import policy
+
+The collection's revision 1 import policy accepts a reported `leg_count` of
+3 or 4 and a reported `year_built` from 1800 through the calendar year at
+validation, inclusive. The leg-count set bounds this collection's supported
+configurations. The deliberately broad year interval filters transcription
+errors and future construction dates. Its lower bound is a curation choice,
+not a claim about the earliest liftboat. Neither limit is derived from a
+classification rule or an engineering acceptance criterion.
+
+Blank values remain unreported. A populated value outside these limits rejects
+the import; it is not clamped, defaulted or accepted as another configuration.
+An excluded configuration requires a reviewed policy change before import.
+These checks do not establish stability, capacity, certification or suitability
+for service. Boundary tests use literal values immediately inside and outside
+the supported set and year interval, with a fixed calendar for reproducibility.
+
 ## Sources, terms and retrieval
 
 All sources below were retrieved on 2026-10-27. The manifest records UTC retrieval
@@ -117,7 +141,7 @@ are not redistributed.
 | Source | Use | Terms and limits |
 | --- | --- | --- |
 | [BSEE well activity portal](https://www.data.bsee.gov/Well/WellActivity/Default.aspx) and existing packaged `drilling_rigs.csv` | Select historical `lift_boat` seed labels | [BSEE public-information terms](https://www.bsee.gov/disclaimer); seed digest identifies the existing repository file, not a fresh portal export |
-| [NTSB MIR-22/26](https://www.ntsb.gov/investigations/AccidentReports/Reports/MIR2226.pdf) | Vessel particulars, SEACOR Power casualty, and explicitly labelled historical summaries for Amay S and AVCO V | US federal factual report; third-party attributed material is excluded; [NTSB website policy](https://www.ntsb.gov/about/Pages/privacy.aspx) is a privacy policy, not an additional open licence |
+| [NTSB MIR-22/26](https://www.ntsb.gov/investigations/AccidentReports/Reports/MIR2226.pdf) | Vessel particulars, main casualty and two anonymized historical incident summaries | US federal factual report; third-party attributed material is excluded; [NTSB website policy](https://www.ntsb.gov/about/Pages/privacy.aspx) is a privacy policy, not an additional open licence |
 | [RAM I, III, IV, V and VI specification](https://ariesmarine.com/wp-content/uploads/Class130RamIRamIIIRamIVRamVandRamVI.pdf) | RAM I specifications | Operator copyright; no express open licence found; factual extraction only |
 | [RAM VII specification](https://ariesmarine.com/wp-content/uploads/Class145RamVII.pdf) | RAM VII specifications | Operator copyright; factual extraction only |
 | [RAM VIII, X and XI specification](https://ariesmarine.com/wp-content/uploads/Class175RamVIIIRamXandRamXI.pdf) | Three vessels' specifications | Operator copyright; factual extraction only |
@@ -142,10 +166,15 @@ python -m worldenergydata.vessel_fleet.source_fetch "${LIFTBOAT_RAW_DIR:?set a r
 
 Use `--source ntsb-mir2226` to fetch just that source. The destination must be
 explicit. Curl is used serially over HTTPS; no login or credentials are needed.
-Verified files are reused. A differing digest or a retained `.part` file stops
-the fetch without overwriting it. Retrieval receipts include URL, UTC time,
-HTTP status and digest. Upstream revisions require a reviewed manifest and
-curation update. The script does not automatically archive or upload documents.
+Verified files are reused only when their retrieval receipts match the source
+URL, HTTP status, digest and size and contain a timestamp with a timezone.
+A missing, malformed or inconsistent receipt, differing digest or retained
+`.part` file stops the fetch without overwriting evidence. A failed receipt
+write leaves the verified raw bytes retained but incomplete; resumption rejects
+that state rather than inventing the original retrieval time. Retrieval receipts
+include URL, UTC time, HTTP status, digest and size. Upstream revisions require a
+reviewed manifest and curation update. The script does not automatically archive
+or upload documents.
 
 ## Coverage gaps
 
@@ -154,7 +183,7 @@ curation update. The script does not automatically archive or upload documents.
   returned HTTP 403. No independently retrieved USCG reports are included.
 - The original MAR-85/10 and MAR-91/02 report URLs returned HTML page-not-found
   content with HTTP 200. The two historical records explicitly cite the
-  summaries in MIR-22/26 instead. AVCO V's incident date stays blank because
+  summaries in MIR-22/26 instead. HISTORICAL RECORD 2's incident date stays blank because
   that summary and its bibliography disagree by one day.
 - The anonymous BSEE record has no vessel foreign key. Zero deaths and an
   elevated phase are not inferred from silence.
@@ -171,5 +200,7 @@ population-wide statistics or comparisons between operators.
 `tests/unit/vessel_fleet/loaders/test_liftboat_loader.py` checks schema,
 provenance, seed coverage, joins, blanks and corrupt-input rejection.
 `tests/unit/vessel_fleet/test_liftboat_source_fetch.py` checks downloads,
-digest mismatches, retained partial files and resumption without live requests.
+digest mismatches, retained partial files, incomplete receipts and resumption
+without live requests. Import-policy tests bracket both leg-count and year
+bounds; historical-record tests check neutral labels, keys and coverage counts.
 Existing loader public API tests cover the package exports.

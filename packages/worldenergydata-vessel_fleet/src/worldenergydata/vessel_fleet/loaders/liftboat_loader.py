@@ -89,6 +89,7 @@ def _validate_value(field: str, value: str) -> None:
             raise ValueError(f"invalid integer: {field}")
         if field in {"leg_count", "year_built"} and int(value) == 0:
             raise ValueError(f"invalid positive integer: {field}")
+        # Curation bounds: LIFTBOATS.md, "Import policy" (not design criteria).
         if field == "leg_count" and int(value) not in {3, 4}:
             raise ValueError("liftboat leg_count must be 3 or 4")
         if field == "year_built" and not 1800 <= int(value) <= date.today().year:

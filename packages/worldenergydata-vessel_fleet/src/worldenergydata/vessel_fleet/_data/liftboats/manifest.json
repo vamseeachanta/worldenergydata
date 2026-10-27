@@ -117,11 +117,11 @@
   },
   "tables": {
     "liftboats.csv": {
-      "sha256": "907465cc3a509746dc9a646e28563f30e1df89a26c5e8aedf262eeb45787d4ca",
+      "sha256": "56f88fe38de3bdd076120301fa1c1a3bf816833125250fefdfe48a3982a9c136",
       "row_count": 74
     },
     "incidents.csv": {
-      "sha256": "644125fc2a69bdf0b4e7cbad3bf798a71f9766de4e5232647dad88c265831a52",
+      "sha256": "791e5002a9b2fa213f2428fae6414e72a5e5fb7e8c8c83bb699d4b0945c9209f",
       "row_count": 4
     },
     "seed_crosswalk.csv": {
@@ -138,7 +138,7 @@
     "selected_rows": 158
   },
   "coverage": {
-    "named_vessels": 74,
+    "named_vessels": 72,
     "seed_named_vessels": 72,
     "seed_matched_rows": 105,
     "seed_unresolved_rows": 53,
@@ -147,7 +147,8 @@
     "ntsb_records": 3,
     "uscg_records": 0,
     "bsee_records": 1,
-    "historical_incident_only_vessels": 2
+    "historical_incident_only_vessels": 2,
+    "anonymized_historical_records": 2
   },
   "confidence": {
     "high": "Explicitly stated in a retrieved government report; not independently certified.",

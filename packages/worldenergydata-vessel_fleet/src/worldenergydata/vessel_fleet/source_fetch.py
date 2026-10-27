@@ -23,6 +23,35 @@ def _verify(path: Path, source: dict) -> None:
         raise ValueError("source size mismatch")
 
 
+def _verify_receipt(target: Path, source: dict) -> None:
+    receipt_path = target.with_suffix(target.suffix + ".receipt.json")
+    try:
+        receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as error:
+        raise ValueError(
+            "source receipt missing or invalid; inspect retained provenance before resuming"
+        ) from error
+    expected = {
+        "url": source["url"],
+        "http_status": 200,
+        "sha256": source["sha256"],
+        "size_bytes": source["size_bytes"],
+    }
+    if not isinstance(receipt, dict) or any(
+        receipt.get(field) != value for field, value in expected.items()
+    ):
+        raise ValueError("source receipt metadata mismatch")
+    timestamp = receipt.get("retrieved_at")
+    if not isinstance(timestamp, str):
+        raise ValueError("source receipt requires a retrieval timestamp")
+    try:
+        observed = datetime.fromisoformat(timestamp.replace("Z", "+00:00"))
+    except ValueError as error:
+        raise ValueError("source receipt retrieval timestamp is invalid") from error
+    if observed.tzinfo is None:
+        raise ValueError("source receipt retrieval timestamp requires a timezone")
+
+
 def fetch_sources(
     output_dir: Path | str,
     manifest_path: Path | str | None = None,
@@ -30,10 +59,11 @@ def fetch_sources(
 ) -> list[str]:
     """Fetch public documents once, verifying existing bytes on subsequent runs.
 
-    Existing files with different digests and leftover partial files stop the
-    operation. They are never overwritten or removed. Local seed records and
-    inaccessible index pages are excluded. Changed upstream bytes require a
-    reviewed manifest update; no digest is silently refreshed.
+    Existing files require both matching bytes and a valid retrieval receipt.
+    Missing or invalid receipts, different digests and leftover partial files
+    stop the operation without overwriting or removing evidence. Local seed
+    records and inaccessible index pages are excluded. Changed upstream bytes
+    require a reviewed manifest update; no digest is silently refreshed.
     """
     if manifest_path is None:
         manifest = LiftboatLoader().manifest
@@ -66,6 +96,7 @@ def fetch_sources(
         target = destination / source["raw_file"]
         if target.exists():
             _verify(target, source)
+            _verify_receipt(target, source)
             completed.append(identity)
             continue
         partial = target.with_suffix(target.suffix + ".part")
@@ -87,7 +118,7 @@ def fetch_sources(
                 "--proto-redir",
                 "=https",
                 "--output",
-                str(partial),
+                partial.as_posix(),
                 "--write-out",
                 "%{http_code}",
                 source["url"],
@@ -95,6 +126,7 @@ def fetch_sources(
             check=True,
             capture_output=True,
             text=True,
+            encoding="utf-8",
         )
         if result.stdout != "200":
             raise ValueError("source returned unexpected HTTP status")
@@ -108,7 +140,7 @@ def fetch_sources(
             "size_bytes": source["size_bytes"],
         }
         target.with_suffix(target.suffix + ".receipt.json").write_text(
-            json.dumps(receipt, indent=2) + "\n", encoding="utf-8"
+            json.dumps(receipt, indent=2) + "\n", encoding="utf-8", newline="\n"
         )
         completed.append(identity)
     return completed

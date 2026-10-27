@@ -3,6 +3,7 @@
 import csv
 import hashlib
 import json
+from datetime import date
 from pathlib import Path
 
 import pytest
@@ -31,14 +32,16 @@ def rewrite(directory, table, edit):
         columns = reader.fieldnames
         rows = list(reader)
     edit(rows)
-    with path.open("w", newline="", encoding="utf-8") as stream:
+    with path.open("w", newline="\n", encoding="utf-8") as stream:
         writer = csv.DictWriter(stream, fieldnames=columns, lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
-    manifest = json.loads((directory / "manifest.json").read_text())
+    manifest = json.loads((directory / "manifest.json").read_text(encoding="utf-8"))
     manifest["tables"][table]["sha256"] = hashlib.sha256(path.read_bytes()).hexdigest()
     manifest["tables"][table]["row_count"] = len(rows)
-    (directory / "manifest.json").write_text(json.dumps(manifest))
+    (directory / "manifest.json").write_text(
+        json.dumps(manifest), encoding="utf-8", newline="\n"
+    )
 
 
 def test_packaged_database_and_public_api():
@@ -56,6 +59,25 @@ def test_packaged_database_and_public_api():
     assert any(row["agency"] == "NTSB" for row in incidents)
     assert set(VESSEL_FIELDS) <= vessels[0].keys()
     assert set(INCIDENT_FIELDS) <= incidents[0].keys()
+
+
+def test_historical_records_use_neutral_labels_and_consistent_keys():
+    loader = LiftboatLoader()
+    seed_ids = {row["liftboat_id"] for row in loader.load_seed_crosswalk()}
+    historical = [row for row in loader.load() if row["liftboat_id"] not in seed_ids]
+    assert len(historical) == 2
+    for index, row in enumerate(historical, 1):
+        assert row["liftboat_id"] == f"lb-historical-{index}", "use a neutral key"
+        assert row["vessel_name"] == f"HISTORICAL RECORD {index}", "use a neutral label"
+        records = loader.incidents_for(row["liftboat_id"])
+        assert len(records) == 1
+        assert records[0]["incident_id"] == f"ntsb-historical-{index}"
+        assert records[0]["vessel_name"] == row["vessel_name"]
+        assert row["vessel_name_confidence"] == "medium"
+    coverage = loader.manifest["coverage"]
+    assert coverage["named_vessels"] == 72
+    assert coverage["anonymized_historical_records"] == 2
+    assert len(loader.load()) == 74
 
 
 def test_seed_crosswalk_is_complete_and_preserves_ambiguous_labels():
@@ -149,6 +171,47 @@ def test_invalid_observations_rejected(database, field, value):
         LiftboatLoader(database).load()
 
 
+@pytest.mark.parametrize(
+    "field,value,accepted",
+    [
+        ("leg_count", "2", False),
+        ("leg_count", "3", True),
+        ("leg_count", "4", True),
+        ("leg_count", "5", False),
+        ("year_built", "1799", False),
+        ("year_built", "1800", True),
+        ("year_built", "2030", True),
+        ("year_built", "2031", False),
+    ],
+)
+def test_documented_import_policy_boundaries(
+    database, monkeypatch, field, value, accepted
+):
+    class CatalogDate(date):
+        @classmethod
+        def today(cls):
+            return cls(2030, 6, 15)
+
+    monkeypatch.setattr(
+        "worldenergydata.vessel_fleet.loaders.liftboat_loader.date", CatalogDate
+    )
+
+    # Literal bounds come from LIFTBOATS.md, Import policy: adjacent values
+    # bracket 3/4 legs and 1800/current year independently of implementation.
+    def edit(rows):
+        rows[0][field] = value
+        rows[0][field + "_source"] = "seed"
+        rows[0][field + "_confidence"] = "low"
+
+    rewrite(database, "liftboats.csv", edit)
+    loader = LiftboatLoader(database)
+    if accepted:
+        assert loader.load()[0][field] == value
+    else:
+        with pytest.raises(ValueError, match=field):
+            loader.load()
+
+
 def test_provenance_without_value_rejected(database):
     def edit(rows):
         rows[0]["builder"] = ""
@@ -232,11 +295,13 @@ def test_corrupt_bytes_rejected_before_parsing(database):
 def test_malformed_csv_rejected_even_with_updated_digest(database):
     path = database / "liftboats.csv"
     path.write_bytes(path.read_bytes() + b"bad,row\n")
-    manifest = json.loads((database / "manifest.json").read_text())
+    manifest = json.loads((database / "manifest.json").read_text(encoding="utf-8"))
     manifest["tables"]["liftboats.csv"]["sha256"] = hashlib.sha256(
         path.read_bytes()
     ).hexdigest()
-    (database / "manifest.json").write_text(json.dumps(manifest))
+    (database / "manifest.json").write_text(
+        json.dumps(manifest), encoding="utf-8", newline="\n"
+    )
     with pytest.raises(ValueError, match="width"):
         LiftboatLoader(database).load()
 
