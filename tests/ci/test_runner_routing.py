@@ -1,6 +1,7 @@
-"""Offline contracts for the runner expressions in the two PR workflows."""
+"""Offline runner contracts for CI, PR validation and domain workflows."""
 
 import ast
+import hashlib
 import json
 import re
 from pathlib import Path
@@ -9,7 +10,9 @@ import pytest
 import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
-WORKFLOWS = ("ci.yml", "pr-validation.yml")
+WORKFLOWS = ("ci.yml", "pr-validation.yml", "domain-matrix.yml")
+RUNNER_JSON = '["self-hosted","x64"]'
+RUNNER_VALUES = ("self-hosted-x64", RUNNER_JSON)
 LABELS = ["self-hosted", "Linux", "X64"]
 JOB_NAMES = {
     "ci.yml": {
@@ -26,6 +29,11 @@ JOB_NAMES = {
         "security-gate": "Security Scan",
         "docs-gate": "Documentation",
         "pr-gate": "Test (PR gate)",
+    },
+    "domain-matrix.yml": {
+        "discover": "Discover domains",
+        "test-domain": "Domain ${{ matrix.name }}",
+        "aggregate": "Aggregate domain results",
     },
     "pr-validation.yml": {
         "pr-title": "Validate PR Title",
@@ -161,7 +169,8 @@ def test_pr_code_has_read_only_permissions(name):
         permissions = job.get("permissions", data["permissions"])
         assert isinstance(permissions, dict), job_id
         assert all(value in ("read", "none") for value in permissions.values()), job_id
-        assert job.get("secrets") != "inherit", job_id
+        assert "secrets" not in job, job_id
+        assert "secrets." not in json.dumps(job), job_id
 
 
 def test_coverage_upload_has_no_repository_secret():
@@ -195,7 +204,7 @@ def test_runner_selection_across_events(name, event, fork, draft):
         "unknown",
         '"ubuntu-missing"',
         "self-hosted-arm64",
-        "self-hosted-x64",
+        *RUNNER_VALUES,
     ]
     for job in workflow(name)["jobs"].values():
         if "runs-on" in job:
@@ -204,9 +213,7 @@ def test_runner_selection_across_events(name, event, fork, draft):
                     event == "pull_request" and not fork
                 )
                 expected = (
-                    LABELS
-                    if value == "self-hosted-x64" and eligible
-                    else "ubuntu-latest"
+                    LABELS if value in RUNNER_VALUES and eligible else "ubuntu-latest"
                 )
                 assert (
                     evaluate(job["runs-on"], context(value, event, fork, draft))
@@ -234,7 +241,8 @@ def test_fixed_mapping_cannot_parse_runner_configuration(name):
             "github.event.pull_request.head.repo.full_name == github.repository"
             in expression
         )
-        assert "vars.PR_GATE_RUNNER == 'self-hosted-x64'" in expression
+        for value in RUNNER_VALUES:
+            assert f"vars.PR_GATE_RUNNER == '{value}'" in expression
 
 
 @pytest.mark.parametrize("name", WORKFLOWS)
@@ -257,8 +265,11 @@ def test_drafts_and_metadata_edits_preserve_every_gate(name, draft, action):
     data = workflow(name)
     events = data.get("on", data.get(True))
     assert "pull_request_target" not in events
-    assert action in events["pull_request"]["types"]
-    assert set(events["pull_request"]) == {"types"}
+    if name == "domain-matrix.yml":
+        assert set(events) == {"workflow_call"}
+    else:
+        assert action in events["pull_request"]["types"]
+        assert set(events["pull_request"]) == {"types"}
     assert {
         job_id: job.get("name") for job_id, job in data["jobs"].items()
     } == JOB_NAMES[name]
@@ -272,10 +283,10 @@ def test_drafts_and_metadata_edits_preserve_every_gate(name, draft, action):
             assert not job.get("continue-on-error", False)
 
 
-def test_reusable_gate_does_not_claim_caller_runner_inheritance():
+def test_local_reusable_gate_preserves_required_result():
     jobs = workflow("ci.yml")["jobs"]
     reusable = jobs["domain-tests"]
-    assert reusable["uses"].endswith("/.github/workflows/domain-matrix.yml@main")
+    assert reusable["uses"] == "./.github/workflows/domain-matrix.yml"
     assert "runs-on" not in reusable
     assert "with" not in reusable  # No runner input exists in the inspected contract.
     assert "secrets" not in reusable
@@ -286,3 +297,65 @@ def test_reusable_gate_does_not_claim_caller_runner_inheritance():
     assert full["env"]["FULL_RESULT"] == "${{ needs.domain-tests.result }}"
     assert '"$FULL_RESULT" != success' in full["run"]
     assert "exit 1" in full["run"]
+
+
+def test_domain_workflow_keeps_test_and_aggregate_contract():
+    data = workflow("domain-matrix.yml")
+    events = data.get("on", data.get(True))
+    inputs = events["workflow_call"]["inputs"]
+    assert inputs["install-cmd"]["default"] == "uv sync --frozen --all-extras"
+    assert inputs["test-runner"]["default"] == "uv run --with pytest-xdist pytest"
+    jobs = data["jobs"]
+    assert jobs["test-domain"]["needs"] == "discover"
+    assert jobs["test-domain"]["strategy"] == {
+        "fail-fast": False,
+        "max-parallel": "${{ inputs.max-parallel }}",
+        "matrix": "${{ fromJSON(needs.discover.outputs.matrix) }}",
+    }
+    aggregate = jobs["aggregate"]
+    assert aggregate["needs"] == ["discover", "test-domain"]
+    assert aggregate["if"] == "always()"
+    assert not aggregate.get("continue-on-error", False)
+    for job in jobs.values():
+        assert "if" not in job or job is aggregate
+        assert not job.get("continue-on-error", False)
+    run = aggregate["steps"][0]["run"]
+    assert 'args.discover != "success" or args.test_domain != "success"' in run
+
+
+@pytest.mark.parametrize("name", ("ci.yml", "pr-validation.yml"))
+def test_triggers_and_conditions_match_existing_gate(name):
+    """Routing must preserve triggers, dependencies, matrices and every guard."""
+    data = workflow(name)
+    controls = {
+        "events": data.get("on", data.get(True)),
+        "jobs": {
+            job_id: {
+                key: job.get(key)
+                for key in ("if", "needs", "strategy", "continue-on-error")
+            }
+            | {"steps": [step.get("if") for step in job.get("steps", [])]}
+            for job_id, job in data["jobs"].items()
+        },
+    }
+    # Fingerprints of the reviewed workflows before this routing fix.
+    expected = {
+        "ci.yml": "931b63bf2de131a26f450ec5086dd347f84cdede290b950f4a811f023a5ef3d3",
+        "pr-validation.yml": "04e9973274020af213e23fd8964a065a9249bb093286bf918f110b0bd5e0e583",
+    }
+    digest = hashlib.sha256(json.dumps(controls, sort_keys=True).encode()).hexdigest()
+    assert digest == expected[name]
+
+
+def test_domain_scaffolding_matches_shared_workflow_except_routing():
+    """Pin the shared workflow's parsed content, including all test commands."""
+    data = workflow("domain-matrix.yml")
+    data["on"] = data.pop(True)
+    for job in data["jobs"].values():
+        job.pop("runs-on")
+    # Shared workflow blob fetched for this copy; comments do not affect YAML.
+    expected = "853c74b911a903c59153f203d6b68d58ee323dcf0f295d14f73d56693af1a680"
+    assert (
+        hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()
+        == expected
+    )

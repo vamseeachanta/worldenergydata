@@ -1,12 +1,11 @@
 name: PR Validation
 
-# PR_GATE_RUNNER: only self-hosted-x64 maps to [self-hosted, Linux, X64].
-# Selection allows same-repository pull_request, push and workflow_dispatch.
-# Forks, other events and all other values (including self-hosted-arm64, unset,
-# empty, malformed and unknown values) use ubuntu-latest.
+# PR_GATE_RUNNER: ["self-hosted","x64"] (JSON) selects fixed X64 labels.
+# The legacy self-hosted-x64 token is also supported.
+# Only same-repository pull_request, push and workflow_dispatch may opt in.
+# Forks, other events, unset and unrecognized values use ubuntu-latest.
 # ARM64 remains unsupported: locked nlopt 2.10.0 lacks compatible artifacts.
-# Linux tooling: bash, git, Python and uv. Unsetting affects future routing;
-# it cannot undo prior execution or clean runner state.
+# Unsetting the variable affects future routing only.
 
 on:
   pull_request:
@@ -28,14 +27,15 @@ jobs:
       ${{ ((github.event_name == 'pull_request' &&
       github.event.pull_request.head.repo.full_name == github.repository) ||
       github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
-      vars.PR_GATE_RUNNER == 'self-hosted-x64' &&
+      (vars.PR_GATE_RUNNER == 'self-hosted-x64' ||
+      vars.PR_GATE_RUNNER == '["self-hosted","x64"]') &&
       fromJSON('["self-hosted", "Linux", "X64"]') || 'ubuntu-latest' }}
 
     steps:
       - name: Check PR title format
         uses: amannn/action-semantic-pull-request@v6
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
         with:
           types: |
             feat
@@ -61,7 +61,8 @@ jobs:
       ${{ ((github.event_name == 'pull_request' &&
       github.event.pull_request.head.repo.full_name == github.repository) ||
       github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
-      vars.PR_GATE_RUNNER == 'self-hosted-x64' &&
+      (vars.PR_GATE_RUNNER == 'self-hosted-x64' ||
+      vars.PR_GATE_RUNNER == '["self-hosted","x64"]') &&
       fromJSON('["self-hosted", "Linux", "X64"]') || 'ubuntu-latest' }}
 
     steps:
@@ -95,7 +96,8 @@ jobs:
       ${{ ((github.event_name == 'pull_request' &&
       github.event.pull_request.head.repo.full_name == github.repository) ||
       github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
-      vars.PR_GATE_RUNNER == 'self-hosted-x64' &&
+      (vars.PR_GATE_RUNNER == 'self-hosted-x64' ||
+      vars.PR_GATE_RUNNER == '["self-hosted","x64"]') &&
       fromJSON('["self-hosted", "Linux", "X64"]') || 'ubuntu-latest' }}
 
     steps:
@@ -161,7 +163,8 @@ jobs:
       ${{ ((github.event_name == 'pull_request' &&
       github.event.pull_request.head.repo.full_name == github.repository) ||
       github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
-      vars.PR_GATE_RUNNER == 'self-hosted-x64' &&
+      (vars.PR_GATE_RUNNER == 'self-hosted-x64' ||
+      vars.PR_GATE_RUNNER == '["self-hosted","x64"]') &&
       fromJSON('["self-hosted", "Linux", "X64"]') || 'ubuntu-latest' }}
     # NOTE: This job must ALWAYS run. "Changelog Check" is a required status check
     # in the main branch ruleset, and a required check that is skipped (via a
@@ -190,7 +193,8 @@ jobs:
       ${{ ((github.event_name == 'pull_request' &&
       github.event.pull_request.head.repo.full_name == github.repository) ||
       github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
-      vars.PR_GATE_RUNNER == 'self-hosted-x64' &&
+      (vars.PR_GATE_RUNNER == 'self-hosted-x64' ||
+      vars.PR_GATE_RUNNER == '["self-hosted","x64"]') &&
       fromJSON('["self-hosted", "Linux", "X64"]') || 'ubuntu-latest' }}
 
     steps:
@@ -213,7 +217,8 @@ jobs:
       ${{ ((github.event_name == 'pull_request' &&
       github.event.pull_request.head.repo.full_name == github.repository) ||
       github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
-      vars.PR_GATE_RUNNER == 'self-hosted-x64' &&
+      (vars.PR_GATE_RUNNER == 'self-hosted-x64' ||
+      vars.PR_GATE_RUNNER == '["self-hosted","x64"]') &&
       fromJSON('["self-hosted", "Linux", "X64"]') || 'ubuntu-latest' }}
     permissions:
       contents: read
