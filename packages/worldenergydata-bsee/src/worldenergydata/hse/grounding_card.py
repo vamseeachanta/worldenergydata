@@ -117,7 +117,8 @@ def render_html(
         for k, v in analysis.metrics
     )
     vintage = grounding.get("vintage_note", "")
-    traces = _timeline_traces(grounding)
+    # Prevent incident text from closing the HTML script; JSON decoding is lossless.
+    traces = _timeline_traces(grounding).replace("<", "\\u003c")
     sep = " · " if analysis.method and analysis.basis else ""
     basis_line = f"{_esc(analysis.method)}{sep}{_esc(analysis.basis)}"
 
