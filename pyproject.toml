@@ -431,6 +431,7 @@ markers = [
     "timeout: Tests with custom timeout settings",
     "asyncio: Asynchronous tests using pytest-asyncio",
     "contracts: Contract tests asserting assetutilities public API stability",
+    "artifact_currency: Repo-wide generated-artifact currency checks; skipped in the PR fast gate (WED_FAST_GATE=1), run in the daily Main full run",
 ]
 
 filterwarnings = [

@@ -62,6 +62,7 @@ def test_enrollment_covers_every_method_and_preserves_pin():
         assert row["targets"] or row["relation"] != "delegates"
 
 
+@pytest.mark.artifact_currency
 def test_discovery_evidence_matches_tracked_sources():
     """Compare pinned hit sets with maintained sources, also in shallow CI.
 
