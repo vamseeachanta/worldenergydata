@@ -9,7 +9,9 @@ from pathlib import Path
 import pytest
 import yaml
 
-CI_WORKFLOW = Path(__file__).resolve().parents[2] / ".github/workflows/ci.yml"
+WORKFLOWS = Path(__file__).resolve().parents[2] / ".github/workflows"
+CI_WORKFLOW = WORKFLOWS / "ci.yml"
+FULL_RUN_WORKFLOW = WORKFLOWS / "main-full-run.yml"
 
 
 def _load_workflow() -> dict:
@@ -229,9 +231,7 @@ def test_required_names_have_single_result_job() -> None:
     jobs = _load_workflow()["jobs"]
     required = {
         "Lint": "lint",
-        "Type Check": "type-check",
         "Security Scan": "security",
-        "Documentation": "docs",
         "Test (PR gate)": "domain-tests",
     }
     for name, heavy_id in required.items():
@@ -288,9 +288,7 @@ def test_required_names_have_single_result_job() -> None:
                 )
 
 
-@pytest.mark.parametrize(
-    "gate_id", ["lint-gate", "type-check-gate", "security-gate", "docs-gate", "pr-gate"]
-)
+@pytest.mark.parametrize("gate_id", ["lint-gate", "security-gate", "pr-gate"])
 @pytest.mark.parametrize("evidence", [None, "", "{}", "missing", "PASS", "FAIL"])
 @pytest.mark.parametrize("replay_selected", [False, True])
 def test_result_environment_before_step_selection(gate_id, evidence, replay_selected):
@@ -331,24 +329,15 @@ def test_result_environment_before_step_selection(gate_id, evidence, replay_sele
 
 
 def test_full_jobs_honor_cancellation() -> None:
-    """All seven heavy jobs remain cancellable after mode failure."""
+    """All three fast-gate jobs remain cancellable after mode failure."""
     jobs = _load_workflow()["jobs"]
-    for key in (
-        "domain-tests",
-        "test",
-        "lint",
-        "type-check",
-        "security",
-        "build",
-        "docs",
-    ):
+    for key in ("domain-tests", "lint", "security"):
         condition = jobs[key]["if"]
         assert "always()" not in condition, key
         assert "!cancelled()" in condition, key
         assert "needs.mode.outputs.replay != 'true'" in condition, key
         assert "needs.mode.result != 'success'" in condition, key
         assert "mode" in jobs[key]["needs"]
-    assert "needs.lint.result == 'success'" in jobs["build"]["if"]
     assert jobs["mode"]["permissions"] == {"contents": "read", "actions": "read"}
     artifact = jobs["mode"]["steps"][-1]
     assert artifact["with"]["retention-days"] == 14
@@ -620,3 +609,46 @@ def test_mode_evidence_controls_full_gate_fallback(tmp_path, evidence):
     else:
         assert "tip" not in values
         assert not (tmp_path / "gate-tip").exists()
+
+
+def _events(path: Path) -> dict:
+    workflow = yaml.safe_load(path.read_text(encoding="utf-8"))
+    return workflow["on"] if "on" in workflow else workflow[True]
+
+
+def test_pr_gate_is_fast_only() -> None:
+    """PRs run lint, the secret scan and touched-module tests (28 Oct 2026)."""
+    jobs = _load_workflow()["jobs"]
+    assert set(jobs) == {
+        "mode",
+        "domain-tests",
+        "lint",
+        "security",
+        "lint-gate",
+        "security-gate",
+        "pr-gate",
+    }
+    runner = jobs["domain-tests"]["with"]["test-runner"]
+    assert runner.startswith("env WED_FAST_GATE=1 ")
+    lint_script = "\n".join(step.get("run", "") for step in jobs["lint"]["steps"])
+    assert "uv sync" not in lint_script
+    assert "uv lock" not in lint_script
+
+
+def test_no_workflow_uses_github_schedule() -> None:
+    """The daily full run is dispatched by our own cron, not GitHub's schedule."""
+    for path in sorted(WORKFLOWS.glob("*.yml")):
+        assert "schedule" not in _events(path), path.name
+
+
+def test_main_full_run_is_dispatch_only_and_covers_the_moved_checks() -> None:
+    """Everything removed from the PR gate runs once a day on main instead."""
+    assert set(_events(FULL_RUN_WORKFLOW)) == {"workflow_dispatch"}
+    workflow = yaml.safe_load(FULL_RUN_WORKFLOW.read_text(encoding="utf-8"))
+    assert workflow["name"] == "Main full run"
+    jobs = workflow["jobs"]
+    for key in ("full-suite", "lockfile", "type-check", "docs", "build"):
+        assert key in jobs, key
+    text = FULL_RUN_WORKFLOW.read_text(encoding="utf-8")
+    assert "uv lock --check" in text
+    assert "WED_FAST_GATE" not in text

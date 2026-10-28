@@ -1,5 +1,10 @@
 name: PR Validation
 
+# PR fast gate (28 Oct 2026): only quick checks run here. Check Sensitive Files
+# is required; the title, file-size and knowledge-pack lints are advisory or
+# path-scoped. The advisory-only Changelog and Code Owners notices were removed
+# with their required-check status.
+
 on:
   pull_request:
     types: [opened, synchronize, reopened, edited]
@@ -124,45 +129,6 @@ jobs:
             exit 1
           fi
           echo "No potentially sensitive filenames in PR changes."
-
-  changelog-check:
-    name: Changelog Check
-    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
-    # NOTE: This job must ALWAYS run. "Changelog Check" is a required status check
-    # in the main branch ruleset, and a required check that is skipped (via a
-    # job-level `if:`) is never "satisfied" — it deadlocks the PR at BLOCKED
-    # forever. That previously made every chore/ci/dependabot PR unmergeable
-    # (#802). The step below is advisory only (it emits a notice, never fails),
-    # so running it unconditionally is safe and satisfies the required context.
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
-
-      - name: Check changelog update
-        run: |
-          if git diff --name-only origin/main...HEAD | grep -qE "^CHANGELOG|^HISTORY|^NEWS"; then
-            echo "Changelog has been updated"
-          else
-            echo "::notice::Consider updating the changelog for this PR"
-          fi
-
-  code-owners:
-    name: Code Owners Check
-    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v7
-
-      - name: Check CODEOWNERS exists
-        run: |
-          if [ -f ".github/CODEOWNERS" ] || [ -f "CODEOWNERS" ] || [ -f "docs/CODEOWNERS" ]; then
-            echo "CODEOWNERS file found"
-          else
-            echo "::notice::Consider adding a CODEOWNERS file"
-          fi
 
   pack-lint:
     name: Lint Changed Knowledge Packs

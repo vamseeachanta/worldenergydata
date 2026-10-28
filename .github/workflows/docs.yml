@@ -1,17 +1,8 @@
 name: Build API Docs
 
+# Docs build is part of the daily "Main full run" (28 Oct 2026 fast gate); it no
+# longer runs on pull requests or pushes. Dispatch this workflow to build ad hoc.
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'src/**'
-      - 'docs/api/**'
-      - 'mkdocs.yml'
-  pull_request:
-    paths:
-      - 'src/**'
-      - 'docs/api/**'
-      - 'mkdocs.yml'
   workflow_dispatch:
 
 jobs:

@@ -386,9 +386,7 @@ def test_transport_rejects_non_https_before_auth(replay, monkeypatch):
 # Required names and the all-PASS rule come from issue #1350, section 1.
 REQUIRED_NAMES = (
     "Lint",
-    "Type Check",
     "Security Scan",
-    "Documentation",
     "Test (PR gate)",
 )
 
@@ -404,7 +402,7 @@ def full_gate_api():
 
 
 def test_select_mode_snapshots_all_required_checks(replay):
-    """Hand truth table: PASS AND PASS AND PASS AND PASS AND PASS = true."""
+    """Hand truth table: PASS AND PASS AND PASS = true."""
     api = full_gate_api()
     result = replay.select_mode(api, CONTEXT)
     assert result["replay"] is True

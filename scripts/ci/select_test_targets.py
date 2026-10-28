@@ -36,6 +36,7 @@ Emits ``scope=`` / ``xdist_targets=`` / ``seq_targets=`` lines (GitHub Actions
 from __future__ import annotations
 
 import argparse
+import os
 import re
 import json
 import sys
@@ -232,6 +233,43 @@ def select(changed: list[str], root: Path) -> dict:
     return {"scope": "modules" if relevant else "skip", "xdist": xdist, "seq": seq}
 
 
+# PR fast gate (owner ruling 28 Oct 2026): a pull request runs lint plus the
+# touched-module tests only, finishing in minutes. A core-path change no longer
+# fans out to the whole tree on a PR; the daily "Main full run" workflow runs
+# the full suite on main instead. Core paths in the CI tooling still run the
+# CI contract suite. To run the full tree for a branch, dispatch "Main full
+# run" on it.
+FAST_CORE_TARGETS = (
+    # (core path prefix, extra target)
+    ("scripts/ci/", "tests/ci"),
+    (".github/workflows/", "tests/ci"),
+)
+
+
+def select_fast(changed: list[str], root: Path) -> dict:
+    """PR fast-gate selection: like :func:`select`, without the core fan-out."""
+    core = [p for p in changed if _is_core(p)]
+    result = select([p for p in changed if not _is_core(p)], root)
+    if not core:
+        return result
+    extra = [
+        target
+        for path in core
+        for prefix, target in FAST_CORE_TARGETS
+        if path.startswith(prefix)
+    ]
+    return {
+        "scope": "modules",
+        "xdist": _existing_unique(result["xdist"] + extra, root),
+        "seq": result["seq"],
+    }
+
+
+def is_fast_gate(environ=os.environ) -> bool:
+    """The fast gate applies to pull request events only (push/dispatch: full)."""
+    return environ.get("GITHUB_EVENT_NAME") == "pull_request"
+
+
 def _existing_unique(targets: list[str], root: Path) -> list[str]:
     seen, out = set(), []
     for t in targets:
@@ -260,7 +298,7 @@ def _full_tree(root: Path) -> list[str]:
     return out
 
 
-def to_matrix(changed: list[str], root: Path) -> dict:
+def to_matrix(changed: list[str], root: Path, fast: bool = False) -> dict:
     """Build a GitHub-Actions matrix of per-domain shards from changed files.
 
     Each shard is ``{"name", "targets", "mode"}`` where ``mode`` is ``xdist``
@@ -275,8 +313,11 @@ def to_matrix(changed: list[str], root: Path) -> dict:
     * ``scope=modules`` -> the always-on shard + one shard per touched module +
       one per routed contract; seq shards per touched integration module.
     * ``scope=skip`` -> just the always-on shard (never empty).
+
+    ``fast=True`` (pull requests) selects with :func:`select_fast`, so a core
+    change runs the always-on shard plus the touched modules, never the tree.
     """
-    result = select(changed, root)
+    result = select_fast(changed, root) if fast else select(changed, root)
     scope = result["scope"]
     shards: list[dict] = []
 
@@ -380,12 +421,13 @@ def main(argv: list[str] | None = None) -> int:
     )
     a = ap.parse_args(argv)
     changed = _read_changed(a)
+    fast = is_fast_gate()
     if a.emit_matrix:
-        matrix = to_matrix(changed, Path(a.root))
+        matrix = to_matrix(changed, Path(a.root), fast=fast)
         print(f"scope={matrix['scope']}")
         print(f"matrix={json.dumps({'include': matrix['include']})}")
         return 0
-    result = select(changed, Path(a.root))
+    result = (select_fast if fast else select)(changed, Path(a.root))
     print(f"scope={result['scope']}")
     print(f"xdist_targets={' '.join(result['xdist'])}")
     print(f"seq_targets={' '.join(result['seq'])}")

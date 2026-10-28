@@ -14,11 +14,10 @@ from urllib.parse import quote, urlencode, urlsplit
 
 API = Callable[[str], dict[str, Any]]
 # Issue #1350, section 1: replay requires PASS for every protected name.
+# PR fast gate (28 Oct 2026): Type Check and Documentation left the PR gate.
 REQUIRED_CHECKS = (
     "Lint",
-    "Type Check",
     "Security Scan",
-    "Documentation",
     "Test (PR gate)",
 )
 

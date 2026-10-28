@@ -293,10 +293,15 @@ def test_malformed_ruff_json_is_rejected(scan, text):
 
 
 def test_workflow_adds_scan_without_replacing_existing_checks():
-    """The inventory check is additive to the existing three lint commands."""
-    workflow = Path(__file__).resolve().parents[2] / ".github/workflows/ci.yml"
-    text = workflow.read_text()
-    assert "python scripts/ci/check_f821.py" in text
-    assert "uv run black --check --diff src/ tests/" in text
-    assert "uv run isort --check-only --diff src/ tests/" in text
-    assert "uv run flake8 src/" in text
+    """The inventory runs daily; the PR lint gate keeps its three commands.
+
+    The PR fast gate (28 Oct 2026) moved the five-run inventory to the daily
+    Main full run; black, isort and flake8 stay in the PR lint job.
+    """
+    workflows = Path(__file__).resolve().parents[2] / ".github/workflows"
+    full_run = (workflows / "main-full-run.yml").read_text()
+    assert "python scripts/ci/check_f821.py" in full_run
+    lint = (workflows / "ci.yml").read_text()
+    assert '"black==$black" --check --diff src/ tests/' in lint
+    assert '"isort==$isort" --check-only --diff src/ tests/' in lint
+    assert '"flake8==$flake8" src/' in lint

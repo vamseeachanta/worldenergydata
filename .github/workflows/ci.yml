@@ -1,13 +1,18 @@
 name: CI
 
+# PR fast gate (owner ruling 28 Oct 2026): a pull request runs lint, the secret
+# scan and the touched-module tests only, finishing in minutes. Push to main
+# stays light (lint + secret scan). The full suite, type check, docs, package
+# build, lockfile and other generated-artifact currency checks moved to
+# "Main full run" (.github/workflows/main-full-run.yml), dispatched once a day
+# by the ace-linux-1 cron with `gh workflow run`; GitHub's schedule trigger is
+# not used. Required checks: Lint, Security Scan, Test (PR gate).
 on:
   push:
     branches: [main, develop]
   pull_request:
     # Metadata edits reuse validated evidence or run the full gate.
     types: [opened, synchronize, reopened, edited]
-  schedule:
-    - cron: "17 9 * * *" # nightly full matrix (~04:17 CT)
   workflow_dispatch:
 
 concurrency:
@@ -97,161 +102,26 @@ jobs:
   # scripts/ci/select_test_targets.py --emit-matrix — the single source of truth
   # (a module is mapped iff tests/unit/<module>/ exists; new modules auto-map,
   # guarded by tests/ci/test_select_test_targets.py). On core-path changes the
-  # matrix fans out to EVERY domain. The aggregate `pr-gate` job is the single
-  # required status check. The full 3-Python matrix still runs on push to main,
-  # nightly, dispatch, or `ci-full` PRs.
+  # matrix fans out to EVERY domain on push/dispatch; on a pull request the
+  # selector's fast-gate mode runs the always-on shard + touched modules only
+  # (core changes no longer fan out; the daily Main full run covers the tree).
+  # The aggregate `pr-gate` job is the single required test check.
 
   # The discover -> test-domain (matrix) -> aggregate scaffolding now lives in
   # the shared reusable workflow (workspace-hub#.../domain-matrix.yml, P4
   # worldenergydata#530). wed's conventions match the reusable defaults exactly
   # (selector scripts/ci/select_test_targets.py, uv sync --all-extras, quarantine
-  # scripts/ci/quarantine.txt, python-setup uv, max-parallel 10), so the caller
-  # passes no `with:` overrides.
+  # scripts/ci/quarantine.txt, python-setup uv, max-parallel 10). The only
+  # override sets WED_FAST_GATE=1 so tests/conftest.py skips repo-wide
+  # artifact-currency tests (they run in the daily Main full run).
   domain-tests:
     needs: [mode]
     if: >-
       !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && github.event_name
       == 'pull_request'
     uses: vamseeachanta/workspace-hub/.github/workflows/domain-matrix.yml@main
-
-  # ------------------------------------------------------------ full matrix --
-  test:
-    name: Test Python ${{ matrix.python-version }}
-    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
-    needs: [mode]
-    if: >-
-      !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && (
-      github.event_name == 'push' ||
-      github.event_name == 'schedule' ||
-      github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'pull_request' &&
-       contains(github.event.pull_request.labels.*.name, 'ci-full')))
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: ["3.10", "3.11", "3.12"]
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v7
-        with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
-          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
-          fetch-depth: 1
-
-      - name: Build local pull request merge
-        id: local_merge
-        if: github.event_name == 'pull_request'
-        env:
-          BASE_REF: ${{ github.event.pull_request.base.ref }}
-          BASE_URL: ${{ github.event.pull_request.base.repo.clone_url }}
-          HEAD_URL: ${{ github.event.pull_request.head.repo.clone_url }}
-          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-          EVENT_BASE: ${{ github.event.pull_request.base.sha }}
-        run: |
-          set -euo pipefail
-          base_ref="refs/remotes/base/$BASE_REF"
-          git fetch --no-tags "$BASE_URL" "+refs/heads/$BASE_REF:$base_ref"
-          tip=$(git rev-parse "$base_ref")
-          for deepen in 50 100 200; do
-            if git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
-              break
-            fi
-            if [ "$(git rev-parse --is-shallow-repository)" != true ]; then
-              break
-            fi
-            git fetch --no-tags --deepen="$deepen" "$HEAD_URL" "$PR_HEAD_SHA"
-            git fetch --no-tags --deepen="$deepen" "$BASE_URL" "$tip"
-          done
-          if ! git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
-            if [ "$(git rev-parse --is-shallow-repository)" = true ]; then
-              git fetch --no-tags --unshallow "$HEAD_URL" "$PR_HEAD_SHA"
-              git fetch --no-tags "$BASE_URL" "$tip"
-            fi
-          fi
-          if ! git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
-            echo "::error::No merge base for current base tip and pull request head"
-            exit 1
-          fi
-          git config user.name 'github-actions[bot]'
-          git config user.email 'github-actions[bot]@users.noreply.github.com'
-          git checkout --detach "$tip"
-          if ! git merge --no-ff --no-edit "$PR_HEAD_SHA"; then
-            echo "::error::Cannot merge pull request head into current base tip"
-            git merge --abort
-            exit 1
-          fi
-          mapfile -t parents < <(git cat-file -p HEAD | sed -n 's/^parent //p')
-          first_parent=${parents[0]:-}
-          second_parent=${parents[1]:-}
-          if [ "${#parents[@]}" -ne 2 ] || [ "$first_parent" != "$tip" ] || \
-             [ "$second_parent" != "$PR_HEAD_SHA" ]; then
-            echo "::error::Local merge does not have exactly the expected two parents"
-            exit 1
-          fi
-          tested=$(git rev-parse HEAD)
-          tree=$(git rev-parse 'HEAD^{tree}')
-          echo "tested=$tested first_parent=$first_parent second_parent=$second_parent" \
-            "tip=$tip event_base=$EVENT_BASE tree=$tree"
-          echo "tip=$tip" >> "$GITHUB_OUTPUT"
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v7
-        with:
-          enable-cache: true
-          cache-dependency-glob: "uv.lock"
-
-      - name: Set up Python ${{ matrix.python-version }}
-        run: uv python install ${{ matrix.python-version }}
-
-      - name: Install dependencies
-        run: uv sync --all-extras
-
-      - name: Run tests with coverage
-        run: |
-          # tests/integration kills xdist workers (a CLI edge-case test
-          # hard-exits the process); tests/performance asserts wall-clock
-          # budgets — both run sequentially below. Targets are enumerated
-          # explicitly so the two heavy lanes stay out of the parallel run.
-          # rootdir is now deterministically the repo root (single pyproject.toml
-          # config, #529), so node ids are stably tests/-prefixed.
-          targets=$(find tests -maxdepth 1 -mindepth 1 \( -type d ! -name performance ! -name integration ! -name __pycache__ \) -o -maxdepth 1 -name 'test_*.py' | sort | tr '\n' ' ')
-          uv run --with pytest-xdist pytest $targets \
-            -n auto \
-            --tb=short \
-            --cov=src \
-            --cov-report=xml:coverage.xml \
-            --cov-report=term-missing \
-            --junitxml=reports/coverage/test-results.xml
-
-      - name: Run sequential tests (integration / performance)
-        run: |
-          uv run pytest tests/integration tests/performance \
-            --tb=short \
-            --cov=src \
-            --cov-append \
-            --cov-report=xml:coverage.xml
-
-      - name: Upload test results
-        uses: actions/upload-artifact@v7
-        if: always()
-        with:
-          name: test-results-${{ matrix.python-version }}
-          path: |
-            reports/coverage/test-results.xml
-            coverage.xml
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v7
-        if: matrix.python-version == '3.11'
-        with:
-          files: coverage.xml
-          flags: unittests
-          name: codecov-umbrella
-          fail_ci_if_error: false
-          verbose: true
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+    with:
+      test-runner: env WED_FAST_GATE=1 uv run --with pytest-xdist pytest
 
   lint:
     name: Lint (full)
@@ -330,135 +200,30 @@ jobs:
           enable-cache: true
           cache-dependency-glob: "uv.lock"
 
-      - name: Set up Python
-        run: uv python install ${{ env.PYTHON_VERSION_DEFAULT }}
-
-      - name: Check that uv.lock matches pyproject.toml
-        run: uv lock --check
-
-      - name: Install dependencies
-        run: uv sync --all-extras
-
-      - name: Check F821 scan consistency
-        # Repetitions follow the issue investigation plan; timeout is an execution budget.
+      - name: Run Black, isort and flake8 (versions pinned by uv.lock)
+        # No project install: the formatters run from uv's tool cache at the
+        # exact versions recorded in uv.lock. The lockfile currency check
+        # (`uv lock --check`) runs in the daily Main full run, not on PRs.
         run: |
-          uv run --no-sync python scripts/ci/check_f821.py src/ tests/ packages/ \
-            --runs 5 --timeout 300 --output "${RUNNER_TEMP}/f821-scan"
-
-      - name: Upload F821 scan evidence
-        if: ${{ always() }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: f821-scan-evidence
-          path: ${{ runner.temp }}/f821-scan
-          if-no-files-found: ignore
-
-      - name: Run Black
-        run: uv run black --check --diff src/ tests/
-
-      - name: Run isort
-        run: uv run isort --check-only --diff src/ tests/
-
-      - name: Run flake8
-        run: |
-          uv run flake8 src/ \
+          set -euo pipefail
+          pinned='import tomllib
+          lock = tomllib.load(open("uv.lock", "rb"))["package"]
+          v = {p["name"]: p["version"] for p in lock}
+          print(v["black"], v["isort"], v["flake8"])'
+          versions=$(uv run --no-project --python "$PYTHON_VERSION_DEFAULT" python -c "$pinned")
+          read -r black isort flake8 <<< "$versions"
+          echo "black $black, isort $isort, flake8 $flake8"
+          py=(--python "$PYTHON_VERSION_DEFAULT")
+          uvx "${py[@]}" "black==$black" --check --diff src/ tests/
+          uvx "${py[@]}" "isort==$isort" --check-only --diff src/ tests/
+          uvx "${py[@]}" "flake8==$flake8" src/ \
             --max-line-length=100 \
             --extend-ignore=E203,W503 \
             --exclude=__pycache__,*.egg-info,.git,.venv
 
-  type-check:
-    name: Type Check (full)
-    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
-    needs: [mode]
-    if: >-
-      !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true')
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v7
-        with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
-          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
-          fetch-depth: 1
-
-      - name: Build local pull request merge
-        id: local_merge
-        if: github.event_name == 'pull_request'
-        env:
-          BASE_REF: ${{ github.event.pull_request.base.ref }}
-          BASE_URL: ${{ github.event.pull_request.base.repo.clone_url }}
-          HEAD_URL: ${{ github.event.pull_request.head.repo.clone_url }}
-          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-          EVENT_BASE: ${{ github.event.pull_request.base.sha }}
-        run: |
-          set -euo pipefail
-          base_ref="refs/remotes/base/$BASE_REF"
-          git fetch --no-tags "$BASE_URL" "+refs/heads/$BASE_REF:$base_ref"
-          tip=$(git rev-parse "$base_ref")
-          for deepen in 50 100 200; do
-            if git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
-              break
-            fi
-            if [ "$(git rev-parse --is-shallow-repository)" != true ]; then
-              break
-            fi
-            git fetch --no-tags --deepen="$deepen" "$HEAD_URL" "$PR_HEAD_SHA"
-            git fetch --no-tags --deepen="$deepen" "$BASE_URL" "$tip"
-          done
-          if ! git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
-            if [ "$(git rev-parse --is-shallow-repository)" = true ]; then
-              git fetch --no-tags --unshallow "$HEAD_URL" "$PR_HEAD_SHA"
-              git fetch --no-tags "$BASE_URL" "$tip"
-            fi
-          fi
-          if ! git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
-            echo "::error::No merge base for current base tip and pull request head"
-            exit 1
-          fi
-          git config user.name 'github-actions[bot]'
-          git config user.email 'github-actions[bot]@users.noreply.github.com'
-          git checkout --detach "$tip"
-          if ! git merge --no-ff --no-edit "$PR_HEAD_SHA"; then
-            echo "::error::Cannot merge pull request head into current base tip"
-            git merge --abort
-            exit 1
-          fi
-          mapfile -t parents < <(git cat-file -p HEAD | sed -n 's/^parent //p')
-          first_parent=${parents[0]:-}
-          second_parent=${parents[1]:-}
-          if [ "${#parents[@]}" -ne 2 ] || [ "$first_parent" != "$tip" ] || \
-             [ "$second_parent" != "$PR_HEAD_SHA" ]; then
-            echo "::error::Local merge does not have exactly the expected two parents"
-            exit 1
-          fi
-          tested=$(git rev-parse HEAD)
-          tree=$(git rev-parse 'HEAD^{tree}')
-          echo "tested=$tested first_parent=$first_parent second_parent=$second_parent" \
-            "tip=$tip event_base=$EVENT_BASE tree=$tree"
-          echo "tip=$tip" >> "$GITHUB_OUTPUT"
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v7
-        with:
-          enable-cache: true
-          cache-dependency-glob: "uv.lock"
-
-      - name: Set up Python
-        run: uv python install ${{ env.PYTHON_VERSION_DEFAULT }}
-
-      - name: Install dependencies
-        run: uv sync --all-extras
-
-      - name: Run mypy
-        run: |
-          uv run mypy src/worldenergydata/ \
-            --ignore-missing-imports \
-            --no-error-summary \
-            --show-error-codes
-        continue-on-error: true
-
   security:
     name: Security Scan (full)
+    # PR/push: secret scan only. Bandit runs in the daily Main full run.
     runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
     needs: [mode]
     if: >-
@@ -528,214 +293,11 @@ jobs:
             "tip=$tip event_base=$EVENT_BASE tree=$tree"
           echo "tip=$tip" >> "$GITHUB_OUTPUT"
 
-      - name: Install uv
-        uses: astral-sh/setup-uv@v7
-        with:
-          enable-cache: true
-          cache-dependency-glob: "uv.lock"
-
-      - name: Set up Python
-        run: uv python install ${{ env.PYTHON_VERSION_DEFAULT }}
-
-      - name: Install dependencies
-        run: uv sync --all-extras
-
-      - name: Run bandit security scan
-        run: |
-          uv pip install bandit
-          uv run bandit -r src/ -ll -ii -x tests/ || true
-
       - name: Check for secrets with gitleaks
         uses: gitleaks/gitleaks-action@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         continue-on-error: true
-
-  build:
-    name: Build Package
-    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
-    needs: [mode, lint] # test job skips on unlabeled PRs (module gate covers them)
-    if: >-
-      !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && needs.lint.result
-      == 'success'
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v7
-        with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
-          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
-          fetch-depth: 1
-
-      - name: Build local pull request merge
-        id: local_merge
-        if: github.event_name == 'pull_request'
-        env:
-          BASE_REF: ${{ github.event.pull_request.base.ref }}
-          BASE_URL: ${{ github.event.pull_request.base.repo.clone_url }}
-          HEAD_URL: ${{ github.event.pull_request.head.repo.clone_url }}
-          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-          EVENT_BASE: ${{ github.event.pull_request.base.sha }}
-        run: |
-          set -euo pipefail
-          base_ref="refs/remotes/base/$BASE_REF"
-          git fetch --no-tags "$BASE_URL" "+refs/heads/$BASE_REF:$base_ref"
-          tip=$(git rev-parse "$base_ref")
-          for deepen in 50 100 200; do
-            if git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
-              break
-            fi
-            if [ "$(git rev-parse --is-shallow-repository)" != true ]; then
-              break
-            fi
-            git fetch --no-tags --deepen="$deepen" "$HEAD_URL" "$PR_HEAD_SHA"
-            git fetch --no-tags --deepen="$deepen" "$BASE_URL" "$tip"
-          done
-          if ! git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
-            if [ "$(git rev-parse --is-shallow-repository)" = true ]; then
-              git fetch --no-tags --unshallow "$HEAD_URL" "$PR_HEAD_SHA"
-              git fetch --no-tags "$BASE_URL" "$tip"
-            fi
-          fi
-          if ! git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
-            echo "::error::No merge base for current base tip and pull request head"
-            exit 1
-          fi
-          git config user.name 'github-actions[bot]'
-          git config user.email 'github-actions[bot]@users.noreply.github.com'
-          git checkout --detach "$tip"
-          if ! git merge --no-ff --no-edit "$PR_HEAD_SHA"; then
-            echo "::error::Cannot merge pull request head into current base tip"
-            git merge --abort
-            exit 1
-          fi
-          mapfile -t parents < <(git cat-file -p HEAD | sed -n 's/^parent //p')
-          first_parent=${parents[0]:-}
-          second_parent=${parents[1]:-}
-          if [ "${#parents[@]}" -ne 2 ] || [ "$first_parent" != "$tip" ] || \
-             [ "$second_parent" != "$PR_HEAD_SHA" ]; then
-            echo "::error::Local merge does not have exactly the expected two parents"
-            exit 1
-          fi
-          tested=$(git rev-parse HEAD)
-          tree=$(git rev-parse 'HEAD^{tree}')
-          echo "tested=$tested first_parent=$first_parent second_parent=$second_parent" \
-            "tip=$tip event_base=$EVENT_BASE tree=$tree"
-          echo "tip=$tip" >> "$GITHUB_OUTPUT"
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v7
-        with:
-          enable-cache: true
-          cache-dependency-glob: "uv.lock"
-
-      - name: Set up Python
-        run: uv python install ${{ env.PYTHON_VERSION_DEFAULT }}
-
-      - name: Build package
-        # Workspace mode (ADR 0001 Phase 2 PR #1): build BOTH the root
-        # worldenergydata wheel and the worldenergydata-core member wheel so the
-        # build job exercises the full workspace, not just the root package.
-        run: uv build --all-packages
-
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v7
-        with:
-          name: dist
-          path: dist/
-          retention-days: 5
-
-  docs:
-    name: Documentation (full)
-    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
-    needs: [mode]
-    if: >-
-      !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && github.event_name
-      == 'pull_request'
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v7
-        with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
-          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
-          fetch-depth: 1
-
-      - name: Build local pull request merge
-        id: local_merge
-        if: github.event_name == 'pull_request'
-        env:
-          BASE_REF: ${{ github.event.pull_request.base.ref }}
-          BASE_URL: ${{ github.event.pull_request.base.repo.clone_url }}
-          HEAD_URL: ${{ github.event.pull_request.head.repo.clone_url }}
-          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-          EVENT_BASE: ${{ github.event.pull_request.base.sha }}
-        run: |
-          set -euo pipefail
-          base_ref="refs/remotes/base/$BASE_REF"
-          git fetch --no-tags "$BASE_URL" "+refs/heads/$BASE_REF:$base_ref"
-          tip=$(git rev-parse "$base_ref")
-          for deepen in 50 100 200; do
-            if git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
-              break
-            fi
-            if [ "$(git rev-parse --is-shallow-repository)" != true ]; then
-              break
-            fi
-            git fetch --no-tags --deepen="$deepen" "$HEAD_URL" "$PR_HEAD_SHA"
-            git fetch --no-tags --deepen="$deepen" "$BASE_URL" "$tip"
-          done
-          if ! git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
-            if [ "$(git rev-parse --is-shallow-repository)" = true ]; then
-              git fetch --no-tags --unshallow "$HEAD_URL" "$PR_HEAD_SHA"
-              git fetch --no-tags "$BASE_URL" "$tip"
-            fi
-          fi
-          if ! git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
-            echo "::error::No merge base for current base tip and pull request head"
-            exit 1
-          fi
-          git config user.name 'github-actions[bot]'
-          git config user.email 'github-actions[bot]@users.noreply.github.com'
-          git checkout --detach "$tip"
-          if ! git merge --no-ff --no-edit "$PR_HEAD_SHA"; then
-            echo "::error::Cannot merge pull request head into current base tip"
-            git merge --abort
-            exit 1
-          fi
-          mapfile -t parents < <(git cat-file -p HEAD | sed -n 's/^parent //p')
-          first_parent=${parents[0]:-}
-          second_parent=${parents[1]:-}
-          if [ "${#parents[@]}" -ne 2 ] || [ "$first_parent" != "$tip" ] || \
-             [ "$second_parent" != "$PR_HEAD_SHA" ]; then
-            echo "::error::Local merge does not have exactly the expected two parents"
-            exit 1
-          fi
-          tested=$(git rev-parse HEAD)
-          tree=$(git rev-parse 'HEAD^{tree}')
-          echo "tested=$tested first_parent=$first_parent second_parent=$second_parent" \
-            "tip=$tip event_base=$EVENT_BASE tree=$tree"
-          echo "tip=$tip" >> "$GITHUB_OUTPUT"
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v7
-        with:
-          enable-cache: true
-          cache-dependency-glob: "uv.lock"
-
-      - name: Set up Python
-        run: uv python install ${{ env.PYTHON_VERSION_DEFAULT }}
-
-      - name: Install dependencies
-        run: uv sync --extra docs
-
-      - name: Build documentation
-        run: |
-          if [ -f docs/conf.py ]; then
-            cd docs && uv run sphinx-build -b html . _build/html
-          else
-            echo "Skipping Sphinx build: docs/conf.py is not present"
-          fi
 
   # Gate mode validates evidence once using the maintained live-base helper.
   # Result jobs consume that snapshot, avoiding races between repeated lookups.
@@ -765,32 +327,6 @@ jobs:
             exit 1
           fi
 
-  type-check-gate:
-    name: Type Check
-    needs: [mode, type-check]
-    if: ${{ !cancelled() }}
-    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
-    permissions:
-      contents: read
-      actions: read
-    steps:
-      - name: Copy selected check conclusion
-        if: needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'
-        env:
-          REPLAY_RESULT: ${{ fromJSON(needs.mode.outputs.evidence || '{}')['Type Check'].decision }}
-        run: |
-          echo "Selected replay result: $REPLAY_RESULT"
-          test "$REPLAY_RESULT" = PASS
-      - name: Gate on full result
-        if: needs.mode.result != 'success' || needs.mode.outputs.replay != 'true'
-        env:
-          FULL_RESULT: ${{ needs.type-check.result }}
-        run: |
-          if [ "$FULL_RESULT" != success ]; then
-            echo "::error::Full gate did not succeed: $FULL_RESULT"
-            exit 1
-          fi
-
   security-gate:
     name: Security Scan
     needs: [mode, security]
@@ -811,32 +347,6 @@ jobs:
         if: needs.mode.result != 'success' || needs.mode.outputs.replay != 'true'
         env:
           FULL_RESULT: ${{ needs.security.result }}
-        run: |
-          if [ "$FULL_RESULT" != success ]; then
-            echo "::error::Full gate did not succeed: $FULL_RESULT"
-            exit 1
-          fi
-
-  docs-gate:
-    name: Documentation
-    needs: [mode, docs]
-    if: ${{ !cancelled() && github.event_name == 'pull_request' }}
-    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
-    permissions:
-      contents: read
-      actions: read
-    steps:
-      - name: Copy selected check conclusion
-        if: needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'
-        env:
-          REPLAY_RESULT: ${{ fromJSON(needs.mode.outputs.evidence || '{}')['Documentation'].decision }}
-        run: |
-          echo "Selected replay result: $REPLAY_RESULT"
-          test "$REPLAY_RESULT" = PASS
-      - name: Gate on full result
-        if: needs.mode.result != 'success' || needs.mode.outputs.replay != 'true'
-        env:
-          FULL_RESULT: ${{ needs.docs.result }}
         run: |
           if [ "$FULL_RESULT" != success ]; then
             echo "::error::Full gate did not succeed: $FULL_RESULT"

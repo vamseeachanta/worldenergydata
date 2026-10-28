@@ -13,11 +13,11 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
 HELPER = "scripts/ci/replay_gate.py"
+# PR fast gate (28 Oct 2026): Type Check and Documentation moved to the daily
+# Main full run, so these three are the replayable required wrappers.
 REQUIRED = {
     "lint-gate": "Lint",
-    "type-check-gate": "Type Check",
     "security-gate": "Security Scan",
-    "docs-gate": "Documentation",
     "pr-gate": "Test (PR gate)",
 }
 
