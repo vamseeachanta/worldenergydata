@@ -1,9 +1,60 @@
 {
   "schema_version": 1,
   "repository": "worldenergydata",
-  "revision": "648d6de46081ad98a06504a25ec8a222acbd41b1",
-  "scope": "Package-local enrollment proposal; external map and reviewed inventory unchanged.",
+  "revision": "a814fe13149465d1daeb8a06ca2f024b60a335a1",
+  "detector_revision": "88c8c3efe56ff63216cb81a8f3e642059b158d3b",
+  "scope": "Package-local enrollment proposal; external reviewed map is unchanged.",
   "families": [
+    {
+      "id": "duration",
+      "title": "Position-based power-law duration",
+      "equation": "T(N) = T1 * N**(log(LC)/log(2)); N <= 1 returns T1",
+      "source": {
+        "title": "Recorded application equations; engineering provenance unqualified",
+        "document": "batch_economics/economics.py",
+        "revision": "a814fe13149465d1daeb8a06ca2f024b60a335a1",
+        "section": "learning_curve_time, lines 44-62",
+        "application": "Implementation evidence and arithmetic only; physical qualification NOT_EVALUATED."
+      },
+      "implementations": [
+        {
+          "path": "packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py",
+          "symbol": "BatchDrillingEconomics.learning_curve_time",
+          "line": 38,
+          "end_line": 62,
+          "kind": "method",
+          "relation": "implementation",
+          "module": "drilling",
+          "file_sha256": "a14564ea9372b26481bb41e4387b11a1dcb908c7e3bd5a230ba7dea327ab58c4"
+        }
+      ],
+      "tests": [
+        "tests/unit/drilling/test_pack_numeric_gates.py::test_c5_power_law_duration",
+        "tests/unit/drilling/test_implementation_map.py::test_duration_and_campaign_cost_hand_calculations"
+      ],
+      "limits": [
+        "Individual versus cumulative-average duration interpretation remains unresolved (#1342).",
+        "Direct finite-input and positive-position contracts remain tracked in #1344."
+      ],
+      "counted": false,
+      "status": "pending_review",
+      "qualification": "NOT_EVALUATED",
+      "duplicate_discovery": {
+        "revision": "a814fe13149465d1daeb8a06ca2f024b60a335a1",
+        "scope": "All tracked Python blobs; exact method-definition names, including scripts and tests.",
+        "pattern": "def (learning_curve_time)\\(",
+        "command": "git grep -n -E 'def (learning_curve_time)\\(' <revision> -- '*.py'",
+        "results": [
+          {
+            "path": "packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py",
+            "line": 38,
+            "classification": "implementation",
+            "file_sha256": "a14564ea9372b26481bb41e4387b11a1dcb908c7e3bd5a230ba7dea327ab58c4"
+          }
+        ],
+        "conclusion": "No additional same-name definition found. API delegates share the enrolled implementation; differently named algorithms are not excluded. No claim of algorithmic uniqueness."
+      }
+    },
     {
       "id": "mobilization-allocation",
       "title": "Equal allocation of fixed mobilization cost per well",
@@ -26,7 +77,7 @@
           "line": 68,
           "end_line": 90,
           "kind": "method",
-          "relation": "independent",
+          "relation": "implementation",
           "module": "drilling",
           "file_sha256": "a14564ea9372b26481bb41e4387b11a1dcb908c7e3bd5a230ba7dea327ab58c4"
         }
@@ -36,34 +87,346 @@
         "tests/unit/drilling/test_implementation_map.py::test_mobilization_nonpositive_count"
       ],
       "duplicate_discovery": {
-        "scope": "All tracked Python blobs at revision; bounded name and literal-division search.",
-        "pattern": "mobilization_savings|mob_cost / n_wells_batch",
-        "command": "git grep -l -E 'mobilization_savings|mob_cost / n_wells_batch' <revision> -- '*.py'",
+        "revision": "a814fe13149465d1daeb8a06ca2f024b60a335a1",
+        "scope": "All tracked Python blobs; exact method-definition names, including scripts and tests.",
+        "pattern": "def (mobilization_savings)\\(",
+        "command": "git grep -n -E 'def (mobilization_savings)\\(' <revision> -- '*.py'",
         "results": [
           {
             "path": "packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py",
+            "line": 68,
             "classification": "implementation",
             "file_sha256": "a14564ea9372b26481bb41e4387b11a1dcb908c7e3bd5a230ba7dea327ab58c4"
-          },
-          {
-            "path": "tests/drilling/test_batch_economics.py",
-            "classification": "test_consumer",
-            "file_sha256": "df9adfcdbc4ca42cda5bba5b9750b96cdc3f57acbb9bc035cd217ab94a414b20"
-          },
-          {
-            "path": "tests/unit/drilling/test_pack_numeric_gates.py",
-            "classification": "test_consumer",
-            "file_sha256": "a7bffd58e73b8f640b2fedba9b3041241bdce9f59ec1623c5bbaed35e9ae7c80"
           }
         ],
-        "conclusion": "No additional definition in this search; not a proof of algorithmic uniqueness."
+        "conclusion": "No additional same-name definition found. API delegates share the enrolled implementation; differently named algorithms are not excluded. No claim of algorithmic uniqueness."
       },
       "limits": [
         "The return is allocated cost, despite the savings method name.",
         "n_wells_standalone is accepted but unused; semantics remain tracked in #1345.",
         "Only the existing nonpositive batch-count guard is recorded; finiteness and integer-count contracts remain tracked in #1344.",
         "Engineering qualification and counted-family review are NOT_EVALUATED."
-      ]
+      ],
+      "qualification": "NOT_EVALUATED"
+    },
+    {
+      "id": "break-even-comparison",
+      "title": "Finite strict batch versus standalone cost comparison",
+      "equation": "first N with mob + rate*sum(T(i), i=1..N) < N*(mob+rate*T1)",
+      "source": {
+        "title": "Recorded application equations; engineering provenance unqualified",
+        "document": "batch_economics/economics.py",
+        "revision": "a814fe13149465d1daeb8a06ca2f024b60a335a1",
+        "section": "break_even_n_wells, lines 122-136",
+        "application": "Implementation evidence and arithmetic only; physical qualification NOT_EVALUATED."
+      },
+      "implementations": [
+        {
+          "path": "packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py",
+          "symbol": "BatchDrillingEconomics.break_even_n_wells",
+          "line": 96,
+          "end_line": 136,
+          "kind": "method",
+          "relation": "implementation",
+          "module": "drilling",
+          "file_sha256": "a14564ea9372b26481bb41e4387b11a1dcb908c7e3bd5a230ba7dea327ab58c4"
+        }
+      ],
+      "tests": [
+        "tests/unit/drilling/test_pack_numeric_gates.py::test_c7_break_even_outputs"
+      ],
+      "limits": [
+        "Search is capped at 200 candidates and returns 1 if none qualifies; this is existing application policy, not a sourced acceptance limit.",
+        "Cost-basis and fallback semantics remain tracked in #1345."
+      ],
+      "counted": false,
+      "status": "pending_review",
+      "qualification": "NOT_EVALUATED",
+      "duplicate_discovery": {
+        "revision": "a814fe13149465d1daeb8a06ca2f024b60a335a1",
+        "scope": "All tracked Python blobs; exact method-definition names, including scripts and tests.",
+        "pattern": "def (break_even_n_wells)\\(",
+        "command": "git grep -n -E 'def (break_even_n_wells)\\(' <revision> -- '*.py'",
+        "results": [
+          {
+            "path": "packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py",
+            "line": 96,
+            "classification": "implementation",
+            "file_sha256": "a14564ea9372b26481bb41e4387b11a1dcb908c7e3bd5a230ba7dea327ab58c4"
+          }
+        ],
+        "conclusion": "No additional same-name definition found. API delegates share the enrolled implementation; differently named algorithms are not excluded. No claim of algorithmic uniqueness."
+      }
+    },
+    {
+      "id": "campaign-cost",
+      "title": "Undiscounted campaign total and standalone comparison",
+      "equation": "batch = mob + rate*sum(T(i)); standalone = N*(mob+rate*T1); savings = standalone-batch",
+      "source": {
+        "title": "Recorded application equations; engineering provenance unqualified",
+        "document": "batch_economics/economics.py",
+        "revision": "a814fe13149465d1daeb8a06ca2f024b60a335a1",
+        "section": "batch_vs_standalone_npv and campaign_total_cost, lines 170-228",
+        "application": "Implementation evidence and arithmetic only; physical qualification NOT_EVALUATED."
+      },
+      "implementations": [
+        {
+          "path": "packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py",
+          "symbol": "BatchDrillingEconomics.batch_vs_standalone_npv",
+          "line": 142,
+          "end_line": 196,
+          "kind": "method",
+          "relation": "implementation",
+          "module": "drilling",
+          "file_sha256": "a14564ea9372b26481bb41e4387b11a1dcb908c7e3bd5a230ba7dea327ab58c4"
+        },
+        {
+          "path": "packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py",
+          "symbol": "BatchDrillingEconomics.campaign_total_cost",
+          "line": 202,
+          "end_line": 228,
+          "kind": "method",
+          "relation": "implementation",
+          "module": "drilling",
+          "file_sha256": "a14564ea9372b26481bb41e4387b11a1dcb908c7e3bd5a230ba7dea327ab58c4"
+        }
+      ],
+      "tests": [
+        "tests/unit/drilling/test_implementation_map.py::test_duration_and_campaign_cost_hand_calculations",
+        "tests/drilling/test_batch_economics.py::TestBatchVsStandaloneNPV::test_single_well_no_mob_savings"
+      ],
+      "limits": [
+        "Comparison uses an unqualified depth-to-duration heuristic; constants are implementation policy only (#1342).",
+        "discount_rate is unused; outputs are undiscounted costs despite NPV names (#1345).",
+        "Sequence and empty-campaign contracts remain tracked in #1344."
+      ],
+      "counted": false,
+      "status": "pending_review",
+      "qualification": "NOT_EVALUATED",
+      "duplicate_discovery": {
+        "revision": "a814fe13149465d1daeb8a06ca2f024b60a335a1",
+        "scope": "All tracked Python blobs; exact method-definition names, including scripts and tests.",
+        "pattern": "def (batch_vs_standalone_npv|campaign_total_cost)\\(",
+        "command": "git grep -n -E 'def (batch_vs_standalone_npv|campaign_total_cost)\\(' <revision> -- '*.py'",
+        "results": [
+          {
+            "path": "packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py",
+            "line": 142,
+            "classification": "implementation",
+            "file_sha256": "a14564ea9372b26481bb41e4387b11a1dcb908c7e3bd5a230ba7dea327ab58c4"
+          },
+          {
+            "path": "packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py",
+            "line": 202,
+            "classification": "implementation",
+            "file_sha256": "a14564ea9372b26481bb41e4387b11a1dcb908c7e3bd5a230ba7dea327ab58c4"
+          }
+        ],
+        "conclusion": "No additional same-name definition found. API delegates share the enrolled implementation; differently named algorithms are not excluded. No claim of algorithmic uniqueness."
+      }
+    },
+    {
+      "id": "anchored-time-window-grouping",
+      "title": "Inclusive calendar window anchored at first unassigned event",
+      "equation": "end = first + DateOffset(months=M); include spud <= end; span_days = (last-first)/Timedelta(days=1)",
+      "source": {
+        "title": "pandas Time series guide and Timedelta reference",
+        "year": 2026,
+        "section": "DateOffset objects; Timedelta units",
+        "url": "https://pandas.pydata.org/docs/user_guide/timeseries.html#dateoffset-objects",
+        "accessed": "2026-10-22"
+      },
+      "implementations": [
+        {
+          "path": "packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py",
+          "symbol": "BSEEBatchDetector.detect_batches",
+          "line": 142,
+          "end_line": 153,
+          "kind": "method",
+          "relation": "api_delegate",
+          "module": "drilling",
+          "file_sha256": "22c003b37e4941e41f0d5c4ad112b916636ea31ab2502cdfa16226f6b95037e5"
+        },
+        {
+          "path": "packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py",
+          "symbol": "BSEEBatchDetector.detect_batches_with_diagnostics",
+          "line": 155,
+          "end_line": 213,
+          "kind": "method",
+          "relation": "api_delegate",
+          "module": "drilling",
+          "file_sha256": "22c003b37e4941e41f0d5c4ad112b916636ea31ab2502cdfa16226f6b95037e5"
+        },
+        {
+          "path": "packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py",
+          "symbol": "BSEEBatchDetector._group",
+          "line": 216,
+          "end_line": 248,
+          "kind": "method",
+          "relation": "implementation",
+          "module": "drilling",
+          "file_sha256": "22c003b37e4941e41f0d5c4ad112b916636ea31ab2502cdfa16226f6b95037e5"
+        }
+      ],
+      "tests": [
+        "tests/unit/drilling/test_detector_regression.py::test_record_conservation_and_all_rejection_reasons",
+        "tests/unit/drilling/test_detector_regression.py::test_calendar_endpoint_one_second_either_side",
+        "tests/unit/drilling/test_detector_regression.py::test_windows_anchor_to_first_member_not_last_member",
+        "tests/unit/drilling/test_detector_contracts.py::test_calendar_month_boundary_and_fractional_days"
+      ],
+      "limits": [
+        "Window length is application policy, not a physically qualified campaign boundary.",
+        "batch_size counts distinct accepted event rows, not unique wells.",
+        "UTC normalization does not establish source-timezone provenance."
+      ],
+      "counted": false,
+      "status": "pending_review",
+      "qualification": "NOT_EVALUATED",
+      "duplicate_discovery": {
+        "revision": "a814fe13149465d1daeb8a06ca2f024b60a335a1",
+        "scope": "All tracked Python blobs; exact method-definition names, including scripts and tests.",
+        "pattern": "def (detect_batches|detect_batches_with_diagnostics|_group)\\(",
+        "command": "git grep -n -E 'def (detect_batches|detect_batches_with_diagnostics|_group)\\(' <revision> -- '*.py'",
+        "results": [
+          {
+            "path": "packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py",
+            "line": 142,
+            "classification": "api_delegate",
+            "file_sha256": "22c003b37e4941e41f0d5c4ad112b916636ea31ab2502cdfa16226f6b95037e5"
+          },
+          {
+            "path": "packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py",
+            "line": 155,
+            "classification": "api_delegate",
+            "file_sha256": "22c003b37e4941e41f0d5c4ad112b916636ea31ab2502cdfa16226f6b95037e5"
+          },
+          {
+            "path": "packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py",
+            "line": 216,
+            "classification": "implementation",
+            "file_sha256": "22c003b37e4941e41f0d5c4ad112b916636ea31ab2502cdfa16226f6b95037e5"
+          }
+        ],
+        "conclusion": "No additional same-name definition found. API delegates share the enrolled implementation; differently named algorithms are not excluded. No claim of algorithmic uniqueness."
+      }
+    },
+    {
+      "id": "log-space-learning-fit",
+      "title": "Centered least-squares fit of log duration against log position",
+      "equation": "b = sum((x-mean(x))*(y-mean(y)))/sum((x-mean(x))**2); x=log(N); y=log(T); LC=2**b",
+      "source": {
+        "title": "NIST/SEMATECH e-Handbook of Statistical Methods",
+        "edition": "Online edition accessed 2026",
+        "section": "4.4.3.1, Least Squares",
+        "url": "https://www.itl.nist.gov/div898/handbook/pmd/section4/pmd431.htm",
+        "accessed": "2026-10-22",
+        "application": "Linear least squares after the declared log transform; doubling ratio follows algebraically."
+      },
+      "implementations": [
+        {
+          "path": "packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py",
+          "symbol": "BSEEBatchDetector.fit_learning_curve",
+          "line": 250,
+          "end_line": 257,
+          "kind": "method",
+          "relation": "api_delegate",
+          "module": "drilling",
+          "file_sha256": "22c003b37e4941e41f0d5c4ad112b916636ea31ab2502cdfa16226f6b95037e5"
+        },
+        {
+          "path": "packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py",
+          "symbol": "BSEEBatchDetector.fit_learning_curve_with_diagnostics",
+          "line": 259,
+          "end_line": 326,
+          "kind": "method",
+          "relation": "implementation",
+          "module": "drilling",
+          "file_sha256": "22c003b37e4941e41f0d5c4ad112b916636ea31ab2502cdfa16226f6b95037e5"
+        }
+      ],
+      "tests": [
+        "tests/unit/drilling/test_detector_regression.py::test_identifiability_boundary",
+        "tests/unit/drilling/test_detector_regression.py::test_clipping_boundary_and_one_duration_step_either_side",
+        "tests/unit/drilling/test_detector_contracts.py::test_learning_three_point_hand_result"
+      ],
+      "limits": [
+        "Fallback 0.85 and bounds [0.5,1.0] are compatibility policy in detector-contracts.md revision 1, not engineering acceptance limits.",
+        "Filtered rows, defaults, raw factors and clipping status must be retained by diagnostic consumers.",
+        "Physical duration interpretation and calibration remain NOT_EVALUATED (#1342)."
+      ],
+      "counted": false,
+      "status": "pending_review",
+      "qualification": "NOT_EVALUATED",
+      "duplicate_discovery": {
+        "revision": "a814fe13149465d1daeb8a06ca2f024b60a335a1",
+        "scope": "All tracked Python blobs; exact method-definition names, including scripts and tests.",
+        "pattern": "def (fit_learning_curve|fit_learning_curve_with_diagnostics)\\(",
+        "command": "git grep -n -E 'def (fit_learning_curve|fit_learning_curve_with_diagnostics)\\(' <revision> -- '*.py'",
+        "results": [
+          {
+            "path": "packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py",
+            "line": 250,
+            "classification": "api_delegate",
+            "file_sha256": "22c003b37e4941e41f0d5c4ad112b916636ea31ab2502cdfa16226f6b95037e5"
+          },
+          {
+            "path": "packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py",
+            "line": 259,
+            "classification": "implementation",
+            "file_sha256": "22c003b37e4941e41f0d5c4ad112b916636ea31ab2502cdfa16226f6b95037e5"
+          }
+        ],
+        "conclusion": "No additional same-name definition found. API delegates share the enrolled implementation; differently named algorithms are not excluded. No claim of algorithmic uniqueness."
+      }
     }
-  ]
+  ],
+  "broader_duplicate_discovery": {
+    "revision": "a814fe13149465d1daeb8a06ca2f024b60a335a1",
+    "pattern": "learning_curve|learning.?rate|mobilization_savings|batch_cost",
+    "command": "git grep -l -i -E 'learning_curve|learning.?rate|mobilization_savings|batch_cost' <revision> -- '*.py'",
+    "results": [
+      {
+        "path": "packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py",
+        "classification": "enrolled_implementation",
+        "file_sha256": "22c003b37e4941e41f0d5c4ad112b916636ea31ab2502cdfa16226f6b95037e5"
+      },
+      {
+        "path": "packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py",
+        "classification": "enrolled_implementation",
+        "file_sha256": "a14564ea9372b26481bb41e4387b11a1dcb908c7e3bd5a230ba7dea327ab58c4"
+      },
+      {
+        "path": "packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/models.py",
+        "classification": "schema",
+        "file_sha256": "dda57364683385ac3af3e10d0971921f9295f94bfbf1b85819c2f6b487ecff46"
+      },
+      {
+        "path": "tests/drilling/test_batch_economics.py",
+        "classification": "test_consumer",
+        "file_sha256": "df9adfcdbc4ca42cda5bba5b9750b96cdc3f57acbb9bc035cd217ab94a414b20"
+      },
+      {
+        "path": "tests/unit/drilling/test_detector_contracts.py",
+        "classification": "test_consumer",
+        "file_sha256": "ca351a0150a119e638621b66599404db7a36566a199de2b843e07367750434a5"
+      },
+      {
+        "path": "tests/unit/drilling/test_implementation_map.py",
+        "classification": "test_consumer",
+        "file_sha256": "f5afc3d4734bbe032992c43530629d6db6dcd5acfa2a9a33dd1101da24449c13"
+      },
+      {
+        "path": "tests/unit/drilling/test_pack_numeric_gates.py",
+        "classification": "test_consumer",
+        "file_sha256": "a7bffd58e73b8f640b2fedba9b3041241bdce9f59ec1623c5bbaed35e9ae7c80"
+      },
+      {
+        "path": "tests/unit/safety_analysis/nlp/test_classification_pipeline.py",
+        "classification": "unrelated_optimizer_fixture",
+        "file_sha256": "0e538035fac6b509e9c0fc27b7834ce5e26ef61b0b727261971f9c186dd67fff"
+      }
+    ],
+    "conclusion": "Eight files: two enrolled runtime modules, one schema, four drilling test consumers and one unrelated optimizer hyperparameter fixture. No further computational definition found in this bounded keyword search; algebraically equivalent or differently named methods remain outside its reach.",
+    "evidence_basis": "Digests describe the pinned blobs, including historical test files; current implementation bytes are verified separately."
+  }
 }
