@@ -27,7 +27,11 @@ def load_config(config_path: str | Path) -> dict:
 
 def configured_sources(config: dict) -> list[dict]:
     """Expand configured ECMC sources into named download entries."""
-    return [{"name": name, **source} for name, source in config["sources"].items()]
+    sources = [{"name": name, **source} for name, source in config["sources"].items()]
+    for source in sources:
+        if source.get("source_type") not in {"production_csv", "wells_shapefile"}:
+            raise ValueError("unsupported ECMC source_type")
+    return sources
 
 
 def download_source(url: str, destination: str | Path, timeout: int = 120) -> dict:
