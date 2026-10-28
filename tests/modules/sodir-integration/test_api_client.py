@@ -10,20 +10,15 @@ Tests verify:
 """
 
 import json
-import sys
 import time
 from datetime import datetime, timedelta
-from pathlib import Path
 from unittest.mock import MagicMock, Mock, call, patch
 
 import pytest
 
-# Add the module path for imports
-sys.path.insert(0, str(Path(__file__).parent))
-
-from sodir_module.api_client import SodirAPIClient
-from sodir_module.cache import CacheEntry, SodirCache
-from sodir_module.errors import (
+from worldenergydata.sodir.api_client import SodirAPIClient
+from worldenergydata.sodir.cache import CacheEntry, SodirCache
+from worldenergydata.sodir.errors import (
     SodirAPIError,
     SodirConfigurationError,
     SodirRateLimitError,
@@ -71,7 +66,7 @@ class TestSodirAPIClient:
 
         assert client.base_url == "https://factmaps.sodir.no/api/rest"
 
-    @patch("sodir_module.api_client.requests.get")
+    @patch("worldenergydata.sodir.transport.requests.Session.get")
     def test_get_request_basic(self, mock_get, api_client, mock_response):
         """Test basic GET request functionality."""
         mock_get.return_value = mock_response
@@ -81,12 +76,12 @@ class TestSodirAPIClient:
         assert result == {"data": [{"id": 1, "name": "test"}]}
         mock_get.assert_called_once_with(
             "https://factmaps.sodir.no/api/rest/test-endpoint",
-            params=None,
+            params={"format": "json"},
             headers=api_client.headers,
             timeout=api_client.timeout,
         )
 
-    @patch("sodir_module.api_client.requests.get")
+    @patch("worldenergydata.sodir.transport.requests.Session.get")
     def test_get_request_with_params(self, mock_get, api_client, mock_response):
         """Test GET request with query parameters."""
         mock_get.return_value = mock_response
@@ -131,7 +126,7 @@ class TestRateLimiting:
         client3 = SodirAPIClient("https://test.api", rate_limit=0)
         assert client3.min_interval == 0  # No rate limiting
 
-    @patch("sodir_module.api_client.requests.get")
+    @patch("worldenergydata.sodir.transport.requests.Session.get")
     def test_rate_limiting_enforced(self, mock_get, slow_client):
         """Test that rate limiting delays requests appropriately."""
         mock_response = Mock()
@@ -150,7 +145,7 @@ class TestRateLimiting:
         assert elapsed >= 0.4  # Allow some tolerance
         assert mock_get.call_count == 2
 
-    @patch("sodir_module.api_client.requests.get")
+    @patch("worldenergydata.sodir.transport.requests.Session.get")
     def test_no_rate_limiting_when_disabled(self, mock_get):
         """Test that rate limiting can be disabled."""
         mock_response = Mock()
@@ -159,6 +154,7 @@ class TestRateLimiting:
         mock_get.return_value = mock_response
 
         client = SodirAPIClient("https://test.api", rate_limit=0)
+        client.cache_enabled = False
 
         # Make rapid requests
         start_time = time.time()
@@ -183,7 +179,7 @@ class TestCaching:
         client.cache_enabled = True
         return client
 
-    @patch("sodir_module.api_client.requests.get")
+    @patch("worldenergydata.sodir.transport.requests.Session.get")
     def test_cache_hit(self, mock_get, client_with_cache):
         """Test that cached responses are returned without API call."""
         mock_response = Mock()
@@ -201,7 +197,7 @@ class TestCaching:
         assert result2 == {"data": ["first"]}
         assert mock_get.call_count == 1  # No additional API call
 
-    @patch("sodir_module.api_client.requests.get")
+    @patch("worldenergydata.sodir.transport.requests.Session.get")
     def test_cache_expiration(self, mock_get, client_with_cache):
         """Test that cache entries expire after TTL."""
         mock_response = Mock()
@@ -210,6 +206,7 @@ class TestCaching:
         mock_get.return_value = mock_response
 
         # Set cache TTL to very short time for testing
+        client_with_cache.cache_ttl = 0.1
         client_with_cache.cache.default_ttl = 0.1  # 100ms
 
         # First call
@@ -225,7 +222,7 @@ class TestCaching:
         assert result2 == {"data": ["second"]}
         assert mock_get.call_count == 2
 
-    @patch("sodir_module.api_client.requests.get")
+    @patch("worldenergydata.sodir.transport.requests.Session.get")
     def test_cache_key_includes_params(self, mock_get, client_with_cache):
         """Test that cache keys include query parameters."""
         mock_response = Mock()
@@ -269,7 +266,7 @@ class TestErrorHandling:
             retry_delay=0.1,  # Short delay for testing
         )
 
-    @patch("sodir_module.api_client.requests.get")
+    @patch("worldenergydata.sodir.transport.requests.Session.get")
     def test_retry_on_server_error(self, mock_get, client):
         """Test retry logic for 5xx server errors."""
         # Simulate server error then success
@@ -288,7 +285,7 @@ class TestErrorHandling:
         assert result == {"data": []}
         assert mock_get.call_count == 3
 
-    @patch("sodir_module.api_client.requests.get")
+    @patch("worldenergydata.sodir.transport.requests.Session.get")
     def test_retry_on_rate_limit(self, mock_get, client):
         """Test retry logic for rate limit errors."""
         # Simulate rate limit then success
@@ -308,7 +305,7 @@ class TestErrorHandling:
         assert result == {"data": []}
         assert mock_get.call_count == 2
 
-    @patch("sodir_module.api_client.requests.get")
+    @patch("worldenergydata.sodir.transport.requests.Session.get")
     def test_max_retries_exceeded(self, mock_get, client):
         """Test that retries stop after max attempts."""
         # Always return server error
@@ -321,9 +318,11 @@ class TestErrorHandling:
             client.get("/test")
 
         assert exc_info.value.status_code == 500
+        assert exc_info.value.context["status_code"] == 500
+        assert exc_info.value.context["module"] == "sodir"
         assert mock_get.call_count == 4  # Initial + 3 retries
 
-    @patch("sodir_module.api_client.requests.get")
+    @patch("worldenergydata.sodir.transport.requests.Session.get")
     def test_exponential_backoff(self, mock_get, client):
         """Test exponential backoff between retries."""
         # Always return server error
@@ -343,7 +342,7 @@ class TestErrorHandling:
         # Expected delays: 0.1, 0.2, 0.4 = 0.7 seconds minimum
         assert elapsed >= 0.6  # Allow some tolerance
 
-    @patch("sodir_module.api_client.requests.get")
+    @patch("worldenergydata.sodir.transport.requests.Session.get")
     def test_no_retry_on_client_error(self, mock_get, client):
         """Test that client errors (4xx) don't trigger retries."""
         error_response = Mock()
@@ -355,7 +354,84 @@ class TestErrorHandling:
             client.get("/test")
 
         assert exc_info.value.status_code == 400
+        assert exc_info.value.context["status_code"] == 400
         assert mock_get.call_count == 1  # No retries
+
+    @patch("worldenergydata.sodir.transport.time.sleep")
+    def test_exhausted_rate_limit_preserves_error(self, mock_sleep, client):
+        """Keep the rate-limit subtype and retry delay after the last attempt."""
+        response = Mock(status_code=429, headers={"Retry-After": "2"})
+        response.text = "Rate limit exceeded"
+        with patch.object(client, "_make_request", return_value=response) as request:
+            with pytest.raises(SodirRateLimitError) as exc_info:
+                client.get("/test")
+
+        assert request.call_count == 4
+        assert mock_sleep.call_args_list == [call(2), call(2), call(2)]
+        assert exc_info.value.status_code == 429
+        assert exc_info.value.retry_after == 2
+        assert exc_info.value.context["status_code"] == 429
+        assert exc_info.value.context["retry_after"] == 2
+
+    @patch("worldenergydata.sodir.transport.time.sleep")
+    def test_structured_server_error_preserves_context(self, mock_sleep, client):
+        """Retry transient structured errors without replacing their context."""
+        failure = SodirAPIError(
+            "Temporary failure", status_code=503, context={"operation": "synthetic"}
+        )
+        with patch.object(client, "_make_request", side_effect=failure) as request:
+            with pytest.raises(SodirAPIError) as exc_info:
+                client.get("/test")
+
+        assert request.call_count == 4
+        assert mock_sleep.call_args_list == [call(0.1), call(0.2), call(0.4)]
+        assert exc_info.value is failure
+        assert exc_info.value.context["status_code"] == 503
+        assert exc_info.value.context["operation"] == "synthetic"
+
+    @patch("worldenergydata.sodir.transport.time.sleep")
+    def test_network_errors_keep_retry_backoff(self, mock_sleep, client):
+        """Keep bounded retries and backoff for transport connection failures."""
+        with patch.object(
+            client, "_make_request", side_effect=ConnectionError("Connection failed")
+        ) as request:
+            with pytest.raises(SodirAPIError, match="Request failed after 4 attempts"):
+                client.get("/test")
+
+        assert request.call_count == 4
+        assert mock_sleep.call_args_list == [call(0.1), call(0.2), call(0.4)]
+
+    @pytest.mark.parametrize("status", [400, 500])
+    @patch("worldenergydata.sodir.transport.time.sleep")
+    def test_zero_retries_preserves_status(self, mock_sleep, client, status):
+        """The first failed response is terminal when no retries are allowed."""
+        client.max_retries = 0
+        response = Mock(status_code=status, text="Request failed")
+        with patch.object(client, "_make_request", return_value=response) as request:
+            with pytest.raises(SodirAPIError) as exc_info:
+                client.get("/test")
+
+        assert request.call_count == 1
+        mock_sleep.assert_not_called()
+        assert exc_info.value.status_code == status
+        assert exc_info.value.context["status_code"] == status
+
+    @patch("worldenergydata.sodir.transport.time.sleep")
+    def test_client_error_after_server_error_is_terminal(self, mock_sleep, client):
+        """A client rejection must not be retried into a later success."""
+        server_error = Mock(status_code=500, text="Temporary failure")
+        client_error = Mock(status_code=400, text="Request rejected")
+        success = Mock(status_code=200)
+        success.json.return_value = {"data": []}
+        with patch.object(
+            client, "_make_request", side_effect=[server_error, client_error, success]
+        ) as request:
+            with pytest.raises(SodirAPIError) as exc_info:
+                client.get("/test")
+
+        assert request.call_count == 2
+        assert mock_sleep.call_args_list == [call(0.1)]
+        assert exc_info.value.status_code == 400
 
 
 class TestSODIREndpoints:
@@ -368,7 +444,7 @@ class TestSODIREndpoints:
             base_url="https://factmaps.sodir.no/api/rest", rate_limit=10
         )
 
-    @patch("sodir_module.api_client.requests.get")
+    @patch("worldenergydata.sodir.transport.requests.Session.get")
     def test_get_blocks(self, mock_get, client):
         """Test blocks endpoint method."""
         mock_response = Mock()
@@ -388,7 +464,7 @@ class TestSODIREndpoints:
             timeout=client.timeout,
         )
 
-    @patch("sodir_module.api_client.requests.get")
+    @patch("worldenergydata.sodir.transport.requests.Session.get")
     def test_get_wellbores(self, mock_get, client):
         """Test wellbores endpoint method."""
         mock_response = Mock()
@@ -408,7 +484,7 @@ class TestSODIREndpoints:
             timeout=client.timeout,
         )
 
-    @patch("sodir_module.api_client.requests.get")
+    @patch("worldenergydata.sodir.transport.requests.Session.get")
     def test_get_fields(self, mock_get, client):
         """Test fields endpoint method."""
         mock_response = Mock()
@@ -428,7 +504,7 @@ class TestSODIREndpoints:
             timeout=client.timeout,
         )
 
-    @patch("sodir_module.api_client.requests.get")
+    @patch("worldenergydata.sodir.transport.requests.Session.get")
     def test_get_discoveries(self, mock_get, client):
         """Test discoveries endpoint method."""
         mock_response = Mock()
@@ -448,7 +524,7 @@ class TestSODIREndpoints:
             timeout=client.timeout,
         )
 
-    @patch("sodir_module.api_client.requests.get")
+    @patch("worldenergydata.sodir.transport.requests.Session.get")
     def test_get_surveys(self, mock_get, client):
         """Test surveys endpoint method."""
         mock_response = Mock()
@@ -492,7 +568,7 @@ class TestRequestHeaders:
         assert client.headers["X-Custom-Header"] == "test-value"
         assert "User-Agent" in client.headers  # Default still present
 
-    @patch("sodir_module.api_client.requests.get")
+    @patch("worldenergydata.sodir.transport.requests.Session.get")
     def test_headers_sent_with_request(self, mock_get):
         """Test headers are included in requests."""
         mock_response = Mock()

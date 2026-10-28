@@ -119,6 +119,32 @@ def test_config_repo_structure_routes_to_its_contract():
     assert "tests/repo_structure" in r["xdist"]
 
 
+@pytest.mark.parametrize(
+    "paths",
+    [
+        [".gitattributes"],
+        ["scripts/maintenance/classify_report_inventory.py"],
+        ["docs/modules/report-inventory.csv"],
+        ["tests/repo_structure/test_report_inventory.py"],
+        ["tests/repo_structure/test_new_contract.py"],
+        [
+            ".gitattributes",
+            "scripts/maintenance/classify_report_inventory.py",
+            "tests/repo_structure/test_report_inventory.py",
+        ],
+    ],
+)
+def test_inventory_changes_select_structure_and_byte_check(paths):
+    # The suite includes test_committed_csv_matches, which invokes --check.
+    result = select(paths, REPO_ROOT)
+    assert result["scope"] == "modules"
+    assert result["xdist"].count("tests/repo_structure") == 1
+    matrix = to_matrix(paths, REPO_ROOT)
+    assert matrix["scope"] == "modules"
+    targets = [t for shard in matrix["include"] for t in shard["targets"].split()]
+    assert targets.count("tests/repo_structure") == 1
+
+
 @pytest.mark.parametrize("module", _unit_modules())
 def test_every_unit_module_is_selected(module):
     """Drift guard: a change under any tests/unit/<module> must be module-scoped

@@ -59,6 +59,72 @@ This repo is the **asset & data** half of that loop — the public-source field/
 [Architecture drawing and report inventory](docs/modules/repository-architecture.md)
 covers ingestion, processing, capability provenance, publication and the bulk-data boundary.
 
+```mermaid
+flowchart TB
+  public_sources["BSEE; IMO GISIS; Texas RRC; other public sources"]
+  scheduler["Configured scheduler: eight implemented adapters; LNG stub"]
+  manual["Manual and on-demand acquisition; other automation not established"]
+  bulk["Bulk data outside git: WED_DATA_ROOT override; no bulk LFS"]
+  bsee["BSEE and HSE: ingestion, validation, analysis"]
+  marine["Marine safety: importers, normalization, analysis"]
+  regional["Regional and environmental packages: acquisition and processing"]
+  field_dev["Field development: catalogs, concepts, schematics"]
+  reports["Frozen reports and analysis tables"]
+  pages["Pages builder and deployment workflow"]
+  hub["Canonical capabilities website: redirect target"]
+  hf["Hugging Face: explicitly invoked export scripts and pilot configuration"]
+  subgraph capabilities["Surviving capability work specifications; provenance below"]
+    economics["Economics: field dimension, seven builder fields"]
+    portfolio["Economics portfolio"]
+    benchmark["Well benchmark"]
+    completion["Drilling and completion"]
+    well_path["Well paths"]
+    fd_showcase["Field-development showcase"]
+    fd_playbook["Interactive playbook"]
+    fd_portfolio["Development portfolio"]
+    fd_bsee_matched["BSEE-matched development"]
+    ms_exec["Marine safety executive summary"]
+    ms_fatality["Fatality analysis"]
+    ms_foundering["Foundering analysis"]
+    ms_hatch["Hatch analysis"]
+    imo["IMO GISIS analysis"]
+    mooring["Mooring incident-grounded screen"]
+  end
+  public_sources -.-> scheduler
+  public_sources -.-> manual
+  scheduler -.-> bulk
+  manual -.-> bulk
+  bulk -.-> bsee
+  bulk -.-> marine
+  bulk -.-> regional
+  bsee --> reports
+  marine --> reports
+  field_dev --> reports
+  bsee -.-> economics
+  economics -.-> portfolio
+  bsee -.-> benchmark
+  bsee -.-> completion
+  bsee -.-> well_path
+  bsee -.-> mooring
+  marine -.-> ms_exec
+  marine -.-> ms_fatality
+  marine -.-> ms_foundering
+  marine -.-> ms_hatch
+  manual -.-> imo
+  manual -.-> field_dev
+  field_dev -.-> fd_showcase
+  field_dev -.-> fd_playbook
+  field_dev -.-> fd_portfolio
+  field_dev -.-> fd_bsee_matched
+  reports --> pages
+  reports -.-> hf
+  pages --> hub
+```
+
+Figure 1. Repository architecture. Solid arrows show implemented relationships; dashed
+arrows show documented inputs or configured intent. Refresh execution, data freshness
+and completed publication require separate evidence; the linked page records provenance.
+
 ## Overview
 
 WorldEnergyData helps energy industry professionals, data analysts, researchers, and consultants make data-driven decisions by providing:

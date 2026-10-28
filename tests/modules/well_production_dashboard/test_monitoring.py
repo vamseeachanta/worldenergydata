@@ -9,9 +9,10 @@ import time
 import unittest
 from datetime import datetime, timedelta
 from pathlib import Path
+from threading import Event
 from unittest.mock import MagicMock, Mock, call, patch
 
-from src.worldenergydata.modules.well_production_dashboard.monitoring import (
+from worldenergydata.well_production_dashboard.monitoring import (
     AuditEntry,
     DashboardMonitor,
     PerformanceMetrics,
@@ -327,29 +328,34 @@ class TestDashboardMonitor(unittest.TestCase):
         alert = callback.call_args[0][0]
         self.assertEqual(alert["type"], "slow_response")
 
-    @patch("src.worldenergydata.modules.well_production_dashboard.monitoring.psutil")
-    def test_background_monitoring(self, mock_psutil):
+    @patch("psutil.Process")
+    def test_background_monitoring(self, mock_process_factory):
         """Test background monitoring thread."""
         # Configure mock
         mock_process = Mock()
         mock_process.memory_info.return_value.rss = 500 * 1024 * 1024  # 500 MB
-        mock_psutil.Process.return_value = mock_process
+        mock_process_factory.return_value = mock_process
 
         # Create monitor with short interval
         config = {
             "audit_file": str(self.audit_file),
             "enable_background_monitoring": False,
             "monitoring_interval": 0.1,
+            "alert_memory_mb": 100,
         }
         monitor = DashboardMonitor(config=config)
+        self.addCleanup(monitor.stop_background_monitoring)
+        sampled = Event()
+        monitor.register_alert_callback(lambda alert: sampled.set())
 
         # Start monitoring
         monitor.start_background_monitoring()
-        time.sleep(0.3)  # Let it run for a bit
+        self.assertTrue(sampled.wait(timeout=2), "Memory sample was not collected")
 
         # Check that metrics were collected
         self.assertGreater(len(monitor.metrics_history), 0)
         self.assertGreater(monitor.metrics.peak_memory_mb, 0)
+        self.assertEqual(monitor.metrics.peak_memory_mb, 500)
 
         # Stop monitoring
         monitor.stop_background_monitoring()
@@ -360,7 +366,7 @@ class TestMonitorDecorator(unittest.TestCase):
 
     def test_monitor_function_with_monitor(self):
         """Test monitor decorator with monitor instance."""
-        monitor = Mock(spec=DashboardMonitor)
+        monitor = MagicMock(spec=DashboardMonitor)
 
         @monitor_function(action="test_action")
         def test_func(x, monitor=None):
@@ -387,7 +393,7 @@ class TestMonitorDecorator(unittest.TestCase):
 
         class TestClass:
             def __init__(self):
-                self.monitor = Mock(spec=DashboardMonitor)
+                self.monitor = MagicMock(spec=DashboardMonitor)
 
             @monitor_function()
             def test_method(self, x):

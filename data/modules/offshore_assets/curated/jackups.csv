@@ -1,135 +1,164 @@
-RIG_NAME,RIG_DESIGN_MODEL,YEAR_DELIVERED,COUNTRY_BUILT,CLASSIFICATION_SOCIETY,MAX_WATER_DEPTH_RATING_FT,MIN_WATER_DEPTH_FT,OVERALL_LEG_LENGTH_FT,SPUD_CAN_DIAMETER_FT,MAX_DRILLING_DEPTH_FT,QUARTERS_CAPACITY,OVERALL_HULL_LENGTH_FT,DERRICK_RATING_KIPS,DRAWWORKS_HP,BOP_OPERATING_PRESSURE_KSI
-ABAN VIII,BMC Pacific 375,2008,Singapore,ABS,375,30,506,56,30000,120,245,1600,3000,15
-Deep Driller 1,Baker Marine Pacific,2006,Singapore,ABS,375,30,506,55,30000,120,240,1600,3450,15
-Deep Driller 2,KFELS Super u2018Bu2019 class,2006,Singapore,ABS,350,30,486,52,35000,120,246,2000,4600,15
-Deep Driller 3,KFELS Super u2018Bu2019 class,2006,Singapore,ABS,350,30,486,52,35000,120,246,2000,4600,15
-Deep Driller 4,Baker Marine Pacific,2007,Singapore,ABS,375,30,506,55,30000,120,240,1600,3450,15
-Deep Driller 5,KFELS Super u2018Bu2019 class,2007,Singapore,ABS,350,30,486,52,35000,120,246,2000,4600,15
-Deep Driller 6,KFELS Super u2018Bu2019 class,2008,Singapore,ABS,350,30,486,52,35000,120,246,2000,4600,15
-Deep Driller 7,Baker Marine Pacific,2008,Singapore,ABS,375,30,506,55,30000,120,240,1600,3450,15
-Deep Driller 8,KFELS Super u2018Bu2019 class,2008,Singapore,ABS,350,30,486,52,35000,120,246,2000,4600,15
-Raniworo,BMC 350,,Singapore,ABS,350,30,,55,25000,100,,1250,2000,10
-Soehanah,BMC Pacific 375,2007,Singapore,ABS,375,30,505,55,25000,115,326,1400,2800,10
-Atwood Beacon,KFELS enhanced u2018Bu2019 class,2003,Singapore,ABS,400,18,517,47,36000,112,234,1500,3300,2
-Atwood Mako,BMC Pacific 400,2012,Singapore,ABS,400,,532,55,30000,150,237,1500,,15
-Atwood Manta,BMC Pacific 400,2012,Singapore,ABS,400,,532,55,30000,150,237,1500,,15
-Atwood Orca,BMC Pacific 400,2012,Singapore,ABS,400,,532,55,30000,150,237,1500,,15
-Atwood Aurora,LeTourneau Super 116E,2008,USA,ABS,350,18,477,46,30000,110,243,1500,4500,15
-COSL Craft,KFELS u2018Bu2019 class,2007,Singapore,ABS,400,30,517,47,30000,112,234,1500,3450,15
-COSL Power,BMC Pacific 375,2006,Singapore,ABS,375,30,506,56,30000,115,236,1500,3450,15
-COSL Superior,BMC Pacific 375,2006,Singapore,ABS,375,30,506,56,30000,115,236,1500,3450,15
-COSL Boss,KFELS u2018Bu2019 class,2007,Singapore,ABS,400,30,517,47,30000,112,234,1500,3450,15
-COSL Force,BMC Pacific 375,2008,Singapore,ABS,375,30,506,56,30000,115,236,1500,3450,15
-COSL Strike,KFELS u2018Bu2019 class,2009,Singapore,ABS,400,30,517,47,30000,112,234,1500,3450,15
-COSL Seeker,BMC Pacific 375,2008,Singapore,ABS,375,30,506,56,30000,115,236,1500,3450,15
-COSL Confidence,BMC Pacific 375,2009,Singapore,ABS,375,30,506,56,30000,115,236,1500,3450,15
-COSL 941,F & G JU2000,2006,China,ABS,400,30,548,,30000,120,231,2000,,
-COSL 942,F & G JU2000,2008,China,ABS,400,30,548,,30000,120,231,2000,,
-Ocean Titan,LeTourneau 64,1974,USA,ABS,350,26,467,46,25000,76,237.1,1700,3000,10
-Ocean Scepter,KFELS Super u2018Bu2019 class,2008,USA,ABS,350,20,486,47,35000,120,246,2000,4600,15
-Setty,BMC 375,2010,Singapore,ABS,375,,506,,30000,120,236,,3000,15
-Sneferu,BMC 375,2009,Singapore,ABS,375,,506,,30000,120,236,,3000,15
-ENSCO 67,MLT 84-CE (enhanced),1976,Scotland,ABS,350,24,511,46,30000,108,238,1500,3000,10
-ENSCO 68,MLT 116-CE (enhanced),1976,USA,ABS,400,22,512,46,30000,80,261,1500,3000,10
-ENSCO 75,MLT Super 116C,1999,USA,ABS,380,32,544,57,30000,83,243,1500,3000,10
-ENSCO 76,MLT Super 116C,1999,USA,ABS,350,16,411,46,30000,100,243,1500,3000,15
-ENSCO 81,MLT 116-C,1979,UK,ABS,350,20,477,46,25000,106,243,1500,3000,10
-ENSCO 87,MLT 116-C,1982,USA,ABS,350,25,477,46,25000,75,243,1500,3000,10
-ENSCO 101,KFELS MOD V u2018Au2019 class,2000,Singapore,ABS,400,25,540,60,30000,96,228,1500,3000,15
-ENSCO 102,KFELS MOD V u2018Au2019 class,2002,Singapore,ABS,400,25,541,60,30000,122,246,1500,3000,15
-ENSCO 104,KFELS MOD V u2018Bu2019 class,2002,Singapore,ABS,400,20,517,47,30000,110,225,1500,3000,10
-ENSCO 105,KFELS MOD V u2018Bu2019 class,2002,USA,ABS,400,16,517,46,30000,94,225,1500,3000,10
-ENSCO 106,KFELS MOD V enhanced u2018Bu2019 class,2005,Singapore,ABS,400,20,517,53,30000,112,234,1500,3000,10
-ENSCO 107,KFELS MOD V enhanced u2018Bu2019 class,2006,Singapore,ABS,400,20,517,53,30000,112,234,1500,3000,10
-ENSCO 108,KFELS MOD V enhanced u2018Bu2019 class,2007,Singapore,ABS,400,20,517,53,30000,112,234,1500,3000,10
-ENSCO 109,KFELS MOD V Super u2018Bu2019 class,2008,Singapore,ABS,400,20,486,53,30000,120,246,2000,4600,15
-ENSCO 120,KFELS MOD V Super u2018Au2019 class,2013,Singapore,ABS,400,25,540,59.7,40000,150,246,2500,6000,15
-Neptune,LeTourneau Super 116E,2013,UAE,,350,,,,30000,,,1500,3000,
-Saturn,KFELS Mod V,2000,Azerbaijan,ABS,350,19,496,2690,26000,100,228,1300,3000,15
-GreatDrill Chaaya,LeTourneau Super 116E,2013,UAE,ABS,350,30,478,,30000,106,243,1500,4500,15
-GreatDrill,Chiltra KFELS B class,2009,Singapore,ABS,350,30,491,53,30000,112,234,1500,3000,10
-GreatDrill Chetna,Chiltra KFELS B class,2009,Singapore,ABS,350,30,491,53,30000,112,234,1500,3000,10
-Hercules 350,LeTourneau 116-C,1982,Canada,ABS,350,25,477,46,25000,,243,1250,3000,3
-Hakuryu  10,BMC Pacific 375,2008,Singapore,ABS,375,30,506,55,30000,120,236,1500,3000,15
-Hakuryu 11,KFELS Super u2018Bu2019 class,2013,Singapore,ABS,425,,531,47,35000,150,246,2000,1150,15
-Discovery I,KFELS u2018Bu2019 class,2008,Singapore,ABS,350,30,491,47,30000,112,234,1600,3000,10
-Virtue I,KFELS u2018Bu2019 class,2008,Singapore,ABS,350,30,491,47,30000,112,234,1600,3000,10
-Ben Rinnes,LeTourneau 53,1973,USA,ABS,350,18,478,46,30000,100,284,1500,3000,10
-Maersk Endurer,BMC 350,1984,Japan,ABS,350,30,479,56,30000,98,236,1500,3000,15
-Maersk Gallant,MSC CJ62-120S,1993,Singapore,Lloyds,394,30,575,64,25000,100,257,2000,3000,15
-Maersk Giant,Hitachi Zosen,1986,Japan,Lloyds,350,30,525,56,25000,100,277,1000,2000,15
-Maersk Guardian,Hitachi Zosen,1986,Japan,Lloyds,350,30,515,56,25000,100,277,1000,2000,15
-Mufffdrsk Innovator,MSC CJ70-150MC,2003,Korea,DnV,492,30,673,72,30000,120,291,2000,4600,15
-Mufffdrsk Inspirer,MSC CJ70-150MC,2004,Korea,DnV,492,30,673,72,30000,120,291,2000,4600,15
-Maersk Resilient,MSC CJ50,2008,Singapore,ABS,350,30,479,69,30000,120,229,1500,4500,15
-Mufffdrsk Resolute,MSC CJ50,2008,Singapore,ABS,350,30,479,52,30000,120,229,1500,4500,15
-Mufffdrsk Resolve,MSC CJ50,2009,Singapore,ABS,350,30,479,52,30000,120,229,1500,4500,15
-Maersk Reacher,MSC CJ50,2008,Singapore,ABS,350,30,479,69,30000,110,229,1500,4500,15
-Maersk Completer,BMC Pacific 375,2007,Singapore,ABS,375,30,507,55,30000,120,236.5,1500,3000,15
-Maersk Convincer,BMC Pacific 375,2007,Singapore,ABS,375,30,507,55,30000,120,236.5,1500,3000,15
-Noble Al White,CFEM T-2005-C,1982,France,DNV,360,50,504,49.2,25000,96,245,1000,4600,15
-Noble Bill Jennings,MLT Class 84 ERC,1975,USA,ABS,390,25,500,46,25000,102,248,1300,3000,10
-Noble Eddie Paul,MLT Class 84 ERC,1975,USA,ABS,390,25,500,46,25000,100,247,1671,3000,10
-Noble Leonard Jones,MLT Class 53 ERC,1972,USA,ABS,350,25,500,46,25000,104,247,1671,3000,10
-Noble Roger,Lewis JU-2000E,2007,China,ABS,400,30,547,59,35000,130,231,2000,4600,15
-Noble Hans Duel,Lewis JU-2000E,2009,China,ABS,400,30,549,59,30000,120,328,1500,4600,15
-Noble Scott Marks,Lewis JU-2000E,2009,China,ABS,400,30,548,59,30000,120,231,2000,4600,15
-Tonala,KFELS u2018Bu2019 class,2004,USA,ABS,375,,517,46,25000,100,234,1500,3000,10
-Panuco,LeTourneau 116-CE,2007,USA,ABS,350,,,,25000,,,,,
-Tuxpan,LeTourneau Super 116-E,2010,USA,ABS,375,,511,,30000,,,,,
-Papaloapan,LeTourneau Super 116-E,2013,USA,ABS,375,,511,,30000,120,243,1500,,
-PV Drilling II,KFELS B,2009,Singapore,ABS,400,,517,46,30000,120,234,1500,3450,15
-PV Drilling III,KFELS B,2009,Singapore,ABS,400,,517,53,30000,111,234,680,3200,15
-Rowan Alaska,Letourneau 84,1975,USA,ABS,350,26,477,46,30000,79,248,1250,4500,10
-Rowan Gorilla II,Gorilla,1984,Singapore,ABS,350,30,638,66,30000,88,297,1250,4500,10
-Rowan Gorilla III,Gorilla,1984,USA,ABS,325,30,504,66,30000,92,297,1250,4500,15
-Rowan Gorilla IV,Gorilla,1986,USA,ABS,450,30,638,66,30000,86,297,2000,4500,15
-Rowan Gorilla V,Super Gorilla,1998,USA,ABS / DNV,400,30,574,57,35000,120,306,2500,5000,15
-Rowan Gorilla VI,Super Gorilla,2000,USA,ABS / DNV,450,30,607,57,35000,120,306,2500,5000,15
-Rowan Gorilla VII,Super Gorilla,2002,USA,ABS / DNV,450,30,607,57,35000,120,306,2500,5000,15
-Bob Palmer,Super Gorilla XL,2003,USA,ABS / DNV,490,30,647,67.7,35000,118,306,2500,4500,15
-Rowan Joe Douglas,Letourneau 240-C,2011,USA,ABS / DNV,375,,491,,35000,108,228,2500,3000,15
-Rowan Louisiana,Letourneau 84,1975,USA,ABS,350,24,466,46,25000,78,248,1500,4500,10
-Ralph Coffman,Letourneau 240-C,2009,USA,ABS,375,20,491,56,35000,108,228,2500,4500,15
-Rowan EXL I,Super 116E,2010,USA,ABS,350,20,477,46,35000,120,228,2000,3000,15
-Rowan EXL II,Super 116E,2010,USA,ABS,380,20,511,46,35000,120,228,2000,3000,15
-Rowan EXL III,Super 116E,2010,USA,ABS,350,20,477,46,35000,120,228,2000,3000,15
-Rowan EXL IV,Super 116E,2011,USA,ABS,320,,444,,35000,120,228,2000,3000,15
-Rowan Mississippi,Letourneau 240-C,2008,USA,ABS,375,15,491,56,35000,108,228,2500,4500,15
-Rowan Stavanger,KFELS N-Class,2011,Singapore,DNV,400,30,568,66,35000,120,264,2200,4600,15
-Rowan Viking,KFELS N-Class,2010,Singapore,DNV,400,30,568,66,35000,120,264,2200,4600,15
-Rowan Norway,KFELS N-Class,2011,Singapore,DNV,400,30,568,66,35000,120,264,2200,4600,15
-West Leda,Baker Marine Pacific,2010,Singapore,ABS,375,55,506,55,30000,120,237,1500,3000,15
-West Triton,Baker Marine Pacific,2008,Singapore,ABS,375,55,506,55.5,30000,115,237,1500,4050,15
-West Cressida,Baker Marine Pacific,2009,Singapore,ABS,375,55,506,55,30000,120,237,1500,3000,15
-West Ariel,KFELS u2018Bu2019 class,2008,Singapore,ABS,400,55,517,47,30000,112,234,1500,3000,15
-West Callisto,KFELS u2018Bu2019 class,2010,Singapore,ABS,400,55,517,47,30000,112,234,1500,3000,15
-West Prospero,KFELS u2018Bu2019 class,2007,Singapore,ABS,400,55,514,47,30000,110,234,1500,3000,15
-West Castor,F & G JU 2000 E,2013,Singapore,ABS,400,,547,59,30000,140,231,2000,3000,15
-West Oberon,F & G JU 2000 E,2013,China,ABS,400,,547,59,30000,140,231,2000,3000,15
-West Telesto,F & G JU 2000 E,2013,China,ABS,400,,547,59,30000,140,231,2000,3000,15
-West Epsilon,MSC CJ62 120S,1993,Singapore,DNV,400,,575,58,30000,115,237,1650,3000,15
-West Elara,MSC CJ 70 X150A,2011,Singapore,DNV,492,32,672,75,40000,120,290,2200,4600,15
-Offshore Courageous,LeTourneau Super 116C,2007,USA,ABS,350,16,477,46,30000,110,243,1500,3000,15
-Offshore Resolute,LeTourneau Super 116C,2008,USA,ABS,350,16,477,46,30000,102,243,1500,3000,15
-Offshore Defender,LeTourneau Super 116C,2007,USA,ABS,350,16,477,46,30000,102,243,1500,3000,15
-Offshore Vigilant,LeTourneau Super 116C,2008,USA,ABS,350,16,477,46,30000,102,243,1500,3000,15
-Offshore Intrepid,LeTourneau Super 116C,2009,USA,ABS,350,16,477,46,30000,102,243,1500,3000,15
-Offshore Freedom,LeTourneau Super 116C,2009,USA,ABS,350,16.5,477,46,30000,105,243,1500,3000,15
-Offshore Mischief,LeTourneau Super 116C,2009,USA,ABS,350,16.5,477,46,30000,105,243,1500,3000,15
-ST Bahari I,F&G JU2000E,2011,China,ABS,400,,,,30000,120,,,3200,
-GSF Constellation I,F&G JU 2000,2003,Singapore,ABS,400,,548,59,30000,120,231,1600,3000,15
-GSF Constellation II,F&G JU 2000,2004,Singapore,ABS,400,,548,59,30000,120,231,1600,3000,15
-GSF Galaxy I,F&G L-780 Mod VI,1991,Singapore,ABS,400,,560,60,30000,120,244,1600,3000,15
-GSF Galaxy II,F&G L-780 Mod VI,1998,Singapore,ABS,400,,560,60,30000,120,244,1600,3000,15
-GSF Galaxy III,F&G L-780 Mod VI,1999,Singapore,ABS,400,,560,60,30000,120,244,1600,3000,15
-Transocean Honor,PPL Pacific Class 400,2012,Singapore,ABS,400,,532,55,30000,150,236,1500,3000,15
-Transoean Siam Driller,Keppel FELS Super B,2013,Singapore,ABS,350,,486,,35000,150,246,1500,4500,10
-Transoean Andaman,Keppel FELS Super B,2013,Singapore,ABS,350,,486,,35000,150,246,1500,4500,10
-GSF Magellan,F&G L-780 Mod V,1992,Singapore,ABS,350,,496,60,30000,115,228,1600,3000,15
-GSF Monarch,F&G L-780 Mod V,1986,Singapore,ABS,350,,496,60,30000,98,228,1400,3000,10
-GSF Monitor,F&G L-780 Mod V,1989,Singapore,ABS,350,,496,60,30000,115,228,1550,3000,15
-Emerald Driller,Baker Marine Pacific 375,2008,Singapore,ABS,375,30,506,55.5,30000,120,236,1500,3000,15
-Sapphire Driller,Baker Marine Pacific 375,2009,Singapore,ABS,375,30,506,55.5,30000,120,236,1500,3000,15
-Aquamarine Driller,Baker Marine Pacific 375,2009,Singapore,ABS,375,30,506,55.5,30000,120,236,1500,3000,15
-Topaz Driller,Baker Marine Pacific 375,2009,Singapore,ABS,375,30,506,55.5,30000,120,236,1500,3000,15
+RIG_NAME,RIG_DESIGN_MODEL,YEAR_DELIVERED,COUNTRY_BUILT,CLASSIFICATION_SOCIETY,MAX_WATER_DEPTH_RATING_FT,MIN_WATER_DEPTH_FT,OVERALL_LEG_LENGTH_FT,SPUD_CAN_DIAMETER_FT,MAX_DRILLING_DEPTH_FT,QUARTERS_CAPACITY,OVERALL_HULL_LENGTH_FT,DERRICK_RATING_KIPS,DRAWWORKS_HP,BOP_OPERATING_PRESSURE_KSI,source_url
+Admarine 261,LeTourneau 82-SD-C,,,,250.0,,,,,,,,,,https://adesgroup.com/our-fleet/offshore-fleet/
+Admarine 655,Pool Energy 140 Series,,,,160.0,,,,,,,,,,https://adesgroup.com/our-fleet/offshore-fleet/
+Admarine 686,KFELS B Class Mod V,,,,400.0,,,,,,,,,,https://adesgroup.com/our-fleet/offshore-fleet/
+Admarine 687,Baker Marine Pacific Class 375,,,,375.0,,,,,,,,,,https://adesgroup.com/our-fleet/offshore-fleet/
+Admarine 689,KFELS Super B Class,,,,350.0,,,,,,,,,,https://adesgroup.com/our-fleet/offshore-fleet/
+Admarine 691,Bajer Marine Pacific Class 375,,,,375.0,,,,,,,,,,https://adesgroup.com/our-fleet/offshore-fleet/
+Admarine 694,KFELS Super B Class,,,,350.0,,,,,,,,,,https://adesgroup.com/our-fleet/offshore-fleet/
+Admarine 695,PPL Pacific Class 400,,,,400.0,,,,,,,,,,https://adesgroup.com/our-fleet/offshore-fleet/
+Aquamarine Driller,Baker Marine Pacific Class 375,,,,375.0,,,,,,,,,,https://adesgroup.com/our-fleet/offshore-fleet/
+Emerald Driller,Baker Marine Pacific Class 375,,,,375.0,,,,,,,,,,https://adesgroup.com/our-fleet/offshore-fleet/
+Sapphire Driller,Baker Marine Pacific Class 375,,,,375.0,,,,,,,,,,https://adesgroup.com/our-fleet/offshore-fleet/
+Soehanah Driller,Baker Marine Pacific 375,2007,,,375.0,,,,25000.0,,236.5,,,,https://adesgroup.com/our-fleet/offshore-fleet/; https://eldoradodrilling.com/wp-content/uploads/2026/10/Soehanah-SOH-Spec-Sheet_nopd.pdf
+Topaz Driller,Baker Marine Pacific 375,2009,,,375.0,,,,30000.0,,236.0,,,,https://adesgroup.com/our-fleet/offshore-fleet/; https://eldoradodrilling.com/wp-content/uploads/2026/10/Topaz-Driller-TOD-Spec-Sheet_nopd.pdf
+Arabdrill 110,KFELS Mod-V Class B,2015,,,400.0,,,,30000.0,,234.0,,,,https://ad-prod-ireland2.s3.eu-west-1.amazonaws.com/uploads/AD110.pdf
+Arabdrill 130,KFELS Mod-V Class B,2015,,,400.0,,,,30000.0,,234.0,,,,https://ad-prod-ireland2.s3.eu-west-1.amazonaws.com/uploads/AD130.pdf
+Arabdrill 140,KFELS Mod-V Class B,2017,,,400.0,,,,30000.0,,234.0,,,,https://ad-prod-ireland2.s3.eu-west-1.amazonaws.com/uploads/AD140.pdf
+Arabdrill 150,"PACIFIC CLASS, PPL 400",2023,,,400.0,,532.0,,30000.0,,236.5,,,,https://ad-prod-ireland2.s3.eu-west-1.amazonaws.com/uploads/AD150.pdf
+Arabdrill 30,KFELS Mod-V Class B,2006,,,300.0,,,,30000.0,,234.0,,,,https://ad-prod-ireland2.s3.eu-west-1.amazonaws.com/uploads/AD30.pdf
+Arabdrill 50,KFELS Mod-V Class B,2013,,,400.0,,,,30000.0,,234.0,,,,https://ad-prod-ireland2.s3.eu-west-1.amazonaws.com/uploads/AD50.pdf
+Arabdrill 60,KFELS Mod-V Class B,2013,,,400.0,,,,30000.0,,234.0,,,,https://ad-prod-ireland2.s3.eu-west-1.amazonaws.com/uploads/AD60.pdf
+Arabdrill 70,KFELS Mod-V Class B,2015,,,400.0,,,,30000.0,,234.0,,,,https://ad-prod-ireland2.s3.eu-west-1.amazonaws.com/uploads/AD70.pdf
+Arabdrill 80,Marathon Letourneau 82 SD-C,,,,250.0,,,,20000.0,,207.3,,,,https://ad-prod-ireland2.s3.eu-west-1.amazonaws.com/uploads/AD80.pdf
+Bob Keller,LeTourneau Tarzan Class,,,,300.0,,445.0,,35000.0,,215.0,,,,https://www.arodrilling.com/fleet;https://www.arodrilling.com/Media/Rig%20Documents/ARO%20Drilling%20-%20Bob%20Keller%20-%20Rig%20Specification%20%28Rev.00%20-%2001-08-2019%29%20.pdf
+Gilbert Rowe,LeTourneau 116-C Class,,,,300.0,,410.4,,25000.0,,243.1,,,,https://www.arodrilling.com/fleet;https://www.arodrilling.com/Media/background/DAT-ENG-ARO-038-20-001-R3%20RIG%20SPECIFICATION%20SHEET.pdf
+Hank Boswell,LeTourneau Tarzan Class,2006,,,300.0,,445.0,,35000.0,,215.0,,,,https://www.arodrilling.com/fleet;https://www.arodrilling.com/Media/Rig%20Documents/ARO%20Drilling%20-%20Hank%20Boswell%20-%20Rig%20Specification%20%28Rev.00%20-%2001-08-2019%29.pdf
+JP Bussell,LeTourneau Tarzan Class,2008,,,300.0,,,,35000.0,,,,,,https://www.arodrilling.com/fleet
+Kingdom 1,,2023,,,300.0,,,,30000.0,,,,,,https://www.arodrilling.com/fleet
+Kingdom 2,,2024,,,300.0,,,,35000.0,,,,,,https://www.arodrilling.com/fleet
+SAR-201,BMC 200 IC Class Jack Up,1982,,,200.0,,,,20000.0,,,,,,https://www.arodrilling.com/fleet
+SAR-202,KFELS Super B Class,2012,,,,,402.0,,30000.0,,246.0,,,,https://www.arodrilling.com/fleet;https://www.arodrilling.com/Media/background/DAT-ENG-ARO-202-20-001-R2%20RIG%20SPECIFICATION%20SHEET.pdf
+Scooter Yeargain,LeTourneau Tarzan Class,2004,,,300.0,,,,35000.0,,,,,,https://www.arodrilling.com/fleet
+Arabia I,KFELS B Class,2020,,,400.0,,517.0,,30000.0,,234.0,,,,https://www.borrdrilling.com/our-fleet;https://api.borrdrilling.com/wp-content/uploads/2024/08/Borr-Drilling-Arabia-1-Heimdal.pdf
+Arabia II,KFELS B Class,2019,,,400.0,,517.0,,30000.0,,234.0,,,,https://www.borrdrilling.com/our-fleet;https://api.borrdrilling.com/wp-content/uploads/2024/08/Short-Specification-Arabia-II.pdf
+Arabia III,KFELS Super A Class,2013,,,400.0,,525.0,,35000.0,,246.0,,,,https://www.borrdrilling.com/our-fleet;https://api.borrdrilling.com/wp-content/uploads/2024/08/Borr-Drilling-Arabia-III-1.pdf
+Bestla,Gusto MSC CJ50,2008,,,350.0,,480.0,,30000.0,,230.0,,,,https://www.borrdrilling.com/our-fleet;https://api.borrdrilling.com/wp-content/uploads/2024/08/Borr-Drilling-Bestla.pdf
+Courageous,LeTourneau Super 116 Class,2007,,,350.0,,477.0,,30000.0,,243.0,,,,https://www.borrdrilling.com/our-fleet;https://api.borrdrilling.com/wp-content/uploads/2026/10/Borr-Drilling-Courageous.pdf
+Defender,LeTourneau Super 116 Class,2007,,,350.0,,477.0,,30000.0,,243.0,,,,https://www.borrdrilling.com/our-fleet;https://api.borrdrilling.com/wp-content/uploads/2026/10/Borr-Drilling-Defender.pdf
+Forseti,F&G JU-3000N,2013,,,400.0,,554.7,,35000.0,,231.0,,,,https://www.borrdrilling.com/our-fleet;https://api.borrdrilling.com/wp-content/uploads/2026/01/Borr-Drilling-Forseti-2.pdf
+Freyja,F&G JU-3000N,2014,,,400.0,,554.7,,35000.0,,231.0,,,,https://www.borrdrilling.com/our-fleet;https://api.borrdrilling.com/wp-content/uploads/2026/01/Borr-Drilling-Freyja-2.pdf
+Galar,PPL Pacific Class 400,2017,,,400.0,,532.0,,30000.0,,236.5,,,,https://www.borrdrilling.com/our-fleet;https://api.borrdrilling.com/wp-content/uploads/2024/08/Borr-Drilling-Galar.pdf
+Gerd,PPL Pacific Class 400,2018,,,400.0,,533.0,,30000.0,,236.5,,,,https://www.borrdrilling.com/our-fleet;https://api.borrdrilling.com/wp-content/uploads/2024/08/Short-Specification-Gerd-2.pdf
+Gersemi,PPL Pacific Class 400,2018,,,400.0,,532.0,,30000.0,,236.5,,,,https://www.borrdrilling.com/our-fleet;https://api.borrdrilling.com/wp-content/uploads/2024/08/Short-Specification-Gersemi.pdf
+Grid,PPL Pacific Class 400,2018,,,400.0,,532.0,,30000.0,,236.5,,,,https://www.borrdrilling.com/our-fleet;https://api.borrdrilling.com/wp-content/uploads/2024/08/Borr-Drilling-Grid.pdf
+Groa,PPL Pacific Class 400,2018,,,400.0,,532.0,,30000.0,,236.5,,,,https://www.borrdrilling.com/our-fleet;https://api.borrdrilling.com/wp-content/uploads/2024/08/Short-Specification-Groa.pdf
+Gunnlod,PPL Pacific Class 400,2018,,,400.0,,532.0,,30000.0,,236.5,,,,https://www.borrdrilling.com/our-fleet;https://api.borrdrilling.com/wp-content/uploads/2024/08/Borr-Drilling-Gunnlod.pdf
+Hild,KFELS Super B Class,2020,,,400.0,,514.0,,35000.0,,246.0,,,,https://www.borrdrilling.com/our-fleet;https://api.borrdrilling.com/wp-content/uploads/2024/08/Borr-Drilling-Hild.pdf
+Idun,KFELS Super B Bigfoot Class,2013,,,350.0,,486.0,,35000.0,,246.0,,,,https://www.borrdrilling.com/our-fleet;https://api.borrdrilling.com/wp-content/uploads/2024/08/Borr-Drilling-Idun.pdf
+Intrepid,LeTourneau Super 116 Class,2008,,,350.0,,477.0,,30000.0,,243.0,,,,https://www.borrdrilling.com/our-fleet;https://api.borrdrilling.com/wp-content/uploads/2026/10/Borr-Drilling-Intrepid.pdf
+Joro,Gusto MSC CJ50,2008,,,350.0,,480.0,,30000.0,,230.0,,,,https://www.borrdrilling.com/our-fleet;https://api.borrdrilling.com/wp-content/uploads/2024/08/Borr-Drilling-Joro.pdf
+Mist,KFELS Super B Bigfoot Class,2013,,,350.0,,486.0,,35000.0,,246.0,,,,https://www.borrdrilling.com/our-fleet;https://api.borrdrilling.com/wp-content/uploads/2024/08/Short-Specification-Mist.pdf
+Natt,PPL Pacific Class 400,2018,,,400.0,,532.0,,30000.0,,236.5,,,,https://www.borrdrilling.com/our-fleet;https://api.borrdrilling.com/wp-content/uploads/2024/08/Borr-Drilling-Natt-1-1.pdf
+Njord,PPL Pacific Class 400,2019,,,400.0,,533.0,,30000.0,,236.5,,,,https://www.borrdrilling.com/our-fleet;https://api.borrdrilling.com/wp-content/uploads/2024/08/Borr-Drilling-Njord.pdf
+Norve,PPL Pacific Class 400,2011,,,400.0,,532.0,,30000.0,,236.5,,,,https://www.borrdrilling.com/our-fleet;https://api.borrdrilling.com/wp-content/uploads/2024/08/Borr-Drilling-Norve-2.pdf
+Oberon,Friede & Goldman JU 2000E,2013,,,400.0,,548.0,,35000.0,,231.0,,,,https://www.borrdrilling.com/our-fleet;https://api.borrdrilling.com/wp-content/uploads/2026/10/Borr-Drilling-Oberon.pdf
+Odin,KFELS Super B Bigfoot Class,2013,,,350.0,,486.0,,35000.0,,246.0,,,,https://www.borrdrilling.com/our-fleet;https://api.borrdrilling.com/wp-content/uploads/2024/08/Short-Specification-Odin.pdf
+Prospector 1,Friede & Goldman JU 2000E,2013,,,400.0,,547.0,,35000.0,,231.0,,,,https://www.borrdrilling.com/our-fleet;https://api.borrdrilling.com/wp-content/uploads/2024/08/Borr-Drilling-Prospector-1-1.pdf
+Prospector 5,Friede & Goldman JU 2000E,2014,,,400.0,,,,,,,,,,https://www.borrdrilling.com/our-fleet
+Ran,KFELS Super A Class,2013,,,400.0,,525.0,,35000.0,,246.0,,,,https://www.borrdrilling.com/our-fleet;https://api.borrdrilling.com/wp-content/uploads/2024/08/Borr-Drilling-Ran.pdf
+Saga,KFELS Super B Bigfoot Class,2018,,,400.0,,517.0,,35000.0,,246.0,,,,https://www.borrdrilling.com/our-fleet;https://api.borrdrilling.com/wp-content/uploads/2024/08/Short-Specification-Saga-1.pdf
+Sif,F&G JU-3000N,2013,,,400.0,,554.7,,35000.0,,231.0,,,,https://www.borrdrilling.com/our-fleet;https://api.borrdrilling.com/wp-content/uploads/2026/01/Borr-Drilling-Sif-1.pdf
+Skald,KFELS Super B Bigfoot Class,2018,,,400.0,,517.0,,35000.0,,246.0,,,,https://www.borrdrilling.com/our-fleet;https://api.borrdrilling.com/wp-content/uploads/2024/08/Borr-Drilling-Skald.pdf
+Thor,KFELS Super B Bigfoot Class,2019,,,400.0,,517.0,,35000.0,,247.0,,,,https://www.borrdrilling.com/our-fleet;https://api.borrdrilling.com/wp-content/uploads/2024/08/Short-Specification-Thor-Dec-2025.pdf
+Titania FE,Friede & Goldman JU 2000E,2014,,,400.0,,548.0,,35000.0,,231.0,,,,https://www.borrdrilling.com/our-fleet;https://api.borrdrilling.com/wp-content/uploads/2026/10/Borr-Drilling-Titania.pdf
+Vali,KFELS Super B Bigfoot Class,2024,,,400.0,,517.0,,35000.0,,246.0,,,,https://www.borrdrilling.com/our-fleet;https://api.borrdrilling.com/wp-content/uploads/2024/08/Borr-Drilling-Vali.pdf
+Var,KFELS Super B Bigfoot Class,2024,,,400.0,,517.0,,35000.0,,246.0,,,,https://www.borrdrilling.com/our-fleet;https://api.borrdrilling.com/wp-content/uploads/2024/08/Short-Specification-Var-1.pdf
+COSL FORCE,Baker Marine Pacific Class 375,2008,,,375.0,,506.0,,30000.0,,,,,,https://www.globalpetrotech.com/off-shore/cosl-force.aspx?Itemid=387
+COSL POWER,Baker Marine Pacific Class 375,2006,,,375.0,,506.4,55.4,30000.0,,236.6,,,,https://www.cosl.com.cn/english/servicesproducts/drilling/drillingrigs/375ft/202502/P020250206625417716574.pdf
+COSL STRIKE,Keppel FELS KFELS MOD V B,2009,,,400.0,,517.0,,30000.0,,,,,,https://www.globalpetrotech.com/off-shore/cosl-strike.aspx?Itemid=384
+Enterprise 150,Marathon LeTourneau 150-44-C,1979,,,150.0,,249.7,36.0,16000.0,,172.0,,,,https://enterpriseoffshore.com/wp-content/uploads/EOD150-Spec-Sheet-rev3.pdf
+Enterprise 201,Bethlehem JU-200-MC,1981,,,181.0,,269.0,,20000.0,,157.0,,,,https://enterpriseoffshore.com/wp-content/uploads/EOD201-Spec-Sheet-rev3.pdf
+Enterprise 205,Bethlehem JU-200-MC,,,,200.0,,,,,,,,,,https://enterpriseoffshore.com/our-fleet/
+Enterprise 209,Bethlehem JU-200-MC,1981,,,181.0,,269.0,,20000.0,,157.0,,,,https://enterpriseoffshore.com/wp-content/uploads/EOD209-Spec-Sheet-rev3.pdf
+Enterprise 214,Bethlehem JU-200-MC,1981,,,181.0,,269.0,,20000.0,,157.0,,,,https://enterpriseoffshore.com/wp-content/uploads/EOD214-Spec-Sheet-rev3.pdf
+Enterprise 251,Bethlehem JU-250-MS,1978,,,230.0,,312.0,,20000.0,,166.0,,,,https://enterpriseoffshore.com/wp-content/uploads/EOD251-Spec-Sheet.pdf
+Enterprise 253,Bethlehem JU-250-MS,1982,,,230.0,,312.0,,25000.0,,166.0,,,,https://enterpriseoffshore.com/wp-content/uploads/EOD253-Spec-Sheet.pdf
+Enterprise 263,Bethlehem JU-250-MC,1981,,,230.0,,321.0,,20000.0,,166.0,,,,https://enterpriseoffshore.com/wp-content/uploads/EOD263-Spec-Sheet-Rev-08-Aug-23-2019.pdf
+Enterprise 264,Bethlehem JU-250-MC,1976,,,230.0,,312.0,,25000.0,,153.0,,,,https://enterpriseoffshore.com/wp-content/uploads/EOD264-Spec-Sheet-Rev-12-New-Version-Feb-8-2021.pdf
+Enterprise 351,Marathon Le Tourneau Class 116-C,,,,350.0,,,,,,,,,,https://enterpriseoffshore.com/our-fleet/
+Noble Innovator,GustoMSC CJ70-XL,2003,,,492.0,,675.0,64.6,30000.0,,291.0,,,,https://noblecorp.com/wp-content/uploads/2026/05/NINN_Folder_RevD.pdf; https://noblecorp.com/rig/noble-innovator/
+Noble Integrator,GustoMSC CJ70-XLE,,,,492.0,,,72.2,40000.0,,291.0,,,,https://noblecorp.com/wp-content/uploads/2026/05/NINT_Folder_RevD.pdf; https://noblecorp.com/rig/noble-integrator/
+Noble Interceptor,GustoMSC CJ70-XLE,,,,492.0,,,72.0,40000.0,,291.0,,,,https://noblecorp.com/wp-content/uploads/2026/05/NINTER_Folder_RevD.pdf; https://noblecorp.com/rig/noble-interceptor/
+Noble Intrepid,GustoMSC CJ70-XLE,,,,492.0,,,72.0,40000.0,,291.0,,,,https://noblecorp.com/wp-content/uploads/2026/05/NINTR_Folder_RevD.pdf; https://noblecorp.com/rig/noble-intrepid/
+Noble Invincible,GustoMSC CJ70-XLE,,,,492.0,,675.0,72.0,,,291.0,,,,https://noblecorp.com/wp-content/uploads/2026/05/NINV_Folder_RevD.pdf; https://noblecorp.com/rig/noble-invincible/
+Energy Edge,GustoMSC CJ50-X120-G,,,,400.0,,541.3,49.5,30000.0,,229.6,,,,https://northernoffshore.com/media/pdfs/NOF-Short-Specifications_Energy-Edge_Nov2021.pdf; https://www.gapmarine.com/fleet.html
+Energy Embracer,GustoMSC CJ46-X100-D,,,,375.0,,503.3,45.3,30000.0,,214.0,,,,https://northernoffshore.com/media/pdfs/NOF-Short-Specifications_Energy-Embracer_Feb2023_Rev.1.pdf; https://www.gapmarine.com/fleet.html
+Energy Emerger,GustoMSC CJ46-X100-D,2017,,,375.0,,503.3,45.3,30000.0,,214.0,,,,https://northernoffshore.com/media/pdfs/NOF-Short-Specifications_Energy-Emerger_Feb2023_Rev.1.pdf; https://www.gapmarine.com/fleet.html
+Energy Enticer,GustoMSC CJ50-X120-G,2019,,,400.0,,541.3,49.5,30000.0,,229.6,,,,https://northernoffshore.com/media/pdfs/NOF-Short-Specifications_Energy-Enticer_Nov2021.pdf; https://www.gapmarine.com/fleet.html
+PV DRILLING I,Keppel FELS Mod V B-Class,2007,,,300.0,,437.0,,25000.0,,234.0,,,,https://www.pvdrilling.com.vn/en-US/the-fleet/pv-drilling-i
+PV DRILLING II,Keppel FELS Mod V B-Class,2009,,,400.0,,517.0,,30000.0,,234.0,,,,https://www.pvdrilling.com.vn/en-US/the-fleet/pv-drilling-ii
+PV DRILLING III,KFELS MOD V B CLASS Big Foot,2009,,,400.0,,517.0,,30000.0,,234.0,,,,https://www.pvdrilling.com.vn/en-US/pv-drilling-iii
+PV DRILLING IX,Friede Goldman JU2000E,2016,,,425.0,,547.0,59.0,30000.0,,243.0,,,,https://www.pvdrilling.com.vn/en-US/the-fleet/pv-drilling-ix
+PV DRILLING VI,Keppel FELS Mod V Enhanced B-Class,2015,,,400.0,,517.0,,30000.0,,234.0,,,,https://www.pvdrilling.com.vn/en-US/the-fleet/pv-drilling-vi
+PV DRILLING VIII,Keppel FELS Mod V B-Class,2007,,,400.0,,514.0,,30000.0,,234.0,,,,https://www.pvdrilling.com.vn/en-US/the-fleet/pv-drilling-viii
+PV DRILLING X,Keppel FELS Mod V Super B-Class,2008,,,350.0,,486.0,45.4,35000.0,,246.0,,,,https://www.pvdrilling.com.vn/en-US/the-fleet/pv-drilling-x
+West Elara,Gusto MSC CJ70-X150,2011,,,492.0,,673.0,,35000.0,,290.0,,,,https://www.seadrill.com/wp-content/uploads/2024/01/West_Elara.pdf; https://www.seadrill.com/fleet/
+Adriatic I,Marathon LeTourneau 116-C,1981,,,350.0,,477.0,46.0,25000.0,,243.0,,,,https://www.shelfdrilling.com/wp-content/uploads/2018/11/Shelf-Drilling_Adriatic-I_Spec-Sheet-Nov-2018.pdf; https://www.shelfdrilling.com/our-fleet/
+C.E. Thornton,Marathon LeTourneau 53-SC,1974,,,300.0,,410.0,,21000.0,,218.0,,,,https://www.shelfdrilling.com/wp-content/uploads/2023/03/Shelf-Drilling_CE-Thornton_Spec-Sheet-Mar-2023.pdf; https://www.shelfdrilling.com/our-fleet/
+Compact Driller,Marathon LeTourneau 116-C,1992,,,300.0,,410.0,,25000.0,,243.0,,,,https://www.shelfdrilling.com/wp-content/uploads/2021/01/Shelf-Drilling_Compact-Driller_Spec-Sheet-Jan-2021.pdf; https://www.shelfdrilling.com/our-fleet/
+F.G. McClintock,Marathon LeTourneau 53-SC,1975,,,300.0,,410.0,,21000.0,,218.0,,,,https://www.shelfdrilling.com/wp-content/uploads/2018/07/Shelf-Drilling_FG-McClintock_Spec-Sheet-Jul-2018.pdf; https://www.shelfdrilling.com/our-fleet/
+Harvey H. Ward,Friede & Goldman L-780 Model II,1981,,,300.0,,416.0,,25000.0,,180.0,,,,https://www.shelfdrilling.com/wp-content/uploads/2024/08/Shelf-Drilling_Harvey-H-Ward_Spec-Sheet-Aug-2024-1.pdf; https://www.shelfdrilling.com/our-fleet/
+High Island II,Marathon LeTourneau 82-SD-C,1979,,,270.0,,394.0,,20000.0,,207.0,,,,https://www.shelfdrilling.com/wp-content/uploads/2022/04/Shelf-Drilling_High-Island-II_Spec-Sheet-Apr-2022.pdf; https://www.shelfdrilling.com/our-fleet/
+High Island IV,Marathon LeTourneau 82-SD-C,1980,,,270.0,,394.0,,20000.0,,207.0,,,,https://www.shelfdrilling.com/wp-content/uploads/2025/03/Shelf-Drilling_High-Island-IV_Spec-Sheet-Mar-2025.pdf; https://www.shelfdrilling.com/our-fleet/
+High Island IX,Marathon LeTourneau 82-SD-C,1983,,,250.0,,360.0,40.0,20000.0,,207.0,,,,https://www.shelfdrilling.com/wp-content/uploads/2016/02/Shelf-Drilling_High-Island-IX_Spec-Sheet-February-2016.pdf; https://www.shelfdrilling.com/our-fleet/
+High Island V,Marathon LeTourneau 82-SD-C,1981,,,270.0,,394.0,40.0,20000.0,,207.0,,,,https://www.shelfdrilling.com/wp-content/uploads/2024/11/Shelf-Drilling_High-Island-V_Spec-Sheet-November-2024.pdf; https://www.shelfdrilling.com/our-fleet/
+J.T. Angel,Friede & Goldman L-780 Model II,1982,,,300.0,,416.0,,25000.0,,180.0,,,,https://www.shelfdrilling.com/wp-content/uploads/2021/12/Shelf-Drilling_JT-Angel_Spec-Sheet-Dec-2021.pdf; https://www.shelfdrilling.com/our-fleet/
+Key Manhattan,Marathon LeTourneau 116-C,1980,,,350.0,,477.0,,25000.0,,243.0,,,,https://www.shelfdrilling.com/wp-content/uploads/2019/03/Shelf-Drilling_Key-Manhattan_Spec-Sheet-Mar-2019.pdf; https://www.shelfdrilling.com/our-fleet/page/2/
+Key Singapore,Marathon LeTourneau 116-C,1982,,,350.0,,477.0,46.0,25000.0,,243.0,,,,https://www.shelfdrilling.com/wp-content/uploads/2018/07/Shelf-Drilling_Key-Singapore_Spec-Sheet-Jul-2018.pdf; https://www.shelfdrilling.com/our-fleet/page/2/
+Main Pass IV,Friede & Goldman L-780-MOD II,1982,,,300.0,,416.0,40.0,25000.0,,180.0,,,,https://www.shelfdrilling.com/wp-content/uploads/2018/07/Shelf-Drilling_Main-Pass-IV_Spec-Sheet-Jul-2018.pdf; https://www.shelfdrilling.com/our-fleet/page/2/
+Parameswara,Baker Marine BMC 300 IC,1983,,,300.0,,423.0,,25000.0,,212.0,,,,https://www.shelfdrilling.com/wp-content/uploads/2025/03/Shelf-Drilling_Parameswara_Spec-Sheet-Mar-2025.pdf; https://www.shelfdrilling.com/our-fleet/page/2/
+Rig 141,Marathon LeTourneau 82-SD-C,1982,,,250.0,,360.0,,20000.0,,207.0,,,,https://www.shelfdrilling.com/wp-content/uploads/2015/12/Shelf-Drilling_Rig-141_Spec-Sheet-Dec-2015.pdf; https://www.shelfdrilling.com/our-fleet/page/2/
+Ron Tappmeyer,Marathon LeTourneau 116-C,1978,,,300.0,,410.0,,25000.0,,243.0,,,,https://www.shelfdrilling.com/wp-content/uploads/2023/01/Shelf-Drilling_Ron-Tappmeyer_Spec-Sheet-Jan-2023-1.pdf; https://www.shelfdrilling.com/our-fleet/page/2/
+Shelf Drilling Achiever,GustoMSC CJ46-X100-D,2019,,,350.0,,483.0,52.5,30000.0,,214.0,,,,https://www.shelfdrilling.com/wp-content/uploads/2022/12/Shelf-Drilling-Achiever_Spec-Sheet-Dec-2022.pdf; https://www.shelfdrilling.com/our-fleet/page/2/
+Shelf Drilling Barsk,GustoMSC CJ70-X150-ST,2016,,,492.1,,703.0,,32808.4,,296.9,,,,https://www.shelfdrilling.com/wp-content/uploads/2024/04/Shelf-Drilling-Barsk_Spec-Sheet-Apr-2024.pdf; https://www.shelfdrilling.com/our-fleet/page/2/
+Shelf Drilling Chaophraya,LeTourneau Super 116 E,2016,,,350.0,,477.0,50.5,30000.0,,243.0,,,,https://www.shelfdrilling.com/wp-content/uploads/2024/01/Shelf-Drilling_Chaophraya_Spec-Sheet-Jan-2024.pdf; https://www.shelfdrilling.com/our-fleet/page/2/
+Shelf Drilling Enterprise,Baker Marine Pacific Class 375,2007,,,375.0,,506.0,,30000.0,,236.5,,,,https://www.shelfdrilling.com/wp-content/uploads/2024/10/Shelf-Drilling-Enterprise_Spec-Sheet-Oct-2024-10K-1.pdf; https://www.shelfdrilling.com/our-fleet/page/2/
+Shelf Drilling Fortress,Friede & Goldman JU-3000N,2014,,,400.0,,555.0,,35000.0,,231.0,,,,https://www.shelfdrilling.com/wp-content/uploads/2023/08/Shelf-Drilling-Fortress_Spec-Sheet-Aug-2023.pdf; https://www.shelfdrilling.com/our-fleet/page/3/
+Shelf Drilling Krathong,LeTourneau Super 116 E,2017,,,350.0,,477.0,50.5,30000.0,,243.0,,,,https://www.shelfdrilling.com/wp-content/uploads/2024/01/Shelf-Drilling_Krathong_Spec-Sheet-Jan-2024.pdf; https://www.shelfdrilling.com/our-fleet/page/3/
+Shelf Drilling Mentor,LeTourneau Super 116-E,2010,,,350.0,,477.0,,30000.0,,243.0,,,,https://www.shelfdrilling.com/wp-content/uploads/2021/02/Shelf-Drilling_Mentor_Spec-Sheet-Feb-2021-10K.pdf; https://www.shelfdrilling.com/our-fleet/page/3/
+Shelf Drilling Odyssey,Friede & Goldman JU-3000N,2014,,,400.0,,555.0,,35000.0,,231.0,,,,https://www.shelfdrilling.com/wp-content/uploads/2023/04/Shelf-Drilling-Odyssey_Spec-Sheet-Apr-2023.pdf; https://www.shelfdrilling.com/our-fleet/page/3/
+Shelf Drilling Perseverance,Friede & Goldman JU-2000E,2008,,,400.0,,548.0,,30000.0,,231.0,,,,https://www.shelfdrilling.com/wp-content/uploads/2024/08/Shelf-Drilling-Perseverance_Spec-Sheet-Aug-2024-1.pdf; https://www.shelfdrilling.com/our-fleet/page/3/
+Shelf Drilling Resourceful,LeTourneau Super 116-C,2008,,,350.0,,477.0,,30000.0,,243.0,,,,https://www.shelfdrilling.com/wp-content/uploads/2020/11/Shelf-Drilling_Resourceful_Spec-Sheet-Nov-2020.pdf; https://www.shelfdrilling.com/our-fleet/page/3/
+Shelf Drilling Scepter,Keppel FELS Super B Class,2008,,,350.0,,486.0,,35000.0,,246.0,,,,https://www.shelfdrilling.com/wp-content/uploads/2020/07/Shelf-Drilling_Scepter_Spec-Sheet-Jul-2020-10K.pdf; https://www.shelfdrilling.com/our-fleet/page/3/
+Shelf Drilling Tenacious,Baker Marine Pacific Class 375,2007,,,375.0,,506.0,,30000.0,,236.5,,,,https://www.shelfdrilling.com/wp-content/uploads/2022/02/Shelf-Drilling_Tenacious_Spec-Sheet-Feb-2022-10K-F.pdf; https://www.shelfdrilling.com/our-fleet/page/3/
+Shelf Drilling Victory,Baker Marine Pacific Class 375,2008,,,375.0,,506.0,,30000.0,,239.8,,,,https://www.shelfdrilling.com/wp-content/uploads/2022/07/Shelf-Drilling-Victory_Spec-Sheet-Mar-2024.pdf; https://www.shelfdrilling.com/our-fleet/page/3/
+Shelf Drilling Winner,Friede & Goldman JU-3000N,2014,,,400.0,,555.0,,35000.0,,231.0,,,,https://www.shelfdrilling.com/wp-content/uploads/2023/08/Shelf-Drilling-Winner_Spec-Sheet-Aug-2023.pdf; https://www.shelfdrilling.com/our-fleet/page/3/
+Trident 16,Modec 300 C-38,1982,,,300.0,,405.0,,25000.0,,220.0,,,,https://www.shelfdrilling.com/wp-content/uploads/2017/09/Shelf-Drilling_Trident-16_Spec-Sheet-Sep-2017.pdf; https://www.shelfdrilling.com/our-fleet/page/4/
+Trident II,Marathon LeTourneau 84-SC Mod,1977,,,300.0,,410.0,,21000.0,,237.0,,,,https://www.shelfdrilling.com/wp-content/uploads/2014/08/Shelf-Drilling_Trident-II_Spec-Sheet-August-2014.pdf; https://www.shelfdrilling.com/our-fleet/page/4/
+Trident XII,BMC 300 IC,1982,,,300.0,,429.5,,21000.0,,212.0,,,,https://www.shelfdrilling.com/wp-content/uploads/2017/04/Shelf-Drilling_Trident-XII_Spec-Sheet-Apr-2017.pdf; https://www.shelfdrilling.com/our-fleet/page/4/
+VALARIS 106,KFELS MOD V Jackup,2005,,,,,517.0,,30000.0,,234.0,,,,https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-106.pdf
+VALARIS 107,KFELS MOD V Jackup,2006,,,,,517.0,,30000.0,,234.0,,,,https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-107.pdf
+VALARIS 108,KFELS MOD V Jackup,2007,,,,,517.0,,30000.0,,234.0,,,,https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-108.pdf
+VALARIS 110,KFELS MOD V Jackup,2015,,,,,517.0,,35000.0,,234.0,,,,https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-110.pdf
+VALARIS 111,KFELS Mod V Enhanced Deepwater Independent Leg Jackup,2003,,,,,517.0,,36000.0,,234.0,,,,https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-111.pdf
+VALARIS 115,Baker Marine Pacific Independent Leg Jackup,2013,,,,,532.0,,30000.0,,236.5,,,,https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-115.pdf
+VALARIS 116,LeTourneau Technologies 240-C Class Jackup,2008,,,,,491.0,,35000.0,,228.0,,,,https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-116.pdf
+VALARIS 117,LeTourneau Technologies 240-C Class Jackup,2009,,,,,536.0,,35000.0,,228.0,,,,https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-117.pdf
+VALARIS 118,LeTourneau Technologies 240-C Class Jackup,2012,,,,,491.0,,35000.0,,228.0,,,,https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-118.pdf
+VALARIS 120,"Keppel FELS, Ultra-Enhanced Super ‘A’ Class",2013,,,,,540.0,,40000.0,,246.0,,,,https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-120.pdf
+VALARIS 121,"Keppel FELS, Ultra-Enhanced Super ‘A’ Class",2014,,,,,540.0,,40000.0,,246.0,,,,https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-121.pdf
+VALARIS 122,"Keppel FELS, Ultra-Enhanced Super ‘A’ Class",2013,,,,,540.0,,40000.0,,246.0,,,,https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-122.pdf
+VALARIS 123,"Keppel FELS, Ultra-Enhanced Super ‘A’ Class",2019,,,,,540.0,,40000.0,,246.0,,,,https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-123.pdf
+VALARIS 140,LeTourneau Super 116E Jackup,2016,,,340.0,,444.0,,30000.0,,243.0,,,,https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-140.pdf
+VALARIS 141,LeTourneau Super 116E Jackup,2016,,,,,444.0,,30000.0,,243.0,,,,https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-141.pdf
+VALARIS 143,LeTourneau Technologies EXL (Super 116E) Class Jackup,2011,,,,,477.0,,35000.0,,243.0,,,,https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-143.pdf
+VALARIS 144,LeTourneau Technologies EXL (Super 116E) Class Jackup,2010,,,,,511.0,,35000.0,,243.0,,,,https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-144.pdf
+VALARIS 146,LeTourneau Technologies EXL (Super 116E) Class Jackup,2011,,,,,444.0,,35000.0,,243.0,,,,https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-146.pdf
+VALARIS 147,LeTourneau Technologies Super 116E-PB Class Jackup,2012,,,,,477.0,,30000.0,,243.0,,,,https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-147.pdf
+VALARIS 148,LeTourneau Technologies Super 116E-PB Class Jackup,2013,,,,,477.0,,30000.0,,305.0,,,,https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-148.pdf
+VALARIS 248,LeTourneau Technologies Super Gorilla Class Jackup,2000,,,,,607.0,,35000.0,,306.0,,,,https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-248.pdf
+VALARIS 249,LeTourneau Technologies Super Gorilla Class Jackup,2001,,,,,607.0,,35000.0,,306.0,,,,https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-249.pdf
+VALARIS 250,LeTourneau Technologies Super Gorilla XL Class Jackup,2003,,,,,645.0,,35000.0,,306.0,,,,https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-250.pdf
+VALARIS 72,Hitachi K1025N Jack Up,1981,,,,,343.8,,25000.0,,230.0,,,,https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-72.pdf
+VALARIS 76,MLT Super 116-C Jackup,1999,,,,,411.0,,30000.0,,243.0,,,,https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-76.pdf
+VALARIS 92,Marathon LeTourneau Technologies 116-C Jackup,1982,,,,,343.0,,25000.0,,243.0,,,,https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-92.pdf
+VALARIS NORWAY,KFELS N-Class Jackup,2011,,,,,568.0,,35000.0,,264.0,,,,https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-NORWAY.pdf
+VALARIS STAVANGER,KFELS N-Class Jackup,2011,,,,,568.0,,35000.0,,264.0,,,,https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-STAVANGER.pdf
+VALARIS VIKING,KFELS N-Class Jackup,2010,,,,,600.0,,35000.0,,264.0,,,,https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-VIKING.pdf
+VELESTO NAGA 2,GustoMSC-CJ46-X100D,2009,,,350.0,,483.5,45.0,30000.0,,214.1,,,,https://asset.xtopia.io/clients/asset_06BCF24A-3658-437A-AC25-8E9DF29B0D49/contentms/img/services/pdf/naga-2-2026.pdf
+VELESTO NAGA 3,GustoMSC-CJ46-X100D,,,,350.0,,483.5,45.0,30000.0,,214.1,,,,https://asset.xtopia.io/clients/asset_06BCF24A-3658-437A-AC25-8E9DF29B0D49/contentms/img/services/pdf/naga-3-2026.pdf
+VELESTO NAGA 4,Keppel FELS B Class,2013,,,400.0,,517.0,47.2,30000.0,,234.0,,,,https://asset.xtopia.io/clients/asset_06BCF24A-3658-437A-AC25-8E9DF29B0D49/contentms/img/services/pdf/naga-4-2026.pdf
+VELESTO NAGA 5,Keppel FELS B Class,2014,,,400.0,,517.0,47.2,30000.0,,234.0,,,,https://asset.xtopia.io/clients/asset_06BCF24A-3658-437A-AC25-8E9DF29B0D49/contentms/img/services/pdf/naga-5-2026.pdf
+VELESTO NAGA 6,GustoMSC-CJ46-X100D,2014,,,375.0,,503.3,45.0,30000.0,,214.1,,,,https://asset.xtopia.io/clients/asset_06BCF24A-3658-437A-AC25-8E9DF29B0D49/contentms/img/services/pdf/naga-6-2026.pdf
+VELESTO NAGA 8,Keppel FELS B Class (Bigfoot),2015,,,375.0,,517.0,53.0,30000.0,,234.0,,,,https://asset.xtopia.io/clients/asset_06BCF24A-3658-437A-AC25-8E9DF29B0D49/contentms/img/services/pdf/naga-8-2026.pdf

@@ -8,11 +8,16 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts" / "audit"))
 
-from test_source_refresh_contract import _contract, _valid_sources, _write_project
 from validate_source_refresh_contract import (  # noqa: E402
     REQUIRED_HIGH_VALUE_SOURCES,
     ValidationError,
     validate_contract,
+)
+
+from tests.unit.audit.test_source_refresh_contract import (
+    _contract,
+    _valid_sources,
+    _write_project,
 )
 
 

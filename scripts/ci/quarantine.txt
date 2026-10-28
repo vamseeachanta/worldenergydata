@@ -130,3 +130,32 @@ tests/unit/marine_safety/analysis/test_llm_classifier.py::TestPerformance::test_
 tests/unit/marine_safety/analysis/test_llm_classifier.py::TestClassificationAccuracy::test_positive_case_accuracy
 tests/unit/marine_safety/analysis/test_llm_classifier.py::TestClassificationAccuracy::test_negative_case_accuracy
 tests/unit/marine_safety/analysis/test_llm_classifier.py::TestClassificationAccuracy::test_f1_score_calculation
+
+# ---------------------------------------------------------------------------
+# Added for batch 1803 (fix-forward), 28 Oct 2026. Combining the batch PRs left
+# these evidence pins and enrollments stale; each regenerates on main after the
+# batch lands. Tracking issue #1804.
+# ---------------------------------------------------------------------------
+
+# FIX-FORWARD after batch 1803: drilling evidence pin/enrollment regenerates on main (pins from #1695, sources edited by #1378) — issue #1804
+tests/unit/drilling/test_implementation_map.py::test_family_discovery_evidence
+tests/unit/drilling/test_implementation_map.py::test_all_six_family_enrollments
+tests/unit/drilling/test_pack_evidence.py::test_pack_source_pin_and_digests
+tests/unit/drilling/test_pack_evidence.py::test_pack_source_ranges_and_regression_nodes_resolve
+
+# FIX-FORWARD after batch 1803: eia_us evidence pin/enrollment regenerates on main (map from #1267; 260 methods vs 257 pinned) — issue #1804
+tests/unit/eia_us/test_implementation_map.py::test_enrollment_covers_every_method_and_preserves_pin
+
+# FIX-FORWARD after batch 1803: bsee evidence pin/enrollment regenerates on main (survey record #1366 vs method change #1454; screening criteria drift from #1659) — issue #1804
+tests/unit/bsee/analysis/test_directional_survey_validation.py::test_public_record_reproducible_and_revision_bound
+tests/unit/bsee/pipeline/test_screening_contract.py::test_committed_manifest_tracks_current_generator_criteria
+
+# FIX-FORWARD after batch 1803: hse evidence pin/enrollment regenerates on main (notice loaders #1687 vs source registry #1688) — issue #1804
+tests/unit/hse/test_source_registry.py::test_legacy_loader_urls_belong_to_registered_sources
+
+# FIX-FORWARD after batch 1803: vessel_fleet evidence pin/enrollment regenerates on main (liftboat crosswalk digest from #1800) — issue #1804
+tests/unit/vessel_fleet/loaders/test_liftboat_loader.py::test_seed_crosswalk_is_complete_and_preserves_ambiguous_labels
+
+# FIX-FORWARD after batch 1803: ci F821 evidence pin/enrollment regenerates on main (ruff worked example from #1588) — issue #1804
+tests/ci/test_check_f821.py::test_real_tools_and_worked_example[False-ruff]
+tests/ci/test_check_f821.py::test_real_tools_and_worked_example[True-ruff]

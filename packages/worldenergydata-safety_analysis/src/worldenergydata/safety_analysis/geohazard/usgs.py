@@ -74,6 +74,23 @@ class QueryResult:
     source_url: str
     retrieved_at_utc: str
     matched_count: int
+    requested_limit: int | None = None
+
+    @property
+    def count_mismatch(self) -> bool:
+        """Compare returned rows with the earlier count, not event identities."""
+        return len(self.events) != self.matched_count
+
+    @property
+    def limit_reached(self) -> bool | None:
+        """Flag possible truncation; an unknown caller limit remains unknown.
+
+        USGS event-service v1, limit parameter (read 2026-10-19): the limit
+        caps returned events. Equal counts do not certify completeness.
+        """
+        if self.requested_limit is None:
+            return None
+        return len(self.events) >= self.requested_limit
 
 
 def _number(value: Any, low: float = -math.inf, high: float = math.inf) -> float:
@@ -105,8 +122,17 @@ def _event(feature: dict[str, Any], source_url: str) -> EarthquakeEvent:
     if feature["type"] != "Feature" or geometry["type"] != "Point":
         raise ValueError("Expected Point feature")
     coords = geometry["coordinates"]
-    if len(coords) != 3 or not isinstance(feature["id"], str):
+    # USGS GeoJSON Summary v1.0, Output (read 2026-10-19): three coordinates
+    # [longitude, latitude, depth], string id and Long Integer event time.
+    if (
+        not isinstance(coords, list)
+        or len(coords) != 3
+        or not isinstance(feature["id"], str)
+        or not feature["id"].strip()
+    ):
         raise ValueError("Expected id and three coordinates")
+    if type(props["time"]) is not int:
+        raise ValueError("Expected integer event time")
     timestamp = _number(props["time"])
     return EarthquakeEvent(
         event_id=feature["id"],
@@ -122,18 +148,71 @@ def _event(feature: dict[str, Any], source_url: str) -> EarthquakeEvent:
     )
 
 
+def _unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    """Reject ambiguous members (client policy; RFC 8259, 2017, section 4)."""
+    result: dict[str, Any] = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError("Duplicate JSON member")
+        result[key] = value
+    return result
+
+
+def _json_number(value: str) -> float:
+    """Reject non-finite values/overflow (RFC 8259, 2017, section 6)."""
+    return _number(float(value))
+
+
+def _validate_collection(data: dict[str, Any]) -> None:
+    """Check the declared row count when collection metadata supplies it.
+
+    USGS GeoJSON Summary v1.0, Output (read 2026-10-19) declares an integer
+    metadata.count. Agreement with features is this client's integrity policy.
+    Omitted metadata/count remains supported for existing recorded payloads.
+    """
+    if "metadata" in data:
+        metadata = data["metadata"]
+        if not isinstance(metadata, dict):
+            raise ValueError("Expected metadata object")
+        if "count" in metadata and (
+            type(metadata["count"]) is not int
+            or metadata["count"] != len(data["features"])
+        ):
+            raise ValueError("Metadata count differs from feature count")
+
+
 def parse_geojson(raw: bytes | None, source_url: str) -> tuple[EarthquakeEvent, ...]:
-    """Parse the documented GeoJSON summary fields without filling nulls."""
+    """Parse unambiguous summary fields; reject the whole payload on failure.
+
+    Numeric nulls remain unknown. Duplicate JSON members and event IDs are
+    refused rather than silently selecting a value or double-counting a row.
+    """
     if raw is None:
         return ()
     try:
-        data = json.loads(raw)
+        data = json.loads(
+            raw,
+            object_pairs_hook=_unique_object,
+            parse_constant=_json_number,
+            parse_float=_json_number,
+        )
         if data["type"] != "FeatureCollection" or not isinstance(
             data["features"], list
         ):
             raise ValueError("Expected FeatureCollection")
-        return tuple(_event(feature, source_url) for feature in data["features"])
-    except (KeyError, TypeError, ValueError, OverflowError, OSError) as exc:
+        _validate_collection(data)
+        rows = tuple(_event(feature, source_url) for feature in data["features"])
+        if len({row.event_id for row in rows}) != len(rows):
+            raise ValueError("Duplicate event identifier")
+        return rows
+    except (
+        KeyError,
+        TypeError,
+        ValueError,
+        OverflowError,
+        OSError,
+        RecursionError,
+    ) as exc:
         raise ServiceError("Invalid USGS GeoJSON response") from exc
 
 
@@ -250,7 +329,7 @@ class USGSClient:
         rows = parse_geojson(raw, url)
         if len(rows) > limit:
             raise TooManyEvents("Response exceeds event limit. Narrow the selection.")
-        return QueryResult(rows, raw, url, self._retrieved_at_utc, count)
+        return QueryResult(rows, raw, url, self._retrieved_at_utc, count, limit)
 
     def query_box(
         self,

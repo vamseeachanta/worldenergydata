@@ -2,10 +2,13 @@
 
 Compares last-run timestamps against configured thresholds to identify
 data sources that are overdue for refresh (per D-13/D-14 requirements).
+
+Comparison instants use UTC. Legacy timestamps without timezone information
+are interpreted as UTC; offset-aware timestamps retain their actual instant.
 """
 
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List
 
 logger = logging.getLogger(__name__)
@@ -18,6 +21,13 @@ STALENESS_THRESHOLDS: Dict[str, timedelta] = {
     "hse_refresh": timedelta(days=10),
     "eia_us_refresh": timedelta(days=45),
 }
+
+
+def _as_utc(value: datetime) -> datetime:
+    """Normalize an instant to UTC, treating legacy naive values as UTC."""
+    if value.tzinfo is None:
+        value = value.replace(tzinfo=timezone.utc)
+    return value.astimezone(timezone.utc)
 
 
 def check_staleness(status: dict) -> List[str]:
@@ -33,7 +43,7 @@ def check_staleness(status: dict) -> List[str]:
     stale_jobs: List[str] = []
     jobs = status.get("jobs", {})
 
-    now = datetime.now()
+    now = _as_utc(datetime.now(timezone.utc))
 
     for job_name, threshold in STALENESS_THRESHOLDS.items():
         entry = jobs.get(job_name, {})
@@ -45,7 +55,7 @@ def check_staleness(status: dict) -> List[str]:
             continue
 
         try:
-            last_run = datetime.fromisoformat(start_time_iso)
+            last_run = _as_utc(datetime.fromisoformat(start_time_iso))
         except (ValueError, TypeError):
             stale_jobs.append(job_name)
             continue
@@ -68,7 +78,7 @@ def get_staleness_details(status: dict) -> List[Dict[str, Any]]:
     """
     details: List[Dict[str, Any]] = []
     jobs = status.get("jobs", {})
-    now = datetime.now()
+    now = _as_utc(datetime.now(timezone.utc))
 
     for job_name, threshold in STALENESS_THRESHOLDS.items():
         threshold_hours = threshold.total_seconds() / 3600.0
@@ -88,7 +98,7 @@ def get_staleness_details(status: dict) -> List[Dict[str, Any]]:
             continue
 
         try:
-            last_run = datetime.fromisoformat(start_time_iso)
+            last_run = _as_utc(datetime.fromisoformat(start_time_iso))
         except (ValueError, TypeError):
             details.append(
                 {

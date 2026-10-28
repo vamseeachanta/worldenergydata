@@ -64,26 +64,28 @@ explicitly or does not.
 
 from __future__ import annotations
 
+import warnings
 from dataclasses import dataclass
+from math import isfinite
 
 import pandas as pd
 
 from worldenergydata.lower_tertiary.ops_timeline import WAR_ACTIVITY_LABELS
 
 __all__ = [
-    "WAR_ACTIVITY_LABELS",
-    "Basis",
     "BASIS_DRL_COM",
     "BASIS_DRL_COM_PND",
     "BASIS_METHOD_1",
-    "PRESET_BASES",
     "DEFAULT_PHASES",
-    "STATUS_COVERED_UNATTRIBUTED",
     "MAX_PLAUSIBLE_SPAN_DAYS",
+    "PRESET_BASES",
+    "STATUS_COVERED_UNATTRIBUTED",
+    "WAR_ACTIVITY_LABELS",
+    "Basis",
     "normalize_api12",
-    "union_days",
     "rig_days_by_bore",
     "rig_days_by_well",
+    "union_days",
 ]
 
 # Emitted when a bore appears in the target population but has no WAR
@@ -209,8 +211,34 @@ def union_days(intervals) -> int:
     return int(total)
 
 
+def _api12_tokens(values) -> pd.Series:
+    return (
+        pd.Series(values).astype(str).str.strip().str.replace(r"\.0+$", "", regex=True)
+    )
+
+
+def quarantine_war_identifiers(war: pd.DataFrame) -> pd.DataFrame:
+    """Exclude malformed WAR keys before aggregation, reporting the row count.
+
+    The input is preserved. Excluded rows contribute no activity; the warning
+    means results cover only records with valid keys, not the entire input.
+    No padding, truncation, or inference of missing wellbore keys is attempted.
+    """
+    keys = _api12_tokens(war["API_WELL_NUMBER"])
+    valid = keys.str.fullmatch(r"[0-9]{12}", na=False)
+    rejected = int((~valid).sum())
+    if rejected:
+        warnings.warn(
+            f"Quarantined {rejected} WAR row(s) with invalid API12 identifiers; "
+            "rig-day results exclude these rows.",
+            UserWarning,
+            stacklevel=2,
+        )
+    return war.assign(API_WELL_NUMBER=keys).loc[valid].copy()
+
+
 def normalize_api12(values) -> pd.Series:
-    """Coerce an API well number column to its canonical 12-digit string form.
+    """Normalize and validate BSEE wellbore keys before deriving well families.
 
     A numeric API column stringifies with a float tail -- ``608124009500.0`` --
     which matches no population entry. Because a non-match is reported as
@@ -218,9 +246,25 @@ def normalize_api12(values) -> pd.Series:
     bore comes back null and the result looks like a coverage gap rather than
     a dtype mismatch. Callers reach this legitimately, since concatenating
     heterogeneous WAR members widens the column to float64.
+
+    Whitespace and integral decimal tails are accepted for CSV compatibility.
+    Missing or malformed keys raise rather than invent a bore by padding an
+    API-10 or truncating an API-14. Leading zeros in strings are preserved;
+    leading zeros already lost to numeric conversion cannot be recovered.
+    Format validation does not establish that BSEE assigned the identifier.
     """
-    s = pd.Series(values).astype(str).str.strip()
-    return s.str.replace(r"\.0+$", "", regex=True)
+    normalized = _api12_tokens(values)
+    # MMS NTL 2009-G33 (2009), attachment pp. 2-3, API Well Number:
+    # ten family digits plus two WB digits; interval codes are separate (p. 4).
+    # https://www.bsee.gov/sites/bsee.gov/files/notices-to-lessees-ntl/notices-to-lessees/09-g33.pdf
+    invalid = ~normalized.str.fullmatch(r"[0-9]{12}", na=False)
+    if invalid.any():
+        raise ValueError(
+            "API_WELL_NUMBER requires 12 ASCII digits after normalization; "
+            f"{int(invalid.sum())} invalid identifier(s). "
+            "Supply full BSEE wellbore keys, not family or completion keys."
+        )
+    return normalized
 
 
 def _parse_war_date(values) -> pd.Series:
@@ -407,11 +451,16 @@ def _max_drill_fluid_wgt(group: pd.DataFrame):
 
     Returns null, never 0, when nothing was reported: a bore with no recorded
     fluid weight is not a bore drilled on water.
+
+    Units: Form BSEE-0133 (expiration 2024), item 10, MW / PPG. The input
+    policy is finite positive values, not an engineering acceptance range;
+    see docs/modules/bsee/analysis/legacy_component_retirement.md,
+    "Fluid-weight contract" (2026-10-20). No upper limit is assumed.
     """
     if "drill_fluid_wgt" not in group.columns:
         return pd.NA
     values = pd.to_numeric(group["drill_fluid_wgt"], errors="coerce").dropna()
-    values = values[values > 0]
+    values = values[values.map(isfinite) & (values > 0)]
     return float(values.max()) if len(values) else pd.NA
 
 
@@ -458,8 +507,8 @@ DEFAULT_PHASES: dict[str, frozenset[str]] = {
 def rig_days_by_bore(
     war: pd.DataFrame,
     basis: Basis = BASIS_DRL_COM,
-    population: "list[str] | None" = None,
-    phases: "dict[str, frozenset[str]] | None" = None,
+    population: list[str] | None = None,
+    phases: dict[str, frozenset[str]] | None = None,
 ) -> pd.DataFrame:
     """Rig-days per API12 wellbore.
 
@@ -524,10 +573,10 @@ def rig_days_by_bore(
             # weeks we do hold, not a claim about the bore's history.
             "pnd_days": by_code.get("PND", 0),
             "war_days_total": union_days(zip(group["start"], group["end"])),
-            "war_weeks": int(len(group)),
+            "war_weeks": len(group),
             "days_by_code": by_code,
             "days_status": coverage_status,
-            "war_weeks_unattributed": int(len(unattributed)),
+            "war_weeks_unattributed": len(unattributed),
             "war_weeks_rejected": rejected,
             "war_weeks_implausible": implausible,
             "drilling_days_status": drilling_status,
@@ -639,7 +688,7 @@ _DAY_COLUMNS = ("drilling_days", "completion_days", "pnd_days", "war_days_total"
 def rig_days_by_well(
     war: pd.DataFrame,
     basis: Basis = BASIS_DRL_COM,
-    population: "list[str] | None" = None,
+    population: list[str] | None = None,
 ) -> pd.DataFrame:
     """Rig-days per API10 well, unioning the WAR weeks of all its bores.
 

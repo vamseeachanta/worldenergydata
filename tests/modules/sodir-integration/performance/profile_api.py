@@ -9,10 +9,8 @@ import concurrent.futures
 import cProfile
 import io
 import json
-import os
 import pstats
 import statistics
-import sys
 import time
 import tracemalloc
 from dataclasses import asdict, dataclass
@@ -20,14 +18,11 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
-# Add parent directory to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent))
-
-from sodir_module.api_client import SodirAPIClient
-from sodir_module.cache import SodirCache
-from sodir_module.processors.block_processor import BlockProcessor
-from sodir_module.processors.field_processor import FieldProcessor
-from sodir_module.processors.wellbore_processor import WellboreProcessor
+from worldenergydata.sodir.api_client import SodirAPIClient
+from worldenergydata.sodir.cache import SodirCache
+from worldenergydata.sodir.processors.block_processor import BlockProcessor
+from worldenergydata.sodir.processors.field_processor import FieldProcessor
+from worldenergydata.sodir.processors.wellbore_processor import WellboreProcessor
 
 
 @dataclass

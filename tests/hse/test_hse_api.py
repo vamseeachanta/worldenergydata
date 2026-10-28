@@ -65,7 +65,9 @@ def test_hse_statistics_query_grouping():
 def test_hse_epa_tri_query():
     from worldenergydata.hse.api import EpaTriQuery
 
-    df = EpaTriQuery().query(naics="324110", chemical_carcinogen=True)
+    with pytest.raises(NotImplementedError, match="NOT_EVALUATED"):
+        EpaTriQuery().query(naics="324110", chemical_carcinogen=True)
+    df = EpaTriQuery().query(naics="324110")
     assert isinstance(df, pd.DataFrame)
     assert (df["naics_code"] == "324110").all()
     assert len(df) == 1

@@ -48,7 +48,7 @@ This dataset is **synthetic / educational, not real field data**. Quality red fl
 
 ## Relationship to other repo data
 
-- **Sibling**: `data/modules/pipeline/api_5l_pipe_schedule.csv` — API 5L pipe schedule lookup. Useful for joining standard `Pipe_Size_mm` against expected wall thicknesses.
+- **Sibling**: `data/modules/pipeline/api_5l_pipe_schedule.csv` — header-only caller-input template. Supply independently sourced dimensions and a per-row `sources.yml` before joining thickness data; see the [input contract](../../README.md).
 - **No overlap** with `pipeline_safety` (incident records) or `kaggle_oil_facility_accidents` (PHMSA Form 7000-1 incident data) — those are post-failure forensic data; this is pre-failure integrity data.
 
 ## Re-acquisition

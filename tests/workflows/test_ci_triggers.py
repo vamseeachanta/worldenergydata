@@ -1,5 +1,6 @@
 """Keep pull request CI available for every target branch."""
 
+import json
 import os
 import shutil
 import subprocess
@@ -43,7 +44,7 @@ def test_required_pull_request_check_name_is_unchanged() -> None:
 
 
 def _evaluate_expression(expression: str, context: dict) -> object:
-    """Evaluate the equality and short-circuit subset used by concurrency."""
+    """Evaluate the workflow's Boolean and JSON/property expression subset."""
     import ast
     import re
 
@@ -60,6 +61,13 @@ def _evaluate_expression(expression: str, context: dict) -> object:
         """Interpret only literals, comparisons and Boolean operators."""
         if isinstance(node, (ast.Constant, ast.Dict)):
             return ast.literal_eval(node)
+        if isinstance(node, ast.Call) and isinstance(node.func, ast.Name):
+            assert node.func.id == "fromJSON" and len(node.args) == 1
+            return json.loads(evaluate(node.args[0]))
+        if isinstance(node, (ast.Subscript, ast.Attribute)):
+            value = evaluate(node.value)
+            key = evaluate(node.slice) if isinstance(node, ast.Subscript) else node.attr
+            return value.get(key) if isinstance(value, dict) else None
         if isinstance(node, ast.UnaryOp) and isinstance(node.op, ast.Not):
             return not evaluate(node.operand)
         if isinstance(node, ast.Compare):
@@ -234,13 +242,24 @@ def test_required_names_have_single_result_job() -> None:
         assert "!cancelled()" in gate["if"]
         assert "needs.mode.outputs.replay" not in gate["if"]
         assert gate["permissions"] == {"contents": "read", "actions": "read"}
-        checkout, replay, full = gate["steps"]
-        assert (
-            checkout["if"]
-            == replay["if"]
-            == ("needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'")
+        replay, full = gate["steps"]
+        assert replay["if"] == (
+            "needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'"
         )
-        assert replay["env"]["CHECK_NAME"] == name
+        assert replay["env"]["REPLAY_RESULT"] == (
+            "${{ fromJSON(needs.mode.outputs.evidence || '{}')['"
+            + name
+            + "'].decision }}"
+        )
+        assert "GH_TOKEN" not in replay["env"]
+        for decision, expected in [("PASS", 0), ("FAIL", 1), ("", 1)]:
+            completed = subprocess.run(
+                ["bash", "-e", "-c", replay["run"]],
+                env={**os.environ, "REPLAY_RESULT": decision},
+                capture_output=True,
+                check=False,
+            )
+            assert completed.returncode == expected
         assert full["if"] == (
             "needs.mode.result != 'success' || needs.mode.outputs.replay != 'true'"
         )
@@ -269,6 +288,46 @@ def test_required_names_have_single_result_job() -> None:
                 )
 
 
+@pytest.mark.parametrize("gate_id", ["lint-gate", "security-gate", "pr-gate"])
+@pytest.mark.parametrize("evidence", [None, "", "{}", "missing", "PASS", "FAIL"])
+@pytest.mark.parametrize("replay_selected", [False, True])
+def test_result_environment_before_step_selection(gate_id, evidence, replay_selected):
+    """Eager env evaluation tolerates absent evidence but cannot grant replay PASS."""
+    gate = _load_workflow()["jobs"][gate_id]
+    replay, full = gate["steps"]
+    context = {
+        "needs.mode.result": "success",
+        "needs.mode.outputs.replay": "true" if replay_selected else "false",
+        "needs." + gate["needs"][1] + ".result": "success",
+    }
+    if evidence is not None:
+        context["needs.mode.outputs.evidence"] = (
+            json.dumps(
+                {gate["name"]: {} if evidence == "missing" else {"decision": evidence}}
+            )
+            if evidence in ("missing", "PASS", "FAIL")
+            else evidence
+        )
+    # Evaluate even the unselected step, matching hosted runner evaluation order.
+    decision = _evaluate_expression(replay["env"]["REPLAY_RESULT"][3:-2], context)
+    assert decision == (evidence if evidence in ("PASS", "FAIL") else None)
+    selected = replay if _evaluate_expression(replay["if"], context) else full
+    assert bool(_evaluate_expression(full["if"], context)) is not replay_selected
+    variable = "REPLAY_RESULT" if replay_selected else "FULL_RESULT"
+    value = (
+        decision
+        if replay_selected
+        else _evaluate_expression(full["env"]["FULL_RESULT"][3:-2], context)
+    )
+    assert variable in selected["env"]
+    # The shell contract is executed separately in test_required_names_have_single_result_job.
+    if replay_selected:
+        assert 'test "$REPLAY_RESULT" = PASS' in selected["run"]
+        assert (value == "PASS") is (evidence == "PASS")
+    else:
+        assert value == "success"
+
+
 def test_full_jobs_honor_cancellation() -> None:
     """All three fast-gate jobs remain cancellable after mode failure."""
     jobs = _load_workflow()["jobs"]
@@ -280,9 +339,6 @@ def test_full_jobs_honor_cancellation() -> None:
         assert "needs.mode.result != 'success'" in condition, key
         assert "mode" in jobs[key]["needs"]
     assert jobs["mode"]["permissions"] == {"contents": "read", "actions": "read"}
-    assert not any(
-        "checkout@" in step.get("uses", "") for step in jobs["mode"]["steps"]
-    )
     artifact = jobs["mode"]["steps"][-1]
     assert artifact["with"]["retention-days"] == 14
     assert artifact["with"]["name"].startswith("gate-tip-")
@@ -330,24 +386,50 @@ def test_checkout_builds_current_base_merge(job_id: str, index: int) -> None:
             assert "event_base=$EVENT_BASE" in line
 
 
-def _git(root: Path, *args: str) -> str:
+def _git(root: Path, *args: str, input_data: bytes | None = None) -> str:
     """Run a real Git command and include its diagnostics on failure."""
+    env = os.environ.copy()
+    for key in ("GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR", "GIT_INDEX_FILE"):
+        env.pop(key, None)
     result = subprocess.run(
         ["git", "-C", str(root), *args],
+        env=env,
+        input=input_data,
         capture_output=True,
-        text=True,
         check=True,
         timeout=30,
     )
-    return result.stdout.strip()
+    return result.stdout.decode("utf-8").strip()
 
 
 def _commit(root: Path, filename: str, contents: str) -> str:
-    """Commit a fixture change using the fixture repository identity."""
-    (root / filename).write_text(contents, encoding="utf-8")
+    """Record synthetic parented history without configuring a Git identity."""
+    (root / filename).write_text(contents, encoding="utf-8", newline="\n")
     _git(root, "add", filename)
-    _git(root, "commit", "-m", "fixture change")
-    return _git(root, "rev-parse", "HEAD")
+    tree = _git(root, "write-tree")
+    parent = _git(
+        root,
+        "for-each-ref",
+        "--format=%(objectname)",
+        _git(root, "symbolic-ref", "HEAD"),
+    )
+    commit = (
+        f"tree {tree}\n"
+        + (f"parent {parent}\n" if parent else "")
+        + "author Fixture <fixture> 0 +0000\n"
+        + "committer Fixture <fixture> 0 +0000\n\nfixture change\n"
+    )
+    revision = _git(
+        root,
+        "hash-object",
+        "-t",
+        "commit",
+        "-w",
+        "--stdin",
+        input_data=commit.encode("utf-8"),
+    )
+    _git(root, "update-ref", "HEAD", revision)
+    return revision
 
 
 def _fixture_history(root: Path, case: str) -> tuple[Path, str, str, str]:
@@ -356,8 +438,6 @@ def _fixture_history(root: Path, case: str) -> tuple[Path, str, str, str]:
     _git(root, "init", "--bare", str(origin))
     source = root / "source"
     _git(root, "clone", origin.as_uri(), str(source))
-    _git(source, "config", "user.name", "Test")
-    _git(source, "config", "user.email", "test@example.com")
     _git(source, "checkout", "-b", "main")
     event_base = _commit(source, "shared.txt", "original\n")
     if case == "shallow":
@@ -377,6 +457,27 @@ def _fixture_history(root: Path, case: str) -> tuple[Path, str, str, str]:
             tip = _commit(source, "base-history.txt", str(number))
     _git(source, "push", "origin", "main", "feature")
     return origin, event_base, tip, head
+
+
+def test_fixture_history_does_not_override_git_identity(tmp_path):
+    """Synthetic history must not configure an identity or carry an address."""
+    _fixture_history(tmp_path, "moved_base")
+    source = tmp_path / "source"
+    result = subprocess.run(
+        [
+            "git",
+            "-C",
+            str(source),
+            "config",
+            "--local",
+            "--get-regexp",
+            r"user\.(name|email)",
+        ],
+        capture_output=True,
+        check=False,
+    )
+    assert result.returncode == 1
+    assert _git(source, "rev-list", "--count", "HEAD") == "2"
 
 
 @pytest.mark.parametrize("job_id,index", _checkout_steps())
@@ -435,13 +536,79 @@ def test_local_merge_behavior(
         assert result.returncode == 0, result.stdout + result.stderr
         parents = _git(runner, "show", "-s", "--format=%P", "HEAD").split()
         assert parents == [tip, head]
-        assert output.read_text().splitlines() == [f"tip={tip}"]
+        assert output.read_text(encoding="utf-8").splitlines() == [f"tip={tip}"]
         tested = _git(runner, "rev-parse", "HEAD")
         tree = _git(runner, "rev-parse", "HEAD^{tree}")
         assert (
             f"tested={tested} first_parent={tip} second_parent={head} "
             f"tip={tip} event_base={event_base} tree={tree}"
         ) in result.stdout
+
+
+@pytest.mark.parametrize("evidence", ["true", "false", ""])
+def test_mode_evidence_controls_full_gate_fallback(tmp_path, evidence):
+    """Issue #1350 truth table: only all-PASS evidence can disable full jobs.
+
+    Hand calculation: true selects replay; false or missing selects full CI.
+    Every full job contains the same replay != true guard, so false opens it.
+    """
+    mode = _load_workflow()["jobs"]["mode"]
+    assert mode["outputs"]["evidence"] == "${{ steps.lookup.outputs.evidence }}"
+    steps = mode["steps"]
+    candidate = next(step for step in steps if step.get("id") == "candidate")
+    checkout = next(step for step in steps if "checkout" in step.get("uses", ""))
+    lookup = next(step for step in steps if step.get("id") == "lookup")
+    select = next(step for step in steps if step.get("id") == "mode")
+    artifact = next(step for step in steps if "upload-artifact" in step.get("uses", ""))
+    assert candidate["id"] == "candidate"
+    assert checkout["if"] == lookup["if"] == "steps.candidate.outputs.replay == 'true'"
+    assert lookup["id"] == "lookup"
+    assert lookup["env"]["GH_TOKEN"] == "${{ github.token }}"
+    assert lookup["run"].endswith("python scripts/ci/replay_gate.py --mode\n")
+    assert select["id"] == "mode"
+    assert select["env"]["REPLAY"] == "${{ steps.lookup.outputs.replay || 'false' }}"
+    assert artifact["if"] == (
+        "github.event_name == 'pull_request' && steps.mode.outputs.replay != 'true'"
+    )
+    output = tmp_path / "output"
+    tools = tmp_path / "tools"
+    tools.mkdir()
+    # Synthetic Git response; the digest content is arbitrary, not a design value.
+    tip = "b" * 40
+    git = tools / "git"
+    git.write_text(
+        "#!/bin/sh\nprintf '%s\trefs/heads/main\n' " + tip + "\n",
+        encoding="utf-8",
+        newline="\n",
+    )
+    git.chmod(0o755)
+    result = subprocess.run(
+        ["bash", "-e", "-o", "pipefail", "-c", select["run"]],
+        env={
+            **os.environ,
+            "PATH": str(tools) + os.pathsep + os.environ["PATH"],
+            "REPLAY": evidence or "false",
+            "IS_PR": "true",
+            "BASE_URL": "unused",
+            "BASE_REF": "main",
+            "GITHUB_OUTPUT": str(output),
+            "RUNNER_TEMP": str(tmp_path),
+        },
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert result.returncode == 0
+    values = dict(
+        line.split("=", 1) for line in output.read_text(encoding="utf-8").splitlines()
+    )
+    assert values["replay"] == ("true" if evidence == "true" else "false")
+    if evidence != "true":
+        assert values["tip"] == tip
+        assert (tmp_path / "gate-tip").read_text(encoding="utf-8") == "."
+    else:
+        assert "tip" not in values
+        assert not (tmp_path / "gate-tip").exists()
 
 
 def _events(path: Path) -> dict:

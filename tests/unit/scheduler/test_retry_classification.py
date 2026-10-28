@@ -317,3 +317,124 @@ def test_transient_eia_error_can_recover(tmp_path):
     assert result.status == "success"
     assert run.call_count == 2
     sleep.assert_called_once_with(1)
+
+
+@pytest.mark.parametrize(
+    "date_config",
+    [
+        {"year": 2026, "month": 0},
+        {"year": 2026, "month": 13},
+        {"year": 2026},
+        {"month": 1},
+        {"semester": 1},
+    ],
+)
+def test_anp_invalid_date_stops_before_client_creation(date_config, tmp_path):
+    """Hand trace: invalid explicit date gives one call and zero sleeps.
+
+    ANPClient._build_month_url defines the inclusive month range 1..12;
+    the adjacent 0 and 13 inputs violate it. Partial explicit dates cannot
+    identify the requested month. The year and retry inputs are synthetic.
+    """
+    from worldenergydata.scheduler.jobs.brazil_anp_refresh import BrazilAnpRefreshJob
+    from worldenergydata.scheduler.monitor import RetryManager
+
+    job = BrazilAnpRefreshJob()
+    run = Mock(
+        side_effect=lambda: job.run({"output_dir": str(tmp_path), **date_config})
+    )
+    manager = RetryManager(max_retries=3, backoff_seconds=1)
+    with (
+        patch("worldenergydata.scheduler.jobs.brazil_anp_refresh.ANPClient") as client,
+        patch("worldenergydata.scheduler.monitor.time.sleep") as sleep,
+    ):
+        result = manager.run_with_retry(run)
+    assert result.status == "failure"
+    assert result.retryable is False
+    assert result.error_msg
+    run.assert_called_once_with()
+    sleep.assert_not_called()
+    client.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    "status,retryable",
+    [(HTTPStatus.NOT_FOUND, False), (HTTPStatus.SERVICE_UNAVAILABLE, True)],
+)
+def test_bsee_http_status_reaches_health_without_losing_classification(
+    status, retryable, tmp_path
+):
+    """Hand trace through the real scraper, adapter, retry loop and report.
+
+    A single-dataset Not Found requires one request, no sleeps, and no
+    manifest. For a transient failure the explicit scheduler budget is two,
+    each job call uses TRANSIENT_DATASET_ATTEMPTS, and each scraper call uses
+    MAX_RETRIES. Total HTTP requests are their product. Scheduler delays:
+    synthetic base 1 * 2**0 = 1 second. The scraper has one fewer sleep than
+    requests per invocation. RFC 9110 (2022), sections 15.5.5 and 15.6.4,
+    supplies the status semantics; #460 supplies the per-run policy.
+    """
+    from worldenergydata.bsee.data.scrapers.bsee_web import BSEEWebScraper
+    from worldenergydata.scheduler.jobs.bsee_refresh import (
+        BSEE_DATASETS,
+        TRANSIENT_DATASET_ATTEMPTS,
+        BseeRefreshJob,
+    )
+    from worldenergydata.scheduler.scheduler import DataScheduler
+
+    config_path = tmp_path / "config" / "scheduler" / "config.yml"
+    config_path.parent.mkdir(parents=True)
+    output_dir = tmp_path / "output"
+    config_path.write_text(
+        json.dumps(
+            {
+                "jobs": [{"name": "bsee_refresh", "output_dir": str(output_dir)}],
+                "monitoring": {
+                    "log_dir": str(tmp_path / "logs"),
+                    "status_file": str(tmp_path / "status.json"),
+                    "retry_max": 2,
+                    "retry_backoff_seconds": 1,
+                },
+            }
+        )
+    )
+    scheduler = DataScheduler(str(config_path))
+    job = BseeRefreshJob()
+    run = Mock(wraps=job.run)
+    job.run = run
+    scheduler.register_job(job)
+    response = requests.Response()
+    response.status_code = status
+    response.url = "https://example.invalid/archive.zip"
+    # Both layers use the same time module; one spy observes every sleep.
+    with (
+        patch("requests.Session.get", return_value=response) as get,
+        patch("worldenergydata.scheduler.monitor.time.sleep") as sleep,
+        patch(
+            "worldenergydata.scheduler.jobs.bsee_refresh.load_dataset_catalog",
+            return_value={"platform": BSEE_DATASETS["platform"]},
+        ),
+    ):
+        result = scheduler.run_once(job.name)
+    assert result.status == "failure"
+    assert result.retryable is retryable
+    assert run.call_count == (2 if retryable else 1)
+    scraper_calls = 2 * TRANSIENT_DATASET_ATTEMPTS
+    assert get.call_count == (
+        scraper_calls * BSEEWebScraper.MAX_RETRIES if retryable else 1
+    )
+    assert sleep.call_args_list == (
+        [call(BSEEWebScraper.RETRY_DELAY)]
+        * (TRANSIENT_DATASET_ATTEMPTS * (BSEEWebScraper.MAX_RETRIES - 1))
+        + [call(1)]
+        + [call(BSEEWebScraper.RETRY_DELAY)]
+        * (TRANSIENT_DATASET_ATTEMPTS * (BSEEWebScraper.MAX_RETRIES - 1))
+        if retryable
+        else []
+    )
+    reported = json.loads((tmp_path / "status.json").read_text())
+    assert reported["jobs"][job.name]["retryable"] is retryable
+    assert reported["jobs"][job.name]["status"] == "failure"
+    (log_path,) = (tmp_path / "logs").glob("*.json")
+    assert json.loads(log_path.read_text())["retryable"] is retryable
+    assert not (output_dir / "manifest.json").exists()

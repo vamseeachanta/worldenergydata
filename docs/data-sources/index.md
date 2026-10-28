@@ -9,6 +9,9 @@ WorldEnergyData integrates multiple public energy data sources to provide unifie
 
 ## Available Data Sources
 
+[International country source readiness](international-source-readiness.html) records
+bounded Argentina discovery, Colombia monthly samples and remaining access limits.
+
 ### 🛢️ [BSEE - Bureau of Safety and Environmental Enforcement](bsee/)
 
 The most comprehensive data source in WorldEnergyData, covering US Gulf of Mexico offshore operations.

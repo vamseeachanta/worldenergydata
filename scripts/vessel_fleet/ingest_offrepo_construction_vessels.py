@@ -32,23 +32,14 @@ import sys
 from pathlib import Path
 from typing import Any
 
+from pydantic import ValidationError
+
 _SCRIPT_DIR = Path(__file__).resolve().parent
 _PROJECT_ROOT = _SCRIPT_DIR.parent.parent
 sys.path.insert(0, str(_PROJECT_ROOT / "src"))
-
-from worldenergydata.vessel_fleet.collectors.acma_msiv_collector import (
-    collect_msiv_vessels,
+sys.path.insert(
+    0, str(_PROJECT_ROOT / "packages" / "worldenergydata-vessel_fleet" / "src")
 )
-from worldenergydata.vessel_fleet.collectors.frontier_csv_collector import (
-    collect_frontier_vessels,
-)
-from worldenergydata.vessel_fleet.dedup.deduplicator import (
-    deduplicate_fleet_with_report,
-)
-from worldenergydata.vessel_fleet.schemas.construction_vessel import (
-    ConstructionVesselSchema,
-)
-from worldenergydata.vessel_fleet.storage.parquet import ParquetStore
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
@@ -69,13 +60,35 @@ def _load_curated_csv(path: Path) -> tuple[list[str], list[dict[str, Any]]]:
 
 
 def main() -> int:
+    # Load the namespace after configuring the source-checkout import paths.
+    from worldenergydata import vessel_fleet
+    from worldenergydata.vessel_fleet.collectors.acma_msiv_collector import (
+        collect_msiv_vessels,
+    )
+    from worldenergydata.vessel_fleet.collectors.frontier_csv_collector import (
+        collect_frontier_vessels,
+    )
+    from worldenergydata.vessel_fleet.dedup.deduplicator import (
+        deduplicate_fleet_with_report,
+    )
+    from worldenergydata.vessel_fleet.schemas.construction_vessel import (
+        ConstructionVesselSchema,
+    )
+    from worldenergydata.vessel_fleet.storage.parquet import ParquetStore
+
+    default_data_dir = Path(vessel_fleet.__file__).resolve().parent / "_data"
     parser = argparse.ArgumentParser(
         description="Grow curated construction vessels with off-repo sources",
     )
     parser.add_argument(
         "--data-dir",
-        default=str(_PROJECT_ROOT / "data/modules/vessel_fleet"),
+        default=str(default_data_dir),
         help="Base vessel_fleet data directory",
+    )
+    parser.add_argument(
+        "--msiv-dir",
+        type=Path,
+        help="MSIV source directory; overrides the configured environment directory",
     )
     parser.add_argument(
         "--dry-run",
@@ -94,17 +107,17 @@ def main() -> int:
     logger.info("Loaded %d existing curated vessels", len(existing))
 
     frontier = collect_frontier_vessels()
-    msiv = collect_msiv_vessels()
-    logger.info(
-        "Off-repo: %d Frontier + %d MSIV records", len(frontier), len(msiv)
-    )
+    msiv = collect_msiv_vessels(args.msiv_dir)
+    logger.info("Off-repo: %d construction + %d MSIV records", len(frontier), len(msiv))
 
     all_records: list[dict[str, Any]] = existing + frontier + msiv
     deduped, conflicts = deduplicate_fleet_with_report(all_records)
 
     # Keep only construction-category vessels in the curated construction table.
     construction = [
-        r for r in deduped if (r.get("VESSEL_CATEGORY") or "construction") == "construction"
+        r
+        for r in deduped
+        if (r.get("VESSEL_CATEGORY") or "construction") == "construction"
     ]
     # Normalise the category label on any off-repo additions.
     for r in construction:
@@ -119,7 +132,7 @@ def main() -> int:
         payload = {k: v for k, v in rec.items() if v is not None}
         try:
             model = ConstructionVesselSchema(**payload)
-        except Exception as exc:  # pragma: no cover - defensive
+        except ValidationError as exc:  # pragma: no cover - defensive
             failures += 1
             logger.warning(
                 "Dropping invalid vessel %s: %s", rec.get("VESSEL_NAME"), exc

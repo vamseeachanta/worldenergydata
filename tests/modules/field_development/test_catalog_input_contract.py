@@ -5,9 +5,14 @@ import json
 from pathlib import Path
 
 import pytest
-from test_catalog_integration import api as fixture_api
-from test_catalog_integration import inputs as fixture_inputs
-from test_catalog_integration import write_json
+
+from tests.modules.field_development.test_catalog_integration import api as fixture_api
+from tests.modules.field_development.test_catalog_integration import (
+    inputs as fixture_inputs,
+)
+from tests.modules.field_development.test_catalog_integration import (
+    write_json,
+)
 
 api = fixture_api
 inputs = fixture_inputs

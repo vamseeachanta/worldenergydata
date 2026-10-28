@@ -12,6 +12,8 @@ import numpy as np
 import pandas as pd
 from scipy.stats import linregress
 
+from worldenergydata.common.decline import exponential_rate, hyperbolic_rate
+
 from .views_utils import PLOTLY_AVAILABLE
 
 # Import plotly components if available
@@ -86,7 +88,7 @@ class DeclineCurveAnalyzer:
         D = params["decline_rate"] / 12  # Convert to monthly
 
         time = np.arange(periods)
-        fitted = qi * np.exp(-D * time)
+        fitted = exponential_rate(time, qi, D)
 
         return fitted
 
@@ -103,11 +105,11 @@ class DeclineCurveAnalyzer:
         if decline_type == "exponential":
             # Start from last known production
             future_time = np.arange(1, periods + 1)
-            forecast = qi * np.exp(-D * future_time)
+            forecast = exponential_rate(future_time, qi, D)
         else:  # hyperbolic
             b = params.get("b_factor", 0.5)
             future_time = np.arange(1, periods + 1)
-            forecast = qi / ((1 + b * D * future_time) ** (1 / b))
+            forecast = hyperbolic_rate(future_time, qi, D, b)
 
         return forecast
 
