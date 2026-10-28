@@ -8,7 +8,8 @@ application with Rich console output.
 Architecture:
     The CLI uses a modular architecture where each domain module (bsee,
     marine-safety, fdas) provides its own Typer sub-application that is
-    registered with the main app.
+    registered with the main app by import path. A family loads only when
+    its context is requested for dispatch or family-specific completion.
 
 Usage:
     worldenergydata <module> <command> [options]
@@ -50,25 +51,7 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 
-from worldenergydata.cli.commands import (
-    bsee,
-    canada,
-    dashboard,
-    eia,
-    fdas,
-    kansas_kgs,
-    landman,
-    lng_terminals,
-    lower_tertiary,
-    marine_safety,
-    metocean,
-    mexico_cnh,
-    ndbc,
-    production_forecast,
-    sodir,
-    texas_rrc,
-)
-from worldenergydata.safety_analysis import cli as safety_analysis_cli
+from worldenergydata.cli.lazy import lazy_app
 
 # Initialize console for rich output
 console = Console()
@@ -83,72 +66,88 @@ app = typer.Typer(
 )
 
 # Add module subcommands
-app.add_typer(bsee.app, name="bsee", help="BSEE data operations and analysis")
 app.add_typer(
-    dashboard.app,
+    lazy_app("worldenergydata.cli.commands.bsee"),
+    name="bsee",
+    help="BSEE data operations and analysis",
+)
+app.add_typer(
+    lazy_app("worldenergydata.cli.commands.dashboard"),
     name="dashboard",
     help="Launch the Plotly Dash BSEE/FDAS web dashboard",
 )
 app.add_typer(
-    eia.app,
+    lazy_app("worldenergydata.cli.commands.eia"),
     name="eia",
     help="EIA API v2 weekly petroleum and gas feed ingestion",
 )
 app.add_typer(
-    marine_safety.app,
+    lazy_app("worldenergydata.cli.commands.marine_safety"),
     name="marine-safety",
     help="Marine safety incident data management",
 )
-app.add_typer(fdas.app, name="fdas", help="Field Development Analysis System")
 app.add_typer(
-    lower_tertiary.app,
+    lazy_app("worldenergydata.cli.commands.fdas"),
+    name="fdas",
+    help="Field Development Analysis System",
+)
+app.add_typer(
+    lazy_app("worldenergydata.cli.commands.lower_tertiary"),
     name="lower-tertiary",
     help="Lower Tertiary portfolio analyses (10 GoM fields)",
 )
 app.add_typer(
-    sodir.app,
+    lazy_app("worldenergydata.cli.commands.sodir"),
     name="sodir",
     help="SODIR (Norwegian Offshore Directorate) data operations",
 )
 app.add_typer(
-    metocean.app, name="metocean", help="Metocean data - buoys, tides, marine weather"
+    lazy_app("worldenergydata.cli.commands.metocean"),
+    name="metocean",
+    help="Metocean data - buoys, tides, marine weather",
 )
 app.add_typer(
-    ndbc.app,
+    lazy_app("worldenergydata.cli.commands.ndbc"),
     name="ndbc",
     help="NDBC buoy data: scatter matrices, Weibull fits, wave roses",
 )
 app.add_typer(
-    texas_rrc.app, name="texas-rrc", help="Texas Railroad Commission oil & gas data"
+    lazy_app("worldenergydata.cli.commands.texas_rrc"),
+    name="texas-rrc",
+    help="Texas Railroad Commission oil & gas data",
 )
 app.add_typer(
-    kansas_kgs.app,
+    lazy_app("worldenergydata.cli.commands.kansas_kgs"),
     name="kansas-kgs",
     help="Kansas Geological Survey well and pressure data",
 )
-app.add_typer(canada.app, name="canada", help="Canadian oil & gas data (AER/BCER)")
 app.add_typer(
-    mexico_cnh.app,
+    lazy_app("worldenergydata.cli.commands.canada"),
+    name="canada",
+    help="Canadian oil & gas data (AER/BCER)",
+)
+app.add_typer(
+    lazy_app("worldenergydata.cli.commands.mexico_cnh"),
     name="mexico-cnh",
     help="Mexico CNH oil & gas data (SIH dashboard)",
 )
 app.add_typer(
-    landman.app,
+    lazy_app("worldenergydata.cli.commands.landman"),
     name="landman",
     help="Mineral ownership and lease data operations",
 )
 app.add_typer(
-    lng_terminals.app,
+    lazy_app("worldenergydata.cli.commands.lng_terminals"),
     name="lng-terminals",
     help="Global LNG terminal dataset with engineering design data",
 )
 app.add_typer(
-    safety_analysis_cli.app,
+    lazy_app("worldenergydata.safety_analysis.cli"),
     name="safety-analysis",
     help="Safety analysis and HSE data processing",
 )
 app.add_typer(
-    production_forecast.app,
+    lazy_app("worldenergydata.cli.commands.production_forecast"),
     name="forecast",
     help="Arps decline curve analysis — fit, EUR, and production forecast",
 )
@@ -401,7 +400,7 @@ def status() -> None:
 @app.callback(invoke_without_command=True)
 def main(
     ctx: typer.Context,
-    verbose: bool = typer.Option(  # noqa: B008  # noqa: B008
+    verbose: bool = typer.Option(
         False, "--verbose", "-v", help="Enable verbose output"
     ),
 ) -> None:
