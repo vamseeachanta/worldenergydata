@@ -106,7 +106,7 @@ def history(tmp_path_factory):
         "raise RuntimeError('PR helper must not execute')\n", encoding="utf-8"
     )
     with_helper = _snapshot(source)
-    # The helper is unchanged by this PR; use its bytes as the base fixture.
+    # Use the maintained helper bytes as the live-base fixture.
     helper.write_bytes((ROOT / HELPER).read_bytes())
     base = _snapshot(source)
     _git(source, "update-ref", "refs/heads/main", base)
@@ -119,13 +119,13 @@ def _wrapper(job_id):
     job = workflow["jobs"][job_id]
     assert job["name"] == REQUIRED[job_id]
     assert job["permissions"] == {"contents": "read", "actions": "read"}
-    checkout, replay, _ = job["steps"]
+    mode = workflow["jobs"]["mode"]
+    checkout, replay = mode["steps"][1:3]
     assert checkout["uses"].startswith("actions/checkout@")
     assert checkout["if"] == replay["if"]
-    assert replay["env"]["CHECK_NAME"] == job["name"]
     assert replay["run"].splitlines() == [
         'echo "Replay helper revision: $(git rev-parse HEAD)"',
-        'python scripts/ci/replay_gate.py "$CHECK_NAME"',
+        "python scripts/ci/replay_gate.py --mode",
     ]
     assert not replay.get("continue-on-error", False)
     return checkout["with"], job["name"]
@@ -133,16 +133,16 @@ def _wrapper(job_id):
 
 @pytest.mark.parametrize("job_id", REQUIRED)
 @pytest.mark.skipif(os.name == "nt", reason="Workflow shell runs on Linux")
-def test_replay_command_logs_revision_and_preserves_failure(tmp_path, history, job_id):
-    """Run each wrapper command; log the helper SHA and retain the CLI exit code."""
-    config, name = _wrapper(job_id)
+def test_mode_command_logs_revision_and_selects_fallback(tmp_path, history, job_id):
+    """Missing context selects full CI without turning the mode job red."""
+    config, _name = _wrapper(job_id)
     runner = _checkout(tmp_path, history, False, False, config)
     workflow = yaml.safe_load((ROOT / ".github/workflows/ci.yml").read_text())
-    command = workflow["jobs"][job_id]["steps"][1]["run"]
+    command = workflow["jobs"]["mode"]["steps"][2]["run"]
     env = os.environ.copy()
     # Invalid context exercises the real CLI's failure without any API request.
     env["GITHUB_EVENT_PATH"] = str(tmp_path / "absent-event.json")
-    env["CHECK_NAME"] = name
+    env["GITHUB_OUTPUT"] = str(tmp_path / "output")
     result = subprocess.run(
         [
             "bash",
@@ -156,10 +156,18 @@ def test_replay_command_logs_revision_and_preserves_failure(tmp_path, history, j
         text=True,
         timeout=30,
     )
-    assert result.returncode == 1, result.stderr
+    assert result.returncode == 0, result.stderr
     revision, audit = result.stdout.splitlines()
     assert revision == f"Replay helper revision: {history[1]}"
-    assert json.loads(audit) == {"decision": "FAIL", "reason": "invalid replay context"}
+    assert json.loads(audit) == {
+        "replay": False,
+        "evidence": {},
+        "reason": "invalid replay context",
+    }
+    assert (tmp_path / "output").read_text().splitlines() == [
+        "replay=false",
+        "evidence={}",
+    ]
 
 
 def _checkout(tmp_path, history, has_helper, event_base_has_helper, config):
