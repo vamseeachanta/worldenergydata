@@ -13,6 +13,8 @@ from typing import Dict, Optional
 import numpy as np
 import pandas as pd
 
+from worldenergydata.common.finance import net_present_value
+
 # Import from comprehensive reports module
 
 logger = logging.getLogger(__name__)
@@ -435,12 +437,7 @@ def calculate_npv(cash_flows: np.ndarray, monthly_rate: float) -> float:
     Returns:
         Net present value
     """
-    if cash_flows.size == 0:
-        return 0.0
-
-    periods = np.arange(cash_flows.size)
-    discount_factors = (1.0 + monthly_rate) ** periods
-    return float(np.sum(cash_flows / discount_factors))
+    return net_present_value(cash_flows, monthly_rate)
 
 
 def calculate_mirr(
