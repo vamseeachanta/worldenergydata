@@ -5,14 +5,14 @@
 | Module | metocean |
 | Repository | worldenergydata |
 | Path | `packages/worldenergydata-metocean/src/worldenergydata/metocean` |
-| Pack revision | 6 |
-| Code revision | `a8b26875c1d94a138456fbd885043f43307b73b3` |
+| Pack revision | 7 |
+| Code revision | Base `5e6df17dfff3faffb66540e40b8683d1139e8395`; selector validation described in revision 7 |
 | Analysis family | Data pipeline; Python calculations gate set, AQG r0 §10 |
 | QA family | EC |
 | Quality manager role | Calculations quality manager; data pipeline coverage provisional |
 | Status | DRAFT |
 
-This pack inventories the metocean module's methods, evidence and known limits. Revision 6 corrects the conditional-density and grid citations and records regression coverage for all six reported conditional coefficients; it does not qualify environmental design conditions.
+This pack inventories the metocean module's methods, evidence and known limits. Revision 7 records explicit annual-max distribution validation and independently collected dispatch regressions; it does not qualify environmental design conditions.
 
 ## Revision history
 
@@ -21,6 +21,7 @@ This pack inventories the metocean module's methods, evidence and known limits. 
 | 4 | 2026-10-18 | Correct route delegation and document annual-max limitations because the earlier wording conflated POT and annual-max selection and cited an unused contour route; #1354. Earlier revision records remain in section 7. |
 | 5 | 2026-10-22 | Decode the conditional coefficients and Tp-first contour tuple, remove unreliable method labels and fabricated fallback results, and add a synthetic density-curve hand check; #1354. |
 | 6 | 2026-10-24 | Retain all six conditional coefficients in report summaries and correct the density and grid source references so the reported model and its hand check can be traced; #1354. |
+| 7 | 2026-10-25 | Reject unsupported annual-max selectors before backend dispatch and record executing regressions because the backend does not provide this input contract; #1354. |
 
 ## 1. Purpose and scope
 
@@ -98,6 +99,25 @@ Validated engineering benchmarks: **0**; the cases below exercise synthetic or r
 | REG-5 missing-value flag | Literal missing wave height | One MISSING flag and passing check result, exact categorical equality | `tests/unit/metocean/processors/test_quality_filter.py::TestCheckRange::test_none_value_returns_missing` | PASS before and after. [tests/unit/metocean/processors/test_quality_filter.py:L27-L31] |
 | REG-6 scheduler output | Mocked forecast and temporary output directory | 1 updated record, stored wave height 1.2 m, one forecast call | `tests/unit/scheduler/test_metocean_adapter.py::test_metocean_writes_forecast_parquet_for_configured_locations` | PASS before and after. [tests/unit/scheduler/test_metocean_adapter.py:L38-L65] |
 
+### Annual-max selector validation
+
+The wrapper accepts the exact strings `GEV` and `GUM`; other names, empty or whitespace strings, case variants and non-string inputs raise `ValueError` naming both supported distributions before point-fit or uncertainty dispatch. The validation precedes series conversion. Evidence: [eva.py](../statistics/eva.py), `ExtremeValueAnalysis.fit_annual_maxima`.
+
+The synthetic indexed-series regression supplies dispatch sentinels, not a fitted engineering example. `tests/unit/metocean/test_annual_maxima_distribution_contract.py::test_invalid_distribution_rejected_before_backend` executes 19 rejection cases and checks both backend spies remain uncalled. `tests/unit/metocean/test_annual_maxima_distribution_contract.py::test_supported_distributions_forward_unchanged` executes 3 cases for default `GEV`, explicit `GEV` and explicit `GUM`, preserving selectors, indexed input, return periods and the independently supplied period/level pairs. The explicit new-file run passes all 22 cases with no skips or xfails. Before the guard, those same tests produce 19 failures and 3 passes; a separate probe forwards `GPD` to both backend calls.
+
+Module execution on 2026-10-25 uses `python -m pytest tests/unit/metocean -q -rA`, with cache, coverage, performance and temporary outputs directed outside the repository. Collection totals are measured separately with `--collect-only`; existing uncommitted changes are accounted for with the repository's `--allow-existing-tree-changes` option.
+
+| Execution | Collected nodes (count) | Passed (count) | Failed (count) | Skipped, including collection skip (count) |
+| --- | --- | --- | --- | --- |
+| Before selector validation | 806 | 785 | 4 | 18 |
+| After selector validation | 828 | 811 | 0 | 18 |
+
+The initial baseline failures concern the scheduler import at `tests/unit/metocean/test_archive_update.py:247` and the XML parser used by three live NDBC cases at `clients/ndbc_client.py:169`. Both files match the base revision by readback and byte comparison. Adding the existing scheduler member to the scratch source path and supplying an XML parser makes all 4 affected tests pass before the final module run; that environment correction is separate from the 22 new selector cases. No dependency declaration or collection policy is changed.
+
+Ignored targets remain the 7 existing files under `tests/unit/metocean/statistics/`: `test_environmental_contours.py`, `test_eva.py`, `test_joint_probability.py`, `test_reporting.py`, `test_scatter_diagram.py`, `test_wave_spectra.py` and `test_weather_windows.py`, as listed by `tests/conftest.py:650-657`. The new regression is outside that list and executes in the module run. Existing skips remain distinct from ignored files: the CLI module skips at collection, 10 benchmark cases require an external dataset, 6 publisher cases require explicit live opt-in, and the realtime freshness case skips for stale observations at the time of this run.
+
+Optional-dependency limitation: the explicit command `python -m pytest tests/unit/metocean/statistics/test_eva.py::test_annual_gumbel_values_and_partial_year_selection -q -rA` cannot collect because `metocean_stats` is unavailable. The existing independent hand-calculation reference is retained unchanged; the backend-spy tests establish wrapper dispatch and rejection, not upstream fitting arithmetic. Other #1354 items and contour qualification remain outside this slice.
+
 ### Synthetic LoNoWe density-curve example
 
 This is a statistical regression example with stipulated inputs, not a site assessment or a qualified environmental design contour. Run `python -m worldenergydata.metocean.statistics.examples.lonowe_example` with the metocean package and metocean-stats 1.2.0 available. The executable inputs and their provenance are in [lonowe_example.py](../statistics/examples/lonowe_example.py).
@@ -171,7 +191,7 @@ sweep: 63 found at code revision `a8b26875c1d94a138456fbd885043f43307b73b3` (bro
 | Synchronized retries / inaccurate backoff description | Linear delays without jitter; static detection is absence of randomized delay in retry branches; no runtime jitter detection check exists | #431; observed 2026-10-15 | [packages/worldenergydata-metocean/src/worldenergydata/metocean/clients/base_client.py:L169-L219] |
 | Scheduler's success can include failed locations | Success depends on some records being written; failures remain in error text; detection is the existing partial-failure test | #268; observed 2026-10-15 | [packages/worldenergydata-scheduler/src/worldenergydata/scheduler/jobs/metocean_refresh.py:L69-L92] [tests/unit/scheduler/test_metocean_adapter.py:L68-L91] |
 | Statistics cannot collect; CLI coverage absent | Missing unconditional backend dependency; CLI test module explicitly skips itself; MET-02 | issue pending (2), #349; observed 2026-10-15 | [packages/worldenergydata-metocean/src/worldenergydata/metocean/statistics/joint_probability.py:L14-L18] [tests/unit/metocean/test_cli.py:L14-L18] |
-| Annual-max selection and return-period labels may mislead | At metocean-stats v.1.2.0, calendar-year grouping includes partial years without a completeness filter; a requested 1-year period is replaced with 1.6 years in the returned index. Distribution fitting supports `GEV` and `GUM` only; other names reach an undefined return-level variable after printing a message. Check data completeness, distribution and the returned index explicitly; these are backend behaviors, not qualified design recommendations. The wrapper maps the substituted value back to the requested 1-year label; the hand-calculation test records that caveat explicitly. | #1354; documentation correction, 2026-10-18 | [v.1.2.0 extreme.py L106-L137](https://github.com/MET-OM/metocean-stats/blob/v.1.2.0/metocean_stats/stats/extreme.py#L106-L137); wrapper call: [packages/worldenergydata-metocean/src/worldenergydata/metocean/statistics/eva.py:L147-L174] |
+| Annual-max selection and return-period labels may mislead | The referenced metocean-stats v.1.2.0 backend groups calendar-year maxima including partial years without a completeness filter; a requested 1-year period is replaced with 1.6 years in its returned index. The wrapper maps that substituted value back to the requested 1-year label; the existing independent Gumbel test documents this caveat. The wrapper now accepts only the exact strings `GEV` and `GUM`, raising `ValueError` for every other selector before either annual-max backend call. This input contract does not qualify data completeness or return-period labels. | #1354; selector validation, 2026-10-25 | Backend reference in section 3; [eva.py](../statistics/eva.py), `ExtremeValueAnalysis.fit_annual_maxima`; `tests/unit/metocean/test_annual_maxima_distribution_contract.py::test_invalid_distribution_rejected_before_backend`; `tests/unit/metocean/test_annual_maxima_distribution_contract.py::test_supported_distributions_forward_unchanged`; `tests/unit/metocean/statistics/test_eva.py::test_annual_gumbel_values_and_partial_year_selection`; section 4 execution inventory |
 | Joint contour method and duration | `lonowe()` supports only fitted return periods; IFORM/ISORM raise `NOT_EVALUATED`. Duration defaults to the backend effective interval, ((last minus first timestamp).days + 1) * 24 / sample count in hours; an explicit mismatch raises an error. The native 1-year curve uses 1.5873 years internally, a different substitution from annual maxima. No ellipse is fabricated. | #1354; corrected 2026-10-22 | [v.1.2.0 extreme.py L748-L766](https://github.com/MET-OM/metocean-stats/blob/v.1.2.0/metocean_stats/stats/extreme.py#L748-L766); [v.1.2.0 aux_funcs.py L121-L130](https://github.com/MET-OM/metocean-stats/blob/v.1.2.0/metocean_stats/stats/aux_funcs.py#L121-L130) |
 
 ## 7. Lessons log
@@ -186,6 +206,7 @@ Historical entries record the wording at their revision; historical CMA citation
 | 2026-10-16 | Pack revision 3 fix-up; #1320 F1-F3; maintainer decision | Scope delegation claims to the routes and cite native Weibull and LoNoWe implementations; identify #1313 as an open issue; tie the first sweep to the pinned commit (63 candidates) | [v.1.2.0 extreme.py L13-L137](https://github.com/MET-OM/metocean-stats/blob/v.1.2.0/metocean_stats/stats/extreme.py#L13-L137); [v.1.2.0 CMA/contours.py L4-L35](https://github.com/MET-OM/metocean-stats/blob/v.1.2.0/metocean_stats/CMA/contours.py#L4-L35); [v.1.2.0 CMA/contours.py L92-L103](https://github.com/MET-OM/metocean-stats/blob/v.1.2.0/metocean_stats/CMA/contours.py#L92-L103); [v.1.2.0 aux_funcs.py L58-L86](https://github.com/MET-OM/metocean-stats/blob/v.1.2.0/metocean_stats/stats/aux_funcs.py#L58-L86); [v.1.2.0 extreme.py L610-L766](https://github.com/MET-OM/metocean-stats/blob/v.1.2.0/metocean_stats/stats/extreme.py#L610-L766); [packages/worldenergydata-metocean/src/worldenergydata/metocean/statistics/joint_probability.py:L74-L107] | Sections 3, 6, 7 and 9; revision 3 record corrected without changing the code pin | Pending maintainer entry |
 | 2026-10-18 | Pack revision 4; #1354 | `return_levels_pot` uses `pyextremes.get_extremes`; annual maxima use pandas `idxmax` and include partial years. Both fit with `scipy.stats`. The contour wrapper consumes native joint-model curves or calls `virocon` directly, with a heuristic fallback on exceptions; it does not use CMA. | [v.1.2.0 extreme.py L13-L137](https://github.com/MET-OM/metocean-stats/blob/v.1.2.0/metocean_stats/stats/extreme.py#L13-L137); [packages/worldenergydata-metocean/src/worldenergydata/metocean/statistics/environmental_contours.py:L203-L270] | Sections 3, 6 and 9; correct current claims while preserving historical entries | Pending maintainer entry |
 | 2026-10-22 | Pack revision 5; #1354 | Conditional mean/variance coefficients are not marginal Weibull parameters. Native density curves cannot establish IFORM or ISORM results; use `lonowe()` or handle `NOT_EVALUATED`. | [v.1.2.0 extreme.py L731-L766](https://github.com/MET-OM/metocean-stats/blob/v.1.2.0/metocean_stats/stats/extreme.py#L731-L766); [v.1.2.0 aux_funcs.py L121-L175](https://github.com/MET-OM/metocean-stats/blob/v.1.2.0/metocean_stats/stats/aux_funcs.py#L121-L175) | Sections 3, 4, 6 and 9 | Pending maintainer entry |
+| 2026-10-25 | Pack revision 7; #1354 | Validate supported selectors before point-fit and uncertainty dispatch, and place optional-backend boundary regressions outside the existing ignored targets. A passing spy contract does not qualify fitting arithmetic. | `tests/unit/metocean/test_annual_maxima_distribution_contract.py::test_invalid_distribution_rejected_before_backend`; section 4 | Sections 4 and 6; retain earlier revision history | Pending maintainer entry |
 
 ## 8. Maintainer responsibility
 
