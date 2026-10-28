@@ -1,9 +1,19 @@
 # Well-identifier grain for drilling and completion metrics
 
-- Status: current-code inventory; aggregation proposal not ratified or implemented by this record.
-- Evidence date: 2026-10-12; repository revision `7f645ac5844b25a79374f62fb0230ef1dbb4b143`.
+- Status: current-code inventory with tested WAR identifier validation; episode attribution remains proposed.
+- Inventory evidence date: 2026-10-12; repository revision `7f645ac5844b25a79374f62fb0230ef1dbb4b143`. Identifier validation and its tests are added in this revision.
 - Scope: deliverable 2 of [issue 1081](https://github.com/vamseeachanta/worldenergydata/issues/1081), using its [research note](https://github.com/vamseeachanta/worldenergydata/issues/1081#issuecomment-6113191313).
 - Placement follows the existing BSEE analysis note [API12 resolution](julia_api12_resolution.md#L1), indexed by [Data Sources](../../README.md#L14). This is a methodology decision record, not a replacement for the historical rig-day notes.
+
+## Revision history
+
+| Revision | Date | Change and reason |
+|---|---|---|
+| 0 | 2026-10-12 | The metric inventory and source definitions were recorded to distinguish bore counts from family counts. |
+| 1 | 2026-10-19 | WAR identifier validation and grain regression tests were added to prevent malformed keys from becoming bore or family results. |
+| 2 | 2026-10-24 | Compatibility results and their limits were recorded to distinguish stored-snapshot evidence from current-feed validation. |
+
+Table 0. Revision history of the decision record.
 
 ## Decision and identifier definitions
 
@@ -31,7 +41,7 @@ R2 and R3 define `API_WELL_NUMBER` using the component structure above but decla
 | WAR main loader | Reads `API_WELL_NUMBER`, with `API_NUMBER` / `API` aliases. `normalize_api` strips whitespace and a trailing `.0`; it neither pads nor truncates nor enforces length. | [Extractor:73](../../../modules/bsee/analysis/production/FDAS_V30/extract_drilling_completion_days.py#L73), [loader:127](../../../modules/bsee/analysis/production/FDAS_V30/extract_drilling_completion_days.py#L127). |
 | Borehole loader | Reads `API_WELL_NUMBER` / `API` using the same normalizer. Minimum spud and maximum TD remain grouped by the **full normalized key**, not a derived API-10. They are metadata, no longer the day-count rule. | [Extractor:197](../../../modules/bsee/analysis/production/FDAS_V30/extract_drilling_completion_days.py#L197), [grouping:222](../../../modules/bsee/analysis/production/FDAS_V30/extract_drilling_completion_days.py#L222). |
 | WAR properties and remarks | `SN_WAR` joins the activity code to WAR. Remarks provide narrative/mud-weight information, not drilling or completion days. | [Property loader:158](../../../modules/bsee/analysis/production/FDAS_V30/extract_drilling_completion_days.py#L158), [day call:388](../../../modules/bsee/analysis/production/FDAS_V30/extract_drilling_completion_days.py#L388). |
-| Shared WAR engine | `normalize_api12` removes floating-point tails but does not validate twelve digits. `_prepare` reads `API_WELL_NUMBER`; `rig_days_by_bore` groups by the resulting full `api12`. `api10 = api12[:10]` is derived only afterward; the well helper explicitly regroups on that prefix. | [Normalizer:212](../../../../packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/war_rig_days.py#L212), [bore grouping:489](../../../../packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/war_rig_days.py#L489), [family:519](../../../../packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/war_rig_days.py#L519), [well grouping:687](../../../../packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/war_rig_days.py#L687). |
+| Shared WAR engine | `normalize_api12` removes whitespace and integral decimal tails, then requires twelve ASCII digits (R1, attachment pp. 2-3). Invalid WAR or requested-population keys raise before grouping. `rig_days_by_bore` groups by the full key; `rig_days_by_well` explicitly regroups on its family prefix. | [WAR engine](../../../../packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/war_rig_days.py), functions `normalize_api12`, `_prepare`, `rig_days_by_bore` and `rig_days_by_well`; [grain regression tests](../../../../tests/unit/bsee/analysis/test_war_identifier_grain.py). |
 | OGOR-A chronological conversion | Reads `API_WELL_NUMBER`, coerces it numerically, and groups by lease, well name, full API and month. It does not retain interval as a grouping key: this output is bore-month aggregation, although the regulatory production source is completion-based. | [Converter:242](../../../modules/bsee/analysis/production/FDAS_V30/ogora_to_chronological.py#L242). |
 | Local field-definition notes | Map `API_WELL_NUMBER`, spud/TD and raw table names; they do not establish a stored-length profile. The API-number note is an external link, not a local schema guarantee. | [Field mappings:8](../data/analysis_data.md#L8), [drilling fields:13](../data/drilling_data_rev1.md#L13), [API note:1](../data/well_api_number.md#L1). |
 
@@ -85,18 +95,36 @@ Table 4. The issue's populations; [committed vintage-diff CSV](../../../../repor
 
 The check counts distinct `api12` strings and their first ten characters; no missing intervals or WAR membership is inferred from date presence, zero days, or a nonzero suffix. The two unreproduced populations must remain unresolved until their selection rules and members are available.
 
-## Proposed, not implemented
+## Implemented boundary and remaining proposal
 
-The research note proposes **API-12 bore x contiguous activity episode**, carrying `api10` for roll-up; counts would state bores versus families, and production would retain the completion interval and month. Borehole/WAR joins would normalize twelve-character keys and reconcile renumbering through `PREV_API_NUMBER` (R5); `SN_WAR` and report bounds would identify, order and de-overlap activity records. These normalization/renumbering/episode requirements are not established by the current string normalizer.
+The WAR engine now rejects missing, malformed, family-only and extended identifiers instead of deriving a family from an unverified key. Integral numeric inputs remain supported, but strings are required to preserve leading zeros. No zero-padding or truncation is performed. This is format validation against R1, attachment pp. 2-3, not proof that BSEE assigned a number or that the source row is correctly attributed. Raw feeds are not profiled by this check. Extractor metadata loaders and other normalizers retain their existing behavior.
+
+The [grain tests](../../../../tests/unit/bsee/analysis/test_war_identifier_grain.py) reproduce the distinct bore and family counts in Table 4 from the committed extract. Synthetic, hand-calculated cases also distinguish additive bore-days from family interval unions and show that a later return to the same bore excludes idle years. Duplicate intervals add no days. These cases verify the existing inclusive-day convention; they neither ratify an activity basis nor identify new episodes or completions.
+
+R1 and R4 were reopened on 2026-10-19 with HTTP 200. R1 confirms the separate WB and producing-interval identifiers; R4 confirms the API and interval fields. Other source-access dates and the unresolved population memberships below remain as recorded in the original inventory. The cross-repository reference note remains outside this revision.
+
+The research note proposes **API-12 bore x contiguous activity episode**, carrying `api10` for roll-up; counts would state bores versus families, and production would retain the completion interval and month. Borehole/WAR joins would reconcile renumbering through `PREV_API_NUMBER` (R5); `SN_WAR` and report bounds would identify and order activity episodes. The WAR normalizer enforces key format; it does not reconcile renumbering or reconstruct episodes.
 
 Its proposed replacement for the date hull would calculate days per bore and sum within a family only after confirming bore-specific spud dates. If spud repeats the original well date, the proposal would investigate a bore-specific kickoff, previous-bore TD or first WAR date as the start, without spanning idle gaps. These alternatives are **not verified equivalent start dates** and are not adopted here. Re-entry episodes would remain attached to the same bore unless a new numbered bore is created; rig time would not be multiplied across completion intervals.
 
 Current `rig_days_by_well` already unions the family's WAR intervals and emits additive columns separately. That implementation addresses overlap at bore transitions; it is **not** the research note's conditional sum of per-bore milestone differences. Episode partitioning, renumbering and any change to retained metadata need their own reviewed implementation and declared acceptance rule.
 
+## Compatibility evidence and limits
+
+The follow-up comment on #1443 at `e3d4d166` reports the following results. These are retained results from that run, not a new raw-feed recomputation:
+
+- The stored snapshot contained 363,786 WAR main rows and 54,714 borehole rows, with zero missing or malformed identifiers after normalization. Its last weekly start was 2026-02-15, so this check does not establish current-feed compatibility.
+- The enrichment caller completed for 54,714 bores: 12,376 had drilling-day values, 14,657 had no drilling code and 27,681 had no WAR coverage. The QA caller completed bore and family aggregation, then raised `TypeError` for `NAType` in the existing `_n` serializer at line 469 when converting a null activity-day value to an integer. A completed QA report is not established.
+- The BSEE unit domain changed from 1,707 passed, nine failed and four skipped before the fixture correction to 1,716 passed, zero failed and four skipped afterward. The optional map-export test passed separately after its dependency was supplied; three explicit configuration skips remained.
+
+The compatibility correction uses distinct synthetic twelve-digit keys in [the comparison fixtures](../../../../tests/unit/bsee/analysis/test_ratified_day_basis_comparison.py) and requires the specific multiple-well error. The [identifier-grain CSV check](../../../../tests/unit/bsee/analysis/test_war_identifier_grain.py) specifies UTF-8 and CSV newline handling. The [BSEE knowledge pack](../../../../packages/worldenergydata-bsee/src/worldenergydata/bsee/docs/agent-pack.md), line 205, describes the validating normalizer contract. No caller quarantine or aggregation rule was added.
+
+The knowledge-pack lint also reports `SWEEP: no line` for the required numeric `sweep: N found` marker. The legacy marker at pack line 115 and the same checker requirement are present on `origin/main`; this is a pre-existing documentation defect. No package-wide sweep is claimed. The QA null serialization and feed-freshness limits remain unresolved. The overlapping identifier change in #1445 requires a maintainer merge choice.
+
 ## Not verified
 
 - API Bulletin D12A and the full PPDM standard were not opened here. R8 verifies custody/successor status only. API-14 as a vendor event sequence is the research note's **secondary-only** description (R9), not a verified primary standard or a BSEE completion identifier.
-- Stored length/format across the full borehole, WAR and OGOR-A feeds was not profiled. The committed population check establishes twelve digits only for its extracted CSV.
+- Current-feed length/format across the borehole, WAR and OGOR-A feeds remains unverified. The reported stored-snapshot check above does not establish live-feed freshness, and the committed population test covers only its extracted CSV.
 - Repeated original spud dates on sidetracks, actual WB-to-ST/BP mappings within families, and a field-definition page for the completion table itself remain unverified. OGOR-A and the handbook are supporting production evidence, not that missing table definition.
 - R1's cover prints an expiration date of 2014-11-03; R1a still displays Active. Formal reissue/current legal status beyond those observations is not established. R1 is used for the documented numbering scheme, not a current compliance opinion.
 - The memberships behind 184 and 211, live external publication parity, and complete raw-data recomputation are not established. No private datasets or licensed software were used.

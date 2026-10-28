@@ -210,7 +210,7 @@ def union_days(intervals) -> int:
 
 
 def normalize_api12(values) -> pd.Series:
-    """Coerce an API well number column to its canonical 12-digit string form.
+    """Normalize and validate BSEE wellbore keys before deriving well families.
 
     A numeric API column stringifies with a float tail -- ``608124009500.0`` --
     which matches no population entry. Because a non-match is reported as
@@ -218,9 +218,26 @@ def normalize_api12(values) -> pd.Series:
     bore comes back null and the result looks like a coverage gap rather than
     a dtype mismatch. Callers reach this legitimately, since concatenating
     heterogeneous WAR members widens the column to float64.
+
+    Whitespace and integral decimal tails are accepted for CSV compatibility.
+    Missing or malformed keys raise rather than invent a bore by padding an
+    API-10 or truncating an API-14. Leading zeros in strings are preserved;
+    leading zeros already lost to numeric conversion cannot be recovered.
+    Format validation does not establish that BSEE assigned the identifier.
     """
     s = pd.Series(values).astype(str).str.strip()
-    return s.str.replace(r"\.0+$", "", regex=True)
+    normalized = s.str.replace(r"\.0+$", "", regex=True)
+    # MMS NTL 2009-G33 (2009), attachment pp. 2-3, API Well Number:
+    # ten family digits plus two WB digits; interval codes are separate (p. 4).
+    # https://www.bsee.gov/sites/bsee.gov/files/notices-to-lessees-ntl/notices-to-lessees/09-g33.pdf
+    invalid = ~normalized.str.fullmatch(r"[0-9]{12}", na=False)
+    if invalid.any():
+        raise ValueError(
+            "API_WELL_NUMBER requires 12 ASCII digits after normalization; "
+            f"{int(invalid.sum())} invalid identifier(s). "
+            "Supply full BSEE wellbore keys, not family or completion keys."
+        )
+    return normalized
 
 
 def _parse_war_date(values) -> pd.Series:

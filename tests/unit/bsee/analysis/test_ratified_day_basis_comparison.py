@@ -57,7 +57,7 @@ def synthetic_records():
     return pd.DataFrame(
         [
             dict(
-                API_WELL_NUMBER="synthetic",
+                API_WELL_NUMBER="012345678900",
                 WAR_START_DT=start,
                 WAR_END_DT=end,
                 WELL_ACTIVITY_CD=code,
@@ -87,8 +87,8 @@ def test_absent_code_stays_null_and_multiple_wells_are_rejected():
     assert result["drilling_days"] is None
     assert result["completion_days"] is None
     assert result["suspended_days"] == 7
-    records = pd.concat([records, records.assign(API_WELL_NUMBER="second")])
-    with pytest.raises(ValueError):
+    records = pd.concat([records, records.assign(API_WELL_NUMBER="012345678901")])
+    with pytest.raises(ValueError, match="Exactly one wellbore is required"):
         module.count_ratified_days(records)
 
 
