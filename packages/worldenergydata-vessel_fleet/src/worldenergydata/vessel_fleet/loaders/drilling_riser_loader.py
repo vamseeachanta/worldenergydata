@@ -1,6 +1,6 @@
 """Load drilling riser component data from curated dataset.
 
-Validates CSV widths, required query/provenance columns and populated provenance.
+Validates CSV widths, unambiguous headers, identities and populated provenance.
 Empty physical lines are skipped; whitespace and delimiter-only records are checked.
 Queries cover component type, size and pressure rating.
 """
@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import csv
 import logging
+import unicodedata
 from io import StringIO
 from pathlib import Path
 from typing import Optional
@@ -49,14 +50,24 @@ VALID_COMPONENT_TYPES = (
 )
 
 
-def _validate_row_widths(content: str) -> None:
-    """Check widths except empty physical lines; retain physical start numbers."""
+def _validate_row_widths(content: str) -> list[int]:
+    """Check header mapping and widths; return physical record start numbers."""
     reader = csv.reader(StringIO(content), strict=True)
     try:
         header = next(reader, [])
     except csv.Error as exc:
         raise ValueError(f"Malformed CSV at line 1: {exc}") from exc
+    # Issue #1046 requires aligned columns: pandas would silently rename
+    # duplicate or unnamed labels, hiding an ambiguous field mapping.
+    seen_columns: set[str] = set()
+    for field in header:
+        if not field.strip():
+            raise ValueError("CSV header at line 1: blank column name")
+        if field in seen_columns:
+            raise ValueError(f"CSV header at line 1: duplicate column {field}")
+        seen_columns.add(field)
     expected = len(header)
+    line_numbers: list[int] = []
     while True:
         line_number = reader.line_num + 1
         try:
@@ -72,6 +83,8 @@ def _validate_row_widths(content: str) -> None:
                 f"CSV line {line_number}: expected {expected} fields, "
                 f"actual {len(row)}"
             )
+        line_numbers.append(line_number)
+    return line_numbers
 
 
 class DrillingRiserLoader:
@@ -86,7 +99,7 @@ class DrillingRiserLoader:
         self._df: Optional[pd.DataFrame] = None
 
     def load(self) -> pd.DataFrame:
-        """Validate widths, required columns and provenance before caching.
+        """Validate widths, headers, provenance and unique IDs before caching.
 
         Only empty physical lines are exempt from record-width validation.
         """
@@ -102,16 +115,41 @@ class DrillingRiserLoader:
         # Parse the same snapshot that was checked, so a file replacement
         # cannot introduce unchecked rows between preflight and pandas.
         content = csv_path.read_text(encoding="utf-8-sig")
-        _validate_row_widths(content)
-        df = pd.read_csv(StringIO(content))
+        line_numbers = _validate_row_widths(content)
+        # Preserve literal IDs, including leading zeros and pandas NA tokens;
+        # missing-value and numeric parsing for other columns stay unchanged.
+        df = pd.read_csv(StringIO(content), converters={"COMPONENT_ID": str})
         missing_columns = [field for field in _REQUIRED_COLUMNS if field not in df]
         if missing_columns:
             raise ValueError("Missing required column " + ", ".join(missing_columns))
-        for field in ("DATA_SOURCE", "NOTES"):
+        for field in ("DATA_SOURCE", "NOTES", "COMPONENT_ID"):
             missing = df[field].isna() | df[field].astype(str).str.strip().eq("")
             if missing.any():
-                ids = df.loc[missing, "COMPONENT_ID"].tolist()
-                raise ValueError(f"{field} must be populated for components {ids}")
+                lines = ", ".join(
+                    str(line_numbers[index]) for index in df.index[missing]
+                )
+                raise ValueError(f"{field} must be populated at CSV line {lines}")
+        padded = df["COMPONENT_ID"].ne(df["COMPONENT_ID"].str.strip())
+        if padded.any():
+            lines = ", ".join(str(line_numbers[index]) for index in df.index[padded])
+            raise ValueError(
+                f"COMPONENT_ID has leading or trailing whitespace at CSV line {lines}"
+            )
+        formatted = df["COMPONENT_ID"].map(
+            lambda value: any(unicodedata.category(char) == "Cf" for char in value)
+        )
+        if formatted.any():
+            lines = ", ".join(str(line_numbers[index]) for index in df.index[formatted])
+            raise ValueError(
+                f"COMPONENT_ID contains Unicode format characters at CSV line {lines}"
+            )
+        # Issue #1046 requires unique component IDs; get_by_id must not select
+        # an arbitrary first record when more than one component has that ID.
+        duplicate_ids = df.loc[
+            df["COMPONENT_ID"].duplicated(keep=False), "COMPONENT_ID"
+        ].unique()
+        if len(duplicate_ids):
+            raise ValueError(f"Duplicate COMPONENT_ID values: {duplicate_ids.tolist()}")
         self._df = df
         logger.info("Loaded %d drilling riser components", len(df))
         return self._df
