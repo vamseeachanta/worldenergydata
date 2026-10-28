@@ -190,9 +190,13 @@ def _append(base: Optional[pd.DataFrame], new: pd.DataFrame) -> pd.DataFrame:
 
 
 def load_extended_wti_prices(through_date: str = "2025-10-01") -> pd.DataFrame:
-    """Load V30 WTI prices and extend through ``through_date``.
+    """Load V30 WTI prices up to and including the requested month.
 
     Priority: local snapshot, EIA GitHub CSV, FRED API, then flat-forward.
+    Missing extension months carry the latest preceding observation forward;
+    warnings identify its source and month. Future observations never fill gaps.
+    Workbook precedence is enforced at source selection; full workbook/snapshot
+    overlap agreement is checked offline by the snapshot tests.
     A two-second pause applies to every production call needing months beyond the snapshot.
     Returns DataFrame: Month (datetime), WTI_USD (float), source (str).
     """
@@ -203,7 +207,9 @@ def load_extended_wti_prices(through_date: str = "2025-10-01") -> pd.DataFrame:
     logger.info("V30 prices span %s to %s", v30_df["Month"].min(), v30_last)
 
     if through_ts <= v30_last:
-        return v30_df[["Month", "WTI_USD", "source"]].reset_index(drop=True)
+        return v30_df.loc[
+            v30_df["Month"] <= through_ts, ["Month", "WTI_USD", "source"]
+        ].reset_index(drop=True)
 
     needed = _needed_months(v30_last, through_ts)
     extension: Optional[pd.DataFrame] = None
@@ -242,28 +248,26 @@ def load_extended_wti_prices(through_date: str = "2025-10-01") -> pd.DataFrame:
         m for m in needed if m.to_period("M") not in _covered_periods(extension)
     ]
     if still_missing:
-        ff_df = pd.DataFrame({"Month": still_missing, "WTI_USD": V30_LAST_PRICE})
+        observations = pd.concat([v30_df, extension], ignore_index=True)
+        observations = observations.sort_values("Month")
+        rows = []
+        # Forecasting: Principles and Practice,
+        # 3rd ed. (2021), section 5.2, naive method: y_hat(T+h|T) = y(T).
+        # https://otexts.com/fpp3/toolbox.html (Naive method)
+        for month in still_missing:
+            basis = observations.loc[observations["Month"] < month].iloc[-1]
+            rows.append({"Month": month, "WTI_USD": basis["WTI_USD"]})
+            logger.warning(
+                "Flat-forwarded %s at $%.2f from %s observation %s; "
+                "refresh data/wti-monthly.csv — see data/wti-monthly.PROVENANCE.md",
+                month.strftime("%Y-%m"),
+                basis["WTI_USD"],
+                basis["source"],
+                basis["Month"].strftime("%Y-%m"),
+            )
+        ff_df = pd.DataFrame(rows)
         ff_df["source"] = "flat_forward"
         extension = _append(extension, ff_df)
-        logger.warning(
-            "Flat-forwarded %d months at $%.2f; refresh data/wti-monthly.csv "
-            "— see data/wti-monthly.PROVENANCE.md",
-            len(ff_df),
-            V30_LAST_PRICE,
-        )
-
-    # Validate Jul 2025 overlap and drop duplicate (V30 is authoritative)
-    if extension is not None:
-        overlap = extension[extension["Month"] == V30_LAST_MONTH]
-        if not overlap.empty:
-            overlap_price = overlap["WTI_USD"].iloc[0]
-            if abs(overlap_price - V30_LAST_PRICE) > 0.01:
-                logger.warning(
-                    "Jul 2025 overlap mismatch: V30=$%.2f, extension=$%.2f",
-                    V30_LAST_PRICE,
-                    overlap_price,
-                )
-            extension = extension[extension["Month"] != V30_LAST_MONTH]
 
     result = pd.concat([v30_df, extension], ignore_index=True)
     result = result.sort_values("Month").reset_index(drop=True)
