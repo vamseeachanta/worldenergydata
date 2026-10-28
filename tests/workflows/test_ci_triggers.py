@@ -397,24 +397,50 @@ def test_checkout_builds_current_base_merge(job_id: str, index: int) -> None:
             assert "event_base=$EVENT_BASE" in line
 
 
-def _git(root: Path, *args: str) -> str:
+def _git(root: Path, *args: str, input_data: bytes | None = None) -> str:
     """Run a real Git command and include its diagnostics on failure."""
+    env = os.environ.copy()
+    for key in ("GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR", "GIT_INDEX_FILE"):
+        env.pop(key, None)
     result = subprocess.run(
         ["git", "-C", str(root), *args],
+        env=env,
+        input=input_data,
         capture_output=True,
-        text=True,
         check=True,
         timeout=30,
     )
-    return result.stdout.strip()
+    return result.stdout.decode("utf-8").strip()
 
 
 def _commit(root: Path, filename: str, contents: str) -> str:
-    """Commit a fixture change using the fixture repository identity."""
-    (root / filename).write_text(contents, encoding="utf-8")
+    """Record synthetic parented history without configuring a Git identity."""
+    (root / filename).write_text(contents, encoding="utf-8", newline="\n")
     _git(root, "add", filename)
-    _git(root, "commit", "-m", "fixture change")
-    return _git(root, "rev-parse", "HEAD")
+    tree = _git(root, "write-tree")
+    parent = _git(
+        root,
+        "for-each-ref",
+        "--format=%(objectname)",
+        _git(root, "symbolic-ref", "HEAD"),
+    )
+    commit = (
+        f"tree {tree}\n"
+        + (f"parent {parent}\n" if parent else "")
+        + "author Fixture <fixture> 0 +0000\n"
+        + "committer Fixture <fixture> 0 +0000\n\nfixture change\n"
+    )
+    revision = _git(
+        root,
+        "hash-object",
+        "-t",
+        "commit",
+        "-w",
+        "--stdin",
+        input_data=commit.encode("utf-8"),
+    )
+    _git(root, "update-ref", "HEAD", revision)
+    return revision
 
 
 def _fixture_history(root: Path, case: str) -> tuple[Path, str, str, str]:
@@ -423,8 +449,6 @@ def _fixture_history(root: Path, case: str) -> tuple[Path, str, str, str]:
     _git(root, "init", "--bare", str(origin))
     source = root / "source"
     _git(root, "clone", origin.as_uri(), str(source))
-    _git(source, "config", "user.name", "Test")
-    _git(source, "config", "user.email", "test@example.com")
     _git(source, "checkout", "-b", "main")
     event_base = _commit(source, "shared.txt", "original\n")
     if case == "shallow":
@@ -444,6 +468,27 @@ def _fixture_history(root: Path, case: str) -> tuple[Path, str, str, str]:
             tip = _commit(source, "base-history.txt", str(number))
     _git(source, "push", "origin", "main", "feature")
     return origin, event_base, tip, head
+
+
+def test_fixture_history_does_not_override_git_identity(tmp_path):
+    """Synthetic history must not configure an identity or carry an address."""
+    _fixture_history(tmp_path, "moved_base")
+    source = tmp_path / "source"
+    result = subprocess.run(
+        [
+            "git",
+            "-C",
+            str(source),
+            "config",
+            "--local",
+            "--get-regexp",
+            r"user\.(name|email)",
+        ],
+        capture_output=True,
+        check=False,
+    )
+    assert result.returncode == 1
+    assert _git(source, "rev-list", "--count", "HEAD") == "2"
 
 
 @pytest.mark.parametrize("job_id,index", _checkout_steps())
@@ -502,7 +547,7 @@ def test_local_merge_behavior(
         assert result.returncode == 0, result.stdout + result.stderr
         parents = _git(runner, "show", "-s", "--format=%P", "HEAD").split()
         assert parents == [tip, head]
-        assert output.read_text().splitlines() == [f"tip={tip}"]
+        assert output.read_text(encoding="utf-8").splitlines() == [f"tip={tip}"]
         tested = _git(runner, "rev-parse", "HEAD")
         tree = _git(runner, "rev-parse", "HEAD^{tree}")
         assert (
@@ -520,7 +565,12 @@ def test_mode_evidence_controls_full_gate_fallback(tmp_path, evidence):
     """
     mode = _load_workflow()["jobs"]["mode"]
     assert mode["outputs"]["evidence"] == "${{ steps.lookup.outputs.evidence }}"
-    candidate, checkout, lookup, select, artifact = mode["steps"]
+    steps = mode["steps"]
+    candidate = next(step for step in steps if step.get("id") == "candidate")
+    checkout = next(step for step in steps if "checkout" in step.get("uses", ""))
+    lookup = next(step for step in steps if step.get("id") == "lookup")
+    select = next(step for step in steps if step.get("id") == "mode")
+    artifact = next(step for step in steps if "upload-artifact" in step.get("uses", ""))
     assert candidate["id"] == "candidate"
     assert checkout["if"] == lookup["if"] == "steps.candidate.outputs.replay == 'true'"
     assert lookup["id"] == "lookup"
@@ -537,7 +587,11 @@ def test_mode_evidence_controls_full_gate_fallback(tmp_path, evidence):
     # Synthetic Git response; the digest content is arbitrary, not a design value.
     tip = "b" * 40
     git = tools / "git"
-    git.write_text("#!/bin/sh\nprintf '%s\trefs/heads/main\n' " + tip + "\n")
+    git.write_text(
+        "#!/bin/sh\nprintf '%s\trefs/heads/main\n' " + tip + "\n",
+        encoding="utf-8",
+        newline="\n",
+    )
     git.chmod(0o755)
     result = subprocess.run(
         ["bash", "-e", "-o", "pipefail", "-c", select["run"]],
@@ -556,11 +610,13 @@ def test_mode_evidence_controls_full_gate_fallback(tmp_path, evidence):
         check=True,
     )
     assert result.returncode == 0
-    values = dict(line.split("=", 1) for line in output.read_text().splitlines())
+    values = dict(
+        line.split("=", 1) for line in output.read_text(encoding="utf-8").splitlines()
+    )
     assert values["replay"] == ("true" if evidence == "true" else "false")
     if evidence != "true":
         assert values["tip"] == tip
-        assert (tmp_path / "gate-tip").read_text() == "."
+        assert (tmp_path / "gate-tip").read_text(encoding="utf-8") == "."
     else:
         assert "tip" not in values
         assert not (tmp_path / "gate-tip").exists()
