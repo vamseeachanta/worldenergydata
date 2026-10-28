@@ -272,3 +272,59 @@ def test_cli_existing_manifest_creates_no_output(tmp_path, monkeypatch):
         main()
     assert manifest.read_bytes() == b"preserved"
     assert not output.exists()
+
+
+@pytest.mark.parametrize("value", ["1_000", "١٢", "1,000", "-1e-9999"])
+def test_measurement_rejects_ambiguous_text(value):
+    """Schema policy: ASCII decimal only; negative underflow is still negative."""
+    with pytest.raises(ValueError):
+        load_export(changed("capacity_mw", value))
+
+
+@pytest.mark.parametrize("value,expected", [("1e2", 100), (".5", 0.5), ("0", 0)])
+def test_measurement_decimal_examples(value, expected):
+    """Hand results: 1 times ten squared = 100; .5 = one half; 0 = zero."""
+    assert load_export(changed("capacity_mw", value))[0]["capacity_mw"] == expected
+
+
+@pytest.mark.parametrize(
+    "url",
+    [
+        "https://:443/data",
+        "https://bad host/data",
+        "https://example.invalid:bad/",
+        "https://example.invalid:999999/",
+        "https://example.invalid\\evil/",
+        "https://example.invalid/\npath",
+        "https://example.invalid/\x7fpath",
+    ],
+)
+@pytest.mark.parametrize("target", ["source", "terms"])
+def test_url_authority_rejected(url, target):
+    """Malformed authorities and control characters cannot identify evidence."""
+    with pytest.raises(ValueError):
+        if target == "source":
+            load_export(changed("source_url", url))
+        else:
+            emit_manifest(
+                CSV.read_bytes(),
+                retrieved_at_utc="2026-01-01T00:00:00Z",
+                terms_quote="Synthetic terms",
+                terms_url=url,
+            )
+
+
+@pytest.mark.parametrize(
+    "url", ["https://example.invalid:443/data", "https://[::1]/data"]
+)
+def test_url_syntax_does_not_establish_network_permission(url):
+    """Valid port and IPv6 syntax pass without transport or rights inference."""
+    assert load_export(changed("source_url", url))[0]["source_url"] == url
+
+
+def test_documented_worked_example():
+    """Hand calculation: 1e2 = 1 * 10**2 = 100; .5 = 1/2 = 0.5."""
+    raw = CSV.read_bytes().replace(b"10.5,20.25", b"1e2,.5")
+    row = load_export(raw)[0]
+    assert row["capacity_mw"] == 100
+    assert row["generation_gwh"] == 0.5
