@@ -136,8 +136,9 @@ def read_depth_grid(
     only coordinate axes and clipped values are read, without derived files.
     """
     _validate_bbox(bbox)
-    if max_cells <= 0:
-        raise ValueError("max_cells must be positive")
+    # A caller-selected resource budget, not a source accuracy threshold.
+    if isinstance(max_cells, bool) or not isinstance(max_cells, int) or max_cells <= 0:
+        raise ValueError("max_cells must be a positive integer")
     _qualify_conventions(entry)
     verify_file(archive, entry)
     if entry["source_id"] == "boem_gom_bathymetry":
@@ -150,6 +151,9 @@ def read_depth_grid(
 
 def _depth(elevation: Any, convention: str) -> Any:
     values = np.ma.asarray(elevation, dtype=float).filled(np.nan)
+    # CF Conventions 1.6 (2011), section 2.5.1: preserve missing data.
+    # Nonfinite samples cannot represent a finite water depth.
+    values = np.where(np.isfinite(values), values, np.nan)
     if convention == "elevation_positive_up":
         return np.where(values <= 0, -values, np.nan)
     if convention == "depth_positive_down":
@@ -206,6 +210,26 @@ def _read_tiff(
             return clip_to_bbox(DepthGrid(lon, lat, _depth(values, convention)), bbox)
 
 
+def _netcdf_axis(variable: Any, name: str, limit: int) -> Any:
+    """Require unmasked dimension coordinates before selecting cell centres.
+
+    CF Conventions 1.6 (2011), sections 1.2 and 5: a coordinate variable is
+    one dimensional, shares its dimension's name, is monotonic and has no
+    missing values. Sections 4.1 and 4.2 define geographic coordinate units.
+    """
+    if getattr(variable, "dimensions", None) != (name,):
+        raise TerrainFetchError("unsupported netCDF coordinate dimensions")
+    values = np.ma.asarray(variable[:])
+    if np.any(np.ma.getmaskarray(values)):
+        raise TerrainFetchError("netCDF coordinates contain missing values")
+    axis = np.asarray(values)
+    try:
+        _validate_axis(axis, limit)
+    except (ValueError, TypeError) as exc:
+        raise TerrainFetchError("invalid netCDF coordinate values") from exc
+    return axis
+
+
 def _read_netcdf(
     archive: Path,
     bbox: tuple[float, float, float, float],
@@ -217,6 +241,10 @@ def _read_netcdf(
     except ImportError as exc:
         raise TerrainFetchError("netCDF4 reader requires optional netCDF4") from exc
     with Dataset(archive, "r") as dataset:
+        if not {"lon", "lat", "elevation"}.issubset(dataset.variables):
+            raise TerrainFetchError(
+                "netCDF required lon/lat/elevation variables missing"
+            )
         lon_var, lat_var = dataset.variables["lon"], dataset.variables["lat"]
         if (
             getattr(lon_var, "units", None) != "degrees_east"
@@ -225,15 +253,19 @@ def _read_netcdf(
             raise TerrainFetchError(
                 "netCDF coordinate units are not geographic degrees"
             )
-        lon, lat = np.asarray(lon_var[:]), np.asarray(lat_var[:])
-        _validate_axis(lon, 180)
-        _validate_axis(lat, 90)
+        # GEBCO_2024 (2024), "Grid, vertical and horizontal datum": global
+        # geographic cell centres. Degree bounds are a coordinate-domain check.
+        lon = _netcdf_axis(lon_var, "lon", 180)
+        lat = _netcdf_axis(lat_var, "lat", 90)
         elevation = dataset.variables["elevation"]
-        if elevation.dimensions != ("lat", "lon") or elevation.units not in (
-            "m",
-            "meters",
+        # GEBCO_2024 (2024), "CF-compliant NetCDF format": a two-dimensional
+        # metre elevation array. Its shape must agree with the coordinate axes.
+        if (
+            getattr(elevation, "dimensions", None) != ("lat", "lon")
+            or getattr(elevation, "units", None) not in ("m", "meters")
+            or getattr(elevation, "shape", None) != (len(lat), len(lon))
         ):
-            raise TerrainFetchError("unsupported elevation dimensions or units")
+            raise TerrainFetchError("unsupported elevation dimensions, shape or units")
         west, south, east, north = bbox
         x = np.flatnonzero((lon >= west) & (lon <= east))
         y = np.flatnonzero((lat >= south) & (lat <= north))
