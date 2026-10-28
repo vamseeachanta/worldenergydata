@@ -25,6 +25,14 @@ from worldenergydata.cost.data_collection.disclosure_ingest_contract import (
     ingest_disclosure_rows,
     validate_disclosure_citation,
 )
+from worldenergydata.cost.data_collection.disclosure_normalization import (
+    DisclosureMoney,
+    NormalizationPolicy,
+    NormalizedDisclosureMoney,
+    money_values_are_comparable,
+    normalize_disclosure_money,
+    normalize_disclosure_money_rows,
+)
 from worldenergydata.cost.data_collection.linkage import (
     CostDataPointLinkResult,
     LinkageStatus,
@@ -74,4 +82,10 @@ __all__ = [
     "load_public_dataset",
     "resolve_cost_datapoint_link",
     "validate_disclosure_citation",
+    "DisclosureMoney",
+    "NormalizationPolicy",
+    "NormalizedDisclosureMoney",
+    "money_values_are_comparable",
+    "normalize_disclosure_money",
+    "normalize_disclosure_money_rows",
 ]
