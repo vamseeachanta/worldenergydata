@@ -230,7 +230,13 @@ class TexasRRC:
         districts.to_csv(districts_path, index=False)
         summary = {
             "total_records": len(processed),
-            "district_count": int(len(districts)),
+            "district_count": int(districts["district"].notna().sum()),
+            "unclassified_records": sum(
+                record.get("district") is None for record in processed
+            ),
+            "unclassified_oil_production": float(
+                districts.loc[districts["district"].isna(), "oil_production"].sum()
+            ),
             "oil_production_total": float(districts["oil_production"].sum()),
             "gas_production_total": float(districts["gas_production"].sum()),
         }
