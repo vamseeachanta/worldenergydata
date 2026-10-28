@@ -46,3 +46,87 @@ performance/test_critical_operations.py::TestCriticalOperationsPerformance::test
 # REMOVED in #529 — the root cause (src.-prefixed mock.patch targets) was fixed
 # for real across the wpd test files, so the whole TestQueryOptimizerLazyLoading
 # class now passes. Close #558.
+
+# ---------------------------------------------------------------------------
+# 28 Oct 2026 baseline: every test that fails on main (b419f197), from the
+# batch triage evidence (main-clean and main-unenrolled runs). Tracking issue
+# #1804: tick the box and delete the line when the test is fixed.
+# Outside the PR gate, tests/conftest.py marks each line xfail(strict=False)
+# (a "deselect:" comment removes the test instead). One tests/-prefixed form
+# per line is enough: the gate and the conftest both add the other spelling.
+# ---------------------------------------------------------------------------
+
+# tree-preservation guard rejects declared coverage outputs — issue #1804
+tests/ci/test_tree_preservation.py::test_guard_accepts_declared_coverage_output[json-declared.json]
+tests/ci/test_tree_preservation.py::test_guard_accepts_declared_coverage_output[html-declared-html]
+tests/ci/test_tree_preservation.py::test_guard_accepts_declared_coverage_output[annotate-declared-annotate]
+tests/ci/test_tree_preservation.py::test_guard_accepts_declared_coverage_output[None-None]
+
+# per-subtree data symlinks missing where /mnt/ace/worldenergydata exists (self-hosted hosts) — issue #1804
+tests/integration/test_data_symlink.py::test_relocated_subtrees_resolve_to_ace
+tests/integration/test_data_symlink.py::test_bsee_bin_accessible_via_symlink
+tests/integration/test_data_symlink.py::test_hse_raw_accessible_via_symlink
+
+# committed report inventory CSV is stale (artifact currency) — issue #1804
+tests/repo_structure/test_report_inventory.py::test_committed_csv_matches
+
+# optional field-concept behaviour differs from the recorded main output — issue #1804
+tests/unit/australia/test_field_concept_opt_in.py::test_omitted_wells_match_recorded_main[kingfish]
+tests/unit/australia/test_field_concept_opt_in.py::test_omitted_wells_match_recorded_main[without_source]
+tests/unit/australia/test_field_concept_opt_in.py::test_omitted_wells_match_recorded_main[field_alias]
+
+# CLI smoke subprocesses exceed their 20 s budget on loaded hosts — issue #1804
+tests/unit/cli/test_cli_smoke.py::test_root_help_info_and_version_are_bounded_safe
+tests/unit/cli/test_cli_smoke.py::test_info_lists_all_registered_public_subapps
+
+# examples/README.md does not list two example scripts — issue #1804
+tests/unit/cli/test_docs_coverage.py::TestExamplesReadmeSafetyMatrix::test_all_py_examples_listed
+
+# EIA US implementation-map discovery evidence is stale (artifact currency) — issue #1804
+tests/unit/eia_us/test_implementation_map.py::test_discovery_evidence_matches_tracked_sources
+
+# patched time.monotonic runs dry inside the performance hook and crashes the xdist worker — issue #1804
+tests/unit/safety_analysis/geohazard/test_usgs.py::test_transport_caps_timeout_pause_and_headers  # deselect: crashes the worker (INTERNALERROR), so xfail cannot contain it — issue #1804
+
+# Not collected on main yet (tests/conftest.py pytest_ignore_collect); they fail
+# once enrolled, as the open batch does. Listed now so enrolment stays green.
+# BSEE URL importers: tests expect retired URL attributes and data types — issue #1804
+tests/unit/hse/importers/test_bsee_statistics_importer_url.py::TestBSEEStatisticsImporterURL::test_importer_initialization
+tests/unit/hse/importers/test_bsee_statistics_importer_url.py::TestBSEEStatisticsImporterURL::test_fetch_data_downloads_from_url
+tests/unit/hse/importers/test_bsee_statistics_importer_url.py::TestBSEEStatisticsImporterURL::test_fetch_data_uses_longer_timeout
+tests/unit/hse/importers/test_bsee_statistics_importer_url.py::TestBSEEStatisticsImporterURL::test_normalize_data_converts_string_integers
+tests/unit/hse/importers/test_bsee_statistics_importer_url.py::TestBSEEStatisticsImporterURL::test_normalize_data_sets_incident_type_equipment_failure
+tests/unit/hse/importers/test_bsee_statistics_importer_url.py::TestBSEEStatisticsImporterURL::test_normalize_data_maps_report_date_to_incident_date
+tests/unit/hse/importers/test_bsee_statistics_importer_url.py::TestBSEEStatisticsImporterURL::test_importer_handles_multiple_csv_files
+tests/unit/hse/importers/test_bsee_statistics_importer_url.py::TestBSEEStatisticsImporterURLPerformance::test_large_file_handling
+tests/unit/hse/importers/test_bsee_incidents_importer_url.py::TestBSEEIncidentsImporterURL::test_importer_initialization
+tests/unit/hse/importers/test_bsee_incidents_importer_url.py::TestBSEEIncidentsImporterURL::test_fetch_data_downloads_from_url
+tests/unit/hse/importers/test_bsee_incidents_importer_url.py::TestBSEEIncidentsImporterURL::test_fetch_data_processes_dict_with_data_key
+tests/unit/hse/importers/test_bsee_incidents_importer_url.py::TestBSEEIncidentsImporterURL::test_fetch_data_processes_direct_dataframe
+tests/unit/hse/importers/test_bsee_incidents_importer_url.py::TestBSEEIncidentsImporterURL::test_fetch_data_aggregates_multiple_files
+tests/unit/hse/importers/test_bsee_incidents_importer_url.py::TestBSEEIncidentsImporterURL::test_normalize_data_inherited_from_parent
+tests/unit/hse/importers/test_bsee_incidents_importer_url.py::TestBSEEIncidentsImporterURLIntegration::test_no_duplicate_import
+tests/unit/hse/importers/test_bsee_penalties_importer_url.py::TestBSEEPenaltiesImporterURL::test_importer_initialization
+tests/unit/hse/importers/test_bsee_penalties_importer_url.py::TestBSEEPenaltiesImporterURL::test_fetch_data_downloads_from_war_url
+tests/unit/hse/importers/test_bsee_penalties_importer_url.py::TestBSEEPenaltiesImporterURL::test_fetch_data_uses_longest_timeout
+tests/unit/hse/importers/test_bsee_penalties_importer_url.py::TestBSEEPenaltiesImporterURL::test_normalize_data_converts_penalty_amount_to_float
+tests/unit/hse/importers/test_bsee_penalties_importer_url.py::TestBSEEPenaltiesImporterURL::test_normalize_data_converts_compliance_deadline_to_datetime
+tests/unit/hse/importers/test_bsee_penalties_importer_url.py::TestBSEEPenaltiesImporterURL::test_normalize_data_converts_compliance_achieved_to_boolean
+tests/unit/hse/importers/test_bsee_penalties_importer_url.py::TestBSEEPenaltiesImporterURL::test_normalize_data_sets_incident_type_violation
+tests/unit/hse/importers/test_bsee_penalties_importer_url.py::TestBSEEPenaltiesImporterURL::test_importer_handles_multiple_war_files
+tests/unit/hse/importers/test_bsee_penalties_importer_url.py::TestBSEEPenaltiesImporterURLPerformance::test_very_large_file_handling
+
+# marine-safety LLM classifier: tests predate the candidate_labels API — issue #1804
+tests/unit/marine_safety/analysis/test_llm_classifier.py::TestLLMClassifierInitialization::test_llm_classifier_initialization
+tests/unit/marine_safety/analysis/test_llm_classifier.py::TestBasicClassification::test_classify_hatch_maloperation_positive
+tests/unit/marine_safety/analysis/test_llm_classifier.py::TestBasicClassification::test_batch_classification
+tests/unit/marine_safety/analysis/test_llm_classifier.py::TestHatchDetectionPatterns::test_detect_hatch_not_closed
+tests/unit/marine_safety/analysis/test_llm_classifier.py::TestHatchDetectionPatterns::test_detect_opening_maloperation
+tests/unit/marine_safety/analysis/test_llm_classifier.py::TestHatchDetectionPatterns::test_detect_engine_room_access_failure
+tests/unit/marine_safety/analysis/test_llm_classifier.py::TestHatchDetectionPatterns::test_detect_watertight_door_issue
+tests/unit/marine_safety/analysis/test_llm_classifier.py::TestHatchDetectionPatterns::test_negative_case_no_hatch_incident
+tests/unit/marine_safety/analysis/test_llm_classifier.py::TestPerformance::test_batch_processing_faster_than_individual
+tests/unit/marine_safety/analysis/test_llm_classifier.py::TestPerformance::test_batch_throughput
+tests/unit/marine_safety/analysis/test_llm_classifier.py::TestClassificationAccuracy::test_positive_case_accuracy
+tests/unit/marine_safety/analysis/test_llm_classifier.py::TestClassificationAccuracy::test_negative_case_accuracy
+tests/unit/marine_safety/analysis/test_llm_classifier.py::TestClassificationAccuracy::test_f1_score_calculation

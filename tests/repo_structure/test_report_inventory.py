@@ -125,6 +125,7 @@ def test_builder_agreement(tmp_path, monkeypatch):
     } == set()
 
 
+@pytest.mark.artifact_currency
 def test_committed_csv_matches(capsys):
     module = inventory_module()
     assert module.main(["--check"]) == 0

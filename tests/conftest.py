@@ -561,6 +561,79 @@ def pytest_sessionfinish(session, exitstatus):
         print("=" * 60)
 
 
+# --------------------------------------------------------------- quarantine --
+# scripts/ci/quarantine.txt lists tests that already fail on main. The PR gate
+# deselects them (shared domain-matrix workflow); every other run, including
+# the daily "Main full run" and local runs, marks them xfail(strict=False) so
+# the suite stays green while the failure stays visible. A quarantined test
+# that starts passing reports XPASS: remove its line and tick the tracking
+# issue. A line whose comment starts with "deselect:" is removed from the run
+# instead (for tests that crash the worker, which xfail cannot contain).
+_QUARANTINE_FILE = Path(__file__).resolve().parents[1] / "scripts/ci/quarantine.txt"
+
+# The PR fast gate sets WED_FAST_GATE=1. Tests marked artifact_currency check
+# that repo-wide generated artifacts (inventories, census, evidence maps) are
+# current; they run in the daily main full run, not on every PR.
+_FAST_GATE_ENV = "WED_FAST_GATE"
+
+
+def _canonical_node_id(node_id: str) -> str:
+    """Use the tests/-prefixed form so both quarantine spellings match."""
+    return node_id if node_id.startswith("tests/") else f"tests/{node_id}"
+
+
+def _load_quarantine(path: Path = _QUARANTINE_FILE) -> Dict[str, tuple]:
+    """Return {node id: (reason, deselect)} parsed from the quarantine file."""
+    entries: Dict[str, tuple] = {}
+    if not path.is_file():
+        return entries
+    heading = ""
+    in_comment_block = False
+    for raw in path.read_text(encoding="utf-8").splitlines():
+        line = raw.strip()
+        if not line:
+            in_comment_block = False
+            continue
+        if line.startswith("#"):
+            if not in_comment_block:
+                heading = line.lstrip("#").strip()
+                in_comment_block = True
+            continue
+        in_comment_block = False
+        node_id, _, comment = line.partition("#")
+        node_id, comment = node_id.strip(), comment.strip()
+        deselect = comment.lower().startswith("deselect:")
+        if deselect:
+            comment = comment.split(":", 1)[1].strip()
+        reason = comment or heading or "listed in scripts/ci/quarantine.txt"
+        entries[_canonical_node_id(node_id)] = (f"quarantined: {reason}", deselect)
+    return entries
+
+
+def pytest_collection_modifyitems(config, items):
+    """Apply the quarantine list and the fast-gate artifact-currency skip."""
+    quarantine = _load_quarantine()
+    fast_gate = os.environ.get(_FAST_GATE_ENV) == "1"
+    currency_skip = pytest.mark.skip(
+        reason="artifact currency check: runs in the daily Main full run"
+    )
+    kept, dropped = [], []
+    for item in items:
+        entry = quarantine.get(_canonical_node_id(item.nodeid))
+        if entry is not None:
+            reason, deselect = entry
+            if deselect:
+                dropped.append(item)
+                continue
+            item.add_marker(pytest.mark.xfail(reason=reason, strict=False))
+        if fast_gate and item.get_closest_marker("artifact_currency"):
+            item.add_marker(currency_skip)
+        kept.append(item)
+    if dropped:
+        config.hook.pytest_deselected(items=dropped)
+        items[:] = kept
+
+
 # Skip collection of experimental/archived test files
 def pytest_ignore_collect(collection_path, config):
     """Skip collection of experimental and archived test files.

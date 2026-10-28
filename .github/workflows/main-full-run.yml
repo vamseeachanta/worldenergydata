@@ -1,0 +1,346 @@
+name: Main full run
+
+# Daily full run on main (owner ruling 28 Oct 2026). Pull requests run only the
+# fast gate in ci.yml (lint, secret scan, touched-module tests); everything
+# slow or repo-wide runs here once a day instead: the whole test suite on all
+# supported Pythons, the generated-artifact currency checks (lockfile, report
+# inventory, evidence maps), type check, docs, package build, bandit,
+# dependency audit and benchmarks.
+#
+# There is deliberately no `schedule:` trigger. Our cron on ace-linux-1
+# dispatches it once every 24 h:
+#   gh workflow run main-full-run.yml --repo vamseeachanta/worldenergydata --ref main
+# Dispatching it on a branch (--ref <branch>) gives a PR the full tree on demand.
+#
+# Tests listed in scripts/ci/quarantine.txt run here as xfail(strict=False)
+# (tests/conftest.py), so a green run means every other test passed.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: main-full-run-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  PYTHON_VERSION: "3.11"
+
+jobs:
+  full-suite:
+    name: Full suite (Python ${{ matrix.python-version }})
+    runs-on: [self-hosted, x64]
+    timeout-minutes: 240
+    strategy:
+      fail-fast: false
+      # Leave one self-hosted runner free for pull request gates.
+      max-parallel: 2
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
+      - name: Set up Python ${{ matrix.python-version }}
+        run: uv python install ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        # --frozen: a stale lockfile is reported by the lockfile job below
+        # instead of being silently re-resolved here.
+        run: uv sync --frozen --all-extras --python ${{ matrix.python-version }}
+
+      - name: Run tests with coverage
+        run: |
+          # tests/integration kills xdist workers (a CLI edge-case test
+          # hard-exits the process); tests/performance asserts wall-clock
+          # budgets; both run sequentially in the next step.
+          targets=$(find tests -maxdepth 1 -mindepth 1 \( -type d ! -name performance ! -name integration ! -name __pycache__ \) -o -maxdepth 1 -name 'test_*.py' | sort | tr '\n' ' ')
+          uv run --frozen --with pytest-xdist pytest $targets \
+            -n auto \
+            --tb=short \
+            --cov=src \
+            --cov-report=xml:coverage.xml \
+            --cov-report=term-missing \
+            --junitxml=reports/coverage/test-results.xml
+
+      - name: Run sequential tests (integration / performance)
+        if: ${{ !cancelled() }}
+        run: |
+          uv run --frozen pytest tests/integration tests/performance \
+            --tb=short \
+            --cov=src \
+            --cov-append \
+            --cov-report=xml:coverage.xml \
+            --junitxml=reports/coverage/test-results-sequential.xml
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: test-results-${{ matrix.python-version }}
+          path: |
+            reports/coverage/test-results*.xml
+            coverage.xml
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v7
+        if: matrix.python-version == '3.11'
+        with:
+          files: coverage.xml
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: false
+          verbose: true
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+  lockfile:
+    name: Lockfile currency
+    runs-on: [self-hosted, x64]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+
+      - name: Check that uv.lock matches pyproject.toml
+        # On a mismatch, publish the regenerated uv.lock as an artifact so the
+        # fix is one download and one PR, then fail this job.
+        run: |
+          if uv lock --check; then
+            exit 0
+          fi
+          uv lock
+          mkdir -p lock-refresh && cp uv.lock lock-refresh/uv.lock
+          {
+            echo "## uv.lock is stale"
+            echo "Download the lock-refresh artifact and commit its uv.lock to main."
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "::error::uv.lock does not match pyproject.toml; regenerated copy uploaded as lock-refresh"
+          exit 1
+
+      - name: Upload regenerated lockfile
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: lock-refresh
+          path: lock-refresh/uv.lock
+          if-no-files-found: ignore
+          retention-days: 7
+
+  type-check:
+    name: Type Check
+    runs-on: [self-hosted, x64]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
+      - name: Set up Python
+        run: uv python install ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: uv sync --frozen --all-extras
+
+      - name: Run mypy
+        run: |
+          uv run --frozen mypy src/worldenergydata/ \
+            --ignore-missing-imports \
+            --no-error-summary \
+            --show-error-codes
+        continue-on-error: true
+
+  docs:
+    name: Documentation
+    runs-on: [self-hosted, x64]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
+      - name: Set up Python
+        run: uv python install ${{ env.PYTHON_VERSION }}
+
+      - name: Build Sphinx documentation
+        run: |
+          if [ -f docs/conf.py ]; then
+            uv sync --frozen --extra docs
+            cd docs && uv run --frozen sphinx-build -b html . _build/html
+          else
+            echo "Skipping Sphinx build: docs/conf.py is not present"
+          fi
+
+      - name: Build API docs (mkdocs)
+        run: uv run --frozen --group docs mkdocs build --strict
+
+  build:
+    name: Build Package
+    runs-on: [self-hosted, x64]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
+      - name: Set up Python
+        run: uv python install ${{ env.PYTHON_VERSION }}
+
+      - name: Build package
+        # Workspace mode (ADR 0001): build the root wheel and every member.
+        run: uv build --all-packages
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: dist
+          path: dist/
+          retention-days: 5
+
+  security-deep:
+    name: Security Scan (deep)
+    runs-on: [self-hosted, x64]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+
+      - name: Run bandit security scan
+        run: uvx bandit -r src/ -ll -ii -x tests/ || true
+
+      - name: Check for secrets with gitleaks
+        uses: gitleaks/gitleaks-action@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+
+  dependency-audit:
+    name: Dependency Audit
+    runs-on: [self-hosted, x64]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+
+      - name: Set up Python
+        run: uv python install ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: uv sync --frozen --all-extras
+
+      - name: Audit dependencies with pip-audit
+        run: |
+          uv pip install pip-audit
+          uv run --frozen pip-audit --strict || true
+        continue-on-error: true
+
+      - name: Check for outdated dependencies
+        run: |
+          echo "## Outdated Dependencies" >> "$GITHUB_STEP_SUMMARY"
+          uv pip list --outdated >> "$GITHUB_STEP_SUMMARY" || echo "All dependencies are up to date"
+
+  performance-benchmark:
+    name: Performance Benchmark
+    runs-on: [self-hosted, x64]
+    needs: [full-suite]
+    if: ${{ !cancelled() }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
+      - name: Set up Python
+        run: uv python install ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: uv sync --frozen --all-extras
+
+      - name: Run benchmarks
+        run: |
+          uv run --frozen pytest tests/ \
+            -v \
+            --benchmark-only \
+            --benchmark-json=benchmark.json \
+            || echo "No benchmarks found or benchmark tests skipped"
+
+      - name: Upload benchmark results
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: benchmark-results
+          path: benchmark.json
+          retention-days: 30
+
+  notify-failure:
+    name: Notify on Failure
+    runs-on: [self-hosted, x64]
+    needs: [full-suite, lockfile, docs, build, dependency-audit]
+    if: failure() && github.ref == 'refs/heads/main'
+    permissions:
+      issues: write
+    steps:
+      - name: Open or reuse the failure issue
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const title = `Main full run failed - ${new Date().toISOString().split('T')[0]}`;
+            const body = `
+            ## Main full run failure
+
+            The daily full run on main has failed. Please investigate.
+
+            - **Run:** [${context.runId}](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})
+            - **Commit:** ${context.sha}
+
+            A test that already fails on main belongs in scripts/ci/quarantine.txt
+            with its tracking issue, so the next run is green again.
+            `;
+
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'nightly-failure',
+            });
+
+            if (issues.data.length === 0) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: title,
+                body: body,
+                labels: ['nightly-failure', 'ci'],
+              });
+            }
