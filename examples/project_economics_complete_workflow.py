@@ -15,36 +15,29 @@ Date: 2025-10-03
 """
 
 import sys
-from pathlib import Path
 from datetime import datetime
-import pandas as pd
+from pathlib import Path
+
 import numpy as np
+import pandas as pd
 
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from src.worldenergydata.modules.project_economics import (
-    # Core financial
-    calculate_all_metrics,
-    excel_like_mirr,
-    calculate_npv,
-
-    # Configuration
+from src.worldenergydata.modules.project_economics import (  # Core financial; Configuration; Adapters
     AssumptionsManager,
-    classify_dev_system_by_depth,
-
-    # Adapters
     BseeAdapter,
+    calculate_all_metrics,
+    calculate_npv,
+    classify_dev_system_by_depth,
+    excel_like_mirr,
 )
-
-from src.worldenergydata.modules.project_economics.data import (
-    ProductionProcessor,
-)
-
 from src.worldenergydata.modules.project_economics.analysis import (
     CashflowEngine,
 )
-
+from src.worldenergydata.modules.project_economics.data import (
+    ProductionProcessor,
+)
 from src.worldenergydata.modules.project_economics.reports import (
     ProjectEconomicsReportBuilder,
 )
@@ -52,28 +45,30 @@ from src.worldenergydata.modules.project_economics.reports import (
 
 def example_simple_npv_mirr():
     """Example 1: Simple NPV and MIRR calculation"""
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("Example 1: Simple NPV and MIRR Calculation")
-    print("="*80)
+    print("=" * 80)
 
     # Simple field development cashflow (in millions USD)
-    cashflows = np.array([
-        -1500,  # Year 0: Initial CAPEX
-        -500,   # Year 1: Additional CAPEX
-        200,    # Year 2: First production
-        800,    # Year 3: Ramp up
-        1200,   # Year 4: Peak
-        1000,   # Year 5: Plateau
-        800,    # Year 6: Decline
-        600,    # Year 7
-        400,    # Year 8
-        200,    # Year 9
-    ])
+    cashflows = np.array(
+        [
+            -1500,  # Year 0: Initial CAPEX
+            -500,  # Year 1: Additional CAPEX
+            200,  # Year 2: First production
+            800,  # Year 3: Ramp up
+            1200,  # Year 4: Peak
+            1000,  # Year 5: Plateau
+            800,  # Year 6: Decline
+            600,  # Year 7
+            400,  # Year 8
+            200,  # Year 9
+        ]
+    )
 
     discount_rate = 0.10  # 10% cost of capital
 
     # Calculate NPV
-    npv = calculate_npv(cashflows, discount_rate, period='annual')
+    npv = calculate_npv(cashflows, discount_rate, period="annual")
 
     # Calculate MIRR
     mirr_annual, mirr_monthly = excel_like_mirr(cashflows, discount_rate)
@@ -89,26 +84,39 @@ def example_simple_npv_mirr():
 
 def example_with_assumptions():
     """Example 2: Using assumptions manager"""
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("Example 2: Development System Assumptions")
-    print("="*80)
+    print("=" * 80)
 
     # Load assumptions from project_economics source
-    assumptions_file = Path('/home/vamsee/Downloads/project_economics_V30/lease_assumptions.xlsx')
+    assumptions_file = (
+        Path(__file__).resolve().parents[1]
+        / "docs/modules/bsee/analysis/production/project_economics_V30/lease_assumptions.xlsx"
+    )
 
     if assumptions_file.exists():
         mgr = AssumptionsManager.from_excel(assumptions_file)
 
         print("\nSubsea 15K Development Assumptions:")
-        for param in ['HOST_CAPEX_MM', 'SURF_PER_WELL_MM', 'ROYALTY_RATE',
-                     'VARIABLE_OPEX_$/BBL', 'FIXED_OPEX_MM_PER_YEAR']:
-            value = mgr.get('subsea15', param)
+        for param in [
+            "HOST_CAPEX_MM",
+            "SURF_PER_WELL_MM",
+            "ROYALTY_RATE",
+            "VARIABLE_OPEX_$/BBL",
+            "FIXED_OPEX_MM_PER_YEAR",
+        ]:
+            value = mgr.get("subsea15", param)
             print(f"  {param:30} {value:10.2f}")
 
         print("\nSubsea 20K Development Assumptions:")
-        for param in ['HOST_CAPEX_MM', 'SURF_PER_WELL_MM', 'ROYALTY_RATE',
-                     'VARIABLE_OPEX_$/BBL', 'FIXED_OPEX_MM_PER_YEAR']:
-            value = mgr.get('subsea20', param)
+        for param in [
+            "HOST_CAPEX_MM",
+            "SURF_PER_WELL_MM",
+            "ROYALTY_RATE",
+            "VARIABLE_OPEX_$/BBL",
+            "FIXED_OPEX_MM_PER_YEAR",
+        ]:
+            value = mgr.get("subsea20", param)
             print(f"  {param:30} {value:10.2f}")
     else:
         print("\nUsing default assumptions (assumptions file not found)")
@@ -117,20 +125,22 @@ def example_with_assumptions():
 
 def example_production_processing():
     """Example 3: Production data processing"""
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("Example 3: Production Data Processing")
-    print("="*80)
+    print("=" * 80)
 
     # Create sample production data
-    dates = pd.date_range('2020-01-01', periods=48, freq='MS')
-    production_data = pd.DataFrame({
-        'API_WELL_NUMBER': ['60805401' + str(i).zfill(4) for i in range(5)] * 48,
-        'DEV_NAME': ['Sample Field'] * 240,
-        'PROD_DATE': np.repeat(dates, 5),
-        'OIL_VOLUME': np.random.randint(5000, 25000, 240),
-        'WATER_VOLUME': np.random.randint(1000, 10000, 240),
-        'GAS_VOLUME': np.random.randint(500, 5000, 240),
-    })
+    dates = pd.date_range("2020-01-01", periods=48, freq="MS")
+    production_data = pd.DataFrame(
+        {
+            "API_WELL_NUMBER": ["60805401" + str(i).zfill(4) for i in range(5)] * 48,
+            "DEV_NAME": ["Sample Field"] * 240,
+            "PROD_DATE": np.repeat(dates, 5),
+            "OIL_VOLUME": np.random.randint(5000, 25000, 240),
+            "WATER_VOLUME": np.random.randint(1000, 10000, 240),
+            "GAS_VOLUME": np.random.randint(500, 5000, 240),
+        }
+    )
 
     print(f"\nProcessing {len(production_data)} production records...")
 
@@ -138,7 +148,7 @@ def example_production_processing():
     processor = ProductionProcessor(production_data)
 
     # Monthly aggregation
-    monthly = processor.aggregate_monthly(by='DEV_NAME')
+    monthly = processor.aggregate_monthly(by="DEV_NAME")
     print(f"\nMonthly Production Summary:")
     print(f"  Months of production: {len(monthly)}")
     print(f"  Total oil:            {monthly['MONTHLY_OIL_BBL'].sum():,.0f} BBL")
@@ -146,67 +156,72 @@ def example_production_processing():
     print(f"  Peak month:           {monthly['MONTHLY_OIL_BBL'].max():,.0f} BBL")
 
     # First oil
-    first_oil = processor.identify_first_oil(by='DEV_NAME')
+    first_oil = processor.identify_first_oil(by="DEV_NAME")
     print(f"\nFirst Oil:")
     print(f"  Date:                 {first_oil['FIRST_OIL_DATE'].iloc[0]}")
 
     # Cumulative production
-    cumulative = processor.calculate_cumulative_production(by='DEV_NAME')
+    cumulative = processor.calculate_cumulative_production(by="DEV_NAME")
     print(f"\nCumulative Production:")
-    print(f"  Final cumulative:     {cumulative['CUMULATIVE_OIL_BBL'].iloc[-1]:,.0f} BBL")
+    print(
+        f"  Final cumulative:     {cumulative['CUMULATIVE_OIL_BBL'].iloc[-1]:,.0f} BBL"
+    )
 
 
 def example_cashflow_generation():
     """Example 4: Monthly cashflow generation"""
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("Example 4: Monthly Cashflow Generation")
-    print("="*80)
+    print("=" * 80)
 
     # Create sample data
-    months = pd.period_range('2024-01', periods=60, freq='M')
-    production = pd.DataFrame({
-        'YEAR_MONTH': months,
-        'MONTHLY_OIL_BBL': np.concatenate([
-            np.linspace(0, 100000, 12),      # Ramp up
-            np.full(24, 100000),              # Plateau
-            np.linspace(100000, 50000, 24),   # Decline
-        ])
-    })
+    months = pd.period_range("2024-01", periods=60, freq="M")
+    production = pd.DataFrame(
+        {
+            "YEAR_MONTH": months,
+            "MONTHLY_OIL_BBL": np.concatenate(
+                [
+                    np.linspace(0, 100000, 12),  # Ramp up
+                    np.full(24, 100000),  # Plateau
+                    np.linspace(100000, 50000, 24),  # Decline
+                ]
+            ),
+        }
+    )
 
     # Setup
     mgr = AssumptionsManager()  # Use defaults
-    engine = CashflowEngine(mgr, 'subsea15')
+    engine = CashflowEngine(mgr, "subsea15")
 
     # WTI prices
     wti_prices = {str(m): 75.0 for m in months}
 
     # Drilling timeline (simplified)
     timeline = {
-        'drilling_monthly': {
-            '2023-06': 30,
-            '2023-07': 31,
-            '2023-08': 15,
+        "drilling_monthly": {
+            "2023-06": 30,
+            "2023-07": 31,
+            "2023-08": 15,
         },
-        'completion_monthly': {
-            '2023-09': 30,
-            '2023-10': 31,
-            '2023-11': 30,
-        }
+        "completion_monthly": {
+            "2023-09": 30,
+            "2023-10": 31,
+            "2023-11": 30,
+        },
     }
 
     print("\nGenerating monthly cashflows...")
     cashflows = engine.generate_monthly_cashflow(
-        production,
-        timeline,
-        wti_prices,
-        datetime(2024, 1, 1)
+        production, timeline, wti_prices, datetime(2024, 1, 1)
     )
 
     # Summary
     total_revenue = sum(cf.oil_revenue_usd for cf in cashflows)
     total_opex = sum(cf.variable_opex_usd + cf.fixed_opex_usd for cf in cashflows)
-    total_capex = sum(cf.drilling_capex_usd + cf.facilities_capex_usd + cf.host_capex_usd
-                     for cf in cashflows)
+    total_capex = sum(
+        cf.drilling_capex_usd + cf.facilities_capex_usd + cf.host_capex_usd
+        for cf in cashflows
+    )
     net_cashflow = sum(cf.net_cashflow_usd for cf in cashflows)
 
     print(f"\nCashflow Summary ({len(cashflows)} months):")
@@ -228,11 +243,11 @@ def example_cashflow_generation():
 
 def example_complete_workflow():
     """Example 5: Complete workflow with real data (if available)"""
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("Example 5: Complete Workflow")
-    print("="*80)
+    print("=" * 80)
 
-    bsee_data_dir = Path('data/modules/bsee/current')
+    bsee_data_dir = Path("data/modules/bsee/current")
 
     if not bsee_data_dir.exists():
         print("\nBSEE data directory not found - using synthetic data")
@@ -247,14 +262,16 @@ def example_complete_workflow():
     print("  4. Generating cashflows")
     print("  5. Calculating financial metrics")
     print("  6. Creating Excel report")
-    print("\nSee examples/project_economics_anchor_field_example.py for full implementation")
+    print(
+        "\nSee examples/project_economics_anchor_field_example.py for full implementation"
+    )
 
 
 def main():
     """Run all examples"""
-    print("="*80)
+    print("=" * 80)
     print("project_economics Module - Complete Workflow Examples")
-    print("="*80)
+    print("=" * 80)
 
     try:
         example_simple_npv_mirr()
@@ -263,9 +280,9 @@ def main():
         example_cashflow_generation()
         example_complete_workflow()
 
-        print("\n" + "="*80)
+        print("\n" + "=" * 80)
         print("✓ All examples completed successfully!")
-        print("="*80)
+        print("=" * 80)
         print("\nFor more examples, see:")
         print("  - examples/project_economics_anchor_field_example.py")
         print("  - tests/modules/project_economics/integration/test_end_to_end.py")
@@ -273,11 +290,12 @@ def main():
     except Exception as e:
         print(f"\n✗ Error running examples: {e}")
         import traceback
+
         traceback.print_exc()
         return 1
 
     return 0
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

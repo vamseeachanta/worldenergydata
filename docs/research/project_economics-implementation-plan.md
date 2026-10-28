@@ -1,12 +1,12 @@
 # project_economics Implementation Plan
 **Author:** Analysis Team
 **Date:** 2025-10-03
-**Source:** `/home/vamsee/Downloads/project_economics_V30`
+**Source:** `docs/modules/bsee/analysis/production/project_economics_V30`
 **Target:** WorldEnergyData Repository
 
 ## Executive Summary
 
-Roy's latest project_economics code represents a complete financial analysis system for deepwater field development. This plan outlines integration into the WorldEnergyData repository with proper alignment to BSEE data structures.
+the reference implementation's latest project_economics code represents a complete financial analysis system for deepwater field development. This plan outlines integration into the WorldEnergyData repository with proper alignment to BSEE data structures.
 
 ## Source Code Analysis
 

@@ -3,7 +3,7 @@
 
 ## Overview
 
-Roy's project_economics code requires specific data structures. This document outlines the minimal changes needed to accommodate project_economics integration while preserving existing BSEE data integrity.
+the reference implementation's project_economics code requires specific data structures. This document outlines the minimal changes needed to accommodate project_economics integration while preserving existing BSEE data integrity.
 
 ## Required BSEE File Changes
 

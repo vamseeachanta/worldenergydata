@@ -1,7 +1,7 @@
 """
 Validation Tests Against Original project_economics Code
 
-Compares new implementation against Roy's original project_economics V30 code
+Compares new implementation against the reference implementation's original project_economics V30 code
 using the same input data and validating outputs match within tolerance.
 
 Author: WorldEnergyData Team

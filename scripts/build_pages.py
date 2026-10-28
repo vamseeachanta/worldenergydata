@@ -48,10 +48,10 @@ from __future__ import annotations
 
 import argparse
 import html
-from html import unescape as _html_unescape
 import re
 import shutil
 import sys
+from html import unescape as _html_unescape
 from pathlib import Path
 
 _SCRIPTS = Path(__file__).resolve().parent
@@ -391,7 +391,7 @@ def build_shared_assets() -> dict[str, bool]:
     """Write the stylesheet and copy the shared viz assets. Returns the set of
     viz assets that are available (used by domain builders that embed them)."""
     ASSETS.mkdir(parents=True, exist_ok=True)
-    (ASSETS / "style.css").write_text(STYLE, encoding="utf-8")
+    (ASSETS / "style.css").write_text(STYLE, encoding="utf-8", newline="\n")
 
     # --- copy the self-contained viz HTML as assets ---
     # Prefer the committed site_assets/ copy (what CI publishes); fall back to the
@@ -467,7 +467,6 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
                 lifecycle_src / "_explorer.json",
                 lifecycle_dst / "_explorer.json",
             )
-
     # --- Drilling learning-curve front door (issue #775) ---
     # Self-contained HTML (inline CSS + inline-SVG charts) built by
     # scripts/lower_tertiary/build_drilling_insights.py; copied verbatim so its
@@ -475,7 +474,6 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
     drill_src = REPORTS / "lower_tertiary" / "drilling_insights.html"
     if drill_src.exists():
         shutil.copyfile(drill_src, PUBLIC / "drilling-insights.html")
-
     # --- Economics pages (one unlabelled result per field) ---
     npv_re = re.compile(r"Terminal cumulative NPV = \*\*([^*]+)\*\*")
     fields = []  # (slug, display, page_filename, npv_str, npv_value)
@@ -513,9 +511,9 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
                 route_ctx={"field_slug": slug, "field_name": _html_unescape(display)},
             ),
             encoding="utf-8",
+            newline="\n",
         )
         fields.append((slug, display, fname, npv_str, npv_val))
-
     # --- Benchmark page ---
     bench_md = (
         REPORTS / "lower_tertiary" / "lt_well_benchmark_lower_tertiary_2010_latest.md"
@@ -536,8 +534,8 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
                 ),
             ),
             encoding="utf-8",
+            newline="\n",
         )
-
     # --- World Oil April 2026 validation page (durable QA/QC record) ---
     val_md = REPORTS / "lower_tertiary" / "wo-april-2026-validation.md"
     if val_md.exists():
@@ -561,23 +559,21 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
                 ),
             ),
             encoding="utf-8",
+            newline="\n",
         )
-
     # --- D&C drill-down explorer (committed self-contained page) ---
     drill_html = REPORTS / "lower_tertiary" / "dc-drilldown.html"
     if drill_html.exists():
         shutil.copy2(drill_html, PUBLIC / "dc-drilldown.html")
-
-    # --- Rig-day basis validation against owner anchors (self-contained) ---
-    roy_qa_html = REPORTS / "lower_tertiary" / "roy-rig-days-validation.html"
-    if roy_qa_html.exists():
-        shutil.copy2(roy_qa_html, PUBLIC / "roy-rig-days-validation.html")
-
+    # --- Rig-day basis validation against reference anchors (self-contained) ---
+    for basis_qa_html in (REPORTS / "lower_tertiary").glob(
+        "*-rig-days-validation.html"
+    ):
+        shutil.copy2(basis_qa_html, PUBLIC / basis_qa_html.name)
     # --- BSEE WAR activity-code definitions (self-contained, #1065) ---
     codes_html = REPORTS / "lower_tertiary" / "war-activity-codes.html"
     if codes_html.exists():
         shutil.copy2(codes_html, PUBLIC / "war-activity-codes.html")
-
     # --- World Oil April 2026 QA/QC report hub (committed self-contained page) ---
     hub_html = REPORTS / "lower_tertiary" / "wo-april-2026-qaqc-hub.html"
     if hub_html.exists():
@@ -607,6 +603,7 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
                 ),
             ),
             encoding="utf-8",
+            newline="\n",
         )
 
     # --- project_economics revision comparison (V30 -> V50 -> wed) page ---
@@ -622,7 +619,7 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
                 + md_to_html(rev_md.read_text(encoding="utf-8")),
                 provenance=(
                     "Comparison drawn from the V30/V50 source archives "
-                    "(/mnt/ace/.../project_economics_revisions) and the wed reproduction reports; "
+                    "(data/reference/project_economics_revisions) and the wed reproduction reports; "
                     "the cost-assumptions diff was recomputed cell-by-cell. Revision "
                     "dates confirmed against Gmail and file vintages."
                 ),
@@ -634,6 +631,7 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
                 ),
             ),
             encoding="utf-8",
+            newline="\n",
         )
 
     # --- Portfolio summary page ---
@@ -651,6 +649,7 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
                 ),
             ),
             encoding="utf-8",
+            newline="\n",
         )
 
     # --- Well-path page ---
@@ -692,6 +691,7 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
                 ),
             ),
             encoding="utf-8",
+            newline="\n",
         )
 
     return fields
@@ -1134,9 +1134,9 @@ def build_index() -> None:
             "reconciliation matrix &mdash; 253 wellbores across 11 "
             "developments.</p></a>"
         )
-    if (PUBLIC / "roy-rig-days-validation.html").exists():
+    for basis_page in PUBLIC.glob("*-rig-days-validation.html"):
         cards.append(
-            '<a class="card" href="roy-rig-days-validation.html">'
+            f'<a class="card" href="{html.escape(basis_page.name)}">'
             "<h3>Rig-Day Basis Validation &rarr;</h3>"
             "<p>The WAR activity-code basis checked against the domain owner's "
             "own hand-worked figures &mdash; every anchor found, its delta, and "
@@ -1245,7 +1245,7 @@ def build_index() -> None:
             "field concept."
         ),
     )
-    (PUBLIC / "index.html").write_text(landing, encoding="utf-8")
+    (PUBLIC / "index.html").write_text(landing, encoding="utf-8", newline="\n")
 
 
 # ---------------------------------------------------------------------------

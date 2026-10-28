@@ -1,7 +1,7 @@
 """
 Phase A: V30 Determinism Tests
 
-Verify that Roy's project_economics V30 golden baseline output (financial_project_summary.xlsx)
+Verify that the reference implementation's project_economics V30 golden baseline output (financial_project_summary.xlsx)
 matches the captured reference values in golden_baseline_v30.yml.
 
 This confirms the baseline is stable and correctly captured before
@@ -28,13 +28,13 @@ GOLDEN_BASELINE_PATH = (
 @pytest.fixture(scope="module")
 def golden_baseline():
     """Load golden baseline reference values."""
-    with GOLDEN_BASELINE_PATH.open("r") as f:
+    with GOLDEN_BASELINE_PATH.open("r", encoding="utf-8") as f:
         return yaml.safe_load(f)
 
 
 @pytest.fixture(scope="module")
 def v30_output():
-    """Load Roy's V30 financial_project_summary.xlsx Project_Summary sheet."""
+    """Load the reference implementation's V30 financial_project_summary.xlsx Project_Summary sheet."""
     xlsx_path = PROJECT_ECONOMICS_V30_DIR / "financial_project_summary.xlsx"
     if not xlsx_path.exists():
         pytest.skip(f"V30 output not found: {xlsx_path}")

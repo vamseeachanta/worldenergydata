@@ -265,7 +265,7 @@ Week 6: Validation & Documentation
 
 ## Source Code Location
 
-**Original project_economics Code:** `/home/vamsee/Downloads/project_economics_V30/`
+**Original project_economics Code:** `docs/modules/bsee/analysis/production/project_economics_V30/`
 
 **Core Files:**
 - `generate_financial_summary.py` (474 lines) - Financial engine

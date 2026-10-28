@@ -13,7 +13,7 @@ Project economics is the financial analysis codebase for deepwater oil & gas fie
 ## Current State
 
 ### Code Location
-`/home/vamsee/Downloads/project_economics_V30/` (source directory - 4 Python files, 1,749 total lines)
+`docs/modules/bsee/analysis/production/project_economics_V30/` (source directory - 4 Python files, 1,749 total lines)
 
 ### Key Files
 1. `generate_financial_summary.py` - Main financial engine
@@ -395,4 +395,3 @@ Project economics is the financial analysis codebase for deepwater oil & gas fie
 **Date:** 2025-10-03
 **Review Status:** Draft for Approval
 **Next Review:** End of Week 1 (Post-Kickoff)
-

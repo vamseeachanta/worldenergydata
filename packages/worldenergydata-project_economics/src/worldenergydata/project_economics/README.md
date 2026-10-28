@@ -465,7 +465,7 @@ See main repository LICENSE file.
 
 ---
 
-**Source**: Ported from project_economics_V30 (Roy's latest code)
+**Source**: Ported from project_economics_V30 (the reference implementation's latest code)
 **Validation**: 100% match with original implementation
 **Performance**: 3x faster than original
 **Documentation**: Complete user guide and API reference

@@ -19,6 +19,7 @@ from __future__ import annotations
 import argparse
 import ast
 import csv
+import glob
 import io
 import re
 from collections import Counter
@@ -69,6 +70,17 @@ def literal_tables(function):
 def path_expression(node, values):
     if isinstance(node, ast.Name):
         return values.get(node.id)
+    if (
+        isinstance(node, ast.Call)
+        and isinstance(node.func, ast.Attribute)
+        and node.func.attr == "glob"
+        and len(node.args) == 1
+        and isinstance(node.args[0], ast.Constant)
+        and isinstance(node.args[0].value, str)
+    ):
+        base = path_expression(node.func.value, values)
+        if base is not None:
+            return base / node.args[0].value
     if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Div):
         base = path_expression(node.left, values)
         if base is not None and isinstance(node.right, ast.Constant):
@@ -86,6 +98,10 @@ def direct_copy_sources(function):
             value = path_expression(node.value, values)
             if isinstance(target, ast.Name) and value is not None:
                 values[target.id] = value
+        if isinstance(node, ast.For) and isinstance(node.target, ast.Name):
+            value = path_expression(node.iter, values)
+            if value is not None:
+                values[node.target.id] = value
     result = []
     for node in nodes:
         if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute):
@@ -140,7 +156,8 @@ def selection_rows(root, builder=BUILDER):
     # build_lower_tertiary:416-695; direct copies gate on their own source.
     for path in direct_copy_sources(functions["build_lower_tertiary"]):
         if not path.startswith(base + "/"):
-            add("build_lower_tertiary", path)
+            gate = Path(path).parent.as_posix() if glob.has_magic(path) else path
+            add("build_lower_tertiary", path, gate)
 
     # build_field_development:698-741; loop tables supply singles and whole trees.
     for table in literal_tables(functions["build_field_development"]):
@@ -238,7 +255,9 @@ def classify_tree(root, builder=BUILDER):
             classification, evidence = "superseded", replacement
         elif '<p class="unverified">' in path.read_text(encoding="utf-8"):
             classification = "unverified"
-            evidence = "explicit unverified notice; source-data reproduction not established"
+            evidence = (
+                "explicit unverified notice; source-data reproduction not established"
+            )
         elif relative in selected:
             classification, evidence = "current", selected[relative]
         elif re.search(r"(^|[_-])(demo|test)(?=[_.-])", path.name):
@@ -284,7 +303,13 @@ def main(argv=None):
     else:
         counts = Counter(row["classification"] for row in classify_tree(ROOT, BUILDER))
         print("| Classification | HTML files |\n| --- | --- |")
-        for classification in ("current", "superseded", "unverified", "one-off", "undetermined"):
+        for classification in (
+            "current",
+            "superseded",
+            "unverified",
+            "one-off",
+            "undetermined",
+        ):
             print(f"| {classification} | {counts[classification]} |")
         print(
             "\n| Repository-relative selection glob | Existence gates | "

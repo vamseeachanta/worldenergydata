@@ -63,7 +63,7 @@ AFTER:  "**Decision quality:** Improved investment decisions on $100M+ portfolio
 
 1. **Line 4: Path Reference** 🟡
    ```markdown
-   **Source:** `/home/vamsee/Downloads/project_economics_V30`
+   **Source:** `docs/modules/bsee/analysis/production/project_economics_V30`
    ```
    **Fix:** Add note: `(source directory - not renamed)`
 
@@ -109,7 +109,7 @@ AFTER:  "**Decision quality:** Improved investment decisions on $100M+ portfolio
 1. **Line 6: Title Still Says V30** 🔴
    ```markdown
    # project_economics Code Comparison & Analysis
-   **Comparing Roy's Latest Code to Repository Requirements**
+   **Comparing the reference implementation's Latest Code to Repository Requirements**
    ```
    Currently says "V30" in some sections - needs global find/replace
 

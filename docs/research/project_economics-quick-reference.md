@@ -9,7 +9,7 @@ Financial analysis system for deepwater field development:
 - **Development economics** (CAPEX, OPEX, revenue)
 
 ## Location
-📂 `/home/vamsee/Downloads/project_economics_V30/`
+📂 `docs/modules/bsee/analysis/production/project_economics_V30/`
 
 ## Core Files (4 scripts, 1,749 lines)
 
@@ -243,11 +243,10 @@ src/worldenergydata/modules/project_economics/
 - Code Comparison: `project_economics-code-comparison.md`
 - Executive Summary: `project_economics-executive-summary.md`
 
-**Source Code:** `/home/vamsee/Downloads/project_economics_V30/`
+**Source Code:** `docs/modules/bsee/analysis/production/project_economics_V30/`
 
 ---
 
 **Last Updated:** 2025-10-03
 **Version:** 1.0
 **Status:** Ready for Review
-

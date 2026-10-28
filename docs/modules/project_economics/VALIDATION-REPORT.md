@@ -1,14 +1,14 @@
 # project_economics Implementation Validation Report
 
 **Date:** 2025-10-03
-**Validated Against:** Roy's project_economics V30 (`/home/vamsee/Downloads/project_economics_V30`)
+**Validated Against:** the reference implementation's project_economics V30 (`docs/modules/bsee/analysis/production/project_economics_V30`)
 **Status:** ✅ **VALIDATED - 100% Match on Core Calculations**
 
 ---
 
 ## Executive Summary
 
-The new project_economics implementation has been comprehensively validated against Roy's original project_economics V30 code. All core financial calculations produce **identical results** to the original implementation.
+The new project_economics implementation has been comprehensively validated against the reference implementation's original project_economics V30 code. All core financial calculations produce **identical results** to the original implementation.
 
 ### Validation Results
 
@@ -262,7 +262,7 @@ Despite these improvements, **all numerical outputs are identical** to the origi
 
 ## 8. Test Data Files Used
 
-From `/home/vamsee/Downloads/project_economics_V30/`:
+From `docs/modules/bsee/analysis/production/project_economics_V30/`:
 
 - ✅ `lease_assumptions.xlsx` - Loaded successfully, all parameters match
 - ✅ `leases.xlsx` - Structure validated
@@ -343,7 +343,7 @@ The implementation is **validated and ready** for production use with the follow
 
 ### Confidence Level: **VERY HIGH**
 
-The new project_economics implementation is a **faithful, validated port** of Roy's original code with the following advantages:
+The new project_economics implementation is a **faithful, validated port** of the reference implementation's original code with the following advantages:
 
 - ✅ Identical numerical outputs
 - ✅ Better code organization and modularity
@@ -358,4 +358,4 @@ The new project_economics implementation is a **faithful, validated port** of Ro
 **Validated By:** WorldEnergyData Team
 **Validation Date:** 2025-10-03
 **Version:** project_economics v1.0.0
-**Original Source:** Roy's project_economics V30 (`/home/vamsee/Downloads/project_economics_V30`)
+**Original Source:** the reference implementation's project_economics V30 (`docs/modules/bsee/analysis/production/project_economics_V30`)

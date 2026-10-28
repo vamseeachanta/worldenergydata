@@ -8,13 +8,13 @@
 
 ## Summary
 
-Reproduced Roy's project_economics V30 lower tertiary financial results using raw BSEE OGOR production data. Production totals match the V30 golden baseline within ±0.1% tolerance for all 7 producing developments.
+Reproduced the reference implementation's project_economics V30 lower tertiary financial results using raw BSEE OGOR production data. Production totals match the V30 golden baseline within ±0.1% tolerance for all 7 producing developments.
 
 ## Phase A: V30 Determinism
 
 **Result: PASS (21/21 tests)**
 
-Verified that Roy's V30 output (`financial_project_summary.xlsx`) matches the captured golden baseline (`golden_baseline_v30.yml`). The baseline is stable and correctly captured.
+Verified that the reference implementation's V30 output (`financial_project_summary.xlsx`) matches the captured golden baseline (`golden_baseline_v30.yml`). The baseline is stable and correctly captured.
 
 | Test Class | Tests | Result |
 |---|---|---|
@@ -40,7 +40,7 @@ Reproduced V30 production totals from raw BSEE OGOR zip files using V30 lease ma
 
 ### Residual Deltas Explained
 
-- **Jack St Malo (+0.03%)**: Minor well-test production (2006/2012/2013) included in OGOR but excluded by Roy at the well level. Within tolerance.
+- **Jack St Malo (+0.03%)**: Minor well-test production (2006/2012/2013) included in OGOR but excluded by reference maintainer at the well level. Within tolerance.
 - **Julia (-0.001%)**: Rounding difference at the well aggregation level. Within tolerance.
 - **All others**: Exact match (0.00%).
 

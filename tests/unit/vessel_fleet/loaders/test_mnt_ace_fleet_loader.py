@@ -1,14 +1,15 @@
-# ABOUTME: Tests for the /mnt/ace fleet loader (heavy-lift CSV snapshots +
+# ABOUTME: Tests for the external-reference fleet loader (heavy-lift CSV snapshots +
 # ABOUTME: MSIV markdown DB ingestion into the vessel-fleet schema, issue #595.
 """Tests for ``mnt_ace_fleet_loader``.
 
 CI-safe: synthetic CSV/markdown fixtures written to ``tmp_path`` exercise the
 normalisation, reconciliation, and markdown-table parsing. One skip-if-missing
-test runs against the real off-repo data under ``/mnt/ace``.
+test runs against the configured external reference data.
 """
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 import pytest
@@ -59,7 +60,9 @@ Excellent |
 
 
 def _write(tmp_path: Path, name: str, header: str, rows: list[str]) -> None:
-    (tmp_path / name).write_text("\n".join([header, *rows]) + "\n", encoding="utf-8")
+    (tmp_path / name).write_text(
+        "\n".join([header, *rows]) + "\n", encoding="utf-8", newline="\n"
+    )
 
 
 class TestLoadHeavyLiftCsvs:
@@ -159,14 +162,14 @@ class TestLoadHeavyLiftCsvs:
 class TestParseMsivMarkdown:
     def test_parses_only_spec_matrix(self, tmp_path):
         path = tmp_path / "vessel-specifications-matrix.md"
-        path.write_text(_MSIV_MARKDOWN, encoding="utf-8")
+        path.write_text(_MSIV_MARKDOWN, encoding="utf-8", newline="\n")
         out = ld.parse_msiv_markdown(path)
         names = {r["VESSEL_NAME"] for r in out}
         assert names == {"Sleipnir", "Seven Borealis", "DB-30"}
 
     def test_tags_intervention_msiv(self, tmp_path):
         path = tmp_path / "matrix.md"
-        path.write_text(_MSIV_MARKDOWN, encoding="utf-8")
+        path.write_text(_MSIV_MARKDOWN, encoding="utf-8", newline="\n")
         rec = next(
             r for r in ld.parse_msiv_markdown(path) if r["VESSEL_NAME"] == "DB-30"
         )
@@ -175,7 +178,7 @@ class TestParseMsivMarkdown:
 
     def test_specs_and_collection_date(self, tmp_path):
         path = tmp_path / "matrix.md"
-        path.write_text(_MSIV_MARKDOWN, encoding="utf-8")
+        path.write_text(_MSIV_MARKDOWN, encoding="utf-8", newline="\n")
         rec = next(
             r for r in ld.parse_msiv_markdown(path) if r["VESSEL_NAME"] == "Sleipnir"
         )
@@ -192,7 +195,7 @@ class TestParseMsivMarkdown:
 
     def test_no_client_or_project_identifiers_in_output(self, tmp_path):
         path = tmp_path / "matrix.md"
-        path.write_text(_MSIV_MARKDOWN, encoding="utf-8")
+        path.write_text(_MSIV_MARKDOWN, encoding="utf-8", newline="\n")
         blob = repr(ld.parse_msiv_markdown(path)).upper()
         assert "REDACTED" not in blob
         assert "CONFIDENTIAL" not in blob
@@ -203,14 +206,14 @@ class TestParseMsivMarkdown:
 
     def test_prose_only_markdown_yields_empty(self, tmp_path):
         path = tmp_path / "prose.md"
-        path.write_text("# Notes\n\nNo tables here.\n", encoding="utf-8")
+        path.write_text("# Notes\n\nNo tables here.\n", encoding="utf-8", newline="\n")
         assert ld.parse_msiv_markdown(path) == []
 
 
 class TestParseMsivDir:
     def test_dedups_across_files(self, tmp_path):
-        (tmp_path / "a.md").write_text(_MSIV_MARKDOWN, encoding="utf-8")
-        (tmp_path / "b.md").write_text(_MSIV_MARKDOWN, encoding="utf-8")
+        (tmp_path / "a.md").write_text(_MSIV_MARKDOWN, encoding="utf-8", newline="\n")
+        (tmp_path / "b.md").write_text(_MSIV_MARKDOWN, encoding="utf-8", newline="\n")
         out = ld.parse_msiv_dir(tmp_path)
         names = [r["VESSEL_NAME"] for r in out]
         assert sorted(names) == ["DB-30", "Seven Borealis", "Sleipnir"]
@@ -231,7 +234,9 @@ class TestCombine:
                 "active,2024,,https://z,2010"
             ],
         )
-        (msiv_dir / "matrix.md").write_text(_MSIV_MARKDOWN, encoding="utf-8")
+        (msiv_dir / "matrix.md").write_text(
+            _MSIV_MARKDOWN, encoding="utf-8", newline="\n"
+        )
         out = ld.combine(heavy_lift_dir=hl_dir, msiv_dir=msiv_dir)
         cats = {r["VESSEL_CATEGORY"] for r in out}
         assert cats == {"construction", "intervention"}
@@ -241,19 +246,21 @@ class TestCombine:
         assert ld.combine() == []
 
 
-# --- Real-data integration (skipped when /mnt/ace is not mounted) -----------
+# --- Real-data integration (skipped when external reference data is unavailable) -----------
 
-_REAL_HL_DIR = Path("/mnt/ace/Reference contributor/data/processed/vessel-fleet")
-_REAL_MSIV_DIR = Path("/mnt/ace/acma-projects/B1535/data/vessels/msiv")
+_REAL_HL_DIR = Path(
+    os.environ.get("HEAVY_LIFT_REFERENCE_DIR", "data/processed/vessel-fleet")
+)
+_REAL_MSIV_DIR = Path(os.environ.get("MSIV_REFERENCE_DIR", "data/vessels/msiv"))
 
 
 @pytest.mark.skipif(
     not (_REAL_HL_DIR.is_dir() and _REAL_MSIV_DIR.is_dir()),
-    reason="off-repo /mnt/ace fleet data not mounted",
+    reason="external reference directories unavailable",
 )
 def test_real_mnt_ace_data_combines():
     out = ld.combine(heavy_lift_dir=_REAL_HL_DIR, msiv_dir=_REAL_MSIV_DIR)
-    assert out, "expected records from real /mnt/ace fleet data"
+    assert out, "expected records from external reference fleet data"
     # every record has the required name + provenance
     for rec in out:
         assert rec["VESSEL_NAME"]

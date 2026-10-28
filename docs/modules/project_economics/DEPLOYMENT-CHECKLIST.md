@@ -4,7 +4,7 @@
 
 This checklist documents the complete implementation and deployment of the project economics module into the WorldEnergyData repository.
 
-**Source**: Roy's latest project_economics code from `/home/vamsee/Downloads/project_economics_V30`
+**Source**: the reference implementation's latest project_economics code from `docs/modules/bsee/analysis/production/project_economics_V30`
 **Target**: `src/worldenergydata/modules/project_economics/`
 **Status**: ✅ **COMPLETE AND VALIDATED**
 
@@ -530,6 +530,6 @@ For questions or issues:
 **Created**: 2025-10-03
 **Last Updated**: 2025-10-03
 **Version**: 1.0.0
-**Source**: Roy's project_economics V30 (`/home/vamsee/Downloads/project_economics_V30`)
+**Source**: the reference implementation's project_economics V30 (`docs/modules/bsee/analysis/production/project_economics_V30`)
 **Target**: `src/worldenergydata/modules/project_economics/`
 **Status**: ✅ **DEPLOYMENT COMPLETE**

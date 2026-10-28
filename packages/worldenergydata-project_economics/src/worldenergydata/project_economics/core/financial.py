@@ -2,7 +2,7 @@
 project_economics Financial Calculations Module
 
 Provides Excel-compatible NPV and MIRR calculations for deepwater field development
-economic analysis. All functions maintain compatibility with Roy's original project_economics
+economic analysis. All functions maintain compatibility with the reference implementation's original project_economics
 algorithms while adding comprehensive type hints, validation, and testing support.
 
 Author: WorldEnergyData Team

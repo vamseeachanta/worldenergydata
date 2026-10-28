@@ -3,8 +3,8 @@
 **Status:** validated 2026-07-06 · all 4 tables dispositioned
 **Benchmark name:** "World Oil April 2026 article" (World Oil Lower-Tertiary series, part 2; BSEE-derived data thru Nov 2025)
 **Canonical model artifact:** `docs/modules/bsee/analysis/production/project_economics_V30/financial_project_summary.xlsx` (+ assumptions in `lease_assumptions.xlsx`)
-**Model basis:** the worldenergydata ("wed") toolset is the canonical model going forward. It reproduces the frozen **V30** baseline (2025-09-29) to within ±0.1 % and carries the extended **V50** production window (through 2026-04) on one code path. Economics below are quoted on the **V50 (latest-OGOR-A)** basis, with the frozen V30 reference shown alongside; **D&C days are version-independent** (identical under V30 and V50). Full three-revision comparison, script differences, missed-file inventory and bug review: [project_economics revision comparison](https://vamseeachanta.github.io/worldenergydata/project_economics-revision-comparison.html) (§6.1).
-**Live reconciliation page:** [/completion/verification.html](https://vamseeachanta.github.io/worldenergydata/completion/verification.html)
+**Model basis:** the worldenergydata ("wed") toolset is the canonical model going forward. It reproduces the frozen **V30** baseline (2025-09-29) to within ±0.1 % and carries the extended **V50** production window (through 2026-04) on one code path. Economics below are quoted on the **V50 (latest-OGOR-A)** basis, with the frozen V30 reference shown alongside; **D&C days are version-independent** (identical under V30 and V50). Full three-revision comparison, script differences, missed-file inventory and bug review: [project_economics revision comparison](project_economics-revision-comparison.html) (§6.1).
+**Live reconciliation page:** [/completion/verification.html](completion/verification.html)
 
 ---
 
@@ -12,7 +12,7 @@
 
 This document is the durable, single-source record of the validation — every number, discrepancy, and open question lives HERE (email carries only brief pointers to it).
 
-1. **The apparent 2× well-days gap is resolved.** Our page had headlined drilling-only days; on a like-for-like drilling-plus-completion basis our BSEE-derived extract reconciles with the article's Table 1 within a few percent, with every per-development difference itemized in §3 and kept current on the [live verification page](https://vamseeachanta.github.io/worldenergydata/completion/verification.html).
+1. **The apparent 2× well-days gap is resolved.** Our page had headlined drilling-only days; on a like-for-like drilling-plus-completion basis our BSEE-derived extract reconciles with the article's Table 1 within a few percent, with every per-development difference itemized in §3 and kept current on the [live verification page](completion/verification.html).
 2. **Buckskin is recovered.** It was missing from our extract because the pipeline read a shelf-only dataset; the canonical extractor now reads the raw Keathley Canyon WAR data directly and Buckskin lands within one sidetrack and ~2.6% of the article's figures (§3).
 3. **All four article tables are dispositioned** (§2): BSEE-derived columns reconcile through our code end-to-end; modeled and operator-announced columns are flagged, never recomputed.
 4. **Five discrepancies were found** and are documented with WED evidence and side-by-side comparison tables for QA hand-back (§4).
@@ -39,9 +39,9 @@ The article's four tables **are this repository's project_economics V30 model ou
 
 ## 3. Field-level D&C reconciliation (Table 1)
 
-> **On the latest (V50/wed) basis, D&C is fully reconciled: V50 = wed to the day, Δ = 0 for every field** (same byte-identical extractor, same WAR). The per-field **drilling / completion / D&C** split (V30 / V50 / wed + discrepancy) is on the [comparison page §4.4](https://vamseeachanta.github.io/worldenergydata/project_economics-revision-comparison.html). The table below reconciles our extraction against the **article as published**. For the bore-by-bore drill-down behind every row (spud, TD date, drilling/completion split, producer and sidetrack markers), see the [per-well D&C days listing](https://vamseeachanta.github.io/worldenergydata/wo-april-2026-per-well-dc.html).
+> **On the latest (V50/wed) basis, D&C is fully reconciled: V50 = wed to the day, Δ = 0 for every field** (same byte-identical extractor, same WAR). The per-field **drilling / completion / D&C** split (V30 / V50 / wed + discrepancy) is on the [comparison page §4.4](project_economics-revision-comparison.html). The table below reconciles our extraction against the **article as published**. For the bore-by-bore drill-down behind every row (spud, TD date, drilling/completion split, producer and sidetrack markers), see the [per-well D&C days listing](wo-april-2026-per-well-dc.html).
 
-Our full-raw candidate extraction (canonical extractor reading raw BSEE WAR `.bin`; wed PR [#851](https://github.com/vamseeachanta/worldenergydata/pull/851), issue [#842](https://github.com/vamseeachanta/worldenergydata/issues/842)) vs the article, total D&C days:
+Our full-raw candidate extraction (canonical extractor reading raw BSEE WAR `.bin`; wed PR [#851](https://github.com/vamseeachanta/worldenergydata/pull/851), issue #842) vs the article, total D&C days:
 
 The **Δ since Nov '25** column (added 2026-07-06) reports, of our current D&C total, how many days accrued **after the article's November-2025 data cutoff** — computed by re-running the canonical extractor against the 2026-02-19 WAR vintage twice (uncapped vs. capped at 2025-11-30) and differencing; see the [delta-increase analysis in §3.1](#3-1-d-c-days-accrued-since-the-article-s-nov-2025-cutoff).
 
@@ -56,13 +56,13 @@ The **Δ since Nov '25** column (added 2026-07-06) reports, of our current D&C t
 | North Platte | 23 | 20 | 971 | 971 | 0 | 0 | days exact; +3 zero-day sidetracks |
 | Shenandoah | 23 | 23 | 2,370 | 2,346 | +24 | 0 | resolved (frozen V30 was −357); Δ pre-dates cutoff |
 | **Buckskin** | **25** | **24** | **2,056** | **2,004** | +52 | 0 | **recovered** — was missing entirely (shelf-only extract) |
-| Jack St Malo | 73 | 73 | 7,047 | 6,928 | +119 | 0 | open — suspect over-counted post-TD completion days; deferred bug [#846](https://github.com/vamseeachanta/worldenergydata/issues/846) |
+| Jack St Malo | 73 | 73 | 7,047 | 6,928 | +119 | 0 | open — suspect over-counted post-TD completion days; deferred bug #846 |
 | Big Foot | 38 | — | 3,265 | — | — | +33 | WED-only: article excluded Big Foot; +33 post-cutoff well-servicing days (§3.1) |
 | **Total (all 11)** | | | **25,404** | | | **+53** | 253 wells; +53 days since the Nov-2025 cutoff |
 
 Fidelity anchor: the candidate extraction reproduces the frozen V30 workbook **exactly** on Anchor (821 drilling / 1,004 completion days), pinned by `tests/integration/test_kc_ingest_fidelity.py`. Candidate totals: 253 wells / 25,404 D&C days across 26 leases, 11 developments.
 
-The like-for-like frozen-V30 reconciliation (217 wells, 22,478 WED vs 21,944 WO D&C days; matched-9 −2.5%) lives on the [verification page](https://vamseeachanta.github.io/worldenergydata/completion/verification.html) and in `scripts/completion/build_completion_report.py` (`WO_APRIL_2026_ARTICLE` frozen benchmark).
+The like-for-like frozen-V30 reconciliation (217 wells, 22,478 WED vs 21,944 WO D&C days; matched-9 −2.5%) lives on the [verification page](completion/verification.html) and in `scripts/completion/build_completion_report.py` (`WO_APRIL_2026_ARTICLE` frozen benchmark).
 
 ### 3.1 D&C days accrued since the article's Nov-2025 cutoff
 
@@ -78,7 +78,7 @@ The article's Table 1 was built on BSEE WAR data through **November 2025**. Our 
 **Findings from the delta-increase analysis:**
 
 1. **The increment is small and concentrated: 53 D&C days, entirely on Big Foot (+33) and Stones (+20).** Every other Lower-Tertiary development shows zero post-cutoff activity in our feed — the article's November-2025 window already captured essentially all of their drilling and completion.
-2. **All 53 added days are completion-phase, none drilling** (`drill_delta = 0` for every well). Each traces to rig-on-well days on wells that reached total depth years ago (Big Foot 2020; Stones 2018–2022), so they are **late-life well-servicing / intervention days**, not new-well D&C — swept in by the extractor's simplified rule that counts every rig-day after TD as "completion" (the same accounting behaviour tracked for Jack St Malo in [#846](https://github.com/vamseeachanta/worldenergydata/issues/846)).
+2. **All 53 added days are completion-phase, none drilling** (`drill_delta = 0` for every well). Each traces to rig-on-well days on wells that reached total depth years ago (Big Foot 2020; Stones 2018–2022), so they are **late-life well-servicing / intervention days**, not new-well D&C — swept in by the extractor's simplified rule that counts every rig-day after TD as "completion" (the same accounting behaviour tracked for Jack St Malo in #846).
 3. **None of the WED-vs-article Δ days in §3 come from this newer data.** Shenandoah (+24), Buckskin (+52) and Jack St Malo (+119) all pre-date the cutoff (latest activity 2025-09, 2024-05 and 2025-05 respectively); those differences are recompletion accounting, the Buckskin recovery, and the JSM over-count — orthogonal to the data vintage. **Refreshing to the Feb-2026 vintage therefore leaves the reconciliation of the nine matched developments unchanged, and the article stands as printed for them.**
 
 *Reproduce:* re-run `docs/modules/bsee/analysis/production/project_economics_V30/extract_drilling_completion_days.py` against the `2026-02-19` WAR `.bin` feed with `leases_v21_kc.csv`, applying an `activity-day > 2025-11-30` filter on the same `WAR_START_DT`/`WAR_END_DT` daily index the extractor already unions.
@@ -101,8 +101,8 @@ Summary:
 
 | Development | WO Table 4 recovered (MMbbl) | WED, frozen V30 window (thru 2025-05) | WED, latest OGOR-A | WED evidence |
 |---|---:|---:|---:|---|
-| Anchor | 1 | 6.9 | 18.6 | [Anchor economics (live)](https://vamseeachanta.github.io/worldenergydata/economics-anchor.html) · `financial_project_summary.xlsx` Project_Summary · `field_economics_anchor_v50.md` |
-| Shenandoah | 1 | 0.004 (first oil 2025-02; window ends 2025-05) | 21.2 | [Shenandoah economics (live)](https://vamseeachanta.github.io/worldenergydata/economics-shenandoah.html) · `field_economics_shenandoah_v50.md` |
+| Anchor | 1 | 6.9 | 18.6 | [Anchor economics (live)](economics-anchor.html) · `financial_project_summary.xlsx` Project_Summary · `field_economics_anchor_v50.md` |
+| Shenandoah | 1 | 0.004 (first oil 2025-02; window ends 2025-05) | 21.2 | [Shenandoah economics (live)](economics-shenandoah.html) · `field_economics_shenandoah_v50.md` |
 
 Both fields' produced volumes are material in the BSEE record and rising month-on-month, so "1" reads as a stale placeholder rather than a data point — and Table 2 of the article itself carries production for both.
 
@@ -113,7 +113,7 @@ Both fields' produced volumes are material in the BSEE record and rising month-o
 | NPV @10% | −228 | **−228.0** | −1,479.5 (V30; −1,461 on the V50 latest-OGOR rerun) |
 | Net cash flow | −275 | **−275.0** | −3,305.5 |
 
-The printed "Stones" values equal WED's Tiber row **to the dollar** (Tiber: two exploration bores, never developed — small numbers by construction). The real Stones values are roughly six to twelve times larger in magnitude. WED evidence: [Stones economics (live)](https://vamseeachanta.github.io/worldenergydata/economics-stones.html) · `financial_project_summary.xlsx` sheets `Stones` / `Tiber`.
+The printed "Stones" values equal WED's Tiber row **to the dollar** (Tiber: two exploration bores, never developed — small numbers by construction). The real Stones values are roughly six to twelve times larger in magnitude. WED evidence: [Stones economics (live)](economics-stones.html) · `financial_project_summary.xlsx` sheets `Stones` / `Tiber`.
 
 ### 4.3 D3 — Cascade Chinook net cash flow cannot be positive
 
@@ -129,7 +129,7 @@ The printed "Stones" values equal WED's Tiber row **to the dollar** (Tiber: two 
 | **= Net cash flow** | **−3,820.3** |
 | WO prints | **+3,656** |
 
-With barely break-even lifetime margin before capital, no assignment of the capital stack can produce a positive NCF — and the article's own NPV for the same field prints negative (−1,122), which is internally inconsistent with a positive NCF of that size. WED evidence: [Cascade–Chinook economics (live)](https://vamseeachanta.github.io/worldenergydata/economics-cascade_chinook.html) · `financial_project_summary.xlsx` sheet `Cascade Chinook`.
+With barely break-even lifetime margin before capital, no assignment of the capital stack can produce a positive NCF — and the article's own NPV for the same field prints negative (−1,122), which is internally inconsistent with a positive NCF of that size. WED evidence: [Cascade–Chinook economics (live)](economics-cascade_chinook.html) · `financial_project_summary.xlsx` sheet `Cascade Chinook`.
 
 ### 4.4 D4 — Julia and Stones OPEX print as zero
 
@@ -138,7 +138,7 @@ With barely break-even lifetime margin before capital, no assignment of the capi
 | Julia (2016) | 0 | 425.6 | 693.8 | **1,119.4** |
 | Stones (2016) | 0 | 334.6 | 1,275.0 | **1,609.6** |
 
-Both fields have produced continuously for roughly a decade; zero lifetime OPEX is not plausible on any basis. WED evidence: [Julia economics (live)](https://vamseeachanta.github.io/worldenergydata/economics-julia.html) · [Stones economics (live)](https://vamseeachanta.github.io/worldenergydata/economics-stones.html) · `financial_project_summary.xlsx` sheets `Julia` / `Stones`.
+Both fields have produced continuously for roughly a decade; zero lifetime OPEX is not plausible on any basis. WED evidence: [Julia economics (live)](economics-julia.html) · [Stones economics (live)](economics-stones.html) · `financial_project_summary.xlsx` sheets `Julia` / `Stones`.
 
 ### 4.5 D5 — Jack St Malo recovery factor
 
@@ -150,7 +150,7 @@ Both fields have produced continuously for roughly a decade; zero lifetime OPEX 
 | Printed recovery factor | **10%** | WO Table 4 |
 | WED OGOR-A cumulative oil (V30 window) | 406.6 MMbbl | `financial_project_summary.xlsx`; consistent with ~420 at the latest OGOR-A month |
 
-Pure arithmetic on the article's own cells; the recovered figure itself checks out against WED. WED evidence: [Jack / St. Malo economics (live)](https://vamseeachanta.github.io/worldenergydata/economics-jack_st_malo.html).
+Pure arithmetic on the article's own cells; the recovered figure itself checks out against WED. WED evidence: [Jack / St. Malo economics (live)](economics-jack_st_malo.html).
 
 ### 4.6 Project-cost basis (full stack, per development)
 
@@ -188,13 +188,13 @@ The complete per-development financial summary from the same canonical workbook,
 | Stones | 2016-09 | 83.7 | 10 / 2 | 22 | 5,582 | 1,047 | 1,610 | −3,306 | −1,480 | 2.7% |
 | Tiber | never | 0 | 0 / 0 | 2 | 0 | 0 | 0 | −275 | −228 | — |
 
-Cross-checks a reader can do immediately: the D2 duplicate row is visible here (Tiber's −275 / −228 are the values the article prints for Stones); D3's Cascade Chinook NCF is here in context; D4's OPEX columns are non-zero for Julia and Stones; Table 3's mean project NPV (−$1.19B) is the average of the NPV column. Per-field monthly cash-flow detail: the live economics pages ([Anchor](https://vamseeachanta.github.io/worldenergydata/economics-anchor.html) · [Big Foot](https://vamseeachanta.github.io/worldenergydata/economics-big_foot.html) · [Cascade–Chinook](https://vamseeachanta.github.io/worldenergydata/economics-cascade_chinook.html) · [Jack/St. Malo](https://vamseeachanta.github.io/worldenergydata/economics-jack_st_malo.html) · [Julia](https://vamseeachanta.github.io/worldenergydata/economics-julia.html) · [Shenandoah](https://vamseeachanta.github.io/worldenergydata/economics-shenandoah.html) · [Stones](https://vamseeachanta.github.io/worldenergydata/economics-stones.html)) and the [portfolio summary](https://vamseeachanta.github.io/worldenergydata/portfolio.html). Sanctioned-baseline figures are CI-guarded against `golden_baseline_v30.yml` — see [capabilities § validation](https://vamseeachanta.github.io/worldenergydata/capabilities/#validation).
+Cross-checks a reader can do immediately: the D2 duplicate row is visible here (Tiber's −275 / −228 are the values the article prints for Stones); D3's Cascade Chinook NCF is here in context; D4's OPEX columns are non-zero for Julia and Stones; Table 3's mean project NPV (−$1.19B) is the average of the NPV column. Per-field monthly cash-flow detail: the live economics pages ([Anchor](economics-anchor.html) · [Big Foot](economics-big_foot.html) · [Cascade–Chinook](economics-cascade_chinook.html) · [Jack/St. Malo](economics-jack_st_malo.html) · [Julia](economics-julia.html) · [Shenandoah](economics-shenandoah.html) · [Stones](economics-stones.html)) and the [portfolio summary](portfolio.html). Sanctioned-baseline figures are CI-guarded against `golden_baseline_v30.yml` — see [capabilities § validation](capabilities/#validation).
 
-## 5. Open asks to Roy / Chuck (their inputs, cited as theirs)
+## 5. Open asks to reference maintainer / Chuck (their inputs, cited as theirs)
 
 1. **STOIIP source for Table 4** *(hard gap)* — no BOEM/BSEE source exists for STOIIP/OOIP; public record is operator FID press only (Buckskin ~5 Bbbl, Julia 6 Bbbl, Stones >2 Bboe, Tiber 4–6 Bbbl; Cascade/Chinook has no clean public figure). Need their basis for a consistent column.
 2. **Cost / rate-deck vintage confirmation** — are Table 1/2 costs the V30 `lease_assumptions.xlsx` deck we hold, or a revised deck?
-3. **Complete recoverable-reserves (STB) set + appraisal-well definition** — we hold a few in BOE. BOEM's free Reserves Inventory (field-level, 31-Dec-2023 vintage) + Deepwater Qualified Fields (discovery/first-oil dates) are NOW IN the refresh pipeline ([#847](https://github.com/vamseeachanta/worldenergydata/issues/847), landed 2026-07-06 — see §5.1); WO Table 4 recoverable figures for Anchor 440 / JSM 500 / Stones 250 match operator press exactly, but BOEM's booked figure for Stones does not (§5.1) — which basis does the article intend?
+3. **Complete recoverable-reserves (STB) set + appraisal-well definition** — we hold a few in BOE. BOEM's free Reserves Inventory (field-level, 31-Dec-2023 vintage) + Deepwater Qualified Fields (discovery/first-oil dates) are NOW IN the refresh pipeline (#847, landed 2026-07-06 — see §5.1); WO Table 4 recoverable figures for Anchor 440 / JSM 500 / Stones 250 match operator press exactly, but BOEM's booked figure for Stones does not (§5.1) — which basis does the article intend?
 
 ### 5.1 BOEM cross-check (added 2026-07-06, #847 implementation)
 
@@ -203,7 +203,7 @@ The free BOEM Reserves Inventory (Table 4, 31-Dec-2023 vintage) is now in the re
 | Development | BOEM original (mean) | Operator/WO announced | Verdict |
 |---|---:|---:|---|
 | Jack St Malo | 550.6 | 500 | consistent (+10%) |
-| **Stones** | **128.3** | **250** | **−48.7% — discrepancy flagged** (`lt_reserves_discrepancies.csv`); ask Roy/Chuck which basis WO intends |
+| **Stones** | **128.3** | **250** | **−48.7% — discrepancy flagged** (`lt_reserves_discrepancies.csv`); ask reference maintainer/Chuck which basis WO intends |
 | Anchor | not booked in 2023 vintage (FO 2024) | 440 | BOEM cross-check possible from the next vintage |
 | Buckskin | 456.6 | — (WO carries no figure) | BOEM fills the gap |
 | Big Foot / Cascade Chinook / Julia | 176.9 / 74.0 / 127.6 | — | new BOEM columns |
@@ -214,12 +214,12 @@ Discovery + first-production dates now sourced from BSEE Deepwater Qualified Fie
 ## 6. Provenance and versioning
 
 - **V30** = frozen baseline (2025-09-29 workbook; production window thru 2025-05). **V50** = rerun on latest OGOR-A (2026-06-26; window thru 2026-04, +11 months). **wed** = the canonical toolset (2026-07-06) that reproduces V30 and carries the V50 window on one code path. **D&C days are WAR-derived and identical under all three** — the Table 1 reconciliation is version-independent (`reports/lower_tertiary/v30_vs_v50_comparison.md`).
-- Owner decision (2026-07-06, noted on [#842](https://github.com/vamseeachanta/worldenergydata/issues/842)): the full-raw extraction **supersedes** V30 as canonical D&C once Roy confirms this validation; consumers (`v30_reproducer`, `financial/config_loader`) migrate then.
+- Owner decision (2026-07-06, noted on #842): the full-raw extraction **supersedes** V30 as canonical D&C once reference maintainer confirms this validation; consumers (`v30_reproducer`, `financial/config_loader`) migrate then.
 - Every "WED" number in this report is computed by repository code from BSEE raw data (WAR + OGOR-A). Numbers we could not recompute in-session are tagged with their recorded source.
 
 ### 6.1 Revision lineage (V30 → V50 → wed) and canonical basis
 
-The full three-way comparison — scripts, inputs, months of BSEE data, result tables, script-by-script differences, the missed-file inventory, and an adversarial bug review — is its own living page: **[project_economics revision comparison](https://vamseeachanta.github.io/worldenergydata/project_economics-revision-comparison.html)**. Summary:
+The full three-way comparison — scripts, inputs, months of BSEE data, result tables, script-by-script differences, the missed-file inventory, and an adversarial bug review — is its own living page: **[project_economics revision comparison](project_economics-revision-comparison.html)**. Summary:
 
 | Dimension | V30 (2025-09-29) | V50 (2026-06-26) | wed (2026-07-06) |
 |---|---|---|---|
@@ -231,7 +231,7 @@ The full three-way comparison — scripts, inputs, months of BSEE data, result t
 | Result workbook | shipped .xlsx | **none shipped** | YAML + markdown reports |
 | Portfolio NPV @10 % | −$8,327.8 MM | −$7,895.3 MM (+$432.5 MM) | reproduces both |
 
-**Roy's V50 script has now been run and reconciled field-by-field against wed** (2026-07-07; full tables on the [comparison page §4.4–§4.6](https://vamseeachanta.github.io/worldenergydata/project_economics-revision-comparison.html)). Headline result, to verify D&C and financials on the latest (V50/wed) basis:
+**the reference implementation's V50 script has now been run and reconciled field-by-field against wed** (2026-07-07; full tables on the [comparison page §4.4–§4.6](project_economics-revision-comparison.html)). Headline result, to verify D&C and financials on the latest (V50/wed) basis:
 
 | Check | Result |
 |---|---|
@@ -239,9 +239,9 @@ The full three-way comparison — scripts, inputs, months of BSEE data, result t
 | **Produced oil** | V50 = wed, all fields (same OGOR-A window) |
 | **NPV @10%** | 7 producers within **−$103M…+$197M** (the 13 cost cells); 3 exploration-only fields **exact**; **Jack St Malo −$3.1B — the sole material gap** |
 | **After-tax vs pre-tax** | **small, real** — severance/ad-valorem = 0, but 21% corporate tax hits the 3 fields with positive *lifetime* cash flow: JSM −$103M NPV, Julia −$4.4M, Buckskin −$3.9M; the other 8 (negative cash flow) pay none |
-| **Article Table-2 errata** | Roy's V50 script **corrects** them (Stones≠Tiber, Cascade NCF sign, zero-OPEX) — his code agrees with §4.1–§4.5 here |
+| **Article Table-2 errata** | the reference implementation's V50 script **corrects** them (Stones≠Tiber, Cascade NCF sign, zero-OPEX) — his code agrees with §4.1–§4.5 here |
 
-**The one open item for the article team:** the Jack St Malo gap is **≈ $3.0B the NPV discount-reference convention** (Roy discounts "from Day 1 / first spud" (2000), wed from first cashflow; JSM's 14-year spud→first-oil gap makes it swing) **plus ~$103M corporate tax**; undiscounted cash flows reconcile. (The 13 cost cells account for only ±$100–200M per field; severance/ad-valorem are 0; the 21% corporate tax is a small real effect on the 3 fields with positive lifetime cash flow. NPV-negative does **not** imply zero tax.)
+**The one open item for the article team:** the Jack St Malo gap is **≈ $3.0B the NPV discount-reference convention** (reference maintainer discounts "from Day 1 / first spud" (2000), wed from first cashflow; JSM's 14-year spud→first-oil gap makes it swing) **plus ~$103M corporate tax**; undiscounted cash flows reconcile. (The 13 cost cells account for only ±$100–200M per field; severance/ad-valorem are 0; the 21% corporate tax is a small real effect on the 3 fields with positive lifetime cash flow. NPV-negative does **not** imply zero tax.)
 
 ## 7. Related work
 
@@ -252,11 +252,11 @@ The full three-way comparison — scripts, inputs, months of BSEE data, result t
 | wed [#851](https://github.com/vamseeachanta/worldenergydata/pull/851) (merged) | KC deepwater ingest — raw `.bin` extractor + Buckskin leases + fidelity tests |
 | wed [#852](https://github.com/vamseeachanta/worldenergydata/pull/852) (merged) | benchmark renamed "World Oil April 2026 article" on the live pages |
 | wed [#861](https://github.com/vamseeachanta/worldenergydata/pull/861) (merged) | #847 implementation: BOEM reserves + discovery in the refresh pipeline; curated `lt_reserves_discovery.csv` |
-| wed [#842](https://github.com/vamseeachanta/worldenergydata/issues/842) | KC ingest issue; V30-supersede decision recorded (open pending article-team confirmation) |
-| wed [#844](https://github.com/vamseeachanta/worldenergydata/issues/844) | living cost-basis time-series |
-| wed [#846](https://github.com/vamseeachanta/worldenergydata/issues/846) | JSM D&C overshoot (+119) |
-| wed [#847](https://github.com/vamseeachanta/worldenergydata/issues/847) (closed) | BOEM reserves + discovery-date ingest |
-| wed [#855](https://github.com/vamseeachanta/worldenergydata/issues/855) | future BOEM source family (field monthly production, reserve history 1975–2023, older vintages) |
+| wed #842 | KC ingest issue; V30-supersede decision recorded (open pending article-team confirmation) |
+| wed #844 | living cost-basis time-series |
+| wed #846 | JSM D&C overshoot (+119) |
+| wed #847 (closed) | BOEM reserves + discovery-date ingest |
+| wed #855 | future BOEM source family (field monthly production, reserve history 1975–2023, older vintages) |
 | wshub [#3385](https://github.com/vamseeachanta/workspace-hub/issues/3385) | "Verified against references & baselines" section epic |
 
 ## 8. Change log (session notes — the durable record)
@@ -269,4 +269,4 @@ The full three-way comparison — scripts, inputs, months of BSEE data, result t
 | 2026-07-06 | KC deepwater ingest landed (PR #851): canonical extractor reads raw WAR `.bin`; Buckskin becomes a matched row (§3); Anchor fidelity pinned exactly by test. Benchmark renamed to "World Oil April 2026 article" everywhere (PR #852). This report committed (PR #853). |
 | 2026-07-06 | BOEM reserves + discovery ingest landed (#847 / PR #861, plan #854 with two adversarial review rounds): annual Table 4 workbook + Deepwater Qualified Fields on refresh cadence; curated per-development table with citation columns; **Stones reserves discrepancy surfaced** (§5.1). Follow-on source family filed as #855. |
 | 2026-07-06 | Delta-increase analysis added (§3.1): current 2026-02-19 WAR vintage vs the article's Nov-2025 cutoff yields **+53 D&C days** (Big Foot +33, Stones +20), all post-TD well-servicing; Table 1 gains a **Δ since Nov '25** column. Section permalinks + an "On this page" contents nav added to the page. |
-| 2026-07-06 | Migrated the model basis to **V50 (latest OGOR-A)** with V30 as the frozen reference; added §6.1 revision lineage and a full companion page ([project_economics revision comparison](https://vamseeachanta.github.io/worldenergydata/project_economics-revision-comparison.html)) covering the three-revision comparison, V30→V50 script differences, missed-file inventory, and an adversarial bug review of the wed scripts (V30/V50 source archives backed up to `/mnt/ace/.../project_economics_revisions/`). Surfaced two reconciliation items for the article team: pre-tax vs after-tax, and 13 changed V50 cost cells. |
+| 2026-07-06 | Migrated the model basis to **V50 (latest OGOR-A)** with V30 as the frozen reference; added §6.1 revision lineage and a full companion page ([project_economics revision comparison](project_economics-revision-comparison.html)) covering the three-revision comparison, V30→V50 script differences, missed-file inventory, and an adversarial bug review of the wed scripts (V30/V50 source archives backed up to `data/reference/project_economics_revisions/`). Surfaced two reconciliation items for the article team: pre-tax vs after-tax, and 13 changed V50 cost cells. |

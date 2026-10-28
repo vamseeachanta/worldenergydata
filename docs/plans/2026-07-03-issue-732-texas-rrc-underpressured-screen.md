@@ -2,7 +2,7 @@
 
 **Issue:** https://github.com/vamseeachanta/worldenergydata/issues/732
 **Status:** implemented
-**Tier:** T2 (multi-source analysis adapter, config update, live `/mnt/ace` run, tests, docs)
+**Tier:** T2 (multi-source analysis adapter, config update, live external-data run, tests, docs)
 **Client:** N/A
 **Project:** worldenergydata onshore pressure screen
 **Lane:** codex
@@ -40,15 +40,15 @@ Planning-time worktree probes show these related lanes:
 
 | Worktree | Branch | Scope impact |
 |---|---|---|
-| `/mnt/local-analysis/wt-wed-714-project_economics` | `feat/project_economics-714-source-agnostic-package` locked | Avoid project_economics/package-generalization changes |
-| `/mnt/local-analysis/wt-wed-660` | `feat/onshore-rrc-source-catalog-660` | Avoid source-catalog rewrites |
-| `/mnt/local-analysis/wt-wed-661` | `feat/onshore-rrc-refresh-661` | Avoid Texas raw-refresh changes |
-| `/mnt/local-analysis/wt-wed-779` | `feat/corpus-datasets-779` | No pressure-screen overlap observed |
+| `adjacent project economics checkout` | `feat/project_economics-714-source-agnostic-package` locked | Avoid project_economics/package-generalization changes |
+| `adjacent checkout` | `feat/onshore-rrc-source-catalog-660` | Avoid source-catalog rewrites |
+| `adjacent checkout` | `feat/onshore-rrc-refresh-661` | Avoid Texas raw-refresh changes |
+| `adjacent checkout` | `feat/corpus-datasets-779` | No pressure-screen overlap observed |
 
 Implementation will stay inside the existing `underpressured_screen` analysis
 module, its tests, config, and docs.
 
-### Direct-source and `/mnt/ace` inventory
+### Direct-source and external-data inventory
 
 The implementation will consume direct-source outputs already written under the
 storage contract. It will not scrape PatchOps, Collide, LinkedIn, commercial
@@ -56,10 +56,10 @@ services, or historical third-party scraper code.
 
 | Source | Current direct-source artifact | Planned role |
 |---|---|---|
-| Kansas KGS #725 | `/mnt/ace/worldenergydata/data/modules/kansas_kgs/curated/pressure/well_pressure_observations.parquet` | Existing Hugoton/Panoma validation source |
-| Texas RRC #709 | `/mnt/ace/worldenergydata/data/modules/texas_rrc/curated/pressure/well_pressure_observations/texas_rrc_well_pressure_observations.parquet` | New Texas screen input |
-| Texas RRC #709 quality | `/mnt/ace/worldenergydata/data/modules/texas_rrc/curated/pressure/well_pressure_observations/texas_rrc_pressure_observation_quality.json` | Source warnings and caveat propagation |
-| Existing screen output | `/mnt/ace/worldenergydata/data/modules/pressure_screen/curated/` | Output location to refresh after approval |
+| Kansas KGS #725 | `data/modules/kansas_kgs/curated/pressure/well_pressure_observations.parquet` | Existing Hugoton/Panoma validation source |
+| Texas RRC #709 | `data/modules/texas_rrc/curated/pressure/well_pressure_observations/texas_rrc_well_pressure_observations.parquet` | New Texas screen input |
+| Texas RRC #709 quality | `data/modules/texas_rrc/curated/pressure/well_pressure_observations/texas_rrc_pressure_observation_quality.json` | Source warnings and caveat propagation |
+| Existing screen output | `data/modules/pressure_screen/curated/` | Output location to refresh after approval |
 
 Current live evidence:
 
@@ -132,7 +132,7 @@ different state-source schemas at the analysis boundary.
 The approved implementation will refresh:
 
 ```text
-/mnt/ace/worldenergydata/data/modules/pressure_screen/curated/
+data/modules/pressure_screen/curated/
   well_screen_earliest.parquet
   underpressured_field_ranking.parquet
   screen_summary.json
@@ -303,13 +303,13 @@ pass.
 ```yaml
 inputs:
   - name: kansas_kgs_proration
-    path: /mnt/ace/worldenergydata/data/modules/kansas_kgs/curated/pressure/well_pressure_observations.parquet
+    path: data/modules/kansas_kgs/curated/pressure/well_pressure_observations.parquet
     schema: screen_v1
     state: KS
     era: depleted
   - name: texas_rrc_completion_packets
-    path: /mnt/ace/worldenergydata/data/modules/texas_rrc/curated/pressure/well_pressure_observations/texas_rrc_well_pressure_observations.parquet
-    quality_path: /mnt/ace/worldenergydata/data/modules/texas_rrc/curated/pressure/well_pressure_observations/texas_rrc_pressure_observation_quality.json
+    path: data/modules/texas_rrc/curated/pressure/well_pressure_observations/texas_rrc_well_pressure_observations.parquet
+    quality_path: data/modules/texas_rrc/curated/pressure/well_pressure_observations/texas_rrc_pressure_observation_quality.json
     schema: texas_rrc_pressure_v1
     state: TX
     era: completion_packet_screening
@@ -327,11 +327,11 @@ It will include:
   claimed as measured virgin BHP.
 - The #709 raw manifest warning if present in the live run summary.
 
-### Task 4: Run the live `/mnt/ace` screen and verification
+### Task 4: Run the live external-data screen and verification
 
 **Files:**
 
-- No generated `/mnt/ace` files will be committed to git.
+- No generated external-data files will be committed to git.
 - Commit only source, config, tests, and docs.
 
 **Commands:**
@@ -366,7 +366,7 @@ The implementation will not:
 - require Texas West Panhandle recovery from the current 48-row daily packet
 - claim WHP-derived Texas gradients are measured virgin BHP
 - perform economic, reserves, or field architecture ranking
-- commit generated parquet, CSV, JSON, ZIP, or raw datasets under `/mnt/ace`
+- commit generated parquet, CSV, JSON, ZIP, or raw datasets in external storage
 
 ## Adversarial Review Checklist
 
@@ -375,4 +375,4 @@ The implementation will not:
 - The Kansas Hugoton/Panoma validation gate must remain load-bearing.
 - Texas participation must be validated without forcing a false analog result.
 - Source warnings from #709 quality JSON must not be dropped in the summary.
-- Generated `/mnt/ace` data must remain untracked.
+- Generated external data must remain untracked.

@@ -21,7 +21,7 @@
 6. Documentation Review Summary (Quality assessment) - 7.6KB
 
 **Key Findings:**
-- Roy's project_economics code: 1,749 lines of proven financial analysis
+- the reference implementation's project_economics code: 1,749 lines of proven financial analysis
 - Integration timeline: 6 weeks with 1 developer
 - Development cost: $38,400
 - Expected ROI: 25-250x (conservative to optimistic)
@@ -33,7 +33,7 @@
 
 ### Source Code Analysis ✅
 
-**Location:** `/home/vamsee/Downloads/project_economics_V30/`
+**Location:** `docs/modules/bsee/analysis/production/project_economics_V30/`
 
 **4 Core Python Files Analyzed:**
 1. `generate_financial_summary.py` (474 lines) - NPV/MIRR engine
@@ -300,7 +300,7 @@ docs/research/
 
 ### Source Code
 ```
-/home/vamsee/Downloads/project_economics_V30/
+docs/modules/bsee/analysis/production/project_economics_V30/
 ├── generate_financial_summary.py      # Financial engine
 ├── build_multi_year_lease_matrix1.py  # Production processing
 ├── ogora_to_chronological.py          # Chronological analysis
@@ -464,4 +464,3 @@ docs/research/
 **Reviewed by:** Quality Assurance
 **Date:** 2025-10-03
 **Version:** 1.0 FINAL
-
