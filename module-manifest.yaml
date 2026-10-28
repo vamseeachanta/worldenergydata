@@ -89,6 +89,9 @@ modules:
   - id: hse
     name: "HSE Incidents and Offshore Evidence"
     package: "worldenergydata.hse"
+    source_authorities: [BSEE, OSHA, EPA]
+    uk_hse_offshore_statistics_status: not_acquired
+    source_registry: data/modules/hse/offshore/source_registry.json
     region: [gulf_of_mexico, usa, global_offshore]
     domain: [hse, regulatory]
     data_types:
