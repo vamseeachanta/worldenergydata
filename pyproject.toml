@@ -155,7 +155,7 @@ docs = [
     "sphinx>=6.0",
     "sphinx-rtd-theme>=3.1.0",
     "mkdocs>=1.6.0",
-    "mkdocstrings[python]>=0.25.0",
+    "mkdocstrings[python]>=1.0.6",
     "mkdocs-material>=9.5.0",
 ]
 llm = [
@@ -573,7 +573,7 @@ benchmark = [
 ]
 docs = [
     "mkdocs>=1.6.0",
-    "mkdocstrings[python]>=0.25.0",
+    "mkdocstrings[python]>=1.0.6",
     "mkdocs-material>=9.5.0",
 ]
 dev = [
