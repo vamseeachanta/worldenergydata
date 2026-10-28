@@ -202,7 +202,7 @@ Definition-name searches covered tracked Python under the repository, including 
 | `lower_tertiary.ops_timeline.load_ogor_from_bin` | Wrapper returning a copy of a cached result; helper rather than an additional parser | [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/ops_timeline.py:L109-L127] |
 | `lower_tertiary.ops_timeline._load_ogor_from_bin_uncached` | Separate binary parser reconstructs a header row before joining data, unlike the main positional adapter | [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/ops_timeline.py:L130-L167] |
 | `scripts/all_fields_economics._read_bin_year`, `load_ogor` | Separate script reconstructs header data and normalizes production fields | [scripts/all_fields_economics.py:L32-L46] |
-| `war_rig_days.normalize_api12` | Separate in-package identifier normalizer strips a float suffix; not the shared null-restoring helper | [packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/war_rig_days.py:L212-L223] [packages/worldenergydata-bsee/src/worldenergydata/bsee/data/utils/api_well_normalizer.py:L24-L28] |
+| `war_rig_days.normalize_api12` | Validates exactly 12 ASCII digits after trimming whitespace and integral decimal tails; rejects missing, family, completion and malformed keys without padding or truncation. Callers may explicitly quarantine malformed WAR rows with a count warning before aggregation. | [packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/war_rig_days.py (`normalize_api12`, `quarantine_war_identifiers`)] [packages/worldenergydata-bsee/src/worldenergydata/bsee/data/utils/api_well_normalizer.py:L24-L28] |
 
 ## 10. Coverage and open items
 
