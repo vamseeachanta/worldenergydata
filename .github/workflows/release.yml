@@ -27,7 +27,7 @@ env:
 jobs:
   validate:
     name: Validate Release
-    runs-on: ubuntu-latest
+    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
     outputs:
       version: ${{ steps.version.outputs.version }}
 
@@ -58,7 +58,7 @@ jobs:
 
   test:
     name: Run Tests
-    runs-on: ubuntu-latest
+    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
     needs: validate
 
     steps:
@@ -81,7 +81,7 @@ jobs:
 
   build:
     name: Build Package
-    runs-on: ubuntu-latest
+    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
     needs: [validate, test]
 
     steps:
@@ -121,7 +121,7 @@ jobs:
 
   publish-testpypi:
     name: Publish to Test PyPI
-    runs-on: ubuntu-latest
+    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
     needs: build
     if: |
       (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')) ||
@@ -131,11 +131,17 @@ jobs:
       url: https://test.pypi.org/project/worldenergydata/
 
     steps:
+      - name: Prepare isolated distribution directory
+        id: release_dist
+        run: |
+          dist_dir=$(mktemp -d "$RUNNER_TEMP/publish-dist.XXXXXX")
+          echo "path=$dist_dir" >> "$GITHUB_OUTPUT"
+
       - name: Download build artifacts
         uses: actions/download-artifact@v8
         with:
           name: dist
-          path: dist/
+          path: ${{ steps.release_dist.outputs.path }}
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
@@ -146,8 +152,9 @@ jobs:
       - name: Publish to Test PyPI
         run: |
           uv pip install twine
-          uv run twine upload --repository testpypi dist/*
+          uv run twine upload --repository testpypi "$DIST_DIR"/*
         env:
+          DIST_DIR: ${{ steps.release_dist.outputs.path }}
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.TEST_PYPI_API_TOKEN }}
 
@@ -159,7 +166,7 @@ jobs:
 
   publish-pypi:
     name: Publish to PyPI
-    runs-on: ubuntu-latest
+    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
     needs: [build, publish-testpypi]
     if: |
       always() &&
@@ -171,11 +178,17 @@ jobs:
       url: https://pypi.org/project/worldenergydata/
 
     steps:
+      - name: Prepare isolated distribution directory
+        id: release_dist
+        run: |
+          dist_dir=$(mktemp -d "$RUNNER_TEMP/publish-dist.XXXXXX")
+          echo "path=$dist_dir" >> "$GITHUB_OUTPUT"
+
       - name: Download build artifacts
         uses: actions/download-artifact@v8
         with:
           name: dist
-          path: dist/
+          path: ${{ steps.release_dist.outputs.path }}
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
@@ -186,14 +199,15 @@ jobs:
       - name: Publish to PyPI
         run: |
           uv pip install twine
-          uv run twine upload dist/*
+          uv run twine upload "$DIST_DIR"/*
         env:
+          DIST_DIR: ${{ steps.release_dist.outputs.path }}
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
 
   github-release:
     name: Create GitHub Release
-    runs-on: ubuntu-latest
+    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
     needs: [validate, build, publish-pypi]
     if: |
       always() &&

@@ -24,7 +24,7 @@ env:
 jobs:
   mode:
     name: Gate mode
-    runs-on: ubuntu-latest
+    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
     permissions:
       contents: read
       actions: read
@@ -73,23 +73,19 @@ jobs:
   # required status check. The full 3-Python matrix still runs on push to main,
   # nightly, dispatch, or `ci-full` PRs.
 
-  # The discover -> test-domain (matrix) -> aggregate scaffolding now lives in
-  # the shared reusable workflow (workspace-hub#.../domain-matrix.yml, P4
-  # worldenergydata#530). wed's conventions match the reusable defaults exactly
-  # (selector scripts/ci/select_test_targets.py, uv sync --all-extras, quarantine
-  # scripts/ci/quarantine.txt, python-setup uv, max-parallel 10), so the caller
-  # passes no `with:` overrides.
+  # The local reusable workflow preserves domain discovery, quarantine and
+  # aggregation while applying the same x64 and fork-isolation policy.
   domain-tests:
     needs: [mode]
     if: >-
       !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && github.event_name
       == 'pull_request'
-    uses: vamseeachanta/workspace-hub/.github/workflows/domain-matrix.yml@main
+    uses: ./.github/workflows/domain-matrix.yml
 
   # ------------------------------------------------------------ full matrix --
   test:
     name: Test Python ${{ matrix.python-version }}
-    runs-on: ubuntu-latest
+    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
     needs: [mode]
     if: >-
       !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && (
@@ -227,7 +223,7 @@ jobs:
 
   lint:
     name: Lint (full)
-    runs-on: ubuntu-latest
+    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
     needs: [mode]
     if: >-
       !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true')
@@ -326,7 +322,7 @@ jobs:
 
   type-check:
     name: Type Check (full)
-    runs-on: ubuntu-latest
+    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
     needs: [mode]
     if: >-
       !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true')
@@ -417,7 +413,7 @@ jobs:
 
   security:
     name: Security Scan (full)
-    runs-on: ubuntu-latest
+    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
     needs: [mode]
     if: >-
       !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true')
@@ -511,7 +507,7 @@ jobs:
 
   build:
     name: Build Package
-    runs-on: ubuntu-latest
+    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
     needs: [mode, lint] # test job skips on unlabeled PRs (module gate covers them)
     if: >-
       !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && needs.lint.result
@@ -605,7 +601,7 @@ jobs:
 
   docs:
     name: Documentation (full)
-    runs-on: ubuntu-latest
+    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
     needs: [mode]
     if: >-
       !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && github.event_name
@@ -701,7 +697,7 @@ jobs:
     name: Lint
     needs: [mode, lint]
     if: ${{ !cancelled() }}
-    runs-on: ubuntu-latest
+    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
     permissions:
       contents: read
       actions: read
@@ -737,7 +733,7 @@ jobs:
     name: Type Check
     needs: [mode, type-check]
     if: ${{ !cancelled() }}
-    runs-on: ubuntu-latest
+    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
     permissions:
       contents: read
       actions: read
@@ -773,7 +769,7 @@ jobs:
     name: Security Scan
     needs: [mode, security]
     if: ${{ !cancelled() }}
-    runs-on: ubuntu-latest
+    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
     permissions:
       contents: read
       actions: read
@@ -809,7 +805,7 @@ jobs:
     name: Documentation
     needs: [mode, docs]
     if: ${{ !cancelled() && github.event_name == 'pull_request' }}
-    runs-on: ubuntu-latest
+    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
     permissions:
       contents: read
       actions: read
@@ -845,7 +841,7 @@ jobs:
     name: Test (PR gate)
     needs: [mode, domain-tests]
     if: ${{ !cancelled() && github.event_name == 'pull_request' }}
-    runs-on: ubuntu-latest
+    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
     permissions:
       contents: read
       actions: read
