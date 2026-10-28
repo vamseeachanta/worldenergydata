@@ -17,7 +17,9 @@ ARCHITECTURE = ROOT / "docs/modules/repository-architecture.md"
 
 def test_report_observation_matches_tree_and_csv():
     """Hand tally: one CSV row per HTML path; category totals sum to that set."""
-    with (ROOT / "docs/modules/report-inventory.csv").open(newline="") as stream:
+    with (ROOT / "docs/modules/report-inventory.csv").open(
+        encoding="utf-8", newline=""
+    ) as stream:
         rows = list(csv.DictReader(stream))
     paths = {p.relative_to(ROOT).as_posix() for p in (ROOT / "reports").rglob("*.html")}
     assert len(rows) == len(paths)

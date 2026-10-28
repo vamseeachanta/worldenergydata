@@ -47,6 +47,11 @@ jobs:
           persist-credentials: false
           sparse-checkout: scripts/ci/replay_gate.py
           sparse-checkout-cone-mode: false
+      - name: Set up replay interpreter
+        if: steps.candidate.outputs.replay == 'true'
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION_DEFAULT }}
       - name: Evaluate replay evidence
         id: lookup
         if: steps.candidate.outputs.replay == 'true'

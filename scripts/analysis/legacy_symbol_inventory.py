@@ -13,7 +13,7 @@ import json
 from pathlib import Path
 
 LEGACY = Path("packages/worldenergydata-core/src/worldenergydata/common/legacy")
-TARGETS = ("ong_fd_components.py", "wellpath3D.py")
+TARGETS = ("wellpath3D.py",)
 
 
 def _bindings(node: ast.AST) -> list[str]:

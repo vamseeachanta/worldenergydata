@@ -108,11 +108,13 @@ def test_cli_matches_inventory_and_report(audit, tmp_path):
         [sys.executable, str(SCRIPT), "--root", str(ROOT)],
         check=True,
         text=True,
+        encoding="utf-8",
         capture_output=True,
         cwd=tmp_path,
     )
     payload = json.loads(result.stdout)
-    report = REPORT.read_text()
+    assert set(payload) == {"wellpath3D.py"}
+    report = REPORT.read_text(encoding="utf-8")
     for filename, evidence in payload.items():
         section = report.split(f"## `{filename}`\n", 1)[1].split("\n## ", 1)[0]
         rows = {}
@@ -138,30 +140,121 @@ def test_cli_matches_inventory_and_report(audit, tmp_path):
         assert expected_row in report
 
 
+def test_cli_still_requires_the_retained_module(tmp_path):
+    """Retirement must not silently suppress a missing retained source file."""
+    result = subprocess.run(
+        [sys.executable, str(SCRIPT), "--root", str(tmp_path)],
+        text=True,
+        encoding="utf-8",
+        capture_output=True,
+        check=False,
+    )
+    assert result.returncode != 0
+    assert "wellpath3D.py" in result.stderr
+
+
 def test_migrated_symbols_resolve_to_actual_source_definitions(audit):
     """Every imported compatibility export must have a binding at its origin."""
     legacy = ROOT / audit.LEGACY
-    source = (legacy / "wellpath3D.py").read_text()
+    source = (legacy / "wellpath3D.py").read_text(encoding="utf-8")
     for symbol in audit.inventory(source):
         if symbol["origin"]:
             module, name = symbol["origin"].rsplit(".", 1)
             target = legacy / (module.rsplit(".", 1)[1] + ".py")
             assert name in {
-                item["name"] for item in audit.inventory(target.read_text())
+                item["name"]
+                for item in audit.inventory(target.read_text(encoding="utf-8"))
             }
 
 
-def test_package_export_is_a_distinct_replacement(audit):
-    """The package export targets the replacement, not the original class."""
+def test_package_does_not_export_the_retired_component(audit):
+    """The coordinator and drilling helpers have no compatibility reexports."""
     legacy = ROOT / audit.LEGACY
-    tree = ast.parse((legacy / "__init__.py").read_text())
-    origins = [
-        node.module
+    source = (legacy / "__init__.py").read_text(encoding="utf-8")
+    symbols = audit.inventory(source)
+    retired_exports = {
+        "ONGFDComponents",
+        "assign_st_bp_tree_info",
+        "get_rig_days_and_drilling_wt",
+    }
+    assert retired_exports.isdisjoint(symbol["name"] for symbol in symbols)
+    for node in ast.parse(source).body:
+        if isinstance(node, ast.Assign) and any(
+            isinstance(target, ast.Name) and target.id == "__all__"
+            for target in node.targets
+        ):
+            assert retired_exports.isdisjoint(ast.literal_eval(node.value))
+
+
+def _retirement_metadata_literals(tree, relative_path):
+    if relative_path.as_posix() != (
+        "tests/unit/common/test_legacy_component_retirement.py"
+    ):
+        return set()
+    return {
+        literal
         for node in tree.body
-        if isinstance(node, ast.ImportFrom)
-        and any(alias.name == "ONGFDComponents" for alias in node.names)
-    ]
-    assert origins == ["ong_fd_components_refactored"]
+        if isinstance(node, ast.Assign)
+        and any(
+            isinstance(target, ast.Name) and target.id == "RETIRED_MODULES"
+            for target in node.targets
+        )
+        and isinstance(node.value, (ast.Tuple, ast.List))
+        for literal in node.value.elts
+        if isinstance(literal, ast.Constant) and isinstance(literal.value, str)
+    }
+
+
+def _candidate_references(source, relative_path, names):
+    tree = ast.parse(source)
+    metadata = _retirement_metadata_literals(tree, relative_path)
+    references = []
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.Import, ast.ImportFrom)):
+            imported = [alias.name for alias in node.names]
+            if isinstance(node, ast.ImportFrom):
+                imported.append(node.module or "")
+            if any(names.intersection(value.split(".")) for value in imported):
+                references.append(
+                    f"Unexpected legacy import: {relative_path.as_posix()}:{node.lineno}"
+                )
+        if (
+            isinstance(node, ast.Constant)
+            and isinstance(node.value, str)
+            and node not in metadata
+            and names.intersection(node.value.split("."))
+        ):
+            references.append(
+                f"Possible dynamic reference: {relative_path.as_posix()}:{node.lineno}"
+            )
+    return references
+
+
+@pytest.mark.parametrize(
+    "relative_path, caller, has_reference",
+    [
+        ("tests/unit/common/test_legacy_component_retirement.py", "", False),
+        (
+            "tests/unit/common/test_legacy_component_retirement.py",
+            "import worldenergydata.common.legacy.ong_fd_components\n",
+            True,
+        ),
+        (
+            "tests/unit/common/test_legacy_component_retirement.py",
+            'importlib.import_module("worldenergydata.common.legacy.ong_fd_components")\n',
+            True,
+        ),
+        ("tests/other.py", "", True),
+    ],
+)
+def test_retirement_metadata_does_not_hide_callers(
+    relative_path, caller, has_reference
+):
+    source = 'RETIRED_MODULES = ("ong_fd_components",)\n' + caller
+    references = _candidate_references(
+        source, Path(relative_path), {"ong_fd_components", "wellpath3D"}
+    )
+    assert bool(references) is has_reference
 
 
 def test_no_tracked_python_imports_of_candidate_modules():
@@ -169,6 +262,7 @@ def test_no_tracked_python_imports_of_candidate_modules():
 
     Text candidates come from every tracked Python file. Comments are not
     imports; literal dynamic module names are conservatively treated as uses.
+    The retirement test's declared module names are metadata, not caller sites.
     This cannot detect module names assembled at runtime.
     """
     names = {"ong_fd_components", "wellpath3D"}
@@ -202,18 +296,12 @@ def test_no_tracked_python_imports_of_candidate_modules():
     for raw_path in result.stdout.split(b"\0"):
         if not raw_path:
             continue
-        path = ROOT / raw_path.decode()
+        path = ROOT / raw_path.decode("utf-8")
         if path in excluded:
             continue
-        for node in ast.walk(ast.parse(path.read_text())):
-            if isinstance(node, (ast.Import, ast.ImportFrom)):
-                imported = [alias.name for alias in node.names]
-                if isinstance(node, ast.ImportFrom):
-                    imported.append(node.module or "")
-                assert not any(
-                    names.intersection(value.split(".")) for value in imported
-                ), f"Unexpected legacy import: {path.relative_to(ROOT)}:{node.lineno}"
-            if isinstance(node, ast.Constant) and isinstance(node.value, str):
-                assert not names.intersection(
-                    node.value.split(".")
-                ), f"Possible dynamic reference: {path.relative_to(ROOT)}:{node.lineno}"
+        assert (
+            _candidate_references(
+                path.read_text(encoding="utf-8"), path.relative_to(ROOT), names
+            )
+            == []
+        )

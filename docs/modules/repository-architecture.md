@@ -12,7 +12,7 @@ Double-colon suffixes identify symbols, with work IDs selecting entries in `SPEC
 Source line ranges outside Tables 3 and 4 belong to the initial inspection; use the named
 files and symbols when reading newer revisions.
 
-The tree contains **299 report HTML files and zero API capability HTML pages**,
+The tree contains **307 report HTML files and zero API capability HTML pages**,
 enumerated in [report-inventory.csv](report-inventory.csv).
 The former API capability directory was intentionally removed by
 [PR 1141](https://github.com/vamseeachanta/worldenergydata/pull/1141).
@@ -27,6 +27,7 @@ The issue's earlier report counts are therefore not the inventory baseline.
 | Initial | 2026-10-12 | Source inspection and report classification established the repository map. |
 | Inventory reconciliation | 2026-10-19 | Counts and Pages selections are reconciled with the current tree; the README embeds the drawing and regression checks detect drift. |
 | Provenance reconciliation | 2026-10-21 | Source descriptions are reconciled with the surviving work specifications; symbol locators and stronger regression checks detect stale provenance and avoid line-number drift. |
+| Report count reconciliation | 2026-10-27 | Report and category counts match the HTML tree and inventory CSV after integration. |
 
 ## Drawing
 
@@ -259,11 +260,11 @@ are not counted. Re-evaluate the builder and its gates when the tree changes.
 
 | Classification | HTML files |
 | --- | --- |
-| current | 259 |
+| current | 266 |
 | superseded | 0 |
 | unverified | 5 |
 | one-off | 3 |
-| undetermined | 32 |
+| undetermined | 33 |
 
 Table 5. Reproduced counts; per-file evidence is in [report-inventory.csv](report-inventory.csv).
 

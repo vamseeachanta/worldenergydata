@@ -2,21 +2,24 @@
 
 ## Summary
 
-The original component class has no tracked caller. The wellpath module retains
-its executable GUI entry point and compatibility exports. These findings identify
-candidates for a compatibility review; no runtime code is removed.
-The inventory covers 58 symbols: 6 DEAD candidates, 40 MIGRATED exports and
-12 LIVE bindings, using the repository-scoped definitions below.
+The component coordinator and its drilling helpers are retired under the
+[retirement contract](../modules/bsee/analysis/legacy_component_retirement.md).
+The retained wellpath module keeps its executable GUI entry point and compatibility
+exports. The current inventory covers 55 retained symbols: 5 DEAD candidates,
+40 MIGRATED exports and 10 LIVE bindings, using the repository-scoped definitions
+below. The original component inventory is preserved as historical evidence.
 
 ## Revision history
 
 | Revision | Date | What changed and why |
 | --- | --- | --- |
 | Initial | 2026-10-19 | Record static caller evidence before considering legacy deletion. |
+| Retirement reconciliation | 2026-10-27 | Remove retired sources from the executable inventory, retain their historical audit and verify the remaining compatibility exports. |
 
 ## Scope and evidence basis
 
-Refs #1108. Source revision: `648d6de46081ad98a06504a25ec8a222acbd41b1`.
+Refs #1108. The initial caller audit references the source revision
+`648d6de46081ad98a06504a25ec8a222acbd41b1`.
 The current source lives in
 `packages/worldenergydata-core/src/worldenergydata/common/legacy/`, rather than
 in the old root-package location named by the issue. The report lives under
@@ -48,15 +51,24 @@ they do not resolve lexical shadowing or perform whole-program reachability.
 External caller evidence comes from the separate tracked-text sweep below;
 absence of local loads alone does not prove DEAD.
 
+The executable inventory now requires only `wellpath3D.py`. Missing retained
+source still fails the audit; retired files are removed from the target list
+explicitly rather than skipped when absent. The retired files are
+`ong_fd_components.py`, `ong_fd_components_refactored.py` and
+`ong_fd_drilling.py`. The package no longer exports `ONGFDComponents`,
+`get_rig_days_and_drilling_wt` or `assign_st_bp_tree_info`.
+
 ## `ong_fd_components.py`
 
-Source: [original component module](../../packages/worldenergydata-core/src/worldenergydata/common/legacy/ong_fd_components.py).
+Status: **RETIRED**. The following rows describe the original source revision,
+not the current executable inventory. Historical source location:
+`packages/worldenergydata-core/src/worldenergydata/common/legacy/ong_fd_components.py`.
 
 | Symbol | Status | Definition lines | Evidence |
 | --- | --- | --- | --- |
 | `logger` | LIVE | 19 | Read only inside the candidate class: 127, 131, 161, 224, 248, 1443. |
 | `dtu` | LIVE | 21 | Read only inside the candidate class: 259. |
-| `ONGFDComponents` | DEAD | 24-1656 | No tracked caller; the package exports a distinct replacement. |
+| `ONGFDComponents` | DEAD | 24-1656 | No tracked caller at the original revision; the then-exported replacement was distinct and is also retired. |
 
 ## `wellpath3D.py`
 
@@ -125,7 +137,7 @@ under the same legacy package and are checked against actual source bindings.
 
 ## Caller sweep and false-positive checks
 
-The following searches cover all tracked, non-binary repository text, including
+The initial searches covered all tracked, non-binary repository text, including
 Python, configuration, notebooks, documentation and test-generation metadata.
 They do not depend on a hard-coded source-directory list. The two audited source
 files are excluded only from the module-name search, to expose external sites.
@@ -145,7 +157,9 @@ git grep -n -I -w -e ONGFDComponents -e instantTab -e wells_plot \
   ':!docs/analysis/legacy-dead-code-report.md'
 ```
 
-Every external match was inspected:
+The following table preserves the initial external matches and their
+interpretation at the original source revision. The initializer's coordinator
+export and the replacement module are now retired.
 
 | Matching source | Interpretation |
 | --- | --- |
@@ -166,8 +180,15 @@ Every external match was inspected:
 
 Package-relative source names in this table abbreviate the corresponding
 `packages/worldenergydata-<domain>/src/worldenergydata/` prefix. The package
-initializer and replacement class were read directly: resolving a name through
-`common.legacy` does not resolve to the original component class.
+initializer and replacement class were read directly for the initial audit:
+the then-current `common.legacy` export did not resolve to the original component
+class. Neither coordinator is exported after retirement.
+
+The current regression checks all tracked Python imports, including relative
+and aliased imports, and literal dynamic module references. Only the string
+elements of `RETIRED_MODULES` in the retirement regression are classified as
+test metadata. Import statements and other string literals in that same file
+remain checked. Retirement metadata does not establish a runtime caller.
 
 Within wellpath, the guarded entry point calls `firstStart` and `myApplication`
 at lines 1243 and 1246. GUI code instantiates `newwell`, `well` and `wellmap` at
@@ -181,16 +202,18 @@ The arithmetic is defined here and implemented in `covered_lines`: take the unio
 of inclusive physical source spans of DEAD local symbols, divide its size by the
 file's physical line count, and express as a percentage. Blank lines outside the
 spans, dependency imports, reexport imports and export-list entries are excluded.
-The whole candidate class includes its methods; those methods are not counted
-again. This is a source-size estimate, not an approved deletion amount.
+This is a source-size estimate for the retained module, not an approved deletion
+amount. The retired class is excluded from the current denominator and totals.
 
 | File | Candidate lines | Physical lines | Candidate percentage |
 | --- | --- | --- | --- |
-| `ong_fd_components.py` | 1633 | 1656 | 98.6% |
 | `wellpath3D.py` | 7 | 1249 | 0.6% |
 
-Independent arithmetic: the class spans lines 24 through 1656 inclusive, so its
-size is 1656 minus 24 plus 1 = 1633 lines. The unused wellpath function spans
+Historical arithmetic: the retired class spanned lines 24 through 1656 inclusive,
+so its size was 1656 minus 24 plus 1 = 1633 lines, or 98.6% of 1656 physical
+lines. That historical estimate is not part of the current inventory.
+
+Independent retained-source arithmetic: the unused wellpath function spans
 98 through 100 inclusive, contributing 3 lines, and the four unused global
 assignments contribute one line each: 3 + 4 = 7. Percentages are rounded to one
 decimal place. Denominators are measured from the source files, not the issue's
@@ -201,12 +224,12 @@ historical line counts. No engineering constants or acceptance limits are used.
 ```sh
 uv run --no-project python scripts/analysis/legacy_symbol_inventory.py
 uv run --no-project --with pytest python -m pytest \
-  tests/analysis/test_legacy_symbol_inventory.py --noconftest -c /dev/null \
-  -q -rA -p no:cacheprovider
+  tests/analysis/test_legacy_symbol_inventory.py --noconftest -o addopts='' \
+  --import-mode=importlib -q -rA -p no:cacheprovider
 ```
 
 Direct the test temporary directory and tool caches to a writable scratch folder.
-All 13 isolated tests pass; they require only pytest and the standard library.
+The isolated tests require only pytest and the standard library.
 They exercise
 inert parsing, module-scope boundaries, callback/entry-point references, distinct
 reexport identity, explicit export validation, decorators and source-span union.
@@ -215,22 +238,19 @@ report row and percentage with the current source. An independent tracked-Python
 search guards against new direct, relative or aliased legacy-module imports and
 literal dynamic module references. Expected fixture line numbers
 come from the literal source strings in the tests; the union example is worked
-out independently in its test docstring. Runtime legacy modules are unchanged.
+out independently in its test docstring. The package-export assertion verifies
+the retired API's absence without importing optional runtime dependencies.
 
 ## Later slices and limits
 
-- A compatibility review is warranted for the original component class: its
-  candidate share exceeds the follow-up threshold stated in #1108. Confirm
-  external consumers and decide whether a deprecation or forwarding shim is
-  required. The package replacement's import alone does not prove behavioral
-  equivalence, and its behavior has not been compared here.
+- The original component and its replacement are retired. The retirement
+  contract records the retained WAR capabilities and their limits; this audit
+  does not reintroduce a forwarding shim or establish behavioral equivalence.
 - Separately review the unused wellpath exports. Preserve the GUI entry point,
   callbacks and all migrated exports unless their public compatibility contract
   is intentionally changed.
-- Deletion implementation and new tracking issues are deferred. No issue is
-  created by this change. The linked well-design discussion supplies no caller
-  evidence; the historical split reference did not resolve to a separate issue
-  in the repository issue search.
+- The remaining wellpath deletion candidates are deferred. No new compatibility
+  export removal is authorized by this audit.
 - Dynamic import strings assembled at runtime, untracked local scripts and
   external consumers are NOT_EVALUATED. Explicit reexports are protected even
   when no in-repository direct caller uses them. A repository text sweep cannot
