@@ -22,6 +22,8 @@ class RigType(str, Enum):
     SNUBBING_UNIT = "snubbing_unit"
     WORKOVER_RIG = "workover_rig"
     SUPPORT_VESSEL = "support_vessel"
+    RLWI_MONOHULL = "rlwi_monohull"
+    HEAVY_INTERVENTION_SEMI = "heavy_intervention_semi"
     PUMPING_UNIT = "pumping_unit"
     UNKNOWN = "unknown"
 

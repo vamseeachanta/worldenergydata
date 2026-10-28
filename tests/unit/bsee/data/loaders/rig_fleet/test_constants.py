@@ -22,7 +22,12 @@ class TestRigTypeEnum:
         assert RigType.DRILLSHIP == "drillship"
 
     def test_member_count(self):
-        assert len(RigType) == 16
+        # The previous taxonomy plus the two dedicated intervention types.
+        assert len(RigType) == 18
+
+    def test_dedicated_intervention_types(self):
+        assert RigType.RLWI_MONOHULL.value == "rlwi_monohull"
+        assert RigType.HEAVY_INTERVENTION_SEMI.value == "heavy_intervention_semi"
 
 
 class TestRigStatusEnum:
