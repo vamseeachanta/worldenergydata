@@ -27,7 +27,8 @@ from select_test_targets import (  # noqa: E402
 
 
 @pytest.mark.parametrize(
-    "path", ["pyproject.toml", "uv.lock", "tests/conftest.py", "src/worldenergydata/engine.py"]
+    "path",
+    ["pyproject.toml", "uv.lock", "tests/conftest.py", "src/worldenergydata/engine.py"],
 )
 def test_core_change_on_pr_runs_always_on_set_not_full_tree(path):
     assert select([path], REPO_ROOT)["scope"] == "full"
@@ -74,7 +75,12 @@ def test_full_fan_out_is_kept_outside_pull_requests():
 
 @pytest.mark.parametrize(
     "event,expected",
-    [("pull_request", True), ("push", False), ("workflow_dispatch", False), (None, False)],
+    [
+        ("pull_request", True),
+        ("push", False),
+        ("workflow_dispatch", False),
+        (None, False),
+    ],
 )
 def test_fast_gate_follows_the_event(event, expected):
     environ = {} if event is None else {"GITHUB_EVENT_NAME": event}

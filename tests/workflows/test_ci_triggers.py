@@ -463,8 +463,7 @@ def test_pr_gate_is_fast_only() -> None:
     }
     runner = jobs["domain-tests"]["with"]["test-runner"]
     assert runner.startswith("env WED_FAST_GATE=1 ")
-    lint_script = "
-".join(step.get("run", "") for step in jobs["lint"]["steps"])
+    lint_script = "\n".join(step.get("run", "") for step in jobs["lint"]["steps"])
     assert "uv sync" not in lint_script
     assert "uv lock" not in lint_script
 
