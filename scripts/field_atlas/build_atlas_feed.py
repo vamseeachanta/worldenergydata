@@ -190,8 +190,13 @@ def build(integration: dict | None = None) -> dict:
 
 
 def _row_fingerprint(row: dict) -> str:
-    payload = json.dumps(list(row.values()), separators=(",", ":"), ensure_ascii=False)
-    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+    # Load the stdlib helper lazily so ordinary feed builds need no package import.
+    source = PROJECT_ROOT / "src/worldenergydata/field_development"
+    if str(source) not in sys.path:
+        sys.path.insert(0, str(source))
+    import catalog_build_common
+
+    return catalog_build_common.row_fingerprint(list(row.values()))
 
 
 def main():
