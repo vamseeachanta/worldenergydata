@@ -86,6 +86,8 @@ class TestPressureWindowAnalyzer:
             fracture_gradient_psi=5400.0,
             mud_weight_ppg=10.5,
             flow_rate_gpm=800.0,
+            # Legacy fixture: agent-pack.md revision 1, section 2 (annular loss).
+            annular_pressure_drop_psi=200.0,
         )
         assert isinstance(result, PressureWindow)
 
@@ -96,6 +98,8 @@ class TestPressureWindowAnalyzer:
             fracture_gradient_psi=4500.0,
             mud_weight_ppg=10.0,
             flow_rate_gpm=600.0,
+            # Legacy fixture: agent-pack.md revision 1, section 2 (annular loss).
+            annular_pressure_drop_psi=200.0,
         )
         assert result.pressure_window_psi == pytest.approx(500.0)
 
@@ -106,6 +110,8 @@ class TestPressureWindowAnalyzer:
             fracture_gradient_psi=5150.0,  # window = 150 psi < 200
             mud_weight_ppg=10.5,
             flow_rate_gpm=800.0,
+            # Legacy fixture: agent-pack.md revision 1, section 2 (annular loss).
+            annular_pressure_drop_psi=200.0,
         )
         assert result.mpd_required is True
 
@@ -116,6 +122,8 @@ class TestPressureWindowAnalyzer:
             fracture_gradient_psi=3000.0,  # window = 1000 psi >> 500
             mud_weight_ppg=9.0,
             flow_rate_gpm=400.0,
+            # Legacy fixture: agent-pack.md revision 1, section 2 (annular loss).
+            annular_pressure_drop_psi=200.0,
         )
         assert result.mpd_required is False
 
@@ -156,6 +164,8 @@ class TestPressureWindowAnalyzer:
             fracture_gradient_psi=3600.0,
             mud_weight_ppg=9.5,
             flow_rate_gpm=500.0,
+            # Legacy fixture: agent-pack.md revision 1, section 2 (annular loss).
+            annular_pressure_drop_psi=200.0,
         )
         assert result.depth_m == pytest.approx(1500.0)
 
@@ -166,3 +176,68 @@ class TestPressureWindowAnalyzer:
     def test_mpd_required_helper_custom_threshold(self):
         assert self.analyzer.mpd_required(300.0, threshold_psi=500.0) is True
         assert self.analyzer.mpd_required(600.0, threshold_psi=500.0) is False
+
+
+class TestExplicitAnnularLoss:
+    """API regressions for issue #1290; synthetic inputs, not design limits."""
+
+    def test_omitted_annular_loss_is_rejected(self):
+        """Unknown loss must not be replaced with an assumed pressure."""
+        with pytest.raises(TypeError, match="annular_pressure_drop_psi"):
+            PressureWindowAnalyzer().analyze(
+                depth_m=1000.0,
+                pore_pressure_psi=1500.0,
+                fracture_gradient_psi=2500.0,
+                mud_weight_ppg=10.0,
+                flow_rate_gpm=400.0,
+            )
+
+    @pytest.mark.parametrize("loss_psi", [0.0, 128.0])
+    def test_explicit_loss_at_zero_depth(self, loss_psi):
+        """Hand calculation: P = H + loss; H = density * gravity * depth.
+
+        At zero depth, H = 0, hence P = 0 + loss = loss (zero or 128 psi).
+        These are exact binary inputs, so equality needs no tolerance.
+        This algebraic boundary case does not assess physical admissibility.
+        Source: SLB Energy Glossary, "equivalent circulating density",
+        undated, pressure form of the published density equation:
+        https://glossary.slb.com/en/terms/e/equivalent_circulating_density
+        """
+        result = PressureWindowAnalyzer().analyze(
+            depth_m=0.0,
+            pore_pressure_psi=0.0,
+            fracture_gradient_psi=1024.0,
+            mud_weight_ppg=10.0,
+            flow_rate_gpm=400.0,
+            annular_pressure_drop_psi=loss_psi,
+        )
+        assert result.ecd_psi == loss_psi
+
+    def test_positional_loss_and_threshold_are_preserved(self):
+        """Hand calculation at zero depth: P = 0 + 128 = 128 psi.
+
+        Source and algebraic scope: test_explicit_loss_at_zero_depth.
+        The synthetic window is 1024 - 0 = 1024 psi; the supplied threshold
+        is also 1024 psi, so the existing strict comparison returns False.
+        No engineering threshold is inferred from these fixture values.
+        """
+        result = PressureWindowAnalyzer().analyze(
+            0.0, 0.0, 1024.0, 10.0, 400.0, 128.0, 1024.0
+        )
+        assert result.ecd_psi == 128.0
+        assert result.mpd_required is False
+
+    def test_supplied_loss_is_added_once_at_nonzero_depth(self):
+        """Hand calculation: (H + 128) - (H + 0) = 128 psi.
+
+        H cancels for identical mud weight and depth; no hydrostatic
+        coefficient or unit conversion is used to obtain the expectation.
+        Source: SLB Energy Glossary, "equivalent circulating density",
+        undated; pressure-form equation cited in the zero-depth test.
+        The synthetic loss increment is exactly representable in binary;
+        exact equality checks the additive term, not engineering accuracy.
+        """
+        analyzer = PressureWindowAnalyzer()
+        static = analyzer.analyze(1000.0, 1500.0, 2500.0, 10.0, 0.0, 0.0)
+        circulating = analyzer.analyze(1000.0, 1500.0, 2500.0, 10.0, 400.0, 128.0)
+        assert circulating.ecd_psi - static.ecd_psi == 128.0
