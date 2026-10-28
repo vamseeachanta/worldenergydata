@@ -5,11 +5,21 @@
 | Module | `modules/marine_safety` |
 | Repository | `worldenergydata` |
 | Package path | `src/worldenergydata/modules/marine_safety` |
-| Pack revision | 1, 2026-10-16 |
+| Pack revision | 2, 2026-10-22 |
 | Code revision | `72716499230d3457ce90a5bcd23a8a8367bc0bd3` |
 | Analysis family | EC; compatibility interface for a data pipeline; AQG r0 section 10, Python calculations |
 | Quality role | Calculations quality manager; data-pipeline quality manager as deputy when appointed |
 | Status | DRAFT |
+
+Summary: the compatibility boundary retains unresolved exports and diagnostics;
+collection and alias evidence are updated below without qualifying incident algorithms.
+
+## Revision history
+
+| Revision | Date | What changed and why |
+| --- | --- | --- |
+| 1 | 2026-10-16 | Initial compatibility assessment. |
+| 2 | 2026-10-22 | Restore collection evidence, correct gate accounting and commit missing draft references for #1351 and #1239. |
 
 ## 1. Purpose and scope
 
@@ -19,7 +29,7 @@ Normal imports first encounter the shared redirect finder, installed by the name
 
 This pack covers that compatibility boundary, including all its subdirectories; the separate implementation package and its existing knowledge pack retain responsibility for incident ingestion, statistics, database operations and reporting. [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/docs/agent-pack.md:L1-L13] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/__init__.py:L16-L30]
 
-UNVERIFIED: U1 — no maturity classification or routing entry is established for this compatibility package; documentation and routing reconciliation is section 10, issue pending (1).
+UNVERIFIED: U1 — no maturity classification or routing entry is established for this compatibility package; documentation and routing reconciliation is section 10, unfiled draft 1 in [ISSUES_DRAFT.md](ISSUES_DRAFT.md).
 
 ## 2. Inputs and outputs
 
@@ -68,7 +78,36 @@ The following are regression examples with application-defined expectations, not
 
 Result record: BASE `72716499230d3457ce90a5bcd23a8a8367bc0bd3`; ordinary git-source resolution; `uv run --extra test python -m pytest tests/modules/marine_safety tests/unit/marine_safety tests/marine_safety tests/unit/test_modules_compat.py tests/integration/cli/test_marine_safety_cli.py -q -rA -p no:cacheprovider --basetemp=<scratch>`; 109 selected, 90 passed, 0 failed, 19 skipped, 0 NOT_RUN, with repository addopts preserved; outputs confined to a temporary source copy.
 
-The unit-test directory argument does not establish unit coverage because the existing root hook excludes its descendants; explicit-file results and their limits are recorded separately in section 10. [tests/conftest.py:L662-L680]
+That historical directory command omitted the unit tree. The current collection
+regression records **Before: 4/56** files and **After: 56/56** files across
+`tests/unit/marine_safety`, `tests/modules/marine_safety` and `tests/marine_safety`;
+the unit subset changes from 0/52 to 52/52. These counts exclude the separate CLI
+integration file, explaining the original pack's 57-file inventory. Skipped
+modules count as visited files; current collection has no errors.
+Source: `tests/unit/test_marine_safety_collection.py`, its failing pre-change run
+and passing post-change run; issue #1239. Historical hatch fixture imports are
+corrected solely to permit collection, including the two lazy fixture imports.
+
+### Alias identity worked example
+
+Expected values follow independently constructed canonical paths and Python
+object identity, with the suffix inventory from sections 2 and 5. Each case
+passes in both import orders in a fresh interpreter; cached repeats retain
+identity without another warning. Executable evidence:
+`tests/unit/test_modules_compat.py::test_marine_safety_redirect_identity_and_warning`.
+
+| Suffix | Observed identity | Observed first legacy import warning |
+| --- | --- | --- |
+| `(empty)` | True | DeprecationWarning |
+| `.analysis` | True | DeprecationWarning |
+| `.analysis.incidents` | True | DeprecationWarning |
+| `.importers` | True | DeprecationWarning |
+| `.processors` | True | DeprecationWarning |
+
+R1 and R2 exercise legacy imports. R3 is a **canonical-only** report regression
+and is retained for context, outside compatibility gate C4. Current raw and
+strict-xfail outcome inventories are recorded in the canonical
+[baseline results](../../../../../packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/docs/BASELINE_RESULTS.md).
 
 ## 5. QA gates
 
@@ -86,14 +125,19 @@ Assessment basis: AQG r0, section 10, Python calculations; G5 applies to every f
 | ID | Executable check | Numeric pass criterion and unit | Evidence and current result | Gate |
 | --- | --- | --- | --- | --- |
 | C0 | Parse all package `.py` files with `ast.parse`; count classes, functions, file I/O and numeric conversion calls independently of docstrings | 5 parseable files; 0 class/function definitions and 0 direct file I/O or numeric conversion calls, counts | Syntax-tree inventory; PASS. [src/worldenergydata/modules/marine_safety/__init__.py:L1-L1] [src/worldenergydata/modules/marine_safety/analysis/__init__.py:L13-L36] [src/worldenergydata/modules/marine_safety/analysis/incidents/__init__.py:L8-L14] [src/worldenergydata/modules/marine_safety/importers/__init__.py:L7-L13] [src/worldenergydata/modules/marine_safety/processors/__init__.py:L8-L20] | G0 |
-| C1 | Extract each literal subordinate `__all__` with `ast.literal_eval`; use `hasattr(importlib.import_module(legacy_name), symbol)` for every declaration | 14 declarations checked; 0 missing symbols, counts | 14 checked, 2 missing: baseline FAIL, issue pending (1). [src/worldenergydata/modules/marine_safety/analysis/__init__.py:L27-L36] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/analysis/__init__.py:L9-L56] | G0 |
-| C2 | Run the section-4 pytest command with unchanged repository configuration | 0 failed nodes and 0 collection errors, counts; report all skips separately | BASE and AFTER: 90 PASS, 19 SKIP. [tests/modules/marine_safety/analysis/test_cause_analyzer.py:L14-L22] [tests/modules/marine_safety/test_models.py:L73-L78] | G1 |
-| C3 | Compare discovered `test_*.py` files under `tests/unit/marine_safety` with files represented in collected node IDs; target those files explicitly with importlib collection | 0 discovered files absent from collection, files; 0 collection errors, errors | Directory traversal excludes the unit tree; explicit files expose baseline collection and assertion failures; #1239 and #327. [tests/conftest.py:L662-L680] [tests/unit/marine_safety/test_hatch_maloperation_analysis.py:L11-L14] | G1 |
-| C4 | Run R1, R2 and R3 through the full offline command | 3 passing example nodes; 0 failures, counts | BASE and AFTER: 3 PASS. [tests/modules/marine_safety/analysis/test_cause_analyzer.py:L83-L92] [tests/modules/marine_safety/analysis/test_cause_analyzer.py:L375-L379] [tests/modules/marine_safety/analysis/test_cause_report.py:L388-L395] | G1 |
-| C5 | Hand-list suffixes: empty, `.analysis`, `.analysis.incidents`, `.importers`, `.processors`; for each compare `import_module('worldenergydata.modules.marine_safety'+suffix) is import_module('worldenergydata.marine_safety'+suffix)` | 5 successful imports and 5 identical object pairs; 0 mismatches, counts | BASE: 5/5 identical; PASS; source-derived oracle is the explicit legacy/canonical path pair, not an incident statistic. [src/worldenergydata/_compat.py:L68-L73] [src/worldenergydata/_compat.py:L95-L104] | G2 |
+| C1 | Extract each literal subordinate `__all__` with `ast.literal_eval`; use `hasattr(importlib.import_module(legacy_name), symbol)` for every declaration | 14 declarations checked; 0 missing symbols, counts | 14 checked, 2 missing: baseline FAIL, unfiled draft 1 in [ISSUES_DRAFT.md](ISSUES_DRAFT.md). [src/worldenergydata/modules/marine_safety/analysis/__init__.py:L27-L36] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/analysis/__init__.py:L9-L56] | G0 |
+| C2 | Run the section-4 test targets with raw failure reporting (`--runxfail`) | 0 failed nodes and 0 collection errors, counts | Historical BASE: 90 PASS, 19 SKIP; current raw run: 2,062 PASS, 30 FAIL, 68 SKIP, 0 ERROR: baseline FAIL; see canonical baseline results and drafts 3, 4, 5 and 8. | G1 |
+| C3 | Compare discovered test files with pytest file reports, including module skips; require no collection errors | 0 discovered files absent; 0 collection errors | Historical baseline FAIL: 52 files excluded and 1 collection error (#1239; #1351 defect 3); current collection PASS: 56/56 files visited, unit subset 52/52, no collection errors; `tests/unit/test_marine_safety_collection.py`. | G1 |
+| C4 | Run R1 and R2 through the legacy import path | 2 passing example nodes; 0 failures, counts | Historical and current: 2 PASS; application expectations are the five-row fixture and empty narratives in section 4. | G1 |
+| C5 | Independently construct the five legacy/canonical suffix pairs in section 4; assert identity and capture deprecation warnings in both import orders | All pairs identical and all first legacy imports warn; no mismatch | PASS: five suffixes in both orders; committed parametrized evidence in `tests/unit/test_modules_compat.py`; cached repeats also checked. | G2 |
 | C6 | Resolve every source citation at the header pin; match each example node to pytest output; retain all unresolved qualifications in section 10 | 0 invalid citation ranges, 0 examples without node results, 0 untracked qualifications, counts | Citation resolver and acceptance record; independent clearance pending | G5 |
 
 Check definitions: G0 = 2; G1 = 3; G2 = 1; G3 = 0; G4 = 0; G5 = 1; total = 7.
+C3 included: historical outcomes are 4 PASS (C0, C2, C4, C5), 2 baseline FAIL
+(C1, C3) and 1 NOT_EVALUATED (C6). Current outcomes are 4 PASS (C0, C3, C4, C5),
+2 baseline FAIL (C1, C2) and 1 NOT_EVALUATED (C6). Both totals include all seven
+checks; the historical C3 failure remains recorded even after collection is restored.
+C6 independent clearance is not established by this change.
 
 ## 6. Known failure modes and pitfalls
 
@@ -112,17 +156,17 @@ No local swallowing handler, skipped record, error-return sentinel, numeric defa
 | Symptom | Cause at code pin | Detection check | Issue and date |
 | --- | --- | --- | --- |
 | An excluded test directory can leave the suite green without running its checks | Root collection hook returns `True` for descendants of `tests/unit/marine_safety` | C3; baseline finding, not coverage evidence | #1239, 2026-10-16. [tests/conftest.py:L662-L680] |
-| Legacy analysis export declarations overstate the runtime namespace | Finder selects the canonical analysis initializer, which does not bind the two report symbols declared in the compatibility file | C1 detects 2 missing declarations; direct import from `worldenergydata.marine_safety.analysis.cause_report` is the tested route | issue pending (1), 2026-10-16. [src/worldenergydata/modules/marine_safety/analysis/__init__.py:L13-L16] [src/worldenergydata/_compat.py:L103-L123] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/analysis/__init__.py:L9-L56] [tests/modules/marine_safety/analysis/test_cause_report.py:L12-L15] |
-| Finder can decline a target after an internal resolution error | Shared `find_spec()` catches `ModuleNotFoundError` and `ValueError`, substitutes `None`, then returns no spec; later import machinery decides the outcome | no detection check exists for the swallowed cause; C5 checks only available targets | issue pending (1), 2026-10-16. [src/worldenergydata/_compat.py:L106-L116] |
+| Legacy analysis export declarations overstate the runtime namespace | Finder selects the canonical analysis initializer, which does not bind the two report symbols declared in the compatibility file | C1 detects 2 missing declarations; direct import from `worldenergydata.marine_safety.analysis.cause_report` is the tested route | unfiled draft 1 in [ISSUES_DRAFT.md](ISSUES_DRAFT.md), 2026-10-16. [src/worldenergydata/modules/marine_safety/analysis/__init__.py:L13-L16] [src/worldenergydata/_compat.py:L103-L123] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/analysis/__init__.py:L9-L56] [tests/modules/marine_safety/analysis/test_cause_report.py:L12-L15] |
+| Finder can decline a target after an internal resolution error | Shared `find_spec()` catches `ModuleNotFoundError` and `ValueError`, substitutes `None`, then returns no spec; later import machinery decides the outcome | no detection check exists for the swallowed cause; C5 checks only available targets | unfiled draft 1 in [ISSUES_DRAFT.md](ISSUES_DRAFT.md), 2026-10-16. [src/worldenergydata/_compat.py:L106-L116] |
 | A closed compatibility incident does not prove every old import surface works | #278's plan distinguishes healthy canonical marine-safety packages from deleted implementations in another domain | C5 covers the five package aliases; C1 covers declared symbols | #278, 2026-10-16. [docs/plans/2026-05-04-issue-278-compatibility-shims.md:L15-L19] [docs/plans/2026-05-04-issue-278-compatibility-shims.md:L30-L35] |
-| Canonical-package tests fail, error or skip | Database fixtures, unavailable classifier inputs, logging assertions, a test-local matching oracle, and scraper/validator API expectations belong to the [canonical marine-safety pack](../../../../../packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/docs/agent-pack.md) (#1236), section 6 and section 10 C4–C10 | C2 and C3 record outcomes; no detection check exists for skipped assertions or unavailable model results | Tracked there: database skips / its draft 1; C4 / its draft 3; C5 / its draft 4; C6 / its draft 5; C9 / its draft 7 (including integration skips); C10 / its draft 8. [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/docs/agent-pack.md:L198-L211] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/docs/agent-pack.md:L293-L299] |
+| Canonical-package tests fail, error or skip | Database fixtures, unavailable classifier inputs, logging assertions, a test-local matching oracle, and scraper/validator API expectations belong to the [canonical marine-safety pack](../../../../../packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/docs/agent-pack.md) (#1236), section 6 and section 10 C4–C10 | C2 and C3 record outcomes; no detection check exists for skipped assertions or unavailable model results | Canonical issue drafts: database skips / draft 1; C4 / draft 3; C5 / draft 4; C6 / draft 5; C9 / draft 7 (including integration skips); C10 / draft 8. [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/docs/agent-pack.md:L198-L211] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/docs/agent-pack.md:L293-L299] |
 | One hatch-analysis test imports a nonexistent fixture namespace | Test imports the historical fixture path; the fixture source is under the unit-test tree | C3 records collection errors; no module code correction is included | #327, 2026-10-16. [tests/unit/marine_safety/test_hatch_maloperation_analysis.py:L11-L14] [docs/plans/2026-05-04-issue-327-conftest-marine-safety-fix.md:L9-L17] |
 
 ## 7. Lessons log
 
 | Date | Entry | Lesson | Evidence | Pack change | Shared-log reference |
 | --- | --- | --- | --- | --- | --- |
-| 2026-10-16 | Initial compatibility assessment | Inspect the active import finder before treating a surviving initializer's declarations as the runtime namespace | [src/worldenergydata/_compat.py:L103-L123] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/analysis/__init__.py:L9-L56] | C1 and section-6 export mismatch | issue pending (1) |
+| 2026-10-16 | Initial compatibility assessment | Inspect the active import finder before treating a surviving initializer's declarations as the runtime namespace | [src/worldenergydata/_compat.py:L103-L123] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/analysis/__init__.py:L9-L56] | C1 and section-6 export mismatch | unfiled draft 1 in [ISSUES_DRAFT.md](ISSUES_DRAFT.md) |
 | 2026-10-16 | Initial compatibility assessment | Compare discovered files with collection; a green directory run can omit unit tests | [tests/conftest.py:L662-L680] | C3 and explicit-file evidence | #1239 |
 
 ## 8. Ownership
@@ -162,7 +206,7 @@ These are the assessment responsibilities for this pack, not a record of complet
 | A8 inventory result | PASS, empty inventory |
 | A8 counted-family grep | NOT_APPLICABLE: no map family has an implementation row in the header package |
 | Further second implementations counted | 0 |
-| Map follow-up | Legacy import dispatch, wildcard export and explicit export, the method families of section 3; issue pending (4) |
+| Map follow-up | Legacy import dispatch, wildcard export and explicit export, the method families of section 3; unfiled draft 4 in [ISSUES_DRAFT.md](ISSUES_DRAFT.md) |
 
 The audit above records a map revision from a separate repository, not an implementation census of the canonical data pipeline. Reproduction: parse that pinned YAML, select families having at least one implementation `path` below the header package, retain every implementation row for those families, and rank by in-package row count with map order as the tie-breaker; the empty selection requires no `search_signals` grep.
 
@@ -172,7 +216,11 @@ Repository-wide discovery for the same interface uses `rg -n --glob '*.py' 'worl
 
 ### Coverage record
 
-The two compatibility-specific drafts are committed in [ISSUES_DRAFT.md](ISSUES_DRAFT.md); their numbers remain 1 and 4 to preserve existing references. Canonical-package defects are tracked in its own pack and must not create additional drafts here.
+The two compatibility-specific drafts are committed in [ISSUES_DRAFT.md](ISSUES_DRAFT.md); their numbers remain 1 and 4 to preserve existing references. Canonical issue drafts are committed in the canonical
+[ISSUES_DRAFT.md](../../../../../packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/docs/ISSUES_DRAFT.md),
+with per-node evidence in its [BASELINE_RESULTS.md](../../../../../packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/docs/BASELINE_RESULTS.md).
+These are explicit unfiled placeholders, not claims of existing issues; the
+maintainer can file each text without duplicating canonical defects here.
 
 All five package Python files were read in full, including the incident-analysis subdirectory; no subordinate compatibility source is excluded from this pack. [src/worldenergydata/modules/marine_safety/__init__.py:L1-L1] [src/worldenergydata/modules/marine_safety/analysis/__init__.py:L1-L36] [src/worldenergydata/modules/marine_safety/analysis/incidents/__init__.py:L1-L14] [src/worldenergydata/modules/marine_safety/importers/__init__.py:L1-L13] [src/worldenergydata/modules/marine_safety/processors/__init__.py:L1-L20]
 
@@ -180,13 +228,13 @@ Supporting sources read: the shared redirect and attribute shim, canonical expor
 
 | Open item | Required resolution | Responsible role | Tracking |
 | --- | --- | --- | --- |
-| U1: maturity and compatibility contract | Reconcile declared versus active exports, define compatibility maturity and document the missing-target diagnostic contract | Module maintainer | issue pending (1) |
-| U2: wider documentation claims | Reconcile discovered documentation with the separate canonical-package assessment; excerpts establish discovery only, not capability or data qualification | Module maintainer | issue pending (1) |
+| U1: maturity and compatibility contract | Reconcile declared versus active exports, define compatibility maturity and document the missing-target diagnostic contract | Module maintainer | unfiled draft 1 in [ISSUES_DRAFT.md](ISSUES_DRAFT.md) |
+| U2: wider documentation claims | Reconcile discovered documentation with the separate canonical-package assessment; excerpts establish discovery only, not capability or data qualification | Module maintainer | unfiled draft 1 in [ISSUES_DRAFT.md](ISSUES_DRAFT.md) |
 | Unit-test collection gap | Restore complete discovery and resolve the historical fixture imports; the old repair issue is closed, not evidence of current coverage | Test maintainer | #1239; #327 |
-| Canonical-package test outcomes | Resolve database/model fixtures, unconditional skips and assertion/API mismatches in the canonical pack; retain this pack's outcome inventory as evidence | Canonical-package test maintainers | [canonical marine-safety pack](../../../../../packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/docs/agent-pack.md) (#1236), section 6 and C4–C10; its drafts 1, 3, 4, 5, 7 and 8 |
-| Implementation-map follow-up | Register the three section-3 compatibility method families with in-package rows before counting them in a later A8 audit | Registry maintainer | issue pending (4) |
+| Canonical-package test outcomes | Resolve database/model fixtures, unconditional skips and assertion/API mismatches in the canonical pack; retain this pack's outcome inventory as evidence | Canonical-package test maintainers | [canonical marine-safety pack](../../../../../packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/docs/agent-pack.md) (#1236), section 6 and C4–C10; the canonical issue drafts 1, 3, 4, 5, 7 and 8 |
+| Implementation-map follow-up | Register the three section-3 compatibility method families with in-package rows before counting them in a later A8 audit | Registry maintainer | unfiled draft 4 in [ISSUES_DRAFT.md](ISSUES_DRAFT.md) |
 
-UNVERIFIED: U2 — capability, completeness, worked-example counts and validation claims in the discovered documentation are not accepted as evidence for the compatibility boundary; reconciliation remains issue pending (1).
+UNVERIFIED: U2 — capability, completeness, worked-example counts and validation claims in the discovered documentation are not accepted as evidence for the compatibility boundary; reconciliation remains unfiled draft 1 in [ISSUES_DRAFT.md](ISSUES_DRAFT.md).
 
 ### Discovered documentation
 
