@@ -1,0 +1,163 @@
+{
+  "source": {
+    "dataset": "Synthetic arithmetic fixture; not regulator observations",
+    "url": "https://www.rrc.texas.gov/resource-center/research/data-sets-available-for-download/",
+    "snapshot_date": "2025-03-01",
+    "inventory_date": "2025-02-28"
+  },
+  "policy": {
+    "min_wells": 1,
+    "max_wells": 10,
+    "stripper_bopd": 2,
+    "min_stripper_share": 0.5,
+    "min_peers": 2,
+    "window_months": 2,
+    "vintage_years": 5,
+    "deficit_fraction": 0.5,
+    "decline_excess_fraction": 0.5,
+    "erratic_cv": 0.5,
+    "top_candidates": 5
+  },
+  "wells": [
+    {
+      "operator_no": "000001",
+      "operator_name": "Example Energy, Inc.",
+      "api_number": "4200100010",
+      "district": "01",
+      "county": "001",
+      "field_no": "00000001",
+      "oil_gas_code": "O",
+      "lease_no": "000001",
+      "status": "producing",
+      "completion_year": 2000
+    },
+    {
+      "operator_no": "000001",
+      "operator_name": "Example Energy LLC",
+      "api_number": "4200100011",
+      "district": "01",
+      "county": "001",
+      "field_no": "00000001",
+      "oil_gas_code": "O",
+      "lease_no": "000001",
+      "status": "producing",
+      "completion_year": 2000
+    },
+    {
+      "operator_no": "000002",
+      "operator_name": "Example Energy, Inc.",
+      "api_number": "4200100020",
+      "district": "01",
+      "county": "001",
+      "field_no": "00000001",
+      "oil_gas_code": "O",
+      "lease_no": "000002",
+      "status": "producing",
+      "completion_year": 2000
+    },
+    {
+      "operator_no": "000002",
+      "operator_name": "Example Energy LLC",
+      "api_number": "4200100021",
+      "district": "01",
+      "county": "001",
+      "field_no": "00000001",
+      "oil_gas_code": "O",
+      "lease_no": "000002",
+      "status": "producing",
+      "completion_year": 2000
+    },
+    {
+      "operator_no": "000003",
+      "operator_name": "Synthetic Resources",
+      "api_number": "4200100030",
+      "district": "01",
+      "county": "001",
+      "field_no": "00000001",
+      "oil_gas_code": "O",
+      "lease_no": "000003",
+      "status": "inactive",
+      "completion_year": 2000
+    },
+    {
+      "operator_no": "000003",
+      "operator_name": "Synthetic Resources",
+      "api_number": "4200100031",
+      "district": "01",
+      "county": "001",
+      "field_no": "00000001",
+      "oil_gas_code": "O",
+      "lease_no": "000003",
+      "status": "inactive",
+      "completion_year": 2000
+    }
+  ],
+  "production": [
+    {
+      "operator_no": "000001",
+      "district": "01",
+      "oil_gas_code": "O",
+      "lease_no": "000001",
+      "month": "2025-01",
+      "oil_bbl": 62,
+      "gas_mcf": 0,
+      "water_bbl": null,
+      "granularity": "lease"
+    },
+    {
+      "operator_no": "000001",
+      "district": "01",
+      "oil_gas_code": "O",
+      "lease_no": "000001",
+      "month": "2025-02",
+      "oil_bbl": 28,
+      "gas_mcf": 0,
+      "water_bbl": null,
+      "granularity": "lease"
+    },
+    {
+      "operator_no": "000002",
+      "district": "01",
+      "oil_gas_code": "O",
+      "lease_no": "000002",
+      "month": "2025-01",
+      "oil_bbl": 248,
+      "gas_mcf": 0,
+      "water_bbl": null,
+      "granularity": "lease"
+    },
+    {
+      "operator_no": "000002",
+      "district": "01",
+      "oil_gas_code": "O",
+      "lease_no": "000002",
+      "month": "2025-02",
+      "oil_bbl": 224,
+      "gas_mcf": 0,
+      "water_bbl": null,
+      "granularity": "lease"
+    },
+    {
+      "operator_no": "000003",
+      "district": "01",
+      "oil_gas_code": "O",
+      "lease_no": "000003",
+      "month": "2025-01",
+      "oil_bbl": 62,
+      "gas_mcf": 0,
+      "water_bbl": null,
+      "granularity": "lease"
+    },
+    {
+      "operator_no": "000003",
+      "district": "01",
+      "oil_gas_code": "O",
+      "lease_no": "000003",
+      "month": "2025-02",
+      "oil_bbl": 0,
+      "gas_mcf": 0,
+      "water_bbl": null,
+      "granularity": "lease"
+    }
+  ]
+}

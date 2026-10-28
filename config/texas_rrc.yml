@@ -334,3 +334,19 @@ integration:
       - excel
       - shapefile
       - geojson
+
+# Operator screen policy: required caller decisions, not regulator acceptance limits.
+# See docs/data-sources/onshore/texas-rrc/operator-screen.md, method M1–M5.
+# Copy this section to a local configuration and supply every value before use.
+operator_screen:
+  min_wells: null
+  max_wells: null
+  stripper_bopd: null
+  min_stripper_share: null
+  min_peers: null
+  window_months: null
+  vintage_years: null
+  deficit_fraction: null
+  decline_excess_fraction: null
+  erratic_cv: null
+  top_candidates: null

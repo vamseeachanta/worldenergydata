@@ -93,3 +93,10 @@ git-flow:
 git-parallel: parallel-check
 	@echo "🚀 Running Git operations in parallel..."
 	@$(MAKE) -j3 git-sync git-status git-clean
+
+# Local normalized inputs and generated outputs are supplied explicitly.
+.PHONY: onepager
+PYTHON ?= python
+onepager:
+	@test -n "$(INPUT)" -a -n "$(AS_OF)" -a -n "$(OUTPUT)" -a -n "$(OPERATOR)"
+	PYTHONPATH="src:packages/worldenergydata-texas_rrc/src:$(PYTHONPATH)" $(PYTHON) -m worldenergydata.texas_rrc.operator_screen --input "$(INPUT)" --as-of "$(AS_OF)" --output "$(OUTPUT)" --operator "$(OPERATOR)"
