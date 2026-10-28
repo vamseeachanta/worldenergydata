@@ -1026,7 +1026,9 @@ class WellProductionDashboard(DashboardBuilder):
                     else pd.DataFrame()
                 ),
                 "well_ids": list(self._loaded_well_ids),
-                "charts": [chart.__dict__.copy() for chart in self.charts],
+                "charts": {
+                    chart.chart_id: chart.__dict__.copy() for chart in self.charts
+                },
                 "filters": deepcopy(self.filters),
                 "verification_results": results,
                 "timestamp": datetime.now().isoformat(),
