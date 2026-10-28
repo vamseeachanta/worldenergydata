@@ -103,8 +103,10 @@ class BlendProductionLoader:
             pdf_url: Optional explicit PDF URL; if None, attempts construction.
 
         Returns:
-            List of BlendRecord. Empty list if PDF unavailable or parse fails.
+            List of BlendRecord. Empty list if the PDF cannot be downloaded.
+            Parsing and report/request period disagreement raise NuprcAPIError.
         """
+        self._validate_period(year, month)
         url = pdf_url or self._build_pdf_url(year, month)
         try:
             pdf_bytes = self._client.download_pdf(url)
@@ -120,17 +122,21 @@ class BlendProductionLoader:
         raw_rows = parse_blend_table_from_pdf(pdf_bytes)
         records = []
         for row in raw_rows:
+            if (row.get("year"), row.get("month")) != (year, month):
+                raise NuprcAPIError(
+                    "Report period is absent or differs from requested period"
+                )
             try:
                 records.append(
                     BlendRecord(
                         blend=row["blend"],
                         volume_kbd=float(row["volume_kbd"]),
-                        month=row.get("month") or month,
-                        year=row.get("year") or year,
+                        month=row["month"],
+                        year=row["year"],
                     )
                 )
-            except (ValueError, KeyError) as exc:
-                logger.debug("Skipping malformed row %s: %s", row, exc)
+            except (ValueError, KeyError, TypeError) as exc:
+                raise NuprcAPIError("Malformed blend record") from exc
 
         return records
 
@@ -153,6 +159,7 @@ class BlendProductionLoader:
         NUPRC URLs do not follow a strict pattern; this returns a
         best-guess URL that may not exist. Callers must handle failures.
         """
+        self._validate_period(year, month)
         month_names = [
             "",
             "january",
@@ -174,3 +181,12 @@ class BlendProductionLoader:
             f"{year}/{month:02d}/"
             f"monthly-oil-production-status-{month_name}-{year}.pdf"
         )
+
+    @staticmethod
+    def _validate_period(year: int, month: int) -> None:
+        # Same record-domain bounds as BlendRecord; reject Python's negative
+        # list indices and booleans before either URL construction or download.
+        if type(month) is not int or not MIN_MONTH <= month <= MAX_MONTH:
+            raise ValueError("month must be an integer from 1 to 12")
+        if type(year) is not int or year < MIN_VALID_YEAR:
+            raise ValueError("year is outside the supported record domain")
