@@ -18,6 +18,15 @@ is resolved package-relative by the loaders and `FleetRouter`. This makes the
 domain self-contained — no repo-root or external data mount is required — and
 the data ships in the built wheel.
 
+## Liftboats and public incidents
+
+[The liftboat database](LIFTBOATS.md) adds sourced technical observations,
+an explicit crosswalk of historical seed names, and public NTSB/BSEE incident
+records. `LiftboatLoader` is available from `worldenergydata.vessel_fleet`.
+Unreported values remain blank; source URLs, terms, retrieval timestamps and
+document digests are recorded in the packaged manifest. USCG report access and
+identity gaps are documented alongside the data.
+
 ## Riser classes, bundles and buoyancy OD ratio
 
 The additive riser fields address [the riser catalog issue](https://github.com/vamseeachanta/worldenergydata/issues/1138).
