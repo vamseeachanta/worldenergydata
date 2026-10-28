@@ -10,6 +10,10 @@ per-source refresh jobs import the source-domain members
 member depends on each of them — but no carved domain imports the scheduler
 back, so there is no dependency cycle.
 
+Scheduled jobs share output-directory resolution and retain timestamped copies
+after successful refreshes. See the [output directory guide](../../docs/guides/scheduler-output-directories.md)
+for configuration precedence, retention limits and a runnable synthetic example.
+
 Importable transparently as `worldenergydata.scheduler` once the workspace is
 installed (`uv sync --all-extras`).
 
