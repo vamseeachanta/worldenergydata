@@ -10,10 +10,7 @@ This module tests all data processors for different SODIR data types:
 - Coordinate transformation utilities
 """
 
-import os
-
 # Import processors to be tested
-import sys
 import unittest
 from datetime import datetime, timedelta
 from typing import Any, Dict, List
@@ -21,8 +18,6 @@ from unittest.mock import MagicMock, Mock, patch
 
 import numpy as np
 import pandas as pd
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "sodir_module"))
 
 
 class TestBlockProcessor(unittest.TestCase):

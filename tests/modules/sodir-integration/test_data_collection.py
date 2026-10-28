@@ -13,16 +13,14 @@ import json
 import os
 
 # Import modules to be tested
-import sys
 import unittest
 from datetime import datetime, timedelta
 from pathlib import Path
+from tempfile import TemporaryDirectory
 from typing import Any, Dict, List
 from unittest.mock import MagicMock, Mock, call, patch
 
 import pytest
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "sodir_module"))
 
 
 class TestSodirDataRouter(unittest.TestCase):
@@ -31,17 +29,21 @@ class TestSodirDataRouter(unittest.TestCase):
     def setUp(self):
         """Set up test fixtures."""
         from worldenergydata.sodir.data import SodirData
+        from worldenergydata.sodir.endpoints import API_DEFAULTS
+
+        self.temp_directory = TemporaryDirectory(dir=os.environ["TMPDIR"])
+        self.addCleanup(self.temp_directory.cleanup)
 
         # Mock configuration
         self.config = {
             "api": {
-                "base_url": "https://factmaps.sodir.no/api/rest",
+                "base_url": API_DEFAULTS["base_url"],
                 "timeout": 30,
                 "rate_limit": 10,
             },
             "cache": {"ttl_hours": 24, "max_size": 1000},
             "storage": {
-                "base_path": "tests/modules/sodir-integration/data",
+                "base_path": self.temp_directory.name,
                 "format": "json",
                 "compression": False,
             },
@@ -56,19 +58,19 @@ class TestSodirDataRouter(unittest.TestCase):
 
         # Mock data samples
         self.sample_block = {
-            "blcName": "35/11",
+            "blcName": "90/1",
             "blcStatus": "AWARDED",
-            "blcOperatorName": "EQUINOR ENERGY AS",
+            "blcOperatorName": "OPERATOR_A",
         }
 
         self.sample_wellbore = {
-            "wlbName": "35/11-1",
+            "wlbName": "90/1-1",
             "wlbStatus": "P&A",
             "wlbTotalDepth": 3500.0,
         }
 
         self.sample_field = {
-            "fldName": "JOHAN SVERDRUP",
+            "fldName": "FIELD_A",
             "fldStatus": "PRODUCING",
             "fldOriginalReservesOil": 2700.0,
         }
@@ -155,9 +157,107 @@ class TestSodirDataRouter(unittest.TestCase):
             self.assertEqual(result["metadata"]["validation"]["invalid_count"], 1)
             self.assertIn("errors", result["metadata"]["validation"])
 
+    def test_rejected_records_remain_in_validation_summary(self):
+        """All rejected raw records remain invalid when no output survives."""
+        with patch.object(self.sodir_data.api_client, "get_blocks") as mock_get:
+            mock_get.return_value = [None, {"blcName": ""}]
+            result = self.sodir_data.collect_dataset("blocks", validate=True)
+        self.assertEqual(result["status"], "success")
+        self.assertEqual(result["count"], 0)
+        self.assertEqual(result["data"], [])
+        validation = result["metadata"]["validation"]
+        self.assertEqual(validation["valid_count"], 0)
+        self.assertEqual(validation["invalid_count"], 2)
+        self.assertEqual(len(validation["errors"]), 2)
+        self.assertTrue(all(error["errors"] for error in validation["errors"]))
+        self.assertEqual(self.sodir_data.stats["validations_failed"], 2)
+
+    def test_mixed_processing_and_validation_failures_count_once(self):
+        """Strict filtering preserves counts from both rejection stages."""
+        for strict, retained in [(False, 2), (True, 1)]:
+            with self.subTest(strict=strict):
+                self.sodir_data.config["collection"]["strict_validation"] = strict
+                with patch.object(self.sodir_data.api_client, "get_blocks") as mock_get:
+                    mock_get.return_value = [
+                        self.sample_block,
+                        {"blcName": "invalid-block"},
+                        {"blcName": ""},
+                    ]
+                    result = self.sodir_data.collect_dataset("blocks", validate=True)
+                self.assertEqual(result["status"], "success")
+                self.assertEqual(result["count"], retained)
+                validation = result["metadata"]["validation"]
+                self.assertEqual(validation["valid_count"], 1)
+                self.assertEqual(validation["invalid_count"], 2)
+                self.assertEqual(len(validation["errors"]), 2)
+                self.assertTrue(all(error["errors"] for error in validation["errors"]))
+        self.assertEqual(self.sodir_data.stats["validations_failed"], 4)
+
+    def test_rejection_counts_do_not_leak_between_collections(self):
+        """A valid collection does not inherit earlier processor errors."""
+        with patch.object(self.sodir_data.api_client, "get_blocks") as mock_get:
+            mock_get.side_effect = [[{"blcName": ""}], [self.sample_block]]
+            rejected = self.sodir_data.collect_dataset("blocks", validate=True)
+            valid = self.sodir_data.collect_dataset("blocks", validate=True)
+        self.assertEqual(rejected["metadata"]["validation"]["invalid_count"], 1)
+        self.assertEqual(valid["metadata"]["validation"]["valid_count"], 1)
+        self.assertEqual(valid["metadata"]["validation"]["invalid_count"], 0)
+        self.assertEqual(valid["metadata"]["validation"]["errors"], [])
+        self.assertEqual(self.sodir_data.processors["blocks"].error_count, 1)
+        self.assertEqual(self.sodir_data.stats["validations_failed"], 1)
+
+    def test_rejections_remain_unvalidated_when_validation_is_disabled(self):
+        """Processing rejection does not imply that validation was requested."""
+        with patch.object(self.sodir_data.api_client, "get_blocks") as mock_get:
+            mock_get.return_value = [{"blcName": ""}]
+            result = self.sodir_data.collect_dataset("blocks", validate=False)
+        self.assertEqual(result["status"], "success")
+        self.assertEqual(result["count"], 0)
+        self.assertFalse(result["metadata"]["validated"])
+        self.assertNotIn("validation", result["metadata"])
+        self.assertEqual(self.sodir_data.stats["validations_failed"], 0)
+
+    def test_invalid_processor_output_cannot_create_validation_summary(self):
+        """Malformed results and excess outputs fail collection explicitly."""
+        outputs = [None, {}, "invalid", [None], [self.sample_block] * 2]
+        for output in outputs:
+            with self.subTest(output_type=type(output).__name__):
+                with (
+                    patch.object(self.sodir_data.api_client, "get_blocks") as mock_get,
+                    patch.object(self.sodir_data, "_process_data", return_value=output),
+                ):
+                    mock_get.return_value = [self.sample_block]
+                    result = self.sodir_data.collect_dataset("blocks", validate=True)
+                self.assertEqual(result["status"], "failed")
+                self.assertTrue(result["error"])
+                self.assertNotIn("validation", result["metadata"])
+                self.assertNotIn("count", result)
+        self.assertEqual(self.sodir_data.stats["errors"], len(outputs))
+        self.assertEqual(self.sodir_data.stats["validations_failed"], 0)
+
+    def test_processor_cannot_expand_input_before_count_check(self):
+        """Output limits use the received count even if processing mutates its list."""
+
+        def expand_input(dataset_type, records):
+            records.append(self.sample_block.copy())
+            return records
+
+        with (
+            patch.object(self.sodir_data.api_client, "get_blocks") as fetch,
+            patch.object(self.sodir_data, "_process_data", side_effect=expand_input),
+        ):
+            fetch.return_value = [self.sample_block]
+            result = self.sodir_data.collect_dataset("blocks", validate=True)
+        self.assertEqual(result["status"], "failed")
+        self.assertNotIn("validation", result["metadata"])
+        self.assertEqual(self.sodir_data.stats["errors"], 1)
+
     def test_storage_integration(self):
         """Test data storage functionality."""
         with patch.object(self.sodir_data.storage, "save") as mock_save:
+            mock_save.return_value = (
+                Path(self.temp_directory.name) / "raw" / "records.json"
+            )
             with patch.object(self.sodir_data.api_client, "get_wellbores") as mock_get:
                 mock_get.return_value = [self.sample_wellbore]
 
@@ -167,6 +267,9 @@ class TestSodirDataRouter(unittest.TestCase):
                 call_args = mock_save.call_args[0]
                 self.assertEqual(call_args[0], "wellbores")
                 self.assertIsInstance(call_args[1], dict)
+                self.assertEqual(
+                    result["storage"]["path"], mock_save.return_value.as_posix()
+                )
 
     def test_incremental_collection(self):
         """Test incremental data collection with date filtering."""
@@ -219,13 +322,20 @@ class TestDataCollectionWorkflow(unittest.TestCase):
         """Set up test fixtures."""
         from worldenergydata.sodir.workflows.collection import CollectionWorkflow
 
+        self.temp_directory = TemporaryDirectory(dir=os.environ["TMPDIR"])
+        self.addCleanup(self.temp_directory.cleanup)
+
         self.workflow_config = {
             "name": "daily_collection",
             "datasets": ["blocks", "wellbores", "fields"],
             "schedule": "daily",
             "filters": {"status": "ACTIVE", "updated_since": "yesterday"},
             "validation": {"enabled": True, "strict": False},
-            "storage": {"format": "json", "compression": True},
+            "storage": {
+                "base_path": self.temp_directory.name,
+                "format": "json",
+                "compression": True,
+            },
         }
 
         self.workflow = CollectionWorkflow(self.workflow_config)
@@ -246,7 +356,7 @@ class TestDataCollectionWorkflow(unittest.TestCase):
 
             mock_collect.return_value = {"data": [], "count": 10}
             mock_validate.return_value = {"valid": True, "errors": []}
-            mock_store.return_value = {"success": True, "path": "/data/output.json"}
+            mock_store.return_value = {"success": True, "path": "outputs/records.json"}
 
             result = self.workflow.execute()
 
@@ -305,8 +415,11 @@ class TestDataStorage(unittest.TestCase):
         """Set up test fixtures."""
         from worldenergydata.sodir.storage import DataStorage
 
+        self.temp_directory = TemporaryDirectory(dir=os.environ["TMPDIR"])
+        self.addCleanup(self.temp_directory.cleanup)
+
         self.storage_config = {
-            "base_path": "tests/modules/sodir-integration/data",
+            "base_path": self.temp_directory.name,
             "format": "json",
             "compression": False,
             "structure": "hierarchical",
@@ -319,8 +432,8 @@ class TestDataStorage(unittest.TestCase):
             "timestamp": datetime.now().isoformat(),
             "count": 10,
             "data": [
-                {"block_name": "35/11", "status": "AWARDED"},
-                {"block_name": "35/12", "status": "OPEN"},
+                {"block_name": "90/1", "status": "AWARDED"},
+                {"block_name": "90/2", "status": "OPEN"},
             ],
         }
 
@@ -416,17 +529,17 @@ class TestDatasetGeneration(unittest.TestCase):
         self.generator = DatasetGenerator()
 
         self.sample_blocks = [
-            {"block_name": "35/11", "status": "AWARDED", "operator": "EQUINOR"},
-            {"block_name": "35/12", "status": "OPEN", "operator": None},
+            {"block_name": "90/1", "status": "AWARDED", "operator": "OPERATOR_A"},
+            {"block_name": "90/2", "status": "OPEN", "operator": None},
         ]
 
         self.sample_fields = [
             {
-                "field_name": "JOHAN SVERDRUP",
+                "field_name": "FIELD_A",
                 "status": "PRODUCING",
                 "oil_reserves": 2700,
             },
-            {"field_name": "MARTIN LINGE", "status": "PRODUCING", "oil_reserves": 200},
+            {"field_name": "FIELD_B", "status": "PRODUCING", "oil_reserves": 200},
         ]
 
     def test_create_analysis_dataset(self):
@@ -444,8 +557,8 @@ class TestDatasetGeneration(unittest.TestCase):
         """Test cross-referencing between datasets."""
         # Add wellbores that reference blocks
         wellbores = [
-            {"wellbore_name": "35/11-1", "block": "35/11"},
-            {"wellbore_name": "35/12-1", "block": "35/12"},
+            {"wellbore_name": "90/1-1", "block": "90/1"},
+            {"wellbore_name": "90/2-1", "block": "90/2"},
         ]
 
         dataset = self.generator.create_cross_referenced_dataset(
@@ -454,7 +567,7 @@ class TestDatasetGeneration(unittest.TestCase):
 
         # Check cross-references were created
         self.assertIn("block_wellbores", dataset)
-        self.assertEqual(len(dataset["block_wellbores"]["35/11"]), 1)
+        self.assertEqual(len(dataset["block_wellbores"]["90/1"]), 1)
 
     def test_summary_statistics(self):
         """Test generation of summary statistics."""
@@ -477,7 +590,7 @@ class TestDatasetGeneration(unittest.TestCase):
         # Test CSV export
         csv_output = self.generator.export_csv(dataset["blocks"])
         self.assertIn("block_name", csv_output)
-        self.assertIn("35/11", csv_output)
+        self.assertIn("90/1", csv_output)
 
     def test_filtering_and_sorting(self):
         """Test dataset filtering and sorting capabilities."""
@@ -487,14 +600,14 @@ class TestDatasetGeneration(unittest.TestCase):
         )
 
         self.assertEqual(len(filtered), 1)
-        self.assertEqual(filtered[0]["block_name"], "35/11")
+        self.assertEqual(filtered[0]["block_name"], "90/1")
 
         # Sort by field reserves
         sorted_fields = self.generator.sort_dataset(
             self.sample_fields, by="oil_reserves", descending=True
         )
 
-        self.assertEqual(sorted_fields[0]["field_name"], "JOHAN SVERDRUP")
+        self.assertEqual(sorted_fields[0]["field_name"], "FIELD_A")
 
 
 @pytest.mark.skip(
@@ -508,17 +621,20 @@ class TestDataValidationIntegration(unittest.TestCase):
         from worldenergydata.sodir.data import SodirData
         from worldenergydata.sodir.validators import DataValidator
 
+        self.temp_directory = TemporaryDirectory(dir=os.environ["TMPDIR"])
+        self.addCleanup(self.temp_directory.cleanup)
+
         self.validator = DataValidator()
         config = {
             "collection": {"validate": True},
-            "storage": {"base_path": "test_data"},
+            "storage": {"base_path": self.temp_directory.name},
         }
         self.sodir_data = SodirData(config)
 
     def test_validate_collected_data(self):
         """Test validation of collected data."""
         test_field = {
-            "fldName": "TEST FIELD",
+            "fldName": "FIELD_C",
             "fldDiscoveryYear": 2020,
             "fldProductionStartYear": 2019,  # Invalid: production before discovery
         }
@@ -532,7 +648,7 @@ class TestDataValidationIntegration(unittest.TestCase):
     def test_validation_report_generation(self):
         """Test generation of validation reports."""
         test_data = [
-            {"fldName": "VALID FIELD", "fldDiscoveryYear": 2010},
+            {"fldName": "FIELD_D", "fldDiscoveryYear": 2010},
             {"fldName": "", "fldDiscoveryYear": 2020},  # Invalid: missing name
         ]
 
