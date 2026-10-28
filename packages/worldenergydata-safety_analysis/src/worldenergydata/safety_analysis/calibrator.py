@@ -336,8 +336,8 @@ class EnigmaCalibrator:
                 "injury_type": injury_type_col,
                 "severity": chosen_severities,
                 "incident_date": incident_dates,
+                # Issue #1240 (2026): synthetic rows use neutral operator codenames.
                 "operator": rng.choice(
-                    # Issue #1240 (2026): synthetic rows use neutral codenames.
                     [
                         "OPERATOR-A",
                         "OPERATOR-B",
