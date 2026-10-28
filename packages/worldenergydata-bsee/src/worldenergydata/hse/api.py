@@ -1,39 +1,30 @@
 # ABOUTME: HSE query API on the shared TypedQuery base (wed#363 / workspace-hub#3286).
 # ABOUTME: incidents/penalties/statistics/epa_tri query surfaces with an offline synthetic fallback.
 
-"""HSE (Health, Safety, Environment) query API.
+"""Validated HSE query surfaces with pandas results and async database access.
 
-Parity with ``marine_safety.api`` built on the shared
-:class:`~worldenergydata.common.query_api.TypedQuery` base (workspace-hub#3286).
-Closes the *query-surface* portion of wed#363: ``incidents`` (HSEIncident),
-``penalties`` (ViolationIncident), ``statistics`` (SafetyStatistic) and
-``epa_tri`` (ToxicRelease).
-
-Each surface queries a SQLAlchemy session. When no session is injected and no
-populated DB is available, it falls back to an in-memory SQLite database seeded
-with a small synthetic sample -- mirroring marine_safety's synthetic default so
-the query surface is testable offline (no live DB, no ``/mnt/ace``). The live
-DB / async-pooling / CLI / notebook ACs of wed#363 remain gated on wed#359 +
-HSE DB population and stay open under #363.
-
-Usage::
-
-    import worldenergydata as wed
-
-    df = wed.hse_api.incidents.query(operator="Shell", year=2022, severity="fatality")
-    df = wed.hse_api.penalties.query(min_amount=10000)
-    df = wed.hse_api.statistics.query(year=2022, grouping="operator")
-    df = wed.hse_api.epa_tri.query(naics="324110")
+``HSEApi(HSEQueryConfig(database_url=...))`` reads an existing database.
+Module singletons retain the offline demonstration for compatibility and label
+all frames ``data_kind=synthetic``. No configured query falls back to samples.
+See ``docs/modules/hse/query-api.html`` for schema-dependent limitations.
 """
 
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import ClassVar
 
 import pandas as pd
+from sqlalchemy import extract, func, select
 
 from worldenergydata.common.query_api import FilterSpec, TypedQuery
+from worldenergydata.hse.database.models import (
+    HSEIncident,
+    SafetyStatistic,
+    ToxicRelease,
+    ViolationIncident,
+)
+from worldenergydata.hse.query_config import HSEBackend, HSEQueryConfig, QueryFilters
 
 
 # ---------------------------------------------------------------------------
@@ -181,67 +172,131 @@ def build_synthetic_session():
 
 
 class _HSEQuery(TypedQuery):
-    """Common machinery: a session (injected or synthetic) + pandas filtering."""
+    """SQL selections shared by synchronous and asynchronous query methods."""
 
-    #: ORM column names emitted into the result DataFrame.
-    columns: List[str] = []
-    #: Map normalized-filter key -> DataFrame column to filter on (list filters).
-    _list_filter_columns: Dict[str, str] = {}
-    #: DataFrame column holding the year-bearing date (or int) for year filters.
-    _year_column: Optional[str] = None
-    _year_is_int: bool = False
+    columns: ClassVar[list[str]] = []
+    _list_filter_columns: ClassVar[dict] = {}
+    _year_column = None
+    _year_is_int = False
+    extra_filters: ClassVar[set[str]] = set()
 
-    def __init__(self, session: Any = None) -> None:
+    def __init__(self, session=None, *, backend=None):
+        if session is not None and backend is not None:
+            raise ValueError("Supply a session or a backend, not both")
         self._session = session
+        self._backend = backend
+        self._synthetic = session is None and backend is None
 
-    def _get_session(self):
+    def _normalize(self, **kwargs):
+        allowed = {"year", "start_year", "end_year", "limit", "offset"}
+        for spec in self.filters:
+            if spec.kind == "list":
+                allowed.update({spec.name, spec.singular} - {None})
+                for key in (spec.name,):
+                    value = kwargs.get(key)
+                    if value is not None and not isinstance(value, list):
+                        raise TypeError(f"{key} must be a list")
+        unknown = kwargs.keys() - allowed - self.extra_filters
+        if unknown:
+            raise ValueError(f"Unknown filters: {', '.join(sorted(unknown))}")
+        normalized = super()._normalize(**kwargs)
+        normalized.update(normalized.pop("_passthrough"))
+        result = QueryFilters.model_validate(normalized).model_dump()
+        if result["metric"] is not None and result["metric"] not in COUNT_COLUMNS:
+            raise ValueError("Unknown safety statistic metric")
+        if result["chemical_carcinogen"] is not None:
+            raise NotImplementedError(
+                "NOT_EVALUATED: ToxicRelease has no carcinogen classification"
+            )
+        if isinstance(self, OshaQuery) and result["naics_codes"] is not None:
+            raise NotImplementedError(
+                "NOT_EVALUATED: OSHA NAICS is not a structured incident column"
+            )
+        return result
+
+    def _statement(self, normalized):
+        statement = self._select(normalized)
+        for key, column in self._list_filter_columns.items():
+            if normalized[key]:
+                statement = statement.where(column.in_(normalized[key]))
+        year = type(self)._year_column
+        if year is not None:
+            year = year if self._year_is_int else extract("year", year)
+            if normalized["start_year"] is not None:
+                statement = statement.where(year >= normalized["start_year"])
+            if normalized["end_year"] is not None:
+                statement = statement.where(year <= normalized["end_year"])
+        if isinstance(self, IncidentsQuery):
+            sources = normalized["sources"]
+            if isinstance(self, OshaQuery):
+                sources = ["osha"]
+            if sources and len(set(sources)) == 1:
+                is_osha = HSEIncident.bsee_incident_id.startswith(
+                    "OSHA-", autoescape=True
+                )
+                statement = statement.where(
+                    is_osha if sources[0] == "osha" else ~is_osha
+                )
+        if isinstance(self, PenaltiesQuery) and normalized["min_amount"] is not None:
+            statement = statement.where(
+                ViolationIncident.penalty_amount >= normalized["min_amount"]
+            )
+        return statement.limit(normalized["limit"]).offset(normalized["offset"])
+
+    def _select(self, normalized):
+        return select(*(getattr(self.model, name) for name in self.columns)).order_by(
+            self.model.id
+        )
+
+    def _frame(self, result, statement):
+        frame = pd.DataFrame(
+            result.mappings().all(), columns=statement.selected_columns.keys()
+        )
+        frame.attrs["data_kind"] = "synthetic" if self._synthetic else "database"
+        frame.attrs["workflow_id"] = self.query_id
+        return frame
+
+    def _execute(self, normalized):
+        statement = self._statement(normalized)
+        if self._backend is not None:
+            with self._backend.session() as session:
+                return self._frame(session.execute(statement), statement)
         if self._session is None:
             self._session = build_synthetic_session()
-        return self._session
+        return self._frame(self._session.execute(statement), statement)
 
-    def _base_frame(self) -> pd.DataFrame:
-        """Load this surface's rows into a DataFrame. Subclasses override."""
-        raise NotImplementedError
+    async def aquery(self, **kwargs) -> pd.DataFrame:
+        """Run the same SQL using a pooled async engine and a fresh session."""
+        normalized = self._normalize(**kwargs)
+        if self._backend is None:
+            raise ValueError("Async queries require an explicitly configured HSEApi")
+        statement = self._statement(normalized)
+        async with self._backend.async_session() as session:
+            return self._frame(await session.execute(statement), statement)
 
-    def _apply_common_filters(
-        self, df: pd.DataFrame, normalized: Dict[str, Any]
-    ) -> pd.DataFrame:
-        for key, col in self._list_filter_columns.items():
-            values = normalized.get(key)
-            if values and col in df.columns:
-                df = df[df[col].isin(values)]
-        if self._year_column and self._year_column in df.columns:
-            sy = normalized.get("start_year")
-            ey = normalized.get("end_year")
-            if sy is not None or ey is not None:
-                if self._year_is_int:
-                    years = pd.to_numeric(df[self._year_column], errors="coerce")
-                else:
-                    years = pd.to_datetime(df[self._year_column], errors="coerce").dt.year
-                if sy is not None:
-                    df = df[years >= sy]
-                if ey is not None:
-                    df = df[years <= ey]
-        return df.reset_index(drop=True)
-
-    @staticmethod
-    def _rows_to_df(rows, columns: List[str]) -> pd.DataFrame:
-        records = [{c: getattr(r, c, None) for c in columns} for r in rows]
-        return pd.DataFrame(records, columns=columns)
+    def close(self):
+        """Release a demonstration session; injected sessions remain caller-owned."""
+        if self._synthetic and self._session is not None:
+            engine = self._session.get_bind()
+            self._session.close()
+            engine.dispose()
+            self._session = None
 
 
 class IncidentsQuery(_HSEQuery):
-    """Query HSE incidents (``HSEIncident``)."""
+    """Query incidents; source is inferred from the existing OSHA identifier prefix."""
 
     query_id = "hse.incidents"
-    filters = [
+    model = HSEIncident
+    filters: ClassVar[list[FilterSpec]] = [
         FilterSpec("operators", "operator", "list"),
         FilterSpec("incident_types", "incident_type", "list"),
         FilterSpec("severities", "severity", "list"),
         FilterSpec("fields", "field", "list"),
+        FilterSpec("sources", "source", "list"),
         FilterSpec("years", None, "year"),
     ]
-    columns = [
+    columns: ClassVar[list[str]] = [
         "bsee_incident_id",
         "incident_date",
         "operator",
@@ -253,37 +308,26 @@ class IncidentsQuery(_HSEQuery):
         "description",
     ]
     result_columns = columns
-    _list_filter_columns = {
-        "operators": "operator",
-        "incident_types": "incident_type",
-        "severities": "severity",
-        "fields": "field_name",
+    _list_filter_columns: ClassVar[dict] = {
+        "operators": HSEIncident.operator,
+        "incident_types": HSEIncident.incident_type,
+        "severities": HSEIncident.severity,
+        "fields": HSEIncident.field_name,
     }
-    _year_column = "incident_date"
-
-    def _base_frame(self) -> pd.DataFrame:
-        from worldenergydata.hse.database.models import HSEIncident
-
-        rows = self._get_session().query(HSEIncident).all()
-        return self._rows_to_df(rows, self.columns)
-
-    def _execute(self, normalized: Dict[str, Any]) -> pd.DataFrame:
-        return self._apply_common_filters(self._base_frame(), normalized)
+    _year_column = HSEIncident.incident_date
 
 
 class PenaltiesQuery(_HSEQuery):
-    """Query civil penalties (``ViolationIncident`` joined to ``HSEIncident``).
-
-    Supports a ``min_amount`` passthrough filtering ``penalty_amount >= min``.
-    """
+    """Select penalties joined to parent incidents; year means incident year."""
 
     query_id = "hse.penalties"
-    filters = [
+    filters: ClassVar[list[FilterSpec]] = [
         FilterSpec("operators", "operator", "list"),
         FilterSpec("penalty_statuses", "penalty_status", "list"),
         FilterSpec("years", None, "year"),
     ]
-    columns = [
+    extra_filters: ClassVar[set[str]] = {"min_amount"}
+    columns: ClassVar[list[str]] = [
         "inc_number",
         "operator",
         "incident_date",
@@ -293,99 +337,92 @@ class PenaltiesQuery(_HSEQuery):
         "penalty_status",
     ]
     result_columns = columns
-    _list_filter_columns = {
-        "operators": "operator",
-        "penalty_statuses": "penalty_status",
+    _list_filter_columns: ClassVar[dict] = {
+        "operators": HSEIncident.operator,
+        "penalty_statuses": ViolationIncident.penalty_status,
     }
-    _year_column = "incident_date"
+    _year_column = HSEIncident.incident_date
 
-    def _base_frame(self) -> pd.DataFrame:
-        from worldenergydata.hse.database.models import ViolationIncident
-
-        rows = self._get_session().query(ViolationIncident).all()
-        records = []
-        for r in rows:
-            parent = r.hse_incident
-            records.append(
-                {
-                    "inc_number": r.inc_number,
-                    "operator": getattr(parent, "operator", None),
-                    "incident_date": getattr(parent, "incident_date", None),
-                    "violation_type": r.violation_type,
-                    "regulation_cited": r.regulation_cited,
-                    "penalty_amount": r.penalty_amount,
-                    "penalty_status": r.penalty_status,
-                }
+    def _select(self, normalized):
+        return (
+            select(
+                ViolationIncident.inc_number,
+                HSEIncident.operator,
+                HSEIncident.incident_date,
+                ViolationIncident.violation_type,
+                ViolationIncident.regulation_cited,
+                ViolationIncident.penalty_amount,
+                ViolationIncident.penalty_status,
             )
-        return pd.DataFrame(records, columns=self.columns)
+            .join(HSEIncident, ViolationIncident.hse_incident_id == HSEIncident.id)
+            .order_by(ViolationIncident.id)
+        )
 
-    def _execute(self, normalized: Dict[str, Any]) -> pd.DataFrame:
-        df = self._apply_common_filters(self._base_frame(), normalized)
-        min_amount = normalized.get("_passthrough", {}).get("min_amount")
-        if min_amount is not None and "penalty_amount" in df.columns:
-            df = df[df["penalty_amount"].fillna(-1) >= min_amount].reset_index(drop=True)
-        return df
+
+COUNT_COLUMNS = [
+    "total_incidents",
+    "fatality_count",
+    "lost_time_count",
+    "recordable_count",
+    "near_miss_count",
+    "minor_count",
+]
 
 
 class StatisticsQuery(_HSEQuery):
-    """Query aggregated safety statistics (``SafetyStatistic``).
-
-    A ``grouping`` passthrough (e.g. ``"operator"`` / ``"field_name"``) groups
-    the count columns; a ``metric`` passthrough selects a single count column.
-    """
+    """Sum stored counts by a validated grouping; NULL-only sums remain NULL."""
 
     query_id = "hse.statistics"
-    filters = [
+    model = SafetyStatistic
+    filters: ClassVar[list[FilterSpec]] = [
         FilterSpec("operators", "operator", "list"),
         FilterSpec("fields", "field", "list"),
         FilterSpec("years", None, "year"),
     ]
-    _count_columns = [
-        "total_incidents",
-        "fatality_count",
-        "lost_time_count",
-        "recordable_count",
-        "near_miss_count",
-        "minor_count",
-    ]
-    columns = ["report_date", "operator", "field_name"] + _count_columns
+    extra_filters: ClassVar[set[str]] = {"metric", "grouping"}
+    columns: ClassVar[list[str]] = [
+        "report_date",
+        "operator",
+        "field_name",
+    ] + COUNT_COLUMNS
     result_columns = columns
-    _list_filter_columns = {"operators": "operator", "fields": "field_name"}
-    _year_column = "report_date"
+    _list_filter_columns: ClassVar[dict] = {
+        "operators": SafetyStatistic.operator,
+        "fields": SafetyStatistic.field_name,
+    }
+    _year_column = SafetyStatistic.report_date
 
-    def _base_frame(self) -> pd.DataFrame:
-        from worldenergydata.hse.database.models import SafetyStatistic
-
-        rows = self._get_session().query(SafetyStatistic).all()
-        return self._rows_to_df(rows, self.columns)
-
-    def _execute(self, normalized: Dict[str, Any]) -> pd.DataFrame:
-        df = self._apply_common_filters(self._base_frame(), normalized)
-        passthrough = normalized.get("_passthrough", {})
-        grouping = passthrough.get("grouping")
-        metric = passthrough.get("metric")
-        value_cols = [metric] if metric in self._count_columns else self._count_columns
-        if grouping and grouping in df.columns:
-            df = (
-                df.groupby(grouping, as_index=False)[value_cols].sum().reset_index(drop=True)
+    def _select(self, normalized):
+        metric, grouping = normalized["metric"], normalized["grouping"]
+        names = [metric] if metric else COUNT_COLUMNS
+        # SQL SUM over supplied counts; no incidence rate or exposure is inferred.
+        if grouping:
+            group_column = getattr(self.model, grouping)
+            sums = [func.sum(getattr(self.model, name)).label(name) for name in names]
+            return (
+                select(group_column, *sums)
+                .group_by(group_column)
+                .order_by(group_column)
             )
-        elif metric in self._count_columns:
-            keep = [c for c in ("report_date", "operator", "field_name") if c in df.columns]
-            df = df[keep + [metric]].reset_index(drop=True)
-        return df
+        names = ["report_date", "operator", "field_name"] + names
+        return select(*(getattr(self.model, name) for name in names)).order_by(
+            self.model.id
+        )
 
 
 class EpaTriQuery(_HSEQuery):
-    """Query EPA TRI toxic-release records (``ToxicRelease``)."""
+    """Query stored toxic releases; carcinogen evidence is absent in this schema."""
 
     query_id = "hse.epa_tri"
-    filters = [
+    model = ToxicRelease
+    filters: ClassVar[list[FilterSpec]] = [
         FilterSpec("naics_codes", "naics", "list"),
         FilterSpec("chemicals", "chemical", "list"),
         FilterSpec("states", "state", "list"),
         FilterSpec("years", None, "year"),
     ]
-    columns = [
+    extra_filters: ClassVar[set[str]] = {"chemical_carcinogen"}
+    columns: ClassVar[list[str]] = [
         "tri_facility_id",
         "facility_name",
         "city",
@@ -397,28 +434,59 @@ class EpaTriQuery(_HSEQuery):
         "reporting_year",
     ]
     result_columns = columns
-    _list_filter_columns = {
-        "naics_codes": "naics_code",
-        "chemicals": "chemical_name",
-        "states": "state",
+    _list_filter_columns: ClassVar[dict] = {
+        "naics_codes": ToxicRelease.naics_code,
+        "chemicals": ToxicRelease.chemical_name,
+        "states": ToxicRelease.state,
     }
-    _year_column = "reporting_year"
+    _year_column = ToxicRelease.reporting_year
     _year_is_int = True
 
-    def _base_frame(self) -> pd.DataFrame:
-        from worldenergydata.hse.database.models import ToxicRelease
 
-        rows = self._get_session().query(ToxicRelease).all()
-        return self._rows_to_df(rows, self.columns)
+class OshaQuery(IncidentsQuery):
+    """Query OSHA-prefixed records; industry and dedup completeness stay unverified."""
 
-    def _execute(self, normalized: Dict[str, Any]) -> pd.DataFrame:
-        # `chemical_carcinogen` (passthrough) is accepted but a best-effort no-op
-        # offline: the synthetic sample carries no carcinogen flag column.
-        return self._apply_common_filters(self._base_frame(), normalized)
+    query_id = "hse.osha"
+    filters: ClassVar[list[FilterSpec]] = [
+        spec for spec in IncidentsQuery.filters if spec.name != "sources"
+    ] + [
+        FilterSpec("naics_codes", "naics", "list"),
+    ]
 
 
-# Module-level singletons for convenience attribute access (wed.hse_api.<name>).
+class HSEApi:
+    """Own one configured connection pool shared by all five query surfaces."""
+
+    def __init__(self, config: HSEQueryConfig):
+        self._backend = HSEBackend(config)
+        self.incidents = IncidentsQuery(backend=self._backend)
+        self.penalties = PenaltiesQuery(backend=self._backend)
+        self.statistics = StatisticsQuery(backend=self._backend)
+        self.epa_tri = EpaTriQuery(backend=self._backend)
+        self.osha = OshaQuery(backend=self._backend)
+
+    def close(self):
+        self._backend.close()
+
+    async def aclose(self):
+        await self._backend.aclose()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        self.close()
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, *exc):
+        await self.aclose()
+
+
+# Compatibility demonstration surfaces; configured use goes through HSEApi.
 incidents = IncidentsQuery()
 penalties = PenaltiesQuery()
 statistics = StatisticsQuery()
 epa_tri = EpaTriQuery()
+osha = OshaQuery()
