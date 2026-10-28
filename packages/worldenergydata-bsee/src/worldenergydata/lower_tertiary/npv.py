@@ -5,12 +5,14 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping
+from datetime import date
+from math import isfinite
 from pathlib import Path
 from typing import Dict, Optional
 
 import pandas as pd
 import yaml
-
 from worldenergydata.lower_tertiary.partner_reference import validate_partners_by_field
 
 
@@ -52,11 +54,19 @@ def load_lease_mapping(path: Path | str) -> Dict[str, Dict[str, object]]:
 
 
 def _resolve_first_oil(value: object) -> pd.Timestamp:
-    if isinstance(value, pd.Timestamp):
-        return value
+    """Require an explicit calendar date; never infer an epoch from a number."""
+    message = "first_oil must be an explicit, valid calendar date"
     if value is None:
-        return pd.Timestamp("1970-01-01")
-    return pd.to_datetime(value)
+        raise ValueError(message)
+    if not isinstance(value, (str, date, pd.Timestamp)):
+        raise TypeError(message)
+    try:
+        resolved = pd.Timestamp(value)
+    except (TypeError, ValueError, OverflowError) as exc:
+        raise ValueError(message) from exc
+    if pd.isna(resolved):
+        raise ValueError(message)
+    return resolved
 
 
 def load_field_inputs(
@@ -97,9 +107,12 @@ def load_field_inputs(
         leases = [_normalize_lease(item) for item in leases]
 
         capex = field_payload.get("capex") or {}
-        first_oil = _resolve_first_oil(
-            field_payload.get("first_oil")
-            or field_payload.get("key_dates", {}).get("first_oil")
+        first_oil_value = field_payload.get("first_oil") or field_payload.get(
+            "key_dates", {}
+        ).get("first_oil")
+        # Inventory loading may retain unknown dates; financial evaluation may not.
+        first_oil = (
+            _resolve_first_oil(first_oil_value) if first_oil_value is not None else None
         )
         data_through_value = field_payload.get("data_through") or field_payload.get(
             "key_dates", {}
@@ -167,12 +180,31 @@ def summarize_field_financials(
     field_profile: Dict[str, object],
     econ_config: Dict[str, object],
 ) -> Dict[str, float | str | int]:
-    """Summarize key production and financial metrics for a field."""
+    """Summarize financial metrics with explicit first oil and positive CAPEX.
+
+    Missing/invalid first oil or nonpositive/nonfinite total CAPEX raises ValueError.
+    Unsupported first-oil types raise TypeError. PI retains the existing project-NPV/CAPEX convention.
+    """
 
     if monthly.empty:
         raise ValueError("Monthly dataframe must contain at least one record")
 
     first_oil = _resolve_first_oil(field_profile.get("first_oil"))
+    capex = field_profile.get("capex")
+    capex_value = capex.get("total_mm_usd") if isinstance(capex, Mapping) else None
+    message = "capex.total_mm_usd must be an explicit, finite, positive investment"
+    if capex_value is None or isinstance(capex_value, bool):
+        raise ValueError(message)
+    try:
+        capex_total = float(capex_value)
+    except (TypeError, ValueError, OverflowError) as exc:
+        raise ValueError(message) from exc
+    # OpenStax, Principles of Finance (2022), section 16.2, equation 16.1:
+    # CAPEX is the positive investment outflow; a zero denominator cannot define PI.
+    # https://openstax.org/books/principles-finance/pages/16-2-net-present-value-npv-method
+    if not isfinite(capex_total) or capex_total <= 0:
+        raise ValueError(message)
+
     discount_rate = float(
         econ_config["financial_metrics"]["discount_rates"]["primary_discount_rate"]
     )
@@ -200,11 +232,10 @@ def summarize_field_financials(
     npv_operations = df["pv_cash_flow"].sum()
 
     boe = total_oil + total_gas / 6.0
-    capex_total = float(field_profile.get("capex", {}).get("total_mm_usd", 0.0))
 
     npv_operations_mm = npv_operations / 1_000_000.0
     npv_project_mm = npv_operations_mm - capex_total
-    profitability_index = (npv_project_mm / capex_total) if capex_total else 0.0
+    profitability_index = npv_project_mm / capex_total
 
     return {
         "Field": field_profile.get(
