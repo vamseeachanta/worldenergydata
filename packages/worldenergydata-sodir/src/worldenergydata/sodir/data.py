@@ -11,6 +11,7 @@ This module follows the BSEE pattern to orchestrate:
 
 import logging
 from datetime import datetime
+from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 logger = logging.getLogger(__name__)
@@ -170,11 +171,30 @@ class SodirData:
                 return result
 
             # Process data through appropriate processor
+            raw_count = len(raw_data)
             processed_data = self._process_data(dataset_type, raw_data)
+            if not isinstance(processed_data, list) or any(
+                not isinstance(record, dict) for record in processed_data
+            ):
+                raise ValueError(
+                    "Processor output must be a list of record dictionaries"
+                )
+            rejected_count = raw_count - len(processed_data)
+            if rejected_count < 0:
+                raise ValueError("Processor output count exceeds supplied records")
 
             # Validate if requested
             if validate:
                 validation_result = self._validate_data(dataset_type, processed_data)
+                validation_result["invalid_count"] += rejected_count
+                validation_result["errors"].extend(
+                    {
+                        "record": "unknown",
+                        "errors": ["Record rejected during processing"],
+                    }
+                    for _ in range(rejected_count)
+                )
+                self.stats["validations_failed"] += rejected_count
                 result["metadata"]["validation"] = validation_result
 
                 # Filter out invalid records if strict validation
@@ -245,12 +265,12 @@ class SodirData:
         if result["status"] == "success" and result["count"] > 0 and self.storage:
             # Store data
             try:
-                storage_path = self.storage.save(dataset_type, result)
+                storage_path = Path(self.storage.save(dataset_type, result)).as_posix()
                 result["storage"] = {
-                    "path": str(storage_path),
+                    "path": storage_path,
                     "timestamp": datetime.utcnow().isoformat(),
                 }
-                logger.info(f"Stored {dataset_type} data to {storage_path}")
+                logger.info("Stored %s dataset", dataset_type)
             except Exception as e:
                 logger.error(f"Failed to store {dataset_type}: {str(e)}")
                 result["storage"] = {"error": str(e)}
