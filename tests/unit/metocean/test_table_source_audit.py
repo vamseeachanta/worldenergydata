@@ -42,6 +42,145 @@ def update_json(inputs, name, mutate):
     path.write_text(json.dumps(content), encoding="utf-8", newline="\n")
 
 
+@pytest.fixture
+def synthetic_inputs(tmp_path):
+    """Issue #1262 citation fields, with no publication or engineering values.
+
+    Hand enumeration: alpha lacks an edition, middle lacks a locator, and
+    zeta lacks both. All remain unresolved. Repeated hex characters are dummy
+    full-length repository revisions, not citations to actual evidence.
+    """
+    tables = {}
+    for name, edition, locator in (
+        ("zeta.csv", None, None),
+        ("alpha.csv", None, "synthetic locator"),
+        ("middle.csv", "synthetic edition", None),
+    ):
+        tables[name] = {
+            "source_document": "Synthetic document, not a publication",
+            "edition": edition,
+            "table_or_clause": locator,
+            "attribution_status": "repository_attribution_only",
+            "verification_status": "NOT_EVALUATED",
+            "decision_status": "maintainer_decision_required",
+            "reason": "Synthetic citation has not been evaluated",
+            "required_evidence": "Synthetic unresolved evidence request",
+            "evidence": [
+                {
+                    "path": "docs/synthetic-zeta.md",
+                    "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                    "scope": "Synthetic first evidence, unresolved",
+                },
+                {
+                    "path": "docs/synthetic-alpha.md",
+                    "revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                    "scope": "Synthetic second evidence, unresolved",
+                },
+            ],
+        }
+    entries = [
+        {"name": name, "source_record": f"table_sources.json#/tables/{name}"}
+        for name in tables
+    ]
+    (tmp_path / "table_sources.json").write_text(
+        json.dumps({"tables": tables}, indent=2) + "\n", encoding="utf-8"
+    )
+    (tmp_path / "_metadata.json").write_text(
+        json.dumps({"external_datasets": entries}, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    (tmp_path / "schema.yaml").write_text(
+        yaml.safe_dump(
+            {"datasets": [{**entry, "distributed": False} for entry in entries]},
+            sort_keys=False,
+        ),
+        encoding="utf-8",
+    )
+    return tmp_path
+
+
+def test_decision_queue_is_independent_of_metadata_order(audit, synthetic_inputs):
+    """Each inventory reversal must preserve the hand-enumerated queue."""
+    expected_queue = [
+        ("alpha.csv", ["edition"]),
+        ("middle.csv", ["table_or_clause"]),
+        ("zeta.csv", ["edition", "table_or_clause"]),
+    ]
+    original = audit.audit_sources(synthetic_inputs)
+    assert [
+        (row["name"], row["missing_fields"]) for row in original["maintainer_decisions"]
+    ] == expected_queue
+    for row in original["maintainer_decisions"]:
+        assert row["verification_status"] == "NOT_EVALUATED"
+        assert row["decision_status"] == "maintainer_decision_required"
+        assert [item["path"] for item in row["evidence"]] == [
+            "docs/synthetic-zeta.md",
+            "docs/synthetic-alpha.md",
+        ]
+
+    # Reverse one more inventory each time; evidence order is retained.
+    for filename, inventory in (
+        ("table_sources.json", "tables"),
+        ("_metadata.json", "external_datasets"),
+        ("schema.yaml", "datasets"),
+    ):
+        path = synthetic_inputs / filename
+        content = yaml.safe_load(path.read_text(encoding="utf-8"))
+        rows = content[inventory]
+        content[inventory] = (
+            dict(reversed(list(rows.items())))
+            if isinstance(rows, dict)
+            else list(reversed(rows))
+        )
+        path.write_text(
+            (
+                json.dumps(content, indent=2) + "\n"
+                if filename.endswith("json")
+                else yaml.safe_dump(content, sort_keys=False)
+            ),
+            encoding="utf-8",
+        )
+        before = {item.name: item.read_bytes() for item in synthetic_inputs.iterdir()}
+        report = audit.audit_sources(synthetic_inputs)
+        assert report == original
+        assert [
+            (row["name"], row["missing_fields"])
+            for row in report["maintainer_decisions"]
+        ] == expected_queue
+        assert {
+            item.name: item.read_bytes() for item in synthetic_inputs.iterdir()
+        } == before
+
+
+def test_audit_preserves_all_input_bytes(audit, synthetic_inputs):
+    """Issue #1262 retention: repeated API and CLI reads leave every byte intact."""
+    before = {item.name: item.read_bytes() for item in synthetic_inputs.iterdir()}
+    first = audit.audit_sources(synthetic_inputs)
+    assert {
+        item.name: item.read_bytes() for item in synthetic_inputs.iterdir()
+    } == before
+    assert audit.audit_sources(synthetic_inputs) == first
+    assert {
+        item.name: item.read_bytes() for item in synthetic_inputs.iterdir()
+    } == before
+
+    # CLI contract: reporting succeeds; strict mode fails for unresolved sources.
+    for flags, expected_status in (([], 0), (["--require-citations"], 1)):
+        result = subprocess.run(
+            [sys.executable, str(SCRIPT), "--data-dir", str(synthetic_inputs), *flags],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            check=False,
+        )
+        assert result.returncode == expected_status
+        assert result.stderr == ""
+        assert json.loads(result.stdout) == first
+        assert {
+            item.name: item.read_bytes() for item in synthetic_inputs.iterdir()
+        } == before
+
+
 def test_current_worked_example(audit):
     report = audit.audit_sources(DATA)
     assert report["table_count"] == 8  # Issue #1262 filename inventory.
