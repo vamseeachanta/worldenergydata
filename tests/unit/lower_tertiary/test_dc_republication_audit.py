@@ -293,3 +293,100 @@ def test_committed_reference_and_population_are_audited_without_republishing():
     }
     assert sum(d["bores"] for d in result["developments"]) == len(published)
     assert result["publication"]["status"] == "NOT_EVALUATED"
+
+
+def test_review_shows_all_methods_paired_counts_and_unavailable_field_totals(inputs):
+    """Fixture: paired D&C16 -> milestone21 (+5), activity14 (-2), interim29 (+13).
+
+    The second bore is absent, so no replacement total or NPV delta is known.
+    """
+    result = audit.build_audit(inputs[0])
+    report = audit.render_markdown(result, revision_date="2026-10-21")
+    assert "## Revision history" in report
+    assert report.index("## Revision history") < report.index("## Publication")
+    assert "| synthetic | 2 | 6 | 10 | 16 | NOT_EVALUATED |" in report
+    for method, after, delta in [
+        ("milestone", 21, "+5"),
+        ("activity_code", 14, "-2"),
+        ("interim", 29, "+13"),
+    ]:
+        assert (
+            f"| synthetic | {method} | per-well history | dc_days | 1 | 16 | {after} | {delta} |"
+            in report
+        )
+    assert "| synthetic | NOT_EVALUATED |" in report
+    assert "100000000002" in report  # Absent weekly input is actionable.
+    assert "Paired subtotals are not replacement development totals" in report
+    assert "unlabelled legacy output" in report
+    assert audit.WAR_METHODOLOGY.strip() in report
+    assert all(d["npv_impact"]["delta_usd"] is None for d in result["developments"])
+
+
+def test_review_escapes_source_text_in_tables(inputs):
+    root, rows, _ = inputs
+    rows[0]["LEASE_NAME"] = "synthetic | <script>"
+    write_csv(root / audit.SOURCE, rows)
+    report = audit.render_markdown(audit.build_audit(root), revision_date="2026-10-21")
+    assert "synthetic &#124; &lt;script&gt;" in report
+    assert "<script>" not in report
+
+
+def test_cli_can_write_deterministic_review_outside_repository(inputs, tmp_path):
+    root, _, _ = inputs
+    output, review = tmp_path / "audit.json", tmp_path / "review.md"
+    args = [
+        "--root",
+        str(root),
+        "--output",
+        str(output),
+        "--markdown-output",
+        str(review),
+        "--report-date",
+        "2026-10-21",
+    ]
+    assert audit.main(args) == 0
+    first = (output.read_bytes(), review.read_bytes())
+    assert audit.main(args) == 0
+    assert (output.read_bytes(), review.read_bytes()) == first
+
+
+@pytest.mark.parametrize("problem", ["inside", "same", "missing_date", "invalid_date"])
+def test_cli_checks_every_destination_and_date_before_writing(
+    inputs, tmp_path, problem
+):
+    root, _, _ = inputs
+    output = tmp_path / "audit.json"
+    review = root / "review.md" if problem == "inside" else tmp_path / "review.md"
+    if problem == "same":
+        review = output
+    args = [
+        "--root",
+        str(root),
+        "--output",
+        str(output),
+        "--markdown-output",
+        str(review),
+    ]
+    if problem != "missing_date":
+        args.extend(
+            ["--report-date", "bad-date" if problem == "invalid_date" else "2026-10-21"]
+        )
+    with pytest.raises(SystemExit):
+        audit.main(args)
+    assert not output.exists()
+    assert not review.exists()
+
+
+def test_review_retains_explicit_before_basis_and_per_development_financial_gap(inputs):
+    root, rows, _ = inputs
+    rows[0]["BASIS"] = "synthetic source basis"
+    rows[1]["BASIS"] = "synthetic source basis"
+    write_csv(root / audit.SOURCE, rows)
+    result = audit.build_audit(root)
+    report = audit.render_markdown(result, revision_date="2026-10-21")
+    assert "| NOT_EVALUATED | synthetic source basis |" in report
+    assert result["developments"][0]["npv_impact"] == {
+        "status": "NOT_EVALUATED",
+        "delta_usd": None,
+        "reason": audit.NPV_REASON,
+    }
