@@ -5,6 +5,7 @@ from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
+
 from worldenergydata.metocean.clients.base_client import FetchResult
 from worldenergydata.metocean.constants import DataSource
 from worldenergydata.scheduler.jobs.base import AbstractJob, JobResult
