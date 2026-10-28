@@ -118,7 +118,11 @@ def sniff_read_table(path):
 def load_war_main(path):
     if not path or not os.path.exists(path):
         raise FileNotFoundError("WAR main file not found.")
-    df = sniff_read_table(path)
+    p = Path(path)
+    if p.suffix.lower() in (".xlsx", ".xls"):
+        df = sniff_read_table(p)
+    else:
+        df = sniff_read_csv_like(p, header="infer")
     C = {c.upper(): c for c in df.columns}
 
     api   = C.get("API_WELL_NUMBER") or C.get("API_NUMBER") or C.get("API")
@@ -172,12 +176,12 @@ def extract_ogora_zips_to_temp(zip_paths):
                 for name in zf.namelist():
                     lower = name.lower()
                     if lower.endswith((".csv", ".xlsx", ".txt")):
-                        out_path = Path(tempdir.name) / Path(name).name
+                        out_path = Path(tempdir.name) / f"{len(extracted)}_{Path(name).name}"
                         with zf.open(name) as src, open(out_path, "wb") as dst:
                             dst.write(src.read())
                         extracted.append(str(out_path))
         except zipfile.BadZipFile:
-            print(f"⚠️ Skipping unreadable zip: {zp}")
+            print(f"⚠️ Skipping unreadable zip: {Path(zp).as_posix()}")
     return tempdir, extracted
 
 def read_any_table(path):
@@ -202,42 +206,40 @@ def is_headerless_ogora(df):
 def parse_headerless_ogora(df):
     """
     Map positional columns based on observed OGORA 'delimit' structure:
-      0: district/area code (ignore)
-      1: WELL_ID (use as API_WELL_NUMBER surrogate)
+      0: LEASE_NUMBER (fallback grouping)
+      1: WELL_COMPLETION_ID (not an API)
       2: PROD_MONTH (YYYYMM)
       3: DAYS_ON_PROD
-      4: product code (O/G/U) (ignore for now)
+      4: PRODUCT_CODE (only O contributes oil)
       5: OIL_BBL
       6: GAS (ignore)
       7: WATER_BBL
-      10: AREA (e.g., WD)
-      11: BLOCK (e.g., 31)
-      14: LEASE_HINT (e.g., WD030)
+      8: API_WELL_NUMBER
     """
+    # Column positions: docs/data/legacy/data/bsee_yearly_production_data.yml,
+    # first df_columns sequence, repository edition. API is zero-based column 8.
+    if df.shape[1] < 9:
+        raise ValueError("Headerless OGORA requires API column 8")
     df = df.copy()
     cols = list(range(df.shape[1]))
     def safe_col(i):
-        return df[i] if i in cols else np.nan
+        return df[i] if i in cols else pd.Series(np.nan, index=df.index)
 
-    well_id = safe_col(1).astype(str).str.strip()
+    well_id = safe_col(8).where(safe_col(8).notna(), None)
     yyyymm = pd.to_numeric(safe_col(2), errors="coerce").astype("Int64")
     prod_month = pd.to_datetime(yyyymm.astype(str) + "01", format="%Y%m%d", errors="coerce")
 
     days = pd.to_numeric(safe_col(3), errors="coerce").fillna(0)
     oil = pd.to_numeric(safe_col(5), errors="coerce").fillna(0.0)
-    water = pd.to_numeric(safe_col(7), errors="coerce").fillna(0.0)
+    oil = oil.where(safe_col(4).astype(str).str.strip().str.upper().eq("O"), 0.0)
+    water = pd.to_numeric(safe_col(7), errors="coerce")
 
-    area = safe_col(10).astype(str).str.strip()
-    block = pd.to_numeric(safe_col(11), errors="coerce").astype("Int64")
-    lease_hint = safe_col(14).astype(str).str.strip()
-
-    # Build fallback grouping label
-    area_block = (area.fillna("") + " " + block.astype(str).fillna("")).str.strip()
-    lease_fallback = lease_hint.where(lease_hint.ne(""), area_block)
+    # Lease identity is column 0 in the same repository layout.
+    lease_fallback = safe_col(0).fillna("").astype(str).str.strip()
     lease_fallback = lease_fallback.where(lease_fallback.ne(""), "UNMAPPED")
 
     out = pd.DataFrame({
-        "API_WELL_NUMBER": well_id.apply(normalize_api),   # surrogate if true API not present
+        "API_WELL_NUMBER": well_id.apply(normalize_api),
         "MONTH": prod_month.dt.to_period("M").dt.to_timestamp(),
         "OIL_BBL": oil,
         "WATER_BBL": water,
@@ -315,7 +317,7 @@ def load_ogora_production(ogora_source):
         try:
             df = read_any_table(f)
         except Exception:
-            print(f"⚠️ Skipping unreadable file: {f}")
+            print(f"⚠️ Skipping unreadable file: {Path(f).as_posix()}")
             continue
 
         # Headerless OGORA .txt (positional)
@@ -336,7 +338,7 @@ def load_ogora_production(ogora_source):
         day_col = pick(C, ["DAYS_ON_PROD", "DAYS", "PROD_DAYS", "PRODUCTION_DAYS", "DAYS ON"])
 
         if api_col is None:
-            print(f"⚠️ Skipping file without API column: {f}")
+            print(f"⚠️ Skipping file without API column: {Path(f).as_posix()}")
             continue
 
         api_series = df[api_col].apply(normalize_api)
@@ -349,7 +351,7 @@ def load_ogora_production(ogora_source):
             m = pd.to_numeric(df[m_col], errors="coerce").astype("Int64").clip(lower=1, upper=12)
             date_series = pd.to_datetime(dict(year=y, month=m, day=1), errors="coerce")
         else:
-            print(f"⚠️ Skipping file without usable date/month columns: {f}")
+            print(f"⚠️ Skipping file without usable date/month columns: {Path(f).as_posix()}")
             continue
 
         tmp = pd.DataFrame({
@@ -377,7 +379,7 @@ def load_ogora_production(ogora_source):
             prod["has_prod"] = ((prod["OIL_BBL"].fillna(0) > 0) | (prod["WATER_BBL"].fillna(0) > 0)).astype(int)
             grouped = prod.groupby(["API_WELL_NUMBER", "MONTH"], as_index=False).agg({
                 "OIL_BBL": "sum",
-                "WATER_BBL": "sum",
+                "WATER_BBL": lambda values: values.sum(skipna=False),
                 "DAYS": "sum",
                 "has_prod": "sum"
             })
@@ -390,7 +392,7 @@ def load_ogora_production(ogora_source):
         else:
             monthly = prod.groupby(["API_WELL_NUMBER", "MONTH"], as_index=False).agg({
                 "OIL_BBL": "sum",
-                "WATER_BBL": "sum",
+                "WATER_BBL": lambda values: values.sum(skipna=False),
                 "DAYS": "sum"
             }).rename(columns={"DAYS": "DAYS_ON_PROD"})
         # Ensure fallback column exists
@@ -401,7 +403,7 @@ def load_ogora_production(ogora_source):
         monthly = prod.copy()
 
     # Fill NaNs with zeros for measures
-    for c in ["OIL_BBL", "WATER_BBL", "DAYS_ON_PROD"]:
+    for c in ["OIL_BBL", "DAYS_ON_PROD"]:
         monthly[c] = pd.to_numeric(monthly[c], errors="coerce").fillna(0.0)
 
     return monthly
@@ -417,17 +419,21 @@ def build_workbook(prod_monthly, war_map, leases_df, out_path):
     """
     prod = prod_monthly.merge(
         war_map[["API_WELL_NUMBER", "LEASE_NAME", "SURF_LEASE_NUM", "WELL_NAME", "LEASE_KEY"]],
-        on="API_WELL_NUMBER", how="left"
+        on="API_WELL_NUMBER", how="left", validate="many_to_one"
     )
+
+    assert len(prod) == len(prod_monthly), "WAR join changed production row count"
 
     # Lease name fallback from leases_df by SURF_LEASE_NUM
     if not leases_df.empty:
         lease_names = leases_df[["SURF_LEASE_NUM", "LEASE_NAME"]].dropna()
         if not lease_names.empty:
+            before = len(prod)
             prod = prod.merge(
                 lease_names.rename(columns={"LEASE_NAME": "LEASE_NAME_FROM_LIST"}),
-                on="SURF_LEASE_NUM", how="left"
+                on="SURF_LEASE_NUM", how="left", validate="many_to_one"
             )
+            assert len(prod) == before, "Lease join changed production row count"
             prod["LEASE_NAME"] = prod["LEASE_NAME"].fillna(prod["LEASE_NAME_FROM_LIST"])
             prod = prod.drop(columns=["LEASE_NAME_FROM_LIST"], errors="ignore")
 
@@ -463,14 +469,12 @@ def build_workbook(prod_monthly, war_map, leases_df, out_path):
             id_cols = ["WELL_NAME", "API_WELL_NUMBER"]
 
             # Pivot helper
-            def pivot_metric(val_col):
-                p = g.pivot_table(
-                    index=id_cols,
-                    columns="MONTH_STR",
-                    values=val_col,
-                    aggfunc="sum",
-                    fill_value=0.0,
-                )
+            def pivot_metric(val_col, group=g, index_columns=tuple(id_cols)):
+                p = group.groupby(list(index_columns) + ["MONTH_STR"], dropna=False)[val_col].agg(
+                    lambda values: values.sum(skipna=False)
+                ).unstack("MONTH_STR")
+                if val_col != "WATER_BBL":
+                    p = p.fillna(0.0)
                 # Order columns chronologically by YYYY-MM
                 cols = sorted(p.columns, key=lambda s: (int(s[:4]), int(s[5:7])))
                 return p.reindex(columns=cols)
@@ -526,11 +530,12 @@ def main():
     if not ogora_source:
         raise SystemExit("Missing OGORA production source. Provide --ogora-prod or place ogora*.zip or .txt in the directory.")
 
-    print(f"Using WAR main: {war_main_path}")
+    print(f"Using WAR main: {Path(war_main_path).as_posix()}")
     if leases_path:
-        print(f"Using leases:   {leases_path}")
-    print(f"Using OGORA:    {ogora_source}")
-    print(f"Output:         {args.out}")
+        print(f"Using leases:   {Path(leases_path).as_posix()}")
+    sources = ogora_source if isinstance(ogora_source, list) else [ogora_source]
+    print(f"Using OGORA:    {', '.join(Path(p).as_posix() for p in sources)}")
+    print(f"Output:         {Path(args.out).as_posix()}")
 
     war_map = load_war_main(war_main_path)
     leases_df = load_leases(leases_path) if leases_path else pd.DataFrame()
@@ -541,7 +546,7 @@ def main():
 
     build_workbook(prod_monthly, war_map, leases_df, args.out)
 
-    print(f"✅ Built {args.out} with {len(prod_monthly)} rows.")
+    print(f"✅ Built {Path(args.out).as_posix()} with {len(prod_monthly)} rows.")
 
 if __name__ == "__main__":
     main()
