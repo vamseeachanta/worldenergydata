@@ -8,7 +8,10 @@ from datetime import datetime
 from http import HTTPStatus
 from pathlib import Path
 
-from worldenergydata.brazil_anp.production.anp_client import ANPClient
+from worldenergydata.brazil_anp.production.anp_client import (
+    ANPClient,
+    ANPIngestionError,
+)
 from worldenergydata.brazil_anp.production.well_production import WellProductionLoader
 from worldenergydata.common.data_resolver import get_module_data_safe
 from worldenergydata.scheduler.jobs.base import (
@@ -67,6 +70,13 @@ class BrazilAnpRefreshJob(AbstractJob):
                 force_refresh=force_refresh,
             )
             raw_records = len(raw_df)
+            if raw_df.empty:
+                raise ANPIngestionError("ANP refresh contains no production records")
+            normalized = WellProductionLoader().load(raw_df)
+            if normalized.empty or len(normalized) != raw_records:
+                raise ANPIngestionError(
+                    "ANP normalization changed the production record count"
+                )
             raw_dir = output_dir / "raw"
             raw_dir.mkdir(parents=True, exist_ok=True)
             raw_df.to_parquet(
@@ -76,7 +86,6 @@ class BrazilAnpRefreshJob(AbstractJob):
                 compression="snappy",
             )
 
-            normalized = WellProductionLoader().load(raw_df)
             write_parquet(
                 normalized,
                 output_dir,
@@ -109,7 +118,7 @@ def _is_deterministic_failure(exc: Exception) -> bool:
     from requests.exceptions import HTTPError
 
     # ANPClient.load_cached re-parses the same bytes, so a bad ZIP needs repair.
-    if isinstance(exc, zipfile.BadZipFile):
+    if isinstance(exc, (zipfile.BadZipFile, ANPIngestionError)):
         return True
     # RFC 9110 (2022), section 15.5.5: Not Found. A missing configured
     # endpoint stops this run; this does not assert permanent unavailability.
