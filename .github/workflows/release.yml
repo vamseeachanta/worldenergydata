@@ -131,11 +131,17 @@ jobs:
       url: https://test.pypi.org/project/worldenergydata/
 
     steps:
+      - name: Prepare isolated distribution directory
+        id: release_dist
+        run: |
+          dist_dir=$(mktemp -d "$RUNNER_TEMP/publish-dist.XXXXXX")
+          echo "path=$dist_dir" >> "$GITHUB_OUTPUT"
+
       - name: Download build artifacts
         uses: actions/download-artifact@v8
         with:
           name: dist
-          path: dist/
+          path: ${{ steps.release_dist.outputs.path }}
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
@@ -146,8 +152,9 @@ jobs:
       - name: Publish to Test PyPI
         run: |
           uv pip install twine
-          uv run twine upload --repository testpypi dist/*
+          uv run twine upload --repository testpypi "$DIST_DIR"/*
         env:
+          DIST_DIR: ${{ steps.release_dist.outputs.path }}
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.TEST_PYPI_API_TOKEN }}
 
@@ -171,11 +178,17 @@ jobs:
       url: https://pypi.org/project/worldenergydata/
 
     steps:
+      - name: Prepare isolated distribution directory
+        id: release_dist
+        run: |
+          dist_dir=$(mktemp -d "$RUNNER_TEMP/publish-dist.XXXXXX")
+          echo "path=$dist_dir" >> "$GITHUB_OUTPUT"
+
       - name: Download build artifacts
         uses: actions/download-artifact@v8
         with:
           name: dist
-          path: dist/
+          path: ${{ steps.release_dist.outputs.path }}
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
@@ -186,8 +199,9 @@ jobs:
       - name: Publish to PyPI
         run: |
           uv pip install twine
-          uv run twine upload dist/*
+          uv run twine upload "$DIST_DIR"/*
         env:
+          DIST_DIR: ${{ steps.release_dist.outputs.path }}
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
 
