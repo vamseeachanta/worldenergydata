@@ -23,7 +23,8 @@ Time alignment:
 
 from __future__ import annotations
 
-from typing import Any, Dict, List
+from math import isfinite
+from typing import Any
 
 import pandas as pd
 
@@ -31,7 +32,7 @@ import pandas as pd
 _DIRECTIONAL_PARAMS = {"wind_dir", "current_dir", "wave_dir"}
 
 # Mapping from client attribute name → (standard_name, unit)
-_NDBC_MAP: Dict[str, tuple[str, str]] = {
+_NDBC_MAP: dict[str, tuple[str, str]] = {
     "wave_height_m": ("Hs", "m"),
     "dominant_wave_period_s": ("Tp", "s"),
     "average_wave_period_s": ("Tm", "s"),
@@ -42,7 +43,7 @@ _NDBC_MAP: Dict[str, tuple[str, str]] = {
     "current_speed_ms": ("current_speed", "m/s"),
 }
 
-_OPEN_METEO_MAP: Dict[str, tuple[str, str]] = {
+_OPEN_METEO_MAP: dict[str, tuple[str, str]] = {
     "wave_height_m": ("Hs", "m"),
     "wave_period_s": ("Tp", "s"),
     "wave_direction_deg": ("wave_dir", "deg"),
@@ -53,7 +54,7 @@ _OPEN_METEO_MAP: Dict[str, tuple[str, str]] = {
     "sea_surface_temp_c": ("sst", "degC"),
 }
 
-_MET_NORWAY_MAP: Dict[str, tuple[str, str]] = {
+_MET_NORWAY_MAP: dict[str, tuple[str, str]] = {
     "wave_height_m": ("Hs", "m"),
     "wave_period_s": ("Tp", "s"),
     "wave_direction_deg": ("wave_dir", "deg"),
@@ -64,16 +65,16 @@ _MET_NORWAY_MAP: Dict[str, tuple[str, str]] = {
     "sea_surface_temp_c": ("sst", "degC"),
 }
 
-_COOPS_WATER_LEVEL_MAP: Dict[str, tuple[str, str]] = {
+_COOPS_WATER_LEVEL_MAP: dict[str, tuple[str, str]] = {
     "water_level_m": ("water_level", "m"),
 }
 
-_COOPS_CURRENT_MAP: Dict[str, tuple[str, str]] = {
+_COOPS_CURRENT_MAP: dict[str, tuple[str, str]] = {
     "speed_ms": ("current_speed", "m/s"),
     "direction_deg": ("current_dir", "deg"),
 }
 
-_ERDDAP_MAP: Dict[str, tuple[str, str]] = {
+_ERDDAP_MAP: dict[str, tuple[str, str]] = {
     "wave_height_m": ("Hs", "m"),
     "wave_period_s": ("Tp", "s"),
     "wave_direction_deg": ("wave_dir", "deg"),
@@ -109,9 +110,9 @@ class MetoceanHarmonizer:
 
     def _to_long(
         self,
-        obs_list: List[Dict[str, Any]],
+        obs_list: list[dict[str, Any]],
         time_key: str,
-        attr_map: Dict[str, tuple[str, str]],
+        attr_map: dict[str, tuple[str, str]],
         source_label: str,
     ) -> pd.DataFrame:
         """
@@ -126,13 +127,13 @@ class MetoceanHarmonizer:
         Returns:
             Long-format DataFrame with columns: timestamp, parameter, value, source, unit
         """
-        rows: List[Dict[str, Any]] = []
+        rows: list[dict[str, Any]] = []
 
         for obs in obs_list:
             raw_ts = obs.get(time_key)
             if raw_ts is None:
                 continue
-            ts = pd.Timestamp(raw_ts).tz_localize(None)  # normalise to naive UTC
+            ts = pd.to_datetime(raw_ts, utc=True).tz_localize(None)
 
             for attr, (param, unit) in attr_map.items():
                 val = obs.get(attr)
@@ -141,6 +142,8 @@ class MetoceanHarmonizer:
                 try:
                     numeric = float(val)
                 except (TypeError, ValueError):
+                    continue
+                if not isfinite(numeric):
                     continue
                 rows.append(
                     {
@@ -163,7 +166,7 @@ class MetoceanHarmonizer:
     # Public harmonisation methods
     # ------------------------------------------------------------------
 
-    def harmonize_ndbc(self, observations: List[Dict[str, Any]]) -> pd.DataFrame:
+    def harmonize_ndbc(self, observations: list[dict[str, Any]]) -> pd.DataFrame:
         """
         Harmonize NDBC NDBCObservation dicts into long-format DataFrame.
 
@@ -180,7 +183,7 @@ class MetoceanHarmonizer:
             source_label="ndbc",
         )
 
-    def harmonize_open_meteo(self, observations: List[Dict[str, Any]]) -> pd.DataFrame:
+    def harmonize_open_meteo(self, observations: list[dict[str, Any]]) -> pd.DataFrame:
         """
         Harmonize OpenMeteoForecast dicts into long-format DataFrame.
 
@@ -197,7 +200,7 @@ class MetoceanHarmonizer:
             source_label="open_meteo",
         )
 
-    def harmonize_met_norway(self, observations: List[Dict[str, Any]]) -> pd.DataFrame:
+    def harmonize_met_norway(self, observations: list[dict[str, Any]]) -> pd.DataFrame:
         """
         Harmonize MetNorwayForecast dicts into long-format DataFrame.
 
@@ -215,7 +218,7 @@ class MetoceanHarmonizer:
         )
 
     def harmonize_coops_water_level(
-        self, observations: List[Dict[str, Any]]
+        self, observations: list[dict[str, Any]]
     ) -> pd.DataFrame:
         """
         Harmonize CO-OPS water level dicts into long-format DataFrame.
@@ -234,7 +237,7 @@ class MetoceanHarmonizer:
         )
 
     def harmonize_coops_current(
-        self, observations: List[Dict[str, Any]]
+        self, observations: list[dict[str, Any]]
     ) -> pd.DataFrame:
         """
         Harmonize CO-OPS current dicts into long-format DataFrame.
@@ -252,7 +255,7 @@ class MetoceanHarmonizer:
             source_label="coops",
         )
 
-    def harmonize_erddap(self, observations: List[Dict[str, Any]]) -> pd.DataFrame:
+    def harmonize_erddap(self, observations: list[dict[str, Any]]) -> pd.DataFrame:
         """
         Harmonize ERDDAP observation dicts into long-format DataFrame.
 
@@ -297,7 +300,7 @@ class MetoceanHarmonizer:
         df = df.copy()
         df["timestamp"] = pd.to_datetime(df["timestamp"])
 
-        aligned_parts: List[pd.DataFrame] = []
+        aligned_parts: list[pd.DataFrame] = []
 
         for (param, source, unit), grp in df.groupby(
             ["parameter", "source", "unit"], sort=False
@@ -345,7 +348,7 @@ class MetoceanHarmonizer:
         result["timestamp"] = pd.to_datetime(result["timestamp"])
         return result
 
-    def merge_sources(self, dataframes: List[pd.DataFrame]) -> pd.DataFrame:
+    def merge_sources(self, dataframes: list[pd.DataFrame]) -> pd.DataFrame:
         """
         Concatenate harmonised DataFrames from multiple sources.
 
