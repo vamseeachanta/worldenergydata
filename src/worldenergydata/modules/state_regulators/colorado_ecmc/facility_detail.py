@@ -75,7 +75,9 @@ def _page_context(page_text: str) -> dict:
     return {
         "api_fragment": api_fragment,
         "api10": f"05{api_fragment}" if api_fragment else pd.NA,
-        "api12": f"05{api_fragment}00" if api_fragment else pd.NA,
+        # Recorded HTML does not qualify a wellbore-to-API sidetrack mapping.
+        "api12": pd.NA,
+        "api12_status": "NOT_EVALUATED",
         "facility_id": _first_group(r"FacilityID:\s*(\d+)", page_text),
         "field": _clean_field(_first_group(r"Field:\s*([A-Z0-9 ()/-]+)", page_text)),
         "formation_code": _first_group(
@@ -120,7 +122,19 @@ def _find_initial_test_tables(soup: BeautifulSoup) -> list:
 def _initial_test_block_context(table) -> dict:
     container = table.find_parent("div", class_="accordion2") or table
     block_text = _normalize_space(container.get_text(" ", strip=True))
+    wellbore_container = container.find_parent("div", class_="accordion")
+    heading = (
+        wellbore_container.find("div", class_="accordion-head")
+        if wellbore_container is not None
+        else None
+    )
+    wellbore_context = (
+        _present_values(_page_context(heading.get_text(" ", strip=True)))
+        if heading is not None
+        else {}
+    )
     return {
+        **wellbore_context,
         "formation_code": _first_group(
             r"Formation\s+([A-Z0-9]+)\s+Formation Classification", block_text
         ),
@@ -249,6 +263,7 @@ def _columns() -> list[str]:
         "api_fragment",
         "api10",
         "api12",
+        "api12_status",
         "facility_id",
         "field",
         "formation_code",

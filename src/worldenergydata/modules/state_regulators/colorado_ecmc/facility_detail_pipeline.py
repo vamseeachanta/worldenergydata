@@ -56,7 +56,7 @@ def parse_facility_detail_pages(fetch_manifest: dict) -> tuple[pd.DataFrame, dic
         "parsed_initial_test_rows": 0,
     }
     for metadata in fetch_manifest.get("fetched", []):
-        html = Path(metadata["raw_path"]).read_text(encoding="utf-8", errors="ignore")
+        html = Path(metadata["raw_path"]).read_text(encoding="utf-8")
         parsed = parse_facility_detail_html(html, metadata.get("source_url"))
         if parsed.empty:
             quality["no_initial_test_pages"] += 1
@@ -65,6 +65,9 @@ def parse_facility_detail_pages(fetch_manifest: dict) -> tuple[pd.DataFrame, dic
             raw_path=metadata.get("raw_path"),
             sha256=metadata.get("sha256"),
             downloaded_at=metadata.get("downloaded_at"),
+            identity_status=metadata.get("identity_status", "identity_unverified"),
+            requested_api_fragment=metadata.get("api_fragment"),
+            requested_facility_id=metadata.get("facility_id"),
         )
         frames.append(parsed)
         quality["parsed_pages"] += 1

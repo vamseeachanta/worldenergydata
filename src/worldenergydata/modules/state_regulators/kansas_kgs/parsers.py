@@ -71,7 +71,7 @@ def read_proration_pressures(path: str | Path) -> pd.DataFrame:
     parses the quoted data rows against the fixed 22-column schema.
     """
     path = Path(path)
-    with path.open("r", encoding="utf-8", errors="replace") as handle:
+    with path.open("r", encoding="utf-8") as handle:
         lines = handle.readlines()
     data_start = 1
     while data_start < len(lines) and _is_header_continuation(lines[data_start]):
@@ -103,7 +103,11 @@ def read_wells_master(
     for column in WELLS_NUMERIC:
         frame[column] = pd.to_numeric(frame[column], errors="coerce")
     for column in WELLS_DATES:
-        frame[column] = pd.to_datetime(
-            frame[column], format="%d-%b-%Y", errors="coerce"
+        parsed = pd.to_datetime(frame[column], format="%d-%b-%Y", errors="coerce")
+        invalid = (
+            frame[column].notna() & frame[column].str.strip().ne("") & parsed.isna()
         )
+        if invalid.any():
+            raise ValueError(f"invalid Kansas date {column}: {int(invalid.sum())} rows")
+        frame[column] = parsed
     return frame
