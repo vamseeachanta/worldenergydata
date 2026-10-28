@@ -158,12 +158,12 @@ def test_build_report_includes_field_monthly_series_and_conversion_caveat(tmp_pa
     )
     assert ayoluengo["monthly"] == [
         {
-            "gas_mcf": 0.0,
+            "gas_mcf": None,
             "oil_bbl": 10.0,
             "period": "2025-01",
         },
         {
-            "gas_mcf": 0.0,
+            "gas_mcf": None,
             "oil_bbl": 20.0,
             "period": "2025-02",
         },
@@ -220,8 +220,15 @@ def test_build_report_outputs_strict_json_for_sparse_product_rows(tmp_path):
 
     assert "NaN" not in json_text
     assert "NaN" not in payload
-    json.loads(json_text, parse_constant=reject_non_standard_constant)
-    json.loads(payload, parse_constant=reject_non_standard_constant)
+    document = json.loads(json_text, parse_constant=reject_non_standard_constant)
+    embedded = json.loads(payload, parse_constant=reject_non_standard_constant)
+    assert document == embedded
+    items = document["fields"]["items"]
+    assert any(item["gas_mcf"] is None for item in items)
+    assert any(item["oil_bbl"] is None for item in items)
+    for item in items:
+        for row in item["monthly"]:
+            assert row["oil_bbl"] is None or row["gas_mcf"] is None
 
 
 def test_cli_writes_html_and_json(tmp_path):
