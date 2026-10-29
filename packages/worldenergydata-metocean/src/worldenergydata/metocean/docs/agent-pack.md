@@ -5,14 +5,14 @@
 | Module | metocean |
 | Repository | worldenergydata |
 | Path | `packages/worldenergydata-metocean/src/worldenergydata/metocean` |
-| Pack revision | 7 |
-| Code revision | Base `5e6df17dfff3faffb66540e40b8683d1139e8395`; selector validation described in revision 7 |
+| Pack revision | 8 |
+| Code revision | Tested `3b19a6c33b4651f282b383879c21155bd1fa3bd8`; revision 8 updates evidence only |
 | Analysis family | Data pipeline; Python calculations gate set, AQG r0 §10 |
 | QA family | EC |
 | Quality manager role | Calculations quality manager; data pipeline coverage provisional |
 | Status | DRAFT |
 
-This pack inventories the metocean module's methods, evidence and known limits. Revision 7 records explicit annual-max distribution validation and independently collected dispatch regressions; it does not qualify environmental design conditions.
+This pack inventories the metocean module's methods, evidence and known limits. Revision 8 records fresh selector regression and isolated build evidence; environmental design conditions remain unqualified.
 
 ## Revision history
 
@@ -22,6 +22,7 @@ This pack inventories the metocean module's methods, evidence and known limits. 
 | 5 | 2026-10-22 | Decode the conditional coefficients and Tp-first contour tuple, remove unreliable method labels and fabricated fallback results, and add a synthetic density-curve hand check; #1354. |
 | 6 | 2026-10-24 | Retain all six conditional coefficients in report summaries and correct the density and grid source references so the reported model and its hand check can be traced; #1354. |
 | 7 | 2026-10-25 | Reject unsupported annual-max selectors before backend dispatch and record executing regressions because the backend does not provide this input contract; #1354. |
+| 8 | 2026-10-29 | Record fresh selector and identity regression counts and isolated build evidence, separating execution from collection and metadata findings from source defects; #1354. |
 
 ## 1. Purpose and scope
 
@@ -117,6 +118,25 @@ The initial baseline failures concern the scheduler import at `tests/unit/metoce
 Ignored targets remain the 7 existing files under `tests/unit/metocean/statistics/`: `test_environmental_contours.py`, `test_eva.py`, `test_joint_probability.py`, `test_reporting.py`, `test_scatter_diagram.py`, `test_wave_spectra.py` and `test_weather_windows.py`, as listed by `tests/conftest.py:650-657`. The new regression is outside that list and executes in the module run. Existing skips remain distinct from ignored files: the CLI module skips at collection, 10 benchmark cases require an external dataset, 6 publisher cases require explicit live opt-in, and the realtime freshness case skips for stale observations at the time of this run.
 
 Optional-dependency limitation: the explicit command `python -m pytest tests/unit/metocean/statistics/test_eva.py::test_annual_gumbel_values_and_partial_year_selection -q -rA` cannot collect because `metocean_stats` is unavailable. The existing independent hand-calculation reference is retained unchanged; the backend-spy tests establish wrapper dispatch and rejection, not upstream fitting arithmetic. Other #1354 items and contour qualification remain outside this slice.
+
+### Selector audit on 2026-10-29
+
+The unchanged code at `3b19a6c33b4651f282b383879c21155bd1fa3bd8` is tested before this evidence update. The explicit selector command is `python -m pytest tests/unit/metocean/test_annual_maxima_distribution_contract.py --noconftest -o addopts= -q -rA -p no:cacheprovider`, with `--basetemp` and `--junitxml` directed to external temporary storage. Execution uses `uv run --no-project` with pytest, NumPy, pandas, Plotly and pydantic supplied independently of the repository environment. The configured hook framework is not invoked.
+
+| Selection | Passed (count) | Failed (count) | Errors (count) | Skipped (count) |
+| --- | --- | --- | --- | --- |
+| Annual-max selector contract, baseline | 22 | 0 | 0 | 0 |
+| Drilling-riser and identity regressions, baseline | 231 | 0 | 0 | 0 |
+| Annual-max selector contract, final | 22 | 0 | 0 | 0 |
+| Drilling-riser and identity regressions, final | 231 | 0 | 0 | 0 |
+
+Table: Fresh executed baseline and final results; JUnit records are read back separately from collection output. Final execution passes 253 cases; source and test SHA-256 digests remain unchanged from baseline.
+
+The additional selection comprises all six existing drilling-riser test files: `tests/unit/vessel_fleet/models/test_drilling_riser.py`, `tests/unit/vessel_fleet/models/test_drilling_riser_model.py`, `tests/unit/vessel_fleet/schemas/test_drilling_riser.py`, `tests/unit/vessel_fleet/schemas/test_drilling_riser_schema.py`, `tests/unit/vessel_fleet/loaders/test_drilling_riser_loader.py` and `tests/unit/vessel_fleet/loaders/test_drilling_riser_alignment.py`; both `tests/unit/vessel_fleet/test_identity_resolver.py` and `tests/unit/vessel_fleet/test_identity_enrichment.py` are also executed. These eight files are measured separately from the selector file. A separate `--collect-only` invocation collects 253 nodes across the nine files and executes none. Repository conftest hooks are excluded by the explicit commands; these results do not establish collection under the repository's default policy.
+
+The root distribution builds successfully from an external copy of the tested commit using `python -m build`, producing a source archive and wheel without writing build outputs into the checkout. This build does not install runtime dependencies or qualify the optional fitting backend. Earlier complete-module counts and skips above remain historical evidence; that broader suite is not rerun by this audit.
+
+The title prefix and missing Plan-lite description section are metadata findings; no additional source defect is established. Main integration, current hosted checks and a fresh provider review after publication remain pending; merge eligibility is not established. This evidence update preserves the original published commit as an ancestor without merging or rewriting history. Recorded regressions establish wrapper dispatch and rejection, without qualifying upstream fitting arithmetic or environmental design conditions.
 
 ### Synthetic LoNoWe density-curve example
 
