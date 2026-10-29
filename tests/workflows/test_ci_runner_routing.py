@@ -5,6 +5,7 @@ import json
 import os
 import re
 import subprocess
+import sys
 from pathlib import Path
 
 import pytest
@@ -85,7 +86,17 @@ def test_domain_gate_keeps_all_three_jobs_and_read_only_permissions() -> None:
     assert load_workflow("ci.yml")["jobs"]["domain-tests"]["uses"] == (
         "./.github/workflows/domain-matrix.yml"
     )
+    caller = load_workflow("ci.yml")["jobs"]["domain-tests"]
+    assert caller["with"]["test-runner"] == (
+        "env WED_FAST_GATE=1 uv run --with pytest-xdist pytest"
+    )
     workflow = load_workflow("domain-matrix.yml")
+    assert "test-runner" in workflow[True]["workflow_call"]["inputs"]
+    assert any(
+        step.get("env", {}).get("TEST_RUNNER") == "${{ inputs.test-runner }}"
+        and "$TEST_RUNNER $TARGETS" in step.get("run", "")
+        for step in workflow["jobs"]["test-domain"]["steps"]
+    )
     assert workflow["permissions"] == {"contents": "read"}
     jobs = workflow["jobs"]
     assert set(jobs) == {"discover", "test-domain", "aggregate"}
@@ -99,6 +110,51 @@ def test_domain_gate_keeps_all_three_jobs_and_read_only_permissions() -> None:
         for step in job.get("steps", []):
             if "checkout@" in step.get("uses", ""):
                 assert step["with"]["persist-credentials"] is False
+
+
+def test_domain_contract_reads_utf8_and_writes_lf_with_ascii_locale(tmp_path):
+    """Execute the generated validator with UTF-8 mode explicitly disabled."""
+    steps = load_workflow("domain-matrix.yml")["jobs"]["discover"]["steps"]
+    shell = next(
+        step["run"] for step in steps if "DOMAIN_MATRIX_SCRIPT" in step.get("run", "")
+    )
+    script = shell.split("<<'DOMAIN_MATRIX_SCRIPT'\n", 1)[1].split(
+        "\nDOMAIN_MATRIX_SCRIPT", 1
+    )[0]
+    validator = tmp_path / "validator.py"
+    validator.write_text(script, encoding="utf-8", newline="\n")
+    source = tmp_path / "selector-output"
+    matrix = {
+        "include": [{"name": "core", "targets": "tests/\u03bb.py", "mode": "seq"}]
+    }
+    source.write_text(
+        "scope=modules\nmatrix=" + json.dumps(matrix, ensure_ascii=False) + "\n",
+        encoding="utf-8",
+        newline="\n",
+    )
+    output = tmp_path / "output"
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-X",
+            "utf8=0",
+            str(validator),
+            str(source),
+            "--github-output",
+            str(output),
+        ],
+        env={
+            **os.environ,
+            "LC_ALL": "C",
+            "PYTHONCOERCECLOCALE": "0",
+            "PYTHONUTF8": "0",
+        },
+        capture_output=True,
+        check=False,
+        timeout=30,
+    )
+    assert result.returncode == 0, result.stderr.decode("utf-8")
+    assert output.read_bytes() == b"matrix-size=1\n"
 
 
 @pytest.mark.parametrize("job_id", ["publish-testpypi", "publish-pypi"])
