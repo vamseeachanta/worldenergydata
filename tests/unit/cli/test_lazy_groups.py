@@ -104,6 +104,25 @@ def test_proxy_invoke_supports_click_calling_convention(synthetic):
     assert events == [("family", "normal", "direct"), ("leaf", "answer")]
 
 
+@pytest.mark.parametrize("operation", ["get_params", "to_info_dict"])
+def test_direct_context_introspection_preserves_family_options(synthetic, operation):
+    root, imports, events = synthetic
+    proxy = get_command(root).commands["sample"]
+    with typer.Context(proxy) as ctx:
+        if operation == "get_params":
+            params = [param.to_info_dict() for param in proxy.get_params(ctx)]
+        else:
+            info = proxy.to_info_dict(ctx)
+            assert "nested" in info["commands"]
+            params = info["params"]
+
+    mode = next(param for param in params if param["name"] == "mode")
+    assert mode["opts"] == ["--mode"]
+    assert mode["default"] == "normal"
+    assert imports == ["test.family"]
+    assert events == []
+
+
 def test_missing_family_affects_only_selected_command(monkeypatch):
     def missing(name):
         raise ModuleNotFoundError(name)

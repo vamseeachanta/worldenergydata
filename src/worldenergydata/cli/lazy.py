@@ -47,6 +47,9 @@ def lazy_app(module_path: str) -> typer.Typer:
         def list_commands(self, ctx: Any) -> list[str]:
             return self._load().list_commands(ctx)
 
+        def get_params(self, ctx: Any) -> Any:
+            return self._load().get_params(ctx)
+
         def shell_complete(self, ctx: Any, incomplete: str) -> Any:
             return self._load().shell_complete(ctx, incomplete)
 

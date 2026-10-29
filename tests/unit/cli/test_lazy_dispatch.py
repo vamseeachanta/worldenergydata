@@ -100,7 +100,10 @@ def installed_console(tmp_path):
 @pytest.mark.parametrize("args", [("--help",), ("info",), ("version",), ()])
 def test_root_requests_have_no_family_imports(installed_console, args):
     result, imported = installed_console(*args)
-    assert result.returncode == (2 if not args else 0), result.stderr
+    # Click before 8.2 exits successfully when no_args_is_help displays help.
+    assert result.returncode in ({0} if args else {0, 2}), result.stderr
+    if not args:
+        assert "Usage:" in result.stdout + result.stderr
     assert imported == set()
 
 

@@ -10,13 +10,15 @@ Root help, info, version, invalid commands and root completion need no family.
 | Revision | Date | Change and reason |
 | --- | --- | --- |
 | Initial | 2026-10-20 | Defer family imports and document reproducible startup checks. |
+| Update | 2026-10-29 | Preserve family options during introspection and test supported Click help exits. |
 
 ## Method and sources
 
 [Click: Lazily Loading Subcommands](https://click.palletsprojects.com/en/stable/complex/#lazily-loading-subcommands)
 (accessed 2026-10-20) explains lazy registration and warns that help and completion
 can resolve commands. The implementation therefore exposes a metadata-only
-Typer group and imports the family when its context is constructed. A wrapper
+Typer group and imports the family when its context is constructed or its
+parameters are inspected directly. A wrapper
 uses normal `add_typer` conversion to preserve the existing registration overrides.
 The loaded group is cached within that converted command, with no global cache.
 
@@ -102,6 +104,21 @@ focused suite passed 183 tests, including 41 new tests. Root help and `info`
 were compared byte-for-byte with the pinned baseline at the same terminal
 width and were identical. The two omitted lazy command exports are now listed
 explicitly: `lower_tertiary` and `production_forecast`.
+
+Direct Click introspection through `get_params` or `to_info_dict` loads the
+selected family and retains its callback options without executing callbacks.
+Root help and root completion continue to use metadata without loading families.
+Introspection and dispatch are separate loading paths; regression tests cover
+both paths and require the cached family to be imported once.
+
+A bare invocation displays help. Click 8.1.8 returns 0 for that request, while
+Click 8.3.0 returns 2. The startup regression permits either help exit status,
+requires help output and retains the empty family import set. Explicit help,
+info and version requests still require exit status 0.
+
+The updated focused suite passes 185 tests, including the two direct-context
+introspection cases. A separate Click 8.1.8 selection passes 13 tests covering
+the lazy groups and root import budget. Neither run skips any selected case.
 
 This change defers each family as a unit. Heavy dependencies needed by the
 selected family can still load. It does not change provider routing, acquire
