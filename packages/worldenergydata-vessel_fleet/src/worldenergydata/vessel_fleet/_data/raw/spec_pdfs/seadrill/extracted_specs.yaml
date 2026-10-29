@@ -6,6 +6,9 @@
 # text_parse_manual_dims -> cylindrical hull; single-diameter dims transcribed (2026-07-13).
 # Sheets carry U.S. + metric blocks; imperial parsed, DISPLACEMENT from the vendor metric block
 # where printed. Loads in short tons.
+# The source-labelled load-line draft also has RAW_DRAFT_LOAD_LINE_FT.
+# RAW_DRAFT_OPERATING_FT is a deprecated alias for that load-line value only;
+# the other records retain their explicitly stated operating drafts.
 retrieved: '2026-07-13'
 source_family: contractor_rig_summary_pdf
 owner: Seadrill Limited
@@ -370,4 +373,5 @@ vessels:
       CANTILEVER_REACH_FT: 100.0
       VARIABLE_DECK_LOAD_ST: 11000
       RAW_DIMENSIONS_FT: 290 x 320 x 39
+      RAW_DRAFT_LOAD_LINE_FT: 24.0
       RAW_DRAFT_OPERATING_FT: 24.0

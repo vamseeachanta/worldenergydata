@@ -54,8 +54,9 @@ _DEFAULT_DATA_DIR = (
     / "packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/_data"
 )
 
-# Schema fields pushed into the curated table. RAW_* provenance keys stay in
-# the YAML / raw parquet only.
+# Schema fields pushed into the curated table. The explicit load-line draft
+# is retained so DRAFT_M is not mistaken for an operating-condition value.
+# Other RAW_* provenance keys stay in the source extraction.
 _CURATED_FIELDS = (
     "YEAR_BUILT",
     "FLAG_STATE",
@@ -65,6 +66,7 @@ _CURATED_FIELDS = (
     "BEAM_M",
     "DEPTH_M",
     "DRAFT_M",
+    "RAW_DRAFT_LOAD_LINE_FT",
     "DISPLACEMENT_TONNES",
     "MOONPOOL_LENGTH_M",
     "MOONPOOL_WIDTH_M",
@@ -127,6 +129,13 @@ def _match_key(name: str) -> str:
 
 
 def load_extraction(data_dir: Path, contractor: str) -> dict:
+    """Load specs without interpreting the legacy raw draft key as operating.
+
+    RAW_DRAFT_LOAD_LINE_FT identifies source-labelled load-line draft; the
+    deprecated RAW_DRAFT_OPERATING_FT alias is retained in those extractions.
+    DRAFT_M remains the rounded source-condition value. Without an explicit
+    load-line key, the source is required to establish the draft condition.
+    """
     yaml_path = data_dir / f"raw/spec_pdfs/{contractor}/extracted_specs.yaml"
     with open(yaml_path) as fh:
         return yaml.safe_load(fh)
