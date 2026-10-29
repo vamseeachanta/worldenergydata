@@ -39,6 +39,8 @@ from pathlib import Path
 
 import pandas as pd
 
+from worldenergydata.field_development.data_availability import require_available_source
+
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(PROJECT_ROOT / "src"))
 
@@ -221,6 +223,7 @@ REGION_ORDER = [
 
 
 def build_table() -> pd.DataFrame:
+    require_available_source(CURATED / "production_facilities.csv")
     pf = pd.read_csv(CURATED / "production_facilities.csv")
     rows = []
     unmapped_countries = set()

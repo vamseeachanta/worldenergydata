@@ -115,10 +115,23 @@ def _field_entry(r: dict) -> dict:
 
 
 def build(integration: dict | None = None) -> dict:
+    source_dir = PROJECT_ROOT / "src/worldenergydata/field_development"
+    if str(source_dir) not in sys.path:
+        sys.path.insert(0, str(source_dir))
+    from data_availability import require_available_source
+
+    require_available_source(FIELDS_CSV)
+    require_available_source(COVERAGE_CSV)
     if integration is not None:
-        expected = integration.get("manifest", {}).get("input_hashes", {}).get("legacy_catalog")
+        expected = (
+            integration.get("manifest", {})
+            .get("input_hashes", {})
+            .get("legacy_catalog")
+        )
         if expected != hashlib.sha256(FIELDS_CSV.read_bytes()).hexdigest():
-            raise ValueError("extension legacy catalog digest differs from the atlas input")
+            raise ValueError(
+                "extension legacy catalog digest differs from the atlas input"
+            )
     catalog = list(csv.DictReader(FIELDS_CSV.open(newline="", encoding="utf-8")))
     roster = json.loads(ROSTER.read_text())
     statuses = load_scorecard(SCORECARD)
@@ -173,6 +186,7 @@ def build(integration: dict | None = None) -> dict:
     extension_counts = None
     if integration is not None:
         from catalog_extension import extend_fields
+
         fields, extension_counts = extend_fields(pairs, integration, _row_fingerprint)
         fields.sort(key=lambda e: (e["country"], e["name"]))
 
@@ -181,8 +195,11 @@ def build(integration: dict | None = None) -> dict:
             "generated_by": "scripts/field_atlas/build_atlas_feed.py",
             "issue": 947,
             "source": "data/modules/offshore_assets/curated/fields.csv",
-            **({"catalog_extension": {"schema_version": 1, **extension_counts}}
-               if extension_counts is not None else {}),
+            **(
+                {"catalog_extension": {"schema_version": 1, **extension_counts}}
+                if extension_counts is not None
+                else {}
+            ),
         },
         "countries": countries,
         "fields": fields,
@@ -205,8 +222,12 @@ def main():
     parser.add_argument("--research-preview", action="store_true")
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
-    if args.research_preview and (not args.output or args.output.resolve() == OUT.resolve()):
-        parser.error("research preview requires an explicit output outside the default public feed")
+    if args.research_preview and (
+        not args.output or args.output.resolve() == OUT.resolve()
+    ):
+        parser.error(
+            "research preview requires an explicit output outside the default public feed"
+        )
     if args.research_preview and not args.catalog_extension:
         parser.error("research preview requires a catalog extension")
     integration = _load_extension(args.catalog_extension, not args.research_preview)
@@ -215,7 +236,9 @@ def main():
         feed["meta"]["catalog_extension"]["state"] = integration["manifest"]["state"]
     output = args.output or OUT
     output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(json.dumps(feed, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
+    output.write_text(
+        json.dumps(feed, indent=1, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
     print(
         f"  wrote {output.name}  ({len(feed['countries'])} countries, "
         f"{len(feed['fields'])} fields)"
@@ -225,7 +248,9 @@ def main():
 def _load_extension(directory: Path | None, public_only: bool):
     if directory is None:
         return None
-    source = PROJECT_ROOT / "src/worldenergydata/field_development/catalog_integration.py"
+    source = (
+        PROJECT_ROOT / "src/worldenergydata/field_development/catalog_integration.py"
+    )
     spec = importlib.util.spec_from_file_location("catalog_integration", source)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)

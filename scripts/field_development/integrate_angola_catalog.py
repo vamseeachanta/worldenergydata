@@ -27,6 +27,13 @@ def gate_input(path):
 
 
 def build_from_arguments(args):
+    import sys
+
+    source_dir = ROOT / "src/worldenergydata/field_development"
+    sys.path.insert(0, str(source_dir))
+    from data_availability import require_available_source
+
+    require_available_source(args.legacy)
     decisions, decision_digest = gate_input(args.match_decisions)
     eligibility, eligibility_digest = gate_input(args.eligibility)
     bundle = API.build_integration(

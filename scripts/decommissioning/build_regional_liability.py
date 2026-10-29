@@ -33,6 +33,8 @@ from pathlib import Path
 
 import pandas as pd
 
+from worldenergydata.field_development.data_availability import require_available_source
+
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(
     0, str(PROJECT_ROOT / "packages" / "worldenergydata-decommissioning" / "src")
@@ -90,6 +92,7 @@ def _b(musd: float) -> str:
 
 
 def main() -> None:
+    require_available_source(SRC)
     df = pd.read_csv(SRC)
     n_total = len(df)
     res = price_portfolio(df)

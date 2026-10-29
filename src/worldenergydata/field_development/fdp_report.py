@@ -249,6 +249,6 @@ this field (where known).</p></div>
 <figure>{block_svg}<figcaption>Subsea architecture block diagram</figcaption></figure>
 <figure>{layout_svg}<figcaption>{_esc(layout_caption(arch))}</figcaption></figure>
 </div>
-<p class="foot">Sources: SubseaIQ field catalog (~2014) + BSEE + curated vessel/
-subsea catalogs. Schematics are deterministic, generated from the field concept.
+<p class="foot">Source basis: {_esc(concept.data_source or "Not established")}.
+Schematics are deterministic, generated from the field concept.
 </p></div></body></html>"""
