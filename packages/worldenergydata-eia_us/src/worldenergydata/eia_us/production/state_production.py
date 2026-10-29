@@ -1,7 +1,13 @@
-"""Monthly crude + NGL production by US state (EIA-914 / state series).
+"""Monthly crude oil production by US state (EIA state series).
 
-EIA series format: PET.MCRFP{XX}2.M  where XX = two-letter state code.
+EIA series format: PET.MCRFP{XX}1.M  where XX = two-letter state code.
 Unit in API: Thousand Barrels (Mbbl) — converted to barrels (bbl) on load.
+
+Source: EIA, Texas Field Production of Crude Oil (accessed 2026-10-29):
+https://www.eia.gov/dnav/pet/hist/LeafHandler.ashx?n=PET&s=MCRFPTX1&f=M
+The published monthly unit is "Thousand Barrels". The ...2.M series is a
+daily rate ("Thousand Barrels per Day") and is not accepted by this loader:
+https://www.eia.gov/dnav/pet/hist/LeafHandler.ashx?n=PET&s=MCRFPTX2&f=M
 
 Major producing states covered:
   TX, ND, NM, CO, AK, WY, OK, CA, WV, OH, PA, LA
@@ -37,10 +43,10 @@ def STATE_SERIES_ID(state_code: str) -> str:  # noqa: N802
         state_code: Two-letter US state abbreviation (case-insensitive).
 
     Returns:
-        EIA series ID string e.g. 'PET.MCRFPTX2.M'.
+        Monthly volume series ID e.g. 'PET.MCRFPTX1.M' (Thousand Barrels).
     """
     code = state_code.upper().strip()
-    return f"PET.MCRFP{code}2.M"
+    return f"PET.MCRFP{code}1.M"
 
 
 class StateProductionLoader:

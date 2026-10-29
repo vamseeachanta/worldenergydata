@@ -54,16 +54,15 @@ class TestMajorProducingStates:
 class TestStateSeriesId:
     def test_texas_series_id_format(self):
         series_id = STATE_SERIES_ID("TX")
-        assert "TX" in series_id
-        assert series_id.startswith("PET.")
+        assert series_id == "PET.MCRFPTX1.M"
 
     def test_alaska_series_id(self):
         series_id = STATE_SERIES_ID("AK")
-        assert "AK" in series_id
+        assert series_id == "PET.MCRFPAK1.M"
 
     def test_series_id_uppercase(self):
-        series_id = STATE_SERIES_ID("nd")
-        assert "ND" in series_id
+        series_id = STATE_SERIES_ID(" nd ")
+        assert series_id == "PET.MCRFPND1.M"
 
 
 class TestStateProductionLoader:

@@ -12,6 +12,7 @@ from copy import deepcopy
 import pandas as pd
 import pytest
 
+from worldenergydata.eia_us.client.eia_api import EIAApiClient
 from worldenergydata.eia_us.production.state_production import StateProductionLoader
 
 
@@ -33,6 +34,50 @@ def test_declared_volume_unit_conversion():
         {"state": "TX", "year": 2024, "crude_bbl": 5000.0}
     ]
     assert records == original
+
+
+@pytest.mark.parametrize(
+    "series_id,state,expected_bbl",
+    [
+        ("PET.MCRFPTX1.M", "TX", [5200000.0, 5150000.0]),
+        ("PET.MCRFPAK1.M", "AK", [450000.0, 440000.0]),
+        ("PET.MCRFPUS1.M", "US", [12500000.0, 12300000.0, 12450000.0]),
+    ],
+)
+def test_monthly_volume_series_has_loadable_mock(series_id, state, expected_bbl):
+    """Synthetic mock volumes are in thousand barrels, not daily rates."""
+    client = EIAApiClient(api_key="TEST_KEY")
+    records = client.fetch_series(series_id, use_mock=True)
+
+    assert records
+    assert all(record["unit"] == "Thousand Barrels" for record in records)
+    monthly = StateProductionLoader().load(records, state=state)
+    assert monthly["crude_bbl"].tolist() == expected_bbl
+
+
+def test_published_row_unit_survives_client_to_loader():
+    """The published API browser reads row.unit; units names metadata.
+
+    EIA API Technical Documentation and its linked API Query Browser,
+    accessed 2026-10-29: https://www.eia.gov/opendata/documentation.php
+    https://www.eia.gov/opendata/browser/
+    These rows are synthetic, not an authenticated API payload.
+    """
+    raw = {
+        "response": {
+            "data": [monthly_record("2024-02", "2"), monthly_record("2024-03", "3")]
+        }
+    }
+    original = deepcopy(raw)
+    records = EIAApiClient(api_key="TEST_KEY").parse_series_response(raw)
+    loader = StateProductionLoader()
+    monthly = loader.load(records, state="TX")
+
+    assert [record["unit"] for record in records] == ["Thousand Barrels"] * 2
+    # 2 * 1000 = 2000 and 3 * 1000 = 3000 bbl; neither needs day weighting.
+    assert monthly["crude_bbl"].tolist() == [2000.0, 3000.0]
+    assert loader.annual_total(monthly)["crude_bbl"].tolist() == [5000.0]
+    assert raw == original
 
 
 @pytest.mark.parametrize(
