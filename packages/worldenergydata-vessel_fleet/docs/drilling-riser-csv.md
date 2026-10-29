@@ -1,7 +1,8 @@
 # Drilling riser CSV validation
 
 The component loader rejects records whose field count differs from the header,
-ambiguous column labels, missing provenance and missing or repeated component IDs.
+ambiguous column labels, missing provenance, blank, padded or repeated IDs,
+and IDs containing Unicode format characters.
 Validation completes before a DataFrame is cached. This protects field alignment
 and identity lookup; it does not establish engineering suitability of the data.
 
@@ -11,6 +12,8 @@ and identity lookup; it does not establish engineering suitability of the data.
 | --- | --- | --- |
 | 1 | 2026-10-19 | Document header and identity rejection, with a reproducible example to prevent ambiguous catalog lookups. |
 | 2 | 2026-10-20 | Preserve literal ID strings, locate blank IDs by physical CSV line, and remove temporary example files automatically. |
+| 3 | 2026-10-21 | Reject padded IDs and locate missing provenance by physical CSV line so ambiguous or incomplete records can be corrected. |
+| 4 | 2026-10-21 | Reject Unicode format characters in IDs to prevent invisible or directional formatting from creating ambiguous lookups. |
 
 ## Input contract and method
 
@@ -30,20 +33,24 @@ reads a single UTF-8 snapshot (a byte-order mark is accepted), then:
    expected count and actual count. Only empty physical lines are skipped.
 3. Parses the same snapshot with pandas, preserving literal ID strings, and
    checks the required query columns and populated `DATA_SOURCE` and `NOTES`.
-   Missing-provenance errors give physical record start lines.
-4. Checks `COMPONENT_ID` strings for blank, padded or repeated values. Blank and
-   padded-ID errors give the physical start line, including after quoted
-   newlines or empty physical lines. Repeated IDs are rejected before
+   Missing provenance errors give each affected record's physical start line.
+4. Checks `COMPONENT_ID` strings for blank, padded or repeated values and Unicode
+   format characters (category `Cf`, including zero-width spaces and byte-order
+   marks inside a field). Format-character errors give every affected record's
+   physical start line. Blank-ID and padding errors give the physical start
+   line, including after quoted newlines or empty physical lines. IDs with
+   leading or trailing whitespace
+   are rejected rather than trimmed. Repeated IDs are rejected before
    `get_by_id` can choose a first match.
 5. Caches the frame only after all checks pass. A failed load can be retried after
    the input is corrected.
 
-IDs with leading or trailing whitespace are rejected, even without another ID
-that would collide after trimming. Column names and valid IDs are compared
-exactly; validation does not trim, rename or otherwise normalize them.
-Optional engineering cells may remain empty.
+Column names and unpadded IDs are compared exactly; validation does not trim,
+rename or otherwise normalize them. Optional engineering cells may remain empty.
 IDs `1` and `01` remain distinct strings; `NA` is a populated ID. Other columns
 retain pandas' default numeric and missing-value parsing.
+Pandas missing-value tokens such as `NA` in `DATA_SOURCE` or `NOTES` are
+therefore treated as missing provenance.
 A missing file retains the existing behavior of returning an empty frame.
 
 ## Worked example: repeated identity, correction and short row
@@ -117,8 +124,10 @@ CSV line 2: expected 9 fields, actual 8
 
 [Identity tests](../../../tests/unit/vessel_fleet/loaders/test_drilling_riser_identity.py)
 exercise ambiguous headers, blank IDs with physical line numbers, literal numeric
-and missing-value-like ID strings, padded IDs, provenance error locations,
-repeated IDs, correction and retry, and quoted provenance round trips. Existing
+and missing-value-like ID strings, padded-ID and format-character rejection,
+exact matching of Unicode IDs without normalization, repeated IDs, correction
+and retry, missing provenance with physical line numbers, and quoted provenance
+round trips. Existing
 [alignment tests](../../../tests/unit/vessel_fleet/loaders/test_drilling_riser_alignment.py)
 retain the catalog's ID list, delimiter-independent text digest, width checks,
 component-type anchors and provenance assertions.
