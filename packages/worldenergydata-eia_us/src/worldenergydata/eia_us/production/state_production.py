@@ -7,12 +7,11 @@ Major producing states covered:
   TX, ND, NM, CO, AK, WY, OK, CA, WV, OH, PA, LA
 """
 
-import logging
+import re
+from datetime import date
 from typing import Any, Dict, List
 
 import pandas as pd
-
-logger = logging.getLogger(__name__)
 
 # Two-letter codes for the 12 major crude-producing states
 MAJOR_PRODUCING_STATES: List[str] = [
@@ -47,7 +46,7 @@ def STATE_SERIES_ID(state_code: str) -> str:  # noqa: N802
 class StateProductionLoader:
     """Load and normalise EIA state-level monthly crude production data."""
 
-    # Thousand Barrels → Barrels
+    # Definition of the documented unit: one Thousand Barrels = 1000 bbl.
     _KBBL_TO_BBL: float = 1_000.0
 
     def load(
@@ -60,11 +59,18 @@ class StateProductionLoader:
         Args:
             records: List of dicts with 'period', 'value', 'unit' keys,
                      as returned by EIAApiClient.parse_series_response().
+                     'period' must be a valid Gregorian month in YYYY-MM form;
+                     'unit' must be exactly 'Thousand Barrels' (a monthly volume,
+                     not a daily rate). Absent or null 'value' remains unknown.
             state: Two-letter state code (stored uppercase in output).
 
         Returns:
             DataFrame with columns: state, year, month, crude_bbl.
             Empty DataFrame (same columns) if records is empty.
+
+        Raises:
+            ValueError: A record has an invalid 'period' or unsupported 'unit'.
+                Invalid records are rejected rather than silently omitted.
         """
         _cols = ["state", "year", "month", "crude_bbl"]
 
@@ -74,12 +80,25 @@ class StateProductionLoader:
         rows = []
         state_upper = state.upper().strip()
         for rec in records:
-            period = rec.get("period", "")
+            period = rec.get("period")
+            # YYYY-MM: four year digits and two month digits; date validates
+            # Gregorian calendar bounds using the first day of that month.
+            if not isinstance(period, str) or not re.fullmatch(
+                r"[0-9]{4}-[0-9]{2}", period
+            ):
+                raise ValueError(f"Invalid period {period!r}: expected YYYY-MM")
             try:
-                year, month = int(period[:4]), int(period[5:7])
-            except (ValueError, IndexError):
-                logger.warning("Skipping record with unparseable period: %s", period)
-                continue
+                month_start = date.fromisoformat(f"{period}-01")
+            except ValueError as error:
+                raise ValueError(
+                    f"Invalid period {period!r}: expected a valid calendar month"
+                ) from error
+
+            unit = rec.get("unit")
+            if not isinstance(unit, str) or unit != "Thousand Barrels":
+                raise ValueError(
+                    f"Invalid unit {unit!r}: expected 'Thousand Barrels' monthly volume"
+                )
 
             raw_value = rec.get("value")
             if raw_value is None:
@@ -90,14 +109,11 @@ class StateProductionLoader:
             rows.append(
                 {
                     "state": state_upper,
-                    "year": year,
-                    "month": month,
+                    "year": month_start.year,
+                    "month": month_start.month,
                     "crude_bbl": crude_bbl,
                 }
             )
-
-        if not rows:
-            return pd.DataFrame(columns=_cols)
 
         return pd.DataFrame(rows)[_cols].reset_index(drop=True)
 
@@ -106,11 +122,22 @@ class StateProductionLoader:
 
         Returns:
             DataFrame with columns: state, year, crude_bbl.
+            An unknown quantity in any supplied row makes that state/year total
+            unknown (NaN), including groups with no known quantities. True zeros
+            remain zero. Totals sum monthly volumes without rate weighting.
+
+        Only supplied rows are aggregated. An absent month is distinct from a
+        supplied row with an unknown quantity; no calendar-coverage completeness
+        is inferred, so a numeric result need not represent a full year.
         """
         if df.empty:
             return pd.DataFrame(columns=["state", "year", "crude_bbl"])
 
-        return df.groupby(["state", "year"])["crude_bbl"].sum().reset_index()
+        return (
+            df.groupby(["state", "year"])["crude_bbl"]
+            .agg(lambda values: values.sum(min_count=len(values)))
+            .reset_index()
+        )
 
     def filter_year(self, df: pd.DataFrame, year: int) -> pd.DataFrame:
         """Return rows for a specific calendar year."""

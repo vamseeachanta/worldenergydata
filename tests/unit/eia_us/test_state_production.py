@@ -114,7 +114,7 @@ class TestStateProductionLoader:
             }
         ]
         df = loader.load(raw, state="TX")
-        assert pd.isna(df["crude_bbl"].iloc[0]) or df["crude_bbl"].iloc[0] == 0.0
+        assert pd.isna(df["crude_bbl"].iloc[0])
 
     def test_annual_total_correct(self, loader):
         raw = make_mock_state_response("TX", 12)
