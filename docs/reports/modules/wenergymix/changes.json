@@ -1,0 +1,14 @@
+{
+  "document": "Energy mix module analysis",
+  "revisions": [
+    {
+      "revision": "00",
+      "date": "2026-10-21",
+      "changes": [
+        "The offline offshore-wind workflow is documented from normalized observations through selection, energy-unit conversion and provenance.",
+        "The published synthetic example is distinguished from source observations, with its nonnegative measurement boundary and missing-value behavior shown.",
+        "Numerical regression evidence is separated from source accuracy, reuse rights and engineering qualification; the missing evidence and next actions are identified."
+      ]
+    }
+  ]
+}
