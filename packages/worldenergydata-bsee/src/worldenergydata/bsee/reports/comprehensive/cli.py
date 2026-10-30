@@ -455,7 +455,7 @@ Examples:
         <!DOCTYPE html>
         <html>
         <head>
-            <title>{metadata.get('report_type', '').upper()} Report - {metadata.get('entity', '')}</title>  # noqa: E501
+            <title>{metadata.get('report_type', '').upper()} Report - {metadata.get('entity', '')}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 20px; }}
                 h1 {{ color: #333; }}
@@ -471,7 +471,7 @@ Examples:
         <body>
             <h1>{metadata.get('report_type', '').upper()} Report</h1>
             <h2>Entity: {metadata.get('entity', '')}</h2>
-            <p>Generated: {metadata.get('generated_date', '')} {metadata.get('generated_time', '')}</p>  # noqa: E501
+            <p>Generated: {metadata.get('generated_date', '')} {metadata.get('generated_time', '')}</p>
 
             <h2>Summary</h2>
         """
