@@ -36,114 +36,11 @@ logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 logger = logging.getLogger(__name__)
 
 
-def load_incident_data(input_dir: Path):
-    """Load all incident CSV files from real data sources."""
-    data = {}
-    all_incidents = []
+def load_incident_data(input_dir: Path, manifest_path: Path = None):
+    """Require both public inputs and agreement with the recorded manifest."""
+    from scripts.marine_safety.incident_inputs import DEFAULT_MANIFEST, load_inputs
 
-    logger.info("Loading real incident data from multiple sources...")
-
-    # 1. Load Canadian TSB occurrence data
-    try:
-        tsb_file = Path('data/modules/marine_safety/raw/canadian_tsb/occurrence.csv')
-        if tsb_file.exists():
-            logger.info(f"Loading Canadian TSB data from {tsb_file}")
-            tsb_df = pd.read_csv(tsb_file, encoding='utf-8-sig', low_memory=False)
-
-            # Normalize schema
-            tsb_normalized = pd.DataFrame({
-                'incident_id': tsb_df['OccID'] if 'OccID' in tsb_df else '',
-                'date': pd.to_datetime(tsb_df['OccDate'], errors='coerce') if 'OccDate' in tsb_df else None,
-                'vessel_name': '',  # Not in TSB occurrence table
-                'description': tsb_df['Summary'] if 'Summary' in tsb_df else '',
-                'severity': tsb_df['OccClassDisplayEng'] if 'OccClassDisplayEng' in tsb_df else 'Unknown',
-                'location': tsb_df['ProvinceDisplayEng'] if 'ProvinceDisplayEng' in tsb_df else '',
-                'fatalities': tsb_df['TotalDeaths'] if 'TotalDeaths' in tsb_df else 0,
-                'injuries': (tsb_df['TotalMinorInjuries'].fillna(0) +
-                           tsb_df['TotalSeriousInjuries'].fillna(0)) if 'TotalMinorInjuries' in tsb_df else 0,
-                'incident_type': tsb_df['AccIncTypeDisplayEng'] if 'AccIncTypeDisplayEng' in tsb_df else '',
-                'source': 'Canadian TSB'
-            })
-            all_incidents.append(tsb_normalized)
-            logger.info(f"Loaded {len(tsb_normalized)} Canadian TSB incidents")
-    except Exception as e:
-        logger.error(f"Error loading Canadian TSB data: {e}")
-
-    # 2. Load DLP Historical accidents data
-    try:
-        dlp_file = Path('data/modules/marine_safety/raw/dlp_historical/Accidents_1995-2012.csv')
-        if dlp_file.exists():
-            logger.info(f"Loading DLP Historical data from {dlp_file}")
-            dlp_df = pd.read_csv(dlp_file, encoding='utf-8-sig', low_memory=False)
-
-            # Normalize schema
-            dlp_normalized = pd.DataFrame({
-                'incident_id': dlp_df['BARDID'] if 'BARDID' in dlp_df else '',
-                'date': pd.to_datetime(dlp_df['Date'], errors='coerce') if 'Date' in dlp_df else None,
-                'vessel_name': '',  # Not in accidents table
-                'description': dlp_df['Redactednarrative'] if 'Redactednarrative' in dlp_df else '',
-                'severity': 'Unknown',
-                'location': (dlp_df['NameofBodyofWater'].fillna('') + ', ' +
-                           dlp_df['State'].fillna('')) if 'NameofBodyofWater' in dlp_df else '',
-                'fatalities': dlp_df['Numberdeaths'].fillna(0) if 'Numberdeaths' in dlp_df else 0,
-                'injuries': dlp_df['Numberinjured'].fillna(0) if 'Numberinjured' in dlp_df else 0,
-                'incident_type': dlp_df['AccidentEvent1'] if 'AccidentEvent1' in dlp_df else '',
-                'source': 'DLP Historical'
-            })
-            all_incidents.append(dlp_normalized)
-            logger.info(f"Loaded {len(dlp_normalized)} DLP Historical incidents")
-    except Exception as e:
-        logger.error(f"Error loading DLP Historical data: {e}")
-
-    # 3. Load IMO GISIS data (use collated file if available)
-    try:
-        imo_file = Path('data/modules/marine_safety/raw/imo_gisis/imo_gisis_collated.csv')
-        if imo_file.exists():
-            logger.info(f"Loading IMO GISIS data from {imo_file}")
-            imo_df = pd.read_csv(imo_file, encoding='utf-8-sig', low_memory=False)
-
-            # Normalize schema
-            imo_normalized = pd.DataFrame({
-                'incident_id': imo_df['Reference'] if 'Reference' in imo_df else '',
-                'date': pd.to_datetime(imo_df['Occurrence date and time'], errors='coerce') if 'Occurrence date and time' in imo_df else None,
-                'vessel_name': imo_df['Ships involved'] if 'Ships involved' in imo_df else '',
-                'description': imo_df['Casualty event'] if 'Casualty event' in imo_df else '',
-                'severity': imo_df['Casualty severity'] if 'Casualty severity' in imo_df else 'Unknown',
-                'location': imo_df['Place'] if 'Place' in imo_df else '',
-                'fatalities': 0,  # Not directly available in IMO data
-                'injuries': 0,  # Not directly available in IMO data
-                'incident_type': imo_df['Casualty event'] if 'Casualty event' in imo_df else '',
-                'source': 'IMO GISIS'
-            })
-            all_incidents.append(imo_normalized)
-            logger.info(f"Loaded {len(imo_normalized)} IMO GISIS incidents")
-    except Exception as e:
-        logger.error(f"Error loading IMO GISIS data: {e}")
-
-    # Combine all incidents
-    if all_incidents:
-        combined_df = pd.concat(all_incidents, ignore_index=True)
-        logger.info(f"Combined total: {len(combined_df)} incidents from all sources")
-
-        # Remove rows with no description
-        combined_df = combined_df[combined_df['description'].notna() & (combined_df['description'] != '')]
-        logger.info(f"After removing empty descriptions: {len(combined_df)} incidents")
-
-        # Separate into incident types (will be detected by LLM/regex later)
-        data['all_incidents'] = combined_df
-        data['hatch'] = combined_df  # Will filter in analysis
-        data['foundering'] = combined_df[combined_df['incident_type'].str.contains('founder|capsize|sinking', case=False, na=False)]
-        data['fatality'] = combined_df[combined_df['fatalities'] > 0]
-
-        logger.info(f"Potential foundering incidents: {len(data['foundering'])}")
-        logger.info(f"Fatal incidents: {len(data['fatality'])}")
-    else:
-        logger.warning("No incident data loaded")
-        data['hatch'] = pd.DataFrame()
-        data['foundering'] = pd.DataFrame()
-        data['fatality'] = pd.DataFrame()
-
-    return data
+    return load_inputs(input_dir, manifest_path or DEFAULT_MANIFEST)
 
 
 def analyze_hatch_incidents(df: pd.DataFrame, use_llm: bool = False):
@@ -610,6 +507,9 @@ def create_fatality_visualizations(df: pd.DataFrame, analysis: dict):
 
 def generate_executive_summary(data: dict, analyses: dict, output_dir: Path, use_llm: bool):
     """Generate executive summary HTML report."""
+    from scripts.marine_safety.incident_inputs import provenance_html
+
+    provenance = provenance_html(data["manifest"]) if "manifest" in data else ""
 
     html = f"""
 <!DOCTYPE html>
@@ -763,6 +663,7 @@ def generate_executive_summary(data: dict, analyses: dict, output_dir: Path, use
         <p>Analysis Method: <span class="badge {'llm' if use_llm else 'regex'}">{'LLM-Enhanced Detection' if use_llm else 'Regex Pattern Matching'}</span></p>
     </div>
 
+    {provenance}
     <div class="summary-cards">
         <div class="card critical">
             <h3>Hatch Maloperation</h3>
@@ -1402,7 +1303,9 @@ def generate_detailed_report(incident_type: str, df: pd.DataFrame, analysis: dic
 def main():
     parser = argparse.ArgumentParser(description='Generate marine safety incident reports')
     parser.add_argument('--input-dir', type=Path, required=False, default=None,
-                       help='Directory containing incident CSV files (optional, uses real data by default)')
+                       help='External raw input directory recorded by the fetch script')
+    parser.add_argument('--manifest', type=Path, default=None,
+                        help='Input manifest (defaults to the committed manifest)')
     parser.add_argument('--output-dir', type=Path, required=True,
                        help='Directory for output reports')
     parser.add_argument('--use-llm', type=str, default='false',
@@ -1416,17 +1319,18 @@ def main():
     logger.info("="*60)
     logger.info("Marine Safety Incident Analysis Report Generator")
     logger.info("="*60)
-    logger.info(f"Data source: Real incident databases (Canadian TSB, DLP Historical, IMO GISIS)")
+    logger.info("Data source: Public inputs: Canadian TSB and DLP Historical; GISIS excluded")
     logger.info(f"Output directory: {args.output_dir}")
     logger.info(f"LLM detection: {use_llm}")
     logger.info("")
 
-    # Create output directory
+    # Validate all inputs before creating or overwriting any report.
+    try:
+        data = load_incident_data(args.input_dir, args.manifest)
+    except (OSError, ValueError, KeyError) as error:
+        logger.error("Incident input validation failed: %s", error)
+        return 1
     args.output_dir.mkdir(parents=True, exist_ok=True)
-
-    # Load data (input_dir is now ignored, loads from hardcoded real data sources)
-    logger.info("Loading incident data from real databases...")
-    data = load_incident_data(args.input_dir)
 
     # Analyze incidents
     logger.info("Analyzing incidents...")

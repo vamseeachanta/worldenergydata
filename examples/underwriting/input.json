@@ -1,0 +1,90 @@
+{
+  "asset": "Synthetic asset",
+  "as_of": "2026-10-20",
+  "revision": "initial",
+  "revision_note": "Demonstrate evidence and missing-data reporting with invented inputs.",
+  "sources": [
+    {
+      "id": "example",
+      "kind": "synthetic",
+      "status": "derived",
+      "publication": "synthetic",
+      "citation": "Worked example in docs/underwriting/diligence-pack.md (2026), Inputs and method",
+      "url": "docs/underwriting/diligence-pack.md",
+      "retrieved_at": "2026-10-20T00:00:00+00:00",
+      "sha256": "eee7b35e116b3fc15ceeb75aaf656de59cffa6b0364848c3a2808837e2c9de8c",
+      "license": "Invented demonstration inputs; no external records copied",
+      "coverage": "Location, two well identifiers and one monthly oil observation only",
+      "caveats": [
+        "Synthetic observations do not establish source readiness or asset condition."
+      ]
+    }
+  ],
+  "observations": [
+    {
+      "section": "asset_location",
+      "subject": "sample-asset",
+      "label": "Area",
+      "value": "Synthetic area",
+      "unit": "text",
+      "source_id": "example",
+      "locator": "location-row",
+      "observed_on": "2026-09-30"
+    },
+    {
+      "section": "wells",
+      "subject": "sample-well-a",
+      "label": "Well identifier",
+      "value": "sample-well-a",
+      "unit": "identifier",
+      "source_id": "example",
+      "locator": "well-row-a",
+      "observed_on": "2026-09-30"
+    },
+    {
+      "section": "wells",
+      "subject": "sample-well-b",
+      "label": "Well identifier",
+      "value": "sample-well-b",
+      "unit": "identifier",
+      "source_id": "example",
+      "locator": "well-row-b",
+      "observed_on": "2026-09-30"
+    },
+    {
+      "section": "production",
+      "subject": "sample-lease",
+      "label": "Monthly oil volume",
+      "value": 12,
+      "unit": "bbl",
+      "source_id": "example",
+      "locator": "production-row:2026-09",
+      "observed_on": "2026-09-30"
+    }
+  ],
+  "gaps": {
+    "production": [
+      "Lease-level production is not allocated to individual wells."
+    ]
+  },
+  "references": [
+    {
+      "label": "Data inventory",
+      "url": "",
+      "status": "NOT_EVALUATED",
+      "note": "Inventory artifact not supplied; see #910."
+    },
+    {
+      "label": "U.S. onshore matrix",
+      "url": "",
+      "status": "NOT_EVALUATED",
+      "note": "Readiness matrix not supplied; see #911."
+    },
+    {
+      "label": "Source modules/issues",
+      "url": "docs/data-sources/onshore/state-well-databases/source-catalog.md",
+      "status": "AVAILABLE",
+      "note": "Regulator source catalog; joins #915, title feasibility #914, public land #913, discovery #912, pressure #708."
+    }
+  ]
+}

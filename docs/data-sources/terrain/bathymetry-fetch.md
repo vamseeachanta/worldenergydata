@@ -92,3 +92,6 @@ suitability; source qualification and independent review remain required.
 relief) remains a follow-up and is unchanged.
 
 The reader dependency decision remains outside this fix-up scope.
+
+For explicit east/west selection and offline-first bounded reads, see
+[BOEM bathymetry consumer access](boem-bathymetry.md).
