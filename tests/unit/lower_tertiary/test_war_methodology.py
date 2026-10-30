@@ -84,7 +84,9 @@ def test_selected_surfaces_disclose_all_limits(surface, tmp_path):
         mod.PUBLIC = tmp_path / "public"
         mod.ASSETS = mod.PUBLIC / "assets"
         mod.build(domains=["lower_tertiary"])
-        text = (mod.PUBLIC / "wo-april-2026-validation.html").read_text()
+        text = (mod.PUBLIC / "wo-april-2026-validation.html").read_text(
+            encoding="utf-8"
+        )
     elif surface == "listing":
         mod = load_script("scripts/lower_tertiary/build_wo_per_well_dc.py")
         text = mod.build_markdown(mod.load_bores(), mod.load_vintage_diff())
@@ -313,3 +315,45 @@ def test_existing_dataset_card_replaces_old_note_once():
     assert_limits(updated)
     assert_source_list(updated)
     assert mod.patch_readme(updated) == updated
+
+
+def test_decision_link_and_annual_source():
+    mod = load_script("scripts/lower_tertiary/war_methodology.py")
+    url = DECISION_URL
+    assert f"]({url})" in mod.WAR_METHODOLOGY
+    assert f'href="{url}"' in mod.methodology_html()
+    assert "CFR-2025-title30-vol2-sec250-743" in mod.WAR_METHODOLOGY
+
+
+def test_insights_calendar_basis():
+    mod = load_script("scripts/lower_tertiary/build_drilling_insights.py")
+    wells = mod.load_wells(mod.DEFAULT_SOURCE)
+    assert "calendar_days" in wells
+    text = mod.render_html(mod.compute_stats(wells), mod.DEFAULT_SOURCE)
+    note = text.split('class="panel war-methodology"', 1)[1]
+    assert "this page reports spud-to-TD calendar days" in note
+    assert "Existing figures retain their legacy" not in note
+    assert "The learning-series ratios" not in note
+
+
+def test_calendar_dates_keep_zero_and_reject_missing_or_reversed(monkeypatch):
+    mod = load_script("scripts/lower_tertiary/build_drilling_insights.py")
+    frame = mod.pd.DataFrame(
+        {
+            "LEASE_NAME": ["Example"] * 4,
+            "WELL_SPUD_DATE": ["01/01/2020"] * 4,
+            "TOTAL_DEPTH_DATE": ["01/08/2020", "01/01/2020", "12/31/2019", None],
+            "MAX_WELL_BORE_TVD": [1000] * 4,
+        }
+    )
+    monkeypatch.setattr(mod.pd, "read_excel", lambda *args, **kwargs: frame.copy())
+    wells = mod.load_wells(mod.DEFAULT_SOURCE)
+    # Jan 8 - Jan 1 = 7 days; Jan 1 - Jan 1 = 0 days; the other two
+    # intervals are invalid. The valid sum is 7 and median is (7 + 0) / 2.
+    assert wells["calendar_days"].iloc[:2].tolist() == [7, 0]
+    assert wells["calendar_days"].iloc[2:].isna().all()
+    stats = mod.compute_stats(wells)
+    assert stats["n_calendar"] == 2
+    assert stats["n_missing"] == 2
+    assert stats["total_calendar_days"] == 7
+    assert stats["median_days"] == 3.5

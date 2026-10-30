@@ -39,3 +39,33 @@ Source = **GitHub Actions**.
 Julia (lease G20351) Lower-Tertiary subsea development: field economics (V30 NPV)
 and 3D well paths. Add a page by dropping a new report into `reports/` and a
 render block into `scripts/build_pages.py`.
+
+## Domain-scoped rebuilds
+
+The Pages workflow selects builders from the complete push diff using
+`scripts/pages_scope.py`. Each changed report must belong to a registered
+builder. Unknown report paths, shared presentation dependencies, deletions and
+renames request a clean build. The selector reads the builder registry rather
+than maintaining a separate domain list.
+
+An incremental build requires the cached `public/` tree from the exact revision
+used as the diff base. Prefix matches are not used: an older tree could omit
+changes from intervening commits. Cache keys use a new version prefix to exclude
+trees produced by the previous selection policy. A missing cache or unavailable
+diff base causes a clean build of every domain. Manual dispatch also rebuilds
+everything. The cache action's [restore contract](https://github.com/actions/cache/blob/main/restore/README.md)
+defines `cache-hit` as true only for an exact key match.
+
+The workflow still uploads and deploys the complete site artifact. With an exact
+cache hit, untouched domain output survives while the selected builders, shared
+assets and landing index are refreshed. Deleted or renamed inputs currently
+rebuild the whole tree; selective stale-output cleanup is a later extension.
+
+To inspect the selection without generating pages:
+
+```bash
+python scripts/pages_scope.py --base HEAD~1 --head HEAD
+```
+
+The selector and workflow shell branches are covered by `tests/test_pages_scope.py`;
+the renderer's output isolation is covered by `tests/test_build_pages.py`.
