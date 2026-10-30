@@ -18,6 +18,26 @@ is resolved package-relative by the loaders and `FleetRouter`. This makes the
 domain self-contained — no repo-root or external data mount is required — and
 the data ships in the built wheel.
 
+## Draft conditions
+
+`RAW_DRAFT_LOAD_LINE_FT` identifies a draft explicitly labelled as load line in
+the source specification. The parser, packaged extractions and spec-ingestion
+script preserve this field. For these values, `RAW_DRAFT_OPERATING_FT` remains
+as a deprecated compatibility alias. Other layouts still use the legacy key
+for explicitly stated operating drafts; an older unqualified draft also retains
+that key. Its name alone does not establish the draft condition.
+
+`DRAFT_M` retains the existing source-condition value rounded to one decimal.
+For a load-line record it describes load-line draft, not operating draft. A
+separately stated operating draft takes precedence for `DRAFT_M` and the legacy
+operating key. Transit drafts remain under `RAW_DRAFT_TRANSIT_FT`.
+
+The committed Prospector 1 extraction contains a load-line draft of 21.9 ft,
+rounded to 6.7 m. The [public specification](https://api.borrdrilling.com/wp-content/uploads/2024/08/Short-Specification-Prospector-1.pdf)
+labels this value as draft at load line. The regression test checks that
+extraction and its preservation through schema serialization and ingestion;
+the value does not establish draft in an operating condition.
+
 ## Liftboats and public incidents
 
 [The liftboat database](LIFTBOATS.md) adds sourced technical observations,

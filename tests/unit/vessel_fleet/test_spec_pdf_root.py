@@ -271,3 +271,91 @@ def test_cli_hash_mismatch_is_incomplete(ingest, monkeypatch, tmp_path):
         sys, "argv", [str(SCRIPT), "--reparse", "--data-dir", str(data_dir)]
     )
     assert ingest.main() == 3
+
+
+def test_prospector_1_load_line_draft(ingest):
+    """The public source labels 21.9 ft as draft at load line, rounded to 6.7 m.
+
+    Source: the Borr manifest entry for the Prospector 1 specification.
+    This checks the committed extraction; it does not certify operating draft.
+    """
+    from worldenergydata.vessel_fleet.schemas.drilling_rig import DrillingRigSchema
+
+    entry = ingest.load_extraction(DATA_DIR, "borr")["vessels"]["Prospector 1"]
+    specs = entry["specs"]
+    assert specs["RAW_DRAFT_LOAD_LINE_FT"] == 21.9
+    assert specs["RAW_DRAFT_OPERATING_FT"] == 21.9  # Deprecated load-line alias.
+    assert specs["DRAFT_M"] == 6.7
+    record = DrillingRigSchema(VESSEL_NAME="Prospector 1", **specs).model_dump()
+    assert record["RAW_DRAFT_LOAD_LINE_FT"] == 21.9
+
+
+@pytest.mark.parametrize("destination", ["raw", "curated"])
+def test_load_line_draft_survives_ingestion(ingest, tmp_path, destination):
+    extraction = ingest.load_extraction(DATA_DIR, "borr")
+    extraction["vessels"] = {"Prospector 1": extraction["vessels"]["Prospector 1"]}
+    if destination == "raw":
+        assert ingest.write_raw_source(extraction, tmp_path, {}, "borr") == 1
+        store = ingest.ParquetStore(base_dir=tmp_path / "raw/spec_pdf_dimensions")
+        [record] = store.load("borr.parquet")
+    else:
+        store = ingest.ParquetStore(base_dir=tmp_path / "curated")
+        store.save([{"VESSEL_NAME": "Prospector 1"}], "drilling_rigs.parquet")
+        assert ingest.apply_to_curated(extraction, tmp_path, {}) == 1
+        [record] = store.load("drilling_rigs.parquet")
+    assert record["RAW_DRAFT_LOAD_LINE_FT"] == 21.9
+    assert record["DRAFT_M"] == 6.7
+
+
+@pytest.mark.parametrize("change", ["format", "alias", "value", "metadata", "wrong"])
+def test_draft_relabel_validation(change):
+    """The validator rejects numerical or metadata edits beyond an added alias."""
+    import copy
+    import runpy
+
+    validate = runpy.run_path(str(SCRIPT.with_name("validate_draft_relabel.py")))[
+        "validate_relabel"
+    ]
+    before = {"vessels": {"Rig": {"specs": {"RAW_DRAFT_OPERATING_FT": 21.9}}}}
+    after = copy.deepcopy(before)
+    specs = after["vessels"]["Rig"]["specs"]
+    if change == "alias":
+        specs["RAW_DRAFT_LOAD_LINE_FT"] = 21.9
+    elif change == "value":
+        specs["RAW_DRAFT_OPERATING_FT"] = 22.0
+    elif change == "metadata":
+        after["retrieved"] = "changed"
+    elif change == "wrong":
+        specs["RAW_DRAFT_LOAD_LINE_FT"] = 22.0
+    if change in ("format", "alias"):
+        assert validate(before, after) == (1 if change == "alias" else 0)
+    else:
+        with pytest.raises(ValueError):
+            validate(before, after)
+
+
+@pytest.mark.parametrize("legacy", ["", "unreported"])
+def test_legacy_raw_draft_metadata_remains_compatible(legacy):
+    from worldenergydata.vessel_fleet.schemas.drilling_rig import DrillingRigSchema
+
+    record = DrillingRigSchema(
+        VESSEL_NAME="Rig", RAW_DRAFT_OPERATING_FT=legacy, DRAFT_M=6.7
+    )
+    assert record.DRAFT_M == 6.7
+
+
+@pytest.mark.parametrize("blank", ["", "  "])
+def test_load_line_draft_accepts_blank_optional_values(blank):
+    from worldenergydata.vessel_fleet.schemas.drilling_rig import DrillingRigSchema
+
+    record = DrillingRigSchema(VESSEL_NAME="Rig", RAW_DRAFT_LOAD_LINE_FT=blank)
+    assert record.RAW_DRAFT_LOAD_LINE_FT is None
+
+
+def test_load_line_draft_rejects_negative_values():
+    from pydantic import ValidationError
+
+    from worldenergydata.vessel_fleet.schemas.drilling_rig import DrillingRigSchema
+
+    with pytest.raises(ValidationError):
+        DrillingRigSchema(VESSEL_NAME="Rig", RAW_DRAFT_LOAD_LINE_FT=-1)
