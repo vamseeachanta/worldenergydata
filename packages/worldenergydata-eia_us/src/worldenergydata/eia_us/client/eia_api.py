@@ -5,9 +5,9 @@ Auth: API key via EIA_API_KEY environment variable.
 Rate limit: 500 requests per hour per key — enforced via token bucket.
 
 Key series IDs:
-  PET.MCRFPUS2.M  — US total monthly crude production
-  PET.MCRFPAK2.M  — Alaska monthly crude production
-  PET.MCRFPTX2.M  — Texas monthly crude production (XX = state code)
+  PET.MCRFPUS1.M  — US total monthly crude volume (Thousand Barrels)
+  PET.MCRFPAK1.M  — Alaska monthly crude volume (Thousand Barrels)
+  PET.MCRFPTX1.M  — Texas monthly crude volume (XX = state code)
   INTL.57-1-*.A   — International annual country production
 """
 
@@ -86,16 +86,16 @@ class EIACache:
 
 # Mock data for tests — avoids any live HTTP calls
 _MOCK_SERIES_DATA: Dict[str, List[Dict[str, Any]]] = {
-    "PET.MCRFPUS2.M": [
+    "PET.MCRFPUS1.M": [
         {"period": "2024-01", "value": "12500", "unit": "Thousand Barrels"},
         {"period": "2024-02", "value": "12300", "unit": "Thousand Barrels"},
         {"period": "2024-03", "value": "12450", "unit": "Thousand Barrels"},
     ],
-    "PET.MCRFPAK2.M": [
+    "PET.MCRFPAK1.M": [
         {"period": "2024-01", "value": "450", "unit": "Thousand Barrels"},
         {"period": "2024-02", "value": "440", "unit": "Thousand Barrels"},
     ],
-    "PET.MCRFPTX2.M": [
+    "PET.MCRFPTX1.M": [
         {"period": "2024-01", "value": "5200", "unit": "Thousand Barrels"},
         {"period": "2024-02", "value": "5150", "unit": "Thousand Barrels"},
     ],
@@ -177,7 +177,13 @@ class EIAApiClient:
             raw: Full JSON response dict from EIA API.
 
         Returns:
-            List of record dicts with 'period' and 'value' (float or None).
+            List of dicts with 'period', 'value' (float or None) and 'unit'.
+            The singular row field is retained, as read by getUnit in EIA's
+            published API Query Browser (accessed 2026-10-29):
+            https://www.eia.gov/opendata/browser/
+            The technical documentation uses 'units' in data-column metadata;
+            this is distinct from a row's 'unit':
+            https://www.eia.gov/opendata/documentation.php
 
         Raises:
             EIAApiError: If response.data is missing or is not an array.
@@ -225,7 +231,7 @@ class EIAApiClient:
         without making any HTTP requests.
 
         Args:
-            series_id: EIA series identifier (e.g. 'PET.MCRFPUS2.M').
+            series_id: EIA series identifier (e.g. 'PET.MCRFPUS1.M').
             params: Optional query parameters (start, end, frequency, etc.).
             use_mock: If True, return mock data without HTTP calls.
 
