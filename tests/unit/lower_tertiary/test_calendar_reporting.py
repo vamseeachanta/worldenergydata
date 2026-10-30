@@ -115,7 +115,9 @@ def test_insight_csv_and_page_state_definition_and_population(tmp_path):
     assert saved["spud_to_td_calendar_days"].iloc[:2].tolist() == [60, 0]
     page = mod.render_html(stats, mod.DEFAULT_SOURCE)
     assert "Calendar cycle time" in page
-    assert "184" in page and "211" in page
+    population = mod.read_population_counts()
+    assert f"<b>{population['article_bores']}</b> wellbores" in page
+    assert "<b>2</b> positive legacy" in page
     assert "not rig-days" in page
     assert "2 of 3" in page
     assert "among 217 workbook wellbores" not in page
@@ -246,3 +248,87 @@ def test_insight_date_matches_latest_issued_revision(monkeypatch):
     frame = pd.DataFrame(columns=["calendar_days", "MAX_WELL_BORE_TVD", "LEASE_NAME"])
     page = mod.render_html(mod.compute_stats(frame), mod.DEFAULT_SOURCE)
     assert "Report revision date 2030-01-01." in page
+
+
+def test_population_note_reads_committed_inputs(tmp_path):
+    """Hand count: one positive, one zero, one absent legacy entry = 1 of 3.
+
+    Synthetic article table totals 2 bores and 9 D&C days; benchmark has one
+    producing row. Changing the files must change the rendered note, not code.
+    """
+    mod = _script("build_drilling_insights")
+    article = tmp_path / "article.md"
+    article.write_text(
+        "| Development | Bores (WO) | D&C (WO) |\n"
+        "|---|---:|---:|\n| **Total** | **2** | **9** |\n"
+    )
+    benchmark = tmp_path / "benchmark.csv"
+    benchmark.write_text("api12\n001\n")
+    frame = pd.DataFrame(
+        {
+            "calendar_days": [60, 0, None],
+            "DRILLING_DAYS": [60, 0, None],
+            "MAX_WELL_BORE_TVD": [None] * 3,
+            "LEASE_NAME": ["Synthetic"] * 3,
+        }
+    )
+    population = mod.read_population_counts(article, benchmark)
+    page = mod.render_html(mod.compute_stats(frame), mod.DEFAULT_SOURCE, population)
+    assert "<b>1</b> positive legacy" in page
+    assert "remaining 2" in page
+    assert "<b>2</b> wellbores and 9 days" in page
+    assert "1 producing wells" in page
+    article.write_text(article.read_text().replace("**2**", "**4**"))
+    benchmark.write_text("api12\n001\n002\n")
+    population = mod.read_population_counts(article, benchmark)
+    page = mod.render_html(mod.compute_stats(frame), mod.DEFAULT_SOURCE, population)
+    assert "<b>4</b> wellbores" in page
+    assert "2 producing wells" in page
+
+
+def test_public_calendar_files_do_not_publish_legacy_schema():
+    """Only calendar surfaces are checked; activity-coded drilling days stay valid."""
+    files = list((REPO / "reports").rglob("lt_well_benchmark*.csv"))
+    files += [REPO / "reports/lower_tertiary/lt_drilling_insights.csv"]
+    for path in files:
+        assert "drilling_days" not in pd.read_csv(path, nrows=0).columns, path
+    for path in (REPO / "reports/lower_tertiary").glob("lt_well_benchmark*.md"):
+        text = path.read_text()
+        assert "Drill days" not in text
+        assert "Spud to completion (calendar days)" in text
+    page = (REPO / "reports/lower_tertiary/drilling_insights.html").read_text()
+    assert "Calendar cycle time (days)" in page
+    assert "Drilling days (days)" not in page
+
+
+@pytest.mark.parametrize("total_rows", ["", "| Total | 2 | 9 |\n" * 2])
+def test_population_note_rejects_missing_or_duplicate_totals(tmp_path, total_rows):
+    mod = _script("build_drilling_insights")
+    article = tmp_path / "article.md"
+    article.write_text("| Development | Bores (WO) | D&C (WO) |\n" + total_rows)
+    benchmark = tmp_path / "benchmark.csv"
+    benchmark.write_text("api12\n")
+    with pytest.raises(ValueError, match="one population total"):
+        mod.read_population_counts(article, benchmark)
+
+
+def test_committed_calendar_page_matches_builder():
+    mod = _script("build_drilling_insights")
+    frame = mod.load_wells(mod.DEFAULT_SOURCE)
+    expected = (
+        mod.site_nav.inject_for(
+            mod.render_html(mod.compute_stats(frame), mod.DEFAULT_SOURCE),
+            "drilling_insights",
+        ).rstrip()
+        + "\n"
+    )
+    assert mod.HTML_PATH.read_text(encoding="utf-8") == expected
+
+
+def test_benchmark_page_links_worked_calendar_example():
+    mod = _script("build_well_benchmark")
+    frame = pd.DataFrame(columns=["uptime_flag", "revenue_flag", "decline_flag"])
+    page = mod.render_markdown(frame, mod.BenchmarkConfig(), "2020-06-30")
+    assert "benchmark_calendar_spans.md" in page
+    doc = REPO / "docs/data-sources/bsee/analysis/rig_days/benchmark_calendar_spans.md"
+    assert "60 + 100 = 160" in doc.read_text()

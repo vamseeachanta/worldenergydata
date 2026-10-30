@@ -51,6 +51,11 @@ REVISION_HISTORY = (
         "2026-10-20",
         "Document the retained completion_days name and its calendar basis for compatibility.",
     ),
+    (
+        3,
+        "2026-10-22",
+        "Link the calendar identity and worked example to make the timing basis auditable without raw data.",
+    ),
 )
 
 # Columns rendered in the markdown table (order matters), with headers.
@@ -129,6 +134,12 @@ def render_markdown(df: pd.DataFrame, cfg: BenchmarkConfig, end_date: str) -> st
     )
     lines.extend(
         [
+            (
+                "See the [calendar-span definition and synthetic worked example]"
+                "(../../docs/data-sources/bsee/analysis/rig_days/benchmark_calendar_spans.md) "
+                "for the date identity and limits."
+            ),
+            "",
             "## Limits",
             "",
             "The CSV column `completion_days` retains its name for compatibility with existing consumers. "

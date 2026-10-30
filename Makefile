@@ -45,12 +45,15 @@ clean:
 .PHONY: data data-dry
 
 # Prerequisites: install uv and run `uv sync` once.
+# Source: issue #1066 (namespace-package import failure).
+BSEE_PYTHONPATH := src:packages/worldenergydata-core/src:packages/worldenergydata-bsee/src
+
 # Issue 1066 notes: eWell WAR bulk contains only reports submitted since April 2004.
 data:  ## Download BSEE datasets (~300 MB, ~8 min)
-	uv run python scripts/refresh_bsee_all.py
+	PYTHONPATH="$(BSEE_PYTHONPATH)" uv run python scripts/refresh_bsee_all.py
 
 data-dry:  ## Show what data would be downloaded
-	uv run python scripts/refresh_bsee_all.py --dry-run
+	PYTHONPATH="$(BSEE_PYTHONPATH)" uv run python scripts/refresh_bsee_all.py --dry-run
 
 # Parallel file processing example
 process-files:
