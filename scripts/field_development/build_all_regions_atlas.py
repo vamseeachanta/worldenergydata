@@ -36,6 +36,8 @@ import sys
 from datetime import date
 from pathlib import Path
 
+from worldenergydata.field_development.data_availability import require_available_source
+
 _SCRIPTS = Path(__file__).resolve().parents[1]
 if str(_SCRIPTS) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS))
@@ -68,6 +70,7 @@ OUT_HTML = PROJECT_ROOT / "reports" / "field_development" / "all_regions_atlas.h
 
 
 def read_coverage():
+    require_available_source(COVERAGE_CSV)
     """Return (by_country list of dicts, by_region dict, totals dict)."""
     by_country = []
     by_region = {}

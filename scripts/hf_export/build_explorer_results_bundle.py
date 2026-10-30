@@ -73,6 +73,13 @@ def load_source(path: Path) -> tuple[dict, str, int]:
 
 
 def build_bundle() -> dict:
+    import sys
+
+    source_dir = REPO / "src/worldenergydata/field_development"
+    sys.path.insert(0, str(source_dir))
+    from data_availability import require_available_source
+
+    require_available_source(ATLAS_JSON)
     explorer, exp_hash, exp_bytes = load_source(EXPLORER_JSON)
     atlas, atlas_hash, atlas_bytes = load_source(ATLAS_JSON)
 
@@ -209,13 +216,13 @@ def render_card(bundle: dict) -> str:
         "`performance.breakeven_wti`)",
         "",
         "Per-field economics are **life-to-date, pre-tax, 10%-discounted** "
-        "(`performance.economics_basis == \"life_to_date_pretax_npv_at_10pct\"`): the "
+        '(`performance.economics_basis == "life_to_date_pretax_npv_at_10pct"`): the '
         "full sunk capital is charged against only the oil produced **to date**, not "
         "against full-cycle EUR. These are **not** full-cycle economics. "
         "For a field early in its life that is legitimately deep-negative, so such "
         "values are **withheld** — `npv_mm`, `breakeven_wti` and `sens_mm_per_dollar` "
-        "are `null` and `performance.economics_status == \"early_life\"`. Only fields "
-        "with `economics_status == \"surfaced\"` carry a client-credible life-to-date "
+        'are `null` and `performance.economics_status == "early_life"`. Only fields '
+        'with `economics_status == "surfaced"` carry a client-credible life-to-date '
         "number (and it may still be negative — an expected life-to-date artifact for "
         "high-up-front-capital deepwater fields). A credible full-cycle recompute is "
         "tracked in worldenergydata#973.",

@@ -1,5 +1,5 @@
 # ABOUTME: Architecture-drawing panel gate (issue #969, epic #942) — asserts the
-# ABOUTME: per-field `architecture` payload (plan-view SVG for 3, placeholder for 7).
+# ABOUTME: per-field `architecture` payload (independent plan-view SVG or an unavailable-input placeholder).
 
 import json
 import re
@@ -10,8 +10,8 @@ import pytest
 REPO = Path(__file__).resolve().parents[3]
 EXPLORER = REPO / "reports/lower_tertiary/lifecycle/_explorer.json"
 
-# Exactly the 3 LT fields with a committed, authored FieldConcept (real geometry).
-AUTHORED = {"cascade_chinook", "julia", "stones"}
+# Only the independently sourced concept retains authored geometry.
+AUTHORED = {"julia"}
 # The FDP-authoring backlog issue the concept-less placeholder links (#759/#962).
 PENDING_ISSUE = 962
 # PDF-portability forbidden constructs (.claude/rules/svg-pdf-portability.md).
@@ -40,8 +40,8 @@ def test_architecture_key_present_all_fields():
     assert not missing, f"fields without an architecture key: {missing}"
 
 
-# --- 2. real SVG for the authored three ------------------------------------
-def test_architecture_svg_for_authored_three():
+# --- 2. real SVG for the independently sourced geometry ------------------------------------
+def test_architecture_svg_for_independent_geometry():
     fields = _fields()
     for fid in AUTHORED:
         arch = fields[fid]["architecture"]
@@ -49,17 +49,13 @@ def test_architecture_svg_for_authored_three():
         assert arch["svg"].startswith("<svg"), f"{fid}: svg does not start with <svg"
         assert arch["source"] == "render_layout", fid
         assert arch.get("caption"), f"{fid}: architecture caption missing"
-    # r2 DECISION (§3.3): honest scope — the Chinook-only tieback concept.
-    assert (
-        fields["cascade_chinook"]["architecture"]["caption"] == "Chinook subsea tieback"
-    )
 
 
-# --- 3. placeholder for the other seven ------------------------------------
-def test_architecture_placeholder_for_seven():
+# --- 3. placeholder for unavailable inputs ------------------------------------
+def test_architecture_placeholder_for_unavailable_inputs():
     fields = _fields()
     placeholder = {fid for fid in fields if fid not in AUTHORED}
-    assert len(placeholder) == 7, placeholder
+    assert len(placeholder) == 9, placeholder
     for fid in placeholder:
         arch = fields[fid]["architecture"]
         assert arch["svg"] is None, f"{fid}: expected placeholder (svg None)"

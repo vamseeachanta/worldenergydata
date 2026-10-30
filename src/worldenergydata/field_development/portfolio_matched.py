@@ -27,6 +27,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
 
+from worldenergydata.field_development.data_availability import require_available_source
 from worldenergydata.field_development.enums import ConceptType
 from worldenergydata.field_development.host_enrichment import (
     correct_satellite_labels,
@@ -92,6 +93,7 @@ def _concept(value: str) -> Optional[ConceptType]:
 def load_matched_crosswalk(csv_path: Optional[Path] = None) -> list[CrosswalkMatch]:
     """Load the crosswalk rows flagged ``matched`` as :class:`CrosswalkMatch`."""
     path = csv_path or _curated_crosswalk_path()
+    require_available_source(path)
     out: list[CrosswalkMatch] = []
     with open(path, newline="", encoding="utf-8") as fh:
         for row in csv.DictReader(fh):

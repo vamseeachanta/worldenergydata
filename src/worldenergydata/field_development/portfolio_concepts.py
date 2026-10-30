@@ -4,25 +4,11 @@
 worldenergydata.field_development.portfolio_concepts
 ====================================================
 
-Resolve the **authored** :class:`FieldConcept` for a Lower-Tertiary Explorer
-field id. Only 3 of the 10 LT fields carry a committed FDP page with real
-geometry (well count / concept type / tieback distance): ``cascade_chinook``,
-``julia`` and ``stones``. The architecture-drawing panel (#969) draws a to-scale
-plan-view for exactly those 3 (via
-:func:`worldenergydata.field_development.layout.render_layout`) and shows a
-visible placeholder for the other 7 — an honest gap over a degenerate 1-tree
-drawing.
-
-Concept provenance (kept here so a later reviewer sees one seam, not build
-scripts):
-
-* ``julia`` — the richest authored concept (5 wells, 2 manifolds, 30 km tieback),
-  mirrored from ``scripts/field_development/build_julia_fdp.py``. Deliberately
-  disagrees with ``_research.json`` (6 wells) — "richest" wins.
-* ``stones`` / ``cascade_chinook`` — ``to_concept()`` applied to the matching
-  ``reports/field_development/portfolio/_research.json`` entry ("Stones" — FPSO,
-  8 wells; "Chinook" — subsea tieback, 2 wells, 24 km). ``cascade_chinook`` is
-  drawn from the Chinook-only concept; the render sites caption it honestly.
+Resolve an independently sourced authored concept for a lifecycle field.
+The historical portfolio entries are held privately pending redistribution-terms
+review. Their geometry remains unavailable after withdrawal from the research
+JSON. The independent inline concept retains its existing configuration/BSEE
+basis. Missing inputs return None so callers display a visible placeholder.
 
 A concept whose numeric inputs are non-finite (NaN/inf) is rejected → ``None``
 (defence-in-depth so no ``NaN``/``Infinity`` can reach the SVG or the sidecar
@@ -123,7 +109,7 @@ def _to_concept(d: dict) -> FieldConcept:
         plateau_rate_boed=d.get("plateau_boed"),
         year_first_oil=d.get("first_oil_year"),
         metocean_regime=MetoceanRegime.HURRICANE_CYCLONE,
-        data_source="SubseaIQ + web research (FDP portfolio)",
+        data_source="Explicit portfolio input; see its source records",
     )
 
 
@@ -150,9 +136,9 @@ def _is_finite_concept(c: FieldConcept) -> bool:
 def concept_for(field_id: str) -> Optional[FieldConcept]:
     """Return the authored :class:`FieldConcept` for ``field_id``, else ``None``.
 
-    Real geometry exists for exactly ``cascade_chinook`` / ``julia`` / ``stones``;
-    every other id (the concept-less 7 and any unknown id) returns ``None`` so the
-    caller emits a placeholder. A concept with non-finite numeric inputs is also
+    Withdrawn portfolio entries and unknown identities return ``None`` so the
+    caller emits a placeholder. Independent authored inputs remain supported.
+    A concept with non-finite numeric inputs is also
     rejected (→ ``None``).
     """
     if field_id == "julia":

@@ -1,99 +1,97 @@
 {
   "module": "offshore_assets",
-  "generated_at": "2026-10-27T16:00:52.576427+00:00",
-  "last_refresh": "2026-10-27",
-  "record_count": 3896,
-  "file_count": 10,
-  "total_size_bytes": 361296,
+  "generated_at": "2026-10-29T10:26:32.291843+00:00",
+  "last_refresh": null,
+  "record_count": null,
+  "file_count": 3,
+  "total_size_bytes": 27633,
   "source_url": null,
   "format": ".csv,.md,.yaml",
   "has_external_data": false,
   "external_data_root": null,
-  "provenance": "Legacy reference tables except jackups.csv, which is rebuilt solely from public contractor specification and overview pages retrieved 2026-10-27.",
+  "provenance": "Historical offshore scrape and unverified jackup replacement withheld from public distribution. Independent regulator datasets retain their own source records.",
   "files": [
-    {
-      "name": "country_centroids.csv",
-      "path": "curated/country_centroids.csv",
-      "size_bytes": 6409,
-      "modified": "2026-06-22"
-    },
-    {
-      "name": "coverage_summary.csv",
-      "path": "curated/coverage_summary.csv",
-      "size_bytes": 4177,
-      "modified": "2026-06-22"
-    },
     {
       "name": "COVERAGE_SUMMARY.md",
       "path": "curated/COVERAGE_SUMMARY.md",
-      "size_bytes": 2849,
-      "modified": "2026-06-22"
-    },
-    {
-      "name": "drilling_rigs.csv",
-      "path": "curated/drilling_rigs.csv",
-      "size_bytes": 15854,
-      "modified": "2026-06-22"
-    },
-    {
-      "name": "fields.csv",
-      "path": "curated/fields.csv",
-      "size_bytes": 160020,
-      "modified": "2026-06-22"
-    },
-    {
-      "name": "host_facilities.csv",
-      "path": "curated/host_facilities.csv",
-      "size_bytes": 17398,
-      "modified": "2026-06-22"
-    },
-    {
-      "name": "jackups.csv",
-      "path": "curated/jackups.csv",
-      "size_bytes": 29495,
-      "modified": "2026-10-27",
-      "row_count": 163,
-      "sha256": "8c095769a0a5c16cf2dfb360dc7d6028fd33641f9fc44b03888371887d5d5087",
-      "byte_basis": "UTF-8 CSV with LF line endings; normalize checkout CRLF pairs to LF before checking size and SHA-256",
-      "provenance": {
-        "source": "Public contractor specification pages and overview pages",
-        "retrieved": "2026-10-27",
-        "source_sha256": "1618e8f01b438221919fb5e3c5f7d33b945743d9d992d018a1489a91430e34b9",
-        "source_row_count": 163,
-        "builder": "scripts/field_development/build_contractor_jackups.py",
-        "length_conversion": "metres / 0.3048, rounded half up to one decimal foot",
-        "year_basis": "Build, delivery or entered-service year; not harmonized",
-        "unavailable_columns": [
-          "COUNTRY_BUILT",
-          "CLASSIFICATION_SOCIETY",
-          "MIN_WATER_DEPTH_FT",
-          "QUARTERS_CAPACITY",
-          "DERRICK_RATING_KIPS",
-          "DRAWWORKS_HP",
-          "BOP_OPERATING_PRESSURE_KSI"
-        ],
-        "limitations": "Sample only; fourteen rows include indexed official particulars without direct-sheet readback. No retrievable input artifact or field-level extraction record is recorded; a complete rebuild and numerical source claims remain unverified. Not qualified for engineering use."
-      }
-    },
-    {
-      "name": "production_facilities.csv",
-      "path": "curated/production_facilities.csv",
-      "size_bytes": 79624,
+      "size_bytes": 261,
       "modified": "2026-06-22"
     },
     {
       "name": "README.md",
       "path": "README.md",
-      "size_bytes": 12762,
+      "size_bytes": 1967,
       "modified": "2026-10-27"
     },
     {
       "name": "schema.yaml",
       "path": "schema.yaml",
-      "size_bytes": 32708,
+      "size_bytes": 25405,
       "modified": "2026-10-27"
     }
   ],
   "files_truncated": false,
-  "summary_scope": "Listed files only; byte totals exclude this metadata file. Record count is the sum of rows in listed CSVs."
+  "summary_scope": "Listed public files only; withheld rows are unavailable, not zero.",
+  "withheld_datasets": [
+    {
+      "name": "country_centroids.csv",
+      "status": "withheld",
+      "notice": "curated/country_centroids.csv.md",
+      "loader": "worldenergydata.field_development.data_availability.load_withheld_dataset"
+    },
+    {
+      "name": "coverage_summary.csv",
+      "status": "withheld",
+      "notice": "curated/coverage_summary.csv.md",
+      "loader": "worldenergydata.field_development.data_availability.load_withheld_dataset"
+    },
+    {
+      "name": "drilling_rigs.csv",
+      "status": "withheld",
+      "notice": "curated/drilling_rigs.csv.md",
+      "loader": "worldenergydata.field_development.data_availability.load_withheld_dataset"
+    },
+    {
+      "name": "fields.csv",
+      "status": "withheld",
+      "notice": "curated/fields.csv.md",
+      "loader": "worldenergydata.field_development.data_availability.load_withheld_dataset"
+    },
+    {
+      "name": "host_facilities.csv",
+      "status": "withheld",
+      "notice": "curated/host_facilities.csv.md",
+      "loader": "worldenergydata.field_development.data_availability.load_withheld_dataset"
+    },
+    {
+      "name": "jackups.csv",
+      "status": "withheld",
+      "notice": "curated/jackups.csv.md",
+      "loader": "worldenergydata.field_development.data_availability.load_withheld_dataset"
+    },
+    {
+      "name": "production_facilities.csv",
+      "status": "withheld",
+      "notice": "curated/production_facilities.csv.md",
+      "loader": "worldenergydata.field_development.data_availability.load_withheld_dataset"
+    },
+    {
+      "name": "bsee_field_crosswalk.csv",
+      "status": "withheld",
+      "notice": "curated/bsee_field_crosswalk.csv.md",
+      "loader": "worldenergydata.field_development.data_availability.load_withheld_dataset"
+    },
+    {
+      "name": "subseaiq_hosts.csv",
+      "status": "withheld",
+      "notice": "curated/subseaiq_hosts.csv.md",
+      "loader": "worldenergydata.field_development.data_availability.load_withheld_dataset"
+    },
+    {
+      "name": "subseaiq_bsee_block_crosswalk.csv",
+      "status": "withheld",
+      "notice": "curated/subseaiq_bsee_block_crosswalk.csv.md",
+      "loader": "worldenergydata.field_development.data_availability.load_withheld_dataset"
+    }
+  ]
 }

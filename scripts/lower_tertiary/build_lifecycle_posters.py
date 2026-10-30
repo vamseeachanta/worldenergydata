@@ -31,17 +31,17 @@ _SRC = Path(__file__).resolve().parents[2] / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
-from worldenergydata.field_development.host_text_classifier import (  # noqa: E402
-    classify_tree_type,
-)
+from worldenergydata.field_development.concept import build_concept  # noqa: E402
 from worldenergydata.field_development.decommission_risk import (  # noqa: E402
     classify_decommissioning,
+)
+from worldenergydata.field_development.host_text_classifier import (  # noqa: E402
+    classify_tree_type,
 )
 from worldenergydata.field_development.hpht_risk import classify_hpht  # noqa: E402
 from worldenergydata.field_development.landman import (  # noqa: E402
     build_landman,
 )
-from worldenergydata.field_development.concept import build_concept  # noqa: E402
 from worldenergydata.field_development.layout import render_layout  # noqa: E402
 from worldenergydata.field_development.portfolio_concepts import (  # noqa: E402
     concept_for,
@@ -67,10 +67,9 @@ _DECOM_CSV = (
 
 
 def _load_decom_rows() -> list[dict]:
-    if not _DECOM_CSV.exists():
-        return []
-    lines = [ln for ln in _DECOM_CSV.read_text().splitlines() if not ln.startswith("#")]
-    return list(csv.DictReader(lines))
+    # The facility inventory is held privately pending redistribution-terms
+    # review. A missing signal means unavailable, never zero liability.
+    return []
 
 
 _DECOM_ROWS = _load_decom_rows()
@@ -98,9 +97,9 @@ _ARCH_CAPTION = {
 def _architecture_for(field_id: str) -> dict:
     """Architecture-drawing payload for one field (#969, epic #942).
 
-    Authored fields (cascade_chinook/julia/stones) carry an inline plan-view SVG
-    string rendered from their FieldConcept; the other 7 carry a visible
-    placeholder linking the FDP-authoring issue. Injected ONCE here so the poster
+    Independently sourced concepts carry an inline plan-view SVG rendered from
+    their FieldConcept. Missing or withheld inputs carry a visible placeholder
+    linking the FDP-authoring issue. Injected ONCE here so the poster
     embed and the _explorer.json sidecar serialize the SAME object (identity gate).
     """
     concept = concept_for(field_id)
@@ -430,6 +429,7 @@ def facts_to_field(f: dict) -> dict:
         "reservoir": f.get("reservoir"),
         "risk": {
             "hpht": classify_hpht(f.get("reservoir")),
+            "decommissioning_status": "withheld_pending_redistribution_review",
             "decommissioning": classify_decommissioning(
                 f.get("decommissioning_facility"), _DECOM_ROWS
             ),

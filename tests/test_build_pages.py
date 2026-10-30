@@ -57,13 +57,11 @@ def test_lower_tertiary_publishes_explorer_sidecar(bp):
     assert "wells" in data
 
 
-def test_field_atlas_publishes_global_feed(bp):
-    # Global catalog feed lazily fetched by the Explorer funnel (#947).
+def test_field_atlas_withholds_global_feed(bp):
     bp.build(domains=["field-atlas"])
-    feed = bp.PUBLIC / "field-atlas" / "_atlas_feed.json"
-    assert feed.exists()
-    data = json.loads(feed.read_text())
-    assert data["countries"] and data["fields"]
+    assert not (bp.PUBLIC / "field-atlas/_atlas_feed.json").exists()
+    page = (bp.PUBLIC / "field-atlas/index.html").read_text()
+    assert "held privately pending redistribution-terms review" in page
 
 
 def test_partial_build_only_touches_its_domain(bp):
@@ -118,8 +116,8 @@ def test_field_development_domain_publishes_self_contained_surfaces(bp):
     assert (fd / "portfolio" / "index.html").exists()
     assert (fd / "bsee-matched" / "index.html").exists()
     assert len(list((fd / "bsee-matched").glob("*.html"))) > 50
-    # The showcase carries real generated schematics (inline SVG).
-    assert (fd / "showcase.html").read_text(encoding="utf-8").count("<svg") >= 2
+    # The withdrawn showcase carries an explicit availability notice.
+    assert "redistribution-terms review" in (fd / "showcase.html").read_text()
     # JSON sidecars are not published.
     assert not list(fd.rglob("*.json"))
 
@@ -225,3 +223,11 @@ def test_calendar_insight_download_and_labels(bp):
     assert "Calendar cycle time" in page
     assert "Calendar cycle time" in (bp.PUBLIC / "index.html").read_text()
     assert "burned 11,124 rig-days" not in (bp.PUBLIC / "index.html").read_text()
+
+
+def test_partial_build_removes_stale_restricted_feed(bp):
+    target = bp.PUBLIC / "field-atlas/_atlas_feed.json"
+    target.parent.mkdir(parents=True)
+    target.write_text('{"synthetic_stale_payload": true}')
+    bp.build(domains=["field-atlas"])
+    assert not target.exists()

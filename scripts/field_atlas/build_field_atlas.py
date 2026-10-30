@@ -27,9 +27,11 @@ if str(_SCRIPTS) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS))
 import site_nav  # noqa: E402  (nav-spine helper, issue #850)
 
+from worldenergydata.common.fields_registry import load_fields  # noqa: E402
+
 # Field identity resolves through THE canonical registry (config/fields.yml via
 # worldenergydata.common.fields_registry) — no local name→id map lives here (#755).
-from worldenergydata.common.fields_registry import load_fields  # noqa: E402
+from worldenergydata.field_development.data_availability import require_available_source
 
 HERE = Path(__file__).resolve().parents[2] / "reports/field-atlas"
 ROSTER = HERE / "_roster.json"
@@ -38,6 +40,7 @@ TEMPLATE_PATH = HERE / "atlas_template.html"
 
 
 def build() -> str:
+    require_available_source(ROSTER)
     fields = json.loads(ROSTER.read_text(encoding="utf-8"))
     registry = load_fields()
     for f in fields:

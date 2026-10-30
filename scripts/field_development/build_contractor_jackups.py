@@ -144,6 +144,15 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("output", type=Path)
     parser.add_argument("--source-sha256", required=True)
     args = parser.parse_args(argv)
+    import sys
+
+    source_dir = (
+        Path(__file__).resolve().parents[2] / "src/worldenergydata/field_development"
+    )
+    sys.path.insert(0, str(source_dir))
+    from data_availability import require_available_source
+
+    require_available_source(args.output)
     if args.source.resolve() == args.output.resolve():
         raise ValueError("Input and output must be distinct")
     raw = args.source.read_bytes()
