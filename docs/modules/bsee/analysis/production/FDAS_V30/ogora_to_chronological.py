@@ -26,8 +26,8 @@ Notes
 -----
 • Reads OGOR text/CSV inside zips using encoding='ISO-8859-1'.
 • Expects 19 OGOR columns (LEASE_NUM, WELL_COMPLETION_ID, PROD_YEARMONTH, DAYS_ON,
-  PRODUCT_CODE, OIL_PROD, GAS_PROD, COND_PROD, API_WELL_NUMBER, ...).
-• Water is derived as WATER_PROD if present; if absent in source files, defaults to 0.
+  PRODUCT_CODE, OIL_PROD, GAS_PROD, WATER_PROD, API_WELL_NUMBER, ...).
+• Missing water and omitted prices remain NOT_EVALUATED, never measured zero.
 • Leases file (xlsx/csv) provides LEASE_NUM→LEASE_NAME (and optionally DEV_NAME/DEV_SYSTEM).
 • D&C days and WTI price inputs are optional; joined by MONTH (and API for D&C).
 """
@@ -45,10 +45,12 @@ from typing import Optional
 import numpy as np
 import pandas as pd
 
+# Positional source: docs/data/legacy/data/bsee_yearly_production_data.yml,
+# first df_columns sequence (repository edition): zero-based 7 is water, 8 API.
 # ----------------------------- Constants -----------------------------
 OGORA_COLS = [
     'LEASE_NUM', 'WELL_COMPLETION_ID', 'PROD_YEARMONTH', 'DAYS_ON', 'PRODUCT_CODE',
-    'OIL_PROD', 'GAS_PROD', 'COND_PROD', 'API_WELL_NUMBER', 'FIELD10',
+    'OIL_PROD', 'GAS_PROD', 'WATER_PROD', 'API_WELL_NUMBER', 'FIELD10',
     'BLOCK_DESC', 'FIELD12', 'OPERATOR_NAME', 'BLOCK_CODE', 'FIELD15',
     'SUFFIX', 'SPUD_DATE', 'ENTITY_ID', 'STATUS'
 ]
@@ -113,26 +115,29 @@ def load_leases_with_names(path: str) -> pd.DataFrame:
 
     # Normalized keys for robust joins later
     out["LEASE_NAME_KEY"] = out["LEASE_NAME"].str.upper().str.strip()
-    return out.drop_duplicates("LEASE_NUM")
+    out = out.drop_duplicates()
+    if out["LEASE_NUM"].duplicated().any():
+        raise pd.errors.MergeError("Conflicting lease mappings")
+    return out
 
 def read_ogor_zip(zip_path: str) -> pd.DataFrame:
     with zipfile.ZipFile(zip_path, "r") as z:
         inner = [n for n in z.namelist() if n.lower().endswith((".txt", ".csv"))]
         if not inner:
             raise ValueError(f"No .txt/.csv found inside {zip_path}")
-        with z.open(inner[0]) as f:
-            df = pd.read_csv(
-                io.TextIOWrapper(f, encoding="ISO-8859-1"),
-                header=None, dtype=str, quotechar='"'
-            )
-    # pad/truncate to expected column count
-    if df.shape[1] < len(OGORA_COLS):
-        for _ in range(len(OGORA_COLS) - df.shape[1]):
-            df[df.shape[1]] = None
-    elif df.shape[1] > len(OGORA_COLS):
-        df = df.iloc[:, :len(OGORA_COLS)]
-    df.columns = OGORA_COLS
-    return df
+        frames = []
+        for name in sorted(inner):
+            with z.open(name) as f:
+                frame = pd.read_csv(
+                    io.TextIOWrapper(f, encoding="ISO-8859-1"),
+                    header=None, dtype=str, quotechar='"'
+                )
+            if frame.shape[1] < 9:
+                raise ValueError("OGORA member lacks API column 8")
+            frame = frame.reindex(columns=range(len(OGORA_COLS)))
+            frame.columns = OGORA_COLS
+            frames.append(frame)
+    return pd.concat(frames, ignore_index=True).drop_duplicates()
 
 # ----------------------------- D&C and WTI -----------------------------
 
@@ -228,15 +233,19 @@ def build_chrono(ogor_dir: str, leases_path: str, pattern: str,
         # Types
         df["DAYS_ON"]  = pd.to_numeric(df["DAYS_ON"], errors="coerce").fillna(0)
         df["OIL_PROD"] = pd.to_numeric(df["OIL_PROD"], errors="coerce").fillna(0)
-        # WATER_PROD may not exist in standard 19-col set; try to find it
+        # Repository OGORA layout identifies column 7 as water, not condensate.
+        df["OIL_PROD"] = df["OIL_PROD"].where(
+            df["PRODUCT_CODE"].str.strip().str.upper().eq("O"), 0.0
+        )
+        # Preserve missing observations through the aggregate.
         if "WATER_PROD" in df.columns:
-            df["WATER_PROD"] = pd.to_numeric(df["WATER_PROD"], errors="coerce").fillna(0)
+            df["WATER_PROD"] = pd.to_numeric(df["WATER_PROD"], errors="coerce")
         else:
             water_col = next((c for c in df.columns if str(c).upper().startswith("WATER")), None)
             if water_col:
-                df["WATER_PROD"] = pd.to_numeric(df[water_col], errors="coerce").fillna(0)
+                df["WATER_PROD"] = pd.to_numeric(df[water_col], errors="coerce")
             else:
-                df["WATER_PROD"] = 0.0
+                df["WATER_PROD"] = np.nan
 
         # Parse month
         df["MONTH"] = df["PROD_YEARMONTH"].apply(month_from_yyyymm)
@@ -249,7 +258,7 @@ def build_chrono(ogor_dir: str, leases_path: str, pattern: str,
         # Aggregate to lease/well/API/month
         g = (df.groupby(["LEASE_NUM","WELL_NAME","API_WELL_NUMBER","MONTH"], dropna=False)
                .agg(MONTHLY_OIL_VOLUME=("OIL_PROD","sum"),
-                    MONTHLY_WATER_VOLUME=("WATER_PROD","sum"),
+                    MONTHLY_WATER_VOLUME=("WATER_PROD", lambda values: values.sum(skipna=False)),
                     DAYS_ON_PROD=("DAYS_ON","sum"))
                .reset_index())
         parts.append(g)
@@ -260,7 +269,8 @@ def build_chrono(ogor_dir: str, leases_path: str, pattern: str,
     ogor_monthly = pd.concat(parts, ignore_index=True)
 
     # Map lease names & dev mapping via LEASE_NUM first
-    ogor_monthly = ogor_monthly.merge(leases_df, on="LEASE_NUM", how="left")
+    ogor_monthly = ogor_monthly.merge(leases_df, on="LEASE_NUM", how="left", validate="many_to_one")
+    assert len(ogor_monthly) == sum(len(part) for part in parts), "Lease join changed rows"
 
     # Fallback: if DEV_NAME missing after LEASE_NUM join, try joining by LEASE_NAME
     needs_fallback = ("DEV_NAME" not in ogor_monthly.columns or
@@ -269,7 +279,10 @@ def build_chrono(ogor_dir: str, leases_path: str, pattern: str,
     if needs_fallback:
         ogor_monthly["LEASE_NAME_KEY"] = ogor_monthly["LEASE_NAME"].astype(str).str.upper().str.strip()
         ogor_monthly = ogor_monthly.drop(columns=[c for c in ["DEV_NAME","DEV_SYSTEM"] if c in ogor_monthly.columns])
-        ogor_monthly = ogor_monthly.merge(leases_df[["LEASE_NAME_KEY","DEV_NAME","DEV_SYSTEM"]], on="LEASE_NAME_KEY", how="left")
+        mapping = leases_df[["LEASE_NAME_KEY", "DEV_NAME", "DEV_SYSTEM"]].drop_duplicates()
+        before = len(ogor_monthly)
+        ogor_monthly = ogor_monthly.merge(mapping, on="LEASE_NAME_KEY", how="left", validate="many_to_one")
+        assert len(ogor_monthly) == before, "Name fallback changed rows"
         ogor_monthly.drop(columns=["LEASE_NAME_KEY"], inplace=True, errors="ignore")
 
     # Compute avg bbls/day
@@ -283,11 +296,15 @@ def build_chrono(ogor_dir: str, leases_path: str, pattern: str,
     dnc = allocate_dnc_by_month(dnc_path)
     wti = load_wti_monthly(wti_path)
 
-    df = ogor_monthly.merge(dnc, on=["API_WELL_NUMBER","MONTH"], how="left")
-    df = df.merge(wti, on="MONTH", how="left")
+    df = ogor_monthly.merge(dnc, on=["API_WELL_NUMBER","MONTH"], how="left", validate="many_to_one")
+    assert len(df) == len(ogor_monthly), "D&C join changed rows"
+    df = df.merge(wti, on="MONTH", how="left", validate="many_to_one")
+    assert len(df) == len(ogor_monthly), "WTI join changed rows"
 
     # Revenue convenience (can be overridden downstream)
-    df["WTI_USD"] = pd.to_numeric(df.get("WTI_USD", np.nan), errors="coerce").fillna(0.0)
+    df["WTI_USD"] = pd.to_numeric(df.get("WTI_USD", np.nan), errors="coerce")
+    df["WATER_STATUS"] = np.where(df["MONTHLY_WATER_VOLUME"].notna(), "EVALUATED", "NOT_EVALUATED")
+    df["PRICE_STATUS"] = np.where(df["WTI_USD"].notna(), "EVALUATED", "NOT_EVALUATED")
     df["MONTHLY_REVENUE_USD"] = df["MONTHLY_OIL_VOLUME"] * df["WTI_USD"]
 
     # Normalize column names (strip) and guarantee DEV_NAME/DEV_SYSTEM exist
@@ -304,7 +321,7 @@ def build_chrono(ogor_dir: str, leases_path: str, pattern: str,
         "AVG_BBLS_PER_DAY","DAYS_ON_PROD",
         "MONTHLY_OIL_VOLUME","MONTHLY_WATER_VOLUME",
         "WTI_USD","MONTHLY_REVENUE_USD",
-        "DEV_NAME","DEV_SYSTEM"
+        "DEV_NAME","DEV_SYSTEM", "WATER_STATUS", "PRICE_STATUS"
     ]
     for c in cols:
         if c not in df.columns:
