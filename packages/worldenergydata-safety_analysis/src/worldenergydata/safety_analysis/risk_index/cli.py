@@ -399,7 +399,15 @@ def export_cmd(
                 scores_df.to_csv(out_path, index=False)
             elif format == "json":
                 out_path = out_base.with_suffix(".json")
-                scores_df.to_json(out_path, orient="records", indent=2)
+                # Match the reporting date contract (pandas 2.3.3 to_json API):
+                # https://pandas.pydata.org/pandas-docs/version/2.3/reference/api/pandas.DataFrame.to_json.html
+                scores_df.to_json(
+                    out_path,
+                    orient="records",
+                    indent=2,
+                    date_format="iso",
+                    date_unit="ms",
+                )
             elif format == "parquet":
                 out_path = out_base.with_suffix(".parquet")
                 scores_df.to_parquet(out_path, index=False)
