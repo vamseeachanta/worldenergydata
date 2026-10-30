@@ -1,0 +1,11 @@
+{
+  "observations": [
+    {
+      "source_id": "texas_rrc",
+      "status": "partial/error",
+      "evidence": "synthetic-example: incomplete regulator batch, not a live observation",
+      "observed_at": "2026-10-20T00:00:00Z",
+      "limitations": "Illustrative incomplete well batch; no title instruments or freshness proof."
+    }
+  ]
+}
