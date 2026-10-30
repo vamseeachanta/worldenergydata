@@ -108,6 +108,8 @@
     .xact{color:#08131f}.xerr{background:#2a1518;border-color:#5c2a30;color:#f0a9a9}
   }
 </style>
+<!-- Maintainer-approved public release only; see the visualization API guide. -->
+<script id="hf-viz-config" type="application/json">{}</script>
 </head>
 <body>
 <div class="wrap">
@@ -313,6 +315,57 @@ function crumb(items){
 }
 function show(html){ $("x-body").innerHTML = html; }
 
+// HF visualization API (#966).
+function hfVizPlaceholder(target, message){
+  const note = document.createElement("span");
+  note.textContent = message + " ";
+  const link = document.createElement("a");
+  link.href = "https://github.com/vamseeachanta/worldenergydata/issues/966";
+  link.textContent = "Visualization availability (#966)";
+  target.replaceChildren(note, link);
+}
+async function loadHfVisualization(target, fieldId){
+  if (!target) return;
+  hfVizPlaceholder(target, "Saved visualization unavailable while the public service is checked.");
+  try {
+    const config = JSON.parse(document.getElementById("hf-viz-config").textContent);
+    // Full hashes follow the HF download guide; timeout is a deployment input.
+    const commit = /^[0-9a-f]{40}$/;
+    if (![config.dataset_revision, config.source_revision, config.renderer_revision].every(v => typeof v === "string" && commit.test(v)) ||
+        !/^[0-9a-f]{64}$/.test(config.bundle_sha256) || typeof config.dataset_id !== "string" ||
+        !Number.isSafeInteger(config.request_timeout_ms) || config.request_timeout_ms <= 0) throw new Error("Unconfigured");
+    const endpoint = new URL(config.endpoint);
+    if (endpoint.protocol !== "https:" || endpoint.username || endpoint.password || endpoint.search || endpoint.hash) throw new Error("Invalid endpoint");
+    const response = await fetch(endpoint.href, {
+      method: "POST", credentials: "omit", headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({dataset_revision: config.dataset_revision, field_id: fieldId}),
+      signal: AbortSignal.timeout(config.request_timeout_ms)
+    });
+    if (!response.ok) throw new Error("Service unavailable");
+    const result = await response.json();
+    for (const key of ["dataset_id", "dataset_revision", "source_revision", "renderer_revision", "bundle_sha256"]){
+      if (result[key] !== config[key]) throw new Error("Revision mismatch");
+    }
+    if (result.field_id !== fieldId || result.media_type !== "image/svg+xml" ||
+        result.metric !== "cum_oil_mmbbl" || result.units !== "MMbbl" || typeof result.svg !== "string") throw new Error("Invalid visualization");
+    // A route change detaches the old figure; its response must not replace the new one.
+    if (!target.isConnected) return;
+    const image = document.createElement("img");
+    image.alt = "Saved cumulative oil comparison (MMbbl); field histories cover different periods";
+    // SVG stays in an image context. Never insert remote markup as HTML.
+    image.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(result.svg);
+    image.style = "width:100%;height:auto";
+    image.onerror = () => hfVizPlaceholder(target, "Saved visualization unavailable: the returned image could not be displayed.");
+    const caption = document.createElement("figcaption");
+    caption.style = "overflow-wrap:anywhere";
+    caption.textContent = `Saved dataset ${result.dataset_id} at ${result.dataset_revision}; analysis code ${result.source_revision}; renderer code ${result.renderer_revision}; bundle SHA-256 ${result.bundle_sha256}. This saved snapshot can differ from the live field panel.`;
+    target.replaceChildren(image, caption);
+  } catch (error){
+    if (target.isConnected) hfVizPlaceholder(target, "Saved visualization unavailable: an approved release, public endpoint or access is unavailable.");
+  }
+}
+// End HF visualization API.
+
 function renderField(x, f){
   crumb([["Atlas", "#"], [f.name, `#/field/${f.id}`]]);
   const strip = PHASES.map(p=>`<span class="xph${p===f.currentPhase?" on":""}">${esc(p)}</span>`).join("");
@@ -430,8 +483,12 @@ function renderField(x, f){
       ${concept}${arch}${perf}${resv}${uw}${landman}
     </div>
     <div class="xacts">${acts.join("")}</div>
+    <figure id="x-hf-viz" class="xnote" aria-live="polite">
+      Saved visualization unavailable. <a href="https://github.com/vamseeachanta/worldenergydata/issues/966">Visualization availability (#966)</a>
+    </figure>
     ${wellsNote}
     <p class="xprov">${esc(f.provenance||"")}</p>`);
+  loadHfVisualization($("x-hf-viz"), f.id);
 }
 
 function renderWells(x, f){
