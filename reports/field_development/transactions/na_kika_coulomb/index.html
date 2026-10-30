@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Na Kika and Coulomb transaction screening</title><style>
+body{font:16px system-ui,sans-serif;max-width:1100px;margin:2rem auto;padding:1rem;color:#162b3c}
+table{border-collapse:collapse;width:100%;margin:1rem 0}
+td,th{border:1px solid #abbcc8;padding:.5rem;text-align:left}
+th{background:#edf3f7}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#edf3f7;padding:1rem}
+details{margin:1rem 0}a{color:#125e83}.status{border-left:5px solid #b96b00;padding:1rem}
+</style></head><body><h1>Na Kika and Coulomb transaction screening</h1>
+<h2>Summary</h2><p class="status">Field economics require qualified production, reserves and explicit assumptions; transaction ratios alone are not a valuation opinion.</p>
+<h2>Revision history</h2>
+<table><thead><tr><th scope='col'>Revision</th><th scope='col'>Date</th><th scope='col'>Change and reason</th></tr></thead><tbody><tr><td>Initial</td><td>2026-10-20</td><td>Add evidence-constrained screening and expose missing economics inputs.</td></tr></tbody></table><p>Table. Revision, Date, Change and reason.</p>
+<nav><a href="index.html">Transaction</a> | <a href="lifecycle.html">Lifecycle</a></nav>
+<h2>Announced transaction</h2><p>Announced total consideration: 1700000000 USD; subject to adjustments and contingent payments. This is the seller-total basis, not either buyer's allocated net consideration. Closing is NOT_EVALUATED.</p><table><thead><tr><th scope='col'>Subject</th><th scope='col'>Sold working interest (fraction)</th><th scope='col'>Source locator</th></tr></thead><tbody><tr><td>Na Kika platform and associated fields</td><td>0.5</td><td>meta[name=description]: non-operated interest</td></tr><tr><td>Coulomb tieback</td><td>1</td><td>meta[name=description]: wholly owned tieback</td></tr></tbody></table><p>Table. Subject, Sold working interest (fraction), Source locator.</p><h2>Transaction ratios</h2><table><thead><tr><th scope='col'>Basis</th><th scope='col'>Metric</th><th scope='col'>Result</th><th scope='col'>Unit</th><th scope='col'>Missing evidence</th></tr></thead><tbody><tr><td>shell_total</td><td>usd_per_boe</td><td>NOT_EVALUATED</td><td>USD/(boe)</td><td>Reserves for this exact acquired-interest scope are not verified</td></tr><tr><td>shell_total</td><td>usd_per_flowing_boe_day</td><td>NOT_EVALUATED</td><td>USD/(boe/d)</td><td>Production period and acquired-interest scope are not verified</td></tr><tr><td>talos_announced</td><td>usd_per_boe</td><td>NOT_EVALUATED</td><td>USD/(boe)</td><td>Buyer allocation or net consideration not verified from an accessible source; Reserves for this exact acquired-interest scope are not verified</td></tr><tr><td>talos_announced</td><td>usd_per_flowing_boe_day</td><td>NOT_EVALUATED</td><td>USD/(boe/d)</td><td>Buyer allocation or net consideration not verified from an accessible source; Production period and acquired-interest scope are not verified</td></tr><tr><td>talos_net</td><td>usd_per_boe</td><td>NOT_EVALUATED</td><td>USD/(boe)</td><td>Buyer allocation or net consideration not verified from an accessible source; Reserves for this exact acquired-interest scope are not verified</td></tr><tr><td>talos_net</td><td>usd_per_flowing_boe_day</td><td>NOT_EVALUATED</td><td>USD/(boe/d)</td><td>Buyer allocation or net consideration not verified from an accessible source; Production period and acquired-interest scope are not verified</td></tr><tr><td>ridgewood</td><td>usd_per_boe</td><td>NOT_EVALUATED</td><td>USD/(boe)</td><td>Buyer allocation or net consideration not verified from an accessible source; Reserves for this exact acquired-interest scope are not verified</td></tr><tr><td>ridgewood</td><td>usd_per_flowing_boe_day</td><td>NOT_EVALUATED</td><td>USD/(boe/d)</td><td>Buyer allocation or net consideration not verified from an accessible source; Production period and acquired-interest scope are not verified</td></tr></tbody></table><p>Table. Basis, Metric, Result, Unit, Missing evidence.</p><p>Method: consideration USD / acquired-interest reserves boe; consideration USD / acquired-interest production boe/day. No interest scaling, energy-equivalence conversion or assumed cash-flow parameters are applied.</p><h2>Terms and preferential-right scenarios</h2><table><thead><tr><th scope='col'>Term</th><th scope='col'>Status</th><th scope='col'>Missing evidence</th></tr></thead><tbody><tr><td>bp_preferential_right</td><td>NOT_EVALUATED</td><td>Exercise terms and outcome require an accessible cited release</td></tr><tr><td>upside</td><td>NOT_EVALUATED</td><td>Contingent-payment triggers and amounts are not available in the accessible metadata</td></tr><tr><td>orri</td><td>NOT_EVALUATED</td><td>Royalty terms are not verified</td></tr><tr><td>decommissioning</td><td>NOT_EVALUATED</td><td>Liability allocation is not verified</td></tr></tbody></table><p>Table. Term, Status, Missing evidence.</p><table><thead><tr><th scope='col'>Conditional scenario</th><th scope='col'>Status</th><th scope='col'>Basis</th></tr></thead><tbody><tr><td>no_preferential_exercise</td><td>NOT_EVALUATED</td><td>Conditional branch only; no assertion about legal terms or outcome</td></tr><tr><td>preferential_exercise</td><td>NOT_EVALUATED</td><td>Conditional branch only; revised consideration and acquired scope required</td></tr></tbody></table><p>Table. Conditional scenario, Status, Basis.</p><h2>Field economics readiness</h2><table><thead><tr><th scope='col'>Field</th><th scope='col'>Block candidate</th><th scope='col'>Block matched</th><th scope='col'>Economics status</th><th scope='col'>Missing inputs</th></tr></thead><tbody><tr><td>Ariel</td><td>MC429</td><td>True</td><td>NOT_EVALUATED</td><td>verified_field_production, public_reserves_and_interest_basis, price_forecast, opex, capex, fiscal_terms, discount_rate, decommissioning_cost_and_timing</td></tr><tr><td>Coulomb</td><td>MC657</td><td>True</td><td>NOT_EVALUATED</td><td>verified_field_production, public_reserves_and_interest_basis, price_forecast, opex, capex, fiscal_terms, discount_rate, decommissioning_cost_and_timing</td></tr><tr><td>East Anstey</td><td>MC607</td><td>True</td><td>NOT_EVALUATED</td><td>verified_field_production, public_reserves_and_interest_basis, price_forecast, opex, capex, fiscal_terms, discount_rate, decommissioning_cost_and_timing</td></tr><tr><td>Fourier</td><td>MC522</td><td>True</td><td>NOT_EVALUATED</td><td>verified_field_production, public_reserves_and_interest_basis, price_forecast, opex, capex, fiscal_terms, discount_rate, decommissioning_cost_and_timing</td></tr><tr><td>Herschel</td><td>MC520</td><td>False</td><td>NOT_EVALUATED</td><td>verified_field_production, public_reserves_and_interest_basis, price_forecast, opex, capex, fiscal_terms, discount_rate, decommissioning_cost_and_timing</td></tr><tr><td>Kepler</td><td>MC383</td><td>True</td><td>NOT_EVALUATED</td><td>verified_field_production, public_reserves_and_interest_basis, price_forecast, opex, capex, fiscal_terms, discount_rate, decommissioning_cost_and_timing</td></tr></tbody></table><p>Table. Field, Block candidate, Block matched, Economics status, Missing inputs.</p><p>NPV is NOT_EVALUATED for every field. Refresh requires verified field-to-lease/API membership, dated BSEE production, aligned reserves and interest scope, price, costs, fiscal terms, discount rate and abandonment timing.</p><h2>Source provenance</h2><details><summary>shell_release: available</summary><a href="https://www.shell.com/news-and-insights/newsroom/news-and-media-releases/2026/shell-to-sell-interest-in-gulf-of-america-platform.html">Public source</a><pre>{
+  &quot;url&quot;: &quot;https://www.shell.com/news-and-insights/newsroom/news-and-media-releases/2026/shell-to-sell-interest-in-gulf-of-america-platform.html&quot;,
+  &quot;edition&quot;: &quot;2026 release&quot;,
+  &quot;http_status&quot;: 200,
+  &quot;retrieved_at&quot;: &quot;2026-10-20T09:03:17Z&quot;,
+  &quot;access&quot;: &quot;available&quot;,
+  &quot;coverage&quot;: &quot;HTML description metadata only&quot;,
+  &quot;sha256&quot;: &quot;c0565b6eac4d275970273add5c251d42a395579813e936d3a2c6d8a114cce120&quot;,
+  &quot;retention&quot;: &quot;Local source response retained separately; not a repository backup&quot;,
+  &quot;readiness&quot;: &quot;partial&quot;
+}</pre></details><details><summary>talos_release: unavailable</summary><a href="https://www.talosenergy.com/investor-relations/news/news-details/2026/Talos-Energy-Announces-Strategic-Acquisition-of-Gulf-of-America-Deepwater-Oil-Assets/default.aspx">Public source</a><pre>{
+  &quot;url&quot;: &quot;https://www.talosenergy.com/investor-relations/news/news-details/2026/Talos-Energy-Announces-Strategic-Acquisition-of-Gulf-of-America-Deepwater-Oil-Assets/default.aspx&quot;,
+  &quot;edition&quot;: &quot;2026 release&quot;,
+  &quot;http_status&quot;: 403,
+  &quot;retrieved_at&quot;: &quot;2026-10-20T09:03:26Z&quot;,
+  &quot;access&quot;: &quot;unavailable&quot;,
+  &quot;coverage&quot;: &quot;HTTP rejection; no claims extracted&quot;,
+  &quot;sha256&quot;: &quot;2b4297a6304ead96fcfeb56f3757bb98a124bb2ff61ac6d84df1ff06d0cbf7b2&quot;,
+  &quot;retention&quot;: &quot;Local source response retained separately; not a repository backup&quot;,
+  &quot;readiness&quot;: &quot;unavailable&quot;
+}</pre></details><details><summary>bp_expansion: unavailable</summary><a href="https://www.bp.com/en_us/united-states/ho%6De/news/press-releases/bp-announces-successful-start-up-of-herschel-expansion-in-gulf-of-mexico.html">Public source</a><pre>{
+  &quot;url&quot;: &quot;https://www.bp.com/en_us/united-states/ho%6De/news/press-releases/bp-announces-successful-start-up-of-herschel-expansion-in-gulf-of-mexico.html&quot;,
+  &quot;edition&quot;: &quot;publication date unverified&quot;,
+  &quot;http_status&quot;: 403,
+  &quot;retrieved_at&quot;: &quot;2026-10-20T09:03:26Z&quot;,
+  &quot;access&quot;: &quot;unavailable&quot;,
+  &quot;coverage&quot;: &quot;HTTP rejection; no claims extracted&quot;,
+  &quot;sha256&quot;: &quot;4911896da8042697d2e59bcfad4fbed2b39001c975a674ca52a4bda1652d579d&quot;,
+  &quot;retention&quot;: &quot;Local source response retained separately; not a repository backup&quot;,
+  &quot;readiness&quot;: &quot;unavailable&quot;
+}</pre></details><details><summary>catalog_fields: available</summary><pre>{
+  &quot;path&quot;: &quot;data/modules/offshore_assets/curated/fields.csv&quot;,
+  &quot;revision&quot;: &quot;d867ba1e011bb7558e0e9dd02e118160657f9633&quot;,
+  &quot;access&quot;: &quot;available&quot;,
+  &quot;sha256&quot;: &quot;6a5a2be298295da8bbea9b0dc5099397abe6edd97b6c4d621d7d4c05ac09bd63&quot;,
+  &quot;coverage&quot;: &quot;Existing curated catalog; not independently qualified production or reserves&quot;,
+  &quot;readiness&quot;: &quot;partial&quot;
+}</pre></details><details><summary>catalog_crosswalk: available</summary><pre>{
+  &quot;path&quot;: &quot;data/modules/offshore_assets/curated/subseaiq_bsee_block_crosswalk.csv&quot;,
+  &quot;revision&quot;: &quot;d867ba1e011bb7558e0e9dd02e118160657f9633&quot;,
+  &quot;access&quot;: &quot;available&quot;,
+  &quot;sha256&quot;: &quot;ff481c0cc9ba1c08551314f3e38da98c4c139332b5bd3b9b6921ba051200a804&quot;,
+  &quot;coverage&quot;: &quot;Existing curated catalog; not independently qualified production or reserves&quot;,
+  &quot;readiness&quot;: &quot;partial&quot;
+}</pre></details><details><summary>catalog_host: available</summary><pre>{
+  &quot;path&quot;: &quot;data/modules/offshore_assets/curated/host_facilities.csv&quot;,
+  &quot;revision&quot;: &quot;d867ba1e011bb7558e0e9dd02e118160657f9633&quot;,
+  &quot;access&quot;: &quot;available&quot;,
+  &quot;sha256&quot;: &quot;cef18b57d3178a65f996d5d9099d3f06f78f33a285096b54b4b3da5ae7d152ba&quot;,
+  &quot;coverage&quot;: &quot;Existing curated catalog; not independently qualified production or reserves&quot;,
+  &quot;readiness&quot;: &quot;partial&quot;
+}</pre></details><h2>Input echo</h2><details><summary>Complete cited input snapshot</summary><pre>{
+  &quot;schema_version&quot;: 1,
+  &quot;title&quot;: &quot;Na Kika and Coulomb transaction screening&quot;,
+  &quot;evidence_as_of&quot;: &quot;2026-10-20&quot;,
+  &quot;sources&quot;: {
+    &quot;shell_release&quot;: {
+      &quot;url&quot;: &quot;https://www.shell.com/news-and-insights/newsroom/news-and-media-releases/2026/shell-to-sell-interest-in-gulf-of-america-platform.html&quot;,
+      &quot;edition&quot;: &quot;2026 release&quot;,
+      &quot;http_status&quot;: 200,
+      &quot;retrieved_at&quot;: &quot;2026-10-20T09:03:17Z&quot;,
+      &quot;access&quot;: &quot;available&quot;,
+      &quot;coverage&quot;: &quot;HTML description metadata only&quot;,
+      &quot;sha256&quot;: &quot;c0565b6eac4d275970273add5c251d42a395579813e936d3a2c6d8a114cce120&quot;,
+      &quot;retention&quot;: &quot;Local source response retained separately; not a repository backup&quot;,
+      &quot;readiness&quot;: &quot;partial&quot;
+    },
+    &quot;talos_release&quot;: {
+      &quot;url&quot;: &quot;https://www.talosenergy.com/investor-relations/news/news-details/2026/Talos-Energy-Announces-Strategic-Acquisition-of-Gulf-of-America-Deepwater-Oil-Assets/default.aspx&quot;,
+      &quot;edition&quot;: &quot;2026 release&quot;,
+      &quot;http_status&quot;: 403,
+      &quot;retrieved_at&quot;: &quot;2026-10-20T09:03:26Z&quot;,
+      &quot;access&quot;: &quot;unavailable&quot;,
+      &quot;coverage&quot;: &quot;HTTP rejection; no claims extracted&quot;,
+      &quot;sha256&quot;: &quot;2b4297a6304ead96fcfeb56f3757bb98a124bb2ff61ac6d84df1ff06d0cbf7b2&quot;,
+      &quot;retention&quot;: &quot;Local source response retained separately; not a repository backup&quot;,
+      &quot;readiness&quot;: &quot;unavailable&quot;
+    },
+    &quot;bp_expansion&quot;: {
+      &quot;url&quot;: &quot;https://www.bp.com/en_us/united-states/ho%6De/news/press-releases/bp-announces-successful-start-up-of-herschel-expansion-in-gulf-of-mexico.html&quot;,
+      &quot;edition&quot;: &quot;publication date unverified&quot;,
+      &quot;http_status&quot;: 403,
+      &quot;retrieved_at&quot;: &quot;2026-10-20T09:03:26Z&quot;,
+      &quot;access&quot;: &quot;unavailable&quot;,
+      &quot;coverage&quot;: &quot;HTTP rejection; no claims extracted&quot;,
+      &quot;sha256&quot;: &quot;4911896da8042697d2e59bcfad4fbed2b39001c975a674ca52a4bda1652d579d&quot;,
+      &quot;retention&quot;: &quot;Local source response retained separately; not a repository backup&quot;,
+      &quot;readiness&quot;: &quot;unavailable&quot;
+    },
+    &quot;catalog_fields&quot;: {
+      &quot;path&quot;: &quot;data/modules/offshore_assets/curated/fields.csv&quot;,
+      &quot;revision&quot;: &quot;d867ba1e011bb7558e0e9dd02e118160657f9633&quot;,
+      &quot;access&quot;: &quot;available&quot;,
+      &quot;sha256&quot;: &quot;6a5a2be298295da8bbea9b0dc5099397abe6edd97b6c4d621d7d4c05ac09bd63&quot;,
+      &quot;coverage&quot;: &quot;Existing curated catalog; not independently qualified production or reserves&quot;,
+      &quot;readiness&quot;: &quot;partial&quot;
+    },
+    &quot;catalog_crosswalk&quot;: {
+      &quot;path&quot;: &quot;data/modules/offshore_assets/curated/subseaiq_bsee_block_crosswalk.csv&quot;,
+      &quot;revision&quot;: &quot;d867ba1e011bb7558e0e9dd02e118160657f9633&quot;,
+      &quot;access&quot;: &quot;available&quot;,
+      &quot;sha256&quot;: &quot;ff481c0cc9ba1c08551314f3e38da98c4c139332b5bd3b9b6921ba051200a804&quot;,
+      &quot;coverage&quot;: &quot;Existing curated catalog; not independently qualified production or reserves&quot;,
+      &quot;readiness&quot;: &quot;partial&quot;
+    },
+    &quot;catalog_host&quot;: {
+      &quot;path&quot;: &quot;data/modules/offshore_assets/curated/host_facilities.csv&quot;,
+      &quot;revision&quot;: &quot;d867ba1e011bb7558e0e9dd02e118160657f9633&quot;,
+      &quot;access&quot;: &quot;available&quot;,
+      &quot;sha256&quot;: &quot;cef18b57d3178a65f996d5d9099d3f06f78f33a285096b54b4b3da5ae7d152ba&quot;,
+      &quot;coverage&quot;: &quot;Existing curated catalog; not independently qualified production or reserves&quot;,
+      &quot;readiness&quot;: &quot;partial&quot;
+    }
+  },
+  &quot;transaction&quot;: {
+    &quot;state&quot;: &quot;Announced sale; current closing outcome unverified&quot;,
+    &quot;closing_status&quot;: &quot;NOT_EVALUATED&quot;,
+    &quot;buyer_group&quot;: [
+      &quot;Talos Energy&quot;,
+      &quot;Ridgewood Energy&quot;
+    ],
+    &quot;buyer_group_citation&quot;: {
+      &quot;source_id&quot;: &quot;shell_release&quot;,
+      &quot;locator&quot;: &quot;meta[name=description]: acquiring subsidiaries&quot;
+    },
+    &quot;working_interests&quot;: [
+      {
+        &quot;value&quot;: 0.5,
+        &quot;unit&quot;: &quot;fraction&quot;,
+        &quot;basis&quot;: &quot;shell_total&quot;,
+        &quot;subject&quot;: &quot;Na Kika platform and associated fields&quot;,
+        &quot;as_of&quot;: &quot;2026-10-20&quot;,
+        &quot;citation&quot;: {
+          &quot;source_id&quot;: &quot;shell_release&quot;,
+          &quot;locator&quot;: &quot;meta[name=description]: non-operated interest&quot;
+        }
+      },
+      {
+        &quot;value&quot;: 1,
+        &quot;unit&quot;: &quot;fraction&quot;,
+        &quot;basis&quot;: &quot;shell_total&quot;,
+        &quot;subject&quot;: &quot;Coulomb tieback&quot;,
+        &quot;as_of&quot;: &quot;2026-10-20&quot;,
+        &quot;citation&quot;: {
+          &quot;source_id&quot;: &quot;shell_release&quot;,
+          &quot;locator&quot;: &quot;meta[name=description]: wholly owned tieback&quot;
+        }
+      }
+    ],
+    &quot;terms&quot;: {
+      &quot;bp_preferential_right&quot;: {
+        &quot;status&quot;: &quot;NOT_EVALUATED&quot;,
+        &quot;value&quot;: null,
+        &quot;reason&quot;: &quot;Exercise terms and outcome require an accessible cited release&quot;,
+        &quot;source_id&quot;: &quot;talos_release&quot;
+      },
+      &quot;upside&quot;: {
+        &quot;status&quot;: &quot;NOT_EVALUATED&quot;,
+        &quot;value&quot;: null,
+        &quot;reason&quot;: &quot;Contingent-payment triggers and amounts are not available in the accessible metadata&quot;,
+        &quot;source_id&quot;: &quot;shell_release&quot;
+      },
+      &quot;orri&quot;: {
+        &quot;status&quot;: &quot;NOT_EVALUATED&quot;,
+        &quot;value&quot;: null,
+        &quot;reason&quot;: &quot;Royalty terms are not verified&quot;,
+        &quot;source_id&quot;: &quot;talos_release&quot;
+      },
+      &quot;decommissioning&quot;: {
+        &quot;status&quot;: &quot;NOT_EVALUATED&quot;,
+        &quot;value&quot;: null,
+        &quot;reason&quot;: &quot;Liability allocation is not verified&quot;,
+        &quot;source_id&quot;: &quot;talos_release&quot;
+      }
+    },
+    &quot;scenarios&quot;: [
+      {
+        &quot;id&quot;: &quot;no_preferential_exercise&quot;,
+        &quot;status&quot;: &quot;NOT_EVALUATED&quot;,
+        &quot;reason&quot;: &quot;Conditional branch only; no assertion about legal terms or outcome&quot;
+      },
+      {
+        &quot;id&quot;: &quot;preferential_exercise&quot;,
+        &quot;status&quot;: &quot;NOT_EVALUATED&quot;,
+        &quot;reason&quot;: &quot;Conditional branch only; revised consideration and acquired scope required&quot;
+      }
+    ]
+  },
+  &quot;bases&quot;: {
+    &quot;shell_total&quot;: {
+      &quot;consideration&quot;: {
+        &quot;value&quot;: 1700000000,
+        &quot;unit&quot;: &quot;USD&quot;,
+        &quot;basis&quot;: &quot;shell_total&quot;,
+        &quot;subject&quot;: &quot;All interests in the announced sale&quot;,
+        &quot;as_of&quot;: &quot;2026-10-20&quot;,
+        &quot;citation&quot;: {
+          &quot;source_id&quot;: &quot;shell_release&quot;,
+          &quot;locator&quot;: &quot;meta[name=description]: total consideration; subject to adjustments and contingent payments&quot;
+        }
+      },
+      &quot;reserves&quot;: {
+        &quot;value&quot;: null,
+        &quot;unit&quot;: &quot;boe&quot;,
+        &quot;reason&quot;: &quot;Reserves for this exact acquired-interest scope are not verified&quot;
+      },
+      &quot;production&quot;: {
+        &quot;value&quot;: null,
+        &quot;unit&quot;: &quot;boe/d&quot;,
+        &quot;reason&quot;: &quot;Production period and acquired-interest scope are not verified&quot;
+      }
+    },
+    &quot;talos_announced&quot;: {
+      &quot;consideration&quot;: {
+        &quot;value&quot;: null,
+        &quot;unit&quot;: &quot;USD&quot;,
+        &quot;reason&quot;: &quot;Buyer allocation or net consideration not verified from an accessible source&quot;
+      },
+      &quot;reserves&quot;: {
+        &quot;value&quot;: null,
+        &quot;unit&quot;: &quot;boe&quot;,
+        &quot;reason&quot;: &quot;Reserves for this exact acquired-interest scope are not verified&quot;
+      },
+      &quot;production&quot;: {
+        &quot;value&quot;: null,
+        &quot;unit&quot;: &quot;boe/d&quot;,
+        &quot;reason&quot;: &quot;Production period and acquired-interest scope are not verified&quot;
+      }
+    },
+    &quot;talos_net&quot;: {
+      &quot;consideration&quot;: {
+        &quot;value&quot;: null,
+        &quot;unit&quot;: &quot;USD&quot;,
+        &quot;reason&quot;: &quot;Buyer allocation or net consideration not verified from an accessible source&quot;
+      },
+      &quot;reserves&quot;: {
+        &quot;value&quot;: null,
+        &quot;unit&quot;: &quot;boe&quot;,
+        &quot;reason&quot;: &quot;Reserves for this exact acquired-interest scope are not verified&quot;
+      },
+      &quot;production&quot;: {
+        &quot;value&quot;: null,
+        &quot;unit&quot;: &quot;boe/d&quot;,
+        &quot;reason&quot;: &quot;Production period and acquired-interest scope are not verified&quot;
+      }
+    },
+    &quot;ridgewood&quot;: {
+      &quot;consideration&quot;: {
+        &quot;value&quot;: null,
+        &quot;unit&quot;: &quot;USD&quot;,
+        &quot;reason&quot;: &quot;Buyer allocation or net consideration not verified from an accessible source&quot;
+      },
+      &quot;reserves&quot;: {
+        &quot;value&quot;: null,
+        &quot;unit&quot;: &quot;boe&quot;,
+        &quot;reason&quot;: &quot;Reserves for this exact acquired-interest scope are not verified&quot;
+      },
+      &quot;production&quot;: {
+        &quot;value&quot;: null,
+        &quot;unit&quot;: &quot;boe/d&quot;,
+        &quot;reason&quot;: &quot;Production period and acquired-interest scope are not verified&quot;
+      }
+    }
+  },
+  &quot;assets&quot;: [
+    {
+      &quot;name&quot;: &quot;Na Kika&quot;,
+      &quot;kind&quot;: &quot;hub&quot;
+    },
+    {
+      &quot;name&quot;: &quot;Ariel&quot;,
+      &quot;kind&quot;: &quot;field&quot;
+    },
+    {
+      &quot;name&quot;: &quot;Coulomb&quot;,
+      &quot;kind&quot;: &quot;field&quot;
+    },
+    {
+      &quot;name&quot;: &quot;East Anstey&quot;,
+      &quot;kind&quot;: &quot;field&quot;
+    },
+    {
+      &quot;name&quot;: &quot;Fourier&quot;,
+      &quot;kind&quot;: &quot;field&quot;
+    },
+    {
+      &quot;name&quot;: &quot;Herschel&quot;,
+      &quot;kind&quot;: &quot;field&quot;
+    },
+    {
+      &quot;name&quot;: &quot;Kepler&quot;,
+      &quot;kind&quot;: &quot;field&quot;
+    },
+    {
+      &quot;name&quot;: &quot;Herschel Expansion&quot;,
+      &quot;kind&quot;: &quot;expansion&quot;
+    }
+  ],
+  &quot;coverage_note&quot;: &quot;Requested roster only; not an exhaustive or verified sale-perimeter inventory. Catalog dates are historical source labels, not independently verified lifecycle events.&quot;
+}</pre></details><p>Machine-readable files: <a href="metrics.json">metrics</a>, <a href="lifecycle.json">lifecycle</a>, <a href="economics_readiness.json">readiness</a>, <a href="provenance.json">provenance</a>.</p></body></html>

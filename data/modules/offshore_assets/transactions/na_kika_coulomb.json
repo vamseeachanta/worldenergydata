@@ -1,0 +1,249 @@
+{
+  "schema_version": 1,
+  "title": "Na Kika and Coulomb transaction screening",
+  "evidence_as_of": "2026-10-20",
+  "sources": {
+    "shell_release": {
+      "url": "https://www.shell.com/news-and-insights/newsroom/news-and-media-releases/2026/shell-to-sell-interest-in-gulf-of-america-platform.html",
+      "edition": "2026 release",
+      "http_status": 200,
+      "retrieved_at": "2026-10-20T09:03:17Z",
+      "access": "available",
+      "coverage": "HTML description metadata only",
+      "sha256": "c0565b6eac4d275970273add5c251d42a395579813e936d3a2c6d8a114cce120",
+      "retention": "Local source response retained separately; not a repository backup",
+      "readiness": "partial"
+    },
+    "talos_release": {
+      "url": "https://www.talosenergy.com/investor-relations/news/news-details/2026/Talos-Energy-Announces-Strategic-Acquisition-of-Gulf-of-America-Deepwater-Oil-Assets/default.aspx",
+      "edition": "2026 release",
+      "http_status": 403,
+      "retrieved_at": "2026-10-20T09:03:26Z",
+      "access": "unavailable",
+      "coverage": "HTTP rejection; no claims extracted",
+      "sha256": "2b4297a6304ead96fcfeb56f3757bb98a124bb2ff61ac6d84df1ff06d0cbf7b2",
+      "retention": "Local source response retained separately; not a repository backup",
+      "readiness": "unavailable"
+    },
+    "bp_expansion": {
+      "url": "https://www.bp.com/en_us/united-states/ho%6De/news/press-releases/bp-announces-successful-start-up-of-herschel-expansion-in-gulf-of-mexico.html",
+      "edition": "publication date unverified",
+      "http_status": 403,
+      "retrieved_at": "2026-10-20T09:03:26Z",
+      "access": "unavailable",
+      "coverage": "HTTP rejection; no claims extracted",
+      "sha256": "4911896da8042697d2e59bcfad4fbed2b39001c975a674ca52a4bda1652d579d",
+      "retention": "Local source response retained separately; not a repository backup",
+      "readiness": "unavailable"
+    },
+    "catalog_fields": {
+      "path": "data/modules/offshore_assets/curated/fields.csv",
+      "revision": "d867ba1e011bb7558e0e9dd02e118160657f9633",
+      "access": "available",
+      "sha256": "6a5a2be298295da8bbea9b0dc5099397abe6edd97b6c4d621d7d4c05ac09bd63",
+      "coverage": "Existing curated catalog; not independently qualified production or reserves",
+      "readiness": "partial"
+    },
+    "catalog_crosswalk": {
+      "path": "data/modules/offshore_assets/curated/subseaiq_bsee_block_crosswalk.csv",
+      "revision": "d867ba1e011bb7558e0e9dd02e118160657f9633",
+      "access": "available",
+      "sha256": "ff481c0cc9ba1c08551314f3e38da98c4c139332b5bd3b9b6921ba051200a804",
+      "coverage": "Existing curated catalog; not independently qualified production or reserves",
+      "readiness": "partial"
+    },
+    "catalog_host": {
+      "path": "data/modules/offshore_assets/curated/host_facilities.csv",
+      "revision": "d867ba1e011bb7558e0e9dd02e118160657f9633",
+      "access": "available",
+      "sha256": "cef18b57d3178a65f996d5d9099d3f06f78f33a285096b54b4b3da5ae7d152ba",
+      "coverage": "Existing curated catalog; not independently qualified production or reserves",
+      "readiness": "partial"
+    }
+  },
+  "transaction": {
+    "state": "Announced sale; current closing outcome unverified",
+    "closing_status": "NOT_EVALUATED",
+    "buyer_group": [
+      "Talos Energy",
+      "Ridgewood Energy"
+    ],
+    "buyer_group_citation": {
+      "source_id": "shell_release",
+      "locator": "meta[name=description]: acquiring subsidiaries"
+    },
+    "working_interests": [
+      {
+        "value": 0.5,
+        "unit": "fraction",
+        "basis": "shell_total",
+        "subject": "Na Kika platform and associated fields",
+        "as_of": "2026-10-20",
+        "citation": {
+          "source_id": "shell_release",
+          "locator": "meta[name=description]: non-operated interest"
+        }
+      },
+      {
+        "value": 1,
+        "unit": "fraction",
+        "basis": "shell_total",
+        "subject": "Coulomb tieback",
+        "as_of": "2026-10-20",
+        "citation": {
+          "source_id": "shell_release",
+          "locator": "meta[name=description]: wholly owned tieback"
+        }
+      }
+    ],
+    "terms": {
+      "bp_preferential_right": {
+        "status": "NOT_EVALUATED",
+        "value": null,
+        "reason": "Exercise terms and outcome require an accessible cited release",
+        "source_id": "talos_release"
+      },
+      "upside": {
+        "status": "NOT_EVALUATED",
+        "value": null,
+        "reason": "Contingent-payment triggers and amounts are not available in the accessible metadata",
+        "source_id": "shell_release"
+      },
+      "orri": {
+        "status": "NOT_EVALUATED",
+        "value": null,
+        "reason": "Royalty terms are not verified",
+        "source_id": "talos_release"
+      },
+      "decommissioning": {
+        "status": "NOT_EVALUATED",
+        "value": null,
+        "reason": "Liability allocation is not verified",
+        "source_id": "talos_release"
+      }
+    },
+    "scenarios": [
+      {
+        "id": "no_preferential_exercise",
+        "status": "NOT_EVALUATED",
+        "reason": "Conditional branch only; no assertion about legal terms or outcome"
+      },
+      {
+        "id": "preferential_exercise",
+        "status": "NOT_EVALUATED",
+        "reason": "Conditional branch only; revised consideration and acquired scope required"
+      }
+    ]
+  },
+  "bases": {
+    "shell_total": {
+      "consideration": {
+        "value": 1700000000,
+        "unit": "USD",
+        "basis": "shell_total",
+        "subject": "All interests in the announced sale",
+        "as_of": "2026-10-20",
+        "citation": {
+          "source_id": "shell_release",
+          "locator": "meta[name=description]: total consideration; subject to adjustments and contingent payments"
+        }
+      },
+      "reserves": {
+        "value": null,
+        "unit": "boe",
+        "reason": "Reserves for this exact acquired-interest scope are not verified"
+      },
+      "production": {
+        "value": null,
+        "unit": "boe/d",
+        "reason": "Production period and acquired-interest scope are not verified"
+      }
+    },
+    "talos_announced": {
+      "consideration": {
+        "value": null,
+        "unit": "USD",
+        "reason": "Buyer allocation or net consideration not verified from an accessible source"
+      },
+      "reserves": {
+        "value": null,
+        "unit": "boe",
+        "reason": "Reserves for this exact acquired-interest scope are not verified"
+      },
+      "production": {
+        "value": null,
+        "unit": "boe/d",
+        "reason": "Production period and acquired-interest scope are not verified"
+      }
+    },
+    "talos_net": {
+      "consideration": {
+        "value": null,
+        "unit": "USD",
+        "reason": "Buyer allocation or net consideration not verified from an accessible source"
+      },
+      "reserves": {
+        "value": null,
+        "unit": "boe",
+        "reason": "Reserves for this exact acquired-interest scope are not verified"
+      },
+      "production": {
+        "value": null,
+        "unit": "boe/d",
+        "reason": "Production period and acquired-interest scope are not verified"
+      }
+    },
+    "ridgewood": {
+      "consideration": {
+        "value": null,
+        "unit": "USD",
+        "reason": "Buyer allocation or net consideration not verified from an accessible source"
+      },
+      "reserves": {
+        "value": null,
+        "unit": "boe",
+        "reason": "Reserves for this exact acquired-interest scope are not verified"
+      },
+      "production": {
+        "value": null,
+        "unit": "boe/d",
+        "reason": "Production period and acquired-interest scope are not verified"
+      }
+    }
+  },
+  "assets": [
+    {
+      "name": "Na Kika",
+      "kind": "hub"
+    },
+    {
+      "name": "Ariel",
+      "kind": "field"
+    },
+    {
+      "name": "Coulomb",
+      "kind": "field"
+    },
+    {
+      "name": "East Anstey",
+      "kind": "field"
+    },
+    {
+      "name": "Fourier",
+      "kind": "field"
+    },
+    {
+      "name": "Herschel",
+      "kind": "field"
+    },
+    {
+      "name": "Kepler",
+      "kind": "field"
+    },
+    {
+      "name": "Herschel Expansion",
+      "kind": "expansion"
+    }
+  ],
+  "coverage_note": "Requested roster only; not an exhaustive or verified sale-perimeter inventory. Catalog dates are historical source labels, not independently verified lifecycle events."
+}

@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Evidence-constrained transaction screening</title>
+<style>body{font:16px system-ui,sans-serif;max-width:1000px;margin:2rem auto;padding:1rem;color:#162b3c}table{border-collapse:collapse;width:100%}td,th{border:1px solid #abbcc8;padding:.5rem;text-align:left}pre{white-space:pre-wrap;background:#edf3f7;padding:1rem}a{color:#125e83}</style>
+</head><body>
+<h1>Evidence-constrained transaction screening</h1>
+<h2>Summary</h2>
+<p>The package preserves source-supported announced transaction facts, separates seller-total and buyer consideration bases, maps the requested lifecycle roster to existing field-development reports, and exposes the evidence required for field economics. Transaction valuations and field NPV remain NOT_EVALUATED where denominator or cash-flow evidence is missing.</p>
+<h2>Revision history</h2>
+<table><thead><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr></thead><tbody><tr><td>Initial</td><td>2026-10-20</td><td>Add reproducible transaction screening and identify unavailable evidence explicitly.</td></tr></tbody></table>
+<p>Table 1. Documentation revision history.</p>
+<h2>Scope and slices</h2>
+<p>Refs <a href="https://github.com/vamseeachanta/worldenergydata/issues/907">issue 907</a>. Slice 1 supplies cited transaction observations and independent ratios. Slice 2 distinguishes the Na Kika hub from field developments, retains catalog lifecycle labels and links existing pages. Slice 3 supplies field economics readiness, an offline generator, machine-readable sidecars and a worked example. This is a partial-evidence implementation, not a completed acquisition valuation.</p>
+<p><a href="../reports/field_development/transactions/na_kika_coulomb/index.html">Open the transaction package</a> or <a href="../reports/field_development/transactions/na_kika_coulomb/lifecycle.html">lifecycle coverage</a>.</p>
+<h2>Regeneration</h2>
+<pre>PYTHONPATH=src python scripts/field_development/build_na_kika_coulomb_transaction.py
+# Optional: --input a cited JSON snapshot; --out a report directory</pre>
+<p>The generator reads <code>data/modules/offshore_assets/transactions/na_kika_coulomb.json</code> and verifies SHA-256 digests of the referenced committed catalogs. It performs no network requests. It writes and reads back index.html, lifecycle.html, metrics.json, lifecycle.json, economics_readiness.json and provenance.json. Repeated builds from the same input and output location produce identical bytes. Input provenance uses canonical UTF-8 JSON with sorted keys and compact separators; source digests describe original response or catalog bytes.</p>
+<h2>Source basis and limits</h2>
+<ul>
+<li><a href="https://www.shell.com/news-and-insights/newsroom/news-and-media-releases/2026/shell-to-sell-interest-in-gulf-of-america-platform.html">Shell, 2026 sale announcement</a>: HTTP 200 at the recorded retrieval time. Only the HTML description metadata is accessible. It supports total announced consideration of USD 1.7 billion, the sold working interests, the buyer group and the Coulomb tieback description. Adjustment amounts and contingent-payment triggers are not established.</li>
+<li><a href="https://www.talosenergy.com/investor-relations/news/news-details/2026/Talos-Energy-Announces-Strategic-Acquisition-of-Gulf-of-America-Deepwater-Oil-Assets/default.aspx">Talos acquisition release</a>: HTTP 403 at the recorded retrieval time. Buyer consideration, reserves, production, ORRI and decommissioning terms are not extracted or estimated.</li>
+<li><a href="https://www.bp.com/en_us/united-states/ho%6De/news/press-releases/bp-announces-successful-start-up-of-herschel-expansion-in-gulf-of-mexico.html">BP Herschel Expansion release</a>: HTTP 403 at the recorded retrieval time. Expansion dates, volumes and transaction membership are not established.</li>
+<li>Existing curated fields, block crosswalk and host-facilities CSVs supply catalog labels only, with source-relative paths, pinned repository revision, claim locators and SHA-256 digests in the input. They are not qualified field-production or reserves datasets. Catalog identity indexes were unavailable during preparation; no replacement authority registry is asserted.</li>
+</ul>
+<p>Access is an observation at the recorded retrieval time, not a claim about current access or transaction closing. The source responses are retained separately as local retrieval evidence; the repository contains normalized facts and source receipts, not a backup of those responses.</p>
+<h2>Method and worked example</h2>
+<p>The equations are dimensional definitions derived here, with no empirical coefficient or standard-derived constant: price per reserve unit = consideration [USD] / acquired-interest reserves [boe]; price per flowing unit = consideration [USD] / acquired-interest production [boe/day]. Both observations shall have the same declared consideration basis and acquired-interest asset subject. The observation date shall be recorded for each input. The preparation date is not a production averaging period.</p>
+<p>The following synthetic arithmetic example is independent of the public transaction. Its values are invented teaching inputs, not assumed engineering data.</p>
+<pre>from worldenergydata.field_development.transaction_package import valuation_metrics
+
+def synthetic(value, unit):
+    return {
+        "value": value, "unit": unit, "basis": "synthetic",
+        "subject": "synthetic portfolio", "as_of": "2026-01-01",
+        "citation": {"source_id": "hand-calculation", "locator": "worked example"},
+    }
+
+result = valuation_metrics(
+    synthetic(120, "USD"), synthetic(8, "boe"), synthetic(4, "boe/d")
+)
+# Independent arithmetic: 120 / 8 = 15.0 USD/boe.
+# Independent arithmetic: 120 / 4 = 30.0 USD/(boe/day).
+assert result["usd_per_boe"]["value"] == 15
+assert result["usd_per_flowing_boe_day"]["value"] == 30</pre>
+<p>Missing denominators produce a null value with NOT_EVALUATED and a reason. A true zero denominator is separately identified. Invalid units, negative or non-finite values, missing claim locators, and mixed bases or asset subjects are refused. Ratios do not predict investment returns and are not judged against an invented acceptance limit.</p>
+<h2>Lifecycle interpretation</h2>
+<p>The requested roster comprises the hub, Ariel, Coulomb, East Anstey, Fourier, Herschel, Kepler and Herschel Expansion. It is not an exhaustive verified sale perimeter. The catalog host classification is semisub FPS. That host label is retained separately from field concepts; the source-supported Coulomb field concept is subsea tieback. Other field concepts and host associations remain unverified. Existing portfolio files are linked and are not rewritten. Their original host/field labeling may therefore still differ from this package.</p>
+<p>Herschel has a catalog row but no existing BSEE-matched generated page. Herschel Expansion is a separate unresolved lifecycle event. East Anstey is retained as a catalog candidate with transaction membership NOT_EVALUATED, rather than silently asserting agreement with the inaccessible release. BP preferential-right exercise and non-exercise remain conditional branches; neither is an asserted legal outcome.</p>
+<h2>Economics refresh contract</h2>
+<p>A matched block is a candidate lookup key, not a verified field-production join. Before NPV can be evaluated, each field requires a verified field-to-lease/API mapping, dated BSEE monthly production and units, public reserves on the acquired-interest basis, explicit price assumptions, OPEX, CAPEX, fiscal terms, discount rate and decommissioning amount and timing. The present package imports none of those inputs and applies no default values. Its readiness list is the handoff for that refresh.</p>
+<h2>Validation</h2>
+<p>Focused tests exercise hand-calculated ratios, mixed-basis and missing-evidence handling, source digests, roster completeness, block-versus-field readiness, escaped HTML, deterministic regeneration and command-line output readback. HTML is self-contained, uses native disclosure controls for evidence inspection and has no external script or stylesheet dependencies. No quantitative chart is drawn because no qualified transaction ratio or economics series is available; plotting requirements in <a href="HTML_REPORTING_STANDARDS.md">HTML Reporting Standards</a> apply when such a series is supplied.</p>
+</body></html>
