@@ -347,12 +347,120 @@ def load_evidence(data_dir=None):
     return bundle
 
 
-def find_pipelay(method, minimum_tension_t, *, bundle=None):
+def find_by_imo(imo, *, bundle=None):
+    """Return an accepted identity by its exact IMO string, or None.
+
+    The existing evidence contract requires seven ASCII digits and a cited
+    quotation. This lookup does not establish registry or checksum validity.
+    Candidate identifiers and legacy roster values never qualify. The detached
+    result retains identity limitations, provenance and the hull disposition.
+    """
+    _require(
+        isinstance(imo, str) and bool(re.fullmatch(r"[0-9]{7}", imo)),
+        "IMO must be a seven-digit ASCII string",
+    )
+    evidence = load_evidence() if bundle is None else bundle
+    validate_evidence(evidence)
+    for row in evidence["vessels"]:
+        if row["imo"] is not None and row["imo"]["value"] == imo:
+            return copy.deepcopy(row)
+    return None
+
+
+def screen_crane(
+    vessel_name, *, crane, mode, radius_m, minimum_capacity_t, bundle=None
+):
+    """Screen one named hoist/configuration using printed evidence only.
+
+    MATCH and BELOW_CAPACITY describe the printed rating, not operational
+    suitability. A point covers only its exact radius; a bounded interval
+    covers its inclusive bounds. An up_to rating excludes its printed endpoint
+    as well as its unbounded interior. No interpolation, extrapolation, tandem
+    sum or assumed lower bound is applied. Missing or conflicting coverage is
+    NOT_EVALUATED. Identity limitations and source metadata accompany results.
+
+    Interval semantics follow the Main Hoist Capacity table in the 2021
+    equipment folder referenced by the bundle's sources:
+    https://www.heerema.com/hubfs/HMC%20Equipment%20Folder_20211108.pdf?hsLang=en
+    The comparison capacity >= caller demand is a screening predicate, not a
+    design acceptance limit. The caller supplies radius and demand in m and t.
+    """
+    for name, value in (("vessel", vessel_name), ("crane", crane), ("mode", mode)):
+        _require(_text(value), f"Missing {name} selection")
+    _require(_number(radius_m), "Crane radius must be finite and positive")
+    _require(
+        _number(minimum_capacity_t, zero=True),
+        "Minimum capacity must be finite and nonnegative",
+    )
+    evidence = load_evidence() if bundle is None else bundle
+    validate_evidence(evidence)
+    # Exact labels avoid merging configurations or roster spelling variants.
+    vessels = [row for row in evidence["vessels"] if row["vessel_name"] == vessel_name]
+    _require(bool(vessels), "Unknown vessel")
+    selected_ratings = [
+        rating
+        for rating in evidence["cranes"]
+        if rating["vessel_name"] == vessel_name
+        and rating["crane"] == crane
+        and rating["mode"] == mode
+    ]
+    ratings = []
+    for rating in selected_ratings:
+        lo, hi = rating["radius_min_m"], rating["radius_max_m"]
+        if rating["radius_kind"] in {"point", "interval"} and lo <= radius_m <= hi:
+            ratings.append(rating)
+
+    result = {
+        "evaluation": "NOT_EVALUATED",
+        "reason": "No printed point or bounded interval covers the requested radius",
+        "radius_m": radius_m,
+        "minimum_capacity_t": minimum_capacity_t,
+        "crane": crane,
+        "mode": mode,
+        "capacity_t": None,
+        "vessel": copy.deepcopy(vessels[0]),
+        "matched_ratings": copy.deepcopy(ratings),
+        "sources": {
+            sid: copy.deepcopy(evidence["sources"][sid])
+            for sid in sorted({rating["source_id"] for rating in ratings})
+        },
+    }
+    if not selected_ratings:
+        result["reason"] = "No printed rating for the selected hoist and configuration"
+        return result
+    if not ratings:
+        if any(
+            rating["radius_kind"] == "up_to" and radius_m <= rating["radius_max_m"]
+            for rating in selected_ratings
+        ):
+            result["reason"] = (
+                "Unknown lower bound for up_to rating; its printed endpoint is also excluded"
+            )
+        return result
+    capacities = {rating["capacity_t"] for rating in ratings}
+    if len(capacities) != 1:
+        result["reason"] = "Conflicting printed capacities cover the requested radius"
+        return result
+    capacity = capacities.pop()
+    result["capacity_t"] = capacity
+    if capacity >= minimum_capacity_t:
+        result["evaluation"] = "MATCH"
+        result["reason"] = "Printed capacity meets the requested screening demand"
+    else:
+        result["evaluation"] = "BELOW_CAPACITY"
+        result["reason"] = "Printed capacity is below the requested screening demand"
+    return result
+
+
+def find_pipelay(method, minimum_tension_t, *, rating_basis=None, bundle=None):
     """Return sourced candidates with method-specific tension >= the minimum.
 
     Missing capacity never qualifies. Method matching ignores case and surrounding
     spaces, but does not equate distinct lay methods. Returned records are detached
     copies retaining identity limitations and the matched capability's provenance.
+    Supply an exact ``rating_basis`` label to avoid comparing holding, dynamic and
+    lay-tension ratings as equivalent. None preserves unqualified legacy screening;
+    the matched basis is always retained and no basis conversion is performed.
     """
     method = method.strip().lower() if isinstance(method, str) else None
     _require(method in _METHODS, "Unknown lay method")
@@ -360,6 +468,7 @@ def find_pipelay(method, minimum_tension_t, *, bundle=None):
         _number(minimum_tension_t, zero=True),
         "Minimum tension must be finite and nonnegative",
     )
+    _require(rating_basis is None or _text(rating_basis), "Invalid lay rating basis")
     evidence = load_evidence() if bundle is None else bundle
     validate_evidence(evidence)
     result = []
@@ -367,6 +476,7 @@ def find_pipelay(method, minimum_tension_t, *, bundle=None):
         for capability in row["pipelay"]:
             if (
                 capability["method"] == method
+                and (rating_basis is None or capability["rating_basis"] == rating_basis)
                 and capability["tension_t"] >= minimum_tension_t
             ):
                 result.append(
