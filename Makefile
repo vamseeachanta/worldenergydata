@@ -93,3 +93,14 @@ git-flow:
 git-parallel: parallel-check
 	@echo "🚀 Running Git operations in parallel..."
 	@$(MAKE) -j3 git-sync git-status git-clean
+
+# Operator report inputs and generated artifacts are supplied explicitly.
+# Install the package or use the source tree; no project environment is created.
+ONEPAGER_PYTHON ?= python3
+.PHONY: onepager onepager-html
+onepager onepager-html:
+	@test -n "$(OPERATOR)" -a -n "$(INPUT)" -a -n "$(OUTPUT)" || \
+	  { echo "Set OPERATOR, INPUT (snapshot JSON), and OUTPUT (artifact directory)"; exit 1; }
+	PYTHONPATH="src:$$PYTHONPATH" $(ONEPAGER_PYTHON) -m worldenergydata.analysis.operator_onepager \
+	  --operator "$(OPERATOR)" --input "$(INPUT)" --output-dir "$(OUTPUT)" \
+	  $(if $(filter onepager-html,$@),--html-only,)
