@@ -20,6 +20,7 @@ import base64
 import html
 import re
 import sys
+from datetime import date
 from pathlib import Path
 
 _REPO = Path(__file__).resolve().parents[2]
@@ -481,6 +482,7 @@ _TEMPLATE = """<!doctype html><html lang="en"><head><meta charset="utf-8">
 
 
 def _render_html(spec: dict, brand_css: str = "") -> str:
+    _validate_spec(spec)
     _validate_brand(brand_css)
     figs = ""
     if spec["figures"]:
@@ -509,6 +511,70 @@ def _render_html(spec: dict, brand_css: str = "") -> str:
         bullets=bullets,
         live=html.escape(live),
     )
+
+
+def _validate_spec(spec: dict) -> None:
+    """Check the editorial contract before rendering or creating output paths."""
+    page = spec["id"]
+    if not spec["title"].strip():
+        raise ValueError(f"{page}: title must identify the engineering deliverable")
+
+    # Issue #1199, editorial requirements 5 and 12: preserve recorded date
+    # precision, allow explicitly absent cut-offs, and print a fixed revision day.
+    if not re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", REVISION_DATE):
+        raise ValueError("revision must be a calendar date in year-month-day form")
+    try:
+        date.fromisoformat(REVISION_DATE)
+    except ValueError as error:
+        raise ValueError("revision must be a valid calendar day") from error
+
+    basis = spec["std"]
+    source, separator, cutoff = basis.partition(" · data as of: ")
+    recorded = re.match(
+        r"(not recorded|[0-9]{4}(?:-[0-9]{2}){0,2})(?=$|[ ;·(])", cutoff
+    )
+    if (
+        not separator
+        or not source.strip(" ·\t\r\n")
+        or basis.count("data as of:") != 1
+        or recorded is None
+    ):
+        raise ValueError(f"{page}: basis requires a source and explicit data cut-off")
+    value = recorded.group(1)
+    if value != "not recorded":
+        # Missing month/day are used only to check the Gregorian calendar;
+        # the supplied basis is printed unchanged, without invented precision.
+        calendar_day = (value + "-01-01")[:10]
+        try:
+            date.fromisoformat(calendar_day)
+        except ValueError as error:
+            raise ValueError(f"{page}: basis contains an invalid calendar date") from error
+
+    # Issue #1199, requirement 5; these are the existing economics-bearing pages
+    # identified by test_economic_pages_state_price_and_cost_basis.
+    economic_pages = {
+        "sec-economics", "portfolio", "benchmark", "sec-playbook", "fd-showcase"
+    }
+    if (page in economic_pages or page.startswith("economics-")) and not all(
+        re.search(rf"\b{label}:\s*\w", basis) for label in ("Price", "cost")
+    ):
+        raise ValueError(f"{page}: economics basis requires price and cost assumptions")
+
+
+def _validate_specs(specs: list[dict]) -> None:
+    """Preflight the complete set so invalid later pages cannot leave partial output."""
+    ids: set[str] = set()
+    titles: set[str] = set()
+    for spec in specs:
+        _validate_spec(spec)
+        page = spec["id"]
+        title = " ".join(spec["title"].split()).casefold()
+        if page in ids:
+            raise ValueError(f"{page}: duplicate page id")
+        if title in titles:
+            raise ValueError(f"{page}: duplicate page title")
+        ids.add(page)
+        titles.add(title)
 
 
 def _validate_brand(css: str) -> None:
@@ -552,10 +618,11 @@ def main(argv: list[str] | None = None) -> None:
             _validate_brand(brand_css)
         except (OSError, UnicodeError, ValueError) as error:
             parser.error(f"cannot read brand stylesheet: {error}")
-    ids = set()
+    try:
+        _validate_specs(SPECS)
+    except ValueError as error:
+        parser.error(str(error))
     for spec in SPECS:
-        assert spec["id"] not in ids, f"duplicate id {spec['id']}"
-        ids.add(spec["id"])
         build_onepager(spec, _OUT, brand_css=brand_css)
     print(
         f"Wrote {len(SPECS)} capability HTML cards into {_OUT.relative_to(_REPO)}/"

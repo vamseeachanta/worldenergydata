@@ -572,3 +572,124 @@ def test_builder_has_no_pdf_print_interface(tmp_path):
     assert source == tmp_path / f"{spec['id']}.html"
     assert list(tmp_path.iterdir()) == [source]
     assert not list(tmp_path.rglob("*.pdf"))
+
+
+@pytest.mark.parametrize("title", ["", " \t\n"])
+def test_blank_title_is_rejected_before_writing(title, tmp_path):
+    """Issue #1199: a summary must identify its engineering deliverable."""
+    mod = load_builder()
+    spec = dict(mod.SPECS[0], title=title)
+    out = tmp_path / "output"
+    with pytest.raises(ValueError, match="title"):
+        mod.build_onepager(spec, out)
+    assert not out.exists()
+
+
+@pytest.mark.parametrize("duplicate", ["id", "title"])
+def test_duplicate_page_is_rejected_before_any_output(duplicate, tmp_path, monkeypatch):
+    """Issue #1199: distinct addresses and titles are a whole-build contract.
+
+    The repeated title differs only in case and whitespace; these editorial
+    changes do not create a distinct engineering subject. Existing output must
+    remain unchanged when a later specification is invalid.
+    """
+    mod = load_builder()
+    first, second = (dict(spec) for spec in mod.SPECS[:2])
+    second[duplicate] = first[duplicate]
+    if duplicate == "title":
+        second["title"] = "  " + first["title"].upper().replace(" ", "\t ") + "  "
+    out = tmp_path / "output"
+    out.mkdir()
+    sentinel = out / f"{first['id']}.html"
+    sentinel.write_text("previous reviewed output\n")
+    monkeypatch.setattr(mod, "SPECS", [first, second])
+    monkeypatch.setattr(mod, "_OUT", out)
+    with pytest.raises(SystemExit) as error:
+        mod.main([])
+    assert error.value.code == 2
+    assert list(out.iterdir()) == [sentinel]
+    assert sentinel.read_text() == "previous reviewed output\n"
+
+
+@pytest.mark.parametrize(
+    "basis",
+    [
+        "",
+        "Public source without a recorded cut-off",
+        " · data as of: not recorded",
+        "\t · data as of: not recorded",
+        "Public source · data as of: ",
+        "Public source · data as of: unknown",
+        "Public source · data as of: 2025-13",
+        "Public source · data as of: 2025-02-29",
+        "Public source · data as of: 0000",
+        "Public source · data as of: 2025-05-01extra",
+        "Public source · data as of: not recorded extra · data as of: 2025",
+    ],
+)
+def test_invalid_basis_is_rejected_before_writing(basis, tmp_path):
+    """Issue #1199 requires a source and recorded cut-off or 'not recorded'.
+
+    Calendar cases are synthetic, independent Gregorian checks: months end at
+    December, the non-leap year has no February leap day, and no year zero is
+    supported. Suffixes must not turn malformed dates into valid prefixes.
+    """
+    mod = load_builder()
+    spec = dict(mod.SPECS[0], id="sample", std=basis)
+    out = tmp_path / "output"
+    with pytest.raises(ValueError, match="basis"):
+        mod.build_onepager(spec, out)
+    assert not out.exists()
+
+
+@pytest.mark.parametrize(
+    "cutoff",
+    ["not recorded", "2024", "2024-02", "2024-02-29 (record coverage end)"],
+)
+def test_basis_preserves_recorded_precision(cutoff, tmp_path):
+    """Issue #1199 allows absent cut-offs; calendar examples use a leap year.
+
+    Expected text is the literal supplied basis, without inventing a month,
+    day or acquisition date when the source records less precision.
+    """
+    mod = load_builder()
+    basis = f"Public source · data as of: {cutoff}"
+    spec = dict(mod.SPECS[0], id="sample", std=basis)
+    source = mod.build_onepager(spec, tmp_path)
+    assert basis in html.unescape(source.read_text())
+
+
+@pytest.mark.parametrize("missing", ["Price", "cost"])
+def test_economics_requires_both_assumption_bases(missing, tmp_path):
+    """Issue #1199 requires separate price and cost bases on economics pages."""
+    mod = load_builder()
+    spec = dict(mod.SPECS[0])
+    spec["std"] = spec["std"].replace(f"{missing}:", f"{missing} inputs:")
+    out = tmp_path / "output"
+    with pytest.raises(ValueError, match="basis"):
+        mod.build_onepager(spec, out)
+    assert not out.exists()
+
+
+@pytest.mark.parametrize("revision", ["", "2025", "2025-02-29", "2025-1-01"])
+def test_revision_requires_a_calendar_day(revision, tmp_path, monkeypatch):
+    """Issue #1199 requires a fixed revision date, including month and day."""
+    mod = load_builder()
+    monkeypatch.setattr(mod, "REVISION_DATE", revision)
+    out = tmp_path / "output"
+    with pytest.raises(ValueError, match="revision"):
+        mod.build_onepager(mod.SPECS[0], out)
+    assert not out.exists()
+
+
+@pytest.mark.parametrize("spec", load_builder().SPECS, ids=lambda spec: spec["id"])
+def test_retained_html_reproduces_exactly(spec, tmp_path):
+    """Issue #1199: retained UTF-8 HTML is the independent expected artifact.
+
+    Compare complete bytes, including embedded font payloads and the final
+    newline, rather than reconstructing expected output from the template.
+    """
+    mod = load_builder()
+    retained = SCRIPT.parents[2] / "reports/capabilities/pdf" / f"{spec['id']}.html"
+    generated = mod.build_onepager(spec, tmp_path)
+    assert generated.read_bytes() == retained.read_bytes()
