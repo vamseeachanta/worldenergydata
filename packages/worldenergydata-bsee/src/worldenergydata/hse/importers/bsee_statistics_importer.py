@@ -2,6 +2,8 @@
 # ABOUTME: Implements CSV parsing and field normalization for aggregated HSE statistics records
 
 from datetime import datetime
+from decimal import Decimal, InvalidOperation
+from numbers import Number
 from pathlib import Path
 from typing import Any, Dict, List
 
@@ -22,11 +24,46 @@ class BSEEStatisticsImporter(BaseImporter):
     Handles CSV parsing, field normalization, and data type conversion
     for quarterly and annual aggregated incident statistics.
 
+    Count policy (issue #1599): operational_period and all incident counts
+    accept nonnegative integral numeric values and integral decimal text as
+    integers. Zero is the nonnegative boundary. Fractional, negative, boolean
+    and nonfinite values fail validation with a field diagnostic. Scalar
+    missing values (including floating NaN and pandas.NA) remain None; they
+    never become zero. Invalid nonmissing counts are retained for validation.
+
     Usage:
         importer = BSEEStatisticsImporter(db_session, csv_file_path="statistics.csv")
         stats = importer.import_data()
         logger.info(f"Imported: {stats['imported_count']}, Skipped: {stats['skipped_count']}")
     """
+
+    _COUNT_FIELDS = (
+        "operational_period",
+        "total_incidents",
+        "fatality_count",
+        "lost_time_count",
+        "recordable_count",
+        "near_miss_count",
+        "minor_count",
+    )
+
+    @staticmethod
+    def _normalize_count(value: Any) -> Any:
+        """Convert valid integral counts; retain invalid values for validation."""
+        if value is None or pd.api.types.is_bool(value):
+            return value
+        if isinstance(value, (str, Number, Decimal)):
+            try:
+                number = Decimal(str(value))
+                if (
+                    number.is_finite()
+                    and number >= 0
+                    and number == number.to_integral_value()
+                ):
+                    return int(number)
+            except (InvalidOperation, ValueError):
+                pass
+        return value
 
     def __init__(self, db_session, csv_file_path: str = None):
         """
@@ -75,8 +112,8 @@ class BSEEStatisticsImporter(BaseImporter):
             raise FileNotFoundError(f"CSV file not found: {self.csv_file_path}")
 
         try:
-            # Read CSV file with pandas
-            df = pd.read_csv(csv_path)
+            # Preserve nonmissing text; pandas still recognizes its NA tokens.
+            df = pd.read_csv(csv_path, dtype=object)
 
             # Convert DataFrame to list of dictionaries
             records = df.to_dict("records")
@@ -115,6 +152,12 @@ class BSEEStatisticsImporter(BaseImporter):
         Returns:
             Normalized dictionary matching SafetyStatistic schema
         """
+        # Normalize scalar missingness before any field-specific guard. A new
+        # dictionary preserves the caller's raw values, including text spacing.
+        raw_data = {
+            field: None if pd.isna(value) else value
+            for field, value in raw_data.items()
+        }
         normalized = {}
 
         # Optional identifier retained for traceability to BSEE source records.
@@ -154,94 +197,8 @@ class BSEEStatisticsImporter(BaseImporter):
         # Optional field: field_name
         normalized["field_name"] = raw_data.get("field")
 
-        # Optional field: operational_period (convert string to integer)
-        if (
-            "operational_period" in raw_data
-            and raw_data["operational_period"] is not None
-        ):
-            try:
-                if isinstance(raw_data["operational_period"], str):
-                    normalized["operational_period"] = int(
-                        raw_data["operational_period"]
-                    )
-                else:
-                    normalized["operational_period"] = raw_data["operational_period"]
-            except (ValueError, TypeError):
-                normalized["operational_period"] = None
-        else:
-            normalized["operational_period"] = None
-
-        # Optional field: total_incidents (convert string to integer)
-        if "total_incidents" in raw_data and raw_data["total_incidents"] is not None:
-            try:
-                if isinstance(raw_data["total_incidents"], str):
-                    normalized["total_incidents"] = int(raw_data["total_incidents"])
-                else:
-                    normalized["total_incidents"] = raw_data["total_incidents"]
-            except (ValueError, TypeError):
-                normalized["total_incidents"] = None
-        else:
-            normalized["total_incidents"] = None
-
-        # Optional field: fatality_count (convert string to integer)
-        if "fatality_count" in raw_data and raw_data["fatality_count"] is not None:
-            try:
-                if isinstance(raw_data["fatality_count"], str):
-                    normalized["fatality_count"] = int(raw_data["fatality_count"])
-                else:
-                    normalized["fatality_count"] = raw_data["fatality_count"]
-            except (ValueError, TypeError):
-                normalized["fatality_count"] = None
-        else:
-            normalized["fatality_count"] = None
-
-        # Optional field: lost_time_count (convert string to integer)
-        if "lost_time_count" in raw_data and raw_data["lost_time_count"] is not None:
-            try:
-                if isinstance(raw_data["lost_time_count"], str):
-                    normalized["lost_time_count"] = int(raw_data["lost_time_count"])
-                else:
-                    normalized["lost_time_count"] = raw_data["lost_time_count"]
-            except (ValueError, TypeError):
-                normalized["lost_time_count"] = None
-        else:
-            normalized["lost_time_count"] = None
-
-        # Optional field: recordable_count (convert string to integer)
-        if "recordable_count" in raw_data and raw_data["recordable_count"] is not None:
-            try:
-                if isinstance(raw_data["recordable_count"], str):
-                    normalized["recordable_count"] = int(raw_data["recordable_count"])
-                else:
-                    normalized["recordable_count"] = raw_data["recordable_count"]
-            except (ValueError, TypeError):
-                normalized["recordable_count"] = None
-        else:
-            normalized["recordable_count"] = None
-
-        # Optional field: near_miss_count (convert string to integer)
-        if "near_miss_count" in raw_data and raw_data["near_miss_count"] is not None:
-            try:
-                if isinstance(raw_data["near_miss_count"], str):
-                    normalized["near_miss_count"] = int(raw_data["near_miss_count"])
-                else:
-                    normalized["near_miss_count"] = raw_data["near_miss_count"]
-            except (ValueError, TypeError):
-                normalized["near_miss_count"] = None
-        else:
-            normalized["near_miss_count"] = None
-
-        # Optional field: minor_count (convert string to integer)
-        if "minor_count" in raw_data and raw_data["minor_count"] is not None:
-            try:
-                if isinstance(raw_data["minor_count"], str):
-                    normalized["minor_count"] = int(raw_data["minor_count"])
-                else:
-                    normalized["minor_count"] = raw_data["minor_count"]
-            except (ValueError, TypeError):
-                normalized["minor_count"] = None
-        else:
-            normalized["minor_count"] = None
+        for field in self._COUNT_FIELDS:
+            normalized[field] = self._normalize_count(raw_data.get(field))
 
         return normalized
 
@@ -294,6 +251,14 @@ class BSEEStatisticsImporter(BaseImporter):
                 f"{type(normalized_data['report_date']).__name__}"
             )
             valid = False
+
+        for field in self._COUNT_FIELDS:
+            value = normalized_data.get(field)
+            if value is not None and (type(value) is not int or value < 0):
+                self.validation_errors.append(
+                    f"{field} must be a nonnegative integer or None"
+                )
+                valid = False
 
         return valid
 

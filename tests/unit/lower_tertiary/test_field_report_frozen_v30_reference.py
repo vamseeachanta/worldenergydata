@@ -59,3 +59,13 @@ def test_no_version_labels(path: Path):
         assert (
             token.lower() not in lower
         ), f"{path.name}: banned label {token!r} present"
+
+
+@pytest.mark.parametrize("path", REPORTS, ids=lambda p: p.name)
+def test_header_npv_matches_financial_summary(path: Path):
+    md = path.read_text(encoding="utf-8")
+    header = re.search(r"\*\*(\$[-0-9,]+\.[0-9] M)\*\*", md.splitlines()[4])
+    body = re.search(r"\| \*\*NPV @ 10%\*\* \| \*\*(\$[-0-9,]+\.[0-9] M)\*\* \|", md)
+    assert header, f"{path.name}: header line 5 is missing the field NPV"
+    assert body, f"{path.name}: financial summary is missing the field NPV"
+    assert header.group(1) == body.group(1), path.name

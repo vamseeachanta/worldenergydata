@@ -2,7 +2,7 @@
 
 **Development:** Stones (subsea15) &middot; **Lease:** G17001 &middot; **First oil:** 2016-09-01 &middot; **Discount rate:** 10% annual
 
-**Data window:** 2000-09 -> 2026-04
+**Data window:** 2000-09 -> 2026-04 &middot; **NPV @ 10%:** **$-1,460.8 M**
 
 ## Summary
 
@@ -13,6 +13,14 @@ On public BSEE production + cost data, **Stones** is **NPV-negative at 10%** lif
 - The cumulative-NPV path bottomed at **$-1,907.4 M** in **2017** and has since recovered **$+446.6 M** as production paid back capital.
 
 > Generated from public BSEE OGOR-A production and drilling/WAR records run through a monthly cashflow + trimmed-discount model (`build_field_npv_timeline`), covering field life through the latest available BSEE OGOR-A month. The NPV timeline below is an additive presentation layer over that model; it does not alter the computed final NPV.
+
+## Revision history
+
+| Revision | Date | Change and reason |
+|----------|------|-------------------|
+| 1 | 2026-10-29 | The field NPV is added to the header to match the financial summary. |
+
+Table 1. Report revision history.
 
 ---
 
@@ -221,7 +229,7 @@ _Exact, not sampled: NPV is affine in a uniform price multiplier (revenue and ro
 
 ## Next Steps
 
-- **Get a tailored analysis.** Want this for your own assets — a different field, a custom price deck, sensitivities, or a partner-level working-interest view? **AceEngineer** builds traceable field economics from public data. Contact **vamsee.achanta@aceengineer.com** to scope an engagement.
+- **Get a tailored analysis.** Want this for your own assets — a different field, a custom price deck, sensitivities, or a partner-level working-interest view? **AceEngineer** builds traceable field economics from public data. Contact **AceEngineer** to scope an engagement.
 - **Explore the full play.** Stones is one of **10 Lower Tertiary (Wilcox) fields** covered by this model. Regenerate any field with `--dev <Field>`, or ask for the **portfolio economics report** for the whole-play NPV view (Jack/St. Malo, Stones, Big Foot, Anchor, Cascade/Chinook, and more).
 - **See the methodology.** Every number here traces to **public BSEE OGOR-A production + drilling/WAR records** run through a transparent cashflow model — no black box. The pipeline (BSEE public data → parsed `.bin` → NPV) is reproducible end-to-end.
 - **Run it yourself.** Refresh the data and regenerate this report:

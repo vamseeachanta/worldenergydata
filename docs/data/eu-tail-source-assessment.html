@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EU source granularity assessment</title>
+<style>
+body { font-family: system-ui, sans-serif; max-width: 76rem; margin: auto; padding: 2rem;
+ color: #172033; background: #fff; line-height: 1.6; }
+table { border-collapse: collapse; display: block; overflow-x: auto; }
+th, td { border: 1px solid #ccd3df; padding: .5rem; text-align: left; }
+caption { caption-side: bottom; text-align: left; }
+dt { font-weight: bold; } dd { margin-bottom: .8rem; }
+code { overflow-wrap: anywhere; } pre { overflow-x: auto; background: #f3f5f8; padding: 1rem; }
+section { border-top: 1px solid #ccd3df; margin-top: 2rem; } a { color: #174c91; }
+</style></head><body><main>
+<h1>EU source granularity assessment</h1>
+<p>Assessment date: 2026-10-20.
+<a href="https://github.com/vamseeachanta/worldenergydata/issues/753">Issue 753</a>.</p>
+<h2>Summary</h2>
+<p>The ISPRA indicator and the inspected DGEG pages remain coverage sources.
+The Italian upstream CSV warrants concession-aware investigation, with field mapping
+unresolved. CORES still publishes the production-workbook links, but the current
+internal structure is not established by the HEAD-only check. Its existing chain is
+retained; reproduction requires permission covering the intended use.</p>
+<h2>Revision history</h2>
+<table><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr>
+<tr><td>1</td><td>2026-10-20</td>
+<td>Publisher availability and terms are checked; structure evidence, concession mapping
+and reuse are separated to prevent unsupported chain-readiness claims.</td></tr>
+<caption>Table 1. Initial assessment issue.</caption></table>
+<h2>Method</h2>
+<p>The issue decision gate permits field/well production OR usable field metadata. Monthly production fit, concession mapping and reuse are assessed separately. No source is automatically enrolled in an analysis chain.</p>
+<p>The Boolean gate is: verified field/well production OR verified usable field metadata.
+A concession satisfies the production branch only with a verified field mapping.
+Monthly FDAS fit additionally requires verified monthly resolution. These are logical
+criteria from the linked issue, not engineering equations; no physical constants,
+volume conversions, economic assumptions or numeric acceptance limits are introduced.</p>
+<p>A PROMOTE disposition identifies a capability candidate. Adapter conformance,
+full-data completeness, freshness, units and lawful intended use remain prerequisites.
+NOT_EVALUATED exposes missing evidence; it does not mean a true zero or a country-wide
+absence of production. ATTRIBUTION_REQUIRED describes the stated licence condition,
+not a completed reuse-compliance check. No automated enrolment is performed.</p>
+<table><thead><tr><th>Selected source</th><th>Chain decision</th><th>Monthly FDAS input</th>
+<th>FieldConcept input</th><th>Raw redistribution</th></tr></thead><tbody><tr><th scope="row">Italy / ISPRA</th><td>COVERAGE_ONLY</td><td>UNAVAILABLE</td><td>UNAVAILABLE</td><td>NOT_EVALUATED</td></tr><tr><th scope="row">Italy / MASE / UNMIG</th><td>REVIEW_MAPPING</td><td>REQUIRES_MAPPING</td><td>UNAVAILABLE</td><td>ATTRIBUTION_REQUIRED</td></tr><tr><th scope="row">Portugal / DGEG</th><td>COVERAGE_ONLY</td><td>UNAVAILABLE</td><td>UNAVAILABLE</td><td>NOT_EVALUATED</td></tr><tr><th scope="row">Spain / CORES</th><td>NOT_EVALUATED</td><td>NOT_EVALUATED</td><td>UNAVAILABLE</td><td>PERMISSION_REQUIRED</td></tr></tbody>
+<caption>Table 2. Dispositions for the inspected sources only.</caption></table>
+<h2>Source characterization and evidence</h2><section id="italy_ispra"><h3>Italy — ISPRA</h3><p>Energy resource extraction sites (oil and gas)</p><p>Data types: production aggregates, concessions and well counts, reserves, environmental indicators. Formats: HTML, XLSX tables, JPG figures.</p><p><strong>COVERAGE_ONLY</strong>: The inspected source provides neither qualifying production nor field metadata.</p><dl><dt>Granularity</dt><dd>National, regional, provincial and marine-zone summaries; concession and well counts are not individual field records.</dd><dt>Access and format inspection</dt><dd>Public page and linked downloads; no credentials requested for page inspection. Linked table payloads were not opened.</dd><dt>Temporal coverage</dt><dd>The page states 1982 to November 2024; production tables describe 2023.</dd><dt>Spatial coverage</dt><dd>Italy onshore and offshore marine zones.</dd><dt>Update frequency and vintage</dt><dd>Annual indicator; factsheet dated 2024-12-31. No later update was shown at inspection.</dd><dt>Reuse terms</dt><dd>No source-specific reuse terms established from the inspected indicator page.</dd><dt>Units and qualification</dt><dd>Page production summaries use Sm3 for gas and tonnes for oil; no conversion is performed.</dd><dt>Earlier decision</dt><dd>Coverage only in the earlier issue research.</dd><dt>Comparison with earlier research</dt><dd>CONFIRMED for the ISPRA indicator; does not establish absence of granular data elsewhere in Italy.</dd><dt>Next step</dt><dd>Retain as coverage context; assess the upstream ministry source separately.</dd></dl><h4>Limitations</h4><ul><li>The linked XLSX tables were not inspected internally.</li><li>Aggregate counts do not establish field or well identifiers, production histories, water depth or spud dates.</li><li>Reuse remains NOT_EVALUATED.</li></ul><h4>Observation receipts</h4><ul><li><a href="https://indicatoriambientali.isprambiente.it/en/georesources/energy-resource-extraction-sites-oil-and-gas">Publisher evidence</a>: GET; HTTP 200; 2026-10-20T10:05:41.676778Z; response_body; <code>sha256:94dde1e34b018cdab5d215142b50dd1a38db84202f456ea5d9a59a498d5faa52</code>.</li></ul></section><section id="italy_unmig"><h3>Italy — MASE / UNMIG</h3><p>Produzione nazionale di idrocarburi</p><p>Data types: monthly production by concession, mineral, operator, region or marine zone, onshore/offshore indicator. Formats: semicolon-separated UTF-8 CSV with BOM, annual PDF reports.</p><p><strong>REVIEW_MAPPING</strong>: Concession production needs a verified field mapping.</p><dl><dt>Granularity</dt><dd>Mining title (concession), not an established one-to-one field or well key.</dd><dt>Access and format inspection</dt><dd>Public production page and credential-free partial CSV request; server returned HTTP 206 for bytes 0-4095.</dd><dt>Temporal coverage</dt><dd>Page advertises CSV years 2004-2026 and data through 2026-07-31, updated 2026-09-29. Coverage was not recomputed from the partial response.</dd><dt>Spatial coverage</dt><dd>Italian onshore and offshore producing concessions.</dd><dt>Update frequency and vintage</dt><dd>Monthly columns; publication cadence is not stated. Reporting resolution is distinct from refresh frequency.</dd><dt>Reuse terms</dt><dd>The production page states Creative Commons Attribuzione 4.0 Internazionale and links CC BY 4.0.</dd><dt>Units and qualification</dt><dd>Gas: Sm3; crude oil and gasoline: kg, as stated on the production page. Reference conditions and conversion inputs remain unqualified.</dd><dt>Earlier decision</dt><dd>Italy was parked when only ISPRA was considered; the later issue research proposed promotion after discovering this source.</dd><dt>Comparison with earlier research</dt><dd>CHANGED relative to the initial Italy park decision; current partial header confirms the later concession-series finding, with mapping still unresolved.</dd><dt>Next step</dt><dd>Prepare a concession-aware ingestion proposal with attribution, full-byte provenance, missing-month handling and an independently reviewed title-to-field mapping before field cashflow.</dd></dl><h4>Limitations</h4><ul><li>Only the CSV header and initial bytes were inspected; full-file completeness, duplicate rows, missing-month representation and annual-total reconciliation remain NOT_EVALUATED.</li><li>A concession is not assumed to be a field; its production cannot yet be allocated to fields.</li><li>No density, gas energy factor, fiscal assumptions, well depths or development costs are inferred.</li></ul><h4>Observation receipts</h4><ul><li><a href="https://unmig.mase.gov.it/ricerca-e-coltivazione-di-idrocarburi/produzione-nazionale-di-idrocarburi/">Publisher evidence</a>: GET; HTTP 200; 2026-10-20T10:05:46.005548Z; response_body; <code>sha256:9570dedad2f3bc0152c8e08e7130695ecbfb4ac688833e43c4e9b564dd1d560f</code>.</li><li><a href="https://unmig.mase.gov.it/wp-content/uploads/dati/produzione/produzione-2026.csv">Publisher evidence</a>: GET Range: bytes=0-4095; HTTP 206; 2026-10-20T10:06:37.057773Z; partial_response_body; <code>sha256:72949f399cde0cea7e5dba5e57259bc1b1b87b87f9b04d308270f036a6c8da37</code>.</li></ul></section><section id="portugal_dgeg"><h3>Portugal — DGEG</h3><p>Exploration history; Data/Consultation</p><p>Data types: exploration history, individual exploratory-well descriptions, seismic surveys, test recoveries. Formats: HTML, linked map portal and illustrations, facility-held technical records described on the consultation page.</p><p><strong>COVERAGE_ONLY</strong>: The inspected source provides neither qualifying production nor field metadata.</p><dl><dt>Granularity</dt><dd>Narrative exploration events and well examples; no commercial per-field monthly production series or structured field input table on the inspected pages.</dd><dt>Access and format inspection</dt><dd>Public narrative and consultation pages; underlying technical information is described as available at DGEG or LNEG facilities. No facility records or map layers were requested.</dd><dt>Temporal coverage</dt><dd>Exploration narrative begins in 1938; the consultation page describes wells since 1938. The observation date is not a source vintage.</dd><dt>Spatial coverage</dt><dd>Portuguese onshore and offshore basins.</dd><dt>Update frequency and vintage</dt><dd>Not stated on the inspected pages.</dd><dt>Reuse terms</dt><dd>Footer reserves rights; no dataset reuse licence established. A linked price-list page was not opened.</dd><dt>Units and qualification</dt><dd>Narrative uses metres, seismic distances and test-recovery litres; these are not monthly commercial production volumes.</dd><dt>Earlier decision</dt><dd>Park as exploration coverage only.</dd><dt>Comparison with earlier research</dt><dd>CONFIRMED for the inspected pages. The history page states no current petroleum exploration/exploitation rights; a nationwide claim of no possible metadata is not made.</dd><dt>Next step</dt><dd>Retain exploration coverage; consider field-metadata promotion only after a usable structured dataset and reuse rights are established.</dd></dl><h4>Limitations</h4><ul><li>Isolated exploratory-well depths do not establish a structured producing-field input dataset.</li><li>Map-layer schemas and reuse permissions remain NOT_EVALUATED.</li><li>Production tests are not treated as a producing-field history, and absent production is not a zero-valued series.</li></ul><h4>Observation receipts</h4><ul><li><a href="https://www.dgeg.gov.pt/en/vertical-areas/geology/petroleum-co2-geological-storage/petroleum-geology/exploration-history/">Publisher evidence</a>: GET; HTTP 200; 2026-10-20T10:05:43.882407Z; response_body; <code>sha256:11970b67933bd20192d99d27589e4217e39d4fdc8eed5cb2fe82dacf3d1d24bf</code>.</li><li><a href="https://www.dgeg.gov.pt/en/vertical-areas/geology/petroleum-co2-geological-storage/technical-data-and-information/data-consultation/">Publisher evidence</a>: GET; HTTP 200; 2026-10-20T10:06:36.201481Z; response_body; <code>sha256:4af3cefed8f448a0bff06a0a9346cd3b959a5500af0729976c6887f7f264a9db</code>.</li></ul></section><section id="spain_cores"><h3>Spain — CORES</h3><p>Indigenous Crude Oil Production; Indigenous Natural Gas Production</p><p>Data types: oil production, gas production. Formats: XLSX.</p><p><strong>NOT_EVALUATED</strong>: Evidence does not establish the current source structure or metadata.</p><dl><dt>Granularity</dt><dd>Per-field monthly structure was established by earlier issue research and is supported by existing parsers; current workbook internals were not opened in this check.</dd><dt>Access and format inspection</dt><dd>Public statistics page links both workbooks; credential-free HEAD requests returned HTTP 200 and spreadsheet content types. HEAD responses do not establish workbook content.</dd><dt>Temporal coverage</dt><dd>Current page lists oil series from 1966 and gas from 1963. The later issue research distinguishes annual early oil rows from monthly rows; exact current row coverage remains unverified.</dd><dt>Spatial coverage</dt><dd>Spanish producing fields according to the earlier workbook characterization; the current portal labels the series indigenous production.</dd><dt>Update frequency and vintage</dt><dd>Page update and workbook Last-Modified dates are 2026-10-13. Monthly reporting is historical evidence, not a new full workbook validation.</dd><dt>Reuse terms</dt><dd>Legal notice requires prior written authorization for reproduction, transmission or modification; citation and latest-update conditions also apply. Attribution alone is not authorization.</dd><dt>Units and qualification</dt><dd>Existing package and earlier issue research identify tonnes for oil and GWh for gas. Current workbook units remain unverified in this HEAD-only check; no conversion is performed.</dd><dt>Earlier decision</dt><dd>Promoted and already implemented in the Spain package; the later research corrected the reuse interpretation.</dd><dt>Comparison with earlier research</dt><dd>CONFIRMED availability and reuse restriction; current field-level structure is UNVERIFIED. NOT_EVALUATED describes this check, not a reversal or removal of the existing chain.</dd><dt>Next step</dt><dd>Reuse the existing chain after authorized local workbook inspection; preserve publisher attribution and update date, and obtain permission covering intended reproduction or publication.</dd></dl><h4>Limitations</h4><ul><li>No raw workbook or production series is redistributed in this change.</li><li>Current per-field headers, units, missing-data semantics and date coverage remain NOT_EVALUATED.</li><li>Neither raw data nor derived-data publication rights are inferred from public access; written authorization must cover the intended reuse.</li></ul><h4>Observation receipts</h4><ul><li><a href="https://www.cores.es/en/estadisticas">Publisher evidence</a>: GET; HTTP 200; 2026-10-20T10:05:44.674335Z; response_body; <code>sha256:8dd3c434e22a9ad11ae231d2fc5aae6b3c2fcf9d7309de9a482a0cc044590138</code>.</li><li><a href="https://www.cores.es/en/aviso-legal">Publisher evidence</a>: GET; HTTP 200; 2026-10-20T10:05:47.932048Z; response_body; <code>sha256:0d24ce5eed470c5455f94d229a149668ea77a06f9b66f74302fa6772cad6017a</code>.</li><li><a href="https://www.cores.es/sites/default/files/archivos/estadisticas/crude-oil-production.xlsx">Publisher evidence</a>: HEAD; HTTP 200; 2026-10-20T10:06:34.682958Z; response_headers; <code>sha256:a1cd88715b24deeb2098d8fd3203c02dc7b0c50b10c8bb186fcb0b7ee3296b19</code>.</li><li><a href="https://www.cores.es/sites/default/files/archivos/estadisticas/gas-production.xlsx">Publisher evidence</a>: HEAD; HTTP 200; 2026-10-20T10:06:35.442774Z; response_headers; <code>sha256:9dc69b93383a0f5cc0cd1d0784f8024b8974dff09100e44a7816a11ee3048d0d</code>.</li><li><a href="https://github.com/vamseeachanta/worldenergydata/issues/753#issuecomment-6115434418">Earlier issue research</a> supports the historical structure claim; it is not current payload validation.</li></ul></section>
+<h2>Worked example: inputs, method and answer</h2>
+<p>Input: <a href="eu-tail-source-assessment.json">the versioned capability flags and
+publisher observations</a>. Method: SourceCapabilities is evaluated by assess_source;
+rights are reported independently. Italy has verified monthly concession columns and
+no verified field mapping, so the answer is REVIEW_MAPPING / REQUIRES_MAPPING.
+Spain has only current HEAD evidence, so its current series is NOT_EVALUATED and its
+raw reproduction remains PERMISSION_REQUIRED. ISPRA and DGEG evaluate to COVERAGE_ONLY.</p>
+<p>Run from the repository root:</p>
+<pre>PYTHONPATH=src python examples/eu_tail_source_assessment.py
+PYTHONPATH=src python examples/eu_tail_source_assessment.py \
+    --output-html docs/data/eu-tail-source-assessment.html</pre>
+<pre>{
+  &quot;italy_ispra&quot;: {
+    &quot;decision&quot;: &quot;COVERAGE_ONLY&quot;,
+    &quot;fdas_production&quot;: &quot;UNAVAILABLE&quot;,
+    &quot;field_concept&quot;: &quot;UNAVAILABLE&quot;,
+    &quot;raw_redistribution&quot;: &quot;NOT_EVALUATED&quot;,
+    &quot;reason&quot;: &quot;The inspected source provides neither qualifying production nor field metadata.&quot;
+  },
+  &quot;italy_unmig&quot;: {
+    &quot;decision&quot;: &quot;REVIEW_MAPPING&quot;,
+    &quot;fdas_production&quot;: &quot;REQUIRES_MAPPING&quot;,
+    &quot;field_concept&quot;: &quot;UNAVAILABLE&quot;,
+    &quot;raw_redistribution&quot;: &quot;ATTRIBUTION_REQUIRED&quot;,
+    &quot;reason&quot;: &quot;Concession production needs a verified field mapping.&quot;
+  },
+  &quot;portugal_dgeg&quot;: {
+    &quot;decision&quot;: &quot;COVERAGE_ONLY&quot;,
+    &quot;fdas_production&quot;: &quot;UNAVAILABLE&quot;,
+    &quot;field_concept&quot;: &quot;UNAVAILABLE&quot;,
+    &quot;raw_redistribution&quot;: &quot;NOT_EVALUATED&quot;,
+    &quot;reason&quot;: &quot;The inspected source provides neither qualifying production nor field metadata.&quot;
+  },
+  &quot;spain_cores&quot;: {
+    &quot;decision&quot;: &quot;NOT_EVALUATED&quot;,
+    &quot;fdas_production&quot;: &quot;NOT_EVALUATED&quot;,
+    &quot;field_concept&quot;: &quot;UNAVAILABLE&quot;,
+    &quot;raw_redistribution&quot;: &quot;PERMISSION_REQUIRED&quot;,
+    &quot;reason&quot;: &quot;Evidence does not establish the current source structure or metadata.&quot;
+  }
+}</pre>
+<h2>Retention and remaining work</h2>
+<p>Publisher response bodies and headers are retained as local research evidence, outside the public repository. Digests identify those observed bytes, not redistributed source datasets or a backup. No raw CORES workbook was downloaded.</p>
+<p>Existing catalog and domain index were unavailable in the inspected checkout. Keys below identify assessment rows only; no catalog source or dataset identities are assigned.</p>
+<p>Spain already has workbook discovery, parsers, a unified production adapter and a
+reference chain. This assessment does not duplicate or alter those modules. Further
+work consists of Italian full-CSV validation and title-to-field mapping, authorized
+current CORES workbook inspection and intended-use permission, and Portuguese structured
+map-layer inspection if field metadata is pursued. Pre-2004 Italian records and the
+Portuguese price list are not evaluated. Independent review remains a prerequisite
+before merge.</p>
+</main></body></html>

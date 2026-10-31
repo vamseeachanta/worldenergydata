@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>V50 assumptions change log</title>
+<style>
+body { font: 14px/1.4 system-ui, sans-serif; color: #182c3a; margin: 2rem auto; max-width: 1200px; padding: 0 1rem; }
+h1 { font-size: 1.6rem; } h2 { font-size: 1.15rem; }
+table { border-collapse: collapse; width: 100%; margin: .7rem 0; }
+th, td { border: 1px solid #b8c6ce; padding: .3rem; text-align: left; vertical-align: top; }
+th { background: #edf3f6; } caption { caption-side: bottom; text-align: left; }
+a { color: #075a89; } code { overflow-wrap: anywhere; }
+@media print { body { font-size: 8pt; margin: 0; max-width: none; } tr { break-inside: avoid; } }
+</style>
+<main>
+<h1>V50 assumptions change log</h1>
+<p><strong>Summary.</strong> Revision <code>v50-assumptions-r1</code> records proposed differences from the frozen V30 and current window-only basis.
+The current reproduction remains pre-tax with frozen costs. Canonical codebase selection does not approve the proposed cost/after-tax basis.
+No cost or tax change is accepted by this record; missing approval and engineering evidence remain explicit.</p>
+<h2>Revision history</h2>
+<table><thead><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr></thead>
+<tbody><tr><td>v50-assumptions-r1</td><td>2026-10-19</td><td>Record proposed changes and evidence gaps before adoption of the cost/after-tax basis.</td></tr>
+<tr><td>v50-assumptions-r1.1</td><td>2026-10-21</td><td>Correct the tax-setting and price-sensitivity source sections so each stated assumption can be checked against its evidence; no assumptions or adoption decisions change.</td></tr></tbody></table>
+<h2>Cost changes</h2>
+<p>Values are transcribed from S1 §3.4, the committed reconciliation, rather than a newly inspected V50 workbook.
+Reasons below describe the changed allowance; they do not establish its engineering justification.
+The original V50 input workbook and its digest are required before acceptance.</p>
+<!-- Numerical source: S1, FDAS revision comparison (2026-07-07), section 3.4, all thirteen cost-cell pairs. -->
+<table id="cost-changes"><thead><tr><th>Parameter / unit</th><th>System</th><th>Old</th><th>Proposed new</th><th>Reason / missing basis</th><th>Source</th><th>Disposition</th><th>All future runs?</th></tr></thead><tbody>
+<tr><td>Host_CAPEX_MM</td><td>subsea15</td><td>1200</td><td>900</td><td>Revised host allocation; engineering basis not documented.</td><td>S1 §3.4</td><td>UNRESOLVED</td><td>No; approval required for the affected system.</td></tr>
+<tr><td>Host_CAPEX_MM</td><td>subsea20</td><td>1500</td><td>800</td><td>Revised host allocation; engineering basis not documented.</td><td>S1 §3.4</td><td>UNRESOLVED</td><td>No; approval required for the affected system.</td></tr>
+<tr><td>Host_CAPEX_MM</td><td>dry</td><td>2000</td><td>1500</td><td>Revised host allocation; engineering basis not documented.</td><td>S1 §3.4</td><td>UNRESOLVED</td><td>No; approval required for the affected system.</td></tr>
+<tr><td>Host_CAPEX_MM</td><td>tieback15</td><td>0</td><td>80</td><td>Revised host allocation; engineering basis not documented.</td><td>S1 §3.4</td><td>UNRESOLVED</td><td>No; approval required for the affected system.</td></tr>
+<tr><td>Host_CAPEX_MM</td><td>tieback20</td><td>0</td><td>100</td><td>Revised host allocation; engineering basis not documented.</td><td>S1 §3.4</td><td>UNRESOLVED</td><td>No; approval required for the affected system.</td></tr>
+<tr><td>Water_Injection_Facility_Cost_MM</td><td>subsea20</td><td>200</td><td>100</td><td>Revised injection-facility allowance; engineering basis not documented.</td><td>S1 §3.4</td><td>UNRESOLVED</td><td>No; approval required for the affected system.</td></tr>
+<tr><td>Water_Injection_Facility_Cost_MM</td><td>tieback15</td><td>100</td><td>200</td><td>Revised injection-facility allowance; engineering basis not documented.</td><td>S1 §3.4</td><td>UNRESOLVED</td><td>No; approval required for the affected system.</td></tr>
+<tr><td>Water_Injection_Facility_Cost_MM</td><td>tieback20</td><td>200</td><td>250</td><td>Revised injection-facility allowance; engineering basis not documented.</td><td>S1 §3.4</td><td>UNRESOLVED</td><td>No; approval required for the affected system.</td></tr>
+<tr><td>Variable_OPEX_$/bbl</td><td>subsea15</td><td>4</td><td>6</td><td>Revised unit operating cost; escalation basis not documented.</td><td>S1 §3.4</td><td>UNRESOLVED</td><td>No; approval required for the affected system.</td></tr>
+<tr><td>Variable_OPEX_$/bbl</td><td>subsea20</td><td>6</td><td>8</td><td>Revised unit operating cost; escalation basis not documented.</td><td>S1 §3.4</td><td>UNRESOLVED</td><td>No; approval required for the affected system.</td></tr>
+<tr><td>Variable_OPEX_$/bbl</td><td>tieback20</td><td>6</td><td>8</td><td>Revised unit operating cost; escalation basis not documented.</td><td>S1 §3.4</td><td>UNRESOLVED</td><td>No; approval required for the affected system.</td></tr>
+<tr><td>Booster_Pump_15K_MM</td><td>subsea15</td><td>275</td><td>250</td><td>Revised pump allowance; engineering basis not documented.</td><td>S1 §3.4</td><td>UNRESOLVED</td><td>No; approval required for the affected system.</td></tr>
+<tr><td>Booster_Pump_15K_MM</td><td>tieback15</td><td>275</td><td>250</td><td>Revised pump allowance; engineering basis not documented.</td><td>S1 §3.4</td><td>UNRESOLVED</td><td>No; approval required for the affected system.</td></tr>
+</tbody><caption>Table 1. Proposed cost-cell changes. MM denotes million USD; Variable_OPEX is USD/bbl.</caption></table>
+<h2>Model and input basis</h2>
+<!-- Numerical sources: S1 section 0 item 7 and sections 2, 3.3, 4.3 and 4.4; S2 _excel_like_mirr; S3 metadata. Values are observed model inputs, not tax-law validation. -->
+<table><thead><tr><th>Item</th><th>Old / current basis</th><th>Proposed basis</th><th>Reason and source</th><th>Disposition / future-run scope</th></tr></thead><tbody>
+<tr id="tax"><td>After-tax activation</td><td>Pre-tax; severance, ad-valorem, corporate tax and NOL inactive.</td><td>Activate severance and ad-valorem at 0%, corporate tax at 21%, with monthly NOL carryforward.</td><td>Represent after-tax cashflow. S1 §0 item 7, §3.3 and §4.3 record these model settings; unchanged stored rates become active logic. No tax-law applicability or NOL restrictions are established here.</td><td>UNRESOLVED. NOT_EVALUATED for canonical adoption pending the reviewed tax specification and maintainer decision. No automatic effect on future runs.</td></tr>
+<tr id="leases"><td>Lease population / Buckskin KC</td><td>Frozen 20-lease basis excludes Buckskin.</td><td>Expanded 26-lease / 11-development basis; Buckskin uses the separate KC input set.</td><td>Include the additional lease population in economics. S1 §2 and §4.4; S4 selects the KC input tables explicitly.</td><td>UNRESOLVED for universal adoption. Current KC runs remain explicitly selected; future runs shall identify their lease input set. No silent replacement of the frozen mapping.</td></tr>
+<tr id="wti"><td>WTI deck convention</td><td>Frozen deck for V30; extended cascade for latest-window runs.</td><td>No new convention accepted. Full comparison requires a common dated deck and explicit missing-month fill policy.</td><td>Avoid attributing price-deck effects to model changes. S1 §2 and §4.3 distinguish the supplied deck from the extended-deck sensitivity; S5 implements the current cascade.</td><td>UNRESOLVED. NOT_EVALUATED for a changed convention until deck provenance and overlap checks are resolved. No future-run change authorized.</td></tr>
+<tr id="mirr"><td>MIRR finance / reinvestment</td><td>Both legs use the annual discount rate converted to monthly, rather than separate workbook finance/reinvestment inputs.</td><td>No separate rates accepted; required inputs and their period convention await a decision.</td><td>Separate financing from reinvestment assumptions. S2 <code>_excel_like_mirr</code> establishes current behavior; S1 §6 B4 records the discrepancy.</td><td>UNRESOLVED. NOT_EVALUATED for a revised MIRR basis. Preserve current reproduction until approved rates and independent examples are available; no automatic future-run change.</td></tr>
+<tr><td>Window-only reproduction</td><td>Frozen V30 window.</td><td>Extended data window with the recorded first-oil correction; costs and tax model remain frozen.</td><td>Separate data refresh from assumption adoption. S3 metadata explicitly identifies this basis.</td><td>EXISTING_REPRODUCTION, not acceptance of the proposed model. Future latest-window runs retain their explicit window and correction metadata.</td></tr>
+</tbody><caption>Table 2. Basis decisions, required evidence and future-run scope.</caption></table>
+<h2 id="disposition">Acceptance boundary and remaining work</h2>
+<p><strong>Accepted changes:</strong> none newly accepted by this log. <strong>Rejected interpretation:</strong> treating the window-only baseline as evidence that all proposed V50 assumptions are approved.
+<strong>Unresolved:</strong> cost engineering basis, original-input identity, tax specification, expanded-lease approval, WTI convention and separate MIRR rates.
+The maintainer shall record the decision and affected run scope before any proposed change is adopted.
+The version identifies this decision record, not an approved economic input deck.</p>
+<p>The canonical V50 workbook generator is not present in the inspected checkout. Workbook assumption-version metadata remains NOT_EVALUATED;
+that follow-up shall bind the actual generator and its output to an approved assumption version. Existing baseline and workbook bytes remain unchanged.</p>
+<h2>Sources</h2>
+<ul>
+<li>S1: <a href="../../../reports/lower_tertiary/fdas_revision_comparison.md">FDAS revision comparison</a>, reconciliation update 2026-07-07, §§2, 3.3–3.4, 4.4 and 6. Secondary evidence; the original V50 input workbook was not inspected.</li>
+<li>S2: <a href="../../../packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/v30_financial_reproducer.py">Financial reproducer</a>, <code>_excel_like_mirr</code> and <code>reproduce_v30_financials</code>, inspected 2026-10-19.</li>
+<li>S3: <a href="golden_baseline_v50.yml">Window-only baseline metadata</a>, extraction 2026-06-26.</li>
+<li>S4: <a href="../../../packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/v30_financial_reproducer.py">Financial input selector</a>, <code>_input_set_tables</code>, inspected 2026-10-19.</li>
+<li>S5: <a href="../../../packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/wti_prices.py">WTI cascade implementation</a>, inspected 2026-10-19.</li>
+<li>Task and decision scope: <a href="https://github.com/vamseeachanta/worldenergydata/issues/899">assumptions change-log issue</a> and linked discussions.</li>
+</ul>
+</main>
+</html>
