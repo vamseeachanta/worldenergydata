@@ -51,3 +51,6 @@ packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/directional_surv
 
 # Preserve the benchmark source digest across platform checkout conventions.
 reports/lower_tertiary/lt_well_benchmark_lower_tertiary_2010_latest.csv text eol=lf
+
+# India DGH/PPAC raw source copies: keep bytes exactly as retrieved (SHA-256 in manifest).
+data/modules/india_dgh/raw/** -text

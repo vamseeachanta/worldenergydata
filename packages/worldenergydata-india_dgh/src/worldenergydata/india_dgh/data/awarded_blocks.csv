@@ -1,0 +1,176 @@
+round,round_family,block_name,basin,basin_basis,basin_published,basin_category,acreage_type,acreage_type_basis,area_km2,area_basis,awardee,state,contract_signed,source_id,source_page
+OALP-I,OALP,RJ-ONHP-2017/1,Rajasthan,block_code,,,onland,block_code,,,VEDANTA,,,dgh_oalp1_awardees,1
+OALP-I,OALP,RJ-ONHP-2017/2,Rajasthan,block_code,,,onland,block_code,,,VEDANTA,,,dgh_oalp1_awardees,1
+OALP-I,OALP,RJ-ONHP-2017/3,Rajasthan,block_code,,,onland,block_code,,,VEDANTA,,,dgh_oalp1_awardees,1
+OALP-I,OALP,RJ-ONHP-2017/4,Rajasthan,block_code,,,onland,block_code,,,VEDANTA,,,dgh_oalp1_awardees,1
+OALP-I,OALP,RJ-ONHP-2017/5,Rajasthan,block_code,,,onland,block_code,,,VEDANTA,,,dgh_oalp1_awardees,1
+OALP-I,OALP,RJ-ONHP-2017/6,Rajasthan,block_code,,,onland,block_code,,,VEDANTA,,,dgh_oalp1_awardees,1
+OALP-I,OALP,RJ-ONHP-2017/7,Rajasthan,block_code,,,onland,block_code,,,VEDANTA,,,dgh_oalp1_awardees,1
+OALP-I,OALP,RJ-ONHP-2017/8,Rajasthan,block_code,,,onland,block_code,,,OIL,,,dgh_oalp1_awardees,1
+OALP-I,OALP,RJ-ONHP-2017/9,Rajasthan,block_code,,,onland,block_code,,,OIL,,,dgh_oalp1_awardees,1
+OALP-I,OALP,CB-ONHP-2017/1,Cambay,block_code,,,onland,block_code,,,VEDANTA,,,dgh_oalp1_awardees,1
+OALP-I,OALP,CB-ONHP-2017/2,Cambay,block_code,,,onland,block_code,,,VEDANTA,,,dgh_oalp1_awardees,1
+OALP-I,OALP,CB-ONHP-2017/3,Cambay,block_code,,,onland,block_code,,,VEDANTA,,,dgh_oalp1_awardees,1
+OALP-I,OALP,CB-ONHP-2017/4,Cambay,block_code,,,onland,block_code,,,VEDANTA,,,dgh_oalp1_awardees,1
+OALP-I,OALP,CB-ONHP-2017/5,Cambay,block_code,,,onland,block_code,,,VEDANTA,,,dgh_oalp1_awardees,2
+OALP-I,OALP,CB-ONHP-2017/6,Cambay,block_code,,,onland,block_code,,,VEDANTA,,,dgh_oalp1_awardees,2
+OALP-I,OALP,CB-ONHP-2017/7,Cambay,block_code,,,onland,block_code,,,VEDANTA,,,dgh_oalp1_awardees,2
+OALP-I,OALP,CB-ONHP-2017/9,Cambay,block_code,,,onland,block_code,,,BPRL,,,dgh_oalp1_awardees,2
+OALP-I,OALP,CB-ONHP-2017/10,Cambay,block_code,,,onland,block_code,,,VEDANTA,,,dgh_oalp1_awardees,2
+OALP-I,OALP,CB-ONHP-2017/11,Cambay,block_code,,,onland,block_code,,,VEDANTA,,,dgh_oalp1_awardees,2
+OALP-I,OALP,CB-ONHP-2017/12,Cambay,block_code,,,onland,block_code,,,GAIL,,,dgh_oalp1_awardees,2
+OALP-I,OALP,GK-ONHP-2017/1,Kutch,block_code,,,onland,block_code,,,VEDANTA,,,dgh_oalp1_awardees,2
+OALP-I,OALP,KG-ONHP-2017/1,Krishna-Godavari,block_code,,,onland,block_code,,,VEDANTA,,,dgh_oalp1_awardees,2
+OALP-I,OALP,KG-ONHP-2017/2,Krishna-Godavari,block_code,,,onland,block_code,,,VEDANTA,,,dgh_oalp1_awardees,2
+OALP-I,OALP,KG-ONHP-2017/3,Krishna-Godavari,block_code,,,onland,block_code,,,VEDANTA,,,dgh_oalp1_awardees,2
+OALP-I,OALP,CY-ONHP-2017/1,Cauvery,block_code,,,onland,block_code,,,ONGC,,,dgh_oalp1_awardees,2
+OALP-I,OALP,AA-ONHP-2017/1,Assam-Arakan Fold Belt,block_code,,,onland,block_code,,,VEDANTA,,,dgh_oalp1_awardees,2
+OALP-I,OALP,AA-ONHP-2017/2,Assam-Arakan Fold Belt,block_code,,,onland,block_code,,,VEDANTA,,,dgh_oalp1_awardees,2
+OALP-I,OALP,AA-ONHP-2017/3,Assam-Arakan Fold Belt,block_code,,,onland,block_code,,,VEDANTA,,,dgh_oalp1_awardees,2
+OALP-I,OALP,AA-ONHP-2017/4,Assam-Arakan Fold Belt,block_code,,,onland,block_code,,,VEDANTA,,,dgh_oalp1_awardees,3
+OALP-I,OALP,AA-ONHP-2017/5,Assam-Arakan Fold Belt,block_code,,,onland,block_code,,,VEDANTA,,,dgh_oalp1_awardees,3
+OALP-I,OALP,AA-ONHP-2017/6,Assam-Arakan Fold Belt,block_code,,,onland,block_code,,,VEDANTA,,,dgh_oalp1_awardees,3
+OALP-I,OALP,AA-ONHP-2017/8,Assam-Arakan Fold Belt,block_code,,,onland,block_code,,,VEDANTA,,,dgh_oalp1_awardees,3
+OALP-I,OALP,AA-ONHP-2017/9,Assam-Arakan Fold Belt,block_code,,,onland,block_code,,,VEDANTA,,,dgh_oalp1_awardees,3
+OALP-I,OALP,AA-ONHP-2017/10,Assam-Arakan Fold Belt,block_code,,,onland,block_code,,,OIL,,,dgh_oalp1_awardees,3
+OALP-I,OALP,AA-ONHP-2017/11,Assam-Arakan Fold Belt,block_code,,,onland,block_code,,,VEDANTA,,,dgh_oalp1_awardees,3
+OALP-I,OALP,AA-ONHP-2017/12,Assam-Arakan Fold Belt,block_code,,,onland,block_code,,,OIL,,,dgh_oalp1_awardees,3
+OALP-I,OALP,AA-ONHP-2017/13,Assam-Arakan Fold Belt,block_code,,,onland,block_code,,,OIL,,,dgh_oalp1_awardees,3
+OALP-I,OALP,AA-ONHP-2017/14,Assam-Arakan Fold Belt,block_code,,,onland,block_code,,,VEDANTA,,,dgh_oalp1_awardees,3
+OALP-I,OALP,AA-ONHP-2017/15,Assam-Arakan Fold Belt,block_code,,,onland,block_code,,,VEDANTA,,,dgh_oalp1_awardees,3
+OALP-I,OALP,AA-ONHP-2017/16,Assam-Arakan Fold Belt,block_code,,,onland,block_code,,,OIL,,,dgh_oalp1_awardees,3
+OALP-I,OALP,AA-ONHP-2017/17,Assam-Arakan Fold Belt,block_code,,,onland,block_code,,,OIL,,,dgh_oalp1_awardees,3
+OALP-I,OALP,AA-ONHP-2017/18,Assam-Arakan Fold Belt,block_code,,,onland,block_code,,,OIL,,,dgh_oalp1_awardees,3
+OALP-I,OALP,AA-ONHP-2017/19,Assam-Arakan Fold Belt,block_code,,,onland,block_code,,,HOEC,,,dgh_oalp1_awardees,3
+OALP-I,OALP,AA-ONHP-2017/20,Assam-Arakan Fold Belt,block_code,,,onland,block_code,,,OIL,,,dgh_oalp1_awardees,4
+OALP-I,OALP,GV-ONHP-2017/1,Ganga-Punjab,block_code,,,onland,block_code,,,VEDANTA,,,dgh_oalp1_awardees,4
+OALP-I,OALP,HF-ONHP-2017/1,Himalayan Foreland,block_code,,,onland,block_code,,,VEDANTA,,,dgh_oalp1_awardees,4
+OALP-I,OALP,GK-OSHP-2017/1,Kutch,block_code,,,shallow_water,block_code,,,VEDANTA,,,dgh_oalp1_awardees,4
+OALP-I,OALP,GS-OSHP-2017/1,Saurashtra,block_code,,,shallow_water,block_code,,,VEDANTA,,,dgh_oalp1_awardees,4
+OALP-I,OALP,GS-OSHP-2017/2,Saurashtra,block_code,,,shallow_water,block_code,,,VEDANTA,,,dgh_oalp1_awardees,4
+OALP-I,OALP,MB-OSHP-2017/1,Mumbai,block_code,,,shallow_water,block_code,,,ONGC,,,dgh_oalp1_awardees,4
+OALP-I,OALP,MB-OSHP-2017/2,Mumbai,block_code,,,shallow_water,block_code,,,VEDANTA,,,dgh_oalp1_awardees,4
+OALP-I,OALP,KG-OSHP-2017/1,Krishna-Godavari,block_code,,,shallow_water,block_code,,,VEDANTA,,,dgh_oalp1_awardees,4
+OALP-I,OALP,CY-OSHP-2017/1,Cauvery,block_code,,,shallow_water,block_code,,,VEDANTA,,,dgh_oalp1_awardees,4
+OALP-I,OALP,CY-OSHP-2017/2,Cauvery,block_code,,,shallow_water,block_code,,,VEDANTA,,,dgh_oalp1_awardees,4
+OALP-I,OALP,KG-DWHP-2017/1,Krishna-Godavari,block_code,,,deep_water,block_code,,,VEDANTA,,,dgh_oalp1_awardees,4
+OALP-II,OALP,RJ-ONHP-2018/1,Rajasthan,block_code,,,onland,block_code,,,Vedanta Limited,,,dgh_oalp2_awardees,1
+OALP-II,OALP,CB-ONHP-2018/1,Cambay,block_code,,,onland,block_code,,,Vedanta Limited,,,dgh_oalp2_awardees,1
+OALP-II,OALP,CB-ONHP-2018/2,Cambay,block_code,,,onland,block_code,,,ONGC Limited,,,dgh_oalp2_awardees,1
+OALP-II,OALP,CY-ONHP-2018/1,Cauvery,block_code,,,onland,block_code,,,Indian Oil Corporation Limited,,,dgh_oalp2_awardees,1
+OALP-II,OALP,MN-ONHP-2018/1,Mahanadi,block_code,,,onland,block_code,,,Oil India Limited,,,dgh_oalp2_awardees,1
+OALP-II,OALP,MN-ONHP-2018/2,Mahanadi,block_code,,,onland,block_code,,,Oil India Limited,,,dgh_oalp2_awardees,1
+OALP-II,OALP,MN-ONHP-2018/3,Mahanadi,block_code,,,onland,block_code,,,Oil India Limited,,,dgh_oalp2_awardees,1
+OALP-II,OALP,MN-ONHP-2018/4,Mahanadi,block_code,,,onland,block_code,,,Oil India Limited,,,dgh_oalp2_awardees,1
+OALP-II,OALP,GK-OSHP-2018/1,Kutch,block_code,,,shallow_water,block_code,,,Vedanta Limited,,,dgh_oalp2_awardees,1
+OALP-II,OALP,GK-OSHP-2018/2,Kutch,block_code,,,shallow_water,block_code,,,Vedanta Limited,,,dgh_oalp2_awardees,1
+OALP-II,OALP,AN-OSHP-2018/1,Andaman-Nicobar,block_code,,,shallow_water,block_code,,,Oil India Limited,,,dgh_oalp2_awardees,1
+OALP-II,OALP,AN-OSHP-2018/2,Andaman-Nicobar,block_code,,,shallow_water,block_code,,,Oil India Limited,,,dgh_oalp2_awardees,1
+OALP-II,OALP,MN-OSHP-2018/1,Mahanadi,block_code,,,shallow_water,block_code,,,Vedanta Limited,,,dgh_oalp2_awardees,1
+OALP-II,OALP,KG-UDWHP-2018/1,Krishna-Godavari,block_code,,,ultra_deep_water,block_code,,,"BP Exploration (Alpha) Limited (40.0%), Reliance Industries Ltd (60.0%)",,,dgh_oalp2_awardees,1
+OALP-III,OALP,RJ-ONHP-2018/2,Rajasthan,block_code,,,onland,block_code,,,Oil India Limited,,,dgh_oalp3_awardees,1
+OALP-III,OALP,CB-ONHP-2018/3,Cambay,block_code,,,onland,block_code,,,Vedanta Limited,,,dgh_oalp3_awardees,1
+OALP-III,OALP,CB-ONHP-2018/4,Cambay,block_code,,,onland,block_code,,,Vedanta Limited,,,dgh_oalp3_awardees,1
+OALP-III,OALP,CY-ONHP-2018/2,Cauvery,block_code,,,onland,block_code,,,ONGC Limited,,,dgh_oalp3_awardees,1
+OALP-III,OALP,CY-ONHP-2018/3,Cauvery,block_code,,,onland,block_code,,,ONGC Limited,,,dgh_oalp3_awardees,1
+OALP-III,OALP,KG-ONHP-2018/1,Krishna-Godavari,block_code,,,onland,block_code,,,Vedanta Limited,,,dgh_oalp3_awardees,1
+OALP-III,OALP,KG-ONHP-2018/2,Krishna-Godavari,block_code,,,onland,block_code,,,Vedanta Limited,,,dgh_oalp3_awardees,1
+OALP-III,OALP,MN-ONHP-2018/5,Mahanadi,block_code,,,onland,block_code,,,Oil India Limited,,,dgh_oalp3_awardees,1
+OALP-III,OALP,BP-ONHP-2018/1,Bengal-Purnea,block_code,,,onland,block_code,,,ONGC Limited,,,dgh_oalp3_awardees,1
+OALP-III,OALP,AA-ONHP-2018/1,Assam-Arakan Fold Belt,block_code,,,onland,block_code,,,Vedanta Limited,,,dgh_oalp3_awardees,1
+OALP-III,OALP,AA-ONHP-2018/2,Assam-Arakan Fold Belt,block_code,,,onland,block_code,,,Oil India Limited,,,dgh_oalp3_awardees,1
+OALP-III,OALP,AA-ONHP-2018/3,Assam-Arakan Fold Belt,block_code,,,onland,block_code,,,Oil India Limited,,,dgh_oalp3_awardees,1
+OALP-III,OALP,AA-ONHP-2018/4,Assam-Arakan Fold Belt,block_code,,,onland,block_code,,,ONGC Limited,,,dgh_oalp3_awardees,1
+OALP-III,OALP,AA-ONHP-2018/5,Assam-Arakan Fold Belt,block_code,,,onland,block_code,,,Oil India Limited,,,dgh_oalp3_awardees,1
+OALP-III,OALP,MB-OSHP-2018/1,Mumbai,block_code,,,shallow_water,block_code,,,ONGC Limited,,,dgh_oalp3_awardees,1
+OALP-III,OALP,MB-OSHP-2018/2,Mumbai,block_code,,,shallow_water,block_code,,,ONGC Limited,,,dgh_oalp3_awardees,1
+OALP-III,OALP,KK-OSHP-2018/1,Kerala-Konkan,block_code,,,shallow_water,block_code,,,Oil India Limited,,,dgh_oalp3_awardees,1
+OALP-III,OALP,MN-DWHP-2018/1,Mahanadi,block_code,,,deep_water,block_code,,,ONGC Limited,,,dgh_oalp3_awardees,1
+OALP-IV,OALP,RJ-ONHP-2019/1,Rajasthan,block_code,Rajasthan,I,onland,source_table,2118.83,award_list,Oil and Natural Gas Corporation Limited,,2020-01-02,dgh_oalp4_contract_signing,2
+OALP-IV,OALP,VN-ONHP-2019/1,Vindhyan,block_code,Vindhayan,II,onland,source_table,2730.73,award_list,Oil and Natural Gas Corporation Limited,,2020-01-02,dgh_oalp4_contract_signing,2
+OALP-IV,OALP,VN-ONHP-2019/2,Vindhyan,block_code,Vindhayan,II,onland,source_table,3077.65,award_list,Oil and Natural Gas Corporation Limited,,2020-01-02,dgh_oalp4_contract_signing,2
+OALP-IV,OALP,VN-ONHP-2019/3,Vindhyan,block_code,Vindhayan,II,onland,source_table,3097.17,award_list,Oil and Natural Gas Corporation Limited,,2020-01-02,dgh_oalp4_contract_signing,2
+OALP-IV,OALP,VN-ONHP-2019/4,Vindhyan,block_code,Vindhayan,II,onland,source_table,2932.74,award_list,Oil and Natural Gas Corporation Limited,,2020-01-02,dgh_oalp4_contract_signing,2
+OALP-IV,OALP,VN-ONHP-2019/5,Vindhyan,block_code,Vindhayan,II,onland,source_table,1421.66,award_list,Oil and Natural Gas Corporation Limited,,2020-01-02,dgh_oalp4_contract_signing,2
+OALP-IV,OALP,BP-ONHP-2019/1,Bengal-Purnea,block_code,Bengal Purnea,III,onland,source_table,3130.91,award_list,Oil and Natural Gas Corporation Limited,,2020-01-02,dgh_oalp4_contract_signing,2
+OALP-V,OALP,AA-ONHP-2019/1,Assam-Arakan Fold Belt,block_code,Assam Shelf & Assam Arakan,I,onland,block_code,,,OIL,,,dgh_oalp5_blocks_awarded,1
+OALP-V,OALP,AA-ONHP-2019/2,Assam-Arakan Fold Belt,block_code,Assam Shelf & Assam Arakan,I,onland,block_code,,,OIL,,,dgh_oalp5_blocks_awarded,1
+OALP-V,OALP,BP-ONHP-2019/2,Bengal-Purnea,block_code,Bengal-Purnea,III,onland,block_code,,,ONGC,,,dgh_oalp5_blocks_awarded,1
+OALP-V,OALP,CB-ONHP-2019/1,Cambay,block_code,Cambay,I,onland,block_code,,,ONGC,,,dgh_oalp5_blocks_awarded,1
+OALP-V,OALP,CB-ONHP-2019/2,Cambay,block_code,Cambay,I,onland,block_code,,,ONGC,,,dgh_oalp5_blocks_awarded,1
+OALP-V,OALP,CY-UDWHP-2019/1,Cauvery,block_code,Cauvery,I,ultra_deep_water,block_code,,,ONGC,,,dgh_oalp5_blocks_awarded,1
+OALP-V,OALP,GK-ONHP-2019/1,Kutch,block_code,Gujarat Kutch,II,onland,block_code,,,ONGC,,,dgh_oalp5_blocks_awarded,1
+OALP-V,OALP,GS-OSHP-2019/1,Saurashtra,block_code,Gujarat Saurashtra,II,shallow_water,block_code,,,ONGC,,,dgh_oalp5_blocks_awarded,1
+OALP-V,OALP,MB-OSHP-2019/1,Mumbai,block_code,Mumbai,I,shallow_water,block_code,,,ONGC,,,dgh_oalp5_blocks_awarded,1
+OALP-V,OALP,RJ-ONHP-2019/2,Rajasthan,block_code,Rajasthan,I,onland,block_code,,,OIL,,,dgh_oalp5_blocks_awarded,1
+OALP-V,OALP,RJ-ONHP-2019/3,Rajasthan,block_code,Rajasthan,I,onland,block_code,,,OIL,,,dgh_oalp5_blocks_awarded,1
+OALP-VI,OALP,CB-ONHP-2020/1,Cambay,block_code,Cambay Basin,I,onland,block_code,,,OIL AND NATURAL GAS CORPORATION LIMITED,,,dgh_oalp6_awardees,1
+OALP-VI,OALP,AA-ONHP-2020/1,Assam-Arakan Fold Belt,block_code,Assam-Arakan Fold Belt,I,onland,block_code,,,OIL INDIA LIMITED,,,dgh_oalp6_awardees,1
+OALP-VI,OALP,AA-ONHP-2020/2,Assam-Arakan Fold Belt,block_code,Assam-Arakan Fold Belt,I,onland,block_code,,,OIL AND NATURAL GAS CORPORATION LIMITED,,,dgh_oalp6_awardees,1
+OALP-VI,OALP,AA-ONHP-2020/3,Assam-Arakan Fold Belt,block_code,Assam-Arakan Fold Belt,I,onland,block_code,,,OIL INDIA LIMITED,,,dgh_oalp6_awardees,1
+OALP-VI,OALP,CD-ONHP-2020/1,Cuddapah,block_code,Cuddapah Basin,III,onland,block_code,,,OIL AND NATURAL GAS CORPORATION LIMITED,,,dgh_oalp6_awardees,1
+OALP-VI,OALP,NM-ONHP-2020/1,Narmada,block_code,Narmada Basin,III,onland,block_code,,,OIL AND NATURAL GAS CORPORATION LIMITED,,,dgh_oalp6_awardees,1
+OALP-VI,OALP,MB-OSHP-2020/1,Mumbai,block_code,Mumbai Offshore,I,shallow_water,block_code,,,OIL AND NATURAL GAS CORPORATION LIMITED,,,dgh_oalp6_awardees,1
+OALP-VI,OALP,MB-OSHP-2020/2,Mumbai,block_code,Mumbai Offshore,I,shallow_water,block_code,,,OIL AND NATURAL GAS CORPORATION LIMITED,,,dgh_oalp6_awardees,1
+OALP-VI,OALP,AN-UDWHP-2020/1,Andaman-Nicobar,block_code,Andaman Basin,II,ultra_deep_water,block_code,,,OIL AND NATURAL GAS CORPORATION LIMITED,,,dgh_oalp6_awardees,1
+OALP-VI,OALP,AN-UDWHP-2020/2,Andaman-Nicobar,block_code,Andaman Basin,II,ultra_deep_water,block_code,,,OIL AND NATURAL GAS CORPORATION LIMITED,,,dgh_oalp6_awardees,1
+OALP-VI,OALP,CB-ONHP-2021/1,Cambay,block_code,Cambay Basin,I,onland,block_code,,,OIL AND NATURAL GAS CORPORATION LIMITED,,,dgh_oalp6_awardees,1
+OALP-VI,OALP,CB-ONHP-2021/2,Cambay,block_code,Cambay Basin,I,onland,block_code,,,OIL AND NATURAL GAS CORPORATION LIMITED,,,dgh_oalp6_awardees,1
+OALP-VI,OALP,GK-ONHP-2021/1,Kutch,block_code,Kutch Basin,II,onland,block_code,,,OIL AND NATURAL GAS CORPORATION LIMITED,,,dgh_oalp6_awardees,1
+OALP-VI,OALP,GS-ONHP-2021/1,Saurashtra,block_code,Saurashtra Basin,II,onland,block_code,,,OIL AND NATURAL GAS CORPORATION LIMITED,,,dgh_oalp6_awardees,1
+OALP-VI,OALP,GV-ONHP-2021/1,Ganga-Punjab,block_code,Ganga-Punjab,II,onland,block_code,,,OIL AND NATURAL GAS CORPORATION LIMITED,,,dgh_oalp6_awardees,1
+OALP-VI,OALP,GV-ONHP-2021/2,Ganga-Punjab,block_code,Ganga-Punjab,II,onland,block_code,,,OIL AND NATURAL GAS CORPORATION LIMITED,,,dgh_oalp6_awardees,1
+OALP-VI,OALP,BP-ONHP-2021/1,Bengal-Purnea,block_code,Bengal-Purnea,III,onland,block_code,,,OIL AND NATURAL GAS CORPORATION LIMITED,,,dgh_oalp6_awardees,1
+OALP-VI,OALP,AA-ONHP-2021/1,Assam-Arakan Fold Belt,block_code,Assam-Arakan Fold Belt,I,onland,block_code,,,OIL AND NATURAL GAS CORPORATION LIMITED,,,dgh_oalp6_awardees,1
+OALP-VI,OALP,AS-ONHP-2021/1,Assam Shelf,block_code,Assam Shelf Basin,I,onland,block_code,,,OIL AND NATURAL GAS CORPORATION LIMITED,,,dgh_oalp6_awardees,1
+OALP-VI,OALP,CB-OSHP-2021/1,Cambay,block_code,Cambay Basin,I,shallow_water,block_code,,,SUN PETROCHEMICALS PVT LTD,,,dgh_oalp6_awardees,1
+OALP-VI,OALP,MB-OSHP-2021/1,Mumbai,block_code,Mumbai Offshore,I,shallow_water,block_code,,,OIL AND NATURAL GAS CORPORATION LIMITED,,,dgh_oalp6_awardees,1
+OALP-VII,OALP,RJ-ONHP-2021/1,Rajasthan,block_code,Rajasthan,I,onland,block_code,,,GAIL (INDIA) LIMITED,,2022-06-28,dgh_oalp7_awardees,1
+OALP-VII,OALP,AA-ONHP-2021/2,Assam-Arakan Fold Belt,block_code,Assam-Arakan Fold Belt,I,onland,block_code,,,OIL AND NATURAL GAS CORPORATION LIMITED,,2022-06-28,dgh_oalp7_awardees,1
+OALP-VII,OALP,SR-ONHP-2021/1,Satpura-South Rewa-Damodar,block_code,Satpura-South Rewa-Damodar,III,onland,block_code,,,OIL AND NATURAL GAS CORPORATION LIMITED,,2022-06-28,dgh_oalp7_awardees,1
+OALP-VII,OALP,CB-OSHP-2021/2,Cambay,block_code,Cambay,I,shallow_water,block_code,,,SUN PETROCHEMICALS PVT LTD.,,2022-06-28,dgh_oalp7_awardees,1
+OALP-VII,OALP,CY-UDWHP-2021/1,Cauvery,block_code,Cauvery,I,ultra_deep_water,block_code,,,OIL AND NATURAL GAS CORPORATION LIMITED,,2022-06-28,dgh_oalp7_awardees,1
+OALP-VII,OALP,AS-ONHP-2021/2,Assam Shelf,block_code,Assam Shelf,I,onland,block_code,,,OIL INDIA LIMITED,,2022-06-28,dgh_oalp7_awardees,1
+OALP-VII,OALP,AS-ONHP-2021/3,Assam Shelf,block_code,Assam Shelf,I,onland,block_code,,,OIL INDIA LIMITED,,2022-06-28,dgh_oalp7_awardees,1
+OALP-VII,OALP,CB-OSHP-2021/3,Cambay,block_code,Cambay,I,shallow_water,block_code,,,SUN PETROCHEMICALS PVT LTD.,,2022-06-28,dgh_oalp7_awardees,1
+OALP-VIII,OALP,AS-ONHP-2022/1,Assam Shelf,block_code,Assam Shelf,I,onland,source_table,2057.63,award_list,Oil India Ltd.,,,dgh_oalp8_blocks_awarded,1
+OALP-VIII,OALP,CB-ONHP-2022/1,Cambay,block_code,Cambay,I,onland,source_table,188.52,award_list,ONGC Ltd.,,,dgh_oalp8_blocks_awarded,1
+OALP-VIII,OALP,KG-UDWHP-2022/1,Krishna-Godavari,block_code,KG Offshore,I,ultra_deep_water,source_table,1199.64,award_list,RIL-BP (Consortium),,,dgh_oalp8_blocks_awarded,1
+OALP-VIII,OALP,MB-OSHP-2022/1,Mumbai,block_code,Mumbai Offshore,I,shallow_water,source_table,4107.97,award_list,ONGC Ltd.,,,dgh_oalp8_blocks_awarded,1
+OALP-VIII,OALP,GK-OSHP-2022/1,Kutch,block_code,Kutch Offshore,II,shallow_water,source_table,765.54,award_list,Sun Petrochemicals Pvt Ltd.,,,dgh_oalp8_blocks_awarded,1
+OALP-VIII,OALP,GS-DWHP-2022/1,Saurashtra,block_code,Saurashtra Offshore,II,deep_water,source_table,2742.7,award_list,ONGC Ltd.,,,dgh_oalp8_blocks_awarded,1
+OALP-VIII,OALP,MN-UDWHP-2022/1,Mahanadi,block_code,Mahanadi Offshore,II,ultra_deep_water,source_table,9717.34,award_list,ONGC Ltd.,,,dgh_oalp8_blocks_awarded,1
+OALP-VIII,OALP,BP-OSHP-2022/1,Bengal-Purnea,block_code,Bengal Purnea Offshore,III,shallow_water,source_table,5754.92,award_list,ONGC Ltd.,,,dgh_oalp8_blocks_awarded,1
+OALP-VIII,OALP,KK-DWHP-2022/1,Kerala-Konkan,block_code,Kerala-Konkan Offshore,III,deep_water,source_table,1112.71,award_list,ONGC Ltd.,,,dgh_oalp8_blocks_awarded,2
+OALP-VIII,OALP,KK-OSHP-2022/1,Kerala-Konkan,block_code,Kerala-Konkan Offshore,III,shallow_water,source_table,6717.56,award_list,ONGC Ltd.,,,dgh_oalp8_blocks_awarded,2
+OALP-IX,OALP,CY-UDWHP-2022/1,Cauvery,block_code,Cauvery,I,ultra_deep_water,block_code,9514.63,offer_list,OIL AND NATURAL GAS CORPORATION LIMITED,,2025-04-15,dgh_oalp9_awardees,1
+OALP-IX,OALP,CY-UDWHP-2022/2,Cauvery,block_code,Cauvery,I,ultra_deep_water,block_code,9844.72,offer_list,OIL AND NATURAL GAS CORPORATION LIMITED,,2025-04-15,dgh_oalp9_awardees,1
+OALP-IX,OALP,CY-UDWHP-2022/3,Cauvery,block_code,Cauvery,I,ultra_deep_water,block_code,7795.45,offer_list,OIL AND NATURAL GAS CORPORATION LIMITED,,2025-04-15,dgh_oalp9_awardees,1
+OALP-IX,OALP,GS-OSHP-2022/1,Saurashtra,block_code,Saurashtra,II,shallow_water,block_code,5585.61,offer_list,OIL AND NATURAL GAS CORPORATION LIMITED,,2025-04-15,dgh_oalp9_awardees,1
+OALP-IX,OALP,GK-OSHP-2023/1,Kutch,block_code,Kutch,II,shallow_water,block_code,,,OIL AND NATURAL GAS CORPORATION LIMITED,,2025-04-15,dgh_oalp9_awardees,1
+OALP-IX,OALP,CY-UDWHP-2023/1,Cauvery,block_code,Cauvery,I,ultra_deep_water,block_code,,,OIL AND NATURAL GAS CORPORATION LIMITED,,2025-04-15,dgh_oalp9_awardees,1
+OALP-IX,OALP,GS-UDWHP-2023/1,Saurashtra,block_code,Saurashtra,II,ultra_deep_water,block_code,,,OIL AND NATURAL GAS CORPORATION LIMITED,,2025-04-15,dgh_oalp9_awardees,1
+OALP-IX,OALP,GS-UDWHP-2023/2,Saurashtra,block_code,Saurashtra,II,ultra_deep_water,block_code,,,OIL AND NATURAL GAS CORPORATION LIMITED,,2025-04-15,dgh_oalp9_awardees,1
+OALP-IX,OALP,GS-OSHP-2023/1,Saurashtra,block_code,Saurashtra,II,shallow_water,block_code,,,OIL AND NATURAL GAS CORPORATION LIMITED,,2025-04-15,dgh_oalp9_awardees,1
+OALP-IX,OALP,MB-OSHP-2023/1,Mumbai,block_code,Mumbai Offshore,I,shallow_water,block_code,,,OIL AND NATURAL GAS CORPORATION LIMITED,,2025-04-15,dgh_oalp9_awardees,1
+OALP-IX,OALP,CB-ONHP-2023/3,Cambay,block_code,Cambay,I,onland,block_code,,,OIL AND NATURAL GAS CORPORATION LIMITED,,2025-04-15,dgh_oalp9_awardees,1
+OALP-IX,OALP,AS-ONHP-2022/3,Assam Shelf,block_code,Assam Shelf,I,onland,block_code,2168.09,offer_list,OIL INDIA LIMITED,,2025-04-15,dgh_oalp9_awardees,1
+OALP-IX,OALP,CB-ONHP-2023/1,Cambay,block_code,Cambay,I,onland,block_code,,,OIL INDIA LIMITED,,2025-04-15,dgh_oalp9_awardees,1
+OALP-IX,OALP,MN-UDWHP-2023/2,Mahanadi,block_code,Mahanadi,II,ultra_deep_water,block_code,,,OIL INDIA LIMITED,,2025-04-15,dgh_oalp9_awardees,1
+OALP-IX,OALP,KG-UDWHP-2023/1,Krishna-Godavari,block_code,Krishna Godavari,I,ultra_deep_water,block_code,,,OIL INDIA LIMITED,,2025-04-15,dgh_oalp9_awardees,1
+OALP-IX,OALP,KG-UDWHP-2023/2,Krishna-Godavari,block_code,Krishna Godavari,I,ultra_deep_water,block_code,,,OIL INDIA LIMITED,,2025-04-15,dgh_oalp9_awardees,1
+OALP-IX,OALP,MN-UDWHP-2023/3,Mahanadi,block_code,Mahanadi,II,ultra_deep_water,block_code,,,OIL INDIA LIMITED,,2025-04-15,dgh_oalp9_awardees,2
+OALP-IX,OALP,CB-OSHP-2023/1,Cambay,block_code,Cambay,I,shallow_water,block_code,,,VEDANTA LIMITED,,2025-04-15,dgh_oalp9_awardees,2
+OALP-IX,OALP,MB-OSHP-2023/2,Mumbai,block_code,Mumbai Offshore,I,shallow_water,block_code,,,VEDANTA LIMITED,,2025-04-15,dgh_oalp9_awardees,2
+OALP-IX,OALP,GS-ONHP-2023/2,Saurashtra,block_code,Saurashtra,II,onland,block_code,,,VEDANTA LIMITED,,2025-04-15,dgh_oalp9_awardees,2
+OALP-IX,OALP,GS-ONHP-2023/3,Saurashtra,block_code,Saurashtra,II,onland,block_code,,,VEDANTA LIMITED,,2025-04-15,dgh_oalp9_awardees,2
+OALP-IX,OALP,CB-OSHP-2023/2,Cambay,block_code,Cambay,I,shallow_water,block_code,,,VEDANTA LIMITED,,2025-04-15,dgh_oalp9_awardees,2
+OALP-IX,OALP,CB-ONHP-2023/2,Cambay,block_code,Cambay,I,onland,block_code,,,VEDANTA LIMITED,,2025-04-15,dgh_oalp9_awardees,2
+OALP-IX,OALP,GS-ONHP-2023/1,Saurashtra,block_code,Saurashtra,II,onland,block_code,,,VEDANTA LIMITED,,2025-04-15,dgh_oalp9_awardees,2
+OALP-IX,OALP,CB-ONHP-2022/2,Cambay,block_code,Cambay,I,onland,block_code,713.92,offer_list,OIL AND NATURAL GAS CORPORATION LIMITED / OIL INDIA LIMITED,,2025-04-15,dgh_oalp9_awardees,2
+OALP-IX,OALP,AS-ONHP-2022/2,Assam Shelf,block_code,Assam Shelf,I,onland,block_code,784.32,offer_list,OIL AND NATURAL GAS CORPORATION LIMITED / OIL INDIA LIMITED,,2025-04-15,dgh_oalp9_awardees,2
+OALP-IX,OALP,MN-UDWHP-2023/1,Mahanadi,block_code,Mahanadi,II,ultra_deep_water,block_code,,,OIL AND NATURAL GAS CORPORATION LIMITED / OIL INDIA LIMITED,,2025-04-15,dgh_oalp9_awardees,2
+OALP-IX,OALP,GS-OSHP-2022/2,Saurashtra,block_code,Saurashtra,II,shallow_water,block_code,5453.96,offer_list,OIL AND NATURAL GAS CORPORATION LIMITED / RELIANCE INDUSTRIES LIMITED / BP EXPLORATION (ALPHA) LIMITED,,2025-04-15,dgh_oalp9_awardees,2
+SCBM-2022,CBM,SR-ONHP(CBM)-2022/4,Satpura-South Rewa-Damodar,block_code,,,onland,block_code,418.0,award_list,Transcontinental Natural Resources Pvt. Ltd. (TNRL),Madhya Pradesh,,dgh_scbm2022_blocks_awarded,1
+SCBM-2022,CBM,SR-ONHP(CBM)-2022/5,Satpura-South Rewa-Damodar,block_code,,,onland,block_code,211.0,award_list,Transcontinental Natural Resources Pvt. Ltd. (TNRL),Madhya Pradesh,,dgh_scbm2022_blocks_awarded,1
+SCBM-2022,CBM,SR-ONHP(CBM)-2022/6,Satpura-South Rewa-Damodar,block_code,,,onland,block_code,88.0,award_list,Oilmax Energy Private Limited (OEPL),Chhattisgarh,,dgh_scbm2022_blocks_awarded,1

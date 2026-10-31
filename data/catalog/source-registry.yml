@@ -247,3 +247,18 @@ modules:
       boem_gom_bathymetry:
         source_url: https://www.boem.gov/oil-gas-energy/mapping-and-data/map-gallery/northern-gom-deepwater-bathymetry-grid-3d-seismic
         update_frequency: static
+  india_dgh:
+    source_base_url: https://dghindia.gov.in
+    license: "DGH and PPAC website terms: reproduction free of charge, accurately and with prominent source acknowledgement; not extended to third-party copyright material. Raw bytes are Internet Archive captures of the government URLs (manifest: packages/worldenergydata-india_dgh/src/worldenergydata/india_dgh/data/source_manifest.json)"
+    default_update_frequency: per_round
+    datasets:
+      awarded_blocks:
+        source_url: https://dghindia.gov.in/assets/downloads/6822da892e4d7oalpix.pdf
+        notes: "OALP rounds I-IX and SCBM-2022 award lists (one PDF per round); see the manifest for every URL and SHA-256."
+      basins:
+        source_url: https://dghindia.gov.in/index.php/page?pageId=66&name=Indian%20Geology
+        update_frequency: ad_hoc
+      production:
+        source_url: https://www.ppac.gov.in/WriteReadData/userfiles/file/NG-H-Production.xls
+        update_frequency: monthly
+        notes: "PPAC legacy XLS series (crude by company group, gas by state onshore/offshore). The current PPAC historical download requires sign-in and is not used."

@@ -44,6 +44,7 @@ dependencies = [
     "worldenergydata-australia",
     "worldenergydata-canada",
     "worldenergydata-mexico_cnh",
+    "worldenergydata-india_dgh",
     "worldenergydata-texas_rrc",
     "worldenergydata-kansas_kgs",
     # Phase 2 batch 2 (#529): next-most-isolated leaf domains carved into members.
@@ -241,6 +242,8 @@ exclude = [
     "worldenergydata.canada.*",
     "worldenergydata.mexico_cnh",
     "worldenergydata.mexico_cnh.*",
+    "worldenergydata.india_dgh",
+    "worldenergydata.india_dgh.*",
     "worldenergydata.texas_rrc",
     "worldenergydata.texas_rrc.*",
     "worldenergydata.landman",
@@ -507,6 +510,7 @@ worldenergydata-spain = { workspace = true }
 worldenergydata-australia = { workspace = true }
 worldenergydata-canada = { workspace = true }
 worldenergydata-mexico_cnh = { workspace = true }
+worldenergydata-india_dgh = { workspace = true }
 worldenergydata-texas_rrc = { workspace = true }
 worldenergydata-kansas_kgs = { workspace = true }
 # Phase 2 batch 2 (#529): next-most-isolated leaf domain members.

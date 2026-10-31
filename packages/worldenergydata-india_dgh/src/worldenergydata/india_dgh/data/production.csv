@@ -1,0 +1,961 @@
+period,period_type,fiscal_year,product,measure,company_group,location,state,value,unit,provisional,source_id
+1998-99,fiscal_year,1998-99,crude_oil,production,JVC/Private,all,all,3.03,million_tonnes,False,ppac_crude_annual_hindi_2022
+1998-99,fiscal_year,1998-99,crude_oil,production,OIL,all,all,3.28,million_tonnes,False,ppac_crude_annual_hindi_2022
+1998-99,fiscal_year,1998-99,crude_oil,production,ONGC,all,all,26.45,million_tonnes,False,ppac_crude_annual_hindi_2022
+1999-00,fiscal_year,1999-00,crude_oil,production,JVC/Private,all,all,4.02,million_tonnes,False,ppac_crude_annual_hindi_2022
+1999-00,fiscal_year,1999-00,crude_oil,production,OIL,all,all,3.28,million_tonnes,False,ppac_crude_annual_hindi_2022
+1999-00,fiscal_year,1999-00,crude_oil,production,ONGC,all,all,24.7,million_tonnes,False,ppac_crude_annual_hindi_2022
+2000-01,fiscal_year,2000-01,crude_oil,production,JVC/Private,all,all,4.09,million_tonnes,False,ppac_crude_annual_hindi_2022
+2000-01,fiscal_year,2000-01,crude_oil,production,OIL,all,all,3.29,million_tonnes,False,ppac_crude_annual_hindi_2022
+2000-01,fiscal_year,2000-01,crude_oil,production,ONGC,all,all,25.07,million_tonnes,False,ppac_crude_annual_hindi_2022
+2001-02,fiscal_year,2001-02,crude_oil,production,JVC/Private,all,all,4.1419999999999995,million_tonnes,False,ppac_crude_annual_hindi_2022
+2001-02,fiscal_year,2001-02,crude_oil,production,OIL,all,all,3.183,million_tonnes,False,ppac_crude_annual_hindi_2022
+2001-02,fiscal_year,2001-02,crude_oil,production,ONGC,all,all,24.700000000000003,million_tonnes,False,ppac_crude_annual_hindi_2022
+2002-03,fiscal_year,2002-03,crude_oil,production,JVC/Private,all,all,4.086799999999999,million_tonnes,False,ppac_crude_annual_hindi_2022
+2002-03,fiscal_year,2002-03,crude_oil,production,OIL,all,all,2.95,million_tonnes,False,ppac_crude_annual_hindi_2022
+2002-03,fiscal_year,2002-03,crude_oil,production,ONGC,all,all,26.040000000000003,million_tonnes,False,ppac_crude_annual_hindi_2022
+2003-04,fiscal_year,2003-04,crude_oil,production,JVC/Private,all,all,4.3139959999999995,million_tonnes,False,ppac_crude_annual_hindi_2022
+2003-04,fiscal_year,2003-04,crude_oil,production,OIL,all,all,3.027,million_tonnes,False,ppac_crude_annual_hindi_2022
+2003-04,fiscal_year,2003-04,crude_oil,production,ONGC,all,all,26.031000000000006,million_tonnes,False,ppac_crude_annual_hindi_2022
+2004-05,fiscal_year,2004-05,crude_oil,production,JVC/Private,all,all,4.300381999999999,million_tonnes,False,ppac_crude_annual_hindi_2022
+2004-05,fiscal_year,2004-05,crude_oil,production,OIL,all,all,3.206757,million_tonnes,False,ppac_crude_annual_hindi_2022
+2004-05,fiscal_year,2004-05,crude_oil,production,ONGC,all,all,26.63093,million_tonnes,False,ppac_crude_annual_hindi_2022
+2005-06,fiscal_year,2005-06,crude_oil,production,JVC/Private,all,all,4.552233999999999,million_tonnes,False,ppac_crude_annual_hindi_2022
+2005-06,fiscal_year,2005-06,crude_oil,production,OIL,all,all,3.2359,million_tonnes,False,ppac_crude_annual_hindi_2022
+2005-06,fiscal_year,2005-06,crude_oil,production,ONGC,all,all,24.412291,million_tonnes,False,ppac_crude_annual_hindi_2022
+2006-07,fiscal_year,2006-07,condensate,production,Condensate,all,all,2.013239,million_tonnes,False,ppac_crude_annual_hindi_2022
+2006-07,fiscal_year,2006-07,crude_oil,production,JVC/Private,all,all,4.696687,million_tonnes,False,ppac_crude_annual_hindi_2022
+2006-07,fiscal_year,2006-07,crude_oil,production,OIL,all,all,3.1088,million_tonnes,False,ppac_crude_annual_hindi_2022
+2006-07,fiscal_year,2006-07,crude_oil,production,ONGC,all,all,24.161391000000002,million_tonnes,False,ppac_crude_annual_hindi_2022
+2007-08,fiscal_year,2007-08,condensate,production,Condensate,all,all,2.2478590000000005,million_tonnes,False,ppac_crude_annual_hindi_2022
+2007-08,fiscal_year,2007-08,crude_oil,production,JVC/Private,all,all,4.836046000000001,million_tonnes,False,ppac_crude_annual_hindi_2022
+2007-08,fiscal_year,2007-08,crude_oil,production,OIL,all,all,3.0949999999999998,million_tonnes,False,ppac_crude_annual_hindi_2022
+2007-08,fiscal_year,2007-08,crude_oil,production,ONGC,all,all,23.935774000000002,million_tonnes,False,ppac_crude_annual_hindi_2022
+2008-09,fiscal_year,2008-09,condensate,production,Condensate,all,all,2.1254509999999995,million_tonnes,False,ppac_crude_annual_hindi_2022
+2008-09,fiscal_year,2008-09,crude_oil,production,JVC/Private,all,all,4.383257,million_tonnes,False,ppac_crude_annual_hindi_2022
+2008-09,fiscal_year,2008-09,crude_oil,production,OIL,all,all,3.4556000000000004,million_tonnes,False,ppac_crude_annual_hindi_2022
+2008-09,fiscal_year,2008-09,crude_oil,production,ONGC,all,all,23.361,million_tonnes,False,ppac_crude_annual_hindi_2022
+2009-10,fiscal_year,2009-10,condensate,production,Condensate,all,all,2.0360299999999993,million_tonnes,False,ppac_crude_annual_hindi_2022
+2009-10,fiscal_year,2009-10,crude_oil,production,JVC/Private,all,all,5.059774999999999,million_tonnes,False,ppac_crude_annual_hindi_2022
+2009-10,fiscal_year,2009-10,crude_oil,production,OIL,all,all,3.5158,million_tonnes,False,ppac_crude_annual_hindi_2022
+2009-10,fiscal_year,2009-10,crude_oil,production,ONGC,all,all,22.786835000000007,million_tonnes,False,ppac_crude_annual_hindi_2022
+2010-11,fiscal_year,2010-11,condensate,production,Condensate,all,all,2.1024589999999996,million_tonnes,False,ppac_crude_annual_hindi_2022
+2010-11,fiscal_year,2010-11,crude_oil,production,JVC/Private,all,all,9.512584,million_tonnes,False,ppac_crude_annual_hindi_2022
+2010-11,fiscal_year,2010-11,crude_oil,production,OIL,all,all,3.5538999999999996,million_tonnes,False,ppac_crude_annual_hindi_2022
+2010-11,fiscal_year,2010-11,crude_oil,production,ONGC,all,all,22.524875,million_tonnes,False,ppac_crude_annual_hindi_2022
+2011-12,fiscal_year,2011-12,condensate,production,Condensate,all,all,2.1558263970000002,million_tonnes,False,ppac_crude_annual_hindi_2022
+2011-12,fiscal_year,2011-12,crude_oil,production,JVC/Private,all,all,10.323606737,million_tonnes,False,ppac_crude_annual_hindi_2022
+2011-12,fiscal_year,2011-12,crude_oil,production,OIL,all,all,3.842834,million_tonnes,False,ppac_crude_annual_hindi_2022
+2011-12,fiscal_year,2011-12,crude_oil,production,ONGC,all,all,21.75992297568518,million_tonnes,False,ppac_crude_annual_hindi_2022
+2012-04,month,2012-13,natural_gas,gross_production,all,offshore,all,2903.9351229999997,million_scm,False,ppac_gas_historical_2020
+2012-04,month,2012-13,natural_gas,gross_production,all,onshore,Andhra Pradesh,114.281613,million_scm,False,ppac_gas_historical_2020
+2012-04,month,2012-13,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,238.35687000000001,million_scm,False,ppac_gas_historical_2020
+2012-04,month,2012-13,natural_gas,gross_production,all,onshore,Gujarat,185.72884342,million_scm,False,ppac_gas_historical_2020
+2012-04,month,2012-13,natural_gas,gross_production,all,onshore,Rajasthan,36.504727,million_scm,False,ppac_gas_historical_2020
+2012-04,month,2012-13,natural_gas,gross_production,all,onshore,Tamil Nadu,97.83351,million_scm,False,ppac_gas_historical_2020
+2012-04,month,2012-13,natural_gas,gross_production,all,onshore,Tripura,51.688624,million_scm,False,ppac_gas_historical_2020
+2012-04,month,2012-13,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",6.86988637,million_scm,False,ppac_gas_historical_2020
+2012-04,month,2012-13,natural_gas,net_production,all,all,all,3546.0959571299995,million_scm,False,ppac_gas_historical_2020
+2012-05,month,2012-13,natural_gas,gross_production,all,offshore,all,2942.334158,million_scm,False,ppac_gas_historical_2020
+2012-05,month,2012-13,natural_gas,gross_production,all,onshore,Andhra Pradesh,114.323214,million_scm,False,ppac_gas_historical_2020
+2012-05,month,2012-13,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,239.844518,million_scm,False,ppac_gas_historical_2020
+2012-05,month,2012-13,natural_gas,gross_production,all,onshore,Gujarat,186.56910849,million_scm,False,ppac_gas_historical_2020
+2012-05,month,2012-13,natural_gas,gross_production,all,onshore,Rajasthan,47.846877,million_scm,False,ppac_gas_historical_2020
+2012-05,month,2012-13,natural_gas,gross_production,all,onshore,Tamil Nadu,108.063221,million_scm,False,ppac_gas_historical_2020
+2012-05,month,2012-13,natural_gas,gross_production,all,onshore,Tripura,52.824474,million_scm,False,ppac_gas_historical_2020
+2012-05,month,2012-13,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",8.286888,million_scm,False,ppac_gas_historical_2020
+2012-05,month,2012-13,natural_gas,net_production,all,all,all,3605.0018295599994,million_scm,False,ppac_gas_historical_2020
+2012-06,month,2012-13,natural_gas,gross_production,all,offshore,all,2795.696216,million_scm,False,ppac_gas_historical_2020
+2012-06,month,2012-13,natural_gas,gross_production,all,onshore,Andhra Pradesh,107.500088,million_scm,False,ppac_gas_historical_2020
+2012-06,month,2012-13,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,243.866508,million_scm,False,ppac_gas_historical_2020
+2012-06,month,2012-13,natural_gas,gross_production,all,onshore,Gujarat,177.40096762,million_scm,False,ppac_gas_historical_2020
+2012-06,month,2012-13,natural_gas,gross_production,all,onshore,Rajasthan,55.80067700000001,million_scm,False,ppac_gas_historical_2020
+2012-06,month,2012-13,natural_gas,gross_production,all,onshore,Tamil Nadu,97.670719,million_scm,False,ppac_gas_historical_2020
+2012-06,month,2012-13,natural_gas,gross_production,all,onshore,Tripura,47.506808,million_scm,False,ppac_gas_historical_2020
+2012-06,month,2012-13,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",8.635458999999999,million_scm,False,ppac_gas_historical_2020
+2012-06,month,2012-13,natural_gas,net_production,all,all,all,3457.21710496,million_scm,False,ppac_gas_historical_2020
+2012-07,month,2012-13,natural_gas,gross_production,all,offshore,all,2842.9707430000003,million_scm,False,ppac_gas_historical_2020
+2012-07,month,2012-13,natural_gas,gross_production,all,onshore,Andhra Pradesh,109.240484,million_scm,False,ppac_gas_historical_2020
+2012-07,month,2012-13,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,253.85290999999998,million_scm,False,ppac_gas_historical_2020
+2012-07,month,2012-13,natural_gas,gross_production,all,onshore,Gujarat,173.24290643,million_scm,False,ppac_gas_historical_2020
+2012-07,month,2012-13,natural_gas,gross_production,all,onshore,Rajasthan,60.800636,million_scm,False,ppac_gas_historical_2020
+2012-07,month,2012-13,natural_gas,gross_production,all,onshore,Tamil Nadu,83.505746,million_scm,False,ppac_gas_historical_2020
+2012-07,month,2012-13,natural_gas,gross_production,all,onshore,Tripura,48.489404,million_scm,False,ppac_gas_historical_2020
+2012-07,month,2012-13,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",9.130354,million_scm,False,ppac_gas_historical_2020
+2012-07,month,2012-13,natural_gas,net_production,all,all,all,3506.01303568,million_scm,False,ppac_gas_historical_2020
+2012-08,month,2012-13,natural_gas,gross_production,all,offshore,all,2785.141496,million_scm,False,ppac_gas_historical_2020
+2012-08,month,2012-13,natural_gas,gross_production,all,onshore,Andhra Pradesh,107.097527,million_scm,False,ppac_gas_historical_2020
+2012-08,month,2012-13,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,257.944548,million_scm,False,ppac_gas_historical_2020
+2012-08,month,2012-13,natural_gas,gross_production,all,onshore,Gujarat,177.24422259000002,million_scm,False,ppac_gas_historical_2020
+2012-08,month,2012-13,natural_gas,gross_production,all,onshore,Rajasthan,61.45696900000001,million_scm,False,ppac_gas_historical_2020
+2012-08,month,2012-13,natural_gas,gross_production,all,onshore,Tamil Nadu,97.256809,million_scm,False,ppac_gas_historical_2020
+2012-08,month,2012-13,natural_gas,gross_production,all,onshore,Tripura,52.178011,million_scm,False,ppac_gas_historical_2020
+2012-08,month,2012-13,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",9.547888,million_scm,False,ppac_gas_historical_2020
+2012-08,month,2012-13,natural_gas,net_production,all,all,all,3472.84131823,million_scm,False,ppac_gas_historical_2020
+2012-09,month,2012-13,natural_gas,gross_production,all,offshore,all,2633.728111,million_scm,False,ppac_gas_historical_2020
+2012-09,month,2012-13,natural_gas,gross_production,all,onshore,Andhra Pradesh,98.106736,million_scm,False,ppac_gas_historical_2020
+2012-09,month,2012-13,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,250.000121,million_scm,False,ppac_gas_historical_2020
+2012-09,month,2012-13,natural_gas,gross_production,all,onshore,Gujarat,165.72575491,million_scm,False,ppac_gas_historical_2020
+2012-09,month,2012-13,natural_gas,gross_production,all,onshore,Rajasthan,57.608864,million_scm,False,ppac_gas_historical_2020
+2012-09,month,2012-13,natural_gas,gross_production,all,onshore,Tamil Nadu,99.886901,million_scm,False,ppac_gas_historical_2020
+2012-09,month,2012-13,natural_gas,gross_production,all,onshore,Tripura,48.169101,million_scm,False,ppac_gas_historical_2020
+2012-09,month,2012-13,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",9.538207,million_scm,False,ppac_gas_historical_2020
+2012-09,month,2012-13,natural_gas,net_production,all,all,all,3266.7841545100005,million_scm,False,ppac_gas_historical_2020
+2012-10,month,2012-13,natural_gas,gross_production,all,offshore,all,2669.5053049999997,million_scm,False,ppac_gas_historical_2020
+2012-10,month,2012-13,natural_gas,gross_production,all,onshore,Andhra Pradesh,100.813162,million_scm,False,ppac_gas_historical_2020
+2012-10,month,2012-13,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,250.16906699999998,million_scm,False,ppac_gas_historical_2020
+2012-10,month,2012-13,natural_gas,gross_production,all,onshore,Gujarat,168.48882877,million_scm,False,ppac_gas_historical_2020
+2012-10,month,2012-13,natural_gas,gross_production,all,onshore,Rajasthan,67.461187,million_scm,False,ppac_gas_historical_2020
+2012-10,month,2012-13,natural_gas,gross_production,all,onshore,Tamil Nadu,102.925767,million_scm,False,ppac_gas_historical_2020
+2012-10,month,2012-13,natural_gas,gross_production,all,onshore,Tripura,57.737239,million_scm,False,ppac_gas_historical_2020
+2012-10,month,2012-13,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",9.329433,million_scm,False,ppac_gas_historical_2020
+2012-10,month,2012-13,natural_gas,net_production,all,all,all,3344.3872617200004,million_scm,False,ppac_gas_historical_2020
+2012-11,month,2012-13,natural_gas,gross_production,all,offshore,all,2523.6733130000002,million_scm,False,ppac_gas_historical_2020
+2012-11,month,2012-13,natural_gas,gross_production,all,onshore,Andhra Pradesh,95.4163,million_scm,False,ppac_gas_historical_2020
+2012-11,month,2012-13,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,244.95768,million_scm,False,ppac_gas_historical_2020
+2012-11,month,2012-13,natural_gas,gross_production,all,onshore,Gujarat,166.69234869000002,million_scm,False,ppac_gas_historical_2020
+2012-11,month,2012-13,natural_gas,gross_production,all,onshore,Rajasthan,65.49222900000001,million_scm,False,ppac_gas_historical_2020
+2012-11,month,2012-13,natural_gas,gross_production,all,onshore,Tamil Nadu,100.70285,million_scm,False,ppac_gas_historical_2020
+2012-11,month,2012-13,natural_gas,gross_production,all,onshore,Tripura,54.441126,million_scm,False,ppac_gas_historical_2020
+2012-11,month,2012-13,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",9.06784,million_scm,False,ppac_gas_historical_2020
+2012-11,month,2012-13,natural_gas,net_production,all,all,all,3179.0570101900007,million_scm,False,ppac_gas_historical_2020
+2012-12,month,2012-13,natural_gas,gross_production,all,offshore,all,2583.5623019999994,million_scm,False,ppac_gas_historical_2020
+2012-12,month,2012-13,natural_gas,gross_production,all,onshore,Andhra Pradesh,102.311685,million_scm,False,ppac_gas_historical_2020
+2012-12,month,2012-13,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,250.744848,million_scm,False,ppac_gas_historical_2020
+2012-12,month,2012-13,natural_gas,gross_production,all,onshore,Gujarat,163.64272805,million_scm,False,ppac_gas_historical_2020
+2012-12,month,2012-13,natural_gas,gross_production,all,onshore,Rajasthan,61.398163999999994,million_scm,False,ppac_gas_historical_2020
+2012-12,month,2012-13,natural_gas,gross_production,all,onshore,Tamil Nadu,103.978652,million_scm,False,ppac_gas_historical_2020
+2012-12,month,2012-13,natural_gas,gross_production,all,onshore,Tripura,56.000351,million_scm,False,ppac_gas_historical_2020
+2012-12,month,2012-13,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",10.171137,million_scm,False,ppac_gas_historical_2020
+2012-12,month,2012-13,natural_gas,net_production,all,all,all,3262.5655423701996,million_scm,False,ppac_gas_historical_2020
+2012-13,fiscal_year,2012-13,condensate,production,Condensate,all,all,2.201066124,million_tonnes,False,ppac_crude_annual_hindi_2022
+2012-13,fiscal_year,2012-13,crude_oil,production,JVC/Private,all,all,11.51504952,million_tonnes,False,ppac_crude_annual_hindi_2022
+2012-13,fiscal_year,2012-13,crude_oil,production,OIL,all,all,3.7166900000000007,million_tonnes,False,ppac_crude_annual_hindi_2022
+2012-13,fiscal_year,2012-13,crude_oil,production,ONGC,all,all,20.486279349466,million_tonnes,False,ppac_crude_annual_hindi_2022
+2013-01,month,2012-13,natural_gas,gross_production,all,offshore,all,2496.405037,million_scm,False,ppac_gas_historical_2020
+2013-01,month,2012-13,natural_gas,gross_production,all,onshore,Andhra Pradesh,100.139176,million_scm,False,ppac_gas_historical_2020
+2013-01,month,2012-13,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,241.889683,million_scm,False,ppac_gas_historical_2020
+2013-01,month,2012-13,natural_gas,gross_production,all,onshore,Gujarat,159.17422342,million_scm,False,ppac_gas_historical_2020
+2013-01,month,2012-13,natural_gas,gross_production,all,onshore,Rajasthan,59.503693999999996,million_scm,False,ppac_gas_historical_2020
+2013-01,month,2012-13,natural_gas,gross_production,all,onshore,Tamil Nadu,107.666596,million_scm,False,ppac_gas_historical_2020
+2013-01,month,2012-13,natural_gas,gross_production,all,onshore,Tripura,67.175259,million_scm,False,ppac_gas_historical_2020
+2013-01,month,2012-13,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",9.250965,million_scm,False,ppac_gas_historical_2020
+2013-01,month,2012-13,natural_gas,net_production,all,all,all,3176.49198657,million_scm,False,ppac_gas_historical_2020
+2013-02,month,2012-13,natural_gas,gross_production,all,offshore,all,2209.3478599999935,million_scm,False,ppac_gas_historical_2020
+2013-02,month,2012-13,natural_gas,gross_production,all,onshore,Andhra Pradesh,92.762422,million_scm,False,ppac_gas_historical_2020
+2013-02,month,2012-13,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,221.661576,million_scm,False,ppac_gas_historical_2020
+2013-02,month,2012-13,natural_gas,gross_production,all,onshore,Gujarat,147.488133,million_scm,False,ppac_gas_historical_2020
+2013-02,month,2012-13,natural_gas,gross_production,all,onshore,Rajasthan,47.846399999999996,million_scm,False,ppac_gas_historical_2020
+2013-02,month,2012-13,natural_gas,gross_production,all,onshore,Tamil Nadu,98.979732,million_scm,False,ppac_gas_historical_2020
+2013-02,month,2012-13,natural_gas,gross_production,all,onshore,Tripura,56.550683,million_scm,False,ppac_gas_historical_2020
+2013-02,month,2012-13,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",8.456172,million_scm,False,ppac_gas_historical_2020
+2013-02,month,2012-13,natural_gas,net_production,all,all,all,2820.755555719993,million_scm,False,ppac_gas_historical_2020
+2013-03,month,2012-13,natural_gas,gross_production,all,offshore,all,2416.047666,million_scm,False,ppac_gas_historical_2020
+2013-03,month,2012-13,natural_gas,gross_production,all,onshore,Andhra Pradesh,106.179157,million_scm,False,ppac_gas_historical_2020
+2013-03,month,2012-13,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,257.55654300000003,million_scm,False,ppac_gas_historical_2020
+2013-03,month,2012-13,natural_gas,gross_production,all,onshore,Gujarat,160.70269862,million_scm,False,ppac_gas_historical_2020
+2013-03,month,2012-13,natural_gas,gross_production,all,onshore,Rajasthan,63.703039000000004,million_scm,False,ppac_gas_historical_2020
+2013-03,month,2012-13,natural_gas,gross_production,all,onshore,Tamil Nadu,107.566808,million_scm,False,ppac_gas_historical_2020
+2013-03,month,2012-13,natural_gas,gross_production,all,onshore,Tripura,53.976032,million_scm,False,ppac_gas_historical_2020
+2013-03,month,2012-13,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",8.953074,million_scm,False,ppac_gas_historical_2020
+2013-03,month,2012-13,natural_gas,net_production,all,all,all,3115.73101319,million_scm,False,ppac_gas_historical_2020
+2013-04,month,2013-14,natural_gas,gross_production,all,offshore,all,2272.078045,million_scm,False,ppac_gas_historical_2020
+2013-04,month,2013-14,natural_gas,gross_production,all,onshore,Andhra Pradesh,101.910006,million_scm,False,ppac_gas_historical_2020
+2013-04,month,2013-14,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,251.887994,million_scm,False,ppac_gas_historical_2020
+2013-04,month,2013-14,natural_gas,gross_production,all,onshore,Gujarat,156.30397842,million_scm,False,ppac_gas_historical_2020
+2013-04,month,2013-14,natural_gas,gross_production,all,onshore,Rajasthan,64.41736499999999,million_scm,False,ppac_gas_historical_2020
+2013-04,month,2013-14,natural_gas,gross_production,all,onshore,Tamil Nadu,94.638804,million_scm,False,ppac_gas_historical_2020
+2013-04,month,2013-14,natural_gas,gross_production,all,onshore,Tripura,50.763863,million_scm,False,ppac_gas_historical_2020
+2013-04,month,2013-14,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",9.383180000000001,million_scm,False,ppac_gas_historical_2020
+2013-04,month,2013-14,natural_gas,net_production,all,all,all,2945.889795000001,million_scm,False,ppac_gas_historical_2020
+2013-05,month,2013-14,natural_gas,gross_production,all,offshore,all,2244.9112139999997,million_scm,False,ppac_gas_historical_2020
+2013-05,month,2013-14,natural_gas,gross_production,all,onshore,Andhra Pradesh,102.496408,million_scm,False,ppac_gas_historical_2020
+2013-05,month,2013-14,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,248.16923500000001,million_scm,False,ppac_gas_historical_2020
+2013-05,month,2013-14,natural_gas,gross_production,all,onshore,Gujarat,149.06410392,million_scm,False,ppac_gas_historical_2020
+2013-05,month,2013-14,natural_gas,gross_production,all,onshore,Rajasthan,85.354159,million_scm,False,ppac_gas_historical_2020
+2013-05,month,2013-14,natural_gas,gross_production,all,onshore,Tamil Nadu,103.318769,million_scm,False,ppac_gas_historical_2020
+2013-05,month,2013-14,natural_gas,gross_production,all,onshore,Tripura,66.222757,million_scm,False,ppac_gas_historical_2020
+2013-05,month,2013-14,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",10.173589,million_scm,False,ppac_gas_historical_2020
+2013-05,month,2013-14,natural_gas,net_production,all,all,all,2942.01630192,million_scm,False,ppac_gas_historical_2020
+2013-06,month,2013-14,natural_gas,gross_production,all,offshore,all,2239.1872052846234,million_scm,False,ppac_gas_historical_2020
+2013-06,month,2013-14,natural_gas,gross_production,all,onshore,Andhra Pradesh,100.437999,million_scm,False,ppac_gas_historical_2020
+2013-06,month,2013-14,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,236.154747,million_scm,False,ppac_gas_historical_2020
+2013-06,month,2013-14,natural_gas,gross_production,all,onshore,Gujarat,138.31740336395,million_scm,False,ppac_gas_historical_2020
+2013-06,month,2013-14,natural_gas,gross_production,all,onshore,Rajasthan,67.66899346371194,million_scm,False,ppac_gas_historical_2020
+2013-06,month,2013-14,natural_gas,gross_production,all,onshore,Tamil Nadu,102.560616,million_scm,False,ppac_gas_historical_2020
+2013-06,month,2013-14,natural_gas,gross_production,all,onshore,Tripura,49.624365,million_scm,False,ppac_gas_historical_2020
+2013-06,month,2013-14,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",11.648235900000001,million_scm,False,ppac_gas_historical_2020
+2013-06,month,2013-14,natural_gas,net_production,all,all,all,2875.932040112878,million_scm,False,ppac_gas_historical_2020
+2013-07,month,2013-14,natural_gas,gross_production,all,offshore,all,2278.6973509037766,million_scm,False,ppac_gas_historical_2020
+2013-07,month,2013-14,natural_gas,gross_production,all,onshore,Andhra Pradesh,101.048272,million_scm,False,ppac_gas_historical_2020
+2013-07,month,2013-14,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,245.99964300000002,million_scm,False,ppac_gas_historical_2020
+2013-07,month,2013-14,natural_gas,gross_production,all,onshore,Gujarat,141.8039643701,million_scm,False,ppac_gas_historical_2020
+2013-07,month,2013-14,natural_gas,gross_production,all,onshore,Rajasthan,70.651855334809,million_scm,False,ppac_gas_historical_2020
+2013-07,month,2013-14,natural_gas,gross_production,all,onshore,Tamil Nadu,106.338217,million_scm,False,ppac_gas_historical_2020
+2013-07,month,2013-14,natural_gas,gross_production,all,onshore,Tripura,50.407731,million_scm,False,ppac_gas_historical_2020
+2013-07,month,2013-14,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",13.808376679999999,million_scm,False,ppac_gas_historical_2020
+2013-07,month,2013-14,natural_gas,net_production,all,all,all,2927.5104022353867,million_scm,False,ppac_gas_historical_2020
+2013-08,month,2013-14,natural_gas,gross_production,all,offshore,all,2239.597272299151,million_scm,False,ppac_gas_historical_2020
+2013-08,month,2013-14,natural_gas,gross_production,all,onshore,Andhra Pradesh,98.91655,million_scm,False,ppac_gas_historical_2020
+2013-08,month,2013-14,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,249.52562400000002,million_scm,False,ppac_gas_historical_2020
+2013-08,month,2013-14,natural_gas,gross_production,all,onshore,Gujarat,142.93182572730998,million_scm,False,ppac_gas_historical_2020
+2013-08,month,2013-14,natural_gas,gross_production,all,onshore,Rajasthan,72.59429463778679,million_scm,False,ppac_gas_historical_2020
+2013-08,month,2013-14,natural_gas,gross_production,all,onshore,Tamil Nadu,110.272137,million_scm,False,ppac_gas_historical_2020
+2013-08,month,2013-14,natural_gas,gross_production,all,onshore,Tripura,50.616336999999994,million_scm,False,ppac_gas_historical_2020
+2013-08,month,2013-14,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",13.433374,million_scm,False,ppac_gas_historical_2020
+2013-08,month,2013-14,natural_gas,net_production,all,all,all,2910.212856131974,million_scm,False,ppac_gas_historical_2020
+2013-09,month,2013-14,natural_gas,gross_production,all,offshore,all,2158.6729289748946,million_scm,False,ppac_gas_historical_2020
+2013-09,month,2013-14,natural_gas,gross_production,all,onshore,Andhra Pradesh,95.758826,million_scm,False,ppac_gas_historical_2020
+2013-09,month,2013-14,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,242.600775,million_scm,False,ppac_gas_historical_2020
+2013-09,month,2013-14,natural_gas,gross_production,all,onshore,Gujarat,141.87218133778998,million_scm,False,ppac_gas_historical_2020
+2013-09,month,2013-14,natural_gas,gross_production,all,onshore,Rajasthan,69.73096909738231,million_scm,False,ppac_gas_historical_2020
+2013-09,month,2013-14,natural_gas,gross_production,all,onshore,Tamil Nadu,111.10866,million_scm,False,ppac_gas_historical_2020
+2013-09,month,2013-14,natural_gas,gross_production,all,onshore,Tripura,60.41754699999999,million_scm,False,ppac_gas_historical_2020
+2013-09,month,2013-14,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",14.046648,million_scm,False,ppac_gas_historical_2020
+2013-09,month,2013-14,natural_gas,net_production,all,all,all,2825.8964636172773,million_scm,False,ppac_gas_historical_2020
+2013-10,month,2013-14,natural_gas,gross_production,all,offshore,all,2186.4344780448137,million_scm,False,ppac_gas_historical_2020
+2013-10,month,2013-14,natural_gas,gross_production,all,onshore,Andhra Pradesh,94.429291,million_scm,False,ppac_gas_historical_2020
+2013-10,month,2013-14,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,248.27925599999998,million_scm,False,ppac_gas_historical_2020
+2013-10,month,2013-14,natural_gas,gross_production,all,onshore,Gujarat,141.8632040528011,million_scm,False,ppac_gas_historical_2020
+2013-10,month,2013-14,natural_gas,gross_production,all,onshore,Rajasthan,82.66263177041756,million_scm,False,ppac_gas_historical_2020
+2013-10,month,2013-14,natural_gas,gross_production,all,onshore,Tamil Nadu,115.175799,million_scm,False,ppac_gas_historical_2020
+2013-10,month,2013-14,natural_gas,gross_production,all,onshore,Tripura,80.312264,million_scm,False,ppac_gas_historical_2020
+2013-10,month,2013-14,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",14.68169199,million_scm,False,ppac_gas_historical_2020
+2013-10,month,2013-14,natural_gas,net_production,all,all,all,2880.0043464316927,million_scm,False,ppac_gas_historical_2020
+2013-11,month,2013-14,natural_gas,gross_production,all,offshore,all,2131.9006803924963,million_scm,False,ppac_gas_historical_2020
+2013-11,month,2013-14,natural_gas,gross_production,all,onshore,Andhra Pradesh,96.708014,million_scm,False,ppac_gas_historical_2020
+2013-11,month,2013-14,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,245.76373,million_scm,False,ppac_gas_historical_2020
+2013-11,month,2013-14,natural_gas,gross_production,all,onshore,Gujarat,136.41766774599992,million_scm,False,ppac_gas_historical_2020
+2013-11,month,2013-14,natural_gas,gross_production,all,onshore,Rajasthan,98.42831908394263,million_scm,False,ppac_gas_historical_2020
+2013-11,month,2013-14,natural_gas,gross_production,all,onshore,Tamil Nadu,108.616689,million_scm,False,ppac_gas_historical_2020
+2013-11,month,2013-14,natural_gas,gross_production,all,onshore,Tripura,61.913290999999994,million_scm,False,ppac_gas_historical_2020
+2013-11,month,2013-14,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",14.786823,million_scm,False,ppac_gas_historical_2020
+2013-11,month,2013-14,natural_gas,net_production,all,all,all,2822.7481075555684,million_scm,False,ppac_gas_historical_2020
+2013-12,month,2013-14,natural_gas,gross_production,all,offshore,all,2228.0911188400432,million_scm,False,ppac_gas_historical_2020
+2013-12,month,2013-14,natural_gas,gross_production,all,onshore,Andhra Pradesh,98.73724500000006,million_scm,False,ppac_gas_historical_2020
+2013-12,month,2013-14,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,248.90312,million_scm,False,ppac_gas_historical_2020
+2013-12,month,2013-14,natural_gas,gross_production,all,onshore,Gujarat,128.68942206200003,million_scm,False,ppac_gas_historical_2020
+2013-12,month,2013-14,natural_gas,gross_production,all,onshore,Rajasthan,96.2447773400263,million_scm,False,ppac_gas_historical_2020
+2013-12,month,2013-14,natural_gas,gross_production,all,onshore,Tamil Nadu,116.50416900000003,million_scm,False,ppac_gas_historical_2020
+2013-12,month,2013-14,natural_gas,gross_production,all,onshore,Tripura,68.15168500000001,million_scm,False,ppac_gas_historical_2020
+2013-12,month,2013-14,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",16.588135,million_scm,False,ppac_gas_historical_2020
+2013-12,month,2013-14,natural_gas,net_production,all,all,all,2931.337141245431,million_scm,False,ppac_gas_historical_2020
+2013-14,fiscal_year,2013-14,condensate,production,Condensate,all,all,1.922972597424135,million_tonnes,False,ppac_crude_annual_hindi_2022
+2013-14,fiscal_year,2013-14,crude_oil,production,JVC/Private,all,all,11.959123560775,million_tonnes,False,ppac_crude_annual_hindi_2022
+2013-14,fiscal_year,2013-14,crude_oil,production,OIL,all,all,3.489597,million_tonnes,False,ppac_crude_annual_hindi_2022
+2013-14,fiscal_year,2013-14,crude_oil,production,ONGC,all,all,20.440490561032004,million_tonnes,False,ppac_crude_annual_hindi_2022
+2014-01,month,2013-14,natural_gas,gross_production,all,offshore,all,2272.83655771978,million_scm,False,ppac_gas_historical_2020
+2014-01,month,2013-14,natural_gas,gross_production,all,onshore,Andhra Pradesh,97.6212,million_scm,False,ppac_gas_historical_2020
+2014-01,month,2013-14,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,246.726301,million_scm,False,ppac_gas_historical_2020
+2014-01,month,2013-14,natural_gas,gross_production,all,onshore,Gujarat,128.68411664649022,million_scm,False,ppac_gas_historical_2020
+2014-01,month,2013-14,natural_gas,gross_production,all,onshore,Rajasthan,99.25089965584701,million_scm,False,ppac_gas_historical_2020
+2014-01,month,2013-14,natural_gas,gross_production,all,onshore,Tamil Nadu,115.831834,million_scm,False,ppac_gas_historical_2020
+2014-01,month,2013-14,natural_gas,gross_production,all,onshore,Tripura,95.98076400000001,million_scm,False,ppac_gas_historical_2020
+2014-01,month,2013-14,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",16.13308266,million_scm,False,ppac_gas_historical_2020
+2014-01,month,2013-14,natural_gas,net_production,all,all,all,3004.588243857021,million_scm,False,ppac_gas_historical_2020
+2014-02,month,2013-14,natural_gas,gross_production,all,offshore,all,2039.935489690096,million_scm,False,ppac_gas_historical_2020
+2014-02,month,2013-14,natural_gas,gross_production,all,onshore,Andhra Pradesh,87.625109,million_scm,False,ppac_gas_historical_2020
+2014-02,month,2013-14,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,226.67539399999998,million_scm,False,ppac_gas_historical_2020
+2014-02,month,2013-14,natural_gas,gross_production,all,onshore,Gujarat,116.20668136196001,million_scm,False,ppac_gas_historical_2020
+2014-02,month,2013-14,natural_gas,gross_production,all,onshore,Rajasthan,79.6679714123928,million_scm,False,ppac_gas_historical_2020
+2014-02,month,2013-14,natural_gas,gross_production,all,onshore,Tamil Nadu,102.591777,million_scm,False,ppac_gas_historical_2020
+2014-02,month,2013-14,natural_gas,gross_production,all,onshore,Tripura,89.43297399999999,million_scm,False,ppac_gas_historical_2020
+2014-02,month,2013-14,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",14.6778568,million_scm,False,ppac_gas_historical_2020
+2014-02,month,2013-14,natural_gas,net_production,all,all,all,2696.191913845776,million_scm,False,ppac_gas_historical_2020
+2014-03,month,2013-14,natural_gas,gross_production,all,offshore,all,2102.8594695273614,million_scm,False,ppac_gas_historical_2020
+2014-03,month,2013-14,natural_gas,gross_production,all,onshore,Andhra Pradesh,95.6542,million_scm,False,ppac_gas_historical_2020
+2014-03,month,2013-14,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,218.785763,million_scm,False,ppac_gas_historical_2020
+2014-03,month,2013-14,natural_gas,gross_production,all,onshore,Gujarat,134.784184951975,million_scm,False,ppac_gas_historical_2020
+2014-03,month,2013-14,natural_gas,gross_production,all,onshore,Rajasthan,95.5323156326615,million_scm,False,ppac_gas_historical_2020
+2014-03,month,2013-14,natural_gas,gross_production,all,onshore,Tamil Nadu,117.060981,million_scm,False,ppac_gas_historical_2020
+2014-03,month,2013-14,natural_gas,gross_production,all,onshore,Tripura,98.390921,million_scm,False,ppac_gas_historical_2020
+2014-03,month,2013-14,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",16.156775,million_scm,False,ppac_gas_historical_2020
+2014-03,month,2013-14,natural_gas,net_production,all,all,all,2811.7296891015976,million_scm,False,ppac_gas_historical_2020
+2014-04,month,2014-15,natural_gas,gross_production,all,offshore,all,1997.5587996806867,million_scm,False,ppac_gas_historical_2020
+2014-04,month,2014-15,natural_gas,gross_production,all,onshore,Andhra Pradesh,91.184028,million_scm,False,ppac_gas_historical_2020
+2014-04,month,2014-15,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,247.553278,million_scm,False,ppac_gas_historical_2020
+2014-04,month,2014-15,natural_gas,gross_production,all,onshore,Gujarat,130.44120018,million_scm,False,ppac_gas_historical_2020
+2014-04,month,2014-15,natural_gas,gross_production,all,onshore,Rajasthan,80.8078831333758,million_scm,False,ppac_gas_historical_2020
+2014-04,month,2014-15,natural_gas,gross_production,all,onshore,Tamil Nadu,113.958843,million_scm,False,ppac_gas_historical_2020
+2014-04,month,2014-15,natural_gas,gross_production,all,onshore,Tripura,91.45955699999999,million_scm,False,ppac_gas_historical_2020
+2014-04,month,2014-15,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",16.861062,million_scm,False,ppac_gas_historical_2020
+2014-04,month,2014-15,natural_gas,net_production,all,all,all,2699.5094149311217,million_scm,False,ppac_gas_historical_2020
+2014-05,month,2014-15,natural_gas,gross_production,all,offshore,all,2178.2340829621107,million_scm,False,ppac_gas_historical_2020
+2014-05,month,2014-15,natural_gas,gross_production,all,onshore,Andhra Pradesh,94.821158,million_scm,False,ppac_gas_historical_2020
+2014-05,month,2014-15,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,259.28548700000005,million_scm,False,ppac_gas_historical_2020
+2014-05,month,2014-15,natural_gas,gross_production,all,onshore,Gujarat,132.229469549,million_scm,False,ppac_gas_historical_2020
+2014-05,month,2014-15,natural_gas,gross_production,all,onshore,Rajasthan,76.7585583953118,million_scm,False,ppac_gas_historical_2020
+2014-05,month,2014-15,natural_gas,gross_production,all,onshore,Tamil Nadu,109.159197,million_scm,False,ppac_gas_historical_2020
+2014-05,month,2014-15,natural_gas,gross_production,all,onshore,Tripura,73.30832000000001,million_scm,False,ppac_gas_historical_2020
+2014-05,month,2014-15,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",18.231524,million_scm,False,ppac_gas_historical_2020
+2014-05,month,2014-15,natural_gas,net_production,all,all,all,2873.394728001436,million_scm,False,ppac_gas_historical_2020
+2014-06,month,2014-15,natural_gas,gross_production,all,offshore,all,2120.872346781753,million_scm,False,ppac_gas_historical_2020
+2014-06,month,2014-15,natural_gas,gross_production,all,onshore,Andhra Pradesh,89.25630600000001,million_scm,False,ppac_gas_historical_2020
+2014-06,month,2014-15,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,254.466322,million_scm,False,ppac_gas_historical_2020
+2014-06,month,2014-15,natural_gas,gross_production,all,onshore,Gujarat,129.5344651753,million_scm,False,ppac_gas_historical_2020
+2014-06,month,2014-15,natural_gas,gross_production,all,onshore,Rajasthan,78.75728961359789,million_scm,False,ppac_gas_historical_2020
+2014-06,month,2014-15,natural_gas,gross_production,all,onshore,Tamil Nadu,106.805339,million_scm,False,ppac_gas_historical_2020
+2014-06,month,2014-15,natural_gas,gross_production,all,onshore,Tripura,97.10350400000002,million_scm,False,ppac_gas_historical_2020
+2014-06,month,2014-15,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",17.641381999999997,million_scm,False,ppac_gas_historical_2020
+2014-06,month,2014-15,natural_gas,net_production,all,all,all,2827.3492751806057,million_scm,False,ppac_gas_historical_2020
+2014-07,month,2014-15,natural_gas,gross_production,all,offshore,all,2008.8127498059876,million_scm,False,ppac_gas_historical_2020
+2014-07,month,2014-15,natural_gas,gross_production,all,onshore,Andhra Pradesh,17.414336,million_scm,False,ppac_gas_historical_2020
+2014-07,month,2014-15,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,267.35462199999995,million_scm,False,ppac_gas_historical_2020
+2014-07,month,2014-15,natural_gas,gross_production,all,onshore,Gujarat,128.826093490615,million_scm,False,ppac_gas_historical_2020
+2014-07,month,2014-15,natural_gas,gross_production,all,onshore,Rajasthan,95.04853643794598,million_scm,False,ppac_gas_historical_2020
+2014-07,month,2014-15,natural_gas,gross_production,all,onshore,Tamil Nadu,110.051181,million_scm,False,ppac_gas_historical_2020
+2014-07,month,2014-15,natural_gas,gross_production,all,onshore,Tripura,94.72303700000002,million_scm,False,ppac_gas_historical_2020
+2014-07,month,2014-15,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",18.163828,million_scm,False,ppac_gas_historical_2020
+2014-07,month,2014-15,natural_gas,net_production,all,all,all,2653.799904832045,million_scm,False,ppac_gas_historical_2020
+2014-08,month,2014-15,natural_gas,gross_production,all,offshore,all,2060.5827349959973,million_scm,False,ppac_gas_historical_2020
+2014-08,month,2014-15,natural_gas,gross_production,all,onshore,Andhra Pradesh,7.56429,million_scm,False,ppac_gas_historical_2020
+2014-08,month,2014-15,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,258.29,million_scm,False,ppac_gas_historical_2020
+2014-08,month,2014-15,natural_gas,gross_production,all,onshore,Gujarat,121.49186699874005,million_scm,False,ppac_gas_historical_2020
+2014-08,month,2014-15,natural_gas,gross_production,all,onshore,Rajasthan,90.10422640431321,million_scm,False,ppac_gas_historical_2020
+2014-08,month,2014-15,natural_gas,gross_production,all,onshore,Tamil Nadu,103.565896,million_scm,False,ppac_gas_historical_2020
+2014-08,month,2014-15,natural_gas,gross_production,all,onshore,Tripura,76.46073799999998,million_scm,False,ppac_gas_historical_2020
+2014-08,month,2014-15,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",18.371768,million_scm,False,ppac_gas_historical_2020
+2014-08,month,2014-15,natural_gas,net_production,all,all,all,2655.861284902403,million_scm,False,ppac_gas_historical_2020
+2014-09,month,2014-15,natural_gas,gross_production,all,offshore,all,2055.233660895186,million_scm,False,ppac_gas_historical_2020
+2014-09,month,2014-15,natural_gas,gross_production,all,onshore,Andhra Pradesh,6.287842000000063,million_scm,False,ppac_gas_historical_2020
+2014-09,month,2014-15,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,236.974275,million_scm,False,ppac_gas_historical_2020
+2014-09,month,2014-15,natural_gas,gross_production,all,onshore,Gujarat,122.28810977845609,million_scm,False,ppac_gas_historical_2020
+2014-09,month,2014-15,natural_gas,gross_production,all,onshore,Rajasthan,100.9766573136633,million_scm,False,ppac_gas_historical_2020
+2014-09,month,2014-15,natural_gas,gross_production,all,onshore,Tamil Nadu,92.763234,million_scm,False,ppac_gas_historical_2020
+2014-09,month,2014-15,natural_gas,gross_production,all,onshore,Tripura,94.597755,million_scm,False,ppac_gas_historical_2020
+2014-09,month,2014-15,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",16.948915,million_scm,False,ppac_gas_historical_2020
+2014-09,month,2014-15,natural_gas,net_production,all,all,all,2651.4653050051365,million_scm,False,ppac_gas_historical_2020
+2014-10,month,2014-15,natural_gas,gross_production,all,offshore,all,2140.5054757502303,million_scm,False,ppac_gas_historical_2020
+2014-10,month,2014-15,natural_gas,gross_production,all,onshore,Andhra Pradesh,6.568762,million_scm,False,ppac_gas_historical_2020
+2014-10,month,2014-15,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,245.16204,million_scm,False,ppac_gas_historical_2020
+2014-10,month,2014-15,natural_gas,gross_production,all,onshore,Gujarat,131.28640131095906,million_scm,False,ppac_gas_historical_2020
+2014-10,month,2014-15,natural_gas,gross_production,all,onshore,Rajasthan,110.53736187173381,million_scm,False,ppac_gas_historical_2020
+2014-10,month,2014-15,natural_gas,gross_production,all,onshore,Tamil Nadu,99.624337,million_scm,False,ppac_gas_historical_2020
+2014-10,month,2014-15,natural_gas,gross_production,all,onshore,Tripura,96.32631400000004,million_scm,False,ppac_gas_historical_2020
+2014-10,month,2014-15,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",16.791959,million_scm,False,ppac_gas_historical_2020
+2014-10,month,2014-15,natural_gas,net_production,all,all,all,2759.6588530950316,million_scm,False,ppac_gas_historical_2020
+2014-11,month,2014-15,natural_gas,gross_production,all,offshore,all,2092.5818995339037,million_scm,False,ppac_gas_historical_2020
+2014-11,month,2014-15,natural_gas,gross_production,all,onshore,Andhra Pradesh,30.145176,million_scm,False,ppac_gas_historical_2020
+2014-11,month,2014-15,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,253.502961,million_scm,False,ppac_gas_historical_2020
+2014-11,month,2014-15,natural_gas,gross_production,all,onshore,Gujarat,129.52601055145826,million_scm,False,ppac_gas_historical_2020
+2014-11,month,2014-15,natural_gas,gross_production,all,onshore,Rajasthan,109.54612390790129,million_scm,False,ppac_gas_historical_2020
+2014-11,month,2014-15,natural_gas,gross_production,all,onshore,Tamil Nadu,89.324056,million_scm,False,ppac_gas_historical_2020
+2014-11,month,2014-15,natural_gas,gross_production,all,onshore,Tripura,104.14734299999998,million_scm,False,ppac_gas_historical_2020
+2014-11,month,2014-15,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",18.127589,million_scm,False,ppac_gas_historical_2020
+2014-11,month,2014-15,natural_gas,net_production,all,all,all,2745.572103788167,million_scm,False,ppac_gas_historical_2020
+2014-12,month,2014-15,natural_gas,gross_production,all,offshore,all,2151.533318518138,million_scm,False,ppac_gas_historical_2020
+2014-12,month,2014-15,natural_gas,gross_production,all,onshore,Andhra Pradesh,48.753673999999975,million_scm,False,ppac_gas_historical_2020
+2014-12,month,2014-15,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,253.87424,million_scm,False,ppac_gas_historical_2020
+2014-12,month,2014-15,natural_gas,gross_production,all,onshore,Gujarat,132.21330675368097,million_scm,False,ppac_gas_historical_2020
+2014-12,month,2014-15,natural_gas,gross_production,all,onshore,Rajasthan,111.4780708086129,million_scm,False,ppac_gas_historical_2020
+2014-12,month,2014-15,natural_gas,gross_production,all,onshore,Tamil Nadu,94.37693,million_scm,False,ppac_gas_historical_2020
+2014-12,month,2014-15,natural_gas,gross_production,all,onshore,Tripura,101.479179,million_scm,False,ppac_gas_historical_2020
+2014-12,month,2014-15,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",20.788686000000002,million_scm,False,ppac_gas_historical_2020
+2014-12,month,2014-15,natural_gas,net_production,all,all,all,2826.4244000211834,million_scm,False,ppac_gas_historical_2020
+2014-15,fiscal_year,2014-15,condensate,production,Condensate,all,all,1.570444142546,million_tonnes,False,ppac_crude_annual_hindi_2022
+2014-15,fiscal_year,2014-15,crude_oil,production,JVC/Private,all,all,11.651874209750998,million_tonnes,False,ppac_crude_annual_hindi_2022
+2014-15,fiscal_year,2014-15,crude_oil,production,OIL,all,all,3.419971,million_tonnes,False,ppac_crude_annual_hindi_2022
+2014-15,fiscal_year,2014-15,crude_oil,production,ONGC,all,all,20.826798854247997,million_tonnes,False,ppac_crude_annual_hindi_2022
+2015-01,month,2014-15,natural_gas,gross_production,all,offshore,all,2140.287310645438,million_scm,False,ppac_gas_historical_2020
+2015-01,month,2014-15,natural_gas,gross_production,all,onshore,Andhra Pradesh,48.415567,million_scm,False,ppac_gas_historical_2020
+2015-01,month,2014-15,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,248.619176,million_scm,False,ppac_gas_historical_2020
+2015-01,month,2014-15,natural_gas,gross_production,all,onshore,Gujarat,128.9911921191649,million_scm,False,ppac_gas_historical_2020
+2015-01,month,2014-15,natural_gas,gross_production,all,onshore,Rajasthan,108.514474799839,million_scm,False,ppac_gas_historical_2020
+2015-01,month,2014-15,natural_gas,gross_production,all,onshore,Tamil Nadu,90.311452,million_scm,False,ppac_gas_historical_2020
+2015-01,month,2014-15,natural_gas,gross_production,all,onshore,Tripura,100.320466,million_scm,False,ppac_gas_historical_2020
+2015-01,month,2014-15,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",22.826734000000002,million_scm,False,ppac_gas_historical_2020
+2015-01,month,2014-15,natural_gas,net_production,all,all,all,2804.1988181949564,million_scm,False,ppac_gas_historical_2020
+2015-02,month,2014-15,natural_gas,gross_production,all,offshore,all,1863.255902948393,million_scm,False,ppac_gas_historical_2020
+2015-02,month,2014-15,natural_gas,gross_production,all,onshore,Andhra Pradesh,45.671188,million_scm,False,ppac_gas_historical_2020
+2015-02,month,2014-15,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,218.999684,million_scm,False,ppac_gas_historical_2020
+2015-02,month,2014-15,natural_gas,gross_production,all,onshore,Gujarat,113.6803615300313,million_scm,False,ppac_gas_historical_2020
+2015-02,month,2014-15,natural_gas,gross_production,all,onshore,Rajasthan,98.33470045971781,million_scm,False,ppac_gas_historical_2020
+2015-02,month,2014-15,natural_gas,gross_production,all,onshore,Tamil Nadu,81.615045,million_scm,False,ppac_gas_historical_2020
+2015-02,month,2014-15,natural_gas,gross_production,all,onshore,Tripura,92.325389,million_scm,False,ppac_gas_historical_2020
+2015-02,month,2014-15,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",19.6457799,million_scm,False,ppac_gas_historical_2020
+2015-02,month,2014-15,natural_gas,net_production,all,all,all,2458.023401564455,million_scm,False,ppac_gas_historical_2020
+2015-03,month,2014-15,natural_gas,gross_production,all,offshore,all,2051.177337314116,million_scm,False,ppac_gas_historical_2020
+2015-03,month,2014-15,natural_gas,gross_production,all,onshore,Andhra Pradesh,54.505351,million_scm,False,ppac_gas_historical_2020
+2015-03,month,2014-15,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,247.688827,million_scm,False,ppac_gas_historical_2020
+2015-03,month,2014-15,natural_gas,gross_production,all,onshore,Gujarat,126.32053703646524,million_scm,False,ppac_gas_historical_2020
+2015-03,month,2014-15,natural_gas,gross_production,all,onshore,Rajasthan,116.90731141945281,million_scm,False,ppac_gas_historical_2020
+2015-03,month,2014-15,natural_gas,gross_production,all,onshore,Tamil Nadu,100.009625,million_scm,False,ppac_gas_historical_2020
+2015-03,month,2014-15,natural_gas,gross_production,all,onshore,Tripura,117.78903700000001,million_scm,False,ppac_gas_historical_2020
+2015-03,month,2014-15,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",23.8397626,million_scm,False,ppac_gas_historical_2020
+2015-03,month,2014-15,natural_gas,net_production,all,all,all,2737.963904508005,million_scm,False,ppac_gas_historical_2020
+2015-04,month,2015-16,natural_gas,gross_production,all,offshore,all,1961.5296808326605,million_scm,False,ppac_gas_historical_2020
+2015-04,month,2015-16,natural_gas,gross_production,all,onshore,Andhra Pradesh,52.926962,million_scm,False,ppac_gas_historical_2020
+2015-04,month,2015-16,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,217.87341700000002,million_scm,False,ppac_gas_historical_2020
+2015-04,month,2015-16,natural_gas,gross_production,all,onshore,Gujarat,126.59203108351554,million_scm,False,ppac_gas_historical_2020
+2015-04,month,2015-16,natural_gas,gross_production,all,onshore,Rajasthan,93.3912531009502,million_scm,False,ppac_gas_historical_2020
+2015-04,month,2015-16,natural_gas,gross_production,all,onshore,Tamil Nadu,88.511851,million_scm,False,ppac_gas_historical_2020
+2015-04,month,2015-16,natural_gas,gross_production,all,onshore,Tripura,99.654467,million_scm,False,ppac_gas_historical_2020
+2015-04,month,2015-16,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",29.984641,million_scm,False,ppac_gas_historical_2020
+2015-04,month,2015-16,natural_gas,net_production,all,all,all,2577.6516619321937,million_scm,False,ppac_gas_historical_2020
+2015-05,month,2015-16,natural_gas,gross_production,all,offshore,all,2100.1303544639095,million_scm,False,ppac_gas_historical_2020
+2015-05,month,2015-16,natural_gas,gross_production,all,onshore,Andhra Pradesh,52.690946,million_scm,False,ppac_gas_historical_2020
+2015-05,month,2015-16,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,246.60905783999974,million_scm,False,ppac_gas_historical_2020
+2015-05,month,2015-16,natural_gas,gross_production,all,onshore,Gujarat,125.53096727957941,million_scm,False,ppac_gas_historical_2020
+2015-05,month,2015-16,natural_gas,gross_production,all,onshore,Rajasthan,99.7558072732945,million_scm,False,ppac_gas_historical_2020
+2015-05,month,2015-16,natural_gas,gross_production,all,onshore,Tamil Nadu,97.149325,million_scm,False,ppac_gas_historical_2020
+2015-05,month,2015-16,natural_gas,gross_production,all,onshore,Tripura,96.365303,million_scm,False,ppac_gas_historical_2020
+2015-05,month,2015-16,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",32.150771999999996,million_scm,False,ppac_gas_historical_2020
+2015-05,month,2015-16,natural_gas,net_production,all,all,all,2755.1067808196653,million_scm,False,ppac_gas_historical_2020
+2015-06,month,2015-16,natural_gas,gross_production,all,offshore,all,1988.7955106256456,million_scm,False,ppac_gas_historical_2020
+2015-06,month,2015-16,natural_gas,gross_production,all,onshore,Andhra Pradesh,48.759977000000006,million_scm,False,ppac_gas_historical_2020
+2015-06,month,2015-16,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,241.736925,million_scm,False,ppac_gas_historical_2020
+2015-06,month,2015-16,natural_gas,gross_production,all,onshore,Gujarat,120.59692464100002,million_scm,False,ppac_gas_historical_2020
+2015-06,month,2015-16,natural_gas,gross_production,all,onshore,Rajasthan,99.165428467465,million_scm,False,ppac_gas_historical_2020
+2015-06,month,2015-16,natural_gas,gross_production,all,onshore,Tamil Nadu,94.78589999999998,million_scm,False,ppac_gas_historical_2020
+2015-06,month,2015-16,natural_gas,gross_production,all,onshore,Tripura,96.547477,million_scm,False,ppac_gas_historical_2020
+2015-06,month,2015-16,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",32.107489,million_scm,False,ppac_gas_historical_2020
+2015-06,month,2015-16,natural_gas,net_production,all,all,all,2619.207617166199,million_scm,False,ppac_gas_historical_2020
+2015-07,month,2015-16,natural_gas,gross_production,all,offshore,all,1837.365180069838,million_scm,False,ppac_gas_historical_2020
+2015-07,month,2015-16,natural_gas,gross_production,all,onshore,Andhra Pradesh,48.493216,million_scm,False,ppac_gas_historical_2020
+2015-07,month,2015-16,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,249.29180300000002,million_scm,False,ppac_gas_historical_2020
+2015-07,month,2015-16,natural_gas,gross_production,all,onshore,Gujarat,119.19646800159394,million_scm,False,ppac_gas_historical_2020
+2015-07,month,2015-16,natural_gas,gross_production,all,onshore,Rajasthan,113.5494165185734,million_scm,False,ppac_gas_historical_2020
+2015-07,month,2015-16,natural_gas,gross_production,all,onshore,Tamil Nadu,94.114528,million_scm,False,ppac_gas_historical_2020
+2015-07,month,2015-16,natural_gas,gross_production,all,onshore,Tripura,123.141473,million_scm,False,ppac_gas_historical_2020
+2015-07,month,2015-16,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",33.9292646,million_scm,False,ppac_gas_historical_2020
+2015-07,month,2015-16,natural_gas,net_production,all,all,all,2510.6445494798118,million_scm,False,ppac_gas_historical_2020
+2015-08,month,2015-16,natural_gas,gross_production,all,offshore,all,2049.8279185422425,million_scm,False,ppac_gas_historical_2020
+2015-08,month,2015-16,natural_gas,gross_production,all,onshore,Andhra Pradesh,47.256589,million_scm,False,ppac_gas_historical_2020
+2015-08,month,2015-16,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,261.106877,million_scm,False,ppac_gas_historical_2020
+2015-08,month,2015-16,natural_gas,gross_production,all,onshore,Gujarat,122.05129409525726,million_scm,False,ppac_gas_historical_2020
+2015-08,month,2015-16,natural_gas,gross_production,all,onshore,Rajasthan,119.31878844417845,million_scm,False,ppac_gas_historical_2020
+2015-08,month,2015-16,natural_gas,gross_production,all,onshore,Tamil Nadu,88.30333,million_scm,False,ppac_gas_historical_2020
+2015-08,month,2015-16,natural_gas,gross_production,all,onshore,Tripura,114.18729300000001,million_scm,False,ppac_gas_historical_2020
+2015-08,month,2015-16,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",34.303847,million_scm,False,ppac_gas_historical_2020
+2015-08,month,2015-16,natural_gas,net_production,all,all,all,2732.4666631664622,million_scm,False,ppac_gas_historical_2020
+2015-09,month,2015-16,natural_gas,gross_production,all,offshore,all,1992.0815021157932,million_scm,False,ppac_gas_historical_2020
+2015-09,month,2015-16,natural_gas,gross_production,all,onshore,Andhra Pradesh,41.39006,million_scm,False,ppac_gas_historical_2020
+2015-09,month,2015-16,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,245.954934,million_scm,False,ppac_gas_historical_2020
+2015-09,month,2015-16,natural_gas,gross_production,all,onshore,Gujarat,127.09861978754004,million_scm,False,ppac_gas_historical_2020
+2015-09,month,2015-16,natural_gas,gross_production,all,onshore,Rajasthan,114.06467428996805,million_scm,False,ppac_gas_historical_2020
+2015-09,month,2015-16,natural_gas,gross_production,all,onshore,Tamil Nadu,85.87691,million_scm,False,ppac_gas_historical_2020
+2015-09,month,2015-16,natural_gas,gross_production,all,onshore,Tripura,110.171272,million_scm,False,ppac_gas_historical_2020
+2015-09,month,2015-16,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",33.417348,million_scm,False,ppac_gas_historical_2020
+2015-09,month,2015-16,natural_gas,net_production,all,all,all,2651.666647484336,million_scm,False,ppac_gas_historical_2020
+2015-10,month,2015-16,natural_gas,gross_production,all,offshore,all,2006.7482439323503,million_scm,False,ppac_gas_historical_2020
+2015-10,month,2015-16,natural_gas,gross_production,all,onshore,Andhra Pradesh,45.708689,million_scm,False,ppac_gas_historical_2020
+2015-10,month,2015-16,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,269.67920200000003,million_scm,False,ppac_gas_historical_2020
+2015-10,month,2015-16,natural_gas,gross_production,all,onshore,Gujarat,129.91573968553206,million_scm,False,ppac_gas_historical_2020
+2015-10,month,2015-16,natural_gas,gross_production,all,onshore,Rajasthan,117.51029162582843,million_scm,False,ppac_gas_historical_2020
+2015-10,month,2015-16,natural_gas,gross_production,all,onshore,Tamil Nadu,83.71044,million_scm,False,ppac_gas_historical_2020
+2015-10,month,2015-16,natural_gas,gross_production,all,onshore,Tripura,111.02754499999998,million_scm,False,ppac_gas_historical_2020
+2015-10,month,2015-16,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",30.719703,million_scm,False,ppac_gas_historical_2020
+2015-10,month,2015-16,natural_gas,net_production,all,all,all,2704.7310844035865,million_scm,False,ppac_gas_historical_2020
+2015-11,month,2015-16,natural_gas,gross_production,all,offshore,all,1931.5071118513758,million_scm,False,ppac_gas_historical_2020
+2015-11,month,2015-16,natural_gas,gross_production,all,onshore,Andhra Pradesh,52.469824,million_scm,False,ppac_gas_historical_2020
+2015-11,month,2015-16,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,269.566888,million_scm,False,ppac_gas_historical_2020
+2015-11,month,2015-16,natural_gas,gross_production,all,onshore,Gujarat,119.00786684601141,million_scm,False,ppac_gas_historical_2020
+2015-11,month,2015-16,natural_gas,gross_production,all,onshore,Rajasthan,120.86739270674948,million_scm,False,ppac_gas_historical_2020
+2015-11,month,2015-16,natural_gas,gross_production,all,onshore,Tamil Nadu,70.248784,million_scm,False,ppac_gas_historical_2020
+2015-11,month,2015-16,natural_gas,gross_production,all,onshore,Tripura,121.956677,million_scm,False,ppac_gas_historical_2020
+2015-11,month,2015-16,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",30.68244,million_scm,False,ppac_gas_historical_2020
+2015-11,month,2015-16,natural_gas,net_production,all,all,all,2635.8204383234524,million_scm,False,ppac_gas_historical_2020
+2015-12,month,2015-16,natural_gas,gross_production,all,offshore,all,1939.0730170000002,million_scm,False,ppac_gas_historical_2020
+2015-12,month,2015-16,natural_gas,gross_production,all,onshore,Andhra Pradesh,55.017846,million_scm,False,ppac_gas_historical_2020
+2015-12,month,2015-16,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,279.4804171600003,million_scm,False,ppac_gas_historical_2020
+2015-12,month,2015-16,natural_gas,gross_production,all,onshore,Gujarat,121.94352253459999,million_scm,False,ppac_gas_historical_2020
+2015-12,month,2015-16,natural_gas,gross_production,all,onshore,Rajasthan,127.55284734,million_scm,False,ppac_gas_historical_2020
+2015-12,month,2015-16,natural_gas,gross_production,all,onshore,Tamil Nadu,71.068511,million_scm,False,ppac_gas_historical_2020
+2015-12,month,2015-16,natural_gas,gross_production,all,onshore,Tripura,109.50700400000001,million_scm,False,ppac_gas_historical_2020
+2015-12,month,2015-16,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",33.337615,million_scm,False,ppac_gas_historical_2020
+2015-12,month,2015-16,natural_gas,net_production,all,all,all,2650.1090007396006,million_scm,False,ppac_gas_historical_2020
+2015-16,fiscal_year,2015-16,condensate,production,Condensate,all,all,1.4420871966755002,million_tonnes,False,ppac_crude_annual_hindi_2022
+2015-16,fiscal_year,2015-16,crude_oil,production,JVC/Private,all,all,11.192952850355999,million_tonnes,False,ppac_crude_annual_hindi_2022
+2015-16,fiscal_year,2015-16,crude_oil,production,OIL,all,all,3.226036,million_tonnes,False,ppac_crude_annual_hindi_2022
+2015-16,fiscal_year,2015-16,crude_oil,production,ONGC,all,all,21.080675424459493,million_tonnes,False,ppac_crude_annual_hindi_2022
+2016-01,month,2015-16,natural_gas,gross_production,all,offshore,all,1660.9045219999998,million_scm,False,ppac_gas_historical_2020
+2016-01,month,2015-16,natural_gas,gross_production,all,onshore,Andhra Pradesh,55.217783,million_scm,False,ppac_gas_historical_2020
+2016-01,month,2015-16,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,266.536278,million_scm,False,ppac_gas_historical_2020
+2016-01,month,2015-16,natural_gas,gross_production,all,onshore,Gujarat,123.82331632309999,million_scm,False,ppac_gas_historical_2020
+2016-01,month,2015-16,natural_gas,gross_production,all,onshore,Rajasthan,116.83490204,million_scm,False,ppac_gas_historical_2020
+2016-01,month,2015-16,natural_gas,gross_production,all,onshore,Tamil Nadu,74.06832800000001,million_scm,False,ppac_gas_historical_2020
+2016-01,month,2015-16,natural_gas,gross_production,all,onshore,Tripura,116.803274,million_scm,False,ppac_gas_historical_2020
+2016-01,month,2015-16,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",33.196107000000005,million_scm,False,ppac_gas_historical_2020
+2016-01,month,2015-16,natural_gas,net_production,all,all,all,2363.6600759999997,million_scm,False,ppac_gas_historical_2020
+2016-02,month,2015-16,natural_gas,gross_production,all,offshore,all,1829.990284,million_scm,False,ppac_gas_historical_2020
+2016-02,month,2015-16,natural_gas,gross_production,all,onshore,Andhra Pradesh,57.045916,million_scm,False,ppac_gas_historical_2020
+2016-02,month,2015-16,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,236.01171200000002,million_scm,False,ppac_gas_historical_2020
+2016-02,month,2015-16,natural_gas,gross_production,all,onshore,Gujarat,120.25182324490001,million_scm,False,ppac_gas_historical_2020
+2016-02,month,2015-16,natural_gas,gross_production,all,onshore,Rajasthan,103.6652483,million_scm,False,ppac_gas_historical_2020
+2016-02,month,2015-16,natural_gas,gross_production,all,onshore,Tamil Nadu,74.66484,million_scm,False,ppac_gas_historical_2020
+2016-02,month,2015-16,natural_gas,gross_production,all,onshore,Tripura,110.556658,million_scm,False,ppac_gas_historical_2020
+2016-02,month,2015-16,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",32.820848,million_scm,False,ppac_gas_historical_2020
+2016-02,month,2015-16,natural_gas,net_production,all,all,all,2493.9301566537,million_scm,False,ppac_gas_historical_2020
+2016-03,month,2015-16,natural_gas,gross_production,all,offshore,all,1713.7850365304,million_scm,False,ppac_gas_historical_2020
+2016-03,month,2015-16,natural_gas,gross_production,all,onshore,Andhra Pradesh,62.376686,million_scm,False,ppac_gas_historical_2020
+2016-03,month,2015-16,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,270.492743,million_scm,False,ppac_gas_historical_2020
+2016-03,month,2015-16,natural_gas,gross_production,all,onshore,Gujarat,134.0685040129,million_scm,False,ppac_gas_historical_2020
+2016-03,month,2015-16,natural_gas,gross_production,all,onshore,Rajasthan,112.33332854599999,million_scm,False,ppac_gas_historical_2020
+2016-03,month,2015-16,natural_gas,gross_production,all,onshore,Tamil Nadu,88.36402400000007,million_scm,False,ppac_gas_historical_2020
+2016-03,month,2015-16,natural_gas,gross_production,all,onshore,Tripura,122.041436,million_scm,False,ppac_gas_historical_2020
+2016-03,month,2015-16,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",36.218762,million_scm,False,ppac_gas_historical_2020
+2016-03,month,2015-16,natural_gas,net_production,all,all,all,2434.1730307559,million_scm,False,ppac_gas_historical_2020
+2016-04,month,2016-17,natural_gas,gross_production,all,offshore,all,1701.40016,million_scm,False,ppac_gas_historical_2020
+2016-04,month,2016-17,natural_gas,gross_production,all,onshore,Andhra Pradesh,55.028961,million_scm,False,ppac_gas_historical_2020
+2016-04,month,2016-17,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,265.630343,million_scm,False,ppac_gas_historical_2020
+2016-04,month,2016-17,natural_gas,gross_production,all,onshore,Gujarat,125.78276548783333,million_scm,False,ppac_gas_historical_2020
+2016-04,month,2016-17,natural_gas,gross_production,all,onshore,Rajasthan,118.839365066,million_scm,False,ppac_gas_historical_2020
+2016-04,month,2016-17,natural_gas,gross_production,all,onshore,Tamil Nadu,84.328765,million_scm,False,ppac_gas_historical_2020
+2016-04,month,2016-17,natural_gas,gross_production,all,onshore,Tripura,99.79069700000001,million_scm,False,ppac_gas_historical_2020
+2016-04,month,2016-17,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",37.238822,million_scm,False,ppac_gas_historical_2020
+2016-04,month,2016-17,natural_gas,net_production,all,all,all,2400.3981160281332,million_scm,False,ppac_gas_historical_2020
+2016-05,month,2016-17,natural_gas,gross_production,all,offshore,all,1869.805249,million_scm,False,ppac_gas_historical_2020
+2016-05,month,2016-17,natural_gas,gross_production,all,onshore,Andhra Pradesh,57.66962900000001,million_scm,False,ppac_gas_historical_2020
+2016-05,month,2016-17,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,255.10211999999999,million_scm,False,ppac_gas_historical_2020
+2016-05,month,2016-17,natural_gas,gross_production,all,onshore,Gujarat,113.80269576893329,million_scm,False,ppac_gas_historical_2020
+2016-05,month,2016-17,natural_gas,gross_production,all,onshore,Rajasthan,120.08702490060001,million_scm,False,ppac_gas_historical_2020
+2016-05,month,2016-17,natural_gas,gross_production,all,onshore,Tamil Nadu,78.02437599999999,million_scm,False,ppac_gas_historical_2020
+2016-05,month,2016-17,natural_gas,gross_production,all,onshore,Tripura,121.07538599999998,million_scm,False,ppac_gas_historical_2020
+2016-05,month,2016-17,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",42.645823474,million_scm,False,ppac_gas_historical_2020
+2016-05,month,2016-17,natural_gas,net_production,all,all,all,2575.5664976633334,million_scm,False,ppac_gas_historical_2020
+2016-06,month,2016-17,natural_gas,gross_production,all,offshore,all,1816.324693,million_scm,False,ppac_gas_historical_2020
+2016-06,month,2016-17,natural_gas,gross_production,all,onshore,Andhra Pradesh,68.317507,million_scm,False,ppac_gas_historical_2020
+2016-06,month,2016-17,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,259.3064,million_scm,False,ppac_gas_historical_2020
+2016-06,month,2016-17,natural_gas,gross_production,all,onshore,Gujarat,107.34391133923333,million_scm,False,ppac_gas_historical_2020
+2016-06,month,2016-17,natural_gas,gross_production,all,onshore,Rajasthan,112.20425102499999,million_scm,False,ppac_gas_historical_2020
+2016-06,month,2016-17,natural_gas,gross_production,all,onshore,Tamil Nadu,74.585825,million_scm,False,ppac_gas_historical_2020
+2016-06,month,2016-17,natural_gas,gross_production,all,onshore,Tripura,116.650984,million_scm,False,ppac_gas_historical_2020
+2016-06,month,2016-17,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",43.668813704,million_scm,False,ppac_gas_historical_2020
+2016-06,month,2016-17,natural_gas,net_production,all,all,all,2513.2248906609334,million_scm,False,ppac_gas_historical_2020
+2016-07,month,2016-17,natural_gas,gross_production,all,offshore,all,1874.4156280000002,million_scm,False,ppac_gas_historical_2020
+2016-07,month,2016-17,natural_gas,gross_production,all,onshore,Andhra Pradesh,73.004216,million_scm,False,ppac_gas_historical_2020
+2016-07,month,2016-17,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,273.574359,million_scm,False,ppac_gas_historical_2020
+2016-07,month,2016-17,natural_gas,gross_production,all,onshore,Gujarat,126.27952106866667,million_scm,False,ppac_gas_historical_2020
+2016-07,month,2016-17,natural_gas,gross_production,all,onshore,Rajasthan,116.48003531599998,million_scm,False,ppac_gas_historical_2020
+2016-07,month,2016-17,natural_gas,gross_production,all,onshore,Tamil Nadu,74.48879799999999,million_scm,False,ppac_gas_historical_2020
+2016-07,month,2016-17,natural_gas,gross_production,all,onshore,Tripura,119.533938,million_scm,False,ppac_gas_historical_2020
+2016-07,month,2016-17,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",46.858479527,million_scm,False,ppac_gas_historical_2020
+2016-07,month,2016-17,natural_gas,net_production,all,all,all,2619.594438032667,million_scm,False,ppac_gas_historical_2020
+2016-08,month,2016-17,natural_gas,gross_production,all,offshore,all,1846.249728,million_scm,False,ppac_gas_historical_2020
+2016-08,month,2016-17,natural_gas,gross_production,all,onshore,Andhra Pradesh,75.657136,million_scm,False,ppac_gas_historical_2020
+2016-08,month,2016-17,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,264.205338,million_scm,False,ppac_gas_historical_2020
+2016-08,month,2016-17,natural_gas,gross_production,all,onshore,Gujarat,129.81936463176663,million_scm,False,ppac_gas_historical_2020
+2016-08,month,2016-17,natural_gas,gross_production,all,onshore,Rajasthan,111.98757352199999,million_scm,False,ppac_gas_historical_2020
+2016-08,month,2016-17,natural_gas,gross_production,all,onshore,Tamil Nadu,77.952359,million_scm,False,ppac_gas_historical_2020
+2016-08,month,2016-17,natural_gas,gross_production,all,onshore,Tripura,120.04148400000001,million_scm,False,ppac_gas_historical_2020
+2016-08,month,2016-17,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",48.235619989,million_scm,False,ppac_gas_historical_2020
+2016-08,month,2016-17,natural_gas,net_production,all,all,all,2578.451875464867,million_scm,False,ppac_gas_historical_2020
+2016-09,month,2016-17,natural_gas,gross_production,all,offshore,all,1787.070997,million_scm,False,ppac_gas_historical_2020
+2016-09,month,2016-17,natural_gas,gross_production,all,onshore,Andhra Pradesh,77.280003,million_scm,False,ppac_gas_historical_2020
+2016-09,month,2016-17,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,262.290303,million_scm,False,ppac_gas_historical_2020
+2016-09,month,2016-17,natural_gas,gross_production,all,onshore,Gujarat,132.68820241166665,million_scm,False,ppac_gas_historical_2020
+2016-09,month,2016-17,natural_gas,gross_production,all,onshore,Rajasthan,103.1037056117,million_scm,False,ppac_gas_historical_2020
+2016-09,month,2016-17,natural_gas,gross_production,all,onshore,Tamil Nadu,75.160219,million_scm,False,ppac_gas_historical_2020
+2016-09,month,2016-17,natural_gas,gross_production,all,onshore,Tripura,114.68374,million_scm,False,ppac_gas_historical_2020
+2016-09,month,2016-17,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",47.81615576400001,million_scm,False,ppac_gas_historical_2020
+2016-09,month,2016-17,natural_gas,net_production,all,all,all,2503.028377539267,million_scm,False,ppac_gas_historical_2020
+2016-10,month,2016-17,natural_gas,gross_production,all,offshore,all,1909.91239483446,million_scm,False,ppac_gas_historical_2020
+2016-10,month,2016-17,natural_gas,gross_production,all,onshore,Andhra Pradesh,76.441957,million_scm,False,ppac_gas_historical_2020
+2016-10,month,2016-17,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,263.97253233333333,million_scm,False,ppac_gas_historical_2020
+2016-10,month,2016-17,natural_gas,gross_production,all,onshore,Gujarat,139.438868881,million_scm,False,ppac_gas_historical_2020
+2016-10,month,2016-17,natural_gas,gross_production,all,onshore,Rajasthan,103.359067,million_scm,False,ppac_gas_historical_2020
+2016-10,month,2016-17,natural_gas,gross_production,all,onshore,Tamil Nadu,86.41110966666669,million_scm,False,ppac_gas_historical_2020
+2016-10,month,2016-17,natural_gas,gross_production,all,onshore,Tripura,124.843578,million_scm,False,ppac_gas_historical_2020
+2016-10,month,2016-17,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",50.761214721,million_scm,False,ppac_gas_historical_2020
+2016-10,month,2016-17,natural_gas,net_production,all,all,all,2670.8713779754603,million_scm,False,ppac_gas_historical_2020
+2016-11,month,2016-17,natural_gas,gross_production,all,offshore,all,1846.56291183446,million_scm,False,ppac_gas_historical_2020
+2016-11,month,2016-17,natural_gas,gross_production,all,onshore,Andhra Pradesh,74.507372,million_scm,False,ppac_gas_historical_2020
+2016-11,month,2016-17,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,262.5946753333333,million_scm,False,ppac_gas_historical_2020
+2016-11,month,2016-17,natural_gas,gross_production,all,onshore,Gujarat,136.98376426099998,million_scm,False,ppac_gas_historical_2020
+2016-11,month,2016-17,natural_gas,gross_production,all,onshore,Rajasthan,92.1497866512,million_scm,False,ppac_gas_historical_2020
+2016-11,month,2016-17,natural_gas,gross_production,all,onshore,Tamil Nadu,85.55697966666669,million_scm,False,ppac_gas_historical_2020
+2016-11,month,2016-17,natural_gas,gross_production,all,onshore,Tripura,121.260536,million_scm,False,ppac_gas_historical_2020
+2016-11,month,2016-17,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",50.28572149,million_scm,False,ppac_gas_historical_2020
+2016-11,month,2016-17,natural_gas,net_production,all,all,all,2583.56103221276,million_scm,False,ppac_gas_historical_2020
+2016-12,month,2016-17,natural_gas,gross_production,all,offshore,all,1900.3725818344599,million_scm,False,ppac_gas_historical_2020
+2016-12,month,2016-17,natural_gas,gross_production,all,onshore,Andhra Pradesh,78.312171,million_scm,False,ppac_gas_historical_2020
+2016-12,month,2016-17,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,260.92947133333337,million_scm,False,ppac_gas_historical_2020
+2016-12,month,2016-17,natural_gas,gross_production,all,onshore,Gujarat,139.17326368099998,million_scm,False,ppac_gas_historical_2020
+2016-12,month,2016-17,natural_gas,gross_production,all,onshore,Rajasthan,101.59683045599999,million_scm,False,ppac_gas_historical_2020
+2016-12,month,2016-17,natural_gas,gross_production,all,onshore,Tamil Nadu,88.8807166666667,million_scm,False,ppac_gas_historical_2020
+2016-12,month,2016-17,natural_gas,gross_production,all,onshore,Tripura,114.414293,million_scm,False,ppac_gas_historical_2020
+2016-12,month,2016-17,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",53.134530551000005,million_scm,False,ppac_gas_historical_2020
+2016-12,month,2016-17,natural_gas,net_production,all,all,all,2642.6136143897597,million_scm,False,ppac_gas_historical_2020
+2016-17,fiscal_year,2016-17,condensate,production,Condensate,all,all,1.507728335844,million_tonnes,False,ppac_crude_annual_hindi_2022
+2016-17,fiscal_year,2016-17,crude_oil,production,JVC/Private,all,all,10.387998529099999,million_tonnes,False,ppac_crude_annual_hindi_2022
+2016-17,fiscal_year,2016-17,crude_oil,production,OIL,all,all,3.2580290000000005,million_tonnes,False,ppac_crude_annual_hindi_2022
+2016-17,fiscal_year,2016-17,crude_oil,production,ONGC,all,all,20.855072816544006,million_tonnes,False,ppac_crude_annual_hindi_2022
+2017-01,month,2016-17,natural_gas,gross_production,all,offshore,all,1885.477779,million_scm,False,ppac_gas_historical_2020
+2017-01,month,2016-17,natural_gas,gross_production,all,onshore,Andhra Pradesh,79.23741566666659,million_scm,False,ppac_gas_historical_2020
+2017-01,month,2016-17,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,268.1068385,million_scm,False,ppac_gas_historical_2020
+2017-01,month,2016-17,natural_gas,gross_production,all,onshore,Gujarat,143.7602296240001,million_scm,False,ppac_gas_historical_2020
+2017-01,month,2016-17,natural_gas,gross_production,all,onshore,Rajasthan,99.356750269,million_scm,False,ppac_gas_historical_2020
+2017-01,month,2016-17,natural_gas,gross_production,all,onshore,Tamil Nadu,88.96335733333329,million_scm,False,ppac_gas_historical_2020
+2017-01,month,2016-17,natural_gas,gross_production,all,onshore,Tripura,120.00272300000002,million_scm,False,ppac_gas_historical_2020
+2017-01,month,2016-17,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",53.58274286100001,million_scm,False,ppac_gas_historical_2020
+2017-01,month,2016-17,natural_gas,net_production,all,all,all,2645.2399922765003,million_scm,False,ppac_gas_historical_2020
+2017-02,month,2016-17,natural_gas,gross_production,all,offshore,all,1728.0325090000001,million_scm,False,ppac_gas_historical_2020
+2017-02,month,2016-17,natural_gas,gross_production,all,onshore,Andhra Pradesh,71.47029066666661,million_scm,False,ppac_gas_historical_2020
+2017-02,month,2016-17,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,243.20367,million_scm,False,ppac_gas_historical_2020
+2017-02,month,2016-17,natural_gas,gross_production,all,onshore,Gujarat,135.5204452015001,million_scm,False,ppac_gas_historical_2020
+2017-02,month,2016-17,natural_gas,gross_production,all,onshore,Rajasthan,94.309701099,million_scm,False,ppac_gas_historical_2020
+2017-02,month,2016-17,natural_gas,gross_production,all,onshore,Tamil Nadu,80.22585533333331,million_scm,False,ppac_gas_historical_2020
+2017-02,month,2016-17,natural_gas,gross_production,all,onshore,Tripura,124.259505,million_scm,False,ppac_gas_historical_2020
+2017-02,month,2016-17,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",45.509928841999994,million_scm,False,ppac_gas_historical_2020
+2017-02,month,2016-17,natural_gas,net_production,all,all,all,2446.6564329469006,million_scm,False,ppac_gas_historical_2020
+2017-03,month,2016-17,natural_gas,gross_production,all,offshore,all,1872.605715,million_scm,False,ppac_gas_historical_2020
+2017-03,month,2016-17,natural_gas,gross_production,all,onshore,Andhra Pradesh,80.84879466666662,million_scm,False,ppac_gas_historical_2020
+2017-03,month,2016-17,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,276.5073055,million_scm,False,ppac_gas_historical_2020
+2017-03,month,2016-17,natural_gas,gross_production,all,onshore,Gujarat,149.67459414100009,million_scm,False,ppac_gas_historical_2020
+2017-03,month,2016-17,natural_gas,gross_production,all,onshore,Rajasthan,103.866395546,million_scm,False,ppac_gas_historical_2020
+2017-03,month,2016-17,natural_gas,gross_production,all,onshore,Tamil Nadu,88.58916633333331,million_scm,False,ppac_gas_historical_2020
+2017-03,month,2016-17,natural_gas,gross_production,all,onshore,Tripura,133.351559,million_scm,False,ppac_gas_historical_2020
+2017-03,month,2016-17,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",44.851490963,million_scm,False,ppac_gas_historical_2020
+2017-03,month,2016-17,natural_gas,net_production,all,all,all,2668.700587707,million_scm,False,ppac_gas_historical_2020
+2017-04,month,2017-18,natural_gas,gross_production,all,offshore,all,1674.1078619999998,million_scm,False,ppac_gas_historical_2020
+2017-04,month,2017-18,natural_gas,gross_production,all,onshore,Andhra Pradesh,72.157418,million_scm,False,ppac_gas_historical_2020
+2017-04,month,2017-18,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,265.262849,million_scm,False,ppac_gas_historical_2020
+2017-04,month,2017-18,natural_gas,gross_production,all,onshore,Gujarat,140.229718758,million_scm,False,ppac_gas_historical_2020
+2017-04,month,2017-18,natural_gas,gross_production,all,onshore,Rajasthan,117.824831,million_scm,False,ppac_gas_historical_2020
+2017-04,month,2017-18,natural_gas,gross_production,all,onshore,Tamil Nadu,96.63751699999999,million_scm,False,ppac_gas_historical_2020
+2017-04,month,2017-18,natural_gas,gross_production,all,onshore,Tripura,121.158507,million_scm,False,ppac_gas_historical_2020
+2017-04,month,2017-18,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",46.262833966,million_scm,False,ppac_gas_historical_2020
+2017-04,month,2017-18,natural_gas,net_production,all,all,all,2455.685398597,million_scm,False,ppac_gas_historical_2020
+2017-05,month,2017-18,natural_gas,gross_production,all,offshore,all,1891.578769,million_scm,False,ppac_gas_historical_2020
+2017-05,month,2017-18,natural_gas,gross_production,all,onshore,Andhra Pradesh,72.89960599999999,million_scm,False,ppac_gas_historical_2020
+2017-05,month,2017-18,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,269.548843,million_scm,False,ppac_gas_historical_2020
+2017-05,month,2017-18,natural_gas,gross_production,all,onshore,Gujarat,144.7417339206,million_scm,False,ppac_gas_historical_2020
+2017-05,month,2017-18,natural_gas,gross_production,all,onshore,Rajasthan,117.38953099999998,million_scm,False,ppac_gas_historical_2020
+2017-05,month,2017-18,natural_gas,gross_production,all,onshore,Tamil Nadu,93.400228,million_scm,False,ppac_gas_historical_2020
+2017-05,month,2017-18,natural_gas,gross_production,all,onshore,Tripura,130.58144499999997,million_scm,False,ppac_gas_historical_2020
+2017-05,month,2017-18,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",48.47021694199999,million_scm,False,ppac_gas_historical_2020
+2017-05,month,2017-18,natural_gas,net_production,all,all,all,2697.1139647623,million_scm,False,ppac_gas_historical_2020
+2017-06,month,2017-18,natural_gas,gross_production,all,offshore,all,1890.199369,million_scm,False,ppac_gas_historical_2020
+2017-06,month,2017-18,natural_gas,gross_production,all,onshore,Andhra Pradesh,70.90311900000002,million_scm,False,ppac_gas_historical_2020
+2017-06,month,2017-18,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,263.03071400000005,million_scm,False,ppac_gas_historical_2020
+2017-06,month,2017-18,natural_gas,gross_production,all,onshore,Gujarat,139.9020944223,million_scm,False,ppac_gas_historical_2020
+2017-06,month,2017-18,natural_gas,gross_production,all,onshore,Rajasthan,120.3801,million_scm,False,ppac_gas_historical_2020
+2017-06,month,2017-18,natural_gas,gross_production,all,onshore,Tamil Nadu,99.949887,million_scm,False,ppac_gas_historical_2020
+2017-06,month,2017-18,natural_gas,gross_production,all,onshore,Tripura,121.15401999999999,million_scm,False,ppac_gas_historical_2020
+2017-06,month,2017-18,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",50.21864931099999,million_scm,False,ppac_gas_historical_2020
+2017-06,month,2017-18,natural_gas,net_production,all,all,all,2674.3749748109,million_scm,False,ppac_gas_historical_2020
+2017-07,month,2017-18,natural_gas,gross_production,all,offshore,all,1948.8165529999999,million_scm,False,ppac_gas_historical_2020
+2017-07,month,2017-18,natural_gas,gross_production,all,onshore,Andhra Pradesh,76.52496500000001,million_scm,False,ppac_gas_historical_2020
+2017-07,month,2017-18,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,281.264498,million_scm,False,ppac_gas_historical_2020
+2017-07,month,2017-18,natural_gas,gross_production,all,onshore,Gujarat,140.92696610180002,million_scm,False,ppac_gas_historical_2020
+2017-07,month,2017-18,natural_gas,gross_production,all,onshore,Rajasthan,117.221696,million_scm,False,ppac_gas_historical_2020
+2017-07,month,2017-18,natural_gas,gross_production,all,onshore,Tamil Nadu,104.044529,million_scm,False,ppac_gas_historical_2020
+2017-07,month,2017-18,natural_gas,gross_production,all,onshore,Tripura,130.294075,million_scm,False,ppac_gas_historical_2020
+2017-07,month,2017-18,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",59.639407670999994,million_scm,False,ppac_gas_historical_2020
+2017-07,month,2017-18,natural_gas,net_production,all,all,all,2795.9609903196,million_scm,False,ppac_gas_historical_2020
+2017-08,month,2017-18,natural_gas,gross_production,all,offshore,all,1877.684971,million_scm,False,ppac_gas_historical_2020
+2017-08,month,2017-18,natural_gas,gross_production,all,onshore,Andhra Pradesh,77.554786,million_scm,False,ppac_gas_historical_2020
+2017-08,month,2017-18,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,293.04235700000004,million_scm,False,ppac_gas_historical_2020
+2017-08,month,2017-18,natural_gas,gross_production,all,onshore,Gujarat,139.7973308111,million_scm,False,ppac_gas_historical_2020
+2017-08,month,2017-18,natural_gas,gross_production,all,onshore,Rajasthan,119.55284,million_scm,False,ppac_gas_historical_2020
+2017-08,month,2017-18,natural_gas,gross_production,all,onshore,Tamil Nadu,103.376383,million_scm,False,ppac_gas_historical_2020
+2017-08,month,2017-18,natural_gas,gross_production,all,onshore,Tripura,96.678292,million_scm,False,ppac_gas_historical_2020
+2017-08,month,2017-18,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",65.247691147,million_scm,False,ppac_gas_historical_2020
+2017-08,month,2017-18,natural_gas,net_production,all,all,all,2678.4590629669,million_scm,False,ppac_gas_historical_2020
+2017-09,month,2017-18,natural_gas,gross_production,all,offshore,all,1846.917015603217,million_scm,False,ppac_gas_historical_2020
+2017-09,month,2017-18,natural_gas,gross_production,all,onshore,Andhra Pradesh,77.88260799999999,million_scm,False,ppac_gas_historical_2020
+2017-09,month,2017-18,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,278.89442199999996,million_scm,False,ppac_gas_historical_2020
+2017-09,month,2017-18,natural_gas,gross_production,all,onshore,Gujarat,133.5012724032,million_scm,False,ppac_gas_historical_2020
+2017-09,month,2017-18,natural_gas,gross_production,all,onshore,Rajasthan,117.291663,million_scm,False,ppac_gas_historical_2020
+2017-09,month,2017-18,natural_gas,gross_production,all,onshore,Tamil Nadu,100.913927,million_scm,False,ppac_gas_historical_2020
+2017-09,month,2017-18,natural_gas,gross_production,all,onshore,Tripura,104.253079,million_scm,False,ppac_gas_historical_2020
+2017-09,month,2017-18,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",63.575801311,million_scm,False,ppac_gas_historical_2020
+2017-09,month,2017-18,natural_gas,net_production,all,all,all,2652.527734413217,million_scm,False,ppac_gas_historical_2020
+2017-10,month,2017-18,natural_gas,gross_production,all,offshore,all,1892.123537,million_scm,False,ppac_gas_historical_2020
+2017-10,month,2017-18,natural_gas,gross_production,all,onshore,Andhra Pradesh,81.079367,million_scm,False,ppac_gas_historical_2020
+2017-10,month,2017-18,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,273.306216,million_scm,False,ppac_gas_historical_2020
+2017-10,month,2017-18,natural_gas,gross_production,all,onshore,Gujarat,137.2538437784,million_scm,False,ppac_gas_historical_2020
+2017-10,month,2017-18,natural_gas,gross_production,all,onshore,Rajasthan,126.567745,million_scm,False,ppac_gas_historical_2020
+2017-10,month,2017-18,natural_gas,gross_production,all,onshore,Tamil Nadu,103.61781399999998,million_scm,False,ppac_gas_historical_2020
+2017-10,month,2017-18,natural_gas,gross_production,all,onshore,Tripura,126.437573,million_scm,False,ppac_gas_historical_2020
+2017-10,month,2017-18,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",68.02718856199999,million_scm,False,ppac_gas_historical_2020
+2017-10,month,2017-18,natural_gas,net_production,all,all,all,2737.6293610271996,million_scm,False,ppac_gas_historical_2020
+2017-11,month,2017-18,natural_gas,gross_production,all,offshore,all,1831.98825,million_scm,False,ppac_gas_historical_2020
+2017-11,month,2017-18,natural_gas,gross_production,all,onshore,Andhra Pradesh,77.68080199999999,million_scm,False,ppac_gas_historical_2020
+2017-11,month,2017-18,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,265.506546,million_scm,False,ppac_gas_historical_2020
+2017-11,month,2017-18,natural_gas,gross_production,all,onshore,Gujarat,130.671828522,million_scm,False,ppac_gas_historical_2020
+2017-11,month,2017-18,natural_gas,gross_production,all,onshore,Rajasthan,115.578946,million_scm,False,ppac_gas_historical_2020
+2017-11,month,2017-18,natural_gas,gross_production,all,onshore,Tamil Nadu,100.973491,million_scm,False,ppac_gas_historical_2020
+2017-11,month,2017-18,natural_gas,gross_production,all,onshore,Tripura,123.825858,million_scm,False,ppac_gas_historical_2020
+2017-11,month,2017-18,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",68.636692661,million_scm,False,ppac_gas_historical_2020
+2017-11,month,2017-18,natural_gas,net_production,all,all,all,2642.4687084873003,million_scm,False,ppac_gas_historical_2020
+2017-12,month,2017-18,natural_gas,gross_production,all,offshore,all,1846.965496,million_scm,False,ppac_gas_historical_2020
+2017-12,month,2017-18,natural_gas,gross_production,all,onshore,Andhra Pradesh,82.870543,million_scm,False,ppac_gas_historical_2020
+2017-12,month,2017-18,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,268.73273700000004,million_scm,False,ppac_gas_historical_2020
+2017-12,month,2017-18,natural_gas,gross_production,all,onshore,Gujarat,133.34682968656668,million_scm,False,ppac_gas_historical_2020
+2017-12,month,2017-18,natural_gas,gross_production,all,onshore,Rajasthan,123.54305299999999,million_scm,False,ppac_gas_historical_2020
+2017-12,month,2017-18,natural_gas,gross_production,all,onshore,Tamil Nadu,102.201388,million_scm,False,ppac_gas_historical_2020
+2017-12,month,2017-18,natural_gas,gross_production,all,onshore,Tripura,122.89579999999998,million_scm,False,ppac_gas_historical_2020
+2017-12,month,2017-18,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",70.796231615,million_scm,False,ppac_gas_historical_2020
+2017-12,month,2017-18,natural_gas,net_production,all,all,all,2673.3645637883665,million_scm,False,ppac_gas_historical_2020
+2017-18,fiscal_year,2017-18,condensate,production,Condensate,all,all,1.6390755063,million_tonnes,False,ppac_crude_annual_hindi_2022
+2017-18,fiscal_year,2017-18,crude_oil,production,JVC/Private,all,all,9.873952794500003,million_tonnes,False,ppac_crude_annual_hindi_2022
+2017-18,fiscal_year,2017-18,crude_oil,production,OIL,all,all,3.3762771370000006,million_tonnes,False,ppac_crude_annual_hindi_2022
+2017-18,fiscal_year,2017-18,crude_oil,production,ONGC,all,all,20.795025437491,million_tonnes,False,ppac_crude_annual_hindi_2022
+2018-01,month,2017-18,natural_gas,gross_production,all,offshore,all,1804.9260778745102,million_scm,False,ppac_gas_historical_2020
+2018-01,month,2017-18,natural_gas,gross_production,all,onshore,Andhra Pradesh,84.265651,million_scm,False,ppac_gas_historical_2020
+2018-01,month,2017-18,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,271.65482299999996,million_scm,False,ppac_gas_historical_2020
+2018-01,month,2017-18,natural_gas,gross_production,all,onshore,Gujarat,130.750475526,million_scm,False,ppac_gas_historical_2020
+2018-01,month,2017-18,natural_gas,gross_production,all,onshore,Rajasthan,114.273621,million_scm,False,ppac_gas_historical_2020
+2018-01,month,2017-18,natural_gas,gross_production,all,onshore,Tamil Nadu,103.410727,million_scm,False,ppac_gas_historical_2020
+2018-01,month,2017-18,natural_gas,gross_production,all,onshore,Tripura,124.868996,million_scm,False,ppac_gas_historical_2020
+2018-01,month,2017-18,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",60.923441403,million_scm,False,ppac_gas_historical_2020
+2018-01,month,2017-18,natural_gas,net_production,all,all,all,2616.83755860451,million_scm,False,ppac_gas_historical_2020
+2018-02,month,2017-18,natural_gas,gross_production,all,offshore,all,1654.53218844607,million_scm,False,ppac_gas_historical_2020
+2018-02,month,2017-18,natural_gas,gross_production,all,onshore,Andhra Pradesh,82.69563000000001,million_scm,False,ppac_gas_historical_2020
+2018-02,month,2017-18,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,242.37443199999998,million_scm,False,ppac_gas_historical_2020
+2018-02,month,2017-18,natural_gas,gross_production,all,onshore,Gujarat,114.30469389000001,million_scm,False,ppac_gas_historical_2020
+2018-02,month,2017-18,natural_gas,gross_production,all,onshore,Rajasthan,120.48033410000001,million_scm,False,ppac_gas_historical_2020
+2018-02,month,2017-18,natural_gas,gross_production,all,onshore,Tamil Nadu,93.64336700000004,million_scm,False,ppac_gas_historical_2020
+2018-02,month,2017-18,natural_gas,gross_production,all,onshore,Tripura,113.488664,million_scm,False,ppac_gas_historical_2020
+2018-02,month,2017-18,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",62.584334946,million_scm,False,ppac_gas_historical_2020
+2018-02,month,2017-18,natural_gas,net_production,all,all,all,2404.28507059507,million_scm,False,ppac_gas_historical_2020
+2018-03,month,2017-18,natural_gas,gross_production,all,offshore,all,1850.7791537952598,million_scm,False,ppac_gas_historical_2020
+2018-03,month,2017-18,natural_gas,gross_production,all,onshore,Andhra Pradesh,102.64695300000002,million_scm,False,ppac_gas_historical_2020
+2018-03,month,2017-18,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,275.917923,million_scm,False,ppac_gas_historical_2020
+2018-03,month,2017-18,natural_gas,gross_production,all,onshore,Gujarat,121.23623317300002,million_scm,False,ppac_gas_historical_2020
+2018-03,month,2017-18,natural_gas,gross_production,all,onshore,Rajasthan,131.830096,million_scm,False,ppac_gas_historical_2020
+2018-03,month,2017-18,natural_gas,gross_production,all,onshore,Tamil Nadu,105.04832,million_scm,False,ppac_gas_historical_2020
+2018-03,month,2017-18,natural_gas,gross_production,all,onshore,Tripura,124.734067,million_scm,False,ppac_gas_historical_2020
+2018-03,month,2017-18,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",70.42029505,million_scm,False,ppac_gas_historical_2020
+2018-03,month,2017-18,natural_gas,net_production,all,all,all,2702.4975165422597,million_scm,False,ppac_gas_historical_2020
+2018-04,month,2018-19,natural_gas,gross_production,all,offshore,all,1777.429488,million_scm,False,ppac_gas_historical_2020
+2018-04,month,2018-19,natural_gas,gross_production,all,onshore,Andhra Pradesh,101.34255200000001,million_scm,False,ppac_gas_historical_2020
+2018-04,month,2018-19,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,257.24203566666665,million_scm,False,ppac_gas_historical_2020
+2018-04,month,2018-19,natural_gas,gross_production,all,onshore,Gujarat,116.12595622833331,million_scm,False,ppac_gas_historical_2020
+2018-04,month,2018-19,natural_gas,gross_production,all,onshore,Rajasthan,127.30389699999999,million_scm,False,ppac_gas_historical_2020
+2018-04,month,2018-19,natural_gas,gross_production,all,onshore,Tamil Nadu,100.358241,million_scm,False,ppac_gas_historical_2020
+2018-04,month,2018-19,natural_gas,gross_production,all,onshore,Tripura,120.134586,million_scm,False,ppac_gas_historical_2020
+2018-04,month,2018-19,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",62.940554209999995,million_scm,False,ppac_gas_historical_2020
+2018-04,month,2018-19,natural_gas,net_production,all,all,all,2599.2258204190002,million_scm,False,ppac_gas_historical_2020
+2018-05,month,2018-19,natural_gas,gross_production,all,offshore,all,1815.7467,million_scm,False,ppac_gas_historical_2020
+2018-05,month,2018-19,natural_gas,gross_production,all,onshore,Andhra Pradesh,96.88115200000001,million_scm,False,ppac_gas_historical_2020
+2018-05,month,2018-19,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,272.75980566666664,million_scm,False,ppac_gas_historical_2020
+2018-05,month,2018-19,natural_gas,gross_production,all,onshore,Gujarat,119.25262023933334,million_scm,False,ppac_gas_historical_2020
+2018-05,month,2018-19,natural_gas,gross_production,all,onshore,Rajasthan,132.858222,million_scm,False,ppac_gas_historical_2020
+2018-05,month,2018-19,natural_gas,gross_production,all,onshore,Tamil Nadu,103.728562,million_scm,False,ppac_gas_historical_2020
+2018-05,month,2018-19,natural_gas,gross_production,all,onshore,Tripura,124.065131,million_scm,False,ppac_gas_historical_2020
+2018-05,month,2018-19,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",62.647,million_scm,False,ppac_gas_historical_2020
+2018-05,month,2018-19,natural_gas,net_production,all,all,all,2662.2796639059998,million_scm,False,ppac_gas_historical_2020
+2018-06,month,2018-19,natural_gas,gross_production,all,offshore,all,1824.5169999999998,million_scm,False,ppac_gas_historical_2020
+2018-06,month,2018-19,natural_gas,gross_production,all,onshore,Andhra Pradesh,67.753583,million_scm,False,ppac_gas_historical_2020
+2018-06,month,2018-19,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,270.4560266666667,million_scm,False,ppac_gas_historical_2020
+2018-06,month,2018-19,natural_gas,gross_production,all,onshore,Gujarat,115.03324323933334,million_scm,False,ppac_gas_historical_2020
+2018-06,month,2018-19,natural_gas,gross_production,all,onshore,Rajasthan,127.366586,million_scm,False,ppac_gas_historical_2020
+2018-06,month,2018-19,natural_gas,gross_production,all,onshore,Tamil Nadu,97.11442799999999,million_scm,False,ppac_gas_historical_2020
+2018-06,month,2018-19,natural_gas,gross_production,all,onshore,Tripura,117.40835000000001,million_scm,False,ppac_gas_historical_2020
+2018-06,month,2018-19,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",58.163,million_scm,False,ppac_gas_historical_2020
+2018-06,month,2018-19,natural_gas,net_production,all,all,all,2612.776586906,million_scm,False,ppac_gas_historical_2020
+2018-07,month,2018-19,natural_gas,gross_production,all,offshore,all,1801.291,million_scm,False,ppac_gas_historical_2020
+2018-07,month,2018-19,natural_gas,gross_production,all,onshore,Andhra Pradesh,91.29406499999999,million_scm,False,ppac_gas_historical_2020
+2018-07,month,2018-19,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,282.86740466666663,million_scm,False,ppac_gas_historical_2020
+2018-07,month,2018-19,natural_gas,gross_production,all,onshore,Gujarat,118.47719100000002,million_scm,False,ppac_gas_historical_2020
+2018-07,month,2018-19,natural_gas,gross_production,all,onshore,Rajasthan,127.018408,million_scm,False,ppac_gas_historical_2020
+2018-07,month,2018-19,natural_gas,gross_production,all,onshore,Tamil Nadu,105.46464699999999,million_scm,False,ppac_gas_historical_2020
+2018-07,month,2018-19,natural_gas,gross_production,all,onshore,Tripura,129.42526400000003,million_scm,False,ppac_gas_historical_2020
+2018-07,month,2018-19,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",57.683,million_scm,False,ppac_gas_historical_2020
+2018-07,month,2018-19,natural_gas,net_production,all,all,all,2651.7810598056667,million_scm,False,ppac_gas_historical_2020
+2018-08,month,2018-19,natural_gas,gross_production,all,offshore,all,1880.30847027045,million_scm,False,ppac_gas_historical_2020
+2018-08,month,2018-19,natural_gas,gross_production,all,onshore,Andhra Pradesh,92.52382300000002,million_scm,False,ppac_gas_historical_2020
+2018-08,month,2018-19,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,291.93122066666666,million_scm,False,ppac_gas_historical_2020
+2018-08,month,2018-19,natural_gas,gross_production,all,onshore,Gujarat,118.97343000000001,million_scm,False,ppac_gas_historical_2020
+2018-08,month,2018-19,natural_gas,gross_production,all,onshore,Rajasthan,125.328435,million_scm,False,ppac_gas_historical_2020
+2018-08,month,2018-19,natural_gas,gross_production,all,onshore,Tamil Nadu,103.30165000000001,million_scm,False,ppac_gas_historical_2020
+2018-08,month,2018-19,natural_gas,gross_production,all,onshore,Tripura,118.52047400000002,million_scm,False,ppac_gas_historical_2020
+2018-08,month,2018-19,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",57.171,million_scm,False,ppac_gas_historical_2020
+2018-08,month,2018-19,natural_gas,net_production,all,all,all,2717.8569029371165,million_scm,False,ppac_gas_historical_2020
+2018-09,month,2018-19,natural_gas,gross_production,all,offshore,all,1803.3305000000003,million_scm,False,ppac_gas_historical_2020
+2018-09,month,2018-19,natural_gas,gross_production,all,onshore,Andhra Pradesh,91.78590799999999,million_scm,False,ppac_gas_historical_2020
+2018-09,month,2018-19,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,283.19107866666667,million_scm,False,ppac_gas_historical_2020
+2018-09,month,2018-19,natural_gas,gross_production,all,onshore,Gujarat,118.07039300000001,million_scm,False,ppac_gas_historical_2020
+2018-09,month,2018-19,natural_gas,gross_production,all,onshore,Rajasthan,119.78443399999999,million_scm,False,ppac_gas_historical_2020
+2018-09,month,2018-19,natural_gas,gross_production,all,onshore,Tamil Nadu,99.276329,million_scm,False,ppac_gas_historical_2020
+2018-09,month,2018-19,natural_gas,gross_production,all,onshore,Tripura,114.48257500000001,million_scm,False,ppac_gas_historical_2020
+2018-09,month,2018-19,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",54.218,million_scm,False,ppac_gas_historical_2020
+2018-09,month,2018-19,natural_gas,net_production,all,all,all,2618.9048446316665,million_scm,False,ppac_gas_historical_2020
+2018-10,month,2018-19,natural_gas,gross_production,all,offshore,all,1872.077979,million_scm,False,ppac_gas_historical_2020
+2018-10,month,2018-19,natural_gas,gross_production,all,onshore,Andhra Pradesh,94.98318400000001,million_scm,False,ppac_gas_historical_2020
+2018-10,month,2018-19,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,289.82675700000004,million_scm,False,ppac_gas_historical_2020
+2018-10,month,2018-19,natural_gas,gross_production,all,onshore,Gujarat,117.07053199999993,million_scm,False,ppac_gas_historical_2020
+2018-10,month,2018-19,natural_gas,gross_production,all,onshore,Rajasthan,125.491995,million_scm,False,ppac_gas_historical_2020
+2018-10,month,2018-19,natural_gas,gross_production,all,onshore,Tamil Nadu,101.33187500000003,million_scm,False,ppac_gas_historical_2020
+2018-10,month,2018-19,natural_gas,gross_production,all,onshore,Tripura,139.398372,million_scm,False,ppac_gas_historical_2020
+2018-10,month,2018-19,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",57.474,million_scm,False,ppac_gas_historical_2020
+2018-10,month,2018-19,natural_gas,net_production,all,all,all,2723.2047452589995,million_scm,False,ppac_gas_historical_2020
+2018-11,month,2018-19,natural_gas,gross_production,all,offshore,all,1846.1351410000002,million_scm,False,ppac_gas_historical_2020
+2018-11,month,2018-19,natural_gas,gross_production,all,onshore,Andhra Pradesh,91.90909799999997,million_scm,False,ppac_gas_historical_2020
+2018-11,month,2018-19,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,273.012256,million_scm,False,ppac_gas_historical_2020
+2018-11,month,2018-19,natural_gas,gross_production,all,onshore,Gujarat,115.20476099999998,million_scm,False,ppac_gas_historical_2020
+2018-11,month,2018-19,natural_gas,gross_production,all,onshore,Rajasthan,108.479,million_scm,False,ppac_gas_historical_2020
+2018-11,month,2018-19,natural_gas,gross_production,all,onshore,Tamil Nadu,98.065706,million_scm,False,ppac_gas_historical_2020
+2018-11,month,2018-19,natural_gas,gross_production,all,onshore,Tripura,138.17156899999998,million_scm,False,ppac_gas_historical_2020
+2018-11,month,2018-19,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",60.796,million_scm,False,ppac_gas_historical_2020
+2018-11,month,2018-19,natural_gas,net_production,all,all,all,2667.020603302,million_scm,False,ppac_gas_historical_2020
+2018-12,month,2018-19,natural_gas,gross_production,all,offshore,all,1952.2043509999999,million_scm,False,ppac_gas_historical_2020
+2018-12,month,2018-19,natural_gas,gross_production,all,onshore,Andhra Pradesh,91.87270200000002,million_scm,False,ppac_gas_historical_2020
+2018-12,month,2018-19,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,282.55973500000005,million_scm,False,ppac_gas_historical_2020
+2018-12,month,2018-19,natural_gas,gross_production,all,onshore,Gujarat,119.74777899999991,million_scm,False,ppac_gas_historical_2020
+2018-12,month,2018-19,natural_gas,gross_production,all,onshore,Rajasthan,112.10985,million_scm,False,ppac_gas_historical_2020
+2018-12,month,2018-19,natural_gas,gross_production,all,onshore,Tamil Nadu,101.924751,million_scm,False,ppac_gas_historical_2020
+2018-12,month,2018-19,natural_gas,gross_production,all,onshore,Tripura,142.691618,million_scm,False,ppac_gas_historical_2020
+2018-12,month,2018-19,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",63.383,million_scm,False,ppac_gas_historical_2020
+2018-12,month,2018-19,natural_gas,net_production,all,all,all,2795.242771,million_scm,False,ppac_gas_historical_2020
+2018-19,fiscal_year,2018-19,condensate,production,Condensate,all,all,1.7288047691,million_tonnes,False,ppac_crude_annual_hindi_2022
+2018-19,fiscal_year,2018-19,crude_oil,production,JVC/Private,all,all,9.62430037658,million_tonnes,False,ppac_crude_annual_hindi_2022
+2018-19,fiscal_year,2018-19,crude_oil,production,OIL,all,all,3.293133329,million_tonnes,False,ppac_crude_annual_hindi_2022
+2018-19,fiscal_year,2018-19,crude_oil,production,ONGC,all,all,19.557027609255336,million_tonnes,False,ppac_crude_annual_hindi_2022
+2019-01,month,2018-19,natural_gas,gross_production,all,offshore,all,1932.113073,million_scm,False,ppac_gas_historical_2020
+2019-01,month,2018-19,natural_gas,gross_production,all,onshore,Andhra Pradesh,91.80226700000001,million_scm,False,ppac_gas_historical_2020
+2019-01,month,2018-19,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,271.731715,million_scm,False,ppac_gas_historical_2020
+2019-01,month,2018-19,natural_gas,gross_production,all,onshore,Gujarat,117.583042,million_scm,False,ppac_gas_historical_2020
+2019-01,month,2018-19,natural_gas,gross_production,all,onshore,Rajasthan,126.655,million_scm,False,ppac_gas_historical_2020
+2019-01,month,2018-19,natural_gas,gross_production,all,onshore,Tamil Nadu,102.42648500000001,million_scm,False,ppac_gas_historical_2020
+2019-01,month,2018-19,natural_gas,gross_production,all,onshore,Tripura,136.99311,million_scm,False,ppac_gas_historical_2020
+2019-01,month,2018-19,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",62.148,million_scm,False,ppac_gas_historical_2020
+2019-01,month,2018-19,natural_gas,net_production,all,all,all,2772.063656654,million_scm,False,ppac_gas_historical_2020
+2019-02,month,2018-19,natural_gas,gross_production,all,offshore,all,1730.227888,million_scm,False,ppac_gas_historical_2020
+2019-02,month,2018-19,natural_gas,gross_production,all,onshore,Andhra Pradesh,81.660195,million_scm,False,ppac_gas_historical_2020
+2019-02,month,2018-19,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,252.613775,million_scm,False,ppac_gas_historical_2020
+2019-02,month,2018-19,natural_gas,gross_production,all,onshore,Gujarat,107.59880699999998,million_scm,False,ppac_gas_historical_2020
+2019-02,month,2018-19,natural_gas,gross_production,all,onshore,Rajasthan,117.1377,million_scm,False,ppac_gas_historical_2020
+2019-02,month,2018-19,natural_gas,gross_production,all,onshore,Tamil Nadu,93.137802,million_scm,False,ppac_gas_historical_2020
+2019-02,month,2018-19,natural_gas,gross_production,all,onshore,Tripura,127.63627000000001,million_scm,False,ppac_gas_historical_2020
+2019-02,month,2018-19,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",55.738,million_scm,False,ppac_gas_historical_2020
+2019-02,month,2018-19,natural_gas,net_production,all,all,all,2496.071249163,million_scm,False,ppac_gas_historical_2020
+2019-03,month,2018-19,natural_gas,gross_production,all,offshore,all,1883.7871680000003,million_scm,False,ppac_gas_historical_2020
+2019-03,month,2018-19,natural_gas,gross_production,all,onshore,Andhra Pradesh,87.84705400000003,million_scm,False,ppac_gas_historical_2020
+2019-03,month,2018-19,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,288.326291,million_scm,False,ppac_gas_historical_2020
+2019-03,month,2018-19,natural_gas,gross_production,all,onshore,Gujarat,119.08528899999996,million_scm,False,ppac_gas_historical_2020
+2019-03,month,2018-19,natural_gas,gross_production,all,onshore,Rajasthan,133.715,million_scm,False,ppac_gas_historical_2020
+2019-03,month,2018-19,natural_gas,gross_production,all,onshore,Tamil Nadu,101.72203099999999,million_scm,False,ppac_gas_historical_2020
+2019-03,month,2018-19,natural_gas,gross_production,all,onshore,Tripura,145.375959,million_scm,False,ppac_gas_historical_2020
+2019-03,month,2018-19,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",58.1,million_scm,False,ppac_gas_historical_2020
+2019-03,month,2018-19,natural_gas,net_production,all,all,all,2741.480383139,million_scm,False,ppac_gas_historical_2020
+2019-20,fiscal_year,2019-20,condensate,production,Condensate,all,all,1.645941,million_tonnes,False,ppac_crude_annual_hindi_2022
+2019-20,fiscal_year,2019-20,crude_oil,production,JVC/Private,all,all,8.173136,million_tonnes,False,ppac_crude_annual_hindi_2022
+2019-20,fiscal_year,2019-20,crude_oil,production,OIL,all,all,3.106612,million_tonnes,False,ppac_crude_annual_hindi_2022
+2019-20,fiscal_year,2019-20,crude_oil,production,ONGC,all,all,19.243579,million_tonnes,False,ppac_crude_annual_hindi_2022
+2020-21,fiscal_year,2020-21,condensate,production,Condensate,all,all,1.3727421100000003,million_tonnes,False,ppac_crude_annual_hindi_2022
+2020-21,fiscal_year,2020-21,crude_oil,production,JVC/Private,all,all,7.10289,million_tonnes,False,ppac_crude_annual_hindi_2022
+2020-21,fiscal_year,2020-21,crude_oil,production,OIL,all,all,2.9373658704000003,million_tonnes,False,ppac_crude_annual_hindi_2022
+2020-21,fiscal_year,2020-21,crude_oil,production,ONGC,all,all,19.081097825209998,million_tonnes,False,ppac_crude_annual_hindi_2022
+2021-04,month,2021-22,natural_gas,gross_production,all,offshore,all,1806.5838549999999,million_scm,True,ppac_gas_current_2022
+2021-04,month,2021-22,natural_gas,gross_production,all,onshore,Andhra Pradesh,68.72986899999998,million_scm,True,ppac_gas_current_2022
+2021-04,month,2021-22,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,257.357078,million_scm,True,ppac_gas_current_2022
+2021-04,month,2021-22,natural_gas,gross_production,all,onshore,Gujarat,91.68705,million_scm,True,ppac_gas_current_2022
+2021-04,month,2021-22,natural_gas,gross_production,all,onshore,Rajasthan,209.357107,million_scm,True,ppac_gas_current_2022
+2021-04,month,2021-22,natural_gas,gross_production,all,onshore,Tamil Nadu,80.42312,million_scm,True,ppac_gas_current_2022
+2021-04,month,2021-22,natural_gas,gross_production,all,onshore,Tripura,80.87459000000001,million_scm,True,ppac_gas_current_2022
+2021-04,month,2021-22,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",56.509,million_scm,True,ppac_gas_current_2022
+2021-04,month,2021-22,natural_gas,net_production,all,all,all,2583.345306493,million_scm,True,ppac_gas_current_2022
+2021-05,month,2021-22,natural_gas,gross_production,all,offshore,all,1845.667616,million_scm,True,ppac_gas_current_2022
+2021-05,month,2021-22,natural_gas,gross_production,all,onshore,Andhra Pradesh,67.83476499999999,million_scm,True,ppac_gas_current_2022
+2021-05,month,2021-22,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,264.235895,million_scm,True,ppac_gas_current_2022
+2021-05,month,2021-22,natural_gas,gross_production,all,onshore,Gujarat,87.49305899999999,million_scm,True,ppac_gas_current_2022
+2021-05,month,2021-22,natural_gas,gross_production,all,onshore,Rajasthan,227.632104,million_scm,True,ppac_gas_current_2022
+2021-05,month,2021-22,natural_gas,gross_production,all,onshore,Tamil Nadu,80.87355699999998,million_scm,True,ppac_gas_current_2022
+2021-05,month,2021-22,natural_gas,gross_production,all,onshore,Tripura,107.031102,million_scm,True,ppac_gas_current_2022
+2021-05,month,2021-22,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",58.879999999999995,million_scm,True,ppac_gas_current_2022
+2021-05,month,2021-22,natural_gas,net_production,all,all,all,2660.260501019,million_scm,True,ppac_gas_current_2022
+2021-06,month,2021-22,natural_gas,gross_production,all,offshore,all,1879.520556,million_scm,True,ppac_gas_current_2022
+2021-06,month,2021-22,natural_gas,gross_production,all,onshore,Andhra Pradesh,67.83577900000002,million_scm,True,ppac_gas_current_2022
+2021-06,month,2021-22,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,264.505933,million_scm,True,ppac_gas_current_2022
+2021-06,month,2021-22,natural_gas,gross_production,all,onshore,Gujarat,84.68558900000001,million_scm,True,ppac_gas_current_2022
+2021-06,month,2021-22,natural_gas,gross_production,all,onshore,Rajasthan,235.11506899999998,million_scm,True,ppac_gas_current_2022
+2021-06,month,2021-22,natural_gas,gross_production,all,onshore,Tamil Nadu,80.726303,million_scm,True,ppac_gas_current_2022
+2021-06,month,2021-22,natural_gas,gross_production,all,onshore,Tripura,107.887585,million_scm,True,ppac_gas_current_2022
+2021-06,month,2021-22,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",56.703,million_scm,True,ppac_gas_current_2022
+2021-06,month,2021-22,natural_gas,net_production,all,all,all,2713.205567573,million_scm,True,ppac_gas_current_2022
+2021-07,month,2021-22,natural_gas,gross_production,all,offshore,all,1940.9897749999998,million_scm,True,ppac_gas_current_2022
+2021-07,month,2021-22,natural_gas,gross_production,all,onshore,Andhra Pradesh,72.20929299999999,million_scm,True,ppac_gas_current_2022
+2021-07,month,2021-22,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,294.62924,million_scm,True,ppac_gas_current_2022
+2021-07,month,2021-22,natural_gas,gross_production,all,onshore,Gujarat,87.52421600000001,million_scm,True,ppac_gas_current_2022
+2021-07,month,2021-22,natural_gas,gross_production,all,onshore,Rajasthan,247.50690799999998,million_scm,True,ppac_gas_current_2022
+2021-07,month,2021-22,natural_gas,gross_production,all,onshore,Tamil Nadu,73.89100600000003,million_scm,True,ppac_gas_current_2022
+2021-07,month,2021-22,natural_gas,gross_production,all,onshore,Tripura,119.766388,million_scm,True,ppac_gas_current_2022
+2021-07,month,2021-22,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",57.63,million_scm,True,ppac_gas_current_2022
+2021-07,month,2021-22,natural_gas,net_production,all,all,all,2819.496799622,million_scm,True,ppac_gas_current_2022
+2021-08,month,2021-22,natural_gas,gross_production,all,offshore,all,1946.461648,million_scm,True,ppac_gas_current_2022
+2021-08,month,2021-22,natural_gas,gross_production,all,onshore,Andhra Pradesh,71.444299,million_scm,True,ppac_gas_current_2022
+2021-08,month,2021-22,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,301.558685,million_scm,True,ppac_gas_current_2022
+2021-08,month,2021-22,natural_gas,gross_production,all,onshore,Gujarat,81.32136600000001,million_scm,True,ppac_gas_current_2022
+2021-08,month,2021-22,natural_gas,gross_production,all,onshore,Rajasthan,242.367561,million_scm,True,ppac_gas_current_2022
+2021-08,month,2021-22,natural_gas,gross_production,all,onshore,Tamil Nadu,85.49591099999999,million_scm,True,ppac_gas_current_2022
+2021-08,month,2021-22,natural_gas,gross_production,all,onshore,Tripura,139.75729600000003,million_scm,True,ppac_gas_current_2022
+2021-08,month,2021-22,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",57.864,million_scm,True,ppac_gas_current_2022
+2021-08,month,2021-22,natural_gas,net_production,all,all,all,2853.48233905,million_scm,True,ppac_gas_current_2022
+2021-09,month,2021-22,natural_gas,gross_production,all,offshore,all,1941.0797279999997,million_scm,True,ppac_gas_current_2022
+2021-09,month,2021-22,natural_gas,gross_production,all,onshore,Andhra Pradesh,65.86219500000001,million_scm,True,ppac_gas_current_2022
+2021-09,month,2021-22,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,296.06729199999995,million_scm,True,ppac_gas_current_2022
+2021-09,month,2021-22,natural_gas,gross_production,all,onshore,Gujarat,78.65511299999999,million_scm,True,ppac_gas_current_2022
+2021-09,month,2021-22,natural_gas,gross_production,all,onshore,Rajasthan,232.2232,million_scm,True,ppac_gas_current_2022
+2021-09,month,2021-22,natural_gas,gross_production,all,onshore,Tamil Nadu,94.458009,million_scm,True,ppac_gas_current_2022
+2021-09,month,2021-22,natural_gas,gross_production,all,onshore,Tripura,137.01200200000002,million_scm,True,ppac_gas_current_2022
+2021-09,month,2021-22,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",57.038,million_scm,True,ppac_gas_current_2022
+2021-09,month,2021-22,natural_gas,net_production,all,all,all,2839.746415972,million_scm,True,ppac_gas_current_2022
+2021-10,month,2021-22,natural_gas,gross_production,all,offshore,all,2010.5753200000001,million_scm,True,ppac_gas_current_2022
+2021-10,month,2021-22,natural_gas,gross_production,all,onshore,Andhra Pradesh,68.541038,million_scm,True,ppac_gas_current_2022
+2021-10,month,2021-22,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,311.02685299999996,million_scm,True,ppac_gas_current_2022
+2021-10,month,2021-22,natural_gas,gross_production,all,onshore,Gujarat,85.09786499999998,million_scm,True,ppac_gas_current_2022
+2021-10,month,2021-22,natural_gas,gross_production,all,onshore,Rajasthan,236.484394,million_scm,True,ppac_gas_current_2022
+2021-10,month,2021-22,natural_gas,gross_production,all,onshore,Tamil Nadu,102.70338099999998,million_scm,True,ppac_gas_current_2022
+2021-10,month,2021-22,natural_gas,gross_production,all,onshore,Tripura,143.84041699999997,million_scm,True,ppac_gas_current_2022
+2021-10,month,2021-22,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",58.544,million_scm,True,ppac_gas_current_2022
+2021-10,month,2021-22,natural_gas,net_production,all,all,all,2953.888805296,million_scm,True,ppac_gas_current_2022
+2021-11,month,2021-22,natural_gas,gross_production,all,offshore,all,1915.3598180000001,million_scm,True,ppac_gas_current_2022
+2021-11,month,2021-22,natural_gas,gross_production,all,onshore,Andhra Pradesh,63.983253000000005,million_scm,True,ppac_gas_current_2022
+2021-11,month,2021-22,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,293.785969,million_scm,True,ppac_gas_current_2022
+2021-11,month,2021-22,natural_gas,gross_production,all,onshore,Gujarat,81.207627,million_scm,True,ppac_gas_current_2022
+2021-11,month,2021-22,natural_gas,gross_production,all,onshore,Rajasthan,220.005516,million_scm,True,ppac_gas_current_2022
+2021-11,month,2021-22,natural_gas,gross_production,all,onshore,Tamil Nadu,98.78935599999997,million_scm,True,ppac_gas_current_2022
+2021-11,month,2021-22,natural_gas,gross_production,all,onshore,Tripura,139.89203700000002,million_scm,True,ppac_gas_current_2022
+2021-11,month,2021-22,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",56.447,million_scm,True,ppac_gas_current_2022
+2021-11,month,2021-22,natural_gas,net_production,all,all,all,2798.3162050650003,million_scm,True,ppac_gas_current_2022
+2021-12,month,2021-22,natural_gas,gross_production,all,offshore,all,1947.4506309999997,million_scm,True,ppac_gas_current_2022
+2021-12,month,2021-22,natural_gas,gross_production,all,onshore,Andhra Pradesh,67.89671399999999,million_scm,True,ppac_gas_current_2022
+2021-12,month,2021-22,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,285.241847,million_scm,True,ppac_gas_current_2022
+2021-12,month,2021-22,natural_gas,gross_production,all,onshore,Gujarat,88.73956399999999,million_scm,True,ppac_gas_current_2022
+2021-12,month,2021-22,natural_gas,gross_production,all,onshore,Rajasthan,211.254178,million_scm,True,ppac_gas_current_2022
+2021-12,month,2021-22,natural_gas,gross_production,all,onshore,Tamil Nadu,97.94802600000001,million_scm,True,ppac_gas_current_2022
+2021-12,month,2021-22,natural_gas,gross_production,all,onshore,Tripura,140.031009,million_scm,True,ppac_gas_current_2022
+2021-12,month,2021-22,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",58.131,million_scm,True,ppac_gas_current_2022
+2021-12,month,2021-22,natural_gas,net_production,all,all,all,2814.426638479,million_scm,True,ppac_gas_current_2022
+2021-22,fiscal_year,2021-22,condensate,production,Condensate,all,all,1.2407793409999999,million_tonnes,True,ppac_crude_annual_hindi_2022
+2021-22,fiscal_year,2021-22,crude_oil,production,JVC/Private,all,all,6.951056999999999,million_tonnes,True,ppac_crude_annual_hindi_2022
+2021-22,fiscal_year,2021-22,crude_oil,production,OIL,all,all,2.986881395,million_tonnes,True,ppac_crude_annual_hindi_2022
+2021-22,fiscal_year,2021-22,crude_oil,production,ONGC,all,all,18.509758899322,million_tonnes,True,ppac_crude_annual_hindi_2022
+2022-01,month,2021-22,natural_gas,gross_production,all,offshore,all,1919.2693360000003,million_scm,True,ppac_gas_current_2022
+2022-01,month,2021-22,natural_gas,gross_production,all,onshore,Andhra Pradesh,67.97398900000002,million_scm,True,ppac_gas_current_2022
+2022-01,month,2021-22,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,287.799403,million_scm,True,ppac_gas_current_2022
+2022-01,month,2021-22,natural_gas,gross_production,all,onshore,Gujarat,85.53250800000002,million_scm,True,ppac_gas_current_2022
+2022-01,month,2021-22,natural_gas,gross_production,all,onshore,Rajasthan,199.00766099999998,million_scm,True,ppac_gas_current_2022
+2022-01,month,2021-22,natural_gas,gross_production,all,onshore,Tamil Nadu,101.57385800000002,million_scm,True,ppac_gas_current_2022
+2022-01,month,2021-22,natural_gas,gross_production,all,onshore,Tripura,142.148707,million_scm,True,ppac_gas_current_2022
+2022-01,month,2021-22,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",57.787,million_scm,True,ppac_gas_current_2022
+2022-01,month,2021-22,natural_gas,net_production,all,all,all,2767.298241499,million_scm,True,ppac_gas_current_2022
+2022-02,month,2021-22,natural_gas,gross_production,all,offshore,all,1757.3728019999999,million_scm,True,ppac_gas_current_2022
+2022-02,month,2021-22,natural_gas,gross_production,all,onshore,Andhra Pradesh,58.607171,million_scm,True,ppac_gas_current_2022
+2022-02,month,2021-22,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,271.057586,million_scm,True,ppac_gas_current_2022
+2022-02,month,2021-22,natural_gas,gross_production,all,onshore,Gujarat,78.73059400000001,million_scm,True,ppac_gas_current_2022
+2022-02,month,2021-22,natural_gas,gross_production,all,onshore,Rajasthan,170.377218,million_scm,True,ppac_gas_current_2022
+2022-02,month,2021-22,natural_gas,gross_production,all,onshore,Tamil Nadu,88.468495,million_scm,True,ppac_gas_current_2022
+2022-02,month,2021-22,natural_gas,gross_production,all,onshore,Tripura,126.367179,million_scm,True,ppac_gas_current_2022
+2022-02,month,2021-22,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",51.281,million_scm,True,ppac_gas_current_2022
+2022-02,month,2021-22,natural_gas,net_production,all,all,all,2515.0734531959997,million_scm,True,ppac_gas_current_2022
+2022-03,month,2021-22,natural_gas,gross_production,all,offshore,all,1958.577961,million_scm,True,ppac_gas_current_2022
+2022-03,month,2021-22,natural_gas,gross_production,all,onshore,Andhra Pradesh,67.72261400000001,million_scm,True,ppac_gas_current_2022
+2022-03,month,2021-22,natural_gas,gross_production,all,onshore,Assam / Arunachal Pradesh,301.88943800000004,million_scm,True,ppac_gas_current_2022
+2022-03,month,2021-22,natural_gas,gross_production,all,onshore,Gujarat,86.61523799999999,million_scm,True,ppac_gas_current_2022
+2022-03,month,2021-22,natural_gas,gross_production,all,onshore,Rajasthan,187.50232499999998,million_scm,True,ppac_gas_current_2022
+2022-03,month,2021-22,natural_gas,gross_production,all,onshore,Tamil Nadu,81.16991600000001,million_scm,True,ppac_gas_current_2022
+2022-03,month,2021-22,natural_gas,gross_production,all,onshore,Tripura,146.16732,million_scm,True,ppac_gas_current_2022
+2022-03,month,2021-22,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",56.58200000000001,million_scm,True,ppac_gas_current_2022
+2022-03,month,2021-22,natural_gas,net_production,all,all,all,2812.693340566,million_scm,True,ppac_gas_current_2022
+2022-04,month,2022-23,condensate,production,Condensate,all,all,0.10763442,million_tonnes,True,ppac_crude_current_2022
+2022-04,month,2022-23,crude_oil,production,JVC/Private,all,all,0.5460109999999999,million_tonnes,True,ppac_crude_current_2022
+2022-04,month,2022-23,crude_oil,production,OIL,all,all,0.251454955,million_tonnes,True,ppac_crude_current_2022
+2022-04,month,2022-23,crude_oil,production,ONGC,all,all,1.564568073657,million_tonnes,True,ppac_crude_current_2022
+2022-05,month,2022-23,condensate,production,Condensate,all,all,0.10429009,million_tonnes,True,ppac_crude_current_2022
+2022-05,month,2022-23,crude_oil,production,JVC/Private,all,all,0.5711099999999999,million_tonnes,True,ppac_crude_current_2022
+2022-05,month,2022-23,crude_oil,production,OIL,all,all,0.265225477,million_tonnes,True,ppac_crude_current_2022
+2022-05,month,2022-23,crude_oil,production,ONGC,all,all,1.609424834531,million_tonnes,True,ppac_crude_current_2022
