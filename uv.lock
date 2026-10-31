@@ -8202,6 +8202,7 @@ dependencies = [
     { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "numpy", version = "2.3.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "pandas" },
+    { name = "requests" },
     { name = "scipy", version = "1.15.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "scipy", version = "1.17.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "worldenergydata-core" },
@@ -8211,6 +8212,7 @@ dependencies = [
 requires-dist = [
     { name = "numpy", specifier = ">=2.2.6,<3.0" },
     { name = "pandas", specifier = ">=2.3.3,<3.0" },
+    { name = "requests", specifier = ">=2.32.0,<3.0" },
     { name = "scipy", specifier = ">=1.11.0,<2.0" },
     { name = "worldenergydata-core", editable = "packages/worldenergydata-core" },
 ]
