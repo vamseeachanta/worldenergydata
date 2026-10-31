@@ -22,7 +22,7 @@
 
 version: "1.0"
 generated_at: "2026-05-04"
-total_modules: 30
+total_modules: 31
 
 modules:
 
@@ -336,6 +336,30 @@ modules:
     catalog_status: runtime_fetched
     capability_source: manifest
     related_wrk: [WRK-018, WRK-019, WRK-171, WRK-196, WRK-197, WRK-220, WRK-260]
+
+  # ── INDIA ───────────────────────────────────────────────────────────────────
+
+  - id: india_dgh
+    name: "India DGH / PPAC"
+    package: "worldenergydata.india_dgh"
+    region: [india, india_offshore]
+    domain: [production, regulatory, licensing]
+    data_types:
+      - blocks
+      - contracts
+      - production
+      - basins
+    key_classes:
+      - load_awarded_blocks
+      - load_monthly_production
+      - load_basins
+    status: beta
+    entry_point: "from worldenergydata.india_dgh import load_awarded_blocks, load_monthly_production, load_basins"
+    notes: "DGH OALP award lists (rounds I-IX, PDF tables via pdfplumber), DGH sedimentary basin categories, PPAC company-group crude production; source URLs and SHA-256 in data/source_manifest.json."
+    in_scheduler: false
+    public_cli: false
+    catalog_status: reference_data
+    capability_source: manifest
 
   # ── MEXICO ──────────────────────────────────────────────────────────────────
 

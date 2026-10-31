@@ -14,6 +14,7 @@ Total modules indexed: **27** (18 data-source + 7 infrastructure + 2 analysis/vi
 | `ukcs` | UK Continental Shelf, North Sea | production, wells, completions, field economics | stable |
 | `brazil_anp` | Brazil (pre-salt, Santos, Campos) | production, wells, fiscal regimes | stable |
 | `mexico_cnh` | Mexico / GOM Mexican Waters | production, wells, fields, blocks, contracts | stable |
+| `india_dgh` | India (onland, shallow, deep and ultra-deep water) | OALP awarded blocks, company-group production, sedimentary basins | beta |
 | `canada` | Alberta, BC, Saskatchewan, Manitoba | wellbore, production, permits | stable |
 | `texas_rrc` | Texas, USA | production, wellbore, drilling permits | stable |
 | `eia_us` | United States, Alaska | production, drilling productivity, basin analysis | stable |
