@@ -1,0 +1,273 @@
+{
+  "title": "EU source capability assessment",
+  "revision": "1",
+  "as_of": "2026-10-20",
+  "issue_url": "https://github.com/vamseeachanta/worldenergydata/issues/753",
+  "criteria": "The issue decision gate permits field/well production OR usable field metadata. Monthly production fit, concession mapping and reuse are assessed separately. No source is automatically enrolled in an analysis chain.",
+  "catalog_status": "Existing catalog and domain index were unavailable in the inspected checkout. Keys below identify assessment rows only; no catalog source or dataset identities are assigned.",
+  "evidence_retention": "Publisher response bodies and headers are retained as local research evidence, outside the public repository. Digests identify those observed bytes, not redistributed source datasets or a backup. No raw CORES workbook was downloaded.",
+  "sources": [
+    {
+      "key": "italy_ispra",
+      "country": "Italy",
+      "publisher": "ISPRA",
+      "title": "Energy resource extraction sites (oil and gas)",
+      "data_types": [
+        "production aggregates",
+        "concessions and well counts",
+        "reserves",
+        "environmental indicators"
+      ],
+      "granularity": "National, regional, provincial and marine-zone summaries; concession and well counts are not individual field records.",
+      "formats": [
+        "HTML",
+        "XLSX tables",
+        "JPG figures"
+      ],
+      "access": "Public page and linked downloads; no credentials requested for page inspection. Linked table payloads were not opened.",
+      "temporal_coverage": "The page states 1982 to November 2024; production tables describe 2023.",
+      "spatial_coverage": "Italy onshore and offshore marine zones.",
+      "update_frequency": "Annual indicator; factsheet dated 2024-12-31. No later update was shown at inspection.",
+      "licence": "No source-specific reuse terms established from the inspected indicator page.",
+      "source_units": "Page production summaries use Sm3 for gas and tonnes for oil; no conversion is performed.",
+      "capabilities": {
+        "production_granularity": "aggregate",
+        "production_frequency": "annual",
+        "production_verified": true,
+        "field_metadata": "absent",
+        "reuse": "unspecified"
+      },
+      "observations": [
+        {
+          "url": "https://indicatoriambientali.isprambiente.it/en/georesources/energy-resource-extraction-sites-oil-and-gas",
+          "observed_at": "2026-10-20T10:05:41.676778Z",
+          "method": "GET",
+          "http_status": 200,
+          "sha256": "94dde1e34b018cdab5d215142b50dd1a38db84202f456ea5d9a59a498d5faa52",
+          "digest_scope": "response_body"
+        }
+      ],
+      "previous_decision": "Coverage only in the earlier issue research.",
+      "comparison": "CONFIRMED for the ISPRA indicator; does not establish absence of granular data elsewhere in Italy.",
+      "limitations": [
+        "The linked XLSX tables were not inspected internally.",
+        "Aggregate counts do not establish field or well identifiers, production histories, water depth or spud dates.",
+        "Reuse remains NOT_EVALUATED."
+      ],
+      "next_step": "Retain as coverage context; assess the upstream ministry source separately."
+    },
+    {
+      "key": "italy_unmig",
+      "country": "Italy",
+      "publisher": "MASE / UNMIG",
+      "title": "Produzione nazionale di idrocarburi",
+      "data_types": [
+        "monthly production by concession",
+        "mineral",
+        "operator",
+        "region or marine zone",
+        "onshore/offshore indicator"
+      ],
+      "granularity": "Mining title (concession), not an established one-to-one field or well key.",
+      "formats": [
+        "semicolon-separated UTF-8 CSV with BOM",
+        "annual PDF reports"
+      ],
+      "access": "Public production page and credential-free partial CSV request; server returned HTTP 206 for bytes 0-4095.",
+      "temporal_coverage": "Page advertises CSV years 2004-2026 and data through 2026-07-31, updated 2026-09-29. Coverage was not recomputed from the partial response.",
+      "spatial_coverage": "Italian onshore and offshore producing concessions.",
+      "update_frequency": "Monthly columns; publication cadence is not stated. Reporting resolution is distinct from refresh frequency.",
+      "licence": "The production page states Creative Commons Attribuzione 4.0 Internazionale and links CC BY 4.0.",
+      "source_units": "Gas: Sm3; crude oil and gasoline: kg, as stated on the production page. Reference conditions and conversion inputs remain unqualified.",
+      "header": [
+        "Minerale",
+        "Anno",
+        "Ub",
+        "Titolo",
+        "Operatore",
+        "Regione",
+        "Gennaio",
+        "Febbraio",
+        "Marzo",
+        "Aprile",
+        "Maggio",
+        "Giugno",
+        "Luglio",
+        "Agosto",
+        "Settembre",
+        "Ottobre",
+        "Novembre",
+        "Dicembre",
+        "Totale"
+      ],
+      "capabilities": {
+        "production_granularity": "concession",
+        "production_frequency": "monthly",
+        "production_verified": true,
+        "field_metadata": "absent",
+        "reuse": "cc_by_4_0",
+        "concession_field_mapping": false
+      },
+      "observations": [
+        {
+          "url": "https://unmig.mase.gov.it/ricerca-e-coltivazione-di-idrocarburi/produzione-nazionale-di-idrocarburi/",
+          "observed_at": "2026-10-20T10:05:46.005548Z",
+          "method": "GET",
+          "http_status": 200,
+          "sha256": "9570dedad2f3bc0152c8e08e7130695ecbfb4ac688833e43c4e9b564dd1d560f",
+          "digest_scope": "response_body"
+        },
+        {
+          "url": "https://unmig.mase.gov.it/wp-content/uploads/dati/produzione/produzione-2026.csv",
+          "observed_at": "2026-10-20T10:06:37.057773Z",
+          "method": "GET Range: bytes=0-4095",
+          "http_status": 206,
+          "sha256": "72949f399cde0cea7e5dba5e57259bc1b1b87b87f9b04d308270f036a6c8da37",
+          "digest_scope": "partial_response_body"
+        }
+      ],
+      "previous_decision": "Italy was parked when only ISPRA was considered; the later issue research proposed promotion after discovering this source.",
+      "comparison": "CHANGED relative to the initial Italy park decision; current partial header confirms the later concession-series finding, with mapping still unresolved.",
+      "limitations": [
+        "Only the CSV header and initial bytes were inspected; full-file completeness, duplicate rows, missing-month representation and annual-total reconciliation remain NOT_EVALUATED.",
+        "A concession is not assumed to be a field; its production cannot yet be allocated to fields.",
+        "No density, gas energy factor, fiscal assumptions, well depths or development costs are inferred."
+      ],
+      "next_step": "Prepare a concession-aware ingestion proposal with attribution, full-byte provenance, missing-month handling and an independently reviewed title-to-field mapping before field cashflow."
+    },
+    {
+      "key": "portugal_dgeg",
+      "country": "Portugal",
+      "publisher": "DGEG",
+      "title": "Exploration history; Data/Consultation",
+      "data_types": [
+        "exploration history",
+        "individual exploratory-well descriptions",
+        "seismic surveys",
+        "test recoveries"
+      ],
+      "granularity": "Narrative exploration events and well examples; no commercial per-field monthly production series or structured field input table on the inspected pages.",
+      "formats": [
+        "HTML",
+        "linked map portal and illustrations",
+        "facility-held technical records described on the consultation page"
+      ],
+      "access": "Public narrative and consultation pages; underlying technical information is described as available at DGEG or LNEG facilities. No facility records or map layers were requested.",
+      "temporal_coverage": "Exploration narrative begins in 1938; the consultation page describes wells since 1938. The observation date is not a source vintage.",
+      "spatial_coverage": "Portuguese onshore and offshore basins.",
+      "update_frequency": "Not stated on the inspected pages.",
+      "licence": "Footer reserves rights; no dataset reuse licence established. A linked price-list page was not opened.",
+      "source_units": "Narrative uses metres, seismic distances and test-recovery litres; these are not monthly commercial production volumes.",
+      "capabilities": {
+        "production_granularity": "none",
+        "production_frequency": "none",
+        "production_verified": true,
+        "field_metadata": "absent",
+        "reuse": "unspecified"
+      },
+      "observations": [
+        {
+          "url": "https://www.dgeg.gov.pt/en/vertical-areas/geology/petroleum-co2-geological-storage/petroleum-geology/exploration-history/",
+          "observed_at": "2026-10-20T10:05:43.882407Z",
+          "method": "GET",
+          "http_status": 200,
+          "sha256": "11970b67933bd20192d99d27589e4217e39d4fdc8eed5cb2fe82dacf3d1d24bf",
+          "digest_scope": "response_body"
+        },
+        {
+          "url": "https://www.dgeg.gov.pt/en/vertical-areas/geology/petroleum-co2-geological-storage/technical-data-and-information/data-consultation/",
+          "observed_at": "2026-10-20T10:06:36.201481Z",
+          "method": "GET",
+          "http_status": 200,
+          "sha256": "4af3cefed8f448a0bff06a0a9346cd3b959a5500af0729976c6887f7f264a9db",
+          "digest_scope": "response_body"
+        }
+      ],
+      "previous_decision": "Park as exploration coverage only.",
+      "comparison": "CONFIRMED for the inspected pages. The history page states no current petroleum exploration/exploitation rights; a nationwide claim of no possible metadata is not made.",
+      "limitations": [
+        "Isolated exploratory-well depths do not establish a structured producing-field input dataset.",
+        "Map-layer schemas and reuse permissions remain NOT_EVALUATED.",
+        "Production tests are not treated as a producing-field history, and absent production is not a zero-valued series."
+      ],
+      "next_step": "Retain exploration coverage; consider field-metadata promotion only after a usable structured dataset and reuse rights are established."
+    },
+    {
+      "key": "spain_cores",
+      "country": "Spain",
+      "publisher": "CORES",
+      "title": "Indigenous Crude Oil Production; Indigenous Natural Gas Production",
+      "data_types": [
+        "oil production",
+        "gas production"
+      ],
+      "granularity": "Per-field monthly structure was established by earlier issue research and is supported by existing parsers; current workbook internals were not opened in this check.",
+      "formats": [
+        "XLSX"
+      ],
+      "access": "Public statistics page links both workbooks; credential-free HEAD requests returned HTTP 200 and spreadsheet content types. HEAD responses do not establish workbook content.",
+      "temporal_coverage": "Current page lists oil series from 1966 and gas from 1963. The later issue research distinguishes annual early oil rows from monthly rows; exact current row coverage remains unverified.",
+      "spatial_coverage": "Spanish producing fields according to the earlier workbook characterization; the current portal labels the series indigenous production.",
+      "update_frequency": "Page update and workbook Last-Modified dates are 2026-10-13. Monthly reporting is historical evidence, not a new full workbook validation.",
+      "licence": "Legal notice requires prior written authorization for reproduction, transmission or modification; citation and latest-update conditions also apply. Attribution alone is not authorization.",
+      "required_attribution": "Source CORES (www.cores.es), with the latest update date when information refers to a specific date.",
+      "source_units": "Existing package and earlier issue research identify tonnes for oil and GWh for gas. Current workbook units remain unverified in this HEAD-only check; no conversion is performed.",
+      "capabilities": {
+        "production_granularity": "field",
+        "production_frequency": "monthly",
+        "production_verified": false,
+        "field_metadata": "absent",
+        "reuse": "permission_required"
+      },
+      "observations": [
+        {
+          "url": "https://www.cores.es/en/estadisticas",
+          "observed_at": "2026-10-20T10:05:44.674335Z",
+          "method": "GET",
+          "http_status": 200,
+          "sha256": "8dd3c434e22a9ad11ae231d2fc5aae6b3c2fcf9d7309de9a482a0cc044590138",
+          "digest_scope": "response_body"
+        },
+        {
+          "url": "https://www.cores.es/en/aviso-legal",
+          "observed_at": "2026-10-20T10:05:47.932048Z",
+          "method": "GET",
+          "http_status": 200,
+          "sha256": "0d24ce5eed470c5455f94d229a149668ea77a06f9b66f74302fa6772cad6017a",
+          "digest_scope": "response_body"
+        },
+        {
+          "url": "https://www.cores.es/sites/default/files/archivos/estadisticas/crude-oil-production.xlsx",
+          "observed_at": "2026-10-20T10:06:34.682958Z",
+          "method": "HEAD",
+          "http_status": 200,
+          "sha256": "a1cd88715b24deeb2098d8fd3203c02dc7b0c50b10c8bb186fcb0b7ee3296b19",
+          "digest_scope": "response_headers"
+        },
+        {
+          "url": "https://www.cores.es/sites/default/files/archivos/estadisticas/gas-production.xlsx",
+          "observed_at": "2026-10-20T10:06:35.442774Z",
+          "method": "HEAD",
+          "http_status": 200,
+          "sha256": "9dc69b93383a0f5cc0cd1d0784f8024b8974dff09100e44a7816a11ee3048d0d",
+          "digest_scope": "response_headers"
+        }
+      ],
+      "previous_decision": "Promoted and already implemented in the Spain package; the later research corrected the reuse interpretation.",
+      "comparison": "CONFIRMED availability and reuse restriction; current field-level structure is UNVERIFIED. NOT_EVALUATED describes this check, not a reversal or removal of the existing chain.",
+      "existing_implementation": [
+        "packages/worldenergydata-spain/src/worldenergydata/spain/production/cores_source.py",
+        "packages/worldenergydata-spain/src/worldenergydata/spain/production/cores_loader.py",
+        "packages/worldenergydata-spain/src/worldenergydata/spain/reference_chain.py",
+        "packages/worldenergydata-production/src/worldenergydata/production/unified/adapters/spain_cores_adapter.py"
+      ],
+      "historical_evidence_url": "https://github.com/vamseeachanta/worldenergydata/issues/753#issuecomment-6115434418",
+      "limitations": [
+        "No raw workbook or production series is redistributed in this change.",
+        "Current per-field headers, units, missing-data semantics and date coverage remain NOT_EVALUATED.",
+        "Neither raw data nor derived-data publication rights are inferred from public access; written authorization must cover the intended reuse."
+      ],
+      "next_step": "Reuse the existing chain after authorized local workbook inspection; preserve publisher attribution and update date, and obtain permission covering intended reproduction or publication."
+    }
+  ]
+}
