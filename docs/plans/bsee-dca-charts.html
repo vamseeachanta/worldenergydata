@@ -1,0 +1,29 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>BSEE decline chart plan</title>
+<body><h1>Sample BSEE decline charts</h1>
+<p>Scope: <a href="https://github.com/vamseeachanta/worldenergydata/issues/1839">BSEE decline charts</a>.
+Execution will use one lane in the assigned worktree. The sample will contain two API wells and field WR627.
+The full run and external explorer integration will await sample QA.</p>
+<h2>Resource intelligence</h2><p>The implementation will reuse common.decline rate equations and the existing
+Julia OGOR-A extracts and source manifest. Existing decline APIs will remain compatible. New monthly
+analysis will retain elapsed calendar time, rather than compress filtered observations.</p>
+<h2>Method and artifact map</h2><p>A monthly_dca module will validate OGOR-A records, sum oil volumes by API or field,
+divide by calendar days, retain zero-production months, and distinguish absent reports. Bounded least squares
+will compare exponential, hyperbolic and harmonic models by AIC. A continuous terminal exponential tail will
+impose a positive nominal minimum decline. Analytical integration will calculate remaining barrels from the
+last reporting boundary to the economic limit. Reported barrels will supply produced-to-date volume.</p>
+<p>A monthly_dca_plots module will build date-based Plotly panels and static SVG/PNG from the same arrays.
+A sample builder will verify source digests and save arrays, compact metrics, output digests and an HTML page.
+Documentation will state units, fit windows, scenarios, source dates and limitations.</p>
+<h2>TDD and acceptance</h2><p>Tests will precede implementation and cover a hand-calculated exponential recovery,
+terminal continuity, harmonic integration, calendar-day field sums, missing and shut-in months, invalid units
+and records, cap enforcement, forecast cutoff and independent withheld-history back-tests. The nearest decline
+tests will run with pytest through uv. The sample will be read back and static images will be inspected.</p>
+<h2>Adversarial plan review</h2><p>Defect-hunting will challenge time compression, summed well-day normalization,
+volume/rate unit confusion, duplicate completion records, incomplete field reporting, economic-limit truncation,
+back-test leakage and false lifecycle EUR claims. Source hashes will be checked before consumption.
+Incomplete history will withhold EUR. Nonpositive limits or terminal decline will be rejected.</p>
+<p>Cross-provider review will remain unavailable under the task's prohibition on other model calls. A local
+defect-focused artifact review will be recorded with hashes; it will not be described as cross-provider consensus.</p>
+<h2>Risks and limits</h2><p>Monthly calendar rates will include downtime. Operational changes may mimic reservoir decline.
+Field aggregation will not establish well-level recovery, boundary-dominated flow or unchanged well inventory.
+Economic limits will be explicit illustrative inputs; costs and income equality will not be established.</p></body></html>
