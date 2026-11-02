@@ -1,7 +1,7 @@
 <!doctype html><html lang="en"><meta charset="utf-8"><title>BSEE decline chart plan</title>
 <body><h1>Sample BSEE decline charts</h1>
 <p>Scope: <a href="https://github.com/vamseeachanta/worldenergydata/issues/1839">BSEE decline charts</a>.
-Execution will use one lane in the assigned worktree. The sample will contain two API wells and field WR627.
+The sample will contain two API wells and field WR627.
 The full run and external explorer integration will await sample QA.</p>
 <h2>Resource intelligence</h2><p>The implementation will reuse common.decline rate equations and the existing
 Julia OGOR-A extracts and source manifest. Existing decline APIs will remain compatible. New monthly
@@ -22,8 +22,6 @@ tests will run with pytest through uv. The sample will be read back and static i
 volume/rate unit confusion, duplicate completion records, incomplete field reporting, economic-limit truncation,
 back-test leakage and false lifecycle EUR claims. Source hashes will be checked before consumption.
 Incomplete history will withhold EUR. Nonpositive limits or terminal decline will be rejected.</p>
-<p>Cross-provider review will remain unavailable under the task's prohibition on other model calls. A local
-defect-focused artifact review will be recorded with hashes; it will not be described as cross-provider consensus.</p>
 <h2>Risks and limits</h2><p>Monthly calendar rates will include downtime. Operational changes may mimic reservoir decline.
 Field aggregation will not establish well-level recovery, boundary-dominated flow or unchanged well inventory.
 Economic limits will be explicit illustrative inputs; costs and income equality will not be established.</p></body></html>
