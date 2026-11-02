@@ -51,3 +51,6 @@ packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/directional_surv
 
 # Preserve the benchmark source digest across platform checkout conventions.
 reports/lower_tertiary/lt_well_benchmark_lower_tertiary_2010_latest.csv text eol=lf
+
+# Preserve the exact exported bytes referenced by the sample DCA manifest.
+docs/reports/bsee-dca-sample/** -text
