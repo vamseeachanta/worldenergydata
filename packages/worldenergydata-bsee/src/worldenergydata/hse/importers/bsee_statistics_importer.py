@@ -24,6 +24,12 @@ class BSEEStatisticsImporter(BaseImporter):
     Handles CSV parsing, field normalization, and data type conversion
     for quarterly and annual aggregated incident statistics.
 
+    CSV missing-token policy (issue #1599): only empty cells and the exact
+    text "NA" denote missing values. Other text, including "None", "N/A"
+    and "NaN", is preserved. Direct dictionaries retain all text tokens;
+    consequently "NA" is missing only in CSV input, while text "NaN" is
+    an invalid count in both routes. Scalar floating NaN remains missing.
+
     Count policy (issue #1599): operational_period and all incident counts
     accept nonnegative integral numeric values and integral decimal text as
     integers. Zero is the nonnegative boundary. Fractional, negative, boolean
@@ -109,11 +115,16 @@ class BSEEStatisticsImporter(BaseImporter):
         csv_path = Path(self.csv_file_path)
 
         if not csv_path.exists():
-            raise FileNotFoundError(f"CSV file not found: {self.csv_file_path}")
+            raise FileNotFoundError(f"CSV file not found: {csv_path.as_posix()}")
 
         try:
-            # Preserve nonmissing text; pandas still recognizes its NA tokens.
-            df = pd.read_csv(csv_path, dtype=object)
+            df = pd.read_csv(
+                csv_path,
+                dtype=object,
+                keep_default_na=False,
+                na_values=["", "NA"],
+                encoding="utf-8",
+            )
 
             # Convert DataFrame to list of dictionaries
             records = df.to_dict("records")
@@ -155,7 +166,7 @@ class BSEEStatisticsImporter(BaseImporter):
         # Normalize scalar missingness before any field-specific guard. A new
         # dictionary preserves the caller's raw values, including text spacing.
         raw_data = {
-            field: None if pd.isna(value) else value
+            field: None if pd.api.types.is_scalar(value) and pd.isna(value) else value
             for field, value in raw_data.items()
         }
         normalized = {}

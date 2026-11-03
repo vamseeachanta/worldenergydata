@@ -10,7 +10,7 @@ import csv
 from datetime import datetime
 from decimal import Decimal
 from importlib import import_module
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 from unittest.mock import MagicMock
 
 import numpy as np
@@ -34,6 +34,12 @@ OPTIONAL_FIELDS = {
     **{field: field for field in COUNT_FIELDS},
 }
 MISSING = [None, float("nan"), pd.NA]
+NONSCALAR = [
+    ["synthetic", None],
+    np.array(["synthetic", "metadata"]),
+    pd.Series(["synthetic", pd.NA]),
+    {"synthetic": None},
+]
 
 
 def valid_record():
@@ -42,8 +48,10 @@ def valid_record():
 
 def write_csv(tmp_path, records):
     path = tmp_path / "statistics.csv"
-    with path.open("w", newline="", encoding="utf-8") as stream:
-        writer = csv.DictWriter(stream, fieldnames=list(records[0]))
+    with path.open("w", newline="\n", encoding="utf-8") as stream:
+        writer = csv.DictWriter(
+            stream, fieldnames=list(records[0]), lineterminator="\n"
+        )
         writer.writeheader()
         writer.writerows(records)
     return path
@@ -88,6 +96,91 @@ def test_csv_missing_tokens_normalize_to_none(importer, tmp_path, token):
     assert normalized["operator"] == "  synthetic operator  "
     assert importer.validate_data(normalized) is True
     assert_unchanged(fetched, original)
+
+
+@pytest.mark.parametrize(
+    "token",
+    ["None", "NULL", "null", "N/A", "n/a", "#N/A", "<NA>", "NaN", "nan", "  NA  "],
+)
+def test_csv_text_outside_missing_policy_is_preserved(importer, tmp_path, token):
+    record = {
+        **valid_record(),
+        "operator_name": token,
+        "facility": token,
+        "field": token,
+        "incident_id": token,
+        "severity": token,
+        "minor_count": "7",
+    }
+    importer.csv_file_path = str(write_csv(tmp_path, [record]))
+    (fetched,) = importer.fetch_data()
+    original = fetched.copy()
+    normalized = importer.normalize_data(fetched)
+    for field in (
+        "operator",
+        "facility_name",
+        "field_name",
+        "bsee_incident_id",
+        "severity",
+    ):
+        assert normalized[field] == token
+    assert normalized["minor_count"] == 7
+    assert importer.validate_data(normalized) is True
+    assert_unchanged(fetched, original)
+
+
+@pytest.mark.parametrize("metadata", NONSCALAR, ids=["list", "array", "series", "dict"])
+def test_direct_dictionary_ignores_nonscalar_metadata(importer, metadata):
+    record = {**valid_record(), "metadata": metadata, "minor_count": "7"}
+    original = record.copy()
+    normalized = importer.normalize_data(record)
+    assert "metadata" not in normalized
+    assert normalized["operator"] == "  synthetic operator  "
+    assert normalized["report_date"] == datetime(2024, 3, 31)
+    assert normalized["minor_count"] == 7
+    assert importer.validate_data(normalized) is True
+    assert_unchanged(record, original)
+
+
+@pytest.mark.parametrize("value", NONSCALAR, ids=["list", "array", "series", "dict"])
+def test_direct_dictionary_nonscalar_count_is_invalid(importer, value):
+    record = {**valid_record(), "total_incidents": value}
+    original = record.copy()
+    normalized = importer.normalize_data(record)
+    assert normalized["total_incidents"] is value
+    assert importer.validate_data(normalized) is False
+    assert any("total_incidents" in error for error in importer.validation_errors)
+    assert_unchanged(record, original)
+
+
+@pytest.mark.parametrize("field", COUNT_FIELDS)
+@pytest.mark.parametrize("route", ["csv", "dictionary"])
+def test_text_nan_count_is_invalid_for_both_input_routes(
+    importer, tmp_path, field, route
+):
+    record = {**valid_record(), field: "NaN"}
+    if route == "csv":
+        importer.csv_file_path = str(write_csv(tmp_path, [record]))
+        (record,) = importer.fetch_data()
+    original = record.copy()
+    normalized = importer.normalize_data(record)
+    assert normalized[field] == "NaN"
+    assert importer.validate_data(normalized) is False
+    assert any(field in error for error in importer.validation_errors)
+    assert_unchanged(record, original)
+
+
+def test_missing_csv_diagnostic_uses_forward_slashes(importer, monkeypatch):
+    class MissingPath(PureWindowsPath):
+        def exists(self):
+            return False
+
+    module = import_module(type(importer).__module__)
+    monkeypatch.setattr(module, "Path", MissingPath)
+    importer.csv_file_path = str(MissingPath("synthetic") / "statistics.csv")
+    with pytest.raises(FileNotFoundError) as error:
+        importer.fetch_data()
+    assert str(error.value) == "CSV file not found: synthetic/statistics.csv"
 
 
 @pytest.mark.parametrize("missing", MISSING, ids=["none", "nan", "pandas-na"])
