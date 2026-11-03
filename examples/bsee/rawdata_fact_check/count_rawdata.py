@@ -12,7 +12,8 @@ Counting rules
 - A new-well permit is counted once per well (API well number): the permit with the
   lowest SN_APD among the "New Well" permits of that well in the Gulf of Mexico region
   (REGION_CODE "G"), by the year of its requested spud date, with the rig type that
-  permit names.
+  permit names. Wells whose first permit gives no requested spud date are left out and
+  counted in ``no_spud_date``.
 - Rig types are reported as named in RIG_TYPE_CODE. Types with fewer than 1 % of the
   permits counted (barge, barge rig, well intervention vessel, blank) are grouped as
   "Other", and the grouping is printed with the counts.
@@ -122,9 +123,13 @@ def count_permits(permits: list[dict], first_year: int, last_year: int) -> dict:
     table = {y: collections.Counter() for y in years}
     depth = collections.defaultdict(list)
     other_codes = collections.Counter()
+    no_spud_date = 0
     for r in permits:
         d = mdy(r["REQ_SPUD_DATE"])
-        if not d or d[0] not in table:
+        if not d:
+            no_spud_date += 1
+            continue
+        if d[0] not in table:
             continue
         label = rig_label(r["RIG_TYPE_CODE"])
         table[d[0]][label] += 1
@@ -153,6 +158,7 @@ def count_permits(permits: list[dict], first_year: int, last_year: int) -> dict:
         "all": sum(totals.values()),
         "water_depth": water,
         "other_grouped": dict(other_codes),
+        "no_spud_date": no_spud_date,
     }
 
 
@@ -227,6 +233,9 @@ def self_test() -> None:
         ),  # not a New Well
         apd(6, "D", "New Well", "P", "6/1/2005", "JACKUP", "80"),  # Pacific region
         apd(7, "E", "New Well", "G", "2/2/2006", "Barge Rig", "12"),  # grouped as Other
+        apd(
+            8, "F", "New Well", "G", "", "JACKUP", "50"
+        ),  # no requested spud date: left out
     ]
     p = count_permits(first_new_well_permits(rows), 2005, 2006)
     # Hand count: 2005 holds A (jack-up, 90 ft) and B (drillship); 2006 holds E (Other).
@@ -234,6 +243,7 @@ def self_test() -> None:
     assert p["by_year"][0]["Drillship"] == 1 and p["by_year"][1]["Other"] == 1
     assert p["water_depth"]["Jack-up"]["median_ft"] == 90.0  # A's first permit, not 100
     assert p["other_grouped"] == {"BARGE RIG": 1} and p["all"] == 3
+    assert p["no_spud_date"] == 1  # well F
     inv = count_investigations(
         [
             {

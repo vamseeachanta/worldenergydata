@@ -34,7 +34,9 @@ With `--out <folder>` it also writes `new-well-permits-by-rig-type.csv` and
 
 - One permit per well (API well number): the lowest `SN_APD` among the well's
   `New Well` permits with `REGION_CODE` `G` (Gulf of Mexico), counted in the year of its
-  requested spud date, with the rig type named in that permit.
+  requested spud date, with the rig type named in that permit. Wells whose first `New Well`
+  permit gives no requested spud date are left out; their number is printed as
+  `no_spud_date`.
 - Rig types are named as in `RIG_TYPE_CODE`: jack-up, drillship, semisubmersible,
   DP (dynamically positioned) semisubmersible, platform rig and submersible. Barge,
   barge rig and well intervention vessel, each under 1 % of the permits counted, are
@@ -58,7 +60,7 @@ years counted. The self-test runs a hand-counted synthetic case and needs no fil
 The files of 2 November 2026 (APDRawData.zip SHA-256 `b4ab6606...99c0`,
 IncInvRawData.zip SHA-256 `bb738acc...59b1`) give, for 2005 to 2026:
 
-- 2,895 new-well permits: jack-up 1,333; drillship 758; semisubmersible 282;
+- 2,895 new-well permits (10 wells left out for no requested spud date): jack-up 1,333; drillship 758; semisubmersible 282;
   DP semisubmersible 260; platform rig 162; submersible 81; other 19;
 - 2005: 322 permits, 234 naming a jack-up; 2025: 47 permits, 44 naming a drillship;
 - 2,029 investigations of incidents from 4 January 1995 to 24 October 2026: 1,948 by a
