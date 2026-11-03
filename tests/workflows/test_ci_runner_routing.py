@@ -4,6 +4,7 @@ import ast
 import json
 import os
 import re
+import shlex
 import subprocess
 import sys
 from pathlib import Path
@@ -33,8 +34,11 @@ def runner_labels(expression: str, context: dict) -> object:
         if isinstance(node, (ast.Constant, ast.List)):
             return ast.literal_eval(node)
         if isinstance(node, ast.Compare):
-            assert len(node.ops) == 1 and isinstance(node.ops[0], ast.Eq)
-            return interpret(node.left) == interpret(node.comparators[0])
+            assert len(node.ops) == 1 and isinstance(node.ops[0], (ast.Eq, ast.NotEq))
+            left, right = interpret(node.left), interpret(node.comparators[0])
+            return (
+                left != right if isinstance(node.ops[0], ast.NotEq) else left == right
+            )
         assert isinstance(node, ast.BoolOp)
         result = interpret(node.values[0])
         for operand in node.values[1:]:
@@ -45,21 +49,24 @@ def runner_labels(expression: str, context: dict) -> object:
             result = interpret(operand)
         return result
 
-    return interpret(ast.parse(expression.strip(), mode="eval").body)
+    return interpret(ast.parse(f"({expression.strip()})", mode="eval").body)
 
 
 @pytest.mark.parametrize(
     "event,fork,head,expected",
     [
         ("pull_request", True, "different", "ubuntu-latest"),
-        ("pull_request", False, "same", ["self-hosted", "x64"]),
-        ("push", None, None, ["self-hosted", "x64"]),
-        ("schedule", None, None, ["self-hosted", "x64"]),
-        ("workflow_dispatch", None, None, ["self-hosted", "x64"]),
+        ("pull_request", None, None, "ubuntu-latest"),
+        ("pull_request", False, None, "ubuntu-latest"),
+        ("pull_request", False, "different", "ubuntu-latest"),
+        ("pull_request", False, "same", ["self-hosted", "x64", "linux"]),
+        ("push", None, None, ["self-hosted", "x64", "linux"]),
+        ("schedule", None, None, ["self-hosted", "x64", "linux"]),
+        ("workflow_dispatch", None, None, ["self-hosted", "x64", "linux"]),
     ],
 )
 def test_every_job_routes_trusted_events_and_isolates_forks(
-    event: str, fork: bool, head: str, expected: object
+    event: str, fork: bool | None, head: str | None, expected: object
 ) -> None:
     """Cover every declared job, including discovery, domain tests and aggregation."""
     context = {
@@ -69,16 +76,115 @@ def test_every_job_routes_trusted_events_and_isolates_forks(
         "github.repository": "same",
     }
     for path in sorted(WORKFLOWS.glob("*.yml")):
-        for job_id, job in load_workflow(path.name)["jobs"].items():
+        workflow = load_workflow(path.name)
+        for job_id, job in workflow["jobs"].items():
             if "uses" in job:
                 assert job["uses"] == "./.github/workflows/domain-matrix.yml"
                 assert (WORKFLOWS / "domain-matrix.yml").is_file()
+                continue
+            if isinstance(job["runs-on"], list):
+                events = workflow.get("on", workflow.get(True))
+                assert events and set(events) <= {
+                    "push",
+                    "schedule",
+                    "workflow_dispatch",
+                }, "Literal runners require trusted triggers"
+                assert {"self-hosted", "x64"} <= set(job["runs-on"])
                 continue
             assert runner_labels(job["runs-on"], context) == expected, (
                 path.name,
                 job_id,
                 event,
             )
+
+
+@pytest.mark.parametrize("event", ["push", "schedule", "workflow_dispatch"])
+def test_routing_accepts_literal_labels_for_trusted_workflows(
+    tmp_path: Path, monkeypatch, event: str
+) -> None:
+    """A workflow without PR entry points may use a literal runner list."""
+    workflow = {
+        "on": {event: None},
+        "jobs": {"full-suite": {"runs-on": ["self-hosted", "x64"]}},
+    }
+    (tmp_path / "trusted.yml").write_text(yaml.safe_dump(workflow), encoding="utf-8")
+    monkeypatch.setattr(sys.modules[__name__], "WORKFLOWS", tmp_path)
+    test_every_job_routes_trusted_events_and_isolates_forks(
+        event, None, None, ["self-hosted", "x64", "linux"]
+    )
+
+
+@pytest.mark.parametrize(
+    "event", ["pull_request", "workflow_call", "pull_request_target"]
+)
+def test_literal_labels_cannot_bypass_untrusted_event_routing(
+    tmp_path: Path, monkeypatch, event: str
+) -> None:
+    """Reusable workflows must retain the caller's PR isolation policy."""
+    workflow = {
+        "on": {"workflow_dispatch": None, event: None},
+        "jobs": {"unsafe": {"runs-on": ["self-hosted", "x64"]}},
+    }
+    (tmp_path / "unsafe.yml").write_text(yaml.safe_dump(workflow), encoding="utf-8")
+    monkeypatch.setattr(sys.modules[__name__], "WORKFLOWS", tmp_path)
+    with pytest.raises(
+        AssertionError, match="Literal runners require trusted triggers"
+    ):
+        test_every_job_routes_trusted_events_and_isolates_forks(
+            "pull_request", None, None, "ubuntu-latest"
+        )
+
+
+@pytest.mark.parametrize(
+    "workflow_name,job_id,maximum",
+    [
+        ("domain-matrix.yml", "discover", 10),
+        ("domain-matrix.yml", "test-domain", 60),
+        ("domain-matrix.yml", "aggregate", 10),
+        ("ci.yml", "lint", 30),
+        ("ci.yml", "security", 30),
+        ("release.yml", "publish-testpypi", 15),
+        ("release.yml", "publish-pypi", 15),
+    ],
+)
+def test_expensive_and_publishing_jobs_have_bounded_timeouts(
+    workflow_name: str, job_id: str, maximum: int
+) -> None:
+    assert (
+        0 < load_workflow(workflow_name)["jobs"][job_id]["timeout-minutes"] <= maximum
+    )
+
+
+@pytest.mark.parametrize(
+    "job_id,step_name,tool",
+    [
+        ("publish-testpypi", "Publish to Test PyPI", "twine"),
+        ("publish-pypi", "Publish to PyPI", "twine"),
+        ("publish-testpypi", "Test installation from Test PyPI", "python"),
+    ],
+)
+def test_release_tools_ignore_reused_workspace(
+    job_id: str, step_name: str, tool: str
+) -> None:
+    """Never discover a project or mutate its environment during publication."""
+    job = load_workflow("release.yml")["jobs"][job_id]
+    step = next(step for step in job["steps"] if step["name"] == step_name)
+    assert step.get("working-directory") == "${{ runner.temp }}"
+    commands = [
+        shlex.split(line)
+        for line in step["run"].replace("\\\n", " ").splitlines()
+        if line.strip() and not line.lstrip().startswith("sleep ")
+    ]
+    assert len(commands) == 1
+    command = commands[0]
+    assert command[:3] == ["uv", "run", "--no-project"]
+    assert command[3] == "--with"
+    if tool == "twine":
+        assert command[4:7] == ["twine", "twine", "upload"]
+    else:
+        assert "validate" in job["needs"]
+        assert command[4] == "worldenergydata==${{ needs.validate.outputs.version }}"
+        assert command[-3:] == ["python", "-c", "import worldenergydata"]
 
 
 def test_domain_gate_keeps_all_three_jobs_and_read_only_permissions() -> None:
@@ -179,14 +285,18 @@ def test_publish_excludes_stale_distributions(tmp_path: Path, job_id: str) -> No
     stale.write_bytes(b"")
     recorder = tools / "uv"
     recorder.write_text(
-        '#!/usr/bin/env bash\nif [ "$1 $2 $3" = "run twine upload" ]; then\n'
-        '  printf "%s\\0" "$@" > "$UPLOAD_ARGS"\nfi\n',
+        '#!/usr/bin/env bash\nprintf "%s\\0" "$@" > "$UPLOAD_ARGS"\n'
+        'printf "%s" "$PWD" > "$UPLOAD_CWD"\n',
         encoding="utf-8",
         newline="\n",
     )
     recorder.chmod(0o755)
     env = dict(os.environ, PATH=f"{tools}{os.pathsep}{os.environ['PATH']}")
-    env.update(RUNNER_TEMP=str(runner), UPLOAD_ARGS=str(tmp_path / "upload-args"))
+    env.update(
+        RUNNER_TEMP=str(runner),
+        UPLOAD_ARGS=str(tmp_path / "upload-args"),
+        UPLOAD_CWD=str(tmp_path / "upload-cwd"),
+    )
     destinations = []
     for attempt in range(2):
         output = tmp_path / f"output-{attempt}"
@@ -210,13 +320,26 @@ def test_publish_excludes_stale_distributions(tmp_path: Path, job_id: str) -> No
         env["DIST_DIR"] = str(directory)
         subprocess.run(
             ["bash", "-euo", "pipefail", "-c", publish["run"]],
-            cwd=tmp_path,
+            cwd=(
+                runner
+                if publish.get("working-directory") == "${{ runner.temp }}"
+                else tmp_path
+            ),
             env=env,
             check=True,
             capture_output=True,
             encoding="utf-8",
         )
         arguments = Path(env["UPLOAD_ARGS"]).read_bytes().split(b"\0")[:-1]
+        assert arguments[:6] == [
+            b"run",
+            b"--no-project",
+            b"--with",
+            b"twine",
+            b"twine",
+            b"upload",
+        ]
+        assert Path(env["UPLOAD_CWD"]).read_text(encoding="utf-8") == str(runner)
         wheels = [os.fsdecode(arg) for arg in arguments if arg.endswith(b".whl")]
         assert wheels == [str(current)]
         assert stale.exists()

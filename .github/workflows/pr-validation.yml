@@ -11,7 +11,10 @@ permissions:
 jobs:
   pr-title:
     name: Validate PR Title
-    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
+    runs-on: >-
+      ${{ (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository) &&
+          fromJSON('["self-hosted","x64","linux"]') || 'ubuntu-latest' }}
 
     steps:
       - name: Check PR title format
@@ -39,7 +42,10 @@ jobs:
 
   file-size:
     name: Check File Sizes
-    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
+    runs-on: >-
+      ${{ (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository) &&
+          fromJSON('["self-hosted","x64","linux"]') || 'ubuntu-latest' }}
 
     steps:
       - name: Checkout repository
@@ -67,7 +73,10 @@ jobs:
 
   sensitive-files:
     name: Check Sensitive Files
-    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
+    runs-on: >-
+      ${{ (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository) &&
+          fromJSON('["self-hosted","x64","linux"]') || 'ubuntu-latest' }}
 
     steps:
       - name: Checkout repository
@@ -127,7 +136,10 @@ jobs:
 
   changelog-check:
     name: Changelog Check
-    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
+    runs-on: >-
+      ${{ (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository) &&
+          fromJSON('["self-hosted","x64","linux"]') || 'ubuntu-latest' }}
     # NOTE: This job must ALWAYS run. "Changelog Check" is a required status check
     # in the main branch ruleset, and a required check that is skipped (via a
     # job-level `if:`) is never "satisfied" — it deadlocks the PR at BLOCKED
@@ -150,7 +162,10 @@ jobs:
 
   code-owners:
     name: Code Owners Check
-    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
+    runs-on: >-
+      ${{ (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository) &&
+          fromJSON('["self-hosted","x64","linux"]') || 'ubuntu-latest' }}
 
     steps:
       - name: Checkout repository
@@ -166,7 +181,10 @@ jobs:
 
   pack-lint:
     name: Lint Changed Knowledge Packs
-    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
+    runs-on: >-
+      ${{ (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository) &&
+          fromJSON('["self-hosted","x64","linux"]') || 'ubuntu-latest' }}
     permissions:
       contents: read
 

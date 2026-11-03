@@ -12,7 +12,10 @@ env:
 jobs:
   full-test-suite:
     name: Full Test Suite
-    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
+    runs-on: >-
+      ${{ (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository) &&
+          fromJSON('["self-hosted","x64","linux"]') || 'ubuntu-latest' }}
 
     steps:
       - name: Checkout repository
@@ -48,7 +51,10 @@ jobs:
 
   dependency-audit:
     name: Dependency Audit
-    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
+    runs-on: >-
+      ${{ (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository) &&
+          fromJSON('["self-hosted","x64","linux"]') || 'ubuntu-latest' }}
 
     steps:
       - name: Checkout repository
@@ -76,7 +82,10 @@ jobs:
 
   performance-benchmark:
     name: Performance Benchmark
-    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
+    runs-on: >-
+      ${{ (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository) &&
+          fromJSON('["self-hosted","x64","linux"]') || 'ubuntu-latest' }}
 
     steps:
       - name: Checkout repository
@@ -111,7 +120,10 @@ jobs:
 
   notify-failure:
     name: Notify on Failure
-    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
+    runs-on: >-
+      ${{ (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository) &&
+          fromJSON('["self-hosted","x64","linux"]') || 'ubuntu-latest' }}
     needs: [full-test-suite, dependency-audit]
     if: failure()
 

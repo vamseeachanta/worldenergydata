@@ -57,14 +57,18 @@ jobs:
   # --------------------------------------------------------------- discover --
   discover:
     name: Discover domains
-    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
+    runs-on: >-
+      ${{ (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository) &&
+          fromJSON('["self-hosted","x64","linux"]') || 'ubuntu-latest' }}
+    timeout-minutes: 10
     outputs:
       matrix: ${{ steps.sel.outputs.matrix }}
       scope: ${{ steps.sel.outputs.scope }}
       matrix-size: ${{ steps.sel.outputs.matrix-size }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
           fetch-depth: 0 # need the base commit to diff changed files
@@ -226,14 +230,18 @@ jobs:
   test-domain:
     name: Domain ${{ matrix.name }}
     needs: discover
-    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
+    runs-on: >-
+      ${{ (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository) &&
+          fromJSON('["self-hosted","x64","linux"]') || 'ubuntu-latest' }}
+    timeout-minutes: 60
     strategy:
       fail-fast: false # one red domain must not cancel the others
       max-parallel: ${{ inputs.max-parallel }}
       matrix: ${{ fromJSON(needs.discover.outputs.matrix) }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
 
@@ -254,7 +262,7 @@ jobs:
 
       - name: Set up Python (setup-python)
         if: ${{ inputs.python-setup == 'setup-python' }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: ${{ inputs.python-version }}
 
@@ -364,7 +372,11 @@ jobs:
     name: Aggregate domain results
     needs: [discover, test-domain]
     if: always()
-    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
+    runs-on: >-
+      ${{ (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository) &&
+          fromJSON('["self-hosted","x64","linux"]') || 'ubuntu-latest' }}
+    timeout-minutes: 10
     steps:
       - name: Aggregate domain results
         env:

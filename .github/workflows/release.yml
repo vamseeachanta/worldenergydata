@@ -27,7 +27,10 @@ env:
 jobs:
   validate:
     name: Validate Release
-    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
+    runs-on: >-
+      ${{ (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository) &&
+          fromJSON('["self-hosted","x64","linux"]') || 'ubuntu-latest' }}
     outputs:
       version: ${{ steps.version.outputs.version }}
 
@@ -58,7 +61,10 @@ jobs:
 
   test:
     name: Run Tests
-    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
+    runs-on: >-
+      ${{ (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository) &&
+          fromJSON('["self-hosted","x64","linux"]') || 'ubuntu-latest' }}
     needs: validate
 
     steps:
@@ -81,7 +87,10 @@ jobs:
 
   build:
     name: Build Package
-    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
+    runs-on: >-
+      ${{ (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository) &&
+          fromJSON('["self-hosted","x64","linux"]') || 'ubuntu-latest' }}
     needs: [validate, test]
 
     steps:
@@ -121,8 +130,12 @@ jobs:
 
   publish-testpypi:
     name: Publish to Test PyPI
-    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
-    needs: build
+    runs-on: >-
+      ${{ (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository) &&
+          fromJSON('["self-hosted","x64","linux"]') || 'ubuntu-latest' }}
+    timeout-minutes: 15
+    needs: [validate, build]
     if: |
       (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')) ||
       (github.event_name == 'workflow_dispatch' && github.event.inputs.publish_testpypi == 'true')
@@ -150,23 +163,32 @@ jobs:
         run: uv python install ${{ env.PYTHON_VERSION }}
 
       - name: Publish to Test PyPI
+        working-directory: ${{ runner.temp }}
         run: |
-          uv pip install twine
-          uv run twine upload --repository testpypi "$DIST_DIR"/*
+          uv run --no-project --with twine twine upload --repository testpypi "$DIST_DIR"/*
         env:
           DIST_DIR: ${{ steps.release_dist.outputs.path }}
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.TEST_PYPI_API_TOKEN }}
 
       - name: Test installation from Test PyPI
+        working-directory: ${{ runner.temp }}
         run: |
           sleep 30  # Wait for package to be available
-          uv pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ worldenergydata==${{ needs.validate.outputs.version }}
+          uv run --no-project \
+            --with "worldenergydata==${{ needs.validate.outputs.version }}" \
+            --index-url https://test.pypi.org/simple/ \
+            --extra-index-url https://pypi.org/simple/ \
+            python -c "import worldenergydata"
         continue-on-error: true
 
   publish-pypi:
     name: Publish to PyPI
-    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
+    runs-on: >-
+      ${{ (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository) &&
+          fromJSON('["self-hosted","x64","linux"]') || 'ubuntu-latest' }}
+    timeout-minutes: 15
     needs: [build, publish-testpypi]
     if: |
       always() &&
@@ -197,9 +219,9 @@ jobs:
         run: uv python install ${{ env.PYTHON_VERSION }}
 
       - name: Publish to PyPI
+        working-directory: ${{ runner.temp }}
         run: |
-          uv pip install twine
-          uv run twine upload "$DIST_DIR"/*
+          uv run --no-project --with twine twine upload "$DIST_DIR"/*
         env:
           DIST_DIR: ${{ steps.release_dist.outputs.path }}
           TWINE_USERNAME: __token__
@@ -207,7 +229,10 @@ jobs:
 
   github-release:
     name: Create GitHub Release
-    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
+    runs-on: >-
+      ${{ (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository) &&
+          fromJSON('["self-hosted","x64","linux"]') || 'ubuntu-latest' }}
     needs: [validate, build, publish-pypi]
     if: |
       always() &&
