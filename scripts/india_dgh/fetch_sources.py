@@ -42,7 +42,7 @@ ALLOWED_HOSTS = {
     "data.gov.in",
     "www.data.gov.in",
 }
-USER_AGENT = "worldenergydata-india_dgh/0.1 (+https://github.com/vamseeachanta/worldenergydata)"
+USER_AGENT = "worldenergydata-india_dgh/0.1"
 MAX_BYTES = 60 * 1024 * 1024
 
 
@@ -86,8 +86,9 @@ def main(argv: list[str] | None = None) -> int:
             failures += 1
             continue
         digest = hashlib.sha256(payload).hexdigest()
-        target.write_bytes(payload)
         status = "OK" if digest == entry["sha256"] else "DIGEST-CHANGED"
+        if status == "OK":
+            target.write_bytes(payload)
         failures += status != "OK"
         print(f"{status} {entry['id']} {len(payload)} bytes sha256={digest}")
     return 1 if failures else 0

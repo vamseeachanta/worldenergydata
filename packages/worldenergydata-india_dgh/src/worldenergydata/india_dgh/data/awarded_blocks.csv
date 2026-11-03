@@ -86,13 +86,13 @@ OALP-III,OALP,MB-OSHP-2018/1,Mumbai,block_code,,,shallow_water,block_code,,,ONGC
 OALP-III,OALP,MB-OSHP-2018/2,Mumbai,block_code,,,shallow_water,block_code,,,ONGC Limited,,,dgh_oalp3_awardees,1
 OALP-III,OALP,KK-OSHP-2018/1,Kerala-Konkan,block_code,,,shallow_water,block_code,,,Oil India Limited,,,dgh_oalp3_awardees,1
 OALP-III,OALP,MN-DWHP-2018/1,Mahanadi,block_code,,,deep_water,block_code,,,ONGC Limited,,,dgh_oalp3_awardees,1
-OALP-IV,OALP,RJ-ONHP-2019/1,Rajasthan,block_code,Rajasthan,I,onland,source_table,2118.83,award_list,Oil and Natural Gas Corporation Limited,,2020-01-02,dgh_oalp4_contract_signing,2
-OALP-IV,OALP,VN-ONHP-2019/1,Vindhyan,block_code,Vindhayan,II,onland,source_table,2730.73,award_list,Oil and Natural Gas Corporation Limited,,2020-01-02,dgh_oalp4_contract_signing,2
-OALP-IV,OALP,VN-ONHP-2019/2,Vindhyan,block_code,Vindhayan,II,onland,source_table,3077.65,award_list,Oil and Natural Gas Corporation Limited,,2020-01-02,dgh_oalp4_contract_signing,2
-OALP-IV,OALP,VN-ONHP-2019/3,Vindhyan,block_code,Vindhayan,II,onland,source_table,3097.17,award_list,Oil and Natural Gas Corporation Limited,,2020-01-02,dgh_oalp4_contract_signing,2
-OALP-IV,OALP,VN-ONHP-2019/4,Vindhyan,block_code,Vindhayan,II,onland,source_table,2932.74,award_list,Oil and Natural Gas Corporation Limited,,2020-01-02,dgh_oalp4_contract_signing,2
-OALP-IV,OALP,VN-ONHP-2019/5,Vindhyan,block_code,Vindhayan,II,onland,source_table,1421.66,award_list,Oil and Natural Gas Corporation Limited,,2020-01-02,dgh_oalp4_contract_signing,2
-OALP-IV,OALP,BP-ONHP-2019/1,Bengal-Purnea,block_code,Bengal Purnea,III,onland,source_table,3130.91,award_list,Oil and Natural Gas Corporation Limited,,2020-01-02,dgh_oalp4_contract_signing,2
+OALP-IV,OALP,RJ-ONHP-2019/1,Rajasthan,block_code,Rajasthan,I,onland,source_table,2118.83,award_list,Oil and Natural Gas Corporation Limited,Rajasthan,2020-01-02,dgh_oalp4_contract_signing,2
+OALP-IV,OALP,VN-ONHP-2019/1,Vindhyan,block_code,Vindhayan,II,onland,source_table,2730.73,award_list,Oil and Natural Gas Corporation Limited,Madhya Pradesh,2020-01-02,dgh_oalp4_contract_signing,2
+OALP-IV,OALP,VN-ONHP-2019/2,Vindhyan,block_code,Vindhayan,II,onland,source_table,3077.65,award_list,Oil and Natural Gas Corporation Limited,Madhya Pradesh,2020-01-02,dgh_oalp4_contract_signing,2
+OALP-IV,OALP,VN-ONHP-2019/3,Vindhyan,block_code,Vindhayan,II,onland,source_table,3097.17,award_list,Oil and Natural Gas Corporation Limited,Madhya Pradesh,2020-01-02,dgh_oalp4_contract_signing,2
+OALP-IV,OALP,VN-ONHP-2019/4,Vindhyan,block_code,Vindhayan,II,onland,source_table,2932.74,award_list,Oil and Natural Gas Corporation Limited,Madhya Pradesh,2020-01-02,dgh_oalp4_contract_signing,2
+OALP-IV,OALP,VN-ONHP-2019/5,Vindhyan,block_code,Vindhayan,II,onland,source_table,1421.66,award_list,Oil and Natural Gas Corporation Limited,Madhya Pradesh,2020-01-02,dgh_oalp4_contract_signing,2
+OALP-IV,OALP,BP-ONHP-2019/1,Bengal-Purnea,block_code,Bengal Purnea,III,onland,source_table,3130.91,award_list,Oil and Natural Gas Corporation Limited,West Bengal,2020-01-02,dgh_oalp4_contract_signing,2
 OALP-V,OALP,AA-ONHP-2019/1,Assam-Arakan Fold Belt,block_code,Assam Shelf & Assam Arakan,I,onland,block_code,,,OIL,,,dgh_oalp5_blocks_awarded,1
 OALP-V,OALP,AA-ONHP-2019/2,Assam-Arakan Fold Belt,block_code,Assam Shelf & Assam Arakan,I,onland,block_code,,,OIL,,,dgh_oalp5_blocks_awarded,1
 OALP-V,OALP,BP-ONHP-2019/2,Bengal-Purnea,block_code,Bengal-Purnea,III,onland,block_code,,,ONGC,,,dgh_oalp5_blocks_awarded,1
@@ -133,16 +133,16 @@ OALP-VII,OALP,CY-UDWHP-2021/1,Cauvery,block_code,Cauvery,I,ultra_deep_water,bloc
 OALP-VII,OALP,AS-ONHP-2021/2,Assam Shelf,block_code,Assam Shelf,I,onland,block_code,,,OIL INDIA LIMITED,,2022-06-28,dgh_oalp7_awardees,1
 OALP-VII,OALP,AS-ONHP-2021/3,Assam Shelf,block_code,Assam Shelf,I,onland,block_code,,,OIL INDIA LIMITED,,2022-06-28,dgh_oalp7_awardees,1
 OALP-VII,OALP,CB-OSHP-2021/3,Cambay,block_code,Cambay,I,shallow_water,block_code,,,SUN PETROCHEMICALS PVT LTD.,,2022-06-28,dgh_oalp7_awardees,1
-OALP-VIII,OALP,AS-ONHP-2022/1,Assam Shelf,block_code,Assam Shelf,I,onland,source_table,2057.63,award_list,Oil India Ltd.,,,dgh_oalp8_blocks_awarded,1
-OALP-VIII,OALP,CB-ONHP-2022/1,Cambay,block_code,Cambay,I,onland,source_table,188.52,award_list,ONGC Ltd.,,,dgh_oalp8_blocks_awarded,1
-OALP-VIII,OALP,KG-UDWHP-2022/1,Krishna-Godavari,block_code,KG Offshore,I,ultra_deep_water,source_table,1199.64,award_list,RIL-BP (Consortium),,,dgh_oalp8_blocks_awarded,1
-OALP-VIII,OALP,MB-OSHP-2022/1,Mumbai,block_code,Mumbai Offshore,I,shallow_water,source_table,4107.97,award_list,ONGC Ltd.,,,dgh_oalp8_blocks_awarded,1
-OALP-VIII,OALP,GK-OSHP-2022/1,Kutch,block_code,Kutch Offshore,II,shallow_water,source_table,765.54,award_list,Sun Petrochemicals Pvt Ltd.,,,dgh_oalp8_blocks_awarded,1
-OALP-VIII,OALP,GS-DWHP-2022/1,Saurashtra,block_code,Saurashtra Offshore,II,deep_water,source_table,2742.7,award_list,ONGC Ltd.,,,dgh_oalp8_blocks_awarded,1
-OALP-VIII,OALP,MN-UDWHP-2022/1,Mahanadi,block_code,Mahanadi Offshore,II,ultra_deep_water,source_table,9717.34,award_list,ONGC Ltd.,,,dgh_oalp8_blocks_awarded,1
-OALP-VIII,OALP,BP-OSHP-2022/1,Bengal-Purnea,block_code,Bengal Purnea Offshore,III,shallow_water,source_table,5754.92,award_list,ONGC Ltd.,,,dgh_oalp8_blocks_awarded,1
-OALP-VIII,OALP,KK-DWHP-2022/1,Kerala-Konkan,block_code,Kerala-Konkan Offshore,III,deep_water,source_table,1112.71,award_list,ONGC Ltd.,,,dgh_oalp8_blocks_awarded,2
-OALP-VIII,OALP,KK-OSHP-2022/1,Kerala-Konkan,block_code,Kerala-Konkan Offshore,III,shallow_water,source_table,6717.56,award_list,ONGC Ltd.,,,dgh_oalp8_blocks_awarded,2
+OALP-VIII,OALP,AS-ONHP-2022/1,Assam Shelf,block_code,Assam Shelf,I,onland,source_table,2057.63,award_list,Oil India Ltd.,Assam,,dgh_oalp8_blocks_awarded,1
+OALP-VIII,OALP,CB-ONHP-2022/1,Cambay,block_code,Cambay,I,onland,source_table,188.52,award_list,ONGC Ltd.,Gujarat,,dgh_oalp8_blocks_awarded,1
+OALP-VIII,OALP,KG-UDWHP-2022/1,Krishna-Godavari,block_code,KG Offshore,I,ultra_deep_water,source_table,1199.64,award_list,RIL-BP (Consortium),Eastern Offshore,,dgh_oalp8_blocks_awarded,1
+OALP-VIII,OALP,MB-OSHP-2022/1,Mumbai,block_code,Mumbai Offshore,I,shallow_water,source_table,4107.97,award_list,ONGC Ltd.,Western Offshore,,dgh_oalp8_blocks_awarded,1
+OALP-VIII,OALP,GK-OSHP-2022/1,Kutch,block_code,Kutch Offshore,II,shallow_water,source_table,765.54,award_list,Sun Petrochemicals Pvt Ltd.,Western Offshore,,dgh_oalp8_blocks_awarded,1
+OALP-VIII,OALP,GS-DWHP-2022/1,Saurashtra,block_code,Saurashtra Offshore,II,deep_water,source_table,2742.7,award_list,ONGC Ltd.,Western Offshore,,dgh_oalp8_blocks_awarded,1
+OALP-VIII,OALP,MN-UDWHP-2022/1,Mahanadi,block_code,Mahanadi Offshore,II,ultra_deep_water,source_table,9717.34,award_list,ONGC Ltd.,Eastern Offshore,,dgh_oalp8_blocks_awarded,1
+OALP-VIII,OALP,BP-OSHP-2022/1,Bengal-Purnea,block_code,Bengal Purnea Offshore,III,shallow_water,source_table,5754.92,award_list,ONGC Ltd.,Eastern Offshore,,dgh_oalp8_blocks_awarded,1
+OALP-VIII,OALP,KK-DWHP-2022/1,Kerala-Konkan,block_code,Kerala-Konkan Offshore,III,deep_water,source_table,1112.71,award_list,ONGC Ltd.,Eastern Offshore,,dgh_oalp8_blocks_awarded,2
+OALP-VIII,OALP,KK-OSHP-2022/1,Kerala-Konkan,block_code,Kerala-Konkan Offshore,III,shallow_water,source_table,6717.56,award_list,ONGC Ltd.,Western Offshore,,dgh_oalp8_blocks_awarded,2
 OALP-IX,OALP,CY-UDWHP-2022/1,Cauvery,block_code,Cauvery,I,ultra_deep_water,block_code,9514.63,offer_list,OIL AND NATURAL GAS CORPORATION LIMITED,,2025-04-15,dgh_oalp9_awardees,1
 OALP-IX,OALP,CY-UDWHP-2022/2,Cauvery,block_code,Cauvery,I,ultra_deep_water,block_code,9844.72,offer_list,OIL AND NATURAL GAS CORPORATION LIMITED,,2025-04-15,dgh_oalp9_awardees,1
 OALP-IX,OALP,CY-UDWHP-2022/3,Cauvery,block_code,Cauvery,I,ultra_deep_water,block_code,7795.45,offer_list,OIL AND NATURAL GAS CORPORATION LIMITED,,2025-04-15,dgh_oalp9_awardees,1

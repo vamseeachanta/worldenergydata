@@ -8,7 +8,7 @@ copies the three listing sentences of that page verbatim in structure.
 import pytest
 
 from worldenergydata.india_dgh import load_basins
-from worldenergydata.india_dgh.basins import EXPECTED_COUNTS, parse_basin_page
+from worldenergydata.india_dgh.basins import parse_basin_page
 
 PAGE = """<p>Based on conventional resource potential, 7 basins are grouped under
 Category-I covering 30% of total basinal area. These 7 basins are namely
@@ -27,7 +27,7 @@ Karewa, Bhima-Kaladgi, and Bastar. These basins are appraised.</p>"""
 def test_page_parses_to_26_basins_by_category():
     frame = parse_basin_page(PAGE)
     assert len(frame) == 26
-    assert frame.groupby("category").size().to_dict() == EXPECTED_COUNTS
+    assert frame.groupby("category").size().to_dict() == {"I": 7, "II": 5, "III": 14}
     row = frame.set_index("basin").loc["Himalayan Foreland"]
     assert row.basin_published == "Himalyan Foreland"  # published spelling kept
     assert row.category == "III"
@@ -41,11 +41,16 @@ def test_changed_listing_fails_closed():
 def test_shipped_basins_match_parser_contract():
     frame = load_basins()
     assert len(frame) == 26
-    assert frame.groupby("category").size().to_dict() == EXPECTED_COUNTS
+    assert frame.groupby("category").size().to_dict() == {"I": 7, "II": 5, "III": 14}
     assert not frame.basin.duplicated().any()
     assert (frame.category_as_of == "2023-01-27").all()
     # Category-I is "reserves and already producing": seven producing basins.
     assert set(frame[frame.category == "I"].basin) == {
-        "Krishna-Godavari", "Mumbai", "Assam Shelf", "Rajasthan",
-        "Cauvery", "Assam-Arakan Fold Belt", "Cambay",
+        "Krishna-Godavari",
+        "Mumbai",
+        "Assam Shelf",
+        "Rajasthan",
+        "Cauvery",
+        "Assam-Arakan Fold Belt",
+        "Cambay",
     }

@@ -155,7 +155,8 @@ def parse_area(value: str) -> float:
     if not text:
         return float("nan")
     area = float(text)
-    if not 0 < area < 100_000:
+    # The source states square kilometres but supplies no universal area cap.
+    if not math.isfinite(area) or area <= 0:
         raise ValueError(f"block area out of range: {value!r} sq. km")
     return area
 
@@ -163,25 +164,35 @@ def parse_area(value: str) -> float:
 def _header_map(rows: list[list]) -> dict[int, str]:
     """Map column index -> field from the header rows above the first block."""
     width = max(len(r) for r in rows)
-    texts = [" ".join(_clean(r[i]) for r in rows if i < len(r)).lower() for i in range(width)]
+    texts = [
+        " ".join(_clean(r[i]) for r in rows if i < len(r)).lower() for i in range(width)
+    ]
     mapping: dict[int, str] = {}
     for index, text in enumerate(texts):
         for field, required, excluded in HEADER_KEYS:
             if field in mapping.values():
                 continue  # first matching column wins
-            if all(w in text for w in required) and not any(w in text for w in excluded):
+            if all(w in text for w in required) and not any(
+                w in text for w in excluded
+            ):
                 mapping[index] = field
                 break
     return mapping
 
 
-def table_records(table: list[list], header_rows: list[list] | None = None) -> tuple[list[dict], list[list]]:
+def table_records(
+    table: list[list], header_rows: list[list] | None = None
+) -> tuple[list[dict], list[list]]:
     """Group a pdfplumber table into one record per block code.
 
     Returns the records and the header rows used, so a table that continues on
     a following page without a header can reuse the previous page's header.
     """
-    anchors = [i for i, row in enumerate(table) if any(normalize_block_code(_clean(c) or "") for c in row)]
+    anchors = [
+        i
+        for i, row in enumerate(table)
+        if any(normalize_block_code(_clean(c) or "") for c in row)
+    ]
     if not anchors:
         return [], header_rows or []
     header = table[: anchors[0]] if anchors[0] else (header_rows or [])
@@ -194,11 +205,17 @@ def table_records(table: list[list], header_rows: list[list] | None = None) -> t
         if normalize_block_code(_clean(cell))
     )
     block_column = columns.most_common(1)[0][0]
-    mapping = {i: f for i, f in mapping.items() if f != "block_name" and i != block_column}
+    mapping = {
+        i: f for i, f in mapping.items() if f != "block_name" and i != block_column
+    }
     mapping[block_column] = "block_name"
     if not header:
         raise ValueError("block table header not recognised")
-    totals = [i for i, row in enumerate(table) if _clean(next((c for c in row if _clean(c)), "")).lower().startswith("total")]
+    totals = [
+        i
+        for i, row in enumerate(table)
+        if _clean(next((c for c in row if _clean(c)), "")).lower().startswith("total")
+    ]
     records = []
     bounds = anchors + [len(table)]
     for start, end in zip(bounds, bounds[1:]):
@@ -206,7 +223,11 @@ def table_records(table: list[list], header_rows: list[list] | None = None) -> t
         group = table[start:end]
         record: dict[str, str] = {}
         for index, field in mapping.items():
-            parts = [_clean(row[index]) for row in group if index < len(row) and _clean(row[index])]
+            parts = [
+                _clean(row[index])
+                for row in group
+                if index < len(row) and _clean(row[index])
+            ]
             joined = " ".join(parts)
             for broken, whole in WRAP_FIXES.items():
                 joined = joined.replace(broken, whole)
@@ -216,7 +237,9 @@ def table_records(table: list[list], header_rows: list[list] | None = None) -> t
     previous = None
     for record in records:
         if record.get("awardee"):
-            record["awardee"] = re.sub(r"\(all \d+ blocks\)", "", record["awardee"], flags=re.I).strip()
+            record["awardee"] = re.sub(
+                r"\(all \d+ blocks\)", "", record["awardee"], flags=re.I
+            ).strip()
             previous = record["awardee"]
         elif "awardee" in record and previous:
             record["awardee"] = previous
@@ -227,7 +250,12 @@ def parse_round_pdf(path: str | Path, source: RoundSource) -> pd.DataFrame:
     """Parse one DGH award-list PDF into the normalized block schema."""
     import pdfplumber
 
-    settings = {"vertical_strategy": "lines", "horizontal_strategy": "lines", "snap_tolerance": 4, "join_tolerance": 4}
+    settings = {
+        "vertical_strategy": "lines",
+        "horizontal_strategy": "lines",
+        "snap_tolerance": 4,
+        "join_tolerance": 4,
+    }
     rows = []
     with pdfplumber.open(str(path)) as pdf:
         header: list[list] = []
@@ -250,10 +278,11 @@ def parse_round_pdf(path: str | Path, source: RoundSource) -> pd.DataFrame:
 def _normalize(record: dict, source: RoundSource, page: int) -> dict:
     code = normalize_block_code(record["block_name"])
     description = record.get("description", "")
+    segments = [part.strip() for part in description.split("/", 2)]
     acreage, basis = acreage_from_description(description), "source_table"
     if acreage is None:
         acreage, basis = acreage_from_code(code), "block_code"
-    published = record.get("basin") or (description.split("/")[1].strip() if description.count("/") >= 2 else "")
+    published = record.get("basin") or (segments[1] if len(segments) == 3 else "")
     basin = CODE_BASIN.get(code[:2])
     category = basin_category(record.get("basin_category", ""))
     area = parse_area(record.get("area_km2", ""))
@@ -270,7 +299,7 @@ def _normalize(record: dict, source: RoundSource, page: int) -> dict:
         "area_km2": area,
         "area_basis": None if math.isnan(area) else "award_list",
         "awardee": record.get("awardee") or None,
-        "state": record.get("state") or None,
+        "state": record.get("state") or (segments[2] if len(segments) == 3 else None),
         "contract_signed": source.contract_signed,
         "source_id": source.source_id,
         "source_page": page,
@@ -279,6 +308,8 @@ def _normalize(record: dict, source: RoundSource, page: int) -> dict:
 
 def load_awarded_blocks() -> pd.DataFrame:
     """Awarded blocks shipped with the package (built by scripts/india_dgh/build_tables.py)."""
-    frame = pd.read_csv(data_path("awarded_blocks.csv"), dtype={"basin_category": "string"})
+    frame = pd.read_csv(
+        data_path("awarded_blocks.csv"), dtype={"basin_category": "string"}
+    )
     frame["contract_signed"] = pd.to_datetime(frame["contract_signed"], errors="raise")
     return frame

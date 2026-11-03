@@ -62,7 +62,10 @@ def test_acreage_from_help_code(code, acreage):
     assert acreage_from_code(code) == acreage
 
 
-@pytest.mark.parametrize("value, expected", [("Cat-I", "I"), ("Category- II", "II"), ("III", "III"), ("", None), ("5", None)])
+@pytest.mark.parametrize(
+    "value, expected",
+    [("Cat-I", "I"), ("Category- II", "II"), ("III", "III"), ("", None), ("5", None)],
+)
 def test_basin_category(value, expected):
     assert basin_category(value) == expected
 
@@ -79,12 +82,26 @@ def test_area_parsing_keeps_blank_unknown_and_rejects_garbage():
 def test_wrapped_cells_join_to_their_block_and_total_row_is_excluded():
     """Round VIII layout: description and awardee wrap; a total row follows."""
     table = [
-        ["", "Blocks Awarded", "", "Description\n(Type / Basin /\nState)", "", "Area of"],
+        [
+            "",
+            "Blocks Awarded",
+            "",
+            "Description\n(Type / Basin /\nState)",
+            "",
+            "Area of",
+        ],
         [None, None, None, None, "Name of", None],
         ["SN.", None, "Category", None, None, "Award"],
         [None, None, None, None, "Awardee", None],
         ["", None, "", None, None, "(Sq. Km.)"],
-        ["", "KG-UDWHP-2022/1", "", "Ultra Deep\nWater/KG\nOffshore/Eastern\nOffshore", "", ""],
+        [
+            "",
+            "KG-UDWHP-2022/1",
+            "",
+            "Ultra Deep\nWater/KG\nOffshore/Eastern\nOffshore",
+            "",
+            "",
+        ],
         ["3", None, "I", None, "RIL-BP", "1199.64"],
         [None, None, None, None, "(Consortium)", None],
         ["", "GK-OSHP-2022/1", "", "Shallow\nWater/Kutch", "", ""],
@@ -103,9 +120,27 @@ def test_wrapped_cells_join_to_their_block_and_total_row_is_excluded():
 def test_merged_company_cell_carries_to_following_blocks():
     """Round IV layout: one company cell spans all seven blocks."""
     table = [
-        ["Company", "Blocks\nAwarded", "Category", "Description (Type / Basin /\nState)", "Area of Award (Sq.\nKms)"],
-        ["Oil and Natural\nGas Corporation\nLimited\n(All 7 Blocks)", "RJ-ONHP-\n2019/1", "Category-\nI", "Onland / Rajasthan / Rajasthan", "2,118.83"],
-        [None, "VN-ONHP-\n2019/1", "Category-", "Onland / Vindhayan / Madhya\nPradesh", "2,730.73"],
+        [
+            "Company",
+            "Blocks\nAwarded",
+            "Category",
+            "Description (Type / Basin /\nState)",
+            "Area of Award (Sq.\nKms)",
+        ],
+        [
+            "Oil and Natural\nGas Corporation\nLimited\n(All 7 Blocks)",
+            "RJ-ONHP-\n2019/1",
+            "Category-\nI",
+            "Onland / Rajasthan / Rajasthan",
+            "2,118.83",
+        ],
+        [
+            None,
+            "VN-ONHP-\n2019/1",
+            "Category-",
+            "Onland / Vindhayan / Madhya\nPradesh",
+            "2,730.73",
+        ],
         [None, None, "II", None, None],
     ]
     records, _ = table_records(table)
@@ -155,8 +190,13 @@ def test_published_basin_is_consistent_with_code_basin(blocks):
     aliases = {"KG": "krishna", "AN": "andaman", "GV": "ganga", "VN": "vindh"}
     for row in blocks.dropna(subset=["basin_published"]).itertuples():
         published = row.basin_published.lower().replace("-", " ")
-        stem = aliases.get(row.block_name[:2], row.basin.lower().replace("-", " ").split()[0])
-        assert stem[:5] in published or "kg" in published, (row.block_name, row.basin_published)
+        stem = aliases.get(
+            row.block_name[:2], row.basin.lower().replace("-", " ").split()[0]
+        )
+        assert stem[:5] in published or "kg" in published, (
+            row.block_name,
+            row.basin_published,
+        )
 
 
 def test_area_unknown_is_missing_not_zero(blocks):
@@ -167,3 +207,37 @@ def test_area_unknown_is_missing_not_zero(blocks):
 
 def test_contract_signed_is_date_or_missing(blocks):
     assert pd.api.types.is_datetime64_any_dtype(blocks.contract_signed)
+
+
+def test_round_iv_state_matches_source_page_two():
+    """DGH round-IV contract-signing release, page 2: Type / Basin / State."""
+    from pathlib import Path
+
+    from worldenergydata.india_dgh.blocks import RoundSource, parse_round_pdf
+
+    root = Path(__file__).resolve().parents[3]
+    source = RoundSource("OALP-IV", "OALP", "dgh_oalp4_contract_signing")
+    frame = parse_round_pdf(
+        root / "data/modules/india_dgh/raw/oalp4_contract_signing_press_release.pdf",
+        source,
+    ).set_index("block_name")
+    assert frame.loc["RJ-ONHP-2019/1", "source_page"] == 2
+    assert frame.loc["RJ-ONHP-2019/1", "state"] == "Rajasthan"
+    assert frame.loc["VN-ONHP-2019/1", "state"] == "Madhya Pradesh"
+    assert frame.loc["BP-ONHP-2019/1", "state"] == "West Bengal"
+
+
+def test_shipped_state_matches_round_iv_description():
+    frame = load_awarded_blocks().set_index("block_name")
+    assert frame.loc["RJ-ONHP-2019/1", "state"] == "Rajasthan"
+
+
+@pytest.mark.parametrize("value", ["100000", "100001"])
+def test_area_has_no_unsupported_upper_ceiling(value):
+    assert parse_area(value) == float(value)
+
+
+@pytest.mark.parametrize("value", ["nan", "inf", "-inf", "-1"])
+def test_area_must_be_positive_and_finite(value):
+    with pytest.raises(ValueError, match="area"):
+        parse_area(value)

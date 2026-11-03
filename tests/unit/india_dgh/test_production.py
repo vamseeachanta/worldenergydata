@@ -19,8 +19,20 @@ N = None
 
 def monthly_sheet(ongc=1.5, oil=0.25, private=0.5, total=2.25, title="2022-23 (P)"):
     """April populated; May blank components with a printed zero total."""
-    months = ["April", "May", "June", "July", "August", "September", "October",
-              "November", "December", "January", "February", "March"]
+    months = [
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+        "January",
+        "February",
+        "March",
+    ]
     rows = [
         [N, "Petroleum Planning & Analysis Cell"] + [N] * 12,
         [title, N, "(Million Metric Tonnes)"] + [N] * 11,
@@ -48,7 +60,7 @@ def test_month_columns_map_to_calendar_months_of_the_fiscal_year():
 
 def test_january_belongs_to_the_later_calendar_year():
     sheet = monthly_sheet()
-    sheet.iloc[5, 10] = 1.0  # ONGC, January column
+    sheet.iloc[5:11, 10] = sheet.iloc[5:11, 1]  # Complete January period
     frame = parse_ppac_sheet(sheet, "crude_oil", "s")
     assert "2023-01" in set(frame.period)
 
@@ -85,7 +97,9 @@ def test_fiscal_year_layout():
     ]
     frame = parse_ppac_sheet(pd.DataFrame(rows), "crude_oil", "s")
     assert len(frame) == 9 and set(frame.period_type) == {"fiscal_year"}
-    ongc = frame[(frame.company_group == "ONGC") & (frame.period == "1999-00")].value.iloc[0]
+    ongc = frame[
+        (frame.company_group == "ONGC") & (frame.period == "1999-00")
+    ].value.iloc[0]
     assert math.isclose(ongc, 24.7)
 
 
@@ -94,13 +108,32 @@ def test_shipped_production_is_traceable_and_non_negative():
     assert len(frame) > 0
     assert (frame.value >= 0).all()
     assert set(frame.unit) <= {"million_tonnes", "million_scm"}
-    assert not frame.duplicated(["period", "product", "measure", "company_group", "location", "state"]).any()
+    assert not frame.duplicated(
+        ["period", "product", "measure", "company_group", "location", "state"]
+    ).any()
 
 
-def gas_sheet(cbm=10.0, offshore=100.0, total=None, title="State-wise Natural Gas Production in India, 2018-19 (Month-wise)"):
+def gas_sheet(
+    cbm=10.0,
+    offshore=100.0,
+    total=None,
+    title="State-wise Natural Gas Production in India, 2018-19 (Month-wise)",
+):
     """PPAC NG month-wise layout; CBM sits outside Onshore Total (A)."""
-    months = ["April", "May", "June", "July", "August", "September", "October",
-              "November", "December", "January", "February", "March"]
+    months = [
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+        "January",
+        "February",
+        "March",
+    ]
     onshore = 30.0 + 20.0
     total = onshore + offshore + cbm if total is None else total
     rows = [
@@ -157,9 +190,99 @@ def test_hindi_crude_labels_parse():
 
 def test_shipped_production_coverage():
     frame = load_production()
-    gas = frame[(frame["product"] == "natural_gas") & (frame.measure == "gross_production")]
+    gas = frame[
+        (frame["product"] == "natural_gas") & (frame.measure == "gross_production")
+    ]
     assert gas.period.nunique() == 96  # FY2012-13 to 2018-19 and FY2021-22, monthly
     assert set(gas.location) == {"onshore", "onshore_cbm", "offshore"}
-    crude = frame[(frame["product"] == "crude_oil") & (frame.period_type == "fiscal_year")]
+    crude = frame[
+        (frame["product"] == "crude_oil") & (frame.period_type == "fiscal_year")
+    ]
     assert crude.period.min() == "1998-99" and crude.period.max() == "2021-22"
     assert set(crude.company_group) == {"ONGC", "OIL", "JVC/Private"}
+
+
+@pytest.mark.parametrize("row", [5, 6, 7, 8, 9])
+def test_partial_crude_period_rejected(row):
+    sheet = monthly_sheet()
+    sheet.iloc[row, 1] = None
+    with pytest.raises(ValueError, match="2022-04.*incomplete"):
+        parse_ppac_sheet(sheet, "crude_oil", "s")
+
+
+def test_crude_total_without_components_is_not_unpublished():
+    sheet = monthly_sheet()
+    sheet.iloc[5:9, 1] = None
+    with pytest.raises(ValueError, match="2022-04.*incomplete"):
+        parse_ppac_sheet(sheet, "crude_oil", "s")
+
+
+@pytest.mark.parametrize("row", [5, 6, 7, 8, 9, 10])
+def test_partial_gas_period_rejected(row):
+    from worldenergydata.india_dgh.production import parse_ppac_gas_sheet
+
+    sheet = gas_sheet()
+    sheet.iloc[row, 1] = None
+    with pytest.raises(ValueError, match="2018-04.*incomplete"):
+        parse_ppac_gas_sheet(sheet, "s")
+
+
+def test_gas_wholly_unpublished_month_with_zero_totals_is_omitted():
+    from worldenergydata.india_dgh.production import parse_ppac_gas_sheet
+
+    sheet = gas_sheet()
+    sheet.iloc[[8, 10, 11], 2] = 0.0
+    frame = parse_ppac_gas_sheet(sheet, "s")
+    assert set(frame.period) == {"2018-04"}
+
+
+def test_gas_total_without_components_is_not_unpublished():
+    from worldenergydata.india_dgh.production import parse_ppac_gas_sheet
+
+    sheet = gas_sheet()
+    sheet.iloc[5:10, 1] = None
+    with pytest.raises(ValueError, match="2018-04.*incomplete"):
+        parse_ppac_gas_sheet(sheet, "s")
+
+
+def test_stored_crude_values_reject_a_1900_tonne_total_change():
+    from pathlib import Path
+
+    from worldenergydata.india_dgh.production import read_sheets
+
+    root = Path(__file__).resolve().parents[3]
+    sheet = read_sheets(
+        root
+        / "data/modules/india_dgh/raw/PT_Crude_oil_production_Current_wb20220626.xls"
+    )[0]
+    total_row = sheet.iloc[:, 0].eq("Total crude oil")
+    sheet.loc[total_row, 1] += 0.0019  # 1,900 tonnes in million tonnes
+    with pytest.raises(ValueError, match="2022-04.*total"):
+        parse_ppac_sheet(sheet, "crude_oil", "s")
+
+
+@pytest.mark.parametrize("scale", [1.0, 4096.0])
+@pytest.mark.parametrize("steps, accepted", [(3, True), (4, False)])
+def test_reconciliation_bound_follows_binary_precision(scale, steps, accepted):
+    """Three operands at scale sum to 3*scale: bound is 3.5 ulps of total."""
+    total = 3 * scale + steps * math.ulp(3 * scale)
+    sheet = monthly_sheet(ongc=scale, oil=scale, private=scale, total=total)
+    if accepted:
+        assert len(parse_ppac_sheet(sheet, "crude_oil", "s")) == 4
+    else:
+        with pytest.raises(ValueError, match="total"):
+            parse_ppac_sheet(sheet, "crude_oil", "s")
+
+
+@pytest.mark.parametrize("steps, accepted", [(3, True), (4, False)])
+def test_gas_onshore_reconciliation_precision_boundary(steps, accepted):
+    from worldenergydata.india_dgh.production import parse_ppac_gas_sheet
+
+    sheet = gas_sheet()
+    delta = steps * math.ulp(50.0)
+    sheet.iloc[8, 1] += delta
+    if accepted:
+        assert len(parse_ppac_gas_sheet(sheet, "s")) == 5
+    else:
+        with pytest.raises(ValueError, match="Onshore Total"):
+            parse_ppac_gas_sheet(sheet, "s")

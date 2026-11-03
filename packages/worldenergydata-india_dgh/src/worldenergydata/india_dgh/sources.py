@@ -7,7 +7,16 @@ import json
 from importlib import resources
 from pathlib import Path
 
-REQUIRED_KEYS = {"id", "publisher", "title", "url", "filename", "sha256", "retrieved", "terms_url"}
+REQUIRED_KEYS = {
+    "id",
+    "publisher",
+    "title",
+    "url",
+    "filename",
+    "sha256",
+    "retrieved",
+    "terms_url",
+}
 
 
 def data_path(name: str) -> Path:
@@ -21,7 +30,9 @@ def load_source_manifest() -> dict:
     for entry in manifest["files"]:
         missing = REQUIRED_KEYS - set(entry)
         if missing:
-            raise ValueError(f"manifest entry {entry.get('id')} lacks {sorted(missing)}")
+            raise ValueError(
+                f"manifest entry {entry.get('id')} lacks {sorted(missing)}"
+            )
         if len(entry["sha256"]) != 64:
             raise ValueError(f"manifest entry {entry['id']} has no SHA-256")
         if entry["id"] in ids:

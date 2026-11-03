@@ -31,9 +31,25 @@ import pandas as pd
 
 from .sources import data_path
 
-MONTHS = ["april", "may", "june", "july", "august", "september", "october",
-          "november", "december", "january", "february", "march"]
-UNITS = {"million metric tonnes": "million_tonnes", "मिलियन मीट्रिक टन": "million_tonnes", "mmscm": "million_scm"}
+MONTHS = [
+    "april",
+    "may",
+    "june",
+    "july",
+    "august",
+    "september",
+    "october",
+    "november",
+    "december",
+    "january",
+    "february",
+    "march",
+]
+UNITS = {
+    "million metric tonnes": "million_tonnes",
+    "मिलियन मीट्रिक टन": "million_tonnes",
+    "mmscm": "million_scm",
+}
 # Crude row label (lower-case, all whitespace removed) -> (company group, role).
 CRUDE_ROWS = {
     "ongc": ("ONGC", "component"),
@@ -51,13 +67,28 @@ CRUDE_ROWS = {
     "condensate*": ("Condensate", "condensate"),
     "संघनन(condensate)*": ("Condensate", "condensate"),
 }
-COLUMNS = ["period", "period_type", "fiscal_year", "product", "measure", "company_group", "location",
-           "state", "value", "unit", "provisional", "source_id"]
-TOLERANCE = {"million_tonnes": 0.002, "million_scm": 0.05}
+COLUMNS = [
+    "period",
+    "period_type",
+    "fiscal_year",
+    "product",
+    "measure",
+    "company_group",
+    "location",
+    "state",
+    "value",
+    "unit",
+    "provisional",
+    "source_id",
+]
 
 
 def _label(value) -> str:
-    return re.sub(r"\s+", "", str(value)).replace("‌", "").lower() if isinstance(value, str) else ""
+    return (
+        re.sub(r"\s+", "", str(value)).replace("‌", "").lower()
+        if isinstance(value, str)
+        else ""
+    )
 
 
 def _fiscal_year(text: str) -> str | None:
@@ -99,59 +130,122 @@ def _periods(cells: list[list]):
     for index, row in enumerate(cells):
         labels = [_label(c) for c in row]
         if "april" in labels and "march" in labels:
-            title = " ".join(str(c) for r in cells[:index] for c in r if isinstance(c, str))
+            title = " ".join(
+                str(c) for r in cells[:index] for c in r if isinstance(c, str)
+            )
             fiscal = _fiscal_year(title)
             if fiscal is None:
                 raise ValueError("monthly sheet has no fiscal year in its title")
             provisional = "(p)" in title.lower() or "*" in title
-            return index, [(i, _period_month(fiscal, MONTHS.index(l)), "month", fiscal, provisional)
-                           for i, l in enumerate(labels) if l in MONTHS]
-        years = [(i, _fiscal_year(c)) for i, c in enumerate(row) if isinstance(c, str) and _fiscal_year(c)]
+            return index, [
+                (
+                    i,
+                    _period_month(fiscal, MONTHS.index(l)),
+                    "month",
+                    fiscal,
+                    provisional,
+                )
+                for i, l in enumerate(labels)
+                if l in MONTHS
+            ]
+        years = [
+            (i, _fiscal_year(c))
+            for i, c in enumerate(row)
+            if isinstance(c, str) and _fiscal_year(c)
+        ]
         if len(years) >= 3:
-            return index, [(i, fy, "fiscal_year", fy, "(p)" in str(row[i]).lower()) for i, fy in years]
+            return index, [
+                (i, fy, "fiscal_year", fy, "(p)" in str(row[i]).lower())
+                for i, fy in years
+            ]
     raise ValueError("no period header row")
 
 
-def _close(a: float, b: float, unit: str) -> bool:
-    return abs(a - b) <= TOLERANCE[unit] * max(1.0, abs(b) / 1000)
+def _close(parts: list[float], total: float) -> bool:
+    """Compare stored XLS numbers, allowing only binary rounding error.
+
+    The pinned PPAC workbooks retain unrounded numeric cells even where their
+    display formats show fewer decimals. No display rounding or unit-relative
+    tolerance is applied. Allow one representable step (ulp) per stored operand
+    and total, plus one for the correctly rounded sum computed by math.fsum.
+    """
+    computed = math.fsum(parts)
+    bound = math.fsum(math.ulp(v) for v in [*parts, total, computed])
+    return abs(computed - total) <= bound
 
 
 def parse_ppac_sheet(frame: pd.DataFrame, product: str, source_id: str) -> pd.DataFrame:
     """Parse one PPAC crude-by-company sheet (read with header=None)."""
     if product != "crude_oil":
-        raise ValueError("company-group sheets are crude oil; use parse_ppac_gas_sheet for gas")
+        raise ValueError(
+            "company-group sheets are crude oil; use parse_ppac_gas_sheet for gas"
+        )
     cells = _cells(frame)
     unit = _unit(cells)
     if unit != "million_tonnes":
         raise ValueError(f"unit changed: {unit} for {product}")
     header_index, periods = _periods(cells)
     records, checks = [], {}
-    for row in cells[header_index + 1:]:
+    for row in cells[header_index + 1 :]:
         key = _label(row[0])
         if key not in CRUDE_ROWS:
             continue
         group, role = CRUDE_ROWS[key]
         for column, period, period_type, fiscal, provisional in periods:
             value = _number(row[column] if column < len(row) else None)
-            checks.setdefault(period, {})[group if role == "component" else role] = value
+            checks.setdefault(period, {})[
+                group if role == "component" else role
+            ] = value
             if role in ("component", "condensate") and not math.isnan(value):
-                records.append({
-                    "period": period, "period_type": period_type, "fiscal_year": fiscal,
-                    "product": "condensate" if role == "condensate" else product,
-                    "measure": "production", "company_group": group, "location": "all",
-                    "state": "all", "value": value, "unit": unit, "provisional": provisional,
-                    "source_id": source_id,
-                })
+                records.append(
+                    {
+                        "period": period,
+                        "period_type": period_type,
+                        "fiscal_year": fiscal,
+                        "product": "condensate" if role == "condensate" else product,
+                        "measure": "production",
+                        "company_group": group,
+                        "location": "all",
+                        "state": "all",
+                        "value": value,
+                        "unit": unit,
+                        "provisional": provisional,
+                        "source_id": source_id,
+                    }
+                )
     if not records:
         raise ValueError("no production rows recognised")
+    published = set()
     for period, values in checks.items():
+        required = [
+            values.get(k, math.nan)
+            for k in ("ONGC", "OIL", "JVC/Private", "subtotal", "total")
+        ]
+        if _unpublished(
+            required[:3], required[3:] + [values.get("condensate", math.nan)]
+        ):
+            continue
+        if any(map(math.isnan, required)):
+            raise ValueError(f"{period}: incomplete crude production period")
+        published.add(period)
         ongc, oil = values.get("ONGC", math.nan), values.get("OIL", math.nan)
-        private, subtotal, total = (values.get(k, math.nan) for k in ("JVC/Private", "subtotal", "total"))
-        if not any(map(math.isnan, (ongc, oil, subtotal))) and not _close(ongc + oil, subtotal, unit):
+        private, subtotal, total = (
+            values.get(k, math.nan) for k in ("JVC/Private", "subtotal", "total")
+        )
+        if not _close([ongc, oil], subtotal):
             raise ValueError(f"{period}: ONGC + OIL does not equal PSU total")
-        if not any(map(math.isnan, (ongc, oil, private, total))) and not _close(ongc + oil + private, total, unit):
+        if not _close([ongc, oil, private], total):
             raise ValueError(f"{period}: company groups do not equal total")
-    return pd.DataFrame(records, columns=COLUMNS)
+    return pd.DataFrame(
+        [r for r in records if r["period"] in published], columns=COLUMNS
+    )
+
+
+def _unpublished(components: list[float], totals: list[float]) -> bool:
+    """Future columns have blank components and blank or formula-zero totals."""
+    return all(math.isnan(v) for v in components) and all(
+        math.isnan(v) or v == 0 for v in totals
+    )
 
 
 def _gas_row(label: str):
@@ -179,7 +273,7 @@ def parse_ppac_gas_sheet(frame: pd.DataFrame, source_id: str) -> pd.DataFrame:
     if any(p[2] != "month" for p in periods):
         raise ValueError("gas sheet must be month-wise")
     records, checks = [], {}
-    for row in cells[header_index + 1:]:
+    for row in cells[header_index + 1 :]:
         kind, _ = _gas_row(_label(row[0]))
         if kind is None:
             continue
@@ -193,44 +287,101 @@ def parse_ppac_gas_sheet(frame: pd.DataFrame, source_id: str) -> pd.DataFrame:
                 bucket[kind] = value
             if math.isnan(value):
                 continue
-            base = {"period": period, "period_type": "month", "fiscal_year": fiscal,
-                    "product": "natural_gas", "company_group": "all", "unit": unit,
-                    "provisional": provisional, "source_id": source_id}
+            base = {
+                "period": period,
+                "period_type": "month",
+                "fiscal_year": fiscal,
+                "product": "natural_gas",
+                "company_group": "all",
+                "unit": unit,
+                "provisional": provisional,
+                "source_id": source_id,
+            }
             if kind == "state":
-                records.append({**base, "measure": "gross_production", "location": "onshore", "state": name, "value": value})
+                records.append(
+                    {
+                        **base,
+                        "measure": "gross_production",
+                        "location": "onshore",
+                        "state": name,
+                        "value": value,
+                    }
+                )
             elif kind == "cbm":
-                records.append({**base, "measure": "gross_production", "location": "onshore_cbm", "state": name, "value": value})
+                records.append(
+                    {
+                        **base,
+                        "measure": "gross_production",
+                        "location": "onshore_cbm",
+                        "state": name,
+                        "value": value,
+                    }
+                )
             elif kind == "offshore":
-                records.append({**base, "measure": "gross_production", "location": "offshore", "state": "all", "value": value})
+                records.append(
+                    {
+                        **base,
+                        "measure": "gross_production",
+                        "location": "offshore",
+                        "state": "all",
+                        "value": value,
+                    }
+                )
             elif kind == "net":
-                records.append({**base, "measure": "net_production", "location": "all", "state": "all", "value": value})
+                records.append(
+                    {
+                        **base,
+                        "measure": "net_production",
+                        "location": "all",
+                        "state": "all",
+                        "value": value,
+                    }
+                )
     if not records:
         raise ValueError("no gas rows recognised")
+    published = set()
     for period, values in checks.items():
         states = values["state"]
-        if any(math.isnan(v) for v in states):
+        components = states + [values.get("offshore", math.nan)]
+        if "cbm" in values:
+            components.append(values["cbm"])
+        totals = [values.get(k, math.nan) for k in ("onshore_total", "total")]
+        if _unpublished(components, totals + [values.get("net", math.nan)]):
             continue
-        onshore = values.get("onshore_total", math.nan)
-        if not math.isnan(onshore) and not _close(sum(states), onshore, unit):
+        if not states or any(map(math.isnan, components + totals)):
+            raise ValueError(f"{period}: incomplete gas production period")
+        published.add(period)
+        onshore = values["onshore_total"]
+        if not _close(states, onshore):
             raise ValueError(f"{period}: onshore states do not equal Onshore Total (A)")
-        parts = (onshore, values.get("offshore", math.nan), values.get("cbm", 0.0))
-        total = values.get("total", math.nan)
-        if not any(map(math.isnan, parts)) and not math.isnan(total) and not _close(sum(parts), total, unit):
-            raise ValueError(f"{period}: onshore + offshore + CBM does not equal Total (A+B)")
-    return pd.DataFrame(records, columns=COLUMNS)
+        parts = [onshore, values["offshore"]]
+        if "cbm" in values:
+            parts.append(values["cbm"])
+        if not _close(parts, values["total"]):
+            raise ValueError(
+                f"{period}: onshore + offshore + CBM does not equal Total (A+B)"
+            )
+    return pd.DataFrame(
+        [r for r in records if r["period"] in published], columns=COLUMNS
+    )
 
 
 def read_sheets(path: Path, month_wise_only: bool = False) -> list[pd.DataFrame]:
     book = pd.read_excel(path, header=None, sheet_name=None)
-    return [frame for name, frame in book.items() if not month_wise_only or "month" in name.lower()
-            or "current" in name.lower()]
+    return [
+        frame
+        for name, frame in book.items()
+        if not month_wise_only or "month" in name.lower() or "current" in name.lower()
+    ]
 
 
 def combine(frames: list[pd.DataFrame]) -> pd.DataFrame:
     """Concatenate in source order; a later source supersedes an earlier one."""
     frame = pd.concat(frames, ignore_index=True)
     key = ["period", "product", "measure", "company_group", "location", "state"]
-    return frame.drop_duplicates(key, keep="last").sort_values(key).reset_index(drop=True)
+    return (
+        frame.drop_duplicates(key, keep="last").sort_values(key).reset_index(drop=True)
+    )
 
 
 def load_production() -> pd.DataFrame:

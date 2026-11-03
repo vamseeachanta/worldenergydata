@@ -27,7 +27,11 @@ from worldenergydata.india_dgh.production import (
     parse_ppac_sheet,
     read_sheets,
 )
-from worldenergydata.india_dgh.sources import data_path, load_source_manifest, verify_file
+from worldenergydata.india_dgh.sources import (
+    data_path,
+    load_source_manifest,
+    verify_file,
+)
 
 # Award lists. Signing dates only where the cited document states them:
 # round IV press release of 2 Jan 2020 ("signed today"); rounds VII and IX
@@ -49,7 +53,11 @@ OFFER_AREAS = [RoundSource("OALP-IX", "OALP", "dgh_oalp9_blocks_on_offer")]
 BASIN_PAGE = "dgh_basins_and_categories"
 # Listed oldest capture first: a later capture supersedes an earlier one for the
 # same period (provisional years are revised in later editions).
-CRUDE = ["ppac_crude_annual_2019", "ppac_crude_annual_hindi_2022", "ppac_crude_current_2022"]
+CRUDE = [
+    "ppac_crude_annual_2019",
+    "ppac_crude_annual_hindi_2022",
+    "ppac_crude_current_2022",
+]
 GAS = ["ppac_gas_historical_2020", "ppac_gas_current_2022"]
 
 
@@ -61,11 +69,18 @@ def _verified(raw: Path, source_id: str) -> Path:
 
 
 def build_blocks(raw: Path) -> pd.DataFrame:
-    frame = pd.concat([parse_round_pdf(_verified(raw, s.source_id), s) for s in ROUNDS], ignore_index=True)
+    frame = pd.concat(
+        [parse_round_pdf(_verified(raw, s.source_id), s) for s in ROUNDS],
+        ignore_index=True,
+    )
     for source in OFFER_AREAS:
         offer = parse_round_pdf(_verified(raw, source.source_id), source)
         areas = offer.set_index("block_name").area_km2.dropna()
-        target = (frame["round"] == source.round) & frame.area_km2.isna() & frame.block_name.isin(areas.index)
+        target = (
+            (frame["round"] == source.round)
+            & frame.area_km2.isna()
+            & frame.block_name.isin(areas.index)
+        )
         frame.loc[target, "area_km2"] = frame.loc[target, "block_name"].map(areas)
         frame.loc[target, "area_basis"] = "offer_list"
     if frame.block_name.duplicated().any():

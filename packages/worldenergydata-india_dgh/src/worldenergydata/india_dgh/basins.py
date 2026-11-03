@@ -64,7 +64,9 @@ def parse_basin_page(page: str | bytes) -> pd.DataFrame:
     for category, expected in EXPECTED_COUNTS.items():
         names = found.get(category, [])
         if len(names) != expected:
-            raise ValueError(f"Category-{category}: expected {expected} basins, found {len(names)}")
+            raise ValueError(
+                f"Category-{category}: expected {expected} basins, found {len(names)}"
+            )
         for name in names:
             rows.append(
                 {
