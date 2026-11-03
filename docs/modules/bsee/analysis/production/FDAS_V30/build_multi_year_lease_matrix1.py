@@ -422,18 +422,15 @@ def build_workbook(prod_monthly, war_map, leases_df, out_path):
         on="API_WELL_NUMBER", how="left", validate="many_to_one"
     )
 
-    assert len(prod) == len(prod_monthly), "WAR join changed production row count"
 
     # Lease name fallback from leases_df by SURF_LEASE_NUM
     if not leases_df.empty:
         lease_names = leases_df[["SURF_LEASE_NUM", "LEASE_NAME"]].dropna()
         if not lease_names.empty:
-            before = len(prod)
             prod = prod.merge(
                 lease_names.rename(columns={"LEASE_NAME": "LEASE_NAME_FROM_LIST"}),
                 on="SURF_LEASE_NUM", how="left", validate="many_to_one"
             )
-            assert len(prod) == before, "Lease join changed production row count"
             prod["LEASE_NAME"] = prod["LEASE_NAME"].fillna(prod["LEASE_NAME_FROM_LIST"])
             prod = prod.drop(columns=["LEASE_NAME_FROM_LIST"], errors="ignore")
 

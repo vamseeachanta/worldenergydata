@@ -270,7 +270,6 @@ def build_chrono(ogor_dir: str, leases_path: str, pattern: str,
 
     # Map lease names & dev mapping via LEASE_NUM first
     ogor_monthly = ogor_monthly.merge(leases_df, on="LEASE_NUM", how="left", validate="many_to_one")
-    assert len(ogor_monthly) == sum(len(part) for part in parts), "Lease join changed rows"
 
     # Fallback: if DEV_NAME missing after LEASE_NUM join, try joining by LEASE_NAME
     needs_fallback = ("DEV_NAME" not in ogor_monthly.columns or
@@ -280,9 +279,7 @@ def build_chrono(ogor_dir: str, leases_path: str, pattern: str,
         ogor_monthly["LEASE_NAME_KEY"] = ogor_monthly["LEASE_NAME"].astype(str).str.upper().str.strip()
         ogor_monthly = ogor_monthly.drop(columns=[c for c in ["DEV_NAME","DEV_SYSTEM"] if c in ogor_monthly.columns])
         mapping = leases_df[["LEASE_NAME_KEY", "DEV_NAME", "DEV_SYSTEM"]].drop_duplicates()
-        before = len(ogor_monthly)
         ogor_monthly = ogor_monthly.merge(mapping, on="LEASE_NAME_KEY", how="left", validate="many_to_one")
-        assert len(ogor_monthly) == before, "Name fallback changed rows"
         ogor_monthly.drop(columns=["LEASE_NAME_KEY"], inplace=True, errors="ignore")
 
     # Compute avg bbls/day
@@ -297,9 +294,7 @@ def build_chrono(ogor_dir: str, leases_path: str, pattern: str,
     wti = load_wti_monthly(wti_path)
 
     df = ogor_monthly.merge(dnc, on=["API_WELL_NUMBER","MONTH"], how="left", validate="many_to_one")
-    assert len(df) == len(ogor_monthly), "D&C join changed rows"
     df = df.merge(wti, on="MONTH", how="left", validate="many_to_one")
-    assert len(df) == len(ogor_monthly), "WTI join changed rows"
 
     # Revenue convenience (can be overridden downstream)
     df["WTI_USD"] = pd.to_numeric(df.get("WTI_USD", np.nan), errors="coerce")
