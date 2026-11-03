@@ -627,14 +627,36 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
     # --- FDAS revision comparison (V30 -> V50 -> wed) page ---
     rev_md = REPORTS / "lower_tertiary" / "fdas_revision_comparison.md"
     if rev_md.exists():
+        assumptions_log = (
+            ROOT / "config/analysis/lower_tertiary/v50_assumptions_change_log.html"
+        )
+        assumptions_html = assumptions_log.read_text(encoding="utf-8")
+        source_prefix = f"https://github.com/{REPO}/blob/main/"
+        assumptions_html = (
+            assumptions_html.replace(
+                'href="../../../reports/lower_tertiary/fdas_revision_comparison.md"',
+                'href="fdas-revision-comparison.html"',
+            )
+            .replace('href="../../../packages/', f'href="{source_prefix}packages/')
+            .replace(
+                'href="golden_baseline_v50.yml"',
+                f'href="{source_prefix}config/analysis/lower_tertiary/golden_baseline_v50.yml"',
+            )
+        )
+        (PUBLIC / "v50-assumptions-change-log.html").write_text(
+            assumptions_html, encoding="utf-8", newline="\n"
+        )
+        comparison_text = rev_md.read_text(encoding="utf-8").replace(
+            "../../config/analysis/lower_tertiary/v50_assumptions_change_log.html",
+            "v50-assumptions-change-log.html",
+        )
         (PUBLIC / "fdas-revision-comparison.html").write_text(
             page(
                 "FDAS Revision Comparison — V30 &rarr; V50 &rarr; wed",
                 "Three-way comparison of the Lower-Tertiary economics pipeline: "
                 "scripts, inputs, BSEE-data months, result tables, script differences, "
                 "missed files, and a bug review — the basis for adopting wed as canonical.",
-                _toc(rev_md.read_text(encoding="utf-8"))
-                + md_to_html(rev_md.read_text(encoding="utf-8")),
+                _toc(comparison_text) + md_to_html(comparison_text),
                 provenance=(
                     "Comparison drawn from the V30/V50 source archives "
                     "(/mnt/ace/.../fdas_revisions) and the wed reproduction reports; "

@@ -11,6 +11,69 @@ import pytest
 ROOT = Path(__file__).resolve().parents[3]
 
 
+@pytest.fixture
+def legacy_text_defaults(monkeypatch):
+    original_open = Path.open
+
+    def legacy_open(
+        path, mode="r", buffering=-1, encoding=None, errors=None, newline=None
+    ):
+        if "b" not in mode:
+            if encoding in (None, "locale"):
+                encoding = "cp1252"
+            if newline is None:
+                newline = "\r\n"
+        return original_open(
+            path,
+            mode=mode,
+            buffering=buffering,
+            encoding=encoding,
+            errors=errors,
+            newline=newline,
+        )
+
+    monkeypatch.setattr(Path, "open", legacy_open)
+
+
+@pytest.mark.parametrize("report", ["executive", "detail"])
+def test_report_text_uses_utf8_and_lf_with_legacy_defaults(
+    tmp_path, monkeypatch, legacy_text_defaults, report
+):
+    import pandas as pd
+
+    generator = module("generate_incident_report")
+    monkeypatch.setattr(
+        generator, "unverified_notice", lambda *_: "<p>Synthetic → note</p>"
+    )
+    monkeypatch.chdir(tmp_path)
+    if report == "executive":
+        analyses = {
+            "hatch": {"detected": 0, "total": 0, "by_severity": {}},
+            "foundering": {
+                "total": 0,
+                "total_fatalities": 0,
+                "avg_fatalities": 0,
+                "by_fatality_range": {},
+            },
+            "fatality": {"total": 0, "total_deaths": 0, "by_cause": {}},
+        }
+        generator.generate_executive_summary({}, analyses, tmp_path, False)
+        output = tmp_path / "executive_summary.html"
+    else:
+        generator.generate_detailed_report(
+            "foundering",
+            pd.DataFrame({"description": ["Synthetic note"]}),
+            {},
+            [],
+            tmp_path,
+            False,
+        )
+        output = tmp_path / "foundering_analysis.html"
+    content = output.read_bytes()
+    assert "Synthetic → note" in content.decode("utf-8")
+    assert b"\r\n" not in content
+
+
 def module(name):
     spec = importlib.util.spec_from_file_location(
         name, ROOT / "scripts/marine_safety" / f"{name}.py"
@@ -39,7 +102,7 @@ def inputs(tmp_path):
     for name, text in contents.items():
         path = tmp_path / name
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(text)
+        path.write_text(text, encoding="utf-8", newline="\n")
         sources.append(
             {
                 "id": name.split("/")[0],
@@ -63,7 +126,7 @@ def inputs(tmp_path):
         },
     }
     manifest_path = tmp_path / "manifest.json"
-    manifest_path.write_text(json.dumps(manifest))
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8", newline="\n")
     return tmp_path, manifest_path, manifest
 
 
@@ -90,7 +153,7 @@ def test_negative_control_changed_count(inputs, monkeypatch):
     root, manifest_path, manifest = inputs
     changed = copy.deepcopy(manifest)
     changed["counts"]["analysed_rows"] = 4
-    manifest_path.write_text(json.dumps(changed))
+    manifest_path.write_text(json.dumps(changed), encoding="utf-8", newline="\n")
     with pytest.raises(ValueError, match="Count agreement failed"):
         module("generate_incident_report").load_incident_data(root, manifest_path)
 
@@ -98,7 +161,9 @@ def test_negative_control_changed_count(inputs, monkeypatch):
 def test_changed_digest_rejected(inputs, monkeypatch):
     monkeypatch.syspath_prepend(str(ROOT))
     root, manifest_path, _ = inputs
-    with (root / "canadian_tsb/occurrence.csv").open("a") as stream:
+    with (root / "canadian_tsb/occurrence.csv").open(
+        "a", encoding="utf-8", newline="\n"
+    ) as stream:
         stream.write("F,2020-01-06,another row,Sinking,0\n")
     with pytest.raises(ValueError, match="SHA-256 mismatch"):
         module("generate_incident_report").load_incident_data(root, manifest_path)
@@ -108,9 +173,9 @@ def test_required_columns_rejected(inputs, monkeypatch):
     monkeypatch.syspath_prepend(str(ROOT))
     root, manifest_path, manifest = inputs
     path = root / manifest["sources"][0]["path"]
-    path.write_text("wrong\nvalue\n")
+    path.write_text("wrong\nvalue\n", encoding="utf-8", newline="\n")
     manifest["sources"][0]["sha256"] = hashlib.sha256(path.read_bytes()).hexdigest()
-    manifest_path.write_text(json.dumps(manifest))
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8", newline="\n")
     with pytest.raises(ValueError, match="Required columns"):
         module("generate_incident_report").load_incident_data(root, manifest_path)
 
@@ -135,12 +200,14 @@ def test_blocked_fetch_records_unknowns(tmp_path, monkeypatch):
         assert source["row_count"] == "NOT_EVALUATED"
         assert source["download_date_utc"] == "NOT_EVALUATED"
         assert source["error"] == "HTTP 403: Forbidden"
-    assert json.loads((tmp_path / "manifest.json").read_text()) == manifest
+    assert (
+        json.loads((tmp_path / "manifest.json").read_text(encoding="utf-8")) == manifest
+    )
 
 
 def test_manifest_has_explicit_publication_limitations():
     manifest = json.loads(
-        (ROOT / "config/marine_safety_input_manifest.json").read_text()
+        (ROOT / "config/marine_safety_input_manifest.json").read_text(encoding="utf-8")
     )
     assert manifest["excluded_sources"][0]["id"] == "imo_gisis"
     assert "account" in manifest["excluded_sources"][0]["reason"]
@@ -236,7 +303,7 @@ def test_cli_missing_input_nonzero(tmp_path):
 def test_each_changed_analysis_count_is_rejected(inputs, field):
     root, manifest_path, manifest = inputs
     manifest["counts"][field] += 1
-    manifest_path.write_text(json.dumps(manifest))
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8", newline="\n")
     with pytest.raises(ValueError, match="Count agreement failed"):
         module("incident_inputs").load_inputs(root, manifest_path)
 
@@ -245,10 +312,12 @@ def test_published_summary_agrees_with_manifest():
     from bs4 import BeautifulSoup
 
     manifest = json.loads(
-        (ROOT / "config/marine_safety_input_manifest.json").read_text()
+        (ROOT / "config/marine_safety_input_manifest.json").read_text(encoding="utf-8")
     )
     soup = BeautifulSoup(
-        (ROOT / "reports/marine_safety/executive_summary.html").read_text(),
+        (ROOT / "reports/marine_safety/executive_summary.html").read_text(
+            encoding="utf-8"
+        ),
         "html.parser",
     )
     section = soup.find(id="input-provenance")
@@ -275,7 +344,7 @@ def test_published_summary_agrees_with_manifest():
 def test_source_row_count_drift_rejected(inputs):
     root, manifest_path, manifest = inputs
     manifest["sources"][0]["row_count"] += 1
-    manifest_path.write_text(json.dumps(manifest))
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8", newline="\n")
     with pytest.raises(ValueError, match="Count agreement failed.*row_count"):
         module("incident_inputs").load_inputs(root, manifest_path)
 
@@ -283,14 +352,14 @@ def test_source_row_count_drift_rejected(inputs):
 def test_archive_escape_rejected(inputs):
     root, manifest_path, manifest = inputs
     manifest["sources"][0]["path"] = "../outside.csv"
-    manifest_path.write_text(json.dumps(manifest))
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8", newline="\n")
     with pytest.raises(ValueError, match="inside the raw input directory"):
         module("incident_inputs").load_inputs(root, manifest_path)
 
 
 def test_source_identity_rights_and_count_discrepancy():
     fetcher = module("incident_inputs")
-    manifest = json.loads(fetcher.DEFAULT_MANIFEST.read_text())
+    manifest = json.loads(fetcher.DEFAULT_MANIFEST.read_text(encoding="utf-8"))
     for source in (*fetcher.SOURCES, *manifest["sources"]):
         assert source["license"]
         assert source["license_url"].startswith("https://")
@@ -316,14 +385,14 @@ def test_transient_failure_reuses_only_verified_archive(inputs, monkeypatch, dam
         item["url"] = definition["url"]
     source = manifest["sources"][0]
     if damage == "bytes":
-        (root / source["path"]).write_text("tampered\n")
+        (root / source["path"]).write_text("tampered\n", encoding="utf-8", newline="\n")
     elif damage == "count":
         source["row_count"] += 1
     elif damage == "escape":
         source["path"] = "../outside.csv"
     elif damage == "missing":
         source["path"] = "missing.csv"
-    manifest_path.write_text(json.dumps(manifest))
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8", newline="\n")
 
     def failed(*args, **kwargs):
         raise RequestException("temporary outage")
@@ -342,7 +411,7 @@ def test_transient_failure_reuses_only_verified_archive(inputs, monkeypatch, dam
         assert retained["status"] == "NOT_EVALUATED"
         assert result["counts"] == "NOT_EVALUATED"
     assert result["sources"][1]["status"] == "FETCHED"
-    assert json.loads(manifest_path.read_text()) == result
+    assert json.loads(manifest_path.read_text(encoding="utf-8")) == result
 
 
 @pytest.mark.parametrize("read_error", [TimeoutError, OSError])
@@ -360,7 +429,7 @@ def test_body_read_failure_records_attempts_and_reuses_verified_archives(
     for source, definition in zip(manifest["sources"], fetcher.SOURCES):
         source["url"] = definition["url"]
     if reuse_archive:
-        manifest_path.write_text(json.dumps(manifest))
+        manifest_path.write_text(json.dumps(manifest), encoding="utf-8", newline="\n")
     else:
         manifest_path = root / "new-manifest.json"
     calls = []
@@ -386,7 +455,7 @@ def test_body_read_failure_records_attempts_and_reuses_verified_archives(
     result = fetcher.fetch_inputs(root, manifest_path)
 
     assert calls == [definition["url"] for definition in fetcher.SOURCES]
-    assert json.loads(manifest_path.read_text()) == result
+    assert json.loads(manifest_path.read_text(encoding="utf-8")) == result
     assert all(response.raw.closed for response in responses)
     assert not (root / "sha256").exists()
     for source, previous in zip(result["sources"], manifest["sources"]):

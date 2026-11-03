@@ -859,8 +859,8 @@ def generate_executive_summary(data: dict, analyses: dict, output_dir: Path, use
 """
 
     output_file = output_dir / 'executive_summary.html'
-    output_file.write_text(html)
-    logger.info(f"Executive summary saved to {output_file}")
+    output_file.write_text(html, encoding="utf-8", newline="\n")
+    logger.info(f"Executive summary saved to {output_file.as_posix()}")
 
 
 def export_incident_data_to_csv(df: pd.DataFrame, incident_type: str, results_dir: Path) -> Path:
@@ -901,8 +901,10 @@ def export_incident_data_to_csv(df: pd.DataFrame, incident_type: str, results_di
             export_df[col] = export_df[col].fillna('N/A')
 
     csv_path = results_dir / f'{incident_type}_incidents.csv'
-    export_df.to_csv(csv_path, index=False, encoding='utf-8')
-    logger.info(f"✓ Exported {len(export_df)} {incident_type} incidents to {csv_path}")
+    export_df.to_csv(csv_path, index=False, encoding='utf-8', lineterminator='\n')
+    logger.info(
+        f"✓ Exported {len(export_df)} {incident_type} incidents to {csv_path.as_posix()}"
+    )
 
     return csv_path
 
@@ -1296,14 +1298,14 @@ def generate_detailed_report(incident_type: str, df: pd.DataFrame, analysis: dic
 </html>"""
 
     output_file = output_dir / f'{incident_type}_analysis.html'
-    output_file.write_text(html)
-    logger.info(f"✓ Generated optimized report: {output_file}")
+    output_file.write_text(html, encoding="utf-8", newline="\n")
+    logger.info(f"✓ Generated optimized report: {output_file.as_posix()}")
 
 
 def main():
     parser = argparse.ArgumentParser(description='Generate marine safety incident reports')
     parser.add_argument('--input-dir', type=Path, required=False, default=None,
-                       help='External raw input directory recorded by the fetch script')
+                        help='External raw input directory recorded by the fetch script')
     parser.add_argument('--manifest', type=Path, default=None,
                         help='Input manifest (defaults to the committed manifest)')
     parser.add_argument('--output-dir', type=Path, required=True,
@@ -1320,7 +1322,7 @@ def main():
     logger.info("Marine Safety Incident Analysis Report Generator")
     logger.info("="*60)
     logger.info("Data source: Public inputs: Canadian TSB and DLP Historical; GISIS excluded")
-    logger.info(f"Output directory: {args.output_dir}")
+    logger.info(f"Output directory: {args.output_dir.as_posix()}")
     logger.info(f"LLM detection: {use_llm}")
     logger.info("")
 
