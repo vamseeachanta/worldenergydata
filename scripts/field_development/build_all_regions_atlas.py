@@ -36,7 +36,8 @@ import sys
 from datetime import date
 from pathlib import Path
 
-from worldenergydata.field_development.data_availability import require_available_source
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(PROJECT_ROOT / "src"))
 
 _SCRIPTS = Path(__file__).resolve().parents[1]
 if str(_SCRIPTS) not in sys.path:
@@ -46,7 +47,10 @@ import site_nav  # noqa: E402  (nav-spine helper, issue #850)
 # Country badge rule shared with the field-atlas Explorer feed (#947).
 from catalog_badges import badge_for, load_scorecard  # noqa: E402
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
+from worldenergydata.field_development.data_availability import (  # noqa: E402
+    require_available_source,
+)
+
 CURATED = PROJECT_ROOT / "data" / "modules" / "offshore_assets" / "curated"
 COVERAGE_CSV = CURATED / "coverage_summary.csv"
 FIELDS_CSV = CURATED / "fields.csv"

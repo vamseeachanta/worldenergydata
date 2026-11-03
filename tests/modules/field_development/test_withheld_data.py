@@ -144,15 +144,20 @@ def test_default_generators_reject_withheld_input(script, function):
         getattr(module, function)()
 
 
-def test_region_comparison_direct_command_reaches_withholding(tmp_path):
+@pytest.mark.parametrize(
+    "script",
+    [
+        "field_development/build_region_devtype_comparison.py",
+        "decommissioning/build_regional_liability.py",
+        "field_development/build_all_regions_atlas.py",
+    ],
+)
+def test_direct_command_reaches_withholding_without_pythonpath(script, tmp_path):
     env = dict(os.environ)
     for key in ("PYTHONPATH", "GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR"):
         env.pop(key, None)
     result = subprocess.run(
-        [
-            sys.executable,
-            str(ROOT / "scripts/field_development/build_region_devtype_comparison.py"),
-        ],
+        [sys.executable, str(ROOT / "scripts" / script)],
         cwd=tmp_path,
         env=env,
         capture_output=True,

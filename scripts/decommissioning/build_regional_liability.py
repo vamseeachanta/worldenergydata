@@ -33,9 +33,8 @@ from pathlib import Path
 
 import pandas as pd
 
-from worldenergydata.field_development.data_availability import require_available_source
-
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(PROJECT_ROOT / "src"))
 sys.path.insert(
     0, str(PROJECT_ROOT / "packages" / "worldenergydata-decommissioning" / "src")
 )
@@ -49,6 +48,9 @@ from worldenergydata.decommissioning.cost_model import (  # noqa: E402
 )
 from worldenergydata.decommissioning.facility_liability import (  # noqa: E402
     price_portfolio,
+)
+from worldenergydata.field_development.data_availability import (  # noqa: E402
+    require_available_source,
 )
 
 SRC = (
