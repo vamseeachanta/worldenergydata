@@ -1,0 +1,83 @@
+{
+  "failures": [
+    "war: reversed_dates (10)",
+    "war: implausible_span (33)",
+    "activity: missing_keys (882)",
+    "boreholes: missing_dates (1844)",
+    "unattributed_reports (1747)",
+    "population_coverage (14)"
+  ],
+  "joins": {
+    "orphan_keys": 0,
+    "population_coverage": 14,
+    "unattributed_reports": 1747
+  },
+  "population_bores": 253,
+  "population_sha256": "a6fdd82382ef6c564c0fa0576625630f0f49a969390cdadfb66c02bb5a3bfd64",
+  "scope": "entire supplied tables before population filtering",
+  "sources": [
+    {
+      "downloaded_at": "2026-10-22T10:42:28Z",
+      "file": "eWellWARRawData.zip",
+      "http_status": 200,
+      "sha256": "7b5de6aff8f736ab5d6c7978a857eba5c1212fcca176bec21cd394155da756ce",
+      "size_bytes": 130673137,
+      "url": "https://www.data.bsee.gov/Well/Files/eWellWARRawData.zip"
+    }
+  ],
+  "status": "not-evaluated",
+  "tables": {
+    "activity": {
+      "checks": {
+        "duplicate_keys": 0,
+        "implausible_span": 0,
+        "invalid_api": 0,
+        "invalid_dates": 0,
+        "missing_dates": 0,
+        "missing_keys": 882,
+        "reversed_dates": 0,
+        "row_count": 0,
+        "unit_check": 0
+      },
+      "date_max": null,
+      "date_min": null,
+      "rows": 368305,
+      "unit": "record"
+    },
+    "boreholes": {
+      "checks": {
+        "duplicate_keys": 0,
+        "implausible_span": 0,
+        "invalid_api": 0,
+        "invalid_dates": 0,
+        "missing_dates": 1844,
+        "missing_keys": 0,
+        "reversed_dates": 0,
+        "row_count": 0,
+        "unit_check": 0
+      },
+      "date_max": "2026-06-10",
+      "date_min": "1947-05-10",
+      "rows": 54857,
+      "unit": "day"
+    },
+    "war": {
+      "checks": {
+        "duplicate_keys": 0,
+        "implausible_span": 33,
+        "invalid_api": 0,
+        "invalid_dates": 0,
+        "missing_dates": 0,
+        "missing_keys": 0,
+        "reversed_dates": 10,
+        "row_count": 0,
+        "unit_check": 0
+      },
+      "date_max": "2026-10-17",
+      "date_min": "1988-04-07",
+      "rows": 370052,
+      "unit": "day"
+    }
+  },
+  "workflow_sha256": "b4f90d41da53589bef02f750f3c19963b3775ce0af2dccdeb3fc0a8986a6c20e"
+}

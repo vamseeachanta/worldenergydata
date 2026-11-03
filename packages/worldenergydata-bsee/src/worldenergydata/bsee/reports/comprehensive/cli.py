@@ -451,11 +451,13 @@ Examples:
         metadata = report.get("metadata", {})
         summary = report.get("summary", {})
 
-        html = f"""
+        html = (
+            f"""
         <!DOCTYPE html>
         <html>
         <head>
-            <title>{metadata.get('report_type', '').upper()} Report - {metadata.get('entity', '')}</title>  # noqa: E501
+            <title>{metadata.get('report_type', '').upper()} Report - """
+            f"""{metadata.get('entity', '')}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 20px; }}
                 h1 {{ color: #333; }}
@@ -471,10 +473,12 @@ Examples:
         <body>
             <h1>{metadata.get('report_type', '').upper()} Report</h1>
             <h2>Entity: {metadata.get('entity', '')}</h2>
-            <p>Generated: {metadata.get('generated_date', '')} {metadata.get('generated_time', '')}</p>  # noqa: E501
+            <p>Generated: {metadata.get('generated_date', '')} """
+            f"""{metadata.get('generated_time', '')}</p>
 
             <h2>Summary</h2>
         """
+        )
 
         for key, value in summary.items():
             html += f'<div class="metric"><span class="metric-label">{key.replace("_", " ").title()}:</span>'  # noqa: E501

@@ -8,236 +8,139 @@ and fatalities, then generates professional HTML reports suitable for supervisor
 """
 
 import argparse
-import pandas as pd
-import plotly.graph_objects as go
-import plotly.express as px
-from plotly.subplots import make_subplots
-from pathlib import Path
-from datetime import datetime
-import sys
-import os
-import logging
 import json
+import logging
+import os
+import sys
+from datetime import datetime
+from pathlib import Path
+
+import pandas as pd
+import plotly.express as px
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
 # Add src to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / 'src'))
+sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from scripts.marine_safety.report_notice import NOTICE_STYLE, unverified_notice
 
 try:
-    from worldenergydata.modules.marine_safety.analysis.incidents.hatch_maloperation_analysis import HatchMaloperationAnalyzer
+    from worldenergydata.modules.marine_safety.analysis.incidents.hatch_maloperation_analysis import (
+        HatchMaloperationAnalyzer,
+    )
+
     ANALYZER_AVAILABLE = True
 except ImportError as e:
     print(f"Warning: Could not import HatchMaloperationAnalyzer: {e}")
     ANALYZER_AVAILABLE = False
 
-logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
+logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
 
 
-def load_incident_data(input_dir: Path):
-    """Load all incident CSV files from real data sources."""
-    data = {}
-    all_incidents = []
+def load_incident_data(input_dir: Path, manifest_path: Path = None):
+    """Require both public inputs and agreement with the recorded manifest."""
+    from scripts.marine_safety.incident_inputs import DEFAULT_MANIFEST, load_inputs
 
-    logger.info("Loading real incident data from multiple sources...")
-
-    # 1. Load Canadian TSB occurrence data
-    try:
-        tsb_file = Path('data/modules/marine_safety/raw/canadian_tsb/occurrence.csv')
-        if tsb_file.exists():
-            logger.info(f"Loading Canadian TSB data from {tsb_file}")
-            tsb_df = pd.read_csv(tsb_file, encoding='utf-8-sig', low_memory=False)
-
-            # Normalize schema
-            tsb_normalized = pd.DataFrame({
-                'incident_id': tsb_df['OccID'] if 'OccID' in tsb_df else '',
-                'date': pd.to_datetime(tsb_df['OccDate'], errors='coerce') if 'OccDate' in tsb_df else None,
-                'vessel_name': '',  # Not in TSB occurrence table
-                'description': tsb_df['Summary'] if 'Summary' in tsb_df else '',
-                'severity': tsb_df['OccClassDisplayEng'] if 'OccClassDisplayEng' in tsb_df else 'Unknown',
-                'location': tsb_df['ProvinceDisplayEng'] if 'ProvinceDisplayEng' in tsb_df else '',
-                'fatalities': tsb_df['TotalDeaths'] if 'TotalDeaths' in tsb_df else 0,
-                'injuries': (tsb_df['TotalMinorInjuries'].fillna(0) +
-                           tsb_df['TotalSeriousInjuries'].fillna(0)) if 'TotalMinorInjuries' in tsb_df else 0,
-                'incident_type': tsb_df['AccIncTypeDisplayEng'] if 'AccIncTypeDisplayEng' in tsb_df else '',
-                'source': 'Canadian TSB'
-            })
-            all_incidents.append(tsb_normalized)
-            logger.info(f"Loaded {len(tsb_normalized)} Canadian TSB incidents")
-    except Exception as e:
-        logger.error(f"Error loading Canadian TSB data: {e}")
-
-    # 2. Load DLP Historical accidents data
-    try:
-        dlp_file = Path('data/modules/marine_safety/raw/dlp_historical/Accidents_1995-2012.csv')
-        if dlp_file.exists():
-            logger.info(f"Loading DLP Historical data from {dlp_file}")
-            dlp_df = pd.read_csv(dlp_file, encoding='utf-8-sig', low_memory=False)
-
-            # Normalize schema
-            dlp_normalized = pd.DataFrame({
-                'incident_id': dlp_df['BARDID'] if 'BARDID' in dlp_df else '',
-                'date': pd.to_datetime(dlp_df['Date'], errors='coerce') if 'Date' in dlp_df else None,
-                'vessel_name': '',  # Not in accidents table
-                'description': dlp_df['Redactednarrative'] if 'Redactednarrative' in dlp_df else '',
-                'severity': 'Unknown',
-                'location': (dlp_df['NameofBodyofWater'].fillna('') + ', ' +
-                           dlp_df['State'].fillna('')) if 'NameofBodyofWater' in dlp_df else '',
-                'fatalities': dlp_df['Numberdeaths'].fillna(0) if 'Numberdeaths' in dlp_df else 0,
-                'injuries': dlp_df['Numberinjured'].fillna(0) if 'Numberinjured' in dlp_df else 0,
-                'incident_type': dlp_df['AccidentEvent1'] if 'AccidentEvent1' in dlp_df else '',
-                'source': 'DLP Historical'
-            })
-            all_incidents.append(dlp_normalized)
-            logger.info(f"Loaded {len(dlp_normalized)} DLP Historical incidents")
-    except Exception as e:
-        logger.error(f"Error loading DLP Historical data: {e}")
-
-    # 3. Load IMO GISIS data (use collated file if available)
-    try:
-        imo_file = Path('data/modules/marine_safety/raw/imo_gisis/imo_gisis_collated.csv')
-        if imo_file.exists():
-            logger.info(f"Loading IMO GISIS data from {imo_file}")
-            imo_df = pd.read_csv(imo_file, encoding='utf-8-sig', low_memory=False)
-
-            # Normalize schema
-            imo_normalized = pd.DataFrame({
-                'incident_id': imo_df['Reference'] if 'Reference' in imo_df else '',
-                'date': pd.to_datetime(imo_df['Occurrence date and time'], errors='coerce') if 'Occurrence date and time' in imo_df else None,
-                'vessel_name': imo_df['Ships involved'] if 'Ships involved' in imo_df else '',
-                'description': imo_df['Casualty event'] if 'Casualty event' in imo_df else '',
-                'severity': imo_df['Casualty severity'] if 'Casualty severity' in imo_df else 'Unknown',
-                'location': imo_df['Place'] if 'Place' in imo_df else '',
-                'fatalities': 0,  # Not directly available in IMO data
-                'injuries': 0,  # Not directly available in IMO data
-                'incident_type': imo_df['Casualty event'] if 'Casualty event' in imo_df else '',
-                'source': 'IMO GISIS'
-            })
-            all_incidents.append(imo_normalized)
-            logger.info(f"Loaded {len(imo_normalized)} IMO GISIS incidents")
-    except Exception as e:
-        logger.error(f"Error loading IMO GISIS data: {e}")
-
-    # Combine all incidents
-    if all_incidents:
-        combined_df = pd.concat(all_incidents, ignore_index=True)
-        logger.info(f"Combined total: {len(combined_df)} incidents from all sources")
-
-        # Remove rows with no description
-        combined_df = combined_df[combined_df['description'].notna() & (combined_df['description'] != '')]
-        logger.info(f"After removing empty descriptions: {len(combined_df)} incidents")
-
-        # Separate into incident types (will be detected by LLM/regex later)
-        data['all_incidents'] = combined_df
-        data['hatch'] = combined_df  # Will filter in analysis
-        data['foundering'] = combined_df[combined_df['incident_type'].str.contains('founder|capsize|sinking', case=False, na=False)]
-        data['fatality'] = combined_df[combined_df['fatalities'] > 0]
-
-        logger.info(f"Potential foundering incidents: {len(data['foundering'])}")
-        logger.info(f"Fatal incidents: {len(data['fatality'])}")
-    else:
-        logger.warning("No incident data loaded")
-        data['hatch'] = pd.DataFrame()
-        data['foundering'] = pd.DataFrame()
-        data['fatality'] = pd.DataFrame()
-
-    return data
+    return load_inputs(input_dir, manifest_path or DEFAULT_MANIFEST)
 
 
 def analyze_hatch_incidents(df: pd.DataFrame, use_llm: bool = False):
     """Analyze hatch maloperation incidents using LLM or regex detection."""
     if df.empty:
         return {
-            'total': 0,
-            'detected': 0,
-            'by_severity': {},
-            'by_month': {},
-            'detection_method': 'none'
+            "total": 0,
+            "detected": 0,
+            "by_severity": {},
+            "by_month": {},
+            "detection_method": "none",
         }
 
     results = {
-        'total': len(df),
-        'detected': 0,
-        'true_positives': 0,
-        'false_positives': 0,
-        'true_negatives': 0,
-        'false_negatives': 0,
-        'by_severity': {},
-        'by_month': {},
-        'detection_details': [],
-        'detection_method': 'llm' if use_llm else 'regex'
+        "total": len(df),
+        "detected": 0,
+        "true_positives": 0,
+        "false_positives": 0,
+        "true_negatives": 0,
+        "false_negatives": 0,
+        "by_severity": {},
+        "by_month": {},
+        "detection_details": [],
+        "detection_method": "llm" if use_llm else "regex",
     }
 
     if not ANALYZER_AVAILABLE:
-        logger.warning("HatchMaloperationAnalyzer not available, skipping detailed analysis")
-        results['detection_method'] = 'unavailable'
+        logger.warning(
+            "HatchMaloperationAnalyzer not available, skipping detailed analysis"
+        )
+        results["detection_method"] = "unavailable"
         return results
 
     # Initialize analyzer
     try:
         analyzer = HatchMaloperationAnalyzer(
-            use_llm=use_llm,
-            llm_confidence_threshold=0.7,
-            fallback_to_regex=True
+            use_llm=use_llm, llm_confidence_threshold=0.7, fallback_to_regex=True
         )
         logger.info(f"Initialized analyzer with LLM={use_llm}")
     except Exception as e:
         logger.error(f"Failed to initialize analyzer: {e}")
-        results['detection_method'] = 'error'
+        results["detection_method"] = "error"
         return results
 
     # Analyze each incident
     logger.info(f"Analyzing {len(df)} incidents for hatch maloperation...")
     for idx, row in df.iterrows():
         if idx > 0 and idx % 10000 == 0:
-            logger.info(f"  Processed {idx}/{len(df)} incidents, detected {results['detected']} hatch incidents so far")
+            logger.info(
+                f"  Processed {idx}/{len(df)} incidents, detected {results['detected']} hatch incidents so far"
+            )
 
         incident = {
-            'description': row['description'],
-            'incident_id': row['incident_id']
+            "description": row["description"],
+            "incident_id": row["incident_id"],
         }
 
         # Get detailed detection results
         result = analyzer.is_hatch_maloperation_incident(incident, return_details=True)
 
-        is_detected = result['is_hatch_incident']
+        is_detected = result["is_hatch_incident"]
 
         # Update statistics
         if is_detected:
-            results['detected'] += 1
+            results["detected"] += 1
 
             # Store detection details for detected hatch incidents
             details = {
-                'incident_id': row['incident_id'],
-                'detected': is_detected,
-                'method': result.get('detection_method', 'unknown'),
-                'confidence': result.get('llm_confidence', 0.0),
-                'severity': row.get('severity', 'Unknown'),
-                'date': row['date'],
-                'source': row.get('source', 'Unknown'),
-                'description': row['description'][:200]  # Truncate for display
+                "incident_id": row["incident_id"],
+                "detected": is_detected,
+                "method": result.get("detection_method", "unknown"),
+                "confidence": result.get("llm_confidence", 0.0),
+                "severity": row.get("severity", "Unknown"),
+                "date": row["date"],
+                "source": row.get("source", "Unknown"),
+                "description": row["description"][:200],  # Truncate for display
             }
-            results['detection_details'].append(details)
+            results["detection_details"].append(details)
 
             # By severity
-            severity = row.get('severity', 'Unknown')
-            if severity not in results['by_severity']:
-                results['by_severity'][severity] = 0
+            severity = row.get("severity", "Unknown")
+            if severity not in results["by_severity"]:
+                results["by_severity"][severity] = 0
             if is_detected:
-                results['by_severity'][severity] += 1
+                results["by_severity"][severity] += 1
 
             # By month
-            month = row['date'].strftime('%Y-%m')
-            if month not in results['by_month']:
-                results['by_month'][month] = 0
+            month = row["date"].strftime("%Y-%m")
+            if month not in results["by_month"]:
+                results["by_month"][month] = 0
             if is_detected:
-                results['by_month'][month] += 1
+                results["by_month"][month] += 1
 
     # Calculate detection statistics
     stats = analyzer.get_detection_statistics()
-    results['stats'] = stats
+    results["stats"] = stats
 
     return results
 
@@ -260,24 +163,31 @@ def generate_smart_summary(description: str, max_length: int = 150) -> str:
     import re
 
     # Try to extract vessel name if mentioned
-    vessel_match = re.search(r'(?:vessel|ship|boat|MV|M/V|F/V)\s+["\']?([A-Z][A-Za-z0-9\s-]+)["\']?', desc, re.IGNORECASE)
+    vessel_match = re.search(
+        r'(?:vessel|ship|boat|MV|M/V|F/V)\s+["\']?([A-Z][A-Za-z0-9\s-]+)["\']?',
+        desc,
+        re.IGNORECASE,
+    )
     vessel = vessel_match.group(1).strip() if vessel_match else None
 
     # Try to extract location
-    location_match = re.search(r'(?:in|at|near|off|on)\s+([A-Z][A-Za-z\s,]+?)(?:\.|,|\s+(?:when|during|the|and|with))', desc)
+    location_match = re.search(
+        r"(?:in|at|near|off|on)\s+([A-Z][A-Za-z\s,]+?)(?:\.|,|\s+(?:when|during|the|and|with))",
+        desc,
+    )
     location = location_match.group(1).strip() if location_match else None
 
     # Key incident indicators
     incident_keywords = {
-        'hatch': ['hatch', 'opening', 'door', 'cover', 'access', 'seal', 'closure'],
-        'flooding': ['flood', 'water', 'ingress', 'leak', 'breach'],
-        'capsize': ['capsize', 'overturn', 'roll', 'list'],
-        'founder': ['founder', 'sink', 'sank', 'submerge'],
-        'fire': ['fire', 'explosion', 'burn', 'smoke'],
-        'collision': ['collision', 'collide', 'struck', 'hit', 'contact'],
-        'grounding': ['ground', 'aground', 'strand'],
-        'injury': ['injur', 'fatal', 'death', 'killed', 'crew member'],
-        'mechanical': ['engine', 'propulsion', 'machinery', 'equipment', 'failure']
+        "hatch": ["hatch", "opening", "door", "cover", "access", "seal", "closure"],
+        "flooding": ["flood", "water", "ingress", "leak", "breach"],
+        "capsize": ["capsize", "overturn", "roll", "list"],
+        "founder": ["founder", "sink", "sank", "submerge"],
+        "fire": ["fire", "explosion", "burn", "smoke"],
+        "collision": ["collision", "collide", "struck", "hit", "contact"],
+        "grounding": ["ground", "aground", "strand"],
+        "injury": ["injur", "fatal", "death", "killed", "crew member"],
+        "mechanical": ["engine", "propulsion", "machinery", "equipment", "failure"],
     }
 
     desc_lower = desc.lower()
@@ -300,10 +210,10 @@ def generate_smart_summary(description: str, max_length: int = 150) -> str:
 
     # Extract outcome/result if mentioned
     outcome_patterns = [
-        r'result(?:ed|ing)?\s+in\s+([^.;]+)',
-        r'caus(?:ed|ing)\s+([^.;]+)',
-        r'led\s+to\s+([^.;]+)',
-        r'(\d+\s+(?:crew|person|people|death|fatal|injur))',
+        r"result(?:ed|ing)?\s+in\s+([^.;]+)",
+        r"caus(?:ed|ing)\s+([^.;]+)",
+        r"led\s+to\s+([^.;]+)",
+        r"(\d+\s+(?:crew|person|people|death|fatal|injur))",
     ]
 
     for pattern in outcome_patterns:
@@ -314,52 +224,53 @@ def generate_smart_summary(description: str, max_length: int = 150) -> str:
             break
 
     if parts:
-        summary = ' '.join(parts)
+        summary = " ".join(parts)
         if len(summary) <= max_length:
             return summary
         else:
-            return summary[:max_length-3] + "..."
+            return summary[: max_length - 3] + "..."
 
     # Fallback: Return first sentence or first max_length chars
-    sentences = re.split(r'[.!?]+\s+', desc)
+    sentences = re.split(r"[.!?]+\s+", desc)
     if sentences and len(sentences[0]) <= max_length:
         return sentences[0] + "."
 
-    return desc[:max_length-3] + "..."
+    return desc[: max_length - 3] + "..."
 
 
 def analyze_founderings(df: pd.DataFrame):
     """Analyze foundering incidents."""
     if df.empty:
-        return {'total': 0, 'total_fatalities': 0, 'by_month': {}, 'avg_fatalities': 0}
+        return {"total": 0, "total_fatalities": 0, "by_month": {}, "avg_fatalities": 0}
 
     results = {
-        'total': len(df),
-        'total_fatalities': df['fatalities'].sum(),
-        'avg_fatalities': df['fatalities'].mean(),
-        'by_month': {},
-        'by_fatality_range': {'0': 0, '1-2': 0, '3-5': 0, '6+': 0}
+        "total": len(df),
+        "total_fatalities": df["fatalities"].sum(),
+        "avg_fatalities": df["fatalities"].mean(),
+        "by_month": {},
+        "by_fatality_range": {"0": 0, "1-2": 0, "3-5": 0, "6+": 0},
     }
 
     # By month
-    df['month'] = df['date'].dt.to_period('M').astype(str)
-    monthly = df.groupby('month').agg({
-        'incident_id': 'count',
-        'fatalities': 'sum'
-    }).to_dict('index')
-    results['by_month'] = monthly
+    df["month"] = df["date"].dt.to_period("M").astype(str)
+    monthly = (
+        df.groupby("month")
+        .agg({"incident_id": "count", "fatalities": "sum"})
+        .to_dict("index")
+    )
+    results["by_month"] = monthly
 
     # By fatality range
     for _, row in df.iterrows():
-        deaths = row['fatalities']
+        deaths = row["fatalities"]
         if deaths == 0:
-            results['by_fatality_range']['0'] += 1
+            results["by_fatality_range"]["0"] += 1
         elif deaths <= 2:
-            results['by_fatality_range']['1-2'] += 1
+            results["by_fatality_range"]["1-2"] += 1
         elif deaths <= 5:
-            results['by_fatality_range']['3-5'] += 1
+            results["by_fatality_range"]["3-5"] += 1
         else:
-            results['by_fatality_range']['6+'] += 1
+            results["by_fatality_range"]["6+"] += 1
 
     return results
 
@@ -367,42 +278,50 @@ def analyze_founderings(df: pd.DataFrame):
 def analyze_fatalities(df: pd.DataFrame):
     """Analyze fatality incidents."""
     if df.empty:
-        return {'total': 0, 'total_deaths': 0, 'by_cause': {}, 'by_month': {}, 'by_source': {}}
+        return {
+            "total": 0,
+            "total_deaths": 0,
+            "by_cause": {},
+            "by_month": {},
+            "by_source": {},
+        }
 
     results = {
-        'total': len(df),
-        'total_deaths': int(df['fatalities'].sum()),
-        'by_cause': {},
-        'by_month': {},
-        'by_source': {}
+        "total": len(df),
+        "total_deaths": int(df["fatalities"].sum()),
+        "by_cause": {},
+        "by_month": {},
+        "by_source": {},
     }
 
     # By cause of death (if available in data)
-    if 'cause_of_death' in df.columns:
-        cause_counts = df['cause_of_death'].value_counts().to_dict()
-        results['by_cause'] = cause_counts
+    if "cause_of_death" in df.columns:
+        cause_counts = df["cause_of_death"].value_counts().to_dict()
+        results["by_cause"] = cause_counts
     else:
         # Group by incident type as proxy for cause
-        if 'incident_type' in df.columns:
-            cause_counts = df['incident_type'].value_counts().head(10).to_dict()
-            results['by_cause'] = cause_counts
+        if "incident_type" in df.columns:
+            cause_counts = df["incident_type"].value_counts().head(10).to_dict()
+            results["by_cause"] = cause_counts
 
     # By data source
-    if 'source' in df.columns:
-        source_counts = df.groupby('source').agg({
-            'incident_id': 'count',
-            'fatalities': 'sum'
-        }).to_dict('index')
-        results['by_source'] = source_counts
+    if "source" in df.columns:
+        source_counts = (
+            df.groupby("source")
+            .agg({"incident_id": "count", "fatalities": "sum"})
+            .to_dict("index")
+        )
+        results["by_source"] = source_counts
 
     # By month
     df_copy = df.copy()
-    df_copy['month'] = df_copy['date'].dt.to_period('M').astype(str)
-    monthly = df_copy.groupby('month').agg({
-        'incident_id': 'count',
-        'fatalities': 'sum'
-    }).to_dict('index')
-    results['by_month'] = monthly
+    df_copy["month"] = df_copy["date"].dt.to_period("M").astype(str)
+    monthly = (
+        df_copy.groupby("month")
+        .agg({"incident_id": "count", "fatalities": "sum"})
+        .to_dict("index")
+    )
+    results["by_month"] = monthly
 
     return results
 
@@ -411,80 +330,84 @@ def create_hatch_visualizations(df: pd.DataFrame, analysis: dict):
     """Create interactive visualizations for hatch incidents."""
     figs = []
 
-    if df.empty or analysis['detected'] == 0:
+    if df.empty or analysis["detected"] == 0:
         return figs
 
     # Create dataframe from detection details
-    if not analysis.get('detection_details'):
+    if not analysis.get("detection_details"):
         return figs
 
-    detected_df = pd.DataFrame(analysis['detection_details'])
+    detected_df = pd.DataFrame(analysis["detection_details"])
 
     # 1. Detection by severity
-    if analysis['by_severity']:
-        severity_fig = go.Figure(data=[
-            go.Bar(
-                x=list(analysis['by_severity'].keys()),
-                y=list(analysis['by_severity'].values()),
-                marker_color=['#ff4444', '#ff9944', '#ffdd44'],
-                text=list(analysis['by_severity'].values()),
-                textposition='outside'
-            )
-        ])
-        severity_fig.update_layout(
-            title='Hatch Maloperation Incidents by Severity',
-            xaxis_title='Severity Level',
-            yaxis_title='Number of Incidents',
-            template='plotly_white',
-            height=400
+    if analysis["by_severity"]:
+        severity_fig = go.Figure(
+            data=[
+                go.Bar(
+                    x=list(analysis["by_severity"].keys()),
+                    y=list(analysis["by_severity"].values()),
+                    marker_color=["#ff4444", "#ff9944", "#ffdd44"],
+                    text=list(analysis["by_severity"].values()),
+                    textposition="outside",
+                )
+            ]
         )
-        figs.append(('severity', severity_fig))
+        severity_fig.update_layout(
+            title="Hatch Maloperation Incidents by Severity",
+            xaxis_title="Severity Level",
+            yaxis_title="Number of Incidents",
+            template="plotly_white",
+            height=400,
+        )
+        figs.append(("severity", severity_fig))
 
     # 2. Trend over time
     if not detected_df.empty:
-        detected_df['month'] = detected_df['date'].dt.to_period('M').astype(str)
-        monthly_counts = detected_df.groupby('month').size().reset_index(name='count')
+        detected_df["month"] = detected_df["date"].dt.to_period("M").astype(str)
+        monthly_counts = detected_df.groupby("month").size().reset_index(name="count")
 
-        trend_fig = go.Figure(data=[
-            go.Scatter(
-                x=monthly_counts['month'],
-                y=monthly_counts['count'],
-                mode='lines+markers',
-                line=dict(color='#ff4444', width=3),
-                marker=dict(size=10),
-                name='Incidents'
-            )
-        ])
-        trend_fig.update_layout(
-            title='Hatch Maloperation Incidents - Monthly Trend',
-            xaxis_title='Month',
-            yaxis_title='Number of Incidents',
-            template='plotly_white',
-            height=400
+        trend_fig = go.Figure(
+            data=[
+                go.Scatter(
+                    x=monthly_counts["month"],
+                    y=monthly_counts["count"],
+                    mode="lines+markers",
+                    line=dict(color="#ff4444", width=3),
+                    marker=dict(size=10),
+                    name="Incidents",
+                )
+            ]
         )
-        figs.append(('trend', trend_fig))
+        trend_fig.update_layout(
+            title="Hatch Maloperation Incidents - Monthly Trend",
+            xaxis_title="Month",
+            yaxis_title="Number of Incidents",
+            template="plotly_white",
+            height=400,
+        )
+        figs.append(("trend", trend_fig))
 
     # 3. Detection method breakdown (if using LLM)
-    if 'stats' in analysis and analysis['detection_method'] == 'llm':
-        stats = analysis['stats']
-        method_fig = go.Figure(data=[
-            go.Pie(
-                labels=['LLM Detection', 'Regex Detection', 'Hybrid Detection'],
-                values=[
-                    stats.get('llm_detections', 0),
-                    stats.get('regex_detections', 0),
-                    stats.get('hybrid_detections', 0)
-                ],
-                marker_colors=['#4444ff', '#ff4444', '#44ff44'],
-                hole=0.4
-            )
-        ])
-        method_fig.update_layout(
-            title='Detection Method Distribution',
-            template='plotly_white',
-            height=400
+    if "stats" in analysis and analysis["detection_method"] == "llm":
+        stats = analysis["stats"]
+        method_fig = go.Figure(
+            data=[
+                go.Pie(
+                    labels=["LLM Detection", "Regex Detection", "Hybrid Detection"],
+                    values=[
+                        stats.get("llm_detections", 0),
+                        stats.get("regex_detections", 0),
+                        stats.get("hybrid_detections", 0),
+                    ],
+                    marker_colors=["#4444ff", "#ff4444", "#44ff44"],
+                    hole=0.4,
+                )
+            ]
         )
-        figs.append(('methods', method_fig))
+        method_fig.update_layout(
+            title="Detection Method Distribution", template="plotly_white", height=400
+        )
+        figs.append(("methods", method_fig))
 
     return figs
 
@@ -497,55 +420,72 @@ def create_foundering_visualizations(df: pd.DataFrame, analysis: dict):
         return figs
 
     # 1. Fatalities by incident
-    fatality_fig = go.Figure(data=[
-        go.Bar(
-            x=df['vessel_name'],
-            y=df['fatalities'],
-            marker_color=df['fatalities'].apply(
-                lambda x: '#44ff44' if x == 0 else '#ffdd44' if x <= 2 else '#ff9944' if x <= 5 else '#ff4444'
-            ),
-            text=df['fatalities'],
-            textposition='outside',
-            hovertemplate='<b>%{x}</b><br>Fatalities: %{y}<extra></extra>'
-        )
-    ])
-    fatality_fig.update_layout(
-        title='Fatalities per Foundering Incident',
-        xaxis_title='Vessel',
-        yaxis_title='Number of Fatalities',
-        template='plotly_white',
-        height=500,
-        xaxis_tickangle=-45
+    fatality_fig = go.Figure(
+        data=[
+            go.Bar(
+                x=df["vessel_name"],
+                y=df["fatalities"],
+                marker_color=df["fatalities"].apply(
+                    lambda x: (
+                        "#44ff44"
+                        if x == 0
+                        else "#ffdd44" if x <= 2 else "#ff9944" if x <= 5 else "#ff4444"
+                    )
+                ),
+                text=df["fatalities"],
+                textposition="outside",
+                hovertemplate="<b>%{x}</b><br>Fatalities: %{y}<extra></extra>",
+            )
+        ]
     )
-    figs.append(('fatalities', fatality_fig))
+    fatality_fig.update_layout(
+        title="Fatalities per Foundering Incident",
+        xaxis_title="Vessel",
+        yaxis_title="Number of Fatalities",
+        template="plotly_white",
+        height=500,
+        xaxis_tickangle=-45,
+    )
+    figs.append(("fatalities", fatality_fig))
 
     # 2. Monthly trend
-    df['month'] = df['date'].dt.to_period('M').astype(str)
-    monthly = df.groupby('month').agg({
-        'incident_id': 'count',
-        'fatalities': 'sum'
-    }).reset_index()
-    monthly.columns = ['month', 'incidents', 'fatalities']
+    df["month"] = df["date"].dt.to_period("M").astype(str)
+    monthly = (
+        df.groupby("month")
+        .agg({"incident_id": "count", "fatalities": "sum"})
+        .reset_index()
+    )
+    monthly.columns = ["month", "incidents", "fatalities"]
 
     trend_fig = make_subplots(specs=[[{"secondary_y": True}]])
     trend_fig.add_trace(
-        go.Bar(x=monthly['month'], y=monthly['incidents'], name='Incidents', marker_color='#4444ff'),
-        secondary_y=False
+        go.Bar(
+            x=monthly["month"],
+            y=monthly["incidents"],
+            name="Incidents",
+            marker_color="#4444ff",
+        ),
+        secondary_y=False,
     )
     trend_fig.add_trace(
-        go.Scatter(x=monthly['month'], y=monthly['fatalities'], name='Fatalities',
-                  mode='lines+markers', line=dict(color='#ff4444', width=3)),
-        secondary_y=True
+        go.Scatter(
+            x=monthly["month"],
+            y=monthly["fatalities"],
+            name="Fatalities",
+            mode="lines+markers",
+            line=dict(color="#ff4444", width=3),
+        ),
+        secondary_y=True,
     )
     trend_fig.update_layout(
-        title='Foundering Incidents and Fatalities - Monthly Trend',
-        template='plotly_white',
-        height=400
+        title="Foundering Incidents and Fatalities - Monthly Trend",
+        template="plotly_white",
+        height=400,
     )
-    trend_fig.update_xaxes(title_text='Month')
-    trend_fig.update_yaxes(title_text='Number of Incidents', secondary_y=False)
-    trend_fig.update_yaxes(title_text='Total Fatalities', secondary_y=True)
-    figs.append(('trend', trend_fig))
+    trend_fig.update_xaxes(title_text="Month")
+    trend_fig.update_yaxes(title_text="Number of Incidents", secondary_y=False)
+    trend_fig.update_yaxes(title_text="Total Fatalities", secondary_y=True)
+    figs.append(("trend", trend_fig))
 
     return figs
 
@@ -558,58 +498,74 @@ def create_fatality_visualizations(df: pd.DataFrame, analysis: dict):
         return figs
 
     # 1. Fatalities by cause
-    cause_fig = go.Figure(data=[
-        go.Bar(
-            x=list(analysis['by_cause'].keys()),
-            y=list(analysis['by_cause'].values()),
-            marker_color='#ff4444',
-            text=list(analysis['by_cause'].values()),
-            textposition='outside'
-        )
-    ])
-    cause_fig.update_layout(
-        title='Fatalities by Cause of Death',
-        xaxis_title='Cause of Death',
-        yaxis_title='Number of Incidents',
-        template='plotly_white',
-        height=500,
-        xaxis_tickangle=-45
+    cause_fig = go.Figure(
+        data=[
+            go.Bar(
+                x=list(analysis["by_cause"].keys()),
+                y=list(analysis["by_cause"].values()),
+                marker_color="#ff4444",
+                text=list(analysis["by_cause"].values()),
+                textposition="outside",
+            )
+        ]
     )
-    figs.append(('causes', cause_fig))
+    cause_fig.update_layout(
+        title="Fatalities by Cause of Death",
+        xaxis_title="Cause of Death",
+        yaxis_title="Number of Incidents",
+        template="plotly_white",
+        height=500,
+        xaxis_tickangle=-45,
+    )
+    figs.append(("causes", cause_fig))
 
     # 2. Monthly trend
-    df['month'] = df['date'].dt.to_period('M').astype(str)
-    monthly = df.groupby('month').agg({
-        'incident_id': 'count',
-        'fatalities': 'sum'
-    }).reset_index()
-    monthly.columns = ['month', 'incidents', 'total_fatalities']
+    df["month"] = df["date"].dt.to_period("M").astype(str)
+    monthly = (
+        df.groupby("month")
+        .agg({"incident_id": "count", "fatalities": "sum"})
+        .reset_index()
+    )
+    monthly.columns = ["month", "incidents", "total_fatalities"]
 
     trend_fig = make_subplots(specs=[[{"secondary_y": True}]])
     trend_fig.add_trace(
-        go.Bar(x=monthly['month'], y=monthly['incidents'], name='Incidents', marker_color='#4444ff'),
-        secondary_y=False
+        go.Bar(
+            x=monthly["month"],
+            y=monthly["incidents"],
+            name="Incidents",
+            marker_color="#4444ff",
+        ),
+        secondary_y=False,
     )
     trend_fig.add_trace(
-        go.Scatter(x=monthly['month'], y=monthly['total_fatalities'], name='Total Fatalities',
-                  mode='lines+markers', line=dict(color='#ff4444', width=3)),
-        secondary_y=True
+        go.Scatter(
+            x=monthly["month"],
+            y=monthly["total_fatalities"],
+            name="Total Fatalities",
+            mode="lines+markers",
+            line=dict(color="#ff4444", width=3),
+        ),
+        secondary_y=True,
     )
     trend_fig.update_layout(
-        title='Fatality Incidents - Monthly Trend',
-        template='plotly_white',
-        height=400
+        title="Fatality Incidents - Monthly Trend", template="plotly_white", height=400
     )
-    trend_fig.update_xaxes(title_text='Month')
-    trend_fig.update_yaxes(title_text='Number of Incidents', secondary_y=False)
-    trend_fig.update_yaxes(title_text='Total Fatalities', secondary_y=True)
-    figs.append(('trend', trend_fig))
+    trend_fig.update_xaxes(title_text="Month")
+    trend_fig.update_yaxes(title_text="Number of Incidents", secondary_y=False)
+    trend_fig.update_yaxes(title_text="Total Fatalities", secondary_y=True)
+    figs.append(("trend", trend_fig))
 
     return figs
 
 
-def generate_executive_summary(data: dict, analyses: dict, output_dir: Path, use_llm: bool):
+def generate_executive_summary(
+    data: dict, analyses: dict, output_dir: Path, use_llm: bool
+):
     """Generate executive summary HTML report."""
+    from scripts.marine_safety.incident_inputs import provenance_html
+
+    provenance = provenance_html(data["manifest"]) if "manifest" in data else ""
 
     html = f"""
 <!DOCTYPE html>
@@ -763,6 +719,7 @@ def generate_executive_summary(data: dict, analyses: dict, output_dir: Path, use
         <p>Analysis Method: <span class="badge {'llm' if use_llm else 'regex'}">{'LLM-Enhanced Detection' if use_llm else 'Regex Pattern Matching'}</span></p>
     </div>
 
+    {provenance}
     <div class="summary-cards">
         <div class="card critical">
             <h3>Hatch Maloperation</h3>
@@ -796,8 +753,8 @@ def generate_executive_summary(data: dict, analyses: dict, output_dir: Path, use
                 <li><strong>{analyses['hatch']['detected']}</strong> hatch maloperation incidents detected out of {analyses['hatch']['total']} total incidents analyzed</li>
 """
 
-    if 'stats' in analyses['hatch'] and use_llm:
-        stats = analyses['hatch']['stats']
+    if "stats" in analyses["hatch"] and use_llm:
+        stats = analyses["hatch"]["stats"]
         html += f"""
                 <li><strong>Detection Methods:</strong>
                     <ul>
@@ -808,12 +765,14 @@ def generate_executive_summary(data: dict, analyses: dict, output_dir: Path, use
                 </li>
 """
 
-    if analyses['hatch']['by_severity']:
+    if analyses["hatch"]["by_severity"]:
         html += f"""
                 <li><strong>By Severity:</strong>
                     <ul>
 """
-        for severity, count in sorted(analyses['hatch']['by_severity'].items(), key=lambda x: x[1], reverse=True):
+        for severity, count in sorted(
+            analyses["hatch"]["by_severity"].items(), key=lambda x: x[1], reverse=True
+        ):
             html += f"                        <li>{severity}: {count} incidents</li>\n"
         html += """
                     </ul>
@@ -821,11 +780,11 @@ def generate_executive_summary(data: dict, analyses: dict, output_dir: Path, use
 """
 
     # Calculate detection accuracy if we have true/false positives/negatives
-    if analyses['hatch']['total'] > 0:
-        tp = analyses['hatch'].get('true_positives', 0)
-        tn = analyses['hatch'].get('true_negatives', 0)
-        fp = analyses['hatch'].get('false_positives', 0)
-        fn = analyses['hatch'].get('false_negatives', 0)
+    if analyses["hatch"]["total"] > 0:
+        tp = analyses["hatch"].get("true_positives", 0)
+        tn = analyses["hatch"].get("true_negatives", 0)
+        fp = analyses["hatch"].get("false_positives", 0)
+        fn = analyses["hatch"].get("false_negatives", 0)
 
         total_actual_hatch = tp + fn
         total_non_hatch = tn + fp
@@ -872,12 +831,12 @@ def generate_executive_summary(data: dict, analyses: dict, output_dir: Path, use
                 <li><strong>{analyses['foundering']['avg_fatalities']:.1f}</strong> average fatalities per foundering incident</li>
 """
 
-    if analyses['foundering']['by_fatality_range']:
+    if analyses["foundering"]["by_fatality_range"]:
         html += """
                 <li><strong>Fatality Distribution:</strong>
                     <ul>
 """
-        for range_label, count in analyses['foundering']['by_fatality_range'].items():
+        for range_label, count in analyses["foundering"]["by_fatality_range"].items():
             html += f"                        <li>{range_label} fatalities: {count} incidents</li>\n"
         html += """
                     </ul>
@@ -912,12 +871,14 @@ def generate_executive_summary(data: dict, analyses: dict, output_dir: Path, use
                 <li><strong>{analyses['fatality']['total_deaths']}</strong> total fatalities</li>
 """
 
-    if analyses['fatality']['by_cause']:
+    if analyses["fatality"]["by_cause"]:
         html += """
                 <li><strong>Leading Causes of Death:</strong>
                     <ul>
 """
-        sorted_causes = sorted(analyses['fatality']['by_cause'].items(), key=lambda x: x[1], reverse=True)
+        sorted_causes = sorted(
+            analyses["fatality"]["by_cause"].items(), key=lambda x: x[1], reverse=True
+        )
         for cause, count in sorted_causes[:5]:  # Top 5 causes
             html += f"                        <li>{cause}: {count} incidents</li>\n"
         html += """
@@ -957,22 +918,53 @@ def generate_executive_summary(data: dict, analyses: dict, output_dir: Path, use
 </html>
 """
 
-    output_file = output_dir / 'executive_summary.html'
+    output_file = output_dir / "executive_summary.html"
     output_file.write_text(html)
     logger.info(f"Executive summary saved to {output_file}")
 
 
-def export_incident_data_to_csv(df: pd.DataFrame, incident_type: str, results_dir: Path) -> Path:
+def export_incident_data_to_csv(
+    df: pd.DataFrame, incident_type: str, results_dir: Path
+) -> Path:
     """Export incident data to CSV file for client-side loading."""
     results_dir.mkdir(parents=True, exist_ok=True)
 
     # Select columns based on incident type
-    if incident_type == 'hatch':
-        columns = ['incident_id', 'date', 'vessel_name', 'description', 'severity', 'location', 'source', 'fatalities', 'injuries']
-    elif incident_type == 'foundering':
-        columns = ['incident_id', 'date', 'vessel_name', 'description', 'fatalities', 'location', 'source', 'injuries']
-    elif incident_type == 'fatality':
-        columns = ['incident_id', 'date', 'vessel_name', 'description', 'incident_type', 'location', 'source', 'fatalities', 'injuries']
+    if incident_type == "hatch":
+        columns = [
+            "incident_id",
+            "date",
+            "vessel_name",
+            "description",
+            "severity",
+            "location",
+            "source",
+            "fatalities",
+            "injuries",
+        ]
+    elif incident_type == "foundering":
+        columns = [
+            "incident_id",
+            "date",
+            "vessel_name",
+            "description",
+            "fatalities",
+            "location",
+            "source",
+            "injuries",
+        ]
+    elif incident_type == "fatality":
+        columns = [
+            "incident_id",
+            "date",
+            "vessel_name",
+            "description",
+            "incident_type",
+            "location",
+            "source",
+            "fatalities",
+            "injuries",
+        ]
     else:
         columns = list(df.columns)
 
@@ -981,57 +973,71 @@ def export_incident_data_to_csv(df: pd.DataFrame, incident_type: str, results_di
     export_df = df[available_columns].copy()
 
     # Clean and format data
-    if 'date' in export_df.columns:
-        export_df['date'] = pd.to_datetime(export_df['date'], errors='coerce').dt.strftime('%Y-%m-%d')
-        export_df['date'] = export_df['date'].fillna('Unknown')
+    if "date" in export_df.columns:
+        export_df["date"] = pd.to_datetime(
+            export_df["date"], errors="coerce"
+        ).dt.strftime("%Y-%m-%d")
+        export_df["date"] = export_df["date"].fillna("Unknown")
 
-    if 'vessel_name' in export_df.columns:
-        export_df['vessel_name'] = export_df['vessel_name'].fillna('Unknown')
+    if "vessel_name" in export_df.columns:
+        export_df["vessel_name"] = export_df["vessel_name"].fillna("Unknown")
 
-    if 'description' in export_df.columns:
-        export_df['description'] = export_df['description'].fillna('No description available')
+    if "description" in export_df.columns:
+        export_df["description"] = export_df["description"].fillna(
+            "No description available"
+        )
 
-    for col in ['fatalities', 'injuries']:
+    for col in ["fatalities", "injuries"]:
         if col in export_df.columns:
             export_df[col] = export_df[col].fillna(0).astype(int)
 
-    for col in ['severity', 'location', 'source', 'incident_type']:
+    for col in ["severity", "location", "source", "incident_type"]:
         if col in export_df.columns:
-            export_df[col] = export_df[col].fillna('N/A')
+            export_df[col] = export_df[col].fillna("N/A")
 
-    csv_path = results_dir / f'{incident_type}_incidents.csv'
-    export_df.to_csv(csv_path, index=False, encoding='utf-8')
+    csv_path = results_dir / f"{incident_type}_incidents.csv"
+    export_df.to_csv(csv_path, index=False, encoding="utf-8")
     logger.info(f"✓ Exported {len(export_df)} {incident_type} incidents to {csv_path}")
 
     return csv_path
 
 
-def generate_detailed_report(incident_type: str, df: pd.DataFrame, analysis: dict,
-                            visualizations: list, output_dir: Path, use_llm: bool):
+def generate_detailed_report(
+    incident_type: str,
+    df: pd.DataFrame,
+    analysis: dict,
+    visualizations: list,
+    output_dir: Path,
+    use_llm: bool,
+):
     """Generate detailed HTML report for specific incident type."""
 
     title_map = {
-        'hatch': 'Hatch Maloperation Incidents',
-        'foundering': 'Foundering Incidents',
-        'fatality': 'Fatality Incidents'
+        "hatch": "Hatch Maloperation Incidents",
+        "foundering": "Foundering Incidents",
+        "fatality": "Fatality Incidents",
     }
 
-    title = title_map.get(incident_type, 'Incident Analysis')
+    title = title_map.get(incident_type, "Incident Analysis")
 
     # Export incident data to CSV for optimized client-side loading
-    results_dir = Path('results/modules/marine_safety')
+    results_dir = Path("results/modules/marine_safety")
     csv_path = export_incident_data_to_csv(df, incident_type, results_dir)
-    csv_relative_path = f'../../results/modules/marine_safety/{incident_type}_incidents.csv'
+    csv_relative_path = (
+        f"../../results/modules/marine_safety/{incident_type}_incidents.csv"
+    )
 
     # Build column headers based on incident type
-    if incident_type == 'hatch':
-        table_headers = '<th>Incident ID</th><th>Date</th><th>Vessel</th><th>Description</th><th>Severity</th>'
-    elif incident_type == 'foundering':
-        table_headers = '<th>Incident ID</th><th>Date</th><th>Vessel</th><th>Description</th><th>Fatalities</th>'
-    elif incident_type == 'fatality':
-        table_headers = '<th>Incident ID</th><th>Date</th><th>Vessel</th><th>Description</th><th>Cause of Death</th>'
+    if incident_type == "hatch":
+        table_headers = "<th>Incident ID</th><th>Date</th><th>Vessel</th><th>Description</th><th>Severity</th>"
+    elif incident_type == "foundering":
+        table_headers = "<th>Incident ID</th><th>Date</th><th>Vessel</th><th>Description</th><th>Fatalities</th>"
+    elif incident_type == "fatality":
+        table_headers = "<th>Incident ID</th><th>Date</th><th>Vessel</th><th>Description</th><th>Cause of Death</th>"
     else:
-        table_headers = '<th>Incident ID</th><th>Date</th><th>Vessel</th><th>Description</th>'
+        table_headers = (
+            "<th>Incident ID</th><th>Date</th><th>Vessel</th><th>Description</th>"
+        )
 
     html = f"""<!DOCTYPE html>
 <html lang="en">
@@ -1249,8 +1255,9 @@ def generate_detailed_report(incident_type: str, df: pd.DataFrame, analysis: dic
                 <thead>
                     <tr>
 """
-    html += f'                        {table_headers}\n'
-    html += """                    </tr>
+    html += f"                        {table_headers}\n"
+    html += (
+        """                    </tr>
                 </thead>
                 <tbody id="tableBody">
                 </tbody>
@@ -1271,7 +1278,9 @@ def generate_detailed_report(incident_type: str, df: pd.DataFrame, analysis: dic
         const itemsPerPage = 25;
 
         // Load CSV data
-        Papa.parse('""" + csv_relative_path + """', {
+        Papa.parse('"""
+        + csv_relative_path
+        + """', {
             download: true,
             header: true,
             complete: function(results) {
@@ -1384,6 +1393,7 @@ def generate_detailed_report(incident_type: str, df: pd.DataFrame, analysis: dic
             }}
         }});
 """
+    )
 
     # Add visualization scripts
     for viz_name, fig in visualizations:
@@ -1394,61 +1404,86 @@ def generate_detailed_report(incident_type: str, df: pd.DataFrame, analysis: dic
 </body>
 </html>"""
 
-    output_file = output_dir / f'{incident_type}_analysis.html'
+    output_file = output_dir / f"{incident_type}_analysis.html"
     output_file.write_text(html)
     logger.info(f"✓ Generated optimized report: {output_file}")
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Generate marine safety incident reports')
-    parser.add_argument('--input-dir', type=Path, required=False, default=None,
-                       help='Directory containing incident CSV files (optional, uses real data by default)')
-    parser.add_argument('--output-dir', type=Path, required=True,
-                       help='Directory for output reports')
-    parser.add_argument('--use-llm', type=str, default='false',
-                       help='Use LLM-based detection (true/false)')
+    parser = argparse.ArgumentParser(
+        description="Generate marine safety incident reports"
+    )
+    parser.add_argument(
+        "--input-dir",
+        type=Path,
+        required=False,
+        default=None,
+        help="External raw input directory recorded by the fetch script",
+    )
+    parser.add_argument(
+        "--manifest",
+        type=Path,
+        default=None,
+        help="Input manifest (defaults to the committed manifest)",
+    )
+    parser.add_argument(
+        "--output-dir", type=Path, required=True, help="Directory for output reports"
+    )
+    parser.add_argument(
+        "--use-llm",
+        type=str,
+        default="false",
+        help="Use LLM-based detection (true/false)",
+    )
 
     args = parser.parse_args()
 
     # Convert use_llm string to boolean
-    use_llm = args.use_llm.lower() in ('true', 'yes', '1')
+    use_llm = args.use_llm.lower() in ("true", "yes", "1")
 
-    logger.info("="*60)
+    logger.info("=" * 60)
     logger.info("Marine Safety Incident Analysis Report Generator")
-    logger.info("="*60)
-    logger.info(f"Data source: Real incident databases (Canadian TSB, DLP Historical, IMO GISIS)")
+    logger.info("=" * 60)
+    logger.info(
+        "Data source: Public inputs: Canadian TSB and DLP Historical; GISIS excluded"
+    )
     logger.info(f"Output directory: {args.output_dir}")
     logger.info(f"LLM detection: {use_llm}")
     logger.info("")
 
-    # Create output directory
+    # Validate all inputs before creating or overwriting any report.
+    try:
+        data = load_incident_data(args.input_dir, args.manifest)
+    except (OSError, ValueError, KeyError) as error:
+        logger.error("Incident input validation failed: %s", error)
+        return 1
     args.output_dir.mkdir(parents=True, exist_ok=True)
-
-    # Load data (input_dir is now ignored, loads from hardcoded real data sources)
-    logger.info("Loading incident data from real databases...")
-    data = load_incident_data(args.input_dir)
 
     # Analyze incidents
     logger.info("Analyzing incidents...")
     analyses = {
-        'hatch': analyze_hatch_incidents(data['hatch'], use_llm),
-        'foundering': analyze_founderings(data['foundering']),
-        'fatality': analyze_fatalities(data['fatality'])
+        "hatch": analyze_hatch_incidents(data["hatch"], use_llm),
+        "foundering": analyze_founderings(data["foundering"]),
+        "fatality": analyze_fatalities(data["fatality"]),
     }
 
     # Generate visualizations
     logger.info("Creating visualizations...")
     visualizations = {
-        'hatch': create_hatch_visualizations(data['hatch'], analyses['hatch']),
-        'foundering': create_foundering_visualizations(data['foundering'], analyses['foundering']),
-        'fatality': create_fatality_visualizations(data['fatality'], analyses['fatality'])
+        "hatch": create_hatch_visualizations(data["hatch"], analyses["hatch"]),
+        "foundering": create_foundering_visualizations(
+            data["foundering"], analyses["foundering"]
+        ),
+        "fatality": create_fatality_visualizations(
+            data["fatality"], analyses["fatality"]
+        ),
     }
 
     # Generate reports
     logger.info("Generating reports...")
     generate_executive_summary(data, analyses, args.output_dir, use_llm)
 
-    for incident_type in ['hatch', 'foundering', 'fatality']:
+    for incident_type in ["hatch", "foundering", "fatality"]:
         if not data[incident_type].empty:
             generate_detailed_report(
                 incident_type,
@@ -1456,16 +1491,16 @@ def main():
                 analyses[incident_type],
                 visualizations[incident_type],
                 args.output_dir,
-                use_llm
+                use_llm,
             )
 
     logger.info("")
-    logger.info("="*60)
+    logger.info("=" * 60)
     logger.info("Report generation complete!")
-    logger.info("="*60)
+    logger.info("=" * 60)
 
     return 0
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

@@ -16,6 +16,7 @@ constants, conversion factors, acceptance limits or numerical equations.
 | Revision | Date | Change and reason |
 | --- | --- | --- |
 | Initial | 2026-10-19 | Separate report evidence from unopened database files so integration decisions retain their evidence limits. |
+| Example | 2026-10-25 | Add a standalone intended-use example and subprocess tests so each documented recommendation can be reproduced offline. |
 
 ## Opened sources
 
@@ -75,18 +76,48 @@ assessment = evaluate_iea_methane_tracker("country_reference")
 print(json.dumps(asdict(assessment), indent=2))
 ```
 
+### Standalone example
+
+From the repository root, run:
+
+```bash
+PYTHONPATH=src python examples/esg_carbon/evaluate_methane_tracker.py --intended-use country_reference
+```
+
+The required `--intended-use` option accepts the choices below. Expected
+recommendations follow the publication decision basis above.
+
+| Intended use | Expected JSON recommendation |
+| --- | --- |
+| `country_reference` | `conditional_adoption` |
+| `facility_emissions` | `unsuitable` |
+| `abatement_modelling` | `deferred` |
+
+The standard-library JSON output retains `evaluated_on` as `2026-10-19`, source
+keys and retrieval dates in `sources`, and unresolved findings in `checks` for
+download inspection, database rights, schema and units, and historical coverage.
+An unknown choice or an omitted option exits nonzero without assessment JSON.
+The example performs no source refresh, ingestion or abatement modelling.
+The publication evidence cannot qualify unopened data files.
+
 The snapshot does not update itself when source pages change. Re-evaluation
 requires opening the source material again and updating the dated evidence and
 tests. Callers cannot pass unchecked assertions to clear the unresolved findings.
 
 ## Verification
 
-The focused suite has 24 offline tests. Expected statuses come from the sources
+The library suite has 24 offline tests. Expected statuses come from the sources
 and the independent decision table above, as recorded in test docstrings. Tests
 cover country, facility and abatement decisions, invalid uses, citation links,
 retention of all unresolved checks, separation of report and database rights,
 immutability and exportable structure. No expected emissions values are derived
 from the implementation because this slice performs no emissions calculations.
+
+The standalone example tests execute each intended use in a subprocess, parse
+its JSON, and check the independent recommendation table, source dates, source
+keys and unresolved findings. Network operations and further subprocesses are
+denied inside the example process. Unknown and omitted choices are rejected.
+No numerical model is imported or run.
 
 ## Later slices
 

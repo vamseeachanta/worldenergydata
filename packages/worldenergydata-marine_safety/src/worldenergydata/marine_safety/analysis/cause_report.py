@@ -145,9 +145,14 @@ class CauseAnalysisReport:
 
     def _get_css_styles(self) -> str:
         """Get embedded CSS styles including Bootstrap."""
-        return """
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">  # noqa: E501
-<link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+        return (
+            """
+<link """
+            """href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" """
+            """rel="stylesheet">
+<link """
+            """href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" """
+            """rel="stylesheet">
 <style>
     body {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -236,23 +241,31 @@ class CauseAnalysisReport:
         border-left: 4px solid #0dcaf0;
     }
 </style>"""
+        )
 
     def _get_external_libraries(self) -> str:
         """Get external JavaScript library imports."""
-        return """
+        return (
+            """
 <script src="https://cdn.plot.ly/plotly-2.26.0.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>"""  # noqa: E501
+<script """
+            """src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+<script """
+            """src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/"""
+            """bootstrap.bundle.min.js"></script>"""
+        )  # noqa: E501
 
     def _generate_navigation(self) -> str:
         """Generate navigation menu."""
-        return """
+        return (
+            """
 <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
     <div class="container-fluid">
         <a class="navbar-brand" href="#top">Cause Analysis Report</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">  # noqa: E501
+        <button class="navbar-toggler" type="button" """
+            """data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
@@ -273,6 +286,7 @@ class CauseAnalysisReport:
         </div>
     </div>
 </nav>"""
+        )
 
     def _generate_metadata_section(self) -> str:
         """Generate report metadata section."""
@@ -324,7 +338,8 @@ class CauseAnalysisReport:
             1 for inc in self.incidents if inc["severity"] >= SeverityLevel.SERIOUS
         )
 
-        return f"""
+        return (
+            f"""
 <div class="row mt-4" id="executive-summary">
     <div class="col-12">
         <div class="section">
@@ -338,19 +353,22 @@ class CauseAnalysisReport:
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="metric-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">  # noqa: E501
+                    <div class="metric-card" style="background: """
+            f"""linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
                         <div class="metric-label">Fatalities</div>
                         <div class="metric-value">{total_fatalities}</div>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="metric-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">  # noqa: E501
+                    <div class="metric-card" style="background: """
+            f"""linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
                         <div class="metric-label">Injuries</div>
                         <div class="metric-value">{total_injuries}</div>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="metric-card" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">  # noqa: E501
+                    <div class="metric-card" style="background: """
+            f"""linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
                         <div class="metric-label">Serious+</div>
                         <div class="metric-value">{serious_or_higher}</div>
                     </div>
@@ -360,14 +378,21 @@ class CauseAnalysisReport:
             <div class="alert alert-info mt-4">
                 <h5>Key Findings:</h5>
                 <ul>
-                    <li><strong>Most Common Cause:</strong> {most_common_cause[0].replace('_', ' ').title()} ({most_common_cause[1]} incidents)</li>  # noqa: E501
-                    <li><strong>Severity Distribution:</strong> {serious_or_higher} incidents classified as Serious or higher ({(serious_or_higher/total_incidents*100):.1f}%)</li>  # noqa: E501
-                    <li><strong>Safety Impact:</strong> {total_fatalities} fatalities and {total_injuries} injuries reported across all incidents</li>  # noqa: E501
+                    <li><strong>Most Common Cause:</strong> """
+            f"""{most_common_cause[0].replace('_', ' ').title()} ({most_common_cause[1]} """
+            f"""incidents)</li>
+                    <li><strong>Severity Distribution:</strong> """
+            f"""{serious_or_higher} incidents classified as Serious or higher """
+            f"""({(serious_or_higher/total_incidents*100):.1f}%)</li>
+                    <li><strong>Safety Impact:</strong> """
+            f"""{total_fatalities} fatalities and {total_injuries} injuries reported """
+            f"""across all incidents</li>
                 </ul>
             </div>
         </div>
     </div>
 </div>"""
+        )
 
     def _generate_statistical_findings(self) -> str:
         """Generate statistical findings section with data tables."""
@@ -396,7 +421,8 @@ class CauseAnalysisReport:
                     <td>{percentage:.1f}%</td>
                 </tr>"""
 
-        return f"""
+        return (
+            f"""
 <div class="row mt-4" id="statistical-findings">
     <div class="col-12">
         <div class="section">
@@ -406,12 +432,14 @@ class CauseAnalysisReport:
                 <div class="col-md-6">
                     <h4>Incidents by Cause Category</h4>
                     <div class="text-end mb-2">
-                        <button class="btn btn-sm btn-primary btn-export" onclick="exportTableToCSV('cause-table', 'cause_categories.csv')">  # noqa: E501
+                        <button class="btn btn-sm btn-primary btn-export" """
+            f"""onclick="exportTableToCSV('cause-table', 'cause_categories.csv')">
                             Export CSV
                         </button>
                     </div>
                     <div class="table-responsive">
-                        <table id="cause-table" class="table table-striped table-hover">
+                        <table id="cause-table" class="table """
+            f"""table-striped table-hover">
                             <thead class="table-dark">
                                 <tr>
                                     <th>Cause Category</th>
@@ -429,12 +457,14 @@ class CauseAnalysisReport:
                 <div class="col-md-6">
                     <h4>Incidents by Severity Level</h4>
                     <div class="text-end mb-2">
-                        <button class="btn btn-sm btn-primary btn-export" onclick="exportTableToCSV('severity-table', 'severity_levels.csv')">  # noqa: E501
+                        <button class="btn btn-sm btn-primary btn-export" """
+            f"""onclick="exportTableToCSV('severity-table', 'severity_levels.csv')">
                             Export CSV
                         </button>
                     </div>
                     <div class="table-responsive">
-                        <table id="severity-table" class="table table-striped table-hover">
+                        <table id="severity-table" class="table """
+            f"""table-striped table-hover">
                             <thead class="table-dark">
                                 <tr>
                                     <th>Severity Level</th>
@@ -452,6 +482,7 @@ class CauseAnalysisReport:
         </div>
     </div>
 </div>"""
+        )
 
     def _generate_visualizations(self) -> str:
         """Generate interactive Plotly visualizations."""
@@ -593,7 +624,8 @@ class CauseAnalysisReport:
                     <td>{inc.get('description', '')[:100]}...</td>
                 </tr>"""
 
-        return f"""
+        return (
+            f"""
 <div class="row mt-4" id="hatch-analysis">
     <div class="col-12">
         <div class="section">
@@ -602,20 +634,24 @@ class CauseAnalysisReport:
             <div class="alert alert-warning">
                 <h5>Hatch-Related Incidents Overview:</h5>
                 <ul>
-                    <li><strong>Total Hatch/Opening Incidents:</strong> {hatch_count} ({hatch_percentage:.1f}% of all incidents)</li>  # noqa: E501
-                    <li><strong>Associated Fatalities:</strong> {hatch_fatalities}</li>
+                    <li><strong>Total Hatch/Opening Incidents:</strong> """
+            f"""{hatch_count} ({hatch_percentage:.1f}% of all incidents)</li>
+                    <li><strong>Associated Fatalities:</strong> """
+            f"""{hatch_fatalities}</li>
                     <li><strong>Associated Injuries:</strong> {hatch_injuries}</li>
                 </ul>
             </div>
 
             <h4 class="mt-4">Hatch-Related Incident Details</h4>
             <div class="text-end mb-2">
-                <button class="btn btn-sm btn-primary btn-export" onclick="exportTableToCSV('hatch-table', 'hatch_incidents.csv')">  # noqa: E501
+                <button class="btn btn-sm btn-primary btn-export" """
+            f"""onclick="exportTableToCSV('hatch-table', 'hatch_incidents.csv')">
                     Export CSV
                 </button>
             </div>
             <div class="table-responsive">
-                <table id="hatch-table" class="table table-striped table-hover dataTable">
+                <table id="hatch-table" class="table table-striped """
+            f"""table-hover dataTable">
                     <thead class="table-dark">
                         <tr>
                             <th>Incident ID</th>
@@ -633,6 +669,7 @@ class CauseAnalysisReport:
         </div>
     </div>
 </div>"""
+        )
 
     def _get_javascript(self) -> str:
         """Get JavaScript for interactivity."""

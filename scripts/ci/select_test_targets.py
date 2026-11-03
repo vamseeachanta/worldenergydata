@@ -36,9 +36,9 @@ Emits ``scope=`` / ``xdist_targets=`` / ``seq_targets=`` lines (GitHub Actions
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import re
-import json
 import sys
 from pathlib import Path
 
@@ -77,6 +77,13 @@ CORE_PREFIXES = (
 
 # Exact non-module paths that should run a specific contract suite.
 CONTRACT_ROUTES = {
+    # Keep export and display withholding under CI when only an input changes.
+    "scripts/hf_export/publish_explorer_refresh_to_hf.py": "tests/unit/site",
+    "reports/field-atlas/atlas_template.html": "tests/unit/site",
+    "reports/field-atlas/index.html": "tests/unit/site",
+    "reports/lower_tertiary/lifecycle/_performance.json": "tests/unit/site",
+    "reports/lower_tertiary/parametric/lt_economics_parametric.json": "tests/unit/site",
+    "reports/field-atlas/results/explorer_results_bundle.json": "tests/unit/site",
     "config/repo_structure.yml": "tests/repo_structure",
     ".gitattributes": "tests/repo_structure",
     "scripts/maintenance/classify_report_inventory.py": "tests/repo_structure",
@@ -274,7 +281,11 @@ def _existing_unique(targets: list[str], root: Path) -> list[str]:
     seen, out = set(), []
     for t in targets:
         target = root / t
-        is_test_file = target.is_file() and target.name.startswith("test_") and target.suffix == ".py"
+        is_test_file = (
+            target.is_file()
+            and target.name.startswith("test_")
+            and target.suffix == ".py"
+        )
         if t not in seen and (target.is_dir() or is_test_file):
             seen.add(t)
             out.append(t)
@@ -325,11 +336,7 @@ def to_matrix(changed: list[str], root: Path, fast: bool = False) -> dict:
         unit = root / "tests" / "unit"
         if unit.is_dir():
             for child in sorted(unit.iterdir()):
-                if (
-                    child.is_dir()
-                    and child.name != "__pycache__"
-                    and _has_tests(child)
-                ):
+                if child.is_dir() and child.name != "__pycache__" and _has_tests(child):
                     shards.append(
                         {
                             "name": f"unit-{child.name}",

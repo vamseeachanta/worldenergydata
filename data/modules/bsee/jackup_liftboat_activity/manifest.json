@@ -1,0 +1,243 @@
+{
+  "counts": {
+    "deep_water_records": 139,
+    "excluded": {
+      "other_rig_type": 132651,
+      "outside_year_range": 6913,
+      "unmatched_rig_name": 192100
+    },
+    "input_records": 370156,
+    "output_records": 38492,
+    "records_per_year": {
+      "1997": 99,
+      "1998": 674,
+      "1999": 751,
+      "2000": 1014,
+      "2001": 943,
+      "2002": 1115,
+      "2003": 1345,
+      "2004": 1903,
+      "2005": 2805,
+      "2006": 2230,
+      "2007": 1935,
+      "2008": 3074,
+      "2009": 2447,
+      "2010": 1883,
+      "2011": 1755,
+      "2012": 2234,
+      "2013": 2318,
+      "2014": 2062,
+      "2015": 1092,
+      "2016": 1166,
+      "2017": 1032,
+      "2018": 621,
+      "2019": 592,
+      "2020": 391,
+      "2021": 359,
+      "2022": 1028,
+      "2023": 424,
+      "2024": 630,
+      "2025": 570
+    },
+    "rig_type_checks": {
+      "agree": 24080,
+      "unavailable": 14412
+    },
+    "rig_types": {
+      "JU": 24610,
+      "LB": 13882
+    },
+    "source_8831_ft_record_audit": [
+      {
+        "activity_id": "47363",
+        "api_well_number": "608124001000",
+        "disposition": "unmatched_rig_name",
+        "rig_name": "CR LUIGS",
+        "water_depth_ft": "8831"
+      },
+      {
+        "activity_id": "47508",
+        "api_well_number": "608124001000",
+        "disposition": "unmatched_rig_name",
+        "rig_name": "CR LUIGS",
+        "water_depth_ft": "8831"
+      },
+      {
+        "activity_id": "48208",
+        "api_well_number": "608124001000",
+        "disposition": "unmatched_rig_name",
+        "rig_name": "CR LUIGS",
+        "water_depth_ft": "8831"
+      },
+      {
+        "activity_id": "47649",
+        "api_well_number": "608124001000",
+        "disposition": "unmatched_rig_name",
+        "rig_name": "CR LUIGS",
+        "water_depth_ft": "8831"
+      },
+      {
+        "activity_id": "46885",
+        "api_well_number": "608124001000",
+        "disposition": "unmatched_rig_name",
+        "rig_name": "CR LUIGS",
+        "water_depth_ft": "8831"
+      },
+      {
+        "activity_id": "47052",
+        "api_well_number": "608124001000",
+        "disposition": "unmatched_rig_name",
+        "rig_name": "CR LUIGS",
+        "water_depth_ft": "8831"
+      },
+      {
+        "activity_id": "47846",
+        "api_well_number": "608124001000",
+        "disposition": "unmatched_rig_name",
+        "rig_name": "CR LUIGS",
+        "water_depth_ft": "8831"
+      },
+      {
+        "activity_id": "47987",
+        "api_well_number": "608124001000",
+        "disposition": "unmatched_rig_name",
+        "rig_name": "CR LUIGS",
+        "water_depth_ft": "8831"
+      },
+      {
+        "activity_id": "48730",
+        "api_well_number": "608124001000",
+        "disposition": "unmatched_rig_name",
+        "rig_name": "CR LUIGS",
+        "water_depth_ft": "8831"
+      }
+    ]
+  },
+  "criteria_version": "1",
+  "dataset_id": "us_gom_jackup_liftboat_activity_1997_2025",
+  "depth_screening": {
+    "comparison": ">",
+    "locator": "Figure 4, printed page 6",
+    "source_url": "https://www.bsee.gov/sites/bsee.gov/files/technology-and-research/td_1_oilandgasinfrastructure_01july2022_508.pdf",
+    "threshold_ft": 500
+  },
+  "fields": {
+    "activity_end_date": "WAR WAR_END_DT, normalized to YYYY-MM-DD; reporting-period end, not rig release.",
+    "activity_id": "WAR SN_WAR, unique report identifier; signed integer retained as text.",
+    "activity_start_date": "WAR WAR_START_DT, normalized to YYYY-MM-DD; reporting-period start.",
+    "api_well_number": "WAR API_WELL_NUMBER, exact BSEE borehole identifier; text, including leading zeroes.",
+    "area_code": "WAR SURF_AREA_CODE, surface area code.",
+    "block_number": "WAR SURF_BLOCK_NUM, surface block; text, including leading zeroes.",
+    "borehole_water_depth_ft": "Borehole WATER_DEPTH, feet; separately retained for comparison.",
+    "deep_water_flag": "true if either supplied depth exceeds 500 ft; unknown if a depth is missing/invalid and neither exceeds; otherwise false.",
+    "operator": "WAR BUS_ASC_NAME, business associate/operator spelling as published by BSEE.",
+    "quality_flags": "Pipe-separated screening annotations; release_date_unavailable applies to every row.",
+    "release_date": "Empty: no rig-release field exists in the inspected public WAR/borehole/EOR schemas.",
+    "rig_id": "APM rig view RIG_ID_NUM, matched by case-insensitive, edge-trimmed rig name only.",
+    "rig_name": "WAR RIG_NAME, spelling as published by BSEE.",
+    "rig_type": "APM rig view RIG_TYPE_CODE: JU (jack-up) or LB (liftboat).",
+    "rig_type_check": "agree, conflict or unavailable against other BSEE records joined by rig ID.",
+    "spud_date": "Borehole WELL_SPUD_DATE, normalized to YYYY-MM-DD; borehole spud, not rig arrival.",
+    "type_check_apd_ids": "One representative SN_APD per observed type, pipe-separated; not all APDs.",
+    "type_check_rig_ids": "Rig ID List identifiers used in the cross-check, pipe-separated.",
+    "type_check_types": "Distinct original APD RIG_TYPE_CODE / Rig ID List RIG_TYPE values, pipe-separated.",
+    "water_depth_ft": "WAR WATER_DEPTH, feet; empty when BSEE does not supply it."
+  },
+  "licence": "US federal government public data; BSEE stated distribution and copying terms",
+  "next_refresh_date": "2026-10-30",
+  "owner": "worldenergydata",
+  "raw_storage": "External content-addressed blobs relative to BSEE_JACKUP_RAW_DIR; no raw archive committed",
+  "refresh_basis": {
+    "automatic": false,
+    "cadence": "daily",
+    "source_url": "https://www.data.bsee.gov/Main/RawData.aspx"
+  },
+  "retrieval_date": "2026-10-29",
+  "schema_version": 1,
+  "source_id": "bsee-data-center",
+  "source_ids": [
+    "bsee-data-center",
+    "bsee-ewell-war"
+  ],
+  "sources": [
+    {
+      "archive_path": "blobs/sha256/57/57ce297ff3ad3429a249bf6ea5fe988d8380768413325ef5e8fc3c8d8d127a11.zip",
+      "file": "eWellWARRawData.zip",
+      "retrieved_at_utc": "2026-10-29T09:51:56.965122+00:00",
+      "sha256": "57ce297ff3ad3429a249bf6ea5fe988d8380768413325ef5e8fc3c8d8d127a11",
+      "size_bytes": 130464038,
+      "url": "https://www.data.bsee.gov/Well/Files/eWellWARRawData.zip"
+    },
+    {
+      "archive_path": "blobs/sha256/9d/9d1405e35aaec5b9d7f17f7fcffb239554d45c426c38076469613258b1eb69f6.zip",
+      "file": "BoreholeRawData.zip",
+      "retrieved_at_utc": "2026-10-29T09:52:03.241023+00:00",
+      "sha256": "9d1405e35aaec5b9d7f17f7fcffb239554d45c426c38076469613258b1eb69f6",
+      "size_bytes": 3484144,
+      "url": "https://www.data.bsee.gov/Well/Files/BoreholeRawData.zip"
+    },
+    {
+      "archive_path": "blobs/sha256/69/6932f102b374b8d6a6a275e4051fc1368ee9d610da67ad83cce5cebde06dc587.zip",
+      "file": "rigidlistdelimit.zip",
+      "retrieved_at_utc": "2026-10-29T09:52:03.633447+00:00",
+      "sha256": "6932f102b374b8d6a6a275e4051fc1368ee9d610da67ad83cce5cebde06dc587",
+      "size_bytes": 1632,
+      "url": "https://www.data.bsee.gov/Platform/Files/rigidlistdelimit.zip"
+    },
+    {
+      "archive_path": "blobs/sha256/3b/3bb0db9e2e9f90d1d1f82937c742bbc6a889dacb7aa2c97d892308a59a31dcca.zip",
+      "file": "eWellAPDRawData.zip",
+      "retrieved_at_utc": "2026-10-29T09:52:09.579705+00:00",
+      "sha256": "3bb0db9e2e9f90d1d1f82937c742bbc6a889dacb7aa2c97d892308a59a31dcca",
+      "size_bytes": 9597013,
+      "url": "https://www.data.bsee.gov/Well/Files/eWellAPDRawData.zip"
+    },
+    {
+      "archive_path": "blobs/sha256/37/376dfb287aaaa3291e77c95fd15f36ab851f69eff413f45a39256be5c46e1b08.zip",
+      "file": "eWellEORRawData.zip",
+      "retrieved_at_utc": "2026-10-29T09:52:17.397651+00:00",
+      "sha256": "376dfb287aaaa3291e77c95fd15f36ab851f69eff413f45a39256be5c46e1b08",
+      "size_bytes": 4495826,
+      "url": "https://www.data.bsee.gov/Well/Files/eWellEORRawData.zip"
+    },
+    {
+      "archive_path": "blobs/sha256/33/33379a4ec5e54134ce2f90f1dcca792a62772c9fcc459f93e467934174bb6140.zip",
+      "file": "eWellAPMRawData.zip",
+      "retrieved_at_utc": "2026-10-29T09:54:41.735222+00:00",
+      "sha256": "33379a4ec5e54134ce2f90f1dcca792a62772c9fcc459f93e467934174bb6140",
+      "size_bytes": 35719373,
+      "url": "https://www.data.bsee.gov/Well/Files/eWellAPMRawData.zip"
+    }
+  ],
+  "table": {
+    "columns": [
+      "activity_id",
+      "api_well_number",
+      "rig_name",
+      "rig_id",
+      "rig_type",
+      "area_code",
+      "block_number",
+      "water_depth_ft",
+      "borehole_water_depth_ft",
+      "spud_date",
+      "release_date",
+      "activity_start_date",
+      "activity_end_date",
+      "operator",
+      "rig_type_check",
+      "type_check_types",
+      "type_check_apd_ids",
+      "type_check_rig_ids",
+      "deep_water_flag",
+      "quality_flags"
+    ],
+    "file": "activity_1997_2025.csv.gz",
+    "rows": 38492,
+    "sha256": "ea8831ed0a87f66b981817ccf2b3cab920aad8f925e6a671988fb8568f496798",
+    "size_bytes": 514318,
+    "uncompressed_sha256": "8126b08f6642ed770715a761c8c9d836a70257298a856fe78e23ad5479b172ca",
+    "uncompressed_size_bytes": 8461197
+  },
+  "terms_url": "https://www.bsee.gov/bsee.gov/privacy-disclaimer"
+}

@@ -91,7 +91,9 @@ def write_csv(df: pd.DataFrame, path: Path) -> None:
         }
     )
     path.parent.mkdir(parents=True, exist_ok=True)
-    out.sort_values(["field", "well_name"], kind="stable").to_csv(path, index=False)
+    out.sort_values(["field", "well_name"], kind="stable").to_csv(
+        path, index=False, encoding="utf-8", lineterminator="\n"
+    )
 
 
 def compute_stats(df: pd.DataFrame) -> dict:
@@ -332,6 +334,7 @@ def main(argv: list[str] | None = None) -> int:
         ).rstrip()
         + "\n",
         encoding="utf-8",
+        newline="\n",
     )
     print(f"{stats['n_calendar']} of {stats['n_wellbores']} calendar spans derived")
     return 0
