@@ -31,17 +31,17 @@ _SRC = Path(__file__).resolve().parents[2] / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
-from worldenergydata.field_development.host_text_classifier import (  # noqa: E402
-    classify_tree_type,
-)
+from worldenergydata.field_development.concept import build_concept  # noqa: E402
 from worldenergydata.field_development.decommission_risk import (  # noqa: E402
     classify_decommissioning,
+)
+from worldenergydata.field_development.host_text_classifier import (  # noqa: E402
+    classify_tree_type,
 )
 from worldenergydata.field_development.hpht_risk import classify_hpht  # noqa: E402
 from worldenergydata.field_development.landman import (  # noqa: E402
     build_landman,
 )
-from worldenergydata.field_development.concept import build_concept  # noqa: E402
 from worldenergydata.field_development.layout import render_layout  # noqa: E402
 from worldenergydata.field_development.portfolio_concepts import (  # noqa: E402
     concept_for,
@@ -567,7 +567,9 @@ def main():
     norms_chips = {}
     norms_path = HERE / "_norms.json"
     if norms_path.exists():
-        norms_chips = json.loads(norms_path.read_text(encoding="utf-8")).get("chips", {})
+        norms_chips = json.loads(norms_path.read_text(encoding="utf-8")).get(
+            "chips", {}
+        )
 
     # Field-performance stats (issue #756): attach the per-field BSEE
     # life-to-date contract when present. Only the 7 producing fields have a
@@ -575,7 +577,9 @@ def main():
     perf_fields = {}
     perf_path = HERE / "_performance.json"
     if perf_path.exists():
-        perf_fields = json.loads(perf_path.read_text(encoding="utf-8")).get("fields", {})
+        perf_fields = json.loads(perf_path.read_text(encoding="utf-8")).get(
+            "fields", {}
+        )
 
     fields = []
     for f in facts:

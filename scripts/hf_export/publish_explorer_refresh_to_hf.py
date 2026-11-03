@@ -35,10 +35,18 @@ import pandas as pd
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DATASET = "aceengineer/worldenergydata-explorer"
-BUNDLE = REPO_ROOT / "reports" / "field-atlas" / "results" / "explorer_results_bundle.json"
-PERFORMANCE = REPO_ROOT / "reports" / "lower_tertiary" / "lifecycle" / "_performance.json"
+BUNDLE = (
+    REPO_ROOT / "reports" / "field-atlas" / "results" / "explorer_results_bundle.json"
+)
+PERFORMANCE = (
+    REPO_ROOT / "reports" / "lower_tertiary" / "lifecycle" / "_performance.json"
+)
 PARAMETRIC_JSON = (
-    REPO_ROOT / "reports" / "lower_tertiary" / "parametric" / "lt_economics_parametric.json"
+    REPO_ROOT
+    / "reports"
+    / "lower_tertiary"
+    / "parametric"
+    / "lt_economics_parametric.json"
 )
 
 ECON_COLS = [
@@ -105,13 +113,13 @@ def build_fields(live_parquet: Path) -> pd.DataFrame:
             return released[slug][key]
         return perf_by_slug.get(slug, {}).get(key)
 
-    fields["eur_mmbbl"] = fields["id"].map(lambda s: col(s, "eur_mmbbl")).astype("Float64")
+    fields["eur_mmbbl"] = (
+        fields["id"].map(lambda s: col(s, "eur_mmbbl")).astype("Float64")
+    )
     for c in ECON_COLS:
         if c == "economics_basis":
             fields[c] = fields["id"].map(
-                lambda s: col(s, "economics_basis")
-                if perf_by_slug.get(s)
-                else None
+                lambda s: col(s, "economics_basis") if perf_by_slug.get(s) else None
             )
         else:
             fields[c] = fields["id"].map(lambda s, k=c: col(s, k))
@@ -252,7 +260,9 @@ def main() -> int:
         (out / "README.md").write_text(readme, encoding="utf-8", newline="\n")
 
         print(f"fields: {fields.shape}, parametric: {param.shape}")
-        print(fields[["id", "eur_mmbbl", "npv_mm", "breakeven_wti", "economics_status"]])
+        print(
+            fields[["id", "eur_mmbbl", "npv_mm", "breakeven_wti", "economics_status"]]
+        )
         if dry:
             print("DRY RUN — nothing uploaded")
             return 0

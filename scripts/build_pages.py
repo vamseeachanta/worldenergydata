@@ -48,10 +48,10 @@ from __future__ import annotations
 
 import argparse
 import html
-from html import unescape as _html_unescape
 import re
 import shutil
 import sys
+from html import unescape as _html_unescape
 from pathlib import Path
 
 _SCRIPTS = Path(__file__).resolve().parent

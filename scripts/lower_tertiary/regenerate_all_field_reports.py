@@ -21,6 +21,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import generate_field_economics_report as gen  # noqa: E402
+
 from worldenergydata.lower_tertiary import (  # noqa: E402
     v30_financial_reproducer as _fin,
 )
@@ -113,6 +114,7 @@ def _install_batch_caches() -> None:
         return _fin_cache[key]
 
     _fin.reproduce_v30_financials = _fin_memo
+
 
 # Producing Lower Tertiary fields (display names as in the golden baseline).
 # Pre-production fields (North Platte, Kaskida, Tiber) have no NPV timeline.

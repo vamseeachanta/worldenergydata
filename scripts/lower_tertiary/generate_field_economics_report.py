@@ -750,10 +750,7 @@ def main(argv: list[str] | None = None) -> None:
     else:
         slug = args.dev.lower().replace(" ", "_").replace("/", "_")
         out_path = (
-            PROJECT_ROOT
-            / "reports"
-            / "lower_tertiary"
-            / f"field_economics_{slug}.md"
+            PROJECT_ROOT / "reports" / "lower_tertiary" / f"field_economics_{slug}.md"
         )
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(report, encoding="utf-8")

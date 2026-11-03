@@ -591,7 +591,8 @@ class DataQualityValidator:
 
         elif format == "html":
             # Generate basic HTML report
-            html_content = f"""
+            html_content = (
+                f"""
 <!DOCTYPE html>
 <html>
 <head>
@@ -599,7 +600,11 @@ class DataQualityValidator:
     <style>
         body {{ font-family: Arial, sans-serif; margin: 20px; }}
         h1 {{ color: #333; }}
-        .score {{ font-size: 48px; font-weight: bold; color: {"green" if report['quality_score'] >= 80 else "orange" if report['quality_score'] >= 60 else "red"}; }}
+        .score {{ font-size: 48px; font-weight: bold; color: """
+                f"""{(
+                    "green" if report['quality_score'] >= 80
+                    else "orange" if report['quality_score'] >= 60 else "red"
+                )}; }}
         table {{ border-collapse: collapse; width: 100%; margin-top: 20px; }}
         th, td {{ border: 1px solid #ddd; padding: 12px; text-align: left; }}
         th {{ background-color: #4CAF50; color: white; }}
@@ -609,7 +614,8 @@ class DataQualityValidator:
 <body>
     <h1>HSE Data Quality Report</h1>
     <p><strong>Generated:</strong> {report['validation_timestamp']}</p>
-    <p><strong>Overall Quality Score:</strong> <span class="score">{report['quality_score']:.1f}/100</span></p>
+    <p><strong>Overall Quality Score:</strong> <span """
+                f"""class="score">{report['quality_score']:.1f}/100</span></p>
 
     <h2>Violations by Category</h2>
     <table>
@@ -619,6 +625,7 @@ class DataQualityValidator:
             <th>Count</th>
         </tr>
 """
+            )
 
             for category, violations in report["violations_by_category"].items():
                 for vtype, count in violations.items():

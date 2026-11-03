@@ -336,7 +336,9 @@ def download_one(raw_dir: Path, name: str, url: str) -> dict:
     received = hashlib.sha256()
     # Exact membership in the fixed BSEE HTTPS allowlist is checked above.
     with (
-        urlopen(request, timeout=60) as response,  # nosec B310 -- fixed BSEE HTTPS allowlist
+        urlopen(
+            request, timeout=60
+        ) as response,  # nosec B310 -- fixed BSEE HTTPS allowlist
         target.open("xb") as output,
     ):
         if response.geturl() != url:
