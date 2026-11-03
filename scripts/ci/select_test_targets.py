@@ -36,9 +36,9 @@ Emits ``scope=`` / ``xdist_targets=`` / ``seq_targets=`` lines (GitHub Actions
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import re
-import json
 import sys
 from pathlib import Path
 
@@ -75,8 +75,27 @@ CORE_PREFIXES = (
     "scripts/ci/",  # the selector itself / its tests -> fail safe to full
 )
 
-# Exact non-module paths that should run a specific contract suite.
+# Publication contracts live outside the auto-discovered unit-module tree.
+PAGES_CONTRACTS = ("tests/test_build_pages_assets.py", "tests/test_pages_scope.py")
+CATALOG_CONTRACTS = (
+    "tests/modules/field_development/test_catalog_atlas_evidence.py",
+    "tests/modules/field_development/test_catalog_evidence.py",
+    "tests/modules/field_development/test_catalog_evidence_example.py",
+)
+
+# Exact paths may select one contract suite or several related test files.
 CONTRACT_ROUTES = {
+    "scripts/build_pages.py": PAGES_CONTRACTS,
+    "scripts/pages_scope.py": "tests/test_pages_scope.py",
+    ".github/workflows/pages.yml": PAGES_CONTRACTS,
+    "config/analysis/lower_tertiary/v50_assumptions_change_log.html": PAGES_CONTRACTS,
+    "reports/lower_tertiary/fdas_revision_comparison.md": PAGES_CONTRACTS,
+    "tests/test_build_pages_assets.py": "tests/test_build_pages_assets.py",
+    "tests/test_pages_scope.py": "tests/test_pages_scope.py",
+    "tests/modules/field_development/catalog_test_support.py": CATALOG_CONTRACTS,
+    "scripts/field_atlas/build_atlas_feed.py": CATALOG_CONTRACTS,
+    "scripts/field_atlas/catalog_extension.py": CATALOG_CONTRACTS,
+    "scripts/field_development/example_catalog_evidence.py": CATALOG_CONTRACTS,
     # Keep export and display withholding under CI when only an input changes.
     "scripts/hf_export/publish_explorer_refresh_to_hf.py": "tests/unit/site",
     "reports/field-atlas/atlas_template.html": "tests/unit/site",
@@ -201,9 +220,19 @@ def select(changed: list[str], root: Path) -> dict:
             relevant = True
             continue
         if p in CONTRACT_ROUTES:
-            contracts.add(CONTRACT_ROUTES[p])
+            targets = CONTRACT_ROUTES[p]
+            contracts.update((targets,) if isinstance(targets, str) else targets)
             relevant = True
             continue
+        if p.startswith("src/worldenergydata/field_development/catalog_"):
+            contracts.update(CATALOG_CONTRACTS)
+            relevant = True
+            # Keep the existing unit-module route for the same production path.
+        if p.startswith("tests/modules/field_development/test_catalog_") and p.endswith(
+            ".py"
+        ):
+            contracts.add(p)
+            relevant = True
         if p.startswith(WORKFLOW_PREFIXES):
             relevant = True  # covered by ALWAYS_XDIST tests/workflows
             continue
@@ -281,7 +310,11 @@ def _existing_unique(targets: list[str], root: Path) -> list[str]:
     seen, out = set(), []
     for t in targets:
         target = root / t
-        is_test_file = target.is_file() and target.name.startswith("test_") and target.suffix == ".py"
+        is_test_file = (
+            target.is_file()
+            and target.name.startswith("test_")
+            and target.suffix == ".py"
+        )
         if t not in seen and (target.is_dir() or is_test_file):
             seen.add(t)
             out.append(t)
@@ -332,11 +365,7 @@ def to_matrix(changed: list[str], root: Path, fast: bool = False) -> dict:
         unit = root / "tests" / "unit"
         if unit.is_dir():
             for child in sorted(unit.iterdir()):
-                if (
-                    child.is_dir()
-                    and child.name != "__pycache__"
-                    and _has_tests(child)
-                ):
+                if child.is_dir() and child.name != "__pycache__" and _has_tests(child):
                     shards.append(
                         {
                             "name": f"unit-{child.name}",
@@ -394,7 +423,11 @@ def to_matrix(changed: list[str], root: Path, fast: bool = False) -> dict:
         for tgt in result["xdist"]:
             if tgt in ALWAYS_XDIST:
                 continue  # already in the always-on shard
-            name = tgt.replace("tests/unit/", "unit-").replace("tests/", "")
+            name = (
+                tgt.replace("tests/unit/", "unit-")
+                .replace("tests/", "")
+                .replace("/", "-")
+            )
             shards.append({"name": name, "targets": tgt, "mode": "xdist"})
         for tgt in result["seq"]:
             name = tgt.replace("tests/integration/modules/", "seq-")
