@@ -14,15 +14,17 @@ Counting rules
   (REGION_CODE "G"), by the year of its requested spud date, with the rig type that
   permit names. Wells whose first permit gives no requested spud date are left out and
   counted in ``no_spud_date``.
-- Rig types are reported as named in RIG_TYPE_CODE. Types with fewer than 1 % of the
-  permits counted (barge, barge rig, well intervention vessel, blank) are grouped as
-  "Other", and the grouping is printed with the counts.
+- Rig types: a fixed list of six RIG_TYPE_CODE values is named (see MAJOR below).
+  Every other value, including a blank or unknown code, is grouped as "Other", and the
+  grouped codes are printed in ``other_grouped``. No share threshold is computed.
 - Investigations are counted by kind (DISTRICT or PANEL) and status (as listed).
+  Pending panel investigations are listed by incident date; pending district
+  investigations are counted by incident year.
 
 Usage (standard library only; network is needed only when a file is not in --data-dir):
 
     python examples/bsee/rawdata_fact_check/count_rawdata.py --data-dir bsee-raw
-    python examples/bsee/rawdata_fact_check/count_rawdata.py --data-dir bsee-raw --out out
+    python examples/bsee/rawdata_fact_check/count_rawdata.py --out bsee-out
     python examples/bsee/rawdata_fact_check/count_rawdata.py --self-test
 """
 
@@ -167,7 +169,11 @@ def count_investigations(inv_rows: list[dict]) -> dict:
     kind_status = collections.Counter(
         f'{r["PANEL_DISTRICT"].strip()} {r["STATUS"].strip()}' for r in inv_rows
     )
-    pending = [r for r in inv_rows if r["STATUS"].strip() == "Pending"]
+    pending = [
+        (r["PANEL_DISTRICT"].strip(), mdy(r["DATE_OCCURRED"]))
+        for r in inv_rows
+        if r["STATUS"].strip() == "Pending"
+    ]
     return {
         "records": len(inv_rows),
         "fields": list(inv_rows[0].keys()) if inv_rows else [],
@@ -175,19 +181,16 @@ def count_investigations(inv_rows: list[dict]) -> dict:
         "last_incident": dates[-1] if dates else None,
         "by_kind_and_status": dict(sorted(kind_status.items())),
         "pending_panel_incidents": sorted(
-            mdy(r["DATE_OCCURRED"])
-            for r in pending
-            if r["PANEL_DISTRICT"].strip() == "PANEL"
+            d for kind, d in pending if kind == "PANEL" and d
         ),
         "pending_district_by_year": dict(
             sorted(
                 collections.Counter(
-                    mdy(r["DATE_OCCURRED"])[0]
-                    for r in pending
-                    if r["PANEL_DISTRICT"].strip() == "DISTRICT"
+                    d[0] for kind, d in pending if kind == "DISTRICT" and d
                 ).items()
             )
         ),
+        "pending_without_date": sum(1 for _, d in pending if not d),
     }
 
 
@@ -206,6 +209,12 @@ def write_csv(out_dir: Path, result: dict) -> None:
     with open(out_dir / "counts.json", "w", encoding="utf-8", newline="\n") as f:
         json.dump(result, f, indent=1)
         f.write("\n")
+
+
+def check(ok: bool, what: str) -> None:
+    """Fail the self-test; unlike assert, this also runs under python -O."""
+    if not ok:
+        raise SystemExit(f"self-test failed: {what}")
 
 
 def self_test() -> None:
@@ -239,11 +248,14 @@ def self_test() -> None:
     ]
     p = count_permits(first_new_well_permits(rows), 2005, 2006)
     # Hand count: 2005 holds A (jack-up, 90 ft) and B (drillship); 2006 holds E (Other).
-    assert p["by_year"][0]["total"] == 2 and p["by_year"][0]["Jack-up"] == 1
-    assert p["by_year"][0]["Drillship"] == 1 and p["by_year"][1]["Other"] == 1
-    assert p["water_depth"]["Jack-up"]["median_ft"] == 90.0  # A's first permit, not 100
-    assert p["other_grouped"] == {"BARGE RIG": 1} and p["all"] == 3
-    assert p["no_spud_date"] == 1  # well F
+    y2005, y2006 = p["by_year"]
+    check(y2005["total"] == 2 and y2005["Jack-up"] == 1, "2005 total and jack-up")
+    check(y2005["Drillship"] == 1 and y2006["Other"] == 1, "2005 drillship, 2006 other")
+    jackup_depth = p["water_depth"]["Jack-up"]["median_ft"]
+    check(jackup_depth == 90.0, "lowest SN_APD chosen (90 ft, not 100 ft)")
+    check(p["other_grouped"] == {"BARGE RIG": 1}, "Other grouping")
+    check(p["all"] == 3, "permit total")
+    check(p["no_spud_date"] == 1, "well F left out for no spud date")
     inv = count_investigations(
         [
             {
@@ -256,10 +268,23 @@ def self_test() -> None:
                 "PANEL_DISTRICT": "DISTRICT",
                 "STATUS": "Complete",
             },
+            {
+                "DATE_OCCURRED": "3/9/2024",
+                "PANEL_DISTRICT": "DISTRICT",
+                "STATUS": "Pending",
+            },
+            {
+                "DATE_OCCURRED": "",
+                "PANEL_DISTRICT": "DISTRICT",
+                "STATUS": "Pending",
+            },  # no incident date: counted apart, not dropped silently
         ]
     )
-    assert inv["records"] == 2 and inv["first_incident"] == (1995, 1, 4)
-    assert inv["pending_panel_incidents"] == [(2020, 7, 26)]
+    check(inv["records"] == 4, "investigation records")
+    check(inv["first_incident"] == (1995, 1, 4), "first incident date")
+    check(inv["pending_panel_incidents"] == [(2020, 7, 26)], "pending panel dates")
+    check(inv["pending_district_by_year"] == {2024: 1}, "pending district by year")
+    check(inv["pending_without_date"] == 1, "pending without a date")
     print("self-test passed")
 
 
