@@ -115,6 +115,9 @@ def _to_concept(d: dict) -> FieldConcept:
 
 def _load_research_concept(name: str) -> Optional[FieldConcept]:
     """Find the ``_research.json`` entry by name and map it to a FieldConcept."""
+    # Withdrawn default profiles remain unavailable if historical bytes return.
+    if name in _RESEARCH_NAME.values():
+        return None
     try:
         profiles = json.loads(_RESEARCH_JSON.read_text(encoding="utf-8"))
     except (OSError, ValueError):

@@ -1,6 +1,7 @@
 # ABOUTME: Architecture-drawing panel gate (issue #969, epic #942) — asserts the
 # ABOUTME: per-field `architecture` payload (independent plan-view SVG or an unavailable-input placeholder).
 
+import importlib.util
 import json
 import re
 from pathlib import Path
@@ -113,6 +114,44 @@ def test_architecture_svg_matches_render_layout():
     for fid in AUTHORED:
         expected = render_layout(concept_for(fid))
         assert fields[fid]["architecture"]["svg"] == expected, fid
+
+
+def test_stale_research_cannot_restore_withdrawn_lifecycle_geometry(monkeypatch):
+    from worldenergydata.field_development import portfolio_concepts
+
+    stale = json.dumps(
+        [
+            {"name": name, "concept_type": "subsea_tieback", "water_depth_m": 1000}
+            for name in portfolio_concepts._RESEARCH_NAME.values()
+        ]
+    )
+    original = Path.read_text
+    reads = []
+
+    def read_text(path, *args, **kwargs):
+        if path == portfolio_concepts._RESEARCH_JSON:
+            reads.append(path)
+            return stale
+        return original(path, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "read_text", read_text)
+    spec = importlib.util.spec_from_file_location(
+        "lifecycle_with_stale_research",
+        REPO / "scripts/lower_tertiary/build_lifecycle_posters.py",
+    )
+    builder = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(builder)
+    for field_id in portfolio_concepts._RESEARCH_NAME:
+        payload = builder.facts_to_field({"id": field_id, "name": "Synthetic field"})
+        assert payload["architecture"] == {"svg": None, "pending_issue": PENDING_ISSUE}
+        assert portfolio_concepts.concept_for(field_id) is None
+    for field_id in AUTHORED:
+        assert builder.facts_to_field({"id": field_id, "name": "Synthetic field"})[
+            "architecture"
+        ]["svg"]
+    assert (
+        not reads
+    ), "Withdrawn research entries must be rejected before reading stale data"
 
 
 if __name__ == "__main__":

@@ -1,5 +1,8 @@
 """Public readers must not silently consume the withheld historical catalog."""
 
+import os
+import subprocess
+import sys
 from pathlib import Path
 
 import pytest
@@ -29,7 +32,7 @@ REASON = "held privately pending redistribution-terms review"
 def test_public_payload_is_replaced_by_notice(name):
     path = CURATED / name
     assert not path.exists(), f"Restricted payload remains: {name}"
-    assert REASON in path.with_suffix(path.suffix + ".md").read_text()
+    assert REASON in path.with_suffix(path.suffix + ".md").read_text(encoding="utf-8")
 
 
 @pytest.mark.parametrize(
@@ -64,7 +67,9 @@ def test_independent_synthetic_input_remains_supported(tmp_path):
     path = tmp_path / "fields.csv"
     path.write_text(
         "FIELD_NAME,COUNTRY,BLOCK,RESERVE_TYPE,WATER_DEPTH_M,US_GOM_FLAG\n"
-        "Synthetic field,United States,MC1,Oil,100,Y\n"
+        "Synthetic field,United States,MC1,Oil,100,Y\n",
+        encoding="utf-8",
+        newline="\n",
     )
     fields = subseaiq.load_subseaiq_fields(path)
     assert len(fields) == 1
@@ -95,8 +100,8 @@ def test_withheld_reports_expose_no_embedded_tables():
     ]
     assert paths
     for path in paths:
-        text = path.read_text()
-        assert REASON in text, path.relative_to(ROOT)
+        text = path.read_text(encoding="utf-8")
+        assert REASON in text, path.relative_to(ROOT).as_posix()
         assert "<table" not in text
         assert "<script" not in text
 
@@ -107,8 +112,8 @@ def test_metadata_does_not_advertise_withheld_payloads():
     import yaml
 
     data = ROOT / "data/modules/offshore_assets"
-    schema = yaml.safe_load((data / "schema.yaml").read_text())
-    metadata = json.loads((data / "_metadata.json").read_text())
+    schema = yaml.safe_load((data / "schema.yaml").read_text(encoding="utf-8"))
+    metadata = json.loads((data / "_metadata.json").read_text(encoding="utf-8"))
     assert not set(WITHHELD) & {row["name"] for row in schema["datasets"]}
     assert not set(WITHHELD) & {row["name"] for row in metadata["files"]}
     assert set(WITHHELD) == {row["name"] for row in metadata["withheld_datasets"]}
@@ -137,3 +142,25 @@ def test_default_generators_reject_withheld_input(script, function):
     spec.loader.exec_module(module)
     with pytest.raises(RuntimeError, match=REASON):
         getattr(module, function)()
+
+
+def test_region_comparison_direct_command_reaches_withholding(tmp_path):
+    env = dict(os.environ)
+    for key in ("PYTHONPATH", "GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR"):
+        env.pop(key, None)
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(ROOT / "scripts/field_development/build_region_devtype_comparison.py"),
+        ],
+        cwd=tmp_path,
+        env=env,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=60,
+    )
+    assert result.returncode != 0
+    assert "DatasetUnavailableError" in result.stderr
+    assert REASON in result.stderr
+    assert "ModuleNotFoundError" not in result.stderr
