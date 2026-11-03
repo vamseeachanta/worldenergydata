@@ -32,11 +32,12 @@ For a load-line record it describes load-line draft, not operating draft. A
 separately stated operating draft takes precedence for `DRAFT_M` and the legacy
 operating key. Transit drafts remain under `RAW_DRAFT_TRANSIT_FT`.
 
-The committed Prospector 1 extraction contains a load-line draft of 21.9 ft,
-rounded to 6.7 m. The [public specification](https://api.borrdrilling.com/wp-content/uploads/2024/08/Short-Specification-Prospector-1.pdf)
-labels this value as draft at load line. The regression test checks that
-extraction and its preservation through schema serialization and ingestion;
-the value does not establish draft in an operating condition.
+The committed load-line example contains a draft of 21.9 ft, rounded to
+6.7 m. Its public specification URL and document digest are recorded in the
+[source manifest](src/worldenergydata/vessel_fleet/_data/raw/spec_pdfs/borr/manifest.yaml).
+The regression tests select that extraction by its manifest digest and check
+its preservation through schema serialization and ingestion; the value does
+not establish draft in an operating condition.
 
 ## Liftboats and public incidents
 
