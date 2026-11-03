@@ -56,6 +56,21 @@ def test_path_ownership(scope, paths, expected):
 
 
 @pytest.mark.parametrize(
+    "status, expected",
+    [
+        ("A", (False, ["lower_tertiary"])),
+        ("M", (False, ["lower_tertiary"])),
+        ("D", (True, [])),
+        ("T", (True, [])),
+    ],
+)
+def test_assumptions_record_requires_publication(scope, status, expected):
+    """Refresh changed assumptions; removed inputs cannot retain stale output."""
+    path = "config/analysis/lower_tertiary/v50_assumptions_change_log.html"
+    assert scope.select_domains([(status, path)], KNOWN) == expected
+
+
+@pytest.mark.parametrize(
     "path",
     [
         "scripts/build_pages.py",
@@ -237,3 +252,8 @@ def test_workflow_triggers_cover_shared_inputs(workflow, scope):
         assert path in triggers
     assert "site_assets/**" in triggers
     assert "docs/intervention-db/intervention-stats-brief.html" in triggers
+
+
+def test_workflow_triggers_on_assumptions_record_changes(workflow):
+    triggers = workflow[True]["push"]["paths"]
+    assert "config/analysis/lower_tertiary/v50_assumptions_change_log.html" in triggers

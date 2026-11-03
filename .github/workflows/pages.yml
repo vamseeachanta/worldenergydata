@@ -34,6 +34,7 @@ on:
       - 'scripts/site_nav.py'
       - 'scripts/lower_tertiary/war_methodology.py'
       - 'config/nav_spine.json'
+      - 'config/analysis/lower_tertiary/v50_assumptions_change_log.html'
       - 'docs/intervention-db/intervention-stats-brief.html'
       - '.github/workflows/pages.yml'
   workflow_dispatch:

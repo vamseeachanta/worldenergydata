@@ -26,6 +26,7 @@ SHARED_FILES = frozenset(
 EXTRA_INPUTS = {
     "reports/IMO_GISIS_Executive_Report.html": "marine_safety",
     "docs/intervention-db/intervention-stats-brief.html": "capabilities",
+    "config/analysis/lower_tertiary/v50_assumptions_change_log.html": "lower_tertiary",
 }
 
 
