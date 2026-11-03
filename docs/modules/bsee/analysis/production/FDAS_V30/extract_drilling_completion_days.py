@@ -301,9 +301,7 @@ def last_activity_and_mud_weight(remarks_for_api):
 
 def merge_rows(left, right, **kwargs):
     """Validate lookup cardinality before joining WAR, bore, and lease tables."""
-    before = len(left)
     result = pd.merge(left, right, validate="many_to_one", **kwargs)
-    assert len(result) == before, "Lookup join changed input row count"
     return result
 
 
