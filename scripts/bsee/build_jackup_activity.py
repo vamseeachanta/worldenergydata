@@ -32,7 +32,6 @@ DEPTH_THRESHOLD_FT = 500
 COLUMNS = (
     "activity_id",
     "api_well_number",
-    "rig_name",
     "rig_id",
     "rig_type",
     "area_code",
@@ -80,7 +79,6 @@ DEPTH_REFERENCE_URL = (
 FIELD_DEFINITIONS = {
     "activity_id": "WAR SN_WAR, unique report identifier; signed integer retained as text.",
     "api_well_number": "WAR API_WELL_NUMBER, exact BSEE borehole identifier; text, including leading zeroes.",
-    "rig_name": "WAR RIG_NAME, spelling as published by BSEE.",
     "rig_id": "APM rig view RIG_ID_NUM, matched by case-insensitive, edge-trimmed rig name only.",
     "rig_type": "APM rig view RIG_TYPE_CODE: JU (jack-up) or LB (liftboat).",
     "area_code": "WAR SURF_AREA_CODE, surface area code.",
@@ -211,7 +209,21 @@ def derive_table(war, boreholes, rigs, apds, rig_list):
                 {
                     "activity_id": record_id,
                     "api_well_number": report["API_WELL_NUMBER"],
-                    "rig_name": report["RIG_NAME"],
+                    "rig_reference": (
+                        "bsee-rig:" + candidates[0]["RIG_ID_NUM"]
+                        if len(candidates) == 1
+                        else "name-sha256:"
+                        + hashlib.sha256(
+                            name_key(report["RIG_NAME"]).encode("utf-8")
+                        ).hexdigest()
+                    ),
+                    "registry_evidence": sorted(
+                        [
+                            {"rig_id": r["RIG_ID_NUM"], "rig_type": r["RIG_TYPE_CODE"]}
+                            for r in candidates
+                        ],
+                        key=lambda r: (r["rig_id"], r["rig_type"]),
+                    ),
                     "water_depth_ft": "8831",
                     "disposition": reason or "retained_flagged",
                 }
@@ -250,7 +262,6 @@ def derive_table(war, boreholes, rigs, apds, rig_list):
             {
                 "activity_id": record_id,
                 "api_well_number": report["API_WELL_NUMBER"],
-                "rig_name": report["RIG_NAME"],
                 "rig_id": rig_row["RIG_ID_NUM"],
                 "rig_type": rig_row["RIG_TYPE_CODE"],
                 "area_code": report["SURF_AREA_CODE"],
@@ -336,7 +347,9 @@ def download_one(raw_dir: Path, name: str, url: str) -> dict:
     received = hashlib.sha256()
     # Exact membership in the fixed BSEE HTTPS allowlist is checked above.
     with (
-        urlopen(request, timeout=60) as response,  # nosec B310 -- fixed BSEE HTTPS allowlist
+        urlopen(
+            request, timeout=60
+        ) as response,  # nosec B310 -- fixed BSEE HTTPS allowlist
         target.open("xb") as output,
     ):
         if response.geturl() != url:
@@ -418,6 +431,30 @@ def data_card(manifest: dict) -> str:
     exclusions = ", ".join(
         f"{name}: {count:,}" for name, count in sorted(counts["excluded"].items())
     )
+    audit = counts["source_8831_ft_record_audit"]
+    dispositions = (
+        ", ".join(
+            f"{reason}: {count:,}"
+            for reason, count in sorted(
+                Counter(r["disposition"] for r in audit).items()
+            )
+        )
+        or "none"
+    )
+    registry = sorted(
+        {
+            (e["rig_id"], e["rig_type"])
+            for record in audit
+            for e in record["registry_evidence"]
+        }
+    )
+    registry_text = (
+        ", ".join(
+            f"rig {html.escape(rig_id)} ({html.escape(rig_type)})"
+            for rig_id, rig_type in registry
+        )
+        or "none"
+    )
     return f"""<!doctype html>
 <html lang="en"><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -433,7 +470,8 @@ The subset contains {counts['rig_types'].get('JU', 0):,} jack-up and {counts['ri
 {counts['deep_water_records']:,} reports exceed the 500 ft screening threshold in at least one supplied depth and remain flagged.</p>
 <h2>Revision history</h2>
 <table><caption>Revision history.</caption><tr><th>Revision</th><th>Date</th><th>What changed and why</th></tr>
-<tr><td>1</td><td>{manifest['retrieval_date']}</td><td>Initial release: BSEE activity subset with provenance, cross-checks and visible source limitations.</td></tr></table>
+<tr><td>1</td><td>{manifest['retrieval_date']}</td><td>Initial release: BSEE activity subset with provenance, cross-checks and visible source limitations.</td></tr>
+<tr><td>2</td><td>{manifest['publication_date']}</td><td>Publish rig identifiers and derive anomaly statements from the audit to avoid unsupported claims.</td></tr></table>
 <h2>Download and scope</h2>
 <p><a href="{manifest['table']['file']}">Download the UTF-8 CSV (gzip)</a>. The table has {len(COLUMNS)} columns.
 The <a href="manifest.json">manifest</a> binds the compressed and uncompressed bytes and all retained source archives by SHA-256.</p>
@@ -442,7 +480,7 @@ The <a href="manifest.json">manifest</a> binds the compressed and uncompressed b
 The default-branch URL will change on refresh; use a commit SHA in place of <code>main</code> for an immutable citation.</p>
 <p>Selection uses WAR_START_DT from 1997-01-01 through 2025-12-31, Borehole REGION_CODE=G,
 and APM rig view RIG_TYPE_CODE in JU/LB. Rig names are matched only after edge trimming and case folding;
-the published WAR names are preserved. Unmatched and ambiguous names are excluded and counted, without guessing a rig class.
+only rig identifiers are published; source rig names are omitted. Unmatched and ambiguous names are excluded and counted, without guessing a rig class.
 No fuzzy matching, contractor-page data or contact fields are used. The full Gulf activity population is not established by this subset.</p>
 <h2>Sources, terms and refresh</h2>
 <p>Owner: worldenergydata. Source catalog identities: bsee-data-center and bsee-ewell-war.
@@ -472,11 +510,13 @@ This published upper range is used for plausibility screening, not as a record o
 or a vessel-specific operating limit. The same permissive threshold screens liftboats; a false flag does not establish vessel capability.</p>
 <p>Depths are not corrected or substituted. A disagreement between WAR and borehole values is flagged.
 A borehole depth may describe a subsea well rather than the rig's physical location; no elevation, leg length or geotechnical basis is supplied.
-Blank/negative/non-numeric depths are retained and marked. Generic rig labels beginning with an asterisk are retained and flagged.</p>
-<p>The nine 8,831 ft source WAR records identify <code>CR LUIGS</code> and have no exact name match in the coded rig view.
-Their identifiers and exclusion reasons are preserved in <code>source_8831_ft_record_audit</code> in the manifest.
-BSEE's coded rig view lists <code>GSF C.R. LUIGS</code> as DS (drillship), not JU.
-No alias or jack-up classification is invented to place those nine records into this subset.
+Blank/negative/non-numeric depths are retained and marked. Reports with generic source rig labels beginning with an asterisk are retained and flagged; the labels are omitted.</p>
+<p>8,831 ft source WAR records audited: {len(audit):,}. Dispositions: {html.escape(dispositions)}.
+Their activity identifiers, stable rig references and exclusion reasons are preserved in
+<code>source_8831_ft_record_audit</code> in the manifest.
+Exact-match registry evidence: {registry_text}. Unmatched names have no verified classification;
+no alias or rig classification is inferred. References without a unique match use SHA-256 of the edge-trimmed,
+case-folded source name, without publishing the name.
 The 8,831 ft jack-up screening case is covered by an offline test; it is not a claim that such a retained source row exists.</p>
 <p>Type cross-checks use other BSEE records by RIG_ID_NUM, including APD descriptions and the Rig ID List.
 They test consistency between records, not independent physical inspection; current registry values may not describe a historical configuration.
@@ -523,7 +563,8 @@ def write_release(
         raise ValueError("Published table exceeds repository file-size limit")
     manifest = {
         **source,
-        "schema_version": 1,
+        "schema_version": 2,
+        "publication_date": date.today().isoformat(),
         "criteria_version": "1",
         "dataset_id": "us_gom_jackup_liftboat_activity_1997_2025",
         "source_ids": ["bsee-data-center", "bsee-ewell-war"],

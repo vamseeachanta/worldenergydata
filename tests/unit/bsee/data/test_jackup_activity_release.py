@@ -46,7 +46,6 @@ def test_release_schema_and_bsee_rig_filter(snapshot):
     assert fields == [
         "activity_id",
         "api_well_number",
-        "rig_name",
         "rig_id",
         "rig_type",
         "area_code",
@@ -145,3 +144,23 @@ def test_provenance_has_only_bsee_urls_relative_blobs_and_daily_refresh(snapshot
     assert date.fromisoformat(manifest["next_refresh_date"]) == (
         date.fromisoformat(manifest["retrieval_date"]) + timedelta(days=1)
     )
+
+
+def test_release_exposes_identifiers_instead_of_rig_names(snapshot):
+    manifest, _, _, fields, rows = snapshot
+    from scripts.bsee.build_jackup_activity import data_card
+
+    assert manifest["schema_version"] == 2
+    assert date.fromisoformat(manifest["publication_date"])
+    assert (RELEASE / "data_card.html").read_text() == data_card(manifest)
+    assert "rig_name" not in fields
+    assert all(row["rig_id"] for row in rows)
+    audit = manifest["counts"]["source_8831_ft_record_audit"]
+    assert all("rig_name" not in record for record in audit)
+    assert all(
+        re.fullmatch(
+            r"(?:bsee-rig:.+|name-sha256:[0-9a-f]{64})", record["rig_reference"]
+        )
+        for record in audit
+    )
+    assert all(record["registry_evidence"] == [] for record in audit)

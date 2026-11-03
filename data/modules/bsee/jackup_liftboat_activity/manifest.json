@@ -52,63 +52,72 @@
         "activity_id": "47363",
         "api_well_number": "608124001000",
         "disposition": "unmatched_rig_name",
-        "rig_name": "CR LUIGS",
+        "registry_evidence": [],
+        "rig_reference": "name-sha256:d7ea993a3213db9f8c5742b7634920d6937a521871277caa0ef1f81f05972a78",
         "water_depth_ft": "8831"
       },
       {
         "activity_id": "47508",
         "api_well_number": "608124001000",
         "disposition": "unmatched_rig_name",
-        "rig_name": "CR LUIGS",
+        "registry_evidence": [],
+        "rig_reference": "name-sha256:d7ea993a3213db9f8c5742b7634920d6937a521871277caa0ef1f81f05972a78",
         "water_depth_ft": "8831"
       },
       {
         "activity_id": "48208",
         "api_well_number": "608124001000",
         "disposition": "unmatched_rig_name",
-        "rig_name": "CR LUIGS",
+        "registry_evidence": [],
+        "rig_reference": "name-sha256:d7ea993a3213db9f8c5742b7634920d6937a521871277caa0ef1f81f05972a78",
         "water_depth_ft": "8831"
       },
       {
         "activity_id": "47649",
         "api_well_number": "608124001000",
         "disposition": "unmatched_rig_name",
-        "rig_name": "CR LUIGS",
+        "registry_evidence": [],
+        "rig_reference": "name-sha256:d7ea993a3213db9f8c5742b7634920d6937a521871277caa0ef1f81f05972a78",
         "water_depth_ft": "8831"
       },
       {
         "activity_id": "46885",
         "api_well_number": "608124001000",
         "disposition": "unmatched_rig_name",
-        "rig_name": "CR LUIGS",
+        "registry_evidence": [],
+        "rig_reference": "name-sha256:d7ea993a3213db9f8c5742b7634920d6937a521871277caa0ef1f81f05972a78",
         "water_depth_ft": "8831"
       },
       {
         "activity_id": "47052",
         "api_well_number": "608124001000",
         "disposition": "unmatched_rig_name",
-        "rig_name": "CR LUIGS",
+        "registry_evidence": [],
+        "rig_reference": "name-sha256:d7ea993a3213db9f8c5742b7634920d6937a521871277caa0ef1f81f05972a78",
         "water_depth_ft": "8831"
       },
       {
         "activity_id": "47846",
         "api_well_number": "608124001000",
         "disposition": "unmatched_rig_name",
-        "rig_name": "CR LUIGS",
+        "registry_evidence": [],
+        "rig_reference": "name-sha256:d7ea993a3213db9f8c5742b7634920d6937a521871277caa0ef1f81f05972a78",
         "water_depth_ft": "8831"
       },
       {
         "activity_id": "47987",
         "api_well_number": "608124001000",
         "disposition": "unmatched_rig_name",
-        "rig_name": "CR LUIGS",
+        "registry_evidence": [],
+        "rig_reference": "name-sha256:d7ea993a3213db9f8c5742b7634920d6937a521871277caa0ef1f81f05972a78",
         "water_depth_ft": "8831"
       },
       {
         "activity_id": "48730",
         "api_well_number": "608124001000",
         "disposition": "unmatched_rig_name",
-        "rig_name": "CR LUIGS",
+        "registry_evidence": [],
+        "rig_reference": "name-sha256:d7ea993a3213db9f8c5742b7634920d6937a521871277caa0ef1f81f05972a78",
         "water_depth_ft": "8831"
       }
     ]
@@ -134,7 +143,6 @@
     "quality_flags": "Pipe-separated screening annotations; release_date_unavailable applies to every row.",
     "release_date": "Empty: no rig-release field exists in the inspected public WAR/borehole/EOR schemas.",
     "rig_id": "APM rig view RIG_ID_NUM, matched by case-insensitive, edge-trimmed rig name only.",
-    "rig_name": "WAR RIG_NAME, spelling as published by BSEE.",
     "rig_type": "APM rig view RIG_TYPE_CODE: JU (jack-up) or LB (liftboat).",
     "rig_type_check": "agree, conflict or unavailable against other BSEE records joined by rig ID.",
     "spud_date": "Borehole WELL_SPUD_DATE, normalized to YYYY-MM-DD; borehole spud, not rig arrival.",
@@ -146,6 +154,7 @@
   "licence": "US federal government public data; BSEE stated distribution and copying terms",
   "next_refresh_date": "2026-10-30",
   "owner": "worldenergydata",
+  "publication_date": "2026-11-03",
   "raw_storage": "External content-addressed blobs relative to BSEE_JACKUP_RAW_DIR; no raw archive committed",
   "refresh_basis": {
     "automatic": false,
@@ -153,7 +162,7 @@
     "source_url": "https://www.data.bsee.gov/Main/RawData.aspx"
   },
   "retrieval_date": "2026-10-29",
-  "schema_version": 1,
+  "schema_version": 2,
   "source_id": "bsee-data-center",
   "source_ids": [
     "bsee-data-center",
@@ -213,7 +222,6 @@
     "columns": [
       "activity_id",
       "api_well_number",
-      "rig_name",
       "rig_id",
       "rig_type",
       "area_code",
@@ -234,10 +242,10 @@
     ],
     "file": "activity_1997_2025.csv.gz",
     "rows": 38492,
-    "sha256": "ea8831ed0a87f66b981817ccf2b3cab920aad8f925e6a671988fb8568f496798",
-    "size_bytes": 514318,
-    "uncompressed_sha256": "8126b08f6642ed770715a761c8c9d836a70257298a856fe78e23ad5479b172ca",
-    "uncompressed_size_bytes": 8461197
+    "sha256": "cb0477664e34e3b4a037b03e8d2fa5e1aaf1ae4fb8da9203243ea5032a7c4d00",
+    "size_bytes": 498375,
+    "uncompressed_sha256": "fb0e06ef34581f1a7181d3f407799550fcaef83c9658ce97c9380ff02bcb07d1",
+    "uncompressed_size_bytes": 7833047
   },
   "terms_url": "https://www.bsee.gov/bsee.gov/privacy-disclaimer"
 }

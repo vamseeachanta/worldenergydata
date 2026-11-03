@@ -1,5 +1,6 @@
 """Offline contracts for the public BSEE activity release."""
 
+import gzip
 import hashlib
 import io
 import json
@@ -314,7 +315,9 @@ def test_unmatched_8831_ft_source_records_have_an_explicit_disposition():
         {
             "activity_id": "1",
             "api_well_number": "600000000001",
-            "rig_name": "UNMATCHED PUBLIC RIG",
+            "rig_reference": "name-sha256:"
+            + hashlib.sha256(b"unmatched public rig").hexdigest(),
+            "registry_evidence": [],
             "water_depth_ft": "8831",
             "disposition": "unmatched_rig_name",
         }
@@ -342,3 +345,71 @@ def test_csv_schema_deterministic_compression_and_digest_readback(tmp_path):
     path.write_bytes(path.read_bytes() + b"tampered")
     with pytest.raises(ValueError, match="digest"):
         module.verify_release(first)
+
+
+@pytest.mark.parametrize("anomaly_count", [0, 2])
+def test_refreshed_card_uses_audit_counts_and_exact_registry_evidence(
+    tmp_path, anomaly_count
+):
+    module = pipeline()
+    reports = [activity()]
+    if anomaly_count:
+        reports += [
+            activity(SN_WAR="2", WATER_DEPTH="8831"),
+            activity(SN_WAR="3", WATER_DEPTH="8831", RIG_NAME="UNMATCHED FIXTURE"),
+        ]
+    rows, counts = module.derive_table(reports, [borehole()], [rig()], [], [])
+    manifest = module.write_release(
+        tmp_path, rows, counts, {"sources": []}, "2026-10-29"
+    )
+    card = (tmp_path / "data_card.html").read_text()
+    assert f"8,831 ft source WAR records audited: {anomaly_count}." in card
+    assert "nine" not in card
+    assert "DS (drillship)" not in card
+    audit = manifest["counts"]["source_8831_ft_record_audit"]
+    if anomaly_count:
+        assert audit[0]["registry_evidence"] == [{"rig_id": "100", "rig_type": "JU"}]
+        assert audit[1]["registry_evidence"] == []
+        assert "Exact-match registry evidence: rig 100 (JU)" in card
+        assert "retained_flagged: 1" in card
+        assert "unmatched_rig_name: 1" in card
+    else:
+        assert audit == []
+        assert "Exact-match registry evidence: none" in card
+
+
+def test_rig_names_are_only_used_for_matching_and_never_published(tmp_path):
+    module = pipeline()
+    rows, counts = module.derive_table(
+        [activity(RIG_NAME=" public rig ", WATER_DEPTH="8831")],
+        [borehole()],
+        [rig()],
+        [],
+        [],
+    )
+    assert "rig_name" not in rows[0]
+    assert rows[0]["rig_id"] == "100"
+    assert counts["source_8831_ft_record_audit"][0]["rig_reference"] == "bsee-rig:100"
+    module.write_release(tmp_path, rows, counts, {"sources": []}, "2026-10-29")
+    for name in ("manifest.json", "data_card.html"):
+        assert "public rig" not in (tmp_path / name).read_text().casefold()
+    raw = gzip.decompress((tmp_path / "activity_1997_2025.csv.gz").read_bytes())
+    assert b"public rig" not in raw.lower()
+
+
+def test_unmatched_reference_is_stable_across_order_case_and_spacing():
+    module = pipeline()
+
+    def audit(reports):
+        return module.derive_table(reports, [borehole()], [rig()], [], [])[1][
+            "source_8831_ft_record_audit"
+        ]
+
+    first = audit([activity(RIG_NAME="UNMATCHED FIXTURE", WATER_DEPTH="8831")])
+    second = audit(
+        [
+            activity(SN_WAR="2"),
+            activity(RIG_NAME=" unmatched fixture ", WATER_DEPTH="8831"),
+        ]
+    )
+    assert first[0]["rig_reference"] == second[0]["rig_reference"]
