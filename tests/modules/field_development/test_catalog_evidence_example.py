@@ -5,8 +5,9 @@ import json
 import subprocess
 import sys
 
-import catalog_test_support as support
 import pytest
+
+from tests.modules.field_development import catalog_test_support as support
 
 api = support.api
 

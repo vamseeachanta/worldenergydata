@@ -203,7 +203,7 @@ def test_tiny_grid_through_consumer_api(
 
     # Exercise the real fetcher with the existing HTTP response fixture.
     # An uncached explicit download makes one HEAD and one GET request.
-    from test_bathymetry import Response
+    from tests.unit.field_development.test_bathymetry import Response
 
     def response(url: str, **kwargs: Any) -> Response:
         calls.append(url)

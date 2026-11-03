@@ -4,7 +4,7 @@ import importlib.util
 import sys
 from importlib import import_module
 
-import catalog_test_support as support
+from tests.modules.field_development import catalog_test_support as support
 
 api = support.api
 inputs = support.inputs
