@@ -1,9 +1,11 @@
 # ABOUTME: Architecture-drawing panel gate (issue #969, epic #942) — asserts the
-# ABOUTME: per-field `architecture` payload (independent plan-view SVG or an unavailable-input placeholder).
+# ABOUTME: Per-field architecture uses independent geometry or an unavailable-input placeholder.
 
+import hashlib
 import importlib.util
 import json
 import re
+import sys
 from pathlib import Path
 
 import pytest
@@ -116,6 +118,16 @@ def test_architecture_svg_matches_render_layout():
         assert fields[fid]["architecture"]["svg"] == expected, fid
 
 
+def _load_lifecycle_builder():
+    spec = importlib.util.spec_from_file_location(
+        "lifecycle_regeneration",
+        REPO / "scripts/lower_tertiary/build_lifecycle_posters.py",
+    )
+    builder = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(builder)
+    return builder
+
+
 def test_stale_research_cannot_restore_withdrawn_lifecycle_geometry(monkeypatch):
     from worldenergydata.field_development import portfolio_concepts
 
@@ -135,12 +147,7 @@ def test_stale_research_cannot_restore_withdrawn_lifecycle_geometry(monkeypatch)
         return original(path, *args, **kwargs)
 
     monkeypatch.setattr(Path, "read_text", read_text)
-    spec = importlib.util.spec_from_file_location(
-        "lifecycle_with_stale_research",
-        REPO / "scripts/lower_tertiary/build_lifecycle_posters.py",
-    )
-    builder = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(builder)
+    builder = _load_lifecycle_builder()
     for field_id in portfolio_concepts._RESEARCH_NAME:
         payload = builder.facts_to_field({"id": field_id, "name": "Synthetic field"})
         assert payload["architecture"] == {"svg": None, "pending_issue": PENDING_ISSUE}
@@ -152,6 +159,65 @@ def test_stale_research_cannot_restore_withdrawn_lifecycle_geometry(monkeypatch)
     assert (
         not reads
     ), "Withdrawn research entries must be rejected before reading stale data"
+
+
+def _assert_saved_architecture(out, field_ids):
+    assert {path.name for path in out.iterdir()} == {
+        "index.html",
+        "_explorer.json",
+        *(f"{fid}_lifecycle.html" for fid in field_ids),
+    }
+    fields = json.loads((out / "_explorer.json").read_text(encoding="utf-8"))["fields"]
+    assert set(fields) == set(field_ids)
+    for fid, payload in fields.items():
+        page = (out / f"{fid}_lifecycle.html").read_text(encoding="utf-8")
+        embedded = json.loads(re.search(r"const FIELD = (\{.*?\n\});", page, re.S)[1])
+        assert embedded == payload
+        if fid in AUTHORED:
+            assert payload["architecture"]["svg"].startswith("<svg")
+        else:
+            assert payload["architecture"] == {
+                "svg": None,
+                "pending_issue": PENDING_ISSUE,
+            }
+
+
+def test_full_lifecycle_build_with_stale_research_preserves_withholding(
+    tmp_path, monkeypatch
+):
+    from worldenergydata.field_development import portfolio_concepts
+
+    builder = _load_lifecycle_builder()
+    field_ids = sorted(portfolio_concepts._RESEARCH_NAME.keys() | AUTHORED)
+    protected = [EXPLORER, portfolio_concepts._RESEARCH_JSON, builder.FACTS]
+    protected += [builder.TEMPLATE, builder.HERE / "index.html"]
+    protected += [builder.HERE / f"{fid}_lifecycle.html" for fid in field_ids]
+    before = {path: hashlib.sha256(path.read_bytes()).digest() for path in protected}
+    research = tmp_path / "_research.json"
+    stale = json.dumps(
+        [
+            {"name": name, "concept_type": "subsea_tieback", "water_depth_m": 1000}
+            for name in portfolio_concepts._RESEARCH_NAME.values()
+        ]
+    ).encode("utf-8")
+    research.write_bytes(stale)
+    facts = tmp_path / "facts.json"
+    facts.write_text(
+        json.dumps([{"id": fid, "name": "Synthetic field"} for fid in field_ids]),
+        encoding="utf-8",
+    )
+    out = tmp_path / "output"
+    out.mkdir()
+    monkeypatch.setattr(portfolio_concepts, "_RESEARCH_JSON", research)
+    monkeypatch.setattr(builder, "FACTS", facts)
+    monkeypatch.setattr(builder, "HERE", out)
+    monkeypatch.setattr(sys, "argv", [str(builder.__file__)])
+    builder.main()
+    _assert_saved_architecture(out, field_ids)
+    assert research.read_bytes() == stale
+    assert {
+        path: hashlib.sha256(path.read_bytes()).digest() for path in protected
+    } == before
 
 
 if __name__ == "__main__":
