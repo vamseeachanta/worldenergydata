@@ -1,12 +1,19 @@
 """Offline contracts for the public BSEE activity release."""
 
+import csv
 import gzip
 import hashlib
 import io
 import json
 import zipfile
+from datetime import date
 
 import pytest
+
+REBUILD_COMMAND = (
+    "Rebuild with scripts/bsee/build_jackup_activity.py "
+    "--raw-dir RAW --reuse-manifest MANIFEST --output-dir OUTPUT"
+)
 
 
 def pipeline():
@@ -29,14 +36,17 @@ def test_download_retains_exact_bytes_and_records_provenance(tmp_path, monkeypat
     assert len(manifest["sources"]) == len(module.SOURCES)
     for entry in manifest["sources"]:
         assert (tmp_path / entry["archive_path"]).read_bytes() == payload
-        assert entry["sha256"] == hashlib.sha256(payload).hexdigest()
+        assert entry["sha256"] == hashlib.sha256(payload).hexdigest(), REBUILD_COMMAND
         assert entry["size_bytes"] == len(payload)
         assert entry["url"] == module.SOURCES[entry["file"]]
         assert entry["retrieved_at_utc"].endswith("+00:00")
         assert entry["archive_path"] == (
             f"blobs/sha256/{entry['sha256'][:2]}/{entry['sha256']}.zip"
         )
-    assert json.loads((tmp_path / "source_manifest.json").read_text()) == manifest
+    assert (
+        json.loads((tmp_path / "source_manifest.json").read_text(encoding="utf-8"))
+        == manifest
+    )
     module.verify_sources(tmp_path, manifest)
 
 
@@ -324,7 +334,10 @@ def test_unmatched_8831_ft_source_records_have_an_explicit_disposition():
     ]
 
 
-def test_csv_schema_deterministic_compression_and_digest_readback(tmp_path):
+@pytest.mark.parametrize("later_date", ["2026-10-30", "2026-11-03"])
+def test_csv_schema_deterministic_compression_and_digest_readback(
+    tmp_path, monkeypatch, later_date
+):
     module = pipeline()
     rows, counts = module.derive_table([activity()], [borehole()], [rig()], [], [])
     first, second = tmp_path / "first", tmp_path / "second"
@@ -334,17 +347,143 @@ def test_csv_schema_deterministic_compression_and_digest_readback(tmp_path):
         "sources": [],
         "owner": "worldenergydata",
         "source_id": "bsee-data-center",
+        "publication_date": "2026-10-29",
     }
+
+    class PublicationDate(date):
+        @classmethod
+        def today(cls):
+            return date.fromisoformat(later_date)
+
+    monkeypatch.setattr(module, "date", PublicationDate)
     manifest = module.write_release(first, rows, counts, original, "2026-10-29")
-    module.write_release(second, rows, counts, original, "2026-10-29")
+    PublicationDate.today = classmethod(lambda cls: date(2026, 11, 4))
+    module.write_release(second, rows, counts, manifest, "2026-10-29")
     path = first / manifest["table"]["file"]
-    assert path.read_bytes() == (second / path.name).read_bytes()
+    for name in (path.name, "manifest.json", "data_card.html"):
+        assert (first / name).read_bytes() == (
+            second / name
+        ).read_bytes(), REBUILD_COMMAND
+    assert manifest["publication_date"] == "2026-10-29"
     assert manifest["next_refresh_date"] == "2026-10-30"
-    assert manifest["table"]["sha256"] == hashlib.sha256(path.read_bytes()).hexdigest()
+    assert (
+        manifest["table"]["sha256"] == hashlib.sha256(path.read_bytes()).hexdigest()
+    ), REBUILD_COMMAND
     assert module.verify_release(first) == rows
     path.write_bytes(path.read_bytes() + b"tampered")
     with pytest.raises(ValueError, match="digest"):
         module.verify_release(first)
+
+
+@pytest.mark.parametrize("has_publication_date", [False, True])
+def test_refresh_publication_date_is_an_explicit_override(
+    tmp_path, has_publication_date
+):
+    module = pipeline()
+    rows, counts = module.derive_table([activity()], [borehole()], [rig()], [], [])
+    source = {"sources": []}
+    if has_publication_date:
+        source["publication_date"] = "2026-10-29"
+    manifest = module.write_release(
+        tmp_path,
+        rows,
+        counts,
+        source,
+        "2026-10-29",
+        publication_date=date(2026, 11, 4),
+    )
+    assert manifest["publication_date"] == "2026-11-04"
+    assert source == {
+        "sources": [],
+        **({"publication_date": "2026-10-29"} if has_publication_date else {}),
+    }
+    assert "2026-11-04" in (tmp_path / "data_card.html").read_text(encoding="utf-8")
+
+
+@pytest.mark.parametrize("publication_date", ["not-a-date", "", None])
+def test_invalid_reused_publication_date_is_rejected_before_writing(
+    tmp_path, publication_date
+):
+    module = pipeline()
+    rows, counts = module.derive_table([activity()], [borehole()], [rig()], [], [])
+    with pytest.raises((ValueError, TypeError)):
+        module.write_release(
+            tmp_path,
+            rows,
+            counts,
+            {"sources": [], "publication_date": publication_date},
+            "2026-10-29",
+        )
+    assert list(tmp_path.iterdir()) == []
+
+
+@pytest.fixture
+def raw_release(tmp_path):
+    module = pipeline()
+    raw_dir = tmp_path / "raw"
+    raw_dir.mkdir()
+    tables = {
+        "eWellWARRawData.zip": ("eWellWARRawData/mv_war_main.txt", [activity()]),
+        "BoreholeRawData.zip": ("BoreholeRawData/mv_boreholes_all.txt", [borehole()]),
+        "eWellAPMRawData.zip": ("eWellAPMRawData/mv_apm_rig_view.txt", [rig()]),
+        "eWellAPDRawData.zip": (
+            "eWellAPDRawData/mv_apd_main.txt",
+            [{"SN_APD": "42", "RIG_ID_NUM": "100", "RIG_TYPE_CODE": "JU"}],
+        ),
+        "rigidlistdelimit.zip": (
+            "rigidlistdelimit.txt",
+            [{"RIG_ID": "100", "RIG_NAME": "PUBLIC RIG", "RIG_TYPE": "JACKUP"}],
+        ),
+        "eWellEORRawData.zip": ("unused.txt", [{"ID": "1"}]),
+    }
+    source = {"sources": [], "publication_date": "2026-10-29"}
+    for name, (member, records) in tables.items():
+        buffer = io.StringIO(newline="\n")
+        writer = csv.DictWriter(
+            buffer, fieldnames=list(records[0]), lineterminator="\n"
+        )
+        if name != "rigidlistdelimit.zip":
+            writer.writeheader()
+        writer.writerows(records)
+        archive_path = raw_dir / name
+        with zipfile.ZipFile(archive_path, "w") as archive:
+            archive.writestr(member, buffer.getvalue().encode("utf-8"))
+        entry = {
+            "file": name,
+            "url": module.SOURCES[name],
+            "retrieved_at_utc": "2026-10-29T12:00:00+00:00",
+            "sha256": hashlib.sha256(archive_path.read_bytes()).hexdigest(),
+            "size_bytes": archive_path.stat().st_size,
+        }
+        source["sources"].append(module.retain_blob(raw_dir, archive_path, entry))
+    return raw_dir, source
+
+
+@pytest.mark.parametrize("refresh", [False, True])
+def test_reuse_manifest_cli_preserves_or_explicitly_refreshes_publication_date(
+    tmp_path, monkeypatch, raw_release, refresh
+):
+    module = pipeline()
+    raw_dir, source = raw_release
+    manifest_path = tmp_path / "source.json"
+    module.write_json(manifest_path, source)
+    output = tmp_path / "release"
+    argv = [
+        "build_jackup_activity.py",
+        "--raw-dir",
+        raw_dir.as_posix(),
+        "--reuse-manifest",
+        manifest_path.as_posix(),
+        "--output-dir",
+        output.as_posix(),
+    ]
+    if refresh:
+        argv += ["--publication-date", "2026-11-04"]
+    monkeypatch.setattr("sys.argv", argv)
+    module.main()
+    manifest = json.loads((output / "manifest.json").read_text(encoding="utf-8"))
+    assert manifest["publication_date"] == ("2026-11-04" if refresh else "2026-10-29")
+    assert len(module.verify_release(output)) == 1
 
 
 @pytest.mark.parametrize("anomaly_count", [0, 2])
@@ -362,7 +501,7 @@ def test_refreshed_card_uses_audit_counts_and_exact_registry_evidence(
     manifest = module.write_release(
         tmp_path, rows, counts, {"sources": []}, "2026-10-29"
     )
-    card = (tmp_path / "data_card.html").read_text()
+    card = (tmp_path / "data_card.html").read_text(encoding="utf-8")
     assert f"8,831 ft source WAR records audited: {anomaly_count}." in card
     assert "nine" not in card
     assert "DS (drillship)" not in card
@@ -392,7 +531,9 @@ def test_rig_names_are_only_used_for_matching_and_never_published(tmp_path):
     assert counts["source_8831_ft_record_audit"][0]["rig_reference"] == "bsee-rig:100"
     module.write_release(tmp_path, rows, counts, {"sources": []}, "2026-10-29")
     for name in ("manifest.json", "data_card.html"):
-        assert "public rig" not in (tmp_path / name).read_text().casefold()
+        assert (
+            "public rig" not in (tmp_path / name).read_text(encoding="utf-8").casefold()
+        )
     raw = gzip.decompress((tmp_path / "activity_1997_2025.csv.gz").read_bytes())
     assert b"public rig" not in raw.lower()
 

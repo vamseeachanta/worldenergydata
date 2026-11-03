@@ -16,6 +16,10 @@ import pytest
 RELEASE = (
     Path(__file__).resolve().parents[4] / "data/modules/bsee/jackup_liftboat_activity"
 )
+REBUILD_COMMAND = (
+    "Rebuild with scripts/bsee/build_jackup_activity.py "
+    "--raw-dir RAW --reuse-manifest MANIFEST --output-dir OUTPUT"
+)
 
 
 @pytest.fixture(scope="module")
@@ -29,8 +33,12 @@ def snapshot():
 
 def test_release_manifest_digests_and_size_limit(snapshot):
     manifest, compressed, raw, _, rows = snapshot
-    assert hashlib.sha256(compressed).hexdigest() == manifest["table"]["sha256"]
-    assert hashlib.sha256(raw).hexdigest() == manifest["table"]["uncompressed_sha256"]
+    assert (
+        hashlib.sha256(compressed).hexdigest() == manifest["table"]["sha256"]
+    ), REBUILD_COMMAND
+    assert (
+        hashlib.sha256(raw).hexdigest() == manifest["table"]["uncompressed_sha256"]
+    ), REBUILD_COMMAND
     assert len(compressed) == manifest["table"]["size_bytes"] <= 1_000_000
     assert len(raw) == manifest["table"]["uncompressed_size_bytes"]
     assert (
@@ -152,7 +160,9 @@ def test_release_exposes_identifiers_instead_of_rig_names(snapshot):
 
     assert manifest["schema_version"] == 2
     assert date.fromisoformat(manifest["publication_date"])
-    assert (RELEASE / "data_card.html").read_text() == data_card(manifest)
+    assert (RELEASE / "data_card.html").read_text(encoding="utf-8") == data_card(
+        manifest
+    )
     assert "rig_name" not in fields
     assert all(row["rig_id"] for row in rows)
     audit = manifest["counts"]["source_8831_ft_record_audit"]

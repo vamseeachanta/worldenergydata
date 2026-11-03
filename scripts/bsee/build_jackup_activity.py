@@ -546,8 +546,20 @@ Offline tests: <code>tests/unit/bsee/data/test_jackup_activity.py</code> and <co
 
 
 def write_release(
-    output: Path, rows: list[dict], counts: dict, source: dict, retrieval: str
+    output: Path,
+    rows: list[dict],
+    counts: dict,
+    source: dict,
+    retrieval: str,
+    *,
+    publication_date: date | None = None,
 ) -> dict:
+    if publication_date is None:
+        publication_date = (
+            date.fromisoformat(source["publication_date"])
+            if "publication_date" in source
+            else date.today()
+        )
     buffer = io.StringIO(newline="")
     writer = csv.DictWriter(buffer, fieldnames=COLUMNS, lineterminator="\n")
     writer.writeheader()
@@ -564,7 +576,7 @@ def write_release(
     manifest = {
         **source,
         "schema_version": 2,
-        "publication_date": date.today().isoformat(),
+        "publication_date": publication_date.isoformat(),
         "criteria_version": "1",
         "dataset_id": "us_gom_jackup_liftboat_activity_1997_2025",
         "source_ids": ["bsee-data-center", "bsee-ewell-war"],
@@ -642,7 +654,13 @@ def verify_release(output: Path) -> list[dict]:
     return rows
 
 
-def build_release(raw_dir: Path, source: dict, output: Path) -> dict:
+def build_release(
+    raw_dir: Path,
+    source: dict,
+    output: Path,
+    *,
+    publication_date: date | None = None,
+) -> dict:
     verify_sources(raw_dir, source)
     paths = {
         entry["file"]: raw_dir / entry["archive_path"] for entry in source["sources"]
@@ -711,7 +729,9 @@ def build_release(raw_dir: Path, source: dict, output: Path) -> dict:
         raise ValueError("Refusing to publish an empty activity release")
     output.mkdir(parents=True, exist_ok=False)
     retrieval = max(entry["retrieved_at_utc"][:10] for entry in source["sources"])
-    return write_release(output, rows, counts, source, retrieval)
+    return write_release(
+        output, rows, counts, source, retrieval, publication_date=publication_date
+    )
 
 
 def main() -> None:
@@ -721,6 +741,12 @@ def main() -> None:
     )
     parser.add_argument("--download-only", action="store_true")
     parser.add_argument("--reuse-manifest", type=Path)
+    parser.add_argument(
+        "--publication-date",
+        type=date.fromisoformat,
+        metavar="YYYY-MM-DD",
+        help="Explicit refresh date; otherwise preserve a reused date or use today for a new release",
+    )
     parser.add_argument("--verify-only", action="store_true")
     parser.add_argument(
         "--output-dir",
@@ -748,7 +774,9 @@ def main() -> None:
     else:
         source = download_sources(raw_dir)
     if not args.download_only:
-        manifest = build_release(raw_dir, source, args.output_dir)
+        manifest = build_release(
+            raw_dir, source, args.output_dir, publication_date=args.publication_date
+        )
         print(json.dumps(manifest["counts"], indent=2))
 
 
