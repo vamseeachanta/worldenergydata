@@ -20,6 +20,22 @@ the data ships in the built wheel.
 
 ## Draft conditions
 
+### Plan-lite
+
+- Source labels: populate the load-line field only when the specification
+  explicitly labels that condition. Keep operating and transit drafts distinct;
+  an unqualified draft does not establish a load-line or operating condition.
+- Compatibility: retain the legacy raw key for existing consumers, preserve
+  every original extracted value and metadata item, and keep the existing
+  one-decimal metre rounding. A separately stated operating draft takes
+  precedence over the load-line compatibility alias.
+- Validation: check source-label parsing, schema serialization and ingestion
+  with the focused parser and source-PDF tests. Use manifest digests to verify
+  public PDF fixtures and parsed-YAML comparison to restrict extraction changes
+  to additive load-line fields. Existing curated datasets are not regenerated.
+
+### Field behavior and provenance
+
 `RAW_DRAFT_LOAD_LINE_FT` identifies a draft explicitly labelled as load line in
 the source specification. The parser, packaged extractions and spec-ingestion
 script preserve this field. For these values, `RAW_DRAFT_OPERATING_FT` remains
