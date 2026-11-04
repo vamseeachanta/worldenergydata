@@ -2,7 +2,8 @@
 
 Summary: section 12 defines strict counts, depth validation and declared units
 for #1334. It supersedes F1–F6 and F11–F12. Section 11 retains the date
-completeness contract. Sections 1–10 are historical evidence at the code
+completeness contract. Section 13 corrects context-dependent depth conversion
+and records current numeric regression evidence. Sections 1–10 are historical evidence at the code
 revision below; unrelated gaps and unverified source claims remain open.
 
 ## Revision history
@@ -11,15 +12,16 @@ revision below; unrelated gaps and unverified source claims remain open.
 | --- | --- | --- |
 | 3 | 2026-10-19 | Added date completeness detection and tests so empty or missing dates cannot imply complete bounds. Earlier revision evidence remains below. |
 | 4 | 2026-10-22 | Add count rejection, explicit depth units and detection tests; distinguish input validation from source qualification. |
+| 5 | 2026-11-04 | Removed caller-dependent rounding from depth conversion and added value-preservation tests after a remaining arithmetic gap was reproduced. |
 
 | Header | Value |
 | --- | --- |
 | Module | baker_hughes |
 | Repository | worldenergydata |
 | Path | packages/worldenergydata-baker_hughes/src/worldenergydata/baker_hughes |
-| Pack revision | 4 |
-| Pack date | 2026-10-22 |
-| Code revision | b1394197a66f95d78615425b4e1ad4ff78bd9de2 |
+| Pack revision | 5 |
+| Pack date | 2026-11-04 |
+| Code revision (historical sections 1–10) | b1394197a66f95d78615425b4e1ad4ff78bd9de2 |
 | Analysis family | EC; data pipeline; AQG r0 Python calculations gate set |
 | Quality role | Calculations quality manager; deputy: to be appointed |
 | Status | DRAFT; second-provider clearance pending |
@@ -304,3 +306,67 @@ invocation. The combined total is 236 passing cases. The downstream
 CAD test module retains its existing import skip because CadQuery is absent;
 no CAD result is claimed. Ruff passed on changed Python files. These current
 results supplement rather than rewrite historical result tables.
+
+## 13. Depth arithmetic correction and current numeric evidence
+
+F20: the earlier metre conversion used the caller's active Decimal context.
+Reduced precision or altered rounding changed accepted depths; enabled rounding
+traps or restricted exponents rejected otherwise valid values. Even at the
+default precision, rounding to Decimal before float could lose the distinction
+above a binary rounding midpoint. The new regression tests reproduce these
+defects independently of the source-unit checks in F5 and F6.
+
+Metre conversion now uses the exact rational parsed decimal and international-foot ratio
+from section 12, followed by one float rounding. Numeric cells are parsed from
+`str(read_back_value)`; the conversion does not recover precision lost before
+Excel readback. No Decimal arithmetic context
+is used for that conversion. Nonzero metre inputs are checked by their adjusted
+decimal exponent before constructing ratios: only decades -325 through 308 can
+produce finite nonzero binary64 feet. These loose representation bounds are
+not physical depth limits. The existing overflow and underflow checks still
+reject boundary values that cannot produce a finite nonzero float. Signed zero
+is retained in both units. This guard limits compact extreme-exponent depth
+inputs; it does not establish general workbook or count resource budgets.
+Compact-exponent count allocation remains open under #1859.
+
+Both well and water depths, explicit declarations and suffixed headers, feet and
+metres are exercised under altered precision, rounding, exponent limits and
+traps. The tests also check that caller settings and flags remain unchanged.
+The modified-default-context case in the current thread is an invariance
+guard; the new-thread case detects inheritance from modified defaults.
+Exact-ratio rounding, long mantissas and float boundaries have separate checks.
+
+All nodes below are in `tests/unit/baker_hughes/test_numeric_contract.py`.
+
+| Gap | Detection test node | Current disposition |
+| --- | --- | --- |
+| F1 | `tests/unit/baker_hughes/test_numeric_contract.py::test_rejects_bad_counts` | Pivot missing, invalid and locale-separated counts remain rejected. |
+| F2 | `tests/unit/baker_hughes/test_numeric_contract.py::test_preserves_whole_counts`; `tests/unit/baker_hughes/test_numeric_contract.py::test_count_contract_with_restrictive_decimal_context` | Whole pivot counts stay exact; fractions remain rejected under restrictive contexts. |
+| F3 | `tests/unit/baker_hughes/test_numeric_contract.py::test_invalid_depth_rejected` | Invalid well depths remain rejected; valid-conversion detection is recorded under F20. |
+| F4 | `tests/unit/baker_hughes/test_numeric_contract.py::test_invalid_depth_rejected` | Invalid water depths remain rejected; valid-conversion detection is recorded under F20. |
+| F5 | `tests/unit/baker_hughes/test_numeric_contract.py::test_ambiguous_depth_requires_declaration`; `tests/unit/baker_hughes/test_numeric_contract.py::test_header_declaration_mismatch_rejected` | Undeclared and conflicting well-depth units remain rejected. |
+| F6 | `tests/unit/baker_hughes/test_numeric_contract.py::test_header_declaration_mismatch_rejected`; `tests/unit/baker_hughes/test_numeric_contract.py::test_detects_units_per_header` | Water-depth declarations and mixed-unit headers remain independently checked. |
+| F11 | `tests/unit/baker_hughes/test_numeric_contract.py::test_rejects_bad_counts` | Summary missing, invalid and locale-separated counts remain rejected. |
+| F12 | `tests/unit/baker_hughes/test_numeric_contract.py::test_preserves_whole_counts`; `tests/unit/baker_hughes/test_numeric_contract.py::test_count_contract_with_restrictive_decimal_context` | Whole summary counts stay exact; fractions remain rejected under restrictive contexts. |
+| F20 | `tests/unit/baker_hughes/test_numeric_contract.py::test_depth_conversion_is_independent_of_decimal_context`; `tests/unit/baker_hughes/test_numeric_contract.py::test_depth_conversion_does_not_inherit_default_context`; `tests/unit/baker_hughes/test_numeric_contract.py::test_depth_conversion_rounds_exact_ratio_once` | Context-dependent arithmetic and intermediate Decimal rounding are removed. |
+
+`test_metres_at_float_range_boundaries`,
+`test_metres_outside_float_range_rejected` and `test_zero_depth_sign_is_preserved`
+check representation boundaries and zero preservation. The pre-change focused
+suite contains 131 passing cases in `tests/test_baker_hughes_loader.py` and
+`tests/unit/baker_hughes/`. The extended suite contains 182 cases; all pass
+after the correction (2026-11-04, uncommitted tree). Before the correction, the altered metre contexts,
+new-thread default context and near-midpoint case fail on the main loader.
+
+UNVERIFIED: source workbook revision, independently verified physical depth
+units, datum, independent counts and signed QA evidence remain open under
+#1336. Unit declarations and synthetic regression tests do not qualify external
+data. F7–F10 and other schema, filter and report gaps retain their section-11
+dispositions; this numeric correction does not resolve them.
+
+`test_compact_extreme_exponents_rejected_before_ratio_allocation` checks the
+preflight before an allocation sentinel can be reached.
+`test_numeric_metres_use_read_back_decimal_value` checks a numeric Excel cell.
+
+Revision-5 arithmetic evidence (SHA-256 of `loader.py`):
+`0cb734e83711866c3849c483ac166a1b4bb10400c82046b4b7c59695cdfb6c60`. The header code pin applies only to historical sections 1–10.
