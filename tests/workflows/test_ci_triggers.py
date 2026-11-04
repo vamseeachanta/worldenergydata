@@ -4,6 +4,7 @@ import json
 import os
 import shutil
 import subprocess
+import sys
 from pathlib import Path
 
 import pytest
@@ -652,3 +653,26 @@ def test_main_full_run_is_dispatch_only_and_covers_the_moved_checks() -> None:
     text = FULL_RUN_WORKFLOW.read_text(encoding="utf-8")
     assert "uv lock --check" in text
     assert "WED_FAST_GATE" not in text
+
+
+def test_full_run_inventory_helper_is_available() -> None:
+    """The dispatched inventory must ship its executable dependency."""
+    workflow = yaml.safe_load(FULL_RUN_WORKFLOW.read_text(encoding="utf-8"))
+    steps = workflow["jobs"]["f821-inventory"]["steps"]
+    inventory = next(step for step in steps if "check_f821.py" in step.get("run", ""))
+    helper = "scripts/ci/check_f821.py"
+    assert f"python {helper}" in inventory["run"]
+    root = WORKFLOWS.parents[1]
+    assert (root / helper).is_file(), "Full-run inventory helper is missing"
+    result = subprocess.run(
+        [sys.executable, helper, "--help"],
+        cwd=root,
+        capture_output=True,
+        text=True,
+        timeout=30,
+        check=False,
+    )
+    assert result.returncode == 0, result.stderr
+    assert all(
+        option in result.stdout for option in ("--runs", "--timeout", "--output")
+    )
