@@ -175,6 +175,11 @@ def test_each_required_input_is_mandatory(inputs, source_index):
 
 def test_retained_input_count_agreement():
     """Verify real retained inputs when the external archive is available."""
+    assert_retained_input_count_agreement()
+
+
+def assert_retained_input_count_agreement():
+    """Require source and analysis counts to agree with the retained manifest."""
     raw_dir = os.environ.get("MARINE_SAFETY_RAW_DIR")
     if not raw_dir:
         pytest.skip(
@@ -218,23 +223,25 @@ def test_retained_agreement_runs_against_configured_archive(inputs, monkeypatch)
     root, manifest_path, _ = inputs
     monkeypatch.setenv("MARINE_SAFETY_RAW_DIR", str(root))
     monkeypatch.setenv("MARINE_SAFETY_MANIFEST", str(manifest_path))
-    test_retained_input_count_agreement()
+    assert_retained_input_count_agreement()
 
 
 def test_retained_agreement_does_not_skip_count_drift(inputs, monkeypatch):
     root, manifest_path, manifest = inputs
     manifest["counts"]["foundering_rows"] += 1
-    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8", newline="\n")
     monkeypatch.setenv("MARINE_SAFETY_RAW_DIR", str(root))
     monkeypatch.setenv("MARINE_SAFETY_MANIFEST", str(manifest_path))
     with pytest.raises(ValueError, match="Count agreement failed"):
-        test_retained_input_count_agreement()
+        assert_retained_input_count_agreement()
 
 
 def test_loader_reads_utf8_manifest_with_legacy_defaults(inputs, legacy_text_defaults):
     root, manifest_path, manifest = inputs
     manifest["note"] = "Synthetic → criterion"
-    manifest_path.write_text(json.dumps(manifest, ensure_ascii=False), encoding="utf-8")
+    manifest_path.write_text(
+        json.dumps(manifest, ensure_ascii=False), encoding="utf-8", newline="\n"
+    )
     result = module("generate_incident_report").load_incident_data(root, manifest_path)
     assert result["manifest"]["note"] == manifest["note"]
 
@@ -393,7 +400,9 @@ def test_fetch_manifest_uses_utf8_and_lf(inputs, monkeypatch, legacy_text_defaul
 
     root, manifest_path, manifest = inputs
     manifest["revisions"] = [{"changes": "Synthetic → criterion"}]
-    manifest_path.write_text(json.dumps(manifest, ensure_ascii=False), encoding="utf-8")
+    manifest_path.write_text(
+        json.dumps(manifest, ensure_ascii=False), encoding="utf-8", newline="\n"
+    )
     fetcher = module("incident_inputs")
 
     def unavailable(*_):

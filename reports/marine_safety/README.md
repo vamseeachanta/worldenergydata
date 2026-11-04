@@ -9,7 +9,7 @@ Offline verification does not establish current download availability or new
 production counts. A maintainer must fetch both public inputs, run the agreement
 check below and update the summary figure after the real download. The existing
 manifest and recorded counts are preserved until then. IMO GISIS is out of scope
-for agents: an owner-supplied manual export requires a separate analysis basis
+for agents: a maintainer-supplied manual export requires a separate analysis basis
 and is excluded from this two-source workflow.
 
 ## Revision history
