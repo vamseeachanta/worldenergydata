@@ -15,6 +15,7 @@ Major producing states covered:
 
 import re
 from datetime import date
+from math import isfinite, isnan
 from typing import Any, Dict, List
 
 import pandas as pd
@@ -67,7 +68,9 @@ class StateProductionLoader:
                      as returned by EIAApiClient.parse_series_response().
                      'period' must be a valid Gregorian month in YYYY-MM form;
                      'unit' must be exactly 'Thousand Barrels' (a monthly volume,
-                     not a daily rate). Absent or null 'value' remains unknown.
+                     not a daily rate). Absent, null or numeric NaN 'value'
+                     remains unknown. Other values must be nonnegative and
+                     finite before and after conversion to barrels.
             state: Two-letter state code (stored uppercase in output).
 
         Returns:
@@ -75,7 +78,8 @@ class StateProductionLoader:
             Empty DataFrame (same columns) if records is empty.
 
         Raises:
-            ValueError: A record has an invalid 'period' or unsupported 'unit'.
+            ValueError: A record has an invalid 'period', 'unit' or 'value',
+                or repeats a state/month already supplied.
                 Invalid records are rejected rather than silently omitted.
         """
         _cols = ["state", "year", "month", "crude_bbl"]
@@ -84,6 +88,7 @@ class StateProductionLoader:
             return pd.DataFrame(columns=_cols)
 
         rows = []
+        seen_months = set()
         state_upper = state.upper().strip()
         for rec in records:
             period = rec.get("period")
@@ -100,6 +105,10 @@ class StateProductionLoader:
                     f"Invalid period {period!r}: expected a valid calendar month"
                 ) from error
 
+            if period in seen_months:
+                raise ValueError(f"Duplicate state/month: {state_upper} {period}")
+            seen_months.add(period)
+
             unit = rec.get("unit")
             if not isinstance(unit, str) or unit != "Thousand Barrels":
                 raise ValueError(
@@ -110,7 +119,20 @@ class StateProductionLoader:
             if raw_value is None:
                 crude_bbl = None
             else:
-                crude_bbl = float(raw_value) * self._KBBL_TO_BBL
+                try:
+                    quantity = float(raw_value)
+                except (TypeError, ValueError, OverflowError) as error:
+                    raise ValueError(
+                        "Invalid value: expected a monthly quantity"
+                    ) from error
+                if isnan(quantity) and not isinstance(raw_value, str):
+                    crude_bbl = None
+                else:
+                    crude_bbl = quantity * self._KBBL_TO_BBL
+                    if quantity < 0 or not isfinite(crude_bbl):
+                        raise ValueError(
+                            "Invalid value: expected a nonnegative finite monthly quantity"
+                        )
 
             rows.append(
                 {
@@ -135,9 +157,16 @@ class StateProductionLoader:
         Only supplied rows are aggregated. An absent month is distinct from a
         supplied row with an unknown quantity; no calendar-coverage completeness
         is inferred, so a numeric result need not represent a full year.
+
+        Raises:
+            ValueError: Duplicate (state, year, month) rows would double-count
+                a month, including rows concatenated after separate loads.
         """
         if df.empty:
             return pd.DataFrame(columns=["state", "year", "crude_bbl"])
+
+        if df.duplicated(["state", "year", "month"]).any():
+            raise ValueError("Duplicate state/year/month rows in annual_total")
 
         return (
             df.groupby(["state", "year"])["crude_bbl"]

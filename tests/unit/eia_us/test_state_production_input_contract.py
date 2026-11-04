@@ -210,3 +210,60 @@ def test_absent_months_do_not_imply_calendar_coverage():
     )
 
     assert loader.annual_total(monthly)["crude_bbl"].tolist() == [5000.0]
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        -5,
+        "-5",
+        float("inf"),
+        float("-inf"),
+        "inf",
+        "-inf",
+        "nan",
+        "NaN",
+        "1e309",
+        1e308,
+        "invalid",
+    ],
+)
+def test_invalid_quantity_is_rejected(value):
+    """Unknown numeric NaN is distinct from invalid supplied text."""
+    records = [monthly_record(), monthly_record("2024-02", value)]
+    with pytest.raises(ValueError, match="value"):
+        StateProductionLoader().load(records, state="TX")
+
+
+@pytest.mark.parametrize("values", [(2, 2), (2, 3), (None, 3)])
+def test_duplicate_month_is_rejected_on_load(values):
+    records = [monthly_record(value=value) for value in values]
+    with pytest.raises(ValueError, match="[Dd]uplicate"):
+        StateProductionLoader().load(records, state="TX")
+
+
+def test_duplicate_month_is_rejected_after_concatenation():
+    loader = StateProductionLoader()
+    original = loader.load([monthly_record()], state="TX")
+    revised = loader.load([monthly_record(value=3)], state="TX")
+    combined = pd.concat([original, revised], ignore_index=True)
+    before = combined.copy(deep=True)
+    with pytest.raises(ValueError, match="[Dd]uplicate"):
+        loader.annual_total(combined)
+    pd.testing.assert_frame_equal(combined, before)
+
+
+def test_same_month_in_distinct_states_or_years_is_preserved():
+    loader = StateProductionLoader()
+    monthly = pd.concat(
+        [
+            loader.load([monthly_record()], state="TX"),
+            loader.load([monthly_record(value=3)], state="ND"),
+            loader.load([monthly_record("2025-01", value=0)], state="TX"),
+        ],
+        ignore_index=True,
+    )
+    annual = loader.annual_total(monthly).set_index(["state", "year"])
+    assert annual.loc[("TX", 2024), "crude_bbl"] == 2000.0
+    assert annual.loc[("ND", 2024), "crude_bbl"] == 3000.0
+    assert annual.loc[("TX", 2025), "crude_bbl"] == 0.0
