@@ -4,6 +4,8 @@
 """Unit tests for worldenergydata.drilling.batch_economics (WRK-219)."""
 
 import math
+import sys
+from decimal import Decimal
 
 import pandas as pd
 import pytest
@@ -190,6 +192,23 @@ class TestBreakEven:
             "batch_savings": 0.0,
         }
         assert self.calc.break_even_n_wells(0.0, 350_000.0, 62.5, 1.0) == 1
+
+    def test_fractional_duration_can_report_false_savings(self):
+        """Synthetic zero-mobilization, no-learning costs tie in decimal arithmetic.
+
+        At 21 wells, 350000 * (21 * 62.6) = 460110000 USD in both cases.
+        Float summation before Python 3.12 yields a spurious threshold of 21;
+        the changed sum in Python 3.12 yields the no-savings sentinel here.
+        These are compatibility observations, not economic break-even.
+        """
+        rate = Decimal("350000")
+        duration = Decimal("62.6")
+        batch = rate * sum(duration for _ in range(21))
+        standalone = 21 * (rate * duration)
+        assert batch == standalone == Decimal("460110000")
+
+        expected = 21 if sys.version_info < (3, 12) else 1
+        assert self.calc.break_even_n_wells(0.0, 350_000.0, 62.6, 1.0) == expected
 
 
 # ---------------------------------------------------------------------------
