@@ -6,6 +6,7 @@ All amounts here are synthetic monthly energy, not power or stock snapshots.
 """
 
 import sys
+from fractions import Fraction
 
 import pytest
 
@@ -32,6 +33,28 @@ def test_numeric_observation_and_reported_zero():
     assert total_monthly_energy_mwh([_row(value=0.125)]) == 0.125
 
 
+@pytest.mark.parametrize(
+    "value", ["-1e-400", "1e-400", Fraction(-1, 10**400), Fraction(1, 10**400)]
+)
+def test_nonzero_observation_cannot_underflow_to_reported_zero(value):
+    with pytest.raises(ValueError, match="value"):
+        total_monthly_energy_mwh([_row(value=value)])
+
+
+@pytest.mark.parametrize("value", ["0e-400", "-0e-400", Fraction(0)])
+def test_exact_zero_is_retained(value):
+    assert total_monthly_energy_mwh([_row(value=value)]) == 0
+
+
+@pytest.mark.parametrize(
+    "value", ["5e-324", Fraction(float.fromhex("0x0.0000000000001p-1022"))]
+)
+def test_representable_subnormal_is_retained(value):
+    assert total_monthly_energy_mwh([_row(value=value)]) == float.fromhex(
+        "0x0.0000000000001p-1022"
+    )
+
+
 def test_empty_is_not_reported_zero():
     with pytest.raises(ValueError, match="no monthly"):
         total_monthly_energy_mwh([])
@@ -44,7 +67,8 @@ def test_unit_mismatch_fails_before_summing(units):
 
 
 @pytest.mark.parametrize(
-    "value", [None, True, "", "unavailable", -1, "NaN", "Infinity", float("inf")]
+    "value",
+    [None, True, "", "unavailable", "1__2", -1, "NaN", "Infinity", float("inf")],
 )
 def test_invalid_or_missing_observation_fails(value):
     with pytest.raises((TypeError, ValueError), match="value"):

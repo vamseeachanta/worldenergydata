@@ -11,6 +11,7 @@ from __future__ import annotations
 import math
 import re
 from collections.abc import Iterable, Mapping
+from decimal import Decimal, InvalidOperation
 from numbers import Real
 
 
@@ -20,6 +21,7 @@ def total_monthly_energy_mwh(records: Iterable[Mapping[str, object]]) -> float:
     The arithmetic total is sum(value) for a single series, with unique YYYY-MM
     months and units exactly 'MWh'. Values may be API decimal strings or numbers.
     Missing, negative, nonfinite and duplicate observations are rejected.
+    Nonzero inputs that underflow to zero during float conversion are rejected.
     The caller will select non-overlapping monthly energy amounts, not power,
     rates or stock snapshots. No missing month or observation is imputed.
 
@@ -54,12 +56,26 @@ def total_monthly_energy_mwh(records: Iterable[Mapping[str, object]]) -> float:
         value = record.get("value")
         if isinstance(value, bool) or not isinstance(value, (Real, str)):
             raise TypeError("value must be finite nonnegative monthly energy")
+        exact_value = value
+        if isinstance(value, str):
+            try:
+                exact_value = Decimal(value)
+            except InvalidOperation as exc:
+                raise ValueError(
+                    "value must be finite nonnegative monthly energy"
+                ) from exc
+            if not exact_value.is_finite():
+                raise ValueError("value must be finite nonnegative monthly energy")
+        if exact_value < 0:
+            raise ValueError("value must be finite nonnegative monthly energy")
         try:
             number = float(value)
         except (ValueError, OverflowError) as exc:
             raise ValueError("value must be finite nonnegative monthly energy") from exc
         if not math.isfinite(number) or number < 0:
             raise ValueError("value must be finite nonnegative monthly energy")
+        if number == 0 and exact_value != 0:
+            raise ValueError("value must not underflow to zero")
         values.append(number)
     if not values:
         raise ValueError("no monthly energy observations supplied")

@@ -6,6 +6,7 @@ The same reference conditions are required for both supplied monthly volumes.
 """
 
 import sys
+from fractions import Fraction
 
 import pytest
 
@@ -25,6 +26,22 @@ def test_two_month_gas_total_in_mcf():
 
 def test_reported_zero_is_a_total():
     assert total_monthly_gas_mcf([{"period": "2024-02", "gas_mmscf": 0}]) == 0
+
+
+@pytest.mark.parametrize("sign", [-1, 1])
+def test_nonzero_fraction_cannot_underflow_to_reported_zero(sign):
+    value = Fraction(sign, 10**400)
+    with pytest.raises(ValueError, match="gas_mmscf"):
+        total_monthly_gas_mcf([{"period": "2024-01", "gas_mmscf": value}])
+
+
+def test_exact_zero_and_representable_subnormal_fraction_are_retained():
+    assert total_monthly_gas_mcf([{"period": "2024-01", "gas_mmscf": Fraction(0)}]) == 0
+    smallest = float.fromhex("0x0.0000000000001p-1022")
+    assert (
+        total_monthly_gas_mcf([{"period": "2024-01", "gas_mmscf": Fraction(smallest)}])
+        == smallest * 1000
+    )
 
 
 def test_empty_input_is_not_reported_zero():

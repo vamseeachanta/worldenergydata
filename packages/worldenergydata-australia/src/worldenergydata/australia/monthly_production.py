@@ -23,6 +23,7 @@ def total_monthly_gas_mcf(records: Iterable[Mapping[str, object]]) -> float:
     supplied months' total in thousand standard cubic feet (Mcf), not a rate.
     Per the cited EIA definitions, 10**6 / 10**3 = 1000 Mcf per MMscf.
     Missing months are not filled and an empty series is not reported as zero.
+    Nonzero inputs that underflow to zero during float conversion are rejected.
     This contract does not qualify GBB units or connect field production feeds.
 
     >>> total_monthly_gas_mcf([
@@ -47,12 +48,16 @@ def total_monthly_gas_mcf(records: Iterable[Mapping[str, object]]) -> float:
         value = record.get("gas_mmscf")
         if isinstance(value, bool) or not isinstance(value, Real):
             raise TypeError("gas_mmscf must be a finite nonnegative number")
+        if value < 0:
+            raise ValueError("gas_mmscf must be a finite nonnegative number")
         try:
             number = float(value)
         except OverflowError as exc:
             raise ValueError("gas_mmscf must be finite") from exc
         if not math.isfinite(number) or number < 0:
             raise ValueError("gas_mmscf must be a finite nonnegative number")
+        if number == 0 and value != 0:
+            raise ValueError("gas_mmscf must not underflow to zero")
         volumes.append(convert(number, "mmscf", "mcf"))
     if not volumes:
         raise ValueError("no monthly gas observations supplied")
