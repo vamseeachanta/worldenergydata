@@ -1,7 +1,7 @@
 # Baker Hughes module knowledge pack
 
 Summary: section 13 defines schema, exact-filter and report-completeness
-detection for [issue 1335](https://github.com/vamseeachanta/worldenergydata/issues/1335).
+detection for #1335.
 It supersedes the retained F7–F10/F13–F19 gaps in sections 10–12. Section 12
 defines the numeric contract. Sections 1–10 remain historical evidence at the
 code revision below; source qualification remains unestablished.
@@ -310,7 +310,7 @@ results supplement rather than rewrite historical result tables.
 ## 13. Schema and report completeness contract
 
 This section supersedes the schema, filter and dimension limitations retained
-in sections 10–12 for [issue 1335](https://github.com/vamseeachanta/worldenergydata/issues/1335).
+in sections 10–12 for #1335.
 The rules describe supported input layouts and direct enumeration of supplied
 records. They are implementation contracts, not engineering acceptance limits.
 
@@ -383,22 +383,22 @@ source-workbook compatibility or engineering qualification. DataFrame attrs
 may be lost in downstream transformations; schema provenance then remains
 explicitly not_evaluated. The report is a snapshot and does not mutate its input.
 
-Detection nodes below are relative to `tests/unit/baker_hughes/`. Parametrized
+Detection nodes below use complete repository test paths. Parametrized
 basin/state/country cases independently enumerate the missing values.
 
 | Case | Detection test or retained limitation |
 | --- | --- |
-| F7 | `test_schema_contract.py::test_unmatched_exact_filters_are_errors`; `test_filter_on_absent_dimension_is_error`; `test_filter_on_empty_pivot_is_no_match`; `test_filter_whitespace_is_exact` |
-| F8 | `test_schema_contract.py::test_unmatched_exact_filters_are_errors` (basin and combined-filter parameters); `test_filter_on_absent_dimension_is_error` |
-| F9 | `test_schema_contract.py::test_summary_selects_state_by_name_not_position`; `test_summary_rejects_unknown_identifier`; `test_summary_rejects_ambiguous_identifier` |
-| F10 | `test_schema_contract.py::test_summary_rejects_non_date_headers`; `test_summary_extra_column_cannot_be_silently_dropped`; `test_summary_requires_date_columns`; `test_summary_rejects_duplicate_calendar_dates`; `test_summary_month_first_headers_are_explicit` |
-| F13 | `test_report.py::test_empty_input_reports_incomplete_dates`; `test_missing_date_column_reports_unknown_missing_count`; `test_schema_contract.py::test_empty_workbooks_keep_schema_and_report_incomplete` |
-| F14 | `test_dimension_contract.py::test_null_dimension_values_are_counted` (basin); `test_schema_contract.py::test_blank_excel_dimensions_are_incomplete` (BasinName) |
-| F15 | `test_dimension_contract.py::test_null_dimension_values_are_counted` (state); `test_schema_contract.py::test_blank_excel_dimensions_are_incomplete` (StateProvince) |
-| F16 | `test_dimension_contract.py::test_null_dimension_values_are_counted` (country); `test_schema_contract.py::test_blank_excel_dimensions_are_incomplete` (Country) |
-| F17 | `test_schema_contract.py::test_missing_optional_pivot_column_is_reported`; `test_pivot_missing_required_column_is_schema_error`; `test_extra_pivot_columns_are_rejected`; `test_filtered_pivot_retains_schema_diagnostics` |
-| F18 | `test_dimension_contract.py::test_absent_dimension_has_unknown_missing_count`; `test_summary_absent_pivot_dimensions_are_not_applicable`; `test_summary_still_requires_state_dimension` |
-| F19 | `test_report.py::test_partial_missing_dates_flag_observed_bounds`; `test_all_missing_dates_omit_bounds`; `test_schema_contract.py::test_missing_pivot_dates_reach_report_without_nat_bounds`; `test_dimension_contract.py::test_unparsed_dates_raise_descriptive_error` |
+| F7 | `tests/unit/baker_hughes/test_schema_contract.py::test_unmatched_exact_filters_are_errors`; `tests/unit/baker_hughes/test_schema_contract.py::test_filter_on_absent_dimension_is_error`; `tests/unit/baker_hughes/test_schema_contract.py::test_filter_on_empty_pivot_is_no_match`; `tests/unit/baker_hughes/test_schema_contract.py::test_filter_whitespace_is_exact` |
+| F8 | `tests/unit/baker_hughes/test_schema_contract.py::test_unmatched_exact_filters_are_errors` (basin and combined-filter parameters); `tests/unit/baker_hughes/test_schema_contract.py::test_filter_on_absent_dimension_is_error` |
+| F9 | `tests/unit/baker_hughes/test_schema_contract.py::test_summary_selects_state_by_name_not_position`; `tests/unit/baker_hughes/test_schema_contract.py::test_summary_rejects_unknown_identifier`; `tests/unit/baker_hughes/test_schema_contract.py::test_summary_rejects_ambiguous_identifier` |
+| F10 | `tests/unit/baker_hughes/test_schema_contract.py::test_summary_rejects_non_date_headers`; `tests/unit/baker_hughes/test_schema_contract.py::test_summary_extra_column_cannot_be_silently_dropped`; `tests/unit/baker_hughes/test_schema_contract.py::test_summary_requires_date_columns`; `tests/unit/baker_hughes/test_schema_contract.py::test_summary_rejects_duplicate_calendar_dates`; `tests/unit/baker_hughes/test_schema_contract.py::test_summary_month_first_headers_are_explicit` |
+| F13 | `tests/unit/baker_hughes/test_report.py::test_empty_input_reports_incomplete_dates`; `tests/unit/baker_hughes/test_report.py::test_missing_date_column_reports_unknown_missing_count`; `tests/unit/baker_hughes/test_schema_contract.py::test_empty_workbooks_keep_schema_and_report_incomplete` |
+| F14 | `tests/unit/baker_hughes/test_dimension_contract.py::test_null_dimension_values_are_counted` (basin); `tests/unit/baker_hughes/test_schema_contract.py::test_blank_excel_dimensions_are_incomplete` (BasinName) |
+| F15 | `tests/unit/baker_hughes/test_dimension_contract.py::test_null_dimension_values_are_counted` (state); `tests/unit/baker_hughes/test_schema_contract.py::test_blank_excel_dimensions_are_incomplete` (StateProvince) |
+| F16 | `tests/unit/baker_hughes/test_dimension_contract.py::test_null_dimension_values_are_counted` (country); `tests/unit/baker_hughes/test_schema_contract.py::test_blank_excel_dimensions_are_incomplete` (Country) |
+| F17 | `tests/unit/baker_hughes/test_schema_contract.py::test_missing_optional_pivot_column_is_reported`; `tests/unit/baker_hughes/test_schema_contract.py::test_pivot_missing_required_column_is_schema_error`; `tests/unit/baker_hughes/test_schema_contract.py::test_extra_pivot_columns_are_rejected`; `tests/unit/baker_hughes/test_schema_contract.py::test_filtered_pivot_retains_schema_diagnostics` |
+| F18 | `tests/unit/baker_hughes/test_dimension_contract.py::test_absent_dimension_has_unknown_missing_count`; `tests/unit/baker_hughes/test_dimension_contract.py::test_summary_absent_pivot_dimensions_are_not_applicable`; `tests/unit/baker_hughes/test_dimension_contract.py::test_summary_still_requires_state_dimension` |
+| F19 | `tests/unit/baker_hughes/test_report.py::test_partial_missing_dates_flag_observed_bounds`; `tests/unit/baker_hughes/test_report.py::test_all_missing_dates_omit_bounds`; `tests/unit/baker_hughes/test_schema_contract.py::test_missing_pivot_dates_reach_report_without_nat_bounds`; `tests/unit/baker_hughes/test_dimension_contract.py::test_unparsed_dates_raise_descriptive_error` |
 
 Table 13-2. Detection coverage for F7–F10 and F13–F19.
 
@@ -408,4 +408,4 @@ The tests use synthetic inputs and the existing repository fixtures. Ingestion
 of the current public workbook is untested and may raise for a changed or
 unsupported header layout. No additional aliases or schema-version negotiation
 are provided. Source revision, independently checked values and engineering
-qualification remain open under [issue 1336](https://github.com/vamseeachanta/worldenergydata/issues/1336).
+qualification remain open under #1336.
