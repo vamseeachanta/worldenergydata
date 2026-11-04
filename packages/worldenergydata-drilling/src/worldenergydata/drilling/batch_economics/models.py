@@ -117,15 +117,20 @@ class DrillCampaign(BaseModel):
         """Return wells in sequence order.
 
         Revalidates current state and preserves original site identity.
+        Mapping entries are returned as validated DrillingSite replacements.
         An empty sequence uses insertion order; invalid sequences raise ValueError.
 
         Returns:
             List of DrillingSite in campaign drill order.
         """
         checked = DrillCampaign.model_validate(self)
+        wells = [
+            original if isinstance(original, DrillingSite) else validated
+            for original, validated in zip(self.wells, checked.wells)
+        ]
         if not checked.sequence:
-            return list(self.wells)
-        well_map = {w.well_id: w for w in self.wells}
+            return wells
+        well_map = {w.well_id: w for w in wells}
         return [well_map[wid] for wid in checked.sequence]
 
 

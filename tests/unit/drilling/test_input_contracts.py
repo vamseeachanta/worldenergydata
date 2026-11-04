@@ -237,9 +237,34 @@ def test_identifiers_are_exact_case_sensitive_and_not_trimmed():
     assert [well.well_id for well in model.ordered_wells()] == ids[::-1]
 
 
-def test_ordered_wells_preserves_site_identity():
-    model = campaign(sequence=["W2", "W1"])
-    assert model.ordered_wells()[0] is model.wells[1]
+@pytest.mark.parametrize("sequence", [[], ["W2", "W1"]])
+def test_ordered_wells_preserves_site_identity(sequence):
+    model = campaign(sequence=sequence)
+    originals = {well.well_id: well for well in model.wells}
+    for well in model.ordered_wells():
+        assert well is originals[well.well_id]
+
+
+@pytest.mark.parametrize("sequence", [[], ["W2", "W1"]])
+def test_ordered_wells_normalizes_mutated_mapping_entries(sequence):
+    model = campaign(sequence=sequence)
+    mapping = model.wells[0].model_dump()
+    original_site = model.wells[1]
+    model.wells[0] = mapping
+
+    ordered = model.ordered_wells()
+
+    assert all(isinstance(well, DrillingSite) for well in ordered)
+    assert [well.well_id for well in ordered] == (sequence or ["W1", "W2"])
+    by_id = {well.well_id: well for well in ordered}
+    assert by_id["W1"].model_dump() == mapping
+    assert by_id["W2"] is original_site
+    assert model.wells[0] is mapping
+    calc = BatchDrillingEconomics()
+    assert calc.campaign_total_cost(model, 20) == 400
+    assert calc.batch_vs_standalone_npv(model) == dict(
+        batch_npv=550, standalone_npv=800, batch_savings=250
+    )
 
 
 def test_fraction_real_values_are_accepted():
