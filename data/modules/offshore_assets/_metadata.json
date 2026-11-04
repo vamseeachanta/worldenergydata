@@ -1,10 +1,10 @@
 {
   "module": "offshore_assets",
-  "generated_at": "2026-10-29T10:26:32.291843+00:00",
+  "generated_at": "2026-11-04T05:50:34.341119+00:00",
   "last_refresh": null,
   "record_count": null,
-  "file_count": 3,
-  "total_size_bytes": 27633,
+  "file_count": 19,
+  "total_size_bytes": 39609,
   "source_url": null,
   "format": ".csv,.md,.yaml",
   "has_external_data": false,
@@ -12,26 +12,122 @@
   "provenance": "Historical offshore scrape and unverified jackup replacement withheld from public distribution. Independent regulator datasets retain their own source records.",
   "files": [
     {
-      "name": "COVERAGE_SUMMARY.md",
-      "path": "curated/COVERAGE_SUMMARY.md",
-      "size_bytes": 261,
-      "modified": "2026-06-22"
-    },
-    {
       "name": "README.md",
       "path": "README.md",
       "size_bytes": 1967,
-      "modified": "2026-10-27"
+      "modified": "2026-10-29"
+    },
+    {
+      "name": "catalog_integration_schema.json",
+      "path": "catalog_integration_schema.json",
+      "size_bytes": 2263,
+      "modified": "2026-10-09"
+    },
+    {
+      "name": "BSEE_CROSSWALK.md",
+      "path": "curated/BSEE_CROSSWALK.md",
+      "size_bytes": 261,
+      "modified": "2026-10-29"
+    },
+    {
+      "name": "COVERAGE_SUMMARY.md",
+      "path": "curated/COVERAGE_SUMMARY.md",
+      "size_bytes": 261,
+      "modified": "2026-10-29"
+    },
+    {
+      "name": "LT_RESERVES_DISCOVERY.md",
+      "path": "curated/LT_RESERVES_DISCOVERY.md",
+      "size_bytes": 3276,
+      "modified": "2026-07-06"
+    },
+    {
+      "name": "SUBSEAIQ_HOSTS.md",
+      "path": "curated/SUBSEAIQ_HOSTS.md",
+      "size_bytes": 261,
+      "modified": "2026-10-29"
+    },
+    {
+      "name": "bsee_field_crosswalk.csv.md",
+      "path": "curated/bsee_field_crosswalk.csv.md",
+      "size_bytes": 261,
+      "modified": "2026-10-29"
+    },
+    {
+      "name": "country_centroids.csv.md",
+      "path": "curated/country_centroids.csv.md",
+      "size_bytes": 261,
+      "modified": "2026-10-29"
+    },
+    {
+      "name": "coverage_summary.csv.md",
+      "path": "curated/coverage_summary.csv.md",
+      "size_bytes": 261,
+      "modified": "2026-10-29"
+    },
+    {
+      "name": "drilling_rigs.csv.md",
+      "path": "curated/drilling_rigs.csv.md",
+      "size_bytes": 261,
+      "modified": "2026-10-29"
+    },
+    {
+      "name": "fields.csv.md",
+      "path": "curated/fields.csv.md",
+      "size_bytes": 261,
+      "modified": "2026-10-29"
+    },
+    {
+      "name": "host_facilities.csv.md",
+      "path": "curated/host_facilities.csv.md",
+      "size_bytes": 261,
+      "modified": "2026-10-29"
+    },
+    {
+      "name": "jackups.csv.md",
+      "path": "curated/jackups.csv.md",
+      "size_bytes": 261,
+      "modified": "2026-10-29"
+    },
+    {
+      "name": "lt_reserves_discovery.csv",
+      "path": "curated/lt_reserves_discovery.csv",
+      "size_bytes": 3167,
+      "modified": "2026-07-06"
+    },
+    {
+      "name": "lt_reserves_discrepancies.csv",
+      "path": "curated/lt_reserves_discrepancies.csv",
+      "size_bytes": 138,
+      "modified": "2026-07-06"
+    },
+    {
+      "name": "production_facilities.csv.md",
+      "path": "curated/production_facilities.csv.md",
+      "size_bytes": 261,
+      "modified": "2026-10-29"
+    },
+    {
+      "name": "subseaiq_bsee_block_crosswalk.csv.md",
+      "path": "curated/subseaiq_bsee_block_crosswalk.csv.md",
+      "size_bytes": 261,
+      "modified": "2026-10-29"
+    },
+    {
+      "name": "subseaiq_hosts.csv.md",
+      "path": "curated/subseaiq_hosts.csv.md",
+      "size_bytes": 261,
+      "modified": "2026-10-29"
     },
     {
       "name": "schema.yaml",
       "path": "schema.yaml",
       "size_bytes": 25405,
-      "modified": "2026-10-27"
+      "modified": "2026-10-29"
     }
   ],
   "files_truncated": false,
-  "summary_scope": "Listed public files only; withheld rows are unavailable, not zero.",
+  "summary_scope": "All retained public files except this inventory; withheld rows are unavailable, not zero.",
   "withheld_datasets": [
     {
       "name": "country_centroids.csv",

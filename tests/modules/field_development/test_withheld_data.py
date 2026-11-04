@@ -26,6 +26,80 @@ WITHHELD = (
     "subseaiq_bsee_block_crosswalk.csv",
 )
 REASON = "held privately pending redistribution-terms review"
+FACILITY_WITHHELD = (
+    "fpso_basic_info.csv",
+    "fpso_riser_info.csv",
+    "semisub_basic_info.csv",
+    "semisub_riser_info.csv",
+    "spar_basic_info.csv",
+    "spar_riser_info.csv",
+    "tlp_basic_info.csv",
+)
+
+
+@pytest.mark.parametrize("name", FACILITY_WITHHELD)
+def test_related_facility_payload_is_replaced_by_notice(name):
+    path = ROOT / "data/modules/facility_specs/curated" / name
+    assert not path.exists(), f"Restricted payload remains: {name}"
+    assert REASON in path.with_suffix(path.suffix + ".md").read_text(encoding="utf-8")
+
+
+def test_facility_schema_and_metadata_only_offer_retained_matrix():
+    import json
+
+    import yaml
+
+    data = ROOT / "data/modules/facility_specs"
+    schema = yaml.safe_load((data / "schema.yaml").read_text(encoding="utf-8"))
+    metadata = json.loads((data / "_metadata.json").read_text(encoding="utf-8"))
+    assert [row["name"] for row in schema["datasets"]] == [
+        "mooring_facility_matrix.csv"
+    ]
+    assert set(FACILITY_WITHHELD) == {
+        row["name"] for row in metadata["withheld_datasets"]
+    }
+    assert metadata["record_count"] is None
+    assert all(row["status"] == "withheld" for row in metadata["withheld_datasets"])
+    for row in metadata["withheld_datasets"]:
+        assert REASON in (data / row["notice"]).read_text(encoding="utf-8")
+
+
+@pytest.mark.parametrize("module", ["facility_specs", "offshore_assets"])
+def test_public_inventory_covers_all_retained_files(module):
+    import json
+
+    data = ROOT / "data/modules" / module
+    metadata = json.loads((data / "_metadata.json").read_text(encoding="utf-8"))
+    actual = {
+        path.relative_to(data).as_posix(): path.stat().st_size
+        for path in data.rglob("*")
+        if path.is_file() and path.name != "_metadata.json"
+    }
+    listed = {row["path"]: row["size_bytes"] for row in metadata["files"]}
+    assert listed == actual
+    assert metadata["file_count"] == len(actual) == len(metadata["files"])
+    assert metadata["total_size_bytes"] == sum(actual.values())
+    if module == "offshore_assets":
+        coverage = next(
+            row for row in metadata["files"] if row["name"] == "COVERAGE_SUMMARY.md"
+        )
+        assert coverage["modified"] >= "2026-10-29"
+
+
+def test_atlas_feed_raises_the_package_availability_exception():
+    import importlib.util
+
+    from worldenergydata.field_development.data_availability import (
+        DatasetUnavailableError,
+    )
+
+    spec = importlib.util.spec_from_file_location(
+        "atlas_availability", ROOT / "scripts/field_atlas/build_atlas_feed.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    with pytest.raises(DatasetUnavailableError, match=REASON):
+        module.build()
 
 
 @pytest.mark.parametrize("name", WITHHELD)

@@ -115,10 +115,12 @@ def _field_entry(r: dict) -> dict:
 
 
 def build(integration: dict | None = None) -> dict:
-    source_dir = PROJECT_ROOT / "src/worldenergydata/field_development"
+    source_dir = PROJECT_ROOT / "src"
     if str(source_dir) not in sys.path:
         sys.path.insert(0, str(source_dir))
-    from data_availability import require_available_source
+    from worldenergydata.field_development.data_availability import (
+        require_available_source,
+    )
 
     require_available_source(FIELDS_CSV)
     require_available_source(COVERAGE_CSV)
