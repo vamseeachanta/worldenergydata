@@ -8,9 +8,10 @@ A comprehensive Python data library and analysis platform for the energy industr
 
 ## Why this exists — the engineering ↔ asset circle
 
-`digitalmodel` and `worldenergydata` are two halves of one loop.
+`worldenergydata` is the asset ledger in a shared engineering ↔ asset loop with
+`digitalmodel`: public-source observations give engineering analysis its asset context.
 
-- **digitalmodel** is the engineering brain — deterministic, code-based analysis (mooring, riser, fitness-for-service, hydrodynamics, structural, tubulars, installation): *what is possible and safe via engineering*.
+- **digitalmodel** is the engineering brain — deterministic, code-based analysis (mooring, riser, fitness-for-service, hydrodynamics, structural, tubulars, installation): *how a design performs against its declared engineering criteria*.
 - **worldenergydata** is the real-world asset ledger — public-source, reproducible field / well / facility data across the whole life cycle: *what was actually built, and how it performs*.
 
 Together they close a circle. Engineering designs an asset; it gets built and operated; operations feed back into engineering (inspection, fitness-for-service, fatigue re-assessment); at end of life it is decommissioned — itself an engineering problem — and the outcomes loop back as empirical priors for the next design. The **life-cycle timeline** is the shared spine: `worldenergydata` supplies each stage's real dates and assets, `digitalmodel` supplies each stage's engineering.
@@ -53,6 +54,37 @@ flowchart LR
 Live: [worldenergydata field life-cycle](https://vamseeachanta.github.io/worldenergydata/lifecycle/) · [digitalmodel engineering capabilities](https://vamseeachanta.github.io/digitalmodel/capabilities/)
 
 This repo is the **asset & data** half of that loop — the public-source field/well/facility ledger the engineering runs against.
+
+The diagrams describe the shared integration model. They do not establish data
+coverage or a verified engineering result for every asset or life-cycle stage.
+The same Mermaid blocks are shared with the companion README; the introductions
+explain each repository's role.
+
+### Worked reading example: mooring fatigue during Operate
+
+**Question and inputs.** Consider a mooring-fatigue question at the Operate stage
+of a field's life cycle. The existing bridge reads component geometry and minimum
+breaking load from the component catalog and pairs an engineering summary with
+public BSEE incident context. This is a reading example, without a solver run or
+an asset-specific numerical result.
+
+**Method.** Read the hierarchy as Region → Play → Field, with Operate locating
+the field on its timeline and the mooring as an associated asset. The
+[bridge adapter](scripts/demo/_mooring_live.py) passes engineering inputs to
+`digitalmodel` separately and reads its summary CSV back as data. The
+[card generator](scripts/demo/generate_mooring_grounded_card.py) combines that
+summary with incident context and uses an explicitly illustrative engineering
+panel when the engineering run is unavailable. The
+[card renderer](packages/worldenergydata-bsee/src/worldenergydata/hse/grounding_card.py)
+keeps the engineering basis and incident evidence visible together.
+
+**Answer and limits.** The result is a grounded card: an engineering summary
+beside incident context, with their respective bases. Incident records do not
+validate a fatigue-life prediction. The adapter's loading spectrum is
+illustrative because the component catalog has no cyclic tension history, even
+when the engineering computation runs. Asset-specific fatigue acceptance remains
+`NOT_EVALUATED` in this reading example until an applicable loading history,
+design criteria and a traceable engineering result are supplied.
 
 ## Repository architecture
 
