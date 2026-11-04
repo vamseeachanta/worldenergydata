@@ -1,4 +1,25 @@
-"""Guard runner routing and release isolation on persistent workers."""
+"""Guard runner routing and release isolation on persistent workers.
+
+Operational timeout budgets
+---------------------------
+The timeout ceilings below are chosen operational budgets, not measured runtime
+limits or service guarantees. They bound how long a stalled job can occupy a
+worker; they are not derived from a benchmark or an external timing standard.
+
+* Discovery and aggregation: 10 minutes each. These select targets and combine
+  results without installing application dependencies or running domain tests.
+* Domain tests: 60 minutes. This includes Python provisioning, dependency
+  installation and the selected domain suite, so it receives the largest budget.
+* Lint and security: 30 minutes each. Checkout, history retrieval and tool setup
+  precede repository scans, but neither job runs the application test suite.
+* Publication: 15 minutes each. These download built artifacts, provision Python
+  and upload with an isolated tool; the test-index job also waits 30 seconds and
+  checks installation. Package building is a separate prerequisite job.
+
+These budgets cap occupancy on a finite worker pool and shorten the default
+six-hour timeout. Revisit the policy and its assertions together if job scope
+changes or observed successful runs show that a budget is insufficient.
+"""
 
 import ast
 import json
@@ -265,6 +286,7 @@ def test_package_verification_uses_an_isolated_tool_environment():
 def test_expensive_and_publishing_jobs_have_bounded_timeouts(
     workflow_name: str, job_id: str, maximum: int
 ) -> None:
+    """Enforce the operational budgets explained in this module's docstring."""
     assert (
         0 < load_workflow(workflow_name)["jobs"][job_id]["timeout-minutes"] <= maximum
     )
