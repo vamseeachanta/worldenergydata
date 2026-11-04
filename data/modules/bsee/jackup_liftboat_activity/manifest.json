@@ -6,6 +6,30 @@
       "outside_year_range": 6913,
       "unmatched_rig_name": 192100
     },
+    "identity_by_rig_type": {
+      "JU": {
+        "distinct_ids": 105,
+        "first_report_year": 1997,
+        "generic_identity_records": 5,
+        "records": 24610,
+        "secondary_evidence": {
+          "agree": 24080,
+          "conflict": 0,
+          "unavailable": 530
+        }
+      },
+      "LB": {
+        "distinct_ids": 10,
+        "first_report_year": 2004,
+        "generic_identity_records": 13882,
+        "records": 13882,
+        "secondary_evidence": {
+          "agree": 0,
+          "conflict": 0,
+          "unavailable": 13882
+        }
+      }
+    },
     "input_records": 370156,
     "output_records": 38492,
     "records_per_year": {
@@ -39,6 +63,11 @@
       "2024": 630,
       "2025": 570
     },
+    "report_start_range": {
+      "first": "1997-10-21",
+      "last": "2025-12-31"
+    },
+    "reports_preceding_spud": 680,
     "rig_type_checks": {
       "agree": 24080,
       "unavailable": 14412
@@ -152,21 +181,37 @@
     "water_depth_ft": "WAR WATER_DEPTH, feet; empty when BSEE does not supply it."
   },
   "licence": "US federal government public data; BSEE stated distribution and copying terms",
-  "next_refresh_date": "2026-10-30",
   "owner": "worldenergydata",
   "publication_date": "2026-11-03",
   "raw_storage": "External content-addressed blobs relative to BSEE_JACKUP_RAW_DIR; no raw archive committed",
   "refresh_basis": {
     "automatic": false,
-    "cadence": "daily",
+    "cadence": "manual",
+    "source_cadence": "daily",
     "source_url": "https://www.data.bsee.gov/Main/RawData.aspx"
   },
   "retrieval_date": "2026-10-29",
+  "revision_history": [
+    {
+      "date": "2026-10-29",
+      "description": "Initial release: BSEE activity subset with provenance, cross-checks and visible source limitations.",
+      "revision": 1
+    },
+    {
+      "date": "2026-11-03",
+      "description": "Publish rig identifiers and derive anomaly statements from the audit to avoid unsupported claims.",
+      "revision": 2
+    },
+    {
+      "date": "2026-11-03",
+      "description": "Refresh release metadata and reports with table-derived identity and date limitations; preserve earlier revision dates.",
+      "revision": 3
+    }
+  ],
   "schema_version": 2,
   "source_id": "bsee-data-center",
   "source_ids": [
-    "bsee-data-center",
-    "bsee-ewell-war"
+    "bsee-data-center"
   ],
   "sources": [
     {

@@ -365,7 +365,9 @@ def test_csv_schema_deterministic_compression_and_digest_readback(
             second / name
         ).read_bytes(), REBUILD_COMMAND
     assert manifest["publication_date"] == "2026-10-29"
-    assert manifest["next_refresh_date"] == "2026-10-30"
+    assert "next_refresh_date" not in manifest
+    assert manifest["refresh_basis"]["cadence"] == "manual"
+    assert manifest["refresh_basis"]["source_cadence"] == "daily"
     assert (
         manifest["table"]["sha256"] == hashlib.sha256(path.read_bytes()).hexdigest()
     ), REBUILD_COMMAND
@@ -554,3 +556,222 @@ def test_unmatched_reference_is_stable_across_order_case_and_spacing():
         ]
     )
     assert first[0]["rig_reference"] == second[0]["rig_reference"]
+
+
+@pytest.mark.parametrize("extra_liftboat", [False, True])
+def test_card_identity_limits_are_derived_from_rows(tmp_path, extra_liftboat):
+    module = pipeline()
+    reports = [
+        activity(),
+        activity(SN_WAR="2", RIG_NAME="*GENERIC FIXTURE", WAR_START_DT="1/1/2005"),
+        activity(SN_WAR="3", RIG_NAME="*GENERIC FIXTURE", WAR_START_DT="1/1/2006"),
+    ]
+    if extra_liftboat:
+        reports.append(
+            activity(SN_WAR="4", RIG_NAME="*OTHER FIXTURE", WAR_START_DT="1/1/2003")
+        )
+    rows, counts = module.derive_table(
+        reports,
+        [borehole()],
+        [
+            rig(),
+            rig(RIG_ID_NUM="200", RIG_NAME="*GENERIC FIXTURE", RIG_TYPE_CODE="LB"),
+            rig(RIG_ID_NUM="201", RIG_NAME="*OTHER FIXTURE", RIG_TYPE_CODE="LB"),
+        ],
+        [{"SN_APD": "42", "RIG_ID_NUM": "100", "RIG_TYPE_CODE": "DS"}],
+        [],
+    )
+    # Stale supplied summaries must be replaced by statistics from the new table.
+    counts["identity_by_rig_type"] = {"LB": {"distinct_ids": 999}}
+    manifest = module.write_release(
+        tmp_path, rows, counts, {"sources": []}, "2026-10-29"
+    )
+    card = (tmp_path / "data_card.html").read_text()
+    for code, label in [("JU", "Jack-up"), ("LB", "Liftboat")]:
+        group = [r for r in rows if r["rig_type"] == code]
+        generic = sum(
+            "generic_rig_identity" in r["quality_flags"].split("|") for r in group
+        )
+        checks = {
+            status: sum(r["rig_type_check"] == status for r in group)
+            for status in ("agree", "conflict", "unavailable")
+        }
+        first = min(r["activity_start_date"] for r in group)
+        distinct = len({r["rig_id"] for r in group})
+        assert manifest["counts"]["identity_by_rig_type"][code] == {
+            "records": len(group),
+            "distinct_ids": distinct,
+            "generic_identity_records": generic,
+            "secondary_evidence": checks,
+            "first_report_year": int(first[:4]),
+        }
+        assert (
+            f"{label}: {len(group):,} reports; {distinct:,} distinct IDs; "
+            f"{generic:,} generic-identity reports; secondary evidence "
+            f"agree {checks['agree']:,}, conflict {checks['conflict']:,}, "
+            f"unavailable {checks['unavailable']:,}; first report year {first[:4]}."
+        ) in card
+    first_lb = min(r["activity_start_date"][:4] for r in rows if r["rig_type"] == "LB")
+    assert (
+        "All retained liftboat rows identify a generic placeholder, not an individual unit."
+        in card
+    )
+    assert (
+        f"Zero liftboat rows in years before {first_lb} are not evidence of no activity."
+        in card
+    )
+    assert "Pre-spud move-in reports can end before the borehole spud date." in card
+
+
+def test_changed_table_requires_explicit_refresh_date_before_any_write(tmp_path):
+    module = pipeline()
+    rows, counts = module.derive_table([activity()], [borehole()], [rig()], [], [])
+    source = module.write_release(
+        tmp_path / "original", rows, counts, {"sources": []}, "2026-10-29"
+    )
+    rows[0]["water_depth_ft"] = "210"
+    output = tmp_path / "changed"
+    with pytest.raises(ValueError, match="publication-date"):
+        module.write_release(output, rows, counts, source, "2026-10-29")
+    assert not output.exists()
+    refreshed = module.write_release(
+        output, rows, counts, source, "2026-10-29", publication_date=date(2026, 11, 5)
+    )
+    assert refreshed["table"]["sha256"] != source["table"]["sha256"]
+
+
+def test_refresh_appends_revision_without_redating_history(tmp_path):
+    module = pipeline()
+    rows, counts = module.derive_table([activity()], [borehole()], [rig()], [], [])
+    source = module.write_release(
+        tmp_path / "original",
+        rows,
+        counts,
+        {"sources": []},
+        "2026-10-29",
+        publication_date=date(2026, 11, 3),
+    )
+    previous = json.loads(json.dumps(source))
+    refreshed = module.write_release(
+        tmp_path / "refresh",
+        rows,
+        counts,
+        source,
+        "2026-10-29",
+        publication_date=date(2026, 11, 5),
+    )
+    assert source == previous
+    assert refreshed["revision_history"][:-1] == source["revision_history"]
+    assert refreshed["revision_history"][-1]["date"] == "2026-11-05"
+    assert (
+        refreshed["revision_history"][-1]["revision"]
+        == source["revision_history"][-1]["revision"] + 1
+    )
+    card = (tmp_path / "refresh" / "data_card.html").read_text()
+    for row in refreshed["revision_history"]:
+        assert f"<td>{row['date']}</td><td>{row['description']}</td>" in card
+
+
+@pytest.mark.parametrize("invalid_date", ["not-a-date", "", None])
+def test_build_validates_reused_date_before_creating_output(
+    tmp_path, raw_release, invalid_date
+):
+    module = pipeline()
+    raw_dir, source = raw_release
+    source["publication_date"] = invalid_date
+    output = tmp_path / "invalid-release"
+    with pytest.raises((ValueError, TypeError)):
+        module.build_release(raw_dir, source, output)
+    assert not output.exists()
+
+
+def test_manual_refresh_and_registered_catalog_only(tmp_path):
+    module = pipeline()
+    rows, counts = module.derive_table([activity()], [borehole()], [rig()], [], [])
+    manifest = module.write_release(
+        tmp_path,
+        rows,
+        counts,
+        {"sources": [], "next_refresh_date": "2026-10-30"},
+        "2026-10-29",
+    )
+    assert "next_refresh_date" not in manifest
+    assert manifest["refresh_basis"]["cadence"] == "manual"
+    assert manifest["refresh_basis"]["source_cadence"] == "daily"
+    assert manifest["refresh_basis"]["automatic"] is False
+    assert manifest["source_ids"] == ["bsee-data-center"]
+    card = (tmp_path / "data_card.html").read_text()
+    assert "Refresh is manual; no refresh is scheduled." in card
+    assert "Next planned refresh" not in card
+    assert "bsee-ewell-war" not in card
+
+
+@pytest.mark.parametrize("liftboat_kind", ["absent", "unit", "mixed"])
+def test_refresh_does_not_repeat_blanket_placeholder_claim(tmp_path, liftboat_kind):
+    module = pipeline()
+    reports, rigs = [activity()], [rig()]
+    if liftboat_kind != "absent":
+        reports.append(
+            activity(SN_WAR="2", RIG_NAME="UNIT FIXTURE", WAR_START_DT="1/1/2001")
+        )
+        rigs.append(rig(RIG_ID_NUM="200", RIG_NAME="UNIT FIXTURE", RIG_TYPE_CODE="LB"))
+    if liftboat_kind == "mixed":
+        reports.append(
+            activity(SN_WAR="3", RIG_NAME="*GENERIC FIXTURE", WAR_START_DT="1/1/2002")
+        )
+        rigs.append(
+            rig(RIG_ID_NUM="201", RIG_NAME="*GENERIC FIXTURE", RIG_TYPE_CODE="LB")
+        )
+    rows, counts = module.derive_table(reports, [borehole()], rigs, [], [])
+    module.write_release(tmp_path, rows, counts, {"sources": []}, "2026-10-29")
+    card = (tmp_path / "data_card.html").read_text()
+    assert "All retained liftboat rows identify a generic placeholder" not in card
+    if liftboat_kind == "absent":
+        assert "first report year unavailable" in card
+        assert (
+            "No liftboat rows are retained; this is not evidence of no activity."
+            in card
+        )
+    elif liftboat_kind == "mixed":
+        assert (
+            "Generic liftboat rows identify a placeholder, not an individual unit."
+            in card
+        )
+    else:
+        assert "first report year 2001" in card
+
+
+def test_legacy_revision_dates_survive_migration_and_later_refresh(tmp_path):
+    module = pipeline()
+    rows, counts = module.derive_table([activity()], [borehole()], [rig()], [], [])
+    legacy = module.write_release(
+        tmp_path / "old",
+        rows,
+        counts,
+        {"sources": []},
+        "2026-10-29",
+        publication_date=date(2026, 11, 3),
+    )
+    del legacy["revision_history"]
+    refreshed = module.write_release(
+        tmp_path / "new",
+        rows,
+        counts,
+        legacy,
+        "2026-10-29",
+        publication_date=date(2026, 11, 5),
+    )
+    assert [(r["revision"], r["date"]) for r in refreshed["revision_history"]] == [
+        (1, "2026-10-29"),
+        (2, "2026-11-03"),
+        (3, "2026-11-05"),
+    ]
+    again = module.write_release(
+        tmp_path / "again",
+        rows,
+        counts,
+        refreshed,
+        "2026-10-29",
+        publication_date=date(2026, 11, 6),
+    )
+    assert again["revision_history"][:-1] == refreshed["revision_history"]

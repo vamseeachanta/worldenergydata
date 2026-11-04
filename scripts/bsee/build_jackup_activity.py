@@ -14,7 +14,7 @@ import os
 import re
 import zipfile
 from collections import Counter, defaultdict
-from datetime import date, datetime, timedelta, timezone
+from datetime import date, datetime, timezone
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from urllib.request import Request, urlopen
@@ -413,6 +413,72 @@ def read_rows(path: Path, member: str, required: set[str], fieldnames=None):
                 yield row
 
 
+def identity_statistics(rows: list[dict]) -> dict:
+    """Derive disclosure figures from the exact rows being published."""
+    identities = {}
+    for code in ("JU", "LB"):
+        group = [row for row in rows if row["rig_type"] == code]
+        identities[code] = {
+            "records": len(group),
+            "distinct_ids": len({row["rig_id"] for row in group}),
+            "generic_identity_records": sum(
+                "generic_rig_identity" in row["quality_flags"].split("|")
+                for row in group
+            ),
+            "secondary_evidence": {
+                status: sum(row["rig_type_check"] == status for row in group)
+                for status in ("agree", "conflict", "unavailable")
+            },
+            "first_report_year": min(
+                (int(row["activity_start_date"][:4]) for row in group), default=None
+            ),
+        }
+    starts = [row["activity_start_date"] for row in rows]
+    return {
+        "identity_by_rig_type": identities,
+        "report_start_range": {
+            "first": min(starts, default=None),
+            "last": max(starts, default=None),
+        },
+        "reports_preceding_spud": sum(
+            bool(row["spud_date"] and row["activity_end_date"])
+            and row["spud_date"] > row["activity_end_date"]
+            for row in rows
+        ),
+    }
+
+
+def revision_history(
+    source: dict, retrieval: str, published: date, refresh: bool
+) -> list[dict]:
+    history = [dict(row) for row in source.get("revision_history", [])]
+    if not history:
+        history = [
+            {
+                "revision": 1,
+                "date": retrieval if "table" in source else published.isoformat(),
+                "description": "Initial release: BSEE activity subset with provenance, cross-checks and visible source limitations.",
+            }
+        ]
+        if "table" in source:
+            history.append(
+                {
+                    "revision": 2,
+                    "date": source["publication_date"],
+                    "description": "Publish rig identifiers and derive anomaly statements from the audit to avoid unsupported claims.",
+                }
+            )
+    if refresh and ("table" in source or "revision_history" in source):
+        history.append(
+            {
+                "revision": history[-1]["revision"] + 1,
+                "date": published.isoformat(),
+                "description": "Refresh release metadata and reports with table-derived identity and date limitations; preserve earlier revision dates.",
+            }
+        )
+    return history
+
+
 def data_card(manifest: dict) -> str:
     counts = manifest["counts"]
     fields = "".join(
@@ -431,6 +497,44 @@ def data_card(manifest: dict) -> str:
     exclusions = ", ".join(
         f"{name}: {count:,}" for name, count in sorted(counts["excluded"].items())
     )
+    history = "".join(
+        f"<tr><td>{entry['revision']}</td><td>{html.escape(entry['date'])}</td>"
+        f"<td>{html.escape(entry['description'])}</td></tr>"
+        for entry in manifest["revision_history"]
+    )
+    identities = counts["identity_by_rig_type"]
+    identity_text = ""
+    for code, label in (("JU", "Jack-up"), ("LB", "Liftboat")):
+        group = identities[code]
+        evidence = group["secondary_evidence"]
+        identity_text += (
+            f"<p>{label}: {group['records']:,} reports; {group['distinct_ids']:,} distinct IDs; "
+            f"{group['generic_identity_records']:,} generic-identity reports; secondary evidence "
+            f"agree {evidence['agree']:,}, conflict {evidence['conflict']:,}, "
+            f"unavailable {evidence['unavailable']:,}; first report year {group['first_report_year'] or 'unavailable'}.</p>"
+        )
+    liftboat = identities["LB"]
+    if liftboat["records"]:
+        if liftboat["generic_identity_records"] == liftboat["records"]:
+            identity_text += "<p>All retained liftboat rows identify a generic placeholder, not an individual unit.</p>"
+        elif liftboat["generic_identity_records"]:
+            identity_text += "<p>Generic liftboat rows identify a placeholder, not an individual unit.</p>"
+        identity_text += (
+            f"<p>Zero liftboat rows in years before {liftboat['first_report_year']} are not evidence of no activity. "
+            "The absence may reflect report labelling and does not establish historical inactivity.</p>"
+        )
+    else:
+        identity_text += (
+            "<p>No liftboat rows are retained; this is not evidence of no activity.</p>"
+        )
+    first = counts["report_start_range"]["first"]
+    last = counts["report_start_range"]["last"]
+    report_range = f"First report-start date: {first}; last report-start date: {last}."
+    if first:
+        month = date.fromisoformat(first).strftime("%B %Y")
+        report_range += f" Rows begin in {month}."
+        if first[5:] != "01-01":
+            report_range += " The first year has partial coverage."
     audit = counts["source_8831_ft_record_audit"]
     dispositions = (
         ", ".join(
@@ -468,10 +572,10 @@ code{{overflow-wrap:anywhere}}caption{{caption-side:bottom;text-align:left}}a{{c
 from {counts['input_records']:,} source reports. Each row represents one report, not one well, vessel visit or completed operation.
 The subset contains {counts['rig_types'].get('JU', 0):,} jack-up and {counts['rig_types'].get('LB', 0):,} liftboat reports;
 {counts['deep_water_records']:,} reports exceed the 500 ft screening threshold in at least one supplied depth and remain flagged.</p>
+{identity_text}
 <h2>Revision history</h2>
 <table><caption>Revision history.</caption><tr><th>Revision</th><th>Date</th><th>What changed and why</th></tr>
-<tr><td>1</td><td>{manifest['retrieval_date']}</td><td>Initial release: BSEE activity subset with provenance, cross-checks and visible source limitations.</td></tr>
-<tr><td>2</td><td>{manifest['publication_date']}</td><td>Publish rig identifiers and derive anomaly statements from the audit to avoid unsupported claims.</td></tr></table>
+{history}</table>
 <h2>Download and scope</h2>
 <p><a href="{manifest['table']['file']}">Download the UTF-8 CSV (gzip)</a>. The table has {len(COLUMNS)} columns.
 The <a href="manifest.json">manifest</a> binds the compressed and uncompressed bytes and all retained source archives by SHA-256.</p>
@@ -483,7 +587,7 @@ and APM rig view RIG_TYPE_CODE in JU/LB. Rig names are matched only after edge t
 only rig identifiers are published; source rig names are omitted. Unmatched and ambiguous names are excluded and counted, without guessing a rig class.
 No fuzzy matching, contractor-page data or contact fields are used. The full Gulf activity population is not established by this subset.</p>
 <h2>Sources, terms and refresh</h2>
-<p>Owner: worldenergydata. Source catalog identities: bsee-data-center and bsee-ewell-war.
+<p>Owner: worldenergydata. Source catalog identity: bsee-data-center.
 Retrieval date: {manifest['retrieval_date']}. Licence basis: US federal government public data.
 <a href="{TERMS_URL}">BSEE's stated terms</a> permit distribution and copying of its public information,
 request attribution and provide no warranty of accuracy or completeness.
@@ -491,8 +595,7 @@ The <a href="https://www.data.bsee.gov/Main/HtmlPage.aspx?page=Disclaimer">Data 
 No separate Creative Commons licence is asserted.</p>
 <ul>{sources}</ul>
 <p>The <a href="{RAW_INDEX_URL}">BSEE raw-download index</a> states daily updates for WAR, borehole, APD, APM and EOR.
-Next planned refresh: <strong>{manifest['next_refresh_date']}</strong>, following that daily cadence rather than a quarterly default.
-This is a planned date; the repository script does not install a scheduler.</p>
+Refresh is manual; no refresh is scheduled. The source update cadence does not schedule a repository release.</p>
 <h2>Field definitions</h2>
 <table><caption>Published fields; depths are in feet and normalized dates use YYYY-MM-DD.</caption>
 <tr><th>Field</th><th>Definition and source</th></tr>{fields}</table>
@@ -524,11 +627,14 @@ Agreement: {counts['rig_type_checks'].get('agree', 0):,}; conflict: {counts['rig
 unavailable: {counts['rig_type_checks'].get('unavailable', 0):,}. Missing secondary evidence is not treated as agreement.</p>
 <p>Release dates are not established: the inspected WAR, borehole and EOR main schemas do not supply them.
 Every release_date is empty and flagged. Reporting-period end and borehole total-depth date are not rig-release dates.
-Spud dates describe the borehole and may precede the report by years. These records cannot establish rig visits,
+Spud dates describe the borehole and may precede the report by years.
+Pre-spud move-in reports can end before the borehole spud date.
+{counts['reports_preceding_spud']:,} reports end before the borehole spud date. These records cannot establish rig visits,
 utilisation, operating days, exposure or site-assessment suitability. Early years and historical name variants have incomplete coverage.</p>
 <p>Exclusions (one reason per source record, in selection order): {exclusions}.
 No depth or cross-check flag removes an otherwise selected row. Counts reflect records, not unique wells or rigs.</p>
 <h2>Record counts per year</h2>
+<p>{report_range}</p>
 <table><caption>Retained WAR records, grouped by report-start year.</caption><tr><th>Year</th><th>Records</th></tr>{years}</table>
 <h2>Reproduction and retention</h2>
 <p>Raw archives remain outside Git under the configured <code>BSEE_JACKUP_RAW_DIR</code>, using the documented
@@ -554,6 +660,7 @@ def write_release(
     *,
     publication_date: date | None = None,
 ) -> dict:
+    refresh = publication_date is not None
     if publication_date is None:
         publication_date = (
             date.fromisoformat(source["publication_date"])
@@ -565,33 +672,40 @@ def write_release(
     writer.writeheader()
     writer.writerows(rows)
     raw = buffer.getvalue().encode("utf-8")
+    compressed = io.BytesIO()
+    with gzip.GzipFile(
+        filename="", mode="wb", fileobj=compressed, mtime=0, compresslevel=9
+    ) as zipped:
+        zipped.write(raw)
+    table_bytes = compressed.getvalue()
+    table_digest = hashlib.sha256(table_bytes).hexdigest()
+    if "table" in source and table_digest != source["table"]["sha256"] and not refresh:
+        raise ValueError("Changed table requires an explicit --publication-date")
+    if len(table_bytes) > 1_000_000:
+        raise ValueError("Published table exceeds repository file-size limit")
+    history = revision_history(source, retrieval, publication_date, refresh)
+    output.mkdir(parents=True, exist_ok=True)
     table_path = output / "activity_1997_2025.csv.gz"
     with table_path.open("xb") as stream:
-        with gzip.GzipFile(
-            filename="", mode="wb", fileobj=stream, mtime=0, compresslevel=9
-        ) as zipped:
-            zipped.write(raw)
-    if table_path.stat().st_size > 1_000_000:
-        raise ValueError("Published table exceeds repository file-size limit")
+        stream.write(table_bytes)
     manifest = {
-        **source,
+        **{key: value for key, value in source.items() if key != "next_refresh_date"},
         "schema_version": 2,
+        "revision_history": history,
         "publication_date": publication_date.isoformat(),
         "criteria_version": "1",
         "dataset_id": "us_gom_jackup_liftboat_activity_1997_2025",
-        "source_ids": ["bsee-data-center", "bsee-ewell-war"],
+        "source_ids": ["bsee-data-center"],
         "retrieval_date": retrieval,
-        "next_refresh_date": (
-            date.fromisoformat(retrieval) + timedelta(days=1)
-        ).isoformat(),
         "refresh_basis": {
-            "cadence": "daily",
+            "cadence": "manual",
+            "source_cadence": "daily",
             "source_url": RAW_INDEX_URL,
             "automatic": False,
         },
         "licence": "US federal government public data; BSEE stated distribution and copying terms",
         "terms_url": TERMS_URL,
-        "counts": counts,
+        "counts": {**counts, **identity_statistics(rows)},
         "depth_screening": {
             "threshold_ft": DEPTH_THRESHOLD_FT,
             "comparison": ">",
@@ -727,7 +841,10 @@ def build_release(
     rows, counts = derive_table(war, boreholes, rigs, apds, rig_list)
     if not rows:
         raise ValueError("Refusing to publish an empty activity release")
-    output.mkdir(parents=True, exist_ok=False)
+    if output.exists():
+        raise FileExistsError(
+            "Choose a new output directory; existing releases are retained"
+        )
     retrieval = max(entry["retrieved_at_utc"][:10] for entry in source["sources"])
     return write_release(
         output, rows, counts, source, retrieval, publication_date=publication_date

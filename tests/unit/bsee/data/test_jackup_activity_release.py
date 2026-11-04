@@ -7,7 +7,7 @@ import io
 import json
 import re
 from collections import Counter
-from datetime import date, timedelta
+from datetime import date
 from decimal import Decimal
 from pathlib import Path
 
@@ -131,7 +131,7 @@ def test_release_dates_are_explicitly_unavailable_and_8831_records_are_audited(
     assert not {r["activity_id"] for r in audit} & {r["activity_id"] for r in rows}
 
 
-def test_provenance_has_only_bsee_urls_relative_blobs_and_daily_refresh(snapshot):
+def test_provenance_has_only_bsee_urls_relative_blobs_and_manual_refresh(snapshot):
     manifest = snapshot[0]
     expected = {
         "eWellWARRawData.zip",
@@ -149,9 +149,9 @@ def test_provenance_has_only_bsee_urls_relative_blobs_and_daily_refresh(snapshot
             f"blobs/sha256/{source['sha256'][:2]}/{source['sha256']}.zip"
         )
         assert source["retrieved_at_utc"][:10] == manifest["retrieval_date"]
-    assert date.fromisoformat(manifest["next_refresh_date"]) == (
-        date.fromisoformat(manifest["retrieval_date"]) + timedelta(days=1)
-    )
+    assert "next_refresh_date" not in manifest
+    assert manifest["refresh_basis"]["cadence"] == "manual"
+    assert manifest["refresh_basis"]["source_cadence"] == "daily"
 
 
 def test_release_exposes_identifiers_instead_of_rig_names(snapshot):
@@ -174,3 +174,47 @@ def test_release_exposes_identifiers_instead_of_rig_names(snapshot):
         for record in audit
     )
     assert all(record["registry_evidence"] == [] for record in audit)
+
+
+def test_published_identity_and_date_disclosures_match_table(snapshot):
+    manifest, _, _, _, rows = snapshot
+    card = (RELEASE / "data_card.html").read_text(encoding="utf-8")
+    for code, label in [("JU", "Jack-up"), ("LB", "Liftboat")]:
+        group = [r for r in rows if r["rig_type"] == code]
+        checks = {
+            s: sum(r["rig_type_check"] == s for r in group)
+            for s in ("agree", "conflict", "unavailable")
+        }
+        generic = sum(
+            "generic_rig_identity" in r["quality_flags"].split("|") for r in group
+        )
+        distinct = len({r["rig_id"] for r in group})
+        first = min(r["activity_start_date"][:4] for r in group)
+        assert manifest["counts"]["identity_by_rig_type"][code] == {
+            "records": len(group),
+            "distinct_ids": distinct,
+            "generic_identity_records": generic,
+            "secondary_evidence": checks,
+            "first_report_year": int(first),
+        }
+        assert (
+            f"{label}: {len(group):,} reports; {distinct:,} distinct IDs; "
+            f"{generic:,} generic-identity reports; secondary evidence "
+            f"agree {checks['agree']:,}, conflict {checks['conflict']:,}, "
+            f"unavailable {checks['unavailable']:,}; first report year {first}."
+        ) in card
+    first = min(r["activity_start_date"] for r in rows)
+    last = max(r["activity_start_date"] for r in rows)
+    assert manifest["counts"]["report_start_range"] == {"first": first, "last": last}
+    assert f"First report-start date: {first}; last report-start date: {last}." in card
+    assert "Rows begin in October 1997" in card
+    preceding = sum(
+        bool(
+            r["spud_date"]
+            and r["activity_end_date"]
+            and r["spud_date"] > r["activity_end_date"]
+        )
+        for r in rows
+    )
+    assert manifest["counts"]["reports_preceding_spud"] == preceding
+    assert f"{preceding:,} reports end before the borehole spud date." in card
