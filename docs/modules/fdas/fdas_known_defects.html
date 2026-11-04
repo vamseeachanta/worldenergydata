@@ -26,8 +26,45 @@ dispatch coverage so synthetic checks are not treated as design qualification.</
 header-based matrix aggregations and document CSV/XLSX workbook regressions.</td></tr>
 <tr><td>3</td><td>2026-11-03</td><td>Bound duplicate and product-filter claims to
 the tested readers, record unresolved oil and day-total behavior, and remove
-redundant join assertions while retaining cardinality validation.</td></tr></tbody>
+redundant join assertions while retaining cardinality validation.</td></tr>
+<tr><td>4</td><td>2026-11-03</td><td>Record the eight-file scope, proposed steps
+and acceptance criteria; distinguish historical test counts from current
+reference checks and pre-existing controls.</td></tr></tbody>
 <caption>Table 1. Revision record.</caption></table>
+<h2>Scope and proposed steps</h2>
+<p>The reference-pipeline slice will remain limited to these eight text files:</p>
+<ul>
+<li><code>docs/modules/bsee/analysis/production/FDAS_V30/build_multi_year_lease_matrix1.py</code></li>
+<li><code>docs/modules/bsee/analysis/production/FDAS_V30/extract_drilling_completion_days.py</code></li>
+<li><code>docs/modules/bsee/analysis/production/FDAS_V30/generate_financial_summary_V30.py</code></li>
+<li><code>docs/modules/bsee/analysis/production/FDAS_V30/ogora_to_chronological.py</code></li>
+<li><code>docs/modules/fdas/fdas_known_defects.html</code></li>
+<li><code>tests/unit/fdas/reference/test_day_diagnostics.py</code></li>
+<li><code>tests/unit/fdas/reference/test_financial_defects.py</code></li>
+<li><code>tests/unit/fdas/reference/test_production_defects.py</code></li>
+</ul>
+<ol>
+<li>The reader paths and regression evidence will be inventoried before any
+correction is selected. Product filtering will be claimed only for the
+headerless matrix and chronological readers. Exact duplicate removal will be
+claimed only within each chronological archive.</li>
+<li>Reader identity, lookup cardinality, water propagation and supplied financial
+inputs will be checked against synthetic expectations. Header-based matrix
+product filtering, matrix duplicate removal and cross-archive chronological
+duplicate removal will remain outside the claimed corrections.</li>
+<li>Test results will be labelled by source revision and suite. Historical
+negative probes will be distinguished from current passing tests and from
+controls that already passed before implementation.</li>
+<li>The reference tests, relevant broader tests and repository file checks will
+be run. Basis gaps and untested real-data behavior will remain explicit.</li>
+</ol>
+<h3>Acceptance</h3>
+<p>The reference suite will pass without failed or skipped cases, the eight-file
+scope will match the reviewed slice, and the reader claims will retain the
+boundaries above. Existing checks will remain enabled. Published workbooks,
+reports, prices and the activity-code day basis will remain unchanged. Passing
+synthetic tests and matching headers will not establish engineering
+qualification or agreement with historical workbook values.</p>
 <h2>Finding register</h2>
 <p>Test names below are in <code>tests/unit/fdas/reference/</code>, except the
 existing activity-code regression named for B13. FIXED refers only to the
@@ -142,6 +179,22 @@ the same record plus 20 bbl for API 102. Reading only the first member yields
 records and 10 + 20 = 30 bbl. The 20 bbl loss follows directly from the supplied
 fixture. Distinct completion records remain additive; no API/month-only
 deduplication is used.</p>
+<h2>Verification by revision</h2>
+<table><thead><tr><th>Source revision</th><th>Suite and result</th><th>Evidence limit</th></tr></thead><tbody>
+<tr><td><code>dfc4d62</code></td><td>Historical: 581 passed and two skipped in
+the FDAS, five WAR interval/basis modules and WTI suite; 77 reference cases
+were included.</td><td>Earlier recorded results; these are not current totals.</td></tr>
+<tr><td><code>3d7fe617</code></td><td>93 reference tests passed, zero failed or
+skipped, before this documentation correction.</td><td>Synthetic reference
+fixtures only; the documentation correction changes no executable code.</td></tr>
+</tbody><caption>Table 4. Revision-specific verification; suite sizes are not interchangeable.</caption></table>
+<p>The earlier review records 83 failures and 10 passing controls in historical
+negative probes. Those probes were not rerun for this documentation correction.
+B13's activity-code implementation and regression predate the original change;
+that regression is a pre-existing control, not evidence of a newly corrected
+defect. No claim is made that every regression originally failed.</p>
+<p>Passing synthetic tests and matching headers do not establish engineering
+qualification or agreement with historical workbook values.</p>
 <h2>Sources and limits</h2>
 <ul>
 <li><a href="../../data/legacy/data/bsee_yearly_production_data.yml">Repository
