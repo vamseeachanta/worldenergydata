@@ -7,7 +7,7 @@ on:
 
 jobs:
   docs:
-    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","ARM64"]') }}
+    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","Linux"]') }}
 
     steps:
       - uses: actions/checkout@v7
