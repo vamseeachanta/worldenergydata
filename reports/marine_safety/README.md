@@ -1,8 +1,16 @@
 # Marine Safety Incident Analysis
 
-The public-input analysis is **not yet re-derived**. The TSB download returned
-HTTP 403; combined and filtered counts are `NOT_EVALUATED`. The historical total
+The public-input analysis is **not yet re-derived**. The recorded TSB download
+attempt on 2026-10-20 returned HTTP 403; combined and filtered counts are
+`NOT_EVALUATED`. The historical total
 could not be sourced. Earlier charts remain unverified.
+
+Offline verification does not establish current download availability or new
+production counts. A maintainer must fetch both public inputs, run the agreement
+check below and update the summary figure after the real download. The existing
+manifest and recorded counts are preserved until then. IMO GISIS is out of scope
+for agents: an owner-supplied manual export requires a separate analysis basis
+and is excluded from this two-source workflow.
 
 ## Revision history
 
@@ -49,8 +57,10 @@ Licence names, terms URLs and evidence URLs are recorded per source in the manif
 ## Worked example
 
 Set `MARINE_SAFETY_RAW_DIR` to an approved external data directory. Retain it
-between runs; content-addressed originals are never overwritten. The temporary
-download uses the environment's `TMPDIR`, outside Git.
+between runs; content-addressed originals are never overwritten. Temporary
+downloads, including partial payloads, stay under this external directory,
+independently of `TMPDIR` or `TEMP`. The manifest is read and written as UTF-8
+with LF line endings.
 
 ```bash
 # Install the repository's marine-safety dependencies using its normal setup.
@@ -101,10 +111,18 @@ constants. Negative controls change each manifest count and require rejection.
 Synthetic records are never used as public engineering input.
 
 ```bash
-python3 -m pytest --noconftest -o addopts='' \
+uv run python -m pytest --noconftest -o addopts='' \
   tests/unit/marine_safety/test_incident_inputs.py \
   tests/unit/marine_safety/test_report_verification.py
 ```
+
+`test_retained_input_count_agreement` uses `MARINE_SAFETY_RAW_DIR` and the
+committed manifest by default; set `MARINE_SAFETY_MANIFEST` to check a separately
+recorded manifest. It checks both source row counts and the report's combined,
+filtered, foundering and fatal-incident counts against the manifest. It skips
+with an explicit reason when the external inputs are absent. When both files
+are present, digest, schema or count mismatches fail the test. The synthetic
+worked example runs independently of the external archive.
 
 ## Earlier report files
 
