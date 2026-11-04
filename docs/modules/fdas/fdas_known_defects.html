@@ -29,7 +29,9 @@ the tested readers, record unresolved oil and day-total behavior, and remove
 redundant join assertions while retaining cardinality validation.</td></tr>
 <tr><td>4</td><td>2026-11-03</td><td>Record the eight-file scope, proposed steps
 and acceptance criteria; distinguish historical test counts from current
-reference checks and pre-existing controls.</td></tr></tbody>
+reference checks and pre-existing controls.</td></tr>
+<tr><td>5</td><td>2026-11-04</td><td>Record rechecked reference results at the
+reviewed revision so current and historical suite counts remain distinct.</td></tr></tbody>
 <caption>Table 1. Revision record.</caption></table>
 <h2>Scope and proposed steps</h2>
 <p>The reference-pipeline slice will remain limited to these eight text files:</p>
@@ -187,6 +189,10 @@ were included.</td><td>Earlier recorded results; these are not current totals.</
 <tr><td><code>3d7fe617</code></td><td>93 reference tests passed, zero failed or
 skipped, before this documentation correction.</td><td>Synthetic reference
 fixtures only; the documentation correction changes no executable code.</td></tr>
+<tr><td><code>c6772632</code></td><td>Rechecked: 93 reference tests passed,
+zero failed or skipped.</td><td>Local synthetic checks at the reviewed revision;
+the broader suite and historical negative probes were not rerun. The initial
+isolated run lacked a declared dependency; the complete environment passed.</td></tr>
 </tbody><caption>Table 4. Revision-specific verification; suite sizes are not interchangeable.</caption></table>
 <p>The earlier review records 83 failures and 10 passing controls in historical
 negative probes. Those probes were not rerun for this documentation correction.
