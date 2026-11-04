@@ -162,7 +162,7 @@ llm = [
     "transformers>=4.35.0",
     "torch>=2.0.0",
     "sentencepiece>=0.1.99",
-    "accelerate>=0.25.0",
+    "accelerate>=1.15.0",
 ]
 safety-ml = [
     "scikit-learn>=1.7.2",
