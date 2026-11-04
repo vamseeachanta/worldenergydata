@@ -21,6 +21,13 @@ on:
         type: boolean
         default: true
 
+permissions:
+  contents: read
+
+concurrency:
+  group: release-publishing
+  cancel-in-progress: false
+
 env:
   PYTHON_VERSION: "3.11"
 
@@ -119,8 +126,7 @@ jobs:
 
       - name: Verify package
         run: |
-          uv pip install twine
-          uv run twine check dist/*
+          uv run --no-project --with twine twine check dist/*
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v7
@@ -130,10 +136,7 @@ jobs:
 
   publish-testpypi:
     name: Publish to Test PyPI
-    runs-on: >-
-      ${{ (github.event_name != 'pull_request' ||
-          github.event.pull_request.head.repo.full_name == github.repository) &&
-          fromJSON('["self-hosted","x64","linux"]') || 'ubuntu-latest' }}
+    runs-on: ubuntu-latest
     timeout-minutes: 15
     needs: [validate, build]
     if: |
@@ -184,10 +187,7 @@ jobs:
 
   publish-pypi:
     name: Publish to PyPI
-    runs-on: >-
-      ${{ (github.event_name != 'pull_request' ||
-          github.event.pull_request.head.repo.full_name == github.repository) &&
-          fromJSON('["self-hosted","x64","linux"]') || 'ubuntu-latest' }}
+    runs-on: ubuntu-latest
     timeout-minutes: 15
     needs: [build, publish-testpypi]
     if: |

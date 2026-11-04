@@ -77,19 +77,35 @@ def test_every_job_routes_trusted_events_and_isolates_forks(
     }
     for path in sorted(WORKFLOWS.glob("*.yml")):
         workflow = load_workflow(path.name)
+        events = workflow.get("on", workflow.get(True))
+        assert events and set(events) <= {
+            "push",
+            "pull_request",
+            "schedule",
+            "workflow_dispatch",
+            "workflow_call",
+        }, "Unsupported workflow trigger requires a routing policy review"
         for job_id, job in workflow["jobs"].items():
             if "uses" in job:
                 assert job["uses"] == "./.github/workflows/domain-matrix.yml"
                 assert (WORKFLOWS / "domain-matrix.yml").is_file()
                 continue
+            if path.name == "release.yml" and job_id in {
+                "publish-testpypi",
+                "publish-pypi",
+            }:
+                assert job["runs-on"] == "ubuntu-latest"
+                assert set(events) <= {"push", "workflow_dispatch"}
+                continue
             if isinstance(job["runs-on"], list):
-                events = workflow.get("on", workflow.get(True))
                 assert events and set(events) <= {
                     "push",
                     "schedule",
                     "workflow_dispatch",
                 }, "Literal runners require trusted triggers"
-                assert {"self-hosted", "x64"} <= set(job["runs-on"])
+                assert {"self-hosted", "x64", "linux"} <= set(
+                    job["runs-on"]
+                ), "Trusted runners require Linux x64"
                 continue
             assert runner_labels(job["runs-on"], context) == expected, (
                 path.name,
@@ -105,7 +121,7 @@ def test_routing_accepts_literal_labels_for_trusted_workflows(
     """A workflow without PR entry points may use a literal runner list."""
     workflow = {
         "on": {event: None},
-        "jobs": {"full-suite": {"runs-on": ["self-hosted", "x64"]}},
+        "jobs": {"full-suite": {"runs-on": ["self-hosted", "x64", "linux"]}},
     }
     (tmp_path / "trusted.yml").write_text(yaml.safe_dump(workflow), encoding="utf-8")
     monkeypatch.setattr(sys.modules[__name__], "WORKFLOWS", tmp_path)
@@ -128,11 +144,110 @@ def test_literal_labels_cannot_bypass_untrusted_event_routing(
     (tmp_path / "unsafe.yml").write_text(yaml.safe_dump(workflow), encoding="utf-8")
     monkeypatch.setattr(sys.modules[__name__], "WORKFLOWS", tmp_path)
     with pytest.raises(
-        AssertionError, match="Literal runners require trusted triggers"
+        AssertionError,
+        match=(
+            "Unsupported workflow trigger"
+            if event == "pull_request_target"
+            else "Literal runners require trusted triggers"
+        ),
     ):
         test_every_job_routes_trusted_events_and_isolates_forks(
             "pull_request", None, None, "ubuntu-latest"
         )
+
+
+@pytest.mark.parametrize(
+    "event", ["pull_request_target", "issue_comment", "workflow_run"]
+)
+def test_expression_routing_rejects_unsupported_triggers(tmp_path, monkeypatch, event):
+    """A new event cannot silently inherit access to persistent workers."""
+    workflow = {
+        "on": {event: None},
+        "jobs": {"unsafe": {"runs-on": "${{ 'ubuntu-latest' }}"}},
+    }
+    (tmp_path / "unsafe.yml").write_text(yaml.safe_dump(workflow), encoding="utf-8")
+    monkeypatch.setattr(sys.modules[__name__], "WORKFLOWS", tmp_path)
+    with pytest.raises(AssertionError, match="Unsupported workflow trigger"):
+        test_every_job_routes_trusted_events_and_isolates_forks(
+            event, None, None, "ubuntu-latest"
+        )
+
+
+def test_literal_runners_require_linux(tmp_path, monkeypatch):
+    workflow = {
+        "on": {"workflow_dispatch": None},
+        "jobs": {"full-suite": {"runs-on": ["self-hosted", "x64"]}},
+    }
+    (tmp_path / "trusted.yml").write_text(yaml.safe_dump(workflow), encoding="utf-8")
+    monkeypatch.setattr(sys.modules[__name__], "WORKFLOWS", tmp_path)
+    with pytest.raises(AssertionError, match="Trusted runners require Linux x64"):
+        test_every_job_routes_trusted_events_and_isolates_forks(
+            "workflow_dispatch", None, None, ["self-hosted", "x64", "linux"]
+        )
+
+
+@pytest.mark.parametrize("job_id", ["publish-testpypi", "publish-pypi"])
+def test_publish_jobs_use_ephemeral_workers(job_id):
+    """Index tokens must not share a persistent worker with PR code."""
+    job = load_workflow("release.yml")["jobs"][job_id]
+    assert job["runs-on"] == "ubuntu-latest"
+    assert not any("checkout@" in step.get("uses", "") for step in job["steps"])
+
+
+@pytest.mark.parametrize(
+    "name", ["brand-guard.yml", "ci.yml", "docs.yml", "release.yml"]
+)
+def test_workflow_tokens_default_to_read_only(name):
+    assert load_workflow(name)["permissions"] == {"contents": "read"}
+    if name == "release.yml":
+        assert load_workflow(name)["jobs"]["github-release"]["permissions"] == {
+            "contents": "write"
+        }
+
+
+def test_pr_title_has_only_read_access_to_pull_requests():
+    workflow = load_workflow("pr-validation.yml")
+    assert workflow["permissions"] == {"contents": "read"}
+    assert workflow["jobs"]["pr-title"]["permissions"] == {"pull-requests": "read"}
+    assert all(
+        job.get("permissions", {}).get("pull-requests") != "write"
+        for job in workflow["jobs"].values()
+    )
+
+
+@pytest.mark.parametrize("name", ["pr-validation.yml", "brand-guard.yml", "docs.yml"])
+def test_superseded_pr_runs_cancel_within_the_same_workflow_and_ref(name):
+    concurrency = load_workflow(name)["concurrency"]
+    assert concurrency["group"] == (
+        "${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}"
+    )
+    cancel = concurrency["cancel-in-progress"]
+    for event in ("pull_request", "push", "workflow_dispatch"):
+        assert runner_labels(cancel, {"github.event_name": event}) is (
+            event == "pull_request"
+        )
+
+
+def test_releases_serialize_across_tags_without_cancelling():
+    assert load_workflow("release.yml")["concurrency"] == {
+        "group": "release-publishing",
+        "cancel-in-progress": False,
+    }
+
+
+def test_package_verification_uses_an_isolated_tool_environment():
+    steps = load_workflow("release.yml")["jobs"]["build"]["steps"]
+    verify = next(step for step in steps if step["name"] == "Verify package")
+    assert shlex.split(verify["run"]) == [
+        "uv",
+        "run",
+        "--no-project",
+        "--with",
+        "twine",
+        "twine",
+        "check",
+        "dist/*",
+    ]
 
 
 @pytest.mark.parametrize(
@@ -344,3 +459,39 @@ def test_publish_excludes_stale_distributions(tmp_path: Path, job_id: str) -> No
         assert wheels == [str(current)]
         assert stale.exists()
     assert destinations[0] != destinations[1]
+
+
+def _events(path: Path) -> dict:
+    workflow = yaml.safe_load(path.read_text(encoding="utf-8"))
+    return workflow["on"] if "on" in workflow else workflow[True]
+
+
+def test_pr_gate_is_fast_only() -> None:
+    """PRs run lint, the secret scan and touched-module tests (28 Oct 2026)."""
+    jobs = load_workflow("ci.yml")["jobs"]
+    assert set(jobs) == {
+        "mode",
+        "domain-tests",
+        "lint",
+        "security",
+        "lint-gate",
+        "security-gate",
+        "pr-gate",
+    }
+    runner = jobs["domain-tests"]["with"]["test-runner"]
+    assert runner.startswith("env WED_FAST_GATE=1 ")
+    lint_script = "\n".join(step.get("run", "") for step in jobs["lint"]["steps"])
+    assert "uv sync" not in lint_script
+    assert "uv lock" not in lint_script
+
+
+def test_no_workflow_uses_github_schedule() -> None:
+    """The daily full run is dispatched by our own cron, not GitHub's schedule."""
+    for path in sorted(WORKFLOWS.glob("*.yml")):
+        assert "schedule" not in _events(path), path.name
+
+
+def test_pr_validation_keeps_main_advisory_job_removals() -> None:
+    workflow = yaml.safe_load((WORKFLOWS / "pr-validation.yml").read_text())
+    assert "changelog-check" not in workflow["jobs"]
+    assert "code-owners" not in workflow["jobs"]

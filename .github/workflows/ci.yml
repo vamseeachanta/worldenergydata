@@ -16,6 +16,9 @@ concurrency:
     ${{ github.event_name == 'pull_request' &&
     (github.event.action != 'edited' || github.event.changes.base != null) }}
 
+permissions:
+  contents: read
+
 env:
   PYTHON_VERSION_DEFAULT: "3.11"
 
