@@ -104,12 +104,16 @@ def test_invalid_distribution_rejected_before_backend(annual_maxima, distributio
     point_fit = annual_maxima.stats.return_levels_annual_max
     uncertainty_fit = annual_maxima.stats.return_levels_annual_max_uncertainty
     try:
-        with pytest.raises(ValueError, match="GEV.*GUM"):
+        with pytest.raises(ValueError, match="GEV.*GUM") as error:
             annual_maxima.eva.fit_annual_maxima(
                 annual_maxima.series,
                 distribution=distribution,
                 periods=annual_maxima.periods,
             )
+        assert str(error.value) == (
+            "Annual-maxima distribution must be 'GEV' or 'GUM'; "
+            f"got {distribution!r}"
+        )
     finally:
         point_fit.assert_not_called()
         uncertainty_fit.assert_not_called()

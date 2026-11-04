@@ -169,7 +169,9 @@ class ExtremeValueAnalysis:
             If distribution is not the string 'GEV' or 'GUM'.
         """
         if not isinstance(distribution, str) or distribution not in ("GEV", "GUM"):
-            raise ValueError("Annual-maxima distribution must be 'GEV' or 'GUM'")
+            raise ValueError(
+                f"Annual-maxima distribution must be 'GEV' or 'GUM'; got {distribution!r}"
+            )
         if confidence_level is not None and not 0 < confidence_level < 1:
             raise ValueError("Confidence level must be between zero and one")
         df = self._series_to_df(series)
