@@ -1,0 +1,51 @@
+{
+  "dataset_id": "namespace/dataset",
+  "generator_version": "1.0.0",
+  "inputs": {
+    "atlas": {
+      "classification": "public",
+      "evidence": "",
+      "license": "pending",
+      "path": "reports/field-atlas/_atlas_feed.json",
+      "redistribution": "pending",
+      "sha256": "50e039377705d8ee71ba520b55ea2583317d90b88eb0e41924d96fe0cb8ba32c"
+    },
+    "explorer": {
+      "classification": "public",
+      "evidence": "",
+      "license": "pending",
+      "path": "reports/lower_tertiary/lifecycle/_explorer.json",
+      "redistribution": "pending",
+      "sha256": "29ae5ea119ac28f0a24c8f1107d5b74b14bb99c2c56e94a70efb9b6d8ae07082"
+    },
+    "parametric": {
+      "classification": "public",
+      "evidence": "",
+      "license": "pending",
+      "path": "reports/lower_tertiary/parametric/lt_economics_parametric.json",
+      "redistribution": "pending",
+      "sha256": "a99064acb334458fcd9a63f43d75f788d3b2af26e35eac63308d67596090eb62"
+    },
+    "performance": {
+      "classification": "public",
+      "evidence": "",
+      "license": "pending",
+      "path": "reports/lower_tertiary/lifecycle/_performance.json",
+      "redistribution": "pending",
+      "sha256": "0959bfd07588b8c1a49e8307f94300a07be34a8b88dc2a237ff047c286184971"
+    },
+    "registry": {
+      "classification": "public",
+      "evidence": "",
+      "license": "pending",
+      "path": "config/fields.yml",
+      "redistribution": "pending",
+      "sha256": "5c350649a9cc11b772c37bef8dc5bcfd57a25e5b4660b3176b4da37839f5b265"
+    }
+  },
+  "license": "pending",
+  "schema_version": "1.0.0",
+  "shard_max_bytes": "REQUIRED",
+  "shard_max_records": "REQUIRED",
+  "source_repository": "https://example.org/repository.git"
+}
