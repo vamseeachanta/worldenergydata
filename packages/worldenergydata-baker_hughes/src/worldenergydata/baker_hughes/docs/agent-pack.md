@@ -13,13 +13,14 @@ revision below; unrelated gaps and unverified source claims remain open.
 | 3 | 2026-10-19 | Added date completeness detection and tests so empty or missing dates cannot imply complete bounds. Earlier revision evidence remains below. |
 | 4 | 2026-10-22 | Add count rejection, explicit depth units and detection tests; distinguish input validation from source qualification. |
 | 5 | 2026-11-04 | Removed caller-dependent rounding from depth conversion and added value-preservation tests after a remaining arithmetic gap was reproduced. |
+| 6 | 2026-11-04 | Added the representation-limit citation and exponent-bound derivation beside the guard; executable behavior and boundary tests are retained. |
 
 | Header | Value |
 | --- | --- |
 | Module | baker_hughes |
 | Repository | worldenergydata |
 | Path | packages/worldenergydata-baker_hughes/src/worldenergydata/baker_hughes |
-| Pack revision | 5 |
+| Pack revision | 6 |
 | Pack date | 2026-11-04 |
 | Code revision (historical sections 1–10) | b1394197a66f95d78615425b4e1ad4ff78bd9de2 |
 | Analysis family | EC; data pipeline; AQG r0 Python calculations gate set |
@@ -329,6 +330,13 @@ is retained in both units. This guard limits compact extreme-exponent depth
 inputs; it does not establish general workbook or count resource budgets.
 Compact-exponent count allocation remains open under #1859.
 
+The guard comments cite the November 2005 *Numerical Computation Guide*,
+sections 2.1.1 (rounding) and 2.2.3 (double format), Tables 2-4 and 2-5,
+and derive the excluded decimal decades from the zero-rounding midpoint
+and an outer overflow bound. Decade 308 remains deliberately loose; final
+float validation still decides acceptance. This documents the existing
+preflight without changing executable behavior or its boundary tests.
+
 Both well and water depths, explicit declarations and suffixed headers, feet and
 metres are exercised under altered precision, rounding, exponent limits and
 traps. The tests also check that caller settings and flags remain unchanged.
@@ -370,3 +378,6 @@ preflight before an allocation sentinel can be reached.
 
 Revision-5 arithmetic evidence (SHA-256 of `loader.py`):
 `0cb734e83711866c3849c483ac166a1b4bb10400c82046b4b7c59695cdfb6c60`. The header code pin applies only to historical sections 1–10.
+
+Revision-6 documentation evidence (SHA-256 of `loader.py`):
+`df6f6a7d6fe4f3d906bb4dcb4198507cac65631aa9ab2a60e9078e754bc5e33c`.
