@@ -8,7 +8,7 @@ import yaml
 ROOT = Path(__file__).resolve().parents[2]
 FORK_ROUTING = (
     "${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' "
-    "|| fromJSON('[\"self-hosted\",\"ARM64\"]') }}"
+    '|| fromJSON(\'["self-hosted","ARM64"]\') }}'
 )
 
 
