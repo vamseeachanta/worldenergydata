@@ -77,6 +77,10 @@ CORE_PREFIXES = (
 
 # Exact non-module paths that should run a specific contract suite.
 CONTRACT_ROUTES = {
+    "scripts/eda/report.py": "tests/unit/eda",
+    "docs/examples/eda/README.md": "tests/unit/eda",
+    "docs/examples/eda/manifest.json": "tests/unit/eda",
+    "docs/examples/eda/report.md": "tests/unit/eda",
     "config/repo_structure.yml": "tests/repo_structure",
     ".gitattributes": "tests/repo_structure",
     "scripts/maintenance/classify_report_inventory.py": "tests/repo_structure",
