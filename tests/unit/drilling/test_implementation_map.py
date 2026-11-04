@@ -116,7 +116,7 @@ def test_mobilization_nonpositive_count(wells):
     Zero and minus one exercise the boundary and a representative invalid count;
     1200 USD is the synthetic fixed cost from the hand calculation above.
     """
-    with pytest.raises(ValueError, match="n_wells_batch must be > 0"):
+    with pytest.raises(ValueError, match="must be > 0"):
         BatchDrillingEconomics().mobilization_savings(1200, wells)
 
 
@@ -133,17 +133,17 @@ def test_duration_and_campaign_cost_hand_calculations():
     for position, expected in [(1, 8), (2, 4), (4, 2)]:
         assert calc.learning_curve_time(8, position, 0.5) == pytest.approx(expected)
     well = DrillingSite(
-        well_id="",
+        well_id="W1",
         field_name="",
         location_coords=(0, 0),
         water_depth_ft=0,
-        planned_md_ft=0,
+        planned_md_ft=1,
         well_type="",
     )
     campaign = DrillCampaign(
         campaign_id="",
         rig_name="",
-        wells=[well, well],
+        wells=[well, well.model_copy(update={"well_id": "W2"})],
         rig_day_rate_usd=2,
         mobilization_cost_usd=30,
         learning_curve_factor=0.5,

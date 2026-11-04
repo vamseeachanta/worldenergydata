@@ -5,16 +5,21 @@
 | Module | drilling |
 | Repository | worldenergydata |
 | Path | `packages/worldenergydata-drilling/src/worldenergydata/drilling` |
-| Pack revision | 3 (detector refresh), 2026-10-22 |
+| Pack revision | 4 (input contracts), 2026-11-04 |
 | Code revision | `a814fe13149465d1daeb8a06ca2f024b60a335a1` |
 | Analysis family | EC; Python calculations gate set, AQG r0 section 10 |
 | Quality role | Calculations quality manager; data-pipeline coverage |
 | Status | DRAFT; independent clearance pending |
 
-The source pin includes the reviewed detector commit
-`88c8c3efe56ff63216cb81a8f3e642059b158d3b` (#1533). Runtime sources are unchanged
-by this refresh. Reconciliation and parsing are covered by regression evidence;
+The revision 3 source pin includes the reviewed detector commit
+`88c8c3efe56ff63216cb81a8f3e642059b158d3b` (#1533). Runtime sources were unchanged
+by the revision 3 documentation refresh. Reconciliation and parsing are covered by regression evidence;
 physical applicability remains unqualified.
+
+Current model and calculator inputs are defined in [input-contracts.md](input-contracts.md).
+That contract supersedes the historical input, sequence and empty-campaign
+findings below. The source pins, digests and method inventory retained here
+describe the earlier snapshot and do not establish current-source agreement.
 
 ### Revision history
 
@@ -24,6 +29,7 @@ physical applicability remains unqualified.
 | 1 | 2026-10-17 | Record constant break-even output, stronger numeric gates, pinned digests and node outcomes to expose weak regression oracles. |
 | 3 | 2026-10-19 | Add a pinned mobilization enrollment proposal and exact allocation checks; defer counted inventory changes until review. |
 | 3 (detector refresh) | 2026-10-22 | Refresh the partial revision 3 against the reviewed detector, resolve detector failure rows with regression nodes and enroll the remaining calculation/grouping families. |
+| 4 (input contracts) | 2026-11-04 | Link current finite-value, unit, sequence and empty-campaign requirements and their acceptance coverage; retain the historical source snapshot and qualification limits. |
 
 ## 1. Purpose and scope
 

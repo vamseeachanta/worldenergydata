@@ -22,7 +22,7 @@ def calculator(monkeypatch):
 
 
 def make_campaign(n_wells, mobilization, learning):
-    """Synthetic rate 10 USD/day; zero coordinates/depths are unused metadata."""
+    """Synthetic rate 10 USD/day; valid geometry is unused by the duration stub."""
     return DrillCampaign(
         campaign_id="synthetic",
         rig_name="synthetic",
@@ -35,7 +35,7 @@ def make_campaign(n_wells, mobilization, learning):
                 field_name="synthetic",
                 location_coords=(0.0, 0.0),
                 water_depth_ft=0.0,
-                planned_md_ft=0.0,
+                planned_md_ft=1.0,
                 well_type="development",
             )
             for i in range(n_wells)
