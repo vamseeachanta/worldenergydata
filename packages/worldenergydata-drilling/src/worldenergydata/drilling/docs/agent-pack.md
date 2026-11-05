@@ -5,7 +5,7 @@
 | Module | drilling |
 | Repository | worldenergydata |
 | Path | `packages/worldenergydata-drilling/src/worldenergydata/drilling` |
-| Pack revision | 5 (floating-point cost limits), 2026-11-04 |
+| Pack revision | 6 (break-even table qualifications), 2026-11-04 |
 | Code revision | `a814fe13149465d1daeb8a06ca2f024b60a335a1` |
 | Cost-contract source revision | `88c983611ff1c892a5fb3bd29bca9e73a9c17085` |
 | Analysis family | EC; Python calculations gate set, AQG r0 section 10 |
@@ -17,9 +17,9 @@ The source pin includes the reviewed detector commit
 by this refresh. Reconciliation and parsing are covered by regression evidence;
 physical applicability remains unqualified.
 
-Revision 5 retains the revision-4 cost contract and stronger arithmetic regressions
-for #1345, with explicit false-savings and runtime limits. The code revision and
-earlier evidence below remain historical pins; this revision does not refresh
+Revision 6 retains the revision-4 cost contract and stronger arithmetic regressions
+for #1345, with explicit false-savings and runtime limits in the active tables.
+The code revision and earlier evidence below remain historical pins; this revision does not refresh
 their source digests or qualify the duration model.
 Stale pin/enrollment checks remain tracked by #1804.
 
@@ -33,6 +33,7 @@ Stale pin/enrollment checks remain tracked by #1804.
 | 3 (detector refresh) | 2026-10-22 | Refresh the partial revision 3 against the reviewed detector, resolve detector failure rows with regression nodes and enroll the remaining calculation/grouping families. |
 | 4 | 2026-11-04 | Clarify undiscounted costs, ignored compatibility arguments and the no-savings sentinel; replace weak cost oracles with exact monetary expectations for #1345. |
 | 5 | 2026-11-04 | Qualify the exact-arithmetic no-savings claim and characterize fractional-duration false savings across Python versions without changing production arithmetic. |
+| 6 | 2026-11-04 | Qualify both active break-even table rows as exact-arithmetic results and reference C9 for runtime-dependent floating-point comparisons. |
 
 ## 1. Purpose and scope
 
@@ -69,7 +70,7 @@ The package metadata declares Alpha maturity and Python >=3.10; this declaration
 | --- | --- | --- |
 | `learning_curve_time` | days; first-position base or power-law duration | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L55-L62] |
 | `mobilization_savings` | USD/well; allocated cost, not the difference from standalone | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L74-L90] |
-| `break_even_n_wells` | wells; for positive finite rate/duration, nonnegative mobilization and 0<LC<=1: 2 whenever mobilization>0 or LC<1; otherwise 1; section-6 row 50 and C7 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L122-L136] |
+| `break_even_n_wells` | wells; in exact arithmetic, for positive finite rate/duration, nonnegative mobilization and 0<LC<=1: 2 whenever mobilization>0 or LC<1; otherwise sentinel 1; strict floating-point comparisons can hide real savings or manufacture false savings, with runtime-dependent results (C9); section-6 row 50 and C7 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L122-L136] |
 | `batch_npv`, `standalone_npv`, `batch_savings` | USD; cost totals without negation, savings = standalone minus batch; no discounting | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L170-L196] |
 | `campaign_total_cost` | USD; one mobilization plus sum of duration times rate | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L219-L228] |
 | Detected batches | IDs, event-row `batch_size`, `well_ids` (possibly repeated), UTC start/end; `span_days` retains fractional elapsed days | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L216-L248] |
@@ -98,7 +99,7 @@ These entry points consume in-memory objects and return scalars, dictionaries, l
 | --- | --- | --- |
 | Duration | `T(N)=T1*N**(log(LC)/log(2))`; N<=1 returns T1. The docstring attributes the law to Wright (1936) and calls it cumulative average, while callers sum it as individual durations. | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L44-L62] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L124-L128] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L224-L228] |
 | Mobilization allocation | `mob_cost/n_wells_batch`; rejects nonpositive batch count | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L68-L90] |
-| Break-even | First N with `mob + rate*sum(T(i)) < N*(mob+rate*T1)` over 1..200; for valid positive rate/duration, output is constant at 2 if mob>0 or LC<1, otherwise 1. At N=2 one mobilization is saved; higher mobilization favours batching. See section-6 row 50 and C7 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L122-L136] |
+| Break-even | First N with `mob + rate*sum(T(i)) < N*(mob+rate*T1)` over 1..200; in exact arithmetic, for positive finite rate/duration, nonnegative mobilization and 0<LC<=1, the result is 2 if mob>0 or LC<1, otherwise sentinel 1. At N=2 one mobilization is saved; higher mobilization favours batching. Strict floating-point comparisons can hide real savings or manufacture false savings, with runtime-dependent results (C9). See section-6 row 50 and C7 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L122-L136] |
 | Cost comparison | Base duration from average depths; standalone = N*(mob+rate*base); batch = mob+rate*sum(T(i)); outputs are undiscounted | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L170-L196] |
 | Depth heuristic | `max(mean_MD/400 + mean_water_depth/2000 + 10, 30)` days; empty wells return 60 days; the prose instead describes a 20-day fixed term | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L234-L255] |
 | Campaign total | One mobilization plus rate times sum of supplied-base power-law durations | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L202-L228] |
