@@ -31,6 +31,9 @@
 # - Both sentinel and marker reads come from the SAME staged blob via
 #   `git show ":$file"` — eliminates the working-tree-vs-staged-blob TOCTOU
 #   bypass surfaced by Codex r2 #2 + Claude r1 #4.
+# - Binary policy: scan raw staged bytes as text, including NUL-containing
+#   blobs; do not decompress archives. Keep bytes in a temporary file, never
+#   a Bash variable. Escape control bytes only when rendering violations.
 
 set -uo pipefail
 # Note: not using `set -e` because we deliberately tolerate non-zero exit
@@ -55,31 +58,10 @@ is_path_restricted() {
   return 1
 }
 
-has_eol_sentinel() {
-  # Returns 0 if the line ends with one of the recognized per-line sentinels.
-  local line="$1"
-  case "$line" in
-    *"# CONFLICT_MARKER_FORENSIC_OK") return 0 ;;
-    *"// CONFLICT_MARKER_FORENSIC_OK") return 0 ;;
-    *"<!-- CONFLICT_MARKER_FORENSIC_OK -->") return 0 ;;
-  esac
-  return 1
-}
-
-is_marker_line() {
-  # Returns 0 if the line is a conflict-marker anchor at column 0:
-  #   `<<<<<<<` followed by whitespace or end-of-line, or
-  #   `>>>>>>>` followed by whitespace or end-of-line.
-  # Trailing-space requirement weakened to `(\s|$)` per Claude r1 #8.
-  local line="$1"
-  if [[ "$line" =~ ^"<<<<<<<"([[:space:]]|$) ]]; then
-    return 0
-  fi
-  if [[ "$line" =~ ^">>>>>>>"([[:space:]]|$) ]]; then
-    return 0
-  fi
-  return 1
-}
+staged_blob="$(mktemp)" || exit 1
+trap 'rm -f -- "$staged_blob"' EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
 
 violations=()
 
@@ -92,37 +74,36 @@ while IFS= read -r -d '' file; do
 
   # Read the staged blob ONCE. This is the single source of truth used by
   # both the per-file sentinel check AND the per-line marker scan.
-  if ! staged_content="$(git show ":$file" 2>/dev/null)"; then
-    continue
+  if ! git show ":$file" > "$staged_blob" 2>/dev/null; then
+    printf 'ERROR: Cannot snapshot staged content: %s\n' "$file" >&2
+    exit 1
   fi
 
   # Path-restricted per-file sentinel.
   if is_path_restricted "$file"; then
-    if printf '%s\n' "$staged_content" | grep -qF "<!-- CONFLICT_MARKER_FORENSIC_FILE_OK -->"; then
+    if grep -aqF "<!-- CONFLICT_MARKER_FORENSIC_FILE_OK -->" "$staged_blob"; then
       continue
     fi
   fi
 
   # Co-occurrence pre-check: skip files that don't contain BOTH anchors.
   # Avoids markdown 7-level blockquote false-positive (`>>>>>>> ` alone).
-  if ! printf '%s\n' "$staged_content" | grep -qE '^<<<<<<<([[:space:]]|$)'; then
+  if ! grep -aqE '^<<<<<<<([[:space:]]|$)' "$staged_blob"; then
     continue
   fi
-  if ! printf '%s\n' "$staged_content" | grep -qE '^>>>>>>>([[:space:]]|$)'; then
+  if ! grep -aqE '^>>>>>>>([[:space:]]|$)' "$staged_blob"; then
     continue
   fi
 
-  # Per-line scan with per-line sentinel exemption.
-  lineno=0
+  # Match and exempt raw bytes before escaping diagnostic text for Bash.
+  # grep -n retains the original line numbers, including a final partial line.
   while IFS= read -r line; do
-    lineno=$((lineno + 1))
-    if is_marker_line "$line"; then
-      if has_eol_sentinel "$line"; then
-        continue
-      fi
-      violations+=("${file}:${lineno}:${line}")
-    fi
-  done <<< "$staged_content"
+    violations+=("${file}:${line}")
+  done < <(
+    grep -anE '^(<<<<<<<|>>>>>>>)([[:space:]]|$)' "$staged_blob" |
+      grep -avE '(# CONFLICT_MARKER_FORENSIC_OK|// CONFLICT_MARKER_FORENSIC_OK|<!-- CONFLICT_MARKER_FORENSIC_OK -->)$' |
+      LC_ALL=C cat -v
+  )
 
 done < <(git diff --cached --name-only --diff-filter=ACMR -z 2>/dev/null)
 
