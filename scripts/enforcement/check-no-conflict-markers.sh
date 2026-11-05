@@ -63,6 +63,22 @@ trap 'rm -f -- "$staged_blob"' EXIT
 trap 'exit 130' INT
 trap 'exit 143' TERM
 
+snapshot_read_error() {
+  printf 'ERROR: Cannot read staged content: %s\n' "$file" >&2
+  exit 1
+}
+
+snapshot_contains() {
+  local status
+  # Read the whole snapshot: grep -q can hide a read error after a match.
+  grep -a "$@" "$staged_blob" > /dev/null
+  status=$?
+  case "$status" in
+    0|1) return "$status" ;;
+    *) snapshot_read_error ;;
+  esac
+}
+
 violations=()
 
 # Stage-aware iteration. NUL-delimited form handles filenames with spaces.
@@ -81,29 +97,39 @@ while IFS= read -r -d '' file; do
 
   # Path-restricted per-file sentinel.
   if is_path_restricted "$file"; then
-    if grep -aqF "<!-- CONFLICT_MARKER_FORENSIC_FILE_OK -->" "$staged_blob"; then
+    if snapshot_contains -F "<!-- CONFLICT_MARKER_FORENSIC_FILE_OK -->"; then
       continue
     fi
   fi
 
   # Co-occurrence pre-check: skip files that don't contain BOTH anchors.
   # Avoids markdown 7-level blockquote false-positive (`>>>>>>> ` alone).
-  if ! grep -aqE '^<<<<<<<([[:space:]]|$)' "$staged_blob"; then
+  if ! snapshot_contains -E '^<<<<<<<([[:space:]]|$)'; then
     continue
   fi
-  if ! grep -aqE '^>>>>>>>([[:space:]]|$)' "$staged_blob"; then
+  if ! snapshot_contains -E '^>>>>>>>([[:space:]]|$)'; then
     continue
   fi
 
   # Match and exempt raw bytes before escaping diagnostic text for Bash.
   # grep -n retains the original line numbers, including a final partial line.
-  while IFS= read -r line; do
-    violations+=("${file}:${line}")
-  done < <(
+  # Capture every pipeline status in the subshell; a no-match from either
+  # grep is valid, but read/filter/render errors must reach the parent.
+  if ! matches="$(
     grep -anE '^(<<<<<<<|>>>>>>>)([[:space:]]|$)' "$staged_blob" |
       grep -avE '(# CONFLICT_MARKER_FORENSIC_OK|// CONFLICT_MARKER_FORENSIC_OK|<!-- CONFLICT_MARKER_FORENSIC_OK -->)$' |
       LC_ALL=C cat -v
-  )
+    pipeline_status=("${PIPESTATUS[@]}")
+    [[ ${pipeline_status[0]} -le 1 && ${pipeline_status[1]} -le 1 &&
+       ${pipeline_status[2]} -eq 0 ]]
+  )"; then
+    snapshot_read_error
+  fi
+  if [[ -n "$matches" ]]; then
+    while IFS= read -r line; do
+      violations+=("${file}:${line}")
+    done <<< "$matches"
+  fi
 
 done < <(git diff --cached --name-only --diff-filter=ACMR -z 2>/dev/null)
 

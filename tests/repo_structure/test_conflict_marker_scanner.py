@@ -226,6 +226,67 @@ def test_incomplete_snapshot_is_blocking(staged_repo):
     assert scan(file_limit=True).returncode != 0
 
 
+@pytest.mark.parametrize(
+    "tool, pattern, read_file",
+    [
+        ("grep", FILE_SENTINEL.decode(), True),
+        ("grep", "^<<<<<<<([[:space:]]|$)", True),
+        ("grep", "^>>>>>>>([[:space:]]|$)", True),
+        ("grep", "^(<<<<<<<|>>>>>>>)([[:space:]]|$)", True),
+        (
+            "grep",
+            "(# CONFLICT_MARKER_FORENSIC_OK|// CONFLICT_MARKER_FORENSIC_OK|"
+            "<!-- CONFLICT_MARKER_FORENSIC_OK -->)$",
+            False,
+        ),
+        ("cat", "-v", False),
+    ],
+    ids=["file-sentinel", "open-anchor", "close-anchor", "matcher", "filter", "render"],
+)
+def test_snapshot_read_and_matcher_errors_are_blocking(
+    staged_repo, tmp_path, tool, pattern, read_file
+):
+    stage, scan = staged_repo
+    stage(
+        "docs/plans/example.md",
+        b"<<<<<<< ours "
+        + LINE_SENTINELS[0]
+        + b"\n>>>>>>> theirs "
+        + LINE_SENTINELS[0]
+        + b"\n",
+    )
+    assert scan().returncode == 0
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir()
+    # Reading a directory fails even when a privileged user runs the test.
+    unreadable = tmp_path / "unreadable"
+    unreadable.mkdir()
+    wrapper = bin_dir / tool
+    wrapper.write_text(
+        '#!/usr/bin/env bash\nargs=("$@")\n'
+        'for arg in "$@"; do\n'
+        '  if [[ "$arg" == "$SCANNER_TEST_PATTERN" ]]; then\n'
+        '    if [[ "$SCANNER_TEST_READ_FILE" == 1 ]]; then\n'
+        '      args[${#args[@]}-1]="$SCANNER_TEST_UNREADABLE"\n'
+        '      exec "$SCANNER_TEST_TOOL" "${args[@]}"\n'
+        "    fi\n"
+        '    "$SCANNER_TEST_TOOL" "$@"\n'
+        "    exit 2\n"
+        "  fi\ndone\n"
+        'exec "$SCANNER_TEST_TOOL" "$@"\n'
+    )
+    wrapper.chmod(0o755)
+    result = scan(
+        PATH=str(bin_dir) + os.pathsep + os.environ["PATH"],
+        SCANNER_TEST_TOOL=shutil.which(tool),
+        SCANNER_TEST_PATTERN=pattern,
+        SCANNER_TEST_READ_FILE=str(int(read_file)),
+        SCANNER_TEST_UNREADABLE=str(unreadable),
+    )
+    assert result.returncode != 0
+    assert b"ERROR: Cannot read staged content: docs/plans/example.md" in result.stderr
+
+
 def test_termination_exits_nonzero_and_cleans_snapshot(staged_repo, tmp_path):
     stage, scan = staged_repo
     stage("sample.txt", MARKERS)
