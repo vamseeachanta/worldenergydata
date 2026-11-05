@@ -267,6 +267,41 @@ def test_ordered_wells_normalizes_mutated_mapping_entries(sequence):
     )
 
 
+@pytest.mark.parametrize("sequence", [[], ["W2", "W1"]])
+@pytest.mark.parametrize("mutation", ["identifier", "coordinates", "depth", "iterator"])
+def test_ordered_wells_uses_normalized_snapshot(sequence, mutation):
+    model = campaign(sequence=sequence)
+    originals = {well.well_id: well for well in model.wells}
+    if mutation == "identifier":
+        model.wells[0].well_id = b"W1"
+    elif mutation == "coordinates":
+        model.wells[0].location_coords = (0, 0)
+    elif mutation == "depth":
+        model.wells[0].water_depth_ft = np.float64(0)
+    else:
+        model.wells = iter(model.wells)
+
+    ordered = model.ordered_wells()
+
+    assert [well.well_id for well in ordered] == (sequence or ["W1", "W2"])
+    by_id = {well.well_id: well for well in ordered}
+    assert type(by_id["W1"].well_id) is str
+    assert all(type(value) is float for value in by_id["W1"].location_coords)
+    assert type(by_id["W1"].water_depth_ft) is float
+    assert by_id["W2"] is originals["W2"]
+    if mutation == "iterator":
+        assert by_id["W1"] is originals["W1"]
+    else:
+        assert by_id["W1"] is not originals["W1"]
+    # Check both cost consumers on the same normalized snapshot.
+    normalized = campaign(wells=ordered, sequence=sequence)
+    calc = BatchDrillingEconomics()
+    assert calc.campaign_total_cost(normalized, 20) == 400
+    assert calc.batch_vs_standalone_npv(normalized) == dict(
+        batch_npv=550, standalone_npv=800, batch_savings=250
+    )
+
+
 def test_fraction_real_values_are_accepted():
     from fractions import Fraction
 

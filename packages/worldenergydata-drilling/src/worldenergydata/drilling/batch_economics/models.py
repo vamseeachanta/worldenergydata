@@ -10,6 +10,7 @@ DrillCampaign — rig campaign grouping multiple wells with economics parameters
 from __future__ import annotations
 
 import math
+from collections.abc import Iterable
 from numbers import Integral, Real
 from typing import Annotated
 
@@ -48,6 +49,22 @@ LearningFactor = Annotated[FiniteReal, Field(gt=0, le=1)]
 PositiveInteger = Annotated[int, BeforeValidator(_positive_integer)]
 Latitude = Annotated[FiniteReal, Field(ge=-90, le=90)]
 Longitude = Annotated[FiniteReal, Field(ge=-180, le=180)]
+
+
+def _same_typed_value(original: object, validated: object) -> bool:
+    """Require canonical field types as well as values before retaining identity."""
+    if type(original) is not type(validated):
+        return False
+    if isinstance(original, dict):
+        return original.keys() == validated.keys() and all(
+            _same_typed_value(value, validated[key]) for key, value in original.items()
+        )
+    if isinstance(original, (tuple, list)):
+        return len(original) == len(validated) and all(
+            _same_typed_value(value, checked)
+            for value, checked in zip(original, validated)
+        )
+    return original == validated
 
 
 class DrillingSite(BaseModel):
@@ -116,17 +133,28 @@ class DrillCampaign(BaseModel):
     def ordered_wells(self) -> list[DrillingSite]:
         """Return wells in sequence order.
 
-        Revalidates current state and preserves original site identity.
-        Mapping entries are returned as validated DrillingSite replacements.
+        Revalidates one materialized snapshot of current state. Canonical sites
+        retain identity; entries requiring normalization use validated replacements.
+        A one-shot iterable assigned to wells is consumed once for this call.
         An empty sequence uses insertion order; invalid sequences raise ValueError.
 
         Returns:
             List of DrillingSite in campaign drill order.
         """
-        checked = DrillCampaign.model_validate(self)
+        originals = self.wells
+        if isinstance(originals, Iterable):
+            originals = list(originals)
+        checked = DrillCampaign.model_validate(
+            self.model_copy(update={"wells": originals})
+        )
         wells = [
-            original if isinstance(original, DrillingSite) else validated
-            for original, validated in zip(self.wells, checked.wells)
+            (
+                original
+                if isinstance(original, DrillingSite)
+                and _same_typed_value(original.__dict__, validated.__dict__)
+                else validated
+            )
+            for original, validated in zip(originals, checked.wells)
         ]
         if not checked.sequence:
             return wells
