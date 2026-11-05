@@ -74,13 +74,13 @@ def generate_sensitivity_analysis_tables(
 
     # Generate oil price sensitivity HTML table
     oil_table_html = """
-    <table class="sensitivity-table" style="border-collapse: collapse; width: 100%; margin: 20px 0;">  # noqa: E501
-        <caption style="font-weight: bold; margin-bottom: 10px;">Oil Price Sensitivity Analysis</caption>  # noqa: E501
+    <table class="sensitivity-table" style="border-collapse: collapse; width: 100%; margin: 20px 0;">
+        <caption style="font-weight: bold; margin-bottom: 10px;">Oil Price Sensitivity Analysis</caption>
         <thead>
             <tr style="background-color: #f0f0f0;">
-                <th style="border: 1px solid #ccc; padding: 10px; text-align: center;">Oil Price ($/bbl)</th>  # noqa: E501
-                <th style="border: 1px solid #ccc; padding: 10px; text-align: center;">NPV @ 10%</th>  # noqa: E501
-                <th style="border: 1px solid #ccc; padding: 10px; text-align: center;">NPV @ 15%</th>  # noqa: E501
+                <th style="border: 1px solid #ccc; padding: 10px; text-align: center;">Oil Price ($/bbl)</th>
+                <th style="border: 1px solid #ccc; padding: 10px; text-align: center;">NPV @ 10%</th>
+                <th style="border: 1px solid #ccc; padding: 10px; text-align: center;">NPV @ 15%</th>
                 <th style="border: 1px solid #ccc; padding: 10px; text-align: center;">IRR</th>
             </tr>
         </thead>
@@ -93,10 +93,10 @@ def generate_sensitivity_analysis_tables(
 
         oil_table_html += f"""
             <tr>
-                <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">${row['oil_price']}</td>  # noqa: E501
-                <td style="border: 1px solid #ccc; padding: 8px; text-align: right; color: {npv_10_color};">${row['npv_10']:,.0f}</td>  # noqa: E501
-                <td style="border: 1px solid #ccc; padding: 8px; text-align: right; color: {npv_15_color};">${row['npv_15']:,.0f}</td>  # noqa: E501
-                <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">{row['irr']}</td>  # noqa: E501
+                <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">${row['oil_price']}</td>
+                <td style="border: 1px solid #ccc; padding: 8px; text-align: right; color: {npv_10_color};">${row['npv_10']:,.0f}</td>
+                <td style="border: 1px solid #ccc; padding: 8px; text-align: right; color: {npv_15_color};">${row['npv_15']:,.0f}</td>
+                <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">{row['irr']}</td>
             </tr>
         """
 
@@ -151,13 +151,13 @@ def generate_sensitivity_analysis_tables(
 
     # Generate gas price sensitivity HTML table
     gas_table_html = """
-    <table class="sensitivity-table" style="border-collapse: collapse; width: 100%; margin: 20px 0;">  # noqa: E501
-        <caption style="font-weight: bold; margin-bottom: 10px;">Gas Price Sensitivity Analysis</caption>  # noqa: E501
+    <table class="sensitivity-table" style="border-collapse: collapse; width: 100%; margin: 20px 0;">
+        <caption style="font-weight: bold; margin-bottom: 10px;">Gas Price Sensitivity Analysis</caption>
         <thead>
             <tr style="background-color: #f0f0f0;">
-                <th style="border: 1px solid #ccc; padding: 10px; text-align: center;">Gas Price ($/mcf)</th>  # noqa: E501
-                <th style="border: 1px solid #ccc; padding: 10px; text-align: center;">NPV @ 10%</th>  # noqa: E501
-                <th style="border: 1px solid #ccc; padding: 10px; text-align: center;">NPV @ 15%</th>  # noqa: E501
+                <th style="border: 1px solid #ccc; padding: 10px; text-align: center;">Gas Price ($/mcf)</th>
+                <th style="border: 1px solid #ccc; padding: 10px; text-align: center;">NPV @ 10%</th>
+                <th style="border: 1px solid #ccc; padding: 10px; text-align: center;">NPV @ 15%</th>
                 <th style="border: 1px solid #ccc; padding: 10px; text-align: center;">IRR</th>
             </tr>
         </thead>
@@ -170,10 +170,10 @@ def generate_sensitivity_analysis_tables(
 
         gas_table_html += f"""
             <tr>
-                <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">${row['gas_price']:.2f}</td>  # noqa: E501
-                <td style="border: 1px solid #ccc; padding: 8px; text-align: right; color: {npv_10_color};">${row['npv_10']:,.0f}</td>  # noqa: E501
-                <td style="border: 1px solid #ccc; padding: 8px; text-align: right; color: {npv_15_color};">${row['npv_15']:,.0f}</td>  # noqa: E501
-                <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">{row['irr']}</td>  # noqa: E501
+                <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">${row['gas_price']:.2f}</td>
+                <td style="border: 1px solid #ccc; padding: 8px; text-align: right; color: {npv_10_color};">${row['npv_10']:,.0f}</td>
+                <td style="border: 1px solid #ccc; padding: 8px; text-align: right; color: {npv_15_color};">${row['npv_15']:,.0f}</td>
+                <td style="border: 1px solid #ccc; padding: 8px; text-align: center;">{row['irr']}</td>
             </tr>
         """
 
@@ -189,8 +189,8 @@ def generate_sensitivity_analysis_tables(
     gas_scenarios = [2.5, 3.5, 4.5]
 
     matrix_table_html = """
-    <table class="sensitivity-matrix" style="border-collapse: collapse; width: 100%; margin: 20px 0;">  # noqa: E501
-        <caption style="font-weight: bold; margin-bottom: 10px;">NPV Scenario Matrix (@ 10% Discount Rate)</caption>  # noqa: E501
+    <table class="sensitivity-matrix" style="border-collapse: collapse; width: 100%; margin: 20px 0;">
+        <caption style="font-weight: bold; margin-bottom: 10px;">NPV Scenario Matrix (@ 10% Discount Rate)</caption>
         <thead>
             <tr style="background-color: #f0f0f0;">
                 <th style="border: 1px solid #ccc; padding: 10px;">Oil Price / Gas Price</th>
@@ -208,7 +208,7 @@ def generate_sensitivity_analysis_tables(
     for oil_price in oil_scenarios:
         matrix_table_html += f"""
             <tr>
-                <td style="border: 1px solid #ccc; padding: 8px; font-weight: bold; background-color: #f8f8f8;">${oil_price}/bbl</td>  # noqa: E501
+                <td style="border: 1px solid #ccc; padding: 8px; font-weight: bold; background-color: #f8f8f8;">${oil_price}/bbl</td>
         """
 
         for gas_price in gas_scenarios:
@@ -235,7 +235,7 @@ def generate_sensitivity_analysis_tables(
             npv_color = "green" if npv > 0 else "red"
 
             matrix_table_html += f"""
-                <td style="border: 1px solid #ccc; padding: 8px; text-align: right; color: {npv_color};">${npv:,.0f}</td>  # noqa: E501
+                <td style="border: 1px solid #ccc; padding: 8px; text-align: right; color: {npv_color};">${npv:,.0f}</td>
             """
 
         matrix_table_html += "</tr>"

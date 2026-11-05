@@ -87,7 +87,7 @@ class MetoceanReport:
 
         content = f"""
         <h2>Extreme Value Analysis</h2>
-        <p>Method: <strong>{result.method}</strong> | Distribution: <strong>{result.distribution}</strong></p>  # noqa: E501
+        <p>Method: <strong>{result.method}</strong> | Distribution: <strong>{result.distribution}</strong></p>
         {("" if result.threshold is None else f"<p>Threshold: {result.threshold:.3f}</p>")}
         <h3>Return Period Table</h3>
         {table_html}
@@ -156,7 +156,7 @@ class MetoceanReport:
 
         content = f"""
         <h2>Environmental Contour</h2>
-        <p>Method: <strong>{result.method}</strong> | Return period: <strong>{result.return_period} years</strong></p>  # noqa: E501
+        <p>Method: <strong>{result.method}</strong> | Return period: <strong>{result.return_period} years</strong></p>
         <p>Contour points: {len(result.hs_values)}</p>
         {fig_html}
         """
