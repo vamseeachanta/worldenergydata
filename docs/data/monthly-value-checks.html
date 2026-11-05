@@ -9,6 +9,41 @@ All input amounts are authored synthetic values. These checks establish arithmet
 and unit handling for the stated cases; they do not qualify source observations,
 data completeness, reservoir pressure or production economics.</p>
 
+<h2>Revision history</h2>
+<table>
+<tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr>
+<tr><td>1</td><td>2026-11-04</td><td>Added the bounded plan and current validation
+figures so the scope and acceptance criteria accompany the worked cases.</td></tr>
+</table>
+
+<h2>Plan-lite</h2>
+<ul>
+<li>Bounded scope: synthetic monthly production and energy value checks for the
+five catalogue items below; two caller-normalized aggregation helpers, a two-month
+workbook regression, existing pressure and generation assertions, and this page.</li>
+<li>Intended steps: assert independent expected values; enforce period, series,
+unit and numeric validation; preserve input signs and distinguish exact zero from
+float underflow; document arithmetic and integration limits.</li>
+<li>Validation criteria: the six focused targets below and both helper doctests
+pass; formatting, security, repository-structure and whitespace checks pass.</li>
+</ul>
+<p>Local validation on 2026-11-04: 291 focused tests passed and two doctest examples
+passed. Commands from the repository root, with runtime and test dependencies
+available:</p>
+<pre><code>python -m pytest --noconftest --no-cov \
+    tests/unit/australia/test_monthly_production.py \
+    tests/unit/eia/test_monthly_energy.py \
+    tests/unit/mexico_cnh/test_production_chain.py \
+    tests/unit/kansas_kgs/test_observations.py \
+    tests/unit/energy_mix tests/unit/common/test_units.py \
+    -q -rA -p no:cacheprovider
+python -m pytest --noconftest --no-cov --doctest-modules \
+    packages/worldenergydata-australia/src/worldenergydata/australia/monthly_production.py \
+    packages/worldenergydata-eia/src/worldenergydata/eia/monthly_energy.py \
+    -q -rA -p no:cacheprovider</code></pre>
+<p>Synthetic cases establish arithmetic and unit handling only; source freshness,
+completeness, field allocation and live-feed integration are not established.</p>
+
 <h2>Worked cases</h2>
 <table>
 <tr><th>Module</th><th>Inputs and calculation</th><th>Expected result</th><th>Check</th></tr>
