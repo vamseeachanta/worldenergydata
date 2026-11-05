@@ -1,0 +1,113 @@
+{
+  "status": "NOT_EVALUATED",
+  "fields": [
+    {
+      "name": "Ariel",
+      "block": "MC429",
+      "block_match": true,
+      "status": "NOT_EVALUATED",
+      "npv_usd": null,
+      "missing_inputs": [
+        "verified_field_production",
+        "public_reserves_and_interest_basis",
+        "price_forecast",
+        "opex",
+        "capex",
+        "fiscal_terms",
+        "discount_rate",
+        "decommissioning_cost_and_timing"
+      ],
+      "refresh_method": "Resolve field-to-lease/API membership, retain dated BSEE monthly production, reconcile units and acquired interest, then supply cited economics assumptions."
+    },
+    {
+      "name": "Coulomb",
+      "block": "MC657",
+      "block_match": true,
+      "status": "NOT_EVALUATED",
+      "npv_usd": null,
+      "missing_inputs": [
+        "verified_field_production",
+        "public_reserves_and_interest_basis",
+        "price_forecast",
+        "opex",
+        "capex",
+        "fiscal_terms",
+        "discount_rate",
+        "decommissioning_cost_and_timing"
+      ],
+      "refresh_method": "Resolve field-to-lease/API membership, retain dated BSEE monthly production, reconcile units and acquired interest, then supply cited economics assumptions."
+    },
+    {
+      "name": "East Anstey",
+      "block": "MC607",
+      "block_match": true,
+      "status": "NOT_EVALUATED",
+      "npv_usd": null,
+      "missing_inputs": [
+        "verified_field_production",
+        "public_reserves_and_interest_basis",
+        "price_forecast",
+        "opex",
+        "capex",
+        "fiscal_terms",
+        "discount_rate",
+        "decommissioning_cost_and_timing"
+      ],
+      "refresh_method": "Resolve field-to-lease/API membership, retain dated BSEE monthly production, reconcile units and acquired interest, then supply cited economics assumptions."
+    },
+    {
+      "name": "Fourier",
+      "block": "MC522",
+      "block_match": true,
+      "status": "NOT_EVALUATED",
+      "npv_usd": null,
+      "missing_inputs": [
+        "verified_field_production",
+        "public_reserves_and_interest_basis",
+        "price_forecast",
+        "opex",
+        "capex",
+        "fiscal_terms",
+        "discount_rate",
+        "decommissioning_cost_and_timing"
+      ],
+      "refresh_method": "Resolve field-to-lease/API membership, retain dated BSEE monthly production, reconcile units and acquired interest, then supply cited economics assumptions."
+    },
+    {
+      "name": "Herschel",
+      "block": "MC520",
+      "block_match": false,
+      "status": "NOT_EVALUATED",
+      "npv_usd": null,
+      "missing_inputs": [
+        "verified_field_production",
+        "public_reserves_and_interest_basis",
+        "price_forecast",
+        "opex",
+        "capex",
+        "fiscal_terms",
+        "discount_rate",
+        "decommissioning_cost_and_timing"
+      ],
+      "refresh_method": "Resolve field-to-lease/API membership, retain dated BSEE monthly production, reconcile units and acquired interest, then supply cited economics assumptions."
+    },
+    {
+      "name": "Kepler",
+      "block": "MC383",
+      "block_match": true,
+      "status": "NOT_EVALUATED",
+      "npv_usd": null,
+      "missing_inputs": [
+        "verified_field_production",
+        "public_reserves_and_interest_basis",
+        "price_forecast",
+        "opex",
+        "capex",
+        "fiscal_terms",
+        "discount_rate",
+        "decommissioning_cost_and_timing"
+      ],
+      "refresh_method": "Resolve field-to-lease/API membership, retain dated BSEE monthly production, reconcile units and acquired interest, then supply cited economics assumptions."
+    }
+  ]
+}

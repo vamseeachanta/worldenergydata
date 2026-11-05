@@ -1,0 +1,63 @@
+{
+  "input_sha256": "dfb8c8443fb5a9a05ad6207a2c31cc1ea334dcc676f81e7a0bbe0be19782478f",
+  "digest_domain": "UTF-8 JSON, sorted keys, compact separators",
+  "sources": {
+    "shell_release": {
+      "url": "https://www.shell.com/news-and-insights/newsroom/news-and-media-releases/2026/shell-to-sell-interest-in-gulf-of-america-platform.html",
+      "edition": "2026 release",
+      "http_status": 200,
+      "retrieved_at": "2026-10-20T09:03:17Z",
+      "access": "available",
+      "coverage": "HTML description metadata only",
+      "sha256": "c0565b6eac4d275970273add5c251d42a395579813e936d3a2c6d8a114cce120",
+      "retention": "Local source response retained separately; not a repository backup",
+      "readiness": "partial"
+    },
+    "talos_release": {
+      "url": "https://www.talosenergy.com/investor-relations/news/news-details/2026/Talos-Energy-Announces-Strategic-Acquisition-of-Gulf-of-America-Deepwater-Oil-Assets/default.aspx",
+      "edition": "2026 release",
+      "http_status": 403,
+      "retrieved_at": "2026-10-20T09:03:26Z",
+      "access": "unavailable",
+      "coverage": "HTTP rejection; no claims extracted",
+      "sha256": "2b4297a6304ead96fcfeb56f3757bb98a124bb2ff61ac6d84df1ff06d0cbf7b2",
+      "retention": "Local source response retained separately; not a repository backup",
+      "readiness": "unavailable"
+    },
+    "bp_expansion": {
+      "url": "https://www.bp.com/en_us/united-states/ho%6De/news/press-releases/bp-announces-successful-start-up-of-herschel-expansion-in-gulf-of-mexico.html",
+      "edition": "publication date unverified",
+      "http_status": 403,
+      "retrieved_at": "2026-10-20T09:03:26Z",
+      "access": "unavailable",
+      "coverage": "HTTP rejection; no claims extracted",
+      "sha256": "4911896da8042697d2e59bcfad4fbed2b39001c975a674ca52a4bda1652d579d",
+      "retention": "Local source response retained separately; not a repository backup",
+      "readiness": "unavailable"
+    },
+    "catalog_fields": {
+      "path": "data/modules/offshore_assets/curated/fields.csv",
+      "revision": "d867ba1e011bb7558e0e9dd02e118160657f9633",
+      "access": "available",
+      "sha256": "6a5a2be298295da8bbea9b0dc5099397abe6edd97b6c4d621d7d4c05ac09bd63",
+      "coverage": "Existing curated catalog; not independently qualified production or reserves",
+      "readiness": "partial"
+    },
+    "catalog_crosswalk": {
+      "path": "data/modules/offshore_assets/curated/subseaiq_bsee_block_crosswalk.csv",
+      "revision": "d867ba1e011bb7558e0e9dd02e118160657f9633",
+      "access": "available",
+      "sha256": "ff481c0cc9ba1c08551314f3e38da98c4c139332b5bd3b9b6921ba051200a804",
+      "coverage": "Existing curated catalog; not independently qualified production or reserves",
+      "readiness": "partial"
+    },
+    "catalog_host": {
+      "path": "data/modules/offshore_assets/curated/host_facilities.csv",
+      "revision": "d867ba1e011bb7558e0e9dd02e118160657f9633",
+      "access": "available",
+      "sha256": "cef18b57d3178a65f996d5d9099d3f06f78f33a285096b54b4b3da5ae7d152ba",
+      "coverage": "Existing curated catalog; not independently qualified production or reserves",
+      "readiness": "partial"
+    }
+  }
+}
