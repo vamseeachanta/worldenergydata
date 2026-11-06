@@ -270,8 +270,8 @@ def test_redirect_within_public_hf_origin():
 @pytest.mark.parametrize(
     "extra,env",
     [
-        (["--publish"], None),
-        (["--publish", "--accept-json-migration"], None),
+        (["--publish", "--expected-parent", "a" * 40], "synthetic-auth"),
+        (["--publish", "--accept-json-migration"], "synthetic-auth"),
         (["--publish", "--accept-json-migration", "--expected-parent", "a" * 40], None),
     ],
 )
@@ -279,7 +279,16 @@ def test_live_preflight_requires_migration_parent_and_auth(
     monkeypatch, capsys, extra, env
 ):
     monkeypatch.setattr(publisher, "build_from_git", lambda *a: {"synthetic": b"data"})
-    monkeypatch.delenv("HF_TOKEN", raising=False)
+    if env is None:
+        monkeypatch.delenv("HF_TOKEN", raising=False)
+    else:
+        monkeypatch.setenv("HF_TOKEN", env)
+
+    def unexpected_call(*args, **kwargs):
+        pytest.fail("live preflight reached a backend or publication call")
+
+    monkeypatch.setattr(publisher, "publish_snapshot", unexpected_call)
+    monkeypatch.setattr(publisher, "HuggingFaceBackend", unexpected_call)
     assert (
         publisher.main(
             [

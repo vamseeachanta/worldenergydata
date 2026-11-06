@@ -66,7 +66,10 @@ def case():
                     "alpha": {
                         "wells": 1,
                         "economics_status": "surfaced",
+                        "economics_basis": "life_to_date_pretax_npv_at_10pct",
                         "npv_mm": 2.5,
+                        "breakeven_wti": 45.0,
+                        "sens_mm_per_dollar": 0.5,
                     },
                     "beta": {
                         "wells": 0,
@@ -83,6 +86,7 @@ def case():
                         "economics_status": "surfaced",
                         "grid": [
                             {
+                                "economics_status": "surfaced",
                                 "wti_price_multiplier": 1.0,
                                 "discount_rate": 0.1,
                                 "npv_musd": 2.5,
@@ -698,3 +702,103 @@ def test_typed_measurements_and_withholding(case, role, edit):
     change_source(case, role, edit)
     with pytest.raises(ValueError):
         build(case)
+
+
+def change_records(files, collection, edit):
+    """Keep integrity and browser parity valid while probing release validation."""
+    manifest = json.loads(files[snapshot.MANIFEST])
+    for entry in manifest["artifacts"]:
+        if entry["collection"] == collection:
+            rows = json.loads(files[entry["path"]])
+            for row in rows:
+                if row["field_id"] == "alpha":
+                    edit(row)
+            data = snapshot.canonical_json(rows)
+            files[entry["path"]] = data
+            entry.update(sha256=hashlib.sha256(data).hexdigest(), byte_count=len(data))
+    files[snapshot.MANIFEST] = snapshot.canonical_json(manifest)
+
+
+@pytest.mark.parametrize("stage", ["build", "publish"])
+@pytest.mark.parametrize(
+    "status", [None, "early_life", "unlisted", "not_evaluated", "Surfaced", "missing"]
+)
+def test_scenario_release_permission_required(case, stage, status):
+    backend = Backend({})
+
+    def edit(row):
+        if status == "missing":
+            row.pop("economics_status", None)
+        else:
+            row["economics_status"] = status
+
+    if stage == "build":
+        change_source(
+            case, "parametric", lambda d: edit(d["fields"]["alpha"]["grid"][0])
+        )
+        with pytest.raises(ValueError, match="scenario.*surfaced"):
+            snapshot.publish_snapshot(build(case), "c" * 40, backend)
+    else:
+        files = build(case)
+        change_records(files, "parametric_economics", edit)
+        with pytest.raises(ValueError, match="scenario.*surfaced"):
+            snapshot.publish_snapshot(files, "c" * 40, backend)
+    assert not backend.calls
+
+
+@pytest.mark.parametrize("stage", ["build", "publish"])
+@pytest.mark.parametrize(
+    "basis", [None, "full_cycle", "LIFE_TO_DATE_PRETAX_NPV_AT_10PCT"]
+)
+def test_surfaced_field_basis_required(case, stage, basis):
+    backend = Backend({})
+
+    def edit(row):
+        row["economics_basis"] = basis
+
+    if stage == "build":
+        change_source(case, "performance", lambda d: edit(d["fields"]["alpha"]))
+        with pytest.raises(ValueError, match="economics basis"):
+            snapshot.publish_snapshot(build(case), "c" * 40, backend)
+    else:
+        files = build(case)
+        change_records(files, "fields", edit)
+        with pytest.raises(ValueError, match="economics basis"):
+            snapshot.publish_snapshot(files, "c" * 40, backend)
+    assert not backend.calls
+
+
+@pytest.mark.parametrize("stage", ["build", "publish"])
+@pytest.mark.parametrize("level", ["npv_mm", "breakeven_wti", "sens_mm_per_dollar"])
+@pytest.mark.parametrize("value", [None, True, "2.5"])
+def test_surfaced_levels_require_finite_numbers(case, stage, level, value):
+    backend = Backend({})
+
+    def edit(row):
+        row[level] = value
+
+    if stage == "build":
+        change_source(case, "performance", lambda d: edit(d["fields"]["alpha"]))
+        with pytest.raises(ValueError, match="finite"):
+            snapshot.publish_snapshot(build(case), "c" * 40, backend)
+    else:
+        files = build(case)
+        change_records(files, "fields", edit)
+        with pytest.raises(ValueError, match="finite"):
+            snapshot.publish_snapshot(files, "c" * 40, backend)
+    assert not backend.calls
+
+
+def test_surfaced_release_values_and_status_survive_publication(case):
+    change_source(
+        case, "performance", lambda d: d["fields"]["alpha"].update(npv_mm=-2.5)
+    )
+    files = build(case)
+    backend = Backend(files)
+    receipt = snapshot.publish_snapshot(files, "c" * 40, backend)
+    assert receipt["verification"] == "exact_bytes_verified"
+    field = records(files, "fields")[0]
+    assert field["npv_mm"] == -2.5
+    assert field["breakeven_wti"] == 45.0
+    assert field["sens_mm_per_dollar"] == 0.5
+    assert records(files, "parametric_economics")[0]["economics_status"] == "surfaced"

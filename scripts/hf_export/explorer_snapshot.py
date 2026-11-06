@@ -76,6 +76,9 @@ PERFORMANCE_COLUMNS = (
     "avg_decline_pct_yr",
     "interventions",
 )
+# Release criteria are the existing issue #976 contract, not recalculated limits.
+ECONOMICS_BASIS = "life_to_date_pretax_npv_at_10pct"
+ECONOMICS_LEVELS = ("npv_mm", "breakeven_wti", "sens_mm_per_dollar")
 COUNTRY_COLUMNS = ("country", "fields", "facilities", "badge", "module")
 
 
@@ -359,9 +362,21 @@ def _tables(inputs):
             "conflicting economics admission",
         )
         for row in data["grid"]:
+            require(
+                row.get("economics_status") == "surfaced",
+                "scenario economics must be explicitly surfaced",
+            )
             economics.append(
                 {
-                    **_pick(row, ("wti_price_multiplier", "discount_rate", "npv_musd")),
+                    **_pick(
+                        row,
+                        (
+                            "wti_price_multiplier",
+                            "discount_rate",
+                            "npv_musd",
+                            "economics_status",
+                        ),
+                    ),
                     "field_id": fid,
                     "field": fid,
                     "economics_basis": "life_to_date_pretax_npv",
@@ -426,6 +441,7 @@ RECORD_COLUMNS = {
             "npv_musd",
             "breakeven_multiplier",
             "economics_basis",
+            "economics_status",
         }
     ),
 }
@@ -477,14 +493,24 @@ def _validate_rows(name, rows):
                 value is None or (type(value) in (int, float) and math.isfinite(value)),
                 "finite measurement or null required",
             )
-        if name == "fields" and row["economics_status"] != "surfaced":
-            require(
-                all(
-                    row[k] is None
-                    for k in ("npv_mm", "breakeven_wti", "sens_mm_per_dollar")
-                ),
-                "withheld economics must remain null",
-            )
+        if name == "fields":
+            if row["economics_status"] == "surfaced":
+                require(
+                    row.get("economics_basis") == ECONOMICS_BASIS,
+                    "unsupported surfaced economics basis",
+                )
+                require(
+                    all(
+                        type(row.get(k)) in (int, float) and math.isfinite(row[k])
+                        for k in ECONOMICS_LEVELS
+                    ),
+                    "finite surfaced economics levels required",
+                )
+            else:
+                require(
+                    all(row[k] is None for k in ECONOMICS_LEVELS),
+                    "withheld economics must remain null",
+                )
         for key in KEYS[name]:
             if key in ("discount_rate", "wti_price_multiplier"):
                 require(
@@ -494,6 +520,10 @@ def _validate_rows(name, rows):
             else:
                 _text(row[key])
         if name == "parametric_economics":
+            require(
+                row.get("economics_status") == "surfaced",
+                "scenario economics must be explicitly surfaced",
+            )
             for key in ("npv_musd", "breakeven_multiplier"):
                 require(
                     type(row[key]) in (int, float) and math.isfinite(row[key]),

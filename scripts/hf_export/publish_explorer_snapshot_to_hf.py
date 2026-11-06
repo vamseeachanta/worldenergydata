@@ -106,7 +106,9 @@ def main(argv=None, *, default_dataset=None):
         if args.publish:
             require(args.accept_json_migration, "analytical migration requires review")
             require(args.expected_parent, "expected parent required")
-            backend = HuggingFaceBackend(os.environ.get("HF_TOKEN"))
+            token = os.environ.get("HF_TOKEN")
+            require(bool(token), "explicit authentication required")
+            backend = HuggingFaceBackend(token)
         result = publish_snapshot(
             files, args.expected_parent, backend, dry_run=not args.publish
         )

@@ -11,6 +11,7 @@ refresh entry point delegates to this publisher and requires full configuration.
 | Revision | Date | Change and reason |
 | --- | --- | --- |
 | 1 | 2026-10-20 | Define deterministic local construction and guarded publication to replace floating partial refreshes. |
+| 2 | 2026-11-06 | Require scenario release status, supported field basis and finite surfaced levels at both validation boundaries; isolate live preflight tests and state the storage limitation. |
 
 ## Inputs and admission
 
@@ -55,8 +56,16 @@ obtained by enumeration in the tests.
   collection has an explicit empty shard. Manifest order defines traversal.
 - Field/well counts come from records and must agree with performance coverage.
   A missing performance row is permitted only with explicit zero-well coverage;
-  economics then remains `not_evaluated`. Unlisted or withheld scenarios are
-  excluded. Unknown surfaced economics fields fail.
+  economics then remains `not_evaluated`. Parametric fields without surfaced
+  status are excluded. Each grid row of a surfaced field requires its own
+  explicit `economics_status = surfaced`; any other or missing status stops
+  construction. The row status is retained in analytical and browser schemas
+  and checked again before publication. Unknown surfaced economics fields fail.
+- Surfaced fields require `economics_basis = life_to_date_pretax_npv_at_10pct`
+  and finite, non-boolean numbers for `npv_mm`, `breakeven_wti` and
+  `sens_mm_per_dollar`, under the existing issue #976 release contract.
+  Null or missing levels stop construction and publication; negative finite
+  NPV remains permitted. Non-surfaced field levels must remain null.
 
 Known presentation structures, including SVG, links, CSS and timeline layout,
 are omitted by explicit column projection. Retained text rejects HTML tags,
@@ -159,6 +168,12 @@ Deterministic Parquet compatibility, protected publication workflow, consumer
 inventory and attestation are also follow-up. The legacy results bundle remains
 historical; this builder reads the underlying committed sources directly.
 No website changes, solver runs, live dataset writes or promotion occurred.
+
+Readback currently supports regular Hub-hosted artifacts only. LFS or Xet
+redirects to a CDN are rejected, and no storage preflight detects that transition
+before upload. Such a readback failure can advance the remote head without
+returning a receipt. CDN readback or a pre-upload storage check remains required
+before publishing artifacts that use that storage.
 
 ## Baseline
 
