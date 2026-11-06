@@ -254,6 +254,9 @@ def build_package(data: dict, root: Path) -> dict:
     sources = data["sources"]
     _verify_sources(sources, root)
     _verify_citation(data["transaction"]["buyer_group_citation"], sources)
+    for term in data["transaction"]["terms"].values():
+        if term.get("citation") is not None:
+            _verify_citation(term["citation"], sources)
     for fact in data["transaction"]["working_interests"]:
         value = _number(fact, "fraction")
         if value is None or value > 1:

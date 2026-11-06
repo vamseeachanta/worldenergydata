@@ -166,12 +166,12 @@ def test_supported_membership_has_an_available_source_and_locator():
         citation = row["transaction_membership_citation"]
         if row["transaction_membership_status"] == "SOURCE_SUPPORTED":
             supported += 1
-            assert citation["source_id"] == "shell_release"
+            assert citation["source_id"] in {"shell_release", "talos_release"}
             assert citation["locator"]
             assert data["sources"][citation["source_id"]]["access"] == "available"
         else:
             assert citation is None
-    assert supported == 2
+    assert supported == 6
 
 
 def test_source_digest_mismatch_refused(tmp_path):
@@ -497,3 +497,94 @@ def test_non_finite_ratio_cannot_receive_an_evaluated_status(ranged):
         amount.update(value=None, range=["1e1000", "2e1000"])
     with pytest.raises(ValueError, match="finite"):
         valuation_metrics(amount, observation(8, "boe"), observation(4, "boe/d"))
+
+
+def test_buyer_membership_and_working_interests_keep_preferential_condition():
+    data = json.loads(INPUT.read_text(encoding="utf-8"))
+    package = build_package(data, ROOT)
+    assets = {row["name"]: row for row in package["lifecycle"]["assets"]}
+    for name in ("Ariel", "Fourier", "Herschel", "Kepler"):
+        row = assets[name]
+        assert row["transaction_membership_status"] == "SOURCE_SUPPORTED"
+        assert row["transaction_membership_citation"]["source_id"] == "talos_release"
+        assert (
+            "four associated fields"
+            in row["transaction_membership_citation"]["locator"]
+        )
+        assert "preferential" in row["transaction_membership_reason"]
+        assert "only Coulomb" in row["transaction_membership_reason"]
+    for name in ("East Anstey", "Herschel Expansion"):
+        assert assets[name]["transaction_membership_status"] == "NOT_EVALUATED"
+    interests = [
+        fact
+        for fact in package["transaction"]["working_interests"]
+        if fact["basis"] == "talos_announced"
+    ]
+    assert {fact["value"] for fact in interests} == {0.25, 0.5}
+    assert len(interests) == 2
+    assert all(fact["citation"]["source_id"] == "talos_release" for fact in interests)
+    assert all("preferential" in fact["qualification"] for fact in interests)
+
+
+def test_upside_terms_keep_unpriced_amount_and_claim_citation():
+    term = json.loads(INPUT.read_text(encoding="utf-8"))["transaction"]["terms"][
+        "upside"
+    ]
+    assert term["status"] == "NOT_EVALUATED"
+    assert term["value"] is None
+    assert term["sharing_fraction"] == 0.5
+    assert term["price_threshold_usd_per_bbl"] == 60
+    assert term["end_date"] == "2027-12-31"
+    assert term["citation"]["source_id"] == "talos_release"
+    assert term["citation"]["locator"]
+
+
+def test_ratio_rows_show_dates_and_deposit_exclusion(tmp_path):
+    from html.parser import HTMLParser
+
+    class Rows(HTMLParser):
+        def __init__(self):
+            super().__init__()
+            self.rows = []
+            self.current = []
+
+        def handle_starttag(self, tag, attrs):
+            if tag == "tr":
+                self.current = []
+
+        def handle_data(self, text):
+            self.current.append(text)
+
+        def handle_endtag(self, tag):
+            if tag == "tr":
+                self.rows.append(" ".join(self.current))
+
+    package = build_package(json.loads(INPUT.read_text(encoding="utf-8")), ROOT)
+    write_package(package, tmp_path, ROOT)
+    parser = Rows()
+    parser.feed((tmp_path / "index.html").read_text(encoding="utf-8"))
+    ratio_rows = [row for row in parser.rows if "talos_" in row and "usd_per_" in row]
+    assert len(ratio_rows) == 4
+    for row in ratio_rows:
+        assert "2026-06-30" in row
+        assert "2025-07-01" in row
+        if "usd_per_boe" in row:
+            assert "2025-12-31" in row
+            assert "six months" in row
+        else:
+            assert "2026-03-31" in row
+            assert "2026-Q1" in row
+        if "talos_net" in row:
+            assert "net cash excluding the USD 42.5 million deposit" in row
+
+
+def test_known_term_cannot_cite_unavailable_source():
+    data = json.loads(INPUT.read_text(encoding="utf-8"))
+    data["sources"]["term_evidence"] = copy.deepcopy(data["sources"]["talos_release"])
+    data["sources"]["term_evidence"]["access"] = "unavailable"
+    data["transaction"]["terms"]["upside"]["citation"] = {
+        "source_id": "term_evidence",
+        "locator": "synthetic sharing terms",
+    }
+    with pytest.raises(ValueError, match="unavailable"):
+        build_package(data, ROOT)

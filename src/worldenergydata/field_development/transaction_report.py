@@ -122,6 +122,21 @@ def _transaction_body(package: dict) -> str:
                 f'{_quantity(numerator)} {numerator["unit"]} / '
                 f'{_quantity(denominator)} {denominator["unit"]}'
             )
+            dates = (
+                f'Consideration as of: {numerator.get("as_of", "NOT_EVALUATED")}; '
+                f'effective: {numerator.get("effective_date", "NOT_EVALUATED")}; '
+                f'denominator as of: {denominator.get("as_of", "NOT_EVALUATED")}; '
+                f'period: {denominator.get("measurement_period", "NOT_EVALUATED")}'
+            )
+            qualifications = "; ".join(
+                value
+                for value in (
+                    result["reason"],
+                    numerator.get("basis_label"),
+                    denominator.get("timing_note"),
+                )
+                if value
+            )
             rows.append(
                 [
                     basis,
@@ -129,7 +144,8 @@ def _transaction_body(package: dict) -> str:
                     value,
                     result["unit"],
                     input_values,
-                    result["reason"]
+                    dates,
+                    qualifications
                     or "Same basis and acquired-interest subject; no return threshold",
                 ]
             )
@@ -151,15 +167,35 @@ def _transaction_body(package: dict) -> str:
         )
         + f'<p>Closing: {_text(package["transaction"]["closing_status"])}</p>'
         + _table(
-            ["Subject", "Sold working interest (fraction)", "Source locator"],
             [
-                [fact["subject"], fact["value"], fact["citation"]["locator"]]
+                "Subject",
+                "Basis",
+                "Working interest (fraction)",
+                "Source locator",
+                "Qualification",
+            ],
+            [
+                [
+                    fact["subject"],
+                    fact["basis"],
+                    fact["value"],
+                    fact["citation"]["locator"],
+                    fact.get("qualification", "Announced sale; closing unverified"),
+                ]
                 for fact in package["transaction"]["working_interests"]
             ],
         )
         + "<h2>Transaction ratios</h2>"
         + _table(
-            ["Basis", "Metric", "Result", "Unit", "Inputs", "Criterion or limitation"],
+            [
+                "Basis",
+                "Metric",
+                "Result",
+                "Unit",
+                "Inputs",
+                "Input dates",
+                "Criterion or limitation",
+            ],
             rows,
         )
         + "<p>Method: consideration USD / acquired-interest reserves boe; "
@@ -168,9 +204,26 @@ def _transaction_body(package: dict) -> str:
         "assumed cash-flow parameters are applied.</p>"
         + "<h2>Terms and preferential-right scenarios</h2>"
         + _table(
-            ["Term", "Status", "Missing evidence"],
             [
-                [key, term["status"], term["reason"]]
+                "Term",
+                "Status",
+                "Evidence or limitation",
+                "Disclosed terms",
+                "Source locator",
+            ],
+            [
+                [
+                    key,
+                    term["status"],
+                    term["reason"],
+                    "; ".join(
+                        f"{name}: {value}"
+                        for name, value in term.items()
+                        if name
+                        not in {"status", "value", "reason", "source_id", "citation"}
+                    ),
+                    term.get("citation", {}).get("locator", "NOT_EVALUATED"),
+                ]
                 for key, term in package["transaction"]["terms"].items()
             ],
         )

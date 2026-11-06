@@ -69,7 +69,8 @@
               "source_id": "talos_release",
               "locator": "Opening paragraph: cash consideration net to Talos; subject to adjustments"
             },
-            "approximate": false
+            "approximate": false,
+            "effective_date": "2025-07-01"
           },
           "denominator": {
             "value": 23000000,
@@ -83,7 +84,8 @@
             },
             "approximate": true,
             "reserve_category": "proved",
-            "qualification": "Issuer-stated reserves net of P&A; underlying reserves report not independently reviewed"
+            "qualification": "Issuer-stated reserves net of P&A; underlying reserves report not independently reviewed",
+            "timing_note": "Year-end reserves post-date the acquisition effective date by six months; this is not an effective-date reserve valuation."
           }
         }
       },
@@ -103,7 +105,8 @@
               "source_id": "talos_release",
               "locator": "Opening paragraph: cash consideration net to Talos; subject to adjustments"
             },
-            "approximate": false
+            "approximate": false,
+            "effective_date": "2025-07-01"
           },
           "denominator": {
             "value": 16000,
@@ -116,7 +119,8 @@
               "locator": "GULF OF AMERICA BOLT-ON ACQUISITION: first quarter average for interests Talos is acquiring"
             },
             "approximate": true,
-            "measurement_period": "2026-Q1"
+            "measurement_period": "2026-Q1",
+            "timing_note": "Production is the first-quarter 2026 average and post-dates the acquisition effective date."
           }
         }
       }
@@ -145,7 +149,8 @@
             ],
             "reason": "Expected final net cash range after estimated interim cash flow; excludes the credited deposit",
             "effective_date": "2025-07-01",
-            "excludes_deposit_usd": 42500000
+            "excludes_deposit_usd": 42500000,
+            "basis_label": "net cash excluding the USD 42.5 million deposit"
           },
           "denominator": {
             "value": 23000000,
@@ -159,7 +164,8 @@
             },
             "approximate": true,
             "reserve_category": "proved",
-            "qualification": "Issuer-stated reserves net of P&A; underlying reserves report not independently reviewed"
+            "qualification": "Issuer-stated reserves net of P&A; underlying reserves report not independently reviewed",
+            "timing_note": "Year-end reserves post-date the acquisition effective date by six months; this is not an effective-date reserve valuation."
           }
         },
         "range": [
@@ -190,7 +196,8 @@
             ],
             "reason": "Expected final net cash range after estimated interim cash flow; excludes the credited deposit",
             "effective_date": "2025-07-01",
-            "excludes_deposit_usd": 42500000
+            "excludes_deposit_usd": 42500000,
+            "basis_label": "net cash excluding the USD 42.5 million deposit"
           },
           "denominator": {
             "value": 16000,
@@ -203,7 +210,8 @@
               "locator": "GULF OF AMERICA BOLT-ON ACQUISITION: first quarter average for interests Talos is acquiring"
             },
             "approximate": true,
-            "measurement_period": "2026-Q1"
+            "measurement_period": "2026-Q1",
+            "timing_note": "Production is the first-quarter 2026 average and post-dates the acquisition effective date."
           }
         },
         "range": [
