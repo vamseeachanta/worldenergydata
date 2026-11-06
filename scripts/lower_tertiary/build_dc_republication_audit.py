@@ -23,7 +23,9 @@ import hashlib
 import json
 import sys
 from collections import Counter
+from datetime import date
 from decimal import Decimal, InvalidOperation
+from html import escape
 from pathlib import Path
 
 from worldenergydata.bsee.analysis import ratified_day_basis_comparison as comparison
@@ -32,6 +34,8 @@ if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from lower_tertiary.build_wo_per_well_dc import DEV_OF_LEASE
+from lower_tertiary.dc_surface_audit import audit_surfaces
+from lower_tertiary.war_methodology import WAR_METHODOLOGY
 
 REPO = Path(__file__).resolve().parents[2]
 SOURCE = comparison.EXPORT
@@ -47,6 +51,10 @@ PENDING = "NOT_EVALUATED"
 CONFIRMATION = (
     "Wider-population confirmation is required before replacing published figures; "
     "held records and numeric agreement do not certify complete weekly histories."
+)
+NPV_REASON = (
+    "Financial reruns on confirmed day inputs and a common cost deck are required; "
+    "a day-count delta alone does not establish the discounted capital delta."
 )
 
 
@@ -222,6 +230,7 @@ def _development(name, bores):
         "coverage": dict(sorted(Counter(b["coverage"] for b in bores).items())),
         "status": PENDING,
         "reason": CONFIRMATION,
+        "npv_impact": {"status": PENDING, "delta_usd": None, "reason": NPV_REASON},
         "methods": {
             method: {
                 "basis": basis,
@@ -266,12 +275,9 @@ def build_audit(root: Path) -> dict:
         "publication": {"status": PENDING, "reason": CONFIRMATION},
         "npv_impact": {
             "status": PENDING,
-            "reason": "Financial reruns on confirmed day inputs and a common cost deck are required.",
+            "reason": NPV_REASON,
         },
-        "surface_agreement": {
-            "status": PENDING,
-            "reason": "The published reports, tables and downstream consumers have not been regenerated.",
-        },
+        "surface_agreement": audit_surfaces(root, bores),
         "bores": bores,
         "developments": [
             _development(name, [b for b in bores if b["development"] == name])
@@ -280,19 +286,213 @@ def build_audit(root: Path) -> dict:
     }
 
 
+def render_markdown(result: dict, *, revision_date: str) -> str:
+    """Render the audit, keeping full totals separate from paired subtotals.
+
+    Issue #1079 (2026), "Mandatory: show the change": after minus before.
+    Only differences already calculated on identical contributors are shown.
+    No financial conversion, discount rate, or tolerance is assumed here.
+    """
+    date.fromisoformat(revision_date)
+
+    def cell(value):
+        if value is None:
+            return PENDING
+        return (
+            escape(str(value))
+            .replace("|", "&#124;")
+            .replace("\n", " ")
+            .replace("\r", " ")
+        )
+
+    def row(values):
+        return "| " + " | ".join(cell(v) for v in values) + " |"
+
+    lines = [
+        "# D&C republication review",
+        "",
+        (
+            "Publication remains NOT_EVALUATED. Retained source figures are compared "
+            "with available weekly records and local snapshots; published figures are not replaced."
+        ),
+        "",
+        "## Revision history",
+        "",
+        "| Revision | Date | What changed and why |",
+        "|---|---|---|",
+        row(
+            (
+                "initial",
+                revision_date,
+                "Expose basis differences and missing evidence before replacement.",
+            )
+        ),
+        "",
+        "## Publication",
+        "",
+        cell(result["publication"]["reason"]),
+        "",
+        "Milestone is the comparison default; activity-code and interim methods remain available.",
+        "",
+        "## Retained development totals",
+        "",
+        (
+            "All counts below are displayed source values, including legacy zero placeholders. "
+            "Confirmed replacement totals and their changes remain unavailable."
+        ),
+        "",
+        "| Development | Bores | Before drilling | Before completion | Before D&C | Replacement status | Before basis |",
+        "|---|---:|---:|---:|---:|---|---|",
+    ]
+    for dev in result["developments"]:
+        lines.append(
+            row(
+                (
+                    dev["development"],
+                    dev["bores"],
+                    *[dev["before"][m] for m in METRICS],
+                    dev["status"],
+                    dev["before_basis"],
+                )
+            )
+        )
+    lines.extend(
+        [
+            "",
+            "## Before and after on identical contributors",
+            "",
+            (
+                "Paired subtotals are not replacement development totals. Each metric has its own "
+                "paired count; sparse samples and per-well histories are kept separate. "
+                "Missing records and undated legacy zero placeholders do not become measured zeros."
+            ),
+            "",
+            "| Development | Method | Coverage | Metric | Paired bores | Before | After | Change |",
+            "|---|---|---|---|---:|---:|---:|---:|",
+        ]
+    )
+    for dev in result["developments"]:
+        for method, values in dev["methods"].items():
+            for coverage, metrics in values["paired_by_coverage"].items():
+                for metric, pair in metrics.items():
+                    delta = pair["delta"]
+                    lines.append(
+                        row(
+                            (
+                                dev["development"],
+                                method,
+                                coverage,
+                                metric,
+                                pair["bores"],
+                                pair["before"],
+                                pair["after"],
+                                None if delta is None else f"{delta:+d}",
+                            )
+                        )
+                    )
+    lines.extend(["", "### Method and cause", ""])
+    lines.extend(
+        f"- **{cell(method)}:** {cell(basis)}." for method, basis in BASES.items()
+    )
+    lines.extend(
+        [
+            "",
+            (
+                "Milestone excludes unreported gaps; activity codes allocate whole reported intervals; "
+                "interim counts calendar gaps and includes TD in both phases. "
+                "These are method differences, not proof that incomplete histories are complete."
+            ),
+            "",
+            "## NPV impact by development",
+            "",
+            cell(NPV_REASON),
+            "",
+            "| Development | Status | NPV change (USD) |",
+            "|---|---|---:|",
+        ]
+    )
+    lines.extend(
+        row((d["development"], d["npv_impact"]["status"], d["npv_impact"]["delta_usd"]))
+        for d in result["developments"]
+    )
+    lines.extend(
+        [
+            "",
+            "## Snapshot consistency",
+            "",
+            cell(result["surface_agreement"]["reason"]),
+            "",
+            "| Surface | Status | Findings |",
+            "|---|---|---:|",
+        ]
+    )
+    for snapshot in result["surface_agreement"]["surfaces"]:
+        lines.append(
+            row(
+                (
+                    snapshot["surface"],
+                    snapshot["status"],
+                    len(snapshot.get("findings", [])),
+                )
+            )
+        )
+    lines.extend(["", "## Weekly records still needed", ""])
+    for bore in result["bores"]:
+        if bore["coverage"] == "absent":
+            lines.append(f"- {cell(bore['api12'])}: {cell(bore['reason'])}")
+    lines.extend(["", "## Input digests", "", "| Input | SHA-256 |", "|---|---|"])
+    inputs = result["inputs"] + [
+        s for s in result["surface_agreement"]["surfaces"] if s.get("sha256")
+    ]
+    lines.extend(row((item["path"], item["sha256"])) for item in inputs)
+    lines.extend(
+        [
+            "",
+            "## Sources and limits",
+            "",
+            (
+                "Basis: issue #1064, milestone-default decision (2026-10-12); "
+                "docs/data-sources/bsee/analysis/rig_days/day_basis_comparison.md, Rule and conventions. "
+                "Interim: rig_days_summary.md (2025-06-02), preferred method 3. "
+                "Change and surface scope: issue #1079 (2026)."
+            ),
+            "",
+            *[f"- {cell(limit)}" for limit in result["limits"]],
+            "- Vintage checks cover current-side day counts and membership; historical categories are not certified.",
+            "- Dataset and website publication were not inspected. Fidelity pins remain unchanged.",
+            "",
+            WAR_METHODOLOGY.strip(),
+            "",
+        ]
+    )
+    return "\n".join(lines)
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=REPO)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--markdown-output", type=Path)
+    parser.add_argument("--report-date", type=date.fromisoformat)
     args = parser.parse_args(argv)
     root, output = args.root.resolve(), args.output.resolve()
-    if output.is_relative_to(root):
+    review = args.markdown_output.resolve() if args.markdown_output else None
+    if any(p.is_relative_to(root) for p in (output, review) if p):
         parser.error("audit output must be outside the repository")
+    if review and (review == output or not args.report_date):
+        parser.error("review requires a distinct output and an explicit report date")
     result = build_audit(root)
+    markdown = (
+        render_markdown(result, revision_date=args.report_date.isoformat())
+        if review
+        else None
+    )
     output.write_text(
         json.dumps(result, sort_keys=True, indent=2, allow_nan=False) + "\n",
         encoding="utf-8",
     )
+    if review:
+        review.write_text(markdown, encoding="utf-8")
     return 0
 
 

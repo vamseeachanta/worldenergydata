@@ -75,6 +75,40 @@ def test_direct_unimplemented_lng_fails_without_writing(tmp_path):
     assert not output_dir.exists()
 
 
+def test_direct_unimplemented_lng_preserves_existing_evidence_on_repeat(tmp_path):
+    """Issue #458: no collection means an empty set of updates, hence zero.
+
+    Repeated direct calls must preserve existing cache and freshness evidence.
+    The literal sentinels are synthetic, with no live terminal data or timestamp.
+    """
+    output_dir = tmp_path / "lng"
+    output_dir.mkdir()
+    sentinels = {
+        "manifest.json": b'{"status": "success", "last_success_ts": "unchanged"}\n',
+        "terminals.csv": b"terminal_id,name\nsentinel,unchanged\n",
+    }
+    for name, content in sentinels.items():
+        (output_dir / name).write_bytes(content)
+    original_bytes = {name: (output_dir / name).read_bytes() for name in sentinels}
+    original_members = set(output_dir.rglob("*"))
+    config = {"output_dir": str(output_dir)}
+    original_config = config.copy()
+    job = LngTerminalsRefreshJob()
+
+    # Exercise the initial direct invocation and its repeat without a scheduler.
+    for invocation in ("initial", "repeat"):
+        result = job.run(config)
+
+        assert result.status == "failure", invocation
+        assert result.retryable is False, invocation
+        assert result.records_updated == 0, invocation
+        # Member equality also rejects any newly created success manifest.
+        assert set(output_dir.rglob("*")) == original_members, invocation
+        for name, content in original_bytes.items():
+            assert (output_dir / name).read_bytes() == content, invocation
+        assert config == original_config, invocation
+
+
 @pytest.mark.parametrize("existing_manifest", [False, True])
 @pytest.mark.parametrize("lazy", [False, True])
 def test_enabled_unimplemented_lng_reports_failure_without_backoff(

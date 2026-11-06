@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from datetime import datetime
+from math import isfinite
 from typing import Any
 
 from ..constants import (
@@ -45,14 +47,50 @@ _GIE_STATUS_MAP = {
 }
 
 
+@dataclass(frozen=True)
+class GIECapacityBasis:
+    """Caller-supplied annual and gas-property basis; no universal defaults.
+
+    Factors must describe the same gas and reference conditions as the source.
+    ``reference`` identifies the supporting document or declared assumption.
+    """
+
+    days_per_year: float
+    reference: str
+    tonnes_per_mcm: float | None = None
+    tonnes_per_gwh: float | None = None
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.reference, str) or not self.reference.strip():
+            raise ValueError("A conversion basis reference is required")
+        for field in ("days_per_year", "tonnes_per_mcm", "tonnes_per_gwh"):
+            value = getattr(self, field)
+            if value is None and field != "days_per_year":
+                continue
+            # Positive, finite factors are the domain of mass/rate conversion.
+            if (
+                isinstance(value, bool)
+                or not isinstance(value, (int, float))
+                or not isfinite(value)
+                or value <= 0
+            ):
+                raise ValueError(f"{field} must be finite and positive")
+
+
 class GIECollector(BaseCollector):
     """Collect European LNG terminal data from GIE ALSI."""
 
     source_name = "gie"
     source_reliability = SourceReliability.HIGH
 
-    def __init__(self, refresh_mode: RefreshMode | None = None) -> None:
+    def __init__(
+        self,
+        refresh_mode: RefreshMode | None = None,
+        *,
+        capacity_basis: GIECapacityBasis | None = None,
+    ) -> None:
         super().__init__(source_name="gie", refresh_mode=refresh_mode)
+        self.capacity_basis = capacity_basis
         source_cfg = self.config.sources.get("gie")
         self._api_url = source_cfg.api_url if source_cfg else ""
 
@@ -110,26 +148,31 @@ class GIECollector(BaseCollector):
         status_code = record.get("status", "E").strip()
         status = _GIE_STATUS_MAP.get(status_code, TerminalStatus.OPERATIONAL)
 
-        # Capacity (GIE typically reports in mcm/d or GWh/d)
-        capacity_mtpa = None
-        # GIE API User Manual v007 (2022-10-04), section 2.4, page 8:
-        # dtmi is LNG storage volume, not throughput; never use it as a fallback.
-        # https://www.gie.eu/transparency-platform/GIE_API_documentation_v007.pdf
-        cap_str = record.get("maxCapacity", "")
-        if cap_str:
-            try:
-                mcm_d = float(cap_str)
-                # mcm/d to bcm/yr (365 * mcm/d / 1000), then to MTPA
-                bcm_yr = mcm_d * 365 / 1000
-                capacity_mtpa = round(bcm_yr * 0.735, 2)
-            except (ValueError, TypeError):
-                pass
+        capacity_mtpa = self._parse_capacity(record)
 
         # Coordinates
         lat = self._safe_float(record.get("lat", record.get("latitude")))
         lon = self._safe_float(record.get("lng", record.get("longitude")))
 
         region = Normalizer.get_region(country)
+
+        fields = [
+            "terminal_name",
+            "country",
+            "status",
+            "operator",
+            "latitude",
+            "longitude",
+        ]
+        if capacity_mtpa is not None:
+            fields.append("capacity_mtpa")
+        citations = [self._create_citation(fields)]
+        if capacity_mtpa is not None:
+            citations.append(
+                self._create_citation(["capacity_mtpa"]).model_copy(
+                    update={"source_name": self.capacity_basis.reference}
+                )
+            )
 
         return LNGTerminal(
             terminal_name=name,
@@ -143,20 +186,44 @@ class GIECollector(BaseCollector):
             longitude=lon,
             region=region,
             last_updated=datetime.utcnow(),
-            sources=[
-                self._create_citation(
-                    [
-                        "terminal_name",
-                        "country",
-                        "status",
-                        "capacity_mtpa",
-                        "operator",
-                        "latitude",
-                        "longitude",
-                    ]
-                )
-            ],
+            sources=citations,
         )
+
+    def _parse_capacity(self, record: dict) -> float | None:
+        """Convert only explicitly dimensioned throughput with a declared basis."""
+        # GIE API User Manual v007 (2022), section 2.4, page 8:
+        # dtrs is send-out capacity in GWh/d; dtmi is storage volume, never rate.
+        # https://www.gie.eu/transparency-platform/GIE_API_documentation_v007.pdf
+        # maxCapacity/maxCapacityUnit is the explicit adapter input contract.
+        if "maxCapacity" in record:
+            raw = record["maxCapacity"]
+            unit = record.get("maxCapacityUnit")
+        else:
+            raw = record.get("dtrs")
+            unit = "GWh/d"
+        if raw is None or raw == "":
+            return None
+        try:
+            if unit not in ("mcm/d", "GWh/d"):
+                raise ValueError("unknown or missing capacity unit")
+            rate = float(raw)
+            if isinstance(raw, bool) or not isfinite(rate) or rate <= 0:
+                raise ValueError("capacity rate must be finite and positive")
+            basis = self.capacity_basis
+            if basis is None:
+                raise ValueError("conversion basis is required")
+            factor = basis.tonnes_per_mcm if unit == "mcm/d" else basis.tonnes_per_gwh
+            if factor is None:
+                raise ValueError("conversion factor for capacity unit is required")
+            # Dimensional cancellation: rate/day * tonnes/rate * days/year.
+            # NIST SP 811 (2008), section 4, table 5: mega = 10**6.
+            capacity = rate * factor * basis.days_per_year / 1_000_000
+            if not isfinite(capacity):
+                raise ValueError("capacity conversion is not finite")
+            return capacity
+        except (ValueError, TypeError, OverflowError) as exc:
+            self.logger.warning("GIE capacity NOT_EVALUATED: %s", exc)
+            return None
 
     @staticmethod
     def _safe_float(val: Any) -> float | None:

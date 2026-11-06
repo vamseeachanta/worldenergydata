@@ -36,8 +36,9 @@ Emits ``scope=`` / ``xdist_targets=`` / ``seq_targets=`` lines (GitHub Actions
 from __future__ import annotations
 
 import argparse
-import re
 import json
+import os
+import re
 import sys
 from pathlib import Path
 
@@ -74,9 +75,38 @@ CORE_PREFIXES = (
     "scripts/ci/",  # the selector itself / its tests -> fail safe to full
 )
 
-# Exact non-module paths that should run a specific contract suite.
+# Publication contracts live outside the auto-discovered unit-module tree.
+PAGES_CONTRACTS = ("tests/test_build_pages_assets.py", "tests/test_pages_scope.py")
+CATALOG_CONTRACTS = (
+    "tests/modules/field_development/test_catalog_atlas_evidence.py",
+    "tests/modules/field_development/test_catalog_evidence.py",
+    "tests/modules/field_development/test_catalog_evidence_example.py",
+)
+
+# Exact paths may select one contract suite or several related test files.
 CONTRACT_ROUTES = {
+    "scripts/build_pages.py": PAGES_CONTRACTS,
+    "scripts/pages_scope.py": "tests/test_pages_scope.py",
+    ".github/workflows/pages.yml": PAGES_CONTRACTS,
+    "config/analysis/lower_tertiary/v50_assumptions_change_log.html": PAGES_CONTRACTS,
+    "reports/lower_tertiary/fdas_revision_comparison.md": PAGES_CONTRACTS,
+    "tests/test_build_pages_assets.py": "tests/test_build_pages_assets.py",
+    "tests/test_pages_scope.py": "tests/test_pages_scope.py",
+    "tests/modules/field_development/catalog_test_support.py": CATALOG_CONTRACTS,
+    "scripts/field_atlas/build_atlas_feed.py": CATALOG_CONTRACTS,
+    "scripts/field_atlas/catalog_extension.py": CATALOG_CONTRACTS,
+    "scripts/field_development/example_catalog_evidence.py": CATALOG_CONTRACTS,
+    # Keep export and display withholding under CI when only an input changes.
+    "scripts/hf_export/publish_explorer_refresh_to_hf.py": "tests/unit/site",
+    "reports/field-atlas/atlas_template.html": "tests/unit/site",
+    "reports/field-atlas/index.html": "tests/unit/site",
+    "reports/lower_tertiary/lifecycle/_performance.json": "tests/unit/site",
+    "reports/lower_tertiary/parametric/lt_economics_parametric.json": "tests/unit/site",
+    "reports/field-atlas/results/explorer_results_bundle.json": "tests/unit/site",
     "config/repo_structure.yml": "tests/repo_structure",
+    ".gitattributes": "tests/repo_structure",
+    "scripts/maintenance/classify_report_inventory.py": "tests/repo_structure",
+    "docs/modules/report-inventory.csv": "tests/repo_structure",
     "scripts/capabilities/build_onepagers.py": "tests/test_capability_onepagers.py",
     "tests/test_capability_onepagers.py": "tests/test_capability_onepagers.py",
     "reports/capabilities/pdf/benchmark.html": "tests/test_capability_onepagers.py",
@@ -185,10 +215,24 @@ def select(changed: list[str], root: Path) -> dict:
     relevant = False
 
     for p in changed:
-        if p in CONTRACT_ROUTES:
-            contracts.add(CONTRACT_ROUTES[p])
+        if p.startswith("tests/repo_structure/"):
+            contracts.add("tests/repo_structure")
             relevant = True
             continue
+        if p in CONTRACT_ROUTES:
+            targets = CONTRACT_ROUTES[p]
+            contracts.update((targets,) if isinstance(targets, str) else targets)
+            relevant = True
+            continue
+        if p.startswith("src/worldenergydata/field_development/catalog_"):
+            contracts.update(CATALOG_CONTRACTS)
+            relevant = True
+            # Keep the existing unit-module route for the same production path.
+        if p.startswith("tests/modules/field_development/test_catalog_") and p.endswith(
+            ".py"
+        ):
+            contracts.add(p)
+            relevant = True
         if p.startswith(WORKFLOW_PREFIXES):
             relevant = True  # covered by ALWAYS_XDIST tests/workflows
             continue
@@ -225,11 +269,52 @@ def select(changed: list[str], root: Path) -> dict:
     return {"scope": "modules" if relevant else "skip", "xdist": xdist, "seq": seq}
 
 
+# PR fast gate (owner ruling 28 Oct 2026): a pull request runs lint plus the
+# touched-module tests only, finishing in minutes. A core-path change no longer
+# fans out to the whole tree on a PR; the daily "Main full run" workflow runs
+# the full suite on main instead. Core paths in the CI tooling still run the
+# CI contract suite. To run the full tree for a branch, dispatch "Main full
+# run" on it.
+FAST_CORE_TARGETS = (
+    # (core path prefix, extra target)
+    ("scripts/ci/", "tests/ci"),
+    (".github/workflows/", "tests/ci"),
+)
+
+
+def select_fast(changed: list[str], root: Path) -> dict:
+    """PR fast-gate selection: like :func:`select`, without the core fan-out."""
+    core = [p for p in changed if _is_core(p)]
+    result = select([p for p in changed if not _is_core(p)], root)
+    if not core:
+        return result
+    extra = [
+        target
+        for path in core
+        for prefix, target in FAST_CORE_TARGETS
+        if path.startswith(prefix)
+    ]
+    return {
+        "scope": "modules",
+        "xdist": _existing_unique(result["xdist"] + extra, root),
+        "seq": result["seq"],
+    }
+
+
+def is_fast_gate(environ=os.environ) -> bool:
+    """The fast gate applies to pull request events only (push/dispatch: full)."""
+    return environ.get("GITHUB_EVENT_NAME") == "pull_request"
+
+
 def _existing_unique(targets: list[str], root: Path) -> list[str]:
     seen, out = set(), []
     for t in targets:
         target = root / t
-        is_test_file = target.is_file() and target.name.startswith("test_") and target.suffix == ".py"
+        is_test_file = (
+            target.is_file()
+            and target.name.startswith("test_")
+            and target.suffix == ".py"
+        )
         if t not in seen and (target.is_dir() or is_test_file):
             seen.add(t)
             out.append(t)
@@ -253,7 +338,7 @@ def _full_tree(root: Path) -> list[str]:
     return out
 
 
-def to_matrix(changed: list[str], root: Path) -> dict:
+def to_matrix(changed: list[str], root: Path, fast: bool = False) -> dict:
     """Build a GitHub-Actions matrix of per-domain shards from changed files.
 
     Each shard is ``{"name", "targets", "mode"}`` where ``mode`` is ``xdist``
@@ -268,8 +353,11 @@ def to_matrix(changed: list[str], root: Path) -> dict:
     * ``scope=modules`` -> the always-on shard + one shard per touched module +
       one per routed contract; seq shards per touched integration module.
     * ``scope=skip`` -> just the always-on shard (never empty).
+
+    ``fast=True`` (pull requests) selects with :func:`select_fast`, so a core
+    change runs the always-on shard plus the touched modules, never the tree.
     """
-    result = select(changed, root)
+    result = select_fast(changed, root) if fast else select(changed, root)
     scope = result["scope"]
     shards: list[dict] = []
 
@@ -277,11 +365,7 @@ def to_matrix(changed: list[str], root: Path) -> dict:
         unit = root / "tests" / "unit"
         if unit.is_dir():
             for child in sorted(unit.iterdir()):
-                if (
-                    child.is_dir()
-                    and child.name != "__pycache__"
-                    and _has_tests(child)
-                ):
+                if child.is_dir() and child.name != "__pycache__" and _has_tests(child):
                     shards.append(
                         {
                             "name": f"unit-{child.name}",
@@ -339,7 +423,11 @@ def to_matrix(changed: list[str], root: Path) -> dict:
         for tgt in result["xdist"]:
             if tgt in ALWAYS_XDIST:
                 continue  # already in the always-on shard
-            name = tgt.replace("tests/unit/", "unit-").replace("tests/", "")
+            name = (
+                tgt.replace("tests/unit/", "unit-")
+                .replace("tests/", "")
+                .replace("/", "-")
+            )
             shards.append({"name": name, "targets": tgt, "mode": "xdist"})
         for tgt in result["seq"]:
             name = tgt.replace("tests/integration/modules/", "seq-")
@@ -373,12 +461,13 @@ def main(argv: list[str] | None = None) -> int:
     )
     a = ap.parse_args(argv)
     changed = _read_changed(a)
+    fast = is_fast_gate()
     if a.emit_matrix:
-        matrix = to_matrix(changed, Path(a.root))
+        matrix = to_matrix(changed, Path(a.root), fast=fast)
         print(f"scope={matrix['scope']}")
         print(f"matrix={json.dumps({'include': matrix['include']})}")
         return 0
-    result = select(changed, Path(a.root))
+    result = (select_fast if fast else select)(changed, Path(a.root))
     print(f"scope={result['scope']}")
     print(f"xdist_targets={' '.join(result['xdist'])}")
     print(f"seq_targets={' '.join(result['seq'])}")

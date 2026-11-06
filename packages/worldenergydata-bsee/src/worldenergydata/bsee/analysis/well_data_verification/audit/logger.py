@@ -287,7 +287,7 @@ class AuditLogger:
         start_date: Optional[datetime] = None,
         end_date: Optional[datetime] = None,
         severity: Optional[str] = None,
-        limit: int = 100,
+        limit: Optional[int] = 100,
     ) -> List[AuditEvent]:
         """
         Query audit events.
@@ -299,7 +299,7 @@ class AuditLogger:
             start_date: Filter events after this date
             end_date: Filter events before this date
             severity: Filter by severity level
-            limit: Maximum number of results
+            limit: Maximum number of results, or None for the complete history
 
         Returns:
             List of matching audit events
@@ -332,8 +332,10 @@ class AuditLogger:
             query += " AND severity = ?"
             params.append(severity)
 
-        query += " ORDER BY timestamp DESC LIMIT ?"
-        params.append(limit)
+        query += " ORDER BY timestamp DESC"
+        if limit is not None:
+            query += " LIMIT ?"
+            params.append(limit)
 
         # Execute query
         rows = self.database.query(query, tuple(params))
@@ -490,7 +492,7 @@ class AuditLogger:
         output_path = Path(output_path)
         output_path.parent.mkdir(parents=True, exist_ok=True)
 
-        with open(output_path, "w") as f:
+        with open(output_path, "w", encoding="utf-8", newline="\n") as f:
             json.dump(export_data, f, indent=2)
 
         self.log_event(

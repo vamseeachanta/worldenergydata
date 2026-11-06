@@ -87,7 +87,7 @@ def deep_incident():
         "year": 2022,
         "pipeline_type": "gas_transmission",
         "defect_type": "corrosion",
-        "depth_pct_wall": 82.0,
+        "depth_pct_wall": 80.0,
         "length_mm": 300.0,
         "pipe_od_mm": 323.85,
         "wall_thickness_mm": 9.53,
@@ -175,27 +175,21 @@ class TestCharacterize:
         defect = workflow.characterize(minimal_incident)
         assert defect.source == "phmsa"
 
-    def test_cause_category_mapped_to_defect_type(self, workflow):
-        incident = {
-            "incident_id": "CC-001",
-            "cause_category": "external corrosion",
-            "year": 2020,
-        }
+    def test_cause_category_mapped_to_defect_type(self, workflow, minimal_incident):
+        incident = dict(minimal_incident, cause_category="external corrosion")
+        incident.pop("defect_type")
         defect = workflow.characterize(incident)
         assert defect.defect_type == "corrosion"
 
-    def test_defaults_applied_when_fields_missing(self, workflow):
-        defect = workflow.characterize({"incident_id": "BARE-001"})
-        assert defect.pipe_od_mm > 0
-        assert defect.wall_thickness_mm > 0
-        assert defect.smys_mpa > 0
-        assert defect.maop_mpa > 0
+    def test_missing_geometry_raises(self, workflow):
+        with pytest.raises(ValueError, match="depth_pct_wall"):
+            workflow.characterize({"incident_id": "BARE-001"})
 
-    def test_liquid_pipeline_maop_default(self, workflow):
-        incident = {"incident_id": "LIQ-001", "pipeline_type": "hazardous_liquid"}
-        defect = workflow.characterize(incident)
-        # liquid default MAOP (5.516) < gas default MAOP (6.895)
-        assert defect.maop_mpa < 6.895
+    def test_liquid_requires_explicit_maop(self, workflow, minimal_incident):
+        incident = dict(minimal_incident, pipeline_type="hazardous_liquid")
+        incident.pop("maop_mpa")
+        with pytest.raises(ValueError, match="maop_mpa"):
+            workflow.characterize(incident)
 
 
 # ---------------------------------------------------------------------------
@@ -287,7 +281,7 @@ class TestVerdictLogic:
         result = workflow.assess_ffs(defect)
         # safe_pressure >= MAOP and depth >= 50% → monitor or repair/replace
         # Given the geometry, safe pressure should exceed MAOP for 55% depth
-        assert result.verdict in {"monitor", "repair", "replace"}
+        assert result.verdict in {"accept", "repair", "replace"}
 
     def test_verdict_repair_when_safe_pressure_below_maop(self, workflow):
         # Force very high MAOP so safe_pressure < MAOP but depth < 80%
@@ -502,9 +496,10 @@ class TestInternalCalculations:
             result.failure_pressure_mpa / 1.39, rel=1e-3
         )
 
-    def test_remaining_life_positive_for_corrosion(self, workflow):
+    def test_remaining_life_unknown_without_growth_rate(self, workflow):
         incident = {
             "incident_id": "RL-001",
+            "length_mm": 150.0,
             "defect_type": "corrosion",
             "depth_pct_wall": 30.0,
             "wall_thickness_mm": 9.53,
@@ -514,12 +509,13 @@ class TestInternalCalculations:
         }
         defect = workflow.characterize(incident)
         result = workflow.assess_ffs(defect)
-        assert result.remaining_life_years is not None
-        assert result.remaining_life_years > 0
+        # No qualified growth-rate input: the former assumed life is unknown.
+        assert result.remaining_life_years is None
 
     def test_remaining_life_none_for_mechanical(self, workflow):
         incident = {
             "incident_id": "RL-002",
+            "length_mm": 150.0,
             "defect_type": "mechanical",
             "depth_pct_wall": 20.0,
             "wall_thickness_mm": 9.53,

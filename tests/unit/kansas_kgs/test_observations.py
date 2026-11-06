@@ -5,6 +5,7 @@ from __future__ import annotations
 import csv
 import zipfile
 from io import StringIO
+from itertools import permutations
 from pathlib import Path
 
 import pandas as pd
@@ -220,6 +221,137 @@ def test_unresolved_join_counts_each_missing_depth_once(join_case: str) -> None:
         flag_list = flags.split("|")
         assert set(flag_list) == expected_flags
         assert flag_list.count("missing_depth") == 1
+
+
+@pytest.mark.parametrize("well_order", list(permutations(range(3))))
+@pytest.mark.parametrize("pressure_order", list(permutations(range(3))))
+def test_ambiguous_join_quality_is_invariant_to_input_order(
+    well_order: tuple[int, ...], pressure_order: tuple[int, ...]
+) -> None:
+    """Independent hand count for the synthetic permutation fixture.
+
+    Three pressure rows are unmatched, ambiguous and uniquely matched. Three
+    well rows supply two ambiguous candidates and one control. Each table has
+    3! = 6 orders, giving 6 * 6 = 36 independent comparisons to this oracle.
+    Identifiers numbered from one, year 2000, pressure 85.3 psig, candidate
+    depths 1000/2000 ft and control depth 4000 ft are chosen synthetic inputs.
+
+    Hand count: three observations; one missing join; one ambiguous API/identity;
+    two missing depths (one unmatched + one ambiguous), irrespective of the
+    number of candidates or flags. All rows have county and year; the synthetic
+    county is outside the regional subset, so the remaining counts are zero.
+
+    Atmospheric basis: kansas_kgs/docs/agent-pack.md, section 3, documents the
+    existing, physically UNVERIFIED sea-level assumption of 14.7 psi. Control
+    arithmetic is 85.3 + 14.7 = 100.0 psia; 100.0 / 4000.0 = 0.025 psi/ft.
+    These literal expectations are hand calculations, not builder-derived.
+    """
+    from worldenergydata.kansas_kgs.observations import build_pressure_observations
+
+    api10 = {
+        source_id: f"15000{number:05d}"
+        for number, source_id in enumerate(("unmatched", "ambiguous", "control"), 1)
+    }
+    pressure_rows = pd.DataFrame(
+        [
+            {
+                "source_row_id": source_id,
+                "source_file": "synthetic-pressure",
+                "well_kid": f"{source_id}-source",
+                "api10": api,
+                "county_name": "Synthetic county",
+                "test_year": 2000,
+                "pressure_psig_raw": 85.3,
+            }
+            for source_id, api in api10.items()
+        ]
+    )
+    wells = pd.DataFrame(
+        [
+            {
+                "api10": api10["ambiguous"],
+                "api14": api10["ambiguous"] + "0000",
+                "well_kid": "candidate-a",
+                "reference_depth_ft": 1000.0,
+            },
+            {
+                "api10": api10["ambiguous"],
+                "api14": api10["ambiguous"] + "0001",
+                "well_kid": "candidate-b",
+                "reference_depth_ft": 2000.0,
+            },
+            {
+                "api10": api10["control"],
+                "api14": api10["control"] + "0000",
+                "well_kid": "control-source",
+                "reference_depth_ft": 4000.0,
+            },
+        ]
+    )
+    row_oracle = {
+        "unmatched": {
+            "quality_flags": ("missing_depth", "missing_well_join"),
+            "api14": None,
+            "reference_depth_ft": None,
+            "gradient_psi_ft": None,
+            "is_earliest_observation_for_well": True,
+            "virgin_pressure_proxy_method": "earliest_available_proration_year",
+        },
+        "ambiguous": {
+            "quality_flags": (
+                "ambiguous_api10_join",
+                "ambiguous_identity_for_virgin_proxy",
+                "missing_depth",
+            ),
+            "api14": None,
+            "reference_depth_ft": None,
+            "gradient_psi_ft": None,
+            "is_earliest_observation_for_well": None,
+            "virgin_pressure_proxy_method": None,
+        },
+        "control": {
+            "quality_flags": (),
+            "api14": api10["control"] + "0000",
+            "reference_depth_ft": 4000.0,
+            "gradient_psi_ft": 0.025,
+            "is_earliest_observation_for_well": True,
+            "virgin_pressure_proxy_method": "earliest_available_proration_year",
+        },
+    }
+    quality_oracle = {
+        "row_count": 3,
+        "observation_year_min": 2000,
+        "observation_year_max": 2000,
+        "hugoton_panoma_county_observation_count": 0,
+        "missing_well_join_count": 1,
+        "ambiguous_api10_join_count": 1,
+        "ambiguous_identity_for_virgin_proxy_count": 1,
+        "missing_depth_count": 2,
+        "missing_county_name_count": 0,
+        "missing_test_year_count": 0,
+    }
+
+    result = build_pressure_observations(
+        pressure_rows.iloc[list(pressure_order)].reset_index(drop=True),
+        wells.iloc[list(well_order)].reset_index(drop=True),
+    )
+
+    observations = result.observations.set_index("source_row_id", verify_integrity=True)
+    assert set(observations.index) == set(row_oracle)
+    assert result.quality == quality_oracle
+    assert observations["pressure_psia"].eq(100.0).all()
+    assert observations["atmospheric_pressure_psi"].eq(14.7).all()
+    for source_id, expected in row_oracle.items():
+        row = observations.loc[source_id]
+        for column, value in expected.items():
+            if column == "quality_flags":
+                assert tuple(sorted(filter(None, row[column].split("|")))) == value
+            elif column == "is_earliest_observation_for_well":
+                assert row[column] is value
+            elif value is None:
+                assert pd.isna(row[column])
+            else:
+                assert row[column] == value
 
 
 @pytest.mark.parametrize("blank", ["", "   ", pd.NA])
