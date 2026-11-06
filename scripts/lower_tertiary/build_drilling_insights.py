@@ -13,6 +13,7 @@ milestones give a true zero. This page does not infer rig utilisation or learnin
 from __future__ import annotations
 
 import argparse
+import csv
 import html
 import sys
 from pathlib import Path
@@ -35,6 +36,8 @@ DEFAULT_SOURCE = (
 REPORTS_DIR = PROJECT_ROOT / "reports/lower_tertiary"
 CSV_PATH = REPORTS_DIR / "lt_drilling_insights.csv"
 HTML_PATH = REPORTS_DIR / "drilling_insights.html"
+ARTICLE_COMPARISON = REPORTS_DIR / "wo-april-2026-per-well-dc.md"
+BENCHMARK_CSV = REPORTS_DIR / "lt_well_benchmark_lower_tertiary_2010_latest.csv"
 EM = "—"
 
 # Append one row per issued report change; preserve earlier revision text.
@@ -58,6 +61,11 @@ REVISION_HISTORY = (
         4,
         "2026-10-21",
         "Add sourced WAR limits with a calendar-specific basis; retain the dated intervals and distinguish depth from a duration denominator.",
+    ),
+    (
+        5,
+        "2026-10-22",
+        "Read population counts from the supplied workbook and committed comparison and benchmark tables to prevent stale labels.",
     ),
 )
 
@@ -98,7 +106,14 @@ def compute_stats(df: pd.DataFrame) -> dict:
     valid = df.dropna(subset=["calendar_days"])
     days = valid["calendar_days"]
     lc = valid.dropna(subset=["MAX_WELL_BORE_TVD"])
+    legacy = pd.to_numeric(
+        df.get("DRILLING_DAYS", pd.Series(dtype=float)), errors="coerce"
+    )
+    positive = legacy[legacy > 0]
     return {
+        # Source: issue #1077 population definition; zero/missing rows excluded.
+        "n_legacy_positive": len(positive) if "DRILLING_DAYS" in df else None,
+        "legacy_total": float(positive.sum()) if "DRILLING_DAYS" in df else None,
         "n_wellbores": len(df),
         "n_calendar": len(valid),
         "n_missing": len(df) - len(valid),
@@ -108,6 +123,38 @@ def compute_stats(df: pd.DataFrame) -> dict:
         "per_field": valid.groupby("LEASE_NAME")["calendar_days"]
         .agg(["count", "median", "sum"])
         .reset_index(),
+    }
+
+
+def read_population_counts(
+    article_path: Path = ARTICLE_COMPARISON,
+    benchmark_path: Path = BENCHMARK_CSV,
+) -> dict:
+    """Read saved populations; never infer article membership from workbook rows.
+
+    Sources: the committed per-well reconciliation, Summary vs the article,
+    total row; and the committed producing-well benchmark CSV, one row per well.
+    An absent/ambiguous total is an error, not a guessed population.
+    """
+    header = None
+    totals = []
+    for line in article_path.read_text(encoding="utf-8").splitlines():
+        if not line.startswith("|"):
+            continue
+        cells = [cell.strip().replace("**", "") for cell in line.strip("|").split("|")]
+        if "Bores (WO)" in cells and "D&C (WO)" in cells:
+            header = cells
+        elif header and cells[0] == "Total":
+            totals.append(dict(zip(header, cells, strict=True)))
+    if len(totals) != 1:
+        raise ValueError("Article comparison requires one population total row")
+    total = totals[0]
+    with benchmark_path.open(newline="", encoding="utf-8") as stream:
+        benchmark = list(csv.DictReader(stream))
+    return {
+        "article_bores": int(total["Bores (WO)"].replace(",", "")),
+        "article_days": int(total["D&C (WO)"].replace(",", "")),
+        "benchmark_wells": len(benchmark),
     }
 
 
@@ -210,7 +257,8 @@ def svg_scatter(
     return "".join(parts)
 
 
-def render_html(s: dict, source: Path) -> str:
+def render_html(s: dict, source: Path, population: dict | None = None) -> str:
+    population = read_population_counts() if population is None else population
     lc = s["lc"]
     chart = "<p>No paired dates and TVD available.</p>"
     if not lc.empty:
@@ -265,21 +313,23 @@ th,td {{ text-align:left; padding:8px; border-bottom:1px solid #ccd6df; }}
  are excluded. Missing or reversed dates are not evaluated; same-day dates give
  zero. {s['n_missing']} rows lack an ordered pair; {len(lc)} also have TVD and appear
  below. No positive-duration filter or producing-well filter is applied.</p>
-<p>The historical <b>184</b> figure counted positive legacy DRILLING_DAYS entries
- in the historical 217-wellbore workbook snapshot; the remaining 33 were zero/missing entries.
+<p>The supplied workbook has <b>{_n(s['n_legacy_positive'])}</b> positive legacy
+ DRILLING_DAYS entries among {s['n_wellbores']} named wellbores; the remaining {_n(s['n_wellbores'] - s['n_legacy_positive']) if s['n_legacy_positive'] is not None else 'NOT_EVALUATED'}
+ are zero/missing entries. Legacy counts are NOT_EVALUATED if that column is absent.
  Current population: {s['n_wellbores']} workbook wellbores.
- The historical 11,124-day total mixed milestone spans and WAR-union values and is withdrawn
- as a rig-time claim. The article's <b>211</b> wellbores and 21,944 days cover a
- different development population (excluding Big Foot), and count drilling plus
+ The legacy {_n(s['legacy_total'])}-day total mixed milestone spans and WAR-union values and is withdrawn
+ as a rig-time claim. The article's <b>{population['article_bores']}</b> wellbores and {_n(population['article_days'])} days cover a
+ different development population (the article excludes a development present in the workbook), and count drilling plus
  completion, rather than this page's spud-to-TD interval. Neither the difference
  in counts nor the difference in totals measures missing rig-time or performance.</p>
-<p>Source for the historical counts and definitions:
+<p>Positive legacy counts and totals are read from the supplied workbook; article
+ counts are read from the committed reconciliation total row. Definition context:
 <a href="https://github.com/vamseeachanta/worldenergydata/issues/1062">data-basis investigation</a>;
  source for the article comparison:
 <a href="wo-april-2026-per-well-dc.html">per-well D&amp;C reconciliation, population table</a>.
  Exact row-level membership of the article population is not established by this
  workbook; a paired performance comparison is not evaluated.</p>
-<p>The producing-well benchmark is a third population, restricted by its configured
+<p>The producing-well benchmark has {population['benchmark_wells']} producing wells, a third population, restricted by its configured
  spud window and OGOR-A production. Its <code>spud_to_completion_calendar_days</code>
  ends at the first completion operation, not TD. Its <code>completion_days</code>
  ends at first oil. Neither benchmark interval is rig-time.</p>
