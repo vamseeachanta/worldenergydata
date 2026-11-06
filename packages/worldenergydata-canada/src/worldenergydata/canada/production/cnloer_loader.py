@@ -31,6 +31,7 @@ import json
 import re
 from html.parser import HTMLParser
 from importlib.resources import files
+from math import isfinite
 from pathlib import Path
 from typing import List, Optional
 
@@ -202,6 +203,11 @@ class _ModalTables(HTMLParser):
         self._cell = None
         self._annotation = False
 
+    def close(self):
+        super().close()
+        if self._modal is not None or self._table:
+            raise CnloerParseError("incomplete production modal or table")
+
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
         if tag == "div":
@@ -210,6 +216,8 @@ class _ModalTables(HTMLParser):
             if identifier in {"pshf97", "pshf98", "pshf99", "pshf00", "pshf01"}:
                 if identifier in self.tables:
                     raise CnloerParseError("duplicate production modal")
+                if self._modal is not None:
+                    raise CnloerParseError("incomplete production modal")
                 self._modal = identifier
                 self.tables[identifier] = []
         if self._modal and tag == "table":
@@ -220,8 +228,12 @@ class _ModalTables(HTMLParser):
         if self._table and tag == "sup" and len(self.tables[self._modal]) >= 4:
             self._annotation = True
         if self._table and tag == "tr":
+            if self._row is not None:
+                raise CnloerParseError("incomplete production row")
             self._row = []
         if self._table and tag in {"td", "th"}:
+            if self._cell is not None or self._row is None:
+                raise CnloerParseError("incomplete production cell or row")
             self._cell = []
 
     def handle_data(self, data):
@@ -237,11 +249,17 @@ class _ModalTables(HTMLParser):
             self._cell = None
             self._annotation = False
         if tag == "tr" and self._row is not None:
+            if self._cell is not None:
+                raise CnloerParseError("incomplete production cell")
             self.tables[self._modal].append(self._row)
             self._row = None
         if tag == "table":
+            if self._row is not None:
+                raise CnloerParseError("incomplete production row")
             self._table = False
         if tag == "div" and self._divs:
+            if self._table and self._divs[-1] != self._modal:
+                raise CnloerParseError("incomplete production table")
             self._modal = self._divs.pop()
 
 
@@ -250,12 +268,21 @@ def _modal_number(cell: str) -> str:
     value = cell.strip().replace("\xa0", " ")
     if not re.fullmatch(r"(?:\d+|\d{1,3}(?:[ ,]\d{3})+)(?:\.\d+)?", value):
         raise CnloerParseError("malformed monthly production value")
-    return value.replace(" ", "").replace(",", "")
+    normalized = value.replace(" ", "").replace(",", "")
+    if not isfinite(float(normalized)):
+        raise CnloerParseError("nonfinite monthly production value")
+    return normalized
 
 
 def _validate_modal_headers(rows, year):
     if len(rows) < 4 or rows[1] != ["Oil", "Gas", "Water"]:
         raise CnloerParseError("unexpected production columns")
+    # C-NLOER Statistical Information, pshf97–pshf01 header rows,
+    # https://www.cnloer.ca/information/statistics/ (opened 2026-10-19).
+    grouping = [" ".join(cell.split()) for cell in rows[0][2:]]
+    details = [" ".join(cell.split()) for cell in rows[3]]
+    if grouping != ["Production", "Amendment Date*"] or details != ["Monthly Details"]:
+        raise CnloerParseError("unexpected production section header")
     if [re.sub(r"\s+", "", c) for c in rows[2]] != ["m3", "103m3", "m3"]:
         raise CnloerParseError("unsupported production units")
     expected_header = ["Year", "Month"] if year < 2000 else ["Year/Month", "Reservoir"]
@@ -344,7 +371,11 @@ def parse_cnloer_production_html(html: str, *, field_name: str) -> pd.DataFrame:
                 name for name, number in _MONTHS.items() if number == int(month)
             )
             lines.append(f"{name} {rest}")
-    return parse_cnloer_production_text("\n".join(lines), field_name=field_name)
+    out = parse_cnloer_production_text("\n".join(lines), field_name=field_name)
+    volumes = out[["oil_bbl", "gas_mcf", "water_bbl"]]
+    if not all(isfinite(value) for value in volumes.to_numpy().flat):
+        raise CnloerParseError("nonfinite converted production volume")
+    return out
 
 
 class CnloerProductionLoader:

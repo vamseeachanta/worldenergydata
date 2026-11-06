@@ -109,7 +109,8 @@ _INCIDENTS = [
         "year": 2018,
         "pipeline_type": "gas_transmission",
         "defect_type": "corrosion",
-        "depth_pct_wall": 82.0,
+        # Synthetic boundary case: ORNL/TM-2019/1192 (2019), section 2.1.1.
+        "depth_pct_wall": 80.0,
         "length_mm": 300.0,
         "pipe_od_mm": 323.85,
         "wall_thickness_mm": 9.53,

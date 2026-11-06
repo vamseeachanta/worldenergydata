@@ -1,0 +1,102 @@
+{
+  "public_example": {
+    "schema": {
+      "type": "number",
+      "minimum": 0,
+      "exclusiveMaximum": 100
+    },
+    "cases": [
+      {
+        "value": -1,
+        "reference_accepted": false
+      },
+      {
+        "value": 0,
+        "reference_accepted": true
+      },
+      {
+        "value": 10,
+        "reference_accepted": true
+      },
+      {
+        "value": 99,
+        "reference_accepted": true
+      },
+      {
+        "value": 100,
+        "reference_accepted": false
+      },
+      {
+        "value": 101,
+        "reference_accepted": false
+      }
+    ]
+  },
+  "sources": [
+    {
+      "title": "Understanding JSON Schema: Numeric types, Range example",
+      "edition": "Living documentation; retrieved as recorded",
+      "clauses": "Range",
+      "url": "https://json-schema.org/understanding-json-schema/reference/numeric",
+      "retrieved_at": "2026-10-22T04:50:16Z",
+      "http_status": 200,
+      "response_sha256": "4c4b3bb66d677f1fdb9f1a49e052b9555bd6a647d51680072ba702fff5cec496"
+    },
+    {
+      "title": "JSON Schema Validation: A Vocabulary for Structural Validation of JSON",
+      "edition": "Draft 2020-12",
+      "clauses": "6.2.2 maximum; 6.2.3 exclusiveMaximum; 6.2.4 minimum",
+      "url": "https://json-schema.org/draft/2020-12/json-schema-validation",
+      "retrieved_at": "2026-10-22T04:50:46Z",
+      "http_status": 200,
+      "response_sha256": "09a0233beae9cbde4469b96699c05a45262a4a22cd9f442d6a30763c051a23ec"
+    }
+  ],
+  "existing_tests": {
+    "passed": 398,
+    "failed": 0,
+    "command": "PYTHONPATH=src uv run --no-project --with pytest --with 'pandas<3' --with PyYAML --with pytest-asyncio python -m pytest --noconftest tests/unit/validation tests/unit/test_validation_framework.py tests/test_validation_framework.py -q -rA -p no:cacheprovider -o addopts='' --basetemp=$TMPDIR/validation-tests",
+    "files": [
+      {
+        "path": "tests/test_validation_framework.py",
+        "passed": 18,
+        "sha256": "9e582772a334fecd896c1bf93d63b737c454f488e9f40a513fc3adca7428a343"
+      },
+      {
+        "path": "tests/unit/test_validation_framework.py",
+        "passed": 18,
+        "sha256": "a1a2e58f6a23d85df2d3f568539e478ead96cfc8760756bc65e2cd0cb1af82f9"
+      },
+      {
+        "path": "tests/unit/validation/test_base.py",
+        "passed": 65,
+        "sha256": "56543e439ce85510a37c8bdfaee66d1dbdaafab81e7ef1d604cc6fdc74949e7d"
+      },
+      {
+        "path": "tests/unit/validation/test_exceptions.py",
+        "passed": 21,
+        "sha256": "56528f45094b6c2a7e367d7825fe06f81dbe493e16aa6232478add1865275374"
+      },
+      {
+        "path": "tests/unit/validation/test_rules.py",
+        "passed": 123,
+        "sha256": "651acc4554b1355bd061bca08cd9e60a93de31eb9054ed6eace0ec8cc9cbf42f"
+      },
+      {
+        "path": "tests/unit/validation/test_schema.py",
+        "passed": 31,
+        "sha256": "1f7b51df21e29ca172803edd4bdcaea0a263a99c526bd4ef3292562b241299e9"
+      },
+      {
+        "path": "tests/unit/validation/test_schemas.py",
+        "passed": 65,
+        "sha256": "86482cc95ea2015b242f8c5b036c6644219549a6c78ff7440d2f2b1664ef0e47"
+      },
+      {
+        "path": "tests/unit/validation/test_validators.py",
+        "passed": 57,
+        "sha256": "dd0ccdf6fcb9c693a4d70e716f4b76f8bc5c80258606f11f62e58d17eb6a29e1"
+      }
+    ]
+  }
+}

@@ -2,6 +2,9 @@
 # -----------------------------------------
 # Controls which data refresh jobs run, on what schedule, and how failures
 # are monitored and reported.
+# Relative data paths follow WORLDENERGYDATA_DATA_DIR (or WED_DATA_ROOT)
+# when set. Explicit absolute output_dir paths take precedence.
+# Successful refreshes retain timestamped copies under output_dir/runs/.
 
 jobs:
   - name: bsee_refresh
