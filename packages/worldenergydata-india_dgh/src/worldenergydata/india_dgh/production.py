@@ -63,9 +63,9 @@ CRUDE_ROWS = {
     "पी.एस.यू._कुल": ("PSU", "subtotal"),
     "totalcrudeoil": ("TOTAL", "total"),
     "कुलकच्चातेल": ("TOTAL", "total"),
-    "condensate": ("Condensate", "condensate"),
-    "condensate*": ("Condensate", "condensate"),
-    "संघनन(condensate)*": ("Condensate", "condensate"),
+    "condensate": ("all", "condensate"),
+    "condensate*": ("all", "condensate"),
+    "संघनन(condensate)*": ("all", "condensate"),
 }
 COLUMNS = [
     "period",
@@ -92,8 +92,12 @@ def _label(value) -> str:
 
 
 def _fiscal_year(text: str) -> str | None:
-    match = re.search(r"(\d{4})\s*-\s*(\d{2})", text)
-    return f"{match.group(1)}-{match.group(2)}" if match else None
+    # Exclude four-digit end years, longer numbers and ISO date fragments.
+    for match in re.finditer(r"(?<![\d-])(\d{4})\s*-\s*(\d{2})(?!\d|-\d)", text):
+        start, end = match.groups()
+        if int(end) == (int(start) + 1) % 100:
+            return f"{start}-{end}"
+    return None
 
 
 def _period_month(fiscal_year: str, month_index: int) -> str:
@@ -376,8 +380,17 @@ def read_sheets(path: Path, month_wise_only: bool = False) -> list[pd.DataFrame]
 
 
 def combine(frames: list[pd.DataFrame]) -> pd.DataFrame:
-    """Concatenate in source order; a later source supersedes an earlier one."""
-    frame = pd.concat(frames, ignore_index=True)
+    """A later input frame replaces each complete (period, product) group.
+
+    Other periods and products retain their own source. Replacing whole groups
+    prevents an omitted component from silently surviving from an older source.
+    """
+    frame = pd.concat(
+        [part.assign(_source_order=index) for index, part in enumerate(frames)],
+        ignore_index=True,
+    )
+    latest = frame.groupby(["period", "product"])["_source_order"].transform("max")
+    frame = frame.loc[frame["_source_order"] == latest].drop(columns="_source_order")
     key = ["period", "product", "measure", "company_group", "location", "state"]
     return (
         frame.drop_duplicates(key, keep="last").sort_values(key).reset_index(drop=True)

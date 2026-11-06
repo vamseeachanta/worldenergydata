@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "worldenergydata-india_dgh"
 version = "0.1.0"
-description = "India upstream data: DGH bid rounds and awarded blocks, PPAC monthly production, sedimentary basins."
+description = "India upstream data: DGH bid rounds and awarded blocks, PPAC historical crude, condensate and gas production, sedimentary basins."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }

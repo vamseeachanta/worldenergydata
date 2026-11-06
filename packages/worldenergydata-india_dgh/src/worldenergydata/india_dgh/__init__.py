@@ -1,16 +1,16 @@
 # ABOUTME: India upstream data from DGH (bid rounds, awarded blocks, basins) and PPAC
-# ABOUTME: (monthly crude and gas production by company and onshore/offshore).
+# ABOUTME: (annual and limited monthly crude, condensate, and monthly gas production).
 
 """India upstream module for worldenergydata.
 
 Three normalized tables ship with the package, each derived from a public
 government file whose URL and SHA-256 are recorded in ``data/source_manifest.json``:
 
-* ``load_awarded_blocks()`` - OALP and DSF blocks awarded by the Directorate
+* ``load_awarded_blocks()`` - OALP and special CBM blocks awarded by the Directorate
   General of Hydrocarbons (DGH);
-* ``load_production()`` - crude oil and natural gas production by
-  company group and onshore/offshore, from the Petroleum Planning & Analysis
-  Cell (PPAC);
+* ``load_production()`` - annual and April-May 2022 crude by company group,
+  condensate, and monthly gas by state/onshore/offshore, from the Petroleum
+  Planning & Analysis Cell (PPAC);
 * ``load_basins()`` - the sedimentary basins of India with DGH category.
 
 Unknown values stay missing (NaN); they are never imputed as zero. The National

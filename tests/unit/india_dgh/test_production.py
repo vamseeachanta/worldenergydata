@@ -286,3 +286,105 @@ def test_gas_onshore_reconciliation_precision_boundary(steps, accepted):
     else:
         with pytest.raises(ValueError, match="Onshore Total"):
             parse_ppac_gas_sheet(sheet, "s")
+
+
+def test_condensate_uses_all_company_group_and_is_not_in_crude_total():
+    sheet = monthly_sheet()
+    sheet.iloc[10, 1] = 9.0  # Deliberately larger than crude; reconciled separately.
+    frame = parse_ppac_sheet(sheet, "crude_oil", "s")
+    condensate = frame[frame["product"] == "condensate"]
+    assert condensate.company_group.tolist() == ["all"]
+    assert condensate.value.tolist() == [9.0]
+
+
+def test_shipped_condensate_coverage_and_company_group():
+    frame = load_production()
+    condensate = frame[frame["product"] == "condensate"]
+    assert len(condensate) == 18
+    assert set(condensate.company_group) == {"all"}
+    annual = condensate[condensate.period_type == "fiscal_year"]
+    assert annual.period.tolist() == [
+        f"{year}-{(year + 1) % 100:02d}" for year in range(2006, 2022)
+    ]
+    assert set(condensate[condensate.period_type == "month"].period) == {
+        "2022-04",
+        "2022-05",
+    }
+
+
+@pytest.mark.parametrize(
+    "text, expected",
+    [
+        ("FY 2021-22 (P)", "2021-22"),
+        ("Since 1998 -99", "1998-99"),
+        ("1999-00", "1999-00"),
+        ("2021-2022", None),
+        ("2022-06-26", None),
+        ("2001-02-03", None),
+        ("12021-22", None),
+        ("2021-23", None),
+        ("Updated 2022-06-26; FY 2022-23", "2022-23"),
+        ("2021-2022; FY 2022-23", "2022-23"),
+    ],
+)
+def test_fiscal_year_rejects_dates_and_nonconsecutive_years(text, expected):
+    from worldenergydata.india_dgh.production import _fiscal_year
+
+    assert _fiscal_year(text) == expected
+
+
+def test_update_date_before_fiscal_year_does_not_shift_months():
+    sheet = monthly_sheet(title="Updated 2022-06-26; fiscal year 2022-23 (P)")
+    frame = parse_ppac_sheet(sheet, "crude_oil", "s")
+    assert set(frame.period) == {"2022-04"}
+    assert set(frame.fiscal_year) == {"2022-23"}
+
+
+@pytest.mark.parametrize("order", [("old", "new"), ("new", "old")])
+def test_combine_supersedes_whole_period_product_groups(order):
+    from worldenergydata.india_dgh.production import combine
+
+    old = pd.DataFrame(
+        [
+            {
+                "period": "2021-04",
+                "product": "natural_gas",
+                "measure": "gross_production",
+                "company_group": "all",
+                "location": "onshore",
+                "state": state,
+                "value": value,
+                "source_id": "old",
+            }
+            for state, value in [("Assam", 1.0), ("Gujarat", 2.0)]
+        ]
+    )
+    # A later edition omits one state and changes the retained value.
+    new = old.iloc[:1].copy().assign(source_id="new", value=3.0)
+    # Other periods and products from the earlier input must remain.
+    other_period = old.iloc[:1].copy().assign(period="2021-05")
+    other_product = old.iloc[:1].copy().assign(product="crude_oil")
+    frames = {"old": pd.concat([old, other_period, other_product]), "new": new}
+    combined = combine([frames[name] for name in order])
+    target = combined[
+        (combined.period == "2021-04") & (combined["product"] == "natural_gas")
+    ]
+    expected = frames[order[-1]]
+    expected = expected[
+        (expected.period == "2021-04") & (expected["product"] == "natural_gas")
+    ]
+    assert target.state.tolist() == expected.state.tolist()
+    assert target.value.tolist() == expected.value.tolist()
+    assert set(target.source_id) == {order[-1]}
+    assert len(combined[combined.period == "2021-05"]) == 1
+    assert len(combined[combined["product"] == "crude_oil"]) == 1
+
+
+def test_build_uses_only_crude_sources_that_contribute_rows():
+    import runpy
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[3]
+    script = runpy.run_path(str(root / "scripts/india_dgh/build_tables.py"))
+    assert "ppac_crude_annual_2019" not in script["CRUDE"]
+    assert set(script["CRUDE"]) <= set(load_production().source_id)

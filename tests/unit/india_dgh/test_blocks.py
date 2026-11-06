@@ -7,6 +7,7 @@ wrapped over several text rows. Synthetic rows below copy those layouts.
 """
 
 import math
+import re
 
 import pandas as pd
 import pytest
@@ -241,3 +242,52 @@ def test_area_has_no_unsupported_upper_ceiling(value):
 def test_area_must_be_positive_and_finite(value):
     with pytest.raises(ValueError, match="area"):
         parse_area(value)
+
+
+def test_offshore_description_is_not_an_indian_state():
+    from worldenergydata.india_dgh.blocks import RoundSource, _normalize
+
+    row = _normalize(
+        {
+            "block_name": "KG-UDWHP-2022/1",
+            "description": "Ultra Deep Water/KG Offshore/Eastern Offshore",
+        },
+        RoundSource("OALP-VIII", "OALP", "dgh_oalp8_blocks_awarded"),
+        1,
+    )
+    assert row["state"] is None
+    assert row["offshore_region"] == "Eastern Offshore"
+
+
+def test_shipped_offshore_blocks_have_no_state(blocks):
+    # No state is inferred for offshore acreage, including coastal region text.
+    offshore = blocks[blocks.acreage_type != "onland"]
+    assert len(offshore) > 0
+    assert offshore.state.isna().all()
+    assert blocks.loc[blocks.acreage_type == "onland", "offshore_region"].isna().all()
+
+
+def test_round_viii_page_two_retains_published_region_anomaly():
+    """DGH round-VIII award list, page 2 prints Eastern Offshore for KK deep water."""
+    from pathlib import Path
+
+    import pdfplumber
+
+    from worldenergydata.india_dgh.blocks import RoundSource, parse_round_pdf
+
+    root = Path(__file__).resolve().parents[3]
+    path = root / "data/modules/india_dgh/raw/oalp8_blocks_awarded.pdf"
+    with pdfplumber.open(path) as pdf:
+        text = pdf.pages[1].extract_text()
+        assert "KK-DWHP-2022/1" in text
+        assert re.search(r"KK-DWHP-2022/1[^\n]*\nOffshore/Eastern\nOffshore", text)
+    frame = parse_round_pdf(
+        path, RoundSource("OALP-VIII", "OALP", "dgh_oalp8_blocks_awarded")
+    ).set_index("block_name")
+    row = frame.loc["KK-DWHP-2022/1"]
+    assert row.source_page == 2
+    assert pd.isna(row.state)
+    assert row.offshore_region == "Eastern Offshore"
+    shipped = load_awarded_blocks().set_index("block_name")
+    assert shipped.loc["KK-DWHP-2022/1", "offshore_region"] == "Eastern Offshore"
+    assert shipped.loc["KK-OSHP-2022/1", "offshore_region"] == "Western Offshore"

@@ -52,9 +52,8 @@ ROUNDS = [
 OFFER_AREAS = [RoundSource("OALP-IX", "OALP", "dgh_oalp9_blocks_on_offer")]
 BASIN_PAGE = "dgh_basins_and_categories"
 # Listed oldest capture first: a later capture supersedes an earlier one for the
-# same period (provisional years are revised in later editions).
+# same (period, product) group (provisional years are revised in later editions).
 CRUDE = [
-    "ppac_crude_annual_2019",
     "ppac_crude_annual_hindi_2022",
     "ppac_crude_current_2022",
 ]

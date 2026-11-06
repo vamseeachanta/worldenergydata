@@ -23,27 +23,27 @@ period,period_type,fiscal_year,product,measure,company_group,location,state,valu
 2005-06,fiscal_year,2005-06,crude_oil,production,JVC/Private,all,all,4.552233999999999,million_tonnes,False,ppac_crude_annual_hindi_2022
 2005-06,fiscal_year,2005-06,crude_oil,production,OIL,all,all,3.2359,million_tonnes,False,ppac_crude_annual_hindi_2022
 2005-06,fiscal_year,2005-06,crude_oil,production,ONGC,all,all,24.412291,million_tonnes,False,ppac_crude_annual_hindi_2022
-2006-07,fiscal_year,2006-07,condensate,production,Condensate,all,all,2.013239,million_tonnes,False,ppac_crude_annual_hindi_2022
+2006-07,fiscal_year,2006-07,condensate,production,all,all,all,2.013239,million_tonnes,False,ppac_crude_annual_hindi_2022
 2006-07,fiscal_year,2006-07,crude_oil,production,JVC/Private,all,all,4.696687,million_tonnes,False,ppac_crude_annual_hindi_2022
 2006-07,fiscal_year,2006-07,crude_oil,production,OIL,all,all,3.1088,million_tonnes,False,ppac_crude_annual_hindi_2022
 2006-07,fiscal_year,2006-07,crude_oil,production,ONGC,all,all,24.161391000000002,million_tonnes,False,ppac_crude_annual_hindi_2022
-2007-08,fiscal_year,2007-08,condensate,production,Condensate,all,all,2.2478590000000005,million_tonnes,False,ppac_crude_annual_hindi_2022
+2007-08,fiscal_year,2007-08,condensate,production,all,all,all,2.2478590000000005,million_tonnes,False,ppac_crude_annual_hindi_2022
 2007-08,fiscal_year,2007-08,crude_oil,production,JVC/Private,all,all,4.836046000000001,million_tonnes,False,ppac_crude_annual_hindi_2022
 2007-08,fiscal_year,2007-08,crude_oil,production,OIL,all,all,3.0949999999999998,million_tonnes,False,ppac_crude_annual_hindi_2022
 2007-08,fiscal_year,2007-08,crude_oil,production,ONGC,all,all,23.935774000000002,million_tonnes,False,ppac_crude_annual_hindi_2022
-2008-09,fiscal_year,2008-09,condensate,production,Condensate,all,all,2.1254509999999995,million_tonnes,False,ppac_crude_annual_hindi_2022
+2008-09,fiscal_year,2008-09,condensate,production,all,all,all,2.1254509999999995,million_tonnes,False,ppac_crude_annual_hindi_2022
 2008-09,fiscal_year,2008-09,crude_oil,production,JVC/Private,all,all,4.383257,million_tonnes,False,ppac_crude_annual_hindi_2022
 2008-09,fiscal_year,2008-09,crude_oil,production,OIL,all,all,3.4556000000000004,million_tonnes,False,ppac_crude_annual_hindi_2022
 2008-09,fiscal_year,2008-09,crude_oil,production,ONGC,all,all,23.361,million_tonnes,False,ppac_crude_annual_hindi_2022
-2009-10,fiscal_year,2009-10,condensate,production,Condensate,all,all,2.0360299999999993,million_tonnes,False,ppac_crude_annual_hindi_2022
+2009-10,fiscal_year,2009-10,condensate,production,all,all,all,2.0360299999999993,million_tonnes,False,ppac_crude_annual_hindi_2022
 2009-10,fiscal_year,2009-10,crude_oil,production,JVC/Private,all,all,5.059774999999999,million_tonnes,False,ppac_crude_annual_hindi_2022
 2009-10,fiscal_year,2009-10,crude_oil,production,OIL,all,all,3.5158,million_tonnes,False,ppac_crude_annual_hindi_2022
 2009-10,fiscal_year,2009-10,crude_oil,production,ONGC,all,all,22.786835000000007,million_tonnes,False,ppac_crude_annual_hindi_2022
-2010-11,fiscal_year,2010-11,condensate,production,Condensate,all,all,2.1024589999999996,million_tonnes,False,ppac_crude_annual_hindi_2022
+2010-11,fiscal_year,2010-11,condensate,production,all,all,all,2.1024589999999996,million_tonnes,False,ppac_crude_annual_hindi_2022
 2010-11,fiscal_year,2010-11,crude_oil,production,JVC/Private,all,all,9.512584,million_tonnes,False,ppac_crude_annual_hindi_2022
 2010-11,fiscal_year,2010-11,crude_oil,production,OIL,all,all,3.5538999999999996,million_tonnes,False,ppac_crude_annual_hindi_2022
 2010-11,fiscal_year,2010-11,crude_oil,production,ONGC,all,all,22.524875,million_tonnes,False,ppac_crude_annual_hindi_2022
-2011-12,fiscal_year,2011-12,condensate,production,Condensate,all,all,2.1558263970000002,million_tonnes,False,ppac_crude_annual_hindi_2022
+2011-12,fiscal_year,2011-12,condensate,production,all,all,all,2.1558263970000002,million_tonnes,False,ppac_crude_annual_hindi_2022
 2011-12,fiscal_year,2011-12,crude_oil,production,JVC/Private,all,all,10.323606737,million_tonnes,False,ppac_crude_annual_hindi_2022
 2011-12,fiscal_year,2011-12,crude_oil,production,OIL,all,all,3.842834,million_tonnes,False,ppac_crude_annual_hindi_2022
 2011-12,fiscal_year,2011-12,crude_oil,production,ONGC,all,all,21.75992297568518,million_tonnes,False,ppac_crude_annual_hindi_2022
@@ -128,7 +128,7 @@ period,period_type,fiscal_year,product,measure,company_group,location,state,valu
 2012-12,month,2012-13,natural_gas,gross_production,all,onshore,Tripura,56.000351,million_scm,False,ppac_gas_historical_2020
 2012-12,month,2012-13,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",10.171137,million_scm,False,ppac_gas_historical_2020
 2012-12,month,2012-13,natural_gas,net_production,all,all,all,3262.5655423701996,million_scm,False,ppac_gas_historical_2020
-2012-13,fiscal_year,2012-13,condensate,production,Condensate,all,all,2.201066124,million_tonnes,False,ppac_crude_annual_hindi_2022
+2012-13,fiscal_year,2012-13,condensate,production,all,all,all,2.201066124,million_tonnes,False,ppac_crude_annual_hindi_2022
 2012-13,fiscal_year,2012-13,crude_oil,production,JVC/Private,all,all,11.51504952,million_tonnes,False,ppac_crude_annual_hindi_2022
 2012-13,fiscal_year,2012-13,crude_oil,production,OIL,all,all,3.7166900000000007,million_tonnes,False,ppac_crude_annual_hindi_2022
 2012-13,fiscal_year,2012-13,crude_oil,production,ONGC,all,all,20.486279349466,million_tonnes,False,ppac_crude_annual_hindi_2022
@@ -240,7 +240,7 @@ period,period_type,fiscal_year,product,measure,company_group,location,state,valu
 2013-12,month,2013-14,natural_gas,gross_production,all,onshore,Tripura,68.15168500000001,million_scm,False,ppac_gas_historical_2020
 2013-12,month,2013-14,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",16.588135,million_scm,False,ppac_gas_historical_2020
 2013-12,month,2013-14,natural_gas,net_production,all,all,all,2931.337141245431,million_scm,False,ppac_gas_historical_2020
-2013-14,fiscal_year,2013-14,condensate,production,Condensate,all,all,1.922972597424135,million_tonnes,False,ppac_crude_annual_hindi_2022
+2013-14,fiscal_year,2013-14,condensate,production,all,all,all,1.922972597424135,million_tonnes,False,ppac_crude_annual_hindi_2022
 2013-14,fiscal_year,2013-14,crude_oil,production,JVC/Private,all,all,11.959123560775,million_tonnes,False,ppac_crude_annual_hindi_2022
 2013-14,fiscal_year,2013-14,crude_oil,production,OIL,all,all,3.489597,million_tonnes,False,ppac_crude_annual_hindi_2022
 2013-14,fiscal_year,2013-14,crude_oil,production,ONGC,all,all,20.440490561032004,million_tonnes,False,ppac_crude_annual_hindi_2022
@@ -352,7 +352,7 @@ period,period_type,fiscal_year,product,measure,company_group,location,state,valu
 2014-12,month,2014-15,natural_gas,gross_production,all,onshore,Tripura,101.479179,million_scm,False,ppac_gas_historical_2020
 2014-12,month,2014-15,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",20.788686000000002,million_scm,False,ppac_gas_historical_2020
 2014-12,month,2014-15,natural_gas,net_production,all,all,all,2826.4244000211834,million_scm,False,ppac_gas_historical_2020
-2014-15,fiscal_year,2014-15,condensate,production,Condensate,all,all,1.570444142546,million_tonnes,False,ppac_crude_annual_hindi_2022
+2014-15,fiscal_year,2014-15,condensate,production,all,all,all,1.570444142546,million_tonnes,False,ppac_crude_annual_hindi_2022
 2014-15,fiscal_year,2014-15,crude_oil,production,JVC/Private,all,all,11.651874209750998,million_tonnes,False,ppac_crude_annual_hindi_2022
 2014-15,fiscal_year,2014-15,crude_oil,production,OIL,all,all,3.419971,million_tonnes,False,ppac_crude_annual_hindi_2022
 2014-15,fiscal_year,2014-15,crude_oil,production,ONGC,all,all,20.826798854247997,million_tonnes,False,ppac_crude_annual_hindi_2022
@@ -464,7 +464,7 @@ period,period_type,fiscal_year,product,measure,company_group,location,state,valu
 2015-12,month,2015-16,natural_gas,gross_production,all,onshore,Tripura,109.50700400000001,million_scm,False,ppac_gas_historical_2020
 2015-12,month,2015-16,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",33.337615,million_scm,False,ppac_gas_historical_2020
 2015-12,month,2015-16,natural_gas,net_production,all,all,all,2650.1090007396006,million_scm,False,ppac_gas_historical_2020
-2015-16,fiscal_year,2015-16,condensate,production,Condensate,all,all,1.4420871966755002,million_tonnes,False,ppac_crude_annual_hindi_2022
+2015-16,fiscal_year,2015-16,condensate,production,all,all,all,1.4420871966755002,million_tonnes,False,ppac_crude_annual_hindi_2022
 2015-16,fiscal_year,2015-16,crude_oil,production,JVC/Private,all,all,11.192952850355999,million_tonnes,False,ppac_crude_annual_hindi_2022
 2015-16,fiscal_year,2015-16,crude_oil,production,OIL,all,all,3.226036,million_tonnes,False,ppac_crude_annual_hindi_2022
 2015-16,fiscal_year,2015-16,crude_oil,production,ONGC,all,all,21.080675424459493,million_tonnes,False,ppac_crude_annual_hindi_2022
@@ -576,7 +576,7 @@ period,period_type,fiscal_year,product,measure,company_group,location,state,valu
 2016-12,month,2016-17,natural_gas,gross_production,all,onshore,Tripura,114.414293,million_scm,False,ppac_gas_historical_2020
 2016-12,month,2016-17,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",53.134530551000005,million_scm,False,ppac_gas_historical_2020
 2016-12,month,2016-17,natural_gas,net_production,all,all,all,2642.6136143897597,million_scm,False,ppac_gas_historical_2020
-2016-17,fiscal_year,2016-17,condensate,production,Condensate,all,all,1.507728335844,million_tonnes,False,ppac_crude_annual_hindi_2022
+2016-17,fiscal_year,2016-17,condensate,production,all,all,all,1.507728335844,million_tonnes,False,ppac_crude_annual_hindi_2022
 2016-17,fiscal_year,2016-17,crude_oil,production,JVC/Private,all,all,10.387998529099999,million_tonnes,False,ppac_crude_annual_hindi_2022
 2016-17,fiscal_year,2016-17,crude_oil,production,OIL,all,all,3.2580290000000005,million_tonnes,False,ppac_crude_annual_hindi_2022
 2016-17,fiscal_year,2016-17,crude_oil,production,ONGC,all,all,20.855072816544006,million_tonnes,False,ppac_crude_annual_hindi_2022
@@ -688,7 +688,7 @@ period,period_type,fiscal_year,product,measure,company_group,location,state,valu
 2017-12,month,2017-18,natural_gas,gross_production,all,onshore,Tripura,122.89579999999998,million_scm,False,ppac_gas_historical_2020
 2017-12,month,2017-18,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",70.796231615,million_scm,False,ppac_gas_historical_2020
 2017-12,month,2017-18,natural_gas,net_production,all,all,all,2673.3645637883665,million_scm,False,ppac_gas_historical_2020
-2017-18,fiscal_year,2017-18,condensate,production,Condensate,all,all,1.6390755063,million_tonnes,False,ppac_crude_annual_hindi_2022
+2017-18,fiscal_year,2017-18,condensate,production,all,all,all,1.6390755063,million_tonnes,False,ppac_crude_annual_hindi_2022
 2017-18,fiscal_year,2017-18,crude_oil,production,JVC/Private,all,all,9.873952794500003,million_tonnes,False,ppac_crude_annual_hindi_2022
 2017-18,fiscal_year,2017-18,crude_oil,production,OIL,all,all,3.3762771370000006,million_tonnes,False,ppac_crude_annual_hindi_2022
 2017-18,fiscal_year,2017-18,crude_oil,production,ONGC,all,all,20.795025437491,million_tonnes,False,ppac_crude_annual_hindi_2022
@@ -800,7 +800,7 @@ period,period_type,fiscal_year,product,measure,company_group,location,state,valu
 2018-12,month,2018-19,natural_gas,gross_production,all,onshore,Tripura,142.691618,million_scm,False,ppac_gas_historical_2020
 2018-12,month,2018-19,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",63.383,million_scm,False,ppac_gas_historical_2020
 2018-12,month,2018-19,natural_gas,net_production,all,all,all,2795.242771,million_scm,False,ppac_gas_historical_2020
-2018-19,fiscal_year,2018-19,condensate,production,Condensate,all,all,1.7288047691,million_tonnes,False,ppac_crude_annual_hindi_2022
+2018-19,fiscal_year,2018-19,condensate,production,all,all,all,1.7288047691,million_tonnes,False,ppac_crude_annual_hindi_2022
 2018-19,fiscal_year,2018-19,crude_oil,production,JVC/Private,all,all,9.62430037658,million_tonnes,False,ppac_crude_annual_hindi_2022
 2018-19,fiscal_year,2018-19,crude_oil,production,OIL,all,all,3.293133329,million_tonnes,False,ppac_crude_annual_hindi_2022
 2018-19,fiscal_year,2018-19,crude_oil,production,ONGC,all,all,19.557027609255336,million_tonnes,False,ppac_crude_annual_hindi_2022
@@ -831,11 +831,11 @@ period,period_type,fiscal_year,product,measure,company_group,location,state,valu
 2019-03,month,2018-19,natural_gas,gross_production,all,onshore,Tripura,145.375959,million_scm,False,ppac_gas_historical_2020
 2019-03,month,2018-19,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",58.1,million_scm,False,ppac_gas_historical_2020
 2019-03,month,2018-19,natural_gas,net_production,all,all,all,2741.480383139,million_scm,False,ppac_gas_historical_2020
-2019-20,fiscal_year,2019-20,condensate,production,Condensate,all,all,1.645941,million_tonnes,False,ppac_crude_annual_hindi_2022
+2019-20,fiscal_year,2019-20,condensate,production,all,all,all,1.645941,million_tonnes,False,ppac_crude_annual_hindi_2022
 2019-20,fiscal_year,2019-20,crude_oil,production,JVC/Private,all,all,8.173136,million_tonnes,False,ppac_crude_annual_hindi_2022
 2019-20,fiscal_year,2019-20,crude_oil,production,OIL,all,all,3.106612,million_tonnes,False,ppac_crude_annual_hindi_2022
 2019-20,fiscal_year,2019-20,crude_oil,production,ONGC,all,all,19.243579,million_tonnes,False,ppac_crude_annual_hindi_2022
-2020-21,fiscal_year,2020-21,condensate,production,Condensate,all,all,1.3727421100000003,million_tonnes,False,ppac_crude_annual_hindi_2022
+2020-21,fiscal_year,2020-21,condensate,production,all,all,all,1.3727421100000003,million_tonnes,False,ppac_crude_annual_hindi_2022
 2020-21,fiscal_year,2020-21,crude_oil,production,JVC/Private,all,all,7.10289,million_tonnes,False,ppac_crude_annual_hindi_2022
 2020-21,fiscal_year,2020-21,crude_oil,production,OIL,all,all,2.9373658704000003,million_tonnes,False,ppac_crude_annual_hindi_2022
 2020-21,fiscal_year,2020-21,crude_oil,production,ONGC,all,all,19.081097825209998,million_tonnes,False,ppac_crude_annual_hindi_2022
@@ -920,7 +920,7 @@ period,period_type,fiscal_year,product,measure,company_group,location,state,valu
 2021-12,month,2021-22,natural_gas,gross_production,all,onshore,Tripura,140.031009,million_scm,True,ppac_gas_current_2022
 2021-12,month,2021-22,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",58.131,million_scm,True,ppac_gas_current_2022
 2021-12,month,2021-22,natural_gas,net_production,all,all,all,2814.426638479,million_scm,True,ppac_gas_current_2022
-2021-22,fiscal_year,2021-22,condensate,production,Condensate,all,all,1.2407793409999999,million_tonnes,True,ppac_crude_annual_hindi_2022
+2021-22,fiscal_year,2021-22,condensate,production,all,all,all,1.2407793409999999,million_tonnes,True,ppac_crude_annual_hindi_2022
 2021-22,fiscal_year,2021-22,crude_oil,production,JVC/Private,all,all,6.951056999999999,million_tonnes,True,ppac_crude_annual_hindi_2022
 2021-22,fiscal_year,2021-22,crude_oil,production,OIL,all,all,2.986881395,million_tonnes,True,ppac_crude_annual_hindi_2022
 2021-22,fiscal_year,2021-22,crude_oil,production,ONGC,all,all,18.509758899322,million_tonnes,True,ppac_crude_annual_hindi_2022
@@ -951,11 +951,11 @@ period,period_type,fiscal_year,product,measure,company_group,location,state,valu
 2022-03,month,2021-22,natural_gas,gross_production,all,onshore,Tripura,146.16732,million_scm,True,ppac_gas_current_2022
 2022-03,month,2021-22,natural_gas,gross_production,all,onshore_cbm,"West Bengal, MP, Jharkhand (CBM)",56.58200000000001,million_scm,True,ppac_gas_current_2022
 2022-03,month,2021-22,natural_gas,net_production,all,all,all,2812.693340566,million_scm,True,ppac_gas_current_2022
-2022-04,month,2022-23,condensate,production,Condensate,all,all,0.10763442,million_tonnes,True,ppac_crude_current_2022
+2022-04,month,2022-23,condensate,production,all,all,all,0.10763442,million_tonnes,True,ppac_crude_current_2022
 2022-04,month,2022-23,crude_oil,production,JVC/Private,all,all,0.5460109999999999,million_tonnes,True,ppac_crude_current_2022
 2022-04,month,2022-23,crude_oil,production,OIL,all,all,0.251454955,million_tonnes,True,ppac_crude_current_2022
 2022-04,month,2022-23,crude_oil,production,ONGC,all,all,1.564568073657,million_tonnes,True,ppac_crude_current_2022
-2022-05,month,2022-23,condensate,production,Condensate,all,all,0.10429009,million_tonnes,True,ppac_crude_current_2022
+2022-05,month,2022-23,condensate,production,all,all,all,0.10429009,million_tonnes,True,ppac_crude_current_2022
 2022-05,month,2022-23,crude_oil,production,JVC/Private,all,all,0.5711099999999999,million_tonnes,True,ppac_crude_current_2022
 2022-05,month,2022-23,crude_oil,production,OIL,all,all,0.265225477,million_tonnes,True,ppac_crude_current_2022
 2022-05,month,2022-23,crude_oil,production,ONGC,all,all,1.609424834531,million_tonnes,True,ppac_crude_current_2022
