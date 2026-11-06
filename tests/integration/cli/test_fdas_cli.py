@@ -293,8 +293,8 @@ class TestFDASAnalyze:
         # Should show field and lease options
         assert "field" in output_lower or "lease" in output_lower
 
-    def test_fdas_analyze_default_royalty_matches_results(self, tmp_path):
-        """The source-note default gives 18.75% on both output surfaces."""
+    def test_fdas_analyze_subsea15_default_royalty(self, tmp_path):
+        """The subsea15 default gives 18.75% on both output surfaces."""
         output = tmp_path / "analysis.json"
         result = runner.invoke(
             app,
@@ -305,6 +305,34 @@ class TestFDASAnalyze:
         assert "Royalty Rate: 18.75%" in result.output
         analysis = json.loads(output.read_text())
         assert analysis["configuration"]["royalty_rate"] == 0.1875
+        assert analysis["assumptions"]["royalty_rate"] == 0.1875
+
+    @pytest.mark.parametrize("royalty_rate", [0.125, 0.0])
+    def test_fdas_analyze_assumptions_take_precedence_over_cli_rate(
+        self, tmp_path, royalty_rate
+    ):
+        """The CLI rate is a fallback; the default assumptions table wins."""
+        output = tmp_path / "analysis.json"
+        result = runner.invoke(
+            app,
+            [
+                "fdas",
+                "analyze",
+                "--field",
+                "Synthetic",
+                "--dev-system",
+                "subsea15",
+                "--royalty-rate",
+                str(royalty_rate),
+                "--output",
+                str(output),
+            ],
+        )
+
+        assert result.exit_code == 0
+        assert f"Royalty Rate: {royalty_rate:.2%}" in result.output
+        analysis = json.loads(output.read_text())
+        assert analysis["configuration"]["royalty_rate"] == royalty_rate
         assert analysis["assumptions"]["royalty_rate"] == 0.1875
 
     def test_fdas_analyze_help_documents_source_note_rate(self):
