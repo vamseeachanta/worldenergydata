@@ -17,7 +17,7 @@ Usage:
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
+from typing import Annotated
 
 import typer
 from rich.panel import Panel
@@ -55,10 +55,12 @@ def historical(
     identifier: str = typer.Argument(..., help="Station ID or lat,lon coordinates"),
     start_date: str = typer.Argument(..., help="Start date (YYYY-MM-DD)"),
     end_date: str = typer.Argument(..., help="End date (YYYY-MM-DD)"),
-    source: SourceChoice = typer.Option(
-        SourceChoice.ndbc, "--source", "-s", help="Data source"
-    ),
-    output: Optional[Path] = typer.Option(None, "--output", "-o", help="Output file"),
+    source: Annotated[
+        SourceChoice, typer.Option("--source", "-s", help="Data source")
+    ] = SourceChoice.ndbc,
+    output: Annotated[
+        Path | None, typer.Option("--output", "-o", help="Output file")
+    ] = None,
     fuse: bool = typer.Option(
         False, "--fuse", help="Merge data from multiple sources (requires coords)"
     ),
@@ -129,18 +131,22 @@ def unified(
         "-p",
         help="Comma-separated list of parameters to fetch",
     ),
-    dashboard: Optional[Path] = typer.Option(
-        None,
-        "--dashboard",
-        "-d",
-        help="Save Plotly HTML dashboard to this file",
+    erddap_dataset: str | None = typer.Option(
+        None, "--erddap-dataset", help="Explicit ERDDAP tabledap dataset ID"
     ),
-    output: Optional[Path] = typer.Option(
-        None,
-        "--output",
-        "-o",
-        help="Save harmonised data as CSV to this file",
+    erddap_bbox: str | None = typer.Option(
+        None, "--erddap-bbox", help="Bounds: lon_min,lon_max,lat_min,lat_max"
     ),
+    dashboard: Annotated[
+        Path | None,
+        typer.Option(
+            "--dashboard", "-d", help="Save Plotly HTML dashboard to this file"
+        ),
+    ] = None,
+    output: Annotated[
+        Path | None,
+        typer.Option("--output", "-o", help="Save harmonised data as CSV to this file"),
+    ] = None,
 ) -> None:
     """
     Query multiple metocean sources simultaneously for a location and time range.
@@ -171,8 +177,8 @@ def unified(
         console.print(f"[red]Invalid date format: {exc}[/red]")
         raise typer.Exit(1)
 
-    if start_dt >= end_dt:
-        console.print("[red]Start date must be before end date[/red]")
+    if start_dt > end_dt:
+        console.print("[red]Start date must not follow end date[/red]")
         raise typer.Exit(1)
 
     params_list = tuple(p.strip() for p in parameters.split(",") if p.strip())
@@ -187,18 +193,30 @@ def unified(
         )
     )
 
-    query = MetoceanQuery(
-        lat=lat,
-        lon=lon,
-        start_date=start_dt,
-        end_date=end_dt,
-        parameters=params_list,
-    )
-
-    client = UnifiedMetoceanClient()
+    try:
+        query = MetoceanQuery(
+            lat=lat,
+            lon=lon,
+            start_date=start_dt,
+            end_date=end_dt,
+            parameters=params_list,
+        )
+        bounds = (
+            tuple(float(v) for v in erddap_bbox.split(",")) if erddap_bbox else None
+        )
+        client = UnifiedMetoceanClient(
+            erddap_dataset=erddap_dataset,
+            erddap_bbox=bounds,
+        )
+    except ValueError as exc:
+        console.print(f"[red]Invalid query: {exc}[/red]")
+        raise typer.Exit(1) from None
 
     with console.status("[bold green]Fetching data from all sources…"):
         result = client.query(query)
+
+    for source, status in result.source_status.items():
+        console.print(f"{source}: {status}")
 
     # Display summary
     console.print(
@@ -251,10 +269,10 @@ def unified(
 
 @app.command("update")
 def update(
-    config: Path = typer.Option(..., "--config", exists=True, readable=True),
-    data_root: Path = typer.Option(
-        ..., "--data-root", help="Archive root outside the repository"
-    ),
+    config: Annotated[Path, typer.Option("--config", exists=True, readable=True)],
+    data_root: Annotated[
+        Path, typer.Option("--data-root", help="Archive root outside the repository")
+    ],
     refresh: bool = typer.Option(
         False, "--refresh", help="Check retained publisher revisions"
     ),

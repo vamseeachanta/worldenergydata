@@ -1,5 +1,6 @@
 """Tests for production Colorado ECMC FacilityDetail/Form 5A ingest (#751)."""
 
+from types import SimpleNamespace
 from urllib.error import HTTPError
 
 import pandas as pd
@@ -11,6 +12,7 @@ from worldenergydata.modules.state_regulators.colorado_ecmc import (
 from worldenergydata.modules.state_regulators.colorado_ecmc.facility_detail_ingest import (
     build_facility_detail_source_list,
 )
+from worldenergydata.modules.state_regulators.fetch import client
 
 
 def test_build_source_list_derives_facility_detail_keys_from_raw_wells():
@@ -110,8 +112,7 @@ def test_fetch_facility_detail_pages_uses_user_agent_and_writes_status(
         seen["timeout"] = timeout
         return FakeResponse()
 
-    monkeypatch.setattr(facility_detail_ingest, "urlopen", fake_urlopen)
-    monkeypatch.setattr(facility_detail_ingest, "sleep", lambda _: None)
+    _stub_urlopen(monkeypatch, fake_urlopen)
 
     result = facility_detail_ingest.fetch_facility_detail_pages(
         source_list,
@@ -120,7 +121,8 @@ def test_fetch_facility_detail_pages_uses_user_agent_and_writes_status(
             "facility_detail": {
                 "base_url": "https://ecmc.state.co.us/cogisdb/Facility/FacilityDetail.aspx",
                 "timeout_seconds": 30,
-                "request_delay_seconds": 0,
+                "request_delay_seconds": 2,
+                "terms_checks": _terms_checks(),
                 "user_agent": "worldenergydata-test/1.0",
                 "max_retries": 0,
             },
@@ -151,7 +153,7 @@ def test_fetch_facility_detail_pages_treats_403_as_terminal_failure(
         calls["count"] += 1
         raise HTTPError(request.full_url, 403, "Forbidden", hdrs={}, fp=None)
 
-    monkeypatch.setattr(facility_detail_ingest, "urlopen", fake_urlopen)
+    _stub_urlopen(monkeypatch, fake_urlopen)
 
     result = facility_detail_ingest.fetch_facility_detail_pages(
         source_list,
@@ -160,7 +162,8 @@ def test_fetch_facility_detail_pages_treats_403_as_terminal_failure(
             "facility_detail": {
                 "base_url": "https://ecmc.state.co.us/cogisdb/Facility/FacilityDetail.aspx",
                 "timeout_seconds": 30,
-                "request_delay_seconds": 0,
+                "request_delay_seconds": 2,
+                "terms_checks": _terms_checks(),
                 "user_agent": "worldenergydata-test/1.0",
                 "max_retries": 3,
             },
@@ -194,11 +197,7 @@ def test_fetch_facility_detail_pages_excludes_identity_mismatch(tmp_path, monkey
         def getcode(self):
             return 200
 
-    monkeypatch.setattr(
-        facility_detail_ingest,
-        "urlopen",
-        lambda request, timeout: FakeResponse(),
-    )
+    _stub_urlopen(monkeypatch, lambda request, timeout: FakeResponse())
 
     result = facility_detail_ingest.fetch_facility_detail_pages(
         source_list,
@@ -207,7 +206,8 @@ def test_fetch_facility_detail_pages_excludes_identity_mismatch(tmp_path, monkey
             "facility_detail": {
                 "base_url": "https://ecmc.state.co.us/cogisdb/Facility/FacilityDetail.aspx",
                 "timeout_seconds": 30,
-                "request_delay_seconds": 0,
+                "request_delay_seconds": 2,
+                "terms_checks": _terms_checks(),
                 "user_agent": "worldenergydata-test/1.0",
                 "max_retries": 0,
                 "stop_on_identity_mismatch": True,
@@ -342,3 +342,20 @@ def test_evaluate_screen_promotion_keeps_form5a_candidate_only():
 
     assert promotion["status"] == "candidate_only"
     assert promotion["screen_promotable_rows"] == 0
+
+
+def _stub_urlopen(monkeypatch, open_response):
+    monkeypatch.setattr(
+        client, "build_opener", lambda *args: SimpleNamespace(open=open_response)
+    )
+
+
+def _terms_checks():
+    return [
+        {
+            "origin": "https://ecmc.state.co.us",
+            "terms_url": "https://ecmc.state.co.us/terms",
+            "checked_at": "2020-01-01T00:00:00+00:00",
+            "bulk_allowed": True,
+        }
+    ]

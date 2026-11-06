@@ -16,7 +16,11 @@ from typing import Callable
 import pandas as pd
 
 from worldenergydata.bsee.fieldreserves_fetch import BASE, FILES, fetch_family
-from worldenergydata.bsee.fieldreserves_loader import load_history, load_master
+from worldenergydata.bsee.fieldreserves_loader import (
+    load_appendix,
+    load_history,
+    load_master,
+)
 
 
 def _cached_frame(
@@ -38,13 +42,19 @@ def _cached_frame(
 
 def curate_cache(root: Path) -> dict:
     metadata = json.loads((root / "manifest.json").read_text(encoding="utf-8"))
-    for name in ("curated_history.csv", "curated_production_master.csv", "schema.json"):
+    for name in (
+        "curated_history.csv",
+        "curated_production_master.csv",
+        "curated_appendix.csv",
+        "schema.json",
+    ):
         target = root / name
         if target.exists() or target.is_symlink():
             raise FileExistsError(f"Preserving existing output: {name}")
     frames = {
         "history": _cached_frame(root, metadata, FILES[1], load_history),
         "production_master": _cached_frame(root, metadata, FILES[2], load_master),
+        "appendix": _cached_frame(root, metadata, FILES[3], load_appendix),
     }
     counts, schema = {}, {}
     for kind, df in frames.items():
@@ -59,6 +69,7 @@ def curate_cache(root: Path) -> dict:
             "source values retained without conversion"
         ),
         "production_master": "Oil/condensate: STB; gas: MCF; water unit not stated by source",
+        "appendix": "Identifiers only; no physical quantities",
     }
     (root / "schema.json").write_text(
         json.dumps(schema, indent=2, sort_keys=True) + "\n", encoding="utf-8"

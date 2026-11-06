@@ -6,7 +6,7 @@
 | Repository | `worldenergydata` |
 | Path | `src/worldenergydata/field_development` (package scope) |
 | Pack | `src/worldenergydata/field_development/docs/agent-pack.md` |
-| Pack revision | 2, 2026-10-18 |
+| Pack revision | 3, 2026-10-20 |
 | Code revision | Audit corrections based on `7ea5f6600dc8a7c7f4739dd948bbcf0356e9b26a`; the containing commit binds the revised functions and tests. Historical records below retain their original pins. |
 | Analysis family | EC (engineering calculations); data pipeline; AQG r0 section 10 Python calculations gate set |
 | Quality manager role | Calculations quality manager, interim data-pipeline coverage |
@@ -23,6 +23,10 @@ The flow-assurance path screens hydrate, wax, slugging and erosion hazards; it d
 This revision documents the screening and schematic main path in detail; catalog integration, reference queries, terrain, phase norms, economics and optional geometry are indexed for further coverage in section 10. [src/worldenergydata/field_development/__init__.py:L27-L175]
 
 UNVERIFIED: U1 — conformity to the named engineering standards, their governing editions and clauses, and citation-sidecar completeness have not been established; #1322.
+
+The [standards provenance](standards-provenance.md) register separates verified
+publication metadata from unresolved applicability for the screening, XML and
+symbol references. U1 remains open; no engineering conformity is established.
 
 UNVERIFIED: U2 — independent engineering validation, comprehensive coverage of the supporting paths, and deployment suitability beyond the offline checks remain open; #1323.
 
