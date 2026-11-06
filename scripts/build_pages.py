@@ -429,6 +429,7 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
     ``(slug, display, filename, npv_str, npv_value)`` tuples the landing page
     uses to build its economics table."""
     # Public capability consumers can display the same caveats as the reports.
+    PUBLIC.mkdir(parents=True, exist_ok=True)
     (PUBLIC / "war-methodology.json").write_text(
         json.dumps(methodology_metadata(), ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",

@@ -49,6 +49,24 @@ def test_site_build_exports_capability_data_limits(tmp_path):
     assert path.read_bytes() == original
 
 
+def test_domain_build_exports_metadata_without_reports(tmp_path):
+    mod = load_script("scripts/build_pages.py")
+    mod.PUBLIC = tmp_path / "nested" / "public"
+    mod.REPORTS = tmp_path / "reports"
+    assert not mod.PUBLIC.exists()
+    assert not mod.REPORTS.exists()
+
+    mod.build_lower_tertiary({})
+
+    path = mod.PUBLIC / "war-methodology.json"
+    metadata = json.loads(path.read_text(encoding="utf-8"))
+    note = load_script("scripts/lower_tertiary/war_methodology.py")
+    assert metadata == note.methodology_metadata()
+    original = path.read_bytes()
+    mod.build_lower_tertiary({})
+    assert path.read_bytes() == original
+
+
 def test_worked_example_uses_declared_denominators():
     """Synthetic inputs, not a published well or an acceptance criterion.
 
