@@ -11,10 +11,14 @@ This module provides:
 - Link scraping for available report URLs
 """
 
+import calendar
 import hashlib
 import io
 import logging
+import math
+import re
 from typing import Any, Dict, List, Optional
+from urllib.parse import urljoin, urlsplit
 
 try:
     import requests
@@ -140,38 +144,113 @@ def parse_blend_table_from_pdf(pdf_bytes: Optional[bytes]) -> List[Dict[str, Any
     Extract blend production table rows from NUPRC PDF bytes.
 
     NUPRC PDFs use inconsistent table layouts across years.
-    This function handles gracefully, returning an empty list on failure.
+    A nonempty PDF must supply an unambiguous period and explicit kbd units.
+    Repeated blend/period values are retained once; conflicts raise an error.
 
     Args:
         pdf_bytes: Raw PDF content bytes, or None.
 
     Returns:
         List of dicts with keys: blend, volume_kbd, month, year.
-        Returns empty list if parsing fails or input is empty/None.
+        Returns empty list for empty/None input. Unsupported or malformed
+        nonempty reports raise NuprcAPIError rather than returning partial data.
     """
     if not pdf_bytes:
         return []
 
     if pdfplumber is None:
-        logger.warning("pdfplumber not installed; cannot parse PDF tables")
-        return []
+        raise NuprcAPIError("pdfplumber not installed; cannot parse PDF tables")
 
-    results: List[Dict[str, Any]] = []
+    records = {}
     try:
         with pdfplumber.open(io.BytesIO(pdf_bytes)) as pdf:
             for page in pdf.pages:
+                text = page.extract_text() or ""
                 tables = page.extract_tables()
                 for table in tables:
-                    rows = _parse_blend_rows_from_table(table)
-                    results.extend(rows)
+                    rows = _parse_blend_rows_from_table(table, text)
+                    for row in rows:
+                        key = (row["blend"], row["year"], row["month"])
+                        if key in records and records[key] != row:
+                            raise NuprcAPIError(
+                                "Conflicting repeated blend/period rows"
+                            )
+                        records[key] = row
+    except NuprcAPIError:
+        raise
     except Exception as exc:
-        logger.warning("PDF parsing failed: %s", exc)
+        raise NuprcAPIError("PDF parsing failed") from exc
 
-    return results
+    if not records:
+        raise NuprcAPIError("No supported blend records in PDF")
+    return list(records.values())
+
+
+def _report_period(text: str):
+    """Accept one named calendar month/year, never the requested period.
+
+    Multiple dates are ambiguous; caller must supply a supported table rather
+    than infer which date labels the data. Calendar names: Python Library
+    Reference, calendar.month_name (2025).
+    """
+    names = {
+        name.casefold(): month for month, name in enumerate(calendar.month_name) if name
+    }
+    all_names = names | {
+        name.casefold(): month for month, name in enumerate(calendar.month_abbr) if name
+    }
+    month_pattern = r"\b(?:" + "|".join(all_names) + r")\b"
+    named_months = {
+        all_names[name.casefold()]
+        for name in re.findall(month_pattern, text, flags=re.IGNORECASE)
+    }
+    # A shared trailing year must not turn a range into its final month.
+    range_pattern = (
+        month_pattern
+        + r"\.?(?:[\s,\-/]+\d{4})?\s*(?:[-–—/&]|\b(?:to|through|and)\b)\s*"
+        + month_pattern
+    )
+    if len(named_months) != 1 or re.search(range_pattern, text, flags=re.IGNORECASE):
+        raise NuprcAPIError("Report period is missing or ambiguous")
+    pattern = r"\b(" + "|".join(names) + r")[\s,\-/]+(\d{4})\b"
+    periods = {
+        (int(year), names[name.casefold()])
+        for name, year in re.findall(pattern, text, flags=re.IGNORECASE)
+    }
+    if len(periods) != 1:
+        raise NuprcAPIError("Report period is missing or ambiguous")
+    return periods.pop()
+
+
+def _kbd_column(header: List[str], blend_col: int) -> int:
+    """Require one column with explicit kbd units and no conflicting label.
+
+    Only value labels and calendar labels may accompany the unit. Unknown
+    qualifiers need a supported source fixture, rather than unit inference.
+    """
+    units = r"\bkbd\b|\bthousand barrels\s+(?:per\s+day|/\s*day)\b"
+    labels = (
+        r"\b(?:production|volume|quantity|rate|average|daily|monthly|crude|oil|"
+        r"condensate|"
+        + "|".join(name.lower() for name in calendar.month_name if name)
+        + r"|\d{4})\b"
+    )
+    candidates = []
+    for idx, cell in enumerate(header):
+        if idx == blend_col or not re.search(units, cell):
+            continue
+        remainder = re.sub(labels, "", re.sub(units, "", cell))
+        if re.search(r"[^\s()[\],:;.\-]", remainder):
+            raise NuprcAPIError("Production units conflict or are unsupported")
+        candidates.append(idx)
+    if len(candidates) != 1:
+        raise NuprcAPIError("Production units are missing or ambiguous")
+    return candidates[0]
 
 
 def _parse_blend_rows_from_table(
     table: Optional[List[List[Any]]],
+    page_text: str = "",
 ) -> List[Dict[str, Any]]:
     """
     Parse blend/volume rows from a pdfplumber-extracted table.
@@ -190,32 +269,46 @@ def _parse_blend_rows_from_table(
 
     # Identify column indices heuristically
     blend_col = _find_column(header, ["blend", "stream", "crude", "name"])
-    vol_col = _find_column(header, ["volume", "kbd", "production", "quantity"])
+    vol_col = _find_column(
+        header, ["volume", "kbd", "production", "quantity", "thousand barrels"]
+    )
 
-    if blend_col is None or vol_col is None:
+    if blend_col is None or vol_col is None or blend_col == vol_col:
         return []
+
+    # No volume-to-rate inference: only explicit thousand-barrels/day labels
+    # are supported. BIPM SI Brochure, 9th ed. (2019), section 3, Table 7.
+    vol_col = _kbd_column(header, blend_col)
+    year, month = _report_period(" ".join(header) + " " + page_text)
 
     for row in table[1:]:
         if not row or len(row) <= max(blend_col, vol_col):
             continue
 
         blend_name = str(row[blend_col]).strip().upper() if row[blend_col] else None
-        volume_raw = str(row[vol_col]).strip() if row[vol_col] else None
+        volume_raw = str(row[vol_col]).strip() if row[vol_col] is not None else None
 
         if not blend_name or not volume_raw:
             continue
+        # Total labels are report aggregates, not blend identities (SF1).
+        if re.match(r"^(?:(?:GRAND|SUB)[\s-]*)?TOTAL\b", blend_name):
+            continue
+        if blend_name.lower() == header[blend_col]:
+            continue  # Repeated table header on a continuation page.
 
         try:
             volume_kbd = float(volume_raw.replace(",", ""))
-        except (ValueError, AttributeError):
-            continue
+        except (ValueError, AttributeError) as exc:
+            raise NuprcAPIError("Invalid blend production value") from exc
+        if not math.isfinite(volume_kbd) or volume_kbd < 0:
+            raise NuprcAPIError("Blend production must be finite and nonnegative")
 
         rows.append(
             {
                 "blend": blend_name,
                 "volume_kbd": volume_kbd,
-                "month": None,
-                "year": None,
+                "month": month,
+                "year": year,
             }
         )
 
@@ -242,30 +335,37 @@ def list_report_urls(
 
     Returns:
         List of absolute PDF URLs found on the page.
-        Returns empty list on network or parsing error.
+        Raises NuprcAPIError on dependency, transport, HTTP or discovery failure.
     """
     if requests is None or BeautifulSoup is None:
-        logger.warning("requests or bs4 not installed; cannot scrape links")
-        return []
+        raise NuprcAPIError("requests or bs4 not installed; cannot scrape links")
 
     try:
         resp = requests.get(portal_url, timeout=30)
         if resp.status_code != 200:
-            logger.warning("Portal returned HTTP %d", resp.status_code)
-            return []
+            raise NuprcAPIError(
+                "Report portal HTTP error", status_code=resp.status_code
+            )
 
         soup = BeautifulSoup(resp.text, "html.parser")
         pdf_urls = []
         for tag in soup.find_all("a", href=True):
             href: str = tag["href"]
-            if href.lower().endswith(".pdf"):
-                if href.startswith("http"):
-                    pdf_urls.append(href)
-                else:
-                    pdf_urls.append(NUPRC_BASE_URL + href)
+            # RFC 3986 (2005), section 5: resolve against the actual portal.
+            url = urljoin(portal_url, href)
+            parts = urlsplit(url)
+            if (
+                parts.scheme in {"http", "https"}
+                and parts.path.lower().endswith(".pdf")
+                and url not in pdf_urls
+            ):
+                pdf_urls.append(url)
 
+        if not pdf_urls:
+            raise NuprcAPIError("No PDF report links found in portal")
         return pdf_urls
 
+    except NuprcAPIError:
+        raise
     except Exception as exc:
-        logger.warning("Failed to scrape report URLs: %s", exc)
-        return []
+        raise NuprcAPIError("Failed to discover report URLs") from exc

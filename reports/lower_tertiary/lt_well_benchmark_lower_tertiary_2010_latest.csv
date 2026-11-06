@@ -1,4 +1,4 @@
-api12,well,field,lease,spud,drilling_days,completion_days,first_oil,cum_oil_mmbbl,uptime_pct,uptime_flag,est_revenue_mm,revenue_flag,interventions,intervention_history,decline_annual_pct,decline_model,eur_mmbbl,decline_flag
+api12,well,field,lease,spud,spud_to_completion_calendar_days,completion_days,first_oil,cum_oil_mmbbl,uptime_pct,uptime_flag,est_revenue_mm,revenue_flag,interventions,intervention_history,decline_annual_pct,decline_model,eur_mmbbl,decline_flag
 608124005800,608124005800,Jack St Malo,G21245,2011-12-05,1532.0,47.0,2016-04-01,39.6692,96.9,,2469.8,,0,,8.5,exponential,69.083,
 608124005103,608124005103,Jack St Malo,G17015,2012-06-02,,,2015-07-01,39.5053,95.1,,2413.4,,0,,5.9,exponential,84.583,
 608124011400,608124011400,Jack St Malo,G21245,2016-12-17,,,2017-05-01,37.2755,96.9,,2423.6,,0,,9.7,exponential,64.049,

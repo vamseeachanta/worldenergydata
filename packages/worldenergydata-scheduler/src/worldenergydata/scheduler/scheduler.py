@@ -7,7 +7,6 @@ from pathlib import Path
 from typing import Dict, Optional
 
 import schedule
-
 from worldenergydata.scheduler.alerting import AlertSender
 from worldenergydata.scheduler.config import (
     SchedulerConfig,
@@ -20,6 +19,7 @@ from worldenergydata.scheduler.jobs.base import (
     write_success_manifest,
 )
 from worldenergydata.scheduler.monitor import JobLogger, RetryManager, StatusReporter
+from worldenergydata.scheduler.output import snapshot_outputs
 from worldenergydata.scheduler.status_enricher import enrich_status
 
 logger = logging.getLogger(__name__)
@@ -38,7 +38,12 @@ class DataScheduler:
     def __init__(self, config_path: str) -> None:
         self._config: SchedulerConfig = load_config(config_path)
         validate_config(self._config)
-        self._repo_root = Path(config_path).resolve().parents[2]
+        config_dir = Path(config_path).resolve().parent
+        self._repo_root = (
+            config_dir.parent.parent
+            if config_dir.name == "scheduler" and config_dir.parent.name == "config"
+            else config_dir
+        )
         self._jobs: Dict[str, AbstractJob] = {}
         self._job_state: Dict[str, dict] = {}
         self._running: bool = False
@@ -76,7 +81,7 @@ class DataScheduler:
         """
         if job.name in self._jobs:
             raise ValueError(
-                f"Job '{job.name}' is already registered. " "Use a unique name per job."
+                f"Job '{job.name}' is already registered. Use a unique name per job."
             )
         self._jobs[job.name] = job
         self._job_state[job.name] = {
@@ -137,13 +142,26 @@ class DataScheduler:
 
         job_cfg = dict(self._config.get_job_config(job_name) or {})
         job_cfg["_scheduler_repo_root"] = str(self._repo_root)
+        job_cfg["output_dir"] = str(job.resolve_output_dir(job_cfg))
 
         def _run() -> JobResult:
             return job.run(config=job_cfg)
 
         result = self._retry_manager.run_with_retry(_run)
+        snapshot = None
+        if result.status == "success":
+            try:
+                snapshot = snapshot_outputs(Path(job_cfg["output_dir"]))
+            except (OSError, ValueError) as exc:
+                result.status = "failure"
+                result.error_msg = f"Output snapshot failed: {exc}"
+                result.retryable = False
         self._record_result(job_name, result)
         self._write_success_manifest(job, job_cfg, result)
+        if snapshot is not None:
+            write_success_manifest(
+                job.name, snapshot, result, job_cfg.get("interval", "weekly")
+            )
         self._job_logger.log_result(result)
         # Trigger alerting and enriched status write
         self._status_reporter.check_and_alert([result], self._alert_sender)
@@ -167,19 +185,7 @@ class DataScheduler:
         if result.status != "success":
             return
 
-        output_dir_value = job_cfg.get("output_dir")
-        if output_dir_value is None:
-            output_dir_value = getattr(job, "default_output_dir", None)
-        if output_dir_value is None:
-            logger.debug(
-                "Job '%s' has no output_dir; skipping scheduler manifest write.",
-                job.name,
-            )
-            return
-
-        output_dir = Path(output_dir_value)
-        if not output_dir.is_absolute():
-            output_dir = self._repo_root / output_dir
+        output_dir = job.resolve_output_dir(job_cfg)
         interval = job_cfg.get("interval", "weekly")
         write_success_manifest(job.name, output_dir, result, interval)
 

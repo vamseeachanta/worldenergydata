@@ -8,6 +8,90 @@ from worldenergydata.vessel_fleet.loaders.drilling_riser_loader import (
 )
 
 
+def test_canonical_joint_entries_and_observed_ratios():
+    """CSV revision at implementation: five buoyed joints, hand ratios below.
+
+    Four issue-1138 anchors: three 49/21=7/3, one 44/18.75=176/75.
+    Additional RJ-24-75-BUOY: 55/24. Observed range is [55/24,176/75],
+    with no engineering margin or industry acceptance limit asserted.
+    """
+    entries = DrillingRiserLoader().get_riser_joint_entries()
+    by_id = {entry.component_id: entry for entry in entries}
+    expected = {
+        "RJ-21-75-BUOY": 7 / 3,
+        "RJ-18.75-75-BUOY": 176 / 75,
+        "RJ-21-75-NOV-MERLIN-BUOY": 7 / 3,
+        "RJ-21-75-CAM-BUOY": 7 / 3,
+        "RJ-24-75-BUOY": 55 / 24,
+    }
+    buoyed = [entry for entry in entries if entry.has_buoyancy]
+    assert {entry.component_id for entry in buoyed} == set(expected)
+    for entry in entries:
+        assert entry.riser_class == "drilling"
+        assert entry.auxiliary_lines == []
+        if entry.has_buoyancy:
+            assert entry.buoyancy_od_ratio == pytest.approx(
+                expected[entry.component_id]
+            )
+            assert (
+                55 / 24 <= entry.buoyancy_od_ratio <= 176 / 75
+            ), "new data departs from the observed range, review the row"
+            assert entry.buoyancy_od_in > entry.od_in
+        else:
+            assert entry.buoyancy_od_ratio is None
+    assert by_id["RJ-21-75-BUOY"].weight_water_kips == -4.2
+
+
+def test_lift_bundle_csv_round_trip(sample_riser_data):
+    """Synthetic optional columns: JSON lines retain independent geometry and function."""
+    import json
+
+    csv_path = sample_riser_data / "drilling_riser_components.csv"
+    df = pd.read_csv(csv_path)
+    df["RISER_CLASS"] = "drilling"
+    df.loc[0, "RISER_CLASS"] = "lift"
+    df["AUXILIARY_LINES"] = ""
+    df.loc[0, "AUXILIARY_LINES"] = json.dumps(
+        [
+            dict(function="service", od_in=2.0, wall_thickness_in=0.25),
+            dict(function="injection", od_in=1.0, wall_thickness_in=0.125),
+        ]
+    )
+    df.to_csv(csv_path, index=False)
+    entries = DrillingRiserLoader(sample_riser_data).get_riser_joint_entries("lift")
+    assert len(entries) == 1
+    assert [line.function for line in entries[0].auxiliary_lines] == [
+        "service",
+        "injection",
+    ]
+    assert entries[0].od_in == 21.0
+    assert entries[0].auxiliary_lines[1].wall_thickness_in == 0.125
+
+
+@pytest.mark.parametrize(
+    "column,value",
+    [
+        ("RISER_CLASS", "unknown"),
+        ("AUXILIARY_LINES", "not-json"),
+        ("AUXILIARY_LINES", '[{"function":"service","od_in":2}]'),
+    ],
+)
+def test_typed_loader_rejects_invalid_extension_cells(sample_riser_data, column, value):
+    """Bad optional metadata cannot silently fall back to a legacy joint."""
+    csv_path = sample_riser_data / "drilling_riser_components.csv"
+    df = pd.read_csv(csv_path)
+    df[column] = ""
+    df.loc[0, column] = value
+    df.to_csv(csv_path, index=False)
+    with pytest.raises(ValueError):
+        DrillingRiserLoader(sample_riser_data).get_riser_joint_entries()
+
+
+def test_typed_loader_rejects_unknown_class_filter():
+    with pytest.raises(ValueError, match="riser_class"):
+        DrillingRiserLoader().get_riser_joint_entries("unknown")
+
+
 @pytest.fixture
 def sample_riser_data(tmp_path):
     """Create a minimal drilling riser CSV for testing."""

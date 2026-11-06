@@ -128,7 +128,7 @@ class TestFetchDem:
             "export_image"
         ]
         assert url == catalog_url  # endpoint comes from YAML, not code
-        assert params["bbox"] == "-95.400000,29.700000,-95.300000,29.800000"
+        assert params["bbox"] == "-95.4,29.7,-95.3,29.8"
         assert params["size"] == "64,64"
         assert params["format"] == "tiff"
         assert params["f"] == "image"

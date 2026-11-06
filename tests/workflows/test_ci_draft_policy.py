@@ -16,28 +16,14 @@ DRAFT_GUARD = (
 )
 # These jobs install dependencies, run tests or analysis, or build artifacts.
 HEAVY_JOBS = {
-    "ci.yml": {
-        "domain-tests",
-        "test",
-        "lint",
-        "type-check",
-        "security",
-        "build",
-        "docs",
-    },
-    "docs.yml": {"docs"},
+    "ci.yml": {"mode", "domain-tests", "lint", "security"},
+    "wheel-ownership.yml": {"wheel-ownership"},
 }
-# Required aggregates must reject skipped dependencies, including on drafts.
+# Required aggregates report a quick draft pass and reject incomplete ready runs.
 AGGREGATES = {
-    "ci.yml": {
-        "lint-gate",
-        "type-check-gate",
-        "security-gate",
-        "docs-gate",
-        "pr-gate",
-    },
+    "ci.yml": {"lint-gate", "security-gate", "pr-gate"},
 }
-PR_WORKFLOWS = ("brand-guard.yml", "ci.yml", "docs.yml", "pr-validation.yml")
+PR_WORKFLOWS = ("brand-guard.yml", "ci.yml", "pr-validation.yml", "wheel-ownership.yml")
 PR_EVENTS = ["opened", "synchronize", "reopened", "ready_for_review"]
 
 
@@ -97,16 +83,22 @@ def test_workflow_and_job_names_are_preserved(filename):
     assert_workflow_and_job_names(filename, load_workflow(filename))
 
 
-@pytest.mark.parametrize("filename", PR_WORKFLOWS)
+@pytest.mark.parametrize("filename", sorted(SNAPSHOT))
 def test_triggers_preserve_existing_events_and_filters(filename):
     assert_triggers(filename, load_workflow(filename))
 
 
 @pytest.mark.parametrize("filename", sorted(set(SNAPSHOT) - set(PR_WORKFLOWS)))
-def test_non_pr_snapshot_only_pins_names(filename):
-    baseline = SNAPSHOT[filename]
-    assert set(baseline) == {"name", "jobs"}
-    assert all(set(job) == {"name"} for job in baseline["jobs"].values())
+def test_non_pr_workflows_preserve_main_behavior(filename):
+    workflow = load_workflow(filename)
+    assert "pull_request" not in workflow["on"]
+    for job_id, job in workflow["jobs"].items():
+        assert job.get("if") == SNAPSHOT[filename]["jobs"][job_id]["if"]
+
+
+@pytest.mark.parametrize("filename", ["docs.yml", "main-full-run.yml"])
+def test_daily_builds_are_dispatch_only(filename):
+    assert set(load_workflow(filename)["on"]) == {"workflow_dispatch"}
 
 
 @pytest.mark.parametrize("filename", sorted(HEAVY_JOBS))
@@ -155,7 +147,8 @@ def test_required_aggregate_rejects_incomplete_full_result(job_id, result, expec
     upstream = next(need for need in job["needs"] if need != "mode")
     assert step["env"] == {"FULL_RESULT": "${{ needs." + upstream + ".result }}"}
     assert condition(step["if"]) == (
-        "needs.mode.result != 'success' || needs.mode.outputs.replay != 'true'"
+        f"({DRAFT_GUARD}) && "
+        "(needs.mode.result != 'success' || needs.mode.outputs.replay != 'true')"
     )
     assert not step.get("continue-on-error", False)
     completed = subprocess.run(
@@ -166,6 +159,25 @@ def test_required_aggregate_rejects_incomplete_full_result(job_id, result, expec
         timeout=10,
     )
     assert completed.returncode == expected, completed.stdout + completed.stderr
+
+
+@pytest.mark.parametrize("job_id", sorted(AGGREGATES["ci.yml"]))
+def test_required_aggregate_has_quick_draft_pass(job_id):
+    steps = load_workflow("ci.yml")["jobs"][job_id]["steps"]
+    replay, full, draft = steps
+    for step in (replay, full):
+        assert condition(step["if"]).startswith(f"({DRAFT_GUARD}) && (")
+    assert draft["if"] == (
+        "github.event_name == 'pull_request' && github.event.pull_request.draft == true"
+    )
+    assert set(draft) == {"name", "if", "run"}
+    completed = subprocess.run(
+        ["bash", "-e", "-c", draft["run"]],
+        capture_output=True,
+        text=True,
+        timeout=10,
+    )
+    assert completed.returncode == 0, completed.stdout + completed.stderr
 
 
 @pytest.mark.parametrize(

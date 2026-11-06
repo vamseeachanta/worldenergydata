@@ -1,5 +1,6 @@
 """Keep pull request CI available for every target branch."""
 
+import json
 import os
 import shutil
 import subprocess
@@ -8,7 +9,12 @@ from pathlib import Path
 import pytest
 import yaml
 
-CI_WORKFLOW = Path(__file__).resolve().parents[2] / ".github/workflows/ci.yml"
+WORKFLOWS = Path(__file__).resolve().parents[2] / ".github/workflows"
+CI_WORKFLOW = WORKFLOWS / "ci.yml"
+FULL_RUN_WORKFLOW = WORKFLOWS / "main-full-run.yml"
+DRAFT_GUARD = (
+    "github.event_name != 'pull_request' || github.event.pull_request.draft == false"
+)
 
 
 def _load_workflow() -> dict:
@@ -41,7 +47,7 @@ def test_required_pull_request_check_name_is_unchanged() -> None:
 
 
 def _evaluate_expression(expression: str, context: dict) -> object:
-    """Evaluate the equality and short-circuit subset used by concurrency."""
+    """Evaluate the workflow's Boolean and JSON/property expression subset."""
     import ast
     import re
 
@@ -52,12 +58,24 @@ def _evaluate_expression(expression: str, context: dict) -> object:
     )
     expression = expression.replace("&&", " and ").replace("||", " or ")
     expression = re.sub(r"\bnull\b", "None", expression)
+    expression = re.sub(r"\btrue\b", "True", expression)
+    expression = re.sub(r"\bfalse\b", "False", expression)
     expression = re.sub(r"!(?!=)", " not ", expression).strip()
 
     def evaluate(node):
         """Interpret only literals, comparisons and Boolean operators."""
         if isinstance(node, (ast.Constant, ast.Dict)):
             return ast.literal_eval(node)
+        if isinstance(node, ast.Call) and isinstance(node.func, ast.Name):
+            if node.func.id == "cancelled":
+                assert not node.args
+                return context.get("cancelled", False)
+            assert node.func.id == "fromJSON" and len(node.args) == 1
+            return json.loads(evaluate(node.args[0]))
+        if isinstance(node, (ast.Subscript, ast.Attribute)):
+            value = evaluate(node.value)
+            key = evaluate(node.slice) if isinstance(node, ast.Subscript) else node.attr
+            return value.get(key) if isinstance(value, dict) else None
         if isinstance(node, ast.UnaryOp) and isinstance(node.op, ast.Not):
             return not evaluate(node.operand)
         if isinstance(node, ast.Compare):
@@ -188,7 +206,7 @@ def test_jobs_and_steps_do_not_filter_edit_events() -> None:
 def test_base_change_runs_full_gate() -> None:
     """Only metadata edits select replay; retargets run the full gate."""
     mode = _load_workflow()["jobs"]["mode"]
-    assert "if" not in mode
+    assert mode["if"] == DRAFT_GUARD
     expression = mode["steps"][0]["env"]["REPLAY"]
     assert expression == (
         "${{ github.event_name == 'pull_request' && "
@@ -200,6 +218,7 @@ def test_base_change_runs_full_gate() -> None:
         ("pull_request", "opened", False, False),
         ("pull_request", "synchronize", False, False),
         ("pull_request", "reopened", False, False),
+        ("pull_request", "ready_for_review", False, False),
         ("push", "edited", False, False),
         ("schedule", "", False, False),
         ("workflow_dispatch", "", False, False),
@@ -222,9 +241,7 @@ def test_required_names_have_single_result_job() -> None:
     jobs = _load_workflow()["jobs"]
     required = {
         "Lint": "lint",
-        "Type Check": "type-check",
         "Security Scan": "security",
-        "Documentation": "docs",
         "Test (PR gate)": "domain-tests",
     }
     for name, heavy_id in required.items():
@@ -235,15 +252,31 @@ def test_required_names_have_single_result_job() -> None:
         assert "!cancelled()" in gate["if"]
         assert "needs.mode.outputs.replay" not in gate["if"]
         assert gate["permissions"] == {"contents": "read", "actions": "read"}
-        checkout, replay, full = gate["steps"]
-        assert (
-            checkout["if"]
-            == replay["if"]
-            == ("needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'")
+        replay, full, draft = gate["steps"]
+        assert " ".join(replay["if"].split()) == (
+            f"({DRAFT_GUARD}) && "
+            "(needs.mode.result == 'success' && needs.mode.outputs.replay == 'true')"
         )
-        assert replay["env"]["CHECK_NAME"] == name
-        assert full["if"] == (
-            "needs.mode.result != 'success' || needs.mode.outputs.replay != 'true'"
+        assert replay["env"]["REPLAY_RESULT"] == (
+            "${{ fromJSON(needs.mode.outputs.evidence || '{}')['"
+            + name
+            + "'].decision }}"
+        )
+        assert "GH_TOKEN" not in replay["env"]
+        for decision, expected in [("PASS", 0), ("FAIL", 1), ("", 1)]:
+            completed = subprocess.run(
+                ["bash", "-e", "-c", replay["run"]],
+                env={**os.environ, "REPLAY_RESULT": decision},
+                capture_output=True,
+                check=False,
+            )
+            assert completed.returncode == expected
+        assert " ".join(full["if"].split()) == (
+            f"({DRAFT_GUARD}) && "
+            "(needs.mode.result != 'success' || needs.mode.outputs.replay != 'true')"
+        )
+        assert draft["if"] == (
+            "github.event_name == 'pull_request' && github.event.pull_request.draft == true"
         )
         assert full["env"]["FULL_RESULT"] == "${{ needs." + heavy_id + ".result }}"
         for result, expected in [
@@ -270,32 +303,119 @@ def test_required_names_have_single_result_job() -> None:
                 )
 
 
+@pytest.mark.parametrize("gate_id", ["lint-gate", "security-gate", "pr-gate"])
+@pytest.mark.parametrize("evidence", [None, "", "{}", "missing", "PASS", "FAIL"])
+@pytest.mark.parametrize("replay_selected", [False, True])
+def test_result_environment_before_step_selection(gate_id, evidence, replay_selected):
+    """Eager env evaluation tolerates absent evidence but cannot grant replay PASS."""
+    gate = _load_workflow()["jobs"][gate_id]
+    replay, full, _ = gate["steps"]
+    context = {
+        "needs.mode.result": "success",
+        "needs.mode.outputs.replay": "true" if replay_selected else "false",
+        "needs." + gate["needs"][1] + ".result": "success",
+    }
+    if evidence is not None:
+        context["needs.mode.outputs.evidence"] = (
+            json.dumps(
+                {gate["name"]: {} if evidence == "missing" else {"decision": evidence}}
+            )
+            if evidence in ("missing", "PASS", "FAIL")
+            else evidence
+        )
+    # Evaluate even the unselected step, matching hosted runner evaluation order.
+    decision = _evaluate_expression(replay["env"]["REPLAY_RESULT"][3:-2], context)
+    assert decision == (evidence if evidence in ("PASS", "FAIL") else None)
+    selected = replay if _evaluate_expression(replay["if"], context) else full
+    assert bool(_evaluate_expression(full["if"], context)) is not replay_selected
+    variable = "REPLAY_RESULT" if replay_selected else "FULL_RESULT"
+    value = (
+        decision
+        if replay_selected
+        else _evaluate_expression(full["env"]["FULL_RESULT"][3:-2], context)
+    )
+    assert variable in selected["env"]
+    # The shell contract is executed separately in test_required_names_have_single_result_job.
+    if replay_selected:
+        assert 'test "$REPLAY_RESULT" = PASS' in selected["run"]
+        assert (value == "PASS") is (evidence == "PASS")
+    else:
+        assert value == "success"
+
+
 def test_full_jobs_honor_cancellation() -> None:
-    """All seven heavy jobs remain cancellable after mode failure."""
+    """All three fast-gate jobs remain cancellable after mode failure."""
     jobs = _load_workflow()["jobs"]
-    for key in (
-        "domain-tests",
-        "test",
-        "lint",
-        "type-check",
-        "security",
-        "build",
-        "docs",
-    ):
+    for key in ("domain-tests", "lint", "security"):
         condition = jobs[key]["if"]
         assert "always()" not in condition, key
         assert "!cancelled()" in condition, key
         assert "needs.mode.outputs.replay != 'true'" in condition, key
         assert "needs.mode.result != 'success'" in condition, key
         assert "mode" in jobs[key]["needs"]
-    assert "needs.lint.result == 'success'" in jobs["build"]["if"]
     assert jobs["mode"]["permissions"] == {"contents": "read", "actions": "read"}
-    assert not any(
-        "checkout@" in step.get("uses", "") for step in jobs["mode"]["steps"]
-    )
     artifact = jobs["mode"]["steps"][-1]
     assert artifact["with"]["retention-days"] == 14
     assert artifact["with"]["name"].startswith("gate-tip-")
+
+
+@pytest.mark.parametrize("event", ["pull_request", "push", "workflow_dispatch"])
+@pytest.mark.parametrize("draft", [False, True])
+@pytest.mark.parametrize("replay", ["true", "false", ""])
+@pytest.mark.parametrize("mode_result", ["success", "failure", "skipped"])
+@pytest.mark.parametrize("cancelled", [False, True])
+def test_draft_job_and_result_selection(event, draft, replay, mode_result, cancelled):
+    """Draft skipping cannot suppress required contexts or weaken ready results."""
+    context = {
+        "github.event_name": event,
+        "github.event.pull_request.draft": draft,
+        "needs.mode.result": mode_result,
+        "needs.mode.outputs.replay": replay,
+        "cancelled": cancelled,
+    }
+    is_draft = event == "pull_request" and draft
+    is_replay = mode_result == "success" and replay == "true"
+    jobs = _load_workflow()["jobs"]
+    assert _evaluate_expression(jobs["mode"]["if"], context) is (not is_draft)
+    for job_id in ("domain-tests", "lint", "security"):
+        expected = not is_draft and not cancelled and not is_replay
+        if job_id == "domain-tests":
+            expected = expected and event == "pull_request"
+        assert bool(_evaluate_expression(jobs[job_id]["if"], context)) is expected
+    for job_id in ("lint-gate", "security-gate", "pr-gate"):
+        job = jobs[job_id]
+        runs = not cancelled and (job_id != "pr-gate" or event == "pull_request")
+        assert bool(_evaluate_expression(job["if"][3:-2], context)) is runs
+        selected = [
+            step["name"]
+            for step in job["steps"]
+            if _evaluate_expression(step["if"], context)
+        ]
+        assert selected == [
+            (
+                "Pass draft gate"
+                if is_draft
+                else (
+                    "Copy selected check conclusion"
+                    if is_replay
+                    else "Gate on full result"
+                )
+            )
+        ]
+
+
+@pytest.mark.parametrize("event", ["pull_request", "push", "workflow_dispatch"])
+@pytest.mark.parametrize("draft", [False, True])
+def test_wheel_build_draft_selection(event, draft):
+    workflow = yaml.safe_load((WORKFLOWS / "wheel-ownership.yml").read_text())
+    guard = workflow["jobs"]["wheel-ownership"]["if"]
+    assert _evaluate_expression(
+        guard,
+        {
+            "github.event_name": event,
+            "github.event.pull_request.draft": draft,
+        },
+    ) is (event != "pull_request" or not draft)
 
 
 def _checkout_steps() -> list:
@@ -340,24 +460,50 @@ def test_checkout_builds_current_base_merge(job_id: str, index: int) -> None:
             assert "event_base=$EVENT_BASE" in line
 
 
-def _git(root: Path, *args: str) -> str:
+def _git(root: Path, *args: str, input_data: bytes | None = None) -> str:
     """Run a real Git command and include its diagnostics on failure."""
+    env = os.environ.copy()
+    for key in ("GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR", "GIT_INDEX_FILE"):
+        env.pop(key, None)
     result = subprocess.run(
         ["git", "-C", str(root), *args],
+        env=env,
+        input=input_data,
         capture_output=True,
-        text=True,
         check=True,
         timeout=30,
     )
-    return result.stdout.strip()
+    return result.stdout.decode("utf-8").strip()
 
 
 def _commit(root: Path, filename: str, contents: str) -> str:
-    """Commit a fixture change using the fixture repository identity."""
-    (root / filename).write_text(contents, encoding="utf-8")
+    """Record synthetic parented history without configuring a Git identity."""
+    (root / filename).write_text(contents, encoding="utf-8", newline="\n")
     _git(root, "add", filename)
-    _git(root, "commit", "-m", "fixture change")
-    return _git(root, "rev-parse", "HEAD")
+    tree = _git(root, "write-tree")
+    parent = _git(
+        root,
+        "for-each-ref",
+        "--format=%(objectname)",
+        _git(root, "symbolic-ref", "HEAD"),
+    )
+    commit = (
+        f"tree {tree}\n"
+        + (f"parent {parent}\n" if parent else "")
+        + "author Fixture <fixture> 0 +0000\n"
+        + "committer Fixture <fixture> 0 +0000\n\nfixture change\n"
+    )
+    revision = _git(
+        root,
+        "hash-object",
+        "-t",
+        "commit",
+        "-w",
+        "--stdin",
+        input_data=commit.encode("utf-8"),
+    )
+    _git(root, "update-ref", "HEAD", revision)
+    return revision
 
 
 def _fixture_history(root: Path, case: str) -> tuple[Path, str, str, str]:
@@ -366,8 +512,6 @@ def _fixture_history(root: Path, case: str) -> tuple[Path, str, str, str]:
     _git(root, "init", "--bare", str(origin))
     source = root / "source"
     _git(root, "clone", origin.as_uri(), str(source))
-    _git(source, "config", "user.name", "Test")
-    _git(source, "config", "user.email", "test@example.com")
     _git(source, "checkout", "-b", "main")
     event_base = _commit(source, "shared.txt", "original\n")
     if case == "shallow":
@@ -389,6 +533,27 @@ def _fixture_history(root: Path, case: str) -> tuple[Path, str, str, str]:
     return origin, event_base, tip, head
 
 
+def test_fixture_history_does_not_override_git_identity(tmp_path):
+    """Synthetic history must not configure an identity or carry an address."""
+    _fixture_history(tmp_path, "moved_base")
+    source = tmp_path / "source"
+    result = subprocess.run(
+        [
+            "git",
+            "-C",
+            str(source),
+            "config",
+            "--local",
+            "--get-regexp",
+            r"user\.(name|email)",
+        ],
+        capture_output=True,
+        check=False,
+    )
+    assert result.returncode == 1
+    assert _git(source, "rev-list", "--count", "HEAD") == "2"
+
+
 @pytest.mark.parametrize("job_id,index", _checkout_steps())
 @pytest.mark.parametrize(
     "case", ["moved_base", "conflict", "shallow", "descendant", "no_api"]
@@ -407,15 +572,26 @@ def test_local_merge_behavior(
     assert _git(runner, "rev-parse", "--is-shallow-repository") == "true"
     tools = tmp_path / "tools"
     tools.mkdir()
-    # Only Git and the script's text utility are available; no API clients.
-    for tool in ("git", "sed"):
-        executable = shutil.which(tool)
-        assert executable
-        (tools / tool).symlink_to(executable)
+    # Windows Git needs its installed shell/DLL search path for local fetches.
+    # Block API commands explicitly there; POSIX can restrict PATH to git/sed.
+    if os.name == "nt":
+        for tool in ("gh", "curl"):
+            (tools / tool).write_text(
+                '#!/bin/sh\necho "API clients are disabled" >&2\nexit 127\n',
+                encoding="utf-8",
+                newline="\n",
+            )
+        tool_path = str(tools) + os.pathsep + os.environ["PATH"]
+    else:
+        for tool in ("git", "sed"):
+            executable = shutil.which(tool)
+            assert executable
+            (tools / tool).symlink_to(executable)
+        tool_path = str(tools)
     output = tmp_path / "output"
     env = dict(
         os.environ,
-        PATH=str(tools),
+        PATH=tool_path,
         BASE_REF="main",
         BASE_URL=origin.as_uri(),
         HEAD_URL=origin.as_uri(),
@@ -426,6 +602,16 @@ def test_local_merge_behavior(
     script = _load_workflow()["jobs"][job_id]["steps"][index + 1]["run"]
     bash = shutil.which("bash")
     assert bash
+    if case == "no_api":
+        for client in ("gh", "curl"):
+            probe = subprocess.run(
+                [bash, "-c", f"{client} --version"],
+                env=env,
+                capture_output=True,
+                timeout=10,
+                check=False,
+            )
+            assert probe.returncode == 127, f"{client} must be unavailable"
     result = subprocess.run(
         [bash, "-e", "-o", "pipefail", "-c", script],
         cwd=runner,
@@ -445,10 +631,119 @@ def test_local_merge_behavior(
         assert result.returncode == 0, result.stdout + result.stderr
         parents = _git(runner, "show", "-s", "--format=%P", "HEAD").split()
         assert parents == [tip, head]
-        assert output.read_text().splitlines() == [f"tip={tip}"]
+        assert output.read_text(encoding="utf-8").splitlines() == [f"tip={tip}"]
         tested = _git(runner, "rev-parse", "HEAD")
         tree = _git(runner, "rev-parse", "HEAD^{tree}")
         assert (
             f"tested={tested} first_parent={tip} second_parent={head} "
             f"tip={tip} event_base={event_base} tree={tree}"
         ) in result.stdout
+
+
+@pytest.mark.parametrize("evidence", ["true", "false", ""])
+def test_mode_evidence_controls_full_gate_fallback(tmp_path, evidence):
+    """Issue #1350 truth table: only all-PASS evidence can disable full jobs.
+
+    Hand calculation: true selects replay; false or missing selects full CI.
+    Every full job contains the same replay != true guard, so false opens it.
+    """
+    mode = _load_workflow()["jobs"]["mode"]
+    assert mode["outputs"]["evidence"] == "${{ steps.lookup.outputs.evidence }}"
+    steps = mode["steps"]
+    candidate = next(step for step in steps if step.get("id") == "candidate")
+    checkout = next(step for step in steps if "checkout" in step.get("uses", ""))
+    lookup = next(step for step in steps if step.get("id") == "lookup")
+    select = next(step for step in steps if step.get("id") == "mode")
+    artifact = next(step for step in steps if "upload-artifact" in step.get("uses", ""))
+    assert candidate["id"] == "candidate"
+    assert checkout["if"] == lookup["if"] == "steps.candidate.outputs.replay == 'true'"
+    assert lookup["id"] == "lookup"
+    assert lookup["env"]["GH_TOKEN"] == "${{ github.token }}"
+    assert lookup["run"].endswith("python scripts/ci/replay_gate.py --mode\n")
+    assert select["id"] == "mode"
+    assert select["env"]["REPLAY"] == "${{ steps.lookup.outputs.replay || 'false' }}"
+    assert artifact["if"] == (
+        "github.event_name == 'pull_request' && steps.mode.outputs.replay != 'true'"
+    )
+    output = tmp_path / "output"
+    tools = tmp_path / "tools"
+    tools.mkdir()
+    # Synthetic Git response; the digest content is arbitrary, not a design value.
+    tip = "b" * 40
+    git = tools / "git"
+    git.write_text(
+        "#!/bin/sh\nprintf '%s\trefs/heads/main\n' " + tip + "\n",
+        encoding="utf-8",
+        newline="\n",
+    )
+    git.chmod(0o755)
+    result = subprocess.run(
+        ["bash", "-e", "-o", "pipefail", "-c", select["run"]],
+        env={
+            **os.environ,
+            "PATH": str(tools) + os.pathsep + os.environ["PATH"],
+            "REPLAY": evidence or "false",
+            "IS_PR": "true",
+            "BASE_URL": "unused",
+            "BASE_REF": "main",
+            "GITHUB_OUTPUT": str(output),
+            "RUNNER_TEMP": str(tmp_path),
+        },
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert result.returncode == 0
+    values = dict(
+        line.split("=", 1) for line in output.read_text(encoding="utf-8").splitlines()
+    )
+    assert values["replay"] == ("true" if evidence == "true" else "false")
+    if evidence != "true":
+        assert values["tip"] == tip
+        assert (tmp_path / "gate-tip").read_text(encoding="utf-8") == "."
+    else:
+        assert "tip" not in values
+        assert not (tmp_path / "gate-tip").exists()
+
+
+def _events(path: Path) -> dict:
+    workflow = yaml.safe_load(path.read_text(encoding="utf-8"))
+    return workflow["on"] if "on" in workflow else workflow[True]
+
+
+def test_pr_gate_is_fast_only() -> None:
+    """PRs run lint, the secret scan and touched-module tests (28 Oct 2026)."""
+    jobs = _load_workflow()["jobs"]
+    assert set(jobs) == {
+        "mode",
+        "domain-tests",
+        "lint",
+        "security",
+        "lint-gate",
+        "security-gate",
+        "pr-gate",
+    }
+    runner = jobs["domain-tests"]["with"]["test-runner"]
+    assert runner.startswith("env WED_FAST_GATE=1 ")
+    lint_script = "\n".join(step.get("run", "") for step in jobs["lint"]["steps"])
+    assert "uv sync" not in lint_script
+    assert "uv lock" not in lint_script
+
+
+def test_no_workflow_uses_github_schedule() -> None:
+    """The daily full run is dispatched by our own cron, not GitHub's schedule."""
+    for path in sorted(WORKFLOWS.glob("*.yml")):
+        assert "schedule" not in _events(path), path.name
+
+
+def test_main_full_run_is_dispatch_only_and_covers_the_moved_checks() -> None:
+    """Everything removed from the PR gate runs once a day on main instead."""
+    assert set(_events(FULL_RUN_WORKFLOW)) == {"workflow_dispatch"}
+    workflow = yaml.safe_load(FULL_RUN_WORKFLOW.read_text(encoding="utf-8"))
+    assert workflow["name"] == "Main full run"
+    jobs = workflow["jobs"]
+    for key in ("full-suite", "lockfile", "type-check", "docs", "build"):
+        assert key in jobs, key
+    text = FULL_RUN_WORKFLOW.read_text(encoding="utf-8")
+    assert "uv lock --check" in text
+    assert "WED_FAST_GATE" not in text
