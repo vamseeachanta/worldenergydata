@@ -11,6 +11,7 @@ from html.parser import HTMLParser
 from pathlib import Path
 
 import pytest
+import yaml
 
 from worldenergydata.analysis import operator_onepager as report
 
@@ -339,7 +340,11 @@ def test_missing_pdf_tools_skip_with_explicit_reason_when_optional(monkeypatch, 
 
 def _pdf_page_count(pdf, pdfinfo):
     info = subprocess.run(
-        [pdfinfo, str(pdf)], check=True, capture_output=True, text=True
+        [pdfinfo, str(pdf)],
+        check=True,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
     )
     pages = re.search(r"^Pages:\s+(\d+)\s*$", info.stdout, re.MULTILINE)
     assert pages is not None, info.stdout
@@ -354,6 +359,28 @@ def test_worked_example_pdf_is_one_real_page(bundle, tmp_path, pdf_tools):
 
     report.render_pdf(html, pdf, **pdf_tools)
 
+    assert pdf.read_bytes().startswith(b"%PDF-")
+    assert _pdf_page_count(pdf, pdf_tools["pdfinfo"]) == 1
+
+
+@pytest.mark.integration
+def test_make_pdf_target_is_one_real_page(tmp_path, pdf_tools):
+    subprocess.run(
+        [
+            "make",
+            "onepager",
+            "OPERATOR=001",
+            f"INPUT={(FIXTURES / 'worked_example.json').as_posix()}",
+            f"OUTPUT={tmp_path.as_posix()}",
+            f"ONEPAGER_PYTHON={Path(sys.executable).as_posix()}",
+        ],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        check=True,
+        timeout=300,
+    )
+    pdf = tmp_path / "onepager.pdf"
     assert pdf.read_bytes().startswith(b"%PDF-")
     assert _pdf_page_count(pdf, pdf_tools["pdfinfo"]) == 1
 
@@ -431,6 +458,7 @@ def test_make_html_target(tmp_path):
         ],
         capture_output=True,
         text=True,
+        encoding="utf-8",
         check=True,
     )
     assert "--html-only" in result.stdout
@@ -510,7 +538,7 @@ def test_failed_pdf_build_does_not_publish_rejection(
     tmp_path, monkeypatch, contents, failure
 ):
     html = tmp_path / "in.html"
-    html.write_text("test", encoding="utf-8")
+    html.write_text("test", encoding="utf-8", newline="\n")
     pdf = tmp_path / "onepager.pdf"
     pdf.write_bytes(b"accepted PDF")
     rejected = pdf.with_suffix(".rejected.pdf")
@@ -558,9 +586,9 @@ def test_failed_pdf_build_does_not_publish_rejection(
 
 def test_html_preview_preserves_accepted_pair(bundle, tmp_path):
     source = tmp_path / "bundle.json"
-    source.write_text(json.dumps(bundle), encoding="utf-8")
+    source.write_text(json.dumps(bundle), encoding="utf-8", newline="\n")
     html = tmp_path / "onepager.html"
-    html.write_text("previous accepted HTML", encoding="utf-8")
+    html.write_text("previous accepted HTML", encoding="utf-8", newline="\n")
     pdf = tmp_path / "onepager.pdf"
     pdf.write_bytes(b"previous accepted PDF")
 
@@ -584,3 +612,239 @@ def test_html_preview_preserves_accepted_pair(bundle, tmp_path):
     assert (tmp_path / "onepager.preview.html").read_text(
         encoding="utf-8"
     ) == report.render_html(bundle, "001")
+
+
+@pytest.fixture
+def onepager_ci():
+    workflow = Path(__file__).parents[3] / ".github" / "workflows" / "ci.yml"
+    return yaml.safe_load(workflow.read_text(encoding="utf-8"))["jobs"]
+
+
+def _run_change_detector(
+    onepager_ci, monkeypatch, tmp_path, paths, before="", after=""
+):
+    assert "operator-onepager-changes" in onepager_ci, "PDF changes must be scoped"
+    step = next(
+        step
+        for step in onepager_ci["operator-onepager-changes"]["steps"]
+        if step.get("id") == "paths"
+    )
+    payload = step["run"].split("<<'PY'\n", 1)[1].rsplit("\nPY", 1)[0]
+    output = tmp_path / "output.txt"
+    monkeypatch.setenv("GITHUB_OUTPUT", output.as_posix())
+    monkeypatch.setenv("BASE_SHA", "base")
+    monkeypatch.setenv("HEAD_SHA", "head")
+    for key in ("GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR"):
+        monkeypatch.setenv(key, "inherited-binding")
+    responses = {
+        ("merge-base", "base", "head"): "ancestor\n",
+        ("diff", "--no-renames", "--name-only", "-z", "ancestor", "head", "--"): (
+            b"\0".join(path.encode("utf-8") for path in paths)
+            + (b"\0" if paths else b"")
+        ),
+        ("show", "ancestor:Makefile"): before,
+        ("show", "head:Makefile"): after,
+        ("ls-tree", "--name-only", "ancestor", "--", "Makefile"): (
+            "Makefile\n" if before is not None else ""
+        ),
+        ("ls-tree", "--name-only", "head", "--", "Makefile"): (
+            "Makefile\n" if after is not None else ""
+        ),
+    }
+
+    def git_output(command, **kwargs):
+        assert command[0] == "git"
+        assert not (
+            {"GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR"} & kwargs["env"].keys()
+        )
+        return responses[tuple(command[1:])]
+
+    monkeypatch.setattr(subprocess, "check_output", git_output)
+    exec(compile(payload, "<workflow-change-detector>", "exec"), {})
+    return output.read_text(encoding="utf-8").strip()
+
+
+@pytest.mark.parametrize(
+    "paths, expected",
+    [
+        ([], "required=false"),
+        (["src/worldenergydata/analysis/operator_onepager.py"], "required=true"),
+        (["tests/unit/analysis/test_operator_onepager.py"], "required=true"),
+        (["tests/fixtures/operator_onepager/nested/input.json"], "required=true"),
+        (["tests/fixtures/operator_onepager/line\nbreak.json"], "required=true"),
+        (["docs/guide.md"], "required=false"),
+        (["docs/space and $(false).md"], "required=false"),
+        (["tests/fixtures/operator_onepager-other/input.json"], "required=false"),
+    ],
+)
+def test_ci_detects_only_report_paths(
+    onepager_ci, monkeypatch, tmp_path, paths, expected
+):
+    assert _run_change_detector(onepager_ci, monkeypatch, tmp_path, paths) == expected
+
+
+@pytest.mark.parametrize(
+    "change", ["unrelated", "variable", "recipe", "html_recipe", "prerequisite"]
+)
+def test_ci_detects_makefile_target_changes_only(
+    onepager_ci, monkeypatch, tmp_path, change
+):
+    before = (
+        "other:\n\techo old\nONEPAGER_PYTHON ?= python3\n"
+        "onepager:\n\techo report\nonepager-html:\n\techo preview\n"
+    )
+    after = before.replace("echo old", "echo new")
+    if change == "recipe":
+        after = after.replace("echo report", "echo changed")
+    elif change == "html_recipe":
+        after = after.replace("echo preview", "echo changed")
+    elif change == "variable":
+        after = after.replace("?= python3", "?= python")
+    elif change == "prerequisite":
+        after = after.replace("onepager:", "onepager: input")
+    assert _run_change_detector(
+        onepager_ci, monkeypatch, tmp_path, ["Makefile"], before, after
+    ) == ("required=false" if change == "unrelated" else "required=true")
+
+
+@pytest.mark.parametrize("missing", ["base", "head"])
+def test_ci_makefile_addition_or_removal_requires_pdf(
+    onepager_ci, monkeypatch, tmp_path, missing
+):
+    before = None if missing == "base" else "onepager:\n\techo report\n"
+    after = None if missing == "head" else "onepager:\n\techo report\n"
+    assert (
+        _run_change_detector(
+            onepager_ci, monkeypatch, tmp_path, ["Makefile"], before, after
+        )
+        == "required=true"
+    )
+
+
+@pytest.mark.parametrize("outcome", ["passed", "skipped", "failure", "missing"])
+def test_ci_requires_all_pdf_cases_to_run(onepager_ci, monkeypatch, tmp_path, outcome):
+    steps = onepager_ci["operator-onepager-pdf"]["steps"]
+    matches = [
+        step for step in steps if step["name"] == "Verify required PDF test results"
+    ]
+    assert matches, "Required PDF cases must have recorded outcomes"
+    payload = matches[0]["run"].split("<<'PY'\n", 1)[1].rsplit("\nPY", 1)[0]
+    result = tmp_path / "results.xml"
+    names = [
+        "test_worked_example_pdf_is_one_real_page",
+        "test_make_pdf_target_is_one_real_page",
+        "test_real_pdf_overflow_preserves_accepted_destination",
+    ]
+    cases = "".join(f'<testcase name="{name}"/>' for name in names)
+    if outcome == "missing":
+        cases = cases.replace(f'<testcase name="{names[0]}"/>', "")
+    elif outcome != "passed":
+        cases = cases.replace(
+            f'<testcase name="{names[0]}"/>',
+            f'<testcase name="{names[0]}"><{outcome}/></testcase>',
+        )
+    result.write_text(f"<testsuite>{cases}</testsuite>", encoding="utf-8", newline="\n")
+    monkeypatch.setenv("REPORT_XML", result.as_posix())
+    if outcome == "passed":
+        exec(compile(payload, "<workflow-pdf-results>", "exec"), {})
+    else:
+        with pytest.raises(SystemExit):
+            exec(compile(payload, "<workflow-pdf-results>", "exec"), {})
+
+
+def test_ci_detector_errors_do_not_report_irrelevant(
+    onepager_ci, monkeypatch, tmp_path
+):
+    assert "operator-onepager-changes" in onepager_ci, "PDF changes must be scoped"
+    step = next(
+        step
+        for step in onepager_ci["operator-onepager-changes"]["steps"]
+        if step.get("id") == "paths"
+    )
+    payload = step["run"].split("<<'PY'\n", 1)[1].rsplit("\nPY", 1)[0]
+    output = tmp_path / "output.txt"
+    monkeypatch.setenv("GITHUB_OUTPUT", output.as_posix())
+    monkeypatch.setenv("BASE_SHA", "absent")
+    monkeypatch.setenv("HEAD_SHA", "head")
+
+    def failed_git(command, **kwargs):
+        raise subprocess.CalledProcessError(128, command)
+
+    monkeypatch.setattr(subprocess, "check_output", failed_git)
+    with pytest.raises(subprocess.CalledProcessError):
+        exec(compile(payload, "<workflow-change-detector>", "exec"), {})
+    assert not output.exists()
+
+
+@pytest.mark.parametrize(
+    "domains, changes, required, pdf, succeeds",
+    [
+        ("success", "success", "true", "success", True),
+        ("success", "success", "false", "skipped", True),
+        ("success", "success", "true", "skipped", False),
+        ("success", "success", "true", "failure", False),
+        ("success", "success", "true", "cancelled", False),
+        ("success", "success", "true", "", False),
+        ("success", "failure", "false", "skipped", False),
+        ("success", "skipped", "", "skipped", False),
+        ("success", "cancelled", "", "skipped", False),
+        ("success", "success", "", "skipped", False),
+        ("success", "success", "false", "failure", False),
+        ("success", "success", "false", "success", False),
+        ("failure", "success", "false", "skipped", False),
+        ("skipped", "success", "true", "success", False),
+    ],
+)
+def test_ci_gate_accepts_only_explained_pdf_results(
+    onepager_ci, domains, changes, required, pdf, succeeds
+):
+    step = next(
+        step
+        for step in onepager_ci["pr-gate"]["steps"]
+        if step["name"] == "Gate on full result"
+    )
+    environment = os.environ.copy()
+    environment.update(
+        FULL_RESULT=domains,
+        CHANGES_RESULT=changes,
+        PDF_REQUIRED=required,
+        PDF_RESULT=pdf,
+    )
+    result = subprocess.run(
+        ["bash", "-e", "-c", step["run"]],
+        env=environment,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=10,
+    )
+    assert (result.returncode == 0) is succeeds, result.stdout + result.stderr
+
+
+def test_ci_pdf_job_is_scoped_and_main_replay_is_preserved(onepager_ci):
+    assert "operator-onepager-changes" in onepager_ci, "PDF changes must be scoped"
+    detector = onepager_ci["operator-onepager-changes"]
+    assert any(
+        step.get("with", {}).get("fetch-depth") == 0 for step in detector["steps"]
+    )
+    pdf = onepager_ci["operator-onepager-pdf"]
+    assert "operator-onepager-changes" in pdf["needs"]
+    assert "needs.operator-onepager-changes.outputs.required == 'true'" in pdf["if"]
+    assert pdf["runs-on"] == "ubuntu-latest"
+    assert "operator-onepager-changes" in onepager_ci["pr-gate"]["needs"]
+    assert set(onepager_ci["pr-gate"]["needs"]) == {
+        "mode",
+        "domain-tests",
+        "operator-onepager-changes",
+        "operator-onepager-pdf",
+    }
+    assert "!cancelled()" in onepager_ci["pr-gate"]["if"]
+    assert "github.event_name == 'pull_request'" in onepager_ci["pr-gate"]["if"]
+    assert "github.event_name" in detector["if"]
+    assert "'pull_request'" in detector["if"]
+    assert onepager_ci["pr-gate"]["runs-on"] == onepager_ci["mode"]["runs-on"]
+    assert any(
+        "REPLAY_RESULT" in step.get("env", {})
+        for step in onepager_ci["pr-gate"]["steps"]
+    )
+    assert "test" not in onepager_ci, "The full matrix belongs to the daily workflow"
