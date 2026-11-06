@@ -10,7 +10,7 @@ Covers:
     TestCalibratedMatrix    (4 tests)
     TestIntegrationWithSkill (3 tests)
 
-Total: 173 cases, including 128 source-expression guard cases.
+Total: 225 cases, including 180 source-expression guard cases.
 """
 
 from __future__ import annotations
@@ -452,6 +452,52 @@ def _is_operator_target(target):
     )
 
 
+class _InvalidOperatorLiteral(ValueError):
+    """Carry a formatting error's source line without recording literal values."""
+
+
+def _is_literal_operator_expression(expression):
+    """Recognize complete string expressions before attempting any evaluation."""
+    if isinstance(expression, ast.Constant):
+        return isinstance(expression.value, str)
+    if isinstance(expression, ast.JoinedStr):
+        return all(
+            isinstance(value, ast.Constant) and isinstance(value.value, str)
+            for value in expression.values
+        )
+    if isinstance(expression, ast.BinOp) and isinstance(
+        expression.op, (ast.Add, ast.Mod)
+    ):
+        right = expression.right
+        right_is_literal = (
+            all(_is_literal_operator_expression(value) for value in right.elts)
+            if isinstance(expression.op, ast.Mod) and isinstance(right, ast.Tuple)
+            else _is_literal_operator_expression(right)
+        )
+        return _is_literal_operator_expression(expression.left) and right_is_literal
+    return False
+
+
+def _fold_operator_literal(expression):
+    """Evaluate only previously recognized literal string expressions."""
+    if isinstance(expression, ast.Constant):
+        return expression.value
+    if isinstance(expression, ast.JoinedStr):
+        return "".join(value.value for value in expression.values)
+    left = _fold_operator_literal(expression.left)
+    right = (
+        tuple(_fold_operator_literal(value) for value in expression.right.elts)
+        if isinstance(expression.right, ast.Tuple)
+        else _fold_operator_literal(expression.right)
+    )
+    if isinstance(expression.op, ast.Add):
+        return left + right
+    try:
+        return left % right
+    except (TypeError, ValueError):
+        raise _InvalidOperatorLiteral(expression.lineno) from None
+
+
 def _operator_literal_values(expression):
     """Yield label literals from value branches, excluding lookup metadata."""
     if isinstance(expression, ast.Constant) and isinstance(expression.value, str):
@@ -465,13 +511,9 @@ def _operator_literal_values(expression):
     elif isinstance(expression, ast.BoolOp):
         for value in expression.values:
             yield from _operator_literal_values(value)
-    elif isinstance(expression, ast.BinOp):
-        if isinstance(expression.op, (ast.Add, ast.Mod)) and all(
-            isinstance(operand, ast.Constant) and isinstance(operand.value, str)
-            for operand in (expression.left, expression.right)
-        ):
-            left, right = expression.left.value, expression.right.value
-            value = left + right if isinstance(expression.op, ast.Add) else left % right
+    elif isinstance(expression, (ast.BinOp, ast.JoinedStr)):
+        if _is_literal_operator_expression(expression):
+            value = _fold_operator_literal(expression)
             yield ast.copy_location(ast.Constant(value=value), expression)
     elif isinstance(expression, ast.Dict):
         for value in expression.values:
@@ -529,16 +571,25 @@ def _assert_source_operator_codenames(tree, relative_path):
                 expressions.append(node.value)
     source_fields = []
     for expression in expressions:
-        for node in _operator_literal_values(expression):
-            if not _OPERATOR_PATTERN.fullmatch(node.value):
-                raise AssertionError(
-                    (
-                        relative_path.as_posix(),
-                        node.lineno,
-                        "Operator literal does not follow the codename contract",
+        try:
+            for node in _operator_literal_values(expression):
+                if not _OPERATOR_PATTERN.fullmatch(node.value):
+                    raise AssertionError(
+                        (
+                            relative_path.as_posix(),
+                            node.lineno,
+                            "Operator literal does not follow the codename contract",
+                        )
                     )
+                source_fields.append(node)
+        except _InvalidOperatorLiteral as error:
+            raise AssertionError(
+                (
+                    relative_path.as_posix(),
+                    error.args[0],
+                    "Invalid literal operator formatting",
                 )
-            source_fields.append(node)
+            ) from None
     return source_fields
 
 
@@ -549,8 +600,10 @@ def test_package_source_and_fixtures_use_operator_codenames():
     without storing real names or a denylist. Lookup keys, empty lookup defaults
     and named aggregation tuples are metadata. Conditional and boolean branches,
     dictionary value literals and nonempty lookup defaults are checked. Binary
-    concatenation and percent formatting are folded only for two literal string
-    operands; dynamically computed labels are not evaluated.
+    concatenation and percent formatting are folded recursively for complete
+    string literals, including tuple formatting operands and f-strings without
+    placeholders. Malformed literal formatting reports its source location;
+    dynamically computed labels are not evaluated.
     This is a structural regression check, not free-text entity recognition.
     """
     package = Path(calibrator_module.__file__).parent
@@ -681,6 +734,9 @@ def test_operator_source_guard_checks_expression_values(field, value):
         'prefix + "OPERATOR-AA"',
         '"OPERATOR-" + letter',
         '"OPERATOR-%s" % letter',
+        '"OPERATOR-" + ("A" + letter)',
+        '"OPERATOR-%s%s" % ("A", letter)',
+        'f"OPERATOR-{letter}"',
     ],
 )
 def test_operator_source_guard_skips_dynamic_binary_expressions(field, value):
@@ -696,6 +752,15 @@ def test_operator_source_guard_skips_dynamic_binary_expressions(field, value):
         ('"OPERATOR-" + "AA"', '"UN" + "LABELLED"'),
         ('"OPERATOR-" + "AA"', '"OPERATOR-A" + "OPERATOR-B"'),
         ('"OPERATOR-%s" % "AA"', '"UN%s" % "LABELLED"'),
+        ('"OP" + "ERATOR-" + "AA"', '"UN" + "LAB" + "ELLED"'),
+        ('"OP" + ("ERATOR-" + "AA")', '"UN" + ("LAB" + "ELLED")'),
+        ('"OPERATOR-%s" % ("AA",)', '"UN%s" % ("LABELLED",)'),
+        ('"OPERATOR-%s%s" % ("A", "A")', '"UN%s%s" % ("LAB", "ELLED")'),
+        ('f"OPERATOR-AA"', 'f"UNLABELLED"'),
+        (
+            '("OPERATOR-" + "%s") % ("A" + "A",)',
+            '("UN" + "%s") % ("LAB" + "ELLED",)',
+        ),
     ],
 )
 def test_operator_source_guard_checks_complete_literal_binary_values(
@@ -712,4 +777,26 @@ def test_operator_source_guard_checks_complete_literal_binary_values(
         "example.py",
         1,
         "Operator literal does not follow the codename contract",
+    )
+
+
+@pytest.mark.parametrize("field", sorted(_OPERATOR_FIELDS))
+@pytest.mark.parametrize(
+    "value",
+    [
+        '"OPERATOR-%s %s" % "AA"',
+        '"OPERATOR-%q" % "AA"',
+        '"OPERATOR-%" % ("AA",)',
+        '"OPERATOR-" + ("%s %s" % "AA")',
+    ],
+)
+def test_operator_source_guard_reports_malformed_literal_formatting(field, value):
+    """Malformed formatting reports only its file, line and rule."""
+    tree = ast.parse(f"{field} = (\n    {value}\n)")
+    with pytest.raises(AssertionError) as error:
+        _assert_source_operator_codenames(tree, Path("example.py"))
+    assert error.value.args[0] == (
+        "example.py",
+        2,
+        "Invalid literal operator formatting",
     )
