@@ -2,20 +2,20 @@
 
 ## Summary
 
-The WAR engine now requires complete API-12 bore keys before grouping. API-10
-family counts are separate operations; completion keys remain proposed. The audit reproduces
-the committed bore/family population; full raw-feed completeness remains unverified.
+The WAR engine requires complete API-12 bore keys before grouping. Its shared
+quarantine helper excludes malformed WAR rows with a warning and count when
+selected by a caller. The population audit reproduces the committed bore/family
+counts; full raw-feed completeness remains unverified.
 
 ## Revision history
 
-| Revision | Date | What changed and why |
+| Revision | Date | Change and reason |
 |---|---|---|
-| 0 | 2026-10-12 | Recorded identifier definitions, metric grains, and unresolved populations to distinguish bore counts from family counts. |
-| 1 | 2026-10-19 | Added identifier validation, completion keys, and tested population counts to prevent ambiguous grain from appearing as missing coverage. |
-| 2 | 2026-10-21 | Separated status and evidence from revision history, restored the original revision, and clarified the dates of the inventory and validation changes. |
-| 3 | 2026-10-22 | Deferred the unused completion-key helper and vectorized bore validation to keep this change focused on WAR aggregation. |
+| 0 | 2026-10-12 | The metric inventory and source definitions were recorded to distinguish bore counts from family counts. |
+| 1 | 2026-10-19 | WAR identifier validation and grain regression tests were added to prevent malformed keys from becoming bore or family results. |
+| 2 | 2026-11-06 | A distinct-population summary and scalar adapter were added through the shared validator, with bounded error locations and batch-dispatch regression checks. |
 
-Revision history table. Changes to the identifier-grain record and their purpose.
+Table 0. Revision history of the decision record.
 
 ## Status and evidence
 
@@ -30,8 +30,8 @@ Grain and duration basis are separate attributes. A bore count is not a well-fam
 
 ### Enforced identifier contract
 
-`bsee.analysis.well_identifier_grain` implements the format described by R1,
-attachment pages 3-5 (2009). `normalize_bsee_api12` accepts a complete twelve-digit
+`war_rig_days.normalize_api12` implements the format described by R1,
+attachment pages 3-5 (2009). Its scalar adapter `normalize_bsee_api12` accepts a complete twelve-digit
 ASCII bore key, surrounding whitespace, and an all-zero decimal tail from numeric
 table loading. It rejects missing values, family-only keys, event-suffixed keys,
 lost leading digits, punctuation, and scientific-notation text. It never pads or
@@ -40,8 +40,13 @@ truncates. This is format validation, not proof that BSEE assigned the number.
 `war_rig_days.normalize_api12` applies this contract to both WAR rows and requested
 populations before grouping or coverage matching. A malformed key now raises an
 input error rather than creating an apparent bore or an absent-coverage result.
-The full supplied WAR frame is validated, including rows outside a requested
-population. Correctly formatted identifiers retain the existing day arithmetic.
+Errors report the invalid count and the first five row positions, numbered from
+zero; source values and arbitrary index labels are omitted. The full supplied
+frame is validated, including rows outside a requested population.
+`quarantine_war_identifiers` uses the shared tokenization to exclude malformed
+WAR rows with a warning before strict aggregation when a caller selects it.
+Excluded rows contribute no activity; results then cover only retained rows.
+Correctly formatted identifiers retain the existing day arithmetic.
 
 Completion-key implementation is deferred until a production caller can establish
 its separate interval field. R1, attachment pages 4-5, defines the producing
@@ -50,8 +55,10 @@ an API-14 string. A production observation also needs reporting month and contex
 
 `summarize_bore_population` counts distinct complete bore keys and their family
 prefixes, including a family-size histogram and observed WB codes. Duplicate
-rows count once. Invalid identifiers fail the audit. It does not classify
-producers or geologic sidetracks from WB suffixes.
+rows count once. Invalid identifiers fail the audit. The entire population is
+validated in one batch; the scalar adapter calls the same validator rather than
+reimplementing its format rule. No production consumer of the population helper
+is established. It does not classify producers or geologic sidetracks from WB suffixes.
 
 Regression checks enumerate separated re-entry intervals and overlapping bores:
 bore sums and family calendar unions remain distinct and gaps are excluded.
@@ -83,7 +90,7 @@ R2 and R3 define `API_WELL_NUMBER` using the component structure above but decla
 | WAR main loader | Reads `API_WELL_NUMBER`, with `API_NUMBER` / `API` aliases. `normalize_api` strips whitespace and a trailing `.0`; it neither pads nor truncates nor enforces length. | [Extractor:73](../../../modules/bsee/analysis/production/FDAS_V30/extract_drilling_completion_days.py#L73), [loader:127](../../../modules/bsee/analysis/production/FDAS_V30/extract_drilling_completion_days.py#L127). |
 | Borehole loader | Reads `API_WELL_NUMBER` / `API` using the same normalizer. Minimum spud and maximum TD remain grouped by the **full normalized key**, not a derived API-10. They are metadata, no longer the day-count rule. | [Extractor:197](../../../modules/bsee/analysis/production/FDAS_V30/extract_drilling_completion_days.py#L197), [grouping:222](../../../modules/bsee/analysis/production/FDAS_V30/extract_drilling_completion_days.py#L222). |
 | WAR properties and remarks | `SN_WAR` joins the activity code to WAR. Remarks provide narrative/mud-weight information, not drilling or completion days. | [Property loader:158](../../../modules/bsee/analysis/production/FDAS_V30/extract_drilling_completion_days.py#L158), [day call:388](../../../modules/bsee/analysis/production/FDAS_V30/extract_drilling_completion_days.py#L388). |
-| Shared WAR engine | `normalize_api12` validates the complete bore key in a vectorized batch, matching the scalar `normalize_bsee_api12` contract. `_prepare` reads `API_WELL_NUMBER`; `rig_days_by_bore` groups by the full validated `api12`. The well helper derives the family prefix afterward. | [Identifier contract](../../../../packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/well_identifier_grain.py), [WAR engine](../../../../packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/war_rig_days.py). |
+| Shared WAR engine | `normalize_api12` validates complete bore keys in a vectorized batch. The scalar adapter and population summary delegate to it. `_prepare` reads `API_WELL_NUMBER`; `rig_days_by_bore` groups by the full validated `api12`. The well helper derives the family prefix afterward. | [Identifier contract](../../../../packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/well_identifier_grain.py), [WAR engine](../../../../packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/war_rig_days.py). |
 | OGOR-A chronological conversion | Reads `API_WELL_NUMBER`, coerces it numerically, and groups by lease, well name, full API and month. It does not retain interval as a grouping key: this output is bore-month aggregation, although the regulatory production source is completion-based. | [Converter:242](../../../modules/bsee/analysis/production/FDAS_V30/ogora_to_chronological.py#L242). |
 | Local field-definition notes | Map `API_WELL_NUMBER`, spud/TD and raw table names; they do not establish a stored-length profile. The API-number note is an external link, not a local schema guarantee. | [Field mappings:8](../data/analysis_data.md#L8), [drilling fields:13](../data/drilling_data_rev1.md#L13), [API note:1](../data/well_api_number.md#L1). |
 

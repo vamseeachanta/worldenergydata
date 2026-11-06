@@ -10,7 +10,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from worldenergydata.bsee.analysis import war_rig_days
+from worldenergydata.bsee.analysis import war_rig_days, well_identifier_grain
 from worldenergydata.bsee.analysis.war_rig_days import (
     normalize_api12,
     rig_days_by_bore,
@@ -80,15 +80,79 @@ def test_batch_normalization_does_not_dispatch_each_row_to_the_scalar_helper(
 ):
     """Full-feed validation must use a batch path rather than Python per row."""
 
-    def scalar_call(value):
+    def scalar_call(*args, **kwargs):
         pytest.fail("Batch normalization dispatched a row to the scalar helper")
 
-    monkeypatch.setattr(
-        war_rig_days, "normalize_bsee_api12", scalar_call, raising=False
-    )
+    monkeypatch.setattr(well_identifier_grain, "normalize_bsee_api12", scalar_call)
+    monkeypatch.setattr(pd.Series, "map", scalar_call)
+    monkeypatch.setattr(pd.Series, "apply", scalar_call)
     values = pd.Series([f" {BORE}.00 ", float(OTHER_FAMILY)], index=[9, 9])
     assert normalize_api12(values).tolist() == [BORE, OTHER_FAMILY]
     assert normalize_api12(values).index.tolist() == [9, 9]
+
+
+def test_scalar_normalization_uses_the_shared_batch_contract(monkeypatch):
+    calls = []
+
+    def shared_batch(values):
+        calls.append(values)
+        return pd.Series([OTHER_FAMILY])
+
+    monkeypatch.setattr(war_rig_days, "normalize_api12", shared_batch)
+    assert normalize_bsee_api12(BORE) == OTHER_FAMILY
+    assert calls == [[BORE]]
+
+
+@pytest.mark.parametrize("container", [list, set, iter, dict.fromkeys])
+def test_population_validates_each_iterable_in_one_batch(monkeypatch, container):
+    calls = []
+
+    def shared_batch(values):
+        calls.append(values)
+        return pd.Series(values)
+
+    monkeypatch.setattr(war_rig_days, "normalize_api12", shared_batch)
+    summary = summarize_bore_population(container([BORE, OTHER_FAMILY]))
+    assert summary["bore_count"] == 2
+    assert summary["well_family_count"] == 2
+    assert len(calls) == 1
+    assert isinstance(calls[0], list)
+    assert set(calls[0]) == {BORE, OTHER_FAMILY}
+
+
+def test_error_reports_count_and_bounded_positions_without_source_labels(tmp_path):
+    values = pd.Series(
+        [BORE, None, "bad", None, "bad", None, "bad"],
+        index=[tmp_path.as_posix()] * 7,
+    )
+    with pytest.raises(ValueError, match="6 invalid identifier") as error:
+        normalize_api12(values)
+    message = str(error.value)
+    assert "first row positions (zero-based): [1, 2, 3, 4, 5]" in message
+    assert tmp_path.as_posix() not in message
+    assert BORE not in message
+    assert "bad" not in message
+
+
+@pytest.mark.parametrize("all_invalid", [False, True])
+def test_quarantine_retains_main_contract_and_duplicate_row_labels(all_invalid):
+    key = None if all_invalid else f" {BORE}.00 "
+    frame = _war(
+        [
+            [key, "2024-01-01", "2024-01-07", "DRL"],
+            ["bad", "2024-01-01", "2024-01-07", "DRL"],
+        ]
+    )
+    frame.index = [9, 9]
+    original = frame.copy(deep=True)
+    rejected = 2 if all_invalid else 1
+    with pytest.warns(UserWarning, match=f"Quarantined {rejected} WAR row"):
+        result = war_rig_days.quarantine_war_identifiers(frame)
+    pd.testing.assert_frame_equal(frame, original)
+    assert result["API_WELL_NUMBER"].tolist() == ([] if all_invalid else [BORE])
+    assert result.index.tolist() == ([] if all_invalid else [9])
+    if not all_invalid:
+        assert rig_days_by_bore(result).iloc[0]["drilling_days"] == 7
 
 
 @pytest.mark.parametrize(

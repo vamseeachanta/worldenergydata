@@ -67,6 +67,7 @@ explicitly or does not.
 
 from __future__ import annotations
 
+import warnings
 from dataclasses import dataclass
 
 import pandas as pd
@@ -212,21 +213,61 @@ def union_days(intervals) -> int:
     return int(total)
 
 
+def _api12_tokens(values) -> pd.Series:
+    return (
+        pd.Series(values).astype(str).str.strip().str.replace(r"\.0+$", "", regex=True)
+    )
+
+
+def quarantine_war_identifiers(war: pd.DataFrame) -> pd.DataFrame:
+    """Exclude malformed WAR keys before aggregation, reporting the row count.
+
+    The input is preserved. Excluded rows contribute no activity; the warning
+    means results cover only records with valid keys, not the entire input.
+    No padding, truncation, or inference of missing wellbore keys is attempted.
+    """
+    keys = _api12_tokens(war["API_WELL_NUMBER"])
+    valid = keys.str.fullmatch(r"[0-9]{12}", na=False)
+    rejected = int((~valid).sum())
+    if rejected:
+        warnings.warn(
+            f"Quarantined {rejected} WAR row(s) with invalid API12 identifiers; "
+            "rig-day results exclude these rows.",
+            UserWarning,
+            stacklevel=2,
+        )
+    return war.assign(API_WELL_NUMBER=keys).loc[valid].copy()
+
+
 def normalize_api12(values) -> pd.Series:
-    """Normalize complete BSEE bore keys; reject ambiguous identifier grain.
+    """Normalize and validate BSEE wellbore keys before deriving well families.
 
     A numeric API column stringifies with a float tail -- ``608124009500.0`` --
     which matches no population entry. Because a non-match is reported as
     "this bore has no WAR activity", the failure is silent and total: every
     bore comes back null and the result looks like a coverage gap rather than
-    a dtype mismatch. Accept that numeric tail, but require the full API-12
-    format defined in NTL 2009-G33 (2009), attachment p. 3. Never pad API-10
-    or truncate an event suffix. Preserve Series indices for row alignment.
+    a dtype mismatch. Callers reach this legitimately, since concatenating
+    heterogeneous WAR members widens the column to float64.
+
+    Whitespace and integral decimal tails are accepted for CSV compatibility.
+    Missing or malformed keys raise rather than invent a bore by padding an
+    API-10 or truncating an API-14. Leading zeros in strings are preserved;
+    leading zeros already lost to numeric conversion cannot be recovered.
+    Format validation does not establish that BSEE assigned the identifier.
     """
-    normalized = pd.Series(values).astype(str).str.strip()
-    normalized = normalized.str.replace(r"\.0+$", "", regex=True)
-    if not normalized.str.fullmatch(r"[0-9]{12}", na=False).all():
-        raise ValueError("BSEE bore key requires a complete API-12 identifier")
+    normalized = _api12_tokens(values)
+    # MMS NTL 2009-G33 (2009), attachment pp. 2-3, API Well Number:
+    # ten family digits plus two WB digits; interval codes are separate (p. 4).
+    # https://www.bsee.gov/sites/bsee.gov/files/notices-to-lessees-ntl/notices-to-lessees/09-g33.pdf
+    invalid = ~normalized.str.fullmatch(r"[0-9]{12}", na=False)
+    if invalid.any():
+        positions = invalid.to_numpy().nonzero()[0][:5].tolist()
+        raise ValueError(
+            "BSEE API-12 / API_WELL_NUMBER requires 12 ASCII digits after normalization; "
+            f"{int(invalid.sum())} invalid identifier(s); "
+            f"first row positions (zero-based): {positions}. "
+            "Supply full BSEE wellbore keys, not family or completion keys."
+        )
     return normalized
 
 

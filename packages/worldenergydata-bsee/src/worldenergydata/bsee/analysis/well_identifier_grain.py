@@ -10,9 +10,10 @@ code does not classify a bore as a geologic sidetrack versus a bypass.
 
 from __future__ import annotations
 
-import re
 from collections import Counter
 from collections.abc import Iterable
+
+from worldenergydata.bsee.analysis import war_rig_days
 
 
 def normalize_bsee_api12(value: object) -> str:
@@ -23,11 +24,7 @@ def normalize_bsee_api12(value: object) -> str:
     truncate a family/event identifier. Errors omit source values so logs do
     not inadvertently disclose unrelated input data.
     """
-    text = re.sub(r"\.0+$", "", str(value).strip())
-    # NTL 2009-G33 (2009), attachment p. 3: 2+3+5+2 ASCII decimal digits.
-    if re.fullmatch(r"[0-9]{12}", text) is None:
-        raise ValueError("BSEE bore key requires a complete API-12 identifier")
-    return text
+    return war_rig_days.normalize_api12([value]).iloc[0]
 
 
 def summarize_bore_population(values: Iterable[object]) -> dict:
@@ -37,7 +34,7 @@ def summarize_bore_population(values: Iterable[object]) -> dict:
     than silently reducing the population. No count of completions, producers,
     or sidetracks can be inferred from these bore keys alone.
     """
-    bores = {normalize_bsee_api12(value) for value in values}
+    bores = set(war_rig_days.normalize_api12(list(values)))
     # NTL 2009-G33 (2009), attachment p. 3: family = state+county+well
     # sequence (2+3+5 digits); final two digits identify the wellbore.
     family_sizes = Counter(bore[:10] for bore in bores)
