@@ -159,6 +159,8 @@ class TestCalendarCycleTime:
     def test_leap_year_calendar_span(self):
         """Jan 1 to Mar 1 = 31 + 29 = 60 days in leap year 2020.
 
+        Synthetic TD is Jan 8: TD minus spud = 7 days. The legacy
+        drilling_days label represented completion minus spud, not TD minus spud.
         Mar 1 to Jun 9 = 31 + 30 + 31 + 8 = 100 days; 60 + 100 = 160,
         the Jan 1 to Jun 9 span. No drilling-time alias is published.
         """
@@ -210,3 +212,27 @@ def test_committed_csv_uses_calendar_name():
         header = reader.fieldnames or []
         assert header.count("spud_to_completion_calendar_days") == 1
         assert "drilling_days" not in header
+
+
+def test_committed_calendar_components_close_to_first_oil():
+    """Issue #1077 identity: (completion - spud) + (oil - completion) = oil - spud.
+
+    This is date arithmetic, not an engineering day basis. The synthetic worked
+    row in TestCalendarCycleTime gives spud Jan 1, TD Jan 8, completion Mar 1,
+    oil Jun 9 in 2020: the legacy drilling_days value is 60, completion_days
+    is 100, and oil minus spud is 160. The saved-row tolerance of one day
+    comes from issue #1077, Problem (date decomposition, exact within one day).
+    """
+    path = Path(__file__).resolve().parents[3] / (
+        "reports/lower_tertiary/lt_well_benchmark_lower_tertiary_2010_latest.csv"
+    )
+    rows = list(csv.DictReader(path.open(encoding="utf-8")))
+    evaluated = []
+    for row in rows:
+        span = row["spud_to_completion_calendar_days"]
+        completion = row["completion_days"]
+        if span and completion and row["spud"] and row["first_oil"]:
+            elapsed = (pd.Timestamp(row["first_oil"]) - pd.Timestamp(row["spud"])).days
+            evaluated.append(abs(float(span) + float(completion) - elapsed) <= 1)
+    assert evaluated, "No committed row supports the identity"
+    assert all(evaluated)

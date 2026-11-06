@@ -3,6 +3,7 @@
 from worldenergydata.vessel_fleet.loaders import (
     ConstructionVesselLoader,
     DrillingRiserLoader,
+    LiftboatLoader,
 )
 from worldenergydata.vessel_fleet.models.construction_vessel import (
     ConstructionVesselEntry,
@@ -39,6 +40,7 @@ __all__ = [
     "FlexJointSchema",
     "LMRPEntry",
     "LMRPSchema",
+    "LiftboatLoader",
     "RiserJointEntry",
     "RiserJointSchema",
     "RiserLineEntry",

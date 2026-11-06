@@ -126,6 +126,8 @@ class RiskCalibrator:
         """Map BSEE HSE incidents to WellPlanningRisk probabilities.
 
         Expected columns: date (or year), incident_type, sub_type, severity.
+        A year column covers the inclusive calendar span between its endpoints,
+        including intervening years without incident rows.
         Severity weights: fatality=2.0, lost_time=1.5, recordable=1.0,
         near_miss=0.5, minor=0.3.
 
@@ -362,7 +364,10 @@ class RiskCalibrator:
                     numeric = pd.to_numeric(series, errors="coerce").dropna()
                     if numeric.empty:
                         continue
-                    years = float(numeric.max() - numeric.min())
+                    # OpenStax, College Algebra 2e (2021), section 9.2:
+                    # an = a1 + d(n - 1); unit year spacing gives n = last - first + 1.
+                    # https://openstax.org/books/college-algebra-2e/pages/9-2-arithmetic-sequences
+                    years = float(numeric.max() - numeric.min() + 1)
                     return max(years, 1.0)
                 else:
                     dates = pd.to_datetime(series, errors="coerce").dropna()

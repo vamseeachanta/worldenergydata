@@ -115,5 +115,5 @@ fieldreserves_annual:
       status: supported
       registry_dir: fieldreserves_production_master
     appendbdelimit.zip:
-      status: triaged
+      status: supported
       classification: lease_to_field_index
