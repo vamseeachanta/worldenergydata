@@ -280,8 +280,12 @@ def test_worked_example_writes_a_replayable_answer(tmp_path):
         timeout=30,
     )
     assert result.returncode == 0, result.stderr
-    manifest = json.loads((tmp_path / "synthetic_manifest.json").read_text(encoding="utf-8"))
-    response = json.loads((tmp_path / "render_response.json").read_text(encoding="utf-8"))
+    manifest = json.loads(
+        (tmp_path / "synthetic_manifest.json").read_text(encoding="utf-8")
+    )
+    response = json.loads(
+        (tmp_path / "render_response.json").read_text(encoding="utf-8")
+    )
     raw = (tmp_path / "input_bundle.json").read_bytes()
     assert manifest["releases"][0]["bundle_sha256"] == hashlib.sha256(raw).hexdigest()
     assert response["svg"] == (tmp_path / "chart.svg").read_text(encoding="utf-8")

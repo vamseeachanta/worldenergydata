@@ -67,8 +67,11 @@ assert.ok(target.children.some(child => child.tag === 'a' &&
         [
             node,
             "-e",
-            context + visualization + function
-            + f"\nrenderField({{}}, {json.dumps(field)});" + checks,
+            context
+            + visualization
+            + function
+            + f"\nrenderField({{}}, {json.dumps(field)});"
+            + checks,
         ],
         check=False,
         capture_output=True,
