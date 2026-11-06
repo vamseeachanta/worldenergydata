@@ -163,7 +163,12 @@ class TestBseeJobConfig:
 
 
 class TestEiaUsJobConfig:
-    def test_eia_accepts_api_key_config(self):
+    @patch("worldenergydata.scheduler.jobs.eia_us_refresh.EIAIngestionSync")
+    def test_eia_accepts_api_key_config(self, MockSync, tmp_path):
         job = EiaUsRefreshJob()
-        result = job.run(config={"api_key": "test_key_123"})
+        config = {"api_key": "test_key_123", "output_dir": str(tmp_path)}
+        MockSync.return_value.output_dir = tmp_path
+        MockSync.return_value.run_all.return_value = []
+        result = job.run(config=config)
         assert isinstance(result, JobResult)
+        MockSync.assert_called_once_with(api_key=config["api_key"], output_dir=tmp_path)

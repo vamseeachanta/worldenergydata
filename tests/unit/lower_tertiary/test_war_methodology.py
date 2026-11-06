@@ -10,6 +10,13 @@ import pytest
 from worldenergydata.bsee.analysis.drilling_intensity import DEPTH_COLUMNS
 
 REPO = Path(__file__).resolve().parents[3]
+DECISION_URL = (
+    "https://api.github.com/repositories/574746314/issues/comments/6132640847"
+)
+ANNUAL_CFR_URL = (
+    "https://www.govinfo.gov/content/pkg/CFR-2025-title30-vol2/xml/"
+    "CFR-2025-title30-vol2-sec250-743.xml"
+)
 
 
 def load_script(relative):
@@ -20,7 +27,7 @@ def load_script(relative):
     return module
 
 
-def assert_limits(text):
+def assert_limits(text, *, calendar=False):
     """Depth names follow the normalization module's existing column symbol."""
     text = " ".join(unescape(text).split())
     for fragment in (
@@ -34,22 +41,43 @@ def assert_limits(text):
         f"true vertical depth (TVD), {DEPTH_COLUMNS['tvd']}",
         "no definition was found in the sources cited here",
         "Publisher-declared basis",
-        "1064#issuecomment-6132640847",
-        "Milestone basis is the default",
-        "retained side by side",
-        "confirmation across the wider well population",
+        "6132640847",
         "reports submitted since April 2004",
         "reported, not confirmed",
-        "per 1,000 ft",
         "per 10,000 ft",
         "20–23 days per 10,000 ft",
         "87117-MS",
         "comparability",
     ):
         assert fragment in text, f"missing methodology disclosure: {fragment}"
+    if calendar:
+        assert "this page reports spud-to-TD calendar days" in text
+        assert "total-depth date minus spud date" in text
+        assert "no depth-normalized ratio is calculated" in text
+        assert "retain their legacy calendar and WAR-union arithmetic" not in text
+        assert "learning-series ratios" not in text
+    else:
+        for fragment in (
+            "Milestone basis is the default",
+            "retained side by side",
+            "confirmation across the wider well population",
+            "per 1,000 ft",
+        ):
+            assert fragment in text
 
 
-@pytest.mark.parametrize("surface", ["validation", "listing", "drilldown", "card"])
+@pytest.mark.parametrize(
+    "surface",
+    [
+        "validation",
+        "listing",
+        "drilldown",
+        "card",
+        "insights",
+        "completion",
+        "reconciliation",
+    ],
+)
 def test_selected_surfaces_disclose_all_limits(surface, tmp_path):
     if surface == "validation":
         mod = load_script("scripts/build_pages.py")
@@ -63,16 +91,52 @@ def test_selected_surfaces_disclose_all_limits(surface, tmp_path):
     elif surface == "drilldown":
         mod = load_script("scripts/lower_tertiary/build_dc_drilldown.py")
         text = mod.build_html(mod.load_payload())
-    else:
+    elif surface == "card":
         mod = load_script("scripts/hf_export/publish_dc_days_to_hf.py")
         card = (
             "---\nconfigs:\n- config_name: parametric_economics\n"
             "  data_files: parametric_economics.parquet\n---\n"
         )
         text = mod.patch_readme(card)
-    assert_limits(text)
+    elif surface == "insights":
+        mod = load_script("scripts/lower_tertiary/build_drilling_insights.py")
+        wells = mod.load_wells(mod.DEFAULT_SOURCE)
+        stats = mod.compute_stats(wells)
+        text = mod.render_html(stats, mod.DEFAULT_SOURCE)
+    else:
+        mod = load_script("scripts/completion/build_completion_report.py")
+        wells = mod._load()
+        reconciliation = mod.compute_reconciliation(wells)
+        if surface == "completion":
+            text = mod.render(mod.compute(wells), reconciliation)
+        else:
+            text = mod.render_verification(reconciliation, wells)
+    assert_limits(text, calendar=surface == "insights")
     assert text.count("WAR methodology limits") == 1
     assert_source_list(text)
+
+
+@pytest.mark.parametrize(
+    "relative",
+    [
+        "reports/lower_tertiary/drilling_insights.html",
+        "reports/completion/index.html",
+        "reports/completion/verification.html",
+    ],
+)
+def test_committed_duration_pages_disclose_all_limits(relative):
+    """These pages are copied verbatim by the site builder; test saved output too.
+
+    Disclosure expectations come from 30 CFR 250.743(a), the repository's
+    Makefile coverage caveat, the depth-column declarations and the superseding
+    decision cited by assert_limits. No duration calculation changes here.
+    """
+    text = (REPO / relative).read_text(encoding="utf-8")
+    assert_limits(text, calendar=relative.endswith("drilling_insights.html"))
+    assert text.count("WAR methodology limits") == 1
+    assert_source_list(text)
+    assert text.count("Revision history") == 1
+    assert text.index("Revision history") < text.index("WAR methodology limits")
 
 
 def test_existing_dataset_card_acquires_note_once():
@@ -94,11 +158,16 @@ class NoteParser(HTMLParser):
         self.ancestors = []
         self.items = 0
         self.errors = []
+        self.links = []
 
     def handle_starttag(self, tag, attrs):
         attributes = dict(attrs)
         if "war-methodology" in attributes.get("class", "").split():
             self.ancestors.append(list(self.stack))
+        if tag == "a" and any(
+            "war-methodology" in attr.get("class", "").split() for _, attr in self.stack
+        ):
+            self.links.append(attributes.get("href"))
         if tag == "li" and any(
             "war-methodology" in attr.get("class", "").split() for _, attr in self.stack
         ):
@@ -132,20 +201,23 @@ class NoteParser(HTMLParser):
 
 
 def assert_source_list(text):
-    """Each selected surface renders three distinct source items."""
+    """Each surface retains the decision link and both regulatory sources."""
     if "<section" in text:
         parser = NoteParser()
         parser.feed(text)
-        assert parser.items == 3
+        assert parser.items == 4
+        assert DECISION_URL in parser.links
     else:
         note = text.split("## WAR methodology limits", 1)[1]
-        assert len([line for line in note.splitlines() if line.startswith("- ")]) == 3
+        assert len([line for line in note.splitlines() if line.startswith("- ")]) == 4
+        assert f"[#1064 decision]({DECISION_URL})" in note
+    assert ANNUAL_CFR_URL in text
 
 
 def test_note_uses_superseding_milestone_decision():
     note = load_script("scripts/lower_tertiary/war_methodology.py").WAR_METHODOLOGY
     text = " ".join(note.split())
-    assert "1064#issuecomment-6132640847" in text
+    assert f"[#1064 decision]({DECISION_URL})" in text
     assert "6131101384" not in text
     assert "Milestone basis is the default" in text
     assert "total-depth date minus spud date" in text
@@ -196,6 +268,27 @@ def test_sources_are_markdown_and_html_lists():
     mod = load_script("scripts/lower_tertiary/war_methodology.py")
     assert_source_list(mod.WAR_METHODOLOGY)
     assert_source_list(mod.methodology_html())
+
+
+def test_calendar_note_states_the_published_interval():
+    mod = load_script("scripts/lower_tertiary/war_methodology.py")
+    text = mod.methodology_html(calendar=True)
+    assert_limits(text, calendar=True)
+    assert_source_list(text)
+
+
+@pytest.mark.parametrize(
+    "relative",
+    [
+        "reports/lower_tertiary/drilling_insights.html",
+        "reports/completion/index.html",
+        "reports/completion/verification.html",
+        "reports/lower_tertiary/dc-drilldown.html",
+        "reports/lower_tertiary/wo-april-2026-per-well-dc.md",
+    ],
+)
+def test_saved_notes_keep_clickable_decision_and_annual_source(relative):
+    assert_source_list((REPO / relative).read_text(encoding="utf-8"))
 
 
 def test_html_source_items_are_escaped():

@@ -3,8 +3,9 @@
 # CSV types describe decoded cells; native None is serialized as empty text.
 # Manifest presence maps describe draft/export emission; optional gate pins come from CLI inputs.
 module: offshore_assets
-description: Global O&G fields, production facilities, host vessels, drilling rigs
-  and jackups (parsed from legacy reference extraction). Complements US-GoM BSEE.
+description: Global O&G fields, production facilities, host vessels and drilling rigs
+  from legacy reference extraction, plus jackups from public contractor specifications.
+  Complements US-GoM BSEE.
 datasets:
 - name: country_centroids.csv
   path: data/modules/offshore_assets/curated/country_centroids.csv
@@ -274,6 +275,10 @@ datasets:
 - name: jackups.csv
   path: data/modules/offshore_assets/curated/jackups.csv
   format: csv
+  description: Public contractor specifications and overview pages retrieved 2026-10-27.
+    Missing particulars are empty, never zero. Lengths converted from metres to feet
+    and rounded to one decimal foot. The collection includes indexed source evidence
+    without direct-sheet readback for fourteen rows; see README.md for limitations.
   columns:
   - name: RIG_NAME
     type: string
@@ -285,7 +290,7 @@ datasets:
     unit: ''
   - name: YEAR_DELIVERED
     type: integer
-    description: ''
+    description: Source year; may be build, delivery or entered-service year.
     unit: ''
   - name: COUNTRY_BUILT
     type: string
@@ -296,25 +301,25 @@ datasets:
     description: ''
     unit: ''
   - name: MAX_WATER_DEPTH_RATING_FT
-    type: integer
-    description: ''
-    unit: ''
+    type: float
+    description: Source maximum design or operating rating; conditions vary.
+    unit: ft
   - name: MIN_WATER_DEPTH_FT
     type: float
     description: ''
     unit: ''
   - name: OVERALL_LEG_LENGTH_FT
-    type: integer
+    type: float
     description: ''
-    unit: ''
+    unit: ft
   - name: SPUD_CAN_DIAMETER_FT
     type: float
     description: ''
-    unit: ''
+    unit: ft
   - name: MAX_DRILLING_DEPTH_FT
-    type: integer
+    type: float
     description: ''
-    unit: ''
+    unit: ft
   - name: QUARTERS_CAPACITY
     type: integer
     description: ''
@@ -322,7 +327,7 @@ datasets:
   - name: OVERALL_HULL_LENGTH_FT
     type: float
     description: ''
-    unit: ''
+    unit: ft
   - name: DERRICK_RATING_KIPS
     type: integer
     description: ''
@@ -335,9 +340,13 @@ datasets:
     type: integer
     description: ''
     unit: ''
-  row_count: 134
-  size_bytes: 12332
-  last_modified: '2026-06-22T17:06:49.955460+00:00'
+  - name: source_url
+    type: string
+    description: Public contractor source URLs, separated by semicolons when multiple.
+    unit: ''
+  row_count: 163
+  size_bytes: 29495
+  last_modified: '2026-10-27T00:00:00+00:00'
 - name: production_facilities.csv
   path: data/modules/offshore_assets/curated/production_facilities.csv
   format: csv

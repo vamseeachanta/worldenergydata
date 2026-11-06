@@ -56,6 +56,7 @@ from worldenergydata.cli.commands import (
     dashboard,
     eia,
     fdas,
+    hse,
     kansas_kgs,
     landman,
     lng_terminals,
@@ -100,6 +101,7 @@ app.add_typer(
     help="Marine safety incident data management",
 )
 app.add_typer(fdas.app, name="fdas", help="Field Development Analysis System")
+app.add_typer(hse.app, name="hse", help="HSE incident queries")
 app.add_typer(
     lower_tertiary.app,
     name="lower-tertiary",
@@ -205,6 +207,7 @@ def info() -> None:
         "Field Development Analysis System",
         "calculate-npv, calculate-mirr, analyze",
     )
+    table.add_row("hse", "HSE incident queries", "incidents query")
     table.add_row(
         "lower-tertiary",
         "Lower Tertiary portfolio analyses (10 GoM fields)",

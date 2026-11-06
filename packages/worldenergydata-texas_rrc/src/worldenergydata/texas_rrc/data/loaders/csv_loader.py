@@ -10,6 +10,7 @@ with automatic type inference and validation.
 
 import csv
 import logging
+import re
 from io import StringIO
 from pathlib import Path
 from typing import Any, Dict, Iterator, List, Optional, Union
@@ -40,8 +41,9 @@ class CSVLoader:
         "well_count",
     }
 
+    # Districts are text codes, including alphanumeric values; see
+    # TexasDataValidator.VALID_DISTRICTS and normalize_district in validators.py.
     INTEGER_FIELDS = {
-        "district",
         "county_code",
         "lease_number",
         "operator_number",
@@ -210,6 +212,9 @@ class CSVLoader:
             return None
 
         value = value.strip()
+
+        if field_name == "district" and re.fullmatch(r"\d+\.0+", value):
+            return str(int(value.partition(".")[0]))
 
         # Check for integer fields
         if field_name in self.INTEGER_FIELDS:

@@ -368,6 +368,7 @@ def recompute(war_dir: Path) -> list[dict]:
 
     from worldenergydata.bsee.analysis.war_rig_days import (  # noqa: E501
         BASIS_DRL_COM,
+        quarantine_war_identifiers,
         rig_days_by_bore,
         rig_days_by_well,
     )
@@ -387,7 +388,7 @@ def recompute(war_dir: Path) -> list[dict]:
         on="SN_WAR",
         how="left",
     )
-    war["API_WELL_NUMBER"] = war["API_WELL_NUMBER"].astype(str).str.strip()
+    war = quarantine_war_identifiers(war)
 
     pop = load_population()
     api12s = [w["api12"] for w in pop]
@@ -420,25 +421,26 @@ def recompute(war_dir: Path) -> list[dict]:
             }
         )
     for _, r in wells.iterrows():
+        covered = r["days_status"] == "war_covered"
         rows.append(
             {
                 "grain": "well",
                 "api12": "",
                 "api10": r["api10"],
                 "well_name": f"{int(r['n_bores'])} bore(s): {r['bore_suffixes']}",
-                "drilling_days": str(int(r["drilling_days"])),
-                "completion_days": str(int(r["completion_days"])),
-                "pnd_days": str(int(r["pnd_days"])),
+                "drilling_days": _n(r["drilling_days"], covered),
+                "completion_days": _n(r["completion_days"], covered),
+                "pnd_days": _n(r["pnd_days"], covered),
                 "ta_days": "",
-                "war_days_total": str(int(r["war_days_total"])),
+                "war_days_total": _n(r["war_days_total"], covered),
                 "war_weeks": 0,
-                "days_status": "war_covered",
+                "days_status": r["days_status"],
                 "max_md_ft": "",
                 "max_tvd_ft": "",
                 "max_mud_ppg": "",
-                "drilling_days_additive": str(int(r["drilling_days_additive"])),
-                "completion_days_additive": str(int(r["completion_days_additive"])),
-                "overlap_days": str(int(r["overlap_days"])),
+                "drilling_days_additive": _n(r["drilling_days_additive"], covered),
+                "completion_days_additive": _n(r["completion_days_additive"], covered),
+                "overlap_days": _n(r["overlap_days"], covered),
             }
         )
     starts = pd.to_datetime(main["WAR_START_DT"], errors="coerce", format="mixed")
@@ -465,8 +467,10 @@ def _first_material_month(starts) -> str:
 
 
 def _n(value, covered: bool) -> str:
-    """Render a day count, or empty for a bore with no WAR coverage (never 0)."""
-    return "" if not covered else str(int(value))
+    """Render a known day count; preserve missing totals and absent coverage."""
+    import pandas as pd  # local: only the recompute path needs pandas
+
+    return "" if not covered or pd.isna(value) else str(int(value))
 
 
 def _num(value) -> str:

@@ -8,6 +8,8 @@ legacy lowercase Sm3-style schema used by older tests/callers.
 
 import calendar
 import logging
+import math
+import re
 
 import pandas as pd
 
@@ -45,7 +47,11 @@ class WellProductionLoader:
             return self._load_current_schema(raw_df)
 
         df = raw_df.rename(columns=COLUMN_MAP).copy()
+        df["field"] = _required_identity(df["field"])
+        df["well"] = _required_identity(df["well"])
         df["date"] = pd.to_datetime(df["date"])
+        if df["date"].isna().any():
+            raise ValueError("Invalid ANP production period")
         df["year"] = df["date"].dt.year
         df["month"] = df["date"].dt.month
 
@@ -79,7 +85,8 @@ class WellProductionLoader:
         df = raw_df.copy()
         period = df["Período"].astype(str).str.replace("/", "-", regex=False)
         df["date"] = pd.to_datetime(period + "-01", errors="coerce")
-        df = df[df["date"].notna()].copy()
+        if not period.str.fullmatch(r"\d{4}-\d{2}").all() or df["date"].isna().any():
+            raise ValueError("Invalid ANP production period; no rows accepted")
         df["year"] = df["date"].dt.year.astype(int)
         df["month"] = df["date"].dt.month.astype(int)
         days = df["date"].apply(_days_in_month)
@@ -91,8 +98,8 @@ class WellProductionLoader:
 
         out = pd.DataFrame(
             {
-                "field": df["Campo"].astype(str).str.strip(),
-                "well": df["Nome Poço ANP"].astype(str).str.strip(),
+                "field": _required_identity(df["Campo"]),
+                "well": _required_identity(df["Nome Poço ANP"]),
                 "date": df["date"],
                 "year": df["year"],
                 "month": df["month"],
@@ -136,13 +143,33 @@ def _empty_well_frame() -> pd.DataFrame:
     )
 
 
+def _required_identity(values: pd.Series) -> pd.Series:
+    valid = values.map(lambda value: isinstance(value, str) and bool(value.strip()))
+    if not valid.all():
+        raise ValueError("Missing or non-text ANP production identity")
+    return values.str.strip()
+
+
 def _parse_brazil_number(value) -> float:
-    if pd.isna(value):
-        return 0.0
+    """Accept numeric scalars, dot decimals and grouped decimal-comma text.
+
+    A dot without a comma is always decimal; grouping requires a decimal comma.
+    This explicit input convention prevents ambiguous dot-only rescaling.
+    """
+    if pd.isna(value) or isinstance(value, bool):
+        raise ValueError("Missing or invalid ANP production rate")
     text = str(value).strip()
-    if not text:
-        return 0.0
-    return float(text.replace(".", "").replace(",", "."))
+    if "," in text:
+        if not re.fullmatch(r"[+-]?(?:\d+|\d{1,3}(?:\.\d{3})+),\d+", text):
+            raise ValueError("Invalid ANP decimal-comma number")
+        text = text.replace(".", "").replace(",", ".")
+    try:
+        number = float(text)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("Invalid ANP production number") from exc
+    if not math.isfinite(number) or number < 0:
+        raise ValueError("ANP production rate must be finite and nonnegative")
+    return number
 
 
 def _gas_total_column(df: pd.DataFrame) -> str:

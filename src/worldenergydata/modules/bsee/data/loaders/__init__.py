@@ -13,15 +13,11 @@ from worldenergydata.modules.bsee.data.loaders.block import (
 from worldenergydata.modules.bsee.data.loaders.block import (
     DataFromLocalFiles as BlockDataFromLocalFiles,
 )
-from worldenergydata.modules.bsee.data.loaders.block import (
-    WARDataFromBin,
-)
+from worldenergydata.modules.bsee.data.loaders.block import WARDataFromBin
 from worldenergydata.modules.bsee.data.loaders.lease import (
     DataFromLocalFiles as LeaseDataFromLocalFiles,
 )
-from worldenergydata.modules.bsee.data.loaders.lease import (
-    LeaseRouter,
-)
+from worldenergydata.modules.bsee.data.loaders.lease import LeaseRouter
 
 __all__ = [
     "WellRouter",
