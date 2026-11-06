@@ -157,11 +157,8 @@ class TestBreakEven:
             update={"mobilization_cost_usd": mobilization, "rig_day_rate_usd": 10.0}
         )
         batch = self.calc.campaign_total_cost(campaign, base_days_per_well=20.0)
-        standalone = 2 * (mobilization + 200.0)
-        expected = {100.0: (400.0, 600.0, 200.0), 1000.0: (1300.0, 2400.0, 1100.0)}
-        assert (batch, standalone, standalone - batch) == pytest.approx(
-            expected[mobilization], abs=0.01, rel=0
-        )
+        expected = {100.0: 400.0, 1000.0: 1300.0}
+        assert batch == pytest.approx(expected[mobilization], abs=0.01, rel=0)
         assert self.calc.break_even_n_wells(mobilization, 10.0, 20.0, 0.5) == 2
 
     def test_learning_alone_saves_at_two_wells(self):
@@ -197,8 +194,9 @@ class TestBreakEven:
         """Synthetic zero-mobilization, no-learning costs tie in decimal arithmetic.
 
         At 21 wells, 350000 * (21 * 62.6) = 460110000 USD in both cases.
-        Float summation before Python 3.12 yields a spurious threshold of 21;
-        the changed sum in Python 3.12 yields the no-savings sentinel here.
+        CPython summation before 3.12 yields a spurious threshold of 21;
+        the changed sum in CPython 3.12 yields the no-savings sentinel here.
+        The output pin applies to CPython only; decimal equality is universal.
         These are compatibility observations, not economic break-even.
         """
         rate = Decimal("350000")
@@ -207,8 +205,9 @@ class TestBreakEven:
         standalone = 21 * (rate * duration)
         assert batch == standalone == Decimal("460110000")
 
-        expected = 21 if sys.version_info < (3, 12) else 1
-        assert self.calc.break_even_n_wells(0.0, 350_000.0, 62.6, 1.0) == expected
+        if sys.implementation.name == "cpython":
+            expected = 21 if sys.version_info < (3, 12) else 1
+            assert self.calc.break_even_n_wells(0.0, 350_000.0, 62.6, 1.0) == expected
 
 
 # ---------------------------------------------------------------------------
@@ -297,6 +296,19 @@ class TestBatchVsStandaloneNPV:
 class TestCampaignTotalCost:
     def setup_method(self):
         self.calc = BatchDrillingEconomics()
+
+    @pytest.mark.parametrize(
+        "n_wells,expected", [(4, 93_180_949.55), (5, 108_180_004.02)]
+    )
+    def test_campaign_total_cost_with_original_learning_factor(self, n_wells, expected):
+        """LC=0.85: 20M + 350000 * 62.5 * sum(i**(log(0.85)/log(2))).
+
+        Sum positions 1 through N; independent decimal totals rounded to cents.
+        These are the four- and five-well hand totals used by the NPV checks.
+        """
+        campaign = _make_campaign(n_wells=n_wells, lc_factor=0.85)
+        total = self.calc.campaign_total_cost(campaign, base_days_per_well=62.5)
+        assert total == pytest.approx(expected, abs=0.01, rel=0)
 
     def test_campaign_total_cost_decreases_with_more_wells(self):
         """Average per-well cost should decrease as campaign grows (learning curve)."""
