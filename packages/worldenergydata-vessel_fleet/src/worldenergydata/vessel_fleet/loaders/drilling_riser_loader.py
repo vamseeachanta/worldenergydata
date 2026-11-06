@@ -1,6 +1,7 @@
 """Load drilling riser component data from curated dataset.
 
-Validates CSV widths, unambiguous headers, identities and populated provenance.
+Validates CSV widths, headers and provenance; rejects padded IDs, Unicode
+controls/formatting and canonically equivalent duplicate identities.
 Empty physical lines are skipped; whitespace and delimiter-only records are checked.
 Queries cover component type, size and pressure rating.
 """
@@ -44,8 +45,8 @@ VALID_COMPONENT_TYPES = (
 )
 
 
-def _validate_row_widths(content: str) -> list[int]:
-    """Check header mapping and widths; return physical record start numbers."""
+def _validate_row_widths(content: str) -> tuple[list[int], list[str]]:
+    """Check mapping and widths; return physical starts and literal ID strings."""
     reader = csv.reader(StringIO(content), strict=True)
     try:
         header = next(reader, [])
@@ -62,6 +63,8 @@ def _validate_row_widths(content: str) -> list[int]:
         seen_columns.add(field)
     expected = len(header)
     line_numbers: list[int] = []
+    identities: list[str] = []
+    id_index = header.index("COMPONENT_ID") if "COMPONENT_ID" in header else None
     while True:
         line_number = reader.line_num + 1
         try:
@@ -78,7 +81,17 @@ def _validate_row_widths(content: str) -> list[int]:
                 f"actual {len(row)}"
             )
         line_numbers.append(line_number)
-    return line_numbers
+        if id_index is not None:
+            identities.append(row[id_index])
+    return line_numbers, identities
+
+
+def _csv_line_summary(lines: list[int]) -> str:
+    """Bound diagnostics while preserving physical starts and the total count."""
+    label = "line" if len(lines) == 1 else "lines"
+    numbers = ", ".join(str(number) for number in lines[:20])
+    suffix = f" ({len(lines)} total)" if len(lines) > 20 else ""
+    return f"CSV {label} {numbers}{suffix}"
 
 
 class DrillingRiserLoader:
@@ -93,7 +106,10 @@ class DrillingRiserLoader:
         self._df: Optional[pd.DataFrame] = None
 
     def load(self) -> pd.DataFrame:
-        """Validate widths, headers, provenance and unique IDs before caching.
+        """Validate widths, headers, provenance and identities before caching.
+
+        Reject padded IDs, Unicode controls/formatting and NFC-equivalent IDs.
+        Store literal strings and keep lookups exact; never normalize input IDs.
 
         Only empty physical lines are exempt from record-width validation.
         """
@@ -109,41 +125,59 @@ class DrillingRiserLoader:
         # Parse the same snapshot that was checked, so a file replacement
         # cannot introduce unchecked rows between preflight and pandas.
         content = csv_path.read_text(encoding="utf-8-sig")
-        line_numbers = _validate_row_widths(content)
+        line_numbers, identities = _validate_row_widths(content)
         # Preserve literal IDs, including leading zeros and pandas NA tokens;
         # missing-value and numeric parsing for other columns stay unchanged.
         df = pd.read_csv(StringIO(content), converters={"COMPONENT_ID": str})
         missing_columns = [field for field in _REQUIRED_COLUMNS if field not in df]
         if missing_columns:
             raise ValueError("Missing required column " + ", ".join(missing_columns))
+        # Use the checked CSV strings: the C engine silently truncates at NUL,
+        # while the Python engine applies NA coercion even with a converter.
+        df["COMPONENT_ID"] = pd.Series(identities, dtype=object)
         for field in ("DATA_SOURCE", "NOTES", "COMPONENT_ID"):
             missing = df[field].isna() | df[field].astype(str).str.strip().eq("")
             if missing.any():
-                lines = ", ".join(
-                    str(line_numbers[index]) for index in df.index[missing]
+                location = _csv_line_summary(
+                    [line_numbers[index] for index in df.index[missing]]
                 )
-                raise ValueError(f"{field} must be populated at CSV line {lines}")
+                raise ValueError(f"{field} must be populated at {location}")
         padded = df["COMPONENT_ID"].ne(df["COMPONENT_ID"].str.strip())
         if padded.any():
-            lines = ", ".join(str(line_numbers[index]) for index in df.index[padded])
+            location = _csv_line_summary(
+                [line_numbers[index] for index in df.index[padded]]
+            )
             raise ValueError(
-                f"COMPONENT_ID has leading or trailing whitespace at CSV line {lines}"
+                "COMPONENT_ID must not contain leading or trailing whitespace "
+                f"at {location}"
             )
         formatted = df["COMPONENT_ID"].map(
-            lambda value: any(unicodedata.category(char) == "Cf" for char in value)
+            lambda value: any(
+                unicodedata.category(char) in {"Cc", "Cf"} for char in value
+            )
         )
         if formatted.any():
-            lines = ", ".join(str(line_numbers[index]) for index in df.index[formatted])
-            raise ValueError(
-                f"COMPONENT_ID contains Unicode format characters at CSV line {lines}"
+            location = _csv_line_summary(
+                [line_numbers[index] for index in df.index[formatted]]
             )
-        # Issue #1046 requires unique component IDs; get_by_id must not select
-        # an arbitrary first record when more than one component has that ID.
-        duplicate_ids = df.loc[
-            df["COMPONENT_ID"].duplicated(keep=False), "COMPONENT_ID"
-        ].unique()
-        if len(duplicate_ids):
-            raise ValueError(f"Duplicate COMPONENT_ID values: {duplicate_ids.tolist()}")
+            raise ValueError(
+                "COMPONENT_ID contains Unicode control or format characters "
+                f"at {location}"
+            )
+        # Issue #1046 requires unique component IDs; compare canonical keys
+        # without changing stored strings or exact get_by_id matching.
+        identity_keys = df["COMPONENT_ID"].map(
+            lambda value: unicodedata.normalize("NFC", value)
+        )
+        duplicates = identity_keys.duplicated(keep=False)
+        if duplicates.any():
+            duplicate_ids = df.loc[duplicates, "COMPONENT_ID"].unique().tolist()
+            location = _csv_line_summary(
+                [line_numbers[index] for index in df.index[duplicates]]
+            )
+            raise ValueError(
+                f"Duplicate COMPONENT_ID values: {duplicate_ids[:20]} at {location}"
+            )
         self._df = df
         logger.info("Loaded %d drilling riser components", len(df))
         return self._df

@@ -2,7 +2,8 @@
 
 The component loader rejects records whose field count differs from the header,
 ambiguous column labels, missing provenance, blank, padded or repeated IDs,
-and IDs containing Unicode format characters.
+and IDs containing Unicode control or format characters. Canonically equivalent
+IDs also count as duplicates; stored IDs and lookups remain literal.
 Validation completes before a DataFrame is cached. This protects field alignment
 and identity lookup; it does not establish engineering suitability of the data.
 
@@ -14,6 +15,7 @@ and identity lookup; it does not establish engineering suitability of the data.
 | 2 | 2026-10-20 | Preserve literal ID strings, locate blank IDs by physical CSV line, and remove temporary example files automatically. |
 | 3 | 2026-10-21 | Reject padded IDs and locate missing provenance by physical CSV line so ambiguous or incomplete records can be corrected. |
 | 4 | 2026-10-21 | Reject Unicode format characters in IDs to prevent invisible or directional formatting from creating ambiguous lookups. |
+| 5 | 2026-11-05 | Reject canonically equivalent duplicates and Unicode controls, bound physical-line diagnostics, and consolidate overlapping tests. |
 
 ## Input contract and method
 
@@ -31,22 +33,27 @@ reads a single UTF-8 snapshot (a byte-order mark is accepted), then:
 2. Counts logical CSV fields, respecting quoted commas and newlines. Each record
    must have the header's field count. Width errors give the physical start line,
    expected count and actual count. Only empty physical lines are skipped.
-3. Parses the same snapshot with pandas, preserving literal ID strings, and
+3. Parses the same snapshot with pandas, using literal ID strings from the
+   strict CSV reader (including NUL for rejection rather than truncation), and
    checks the required query columns and populated `DATA_SOURCE` and `NOTES`.
    Missing provenance errors give each affected record's physical start line.
-4. Checks `COMPONENT_ID` strings for blank, padded or repeated values and Unicode
-   format characters (category `Cf`, including zero-width spaces and byte-order
-   marks inside a field). Format-character errors give every affected record's
-   physical start line. Blank-ID and padding errors give the physical start
-   line, including after quoted newlines or empty physical lines. IDs with
-   leading or trailing whitespace
-   are rejected rather than trimmed. Repeated IDs are rejected before
-   `get_by_id` can choose a first match.
+4. Checks `COMPONENT_ID` strings for blank or padded values, Unicode control
+   and format characters (categories `Cc` and `Cf`), and duplicates using NFC
+   comparison keys. Blank, padded, control-character, format-character and
+   duplicate errors identify the affected records' physical start lines,
+   including after quoted newlines or empty physical lines. Diagnostics show at
+   most 20 starts and include the total when truncated. IDs with leading or
+   trailing whitespace are rejected rather than trimmed. Canonically equivalent
+   IDs are rejected together before `get_by_id` can choose a first match.
 5. Caches the frame only after all checks pass. A failed load can be retried after
    the input is corrected.
 
-Column names and unpadded IDs are compared exactly; validation does not trim,
-rename or otherwise normalize them. Optional engineering cells may remain empty.
+Column names and `get_by_id` lookups are compared exactly. NFC keys are used
+only to detect duplicates; validation does not trim or rewrite stored IDs. A
+single decomposed ID is accepted and requires the same literal lookup string.
+Compatibility variants, case differences and other visual confusables are not
+merged by NFC. Non-control, non-format invisible characters are not rejected
+as a class. Optional engineering cells may remain empty.
 IDs `1` and `01` remain distinct strings; `NA` is a populated ID. Other columns
 retain pandas' default numeric and missing-value parsing.
 Pandas missing-value tokens such as `NA` in `DATA_SOURCE` or `NOTES` are
@@ -115,7 +122,7 @@ with tempfile.TemporaryDirectory(prefix="riser-csv-example-") as temporary_dir:
 Expected output, derived from the hand checks above:
 
 ```text
-Duplicate COMPONENT_ID values: ['A']
+Duplicate COMPONENT_ID values: ['A'] at CSV lines 2, 3
 ['A', 'B']
 CSV line 2: expected 9 fields, actual 8
 ```
@@ -124,8 +131,8 @@ CSV line 2: expected 9 fields, actual 8
 
 [Identity tests](../../../tests/unit/vessel_fleet/loaders/test_drilling_riser_identity.py)
 exercise ambiguous headers, blank IDs with physical line numbers, literal numeric
-and missing-value-like ID strings, padded-ID and format-character rejection,
-exact matching of Unicode IDs without normalization, repeated IDs, correction
+and missing-value-like ID strings, padding and control/format-character rejection,
+canonical duplicate rejection, exact Unicode lookups, bounded line diagnostics, correction
 and retry, missing provenance with physical line numbers, and quoted provenance
 round trips. Existing
 [alignment tests](../../../tests/unit/vessel_fleet/loaders/test_drilling_riser_alignment.py)
