@@ -1,10 +1,10 @@
 {
   "module": "offshore_assets",
-  "generated_at": "2026-11-04T05:50:34.341119+00:00",
+  "generated_at": "2026-11-06T14:57:29.699648+00:00",
   "last_refresh": null,
   "record_count": null,
   "file_count": 19,
-  "total_size_bytes": 39609,
+  "total_size_bytes": 40074,
   "source_url": null,
   "format": ".csv,.md,.yaml",
   "has_external_data": false,
@@ -14,8 +14,8 @@
     {
       "name": "README.md",
       "path": "README.md",
-      "size_bytes": 1967,
-      "modified": "2026-10-29"
+      "size_bytes": 2432,
+      "modified": "2026-11-06"
     },
     {
       "name": "catalog_integration_schema.json",

@@ -64,7 +64,7 @@ def sample():
 def write_source(root, data):
     path = root / SOURCE
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(data), encoding="utf-8")
+    path.write_text(json.dumps(data), encoding="utf-8", newline="\n")
     return path
 
 
@@ -173,7 +173,7 @@ def test_invalid_summary_is_rejected(tmp_path, change):
 def test_ambiguous_json_is_rejected(tmp_path, raw):
     """Duplicate keys and non-finite tokens cannot form an auditable input."""
     path = write_source(tmp_path, sample())
-    path.write_text(raw, encoding="utf-8")
+    path.write_text(raw, encoding="utf-8", newline="\n")
     with pytest.raises(ValueError):
         exporter().build_dataset(tmp_path)
 

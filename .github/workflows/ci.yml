@@ -29,7 +29,7 @@ env:
 jobs:
   mode:
     name: Gate mode
-    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
+    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","Linux"]') }}
     permissions:
       contents: read
       actions: read
@@ -125,7 +125,7 @@ jobs:
 
   lint:
     name: Lint (full)
-    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
+    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","Linux"]') }}
     needs: [mode]
     if: >-
       !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true')
@@ -194,6 +194,21 @@ jobs:
             "tip=$tip event_base=$EVENT_BASE tree=$tree"
           echo "tip=$tip" >> "$GITHUB_OUTPUT"
 
+      - name: Install uv for scoped typing
+        uses: astral-sh/setup-uv@v7
+
+      - name: Check typed common modules
+        env:
+          MYPYPATH: src:packages/worldenergydata-core/src
+        run: |
+          uv run --no-project --python "${{ env.PYTHON_VERSION_DEFAULT }}" --with mypy \
+            mypy --explicit-package-bases --follow-imports=silent \
+            --ignore-missing-imports \
+            packages/worldenergydata-core/src/worldenergydata/common/exceptions.py \
+            packages/worldenergydata-core/src/worldenergydata/common/logging.py \
+            packages/worldenergydata-core/src/worldenergydata/common/types.py \
+            examples/typed_common.py
+
       - name: Install uv
         uses: astral-sh/setup-uv@v7
         with:
@@ -224,7 +239,7 @@ jobs:
   security:
     name: Security Scan (full)
     # PR/push: secret scan only. Bandit runs in the daily Main full run.
-    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
+    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","Linux"]') }}
     needs: [mode]
     if: >-
       !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true')
@@ -305,7 +320,7 @@ jobs:
     name: Lint
     needs: [mode, lint]
     if: ${{ !cancelled() }}
-    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
+    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","Linux"]') }}
     permissions:
       contents: read
       actions: read
@@ -331,7 +346,7 @@ jobs:
     name: Security Scan
     needs: [mode, security]
     if: ${{ !cancelled() }}
-    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
+    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","Linux"]') }}
     permissions:
       contents: read
       actions: read
@@ -357,7 +372,7 @@ jobs:
     name: Test (PR gate)
     needs: [mode, domain-tests]
     if: ${{ !cancelled() && github.event_name == 'pull_request' }}
-    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
+    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","Linux"]') }}
     permissions:
       contents: read
       actions: read

@@ -26,6 +26,13 @@ No historical-scrape value is relabelled as a regulator observation.
 
 ## Catalog integration interface
 
+`catalog_integration.CatalogEvidence(bundle)` provides exact-ID entity and record
+views after bundle validation. Atlas extension fields carry optional
+`research_evidence` with source URLs and scoped record groups; nonfield scopes
+are exposed separately under `meta.catalog_extension.nonfield_entities`.
+See the [reader guide and runnable synthetic example](../../../docs/data/angola-catalog-evidence.md)
+for inputs, method, expected counts and publication limits.
+
 `catalog_integration_schema.json` and the integration schemas in `schema.yaml`
 define software interfaces; they contain no retained historical asset rows.
 Explicit independent inputs remain supported by the integration API. The

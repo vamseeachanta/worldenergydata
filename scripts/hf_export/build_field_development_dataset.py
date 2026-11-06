@@ -1,10 +1,9 @@
 """Prepare an offline field-development dataset candidate; never upload data.
 
-The bundled matched-portfolio summary is withheld. An independently sourced
-summary may be supplied through --repo-root with the same relative layout.
-The matched_concepts config projects that summary. No economics, engineering
-coefficients or free-text notes are exported. Hugging Face supports row-oriented
-JSON and named configs:
+The bundled matched-portfolio summary is withheld.
+The matched_concepts config projects a summary in the matched-portfolio report's
+schema. No economics, engineering coefficients or free-text notes
+are exported. Hugging Face supports row-oriented JSON and named configs:
 https://huggingface.co/docs/datasets/loading#json
 https://huggingface.co/docs/hub/datasets-data-files-configuration
 

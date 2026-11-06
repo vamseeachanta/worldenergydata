@@ -5,9 +5,9 @@ Auth: API key via EIA_API_KEY environment variable.
 Rate limit: 500 requests per hour per key — enforced via token bucket.
 
 Key series IDs:
-  PET.MCRFPUS2.M  — US total monthly crude production
-  PET.MCRFPAK2.M  — Alaska monthly crude production
-  PET.MCRFPTX2.M  — Texas monthly crude production (XX = state code)
+  PET.MCRFPUS1.M  — US total monthly crude volume (Thousand Barrels)
+  PET.MCRFPAK1.M  — Alaska monthly crude volume (Thousand Barrels)
+  PET.MCRFPTX1.M  — Texas monthly crude volume (XX = state code)
   INTL.57-1-*.A   — International annual country production
 """
 
@@ -86,16 +86,16 @@ class EIACache:
 
 # Mock data for tests — avoids any live HTTP calls
 _MOCK_SERIES_DATA: Dict[str, List[Dict[str, Any]]] = {
-    "PET.MCRFPUS2.M": [
+    "PET.MCRFPUS1.M": [
         {"period": "2024-01", "value": "12500", "unit": "Thousand Barrels"},
         {"period": "2024-02", "value": "12300", "unit": "Thousand Barrels"},
         {"period": "2024-03", "value": "12450", "unit": "Thousand Barrels"},
     ],
-    "PET.MCRFPAK2.M": [
+    "PET.MCRFPAK1.M": [
         {"period": "2024-01", "value": "450", "unit": "Thousand Barrels"},
         {"period": "2024-02", "value": "440", "unit": "Thousand Barrels"},
     ],
-    "PET.MCRFPTX2.M": [
+    "PET.MCRFPTX1.M": [
         {"period": "2024-01", "value": "5200", "unit": "Thousand Barrels"},
         {"period": "2024-02", "value": "5150", "unit": "Thousand Barrels"},
     ],
@@ -160,11 +160,14 @@ class EIAApiClient:
         # EIA v2 uses /seriesid/ path for backward-compat series access
         return f"{self.base_url}/seriesid/{series_id}"
 
-    def generate_cache_key(self, series_id: str, params: Dict[str, Any]) -> str:
-        """Generate a deterministic cache key from series ID and query params."""
+    def generate_cache_key(
+        self, series_id: str, params: Dict[str, Any], use_mock: bool = False
+    ) -> str:
+        """Generate a deterministic key for the mode, series and query params."""
         sorted_params = sorted(params.items())
         param_str = urlencode(sorted_params)
-        raw = f"{series_id}?{param_str}"
+        mode = "mock" if use_mock else "live"
+        raw = f"{mode}:{series_id}?{param_str}"
         return hashlib.md5(raw.encode()).hexdigest()
 
     # ── Response parsing ──────────────────────────────────────────────────────
@@ -177,7 +180,13 @@ class EIAApiClient:
             raw: Full JSON response dict from EIA API.
 
         Returns:
-            List of record dicts with 'period' and 'value' (float or None).
+            List of dicts with 'period', 'value' (float or None) and 'unit'.
+            The singular row field is retained, as read by getUnit in EIA's
+            published API Query Browser (accessed 2026-10-29):
+            https://www.eia.gov/opendata/browser/
+            The technical documentation uses 'units' in data-column metadata;
+            this is distinct from a row's 'unit':
+            https://www.eia.gov/opendata/documentation.php
 
         Raises:
             EIAApiError: If response.data is missing or is not an array.
@@ -225,7 +234,7 @@ class EIAApiClient:
         without making any HTTP requests.
 
         Args:
-            series_id: EIA series identifier (e.g. 'PET.MCRFPUS2.M').
+            series_id: EIA series identifier (e.g. 'PET.MCRFPUS1.M').
             params: Optional query parameters (start, end, frequency, etc.).
             use_mock: If True, return mock data without HTTP calls.
 
@@ -235,7 +244,7 @@ class EIAApiClient:
         if params is None:
             params = {}
 
-        cache_key = self.generate_cache_key(series_id, params)
+        cache_key = self.generate_cache_key(series_id, params, use_mock=use_mock)
 
         # Cache hit
         if self.cache_enabled:
@@ -261,7 +270,7 @@ class EIAApiClient:
                 self.cache.set(cache_key, parsed)
             return parsed
 
-        # Live HTTP (guarded — not called in tests)
+        # Live transport (injected in offline contract tests)
         return self._fetch_live(series_id, params, cache_key)
 
     def _fetch_live(
@@ -270,7 +279,7 @@ class EIAApiClient:
         params: Dict[str, Any],
         cache_key: str,
     ) -> List[Dict[str, Any]]:
-        """Make live HTTP request to EIA API. Not called in test suite."""
+        """Fetch and validate a live response before caching its records."""
         try:
             import requests  # noqa: PLC0415
         except ImportError as exc:
@@ -288,17 +297,20 @@ class EIAApiClient:
 
         try:
             response = requests.get(url, params=query, timeout=30)
-        except requests.exceptions.RequestException as exc:
-            raise EIAApiError(f"EIA API request failed: {exc}") from exc
+        except requests.exceptions.RequestException:
+            # Transport exceptions can contain URLs with authentication values.
+            raise EIAApiError("EIA API request failed") from None
 
         if response.status_code == 429:
             raise EIARateLimitError("EIA API rate limit exceeded (500 req/hr)")
         if response.status_code != 200:
-            raise EIAApiError(
-                f"EIA API returned status {response.status_code}: {response.text[:200]}"
-            )
+            raise EIAApiError(f"EIA API returned status {response.status_code}")
 
-        raw = response.json()
+        try:
+            raw = response.json()
+        except ValueError:
+            # Decoder diagnostics may contain arbitrary response content.
+            raise EIAApiError("EIA API response is not valid JSON") from None
         records = self.parse_series_response(raw)
 
         if self.cache_enabled:
