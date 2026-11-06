@@ -4,6 +4,7 @@
 
 | File | Safety Class | Notes |
 |------|-------------|-------|
+| `esg_carbon/evaluate_methane_tracker.py` | `bounded-safe` | Dated offline publication assessment; no data, network or credentials |
 | `fdas_complete_workflow.py` | `fixture-only` | Pure financial calculations, no data or network |
 | `validation_examples.py` | `fixture-only` | Validation logic only, no external I/O |
 | `marine_safety_cause_visualization_demo.py` | `data-required` | Requires local marine safety DB |
