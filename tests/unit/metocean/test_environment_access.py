@@ -78,6 +78,7 @@ def test_sdk_errors_do_not_echo_credentials(monkeypatch):
         ERA5Client()
     assert "synthetic sensitive detail" not in str(error.value)
     assert error.value.__suppress_context__
+    assert error.value.__context__ is None
 
 
 def test_optional_extra_declares_current_sdks():
@@ -85,7 +86,9 @@ def test_optional_extra_declares_current_sdks():
 
     root = Path(__file__).resolve().parents[3]
     manifest = tomllib.loads(
-        (root / "packages/worldenergydata-metocean/pyproject.toml").read_text()
+        (root / "packages/worldenergydata-metocean/pyproject.toml").read_text(
+            encoding="utf-8"
+        )
     )
     extra = manifest["project"]["optional-dependencies"]["copernicus"]
     # CDSAPI setup (accessed 2026-10-22), Install the CDS API client.
@@ -122,4 +125,73 @@ def test_download_errors_are_sanitized(monkeypatch, capsys, source):
             CMEMSClient().subset("example-dataset")
     assert "synthetic sensitive detail" not in str(error.value)
     assert error.value.__suppress_context__
+    assert error.value.__context__ is None
     assert capsys.readouterr() == ("", "")
+
+
+@pytest.mark.parametrize("failure", [KeyboardInterrupt, SystemExit])
+@pytest.mark.parametrize("action", ["initialize", "retrieve", "subset"])
+def test_sdk_cancellation_propagates(monkeypatch, failure, action):
+    for name in (
+        "CDSAPI_KEY",
+        "COPERNICUSMARINE_SERVICE_USERNAME",
+        "COPERNICUSMARINE_SERVICE_PASSWORD",
+    ):
+        monkeypatch.setenv(name, "synthetic-placeholder")
+
+    def fail(*args, **kwargs):
+        raise failure()
+
+    constructor = (
+        fail
+        if action == "initialize"
+        else lambda **kwargs: SimpleNamespace(retrieve=fail)
+    )
+    monkeypatch.setitem(sys.modules, "cdsapi", SimpleNamespace(Client=constructor))
+    monkeypatch.setitem(sys.modules, "copernicusmarine", SimpleNamespace(subset=fail))
+    with pytest.raises(failure):
+        if action == "initialize":
+            ERA5Client()
+        elif action == "retrieve":
+            ERA5Client().retrieve("example-dataset", {}, "unused.grib")
+        else:
+            CMEMSClient().subset("example-dataset")
+
+
+def test_marine_selection_preserves_sdk_keyword_names(monkeypatch):
+    for name in (
+        "COPERNICUSMARINE_SERVICE_USERNAME",
+        "COPERNICUSMARINE_SERVICE_PASSWORD",
+    ):
+        monkeypatch.setenv(name, "synthetic-placeholder")
+    monkeypatch.setitem(
+        sys.modules, "copernicusmarine", SimpleNamespace(subset=lambda **kwargs: kwargs)
+    )
+    selection = {"source": "example", "action": "example", "operation": "example"}
+    result = CMEMSClient().subset("example-dataset", **selection)
+    assert {key: result[key] for key in selection} == selection
+
+
+@pytest.mark.parametrize("action", ["initialize", "retrieve", "subset"])
+def test_incompatible_sdk_members_are_sanitized(monkeypatch, action):
+    for name in (
+        "CDSAPI_KEY",
+        "COPERNICUSMARINE_SERVICE_USERNAME",
+        "COPERNICUSMARINE_SERVICE_PASSWORD",
+    ):
+        monkeypatch.setenv(name, "synthetic-placeholder")
+    sdk = (
+        SimpleNamespace()
+        if action == "initialize"
+        else SimpleNamespace(Client=lambda **kwargs: object())
+    )
+    monkeypatch.setitem(sys.modules, "cdsapi", sdk)
+    monkeypatch.setitem(sys.modules, "copernicusmarine", SimpleNamespace())
+    with pytest.raises(EndpointError) as error:
+        if action == "initialize":
+            ERA5Client()
+        elif action == "retrieve":
+            ERA5Client().retrieve("example-dataset", {}, "unused.grib")
+        else:
+            CMEMSClient().subset("example-dataset")
+    assert error.value.__context__ is None

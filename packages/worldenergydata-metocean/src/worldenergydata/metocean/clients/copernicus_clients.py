@@ -83,12 +83,18 @@ def _catalogue_payload(source: str, response: httpx.Response) -> dict[str, Any]:
 
 
 def _sdk(module: str) -> Any:
+    missing_dependency = False
     try:
         return import_module(module)
     except ImportError:
+        missing_dependency = True
+    except Exception:
+        pass
+    if missing_dependency:
         raise ImportError(
             f"Install the optional {module} SDK to use this adapter"
         ) from None
+    raise EndpointError(f"{module}: SDK import failed; details suppressed") from None
 
 
 class CredentialsRequired(RuntimeError):
@@ -102,27 +108,6 @@ def _environment(source: str, *names: str) -> list[str]:
     return values
 
 
-class _SDKErrorBoundary:
-    """Sanitize third-party exception classes/text at the credential boundary.
-
-    The scope is intentionally limited to SDK initialization and requests.
-    Cancellation and process-exit exceptions propagate unchanged.
-    """
-
-    def __init__(self, source: str, action: str) -> None:
-        self.source, self.action = source, action
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, kind, error, traceback):
-        if kind is not None and issubclass(kind, Exception):
-            raise EndpointError(
-                f"{self.source}: {self.action} failed; details suppressed"
-            ) from None
-        return False
-
-
 class ERA5Client:
     """Current CDS API; credentials come only from CDSAPI_KEY.
 
@@ -133,13 +118,22 @@ class ERA5Client:
     def __init__(self) -> None:
         (key,) = _environment("era5", "CDSAPI_KEY")
         sdk = _sdk("cdsapi")
-        with _SDKErrorBoundary("era5", "SDK initialization"):
+        try:
             self._client = sdk.Client(url=CDS_API_URL, key=key, quiet=True, debug=False)
+            return
+        except Exception:
+            pass
+        raise EndpointError(
+            "era5: SDK initialization failed; details suppressed"
+        ) from None
 
     def retrieve(self, dataset: str, request: Mapping[str, Any], target: str) -> Any:
         """Forward the publisher request; SDK error details may hold credentials."""
-        with _SDKErrorBoundary("era5", "retrieval"):
+        try:
             return self._client.retrieve(dataset, dict(request), target)
+        except Exception:
+            pass
+        raise EndpointError("era5: retrieval failed; details suppressed") from None
 
 
 class CMEMSClient:
@@ -161,10 +155,13 @@ class CMEMSClient:
         """Forward selections with environment credentials and sanitized errors."""
         if {"username", "password", "credentials_file"}.intersection(selection):
             raise ValueError("Credentials must come only from environment")
-        with _SDKErrorBoundary("cmems", "subset"):
+        try:
             return self._toolbox.subset(
                 dataset_id=dataset_id,
                 username=self._username,
                 password=self._password,
                 **selection,
             )
+        except Exception:
+            pass
+        raise EndpointError("cmems: subset failed; details suppressed") from None

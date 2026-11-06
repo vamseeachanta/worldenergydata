@@ -9,16 +9,17 @@ import httpx
 
 from worldenergydata.metocean.clients.endpoint_checks import EndpointError, probe_sample
 from worldenergydata.metocean.source_register import (
+    MISSING_TERMS_EVIDENCE,
     _https_url,
     load_register,
     registered_url,
     validate_register,
 )
 
-_REVISION_NOTE = "Snapshot of registered cheap checks for access diagnostics"
+_REVISION_NOTE = "Access diagnostics; unprobed sources use NOT_EVALUATED"
 _REPORT_TYPE = "metocean_source_health"
 _SUMMARY = "Anonymous sample diagnostics; engineering suitability NOT_EVALUATED"
-_STATUSES = {"OK", "RETIRED", "CREDENTIALS_REQUIRED", "UNREACHABLE"}
+_STATUSES = {"OK", "RETIRED", "CREDENTIALS_REQUIRED", "UNREACHABLE", "NOT_EVALUATED"}
 
 
 def _report_timestamp(value: object) -> datetime:
@@ -73,20 +74,22 @@ def _previous_history(previous: object) -> list[dict]:
             raise ValueError
         seen = set()
         for row in sources:
-            if not isinstance(row, dict) or set(row) != {
-                "source",
-                "status",
-                "last_checked",
-                "terms_url",
-                "detail",
-            }:
+            if not isinstance(row, dict):
+                raise ValueError
+            row_fields = {"source", "status", "last_checked", "terms_url", "detail"}
+            if row.get("terms_url") is None:
+                row_fields.add("terms_evaluation")
+            if set(row) != row_fields:
                 raise ValueError
             if not _report_text(row["source"]) or row["source"] in seen:
                 raise ValueError
             seen.add(row["source"])
             if row["status"] not in _STATUSES or not _report_text(row["detail"]):
                 raise ValueError
-            if not _https_url(row["terms_url"]):
+            if row["terms_url"] is None:
+                if row["terms_evaluation"] != MISSING_TERMS_EVIDENCE:
+                    raise ValueError
+            elif not _https_url(row["terms_url"]):
                 raise ValueError
             if row["last_checked"] is not None:
                 _report_timestamp(row["last_checked"])
@@ -107,10 +110,11 @@ def source_health(
     """Return a table and optionally write JSON and Markdown snapshots.
 
     Only registered health_url requests with supported parsers are performed.
-    Account/free-key sources are CREDENTIALS_REQUIRED even if local credentials
-    exist: cheap anonymous checks cannot attest authenticated download readiness.
-    Sources without a supported probe are UNREACHABLE with NOT_EVALUATED detail,
-    not falsely marked retired. No request means last_checked is null.
+    Documented account/free-key sources are CREDENTIALS_REQUIRED even if local
+    credentials exist: anonymous checks cannot attest authenticated readiness.
+    Sources without a supported probe or with unconfirmed authentication are
+    NOT_EVALUATED. No request means last_checked is null. Missing terms URLs
+    remain null with their explicit NOT_EVALUATED evidence.
     RETIRED means the checked URL returned 404/410 (removed or moved), not that
     the entire publisher service has closed. Status semantics: RFC 9110 (2022),
     sections 15.3-15.6; RFC 6585 (2012), section 4.
@@ -127,16 +131,24 @@ def source_health(
     for source in register["sources"]:
         row = {
             "source": source["id"],
-            "status": "UNREACHABLE",
+            "status": "NOT_EVALUATED",
             "last_checked": None,
             "terms_url": source["terms_url"],
             "detail": "NOT_EVALUATED: no supported cheap data probe",
         }
-        if source["auth_requirement"] != "none":
+        if source["terms_url"] is None:
+            row["terms_evaluation"] = source["terms_evaluation"]
+        if source["auth_requirement"] in {"account", "free key"}:
             row.update(
                 status="CREDENTIALS_REQUIRED",
-                detail="Account/key access or unconfirmed anonymous access; download NOT_EVALUATED",
+                detail=(
+                    f"Documented {source['auth_requirement']} requirement: "
+                    f"{source['auth_evidence_url']}; "
+                    "authenticated download NOT_EVALUATED"
+                ),
             )
+        elif source["auth_requirement"] == "unconfirmed":
+            row["detail"] = source["auth_evaluation"]
         elif source.get("health_url"):
             url = source["health_url"]
             if not registered_url(url, {"sources": [source]}):
@@ -202,7 +214,7 @@ def source_health(
         ]
         outputs.append((path, _markdown(table, history)))
     for path, content in outputs:
-        path.write_text(content, encoding="utf-8")
+        path.write_text(content, encoding="utf-8", newline="\n")
     return table
 
 
@@ -219,7 +231,10 @@ def _check(source: str, url: str, http: httpx.Client, user_agent: str) -> dict:
         if status in {401, 403}:
             return {
                 "status": "CREDENTIALS_REQUIRED",
-                "detail": "Access rejected; retirement not established",
+                "detail": (
+                    f"Anonymous request returned HTTP {status}; "
+                    "retirement not established"
+                ),
             }
         return {
             "status": "UNREACHABLE",
@@ -259,7 +274,11 @@ def _markdown(table: list[dict], history: list[str]) -> str:
             row["source"],
             row["status"],
             row["last_checked"] or "not checked",
-            row["terms_url"],
+            (
+                row["terms_url"]
+                if row["terms_url"] is not None
+                else row["terms_evaluation"]
+            ),
             row["detail"],
         ]
         lines.append(

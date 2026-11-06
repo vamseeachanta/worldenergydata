@@ -71,24 +71,36 @@ def client_urls(text):
 def test_clients_do_not_introduce_unregistered_urls():
     paths = [DOMAIN / "constants.py", *(DOMAIN / "clients").glob("*.py")]
     for path in paths:
-        for url in client_urls(path.read_text()):
+        for url in client_urls(path.read_text(encoding="utf-8")):
             assert registered_url(url), path.name
 
 
 def test_audit_detects_direct_request_literals_and_ignores_reference_docstrings():
     urls = client_urls(
-        '"""https://reference.example.org"""\nclient.get("https://unregistered.invalid/data")'
+        '"""https://reference.example.org"""\n'
+        'client.get("https://unregistered.invalid/data")'
     )
     assert urls == ["https://unregistered.invalid/data"]
     assert not registered_url(urls[0])
 
 
 def test_documentation_lists_every_source_and_its_evidence():
-    page = (ROOT / "docs/data-sources/metocean-endpoint-audit.md").read_text()
+    page = (ROOT / "docs/data-sources/metocean-endpoint-audit.md").read_text(
+        encoding="utf-8"
+    )
     for row in load_register()["sources"]:
         assert f"| {row['id']} |" in page
         assert row["docs_url"] in page
-        assert row["terms_url"] in page
+        if row["terms_url"] is None:
+            source_line = next(
+                line
+                for line in page.splitlines()
+                if line.startswith(f"| {row['id']} |")
+            )
+            assert "NOT_EVALUATED" in source_line
+            assert "[terms]" not in source_line
+        else:
+            assert row["terms_url"] in page
 
 
 def test_url_matching_respects_origin_and_path_boundaries():
@@ -112,3 +124,80 @@ def test_account_sources_are_explicit(identifier):
         "RETIRED" if identifier == "cmems" else "NOT_EVALUATED"
     )
     assert row["migration_docs_url"].startswith("https://")
+
+
+@pytest.mark.parametrize(
+    "identifier",
+    [
+        "canada_gdwps",
+        "brazil_pnboia",
+        "india_incois",
+        "pirata",
+        "ncep_wave_hindcast",
+        "ndbc_currents",
+        "nhc_best_track",
+    ],
+)
+def test_unconfirmed_access_is_separate_from_documented_account_access(identifier):
+    source = next(row for row in load_register()["sources"] if row["id"] == identifier)
+    assert source["auth_requirement"] == "unconfirmed"
+    assert source["auth_evaluation"].startswith("NOT_EVALUATED")
+    assert source["account_required"] is None
+
+
+@pytest.mark.parametrize("requirement", ["account", "free key"])
+@pytest.mark.parametrize(
+    "evidence,evaluation",
+    [
+        (None, "confirmed"),
+        (
+            "https://example.invalid/access",
+            "NOT_EVALUATED; requirement not established",
+        ),
+    ],
+)
+def test_credential_requirement_needs_documented_auth_evidence(
+    requirement, evidence, evaluation
+):
+    source = deepcopy(load_register()["sources"][0])
+    source["auth_requirement"] = requirement
+    source["auth_evaluation"] = evaluation
+    source["auth_evidence_url"] = evidence
+    with pytest.raises(ValueError, match="auth_evidence"):
+        validate_register({"sources": [source]})
+
+
+@pytest.mark.parametrize("evaluation", [None, "", "confirmed"])
+def test_unconfirmed_access_requires_explicit_evaluation(evaluation):
+    source = deepcopy(load_register()["sources"][0])
+    source.update(auth_requirement="unconfirmed", auth_evaluation=evaluation)
+    with pytest.raises(ValueError, match="auth_evaluation"):
+        validate_register({"sources": [source]})
+
+
+@pytest.mark.parametrize(
+    "identifier", ["india_incois", "ndbc_currents", "indonesia_bmkg", "nhc_best_track"]
+)
+def test_absent_terms_are_registered_as_null_with_explicit_evidence(identifier):
+    source = next(row for row in load_register()["sources"] if row["id"] == identifier)
+    assert source["terms_url"] is None
+    assert source["terms_evaluation"].startswith("NOT_EVALUATED")
+    assert source["terms_quote"] == "no terms statement found"
+    validate_register({"sources": [source]})
+
+
+@pytest.mark.parametrize(
+    "evaluation",
+    [
+        None,
+        "",
+        "confirmed",
+        "NOT_EVALUATED; no confirmed reuse grant",
+        "NOT_EVALUATEDx",
+    ],
+)
+def test_null_terms_require_explicit_not_evaluated_evidence(evaluation):
+    source = deepcopy(load_register()["sources"][0])
+    source.update(terms_url=None, terms_evaluation=evaluation)
+    with pytest.raises(ValueError, match="terms_url"):
+        validate_register({"sources": [source]})

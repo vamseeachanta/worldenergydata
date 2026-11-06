@@ -1,6 +1,7 @@
 """Replays of recorded publisher data; expected values are literal source rows.
 
 Provenance and digests: tests/fixtures/metocean/endpoints/provenance.json.
+Recorded-sample digests normalize CRLF to LF; other content remains significant.
 NDBC's first retained row has WVHT=0.9 m at 2026-10-21 23:50 UTC.
 CO-OPS's first row is 0.035 m MLLW at 2025-01-01 00:00 GMT.
 ERDDAP's first row is M3, WaveHeight=2.227 meters, 2025-12-31T00:00Z.
@@ -8,8 +9,12 @@ MET's first row has sea_surface_wave_height=2.9 m at 2026-10-22T16:00Z.
 Values are transcribed independently of the parser; no fitted equations apply.
 """
 
+import csv
 import hashlib
+import io
 import json
+import subprocess
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -31,13 +36,96 @@ CASES = [
 ]
 
 
-def test_fixture_provenance_and_integrity():
-    for entry in json.loads((FIXTURES / "provenance.json").read_text())["samples"]:
+def _sample_entries():
+    return json.loads((FIXTURES / "provenance.json").read_text(encoding="utf-8"))[
+        "samples"
+    ]
+
+
+def _replay_copied_fixture(tmp_path, filename, *, tamper=False):
+    root = Path(__file__).resolve().parents[3]
+    example = tmp_path / "examples/metocean/endpoint_station_day.py"
+    example.parent.mkdir(parents=True)
+    example.write_bytes(
+        (root / "examples/metocean/endpoint_station_day.py").read_bytes()
+    )
+    fixtures = tmp_path / "tests/fixtures/metocean/endpoints"
+    fixtures.mkdir(parents=True)
+    for name in ["provenance.json", *(entry["file"] for entry in _sample_entries())]:
+        (fixtures / name).write_bytes((FIXTURES / name).read_bytes())
+    sample = fixtures / filename
+    original = sample.read_bytes()
+    content = original.replace(b"\r\n", b"\n").replace(b"\n", b"\r\n")
+    assert b"\r\n" in content
+    if tamper:
+        content += b" "  # A content change that leaves JSON and text parseable.
+    sample.write_bytes(content)
+    return subprocess.run(
+        [sys.executable, str(example)],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        check=False,
+    )
+
+
+@pytest.mark.parametrize("filename", [entry["file"] for entry in _sample_entries()])
+def test_recorded_example_accepts_crlf_fixtures(tmp_path, filename):
+    result = _replay_copied_fixture(tmp_path, filename)
+    assert result.returncode == 0, result.stderr
+    assert result.stdout.splitlines()[0].startswith("source,station,date,")
+    assert len(result.stdout.splitlines()) == 3
+    rows = list(csv.DictReader(io.StringIO(result.stdout)))
+    # Fixture rows: 144 - 75 missing = 69; 24 * 60 / 6 = 240 water levels.
+    assert [(row["rows"], row["nonmissing"]) for row in rows] == [
+        ("144", "69"),
+        ("240", "240"),
+    ]
+    for row, first, last in zip(rows, [1.8, 0.035], [0.9, 0.355]):
+        assert float(row["first_value"]) == pytest.approx(first)
+        assert float(row["last_value"]) == pytest.approx(last)
+
+
+def test_recorded_example_rejects_unrecorded_station():
+    root = Path(__file__).resolve().parents[3]
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(root / "examples/metocean/endpoint_station_day.py"),
+            "--ndbc-station",
+            "TEST",
+        ],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        check=False,
+    )
+    assert result.returncode != 0
+    assert "Offline request does not match recorded sample" in result.stderr
+
+
+@pytest.mark.parametrize("filename", [entry["file"] for entry in _sample_entries()])
+def test_recorded_example_rejects_tampered_fixtures(tmp_path, filename):
+    result = _replay_copied_fixture(tmp_path, filename, tamper=True)
+    assert result.returncode != 0
+    assert "Recorded sample digest mismatch" in result.stderr
+
+
+@pytest.mark.parametrize("line_ending", [b"\n", b"\r\n"], ids=["lf", "crlf"])
+def test_fixture_provenance_and_integrity(tmp_path, line_ending):
+    for entry in _sample_entries():
         assert entry["url"].startswith("https://")
         assert entry["http_status"] == 200  # RFC 9110 (2022), section 15.3.1.
         assert datetime.fromisoformat(entry["fetched_at"]).utcoffset() is not None
+        sample = tmp_path / entry["file"]
+        sample.write_bytes(
+            (FIXTURES / entry["file"])
+            .read_bytes()
+            .replace(b"\r\n", b"\n")
+            .replace(b"\n", line_ending)
+        )
         assert (
-            hashlib.sha256((FIXTURES / entry["file"]).read_bytes()).hexdigest()
+            hashlib.sha256(sample.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
             == entry["sha256"]
         )
 
@@ -53,7 +141,9 @@ def test_publisher_replay(source, filename, value, timestamp):
 
 @pytest.mark.parametrize("missing", ["", None])
 def test_coops_missing_reading_preserves_the_station_day(missing):
-    payload = json.loads((FIXTURES / "coops_station_day.json").read_text())
+    payload = json.loads(
+        (FIXTURES / "coops_station_day.json").read_text(encoding="utf-8")
+    )
     original = parse_sample("coops", json.dumps(payload).encode())
     payload["data"][0]["v"] = missing
     # Synthetic missing/zero values; all other fields retain recorded provenance.
@@ -83,7 +173,9 @@ def test_coops_missing_reading_preserves_the_station_day(missing):
     ],
 )
 def test_coops_malformed_readings_are_rejected(record):
-    payload = json.loads((FIXTURES / "coops_station_day.json").read_text())
+    payload = json.loads(
+        (FIXTURES / "coops_station_day.json").read_text(encoding="utf-8")
+    )
     payload["data"][0] = record
     with pytest.raises(EndpointError, match="schema"):
         parse_sample("coops", json.dumps(payload).encode())
@@ -159,7 +251,7 @@ def test_failed_endpoint_is_named_without_echoing_body(status):
     ],
 )
 def test_changed_schema_units_or_zone_fail(source, filename, mutate):
-    payload = json.loads((FIXTURES / filename).read_text())
+    payload = json.loads((FIXTURES / filename).read_text(encoding="utf-8"))
     mutate(payload)
     with pytest.raises(EndpointError, match="schema"):
         parse_sample(source, json.dumps(payload).encode())

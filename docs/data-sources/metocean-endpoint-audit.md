@@ -7,31 +7,32 @@ The endpoint register describes anonymous access, account requirements and publi
 | Revision | Date | What changed and why |
 | --- | --- | --- |
 | 1 | 2026-10-22 | Inventory access evidence, replay publisher responses and expose source-health diagnostics to identify unusable endpoints |
+| 2 | 2026-11-06 | Separate unconfirmed access and unprobed status; retain missing-terms evidence; record the workspace CLI dependency resolution |
 
 ## Register and access
 
 The packaged `data/source_register.json` is authoritative. `base_url` and `endpoints` identify request origins and path prefixes. An offline AST audit checks URL assignments in every client and the shared constants. Configurable ERDDAP servers need their own row before use in an audited workflow; registering an origin does not grant rights to all datasets on it.
 
-`none` means the listed public service can be requested without registration. `account` also conservatively gates legacy rows whose anonymous access has not been confirmed; those rows carry `auth_evaluation=NOT_EVALUATED`. They are not advertised as confirmed account-only services. A terms link is an evidence locator, not a verified reuse grant. Existing disabled-source eligibility is preserved.
+`none` means the listed public service can be requested without registration. `account` and `free key` identify documented requirements with an `auth_evidence_url`. `unconfirmed` means anonymous download access has not been established; those rows carry `auth_evaluation=NOT_EVALUATED` and do not assert an account requirement. A terms link is an evidence locator, not a verified reuse grant. A null `terms_url` is permitted only with explicit `terms_evaluation=NOT_EVALUATED` evidence; a checked page without a terms statement does not establish reuse permission. Existing disabled-source eligibility is preserved.
 
 | Source | Base URL | Access | Endpoint documentation | Terms |
 | --- | --- | --- | --- | --- |
 | coops | https://api.tidesandcurrents.noaa.gov/api/prod | none | [documentation](https://api.tidesandcurrents.noaa.gov/api/prod/) | [terms](https://tidesandcurrents.noaa.gov/disclaimers.html) |
 | met_norway | https://api.met.no/weatherapi | none | [documentation](https://api.met.no/weatherapi/oceanforecast/2.0/documentation) | [terms](https://docs.api.met.no/doc/TermsOfService.html) |
 | irish_weather_buoys | https://erddap.marine.ie/erddap | none | [documentation](https://erddap.marine.ie/erddap/tabledap/IWBNetwork.graph) | [terms](https://erddap.marine.ie/erddap/tabledap/IWBNetwork.graph) |
-| canada_gdwps | https://dd.weather.gc.ca | account (anonymous access unconfirmed) | [documentation](https://eccc-msc.github.io/open-data/msc-data/nwp_gdwps/readme_gdwps_en/) | [terms](https://eccc-msc.github.io/open-data/licence/readme_en/) |
-| brazil_pnboia | https://www.marinha.mil.br/chm/dados-do-goos-brasil/pnboia | account (anonymous access unconfirmed) | [documentation](https://www.marinha.mil.br/chm/dados-do-goos-brasil/pnboia) | [terms](https://idem.marinha.mil.br/geonetwork/geonetwork/api/records/26de5378-8016-428e-83cb-993d745b5cdf) |
+| canada_gdwps | https://dd.weather.gc.ca | unconfirmed | [documentation](https://eccc-msc.github.io/open-data/msc-data/nwp_gdwps/readme_gdwps_en/) | [terms](https://eccc-msc.github.io/open-data/licence/readme_en/) |
+| brazil_pnboia | https://www.marinha.mil.br/chm/dados-do-goos-brasil/pnboia | unconfirmed | [documentation](https://www.marinha.mil.br/chm/dados-do-goos-brasil/pnboia) | [terms](https://idem.marinha.mil.br/geonetwork/geonetwork/api/records/26de5378-8016-428e-83cb-993d745b5cdf) |
 | australia_auswave | https://www.bom.gov.au | account | [documentation](https://www.bom.gov.au/nwp/doc/auswave/data.shtml) | [terms](https://www.bom.gov.au/copyright) |
-| india_incois | https://incois.gov.in | account (anonymous access unconfirmed) | [documentation](https://incois.gov.in/site/dataholdings.jsp) | [terms](https://incois.gov.in/site/dataholdings.jsp) |
-| indonesia_bmkg | https://maritim.bmkg.go.id | none | [documentation](https://maritim.bmkg.go.id/apidoc) | [terms](https://maritim.bmkg.go.id/apidoc) |
-| pirata | https://www.pmel.noaa.gov/tao | account (anonymous access unconfirmed) | [documentation](https://www.pmel.noaa.gov/tao/data_deliv/deliv-nojava-pir.html) | [terms](https://www.pmel.noaa.gov/tao/data_deliv/deliv-nojava-pir.html) |
-| ncep_wave_hindcast | https://www.emc.ncep.noaa.gov | account (anonymous access unconfirmed) | [documentation](https://www.emc.ncep.noaa.gov/emc/pages/numerical_forecast_systems/wavemodels.php) | [terms](https://www.weather.gov/disclaimer) |
+| india_incois | https://incois.gov.in | unconfirmed | [documentation](https://incois.gov.in/site/dataholdings.jsp) | NOT_EVALUATED; no terms statement found |
+| indonesia_bmkg | https://maritim.bmkg.go.id | none | [documentation](https://maritim.bmkg.go.id/apidoc) | NOT_EVALUATED; no terms statement found |
+| pirata | https://www.pmel.noaa.gov/tao | unconfirmed | [documentation](https://www.pmel.noaa.gov/tao/data_deliv/deliv-nojava-pir.html) | [terms](https://www.pmel.noaa.gov/tao/data_deliv/deliv-nojava-pir.html) |
+| ncep_wave_hindcast | https://www.emc.ncep.noaa.gov | unconfirmed | [documentation](https://www.emc.ncep.noaa.gov/emc/pages/numerical_forecast_systems/wavemodels.php) | [terms](https://www.weather.gov/disclaimer) |
 | ndbc_archive | https://www.ndbc.noaa.gov | none | [documentation](https://www.ndbc.noaa.gov/docs/ndbc_web_data_guide.pdf) | [terms](https://www.weather.gov/disclaimer) |
 | ndbc_realtime | https://www.ndbc.noaa.gov | none | [documentation](https://www.ndbc.noaa.gov/docs/ndbc_web_data_guide.pdf) | [terms](https://www.weather.gov/disclaimer) |
 | ndbc_spectral | https://www.ndbc.noaa.gov | none | [documentation](https://www.ndbc.noaa.gov/docs/ndbc_web_data_guide.pdf) | [terms](https://www.weather.gov/disclaimer) |
 | ndbc_stations | https://www.ndbc.noaa.gov | none | [documentation](https://www.ndbc.noaa.gov/docs/ndbc_web_data_guide.pdf) | [terms](https://www.weather.gov/disclaimer) |
-| ndbc_currents | https://www.ndbc.noaa.gov | account (anonymous access unconfirmed) | [documentation](https://www.ndbc.noaa.gov/docs/ndbc_web_data_guide.pdf) | [terms](https://www.ndbc.noaa.gov/data/realtime2/) |
-| nhc_best_track | https://www.nhc.noaa.gov | account (anonymous access unconfirmed) | [documentation](https://www.nhc.noaa.gov/data/) | [terms](https://www.nhc.noaa.gov/data/) |
+| ndbc_currents | https://www.ndbc.noaa.gov | unconfirmed | [documentation](https://www.ndbc.noaa.gov/docs/ndbc_web_data_guide.pdf) | NOT_EVALUATED; no terms statement found |
+| nhc_best_track | https://www.nhc.noaa.gov | unconfirmed | [documentation](https://www.nhc.noaa.gov/data/) | NOT_EVALUATED; no terms statement found |
 | open_meteo | https://marine-api.open-meteo.com | none | [documentation](https://open-meteo.com/en/docs/marine-weather-api) | [terms](https://open-meteo.com/en/terms) |
 | erddap_ioos | https://erddap.ioos.us/erddap | none | [documentation](https://erddap.ioos.us/erddap/tabledap/documentation.html) | [terms](https://erddap.ioos.us/erddap/legal.html) |
 | erddap_gcoos | https://erddap.gcoos.org/erddap | none | [documentation](https://erddap.gcoos.org/erddap/tabledap/documentation.html) | [terms](https://erddap.gcoos.org/erddap/legal.html) |
@@ -92,7 +93,7 @@ with httpx.Client(timeout=request_timeout_seconds, trust_env=False) as http:
     )
 ```
 
-Statuses are `OK`, `RETIRED`, `CREDENTIALS_REQUIRED` and `UNREACHABLE`. `OK` requires the supported sample schema, units and UTC checks. `RETIRED` means the checked URL returned HTTP 404/410: it may have moved; the status does not establish publisher-wide retirement. Authentication rejection is separate from retirement. Sources without a supported cheap probe are `UNREACHABLE` with **NOT_EVALUATED** detail and a null last-checked time. Account/key sources remain `CREDENTIALS_REQUIRED` without an authenticated request, even if local credentials exist. `last_checked` is the UTC start time of the report's request batch; null means no request was attempted. The report performs no SDK download.
+Statuses are `OK`, `RETIRED`, `CREDENTIALS_REQUIRED`, `UNREACHABLE` and `NOT_EVALUATED`. `OK` requires the supported sample schema, units and UTC checks. `RETIRED` means the checked URL returned HTTP 404/410: it may have moved; the status does not establish publisher-wide retirement. `CREDENTIALS_REQUIRED` means a documented account/key requirement or an observed HTTP 401/403, with the evidence stated in the report. `UNREACHABLE` requires an attempted request whose transport, HTTP response or data-schema check failed. Anonymous sources without a supported cheap probe and sources with unconfirmed access are `NOT_EVALUATED` with a null last-checked time. Documented account/key sources remain `CREDENTIALS_REQUIRED` without an authenticated request, even if local credentials exist. `last_checked` is the UTC start time of the report's request batch; null means no request was attempted. Missing terms URLs remain JSON null and render the retained NOT_EVALUATED terms evidence in Markdown. The report performs no SDK download.
 
 HTTP classifications follow [RFC 9110 (2022)](https://www.rfc-editor.org/rfc/rfc9110.html), sections 15.3–15.6, and [RFC 6585 (2012)](https://www.rfc-editor.org/rfc/rfc6585.html), section 4. No physical equation, coefficient or engineering acceptance limit is used.
 
@@ -118,5 +119,9 @@ Expected values are literal fixture rows, independently transcribed into test do
 For a live example, pass `--live`, `--user-agent`, `--timeout`, `--ndbc-day` and `--coops-day`. Choose an NDBC day still present in the realtime file. An absent day raises an explicit error; use the separate archive workflow for older NDBC years. `--output` writes CSV to a caller-selected file.
 
 ## Known limits and later work
+
+NDBC text contains no station identifier; station attribution relies on the request URL. Offline replay rejects NDBC station overrides that do not match the recorded URL. Live station attribution cannot be independently checked from the response body.
+
+The workspace lockfile resolves Click 8.5.0 in place of 8.3.0 for the workspace CLI dependency graph; this resolution also affects CLI consumers outside the metocean package.
 
 The register covers more sources than the four supported data probes. Unprobed legacy sources, unrestricted reuse rights, numeric traffic limits, CDS legacy retirement confirmation, authenticated downloads, installed SDK interoperability and engineering suitability remain **NOT_EVALUATED**. Current catalogue checks do not validate account credentials. The health report is a point-in-time diagnostic and performs no automatic retries or bulk requests. External review remains required before merge.

@@ -6,6 +6,7 @@
 |------|-------------|-------|
 | `fdas_complete_workflow.py` | `fixture-only` | Pure financial calculations, no data or network |
 | `validation_examples.py` | `fixture-only` | Validation logic only, no external I/O |
+| `metocean/endpoint_station_day.py` | `fixture-only` | Replays bundled station-day responses offline; `--live` makes outbound requests and requires `--user-agent` and `--timeout` |
 | `marine_safety_cause_visualization_demo.py` | `data-required` | Requires local marine safety DB |
 | `llm_classification_demo.py` | `unsafe-unbounded` | Downloads ~1.6 GB BART model; set `WORLDENERGYDATA_RUN_LLM_EXAMPLES=1` |
 | `marine_safety/generate_cause_report.py` | `data-required` | Requires local marine safety DB |
@@ -17,7 +18,7 @@
 | Class | Meaning |
 |-------|---------|
 | `bounded-safe` | No data, network, or credentials required |
-| `fixture-only` | Uses bundled YAML/static config only |
+| `fixture-only` | Uses bundled static fixtures or config only |
 | `data-required` | Requires local dataset (run `make data` first) |
 | `credential-required` | Requires API key or credentials |
 | `network-required` | Makes outbound network requests |

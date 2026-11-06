@@ -181,8 +181,32 @@ def test_marine_subset_uses_toolbox(monkeypatch):
 )
 def test_optional_dependency_error(monkeypatch, module, client):
     monkeypatch.setitem(sys.modules, module, None)
-    with pytest.raises(ImportError, match=module):
+    with pytest.raises(ImportError, match=module) as error:
         getattr(clients, client)()
+    assert error.value.__context__ is None
+
+
+@pytest.mark.parametrize("client", [clients.ERA5Client, clients.CMEMSClient])
+def test_sdk_import_errors_are_sanitized(monkeypatch, client):
+    def fail(module):
+        raise RuntimeError("synthetic sensitive detail")
+
+    monkeypatch.setattr(clients, "import_module", fail)
+    with pytest.raises(clients.EndpointError, match="SDK import") as error:
+        client()
+    assert "synthetic sensitive detail" not in str(error.value)
+    assert error.value.__context__ is None
+
+
+@pytest.mark.parametrize("client", [clients.ERA5Client, clients.CMEMSClient])
+@pytest.mark.parametrize("failure", [KeyboardInterrupt, SystemExit])
+def test_sdk_import_cancellation_propagates(monkeypatch, client, failure):
+    def fail(module):
+        raise failure()
+
+    monkeypatch.setattr(clients, "import_module", fail)
+    with pytest.raises(failure):
+        client()
 
 
 @pytest.mark.parametrize("status", [301, 302, 307, 308])

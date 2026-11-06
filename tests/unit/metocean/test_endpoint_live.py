@@ -45,7 +45,9 @@ def test_publisher_data_schema(source):
                     },
                     indent=2,
                 )
-                + "\n"
+                + "\n",
+                encoding="utf-8",
+                newline="\n",
             )
 
     with httpx.Client(

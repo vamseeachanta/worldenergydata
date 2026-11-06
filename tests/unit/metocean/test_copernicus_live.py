@@ -39,7 +39,9 @@ def test_current_copernicus_catalogue(source):
                     },
                     indent=2,
                 )
-                + "\n"
+                + "\n",
+                encoding="utf-8",
+                newline="\n",
             )
 
     with httpx.Client(
