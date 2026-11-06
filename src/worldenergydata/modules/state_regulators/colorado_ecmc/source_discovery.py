@@ -34,6 +34,9 @@ def load_source_discovery_config(path: str | Path) -> dict:
 def build_facility_detail_url(api_fragment: str, base_url: str = BASE_URL) -> str:
     digits = "".join(char for char in str(api_fragment) if char.isdigit())
     if len(digits) == 12 and digits.startswith("05"):
+        # The URL has no sidetrack parameter; never silently discard one.
+        if digits[10:] != "00":
+            raise ValueError("FacilityDetail URL cannot select a sidetrack")
         digits = digits[2:10]
     elif len(digits) == 10 and digits.startswith("05"):
         digits = digits[2:10]

@@ -6,8 +6,13 @@ from typing import Any
 
 import numpy as np
 import pytest
-from test_bathymetry import Response, Session, manifest, record
 
+from tests.unit.field_development.test_bathymetry import (
+    Response,
+    Session,
+    manifest,
+    record,
+)
 from worldenergydata.field_development.bathymetry import fetch_bathymetry, verify_file
 from worldenergydata.field_development.bathymetry_grid import (
     _depth,

@@ -334,3 +334,9 @@ integration:
       - excel
       - shapefile
       - geojson
+
+# Operator registry consumes selected local snapshots; no new downloads.
+# Screening choices are required inputs, not regulatory or technical defaults.
+operator_registry:
+  size_bands: []  # Increasing {max_wells: integer, label: string} entries.
+  stripper_bopd: null  # Oil bbl/calendar day; absent => NOT_EVALUATED.

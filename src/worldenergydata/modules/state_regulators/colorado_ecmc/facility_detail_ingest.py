@@ -5,18 +5,23 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import time
 from datetime import datetime, timezone
 from pathlib import Path
-from time import sleep
 from urllib.error import HTTPError
 from urllib.parse import urlencode
-from urllib.request import Request, urlopen
 
 import pandas as pd
+from bs4 import BeautifulSoup
 
 from worldenergydata.modules.state_regulators.colorado_ecmc.facility_detail_candidates import (
     build_form5a_pressure_candidates,
     evaluate_screen_promotion,
+)
+from worldenergydata.modules.state_regulators.fetch import (
+    FetchConfig,
+    Fetcher,
+    TermsCheck,
 )
 
 __all__ = [
@@ -52,6 +57,8 @@ def build_facility_detail_source_list(
                 "api_fragment": api_fragment,
                 "api10": f"05{api_fragment}",
                 "api12": pd.NA,
+                "source_api": _text(row.get("API")),
+                "wellbore_selection": "NOT_EVALUATED",
                 "facility_id": _text(row["Facil_Id"]),
                 "field": _text(row["Field_Name"]),
                 "max_md_ft": pd.to_numeric(row["Max_MD"], errors="coerce"),
@@ -60,7 +67,9 @@ def build_facility_detail_source_list(
                 "longitude": pd.to_numeric(row.get("Longitude"), errors="coerce"),
             }
         )
-    source_list = pd.DataFrame(rows).drop_duplicates("api_fragment")
+    source_list = pd.DataFrame(rows).drop_duplicates()
+    if source_list.duplicated("api_fragment").any():
+        raise ValueError("ambiguous FacilityDetail rows share an API fragment")
     max_requests = int(config.get("max_requests", len(source_list)))
     if max_requests >= len(source_list) and not config.get("allow_full_source_list"):
         raise ValueError(
@@ -76,7 +85,9 @@ def build_facility_detail_source_list(
     return source_list.reset_index(drop=True), quality
 
 
-def fetch_facility_detail_pages(source_list: pd.DataFrame, config: dict) -> dict:
+def fetch_facility_detail_pages(
+    source_list: pd.DataFrame, config: dict, *, clock=time.time, sleep=time.sleep
+) -> dict:
     """Fetch approved FacilityDetail pages with resumable provenance."""
     base = Path(config["storage"]["base_dir"])
     raw_dir = base / "raw" / "facility_detail" / "html"
@@ -85,14 +96,33 @@ def fetch_facility_detail_pages(source_list: pd.DataFrame, config: dict) -> dict
     status_dir.mkdir(parents=True, exist_ok=True)
     fetched, failed = [], []
     settings = config["facility_detail"]
-    for index, row in source_list.reset_index(drop=True).iterrows():
+    # Shared policy.py FetchConfig is the source of pacing/budget defaults.
+    options = dict(settings.get("fetch", {}))
+    if "request_delay_seconds" in settings:
+        options["fallback_interval"] = float(settings["request_delay_seconds"])
+    if "timeout_seconds" in settings:
+        options["timeout"] = float(settings["timeout_seconds"])
+    if "max_retries" in settings:
+        options["max_retries"] = int(settings["max_retries"])
+    fetcher = Fetcher(
+        FetchConfig(
+            base / "raw" / "facility_detail" / "cache",
+            settings["user_agent"],
+            **options,
+        ),
+        [TermsCheck(**check) for check in settings.get("terms_checks", [])],
+        clock=clock,
+        sleep=sleep,
+    )
+    for _, row in source_list.reset_index(drop=True).iterrows():
         try:
-            metadata = _fetch_one_page(row, raw_dir, settings)
+            metadata = _fetch_one_page(row, raw_dir, settings, fetcher)
         except HTTPError as error:
             metadata = _failed_metadata(row, settings, error)
             failed.append(metadata)
             _append_jsonl(status_dir / "failed.jsonl", metadata)
         else:
+            metadata["identity_status"] = _identity_status(metadata)
             if _should_exclude_identity_mismatch(metadata, settings):
                 metadata = _identity_mismatch_metadata(metadata)
                 failed.append(metadata)
@@ -100,22 +130,23 @@ def fetch_facility_detail_pages(source_list: pd.DataFrame, config: dict) -> dict
             else:
                 fetched.append(metadata)
                 _append_jsonl(status_dir / "fetched.jsonl", metadata)
-        if index < len(source_list) - 1:
-            sleep(float(settings.get("request_delay_seconds", 0)))
     return {"fetched": fetched, "failed": failed, "skipped": []}
 
 
-def _fetch_one_page(row: pd.Series, raw_dir: Path, settings: dict) -> dict:
+def _fetch_one_page(
+    row: pd.Series, raw_dir: Path, settings: dict, fetcher: Fetcher
+) -> dict:
     api_fragment = str(row["api_fragment"])
     url = _facility_detail_url(api_fragment, settings["base_url"])
-    request = Request(url, headers={"User-Agent": settings["user_agent"]})
-    with urlopen(request, timeout=int(settings.get("timeout_seconds", 60))) as response:
-        payload = response.read()
-        status_code = response.getcode()
-        headers = response.headers
+    result = fetcher.fetch(url)
+    payload = result.path.read_bytes()
+    status_code = result.metadata.get("status_code", 200)
+    headers = result.metadata["response_headers"]
+    text = BeautifulSoup(payload.decode("utf-8"), "html.parser").get_text(
+        " ", strip=True
+    )
     raw_path = raw_dir / f"{api_fragment}.html"
     raw_path.write_bytes(payload)
-    text = payload.decode("utf-8", errors="ignore")
     return {
         "api_fragment": api_fragment,
         "facility_id": _text(row.get("facility_id")),
@@ -128,7 +159,8 @@ def _fetch_one_page(row: pd.Series, raw_dir: Path, settings: dict) -> dict:
         "sha256": hashlib.sha256(payload).hexdigest(),
         "etag": headers.get("ETag"),
         "downloaded_at": datetime.now(timezone.utc).isoformat(),
-        "retry_count": 0,
+        "retry_count": result.metadata.get("retry_count", 0),
+        "cached": result.cached,
     }
 
 
@@ -153,9 +185,18 @@ def _failed_metadata(row: pd.Series, settings: dict, error: HTTPError) -> dict:
 
 
 def _should_exclude_identity_mismatch(metadata: dict, settings: dict) -> bool:
-    return bool(settings.get("stop_on_identity_mismatch")) and _has_identity_mismatch(
-        metadata
+    return (
+        _identity_status(metadata) != "matched"
+        and settings.get("keep_identity_mismatch") is not True
     )
+
+
+def _identity_status(metadata: dict) -> str:
+    if _has_identity_mismatch(metadata):
+        return "identity_mismatch"
+    if not metadata.get("rendered_api_fragment"):
+        return "identity_unverified"
+    return "matched"
 
 
 def _has_identity_mismatch(metadata: dict) -> bool:
@@ -171,7 +212,7 @@ def _identity_mismatch_metadata(metadata: dict) -> dict:
     failed = dict(metadata)
     failed.update(
         {
-            "status": "identity_mismatch",
+            "status": metadata["identity_status"],
             "error_class": "IdentityMismatch",
             "error_text": (
                 "rendered FacilityDetail identity does not match requested API/facility"
