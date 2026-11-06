@@ -65,14 +65,31 @@ class CalibrationFit:
 
 
 @dataclass
+class SkippedCalibrationRow:
+    """Unsupported row, identified by zero-based input position, not index label."""
+
+    row_position: int
+    asset_type: str | None
+    reason: str = "unsupported_asset_type"
+
+
+@dataclass
 class CalibrationResult:
-    """Aggregate result from CostModelCalibration.fit()."""
+    """Aggregate result from CostModelCalibration.fit().
+
+    total_records counts supported rows assigned to fits (including baseline
+    fallback assessments). input_records also includes skipped_rows. The
+    coverage percentage continues to measure data-driven asset types, not rows.
+    """
 
     asset_type: str
     total_records: int
     years_covered: float
     fits: list[CalibrationFit] = field(default_factory=list)
     coverage_pct: float = 0.0
+    input_records: int = 0
+    skipped_records: int = 0
+    skipped_rows: list[SkippedCalibrationRow] = field(default_factory=list)
 
     def to_dataframe(self) -> pd.DataFrame:
         """Return DataFrame with one row per CalibrationFit."""
@@ -127,6 +144,10 @@ class CostModelCalibration:
           - Blend: 0.7 * fitted_base + 0.3 * baseline_base (for base_musd only)
           - All fitted factors clamped to [0.5x, 2.0x] of baseline
 
+        Only exact supported asset-type keys are assigned to fits. Unsupported
+        and missing keys are reported by input position in skipped_rows;
+        total_records and years_covered describe only assigned rows.
+
         Returns:
             Self (chainable).
         """
@@ -146,8 +167,23 @@ class CostModelCalibration:
         if missing:
             raise ValueError(f"removal_df missing required columns: {sorted(missing)}")
 
-        years_covered = self._compute_years_covered(removal_df)
-        total_records = len(removal_df)
+        supported = removal_df["asset_type"].isin(_CALIBRATION_ASSET_TYPES)
+        used_df = removal_df.loc[supported]
+        skipped_rows = [
+            SkippedCalibrationRow(
+                row_position=position,
+                asset_type=None if pd.isna(value) else str(value),
+            )
+            for position, (value, accepted) in enumerate(
+                zip(removal_df["asset_type"], supported)
+            )
+            if not accepted
+        ]
+        # Discrete Mathematics: An Open Introduction, 3rd ed. (2019), section 1.1:
+        # additive principle for disjoint sets; input = assigned + skipped rows.
+        # https://discrete.openmathbooks.org/dmoi3/sec_counting-addmult.html
+        total_records = len(used_df)
+        years_covered = self._compute_years_covered(used_df) if total_records else 0.0
 
         fits: list[CalibrationFit] = []
         updated_factors: dict[str, dict] = {
@@ -155,7 +191,7 @@ class CostModelCalibration:
         }
 
         for asset_type in _CALIBRATION_ASSET_TYPES:
-            subset = removal_df[removal_df["asset_type"] == asset_type].copy()
+            subset = used_df[used_df["asset_type"] == asset_type].copy()
             fit = self._fit_asset_type(asset_type, subset, updated_factors)
             fits.append(fit)
             # Update in-memory factors with blended values
@@ -183,6 +219,9 @@ class CostModelCalibration:
             years_covered=years_covered,
             fits=fits,
             coverage_pct=coverage_pct,
+            input_records=len(removal_df),
+            skipped_records=len(skipped_rows),
+            skipped_rows=skipped_rows,
         )
         self._fitted = True
         return self

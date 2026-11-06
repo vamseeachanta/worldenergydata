@@ -156,7 +156,7 @@ def test_invalid_qualification_evidence_rejected(tmp_path, kind):
     if kind == "revision":
         path = copied / "revision.json"
         data = json.loads(path.read_text())
-        data["revision"] = "2"
+        data["revision"] += "-unrecorded"
         message = "Newest history row"
     else:
         path = copied / "execution.json"

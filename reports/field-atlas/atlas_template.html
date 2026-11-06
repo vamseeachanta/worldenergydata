@@ -117,6 +117,15 @@
      Fields with a full life-cycle analysis open right here — and link through to their stage-gate hub.</p>
   <div class="story">The <b>Lower Tertiary (Wilcox)</b> play is ~8% of GoM fields but holds <b>~36% of the oil</b> — start there.</div>
 
+  <details id="economics-gate" class="xnote">
+    <summary>Economics release gate</summary>
+    <!-- Basis and withholding policy: reviewed release contract #976 (2026). -->
+    <p>Economics are life-to-date, pre-tax and discounted at 10%: sunk capital is
+       charged against production to date. Negative NPV can be valid on this basis.
+       Only explicitly surfaced values with a known basis are shown. Early-life,
+       withheld or unvalidated economics display n/a; full-cycle economics remain pending.</p>
+  </details>
+
   <section class="guide">
     <h3>Guided demo — a 4-click walkthrough</h3>
     <ol>
@@ -324,13 +333,20 @@ function renderField(x, f){
   let perf = "";
   if (f.performance){
     const P = f.performance, row = (k,v)=> v==null?"":`<tr><td>${esc(k)}</td><td>${esc(v)}</td></tr>`;
+    // Release contract #976 (2026): never trust populated withheld values.
+    const released = P.economics_status === "surfaced" &&
+      P.economics_basis === "life_to_date_pretax_npv_at_10pct" &&
+      [P.npv_mm, P.breakeven_wti, P.sens_mm_per_dollar].every(Number.isFinite);
+    const economics = released
+      ? row("LTD breakeven WTI @10%", "$"+P.breakeven_wti+"/bbl") +
+        row("NPV, life-to-date @10%", "$"+P.npv_mm+"MM")
+      : `<tr><td>Economics</td><td><a href="#economics-gate">n/a — economics withheld</a></td></tr>`;
     perf = `<div class="xcardlet"><div class="xh">Field performance · BSEE life-to-date</div><table>` +
       row("Wells", P.wells) + row("Cum oil", P.cum_oil_mmbbl==null?null:P.cum_oil_mmbbl+" MMbbl") +
       row("EUR", P.eur_mmbbl==null?null:P.eur_mmbbl+" MMbbl") +
       row("Avg uptime", P.avg_uptime_pct==null?null:P.avg_uptime_pct+"%") +
       row("Avg decline", P.avg_decline_pct_yr==null?null:P.avg_decline_pct_yr+"%/yr") +
-      row("Breakeven WTI", P.breakeven_wti==null?null:"$"+P.breakeven_wti+"/bbl") +
-      row("NPV", P.npv_mm==null?null:"$"+P.npv_mm+"MM") +
+      economics +
       row("Interventions", P.interventions) + `</table></div>`;
   }
   let resv = "";

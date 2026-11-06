@@ -237,6 +237,30 @@ def _activity_distributions(result):
     return body + "</section>"
 
 
+def _area_distributions(result):
+    """Render additive record counts without summing distinct-well counts."""
+    body = '<section id="area-characterisation"><h2>Area characterisation</h2>'
+    body += "<p>WAR and EOR areas are reported bottom-hole area codes. Completion areas use unambiguous borehole snapshot metadata. Unknown areas remain in every total. Distinct wells in different groups can overlap.</p>"
+    common = [("year", "Year or unknown"), ("area", "Area code or unknown")]
+    for key, label, code in [
+        ("completion_by_year_area_status", "Completion", "status"),
+        ("eor_by_year_area_type", "EOR", "code"),
+        ("war_by_year_area_type", "WAR", "code"),
+    ]:
+        rows = result.get(key, [])
+        body += _chart(
+            rows, "area", f"{label} records by area; supplied snapshot only."
+        )
+        columns = common + [(code, "Raw code"), ("records", "Records")]
+        if code == "code":
+            columns += [("wells", "Distinct API12 within group")]
+        body += _table(rows, columns, f"{label} counts by year, area and raw code.")
+    status = result.get("operator_class_analysis", {})
+    body += "<h3>Operator class</h3><p>" + _text(status.get("status", "NOT_EVALUATED"))
+    body += ": " + _text(status.get("reason", "No sourced class mapping supplied."))
+    return body + "</p></section>"
+
+
 def _outliers(result):
     wells = sorted(
         (r for r in result["per_well"] if r["outlier"]),
@@ -302,6 +326,7 @@ def render_report(result, revision):
         + _catalogue(result)
         + _completion_distributions(result)
         + _activity_distributions(result)
+        + _area_distributions(result)
         + _outliers(result)
         + _coverage(result)
         + "</body></html>\n"

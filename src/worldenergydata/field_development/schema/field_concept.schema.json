@@ -411,6 +411,20 @@
       "description": "Basin / geographic area.",
       "title": "Region"
     },
+    "reservoir_depth_tvd_m": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Proposed convention: supplied reservoir true vertical depth in metres below mean sea level (TVDSS), positive downward, not water depth; finite and nonnegative. None when unavailable or datum unknown.",
+      "title": "Reservoir Depth Tvd M"
+    },
     "reservoir_distribution": {
       "anyOf": [
         {
@@ -421,6 +435,33 @@
         }
       ],
       "default": null
+    },
+    "reservoir_pressure_psi": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Proposed convention: supplied reservoir absolute pressure in psi (psia), not gauge pressure or a pressure gradient; finite and nonnegative. None when unavailable or reference unknown.",
+      "title": "Reservoir Pressure Psi"
+    },
+    "reservoir_temperature_f": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Proposed convention: supplied reservoir temperature in degrees Fahrenheit; finite subzero values are allowed. None when unavailable.",
+      "title": "Reservoir Temperature F"
     },
     "riser_type": {
       "anyOf": [

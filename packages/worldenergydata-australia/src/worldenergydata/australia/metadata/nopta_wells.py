@@ -88,7 +88,8 @@ def get_bytes(url: str, *, max_bytes: int = 2_000_000) -> bytes:
         raise ValueError("query parameter not permitted")
     if len({k for k, _ in pairs}) != len(pairs):
         raise ValueError("duplicate query parameters")
-    if not 0 < max_bytes <= 2_000_000:
+    # Existing resource cap: data/nopta_wells_note.md, Reproduction (2026-10).
+    if type(max_bytes) is not int or not 0 < max_bytes <= 2_000_000:
         raise ValueError("invalid byte cap")
     time.sleep(2)
     request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
@@ -220,8 +221,10 @@ def fetch_wells(
     layer = parse_layer(metadata)
     if type(max_pages) is not int or not 1 <= max_pages <= 3:
         raise ValueError("invalid page cap")
+    # Existing aggregate cap: data/nopta_wells_note.md, Reproduction (2026-10).
     if (
-        not 0 < max_total_bytes <= 5_000_000
+        type(max_total_bytes) is not int
+        or not 0 < max_total_bytes <= 5_000_000
         or not isinstance(where, str)
         or len(where) > 500
     ):

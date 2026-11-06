@@ -35,12 +35,24 @@ class Query:
 
 
 @pytest.fixture(
-    params=["location", "operator", "permits", "well_detail", "case_detail"]
+    params=[
+        "location",
+        "operator",
+        "permits",
+        "well_detail",
+        "case_detail",
+        "mining_claims",
+        "fluid_minerals",
+    ]
 )
 def query(request):
     # BaseProvider._make_request: zero retries exercises terminal failures
     # without sleeps; zero rate-limit delay removes throttling in offline tests.
-    provider_type = BLMProvider if request.param == "case_detail" else StateGISProvider
+    provider_type = (
+        BLMProvider
+        if request.param in {"case_detail", "mining_claims", "fluid_minerals"}
+        else StateGISProvider
+    )
     with provider_type(max_retries=0, rate_limit_delay=0) as provider:
         cases = {
             "location": Query(
@@ -65,6 +77,12 @@ def query(request):
                 provider,
                 "get_case_detail",
                 {"state": "NM", "case_number": "synthetic-case"},
+            ),
+            "mining_claims": Query(
+                provider, "search_mining_claims", {"state": "NM"}, "claims"
+            ),
+            "fluid_minerals": Query(
+                provider, "search_fluid_minerals", {"state": "NM"}, "leases"
             ),
         }
         yield cases[request.param]
@@ -131,7 +149,14 @@ def test_successful_empty_response(query):
     """
     query.provider._client = httpx.Client(
         transport=httpx.MockTransport(
-            lambda request: httpx.Response(httpx.codes.OK, json={"features": []})
+            lambda request: httpx.Response(
+                httpx.codes.OK,
+                json=(
+                    {"results": []}
+                    if isinstance(query.provider, BLMProvider)
+                    else {"features": []}
+                ),
+            )
         )
     )
 
@@ -145,7 +170,11 @@ def test_successful_empty_response(query):
         # Independent hand count above: len([]) = 0.
         assert result.total_count == result.returned_count == 0
         assert getattr(result, query.collection) == []
-        assert result.source == "state_gis:TX"
+        assert result.source == (
+            f"blm:{query.method.removeprefix('search_')}:NM"
+            if isinstance(query.provider, BLMProvider)
+            else "state_gis:TX"
+        )
 
 
 def test_successful_record_response(query):
@@ -155,11 +184,12 @@ def test_successful_record_response(query):
     depend on the provider parser or a live external service.
     """
     attrs = {"API_NUMBER": "synthetic-api", "PERMIT_NUMBER": "synthetic-permit"}
-    payload = (
-        {"case_nr": "synthetic-case"}
-        if query.method == "get_case_detail"
-        else {"features": [{"attributes": attrs}]}
-    )
+    if query.method == "get_case_detail":
+        payload = {"case_nr": "synthetic-case"}
+    elif isinstance(query.provider, BLMProvider):
+        payload = {"results": [{"case_nr": "synthetic-case"}]}
+    else:
+        payload = {"features": [{"attributes": attrs}]}
     query.provider._client = httpx.Client(
         transport=httpx.MockTransport(
             lambda request: httpx.Response(httpx.codes.OK, json=payload)
@@ -177,5 +207,36 @@ def test_successful_record_response(query):
         (record,) = getattr(result, query.collection)
         if query.collection == "permits":
             assert record.permit_number == "synthetic-permit"
-        else:
+        elif query.collection == "wells":
             assert record.api_number == "synthetic-api"
+        else:
+            assert record.case_number == "synthetic-case"
+
+
+@pytest.mark.parametrize("failure", ["connection", "timeout", "http", "error-envelope"])
+def test_federal_land_status_retains_explicit_error_result(failure):
+    """The sixth federal fallback named in #1251 reports an explicit error.
+
+    Unlike a fabricated zero-record search, its dictionary says unknown and
+    includes an error member. This existing result contract remains visible;
+    no error envelope is cached. The expected location echoes synthetic inputs.
+    """
+
+    def respond(request):
+        if failure == "connection":
+            raise httpx.ConnectError("Synthetic unavailable service", request=request)
+        if failure == "timeout":
+            raise httpx.ReadTimeout("Synthetic timeout", request=request)
+        if failure == "http":
+            return httpx.Response(httpx.codes.SERVICE_UNAVAILABLE)
+        return httpx.Response(httpx.codes.OK, json={"error": {}})
+
+    with BLMProvider(max_retries=0, rate_limit_delay=0) as provider:
+        provider._client = httpx.Client(transport=httpx.MockTransport(respond))
+        result = provider.get_land_status("NM", "T", "R", "S")
+        assert result["status"] == "unknown"
+        assert result["error"]
+        assert {
+            key: result[key] for key in ("state", "township", "range", "section")
+        } == {"state": "NM", "township": "T", "range": "R", "section": "S"}
+        assert provider.cache_stats()["entries"] == 0

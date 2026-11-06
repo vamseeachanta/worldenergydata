@@ -1,8 +1,14 @@
-"""EIA US adapter — state-level shale play production data.
+"""Synthetic EIA US play adapter for unified-query demonstrations.
 
-EIA reports production at the basin/play level rather than individual fields.
-This adapter treats each play as a "field" for consistency with the unified
-schema.  Volumes are natively in bbl / Mcf.
+``region = "eia_us"`` is a routing label. Every returned row is generated
+from this adapter's built-in table and tagged ``source = "eia_us_mock"``;
+it is not retrieved or measured EIA production. The adapter does not call
+``worldenergydata.eia_us`` clients or loaders. Successful adapter queries
+therefore establish no coverage of those loaders or the live EIA API.
+
+The schema uses bbl / Mcf labels for synthetic monthly quantities. Table
+magnitudes and the ramp/decline formula are demonstration assumptions with
+no source-qualified production or forecasting applicability.
 """
 
 from __future__ import annotations
@@ -16,7 +22,11 @@ from worldenergydata.production.unified.query import ProductionQuery
 
 
 class EiaUsAdapter(AbstractProductionAdapter):
-    """EIA US shale play production adapter."""
+    """Generate synthetic play rows; no EIA US loader delegation.
+
+    See the EIA US package documentation, ``docs/method-overlap.md``, for
+    the pinned method inventory and the synthetic-data boundary tests.
+    """
 
     region: str = "eia_us"
 
