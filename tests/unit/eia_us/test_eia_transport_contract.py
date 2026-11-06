@@ -1,8 +1,8 @@
 """Offline contracts exercised through fetch_series and the live transport.
 
-Fixture basis: issue #1606 specifies offsets 0 and 2, pages [1, 2] and [3],
-and 3600 requests/hour with calls 0.25 seconds apart. These are synthetic
-identifiers and counts, not API pagination guarantees. Independent arithmetic:
+Fixture basis: issue #1606 states qualitative contracts only. Offsets 0 and 2,
+pages [1, 2] and [3], and 3600 requests/hour with calls 0.25 seconds apart are
+locally chosen synthetic fixtures, not API pagination guarantees. Arithmetic:
 3600 seconds/hour / 3600 requests/hour = 1 second/request; 1 - 0.25 = 0.75.
 Other numbers are synthetic fixture inputs; call counts enumerate the explicit
 miss/hit traces below. HTTP statuses use HTTPStatus (RFC 9110, section 15;
