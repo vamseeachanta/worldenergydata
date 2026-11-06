@@ -1,0 +1,3 @@
+# Per-row provenance for caller-supplied pipe dimensions; see README.md.
+version: 1
+rows: []

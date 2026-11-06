@@ -103,18 +103,28 @@ class TestCLIStatusCommand:
 
 
 class TestCLIRunJobCommand:
-    def test_run_job_executes_and_returns_result(self, tmp_path):
+    def test_run_job_executes_and_returns_result(self, tmp_path, monkeypatch):
         config_path = _write_config(tmp_path)
         from worldenergydata.scheduler.cli import cmd_run_job
         from worldenergydata.scheduler.jobs.base import JobResult
         from worldenergydata.scheduler.jobs.bsee_refresh import BseeRefreshJob
 
+        job = BseeRefreshJob()
+        received = []
+
+        def run(config):
+            received.append(config["output_dir"])
+            now = datetime.now()
+            return JobResult(job.name, now, now, "success", 0, None)
+
+        monkeypatch.setattr(job, "run", run)
         result = cmd_run_job(
             job_name="bsee_refresh",
             config_path=config_path,
-            jobs=[BseeRefreshJob()],
+            jobs=[job],
         )
         assert isinstance(result, JobResult)
+        assert received == [str(tmp_path / "data" / "modules" / "bsee")]
 
     def test_run_job_unknown_name_raises(self, tmp_path):
         config_path = _write_config(tmp_path)

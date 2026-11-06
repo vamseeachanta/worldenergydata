@@ -201,3 +201,27 @@ def test_capabilities_overview_is_a_redirect_stub_to_the_hub(bp):
     assert 'content="noindex, follow"' in html
     # the old hand-authored overview copy must not return to this page
     assert "Capability Showcase" not in html
+
+
+def test_calendar_insight_download_and_labels(bp):
+    """Published report downloads must resolve beside their HTML page."""
+    bp.build(domains=["lower_tertiary", "capabilities"])
+    hub = (bp.PUBLIC / "capabilities" / "insights.html").read_text().lower()
+    assert "rig-days" not in hub
+    assert "learning curve" not in hub
+    spec = importlib.util.spec_from_file_location(
+        "calendar_insights", SCRIPT.parent / "lower_tertiary/build_drilling_insights.py"
+    )
+    insights = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(insights)
+    stats = insights.compute_stats(insights.load_wells(insights.DEFAULT_SOURCE))
+    assert f"{stats['n_calendar']} of {stats['n_wellbores']}" in hub
+    assert (
+        f'<div class="v">{stats["median_days"]:.1f} <small>median calendar days</small>'
+        in hub
+    )
+    page = (bp.PUBLIC / "drilling-insights.html").read_text()
+    assert (bp.PUBLIC / "lt_drilling_insights.csv").is_file()
+    assert "Calendar cycle time" in page
+    assert "Calendar cycle time" in (bp.PUBLIC / "index.html").read_text()
+    assert "burned 11,124 rig-days" not in (bp.PUBLIC / "index.html").read_text()

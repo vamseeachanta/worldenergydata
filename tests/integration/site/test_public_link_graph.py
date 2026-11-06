@@ -360,8 +360,8 @@ def test_underwriting_risk_signals(public):
 
 def test_concept_fdp_links(public):
     # #759: the concept.fdp_href is a JS-built link the data-driven edge extractor
-    # does NOT auto-catch, so assert it explicitly. Exactly 3 LT fields have an FDP
-    # page; their hrefs resolve; the other 7 carry a placeholder issue.
+    # does NOT auto-catch, so assert it explicitly. All LT fields now have an FDP
+    # page; every href must resolve in the published tree (issue #962).
     import re as _re
 
     fields = _explorer(public)["fields"]
@@ -370,7 +370,7 @@ def test_concept_fdp_links(public):
         for fid, c in fields.items()
         if c["concept"]["fdp_href"]
     }
-    assert set(with_fdp) == {"cascade_chinook", "julia", "stones"}
+    assert set(with_fdp) == set(fields)
     for fid, href in with_fdp.items():
         assert _re.fullmatch(
             r"\.\./field-development/portfolio/[a-z_-]+\.html", href

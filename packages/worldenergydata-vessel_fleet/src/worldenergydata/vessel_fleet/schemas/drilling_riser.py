@@ -2,16 +2,31 @@
 
 from __future__ import annotations
 
+import json
 from typing import Optional
 
-from pydantic import BaseModel, ConfigDict, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
+
+from worldenergydata.vessel_fleet.models.drilling_riser import (
+    RiserClass,
+    RiserLineEntry,
+)
 
 
 class RiserJointSchema(BaseModel):
-    """Schema for a marine drilling riser joint.
+    """Schema for a drilling, hydraulic-lift/mining or production riser joint.
 
     Field names are UPPERCASE to match tabular column headers.
     Units: OD/ID/WT in inches, lengths in feet, weights in kips.
+    OD_IN/ID_IN/WALL_THICKNESS_IN describe the main tube. AUXILIARY_LINES
+    is an optional list (or CSV JSON array) of function, od_in and
+    wall_thickness_in objects; it does not define bundle layout or envelope.
+
+    GRADE retains source text, not a shared strength vocabulary: X-80 refers
+    to line pipe (API Spec 5L), G105/S135 to drill pipe (API Spec 5DP).
+    Specification titles: API 2025 Publications Catalog, Tubular Goods,
+    Spec 5L (46th edition, 2018) and Spec 5DP (2nd edition, 2020).
+    No equivalence, strength value or material qualification is inferred.
     """
 
     model_config = ConfigDict(str_strip_whitespace=True)
@@ -35,6 +50,21 @@ class RiserJointSchema(BaseModel):
 
     DATA_SOURCE: Optional[str] = None
     NOTES: Optional[str] = None
+
+    RISER_CLASS: RiserClass = "drilling"
+    AUXILIARY_LINES: list[RiserLineEntry] = Field(default_factory=list)
+
+    @field_validator("RISER_CLASS", mode="before")
+    @classmethod
+    def _default_riser_class(cls, v: object) -> object:
+        return "drilling" if v is None or v == "" else v
+
+    @field_validator("AUXILIARY_LINES", mode="before")
+    @classmethod
+    def _parse_auxiliary_lines(cls, v: object) -> object:
+        if v is None or v == "":
+            return []
+        return json.loads(v) if isinstance(v, str) else v
 
     @field_validator(
         "MANUFACTURER",
@@ -80,13 +110,13 @@ class RiserJointSchema(BaseModel):
         "WALL_THICKNESS_IN",
         "LENGTH_FT",
         "WEIGHT_AIR_KIPS",
-        "WEIGHT_WATER_KIPS",
         "BUOYANCY_COVERAGE_PCT",
         "BUOYANCY_OD_IN",
         "PRESSURE_RATING_PSI",
     )
     @classmethod
     def _validate_non_negative(cls, v: Optional[float]) -> Optional[float]:
+        # WEIGHT_WATER_KIPS is signed: curated buoyed joints have net uplift.
         if v is not None and v < 0:
             raise ValueError("Value must be >= 0")
         return v

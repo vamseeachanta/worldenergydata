@@ -20,7 +20,7 @@ CONTRACT NOTES (all load-bearing, from the #948 plan review):
   * The V30 extract carries literal ``NaN`` tokens; every numeric is sanitised
     NaN/inf -> None, because a raw NaN is invalid JSON and would break the
     Explorer's JSON.parse when embedded into _explorer.json.
-  * Benchmark ``drilling_days``/``completion_days`` are CALENDAR spans, NOT
+  * Benchmark ``spud_to_completion_calendar_days``/``completion_days`` are CALENDAR spans, NOT
     rig-days (they disagree with V30 on 36/55 wells) -> rig-days come ONLY from
     the V30 extract, never the benchmark.
   * ``cum_oil_mmbbl`` rounds to 1 dp and rig-days/tvd normalise to int to match

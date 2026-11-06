@@ -192,6 +192,12 @@ def facts_to_well(w: dict, field: dict) -> dict:
         },
         {"t": "Abandon", "big": "—", "li": ["still producing", "no P&A"]},
     ]
+    # Issue 778: the brief is a GoM overview, not a per-well access assessment.
+    # Href follows the published lifecycle/wells/ layout in build_pages.py.
+    next(card for card in cards if card["t"] == "Workover")["li"].append(
+        '<a href="../../intervention-db/intervention-stats-brief.html#serviceability">'
+        "GoM subsea serviceability overview →</a>"
+    )
 
     fid = w["field_id"]
     return {

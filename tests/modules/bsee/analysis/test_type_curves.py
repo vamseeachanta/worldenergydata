@@ -6,7 +6,7 @@ Covers: analytical curves, material balance time, auto-matching, edge cases.
 import numpy as np
 import pytest
 
-from worldenergydata.modules.bsee.analysis.type_curves import (
+from worldenergydata.bsee.analysis.type_curves import (
     ProductionData,
     ReservoirParams,
     blasingame_typecurve,

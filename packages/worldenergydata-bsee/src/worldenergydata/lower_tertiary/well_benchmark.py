@@ -264,23 +264,23 @@ def benchmark_well(
 ) -> dict:
     """Assemble one benchmark row for a single well from real BSEE data.
 
-    ``drilling_days`` is a deprecated alias of
-    ``spud_to_completion_calendar_days``: calendar cycle time, not drilling
-    time (issue 1077).
+    ``spud_to_completion_calendar_days`` is elapsed calendar time from spud
+    to the first completion operation, including suspensions; not rig-days.
+    Date subtraction follows Python 3 datetime timedelta semantics:
+    https://docs.python.org/3/library/datetime.html#timedelta-objects
     """
     wellbore = str(api12)[:12]
     monthly = _well_monthly_oil(ogor_well)
     cum_oil = float(monthly["oil_bbl"].sum())
 
-    # Calendar cycle time from spud to first completion; drilling_days remains
-    # a deprecated alias, not drilling time (issue 1077).
+    # Calendar difference, without inclusive endpoint adjustment (see docstring).
     well_ops = ops[ops["API_WELL_NUMBER"].astype(str).str[:12] == wellbore]
     spud_dt = pd.to_datetime(spud) if spud is not None and pd.notna(spud) else pd.NaT
     comp_dt = pd.NaT
     comp = well_ops[well_ops["operation"] == "Completion"]
     if not comp.empty:
         comp_dt = pd.to_datetime(comp["date"]).min()
-    drilling_days = (
+    calendar_days = (
         int((comp_dt - spud_dt).days)
         if pd.notna(spud_dt) and pd.notna(comp_dt) and comp_dt >= spud_dt
         else None
@@ -319,8 +319,7 @@ def benchmark_well(
         "field": field_name,
         "lease": lease,
         "spud": spud_dt.date() if pd.notna(spud_dt) else None,
-        "spud_to_completion_calendar_days": drilling_days,
-        "drilling_days": drilling_days,
+        "spud_to_completion_calendar_days": calendar_days,
         "completion_days": completion_days,
         "first_oil": (
             pd.to_datetime(first_oil).date()

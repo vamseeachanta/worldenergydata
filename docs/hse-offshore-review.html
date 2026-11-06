@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Offshore HSE collection review preparation</title>
+<style>
+body{font:1rem/1.6 system-ui,sans-serif;max-width:64rem;margin:2rem auto;padding:0 1rem;color:#172b3a}
+h1,h2{line-height:1.25}table{border-collapse:collapse;width:100%}th,td{border:1px solid #bcc9d1;padding:.6rem;text-align:left;vertical-align:top}
+pre{background:#f1f5f7;padding:1rem;overflow:auto}code{font-size:.92em}caption{caption-side:bottom;text-align:left;padding:.5rem 0}
+a{color:#125c86}.limit{border-left:4px solid #a25b15;padding-left:1rem}
+</style>
+<main>
+<h1>Offshore HSE collection review preparation</h1>
+<h2>Summary</h2>
+<p>The source-neutral collector now reports unmet collection gates and prepares a
+digest-bound worklist for independent review. A worklist contains stored event
+facts, external identities, classification annotations and cited source rows.
+Its review status is <code>NOT_EVALUATED</code>. It grants no approval.</p>
+<h2>Revision history</h2>
+<table>
+<thead><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr></thead>
+<tbody><tr><td>1</td><td>2026-10-21</td><td>Readiness diagnostics and review worklists are documented so missing collection evidence is visible before review.</td></tr></tbody>
+<caption>Table 1. Document revisions.</caption>
+</table>
+
+<h2>Discovery and scope</h2>
+<p><a href="https://github.com/vamseeachanta/worldenergydata/pull/1330">PR 1330</a>
+delivered the source-neutral event model, transactional intake, source registry,
+corrected authority labels, deduplication, existing-record links and receipt gates.
+<a href="https://github.com/vamseeachanta/worldenergydata/pull/1381">PR 1381</a>
+added notice date ordering. Those changes are retained.</p>
+<p>The committed collection README and manifest identify unresolved work: a pilot
+with three verified public authorities, the recoverable candidate collection,
+complete canonical HSE and marine-safety identity indexes, and current independent
+source checks. The private source catalog is unavailable in the inspected
+workspace; no replacement identities or catalog are created. This change adds
+review preparation, not new incident facts. The broader
+<a href="https://github.com/vamseeachanta/worldenergydata/issues/1325">collection issue</a>
+remains open.</p>
+
+<h2>Plan-lite</h2>
+<ol>
+<li>Slice 1 will add a read-only readiness report in <code>hse/offshore_review.py</code>
+and expose it through <code>scripts/import_offshore_hse.py</code>.</li>
+<li>Slice 2 will prepare pilot and bulk review worklists with cited evidence,
+canonical linked identities and a digest from the same read transaction.</li>
+<li>Slice 3 will provide a runnable synthetic example and tests for missing gates,
+cached sources, linked counts, stale receipts, rounding and concurrent writes.</li>
+<li>The governing sample will be <code>ceil(canonical events / 10)</code>.
+Its source will be issue 1325, Acceptance item 6 (2026-10-17); the pilot and event
+thresholds will come from Acceptance items 2 and 3.</li>
+<li>Later slices will acquire permitted public evidence, restore or replace the
+unlocated candidate packet, supply complete indexes and obtain independent review.</li>
+</ol>
+
+<h2>Inputs and method</h2>
+<p>The input is the existing external <code>modules/hse/offshore/offshore.sqlite</code>
+database. No network retrieval occurs. A single explicit SQLite read transaction
+captures the event, source, external-link and gate rows with their canonical
+dataset digest. A concurrent writer cannot bind new bytes to an older worklist.</p>
+<p>Report-only CLI calls open SQLite in read-only mode, without schema migration.
+A missing database raises an error and creates no directory or empty collection.
+The same path is available as <code>OffshoreImporter(database, read_only=True)</code>.</p>
+<p>Canonical count is the number of distinct event IDs across standalone events
+and external links. Multiple links for one event count once. Pilot source count
+uses distinct public authorities for the pilot event; cached rows and repeated
+documents from an authority do not increase it. A recorded pilot gate identifies
+the pilot; without one, a sole canonical event is used. An ambiguous pilot
+worklist requires <code>--pilot-event-id</code>.</p>
+<table>
+<thead><tr><th>Check</th><th>Criterion</th><th>Absent evidence</th></tr></thead>
+<tbody>
+<tr><td>Pilot sources</td><td>At least three distinct public authorities for the pilot</td><td>NOT_EVALUATED if the pilot is unknown; otherwise FAIL below the threshold</td></tr>
+<tr><td>Pilot review</td><td>A recorded independent-agent receipt includes the known pilot</td><td>NOT_EVALUATED</td></tr>
+<tr><td>Minimum events</td><td>At least 50 canonical events</td><td>FAIL below the threshold, including an empty collection</td></tr>
+<tr><td>Existing-index reconciliation</td><td>A recorded receipt covers both modules and binds current evidence; the HSE index is nonempty</td><td>NOT_EVALUATED; a stale receipt is FAIL</td></tr>
+<tr><td>Bulk review</td><td>A current receipt covers at least ceil(N / 10) distinct known records, and the prerequisite gates pass</td><td>NOT_EVALUATED; an invalid or stale receipt is FAIL</td></tr>
+</tbody>
+<caption>Table 2. Diagnostic criteria from issue 1325 Acceptance (2026-10-17) and the existing importer contract.</caption>
+</table>
+<p>Candidate intake changes the dataset digest after pilot approval. The pilot
+receipt is therefore reported as a historical gate maintained by the importer,
+rather than compared with the current whole-dataset digest. Reconciliation and
+bulk receipts must match current evidence. These diagnostics do not change the
+importer's acceptance rules or authenticate any receipt.</p>
+<p>For bulk review, canonical IDs are ranked by ascending hexadecimal
+<code>SHA-256(dataset_sha256 + ":" + event_id)</code>. The first
+<code>ceil(N / 10)</code> IDs form a reproducible minimum worklist. For pilot
+review, all stored sources for the selected pilot are included. This is a
+deterministic checklist, not a claim of unbiased statistical sampling. More
+records may be reviewed. No engineering equation or physical coefficient is used.</p>
+<p>A record linked to an existing dataset has <code>event: null</code> and retains
+all stored external identities and annotations. The canonical dataset remains
+the authority for fields absent from that link. Every stored source includes
+its existing citation and licence; cached evidence remains visible as cached.</p>
+
+<h2>Commands</h2>
+<p>Run in the repository's Python environment with an external data root and an
+output file outside the checkout:</p>
+<pre><code>python scripts/import_offshore_hse.py --data-root "$WED_DATA_ROOT" --readiness
+python scripts/import_offshore_hse.py --data-root "$WED_DATA_ROOT" --review-worklist pilot
+python scripts/import_offshore_hse.py --data-root "$WED_DATA_ROOT" --review-worklist bulk &gt; "$REVIEW_OUTPUT"</code></pre>
+<p>The Python interfaces are <code>collection_readiness(importer)</code> and
+<code>build_review_worklist(importer, stage="bulk")</code> from
+<code>worldenergydata.hse.offshore_review</code>. The CLI's existing intake and
+approval options run before these reports when combined in one invocation.
+Each report carries its own digest; compare reports only when their digests agree.</p>
+
+<h2>Worked example: inputs, method and answer</h2>
+<p><code>examples/offshore_hse_review.py</code> defines one synthetic event and one
+synthetic source, with an explicit text inventory. Its source URL is a placeholder,
+not evidence of an official incident. Use a new output directory:</p>
+<pre><code>python examples/offshore_hse_review.py --output-dir "$EXAMPLE_OUTPUT"</code></pre>
+<p>The example saves <code>input.json</code>, ingests it twice, prepares a pilot
+worklist and reads back <code>answer.json</code>. The independent count is
+one distinct event plus zero new events on repeat intake, giving one canonical
+event and one source. One public authority is below the three-authority pilot
+criterion, and one event is below the 50-event criterion. Independent receipts
+and consumed indexes are absent, so those checks are NOT_EVALUATED and
+<code>bulk_admitted</code> is false. The minimum bulk review count is
+<code>ceil(1 / 10) = 1</code>; the pilot worklist contains that sole event.
+No receipt is manufactured.</p>
+<p>The tests write out the independent rounding examples:
+<code>N = 1, 9, 10, 11, 49, 50, 51</code> gives
+<code>ceil(N / 10) = 1, 1, 1, 2, 5, 5, 6</code>.
+Additional cases check database-byte preservation, concurrent source insertion,
+linked identities, cached authorities, malformed receipts and actual bulk
+receipt submission through the existing importer.</p>
+
+<h2>Limits and next collection slices</h2>
+<p class="limit">Source truth, privacy, rights, freshness and canonical-index
+completeness are not established by counting rows or preparing a worklist.
+The original reviewed-text inventory is not retained by the importer; a reviewer
+must inspect all stored text and the permitted public sources. A falsely approved
+inventory can contain a personal name. A receipt's role string does not
+authenticate an independent reviewer. None of these outputs qualifies data for
+engineering use.</p>
+<p>Next collection work requires the third verified pilot authority, recoverable
+candidate evidence, complete HSE and marine-safety exports and independent
+source review. Access blocks shall not be bypassed. These remain collection
+requirements under issue 1325, not successful results of this software example.</p>
+</main>
+</html>

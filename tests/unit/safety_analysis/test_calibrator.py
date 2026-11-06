@@ -2,7 +2,7 @@
 Tests for EnigmaCalibrator — data-driven ENIGMA risk score calibration.
 
 Covers:
-    TestSyntheticDataFrame  (5 tests)
+    TestSyntheticDataFrame  (14 tests)
     TestFit                 (8 tests)
     TestCalibrationReport   (8 tests)
     TestRiskScore           (5 tests)
@@ -10,10 +10,12 @@ Covers:
     TestCalibratedMatrix    (4 tests)
     TestIntegrationWithSkill (3 tests)
 
-Total: 38 tests
+Total: 47 tests
 """
 
 from __future__ import annotations
+
+from io import StringIO
 
 import pandas as pd
 import pytest
@@ -72,6 +74,61 @@ class TestSyntheticDataFrame:
         valid_types = {"equipment_failure", "spill", "injury", "violation"}
         actual = set(synthetic_df["incident_type"].dropna().unique())
         assert actual.issubset(valid_types)
+
+    @pytest.mark.parametrize("n_incidents", [0, 1, 50, 200])
+    def test_operators_use_only_codenames(self, n_incidents: int) -> None:
+        """Issue #1240 (2026): synthetic operators use neutral codenames.
+
+        The allowed set spells out OPERATOR-A through OPERATOR-E independently
+        of the generator. Cases cover empty and singleton boundaries plus the
+        custom and default row counts in the existing tests above; these are
+        test inputs, not engineering limits or measured incident frequencies.
+        """
+        allowed = {"OPERATOR-A", "OPERATOR-B", "OPERATOR-C", "OPERATOR-D", "OPERATOR-E"}
+        df = EnigmaCalibrator.synthetic_hse_dataframe(n_incidents=n_incidents)
+
+        assert len(df) == n_incidents
+        assert df["operator"].notna().all()
+        assert df["operator"].isin(allowed).all()
+
+    def test_operators_are_neutral_codenames(self, synthetic_df: pd.DataFrame) -> None:
+        """Issue #1240 (2026): every operator must be a neutral codename.
+
+        The expected labels follow the issue's OPERATOR-A, OPERATOR-B, ...
+        convention, retaining the existing generator's five operator slots.
+        """
+        expected = {
+            "OPERATOR-A",
+            "OPERATOR-B",
+            "OPERATOR-C",
+            "OPERATOR-D",
+            "OPERATOR-E",
+        }
+        assert synthetic_df["operator"].notna().all()
+        assert set(synthetic_df["operator"]) == expected
+
+    @pytest.mark.parametrize("n_incidents", [0, 1])
+    def test_operator_codenames_for_small_outputs(self, n_incidents: int) -> None:
+        """Structural boundary cases: zero requested rows gives none; one gives one.
+
+        Issue #1240 (2026) requires the same codename convention for every row.
+        These row counts are test inputs, not engineering acceptance limits.
+        """
+        df = EnigmaCalibrator.synthetic_hse_dataframe(n_incidents=n_incidents)
+        assert len(df) == n_incidents
+        assert df["operator"].str.fullmatch(r"OPERATOR-[A-E]").all()
+
+    def test_synthetic_output_is_reproducible(self) -> None:
+        """A fixed internal seed must reproduce the complete frame, labels included."""
+        first = EnigmaCalibrator.synthetic_hse_dataframe()
+        second = EnigmaCalibrator.synthetic_hse_dataframe()
+        pd.testing.assert_frame_equal(first, second)
+
+    def test_csv_preserves_operator_codenames(self, synthetic_df: pd.DataFrame) -> None:
+        """Issue #1240 (2026): CSV serialization must retain the neutral labels."""
+        exported = pd.read_csv(StringIO(synthetic_df.to_csv(index=False)))
+        pd.testing.assert_series_equal(exported["operator"], synthetic_df["operator"])
+        assert exported["operator"].str.fullmatch(r"OPERATOR-[A-E]").all()
 
 
 # ---------------------------------------------------------------------------

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import unicodedata
-from typing import Any, Dict, Optional
+from typing import Any
 
 import pandas as pd
 
@@ -13,7 +13,6 @@ from worldenergydata.fdas.adapters.field_concept_normalizer import (
     to_field_concept,
     year_from,
 )
-
 
 _BRAZIL_MAPPING = FieldMetaMapping(
     {
@@ -34,8 +33,8 @@ def build_brazil_field_meta(
     platforms_df: pd.DataFrame,
     wells_df: pd.DataFrame,
     field_name: str,
-) -> Dict[str, Any]:
-    """Reduce official ANP field/platform/well CSV rows to one field meta dict."""
+) -> dict[str, Any]:
+    """Reduce ANP metadata; a non-blank textual field link is required."""
     field_row = _single_field_row(fields_df, field_name)
     platform_rows = _matching_platforms(platforms_df, field_name)
     well_rows = _matching_wells(wells_df, field_name)
@@ -47,13 +46,13 @@ def build_brazil_field_meta(
         "environment": _environment(field_row, well_rows),
         "region": "brazil",
         "water_depth_m": _platform_water_depth(platform_rows),
-        "well_count": _well_count(well_rows),
+        "well_count": _well_count(wells_df, field_name),
         "first_oil_date": _none_if_blank(field_row.get("DATA_INICIO_PRODUCAO")),
         "source": "anp_fase_desenvolvimento_producao",
     }
 
 
-def build_brazil_field_concept(field_meta: Dict[str, Any]):
+def build_brazil_field_concept(field_meta: dict[str, Any]):
     """Build a sparse Brazil FieldConcept from reduced ANP metadata."""
     meta = dict(field_meta)
     meta["region"] = "brazil"
@@ -67,6 +66,8 @@ def brazil_field_meta_mapping() -> FieldMetaMapping:
 
 
 def _single_field_row(fields_df: pd.DataFrame, field_name: str) -> pd.Series:
+    if not _norm(field_name):
+        raise ValueError("field_name must be a non-blank string")
     if fields_df is None or fields_df.empty:
         raise ValueError("fields_df is empty")
     mask = fields_df["CAMPO"].map(_norm) == _norm(field_name)
@@ -80,8 +81,12 @@ def _matching_platforms(platforms_df: pd.DataFrame, field_name: str) -> pd.DataF
     if platforms_df is None or platforms_df.empty or "[CAMPOS]" not in platforms_df:
         return pd.DataFrame()
     needle = _norm(field_name)
-    mask = platforms_df["[CAMPOS]"].fillna("").map(
-        lambda value: needle in [_norm(part) for part in str(value).split(";")]
+    if not needle:
+        return platforms_df.iloc[:0]
+    mask = (
+        platforms_df["[CAMPOS]"]
+        .fillna("")
+        .map(lambda value: needle in [_norm(part) for part in str(value).split(";")])
     )
     return platforms_df[mask]
 
@@ -92,10 +97,13 @@ def _matching_wells(wells_df: pd.DataFrame, field_name: str) -> pd.DataFrame:
     field_col = "Campo" if "Campo" in wells_df.columns else "CAMPO"
     if field_col not in wells_df.columns:
         return pd.DataFrame()
-    return wells_df[wells_df[field_col].map(_norm) == _norm(field_name)]
+    needle = _norm(field_name)
+    if not needle:
+        return wells_df.iloc[:0]
+    return wells_df[wells_df[field_col].map(_norm) == needle]
 
 
-def _platform_water_depth(platforms: pd.DataFrame) -> Optional[float]:
+def _platform_water_depth(platforms: pd.DataFrame) -> float | None:
     col = "[LÂMINA D'ÁGUA (m)]"
     if platforms.empty or col not in platforms.columns:
         return None
@@ -106,25 +114,39 @@ def _platform_water_depth(platforms: pd.DataFrame) -> Optional[float]:
     return float(sum(values) / len(values))
 
 
-def _well_count(wells: pd.DataFrame) -> int:
+def _well_count(wells: pd.DataFrame, field_name: str) -> int | None:
+    """Absent links or identities do not establish a measured well count."""
+    if wells is None or wells.empty:
+        return None
+    field_col = "Campo" if "Campo" in wells.columns else "CAMPO"
+    if field_col not in wells.columns or wells[field_col].map(_norm).eq("").any():
+        return None
+    wells = _matching_wells(wells, field_name)
     if wells.empty:
-        return 0
+        return None
     for col in ("Nome_poço_anp", "Nome Poço ANP", "POCO", "Poço"):
         if col in wells.columns:
-            return int(wells[col].dropna().astype(str).str.strip().nunique())
-    return int(len(wells))
+            names = wells[col]
+            valid = names.map(
+                lambda value: isinstance(value, str) and bool(value.strip())
+            )
+            if not valid.all():
+                return None
+            return int(names.str.strip().nunique())
+    return None
 
 
-def _environment(field_row: pd.Series, wells: pd.DataFrame) -> Optional[str]:
+def _environment(field_row: pd.Series, wells: pd.DataFrame) -> str | None:
     value = _none_if_blank(field_row.get("AMBIENTE"))
     if value is not None:
         return value
     if not wells.empty and "Ambiente" in wells.columns:
-        return _none_if_blank(wells["Ambiente"].dropna().iloc[0])
+        values = wells["Ambiente"].dropna()
+        return _none_if_blank(values.iloc[0]) if not values.empty else None
     return None
 
 
-def _parse_brazil_number(value: Any) -> Optional[float]:
+def _parse_brazil_number(value: Any) -> float | None:
     if pd.isna(value):
         return None
     text = str(value).strip()
@@ -133,7 +155,7 @@ def _parse_brazil_number(value: Any) -> Optional[float]:
     return float(text.replace(".", "").replace(",", "."))
 
 
-def _none_if_blank(value: Any) -> Optional[Any]:
+def _none_if_blank(value: Any) -> Any | None:
     if pd.isna(value):
         return None
     text = str(value).strip()
@@ -141,6 +163,11 @@ def _none_if_blank(value: Any) -> Optional[Any]:
 
 
 def _norm(value: Any) -> str:
-    text = unicodedata.normalize("NFKD", str(value or ""))
+    # Field links are textual identities; null scalars must never become names.
+    # pandas.isna API reference (2026) documents None, NaN, NA and NaT as missing.
+    # https://pandas.pydata.org/docs/reference/api/pandas.isna.html
+    if not isinstance(value, str):
+        return ""
+    text = unicodedata.normalize("NFKD", value)
     ascii_text = "".join(ch for ch in text if not unicodedata.combining(ch))
     return ascii_text.strip().casefold()

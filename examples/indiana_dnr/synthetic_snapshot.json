@@ -1,0 +1,21 @@
+{
+  "source_url": "https://gisdata.in.gov/server/rest/services/Hosted/OilAndGasWells/FeatureServer",
+  "captured_at": "2026-10-19T00:00:00Z",
+  "synthetic": true,
+  "spatial_reference": {"wkid": "synthetic-crs"},
+  "wells": [
+    {"attributes": {"objectid": 1, "igs_id": "42", "igs_int": 42, "permit_number": "0007", "permit_int": 7, "operator_name": "S & S LLC", "lease_name": "Synthetic lease", "county": "Posey", "status": "Oil", "currentstat": 0, "scancount": 2, "scanstat": "Scanned"}, "geometry": {"x": 10, "y": 20}},
+    {"attributes": {"objectid": 2, "igs_id": "43", "igs_int": 43, "permit_number": "0008", "permit_int": 8, "operator_name": "S and S, Inc.", "county": "Vanderburgh"}},
+    {"attributes": {"objectid": 3, "igs_id": "44", "igs_int": 44, "permit_number": "0009", "permit_int": 9, "operator_name": "OTHER LLC"}}
+  ],
+  "completions": [
+    {"attributes": {"objectid": 11, "igs_id": 42, "compdate": "synthetic date", "totaldepthdriller": 1200, "totaldepthloggeer": null, "comptype": "synthetic type"}}
+  ],
+  "images": [
+    {"attributes": {"objectid": 21, "permit_int": 7, "filename": "synthetic.pdf", "description": "Synthetic drilling report"}},
+    {"attributes": {"objectid": 22, "permit_int": 7, "filename": "synthetic-log.pdf", "description": "Synthetic log"}}
+  ],
+  "supplements": [
+    {"igs_id": "42", "permit_no": "0007", "api_number": "synthetic-api-a", "completion_zones": ["synthetic zone"], "formation_tops": [{"formation": "synthetic top", "depth": 900}], "source_record": {"reference": "Synthetic manual crosswalk; no live PDMS data"}}
+  ]
+}

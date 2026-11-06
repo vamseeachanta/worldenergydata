@@ -1,5 +1,7 @@
 # FDAS Lower-Tertiary pipeline — revision comparison (V30 → V50 → wed)
 
+> **Assumptions gate:** Read the [V50 assumptions change log](../../config/analysis/lower_tertiary/v50_assumptions_change_log.html) before adopting V50. Selection of the canonical codebase does not approve the cost/after-tax V50 basis.
+
 **Purpose.** Establish the worldenergydata ("wed") toolset as the canonical, go-forward truth for the Frontier-Deepwater Lower-Tertiary economics, by (1) laying the three revisions side by side, (2) tracing every result to the script that produces it, and (3) surfacing every script difference, missed file, and latent bug — so the FDAS authoring group (Roy, Chuck, et al.) and wed converge on **one** definition of the model.
 
 **Revisions and dates**

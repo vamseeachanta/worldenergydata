@@ -235,15 +235,15 @@ class TestSafetyComplianceCalculations:
         """Test TRIR with zero man hours"""
         metrics = SafetyMetrics(total_recordables=2, man_hours_worked=0)
 
-        trir = metrics.calculate_trir()
-        assert trir == 0.0
+        with pytest.raises(ValueError, match="hours_worked"):
+            metrics.calculate_trir()
 
     def test_ltir_zero_man_hours(self):
         """Test LTIR with zero man hours"""
         metrics = SafetyMetrics(lost_time_incidents=1, man_hours_worked=0)
 
-        ltir = metrics.calculate_ltir()
-        assert ltir == 0.0
+        with pytest.raises(ValueError, match="hours_worked"):
+            metrics.calculate_ltir()
 
     def test_safety_score_perfect(self):
         """Existing policy caps the perfect record at unity.

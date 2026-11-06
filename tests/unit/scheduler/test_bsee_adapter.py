@@ -369,6 +369,97 @@ class TestBseeSchedulerRetryContract:
 class TestBseeAdapterRealArchiveShape:
     """Live archives hold .txt quoted-CSV members behind a dir entry."""
 
+    @pytest.mark.parametrize(
+        "member_order",
+        [("primary", "decoy"), ("decoy", "primary")],
+        ids=["primary-before-decoy", "decoy-before-primary"],
+    )
+    @patch("worldenergydata.scheduler.jobs.bsee_refresh.BSEEWebScraper")
+    def test_primary_values_ignore_archive_member_order(
+        self, MockScraper, tmp_path, member_order
+    ):
+        """Issue #267 requires selection beyond a leading directory entry.
+
+        Values are synthetic fixture inputs, not live source confirmation.
+        BSEE_TXT_CSV has two rows (MP and MI); across the five catalog
+        datasets the hand total is 2 + 2 + 2 + 2 + 2 = 10 rows.
+        """
+        # Same columns, different cells, and three rows instead of two:
+        # choosing the decoy must fail value comparisons as well as totals.
+        decoy_content = (
+            '"AREA_CODE","BLOCK_NUMBER","STRUCTURE_NAME"\r\n'
+            '"ZZ","901","decoy table row alpha"\r\n'
+            '"YY","902","decoy table row beta"\r\n'
+            '"XX","903","decoy table row gamma"\r\n'
+        )
+        assert len(decoy_content) > len(BSEE_TXT_CSV)
+
+        def ordered_download(url, data_type="default", **kwargs):
+            dir_name, primary_name = DATASET_MEMBERS[data_type]
+            members = {
+                "primary": (primary_name, BSEE_TXT_CSV),
+                "decoy": ("mv_decoy_large.txt", decoy_content),
+            }
+            buf = io.BytesIO()
+            with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as zf:
+                zf.writestr(f"{dir_name}/", "")
+                for role in member_order:
+                    member_name, content = members[role]
+                    zf.writestr(f"{dir_name}/{member_name}", content)
+            return buf.getvalue()
+
+        scraper = MockScraper.return_value
+        scraper.download_zip_to_memory.side_effect = ordered_download
+
+        result = BseeRefreshJob().run({"output_dir": str(tmp_path)})
+
+        assert result.status == "success"
+        assert result.error_msg is None
+        assert result.records_updated == 10  # Hand total in the docstring.
+        # Five configured datasets, one successful download each.
+        assert scraper.download_zip_to_memory.call_count == 5
+        # Every expected cell is transcribed from BSEE_TXT_CSV by hand;
+        # the quoted block fields parse as integers, including their spaces.
+        expected = pd.DataFrame(
+            {
+                "AREA_CODE": ["MP", "MI"],
+                "BLOCK_NUMBER": [20, 686],
+                "STRUCTURE_NAME": ["3", "C-CMP"],
+            }
+        )
+        for info in load_dataset_catalog().values():
+            actual = pd.read_parquet(tmp_path / info["output_file"])
+            pd.testing.assert_frame_equal(actual, expected)
+
+    @patch("worldenergydata.scheduler.jobs.bsee_refresh.BSEEWebScraper")
+    def test_unmatched_member_preserves_existing_output(self, MockScraper, tmp_path):
+        """Issue #267 archive drift must preserve a previous snapshot.
+
+        The renamed member matches none of the configured primary patterns.
+        Hand counts: no matched tables means zero rows; five datasets with
+        one deterministic attempt each means five downloads and no retries.
+        """
+        output_path = tmp_path / "bsee_platform_structures.parquet"
+        sentinel = b"previous snapshot sentinel\r\n"
+        output_path.write_bytes(sentinel)
+        buf = io.BytesIO()
+        with zipfile.ZipFile(buf, "w") as zf:
+            zf.writestr("PlatStrucRawData/", "")
+            zf.writestr("PlatStrucRawData/mv_renamed_member.txt", BSEE_TXT_CSV)
+        scraper = MockScraper.return_value
+        scraper.download_zip_to_memory.return_value = buf.getvalue()
+
+        result = BseeRefreshJob().run({"output_dir": str(tmp_path)})
+
+        assert result.status == "failure"
+        assert result.retryable is False
+        assert result.error_msg.startswith("[deterministic]")
+        assert "primary_member_patterns" in result.error_msg
+        assert result.records_updated == 0  # No matched tables; see docstring.
+        assert scraper.download_zip_to_memory.call_count == 5
+        assert output_path.read_bytes() == sentinel
+        assert list(tmp_path.glob("*.parquet")) == [output_path]
+
     @patch("worldenergydata.scheduler.jobs.bsee_refresh.BSEEWebScraper")
     def test_txt_members_extracted_via_primary_pattern(self, MockScraper, tmp_path):
         scraper = MockScraper.return_value
