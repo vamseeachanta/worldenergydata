@@ -27,6 +27,46 @@ def test_adapter_filters_and_requires_water_for_fdas(tmp_path):
     assert adapter.fetch(ProductionQuery(regions=["mexico"], fields=["ABSENT"])).empty
 
 
+def test_two_month_totals_after_rate_conversion_and_operator_aggregation(tmp_path):
+    """Synthetic rates follow SENER January 2025 workbook unit definitions.
+
+    Source: https://hidrocarburos.energia.gob.mx/estadisticas/,
+    Aceite y condensado (Mbd) and Gas Natural (MMpcd), units/header rows.
+    Monthly volume = average daily rate * 1000 * calendar days in month.
+    """
+    from datetime import datetime
+
+    from openpyxl import load_workbook
+
+    path = workbook(tmp_path / "two_months.xlsx")
+    book = load_workbook(path)
+    liquid = book["Aceite y condensado"]
+    gas = book["Gas Natural"]
+    # Add a second operator in February and the original operator in March.
+    liquid.append([datetime(2024, 2, 1), "Basin", "Terrestre", "EXAMPLE", "B", 1, 1, 0])
+    gas.append([datetime(2024, 2, 1), "Basin", "Terrestre", "EXAMPLE", "B", 1, None])
+    liquid.append(
+        [datetime(2024, 3, 1), "Basin", "Terrestre", "EXAMPLE", "OP", 6, 4, 2]
+    )
+    gas.append([datetime(2024, 3, 1), "Basin", "Terrestre", "EXAMPLE", "OP", 5, None])
+    book.save(path)
+    book.close()
+    observed = load_production_workbook(path)
+    frame = SenerProductionAdapter(observed).fetch(ProductionQuery(regions=["mexico"]))
+    assert len(frame) == 2
+    february = frame.loc[frame.month == 2].iloc[0]
+    # February: oil=(2+1)*1000*29=87000 bbl; gas=(3+1)*1000*29=116000 Mcf.
+    assert february.oil_bbl == 87000
+    assert february.gas_mcf == 116000
+    # March: oil=4*1000*31=124000 bbl; gas=5*1000*31=155000 Mcf.
+    # Hand totals: oil=87000+124000=211000; gas=116000+155000=271000.
+    assert frame.oil_bbl.sum() == 211000
+    assert frame.gas_mcf.sum() == 271000
+    # Condensate remains separate: 1*1000*29 + 2*1000*31 = 91000 bbl.
+    assert frame.condensate_bbl.sum() == 91000
+    assert frame.water_bbl.isna().all()
+
+
 def test_collection_uses_local_workbook(tmp_path):
     from worldenergydata.mexico_cnh.data.mexico_cnh_data import MexicoCNHData
 
