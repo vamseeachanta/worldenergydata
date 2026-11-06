@@ -176,23 +176,78 @@ def test_evidence_and_calculation_source_fingerprints():
         assert builder.digest(ROOT / path) in html, REBUILD
 
 
-def test_documented_interface_limits():
+@pytest.mark.parametrize(
+    "source",
+    builder.CALCULATION_SOURCES
+    + [item["path"] for item in builder.load_basis()["existing_tests"]["files"]],
+)
+def test_fingerprints_ignore_checkout_line_endings(tmp_path, source):
+    original = ROOT / source
+    content = original.read_bytes().replace(b"\r\n", b"\n")
+    checkout = tmp_path / "source.py"
+    checkout.write_bytes(content.replace(b"\n", b"\r\n"))
+    assert builder.digest(checkout) == builder.digest(original), REBUILD
+    # Normalization must preserve detection of actual source edits.
+    checkout.write_bytes(content + b"# Fingerprint change probe.\n")
+    assert builder.digest(checkout) != builder.digest(original), REBUILD
+
+
+@pytest.mark.parametrize(
+    "minimum,maximum,values",
+    [
+        (0, 100, [50, 50]),
+        (-1000, 1000, [0, 10]),
+        (50, 50, [50, 50]),
+    ],
+)
+def test_chart_contains_constant_cases_and_external_limits(
+    result, minimum, maximum, values
+):
+    plotted = dict(result, minimum=minimum, maximum=maximum)
+    plotted["cases"] = [
+        dict(case, value=value) for case, value in zip(result["cases"], values)
+    ]
+    html = builder.chart(plotted)
+    ordinates = re.findall(r'\b(?:cy|y1|y2)="(-?\d+(?:\.\d+)?)"', html)
+    # The plot spans y=65 to y=265; both bounds and both points must fit.
+    assert len(ordinates) == 6
+    assert all(65 <= float(value) <= 265 for value in ordinates)
+
+
+@pytest.mark.xfail(
+    strict=True,
+    raises=AssertionError,
+    reason="Known alternate-schema enumeration bypasses numeric range dispatch",
+)
+def test_alternate_schema_rejects_out_of_range_values():
     from worldenergydata.validation import DataValidator
     from worldenergydata.validation.schema import DataType as AlternateType
     from worldenergydata.validation.schema import FieldSchema as AlternateField
     from worldenergydata.validation.schema import ValidationSchema as AlternateSchema
-    from worldenergydata.validation.schemas import ValidationSchema
 
     alternate = AlternateSchema(name="AlternateNumeric")
     alternate.add_field(
         AlternateField(name="value", data_type=AlternateType.FLOAT, max_value=100)
     )
-    # Alternate enumeration passes the .value type lookup but misses numeric dispatch.
-    assert DataValidator(alternate, strict=False).validate({"value": 101})[0]
+    assert not DataValidator(alternate, strict=False).validate({"value": 101})[0]
+
+
+@pytest.mark.xfail(
+    strict=True,
+    raises=AssertionError,
+    reason="Known generic schema validate method returns without executing field checks",
+)
+def test_generic_schema_rejects_out_of_range_values():
+    from worldenergydata.validation.schemas import ValidationSchema
+
     generic = ValidationSchema(name="Generic")
     generic.add_field(builder.make_schema().fields["value"])
-    assert generic.validate({"value": 101}).is_valid
-    # The demonstrated schema does reject this same out-of-range number.
+    assert not generic.validate({"value": 101}).is_valid
+
+
+def test_demonstrated_schema_rejects_out_of_range_values():
+    from worldenergydata.validation import DataValidator
+
     assert not DataValidator(builder.make_schema(), strict=False).validate(
         {"value": 101}
     )[0]
@@ -208,8 +263,8 @@ def test_embedded_interaction_controls():
     completed = subprocess.run(
         [
             node,
-            str(ROOT / "tests/unit/reports/validation_report_interactions.cjs"),
-            str(builder.DEST / "index.html"),
+            (ROOT / "tests/unit/reports/validation_report_interactions.cjs").as_posix(),
+            (builder.DEST / "index.html").as_posix(),
         ],
         check=False,
         capture_output=True,

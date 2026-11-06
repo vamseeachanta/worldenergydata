@@ -3,7 +3,7 @@
   "revisions": [
     {
       "revision": "A",
-      "date": "2026-10-21",
+      "date": "2026-10-22",
       "changes": [
         "The inclusive range workflow is demonstrated against a public exclusive-boundary example.",
         "Schema-interface limits and the evidence needed for wider use are identified."

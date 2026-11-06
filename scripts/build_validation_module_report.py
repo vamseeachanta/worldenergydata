@@ -21,10 +21,10 @@ ROOT = Path(__file__).resolve().parents[1]
 DEST = ROOT / "docs/reports/modules/wvalidation"
 STYLE_SOURCE = "docs/data-sources/metocean-open-observations.html"
 CALCULATION_SOURCES = sorted(
-    str(path.relative_to(ROOT))
+    path.relative_to(ROOT).as_posix()
     for path in (ROOT / "src/worldenergydata/validation").glob("*.py")
 )
-DATE = "2026-10-21"
+DATE = "2026-10-22"
 CHANGES = {
     "report": "Validation module analysis",
     "revisions": [
@@ -41,7 +41,8 @@ CHANGES = {
 
 
 def digest(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+    """Fingerprint source content independently of checkout line endings."""
+    return hashlib.sha256(path.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
 
 
 def load_basis() -> dict:
@@ -144,12 +145,14 @@ def number(key: str, numbers: dict) -> str:
 
 def chart(result: dict) -> str:
     """Offline interactive SVG: one numeric quantity against the source-case order."""
-    low = min(case["value"] for case in result["cases"])
-    high = max(case["value"] for case in result["cases"])
+    values = [case["value"] for case in result["cases"]]
+    values.extend((result["minimum"], result["maximum"]))
+    low = min(values)
+    high = max(values)
     span = high - low
 
     def y(value):
-        return 265 - (value - low) / span * 200
+        return 165 if span == 0 else 265 - (value - low) / span * 200
 
     parts = [
         '<svg id="limit-chart" viewBox="0 0 800 340" width="100%" role="img" '
@@ -349,7 +352,7 @@ def render(result: dict) -> str:
 <p>The validation module is a schema and rule framework for screening energy records. Analysis is performed to determine the behaviour of its numeric range workflow; key results are summarized below.</p>
 <ul><li>The inclusive range workflow is available for bounded finite numeric records.
 <ul><li>{n('summary-accepted')} of {n('summary-records')} public-example records are accepted by the module.</li>
-<li>{n('summary-disagreements')} acceptance differs from the public example at its exclusive upper limit; use of an inclusive limit is required for this workflow.</li></ul></li>
+<li>{n('summary-disagreements')} acceptance differs from the public example at its exclusive upper limit; the module supports only inclusive limits. An exclusive contract bound requires a separate strict check (Section 8.2).</li></ul></li>
 <li>Use beyond this workflow requires a stated data contract.
 <ul><li>Application checks are required for schema imports, null handling and cross-field execution before a dataset is accepted.</li>
 <li>Engineering acceptance is NOT_EVALUATED; schema acceptance establishes only the checks actually executed.</li></ul></li></ul>
@@ -426,10 +429,12 @@ accepted, errors = DataValidator(schema, strict=False).validate(records)</pre>
 <p>Existing tests cover schema construction, exception context, result aggregation, required fields, type and range checks, text and date checks, cross-field relationships, file inputs and schema management. The public demonstration contains illustrative energy records; it is not a measured benchmark. No field-measurement acceptance benchmark is established by the inspected validation package, its focused tests or its demonstration [3].</p>
 <p>Report tests compare every tagged worked-example number and the embedded chart data with fresh module calls. Separate literal anchors check the lower boundary, upper-bound discrepancy and total accepted and rejected counts. The headline accepted count is recomputed from the displayed inputs. Integer comparisons are exact; displayed percentages use a half-unit tolerance in the last displayed digit.</p>
 <p>The generated report is compared with a fresh build using displayed precision. Calculation-source fingerprints detect a change requiring regeneration. These tests establish calculation consistency and the stated boundary cases; they do not establish general conformance or engineering acceptance.</p>
+<p>Fingerprints are calculated after CRLF line endings are normalized to LF; every other source byte remains significant. Changes to any listed validation source or test file, including comment-only edits, require both the focused validation tests and the report tests even when automated path selection omits the report tests. When a test fingerprint changes, the recorded existing-test command is rerun and the per-file counts and fingerprints in <code>basis.json</code> are refreshed from the actual results before the rebuild command in Section 9 is run.</p>
 </section>
 <section class="report-section" id="recommendations"><h2>8 Limits and recommendations</h2>
 <p>Use is limited to contracts whose checks have been exercised explicitly. The following controls are derived from the implementation and the public range criteria [2, 3].</p>
 <h3>8.1 Limits of use</h3>
+<p>The following limits are observations from code inspection. The alternate-enumeration and generic-schema defects are also characterized by strict expected-failure tests; correcting either defect requires its expected-failure marker to be removed and the report to be updated.</p>
 <p>The alternate schema enumeration can bypass numeric dispatch in the record validator. Numeric strings and booleans can pass its numeric type checks; nulls and non-finite values require caller checks. Range checks do not perform unit conversion. A missing required key can contribute multiple issues, and unknown cross-field rule types are silently ignored. Precision, scale, default values and named custom-validator declarations are stored without enforcement in the demonstrated record workflow.</p>
 <p>Object-style cross-field rules in predefined data-frame schemas differ from the dictionary rules expected by the record validator. Several predefined column names and metadata field names also differ. File extension support does not establish data-contract compatibility; file workflows are not qualified by this example. Dataset values are logged by the existing validator, so logging configuration is part of application data handling.</p>
 <h3>8.2 Recommendations</h3>
