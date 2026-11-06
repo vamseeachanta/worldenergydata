@@ -232,6 +232,56 @@ def test_shipped_state_matches_round_iv_description():
     assert frame.loc["RJ-ONHP-2019/1", "state"] == "Rajasthan"
 
 
+def test_offshore_descriptions_keep_region_separate_from_state():
+    from worldenergydata.india_dgh.blocks import RoundSource, _normalize
+
+    source = RoundSource("OALP-VIII", "OALP", "dgh_oalp8_blocks_awarded")
+    record = _normalize(
+        {
+            "block_name": "KK-DWHP-2022/1",
+            "description": "Deep Water / Kerala-Konkan Offshore / Eastern Offshore",
+        },
+        source,
+        2,
+    )
+    assert record["state"] is None
+    assert record["offshore_region"] == "Eastern Offshore"
+
+
+def test_shipped_offshore_blocks_have_no_non_state_values(blocks):
+    # Award lists supply coastal regions for offshore acreage, not states.
+    offshore = blocks[blocks.acreage_type != "onland"]
+    assert offshore.state.isna().all()
+    assert set(offshore.offshore_region.dropna()) == {
+        "Eastern Offshore",
+        "Western Offshore",
+    }
+    assert blocks.loc[blocks.acreage_type == "onland", "offshore_region"].isna().all()
+
+
+def test_round_viii_page_two_preserves_published_region_anomaly():
+    """Page 2 prints Eastern Offshore for the deep-water Kerala-Konkan block."""
+    from pathlib import Path
+
+    import pdfplumber
+
+    from worldenergydata.india_dgh.blocks import RoundSource, parse_round_pdf
+
+    root = Path(__file__).resolve().parents[3]
+    path = root / "data/modules/india_dgh/raw/oalp8_blocks_awarded.pdf"
+    with pdfplumber.open(path) as pdf:
+        text = pdf.pages[1].extract_text()
+    assert "Offshore/Eastern\nOffshore" in text
+    source = RoundSource("OALP-VIII", "OALP", "dgh_oalp8_blocks_awarded")
+    parsed = parse_round_pdf(path, source).set_index("block_name")
+    shipped = load_awarded_blocks().set_index("block_name")
+    for frame in (parsed, shipped):
+        assert frame.loc["KK-DWHP-2022/1", "source_page"] == 2
+        assert pd.isna(frame.loc["KK-DWHP-2022/1", "state"])
+        assert frame.loc["KK-DWHP-2022/1", "offshore_region"] == "Eastern Offshore"
+        assert frame.loc["KK-OSHP-2022/1", "offshore_region"] == "Western Offshore"
+
+
 @pytest.mark.parametrize("value", ["100000", "100001"])
 def test_area_has_no_unsupported_upper_ceiling(value):
     assert parse_area(value) == float(value)

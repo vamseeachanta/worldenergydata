@@ -10,7 +10,7 @@ from worldenergydata.india_dgh import load_awarded_blocks, load_basins, load_pro
 
 blocks = load_awarded_blocks()   # 175 rows: OALP-I to IX (172) and SCBM-2022 (3)
 basins = load_basins()           # 26 sedimentary basins, Category I/II/III
-production = load_production()   # 960 rows: crude by company group, gas by state/onshore/offshore
+production = load_production()   # 960 rows: crude by company, condensate, gas by location
 ```
 
 ## Tables
@@ -19,7 +19,7 @@ production = load_production()   # 960 rows: crude by company group, gas by stat
 | --- | ---: | --- | --- |
 | `awarded_blocks.csv` | 175 | OALP rounds I-IX (172 blocks), Special CBM round 2022 (3 blocks) | DGH award-list PDFs, parsed with pdfplumber |
 | `basins.csv` | 26 | 7 Category-I, 5 Category-II, 14 Category-III, as of 27 Jan 2023 | DGH "Basins and Categories" page |
-| `production.csv` | 960 | Crude oil by ONGC, OIL, JVC/Private: annual FY1998-99 to FY2021-22, monthly Apr-May 2022. Natural gas gross production by state, onshore, onshore CBM and offshore: monthly FY2012-13 to FY2018-19 and FY2021-22 (96 months), with national net production | PPAC XLS |
+| `production.csv` | 960 | Crude oil by ONGC, OIL, JVC/Private: annual FY1998-99 to FY2021-22, monthly Apr-May 2022. Condensate: annual FY2006-07 to FY2021-22 and monthly Apr-May 2022, company_group = `all`, excluded from crude reconciliation. Natural gas gross production by state, onshore, onshore CBM and offshore: monthly FY2012-13 to FY2018-19 and FY2021-22 (96 months), with national net production | PPAC XLS |
 
 ### Awarded blocks: fields and their basis
 
@@ -31,6 +31,8 @@ production = load_production()   # 960 rows: crude by company group, gas by stat
 | `basin_published` | Basin as printed in the award list (rounds IV-IX only) | Award list |
 | `basin_category` | I, II or III as printed beside the block (rounds IV-IX only) | Award list |
 | `acreage_type` | `onland`, `shallow_water`, `deep_water`, `ultra_deep_water` | `acreage_type_basis`: `source_table` where the list prints the type (IV, VIII), else `block_code` (ONHP, OSHP, DWHP, UDWHP) |
+| `state` | Published state for onland acreage; missing for offshore acreage | Third Type / Basin / State segment or source location column |
+| `offshore_region` | Published coastal region for offshore acreage; missing for onland acreage | Third description segment, preserved without geographic correction |
 | `area_km2` | Area in sq. km | `area_basis`: `award_list` (IV, VIII, SCBM) or `offer_list` (8 IX blocks from the IX offer list); otherwise missing |
 | `awardee` | Company or consortium as printed | Award list |
 | `contract_signed` | Revenue Sharing Contract signing date | Only where the document states it: IV (2 Jan 2020), VII (28 Jun 2022), IX (15 Apr 2025) |
@@ -39,6 +41,11 @@ production = load_production()   # 960 rows: crude by company group, gas by stat
 Rounds I-III print block and H1 bidder only. Area is missing for 147 of 175
 blocks; it is never estimated. Awardee strings are not normalized; operator and
 participating-interest splits are not established for consortium awards.
+
+**Source anomaly.** Round VIII page 2 prints `Eastern Offshore` for
+`KK-DWHP-2022/1`, in the Kerala-Konkan basin, and `Western Offshore` for
+`KK-OSHP-2022/1`. The former conflicts with the basin's west-coast location.
+The published text is retained in `offshore_region`; neither value is a state.
 
 ## Sources and terms
 
@@ -77,10 +84,19 @@ Indian network should confirm the digests against the origin.
 
 ## Limitations
 
+- Round-IV source page 1 contains personal names. Publication of that page
+  remains pending a maintainer disposition; the original capture and its
+  manifest digest are unchanged. No edited bytes are presented as an original.
 - The basin category is DGH's 27 Jan 2023 grouping; DGH states the grouping
   is dynamic. Award lists print the category current at each round.
 - Crude oil by onshore and offshore is not in the PPAC XLS series used here.
 - Monthly crude by company covers only April and May 2022.
+- Condensate has no company split and is excluded from the crude component/total
+  reconciliation; it covers FY2006-07 to FY2021-22 and April-May 2022 only.
 - Gas production is by state, not by company.
 - Provisional PPAC values are flagged (`provisional`); a later capture supersedes
-  an earlier one for the same period.
+  an earlier one for the whole period/product group. Crude sheets cover both
+  crude and condensate: a later crude period without condensate removes the
+  older condensate value. Gas coverage is independent.
+- The retained 2019 annual crude capture is not a build input: the 2022 annual
+  capture supersedes every row it would produce. It remains digest-pinned.

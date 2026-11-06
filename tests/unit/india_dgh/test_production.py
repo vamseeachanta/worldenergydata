@@ -103,6 +103,34 @@ def test_fiscal_year_layout():
     assert math.isclose(ongc, 24.7)
 
 
+@pytest.mark.parametrize(
+    "text, expected",
+    [
+        ("2021-2022", None),
+        ("2022-06-26", None),
+        ("2021-22-26", None),
+        ("2021-23", None),
+        ("1999-00", "1999-00"),
+        ("2021 - 22 (P)", "2021-22"),
+        ("Updated 2022-06-26; FY 2021-22", "2021-22"),
+    ],
+)
+def test_fiscal_year_requires_a_complete_consecutive_year_pair(text, expected):
+    from worldenergydata.india_dgh.production import _fiscal_year
+
+    assert _fiscal_year(text) == expected
+
+
+def test_update_date_before_fiscal_year_does_not_shift_months():
+    from worldenergydata.india_dgh.production import parse_ppac_gas_sheet
+
+    title = "Updated 2022-06-26; fiscal year 2021-22"
+    crude = parse_ppac_sheet(monthly_sheet(title=title), "crude_oil", "s")
+    gas = parse_ppac_gas_sheet(gas_sheet(title=title), "s")
+    assert set(crude.period) == set(gas.period) == {"2021-04"}
+    assert set(crude.fiscal_year) == set(gas.fiscal_year) == {"2021-22"}
+
+
 def test_shipped_production_is_traceable_and_non_negative():
     frame = load_production()
     assert len(frame) > 0
@@ -200,6 +228,72 @@ def test_shipped_production_coverage():
     ]
     assert crude.period.min() == "1998-99" and crude.period.max() == "2021-22"
     assert set(crude.company_group) == {"ONGC", "OIL", "JVC/Private"}
+
+
+def test_condensate_is_a_product_with_no_company_split():
+    frame = parse_ppac_sheet(monthly_sheet(), "crude_oil", "s")
+    condensate = frame[frame["product"] == "condensate"]
+    assert condensate.company_group.tolist() == ["all"]
+    assert condensate.value.tolist() == [0.1]
+    # The crude total excludes condensate, so reconciliation still passes.
+    assert frame.loc[frame["product"] == "crude_oil", "value"].sum() == 2.25
+
+
+def test_shipped_condensate_coverage_and_company_group():
+    frame = load_production()
+    condensate = frame[frame["product"] == "condensate"]
+    assert len(condensate) == 18
+    assert set(condensate.company_group) == {"all"}
+    annual = condensate[condensate.period_type == "fiscal_year"]
+    assert set(annual.period) == {
+        f"{year}-{(year + 1) % 100:02d}" for year in range(2006, 2022)
+    }
+    assert set(condensate.loc[condensate.period_type == "month", "period"]) == {
+        "2022-04",
+        "2022-05",
+    }
+
+
+def test_later_source_supersedes_whole_period_product_group():
+    from worldenergydata.india_dgh.production import combine
+
+    old = parse_ppac_sheet(monthly_sheet(), "crude_oil", "old")
+    new = old[old.company_group != "OIL"].assign(source_id="new")
+    result = combine([old, new])
+    assert set(result.source_id) == {"new"}
+    assert "OIL" not in set(result.company_group)
+
+
+def test_later_crude_source_without_condensate_drops_old_condensate():
+    from worldenergydata.india_dgh.production import combine, parse_ppac_gas_sheet
+
+    old = parse_ppac_sheet(monthly_sheet(), "crude_oil", "old")
+    earlier = old.assign(period="2022-03")
+    sheet = monthly_sheet()
+    sheet.iloc[10, 1] = None
+    new = parse_ppac_sheet(sheet, "crude_oil", "new")
+    gas = parse_ppac_gas_sheet(gas_sheet(title="2022-23"), "gas")
+    result = combine([earlier, old, gas, new])
+    april = result[result.period == "2022-04"]
+    assert "condensate" not in set(april["product"])
+    assert set(april.loc[april["product"] == "crude_oil", "source_id"]) == {"new"}
+    pd.testing.assert_frame_equal(
+        result[result["product"] == "natural_gas"].reset_index(drop=True),
+        combine([gas]),
+    )
+    assert len(result[result.period == "2022-03"]) == len(earlier)
+
+
+def test_build_omits_fully_superseded_annual_source():
+    import runpy
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[3]
+    script = runpy.run_path(str(root / "scripts/india_dgh/build_tables.py"))
+    assert script["CRUDE"] == [
+        "ppac_crude_annual_hindi_2022",
+        "ppac_crude_current_2022",
+    ]
 
 
 @pytest.mark.parametrize("row", [5, 6, 7, 8, 9])

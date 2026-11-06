@@ -4,7 +4,12 @@ import json
 
 import pytest
 
-from worldenergydata.india_dgh import load_awarded_blocks, load_source_manifest
+from worldenergydata.india_dgh import (
+    load_awarded_blocks,
+    load_basins,
+    load_production,
+    load_source_manifest,
+)
 from worldenergydata.india_dgh.sources import data_path, verify_file
 
 PUBLIC_HOSTS = (
@@ -24,9 +29,12 @@ def test_manifest_entries_are_public_and_pinned():
         assert len(entry["sha256"]) == 64 and entry["terms_url"].startswith("https://")
 
 
-def test_every_block_row_cites_a_manifest_file():
+@pytest.mark.parametrize("loader", [load_awarded_blocks, load_basins, load_production])
+def test_every_shipped_row_cites_a_manifest_file(loader):
     ids = {e["id"] for e in load_source_manifest()["files"]}
-    assert set(load_awarded_blocks().source_id) <= ids
+    frame = loader()
+    assert frame.source_id.notna().all()
+    assert set(frame.source_id) <= ids
 
 
 def test_manifest_rejects_entry_without_digest(tmp_path, monkeypatch):

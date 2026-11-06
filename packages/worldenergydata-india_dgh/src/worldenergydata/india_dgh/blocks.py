@@ -88,6 +88,7 @@ COLUMNS = [
     "area_basis",
     "awardee",
     "state",
+    "offshore_region",
     "contract_signed",
     "source_id",
     "source_page",
@@ -286,6 +287,7 @@ def _normalize(record: dict, source: RoundSource, page: int) -> dict:
     basin = CODE_BASIN.get(code[:2])
     category = basin_category(record.get("basin_category", ""))
     area = parse_area(record.get("area_km2", ""))
+    location = record.get("state") or (segments[2] if len(segments) == 3 else None)
     return {
         "round": source.round,
         "round_family": source.round_family,
@@ -299,7 +301,8 @@ def _normalize(record: dict, source: RoundSource, page: int) -> dict:
         "area_km2": area,
         "area_basis": None if math.isnan(area) else "award_list",
         "awardee": record.get("awardee") or None,
-        "state": record.get("state") or (segments[2] if len(segments) == 3 else None),
+        "state": location if acreage == "onland" else None,
+        "offshore_region": location if acreage and acreage != "onland" else None,
         "contract_signed": source.contract_signed,
         "source_id": source.source_id,
         "source_page": page,
