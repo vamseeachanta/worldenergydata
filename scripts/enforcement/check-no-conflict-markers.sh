@@ -36,6 +36,8 @@
 #   a Bash variable. Escape control bytes only when rendering violations.
 
 set -uo pipefail
+# Marker delimiters and diagnostics use byte semantics in every caller locale.
+export LC_ALL=C
 # Note: not using `set -e` because we deliberately tolerate non-zero exit
 # codes from grep (no-match) and similar; explicit branching is used instead.
 
@@ -58,13 +60,18 @@ is_path_restricted() {
   return 1
 }
 
-staged_blob="$(mktemp)" || exit 1
-trap 'rm -f -- "$staged_blob"' EXIT
+staged_blob=""
+trap 'if [[ -n "$staged_blob" ]]; then rm -f -- "$staged_blob"; fi' EXIT
+trap 'exit 129' HUP
 trap 'exit 130' INT
 trap 'exit 143' TERM
+if ! staged_blob="$(mktemp)"; then
+  printf 'ERROR: Cannot create staged-content snapshot.\n' >&2
+  exit 1
+fi
 
 snapshot_read_error() {
-  printf 'ERROR: Cannot read staged content: %s\n' "$file" >&2
+  printf 'ERROR: Cannot read staged content: %s\n' "$display_file" >&2
   exit 1
 }
 
@@ -88,10 +95,16 @@ while IFS= read -r -d '' file; do
     continue
   fi
 
+  # Keep each diagnostic on one line, including paths ending in a newline.
+  if ! display_file="$(printf '%s' "${file//$'\n'/^J}" | cat -vT)"; then
+    printf 'ERROR: Cannot render staged path.\n' >&2
+    exit 1
+  fi
+
   # Read the staged blob ONCE. This is the single source of truth used by
   # both the per-file sentinel check AND the per-line marker scan.
   if ! git show ":$file" > "$staged_blob" 2>/dev/null; then
-    printf 'ERROR: Cannot snapshot staged content: %s\n' "$file" >&2
+    printf 'ERROR: Cannot snapshot staged content: %s\n' "$display_file" >&2
     exit 1
   fi
 
@@ -127,7 +140,7 @@ while IFS= read -r -d '' file; do
   fi
   if [[ -n "$matches" ]]; then
     while IFS= read -r line; do
-      violations+=("${file}:${line}")
+      violations+=("${display_file}:${line}")
     done <<< "$matches"
   fi
 

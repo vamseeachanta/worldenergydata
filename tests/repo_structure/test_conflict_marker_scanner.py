@@ -97,21 +97,35 @@ def test_binary_content_without_markers_is_quiet(staged_repo, content):
 
 
 @pytest.mark.parametrize(
-    "name", ["sample.txt", "with spaces.txt", "tab\tname.txt", "line\nname.txt"]
+    "name, displayed_name",
+    [
+        ("sample.txt", "sample.txt"),
+        ("with spaces.txt", "with spaces.txt"),
+        ("tab\tname.txt", "tab^Iname.txt"),
+        ("line\nname.txt", "line^Jname.txt"),
+        ("escape\x1b[31m.txt", "escape^[[31m.txt"),
+        ("ending.txt\n", "ending.txt^J"),
+    ],
 )
 @pytest.mark.parametrize(
     "content",
     [MARKERS, b"binary\0prefix\n" + MARKERS, MARKERS.rstrip(b"\n")],
     ids=["text", "nul", "no-final-newline"],
 )
-def test_conflicts_are_blocked_with_original_line_numbers(staged_repo, name, content):
+def test_conflicts_are_blocked_with_original_line_numbers(
+    staged_repo, name, displayed_name, content
+):
     stage, scan = staged_repo
     stage(name, content)
     result = scan()
     assert result.returncode == 1
     first = 2 if content.startswith(b"binary") else 1
-    assert f"{name}:{first}:<<<<<<< ours".encode() in result.stderr
-    assert f"{name}:{first + 2}:>>>>>>> theirs".encode() in result.stderr
+    assert f"{displayed_name}:{first}:<<<<<<< ours".encode() in result.stderr
+    assert f"{displayed_name}:{first + 2}:>>>>>>> theirs".encode() in result.stderr
+    diagnostics = result.stderr.splitlines()
+    assert sum(b":<<<<<<< ours" in line for line in diagnostics) == 1
+    assert sum(b":>>>>>>> theirs" in line for line in diagnostics) == 1
+    assert b"\x1b" not in result.stderr
 
 
 @pytest.mark.parametrize(
@@ -197,6 +211,23 @@ def test_marker_detection_uses_raw_bytes(staged_repo, content):
     assert scan().returncode == 1
 
 
+@pytest.mark.parametrize(
+    "separator, exit_code",
+    [("\u2003".encode("utf-8"), 0), (b" \xff", 1)],
+    ids=[
+        "multibyte-whitespace-is-not-a-byte-delimiter",
+        "ascii-delimiter-invalid-byte",
+    ],
+)
+def test_byte_semantics_ignore_the_callers_locale(staged_repo, separator, exit_code):
+    stage, scan = staged_repo
+    stage(
+        "sample.txt",
+        b"<<<<<<<" + separator + b"ours\n>>>>>>>" + separator + b"theirs\n",
+    )
+    assert scan(LC_ALL="C.utf8").returncode == exit_code
+
+
 @pytest.mark.parametrize("suffix", [b"\0", b" extra", b"\r"])
 def test_line_exemption_requires_exact_suffix(staged_repo, suffix):
     stage, scan = staged_repo
@@ -216,14 +247,19 @@ def test_anchors_must_occur_in_the_same_blob(staged_repo):
 
 def test_temporary_file_creation_failure_is_blocking(staged_repo, tmp_path):
     stage, scan = staged_repo
-    stage("sample.txt", MARKERS)
-    assert scan(TMPDIR=str(tmp_path / "missing")).returncode != 0
+    stage("sample.txt", b"ordinary text\n")
+    result = scan(TMPDIR=str(tmp_path / "missing"))
+    assert result.returncode != 0
+    assert b"ERROR: Cannot create staged-content snapshot." in result.stderr
 
 
 def test_incomplete_snapshot_is_blocking(staged_repo):
     stage, scan = staged_repo
-    stage("sample.txt", MARKERS + b"padding\n" * 1024)
-    assert scan(file_limit=True).returncode != 0
+    # A truncated snapshot has no markers and would pass an incomplete scan.
+    stage("sample.txt", b"padding\n" * 1024 + MARKERS)
+    result = scan(file_limit=True)
+    assert result.returncode != 0
+    assert b"ERROR: Cannot snapshot staged content: sample.txt" in result.stderr
 
 
 @pytest.mark.parametrize(
@@ -273,7 +309,9 @@ def test_snapshot_read_and_matcher_errors_are_blocking(
         '    "$SCANNER_TEST_TOOL" "$@"\n'
         "    exit 2\n"
         "  fi\ndone\n"
-        'exec "$SCANNER_TEST_TOOL" "$@"\n'
+        'exec "$SCANNER_TEST_TOOL" "$@"\n',
+        encoding="utf-8",
+        newline="\n",
     )
     wrapper.chmod(0o755)
     result = scan(
@@ -287,20 +325,28 @@ def test_snapshot_read_and_matcher_errors_are_blocking(
     assert b"ERROR: Cannot read staged content: docs/plans/example.md" in result.stderr
 
 
-def test_termination_exits_nonzero_and_cleans_snapshot(staged_repo, tmp_path):
+@pytest.mark.parametrize("signal, exit_code", [("TERM", 143), ("HUP", 129)])
+@pytest.mark.parametrize("tool", ["git", "mktemp"])
+def test_termination_exits_nonzero_and_cleans_snapshot(
+    staged_repo, tmp_path, signal, exit_code, tool
+):
     stage, scan = staged_repo
     stage("sample.txt", MARKERS)
     bin_dir = tmp_path / "bin"
     bin_dir.mkdir()
-    wrapper = bin_dir / "git"
+    wrapper = bin_dir / tool
+    trigger = '[ "$1" = show ]' if tool == "git" else "true"
     wrapper.write_text(
-        '#!/bin/sh\nif [ "$1" = show ]; then\n'
-        '  kill -TERM "$PPID"\n  exit 1\nfi\n'
-        'exec "$SCANNER_TEST_GIT" "$@"\n'
+        f"#!/bin/sh\nif {trigger}; then\n"
+        '  "$SCANNER_TEST_TOOL" "$@"\n'
+        f'  kill -{signal} "$PPID"\n  exit 1\nfi\n'
+        'exec "$SCANNER_TEST_TOOL" "$@"\n',
+        encoding="utf-8",
+        newline="\n",
     )
     wrapper.chmod(0o755)
     result = scan(
         PATH=str(bin_dir) + os.pathsep + os.environ["PATH"],
-        SCANNER_TEST_GIT=shutil.which("git"),
+        SCANNER_TEST_TOOL=shutil.which(tool),
     )
-    assert result.returncode != 0
+    assert result.returncode == exit_code
