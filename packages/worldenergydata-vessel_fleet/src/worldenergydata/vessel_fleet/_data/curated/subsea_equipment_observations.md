@@ -14,6 +14,9 @@ require confirmation from drawings. No universal geometry range is established.
 | A | 2026-10-19 | Add source-specific completion-package observations and explicit geometry gaps to prevent unsupported stack-up inputs. |
 | B | 2026-10-21 | Distinguish published but untranscribed research findings from source gaps and clarify component weight provenance. |
 | C | 2026-11-05 | Preserve printed weight labels and assembly uncertainty; clarify search scope and validate observation metadata. |
+| D | 2026-11-06 | Defer mixed-source weight units, remove weight-basis notes from dimensions, retain exact research-status coverage and identify field-specific validation failures. |
+
+Revision C uses the local authoring date; its commit date is 2026-11-06 UTC.
 
 ## Dataset contract
 
@@ -32,9 +35,14 @@ qualified for analysis. Confidence `A` means manufacturer-hosted literature.
 `NOT_FOUND` means no value was established in the bounded pass, not that the
 quantity is zero or absent from every public source. `NOT_TRANSCRIBED` means a
 published finding is identified in the cited research record but its numeric
-value is not entered here. That status is also used in `value`; the `unit`
-remains the requested target unit and does not assert a conversion or a source
-unit. Existing observation IDs are retained for traceability; a `-GAP` suffix
+value is not entered here. That status is also used in `value`. For the
+mixed-source BOP weight lead, `unit` is also `NOT_TRANSCRIBED`: the cited
+findings use different units and weight bases. Other pending rows retain a
+requested target unit, which does not assert a conversion or a source unit.
+At transcription, create a separate row per source and basis, record its unit
+as printed and retain the primary source URL; no force-to-mass conversion is
+implied by a pending row. Existing observation IDs are retained for traceability;
+a `-GAP` suffix
 does not override the row's current status. `NOT_EVALUATED` denotes
 unestablished confidence or intended-use eligibility. `NOT_REPORTED` in `range`
 means no range was supplied. `ft_in` preserves feet-and-inches text without
@@ -62,18 +70,25 @@ used. Each row carries its public URL, document, locator and retrieval date.
   are investigation targets, not findings about all underlying filings.
   Their `source_url` records search scope rather than dimensional evidence.
   Manufacturer literature was not searched for these six gap components in
-  this pass.
+  this pass. The earlier research record cited below documents a prior
+  manufacturer-literature search that found no riser-adapter height or
+  tubing-hanger spool envelope. This is prior search evidence for
+  `ADAPTER-HEIGHT-GAP` and `SPOOL-HEIGHT-GAP`, rather than a new search.
 - [Research record #1140](https://api.github.com/repositories/574746314/issues/comments/6111983634),
   dated 2026-10-11 and accessed 2026-10-21: row 19 identifies combined-stack
   height; rows 1, 4 and 19 identify whole-stack weights; row 20 identifies an
   approximate separate LMRP weight in air. The BOP weight lead uses the
   basis-neutral `weight_as_published` parameter: the cited rows mix dry,
-  submerged and unstated bases. Its target `kg` unit does not convert a wet
-  weight into mass. These findings are NOT_TRANSCRIBED,
+  submerged and unstated bases. Its `unit` remains `NOT_TRANSCRIBED` until
+  each source unit and basis can be recorded separately as published.
+  These findings are NOT_TRANSCRIBED,
   not absent. Source units, dry/submerged basis, assembly boundaries and exact
   configurations require confirmation before transcription into analysis
   inputs. The source for row 1 carries a Restricted document label; no value or
-  text from that sheet is added here. The API URL identifies the dated comment
+  text from that sheet is added here. Future transcription of a finding from
+  a Restricted-labelled source must retain its contractor public-page URL
+  and Restricted note on each resulting row. The API URL identifies the dated
+  comment
   directly; it does not constitute independent verification of the originals.
 - [Earlier research record #1140](https://api.github.com/repositories/574746314/issues/comments/5810649761),
   dated 2026-09-24: component sums provide separate LMRP height estimate leads;
