@@ -12,6 +12,7 @@ refresh entry point delegates to this publisher and requires full configuration.
 | --- | --- | --- |
 | 1 | 2026-10-20 | Define deterministic local construction and guarded publication to replace floating partial refreshes. |
 | 2 | 2026-11-06 | Require scenario release status, supported field basis and finite surfaced levels at both validation boundaries; isolate live preflight tests and state the storage limitation. |
+| 3 | 2026-11-06 | Reject surfaced scenarios with absent performance admission using the documented error and explain the change from refresh suppression to snapshot rejection. |
 
 ## Inputs and admission
 
@@ -66,6 +67,15 @@ obtained by enumeration in the tests.
   `sens_mm_per_dollar`, under the existing issue #976 release contract.
   Null or missing levels stop construction and publication; negative finite
   NPV remains permitted. Non-surfaced field levels must remain null.
+
+The retired refresh publisher nulled stale populated levels on withheld
+performance records, omitted parametric fields with absent or non-surfaced
+performance, and omitted individual non-surfaced grid rows. The snapshot
+replaces that suppression policy with rejection of the complete snapshot for
+those inputs. A surfaced parametric field with an absent, null or status-less
+performance row raises `ValueError("conflicting economics admission")`.
+Explicit zero-well coverage still permits missing performance when no surfaced
+scenarios reference the field.
 
 Known presentation structures, including SVG, links, CSS and timeline layout,
 are omitted by explicit column projection. Retained text rejects HTML tags,

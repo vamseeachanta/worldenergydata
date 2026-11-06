@@ -553,6 +553,31 @@ def test_missing_performance_needs_explicit_zero(case):
     assert rows[1]["economics_status"] == "not_evaluated"
 
 
+@pytest.mark.parametrize("performance", ["missing", "null", "missing_status"])
+def test_surfaced_scenarios_require_performance_admission(case, performance):
+    # Zero-well coverage permits field construction, exposing the scenario guard.
+    change_source(case, "explorer", lambda d: d["fields"]["beta"].update(wellsCount=0))
+
+    def edit(data):
+        if performance == "missing":
+            data["fields"].pop("beta")
+        elif performance == "null":
+            data["fields"]["beta"] = None
+        else:
+            data["fields"]["beta"].pop("economics_status")
+
+    change_source(case, "performance", edit)
+    change_source(
+        case,
+        "parametric",
+        lambda d: d["fields"].update(beta=copy.deepcopy(d["fields"]["alpha"])),
+    )
+    backend = Backend({})
+    with pytest.raises(ValueError, match="conflicting economics admission"):
+        snapshot.publish_snapshot(build(case), "c" * 40, backend)
+    assert not backend.calls
+
+
 @pytest.mark.parametrize("value", [None, "1", True])
 def test_scenario_numeric_schema(case, value):
     change_source(

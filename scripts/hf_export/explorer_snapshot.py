@@ -357,8 +357,10 @@ def _tables(inputs):
         if data["economics_status"] != "surfaced":
             continue
         require(fid in field_ids, "unknown economics field")
+        performance = inputs["performance"]["fields"].get(fid)
         require(
-            inputs["performance"]["fields"][fid]["economics_status"] == "surfaced",
+            performance is not None
+            and performance.get("economics_status") == "surfaced",
             "conflicting economics admission",
         )
         for row in data["grid"]:
