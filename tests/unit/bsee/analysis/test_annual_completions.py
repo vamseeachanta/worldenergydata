@@ -287,6 +287,54 @@ def test_absent_planning_area_is_an_explicit_unknown(area):
     )
 
 
+@pytest.mark.parametrize(
+    "area", ["unknown", " unknown ", "UNKNOWN", "Unknown", "\tUnKnOwN\n"]
+)
+def test_supplied_planning_area_cannot_use_the_unknown_sentinel(area):
+    with pytest.raises(ValueError, match="planning_area.*reserved"):
+        aggregate(
+            [
+                completion(planning_area=None),
+                completion("completion-b", planning_area=area),
+            ]
+        )
+
+
+@pytest.mark.parametrize("reverse", [False, True])
+def test_planning_areas_sort_with_unknown_last_within_each_year(reverse):
+    table = [
+        ("a", "2020-01-01", None, 1000),
+        ("b", "2020-01-01", "west", 500),
+        ("c", "2020-01-01", "z-area", 1000),
+        ("d", "2020-01-01", "0-area", 500),
+        ("e", "2020-01-01", "Area A", 500),
+        ("f", "2020-01-01", None, None),
+        ("g", "2021-01-01", "0-area", 500),
+        ("h", "2019-01-01", None, 500),
+    ]
+    rows = [
+        completion(
+            identifier, completion_date=day, planning_area=area, water_depth_ft=depth
+        )
+        for identifier, day, area, depth in table
+    ]
+    result = aggregate(reversed(rows) if reverse else rows)
+    assert [
+        (cell["year"], cell["planning_area"], cell["water_depth_band"], cell["count"])
+        for cell in result["counts"]
+    ] == [
+        (2019, "unknown", "below 1000 ft", 1),
+        (2020, "0-area", "below 1000 ft", 1),
+        (2020, "Area A", "below 1000 ft", 1),
+        (2020, "west", "below 1000 ft", 1),
+        (2020, "z-area", "1000-3000 ft", 1),
+        (2020, "unknown", "1000-3000 ft", 1),
+        (2020, "unknown", "unknown", 1),
+        (2021, "0-area", "below 1000 ft", 1),
+    ]
+    assert sum(cell["count"] for cell in result["counts"]) == len(rows)
+
+
 def test_planning_area_requires_a_normalized_label():
     with pytest.raises(ValueError, match="planning_area"):
         aggregate([completion(planning_area=12)])

@@ -45,6 +45,8 @@ def annual_completion_counts(
     ``planning_area`` is a supplied label, never inferred from other fields.
     It is distinct from the borehole ``BOTM_AREA_CODE`` bottom-area ``area``
     used by ``analyse``; no conversion to a planning area is performed.
+    Supplied labels equal to ``unknown`` after stripping whitespace and ignoring
+    case are rejected because that label is reserved for missing areas.
     Missing or blank areas and missing/unusable ``water_depth_ft`` values retain
     the existing ``unknown`` label, including boolean depths. Numeric strings
     remain supported. Depth membership and labels use
@@ -52,8 +54,9 @@ def annual_completion_counts(
     are returned in feet. Extra row fields are ignored.
 
     Validation finishes before grouping. Cells are sorted by year, planning
-    area and increasing depth, with unknown depth last; empty input has no cells.
-    Inputs are not mutated.
+    area and increasing depth, with unknown area last within each year and
+    unknown depth last within each area; empty input has no cells. Inputs are
+    not mutated.
     No durations, zero-filled strata or geographic mappings are produced.
     """
     if grain != "completion":
@@ -81,6 +84,10 @@ def annual_completion_counts(
         if area is not None and not isinstance(area, str):
             raise ValueError("planning_area must be a label or None")
         area = area.strip() if isinstance(area, str) else ""
+        if area.casefold() == UNKNOWN:
+            raise ValueError(
+                "planning_area label unknown is reserved for missing areas"
+            )
         depth = row.get("water_depth_ft")
         band = UNKNOWN if isinstance(depth, bool) else depth_band(depth, parameters)
         validated.append((year, area or UNKNOWN, band))
@@ -104,7 +111,13 @@ def annual_completion_counts(
                 "count": counts[(year, area, band)],
             }
             for year, area, band in sorted(
-                counts, key=lambda cell: (cell[0], cell[1], band_order[cell[2]])
+                counts,
+                key=lambda cell: (
+                    cell[0],
+                    cell[1] == UNKNOWN,
+                    cell[1],
+                    band_order[cell[2]],
+                ),
             )
         ],
     }
