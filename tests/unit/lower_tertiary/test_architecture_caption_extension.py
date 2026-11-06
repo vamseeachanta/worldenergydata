@@ -6,6 +6,7 @@ issue #942; SVG strings are sentinels, independent of rendering geometry.
 
 import importlib.util
 import json
+import shutil
 import subprocess
 from html.parser import HTMLParser
 from pathlib import Path
@@ -162,6 +163,10 @@ def test_concept_name_cannot_break_script_embedding(builder, monkeypatch, name):
 
 
 @pytest.mark.parametrize(
+    "following_comment",
+    ["// Lease & landman panel", "// Following panel"],
+)
+@pytest.mark.parametrize(
     "name",
     [
         "Synthetic <b>concept</b>",
@@ -169,13 +174,21 @@ def test_concept_name_cannot_break_script_embedding(builder, monkeypatch, name):
         'Synthetic &amp; < > "quotes" café',
     ],
 )
-def test_architecture_caption_is_literal_text(builder, monkeypatch, name):
+def test_architecture_caption_is_literal_text(
+    builder, monkeypatch, name, following_comment
+):
+    node = shutil.which("node")
+    if node is None:
+        pytest.fail("Node.js is required to execute the architecture panel regression")
     field = _synthetic_field(builder, monkeypatch, name)
     page = _PosterParser()
-    page.feed(builder.render(field))
+    page.feed(
+        builder.render(field).replace("// Lease & landman panel", following_comment)
+    )
     script = page.scripts[0]
     start = script.index("if (FIELD.architecture) {")
-    end = script.index("// Lease & landman panel", start)
+    assignment = script.index('$("f-arch").innerHTML =', start)
+    end = script.index("\n}", assignment) + len("\n}")
     # Execute the real panel renderer; only its DOM insertion target is replaced.
     program = (
         "const FIELD = JSON.parse(process.argv[2]);\n"
@@ -185,7 +198,7 @@ def test_architecture_caption_is_literal_text(builder, monkeypatch, name):
         + "\nprocess.stdout.write(panel.innerHTML);\n"
     )
     result = subprocess.run(
-        ["node", "-", json.dumps(field)],
+        [node, "-", json.dumps(field)],
         input=program,
         capture_output=True,
         text=True,
@@ -198,3 +211,12 @@ def test_architecture_caption_is_literal_text(builder, monkeypatch, name):
     assert panel.headings == [f"Architecture — {name}"]
     assert not {"b", "img", "script"}.intersection(panel.tags)
     assert field["architecture"]["svg"] in result.stdout
+
+
+def test_architecture_caption_requires_node(builder, monkeypatch):
+    monkeypatch.setenv("PATH", "")
+
+    with pytest.raises(pytest.fail.Exception, match="Node.js is required"):
+        test_architecture_caption_is_literal_text(
+            builder, monkeypatch, "Synthetic concept", "// Lease & landman panel"
+        )
