@@ -3,6 +3,9 @@
 Input dates, stations and publisher evidence are described in
  docs/data-sources/metocean-endpoint-audit.md. Offline replay traverses the same
 request construction and parsers as live retrieval, using the committed samples.
+Recorded-sample sha256 digests cover text bytes with CRLF normalized to LF;
+all other bytes remain significant. Publisher raw_sha256 values describe the
+original responses, before the recorded-sample transformations.
 """
 
 import argparse
@@ -39,16 +42,23 @@ def main() -> None:
         parser.error("--live requires --user-agent and --timeout")
     fixtures = Path(__file__).resolve().parents[2] / "tests/fixtures/metocean/endpoints"
     payloads = {}
+    recorded_urls = {}
     if not args.live:
-        manifest = json.loads((fixtures / "provenance.json").read_text())
+        manifest = json.loads(
+            (fixtures / "provenance.json").read_text(encoding="utf-8")
+        )
         for entry in manifest["samples"]:
             content = (fixtures / entry["file"]).read_bytes()
-            if hashlib.sha256(content).hexdigest() != entry["sha256"]:
+            normalized = content.replace(b"\r\n", b"\n")
+            if hashlib.sha256(normalized).hexdigest() != entry["sha256"]:
                 raise ValueError("Recorded sample digest mismatch")
             payloads[entry["source"]] = content
+            recorded_urls[entry["source"]] = httpx.URL(entry["url"])
 
     def replay(request):
         source = "ndbc_realtime" if request.url.host == "www.ndbc.noaa.gov" else "coops"
+        if source == "ndbc_realtime" and request.url != recorded_urls[source]:
+            raise ValueError("Offline request does not match recorded sample")
         return httpx.Response(200, content=payloads[source])
 
     options = {"trust_env": False}
@@ -77,7 +87,7 @@ def main() -> None:
     writer.writeheader()
     writer.writerows(rows)
     if args.output:
-        args.output.write_text(output.getvalue(), encoding="utf-8")
+        args.output.write_text(output.getvalue(), encoding="utf-8", newline="\n")
     else:
         print(output.getvalue(), end="")
 

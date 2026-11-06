@@ -68,7 +68,9 @@ def test_station_day_worked_example(source, station, day, file, expected):
 
 @pytest.mark.parametrize("all_missing", [False, True])
 def test_coops_missing_readings_remain_in_day_summary(all_missing):
-    payload = json.loads((FIXTURES / "coops_station_day.json").read_text())
+    payload = json.loads(
+        (FIXTURES / "coops_station_day.json").read_text(encoding="utf-8")
+    )
     for record in payload["data"] if all_missing else payload["data"][:1]:
         record["v"] = ""  # Synthetic gaps in the recorded station-day.
     with httpx.Client(
@@ -112,14 +114,16 @@ def test_absent_day_is_not_an_empty_success():
         )
 
 
-def test_station_id_in_the_ndbc_request_is_preserved():
-    with httpx.Client(
-        transport=httpx.MockTransport(
-            lambda r: httpx.Response(
-                200, content=(FIXTURES / "ndbc_station_day.txt").read_bytes()
-            )
+def test_ndbc_station_is_attributed_only_by_request_url():
+    """The body has no station ID; it cannot independently establish attribution."""
+
+    def respond(request):
+        assert request.url.path.endswith("/TEST.txt")
+        return httpx.Response(
+            200, content=(FIXTURES / "ndbc_station_day.txt").read_bytes()
         )
-    ) as http:
+
+    with httpx.Client(transport=httpx.MockTransport(respond)) as http:
         rows = fetch_station_day(
             "ndbc_realtime",
             "TEST",
@@ -175,11 +179,20 @@ def test_summary_rejects_empty_or_mixed_days():
         summarize_day(ndbc + coops)
 
 
-def test_documented_example_matches_committed_table(tmp_path):
+@pytest.mark.parametrize("line_ending", [b"\n", b"\r\n"], ids=["lf", "crlf"])
+def test_documented_example_matches_committed_table(tmp_path, line_ending):
+    import csv
     import subprocess
     import sys
 
     root = Path(__file__).resolve().parents[3]
+    expected = tmp_path / "expected.csv"
+    expected.write_bytes(
+        (root / "examples/metocean/endpoint_station_day.csv")
+        .read_bytes()
+        .replace(b"\r\n", b"\n")
+        .replace(b"\n", line_ending)
+    )
     result = subprocess.run(
         [
             sys.executable,
@@ -190,8 +203,41 @@ def test_documented_example_matches_committed_table(tmp_path):
         check=True,
         capture_output=True,
         text=True,
+        encoding="utf-8",
     )
     assert not result.stdout
-    assert (tmp_path / "example.csv").read_bytes() == (
-        root / "examples/metocean/endpoint_station_day.csv"
-    ).read_bytes()
+    assert b"\r" not in (tmp_path / "example.csv").read_bytes()
+    tables = []
+    for path in [tmp_path / "example.csv", expected]:
+        with path.open(encoding="utf-8", newline="") as stream:
+            reader = csv.DictReader(stream)
+            assert reader.fieldnames == [
+                "source",
+                "station",
+                "date",
+                "variable",
+                "unit",
+                "datum",
+                "rows",
+                "nonmissing",
+                "first_utc",
+                "first_value",
+                "last_utc",
+                "last_value",
+            ]
+            tables.append(list(reader))
+    actual_rows, expected_rows = tables
+    assert len(actual_rows) == len(expected_rows) == 2
+    assert [(row["rows"], row["nonmissing"]) for row in actual_rows] == [
+        ("144", "69"),
+        ("240", "240"),
+    ]
+    for actual, recorded in zip(actual_rows, expected_rows):
+        for field in actual:
+            if field in {"first_value", "last_value"}:
+                # Allow floating-point serialization variation, not data changes.
+                assert float(actual[field]) == pytest.approx(
+                    float(recorded[field]), rel=1e-12, abs=1e-12
+                )
+            else:
+                assert actual[field] == recorded[field]

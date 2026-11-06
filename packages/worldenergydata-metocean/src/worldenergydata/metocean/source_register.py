@@ -3,6 +3,8 @@
 import json
 from importlib.resources import files
 
+MISSING_TERMS_EVIDENCE = "NOT_EVALUATED; no terms statement found"
+
 
 def load_register() -> dict:
     resource = files("worldenergydata.metocean").joinpath("data/source_register.json")
@@ -31,12 +33,17 @@ def _https_url(value: object) -> bool:
     )
 
 
+def _not_evaluated(value: object) -> bool:
+    return isinstance(value, str) and value.startswith("NOT_EVALUATED")
+
+
 def validate_register(register: dict) -> None:
     """Reject incomplete access evidence without promoting legacy eligibility.
 
-    ``account`` includes conservative gating where anonymous access has not been
-    evaluated. The accompanying auth_evaluation explains those legacy records.
-    A terms URL is an evidence locator, not an assertion of reuse permission.
+    ``unconfirmed`` preserves access uncertainty without asserting an account
+    requirement. Account/key categories require a documented evidence locator.
+    Missing terms URLs require explicit NOT_EVALUATED evidence; a present terms
+    URL is an evidence locator, not an assertion of reuse permission.
     """
     seen = set()
     for source in register["sources"]:
@@ -44,11 +51,30 @@ def validate_register(register: dict) -> None:
         if identifier in seen:
             raise ValueError("duplicate source identifier")
         seen.add(identifier)
-        for field in ("base_url", "docs_url", "terms_url"):
+        for field in ("base_url", "docs_url"):
             if not _https_url(source.get(field)):
                 raise ValueError(f"{identifier}: invalid or missing {field}")
-        if source.get("auth_requirement") not in {"none", "free key", "account"}:
+        if "terms_url" not in source or (
+            source["terms_url"] is None
+            and source.get("terms_evaluation") != MISSING_TERMS_EVIDENCE
+        ):
+            raise ValueError(
+                f"{identifier}: missing terms_url or NOT_EVALUATED evidence"
+            )
+        if source["terms_url"] is not None and not _https_url(source["terms_url"]):
+            raise ValueError(f"{identifier}: invalid terms_url")
+        requirement = source.get("auth_requirement")
+        if requirement not in {"none", "free key", "account", "unconfirmed"}:
             raise ValueError(f"{identifier}: invalid or missing auth_requirement")
+        if requirement == "unconfirmed" and not _not_evaluated(
+            source.get("auth_evaluation")
+        ):
+            raise ValueError(f"{identifier}: missing NOT_EVALUATED auth_evaluation")
+        if requirement in {"account", "free key"} and (
+            not _https_url(source.get("auth_evidence_url"))
+            or _not_evaluated(source.get("auth_evaluation"))
+        ):
+            raise ValueError(f"{identifier}: missing confirmed auth_evidence")
         endpoints = source.get("endpoints")
         if not isinstance(endpoints, list) or not endpoints:
             raise ValueError(f"{identifier}: missing endpoints")

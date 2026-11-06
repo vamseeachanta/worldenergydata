@@ -28,6 +28,8 @@ def fetch_station_day(
     is not an arbitrary-date archive API. CO-OPS API defines begin/end dates,
     product, units, datum and time_zone (see the register's docs_url). Responses
     may be incomplete or contain missing observations; no gaps are filled.
+    NDBC text contains no station identifier: attribution relies only on the
+    requested URL. Only CO-OPS response metadata independently checks station ID.
     """
     if not station or not station.isascii() or not station.isalnum():
         raise ValueError("An ASCII alphanumeric station identifier is required")
@@ -55,7 +57,7 @@ def fetch_station_day(
     else:
         raise ValueError("Station-day retrieval supports ndbc_realtime or coops")
     rows = probe_sample(source, http=http, user_agent=user_agent, url=url)
-    if any(row.station != station for row in rows):
+    if source == "coops" and any(row.station != station for row in rows):
         raise EndpointError(f"{source}: response station does not match request")
     selected = [row for row in rows if row.timestamp.date() == day]
     if not selected:
