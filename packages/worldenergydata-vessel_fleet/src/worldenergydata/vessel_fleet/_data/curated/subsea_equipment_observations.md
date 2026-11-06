@@ -3,9 +3,9 @@
 The companion `subsea_equipment_observations.csv` records seven public-source
 observations, three untranscribed research findings and six explicit gaps. The
 observations support source discovery and preliminary stack-up investigation.
-Suitability as engineering analysis
-inputs is NOT_EVALUATED: configuration, assembly boundaries and mass basis
-require confirmation from drawings. No universal geometry range is established.
+Suitability as engineering analysis inputs is NOT_EVALUATED: configuration,
+assembly boundaries and mass basis require confirmation from drawings. No
+universal geometry range is established.
 
 ## Revision history
 
@@ -16,6 +16,7 @@ require confirmation from drawings. No universal geometry range is established.
 | C | 2026-11-05 | Preserve printed weight labels and assembly uncertainty; clarify search scope and validate observation metadata. |
 | D | 2026-11-06 | Defer mixed-source weight units, remove weight-basis notes from dimensions, retain exact research-status coverage and identify field-specific validation failures. |
 | E | 2026-11-06 | Defer the unresolved LMRP ton unit and preserve its printed weight basis; strengthen provenance and invalid-field checks and reflow the contract text. |
+| F | 2026-11-06 | Identify URL, pending-value, confidence and range validation failures; cover invalid metadata for every status and reflow the investigation text. |
 
 Revision C uses the local authoring date; its commit date is 2026-11-06 UTC.
 
@@ -62,9 +63,9 @@ used. Each row carries its public URL, document, locator and retrieval date.
   The sheet does not state whether the figures describe a combined assembly
   or each module. Its weight uses `weight_as_published`; only the OVS entries
   use `deployed_weight_as_published`. The dimensional axes are labelled.
-  The relationship to the OVS configuration
-  and the weight discrepancy are unresolved. Neither sheet supersedes the
-  other in this table. Values shall not be combined into a synthetic assembly.
+  The relationship to the OVS configuration and the weight discrepancy are
+  unresolved. Neither sheet supersedes the other in this table. Values shall
+  not be combined into a synthetic assembly.
 - [BSEE Well Information](https://www.data.bsee.gov/Main/Well.aspx),
   accessed 2026-10-19: the inspected index provides well-data and submission
   discovery. It does not itself establish equipment dimensions. The gap rows

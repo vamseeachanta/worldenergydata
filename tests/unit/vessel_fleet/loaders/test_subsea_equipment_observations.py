@@ -51,8 +51,14 @@ def test_provenance_and_shape(rows):
         assert None not in row and None not in row.values()
         for field in COLUMNS:
             assert row[field].strip(), (row["observation_id"], field)
-        assert urlparse(row["source_url"]).scheme == "https"
-        assert urlparse(row["source_url"]).netloc
+        assert urlparse(row["source_url"]).scheme == "https", (
+            row["observation_id"],
+            "invalid source_url",
+        )
+        assert urlparse(row["source_url"]).netloc, (
+            row["observation_id"],
+            "invalid source_url",
+        )
         assert date.fromisoformat(row["retrieved_on"]) <= date.today(), (
             row["observation_id"],
             "invalid retrieved_on",
@@ -71,11 +77,19 @@ def test_provenance_and_shape(rows):
             "invalid status",
         )
         if row["status"] in {"NOT_FOUND", "NOT_TRANSCRIBED"}:
-            assert row["value"] == row["status"]
-            assert row["confidence"] == "NOT_EVALUATED"
+            assert row["value"] == row["status"], (
+                row["observation_id"],
+                "invalid value",
+            )
+            assert row["confidence"] == "NOT_EVALUATED", (
+                row["observation_id"],
+                "invalid confidence",
+            )
         else:
-            assert row["confidence"] == "A"
-            assert row["range"] == "NOT_REPORTED"
+            assert row["confidence"] == "A", (
+                row["observation_id"],
+                "invalid confidence",
+            )
             if row["unit"] == "ft_in":
                 assert re.fullmatch(r"\d+ ft \d+ in", row["value"]), (
                     row["observation_id"],
@@ -90,6 +104,10 @@ def test_provenance_and_shape(rows):
                     row["observation_id"],
                     "invalid value",
                 )
+        assert row["range"] == "NOT_REPORTED", (
+            row["observation_id"],
+            "invalid range",
+        )
 
 
 @pytest.mark.parametrize(
@@ -263,6 +281,16 @@ def test_unconfirmed_weight_units_are_not_assigned_a_mass_unit(rows, identifier)
         ("MODULAR-WEIGHT", "value", "Infinity"),
         ("MODULAR-WEIGHT", "value", "0"),
         ("MODULAR-WEIGHT", "value", "-1"),
+        ("MODULAR-LENGTH", "source_url", "http://example.org/source"),
+        ("MODULAR-LENGTH", "source_url", "https:/source"),
+        ("LMRP-HEIGHT-GAP", "value", "1"),
+        ("BOP-HEIGHT-GAP", "value", "1"),
+        ("MODULAR-LENGTH", "confidence", "B"),
+        ("LMRP-HEIGHT-GAP", "confidence", "A"),
+        ("BOP-HEIGHT-GAP", "confidence", "A"),
+        ("MODULAR-LENGTH", "range", "0"),
+        ("LMRP-HEIGHT-GAP", "range", "0"),
+        ("BOP-HEIGHT-GAP", "range", "0"),
     ],
 )
 def test_provenance_and_shape_rejects_invalid_metadata(rows, identifier, field, value):
