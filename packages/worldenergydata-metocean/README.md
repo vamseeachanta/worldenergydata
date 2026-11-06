@@ -7,6 +7,12 @@ Importable transparently as `worldenergydata.metocean` once the workspace is
 installed (`uv sync --all-extras`). Depends on `worldenergydata-core` for the
 shared `worldenergydata.common` layer.
 
+## Unified queries
+
+The [unified query guide](src/worldenergydata/metocean/unified/README.md)
+describes attributed multi-source results, explicit source outcomes, the CLI,
+optional dataset adapters and a reproducible offline worked example.
+
 ## Reanalysis calibration
 
 `worldenergydata.metocean.calibration` provides delta change, EQM, QDM,

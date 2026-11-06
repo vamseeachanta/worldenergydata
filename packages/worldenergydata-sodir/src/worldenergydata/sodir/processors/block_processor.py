@@ -10,6 +10,7 @@ This processor handles block data including:
 """
 
 import logging
+from collections.abc import Mapping
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -49,6 +50,11 @@ class BlockProcessor:
             Processed block data with normalized fields
         """
         try:
+            if not isinstance(block_data, Mapping):
+                raise ValueError("A block record must be a mapping")
+            name = block_data.get("blcName")
+            if not isinstance(name, str) or not name.strip():
+                raise ValueError("A block record requires a nonblank name")
             processed = {
                 # Basic identifiers
                 "block_name": block_data.get("blcName", ""),
@@ -92,10 +98,8 @@ class BlockProcessor:
             return processed
 
         except Exception as e:
-            logger.error(
-                f"Error processing block {block_data.get('blcName', 'unknown')}: {str(e)}"
-            )
             self.error_count += 1
+            logger.error("Block record processing failed (%s)", type(e).__name__)
             return None
 
     def process_batch(self, blocks: List[Dict[str, Any]]) -> List[Dict[str, Any]]:

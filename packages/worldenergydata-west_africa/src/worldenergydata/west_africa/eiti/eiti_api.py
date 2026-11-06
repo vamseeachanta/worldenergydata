@@ -103,6 +103,9 @@ class EitiApiClient:
                 resp = requests.get(url, params=params, timeout=self.timeout)
                 if resp.status_code == 200:
                     data = resp.json()
+                    # Validate the collection before caching. A missing/null
+                    # collection is a source failure, not a successful empty set.
+                    self._records(data)
                     if self.cache_enabled:
                         self._cache[cache_key] = data
                     return data
@@ -134,6 +137,20 @@ class EitiApiClient:
             + (f": {last_error}" if last_error else "")
         )
 
+    @staticmethod
+    def _records(data: Any) -> list[dict[str, Any]]:
+        """The local API contract accepts a list or a data-list envelope.
+
+        Endpoint schema and completeness remain NOT_EVALUATED against live
+        responses; this check establishes only collection shape (issue #1292).
+        """
+        records = data.get("data") if isinstance(data, dict) else data
+        if not isinstance(records, list) or any(
+            not isinstance(row, dict) for row in records
+        ):
+            raise EitiApiError("EITI response has no valid record collection")
+        return records
+
     def get_countries(self) -> List[Dict[str, Any]]:
         """
         Retrieve list of EITI member countries.
@@ -142,9 +159,7 @@ class EitiApiClient:
             List of country dicts with id, name, and iso2 keys.
         """
         data = self._get("/api/v1/countries")
-        if isinstance(data, list):
-            return data
-        return data.get("data", []) if isinstance(data, dict) else []
+        return self._records(data)
 
     def get_production_data(
         self,
@@ -172,9 +187,7 @@ class EitiApiClient:
             params["company"] = company
 
         data = self._get("/api/v1/production", params=params)
-        if isinstance(data, list):
-            return data
-        return data.get("data", []) if isinstance(data, dict) else []
+        return self._records(data)
 
     def get_payment_data(
         self,
@@ -202,6 +215,4 @@ class EitiApiClient:
             params["company"] = company
 
         data = self._get("/api/v1/payments", params=params)
-        if isinstance(data, list):
-            return data
-        return data.get("data", []) if isinstance(data, dict) else []
+        return self._records(data)

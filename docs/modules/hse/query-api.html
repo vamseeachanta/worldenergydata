@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HSE Python query API</title>
+<style>
+body { max-width: 64rem; margin: 2rem auto; padding: 0 1rem; font: 1rem/1.6 system-ui; }
+pre { overflow: auto; padding: 1rem; background: #f3f5f7; }
+table { border-collapse: collapse; width: 100%; }
+th, td { border: 1px solid #bbb; padding: .5rem; text-align: left; }
+caption { caption-side: bottom; text-align: left; }
+</style>
+<main>
+<h1>HSE Python query API</h1>
+<p>The five query surfaces return pandas DataFrames. Configured queries read an
+existing SQLite database, apply bound SQL predicates and never fall back to
+demonstration records. No engineering qualification or dataset completeness is
+established by a successful query.</p>
+<h2>Revision history</h2>
+<table>
+<tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr>
+<tr><td>1</td><td>2026-10-20</td><td>Document configured queries, asynchronous access
+and schema limits so examples can be reproduced.</td></tr>
+<caption>Table 1. Document revisions.</caption>
+</table>
+<h2>Connection and result contract</h2>
+<pre><code>import os
+import worldenergydata as wed
+
+config = wed.hse_api.HSEQueryConfig(database_url=os.environ["HSE_DATABASE_URL"])
+with wed.hse_api.HSEApi(config) as client:
+    incidents = client.incidents.query(operator="Example A", year=2024,
+                                       severity="fatality", source="bsee_inc")
+    penalties = client.penalties.query(year=2024, min_amount=20)
+    totals = client.statistics.query(year=2024, metric="total_incidents",
+                                     grouping="operator")
+    releases = client.epa_tri.query(naics="111", year=2024)
+    osha = client.osha.query(severity="fatality", year=2024)</code></pre>
+<p>The operator and industry examples are synthetic inputs. Configuration is a
+frozen Pydantic model. Missing files, missing tables and invalid filters raise
+errors. Unknown keyword arguments are rejected. Singular and plural filters are
+supported; a nonempty plural list takes precedence. Filters combine with AND;
+values within a plural list combine with OR. Year bounds are inclusive and a
+single year takes precedence over the bounds. Exact strings are case-sensitive.</p>
+<p><code>limit</code> and <code>offset</code> paginate after filtering and aggregation.
+Rows are ordered by primary key; grouped statistics are ordered by the grouping
+column. Empty results retain their selected columns. Frames carry
+<code>attrs["data_kind"]</code> and <code>attrs["workflow_id"]</code>. Module
+singletons retain the compatibility sample with <code>data_kind="synthetic"</code>.
+That metadata does not certify injected data or survive every serialization.</p>
+<h2>Surface semantics</h2>
+<table>
+<tr><th>Surface</th><th>Selection</th><th>Limits</th></tr>
+<tr><td>incidents</td><td>operator, incident_type, severity, field, source, year</td>
+<td>Source is inferred from the importer identifier convention: OSHA-prefixed
+identifiers select OSHA; other identifiers select bsee_inc. This is not independent
+source provenance.</td></tr>
+<tr><td>penalties</td><td>operator, penalty_status, year, min_amount</td>
+<td>Year is the parent incident year. Amounts use the stored currency basis;
+no currency conversion or assessed-versus-proposed reconciliation is applied.</td></tr>
+<tr><td>statistics</td><td>operator, field, year, metric, grouping</td>
+<td>Metrics are stored count columns. Grouping accepts operator, field_name or
+report_date. Counts are summed; all-missing counts remain missing. Overlapping
+reporting windows are not reconciled and no exposure-normalized rate is inferred.</td></tr>
+<tr><td>epa_tri</td><td>naics, chemical, state, year</td>
+<td>Year is reporting_year and quantities retain the schema's pounds basis.
+chemical_carcinogen=True or False raises NOT_EVALUATED because the schema has
+no classification flag.</td></tr>
+<tr><td>osha</td><td>operator, incident_type, severity, field, year</td>
+<td>Only OSHA-prefixed persisted incidents are selected. naics raises
+NOT_EVALUATED: some importers store it only in free text and not for every record.
+Deduplication, severity qualification and complete violations coverage are not established.</td></tr>
+<caption>Table 2. Query behavior and evidence limits.</caption>
+</table>
+<h2>Asynchronous queries</h2>
+<pre><code>async def read_incidents(config):
+    async with wed.hse_api.HSEApi(config) as client:
+        return await client.incidents.aquery(year=2024)</code></pre>
+<p>The database package declares aiosqlite and SQLAlchemy's asyncio dependencies.
+Both methods build the same SQL statement. One async engine is shared per client,
+with a separate session for every query, including concurrent calls. Pool size
+and overflow are configurable resource settings. The async context disposes both
+engines; the synchronous context releases the synchronous engine. Use a client
+within one event loop and use the async context whenever aquery is called.
+Injected synchronous sessions remain caller-owned.</p>
+<h2>Command line</h2>
+<pre><code>worldenergydata hse incidents query --operator "Example A" --year 2024 --output json
+# Set HSE_DATABASE_URL to an existing SQLite database before this command.
+# Alternatively, supply --database-url explicitly.
+worldenergydata hse incidents query --demo --year 2022 --output json</code></pre>
+<p>The command supports JSON and CSV. Demonstration selection is explicit and
+is labeled on standard error; standard output contains the records.</p>
+<h2>Worked example and method</h2>
+<p><a href="../../../notebooks/quickstart_hse.py">The runnable quickstart</a> uses
+the existing synthetic fixture: penalty amounts 5000, 15000 and 50000. The
+minimum-10000 predicate excludes 5000. The independent sum is 15000 + 50000 =
+65000. These are invented software inputs, not published measurements or
+acceptance limits. The method is selection followed by addition; no physical
+equation or standards-derived coefficient is used.</p>
+<h2>Sources and pending evidence</h2>
+<ul>
+<li><a href="../../../packages/worldenergydata-bsee/src/worldenergydata/hse/database/models.py">Persisted models</a>
+define count fields, dates and release units.</li>
+<li><a href="../../../packages/worldenergydata-bsee/src/worldenergydata/hse/importers/osha_importer.py">OSHA importer</a>
+defines the identifier prefixes and the free-text industry representation.</li>
+<li><a href="https://docs.sqlalchemy.org/en/20/orm/extensions/asyncio.html">SQLAlchemy 2.0 asyncio documentation</a>,
+accessed 2026-10-20, sections Synopsis — ORM and Using AsyncSession with Concurrent Tasks,
+defines engine/session ownership and separate sessions for concurrent tasks.</li>
+</ul>
+<p>Carcinogen evidence, structured OSHA industry fields, deduplication and
+population completeness remain pending ingest work. The tests establish query
+behavior against synthetic fixtures and do not establish live database coverage.</p>
+</main>
+</html>

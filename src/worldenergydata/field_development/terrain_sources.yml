@@ -48,6 +48,8 @@ sources:
       prodFormats: "GeoTIFF"
     endpoints:
       tnm_products_api: "https://tnmaccess.nationalmap.gov/api/v1/products"
+      # TNM Products downloadURL, current and historical paths (2026-10-21).
+      staged_download_root: "https://prd-tnm.s3.amazonaws.com/StagedProducts/Elevation/13/TIFF/"
       staged_tile_template: "https://prd-tnm.s3.amazonaws.com/StagedProducts/Elevation/13/TIFF/current/{tile}/USGS_13_{tile}.tif"
     format: "geotiff"
     resolution: "1/3 arc-second (~10 m); 1x1 degree tiles"
@@ -143,3 +145,64 @@ sources:
       Highest-resolution public bathymetry for GoM deepwater field layout.
       ~510 MB per half: fetch on demand only. Feet-unit and hillshade
       variants exist at the same path prefix.
+
+
+  nasa_icesat2_atl24:
+    name: "ATLAS/ICESat-2 L3A Along Track Coastal and Nearshore Bathymetry, Version 2"
+    provider: "NASA / NSIDC DAAC"
+    canonical_url: "https://nsidc.org/data/atl24/versions/2"
+    access_method: "offline_public_metadata_only"
+    endpoints:
+      collections: "https://cmr.earthdata.nasa.gov/search/collections.umm_json?short_name=ATL24&page_size=10"
+      granules: "https://cmr.earthdata.nasa.gov/search/granules.umm_json?collection_concept_id=C4085168939-NSIDC_CPRD&page_size=1"
+      atom: "https://cmr.earthdata.nasa.gov/search/granules.atom?collection_concept_id=C4085168939-NSIDC_CPRD&page_size=1"
+    format: "HDF5 science product; JSON/XML discovery metadata only"
+    resolution: "Along-track observations; qualified grid resolution UNVERIFIED"
+    coverage: "Coastal and nearshore observations; file-specific coverage requires screening"
+    license: "Use without restrictions subject to recommended NSIDC citation; no SPDX identifier supplied"
+    status: "verified"
+    verified_on: "2026-10-25"
+    verification: >-
+      Public collection, granule UMM, Atom, product and citation-policy responses
+      returned HTTP 200 without redirects. Collection and sample identities agree.
+      Verification covers discovery metadata only; science payload is unverified.
+      Current response digests and request times are recorded in
+      docs/data-sources/atl24-metadata.html.
+    consumers: []
+    metadata_only: true
+    metadata_status: "verified_discovery_metadata"
+    science_authentication_required: true
+    science_acquisition: "UNVERIFIED"
+    engineering_qualification: "UNVERIFIED"
+    collection_concept_id: "C4085168939-NSIDC_CPRD"
+    version: "002"
+    doi: "10.5067/ATLAS/ATL24.002"
+    collection_revision: "2026-10-12T16:32:05.955Z"
+    historical_reference:
+      version: "001"
+      collection_concept_id: "C3433822507-NSIDC_CPRD"
+      doi: "10.5067/ATLAS/ATL24.001"
+    sample:
+      concept_id: "G4100500270-NSIDC_CPRD"
+      filename: "ATL24_20181014001049_02350102_006_02_002_01.h5"
+      metadata_revision: "2026-08-10T23:57:29.141Z"
+      advertised_size_mb: "84.37178039550781"
+      advertised_size_basis: "CMR Atom granuleSizeMB; approximately 84.4 MB, not an exact byte count"
+      umm_size_unit: "UNVERIFIED"
+      payload_bytes: "UNVERIFIED"
+      payload_sha256: "UNVERIFIED"
+    collection_storage:
+      total_bytes: "UNVERIFIED"
+      size_range: "UNVERIFIED"
+    citation:
+      product: "ATLAS/ICESat-2 L3A Along Track Coastal and Nearshore Bathymetry"
+      version: "2"
+      repository: "NASA NSIDC DAAC"
+      doi: "https://doi.org/10.5067/ATLAS/ATL24.002"
+      retrieved_on: "2026-10-25"
+      terms: "https://nsidc.org/about/data-use-and-copyright"
+    notes: >-
+      Attributed discovery summary only. Earthdata authentication is required for
+      science access; public metadata does not establish anonymous HDF5 access.
+      Payload bytes/digest, file-specific frame, quality screening and numerical
+      suitability remain UNVERIFIED. No acquisition or engineering use is enabled.

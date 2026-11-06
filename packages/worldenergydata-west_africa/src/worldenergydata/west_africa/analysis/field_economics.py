@@ -1,6 +1,9 @@
 """
 Nigeria deepwater PSC fiscal regime model.
 
+The coefficients below are legacy assumptions, NOT_EVALUATED for statutory
+applicability. See docs/correctness.md for scope and a synthetic worked example.
+
 Nigeria uses Production Sharing Contracts (PSC) for deepwater blocks.
 The fiscal structure is:
 
@@ -170,7 +173,9 @@ def calculate_cost_oil_recovery(
 
 def calculate_profit_oil_split(
     profit_oil: float,
-    production_rate_bopd: float,
+    production_rate_bopd: float | None = None,
+    *,
+    production_rate_kbd: float | None = None,
 ) -> Dict[str, float]:
     """
     Split profit oil between NNPC and contractor based on production rate.
@@ -179,6 +184,8 @@ def calculate_profit_oil_split(
         profit_oil: Total profit oil amount in USD.
         production_rate_bopd: Finite, nonnegative production rate in barrels
             per day. A missing rate cannot be used to select a tier.
+        production_rate_kbd: Alternative rate in thousand barrels per day.
+            Supply exactly one rate with its explicit unit.
 
     Returns:
         Dict with 'nnpc' and 'contractor' keys (USD amounts).
@@ -189,22 +196,46 @@ def calculate_profit_oil_split(
     # Input domain: issue #1292 (2026), docs/agent-pack.md, SF6.
     # Finite includes zero: Python 3.14 Library Reference, math.isfinite.
     # https://docs.python.org/3.14/library/math.html#math.isfinite
-    if (
-        production_rate_bopd is None
-        or not math.isfinite(production_rate_bopd)
-        or production_rate_bopd < 0
-    ):
-        raise ValueError("production_rate_bopd must be finite and nonnegative")
-
-    nnpc_share = 0.70  # Default to highest tier
+    production_rate_bopd = _resolve_production_rate(
+        production_rate_bopd, production_rate_kbd
+    )
+    _require_nonnegative("profit_oil", profit_oil)
     for max_rate, share in PROFIT_OIL_TIERS:
         if production_rate_bopd <= max_rate:
             nnpc_share = share
             break
+    else:
+        raise ValueError("No profit-oil tier covers production_rate_bopd")
 
     nnpc_amount = profit_oil * nnpc_share
     contractor_amount = profit_oil * (1.0 - nnpc_share)
     return {"nnpc": nnpc_amount, "contractor": contractor_amount}
+
+
+def _require_nonnegative(name: str, value: float) -> None:
+    """Reject absent, nonnumeric, non-finite or negative physical inputs."""
+    if (
+        isinstance(value, bool)
+        or not isinstance(value, (int, float))
+        or not math.isfinite(value)
+        or value < 0
+    ):
+        raise ValueError(f"{name} must be finite and nonnegative")
+
+
+def _resolve_production_rate(bopd: float | None, kbd: float | None) -> float:
+    if (bopd is None) == (kbd is None):
+        raise ValueError(
+            "Supply exactly one of production_rate_bopd or production_rate_kbd"
+        )
+    if kbd is not None:
+        _require_nonnegative("production_rate_kbd", kbd)
+        # BIPM, SI Brochure, 9th ed. (2019), section 3, Table 7:
+        # kilo denotes 10**3. Here kbd explicitly means thousand bbl/day.
+        # https://www.bipm.org/documents/20126/41483022/SI-Brochure-9.pdf
+        bopd = kbd * 1000
+    _require_nonnegative("production_rate_bopd", bopd)
+    return bopd
 
 
 class NigeriaDeepwaterPSC:
@@ -219,7 +250,10 @@ class NigeriaDeepwaterPSC:
     - NDDC levy on gross revenue (3%)
 
     Government take components: royalty + NNPC profit oil + PPT + NDDC levy.
-    Contractor income: contractor profit oil after PPT.
+    Contractor income: contractor profit oil after PPT and the modeled levy.
+    Negative cash obligations are retained to conserve the allocation ledger.
+    Legacy fiscal coefficients and levy base are NOT_EVALUATED for legal
+    applicability; see docs/correctness.md before using a result.
     """
 
     def __init__(
@@ -235,7 +269,9 @@ class NigeriaDeepwaterPSC:
         gross_revenue: float,
         opex: float,
         capex: float,
-        production_rate_bopd: float,
+        production_rate_bopd: float | None = None,
+        *,
+        production_rate_kbd: float | None = None,
     ) -> PSCFiscalResult:
         """
         Compute full PSC fiscal result for a Nigeria deepwater field.
@@ -246,6 +282,9 @@ class NigeriaDeepwaterPSC:
             capex: Annual capital expenditure in USD.
             production_rate_bopd: Finite, nonnegative annual average production
                 rate in barrels per day; required even when profit oil is zero.
+            production_rate_kbd: Alternative annual average in thousand barrels
+                per day, as used by the package's production records and catalog.
+                Supply exactly one of the two rate arguments.
 
         Returns:
             PSCFiscalResult with all fiscal components.
@@ -253,6 +292,17 @@ class NigeriaDeepwaterPSC:
         Raises:
             ValueError: If production_rate_bopd is missing, non-finite or negative.
         """
+        _require_nonnegative("gross_revenue", gross_revenue)
+        _require_nonnegative("opex", opex)
+        _require_nonnegative("capex", capex)
+        _require_nonnegative("water_depth_m", self.water_depth_m)
+        _require_nonnegative("cost_oil_ceiling", self.cost_oil_ceiling)
+        # A recovery fraction is bounded by unity by definition, not tax law.
+        if self.cost_oil_ceiling > 1:
+            raise ValueError("cost_oil_ceiling must not exceed one")
+        production_rate_bopd = _resolve_production_rate(
+            production_rate_bopd, production_rate_kbd
+        )
         # 1. Royalty (0% for >= 1000m deepwater)
         royalty_rate = calculate_royalty_deepwater(self.water_depth_m)
         royalties = gross_revenue * royalty_rate
@@ -281,8 +331,9 @@ class NigeriaDeepwaterPSC:
         )
         ppt_applied_rate = PPT_RATE_PSC
 
-        # 7. Contractor net income after PPT
-        contractor_net_income = max(0.0, contractor_profit_oil - ppt)
+        # 7. Cash-ledger identity (issue #1292, SF5): the government's levy
+        # receipt must also be charged to contractor cash. Do not floor debt.
+        contractor_net_income = contractor_profit_oil - ppt - nddc_levy
 
         # 8. Total government take
         total_government_take = royalties + nnpc_profit_oil + ppt + nddc_levy

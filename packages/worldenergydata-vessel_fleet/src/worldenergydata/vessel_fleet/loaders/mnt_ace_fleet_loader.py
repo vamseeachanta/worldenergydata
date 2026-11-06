@@ -32,15 +32,13 @@ from __future__ import annotations
 import logging
 import re
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 from worldenergydata.vessel_fleet.collectors.acma_msiv_collector import (
-    _find_spec_table,
+    _find_spec_table_with_header,
     _parse_crane,
-    _parse_draft,
     _parse_dp,
-    _split_md_row,
-    _SPEC_TABLE_HEADERS,
+    _parse_draft,
 )
 from worldenergydata.vessel_fleet.collectors.frontier_csv_collector import (
     _map_heavy_lift_row,
@@ -97,8 +95,8 @@ def _map_heavy_lift_snapshot(
     row: dict[str, str],
     *,
     data_source: str,
-    collection_date: Optional[str],
-) -> Optional[dict[str, Any]]:
+    collection_date: str | None,
+) -> dict[str, Any] | None:
     """Map one heavy-lift CSV row, stamping snapshot provenance.
 
     Reuses the shared Frontier row mapper for the spec columns, then overrides
@@ -113,7 +111,7 @@ def _map_heavy_lift_snapshot(
     return mapped
 
 
-def _current_collection_date(row: dict[str, str]) -> Optional[str]:
+def _current_collection_date(row: dict[str, str]) -> str | None:
     """Derive a COLLECTION_DATE for a current-snapshot row.
 
     Prefers the per-row ``status_year`` (e.g. ``2024``); falls back to the
@@ -222,7 +220,7 @@ def load_heavy_lift_csvs(source_dir: str | Path) -> list[dict[str, Any]]:
 # --- MSIV markdown parser ---------------------------------------------------
 
 
-def _extract_created_date(text: str) -> Optional[str]:
+def _extract_created_date(text: str) -> str | None:
     """Return the ``Created:`` ISO date from the markdown header, if present."""
     match = _CREATED_RE.search(text)
     return match.group(1) if match else None
@@ -231,8 +229,8 @@ def _extract_created_date(text: str) -> Optional[str]:
 def _map_msiv_row(
     header: list[str],
     cells: list[str],
-    collection_date: Optional[str],
-) -> Optional[dict[str, Any]]:
+    collection_date: str | None,
+) -> dict[str, Any] | None:
     """Map one vessel-comparison-matrix row to an intervention/MSIV record.
 
     Only vessel particulars are mapped; no cost / scoring / mobilisation or
@@ -287,20 +285,12 @@ def parse_msiv_markdown(path: str | Path) -> list[dict[str, Any]]:
     lines = text.splitlines()
     collection_date = _extract_created_date(text)
 
-    header: list[str] = []
-    for line in lines:
-        if "|" not in line:
-            continue
-        candidate = [c.lower() for c in _split_md_row(line)]
-        if all(h in " ".join(candidate) for h in _SPEC_TABLE_HEADERS):
-            header = candidate
-            break
-
+    header, body = _find_spec_table_with_header(lines)
     if not header:
         return []
 
     records: list[dict[str, Any]] = []
-    for cells in _find_spec_table(lines):
+    for cells in body:
         if len(cells) != len(header):
             continue
         mapped = _map_msiv_row(header, cells, collection_date)
@@ -343,8 +333,8 @@ def parse_msiv_dir(source_dir: str | Path) -> list[dict[str, Any]]:
 
 
 def combine(
-    heavy_lift_dir: Optional[str | Path] = None,
-    msiv_dir: Optional[str | Path] = None,
+    heavy_lift_dir: str | Path | None = None,
+    msiv_dir: str | Path | None = None,
 ) -> list[dict[str, Any]]:
     """Combine heavy-lift CSV and MSIV markdown records into one record set.
 

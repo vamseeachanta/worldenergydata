@@ -6,6 +6,8 @@
 - **Generated:** 2026-06-26
 - **Source:** new BSEE OGOR-A `.bin` (latest) re-run of Roy Shilling's rerun-with-latest-ogora request; same lease mapping, cost assumptions, royalty/opex rates, and 10%/yr discounting as V30.
 
+> **Assumptions gate:** Read the [V50 assumptions change log](../../config/analysis/lower_tertiary/v50_assumptions_change_log.html) before adopting V50. This window-only comparison does not approve the cost/after-tax V50 basis.
+
 > **Reproduction gate (before update):** V30 reproduces from raw OGOR within
 > ±0.1% on production and ±1% on NPV for all matched projects; Jack St Malo
 > NPV sits in its known ~7.3% band (monthly D&C allocation timing). Because
@@ -45,4 +47,3 @@
 - NPV improvements reflect the added producing months net of continued opex;
   no field crosses into positive NPV.
 - Frozen V30 (`golden_baseline_v30.yml`) is unchanged. V50 lives alongside it.
-
