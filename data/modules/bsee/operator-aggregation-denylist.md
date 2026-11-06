@@ -36,24 +36,30 @@ The YAML mirrors the workspace list's section-of-entry format:
 | `default_severity` | `block` or `warn`; omitted means `block` |
 | Rule sections | Lists of mappings, each containing a `pattern` |
 | `pattern` | Nonempty literal text by default |
-| `case_sensitive` | Boolean; omitted means false |
+| `case_sensitive` | Boolean; omitted means false; literals also accept uppercase |
 | `severity` | `block` or `warn`; omitted inherits the default |
 | `regex` | Boolean extension; true explicitly enables Python regular expressions |
+| `description` | Optional descriptive metadata; never printed |
 
 Table 1. Policy metadata and rule fields.
 
-Literal rules are escaped before compilation. Word boundaries prevent short
-names matching inside longer words. Single-word aliases require exact case to
-avoid routine narrative matches, including lowercase terms before a hyphen.
+Literal words are escaped and joined by one or more whitespace characters,
+including line breaks, tabs and non-breaking spaces. Word boundaries prevent
+short names matching inside longer words. Case-sensitive literals match their
+as-written or all-uppercase spelling to retain detection in headings and tables.
+Single-word aliases exclude lowercase terms, including those before a hyphen.
 The ambiguous bridge-plug abbreviation produces a warning rather than a block.
 Full operator names and multiword aliases still block regardless of case.
 Lowercase single-word aliases are intentionally outside automatic detection;
 warnings and indirect references require contextual review.
 
-Placeholder rules match an uppercase single-letter label following `operator`
-or `company`; only the keyword ignores case. Shared metadata, including
-`exclusions`, is accepted; exclusions are deliberately not applied inside the
-explicitly selected report directory. There is no whole-file bypass.
+Placeholder rules match an uppercase single-letter or numeric label following
+`operator`, `operators`, `company` or `companies`; only the keyword ignores case.
+Quotes, Markdown emphasis, and a separating hyphen or colon are supported.
+Lowercase letters and mixed alphanumeric labels remain outside this rule.
+Unknown rule fields are rejected; descriptive metadata is permitted.
+Shared metadata, including `exclusions`, is accepted; exclusions are deliberately
+not applied inside the explicitly selected report directory. There is no whole-file bypass.
 
 ## Usage and results
 
@@ -67,17 +73,23 @@ bash scripts/legal/check-operator-aggregation.sh \
 The workspace policy path is required explicitly, so worktrees and standalone
 checkouts cannot silently omit that half of the union. `--reports` selects a
 report directory (default `reports/hse/`). `--operator-denylist` permits a
-specific local policy version. Both lists are validated before any scanning.
+specific local policy version. Both lists are validated before any scanning;
+each must supply at least one rule. An empty section is permitted only when
+another section in the same policy supplies rules.
 
 Every regular file under the report directory is read as UTF-8, including
 machine-readable sidecars. Linked inputs, unreadable or binary files, invalid
 policies, missing directories and empty directories produce an input error.
-The checker does not decode HTML entities, inspect images, or extract PDFs;
-those require separate review. It reports relative file locations and line
-numbers, without matched text, rule descriptions or source-list contents.
+HTML entities are decoded in `.html` and `.htm` files, retaining physical source
+line numbers. Other formats are scanned as text. Images, PDFs, names split by
+HTML elements and multiply encoded content require separate review.
+The checker reports relative file locations and line numbers, without matched
+text, rule descriptions or source-list contents.
 
 Exit status is zero for no blocking matches (warnings may remain), one for
 blocking matches, and two for invalid or unreadable input. These are CLI status
 codes, not engineering criteria. Existing historical reports are not rewritten
 by this tool. Findings require contextual review before publication; absence of
 matches does not establish aggregation quality or statistical validity.
+The Phase 1A and Phase 1B memo scans remain a separate acceptance criterion
+under issue 420; this policy does not establish that those memos pass.

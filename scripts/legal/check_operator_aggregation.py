@@ -8,6 +8,8 @@ import argparse
 import re
 import stat
 import sys
+from bisect import bisect_right
+from html import unescape
 from pathlib import Path
 
 import yaml
@@ -53,6 +55,14 @@ def load_rules(path):
         for entry in entries:
             if not isinstance(entry, dict):
                 raise TypeError("rule must be a mapping")
+            if entry.keys() - {
+                "pattern",
+                "severity",
+                "case_sensitive",
+                "regex",
+                "description",
+            }:
+                raise ValueError("unknown rule field")
             pattern = entry.get("pattern")
             severity = entry.get("severity", default)
             sensitive = entry.get("case_sensitive", False)
@@ -63,13 +73,22 @@ def load_rules(path):
                 raise ValueError("invalid severity")
             if type(sensitive) is not bool or type(regex) is not bool:
                 raise ValueError("matching flags must be Boolean")
-            expression = pattern if regex else re.escape(pattern)
+            expression = (
+                pattern
+                if regex
+                else r"\s+".join(re.escape(part) for part in pattern.split())
+            )
+            if sensitive and not regex:
+                uppercase = r"\s+".join(
+                    re.escape(part) for part in pattern.upper().split()
+                )
+                expression = f"{expression}|{uppercase}"
             expression = r"(?<!\w)(?:" + expression + r")(?!\w)"
             rules.append(
                 (re.compile(expression, 0 if sensitive else re.IGNORECASE), severity)
             )
-    if not sections:
-        raise ValueError("policy has no rule sections")
+    if not sections or not rules:
+        raise ValueError("policy has no rules")
     return rules
 
 
@@ -107,10 +126,18 @@ def scan_reports(reports, rules):
         text = path.read_text(encoding="utf-8")
         if "\x00" in text:
             raise ValueError("binary report input")
+        lines = text.split("\n")
+        if path.suffix.lower() in (".html", ".htm"):
+            lines = [unescape(line) for line in lines]
+        # Entity-encoded newlines retain the original physical source location.
+        line_starts = [0]
+        for line in lines[:-1]:
+            line_starts.append(line_starts[-1] + len(line) + 1)
+        text = "\n".join(lines)
         findings = {}
         for pattern, severity in rules:
             for match in pattern.finditer(text):
-                number = text.count("\n", 0, match.start()) + 1
+                number = bisect_right(line_starts, match.start())
                 findings.setdefault(number, set()).add(severity)
         for number, severities in sorted(findings.items()):
             severity = "block" if "block" in severities else "warn"

@@ -42,20 +42,27 @@ EXPECTED_ALIASES = [
     ("WPX", "block"),
     ("EOG", "block"),
     ("OXY", "block"),
+    ("BP Exploration", "block"),
+    ("Walter Oil and Gas", "block"),
+    ("Exxon", "block"),
+    ("Kosmos", "block"),
+    ("Oxy", "block"),
 ]
 
 
-def run_check(tmp_path, text, external=None, local=None):
+def run_check(tmp_path, text, external=None, local=None, filename="memo.md"):
     reports = tmp_path / "reports"
     reports.mkdir(exist_ok=True)
-    (reports / "memo.md").write_text(text, encoding="utf-8", newline="\n")
+    (reports / filename).write_text(text, encoding="utf-8", newline="\n")
     external_path = tmp_path / "external.yaml"
     external_path.write_text(
         (
             external
             if isinstance(external, str)
             else yaml.safe_dump(
-                external if external is not None else {"client_references": []}
+                external
+                if external is not None
+                else {"client_references": [{"pattern": "Unmatched synthetic marker"}]}
             )
         ),
         encoding="utf-8",
@@ -108,6 +115,24 @@ def test_named_operator_blocks(tmp_path, text):
     assert result.returncode == 1, result.stderr
 
 
+@pytest.mark.parametrize(
+    "text",
+    [
+        "BP Exploration",
+        "BP Exploration and Production",
+        "Walter Oil and Gas",
+        "Exxon",
+        "Kosmos",
+        "Oxy",
+        "Kosmos Energy Gulf of Mexico Operations",
+    ],
+)
+def test_alternate_operator_forms_block(tmp_path, text):
+    result = run_check(tmp_path, text)
+    assert result.returncode == 1
+    assert "BLOCK memo.md:1" in result.stdout
+
+
 def test_aggregate_language_and_word_boundaries_pass(tmp_path):
     result = run_check(
         tmp_path, "Peer aggregate; oxygen; company analysis; operators overall."
@@ -156,6 +181,28 @@ def test_aliases_keep_exact_case_detection(tmp_path, alias, severity):
     result = run_check(tmp_path, alias)
     assert result.returncode == (1 if severity == "block" else 0), result.stderr
     assert f"{severity.upper()} memo.md:1" in result.stdout
+
+
+@pytest.mark.parametrize("alias,severity", EXPECTED_ALIASES)
+def test_uppercase_aliases_keep_expected_severity(tmp_path, alias, severity):
+    result = run_check(tmp_path, alias.upper())
+    assert result.returncode == (1 if severity == "block" else 0)
+    assert f"{severity.upper()} memo.md:1" in result.stdout
+
+
+@pytest.mark.parametrize("source", ["external", "local"])
+@pytest.mark.parametrize(
+    "text, status",
+    [("SYNTHETIC MARKER", 1), ("synthetic marker", 0), ("Synthetic marker", 0)],
+)
+def test_sensitive_literals_accept_uppercase_only_variant(
+    tmp_path, source, text, status
+):
+    policy = {
+        "client_references": [{"pattern": "Synthetic Marker", "case_sensitive": True}]
+    }
+    result = run_check(tmp_path, text, **{source: policy})
+    assert result.returncode == status
 
 
 @pytest.mark.parametrize("letter_case", ["lower", "upper"])
@@ -213,6 +260,45 @@ def test_malformed_policy_fails_closed(tmp_path, policy):
     result = run_check(tmp_path, "Peer aggregate", policy)
     assert result.returncode == 2
     assert "ERROR" in result.stderr
+
+
+@pytest.mark.parametrize("source", ["external", "local"])
+@pytest.mark.parametrize(
+    "policy",
+    [{"client_references": []}, {"client_references": [], "operator_names": []}],
+)
+def test_zero_rule_policy_fails_closed(tmp_path, source, policy):
+    result = run_check(tmp_path, "Peer aggregate", **{source: policy})
+    assert result.returncode == 2
+    assert "ERROR" in result.stderr
+    assert "Scanned" not in result.stdout
+    assert str(tmp_path) not in result.stderr
+
+
+@pytest.mark.parametrize("source", ["external", "local"])
+@pytest.mark.parametrize(
+    "unknown", [{"regx": True}, {"case_sensitve": True}, {"severtiy": "warn"}]
+)
+def test_unknown_rule_fields_fail_closed(tmp_path, source, unknown):
+    policy = {"client_references": [{"pattern": "Synthetic marker", **unknown}]}
+    result = run_check(tmp_path, "Peer aggregate", **{source: policy})
+    assert result.returncode == 2
+    assert "ERROR" in result.stderr
+    assert "Scanned" not in result.stdout
+    assert "Synthetic marker" not in result.stdout + result.stderr
+    assert str(tmp_path) not in result.stderr
+
+
+@pytest.mark.parametrize("source", ["external", "local"])
+def test_workspace_descriptive_rule_fields_remain_supported(tmp_path, source):
+    policy = {
+        "client_references": [
+            {"pattern": "Synthetic marker", "description": "Synthetic description"}
+        ]
+    }
+    result = run_check(tmp_path, "Synthetic marker", **{source: policy})
+    assert result.returncode == 1
+    assert "Synthetic description" not in result.stdout + result.stderr
 
 
 @pytest.mark.parametrize("source", ["external", "local"])
@@ -286,15 +372,96 @@ def test_each_sourced_operator_is_detected(tmp_path):
         assert result.returncode == 1, result.stderr
 
 
+def test_multiword_operator_names_and_aliases_accept_hard_wrapping(tmp_path):
+    policy = yaml.safe_load(POLICY.read_text(encoding="utf-8"))
+    entries = [(entry["pattern"], "block") for entry in policy["operator_names"]]
+    for pattern, severity in entries + EXPECTED_ALIASES:
+        if len(pattern.split()) > 1:
+            result = run_check(tmp_path, "\n".join(pattern.split()))
+            assert result.returncode == (1 if severity == "block" else 0)
+            assert f"{severity.upper()} memo.md:1" in result.stdout
+
+
+@pytest.mark.parametrize("separator", ["\n", "  ", "\t", "\u00a0", "\r\n"])
+@pytest.mark.parametrize("source", ["external", "local"])
+def test_literal_policy_whitespace_is_flexible(tmp_path, separator, source):
+    policy = {"client_references": [{"pattern": "Synthetic marker"}]}
+    result = run_check(tmp_path, f"Synthetic{separator}marker", **{source: policy})
+    assert result.returncode == 1
+    assert "BLOCK memo.md:1" in result.stdout
+
+
+@pytest.mark.parametrize("extension", ["html", "HTML", "htm"])
+@pytest.mark.parametrize("entity", ["&amp;", "&#38;", "&#x26;"])
+def test_html_entities_are_decoded_before_matching(tmp_path, extension, entity):
+    policy = yaml.safe_load(POLICY.read_text(encoding="utf-8"))
+    for entry in policy["operator_names"]:
+        if "&" in entry["pattern"]:
+            result = run_check(
+                tmp_path,
+                entry["pattern"].replace("&", entity),
+                filename=f"memo.{extension}",
+            )
+            assert result.returncode == 1
+            assert f"BLOCK memo.{extension}:1" in result.stdout
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "Peer&#10;aggregate\nSynthetic &amp; Marker",
+        "Peer aggregate\nSynthetic&#10;&amp; Marker",
+    ],
+)
+def test_html_entity_decoding_preserves_source_line_numbers(tmp_path, text):
+    result = run_check(
+        tmp_path,
+        text,
+        {"client_references": [{"pattern": "Synthetic & Marker"}]},
+        filename="memo.html",
+    )
+    assert result.returncode == 1
+    assert "BLOCK memo.html:2" in result.stdout
+    assert "memo.html:3" not in result.stdout
+    assert text not in result.stdout + result.stderr
+
+
+def test_non_html_text_is_not_entity_decoded(tmp_path):
+    result = run_check(
+        tmp_path,
+        "Synthetic &amp; Marker",
+        {"client_references": [{"pattern": "Synthetic & Marker"}]},
+    )
+    assert result.returncode == 0
+    assert "BLOCK" not in result.stdout
+
+
 @pytest.mark.parametrize(
     "kind",
-    ["empty", "binary", "nul", "utf16", "special", "linked-file", "linked-directory"],
+    [
+        "empty",
+        "binary",
+        "nul",
+        "utf16",
+        pytest.param(
+            "special",
+            marks=pytest.mark.skipif(
+                not hasattr(os, "mkfifo"), reason="FIFO creation is unavailable"
+            ),
+        ),
+        "linked-file",
+        "linked-directory",
+    ],
 )
 def test_unscannable_report_inputs_fail_closed(tmp_path, kind):
     reports = tmp_path / "reports"
     reports.mkdir()
     external = tmp_path / "external.yaml"
-    external.write_text("client_references: []\n", encoding="utf-8", newline="\n")
+    external.write_text(
+        "client_references:\n  - pattern: Unmatched synthetic marker\n",
+        encoding="utf-8",
+        newline="\n",
+    )
     if kind == "binary":
         (reports / "memo.bin").write_bytes(b"\xff")
     elif kind == "nul":
@@ -310,7 +477,10 @@ def test_unscannable_report_inputs_fail_closed(tmp_path, kind):
             "Peer aggregate", encoding="utf-8", newline="\n"
         )
         source = target / "memo.md" if kind == "linked-file" else target
-        (reports / "link").symlink_to(source, target_is_directory=source.is_dir())
+        try:
+            (reports / "link").symlink_to(source, target_is_directory=source.is_dir())
+        except (OSError, NotImplementedError):
+            pytest.skip("Symbolic-link creation is unavailable")
     result = subprocess.run(
         [
             "bash",
@@ -331,12 +501,22 @@ def test_unscannable_report_inputs_fail_closed(tmp_path, kind):
     assert str(tmp_path) not in result.stderr
 
 
+@pytest.mark.skipif(
+    os.name == "nt" or getattr(os, "geteuid", lambda: 0)() == 0,
+    reason="Directory permission denial requires an unprivileged POSIX process",
+)
 def test_unreadable_subdirectory_fails_closed(tmp_path):
     restricted = tmp_path / "reports" / "restricted"
     restricted.mkdir(parents=True)
     (restricted / "memo.md").write_text("Operator X", encoding="utf-8", newline="\n")
     restricted.chmod(0)
     try:
+        try:
+            list(restricted.iterdir())
+        except PermissionError:
+            pass
+        else:
+            pytest.skip("Directory listing is permitted despite the mode restriction")
         result = run_check(tmp_path, "Peer aggregate")
     finally:
         restricted.chmod(0o700)
@@ -403,15 +583,69 @@ def test_disappearing_report_stat_fails_closed(tmp_path, monkeypatch, checker_mo
     )
     missing = reports / "missing.md"
     missing.write_text("Operator X", encoding="utf-8", newline="\n")
-    original_stat = Path.stat
+    original_lstat = Path.lstat
 
-    def failing_stat(path, *, follow_symlinks=True):
+    def failing_lstat(path):
         if path == missing:
             raise FileNotFoundError("report disappeared")
-        return original_stat(path, follow_symlinks=follow_symlinks)
+        return original_lstat(path)
 
-    monkeypatch.setattr(Path, "stat", failing_stat)
+    monkeypatch.setattr(Path, "lstat", failing_lstat)
     with pytest.raises(FileNotFoundError):
+        checker_module.scan_reports(reports, [])
+
+
+def test_enumeration_error_fails_closed_with_readable_sibling(
+    tmp_path, monkeypatch, checker_module, capsys
+):
+    reports = tmp_path / "reports"
+    restricted = reports / "restricted"
+    restricted.mkdir(parents=True)
+    (reports / "readable.md").write_text(
+        "Peer aggregate", encoding="utf-8", newline="\n"
+    )
+    external = tmp_path / "external.yaml"
+    external.write_text(
+        "client_references:\n  - pattern: Synthetic marker\n",
+        encoding="utf-8",
+        newline="\n",
+    )
+    original_iterdir = Path.iterdir
+
+    def failing_iterdir(path):
+        if path == restricted:
+            raise PermissionError("directory enumeration denied")
+        return original_iterdir(path)
+
+    monkeypatch.setattr(Path, "iterdir", failing_iterdir)
+    monkeypatch.setattr(
+        checker_module.sys,
+        "argv",
+        ["checker", "--reports", str(reports), "--workspace-denylist", str(external)],
+    )
+    assert checker_module.main() == 2
+    output = capsys.readouterr()
+    assert "ERROR" in output.err
+    assert "Scanned" not in output.out
+    assert str(tmp_path) not in output.out + output.err
+
+
+def test_nonregular_metadata_fails_closed(tmp_path, monkeypatch, checker_module):
+    reports = tmp_path / "reports"
+    reports.mkdir()
+    unusual = reports / "memo.txt"
+    unusual.write_text("Peer aggregate", encoding="utf-8", newline="\n")
+    original_lstat = Path.lstat
+
+    def nonregular_lstat(path):
+        return (
+            SimpleNamespace(st_mode=stat.S_IFIFO)
+            if path == unusual
+            else original_lstat(path)
+        )
+
+    monkeypatch.setattr(Path, "lstat", nonregular_lstat)
+    with pytest.raises(ValueError, match="unsupported"):
         checker_module.scan_reports(reports, [])
 
 
@@ -432,3 +666,33 @@ def test_placeholder_split_across_lines_blocks(tmp_path):
     result = run_check(tmp_path, "Peer aggregate.\nOperator\nX")
     assert result.returncode == 1
     assert "memo.md:2" in result.stdout
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "Operators A and B",
+        "Companies X",
+        "Operator **X**",
+        "Company _A_",
+        "Operator 'X'",
+        'Company "A"',
+        "Operator-X",
+        "Company: X",
+        "Operator 1",
+        "Companies 12 and 13",
+    ],
+)
+def test_formatted_plural_and_numbered_placeholders_block(tmp_path, text):
+    result = run_check(tmp_path, text)
+    assert result.returncode == 1
+    assert "BLOCK memo.md:1" in result.stdout
+
+
+@pytest.mark.parametrize(
+    "text", ["Operators overall", "Company analysis", "Operator **x**", "Operator 12A"]
+)
+def test_placeholder_extensions_retain_word_and_case_boundaries(tmp_path, text):
+    result = run_check(tmp_path, text)
+    assert result.returncode == 0
+    assert "BLOCK" not in result.stdout

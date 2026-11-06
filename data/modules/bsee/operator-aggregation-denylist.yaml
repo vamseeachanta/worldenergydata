@@ -133,8 +133,24 @@ operator_aliases:
 - pattern: OXY
   case_sensitive: true
   severity: block
+- pattern: BP Exploration
+  case_sensitive: false
+  severity: block
+- pattern: Walter Oil and Gas
+  case_sensitive: false
+  severity: block
+- pattern: Exxon
+  case_sensitive: true
+  severity: block
+- pattern: Kosmos
+  case_sensitive: true
+  severity: block
+- pattern: Oxy
+  case_sensitive: true
+  severity: block
 placeholder_patterns:
-- pattern: (?i:operator|company)\s+[A-Z]
+- pattern: >-
+    (?i:operators?|compan(?:y|ies))(?:\s+|[-:]\s*)[*_'\"]*(?:[A-Z]|[0-9]+)[*_'\"]*
   case_sensitive: true
   severity: block
   regex: true
