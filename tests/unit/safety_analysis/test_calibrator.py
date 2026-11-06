@@ -10,7 +10,7 @@ Covers:
     TestCalibratedMatrix    (4 tests)
     TestIntegrationWithSkill (3 tests)
 
-Total: 43 tests
+Total: 81 cases, including 36 source-expression guard cases.
 """
 
 from __future__ import annotations
@@ -440,6 +440,52 @@ def _assert_operator_values(value):
             _assert_operator_values(item)
 
 
+def _is_operator_target(target):
+    if isinstance(target, ast.Name):
+        return target.id in _OPERATOR_FIELDS
+    if isinstance(target, ast.Attribute):
+        return target.attr in _OPERATOR_FIELDS
+    return (
+        isinstance(target, ast.Subscript)
+        and isinstance(target.slice, ast.Constant)
+        and target.slice.value in _OPERATOR_FIELDS
+    )
+
+
+def _assert_source_operator_codenames(tree, relative_path):
+    """Check literal operator fields without including their values in errors."""
+    expressions = []
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Dict):
+            expressions.extend(
+                value
+                for key, value in zip(node.keys, node.values)
+                if isinstance(key, ast.Constant) and key.value in _OPERATOR_FIELDS
+            )
+        elif isinstance(node, ast.keyword) and node.arg in _OPERATOR_FIELDS:
+            expressions.append(node.value)
+        elif isinstance(node, ast.Assign):
+            if any(_is_operator_target(target) for target in node.targets):
+                expressions.append(node.value)
+        elif isinstance(node, ast.AnnAssign) and _is_operator_target(node.target):
+            if node.value is not None:
+                expressions.append(node.value)
+    source_fields = []
+    for expression in expressions:
+        for node in ast.walk(expression):
+            if isinstance(node, ast.Constant) and isinstance(node.value, str):
+                if not _OPERATOR_PATTERN.fullmatch(node.value):
+                    raise AssertionError(
+                        (
+                            relative_path.as_posix(),
+                            node.lineno,
+                            "Operator literal does not follow the codename contract",
+                        )
+                    )
+                source_fields.append(node)
+    return source_fields
+
+
 def test_package_source_and_fixtures_use_operator_codenames():
     """Issue #1240: scan all package source and safety-specific fixture trees.
 
@@ -457,30 +503,9 @@ def test_package_source_and_fixtures_use_operator_codenames():
     for path in sorted(paths):
         if path.suffix == ".py":
             tree = ast.parse(path.read_text(encoding="utf-8"))
-            expressions = []
-            for node in ast.walk(tree):
-                if isinstance(node, ast.Dict):
-                    expressions.extend(
-                        value
-                        for key, value in zip(node.keys, node.values)
-                        if isinstance(key, ast.Constant)
-                        and key.value in _OPERATOR_FIELDS
-                    )
-                elif isinstance(node, ast.Assign):
-                    if any(
-                        isinstance(target, ast.Name) and target.id in _OPERATOR_FIELDS
-                        for target in node.targets
-                    ):
-                        expressions.append(node.value)
-            for expression in expressions:
-                for node in ast.walk(expression):
-                    if isinstance(node, ast.Constant) and isinstance(node.value, str):
-                        assert _OPERATOR_PATTERN.fullmatch(node.value), (
-                            path.relative_to(repo),
-                            node.lineno,
-                            "Operator literal does not follow the codename contract",
-                        )
-                        source_fields.append(node)
+            source_fields.extend(
+                _assert_source_operator_codenames(tree, path.relative_to(repo))
+            )
         elif path.suffix == ".csv":
             with path.open(encoding="utf-8", newline="") as stream:
                 _assert_operator_values(list(csv.DictReader(stream)))
@@ -496,3 +521,33 @@ def test_operator_fixture_guard_rejects_generic_non_codename():
     with pytest.raises(AssertionError, match="codename contract"):
         _assert_operator_values({"operator": "UNLABELLED"})
     _assert_operator_values({"operator": "OPERATOR-AA"})
+
+
+@pytest.mark.parametrize("field", sorted(_OPERATOR_FIELDS))
+@pytest.mark.parametrize(
+    "source",
+    [
+        '{{"{field}": "{label}"}}',
+        '{field} = "{label}"',
+        'CalibrationRecord({field}="{label}")',
+        'dict({field}="{label}")',
+        'df["{field}"] = "{label}"',
+        'self.{field} = "{label}"',
+        '{field}: str = "{label}"',
+        'df["{field}"]: str = "{label}"',
+        'self.{field}: str = "{label}"',
+    ],
+)
+def test_operator_source_guard_rejects_generic_non_codename(field, source):
+    """Every supported source form rejects an invalid label and accepts a codename."""
+    relative_path = Path("fixtures") / "example.py"
+    invalid = ast.parse(source.format(field=field, label="UNLABELLED"))
+    with pytest.raises(AssertionError, match="codename contract") as error:
+        _assert_source_operator_codenames(invalid, relative_path)
+    assert error.value.args[0] == (
+        "fixtures/example.py",
+        1,
+        "Operator literal does not follow the codename contract",
+    )
+    valid = ast.parse(source.format(field=field, label="OPERATOR-AA"))
+    assert len(_assert_source_operator_codenames(valid, relative_path)) == 1

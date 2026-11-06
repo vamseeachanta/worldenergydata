@@ -257,14 +257,12 @@ class TestJsonExport:
         https://pandas.pydata.org/pandas-docs/version/2.3/reference/api/pandas.DataFrame.to_json.html
         The synthetic naive date 1970-01-02 is one day after the Unix epoch:
         24 hours * 60 minutes * 60 seconds * 1000 milliseconds = 86400000.
-        The default records encoder produces that integer. The export must
-        instead produce "1970-01-02T00:00:00.000" and null for pd.NaT.
+        The export must produce "1970-01-02T00:00:00.000" and null for pd.NaT.
         """
         frame = pd.DataFrame({"date": [pd.Timestamp("1970-01-02"), pd.NaT]})
-        assert frame.to_json(orient="records") == ('[{"date":86400000},{"date":null}]')
         result = FakeResult(data=frame, summary={})
         manifest = export_report(result, formats=["json"], output_dir=str(tmp_path))
-        payload = json.loads(Path(manifest.files["json"]).read_text())
+        payload = json.loads(Path(manifest.files["json"]).read_text(encoding="utf-8"))
         assert payload["data"] == [
             {"date": "1970-01-02T00:00:00.000"},
             {"date": None},
@@ -312,13 +310,13 @@ class TestJsonExport:
 
     def test_json_contains_data_and_summary_keys(self, simple_result, tmp_dir):
         manifest = export_report(simple_result, formats=["json"], output_dir=tmp_dir)
-        payload = json.loads(Path(manifest.files["json"]).read_text())
+        payload = json.loads(Path(manifest.files["json"]).read_text(encoding="utf-8"))
         assert "data" in payload
         assert "summary" in payload
 
     def test_json_data_is_list_of_records(self, simple_result, tmp_dir):
         manifest = export_report(simple_result, formats=["json"], output_dir=tmp_dir)
-        payload = json.loads(Path(manifest.files["json"]).read_text())
+        payload = json.loads(Path(manifest.files["json"]).read_text(encoding="utf-8"))
         assert isinstance(payload["data"], list)
         assert len(payload["data"]) == len(simple_result.data)
 
@@ -369,7 +367,7 @@ class TestJsonExport:
 
     def test_json_summary_preserved(self, simple_result, tmp_dir):
         manifest = export_report(simple_result, formats=["json"], output_dir=tmp_dir)
-        payload = json.loads(Path(manifest.files["json"]).read_text())
+        payload = json.loads(Path(manifest.files["json"]).read_text(encoding="utf-8"))
         assert payload["summary"]["fields_analysed"] == 3
 
 
@@ -391,7 +389,7 @@ class TestPdfHtmlFallback:
 
     def test_pdf_html_is_valid_html(self, simple_result, tmp_dir):
         manifest = export_report(simple_result, formats=["pdf"], output_dir=tmp_dir)
-        content = Path(manifest.files["html_report"]).read_text()
+        content = Path(manifest.files["html_report"]).read_text(encoding="utf-8")
         assert "<html" in content
         assert "</html>" in content
 
