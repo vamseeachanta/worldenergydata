@@ -119,18 +119,35 @@ def _transaction_body(package: dict) -> str:
             numerator = inputs["consideration"]
             denominator = inputs["denominator"]
             input_values = (
-                f'{_quantity(numerator)} {numerator["unit"]} / '
-                f'{_quantity(denominator)} {denominator["unit"]}'
+                f'{_quantity(numerator)} {numerator["unit"]} '
+                f'(as of {numerator.get("as_of", "unavailable")}; '
+                f'effective {numerator.get("effective_date", "unavailable")}) / '
+                f'{_quantity(denominator)} {denominator["unit"]} '
+                f'(as of {denominator.get("as_of", "unavailable")})'
             )
             rows.append(
                 [
-                    basis,
+                    (
+                        basis + ": " + numerator["basis_label"]
+                        if numerator.get("basis_label")
+                        else basis
+                    ),
                     metric,
                     value,
                     result["unit"],
                     input_values,
-                    result["reason"]
-                    or "Same basis and acquired-interest subject; no return threshold",
+                    "; ".join(
+                        filter(
+                            None,
+                            (
+                                result["reason"]
+                                or "Same basis and acquired-interest subject; "
+                                "no return threshold",
+                                numerator.get("reason"),
+                                numerator.get("comparison_note"),
+                            ),
+                        )
+                    ),
                 ]
             )
     facts = package["input_echo"]
@@ -151,9 +168,14 @@ def _transaction_body(package: dict) -> str:
         )
         + f'<p>Closing: {_text(package["transaction"]["closing_status"])}</p>'
         + _table(
-            ["Subject", "Sold working interest (fraction)", "Source locator"],
+            ["Basis", "Subject", "Working interest (fraction)", "Source locator"],
             [
-                [fact["subject"], fact["value"], fact["citation"]["locator"]]
+                [
+                    fact["basis"],
+                    fact["subject"],
+                    fact["value"],
+                    fact["citation"]["locator"],
+                ]
                 for fact in package["transaction"]["working_interests"]
             ],
         )

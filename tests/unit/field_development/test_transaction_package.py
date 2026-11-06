@@ -166,12 +166,12 @@ def test_supported_membership_has_an_available_source_and_locator():
         citation = row["transaction_membership_citation"]
         if row["transaction_membership_status"] == "SOURCE_SUPPORTED":
             supported += 1
-            assert citation["source_id"] == "shell_release"
+            assert citation["source_id"] in {"shell_release", "talos_release"}
             assert citation["locator"]
             assert data["sources"][citation["source_id"]]["access"] == "available"
         else:
             assert citation is None
-    assert supported == 2
+    assert supported == 6
 
 
 def test_source_digest_mismatch_refused(tmp_path):
@@ -497,3 +497,68 @@ def test_non_finite_ratio_cannot_receive_an_evaluated_status(ranged):
         amount.update(value=None, range=["1e1000", "2e1000"])
     with pytest.raises(ValueError, match="finite"):
         valuation_metrics(amount, observation(8, "boe"), observation(4, "boe/d"))
+
+
+def test_buyer_membership_and_working_interests_match_announced_scope():
+    data = json.loads(INPUT.read_text(encoding="utf-8"))
+    package = build_package(data, ROOT)
+    supported = [
+        row
+        for row in package["lifecycle"]["assets"]
+        if row["transaction_membership_status"] == "SOURCE_SUPPORTED"
+    ]
+    assert len(supported) == 6
+    for row in supported:
+        assert "preferential right" in row["transaction_membership_reason"]
+    satellites = [
+        row
+        for row in supported
+        if row["transaction_membership_citation"]["source_id"] == "talos_release"
+    ]
+    assert len(satellites) == 4
+    assert all(
+        "four associated fields" in row["transaction_membership_citation"]["locator"]
+        for row in satellites
+    )
+    interests = [
+        fact
+        for fact in package["transaction"]["working_interests"]
+        if fact["basis"] == "talos_announced"
+    ]
+    assert sorted(fact["value"] for fact in interests) == [0.25, 0.5]
+    assert all(fact["citation"]["source_id"] == "talos_release" for fact in interests)
+
+
+def test_ratio_rows_show_dates_and_deposit_exclusion(tmp_path):
+    package = build_package(json.loads(INPUT.read_text(encoding="utf-8")), ROOT)
+    write_package(package, tmp_path, ROOT)
+    text = (tmp_path / "index.html").read_text(encoding="utf-8")
+    rows = [
+        row
+        for row in text.split("<tr>")
+        if "usd_per_boe" in row or "usd_per_flowing_boe_day" in row
+    ]
+    buyer_rows = [row for row in rows if "talos_announced" in row or "talos_net" in row]
+    assert len(buyer_rows) == 4
+    for row in buyer_rows:
+        assert "2026-06-30" in row
+        assert "2025-07-01" in row
+        assert "2025-12-31" in row or "2026-03-31" in row
+        assert "six months" in row
+        if "talos_net" in row:
+            assert "net cash excluding the USD 42.5 million deposit" in row
+
+
+def test_upside_terms_have_provenance_but_no_invented_payment():
+    data = json.loads(INPUT.read_text(encoding="utf-8"))
+    term = build_package(data, ROOT)["transaction"]["terms"]["upside"]
+    assert term["sharing_fraction"] == 0.5
+    assert term["effective_from"] == "closing"
+    assert term["effective_through"] == "2027-12-31"
+    assert term["realized_price_threshold_usd_per_bbl"] == 60
+    assert term["citation"]["source_id"] == "talos_release"
+    assert term["status"] == "NOT_EVALUATED"
+    assert term["value"] is None
+    data["transaction"]["terms"]["upside"]["citation"]["source_id"] = "bp_expansion"
+    with pytest.raises(ValueError, match="unavailable"):
+        build_package(data, ROOT)

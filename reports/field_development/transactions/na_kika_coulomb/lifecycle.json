@@ -20,7 +20,7 @@
         "source_id": "shell_release",
         "locator": "meta[name=description]: interests included in the sale"
       },
-      "transaction_membership_reason": "Named interest in the seller announcement; closing remains unverified",
+      "transaction_membership_reason": "Announced membership; closing remains unverified. Exercise of the BP preferential right would remove the platform and four associated field interests, leaving only the Coulomb interest.",
       "catalog_host_concept": null,
       "catalog_discovery": null,
       "catalog_first_production": null,
@@ -41,9 +41,12 @@
       "host_concept_citation": null,
       "field_concept": null,
       "field_concept_citation": null,
-      "transaction_membership_status": "NOT_EVALUATED",
-      "transaction_membership_citation": null,
-      "transaction_membership_reason": "Sale membership for this entry is not established by the cited input",
+      "transaction_membership_status": "SOURCE_SUPPORTED",
+      "transaction_membership_citation": {
+        "source_id": "talos_release",
+        "locator": "GULF OF AMERICA BOLT-ON ACQUISITION: four associated fields, including Kepler, Ariel, Fourier, and Herschel"
+      },
+      "transaction_membership_reason": "Announced membership; closing remains unverified. Exercise of the BP preferential right would remove the platform and four associated field interests, leaving only the Coulomb interest.",
       "catalog_host_concept": "semisub_fps",
       "catalog_discovery": "Jun 1995",
       "catalog_first_production": "Apr 2004",
@@ -81,7 +84,7 @@
         "source_id": "shell_release",
         "locator": "meta[name=description]: interests included in the sale"
       },
-      "transaction_membership_reason": "Named interest in the seller announcement; closing remains unverified",
+      "transaction_membership_reason": "Announced membership; closing remains unverified. Exercise of the BP preferential right would remove the platform and four associated field interests, leaving only the Coulomb interest.",
       "catalog_host_concept": "semisub_fps",
       "catalog_discovery": "Jan 1988",
       "catalog_first_production": "Jun 2004",
@@ -137,9 +140,12 @@
       "host_concept_citation": null,
       "field_concept": null,
       "field_concept_citation": null,
-      "transaction_membership_status": "NOT_EVALUATED",
-      "transaction_membership_citation": null,
-      "transaction_membership_reason": "Sale membership for this entry is not established by the cited input",
+      "transaction_membership_status": "SOURCE_SUPPORTED",
+      "transaction_membership_citation": {
+        "source_id": "talos_release",
+        "locator": "GULF OF AMERICA BOLT-ON ACQUISITION: four associated fields, including Kepler, Ariel, Fourier, and Herschel"
+      },
+      "transaction_membership_reason": "Announced membership; closing remains unverified. Exercise of the BP preferential right would remove the platform and four associated field interests, leaving only the Coulomb interest.",
       "catalog_host_concept": "semisub_fps",
       "catalog_discovery": "Jul 1989",
       "catalog_first_production": "Jan 2003",
@@ -166,9 +172,12 @@
       "host_concept_citation": null,
       "field_concept": null,
       "field_concept_citation": null,
-      "transaction_membership_status": "NOT_EVALUATED",
-      "transaction_membership_citation": null,
-      "transaction_membership_reason": "Sale membership for this entry is not established by the cited input",
+      "transaction_membership_status": "SOURCE_SUPPORTED",
+      "transaction_membership_citation": {
+        "source_id": "talos_release",
+        "locator": "GULF OF AMERICA BOLT-ON ACQUISITION: four associated fields, including Kepler, Ariel, Fourier, and Herschel"
+      },
+      "transaction_membership_reason": "Announced membership; closing remains unverified. Exercise of the BP preferential right would remove the platform and four associated field interests, leaving only the Coulomb interest.",
       "catalog_host_concept": "semisub_fps",
       "catalog_discovery": "Jun 1996",
       "catalog_first_production": "Dec 2003",
@@ -195,9 +204,12 @@
       "host_concept_citation": null,
       "field_concept": null,
       "field_concept_citation": null,
-      "transaction_membership_status": "NOT_EVALUATED",
-      "transaction_membership_citation": null,
-      "transaction_membership_reason": "Sale membership for this entry is not established by the cited input",
+      "transaction_membership_status": "SOURCE_SUPPORTED",
+      "transaction_membership_citation": {
+        "source_id": "talos_release",
+        "locator": "GULF OF AMERICA BOLT-ON ACQUISITION: four associated fields, including Kepler, Ariel, Fourier, and Herschel"
+      },
+      "transaction_membership_reason": "Announced membership; closing remains unverified. Exercise of the BP preferential right would remove the platform and four associated field interests, leaving only the Coulomb interest.",
       "catalog_host_concept": "semisub_fps",
       "catalog_discovery": "Dec 1987",
       "catalog_first_production": "Dec 2003",

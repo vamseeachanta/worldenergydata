@@ -259,6 +259,9 @@ def build_package(data: dict, root: Path) -> dict:
         if value is None or value > 1:
             raise ValueError("Working interest must be between zero and one")
         _verify_citation(fact["citation"], sources)
+    for term in data["transaction"]["terms"].values():
+        if term.get("citation") is not None:
+            _verify_citation(term["citation"], sources)
     metrics = {}
     for basis, facts in data["bases"].items():
         for fact in facts.values():

@@ -18,10 +18,10 @@
       "url": "https://www.prnewswire.com/news-releases/talos-energy-announces-strategic-acquisition-of-gulf-of-america-deepwater-oil-assets-302815021.html",
       "edition": "2026-06-30 announcement",
       "http_status": 200,
-      "retrieved_at": "2026-11-06T06:28:12.327396Z",
+      "retrieved_at": "2026-11-06T10:33:35.951741+00:00",
       "access": "available",
       "coverage": "Issuer release distributed by the publisher; full acquisition section read",
-      "sha256": "98085a7de068108d744c02a0828e857b848f7460eb2fdc321d25aa6b4b25ab04",
+      "sha256": "a17d8d4bb502c1e56dfb45d02ae6b318b9be5912c95b58ee7cbce46afb054115",
       "retention": "Local source response retained separately; not a repository backup",
       "readiness": "partial",
       "original_url": "https://www.talosenergy.com/investor-relations/news/news-details/2026/Talos-Energy-Announces-Strategic-Acquisition-of-Gulf-of-America-Deepwater-Oil-Assets/default.aspx",
@@ -99,6 +99,28 @@
           "source_id": "shell_release",
           "locator": "meta[name=description]: wholly owned tieback"
         }
+      },
+      {
+        "value": 0.5,
+        "unit": "fraction",
+        "basis": "talos_announced",
+        "subject": "Coulomb field",
+        "as_of": "2026-06-30",
+        "citation": {
+          "source_id": "talos_release",
+          "locator": "GULF OF AMERICA BOLT-ON ACQUISITION: 50% working interest and operatorship in the Coulomb field"
+        }
+      },
+      {
+        "value": 0.25,
+        "unit": "fraction",
+        "basis": "talos_announced",
+        "subject": "Na Kika platform and four associated fields",
+        "as_of": "2026-06-30",
+        "citation": {
+          "source_id": "talos_release",
+          "locator": "GULF OF AMERICA BOLT-ON ACQUISITION: 25% non-operated working interest in the platform and four associated fields"
+        }
       }
     ],
     "terms": {
@@ -111,8 +133,15 @@
       "upside": {
         "status": "NOT_EVALUATED",
         "value": null,
-        "reason": "Contingent-payment triggers and amounts are not available in the accessible metadata",
-        "source_id": "shell_release"
+        "reason": "A 50% upside sharing agreement applies from closing through year-end 2027 if realized price exceeds USD 60/Bbl, subject to commodity-price-based thresholds and other contingencies. Payment amount remains NOT_EVALUATED.",
+        "sharing_fraction": 0.5,
+        "effective_from": "closing",
+        "effective_through": "2027-12-31",
+        "realized_price_threshold_usd_per_bbl": 60,
+        "citation": {
+          "source_id": "talos_release",
+          "locator": "GULF OF AMERICA BOLT-ON ACQUISITION: other commercial terms; upside sharing agreement"
+        }
       },
       "orri": {
         "status": "NOT_EVALUATED",
@@ -175,7 +204,9 @@
           "source_id": "talos_release",
           "locator": "Opening paragraph: cash consideration net to Talos; subject to adjustments"
         },
-        "approximate": false
+        "approximate": false,
+        "effective_date": "2025-07-01",
+        "comparison_note": "Reserves at year-end 2025 post-date the effective date by six months; production is the 2026-Q1 average. These are dated screening comparisons, not contemporaneous acquisition valuations."
       },
       "reserves": {
         "value": 23000000,
@@ -235,9 +266,11 @@
           450000000,
           500000000
         ],
-        "reason": "Expected final net cash range after estimated interim cash flow; excludes the credited deposit",
+        "reason": "Expected net cash excluding the USD 42.5 million deposit, after estimated interim cash flow; not the total cash outlay",
         "effective_date": "2025-07-01",
-        "excludes_deposit_usd": 42500000
+        "excludes_deposit_usd": 42500000,
+        "comparison_note": "Reserves at year-end 2025 post-date the effective date by six months; production is the 2026-Q1 average. These are dated screening comparisons, not contemporaneous acquisition valuations.",
+        "basis_label": "net cash excluding the USD 42.5 million deposit"
       },
       "reserves": {
         "value": 23000000,
@@ -318,7 +351,7 @@
         "source_id": "shell_release",
         "locator": "meta[name=description]: interests included in the sale"
       },
-      "transaction_membership_reason": "Named interest in the seller announcement; closing remains unverified"
+      "transaction_membership_reason": "Announced membership; closing remains unverified. Exercise of the BP preferential right would remove the platform and four associated field interests, leaving only the Coulomb interest."
     },
     {
       "name": "Ariel",
@@ -329,9 +362,12 @@
       "host_concept_citation": null,
       "field_concept": null,
       "field_concept_citation": null,
-      "transaction_membership_status": "NOT_EVALUATED",
-      "transaction_membership_citation": null,
-      "transaction_membership_reason": "Sale membership for this entry is not established by the cited input"
+      "transaction_membership_status": "SOURCE_SUPPORTED",
+      "transaction_membership_citation": {
+        "source_id": "talos_release",
+        "locator": "GULF OF AMERICA BOLT-ON ACQUISITION: four associated fields, including Kepler, Ariel, Fourier, and Herschel"
+      },
+      "transaction_membership_reason": "Announced membership; closing remains unverified. Exercise of the BP preferential right would remove the platform and four associated field interests, leaving only the Coulomb interest."
     },
     {
       "name": "Coulomb",
@@ -353,7 +389,7 @@
         "source_id": "shell_release",
         "locator": "meta[name=description]: interests included in the sale"
       },
-      "transaction_membership_reason": "Named interest in the seller announcement; closing remains unverified"
+      "transaction_membership_reason": "Announced membership; closing remains unverified. Exercise of the BP preferential right would remove the platform and four associated field interests, leaving only the Coulomb interest."
     },
     {
       "name": "East Anstey",
@@ -377,9 +413,12 @@
       "host_concept_citation": null,
       "field_concept": null,
       "field_concept_citation": null,
-      "transaction_membership_status": "NOT_EVALUATED",
-      "transaction_membership_citation": null,
-      "transaction_membership_reason": "Sale membership for this entry is not established by the cited input"
+      "transaction_membership_status": "SOURCE_SUPPORTED",
+      "transaction_membership_citation": {
+        "source_id": "talos_release",
+        "locator": "GULF OF AMERICA BOLT-ON ACQUISITION: four associated fields, including Kepler, Ariel, Fourier, and Herschel"
+      },
+      "transaction_membership_reason": "Announced membership; closing remains unverified. Exercise of the BP preferential right would remove the platform and four associated field interests, leaving only the Coulomb interest."
     },
     {
       "name": "Herschel",
@@ -390,9 +429,12 @@
       "host_concept_citation": null,
       "field_concept": null,
       "field_concept_citation": null,
-      "transaction_membership_status": "NOT_EVALUATED",
-      "transaction_membership_citation": null,
-      "transaction_membership_reason": "Sale membership for this entry is not established by the cited input"
+      "transaction_membership_status": "SOURCE_SUPPORTED",
+      "transaction_membership_citation": {
+        "source_id": "talos_release",
+        "locator": "GULF OF AMERICA BOLT-ON ACQUISITION: four associated fields, including Kepler, Ariel, Fourier, and Herschel"
+      },
+      "transaction_membership_reason": "Announced membership; closing remains unverified. Exercise of the BP preferential right would remove the platform and four associated field interests, leaving only the Coulomb interest."
     },
     {
       "name": "Kepler",
@@ -403,9 +445,12 @@
       "host_concept_citation": null,
       "field_concept": null,
       "field_concept_citation": null,
-      "transaction_membership_status": "NOT_EVALUATED",
-      "transaction_membership_citation": null,
-      "transaction_membership_reason": "Sale membership for this entry is not established by the cited input"
+      "transaction_membership_status": "SOURCE_SUPPORTED",
+      "transaction_membership_citation": {
+        "source_id": "talos_release",
+        "locator": "GULF OF AMERICA BOLT-ON ACQUISITION: four associated fields, including Kepler, Ariel, Fourier, and Herschel"
+      },
+      "transaction_membership_reason": "Announced membership; closing remains unverified. Exercise of the BP preferential right would remove the platform and four associated field interests, leaving only the Coulomb interest."
     },
     {
       "name": "Herschel Expansion",
@@ -434,6 +479,11 @@
       "Evidence refresh",
       "2026-11-06",
       "Capture accessible buyer evidence, move lifecycle claims into cited input and regenerate retained outputs."
+    ],
+    [
+      "Scope and basis correction",
+      "2026-11-06",
+      "Complete source-supported membership and buyer working interests; expose deposit exclusions, input dates and upside terms."
     ]
   ]
 }

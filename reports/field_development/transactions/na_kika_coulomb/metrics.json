@@ -69,7 +69,9 @@
               "source_id": "talos_release",
               "locator": "Opening paragraph: cash consideration net to Talos; subject to adjustments"
             },
-            "approximate": false
+            "approximate": false,
+            "effective_date": "2025-07-01",
+            "comparison_note": "Reserves at year-end 2025 post-date the effective date by six months; production is the 2026-Q1 average. These are dated screening comparisons, not contemporaneous acquisition valuations."
           },
           "denominator": {
             "value": 23000000,
@@ -103,7 +105,9 @@
               "source_id": "talos_release",
               "locator": "Opening paragraph: cash consideration net to Talos; subject to adjustments"
             },
-            "approximate": false
+            "approximate": false,
+            "effective_date": "2025-07-01",
+            "comparison_note": "Reserves at year-end 2025 post-date the effective date by six months; production is the 2026-Q1 average. These are dated screening comparisons, not contemporaneous acquisition valuations."
           },
           "denominator": {
             "value": 16000,
@@ -143,9 +147,11 @@
               450000000,
               500000000
             ],
-            "reason": "Expected final net cash range after estimated interim cash flow; excludes the credited deposit",
+            "reason": "Expected net cash excluding the USD 42.5 million deposit, after estimated interim cash flow; not the total cash outlay",
             "effective_date": "2025-07-01",
-            "excludes_deposit_usd": 42500000
+            "excludes_deposit_usd": 42500000,
+            "comparison_note": "Reserves at year-end 2025 post-date the effective date by six months; production is the 2026-Q1 average. These are dated screening comparisons, not contemporaneous acquisition valuations.",
+            "basis_label": "net cash excluding the USD 42.5 million deposit"
           },
           "denominator": {
             "value": 23000000,
@@ -188,9 +194,11 @@
               450000000,
               500000000
             ],
-            "reason": "Expected final net cash range after estimated interim cash flow; excludes the credited deposit",
+            "reason": "Expected net cash excluding the USD 42.5 million deposit, after estimated interim cash flow; not the total cash outlay",
             "effective_date": "2025-07-01",
-            "excludes_deposit_usd": 42500000
+            "excludes_deposit_usd": 42500000,
+            "comparison_note": "Reserves at year-end 2025 post-date the effective date by six months; production is the 2026-Q1 average. These are dated screening comparisons, not contemporaneous acquisition valuations.",
+            "basis_label": "net cash excluding the USD 42.5 million deposit"
           },
           "denominator": {
             "value": 16000,
