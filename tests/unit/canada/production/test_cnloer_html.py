@@ -1,5 +1,7 @@
 """Offline synthetic modal tests; no regulator production volumes are retained."""
 
+from sys import float_info
+
 import pandas as pd
 import pytest
 
@@ -168,3 +170,101 @@ def test_parser_excludes_numeric_superscript_annotations():
     frame = parse(html)
     assert frame.iloc[0].oil_bbl == pytest.approx(100 * M3_TO_BBL)
     assert frame.iloc[0].gas_mcf == pytest.approx(10 * E3M3_TO_MCF)
+
+
+@pytest.mark.parametrize("missing", ["table", "row", "cell", "modal"])
+def test_parser_rejects_incomplete_production_markup(missing):
+    """Complete monthly values cannot establish a complete source table.
+
+    Structural basis: C-NLOER Statistical Information, pshf97–pshf01,
+    https://www.cnloer.ca/information/statistics/ (opened 2026-10-19).
+    Each modal encloses a table of explicitly terminated rows and cells;
+    the source's mismatched th/td endings remain supported.
+    """
+    html = synthetic_html()
+    if missing == "table":
+        html = html.rsplit("</table>", 1)[0]
+    elif missing == "row":
+        html = html.replace("Amendment Date*</td></tr>", "Amendment Date*</td>", 1)
+    elif missing == "cell":
+        html = html.replace("100</strong></td>", "100</strong>", 1)
+    else:
+        html = html.rsplit("</div>", 1)[0]
+    with pytest.raises(CnloerParseError, match="incomplete production"):
+        parse(html)
+
+
+def test_parser_ignores_incomplete_unrelated_page_markup():
+    """Only the source production modals establish the backfill schema."""
+    expected = parse(synthetic_html())
+    pd.testing.assert_frame_equal(
+        parse(synthetic_html() + "<div><table><tr><td>Unrelated"), expected
+    )
+
+
+@pytest.mark.parametrize(
+    "old,new",
+    [
+        (">Production</td>", ">Injection</td>"),
+        (">Monthly Details</td>", ">Annual Details</td>"),
+        (">Amendment Date*</td>", ">Unknown</td>"),
+    ],
+)
+def test_parser_rejects_wrong_table_section(old, new):
+    """Header oracle: C-NLOER statistics pshf97–pshf01, opened 2026-10-19.
+
+    The production grouping, monthly section and amendment header establish
+    the meaning of the otherwise valid numeric cells; changing one invalidates
+    that schema. No production volume or conversion coefficient is used.
+    """
+    html = synthetic_html().replace(old, new, 1)
+    with pytest.raises(CnloerParseError, match="unexpected production.*header"):
+        parse(html)
+
+
+def test_parser_accepts_whitespace_in_section_headers():
+    html = synthetic_html().replace(
+        ">Monthly Details</td>", ">  Monthly\nDetails  </td>"
+    )
+    pd.testing.assert_frame_equal(parse(html), parse(synthetic_html()))
+
+
+@pytest.mark.parametrize("overflow", ["input", "conversion"])
+@pytest.mark.parametrize("old", ["<strong>100</strong>", "<td>10</td>", "<td>50</td>"])
+def test_parser_rejects_nonfinite_monthly_volumes(overflow, old):
+    """Hand calculation: max_float times a factor greater than one overflows.
+
+    Python's sys.float_info supplies the runtime floating-point bound; appending
+    a decimal zero multiplies it by ten, overflowing on input instead.
+    The existing units_catalog.md Oil, Gas and Water volume tables specify
+    factors greater than one. No engineering acceptance threshold is added.
+    """
+    value = format(float_info.max, "f")
+    if overflow == "input":
+        value = value.split(".")[0] + "0"
+    replacement = value if old.startswith("<strong>") else f"<td>{value}</td>"
+    with pytest.raises(CnloerParseError, match="nonfinite.*production"):
+        parse(synthetic_html().replace(old, replacement, 1))
+
+
+def test_parser_preserves_zero_month_and_independent_conversions():
+    """Independent hand calculation using common/units_catalog.md tables.
+
+    Oil: 100 m3 * 6.2898 = 628.98 bbl; water: 50 * 6.2898 = 314.49 bbl.
+    Gas: 10 thousand m3 * 35.3147 scf/m3 = 353.147 Mcf, since the
+    two factors of one thousand cancel. These are the catalog's Oil, Water
+    and Gas volume factors, not imports from the parser under test.
+    Synthetic zero January plus eleven positive months must retain January;
+    five complete calendar years contain 5 * 12 = 60 unique periods.
+    """
+    html = synthetic_html().replace(
+        "<strong>100</strong></td><td>10</td><td>50</td>",
+        "0</td><td>0</td><td>0</td>",
+        1,
+    )
+    frame = parse(html)
+    volumes = ["oil_bbl", "gas_mcf", "water_bbl"]
+    assert len(frame) == 60
+    assert not frame.duplicated(["year", "month"]).any()
+    assert frame.iloc[0][volumes].tolist() == [0.0, 0.0, 0.0]
+    assert frame.iloc[1][volumes].tolist() == pytest.approx([628.98, 353.147, 314.49])

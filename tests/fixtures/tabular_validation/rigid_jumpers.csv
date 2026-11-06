@@ -1,0 +1,8 @@
+case,component_id,manufacturer,od_in,wall_thickness_in,length_ft,material_grade,pressure_rating_psi,weight_air_kips,data_source,notes
+clean,synthetic,NA,2,0.5,10,NA,3,1,synthetic,NA
+positive_infinity,synthetic,NA,inf,0.5,10,NA,3,1,synthetic,NA
+not_a_number,synthetic,NA,NaN,0.5,10,NA,3,1,synthetic,NA
+negative_weight,synthetic,NA,2,0.5,10,NA,3,-1,synthetic,NA
+infinite_weight,synthetic,NA,2,0.5,10,NA,3,inf,synthetic,NA
+invalid_numeric_text,synthetic,NA,2,0.5,10,NA,3,NA,synthetic,NA
+absent_weight,synthetic,NA,2,0.5,10,NA,3,,synthetic,

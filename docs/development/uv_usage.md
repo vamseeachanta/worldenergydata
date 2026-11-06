@@ -15,6 +15,35 @@ This guide explains how to use UV for package management, development, and deplo
 
 ## Quick Start
 
+### Dependency-free workspace layout smoke
+
+From the repository root, run this named example with an already installed
+`uv` and Python interpreter. It uses only the Python standard library:
+
+```bash
+# Example: uv-workspace-layout-smoke
+uv run --no-project --no-sync python - <<'PY'
+from pathlib import Path
+
+required_files = (
+    Path("pyproject.toml"),
+    Path("packages/worldenergydata-core/pyproject.toml"),
+)
+missing_files = [str(path) for path in required_files if not path.is_file()]
+if missing_files:
+    raise SystemExit("Missing workspace files: " + ", ".join(missing_files))
+print("workspace-layout-ok")
+PY
+```
+
+This validates uv invocation and workspace layout only, not installed application
+dependencies. `--no-project` skips project discovery, and `--no-sync` leaves
+dependencies untouched. Use an available local Python interpreter to avoid
+interpreter downloads. The expected output is `workspace-layout-ok`; a missing
+file causes a nonzero exit and lists the missing paths.
+
+For the full development environment, use the setup commands below.
+
 ```bash
 
 # Setup development environment
