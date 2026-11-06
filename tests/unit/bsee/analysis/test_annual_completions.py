@@ -80,8 +80,8 @@ def test_annual_area_depth_counts_match_hand_tally():
         (cell["year"], cell["planning_area"], cell["water_depth_band"], cell["count"])
         for cell in result["counts"]
     ] == [
-        (2020, "Area A", "1000-3000 ft", 2),
         (2020, "Area A", "below 1000 ft", 2),
+        (2020, "Area A", "1000-3000 ft", 2),
         (2020, "Area B", "3000-5000 ft", 1),
         (2020, "Area B", "5000-10000 ft", 1),
         (2021, "Area A", "at least 10000 ft", 1),
@@ -118,6 +118,16 @@ def test_duplicate_completion_ids_are_rejected(changed):
 def test_completion_ids_must_be_explicit_nonempty_strings(identifier):
     with pytest.raises(ValueError, match="completion_id"):
         aggregate([completion(identifier)])
+
+
+@pytest.mark.parametrize(
+    "identifier", [" completion-a", "completion-a ", "\tcompletion-a\n"]
+)
+@pytest.mark.parametrize("with_existing", [False, True])
+def test_completion_ids_reject_surrounding_whitespace(identifier, with_existing):
+    rows = [completion()] if with_existing else []
+    with pytest.raises(ValueError, match="completion_id"):
+        aggregate(rows + [completion(identifier)])
 
 
 @pytest.mark.parametrize(
@@ -202,10 +212,56 @@ def test_caller_supplied_depth_bins_are_used():
     assert [cell["count"] for cell in result["counts"]] == [1, 1]
 
 
-@pytest.mark.parametrize("depth", [None, "", "invalid", -1, float("nan"), float("inf")])
+@pytest.mark.parametrize(
+    "edges, depths, expected",
+    [
+        (
+            (1000, 3000, 5000, 10000),
+            [0, 1000, 3000, 5000, 10000, None],
+            [
+                "below 1000 ft",
+                "1000-3000 ft",
+                "3000-5000 ft",
+                "5000-10000 ft",
+                "at least 10000 ft",
+                "unknown",
+            ],
+        ),
+        (
+            (500, 1000),
+            [0, 500, 1000, None],
+            ["below 500 ft", "500-1000 ft", "at least 1000 ft", "unknown"],
+        ),
+        ((500,), [0, 500, None], ["below 500 ft", "at least 500 ft", "unknown"]),
+    ],
+)
+def test_depth_cells_follow_increasing_depth_with_unknown_last(edges, depths, expected):
+    # Each boundary starts one band; one synthetic completion per band gives 1.
+    rows = [
+        completion(f"completion-{index}", water_depth_ft=depth)
+        for index, depth in enumerate(depths)
+    ]
+    result = aggregate(reversed(rows), parameters=Parameters(depth_edges=edges))
+    assert [cell["water_depth_band"] for cell in result["counts"]] == expected
+    assert [cell["count"] for cell in result["counts"]] == [1] * len(depths)
+
+
+@pytest.mark.parametrize(
+    "depth", [None, "", "invalid", -1, float("nan"), float("inf"), True, False]
+)
 def test_unusable_depths_remain_unknown(depth):
     result = aggregate([completion(water_depth_ft=depth)])
     assert result["counts"][0]["water_depth_band"] == "unknown"
+    assert result["counts"][0]["count"] == 1
+
+
+@pytest.mark.parametrize(
+    "depth, expected",
+    [("0", "below 1000 ft"), ("2500", "1000-3000 ft"), ("10000", "at least 10000 ft")],
+)
+def test_numeric_depth_strings_retain_existing_depth_band_membership(depth, expected):
+    result = aggregate([completion(water_depth_ft=depth)])
+    assert result["counts"][0]["water_depth_band"] == expected
     assert result["counts"][0]["count"] == 1
 
 

@@ -34,21 +34,26 @@ def annual_completion_counts(
 ) -> dict[str, object]:
     """Return observed year/area/depth cells with unit ``completions``.
 
-    Each row declares a unique, nonblank string ``completion_id`` and a
-    ``completion_date`` as a date object or an ISO calendar date. Datetimes,
-    ambiguous strings and missing dates are rejected; years are never inferred.
+    Each row declares a unique, nonblank string ``completion_id`` without
+    surrounding whitespace and a ``completion_date`` as a date object or an ISO
+    calendar date. Datetimes, ambiguous strings and missing dates are rejected;
+    years are never inferred.
     ``grain`` must be ``completion`` and ``source`` a nonblank provenance label.
     These declarations describe caller-established identities, not well counts
     or the potentially repeated completion listings consumed by ``analyse``.
 
     ``planning_area`` is a supplied label, never inferred from other fields.
+    It is distinct from the borehole ``BOTM_AREA_CODE`` bottom-area ``area``
+    used by ``analyse``; no conversion to a planning area is performed.
     Missing or blank areas and missing/unusable ``water_depth_ft`` values retain
-    the existing ``unknown`` label. Depth membership and labels use
+    the existing ``unknown`` label, including boolean depths. Numeric strings
+    remain supported. Depth membership and labels use
     ``activity.depth_band`` with explicitly supplied ``Parameters``; boundaries
     are returned in feet. Extra row fields are ignored.
 
     Validation finishes before grouping. Cells are sorted by year, planning
-    area and depth-band label; empty input has no cells. Inputs are not mutated.
+    area and increasing depth, with unknown depth last; empty input has no cells.
+    Inputs are not mutated.
     No durations, zero-filled strata or geographic mappings are produced.
     """
     if grain != "completion":
@@ -66,6 +71,8 @@ def annual_completion_counts(
         identifier = row.get("completion_id")
         if not isinstance(identifier, str) or not identifier.strip():
             raise ValueError("completion_id must be a nonblank string")
+        if identifier != identifier.strip():
+            raise ValueError("completion_id must not contain surrounding whitespace")
         if identifier in seen:
             raise ValueError("duplicate completion_id")
         seen.add(identifier)
@@ -74,10 +81,16 @@ def annual_completion_counts(
         if area is not None and not isinstance(area, str):
             raise ValueError("planning_area must be a label or None")
         area = area.strip() if isinstance(area, str) else ""
-        band = depth_band(row.get("water_depth_ft"), parameters)
+        depth = row.get("water_depth_ft")
+        band = UNKNOWN if isinstance(depth, bool) else depth_band(depth, parameters)
         validated.append((year, area or UNKNOWN, band))
 
     counts = Counter(validated)
+    band_order = {
+        depth_band(edge, parameters): index
+        for index, edge in enumerate((0, *parameters.depth_edges))
+    }
+    band_order[UNKNOWN] = len(band_order)
     return {
         "grain": grain,
         "source": source,
@@ -90,6 +103,8 @@ def annual_completion_counts(
                 "water_depth_band": band,
                 "count": counts[(year, area, band)],
             }
-            for year, area, band in sorted(counts)
+            for year, area, band in sorted(
+                counts, key=lambda cell: (cell[0], cell[1], band_order[cell[2]])
+            )
         ],
     }
