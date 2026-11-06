@@ -194,6 +194,21 @@ jobs:
             "tip=$tip event_base=$EVENT_BASE tree=$tree"
           echo "tip=$tip" >> "$GITHUB_OUTPUT"
 
+      - name: Install uv for scoped typing
+        uses: astral-sh/setup-uv@v7
+
+      - name: Check typed common modules
+        env:
+          MYPYPATH: src:packages/worldenergydata-core/src
+        run: |
+          uv run --no-project --python "${{ env.PYTHON_VERSION_DEFAULT }}" --with mypy \
+            mypy --explicit-package-bases --follow-imports=silent \
+            --ignore-missing-imports \
+            packages/worldenergydata-core/src/worldenergydata/common/exceptions.py \
+            packages/worldenergydata-core/src/worldenergydata/common/logging.py \
+            packages/worldenergydata-core/src/worldenergydata/common/types.py \
+            examples/typed_common.py
+
       - name: Install uv
         uses: astral-sh/setup-uv@v7
         with:

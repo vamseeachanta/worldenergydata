@@ -62,17 +62,18 @@ def test_benchmark_table_calls_calendar_time_by_name():
     assert "not rig-days" in text
 
 
-def test_insight_uses_dates_not_legacy_days(tmp_path):
-    """Jan 1 to Mar 1 2020 = 31 + 29 = 60; same day = 0.
-
-    Legacy values 999 and 888 deliberately disagree. Missing and reversed
-    dates have no derivable span; they must stay null, never become zero.
-    """
-    mod = _script("build_drilling_insights")
+@pytest.fixture
+def insight_workbook(tmp_path):
+    """Real Sheet1 input with non-ASCII text and four date-edge cases."""
     source = tmp_path / "source.xlsx"
     pd.DataFrame(
         {
-            "LEASE_NAME": ["Synthetic"] * 4,
+            "LEASE_NAME": ["Synthetic café"] * 4,
+            "WELL_NAME": ["A", "B", "C", "D"],
+            "API_WELL_NUMBER": ["001", "002", "003", "004"],
+            "SURF_LEASE_NUM": ["synthetic-lease"] * 4,
+            "WATER_DEPTH": [1000] * 4,
+            "MAX_WELL_BORE_TVD": [10000] * 4,
             "WELL_SPUD_DATE": ["01/01/2020"] * 4,
             "TOTAL_DEPTH_DATE": ["03/01/2020", "01/01/2020", None, "12/31/2019"],
             "DRILLING_DAYS": [999, 888, 777, 666],
@@ -80,9 +81,68 @@ def test_insight_uses_dates_not_legacy_days(tmp_path):
             "MAX_DRILL_FLUID_WGT": [15] * 4,
         }
     ).to_excel(source, sheet_name="Sheet1", index=False)
-    frame = mod.load_wells(source)
+    return source
+
+
+def test_insight_uses_dates_not_legacy_days(insight_workbook):
+    """Jan 1 to Mar 1 2020 = 31 + 29 = 60; same day = 0.
+
+    Legacy values 999 and 888 deliberately disagree. Missing and reversed
+    dates have no derivable span; they must stay null, never become zero.
+    """
+    mod = _script("build_drilling_insights")
+    frame = mod.load_wells(insight_workbook)
     assert frame["calendar_days"].iloc[:2].tolist() == [60, 0]
     assert frame["calendar_days"].iloc[2:].isna().all()
+    stats = mod.compute_stats(frame)
+    assert stats["n_missing"] == 2
+    assert stats["median_days"] == 30  # (60 + 0) / 2, excluding invalid dates.
+
+
+@pytest.mark.parametrize("default_newline", ["\n", "\r\n"], ids=["lf", "crlf"])
+def test_insight_csv_bytes_are_utf8_and_lf(
+    insight_workbook, tmp_path, monkeypatch, default_newline
+):
+    """Exercise pandas' platform default as well as the native writer path."""
+    mod = _script("build_drilling_insights")
+    frame = mod.load_wells(insight_workbook)
+    monkeypatch.setattr(os, "linesep", default_newline)
+    target = tmp_path / "calendar.csv"
+    mod.write_csv(frame, target)
+    data = target.read_bytes()
+    assert b"\n" in data
+    assert b"\r\n" not in data
+    assert "Synthetic café" in data.decode("utf-8")
+
+
+@pytest.mark.parametrize("default_newline", ["\n", "\r\n"], ids=["lf", "crlf"])
+def test_insight_main_html_bytes_are_utf8_and_lf(
+    insight_workbook, tmp_path, monkeypatch, default_newline
+):
+    """Run the CLI with a legacy text encoding and platform newline defaults."""
+    mod = _script("build_drilling_insights")
+    reports = tmp_path / "reports"
+    target = reports / "calendar.html"
+    monkeypatch.setattr(mod, "REPORTS_DIR", reports)
+    monkeypatch.setattr(mod, "CSV_PATH", reports / "calendar.csv")
+    monkeypatch.setattr(mod, "HTML_PATH", target)
+    write_text = Path.write_text
+
+    def platform_write_text(path, data, encoding=None, errors=None, newline=None):
+        return write_text(
+            path,
+            data,
+            encoding=encoding or "cp1252",
+            errors=errors,
+            newline=default_newline if newline is None else newline,
+        )
+
+    monkeypatch.setattr(Path, "write_text", platform_write_text)
+    assert mod.main(["--source", str(insight_workbook)]) == 0
+    data = target.read_bytes()
+    assert b"\n" in data
+    assert b"\r\n" not in data
+    assert "Synthetic café" in data.decode("utf-8")
 
 
 def test_insight_csv_and_page_state_definition_and_population(tmp_path):
@@ -115,7 +175,9 @@ def test_insight_csv_and_page_state_definition_and_population(tmp_path):
     assert saved["spud_to_td_calendar_days"].iloc[:2].tolist() == [60, 0]
     page = mod.render_html(stats, mod.DEFAULT_SOURCE)
     assert "Calendar cycle time" in page
-    assert "184" in page and "211" in page
+    population = mod.read_population_counts()
+    assert f"<b>{population['article_bores']}</b> wellbores" in page
+    assert "<b>2</b> positive legacy" in page
     assert "not rig-days" in page
     assert "2 of 3" in page
     assert "among 217 workbook wellbores" not in page
@@ -246,3 +308,87 @@ def test_insight_date_matches_latest_issued_revision(monkeypatch):
     frame = pd.DataFrame(columns=["calendar_days", "MAX_WELL_BORE_TVD", "LEASE_NAME"])
     page = mod.render_html(mod.compute_stats(frame), mod.DEFAULT_SOURCE)
     assert "Report revision date 2030-01-01." in page
+
+
+def test_population_note_reads_committed_inputs(tmp_path):
+    """Hand count: one positive, one zero, one absent legacy entry = 1 of 3.
+
+    Synthetic article table totals 2 bores and 9 D&C days; benchmark has one
+    producing row. Changing the files must change the rendered note, not code.
+    """
+    mod = _script("build_drilling_insights")
+    article = tmp_path / "article.md"
+    article.write_text(
+        "| Development | Bores (WO) | D&C (WO) |\n"
+        "|---|---:|---:|\n| **Total** | **2** | **9** |\n"
+    )
+    benchmark = tmp_path / "benchmark.csv"
+    benchmark.write_text("api12\n001\n")
+    frame = pd.DataFrame(
+        {
+            "calendar_days": [60, 0, None],
+            "DRILLING_DAYS": [60, 0, None],
+            "MAX_WELL_BORE_TVD": [None] * 3,
+            "LEASE_NAME": ["Synthetic"] * 3,
+        }
+    )
+    population = mod.read_population_counts(article, benchmark)
+    page = mod.render_html(mod.compute_stats(frame), mod.DEFAULT_SOURCE, population)
+    assert "<b>1</b> positive legacy" in page
+    assert "remaining 2" in page
+    assert "<b>2</b> wellbores and 9 days" in page
+    assert "1 producing wells" in page
+    article.write_text(article.read_text().replace("**2**", "**4**"))
+    benchmark.write_text("api12\n001\n002\n")
+    population = mod.read_population_counts(article, benchmark)
+    page = mod.render_html(mod.compute_stats(frame), mod.DEFAULT_SOURCE, population)
+    assert "<b>4</b> wellbores" in page
+    assert "2 producing wells" in page
+
+
+def test_public_calendar_files_do_not_publish_legacy_schema():
+    """Only calendar surfaces are checked; activity-coded drilling days stay valid."""
+    files = list((REPO / "reports").rglob("lt_well_benchmark*.csv"))
+    files += [REPO / "reports/lower_tertiary/lt_drilling_insights.csv"]
+    for path in files:
+        assert "drilling_days" not in pd.read_csv(path, nrows=0).columns, path
+    for path in (REPO / "reports/lower_tertiary").glob("lt_well_benchmark*.md"):
+        text = path.read_text()
+        assert "Drill days" not in text
+        assert "Spud to completion (calendar days)" in text
+    page = (REPO / "reports/lower_tertiary/drilling_insights.html").read_text()
+    assert "Calendar cycle time (days)" in page
+    assert "Drilling days (days)" not in page
+
+
+@pytest.mark.parametrize("total_rows", ["", "| Total | 2 | 9 |\n" * 2])
+def test_population_note_rejects_missing_or_duplicate_totals(tmp_path, total_rows):
+    mod = _script("build_drilling_insights")
+    article = tmp_path / "article.md"
+    article.write_text("| Development | Bores (WO) | D&C (WO) |\n" + total_rows)
+    benchmark = tmp_path / "benchmark.csv"
+    benchmark.write_text("api12\n")
+    with pytest.raises(ValueError, match="one population total"):
+        mod.read_population_counts(article, benchmark)
+
+
+def test_committed_calendar_page_matches_builder():
+    mod = _script("build_drilling_insights")
+    frame = mod.load_wells(mod.DEFAULT_SOURCE)
+    expected = (
+        mod.site_nav.inject_for(
+            mod.render_html(mod.compute_stats(frame), mod.DEFAULT_SOURCE),
+            "drilling_insights",
+        ).rstrip()
+        + "\n"
+    )
+    assert mod.HTML_PATH.read_text(encoding="utf-8") == expected
+
+
+def test_benchmark_page_links_worked_calendar_example():
+    mod = _script("build_well_benchmark")
+    frame = pd.DataFrame(columns=["uptime_flag", "revenue_flag", "decline_flag"])
+    page = mod.render_markdown(frame, mod.BenchmarkConfig(), "2020-06-30")
+    assert "benchmark_calendar_spans.md" in page
+    doc = REPO / "docs/data-sources/bsee/analysis/rig_days/benchmark_calendar_spans.md"
+    assert "60 + 100 = 160" in doc.read_text()

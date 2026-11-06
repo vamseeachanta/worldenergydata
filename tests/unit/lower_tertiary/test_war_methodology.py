@@ -84,7 +84,9 @@ def test_selected_surfaces_disclose_all_limits(surface, tmp_path):
         mod.PUBLIC = tmp_path / "public"
         mod.ASSETS = mod.PUBLIC / "assets"
         mod.build(domains=["lower_tertiary"])
-        text = (mod.PUBLIC / "wo-april-2026-validation.html").read_text()
+        text = (mod.PUBLIC / "wo-april-2026-validation.html").read_text(
+            encoding="utf-8"
+        )
     elif surface == "listing":
         mod = load_script("scripts/lower_tertiary/build_wo_per_well_dc.py")
         text = mod.build_markdown(mod.load_bores(), mod.load_vintage_diff())
