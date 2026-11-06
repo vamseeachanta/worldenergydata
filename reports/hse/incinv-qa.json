@@ -1,0 +1,19 @@
+{
+  "status": "pass",
+  "reason": "all required checks passed",
+  "unit_check": "investigation records [count]; no exposure denominator",
+  "row_count": 2027,
+  "missing_keys": 0,
+  "key_columns": [
+    "DATE_OCCURRED",
+    "MILITARY_TIME",
+    "AREA_BLOCK",
+    "ACCIDENT_TYPE"
+  ],
+  "duplicate_keys": 0,
+  "date_range": [
+    "1995-01-04",
+    "2026-09-28"
+  ],
+  "missing_optional_leases": 52
+}
