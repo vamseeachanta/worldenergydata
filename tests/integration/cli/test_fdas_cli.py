@@ -307,6 +307,35 @@ class TestFDASAnalyze:
         assert analysis["configuration"]["royalty_rate"] == 0.1875
         assert analysis["assumptions"]["royalty_rate"] == 0.1875
 
+    @pytest.mark.parametrize("dev_system", ["dry", "subsea15", "subsea20"])
+    @pytest.mark.parametrize("royalty_rate", [0.125, 0.0])
+    def test_fdas_analyze_explicit_royalty_matches_results(
+        self, tmp_path, dev_system, royalty_rate
+    ):
+        """Explicit CLI rates, including zero, reach both reported surfaces."""
+        output = tmp_path / "analysis.json"
+        result = runner.invoke(
+            app,
+            [
+                "fdas",
+                "analyze",
+                "--field",
+                "Synthetic",
+                "--dev-system",
+                dev_system,
+                "--royalty-rate",
+                str(royalty_rate),
+                "--output",
+                str(output),
+            ],
+        )
+
+        assert result.exit_code == 0
+        assert f"Royalty Rate: {royalty_rate:.2%}" in result.output
+        analysis = json.loads(output.read_text())
+        assert analysis["configuration"]["royalty_rate"] == royalty_rate
+        assert analysis["assumptions"]["royalty_rate"] == royalty_rate
+
     def test_fdas_analyze_help_documents_source_note_rate(self):
         result = runner.invoke(app, ["fdas", "analyze", "--help"])
 

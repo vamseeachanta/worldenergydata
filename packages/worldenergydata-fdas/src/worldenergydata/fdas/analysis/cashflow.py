@@ -374,10 +374,11 @@ class CashflowEngine:
             if self.fiscal_terms is not None:
                 royalty_rate = self.fiscal_terms.royalty.rate_for(self.dev_system)
             else:
-                # fiscal/decks/us_gom.yml source_ref (2026-07-03 BOEM note):
-                # deepwater 18.75 / 100, also used for missing assumptions.
+                # Resolve missing values from the per-system defaults, using
+                # the same normalization and unknown-system fallback rules.
+                default_rate = AssumptionsManager().get(self.dev_system, "ROYALTY_RATE")
                 royalty_rate = self.assumptions.get(
-                    self.dev_system, "ROYALTY_RATE", 0.1875
+                    self.dev_system, "ROYALTY_RATE", default_rate
                 )
 
         royalty = {}

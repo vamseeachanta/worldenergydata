@@ -71,11 +71,22 @@ def test_us_gom_royalty_hand_calculation(use_deck, dev_system):
     }
 
 
-def test_missing_assumption_uses_source_note_rate():
-    """BOEM note in us_gom.yml: synthetic USD 1,000,000 * 18.75/100 = 187,500."""
-    assumptions = AssumptionsManager.from_dict({"DEV_SYSTEM": ["subsea15"]})
-    engine = CashflowEngine(assumptions)
-    assert engine.calculate_royalty({"2025-01": 1_000_000.0}) == {"2025-01": 187_500.0}
+@pytest.mark.parametrize(
+    "dev_system, payment",
+    [
+        ("dry", 125_000.0),
+        ("DRY TREE", 125_000.0),
+        ("subsea15", 187_500.0),
+        ("subsea20", 187_500.0),
+        ("default", 187_500.0),
+        ("unmapped", 187_500.0),
+    ],
+)
+def test_missing_assumption_uses_source_note_rate(dev_system, payment):
+    """Synthetic USD 1,000,000 * 12.5/100 (dry) or 18.75/100 (deepwater)."""
+    assumptions = AssumptionsManager.from_dict({"DEV_SYSTEM": [dev_system]})
+    engine = CashflowEngine(assumptions, dev_system=dev_system)
+    assert engine.calculate_royalty({"2025-01": 1_000_000.0}) == {"2025-01": payment}
 
 
 @pytest.mark.parametrize("use_deck", [False, True])

@@ -513,9 +513,7 @@ def analyze(
                         "royalty_rate": royalty_rate,
                     },
                     "assumptions": {
-                        "royalty_rate": assumptions_mgr.get(
-                            dev_system, "ROYALTY_RATE", royalty_rate
-                        ),
+                        "royalty_rate": royalty_rate,
                         "variable_opex_per_bbl": assumptions_mgr.get(
                             dev_system, "VARIABLE_OPEX_$/BBL", 12.0
                         ),
