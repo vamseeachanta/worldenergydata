@@ -6,7 +6,7 @@ Fixtures are synthetic CSV records, not engineering properties or design limits.
 
 import csv
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import pandas as pd
 import pytest
@@ -222,11 +222,13 @@ def test_invalid_identity_reports_physical_line(
     """The bad record starts at line 5 after a quoted newline and an empty line."""
     write_catalog(tmp_path, ["A", component_id])
     path = tmp_path / CSV_NAME
-    content = path.read_text()
+    content = path.read_text(encoding="utf-8")
     content = content.replace("Identity validation only", '"first\nsecond"', 1)
     first_record_end = content.index('second"') + len('second"')
     line_end = content.index("\n", first_record_end)
-    path.write_text(content[:line_end] + "\n" + content[line_end:])
+    path.write_text(
+        content[:line_end] + "\n" + content[line_end:], encoding="utf-8", newline=""
+    )
 
     loader = DrillingRiserLoader(tmp_path)
     with pytest.raises(ValueError, match=rf"COMPONENT_ID.*{reason}.*CSV line 5$"):
@@ -324,10 +326,12 @@ def test_canonical_duplicate_reports_physical_lines_and_allows_retry(
     """Canonical or literal duplicates start on lines 2 and 5, not row indices."""
     write_catalog(tmp_path, ids)
     path = tmp_path / CSV_NAME
-    content = path.read_text().replace("Identity validation only", '"first\nsecond"', 1)
+    content = path.read_text(encoding="utf-8").replace(
+        "Identity validation only", '"first\nsecond"', 1
+    )
     lines = content.splitlines(keepends=True)
     lines.insert(3, "\n")
-    path.write_text("".join(lines))
+    path.write_text("".join(lines), encoding="utf-8", newline="")
     loader = DrillingRiserLoader(tmp_path)
     with pytest.raises(ValueError, match="Duplicate COMPONENT_ID.*CSV lines 2, 5$"):
         loader.load()
@@ -338,15 +342,39 @@ def test_canonical_duplicate_reports_physical_lines_and_allows_retry(
         assert loader.get_by_id(ids[0]) is None
 
 
-@pytest.mark.parametrize("component_id", ["A\x00B", "A\x07B", "A\x1bB", "A\x7fB"])
+@pytest.mark.parametrize(
+    ("component_id", "legacy_nul_reader"),
+    [
+        ("A\x00B", False),
+        ("A\x00B", True),
+        ("A\x07B", False),
+        ("A\x1bB", False),
+        ("A\x7fB", False),
+    ],
+)
 def test_control_character_identity_is_not_cached(
-    tmp_path: Path, component_id: str
+    tmp_path: Path, component_id: str, legacy_nul_reader: bool
 ) -> None:
-    """Embedded Cc characters cannot create invisible identity differences."""
+    """Reject Cc identities, including Python 3.10's earlier CSV-level NUL error."""
     write_catalog(tmp_path, [component_id])
     loader = DrillingRiserLoader(tmp_path)
-    with pytest.raises(ValueError, match="COMPONENT_ID.*control.*CSV line 2$"):
-        loader.load()
+    with patch("csv.reader", wraps=csv.reader) as reader:
+        if legacy_nul_reader:
+            # Reproduce the Python 3.10 reader's failure before ID validation.
+            reader.return_value = MagicMock()
+            reader.return_value.line_num = 1
+            reader.return_value.__next__.side_effect = [
+                HEADER,
+                csv.Error("line contains NUL"),
+            ]
+        expected = "COMPONENT_ID.*control.*CSV line 2$"
+        if "\x00" in component_id:
+            expected = (
+                "(?:COMPONENT_ID.*control.*CSV line 2|"
+                "Malformed CSV at line 2: line contains NUL)$"
+            )
+        with pytest.raises(ValueError, match=expected):
+            loader.load()
     assert loader._df is None
     write_catalog(tmp_path, ["A"])
     assert loader.get_by_id("A")["COMPONENT_ID"] == "A"
@@ -372,3 +400,36 @@ def test_identity_error_line_summary_is_bounded(
     suffix = f" ({total} total)" if total > 20 else ""
     assert str(error.value).endswith(f"CSV {label} {starts}{suffix}")
     assert loader._df is None
+
+
+@pytest.mark.parametrize("parsed_count", [0, 1, 3])
+def test_parser_record_count_mismatch_is_not_cached(
+    tmp_path: Path, parsed_count: int
+) -> None:
+    """Neither dropped nor extra pandas records may silently remap checked IDs."""
+    write_catalog(tmp_path, ["A", "B"])
+    frame = pd.read_csv(tmp_path / CSV_NAME)
+    parsed = frame.iloc[:parsed_count].copy()
+    if parsed_count > len(frame):
+        parsed = pd.concat([frame, frame.iloc[:1]], ignore_index=True)
+    loader = DrillingRiserLoader(tmp_path)
+    with patch("pandas.read_csv", return_value=parsed):
+        with pytest.raises(
+            ValueError,
+            match=rf"CSV parser record count mismatch: strict reader found 2 records, "
+            rf"pandas found {parsed_count}$",
+        ):
+            loader.load()
+    assert loader._df is None
+    assert loader.load()["COMPONENT_ID"].tolist() == ["A", "B"]
+
+
+def test_checked_identities_are_assigned_by_position(tmp_path: Path) -> None:
+    """Pandas index labels must not decide which record receives a literal ID."""
+    write_catalog(tmp_path, ["01", "NA"])
+    frame = pd.read_csv(tmp_path / CSV_NAME)
+    frame.index = [10, 20]
+    with patch("pandas.read_csv", return_value=frame):
+        loaded = DrillingRiserLoader(tmp_path).load()
+    assert loaded.index.tolist() == [10, 20]
+    assert loaded["COMPONENT_ID"].tolist() == ["01", "NA"]
