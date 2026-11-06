@@ -248,6 +248,23 @@ def test_offshore_descriptions_keep_region_separate_from_state():
     assert record["offshore_region"] == "Eastern Offshore"
 
 
+@pytest.mark.parametrize(
+    "location_fields",
+    [
+        {"description": "Unclassified / Rajasthan / Rajasthan"},
+        {"state": "Rajasthan"},
+    ],
+)
+def test_unknown_acreage_rejects_unclassified_location(monkeypatch, location_fields):
+    from worldenergydata.india_dgh.blocks import CODE_ACREAGE, RoundSource, _normalize
+
+    # Simulate a recognized block-code form without an acreage mapping.
+    monkeypatch.delitem(CODE_ACREAGE, "ONHP")
+    source = RoundSource("OALP-IV", "OALP", "dgh_oalp4_contract_signing")
+    with pytest.raises(ValueError, match="unknown acreage type"):
+        _normalize({"block_name": "RJ-ONHP-2019/1", **location_fields}, source, 2)
+
+
 def test_shipped_offshore_blocks_have_no_non_state_values(blocks):
     # Award lists supply coastal regions for offshore acreage, not states.
     offshore = blocks[blocks.acreage_type != "onland"]

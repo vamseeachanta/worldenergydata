@@ -283,6 +283,8 @@ def _normalize(record: dict, source: RoundSource, page: int) -> dict:
     acreage, basis = acreage_from_description(description), "source_table"
     if acreage is None:
         acreage, basis = acreage_from_code(code), "block_code"
+    if acreage is None:
+        raise ValueError(f"unknown acreage type for block {code}")
     published = record.get("basin") or (segments[1] if len(segments) == 3 else "")
     basin = CODE_BASIN.get(code[:2])
     category = basin_category(record.get("basin_category", ""))
