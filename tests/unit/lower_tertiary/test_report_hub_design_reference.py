@@ -83,21 +83,21 @@ def _cards(root: _Element) -> list[_Element]:
     cards = [node for node in root.walk() if node.has_class("card")]
     assert cards, "report cards are missing"
     for card in cards:
-        assert card.tag == "a" and (card.attrs.get("href") or "").strip(), (
-            "report card destination is missing"
-        )
+        assert (
+            card.tag == "a" and (card.attrs.get("href") or "").strip()
+        ), "report card destination is missing"
     return cards
 
 
 def _assert_cards_have_badges(root: _Element) -> None:
     for card in _cards(root):
         badges = [node for node in card.walk() if node.has_class("badge")]
-        assert badges and all(badge.text for badge in badges), (
-            "report card evidence/status badge is missing or empty"
-        )
+        assert badges and all(
+            badge.text for badge in badges
+        ), "report card evidence/status badge is missing or empty"
 
 
-def _guided_path(root: _Element) -> _Element:
+def _guided_paths(root: _Element) -> list[_Element]:
     paths = [node for node in root.walk() if node.has_class("path")]
     assert paths, "guided reading path is missing"
     for path in paths:
@@ -106,7 +106,7 @@ def _guided_path(root: _Element) -> _Element:
             and node.text.casefold() == "guided reading path"
             for node in path.walk()
         ), "guided reading path heading is missing"
-    return next(iter(paths))
+    return paths
 
 
 def _assert_reader_support(root: _Element) -> None:
@@ -116,12 +116,23 @@ def _assert_reader_support(root: _Element) -> None:
         if (node.attrs.get("aria-label") or "").casefold() == "evidence badge legend"
     ]
     assert legends, "evidence badge legend is missing"
-    assert any(
-        node.has_class("item") and node.text
-        for legend in legends
-        for node in legend.walk()
-    ), "evidence badge legend explanations are missing"
-    _guided_path(root)
+    badge_variants = {
+        token
+        for card in _cards(root)
+        for node in card.walk()
+        if node.has_class("badge")
+        for token in (node.attrs.get("class") or "").split()
+        if token != "badge"
+    }
+    for legend in legends:
+        items = [node for node in legend.walk() if node.has_class("item")]
+        assert items and all(
+            item.text for item in items
+        ), "evidence badge legend explanations are missing"
+        assert len(items) >= len(
+            badge_variants
+        ), "evidence badge legend has fewer items than badge variants"
+    _guided_paths(root)
     assert any(
         node.tag == "a"
         and "provenance" in node.text.casefold()
@@ -142,16 +153,17 @@ def _is_issue_target(href: str) -> bool:
 
 
 def _assert_guided_targets(root: _Element) -> None:
-    destinations = {card.attrs["href"] for card in _cards(root)}
-    links = [node for node in _guided_path(root).walk() if node.tag == "a"]
-    assert links, "guided reading path is empty"
-    for link in links:
-        href = (link.attrs.get("href") or "").strip()
-        assert href, "guided reading path destination is missing"
-        assert link.text, "guided reading path link label is empty"
-        assert href in destinations or _is_issue_target(href), (
-            "guided reading path destination is neither a report card nor an issue"
-        )
+    destinations = {card.attrs["href"].strip() for card in _cards(root)}
+    for path in _guided_paths(root):
+        links = [node for node in path.walk() if node.tag == "a"]
+        assert links, "guided reading path is empty"
+        for link in links:
+            href = (link.attrs.get("href") or "").strip()
+            assert href, "guided reading path destination is missing"
+            assert link.text, "guided reading path link label is empty"
+            assert href in destinations or _is_issue_target(
+                href
+            ), "guided reading path destination is neither a report card nor an issue"
 
 
 @pytest.fixture
@@ -240,6 +252,7 @@ def test_reader_support_helper_rejects_missing_elements(old, new, message):
         _assert_reader_support(_HubParser(_MINIMAL_HUB.replace(old, new)).root)
 
 
+@pytest.mark.parametrize("later_path", [False, True], ids=["first-path", "later-path"])
 @pytest.mark.parametrize(
     "replacement, message",
     [
@@ -262,8 +275,70 @@ def test_reader_support_helper_rejects_missing_elements(old, new, message):
         "invalid-issue",
     ],
 )
-def test_guided_target_helper_rejects_missing_destinations(replacement, message):
+def test_guided_target_helper_rejects_missing_destinations(
+    replacement, message, later_path
+):
     """Missing or unrelated targets fail even when valid report cards exist."""
-    text = _MINIMAL_HUB.replace('<a href="report.html">Read</a>', replacement)
+    if later_path:
+        text = _MINIMAL_HUB + (
+            '<div class="path"><h3>Guided reading path</h3>' + replacement + "</div>"
+        )
+    else:
+        text = _MINIMAL_HUB.replace('<a href="report.html">Read</a>', replacement)
     with pytest.raises(AssertionError, match=message):
         _assert_guided_targets(_HubParser(text).root)
+
+
+@pytest.mark.parametrize(
+    "addition",
+    [
+        '<span class="item"></span>',
+        '<span class="item"> \n </span>',
+    ],
+    ids=["empty-item", "whitespace-item"],
+)
+def test_legend_rejects_unexplained_items_beside_explained_item(addition):
+    text = _MINIMAL_HUB.replace("Evidence key</span>", "Evidence key</span>" + addition)
+    with pytest.raises(AssertionError, match="legend explanations are missing"):
+        _assert_reader_support(_HubParser(text).root)
+
+
+def test_legend_rejects_unexplained_badge_variant():
+    text = _MINIMAL_HUB.replace('class="badge"', 'class="badge ok"')
+    text += (
+        '<a class="card" href="other.html"><span class="badge warn">Caveat</span></a>'
+    )
+    with pytest.raises(
+        AssertionError, match="legend has fewer items than badge variants"
+    ):
+        _assert_reader_support(_HubParser(text).root)
+
+
+def test_reader_support_rejects_later_empty_legend():
+    text = _MINIMAL_HUB + '<div aria-label="Evidence badge legend"></div>'
+    with pytest.raises(AssertionError, match="legend explanations are missing"):
+        _assert_reader_support(_HubParser(text).root)
+
+
+def test_legend_accepts_multiple_variants_and_repeated_badges():
+    text = _MINIMAL_HUB.replace('class="badge"', 'class="badge ok"')
+    text = text.replace(
+        "Evidence key</span>",
+        'Evidence key</span><span class="item">Caveat key</span>',
+    )
+    text += (
+        '<a class="card" href="other.html"><span class="badge warn">Caveat</span></a>'
+    )
+    text += (
+        '<a class="card" href="report.html"><span class="badge ok">Evidence</span></a>'
+    )
+    _assert_reader_support(_HubParser(text).root)
+
+
+def test_guided_targets_accept_padded_card_destinations_and_multiple_paths():
+    text = _MINIMAL_HUB.replace('href="report.html"', 'href=" report.html "', 1)
+    text += (
+        '<div class="path"><h3>Guided reading path</h3>'
+        '<a href=" report.html ">Read again</a></div>'
+    )
+    _assert_guided_targets(_HubParser(text).root)
