@@ -6,8 +6,12 @@ No archive is extracted, installed or imported. With no supplied archives, the
 fixture needs the declared build requirements (setuptools and wheel) installed;
 it calls the unchanged backend on a disposable source copy without resolution.
 BAKER_HUGHES_ARTIFACT_DIR may supply a freshly built wheel and sdist instead.
+Sorted regular-member inventories are saved beside build.log by default.
+BAKER_HUGHES_EVIDENCE_DIR redirects inventories and build.log for retention;
+uploading these files and binding artifacts to source remain separate steps.
 """
 
+import io
 import os
 import shutil
 import subprocess
@@ -111,7 +115,9 @@ def distribution_archives(tmp_path_factory):
             text=True,
             check=False,
         )
-        (scratch / "build.log").write_text(result.stdout, encoding="utf-8")
+        evidence_dir = Path(os.environ.get("BAKER_HUGHES_EVIDENCE_DIR", scratch))
+        evidence_dir.mkdir(parents=True, exist_ok=True)
+        (evidence_dir / "build.log").write_text(result.stdout, encoding="utf-8")
         assert result.returncode == 0, result.stdout
 
     # Exactly one of each format must be supplied; missing/ambiguous input fails.
@@ -120,29 +126,79 @@ def distribution_archives(tmp_path_factory):
     return wheel, sdist
 
 
-def test_wheel_contains_pack_and_loader(distribution_archives, capsys):
+def _archive_members(path):
+    """Inspect regular archive members and retain the complete sorted inventory."""
+    if path.suffix == ".whl":
+        with zipfile.ZipFile(path) as archive:
+            members = {
+                member.filename for member in archive.infolist() if not member.is_dir()
+            }
+    else:
+        with tarfile.open(path, "r:gz") as archive:
+            members = {
+                member.name for member in archive.getmembers() if member.isfile()
+            }
+
+    output_dir = Path(os.environ.get("BAKER_HUGHES_EVIDENCE_DIR", path.parent.parent))
+    output_dir.mkdir(parents=True, exist_ok=True)
+    inventory = output_dir / (path.name + ".members.txt")
+    inventory.write_text("\n".join(sorted(members)) + "\n", encoding="utf-8")
+    return members
+
+
+def test_wheel_contains_pack_and_loader(distribution_archives):
     wheel, _ = distribution_archives
-    with zipfile.ZipFile(wheel) as archive:
-        members = {
-            member.filename for member in archive.infolist() if not member.is_dir()
-        }
+    members = _archive_members(wheel)
 
     assert PACKAGE_MEMBERS <= members, sorted(members)
     print("Wheel members:", *sorted(members), sep="\n")
-    output = capsys.readouterr().out
-    assert output.splitlines() == ["Wheel members:", *sorted(members)]
-    print(output, end="")
 
 
-def test_sdist_contains_pack_and_loader(distribution_archives, capsys):
+def test_sdist_contains_pack_and_loader(distribution_archives):
     _, sdist = distribution_archives
     prefix = sdist.name.removesuffix(".tar.gz") + "/src/"
     expected = {prefix + member for member in PACKAGE_MEMBERS}
-    with tarfile.open(sdist, "r:gz") as archive:
-        members = {member.name for member in archive.getmembers() if member.isfile()}
+    members = _archive_members(sdist)
 
     assert expected <= members, sorted(members)
     print("Sdist members:", *sorted(members), sep="\n")
-    output = capsys.readouterr().out
-    assert output.splitlines() == ["Sdist members:", *sorted(members)]
-    print(output, end="")
+
+
+@pytest.mark.parametrize("kind", ["wheel", "sdist"])
+@pytest.mark.parametrize("configured_output", [False, True])
+def test_archive_inventory_retains_all_members(
+    tmp_path, monkeypatch, kind, configured_output
+):
+    """Persist every inspected regular member, including unexpected files."""
+    artifact_dir = tmp_path / "dist"
+    artifact_dir.mkdir()
+    members = PACKAGE_MEMBERS | {"unexpected.txt"}
+    if kind == "wheel":
+        archive_path = artifact_dir / "example.whl"
+        with zipfile.ZipFile(archive_path, "w") as archive:
+            archive.writestr("empty/", "")
+            for member in sorted(members, reverse=True):
+                archive.writestr(member, "fixture")
+    else:
+        archive_path = artifact_dir / "example.tar.gz"
+        with tarfile.open(archive_path, "w:gz") as archive:
+            directory = tarfile.TarInfo("empty")
+            directory.type = tarfile.DIRTYPE
+            archive.addfile(directory)
+            for member in sorted(members, reverse=True):
+                info = tarfile.TarInfo(member)
+                info.size = 7
+                archive.addfile(info, io.BytesIO(b"fixture"))
+
+    output_dir = tmp_path
+    if configured_output:
+        output_dir = tmp_path / "retained" / "evidence"
+        monkeypatch.setenv("BAKER_HUGHES_EVIDENCE_DIR", str(output_dir))
+    else:
+        monkeypatch.delenv("BAKER_HUGHES_EVIDENCE_DIR", raising=False)
+
+    inspected = _archive_members(archive_path)
+
+    assert inspected == members
+    inventory = output_dir / (archive_path.name + ".members.txt")
+    assert inventory.read_text(encoding="utf-8").splitlines() == sorted(members)
