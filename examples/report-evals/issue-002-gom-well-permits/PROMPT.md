@@ -4,7 +4,7 @@ Article: https://www.aceengineer.com/newsletter/issue-002-public-data/
 
 For decision makers: this prompt lets your team, or your AI assistant, recount the permits from the public BSEE file. If you would rather have it done for you, or extended to other BSEE files, use the contact link on the article page.
 
-For practitioners: paste the block below into an AI assistant that can run Python and use the internet. It needs only the Python standard library and about 5 minutes. The key results it must reach are in `results.json` next to this file. `eval.py` grades them.
+For practitioners: paste the block below into an AI assistant that can run Python and use the internet. It needs git and Python 3.10 or later, and no other package. The key results it must reach are in `results.json` next to this file. `eval.py` grades them.
 
 ## Prompt (copy all of it)
 
@@ -18,6 +18,8 @@ Inputs (all public, no account needed):
 - BSEE Application for Permit to Drill raw data, US federal government data,
   updated daily: https://www.data.bsee.gov/Well/Files/APDRawData.zip
   (the article counts the file of 2 November 2026).
+- BSEE Incident Investigations raw data, also read by the script:
+  https://www.data.bsee.gov/Other/Files/IncInvRawData.zip
 - Counting script: https://github.com/vamseeachanta/worldenergydata at commit
   f5af5b6da87710bb395552f9cda5e34d1f324479,
   examples/bsee/rawdata_fact_check/count_rawdata.py. Its README gives the rule.
@@ -52,8 +54,11 @@ The BSEE file changes daily. If your counts differ by a few permits, report the
 difference and the SHA-256 of the file you used; it is not an error.
 
 Ask me before you go on if:
-- the download from data.bsee.gov fails: ask me to download APDRawData.zip in a
-  browser and give you the file, then pass its folder with --data-dir;
+- the download from data.bsee.gov fails: ask me to download both files in a
+  browser, https://www.data.bsee.gov/Well/Files/APDRawData.zip and
+  https://www.data.bsee.gov/Other/Files/IncInvRawData.zip (the script reads both,
+  although the permit counts use only the first), put them in one folder, and pass
+  that folder with --data-dir;
 - you want to extend the count: ask me which years, which rig types and which BSEE
   region I want.
 
@@ -80,7 +85,7 @@ python examples/report-evals/issue-002-gom-well-permits/eval.py --compare my-res
 python examples/report-evals/issue-002-gom-well-permits/eval.py
 ```
 
-The first line grades your own results. The second runs the counting script on today's file and compares every key result itself. `DRIFT` on a count means today's BSEE file differs from the file the article counted.
+The first line grades your own results. The second reads the counting script from the pinned commit, runs it on today's files and compares every key result itself; add `--data-dir FOLDER` if you saved the two BSEE files by hand. `DRIFT` on a count means today's BSEE file differs from the file the article counted.
 
 ## Adapt it to your project
 

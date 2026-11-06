@@ -13,8 +13,7 @@
   "commit": "f5af5b6da87710bb395552f9cda5e34d1f324479",
   "paths": [
    "examples/bsee/rawdata_fact_check/count_rawdata.py",
-   "examples/bsee/rawdata_fact_check/README.md",
-   "examples/report-evals/issue-002-gom-well-permits/eval.py"
+   "examples/bsee/rawdata_fact_check/README.md"
   ],
   "python": "3.10 or later, standard library only",
   "install": "none: the counting script uses the standard library"
@@ -28,6 +27,17 @@
    "licence": "US federal government data",
    "version_or_date": "page counts: file of 2 November 2026; eval: file of the run date",
    "sha256_published": "b4ab66063de5a95c78d0e4d33d220ea806ef07f114bd2add6efa9e8561d299c0",
+   "updates": "daily",
+   "supplied_by": "public",
+   "required": true
+  },
+  {
+   "id": "incident_raw_data",
+   "description": "BSEE Incident Investigations raw data; the pinned counting script reads it as well, although the permit counts do not use it",
+   "source": "US Bureau of Safety and Environmental Enforcement, BSEE Data Center",
+   "url": "https://www.data.bsee.gov/Other/Files/IncInvRawData.zip",
+   "licence": "US federal government data",
+   "version_or_date": "file of the run date",
    "updates": "daily",
    "supplied_by": "public",
    "required": true
@@ -56,8 +66,8 @@
    "id": "script_on_main",
    "what": "The counting script on the main branch of worldenergydata",
    "why": "The pinned commit is on a branch that is not merged yet.",
-   "how_to_supply": "Check out commit f5af5b6 as the prompt says.",
-   "effect": "From a main checkout the eval reports NOT_EVALUATED until the script is merged."
+   "how_to_supply": "Not needed: the eval reads the script from the pinned commit of any clone (it fetches the commit if needed).",
+   "effect": "If the branch is deleted before the merge, the pinned commit may not be fetchable."
   }
  ],
  "cannot_do": [
@@ -69,7 +79,8 @@
   "prompt": "examples/report-evals/issue-002-gom-well-permits/PROMPT.md",
   "cadence": "weekly",
   "runtime_s": 15,
-  "network": true
+  "network": true,
+  "ref": "main"
  },
  "results": [
   {
@@ -842,6 +853,26 @@
    "basis": "fixed",
    "limits": [
     "Synthetic records only; it checks the counting rule, not the BSEE file."
+   ]
+  },
+  {
+   "id": "script_matches_pinned_commit",
+   "label": "The counting script run by the eval is byte-identical (LF line endings) to the script at the pinned commit",
+   "page_ref": "Data note",
+   "value": true,
+   "unit": "-",
+   "period": "not applicable",
+   "source": "worldenergydata git history",
+   "method": "examples/report-evals/issue-002-gom-well-permits/eval.py resolve_script() (on main)",
+   "repo": "https://github.com/vamseeachanta/worldenergydata",
+   "commit": "f5af5b6da87710bb395552f9cda5e34d1f324479",
+   "tolerance": {
+    "abs": 0
+   },
+   "basis": "fixed",
+   "scope": "rebuild",
+   "limits": [
+    "Checks code identity only; the counts are graded by the other results."
    ]
   }
  ]
