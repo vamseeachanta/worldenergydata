@@ -305,6 +305,7 @@ def render_pdf(
             dir=pdf_path.parent, suffix=".pdf", delete=False
         ) as handle:
             pending = Path(handle.name)
+        page_count_rejected = False
         try:
             subprocess.run(
                 [
@@ -335,13 +336,18 @@ def render_pdf(
             # Issue #1128: exactly one page is the acceptance criterion.
             pages = re.search(r"^Pages:\s+(\d+)\s*$", info.stdout, re.MULTILINE)
             if pages is None or int(pages.group(1)) != 1:
+                page_count_rejected = True
                 raise ValueError(
                     "PDF must contain exactly one page; shorten content and rebuild"
                 )
             pending.replace(pdf_path)
+            pdf_path.with_suffix(".rejected.pdf").unlink(missing_ok=True)
         finally:
             if pending.exists():
-                pending.replace(pdf_path.with_suffix(".rejected.pdf"))
+                if page_count_rejected:
+                    pending.replace(pdf_path.with_suffix(".rejected.pdf"))
+                else:
+                    pending.unlink()
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -365,7 +371,8 @@ def main(argv: list[str] | None = None) -> int:
         args.output_dir.mkdir(parents=True, exist_ok=True)
         html_path = args.output_dir / "onepager.html"
         if args.html_only:
-            html_path.write_text(page, encoding="utf-8", newline="\n")
+            preview_path = args.output_dir / "onepager.preview.html"
+            preview_path.write_text(page, encoding="utf-8", newline="\n")
         else:
             with tempfile.TemporaryDirectory(
                 dir=args.output_dir, prefix="onepager-build-"

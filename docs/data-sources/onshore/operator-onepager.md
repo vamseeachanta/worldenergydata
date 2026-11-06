@@ -13,6 +13,7 @@ periods. Missing figures say `not captured`; missing conclusions say
 | 1 | 2026-10-20 | Add the snapshot contract, build targets and worked example for repeatable sourced pages. |
 | 2 | 2026-10-20 | Add browser-backed PDF acceptance tests, reject non-integer schema versions and keep bar scaling finite for large inputs. |
 | 3 | 2026-11-06 | Preserve small observations, reject unknown summary keys and retain accepted HTML/PDF output after failed rebuilds; require PDF tools in CI and bound rendering time. |
+| 4 | 2026-11-06 | Provision a required PDF check, distinguish previews from accepted output and retain only page-count rejections. |
 
 ## Build
 
@@ -37,16 +38,20 @@ make onepager-html OPERATOR=001 \
 
 The equivalent module entry point accepts `--chrome`, `--pdfinfo` and
 `--candidate-limit`. The default executable names are `google-chrome` and
-`pdfinfo`. The HTML-only option makes no page-count claim. Chrome is run with
+`pdfinfo`. The HTML-only option writes `onepager.preview.html` and makes no
+page-count claim; any accepted `onepager.html` and `onepager.pdf` remain unchanged.
+Chrome is run with
 `--headless=new --disable-gpu --no-pdf-header-footer`; the last flag suppresses
 the date and local file address. The browser sandbox remains enabled.
 
 HTML is staged while Chrome writes a candidate PDF; `pdfinfo` must report
 `Pages: 1` before the accepted HTML and PDF are replaced. A failed PDF build
 returns a nonzero status and preserves both previous destination files.
-Rejected candidates are named `onepager.rejected.pdf` for diagnosis; temporary
-HTML and isolated browser profiles are removed. Both subprocesses have a
-120-second timeout. Inspect the command status before distributing an artifact:
+PDF candidates rejected by page-count readback are named `onepager.rejected.pdf`
+for diagnosis. Empty or partial output from a failed browser invocation is removed,
+as is a candidate whose readback tool fails. A successful PDF build removes any
+previous rejection file. Temporary HTML and isolated browser profiles are removed.
+Both subprocesses have a 120-second timeout. Inspect the command status before distributing an artifact:
 a previous PDF is not the result of a failed build.
 Set the usual temporary-directory environment variable to the artifact disk.
 Content is never clipped, hidden, or silently shrunk to force acceptance.
@@ -165,8 +170,11 @@ PDF readback accepting one page and rejecting overflow. Browser-backed integrati
 tests render the worked example and independently read its PDF page count. An
 intentionally overflowing snapshot is rejected, its real page count is read back,
 and the previously accepted PDF is preserved byte for byte. These tests require
-Chrome or Chromium and `pdfinfo`. Missing tools fail when `CI=true` or
-`ONEPAGER_REQUIRE_PDF=1`; otherwise these tests skip with an explicit reason.
+Chrome or Chromium and `pdfinfo`. The dedicated `Operator one-pager PDF` CI job
+installs Chrome and `poppler-utils`, sets `ONEPAGER_REQUIRE_PDF=1` and runs the
+report tests without skips. Its result is required by `Test (PR gate)`. Missing
+tools fail only when `ONEPAGER_REQUIRE_PDF=1`; otherwise these tests skip with an
+explicit reason, including in CI jobs that do not provision PDF tools.
 The failure cases cover preservation of both accepted files, named rejected
 PDFs, browser-profile cleanup and timeout handling. Small positive and negative
 observations and peer labels are checked against supplied literals.

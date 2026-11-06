@@ -231,6 +231,8 @@ def test_pdf_command_and_single_page_guard(tmp_path, monkeypatch):
     html = tmp_path / "in.html"
     html.write_text("<!doctype html><p>test</p>", encoding="utf-8", newline="\n")
     pdf = tmp_path / "out.pdf"
+    rejected = pdf.with_suffix(".rejected.pdf")
+    rejected.write_bytes(b"%PDF-previous rejected output")
     calls = []
 
     def run(args, **kwargs):
@@ -250,6 +252,7 @@ def test_pdf_command_and_single_page_guard(tmp_path, monkeypatch):
     assert "--headless=new" in calls[0]
     assert "--no-sandbox" not in calls[0]
     assert pdf.read_bytes().startswith(b"%PDF-")
+    assert not rejected.exists()
     profile = next(
         a.split("=", 1)[1] for a in calls[0] if a.startswith("--user-data-dir=")
     )
@@ -302,10 +305,7 @@ def _find_pdf_tools():
     )
     pdfinfo = shutil.which("pdfinfo")
     if chrome is None or pdfinfo is None:
-        if (
-            os.environ.get("CI") == "true"
-            or os.environ.get("ONEPAGER_REQUIRE_PDF") == "1"
-        ):
+        if os.environ.get("ONEPAGER_REQUIRE_PDF") == "1":
             pytest.fail("PDF integration requires Chrome or Chromium and pdfinfo")
         pytest.skip("PDF integration requires Chrome or Chromium and pdfinfo")
     return {"chrome": chrome, "pdfinfo": pdfinfo}
@@ -316,14 +316,11 @@ def pdf_tools():
     return _find_pdf_tools()
 
 
-@pytest.mark.parametrize(
-    ("flag", "value"), [("CI", "true"), ("ONEPAGER_REQUIRE_PDF", "1")]
-)
-def test_missing_pdf_tools_fail_when_required(monkeypatch, flag, value):
+@pytest.mark.parametrize("ci", ["false", "true"])
+def test_missing_pdf_tools_fail_when_required(monkeypatch, ci):
     monkeypatch.setattr(shutil, "which", lambda name: None)
-    monkeypatch.delenv("CI", raising=False)
-    monkeypatch.delenv("ONEPAGER_REQUIRE_PDF", raising=False)
-    monkeypatch.setenv(flag, value)
+    monkeypatch.setenv("CI", ci)
+    monkeypatch.setenv("ONEPAGER_REQUIRE_PDF", "1")
     try:
         with pytest.raises(pytest.fail.Exception, match="PDF integration requires"):
             _find_pdf_tools()
@@ -331,9 +328,10 @@ def test_missing_pdf_tools_fail_when_required(monkeypatch, flag, value):
         pytest.fail("Required PDF tools were silently skipped")
 
 
-def test_missing_pdf_tools_skip_with_explicit_reason_when_optional(monkeypatch):
+@pytest.mark.parametrize("ci", ["false", "true"])
+def test_missing_pdf_tools_skip_with_explicit_reason_when_optional(monkeypatch, ci):
     monkeypatch.setattr(shutil, "which", lambda name: None)
-    monkeypatch.delenv("CI", raising=False)
+    monkeypatch.setenv("CI", ci)
     monkeypatch.delenv("ONEPAGER_REQUIRE_PDF", raising=False)
     with pytest.raises(pytest.skip.Exception, match="PDF integration requires"):
         _find_pdf_tools()
@@ -415,7 +413,7 @@ def test_cli_html_only(bundle, tmp_path):
         )
         == 0
     )
-    assert (tmp_path / "onepager.html").read_text(
+    assert (tmp_path / "onepager.preview.html").read_text(
         encoding="utf-8"
     ) == report.render_html(bundle, "001")
     assert not (tmp_path / "onepager.pdf").exists()
@@ -436,7 +434,7 @@ def test_make_html_target(tmp_path):
         check=True,
     )
     assert "--html-only" in result.stdout
-    assert (tmp_path / "onepager.html").read_text(encoding="utf-8") == (
+    assert (tmp_path / "onepager.preview.html").read_text(encoding="utf-8") == (
         FIXTURES / "worked_example.html"
     ).read_text(encoding="utf-8")
 
@@ -504,3 +502,85 @@ def test_browser_timeout_fails_without_replacing_outputs(
     )
     assert not Path(profile).exists()
     assert not list(tmp_path.glob("onepager-build-*"))
+
+
+@pytest.mark.parametrize("contents", [b"", b"partial output", b"%PDF-partial"])
+@pytest.mark.parametrize("failure", ["missing", "timeout", "nonzero", "readback"])
+def test_failed_pdf_build_does_not_publish_rejection(
+    tmp_path, monkeypatch, contents, failure
+):
+    html = tmp_path / "in.html"
+    html.write_text("test", encoding="utf-8")
+    pdf = tmp_path / "onepager.pdf"
+    pdf.write_bytes(b"accepted PDF")
+    rejected = pdf.with_suffix(".rejected.pdf")
+    rejected.write_bytes(b"%PDF-previous rejection")
+
+    def run(args, **kwargs):
+        if args[0] == "chrome":
+            candidate = Path(
+                next(
+                    a.split("=", 1)[1] for a in args if a.startswith("--print-to-pdf=")
+                )
+            )
+            candidate.write_bytes(contents)
+            if failure == "missing":
+                raise FileNotFoundError("browser absent")
+            if failure == "timeout":
+                raise subprocess.TimeoutExpired(args, 120)
+            if failure == "nonzero":
+                raise subprocess.CalledProcessError(1, args)
+        else:
+            raise subprocess.CalledProcessError(1, args)
+        return subprocess.CompletedProcess(args, 0, "", "")
+
+    monkeypatch.setattr(report.subprocess, "run", run)
+    expected_error = {
+        "missing": FileNotFoundError,
+        "timeout": subprocess.TimeoutExpired,
+        "nonzero": subprocess.CalledProcessError,
+        "readback": (
+            subprocess.CalledProcessError
+            if contents.startswith(b"%PDF-")
+            else ValueError
+        ),
+    }[failure]
+    with pytest.raises(expected_error):
+        report.render_pdf(html, pdf, chrome="chrome")
+    assert pdf.read_bytes() == b"accepted PDF"
+    assert rejected.read_bytes() == b"%PDF-previous rejection"
+    assert sorted(path.name for path in tmp_path.iterdir()) == [
+        "in.html",
+        "onepager.pdf",
+        "onepager.rejected.pdf",
+    ]
+
+
+def test_html_preview_preserves_accepted_pair(bundle, tmp_path):
+    source = tmp_path / "bundle.json"
+    source.write_text(json.dumps(bundle), encoding="utf-8")
+    html = tmp_path / "onepager.html"
+    html.write_text("previous accepted HTML", encoding="utf-8")
+    pdf = tmp_path / "onepager.pdf"
+    pdf.write_bytes(b"previous accepted PDF")
+
+    assert (
+        report.main(
+            [
+                "--input",
+                str(source),
+                "--operator",
+                "001",
+                "--output-dir",
+                str(tmp_path),
+                "--html-only",
+            ]
+        )
+        == 0
+    )
+
+    assert html.read_text(encoding="utf-8") == "previous accepted HTML"
+    assert pdf.read_bytes() == b"previous accepted PDF"
+    assert (tmp_path / "onepager.preview.html").read_text(
+        encoding="utf-8"
+    ) == report.render_html(bundle, "001")
