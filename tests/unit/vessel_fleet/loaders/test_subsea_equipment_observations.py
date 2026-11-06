@@ -6,7 +6,8 @@ merging conflicting source revisions must fail these dataset contract tests.
 """
 
 import csv
-from datetime import date
+import re
+from datetime import date, timedelta
 from decimal import Decimal
 from pathlib import Path
 from urllib.parse import urlparse
@@ -52,7 +53,8 @@ def test_provenance_and_shape(rows):
             assert row[field].strip(), (row["observation_id"], field)
         assert urlparse(row["source_url"]).scheme == "https"
         assert urlparse(row["source_url"]).netloc
-        date.fromisoformat(row["retrieved_on"])
+        assert date.fromisoformat(row["retrieved_on"]) <= date.today()
+        assert row["unit"] in {"in", "ft", "ft_in", "kg", "lb"}
         assert row["status"] in {"REPORTED", "NOT_FOUND", "NOT_TRANSCRIBED"}
         if row["status"] in {"NOT_FOUND", "NOT_TRANSCRIBED"}:
             assert row["value"] == row["status"]
@@ -60,7 +62,9 @@ def test_provenance_and_shape(rows):
         else:
             assert row["confidence"] == "A"
             assert row["range"] == "NOT_REPORTED"
-            if row["unit"] != "ft_in":
+            if row["unit"] == "ft_in":
+                assert re.fullmatch(r"\d+ ft \d+ in", row["value"])
+            else:
                 assert Decimal(row["value"]).is_finite()
                 assert Decimal(row["value"]) > 0
 
@@ -121,6 +125,9 @@ def test_modular_published_values(rows, identifier, value, unit):
     assert row["source_url"] == "https://www.trendsetterengineering.com/files/862/"
     assert row["equipment_class"] == "EDP_LRP-6_3_8in-15000psi-generation_unstated"
     assert "unresolved" in row["notes"]
+    assert "EDP / LRP as labelled; combined or per-module not stated" in row["notes"]
+    if identifier == "MODULAR-WEIGHT":
+        assert "basis unspecified" in row["notes"]
 
 
 def test_gaps_remain_explicit(rows):
@@ -160,13 +167,38 @@ def test_known_research_findings_are_untranscribed_not_absent(
         assert "Restricted" in row["notes"]
 
 
-def test_weight_basis_is_not_promoted_to_dry_or_submerged_mass(rows):
-    weights = [
-        row for row in rows if row["parameter"] == "deployed_weight_as_published"
-    ]
-    assert {row["observation_id"] for row in weights} == {
-        "OVS-EDP-WEIGHT",
-        "OVS-LRP-WEIGHT",
-        "MODULAR-WEIGHT",
+def test_published_weight_parameters_preserve_the_source_labels(rows):
+    parameters = {
+        row["observation_id"]: row["parameter"]
+        for row in rows
+        if row["status"] == "REPORTED" and "WEIGHT" in row["observation_id"]
     }
-    assert all("basis unspecified" in row["notes"] for row in weights)
+    assert parameters == {
+        "OVS-EDP-WEIGHT": "deployed_weight_as_published",
+        "OVS-LRP-WEIGHT": "deployed_weight_as_published",
+        "MODULAR-WEIGHT": "weight_as_published",
+    }
+
+
+def test_unspecified_weight_basis_is_not_promoted_to_mass(rows):
+    for row in rows:
+        if re.search(r"basis.*(?:unspecified|unstated)", row["notes"], re.IGNORECASE):
+            assert row["parameter"] not in {"dry_mass", "submerged_mass"}, row[
+                "observation_id"
+            ]
+    bop = next(row for row in rows if row["observation_id"] == "BOP-MASS-GAP")
+    assert bop["parameter"] == "weight_as_published"
+
+
+@pytest.mark.parametrize(
+    "field,value",
+    [
+        ("unit", "kgs"),
+        ("value", "10ft 10in"),
+        ("retrieved_on", (date.today() + timedelta(days=1)).isoformat()),
+    ],
+)
+def test_provenance_and_shape_rejects_invalid_metadata(rows, field, value):
+    row = next(row for row in rows if row["observation_id"] == "MODULAR-LENGTH")
+    with pytest.raises(AssertionError):
+        test_provenance_and_shape([{**row, field: value}])

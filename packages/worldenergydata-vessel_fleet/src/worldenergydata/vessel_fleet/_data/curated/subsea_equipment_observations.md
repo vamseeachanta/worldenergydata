@@ -13,6 +13,7 @@ require confirmation from drawings. No universal geometry range is established.
 |---|---|---|
 | A | 2026-10-19 | Add source-specific completion-package observations and explicit geometry gaps to prevent unsupported stack-up inputs. |
 | B | 2026-10-21 | Distinguish published but untranscribed research findings from source gaps and clarify component weight provenance. |
+| C | 2026-11-05 | Preserve printed weight labels and assembly uncertainty; clarify search scope and validate observation metadata. |
 
 ## Dataset contract
 
@@ -48,23 +49,39 @@ used. Each row carries its public URL, document, locator and retrieval date.
   `T` unit is not interpreted. Deployed weight is not identified as dry or
   submerged. The LRP entry includes its connector.
 - [Trident Modular Intervention System](https://www.trendsetterengineering.com/files/862/),
-  undated, Specifications on page 2: combined package dimensions and weight.
-  The dimensional axes are labelled. The relationship to the OVS configuration
+  undated, Specifications on page 2: EDP / LRP dimensions and weight.
+  The sheet does not state whether the figures describe a combined assembly
+  or each module. Its weight uses `weight_as_published`; only the OVS entries
+  use `deployed_weight_as_published`. The dimensional axes are labelled.
+  The relationship to the OVS configuration
   and the weight discrepancy are unresolved. Neither sheet supersedes the
   other in this table. Values shall not be combined into a synthetic assembly.
 - [BSEE Well Information](https://www.data.bsee.gov/Main/Well.aspx),
   accessed 2026-10-19: the inspected index provides well-data and submission
   discovery. It does not itself establish equipment dimensions. The gap rows
   are investigation targets, not findings about all underlying filings.
+  Their `source_url` records search scope rather than dimensional evidence.
+  Manufacturer literature was not searched for these six gap components in
+  this pass.
 - [Research record #1140](https://api.github.com/repositories/574746314/issues/comments/6111983634),
   dated 2026-10-11 and accessed 2026-10-21: row 19 identifies combined-stack
   height; rows 1, 4 and 19 identify whole-stack weights; row 20 identifies an
-  approximate separate LMRP weight in air. These findings are NOT_TRANSCRIBED,
+  approximate separate LMRP weight in air. The BOP weight lead uses the
+  basis-neutral `weight_as_published` parameter: the cited rows mix dry,
+  submerged and unstated bases. Its target `kg` unit does not convert a wet
+  weight into mass. These findings are NOT_TRANSCRIBED,
   not absent. Source units, dry/submerged basis, assembly boundaries and exact
   configurations require confirmation before transcription into analysis
   inputs. The source for row 1 carries a Restricted document label; no value or
   text from that sheet is added here. The API URL identifies the dated comment
   directly; it does not constitute independent verification of the originals.
+- [Earlier research record #1140](https://api.github.com/repositories/574746314/issues/comments/5810649761),
+  dated 2026-09-24: component sums provide separate LMRP height estimate leads;
+  the record also identifies flex-joint drag-diameter and stiffness-class
+  leads. These are not independently qualified dimensions or stiffness inputs
+  in this table. The LMRP height row remains NOT_FOUND for a directly sourced
+  assembly dimension in this bounded pass; the component-sum lead is an
+  estimate requiring confirmation of assembly boundaries and configuration.
 
 Only individual attributed facts and links are retained; source PDFs, images
 and substantial text are not redistributed. No reuse licence is asserted.
