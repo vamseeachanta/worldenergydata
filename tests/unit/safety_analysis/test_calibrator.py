@@ -10,7 +10,7 @@ Covers:
     TestCalibratedMatrix    (4 tests)
     TestIntegrationWithSkill (3 tests)
 
-Total: 109 cases, including 64 source-expression guard cases.
+Total: 145 cases, including 100 source-expression guard cases.
 """
 
 from __future__ import annotations
@@ -453,16 +453,36 @@ def _is_operator_target(target):
 
 
 def _operator_literal_values(expression):
-    """Yield literal labels, excluding lookup expressions and their defaults."""
+    """Yield label literals from value branches, excluding lookup metadata."""
     if isinstance(expression, ast.Constant) and isinstance(expression.value, str):
         yield expression
     elif isinstance(expression, (ast.List, ast.Tuple, ast.Set)):
         for element in expression.elts:
             yield from _operator_literal_values(element)
+    elif isinstance(expression, ast.IfExp):
+        yield from _operator_literal_values(expression.body)
+        yield from _operator_literal_values(expression.orelse)
+    elif isinstance(expression, ast.BoolOp):
+        for value in expression.values:
+            yield from _operator_literal_values(value)
+    elif isinstance(expression, ast.BinOp):
+        yield from _operator_literal_values(expression.left)
+        yield from _operator_literal_values(expression.right)
+    elif isinstance(expression, ast.Dict):
+        for value in expression.values:
+            yield from _operator_literal_values(value)
     elif isinstance(expression, ast.Call):
-        if isinstance(expression.func, ast.Attribute) and expression.func.attr == "get":
-            return
-        for argument in expression.args:
+        is_lookup = (
+            isinstance(expression.func, ast.Attribute) and expression.func.attr == "get"
+        )
+        arguments = expression.args[1:] if is_lookup else expression.args
+        for argument in arguments:
+            if (
+                is_lookup
+                and isinstance(argument, ast.Constant)
+                and argument.value == ""
+            ):
+                continue
             yield from _operator_literal_values(argument)
         for keyword in expression.keywords:
             if not _is_named_aggregation(expression, keyword):
@@ -473,7 +493,7 @@ def _is_named_aggregation(call, keyword):
     """A pandas named aggregation tuple specifies a column and reduction."""
     return (
         isinstance(call.func, ast.Attribute)
-        and call.func.attr == "agg"
+        and call.func.attr in {"agg", "aggregate"}
         and isinstance(keyword.value, ast.Tuple)
         and len(keyword.value.elts) == 2
     )
@@ -521,8 +541,10 @@ def test_package_source_and_fixtures_use_operator_codenames():
     """Issue #1240: scan all package source and safety-specific fixture trees.
 
     Literal labels and structured fixture fields must match ^OPERATOR-[A-Z]+$,
-    without storing real names or a denylist. Lookup keys, lookup defaults and
-    named aggregation tuples are metadata; dynamic values are not evaluated.
+    without storing real names or a denylist. Lookup keys, empty lookup defaults
+    and named aggregation tuples are metadata. Conditional, boolean, binary and
+    dictionary value literals and nonempty lookup defaults are checked;
+    dynamically computed labels are not evaluated.
     This is a structural regression check, not free-text entity recognition.
     """
     package = Path(calibrator_module.__file__).parent
@@ -592,10 +614,11 @@ def test_operator_source_guard_rejects_generic_non_codename(field, source):
         'self.{field} = row["{field}"]',
         '{field} = record.get("{field}", "")',
         'df.groupby(k).agg({field}=("{field}", "first"))',
+        'df.groupby(k).aggregate({field}=("{field}", "first"))',
     ],
 )
 def test_operator_source_guard_allows_lookup_metadata(field, source):
-    """Column keys, lookup defaults and aggregation methods are not labels."""
+    """Column keys, empty defaults and aggregation methods are not labels."""
     tree = ast.parse(source.format(field=field))
     assert _assert_source_operator_codenames(tree, Path("example.py")) == []
 
@@ -612,6 +635,30 @@ def test_operator_source_guard_allows_lookup_metadata(field, source):
 )
 def test_operator_source_guard_checks_literal_containers_and_call_values(field, value):
     """Literal labels remain checked, including synthetic random choices."""
+    relative_path = Path("example.py")
+    invalid = ast.parse(f"{field} = " + value.format(label="UNLABELLED"))
+    with pytest.raises(AssertionError, match="codename contract"):
+        _assert_source_operator_codenames(invalid, relative_path)
+    valid = ast.parse(f"{field} = " + value.format(label="OPERATOR-AA"))
+    assert len(_assert_source_operator_codenames(valid, relative_path)) == 1
+
+
+@pytest.mark.parametrize("field", sorted(_OPERATOR_FIELDS))
+@pytest.mark.parametrize(
+    "value",
+    [
+        '"{label}" if selector == "UNLABELLED" else existing',
+        'existing if selector == "UNLABELLED" else "{label}"',
+        'existing or "{label}"',
+        '"{label}" and existing',
+        '"{label}" + suffix',
+        'prefix + "{label}"',
+        '{{"UNLABELLED": "{label}"}}',
+        'row.get("operator", "{label}")',
+    ],
+)
+def test_operator_source_guard_checks_expression_values(field, value):
+    """Value-bearing branches reject invalid labels and accept codenames."""
     relative_path = Path("example.py")
     invalid = ast.parse(f"{field} = " + value.format(label="UNLABELLED"))
     with pytest.raises(AssertionError, match="codename contract"):
