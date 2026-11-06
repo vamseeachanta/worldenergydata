@@ -3,6 +3,7 @@
 import hashlib
 import io
 import json
+import sys
 import zipfile
 from argparse import Namespace
 from pathlib import Path
@@ -230,6 +231,8 @@ def test_script_manifest_write_is_explicit_and_attribution_deterministic(
     committed_path.write_bytes(original)
     args = Namespace(
         data_dir=str(directory),
+        roster=independent_roster,
+        manifest_only=False,
         output=output,
         reuse=True,
         update_manifest=update,
@@ -244,7 +247,7 @@ def test_script_manifest_write_is_explicit_and_attribution_deterministic(
     assert len(result["fields"]) == 1
     assert result["fields"][0]["name"] == "Synthetic field"
     assert (
-        result["input_sha256"][independent_roster.name]
+        result["input_sha256"]["roster"]
         == hashlib.sha256(independent_roster.read_bytes()).hexdigest()
     )
     assert all(not Path(key).is_absolute() for key in result["input_sha256"])
@@ -267,6 +270,8 @@ def test_script_rejects_withheld_roster_before_source_reads_or_writes(
     output = tmp_path / "output"
     args = Namespace(
         data_dir=str(tmp_path / "unread"),
+        roster=fetch_sands_atlas.ROSTER_PATH,
+        manifest_only=False,
         output=output,
         reuse=True,
         update_manifest=True,
@@ -296,6 +301,8 @@ def test_script_digest_difference_exits_without_rewriting_manifest(
     original = committed_path.read_bytes()
     args = Namespace(
         data_dir=str(directory),
+        roster=independent_roster,
+        manifest_only=False,
         output=output,
         reuse=True,
         update_manifest=False,
@@ -307,6 +314,131 @@ def test_script_digest_difference_exits_without_rewriting_manifest(
     assert error.value.code != 0
     assert "sha256" in capsys.readouterr().out
     assert committed_path.read_bytes() == original
+
+
+def test_cli_accepts_independent_roster(tmp_path, monkeypatch):
+    directory = tmp_path / "retained"
+    directory.mkdir()
+    manifest = retained_manifest(directory)
+    (directory / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+    output = tmp_path / "output"
+    output.mkdir()
+    (output / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+    roster = tmp_path / "independent.json"
+    roster.write_text(
+        json.dumps([{"name": "Synthetic field", "region": "US Gulf of Mexico"}]),
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "fetch_sands_atlas.py",
+            "--reuse",
+            "--data-dir",
+            str(directory),
+            "--output",
+            str(output),
+            "--roster",
+            str(roster),
+        ],
+    )
+    fetch_sands_atlas.main()
+    result = json.loads((output / "field_attribution.json").read_bytes())
+    assert result["fields"][0]["name"] == "Synthetic field"
+    assert (
+        result["input_sha256"]["roster"]
+        == hashlib.sha256(roster.read_bytes()).hexdigest()
+    )
+
+
+def test_cli_explicit_withheld_roster_is_rejected_before_writes(tmp_path, monkeypatch):
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "fetch_sands_atlas.py",
+            "--data-dir",
+            str(tmp_path / "unread"),
+            "--roster",
+            str(fetch_sands_atlas.ROSTER_PATH),
+            "--output",
+            str(tmp_path / "output"),
+            "--update-manifest",
+        ],
+    )
+    with pytest.raises(DatasetUnavailableError, match="redistribution-terms review"):
+        fetch_sands_atlas.main()
+    assert not (tmp_path / "output").exists()
+    assert not (tmp_path / "unread").exists()
+
+
+@pytest.mark.parametrize("reuse", [False, True])
+@pytest.mark.parametrize("update", [False, True])
+def test_manifest_only_does_not_read_roster_or_write_attribution(
+    tmp_path, monkeypatch, reuse, update
+):
+    directory = tmp_path / "retained"
+    directory.mkdir()
+    manifest = retained_manifest(directory)
+    (directory / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+    output = tmp_path / "output"
+    output.mkdir()
+    original = json.dumps(manifest, separators=(",", ":")).encode()
+    (output / "manifest.json").write_bytes(original)
+    saved = output / "field_attribution.json"
+    saved.write_bytes(b"saved attribution")
+    monkeypatch.setattr(fetch_sands_atlas, "fetch_atlas", lambda *args: manifest)
+
+    def unavailable(*args):
+        pytest.fail("manifest-only must not consume attribution inputs")
+
+    monkeypatch.setattr(fetch_sands_atlas, "require_available_source", unavailable)
+    monkeypatch.setattr(fetch_sands_atlas, "load_fields", unavailable)
+    monkeypatch.setattr(fetch_sands_atlas, "attribute_fields", unavailable)
+    args = [
+        "fetch_sands_atlas.py",
+        "--data-dir",
+        str(directory),
+        "--output",
+        str(output),
+        "--manifest-only",
+    ]
+    if reuse:
+        args.append("--reuse")
+    if update:
+        args.append("--update-manifest")
+    monkeypatch.setattr(sys, "argv", args)
+    fetch_sands_atlas.main()
+    expected = (json.dumps(manifest, indent=2) + "\n").encode() if update else original
+    assert (output / "manifest.json").read_bytes() == expected
+    assert saved.read_bytes() == b"saved attribution"
+
+
+def test_external_provenance_uses_roles_when_basenames_collide(tmp_path):
+    inputs = []
+    for role in ("roster", "registry", "schema"):
+        path = tmp_path / role / "schema.json"
+        path.parent.mkdir()
+        path.write_text(role, encoding="utf-8")
+        inputs.append(path)
+    output = fetch_sands_atlas.attribution_output(tmp_path / "repo", *inputs, [])
+    assert output["input_sha256"] == {
+        role: hashlib.sha256(path.read_bytes()).hexdigest()
+        for role, path in zip(("roster", "registry", "schema"), inputs)
+    }
+
+
+def test_mixed_provenance_key_collision_is_rejected(tmp_path):
+    root = tmp_path / "repo"
+    root.mkdir()
+    roster = tmp_path / "external.json"
+    registry = root / "roster"
+    schema = root / "schema.json"
+    for path in (roster, registry, schema):
+        path.write_text("synthetic input", encoding="utf-8")
+    with pytest.raises(ValueError, match="duplicate provenance key"):
+        fetch_sands_atlas.attribution_output(root, roster, registry, schema, [])
 
 
 def test_transport_pins_host_headers_closes_and_rejects_redirect(monkeypatch):

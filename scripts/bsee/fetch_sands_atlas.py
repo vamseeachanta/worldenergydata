@@ -99,6 +99,17 @@ def parse_args(root: Path) -> argparse.Namespace:
     )
     parser.add_argument("--mdb-export", default="mdb-export")
     parser.add_argument(
+        "--roster",
+        type=Path,
+        default=ROSTER_PATH,
+        help="independently sourced roster; the bundled roster is withheld",
+    )
+    parser.add_argument(
+        "--manifest-only",
+        action="store_true",
+        help="fetch or verify the public Atlas manifest without attribution",
+    )
+    parser.add_argument(
         "--update-manifest",
         action="store_true",
         help="explicitly replace the committed manifest with this run's manifest",
@@ -120,7 +131,7 @@ def parse_args(root: Path) -> argparse.Namespace:
 def main() -> None:
     root = Path(__file__).resolve().parents[2]
     args = parse_args(root)
-    roster_path = require_available_source(ROSTER_PATH)
+    roster_path = None if args.manifest_only else require_available_source(args.roster)
     directory = Path(args.data_dir).resolve()
     schema = root / "data/modules/bsee/atlas/2023/schema.json"
     manifest = (
@@ -132,6 +143,8 @@ def main() -> None:
     check_or_update_manifest(
         args.output / "manifest.json", manifest, args.update_manifest
     )
+    if args.manifest_only:
+        return
     registry_path = root / "config/fields.yml"
     registry = load_fields(registry_path)
     xref_path = directory / "2023xref_oper-comp.csv"
@@ -165,16 +178,21 @@ def attribution_output(
     schema: Path,
     results: list[dict],
 ) -> dict:
+    input_sha256 = {}
+    for role, path in (
+        ("roster", roster_path),
+        ("registry", registry_path),
+        ("schema", schema),
+    ):
+        key = path.relative_to(root).as_posix() if path.is_relative_to(root) else role
+        if key in input_sha256:
+            raise ValueError("duplicate provenance key")
+        input_sha256[key] = hashlib.sha256(path.read_bytes()).hexdigest()
     output = {
         "edition": 2023,
         "manifest": "manifest.json",
         "criteria_version": 2,
-        "input_sha256": {
-            (
-                p.relative_to(root).as_posix() if p.is_relative_to(root) else p.name
-            ): hashlib.sha256(p.read_bytes()).hexdigest()
-            for p in (roster_path, registry_path, schema)
-        },
+        "input_sha256": input_sha256,
         "counts": {
             status: sum(r["status"] == status for r in results)
             for status in ("attributed", "ambiguous", "unmatched")
