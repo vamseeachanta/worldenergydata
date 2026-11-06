@@ -248,6 +248,34 @@ def test_offshore_descriptions_keep_region_separate_from_state():
     assert record["offshore_region"] == "Eastern Offshore"
 
 
+@pytest.mark.parametrize(
+    "location_fields",
+    [
+        {"description": "Unclassified / Basin / Published location"},
+        {"state": "Published location"},
+    ],
+)
+def test_unknown_acreage_with_location_fails_closed(monkeypatch, location_fields):
+    from worldenergydata.india_dgh.blocks import CODE_ACREAGE, RoundSource, _normalize
+
+    # Simulate a block-code type not yet covered by the acreage mapping.
+    monkeypatch.delitem(CODE_ACREAGE, "ONHP")
+    source = RoundSource("test", "OALP", "test_source")
+    with pytest.raises(ValueError, match="unknown acreage type.*published location"):
+        _normalize({"block_name": "RJ-ONHP-2022/1", **location_fields}, source, 1)
+
+
+def test_unknown_acreage_without_location_remains_missing(monkeypatch):
+    from worldenergydata.india_dgh.blocks import CODE_ACREAGE, RoundSource, _normalize
+
+    monkeypatch.delitem(CODE_ACREAGE, "ONHP")
+    source = RoundSource("test", "OALP", "test_source")
+    record = _normalize({"block_name": "RJ-ONHP-2022/1"}, source, 1)
+    assert record["acreage_type"] is None
+    assert record["state"] is None
+    assert record["offshore_region"] is None
+
+
 def test_shipped_offshore_blocks_have_no_non_state_values(blocks):
     # Award lists supply coastal regions for offshore acreage, not states.
     offshore = blocks[blocks.acreage_type != "onland"]

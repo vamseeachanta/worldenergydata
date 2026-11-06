@@ -288,6 +288,8 @@ def _normalize(record: dict, source: RoundSource, page: int) -> dict:
     category = basin_category(record.get("basin_category", ""))
     area = parse_area(record.get("area_km2", ""))
     location = record.get("state") or (segments[2] if len(segments) == 3 else None)
+    if acreage is None and location:
+        raise ValueError(f"unknown acreage type with published location for {code}")
     return {
         "round": source.round,
         "round_family": source.round_family,

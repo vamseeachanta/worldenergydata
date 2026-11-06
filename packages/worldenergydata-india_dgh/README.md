@@ -41,6 +41,8 @@ production = load_production()   # 960 rows: crude by company, condensate, gas b
 Rounds I-III print block and H1 bidder only. Area is missing for 147 of 175
 blocks; it is never estimated. Awardee strings are not normalized; operator and
 participating-interest splits are not established for consortium awards.
+If a published location accompanies an unknown acreage type, parsing raises
+an error rather than discarding the location or assigning it to the wrong field.
 
 **Source anomaly.** Round VIII page 2 prints `Eastern Offshore` for
 `KK-DWHP-2022/1`, in the Kerala-Konkan basin, and `Western Offshore` for
