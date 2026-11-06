@@ -1,0 +1,381 @@
+{
+ "schema_version": "1.0",
+ "report_id": "issue-002-gom-well-permits",
+ "mode": "rebuild",
+ "started_utc": "2026-11-06T15:23:21Z",
+ "finished_utc": "2026-11-06T15:23:21Z",
+ "grade": "PASS",
+ "python": "3.12.10",
+ "platform": "Windows",
+ "context": {
+  "repo_root": "worldenergydata",
+  "repo_head": "f5af5b6da87710bb395552f9cda5e34d1f324479",
+  "counting_script": {
+   "path": "examples/bsee/rawdata_fact_check/count_rawdata.py",
+   "sha256": "cd0720001026efb6c55125886ffb40e66725ec3d28e4fe9e4427741e30c43de4"
+  },
+  "bsee_files": {
+   "APDRawData.zip": {
+    "path": "<tmp>/report-evals-cache/2026-11-06/bsee-raw/APDRawData.zip",
+    "sha256": "a73f31e790ba476bcab3c895da0af6bb97f6dd2890d904a8034d838e919037a5",
+    "retrieved_utc": "already in data dir"
+   },
+   "IncInvRawData.zip": {
+    "path": "<tmp>/report-evals-cache/2026-11-06/bsee-raw/IncInvRawData.zip",
+    "sha256": "b936536640c0e0f58ab31fd2e70fb6da6c4ffbc78a2737aa035bd9f508822475",
+    "retrieved_utc": "already in data dir"
+   }
+  },
+  "fig1_csv": {
+   "url": "https://www.aceengineer.com/assets/data/newsletter/issue-002/fig-p1-new-well-permits-by-rig-type.csv",
+   "path": "<tmp>\\report-evals-cache\\2026-11-06\\fig-p1-new-well-permits-by-rig-type.csv",
+   "sha256": "a53aee488587f01551aed29223fafc35d1a3dd0853b9d139c1ced3109b7db1b8",
+   "retrieved_utc": "cached"
+  },
+  "fig1_2026_total": 47
+ },
+ "results": [
+  {
+   "id": "permits_all_2005_2026",
+   "expected": 2895,
+   "got": 2895,
+   "unit": "permits",
+   "status": "MATCH",
+   "difference": "+0 (+0 %)",
+   "note": "APD file sha256 a73f31e790ba..., retrieved already in data dir"
+  },
+  {
+   "id": "permits_jackup",
+   "expected": 1333,
+   "got": 1333,
+   "unit": "permits",
+   "status": "MATCH",
+   "difference": "+0 (+0 %)",
+   "note": ""
+  },
+  {
+   "id": "median_depth_ft_jackup",
+   "expected": 101,
+   "got": 101.0,
+   "unit": "ft",
+   "status": "MATCH",
+   "difference": "+0 (+0 %)",
+   "note": ""
+  },
+  {
+   "id": "min_depth_ft_jackup",
+   "expected": 9,
+   "got": 9.0,
+   "unit": "ft",
+   "status": "MATCH",
+   "difference": "+0 (+0 %)",
+   "note": ""
+  },
+  {
+   "id": "max_depth_ft_jackup",
+   "expected": 395,
+   "got": 395.0,
+   "unit": "ft",
+   "status": "MATCH",
+   "difference": "+0 (+0 %)",
+   "note": ""
+  },
+  {
+   "id": "permits_drillship",
+   "expected": 758,
+   "got": 758,
+   "unit": "permits",
+   "status": "MATCH",
+   "difference": "+0 (+0 %)",
+   "note": ""
+  },
+  {
+   "id": "median_depth_ft_drillship",
+   "expected": 5187,
+   "got": 5187.0,
+   "unit": "ft",
+   "status": "MATCH",
+   "difference": "+0 (+0 %)",
+   "note": ""
+  },
+  {
+   "id": "min_depth_ft_drillship",
+   "expected": 1296,
+   "got": 1296.0,
+   "unit": "ft",
+   "status": "MATCH",
+   "difference": "+0 (+0 %)",
+   "note": ""
+  },
+  {
+   "id": "max_depth_ft_drillship",
+   "expected": 9808,
+   "got": 9808.0,
+   "unit": "ft",
+   "status": "MATCH",
+   "difference": "+0 (+0 %)",
+   "note": ""
+  },
+  {
+   "id": "permits_semisub",
+   "expected": 282,
+   "got": 282,
+   "unit": "permits",
+   "status": "MATCH",
+   "difference": "+0 (+0 %)",
+   "note": ""
+  },
+  {
+   "id": "median_depth_ft_semisub",
+   "expected": 3233,
+   "got": 3233.0,
+   "unit": "ft",
+   "status": "MATCH",
+   "difference": "+0 (+0 %)",
+   "note": ""
+  },
+  {
+   "id": "min_depth_ft_semisub",
+   "expected": 407,
+   "got": 407.0,
+   "unit": "ft",
+   "status": "MATCH",
+   "difference": "+0 (+0 %)",
+   "note": ""
+  },
+  {
+   "id": "max_depth_ft_semisub",
+   "expected": 9356,
+   "got": 9356.0,
+   "unit": "ft",
+   "status": "MATCH",
+   "difference": "+0 (+0 %)",
+   "note": ""
+  },
+  {
+   "id": "permits_dp_semisub",
+   "expected": 260,
+   "got": 260,
+   "unit": "permits",
+   "status": "MATCH",
+   "difference": "+0 (+0 %)",
+   "note": ""
+  },
+  {
+   "id": "median_depth_ft_dp_semisub",
+   "expected": 5263.5,
+   "got": 5263.5,
+   "unit": "ft",
+   "status": "MATCH",
+   "difference": "+0 (+0 %)",
+   "note": ""
+  },
+  {
+   "id": "min_depth_ft_dp_semisub",
+   "expected": 470,
+   "got": 470.0,
+   "unit": "ft",
+   "status": "MATCH",
+   "difference": "+0 (+0 %)",
+   "note": ""
+  },
+  {
+   "id": "max_depth_ft_dp_semisub",
+   "expected": 10139,
+   "got": 10139.0,
+   "unit": "ft",
+   "status": "MATCH",
+   "difference": "+0 (+0 %)",
+   "note": ""
+  },
+  {
+   "id": "permits_platform_rig",
+   "expected": 162,
+   "got": 162,
+   "unit": "permits",
+   "status": "MATCH",
+   "difference": "+0 (+0 %)",
+   "note": ""
+  },
+  {
+   "id": "median_depth_ft_platform_rig",
+   "expected": 392,
+   "got": 392.0,
+   "unit": "ft",
+   "status": "MATCH",
+   "difference": "+0 (+0 %)",
+   "note": ""
+  },
+  {
+   "id": "min_depth_ft_platform_rig",
+   "expected": 11,
+   "got": 11.0,
+   "unit": "ft",
+   "status": "MATCH",
+   "difference": "+0 (+0 %)",
+   "note": ""
+  },
+  {
+   "id": "max_depth_ft_platform_rig",
+   "expected": 4428,
+   "got": 4428.0,
+   "unit": "ft",
+   "status": "MATCH",
+   "difference": "+0 (+0 %)",
+   "note": ""
+  },
+  {
+   "id": "permits_submersible",
+   "expected": 81,
+   "got": 81,
+   "unit": "permits",
+   "status": "MATCH",
+   "difference": "+0 (+0 %)",
+   "note": ""
+  },
+  {
+   "id": "median_depth_ft_submersible",
+   "expected": 40,
+   "got": 40.0,
+   "unit": "ft",
+   "status": "MATCH",
+   "difference": "+0 (+0 %)",
+   "note": ""
+  },
+  {
+   "id": "min_depth_ft_submersible",
+   "expected": 12,
+   "got": 12.0,
+   "unit": "ft",
+   "status": "MATCH",
+   "difference": "+0 (+0 %)",
+   "note": ""
+  },
+  {
+   "id": "max_depth_ft_submersible",
+   "expected": 72,
+   "got": 72.0,
+   "unit": "ft",
+   "status": "MATCH",
+   "difference": "+0 (+0 %)",
+   "note": ""
+  },
+  {
+   "id": "permits_other",
+   "expected": 19,
+   "got": 19,
+   "unit": "permits",
+   "status": "MATCH",
+   "difference": "+0 (+0 %)",
+   "note": ""
+  },
+  {
+   "id": "median_depth_ft_other",
+   "expected": 12,
+   "got": 12.0,
+   "unit": "ft",
+   "status": "MATCH",
+   "difference": "+0 (+0 %)",
+   "note": ""
+  },
+  {
+   "id": "min_depth_ft_other",
+   "expected": 10,
+   "got": 10.0,
+   "unit": "ft",
+   "status": "MATCH",
+   "difference": "+0 (+0 %)",
+   "note": ""
+  },
+  {
+   "id": "max_depth_ft_other",
+   "expected": 5422,
+   "got": 5422.0,
+   "unit": "ft",
+   "status": "MATCH",
+   "difference": "+0 (+0 %)",
+   "note": ""
+  },
+  {
+   "id": "permits_2005_total",
+   "expected": 322,
+   "got": 322,
+   "unit": "permits",
+   "status": "MATCH",
+   "difference": "+0 (+0 %)",
+   "note": ""
+  },
+  {
+   "id": "permits_2005_jackup",
+   "expected": 234,
+   "got": 234,
+   "unit": "permits",
+   "status": "MATCH",
+   "difference": "+0 (+0 %)",
+   "note": ""
+  },
+  {
+   "id": "permits_2005_drillship",
+   "expected": 15,
+   "got": 15,
+   "unit": "permits",
+   "status": "MATCH",
+   "difference": "+0 (+0 %)",
+   "note": ""
+  },
+  {
+   "id": "permits_2025_total",
+   "expected": 47,
+   "got": 47,
+   "unit": "permits",
+   "status": "MATCH",
+   "difference": "+0 (+0 %)",
+   "note": ""
+  },
+  {
+   "id": "permits_2025_jackup",
+   "expected": 1,
+   "got": 1,
+   "unit": "permits",
+   "status": "MATCH",
+   "difference": "+0 (+0 %)",
+   "note": ""
+  },
+  {
+   "id": "permits_2025_drillship",
+   "expected": 44,
+   "got": 44,
+   "unit": "permits",
+   "status": "MATCH",
+   "difference": "+0 (+0 %)",
+   "note": ""
+  },
+  {
+   "id": "other_grouped_permits",
+   "expected": 19,
+   "got": 19,
+   "unit": "permits",
+   "status": "MATCH",
+   "difference": "+0 (+0 %)",
+   "note": ""
+  },
+  {
+   "id": "fig1_cells_differing_2005_2025",
+   "expected": 0,
+   "got": 0,
+   "unit": "cells",
+   "status": "MATCH",
+   "difference": "+0",
+   "note": ""
+  },
+  {
+   "id": "script_self_test_passed",
+   "expected": true,
+   "got": true,
+   "unit": "-",
+   "status": "MATCH",
+   "difference": "",
+   "note": ""
+  }
+ ]
+}
