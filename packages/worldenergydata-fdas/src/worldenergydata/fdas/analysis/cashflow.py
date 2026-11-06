@@ -11,16 +11,20 @@ Source: Ported from FDAS generate_financial_summary.py
 
 import math
 from calendar import monthrange
+from collections.abc import Mapping
 from dataclasses import dataclass
 from datetime import datetime
+from numbers import Real
 from typing import Dict, List, Optional
 
+import numpy as np
 import pandas as pd
 
 from worldenergydata.common.exceptions import ProcessingError
 from worldenergydata.common.logging import get_logger
 
 from ..core.config import AssumptionsManager
+from ..core.financial import calculate_npv
 from ..fiscal.terms import FiscalTerms
 from .gas_revenue import monthly_gas_revenue
 
@@ -155,10 +159,10 @@ class CashflowEngine:
         Args:
             assumptions_mgr: Assumptions manager with cost parameters
             dev_system: Development system (dry, subsea15, subsea20)
-            fiscal_terms: Optional country fiscal-terms deck. When provided, its
-                royalty layer supersedes the ``AssumptionsManager`` ROYALTY_RATE
-                (see ``calculate_royalty``). ``None`` (the default) preserves the
-                exact legacy US-GoM assumptions path — byte-identical behavior.
+            fiscal_terms: Optional country fiscal deck selecting royalty,
+                oil price marker and NPV discount rate. Income tax remains
+                declarative; all cashflows are pre-tax. ``None`` preserves the
+                legacy US-GoM assumptions path.
         """
         self.assumptions = assumptions_mgr
         self.dev_system = dev_system
@@ -268,14 +272,19 @@ class CashflowEngine:
         oil_production_monthly: Dict[str, float],
         wti_price_monthly: Dict[str, float],
         oil_differential: float = 0.0,
+        *,
+        oil_prices_by_marker: Optional[Dict[str, Dict[str, float]]] = None,
     ) -> Dict[str, float]:
         """
-        Calculate oil revenue.
+        Calculate oil revenue in USD from the selected oil benchmark.
 
         Args:
             oil_production_monthly: Dict mapping year-month to BBL
             wti_price_monthly: Dict mapping year-month to $/BBL
-            oil_differential: Price differential from WTI (USD/BBL)
+            oil_differential: Differential from the selected marker (USD/BBL)
+            oil_prices_by_marker: Optional marker-keyed monthly USD/BBL series.
+                Fiscal decks select their price_marker. A Brent deck requires
+                an explicit Brent series; the legacy positional series is WTI.
 
         Returns:
             Dictionary mapping year-month to revenue
@@ -288,6 +297,13 @@ class CashflowEngine:
             ...     -2.0
             ... )
         """
+        if self.fiscal_terms is not None or oil_prices_by_marker is not None:
+            return self._fiscal_oil_revenue(
+                oil_production_monthly,
+                wti_price_monthly,
+                oil_differential,
+                oil_prices_by_marker,
+            )
         revenue = {}
         for month, production in oil_production_monthly.items():
             wti_price = wti_price_monthly.get(month, 75.0)
@@ -295,6 +311,113 @@ class CashflowEngine:
             revenue[month] = production * realized_price
 
         return revenue
+
+    @staticmethod
+    def _finite_number(value: float, label: str) -> float:
+        if (
+            isinstance(value, bool)
+            or not isinstance(value, Real)
+            or not math.isfinite(value)
+        ):
+            raise CashflowError(f"Invalid {label}: expected a finite number")
+        return float(value)
+
+    def _fiscal_oil_revenue(
+        self,
+        production: Dict[str, float],
+        wti_prices: Dict[str, float],
+        differential: float,
+        by_marker: Optional[Dict[str, Dict[str, float]]],
+    ) -> Dict[str, float]:
+        self._require_usd()
+        marker = self.fiscal_terms.price_marker if self.fiscal_terms else "wti"
+        if marker not in ("wti", "brent"):
+            raise CashflowError(f"Unsupported oil price_marker {marker!r}")
+        if by_marker is not None:
+            if marker not in by_marker:
+                raise CashflowError(f"Missing oil price series for marker {marker}")
+            prices = by_marker[marker]
+        elif marker == "wti":
+            prices = wti_prices
+        else:
+            raise CashflowError(f"Missing oil price series for marker {marker}")
+        if not isinstance(prices, Mapping):
+            raise CashflowError(
+                f"Invalid {marker} oil price series: expected a mapping"
+            )
+        differential = self._finite_number(differential, "oil differential")
+        revenue = {}
+        for month, volume in production.items():
+            volume = self._finite_number(volume, f"oil volume for {month}")
+            if volume < 0:
+                raise CashflowError(f"Invalid oil volume for {month}: negative volume")
+            if month not in prices:
+                raise CashflowError(
+                    f"Missing {marker} oil price in USD/BBL for {month}"
+                )
+            price = self._finite_number(
+                prices[month], f"{marker} oil price for {month}"
+            )
+            # Revenue = quantity * price: OpenStax, Principles of Economics
+            # 3e (2022), section 8.2. Differential is a caller-supplied input.
+            revenue[month] = self._finite_number(
+                volume * (price + differential), f"oil revenue for {month}"
+            )
+        return revenue
+
+    def _require_usd(self) -> None:
+        if self.fiscal_terms is not None and self.fiscal_terms.currency != "USD":
+            raise CashflowError(
+                "Fiscal currency must be USD; no FX conversion is supplied"
+            )
+
+    def calculate_npv(
+        self,
+        cashflows: List[MonthlyCashflowModel],
+        discount_rate_annual: Optional[float] = None,
+    ) -> float:
+        """Pre-tax USD NPV at the earliest supplied month (time zero).
+
+        Explicit rate > fiscal-deck rate > deckless assumptions. A fiscal deck
+        without a rate requires an explicit input. Months are sorted and gaps
+        filled with zero cashflow; leading zero months are retained. Discounting
+        delegates to core.financial.calculate_npv with its effective monthly
+        compounding convention. No income tax or currency conversion is applied.
+        """
+        self._require_usd()
+        if discount_rate_annual is None:
+            discount_rate_annual = (
+                self.fiscal_terms.discount_rate
+                if self.fiscal_terms is not None
+                else self.assumptions.get(self.dev_system, "DISCOUNT_RATE_ANNUAL", None)
+            )
+        rate = self._finite_number(discount_rate_annual, "annual discount rate")
+        # Domain follows core.financial.calculate_npv; r=-1 has no finite PV.
+        if not -1 < rate <= 1:
+            raise CashflowError(
+                "Annual discount rate must be greater than -1 and at most 1"
+            )
+        if not cashflows:
+            raise CashflowError("Cashflow rows cannot be empty")
+        values = {}
+        for row in cashflows:
+            try:
+                date = datetime.strptime(row.year_month, "%Y-%m")
+                if date.strftime("%Y-%m") != row.year_month:
+                    raise ValueError("Noncanonical month")
+            except (ValueError, TypeError) as exc:
+                raise CashflowError("Cashflow year_month must be YYYY-MM") from exc
+            if row.year_month in values:
+                raise CashflowError(f"Duplicate cashflow month {row.year_month}")
+            values[row.year_month] = self._finite_number(
+                row.net_cashflow_usd, f"net cashflow for {row.year_month}"
+            )
+        months = pd.period_range(min(values), max(values), freq="M")
+        array = np.array([values.get(str(month), 0.0) for month in months])
+        # PV = sum(CF_t/(1+r)^t): OpenStax, Principles of Finance (2022),
+        # section 16.2, equation 16.2; monthly conversion is delegated above.
+        result = calculate_npv(array, rate, period="monthly")
+        return self._finite_number(result, "net present value")
 
     def _uses_sliding_scale(self) -> bool:
         return (
@@ -460,6 +583,8 @@ class CashflowEngine:
         wti_prices: Dict[str, float],
         first_oil_date: datetime,
         gas_prices: Optional[Dict[str, float]] = None,
+        *,
+        oil_prices_by_marker: Optional[Dict[str, Dict[str, float]]] = None,
     ) -> List[MonthlyCashflowModel]:
         """
         Generate complete monthly cashflow projection.
@@ -473,6 +598,8 @@ class CashflowEngine:
                 MONTHLY_GAS_MCF and a finite nonnegative price for each
                 production month are required. No hidden heating-value factor
                 or escalation is applied; no deck preserves legacy oil output.
+            oil_prices_by_marker: Explicit marker-keyed monthly USD/BBL series,
+                passed to calculate_revenue. Required for a Brent fiscal deck.
 
         Returns:
             List of MonthlyCashflowModel objects
@@ -513,6 +640,10 @@ class CashflowEngine:
             drilling_monthly, rig_rate_mm
         )
 
+        if self.fiscal_terms is not None or oil_prices_by_marker is not None:
+            if production_monthly["YEAR_MONTH"].astype(str).duplicated().any():
+                raise CashflowError("Duplicate production months in fiscal cashflow")
+
         # Convert production to dict (ensure string keys)
         prod_dict = {
             str(k): v
@@ -530,7 +661,9 @@ class CashflowEngine:
         # Calculate revenue and costs. Validate gas only when explicitly priced.
         gas_volumes: Dict[str, float] = {}
         gas_revenues: Dict[str, float] = {}
-        oil_revenues = self.calculate_revenue(prod_dict, wti_prices)
+        oil_revenues = self.calculate_revenue(
+            prod_dict, wti_prices, oil_prices_by_marker=oil_prices_by_marker
+        )
         revenue_monthly = oil_revenues
         if gas_prices is not None:
             try:
@@ -614,7 +747,9 @@ def generate_monthly_cashflow(
         ...     'subsea15'
         ... )
     """
-    engine = CashflowEngine(assumptions_mgr, dev_system)
+    engine = CashflowEngine(
+        assumptions_mgr, dev_system, fiscal_terms=kwargs.get("fiscal_terms")
+    )
 
     # Extract required parameters from kwargs
     drilling_timeline = kwargs.get("drilling_timeline", {})
@@ -627,6 +762,7 @@ def generate_monthly_cashflow(
         wti_prices,
         first_oil_date,
         gas_prices=kwargs.get("gas_prices"),
+        oil_prices_by_marker=kwargs.get("oil_prices_by_marker"),
     )
 
     # Convert to DataFrame

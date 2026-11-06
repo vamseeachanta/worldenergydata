@@ -1,0 +1,1063 @@
+{
+  "schema_version": 1,
+  "repository": "worldenergydata",
+  "revision": "f82ff2f186158d6f3fa4c457d4049f7ec08c1aeb",
+  "status": "pending_review",
+  "scope": "Package-local enrollment proposal following the drilling package precedent; external registry is unchanged.",
+  "external_map": {
+    "repository": "digitalmodel",
+    "path": "docs/registry/implementation-map.yaml",
+    "artifact_commit": "b5acbe5f61ed4c755c1f7ea4fafa4611bd14e407",
+    "revision": "947fa50ff9a9e210de7e8f90e01b37add85c5954",
+    "file_sha256": "ff8e59964cf4719b34caca3880e0b213a79c48546b49fb7fcb8ca6394e78001a",
+    "in_package_rows": 0,
+    "counted_families": 0,
+    "families_inspected": 13,
+    "observed_at": "2026-10-21",
+    "evidence": "Public registry bytes read at the artifact commit; membership checked across families[].implementations[].path."
+  },
+  "families": [
+    {
+      "id": "retrieval-cache",
+      "counted": false,
+      "qualification": "NOT_EVALUATED",
+      "implementations": [
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/client/eia_api.py",
+          "symbol": "_CacheEntry.__init__",
+          "line": 50,
+          "end_line": 52,
+          "file_sha256": "3205c312af736d3e7b1530f55a9ccf4d711d7487cbab02a7ce24c84a3932398b",
+          "relation": "helper",
+          "basis": "Retrieval/cache infrastructure, not a production calculation; see the pinned method body.",
+          "targets": []
+        },
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/client/eia_api.py",
+          "symbol": "_CacheEntry.is_expired",
+          "line": 54,
+          "end_line": 55,
+          "file_sha256": "3205c312af736d3e7b1530f55a9ccf4d711d7487cbab02a7ce24c84a3932398b",
+          "relation": "helper",
+          "basis": "Retrieval/cache infrastructure, not a production calculation; see the pinned method body.",
+          "targets": []
+        },
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/client/eia_api.py",
+          "symbol": "EIACache.__init__",
+          "line": 61,
+          "end_line": 63,
+          "file_sha256": "3205c312af736d3e7b1530f55a9ccf4d711d7487cbab02a7ce24c84a3932398b",
+          "relation": "helper",
+          "basis": "Retrieval/cache infrastructure, not a production calculation; see the pinned method body.",
+          "targets": []
+        },
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/client/eia_api.py",
+          "symbol": "EIACache.get",
+          "line": 65,
+          "end_line": 73,
+          "file_sha256": "3205c312af736d3e7b1530f55a9ccf4d711d7487cbab02a7ce24c84a3932398b",
+          "relation": "helper",
+          "basis": "Retrieval/cache infrastructure, not a production calculation; see the pinned method body.",
+          "targets": []
+        },
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/client/eia_api.py",
+          "symbol": "EIACache.set",
+          "line": 75,
+          "end_line": 78,
+          "file_sha256": "3205c312af736d3e7b1530f55a9ccf4d711d7487cbab02a7ce24c84a3932398b",
+          "relation": "helper",
+          "basis": "Retrieval/cache infrastructure, not a production calculation; see the pinned method body.",
+          "targets": []
+        },
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/client/eia_api.py",
+          "symbol": "EIACache.clear",
+          "line": 80,
+          "end_line": 82,
+          "file_sha256": "3205c312af736d3e7b1530f55a9ccf4d711d7487cbab02a7ce24c84a3932398b",
+          "relation": "helper",
+          "basis": "Retrieval/cache infrastructure, not a production calculation; see the pinned method body.",
+          "targets": []
+        },
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/client/eia_api.py",
+          "symbol": "EIAApiClient.__init__",
+          "line": 116,
+          "end_line": 154,
+          "file_sha256": "3205c312af736d3e7b1530f55a9ccf4d711d7487cbab02a7ce24c84a3932398b",
+          "relation": "helper",
+          "basis": "Retrieval/cache infrastructure, not a production calculation; see the pinned method body.",
+          "targets": []
+        },
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/client/eia_api.py",
+          "symbol": "EIAApiClient.build_series_url",
+          "line": 158,
+          "end_line": 161,
+          "file_sha256": "3205c312af736d3e7b1530f55a9ccf4d711d7487cbab02a7ce24c84a3932398b",
+          "relation": "helper",
+          "basis": "Retrieval/cache infrastructure, not a production calculation; see the pinned method body.",
+          "targets": []
+        },
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/client/eia_api.py",
+          "symbol": "EIAApiClient.generate_cache_key",
+          "line": 163,
+          "end_line": 168,
+          "file_sha256": "3205c312af736d3e7b1530f55a9ccf4d711d7487cbab02a7ce24c84a3932398b",
+          "relation": "helper",
+          "basis": "Retrieval/cache infrastructure, not a production calculation; see the pinned method body.",
+          "targets": []
+        },
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/client/eia_api.py",
+          "symbol": "EIAApiClient.parse_series_response",
+          "line": 172,
+          "end_line": 211,
+          "file_sha256": "3205c312af736d3e7b1530f55a9ccf4d711d7487cbab02a7ce24c84a3932398b",
+          "relation": "helper",
+          "basis": "Retrieval/cache infrastructure, not a production calculation; see the pinned method body.",
+          "targets": []
+        },
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/client/eia_api.py",
+          "symbol": "EIAApiClient.fetch_series",
+          "line": 215,
+          "end_line": 265,
+          "file_sha256": "3205c312af736d3e7b1530f55a9ccf4d711d7487cbab02a7ce24c84a3932398b",
+          "relation": "delegates",
+          "basis": "Orchestrates cache, mock data and live path; mock parsing is inline, not parse_series_response.",
+          "targets": [
+            "EIACache.get",
+            "EIACache.set",
+            "EIAApiClient._fetch_live"
+          ]
+        },
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/client/eia_api.py",
+          "symbol": "EIAApiClient._fetch_live",
+          "line": 267,
+          "end_line": 307,
+          "file_sha256": "3205c312af736d3e7b1530f55a9ccf4d711d7487cbab02a7ce24c84a3932398b",
+          "relation": "delegates",
+          "basis": "Calls requests.get then the local parser and cache; transport is not a second production algorithm.",
+          "targets": [
+            "EIAApiClient.parse_series_response",
+            "EIAApiClient._apply_rate_limit",
+            "EIACache.set"
+          ]
+        },
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/client/eia_api.py",
+          "symbol": "EIAApiClient._apply_rate_limit",
+          "line": 309,
+          "end_line": 316,
+          "file_sha256": "3205c312af736d3e7b1530f55a9ccf4d711d7487cbab02a7ce24c84a3932398b",
+          "relation": "helper",
+          "basis": "Retrieval/cache infrastructure, not a production calculation; see the pinned method body.",
+          "targets": []
+        }
+      ],
+      "search": {
+        "pattern": "EIAApiClient|EIAFeedClient|EIACache",
+        "command": "git grep -l -E <pattern> <revision> -- '*.py'",
+        "results": [
+          {
+            "path": "notebooks/quickstart_eia.py",
+            "classification": "candidate_requires_review"
+          },
+          {
+            "path": "packages/worldenergydata-eia/src/worldenergydata/eia/__init__.py",
+            "classification": "candidate_requires_review"
+          },
+          {
+            "path": "packages/worldenergydata-eia/src/worldenergydata/eia/client.py",
+            "classification": "candidate_requires_review"
+          },
+          {
+            "path": "packages/worldenergydata-eia/src/worldenergydata/eia/ingestion.py",
+            "classification": "candidate_requires_review"
+          },
+          {
+            "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/client/eia_api.py",
+            "classification": "in_package"
+          },
+          {
+            "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/international/country_production.py",
+            "classification": "in_package"
+          },
+          {
+            "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/production/state_production.py",
+            "classification": "in_package"
+          },
+          {
+            "path": "packages/worldenergydata-scheduler/src/worldenergydata/scheduler/jobs/eia_us_refresh.py",
+            "classification": "candidate_requires_review"
+          },
+          {
+            "path": "tests/unit/eia/test_client.py",
+            "classification": "test_consumer"
+          },
+          {
+            "path": "tests/unit/eia/test_pagination.py",
+            "classification": "test_consumer"
+          },
+          {
+            "path": "tests/unit/eia_us/test_eia_api_client.py",
+            "classification": "test_consumer"
+          },
+          {
+            "path": "tests/unit/eia_us/test_eia_response_validation.py",
+            "classification": "test_consumer"
+          },
+          {
+            "path": "tests/unit/scheduler/test_retry_classification.py",
+            "classification": "test_consumer"
+          }
+        ],
+        "conclusion": "Bounded lexical discovery, not proof of algorithmic uniqueness; outside candidates require symbol review."
+      }
+    },
+    {
+      "id": "normalisation-aggregation",
+      "counted": false,
+      "qualification": "NOT_EVALUATED",
+      "implementations": [
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/production/state_production.py",
+          "symbol": "STATE_SERIES_ID",
+          "line": 34,
+          "end_line": 44,
+          "file_sha256": "aae697f83d4592af2de0ecbe2b6ca4ca414a4ff1bc45a22e7ff438ee3b146222",
+          "relation": "helper",
+          "basis": "Configuration, selection, representation or key construction; no independent engineering equation.",
+          "targets": []
+        },
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/production/state_production.py",
+          "symbol": "StateProductionLoader.load",
+          "line": 53,
+          "end_line": 102,
+          "file_sha256": "aae697f83d4592af2de0ecbe2b6ca4ca414a4ff1bc45a22e7ff438ee3b146222",
+          "relation": "independent",
+          "basis": "Own implementation; no delegation to another enrolled method.",
+          "targets": []
+        },
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/production/state_production.py",
+          "symbol": "StateProductionLoader.annual_total",
+          "line": 104,
+          "end_line": 113,
+          "file_sha256": "aae697f83d4592af2de0ecbe2b6ca4ca414a4ff1bc45a22e7ff438ee3b146222",
+          "relation": "independent",
+          "basis": "Own implementation; no delegation to another enrolled method.",
+          "targets": []
+        },
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/production/state_production.py",
+          "symbol": "StateProductionLoader.filter_year",
+          "line": 115,
+          "end_line": 117,
+          "file_sha256": "aae697f83d4592af2de0ecbe2b6ca4ca414a4ff1bc45a22e7ff438ee3b146222",
+          "relation": "helper",
+          "basis": "Configuration, selection, representation or key construction; no independent engineering equation.",
+          "targets": []
+        },
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/production/state_production.py",
+          "symbol": "StateProductionLoader.filter_state",
+          "line": 119,
+          "end_line": 121,
+          "file_sha256": "aae697f83d4592af2de0ecbe2b6ca4ca414a4ff1bc45a22e7ff438ee3b146222",
+          "relation": "helper",
+          "basis": "Configuration, selection, representation or key construction; no independent engineering equation.",
+          "targets": []
+        },
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/production/basin_production.py",
+          "symbol": "BasinRecord.net_change_bopd",
+          "line": 47,
+          "end_line": 49,
+          "file_sha256": "c4a00f83e0659a519d1f4db6b21715340d012ffc4460e3656767e419f4e7de9a",
+          "relation": "independent",
+          "basis": "Own scalar addition of new-well contribution and legacy decline; duplicated independently by DrillingProductivityReport.net_change_summary.",
+          "targets": []
+        },
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/production/basin_production.py",
+          "symbol": "BasinProductionLoader.load",
+          "line": 64,
+          "end_line": 92,
+          "file_sha256": "c4a00f83e0659a519d1f4db6b21715340d012ffc4460e3656767e419f4e7de9a",
+          "relation": "independent",
+          "basis": "Own implementation; no delegation to another enrolled method.",
+          "targets": []
+        },
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/production/basin_production.py",
+          "symbol": "BasinProductionLoader.filter_basin",
+          "line": 94,
+          "end_line": 96,
+          "file_sha256": "c4a00f83e0659a519d1f4db6b21715340d012ffc4460e3656767e419f4e7de9a",
+          "relation": "helper",
+          "basis": "Configuration, selection, representation or key construction; no independent engineering equation.",
+          "targets": []
+        },
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/production/basin_production.py",
+          "symbol": "BasinProductionLoader.filter_period",
+          "line": 98,
+          "end_line": 100,
+          "file_sha256": "c4a00f83e0659a519d1f4db6b21715340d012ffc4460e3656767e419f4e7de9a",
+          "relation": "helper",
+          "basis": "Configuration, selection, representation or key construction; no independent engineering equation.",
+          "targets": []
+        },
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/production/basin_production.py",
+          "symbol": "BasinProductionLoader.to_records",
+          "line": 102,
+          "end_line": 116,
+          "file_sha256": "c4a00f83e0659a519d1f4db6b21715340d012ffc4460e3656767e419f4e7de9a",
+          "relation": "helper",
+          "basis": "Configuration, selection, representation or key construction; no independent engineering equation.",
+          "targets": []
+        },
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/production/alaska_production.py",
+          "symbol": "AlaskaFieldRecord.total_liquids_bopd",
+          "line": 37,
+          "end_line": 39,
+          "file_sha256": "3fce9c708d6f2850cc16e9195d5f953e17979f6bb1f618ac3ade2786fcb90eba",
+          "relation": "independent",
+          "basis": "Own implementation; no delegation to another enrolled method.",
+          "targets": []
+        },
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/production/alaska_production.py",
+          "symbol": "AlaskaProductionLoader.load",
+          "line": 47,
+          "end_line": 73,
+          "file_sha256": "3fce9c708d6f2850cc16e9195d5f953e17979f6bb1f618ac3ade2786fcb90eba",
+          "relation": "independent",
+          "basis": "Own implementation; no delegation to another enrolled method.",
+          "targets": []
+        },
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/production/alaska_production.py",
+          "symbol": "AlaskaProductionLoader.filter_field",
+          "line": 75,
+          "end_line": 77,
+          "file_sha256": "3fce9c708d6f2850cc16e9195d5f953e17979f6bb1f618ac3ade2786fcb90eba",
+          "relation": "helper",
+          "basis": "Configuration, selection, representation or key construction; no independent engineering equation.",
+          "targets": []
+        },
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/production/alaska_production.py",
+          "symbol": "AlaskaProductionLoader.filter_period",
+          "line": 79,
+          "end_line": 81,
+          "file_sha256": "3fce9c708d6f2850cc16e9195d5f953e17979f6bb1f618ac3ade2786fcb90eba",
+          "relation": "helper",
+          "basis": "Configuration, selection, representation or key construction; no independent engineering equation.",
+          "targets": []
+        },
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/production/alaska_production.py",
+          "symbol": "AlaskaProductionLoader.annual_total",
+          "line": 83,
+          "end_line": 98,
+          "file_sha256": "3fce9c708d6f2850cc16e9195d5f953e17979f6bb1f618ac3ade2786fcb90eba",
+          "relation": "independent",
+          "basis": "Own implementation; no delegation to another enrolled method.",
+          "targets": []
+        },
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/production/alaska_production.py",
+          "symbol": "AlaskaProductionLoader.to_records",
+          "line": 100,
+          "end_line": 112,
+          "file_sha256": "3fce9c708d6f2850cc16e9195d5f953e17979f6bb1f618ac3ade2786fcb90eba",
+          "relation": "helper",
+          "basis": "Configuration, selection, representation or key construction; no independent engineering equation.",
+          "targets": []
+        },
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/production/drilling_productivity.py",
+          "symbol": "DrillingProductivityReport.__init__",
+          "line": 23,
+          "end_line": 24,
+          "file_sha256": "efe16fd1b64173e190e74e693724246a582c4b9476f1dea2d8bb6163f156f352",
+          "relation": "helper",
+          "basis": "Configuration, selection, representation or key construction; no independent engineering equation.",
+          "targets": []
+        },
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/production/drilling_productivity.py",
+          "symbol": "DrillingProductivityReport.load_all_basins",
+          "line": 26,
+          "end_line": 35,
+          "file_sha256": "efe16fd1b64173e190e74e693724246a582c4b9476f1dea2d8bb6163f156f352",
+          "relation": "delegates",
+          "basis": "Returns self._loader.load(records); no independent normalization.",
+          "targets": [
+            "BasinProductionLoader.load"
+          ]
+        },
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/production/drilling_productivity.py",
+          "symbol": "DrillingProductivityReport.rig_count_summary",
+          "line": 37,
+          "end_line": 51,
+          "file_sha256": "efe16fd1b64173e190e74e693724246a582c4b9476f1dea2d8bb6163f156f352",
+          "relation": "independent",
+          "basis": "Own implementation; no delegation to another enrolled method.",
+          "targets": []
+        },
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/production/drilling_productivity.py",
+          "symbol": "DrillingProductivityReport.net_change_summary",
+          "line": 53,
+          "end_line": 67,
+          "file_sha256": "efe16fd1b64173e190e74e693724246a582c4b9476f1dea2d8bb6163f156f352",
+          "relation": "independent",
+          "basis": "Own vectorized addition; does not call BasinRecord.net_change_bopd.",
+          "targets": []
+        },
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/international/country_production.py",
+          "symbol": "CountryProductionLoader.load",
+          "line": 82,
+          "end_line": 106,
+          "file_sha256": "2103f08d2578d4908df48fc887008b03eb9c3a68427c28ee7aaf9d9912e43cc4",
+          "relation": "independent",
+          "basis": "Own implementation; no delegation to another enrolled method.",
+          "targets": []
+        },
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/international/country_production.py",
+          "symbol": "CountryProductionLoader.filter_country",
+          "line": 108,
+          "end_line": 110,
+          "file_sha256": "2103f08d2578d4908df48fc887008b03eb9c3a68427c28ee7aaf9d9912e43cc4",
+          "relation": "helper",
+          "basis": "Configuration, selection, representation or key construction; no independent engineering equation.",
+          "targets": []
+        },
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/international/country_production.py",
+          "symbol": "CountryProductionLoader.filter_year",
+          "line": 112,
+          "end_line": 114,
+          "file_sha256": "2103f08d2578d4908df48fc887008b03eb9c3a68427c28ee7aaf9d9912e43cc4",
+          "relation": "helper",
+          "basis": "Configuration, selection, representation or key construction; no independent engineering equation.",
+          "targets": []
+        },
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/international/country_production.py",
+          "symbol": "CountryProductionLoader.top_producers",
+          "line": 116,
+          "end_line": 145,
+          "file_sha256": "2103f08d2578d4908df48fc887008b03eb9c3a68427c28ee7aaf9d9912e43cc4",
+          "relation": "independent",
+          "basis": "Own implementation; no delegation to another enrolled method.",
+          "targets": []
+        }
+      ],
+      "search": {
+        "pattern": "ProductionLoader|DrillingProductivityReport|net_change_bopd",
+        "command": "git grep -l -E <pattern> <revision> -- '*.py'",
+        "results": [
+          {
+            "path": "packages/worldenergydata-brazil_anp/src/worldenergydata/brazil_anp/production/well_production.py",
+            "classification": "candidate_requires_review"
+          },
+          {
+            "path": "packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/lower_tertiary/analyzer.py",
+            "classification": "candidate_requires_review"
+          },
+          {
+            "path": "packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/lower_tertiary/legacy_loader.py",
+            "classification": "candidate_requires_review"
+          },
+          {
+            "path": "packages/worldenergydata-bsee/src/worldenergydata/bsee/api.py",
+            "classification": "candidate_requires_review"
+          },
+          {
+            "path": "packages/worldenergydata-bsee/src/worldenergydata/bsee/data/loaders/production/__init__.py",
+            "classification": "candidate_requires_review"
+          },
+          {
+            "path": "packages/worldenergydata-bsee/src/worldenergydata/bsee/data/loaders/production/production_loader.py",
+            "classification": "candidate_requires_review"
+          },
+          {
+            "path": "packages/worldenergydata-canada/src/worldenergydata/canada/__init__.py",
+            "classification": "candidate_requires_review"
+          },
+          {
+            "path": "packages/worldenergydata-canada/src/worldenergydata/canada/production/__init__.py",
+            "classification": "candidate_requires_review"
+          },
+          {
+            "path": "packages/worldenergydata-canada/src/worldenergydata/canada/production/cnloer_loader.py",
+            "classification": "candidate_requires_review"
+          },
+          {
+            "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/international/country_production.py",
+            "classification": "in_package"
+          },
+          {
+            "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/production/alaska_production.py",
+            "classification": "in_package"
+          },
+          {
+            "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/production/basin_production.py",
+            "classification": "in_package"
+          },
+          {
+            "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/production/drilling_productivity.py",
+            "classification": "in_package"
+          },
+          {
+            "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/production/state_production.py",
+            "classification": "in_package"
+          },
+          {
+            "path": "packages/worldenergydata-production/src/worldenergydata/production/unified/adapters/sodir_adapter.py",
+            "classification": "candidate_requires_review"
+          },
+          {
+            "path": "packages/worldenergydata-production/src/worldenergydata/production/unified/adapters/spain_cores_adapter.py",
+            "classification": "candidate_requires_review"
+          },
+          {
+            "path": "packages/worldenergydata-production/src/worldenergydata/production/unified/adapters/ukcs_adapter.py",
+            "classification": "candidate_requires_review"
+          },
+          {
+            "path": "packages/worldenergydata-scheduler/src/worldenergydata/scheduler/jobs/brazil_anp_refresh.py",
+            "classification": "candidate_requires_review"
+          },
+          {
+            "path": "packages/worldenergydata-scheduler/src/worldenergydata/scheduler/jobs/spain_cores_refresh.py",
+            "classification": "candidate_requires_review"
+          },
+          {
+            "path": "packages/worldenergydata-scheduler/src/worldenergydata/scheduler/jobs/ukcs_refresh.py",
+            "classification": "candidate_requires_review"
+          },
+          {
+            "path": "packages/worldenergydata-sodir/src/worldenergydata/sodir/feature_service.py",
+            "classification": "candidate_requires_review"
+          },
+          {
+            "path": "packages/worldenergydata-sodir/src/worldenergydata/sodir/production/__init__.py",
+            "classification": "candidate_requires_review"
+          },
+          {
+            "path": "packages/worldenergydata-sodir/src/worldenergydata/sodir/production/monthly_loader.py",
+            "classification": "candidate_requires_review"
+          },
+          {
+            "path": "packages/worldenergydata-spain/src/worldenergydata/spain/production/__init__.py",
+            "classification": "candidate_requires_review"
+          },
+          {
+            "path": "packages/worldenergydata-spain/src/worldenergydata/spain/production/cores_live.py",
+            "classification": "candidate_requires_review"
+          },
+          {
+            "path": "packages/worldenergydata-spain/src/worldenergydata/spain/production/cores_loader.py",
+            "classification": "candidate_requires_review"
+          },
+          {
+            "path": "packages/worldenergydata-ukcs/src/worldenergydata/ukcs/production/field_production.py",
+            "classification": "candidate_requires_review"
+          },
+          {
+            "path": "packages/worldenergydata-west_africa/src/worldenergydata/west_africa/eiti/country_production.py",
+            "classification": "candidate_requires_review"
+          },
+          {
+            "path": "packages/worldenergydata-west_africa/src/worldenergydata/west_africa/nigeria/blend_production.py",
+            "classification": "candidate_requires_review"
+          },
+          {
+            "path": "scripts/bsee/generate_world_oil_reports.py",
+            "classification": "candidate_requires_review"
+          },
+          {
+            "path": "tests/benchmarks/test_eia_benchmarks.py",
+            "classification": "test_consumer"
+          },
+          {
+            "path": "tests/test_production_loader.py",
+            "classification": "test_consumer"
+          },
+          {
+            "path": "tests/test_query_api.py",
+            "classification": "test_consumer"
+          },
+          {
+            "path": "tests/unit/brazil_anp/test_well_production.py",
+            "classification": "test_consumer"
+          },
+          {
+            "path": "tests/unit/canada/production/test_cnloer_html.py",
+            "classification": "test_consumer"
+          },
+          {
+            "path": "tests/unit/canada/production/test_cnloer_loader.py",
+            "classification": "test_consumer"
+          },
+          {
+            "path": "tests/unit/eia_us/test_alaska_production.py",
+            "classification": "test_consumer"
+          },
+          {
+            "path": "tests/unit/eia_us/test_basin_production.py",
+            "classification": "test_consumer"
+          },
+          {
+            "path": "tests/unit/eia_us/test_international_production.py",
+            "classification": "test_consumer"
+          },
+          {
+            "path": "tests/unit/eia_us/test_state_production.py",
+            "classification": "test_consumer"
+          },
+          {
+            "path": "tests/unit/production/unified/test_sodir_adapter_loader.py",
+            "classification": "test_consumer"
+          },
+          {
+            "path": "tests/unit/production/unified/test_spain_cores_adapter_loader.py",
+            "classification": "test_consumer"
+          },
+          {
+            "path": "tests/unit/production/unified/test_ukcs_adapter_loader.py",
+            "classification": "test_consumer"
+          },
+          {
+            "path": "tests/unit/scheduler/test_spain_cores_refresh.py",
+            "classification": "test_consumer"
+          },
+          {
+            "path": "tests/unit/sodir/test_monthly_loader.py",
+            "classification": "test_consumer"
+          },
+          {
+            "path": "tests/unit/sodir/test_norway_716.py",
+            "classification": "test_consumer"
+          },
+          {
+            "path": "tests/unit/spain/test_cores_field_development_report.py",
+            "classification": "test_consumer"
+          },
+          {
+            "path": "tests/unit/spain/test_cores_live_density.py",
+            "classification": "test_consumer"
+          },
+          {
+            "path": "tests/unit/spain/test_cores_loader.py",
+            "classification": "test_consumer"
+          },
+          {
+            "path": "tests/unit/ukcs/test_field_production.py",
+            "classification": "test_consumer"
+          },
+          {
+            "path": "tests/unit/ukcs/test_reference_chain.py",
+            "classification": "test_consumer"
+          },
+          {
+            "path": "tests/unit/west_africa/test_blend_production.py",
+            "classification": "test_consumer"
+          },
+          {
+            "path": "tests/unit/west_africa/test_country_production.py",
+            "classification": "test_consumer"
+          }
+        ],
+        "conclusion": "Bounded lexical discovery, not proof of algorithmic uniqueness; outside candidates require symbol review."
+      }
+    },
+    {
+      "id": "decline",
+      "counted": false,
+      "qualification": "NOT_EVALUATED",
+      "implementations": [
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/analysis/basin_decline.py",
+          "symbol": "arps_hyperbolic",
+          "line": 43,
+          "end_line": 60,
+          "file_sha256": "df3dcc7fded3d541a5d294c2d91429b4d7b5e10c69c0f6cb434aac5b5f269344",
+          "relation": "independent",
+          "basis": "Own implementation; no delegation to another enrolled method.",
+          "targets": []
+        },
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/analysis/basin_decline.py",
+          "symbol": "HyperbolicDeclineModel.__init__",
+          "line": 76,
+          "end_line": 86,
+          "file_sha256": "df3dcc7fded3d541a5d294c2d91429b4d7b5e10c69c0f6cb434aac5b5f269344",
+          "relation": "helper",
+          "basis": "Configuration, selection, representation or key construction; no independent engineering equation.",
+          "targets": []
+        },
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/analysis/basin_decline.py",
+          "symbol": "HyperbolicDeclineModel.predict",
+          "line": 88,
+          "end_line": 104,
+          "file_sha256": "df3dcc7fded3d541a5d294c2d91429b4d7b5e10c69c0f6cb434aac5b5f269344",
+          "relation": "independent",
+          "basis": "Calls local arps_hyperbolic then owns optional terminal-switch and clipping logic; no external decline implementation is called.",
+          "targets": []
+        },
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/analysis/basin_decline.py",
+          "symbol": "HyperbolicDeclineModel._apply_terminal_switch",
+          "line": 106,
+          "end_line": 131,
+          "file_sha256": "df3dcc7fded3d541a5d294c2d91429b4d7b5e10c69c0f6cb434aac5b5f269344",
+          "relation": "independent",
+          "basis": "Own implementation; no delegation to another enrolled method.",
+          "targets": []
+        },
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/analysis/basin_decline.py",
+          "symbol": "ShaleDeclineResult.predict",
+          "line": 146,
+          "end_line": 148,
+          "file_sha256": "df3dcc7fded3d541a5d294c2d91429b4d7b5e10c69c0f6cb434aac5b5f269344",
+          "relation": "delegates",
+          "basis": "Returns self.model.predict(n_months); no independent forecast.",
+          "targets": [
+            "HyperbolicDeclineModel.predict"
+          ]
+        },
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/analysis/basin_decline.py",
+          "symbol": "ShaleDeclineAnalyzer.fit",
+          "line": 157,
+          "end_line": 219,
+          "file_sha256": "df3dcc7fded3d541a5d294c2d91429b4d7b5e10c69c0f6cb434aac5b5f269344",
+          "relation": "independent",
+          "basis": "Calls scipy.optimize.curve_fit with local arps_hyperbolic; owns initial guesses, bounds, fallback and diagnostic orchestration. Not a second optimizer implementation.",
+          "targets": []
+        },
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/analysis/basin_decline.py",
+          "symbol": "ShaleDeclineAnalyzer._r_squared",
+          "line": 222,
+          "end_line": 229,
+          "file_sha256": "df3dcc7fded3d541a5d294c2d91429b4d7b5e10c69c0f6cb434aac5b5f269344",
+          "relation": "independent",
+          "basis": "Own implementation; no delegation to another enrolled method.",
+          "targets": []
+        }
+      ],
+      "search": {
+        "pattern": "arps_hyperbolic|hyperbolic_decline|_fit_hyperbolic|ArpsDeclineCurve",
+        "command": "git grep -l -E <pattern> <revision> -- '*.py'",
+        "results": [
+          {
+            "path": ".claude/agent-library/worldenergydata/oil-and-gas-expert/templates/calculations.py",
+            "classification": "candidate_requires_review"
+          },
+          {
+            "path": "packages/worldenergydata-brazil_anp/src/worldenergydata/brazil_anp/production/decline_curves.py",
+            "classification": "candidate_requires_review"
+          },
+          {
+            "path": "packages/worldenergydata-bsee/src/worldenergydata/well_production_dashboard/views_decline.py",
+            "classification": "candidate_requires_review"
+          },
+          {
+            "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/analysis/basin_decline.py",
+            "classification": "in_package"
+          },
+          {
+            "path": "packages/worldenergydata-fdas/src/worldenergydata/fdas/data/production.py",
+            "classification": "candidate_requires_review"
+          },
+          {
+            "path": "packages/worldenergydata-production/src/worldenergydata/production/__init__.py",
+            "classification": "candidate_requires_review"
+          },
+          {
+            "path": "packages/worldenergydata-production/src/worldenergydata/production/forecast/__init__.py",
+            "classification": "candidate_requires_review"
+          },
+          {
+            "path": "packages/worldenergydata-production/src/worldenergydata/production/forecast/cli.py",
+            "classification": "candidate_requires_review"
+          },
+          {
+            "path": "packages/worldenergydata-production/src/worldenergydata/production/forecast/decline.py",
+            "classification": "candidate_requires_review"
+          },
+          {
+            "path": "packages/worldenergydata-production/src/worldenergydata/production/forecast/router.py",
+            "classification": "candidate_requires_review"
+          },
+          {
+            "path": "packages/worldenergydata-sodir/src/worldenergydata/sodir/forecasting.py",
+            "classification": "candidate_requires_review"
+          },
+          {
+            "path": "packages/worldenergydata-ukcs/src/worldenergydata/ukcs/production/decline_curves.py",
+            "classification": "candidate_requires_review"
+          },
+          {
+            "path": "scripts/gtm/generate_fdas_gtm_report.py",
+            "classification": "candidate_requires_review"
+          },
+          {
+            "path": "src/worldenergydata/modules/well_production_dashboard/well_detail_views.py",
+            "classification": "candidate_requires_review"
+          },
+          {
+            "path": "tests/modules/sodir-integration/test_analysis.py",
+            "classification": "test_consumer"
+          },
+          {
+            "path": "tests/unit/brazil_anp/test_decline_curves.py",
+            "classification": "test_consumer"
+          },
+          {
+            "path": "tests/unit/bsee/reports/comprehensive/visualizations/test_production_charts.py",
+            "classification": "test_consumer"
+          },
+          {
+            "path": "tests/unit/eia_us/test_basin_decline.py",
+            "classification": "test_consumer"
+          },
+          {
+            "path": "tests/unit/fdas/data/test_production.py",
+            "classification": "test_consumer"
+          },
+          {
+            "path": "tests/unit/production/forecast/test_decline.py",
+            "classification": "test_consumer"
+          },
+          {
+            "path": "tests/unit/sodir/test_forecasting.py",
+            "classification": "test_consumer"
+          },
+          {
+            "path": "tests/unit/ukcs/test_decline_curves.py",
+            "classification": "test_consumer"
+          },
+          {
+            "path": "tests/unit/well_production_dashboard/test_well_detail_views.py",
+            "classification": "test_consumer"
+          }
+        ],
+        "conclusion": "Bounded lexical discovery, not proof of algorithmic uniqueness; outside candidates require symbol review."
+      }
+    },
+    {
+      "id": "fiscal",
+      "counted": false,
+      "qualification": "NOT_EVALUATED",
+      "implementations": [
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/analysis/us_fiscal.py",
+          "symbol": "FederalOnshoreFiscal.calculate",
+          "line": 63,
+          "end_line": 90,
+          "file_sha256": "00597f0c167f4e325489fec01b45ff391a72ee4ff396c13b5c7b122cdfd8c9c8",
+          "relation": "independent",
+          "basis": "Own implementation; no delegation to another enrolled method.",
+          "targets": []
+        },
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/analysis/us_fiscal.py",
+          "symbol": "TexasFiscal.calculate_oil",
+          "line": 102,
+          "end_line": 128,
+          "file_sha256": "00597f0c167f4e325489fec01b45ff391a72ee4ff396c13b5c7b122cdfd8c9c8",
+          "relation": "independent",
+          "basis": "Own implementation; no delegation to another enrolled method.",
+          "targets": []
+        },
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/analysis/us_fiscal.py",
+          "symbol": "TexasFiscal.calculate_gas",
+          "line": 130,
+          "end_line": 156,
+          "file_sha256": "00597f0c167f4e325489fec01b45ff391a72ee4ff396c13b5c7b122cdfd8c9c8",
+          "relation": "independent",
+          "basis": "Own implementation; no delegation to another enrolled method.",
+          "targets": []
+        },
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/analysis/us_fiscal.py",
+          "symbol": "NorthDakotaFiscal.calculate",
+          "line": 169,
+          "end_line": 200,
+          "file_sha256": "00597f0c167f4e325489fec01b45ff391a72ee4ff396c13b5c7b122cdfd8c9c8",
+          "relation": "independent",
+          "basis": "Own implementation; no delegation to another enrolled method.",
+          "targets": []
+        }
+      ],
+      "search": {
+        "pattern": "FederalOnshoreFiscal|TexasFiscal|NorthDakotaFiscal|calculate_royalties",
+        "command": "git grep -l -E <pattern> <revision> -- '*.py'",
+        "results": [
+          {
+            "path": "packages/worldenergydata-brazil_anp/src/worldenergydata/brazil_anp/analysis/field_economics.py",
+            "classification": "candidate_requires_review"
+          },
+          {
+            "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/analysis/us_fiscal.py",
+            "classification": "in_package"
+          },
+          {
+            "path": "scripts/bsee/lower_tertiary_analysis.py",
+            "classification": "candidate_requires_review"
+          },
+          {
+            "path": "scripts/lower_tertiary_analysis.py",
+            "classification": "candidate_requires_review"
+          },
+          {
+            "path": "tests/unit/brazil_anp/test_field_economics.py",
+            "classification": "test_consumer"
+          },
+          {
+            "path": "tests/unit/eia_us/test_us_fiscal.py",
+            "classification": "test_consumer"
+          },
+          {
+            "path": "tests/unit/fdas/fiscal/test_deck_parity.py",
+            "classification": "test_consumer"
+          }
+        ],
+        "conclusion": "Bounded lexical discovery, not proof of algorithmic uniqueness; outside candidates require symbol review."
+      }
+    },
+    {
+      "id": "production-crosscheck",
+      "counted": false,
+      "qualification": "NOT_EVALUATED",
+      "implementations": [
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/analysis/us_fiscal.py",
+          "symbol": "GoMCrosscheck.__init__",
+          "line": 214,
+          "end_line": 215,
+          "file_sha256": "00597f0c167f4e325489fec01b45ff391a72ee4ff396c13b5c7b122cdfd8c9c8",
+          "relation": "helper",
+          "basis": "Stores caller tolerance; no comparison.",
+          "targets": []
+        },
+        {
+          "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/analysis/us_fiscal.py",
+          "symbol": "GoMCrosscheck.compare",
+          "line": 217,
+          "end_line": 243,
+          "file_sha256": "00597f0c167f4e325489fec01b45ff391a72ee4ff396c13b5c7b122cdfd8c9c8",
+          "relation": "independent",
+          "basis": "Own difference and relative-error arithmetic; zero reference substitution remains #1607.",
+          "targets": []
+        }
+      ],
+      "search": {
+        "pattern": "GoMCrosscheck|eia_production_kbd|bsee_production_kbd",
+        "command": "git grep -l -E <pattern> <revision> -- '*.py'",
+        "results": [
+          {
+            "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/analysis/us_fiscal.py",
+            "classification": "in_package"
+          },
+          {
+            "path": "tests/unit/eia_us/test_us_fiscal.py",
+            "classification": "test_consumer"
+          }
+        ],
+        "conclusion": "Bounded lexical discovery, not proof of algorithmic uniqueness; outside candidates require symbol review."
+      }
+    }
+  ],
+  "overlaps": [
+    {
+      "path": "packages/worldenergydata-eia/src/worldenergydata/eia/client.py",
+      "symbol": "EIAFeedClient.fetch_petroleum_weekly",
+      "line": 196,
+      "end_line": 219,
+      "file_sha256": "d0312ae0f3e376381493e7eb408dc6a6d1cc8bae618286b0c21201a857c760f6",
+      "relation": "independent",
+      "basis": "Separate weekly feed HTTP path; does not delegate to EIAApiClient.",
+      "targets": []
+    },
+    {
+      "path": "packages/worldenergydata-production/src/worldenergydata/production/forecast/decline.py",
+      "symbol": "ArpsDeclineCurve._rate_fn",
+      "line": 260,
+      "end_line": 277,
+      "file_sha256": "f19582acce955ae6994d5c314b26b65a4a96e74fc765b0d812aa80bd0b77a59d",
+      "relation": "independent",
+      "basis": "Own Arps rate formulas; no call to eia_us arps_hyperbolic.",
+      "targets": []
+    },
+    {
+      "path": "packages/worldenergydata-fdas/src/worldenergydata/fdas/data/production.py",
+      "symbol": "ProductionForecaster.hyperbolic_decline",
+      "line": 327,
+      "end_line": 353,
+      "file_sha256": "b664eb8f631b356421dc34ba67e84ce99ad30c6512df3366f34dd9d0068287c7",
+      "relation": "independent",
+      "basis": "Own hyperbolic formula using yearly time conversion.",
+      "targets": []
+    },
+    {
+      "path": "packages/worldenergydata-ukcs/src/worldenergydata/ukcs/production/decline_curves.py",
+      "symbol": "DeclineCurveAnalyzer._fit_hyperbolic",
+      "line": 163,
+      "end_line": 190,
+      "file_sha256": "e514dfe033f81af653d440468eedaabe49a76184ade759b3b30f58788d17063c",
+      "relation": "independent",
+      "basis": "Own curve_fit and local hyperbolic function.",
+      "targets": []
+    },
+    {
+      "path": "packages/worldenergydata-brazil_anp/src/worldenergydata/brazil_anp/production/decline_curves.py",
+      "symbol": "DeclineCurveAnalyzer._fit_hyperbolic",
+      "line": 134,
+      "end_line": 161,
+      "file_sha256": "5658c2dbd66480e99f9412b8e33400ed0b6253ceee4568af318eda574bbe5f5d",
+      "relation": "independent",
+      "basis": "Own curve_fit and local hyperbolic function.",
+      "targets": []
+    },
+    {
+      "path": "packages/worldenergydata-sodir/src/worldenergydata/sodir/forecasting.py",
+      "symbol": "ProductionForecaster._fit_hyperbolic_decline",
+      "line": 195,
+      "end_line": 233,
+      "file_sha256": "2099a531fa34bdedbdaee39eedccb5a48d66f40f5abd199340ff39356af262e3",
+      "relation": "independent",
+      "basis": "Own curve_fit and local hyperbolic function.",
+      "targets": []
+    }
+  ],
+  "limits": [
+    "External enrollment and counted-family approval require registry maintenance; not asserted here.",
+    "Pending families were all searched at the source revision; counted-family grep remains NOT_APPLICABLE.",
+    "Search results are file-level lexical hits. Independent implementations are not interchangeable without unit and applicability review.",
+    "Decline applicability #1604, production units #1605, cache modes #1606, crosscheck zero reference #1607 and fiscal authority #361 remain unqualified."
+  ]
+}

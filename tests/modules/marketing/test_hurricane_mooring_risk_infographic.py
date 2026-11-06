@@ -186,6 +186,70 @@ def test_rendered_html_contains_required_positioning():
     assert "hurricane-only" in html
 
 
+def _style_rules(html: str) -> dict[str, dict[str, str]]:
+    style = re.search(r"<style>(.*?)</style>", html, re.DOTALL)
+    assert style is not None
+    css = re.sub(r"/\*.*?\*/", "", style.group(1), flags=re.DOTALL)
+    return {
+        selector.strip(): {
+            name.strip(): value.strip()
+            for declaration in declarations.split(";")
+            if ":" in declaration
+            for name, _, value in [declaration.partition(":")]
+        }
+        for selector, declarations in re.findall(r"([^{}]+)\{([^{}]*)\}", css)
+    }
+
+
+def test_infographic_uses_canonical_brand_accents():
+    html = render_html(build_stats(INPUT_DIR, DOCX_NAME))
+    rules = _style_rules(html)
+    tokens = rules[":root"]
+
+    # Canonical accent values: reports/capabilities/assets/tokens.css:1.
+    assert tokens["--navy"] == "#0B3D91"
+    assert tokens["--teal"] == "#0f8a7e"
+    assert tokens["--bg"] != tokens["--navy"]
+    assert "var(--bg)" in rules["body"]["background"]
+
+    # Each accent selector must style an element present in the rendered HTML.
+    for class_name in ("hero", "fill", "node go"):
+        assert f'class="{class_name}"' in html
+    assert "var(--navy)" in rules[".hero"]["border"]
+    assert rules[".hero"]["border-top-color"] == "var(--teal)"
+    assert rules[".hero"]["background"] == (
+        "linear-gradient(135deg, var(--navy), var(--bg))"
+    )
+    assert rules[".fill"]["background"] == (
+        "linear-gradient(90deg, var(--navy), var(--teal))"
+    )
+    assert rules[".node.go"]["border-color"] == "var(--teal)"
+
+
+def test_infographic_preserves_dark_background():
+    rules = _style_rules(render_html(build_stats(INPUT_DIR, DOCX_NAME)))
+    tokens = rules[":root"]
+    background = rules["body"]["background"]
+    for name, value in tokens.items():
+        background = background.replace(f"var({name})", value)
+
+    # Existing dark palette and gradients: generator render_html, before accents.
+    assert background == (
+        "radial-gradient(circle at top left, #123a5a 0, #081827 42%, #050b12 100%)"
+    )
+    assert rules["body"]["color"] == "var(--ink)"
+    assert tokens["--ink"] == "#e5edf5"
+    assert tokens["--muted"] == "#9fb2c6"
+    assert tokens["--cyan"] == "#67e8f9"
+    assert rules[".kicker"]["color"] == "var(--cyan)"
+    assert rules[".stat-label"]["color"] == "var(--cyan)"
+    assert rules["summary"]["color"] == "var(--cyan)"
+    assert tokens["--amber"] == "#f59e0b"
+    assert tokens["--red"] == "#ef4444"
+    assert rules[".caveat"]["border-left"].endswith("solid var(--amber)")
+    assert rules[".node.warn"]["border-color"] == "rgba(239,68,68,.55)"
+
+
 def test_rendered_html_is_interactive_and_provenanced(tmp_path: Path):
     result = generate_artifacts(
         output_dir=tmp_path, input_dir=INPUT_DIR, docx_name=DOCX_NAME

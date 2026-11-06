@@ -59,6 +59,22 @@ Outputs: `/mnt/ace/worldenergydata/data/modules/pressure_screen/curated/`
 (`well_screen_earliest.parquet`, `underpressured_field_ranking.parquet`,
 `screen_summary.json`).
 
+### Non-finite pressure or depth
+
+Before BHP estimation, both `pressure_psia` and `reference_depth_ft` are checked
+with [`numpy.isfinite` (NumPy 2.2 manual, definition and Notes)](https://numpy.org/doc/2.2/reference/generated/numpy.isfinite.html).
+Positive infinity, negative infinity and NaN produce null BHP and gradient
+estimates, `bhp_method=NOT_EVALUATED`, `pressure_tier=NOT_EVALUATED`, and no
+near-vacuum flag. Such observations are excluded from earliest-observation
+selection and field ranking. This applies to measured BHP, shut-in wellhead
+pressure and other reported pressure kinds.
+
+For a synthetic measured-BHP example, 1,200 psia at 5,000 ft gives
+`1200 / 5000 = 0.24 psi/ft`. Replacing either input with positive infinity,
+negative infinity or NaN gives `NOT_EVALUATED`; an infinite depth does not
+represent a measured zero pressure gradient. This input check does not validate
+the configured tier limits or gas-column approximation.
+
 ## Results (run 2026-07-03)
 
 30,100 wells screened: **10,103 Kansas**, **25 Texas**, and **19,972

@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Monthly gas revenue input contract</title>
+<main>
+  <h1>Monthly gas revenue input contract</h1>
+  <p>The gas-pricing helper validates calendar periods and numeric quantities
+    before monthly revenue is calculated. Invalid inputs raise
+    <code>ValueError</code>; gas-validation errors encountered by the cashflow
+    engine are reported as <code>CashflowError</code>.</p>
+
+  <h2>Revision history</h2>
+  <table>
+    <tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr>
+    <tr><td>1</td><td>2026-10-19</td><td>Document calendar and quantity
+      validation to prevent malformed inputs from producing gas revenue.</td></tr>
+  </table>
+  <p>Table 1. Revision history.</p>
+
+  <h2>Required inputs</h2>
+  <ul>
+    <li>The production frame carries <code>YEAR_MONTH</code> and
+      <code>MONTHLY_GAS_MCF</code>, with one row per production month.</li>
+    <li>After the existing string conversion, every production period has the
+      exact ASCII form <code>YYYY-MM</code> and identifies a calendar month
+      representable by Python's <code>date</code> class. Missing periods,
+      whitespace, full dates and unpadded months are rejected.</li>
+    <li>The gas deck contains an explicit realized price in USD/Mcf for every
+      production month. Unused deck entries do not affect the calculation.</li>
+    <li>Prices and volumes are finite, nonnegative quantities. Boolean values,
+      including NumPy Boolean scalars, are rejected. Numeric strings remain
+      supported; conversion overflow is reported as a validation error.</li>
+    <li>Explicit zero prices and volumes remain valid. Duplicate production
+      months and non-finite revenue products remain invalid.</li>
+  </ul>
+
+  <h2>Arithmetic and source basis</h2>
+  <p>Monthly revenue [USD] = monthly volume [Mcf] × realized price [USD/Mcf].
+    The <a href="https://www.eia.gov/dnav/ng/TblDefs/ng_pri_sum_tbldef2.asp">EIA
+    Natural Gas Prices definitions</a>, “Average Price of Deliveries to
+    Consumers” (undated, accessed 2026-10-19), define average price through
+    revenue and associated sales volume. This supports the arithmetic only;
+    it supplies no Spanish market-price assumption.</p>
+  <p>Calendar validation follows the
+    <a href="https://docs.python.org/3.11/library/datetime.html#datetime.date">Python
+    3.11 datetime documentation</a>, date constructor and date.fromisoformat
+    (accessed 2026-10-19). The monthly key shape and nonnegative quantity domain
+    retain the repository's gas-revenue contract at revision
+    <code>648d6de4</code>.</p>
+  <p>The regression examples are synthetic: 100 Mcf × 3 USD/Mcf = 300 USD;
+    200 Mcf × 4 USD/Mcf = 800 USD. Expected values are calculated independently
+    in the test documentation. A zero multiplicand gives zero revenue.</p>
+
+  <h2>Compatibility and limits</h2>
+  <p>Validation applies when a gas deck is supplied. Omitting the deck retains
+    legacy oil-only cashflows. Existing valid gas revenue, royalty and net
+    cashflow arithmetic is unchanged. The Spain reference chain uses the same
+    cashflow engine; separate revenue-total reporting is outside this change.</p>
+  <p>No market series, heating-value factor, currency conversion, gas-specific
+    operating cost or Spain-specific fiscal assumption is introduced. Priced
+    gas does not establish the completeness of development economics.</p>
+  <p>Related scope:
+    <a href="https://github.com/vamseeachanta/worldenergydata/issues/808">gas
+    revenue</a> and the
+    <a href="https://github.com/vamseeachanta/worldenergydata/issues/763">Spain
+    reference chain</a>.</p>
+</main>
+</html>

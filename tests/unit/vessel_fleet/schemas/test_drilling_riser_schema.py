@@ -12,6 +12,49 @@ from worldenergydata.vessel_fleet.schemas.drilling_riser import (
 
 
 class TestRiserJointSchema:
+    @pytest.mark.parametrize("riser_class", ["drilling", "lift", "production"])
+    def test_riser_class_and_bundle(self, riser_class):
+        """Synthetic line geometry tests representation only, not a qualified design."""
+        schema = RiserJointSchema(
+            COMPONENT_ID="bundle",
+            RISER_CLASS=riser_class,
+            AUXILIARY_LINES=[
+                dict(function="service", od_in=2.0, wall_thickness_in=0.25)
+            ],
+        )
+        assert schema.RISER_CLASS == riser_class
+        assert schema.AUXILIARY_LINES[0].od_in == 2.0
+
+    @pytest.mark.parametrize(
+        "line",
+        [
+            dict(function="", od_in=2.0, wall_thickness_in=0.25),
+            dict(function="service", od_in=0, wall_thickness_in=0.25),
+            dict(function="service", od_in=2.0, wall_thickness_in=0),
+            dict(function="service", od_in=2.0, wall_thickness_in=1.0),
+            dict(function="service", od_in=float("inf"), wall_thickness_in=0.25),
+            dict(function="service", od_in=2.0, wall_thickness_in=float("nan")),
+            dict(function="service", od_in=2.0),
+        ],
+    )
+    def test_invalid_auxiliary_geometry_rejected(self, line):
+        """Positive finite OD and wall < OD/2 ensure a hollow circular line."""
+        with pytest.raises(ValueError):
+            RiserJointSchema(COMPONENT_ID="invalid", AUXILIARY_LINES=[line])
+
+    def test_unknown_class_rejected(self):
+        with pytest.raises(ValueError):
+            RiserJointSchema(COMPONENT_ID="invalid", RISER_CLASS="unknown")
+
+    def test_signed_submerged_weight(self):
+        """Curated RJ-21-75-BUOY has -4.2 kips; net uplift is signed, not invalid."""
+        assert (
+            RiserJointSchema(
+                COMPONENT_ID="buoyed", WEIGHT_WATER_KIPS=-4.2
+            ).WEIGHT_WATER_KIPS
+            == -4.2
+        )
+
     def test_valid_riser_joint(self):
         rj = RiserJointSchema(
             COMPONENT_ID="RJ-21-75",

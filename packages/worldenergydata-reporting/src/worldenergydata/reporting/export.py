@@ -72,9 +72,11 @@ def _write_csv(df: pd.DataFrame, dest: Path) -> str:
 
 
 def _write_json(df: pd.DataFrame, summary: dict, dest: Path) -> str:
-    """Write data as JSON records plus summary to a single JSON file."""
+    """Write data as JSON records with ISO dates plus summary."""
     payload = {
-        "data": json.loads(df.to_json(orient="records")),
+        # pandas DataFrame.to_json API, date_format (3.0 docs, 2026):
+        # https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_json.html
+        "data": json.loads(df.to_json(orient="records", date_format="iso")),
         "summary": summary,
     }
     dest.write_text(json.dumps(payload, indent=2, default=str), encoding="utf-8")

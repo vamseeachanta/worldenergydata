@@ -6,13 +6,20 @@ and US Gulf of Mexico (BSEE) offshore petroleum operations.
 """
 
 import logging
+import math
+from collections.abc import Mapping
+from copy import deepcopy
 from dataclasses import dataclass
+from datetime import MAXYEAR, MINYEAR
 from enum import Enum
+from numbers import Integral, Real
 from typing import Any, Dict, List, Optional
 
 import numpy as np
 import pandas as pd
 from scipy import stats
+
+from .processors.field_processor import FieldProcessor
 
 logger = logging.getLogger(__name__)
 
@@ -1031,3 +1038,287 @@ class CrossRegionalAnalyzer:
             aggregated = aggregated.rename(columns={"name": "field_count"})
 
         return aggregated
+
+    @staticmethod
+    def _compatibility_frame(data, required, allow_empty=False):
+        """Copy an explicitly declared table without fabricating absent fields."""
+        if not isinstance(data, pd.DataFrame):
+            raise ValueError("A DataFrame with the required schema is needed")
+        if not data.columns.is_unique or any(name not in data for name in required):
+            raise ValueError("Required columns must be present and unique")
+        if data.empty and not allow_empty:
+            raise ValueError("No observations were supplied")
+        return data.copy(deep=True)
+
+    @staticmethod
+    def _finite_numeric_values(frame, columns, nonnegative=False, whole=False):
+        """Reject null, textual, boolean, complex and non-finite quantities."""
+        values = frame[columns].to_numpy(dtype=object)
+        try:
+            for value in values.flat:
+                if (
+                    isinstance(value, (bool, np.bool_))
+                    or not isinstance(value, Real)
+                    or not math.isfinite(value)
+                ):
+                    raise ValueError("Quantities must be finite real numbers")
+                if nonnegative and value < 0:
+                    raise ValueError("Quantities must be nonnegative")
+                if whole and value != int(value):
+                    raise ValueError("Counts and years must be integral")
+            return np.asarray(values, dtype=float)
+        except (TypeError, OverflowError, FloatingPointError):
+            raise ValueError("Quantities cannot be represented finitely") from None
+
+    def _discovery_summary(self, records, source):
+        """Count supplied records and retain the existing oil-volume convention."""
+        volume_column = {
+            "SODIR": "recoverable_oil_sm3",
+            "BSEE": "recoverable_oil_bbl",
+        }[source]
+        if isinstance(records, (list, tuple)):
+            if not records or any(not isinstance(row, Mapping) for row in records):
+                raise ValueError("Discovery records must be non-empty mappings")
+            records = pd.DataFrame(records, dtype=object)
+        frame = self._compatibility_frame(records, ["discovery_year", volume_column])
+        years = self._finite_numeric_values(frame, ["discovery_year"], whole=True)[:, 0]
+        if ((years < MINYEAR) | (years > MAXYEAR)).any():
+            raise ValueError("Discovery years must be supported calendar years")
+        volumes = self._finite_numeric_values(frame, [volume_column], nonnegative=True)[
+            :, 0
+        ]
+        try:
+            with np.errstate(over="raise", invalid="raise"):
+                if source == "SODIR":
+                    volumes = volumes * FieldProcessor.SM3_TO_BARRELS
+        except (FloatingPointError, OverflowError):
+            raise ValueError("Discovery volume conversion is non-finite") from None
+        frame = pd.DataFrame({"year": years.astype(int), "volume_bbl": volumes})
+        self._finite_numeric_values(frame, ["volume_bbl"], nonnegative=True)
+        summary = frame.groupby("year", sort=True).agg(
+            discoveries=("volume_bbl", "size"), volume_bbl=("volume_bbl", "sum")
+        )
+        self._finite_numeric_values(summary, ["volume_bbl"], nonnegative=True)
+        return summary
+
+    def align_discovery_timelines(self, sodir_records, bsee_records) -> pd.DataFrame:
+        """Align observed years; counts describe supplied records, not completeness.
+
+        SODIR oil is supplied in Sm3 and BSEE oil in barrels. The existing field
+        processor conversion is reused. Missing records or quantities are rejected;
+        a zero after alignment means no supplied record for that source/year.
+        """
+        sodir = self._discovery_summary(sodir_records, "SODIR")
+        bsee = self._discovery_summary(bsee_records, "BSEE")
+        years = sodir.index.union(bsee.index).sort_values()
+        result = pd.DataFrame(index=years)
+        for source, summary in (("sodir", sodir), ("bsee", bsee)):
+            aligned = summary.reindex(years, fill_value=0)
+            result[f"{source}_discoveries"] = aligned["discoveries"]
+            result[f"{source}_volume_bbl"] = aligned["volume_bbl"]
+        result = result.reset_index()
+        result.attrs["discovery_alignment"] = {
+            "source_units": {"SODIR": "Sm3", "BSEE": "bbl"},
+            "output_unit": "bbl",
+            "conversion_basis": {
+                "SODIR": "FieldProcessor.SM3_TO_BARRELS",
+                "BSEE": "identity",
+            },
+            "supplied_observations_only": True,
+            "engineering_data_readiness_established": False,
+        }
+        return result
+
+    @staticmethod
+    def _operator_label(value):
+        if not isinstance(value, str) or not value.strip():
+            raise ValueError("Operator names and aliases must be nonblank strings")
+        return value.strip().casefold()
+
+    def normalize_operator_names(self, operators, operator_map) -> list[str]:
+        """Apply unambiguous supplied aliases and retain unmapped labels verbatim.
+
+        The mapping does not establish canonical identity for unmapped labels.
+        Caller records and the supplied mapping are not modified.
+        """
+        if not isinstance(operators, (list, tuple)) or not operators:
+            raise ValueError("A non-empty sequence of operator names is required")
+        if not isinstance(operator_map, Mapping) or not operator_map:
+            raise ValueError("An explicit operator alias mapping is required")
+        lookup = {}
+        for canonical, aliases in operator_map.items():
+            self._operator_label(canonical)
+            if not isinstance(aliases, (list, tuple)):
+                raise ValueError("Operator aliases must be a sequence of names")
+            for alias in (canonical, *aliases):
+                key = self._operator_label(alias)
+                if key in lookup and lookup[key] != canonical:
+                    raise ValueError("Operator aliases have ambiguous targets")
+                lookup[key] = canonical
+        return [lookup.get(self._operator_label(name), name) for name in operators]
+
+    def _temporal_series(self, data):
+        """Prepare a numeric observation series without guessing an epoch or unit."""
+        frame = self._compatibility_frame(data, ["date"])
+        columns = [name for name in frame.columns if name != "date"]
+        if not columns or any(not isinstance(name, str) for name in columns):
+            raise ValueError("Named numeric measurement columns are required")
+        if "temporal_alignment" in frame.attrs:
+            raise ValueError("Temporal alignment metadata already exists")
+        if frame["date"].isna().any() or any(
+            isinstance(value, (Real, np.bool_)) for value in frame["date"]
+        ):
+            raise ValueError(
+                "Dates must be explicit date values without missing entries"
+            )
+        try:
+            dates = pd.to_datetime(frame["date"], errors="raise")
+        except (ValueError, TypeError, OverflowError, FutureWarning):
+            raise ValueError(
+                "Dates must have a consistent parseable time basis"
+            ) from None
+        if (
+            dates.isna().any()
+            or not pd.api.types.is_datetime64_any_dtype(dates.dtype)
+            or dates.duplicated().any()
+        ):
+            raise ValueError("Dates must be unique and have a consistent timezone")
+        self._finite_numeric_values(frame, columns)
+        frame["date"] = dates
+        frame.attrs = {}
+        return frame.set_index("date")[columns].sort_index()
+
+    def _resample_observations(self, frame, frequency, basis):
+        operations = {
+            name: (
+                (lambda values: values.sum(min_count=1))
+                if operation == "sum"
+                else "mean"
+            )
+            for name, operation in basis.items()
+        }
+        try:
+            with np.errstate(over="raise", invalid="raise"):
+                result = frame.resample(frequency).agg(operations)
+        except (FloatingPointError, OverflowError):
+            raise ValueError("Temporal aggregation is non-finite") from None
+        self._finite_numeric_values(result, list(basis))
+        if result.empty:
+            raise ValueError("No aligned periods are available")
+        return result
+
+    def align_temporal_data(self, sodir_data, bsee_data, target_freq):
+        """Align supplied observations, summing production and averaging others.
+
+        No units are inferred or converted. Missing bins, incompatible time bases
+        and unequal spans are rejected; observations are not filled or truncated.
+        Input attributes are retained alongside the stated aggregation basis.
+        """
+        if not isinstance(target_freq, str) or not target_freq.strip():
+            raise ValueError("An explicit target frequency is required")
+        aliases = {"M": "ME", "Q": "QE", "Y": "YE"}
+        try:
+            frequency = pd.tseries.frequencies.to_offset(
+                aliases.get(target_freq, target_freq)
+            )
+        except (ValueError, TypeError, FutureWarning):
+            raise ValueError("Target frequency is invalid") from None
+        if frequency.n <= 0:
+            raise ValueError("Target frequency must advance time")
+        series = [self._temporal_series(data) for data in (sodir_data, bsee_data)]
+        columns = series[0].columns.tolist()
+        if (
+            set(columns) != set(series[1].columns)
+            or series[0].index.tz != series[1].index.tz
+        ):
+            raise ValueError("Measurement columns and timezone bases must agree")
+        basis = {
+            name: "sum" if "production" in name.lower() else "mean" for name in columns
+        }
+        results = [
+            self._resample_observations(frame[columns], frequency, basis)
+            for frame in series
+        ]
+        if not results[0].index.equals(results[1].index):
+            raise ValueError(
+                "Supplied observations do not cover the same target periods"
+            )
+        for position, original in enumerate((sodir_data, bsee_data)):
+            results[position] = results[position].reset_index()
+            results[position].attrs = deepcopy(original.attrs)
+            results[position].attrs["temporal_alignment"] = {
+                "frequency": frequency.freqstr,
+                "aggregation_basis": basis.copy(),
+                "supplied_observations_only": True,
+                "calendar_completeness_established": False,
+            }
+        return tuple(results)
+
+    def check_referential_integrity(self, reference_data, dependent_data, key):
+        """Check declared identifiers; empty dependent data is not an applicability pass."""
+        if not isinstance(key, str) or not key or key != key.strip():
+            raise ValueError("A nonblank relationship key is required")
+        parents = self._compatibility_frame(reference_data, [key], allow_empty=True)
+        children = self._compatibility_frame(dependent_data, [key], allow_empty=True)
+        kinds = set()
+        for value in [*parents[key].tolist(), *children[key].tolist()]:
+            if isinstance(value, str) and value.strip() and value == value.strip():
+                kinds.add(str)
+            elif isinstance(value, Integral) and not isinstance(
+                value, (bool, np.bool_)
+            ):
+                kinds.add(int)
+            else:
+                raise ValueError(
+                    "Relationship identifiers must be explicit strings or integers"
+                )
+        if len(kinds) > 1 or parents[key].duplicated().any():
+            raise ValueError("Reference identifiers are ambiguous or duplicated")
+        orphan_mask = ~children[key].isin(parents[key])
+        result = {
+            "applicable": bool(len(children)),
+            "checked_references": len(children),
+            "reference_records": len(parents),
+            "orphaned_references": list(
+                dict.fromkeys(children.loc[orphan_mask, key].tolist())
+            ),
+            "orphaned_record_count": int(orphan_mask.sum()),
+        }
+        if not result["applicable"]:
+            result["reason"] = "No dependent records were supplied"
+        return result
+
+    @staticmethod
+    def _nonnegative_well_count(value):
+        if isinstance(value, (bool, np.bool_)) or not isinstance(value, Real):
+            raise ValueError("Well counts must be explicit nonnegative integers")
+        try:
+            if isinstance(value, Integral):
+                count = int(value)
+            elif math.isfinite(value) and value == int(value):
+                count = int(value)
+            else:
+                raise ValueError("Well counts must be finite integers")
+        except (OverflowError, TypeError):
+            raise ValueError("Well counts cannot be represented") from None
+        if count < 0:
+            raise ValueError("Well counts must be nonnegative")
+        return count
+
+    def check_consistency(self, field_summary):
+        """Compare explicitly supplied disjoint well-state counts with their total."""
+        names = ("total_wells", "producing_wells", "plugged_wells")
+        if not isinstance(field_summary, Mapping) or any(
+            name not in field_summary for name in names
+        ):
+            raise ValueError("All deciding well counts must be supplied")
+        counts = {
+            name: self._nonnegative_well_count(field_summary[name]) for name in names
+        }
+        accounted = counts["producing_wells"] + counts["plugged_wells"]
+        return {
+            **counts,
+            "accounted_wells": accounted,
+            "well_count_mismatch": accounted > counts["total_wells"],
+            "criterion": "producing_wells + plugged_wells <= total_wells",
+        }

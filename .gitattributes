@@ -1,3 +1,6 @@
+# Issue #1355: preserve the inventory's strict LF byte contract on checkout.
+docs/modules/report-inventory.csv text eol=lf
+
 # Guard rails — prevent large binary re-introduction (WRK-1341)
 # These file types were relocated to /mnt/ace/<repo>/
 # Mark as binary so git does not attempt diff/merge
@@ -45,3 +48,9 @@ packages/worldenergydata-metocean/src/worldenergydata/metocean/statistics/eva.py
 data/modules/bsee/directional_survey_validation/** -text
 packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/well_api12.py text eol=lf
 packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/directional_survey_validation.py text eol=lf
+
+# Preserve the benchmark source digest across platform checkout conventions.
+reports/lower_tertiary/lt_well_benchmark_lower_tertiary_2010_latest.csv text eol=lf
+
+# Preserve the exact exported bytes referenced by the sample DCA manifest.
+docs/reports/bsee-dca-sample/** -text

@@ -391,7 +391,15 @@ def build_shared_assets() -> dict[str, bool]:
     """Write the stylesheet and copy the shared viz assets. Returns the set of
     viz assets that are available (used by domain builders that embed them)."""
     ASSETS.mkdir(parents=True, exist_ok=True)
-    (ASSETS / "style.css").write_text(STYLE, encoding="utf-8")
+    (ASSETS / "style.css").write_text(STYLE, encoding="utf-8", newline="\n")
+
+    # Workover cards and the Insights hub share this self-contained brief.
+    # Publish it on every build, independently of the selected domains.
+    brief = ROOT / "docs" / "intervention-db" / "intervention-stats-brief.html"
+    if brief.exists():
+        brief_dst = PUBLIC / "intervention-db"
+        brief_dst.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(brief, brief_dst / "intervention-stats-brief.html")
 
     # --- copy the self-contained viz HTML as assets ---
     # Prefer the committed site_assets/ copy (what CI publishes); fall back to the
@@ -468,13 +476,16 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
                 lifecycle_dst / "_explorer.json",
             )
 
-    # --- Drilling learning-curve front door (issue #775) ---
+    # --- Calendar cycle-time front door (issue #775) ---
     # Self-contained HTML (inline CSS + inline-SVG charts) built by
     # scripts/lower_tertiary/build_drilling_insights.py; copied verbatim so its
     # thesis page is reachable at /drilling-insights.html.
     drill_src = REPORTS / "lower_tertiary" / "drilling_insights.html"
     if drill_src.exists():
         shutil.copyfile(drill_src, PUBLIC / "drilling-insights.html")
+        calendar_csv = drill_src.with_name("lt_drilling_insights.csv")
+        if calendar_csv.exists():
+            shutil.copyfile(calendar_csv, PUBLIC / calendar_csv.name)
 
     # --- Economics pages (one unlabelled result per field) ---
     npv_re = re.compile(r"Terminal cumulative NPV = \*\*([^*]+)\*\*")
@@ -513,6 +524,7 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
                 route_ctx={"field_slug": slug, "field_name": _html_unescape(display)},
             ),
             encoding="utf-8",
+            newline="\n",
         )
         fields.append((slug, display, fname, npv_str, npv_val))
 
@@ -536,6 +548,7 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
                 ),
             ),
             encoding="utf-8",
+            newline="\n",
         )
 
     # --- World Oil April 2026 validation page (durable QA/QC record) ---
@@ -561,6 +574,7 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
                 ),
             ),
             encoding="utf-8",
+            newline="\n",
         )
 
     # --- D&C drill-down explorer (committed self-contained page) ---
@@ -607,19 +621,42 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
                 ),
             ),
             encoding="utf-8",
+            newline="\n",
         )
 
     # --- FDAS revision comparison (V30 -> V50 -> wed) page ---
     rev_md = REPORTS / "lower_tertiary" / "fdas_revision_comparison.md"
     if rev_md.exists():
+        assumptions_log = (
+            ROOT / "config/analysis/lower_tertiary/v50_assumptions_change_log.html"
+        )
+        assumptions_html = assumptions_log.read_text(encoding="utf-8")
+        source_prefix = f"https://github.com/{REPO}/blob/main/"
+        assumptions_html = (
+            assumptions_html.replace(
+                'href="../../../reports/lower_tertiary/fdas_revision_comparison.md"',
+                'href="fdas-revision-comparison.html"',
+            )
+            .replace('href="../../../packages/', f'href="{source_prefix}packages/')
+            .replace(
+                'href="golden_baseline_v50.yml"',
+                f'href="{source_prefix}config/analysis/lower_tertiary/golden_baseline_v50.yml"',
+            )
+        )
+        (PUBLIC / "v50-assumptions-change-log.html").write_text(
+            assumptions_html, encoding="utf-8", newline="\n"
+        )
+        comparison_text = rev_md.read_text(encoding="utf-8").replace(
+            "../../config/analysis/lower_tertiary/v50_assumptions_change_log.html",
+            "v50-assumptions-change-log.html",
+        )
         (PUBLIC / "fdas-revision-comparison.html").write_text(
             page(
                 "FDAS Revision Comparison — V30 &rarr; V50 &rarr; wed",
                 "Three-way comparison of the Lower-Tertiary economics pipeline: "
                 "scripts, inputs, BSEE-data months, result tables, script differences, "
                 "missed files, and a bug review — the basis for adopting wed as canonical.",
-                _toc(rev_md.read_text(encoding="utf-8"))
-                + md_to_html(rev_md.read_text(encoding="utf-8")),
+                _toc(comparison_text) + md_to_html(comparison_text),
                 provenance=(
                     "Comparison drawn from the V30/V50 source archives "
                     "(/mnt/ace/.../fdas_revisions) and the wed reproduction reports; "
@@ -634,6 +671,7 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
                 ),
             ),
             encoding="utf-8",
+            newline="\n",
         )
 
     # --- Portfolio summary page ---
@@ -651,6 +689,7 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
                 ),
             ),
             encoding="utf-8",
+            newline="\n",
         )
 
     # --- Well-path page ---
@@ -692,6 +731,7 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
                 ),
             ),
             encoding="utf-8",
+            newline="\n",
         )
 
     return fields
@@ -764,15 +804,6 @@ def build_capabilities(available_viz: dict[str, bool]) -> list[tuple]:
     insights = REPORTS / "capabilities" / "insights.html"
     if insights.exists():
         shutil.copyfile(insights, dst / "insights.html")
-    # Publish the intervention-serviceability brief (lives under docs/) so the
-    # Insights hub's Workover front-door link resolves in the published tree at
-    # /intervention-db/intervention-stats-brief.html. Self-contained (inline
-    # CSS + inline-SVG), copied verbatim.
-    brief = ROOT / "docs" / "intervention-db" / "intervention-stats-brief.html"
-    if brief.exists():
-        brief_dst = PUBLIC / "intervention-db"
-        brief_dst.mkdir(parents=True, exist_ok=True)
-        shutil.copyfile(brief, brief_dst / "intervention-stats-brief.html")
     # Per-capability HTML cards are generated by scripts/capabilities/build_onepagers.py;
     # the folder also retains tracked PDFs that are no longer generated.
     # Copy the whole folder so the page's pdf/ links resolve under /capabilities/.
@@ -1059,9 +1090,16 @@ def _insights_section() -> str:
     if (PUBLIC / "drilling-insights.html").exists():
         cards.append(
             '<a class="card" href="drilling-insights.html">'
-            "<h3>Drilling learning curve &rarr;</h3><p>184 GoM Lower-Tertiary "
-            "development wellbores burned 11,124 rig-days; depth explains only 11% "
-            "of the spread &mdash; execution, not geology, drives the curve.</p></a>"
+            "<h3>Calendar cycle time &rarr;</h3><p>Spud-to-TD calendar intervals "
+            "for GoM Lower-Tertiary wellbores, with date coverage and an explicit "
+            "comparison of workbook and article populations.</p></a>"
+        )
+    if (PUBLIC / "intervention-db" / "intervention-stats-brief.html").exists():
+        cards.append(
+            '<a class="card" href="intervention-db/intervention-stats-brief.html#serviceability">'
+            "<h3>Subsea intervention serviceability &rarr;</h3><p>GoM subsea well "
+            "inventory, light and heavy intervention capability, and forward-looking "
+            "access risk. Open the existing brief for sources and limitations.</p></a>"
         )
     if (PUBLIC / "region-devtype-comparison.html").exists():
         cards.append(
@@ -1245,7 +1283,7 @@ def build_index() -> None:
             "field concept."
         ),
     )
-    (PUBLIC / "index.html").write_text(landing, encoding="utf-8")
+    (PUBLIC / "index.html").write_text(landing, encoding="utf-8", newline="\n")
 
 
 # ---------------------------------------------------------------------------
@@ -1282,9 +1320,9 @@ def build(domains: list[str] | None = None, *, clean: bool = False) -> None:
     pages = sorted(p.name for p in PUBLIC.glob("*.html"))
     scope = "all domains" if domains is None else f"domains: {', '.join(selected)}"
     try:
-        where = f"{PUBLIC.relative_to(ROOT)}/"
+        where = f"{PUBLIC.relative_to(ROOT).as_posix()}/"
     except ValueError:  # PUBLIC redirected outside the repo (e.g. under test)
-        where = str(PUBLIC)
+        where = PUBLIC.as_posix()
     print(f"Built {len(pages)} page(s) into {where} ({scope}): {', '.join(pages)}")
     print(f"Copied {len(available_viz)} viz asset(s).")
 

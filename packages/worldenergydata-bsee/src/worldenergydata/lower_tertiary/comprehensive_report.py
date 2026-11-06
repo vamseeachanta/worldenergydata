@@ -107,6 +107,19 @@ def load_revision_record() -> dict:
     return record
 
 
+def _validate_citation_metadata(citations: pd.DataFrame, field_id: str) -> None:
+    """Require the citation-panel metadata specified by issue #377."""
+    if citations.empty:
+        raise ValueError(f"Missing citations: {field_id}")
+    for column in ("input", "publisher", "code_id", "revision"):
+        if column not in citations or citations[column].isna().any():
+            raise ValueError(f"Missing citation {column}: {field_id}")
+        if not citations[column].map(
+            lambda value: isinstance(value, str) and bool(value.strip())
+        ).all():
+            raise ValueError(f"Empty or invalid citation {column}: {field_id}")
+
+
 def _validate_report(result: ComprehensiveReportResult) -> None:
     ids = [econ.field_id for econ in result.economics_run.results]
     if len(ids) != len(set(ids)) or set(ids) != set(result.field_payloads):
@@ -114,17 +127,13 @@ def _validate_report(result: ComprehensiveReportResult) -> None:
     if result.revision_record["revision"] != result.revision_record["history"][-1]["revision"]:
         raise ValueError("Report revision differs from the newest history row")
     for econ in result.economics_run.results:
-        if econ.citations.empty:
-            raise ValueError(f"Missing citations: {econ.field_id}")
-        for column in ("input", "publisher", "code_id", "revision"):
-            if column not in econ.citations or econ.citations[column].isna().any():
-                raise ValueError(f"Missing citation {column}: {econ.field_id}")
-            if econ.citations[column].astype(str).str.strip().eq("").any():
-                raise ValueError(f"Empty citation {column}: {econ.field_id}")
+        _validate_citation_metadata(econ.citations, econ.field_id)
         config_locator = str(econ.citations.iloc[0]["code_id"])
         if not _citation_resolves(config_locator):
             raise ValueError(f"Unresolved citation: {econ.field_id}")
-        for item in _report_citations(result, econ)["code_id"]:
+        panel = _report_citations(result, econ)
+        _validate_citation_metadata(panel, econ.field_id)
+        for item in panel["code_id"]:
             if not _citation_resolves(item):
                 raise ValueError(f"Unresolved citation: {econ.field_id}")
 
