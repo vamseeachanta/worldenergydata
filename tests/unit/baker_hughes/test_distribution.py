@@ -87,7 +87,7 @@ def test_distribution_boundary_retains_evidence_gap():
         assert required in disposition, required
 
 
-@pytest.mark.parametrize("configured_output", [False, True])
+@pytest.mark.parametrize("configured_output", [None, "absolute", "relative"])
 def test_supplied_archives_keep_inventories_in_scratch(
     tmp_path, tmp_path_factory, monkeypatch, configured_output
 ):
@@ -107,8 +107,11 @@ def test_supplied_archives_keep_inventories_in_scratch(
     before = {path.name: path.read_bytes() for path in artifact_dir.iterdir()}
     monkeypatch.setenv("BAKER_HUGHES_ARTIFACT_DIR", str(artifact_dir))
     monkeypatch.delenv("BAKER_HUGHES_EVIDENCE_DIR", raising=False)
-    if configured_output:
+    if configured_output == "absolute":
         monkeypatch.setenv("BAKER_HUGHES_EVIDENCE_DIR", str(tmp_path / "retained"))
+    elif configured_output == "relative":
+        monkeypatch.chdir(tmp_path)
+        monkeypatch.setenv("BAKER_HUGHES_EVIDENCE_DIR", "retained")
 
     archives = distribution_archives.__wrapped__(tmp_path_factory)
     test_wheel_contains_pack_and_loader(archives)
@@ -117,6 +120,7 @@ def test_supplied_archives_keep_inventories_in_scratch(
     assert sorted(artifact_dir.parent.iterdir()) == [artifact_dir]
     assert {path.name: path.read_bytes() for path in artifact_dir.iterdir()} == before
     _, _, evidence_dir = archives
+    assert evidence_dir.is_absolute()
     if configured_output:
         assert evidence_dir == tmp_path / "retained"
     else:
@@ -129,7 +133,7 @@ def test_supplied_archives_keep_inventories_in_scratch(
 def distribution_archives(tmp_path_factory):
     """Supply scratch archive paths, building offline when none are supplied."""
     scratch = tmp_path_factory.mktemp("baker-hughes-distribution")
-    evidence_dir = Path(os.environ.get("BAKER_HUGHES_EVIDENCE_DIR", scratch))
+    evidence_dir = Path(os.environ.get("BAKER_HUGHES_EVIDENCE_DIR", scratch)).resolve()
     supplied = os.environ.get("BAKER_HUGHES_ARTIFACT_DIR")
     if supplied:
         artifact_dir = Path(supplied).resolve()
