@@ -36,7 +36,7 @@ def render(json_path: Path, html_path: Path) -> None:
     download_date = html_tools.escape(source["downloaded_at"])
     source_url = html_tools.escape(source["url"], quote=True)
     date_range = " to ".join(d["incinv_date_range"])
-    revision_date = source["downloaded_at"][:10]
+    source_date = html_tools.escape(source["downloaded_at"][:10])
 
     sub = d["drill_subactivity_distribution"]
     sev = d["drill_severity_proxy"]
@@ -60,7 +60,7 @@ def render(json_path: Path, html_path: Path) -> None:
     html = f"""<!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Drilling-HSE Patterns — BSEE INCINV (DRILL.*) — {revision_date}</title>
+<title>Drilling-HSE Patterns — BSEE INCINV (DRILL.*) — {source_date}</title>
 <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
 <style>
  body{{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
@@ -79,7 +79,8 @@ def render(json_path: Path, html_path: Path) -> None:
 <h1>Drilling-HSE Patterns &mdash; BSEE INCINV (DRILL.*)</h1>
 <div class="sub">Dataset: {source_kind} &middot;
  Source: <a href="{source_url}">BSEE INCINV accident investigations</a>
- &middot; Downloaded {download_date} &middot; Occurrence dates {date_range}</div>
+ &middot; Current source download: {download_date}
+ &middot; Occurrence dates {date_range}</div>
 
 <div class="note">Drilling-phase incidents are derived by the repo-canonical
  <code>IncidentClassifier</code> cut to <code>activity == "DRILL"</code> over the BSEE
@@ -92,9 +93,9 @@ def render(json_path: Path, html_path: Path) -> None:
 <h2>Revision history</h2>
 <table><thead><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr></thead>
 <tbody><tr><td>1</td><td>2026-07-05</td><td>Initial drilling investigation analysis.</td></tr>
-<tr><td>2</td><td>{revision_date}</td><td>Refresh from the public source with a sealed manifest,
+<tr><td>2</td><td>2026-10-22</td><td>Refresh from the public source with a sealed manifest,
  input QA and downloadable chart values so the figures can be reproduced.</td></tr>
-<tr><td>3</td><td>{revision_date}</td><td>Restore confidence buckets and zero-fill source years.
+<tr><td>3</td><td>2026-10-22</td><td>Restore confidence buckets and zero-fill source years.
  Correct earlier reproducibility wording: recalculation requires the exact archived input;
  no durable public archive copy is supplied with this report.</td></tr></tbody></table>
 

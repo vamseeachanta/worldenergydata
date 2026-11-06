@@ -371,6 +371,7 @@ def test_download_manifest_and_resume(tmp_path, monkeypatch):
         destination.write_bytes(archive.read_bytes())
         return {
             "http_status": 200,
+            "effective_url": URL,
             "etag": '"synthetic-tag"',
             "last_modified": "Thu, 01 Oct 2026 00:00:00 GMT",
         }
@@ -380,6 +381,7 @@ def test_download_manifest_and_resume(tmp_path, monkeypatch):
     manifest = refresh.fetch(cfg)
     assert calls == [URL]
     assert manifest["files"][0]["http_status"] == 200
+    assert all(entry["effective_url"] == URL for entry in manifest["files"])
     assert manifest["files"][0]["etag"] == '"synthetic-tag"'
     assert manifest["files"][0]["last_modified"] == "Thu, 01 Oct 2026 00:00:00 GMT"
     for entry in manifest["files"]:
@@ -402,13 +404,16 @@ def test_network_failure_has_no_manifest(tmp_path, monkeypatch):
     assert not (tmp_path / "manifest.json").exists()
 
 
-def test_renderer_and_failed_qa_replace_public_page(case):
+@pytest.mark.parametrize("source_date", ["2026-10-01", "2026-11-01"])
+def test_renderer_and_failed_qa_replace_public_page(case, source_date):
     cfg, raw, manifest = case
     spec = importlib.util.spec_from_file_location(
         "hse_renderer", ROOT / "scripts/exploration/drilling_hse_render_html.py"
     )
     renderer = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(renderer)
+    manifest["files"][0]["downloaded_at"] = f"{source_date}T00:00:00Z"
+    reseal(cfg, raw, manifest)
     result = refresh.analyze(cfg)
     result["generated_at"] = "2099-12-31T00:00:00Z"
     out = Path(cfg["output_dir"])
@@ -418,8 +423,10 @@ def test_renderer_and_failed_qa_replace_public_page(case):
     page = out / "report.html"
     renderer.render(out / refresh.HEADLINES, page)
     text = page.read_text(encoding="utf-8")
-    assert "2026-10-01T00:00:00Z" in text
-    assert "<td>2</td><td>2026-10-01</td>" in text
+    assert "<td>1</td><td>2026-07-05</td>" in text
+    for revision in (2, 3):
+        assert f"<td>{revision}</td><td>2026-10-22</td>" in text
+    assert f"Current source download: {source_date}T00:00:00Z" in text
     assert "2099-12-31" not in text
     assert "exact archived input" in text
     assert "Correct earlier reproducibility wording" in text
@@ -512,13 +519,14 @@ def test_download_records_response_headers(tmp_path, monkeypatch):
             encoding="utf-8",
             newline="\n",
         )
-        return subprocess.CompletedProcess(command, 0, stdout="200", stderr="")
+        return subprocess.CompletedProcess(command, 0, stdout=f"200\n{URL}", stderr="")
 
     monkeypatch.setattr(refresh.subprocess, "run", response)
     destination = tmp_path / "archive.zip"
     evidence = refresh._download(URL, destination)
     assert evidence == {
         "http_status": 200,
+        "effective_url": URL,
         "etag": '"synthetic-tag"',
         "last_modified": "Thu, 01 Oct 2026 00:00:00 GMT",
     }
@@ -527,6 +535,80 @@ def test_download_records_response_headers(tmp_path, monkeypatch):
     )
     assert request["etag"] == evidence["etag"]
     assert request["last_modified"] == evidence["last_modified"]
+    assert request["effective_url"] == URL
+
+
+@pytest.mark.parametrize(
+    "effective_url",
+    [
+        "",
+        "https://redirect.invalid/archive.zip",
+        "http://www.data.bsee.gov/archive.zip",
+        "https://www.data.bsee.gov.redirect.invalid/archive.zip",
+        URL.replace("://", "://invalid" + chr(64)),
+        "https://www.data.bsee.gov:8443/archive.zip",
+        "https://www.data.bsee.gov:invalid/archive.zip",
+    ],
+)
+def test_download_rejects_unqualified_effective_url(
+    tmp_path, monkeypatch, effective_url
+):
+    import subprocess
+
+    def response(command, **kwargs):
+        destination = Path(command[command.index("--output") + 1])
+        with zipfile.ZipFile(destination, "w") as zipped:
+            zipped.writestr(
+                "IncInvRawData/mv_acc_investigations.txt", FIXTURE.read_bytes()
+            )
+        # Model both the old status-only curl output and the new origin evidence.
+        template = command[command.index("--write-out") + 1]
+        output = "200" if template == "%{http_code}" else f"200\n{effective_url}"
+        return subprocess.CompletedProcess(command, 0, stdout=output, stderr="")
+
+    monkeypatch.setattr(refresh.subprocess, "run", response)
+    cfg = {"data_dir": str(tmp_path / "data"), "url": URL, "source_kind": "public"}
+    with pytest.raises(refresh.NetworkError, match="BLOCKED-NETWORK"):
+        refresh.fetch(cfg)
+    assert not (Path(cfg["data_dir"]) / "manifest.json").exists()
+
+
+@pytest.mark.parametrize(
+    "effective_url",
+    [URL, "https://www.data.bsee.gov/redirected.zip"],
+)
+def test_download_constrains_protocols_and_records_origin(
+    tmp_path, monkeypatch, effective_url
+):
+    import subprocess
+
+    def response(command, **kwargs):
+        assert command[command.index("--proto") + 1] == "=https"
+        assert command[command.index("--proto-redir") + 1] == "=https"
+        assert (
+            command[command.index("--write-out") + 1]
+            == "%{http_code}\n%{url_effective}"
+        )
+        return subprocess.CompletedProcess(
+            command, 0, stdout=f"200\n{effective_url}", stderr=""
+        )
+
+    monkeypatch.setattr(refresh.subprocess, "run", response)
+    assert (
+        refresh._download(URL, tmp_path / "archive.zip")["effective_url"]
+        == effective_url
+    )
+
+
+@pytest.mark.parametrize("operation", ["fetch", "analyze"])
+def test_public_manifest_rejects_recorded_cross_host_redirect(public_case, operation):
+    cfg, _, manifest = public_case
+    manifest["files"][0]["effective_url"] = "https://redirect.invalid/archive.zip"
+    (Path(cfg["data_dir"]) / "manifest.json").write_text(
+        json.dumps(manifest), encoding="utf-8", newline="\n"
+    )
+    with pytest.raises(refresh.QAError, match="provenance"):
+        getattr(refresh, operation)(cfg)
 
 
 def test_years_cover_source_window_when_drill_is_sparse(case):

@@ -19,6 +19,7 @@ import zipfile
 from collections import Counter
 from datetime import date, datetime, timezone
 from pathlib import Path
+from urllib.parse import urlsplit
 
 SOURCE_URL = "https://www.data.bsee.gov/Other/Files/IncInvRawData.zip"
 HEADLINES = "drilling-hse-patterns-2026-07-05.json"
@@ -71,12 +72,32 @@ def _digest(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
+def _public_origin(url):
+    if not isinstance(url, str):
+        return False
+    try:
+        parsed = urlsplit(url)
+        return (
+            parsed.scheme == "https"
+            and parsed.hostname == "www.data.bsee.gov"
+            and parsed.port in {None, 443}
+            and parsed.username is None
+            and parsed.password is None
+        )
+    except ValueError:
+        return False
+
+
 def _download(url, destination):
     """Use curl without credentials; retain response bytes and status on disk."""
     response = subprocess.run(
         [
             "curl",
             "--location",
+            "--proto",
+            "=https",
+            "--proto-redir",
+            "=https",
             "--fail",
             "--connect-timeout",
             "30",
@@ -87,14 +108,17 @@ def _download(url, destination):
             "--dump-header",
             str(destination.with_suffix(".headers")),
             "--write-out",
-            "%{http_code}",
+            "%{http_code}\n%{url_effective}",
             url,
         ],
         capture_output=True,
         text=True,
+        encoding="utf-8",
         check=False,
     )
-    status = response.stdout.strip()
+    metadata = response.stdout.splitlines()
+    status = metadata[0].strip() if metadata else ""
+    effective_url = metadata[1].strip() if len(metadata) == 2 else ""
     # Reset on every response so redirect headers cannot describe the final body.
     headers = {}
     header_path = destination.with_suffix(".headers")
@@ -106,6 +130,7 @@ def _download(url, destination):
                 key, value = line.split(":", 1)
                 headers[key.lower()] = value.strip()
     evidence = {
+        "effective_url": effective_url,
         "etag": headers.get("etag"),
         "last_modified": headers.get("last-modified"),
     }
@@ -121,6 +146,8 @@ def _download(url, destination):
     )
     if response.returncode or status != "200":
         raise NetworkError(f"BLOCKED-NETWORK: {url}; HTTP {status or 'unavailable'}")
+    if not _public_origin(effective_url):
+        raise NetworkError("BLOCKED-NETWORK: unqualified effective HTTPS origin")
     return {"http_status": int(status), **evidence}
 
 
@@ -136,6 +163,11 @@ def _verify_public_files(data_dir, entries):
         for entry in entries
     ):
         raise QAError("provenance: public retrieval requires HTTP 200")
+    if any(
+        "effective_url" in entry and not _public_origin(entry["effective_url"])
+        for entry in entries
+    ):
+        raise QAError("provenance: unexpected effective HTTPS origin")
     member = "IncInvRawData/mv_acc_investigations.txt"
     entry = next(e for e in entries if e["file"] == "mv_acc_investigations.txt")
     if entry.get("archive_member") != member:

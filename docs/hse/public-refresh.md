@@ -25,8 +25,11 @@ classifier, not a copied classification implementation.
 A completed download is resumable: an existing manifest is verified and reused.
 For a new public pull, choose a new data directory. Without `--fetch`, the builder
 runs offline against the configured data directory and requires its manifest.
-The download permits only the public INCINV endpoint and extracts only the known
-text member. Archive bytes and extracted bytes each receive their own SHA-256,
+The requested URL is restricted to the public INCINV endpoint; curl permits only
+HTTPS requests and redirects. The final URL is recorded as `effective_url` and
+must retain the public source's HTTPS origin before a manifest can be sealed.
+Only the known text member is extracted. Archive bytes and extracted bytes each
+receive their own SHA-256,
 byte count, source URL and UTC download timestamp. HTTP status, ETag and
 Last-Modified are recorded too (null if the server omits a header). Redirect
 headers are discarded in favor of the final response headers. For the existing
@@ -100,6 +103,10 @@ manifest requires exactly one archive and one extracted text entry, HTTP 200 for
 both, and the expected archive-member name. The extracted bytes must match that
 member's size and SHA-256 as well as the manifest. Missing or invalid evidence
 blocks qualification; explicitly synthetic fixtures retain their separate contract.
+Recorded effective URLs are checked during offline qualification and resumption.
+Older manifests without this field remain readable; their final redirect origin
+was not captured and is not established by the stored evidence. A new download
+must capture and qualify the effective URL.
 
 A failed refresh writes `not_evaluated` with a reason, clears chart values and
 replaces the public HTML with an unevaluated page. QA statistics remain available
@@ -136,8 +143,10 @@ field name for consumers. Years are zero-filled from the earliest through latest
 source occurrence year, including years outside the DRILL subset's nonzero
 range. Zero means no classified DRILL record in this input, not complete incident
 coverage. Raw accident-type distributions remain excluded because the source
-text can identify facilities. Revision dates follow the source manifest rather
-than the time the page is rendered.
+text can identify facilities. Historical revisions retain their recorded dates:
+revision 1 is dated 2026-07-05 and revisions 2 and 3 are dated 2026-10-22. The
+current source download timestamp is displayed separately so later refreshes
+cannot rewrite the revision history.
 
 ## Offline checks
 
