@@ -5,6 +5,7 @@ Fixtures are synthetic CSV records, not engineering properties or design limits.
 """
 
 import csv
+import sys
 from pathlib import Path
 from unittest.mock import patch
 
@@ -115,6 +116,35 @@ def test_identity_strings_survive_parsing(tmp_path: Path, ids: list[str]) -> Non
         assert loader.get_by_id(component_id)["COMPONENT_ID"] == component_id
 
 
+@pytest.mark.parametrize("parsed_count", [0, 1, 3])
+def test_parser_record_count_mismatch_is_not_cached(
+    tmp_path: Path, parsed_count: int
+) -> None:
+    """Parser disagreement must fail before assigning IDs or caching records."""
+    write_catalog(tmp_path, ["A", "B"])
+    frame = pd.read_csv(tmp_path / CSV_NAME).reindex(range(parsed_count))
+    loader = DrillingRiserLoader(tmp_path)
+    with patch("pandas.read_csv", return_value=frame):
+        with pytest.raises(
+            ValueError,
+            match=rf"CSV record count mismatch: strict reader 2, pandas {parsed_count}$",
+        ):
+            loader.load()
+    assert loader._df is None
+    assert loader.load()["COMPONENT_ID"].tolist() == ["A", "B"]
+
+
+def test_identity_assignment_uses_record_position(tmp_path: Path) -> None:
+    """Index labels cannot swap the strict reader's IDs between parsed rows."""
+    write_catalog(tmp_path, ["A", "B"])
+    frame = pd.read_csv(tmp_path / CSV_NAME)
+    frame.index = [1, 0]
+    with patch("pandas.read_csv", return_value=frame):
+        loaded = DrillingRiserLoader(tmp_path).load()
+    assert loaded.index.tolist() == [1, 0]
+    assert loaded["COMPONENT_ID"].tolist() == ["A", "B"]
+
+
 @pytest.mark.parametrize(
     ("ids", "lines"),
     [
@@ -222,11 +252,11 @@ def test_invalid_identity_reports_physical_line(
     """The bad record starts at line 5 after a quoted newline and an empty line."""
     write_catalog(tmp_path, ["A", component_id])
     path = tmp_path / CSV_NAME
-    content = path.read_text()
+    content = path.read_bytes().decode("utf-8")
     content = content.replace("Identity validation only", '"first\nsecond"', 1)
     first_record_end = content.index('second"') + len('second"')
     line_end = content.index("\n", first_record_end)
-    path.write_text(content[:line_end] + "\n" + content[line_end:])
+    path.write_bytes((content[:line_end] + "\n" + content[line_end:]).encode("utf-8"))
 
     loader = DrillingRiserLoader(tmp_path)
     with pytest.raises(ValueError, match=rf"COMPONENT_ID.*{reason}.*CSV line 5$"):
@@ -324,10 +354,11 @@ def test_canonical_duplicate_reports_physical_lines_and_allows_retry(
     """Canonical or literal duplicates start on lines 2 and 5, not row indices."""
     write_catalog(tmp_path, ids)
     path = tmp_path / CSV_NAME
-    content = path.read_text().replace("Identity validation only", '"first\nsecond"', 1)
+    content = path.read_bytes().decode("utf-8")
+    content = content.replace("Identity validation only", '"first\nsecond"', 1)
     lines = content.splitlines(keepends=True)
     lines.insert(3, "\n")
-    path.write_text("".join(lines))
+    path.write_bytes("".join(lines).encode("utf-8"))
     loader = DrillingRiserLoader(tmp_path)
     with pytest.raises(ValueError, match="Duplicate COMPONENT_ID.*CSV lines 2, 5$"):
         loader.load()
@@ -343,9 +374,16 @@ def test_control_character_identity_is_not_cached(
     tmp_path: Path, component_id: str
 ) -> None:
     """Embedded Cc characters cannot create invisible identity differences."""
-    write_catalog(tmp_path, [component_id])
+    # Python 3.10's writer rejects NUL too; insert it as bytes for the reader test.
+    write_catalog(tmp_path, [component_id.replace("\x00", "NUL")])
+    if "\x00" in component_id:
+        path = tmp_path / CSV_NAME
+        path.write_bytes(path.read_bytes().replace(b"NUL", b"\x00"))
     loader = DrillingRiserLoader(tmp_path)
-    with pytest.raises(ValueError, match="COMPONENT_ID.*control.*CSV line 2$"):
+    message = "COMPONENT_ID.*control.*CSV line 2$"
+    if "\x00" in component_id and sys.version_info < (3, 11):
+        message = "Malformed CSV at line 2: line contains NUL$"
+    with pytest.raises(ValueError, match=message):
         loader.load()
     assert loader._df is None
     write_catalog(tmp_path, ["A"])
