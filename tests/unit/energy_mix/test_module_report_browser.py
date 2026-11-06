@@ -44,12 +44,17 @@ def test_interactive_chart_returns_and_boundary(page):
     assert page.locator("main > section").count() == 10
     assert page.locator("body.hs-doc").count() == 1
     assert page.locator("svg span").count() == 0
-    assert "Demand: 20250 MWh" in page.locator("#chart-readout").inner_text()
+    assert (
+        "Returned generation: 20250 MWh" in page.locator("#chart-readout").inner_text()
+    )
     assert "Lower limit: 0 MWh" in page.locator("#chart-readout").inner_text()
+    assert "at or above the parser" in page.locator("#chart-readout").inner_text()
     page.locator("#chart-case").select_option("1")
-    assert "Demand: 1000 MWh" in page.locator("#chart-readout").inner_text()
+    assert (
+        "Returned generation: 1000 MWh" in page.locator("#chart-readout").inner_text()
+    )
     page.locator('[data-case="2"]').focus()
-    assert "Demand: 0 MWh" in page.locator("#chart-readout").inner_text()
+    assert "Returned generation: 0 MWh" in page.locator("#chart-readout").inner_text()
     assert page.locator("#conversion-chart line.limit").count() == 1
     assert page.locator("#example-table tbody tr").count() == 3
     page.set_viewport_size({"width": 390, "height": 844})
@@ -73,6 +78,10 @@ def test_comment_export_import_and_binding(page, tmp_path):
     sidecar = tmp_path / download.value.suggested_filename
     download.value.save_as(sidecar)
     saved = json.loads(sidecar.read_text(encoding="utf-8"))
+    assert (
+        saved["revision"]
+        == json.loads(page.locator("#report-data").text_content())["revision"]
+    )
     assert saved["comments"] == [{"section": "section-6", "text": text}]
     page.reload(wait_until="load")
     page.locator("#import-comments").set_input_files(sidecar)
@@ -94,7 +103,8 @@ def test_comments_folder_save_api_contract(page):
     text = add_comment(page)
     # Browser folder-selection UI cannot be automated. The API contract below
     # exercises filename, UTF-8 JSON content and write/close completion.
-    page.evaluate("""() => {
+    page.evaluate(
+        """() => {
       window.savedSidecar = null;
       window.streamClosed = false;
       window.showDirectoryPicker = async () => ({getFileHandle: async name => ({
@@ -103,7 +113,8 @@ def test_comments_folder_save_api_contract(page):
           close: async () => {window.streamClosed = true}
         })
       })});
-    }""")
+    }"""
+    )
     page.locator("#save-comments").click()
     page.wait_for_function("window.streamClosed === true")
     stored = page.evaluate("window.savedSidecar")

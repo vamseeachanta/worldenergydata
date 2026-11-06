@@ -35,7 +35,7 @@
   node("path", {d: ordered.map((point, index) => `${index ? "L" : "M"}${x(point.input)} ${y(point.output)}`).join(" "), class: "series"});
   const selector = document.getElementById("chart-case");
   const readout = document.getElementById("chart-readout");
-  const description = point => `Case: ${point.name}. Component: reported generation. Input: ${point.input} GWh. Demand: ${point.output} MWh. Lower limit: ${data.metrics.zero_mwh} MWh. The numerical boundary is met; physical operating limits are not evaluated.`;
+  const description = point => `Case: ${point.name}. Component: reported generation. Input: ${point.input} GWh. Returned generation: ${point.output} MWh. Lower limit: ${data.metrics.zero_mwh} MWh. The value is at or above the parser's nonnegative bound; physical operating limits are not evaluated.`;
   const inspect = index => {
     selector.value = String(index);
     readout.textContent = description(points[index]);
@@ -69,7 +69,7 @@
   const text = document.getElementById("comment-text");
   const list = document.getElementById("comment-list");
   let comments = [];
-  const packet = () => ({document: "Energy mix module analysis", revision: "00", binding, comments});
+  const packet = () => ({document: "Energy mix module analysis", revision: data.revision, binding, comments});
   const serialize = () => JSON.stringify(packet(), null, 2) + "\n";
   const renderComments = () => {
     list.replaceChildren();
@@ -121,7 +121,7 @@
     if (!file) return;
     try {
       const saved = JSON.parse(await file.text());
-      if (saved.document !== packet().document || saved.revision !== "00" || saved.binding !== binding || !Array.isArray(saved.comments)) {
+      if (saved.document !== packet().document || saved.revision !== data.revision || saved.binding !== binding || !Array.isArray(saved.comments)) {
         throw new Error("Document mismatch");
       }
       if (!saved.comments.every(comment => comment && sections.some(section => section.id === comment.section) && typeof comment.text === "string" && comment.text.trim())) {

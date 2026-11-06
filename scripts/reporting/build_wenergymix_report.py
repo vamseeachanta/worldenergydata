@@ -1,5 +1,9 @@
 """Build the offline offshore-wind module report from public interfaces.
 
+Changes to energy_mix source files require rebuilding this report in the same
+pull request. Source and synthetic-fixture identities use UTF-8 text with LF
+line endings so checkout conventions do not change the document binding.
+
 Rebuild from the repository root:
     PYTHONPATH=src python scripts/reporting/build_wenergymix_report.py
 """
@@ -27,6 +31,11 @@ REPORT_DIR = ROOT / "docs/reports/modules/wenergymix"
 FIXTURE = ROOT / "tests/fixtures/energy_mix/irena_offshore_synthetic.csv"
 
 
+def lf_bytes(path: Path) -> bytes:
+    """Read canonical LF text bytes for report evidence across checkouts."""
+    return path.read_bytes().replace(b"\r\n", b"\n")
+
+
 def csv_rows(raw: bytes) -> list[dict[str, str]]:
     """Read the module's CSV bytes without rounding supplied observations."""
     return list(csv.DictReader(io.StringIO(raw.decode("utf-8"))))
@@ -34,7 +43,7 @@ def csv_rows(raw: bytes) -> list[dict[str, str]]:
 
 def calculate_example() -> dict:
     """Call the module on the documented synthetic fixture and zero variation."""
-    raw = FIXTURE.read_bytes()
+    raw = lf_bytes(FIXTURE)
     records = load_export(raw)
     original = csv_rows(raw)
     converted = csv_rows(query_export(raw, generation_unit="MWh"))
@@ -99,10 +108,16 @@ def report_data() -> dict:
             metrics[f"row_{index}_generation_mwh"] = converted[index]["generation_mwh"]
     package = ROOT / "src/worldenergydata/energy_mix"
     digests = {
-        path.relative_to(ROOT).as_posix(): hashlib.sha256(path.read_bytes()).hexdigest()
+        path.relative_to(ROOT).as_posix(): hashlib.sha256(lf_bytes(path)).hexdigest()
         for path in sorted(package.glob("*.py"))
     }
-    return {"example": example, "metrics": metrics, "source_digests": digests}
+    return {
+        "example": example,
+        "metrics": metrics,
+        "source_digests": digests,
+        "revision": changes["revisions"][0]["revision"],
+        "revision_date": changes["revisions"][0]["date"],
+    }
 
 
 def metric(key: str, data: dict) -> str:
@@ -137,6 +152,16 @@ def build_report(output: Path = REPORT_DIR / "index.html") -> Path:
             data, ensure_ascii=False, sort_keys=True, allow_nan=False
         ).replace("<", "\\u003c"),
         "rows": example_rows(data),
+        "revision": escape(data["revision"]),
+        "revision_date": escape(data["revision_date"]),
+        "revision_history": "".join(
+            "<tr>"
+            f"<td>{escape(revision['revision'])}</td>"
+            f"<td>{escape(revision['date'])}</td>"
+            f"<td>{escape(revision.get('summary', ' '.join(revision['changes'])))}</td>"
+            "</tr>"
+            for revision in changes["revisions"]
+        ),
         "input_csv": escape(FIXTURE.read_text(encoding="utf-8").rstrip()),
         "digest": escape(data["example"]["manifest"]["sha256"]),
         "sources": "".join(

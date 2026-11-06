@@ -3,6 +3,7 @@
 import importlib.util
 import json
 import re
+import shutil
 import socket
 from datetime import datetime, timezone
 from decimal import Decimal
@@ -146,10 +147,10 @@ def test_report_and_comment_binding_survive_year_rollover(monkeypatch, tmp_path)
     monkeypatch.setattr(builder, "datetime", RolloverClock)
     monkeypatch.setattr(irena, "datetime", RolloverClock)
     test_report_rebuild_and_worked_example_consistency(tmp_path)
-    assert (tmp_path / "report.html").read_bytes() == (
+    assert (tmp_path / "report.html").read_bytes() == builder.lf_bytes(
         builder.REPORT_DIR / "index.html"
-    ).read_bytes()
-    raw = builder.FIXTURE.read_bytes()
+    )
+    raw = builder.lf_bytes(builder.FIXTURE)
     source_year = builder.csv_rows(raw)[0]["year"]
     future_export = raw.replace(f",{source_year},".encode("utf-8"), b",2027,", 1)
     assert load_export(future_export)[0]["year"] == 2027
@@ -202,10 +203,10 @@ def test_report_structure_references_and_public_text():
     assert not re.search(r'<(?:script|link)[^>]+(?:src|href)="https?:', text)
 
 
-def test_text_inputs_and_outputs_are_utf8_and_lf():
+def test_text_inputs_are_utf8_with_portable_line_endings():
     paths = [BUILDER, Path(__file__), *builder.REPORT_DIR.iterdir()]
     for path in paths:
-        raw = path.read_bytes()
+        raw = builder.lf_bytes(path)
         raw.decode("utf-8")
         assert b"\r" not in raw, path.name
         assert raw.endswith(b"\n"), path.name
@@ -237,7 +238,7 @@ def test_missing_measurement_and_source_preservation_consistency():
 def test_every_worked_metric_matches_module_results_consistency():
     text = (builder.REPORT_DIR / "index.html").read_text(encoding="utf-8")
     data = payload(text)
-    raw = builder.FIXTURE.read_bytes()
+    raw = builder.lf_bytes(builder.FIXTURE)
     loaded = load_export(raw)
     converted = builder.csv_rows(query_export(raw, generation_unit="MWh"))
     metrics = data["metrics"]
@@ -257,3 +258,55 @@ def test_every_worked_metric_matches_module_results_consistency():
     assert int(metrics["input_rows"]) == len(loaded)
     assert int(metrics["selected_rows"]) == len(data["example"]["selected"])
     assert int(metrics["source_bytes"]) == len(raw)
+
+
+def test_revision_metadata_controls_all_displays(monkeypatch, tmp_path):
+    report_dir = tmp_path / "report"
+    shutil.copytree(builder.REPORT_DIR, report_dir)
+    changes_path = report_dir / "changes.json"
+    changes = json.loads(changes_path.read_text(encoding="utf-8"))
+    changes["revisions"].insert(
+        0,
+        {
+            "revision": "02",
+            "date": "2028-01-02",
+            "changes": ["Updated parsing evidence and revision metadata."],
+        },
+    )
+    changes_path.write_text(json.dumps(changes), encoding="utf-8", newline="\n")
+    monkeypatch.setattr(builder, "REPORT_DIR", report_dir)
+    output = builder.build_report(tmp_path / "revised.html")
+    text = output.read_text(encoding="utf-8")
+    assert payload(text)["revision"] == "02"
+    assert payload(text)["revision_date"] == "2028-01-02"
+    assert text.count("Revision 02 · 2028-01-02") == 2
+    assert "<td>02</td><td>2028-01-02</td>" in text
+    assert "<td>00</td><td>2026-10-21</td>" in text
+    assert changes["revisions"][0]["changes"][0] in text
+    assert "revision: data.revision" in text
+    assert "saved.revision !== data.revision" in text
+    assert payload(text)["metrics"]["clock_year"] == "2028"
+
+
+def test_crlf_checkout_preserves_digests_and_comment_binding(monkeypatch, tmp_path):
+    # Model a text checkout without changing repository attributes or config.
+    paths = [
+        builder.FIXTURE,
+        *builder.REPORT_DIR.iterdir(),
+        *(ROOT / "src/worldenergydata/energy_mix").glob("*.py"),
+    ]
+    for source in paths:
+        destination = tmp_path / source.relative_to(ROOT)
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        destination.write_bytes(builder.lf_bytes(source).replace(b"\n", b"\r\n"))
+    monkeypatch.setattr(builder, "ROOT", tmp_path)
+    monkeypatch.setattr(
+        builder, "REPORT_DIR", tmp_path / builder.REPORT_DIR.relative_to(ROOT)
+    )
+    monkeypatch.setattr(
+        builder, "FIXTURE", tmp_path / builder.FIXTURE.relative_to(ROOT)
+    )
+    output = builder.build_report(tmp_path / "rebuilt.html")
+    expected = builder.lf_bytes(ROOT / "docs/reports/modules/wenergymix/index.html")
+    assert output.read_bytes() == expected
+    assert b"\r" not in output.read_bytes()
