@@ -119,6 +119,21 @@ def test_config_repo_structure_routes_to_its_contract():
     assert "tests/repo_structure" in r["xdist"]
 
 
+@pytest.mark.parametrize("module", _unit_modules())
+def test_every_unit_module_is_selected(module):
+    """Drift guard: a change under any tests/unit/<module> must be module-scoped
+    and pull in that module's dir (no module silently regresses to full/skip)."""
+    r = select([f"tests/unit/{module}/test_smoke.py"], REPO_ROOT)
+    assert r["scope"] == "modules"
+    assert f"tests/unit/{module}" in r["xdist"]
+
+
+def test_integration_module_adds_seq_target():
+    r = select(["tests/integration/modules/bsee/test_x.py"], REPO_ROOT)
+    if (REPO_ROOT / "tests/integration/modules/bsee").is_dir():
+        assert "tests/integration/modules/bsee" in r["seq"]
+
+
 def test_decommissioning_report_routes_to_gtm_regressions():
     changed = ["reports/gtm/decommissioning_market_outlook.py"]
     target = "tests/unit/gtm"
@@ -136,21 +151,6 @@ def test_decommissioning_report_routes_to_gtm_regressions():
         "mode": "xdist",
     } in matrix["include"]
     assert "_always" in _names(matrix)
-
-
-@pytest.mark.parametrize("module", _unit_modules())
-def test_every_unit_module_is_selected(module):
-    """Drift guard: a change under any tests/unit/<module> must be module-scoped
-    and pull in that module's dir (no module silently regresses to full/skip)."""
-    r = select([f"tests/unit/{module}/test_smoke.py"], REPO_ROOT)
-    assert r["scope"] == "modules"
-    assert f"tests/unit/{module}" in r["xdist"]
-
-
-def test_integration_module_adds_seq_target():
-    r = select(["tests/integration/modules/bsee/test_x.py"], REPO_ROOT)
-    if (REPO_ROOT / "tests/integration/modules/bsee").is_dir():
-        assert "tests/integration/modules/bsee" in r["seq"]
 
 
 # --- Matrix-emitter (domain fan-out) tests ---
