@@ -1,5 +1,6 @@
 """Static consumer checks for the first incrementally typed common modules."""
 
+import json
 import os
 import runpy
 import subprocess
@@ -10,9 +11,54 @@ from pathlib import Path
 from typing import Any
 
 import pytest
+import yaml
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 COMMON = REPO_ROOT / "packages/worldenergydata-core/src/worldenergydata/common"
+
+
+def test_scoped_typing_blocks_lint_gate() -> None:
+    """The required Lint result must include the scoped check on pull requests."""
+    workflow = yaml.safe_load((REPO_ROOT / ".github/workflows/ci.yml").read_text())
+    jobs = workflow["jobs"]
+    assert "lint" in jobs["lint-gate"]["needs"]
+    lint = jobs["lint"]
+    assert not lint.get("continue-on-error", False)
+    steps = lint["steps"]
+    checks = [s for s in steps if s.get("name") == "Check typed common modules"]
+    assert len(checks) == 1
+    check = checks[0]
+    assert "if" not in check
+    assert not check.get("continue-on-error", False)
+    assert check["env"]["MYPYPATH"] == "src:packages/worldenergydata-core/src"
+    assert "--no-project" in check["run"]
+    assert "--with mypy" in check["run"]
+    for source in ("exceptions.py", "logging.py", "types.py"):
+        assert (
+            f"packages/worldenergydata-core/src/worldenergydata/common/{source}"
+            in check["run"]
+        )
+    assert "examples/typed_common.py" in check["run"]
+    assert any(
+        "astral-sh/setup-uv@" in s.get("uses", "") for s in steps[: steps.index(check)]
+    )
+
+
+def test_documented_json_key_order() -> None:
+    """The displayed answer keeps the sorted key order printed by the example."""
+    guide = (REPO_ROOT / "docs/development/incremental_typing.md").read_text()
+    documented = json.loads(guide.split("```json\n", 1)[1].split("```", 1)[0])
+    executed = subprocess.run(
+        [sys.executable, str(REPO_ROOT / "examples/typed_common.py")],
+        cwd=REPO_ROOT,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    actual = json.loads(executed.stdout)
+    assert documented == actual
+    assert list(documented) == list(actual)
+    assert list(documented["error"]) == list(actual["error"])
 
 
 def run_mypy(source: Path, cache_dir: Path) -> subprocess.CompletedProcess[str]:

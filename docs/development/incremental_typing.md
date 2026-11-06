@@ -12,6 +12,7 @@ expand the checked set as each later module is ready. This increment covers
 | Revision | Date | What changed and why |
 | --- | --- | --- |
 | Initial | 2026-10-20 | Document the first checked common modules and their consumer example. |
+| Update | 2026-11-06 | Place scoped typing in the pull request lint gate and match the example's key order. |
 
 ## Policy
 
@@ -30,8 +31,20 @@ expand the checked set as each later module is ready. This increment covers
 - Add valid consumer calls and invalid argument checks alongside runtime tests.
   A negative test must fail on its intended argument, rather than an import or
   implementation error.
-- Expand the explicit CI file list when another module and its tests are ready.
-  The existing full-tree diagnostic step remains in place.
+- Expand the explicit file list in the lint job's `Check typed common modules`
+  step when another module and its tests are ready. The step runs on pull
+  requests and feeds the required `Lint` check; it uses an isolated mypy
+  environment rather than requiring a full workspace install. The full-tree
+  diagnostic check remains separate.
+
+This is a module-first strategy without ignore overrides, following the clean
+module step of issue #316's recommended path. It is not that issue's Option C,
+which prioritizes selected error categories across the tree.
+
+The consumer tests also run scoped mypy checks through pytest. Their execution
+on later pull requests depends on whether the touched-module selector includes
+`tests/unit/common/test_typing_contracts.py`; the explicit lint step enforces the
+selected implementations and example independently of that selection.
 
 The module imports must resolve from the root namespace and the core workspace
 member when running without an installed workspace:
@@ -72,19 +85,20 @@ record on another page, hence two pages.
 
 The example also serializes an error with a nested list of missing fields and
 merges adapter context with call context. The call's `source` replaces the
-adapter's `source`; `task` remains from the adapter. The expected answer is:
+adapter's `source`; `task` remains from the adapter. The expected answer below
+uses the sorted key order printed by the example; whitespace is insignificant:
 
 ```json
 {
-  "record_count": 2,
-  "total_pages": 2,
+  "context": {"source": "call", "task": "sample"},
   "error": {
-    "error": "WorldEnergyDataError",
     "code": "WED_ERROR",
-    "message": "Missing date",
-    "context": {"fields": ["date"]}
+    "context": {"fields": ["date"]},
+    "error": "WorldEnergyDataError",
+    "message": "Missing date"
   },
-  "context": {"source": "call", "task": "sample"}
+  "record_count": 2,
+  "total_pages": 2
 }
 ```
 
