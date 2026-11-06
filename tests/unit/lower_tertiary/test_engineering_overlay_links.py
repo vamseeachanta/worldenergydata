@@ -1,8 +1,8 @@
 """Issue #767: engineering chips link from the published lifecycle layout.
 
-Expected destinations are the existing cards named in the issue. Independently
-walking from reports/lower_tertiary/lifecycle to reports/hse requires ascending
-through lower_tertiary to reports before entering hse.
+Expected cards come from reports/hse. The publication mapping in build_pages.py
+copies posters to public/lifecycle and cards to public/hse, so links ascend once
+from lifecycle before entering hse, including sites served beneath a URL prefix.
 """
 
 from __future__ import annotations
@@ -12,17 +12,18 @@ import json
 import re
 import shutil
 from pathlib import Path
-from urllib.parse import urlsplit
+from urllib.parse import urljoin, urlsplit
 
 import pytest
 
 # tests/unit/lower_tertiary sits three directories below the repository root.
 ROOT = Path(__file__).resolve().parents[3]
-OUTPUT_DIRECTORY = Path("reports/lower_tertiary/lifecycle")
-TEMPLATE = ROOT / OUTPUT_DIRECTORY / "lifecycle_template.html"
+SOURCE_DIRECTORY = Path("reports/lower_tertiary/lifecycle")
+OUTPUT_DIRECTORY = Path("lifecycle")
+TEMPLATE = ROOT / SOURCE_DIRECTORY / "lifecycle_template.html"
 EXPECTED_TARGETS = {
-    "Mooring fatigue": Path("reports/hse/mooring-fatigue-grounded-card.html"),
-    "Fatigue / VIV": Path("reports/hse/riser-fatigue-grounded-card.html"),
+    "Mooring fatigue": Path("hse/mooring-fatigue-grounded-card.html"),
+    "Fatigue / VIV": Path("hse/riser-fatigue-grounded-card.html"),
 }
 
 pytestmark = pytest.mark.unit
@@ -73,14 +74,45 @@ def _assert_targets(html: str, root: Path, output_directory: Path) -> None:
         assert target.is_relative_to(root.resolve())
         assert target.relative_to(root.resolve()) == EXPECTED_TARGETS[discipline]
         assert target.is_file()
+        for prefix in ("/", "/sample-site/"):
+            base = f"https://example.invalid{prefix}lifecycle/example_lifecycle.html"
+            expected = f"https://example.invalid{prefix}{EXPECTED_TARGETS[discipline].as_posix()}"
+            assert urljoin(base, href) == expected
 
 
-def test_engineering_links_resolve_from_lifecycle_output():
-    _assert_targets(TEMPLATE.read_text(), ROOT, ROOT / OUTPUT_DIRECTORY)
+def _publish_poster(html: str, tmp_path: Path, monkeypatch) -> tuple[Path, Path]:
+    spec = importlib.util.spec_from_file_location(
+        "overlay_pages_builder", ROOT / "scripts/build_pages.py"
+    )
+    publisher = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(publisher)
+    reports = tmp_path / "reports"
+    lifecycle = tmp_path / SOURCE_DIRECTORY
+    lifecycle.mkdir(parents=True)
+    poster_name = "overlay-example_lifecycle.html"
+    (lifecycle / poster_name).write_text(html, encoding="utf-8", newline="\n")
+    (lifecycle / "index.html").write_text("", encoding="utf-8", newline="\n")
+    for relative in EXPECTED_TARGETS.values():
+        card = reports / relative
+        card.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(ROOT / "reports" / relative, card)
+    public = tmp_path / "public"
+    monkeypatch.setattr(publisher, "REPORTS", reports)
+    monkeypatch.setattr(publisher, "PUBLIC", public)
+    publisher.build_lower_tertiary({})
+    publisher.build_hse({})
+    return public, public / OUTPUT_DIRECTORY / poster_name
+
+
+def test_engineering_links_resolve_from_lifecycle_output(tmp_path, monkeypatch):
+    public, poster = _publish_poster(
+        TEMPLATE.read_text(encoding="utf-8"), tmp_path, monkeypatch
+    )
+    _assert_targets(poster.read_text(encoding="utf-8"), public, poster.parent)
 
 
 def test_linked_disciplines_are_declared_and_unlinked_chips_keep_fallback():
-    html = TEMPLATE.read_text()
+    html = TEMPLATE.read_text(encoding="utf-8")
     stages = _overlay_literal(html, "ENG")
     disciplines = {discipline for stage in stages.values() for discipline in stage}
     links = _overlay_literal(html, "ENG_LINK")
@@ -100,7 +132,7 @@ def test_linked_disciplines_are_declared_and_unlinked_chips_keep_fallback():
     )
 
 
-def test_engineering_cards_reachable_after_temporary_render(tmp_path):
+def test_engineering_cards_reachable_after_temporary_render(tmp_path, monkeypatch):
     builder_path = ROOT / "scripts/lower_tertiary/build_lifecycle_posters.py"
     spec = importlib.util.spec_from_file_location(
         "overlay_poster_builder", builder_path
@@ -108,24 +140,19 @@ def test_engineering_cards_reachable_after_temporary_render(tmp_path):
     builder = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(builder)
 
-    # Mirror the published directory tree, including the actual destination
-    # cards. A flat temporary directory would hide the relative-path defect.
-    output_directory = tmp_path / OUTPUT_DIRECTORY
-    output_directory.mkdir(parents=True)
-    for relative in EXPECTED_TARGETS.values():
-        target = tmp_path / relative
-        target.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copyfile(ROOT / relative, target)
-    poster = output_directory / "overlay-example.html"
-    poster.write_text(
-        builder.render({"id": "overlay-example", "name": "Overlay example"})
+    # Render into temporary reports, then exercise the actual publication copy
+    # mappings. Resolving against source reports would pin the wrong contract.
+    public, poster = _publish_poster(
+        builder.render({"id": "overlay-example", "name": "Overlay example"}),
+        tmp_path,
+        monkeypatch,
     )
-    rendered = poster.read_text()
+    rendered = poster.read_text(encoding="utf-8")
     assert "__FIELD_JSON__" not in rendered
-    _assert_targets(rendered, tmp_path, poster.parent)
+    _assert_targets(rendered, public, poster.parent)
     for name in ("ENG", "ENG_LINK"):
         assert _overlay_literal(rendered, name) == _overlay_literal(
-            TEMPLATE.read_text(), name
+            TEMPLATE.read_text(encoding="utf-8"), name
         )
 
 
