@@ -272,7 +272,12 @@ def test_ordered_wells_normalizes_site_subclasses(sequence):
     )
 
 
-def test_break_even_evaluates_each_position_once(monkeypatch):
+@pytest.mark.parametrize(
+    "mobilization,expected,last_position", [(0, 1, 200), (100, 2, 2)]
+)
+def test_break_even_evaluates_each_position_once(
+    monkeypatch, mobilization, expected, last_position
+):
     calc = BatchDrillingEconomics()
     duration = calc.learning_curve_time
     positions = []
@@ -282,9 +287,26 @@ def test_break_even_evaluates_each_position_once(monkeypatch):
         return duration(base_time_days, well_position, lc_factor)
 
     monkeypatch.setattr(calc, "learning_curve_time", tracked_duration)
-    # Zero mobilization and no learning: 10*20*N ties for all 200 sizes.
-    assert calc.break_even_n_wells(0, 10, 20, 1) == 1
-    assert positions == list(range(1, 201))
+    # Without learning, 10*20*N ties at zero mobilization; 100 USD saves at N=2.
+    assert calc.break_even_n_wells(mobilization, 10, 20, 1) == expected
+    assert positions == list(range(1, last_position + 1))
+
+
+def test_break_even_fractional_duration_preserves_sum_semantics():
+    # Without learning, every duration is 62.6 days. Built-in sum preserves
+    # the interpreter's legacy rounding: CPython 3.12 returns 1; 3.11 returns 21.
+    # Exact arithmetic ties: 350000 * 62.6 = 21910000 USD per well.
+    expected = next(
+        (n for n in range(1, 201) if 350000 * sum([62.6] * n) < n * 21910000),
+        1,
+    )
+    assert BatchDrillingEconomics().break_even_n_wells(0, 350000, 62.6, 1) == expected
+
+
+def test_break_even_rejects_overflowing_duration_sum():
+    # Each duration and the one-well cost are finite; 1e308 + 1e308 overflows.
+    with pytest.raises(ValueError, match="computed campaign costs must be finite"):
+        BatchDrillingEconomics().break_even_n_wells(0, 1, 1e308, 1)
 
 
 @pytest.mark.parametrize("sequence", [[], ["W2", "W1"]])

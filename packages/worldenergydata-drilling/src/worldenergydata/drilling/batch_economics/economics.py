@@ -152,8 +152,10 @@ class BatchDrillingEconomics:
             with no learning. This sentinel does not establish break-even.
             The search bound is a legacy implementation choice, not a sourced
             engineering acceptance limit. Floating-point comparisons are strict;
-            no monetary tolerance is applied. Inputs and intermediate costs
-            must be finite; overflow raises ValueError before comparison.
+            no monetary tolerance is applied. Duration prefixes use built-in
+            sum, whose floating-point rounding can depend on the Python version.
+            Inputs and intermediate costs must be finite; overflow raises
+            ValueError before comparison.
         """
         # Accounting basis: OpenStax, Principles of Accounting, Volume 2:
         # Managerial Accounting (2019), section 3.2: fixed plus variable cost.
@@ -163,12 +165,10 @@ class BatchDrillingEconomics:
         if not math.isfinite(standalone_per_well):
             raise ValueError("computed standalone cost must be finite")
 
-        total_drilling_days = 0.0
+        drilling_days = []
         for n in range(1, 201):
-            total_drilling_days += self.learning_curve_time(
-                base_well_days, n, lc_factor
-            )
-            batch_drilling_cost = day_rate * total_drilling_days
+            drilling_days.append(self.learning_curve_time(base_well_days, n, lc_factor))
+            batch_drilling_cost = day_rate * sum(drilling_days)
             batch_total = mob_cost + batch_drilling_cost
             standalone_total = n * standalone_per_well
             if not all(map(math.isfinite, (batch_total, standalone_total))):
