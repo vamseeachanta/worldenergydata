@@ -32,6 +32,7 @@ from worldenergydata.bsee.analysis.war_rig_days import (
     STATUS_COVERED,
     STATUS_NO_ACTIVITY,
     Basis,
+    InvalidWellboreIdentifier,
     rig_days_by_bore,
 )
 
@@ -137,11 +138,16 @@ class WellRigDays:
         that days must be reported as null rather than zero.  A frame that
         somehow spans several API12s is collapsed additively at bore grain
         and flagged, because this pipeline is documented as per-wellbore.
+        Missing or malformed identifiers raise ``InvalidWellboreIdentifier``
+        rather than being reported as absent activity. Missing required
+        columns retain the existing recovery below.
         """
         if war_data is None:
             return None
         try:
             bores = rig_days_by_bore(war_data, basis=basis)
+        except InvalidWellboreIdentifier:
+            raise
         except (ValueError, KeyError) as exc:
             logger.warning(f"WAR frame unusable for rig-days: {exc}")
             return None

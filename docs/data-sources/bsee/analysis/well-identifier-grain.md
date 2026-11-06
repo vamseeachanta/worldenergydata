@@ -13,7 +13,7 @@ counts; full raw-feed completeness remains unverified.
 |---|---|---|
 | 0 | 2026-10-12 | The metric inventory and source definitions were recorded to distinguish bore counts from family counts. |
 | 1 | 2026-10-19 | WAR identifier validation and grain regression tests were added to prevent malformed keys from becoming bore or family results. |
-| 2 | 2026-11-06 | A distinct-population summary and scalar adapter were added through the shared validator, with bounded error locations and batch-dispatch regression checks. |
+| 2 | 2026-11-06 | A distinct-population summary and scalar adapter were added through the shared validator, with bounded error locations and per-well propagation of invalid-key errors. |
 
 Table 0. Revision history of the decision record.
 
@@ -31,7 +31,7 @@ Grain and duration basis are separate attributes. A bore count is not a well-fam
 ### Enforced identifier contract
 
 `war_rig_days.normalize_api12` implements the format described by R1,
-attachment pages 3-5 (2009). Its scalar adapter `normalize_bsee_api12` accepts a complete twelve-digit
+attachment pages 2-3 (2009), API Well Number. Its scalar adapter `normalize_bsee_api12` accepts a complete twelve-digit
 ASCII bore key, surrounding whitespace, and an all-zero decimal tail from numeric
 table loading. It rejects missing values, family-only keys, event-suffixed keys,
 lost leading digits, punctuation, and scientific-notation text. It never pads or
@@ -39,13 +39,20 @@ truncates. This is format validation, not proof that BSEE assigned the number.
 
 `war_rig_days.normalize_api12` applies this contract to both WAR rows and requested
 populations before grouping or coverage matching. A malformed key now raises an
-input error rather than creating an apparent bore or an absent-coverage result.
+`InvalidWellboreIdentifier` input error, a `ValueError` subclass, rather than
+creating an apparent bore or an absent-coverage result in the engine.
 Errors report the invalid count and the first five row positions, numbered from
 zero; source values and arbitrary index labels are omitted. The full supplied
 frame is validated, including rows outside a requested population.
 `quarantine_war_identifiers` uses the shared tokenization to exclude malformed
 WAR rows with a warning before strict aggregation when a caller selects it.
 Excluded rows contribute no activity; results then cover only retained rows.
+For frames with the required columns and usable dates, the per-well
+`war_activity_days`, `rig_days_from_milestone` and `rig_analysis` entry points
+propagate this exception rather than report `no_war_activity` for an invalid key.
+Missing required columns retain their existing recovery; `rig_analysis` can
+reject unusable dates before reaching the engine. Other callers that catch
+`ValueError` must also preserve this distinction themselves.
 Correctly formatted identifiers retain the existing day arithmetic.
 
 Completion-key implementation is deferred until a production caller can establish
@@ -59,6 +66,13 @@ rows count once. Invalid identifiers fail the audit. The entire population is
 validated in one batch; the scalar adapter calls the same validator rather than
 reimplementing its format rule. No production consumer of the population helper
 is established. It does not classify producers or geologic sidetracks from WB suffixes.
+
+The separate `test_well_identifier_grain.py` module checks the population helper,
+its scalar adapter, bounded diagnostics and per-well error propagation on this
+branch. Some format and calendar cases overlap main's `test_war_identifier_grain.py`;
+consolidation requires integration with main. The map/apply guard covers only
+those two Series methods and does not establish the absence of Python iteration
+or a performance bound.
 
 Regression checks enumerate separated re-entry intervals and overlapping bores:
 bore sums and family calendar unions remain distinct and gaps are excluded.

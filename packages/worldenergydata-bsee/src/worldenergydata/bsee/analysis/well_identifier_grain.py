@@ -1,7 +1,7 @@
 """BSEE identifier keys and distinct population counts.
 
 Source: NTL 2009-G33, Well Naming and Numbering Standards (2009), attachment
-pp. 3-5, API Well Number and Producing Interval Code:
+pp. 2-3, API Well Number; pp. 4-5, Producing Interval Code:
 https://www.bsee.gov/sites/bsee.gov/files/notices-to-lessees-ntl/notices-to-lessees/09-g33.pdf
 
 This validates format, not agency assignment or historical renumbering. A WB

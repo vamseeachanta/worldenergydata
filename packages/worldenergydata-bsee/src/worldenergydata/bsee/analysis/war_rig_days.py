@@ -84,6 +84,7 @@ __all__ = [
     "DEFAULT_PHASES",
     "STATUS_COVERED_UNATTRIBUTED",
     "MAX_PLAUSIBLE_SPAN_DAYS",
+    "InvalidWellboreIdentifier",
     "normalize_api12",
     "union_days",
     "rig_days_by_bore",
@@ -239,6 +240,10 @@ def quarantine_war_identifiers(war: pd.DataFrame) -> pd.DataFrame:
     return war.assign(API_WELL_NUMBER=keys).loc[valid].copy()
 
 
+class InvalidWellboreIdentifier(ValueError):
+    """A malformed wellbore key prevents establishing the aggregation grain."""
+
+
 def normalize_api12(values) -> pd.Series:
     """Normalize and validate BSEE wellbore keys before deriving well families.
 
@@ -262,7 +267,7 @@ def normalize_api12(values) -> pd.Series:
     invalid = ~normalized.str.fullmatch(r"[0-9]{12}", na=False)
     if invalid.any():
         positions = invalid.to_numpy().nonzero()[0][:5].tolist()
-        raise ValueError(
+        raise InvalidWellboreIdentifier(
             "BSEE API-12 / API_WELL_NUMBER requires 12 ASCII digits after normalization; "
             f"{int(invalid.sum())} invalid identifier(s); "
             f"first row positions (zero-based): {positions}. "

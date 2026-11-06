@@ -1,7 +1,7 @@
 """Identifier-grain checks for BSEE data; synthetic examples are hand-counted.
 
-Format source: NTL 2009-G33, attachment pp. 3-5 (2009), API Well Number and
-Producing Interval Code. Widths are structural rules, not measured thresholds.
+Format source: NTL 2009-G33 (2009), attachment pp. 2-3, API Well Number;
+pp. 4-5, Producing Interval Code. Widths are structural rules, not measured thresholds.
 """
 
 import csv
@@ -10,7 +10,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from worldenergydata.bsee.analysis import war_rig_days, well_identifier_grain
+from worldenergydata.bsee.analysis import war_rig_days
 from worldenergydata.bsee.analysis.war_rig_days import (
     normalize_api12,
     rig_days_by_bore,
@@ -20,6 +20,7 @@ from worldenergydata.bsee.analysis.well_identifier_grain import (
     normalize_bsee_api12,
     summarize_bore_population,
 )
+from worldenergydata.bsee.analysis.well_rig_days import WellRigDays
 
 # Synthetic identifiers: one family with two bores, and another with one bore.
 BORE = "608120000100"
@@ -54,7 +55,7 @@ def test_normalization_preserves_the_full_bore_key(value):
     ],
 )
 def test_ambiguous_or_missing_identifiers_are_rejected(value):
-    """NTL 2009-G33 p. 3 requires the complete numeric wellbore key."""
+    """NTL 2009-G33 pp. 2-3 requires the complete numeric wellbore key."""
     with pytest.raises(ValueError, match="API-12"):
         normalize_bsee_api12(value)
     with pytest.raises(ValueError, match="API-12"):
@@ -75,17 +76,16 @@ def test_series_normalization_preserves_row_alignment():
     assert normalize_api12(values).to_dict() == {4: BORE, 9: BYPASS_OR_SIDETRACK}
 
 
-def test_batch_normalization_does_not_dispatch_each_row_to_the_scalar_helper(
+def test_normalization_preserves_duplicate_labels_without_series_map_or_apply(
     monkeypatch,
 ):
-    """Full-feed validation must use a batch path rather than Python per row."""
+    """Guard these two methods only; this does not rule out Python iteration."""
 
-    def scalar_call(*args, **kwargs):
-        pytest.fail("Batch normalization dispatched a row to the scalar helper")
+    def per_row_method(*args, **kwargs):
+        pytest.fail("Normalization called Series.map or Series.apply")
 
-    monkeypatch.setattr(well_identifier_grain, "normalize_bsee_api12", scalar_call)
-    monkeypatch.setattr(pd.Series, "map", scalar_call)
-    monkeypatch.setattr(pd.Series, "apply", scalar_call)
+    monkeypatch.setattr(pd.Series, "map", per_row_method)
+    monkeypatch.setattr(pd.Series, "apply", per_row_method)
     values = pd.Series([f" {BORE}.00 ", float(OTHER_FAMILY)], index=[9, 9])
     assert normalize_api12(values).tolist() == [BORE, OTHER_FAMILY]
     assert normalize_api12(values).index.tolist() == [9, 9]
@@ -293,3 +293,32 @@ def test_reentry_and_shared_weeks_keep_bore_and_family_measures_distinct():
     assert family["drilling_days"] == 18
     assert family["drilling_days_additive"] == 21
     assert family["overlap_days"] == 3
+
+
+def test_invalid_identifier_has_a_distinct_value_error_type():
+    with pytest.raises(ValueError, match="API-12") as error:
+        normalize_api12([BORE[:10]])
+    assert type(error.value) is war_rig_days.InvalidWellboreIdentifier
+
+
+@pytest.mark.parametrize("invalid", [BORE[:10], BORE + "01", None])
+@pytest.mark.parametrize("entry_point", ["activity", "milestone", "analysis"])
+def test_per_well_entry_points_propagate_invalid_identifier(invalid, entry_point):
+    """Malformed keys must not turn into null days with no-activity status."""
+    well = WellRigDays()
+    war = _war([[invalid, "2024-01-01", "2024-01-07", "DRL"]])
+    with pytest.raises(ValueError, match="API-12") as error:
+        if entry_point == "activity":
+            well.war_activity_days(war)
+        elif entry_point == "milestone":
+            well.rig_days_from_milestone({}, None, None, war)
+        else:
+            war["SN_WAR"] = [1]
+            war["RIG_NAME"] = ["synthetic rig"]
+            well.rig_analysis(
+                {"parameters": {"max_allowed_npt": 90}},
+                pd.DataFrame({"WELL_SPUD_DATE": [None], "TOTAL_DEPTH_DATE": [None]}),
+                war.drop(columns="WELL_ACTIVITY_CD"),
+                war[["SN_WAR", "WELL_ACTIVITY_CD"]],
+            )
+    assert type(error.value) is war_rig_days.InvalidWellboreIdentifier
