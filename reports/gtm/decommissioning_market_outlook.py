@@ -161,6 +161,11 @@ def build_forecast(inv):
     n_dsi = gs.get("DSI", 0)
     n_ast = gs.get("AST", 0)
     eligible = n_ta + n_com + n_dsi + n_ast
+    if eligible <= 0:
+        raise ValueError(
+            "Eligible inventory is unavailable: forecasting requires at least "
+            "one GoM well with status TA, COM, DSI, or AST."
+        )
 
     # --- DATA: idle-iron aging (TA wells idle >= threshold) ---
     cut = ASSUMPTIONS["data_as_of_year"] - ASSUMPTIONS["idle_threshold_years"]
