@@ -1,6 +1,7 @@
-# Exact existing orphan files; new siblings require an explicit reviewed entry.
+# Exact orphan snapshot; new and reachable exceptions are reported without failing CI.
 # Discovery includes archived files excluded by pytest; see pyproject.toml.
 # Archive basis: pytest configuration at 841cb7d4; earlier exclusions name 254c0c1d.
+# Routing basis: main revision cd5bdf73.
 tests/_archive/integration/test_bsee_pipeline.py # reason: archived
 tests/_archive/modules/bsee/analysis/2025-08-05-multiple-wells-comparison-test/final_system_validation_test.py # reason: archived
 tests/_archive/modules/bsee/analysis/2025-08-05-multiple-wells-comparison-test/multiple_wells_comparison_test.py # reason: archived
@@ -203,14 +204,6 @@ tests/modules/field_development/test_basin.py # reason: test path has no self ro
 tests/modules/field_development/test_block.py # reason: test path has no self route
 tests/modules/field_development/test_calibration.py # reason: test path has no self route
 tests/modules/field_development/test_calibration_evidence.py # reason: test path has no self route
-tests/modules/field_development/test_catalog_cli.py # reason: test path has no self route
-tests/modules/field_development/test_catalog_decision_binding.py # reason: test path has no self route
-tests/modules/field_development/test_catalog_input_contract.py # reason: test path has no self route
-tests/modules/field_development/test_catalog_integration.py # reason: test path has no self route
-tests/modules/field_development/test_catalog_integrity.py # reason: test path has no self route
-tests/modules/field_development/test_catalog_publication.py # reason: test path has no self route
-tests/modules/field_development/test_catalog_schema_contract.py # reason: test path has no self route
-tests/modules/field_development/test_catalog_structure.py # reason: test path has no self route
 tests/modules/field_development/test_cost_estimator.py # reason: test path has no self route
 tests/modules/field_development/test_development_comparison.py # reason: test path has no self route
 tests/modules/field_development/test_dexpi.py # reason: test path has no self route
@@ -261,9 +254,8 @@ tests/modules/well_production_dashboard/test_monitoring.py # reason: excluded by
 tests/modules/well_production_dashboard/test_well_production_dashboard.py # reason: excluded by pytest at 254c0c1d; not ignored at 841cb7d4
 tests/performance/test_critical_operations.py # reason: archived
 tests/performance/test_regression_detector.py # reason: archived
-tests/repo_structure/test_repo_structure_contract.py # reason: test path has no self route
-tests/repo_structure/test_report_inventory.py # reason: test path has no self route
 tests/reservoir/test_resource_estimation.py # reason: test path has no self route
+tests/reservoir/test_resource_estimation_example.py # reason: test path has no self route
 tests/reservoir/test_resource_estimation_validation.py # reason: test path has no self route
 tests/scheduler/test_envelope_adapter.py # reason: test path has no self route
 tests/test_agent_doc_clean.py # reason: test path has no self route

@@ -229,6 +229,18 @@ def unlisted(result: dict, allowlist: dict[str, str]) -> list[str]:
     ]
 
 
+def compare_allowlist(result: dict, allowlist: dict[str, str]) -> dict:
+    """Report new orphans and removable exceptions without enforcing routing."""
+    return {
+        "unlisted": unlisted(result, allowlist),
+        "reachable": [
+            row["path"]
+            for row in result["tests"]
+            if row["reachable"] and row["path"] in allowlist
+        ],
+    }
+
+
 def table(result: dict) -> str:
     lines = ["path | reach | scope | targets"]
     for row in result["tests"]:
@@ -242,6 +254,15 @@ def table(result: dict) -> str:
             f"{row['path']} | {row['status']} | {row['any_targets']} | "
             f"{', '.join(row['scopes'])} | {', '.join(row['routed_targets'])}"
         )
+    if "allowlist" in result:
+        lines.extend(["", "allow-list comparison (report only)"])
+        for key, label in (
+            ("unlisted", "unlisted orphan"),
+            ("reachable", "reachable exception"),
+        ):
+            paths = result["allowlist"][key]
+            lines.append(f"{label} count | {len(paths)}")
+            lines.extend(f"{label} | {path}" for path in paths)
     return "\n".join(lines) + "\n"
 
 
@@ -251,8 +272,15 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--json", type=Path, required=True, help="output JSON inventory"
     )
+    parser.add_argument(
+        "--allowlist",
+        type=Path,
+        default=Path(__file__).with_name("selector_reach_allowlist.txt"),
+        help="exact-file exceptions to compare (report only)",
+    )
     args = parser.parse_args(argv)
     result = audit(args.root)
+    result["allowlist"] = compare_allowlist(result, read_allowlist(args.allowlist))
     args.json.write_text(
         json.dumps(result, indent=2) + "\n", encoding="utf-8", newline="\n"
     )

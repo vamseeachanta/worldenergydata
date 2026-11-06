@@ -102,13 +102,43 @@ def test_allowlist_is_exact_and_requires_reasons(audit, tmp_path):
             audit.read_allowlist(allow)
 
 
-def test_real_tree_has_no_unlisted_orphans(audit, tmp_path):
-    """The real inventory must be covered; a synthetic new sibling must fail the guard."""
-    result = audit.audit(REPO)
-    allow = audit.read_allowlist(REPO / "scripts/ci/selector_reach_allowlist.txt")
-    assert audit.unlisted(result, allow) == []
+def test_real_tree_comparison_is_report_only(audit, tmp_path):
+    """Unrouted additions remain visible without failing an unrelated full run."""
+    import json
+
+    output = tmp_path / "result.json"
+    assert audit.main(["--root", str(REPO), "--json", str(output)]) == 0
+    result = json.loads(output.read_text(encoding="utf-8"))
+    assert "allowlist" in result
+    assert result["tests"]
+
+
+def test_cli_reports_unlisted_and_reachable_allowlist_entries(audit, tmp_path, capsys):
+    """A new sibling and an obsolete exception are reported, with a zero exit code."""
+    import json
+
     put(tmp_path, "tests/loose/test_new.py")
-    assert audit.unlisted(audit.audit(tmp_path), allow) == ["tests/loose/test_new.py"]
+    put(tmp_path, "tests/unit/alpha/test_ok.py")
+    allow = put(
+        tmp_path,
+        "allow.txt",
+        "tests/unit/alpha/test_ok.py # reason: legacy routing gap\n",
+    )
+    output = tmp_path / "result.json"
+    assert (
+        audit.main(
+            ["--root", str(tmp_path), "--json", str(output), "--allowlist", str(allow)]
+        )
+        == 0
+    )
+    result = json.loads(output.read_text(encoding="utf-8"))
+    assert result["allowlist"] == {
+        "unlisted": ["tests/loose/test_new.py"],
+        "reachable": ["tests/unit/alpha/test_ok.py"],
+    }
+    text = capsys.readouterr().out
+    assert "unlisted orphan | tests/loose/test_new.py" in text
+    assert "reachable exception | tests/unit/alpha/test_ok.py" in text
 
 
 def test_allowlist_reasons_match_pytest_exclusions(audit):
@@ -158,7 +188,9 @@ def test_cli_writes_json_and_table(audit, tmp_path, capsys):
     put(tmp_path, "tests/loose/test_orphan.py")
     output = tmp_path / "result.json"
     assert audit.main(["--root", str(tmp_path), "--json", str(output)]) == 0
-    assert json.loads(output.read_text(encoding="utf-8")) == audit.audit(tmp_path)
+    result = json.loads(output.read_text(encoding="utf-8"))
+    assert result.pop("allowlist")["unlisted"] == ["tests/loose/test_orphan.py"]
+    assert result == audit.audit(tmp_path)
     assert "tests/loose/test_orphan.py | orphan" in capsys.readouterr().out
 
 

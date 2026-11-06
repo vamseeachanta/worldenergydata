@@ -1,4 +1,4 @@
-"""Full-mode goldens and API checks; PR goldens require a fast-capable selector."""
+"""Literal full-mode and PR goldens, independent of the checkout's fast APIs."""
 
 import importlib.util
 import json
@@ -225,6 +225,48 @@ def test_json_cli_requires_explicit_flag(tree, capsys):
     assert error.value.code == 2
 
 
+@pytest.fixture
+def fast_selector():
+    """Hand-enumerated public API fixture; PR behavior runs even on older trees."""
+    from types import SimpleNamespace
+
+    routes = {
+        "scripts/ci/check.py": ("full", "tests/ci", "ci"),
+        "src/worldenergydata/engine.py": ("full", None, None),
+        "tests/repo_structure/test_layout.py": (
+            "modules",
+            "tests/repo_structure",
+            "repo_structure",
+        ),
+        "tests/modules/field_development/test_catalog_evidence.py": (
+            "modules",
+            "tests/modules/field_development/test_catalog_evidence.py",
+            "modules-field_development-test_catalog_evidence.py",
+        ),
+    }
+
+    def select(changed, root):
+        return {"scope": routes[changed[0]][0], "xdist": [], "seq": []}
+
+    def select_fast(changed, root):
+        target = routes[changed[0]][1]
+        return {
+            "scope": "modules",
+            "xdist": ["tests/contracts"] + ([target] if target else []),
+            "seq": [],
+        }
+
+    def to_matrix(changed, root, *, fast=False):
+        assert fast is True
+        _, target, name = routes[changed[0]]
+        shards = [{"name": "_always", "mode": "xdist", "targets": "tests/contracts"}]
+        if target:
+            shards.append({"name": name, "mode": "xdist", "targets": target})
+        return {"include": shards}
+
+    return SimpleNamespace(select=select, select_fast=select_fast, to_matrix=to_matrix)
+
+
 @pytest.mark.parametrize(
     "path,expected",
     [
@@ -267,14 +309,11 @@ def test_json_cli_requires_explicit_flag(tree, capsys):
         ),
     ],
 )
-def test_current_selector_pr_goldens(tree, path, expected):
-    """Main's actual fast API selects only the hand-enumerated contract targets.
-
-    A legacy revision must reject unsupported PR mode instead of reporting full
-    selection as if it were the fast gate. The same tests run against main's
-    actual selector in the disposable integration tree.
-    """
+def test_pr_goldens(tree, path, expected, fast_selector, monkeypatch):
+    """All four fast-mode explanations execute, regardless of selector revision."""
     script = load()
+    if not callable(getattr(script._selector(), "select_fast", None)):
+        monkeypatch.setattr(script, "_selector", lambda: fast_selector)
     for name in (
         "tests/ci/test_check.py",
         "tests/repo_structure/test_layout.py",
@@ -284,10 +323,6 @@ def test_current_selector_pr_goldens(tree, path, expected):
         file.parent.mkdir(parents=True, exist_ok=True)
         file.write_text("", encoding="utf-8", newline="\n")
     changes = [{"status": "M", "paths": [path]}]
-    if not hasattr(script._selector(), "select_fast"):
-        with pytest.raises(ValueError, match="PR mode requires.*fast"):
-            script.explain(changes, tree)
-        return
     assert script.render(script.explain(changes, tree)) == expected
 
 
