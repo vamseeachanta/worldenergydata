@@ -48,7 +48,7 @@ Adjacency merging
 Grain
 -----
 BSEE bore keys are API-12: a well-family prefix plus a WB code for numbered
-sidetracks and bypasses (NTL 2009-G33, 2009, attachment p. 3). Inputs must carry
+sidetracks and bypasses (NTL 2009-G33, 2009, attachment pp. 2-3). Inputs must carry
 the complete key; API-10 and event-suffixed keys are rejected before grouping.
 The API-10 output unions calendar coverage across bores; its additive columns
 separately sum bore days. Overlap is reported, without inferring that it proves
@@ -262,7 +262,7 @@ def normalize_api12(values) -> pd.Series:
     """
     normalized = _api12_tokens(values)
     # MMS NTL 2009-G33 (2009), attachment pp. 2-3, API Well Number:
-    # ten family digits plus two WB digits; interval codes are separate (p. 4).
+    # ten family digits plus two WB digits; interval codes are separate (pp. 4-5).
     # https://www.bsee.gov/sites/bsee.gov/files/notices-to-lessees-ntl/notices-to-lessees/09-g33.pdf
     invalid = ~normalized.str.fullmatch(r"[0-9]{12}", na=False)
     if invalid.any():

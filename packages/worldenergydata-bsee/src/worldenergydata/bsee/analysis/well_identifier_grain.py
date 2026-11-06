@@ -35,7 +35,7 @@ def summarize_bore_population(values: Iterable[object]) -> dict:
     or sidetracks can be inferred from these bore keys alone.
     """
     bores = set(war_rig_days.normalize_api12(list(values)))
-    # NTL 2009-G33 (2009), attachment p. 3: family = state+county+well
+    # NTL 2009-G33 (2009), attachment pp. 2-3: family = state+county+well
     # sequence (2+3+5 digits); final two digits identify the wellbore.
     family_sizes = Counter(bore[:10] for bore in bores)
     histogram = Counter(family_sizes.values())

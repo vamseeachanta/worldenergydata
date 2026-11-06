@@ -189,7 +189,7 @@ def test_population_counts_distinct_bores_and_families():
 
     Family A has two bores; B has one. The two unique WB codes are 00 and 01.
     A nonzero WB code cannot distinguish bypasses from geologic sidetracks
-    (NTL 2009-G33 p. 3).
+    (NTL 2009-G33, 2009, attachment pp. 2-3, API Well Number).
     """
     summary = summarize_bore_population([BORE, BYPASS_OR_SIDETRACK, OTHER_FAMILY, BORE])
     assert summary == {
@@ -275,7 +275,8 @@ def test_reentry_and_shared_weeks_keep_bore_and_family_measures_distinct():
     Bore A00: Jan 1-7 plus Jan 22-28 = 7+7 = 14; its idle gap is excluded.
     Bore A01: Jan 5-11 = 7. Family union = Jan 1-11 plus Jan 22-28 = 18.
     Bore sum = 21; overlap Jan 5-7 = 3. A recompletion interval would not
-    receive another copy of these bore days (NTL 2009-G33 pp. 3-5).
+    receive another copy of these bore days (NTL 2009-G33, 2009, attachment
+    pp. 2-3, API Well Number; pp. 4-5, Producing Interval Code).
     """
     war = _war(
         [

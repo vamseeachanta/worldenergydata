@@ -14,13 +14,14 @@ counts; full raw-feed completeness remains unverified.
 | 0 | 2026-10-12 | The metric inventory and source definitions were recorded to distinguish bore counts from family counts. |
 | 1 | 2026-10-19 | WAR identifier validation and grain regression tests were added to prevent malformed keys from becoming bore or family results. |
 | 2 | 2026-11-06 | A distinct-population summary and scalar adapter were added through the shared validator, with bounded error locations and per-well propagation of invalid-key errors. |
+| 3 | 2026-11-06 | The batch caller's failure behaviour, source page ranges and evidence dates were clarified to state the limits of identifier validation. |
 
 Table 0. Revision history of the decision record.
 
 ## Status and evidence
 
 - Status: metric inventory with enforced bore-key format; episode partitioning and renumbering remain proposed.
-- Evidence dates: the original inventory is based on repository revision `7f645ac5844b25a79374f62fb0230ef1dbb4b143` (2026-10-12); identifier validation and population tests were added on 2026-10-19.
+- Evidence dates: the original inventory is based on repository revision `7f645ac5844b25a79374f62fb0230ef1dbb4b143` (2026-10-12); WAR identifier validation and grain tests were added on 2026-10-19; the population helper, bounded diagnostics and per-well propagation tests were added on 2026-11-06 (revision 2).
 - Scope: deliverable 2 of [issue 1081](https://github.com/vamseeachanta/worldenergydata/issues/1081), using its [research note](https://github.com/vamseeachanta/worldenergydata/issues/1081#issuecomment-6113191313).
 - Placement follows the existing BSEE analysis note [API12 resolution](julia_api12_resolution.md#L1), indexed by [Data Sources](../../README.md#L14). This is a methodology decision record, not a replacement for the historical rig-day notes.
 
@@ -53,6 +54,11 @@ propagate this exception rather than report `no_war_activity` for an invalid key
 Missing required columns retain their existing recovery; `rig_analysis` can
 reject unusable dates before reaching the engine. Other callers that catch
 `ValueError` must also preserve this distinction themselves.
+`WellAPI12.run_well_analysis` does not catch `InvalidWellboreIdentifier` from
+its per-well analysis: the first invalid key reached by the engine stops the
+run before the current group's summary CSV is written. Earlier groups may
+already have been written. This caller propagates the error rather than
+selecting the enrichment engine's row-quarantine behaviour.
 Correctly formatted identifiers retain the existing day arithmetic.
 
 Completion-key implementation is deferred until a production caller can establish
@@ -85,7 +91,7 @@ expiration and unverified current legal status remain limitations below.
 | Identifier | Meaning supported by reopened sources | Use in this record |
 |---|---|---|
 | API-10 | State/pseudo-state (2 digits), county/pseudo-county (3), unique well sequence (5), from R1, attachment pages 2-3. A well can contain multiple wellbores. | Well family: first ten characters of the normalized bore identifier. |
-| API-12 | API-10 plus a two-digit wellbore (WB) code. Original hole uses `00`; subsequent numbered sidetracks and bypasses share a sequence (R1, attachment page 3). | Bore, not completion. A nonzero suffix alone does not identify a geologic sidetrack. |
+| API-12 | API-10 plus a two-digit wellbore (WB) code. Original hole uses `00`; subsequent numbered sidetracks and bypasses share a sequence (R1, attachment pages 2-3). | Bore, not completion. A nonzero suffix alone does not identify a geologic sidetrack. |
 | API-14 | Primary-source definition **not verified**. The research note describes a vendor event sequence after API-12, based only on secondary R9; see Not verified. | No established BSEE completion join key. No metric is reclassified as completion-grain from this label. |
 | Completion key | API-12 plus a separate three-character `PROD_INTERVAL_CD`; monthly production also needs reporting month/context (R1, attachment pages 4-5; R4; R7 fields 13-14). | Completion production, distinct from bore rig time. `X01` denotes wellbore-only reporting in R1. |
 
