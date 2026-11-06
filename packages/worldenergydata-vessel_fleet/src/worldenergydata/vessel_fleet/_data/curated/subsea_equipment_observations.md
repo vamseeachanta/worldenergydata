@@ -15,6 +15,7 @@ require confirmation from drawings. No universal geometry range is established.
 | B | 2026-10-21 | Distinguish published but untranscribed research findings from source gaps and clarify component weight provenance. |
 | C | 2026-11-05 | Preserve printed weight labels and assembly uncertainty; clarify search scope and validate observation metadata. |
 | D | 2026-11-06 | Defer mixed-source weight units, remove weight-basis notes from dimensions, retain exact research-status coverage and identify field-specific validation failures. |
+| E | 2026-11-06 | Defer the unresolved LMRP ton unit and preserve its printed weight basis; strengthen provenance and invalid-field checks and reflow the contract text. |
 
 Revision C uses the local authoring date; its commit date is 2026-11-06 UTC.
 
@@ -36,14 +37,14 @@ qualified for analysis. Confidence `A` means manufacturer-hosted literature.
 quantity is zero or absent from every public source. `NOT_TRANSCRIBED` means a
 published finding is identified in the cited research record but its numeric
 value is not entered here. That status is also used in `value`. For the
-mixed-source BOP weight lead, `unit` is also `NOT_TRANSCRIBED`: the cited
-findings use different units and weight bases. Other pending rows retain a
-requested target unit, which does not assert a conversion or a source unit.
+pending BOP and LMRP weight leads, `unit` is also `NOT_TRANSCRIBED`: the BOP
+findings use different units and weight bases, and the LMRP ton type is unstated.
+Pending height rows retain a requested target unit, which does not assert a
+conversion or a source unit.
 At transcription, create a separate row per source and basis, record its unit
 as printed and retain the primary source URL; no force-to-mass conversion is
 implied by a pending row. Existing observation IDs are retained for traceability;
-a `-GAP` suffix
-does not override the row's current status. `NOT_EVALUATED` denotes
+a `-GAP` suffix does not override the row's current status. `NOT_EVALUATED` denotes
 unestablished confidence or intended-use eligibility. `NOT_REPORTED` in `range`
 means no range was supplied. `ft_in` preserves feet-and-inches text without
 conversion. No equations, inferred constants, design limits or conversions are
@@ -81,6 +82,9 @@ used. Each row carries its public URL, document, locator and retrieval date.
   basis-neutral `weight_as_published` parameter: the cited rows mix dry,
   submerged and unstated bases. Its `unit` remains `NOT_TRANSCRIBED` until
   each source unit and basis can be recorded separately as published.
+  The LMRP lead also uses `weight_as_published` and unit `NOT_TRANSCRIBED`:
+  its in-air basis is recorded, but the printed ton type remains unresolved.
+  No ton-to-kilogram conversion is selected.
   These findings are NOT_TRANSCRIBED,
   not absent. Source units, dry/submerged basis, assembly boundaries and exact
   configurations require confirmation before transcription into analysis
@@ -88,8 +92,7 @@ used. Each row carries its public URL, document, locator and retrieval date.
   text from that sheet is added here. Future transcription of a finding from
   a Restricted-labelled source must retain its contractor public-page URL
   and Restricted note on each resulting row. The API URL identifies the dated
-  comment
-  directly; it does not constitute independent verification of the originals.
+  comment directly; it does not constitute independent verification of the originals.
 - [Earlier research record #1140](https://api.github.com/repositories/574746314/issues/comments/5810649761),
   dated 2026-09-24: component sums provide separate LMRP height estimate leads;
   the record also identifies flex-joint drag-diameter and stiffness-class

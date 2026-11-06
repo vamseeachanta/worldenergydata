@@ -66,7 +66,10 @@ def test_provenance_and_shape(rows):
                 row["observation_id"],
                 "invalid unit",
             )
-        assert row["status"] in {"REPORTED", "NOT_FOUND", "NOT_TRANSCRIBED"}
+        assert row["status"] in {"REPORTED", "NOT_FOUND", "NOT_TRANSCRIBED"}, (
+            row["observation_id"],
+            "invalid status",
+        )
         if row["status"] in {"NOT_FOUND", "NOT_TRANSCRIBED"}:
             assert row["value"] == row["status"]
             assert row["confidence"] == "NOT_EVALUATED"
@@ -79,8 +82,14 @@ def test_provenance_and_shape(rows):
                     "invalid value",
                 )
             else:
-                assert Decimal(row["value"]).is_finite()
-                assert Decimal(row["value"]) > 0
+                assert Decimal(row["value"]).is_finite(), (
+                    row["observation_id"],
+                    "invalid value",
+                )
+                assert Decimal(row["value"]) > 0, (
+                    row["observation_id"],
+                    "invalid value",
+                )
 
 
 @pytest.mark.parametrize(
@@ -111,9 +120,7 @@ def test_ovs_published_values(rows, identifier, value, unit):
         ("OVS-LRP-WEIGHT", "LRP Deployed Weight with H4 Connector", True),
     ],
 )
-def test_ovs_weights_identify_the_component_entry(
-    rows, identifier, entry, includes_connector
-):
+def test_component_weight_provenance(rows, identifier, entry, includes_connector):
     row = next(row for row in rows if row["observation_id"] == identifier)
     assert row["source_locator"] == f"p.2 Equipment Specifications; {entry}"
     assert ("H4 connector" in row["notes"]) is includes_connector
@@ -188,6 +195,11 @@ def test_known_research_findings_are_untranscribed_not_absent(
     assert "NOT_EVALUATED" in row["notes"]
     if identifier == "BOP-MASS-GAP":
         assert "Restricted" in row["notes"]
+    elif identifier == "BOP-HEIGHT-GAP":
+        assert "assembly boundaries" in row["notes"]
+    else:
+        assert "in air" in row["notes"]
+        assert "ton type" in row["notes"]
 
 
 def test_known_research_is_untranscribed_not_missing(rows):
@@ -221,24 +233,39 @@ def test_unspecified_weight_basis_is_not_promoted_to_mass(rows):
     assert bop["parameter"] == "weight_as_published"
 
 
-def test_mixed_source_units_are_not_assigned_a_mass_unit(rows):
-    bop = next(row for row in rows if row["observation_id"] == "BOP-MASS-GAP")
-    assert bop["status"] == "NOT_TRANSCRIBED"
-    assert bop["unit"] == "NOT_TRANSCRIBED"
-    assert "source units require confirmation" in bop["notes"]
-    assert "no force-to-mass conversion" in bop["notes"]
+@pytest.mark.parametrize("identifier", ["BOP-MASS-GAP", "LMRP-MASS-GAP"])
+def test_unconfirmed_weight_units_are_not_assigned_a_mass_unit(rows, identifier):
+    row = next(row for row in rows if row["observation_id"] == identifier)
+    assert row["status"] == "NOT_TRANSCRIBED"
+    assert row["unit"] == "NOT_TRANSCRIBED"
+    assert row["parameter"] == "weight_as_published"
+    if identifier == "BOP-MASS-GAP":
+        assert "source units require confirmation" in row["notes"]
+        assert "no force-to-mass conversion" in row["notes"]
+    else:
+        assert "ton type" in row["notes"]
+        assert "no ton-to-kilogram conversion" in row["notes"]
 
 
 @pytest.mark.parametrize(
-    "field,value",
+    "identifier,field,value",
     [
-        ("unit", "kgs"),
-        ("unit", "NOT_TRANSCRIBED"),
-        ("value", "10ft 10in"),
-        ("retrieved_on", (date.today() + timedelta(days=1)).isoformat()),
+        ("MODULAR-LENGTH", "unit", "kgs"),
+        ("MODULAR-LENGTH", "unit", "NOT_TRANSCRIBED"),
+        ("MODULAR-LENGTH", "value", "10ft 10in"),
+        (
+            "MODULAR-LENGTH",
+            "retrieved_on",
+            (date.today() + timedelta(days=1)).isoformat(),
+        ),
+        ("MODULAR-LENGTH", "status", "UNKNOWN"),
+        ("MODULAR-WEIGHT", "value", "NaN"),
+        ("MODULAR-WEIGHT", "value", "Infinity"),
+        ("MODULAR-WEIGHT", "value", "0"),
+        ("MODULAR-WEIGHT", "value", "-1"),
     ],
 )
-def test_provenance_and_shape_rejects_invalid_metadata(rows, field, value):
-    row = next(row for row in rows if row["observation_id"] == "MODULAR-LENGTH")
+def test_provenance_and_shape_rejects_invalid_metadata(rows, identifier, field, value):
+    row = next(row for row in rows if row["observation_id"] == identifier)
     with pytest.raises(AssertionError, match=f"invalid {field}"):
         test_provenance_and_shape([{**row, field: value}])
