@@ -17,7 +17,7 @@ MAP = ROOT / PACKAGE / "docs/implementation-map.json"
 
 def test_all_six_family_enrollments():
     """Verify actual definition locations, digests, evidence and review status."""
-    inventory = json.loads(MAP.read_text())
+    inventory = json.loads(MAP.read_text(encoding="utf-8"))
     assert inventory["repository"] == "worldenergydata"
     assert re.fullmatch(r"[0-9a-f]{40}", inventory["revision"])
     assert {family["id"] for family in inventory["families"]} == {
@@ -54,7 +54,7 @@ def test_all_six_family_enrollments():
             )
         for evidence in family["tests"]:
             path, *nodes = evidence.split("::")
-            definitions = ast.parse((ROOT / path).read_text()).body
+            definitions = ast.parse((ROOT / path).read_text(encoding="utf-8")).body
             for node in nodes:
                 definition = next(
                     n
@@ -79,7 +79,7 @@ def test_family_discovery_evidence():
     git-grep query can be replayed against the full revision; same-name search
     is bounded evidence and cannot prove algorithmic uniqueness.
     """
-    inventory = json.loads(MAP.read_text())
+    inventory = json.loads(MAP.read_text(encoding="utf-8"))
     for family in inventory["families"]:
         discovery = family["duplicate_discovery"]
         assert discovery["revision"] == inventory["revision"]
@@ -116,8 +116,8 @@ def test_mobilization_nonpositive_count(wells):
     Zero and minus one exercise the boundary and a representative invalid count;
     1200 USD is the synthetic fixed cost from the hand calculation above.
     """
-    with pytest.raises(ValueError, match="must be > 0"):
-        BatchDrillingEconomics().mobilization_savings(1200, wells)
+    with pytest.raises(ValueError, match=r"n_wells_batch[\s\S]*must be > 0"):
+        BatchDrillingEconomics().mobilization_savings(1200, n_wells_batch=wells)
 
 
 def test_duration_and_campaign_cost_hand_calculations():

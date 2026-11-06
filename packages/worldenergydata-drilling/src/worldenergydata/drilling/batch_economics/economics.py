@@ -163,11 +163,12 @@ class BatchDrillingEconomics:
         if not math.isfinite(standalone_per_well):
             raise ValueError("computed standalone cost must be finite")
 
+        total_drilling_days = 0.0
         for n in range(1, 201):
-            batch_drilling_cost = day_rate * sum(
-                self.learning_curve_time(base_well_days, pos, lc_factor)
-                for pos in range(1, n + 1)
+            total_drilling_days += self.learning_curve_time(
+                base_well_days, n, lc_factor
             )
+            batch_drilling_cost = day_rate * total_drilling_days
             batch_total = mob_cost + batch_drilling_cost
             standalone_total = n * standalone_per_well
             if not all(map(math.isfinite, (batch_total, standalone_total))):

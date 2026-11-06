@@ -11,6 +11,7 @@ coefficients and legacy result keys are retained.
 | Revision | Date | What changed and why |
 | --- | --- | --- |
 | 1 | 2026-11-04 | Define numeric domains, complete sequences and empty-campaign rejection to prevent silently incomplete or nonfinite cost results. |
+| 2 | 2026-11-06 | Clarify identity retention for canonical sites and validated replacements for normalized entries and subclasses. |
 
 ## Numeric requirements
 
@@ -59,8 +60,10 @@ distinct identifiers, and a sequence must use the exact stored identifiers.
 An omitted sequence or explicit `[]` uses insertion order. Any nonempty sequence
 contains each campaign well ID exactly once. Duplicate sequence IDs, unknown IDs
 and omission of any well are rejected with `ValueError`; no well is silently
-dropped or appended. `ordered_wells()` returns a new list retaining the original
-site objects in the specified order.
+dropped or appended. `ordered_wells()` returns a new list in the specified order.
+Canonical `DrillingSite` entries retain identity; entries that require
+normalization, including subclasses, are returned as validated replacements,
+and the campaign's own list is not modified.
 
 Empty campaigns are rejected at construction. `ordered_wells()` and both public
 campaign-cost entry points revalidate current campaign and nested site state,
@@ -94,8 +97,11 @@ values now fail, including `discount_rate=None`, `n_wells_standalone=0`, Boolean
 inputs, numeric text and floating-point counts. Arrays and Series are rejected;
 these calculator boundaries accept scalars. Constructing a campaign copies and
 validates its site values; subsequent mutation of the caller's original site
-does not alter the campaign. `ordered_wells()` preserves the identities of the
-sites within that campaign. Default factors and the legacy
+does not alter the campaign. `ordered_wells()` retains identity only for canonical
+`DrillingSite` entries; entries that require normalization, including subclasses,
+are returned as validated replacements, and the campaign's own list is not
+modified. A one-shot iterable assigned to `wells` is consumed once per call.
+Default factors and the legacy
 break-even sentinel `1` remain unchanged. Strict floating-point cost comparisons
 can still tie when small differences are below representable precision. Physical
 duration calibration and monetary comparison tolerance remain unqualified;

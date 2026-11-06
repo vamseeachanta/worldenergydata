@@ -246,6 +246,48 @@ def test_ordered_wells_preserves_site_identity(sequence):
 
 
 @pytest.mark.parametrize("sequence", [[], ["W2", "W1"]])
+def test_ordered_wells_normalizes_site_subclasses(sequence):
+    class SiteSubclass(DrillingSite):
+        pass
+
+    model = campaign(sequence=sequence)
+    original = SiteSubclass(**model.wells[0].model_dump())
+    unchanged = model.wells[1]
+    model.wells[0] = original
+
+    ordered = model.ordered_wells()
+
+    assert [well.well_id for well in ordered] == (sequence or ["W1", "W2"])
+    by_id = {well.well_id: well for well in ordered}
+    assert type(by_id["W1"]) is DrillingSite
+    assert by_id["W1"] is not original
+    assert by_id["W1"].model_dump() == original.model_dump()
+    assert by_id["W2"] is unchanged
+    assert model.wells[0] is original
+    calc = BatchDrillingEconomics()
+    # 100 + 10*(20+10) = 400 USD; heuristic days 30+15 give 550 USD.
+    assert calc.campaign_total_cost(model, 20) == 400
+    assert calc.batch_vs_standalone_npv(model) == dict(
+        batch_npv=550, standalone_npv=800, batch_savings=250
+    )
+
+
+def test_break_even_evaluates_each_position_once(monkeypatch):
+    calc = BatchDrillingEconomics()
+    duration = calc.learning_curve_time
+    positions = []
+
+    def tracked_duration(base_time_days, well_position, lc_factor):
+        positions.append(well_position)
+        return duration(base_time_days, well_position, lc_factor)
+
+    monkeypatch.setattr(calc, "learning_curve_time", tracked_duration)
+    # Zero mobilization and no learning: 10*20*N ties for all 200 sizes.
+    assert calc.break_even_n_wells(0, 10, 20, 1) == 1
+    assert positions == list(range(1, 201))
+
+
+@pytest.mark.parametrize("sequence", [[], ["W2", "W1"]])
 def test_ordered_wells_normalizes_mutated_mapping_entries(sequence):
     model = campaign(sequence=sequence)
     mapping = model.wells[0].model_dump()

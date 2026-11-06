@@ -150,7 +150,7 @@ class DrillCampaign(BaseModel):
         wells = [
             (
                 original
-                if isinstance(original, DrillingSite)
+                if type(original) is DrillingSite
                 and _same_typed_value(original.__dict__, validated.__dict__)
                 else validated
             )
