@@ -1,7 +1,7 @@
 # Well-identifier grain for drilling and completion metrics
 
 - Status: current-code inventory with tested WAR identifier validation; episode attribution remains proposed.
-- Inventory evidence date: 2026-10-12; repository revision `7f645ac5844b25a79374f62fb0230ef1dbb4b143`. Identifier validation and its tests are added in this revision.
+- Inventory evidence date: 2026-10-12; repository revision `7f645ac5844b25a79374f62fb0230ef1dbb4b143`. Identifier validation and its tests were added in revision 1 of Table 0.
 - Scope: deliverable 2 of [issue 1081](https://github.com/vamseeachanta/worldenergydata/issues/1081), using its [research note](https://github.com/vamseeachanta/worldenergydata/issues/1081#issuecomment-6113191313).
 - Placement follows the existing BSEE analysis note [API12 resolution](julia_api12_resolution.md#L1), indexed by [Data Sources](../../README.md#L14). This is a methodology decision record, not a replacement for the historical rig-day notes.
 
@@ -12,6 +12,7 @@
 | 0 | 2026-10-12 | The metric inventory and source definitions were recorded to distinguish bore counts from family counts. |
 | 1 | 2026-10-19 | WAR identifier validation and grain regression tests were added to prevent malformed keys from becoming bore or family results. |
 | 2 | 2026-10-24 | Compatibility results and their limits were recorded to distinguish stored-snapshot evidence from current-feed validation. |
+| 3 | 2026-11-06 | Identifier errors are propagated through the per-well caller, input diagnostics are distinguished, and historical evidence limits are clarified to prevent invalid keys from appearing as absent coverage. |
 
 Table 0. Revision history of the decision record.
 
@@ -99,6 +100,10 @@ The check counts distinct `api12` strings and their first ten characters; no mis
 
 The WAR engine now rejects missing, malformed, family-only and extended identifiers instead of deriving a family from an unverified key. Integral numeric inputs remain supported, but strings are required to preserve leading zeros. No zero-padding or truncation is performed. This is format validation against R1, attachment pp. 2-3, not proof that BSEE assigned a number or that the source row is correctly attributed. Raw feeds are not profiled by this check. Extractor metadata loaders and other normalizers retain their existing behavior.
 
+Within the WAR engine, identifier validation precedes date filtering and population selection: even a row with unusable dates or outside the requested population stops the submitted frame if its key is invalid. Errors distinguish the WAR column from the requested population without echoing identifiers or index labels. For frames carrying the required columns and usable dates, the per-well `war_activity_days`, `rig_days_from_milestone` and `rig_analysis` entry points propagate `InvalidWellboreIdentifier` (a `ValueError` subclass) rather than report `no_war_activity` for an invalid key. Existing recovery for missing required columns remains unchanged; `rig_analysis` can also reject unusable dates before reaching the engine.
+
+The day-computation path in `docs/modules/bsee/analysis/production/FDAS_V30/extract_drilling_completion_days.py`, at its `rig_days_by_bore` call, also fails closed through the engine. Its separate metadata `normalize_api` helper neither pads identifiers nor enforces their length.
+
 The [grain tests](../../../../tests/unit/bsee/analysis/test_war_identifier_grain.py) reproduce the distinct bore and family counts in Table 4 from the committed extract. Synthetic, hand-calculated cases also distinguish additive bore-days from family interval unions and show that a later return to the same bore excludes idle years. Duplicate intervals add no days. These cases verify the existing inclusive-day convention; they neither ratify an activity basis nor identify new episodes or completions.
 
 R1 and R4 were reopened on 2026-10-19 with HTTP 200. R1 confirms the separate WB and producing-interval identifiers; R4 confirms the API and interval fields. Other source-access dates and the unresolved population memberships below remain as recorded in the original inventory. The cross-repository reference note remains outside this revision.
@@ -111,15 +116,15 @@ Current `rig_days_by_well` already unions the family's WAR intervals and emits a
 
 ## Compatibility evidence and limits
 
-The follow-up comment on #1443 at `e3d4d166` reports the following results. These are retained results from that run, not a new raw-feed recomputation:
+The following historical measurements were reported on 2026-10-21. The input snapshot and run logs are not committed, so these figures cannot be reproduced from this repository alone. They are retained observations, not a new raw-feed recomputation:
 
 - The stored snapshot contained 363,786 WAR main rows and 54,714 borehole rows, with zero missing or malformed identifiers after normalization. Its last weekly start was 2026-02-15, so this check does not establish current-feed compatibility.
-- The enrichment caller completed for 54,714 bores: 12,376 had drilling-day values, 14,657 had no drilling code and 27,681 had no WAR coverage. The QA caller completed bore and family aggregation, then raised `TypeError` for `NAType` in the existing `_n` serializer at line 469 when converting a null activity-day value to an integer. A completed QA report is not established.
+- The enrichment caller completed for 54,714 bores: 12,376 had drilling-day values, 14,657 had no drilling code and 27,681 had no WAR coverage. The QA caller completed bore and family aggregation, then raised `TypeError` for `NAType` when its `_n` serializer converted a null activity-day value to an integer. The serializer is in the single script matching `scripts/lower_tertiary/build_*_rig_days_qa.py`. A completed QA report is not established.
 - The BSEE unit domain changed from 1,707 passed, nine failed and four skipped before the fixture correction to 1,716 passed, zero failed and four skipped afterward. The optional map-export test passed separately after its dependency was supplied; three explicit configuration skips remained.
 
 The compatibility correction uses distinct synthetic twelve-digit keys in [the comparison fixtures](../../../../tests/unit/bsee/analysis/test_ratified_day_basis_comparison.py) and requires the specific multiple-well error. The [identifier-grain CSV check](../../../../tests/unit/bsee/analysis/test_war_identifier_grain.py) specifies UTF-8 and CSV newline handling. The [BSEE knowledge pack](../../../../packages/worldenergydata-bsee/src/worldenergydata/bsee/docs/agent-pack.md), line 205, describes the validating normalizer contract. No caller quarantine or aggregation rule was added.
 
-The knowledge-pack lint also reports `SWEEP: no line` for the required numeric `sweep: N found` marker. The legacy marker at pack line 115 and the same checker requirement are present on `origin/main`; this is a pre-existing documentation defect. No package-wide sweep is claimed. The QA null serialization and feed-freshness limits remain unresolved. The overlapping identifier change in #1445 requires a maintainer merge choice.
+The QA null serialization and feed-freshness limits remain unresolved. The historical runs do not establish current-feed compatibility or a completed QA report.
 
 ## Not verified
 

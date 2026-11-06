@@ -80,6 +80,7 @@ __all__ = [
     "DEFAULT_PHASES",
     "STATUS_COVERED_UNATTRIBUTED",
     "MAX_PLAUSIBLE_SPAN_DAYS",
+    "InvalidWellboreIdentifier",
     "normalize_api12",
     "union_days",
     "rig_days_by_bore",
@@ -209,7 +210,11 @@ def union_days(intervals) -> int:
     return int(total)
 
 
-def normalize_api12(values) -> pd.Series:
+class InvalidWellboreIdentifier(ValueError):
+    """A malformed wellbore key prevents establishing the aggregation grain."""
+
+
+def normalize_api12(values, *, source: str = "WAR API_WELL_NUMBER") -> pd.Series:
     """Normalize and validate BSEE wellbore keys before deriving well families.
 
     A numeric API column stringifies with a float tail -- ``608124009500.0`` --
@@ -224,6 +229,9 @@ def normalize_api12(values) -> pd.Series:
     API-10 or truncating an API-14. Leading zeros in strings are preserved;
     leading zeros already lost to numeric conversion cannot be recovered.
     Format validation does not establish that BSEE assigned the identifier.
+    The entire input is validated before unusable dates are discarded or a
+    requested population is selected. ``source`` labels the input in errors;
+    identifier values and index labels are never included.
     """
     s = pd.Series(values).astype(str).str.strip()
     normalized = s.str.replace(r"\.0+$", "", regex=True)
@@ -232,8 +240,8 @@ def normalize_api12(values) -> pd.Series:
     # https://www.bsee.gov/sites/bsee.gov/files/notices-to-lessees-ntl/notices-to-lessees/09-g33.pdf
     invalid = ~normalized.str.fullmatch(r"[0-9]{12}", na=False)
     if invalid.any():
-        raise ValueError(
-            "API_WELL_NUMBER requires 12 ASCII digits after normalization; "
+        raise InvalidWellboreIdentifier(
+            f"{source} requires 12 ASCII digits after normalization; "
             f"{int(invalid.sum())} invalid identifier(s). "
             "Supply full BSEE wellbore keys, not family or completion keys."
         )
@@ -500,7 +508,11 @@ def rig_days_by_bore(
         # Restrict before grouping: the raw WAR frame spans every well BSEE
         # has ever reported, and grouping all of them to keep a few hundred
         # dominates the runtime.
-        prepared = prepared[prepared["api12"].isin(set(normalize_api12(population)))]
+        prepared = prepared[
+            prepared["api12"].isin(
+                set(normalize_api12(population, source="population"))
+            )
+        ]
 
     rows = []
     for api12, full_group in prepared.groupby("api12", sort=True):
@@ -594,7 +606,7 @@ def _absent_rows(rows, population, phases) -> list:
     Null days with ``no_war_activity`` -- absent coverage, never a zero.
     """
     present = {r["api12"] for r in rows}
-    absent = sorted(set(normalize_api12(population)) - present)
+    absent = sorted(set(normalize_api12(population, source="population")) - present)
 
     filler = []
     for api12 in absent:
@@ -666,7 +678,11 @@ def rig_days_by_well(
     """
     prepared = _prepare(war)
     if population is not None:
-        prepared = prepared[prepared["api12"].isin(set(normalize_api12(population)))]
+        prepared = prepared[
+            prepared["api12"].isin(
+                set(normalize_api12(population, source="population"))
+            )
+        ]
     bores = rig_days_by_bore(war, basis=basis, population=population)
 
     # Group over ALL requested bores, not just covered ones. Restricting to

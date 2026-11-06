@@ -13,10 +13,13 @@ import pandas as pd
 import pytest
 
 from worldenergydata.bsee.analysis.war_rig_days import (
+    STATUS_COVERED,
+    STATUS_NO_ACTIVITY,
     normalize_api12,
     rig_days_by_bore,
     rig_days_by_well,
 )
+from worldenergydata.bsee.analysis.well_rig_days import WellRigDays
 
 BORE = "012345678900"
 BYPASS = "012345678901"
@@ -87,9 +90,60 @@ def test_aggregation_rejects_bad_war_keys(aggregate, bad_key):
 
 
 @pytest.mark.parametrize("aggregate", [rig_days_by_bore, rig_days_by_well])
-def test_population_keys_are_validated_even_without_war_rows(aggregate):
+@pytest.mark.parametrize("has_war", [False, True])
+def test_population_keys_are_validated_with_their_source(aggregate, has_war):
+    war = war_rows((BORE, "2024-01-01", "2024-01-07", "DRL")) if has_war else war_rows()
+    with pytest.raises(ValueError, match="population.*12 ASCII digits"):
+        aggregate(war, population=["0123456789"])
+
+
+@pytest.mark.parametrize("bad_key", ["0123456789", None, float("nan"), pd.NA])
+@pytest.mark.parametrize("method", ["war_activity_days", "rig_days_from_milestone"])
+def test_per_well_identifier_errors_cannot_become_absent_coverage(bad_key, method):
+    war = war_rows((bad_key, "2024-01-01", "2024-01-07", "DRL"))
+    well = WellRigDays()
+    with pytest.raises(ValueError, match="WAR API_WELL_NUMBER.*12 ASCII digits"):
+        if method == "war_activity_days":
+            well.war_activity_days(war)
+        else:
+            well.rig_days_from_milestone({}, None, None, war)
+
+
+@pytest.mark.parametrize("bad_key", ["0123456789", None])
+def test_rig_analysis_propagates_identifier_errors(bad_key):
+    main = war_rows((bad_key, "2024-01-01", "2024-01-07", "DRL")).drop(
+        columns="WELL_ACTIVITY_CD"
+    )
+    main = main.assign(SN_WAR=1, RIG_NAME="test rig")
+    prop = pd.DataFrame({"SN_WAR": [1], "WELL_ACTIVITY_CD": ["DRL"]})
+    milestones = pd.DataFrame({"WELL_SPUD_DATE": [None], "TOTAL_DEPTH_DATE": [None]})
+    with pytest.raises(ValueError, match="WAR API_WELL_NUMBER.*12 ASCII digits"):
+        WellRigDays().rig_analysis(
+            {"parameters": {"max_allowed_npt": 14}}, milestones, main, prop
+        )
+
+
+@pytest.mark.parametrize("has_war", [False, True])
+def test_per_well_valid_and_absent_coverage_remain_distinct(has_war):
+    war = war_rows((BORE, "2024-01-01", "2024-01-07", "DRL")) if has_war else war_rows()
+    result = WellRigDays().rig_days_from_milestone({}, None, None, war)
+    # Inclusive Jan 1..7 = seven days; absent activity has no measured total.
+    assert result["days_status"] == (STATUS_COVERED if has_war else STATUS_NO_ACTIVITY)
+    assert result["drilling_days"] == (7 if has_war else None)
+
+
+def test_per_well_missing_column_keeps_existing_unusable_frame_handling():
+    war = war_rows((BORE, "2024-01-01", "2024-01-07", "DRL")).drop(
+        columns="WELL_ACTIVITY_CD"
+    )
+    assert WellRigDays().war_activity_days(war) is None
+
+
+@pytest.mark.parametrize("aggregate", [rig_days_by_bore, rig_days_by_well])
+@pytest.mark.parametrize("bad_key", ["0123456789", None])
+def test_invalid_identifiers_raise_even_on_rows_without_dates(aggregate, bad_key):
     with pytest.raises(ValueError, match="12 ASCII digits"):
-        aggregate(war_rows(), population=["0123456789"])
+        aggregate(war_rows((bad_key, None, None, "DRL")))
 
 
 def test_error_reports_count_without_echoing_source_values():
