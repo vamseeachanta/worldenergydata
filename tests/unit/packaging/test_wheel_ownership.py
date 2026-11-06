@@ -64,9 +64,11 @@ def test_member_cannot_own_namespace_initializer(tmp_path, placement):
 
 
 @pytest.mark.parametrize("placement", ["", "purelib", "platlib"])
-def test_overlapping_installed_files_are_rejected(tmp_path, placement):
-    """Intersection is {worldenergydata/common/a.py}, including .data spreading."""
-    shared = "worldenergydata/common/a.py"
+@pytest.mark.parametrize(
+    "shared", ["worldenergydata/common/a.py", "external/a.py", "tool.py"]
+)
+def test_overlapping_installed_files_are_rejected(tmp_path, placement, shared):
+    """The named library file is the intersection, including .data spreading."""
     prefix = f"worldenergydata_eia-0.1.0.data/{placement}/" if placement else ""
     core = wheel(tmp_path, "worldenergydata-core", [shared])
     domain = wheel(tmp_path, "worldenergydata-eia", [prefix + shared])
@@ -83,6 +85,8 @@ def test_overlapping_installed_files_are_rejected(tmp_path, placement):
         ("worldenergydata", "worldenergydata/eia/a.py"),
         ("worldenergydata/eia", "worldenergydata/eia/a.py"),
         ("worldenergydata/eia", "worldenergydata/eia/data/a.py"),
+        ("external", "external/a.py"),
+        ("tool.py", "tool.py/data/a.py"),
     ],
 )
 def test_file_directory_conflicts_are_rejected(
@@ -137,6 +141,77 @@ def test_shared_directory_entries_do_not_conflict(tmp_path):
     core = wheel(tmp_path, "worldenergydata-core", ["worldenergydata/"])
     domain = wheel(tmp_path, "worldenergydata-eia", ["worldenergydata/"])
     assert checker.check_wheels([core, domain]) == []
+
+
+def test_disjoint_non_namespace_libraries_and_metadata_are_valid(tmp_path):
+    core = wheel(tmp_path, "worldenergydata-core", ["external/__init__.py", "tool.py"])
+    domain = wheel(
+        tmp_path,
+        "worldenergydata-eia",
+        [
+            "private_pkg/__init__.py",
+            "other_tool.py",
+            "worldenergydata_eia-0.1.0.data/purelib/shared.dist-info/NOTICE",
+        ],
+    )
+    with ZipFile(core, "a") as archive:
+        archive.writestr("shared.dist-info/NOTICE", "")
+    assert checker.check_wheels([core, domain]) == []
+
+
+@pytest.mark.parametrize("placement", ["", "purelib", "platlib"])
+@pytest.mark.parametrize("suffix", ["pyc", "abi3.so", "cp311-win_amd64.pyd"])
+def test_binary_namespace_initializers_are_rejected(tmp_path, placement, suffix):
+    prefix = f"worldenergydata_eia-0.1.0.data/{placement}/" if placement else ""
+    domain = wheel(
+        tmp_path, "worldenergydata-eia", [prefix + f"worldenergydata/__init__.{suffix}"]
+    )
+    assert any("namespace root" in error for error in checker.check_wheels([domain]))
+
+
+def test_nested_and_similarly_named_initializers_are_valid(tmp_path):
+    domain = wheel(
+        tmp_path,
+        "worldenergydata-eia",
+        ["worldenergydata/eia/__init__.pyc", "worldenergydata/__init__extra.py"],
+    )
+    root = wheel(tmp_path, "worldenergydata", ["worldenergydata/__init__.abi3.so"])
+    assert checker.check_wheels([root, domain]) == []
+
+
+@pytest.mark.parametrize("placement", ["", "purelib", "platlib"])
+@pytest.mark.parametrize("file_first", [False, True])
+@pytest.mark.parametrize("directory_conflict", [False, True])
+def test_case_only_library_collisions_are_rejected(
+    tmp_path, placement, file_first, directory_conflict
+):
+    first_name, second_name = ("a", "z") if file_first else ("z", "a")
+    first = "worldenergydata/EIA" if directory_conflict else "worldenergydata/EIA/A.py"
+    second = "worldenergydata/eia/a.py"
+    prefix = f"{second_name}-0.1.0.data/{placement}/" if placement else ""
+    first_wheel = wheel(tmp_path, first_name, [first])
+    second_wheel = wheel(tmp_path, second_name, [prefix + second])
+    expected = "file/directory conflict" if directory_conflict else "overlap"
+    assert any(
+        expected in error for error in checker.check_wheels([first_wheel, second_wheel])
+    )
+
+
+@pytest.mark.parametrize(
+    "filename",
+    [
+        "worldenergydata/eia/../a.py",
+        "../worldenergydata/eia/a.py",
+        "member-0.1.0.data/purelib/../worldenergydata/a.py",
+        "member-0.1.0.data/data/../a.py",
+        "unused/../",
+    ],
+)
+def test_parent_traversal_is_rejected_before_mapping(tmp_path, filename):
+    artifact = wheel(tmp_path, "worldenergydata-eia", [filename])
+    assert any(
+        "parent traversal" in error for error in checker.check_wheels([artifact])
+    )
 
 
 def test_non_library_data_does_not_claim_namespace(tmp_path):
@@ -195,7 +270,7 @@ def test_incomplete_identity_is_an_error(tmp_path, missing):
 
 def test_invalid_archive_is_an_error(tmp_path):
     artifact = tmp_path / "broken.whl"
-    artifact.write_text("not a ZIP archive", encoding="utf-8")
+    artifact.write_text("not a ZIP archive", encoding="utf-8", newline="\n")
     assert any("cannot read" in error for error in checker.check_wheels([artifact]))
 
 
@@ -213,6 +288,7 @@ def test_command_line_exit_status(tmp_path, conflict):
         [sys.executable, str(SCRIPT), str(artifact)],
         capture_output=True,
         text=True,
+        encoding="utf-8",
         check=False,
     )
     assert bool(result.returncode) is conflict

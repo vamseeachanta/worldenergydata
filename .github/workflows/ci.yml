@@ -598,11 +598,14 @@ jobs:
 
       - name: Test wheel ownership checker
         run: >-
-          uv run python -m pytest --noconftest -o addopts=''
+          uv run --no-project --python ${{ env.PYTHON_VERSION_DEFAULT }}
+          --with pytest python -m pytest --noconftest -o addopts=''
           tests/unit/packaging/test_wheel_ownership.py -q
 
       - name: Check wheel namespace ownership
-        run: python scripts/ci/check_wheel_ownership.py dist/*.whl
+        run: >-
+          uv run --no-project --python ${{ env.PYTHON_VERSION_DEFAULT }}
+          python scripts/ci/check_wheel_ownership.py dist/*.whl
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v7

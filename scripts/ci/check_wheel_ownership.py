@@ -5,7 +5,7 @@ https://peps.python.org/pep-0427/; PEP 503 (2015), "Normalized Names"
 https://peps.python.org/pep-0503/; ADR 0001, "Risks" (root initializer ownership).
 
 This is an ownership check, not a complete wheel-format or dependency validator.
-Only library files under worldenergydata/ are compared. Purelib and platlib
+All library files except distribution metadata are compared. Purelib and platlib
 are conservatively treated as a shared destination, as on typical installs.
 """
 
@@ -27,13 +27,13 @@ def _normalize(name: str) -> str:
 
 def _library_path(filename: str) -> str | None:
     """Map wheel library entries to their PEP 427 installed paths."""
-    parts = PurePosixPath(filename).parts
+    parts = tuple(part.casefold() for part in PurePosixPath(filename).parts)
     if parts and parts[0].endswith(".data"):
         # PEP 427: .data/{purelib,platlib}/<path> spreads into site-packages.
         if len(parts) < 3 or parts[1] not in {"purelib", "platlib"}:
             return None
         parts = parts[2:]
-    if parts and parts[0] == "worldenergydata":
+    if parts and not parts[0].endswith(".dist-info"):
         return "/".join(parts)
     return None
 
@@ -43,7 +43,7 @@ def check_wheels(wheels: Iterable[Path]) -> list[str]:
 
     A member-only selection is valid: PEP 420 contributors need no root wheel.
     When present, the root initializer belongs only to the worldenergydata
-    distribution (ADR 0001). All namespace files, including data, belong to a
+    distribution (ADR 0001). All library files, including package data, belong to a
     single distribution so uninstalling it cannot remove another one's payload.
     """
     paths = sorted(wheels)
@@ -57,7 +57,13 @@ def check_wheels(wheels: Iterable[Path]) -> list[str]:
         label = path.name
         try:
             with ZipFile(path) as archive:
-                entries = [entry for entry in archive.infolist() if not entry.is_dir()]
+                members = archive.infolist()
+                if any(
+                    ".." in PurePosixPath(entry.filename).parts for entry in members
+                ):
+                    errors.append(f"{label}: invalid archive path (parent traversal)")
+                    continue
+                entries = [entry for entry in members if not entry.is_dir()]
                 metadata = [
                     entry
                     for entry in entries
@@ -85,8 +91,10 @@ def check_wheels(wheels: Iterable[Path]) -> list[str]:
                     installed = _library_path(entry.filename)
                     if installed is None:
                         continue
+                    library = PurePosixPath(installed)
                     if (
-                        installed == "worldenergydata/__init__.py"
+                        library.parent.as_posix() == "worldenergydata"
+                        and library.name.startswith("__init__.")
                         and normalized != "worldenergydata"
                     ):
                         errors.append(
@@ -104,7 +112,7 @@ def check_wheels(wheels: Iterable[Path]) -> list[str]:
                     for parent in PurePosixPath(installed).parents:
                         if not parent.parts:
                             continue
-                        directory = str(parent)
+                        directory = parent.as_posix()
                         if directory in owners:
                             errors.append(
                                 f"{label}: file/directory conflict at {directory} "
