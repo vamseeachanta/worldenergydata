@@ -10,7 +10,7 @@ Covers:
     TestCalibratedMatrix    (4 tests)
     TestIntegrationWithSkill (3 tests)
 
-Total: 145 cases, including 100 source-expression guard cases.
+Total: 173 cases, including 128 source-expression guard cases.
 """
 
 from __future__ import annotations
@@ -466,8 +466,13 @@ def _operator_literal_values(expression):
         for value in expression.values:
             yield from _operator_literal_values(value)
     elif isinstance(expression, ast.BinOp):
-        yield from _operator_literal_values(expression.left)
-        yield from _operator_literal_values(expression.right)
+        if isinstance(expression.op, (ast.Add, ast.Mod)) and all(
+            isinstance(operand, ast.Constant) and isinstance(operand.value, str)
+            for operand in (expression.left, expression.right)
+        ):
+            left, right = expression.left.value, expression.right.value
+            value = left + right if isinstance(expression.op, ast.Add) else left % right
+            yield ast.copy_location(ast.Constant(value=value), expression)
     elif isinstance(expression, ast.Dict):
         for value in expression.values:
             yield from _operator_literal_values(value)
@@ -542,9 +547,10 @@ def test_package_source_and_fixtures_use_operator_codenames():
 
     Literal labels and structured fixture fields must match ^OPERATOR-[A-Z]+$,
     without storing real names or a denylist. Lookup keys, empty lookup defaults
-    and named aggregation tuples are metadata. Conditional, boolean, binary and
-    dictionary value literals and nonempty lookup defaults are checked;
-    dynamically computed labels are not evaluated.
+    and named aggregation tuples are metadata. Conditional and boolean branches,
+    dictionary value literals and nonempty lookup defaults are checked. Binary
+    concatenation and percent formatting are folded only for two literal string
+    operands; dynamically computed labels are not evaluated.
     This is a structural regression check, not free-text entity recognition.
     """
     package = Path(calibrator_module.__file__).parent
@@ -651,8 +657,6 @@ def test_operator_source_guard_checks_literal_containers_and_call_values(field, 
         'existing if selector == "UNLABELLED" else "{label}"',
         'existing or "{label}"',
         '"{label}" and existing',
-        '"{label}" + suffix',
-        'prefix + "{label}"',
         '{{"UNLABELLED": "{label}"}}',
         'row.get("operator", "{label}")',
     ],
@@ -665,3 +669,47 @@ def test_operator_source_guard_checks_expression_values(field, value):
         _assert_source_operator_codenames(invalid, relative_path)
     valid = ast.parse(f"{field} = " + value.format(label="OPERATOR-AA"))
     assert len(_assert_source_operator_codenames(valid, relative_path)) == 1
+
+
+@pytest.mark.parametrize("field", sorted(_OPERATOR_FIELDS))
+@pytest.mark.parametrize(
+    "value",
+    [
+        '"UNLABELLED" + suffix',
+        'prefix + "UNLABELLED"',
+        '"OPERATOR-AA" + suffix',
+        'prefix + "OPERATOR-AA"',
+        '"OPERATOR-" + letter',
+        '"OPERATOR-%s" % letter',
+    ],
+)
+def test_operator_source_guard_skips_dynamic_binary_expressions(field, value):
+    """A fragment cannot establish the value of a dynamically computed label."""
+    tree = ast.parse(f"{field} = {value}")
+    assert _assert_source_operator_codenames(tree, Path("example.py")) == []
+
+
+@pytest.mark.parametrize("field", sorted(_OPERATOR_FIELDS))
+@pytest.mark.parametrize(
+    ("valid_value", "invalid_value"),
+    [
+        ('"OPERATOR-" + "AA"', '"UN" + "LABELLED"'),
+        ('"OPERATOR-" + "AA"', '"OPERATOR-A" + "OPERATOR-B"'),
+        ('"OPERATOR-%s" % "AA"', '"UN%s" % "LABELLED"'),
+    ],
+)
+def test_operator_source_guard_checks_complete_literal_binary_values(
+    field, valid_value, invalid_value
+):
+    """Check the complete literal result, rather than accepting its fragments."""
+    relative_path = Path("example.py")
+    valid = ast.parse(f"{field} = {valid_value}")
+    assert len(_assert_source_operator_codenames(valid, relative_path)) == 1
+    invalid = ast.parse(f"{field} = {invalid_value}")
+    with pytest.raises(AssertionError, match="codename contract") as error:
+        _assert_source_operator_codenames(invalid, relative_path)
+    assert error.value.args[0] == (
+        "example.py",
+        1,
+        "Operator literal does not follow the codename contract",
+    )
