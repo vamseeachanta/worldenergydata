@@ -128,7 +128,7 @@ def test_browser_render_contract(mode):
     node = shutil.which("node")
     if node is None:
         pytest.skip("Node is unavailable for browser-script checks")
-    text = TEMPLATE.read_text()
+    text = TEMPLATE.read_text(encoding="utf-8")
     source = text.split("// HF visualization API (#966).", 1)[1].split(
         "// End HF visualization API.", 1
     )[0]
@@ -141,7 +141,7 @@ def test_browser_render_contract(mode):
                 "mode": mode,
             }
         ),
-        text=True,
+        encoding="utf-8",
         capture_output=True,
         timeout=30,
         check=False,
@@ -151,7 +151,7 @@ def test_browser_render_contract(mode):
 
 def test_template_and_generated_page_have_integration():
     for path in (TEMPLATE, ROOT / "reports/field-atlas/index.html"):
-        text = path.read_text()
+        text = path.read_text(encoding="utf-8")
         assert 'id="hf-viz-config"' in text
         assert 'id="x-hf-viz"' in text
         assert 'loadHfVisualization($("x-hf-viz"), f.id)' in text

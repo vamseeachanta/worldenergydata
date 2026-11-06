@@ -29,20 +29,53 @@ def render(page, performance):
     html = page.read_text(encoding="utf-8")
     function = "function renderField(" + html.split("function renderField(", 1)[1]
     function = function.split("function renderWells(", 1)[0]
+    # Include the shipped API, as the browser integration tests do. renderField
+    # now mounts that API after writing the economics panel.
+    visualization = html.split("// HF visualization API (#966).", 1)[1].split(
+        "// End HF visualization API.", 1
+    )[0]
     context = """
+const assert = require('node:assert/strict');
 const PHASES = [];
 const crumb = () => {};
 const esc = s => String(s);
 const rb = s => s;
 const show = html => process.stdout.write(html);
+const target = {
+  isConnected: true,
+  children: [],
+  replaceChildren(...children) { this.children = children; },
+};
+const $ = id => { assert.equal(id, 'x-hf-viz'); return target; };
+const document = {
+  getElementById: id => {
+    assert.equal(id, 'hf-viz-config');
+    return {textContent: '{}'};  // Unconfigured service: exercise offline fallback.
+  },
+  createElement: tag => ({tag}),
+};
+let fetchCalls = 0;
+const fetch = async () => { fetchCalls++; throw new Error('Unexpected network call'); };
 """
     field = {"id": "synthetic", "name": "Synthetic", "performance": performance}
+    checks = """
+assert.equal(fetchCalls, 0, 'unconfigured visualization must stay offline');
+assert.ok(target.children.some(child => child.tag === 'a' &&
+  child.href.endsWith('/issues/966')), 'shipped API must render its fallback');
+"""
     result = subprocess.run(
-        [node, "-e", context + function + f"\nrenderField({{}}, {json.dumps(field)});"],
-        check=True,
+        [
+            node,
+            "-e",
+            context + visualization + function
+            + f"\nrenderField({{}}, {json.dumps(field)});" + checks,
+        ],
+        check=False,
         capture_output=True,
         encoding="utf-8",
+        timeout=30,
     )
+    assert result.returncode == 0, result.stderr
     return html, result.stdout
 
 
