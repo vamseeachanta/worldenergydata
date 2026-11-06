@@ -11,11 +11,11 @@ import json
 import re
 from types import SimpleNamespace
 
-import catalog_test_support as support
 import pytest
 import yaml
 
 from scripts.generate_catalog import CONTRACT_ONLY_STATUS as STATUS
+from tests.modules.field_development import catalog_test_support as support
 
 OFFSHORE = support.ROOT / "data/modules/offshore_assets"
 TABLE_NAMES = {

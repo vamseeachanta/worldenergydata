@@ -9,6 +9,8 @@ from dataclasses import dataclass, field
 from datetime import date
 from typing import Any, Dict, Optional
 
+from worldenergydata.hse.incidence_rate import incidence_rate
+
 
 @dataclass
 class ComplianceMetrics:
@@ -115,7 +117,14 @@ class EnvironmentalMetrics:
 
 @dataclass
 class SafetyMetrics:
-    """Safety compliance metrics"""
+    """Safety metrics for one population and reporting period.
+
+    ``total_recordables`` and ``lost_time_incidents`` are qualified case counts;
+    ``incident_count`` is not used for either incidence rate. Supply matching
+    actual employee-hours in ``man_hours_worked``, excluding paid nonwork time.
+    The default zero exposure is a placeholder: rate calculations raise
+    ``ValueError`` until finite, positive exposure is supplied.
+    """
 
     entity_id: Optional[str] = None
     entity_type: Optional[str] = None
@@ -130,16 +139,22 @@ class SafetyMetrics:
     safety_training_hours: float = 0.0
 
     def calculate_trir(self) -> float:
-        """Calculate Total Recordable Incident Rate"""
-        if self.man_hours_worked > 0:
-            return (self.total_recordables * 200000) / self.man_hours_worked
-        return 0.0
+        """Return total recordables per normalized employee-hours.
+
+        Uses :func:`worldenergydata.hse.incidence_rate.incidence_rate` and its
+        cited normalization. Invalid counts or exposure raise ``ValueError``;
+        zero recordables give zero only with valid positive exposure.
+        """
+        return incidence_rate(self.total_recordables, self.man_hours_worked)
 
     def calculate_ltir(self) -> float:
-        """Calculate Lost Time Incident Rate"""
-        if self.man_hours_worked > 0:
-            return (self.lost_time_incidents * 200000) / self.man_hours_worked
-        return 0.0
+        """Return lost-time cases using the shared incidence-rate convention.
+
+        The caller must qualify the lost-time subset for the same population
+        and period as the hours. This is not an automatic DART classification.
+        Invalid counts or exposure raise ``ValueError`` as for TRIR.
+        """
+        return incidence_rate(self.lost_time_incidents, self.man_hours_worked)
 
     def calculate_safety_score(self) -> float:
         """Calculate overall safety score"""

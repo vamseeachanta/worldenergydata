@@ -1,4 +1,4 @@
-"""Evidence checks for the package-local mobilization allocation enrollment."""
+"""Evidence checks for the six package-local calculation/grouping families."""
 
 import ast
 import hashlib
@@ -15,69 +15,84 @@ PACKAGE = Path("packages/worldenergydata-drilling/src/worldenergydata/drilling")
 MAP = ROOT / PACKAGE / "docs/implementation-map.json"
 
 
-def test_mobilization_enrollment_pin():
-    """Enrollment identifies the actual definition and its unchanged pinned bytes."""
+def test_all_six_family_enrollments():
+    """Verify actual definition locations, digests, evidence and review status."""
     inventory = json.loads(MAP.read_text())
     assert inventory["repository"] == "worldenergydata"
-    (family,) = inventory["families"]
-    assert family["id"] == "mobilization-allocation"
-    assert family["counted"] is False
-    assert family["status"] == "pending_review"
-    (entry,) = family["implementations"]
-    current = (ROOT / entry["path"]).read_bytes()
     assert re.fullmatch(r"[0-9a-f]{40}", inventory["revision"])
-    assert hashlib.sha256(current).hexdigest() == entry["file_sha256"]
-    tree = ast.parse(current)
-    cls = next(node for node in tree.body if isinstance(node, ast.ClassDef))
-    method = next(
-        node
-        for node in cls.body
-        if isinstance(node, ast.FunctionDef) and node.name == "mobilization_savings"
+    assert {family["id"] for family in inventory["families"]} == {
+        "duration",
+        "mobilization-allocation",
+        "break-even-comparison",
+        "campaign-cost",
+        "anchored-time-window-grouping",
+        "log-space-learning-fit",
+    }
+    for family in inventory["families"]:
+        assert family["counted"] is False
+        assert family["status"] == "pending_review"
+        assert family["qualification"] == "NOT_EVALUATED"
+        assert family["equation"] and family["source"] and family["limits"]
+        for entry in family["implementations"]:
+            current = (ROOT / entry["path"]).read_bytes()
+            assert hashlib.sha256(current).hexdigest() == entry["file_sha256"]
+            tree = ast.parse(current)
+            cls_name, method_name = entry["symbol"].split(".")
+            cls = next(
+                n
+                for n in tree.body
+                if isinstance(n, ast.ClassDef) and n.name == cls_name
+            )
+            method = next(
+                n
+                for n in cls.body
+                if isinstance(n, ast.FunctionDef) and n.name == method_name
+            )
+            assert (entry["line"], entry["end_line"]) == (
+                method.lineno,
+                method.end_lineno,
+            )
+        for evidence in family["tests"]:
+            path, *nodes = evidence.split("::")
+            definitions = ast.parse((ROOT / path).read_text()).body
+            for node in nodes:
+                definition = next(
+                    n
+                    for n in definitions
+                    if isinstance(n, (ast.FunctionDef, ast.ClassDef)) and n.name == node
+                )
+                if isinstance(definition, ast.ClassDef):
+                    definitions = definition.body
+    allocation = next(
+        f for f in inventory["families"] if f["id"] == "mobilization-allocation"
     )
-    assert entry["symbol"] == f"{cls.name}.{method.name}"
-    assert entry["line"] == method.lineno
-    assert entry["end_line"] == method.end_lineno
-    for evidence in family["tests"]:
-        path, node = evidence.split("::")
-        definitions = ast.parse((ROOT / path).read_text()).body
-        assert any(
-            isinstance(n, ast.FunctionDef) and n.name == node for n in definitions
-        )
-    assert family["equation"] == "allocated_cost_usd_per_well = mob_cost_usd / n_wells"
-    assert family["source"]["section"] == "2.2, Average fixed cost"
+    assert (
+        allocation["equation"] == "allocated_cost_usd_per_well = mob_cost_usd / n_wells"
+    )
+    assert allocation["source"]["section"] == "2.2, Average fixed cost"
 
 
-def test_mobilization_discovery_evidence():
-    """Check retained search evidence without requiring historical Git objects.
+def test_family_discovery_evidence():
+    """Retained search matches identify definitions and explicit API delegates.
 
-    The recorded command replays the search in a full checkout. File digests
-    and AST classifications also work in shallow CI checkouts.
+    This checks retained evidence in shallow checkouts as well. The recorded
+    git-grep query can be replayed against the full revision; same-name search
+    is bounded evidence and cannot prove algorithmic uniqueness.
     """
     inventory = json.loads(MAP.read_text())
-    discovery = inventory["families"][0]["duplicate_discovery"]
-    for item in discovery["results"]:
-        content = (ROOT / item["path"]).read_bytes()
-        assert hashlib.sha256(content).hexdigest() == item["file_sha256"]
-        assert re.search(discovery["pattern"], content.decode())
-        tree = ast.parse(content)
-        definitions = [
-            node
-            for node in ast.walk(tree)
-            if isinstance(node, ast.FunctionDef) and node.name == "mobilization_savings"
-        ]
-        if item["classification"] == "implementation":
-            assert item["path"].endswith("/batch_economics/economics.py")
-            assert len(definitions) == 1
-        else:
-            assert item["classification"] == "test_consumer"
-            assert item["path"].startswith("tests/")
-            assert not definitions
-            assert any(
-                isinstance(node, ast.Call)
-                and isinstance(node.func, ast.Attribute)
-                and node.func.attr == "mobilization_savings"
-                for node in ast.walk(tree)
-            )
+    for family in inventory["families"]:
+        discovery = family["duplicate_discovery"]
+        assert discovery["revision"] == inventory["revision"]
+        assert discovery["results"] and discovery["conclusion"]
+        assert {(item["path"], item["line"]) for item in discovery["results"]} == {
+            (entry["path"], entry["line"]) for entry in family["implementations"]
+        }
+        for item in discovery["results"]:
+            content = (ROOT / item["path"]).read_bytes()
+            assert hashlib.sha256(content).hexdigest() == item["file_sha256"]
+            line = content.decode().splitlines()[item["line"] - 1]
+            assert re.search(discovery["pattern"], line)
+            assert item["classification"] in {"implementation", "api_delegate"}
 
 
 @pytest.mark.parametrize(
@@ -103,3 +118,37 @@ def test_mobilization_nonpositive_count(wells):
     """
     with pytest.raises(ValueError, match="n_wells_batch must be > 0"):
         BatchDrillingEconomics().mobilization_savings(1200, wells)
+
+
+def test_duration_and_campaign_cost_hand_calculations():
+    """Synthetic arithmetic, economics.py Duration and Campaign total sections.
+
+    T(N)=8*N**(-1) when LC=1/2; thus T(1)=8, T(2)=4, T(4)=2 days.
+    With two wells, 30 USD mobilization and 2 USD/day, cost=30+2*(8+4)=54 USD.
+    This tests the recorded formula, not individual/cumulative duration validity.
+    """
+    from worldenergydata.drilling import DrillCampaign, DrillingSite
+
+    calc = BatchDrillingEconomics()
+    for position, expected in [(1, 8), (2, 4), (4, 2)]:
+        assert calc.learning_curve_time(8, position, 0.5) == pytest.approx(expected)
+    well = DrillingSite(
+        well_id="",
+        field_name="",
+        location_coords=(0, 0),
+        water_depth_ft=0,
+        planned_md_ft=0,
+        well_type="",
+    )
+    campaign = DrillCampaign(
+        campaign_id="",
+        rig_name="",
+        wells=[well, well],
+        rig_day_rate_usd=2,
+        mobilization_cost_usd=30,
+        learning_curve_factor=0.5,
+    )
+    assert calc.campaign_total_cost(campaign, 8) == pytest.approx(54)
+    # No learning: 30+2*(8+8)=62 USD, independently summing both durations.
+    campaign.learning_curve_factor = 1
+    assert calc.campaign_total_cost(campaign, 8) == 62

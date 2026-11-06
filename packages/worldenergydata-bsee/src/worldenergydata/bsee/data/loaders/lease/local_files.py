@@ -18,22 +18,27 @@ class DataFromLocalFiles:
         return cfg, lease_data_groups
 
     def get_lease_data_groups(self, cfg):
+        """Return configuration and one singleton list per configured group.
 
-        cfg = self.get_lease_data_from_local_files(cfg)
+        Each group contains its complete CSV table under ``lease_df``. No
+        configured groups returns an empty list; configuration keeps metadata
+        only, with API numbers derived from the same table returned here.
+        """
+        groups = cfg[cfg["basename"]]["data"]["groups"]
 
         lease_data_groups = []
-        for group in cfg[cfg["basename"]]["data"]["groups"]:
-            lease_data_group = group.copy()
-            lease_array = group["bottom_lease"]["number"]
-            lease_array_well_data = []
-            for lease in lease_array:
-                lease_df = self.get_cfg_df(group)
+        for group_idx, group in enumerate(groups):
+            self._lease_data.router(cfg, group)
+            lease_metadata = self.generate_output_item(cfg, group)
+            lease_df = self.get_cfg_df(lease_metadata)
+            lease_metadata["api12"] = (
+                lease_df["API_WELL_NUMBER"].dropna().unique().tolist()
+            )
+            groups[group_idx] = lease_metadata
 
+            lease_data_group = lease_metadata.copy()
             lease_data_group.update({"lease_df": lease_df})
-
-            lease_array_well_data.append(lease_data_group)
-
-        lease_data_groups.append(lease_array_well_data)
+            lease_data_groups.append([lease_data_group])
 
         return cfg, lease_data_groups
 
@@ -43,22 +48,7 @@ class DataFromLocalFiles:
         return cfg_lease_df
 
     def get_lease_data_from_local_files(self, cfg):
-
-        groups = cfg[cfg["basename"]]["data"]["groups"]
-
-        lease_group_data = []
-        for group_idx in range(len(groups)):
-            group = groups[group_idx]
-            self._lease_data.router(cfg, group)
-            lease_metadata = self.generate_output_item(cfg, group)
-
-            lease_group_data.append(lease_metadata)
-            lease_df = pd.read_csv(lease_metadata["file_name"], low_memory=False)
-            api12_list = lease_df["API_WELL_NUMBER"].dropna().unique().tolist()
-            lease_metadata["api12"] = api12_list
-
-            cfg[cfg["basename"]]["data"]["groups"][group_idx] = lease_metadata
-
+        cfg, _ = self.get_lease_data_groups(cfg)
         return cfg
 
     def generate_output_item(self, cfg, input_item):

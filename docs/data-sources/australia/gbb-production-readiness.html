@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Australia GBB production source readiness</title>
+</head>
+<body>
+<main>
+<h1>Australia GBB production source readiness</h1>
+<h2>Summary</h2>
+<p>The AEMO Gas Bulletin Board actual-flow CSV can be inspected with the offline
+reader in <code>worldenergydata.australia.gbb_production</code>. Source units,
+reuse rights, field allocation and gas-volume conversion are NOT_EVALUATED.
+The snapshot is therefore suitable for schema inspection only; field production
+and non-placeholder economics are not established.</p>
+<h2>Revision history</h2>
+<table>
+  <thead><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr></thead>
+  <tbody><tr><td>1</td><td>2026-10-19</td><td>Offline inspection and explicit
+  qualification gaps are documented to prevent facility flows being treated
+  as field production.</td></tr></tbody>
+</table>
+<p>Table 1. Initial source-readiness assessment.</p>
+<h2>Observed source</h2>
+<p>The
+<a href="https://nemweb.com.au/Reports/Current/GBB/GasBBActualFlowStorageLast31.CSV">publisher CSV</a>
+returned HTTP 200 at 2026-10-19T14:54:06Z. At the time of retrieval, the snapshot
+contained 5,704 records with gas dates from 2026-09-20 through 2026-10-18.
+The 607,660 source bytes have SHA-256
+<code>082dad42efcf088909a69d6eece620c2ae9a721f7060746e73600803b0e323e2</code>.
+These observations identify one snapshot, not permanent source coverage.</p>
+<p>The
+<a href="https://nemweb.com.au/Reports/Current/GBB/">publisher report directory</a>
+returned HTTP 200 at 2026-10-19T14:54:34Z. The
+<a href="https://www.aemo.com.au/privacy-and-legal-notices">publisher legal notices</a>
+returned HTTP 403 with an access-challenge page at 2026-10-19T14:54:14Z.
+Access was not bypassed. No reuse licence is inferred from public download access.
+The source snapshot and request evidence are retained as local inspection
+artifacts, outside the repository; publisher rows are not redistributed.</p>
+<h2>Reader contract</h2>
+<p><code>inspect_gbb_csv(raw, max_bytes=..., max_rows=...)</code> accepts bytes
+already obtained by the caller. Both resource budgets are required positive
+integers, chosen by that caller; they are not engineering acceptance limits.
+UTF-8 with an optional byte-order mark and reordered known columns is supported.
+Unknown, missing or duplicate columns fail. Malformed rows, invalid dates,
+non-finite amounts, duplicate date/facility/location keys and exceeded budgets
+fail without partial output. Duplicate revisions require explicit upstream
+resolution; no last-row-wins rule is assumed.</p>
+<p>The publisher header is the schema basis: GasDate, FacilityName, FacilityId,
+FacilityType, Demand, Supply, TransferIn, TransferOut, HeldInStorage,
+CushionGasStorage, State, LocationName, LocationId and LastUpdated.
+Identifiers remain text, timestamps receive no inferred time zone and finite
+amounts retain their decimal values. Blank amounts are unknown, distinct from
+zero. Negative source values are retained without asserting physical validity.
+All facility types are preserved. Neither summing locations nor treating supply
+as field production is justified by this reader.</p>
+<h2>Qualification required before economics</h2>
+<table>
+  <thead><tr><th>Check</th><th>Status</th><th>Missing evidence</th></tr></thead>
+  <tbody>
+    <tr><td>Source units</td><td>NOT_EVALUATED</td><td>Readable publisher definitions
+    for each quantity and its reporting interval.</td></tr>
+    <tr><td>Reuse rights</td><td>NOT_EVALUATED</td><td>Source-specific terms allowing
+    the intended collection, transformation and publication.</td></tr>
+    <tr><td>Field allocation</td><td>NOT_EVALUATED</td><td>Reviewed field-to-facility
+    relationships, allocation basis, facility-type selection and coverage.</td></tr>
+    <tr><td>Gas-volume conversion</td><td>NOT_EVALUATED</td><td>Sourced units,
+    reference conditions and any required calorific-value basis before gas_mcf
+    can be emitted.</td></tr>
+  </tbody>
+</table>
+<p>Table 2. Missing evidence prevents production qualification.</p>
+<h2>Verification and later slices</h2>
+<p>Synthetic tests independently check literal token readings, schema rejection,
+resource budgets, record identity and explicit qualification gaps. No production
+estimate, conversion coefficient or economic equation is introduced. The exact
+source-byte digest provides snapshot traceability, not an engineering-validity
+claim. The existing screening adapter remains the public chain entry point.</p>
+<p>Later slices will qualify the source, evaluate PEPS-SA separately, and connect
+a reviewed production feed to the adapter and economics. Those slices will
+require sourced conversion and allocation equations, complete-period coverage
+checks, and independent worked cashflow examples. PEPS-SA access, schema and
+rights are not evaluated by this slice. The shared source catalogs were absent
+from the inspected metadata location; no catalog identity or production-readiness
+entry is asserted.</p>
+</main>
+</body>
+</html>
