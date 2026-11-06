@@ -25,15 +25,19 @@ def _normalize(name: str) -> str:
     return re.sub(r"[-_.]+", "-", name).lower()
 
 
-def _library_path(filename: str) -> str | None:
+def _library_path(filename: str, metadata_directory: str) -> str | None:
     """Map wheel library entries to their PEP 427 installed paths."""
     parts = tuple(part.casefold() for part in PurePosixPath(filename).parts)
+    if parts and parts[0] == metadata_directory.casefold():
+        # Only this wheel's own top-level metadata is exempt. Relocated
+        # dist-info paths and unrelated top-level directories are payloads.
+        return None
     if parts and parts[0].endswith(".data"):
         # PEP 427: .data/{purelib,platlib}/<path> spreads into site-packages.
         if len(parts) < 3 or parts[1] not in {"purelib", "platlib"}:
             return None
         parts = parts[2:]
-    if parts and not parts[0].endswith(".dist-info"):
+    if parts:
         return "/".join(parts)
     return None
 
@@ -59,9 +63,15 @@ def check_wheels(wheels: Iterable[Path]) -> list[str]:
             with ZipFile(path) as archive:
                 members = archive.infolist()
                 if any(
-                    ".." in PurePosixPath(entry.filename).parts for entry in members
+                    entry.filename.startswith("/")
+                    or "\\" in entry.filename
+                    or ".." in PurePosixPath(entry.filename).parts
+                    for entry in members
                 ):
-                    errors.append(f"{label}: invalid archive path (parent traversal)")
+                    errors.append(
+                        f"{label}: invalid archive path "
+                        "(absolute, backslash or parent traversal)"
+                    )
                     continue
                 entries = [entry for entry in members if not entry.is_dir()]
                 metadata = [
@@ -87,8 +97,9 @@ def check_wheels(wheels: Iterable[Path]) -> list[str]:
                         f"{label}: duplicate distribution with {distributions[normalized]}"
                     )
                 distributions[normalized] = label
+                metadata_directory = metadata[0].filename.split("/")[0]
                 for entry in entries:
-                    installed = _library_path(entry.filename)
+                    installed = _library_path(entry.filename, metadata_directory)
                     if installed is None:
                         continue
                     library = PurePosixPath(installed)

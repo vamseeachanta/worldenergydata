@@ -13,6 +13,7 @@ other during installation, without importing domain code or its dependencies.
 | --- | --- | --- |
 | Initial | 2026-10-19 | Add artifact ownership checks because source imports can hide overlapping wheels. |
 | Update | 2026-11-06 | Refresh validation provenance, isolate CI tools and cover library ownership edge cases. |
+| CI and path fixes | 2026-11-06 | Run ownership checks on pull requests and detect metadata payload collisions and invalid archive paths. |
 
 ## Contract
 
@@ -26,7 +27,9 @@ namespace-root ownership risk:
 - Each installed library file belongs to a single selected distribution.
   This includes package data, even when duplicate files have identical contents:
   uninstalling either distribution could remove the other's file.
-  Distribution metadata under top-level `*.dist-info/` is excluded.
+  Only the wheel's own top-level `*.dist-info/` directory, identified by its
+  `METADATA` record, is excluded. Unrelated top-level metadata paths and metadata
+  paths relocated through `.data/purelib/` or `.data/platlib/` remain payloads.
 - Ownership keys are case-folded to detect collisions on case-insensitive
   filesystems. A file also cannot occupy a parent directory of another file.
   Shared parent directories remain valid.
@@ -39,7 +42,9 @@ namespace-root ownership risk:
   Multiple versions of the same distribution are rejected in a co-installation
   selection. Versions of different distributions remain independent.
 - Missing or ambiguous top-level `METADATA`, missing identity fields, unreadable
-  archives, parent traversal components and an empty selection fail the check.
+  archives, absolute paths, backslashes, parent traversal components and an
+  empty selection fail the check. Path rejection also covers directory entries
+  and non-library destinations before library mapping.
 
 Run the checker on exactly the wheels intended for a shared installation:
 
@@ -47,8 +52,13 @@ Run the checker on exactly the wheels intended for a shared installation:
 uv run --no-project --python 3.11 python scripts/ci/check_wheel_ownership.py dist/*.whl
 ```
 
-The CI build checks all workspace wheels after its existing build command and
-before artifact upload. Packaging unit tests construct archive member lists
+The dedicated `.github/workflows/wheel-ownership.yml` workflow runs on pull
+requests and manual dispatch. It runs the packaging tests, builds all workspace
+wheels with `uv build --all-packages --wheel`, checks them together and uploads
+them only after the check passes. It is independent of the full build workflow,
+which runs only on manual dispatch on main. Python 3.11 is selected explicitly
+for both the isolated pytest environment and the checker.
+Packaging unit tests construct archive member lists
 independently: expected collisions are their installed-path intersections.
 There are no engineering equations, coefficients or acceptance tolerances.
 
@@ -59,14 +69,17 @@ relocated library files, data collisions, normalized identities, malformed
 metadata, invalid archives and command exit status. CI runs it with an isolated
 pytest environment, then checks all built workspace wheels using the same
 declared Python version. Per-revision case counts and artifact results belong
-to the corresponding CI run, rather than a fixed count in this document.
+to the corresponding run. Local results below are distinct from hosted evidence;
+the new workflow still requires a hosted run after publication.
 
-One-time observation, 2026-11-06: all 39 workspace wheels were built from tracked
-packaging inputs at `9db784bd` in a separate build tree and passed that commit's
-ownership check. This records the input revision; it does not establish results
-for later checker revisions.
+Local observation, 2026-11-06: the input revision `da48a6a5` passed 154 packaging
+cases. The expanded suite failed 17 cases against that checker, then passed all
+171 cases with the corrections in this revision. All 39 workspace wheels were
+rebuilt from unchanged tracked packaging inputs at `da48a6a5` in a separate build
+tree and passed the corrected checker. These are local results, not a hosted run.
 
-At the same input revision and date, an isolated environment containing the
+One-time observation, 2026-11-06, using packaging inputs at `9db784bd`:
+an isolated environment containing the
 built core and EIA wheels plus `requests`
 and its dependencies imported `worldenergydata.eia` without the root distribution
 or any other domain. The smoke check confirmed separate distribution metadata,
@@ -81,8 +94,8 @@ This smoke is a one-time observation, not an automated regression check.
 
 This checks library ownership, not complete wheel-format validation, dependency
 resolution or compatibility. It does not verify RECORD hashes, scripts, headers
-or non-library `.data/data/` destinations. Beyond parent traversal, it does not
-validate malformed archive paths or Unicode normalization. Case-folded comparisons
+or non-library `.data/data/` destinations. Beyond the path rejections above, it
+does not validate malformed archive paths or Unicode normalization. Case-folded comparisons
 are conservative even on case-sensitive filesystems. Empty directory entries
 are ignored, and ownership of entire regular-package subtrees is not enforced.
 It also does not detect omitted payloads or missing artifacts in a selected release.

@@ -151,12 +151,40 @@ def test_disjoint_non_namespace_libraries_and_metadata_are_valid(tmp_path):
         [
             "private_pkg/__init__.py",
             "other_tool.py",
-            "worldenergydata_eia-0.1.0.data/purelib/shared.dist-info/NOTICE",
+            "worldenergydata_eia-0.1.0.dist-info/NOTICE",
         ],
     )
     with ZipFile(core, "a") as archive:
-        archive.writestr("shared.dist-info/NOTICE", "")
+        archive.writestr("worldenergydata_core-0.1.0.dist-info/NOTICE", "")
     assert checker.check_wheels([core, domain]) == []
+
+
+@pytest.mark.parametrize("first_placement", ["", "purelib", "platlib"])
+@pytest.mark.parametrize("second_placement", ["", "purelib", "platlib"])
+def test_unrelated_metadata_paths_are_owned(
+    tmp_path, first_placement, second_placement
+):
+    """Only each wheel's own top-level metadata is exempt from ownership."""
+    shared = "shared.dist-info/notice"
+    first_prefix = f"a-0.1.0.data/{first_placement}/" if first_placement else ""
+    second_prefix = f"z-0.1.0.data/{second_placement}/" if second_placement else ""
+    first = wheel(tmp_path, "a", [first_prefix + shared])
+    second = wheel(tmp_path, "z", [second_prefix + shared])
+    assert any(
+        "overlap" in error and shared in error
+        for error in checker.check_wheels([first, second])
+    )
+
+
+@pytest.mark.parametrize("placement", ["purelib", "platlib"])
+def test_relocated_own_metadata_directory_is_library_payload(tmp_path, placement):
+    shared = "a-0.1.0.dist-info/notice"
+    first = wheel(tmp_path, "a", [f"a-0.1.0.data/{placement}/" + shared])
+    second = wheel(tmp_path, "z", ["z-0.1.0.data/purelib/" + shared])
+    assert any(
+        "overlap" in error and shared in error
+        for error in checker.check_wheels([first, second])
+    )
 
 
 @pytest.mark.parametrize("placement", ["", "purelib", "platlib"])
@@ -211,6 +239,24 @@ def test_parent_traversal_is_rejected_before_mapping(tmp_path, filename):
     artifact = wheel(tmp_path, "worldenergydata-eia", [filename])
     assert any(
         "parent traversal" in error for error in checker.check_wheels([artifact])
+    )
+
+
+@pytest.mark.parametrize(
+    "filename",
+    [
+        "/worldenergydata/__init__.py",
+        "//worldenergydata/__init__.py",
+        r"worldenergydata\__init__.py",
+        r"\worldenergydata\__init__.py",
+        "member-0.1.0.data/data/invalid\\entry",
+        "/unused/",
+    ],
+)
+def test_absolute_and_backslash_paths_are_rejected_before_mapping(tmp_path, filename):
+    artifact = wheel(tmp_path, "worldenergydata-eia", [filename])
+    assert any(
+        "invalid archive path" in error for error in checker.check_wheels([artifact])
     )
 
 
