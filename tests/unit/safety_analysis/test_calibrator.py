@@ -10,7 +10,7 @@ Covers:
     TestCalibratedMatrix    (4 tests)
     TestIntegrationWithSkill (3 tests)
 
-Total: 81 cases, including 36 source-expression guard cases.
+Total: 109 cases, including 64 source-expression guard cases.
 """
 
 from __future__ import annotations
@@ -452,6 +452,33 @@ def _is_operator_target(target):
     )
 
 
+def _operator_literal_values(expression):
+    """Yield literal labels, excluding lookup expressions and their defaults."""
+    if isinstance(expression, ast.Constant) and isinstance(expression.value, str):
+        yield expression
+    elif isinstance(expression, (ast.List, ast.Tuple, ast.Set)):
+        for element in expression.elts:
+            yield from _operator_literal_values(element)
+    elif isinstance(expression, ast.Call):
+        if isinstance(expression.func, ast.Attribute) and expression.func.attr == "get":
+            return
+        for argument in expression.args:
+            yield from _operator_literal_values(argument)
+        for keyword in expression.keywords:
+            if not _is_named_aggregation(expression, keyword):
+                yield from _operator_literal_values(keyword.value)
+
+
+def _is_named_aggregation(call, keyword):
+    """A pandas named aggregation tuple specifies a column and reduction."""
+    return (
+        isinstance(call.func, ast.Attribute)
+        and call.func.attr == "agg"
+        and isinstance(keyword.value, ast.Tuple)
+        and len(keyword.value.elts) == 2
+    )
+
+
 def _assert_source_operator_codenames(tree, relative_path):
     """Check literal operator fields without including their values in errors."""
     expressions = []
@@ -462,8 +489,13 @@ def _assert_source_operator_codenames(tree, relative_path):
                 for key, value in zip(node.keys, node.values)
                 if isinstance(key, ast.Constant) and key.value in _OPERATOR_FIELDS
             )
-        elif isinstance(node, ast.keyword) and node.arg in _OPERATOR_FIELDS:
-            expressions.append(node.value)
+        elif isinstance(node, ast.Call):
+            expressions.extend(
+                keyword.value
+                for keyword in node.keywords
+                if keyword.arg in _OPERATOR_FIELDS
+                and not _is_named_aggregation(node, keyword)
+            )
         elif isinstance(node, ast.Assign):
             if any(_is_operator_target(target) for target in node.targets):
                 expressions.append(node.value)
@@ -472,25 +504,25 @@ def _assert_source_operator_codenames(tree, relative_path):
                 expressions.append(node.value)
     source_fields = []
     for expression in expressions:
-        for node in ast.walk(expression):
-            if isinstance(node, ast.Constant) and isinstance(node.value, str):
-                if not _OPERATOR_PATTERN.fullmatch(node.value):
-                    raise AssertionError(
-                        (
-                            relative_path.as_posix(),
-                            node.lineno,
-                            "Operator literal does not follow the codename contract",
-                        )
+        for node in _operator_literal_values(expression):
+            if not _OPERATOR_PATTERN.fullmatch(node.value):
+                raise AssertionError(
+                    (
+                        relative_path.as_posix(),
+                        node.lineno,
+                        "Operator literal does not follow the codename contract",
                     )
-                source_fields.append(node)
+                )
+            source_fields.append(node)
     return source_fields
 
 
 def test_package_source_and_fixtures_use_operator_codenames():
     """Issue #1240: scan all package source and safety-specific fixture trees.
 
-    Operator-bearing source expressions and structured fixture fields are
-    whitelisted by ^OPERATOR-[A-Z]+$, without storing real names or a denylist.
+    Literal labels and structured fixture fields must match ^OPERATOR-[A-Z]+$,
+    without storing real names or a denylist. Lookup keys, lookup defaults and
+    named aggregation tuples are metadata; dynamic values are not evaluated.
     This is a structural regression check, not free-text entity recognition.
     """
     package = Path(calibrator_module.__file__).parent
@@ -550,4 +582,39 @@ def test_operator_source_guard_rejects_generic_non_codename(field, source):
         "Operator literal does not follow the codename contract",
     )
     valid = ast.parse(source.format(field=field, label="OPERATOR-AA"))
+    assert len(_assert_source_operator_codenames(valid, relative_path)) == 1
+
+
+@pytest.mark.parametrize("field", sorted(_OPERATOR_FIELDS))
+@pytest.mark.parametrize(
+    "source",
+    [
+        'self.{field} = row["{field}"]',
+        '{field} = record.get("{field}", "")',
+        'df.groupby(k).agg({field}=("{field}", "first"))',
+    ],
+)
+def test_operator_source_guard_allows_lookup_metadata(field, source):
+    """Column keys, lookup defaults and aggregation methods are not labels."""
+    tree = ast.parse(source.format(field=field))
+    assert _assert_source_operator_codenames(tree, Path("example.py")) == []
+
+
+@pytest.mark.parametrize("field", sorted(_OPERATOR_FIELDS))
+@pytest.mark.parametrize(
+    "value",
+    [
+        '["{label}"]',
+        '("{label}",)',
+        '{{"{label}"}}',
+        'rng.choice(["{label}"])',
+    ],
+)
+def test_operator_source_guard_checks_literal_containers_and_call_values(field, value):
+    """Literal labels remain checked, including synthetic random choices."""
+    relative_path = Path("example.py")
+    invalid = ast.parse(f"{field} = " + value.format(label="UNLABELLED"))
+    with pytest.raises(AssertionError, match="codename contract"):
+        _assert_source_operator_codenames(invalid, relative_path)
+    valid = ast.parse(f"{field} = " + value.format(label="OPERATOR-AA"))
     assert len(_assert_source_operator_codenames(valid, relative_path)) == 1
