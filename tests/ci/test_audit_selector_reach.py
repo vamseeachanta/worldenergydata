@@ -18,7 +18,7 @@ def load_script(name):
 def put(root, path, text=""):
     destination = root / path
     destination.parent.mkdir(parents=True, exist_ok=True)
-    destination.write_text(text, encoding="utf-8")
+    destination.write_text(text, encoding="utf-8", newline="\n")
     return destination
 
 
@@ -97,7 +97,7 @@ def test_allowlist_is_exact_and_requires_reasons(audit, tmp_path):
         "tests/loose/test_*.py # reason: legacy\n",
         "../tests/test_old.py # reason: legacy\n",
     ):
-        allow.write_text(invalid, encoding="utf-8")
+        allow.write_text(invalid, encoding="utf-8", newline="\n")
         with pytest.raises(ValueError):
             audit.read_allowlist(allow)
 
@@ -111,6 +111,46 @@ def test_real_tree_has_no_unlisted_orphans(audit, tmp_path):
     assert audit.unlisted(audit.audit(tmp_path), allow) == ["tests/loose/test_new.py"]
 
 
+def test_allowlist_reasons_match_pytest_exclusions(audit):
+    """Every configured exclusion has an archive reason, rather than a routing claim."""
+    import fnmatch
+    import shlex
+
+    try:
+        import tomllib
+    except ModuleNotFoundError:
+        import tomli as tomllib
+
+    config = tomllib.loads((REPO / "pyproject.toml").read_text(encoding="utf-8"))[
+        "tool"
+    ]["pytest"]["ini_options"]
+    arguments = shlex.split(config["addopts"])
+    ignores = [
+        item.removeprefix("--ignore=")
+        for item in arguments
+        if item.startswith("--ignore=")
+    ]
+    ignores += [
+        arguments[i + 1] for i, item in enumerate(arguments[:-1]) if item == "--ignore"
+    ]
+    archives = 0
+    for name, reason in audit.read_allowlist(
+        REPO / "scripts/ci/selector_reach_allowlist.txt"
+    ).items():
+        excluded = any(
+            fnmatch.fnmatch(part, pattern)
+            for part in Path(name).parts[:-1]
+            for pattern in config["norecursedirs"]
+        )
+        excluded |= any(name == item or name.startswith(item + "/") for item in ignores)
+        historical = (
+            reason == "reason: excluded by pytest at 254c0c1d; not ignored at 841cb7d4"
+        )
+        assert historical or (reason == "reason: archived") == excluded
+        archives += excluded
+    assert archives > 0
+
+
 def test_cli_writes_json_and_table(audit, tmp_path, capsys):
     """The output contains the sole orphan and the same JSON record as the API."""
     import json
@@ -120,3 +160,129 @@ def test_cli_writes_json_and_table(audit, tmp_path, capsys):
     assert audit.main(["--root", str(tmp_path), "--json", str(output)]) == 0
     assert json.loads(output.read_text(encoding="utf-8")) == audit.audit(tmp_path)
     assert "tests/loose/test_orphan.py | orphan" in capsys.readouterr().out
+
+
+def test_source_probes_exclude_build_outputs(audit, tmp_path):
+    """Only the source/config inputs remain after unrelated local builds."""
+    for name in (
+        "src/worldenergydata/alpha/api.py",
+        "src/worldenergydata/alpha/settings.yml",
+        "src/worldenergydata/alpha/build/api.py",
+    ):
+        put(tmp_path, name)
+    track_fixture(tmp_path)
+    for name in (
+        "src/worldenergydata/alpha/__pycache__/api.pyc",
+        "src/worldenergydata/alpha/alpha.egg-info/PKG-INFO",
+        "src/worldenergydata/alpha/build/generated.py",
+        "src/worldenergydata/alpha/dist/generated.py",
+    ):
+        put(tmp_path, name)
+    assert audit.audit(tmp_path)["sources"][0]["probes"] == [
+        "src/worldenergydata/alpha/api.py",
+        "src/worldenergydata/alpha/build/api.py",
+        "src/worldenergydata/alpha/settings.yml",
+    ]
+
+
+def test_build_outputs_cannot_add_source_groups(audit, tmp_path):
+    """A top-level build directory must not add inventory rows or source probes."""
+    put(tmp_path, "src/worldenergydata/alpha/api.py")
+    track_fixture(tmp_path)
+    before = audit.audit(tmp_path)
+    put(tmp_path, "src/worldenergydata/build/generated.py")
+    put(tmp_path, "src/worldenergydata/alpha.egg-info/PKG-INFO")
+    assert audit.audit(tmp_path) == before
+
+
+def track_fixture(root):
+    """Create an index-only fixture; no commit or identity setting is needed."""
+    import os
+    import subprocess
+
+    env = {
+        k: v
+        for k, v in os.environ.items()
+        if k not in {"GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR", "GIT_INDEX_FILE"}
+    }
+    for arguments in (("init", "-q"), ("add", "-f", "--", ".")):
+        subprocess.run(
+            ["git", *arguments],
+            cwd=root,
+            env=env,
+            check=True,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+        )
+
+
+def test_legitimate_build_directories_remain_in_test_inventory(audit, tmp_path):
+    """Directory names cannot conceal a new orphan from the exact-file guard."""
+    put(tmp_path, "tests/loose/build/test_new.py")
+    put(tmp_path, "tests/unit/alpha/dist/test_new.py")
+    result = audit.audit(tmp_path)
+    assert [r["path"] for r in result["tests"]] == [
+        "tests/loose/build/test_new.py",
+        "tests/unit/alpha/dist/test_new.py",
+    ]
+    assert audit.unlisted(result, {}) == ["tests/loose/build/test_new.py"]
+
+
+def test_namespace_cache_and_links_are_not_test_homes(audit, tmp_path):
+    """Cached namespaces cannot add fabricated unit homes after an import."""
+    put(tmp_path, "packages/alpha/src/worldenergydata/alpha/api.py")
+    put(tmp_path, "tests/unit/alpha/test_api.py")
+    before = audit.audit(tmp_path)
+    put(tmp_path, "packages/alpha/src/worldenergydata/__pycache__/api.pyc")
+    put(tmp_path, "tests/unit/__pycache__/test_fake.py")
+    assert audit.audit(tmp_path)["sources"] == before["sources"]
+
+
+def test_reparse_points_are_links_without_junction_api(audit, tmp_path, monkeypatch):
+    """Windows reparse metadata remains decisive without Path.is_junction."""
+    from types import SimpleNamespace
+
+    put(tmp_path, "junction/api.py")
+    monkeypatch.setattr(Path, "is_symlink", lambda p: False)
+    monkeypatch.setattr(Path, "is_junction", lambda p: False, raising=False)
+    monkeypatch.setattr(
+        Path,
+        "lstat",
+        lambda p: SimpleNamespace(st_reparse_tag=0xA0000003),
+    )
+    assert audit._linked(tmp_path / "junction")
+
+
+def test_nonlink_reparse_files_remain_in_inventory(audit, tmp_path, monkeypatch):
+    """A reparse attribute alone does not establish a symlink or junction."""
+    import stat
+    from types import SimpleNamespace
+
+    put(tmp_path, "placeholder.py")
+    monkeypatch.setattr(Path, "is_symlink", lambda p: False)
+    monkeypatch.setattr(Path, "is_junction", lambda p: False, raising=False)
+    monkeypatch.setattr(
+        Path,
+        "lstat",
+        lambda p: SimpleNamespace(
+            st_file_attributes=stat.FILE_ATTRIBUTE_REPARSE_POINT,
+            st_reparse_tag=0x9000001A,
+        ),
+    )
+    assert not audit._linked(tmp_path / "placeholder.py")
+
+
+def test_inventory_does_not_follow_linked_directories(audit, tmp_path, monkeypatch):
+    """Symlinks and directory junctions cannot add external inventory inputs."""
+    put(tmp_path, "src/worldenergydata/alpha/api.py")
+    put(tmp_path, "src/worldenergydata/alpha/junction/extra.py")
+    monkeypatch.setattr(
+        Path, "is_junction", lambda p: p.name == "junction", raising=False
+    )
+    (tmp_path / "src/worldenergydata/alpha/linked").symlink_to(
+        tmp_path / "src/worldenergydata/alpha/junction", target_is_directory=True
+    )
+    assert audit.audit(tmp_path)["sources"][0]["probes"] == [
+        "src/worldenergydata/alpha/api.py"
+    ]

@@ -3,7 +3,8 @@
 ## Summary
 
 These stdlib tools inventory the current selector without changing its routing or
-required checks. They remain advisory until the maintainer enables a CI guard.
+workflows. The exact-file orphan guard runs whenever CI selects `tests/ci`,
+including the current PR fast gate for CI-tool changes and the main full run.
 Path coverage does not prove pytest collection, successful imports or execution.
 
 ## Revision history
@@ -11,6 +12,7 @@ Path coverage does not prove pytest collection, successful imports or execution.
 | Revision | Date | Change and reason |
 | --- | --- | --- |
 | Initial | 2026-10-22 | Document advisory reachability, static dependents and diff explanations. |
+| Update | 2026-11-06 | Cover current-main orphan tests and explain fast/full modes, merge-base diffs and rename context. |
 
 ## Audit a checkout
 
@@ -23,17 +25,25 @@ python scripts/ci/package_closure.py > "$TMPDIR/package-closure.json"
 
 The audit imports `scripts/ci/select_test_targets.py` by path. For every filename
 matching `test_*.py` or `*_test.py` beneath `tests/` or `packages/*/tests/`, it
-simulates a diff containing only that path. A file is reachable when its selected
+simulates a diff containing only that path using push/full-mode `select`, not
+the PR fast gate. A file is reachable when its selected
 scope is not `full` and a target equals that file or is one of its parent
 directories. Archived tests are inventoried even when pytest excludes them.
 This is **self-diff reachability**: an orphan might still run for some other
 contract route or a full run. It is not proof that no possible diff can reach it.
 
-The source table separately simulates every file beneath each member's `src/`
+The source table separately simulates tracked source/configuration inputs beneath each member's `src/`
 and each `src/worldenergydata/<module>/`. JSON records include probes, scopes,
 all targets, targets beyond the always-on set, existing unit homes, and whether
 any target was selected. Members without source files are `NOT_EVALUATED`.
-Always-on targets must not be mistaken for module-specific coverage.
+In Git checkouts, source probes and source groups come from `git ls-files -z`,
+so untracked build/distribution output cannot change their rows. Plain fixture
+roots without a Git index use filesystem source discovery. Cache directories,
+compiled bytecode, package metadata, symlinks and Windows junctions are
+excluded from both inventories. Legitimate `build`/`dist` test and source
+directories remain inventoried. Always-on targets must not be
+mistaken for module-specific coverage. The filename conventions mirror the
+current pytest configuration; they are not loaded dynamically from it.
 
 The initial tree inspection confirms no `tests/unit/` home for `base_configs`,
 `testing` or `workflow_api`. `base_configs` is a core route requesting `full`;
@@ -47,6 +57,10 @@ as permanent routing policy.
 
 `scripts/ci/selector_reach_allowlist.txt` has one **exact test file** per line,
 followed by `# reason: ...`. Archived files use `# reason: archived`.
+The archive reason follows pytest exclusions at main revision `841cb7d4`,
+including directory patterns and `--ignore` paths. Earlier-only exclusions name
+revision `254c0c1d` explicitly; they do not claim that current main excludes those
+paths. All such paths remain in the inventory.
 Directories, glob patterns, duplicate entries and entries without reasons are
 rejected. Listing an old orphan does not permit a new sibling automatically.
 Review the cause before adding an exception; remove entries after routing is
@@ -60,8 +74,12 @@ uv run --no-project --with pytest python -m pytest tests/ci/test_audit_selector_
 ```
 
 No workflow or existing selector file changes here. The guard lives in
-`tests/ci/`; maintainers can explicitly enable it in their CI selection. The
-current selector does not select that directory for its own test-only changes.
+`tests/ci/` and is already enrolled through the existing full-run target set and
+the fast gate's CI-tool route. Test-only changes beneath `tests/ci/` still have no
+self route. A later unlisted orphan fails the next run selecting this guard;
+adding the test does not guarantee that its own fast gate selects `tests/ci/`.
+The allow-list also covers the inventory at main revision `079e2216`; exact
+entries are retained when a route becomes reachable on another selector revision.
 
 ## Static package dependents
 
@@ -89,26 +107,37 @@ explanation assertions remain normal failures.
 
 ```sh
 python scripts/ci/explain_selection.py --base origin/main --head HEAD
-git diff --name-status --find-renames origin/main HEAD > "$TMPDIR/changes.txt"
+git diff --name-status --find-renames origin/main...HEAD > "$TMPDIR/changes.txt"
 python scripts/ci/explain_selection.py --files-from "$TMPDIR/changes.txt"
+python scripts/ci/explain_selection.py --mode full --base origin/main --head HEAD
 ```
 
-Ref mode uses a two-tip `git diff BASE HEAD`, not a merge-base diff. It reads
-NUL-separated name-status output and preserves spaces, tabs and newlines in
-paths. File mode accepts name-only lines, tab-separated name-status records, or
-a JSON list such as `[{"status":"D","paths":["src/worldenergydata/testing/old.py"]}]`.
-Use JSON for filenames containing tabs or newlines. `--files-from -` reads stdin.
-Supply either the ref pair or file input. Successful explanations exit zero.
+Ref mode uses `git diff BASE...HEAD`, matching the merge-base input documented
+by the selector. It reads NUL-separated name-status output and preserves spaces,
+tabs and newlines in paths. File mode accepts name-only lines or tab-separated
+name-status records. Add `--json` to parse a JSON list such as
+`[{"status":"D","paths":["src/worldenergydata/testing/old.py"]}]` instead.
+Use explicit JSON mode for filenames containing tabs or newlines; a leading
+bracket in ordinary file mode remains part of the path. `--files-from -` reads
+stdin. Supply either the ref pair or file input.
 
-Each path shows the matching rule (`core`, `contract route`, `module`,
-`package`, `ignored`) and its isolated selection. The final block shows the
-combined scope, targets and shards returned by the selector's matrix function.
-A core edit can dominate the combined scope while another path still explains
-its module route. Renames include both endpoints; deletions retain the deleted
-path. A route may fire without an existing target directory, so inspect the
-targets as well as the rule label. Workflow-registry changes use the always-on
-contract rule. Rule labels currently use the selector's routing constants and
-patterns; changes to that interface require updating this advisory adapter.
+The default `--mode pr` calls `select_fast` and `to_matrix(fast=True)` to explain
+the pull request fast gate. `--mode full` calls `select` and the full-mode matrix
+interface used for push/full selection. Older selector revisions without either
+fast API reject PR mode with a stated reason; use full mode for those revisions.
+The selected mode is printed before the per-path explanations.
+
+Each path shows the selector's full-mode classification (`core`, `selector route`
+or `ignored`) alongside its targets in the requested mode. PR core paths show
+`core (fast gate)` so the bounded gate is distinguished from full-mode fan-out.
+Labels derive from public selector results;
+private regexes and routing tables are not mirrored. The combined block shows
+the scope, targets and shards returned by the same selector mode. A full-mode
+core edit can dominate combined scope; the fast gate retains its bounded core
+selection. Rename/copy sources are labelled **context only** and excluded from
+combined selection, matching name-only diff input. Destinations and deleted
+paths determine combined selection. A route may fire without an existing target,
+so inspect the targets as well as the label. Successful explanations exit zero.
 
 ## Reproduce the worked example
 
@@ -134,4 +163,4 @@ equations in these routing tools.
 - `pyproject.toml`: pytest file patterns and archive exclusions.
 - [Python 3.11 AST reference](https://docs.python.org/3.11/library/ast.html): `Import` and `ImportFrom` nodes.
 - [Python 3.11 import statement reference](https://docs.python.org/3.11/reference/simple_stmts.html#the-import-statement): relative import semantics.
-- [Git diff documentation](https://git-scm.com/docs/git-diff): two-tip diffs, `--name-status`, rename records and `-z` output.
+- [Git diff documentation](https://git-scm.com/docs/git-diff): merge-base diffs, `--name-status`, rename records and `-z` output.

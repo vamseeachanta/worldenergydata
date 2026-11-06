@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Advisory reachability inventory using the existing selector without modifying it.
 
-Test discovery follows python_files in pyproject.toml, including archived tests.
+Test discovery mirrors python_files in pyproject.toml, including archived tests.
 Reachability means the changed test is covered by a selected target and scope is
 not full. This is path coverage, not a claim about pytest collection or execution.
 """
@@ -11,6 +11,9 @@ from __future__ import annotations
 import argparse
 import importlib.util
 import json
+import os
+import stat
+import subprocess
 from pathlib import Path, PurePosixPath
 
 REPO = Path(__file__).resolve().parents[2]
@@ -33,6 +36,77 @@ def contains(path: str, targets: list[str]) -> bool:
     )
 
 
+def _linked(path: Path) -> bool:
+    if path.is_symlink() or getattr(path, "is_junction", lambda: False)():
+        return True
+    # MS-FSCC, section 2.1.2.1: only symlink and mount-point tags identify links.
+    # https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-fscc/c8e77b37-3909-4fe6-a4ea-2b9d423b1ee4
+    return path.exists() and getattr(path.lstat(), "st_reparse_tag", 0) in {
+        getattr(stat, "IO_REPARSE_TAG_SYMLINK", 0xA000000C),
+        getattr(stat, "IO_REPARSE_TAG_MOUNT_POINT", 0xA0000003),
+    }
+
+
+def _excluded(name: str) -> bool:
+    return name in {
+        "__pycache__",
+        ".pytest_cache",
+        ".mypy_cache",
+        ".ruff_cache",
+        ".venv",
+        ".tox",
+    } or name.endswith((".egg-info", ".dist-info"))
+
+
+def _inventory_files(root: Path, base: Path):
+    """Prune cache/metadata output and links before walking; keep legitimate build packages."""
+    if any(
+        _linked(p) or _excluded(p.name)
+        for p in (base, *base.parents)
+        if p != root and root in p.parents
+    ):
+        return
+    if not base.resolve().is_relative_to(root.resolve()):
+        return
+    for directory, children, files in os.walk(base, followlinks=False):
+        parent = Path(directory)
+        children[:] = sorted(
+            name
+            for name in children
+            if not _excluded(name) and not _linked(parent / name)
+        )
+        for name in sorted(files):
+            path = parent / name
+            if (
+                path.suffix not in {".pyc", ".pyo"}
+                and not _linked(path)
+                and path.is_file()
+            ):
+                yield path
+
+
+def _tracked_files(root: Path) -> set[str] | None:
+    """Use the checkout index for source inventory; plain fixture roots have no index."""
+    if not (root / ".git").exists():
+        return None
+    env = {
+        k: v
+        for k, v in os.environ.items()
+        if k not in {"GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR", "GIT_INDEX_FILE"}
+    }
+    output = subprocess.check_output(
+        ["git", "ls-files", "-z"], cwd=root, env=env, encoding="utf-8"
+    )
+    return set(output.split("\0")) - {""}
+
+
+def _source_directory(path: Path, root: Path, tracked: set[str] | None) -> bool:
+    if not path.is_dir() or _excluded(path.name) or _linked(path):
+        return False
+    prefix = path.relative_to(root).as_posix() + "/"
+    return tracked is None or any(name.startswith(prefix) for name in tracked)
+
+
 def test_files(root: Path) -> list[str]:
     """Include both pytest filename conventions and package-local test roots."""
     roots = [root / "tests", *sorted((root / "packages").glob("*/tests"))]
@@ -40,9 +114,8 @@ def test_files(root: Path) -> list[str]:
         {
             file.relative_to(root).as_posix()
             for base in roots
-            for pattern in ("test_*.py", "*_test.py")
-            for file in base.rglob(pattern)
-            if file.is_file()
+            for file in _inventory_files(root, base)
+            if file.match("test_*.py") or file.match("*_test.py")
         }
     )
 
@@ -52,10 +125,11 @@ def audit(root: Path) -> dict:
 
     Source rows retain always-on targets separately from routed targets: selecting
     only an always-on contract must not hide a missing module test home. Every
-    actual source file is probed, so multi-domain packages are not reduced to an
+    tracked source file is probed in Git checkouts, so multi-domain packages are not reduced to an
     arbitrary representative. A directory with no source is NOT_EVALUATED.
     """
     selector = load_selector()
+    tracked = _tracked_files(root)
     tests = []
     for path in test_files(root):
         result = selector.select([path], root)
@@ -69,20 +143,34 @@ def audit(root: Path) -> dict:
             }
         )
     groups = [
-        *sorted(p for p in (root / "packages").glob("*") if p.is_dir()),
-        *sorted(p for p in (root / "src/worldenergydata").glob("*") if p.is_dir()),
+        *sorted(
+            p
+            for p in (root / "packages").glob("*")
+            if _source_directory(p, root, tracked)
+        ),
+        *sorted(
+            p
+            for p in (root / "src/worldenergydata").glob("*")
+            if _source_directory(p, root, tracked)
+        ),
     ]
     sources = []
     for group in groups:
         base = group / "src" if group.parent.name == "packages" else group
         namespace = base / "worldenergydata"
         domains = (
-            sorted(p.name for p in namespace.iterdir() if p.is_dir())
+            sorted(
+                p.name
+                for p in namespace.iterdir()
+                if _source_directory(p, root, tracked)
+            )
             if group.parent.name == "packages" and namespace.is_dir()
             else [group.name]
         )
         paths = sorted(
-            p.relative_to(root).as_posix() for p in base.rglob("*") if p.is_file()
+            p.relative_to(root).as_posix()
+            for p in _inventory_files(root, base)
+            if tracked is None or p.relative_to(root).as_posix() in tracked
         )
         selections = [selector.select([path], root) for path in paths]
         targets = sorted({t for s in selections for t in s["xdist"] + s["seq"]})
@@ -165,7 +253,9 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
     result = audit(args.root)
-    args.json.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
+    args.json.write_text(
+        json.dumps(result, indent=2) + "\n", encoding="utf-8", newline="\n"
+    )
     print(table(result), end="")
     return 0
 

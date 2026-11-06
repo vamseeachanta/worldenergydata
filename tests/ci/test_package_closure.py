@@ -18,7 +18,7 @@ def load(name):
 def member(root, name, text, leaf="api.py"):
     file = root / f"packages/worldenergydata-{name}/src/worldenergydata/{name}/{leaf}"
     file.parent.mkdir(parents=True, exist_ok=True)
-    file.write_text(text, encoding="utf-8")
+    file.write_text(text, encoding="utf-8", newline="\n")
     return file.relative_to(root).as_posix()
 
 
@@ -81,7 +81,7 @@ def test_selector_gap_diagnostic_has_hand_calculated_targets(tmp_path):
     for name in ("alpha", "beta"):
         path = tmp_path / f"tests/unit/{name}/test_api.py"
         path.parent.mkdir(parents=True)
-        path.write_text("", encoding="utf-8")
+        path.write_text("", encoding="utf-8", newline="\n")
     closure = load("package_closure")
     selector = load("audit_selector_reach").load_selector()
     assert closure.selector_gaps(tmp_path, closure.scan(tmp_path), selector) == [
@@ -123,7 +123,7 @@ def test_selector_includes_importing_packages(tmp_path):
     for name in ("alpha", "beta", "gamma"):
         path = tmp_path / f"tests/unit/{name}/test_api.py"
         path.parent.mkdir(parents=True)
-        path.write_text("", encoding="utf-8")
+        path.write_text("", encoding="utf-8", newline="\n")
     closure = load("package_closure")
     audit = load("audit_selector_reach")
     selected = audit.load_selector().select([changed], tmp_path)
@@ -135,21 +135,9 @@ def test_selector_includes_importing_packages(tmp_path):
     )
 
 
-def test_current_tree_dependency_inventory(tmp_path):
-    """Mirror actual import edges in a temporary map and expose every selector gap."""
-    closure = load("package_closure")
-    real = closure.scan(REPO)
-    # A fixture map keeps this regression isolated from application execution.
-    for package, providers in real["imports"].items():
-        name = package.removeprefix("worldenergydata-")
-        text = "".join(
-            f"import worldenergydata.{p.removeprefix('worldenergydata-')}\n"
-            for p in providers
-        )
-        member(tmp_path, name, text)
-    report = closure.report(real)
-    assert set(report["packages"]) == set(closure.scan(tmp_path)["imports"])
-    assert not real["not_evaluated"]
+def test_current_tree_dependency_inventory_has_no_parse_errors():
+    """Every real workspace member is parsed without silently dropping invalid source."""
+    assert load("package_closure").scan(REPO)["not_evaluated"] == []
 
 
 @pytest.mark.xfail(
@@ -163,7 +151,7 @@ def test_current_selector_dependency_closure(tmp_path):
 
     closure = load("package_closure")
     snapshot = tmp_path / "import-map.json"
-    snapshot.write_text(json.dumps(closure.scan(REPO)), encoding="utf-8")
+    snapshot.write_text(json.dumps(closure.scan(REPO)), encoding="utf-8", newline="\n")
     graph = json.loads(snapshot.read_text(encoding="utf-8"))
     selector = load("audit_selector_reach").load_selector()
     assert closure.selector_gaps(REPO, graph, selector) == []

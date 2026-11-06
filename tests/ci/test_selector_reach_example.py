@@ -21,6 +21,7 @@ def load():
 def test_example_matches_committed_document(tmp_path):
     """By hand: three unit files reachable, loose orphan; gamma's dependents are alpha,beta."""
     rendered = load().generate(tmp_path)
+    assert "mode=full" in rendered
     assert rendered == (REPO / "docs/ci/selector-reach-example.md").read_text(
         encoding="utf-8"
     )
@@ -29,9 +30,9 @@ def test_example_matches_committed_document(tmp_path):
         "worldenergydata-gamma | worldenergydata-beta | worldenergydata-alpha, worldenergydata-beta"
         in rendered
     )
-    assert "D src/worldenergydata/alpha/removed.py -> module" in rendered
+    assert "D src/worldenergydata/alpha/removed.py -> selector route" in rendered
     assert (
-        "R100 packages/worldenergydata-beta/src/worldenergydata/beta/api.py -> package"
+        "R100 packages/worldenergydata-beta/src/worldenergydata/beta/api.py -> selector route"
         in rendered
     )
 
@@ -40,7 +41,7 @@ def test_generator_does_not_overwrite_different_input(tmp_path):
     """A populated fixture path is preserved instead of silently destroying user input."""
     destination = tmp_path / "tests/loose/test_orphan.py"
     destination.parent.mkdir(parents=True)
-    destination.write_text("preserve", encoding="utf-8")
+    destination.write_text("preserve", encoding="utf-8", newline="\n")
     with pytest.raises(ValueError, match="existing example input differs"):
         load().generate(tmp_path)
     assert destination.read_text(encoding="utf-8") == "preserve"

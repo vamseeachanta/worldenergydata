@@ -10,6 +10,7 @@ This example makes no runtime or avoided-test claim.
 | Revision | Date | Change and reason |
 | --- | --- | --- |
 | Initial | 2026-10-22 | Add reproducible inputs and outputs for advisory routing tools. |
+| Update | 2026-11-06 | Identify full mode and distinguish rename context from selected input. |
 
 ## Inputs
 
@@ -37,8 +38,8 @@ D	src/worldenergydata/alpha/removed.py
 
 For each test, simulate its own file-only diff and check target ancestry with scope other than full.
 For each syntactic import, add an importer-to-provider edge and walk reverse edges to a fixed point.
-For a rename, explain both endpoints; for a deletion, retain the old path.
-The combined selection and shards come directly from the existing selector.
+For a rename, explain both endpoints but select only the destination; retain deleted paths.
+The combined selection and shards come directly from the existing selector in full mode.
 
 ## Answer
 
@@ -62,11 +63,12 @@ The combined selection and shards come directly from the existing selector.
 ### Explanation
 
 ```text
-R100 packages/worldenergydata-alpha/src/worldenergydata/alpha/api.py -> package
+mode=full
+R100 packages/worldenergydata-alpha/src/worldenergydata/alpha/api.py -> selector route (context only)
   scope=modules; targets=tests/unit/alpha
-R100 packages/worldenergydata-beta/src/worldenergydata/beta/api.py -> package
+R100 packages/worldenergydata-beta/src/worldenergydata/beta/api.py -> selector route
   scope=modules; targets=tests/unit/beta
-D src/worldenergydata/alpha/removed.py -> module
+D src/worldenergydata/alpha/removed.py -> selector route
   scope=modules; targets=tests/unit/alpha
 scope=modules
 xdist=tests/unit/alpha tests/unit/beta
@@ -79,7 +81,7 @@ shards:
 ## Interpretation
 
 The loose test is an orphan; unit tests have their own routes.
-Gamma has beta and alpha as reverse dependents, but a gamma-only source diff currently selects only gamma's home.
+Gamma has beta and alpha as reverse dependents, but in full mode a gamma-only source diff currently selects only gamma's home.
 The rename/deletion example selects alpha and beta. Fixing dependent selection remains a separate selector change.
 
 ## Sources

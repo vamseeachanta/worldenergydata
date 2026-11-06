@@ -36,7 +36,7 @@ def generate(root: Path) -> str:
     for name, text in inputs.items():
         path = root / name
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(text, encoding="utf-8")
+        path.write_text(text, encoding="utf-8", newline="\n")
     audit = _load("audit_selector_reach")
     closure = _load("package_closure")
     explainer = _load("explain_selection")
@@ -58,6 +58,7 @@ def generate(root: Path) -> str:
         "| Revision | Date | Change and reason |",
         "| --- | --- | --- |",
         "| Initial | 2026-10-22 | Add reproducible inputs and outputs for advisory routing tools. |",
+        "| Update | 2026-11-06 | Identify full mode and distinguish rename context from selected input. |",
         "",
         "## Inputs",
         "",
@@ -82,8 +83,8 @@ def generate(root: Path) -> str:
             "",
             "For each test, simulate its own file-only diff and check target ancestry with scope other than full.",
             "For each syntactic import, add an importer-to-provider edge and walk reverse edges to a fixed point.",
-            "For a rename, explain both endpoints; for a deletion, retain the old path.",
-            "The combined selection and shards come directly from the existing selector.",
+            "For a rename, explain both endpoints but select only the destination; retain deleted paths.",
+            "The combined selection and shards come directly from the existing selector in full mode.",
             "",
             "## Answer",
             "",
@@ -116,14 +117,14 @@ def generate(root: Path) -> str:
             "",
             "```text",
             explainer.render(
-                explainer.explain(explainer.parse_lines(changes), root)
+                explainer.explain(explainer.parse_lines(changes), root, mode="full")
             ).rstrip(),
             "```",
             "",
             "## Interpretation",
             "",
             "The loose test is an orphan; unit tests have their own routes.",
-            "Gamma has beta and alpha as reverse dependents, but a gamma-only source diff currently selects only gamma's home.",
+            "Gamma has beta and alpha as reverse dependents, but in full mode a gamma-only source diff currently selects only gamma's home.",
             "The rename/deletion example selects alpha and beta. Fixing dependent selection remains a separate selector change.",
             "",
             "## Sources",
