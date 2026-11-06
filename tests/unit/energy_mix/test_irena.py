@@ -3,6 +3,7 @@
 import csv
 import io
 import socket
+import sys
 from pathlib import Path
 from urllib import request
 
@@ -12,6 +13,7 @@ from worldenergydata.energy_mix.irena import (
     AccessRefused,
     emit_manifest,
     fetch_irena,
+    generation_gwh_to_mwh,
     load_export,
     write_table,
 )
@@ -49,6 +51,58 @@ def test_load_and_round_trip():
     assert records[2]["capacity_mw"] is None
     assert records[0]["iso_code"] == ""
     assert load_export(write_table(records)) == records
+
+
+def test_loaded_generation_in_mwh():
+    """Hand calculation using the synthetic fixture's authored 20.25 GWh.
+
+    NIST SP 330 (2019), section 3, table 7 gives G = 10**9 and M = 10**6:
+    20.25 GWh = 20.25 * (10**9 / 10**6) MWh = 20250 MWh, exactly.
+    https://www.nist.gov/pml/special-publication-330/sp-330-section-3
+    """
+    records = load_export(CSV.read_bytes())
+    assert generation_gwh_to_mwh(records[0]["generation_gwh"]) == 20250.0
+    assert records[0]["generation_gwh"] == 20.25
+    # Input contract: docs/data/irena_offshore_wind.md, "Input contract".
+    assert generation_gwh_to_mwh(records[1]["generation_gwh"]) is None
+
+
+@pytest.mark.parametrize("generation,expected", [(0.125, 125.0), (0.0, 0.0)])
+def test_generation_conversion(generation, expected):
+    """Hand calculation: 0.125 * (10**9 / 10**6) = 125; 0 * ratio = 0.
+
+    NIST SP 330 (2019), section 3, table 7 (SI prefixes):
+    https://www.nist.gov/pml/special-publication-330/sp-330-section-3
+    Zero is valid under the repository input contract, not missing data.
+    """
+    assert generation_gwh_to_mwh(generation) == expected
+
+
+def test_generation_conversion_missing():
+    """Blank stays unavailable per the repository's documented input contract."""
+    # docs/data/irena_offshore_wind.md, "Input contract": blank != reported zero.
+    assert generation_gwh_to_mwh(None) is None
+
+
+@pytest.mark.parametrize(
+    "generation", [-1.0, float("nan"), float("inf"), -float("inf")]
+)
+def test_generation_conversion_rejects_invalid_measurements(generation):
+    """Reject violations of the repository's finite, nonnegative input contract."""
+    # docs/data/irena_offshore_wind.md, "Input contract"; -1 is authored input.
+    with pytest.raises(ValueError, match="finite and nonnegative"):
+        generation_gwh_to_mwh(generation)
+
+
+def test_generation_conversion_rejects_overflow():
+    """The largest finite float times the SI prefix ratio exceeds float range.
+
+    NIST SP 330 (2019), section 3, table 7 defines a ratio greater than unity;
+    Python's sys.float_info.max supplies the runtime's finite upper bound.
+    This is a representation check, not an engineering acceptance limit.
+    """
+    with pytest.raises(ValueError, match="Converted generation must be finite"):
+        generation_gwh_to_mwh(sys.float_info.max)
 
 
 @pytest.mark.parametrize(

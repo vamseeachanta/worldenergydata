@@ -1,18 +1,4 @@
 # eia_us module knowledge pack
-### Fit-contract amendment reproduction record
-
-The unchanged decline suite collected and passed 22 cases before the amendment: zero failed and zero skipped. The combined unchanged and new suites collected and passed 28 cases after the source change: zero failed and zero skipped. The six new cases inject optimizer outcomes; they establish failure reporting and diagnostic arithmetic, without claiming live-data validation or a parameter-estimation benchmark. The original forecast tests and configured warnings policy are unchanged. [tests/unit/eia_us/test_basin_decline.py:L17-L183] [tests/unit/eia_us/test_decline_fit_diagnostics.py:L1-L111] [pyproject.toml:L438-L442]
-
-Use `uv run --no-project --no-build --with pytest --with pytest-cov --with pytest-asyncio --with 'numpy>=2.2.6,<3' --with 'scipy>=1.11,<2' --with 'pandas>=2.3.3,<3' --with plotly --with psutil --with pydantic-settings python -m pytest tests/unit/eia_us/test_basin_decline.py tests/unit/eia_us/test_decline_fit_diagnostics.py -q -rA -p no:cacheprovider --basetemp=<scratch-output> --allow-existing-tree-changes`. The baseline uses the same command with only `test_basin_decline.py` and without the existing-change option. Put `src`, the core source and this package source on `PYTHONPATH`; redirect `COVERAGE_FILE` and the configured HTML, XML and JSON reports to scratch. Keep configured `addopts` and warning filters. This uses resolved wheels, rather than the complete project lock.
-
-Recorded environment: Python 3.12.15, NumPy 2.5.4, SciPy 1.18.1, pandas 2.3.3, pytest 9.2.0, pytest-cov 7.1.0 and pytest-asyncio 1.4.1. Dependencies were resolved as wheels with source builds disabled.
-
-The deterministic failure cases are injected `RuntimeError` and `ValueError` from `curve_fit`; both must raise `DeclineFitError` and retain the injected exception as their cause. Repository Python consumer searches found no production call site requiring adaptation. [tests/unit/eia_us/test_decline_fit_diagnostics.py:L17-L30]
-
-Independent arithmetic: observations `[1,2,3]` and predictions `[3,2,1]` have mean 2, total squared deviation 2 and squared residual sum 8, so R-squared is `1-8/2 = -3` and RMSE is `sqrt(8/3)` in the supplied production-rate unit. Repeating both triples meets the existing minimum input length without changing either statistic. The RMSE comparison allows relative error `1e-12` for the square-root rounding; expected values are hand calculations, independent of the implementation. The fitted-objective case independently substitutes its synthetic parameters into `12/sqrt(1+t)`, checks the residual vector and RMSE, and forbids calls to the forecast predictor. [tests/unit/eia_us/test_decline_fit_diagnostics.py:L33-L111]
-
-Forecast-prefix invariance and an independently supported terminal method remain open under #1604. The horizon-based terminal switch is unchanged and is not qualified by these diagnostic tests. Constant-observation R-squared is mathematically undefined; the existing exact-match/otherwise convention is explicitly preserved. [packages/worldenergydata-eia_us/src/worldenergydata/eia_us/analysis/basin_decline.py:L103-L128] [packages/worldenergydata-eia_us/src/worldenergydata/eia_us/analysis/basin_decline.py:L229-L240]
-
 
 | Header | Value |
 | --- | --- |
@@ -20,14 +6,12 @@ Forecast-prefix invariance and an independently supported terminal method remain
 | Repository | `worldenergydata` |
 | Package path | `packages/worldenergydata-eia_us/src/worldenergydata/eia_us` |
 | Pack revision | 4, 2026-11-03 |
-| Code revision | Historical evidence: `fb376e12260fc276927a5aa106719d20b5aaa50c`; fit-contract amendment: main at `84afbf3dbb88cf05d73280ef7aa927e725081c2e`; state-loader repair: #1808 against `76a4ad78` |
+| Code revision | Historical evidence: `fb376e12260fc276927a5aa106719d20b5aaa50c`; fit-contract amendment: main at `84afbf3dbb88cf05d73280ef7aa927e725081c2e` (#1809); state-loader repair: #1808, merged with main at `e4325230739c8fcddc98a1917a6e8aa4081250b8` |
 | Analysis family | EC; data pipeline, using AQG r0 Python calculations |
 | Quality manager role | Calculations quality manager; deputy: maintainer |
 | Status | DRAFT |
 
-The historical code pin is the main commit containing #1401. The fit-contract amendment and its source and test citations describe main at `84afbf3d`; that implementation is absent from the state-loader branch at `76a4ad78`. The state-loader repair and its regression citations describe #1808, including the accompanying quantity and duplicate-month validation. Other citations and earlier execution records retain their historical basis.
-
-Repair annotations distinguish the fit-contract amendment on main from the state-loader changes in #1808. No combined implementation or combined test result is asserted; integration with main remains necessary.
+The historical code pin is the main commit containing #1401. The fit-contract amendment and its source and test citations describe main at `84afbf3d` (#1809). The state-loader repair and its regression citations describe #1808, including the accompanying quantity and duplicate-month validation. Both are present on the #1808 branch after its merge with main at `e4325230`; the combined-tree test result is recorded in section 4. Other citations and earlier execution records retain their historical basis.
 
 ## 1. Purpose and scope
 
@@ -140,6 +124,20 @@ At `76a4ad78`, the four focused files (`test_state_production.py`, `test_state_p
 The complete `tests/unit/eia_us` directory and `tests/benchmarks/test_eia_benchmarks.py` passed 227 cases with two pre-existing expected failures under #1804 and no skips. Both state and basin loader benchmarks passed. The repository harness and its tree-preservation check ran with `--allow-existing-tree-changes`; configured coverage output was redirected to scratch. The focused before/after runs used the repository's documented `--noconftest` invocation. Tests ran on uncommitted changes; no combined result with main's fit-contract amendment is claimed.
 
 Reproduce with `uv run --no-project --no-build --with pytest --with pytest-cov --with pytest-asyncio --with pytest-benchmark --with 'pandas>=2.3.3,<3' --with 'scipy>=1.11,<2' --with requests --with plotly --with psutil --with pydantic-settings --with pyyaml python -m pytest tests/unit/eia_us tests/benchmarks/test_eia_benchmarks.py -q -rA -p no:cacheprovider --basetemp=<scratch-output> --allow-existing-tree-changes`. Put `src` and the core, EIA US and production package source directories on `PYTHONPATH`; redirect `COVERAGE_FILE` and every configured report to scratch without changing assertions or warning filters. Dependencies were resolved from wheels; this is source-tree evidence rather than a locked installation or live-data check.
+
+### Fit-contract amendment reproduction record
+
+The unchanged decline suite collected and passed 22 cases before the amendment: zero failed and zero skipped. The combined unchanged and new suites collected and passed 28 cases after the source change: zero failed and zero skipped. The six new cases inject optimizer outcomes; they establish failure reporting and diagnostic arithmetic, without claiming live-data validation or a parameter-estimation benchmark. The original forecast tests and configured warnings policy are unchanged. [tests/unit/eia_us/test_basin_decline.py:L17-L183] [tests/unit/eia_us/test_decline_fit_diagnostics.py:L1-L111] [pyproject.toml:L438-L442]
+
+Use `uv run --no-project --no-build --with pytest --with pytest-cov --with pytest-asyncio --with 'numpy>=2.2.6,<3' --with 'scipy>=1.11,<2' --with 'pandas>=2.3.3,<3' --with plotly --with psutil --with pydantic-settings python -m pytest tests/unit/eia_us/test_basin_decline.py tests/unit/eia_us/test_decline_fit_diagnostics.py -q -rA -p no:cacheprovider --basetemp=<scratch-output> --allow-existing-tree-changes`. The baseline uses the same command with only `test_basin_decline.py` and without the existing-change option. Put `src`, the core source and this package source on `PYTHONPATH`; redirect `COVERAGE_FILE` and the configured HTML, XML and JSON reports to scratch. Keep configured `addopts` and warning filters. This uses resolved wheels, rather than the complete project lock.
+
+Recorded environment: Python 3.12.15, NumPy 2.5.4, SciPy 1.18.1, pandas 2.3.3, pytest 9.2.0, pytest-cov 7.1.0 and pytest-asyncio 1.4.1. Dependencies were resolved as wheels with source builds disabled.
+
+The deterministic failure cases are injected `RuntimeError` and `ValueError` from `curve_fit`; both must raise `DeclineFitError` and retain the injected exception as their cause. Repository Python consumer searches found no production call site requiring adaptation. [tests/unit/eia_us/test_decline_fit_diagnostics.py:L17-L30]
+
+Independent arithmetic: observations `[1,2,3]` and predictions `[3,2,1]` have mean 2, total squared deviation 2 and squared residual sum 8, so R-squared is `1-8/2 = -3` and RMSE is `sqrt(8/3)` in the supplied production-rate unit. Repeating both triples meets the existing minimum input length without changing either statistic. The RMSE comparison allows relative error `1e-12` for the square-root rounding; expected values are hand calculations, independent of the implementation. The fitted-objective case independently substitutes its synthetic parameters into `12/sqrt(1+t)`, checks the residual vector and RMSE, and forbids calls to the forecast predictor. [tests/unit/eia_us/test_decline_fit_diagnostics.py:L33-L111]
+
+Forecast-prefix invariance and an independently supported terminal method remain open under #1604. The horizon-based terminal switch is unchanged and is not qualified by these diagnostic tests. Constant-observation R-squared is mathematically undefined; the existing exact-match/otherwise convention is explicitly preserved. [packages/worldenergydata-eia_us/src/worldenergydata/eia_us/analysis/basin_decline.py:L103-L128] [packages/worldenergydata-eia_us/src/worldenergydata/eia_us/analysis/basin_decline.py:L229-L240]
 
 ## 5. QA gates
 
