@@ -160,11 +160,14 @@ class EIAApiClient:
         # EIA v2 uses /seriesid/ path for backward-compat series access
         return f"{self.base_url}/seriesid/{series_id}"
 
-    def generate_cache_key(self, series_id: str, params: Dict[str, Any]) -> str:
-        """Generate a deterministic cache key from series ID and query params."""
+    def generate_cache_key(
+        self, series_id: str, params: Dict[str, Any], use_mock: bool = False
+    ) -> str:
+        """Generate a deterministic key for the mode, series and query params."""
         sorted_params = sorted(params.items())
         param_str = urlencode(sorted_params)
-        raw = f"{series_id}?{param_str}"
+        mode = "mock" if use_mock else "live"
+        raw = f"{mode}:{series_id}?{param_str}"
         return hashlib.md5(raw.encode()).hexdigest()
 
     # ── Response parsing ──────────────────────────────────────────────────────
@@ -235,7 +238,7 @@ class EIAApiClient:
         if params is None:
             params = {}
 
-        cache_key = self.generate_cache_key(series_id, params)
+        cache_key = self.generate_cache_key(series_id, params, use_mock=use_mock)
 
         # Cache hit
         if self.cache_enabled:
@@ -261,7 +264,7 @@ class EIAApiClient:
                 self.cache.set(cache_key, parsed)
             return parsed
 
-        # Live HTTP (guarded — not called in tests)
+        # Live transport (injected in offline contract tests)
         return self._fetch_live(series_id, params, cache_key)
 
     def _fetch_live(
@@ -270,7 +273,7 @@ class EIAApiClient:
         params: Dict[str, Any],
         cache_key: str,
     ) -> List[Dict[str, Any]]:
-        """Make live HTTP request to EIA API. Not called in test suite."""
+        """Fetch and validate a live response before caching its records."""
         try:
             import requests  # noqa: PLC0415
         except ImportError as exc:
@@ -288,17 +291,20 @@ class EIAApiClient:
 
         try:
             response = requests.get(url, params=query, timeout=30)
-        except requests.exceptions.RequestException as exc:
-            raise EIAApiError(f"EIA API request failed: {exc}") from exc
+        except requests.exceptions.RequestException:
+            # Transport exceptions can contain URLs with authentication values.
+            raise EIAApiError("EIA API request failed") from None
 
         if response.status_code == 429:
             raise EIARateLimitError("EIA API rate limit exceeded (500 req/hr)")
         if response.status_code != 200:
-            raise EIAApiError(
-                f"EIA API returned status {response.status_code}: {response.text[:200]}"
-            )
+            raise EIAApiError(f"EIA API returned status {response.status_code}")
 
-        raw = response.json()
+        try:
+            raw = response.json()
+        except ValueError:
+            # Decoder diagnostics may contain arbitrary response content.
+            raise EIAApiError("EIA API response is not valid JSON") from None
         records = self.parse_series_response(raw)
 
         if self.cache_enabled:
