@@ -11,6 +11,7 @@ import importlib.util
 import json
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 import pytest
@@ -57,8 +58,11 @@ def test_results_json_passes_jsonschema(folder):
 
 @pytest.mark.parametrize("folder", ALL)
 def test_last_run_is_bound_to_current_files(folder):
-    out = _run(folder, "--check-record", str(EVALS / folder / "last-run.json"))
-    assert out.returncode == 0, out.stdout
+    records = sorted((EVALS / folder).glob("last-run*.json"))
+    assert records, "no run record committed"
+    for record in records:
+        out = _run(folder, "--check-record", str(record))
+        assert out.returncode == 0, (record.name, out.stdout)
 
 
 @pytest.mark.parametrize("mutate, expected", [
@@ -94,6 +98,10 @@ def test_comparison_contract():
     assert kit.compare_one(live, 202.1)[0] == "DRIFT"
     assert kit.compare_one(zero, 0)[0] == "MATCH"            # zero reference is exact
     assert kit.compare_one(zero, 0.001)[0] == "MISMATCH"
+    assert kit.compare_one(zero, 5e-10)[0] == "MISMATCH"     # no floating allowance at zero
+    big = {"value": 1_000_000_000, "tolerance": {"abs": 0}, "basis": "fixed"}
+    assert kit.compare_one(big, 1_000_000_000)[0] == "MATCH"
+    assert kit.compare_one(big, 1_000_000_001)[0] == "MISMATCH"  # integers compare exactly
     assert kit.compare_one(fixed, True)[0] == "MISMATCH"     # boolean for a number
     assert kit.compare_one(flag, 1)[0] == "MISMATCH"         # number for a boolean
     assert kit.compare_one(fixed, float("nan"))[0] == "MISMATCH"
@@ -119,6 +127,61 @@ def test_compare_mode(tmp_path):
     assert _run(folder, "--compare", _reader(tmp_path, "dup.json", dup)).returncode == 1
     extra = full + [{"id": "not_a_result", "value": 1}]
     assert _run(folder, "--compare", _reader(tmp_path, "extra.json", extra)).returncode == 1
+    out = tmp_path / "odd.json"
+    odd = _run(folder, "--compare", _reader(tmp_path, "odd-id.json", [{"id": [], "value": 1}]), "--out", str(out))
+    assert odd.returncode == 1 and json.loads(out.read_text(encoding="utf-8"))["grade"] == "FAIL"
+
+
+def _demo_folder(tmp_path):
+    work = tmp_path / "evals" / "demo"
+    work.mkdir(parents=True)
+    (tmp_path / "evals" / "results.schema.json").write_text(json.dumps(_schema()), encoding="utf-8")
+    (tmp_path / "evals" / "evalkit.py").write_text((EVALS / "evalkit.py").read_text(encoding="utf-8"),
+                                                   encoding="utf-8")
+    (work / "results.json").write_text(json.dumps(_manifest(ALL[0])), encoding="utf-8")
+    (work / "eval.py").write_text("# demo\n", encoding="utf-8")
+    (work / "PROMPT.md").write_text("demo\n", encoding="utf-8")
+    return work
+
+
+def test_failure_after_final_value_fails_the_run(tmp_path):
+    """compute() that fills every value and then raises must not grade PASS."""
+    kit = _kit()
+    work = _demo_folder(tmp_path)
+    results = _manifest(ALL[0])["results"]
+
+    def compute(args, values, notes, context):
+        for r in results:
+            values[r["id"]] = r["value"]
+        raise ValueError("failure after final value")
+
+    out = tmp_path / "run.json"
+    assert kit.main(work / "results.json", compute, argv=["--out", str(out)]) == 1
+    record = json.loads(out.read_text(encoding="utf-8"))
+    assert record["grade"] == "FAIL" and any("failure after final value" in e for e in record["errors"])
+    assert {r["status"] for r in record["results"]} == {"MATCH"}
+
+
+def test_record_written_without_out(tmp_path):
+    kit = _kit()
+    work = _demo_folder(tmp_path)
+    runs = Path(tempfile.gettempdir()) / "report-evals-runs"
+    before = set(runs.glob("*.json")) if runs.exists() else set()
+    kit.main(work / "results.json", lambda args, values, notes, context: None, argv=[])
+    assert set(runs.glob("*.json")) - before
+
+
+@pytest.mark.parametrize("mode, removed", [("rebuild", "eval.py"), ("prompt-level", "PROMPT.md"),
+                                          ("rebuild", "../evalkit.py")])
+def test_missing_bound_file_makes_record_stale(tmp_path, mode, removed):
+    kit = _kit()
+    work = _demo_folder(tmp_path)
+    names = kit.PROMPT_ARTIFACTS if mode == "prompt-level" else kit.REBUILD_ARTIFACTS
+    record = tmp_path / "record.json"
+    record.write_text(json.dumps({"mode": mode, "artifacts": kit.artifacts(work, names)}), encoding="utf-8")
+    assert kit.check_record(work, record) == []
+    (work / removed).unlink()
+    assert any("missing" in p for p in kit.check_record(work, record))
 
 
 def test_failed_compute_still_writes_record(tmp_path):
@@ -141,19 +204,29 @@ def test_failed_compute_still_writes_record(tmp_path):
     assert {r["status"] for r in record["results"][1:]} == {"ERROR"}
 
 
-def test_script_identity_is_checked(tmp_path):
-    """A copy of the counting script that differs from the pinned blob is graded False."""
-    folder = "issue-002-gom-well-permits"
-    spec = importlib.util.spec_from_file_location("_wells_eval", EVALS / folder / "eval.py")
+def _wells_module():
+    spec = importlib.util.spec_from_file_location("_wells_eval", EVALS / "issue-002-gom-well-permits" / "eval.py")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    pin = _manifest(folder)["code"]["commit"]
+    return module
+
+
+@pytest.mark.parametrize("revision", ["pinned", "candidate"])
+def test_script_identity_by_revision(tmp_path, revision):
+    """pinned: a changed copy is graded False. candidate: identity is not graded."""
+    module = _wells_module()
+    pin = _manifest("issue-002-gom-well-permits")["code"]["commit"]
     blob = module.evalkit.git_blob(EVALS.parents[1], pin, module.SCRIPT)
     if blob is None:
         pytest.skip("pinned commit not readable in this clone")
     changed = tmp_path / "count_rawdata.py"
     changed.write_bytes(blob + b"\n# changed\n")
-    args = type("Args", (), {"repo_root": EVALS.parents[1], "script": changed, "cache": tmp_path})()
+    args = type("Args", (), {"repo_root": EVALS.parents[1], "script": changed, "cache": tmp_path,
+                             "revision": revision})()
     values, notes, context = {}, {}, {}
     module.resolve_script(args, pin, values, notes, context)
-    assert values["script_matches_pinned_commit"] is False
+    if revision == "pinned":
+        assert values["script_matches_pinned_commit"] is False
+    else:
+        assert "script_matches_pinned_commit" not in values
+        assert context["code_mode"] == "candidate"

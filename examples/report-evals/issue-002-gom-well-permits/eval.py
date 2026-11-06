@@ -51,6 +51,7 @@ def add_args(ap):
     ap.add_argument("--cache", type=Path,
                     default=Path(tempfile.gettempdir()) / "report-evals-cache" / date.today().isoformat(),
                     help="folder for downloaded files (one folder per day by default)")
+    ap.set_defaults(revision="pinned")  # the counting script is not on main yet
 
 
 def _lf(data: bytes) -> bytes:
@@ -58,14 +59,31 @@ def _lf(data: bytes) -> bytes:
 
 
 def resolve_script(args, pin: str, values: dict, notes: dict, context: dict) -> Path:
-    """Return the script to run, and grade its identity with the pinned commit."""
+    """Return the script to run, and grade its identity with the pinned commit.
+
+    --revision pinned (default here): the pinned blob, or --script checked
+    against it. --revision candidate: the script of this checkout (or
+    --script); its identity with the pin is not graded, so a candidate edit is
+    judged only by the counts it produces.
+    """
+    if args.revision == "candidate":
+        script = args.script or Path(args.repo_root) / SCRIPT
+        if not script.exists():
+            raise FileNotFoundError(f"{SCRIPT} is not in this checkout; use --revision pinned")
+        notes["script_matches_pinned_commit"] = "candidate revision: identity with the pin not graded"
+        context["code_mode"] = "candidate"
+        context["counting_script"] = {"path": SCRIPT if args.script is None else script.name,
+                                      "sha256_lf": hashlib.sha256(_lf(script.read_bytes())).hexdigest()}
+        return script
     blob = evalkit.git_blob(args.repo_root, pin, SCRIPT)
     if args.script is not None:
         script = args.script
         if blob is None:
             notes["script_matches_pinned_commit"] = "pinned commit not readable from --repo-root; identity not checked"
         else:
-            values["script_matches_pinned_commit"] = _lf(script.read_bytes()) == _lf(blob)
+            same = _lf(script.read_bytes()) == _lf(blob)
+            values["script_matches_pinned_commit"] = same
+            context["code_mode"] = "historical" if same else "candidate"
     elif blob is not None:
         script = args.cache / f"count_rawdata-{pin[:12]}.py"
         script.parent.mkdir(parents=True, exist_ok=True)
