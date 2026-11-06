@@ -12,6 +12,7 @@ codes and null normalized fields. It never substitutes zero for missing data.
 | --- | --- | --- |
 | 1 | 2026-10-20 | Added a sourced money policy, deterministic utilities and a worked example to make annual disclosure comparisons auditable. |
 | 2 | 2026-10-22 | Validate serialized comparison keys and currency syntax, and specify the complete decimal context to keep results reproducible. |
+| 3 | 2026-11-06 | Align the plan with evidenced rates, screen fractional rates, canonicalize fingerprints, recheck policy metadata, distinguish missing bases, constrain provenance and document ingest mappings. |
 
 ## Contract and scope
 
@@ -34,21 +35,33 @@ existing analytics behavior are unchanged.
 | `magnitude_scale` | Exactly `units`, `thousand`, `million` or `billion`, using the short scale. |
 | `fiscal_year` | Positive integer calendar-year label. Missing years are never inferred. |
 | `as_reported_metric_name` | Original metric label, retained verbatim. |
-| `metric_name_normalized` | Caller-declared economic metric used in the comparison key. |
-| `scope` | `operator`, `corporate`, `segment` or `project`; these remain distinct. |
+| `metric_name_normalized` | Caller-declared economic metric used in the comparison key; map ingest `DisclosureRow.normalized_metric_name` explicitly to this field. |
+| `scope` | `operator`, `corporate`, `segment` or `project`; map ingest `DisclosureRow.scope_type` to the same `project`, `corporate` or `segment` value. `operator` is a separate normalization-only aggregation scope without an ingest enum counterpart and requires an explicit caller declaration. These scopes remain distinct. |
 | `comparison_basis` | Nonblank caller attestation of accounting perimeter, cash/accrual, gross/net interest and other relevant economic definitions. |
 | `period_basis` | Exactly `calendar_year_flow`; other fiscal calendars and closing balances need a different rate convention. |
 | `price_basis` | Exactly `nominal`; already rebased amounts must not be rebased again. |
-| `provenance` | Source metadata carried unchanged in an independent deep snapshot. Citation verification remains the ingest contract's responsibility. |
+| `provenance` | JSON-compatible source metadata carried unchanged in an independent deep-copied snapshot; nested numbers must be finite. Citation verification remains the ingest contract's responsibility. |
+
+Frozen models prevent field reassignment; nested provenance dictionaries and
+lists remain mutable, and the money model is not a hashable immutable value.
+Normalization deep-copies that metadata so a change to the snapshot does not
+change the input. Unsupported Python objects raise validation errors rather
+than fail later during JSON serialization.
 
 `NormalizationPolicy` requires a policy identifier, annual escalation rate and
 its evidence. The target is USD and the default base year is 2020, as specified
 in the [issue-336 plan](../../plans/2026-04-22-issue-336-currency-normalization-and-comparability-policy-for-annual-disclosures.md).
-The base year can be supplied explicitly. The plan's illustrative 3.0% rate
-has no qualified empirical series here, so it is **required input**, never a
-default. Assumptions must be labelled **assumed, based on previous experience**.
+The base year can be supplied explicitly. The original plan's fixed 3.0% rate
+is not adopted as a default because no qualified empirical escalation series
+is supplied here. The plan's policy revision records this change: the rate and
+its evidence are **required inputs**, never defaults. Assumptions must be
+labelled **assumed, based on previous experience**.
 Explicit `None` for the rate or missing evidence yields `NOT_EVALUATED`,
 including same-year and same-currency rows; the policy must be complete.
+Rates are fractional inputs restricted to `-1 < r < 1`. The upper ceiling is
+an input screen for percent-versus-fraction errors: `3` is rejected rather than
+treated as 300%, while `0.03` represents 3.0%. It is not a sourced empirical
+inflation bound. Rates at or above 100% require a separately defined policy.
 
 ## Method and sources
 
@@ -132,17 +145,31 @@ The batch view preserves order and emits one result for every input. Missing
 fields, mismatched currency/unit pairs, unsupported scales, scopes, periods
 or price bases and missing FX or escalation evidence produce explicit reason
 codes. Nonfinite input numbers and malformed policies raise validation errors.
+Absent or blank period and price bases produce `missing_period_basis` and
+`missing_price_basis`; declared unsupported values produce the corresponding
+`unsupported_*` codes.
 Arithmetic outside the decimal context's range yields
 `decimal_calculation_failed` with no normalized value.
 
 `money_values_are_comparable(a, b)` requires two successful results with exactly
 the same normalized metric, scope, declared economic basis, currency, target
-year, method and full policy fingerprint. A changed assumption, source,
+year, method and full policy fingerprint. Fingerprints use sorted JSON keys
+and exact decimal coefficients and exponents without representational trailing
+zeros or context-dependent rounding. Thus `0.03` and `0.030` yield identical
+fingerprints, as do equivalent FX observations. A changed assumption, source,
 table version or table order conservatively creates a different policy.
-JSON validation rejects a serialized comparison key that disagrees with the
-row's metadata. The comparison gate also reconstructs the tuple from that
-metadata and refuses a stale key. These consistency checks do not authenticate
-the reported evidence or the policy fingerprint's origin.
+The free-text `policy_id` intentionally remains part of this boundary: a new
+identifier isolates its provenance contract even when the numeric assumptions
+match. Existing stored outputs require regeneration to use the canonical
+fingerprint; no compatibility with earlier hash encodings is inferred.
+JSON validation rejects a serialized comparison key that disagrees with its
+key fields. The comparison gate also reconstructs that tuple and refuses a
+stale key. It additionally requires equal
+`annual_escalation_rate`, `escalation_source`, `fx_table_version` and `policy_id`
+between the two rows, including unvalidated copies. Applied FX rates may differ
+between currencies; equality of FX rates is not a comparison criterion.
+These consistency checks do not authenticate the reported evidence or the policy
+fingerprint's origin.
 Currency conversion does not establish equivalent asset boundaries, ownership
 shares, accounting treatments, cash timing or metric definitions. A nonblank
 basis is an attestation by the caller, not an independently verified fact.
@@ -192,6 +219,9 @@ amounts, missing evidence, unavailable FX, decimal failures, policy changes,
 economic-basis gating, serialization and the executable example. It also covers
 independent metadata changes with stale keys, ambiguous matching currency/unit
 pairs, invalid custom FX codes and altered default/current decimal contexts.
+The additional cases cover rate bounds, equivalent decimal fingerprints,
+unrounded policy distinctions, policy identifiers, copied policy metadata,
+missing basis reason codes and nested JSON provenance.
 
 Live FX ingestion, non-calendar fiscal averages, transaction/closing rates,
 qualified escalation series, restatements and adapters for existing downstream

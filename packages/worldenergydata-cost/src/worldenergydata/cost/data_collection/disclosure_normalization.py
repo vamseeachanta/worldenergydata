@@ -21,9 +21,10 @@ from decimal import (
     localcontext,
 )
 from hashlib import sha256
-from typing import Any, Literal
+from json import dumps
+from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field, StrictInt, model_validator
+from pydantic import BaseModel, ConfigDict, Field, JsonValue, StrictInt, model_validator
 
 from worldenergydata.cost.data_collection.fx_policy_v1 import (
     BASELINE_FX_TABLE,
@@ -50,7 +51,8 @@ class DisclosureMoney(BaseModel):
     Unit must repeat the currency code; scale is separate, never inferred from
     a currency symbol or a suffix. ``comparison_basis`` is a caller-attested
     description of accounting perimeter, cash/accrual and gross/net interest.
-    Provenance can retain the complete source record and its citation.
+    Provenance can retain JSON-compatible source metadata and its citation.
+    Frozen fields prevent reassignment; nested provenance remains mutable.
     """
 
     model_config = ConfigDict(frozen=True, extra="forbid", allow_inf_nan=False)
@@ -66,7 +68,20 @@ class DisclosureMoney(BaseModel):
     comparison_basis: str | None = None
     period_basis: str | None = None
     price_basis: str | None = None
-    provenance: dict[str, Any] = Field(default_factory=dict)
+    provenance: dict[str, JsonValue] = Field(default_factory=dict)
+
+
+def _canonical_decimal(value: Decimal) -> str:
+    """Remove representational trailing zeros without context-dependent rounding."""
+    sign, digits, exponent = value.as_tuple()
+    digits = list(digits)
+    while digits and digits[-1] == 0:
+        digits.pop()
+        exponent += 1
+    if not digits:
+        return "0"
+    coefficient = "".join(str(digit) for digit in digits)
+    return f"{'-' if sign else ''}{coefficient}e{exponent}"
 
 
 class NormalizationPolicy(BaseModel):
@@ -74,7 +89,8 @@ class NormalizationPolicy(BaseModel):
 
     The rate and its evidence are required arguments, but may explicitly be
     None to record a missing assumption. Such a policy never produces a value.
-    The full serialized policy is fingerprinted to separate comparison bases.
+    All policy fields, including the identifier, define the comparison boundary.
+    Decimal representations are canonicalized without rounding before hashing.
     """
 
     model_config = ConfigDict(frozen=True, extra="forbid", allow_inf_nan=False)
@@ -83,13 +99,21 @@ class NormalizationPolicy(BaseModel):
     # Target year from the repository issue-336 plan (2026-04-22), Scope Boundaries.
     base_year: StrictInt = Field(default=2020, gt=0)
     # Equation 3-13 requires 1+r > 0 for a positive, invertible price ratio.
-    annual_escalation_rate: Decimal | None = Field(gt=Decimal(-1))
+    # The <1 ceiling is an input screen for percent/fraction entry errors,
+    # not an empirical inflation bound supplied by that equation.
+    annual_escalation_rate: Decimal | None = Field(gt=Decimal(-1), lt=Decimal(1))
     escalation_source: str | None
     fx_table: FxTable = BASELINE_FX_TABLE
 
     @property
     def fingerprint(self) -> str:
-        return sha256(self.model_dump_json().encode("utf-8")).hexdigest()
+        canonical = dumps(
+            self.model_dump(),
+            default=_canonical_decimal,
+            sort_keys=True,
+            separators=(",", ":"),
+        )
+        return sha256(canonical.encode("utf-8")).hexdigest()
 
 
 def _comparison_key(
@@ -111,7 +135,7 @@ def _comparison_key(
 
 
 class NormalizedDisclosureMoney(BaseModel):
-    """Separate normalized fields; raw money is a deep snapshot.
+    """Separate normalized fields; raw money is a deep-copied snapshot.
 
     Amounts are base-year USD in individual units. Decimal values serialize as
     strings in JSON, avoiding binary-float rounding. No presentation rounding
@@ -237,9 +261,13 @@ def normalize_disclosure_money(
         "segment",
     }:
         reasons.append("unsupported_scope")
-    if record.period_basis != "calendar_year_flow":
+    if _blank(record.period_basis):
+        reasons.append("missing_period_basis")
+    elif record.period_basis != "calendar_year_flow":
         reasons.append("unsupported_period_basis")
-    if record.price_basis != "nominal":
+    if _blank(record.price_basis):
+        reasons.append("missing_price_basis")
+    elif record.price_basis != "nominal":
         reasons.append("unsupported_price_basis")
     if policy.annual_escalation_rate is None or _blank(policy.escalation_source):
         reasons.append("missing_escalation_evidence")
@@ -337,6 +365,10 @@ def money_values_are_comparable(
     return (
         left.normalization_status == right.normalization_status == "NORMALIZED"
         and left.comparability_status == right.comparability_status == "comparable"
+        and left.annual_escalation_rate == right.annual_escalation_rate
+        and left.escalation_source == right.escalation_source
+        and left.fx_table_version == right.fx_table_version
+        and left.policy_id == right.policy_id
         and left.comparison_key is not None
         and left.comparison_key
         == left._derived_comparison_key()

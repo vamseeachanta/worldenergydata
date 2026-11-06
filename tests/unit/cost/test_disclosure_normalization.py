@@ -181,10 +181,14 @@ def test_published_fx_quote_direction(money, policy, currency, year, expected):
         ("scope", None, "missing_scope"),
         ("comparison_basis", None, "missing_comparison_basis"),
         ("comparison_basis", "  ", "missing_comparison_basis"),
-        ("period_basis", None, "unsupported_period_basis"),
+        ("period_basis", None, "missing_period_basis"),
+        ("period_basis", "", "missing_period_basis"),
+        ("period_basis", "  ", "missing_period_basis"),
         ("period_basis", "non_calendar_year_flow", "unsupported_period_basis"),
         ("period_basis", "closing_balance", "unsupported_period_basis"),
-        ("price_basis", None, "unsupported_price_basis"),
+        ("price_basis", None, "missing_price_basis"),
+        ("price_basis", "", "missing_price_basis"),
+        ("price_basis", "  ", "missing_price_basis"),
         ("price_basis", "constant", "unsupported_price_basis"),
         ("unit", "USD", "currency_unit_mismatch"),
         ("unit", "EUR/boe", "currency_unit_mismatch"),
@@ -203,6 +207,8 @@ def test_missing_or_ambiguous_inputs_are_not_evaluated(
     assert result.comparability_status == "not_comparable"
     assert result.normalization_status == "NOT_EVALUATED"
     assert reason in result.reasons
+    if field in {"period_basis", "price_basis"}:
+        assert result.reasons == (reason,)
     assert result.normalized_amount is None
     assert result.normalized_currency is None
     assert result.normalized_base_year is None
@@ -283,9 +289,9 @@ def test_nonfinite_amounts_rejected(money, value):
         changed(money, amount=value)
 
 
-@pytest.mark.parametrize("rate", ["-1", "-2", "NaN", "Infinity"])
+@pytest.mark.parametrize("rate", ["-1", "-2", "1", "3", "NaN", "Infinity"])
 def test_invalid_escalation_rate_rejected(policy, rate):
-    """1+r must be positive for the real-valued price ratio (HB 135, eq. 3-13)."""
+    """Positive price ratios (HB 135, eq. 3-13); reject percent/fraction errors."""
     with pytest.raises(ValidationError):
         NormalizationPolicy(**{**policy.model_dump(), "annual_escalation_rate": rate})
 
@@ -398,6 +404,10 @@ def test_serialized_comparison_key_must_match_metadata(money, policy, field, val
         ("normalized_base_year", 2021),
         ("policy_fingerprint", "different-policy"),
         ("comparison_basis", "gross interest"),
+        ("annual_escalation_rate", Decimal("0.04")),
+        ("escalation_source", "Alternative synthetic assumption"),
+        ("fx_table_version", "different-table"),
+        ("policy_id", "different-identifier"),
     ],
 )
 def test_comparison_gate_rechecks_metadata(money, policy, field, value):
@@ -411,6 +421,110 @@ def test_comparison_gate_rechecks_metadata(money, policy, field, value):
         copied = original.model_copy(update={field: value})
     assert not money_values_are_comparable(original, copied)
     assert not money_values_are_comparable(copied, original)
+
+
+@pytest.mark.parametrize("field", ["annual_escalation_rate", "fx_table", "both"])
+def test_equivalent_decimal_policies_share_fingerprint(money, policy, field):
+    """Trailing decimal zeros change representation, not the numeric assumption."""
+    values = policy.model_dump()
+    if field in {"annual_escalation_rate", "both"}:
+        values["annual_escalation_rate"] = Decimal("0.030")
+    if field in {"fx_table", "both"}:
+        values["fx_table"] = FxTable(
+            version=policy.fx_table.version,
+            rates=tuple(
+                FxRate(
+                    **{
+                        **rate.model_dump(),
+                        "usd_per_currency": str(rate.usd_per_currency) + "0",
+                    }
+                )
+                for rate in policy.fx_table.rates
+            ),
+        )
+    equivalent = NormalizationPolicy(**values)
+    with localcontext() as context:
+        context.prec = 2
+        assert equivalent.fingerprint == policy.fingerprint
+    assert money_values_are_comparable(
+        normalize_disclosure_money(money, policy),
+        normalize_disclosure_money(money, equivalent),
+    )
+
+
+def test_fingerprint_preserves_full_decimal_precision(policy):
+    """Canonicalization must not round unequal rates under a caller's context."""
+    different = NormalizationPolicy(
+        **{
+            **policy.model_dump(),
+            "annual_escalation_rate": "0.03000000000000000000000000001",
+        }
+    )
+    with localcontext() as context:
+        context.prec = 2
+        assert different.fingerprint != policy.fingerprint
+
+
+def test_policy_identifier_is_a_conservative_comparison_boundary(money, policy):
+    """Different policy identifiers intentionally isolate provenance contracts."""
+    renamed = NormalizationPolicy(
+        **{**policy.model_dump(), "policy_id": "renamed-policy"}
+    )
+    assert renamed.fingerprint != policy.fingerprint
+    assert not money_values_are_comparable(
+        normalize_disclosure_money(money, policy),
+        normalize_disclosure_money(money, renamed),
+    )
+
+
+@pytest.mark.parametrize(
+    "rate, expected", [("-0.99", "1"), ("0", "100"), ("0.999", "199.9")]
+)
+def test_fractional_escalation_rates_within_policy_bounds(
+    money, policy, rate, expected
+):
+    """Hand: 100*(1+r) gives 1, 100, 199.9; HB 135 (2020), eq. 3-13."""
+    scenario = NormalizationPolicy(
+        **{**policy.model_dump(), "annual_escalation_rate": rate}
+    )
+    row = changed(
+        money,
+        amount="100",
+        currency="USD",
+        unit="USD",
+        magnitude_scale="units",
+        fiscal_year=2019,
+    )
+    result = normalize_disclosure_money(row, scenario)
+    assert result.normalization_status == "NORMALIZED"
+    assert result.normalized_amount == Decimal(expected)
+
+
+@pytest.mark.parametrize(
+    "value",
+    [object(), Path("relative-evidence"), Decimal("0.03"), {1}, (1,), b"text"],
+)
+def test_non_json_provenance_is_rejected(money, value):
+    """Nested provenance must serialize without custom encoders or coercion."""
+    with pytest.raises(ValidationError):
+        changed(money, provenance={"nested": {"value": value}})
+
+
+@pytest.mark.parametrize("value", [float("nan"), float("inf"), -float("inf")])
+def test_nonfinite_provenance_is_rejected(money, value):
+    with pytest.raises(ValidationError):
+        changed(money, provenance={"nested": [value]})
+
+
+def test_json_provenance_roundtrip_is_a_deep_copy(money, policy):
+    row = changed(money, provenance={"nested": [None, True, 1, 1.5, "citation"]})
+    result = normalize_disclosure_money(row, policy)
+    assert (
+        NormalizedDisclosureMoney.model_validate_json(result.model_dump_json())
+        == result
+    )
+    result.as_reported.provenance["nested"].append("changed copy")
+    assert row.provenance["nested"] == [None, True, 1, 1.5, "citation"]
 
 
 @pytest.mark.parametrize(
