@@ -9,15 +9,16 @@ section 11 supersedes the F13/F19 dispositions for the current implementation.
 | Revision | Date | What changed and why |
 | --- | --- | --- |
 | 3 | 2026-10-19 | Added date completeness detection and tests so empty or missing dates cannot imply complete bounds. Earlier revision evidence remains below. |
-| 4 | 2026-10-26 | Qualified distribution evidence as unverified because no durable source-bound measurement record is retained; #1338. |
+| 4 | 2026-10-22 | Add count rejection, explicit depth units and detection tests; distinguish input validation from source qualification. |
+| 5 | 2026-11-06 | Qualified distribution evidence as unverified because no durable source-bound measurement record is retained; added a reproducible assertion and archive inventories; #1338. |
 
 | Header | Value |
 | --- | --- |
 | Module | baker_hughes |
 | Repository | worldenergydata |
 | Path | packages/worldenergydata-baker_hughes/src/worldenergydata/baker_hughes |
-| Pack revision | 4 |
-| Pack date | 2026-10-26 |
+| Pack revision | 5 |
+| Pack date | 2026-11-06 |
 | Code revision | b1394197a66f95d78615425b4e1ad4ff78bd9de2 |
 | Analysis family | EC; data pipeline; AQG r0 Python calculations gate set |
 | Quality role | Calculations quality manager; deputy: to be appointed |
@@ -162,7 +163,7 @@ The export caller `main` saves non-empty results to parquet without `load_pivot_
 | Schema and completeness | F7–F10, F13–F19; empty-filter, missing/extra-column and missing-dimension/report cases lack detection checks | #1335 |
 | Independent evidence | UNVERIFIED: Source workbook revision, depth units, independent counts and signed fingerprinted QA evidence are not established | #1336 |
 | Map coverage | No in-package map family; add section-3 method families and the outside-package collector/export path before counting in-package rows | #1337 |
-| Distribution boundary | UNVERIFIED: A durable source-bound measurement record is not retained. The offline ZIP/TAR membership tests enumerate archive members, but supplied archives are not bound to the reviewed source. [tests/unit/baker_hughes/test_distribution.py] Disposition: the artifact-evidence gap remains open until a durable record binds the inspected archives to their source revision and digests, build command, measured tool versions, archive digests, member inventories and result. Membership alone does not verify installed behavior. Documentation exclusion remains a maintainer decision; the declared Markdown inclusion policy is unchanged. [packages/worldenergydata-baker_hughes/pyproject.toml:L55-L56] | #1338 |
+| Distribution boundary | UNVERIFIED: A durable source-bound measurement record is not retained. The offline ZIP/TAR membership tests enumerate archive members, but supplied archives are not bound to the reviewed source. [tests/unit/baker_hughes/test_distribution.py] The cited test postdates the recorded code revision. Disposition: the artifact-evidence gap remains open until a durable record binds the inspected archives to their source revision and digests, build command, measured tool versions, archive digests, member inventories and result. Membership alone does not verify installed behavior. Documentation exclusion remains a maintainer decision; the declared Markdown inclusion policy is unchanged. [packages/worldenergydata-baker_hughes/pyproject.toml:L55-L56] | #1338 |
 | Documentation discovery | Read the member README and all three package Python files; module-naming documentation found in 6 repository discovery documents, including 1 discovery file with identifying names; individual identifying paths are withheld | #1336 |
 | Testing coverage | Read all 15 test definitions across the loader tests and smoke tests; 3 regression cases are listed in section 4. [tests/test_baker_hughes_loader.py:L13-L135] [tests/unit/baker_hughes/test_smoke.py:L8-L14] | #1336 |
 | Governance | Deputy role and QA evidence indexing still require maintainer action; draft references are filed | #1336 |

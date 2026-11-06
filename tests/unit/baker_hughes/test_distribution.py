@@ -24,6 +24,64 @@ PACKAGE_MEMBERS = {
 }
 
 
+def _copy_source(source, destination):
+    """Copy the member source for an offline build."""
+    shutil.copytree(
+        source,
+        destination,
+        ignore=shutil.ignore_patterns("build", "dist", "*.egg-info", "__pycache__"),
+    )
+
+
+def test_source_copy_excludes_generated_directories(tmp_path):
+    source = tmp_path / "checkout"
+    for relative in (
+        "build/stale.py",
+        "dist/stale.whl",
+        "src/stale.egg-info/SOURCES.txt",
+        "src/__pycache__/stale.pyc",
+        "src/loader.py",
+    ):
+        path = source / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("fixture", encoding="utf-8")
+
+    destination = tmp_path / "source"
+    _copy_source(source, destination)
+
+    assert sorted(
+        path.relative_to(destination).as_posix()
+        for path in destination.rglob("*")
+        if path.is_file()
+    ) == ["src/loader.py"]
+
+
+def test_distribution_boundary_retains_evidence_gap():
+    repo = Path(__file__).resolve().parents[3]
+    pack = repo / (
+        "packages/worldenergydata-baker_hughes/src/"
+        "worldenergydata/baker_hughes/docs/agent-pack.md"
+    )
+    (row,) = (
+        line
+        for line in pack.read_text(encoding="utf-8").splitlines()
+        if line.startswith("| Distribution boundary |")
+    )
+    disposition = row.split("|")[2].strip()
+    assert disposition.startswith("UNVERIFIED:")
+    for required in (
+        "artifact-evidence gap remains open",
+        "supplied archives are not bound to the reviewed source",
+        "source revision and digests",
+        "build command",
+        "measured tool versions",
+        "archive digests",
+        "member inventories and result",
+        "Membership alone does not verify installed behavior",
+    ):
+        assert required in disposition, required
+
+
 @pytest.fixture(scope="module")
 def distribution_archives(tmp_path_factory):
     """Supply scratch archive paths, building offline when none are supplied."""
@@ -35,7 +93,7 @@ def distribution_archives(tmp_path_factory):
         # tests/unit/baker_hughes/test_distribution.py -> repository root.
         repo = Path(__file__).resolve().parents[3]
         source = scratch / "source"
-        shutil.copytree(repo / "packages/worldenergydata-baker_hughes", source)
+        _copy_source(repo / "packages/worldenergydata-baker_hughes", source)
         artifact_dir = scratch / "dist"
         artifact_dir.mkdir()
         result = subprocess.run(
@@ -62,7 +120,7 @@ def distribution_archives(tmp_path_factory):
     return wheel, sdist
 
 
-def test_wheel_contains_pack_and_loader(distribution_archives):
+def test_wheel_contains_pack_and_loader(distribution_archives, capsys):
     wheel, _ = distribution_archives
     with zipfile.ZipFile(wheel) as archive:
         members = {
@@ -70,10 +128,13 @@ def test_wheel_contains_pack_and_loader(distribution_archives):
         }
 
     assert PACKAGE_MEMBERS <= members, sorted(members)
-    print("Wheel members:", *sorted(PACKAGE_MEMBERS), sep="\n")
+    print("Wheel members:", *sorted(members), sep="\n")
+    output = capsys.readouterr().out
+    assert output.splitlines() == ["Wheel members:", *sorted(members)]
+    print(output, end="")
 
 
-def test_sdist_contains_pack_and_loader(distribution_archives):
+def test_sdist_contains_pack_and_loader(distribution_archives, capsys):
     _, sdist = distribution_archives
     prefix = sdist.name.removesuffix(".tar.gz") + "/src/"
     expected = {prefix + member for member in PACKAGE_MEMBERS}
@@ -81,4 +142,7 @@ def test_sdist_contains_pack_and_loader(distribution_archives):
         members = {member.name for member in archive.getmembers() if member.isfile()}
 
     assert expected <= members, sorted(members)
-    print("Sdist members:", *sorted(expected), sep="\n")
+    print("Sdist members:", *sorted(members), sep="\n")
+    output = capsys.readouterr().out
+    assert output.splitlines() == ["Sdist members:", *sorted(members)]
+    print(output, end="")
