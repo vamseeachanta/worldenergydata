@@ -18,16 +18,18 @@ from worldenergydata.ukcs.field_concept import ukcs_field_to_concept
 
 
 @pytest.mark.parametrize(
-    "convert",
+    "convert, source_suffix",
     [
-        build_brazil_field_concept,
-        canada_field_to_concept,
-        sodir_field_to_concept,
-        spain_field_to_concept,
-        ukcs_field_to_concept,
+        (build_brazil_field_concept, ""),
+        (canada_field_to_concept, "; water_depth=provided"),
+        (sodir_field_to_concept, ""),
+        (spain_field_to_concept, ""),
+        (ukcs_field_to_concept, ""),
     ],
 )
-def test_supplied_measurement_and_source_survive_repeated_conversion(convert):
+def test_supplied_measurement_and_source_survive_repeated_conversion(
+    convert, source_suffix
+):
     """Hand calculation: supplied depth wins unchanged; no fallback is needed.
 
     Converting the same dict twice must produce equal models and leave the dict
@@ -42,6 +44,6 @@ def test_supplied_measurement_and_source_survive_repeated_conversion(convert):
     before = copy.deepcopy(meta)
     first = convert(meta)
     assert first.water_depth_m == 12
-    assert first.data_source == meta["source"]
+    assert first.data_source == meta["source"] + source_suffix
     assert convert(meta) == first
     assert meta == before

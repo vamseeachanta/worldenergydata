@@ -28,7 +28,15 @@ def client(monkeypatch):
 def test_continuation_cap_and_exhaustion(client, monkeypatch, remaining):
     """The first payload is L bytes; second budget is exactly R, when positive."""
     page = {
-        "features": [{"attributes": {"OBJECTID": 1}}],
+        "features": [
+            {
+                "attributes": {
+                    "OBJECTID": 1,
+                    "fldName": "synthetic",
+                    "fldNpdidField": 1,
+                }
+            }
+        ],
         "exceededTransferLimit": True,
     }
     raw = json.dumps(page).encode()

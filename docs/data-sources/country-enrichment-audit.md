@@ -17,6 +17,7 @@ source permissions.
 | --- | --- | --- |
 | Initial | 2026-10-21 | Record inspected coverage, correct observed identity and budget defects, and provide reproducible synthetic cases. |
 | 1 | 2026-10-25 | Pair imported values with their own origins, reject orphan evidence, and define the shared-source limit for partial enrichment. |
+| 2 | 2026-11-06 | Align synthetic fixtures and expectations with merged main: nullable reservoir measurements, Canada depth provenance and required SODIR attributes. |
 
 ## Scope and method
 
@@ -33,7 +34,7 @@ identities and distinguishable values; no regulator rows are downloaded.
 | Brazil ANP `field_concept.py` | Existing null-name guards and deterministic metadata reduction; supplied measured depth and source survive repeated concept conversion. | The reducer returns source metadata without an origin map. New provenance inference is outside scope. |
 | SODIR `datasets.py` | Both wellbore and production joins exclude null/blank source identities, reject conflicting supplemental rows, and preserve existing observation columns. Repetition retains source evidence. | No unit conversion or physical eligibility is inferred by the join. |
 | SODIR `feature_service.py` | Remaining-byte transport caps, exact-budget terminal pages, and no request after aggregate exhaustion. | There is no reviewed-terms digest preflight in this connector; changed-access-policy coverage is NOT_EVALUATED. |
-| SODIR, Canada, Spain and UKCS `field_concept.py` | Repeated conversion of supplied metadata preserves depth and the source string without mutating input. | These are sparse converters, not re-enrichment functions. Arbitrary origin dictionaries are not mapped into FieldConcept. |
+| SODIR, Canada, Spain and UKCS `field_concept.py` | Repeated conversion of supplied metadata preserves depth and source evidence without mutating input. Canada appends `; water_depth=provided` to the supplied source; SODIR, Spain and UKCS retain the exact source string. | These are sparse converters, not re-enrichment functions. Arbitrary origin dictionaries are not mapped into FieldConcept. |
 | Brazil ANP `production/anp_client.py`; UKCS `production/nsta_client.py` | Download paths inspected: response bodies are consumed without an aggregate byte cap or reviewed-terms comparison. | Policy-change and remaining-byte safeguards are NOT_EVALUATED; separate connector changes need reviewed policy evidence and explicit budgets. |
 | Canada `production/cnloer_loader.py` | Inspected loader consumes local or injected content; runtime downloading is documented as a follow-on. | Network policy checks are not applicable to this loader. |
 | Spain `production/cores_source.py` | Discovery and workbook-download boundaries inspected. | Workbook validation does not assess changed automation terms or remaining aggregate bytes; these checks are NOT_EVALUATED. |
@@ -161,26 +162,41 @@ depth sentinels and budget arithmetic are specified independently in their
 docstrings. Network boundaries are blocked in transport tests. Existing Brazil
 link tests and the tests of all changed modules are included in validation.
 
-Initial validation recorded 58 passing new regression cases. Its combined module run produced 284 passes
-and three existing snapshot failures at
-`tests/unit/australia/test_field_concept_opt_in.py:27`: the recorded outputs
-omit `flowline_liquid_rate_bpd`, already present in
-`src/worldenergydata/field_development/models.py:80` on `origin/main`.
-Reading the unchanged test, model and snapshots on that reference establishes
-the baseline mismatch. Ruff reported 54 diagnostics on unchanged source spans;
-the new tests passed with first-party import classification matching the
-repository's isort configuration. Black, isort, the repository structure check,
-the engineering-register check and the documented example passed.
+Earlier validation recorded 58 passing new regression cases. Partial-enrichment
+validation added 15 SODIR cases, bringing the enrichment file to 51 cases.
+Eleven new cases failed before their corresponding fixes; four positive cases
+exercise complete imports, a later-row guard and the wellbore projection with
+and without existing observations.
 
-Partial-enrichment validation ran all SODIR, Australia and audit unit tests:
-the unchanged head produced 1,081 passes and three baseline snapshot failures;
-the revised code produced 1,096 passes and the same three failures with
-`PYTHONUTF8` unset. The SODIR enrichment file now contains 51 cases, including
-15 additional cases. Eleven new cases failed before their corresponding fixes;
-four positive cases exercise complete imports, a later-row guard and the
-wellbore projection with and without existing observations. The three
-baseline failures remain at the unchanged assertion described above. Broader
-repository suites and live-source access were not run for this revision.
+After main was merged at `5150ea26`, test-first verification reproduced six
+failures: three Australia snapshot mismatches, Canada's source expectation,
+and both SODIR continuation-budget cases. The Australia fixture now includes
+null `reservoir_depth_tvd_m`, `reservoir_pressure_psi` and
+`reservoir_temperature_f` fields for `kingfish`, `without_source` and
+`field_alias`, matching main's shared model change at `cec8fa25`.
+The existing null `flowline_liquid_rate_bpd` entries are retained. No existing
+fixture value, input, recording metadata, field set or private attribute changed.
+Canada's expectation includes `; water_depth=provided`, matching `b0539abf`.
+The SODIR synthetic page now supplies `fldName` and `fldNpdidField` alongside
+`OBJECTID`, satisfying `7e97799f` so the tests reach continuation-byte accounting.
+Production source and requested-attribute validation are unchanged.
+
+Post-merge targeted verification passed all 227 cases across Australia,
+country conversion, SODIR enrichment links and continuation-byte accounting.
+The Australia snapshot cases now pass. Whole-directory audit and SODIR
+verification produced 57 audit passes and 1,040 SODIR passes, with two
+failures in unchanged SODIR tests:
+`test_batch.py::TestProcessDataCollection::test_sequential_all_success`
+requires positive elapsed time but measured `0.0`, and
+`test_storage.py::TestDataStorageInit::test_init_default` expects `data/sodir`
+where Windows renders `data\sodir`. Neither is an Australia snapshot failure.
+The targeted run used Python 3.12.13; the whole-directory result used Python
+3.11.15 with existing offline dependencies after incomplete dependency sets
+prevented earlier attempts from passing. All runs used
+`PYTHONDONTWRITEBYTECODE=1`, `--noconftest` and `-p no:cacheprovider`, with
+plugin autoload and configured coverage disabled. Socket connections were
+blocked and relative test outputs were confined to disposable worktree scratch
+space. The full repository suite and live-source access were not run.
 
 No engineering coefficients, datum conversions or classification thresholds
 are added. Existing conversion constants and classifications are outside this
