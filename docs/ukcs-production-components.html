@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UKCS production-component extraction</title>
+  <style>
+    body { font-family: sans-serif; max-width: 70rem; margin: 2rem auto; padding: 1rem; line-height: 1.5; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ccc; padding: .5rem; text-align: left; }
+    caption { caption-side: bottom; text-align: left; padding: .5rem 0; }
+    code, pre { background: #f3f5f7; }
+    pre { padding: 1rem; overflow-x: auto; }
+  </style>
+</head>
+<body>
+<h1>UKCS production-component extraction</h1>
+<p>The UKCS loader extracts separate condensate volume and operational streams
+from source-supported PPRS fields. Missing measurements remain <code>NaN</code>.
+The unified adapter retains its existing columns and passes condensate through;
+FDAS receives its existing oil, gas and water schema.</p>
+
+<h2>Revision history</h2>
+<table>
+  <thead><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr></thead>
+  <tbody><tr><td>1</td><td>2026-10-20</td><td>Separate component mappings and unknown-value handling are documented to close the condensate extraction gap.</td></tr></tbody>
+  <caption>Table 1. Document revision history.</caption>
+</table>
+
+<h2>Source basis</h2>
+<p>The authoritative public source is the NSTA
+<a href="https://services-eu1.arcgis.com/OZMfUznmLTnWccBc/arcgis/rest/services/UKCS_hydrocarbon_field_production_reports_PPRS_points_(WGS84)/FeatureServer/0?f=pjson">UKCS hydrocarbon field production reports PPRS points, layer 0</a>.
+Its field aliases were retrieved on 2026-10-20 at 09:21:41 UTC (HTTP 200).
+The downloaded schema has SHA-256
+<code>6fd9a7ade7a5cbf77827302157ca7abdfd4304eae043ab6372b4efe37b57e1b1</code>.
+This observation establishes field names and units at retrieval, rather than
+availability or quality of every monthly measurement. The downloader already
+requests all fields; no additional network request is needed for extraction.</p>
+
+<table>
+  <thead><tr><th>PPRS field</th><th>Source unit</th><th>Loader output</th></tr></thead>
+  <tbody>
+    <tr><td>GCONDVOL</td><td>m3</td><td>condensate_bbl</td></tr>
+    <tr><td>AGASPROKSM</td><td>ksm3</td><td>associated_gas_mcf</td></tr>
+    <tr><td>DGASPROKSM</td><td>ksm3</td><td>dry_gas_mcf</td></tr>
+    <tr><td>WATPRODVOL</td><td>m3</td><td>water_bbl</td></tr>
+    <tr><td>GASINJVOL</td><td>ksm3</td><td>gas_injected_mcf</td></tr>
+    <tr><td>INJWATVOL</td><td>m3</td><td>water_injected_bbl</td></tr>
+    <tr><td>REINJWATVO</td><td>m3</td><td>water_reinjected_bbl</td></tr>
+    <tr><td>GASFLARVOL</td><td>ksm3</td><td>gas_flared_mcf</td></tr>
+    <tr><td>GASVENTVOL</td><td>ksm3</td><td>gas_vented_mcf</td></tr>
+    <tr><td>OILPRODMAS</td><td>tonnes</td><td>oil_bbl, retaining the existing approximate mass conversion</td></tr>
+    <tr><td>GCONDMASS, GCONDMBD, GCONDDEN</td><td>tonnes, mb/d, kg/m3</td><td>Not extracted; no fallback to mass, rate or density</td></tr>
+    <tr><td>No separately identified NGL field</td><td>Not established</td><td>ngl_bbl is NaN</td></tr>
+  </tbody>
+  <caption>Table 2. Source coverage at retrieval. Operational streams are kept separate from production.</caption>
+</table>
+
+<h2>Method and completeness</h2>
+<p>Conversion factors are imported from <code>worldenergydata.common.units</code>.
+<a href="https://www.nist.gov/pml/special-publication-811/nist-guide-si-appendix-b-conversion-factors/nist-guide-si-appendix-b8">NIST SP 811, Appendix B.8 (web edition 2016)</a>
+lists the petroleum barrel and cubic foot in cubic metres. Their inverses
+support the shared rounded factors used here:</p>
+<pre>liquid_bbl = reported_m3 * 6.2898
+gas_mcf = reported_ksm3 * 35.3147
+gas_mcf_total = associated_gas_mcf + dry_gas_mcf</pre>
+<p>The thousand prefixes cancel in the gas conversion. Reference conditions
+are inherited from the source; this conversion does not apply a pressure or
+temperature correction. Condensate is never added to oil, and injection,
+flaring and venting are never added to produced gas. No NGL total is inferred
+from condensate. An explicit source zero remains zero; an absent column, null,
+non-numeric value or infinity becomes unknown. Both gas components are required
+for a total.</p>
+<p>Annual aggregation sums observed records per field and year only when every
+observed value for that component is known. A missing value makes that
+component's annual total unknown. Absent calendar months, duplicate records
+and reporting-unit overlap are not reconciled by this operation. A sum of
+observed records does not establish a complete calendar-year total.</p>
+
+<h2>Worked example</h2>
+<p>Run <code>python examples/ukcs/production_components.py</code> with the
+repository packages importable. Inputs are synthetic: January condensate is
+10 m3; February condensate is null. The independent hand calculation is
+<code>10 * 6.2898 = 62.898 bbl</code>, displayed as 62.9 bbl. February and the
+observed-month annual condensate total remain unknown. NGL remains unknown
+for both months. No measured production is supplied by this example.</p>
+<p>The fixture <code>tests/fixtures/ukcs/pprs_components.json</code> exercises
+the inspected field names using synthetic values. Tests independently calculate
+the expected conversions and cover explicit zeros, absent fields, nulls,
+non-mapping cases, annual incompleteness and the adapter-to-FDAS bridge.</p>
+
+<h2>Compatibility and limits</h2>
+<p>The loader adds component columns; consumers selecting by column name retain
+the existing fields. Empty frames carry the extended schema. Older normalized
+loaders without condensate remain supported by the adapter, with unknown
+condensate output. <code>STANDARD_COLUMNS</code> is unchanged; operational
+streams and NGL stay on the UKCS loader surface. FDAS has no condensate input,
+so separate condensate revenue is not established by this change.</p>
+<p>The existing crude-oil mass factor and legacy thousand-tonne oil/water
+conversions are retained for compatibility. These are approximate and do not
+establish a source-specific density. PPRS oil-volume, density-based condensate,
+separate NGL and daily-rate fallback calculations are not evaluated. A stream
+without a defensible extracted volume remains unknown rather than zero.</p>
+
+<h2>Attribution and reuse</h2>
+<p>NSTA copyright: UKCS hydrocarbon field production reports PPRS points.</p>
+<blockquote>Contains information provided by the North Sea Transition Authority and/or other third parties.</blockquote>
+<p>The <a href="https://www.nstauthority.co.uk/footer/terms-and-conditions/">NSTA terms</a>
+link the <a href="https://www.nstauthority.co.uk/media/u51lhvio/nsta-user-agreeement-june-2023.pdf">June 2023 Open User Licence</a>.
+It permits copying and adaptation with attribution and expressly permits
+non-commercial exploitation. Commercial reuse is not established by this
+documentation. Exemptions include personal data, logos and third-party rights
+outside NSTA authority. No NSTA endorsement or measurement accuracy is claimed.</p>
+</body>
+</html>

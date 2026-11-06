@@ -37,7 +37,7 @@ CASES = {
             "data_source": "synthetic",
             "notes": "NA",
         },
-        ("od_in", "wall_thickness_in", "pressure_rating_psi"),
+        ("od_in", "wall_thickness_in", "length_ft", "pressure_rating_psi"),
         "weight_air_kips",
     ),
     "mooring": (
@@ -55,7 +55,7 @@ CASES = {
             "data_source": "synthetic",
             "notes": "NA",
         },
-        ("mbl_kn",),
+        ("size_mm", "mbl_kn"),
         "weight_kg_per_m",
     ),
 }
@@ -79,7 +79,7 @@ def csv_record(tmp_path, kind, changes):
 @pytest.mark.parametrize("bad", [float("inf"), float("-inf"), float("nan"), -1])
 @pytest.mark.parametrize("route", ["model", "csv"])
 def test_rejects_nonfinite_or_negative(tmp_path, kind, field, bad, route):
-    """Each of the four positivity fields and both weights must reject."""
+    """Each of the six positivity fields and both weights must reject."""
     load, path, model, row = csv_record(tmp_path, kind, {field: bad})
     with pytest.raises(ValidationError, match=field):
         model(**row) if route == "model" else load(path)
@@ -118,12 +118,31 @@ def test_csv_preserves_literal_text(tmp_path, kind, token):
 
 @pytest.mark.parametrize("kind", CASES)
 def test_csv_empty_optional_fields_remain_absent(tmp_path, kind):
-    """Only an empty cell denotes absence; zero weight stays zero."""
+    """Only an empty cell denotes absence."""
     weight = CASES[kind][4]
     load, path, _, _ = csv_record(tmp_path, kind, {"notes": "", weight: ""})
     result = load(path)[0]
     assert result.notes is None
     assert getattr(result, weight) is None
+
+
+@pytest.mark.parametrize("kind", CASES)
+def test_csv_worked_example_preserves_declared_units(tmp_path, kind):
+    """Hand check of synthetic values; ingestion performs no unit conversion.
+
+    Jumper: OD 2 in, wall 0.5 in, length 10 ft, pressure 3 psi, weight 0 kips.
+    Mooring: size 2 mm, MBL 3 kN, linear weight 0 kg/m. Every dimension/load
+    is finite and > 0; both zero weights are finite and >= 0. These are input
+    checks only, with no inferred capacity or cross-field geometry criterion.
+    """
+    _, _, base, positive_fields, weight = CASES[kind]
+    load, path, _, _ = csv_record(tmp_path, kind, {weight: 0})
+    result = load(path)[0]
+    for field in positive_fields:
+        assert getattr(result, field) == base[field]
+    assert getattr(result, weight) == 0.0
+    assert result.manufacturer == "NA"
+    assert result.notes == "NA"
 
 
 @pytest.mark.parametrize(("kind", "field"), FIELDS)

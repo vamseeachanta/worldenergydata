@@ -40,6 +40,18 @@ class RigidJumperSpec(BaseModel):
             raise ValueError("Wall thickness must be positive and finite")
         return v
 
+    @field_validator("length_ft")
+    @classmethod
+    def length_positive(cls, v: float) -> float:
+        """Length must be positive and finite (input-domain check).
+
+        Finiteness: Python Library Reference, math.isfinite:
+        https://docs.python.org/3/library/math.html#math.isfinite
+        """
+        if not isfinite(v) or v <= 0:
+            raise ValueError("Length must be positive and finite")
+        return v
+
     @field_validator("pressure_rating_psi")
     @classmethod
     def pressure_positive(cls, v: float) -> float:
