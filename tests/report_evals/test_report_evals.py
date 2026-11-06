@@ -204,6 +204,49 @@ def test_failed_compute_still_writes_record(tmp_path):
     assert {r["status"] for r in record["results"][1:]} == {"ERROR"}
 
 
+def test_same_second_runs_keep_both_records(tmp_path, monkeypatch):
+    """Two runs started in the same second write two records; neither replaces the other."""
+    kit = _kit()
+    work = _demo_folder(tmp_path)
+    monkeypatch.setattr(kit, "utc_now", lambda: "2026-11-06T12:00:00Z")
+    results = _manifest(ALL[0])["results"]
+
+    def failing(args, values, notes, context):
+        raise ValueError("first run fails")
+
+    def passing(args, values, notes, context):
+        for r in results:
+            values[r["id"]] = r["value"]
+
+    runs = Path(tempfile.gettempdir()) / "report-evals-runs"
+    before = set(runs.glob("*.json")) if runs.exists() else set()
+    assert kit.main(work / "results.json", failing, argv=[]) == 1
+    kit.main(work / "results.json", passing, argv=[])
+    new = set(runs.glob("*.json")) - before
+    grades = sorted(json.loads(p.read_text(encoding="utf-8"))["grade"] for p in new)
+    assert len(new) == 2 and grades[0] == "FAIL", grades
+
+
+def test_offline_blob_lookup_never_fetches(tmp_path, monkeypatch):
+    """A pinned blob missing from the clone is unavailable offline; git fetch is not run."""
+    kit = _kit()
+    calls = []
+    real_run = kit.subprocess.run
+
+    def recording_run(cmd, *args, **kwargs):
+        calls.append(cmd)
+        return real_run(cmd, *args, **kwargs)
+
+    monkeypatch.setattr(kit.subprocess, "run", recording_run)
+    assert kit.git_blob(EVALS.parents[1], "0" * 40, "README.md", fetch=False) is None
+    assert calls and not any("fetch" in c for c in calls)
+    args = type("Args", (), {"repo_root": EVALS.parents[1], "pinned_commit": "0" * 40,
+                             "revision": "pinned", "offline": True})()
+    with pytest.raises(FileNotFoundError):
+        kit.repo_file(args, "README.md")
+    assert not any("fetch" in c for c in calls)
+
+
 def _wells_module():
     spec = importlib.util.spec_from_file_location("_wells_eval", EVALS / "issue-002-gom-well-permits" / "eval.py")
     module = importlib.util.module_from_spec(spec)
@@ -230,3 +273,22 @@ def test_script_identity_by_revision(tmp_path, revision):
     else:
         assert "script_matches_pinned_commit" not in values
         assert context["code_mode"] == "candidate"
+
+
+@pytest.mark.parametrize("revision, code", [("candidate", 0), ("pinned", 2)])
+def test_identity_is_graded_only_when_pinned(tmp_path, revision, code):
+    """With every count matching, a candidate run can PASS; a pinned run also needs the identity result."""
+    module = _wells_module()
+    results = _manifest("issue-002-gom-well-permits")["results"]
+
+    def counts_only(args, values, notes, context):
+        for r in results:
+            if r["id"] != "script_matches_pinned_commit":
+                values[r["id"]] = r["value"]
+
+    out = tmp_path / "run.json"
+    got = module.evalkit.main(EVALS / "issue-002-gom-well-permits" / "results.json", counts_only,
+                              module.add_args, argv=["--revision", revision, "--out", str(out)])
+    assert got == code
+    ids = {r["id"] for r in json.loads(out.read_text(encoding="utf-8"))["results"]}
+    assert ("script_matches_pinned_commit" in ids) == (revision == "pinned")

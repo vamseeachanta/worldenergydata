@@ -70,7 +70,6 @@ def resolve_script(args, pin: str, values: dict, notes: dict, context: dict) -> 
         script = args.script or Path(args.repo_root) / SCRIPT
         if not script.exists():
             raise FileNotFoundError(f"{SCRIPT} is not in this checkout; use --revision pinned")
-        notes["script_matches_pinned_commit"] = "candidate revision: identity with the pin not graded"
         context["code_mode"] = "candidate"
         context["counting_script"] = {"path": SCRIPT if args.script is None else script.name,
                                       "sha256_lf": hashlib.sha256(_lf(script.read_bytes())).hexdigest()}

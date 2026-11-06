@@ -870,7 +870,7 @@
     "abs": 0
    },
    "basis": "fixed",
-   "scope": "rebuild",
+   "scope": "pinned",
    "limits": [
     "Checks code identity only; the counts are graded by the other results."
    ]
