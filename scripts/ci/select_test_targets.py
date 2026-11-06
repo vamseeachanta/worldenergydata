@@ -77,6 +77,7 @@ CORE_PREFIXES = (
 # Exact non-module paths that should run a specific contract suite.
 CONTRACT_ROUTES = {
     "config/repo_structure.yml": "tests/repo_structure",
+    "reports/gtm/decommissioning_market_outlook.py": "tests/unit/gtm",
     "scripts/capabilities/build_onepagers.py": "tests/test_capability_onepagers.py",
     "tests/test_capability_onepagers.py": "tests/test_capability_onepagers.py",
     "reports/capabilities/pdf/benchmark.html": "tests/test_capability_onepagers.py",

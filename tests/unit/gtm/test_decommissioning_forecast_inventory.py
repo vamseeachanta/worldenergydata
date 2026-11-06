@@ -3,7 +3,7 @@
 All well counts, history counts, paces, shares and costs below are synthetic
 test inputs, not BSEE measurements or cost estimates. The hand calculations in
 the control test are the source of its expected values. Calendar windows and
-aging thresholds retain the report's existing assumptions.
+aging thresholds are fixed synthetic inputs independent of report defaults.
 """
 
 import importlib.util
@@ -82,7 +82,12 @@ def test_positive_inventory_retains_drawdown_costs_and_output_schema(
         pa_by_year={2015: 20, 2020: 40, 2024: 100},
         ta_by_year={2010: 10, 2015: 20, 2020: 50},
     )
-    # Only these synthetic scenario assumptions replace production assumptions.
+    # Pin every assumption used by the hand calculation, including its calendar.
+    monkeypatch.setitem(forecast.ASSUMPTIONS, "data_as_of_year", 2025)
+    monkeypatch.setitem(forecast.ASSUMPTIONS, "idle_threshold_years", 10)
+    monkeypatch.setitem(
+        forecast.ASSUMPTIONS, "forecast_years", [2026, 2027, 2028, 2029, 2030]
+    )
     monkeypatch.setitem(
         forecast.ASSUMPTIONS,
         "annual_attrition_pace",
@@ -110,7 +115,7 @@ def test_positive_inventory_retains_drawdown_costs_and_output_schema(
     # high = .5*4 + .5*20 = 12. Totals / 1000 give $BN .24, 1.24, 3.84
     # after rounding to cents. History means: (20+40+100)/10 = 16,
     # (40+100)/5 = 28; implied pace = 16/320 = .05.
-    # At the existing 2025 cutoff, TA ages >=10 sum to 10+20 = 30;
+    # At the synthetic 2025 cutoff, TA ages >=10 sum to 10+20 = 30;
     # ages >=15 sum to 10. Full dict equality also protects every output key.
     assert forecast.build_forecast(inventory) == {
         "eligible_inventory": {

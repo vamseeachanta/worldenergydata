@@ -119,6 +119,25 @@ def test_config_repo_structure_routes_to_its_contract():
     assert "tests/repo_structure" in r["xdist"]
 
 
+def test_decommissioning_report_routes_to_gtm_regressions():
+    changed = ["reports/gtm/decommissioning_market_outlook.py"]
+    target = "tests/unit/gtm"
+    result = select(changed, REPO_ROOT)
+    assert result["scope"] == "modules"
+    assert result["xdist"].count(target) == 1
+    assert all(t in result["xdist"] for t in ALWAYS_XDIST)
+
+    matrix = to_matrix(changed, REPO_ROOT)
+    assert matrix["scope"] == "modules"
+    assert sum(s["targets"] == target for s in matrix["include"]) == 1
+    assert {
+        "name": "unit-gtm",
+        "targets": target,
+        "mode": "xdist",
+    } in matrix["include"]
+    assert "_always" in _names(matrix)
+
+
 @pytest.mark.parametrize("module", _unit_modules())
 def test_every_unit_module_is_selected(module):
     """Drift guard: a change under any tests/unit/<module> must be module-scoped
