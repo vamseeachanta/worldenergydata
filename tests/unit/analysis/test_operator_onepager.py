@@ -2,6 +2,7 @@
 
 import copy
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -18,14 +19,13 @@ FIXTURES = Path(__file__).parents[2] / "fixtures" / "operator_onepager"
 
 @pytest.fixture
 def bundle():
-    return json.loads((FIXTURES / "worked_example.json").read_text())
+    return json.loads((FIXTURES / "worked_example.json").read_text(encoding="utf-8"))
 
 
 def test_golden(bundle):
-    assert (
-        report.render_html(bundle, "001")
-        == (FIXTURES / "worked_example.html").read_text()
-    )
+    assert report.render_html(bundle, "001") == (
+        FIXTURES / "worked_example.html"
+    ).read_text(encoding="utf-8")
 
 
 def test_preserves_values_order_and_chart(bundle):
@@ -65,6 +65,13 @@ def test_registry_operator_without_screen(bundle):
     assert "Peer comparison not captured" in page
     assert "What this data cannot tell you" in page
     assert "Specific uplift, economics and working interest are NOT_EVALUATED" in page
+
+
+def test_unknown_summary_key_is_rejected(bundle):
+    summary = bundle["operators"][0]["summary"]
+    summary["well_count_totl"] = summary.pop("well_count_total")
+    with pytest.raises(ValueError, match="Unknown summary key"):
+        report.render_html(bundle, "001")
 
 
 def test_escape_all_input_text(bundle):
@@ -181,6 +188,29 @@ def test_signed_screen_evidence_preserved(bundle):
     )
 
 
+@pytest.mark.parametrize(
+    ("value", "display"),
+    [(0.04, "0.04"), (-0.04, "-0.04"), (0.0254, "0.0254"), (1e-12, "1e-12")],
+)
+def test_small_evidence_preserves_supplied_precision(bundle, value, display):
+    evidence = bundle["operators"][0]["screen"]["candidates"][0]["evidence"][0]
+    evidence.update(label="Reported change", value=value, unit="fraction")
+    assert f"Reported change: {display} fraction [regulator]" in report.render_html(
+        bundle, "001"
+    )
+
+
+def test_small_peer_labels_agree_with_bar_widths(bundle):
+    """Hand calculation: 0.04 / 0.08 = 0.5; widths are 50.0% and 100.0%."""
+    peer = bundle["operators"][0]["screen"]["peer_comparison"]
+    peer["operator"]["value"] = 0.04
+    peer["median"]["value"] = 0.08
+    page = report.render_html(bundle, "001")
+    assert "Operator: 0.04 bbl/day [regulator]" in page
+    assert "Peer median: 0.08 bbl/day [screen]" in page
+    assert re.findall(r'style="width:([^"]+)"', page) == ["50.0%", "100.0%"]
+
+
 def test_false_positive_percentage(bundle):
     """Hand calculation: 1 false positive / 20 cases = 0.05 = 5.0 percent.
 
@@ -199,7 +229,7 @@ def test_false_positive_percentage(bundle):
 def test_pdf_command_and_single_page_guard(tmp_path, monkeypatch):
     """The issue requires one PDF page and Chrome's header suppression flag."""
     html = tmp_path / "in.html"
-    html.write_text("<!doctype html><p>test</p>")
+    html.write_text("<!doctype html><p>test</p>", encoding="utf-8", newline="\n")
     pdf = tmp_path / "out.pdf"
     calls = []
 
@@ -220,6 +250,10 @@ def test_pdf_command_and_single_page_guard(tmp_path, monkeypatch):
     assert "--headless=new" in calls[0]
     assert "--no-sandbox" not in calls[0]
     assert pdf.read_bytes().startswith(b"%PDF-")
+    profile = next(
+        a.split("=", 1)[1] for a in calls[0] if a.startswith("--user-data-dir=")
+    )
+    assert not Path(profile).exists()
 
 
 @pytest.mark.parametrize("pages", ["Pages: 2\n", "Pages: 0\n", "not a PDF"])
@@ -227,7 +261,7 @@ def test_pdf_overflow_or_invalid_readback_is_not_published(
     tmp_path, monkeypatch, pages
 ):
     html = tmp_path / "in.html"
-    html.write_text("test")
+    html.write_text("test", encoding="utf-8", newline="\n")
     pdf = tmp_path / "out.pdf"
     pdf.write_bytes(b"previous accepted output")
 
@@ -244,10 +278,15 @@ def test_pdf_overflow_or_invalid_readback_is_not_published(
     with pytest.raises(ValueError, match="exactly one page"):
         report.render_pdf(html, pdf, chrome="chrome", pdfinfo="pdfinfo")
     assert pdf.read_bytes() == b"previous accepted output"
+    assert (tmp_path / "out.rejected.pdf").read_bytes() == b"%PDF-test"
+    assert sorted(path.name for path in tmp_path.iterdir()) == [
+        "in.html",
+        "out.pdf",
+        "out.rejected.pdf",
+    ]
 
 
-@pytest.fixture
-def pdf_tools():
+def _find_pdf_tools():
     chrome = next(
         (
             path
@@ -263,8 +302,41 @@ def pdf_tools():
     )
     pdfinfo = shutil.which("pdfinfo")
     if chrome is None or pdfinfo is None:
+        if (
+            os.environ.get("CI") == "true"
+            or os.environ.get("ONEPAGER_REQUIRE_PDF") == "1"
+        ):
+            pytest.fail("PDF integration requires Chrome or Chromium and pdfinfo")
         pytest.skip("PDF integration requires Chrome or Chromium and pdfinfo")
     return {"chrome": chrome, "pdfinfo": pdfinfo}
+
+
+@pytest.fixture
+def pdf_tools():
+    return _find_pdf_tools()
+
+
+@pytest.mark.parametrize(
+    ("flag", "value"), [("CI", "true"), ("ONEPAGER_REQUIRE_PDF", "1")]
+)
+def test_missing_pdf_tools_fail_when_required(monkeypatch, flag, value):
+    monkeypatch.setattr(shutil, "which", lambda name: None)
+    monkeypatch.delenv("CI", raising=False)
+    monkeypatch.delenv("ONEPAGER_REQUIRE_PDF", raising=False)
+    monkeypatch.setenv(flag, value)
+    try:
+        with pytest.raises(pytest.fail.Exception, match="PDF integration requires"):
+            _find_pdf_tools()
+    except pytest.skip.Exception:
+        pytest.fail("Required PDF tools were silently skipped")
+
+
+def test_missing_pdf_tools_skip_with_explicit_reason_when_optional(monkeypatch):
+    monkeypatch.setattr(shutil, "which", lambda name: None)
+    monkeypatch.delenv("CI", raising=False)
+    monkeypatch.delenv("ONEPAGER_REQUIRE_PDF", raising=False)
+    with pytest.raises(pytest.skip.Exception, match="PDF integration requires"):
+        _find_pdf_tools()
 
 
 def _pdf_page_count(pdf, pdfinfo):
@@ -279,7 +351,7 @@ def _pdf_page_count(pdf, pdfinfo):
 @pytest.mark.integration
 def test_worked_example_pdf_is_one_real_page(bundle, tmp_path, pdf_tools):
     html = tmp_path / "onepager.html"
-    html.write_text(report.render_html(bundle, "001"), encoding="utf-8")
+    html.write_text(report.render_html(bundle, "001"), encoding="utf-8", newline="\n")
     pdf = tmp_path / "onepager.pdf"
 
     report.render_pdf(html, pdf, **pdf_tools)
@@ -290,27 +362,45 @@ def test_worked_example_pdf_is_one_real_page(bundle, tmp_path, pdf_tools):
 
 @pytest.mark.integration
 def test_real_pdf_overflow_preserves_accepted_destination(bundle, tmp_path, pdf_tools):
+    source = tmp_path / "bundle.json"
+    source.write_text(json.dumps(bundle), encoding="utf-8", newline="\n")
+    arguments = [
+        "--input",
+        source.as_posix(),
+        "--operator",
+        "001",
+        "--output-dir",
+        tmp_path.as_posix(),
+        "--chrome",
+        pdf_tools["chrome"],
+        "--pdfinfo",
+        pdf_tools["pdfinfo"],
+    ]
     html = tmp_path / "onepager.html"
-    html.write_text(report.render_html(bundle, "001"), encoding="utf-8")
     pdf = tmp_path / "onepager.pdf"
-    report.render_pdf(html, pdf, **pdf_tools)
+    assert report.main(arguments) == 0
     accepted = pdf.read_bytes()
+    accepted_html = html.read_bytes()
 
     bundle["operators"][0]["screen"]["method"] = "Synthetic screen evidence. " * 1000
-    html.write_text(report.render_html(bundle, "001"), encoding="utf-8")
-    with pytest.raises(ValueError, match="exactly one page"):
-        report.render_pdf(html, pdf, **pdf_tools)
+    source.write_text(json.dumps(bundle), encoding="utf-8", newline="\n")
+    with pytest.raises(SystemExit) as error:
+        report.main(arguments)
 
+    assert error.value.code == 1
+    assert html.read_bytes() == accepted_html
     assert pdf.read_bytes() == accepted
     assert _pdf_page_count(pdf, pdf_tools["pdfinfo"]) == 1
     rejected = [path for path in tmp_path.glob("*.pdf") if path != pdf]
     assert len(rejected) == 1
+    assert rejected[0].name == "onepager.rejected.pdf"
     assert _pdf_page_count(rejected[0], pdf_tools["pdfinfo"]) > 1
+    assert not list(tmp_path.glob("onepager-build-*"))
 
 
 def test_cli_html_only(bundle, tmp_path):
     source = tmp_path / "bundle.json"
-    source.write_text(json.dumps(bundle))
+    source.write_text(json.dumps(bundle), encoding="utf-8", newline="\n")
     assert (
         report.main(
             [
@@ -325,7 +415,9 @@ def test_cli_html_only(bundle, tmp_path):
         )
         == 0
     )
-    assert (tmp_path / "onepager.html").read_text() == report.render_html(bundle, "001")
+    assert (tmp_path / "onepager.html").read_text(
+        encoding="utf-8"
+    ) == report.render_html(bundle, "001")
     assert not (tmp_path / "onepager.pdf").exists()
 
 
@@ -344,14 +436,14 @@ def test_make_html_target(tmp_path):
         check=True,
     )
     assert "--html-only" in result.stdout
-    assert (tmp_path / "onepager.html").read_text() == (
+    assert (tmp_path / "onepager.html").read_text(encoding="utf-8") == (
         FIXTURES / "worked_example.html"
-    ).read_text()
+    ).read_text(encoding="utf-8")
 
 
 def test_invalid_input_and_missing_pdf_executable(bundle, tmp_path, monkeypatch):
     source = tmp_path / "bundle.json"
-    source.write_text(json.dumps(bundle))
+    source.write_text(json.dumps(bundle), encoding="utf-8", newline="\n")
 
     def unavailable(*args, **kwargs):
         raise FileNotFoundError("browser absent")
@@ -368,7 +460,47 @@ def test_invalid_input_and_missing_pdf_executable(bundle, tmp_path, monkeypatch)
     with pytest.raises(SystemExit) as error:
         report.main(arguments)
     assert error.value.code == 1
-    source.write_text("not-json")
+    source.write_text("not-json", encoding="utf-8", newline="\n")
     with pytest.raises(SystemExit) as error:
         report.main(arguments)
     assert error.value.code == 1
+
+
+def test_browser_timeout_fails_without_replacing_outputs(
+    bundle, tmp_path, monkeypatch, capsys
+):
+    source = tmp_path / "bundle.json"
+    source.write_text(json.dumps(bundle), encoding="utf-8", newline="\n")
+    html = tmp_path / "onepager.html"
+    html.write_text("previous accepted HTML", encoding="utf-8", newline="\n")
+    pdf = tmp_path / "onepager.pdf"
+    pdf.write_bytes(b"previous accepted PDF")
+    calls = []
+
+    def stalled(args, **kwargs):
+        calls.append((args, kwargs))
+        raise subprocess.TimeoutExpired(args, 120)
+
+    monkeypatch.setattr(report.subprocess, "run", stalled)
+    with pytest.raises(SystemExit) as error:
+        report.main(
+            [
+                "--input",
+                source.as_posix(),
+                "--operator",
+                "001",
+                "--output-dir",
+                tmp_path.as_posix(),
+            ]
+        )
+
+    assert error.value.code == 1
+    assert "timed out" in capsys.readouterr().err
+    assert calls[0][1]["timeout"] == 120
+    assert html.read_text(encoding="utf-8") == "previous accepted HTML"
+    assert pdf.read_bytes() == b"previous accepted PDF"
+    profile = next(
+        a.split("=", 1)[1] for a in calls[0][0] if a.startswith("--user-data-dir=")
+    )
+    assert not Path(profile).exists()
+    assert not list(tmp_path.glob("onepager-build-*"))

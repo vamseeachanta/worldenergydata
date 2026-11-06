@@ -12,6 +12,7 @@ periods. Missing figures say `not captured`; missing conclusions say
 | --- | --- | --- |
 | 1 | 2026-10-20 | Add the snapshot contract, build targets and worked example for repeatable sourced pages. |
 | 2 | 2026-10-20 | Add browser-backed PDF acceptance tests, reject non-integer schema versions and keep bar scaling finite for large inputs. |
+| 3 | 2026-11-06 | Preserve small observations, reject unknown summary keys and retain accepted HTML/PDF output after failed rebuilds; require PDF tools in CI and bound rendering time. |
 
 ## Build
 
@@ -40,11 +41,13 @@ The equivalent module entry point accepts `--chrome`, `--pdfinfo` and
 `--headless=new --disable-gpu --no-pdf-header-footer`; the last flag suppresses
 the date and local file address. The browser sandbox remains enabled.
 
-Chrome writes a candidate PDF first; `pdfinfo` must report `Pages: 1` before
-that file replaces the destination PDF. A failed build returns a nonzero status
-and preserves any previous destination PDF. Inspect the command status before
-distributing an artifact: a previous PDF is not the result of a failed build.
-Rejected candidates and isolated browser profiles remain available for diagnosis.
+HTML is staged while Chrome writes a candidate PDF; `pdfinfo` must report
+`Pages: 1` before the accepted HTML and PDF are replaced. A failed PDF build
+returns a nonzero status and preserves both previous destination files.
+Rejected candidates are named `onepager.rejected.pdf` for diagnosis; temporary
+HTML and isolated browser profiles are removed. Both subprocesses have a
+120-second timeout. Inspect the command status before distributing an artifact:
+a previous PDF is not the result of a failed build.
 Set the usual temporary-directory environment variable to the artifact disk.
 Content is never clipped, hidden, or silently shrunk to force acceptance.
 
@@ -107,9 +110,13 @@ economic or uplift claims. Statistical comparison is not a diagnosis.
 ## Presentation and arithmetic
 
 No domain equation, coefficient or acceptance threshold is introduced. Supplied
-figures and ranks are preserved. Counts display as integers; other observations
-display to one decimal place. Source measurements retain their input precision
-in the snapshot. A bar's width is `(value / max(operator, median)) * 100` percent;
+figures and ranks are preserved. Counts display as integers and summary production
+totals display to one decimal place. Candidate evidence and peer labels retain
+the supplied numeric precision whenever one decimal would change the observation,
+including its sign; small values may use scientific notation. True zero remains
+distinct from a small nonzero observation. Unknown summary keys are rejected;
+omitted known keys remain explicit gaps. A bar's width is
+`(value / max(operator, median)) * 100` percent;
 both widths are zero when both values are zero. This is a normalized visual
 scale, not an uplift percentage. Division precedes multiplication to keep
 finite inputs from overflowing. Its independent hand calculation appears below
@@ -158,7 +165,11 @@ PDF readback accepting one page and rejecting overflow. Browser-backed integrati
 tests render the worked example and independently read its PDF page count. An
 intentionally overflowing snapshot is rejected, its real page count is read back,
 and the previously accepted PDF is preserved byte for byte. These tests require
-Chrome or Chromium and `pdfinfo`; they are skipped if either executable is absent.
+Chrome or Chromium and `pdfinfo`. Missing tools fail when `CI=true` or
+`ONEPAGER_REQUIRE_PDF=1`; otherwise these tests skip with an explicit reason.
+The failure cases cover preservation of both accepted files, named rejected
+PDFs, browser-profile cleanup and timeout handling. Small positive and negative
+observations and peer labels are checked against supplied literals.
 Substituted browser calls remain in unit tests for command and error handling.
 Pagination is specific to the installed rendering environment. No production
 registry or screen output was available for this example; the upstream parquet

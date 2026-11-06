@@ -86,7 +86,13 @@ def _source(source_id: str, sources: dict) -> str:
 
 
 def _measure(
-    item: dict | None, sources: dict, unit: str, *, count=False, signed=False
+    item: dict | None,
+    sources: dict,
+    unit: str,
+    *,
+    count=False,
+    signed=False,
+    precise=False,
 ) -> str:
     if item is None:
         return "not captured"
@@ -94,6 +100,8 @@ def _measure(
         raise ValueError("A figure requires value and source; use null for a gap")
     value = _number(item["value"], count=count, signed=signed)
     formatted = str(int(value)) if count else f"{value:,.1f}"
+    if precise and round(value, 1) != value:
+        formatted = f"{value:,}"
     return f"{formatted} {_text(unit)} {_source(item['source'], sources)}"
 
 
@@ -155,7 +163,7 @@ def _candidates(screen: dict, sources: dict, limit: int) -> str:
             raise ValueError("Each candidate requires sourced evidence")
         evidence_text = "; ".join(
             f"{_text(item.get('label'))}: "
-            f"{_measure(item, sources, item.get('unit'), signed=True)}"
+            f"{_measure(item, sources, item.get('unit'), signed=True, precise=True)}"
             for item in evidence
         )
         basis = (
@@ -188,7 +196,7 @@ def _peers(peer: dict | None, sources: dict) -> str:
     metric, unit, cohort = (_text(peer.get(k)) for k in ("metric", "unit", "cohort"))
     # No inferred peer values: both measurements must be present for a chart.
     values = [peer.get("operator"), peer.get("median")]
-    labels = [_measure(item, sources, peer["unit"]) for item in values]
+    labels = [_measure(item, sources, peer["unit"], precise=True) for item in values]
     if any(item is None for item in values):
         return f"<p>{metric} ({unit}); {cohort}. Peer comparison not captured.</p>"
     maximum = max(item["value"] for item in values)
@@ -220,6 +228,10 @@ def render_html(bundle: dict, operator_no: str, *, candidate_limit: int = 5) -> 
     sources = _validate_sources(bundle)
     operator = _select_operator(bundle, operator_no)
     summary = operator.get("summary", {})
+    if not isinstance(summary, dict):
+        raise ValueError("Summary must be a mapping")
+    if set(summary) - {key for key, _, _, _ in SUMMARY}:
+        raise ValueError("Unknown summary key")
     rows = [
         f"<tr><th>{label}</th><td>"
         f"{_measure(summary.get(key), sources, unit, count=count)}</td></tr>"
@@ -286,39 +298,50 @@ def render_pdf(
     Headless execution: Chrome Headless mode (accessed 2026-10-20),
     https://developer.chrome.com/docs/automation-and-testing/headless
     PDF command and header suppression: issue #1128, Requirements.
-    Rejected PDFs and profiles remain as diagnostics, outside version control.
+    Rejected PDFs are named explicitly; temporary browser profiles are removed.
     """
-    profile = tempfile.mkdtemp(prefix="onepager-profile-")
-    with tempfile.NamedTemporaryFile(
-        dir=pdf_path.parent, suffix=".pdf", delete=False
-    ) as handle:
-        pending = Path(handle.name)
-    subprocess.run(
-        [
-            chrome,
-            "--headless=new",
-            "--disable-gpu",
-            "--no-pdf-header-footer",
-            f"--user-data-dir={profile}",
-            f"--print-to-pdf={pending.resolve()}",
-            html_path.resolve().as_uri(),
-        ],
-        check=True,
-        capture_output=True,
-        text=True,
-    )
-    if not pending.read_bytes().startswith(b"%PDF-"):
-        raise ValueError("Chrome did not produce a PDF")
-    info = subprocess.run(
-        [pdfinfo, str(pending)], check=True, capture_output=True, text=True
-    )
-    # Issue #1128: exactly one page is the acceptance criterion, not a tolerance.
-    pages = re.search(r"^Pages:\s+(\d+)\s*$", info.stdout, re.MULTILINE)
-    if pages is None or int(pages.group(1)) != 1:
-        raise ValueError(
-            "PDF must contain exactly one page; shorten content and rebuild"
-        )
-    pending.replace(pdf_path)
+    with tempfile.TemporaryDirectory(prefix="onepager-profile-") as profile:
+        with tempfile.NamedTemporaryFile(
+            dir=pdf_path.parent, suffix=".pdf", delete=False
+        ) as handle:
+            pending = Path(handle.name)
+        try:
+            subprocess.run(
+                [
+                    chrome,
+                    "--headless=new",
+                    "--disable-gpu",
+                    "--no-pdf-header-footer",
+                    f"--user-data-dir={Path(profile).as_posix()}",
+                    f"--print-to-pdf={pending.resolve().as_posix()}",
+                    html_path.resolve().as_uri(),
+                ],
+                check=True,
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                timeout=120,
+            )
+            if not pending.read_bytes().startswith(b"%PDF-"):
+                raise ValueError("Chrome did not produce a PDF")
+            info = subprocess.run(
+                [pdfinfo, pending.as_posix()],
+                check=True,
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                timeout=120,
+            )
+            # Issue #1128: exactly one page is the acceptance criterion.
+            pages = re.search(r"^Pages:\s+(\d+)\s*$", info.stdout, re.MULTILINE)
+            if pages is None or int(pages.group(1)) != 1:
+                raise ValueError(
+                    "PDF must contain exactly one page; shorten content and rebuild"
+                )
+            pending.replace(pdf_path)
+        finally:
+            if pending.exists():
+                pending.replace(pdf_path.with_suffix(".rejected.pdf"))
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -341,16 +364,25 @@ def main(argv: list[str] | None = None) -> int:
         )
         args.output_dir.mkdir(parents=True, exist_ok=True)
         html_path = args.output_dir / "onepager.html"
-        html_path.write_text(page, encoding="utf-8")
-        if not args.html_only:
-            render_pdf(
-                html_path,
-                args.output_dir / "onepager.pdf",
-                chrome=args.chrome,
-                pdfinfo=args.pdfinfo,
-            )
+        if args.html_only:
+            html_path.write_text(page, encoding="utf-8", newline="\n")
+        else:
+            with tempfile.TemporaryDirectory(
+                dir=args.output_dir, prefix="onepager-build-"
+            ) as staging:
+                pending_html = Path(staging) / "onepager.html"
+                pending_html.write_text(page, encoding="utf-8", newline="\n")
+                render_pdf(
+                    pending_html,
+                    args.output_dir / "onepager.pdf",
+                    chrome=args.chrome,
+                    pdfinfo=args.pdfinfo,
+                )
+                pending_html.replace(html_path)
     except FileNotFoundError:
         parser.exit(1, "Required input or PDF executable is unavailable.\n")
+    except subprocess.TimeoutExpired:
+        parser.exit(1, "PDF build timed out; output is not validated.\n")
     except (
         ValueError,
         KeyError,
