@@ -146,11 +146,11 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     import sys
 
-    source_dir = (
-        Path(__file__).resolve().parents[2] / "src/worldenergydata/field_development"
-    )
+    source_dir = Path(__file__).resolve().parents[2] / "src"
     sys.path.insert(0, str(source_dir))
-    from data_availability import require_available_source
+    from worldenergydata.field_development.data_availability import (
+        require_available_source,
+    )
 
     require_available_source(args.output)
     if args.source.resolve() == args.output.resolve():

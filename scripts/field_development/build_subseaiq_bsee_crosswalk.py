@@ -4,11 +4,11 @@
 import sys
 from pathlib import Path
 
-SOURCE_DIR = (
-    Path(__file__).resolve().parents[2] / "src/worldenergydata/field_development"
-)
+SOURCE_DIR = Path(__file__).resolve().parents[2] / "src"
 sys.path.insert(0, str(SOURCE_DIR))
-from data_availability import load_withheld_dataset  # noqa: E402
+from worldenergydata.field_development.data_availability import (  # noqa: E402
+    load_withheld_dataset,
+)
 
 
 def main() -> None:

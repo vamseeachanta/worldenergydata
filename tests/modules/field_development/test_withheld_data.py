@@ -8,6 +8,7 @@ from pathlib import Path
 import pytest
 
 from worldenergydata.field_development import subseaiq
+from worldenergydata.field_development.data_availability import DatasetUnavailableError
 from worldenergydata.field_development.host_enrichment import load_host_registry
 from worldenergydata.field_development.portfolio_matched import load_matched_crosswalk
 
@@ -35,6 +36,52 @@ FACILITY_WITHHELD = (
     "spar_riser_info.csv",
     "tlp_basic_info.csv",
 )
+
+
+@pytest.mark.parametrize(
+    "relative_path",
+    [f"data/modules/offshore_assets/curated/{name}" for name in WITHHELD]
+    + [f"data/modules/facility_specs/curated/{name}" for name in FACILITY_WITHHELD]
+    + [
+        "reports/field-atlas/_roster.json",
+        "reports/field-atlas/_atlas_feed.json",
+        "reports/decommissioning/regional_liability.csv",
+        "reports/field_development/bsee_matched/_summary.json",
+        "data/modules/bsee/atlas/2023/field_attribution.json",
+    ],
+)
+def test_guard_rejects_restored_withheld_paths(tmp_path, monkeypatch, relative_path):
+    from worldenergydata.field_development import data_availability
+
+    monkeypatch.setattr(data_availability, "ROOT", tmp_path)
+    monkeypatch.setattr(
+        data_availability, "CURATED", tmp_path / "data/modules/offshore_assets/curated"
+    )
+    path = tmp_path / relative_path
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("synthetic stale input", encoding="utf-8", newline="\n")
+    with pytest.raises(DatasetUnavailableError, match=REASON):
+        data_availability.require_available_source(path)
+
+
+def test_guard_allows_independent_synthetic_source(tmp_path):
+    from worldenergydata.field_development.data_availability import (
+        require_available_source,
+    )
+
+    path = tmp_path / "independent.json"
+    path.write_text("[]", encoding="utf-8", newline="\n")
+    assert require_available_source(path) == path
+
+
+def test_roster_derived_attribution_is_withheld():
+    import json
+
+    path = ROOT / "data/modules/bsee/atlas/2023/field_attribution.json"
+    assert json.loads(path.read_text(encoding="utf-8")) == {
+        "status": "withheld",
+        "note": f"The data set is {REASON}.",
+    }
 
 
 @pytest.mark.parametrize("name", FACILITY_WITHHELD)
@@ -204,18 +251,47 @@ def test_metadata_does_not_advertise_withheld_payloads():
         ("field_development/build_region_devtype_comparison.py", "build_table"),
         ("decommissioning/build_regional_liability.py", "main"),
         ("hf_export/build_explorer_results_bundle.py", "build_bundle"),
+        ("field_development/build_contractor_jackups.py", "main"),
+        ("field_development/integrate_angola_catalog.py", "build_from_arguments"),
     ],
 )
-def test_default_generators_reject_withheld_input(script, function):
+def test_default_generators_reject_withheld_input(script, function, tmp_path):
     import importlib.util
+    from argparse import Namespace
 
     spec = importlib.util.spec_from_file_location(
         "withheld_generator", ROOT / "scripts" / script
     )
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    with pytest.raises(RuntimeError, match=REASON):
-        getattr(module, function)()
+    arguments = ()
+    if script.endswith("build_contractor_jackups.py"):
+        arguments = (
+            [
+                str(tmp_path / "unread.csv"),
+                str(CURATED / "jackups.csv"),
+                "--source-sha256",
+                "0" * 64,
+            ],
+        )
+    elif script.endswith("integrate_angola_catalog.py"):
+        arguments = (Namespace(legacy=CURATED / "fields.csv"),)
+    with pytest.raises(DatasetUnavailableError, match=REASON):
+        getattr(module, function)(*arguments)
+
+
+def test_coverage_reader_retains_its_docstring():
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location(
+        "coverage_docstring",
+        ROOT / "scripts/field_development/build_all_regions_atlas.py",
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    assert module.read_coverage.__doc__ == (
+        "Return (by_country list of dicts, by_region dict, totals dict)."
+    )
 
 
 @pytest.mark.parametrize(

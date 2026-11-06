@@ -29,9 +29,11 @@ def gate_input(path):
 def build_from_arguments(args):
     import sys
 
-    source_dir = ROOT / "src/worldenergydata/field_development"
+    source_dir = ROOT / "src"
     sys.path.insert(0, str(source_dir))
-    from data_availability import require_available_source
+    from worldenergydata.field_development.data_availability import (
+        require_available_source,
+    )
 
     require_available_source(args.legacy)
     decisions, decision_digest = gate_input(args.match_decisions)
@@ -87,7 +89,7 @@ def main():
                 "state": bundle["manifest"]["state"],
                 "counts": bundle["manifest"]["counts"],
                 "entities": bundle["manifest"]["entity_counts"],
-                "output": str(output),
+                "output": output.as_posix(),
                 "authority_note": (
                     "Signoff metadata is evidence, not authenticated authority; "
                     "operator must verify originating owner/action authorization."

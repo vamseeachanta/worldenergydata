@@ -46,9 +46,18 @@ def require_available_source(path: Path) -> Path:
     withheld.extend(
         (ROOT / name).resolve()
         for name in (
+            "data/modules/facility_specs/curated/fpso_basic_info.csv",
+            "data/modules/facility_specs/curated/fpso_riser_info.csv",
+            "data/modules/facility_specs/curated/semisub_basic_info.csv",
+            "data/modules/facility_specs/curated/semisub_riser_info.csv",
+            "data/modules/facility_specs/curated/spar_basic_info.csv",
+            "data/modules/facility_specs/curated/spar_riser_info.csv",
+            "data/modules/facility_specs/curated/tlp_basic_info.csv",
+            "data/modules/bsee/atlas/2023/field_attribution.json",
             "reports/field-atlas/_roster.json",
             "reports/field-atlas/_atlas_feed.json",
             "reports/decommissioning/regional_liability.csv",
+            "reports/field_development/bsee_matched/_summary.json",
         )
     )
     if path.resolve() in withheld:

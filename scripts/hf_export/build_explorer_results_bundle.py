@@ -75,9 +75,11 @@ def load_source(path: Path) -> tuple[dict, str, int]:
 def build_bundle() -> dict:
     import sys
 
-    source_dir = REPO / "src/worldenergydata/field_development"
+    source_dir = REPO / "src"
     sys.path.insert(0, str(source_dir))
-    from data_availability import require_available_source
+    from worldenergydata.field_development.data_availability import (
+        require_available_source,
+    )
 
     require_available_source(ATLAS_JSON)
     explorer, exp_hash, exp_bytes = load_source(EXPLORER_JSON)
@@ -253,12 +255,12 @@ def main() -> None:
     assert "Infinity" not in serialized, "Infinity token leaked into bundle"
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
-    OUT_BUNDLE.write_text(serialized + "\n", encoding="utf-8")
-    OUT_CARD.write_text(render_card(bundle), encoding="utf-8")
+    OUT_BUNDLE.write_text(serialized + "\n", encoding="utf-8", newline="\n")
+    OUT_CARD.write_text(render_card(bundle), encoding="utf-8", newline="\n")
 
     rc = bundle["record_counts"]
-    print(f"wrote {OUT_BUNDLE.relative_to(REPO)} ({len(serialized)} bytes)")
-    print(f"wrote {OUT_CARD.relative_to(REPO)}")
+    print(f"wrote {OUT_BUNDLE.relative_to(REPO).as_posix()} ({len(serialized)} bytes)")
+    print(f"wrote {OUT_CARD.relative_to(REPO).as_posix()}")
     print(f"record_counts: {rc}")
 
 
