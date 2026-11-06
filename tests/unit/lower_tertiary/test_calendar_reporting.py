@@ -62,17 +62,18 @@ def test_benchmark_table_calls_calendar_time_by_name():
     assert "not rig-days" in text
 
 
-def test_insight_uses_dates_not_legacy_days(tmp_path):
-    """Jan 1 to Mar 1 2020 = 31 + 29 = 60; same day = 0.
-
-    Legacy values 999 and 888 deliberately disagree. Missing and reversed
-    dates have no derivable span; they must stay null, never become zero.
-    """
-    mod = _script("build_drilling_insights")
+@pytest.fixture
+def insight_workbook(tmp_path):
+    """Real Sheet1 input with non-ASCII text and four date-edge cases."""
     source = tmp_path / "source.xlsx"
     pd.DataFrame(
         {
-            "LEASE_NAME": ["Synthetic"] * 4,
+            "LEASE_NAME": ["Synthetic café"] * 4,
+            "WELL_NAME": ["A", "B", "C", "D"],
+            "API_WELL_NUMBER": ["001", "002", "003", "004"],
+            "SURF_LEASE_NUM": ["synthetic-lease"] * 4,
+            "WATER_DEPTH": [1000] * 4,
+            "MAX_WELL_BORE_TVD": [10000] * 4,
             "WELL_SPUD_DATE": ["01/01/2020"] * 4,
             "TOTAL_DEPTH_DATE": ["03/01/2020", "01/01/2020", None, "12/31/2019"],
             "DRILLING_DAYS": [999, 888, 777, 666],
@@ -80,9 +81,68 @@ def test_insight_uses_dates_not_legacy_days(tmp_path):
             "MAX_DRILL_FLUID_WGT": [15] * 4,
         }
     ).to_excel(source, sheet_name="Sheet1", index=False)
-    frame = mod.load_wells(source)
+    return source
+
+
+def test_insight_uses_dates_not_legacy_days(insight_workbook):
+    """Jan 1 to Mar 1 2020 = 31 + 29 = 60; same day = 0.
+
+    Legacy values 999 and 888 deliberately disagree. Missing and reversed
+    dates have no derivable span; they must stay null, never become zero.
+    """
+    mod = _script("build_drilling_insights")
+    frame = mod.load_wells(insight_workbook)
     assert frame["calendar_days"].iloc[:2].tolist() == [60, 0]
     assert frame["calendar_days"].iloc[2:].isna().all()
+    stats = mod.compute_stats(frame)
+    assert stats["n_missing"] == 2
+    assert stats["median_days"] == 30  # (60 + 0) / 2, excluding invalid dates.
+
+
+@pytest.mark.parametrize("default_newline", ["\n", "\r\n"], ids=["lf", "crlf"])
+def test_insight_csv_bytes_are_utf8_and_lf(
+    insight_workbook, tmp_path, monkeypatch, default_newline
+):
+    """Exercise pandas' platform default as well as the native writer path."""
+    mod = _script("build_drilling_insights")
+    frame = mod.load_wells(insight_workbook)
+    monkeypatch.setattr(os, "linesep", default_newline)
+    target = tmp_path / "calendar.csv"
+    mod.write_csv(frame, target)
+    data = target.read_bytes()
+    assert b"\n" in data
+    assert b"\r\n" not in data
+    assert "Synthetic café" in data.decode("utf-8")
+
+
+@pytest.mark.parametrize("default_newline", ["\n", "\r\n"], ids=["lf", "crlf"])
+def test_insight_main_html_bytes_are_utf8_and_lf(
+    insight_workbook, tmp_path, monkeypatch, default_newline
+):
+    """Run the CLI with a legacy text encoding and platform newline defaults."""
+    mod = _script("build_drilling_insights")
+    reports = tmp_path / "reports"
+    target = reports / "calendar.html"
+    monkeypatch.setattr(mod, "REPORTS_DIR", reports)
+    monkeypatch.setattr(mod, "CSV_PATH", reports / "calendar.csv")
+    monkeypatch.setattr(mod, "HTML_PATH", target)
+    write_text = Path.write_text
+
+    def platform_write_text(path, data, encoding=None, errors=None, newline=None):
+        return write_text(
+            path,
+            data,
+            encoding=encoding or "cp1252",
+            errors=errors,
+            newline=default_newline if newline is None else newline,
+        )
+
+    monkeypatch.setattr(Path, "write_text", platform_write_text)
+    assert mod.main(["--source", str(insight_workbook)]) == 0
+    data = target.read_bytes()
+    assert b"\n" in data
+    assert b"\r\n" not in data
+    assert "Synthetic café" in data.decode("utf-8")
 
 
 def test_insight_csv_and_page_state_definition_and_population(tmp_path):
