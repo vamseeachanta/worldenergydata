@@ -1,16 +1,26 @@
 {
+  "title": "Na Kika hub and field lifecycle",
+  "limitation": "Catalog dates are unqualified historical labels. A block match is not a verified field-production join. The semisub host label does not classify each satellite. Herschel Expansion timing and East Anstey sale membership remain NOT_EVALUATED.",
   "assets": [
     {
       "name": "Na Kika",
       "kind": "hub",
       "host": null,
+      "host_citation": null,
       "host_concept": "semisub_fps",
       "host_concept_citation": {
         "source_id": "catalog_host",
-        "locator": "NA KIKA row; SemiSub classification"
+        "locator": "VESSEL_NAME=NA KIKA; FACILITY_TYPE=SemiSub",
+        "row_name": "NA KIKA"
       },
       "field_concept": null,
       "field_concept_citation": null,
+      "transaction_membership_status": "SOURCE_SUPPORTED",
+      "transaction_membership_citation": {
+        "source_id": "shell_release",
+        "locator": "meta[name=description]: interests included in the sale"
+      },
+      "transaction_membership_reason": "Named interest in the seller announcement; closing remains unverified",
       "catalog_host_concept": null,
       "catalog_discovery": null,
       "catalog_first_production": null,
@@ -18,24 +28,22 @@
       "block": null,
       "block_match": false,
       "block_citation": null,
-      "transaction_membership_status": "SOURCE_SUPPORTED",
       "lifecycle_status": "NOT_EVALUATED",
       "generated_page_status": "missing",
-      "report_path": null,
-      "limitation": "Host concept is not a field concept. Satellite association and sale membership require source confirmation; expansion timing is unverified.",
-      "transaction_membership_citation": {
-        "source_id": "shell_release",
-        "locator": "meta[name=description]: interests included in the sale"
-      }
+      "report_path": null
     },
     {
       "name": "Ariel",
       "kind": "field",
       "host": null,
+      "host_citation": null,
       "host_concept": null,
       "host_concept_citation": null,
       "field_concept": null,
       "field_concept_citation": null,
+      "transaction_membership_status": "NOT_EVALUATED",
+      "transaction_membership_citation": null,
+      "transaction_membership_reason": "Sale membership for this entry is not established by the cited input",
       "catalog_host_concept": "semisub_fps",
       "catalog_discovery": "Jun 1995",
       "catalog_first_production": "Apr 2004",
@@ -49,17 +57,18 @@
         "source_id": "catalog_crosswalk",
         "locator": "og_field_name=Ariel"
       },
-      "transaction_membership_status": "NOT_EVALUATED",
       "lifecycle_status": "CATALOG_ONLY",
       "generated_page_status": "present",
-      "report_path": "reports/field_development/bsee_matched/ariel.html",
-      "limitation": "Host concept is not a field concept. Satellite association and sale membership require source confirmation; expansion timing is unverified.",
-      "transaction_membership_citation": null
+      "report_path": "reports/field_development/bsee_matched/ariel.html"
     },
     {
       "name": "Coulomb",
       "kind": "field",
       "host": "Na Kika",
+      "host_citation": {
+        "source_id": "shell_release",
+        "locator": "meta[name=description]: tieback to Na Kika"
+      },
       "host_concept": null,
       "host_concept_citation": null,
       "field_concept": "subsea_tieback",
@@ -67,6 +76,12 @@
         "source_id": "shell_release",
         "locator": "meta[name=description]: Coulomb tieback"
       },
+      "transaction_membership_status": "SOURCE_SUPPORTED",
+      "transaction_membership_citation": {
+        "source_id": "shell_release",
+        "locator": "meta[name=description]: interests included in the sale"
+      },
+      "transaction_membership_reason": "Named interest in the seller announcement; closing remains unverified",
       "catalog_host_concept": "semisub_fps",
       "catalog_discovery": "Jan 1988",
       "catalog_first_production": "Jun 2004",
@@ -80,24 +95,22 @@
         "source_id": "catalog_crosswalk",
         "locator": "og_field_name=Coulomb"
       },
-      "transaction_membership_status": "SOURCE_SUPPORTED",
       "lifecycle_status": "CATALOG_ONLY",
       "generated_page_status": "present",
-      "report_path": "reports/field_development/bsee_matched/coulomb.html",
-      "limitation": "Host concept is not a field concept. Satellite association and sale membership require source confirmation; expansion timing is unverified.",
-      "transaction_membership_citation": {
-        "source_id": "shell_release",
-        "locator": "meta[name=description]: interests included in the sale"
-      }
+      "report_path": "reports/field_development/bsee_matched/coulomb.html"
     },
     {
       "name": "East Anstey",
       "kind": "field",
       "host": null,
+      "host_citation": null,
       "host_concept": null,
       "host_concept_citation": null,
       "field_concept": null,
       "field_concept_citation": null,
+      "transaction_membership_status": "NOT_EVALUATED",
+      "transaction_membership_citation": null,
+      "transaction_membership_reason": "Sale membership for this entry is not established by the cited input",
       "catalog_host_concept": "semisub_fps",
       "catalog_discovery": "Dec 1997",
       "catalog_first_production": "Dec 2003",
@@ -111,21 +124,22 @@
         "source_id": "catalog_crosswalk",
         "locator": "og_field_name=East Anstey"
       },
-      "transaction_membership_status": "NOT_EVALUATED",
       "lifecycle_status": "CATALOG_ONLY",
       "generated_page_status": "present",
-      "report_path": "reports/field_development/bsee_matched/east-anstey.html",
-      "limitation": "Host concept is not a field concept. Satellite association and sale membership require source confirmation; expansion timing is unverified.",
-      "transaction_membership_citation": null
+      "report_path": "reports/field_development/bsee_matched/east-anstey.html"
     },
     {
       "name": "Fourier",
       "kind": "field",
       "host": null,
+      "host_citation": null,
       "host_concept": null,
       "host_concept_citation": null,
       "field_concept": null,
       "field_concept_citation": null,
+      "transaction_membership_status": "NOT_EVALUATED",
+      "transaction_membership_citation": null,
+      "transaction_membership_reason": "Sale membership for this entry is not established by the cited input",
       "catalog_host_concept": "semisub_fps",
       "catalog_discovery": "Jul 1989",
       "catalog_first_production": "Jan 2003",
@@ -139,21 +153,22 @@
         "source_id": "catalog_crosswalk",
         "locator": "og_field_name=Fourier"
       },
-      "transaction_membership_status": "NOT_EVALUATED",
       "lifecycle_status": "CATALOG_ONLY",
       "generated_page_status": "present",
-      "report_path": "reports/field_development/bsee_matched/fourier.html",
-      "limitation": "Host concept is not a field concept. Satellite association and sale membership require source confirmation; expansion timing is unverified.",
-      "transaction_membership_citation": null
+      "report_path": "reports/field_development/bsee_matched/fourier.html"
     },
     {
       "name": "Herschel",
       "kind": "field",
       "host": null,
+      "host_citation": null,
       "host_concept": null,
       "host_concept_citation": null,
       "field_concept": null,
       "field_concept_citation": null,
+      "transaction_membership_status": "NOT_EVALUATED",
+      "transaction_membership_citation": null,
+      "transaction_membership_reason": "Sale membership for this entry is not established by the cited input",
       "catalog_host_concept": "semisub_fps",
       "catalog_discovery": "Jun 1996",
       "catalog_first_production": "Dec 2003",
@@ -167,21 +182,22 @@
         "source_id": "catalog_crosswalk",
         "locator": "og_field_name=Herschel"
       },
-      "transaction_membership_status": "NOT_EVALUATED",
       "lifecycle_status": "CATALOG_ONLY",
       "generated_page_status": "missing",
-      "report_path": null,
-      "limitation": "Host concept is not a field concept. Satellite association and sale membership require source confirmation; expansion timing is unverified.",
-      "transaction_membership_citation": null
+      "report_path": null
     },
     {
       "name": "Kepler",
       "kind": "field",
       "host": null,
+      "host_citation": null,
       "host_concept": null,
       "host_concept_citation": null,
       "field_concept": null,
       "field_concept_citation": null,
+      "transaction_membership_status": "NOT_EVALUATED",
+      "transaction_membership_citation": null,
+      "transaction_membership_reason": "Sale membership for this entry is not established by the cited input",
       "catalog_host_concept": "semisub_fps",
       "catalog_discovery": "Dec 1987",
       "catalog_first_production": "Dec 2003",
@@ -195,21 +211,22 @@
         "source_id": "catalog_crosswalk",
         "locator": "og_field_name=Kepler"
       },
-      "transaction_membership_status": "NOT_EVALUATED",
       "lifecycle_status": "CATALOG_ONLY",
       "generated_page_status": "present",
-      "report_path": "reports/field_development/bsee_matched/kepler.html",
-      "limitation": "Host concept is not a field concept. Satellite association and sale membership require source confirmation; expansion timing is unverified.",
-      "transaction_membership_citation": null
+      "report_path": "reports/field_development/bsee_matched/kepler.html"
     },
     {
       "name": "Herschel Expansion",
       "kind": "expansion",
       "host": null,
+      "host_citation": null,
       "host_concept": null,
       "host_concept_citation": null,
       "field_concept": null,
       "field_concept_citation": null,
+      "transaction_membership_status": "NOT_EVALUATED",
+      "transaction_membership_citation": null,
+      "transaction_membership_reason": "Sale membership for this entry is not established by the cited input",
       "catalog_host_concept": null,
       "catalog_discovery": null,
       "catalog_first_production": null,
@@ -217,12 +234,9 @@
       "block": null,
       "block_match": false,
       "block_citation": null,
-      "transaction_membership_status": "NOT_EVALUATED",
       "lifecycle_status": "NOT_EVALUATED",
       "generated_page_status": "missing",
-      "report_path": null,
-      "limitation": "Host concept is not a field concept. Satellite association and sale membership require source confirmation; expansion timing is unverified.",
-      "transaction_membership_citation": null
+      "report_path": null
     }
   ],
   "coverage_note": "Requested roster only; not an exhaustive or verified sale-perimeter inventory. Catalog dates are historical source labels, not independently verified lifecycle events."

@@ -12,6 +12,12 @@ def _text(value: object) -> str:
     return html.escape(str(value) if value is not None else "NOT_EVALUATED", quote=True)
 
 
+def _quantity(fact: dict) -> str:
+    if "range" in fact:
+        return " – ".join(f"{value:,}" for value in fact["range"])
+    return f'{fact["value"]:,}' if fact.get("value") is not None else "NOT_EVALUATED"
+
+
 def _table(headers: list[str], rows: list[list]) -> str:
     header = "".join(f"<th scope='col'>{_text(h)}</th>" for h in headers)
     body = "".join(
@@ -24,17 +30,8 @@ def _table(headers: list[str], rows: list[list]) -> str:
     )
 
 
-def _page(title: str, summary: str, body: str, evidence_as_of: str) -> str:
-    revision = _table(
-        ["Revision", "Date", "Change and reason"],
-        [
-            [
-                "Initial",
-                evidence_as_of,
-                "Add evidence-constrained screening and expose missing economics inputs.",
-            ]
-        ],
-    )
+def _page(title: str, summary: str, body: str, revisions: list[list]) -> str:
+    revision = _table(["Revision", "Date", "Change and reason"], revisions)
     return f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -66,13 +63,21 @@ def _lifecycle_body(package: dict, out: Path, root: Path) -> str:
                 asset["catalog_discovery"],
                 asset["catalog_first_production"],
                 asset["transaction_membership_status"],
+                asset["transaction_membership_reason"],
                 asset["generated_page_status"],
             ]
         )
         if asset["report_path"]:
-            target = os.path.relpath(root / asset["report_path"], out).replace(
-                os.sep, "/"
-            )
+            try:
+                target = Path(
+                    os.path.relpath(root / asset["report_path"], out)
+                ).as_posix()
+            except ValueError:
+                links.append(
+                    f'<li>{_text(asset["name"])}: link omitted because output and '
+                    "repository use different drives.</li>"
+                )
+                continue
             links.append(
                 f'<li><a href="{_text(target)}">{_text(asset["name"])}</a></li>'
             )
@@ -87,14 +92,12 @@ def _lifecycle_body(package: dict, out: Path, root: Path) -> str:
                 "Catalog discovery",
                 "Catalog first production",
                 "Sale membership",
+                "Membership basis or limitation",
                 "Existing page",
             ],
             rows,
         )
-        + "<p>Catalog dates are unqualified historical labels. "
-        "A block match is not a verified field-production join. "
-        "The semisub host label does not classify each satellite. "
-        "Herschel Expansion timing and East Anstey sale membership remain NOT_EVALUATED.</p>"
+        + f'<p>{_text(package["lifecycle"]["limitation"])}</p>'
         + "<h2>Existing field-development pages</h2><ul>"
         + "".join(links)
         + "</ul>"
@@ -106,19 +109,47 @@ def _transaction_body(package: dict) -> str:
     for basis, metrics in package["metrics"]["bases"].items():
         for metric, result in metrics.items():
             value = (
-                f'{result["value"]:.1f}'
+                f'{result["value"]:,.2f}'
                 if result["value"] is not None
                 else result["status"]
             )
-            rows.append([basis, metric, value, result["unit"], result["reason"]])
+            if "range" in result:
+                value = " – ".join(f"{bound:,.2f}" for bound in result["range"])
+            inputs = result["inputs"]
+            numerator = inputs["consideration"]
+            denominator = inputs["denominator"]
+            input_values = (
+                f'{_quantity(numerator)} {numerator["unit"]} / '
+                f'{_quantity(denominator)} {denominator["unit"]}'
+            )
+            rows.append(
+                [
+                    basis,
+                    metric,
+                    value,
+                    result["unit"],
+                    input_values,
+                    result["reason"]
+                    or "Same basis and acquired-interest subject; no return threshold",
+                ]
+            )
     facts = package["input_echo"]
-    amount = facts["bases"]["shell_total"]["consideration"]
     body = (
         "<h2>Announced transaction</h2>"
-        f'<p>Announced total consideration: {_text(amount["value"])} USD; '
-        "subject to adjustments and contingent payments. "
-        "This is the seller-total basis, not either buyer's allocated net consideration. "
-        "Closing is NOT_EVALUATED.</p>"
+        + _table(
+            ["Basis", "Consideration (USD)", "Subject", "Basis or limitation"],
+            [
+                [
+                    basis,
+                    _quantity(values["consideration"]),
+                    values["consideration"].get("subject"),
+                    values["consideration"].get("reason")
+                    or values["consideration"]["citation"]["locator"],
+                ]
+                for basis, values in facts["bases"].items()
+            ],
+        )
+        + f'<p>Closing: {_text(package["transaction"]["closing_status"])}</p>'
         + _table(
             ["Subject", "Sold working interest (fraction)", "Source locator"],
             [
@@ -127,7 +158,10 @@ def _transaction_body(package: dict) -> str:
             ],
         )
         + "<h2>Transaction ratios</h2>"
-        + _table(["Basis", "Metric", "Result", "Unit", "Missing evidence"], rows)
+        + _table(
+            ["Basis", "Metric", "Result", "Unit", "Inputs", "Criterion or limitation"],
+            rows,
+        )
         + "<p>Method: consideration USD / acquired-interest reserves boe; "
         "consideration USD / acquired-interest production boe/day. "
         "No interest scaling, energy-equivalence conversion or "
@@ -178,11 +212,13 @@ def _transaction_body(package: dict) -> str:
         )
         if "url" in source:
             body += f'<a href="{_text(source["url"])}">Public source</a>'
-        body += f"<pre>{_text(json.dumps(source, indent=2))}</pre></details>"
+        source_json = json.dumps(source, indent=2, ensure_ascii=False, allow_nan=False)
+        body += f"<pre>{_text(source_json)}</pre></details>"
     body += (
         "<h2>Input echo</h2><details><summary>Complete cited input snapshot</summary>"
     )
-    body += f"<pre>{_text(json.dumps(facts, indent=2))}</pre></details>"
+    input_json = json.dumps(facts, indent=2, ensure_ascii=False, allow_nan=False)
+    body += f"<pre>{_text(input_json)}</pre></details>"
     body += (
         '<p>Machine-readable files: <a href="metrics.json">metrics</a>, '
         '<a href="lifecycle.json">lifecycle</a>, '
@@ -194,23 +230,28 @@ def _transaction_body(package: dict) -> str:
     return body
 
 
-def write_package(package: dict, out: Path, root: Path) -> list[Path]:
+def write_package(
+    package: dict, out: Path, root: Path, *, link_base: Path | None = None
+) -> list[Path]:
     """Write and read back the complete output set; repeated builds are identical."""
     payloads = {
         "index.html": _page(
             package["title"],
             package["metrics"]["criterion"],
             _transaction_body(package),
-            package["evidence_as_of"],
+            package["revision_history"],
         ),
         "lifecycle.html": _page(
-            "Na Kika hub and field lifecycle",
+            package["lifecycle"]["title"],
             "Lifecycle coverage is partial; source gaps remain NOT_EVALUATED.",
-            _lifecycle_body(package, out, root),
-            package["evidence_as_of"],
+            _lifecycle_body(package, link_base if link_base is not None else out, root),
+            package["revision_history"],
         ),
         **{
-            f"{key}.json": json.dumps(package[key], indent=2, allow_nan=False) + "\n"
+            f"{key}.json": json.dumps(
+                package[key], indent=2, ensure_ascii=False, allow_nan=False
+            )
+            + "\n"
             for key in ("metrics", "lifecycle", "economics_readiness", "provenance")
         },
     }

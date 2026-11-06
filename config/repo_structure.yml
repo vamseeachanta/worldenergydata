@@ -85,7 +85,12 @@ temporary_exceptions:
     owner: worldenergydata maintainers
     review_date: "2026-06-30"
     follow_up: https://github.com/vamseeachanta/worldenergydata/issues/394
-    justification: Tracked HTML, Markdown, Python, and JSON report artifacts are preserved as existing durable evidence until a dedicated generated-evidence migration classifies retention, relocation, or deletion.
+    justification: >-
+      Tracked HTML, Markdown, Python, and JSON report artifacts are preserved as existing durable evidence
+      until a dedicated generated-evidence migration classifies retention, relocation, or deletion.
+      The six explicitly listed transaction snapshots are retained as versioned evidence of the cited input;
+      their byte-for-byte regeneration is tested. They are included because this contract provides only
+      exact-path exceptions for retained generated reports. Their retention remains subject to that migration.
     allowed_paths:
       - reports/.gitkeep
       - reports/IMO_GISIS_Executive_Report.html

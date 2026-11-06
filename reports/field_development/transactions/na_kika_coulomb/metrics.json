@@ -54,78 +54,162 @@
     },
     "talos_announced": {
       "usd_per_boe": {
-        "status": "NOT_EVALUATED",
-        "value": null,
+        "status": "EVALUATED",
+        "value": 36.95652173913044,
         "unit": "USD/(boe)",
-        "reason": "Buyer allocation or net consideration not verified from an accessible source; Reserves for this exact acquired-interest scope are not verified",
+        "reason": "",
         "inputs": {
           "consideration": {
-            "value": null,
+            "value": 850000000,
             "unit": "USD",
-            "reason": "Buyer allocation or net consideration not verified from an accessible source"
+            "basis": "talos_announced",
+            "subject": "Talos acquired interests",
+            "as_of": "2026-06-30",
+            "citation": {
+              "source_id": "talos_release",
+              "locator": "Opening paragraph: cash consideration net to Talos; subject to adjustments"
+            },
+            "approximate": false
           },
           "denominator": {
-            "value": null,
+            "value": 23000000,
             "unit": "boe",
-            "reason": "Reserves for this exact acquired-interest scope are not verified"
+            "basis": "talos_announced",
+            "subject": "Talos acquired interests",
+            "as_of": "2025-12-31",
+            "citation": {
+              "source_id": "talos_release",
+              "locator": "GULF OF AMERICA BOLT-ON ACQUISITION: proved reserves net to Talos and net of P&A"
+            },
+            "approximate": true,
+            "reserve_category": "proved",
+            "qualification": "Issuer-stated reserves net of P&A; underlying reserves report not independently reviewed"
           }
         }
       },
       "usd_per_flowing_boe_day": {
-        "status": "NOT_EVALUATED",
-        "value": null,
+        "status": "EVALUATED",
+        "value": 53125.0,
         "unit": "USD/(boe/d)",
-        "reason": "Buyer allocation or net consideration not verified from an accessible source; Production period and acquired-interest scope are not verified",
+        "reason": "",
         "inputs": {
           "consideration": {
-            "value": null,
+            "value": 850000000,
             "unit": "USD",
-            "reason": "Buyer allocation or net consideration not verified from an accessible source"
+            "basis": "talos_announced",
+            "subject": "Talos acquired interests",
+            "as_of": "2026-06-30",
+            "citation": {
+              "source_id": "talos_release",
+              "locator": "Opening paragraph: cash consideration net to Talos; subject to adjustments"
+            },
+            "approximate": false
           },
           "denominator": {
-            "value": null,
+            "value": 16000,
             "unit": "boe/d",
-            "reason": "Production period and acquired-interest scope are not verified"
+            "basis": "talos_announced",
+            "subject": "Talos acquired interests",
+            "as_of": "2026-03-31",
+            "citation": {
+              "source_id": "talos_release",
+              "locator": "GULF OF AMERICA BOLT-ON ACQUISITION: first quarter average for interests Talos is acquiring"
+            },
+            "approximate": true,
+            "measurement_period": "2026-Q1"
           }
         }
       }
     },
     "talos_net": {
       "usd_per_boe": {
-        "status": "NOT_EVALUATED",
+        "status": "EVALUATED_RANGE",
         "value": null,
         "unit": "USD/(boe)",
-        "reason": "Buyer allocation or net consideration not verified from an accessible source; Reserves for this exact acquired-interest scope are not verified",
+        "reason": "",
         "inputs": {
           "consideration": {
             "value": null,
             "unit": "USD",
-            "reason": "Buyer allocation or net consideration not verified from an accessible source"
+            "basis": "talos_net",
+            "subject": "Talos acquired interests",
+            "as_of": "2026-06-30",
+            "citation": {
+              "source_id": "talos_release",
+              "locator": "GULF OF AMERICA BOLT-ON ACQUISITION: expected final net cash range excluding deposit, based on interim cash flow since effective date"
+            },
+            "approximate": true,
+            "range": [
+              450000000,
+              500000000
+            ],
+            "reason": "Expected final net cash range after estimated interim cash flow; excludes the credited deposit",
+            "effective_date": "2025-07-01",
+            "excludes_deposit_usd": 42500000
           },
           "denominator": {
-            "value": null,
+            "value": 23000000,
             "unit": "boe",
-            "reason": "Reserves for this exact acquired-interest scope are not verified"
+            "basis": "talos_net",
+            "subject": "Talos acquired interests",
+            "as_of": "2025-12-31",
+            "citation": {
+              "source_id": "talos_release",
+              "locator": "GULF OF AMERICA BOLT-ON ACQUISITION: proved reserves net to Talos and net of P&A"
+            },
+            "approximate": true,
+            "reserve_category": "proved",
+            "qualification": "Issuer-stated reserves net of P&A; underlying reserves report not independently reviewed"
           }
-        }
+        },
+        "range": [
+          19.565217391304348,
+          21.73913043478261
+        ]
       },
       "usd_per_flowing_boe_day": {
-        "status": "NOT_EVALUATED",
+        "status": "EVALUATED_RANGE",
         "value": null,
         "unit": "USD/(boe/d)",
-        "reason": "Buyer allocation or net consideration not verified from an accessible source; Production period and acquired-interest scope are not verified",
+        "reason": "",
         "inputs": {
           "consideration": {
             "value": null,
             "unit": "USD",
-            "reason": "Buyer allocation or net consideration not verified from an accessible source"
+            "basis": "talos_net",
+            "subject": "Talos acquired interests",
+            "as_of": "2026-06-30",
+            "citation": {
+              "source_id": "talos_release",
+              "locator": "GULF OF AMERICA BOLT-ON ACQUISITION: expected final net cash range excluding deposit, based on interim cash flow since effective date"
+            },
+            "approximate": true,
+            "range": [
+              450000000,
+              500000000
+            ],
+            "reason": "Expected final net cash range after estimated interim cash flow; excludes the credited deposit",
+            "effective_date": "2025-07-01",
+            "excludes_deposit_usd": 42500000
           },
           "denominator": {
-            "value": null,
+            "value": 16000,
             "unit": "boe/d",
-            "reason": "Production period and acquired-interest scope are not verified"
+            "basis": "talos_net",
+            "subject": "Talos acquired interests",
+            "as_of": "2026-03-31",
+            "citation": {
+              "source_id": "talos_release",
+              "locator": "GULF OF AMERICA BOLT-ON ACQUISITION: first quarter average for interests Talos is acquiring"
+            },
+            "approximate": true,
+            "measurement_period": "2026-Q1"
           }
-        }
+        },
+        "range": [
+          28125.0,
+          31250.0
+        ]
       }
     },
     "ridgewood": {
