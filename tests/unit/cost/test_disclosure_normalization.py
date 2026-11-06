@@ -10,6 +10,7 @@ import json
 import runpy
 from copy import deepcopy
 from decimal import Decimal, DefaultContext, Inexact, localcontext
+from itertools import permutations
 from pathlib import Path
 
 import pytest
@@ -452,6 +453,20 @@ def test_equivalent_decimal_policies_share_fingerprint(money, policy, field):
     )
 
 
+@pytest.mark.parametrize("rates", list(permutations(BASELINE_FX_TABLE.rates)))
+def test_fx_observation_order_does_not_change_policy(money, policy, rates):
+    """The same keyed observations define the same policy in every input order."""
+    table = FxTable(version=policy.fx_table.version, rates=rates)
+    equivalent = NormalizationPolicy(**{**policy.model_dump(), "fx_table": table})
+    assert equivalent.fingerprint == policy.fingerprint
+    assert equivalent.model_dump_json() == policy.model_dump_json()
+    assert table.rates == policy.fx_table.rates
+    assert money_values_are_comparable(
+        normalize_disclosure_money(money, policy),
+        normalize_disclosure_money(money, equivalent),
+    )
+
+
 def test_fingerprint_preserves_full_decimal_precision(policy):
     """Canonicalization must not round unequal rates under a caller's context."""
     different = NormalizationPolicy(
@@ -478,12 +493,13 @@ def test_policy_identifier_is_a_conservative_comparison_boundary(money, policy):
 
 
 @pytest.mark.parametrize(
-    "rate, expected", [("-0.99", "1"), ("0", "100"), ("0.999", "199.9")]
+    "rate, expected",
+    [("-0.99", "1"), ("0", "100"), ("0.5", "150"), ("0.999", "199.9")],
 )
 def test_fractional_escalation_rates_within_policy_bounds(
     money, policy, rate, expected
 ):
-    """Hand: 100*(1+r) gives 1, 100, 199.9; HB 135 (2020), eq. 3-13."""
+    """Hand: 100*(1+r) gives 1, 100, 150, 199.9; HB 135 (2020), eq. 3-13."""
     scenario = NormalizationPolicy(
         **{**policy.model_dump(), "annual_escalation_rate": rate}
     )
@@ -599,13 +615,14 @@ def test_rebasing_ignores_mutable_decimal_contexts(
     expected = normalize_disclosure_money(row, policy)
     assert expected.normalization_status == "NORMALIZED"
     assert expected.normalized_amount == Decimal(100)
-    with localcontext() as current:
+    # Restore patches while the owning decimal context is still alive.
+    with localcontext() as current, monkeypatch.context() as patch:
         context = DefaultContext if target == "default" else current
         if setting == "traps":
-            monkeypatch.setitem(context.traps, Inexact, True)
+            patch.setitem(context.traps, Inexact, True)
         else:
-            monkeypatch.setattr(context, "Emin", -1)
-            monkeypatch.setattr(context, "Emax", 1)
+            patch.setattr(context, "Emin", -1)
+            patch.setattr(context, "Emax", 1)
         actual = normalize_disclosure_money(row, policy)
     assert actual.model_dump_json() == expected.model_dump_json()
 
@@ -619,10 +636,11 @@ def test_decimal_range_failures_ignore_disabled_external_traps(
     row = changed(
         money, amount=amount, currency="USD", unit="USD", magnitude_scale="units"
     )
-    with localcontext() as current:
+    # Restore patches while the owning decimal context is still alive.
+    with localcontext() as current, monkeypatch.context() as patch:
         context = DefaultContext if target == "default" else current
         for signal in context.traps:
-            monkeypatch.setitem(context.traps, signal, False)
+            patch.setitem(context.traps, signal, False)
         result = normalize_disclosure_money(row, policy)
     assert result.normalization_status == "NOT_EVALUATED"
     assert result.normalized_amount is None

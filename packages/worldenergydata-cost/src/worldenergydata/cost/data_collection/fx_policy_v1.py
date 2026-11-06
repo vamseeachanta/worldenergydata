@@ -14,7 +14,6 @@ from pydantic import (
     Field,
     StrictInt,
     field_validator,
-    model_validator,
 )
 
 
@@ -51,19 +50,20 @@ class FxRate(BaseModel):
 
 
 class FxTable(BaseModel):
-    """Immutable, explicitly versioned observations; duplicate keys are errors."""
+    """Immutable, versioned observations sorted by currency/year; keys are unique."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     version: str = Field(min_length=1)
     rates: tuple[FxRate, ...]
 
-    @model_validator(mode="after")
-    def unique_keys(self) -> "FxTable":
-        keys = [(row.currency, row.fiscal_year) for row in self.rates]
+    @field_validator("rates")
+    @classmethod
+    def ordered_unique_rates(cls, rates: tuple[FxRate, ...]) -> tuple[FxRate, ...]:
+        keys = [(row.currency, row.fiscal_year) for row in rates]
         if len(keys) != len(set(keys)):
             raise ValueError("duplicate currency/fiscal-year FX key")
-        return self
+        return tuple(sorted(rates, key=lambda row: (row.currency, row.fiscal_year)))
 
 
 # Federal Reserve, Foreign Exchange Rates -- G.5A Annual, 2020 table,

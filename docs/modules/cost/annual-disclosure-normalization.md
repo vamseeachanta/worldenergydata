@@ -13,6 +13,7 @@ codes and null normalized fields. It never substitutes zero for missing data.
 | 1 | 2026-10-20 | Added a sourced money policy, deterministic utilities and a worked example to make annual disclosure comparisons auditable. |
 | 2 | 2026-10-22 | Validate serialized comparison keys and currency syntax, and specify the complete decimal context to keep results reproducible. |
 | 3 | 2026-11-06 | Align the plan with evidenced rates, screen fractional rates, canonicalize fingerprints, recheck policy metadata, distinguish missing bases, constrain provenance and document ingest mappings. |
+| 4 | 2026-11-06 | Canonicalize FX observation order, clarify fractional-rate interpretation and restore decimal test patches before their contexts expire. |
 
 ## Contract and scope
 
@@ -61,7 +62,10 @@ including same-year and same-currency rows; the policy must be complete.
 Rates are fractional inputs restricted to `-1 < r < 1`. The upper ceiling is
 an input screen for percent-versus-fraction errors: `3` is rejected rather than
 treated as 300%, while `0.03` represents 3.0%. It is not a sourced empirical
-inflation bound. Rates at or above 100% require a separately defined policy.
+inflation bound. Every accepted value is read as a fraction: `0.5` means
+50.0%, never 0.5%. The ceiling cannot detect that sub-unity entry error; callers
+must confirm the intended rate. Rates at or above 100% require a separately
+defined policy.
 
 ## Method and sources
 
@@ -106,9 +110,10 @@ The immutable bundled FX table is deliberately small:
 Every observation cites the G.5A table above. USD uses the identity ratio in
 every year. No other currency or year is filled, inverted or interpolated.
 A supplied `FxTable` must have a version, finite positive rates, citations and
-unique currency/year keys; USD observations are refused because its identity
-ratio is fixed. Both reported currency/unit fields and supplied FX observations
-require three uppercase ASCII letters. No symbols, whitespace, case conversion
+unique currency/year keys. Validation sorts observations by currency and then
+fiscal year, so input order does not change the policy. USD observations are
+refused because its identity ratio is fixed. Both reported currency/unit fields
+and supplied FX observations require three uppercase ASCII letters. No symbols, whitespace, case conversion
 or alias expansion are supported. This is a syntax check, not verification
 against a currency registry. Invalid reported codes remain in the raw snapshot
 with `unsupported_currency` or `unsupported_unit`; invalid FX codes raise
@@ -156,12 +161,13 @@ the same normalized metric, scope, declared economic basis, currency, target
 year, method and full policy fingerprint. Fingerprints use sorted JSON keys
 and exact decimal coefficients and exponents without representational trailing
 zeros or context-dependent rounding. Thus `0.03` and `0.030` yield identical
-fingerprints, as do equivalent FX observations. A changed assumption, source,
-table version or table order conservatively creates a different policy.
+fingerprints, as do equivalent FX observations supplied in any order. A changed
+assumption, source or table version conservatively creates a different policy.
 The free-text `policy_id` intentionally remains part of this boundary: a new
 identifier isolates its provenance contract even when the numeric assumptions
 match. Existing stored outputs require regeneration to use the canonical
-fingerprint; no compatibility with earlier hash encodings is inferred.
+fingerprint, including outputs whose earlier fingerprints depended on table
+order; no compatibility with earlier hash encodings is inferred.
 JSON validation rejects a serialized comparison key that disagrees with its
 key fields. The comparison gate also reconstructs that tuple and refuses a
 stale key. It additionally requires equal
