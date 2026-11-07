@@ -1,11 +1,11 @@
 # worldenergydata Module Index
 
 Auto-generated 2026-02-20. Source: `module-manifest.yaml` (WRK-252).
-Total modules indexed: **27** (18 data-source + 7 infrastructure + 2 analysis/visualization).
+Total modules indexed: **29** (22 domain modules + 7 shared utilities).
 
 ---
 
-## Production Data Modules (9 regional sources)
+## Production Data Modules (10 regional sources)
 
 | Module | Region | Key Data Types | Status |
 |--------|--------|---------------|--------|
@@ -14,6 +14,7 @@ Total modules indexed: **27** (18 data-source + 7 infrastructure + 2 analysis/vi
 | `ukcs` | UK Continental Shelf, North Sea | production, wells, completions, field economics | stable |
 | `brazil_anp` | Brazil (pre-salt, Santos, Campos) | production, wells, fiscal regimes | stable |
 | `mexico_cnh` | Mexico / GOM Mexican Waters | production, wells, fields, blocks, contracts | stable |
+| `india_dgh` | India (onland, shallow, deep and ultra-deep water) | OALP and special CBM awards, historical crude by company, condensate totals, monthly gas by location, basins | beta |
 | `canada` | Alberta, BC, Saskatchewan, Manitoba | wellbore, production, permits | stable |
 | `texas_rrc` | Texas, USA | production, wellbore, drilling permits | stable |
 | `eia_us` | United States, Alaska | production, drilling productivity, basin analysis | stable |
