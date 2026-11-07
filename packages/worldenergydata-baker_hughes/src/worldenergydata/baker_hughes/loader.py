@@ -11,6 +11,7 @@ Two formats:
 import logging
 import math
 import re
+from datetime import date, datetime
 from decimal import Decimal, DecimalException, InvalidOperation
 from pathlib import Path
 
@@ -33,6 +34,79 @@ _PIVOT_COLUMN_MAP = {
     "WaterDepth": "water_depth_ft",
     "RigCount": "rig_count",
 }
+
+_PIVOT_OPTIONAL_COLUMNS = (
+    "Country",
+    "StateProvince",
+    "County",
+    "BasinName",
+    "DrillFor",
+    "Location",
+    "Trajectory",
+    "WellType",
+)
+
+
+def _pivot_schema(df: pd.DataFrame) -> dict:
+    """Detect drift without silently inventing optional metadata."""
+    missing = sorted({"PublishDate", "RigCount"} - set(df.columns))
+    if missing:
+        raise ValueError(f"pivot schema: missing required columns {missing}")
+    allowed = set(_PIVOT_COLUMN_MAP) | {
+        field + suffix
+        for field in ("WellDepth", "WaterDepth")
+        for suffix in ("_ft", "_m")
+    }
+    extra = [str(column) for column in df.columns if column not in allowed]
+    if extra:
+        raise ValueError(f"pivot schema: unexpected columns {extra}")
+    missing = sorted(set(_PIVOT_OPTIONAL_COLUMNS) - set(df.columns))
+    return {
+        "status": "incomplete" if missing else "complete",
+        "missing_columns": missing,
+        "extra_columns": [],
+    }
+
+
+def _summary_schema(df: pd.DataFrame) -> tuple[str, dict]:
+    """Select one named identifier and unique, unambiguous calendar dates."""
+    identifiers = [column for column in df.columns if column in {"State", "state"}]
+    if len(identifiers) != 1:
+        raise ValueError("summary schema: exactly one State/state column is required")
+    state_column = identifiers[0]
+    dates = {}
+    for column in df.columns:
+        if column == state_column:
+            continue
+        try:
+            if isinstance(column, (date, datetime)):
+                parsed = pd.Timestamp(column)
+            elif isinstance(column, str) and re.fullmatch(
+                r"[0-9]{4}-[0-9]{2}-[0-9]{2}", column
+            ):
+                parsed = pd.Timestamp(column)
+            elif isinstance(column, str) and re.fullmatch(
+                r"[0-9]{1,2}/[0-9]{1,2}/[0-9]{4}", column
+            ):
+                parsed = pd.Timestamp(datetime.strptime(column, "%m/%d/%Y"))
+            else:
+                raise ValueError
+            if (
+                pd.isna(parsed)
+                or parsed.tzinfo is not None
+                or parsed != parsed.normalize()
+            ):
+                raise ValueError
+        except (ValueError, TypeError, OverflowError):
+            raise ValueError(
+                f"summary schema: unexpected/non-date column {column!r}"
+            ) from None
+        if parsed in dates.values():
+            raise ValueError("summary schema: duplicate calendar date headers")
+        dates[column] = parsed
+    if not dates:
+        raise ValueError("summary schema: at least one date column is required")
+    return state_column, dates
 
 
 # Issue #1334: accept decimal/scientific notation with no locale/grouping
@@ -154,8 +228,12 @@ def load_pivot_table(
         and output units and count policy. Invalid counts/depths raise
         ValueError with field and row; empty depth cells remain NaN. Values
         outside finite/nonzero float representation are rejected.
+        Missing optional metadata is listed in attrs['schema_validation'];
+        unknown columns, missing required fields and unmatched exact filters
+        raise ValueError. No spelling, case or whitespace normalization is used.
     """
     df = pd.read_excel(path, sheet_name=sheet_name, keep_default_na=False, dtype=object)
+    schema = _pivot_schema(df)
     source_units = _validated_depths(df, depth_unit)
     df = df.rename(columns=_PIVOT_COLUMN_MAP)
 
@@ -167,11 +245,15 @@ def load_pivot_table(
         "output_depth_unit": "ft",
         "depth_policy": "empty_cell_missing_otherwise_finite_nonnegative_reject",
     }
+    df.attrs["schema_validation"] = schema
 
-    if country is not None:
-        df = df[df["country"] == country].copy()
-    if basin is not None:
-        df = df[df["basin"] == basin].copy()
+    for field, value in (("country", country), ("basin", basin)):
+        if value is not None:
+            if field not in df.columns:
+                raise ValueError(f"{field} filter: missing dimension column")
+            df = df[df[field] == value].copy()
+            if df.empty:
+                raise ValueError(f"{field} filter: matched no records")
 
     logger.info("Loaded pivot table: %d records from %s", len(df), path)
     return df.reset_index(drop=True)
@@ -196,15 +278,20 @@ def load_summary(
         nonnegative integers; invalid/missing/fractional inputs raise ValueError
         with field and melted row index. No locale separators are inferred.
         DataFrame attrs['numeric_validation'] records the rejection policy.
+        Exactly one State/state column may appear in any position. All other
+        headers must be unique ISO YYYY-MM-DD or month-first M/D/YYYY strings,
+        or naive midnight Excel
+        dates. Missing/extra/ambiguous headers raise ValueError; accepted schema
+        metadata is recorded in attrs['schema_validation'].
     """
     df = pd.read_excel(path, sheet_name=sheet_name, keep_default_na=False, dtype=object)
 
-    state_col = df.columns[0]
-    date_cols = [c for c in df.columns if c != state_col]
+    state_col, dates = _summary_schema(df)
+    df = df.rename(columns=dates)
 
     melted = df.melt(
         id_vars=[state_col],
-        value_vars=date_cols,
+        value_vars=list(dates.values()),
         var_name="date",
         value_name="rig_count",
     )
@@ -212,6 +299,11 @@ def load_summary(
     melted["date"] = pd.to_datetime(melted["date"])
     melted["rig_count"] = _validated_counts(melted["rig_count"])
     melted.attrs["numeric_validation"] = {"rig_count": "nonnegative_integer_reject"}
+    melted.attrs["schema_validation"] = {
+        "status": "complete",
+        "missing_columns": [],
+        "extra_columns": [],
+    }
 
     logger.info("Loaded summary: %d records from %s", len(melted), path)
     return melted.reset_index(drop=True)
