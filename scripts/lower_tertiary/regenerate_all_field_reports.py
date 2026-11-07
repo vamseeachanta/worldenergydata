@@ -98,14 +98,19 @@ def _install_batch_caches() -> None:
     _rep.reproduce_v30_production = _prod_memo
     _fin.reproduce_v30_production = _prod_memo
 
-    # All-fields V30 financials are window-independent and read-only here.
+    # Financials depend on the window, first-oil corrections and input set.
     _raw_fin = _fin.reproduce_v30_financials
     _fin_cache: dict = {}
 
-    def _fin_memo():
-        if "v" not in _fin_cache:
-            _fin_cache["v"] = _raw_fin()
-        return _fin_cache["v"]
+    def _fin_memo(end_date=None, first_oil_overrides=None, input_set="v30"):
+        key = (end_date, tuple(sorted((first_oil_overrides or {}).items())), input_set)
+        if key not in _fin_cache:
+            _fin_cache[key] = _raw_fin(
+                end_date=end_date,
+                first_oil_overrides=first_oil_overrides,
+                input_set=input_set,
+            )
+        return _fin_cache[key]
 
     _fin.reproduce_v30_financials = _fin_memo
 
