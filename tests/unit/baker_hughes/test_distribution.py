@@ -87,7 +87,7 @@ def test_distribution_boundary_retains_evidence_gap():
         assert required in disposition, required
 
 
-@pytest.mark.parametrize("configured_output", [None, "absolute", "relative"])
+@pytest.mark.parametrize("configured_output", [None, "empty", "absolute", "relative"])
 def test_supplied_archives_keep_inventories_in_scratch(
     tmp_path, tmp_path_factory, monkeypatch, configured_output
 ):
@@ -112,6 +112,9 @@ def test_supplied_archives_keep_inventories_in_scratch(
     elif configured_output == "relative":
         monkeypatch.chdir(tmp_path)
         monkeypatch.setenv("BAKER_HUGHES_EVIDENCE_DIR", "retained")
+    elif configured_output == "empty":
+        monkeypatch.chdir(tmp_path)
+        monkeypatch.setenv("BAKER_HUGHES_EVIDENCE_DIR", "")
 
     archives = distribution_archives.__wrapped__(tmp_path_factory)
     test_wheel_contains_pack_and_loader(archives)
@@ -121,10 +124,11 @@ def test_supplied_archives_keep_inventories_in_scratch(
     assert {path.name: path.read_bytes() for path in artifact_dir.iterdir()} == before
     _, _, evidence_dir = archives
     assert evidence_dir.is_absolute()
-    if configured_output:
+    if configured_output in ("absolute", "relative"):
         assert evidence_dir == tmp_path / "retained"
     else:
         assert evidence_dir.parent == tmp_path_factory.getbasetemp()
+        assert evidence_dir != tmp_path
     inventories = sorted(path.name for path in evidence_dir.glob("*.members.txt"))
     assert inventories == [sdist.name + ".members.txt", wheel.name + ".members.txt"]
 
@@ -133,7 +137,9 @@ def test_supplied_archives_keep_inventories_in_scratch(
 def distribution_archives(tmp_path_factory):
     """Supply scratch archive paths, building offline when none are supplied."""
     scratch = tmp_path_factory.mktemp("baker-hughes-distribution")
-    evidence_dir = Path(os.environ.get("BAKER_HUGHES_EVIDENCE_DIR", scratch)).resolve()
+    evidence_dir = Path(
+        os.environ.get("BAKER_HUGHES_EVIDENCE_DIR") or scratch
+    ).resolve()
     supplied = os.environ.get("BAKER_HUGHES_ARTIFACT_DIR")
     if supplied:
         artifact_dir = Path(supplied).resolve()
