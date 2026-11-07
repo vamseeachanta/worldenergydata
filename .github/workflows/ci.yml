@@ -27,6 +27,136 @@ env:
   PYTHON_VERSION_DEFAULT: "3.11"
 
 jobs:
+  operator-onepager-changes:
+    name: Detect operator report changes
+    needs: [mode]
+    if: >-
+      !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && github.event_name
+      == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      required: ${{ steps.paths.outputs.required }}
+    steps:
+      - name: Checkout report history
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          filter: blob:none
+          persist-credentials: false
+
+      - name: Detect report input changes
+        id: paths
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          python - <<'PY'
+          import os
+          import subprocess
+          from pathlib import Path
+
+          environment = os.environ.copy()
+          for key in ('GIT_DIR', 'GIT_WORK_TREE', 'GIT_COMMON_DIR'):
+              environment.pop(key, None)
+
+          def git(*arguments, **kwargs):
+              return subprocess.check_output(['git', *arguments], env=environment, **kwargs)
+
+          head = os.environ['HEAD_SHA']
+          base = git('merge-base', os.environ['BASE_SHA'], head, encoding='utf-8').strip()
+          changed = git('diff', '--no-renames', '--name-only', '-z', base, head, '--').split(b'\0')
+          required = any(
+              path in (
+                  b'src/worldenergydata/analysis/operator_onepager.py',
+                  b'tests/unit/analysis/test_operator_onepager.py',
+              ) or path.startswith(b'tests/fixtures/operator_onepager/')
+              for path in changed
+          )
+
+          def report_targets(revision):
+              if not git('ls-tree', '--name-only', revision, '--', 'Makefile', encoding='utf-8').strip():
+                  return None
+              text = git('show', revision + ':Makefile', encoding='utf-8')
+              selected = []
+              in_target = False
+              for line in text.splitlines():
+                  target = False
+                  if line and not line.startswith((' ', '\t', '#')):
+                      names = line.split(':', 1)[0].split() if ':' in line else []
+                      target = bool({'onepager', 'onepager-html'} & set(names))
+                      in_target = target
+                  if target or (in_target and line.startswith('\t')) or line.startswith('ONEPAGER_'):
+                      selected.append(line)
+              return selected
+
+          if b'Makefile' in changed:
+              required |= report_targets(base) != report_targets(head)
+          with Path(os.environ['GITHUB_OUTPUT']).open('a', encoding='utf-8', newline='\n') as output:
+              print('required=' + str(required).lower(), file=output)
+          PY
+
+  operator-onepager-pdf:
+    name: Operator one-pager PDF
+    needs: [mode, operator-onepager-changes]
+    if: >-
+      !cancelled() && needs.operator-onepager-changes.result == 'success' &&
+      needs.operator-onepager-changes.outputs.required == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Install PDF readback tools
+        run: |
+          google-chrome --version
+          sudo apt-get update
+          sudo apt-get install --yes poppler-utils
+          pdfinfo -v
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+
+      - name: Run report tests with required PDF readback
+        env:
+          PYTHONPATH: src
+          ONEPAGER_REQUIRE_PDF: "1"
+        run: |
+          uv run --no-project --python 3.11 --with pytest==8.4.2 --with PyYAML==6.0.3 python -m pytest \
+            tests/unit/analysis/test_operator_onepager.py --noconftest \
+            -q -rA -p no:cacheprovider -o addopts= --strict-markers \
+            --basetemp="$RUNNER_TEMP/onepager-pdf" \
+            --junitxml="$RUNNER_TEMP/onepager-pdf.xml"
+
+      - name: Verify required PDF test results
+        env:
+          REPORT_XML: ${{ runner.temp }}/onepager-pdf.xml
+        run: |
+          python - <<'PY'
+          import os
+          import xml.etree.ElementTree as ET
+
+          root = ET.parse(os.environ['REPORT_XML']).getroot()
+          required = (
+              'test_worked_example_pdf_is_one_real_page',
+              'test_make_pdf_target_is_one_real_page',
+              'test_real_pdf_overflow_preserves_accepted_destination',
+          )
+          for name in required:
+              cases = [case for case in root.iter('testcase') if case.get('name') == name]
+              if len(cases) != 1 or any(
+                  cases[0].find(tag) is not None for tag in ('skipped', 'failure', 'error')
+              ):
+                  raise SystemExit('Required PDF case did not pass: ' + name)
+          print('All three required PDF cases passed')
+          PY
+
   mode:
     name: Gate mode
     runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","Linux"]') }}
@@ -370,7 +500,7 @@ jobs:
 
   pr-gate:
     name: Test (PR gate)
-    needs: [mode, domain-tests]
+    needs: [mode, domain-tests, operator-onepager-changes, operator-onepager-pdf]
     if: ${{ !cancelled() && github.event_name == 'pull_request' }}
     runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","Linux"]') }}
     permissions:
@@ -388,8 +518,18 @@ jobs:
         if: needs.mode.result != 'success' || needs.mode.outputs.replay != 'true'
         env:
           FULL_RESULT: ${{ needs.domain-tests.result }}
+          CHANGES_RESULT: ${{ needs.operator-onepager-changes.result }}
+          PDF_REQUIRED: ${{ needs.operator-onepager-changes.outputs.required }}
+          PDF_RESULT: ${{ needs.operator-onepager-pdf.result }}
         run: |
-          if [ "$FULL_RESULT" != success ]; then
-            echo "::error::Full gate did not succeed: $FULL_RESULT"
+          if [ "$FULL_RESULT" != success ] || [ "$CHANGES_RESULT" != success ]; then
+            echo "::error::Full gate did not succeed: domains=$FULL_RESULT changes=$CHANGES_RESULT"
             exit 1
           fi
+          case "$PDF_REQUIRED:$PDF_RESULT" in
+            true:success|false:skipped) ;;
+            *)
+              echo "::error::Unexpected PDF result: required=$PDF_REQUIRED result=$PDF_RESULT"
+              exit 1
+              ;;
+          esac
