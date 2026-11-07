@@ -10,7 +10,7 @@ Covers:
     TestCalibratedMatrix    (4 tests)
     TestIntegrationWithSkill (3 tests)
 
-Total: 225 cases, including 180 source-expression guard cases.
+Total: 281 cases, including 236 source-expression guard cases.
 """
 
 from __future__ import annotations
@@ -456,25 +456,43 @@ class _InvalidOperatorLiteral(ValueError):
     """Carry a formatting error's source line without recording literal values."""
 
 
-def _is_literal_operator_expression(expression):
+def _is_literal_operator_expression(expression, *, format_operand=False):
     """Recognize complete string expressions before attempting any evaluation."""
     if isinstance(expression, ast.Constant):
-        return isinstance(expression.value, str)
+        return isinstance(expression.value, str) or (
+            format_operand and type(expression.value) in {int, float}
+        )
     if isinstance(expression, ast.JoinedStr):
         return all(
-            isinstance(value, ast.Constant) and isinstance(value.value, str)
-            for value in expression.values
+            _is_literal_operator_expression(value) for value in expression.values
+        )
+    if isinstance(expression, ast.FormattedValue):
+        return _is_literal_operator_expression(
+            expression.value, format_operand=True
+        ) and (
+            expression.format_spec is None
+            or _is_literal_operator_expression(expression.format_spec)
+        )
+    if format_operand and isinstance(expression, ast.Tuple):
+        return all(
+            _is_literal_operator_expression(value, format_operand=True)
+            for value in expression.elts
+        )
+    if format_operand and isinstance(expression, ast.Dict):
+        return all(
+            isinstance(key, ast.Constant)
+            and isinstance(key.value, str)
+            and _is_literal_operator_expression(value, format_operand=True)
+            for key, value in zip(expression.keys, expression.values)
         )
     if isinstance(expression, ast.BinOp) and isinstance(
         expression.op, (ast.Add, ast.Mod)
     ):
-        right = expression.right
-        right_is_literal = (
-            all(_is_literal_operator_expression(value) for value in right.elts)
-            if isinstance(expression.op, ast.Mod) and isinstance(right, ast.Tuple)
-            else _is_literal_operator_expression(right)
+        return _is_literal_operator_expression(
+            expression.left
+        ) and _is_literal_operator_expression(
+            expression.right, format_operand=isinstance(expression.op, ast.Mod)
         )
-        return _is_literal_operator_expression(expression.left) and right_is_literal
     return False
 
 
@@ -483,18 +501,38 @@ def _fold_operator_literal(expression):
     if isinstance(expression, ast.Constant):
         return expression.value
     if isinstance(expression, ast.JoinedStr):
-        return "".join(value.value for value in expression.values)
+        return "".join(_fold_operator_literal(value) for value in expression.values)
+    if isinstance(expression, ast.Tuple):
+        return tuple(_fold_operator_literal(value) for value in expression.elts)
+    if isinstance(expression, ast.Dict):
+        return {
+            key.value: _fold_operator_literal(value)
+            for key, value in zip(expression.keys, expression.values)
+        }
+    if isinstance(expression, ast.FormattedValue):
+        value = _fold_operator_literal(expression.value)
+        spec = (
+            _fold_operator_literal(expression.format_spec)
+            if expression.format_spec is not None
+            else ""
+        )
+        try:
+            if expression.conversion == ord("s"):
+                value = str(value)
+            elif expression.conversion == ord("r"):
+                value = repr(value)
+            elif expression.conversion == ord("a"):
+                value = ascii(value)
+            return format(value, spec)
+        except (TypeError, ValueError):
+            raise _InvalidOperatorLiteral(expression.lineno) from None
     left = _fold_operator_literal(expression.left)
-    right = (
-        tuple(_fold_operator_literal(value) for value in expression.right.elts)
-        if isinstance(expression.right, ast.Tuple)
-        else _fold_operator_literal(expression.right)
-    )
-    if isinstance(expression.op, ast.Add):
-        return left + right
+    right = _fold_operator_literal(expression.right)
     try:
+        if isinstance(expression.op, ast.Add):
+            return left + right
         return left % right
-    except (TypeError, ValueError):
+    except (KeyError, TypeError, ValueError):
         raise _InvalidOperatorLiteral(expression.lineno) from None
 
 
@@ -601,8 +639,10 @@ def test_package_source_and_fixtures_use_operator_codenames():
     and named aggregation tuples are metadata. Conditional and boolean branches,
     dictionary value literals and nonempty lookup defaults are checked. Binary
     concatenation and percent formatting are folded recursively for complete
-    string literals, including tuple formatting operands and f-strings without
-    placeholders. Malformed literal formatting reports its source location;
+    literal expressions, including tuple and mapping formatting operands,
+    numeric formatting operands and f-strings with literal placeholders,
+    conversions and format specifications. Malformed literal formatting reports
+    its source location without including values;
     dynamically computed labels are not evaluated.
     This is a structural regression check, not free-text entity recognition.
     """
@@ -737,6 +777,9 @@ def test_operator_source_guard_checks_expression_values(field, value):
         '"OPERATOR-" + ("A" + letter)',
         '"OPERATOR-%s%s" % ("A", letter)',
         'f"OPERATOR-{letter}"',
+        '"%(x)s" % {"x": letter}',
+        "f\"OPERATOR-{'AA':{width}}\"",
+        '"OPERATOR-%c" % number',
     ],
 )
 def test_operator_source_guard_skips_dynamic_binary_expressions(field, value):
@@ -757,6 +800,17 @@ def test_operator_source_guard_skips_dynamic_binary_expressions(field, value):
         ('"OPERATOR-%s" % ("AA",)', '"UN%s" % ("LABELLED",)'),
         ('"OPERATOR-%s%s" % ("A", "A")', '"UN%s%s" % ("LAB", "ELLED")'),
         ('f"OPERATOR-AA"', 'f"UNLABELLED"'),
+        ("f\"OPERATOR-{'AA'}\"", "f\"UN{'LABELLED'}\""),
+        (
+            '"%(x)s" % {"x": "OPERATOR-AA"}',
+            '"%(x)s" % {"x": "UNLABELLED"}',
+        ),
+        ('"OPERATOR-%c" % 65', '"UNLABELLED-%d" % 7'),
+        ('"OPERATOR-%.0sAA" % 7.5', '"UNLABELLED-%.1f" % 7.5'),
+        ("f\"OPERATOR-{'AA'!s}\"", "f\"UN{'LABELLED'!s}\""),
+        ("f\"{'OPERATOR-AA':{'s'}}\"", "f\"{'UNLABELLED':{'s'}}\""),
+        ("f\"OPERATOR-{''!r:.0s}AA\"", "f\"UN{''!r:.0s}LABELLED\""),
+        ("f\"OPERATOR-{''!a:.0s}AA\"", "f\"UN{''!a:.0s}LABELLED\""),
         (
             '("OPERATOR-" + "%s") % ("A" + "A",)',
             '("UN" + "%s") % ("LAB" + "ELLED",)',
@@ -788,6 +842,9 @@ def test_operator_source_guard_checks_complete_literal_binary_values(
         '"OPERATOR-%q" % "AA"',
         '"OPERATOR-%" % ("AA",)',
         '"OPERATOR-" + ("%s %s" % "AA")',
+        '"OPERATOR-%(missing)s" % {"x": "AA"}',
+        '"OPERATOR-%(x)d" % {"x": "AA"}',
+        "f\"OPERATOR-{'AA':q}\"",
     ],
 )
 def test_operator_source_guard_reports_malformed_literal_formatting(field, value):
