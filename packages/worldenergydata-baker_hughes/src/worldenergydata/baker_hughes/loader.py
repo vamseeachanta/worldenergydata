@@ -12,6 +12,7 @@ import logging
 import math
 import re
 from decimal import Decimal, DecimalException, InvalidOperation
+from fractions import Fraction
 from pathlib import Path
 
 import pandas as pd
@@ -79,6 +80,26 @@ def _validated_counts(values: pd.Series) -> pd.Series:
 _METRES_PER_FOOT = Decimal("0.3048")
 
 
+def _depth_in_feet(number: Decimal, unit: str) -> float:
+    """Round the exact unit ratio once, without caller Decimal arithmetic."""
+    if unit == "ft" or number.is_zero():
+        return float(number)
+    # Numerical Computation Guide (November 2005), sections 2.1.1 (rounding)
+    # and 2.2.3, Tables 2-4/2-5 (double format):
+    # https://docs.oracle.com/cd/E19422-01/819-3693/ncg_math.html
+    # Least subnormal: 2**-1074 ft; nearest/even zero midpoint: 2**-1075 ft.
+    # 10**-325 < 0.3048 * 2**-1075 < 10**-324, so metre inputs with
+    # adjusted() < -325 round to zero. The midpoint tie also rounds to zero.
+    # Greatest finite: (2 - 2**-52) * 2**1023 ft. Even the outer overflow
+    # bound gives 0.3048 * 2**1024 < 10**308 m, so adjusted() > 308 cannot
+    # round to finite feet. Decade 308 is deliberately retained loosely.
+    # Check before constructing ratios for compact, enormous-exponent inputs;
+    # the existing float checks handle overflow/underflow in boundary decades.
+    if not -325 <= number.adjusted() <= 308:
+        raise ValueError
+    return float(Fraction(number) / Fraction(_METRES_PER_FOOT))
+
+
 def _validated_depths(df: pd.DataFrame, depth_unit: str | None) -> dict[str, str]:
     """Validate source units and values before assigning feet-labelled columns.
 
@@ -111,7 +132,7 @@ def _validated_depths(df: pd.DataFrame, depth_unit: str | None) -> dict[str, str
                 if not number.is_finite() or number < 0 or isinstance(value, bool):
                     raise ValueError
                 # Output remains international feet; convert before labelling.
-                converted = float(number / _METRES_PER_FOOT if unit == "m" else number)
+                converted = _depth_in_feet(number, unit)
                 # A nonzero input must not silently underflow to zero.
                 if not math.isfinite(converted) or (number != 0 and converted == 0):
                     raise ValueError
