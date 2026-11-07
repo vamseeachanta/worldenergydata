@@ -35,9 +35,11 @@ grouped as other.
 Steps:
 1. git clone --filter=blob:none https://github.com/vamseeachanta/worldenergydata
    cd worldenergydata
-   git fetch origin f5af5b6da87710bb395552f9cda5e34d1f324479
+   git fetch origin f5af5b6da87710bb395552f9cda5e34d1f324479 || git fetch origin refs/pull/1844/head
    git checkout f5af5b6da87710bb395552f9cda5e34d1f324479
-   (The repository is large; the blobless clone downloads only what you check out.)
+   (The repository is large; the blobless clone downloads only what you check out.
+   The pinned commit is the head of pull request 1844; GitHub keeps that ref after
+   the branch is deleted, so the second fetch works if the first one does not.)
    Use Python 3.10 or later. No package install is needed.
 2. python examples/bsee/rawdata_fact_check/count_rawdata.py --self-test
 3. python examples/bsee/rawdata_fact_check/count_rawdata.py --out bsee-out --last-year 2026

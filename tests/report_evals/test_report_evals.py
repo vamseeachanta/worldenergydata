@@ -9,6 +9,7 @@ from __future__ import annotations
 import copy
 import importlib.util
 import json
+import os
 import subprocess
 import sys
 import tempfile
@@ -18,6 +19,22 @@ import pytest
 
 EVALS = Path(__file__).resolve().parents[2] / "examples" / "report-evals"
 ALL = sorted(p.name for p in EVALS.iterdir() if (p / "results.json").exists())
+# Variables that would point git at the caller's repository instead of a fixture.
+GIT_BINDINGS = (
+    "GIT_DIR",
+    "GIT_WORK_TREE",
+    "GIT_COMMON_DIR",
+    "GIT_INDEX_FILE",
+    "GIT_OBJECT_DIRECTORY",
+    "GIT_ALTERNATE_OBJECT_DIRECTORIES",
+    "GIT_NAMESPACE",
+)
+
+
+def _git(*args: str, **kwargs) -> subprocess.CompletedProcess:
+    """git for fixture repositories, with the caller's repository bindings cleared."""
+    env = {k: v for k, v in os.environ.items() if k.upper() not in GIT_BINDINGS}
+    return subprocess.run(["git", *args], env=env, **kwargs)
 
 
 def _kit():
@@ -101,6 +118,11 @@ def test_comparison_contract():
     assert kit.compare_one(boundary, 129)[0] == "MATCH"
     assert kit.compare_one(boundary, 129.0)[0] == "MATCH"
     assert kit.compare_one(boundary, 130)[0] == "MISMATCH"
+    small = {"value": 1000, "tolerance": {"rel_pct": 0.7}, "basis": "fixed"}
+    assert kit.compare_one(small, 1007)[0] == "MATCH"
+    assert kit.compare_one(small, 1007.0)[0] == "MATCH"
+    assert kit.compare_one(small, 1008)[0] == "MISMATCH"
+    assert kit.compare_one(boundary, 10**400)[0] == "MISMATCH"  # beyond float range
     huge = {"value": 10**18, "tolerance": {"abs": 0}, "basis": "fixed"}
     assert kit.compare_one(huge, 10**18 + 1)[0] == "MISMATCH"
     fixed = {"value": 10, "tolerance": {"abs": 0.5}, "basis": "fixed"}
@@ -337,14 +359,17 @@ def test_script_identity_by_revision(tmp_path, revision):
     module = _wells_module()
     # A local fixture repository supplies committed bytes without fetching a remote pin.
     repo = tmp_path / "repo"
-    subprocess.run(["git", "init", "-q", str(repo)], check=True)
-    subprocess.run(
-        ["git", "-C", str(repo), "fetch", "-q", str(EVALS.parents[1]), "HEAD"],
+    _git("init", "-q", str(repo), check=True)
+    _git("-C", str(repo), "fetch", "-q", str(EVALS.parents[1]), "HEAD", check=True)
+    pin = _git(
+        "-C",
+        str(repo),
+        "rev-parse",
+        "FETCH_HEAD",
+        capture_output=True,
+        text=True,
         check=True,
-    )
-    pin = subprocess.check_output(
-        ["git", "-C", str(repo), "rev-parse", "FETCH_HEAD"], text=True
-    ).strip()
+    ).stdout.strip()
     # Identity checking is independent of the script's filename or executable behavior.
     module.SCRIPT = "examples/report-evals/issue-002-gom-well-permits/eval.py"
     blob = module.evalkit.git_blob(repo, pin, module.SCRIPT, fetch=False)
@@ -480,8 +505,78 @@ def test_resolved_scripts_are_isolated(tmp_path, monkeypatch):
 def test_record_reports_dirty_artifacts(tmp_path):
     kit = _kit()
     work = _demo_folder(tmp_path)
-    subprocess.run(["git", "init", "-q", str(tmp_path)], check=True)
+    _git("init", "-q", str(tmp_path), check=True)
     out = tmp_path / "record.json"
     kit.main(work / "results.json", lambda *args: None, argv=["--out", str(out)])
     record = json.loads(out.read_text(encoding="utf-8"))
     assert record["context"]["artifacts_dirty"] is True
+
+
+def test_unreadable_reader_and_huge_number_fail(tmp_path):
+    """A reader path that is a directory, or a 401-digit integer, grades FAIL with a record."""
+    folder = ALL[0]
+    out = tmp_path / "dir-run.json"
+    run = _run(folder, "--compare", str(tmp_path), "--out", str(out))
+    assert run.returncode == 1, run.stderr
+    assert json.loads(out.read_text(encoding="utf-8"))["grade"] == "FAIL"
+    numeric = next(
+        r
+        for r in _manifest(folder)["results"]
+        if r.get("scope", "both") == "both"
+        and isinstance(r["value"], int)
+        and not isinstance(r["value"], bool)
+    )
+    reader = tmp_path / "huge.json"
+    reader.write_text(
+        '{"results": [{"id": "%s", "value": %s}]}' % (numeric["id"], "9" * 401),
+        encoding="utf-8",
+    )
+    out = tmp_path / "huge-run.json"
+    run = _run(folder, "--compare", str(reader), "--out", str(out))
+    assert run.returncode == 1, run.stderr
+    record = json.loads(out.read_text(encoding="utf-8"))
+    assert record["grade"] == "FAIL"
+    assert {r["status"] for r in record["results"]} >= {"MISMATCH"}
+
+
+def test_git_calls_ignore_caller_bindings(tmp_path, monkeypatch):
+    """GIT_DIR and related variables must not redirect fixture or evalkit git calls."""
+    kit = _kit()
+    caller = tmp_path / "caller"
+    _git("init", "-q", str(caller), check=True)
+    (caller / "keep.txt").write_text("caller file\n", encoding="utf-8")
+
+    def snapshot():
+        return {
+            str(f.relative_to(caller)): f.read_bytes()
+            for f in caller.rglob("*")
+            if f.is_file()
+        }
+
+    before = snapshot()
+    monkeypatch.setenv("GIT_DIR", str(caller / ".git"))
+    monkeypatch.setenv("GIT_WORK_TREE", str(caller))
+    monkeypatch.setenv("GIT_COMMON_DIR", str(caller / ".git"))
+    fixture = tmp_path / "fixture"
+    _git("init", "-q", str(fixture), check=True)
+    (fixture / "a.txt").write_bytes(b"a\n")
+    _git("-C", str(fixture), "add", "a.txt", check=True)
+    _git(
+        "-C",
+        str(fixture),
+        "-c",
+        "user.name=fixture",
+        "-c",
+        "user.email=fixture@example.invalid",
+        "-c",
+        "commit.gpgsign=false",
+        "commit",
+        "-q",
+        "-m",
+        "fixture",
+        check=True,
+    )
+    head = kit.git_head(fixture)
+    assert head is not None
+    assert kit.git_blob(fixture, head, "a.txt", fetch=False) == b"a\n"
+    assert snapshot() == before

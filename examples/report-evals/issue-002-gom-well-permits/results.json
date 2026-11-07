@@ -67,7 +67,7 @@
    "what": "The counting script on the main branch of worldenergydata",
    "why": "The pinned commit is on a branch that is not merged yet.",
    "how_to_supply": "Not needed: the eval reads the script from the pinned commit of any clone (it fetches the commit if needed).",
-   "effect": "Step 1 explicitly fetches the pinned commit. Retain its source branch until the pin is reachable on main; a squash merge alone does not preserve that ancestry."
+   "effect": "Step 1 fetches the pinned commit by its SHA, or else through refs/pull/1844/head, which GitHub keeps after the branch is deleted, so the pin stays fetchable after a squash merge. A candidate run needs the script on main."
   }
  ],
  "cannot_do": [

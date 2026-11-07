@@ -116,10 +116,20 @@ def fetch(url: str, dest: Path, headers: dict[str, str] | None = None,
             "retrieved_utc": retrieved}
 
 
+# Variables that would make git ignore "-C <path>" and act on another repository.
+GIT_BINDINGS = ("GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR", "GIT_INDEX_FILE",
+                "GIT_OBJECT_DIRECTORY", "GIT_ALTERNATE_OBJECT_DIRECTORIES", "GIT_NAMESPACE")
+
+
+def git_env() -> dict[str, str]:
+    """Environment for git subprocesses, without the variables in GIT_BINDINGS."""
+    return {k: v for k, v in os.environ.items() if k.upper() not in GIT_BINDINGS}
+
+
 def git_head(path: Path) -> str | None:
     try:
         out = subprocess.run(["git", "-C", str(path), "rev-parse", "HEAD"],
-                             capture_output=True, text=True, timeout=30)
+                             capture_output=True, text=True, timeout=30, env=git_env())
         return out.stdout.strip() or None
     except (OSError, subprocess.SubprocessError):
         return None
@@ -133,12 +143,12 @@ def git_blob(repo: Path, commit: str, path: str, fetch: bool = True) -> bytes | 
     """
     def show():
         return subprocess.run(["git", "-C", str(repo), "show", f"{commit}:{path}"],
-                              capture_output=True, timeout=300)
+                              capture_output=True, timeout=300, env=git_env())
     try:
         out = show()
         if out.returncode != 0 and fetch:
             subprocess.run(["git", "-C", str(repo), "fetch", "-q", "origin", commit],
-                           capture_output=True, timeout=600)
+                           capture_output=True, timeout=600, env=git_env())
             out = show()
         return out.stdout if out.returncode == 0 else None
     except (OSError, subprocess.SubprocessError):
@@ -313,9 +323,12 @@ def compare_one(expected: dict[str, Any], got: Any) -> tuple[str, str]:
     elif _is_number(want):
         if not _is_number(got):
             return "MISMATCH", f"expected a number, got {type(got).__name__}"
-        if not math.isfinite(got):
-            return "MISMATCH", f"non-finite {got!r}"
-        diff = float(got) - float(want)
+        try:
+            if not math.isfinite(got):
+                return "MISMATCH", f"non-finite {got!r}"
+            diff = float(got) - float(want)
+        except OverflowError:  # an integer beyond the float range (for example 401 digits)
+            return "MISMATCH", "number outside the comparable range"
         tol = expected["tolerance"]
         both_int = isinstance(want, int) and isinstance(got, int)
         if both_int:
@@ -496,7 +509,10 @@ def main(results_path: Path,
         mode = "prompt-level"
         graded = [r for r in doc["results"] if r.get("scope", "both") == "both"]
         values, structural = reader_values(args.compare, {r["id"] for r in graded})
-        context["reader_file_sha256"] = sha256_file(args.compare) if args.compare.exists() else None
+        try:
+            context["reader_file_sha256"] = sha256_file(args.compare) if args.compare.is_file() else None
+        except OSError:
+            context["reader_file_sha256"] = None
         names = PROMPT_ARTIFACTS
     else:
         mode = "rebuild"
@@ -520,7 +536,7 @@ def main(results_path: Path,
     context["artifacts_repo_head"] = git_head(folder)
     try:
         status = subprocess.run(["git", "-C", str(folder), "status", "--porcelain", "--", *names],
-                                capture_output=True, text=True, timeout=30)
+                                capture_output=True, text=True, timeout=30, env=git_env())
         context["artifacts_dirty"] = bool(status.stdout.strip()) if status.returncode == 0 else None
     except (OSError, subprocess.SubprocessError):
         context["artifacts_dirty"] = None
