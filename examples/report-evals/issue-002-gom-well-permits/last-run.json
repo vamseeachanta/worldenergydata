@@ -2,20 +2,20 @@
  "schema_version": "1.0",
  "report_id": "issue-002-gom-well-permits",
  "mode": "rebuild",
- "started_utc": "2026-11-07T02:51:42Z",
- "finished_utc": "2026-11-07T02:51:43Z",
+ "started_utc": "2026-11-07T03:56:52Z",
+ "finished_utc": "2026-11-07T03:56:53Z",
  "grade": "PASS",
  "pinned_commit": "f5af5b6da87710bb395552f9cda5e34d1f324479",
  "artifacts": {
-  "results.json": "e563436a7375bfd6e6f9d7a553e32b8eb869256203a5edba036d1a3cfe03675a",
-  "eval.py": "4987d51fe52e566155babe14b16f4d293d83143e6e6ef33d2b884ecd0b4bdb8f",
-  "../evalkit.py": "091d8f7659b1d65741e516427c805089768d25ee60379b6b1a90d828891d037d"
+  "results.json": "5526d232ff1d784e5b94e85960f40d231afd80ab743208523259bf2e0982618e",
+  "eval.py": "939b8159c63da8693610709b542d02052d62f2d00cce60111cbadad2aee413ec",
+  "../evalkit.py": "5993133e4d58514b587cece30cb850a487ffcd4032e6fb34142f2b0bbab31a7e"
  },
  "python": "3.12.10",
  "platform": "Windows",
  "context": {
   "revision": "pinned",
-  "repo_head": "07ac65a63cc5bf91060baee5324d4d52b8b2c298",
+  "repo_head": "72424e16af57447628feec85fa1f4d139be6a02b",
   "code_mode": "historical",
   "counting_script": {
    "path": "examples/bsee/rawdata_fact_check/count_rawdata.py",
@@ -35,12 +35,12 @@
   },
   "fig1_csv": {
    "url": "https://www.aceengineer.com/assets/data/newsletter/issue-002/fig-p1-new-well-permits-by-rig-type.csv",
-   "path": "<tmp>\\report-evals-cache\\2026-11-06\\fig-p1-new-well-permits-by-rig-type.csv",
+   "path": "<tmp>/report-evals-cache/2026-11-06/fig-p1-new-well-permits-by-rig-type.csv",
    "sha256": "a53aee488587f01551aed29223fafc35d1a3dd0853b9d139c1ced3109b7db1b8",
    "retrieved_utc": "cached"
   },
   "fig1_2026_total": 47,
-  "artifacts_repo_head": "07ac65a63cc5bf91060baee5324d4d52b8b2c298",
+  "artifacts_repo_head": "72424e16af57447628feec85fa1f4d139be6a02b",
   "artifacts_dirty": false
  },
  "errors": [],
