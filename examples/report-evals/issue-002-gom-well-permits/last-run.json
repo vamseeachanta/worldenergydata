@@ -2,20 +2,20 @@
  "schema_version": "1.0",
  "report_id": "issue-002-gom-well-permits",
  "mode": "rebuild",
- "started_utc": "2026-11-07T03:56:52Z",
- "finished_utc": "2026-11-07T03:56:53Z",
+ "started_utc": "2026-11-07T04:47:46Z",
+ "finished_utc": "2026-11-07T04:47:48Z",
  "grade": "PASS",
  "pinned_commit": "f5af5b6da87710bb395552f9cda5e34d1f324479",
  "artifacts": {
   "results.json": "5526d232ff1d784e5b94e85960f40d231afd80ab743208523259bf2e0982618e",
   "eval.py": "939b8159c63da8693610709b542d02052d62f2d00cce60111cbadad2aee413ec",
-  "../evalkit.py": "5993133e4d58514b587cece30cb850a487ffcd4032e6fb34142f2b0bbab31a7e"
+  "../evalkit.py": "e52cd0ff12cd869c4e2f55ee6a5777800a4278828d28d8fc546cc7b69efe2eb3"
  },
  "python": "3.12.10",
  "platform": "Windows",
  "context": {
   "revision": "pinned",
-  "repo_head": "72424e16af57447628feec85fa1f4d139be6a02b",
+  "repo_head": "6175b891a13b80fabb9d45c7d9fd5d7a8e6d9c3b",
   "code_mode": "historical",
   "counting_script": {
    "path": "examples/bsee/rawdata_fact_check/count_rawdata.py",
@@ -40,7 +40,7 @@
    "retrieved_utc": "cached"
   },
   "fig1_2026_total": 47,
-  "artifacts_repo_head": "72424e16af57447628feec85fa1f4d139be6a02b",
+  "artifacts_repo_head": "6175b891a13b80fabb9d45c7d9fd5d7a8e6d9c3b",
   "artifacts_dirty": false
  },
  "errors": [],
