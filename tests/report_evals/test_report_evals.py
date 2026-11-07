@@ -7,8 +7,10 @@ scheduled report-eval job runs it.
 from __future__ import annotations
 
 import copy
+import hashlib
 import importlib.util
 import json
+import os
 import subprocess
 import sys
 import tempfile
@@ -18,6 +20,13 @@ import pytest
 
 EVALS = Path(__file__).resolve().parents[2] / "examples" / "report-evals"
 ALL = sorted(p.name for p in EVALS.iterdir() if (p / "results.json").exists())
+
+
+@pytest.fixture(autouse=True)
+def _isolate_git_environment(monkeypatch):
+    """Fixture subprocesses must select their explicit repository."""
+    for name in ("GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR"):
+        monkeypatch.delenv(name, raising=False)
 
 
 def _kit():
@@ -485,3 +494,99 @@ def test_record_reports_dirty_artifacts(tmp_path):
     kit.main(work / "results.json", lambda *args: None, argv=["--out", str(out)])
     record = json.loads(out.read_text(encoding="utf-8"))
     assert record["context"]["artifacts_dirty"] is True
+
+
+@pytest.mark.parametrize("failure", ["directory", "digest-error", "overflow"])
+def test_reader_failure_still_writes_record(tmp_path, monkeypatch, capsys, failure):
+    kit = _kit()
+    work = _demo_folder(tmp_path)
+    results = [
+        r for r in _manifest(ALL[0])["results"] if r.get("scope", "both") == "both"
+    ]
+    items = [{"id": r["id"], "value": r["value"]} for r in results]
+    if failure == "overflow":
+        items[0]["value"] = 10**400
+    reader = Path(_reader(tmp_path, "reader.json", items))
+    if failure == "directory":
+        reader = tmp_path
+    elif failure == "digest-error":
+
+        def unreadable_digest(path):
+            raise PermissionError("reader digest unavailable")
+
+        monkeypatch.setattr(kit, "sha256_file", unreadable_digest)
+    out = tmp_path / "run.json"
+    out.write_text('{"grade": "PASS", "stale": true}', encoding="utf-8")
+    code = kit.main(
+        work / "results.json",
+        lambda *args: pytest.fail("compare mode must not rebuild"),
+        argv=["--compare", str(reader), "--out", str(out)],
+    )
+    record = json.loads(out.read_text(encoding="utf-8"))
+    assert code == 1 and record["grade"] == "FAIL" and "stale" not in record
+    assert "GRADE: FAIL" in capsys.readouterr().out
+    if failure == "directory":
+        assert record["errors"] and record["context"]["reader_file_sha256"] is None
+    elif failure == "digest-error":
+        assert any("digest" in error for error in record["errors"])
+        assert {r["status"] for r in record["results"]} == {"MATCH"}
+    else:
+        assert record["results"][0]["status"] == "MISMATCH"
+        assert {r["status"] for r in record["results"][1:]} == {"MATCH"}
+
+
+@pytest.mark.parametrize(
+    "bindings",
+    [
+        ("GIT_DIR",),
+        ("GIT_WORK_TREE",),
+        ("GIT_COMMON_DIR",),
+        ("GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR"),
+    ],
+)
+def test_git_fixtures_preserve_caller_repository(tmp_path, bindings):
+    caller = tmp_path / "caller"
+    clean_env = {
+        k: v
+        for k, v in os.environ.items()
+        if k not in {"GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR"}
+    }
+    subprocess.run(["git", "init", "-q", str(caller)], check=True, env=clean_env)
+    (caller / "caller.txt").write_text("preserve caller files\n", encoding="utf-8")
+
+    def snapshot():
+        return {
+            str(p.relative_to(caller)): hashlib.sha256(p.read_bytes()).hexdigest()
+            for p in caller.rglob("*")
+            if p.is_file()
+        }
+
+    before = snapshot()
+    env = dict(clean_env)
+    for name in bindings:
+        env[name] = str(caller if name == "GIT_WORK_TREE" else caller / ".git")
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "pytest",
+            str(Path(__file__).resolve()),
+            "-k",
+            "script_identity_by_revision or record_reports_dirty_artifacts",
+            "-q",
+            "-p",
+            "no:cacheprovider",
+            "--noconftest",
+            "-o",
+            "addopts=",
+            "--basetemp",
+            str(tmp_path / "child-tests"),
+        ],
+        env=env,
+        capture_output=True,
+        text=True,
+        timeout=60,
+    )
+    assert snapshot() == before, "fixture changed caller files or Git metadata"
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert "3 passed" in result.stdout

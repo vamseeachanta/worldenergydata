@@ -2,20 +2,20 @@
  "schema_version": "1.0",
  "report_id": "issue-002-gom-well-permits",
  "mode": "rebuild",
- "started_utc": "2026-11-07T00:54:58Z",
- "finished_utc": "2026-11-07T00:54:58Z",
+ "started_utc": "2026-11-07T02:52:35Z",
+ "finished_utc": "2026-11-07T02:52:35Z",
  "grade": "PASS",
  "pinned_commit": "f5af5b6da87710bb395552f9cda5e34d1f324479",
  "artifacts": {
   "results.json": "891816b5a7b9e852e4fa04640c94f45246e521e728ddc3d46a0325502379646a",
   "eval.py": "4987d51fe52e566155babe14b16f4d293d83143e6e6ef33d2b884ecd0b4bdb8f",
-  "../evalkit.py": "a61b176807771f9fdb8564d2db6fc12e2ff7649014bdf5e094d838fd0aafbeb4"
+  "../evalkit.py": "92be025488795b06d51ced1fbf38187641c89d42fca461e260331fe0f233db1e"
  },
  "python": "3.12.15",
  "platform": "Linux",
  "context": {
   "revision": "pinned",
-  "repo_head": "06f4c43d7e47c68e136e79daf97bbee32d267711",
+  "repo_head": "1999080662d5d37f93fc1ed87164994ac3d3b870",
   "code_mode": "historical",
   "counting_script": {
    "path": "examples/bsee/rawdata_fact_check/count_rawdata.py",
@@ -23,24 +23,24 @@
   },
   "bsee_files": {
    "APDRawData.zip": {
-    "path": "<tmp>/cache/bsee-raw/APDRawData.zip",
+    "path": "<tmp>/source-cache/APDRawData.zip",
     "sha256": "a73f31e790ba476bcab3c895da0af6bb97f6dd2890d904a8034d838e919037a5",
     "retrieved_utc": "already in data dir"
    },
    "IncInvRawData.zip": {
-    "path": "<tmp>/cache/bsee-raw/IncInvRawData.zip",
+    "path": "<tmp>/source-cache/IncInvRawData.zip",
     "sha256": "b936536640c0e0f58ab31fd2e70fb6da6c4ffbc78a2737aa035bd9f508822475",
     "retrieved_utc": "already in data dir"
    }
   },
   "fig1_csv": {
    "url": "https://www.aceengineer.com/assets/data/newsletter/issue-002/fig-p1-new-well-permits-by-rig-type.csv",
-   "path": "<tmp>/cache/fig-p1-new-well-permits-by-rig-type.csv",
+   "path": "<tmp>/source-cache/fig-p1-new-well-permits-by-rig-type.csv",
    "sha256": "a53aee488587f01551aed29223fafc35d1a3dd0853b9d139c1ced3109b7db1b8",
    "retrieved_utc": "cached"
   },
   "fig1_2026_total": 47,
-  "artifacts_repo_head": "06f4c43d7e47c68e136e79daf97bbee32d267711",
+  "artifacts_repo_head": "1999080662d5d37f93fc1ed87164994ac3d3b870",
   "artifacts_dirty": true
  },
  "errors": [],

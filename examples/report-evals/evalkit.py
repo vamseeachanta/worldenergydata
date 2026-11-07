@@ -313,9 +313,12 @@ def compare_one(expected: dict[str, Any], got: Any) -> tuple[str, str]:
     elif _is_number(want):
         if not _is_number(got):
             return "MISMATCH", f"expected a number, got {type(got).__name__}"
-        if not math.isfinite(got):
-            return "MISMATCH", f"non-finite {got!r}"
-        diff = float(got) - float(want)
+        try:
+            if not math.isfinite(got):
+                return "MISMATCH", f"non-finite {got!r}"
+            diff = float(got) - float(want)
+        except OverflowError:
+            return "MISMATCH", "numeric value exceeds supported comparison range"
         tol = expected["tolerance"]
         both_int = isinstance(want, int) and isinstance(got, int)
         if both_int:
@@ -496,7 +499,11 @@ def main(results_path: Path,
         mode = "prompt-level"
         graded = [r for r in doc["results"] if r.get("scope", "both") == "both"]
         values, structural = reader_values(args.compare, {r["id"] for r in graded})
-        context["reader_file_sha256"] = sha256_file(args.compare) if args.compare.exists() else None
+        context["reader_file_sha256"] = None
+        try:
+            context["reader_file_sha256"] = sha256_file(args.compare)
+        except OSError as exc:
+            structural.append(f"reader file digest unreadable: {exc}")
         names = PROMPT_ARTIFACTS
     else:
         mode = "rebuild"
