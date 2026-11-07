@@ -645,7 +645,9 @@ def test_package_source_and_fixtures_use_operator_codenames():
     its source location without including values. The folding whitelist excludes
     bool, None and bytes operands, conditionals nested inside binary or formatted
     expressions, and list formatting operands. Dynamically computed labels are
-    not evaluated.
+    not evaluated. Resource exhaustion from unbounded literal formatting widths
+    or precisions is outside this check: folding may allocate large strings or
+    raise an uncaught MemoryError. No allocation limit is enforced.
     This is a structural regression check, not free-text entity recognition.
     """
     package = Path(calibrator_module.__file__).parent
