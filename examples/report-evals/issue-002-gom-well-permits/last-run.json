@@ -2,20 +2,20 @@
  "schema_version": "1.0",
  "report_id": "issue-002-gom-well-permits",
  "mode": "rebuild",
- "started_utc": "2026-11-07T00:54:58Z",
- "finished_utc": "2026-11-07T00:54:58Z",
+ "started_utc": "2026-11-07T02:51:42Z",
+ "finished_utc": "2026-11-07T02:51:43Z",
  "grade": "PASS",
  "pinned_commit": "f5af5b6da87710bb395552f9cda5e34d1f324479",
  "artifacts": {
-  "results.json": "891816b5a7b9e852e4fa04640c94f45246e521e728ddc3d46a0325502379646a",
+  "results.json": "e563436a7375bfd6e6f9d7a553e32b8eb869256203a5edba036d1a3cfe03675a",
   "eval.py": "4987d51fe52e566155babe14b16f4d293d83143e6e6ef33d2b884ecd0b4bdb8f",
-  "../evalkit.py": "a61b176807771f9fdb8564d2db6fc12e2ff7649014bdf5e094d838fd0aafbeb4"
+  "../evalkit.py": "091d8f7659b1d65741e516427c805089768d25ee60379b6b1a90d828891d037d"
  },
- "python": "3.12.15",
- "platform": "Linux",
+ "python": "3.12.10",
+ "platform": "Windows",
  "context": {
   "revision": "pinned",
-  "repo_head": "06f4c43d7e47c68e136e79daf97bbee32d267711",
+  "repo_head": "07ac65a63cc5bf91060baee5324d4d52b8b2c298",
   "code_mode": "historical",
   "counting_script": {
    "path": "examples/bsee/rawdata_fact_check/count_rawdata.py",
@@ -23,25 +23,25 @@
   },
   "bsee_files": {
    "APDRawData.zip": {
-    "path": "<tmp>/cache/bsee-raw/APDRawData.zip",
+    "path": "<tmp>/report-evals-cache/2026-11-06/bsee-raw/APDRawData.zip",
     "sha256": "a73f31e790ba476bcab3c895da0af6bb97f6dd2890d904a8034d838e919037a5",
     "retrieved_utc": "already in data dir"
    },
    "IncInvRawData.zip": {
-    "path": "<tmp>/cache/bsee-raw/IncInvRawData.zip",
+    "path": "<tmp>/report-evals-cache/2026-11-06/bsee-raw/IncInvRawData.zip",
     "sha256": "b936536640c0e0f58ab31fd2e70fb6da6c4ffbc78a2737aa035bd9f508822475",
     "retrieved_utc": "already in data dir"
    }
   },
   "fig1_csv": {
    "url": "https://www.aceengineer.com/assets/data/newsletter/issue-002/fig-p1-new-well-permits-by-rig-type.csv",
-   "path": "<tmp>/cache/fig-p1-new-well-permits-by-rig-type.csv",
+   "path": "<tmp>\\report-evals-cache\\2026-11-06\\fig-p1-new-well-permits-by-rig-type.csv",
    "sha256": "a53aee488587f01551aed29223fafc35d1a3dd0853b9d139c1ced3109b7db1b8",
    "retrieved_utc": "cached"
   },
   "fig1_2026_total": 47,
-  "artifacts_repo_head": "06f4c43d7e47c68e136e79daf97bbee32d267711",
-  "artifacts_dirty": true
+  "artifacts_repo_head": "07ac65a63cc5bf91060baee5324d4d52b8b2c298",
+  "artifacts_dirty": false
  },
  "errors": [],
  "results": [
