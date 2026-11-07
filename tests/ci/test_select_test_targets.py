@@ -17,6 +17,7 @@ from select_test_targets import (  # noqa: E402
     ALWAYS_XDIST,
     _has_tests,
     select,
+    select_fast,
     to_matrix,
 )
 
@@ -387,3 +388,30 @@ def test_publication_shard_names_can_be_used_in_artifact_names(path, fast):
     for shard in matrix["include"]:
         assert "/" not in shard["name"]
         assert "\\" not in shard["name"]
+
+
+REPORT_EVAL_PATHS = [
+    "examples/report-evals/README.md",
+    "examples/report-evals/evalkit.py",
+    "examples/report-evals/results.schema.json",
+    "examples/report-evals/issue-002-gom-well-permits/PROMPT.md",
+    "examples/report-evals/issue-002-gom-well-permits/eval.py",
+    "examples/report-evals/issue-002-gom-well-permits/last-run.json",
+    "examples/report-evals/issue-002-gom-well-permits/results.json",
+    "tests/report_evals/test_report_evals.py",
+]
+
+
+@pytest.mark.parametrize(
+    "paths", [REPORT_EVAL_PATHS, *[[p] for p in REPORT_EVAL_PATHS]]
+)
+def test_report_eval_paths_select_their_suite(paths):
+    for chooser in (select, select_fast):
+        result = chooser(paths, REPO_ROOT)
+        assert result["scope"] == "modules", chooser.__name__
+        assert result["xdist"].count("tests/report_evals") == 1, chooser.__name__
+    for fast in (False, True):
+        matrix = to_matrix(paths, REPO_ROOT, fast=fast)
+        targets = [t for shard in matrix["include"] for t in shard["targets"].split()]
+        assert matrix["scope"] == "modules"
+        assert targets.count("tests/report_evals") == 1

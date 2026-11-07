@@ -357,23 +357,18 @@ def _wells_module():
 def test_script_identity_by_revision(tmp_path, revision):
     """pinned: a changed copy is graded False. candidate: identity is not graded."""
     module = _wells_module()
-    # A local fixture repository supplies committed bytes without fetching a remote pin.
+    # A one-commit fixture repository holds the script bytes: no remote, no history fetch.
     repo = tmp_path / "repo"
     _git("init", "-q", str(repo), check=True)
-    _git("-C", str(repo), "fetch", "-q", str(EVALS.parents[1]), "HEAD", check=True)
+    script = repo / module.SCRIPT
+    script.parent.mkdir(parents=True)
+    script.write_bytes(b"# fixture counting script\n")
+    _commit_all(repo)
     pin = _git(
-        "-C",
-        str(repo),
-        "rev-parse",
-        "FETCH_HEAD",
-        capture_output=True,
-        text=True,
-        check=True,
+        "-C", str(repo), "rev-parse", "HEAD", capture_output=True, text=True, check=True
     ).stdout.strip()
-    # Identity checking is independent of the script's filename or executable behavior.
-    module.SCRIPT = "examples/report-evals/issue-002-gom-well-permits/eval.py"
     blob = module.evalkit.git_blob(repo, pin, module.SCRIPT, fetch=False)
-    assert blob is not None
+    assert blob == b"# fixture counting script\n"
     changed = tmp_path / "count_rawdata.py"
     changed.write_bytes(blob + b"\n# changed\n")
     args = type(
@@ -567,7 +562,7 @@ def test_git_calls_ignore_caller_bindings(tmp_path, monkeypatch):
         "-c",
         "user.name=fixture",
         "-c",
-        "user.email=fixture@example.invalid",
+        "user.email=fixture-identity",
         "-c",
         "commit.gpgsign=false",
         "commit",
@@ -602,7 +597,7 @@ def _commit_all(repo):
         "-c",
         "user.name=fixture",
         "-c",
-        "user.email=fixture@example.invalid",
+        "user.email=fixture-identity",
         "-c",
         "commit.gpgsign=false",
         "commit",
@@ -667,3 +662,33 @@ def test_scratch_directory_is_removed(tmp_path, monkeypatch):
         work / "results.json", compute, argv=["--revision", "pinned", "--out", str(out)]
     )
     assert seen and not seen[0].exists() and not seen[0].parent.parent.exists()
+
+
+def test_non_finite_reader_value_keeps_record_strict_json(tmp_path):
+    """A reader value of 1e400 grades FAIL and the record parses as strict JSON."""
+    folder = ALL[0]
+    numeric = next(
+        r
+        for r in _manifest(folder)["results"]
+        if r.get("scope", "both") == "both"
+        and isinstance(r["value"], (int, float))
+        and not isinstance(r["value"], bool)
+    )
+    reader = tmp_path / "inf.json"
+    reader.write_text(
+        '{"results": [{"id": "%s", "value": 1e400}]}' % numeric["id"], encoding="utf-8"
+    )
+    out = tmp_path / "inf-run.json"
+    run = _run(folder, "--compare", str(reader), "--out", str(out))
+    assert run.returncode == 1, run.stderr
+
+    def reject(token):
+        raise ValueError(f"non-standard JSON constant {token}")
+
+    record = json.loads(out.read_text(encoding="utf-8"), parse_constant=reject)
+    row = next(r for r in record["results"] if r["id"] == numeric["id"])
+    assert record["grade"] == "FAIL"
+    assert row["status"] == "MISMATCH" and row["got"] == "inf"
+    assert _kit().json_safe({"a": [float("nan"), float("-inf"), 1.5]}) == {
+        "a": ["nan", "-inf", 1.5]
+    }
