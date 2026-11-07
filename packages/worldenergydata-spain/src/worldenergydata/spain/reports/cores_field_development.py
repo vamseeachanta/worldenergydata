@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, cast
@@ -126,6 +127,7 @@ def _summary(
         "source": {
             "format": source.metadata["format"],
             "last_refresh": source.metadata["last_refresh"],
+            "last_checked": source.metadata.get("last_checked"),
             "record_count": source.metadata["record_count"],
             "source_url": source.metadata["source_url"],
         },
@@ -139,6 +141,7 @@ def _summary(
         "limitations": [
             "Only fields with explicit field metadata and oil production run economics.",
             "Gas-only revenue is deferred to issue #808.",
+            "Missing quantities are unknown; incomplete product totals are null.",
             *oil_conversion_limitations(source.oil_conversion_audit),
             "Ayoluengo uses offshore FDAS plumbing as a wiring check; mismatch is flagged.",
         ],
@@ -157,7 +160,9 @@ def _economics_summary(
     evaluated = [
         item["field_name"]
         for item in fields
-        if item["field_name"] in FIELD_METADATA and item["oil_bbl"] > 0
+        if item["field_name"] in FIELD_METADATA
+        and item["oil_bbl"] is not None
+        and item["oil_bbl"] > 0
     ]
     results = {}
     for field_name in evaluated:
@@ -189,16 +194,17 @@ def _reference_chain_summary(result: dict[str, Any]) -> dict[str, Any]:
 def _field_summaries(frame: pd.DataFrame) -> list[dict[str, Any]]:
     items = []
     for field_name, group in frame.groupby("field_name", sort=True):
-        oil = float(_series(group, "oil_bbl").sum())
-        gas = float(_series(group, "gas_mcf").sum())
+        # Issue 1293 SF5: a sum is complete only when every row is observed.
+        oil = _rounded_number(_series(group, "oil_bbl").sum(min_count=len(group)))
+        gas = _rounded_number(_series(group, "gas_mcf").sum(min_count=len(group)))
         items.append(
             {
                 "field_name": str(field_name),
                 "first_period": _period(group, "min"),
                 "last_period": _period(group, "max"),
-                "gas_mcf": round(gas, 3),
-                "oil_bbl": round(oil, 3),
-                "row_count": int(len(group)),
+                "gas_mcf": gas,
+                "oil_bbl": oil,
+                "row_count": len(group),
                 "limitations": _field_limitations(str(field_name), oil, gas),
                 "monthly": _monthly_series(group),
             }
@@ -206,9 +212,14 @@ def _field_summaries(frame: pd.DataFrame) -> list[dict[str, Any]]:
     return items
 
 
-def _field_limitations(field_name: str, oil_bbl: float, gas_mcf: float) -> list[str]:
+def _field_limitations(
+    field_name: str, oil_bbl: float | None, gas_mcf: float | None
+) -> list[str]:
     limitations = []
-    if gas_mcf > 0 and oil_bbl <= 0:
+    for column, total in (("oil_bbl", oil_bbl), ("gas_mcf", gas_mcf)):
+        if total is None:
+            limitations.append(f"{column}_missing_observations")
+    if gas_mcf is not None and gas_mcf > 0 and (oil_bbl is None or oil_bbl <= 0):
         limitations.append("gas_revenue_deferred_to_issue_808")
     if field_name not in FIELD_METADATA:
         limitations.append("field_environment_metadata_not_curated")
@@ -247,9 +258,11 @@ def _validate_metadata(
         raise CoresReportError("manifest.json status must be success")
     if manifest.get("job_name") != "spain_cores_refresh":
         raise CoresReportError("manifest.json job_name must be spain_cores_refresh")
-    for key in ("source_url", "last_refresh"):
+    for key in ("source_url",):
         if not metadata.get(key):
             raise CoresReportError(f"_metadata.json missing {key}")
+    if "last_refresh" not in metadata:
+        raise CoresReportError("_metadata.json missing last_refresh")
     _validate_workbooks(workbook_metadata)
 
 
@@ -279,8 +292,8 @@ def _to_unified(frame: pd.DataFrame) -> pd.DataFrame:
     out["source"] = "CORES"
     for column in ("oil_bbl", "gas_mcf", "water_bbl", "condensate_bbl"):
         if column not in out:
-            out[column] = 0.0
-        out[column] = pd.to_numeric(out[column], errors="coerce").fillna(0.0)
+            out[column] = float("nan")
+        out[column] = pd.to_numeric(out[column], errors="coerce")
     columns = [
         "region",
         "field_name",
@@ -302,6 +315,12 @@ def _filter_period(
     start: str | None,
     end: str | None,
 ) -> pd.DataFrame:
+    # Issue 1293 SF9: lexical order is chronological only for ISO months.
+    for value in (start, end):
+        if value is not None and not re.fullmatch(r"[0-9]{4}-(?:0[1-9]|1[0-2])", value):
+            raise CoresReportError("period bounds must use YYYY-MM")
+    if start is not None and end is not None and start > end:
+        raise CoresReportError("start period is after end period")
     if start is None and end is None:
         return frame
     period = _period_series(frame)
@@ -330,7 +349,7 @@ def _period_series(frame: pd.DataFrame) -> pd.Series:
 def _series(frame: pd.DataFrame, column: str) -> pd.Series:
     if column not in frame:
         return pd.Series(dtype="float64")
-    return pd.to_numeric(frame[column], errors="coerce").fillna(0.0)
+    return pd.to_numeric(frame[column], errors="coerce")
 
 
 def _concept_item(item: Any) -> dict[str, Any]:
@@ -352,9 +371,9 @@ def _rounded_metrics(metrics: dict[str, Any]) -> dict[str, Any]:
     return rounded
 
 
-def _rounded_number(value: Any) -> float:
+def _rounded_number(value: Any) -> float | None:
     if value is None or pd.isna(value):
-        return 0.0
+        return None
     return round(float(value), 3)
 
 

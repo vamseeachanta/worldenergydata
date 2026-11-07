@@ -18,15 +18,18 @@ committed binary fixture.
 from __future__ import annotations
 
 import json
+import math
+import re
 from importlib.resources import files
 from pathlib import Path
-from typing import Any, Optional, cast
+from typing import Any, cast
 
 import pandas as pd
 
 from worldenergydata.spain.production.cores_density import (
     CoresDensityCoverageError,
     CoresOilConversionAudit,
+    normalize_field_key,
 )
 
 # --- documented conversion constants (review B1) ---------------------------
@@ -81,7 +84,7 @@ class CoresParseError(ValueError):
     """Raised when a CORES frame cannot be parsed."""
 
 
-def _month_to_int(m: object) -> Optional[int]:
+def _month_to_int(m: object) -> int | None:
     return _MONTHS.get(str(m).strip().lower())
 
 
@@ -126,6 +129,8 @@ def extract_cores_field_names(raw: pd.DataFrame) -> list[str]:
 
 
 def _frame_columns(raw: pd.DataFrame) -> tuple[Any, Any, list[Any]]:
+    if raw.columns.duplicated().any():
+        raise CoresParseError("duplicate workbook columns")
     cols = {str(c).strip().lower(): c for c in raw.columns}
     year_col = next((cols[c] for c in _YEAR_COLS if c in cols), None)
     month_col = next((cols[c] for c in _MONTH_COLS if c in cols), None)
@@ -138,15 +143,50 @@ def _frame_columns(raw: pd.DataFrame) -> tuple[Any, Any, list[Any]]:
 
 
 def _is_field_column(column: object) -> bool:
-    return str(column).strip().lower() not in (_YEAR_COLS | _MONTH_COLS | _TOTAL_COLS)
+    name = str(column).strip().lower()
+    return (
+        bool(name)
+        and not name.startswith("unnamed:")
+        and name not in (_YEAR_COLS | _MONTH_COLS | _TOTAL_COLS)
+    )
+
+
+def _source_number(value: object) -> float:
+    """Read Spanish text separately from native Excel numeric cells.
+
+    Unicode CLDR 48 (2025), common/main/es.xml, latn symbols: decimal comma,
+    grouping dot; inherited root.xml decimal pattern ``#,##0.###`` groups
+    three digits. Spain agent pack (2026), section 6 SF1 supplies the example.
+    A dot groups three digits; a comma starts the fractional part. Empty cells
+    and dash placeholders are missing observations, never measured zeroes.
+    """
+    if isinstance(value, str):
+        value = value.strip()
+        if value in {"", "-", "—", "..", "..."}:
+            return float("nan")
+        if not re.fullmatch(r"[+-]?(?:\d+|\d{1,3}(?:\.\d{3})+)(?:,\d+)?", value):
+            raise CoresParseError("invalid Spanish numeric text")
+        value = value.replace(".", "").replace(",", ".")
+    elif pd.isna(value):
+        return float("nan")
+    try:
+        number = float(value)
+    except (TypeError, ValueError) as exc:
+        raise CoresParseError("invalid numeric cell") from exc
+    if not math.isfinite(number):
+        raise CoresParseError("nonfinite numeric cell")
+    return number
 
 
 def _monthly_rows(raw: pd.DataFrame, year_col: Any, month_col: Any) -> pd.DataFrame:
     df = raw.copy()
-    df["_year"] = pd.to_numeric(df[year_col], errors="coerce")
-    df = df[df["_year"].notna() & (df["_year"] > 0)]
     df["_month"] = df[month_col].map(_month_to_int)
-    return df[df["_month"].notna()]
+    df = df[df["_month"].notna()].copy()
+    df["_year"] = df[year_col].map(_source_number)
+    df = df[df["_year"].notna()].copy()
+    if ((df["_year"] <= 0) | (df["_year"] % 1 != 0)).any():
+        raise CoresParseError("year must be a positive integer")
+    return df
 
 
 def _melt_field_values(df: pd.DataFrame, field_cols: list[Any]) -> pd.DataFrame:
@@ -156,8 +196,23 @@ def _melt_field_values(df: pd.DataFrame, field_cols: list[Any]) -> pd.DataFrame:
         var_name="field_name",
         value_name="_val",
     )
-    long["_val"] = pd.to_numeric(long["_val"], errors="coerce")
-    return long[long["_val"].notna()]
+    long["_val"] = long["_val"].map(_source_number)
+    long = long[long["_val"].notna()].copy()
+    # Spain agent pack (2026), section 6 SF10: production is nonnegative.
+    if (long["_val"] < 0).any():
+        raise CoresParseError("negative production quantity")
+    validate_production_keys(long, year_column="_year", month_column="_month")
+    return long
+
+
+def validate_production_keys(
+    frame: pd.DataFrame, *, year_column: str = "year", month_column: str = "month"
+) -> None:
+    """Reject ambiguous field/month rows before products can multiply (SF3)."""
+    keys = frame[[year_column, month_column]].copy()
+    keys["field_key"] = frame["field_name"].map(normalize_field_key)
+    if keys["field_key"].eq("").any() or keys.duplicated().any():
+        raise CoresParseError("empty or duplicate normalized field/month key")
 
 
 def _parsed_output(
@@ -211,8 +266,8 @@ class CoresProductionLoader:
         self,
         *,
         product: str,
-        path: Optional[Path] = None,
-        raw_frame: Optional[pd.DataFrame] = None,
+        path: Path | None = None,
+        raw_frame: pd.DataFrame | None = None,
         header_row: int = 5,
         sheet_name: Any = 0,
         oil_conversion_audit: CoresOilConversionAudit | None = None,
@@ -232,6 +287,7 @@ class CoresProductionLoader:
                 self._path,
                 sheet_name=self._sheet_name,
                 header=self._header_row,
+                dtype=object,
             )
         )
         return parse_cores_frame(
