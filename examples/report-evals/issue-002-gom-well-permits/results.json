@@ -67,7 +67,7 @@
    "what": "The counting script on the main branch of worldenergydata",
    "why": "The pinned commit is on a branch that is not merged yet.",
    "how_to_supply": "Not needed: the eval reads the script from the pinned commit of any clone (it fetches the commit if needed).",
-   "effect": "Step 1 fetches the pinned commit by its SHA, or else through refs/pull/1844/head, which GitHub keeps after the branch is deleted, so the pin stays fetchable after a squash merge. A candidate run needs the script on main."
+   "effect": "Step 1 fetches the pinned commit by its SHA, or else through refs/pull/1844/head, which GitHub keeps after the branch is deleted, so the pin stays fetchable after a squash merge as long as PR 1844 is not force-pushed past it. Once PR 1844 merges, the results are re-pinned to the commit on main. A candidate run needs the script on main."
   }
  ],
  "cannot_do": [
@@ -558,7 +558,8 @@
    "basis": "live",
    "limits": [
     "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
-    "The BSEE file is updated daily; counts may move a little as permits are added or corrected."
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected.",
+    "The 1 % band is less than one foot for this median, so any change in the median is reported as drift."
    ]
   },
   {
@@ -642,7 +643,8 @@
    "basis": "live",
    "limits": [
     "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
-    "The BSEE file is updated daily; counts may move a little as permits are added or corrected."
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected.",
+    "The 1 % band is less than one foot for this median, so any change in the median is reported as drift."
    ]
   },
   {

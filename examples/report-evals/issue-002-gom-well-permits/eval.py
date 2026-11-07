@@ -86,7 +86,7 @@ def resolve_script(args, pin: str, values: dict, notes: dict, context: dict) -> 
             context["code_mode"] = "historical" if same else "candidate"
     elif blob is not None:
         args.cache.mkdir(parents=True, exist_ok=True)
-        script = Path(tempfile.mkdtemp(prefix="count-", dir=args.cache)) / "count_rawdata.py"
+        script = Path(tempfile.mkdtemp(prefix="count-", dir=evalkit.scratch_dir(args))) / "count_rawdata.py"
         script.write_bytes(blob)
         values["script_matches_pinned_commit"] = True
         notes["script_matches_pinned_commit"] = f"read from commit {pin[:12]} of the clone"
