@@ -10,7 +10,7 @@ Covers:
     TestCalibratedMatrix    (4 tests)
     TestIntegrationWithSkill (3 tests)
 
-Total: 281 cases, including 236 source-expression guard cases.
+Total: 289 cases, including 244 source-expression guard cases.
 """
 
 from __future__ import annotations
@@ -524,7 +524,7 @@ def _fold_operator_literal(expression):
             elif expression.conversion == ord("a"):
                 value = ascii(value)
             return format(value, spec)
-        except (TypeError, ValueError):
+        except (OverflowError, TypeError, ValueError):
             raise _InvalidOperatorLiteral(expression.lineno) from None
     left = _fold_operator_literal(expression.left)
     right = _fold_operator_literal(expression.right)
@@ -532,7 +532,7 @@ def _fold_operator_literal(expression):
         if isinstance(expression.op, ast.Add):
             return left + right
         return left % right
-    except (KeyError, TypeError, ValueError):
+    except (KeyError, OverflowError, TypeError, ValueError):
         raise _InvalidOperatorLiteral(expression.lineno) from None
 
 
@@ -642,8 +642,10 @@ def test_package_source_and_fixtures_use_operator_codenames():
     literal expressions, including tuple and mapping formatting operands,
     numeric formatting operands and f-strings with literal placeholders,
     conversions and format specifications. Malformed literal formatting reports
-    its source location without including values;
-    dynamically computed labels are not evaluated.
+    its source location without including values. The folding whitelist excludes
+    bool, None and bytes operands, conditionals nested inside binary or formatted
+    expressions, and list formatting operands. Dynamically computed labels are
+    not evaluated.
     This is a structural regression check, not free-text entity recognition.
     """
     package = Path(calibrator_module.__file__).parent
@@ -845,6 +847,8 @@ def test_operator_source_guard_checks_complete_literal_binary_values(
         '"OPERATOR-%(missing)s" % {"x": "AA"}',
         '"OPERATOR-%(x)d" % {"x": "AA"}',
         "f\"OPERATOR-{'AA':q}\"",
+        '"OPERATOR-%c" % 1114112',
+        'f"{1114112:c}"',
     ],
 )
 def test_operator_source_guard_reports_malformed_literal_formatting(field, value):
