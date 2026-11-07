@@ -67,7 +67,7 @@
    "what": "The counting script on the main branch of worldenergydata",
    "why": "The pinned commit is on a branch that is not merged yet.",
    "how_to_supply": "Not needed: the eval reads the script from the pinned commit of any clone (it fetches the commit if needed).",
-   "effect": "If the branch is deleted before the merge, the pinned commit may not be fetchable."
+   "effect": "Step 1 explicitly fetches the pinned commit. Retain its source branch until the pin is reachable on main; a squash merge alone does not preserve that ancestry."
   }
  ],
  "cannot_do": [
@@ -161,7 +161,8 @@
    "basis": "live",
    "limits": [
     "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
-    "The BSEE file is updated daily; counts may move a little as permits are added or corrected."
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected.",
+    "Depth extremes include the open year 2026; a new or corrected permit can change the extreme and is reported as drift with zero tolerance."
    ]
   },
   {
@@ -181,7 +182,8 @@
    "basis": "live",
    "limits": [
     "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
-    "The BSEE file is updated daily; counts may move a little as permits are added or corrected."
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected.",
+    "Depth extremes include the open year 2026; a new or corrected permit can change the extreme and is reported as drift with zero tolerance."
    ]
   },
   {
@@ -242,7 +244,8 @@
    "basis": "live",
    "limits": [
     "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
-    "The BSEE file is updated daily; counts may move a little as permits are added or corrected."
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected.",
+    "Depth extremes include the open year 2026; a new or corrected permit can change the extreme and is reported as drift with zero tolerance."
    ]
   },
   {
@@ -262,7 +265,8 @@
    "basis": "live",
    "limits": [
     "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
-    "The BSEE file is updated daily; counts may move a little as permits are added or corrected."
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected.",
+    "Depth extremes include the open year 2026; a new or corrected permit can change the extreme and is reported as drift with zero tolerance."
    ]
   },
   {
@@ -323,7 +327,8 @@
    "basis": "live",
    "limits": [
     "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
-    "The BSEE file is updated daily; counts may move a little as permits are added or corrected."
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected.",
+    "Depth extremes include the open year 2026; a new or corrected permit can change the extreme and is reported as drift with zero tolerance."
    ]
   },
   {
@@ -343,7 +348,8 @@
    "basis": "live",
    "limits": [
     "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
-    "The BSEE file is updated daily; counts may move a little as permits are added or corrected."
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected.",
+    "Depth extremes include the open year 2026; a new or corrected permit can change the extreme and is reported as drift with zero tolerance."
    ]
   },
   {
@@ -405,7 +411,8 @@
    "basis": "live",
    "limits": [
     "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
-    "The BSEE file is updated daily; counts may move a little as permits are added or corrected."
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected.",
+    "Depth extremes include the open year 2026; a new or corrected permit can change the extreme and is reported as drift with zero tolerance."
    ]
   },
   {
@@ -425,7 +432,8 @@
    "basis": "live",
    "limits": [
     "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
-    "The BSEE file is updated daily; counts may move a little as permits are added or corrected."
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected.",
+    "Depth extremes include the open year 2026; a new or corrected permit can change the extreme and is reported as drift with zero tolerance."
    ]
   },
   {
@@ -486,7 +494,8 @@
    "basis": "live",
    "limits": [
     "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
-    "The BSEE file is updated daily; counts may move a little as permits are added or corrected."
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected.",
+    "Depth extremes include the open year 2026; a new or corrected permit can change the extreme and is reported as drift with zero tolerance."
    ]
   },
   {
@@ -506,7 +515,8 @@
    "basis": "live",
    "limits": [
     "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
-    "The BSEE file is updated daily; counts may move a little as permits are added or corrected."
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected.",
+    "Depth extremes include the open year 2026; a new or corrected permit can change the extreme and is reported as drift with zero tolerance."
    ]
   },
   {
@@ -527,7 +537,8 @@
    "limits": [
     "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
     "The rig type is the one named in the permit; the page leaves open how often a different rig drilled the well.",
-    "The BSEE file is updated daily; counts may move a little as permits are added or corrected."
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected.",
+    "The 1 % band is less than one permit for this group, so any integer change is reported as drift."
    ]
   },
   {
@@ -567,7 +578,8 @@
    "basis": "live",
    "limits": [
     "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
-    "The BSEE file is updated daily; counts may move a little as permits are added or corrected."
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected.",
+    "Depth extremes include the open year 2026; a new or corrected permit can change the extreme and is reported as drift with zero tolerance."
    ]
   },
   {
@@ -587,7 +599,8 @@
    "basis": "live",
    "limits": [
     "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
-    "The BSEE file is updated daily; counts may move a little as permits are added or corrected."
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected.",
+    "Depth extremes include the open year 2026; a new or corrected permit can change the extreme and is reported as drift with zero tolerance."
    ]
   },
   {
@@ -608,7 +621,8 @@
    "limits": [
     "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
     "The rig type is the one named in the permit; the page leaves open how often a different rig drilled the well.",
-    "The BSEE file is updated daily; counts may move a little as permits are added or corrected."
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected.",
+    "The 1 % band is less than one permit for this group, so any integer change is reported as drift."
    ]
   },
   {
@@ -648,7 +662,8 @@
    "basis": "live",
    "limits": [
     "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
-    "The BSEE file is updated daily; counts may move a little as permits are added or corrected."
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected.",
+    "Depth extremes include the open year 2026; a new or corrected permit can change the extreme and is reported as drift with zero tolerance."
    ]
   },
   {
@@ -668,7 +683,8 @@
    "basis": "live",
    "limits": [
     "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
-    "The BSEE file is updated daily; counts may move a little as permits are added or corrected."
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected.",
+    "Depth extremes include the open year 2026; a new or corrected permit can change the extreme and is reported as drift with zero tolerance."
    ]
   },
   {
@@ -812,7 +828,8 @@
    "basis": "live",
    "limits": [
     "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
-    "The BSEE file is updated daily; counts may move a little as permits are added or corrected."
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected.",
+    "This total includes the open year 2026 and has zero tolerance; any new or corrected permit is reported as drift."
    ]
   },
   {

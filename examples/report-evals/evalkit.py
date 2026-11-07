@@ -60,6 +60,7 @@ import tempfile
 import traceback
 import urllib.request
 from datetime import datetime, timezone
+from fractions import Fraction
 from pathlib import Path
 from typing import Any, Callable
 
@@ -148,7 +149,7 @@ def repo_file(args: argparse.Namespace, rel: str) -> Path:
     """Path of a repository file at the selected revision.
 
     candidate: the file in the checkout (args.repo_root). pinned: the blob at
-    code.commit, written under <temp>/report-evals-pinned/<commit>/ with the
+    code.commit, written to a private temporary directory per invocation with the
     same relative path, so scripts that load files beside them still work.
     """
     if getattr(args, "revision", "candidate") != "pinned":
@@ -157,7 +158,9 @@ def repo_file(args: argparse.Namespace, rel: str) -> Path:
                     fetch=not getattr(args, "offline", False))
     if blob is None:
         raise FileNotFoundError(f"{rel} at {args.pinned_commit[:12]} is not readable from {args.repo_root}")
-    dest = Path(tempfile.gettempdir()) / "report-evals-pinned" / args.pinned_commit[:12] / rel
+    if not hasattr(args, "_pinned_root"):
+        args._pinned_root = Path(tempfile.mkdtemp(prefix="report-evals-pinned-"))
+    dest = args._pinned_root / rel
     dest.parent.mkdir(parents=True, exist_ok=True)
     dest.write_bytes(blob)
     return dest
@@ -266,6 +269,9 @@ def validate(doc: dict[str, Any], schema: dict | None = None) -> list[str]:
         results = []
     seen = set()
     for i, r in enumerate(results):
+        if not isinstance(r, dict):
+            errors.append(f"results[{i}] must be an object")
+            continue
         errors += [f"results[{i}] missing {k}" for k in REQUIRED_RESULT if k not in r]
         rid = r.get("id")
         if rid in seen:
@@ -311,13 +317,16 @@ def compare_one(expected: dict[str, Any], got: Any) -> tuple[str, str]:
             return "MISMATCH", f"non-finite {got!r}"
         diff = float(got) - float(want)
         tol = expected["tolerance"]
-        if "abs" in tol:
-            bound = float(tol["abs"])
-        else:
-            bound = float(tol["rel_pct"]) / 100.0 * abs(float(want))
         both_int = isinstance(want, int) and isinstance(got, int)
-        allowance = 0.0 if both_int else 1e-9 * abs(float(want))  # float representation only
-        ok = abs(got - want if both_int else diff) <= bound + allowance
+        if both_int:
+            bound = (Fraction(str(tol["abs"])) if "abs" in tol else
+                     Fraction(str(tol["rel_pct"])) / 100 * abs(want))
+            ok = abs(got - want) <= bound
+        else:
+            bound = (float(tol["abs"]) if "abs" in tol else
+                     float(tol["rel_pct"]) / 100.0 * abs(float(want)))
+            allowance = 1e-9 * abs(float(want))  # float representation only
+            ok = abs(diff) <= bound + allowance
         text = f"{diff:+.6g} ({diff / abs(float(want)) * 100:+.3g} %)" if want else f"{diff:+.6g}"
     else:
         if not isinstance(got, str):
@@ -508,6 +517,13 @@ def main(results_path: Path,
                     values[r["id"]] = exc
     if "repo_root" in context:  # keep the folder name only, not the local path
         context["repo_root"] = Path(context["repo_root"]).name
+    context["artifacts_repo_head"] = git_head(folder)
+    try:
+        status = subprocess.run(["git", "-C", str(folder), "status", "--porcelain", "--", *names],
+                                capture_output=True, text=True, timeout=30)
+        context["artifacts_dirty"] = bool(status.stdout.strip()) if status.returncode == 0 else None
+    except (OSError, subprocess.SubprocessError):
+        context["artifacts_dirty"] = None
     head = context.get("repo_head")
     if mode == "rebuild" and "code_mode" not in context:
         # historical: code and repository inputs at the pinned commit; candidate: another revision.

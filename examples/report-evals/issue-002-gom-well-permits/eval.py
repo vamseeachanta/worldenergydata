@@ -78,14 +78,15 @@ def resolve_script(args, pin: str, values: dict, notes: dict, context: dict) -> 
     if args.script is not None:
         script = args.script
         if blob is None:
+            context["code_mode"] = "candidate"
             notes["script_matches_pinned_commit"] = "pinned commit not readable from --repo-root; identity not checked"
         else:
             same = _lf(script.read_bytes()) == _lf(blob)
             values["script_matches_pinned_commit"] = same
             context["code_mode"] = "historical" if same else "candidate"
     elif blob is not None:
-        script = args.cache / f"count_rawdata-{pin[:12]}.py"
-        script.parent.mkdir(parents=True, exist_ok=True)
+        args.cache.mkdir(parents=True, exist_ok=True)
+        script = Path(tempfile.mkdtemp(prefix="count-", dir=args.cache)) / "count_rawdata.py"
         script.write_bytes(blob)
         values["script_matches_pinned_commit"] = True
         notes["script_matches_pinned_commit"] = f"read from commit {pin[:12]} of the clone"
@@ -102,7 +103,8 @@ def _run(cmd: list[str], timeout: int) -> subprocess.CompletedProcess:
     out = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", timeout=timeout)
     if out.returncode != 0:
         tail = out.stderr[-400:]
-        if any(k in tail for k in ("URLError", "HTTPError", "urlopen", "TimeoutError", "ConnectionError")):
+        if any(k in tail for k in ("URLError", "HTTPError", "urlopen", "TimeoutError", "ConnectionError",
+                                    "RemoteDisconnected", "IncompleteRead", "ConnectionResetError", "SSLError")):
             raise OSError(f"BSEE download failed: {tail}")
         raise RuntimeError(f"counting script failed: {tail}")
     return out
@@ -112,7 +114,7 @@ def compute(args, values, notes, context):
     doc = json.loads((HERE / "results.json").read_text(encoding="utf-8"))
     pin = doc["code"]["commit"]
     ids = [r["id"] for r in doc["results"]]
-    context.update(repo_root=str(args.repo_root), repo_head=evalkit.git_head(args.repo_root))
+    context.update(repo_head=evalkit.git_head(args.repo_root))
     state: dict = {}
 
     def counts():

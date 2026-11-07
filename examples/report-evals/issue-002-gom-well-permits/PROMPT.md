@@ -34,7 +34,9 @@ grouped as other.
 
 Steps:
 1. git clone --filter=blob:none https://github.com/vamseeachanta/worldenergydata
-   cd worldenergydata && git checkout f5af5b6da87710bb395552f9cda5e34d1f324479
+   cd worldenergydata
+   git fetch origin f5af5b6da87710bb395552f9cda5e34d1f324479
+   git checkout f5af5b6da87710bb395552f9cda5e34d1f324479
    (The repository is large; the blobless clone downloads only what you check out.)
    Use Python 3.10 or later. No package install is needed.
 2. python examples/bsee/rawdata_fact_check/count_rawdata.py --self-test
