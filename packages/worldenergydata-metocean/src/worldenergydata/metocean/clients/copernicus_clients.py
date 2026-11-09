@@ -9,8 +9,10 @@ Downloads require the publisher's credentials and accepted dataset terms.
 SDK imports are deferred until a download adapter is constructed.
 """
 
+import os
+from collections.abc import Mapping
 from importlib import import_module
-from typing import Any, Mapping
+from typing import Any
 
 import httpx
 
@@ -81,31 +83,85 @@ def _catalogue_payload(source: str, response: httpx.Response) -> dict[str, Any]:
 
 
 def _sdk(module: str) -> Any:
+    missing_dependency = False
     try:
         return import_module(module)
     except ImportError:
+        missing_dependency = True
+    except Exception:
+        pass
+    if missing_dependency:
         raise ImportError(
             f"Install the optional {module} SDK to use this adapter"
         ) from None
+    raise EndpointError(f"{module}: SDK import failed; details suppressed") from None
+
+
+class CredentialsRequired(RuntimeError):
+    """An account source lacks required environment configuration."""
+
+
+def _environment(source: str, *names: str) -> list[str]:
+    values = [os.environ.get(name, "") for name in names]
+    if not all(value.strip() for value in values):
+        raise CredentialsRequired(f"{source}: credentials required from environment")
+    return values
 
 
 class ERA5Client:
-    """CDS adapter using current API configuration and SDK-managed credentials."""
+    """Current CDS API; credentials come only from CDSAPI_KEY.
+
+    Supplying an explicit URL and key prevents cdsapi's configuration-file
+    fallback. CDS setup documents the current URL and dataset licence consent.
+    """
 
     def __init__(self) -> None:
-        self._client = _sdk("cdsapi").Client(url=CDS_API_URL)
+        (key,) = _environment("era5", "CDSAPI_KEY")
+        sdk = _sdk("cdsapi")
+        try:
+            self._client = sdk.Client(url=CDS_API_URL, key=key, quiet=True, debug=False)
+            return
+        except Exception:
+            pass
+        raise EndpointError(
+            "era5: SDK initialization failed; details suppressed"
+        ) from None
 
     def retrieve(self, dataset: str, request: Mapping[str, Any], target: str) -> Any:
-        """Pass the dataset download form's current request to CDS unchanged."""
-        return self._client.retrieve(dataset, dict(request), target)
+        """Forward the publisher request; SDK error details may hold credentials."""
+        try:
+            return self._client.retrieve(dataset, dict(request), target)
+        except Exception:
+            pass
+        raise EndpointError("era5: retrieval failed; details suppressed") from None
 
 
 class CMEMSClient:
-    """Marine Toolbox adapter; dataset IDs replace retired MOTU service IDs."""
+    """Marine Toolbox; credentials come only from the documented environment.
+
+    Both values are supplied explicitly, preventing stored-credential fallback.
+    Credentials cannot be overridden in selection arguments.
+    """
 
     def __init__(self) -> None:
+        self._username, self._password = _environment(
+            "cmems",
+            "COPERNICUSMARINE_SERVICE_USERNAME",
+            "COPERNICUSMARINE_SERVICE_PASSWORD",
+        )
         self._toolbox = _sdk("copernicusmarine")
 
     def subset(self, dataset_id: str, **selection: Any) -> Any:
-        """Forward documented Toolbox selections; credentials stay SDK-managed."""
-        return self._toolbox.subset(dataset_id=dataset_id, **selection)
+        """Forward selections with environment credentials and sanitized errors."""
+        if {"username", "password", "credentials_file"}.intersection(selection):
+            raise ValueError("Credentials must come only from environment")
+        try:
+            return self._toolbox.subset(
+                dataset_id=dataset_id,
+                username=self._username,
+                password=self._password,
+                **selection,
+            )
+        except Exception:
+            pass
+        raise EndpointError("cmems: subset failed; details suppressed") from None
