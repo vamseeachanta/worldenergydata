@@ -12,6 +12,9 @@ import yaml
 WORKFLOWS = Path(__file__).resolve().parents[2] / ".github/workflows"
 CI_WORKFLOW = WORKFLOWS / "ci.yml"
 FULL_RUN_WORKFLOW = WORKFLOWS / "main-full-run.yml"
+DRAFT_GUARD = (
+    "github.event_name != 'pull_request' || github.event.pull_request.draft == false"
+)
 
 
 def _load_workflow() -> dict:
@@ -55,6 +58,8 @@ def _evaluate_expression(expression: str, context: dict) -> object:
     )
     expression = expression.replace("&&", " and ").replace("||", " or ")
     expression = re.sub(r"\bnull\b", "None", expression)
+    expression = re.sub(r"\btrue\b", "True", expression)
+    expression = re.sub(r"\bfalse\b", "False", expression)
     expression = re.sub(r"!(?!=)", " not ", expression).strip()
 
     def evaluate(node):
@@ -62,6 +67,9 @@ def _evaluate_expression(expression: str, context: dict) -> object:
         if isinstance(node, (ast.Constant, ast.Dict)):
             return ast.literal_eval(node)
         if isinstance(node, ast.Call) and isinstance(node.func, ast.Name):
+            if node.func.id == "cancelled":
+                assert not node.args
+                return context.get("cancelled", False)
             assert node.func.id == "fromJSON" and len(node.args) == 1
             return json.loads(evaluate(node.args[0]))
         if isinstance(node, (ast.Subscript, ast.Attribute)):
@@ -170,7 +178,7 @@ def test_concurrency_event_behavior() -> None:
 
 
 def test_pull_request_activity_types() -> None:
-    """Retargeting starts fresh gates while preserving the default events."""
+    """Draft-to-ready and retargeting start fresh gates alongside default events."""
     workflow = _load_workflow()
     events = workflow["on"] if "on" in workflow else workflow[True]
     pull_request = events["pull_request"] or {}
@@ -178,6 +186,7 @@ def test_pull_request_activity_types() -> None:
         "opened",
         "synchronize",
         "reopened",
+        "ready_for_review",
         "edited",
     ]
 
@@ -197,7 +206,7 @@ def test_jobs_and_steps_do_not_filter_edit_events() -> None:
 def test_base_change_runs_full_gate() -> None:
     """Only metadata edits select replay; retargets run the full gate."""
     mode = _load_workflow()["jobs"]["mode"]
-    assert "if" not in mode
+    assert mode["if"] == DRAFT_GUARD
     expression = mode["steps"][0]["env"]["REPLAY"]
     assert expression == (
         "${{ github.event_name == 'pull_request' && "
@@ -209,6 +218,7 @@ def test_base_change_runs_full_gate() -> None:
         ("pull_request", "opened", False, False),
         ("pull_request", "synchronize", False, False),
         ("pull_request", "reopened", False, False),
+        ("pull_request", "ready_for_review", False, False),
         ("push", "edited", False, False),
         ("schedule", "", False, False),
         ("workflow_dispatch", "", False, False),
@@ -242,9 +252,10 @@ def test_required_names_have_single_result_job() -> None:
         assert "!cancelled()" in gate["if"]
         assert "needs.mode.outputs.replay" not in gate["if"]
         assert gate["permissions"] == {"contents": "read", "actions": "read"}
-        replay, full = gate["steps"]
-        assert replay["if"] == (
-            "needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'"
+        replay, full, draft = gate["steps"]
+        assert " ".join(replay["if"].split()) == (
+            f"({DRAFT_GUARD}) && "
+            "(needs.mode.result == 'success' && needs.mode.outputs.replay == 'true')"
         )
         assert replay["env"]["REPLAY_RESULT"] == (
             "${{ fromJSON(needs.mode.outputs.evidence || '{}')['"
@@ -260,8 +271,12 @@ def test_required_names_have_single_result_job() -> None:
                 check=False,
             )
             assert completed.returncode == expected
-        assert full["if"] == (
-            "needs.mode.result != 'success' || needs.mode.outputs.replay != 'true'"
+        assert " ".join(full["if"].split()) == (
+            f"({DRAFT_GUARD}) && "
+            "(needs.mode.result != 'success' || needs.mode.outputs.replay != 'true')"
+        )
+        assert draft["if"] == (
+            "github.event_name == 'pull_request' && github.event.pull_request.draft == true"
         )
         assert full["env"]["FULL_RESULT"] == "${{ needs." + heavy_id + ".result }}"
         for result, expected in [
@@ -294,7 +309,7 @@ def test_required_names_have_single_result_job() -> None:
 def test_result_environment_before_step_selection(gate_id, evidence, replay_selected):
     """Eager env evaluation tolerates absent evidence but cannot grant replay PASS."""
     gate = _load_workflow()["jobs"][gate_id]
-    replay, full = gate["steps"]
+    replay, full, _ = gate["steps"]
     context = {
         "needs.mode.result": "success",
         "needs.mode.outputs.replay": "true" if replay_selected else "false",
@@ -342,6 +357,65 @@ def test_full_jobs_honor_cancellation() -> None:
     artifact = jobs["mode"]["steps"][-1]
     assert artifact["with"]["retention-days"] == 14
     assert artifact["with"]["name"].startswith("gate-tip-")
+
+
+@pytest.mark.parametrize("event", ["pull_request", "push", "workflow_dispatch"])
+@pytest.mark.parametrize("draft", [False, True])
+@pytest.mark.parametrize("replay", ["true", "false", ""])
+@pytest.mark.parametrize("mode_result", ["success", "failure", "skipped"])
+@pytest.mark.parametrize("cancelled", [False, True])
+def test_draft_job_and_result_selection(event, draft, replay, mode_result, cancelled):
+    """Draft skipping cannot suppress required contexts or weaken ready results."""
+    context = {
+        "github.event_name": event,
+        "github.event.pull_request.draft": draft,
+        "needs.mode.result": mode_result,
+        "needs.mode.outputs.replay": replay,
+        "cancelled": cancelled,
+    }
+    is_draft = event == "pull_request" and draft
+    is_replay = mode_result == "success" and replay == "true"
+    jobs = _load_workflow()["jobs"]
+    assert _evaluate_expression(jobs["mode"]["if"], context) is (not is_draft)
+    for job_id in ("domain-tests", "lint", "security"):
+        expected = not is_draft and not cancelled and not is_replay
+        if job_id == "domain-tests":
+            expected = expected and event == "pull_request"
+        assert bool(_evaluate_expression(jobs[job_id]["if"], context)) is expected
+    for job_id in ("lint-gate", "security-gate", "pr-gate"):
+        job = jobs[job_id]
+        runs = not cancelled and (job_id != "pr-gate" or event == "pull_request")
+        assert bool(_evaluate_expression(job["if"][3:-2], context)) is runs
+        selected = [
+            step["name"]
+            for step in job["steps"]
+            if _evaluate_expression(step["if"], context)
+        ]
+        assert selected == [
+            (
+                "Pass draft gate"
+                if is_draft
+                else (
+                    "Copy selected check conclusion"
+                    if is_replay
+                    else "Gate on full result"
+                )
+            )
+        ]
+
+
+@pytest.mark.parametrize("event", ["pull_request", "push", "workflow_dispatch"])
+@pytest.mark.parametrize("draft", [False, True])
+def test_wheel_build_draft_selection(event, draft):
+    workflow = yaml.safe_load((WORKFLOWS / "wheel-ownership.yml").read_text())
+    guard = workflow["jobs"]["wheel-ownership"]["if"]
+    assert _evaluate_expression(
+        guard,
+        {
+            "github.event_name": event,
+            "github.event.pull_request.draft": draft,
+        },
+    ) is (event != "pull_request" or not draft)
 
 
 def _checkout_steps() -> list:
@@ -498,15 +572,26 @@ def test_local_merge_behavior(
     assert _git(runner, "rev-parse", "--is-shallow-repository") == "true"
     tools = tmp_path / "tools"
     tools.mkdir()
-    # Only Git and the script's text utility are available; no API clients.
-    for tool in ("git", "sed"):
-        executable = shutil.which(tool)
-        assert executable
-        (tools / tool).symlink_to(executable)
+    # Windows Git needs its installed shell/DLL search path for local fetches.
+    # Block API commands explicitly there; POSIX can restrict PATH to git/sed.
+    if os.name == "nt":
+        for tool in ("gh", "curl"):
+            (tools / tool).write_text(
+                '#!/bin/sh\necho "API clients are disabled" >&2\nexit 127\n',
+                encoding="utf-8",
+                newline="\n",
+            )
+        tool_path = str(tools) + os.pathsep + os.environ["PATH"]
+    else:
+        for tool in ("git", "sed"):
+            executable = shutil.which(tool)
+            assert executable
+            (tools / tool).symlink_to(executable)
+        tool_path = str(tools)
     output = tmp_path / "output"
     env = dict(
         os.environ,
-        PATH=str(tools),
+        PATH=tool_path,
         BASE_REF="main",
         BASE_URL=origin.as_uri(),
         HEAD_URL=origin.as_uri(),
@@ -517,6 +602,16 @@ def test_local_merge_behavior(
     script = _load_workflow()["jobs"][job_id]["steps"][index + 1]["run"]
     bash = shutil.which("bash")
     assert bash
+    if case == "no_api":
+        for client in ("gh", "curl"):
+            probe = subprocess.run(
+                [bash, "-c", f"{client} --version"],
+                env=env,
+                capture_output=True,
+                timeout=10,
+                check=False,
+            )
+            assert probe.returncode == 127, f"{client} must be unavailable"
     result = subprocess.run(
         [bash, "-e", "-o", "pipefail", "-c", script],
         cwd=runner,
