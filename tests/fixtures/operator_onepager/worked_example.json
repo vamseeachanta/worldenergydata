@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "data_status": "synthetic",
+  "registry_source": "regulator",
+  "sources": {
+    "regulator": {
+      "dataset": "Synthetic regulator export (hand-calculation fixture)",
+      "vintage": "2026-01-31",
+      "period": "2025-02-01 to 2026-01-31",
+      "reference": "docs/data-sources/onshore/operator-onepager.md#worked-example"
+    },
+    "screen": {
+      "dataset": "Synthetic screen (not an engineering validation)",
+      "vintage": "2026-02-01",
+      "period": "2025-02-01 to 2026-01-31",
+      "reference": "docs/data-sources/onshore/operator-onepager.md#worked-example"
+    }
+  },
+  "operators": [
+    {
+      "operator_no": "001",
+      "summary": {
+        "well_count_total": {"value": 4, "source": "regulator"},
+        "well_count_producing": {"value": 3, "source": "regulator"},
+        "well_count_inactive": {"value": 1, "source": "regulator"},
+        "field_count": {"value": 2, "source": "regulator"},
+        "oil_bbl_last12": {"value": 120, "source": "regulator"},
+        "gas_mcf_last12": {"value": 600, "source": "regulator"},
+        "water_bbl_last12": null
+      },
+      "screen": {
+        "source": "screen",
+        "method": "Supplied ranking; same-field, same-vintage rate comparison. Inference only.",
+        "false_positive_rate": null,
+        "candidates": [
+          {
+            "rank": 2,
+            "entity_id": "lease-beta",
+            "granularity": "lease",
+            "evidence": [
+              {"label": "Prior reported rate", "unit": "bbl/day", "value": 3, "source": "regulator"}
+            ]
+          },
+          {
+            "rank": 1,
+            "entity_id": "well-alpha",
+            "granularity": "well",
+            "evidence": [
+              {"label": "Reported rate", "unit": "bbl/day", "value": 2, "source": "regulator"},
+              {"label": "Peer median", "unit": "bbl/day", "value": 8, "source": "screen"}
+            ]
+          }
+        ],
+        "peer_comparison": {
+          "metric": "Oil rate",
+          "unit": "bbl/day",
+          "cohort": "Same field and completion vintage; synthetic cohort",
+          "operator": {"value": 2, "source": "regulator"},
+          "median": {"value": 8, "source": "screen"}
+        }
+      }
+    }
+  ]
+}
