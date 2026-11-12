@@ -7,7 +7,7 @@ from hashlib import sha256
 from html import escape
 from math import isfinite
 from pathlib import Path
-from statistics import quantiles
+from statistics import median, quantiles
 from string import Template
 from urllib.parse import urlsplit
 
@@ -122,7 +122,7 @@ def _cohort_summary(key, observations):
     cohort = dict(zip(_COHORT_FIELDS, key))
     cohort.update(
         count=len(values),
-        median_usd_mm=percentile_summary(values)[1],
+        median_usd_mm=median(values),
         year_min=min(year for year, _, _ in observations),
         year_max=max(year for year, _, _ in observations),
         outlier_status="NOT_EVALUATED",
@@ -409,8 +409,7 @@ def _source_links(facts):
     )
 
 
-_REPORT_TEMPLATE = Template(
-    """<!doctype html>
+_REPORT_TEMPLATE = Template("""<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width">
 <title>Operator cost benchmarking analysis</title><style>
 body{font:16px system-ui,sans-serif;background:#f4f7fa;color:#183044;margin:0 auto;padding:2rem;max-width:1200px}
@@ -454,8 +453,7 @@ function selectOperator() {
 selector.addEventListener('change', selectOperator);
 selectOperator();
 </script></body></html>
-"""
-)
+""")
 
 
 def render_html(facts: dict) -> str:

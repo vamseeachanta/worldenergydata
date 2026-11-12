@@ -84,8 +84,8 @@ def well_row(facts):
 
 
 def write_csv(path, rows):
-    with path.open("w", encoding="utf-8", newline="") as stream:
-        writer = csv.DictWriter(stream, fieldnames=list(rows[0]))
+    with path.open("w", encoding="utf-8", newline="\n") as stream:
+        writer = csv.DictWriter(stream, fieldnames=list(rows[0]), lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
 
@@ -152,7 +152,7 @@ def inputs(tmp_path, projects):
     return root
 
 
-def cli(root, output):
+def cli(root, output, *extra_args):
     env = os.environ.copy()
     # No Git subprocesses are used; the CLI only reads the supplied CSV files.
     return subprocess.run(
@@ -167,10 +167,12 @@ def cli(root, output):
             str(output),
             "--report-date",
             "2026-01-01",
+            *extra_args,
         ],
         env=env,
         capture_output=True,
         text=True,
+        encoding="utf-8",
         check=False,
     )
 
@@ -273,8 +275,18 @@ def test_missing_cost_or_lineage_never_falls_back(projects, column):
 
 
 def test_duplicate_project_cannot_inflate_group_count(projects):
-    with pytest.raises(ValueError, match="[Dd]uplicate"):
-        build(projects + [projects[0]])
+    facts = build(projects + [projects[0]])
+    assert well_row(facts)["n"] == 4
+    assert all(
+        "invented-1" not in row["comparables"]
+        for row in facts["rows"] + facts["marginal_rows"]
+    )
+    excluded = [row for row in facts["exclusions"] if row["project_id"] == "invented-1"]
+    assert len(excluded) == 2
+    assert all(
+        "n=2" in row["reason"] and "no cost selected" in row["reason"]
+        for row in excluded
+    )
 
 
 @pytest.mark.parametrize(
@@ -417,6 +429,7 @@ def test_project_ids_supplied_on_project_rows_do_not_need_new_registry_rows(
     identity.write_text(
         "OPAQUE_ID,ENTITY_KIND,ACTIVE,SOURCE_TABLE,SOURCE_RECORD_LOCATOR\n",
         encoding="utf-8",
+        newline="\n",
     )
     from worldenergydata.cost.benchmarks import load_projects
 
@@ -450,3 +463,358 @@ def test_small_positive_figures_are_not_published_as_zero(projects, tmp_path):
         rows = list(csv.DictReader(stream))
     resource = next(r for r in rows if r["metric"] == "capex_per_boe")
     assert float(resource["p50"]) == pytest.approx(0.001)
+
+
+def merged_crosswalk(root, projects, *, matched=True):
+    """The merged header, with invented values and only one registered ID."""
+    write_csv(
+        root / "project_field_crosswalk.csv",
+        [
+            {
+                "PROJECT_ID": f"PROJECT:{p['PROJECT']}",
+                "COST_PROJECT_ID": p["PROJECT_ID"] if i == 0 else "",
+                "PROJECT": p["PROJECT"],
+                "CATALOG_FIELD_ID": p["CATALOG_FIELD_IDS"] if matched else "",
+                "MATCH_METHOD": "manual" if matched else "unmatched",
+                "CONFIDENCE": "high" if matched else "",
+                "PROVENANCE": "Invented source",
+                "EVIDENCE": "Invented matching evidence" if matched else "",
+                "REASON": "Invented catalog has no counterpart" if not matched else "",
+            }
+            for i, p in enumerate(projects)
+        ],
+    )
+
+
+def test_merged_crosswalk_join_uses_exact_locator_and_cost_id(projects, tmp_path):
+    from worldenergydata.cost.benchmarks import load_projects
+
+    root = inputs(tmp_path, projects)
+    merged_crosswalk(root, projects)
+    identity = root / "cost_project_identity.csv"
+    with identity.open(encoding="utf-8") as stream:
+        rows = list(csv.DictReader(stream))
+    write_csv(identity, rows[:1])
+    loaded = load_projects(root)
+    assert loaded[0]["PROJECT_ID"] == "invented-1"
+    assert loaded[1]["PROJECT_ID"] == "PROJECT:Invented project 2"
+    assert loaded[1]["CATALOG_FIELD_IDS"] == "invented-field-2"
+    assert loaded[1]["MATCH_EVIDENCE"] == "Invented matching evidence"
+    assert well_row(build(loaded))["n"] == 5
+
+
+@pytest.mark.parametrize("conflict", ["COST_PROJECT_ID", "PROJECT"])
+def test_merged_crosswalk_rejects_identity_conflicts(projects, tmp_path, conflict):
+    from worldenergydata.cost.benchmarks import load_projects
+
+    root = inputs(tmp_path, projects[:1])
+    merged_crosswalk(root, projects[:1])
+    path = root / "project_field_crosswalk.csv"
+    with path.open(encoding="utf-8") as stream:
+        rows = list(csv.DictReader(stream))
+    rows[0][conflict] = "invented-conflict"
+    write_csv(path, rows)
+    with pytest.raises(ValueError, match="[Cc]rosswalk.*(identity|locator)"):
+        load_projects(root)
+
+
+def test_locator_join_does_not_fold_project_name_case(projects, tmp_path):
+    from worldenergydata.cost.benchmarks import load_projects
+
+    root = inputs(tmp_path, projects[:1])
+    merged_crosswalk(root, [{**projects[0], "PROJECT": "invented project 1"}])
+    facts = build(load_projects(root))
+    assert facts["rows"] == []
+    assert (
+        facts["exclusions"][0]["reason"]
+        == "crosswalk locator does not match project name"
+    )
+
+
+@pytest.mark.parametrize("invalid", ["CAPEX_USD_MM_2026", "quantities"])
+def test_cli_empty_report_fails_with_counts_and_preserves_outputs(
+    projects, tmp_path, invalid
+):
+    root = inputs(tmp_path, projects)
+    output = tmp_path / "reports"
+    assert cli(root, output).returncode == 0
+    before = {p.name: p.read_bytes() for p in output.iterdir()}
+    path = root / "sanctioned_projects.csv"
+    with path.open(encoding="utf-8") as stream:
+        rows = list(csv.DictReader(stream))
+    for row in rows:
+        columns = (
+            (invalid,)
+            if invalid != "quantities"
+            else (
+                "WELL_COUNT",
+                "SURF_KM",
+                "PEAK_PRODUCTION_BOEPD",
+                "RECOVERABLE_RESOURCE_MMBOE",
+            )
+        )
+        for column in columns:
+            row[column] = ""
+    write_csv(path, rows)
+    if invalid == "quantities":
+        path = root / "project_asset_requirements.csv"
+        with path.open(encoding="utf-8") as stream:
+            trees = list(csv.DictReader(stream))
+        write_csv(path, [{**r, "QUANTITY": ""} for r in trees])
+    result = cli(root, output)
+    assert result.returncode == 2
+    assert "No benchmark groups" in result.stderr
+    assert "5 projects;" in result.stderr
+    assert before == {p.name: p.read_bytes() for p in output.iterdir()}
+    fresh = tmp_path / "new-reports"
+    assert cli(root, fresh).returncode == 2
+    assert not fresh.exists()
+
+
+def test_marginal_groups_keep_free_text_hosts_out_of_csv(projects, tmp_path):
+    from worldenergydata.cost.benchmarks import write_benchmarks
+
+    for i, project in enumerate(projects):
+        project["HOST_TYPE"] = f"Invented floating host description {i}"
+    facts = build(projects)
+    exact = [r for r in facts["rows"] if r["metric"] == "capex_per_well"]
+    assert len(exact) == 5
+    assert all(r["n"] == 1 for r in exact)
+    marginal = next(
+        r
+        for r in facts["marginal_rows"]
+        if r["metric"] == "capex_per_well" and r["group_by"] == "water_depth_band"
+    )
+    assert marginal["category"] == "deep"
+    assert marginal["n"] == 5
+    # h=(5-1)p: 10+0.4*10=14; x[2]=30; 40+0.6*60=76.
+    assert (marginal["p10"], marginal["p50"], marginal["p90"]) == pytest.approx(
+        (14, 30, 76)
+    )
+    root = inputs(tmp_path, projects)
+    paths = write_benchmarks(root, tmp_path / "reports", "2026-01-01")
+    with paths["csv"].open(encoding="utf-8") as stream:
+        assert len(list(csv.DictReader(stream))) == len(facts["rows"])
+    assert "Marginal groups" in paths["html"].read_text(encoding="utf-8")
+
+
+def test_explicit_unmatched_projects_retain_sources_and_reason(projects, tmp_path):
+    from worldenergydata.cost.benchmarks import load_projects, write_benchmarks
+
+    root = inputs(tmp_path, projects)
+    merged_crosswalk(root, projects, matched=False)
+    facts = build(load_projects(root))
+    assert well_row(facts)["n"] == 5
+    paths = write_benchmarks(root, tmp_path / "reports", "2026-01-01")
+    html = paths["html"].read_text(encoding="utf-8")
+    assert "Invented catalog has no counterpart" in html
+    assert "unmatched" in html
+
+
+@pytest.mark.parametrize(
+    "reason,field_ids", [("", ""), ("Invented reason", "invented-field")]
+)
+def test_inconsistent_unmatched_lineage_is_excluded(projects, reason, field_ids):
+    projects[0].update(
+        MATCH_METHOD="unmatched", MATCH_REASON=reason, CATALOG_FIELD_IDS=field_ids
+    )
+    facts = build(projects[:1])
+    assert not facts["rows"]
+    assert facts["exclusions"]
+
+
+def test_cli_explicit_derived_projects_table_and_no_nominal_fallback(
+    projects, tmp_path
+):
+    root = inputs(tmp_path, projects)
+    original = root / "sanctioned_projects.csv"
+    selected = root / "sanctioned_projects_2026.csv"
+    selected.write_bytes(original.read_bytes())
+    with original.open(encoding="utf-8") as stream:
+        rows = list(csv.DictReader(stream))
+    write_csv(
+        original,
+        [{k: v for k, v in row.items() if k != "CAPEX_USD_MM_2026"} for row in rows],
+    )
+    output = tmp_path / "reports"
+    result = cli(root, output, "--projects", selected.as_posix())
+    assert result.returncode == 0, result.stderr
+    before = {p.name: p.read_bytes() for p in output.iterdir()}
+    write_csv(original, [{**row, "SANCTIONED_CAPEX_USD_MM": "999999"} for row in rows])
+    assert cli(root, output, "--projects", selected.as_posix()).returncode == 0
+    assert before == {p.name: p.read_bytes() for p in output.iterdir()}
+    write_csv(
+        selected, [{k: v for k, v in row.items() if k != "INDEX_USED"} for row in rows]
+    )
+    result = cli(root, output, "--projects", selected.as_posix())
+    assert result.returncode == 2
+    assert "INDEX_USED" in result.stderr
+    assert before == {p.name: p.read_bytes() for p in output.iterdir()}
+
+
+@pytest.mark.parametrize("values", [(0.1, 0.2), (-1.0, 0.0)])
+def test_existing_cohort_preserves_median_arithmetic_and_domain(values):
+    from worldenergydata.cost.reporting.benchmark_report import _cohort_summary
+
+    observations = [(2020, value, {}) for value in values]
+    cohort = _cohort_summary(
+        ("Invented region", "deep", "total", "drilling"), observations
+    )
+    assert cohort["median_usd_mm"] == (values[0] + values[1]) / 2
+
+
+def test_csv_retains_small_percentile_precision(projects, tmp_path):
+    from worldenergydata.cost.benchmarks import write_benchmarks
+
+    for project in projects:
+        project["RECOVERABLE_RESOURCE_MMBOE"] = "5000"
+    root = inputs(tmp_path, projects)
+    paths = write_benchmarks(root, tmp_path / "reports", "2026-01-01")
+    with paths["csv"].open(encoding="utf-8") as stream:
+        row = next(r for r in csv.DictReader(stream) if r["metric"] == "capex_per_boe")
+    # Intensities .02,.04,.06,.08,.20: P10=.028, P50=.06, P90=.152.
+    assert tuple(float(row[key]) for key in ("p10", "p50", "p90")) == pytest.approx(
+        (0.028, 0.06, 0.152)
+    )
+
+
+@pytest.mark.parametrize(
+    "basis",
+    [
+        "FLOOR disclosed cost",
+        "lower-bound project cost",
+        "in excess of disclosed amount",
+        "lower bound: disclosed cost",
+        "AT LEAST disclosed amount",
+        "FLOOR",
+        "FLOOR: disclosed amount",
+    ],
+)
+def test_bound_costs_are_excluded_from_point_percentiles(projects, basis):
+    projects[0]["CAPEX_BASIS"] = basis
+    facts = build(projects)
+    assert well_row(facts)["n"] == 4
+    assert any("bound" in r["reason"] for r in facts["exclusions"])
+
+
+@pytest.mark.parametrize(
+    "basis",
+    [
+        "point estimate; not a floor",
+        "point estimate confirmed by at least two sources",
+        "not in excess of disclosed amount",
+        "floor-mounted equipment cost",
+    ],
+)
+def test_point_estimate_mentioning_floor_is_not_a_bound(projects, basis):
+    projects[0]["CAPEX_BASIS"] = basis
+    assert well_row(build(projects))["n"] == 5
+
+
+def test_excluded_sole_member_cohort_does_not_abort_other_cohorts(projects):
+    projects[0].update(
+        REGION="Invented distinct region", CAPEX_BASIS="FLOOR: disclosed amount"
+    )
+    facts = build(projects)
+    assert well_row(facts)["n"] == 4
+    assert facts["exclusions"]
+
+
+def test_crosswalk_duplicate_cost_id_is_fatal(projects, tmp_path):
+    from worldenergydata.cost.benchmarks import load_projects
+
+    root = inputs(tmp_path, projects[:2])
+    merged_crosswalk(root, projects[:2])
+    path = root / "project_field_crosswalk.csv"
+    with path.open(encoding="utf-8") as stream:
+        rows = list(csv.DictReader(stream))
+    rows[1]["COST_PROJECT_ID"] = rows[0]["COST_PROJECT_ID"]
+    write_csv(path, rows)
+    with pytest.raises(ValueError, match="[Cc]rosswalk"):
+        load_projects(root)
+
+
+def test_html_retains_escalation_note(projects, tmp_path):
+    from worldenergydata.cost.benchmarks import write_benchmarks
+
+    projects[0]["ESCALATION_NOTE"] = "Invented provisional partial-year index"
+    root = inputs(tmp_path, projects[:1])
+    paths = write_benchmarks(root, tmp_path / "reports", "2026-01-01")
+    assert "Invented provisional partial-year index" in paths["html"].read_text(
+        encoding="utf-8"
+    )
+
+
+def test_duplicate_derived_rows_are_excluded_without_selecting_a_cost(
+    projects, tmp_path
+):
+    from worldenergydata.cost.benchmarks import load_projects, write_benchmarks
+
+    root = inputs(tmp_path, projects)
+    path = root / "sanctioned_projects.csv"
+    with path.open(encoding="utf-8") as stream:
+        rows = list(csv.DictReader(stream))
+    rows.append({**rows[0], "CAPEX_USD_MM_2026": "999.125"})
+    write_csv(path, rows)
+    facts = build(load_projects(root))
+    assert well_row(facts)["n"] == 4
+    assert all("invented-1" not in r["comparables"] for r in facts["rows"])
+    paths = write_benchmarks(root, tmp_path / "reports", "2026-01-01")
+    html = paths["html"].read_text(encoding="utf-8")
+    assert "no cost selected" in html
+    assert "999.125" in html
+
+
+def test_project_table_cannot_supply_unjoined_crosswalk_lineage(projects, tmp_path):
+    from worldenergydata.cost.benchmarks import load_projects
+
+    root = inputs(tmp_path, projects[:1])
+    merged_crosswalk(root, [{**projects[0], "PROJECT": "invented project 1"}])
+    path = root / "sanctioned_projects.csv"
+    with path.open(encoding="utf-8") as stream:
+        rows = list(csv.DictReader(stream))
+    rows[0].update(
+        {
+            k: v
+            for k, v in projects[0].items()
+            if k.startswith("MATCH_") or k == "CATALOG_FIELD_IDS"
+        }
+    )
+    write_csv(path, rows)
+    facts = build(load_projects(root))
+    assert not facts["rows"]
+    assert "crosswalk locator" in facts["exclusions"][0]["reason"]
+
+
+def test_project_names_strip_only_outer_whitespace(projects, tmp_path):
+    from worldenergydata.cost.benchmarks import load_projects
+
+    root = inputs(tmp_path, projects[:1])
+    merged_crosswalk(root, projects[:1])
+    path = root / "sanctioned_projects.csv"
+    with path.open(encoding="utf-8") as stream:
+        rows = list(csv.DictReader(stream))
+    rows[0]["PROJECT"] = " Invented project 1 "
+    write_csv(path, rows)
+    assert well_row(build(load_projects(root)))["n"] == 1
+
+
+def test_changed_input_bytes_stop_generation_before_writing(
+    projects, tmp_path, monkeypatch
+):
+    import worldenergydata.cost.benchmarks as module
+
+    root = inputs(tmp_path, projects)
+    original_load = module.load_projects
+
+    def changing_load(*args):
+        loaded = original_load(*args)
+        path = root / "sanctioned_projects.csv"
+        path.write_bytes(path.read_bytes() + b"\n")
+        return loaded
+
+    monkeypatch.setattr(module, "load_projects", changing_load)
+    output = tmp_path / "reports"
+    with pytest.raises(ValueError, match="Input bytes changed"):
+        module.write_benchmarks(root, output, "2026-01-01")
+    assert not output.exists()

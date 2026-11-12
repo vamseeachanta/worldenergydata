@@ -10,6 +10,7 @@ project IDs behind the statistics. A group with fewer than five projects carries
 | Revision | Date | Change and reason |
 | --- | --- | --- |
 | Initial | 2026-11-12 | Define project intensities, source lineage and fail-closed input requirements. |
+| Interface update | 2026-11-12 | Reconcile upstream crosswalk and escalation tables, retain unmatched reasons, add depth marginals and preserve numeric CSV precision. |
 
 Table 1. Method edition history.
 
@@ -20,6 +21,7 @@ Run from the repository root in the installed workspace environment:
 ```bash
 uv run python -m worldenergydata.cost.benchmarks benchmarks \
   --data-dir data/modules/cost/curated \
+  --projects data/modules/cost/curated/sanctioned_projects_2026.csv \
   --output-dir reports/cost --report-date 2026-11-12
 ```
 
@@ -27,6 +29,9 @@ The command writes `unit_cost_benchmarks.csv` and `unit_cost_benchmarks.html`.
 It validates the inputs and renders the HTML before creating either output.
 An input error exits nonzero and preserves any earlier reports. No nominal mode
 or silent nominal fallback is implemented.
+If no valid benchmark row remains, the command exits 2 with exclusion counts
+before writing either file. An individual emptied cohort does not abort other
+cohorts. Exit 2 also covers input validation and command-line usage errors.
 
 The owning dataset remains the curated cost register. No cost is researched,
 imputed or invented by this module. The input files are:
@@ -35,18 +40,36 @@ imputed or invented by this module. The input files are:
   `CAPEX_USD_MM_2026`, `INDEX_USED`, `INDEX_BASE_YEAR`, `ESCALATION_FACTOR`.
   A missing escalation column prevents report generation. An individual missing
   or invalid cost or lineage value excludes that project with a reason.
+  `--projects` explicitly selects a complete alternative table, such as the
+  upstream derived `sanctioned_projects_2026.csv`; the default project table is
+  then neither read nor hashed. No columns or values fall back to nominal input.
 - `cost_project_identity.csv`: active project IDs and exact
   `sanctioned_projects.csv` locators of the form `PROJECT=<project>`.
-  An explicit `PROJECT_ID` on the project row takes precedence and must agree
-  with the registry when both are present. Unregistered projects are listed by
-  name with an exclusion reason. Duplicate identities are rejected; project
-  names are never matched fuzzily.
-- `project_field_crosswalk.csv`: `PROJECT_ID`, `CATALOG_FIELD_IDS`,
-  `MATCH_METHOD`, `CONFIDENCE`, `EVIDENCE`. Headers are case-insensitive.
+  An explicit `PROJECT_ID` on the project row must agree with the registry and
+  crosswalk cost ID when present. Without an opaque ID, an exact crosswalk
+  locator supplies the comparable ID. Projects lacking both forms are listed
+  with an exclusion reason. Duplicate registry locators remain fatal. Repeated
+  project-table IDs exclude every affected row from both views; the alternatives
+  and their supplied costs are listed, with no cost selected or averaged. A
+  derived table containing both sanctioned and actual labels therefore does
+  not mix those alternatives into a benchmark.
+- `project_field_crosswalk.csv`: the merged schema uses `PROJECT_ID` as a
+  `PROJECT:<project>` locator, optional `COST_PROJECT_ID`, `PROJECT`,
+  `CATALOG_FIELD_ID`, `MATCH_METHOD`, `CONFIDENCE`, `PROVENANCE`, `EVIDENCE`
+  and `REASON`. Locators match the project name exactly after stripping string
+  ends; case and interior whitespace are unchanged. Conflicting IDs or competing
+  name/ID joins stop the run. A row found by cost ID whose locator does not match
+  the source name is excluded with that explicit reason. Legacy opaque
+  `PROJECT_ID` keys remain supported. Crosswalk/quantity lineage on the project
+  table cannot substitute for the authoritative evidence tables.
+  Headers are case-insensitive. `CATALOG_FIELD_IDS`,
   `CATALOG_FIELD_ID`, `FIELD_IDS` and `FIELD_ID` are explicit aliases for the field
   ID column. One row per project is required; multiple field IDs may be carried
-  in that row. Duplicate rows are rejected as ambiguous. Missing field matching
-  or evidence excludes the affected project. The crosswalk file itself is
+  in that row. Duplicate keys are rejected as ambiguous. An explicit `unmatched`
+  method with a nonempty `REASON` and no field ID retains the sourced cost;
+  its reason is shown in the comparables table. Inconsistent unmatched rows and
+  missing matched-field evidence exclude the affected project. Field matching
+  does not supply or alter grouping categories. The crosswalk file itself is
   mandatory; its absence prevents output creation.
 - `project_asset_requirements.csv`: a tree count uses one disclosed row per
   project, with `ASSET_TYPE` equal to `subsea tree` or `wet tree`,
@@ -54,12 +77,9 @@ imputed or invented by this module. The input files are:
   Multiple candidate rows are excluded as ambiguous rather than summed. Dry
   trees, estimated quantities and well counts never substitute for subsea trees.
 
-The base revision lacks `CAPEX_USD_MM_2026` and
-`project_field_crosswalk.csv`. Real output is therefore not established.
-After [the escalation input](https://github.com/vamseeachanta/worldenergydata/issues/1896)
-and [the field crosswalk](https://github.com/vamseeachanta/worldenergydata/issues/1898)
-are merged, the command above will exercise their actual interface. Those
-upstream files and their methods are outside this implementation's scope.
+Escalation and crosswalk methods remain upstream inputs. An absent derived
+table or its missing escalation columns stop generation; the existence of a
+file alone does not establish the quality or completeness of its disclosures.
 
 ## Quantities, units and grouping
 
@@ -80,11 +100,26 @@ values become `unknown`. No aliases or inferred host types are applied.
 Water depth follows the existing `WaterDepthBand` categories: shallow at
 0–300 m, mid above 300 through 1000 m, deep above 1000 through 2000 m and
 ultra-deep above 2000 m. Missing, invalid or negative depths are `unknown`.
+The HTML also provides a separate depth-only marginal view for each metric.
+This view combines regions and development/host descriptions without inferring
+category mappings. Missing depth remains `unknown`. Each project is counted
+once per metric in each view; marginal rows are absent from the contracted CSV
+and shall not be added to exact-cohort counts.
 
 A project contributes at most once to each metric. Missing, nonpositive or
 non-finite quantities exclude only that metric, with the reason retained in the
-HTML. Missing source, escalation or crosswalk lineage excludes all its metrics.
+HTML. Missing source, escalation or invalid crosswalk lineage excludes all its metrics.
 Missing source values remain missing; zero is not a replacement.
+An explicit unmatched field is not missing cost provenance.
+
+Disclosed lower bounds are excluded from point percentiles. The declared rule
+matches a stripped `CAPEX_BASIS` starting with `FLOOR`, `LOWER-BOUND`,
+`LOWER BOUND`, `IN EXCESS OF` or `AT LEAST`, case-insensitive, followed by
+whitespace, a colon or the end of text. A bound is not converted to a point
+estimate. Reasons and exclusion counts appear in the HTML. Other free-text
+qualifications remain subject to source review; this vocabulary does not
+establish that every bound has been identified or predict the effect of
+exclusion on a percentile.
 
 ## Percentiles and reporting precision
 
@@ -98,9 +133,10 @@ exceedance probabilities or model uncertainty bounds.
 The invented test fixture has per-well values `[10, 20, 30, 40, 100]`.
 Its P10/P50/P90 are `14.0`, `30.0` and `76.0`. No fixture value is engineering
 input. Each project has equal weight. Percentiles are calculated before rounding;
-CSV and HTML figures are published to one decimal place, with scientific
-notation for positive figures that would otherwise round to zero. Source quantity and
-index metadata remain identified separately for traceability.
+CSV floats retain round-trip numeric precision for downstream calculations;
+only HTML figures use one decimal place, with scientific notation for positive
+figures that would otherwise round to zero. Source numerators, quantities and
+index metadata retain their supplied precision separately for traceability.
 
 The CSV columns are exactly:
 
@@ -111,15 +147,25 @@ metric,unit,water_depth_band,region,development_type,host_type,n,p10,p50,p90,ind
 `comparables` contains sorted project IDs separated by semicolons;
 `cost_basis=USD_2026`. The HTML lists every observation's numerator,
 denominator column, quantity, index metadata, field linkage, accounting basis
-and cost/quantity sources. It includes exclusion reasons, raw-input SHA-256
+and cost/quantity sources, including `ESCALATION_NOTE` qualifications and
+unmatched crosswalk reasons. It includes exclusion reasons, raw-input SHA-256
 digests, and a facts digest. An edition date or hash does not establish source
 freshness or upstream correctness.
+The selected project-table basename is shown beside the input digests; an
+explicit alternative table is hashed under `projects_table`.
+Input-byte digests are compared before and after loading and calculation;
+a detected change prevents output. This is a stability check, not an atomic
+snapshot against a writer that changes and restores bytes between reads.
+Identity registry locators for the canonical sanctioned table are joined to
+an explicitly selected derived table by exact project name; that correspondence
+remains an upstream contract rather than an independent source reconciliation.
 
 ## Reuse and limits
 
 The implementation extends `reporting.benchmark_report` with
-`percentile_summary` and reuses it in the existing `_cohort_summary` and the new
-unit-cost grouping. Existing `_table`, `_source_links` and `facts_digest` handle
+`percentile_summary` for unit-cost grouping. The existing `_cohort_summary`
+retains `statistics.median` and its established floating-point arithmetic.
+Existing `_table`, `_source_links` and `facts_digest` handle
 escaped tables, cited links and reproducible facts. `timeseries.dataset` supplies
 `read_sanctioned_csv`, including its existing CAPEX-basis validation.
 
