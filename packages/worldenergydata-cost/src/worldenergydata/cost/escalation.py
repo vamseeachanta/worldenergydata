@@ -8,16 +8,16 @@ No network access, FX conversion or changes to nominal source records occur.
 from __future__ import annotations
 
 import argparse
-from bisect import bisect_left
 import csv
-from dataclasses import dataclass
 import hashlib
 import json
 import math
 import os
-from pathlib import Path
 import sys
 import tempfile
+from bisect import bisect_left
+from dataclasses import dataclass
+from pathlib import Path
 from typing import Sequence
 
 from worldenergydata.cost.timeseries.dataset import (
@@ -26,7 +26,6 @@ from worldenergydata.cost.timeseries.dataset import (
 )
 from worldenergydata.cost.timeseries.normalization import MAX_INTERPOLATION_SPAN
 from worldenergydata.cost.timeseries.schema import CostObservation
-
 
 TARGET_YEAR = 2026
 METHOD = "contiguous_ucci_endpoint_ppi_v1"
@@ -254,7 +253,8 @@ class CostEscalator:
                         )
         if any("PARTIAL YEAR" in item for item in details):
             details.append(
-                "Provisional partial-year means; seasonal/timing bias against annual means is unquantified."
+                "Provisional partial-year means; seasonal/timing bias against annual "
+                "means is unquantified."
             )
         return EscalationFactor(
             factor, name, " ".join(dict.fromkeys(details)), tuple(trace)
@@ -293,7 +293,9 @@ class CostEscalator:
                         ucci * ppi,
                         f"{ucci_name}*{ppi_name}",
                         ucci_trace + ppi_trace,
-                        f"UCCI contiguous block ends at {join}; assumed 50:50 endpoint-ratio PPI blend thereafter; no UCCI re-entry. Global UCCI/US PPI splice.",
+                        f"UCCI contiguous block ends at {join}; assumed 50:50 "
+                        "endpoint-ratio PPI blend thereafter; no UCCI re-entry. "
+                        "Global UCCI/US PPI splice.",
                     )
             except LookupError:
                 pass
@@ -301,7 +303,8 @@ class CostEscalator:
             try:
                 return self._result(
                     *self._ppi(base, target, extrapolate),
-                    "Assumed 50:50 machinery/drilling endpoint-ratio PPI blend; no eligible UCCI segment.",
+                    "Assumed 50:50 machinery/drilling endpoint-ratio PPI blend; "
+                    "no eligible UCCI segment.",
                 )
             except LookupError:
                 pass
@@ -480,18 +483,33 @@ def build_projects(
                     base = _year(source["FID_YEAR"].strip())
                     basis_note = "FID year fallback: cost statement year unestablished."
                     if cost_column == _COST_COLUMNS[1]:
-                        basis_note += " Actual/revised cost can postdate FID. Bias direction is unknown and path-dependent; the fallback may overstate or understate escalation. Its magnitude cannot be established until the statement year is known."
+                        basis_note += (
+                            " Actual/revised cost can postdate FID. Bias direction is "
+                            "unknown and path-dependent; the fallback may overstate "
+                            "or understate escalation. Its magnitude cannot be "
+                            "established until the statement year is known."
+                        )
                         earlier_statement = decisions.get(
                             (source["PROJECT"], source["SOURCE_URL"], _COST_COLUMNS[0])
                         )
                         if earlier_statement and earlier_statement[0] > base:
-                            basis_note += f" Chronology inversion: the final/revised disclosure follows the held {earlier_statement[0]} statement, but its exact year is unestablished; the issue-prescribed FID fallback is {base}, not a claim of an earlier actual-cost price vintage. Comparisons remain approximate until a dated source is obtained."
+                            basis_note += (
+                                " Chronology inversion: the final/revised disclosure "
+                                f"follows the held {earlier_statement[0]} statement, "
+                                "but its exact year is unestablished; the "
+                                f"issue-prescribed FID fallback is {base}, not a "
+                                "claim of an earlier actual-cost price vintage. "
+                                "Comparisons remain approximate until a dated "
+                                "source is obtained."
+                            )
                 result = calculator.factor(base)
                 escalated = amount * result.factor
                 if not math.isfinite(escalated):
                     raise ValueError("escalated cost must be finite")
                 context = (
-                    "Preserved historical source context (populated nominal label takes precedence over stale null notes; historical wording is not a current finding): "
+                    "Preserved historical source context (populated nominal label "
+                    "takes precedence over stale null notes; historical wording "
+                    "is not a current finding): "
                     + source["CAPEX_BASIS"]
                     + " | "
                     + source["NOTES"]
@@ -526,7 +544,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument(
         "--statement-years",
         type=Path,
-        help="optional year sidecar; auto-selects an existing sidecar beside sanctioned_projects.csv",
+        help=(
+            "optional year sidecar; auto-selects an existing sidecar beside "
+            "sanctioned_projects.csv"
+        ),
     )
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args(argv)
@@ -568,7 +589,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             temporary.unlink(missing_ok=True)
     print(
         f"Projects: {sum(row['NOMINAL_COST_COLUMN'] == _COST_COLUMNS[0] for row in rows)}; "
-        f"derived nominal costs: {sum(bool(row['CAPEX_USD_MM_2026']) for row in rows)}; rows: {len(rows)}"
+        f"derived nominal costs: {sum(bool(row['CAPEX_USD_MM_2026']) for row in rows)}; "
+        f"rows: {len(rows)}"
     )
     return 0
 

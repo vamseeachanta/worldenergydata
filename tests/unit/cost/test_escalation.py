@@ -3,9 +3,9 @@
 import csv
 import json
 import os
-from pathlib import Path
 import subprocess
 import sys
+from pathlib import Path
 
 import pytest
 
@@ -16,7 +16,6 @@ from worldenergydata.cost.timeseries.dataset import (
 )
 from worldenergydata.cost.timeseries.normalization import DeflatorBasis, build_deflator
 from worldenergydata.cost.timeseries.schema import CostObservation
-
 
 ROOT = Path(__file__).resolve().parents[3]
 CURATED = ROOT / "data/modules/cost/curated"
