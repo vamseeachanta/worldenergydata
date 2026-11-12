@@ -1,0 +1,20 @@
+{
+  "crosswalk_sha256": "c6fc113e845dc2be6620f70788204e0049495f2c49dd53dcd0f497b0f3079b3b",
+  "dataset_id": "cost-project-field-crosswalk",
+  "digest_domain": "utf8-lf",
+  "inputs": {
+    "config/fields.yml": "8e96bcf75fd07803e3773bffa8cff45caa2ad78baefc3e9b6d927dd8ce6e0510",
+    "data/modules/cost/curated/award_asset_links.csv": "2064ee7b514613b87d2e67aa6eb2e8eba6e7261a7b29cd7e2d57ffc150a7c70f",
+    "data/modules/cost/curated/contract_awards.csv": "55062aa7dd443999af2ea3794118a2d0b0a1e6629d1b4cda9a49ed24578a1160",
+    "data/modules/cost/curated/cost_project_identity.csv": "b8848a968b8d5b2d38bc18dbabfdc6c03f81c7f903fb6d6f9fa24cfca725d6bd",
+    "data/modules/cost/curated/cost_revision_trails.csv": "403f108b4a04de50de341e9f36649d0e33f855dcd39caf460cabdbbfa1412540",
+    "data/modules/cost/curated/fdas_project_cost_crosswalk.csv": "f5e2fb5f0f3619964e100bee02c12bc4bd1c6e5be102d02f606d238ec093c236",
+    "data/modules/cost/curated/project_asset_requirements.csv": "3fa8344ebf78976a06ea39455d9cd1ac45e0339a88efe0e061517361ccf86b80",
+    "data/modules/cost/curated/project_cost_statements.csv": "7c1a32b8a5fd51409a217a314f07a9fcb984140a37b1b285dd2cf72530eca1e7",
+    "data/modules/cost/curated/sanctioned_projects.csv": "b71e98598f3b46d8e088a700cd8b0a21b6055b1a843d96243a4a7e103b515d09",
+    "data/modules/cost/staging/asia-pacific-caspian-2016-2026.csv": "0e66d03576a5045ea0e786d55ea5c1d8656a76c93e52c58d5d9e82d1136aae59",
+    "src/worldenergydata/field_development/past_projects.yml": "ccfe6d3c790be6eed7c2c0b7edb878166b3cd6955fd675e31d215ccb1c6c1928"
+  },
+  "schema_version": 1,
+  "units": "identity links; no monetary quantities"
+}
