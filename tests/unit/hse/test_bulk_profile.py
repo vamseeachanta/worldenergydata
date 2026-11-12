@@ -129,6 +129,49 @@ def test_empty_fragment_has_explicit_zero_counts(tmp_path):
     assert result["files"][0]["citation_date_min"] is None
 
 
+@pytest.mark.parametrize("rows", [[], [ROW]])
+def test_successful_index_is_marked_complete(tmp_path, rows):
+    write_csv(tmp_path, "osha_violation2.csv", rows)
+    index_db = tmp_path / "index.sqlite"
+    profile(tmp_path, index_db)
+    with sqlite3.connect(index_db) as index:
+        assert index.execute("SELECT complete FROM meta").fetchall() == [(1,)]
+
+
+@pytest.mark.parametrize(
+    "content, error",
+    [
+        (b"id,extra\na\n", ValueError),
+        (b"", ValueError),
+        (b"id,extra\na,\xff\n", UnicodeDecodeError),
+    ],
+)
+def test_failed_later_fragment_leaves_index_incomplete(tmp_path, content, error):
+    write_csv(tmp_path, "osha_violation2.csv", [ROW])
+    (tmp_path / "osha_violation3.csv").write_bytes(content)
+    index_db = tmp_path / "index.sqlite"
+    with pytest.raises(error):
+        profile(tmp_path, index_db)
+    with sqlite3.connect(index_db) as index:
+        assert index.execute("SELECT complete FROM meta").fetchall() == [(0,)]
+        assert index.execute("SELECT COUNT(*) FROM exact_rows").fetchone() == (1,)
+
+
+@pytest.mark.parametrize("value", ["２０２４-０１-０２", "٢٠٢٤-٠١-٠٢"])
+def test_non_ascii_dates_are_rejected_before_calendar_parsing(monkeypatch, value):
+    module = load_module()
+
+    class AsciiCalendar:
+        @staticmethod
+        def fromisoformat(value):
+            pytest.fail("Non-ASCII dates must fail the format gate")
+
+    monkeypatch.setattr(module, "date", AsciiCalendar)
+    item = {"invalid_citation_dates": 0}
+    module._observe_date(item, value)
+    assert item["invalid_citation_dates"] == 1
+
+
 @pytest.mark.parametrize("missing_dir", [False, True])
 def test_absent_inputs_fail_without_creating_index(tmp_path, missing_dir):
     raw = tmp_path / "missing" if missing_dir else tmp_path
@@ -233,6 +276,8 @@ def test_storage_failure_propagates(tmp_path, monkeypatch):
     monkeypatch.setattr(module, "_observe_signature", fail_write)
     with pytest.raises(sqlite3.OperationalError, match="synthetic storage failure"):
         module.profile_fragments(tmp_path, tmp_path / "index.sqlite")
+    with sqlite3.connect(tmp_path / "index.sqlite") as index:
+        assert index.execute("SELECT complete FROM meta").fetchall() == [(0,)]
 
 
 def test_changed_source_is_rejected(tmp_path, monkeypatch):

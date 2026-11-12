@@ -17,6 +17,10 @@ Overlap counts include each occurrence seen in an earlier sorted fragment.
 Missing key fields and non-ISO dates are counted explicitly, never inferred.
 No NAICS filtering, Parquet, catalog or database ingestion is performed here.
 The index is retained and cannot be reused or overwritten by another run.
+Readers must require SELECT complete FROM meta to return a single row of 1;
+a missing table or any other result means the index is incomplete. Failed runs
+can retain signatures from earlier fragments. A zero-byte fragment fails the
+whole run; a header-only fragment is valid and contributes zero rows.
 """
 
 from __future__ import annotations
@@ -79,7 +83,7 @@ def _observe_date(item, value):
         item["missing_citation_dates"] += 1
         return
     try:
-        if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", value):
+        if not re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", value):
             raise ValueError("Expected ISO calendar date")
         date.fromisoformat(value)
     except ValueError:
@@ -171,8 +175,11 @@ def profile_fragments(raw_dir: Path, index_db: Path) -> dict:
     try:
         # Bound SQLite's page cache to approximately 8 MiB; signatures stay on disk.
         index.execute("PRAGMA cache_size = -8192")
-        for create, _, _ in _STATEMENTS.values():
-            index.execute(create)
+        with index:
+            for create, _, _ in _STATEMENTS.values():
+                index.execute(create)
+            index.execute("CREATE TABLE meta (complete INTEGER NOT NULL)")
+            index.execute("INSERT INTO meta VALUES (?)", (0,))
         files = []
         for number, path in enumerate(paths):
             try:
@@ -192,7 +199,7 @@ def profile_fragments(raw_dir: Path, index_db: Path) -> dict:
                 "duplicate_candidate_keys",
             )
         }
-        return {
+        inventory = {
             "candidate_key": list(CANDIDATE_KEY),
             "files": files,
             **total,
@@ -200,6 +207,9 @@ def profile_fragments(raw_dir: Path, index_db: Path) -> dict:
             "unique_candidate_keys": total["keyed_rows"]
             - total["duplicate_candidate_keys"],
         }
+        with index:
+            index.execute("UPDATE meta SET complete = ?", (1,))
+        return inventory
     finally:
         index.close()
 
