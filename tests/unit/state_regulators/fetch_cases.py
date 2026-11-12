@@ -1,6 +1,10 @@
 """Boundary scenarios collected through the polite-fetch test module."""
 
 import json
+import threading
+from collections.abc import Iterator
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path
 from typing import Any
 
 import pytest
@@ -211,3 +215,64 @@ def case_cached_permission_survives_withdrawal(tmp_path: Any, server: Any) -> No
 def case_invalid_caps_are_rejected(tmp_path: Any, field: Any, value: Any) -> None:
     with pytest.raises(ValueError):
         make_fetcher(tmp_path, "https://records.example.org", Clock(), **{field: value})
+
+
+@pytest.fixture
+def server() -> Iterator[Any]:
+    state: dict[str, list[Any]] = {"requests": [], "responses": [], "headers": []}
+
+    class Handler(BaseHTTPRequestHandler):
+        def do_GET(self) -> None:
+            state["requests"].append(self.path)
+            state["headers"].append(dict(self.headers))
+            status, headers, body = (
+                state["responses"].pop(0)
+                if state["responses"]
+                else (200, {}, b"public records")
+            )
+            self.send_response(status)
+            for key, value in headers.items():
+                self.send_header(key, value)
+            self.end_headers()
+            self.wfile.write(body)
+
+        def log_message(self, *args: Any) -> None:
+            pass
+
+    httpd = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+    thread = threading.Thread(target=httpd.serve_forever, daemon=True)
+    thread.start()
+    yield f"http://127.0.0.1:{httpd.server_port}", state
+    httpd.shutdown()
+    httpd.server_close()
+    thread.join()
+
+
+def settings(root: Path, origin: str) -> dict[str, Any]:
+    """Synthetic operator choices: 2 s spacing, 3 attempts per 10 s window."""
+    return {
+        "execution_role": "regulator-fetch",
+        "storage_root": str(root),
+        "fetch": {
+            "cache_root": str(root / "cache"),
+            "user_agent": "public-records/1.0 (+https://records.example.org/contact)",
+            "fallback_interval": 2,
+            "budget_requests": 3,
+            "budget_window": 10,
+            "timeout": 5,
+            "max_retries": 1,
+            "max_sleep_seconds": 30,
+            "max_response_bytes": 1024,
+        },
+        "terms": [
+            {
+                "origin": origin,
+                "terms_url": origin + "/terms",
+                "checked_at": "2026-10-11T00:00:00Z",
+                "bulk_allowed": True,
+            }
+        ],
+        "bulk_urls": [],
+        "crawl_urls": [origin + "/a", origin + "/b", origin + "/c"],
+        "use_crawl": False,
+    }

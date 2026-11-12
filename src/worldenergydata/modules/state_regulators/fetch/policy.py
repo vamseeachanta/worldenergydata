@@ -18,6 +18,11 @@ class TermsDenied(RuntimeError):
 class BudgetExceeded(RuntimeError):
     """The rolling per-host request budget is exhausted."""
 
+    def __init__(self, origin: str, resume_at: float) -> None:
+        self.origin = origin_of(origin)
+        self.resume_at = datetime.fromtimestamp(resume_at, timezone.utc).isoformat()
+        super().__init__(f"Wait for {self.origin}; resume at {self.resume_at} UTC")
+
 
 class ResponseTooLarge(ValueError):
     """A response exceeded the configured in-memory byte limit."""
@@ -29,6 +34,11 @@ class ResponseTooLarge(ValueError):
 
 class UnreachableTarget(RuntimeError):
     """A target could not be reached from the executing machine."""
+
+    def __init__(self, origin: str, layer: str) -> None:
+        self.origin = origin_of(origin)
+        self.layer = layer
+        super().__init__(f"{layer}: target={self.origin} machine=the build host")
 
 
 def origin_of(url: str) -> str:
@@ -111,15 +121,21 @@ class TermsCheck:
     def __post_init__(self) -> None:
         if type(self.bulk_allowed) is not bool:
             raise ValueError("Bulk permission must be an explicit Boolean")
-
-    def permits(self, url: str) -> bool:
-        checked = datetime.fromisoformat(self.checked_at)
+        try:
+            checked = datetime.fromisoformat(self.checked_at)
+        except (ValueError, TypeError) as error:
+            raise ValueError(
+                "Terms check time must be an ISO 8601 timestamp"
+            ) from error
         offset = checked.utcoffset()
         if offset is None or offset.total_seconds() != 0:
             raise ValueError("Terms check time must be UTC")
         if checked > datetime.now(timezone.utc):
             raise ValueError("Terms check time must not be in the future")
         origin_of(self.terms_url)
+        origin_of(self.origin)
+
+    def permits(self, url: str) -> bool:
         return self.bulk_allowed and origin_of(self.origin) == origin_of(url)
 
 

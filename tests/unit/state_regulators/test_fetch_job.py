@@ -14,40 +14,9 @@ import pytest
 from worldenergydata.modules.state_regulators.fetch import FetchConfig, Fetcher
 from worldenergydata.modules.state_regulators.fetch.job import FetchJob, main
 
-from . import test_polite_fetch
-from .fetch_cases import Clock
+from .fetch_cases import Clock, server, settings
 
-server = test_polite_fetch.server
-
-
-def settings(root: Path, origin: str) -> dict[str, Any]:
-    """Synthetic operator choices: 2 s spacing, 3 attempts per 10 s window."""
-    return {
-        "execution_role": "regulator-fetch",
-        "storage_root": str(root),
-        "fetch": {
-            "cache_root": str(root / "cache"),
-            "user_agent": "public-records/1.0 (+https://records.example.org/contact)",
-            "fallback_interval": 2,
-            "budget_requests": 3,
-            "budget_window": 10,
-            "timeout": 5,
-            "max_retries": 1,
-            "max_sleep_seconds": 30,
-            "max_response_bytes": 1024,
-        },
-        "terms": [
-            {
-                "origin": origin,
-                "terms_url": origin + "/terms",
-                "checked_at": "2026-10-11T00:00:00Z",
-                "bulk_allowed": True,
-            }
-        ],
-        "bulk_urls": [],
-        "crawl_urls": [origin + "/a", origin + "/b", origin + "/c"],
-        "use_crawl": False,
-    }
+__all__ = ["server"]
 
 
 def test_projection_and_restart(tmp_path: Path, server: Any) -> None:
@@ -207,7 +176,7 @@ def test_example_is_offline_and_unpermitted(
     assert report["terms_permitted"] is False
     with pytest.raises(SystemExit) as refused:
         main([str(example), "--execute"])
-    assert refused.value.code == 1
+    assert refused.value.code == 3
 
 
 def test_cli_executes_and_reports_cached_results(

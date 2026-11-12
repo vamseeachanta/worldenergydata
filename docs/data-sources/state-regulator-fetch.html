@@ -72,7 +72,8 @@ unaffected and are still verified on read. Damaged per-URL JSON records also rai
 That cache-hit path makes no network request; purge is an explicit operator action. Uncached URLs still require permission.</p>
 <p>The offline projection reports unique uncached requests, cached URLs, maximum retry attempts, baseline wall-clock
 estimate and terms status. Estimates exclude response latency, future header changes and retry delays; unknown vendor
-windows use configuration. Exhausted budgets stop collection for later resume. HTTP 429 retries are bounded and honor
+windows use configuration. Window-release waits within the sleep cap proceed in the current run; longer waits stop
+collection for later resume. HTTP 429 retries are bounded and honor
 Retry-After; HTTP refusals stop the run.</p>
 <p>The original fetch implementation made no regulator request, crawl or volume run. Indiana wiring, actual recorded terms
 checks, current reachability observations and an authorized real run remain future work. No bulk data is committed.</p>
@@ -106,11 +107,25 @@ above must not be treated as a current measurement.</p>
 variables are refused. This checks placement, not disk identity, free capacity or concurrent filesystem replacement;
 the deployment must provide a stable data directory. Run only one writer per cache root.</p>
 <p>List reviewed official archive, ArcGIS REST or shapefile URLs under <code>bulk_urls</code> and record crawl page URLs
-under <code>crawl_urls</code>. The first bulk candidate is selected when available. <code>use_crawl=true</code> requires
+under <code>crawl_urls</code>. Every distinct bulk URL is collected in configured order when available. Duplicate URLs
+are requested only once. <code>use_crawl=true</code> requires
 crawl URLs and logs the available bulk alternatives. Endpoint discovery remains a human source-review step; this command
 does not scrape to discover routes. Before executing any uncached URL, the complete plan must have matching recorded
 <code>TermsCheck</code> entries. A terms record contains <code>origin</code>, <code>terms_url</code>,
 <code>checked_at</code> (UTC) and an explicit Boolean <code>bulk_allowed</code>. Successful HTTP access never supplies permission.</p>
+<h2>Command failures and scope</h2>
+<p>Failures report a class name and a stable exit category: 2 for invalid configuration (ValueError),
+3 for TermsDenied, 4 for BudgetExceeded, 5 for UnreachableTarget, 6 for CacheIntegrityError, 7 for OSError,
+8 for ResponseTooLarge, 9 for HTTPError, 10 for other RuntimeError failures, 11 for KeyError and 12 for TypeError.
+Reachability errors report only the
+source origin (scheme, host and port) and failure layer. Budget stops report the origin and UTC resume time. URL paths,
+query parameters, filesystem locations and raw operating-system messages are omitted. Cache damage is retained for
+inspection. Terms timestamps are validated as UTC and not in the future when configuration is loaded.</p>
+<p>The generic command collects an explicit URL list with a deployment-role assertion. It does not discover pages,
+construct ArcGIS keyset queries or join source tables. The Indiana collector on the integration
+branch will remain responsible for its source-specific paging and table relationships. These are different planning
+responsibilities; shared request budgets, permission checks and cache access will need integration verification after
+the maintainer reconciles the branches. This change does not establish that verification.</p>
 <h2>Worked example: inputs, method and answer</h2>
 <p>All numbers in this example are synthetic operator choices, not measured regulator limits.
 Inputs: three unique uncached URLs on one origin; spacing 2.0 s; at most three attempts per 10.0 s;
@@ -121,12 +136,16 @@ one retry per URL; no retained attempts or server cooldown. The example also cho
 There is no trailing sleep after the last request. Maximum attempts are
 <code>A = N × (1 + retries) = 3 × (1 + 1) = 6</code>.
 A fourth URL starts at 10.0 s: after starts at 0.0, 2.0 and 4.0 s, the rolling window releases
-the first reservation at 10.0 s. After a completed run, a restart reports zero pending requests and makes zero requests.
+the first reservation at 10.0 s. The 6.0 s wait after the third response fits the 30.0 s sleep cap, so execution
+and projection both place that fourth start at 10.0 s, assuming zero response latency and no additional server limits.
+A 5.0 s sleep cap would instead stop before the fourth request with a UTC resume time.
+After a completed run, a restart reports zero pending requests and makes zero requests.
 The offline example reports <code>terms_permitted=false</code>; tests grant permission only to a local fake server.</p>
 <p>Method source: these schedule and attempt equations follow directly from counting the configured gaps and attempts;
 the independent arithmetic is also written in <code>tests/unit/state_regulators/test_fetch_job.py</code>.
-The projection excludes response latency, future server limits, retry waits and later invocations needed after budget exhaustion.
-For multiple hosts, the sum of per-host projections is a conservative serial estimate, not a completion-time guarantee.</p>
+The projection excludes response latency, future server limits, retry waits and delays in restarting after a wait exceeds
+the sleep cap. It includes rolling-window release waits even when a later invocation will be required.
+For multiple hosts, the sum of per-host projections is a pacing-only estimate; it is not a completion-time bound.</p>
 <h2>Protocol sources and limits</h2>
 <p><a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-10.2.3">RFC 9110 (2022), section 10.2.3</a>
 defines Retry-After seconds or an HTTP date; section 10.1.5 defines User-Agent.

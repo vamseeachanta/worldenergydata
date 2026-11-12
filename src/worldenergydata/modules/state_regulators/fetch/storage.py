@@ -4,10 +4,15 @@ import hashlib
 import json
 import math
 import os
+from collections.abc import Mapping
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any
+
+
+class CacheIntegrityError(ValueError):
+    """Retained cache evidence failed validation; preserve it for inspection."""
 
 
 @dataclass(frozen=True)
@@ -29,7 +34,7 @@ def _checked_path(path: Path, root: Path) -> Path:
         current = current / part
         if current.is_symlink():
             raise ValueError("Cache path must not contain symlinks")
-    if not path.resolve().is_relative_to(root):
+    if not path.resolve().is_relative_to(root.resolve()):
         raise ValueError("Cache path must remain within the cache root")
     return path
 
@@ -71,7 +76,9 @@ def read_record(path: Path, *, root: Path, progress: bool = False) -> dict[str, 
                 raise ValueError("invalid URL record shape")
         return value
     except (ValueError, TypeError, KeyError, OverflowError) as error:
-        raise ValueError(f"Cache integrity: invalid {path.name}. {recovery}") from error
+        raise CacheIntegrityError(
+            f"Cache integrity: invalid {path.name}. {recovery}"
+        ) from error
 
 
 def validate_progress(value: dict[str, Any]) -> None:
@@ -129,7 +136,7 @@ class CacheStore:
         metadata = read_record(record, root=self.root)
         digest = metadata["sha256"]
         if len(digest) != 64 or any(c not in "0123456789abcdef" for c in digest):
-            raise ValueError("Cache integrity: invalid digest")
+            raise CacheIntegrityError("Cache integrity: invalid digest")
         path = _checked_path(self.objects / digest, self.root)
         payload = path.read_bytes()
         if (
@@ -137,7 +144,7 @@ class CacheStore:
             or hashlib.sha256(payload).hexdigest() != digest
             or len(payload) != metadata["size_bytes"]
         ):
-            raise ValueError("Cache integrity verification failed")
+            raise CacheIntegrityError("Cache integrity verification failed")
         return FetchResult(path, metadata, True)
 
     def put(

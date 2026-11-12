@@ -2,10 +2,9 @@
 
 import json
 import shutil
-import threading
+from collections.abc import Iterator
 from datetime import datetime, timezone
-from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-from typing import Any, Iterator, cast
+from typing import Any, cast
 
 import pytest
 
@@ -46,9 +45,11 @@ from .fetch_cases import case_response_cap as test_response_cap
 from .fetch_cases import case_wait_below_cap_proceeds as test_wait_below_cap_proceeds
 from .fetch_cases import (
     make_fetcher,
+    server,
 )
 
 __all__ = [
+    "server",
     "test_cached_permission_survives_withdrawal",
     "test_corrupt_progress_is_preserved",
     "test_corrupt_url_record_is_preserved",
@@ -64,37 +65,6 @@ __all__ = [
 def clean_case_directory(tmp_path: Any) -> Iterator[None]:
     yield
     shutil.rmtree(tmp_path)
-
-
-@pytest.fixture
-def server() -> Iterator[Any]:
-    state: dict[str, list[Any]] = {"requests": [], "responses": [], "headers": []}
-
-    class Handler(BaseHTTPRequestHandler):
-        def do_GET(self) -> None:
-            state["requests"].append(self.path)
-            state["headers"].append(dict(self.headers))
-            status, headers, body = (
-                state["responses"].pop(0)
-                if state["responses"]
-                else (200, {}, b"public records")
-            )
-            self.send_response(status)
-            for key, value in headers.items():
-                self.send_header(key, value)
-            self.end_headers()
-            self.wfile.write(body)
-
-        def log_message(self, *args: Any) -> None:
-            pass
-
-    httpd = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
-    thread = threading.Thread(target=httpd.serve_forever, daemon=True)
-    thread.start()
-    yield f"http://127.0.0.1:{httpd.server_port}", state
-    httpd.shutdown()
-    httpd.server_close()
-    thread.join()
 
 
 def test_recorded_vendor_budget_drives_delay() -> None:
@@ -181,10 +151,14 @@ def test_per_host_budget_survives_restart_and_counts_retries(
     origin, state = server
     clock = Clock()
     state["responses"] = [(429, {"Retry-After": "1"}, b"wait")]
-    fetcher = make_fetcher(tmp_path, origin, clock, budget_requests=1)
+    fetcher = make_fetcher(
+        tmp_path, origin, clock, budget_requests=1, max_sleep_seconds=10
+    )
     with pytest.raises(BudgetExceeded):
         fetcher.fetch(origin + "/a")
-    resumed = make_fetcher(tmp_path, origin, clock, budget_requests=1)
+    resumed = make_fetcher(
+        tmp_path, origin, clock, budget_requests=1, max_sleep_seconds=10
+    )
     with pytest.raises(BudgetExceeded):
         resumed.fetch(origin + "/b")
     assert state["requests"] == ["/a"]
