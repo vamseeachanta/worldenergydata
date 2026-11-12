@@ -18,7 +18,11 @@ Existing dashboard adapters and HTML pages retain their historical basis.
 ## Run a new vintage
 
 From the repository root, run the following with a new data directory and a new
-output directory:
+output directory. Before using the command, copy the configuration and replace
+each table's `date_min`, `date_max` and associated basis fields with reviewed
+coverage criteria for the new archive. Pass that revised configuration in place
+of the snapshot configuration below. The shipped bounds describe one retained
+archive; later or backfilled dates will remain not evaluated under those bounds:
 
 ```sh
 python -m worldenergydata.bsee.analysis.drilling_refresh \
@@ -205,3 +209,15 @@ Run `tests/unit/bsee/analysis/test_drilling_refresh.py` with the existing
 data, start no browser and use no licensed solver. The historical receipt keeps
 its original workflow digest; the current retained receipt is checked against
 the normalized source digest and names the rebuild command on mismatch.
+
+## Quality example ordering
+
+New quality reports select the numerically smallest signed identifier as each
+defect class's `example_id`. This ordering does not imply event chronology.
+
+The retained quality report predates that ordering change and retains its
+original lexicographic examples. Its `workflow_sha256` is checked against
+`quality/workflow_source.py.gz`, a lossless archive of the exact committed LF
+source at revision `0ece088f3b02bdaad290d4c33aefe637e8e22c99`. The archive preserves
+the existing receipt's provenance; the historical results have not been
+regenerated with the revised implementation.

@@ -76,6 +76,8 @@ def test_public_example_consistency(data):
     assert violations == []
     returned = recommend(concept)
     assert data["ranking"] == [r.concept_type.value for r in returned]
+    # The report is a worked tieback example; a different winner requires revision.
+    assert data["ranking"][0] == "subsea_tieback"
     for row in returned:
         assert data["numbers"][f"score.{row.concept_type.value}"] == pytest.approx(
             row.total_score * 100, abs=1e-9
@@ -139,7 +141,7 @@ def test_rebuild_matches_committed_report(tmp_path):
     for name in ("index.html", "changes.json"):
         committed = (REPORT / name).read_text(encoding="utf-8")
         fresh = (tmp_path / name).read_text(encoding="utf-8")
-        # All calculation arrays and geometry are rounded to displayed digits.
+        # Exact serialized arrays and geometry must reproduce, including precision.
         assert committed == fresh, f"Rebuild with: {REBUILD}"
 
 
@@ -161,6 +163,7 @@ def test_offline_structure_references_and_public_wording(tmp_path):
     assert "<title>" in text and "tabindex=" in text
     assert "embedded-changes" in text
     assert "module-report-data" in text
+    assert "rounded for presentation" not in text
     for word in (
         "ow" + "ner",
         "dis" + "patcher",

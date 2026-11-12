@@ -252,7 +252,20 @@ def _date(raw: str):
     return _timestamp(raw).date()
 
 
+def _date_bounds(spec: dict) -> tuple[date | None, date | None]:
+    """Reject malformed or reversed configuration before inspecting source dates."""
+    try:
+        lower = date.fromisoformat(spec["date_min"]) if "date_min" in spec else None
+        upper = date.fromisoformat(spec["date_max"]) if "date_max" in spec else None
+    except (TypeError, ValueError) as exc:
+        raise QualityError("configuration date bounds must be ISO dates") from exc
+    if lower is not None and upper is not None and lower > upper:
+        raise QualityError("configuration date_min exceeds date_max")
+    return lower, upper
+
+
 def _table_qa(rows: list[dict], spec: dict, expected_unit: str) -> dict:
+    lower, upper = _date_bounds(spec)
     keys = [tuple(row[key] for key in spec["keys"]) for row in rows]
     counts = Counter(keys)
     checks = {
@@ -289,14 +302,8 @@ def _table_qa(rows: list[dict], spec: dict, expected_unit: str) -> dict:
                 dates.append(value.date())
                 pair.append(value)
                 checks["out_of_range_dates"] += int(
-                    (
-                        "date_min" in spec
-                        and value.date() < date.fromisoformat(spec["date_min"])
-                    )
-                    or (
-                        "date_max" in spec
-                        and value.date() > date.fromisoformat(spec["date_max"])
-                    )
+                    (lower is not None and value.date() < lower)
+                    or (upper is not None and value.date() > upper)
                 )
             except ValueError:
                 checks["invalid_dates"] += 1
@@ -467,6 +474,7 @@ def _defect_records(tables: dict, config: dict, population: set[str], qa: dict) 
 
     for name, spec in config["tables"].items():
         seen = set()
+        lower, upper = _date_bounds(spec)
         rows = tables[name]
         for row in rows:
             prefix = name + "."
@@ -490,12 +498,8 @@ def _defect_records(tables: dict, config: dict, population: set[str], qa: dict) 
                     try:
                         value = _timestamp(row[column])
                         dates.append(value)
-                        if (
-                            "date_min" in spec
-                            and value.date() < date.fromisoformat(spec["date_min"])
-                        ) or (
-                            "date_max" in spec
-                            and value.date() > date.fromisoformat(spec["date_max"])
+                        if (lower is not None and value.date() < lower) or (
+                            upper is not None and value.date() > upper
                         ):
                             add(prefix + "out_of_range_dates", row)
                     except ValueError:
@@ -565,7 +569,7 @@ def write_data_quality(
             {
                 "defect": defect,
                 "count": len(records),
-                "example_id": min(records),
+                "example_id": min(records, key=int),
                 "rule": "reported",
                 "reason": QUALITY_REASONS[check],
             }

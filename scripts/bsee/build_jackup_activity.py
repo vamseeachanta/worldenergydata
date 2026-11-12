@@ -206,7 +206,7 @@ def derive_table(war, boreholes, rigs, apds, rig_list):
             reason = "other_rig_type"
         else:
             reason = ""
-        if report["WATER_DEPTH"] == "8831":
+        if depth_value(report["WATER_DEPTH"]) == Decimal("8831"):
             anomaly_audit.append(
                 {
                     "activity_id": record_id,
@@ -404,6 +404,15 @@ def read_rows(path: Path, member: str, required: set[str], fieldnames=None):
 
 def data_card(manifest: dict) -> str:
     counts = manifest["counts"]
+    audit = counts["source_8831_ft_record_audit"]
+    audit_names = ", ".join(
+        f"<code>{html.escape(name)}</code>"
+        for name in sorted({row["rig_name"] for row in audit})
+    ) or "none"
+    audit_dispositions = ", ".join(
+        f"{html.escape(reason)}: {count:,}"
+        for reason, count in sorted(Counter(row["disposition"] for row in audit).items())
+    ) or "none"
     fields = "".join(
         f"<tr><td><code>{field}</code></td><td>{html.escape(description)}</td></tr>"
         for field, description in FIELD_DEFINITIONS.items()
@@ -475,10 +484,10 @@ or a vessel-specific operating limit. The same permissive threshold screens lift
 <p>Depths are not corrected or substituted. A disagreement between WAR and borehole values is flagged.
 A borehole depth may describe a subsea well rather than the rig's physical location; no elevation, leg length or geotechnical basis is supplied.
 Blank/negative/non-numeric depths are retained and marked. Generic rig labels beginning with an asterisk are retained and flagged.</p>
-<p>The nine 8,831 ft source WAR records identify <code>CR LUIGS</code> and have no exact name match in the coded rig view.
+<p>The audit contains {len(audit):,} source WAR records at 8,831 ft.
+Reported rig names: {audit_names}. Dispositions: {audit_dispositions}.
 Their identifiers and exclusion reasons are preserved in <code>source_8831_ft_record_audit</code> in the manifest.
-BSEE's coded rig view lists <code>GSF C.R. LUIGS</code> as DS (drillship), not JU.
-No alias or jack-up classification is invented to place those nine records into this subset.
+No alias or rig classification is inferred from a depth value.
 The 8,831 ft jack-up screening case is covered by an offline test; it is not a claim that such a retained source row exists.</p>
 <p>Type cross-checks use other BSEE records by RIG_ID_NUM, including APD descriptions and the Rig ID List.
 They test consistency between records, not independent physical inspection; current registry values may not describe a historical configuration.

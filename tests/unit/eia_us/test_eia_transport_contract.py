@@ -24,7 +24,7 @@ from worldenergydata.eia_us.client.eia_api import (
     EIARateLimitError,
 )
 
-SERIES = "PET.MCRFPUS2.M"
+SERIES = "PET.MCRFPUS1.M"
 # Deliberately synthetic markers used only to detect diagnostic disclosure.
 AUTH_MARKER = "synthetic-auth-marker"
 BODY_MARKER = "synthetic-response-marker"
@@ -124,6 +124,7 @@ def test_mock_live_cache_separation(transport, mock_first):
         {"period": "synthetic-period", "value": 1.0, "unit": "unit"}
     ]
     assert results[True] != results[False]
+    assert results[True], "Cache separation requires a populated mock series"
     assert len(transport.calls) == 1
     assert client.generate_cache_key(SERIES, {}, use_mock=True) != (
         client.generate_cache_key(SERIES, {}, use_mock=False)
@@ -161,6 +162,7 @@ def test_cache_ttl_boundary(transport, use_mock):
     client = EIAApiClient(api_key=AUTH_MARKER, cache_ttl=2)
     transport.replies.extend([page([1]), page([2])])
     initial = client.fetch_series(SERIES, use_mock=use_mock)
+    assert initial, "TTL coverage requires a populated series"
     transport.clock.now += 1
     assert client.fetch_series(SERIES, use_mock=use_mock) is initial
     transport.clock.now += 1
