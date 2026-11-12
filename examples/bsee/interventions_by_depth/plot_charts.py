@@ -27,6 +27,7 @@ BANDS = [
 COLORS = ["#6588a6", "#427298", "#245476", "#102e46", "#777777"]
 MARKERS = ["o", "s", "^", "D", "x"]
 STYLES = ["-", "--", "-.", ":", "--"]
+BAND_LABELS = {"500 to 1500 m": "500 to 1,500 m", "1500 m and deeper": "1,500 m and deeper"}
 HATCHES = ["", "//", "..", "xx", "\\\\"]
 COST_SOURCES = (
     "Sources: BSEE TAP-738, 2015; BOEM EIS 2016-018, 2016;\n"
@@ -86,7 +87,7 @@ def plot(out):
     years = sorted(rates.year.unique())
     active = [b for b in BANDS if rates.loc[rates.band.eq(b), "permits"].sum() > 0]
     legend = [
-        Line2D([], [], color=c, marker=m, linestyle=s, label=b)
+        Line2D([], [], color=c, marker=m, linestyle=s, label=BAND_LABELS.get(b, b))
         for b, c, m, s in zip(BANDS, COLORS, MARKERS, STYLES)
         if b in active
     ]
@@ -111,7 +112,7 @@ def plot(out):
                 edgecolor="#333333",
                 linewidth=0.4,
                 hatch=hatch,
-                label=band,
+                label=BAND_LABELS.get(band, band),
             )
             bottom += vals
         ax.axvspan(last + 0.5, last + 1.5, color="#cccccc", alpha=0.3)
@@ -276,7 +277,7 @@ def plot(out):
         "03_cost_per_event",
         date,
         "Well work: median 7 days / midpoint 10.5 days / two weeks 14 days; scenarios, not outcome quantiles.\n"
-        "Permanent-abandonment costs apply only to that subtype (1387 of 2610 abandonment approvals in 2025).\n"
+        "Permanent-abandonment costs apply only to that subtype (1,387 of 2,610 abandonment approvals in 2025).\n"
         "Subsea rig mobilisation excluded. Dry-tree conductor removal separate; published deep-platform totals include allowances.",
         cost=True,
     )
@@ -291,6 +292,7 @@ def plot(out):
         "liftboat / jack-up",
         "intervention vessel",
         "drillship / semisubmersible",
+        "non-rig operation (recorded)",
         "none named",
         "other",
     ]
@@ -302,6 +304,7 @@ def plot(out):
         "#697725",
         "#aa4444",
         "#17364c",
+        "#4d6570",
         "#777777",
         "#765c49",
     ]
@@ -346,7 +349,8 @@ def plot(out):
             left += vals
         for y, band in enumerate(bands):
             n = int(f[f.band.eq(band)].approvals.sum())
-            ax.text(101, y, f"n={n}", va="center", fontsize=9)
+            ax.text(101, y, f"n={n:,}", va="center", fontsize=9)
+        ax.set_yticks(range(len(bands)), [BAND_LABELS.get(b, b) for b in bands])
         ax.invert_yaxis()
         ax.set_title(event.capitalize(), loc="left", fontsize=13)
         ax.set_xlim(0, 100)
@@ -379,7 +383,7 @@ def plot(out):
         "04_unit_types_by_depth",
         date,
         "Unit types follow the permit rig/unit lookup; they do not establish deployed equipment or access configuration.\n"
-        "Permanent-abandonment panel: 1387 approvals; temporary and unspecified abandonment are excluded.",
+        "Permanent-abandonment panel: 1,387 approvals; temporary and unspecified abandonment are excluded.",
     )
     print(json.dumps({"charts": 4, "formats": ["png", "svg"], "png_width_px": 2160}))
 

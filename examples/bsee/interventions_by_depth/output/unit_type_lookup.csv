@@ -33,7 +33,7 @@ RIG_ID_NUM,RIG_NAME,RIG_TYPE_CODE,unit_category
 49140,* LIFT BOAT (LAFAYETTE DIST),LB,liftboat / jack-up
 45022,* COIL TUBING UNIT (N.O. #2),CT,coiled tubing
 91327,VALARIS JU-118 (ROWAN JOE DOUGLAS),JU,liftboat / jack-up
-50943,* NONE RIG PA OPERATION (HOUMA,NR,none named
+50943,* NONE RIG PA OPERATION (HOUMA,NR,non-rig operation (recorded)
 49580,Seadrill West Vela,DS,drillship / semisubmersible
 51181,SEADRILL WEST CAPRICORN,SD,drillship / semisubmersible
 47941,* HYDRAULIC WORKOVER UNIT NO#2,HW,hydraulic workover / snubbing
@@ -93,7 +93,7 @@ RIG_ID_NUM,RIG_NAME,RIG_TYPE_CODE,unit_category
 49139,* LIFT BOAT (HOUMA DIST),LB,liftboat / jack-up
 49141,* LIFT BOAT (LAKE CHARLES DIST,LB,liftboat / jack-up
 60001,* DP SEMI RIG TO BE DETERMINED,SD,drillship / semisubmersible
-50940,* NON RIG PA OPERATION,NR,none named
+50940,* NON RIG PA OPERATION,NR,non-rig operation (recorded)
 50840,BLAKE 1505,PF,platform rig
 92620,NOBLE BOB DOUGLAS,DS,drillship / semisubmersible
 50541,VALARIS 8503 (ENSCO 8503),SD,drillship / semisubmersible
@@ -103,7 +103,7 @@ RIG_ID_NUM,RIG_NAME,RIG_TYPE_CODE,unit_category
 45117,* WIRELINE UNIT (LAF #4),WL,wireline unit
 100032,VALARIS DS-17 (ROWAN RELIANCE),DS,drillship / semisubmersible
 100052,VALARIS DS-15 (ROWAN RENAISSANCE),DS,drillship / semisubmersible
-50942,* NONE RIG PA OPERATION (NO),NR,none named
+50942,* NONE RIG PA OPERATION (NO),NR,non-rig operation (recorded)
 100056,NABORS MODS 400,PF,platform rig
 100061,T.O. DEEPWATER ATLAS,DS,drillship / semisubmersible
 100069,STENA EVOLUTION,DS,drillship / semisubmersible
@@ -151,7 +151,7 @@ RIG_ID_NUM,RIG_NAME,RIG_TYPE_CODE,unit_category
 45023,* COIL TUBING UNIT (HOUMA #2),CT,coiled tubing
 49150,* LIFT BOAT (HOUMA #3),LB,liftboat / jack-up
 49147,* LIFT BOAT (L.J. #2)),LB,liftboat / jack-up
-50945,* NONE RIG PA OPERATION (LC),NR,none named
+50945,* NONE RIG PA OPERATION (LC),NR,non-rig operation (recorded)
 45025,* COIL TUBING UNIT (L.C. #2),CT,coiled tubing
 46410,ISS #28,PF,platform rig
 51121,NOBLE GLOBETROTTER,DS,drillship / semisubmersible
@@ -202,7 +202,7 @@ RIG_ID_NUM,RIG_NAME,RIG_TYPE_CODE,unit_category
 49859,NOBLE DRILLER,SS,drillship / semisubmersible
 50159,T.O. DEVELOPMENT DRILLER III,SD,drillship / semisubmersible
 47937,* HYDRAULIC WORKOVER UNIT (HO),HW,hydraulic workover / snubbing
-50946,* NONE RIG PA OPERATION (LJ),NR,none named
+50946,* NONE RIG PA OPERATION (LJ),NR,non-rig operation (recorded)
 50880,PARKER 72-B,BR,other
 45015,* COIL TUBING UNIT (ALTERNATE),CT,coiled tubing
 50928,* SNUBBING UNIT (L.J. DIST),SB,hydraulic workover / snubbing
@@ -253,7 +253,7 @@ RIG_ID_NUM,RIG_NAME,RIG_TYPE_CODE,unit_category
 48108,use Rig ID # 48018,PF,platform rig
 60005,* BARGE RIG TO BE DETERMINED,BG,other
 50762,VALARIS JU-146 (ROWAN EXL IV),JU,liftboat / jack-up
-50941,* NON RIG UNIT OPERATION,NR,none named
+50941,* NON RIG UNIT OPERATION,NR,non-rig operation (recorded)
 47940,* HYDRAULIC WORKOVER UNIT (LJ),HW,hydraulic workover / snubbing
 45021,* COIL TUBING UNIT (L.J. DIST),CT,coiled tubing
 45024,* COIL TUBING UNIT (LAF #2),CT,coiled tubing
@@ -326,7 +326,7 @@ RIG_ID_NUM,RIG_NAME,RIG_TYPE_CODE,unit_category
 45111,* WIRELINE UNIT (HOUMA #3),WL,wireline unit
 45108,* WIRELINE UNIT (L.C.#2),WL,wireline unit
 60006,* PLATFORM RIG TO BE DETERMINED,PF,platform rig
-50944,* NONE RIG PA OPERATION (LAF),NR,none named
+50944,* NONE RIG PA OPERATION (LAF),NR,non-rig operation (recorded)
 47934,* HYDRAULIC WORKOVER UNIT (ALTERNATE),HW,hydraulic workover / snubbing
 49565,SEADRILL SEVAN LOUISIANA,SD,drillship / semisubmersible
 45112,* WIRELINE UNIT (LAF #3),WL,wireline unit

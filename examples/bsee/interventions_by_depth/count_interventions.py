@@ -278,13 +278,14 @@ UNIT_TYPES = {
     "DS": "drillship / semisubmersible",
     "SS": "drillship / semisubmersible",
     "SD": "drillship / semisubmersible",
-    "NR": "none named",
+    "NR": "non-rig operation (recorded)",
     "BG": "other",
     "BR": "other",
     "PL": "other",
     "SU": "other",
 }
 UNIT_CATEGORIES = list(dict.fromkeys(UNIT_TYPES.values()))
+UNIT_CATEGORIES.insert(UNIT_CATEGORIES.index("other"), "none named")
 
 
 def unit_category(code, name, rig_id):

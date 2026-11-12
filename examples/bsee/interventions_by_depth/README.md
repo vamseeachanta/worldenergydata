@@ -29,7 +29,7 @@ The collection owner is worldenergydata; the catalog source ID is `bsee-data-cen
 - Rates use **wells standing on 1 January**, not year-end stock: approvals during the year can concern wells removed before year end. The numerator includes approvals during the year, including wells first spudded later in that year, so this is approval intensity against opening stock, not a matched-cohort probability. [Standing wells](output/standing_wells.csv) includes stock dates and assumed counts; [year-end stock](output/standing_wells_year_end.csv) is retained separately (partial 2026 capped at the file date). Zero stock yields a missing rate, not zero.
 - Full years run 2005–2025; [full-year averages](output/full_year_averages.csv) exclude partial 2026 through 12 November. The 2026 denominator remains 1 January stock and its rates are not annualised. EOR W/A/C counts use one `SN_EOR` and the borehole-status date; these are not a matched APM completion cohort. [EOR counts](output/eor_by_year_band.csv) and [same-year ratios](output/eor_permit_ratios.csv) remain descriptive.
 
-At 1 January 2025, 136 wells are **assumed standing**: 135 have no non-superseded bore and 1 have a missing terminal status date (categories can overlap). 17 API10 wells lack any non-cancelled first-spud date and are excluded; their historical stock cannot be dated.
+At 1 January 2025, 136 wells are **assumed standing**: 135 have no non-superseded bore and 1 has a missing terminal status date (categories can overlap). 17 API10 wells lack any non-cancelled first-spud date and are excluded; their historical stock cannot be dated.
 
 Primary OTHER approvals numbered 309–509 per year in 2005–2020, then 174 in 2021, 11 in 2022 and zero from 2023, while WORKOVER rose. Part of the apparent well-work decline reflects a coding change. The 2025 count should not be compared with the long-run mean without this qualification; electronic coverage also changes in the early years. The feed begins in April 2004; [monthly coverage](output/coverage_by_month.csv) retains the early ramp. Current bore statuses and dates provide a retrospective proxy, not a complete state-transition history; earlier abandonments followed by reopening cannot be reconstructed.
 
@@ -37,29 +37,29 @@ Primary OTHER approvals numbered 309–509 per year in 2005–2020, then 174 in 
 
 2025 approvals and distinct API10 wells are shown separately. A well can appear in both event families; the two distinct-well columns must not be added as disjoint populations. The cost cases below apply to permanent abandonment only (1,387 of 2,610 abandonment approvals).
 
-| Depth band        | Work / abandonment approvals   | Distinct wells, work / abandonment   | Standing wells, 1 Jan   | Work / abandonment per 100   |
-|:------------------|:-------------------------------|:-------------------------------------|:------------------------|:-----------------------------|
-| under 100 m       | 316 / 1,963                    | 180 / 805                            | 5,750                   | 5.5 / 34.1                   |
-| 100 to 500 m      | 99 / 282                       | 44 / 101                             | 887                     | 11.2 / 31.8                  |
-| 500 to 1500 m     | 185 / 284                      | 81 / 53                              | 568                     | 32.6 / 50.0                  |
-| 1500 m and deeper | 165 / 81                       | 77 / 28                              | 426                     | 38.7 / 19.0                  |
-| no depth          | 0 / 0                          | 0 / 0                                | 5                       | 0.0 / 0.0                    |
+| Depth band         | Work / abandonment approvals   | Distinct wells, work / abandonment   | Standing wells, 1 Jan   | Work / abandonment per 100   |
+|:-------------------|:-------------------------------|:-------------------------------------|:------------------------|:-----------------------------|
+| under 100 m        | 316 / 1,963                    | 180 / 805                            | 5,750                   | 5.5 / 34.1                   |
+| 100 to 500 m       | 99 / 282                       | 44 / 101                             | 887                     | 11.2 / 31.8                  |
+| 500 to 1,500 m     | 185 / 284                      | 81 / 53                              | 568                     | 32.6 / 50.0                  |
+| 1,500 m and deeper | 165 / 81                       | 77 / 28                              | 426                     | 38.7 / 19.0                  |
+| no depth           | 0 / 0                          | 0 / 0                                | 5                       | 0.0 / 0.0                    |
 
 Approval-to-well ratios, from [the CSV](output/approvals_per_distinct_well.csv): approvals are not wells.
 
-| Depth band        | Work approvals / well   | Abandonment approvals / well   |
-|:------------------|:------------------------|:-------------------------------|
-| under 100 m       | 1.8                     | 2.4                            |
-| 100 to 500 m      | 2.2                     | 2.8                            |
-| 500 to 1500 m     | 2.3                     | 5.4                            |
-| 1500 m and deeper | 2.1                     | 2.9                            |
-| no depth          | not established         | not established                |
+| Depth band         | Work approvals / well   | Abandonment approvals / well   |
+|:-------------------|:------------------------|:-------------------------------|
+| under 100 m        | 1.8                     | 2.4                            |
+| 100 to 500 m       | 2.2                     | 2.8                            |
+| 500 to 1,500 m     | 2.3                     | 5.4                            |
+| 1,500 m and deeper | 2.1                     | 2.9                            |
+| no depth           | not established         | not established                |
 
 An earlier snapshot of 31 Oct 2026 (not retained here) supplies the comparison: the 2025 raw rows remain **523 WORKOVER + ENHANCE; 2,734 ABANDON; 3,833 all codes**. Exclusions are 127 new-hole preparations (124 ABANDON, 3 ENHANCE) and 331 COMP without ZONE. Retaining 145 COMP/ZONE and 100 INFORM/UTIL gives 523 − 3 + 145 + 100 = 765 well work, and 2,734 − 124 = 2,610 abandonment. EOR counts are 12 W, 891 A and 75 C: W unchanged, A and C each one higher than that earlier snapshot. The old snapshot cannot be independently re-read from this PR.
 
 ## Unit and access evidence
 
-The permit's `RIG_ID_NUM` joins the archive's `mv_apm_rig_view` fields `RIG_TYPE_CODE` and `RIG_NAME` with a validated many-to-one join. The type code selects the category; names are retained in [the lookup](output/unit_type_lookup.csv) but are not used to guess equipment. The mapping below is also retained in [CSV](output/unit_type_mapping.csv). NR denotes a non-rig operation and enters none named; an unmatched nonblank ID or unmapped type enters other. SU is a submersible and is not classified as a semisubmersible. A permit's named unit need not be the unit ultimately deployed.
+The permit's `RIG_ID_NUM` joins the archive's `mv_apm_rig_view` fields `RIG_TYPE_CODE` and `RIG_NAME` with a validated many-to-one join. The type code selects the category; names are retained in [the lookup](output/unit_type_lookup.csv) but are not used to guess equipment. The mapping below is also retained in [CSV](output/unit_type_mapping.csv). NR enters **non-rig operation (recorded)**; only blank unit information enters **none named**. Of the 369 under-100-m permanent-abandonment approvals previously grouped as none named, 355 carry the regulator's unit type "non rig PA operation" and 14 remain none named. An unmatched nonblank ID or unmapped type enters other. SU is a submersible and is not classified as a semisubmersible. A permit's named unit need not be the unit ultimately deployed.
 
 | source_field                          | raw_value                     | unit_category                 | rule                                                               |
 |:--------------------------------------|:------------------------------|:------------------------------|:-------------------------------------------------------------------|
@@ -74,7 +74,7 @@ The permit's `RIG_ID_NUM` joins the archive's `mv_apm_rig_view` fields `RIG_TYPE
 | RIG_TYPE_CODE                         | DS                            | drillship / semisubmersible   | exact type code; joined via RIG_ID_NUM; no name inference          |
 | RIG_TYPE_CODE                         | SS                            | drillship / semisubmersible   | exact type code; joined via RIG_ID_NUM; no name inference          |
 | RIG_TYPE_CODE                         | SD                            | drillship / semisubmersible   | exact type code; joined via RIG_ID_NUM; no name inference          |
-| RIG_TYPE_CODE                         | NR                            | none named                    | exact type code; joined via RIG_ID_NUM; no name inference          |
+| RIG_TYPE_CODE                         | NR                            | non-rig operation (recorded)  | exact type code; joined via RIG_ID_NUM; no name inference          |
 | RIG_TYPE_CODE                         | BG                            | other                         | exact type code; joined via RIG_ID_NUM; no name inference          |
 | RIG_TYPE_CODE                         | BR                            | other                         | exact type code; joined via RIG_ID_NUM; no name inference          |
 | RIG_TYPE_CODE                         | PL                            | other                         | exact type code; joined via RIG_ID_NUM; no name inference          |
@@ -84,71 +84,71 @@ The permit's `RIG_ID_NUM` joins the archive's `mv_apm_rig_view` fields `RIG_TYPE
 
 Well work — share of approvals, 2025:
 
-| band              | Wireline        | Coiled tubing   | HW / snubbing   | Platform rig    | Liftboat / jack-up   | Intervention vessel   | Drillship / semi   | None named      | Other           |
-|:------------------|:----------------|:----------------|:----------------|:----------------|:---------------------|:----------------------|:-------------------|:----------------|:----------------|
-| under 100 m       | 72.5%           | 3.8%            | 0.0%            | 0.0%            | 8.9%                 | 0.0%                  | 0.0%               | 14.9%           | 0.0%            |
-| 100 to 500 m      | 35.4%           | 16.2%           | 0.0%            | 6.1%            | 0.0%                 | 2.0%                  | 14.1%              | 24.2%           | 2.0%            |
-| 500 to 1500 m     | 8.6%            | 5.9%            | 0.5%            | 7.6%            | 0.0%                 | 6.5%                  | 44.9%              | 24.9%           | 1.1%            |
-| 1500 m and deeper | 1.2%            | 0.0%            | 0.0%            | 18.2%           | 0.0%                 | 18.8%                 | 29.1%              | 31.5%           | 1.2%            |
-| no depth          | not established | not established | not established | not established | not established      | not established       | not established    | not established | not established |
+| band               | Wireline        | Coiled tubing   | HW / snubbing   | Platform rig    | Liftboat / jack-up   | Intervention vessel   | Drillship / semi   | Non-rig operation (recorded)   | None named      | Other           |
+|:-------------------|:----------------|:----------------|:----------------|:----------------|:---------------------|:----------------------|:-------------------|:-------------------------------|:----------------|:----------------|
+| under 100 m        | 72.5%           | 3.8%            | 0.0%            | 0.0%            | 8.9%                 | 0.0%                  | 0.0%               | 2.5%                           | 12.3%           | 0.0%            |
+| 100 to 500 m       | 35.4%           | 16.2%           | 0.0%            | 6.1%            | 0.0%                 | 2.0%                  | 14.1%              | 11.1%                          | 13.1%           | 2.0%            |
+| 500 to 1,500 m     | 8.6%            | 5.9%            | 0.5%            | 7.6%            | 0.0%                 | 6.5%                  | 44.9%              | 7.0%                           | 17.8%           | 1.1%            |
+| 1,500 m and deeper | 1.2%            | 0.0%            | 0.0%            | 18.2%           | 0.0%                 | 18.8%                 | 29.1%              | 3.6%                           | 27.9%           | 1.2%            |
+| no depth           | not established | not established | not established | not established | not established      | not established       | not established    | not established                | not established | not established |
 Permanent abandonment — share of approvals, 2025:
 
-| band              | Wireline        | Coiled tubing   | HW / snubbing   | Platform rig    | Liftboat / jack-up   | Intervention vessel   | Drillship / semi   | None named      | Other           |
-|:------------------|:----------------|:----------------|:----------------|:----------------|:---------------------|:----------------------|:-------------------|:----------------|:----------------|
-| under 100 m       | 41.4%           | 6.6%            | 1.6%            | 0.0%            | 8.4%                 | 0.0%                  | 0.0%               | 33.6%           | 8.4%            |
-| 100 to 500 m      | 44.7%           | 4.3%            | 0.0%            | 0.0%            | 0.0%                 | 0.0%                  | 9.6%               | 28.7%           | 12.8%           |
-| 500 to 1500 m     | 1.9%            | 12.1%           | 24.2%           | 0.6%            | 0.0%                 | 0.0%                  | 57.3%              | 3.8%            | 0.0%            |
-| 1500 m and deeper | 0.0%            | 18.4%           | 0.0%            | 5.3%            | 0.0%                 | 0.0%                  | 73.7%              | 2.6%            | 0.0%            |
-| no depth          | not established | not established | not established | not established | not established      | not established       | not established    | not established | not established |
+| band               | Wireline        | Coiled tubing   | HW / snubbing   | Platform rig    | Liftboat / jack-up   | Intervention vessel   | Drillship / semi   | Non-rig operation (recorded)   | None named      | Other           |
+|:-------------------|:----------------|:----------------|:----------------|:----------------|:---------------------|:----------------------|:-------------------|:-------------------------------|:----------------|:----------------|
+| under 100 m        | 41.4%           | 6.6%            | 1.6%            | 0.0%            | 8.4%                 | 0.0%                  | 0.0%               | 32.3%                          | 1.3%            | 8.4%            |
+| 100 to 500 m       | 44.7%           | 4.3%            | 0.0%            | 0.0%            | 0.0%                 | 0.0%                  | 9.6%               | 28.7%                          | 0.0%            | 12.8%           |
+| 500 to 1,500 m     | 1.9%            | 12.1%           | 24.2%           | 0.6%            | 0.0%                 | 0.0%                  | 57.3%              | 1.3%                           | 2.5%            | 0.0%            |
+| 1,500 m and deeper | 0.0%            | 18.4%           | 0.0%            | 5.3%            | 0.0%                 | 0.0%                  | 73.7%              | 0.0%                           | 2.6%            | 0.0%            |
+| no depth           | not established | not established | not established | not established | not established      | not established       | not established    | not established                | not established | not established |
 
 [Unit shares](output/unit_type_shares.csv) also retain pooled 2021–2025 counts and all zero/no-depth rows. Chart 04 uses 2025 to align with the headline counts. In 500–1,500 m, only **90 of 157** permanent-abandonment approvals name a drillship or semisubmersible, and **79 of 157** have no YES subsea-completion flag. Water depth cannot select an access method.
 
 The share with an EOR `SUBSEA_COMPLETION_FLAG=YES` follows. This is an **ever-YES flag at API10 in the retained snapshot**, not a contemporaneous access classification: any YES wins across the well's EOR bores; absent YES with a recorded NO is no, and no usable flag is unknown. Unknown records remain in the approval denominator. The complement of YES is not proof of a dry tree. [The CSV](output/subsea_completion_shares.csv) retains YES, NO and unknown counts, plus pooled 2021–2025.
 
-| Depth band        | Flag YES, work / permanent abandonment (%)   | Unknown, work / permanent abandonment   |
-|:------------------|:---------------------------------------------|:----------------------------------------|
-| under 100 m       | 0.9 / 0.0                                    | 9 / 56                                  |
-| 100 to 500 m      | 21.2 / 9.6                                   | 6 / 2                                   |
-| 500 to 1500 m     | 69.2 / 49.7                                  | 14 / 14                                 |
-| 1500 m and deeper | 84.2 / 65.8                                  | 8 / 5                                   |
-| no depth          | not established / not established            | 0 / 0                                   |
+| Depth band         | Flag YES, work / permanent abandonment (%)   | Unknown, work / permanent abandonment   |
+|:-------------------|:---------------------------------------------|:----------------------------------------|
+| under 100 m        | 0.9 / 0.0                                    | 9 / 56                                  |
+| 100 to 500 m       | 21.2 / 9.6                                   | 6 / 2                                   |
+| 500 to 1,500 m     | 69.2 / 49.7                                  | 14 / 14                                 |
+| 1,500 m and deeper | 84.2 / 65.8                                  | 8 / 5                                   |
+| no depth           | not established / not established            | 0 / 0                                   |
 
 ## Duration checks
 
 The permit's own `EST_OPERATION_DAYS` medians are the **operator's estimate on the permit, not observed job length**. Only finite positive estimates enter a median; missing and nonpositive values remain counted in [the CSV](output/permit_duration_estimates.csv). In band order, well-work medians are **3 / 6 / 15 / 14 days**, and permanent-abandonment medians are **14 / 10 / 25 / 21 days**.
 
-| Depth band        | Well work, median days   | Permanent abandonment, median days   | Valid estimates, work / permanent abandonment   |
-|:------------------|:-------------------------|:-------------------------------------|:------------------------------------------------|
-| under 100 m       | 3                        | 14                                   | 305 / 1093                                      |
-| 100 to 500 m      | 6                        | 10                                   | 96 / 94                                         |
-| 500 to 1500 m     | 15                       | 25                                   | 167 / 152                                       |
-| 1500 m and deeper | 14                       | 21                                   | 136 / 37                                        |
-| no depth          | not established          | not established                      | 0 / 0                                           |
+| Depth band         | Well work, median days   | Permanent abandonment, median days   | Valid estimates, work / permanent abandonment   |
+|:-------------------|:-------------------------|:-------------------------------------|:------------------------------------------------|
+| under 100 m        | 3                        | 14                                   | 305 / 1,093                                     |
+| 100 to 500 m       | 6                        | 10                                   | 96 / 94                                         |
+| 500 to 1,500 m     | 15                       | 25                                   | 167 / 152                                       |
+| 1,500 m and deeper | 14                       | 21                                   | 136 / 37                                        |
+| no depth           | not established          | not established                      | 0 / 0                                           |
 
 Beside those estimates, the weekly-report check unions overlapping or adjacent inclusive intervals of 1–90 days for the same API12, named unit and raw code in 2005–2025. A gap or changed code/unit starts a new proxy episode. Missing/placeholder units are excluded. WO, REC, TA and PA are an interpreted non-drilling token subset; several meanings lack a published BSEE definition. Full-year filtering precedes union and can censor endpoints. The 24,908 episodes are neither permits nor proven complete heavy-rig jobs. [The weekly-report CSV](output/war_duration_crosscheck.csv) preserves each raw-code stratum, including the deepest WO-token median of 18 days.
 
-| band              | episodes   | q25_days   | median_days   | q75_days   |
-|:------------------|:-----------|:-----------|:--------------|:-----------|
-| 100 to 500 m      | 2332       | 7          | 16            | 47         |
-| 1500 m and deeper | 1202       | 7          | 11            | 21         |
-| 500 to 1500 m     | 2324       | 6          | 11            | 21         |
-| under 100 m       | 19050      | 5          | 11            | 29         |
+| band               | episodes   | q25_days   | median_days   | q75_days   |
+|:-------------------|:-----------|:-----------|:--------------|:-----------|
+| 100 to 500 m       | 2,332      | 7          | 16            | 47         |
+| 1,500 m and deeper | 1,202      | 7          | 11            | 21         |
+| 500 to 1,500 m     | 2,324      | 6          | 11            | 21         |
+| under 100 m        | 19,050     | 5          | 11            | 29         |
 
 ## Cost basis
 
 **Access method selects the cost, with depth as source applicability only.** Values are scenario costs per well/event in **unescalated 2015 USD millions, two significant figures**. Permanent-abandonment costs apply only to the 1,387 permanent approvals out of 2,610 abandonment approvals in 2025; they do not price temporary or unspecified abandonment. No count is multiplied by a cost to claim expenditure.
 
-| Well / access type                             | Event                 | Applicability                                                                                   | Low / base / high (USD million, 2015)   |
-|:-----------------------------------------------|:----------------------|:------------------------------------------------------------------------------------------------|:----------------------------------------|
-| Platform dry-tree / rigless spread             | well work             | Shelf; source case 50-400 ft (15-122 m)                                                         | 0.53 / 0.75 / 0.98                      |
-| Platform dry-tree / rigless spread             | permanent abandonment | Shelf; source case 50-400 ft (15-122 m)                                                         | 0.27 / 0.33 / 0.59                      |
-| Platform dry-tree / casing jacks               | well work             | Platform-based spread; source casing-jack case above 400 ft; shelf example                      | 0.55 / 0.79 / 1.0                       |
-| Platform dry-tree / casing jacks               | permanent abandonment | Platform-based spread; source casing-jack case above 400 ft; shelf example                      | 0.28 / 0.35 / 0.62                      |
-| Subsea wet-tree / drillship or semisubmersible | well work             | Subsea access; durations anchored at 3000 ft (914 m); not all wells in a depth band             | 4.7 / 7.1 / 9.4                         |
-| Subsea wet-tree / drillship or semisubmersible | permanent abandonment | Subsea access; durations anchored at 3000 ft (914 m); not all wells in a depth band             | 11 / 13 / 16                            |
-| Subsea wet-tree / drillship or semisubmersible | permanent abandonment | Subsea access; 6000-9000 ft (1829-2743 m) anchors; extrapolation beyond 9000 ft not established | 14 / 16 / 18                            |
-| Deepwater platform dry-tree / casing jacks     | well work             | TLP or spar dry-tree access; Table 8-4 anchors 1700 / 3000 / 5000 ft (518 / 914 / 1524 m)       | not priced                              |
-| Deepwater platform dry-tree / casing jacks     | permanent abandonment | TLP or spar dry-tree access; Table 8-4 anchors 1700 / 3000 / 5000 ft (518 / 914 / 1524 m)       | 0.73 / 0.99 / 1.4                       |
+| Well / access type                             | Event                 | Applicability                                                                                                                     | Low / base / high (USD million, 2015)   |
+|:-----------------------------------------------|:----------------------|:----------------------------------------------------------------------------------------------------------------------------------|:----------------------------------------|
+| Platform dry-tree / rigless spread             | well work             | Shelf; source case 50-400 ft (15-122 m)                                                                                           | 0.53 / 0.75 / 0.98                      |
+| Platform dry-tree / rigless spread             | permanent abandonment | Shelf; source case 50-400 ft (15-122 m)                                                                                           | 0.27 / 0.33 / 0.59                      |
+| Platform dry-tree / casing jacks               | well work             | Platform-based spread; source casing-jack case above 400 ft; shelf example                                                        | 0.55 / 0.79 / 1.0                       |
+| Platform dry-tree / casing jacks               | permanent abandonment | Platform-based spread; source casing-jack case above 400 ft; shelf example                                                        | 0.28 / 0.35 / 0.62                      |
+| Subsea wet-tree / drillship or semisubmersible | well work             | Subsea access; duration cases 7 / 10.5 / 14 days, not depth-specific; not all wells in a depth band                               | 4.7 / 7.1 / 9.4                         |
+| Subsea wet-tree / drillship or semisubmersible | permanent abandonment | Subsea access; durations anchored at 3,000 ft (914 m); not all wells in a depth band                                              | 11 / 13 / 16                            |
+| Subsea wet-tree / drillship or semisubmersible | permanent abandonment | Subsea access; 6,000-9,000 ft (1,829-2,743 m) anchors; extrapolation beyond 9,000 ft not established                              | 14 / 16 / 18                            |
+| Deepwater platform dry-tree / casing jacks     | well work             | TLP dry-tree access (source); applied to spars as an assumption; Table 8-4 anchors 1,700 / 3,000 / 5,000 ft (518 / 914 / 1,524 m) | not priced                              |
+| Deepwater platform dry-tree / casing jacks     | permanent abandonment | TLP dry-tree access (source); applied to spars as an assumption; Table 8-4 anchors 1,700 / 3,000 / 5,000 ft (518 / 914 / 1,524 m) | 0.73 / 0.99 / 1.4                       |
 
 - [BSEE TAP-738](https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf), 2015: Table 8-2, printed p. 8-12 (PDF p. 143), prices rigless dry-tree wells for 50–400 ft. Its USD 225,856 P&A work charge over 84 hours implies USD 64,530/day rounded. Standalone mob and demob are USD 37,743 each. Setup, rig-down and study contingencies are outside the simple dayrate-times-duration arithmetic.
 - TAP-738 Table 8-3, p. 8-14 (PDF p. 145), gives USD 68,424/day for the casing-jack spread. The study uses casing jacks above 400 ft and describes dry-tree TLP wells at about 1,500 to over 4,600 ft. The platform work durations and the shallow rigless transport charges are transferred explicitly to the shelf casing-jack scenarios.
@@ -174,7 +174,7 @@ uv run --no-sync python examples/bsee/interventions_by_depth/count_interventions
 uv run --no-sync python examples/bsee/interventions_by_depth/build_cost_basis.py
 uv run --no-sync python examples/bsee/interventions_by_depth/estimate_costs.py --out examples/bsee/interventions_by_depth/output
 uv run --no-sync python examples/bsee/interventions_by_depth/plot_charts.py --out examples/bsee/interventions_by_depth/output
-uv run --no-sync python examples/bsee/interventions_by_depth/write_results_note.py --test-result '53 passed'
+uv run --no-sync python examples/bsee/interventions_by_depth/write_results_note.py --test-result '53 passed in 1.47s'
 uv run --no-sync python examples/bsee/interventions_by_depth/verify_outputs.py
 ```
 
@@ -185,7 +185,7 @@ $env:PYTHONPATH='packages/worldenergydata-bsee/src;packages/worldenergydata-core
 uv run --no-sync python -m pytest --noconftest -o addopts="" tests/unit/bsee/test_interventions_by_depth.py tests/unit/bsee/data/utils/test_api_well_normalizer.py -q
 ```
 
-Result: **53 passed**. Tests cover all-bore stock, date boundaries, cancelled bores, assumed standing, unit categories, three hand-worked cost literals read through YAML and published deepwater dry-tree pricing. Tests use no network or retained raw files. Aggregate reconciliation, input provenance, output digests and software versions are retained in [verification.json](output/verification.json).
+Result: **53 passed in 1.47s**. Tests cover all-bore stock, date boundaries, cancelled bores, assumed standing, unit categories, three hand-worked cost literals read through YAML and published deepwater dry-tree pricing. Tests use no network or retained raw files. Aggregate reconciliation, input provenance, output digests and software versions are retained in [verification.json](output/verification.json).
 
 ## Charts
 

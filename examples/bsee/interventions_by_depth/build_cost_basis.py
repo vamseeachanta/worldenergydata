@@ -98,6 +98,8 @@ def build():
                     if not suffix
                     else "Subsea access; 6000-9000 ft (1829-2743 m) anchors; extrapolation beyond 9000 ft not established"
                 )
+                if prefix == "subsea" and event == "well work":
+                    app = "Subsea access; duration cases 7 / 10.5 / 14 days, not depth-specific; not all wells in a depth band"
                 scenario = dict(
                     scenario_id=prefix
                     + ("_work" if event == "well work" else "_pa")
@@ -174,7 +176,7 @@ def build():
                 scenarios.append(scenario)
     common = dict(
         access_type="Deepwater platform dry-tree / casing jacks",
-        applicability="TLP or spar dry-tree access; Table 8-4 anchors 1700 / 3000 / 5000 ft (518 / 914 / 1524 m)",
+        applicability="TLP dry-tree access (source); applied to spars as an assumption; Table 8-4 anchors 1700 / 3000 / 5000 ft (518 / 914 / 1524 m)",
         asset="dry-tree deepwater platform, 60-well casing-jack campaign",
         dollar_year=2015,
     )

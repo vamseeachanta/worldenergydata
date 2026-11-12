@@ -159,14 +159,6 @@ def verify():
             assert img.width >= 1600
     receipt = dict(
         criteria_revision=2,
-        disclosure_review=dict(
-            audience="public GitHub PR 1949",
-            reviewer="Codex",
-            reviewed_date="2026-11-12",
-            verdict="verified",
-            scope="Derived CSV/PNG/SVG, README and implementation; raw archives and source PDFs excluded",
-            limitations="Approval assumption, retrospective standing stock and source-year access scenarios remain explicit in the README",
-        ),
         software=dict(
             python=platform.python_version(),
             pandas=pd.__version__,

@@ -617,7 +617,8 @@ scenarios:
         spread where applicable.
 - scenario_id: subsea_work
   access_type: Subsea wet-tree / drillship or semisubmersible
-  applicability: Subsea access; durations anchored at 3000 ft (914 m); not all wells in a depth band
+  applicability: Subsea access; duration cases 7 / 10.5 / 14 days, not depth-specific; not all wells in
+    a depth band
   event: well work
   asset: drillship or semisubmersible total spread
   dollar_year: 2015
@@ -627,7 +628,8 @@ scenarios:
       value: 674600
       unit: USD/day
       asset: drillship or semisubmersible total spread
-      applicability: Subsea access; durations anchored at 3000 ft (914 m); not all wells in a depth band
+      applicability: Subsea access; duration cases 7 / 10.5 / 14 days, not depth-specific; not all wells
+        in a depth band
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
@@ -642,7 +644,8 @@ scenarios:
       value: 7
       unit: day/event
       asset: drillship or semisubmersible total spread
-      applicability: Subsea access; durations anchored at 3000 ft (914 m); not all wells in a depth band
+      applicability: Subsea access; duration cases 7 / 10.5 / 14 days, not depth-specific; not all wells
+        in a depth band
       citation:
         title: Gulf of Mexico OCS Oil and Gas Lease Sales 2017-2022, Final EIS, Volume I, BOEM 2016-018
         publisher: BOEM
@@ -657,7 +660,8 @@ scenarios:
       value: 0
       unit: USD/event
       asset: drillship or semisubmersible total spread
-      applicability: Subsea access; durations anchored at 3000 ft (914 m); not all wells in a depth band
+      applicability: Subsea access; duration cases 7 / 10.5 / 14 days, not depth-specific; not all wells
+        in a depth band
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
@@ -672,7 +676,8 @@ scenarios:
       value: 674600
       unit: USD/day
       asset: drillship or semisubmersible total spread
-      applicability: Subsea access; durations anchored at 3000 ft (914 m); not all wells in a depth band
+      applicability: Subsea access; duration cases 7 / 10.5 / 14 days, not depth-specific; not all wells
+        in a depth band
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
@@ -687,7 +692,8 @@ scenarios:
       value: 10.5
       unit: day/event
       asset: drillship or semisubmersible total spread
-      applicability: Subsea access; durations anchored at 3000 ft (914 m); not all wells in a depth band
+      applicability: Subsea access; duration cases 7 / 10.5 / 14 days, not depth-specific; not all wells
+        in a depth band
       citation:
         title: MAG-PLAN Alaska Update, BOEM 2011-059
         publisher: BOEM / Northern Economics
@@ -702,7 +708,8 @@ scenarios:
       value: 0
       unit: USD/event
       asset: drillship or semisubmersible total spread
-      applicability: Subsea access; durations anchored at 3000 ft (914 m); not all wells in a depth band
+      applicability: Subsea access; duration cases 7 / 10.5 / 14 days, not depth-specific; not all wells
+        in a depth band
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
@@ -717,7 +724,8 @@ scenarios:
       value: 674600
       unit: USD/day
       asset: drillship or semisubmersible total spread
-      applicability: Subsea access; durations anchored at 3000 ft (914 m); not all wells in a depth band
+      applicability: Subsea access; duration cases 7 / 10.5 / 14 days, not depth-specific; not all wells
+        in a depth band
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
@@ -732,7 +740,8 @@ scenarios:
       value: 14
       unit: day/event
       asset: drillship or semisubmersible total spread
-      applicability: Subsea access; durations anchored at 3000 ft (914 m); not all wells in a depth band
+      applicability: Subsea access; duration cases 7 / 10.5 / 14 days, not depth-specific; not all wells
+        in a depth band
       citation:
         title: MAG-PLAN Alaska Update, BOEM 2011-059
         publisher: BOEM / Northern Economics
@@ -747,7 +756,8 @@ scenarios:
       value: 0
       unit: USD/event
       asset: drillship or semisubmersible total spread
-      applicability: Subsea access; durations anchored at 3000 ft (914 m); not all wells in a depth band
+      applicability: Subsea access; duration cases 7 / 10.5 / 14 days, not depth-specific; not all wells
+        in a depth band
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
@@ -1051,8 +1061,8 @@ scenarios:
         location: 'Section 8.3.2.3, p.8-18: mobilisation excluded'
       interpretation: EXCLUDED, not zero actual expense; already mobilised unit.
 - access_type: Deepwater platform dry-tree / casing jacks
-  applicability: TLP or spar dry-tree access; Table 8-4 anchors 1700 / 3000 / 5000 ft (518 / 914 / 1524
-    m)
+  applicability: TLP dry-tree access (source); applied to spars as an assumption; Table 8-4 anchors 1700
+    / 3000 / 5000 ft (518 / 914 / 1524 m)
   asset: dry-tree deepwater platform, 60-well casing-jack campaign
   dollar_year: 2015
   scenario_id: deep_platform_work
@@ -1061,8 +1071,8 @@ scenarios:
   limitation: A cited well-work basis on this deepwater platform spread is not established; no price transferred
     from the subsea case.
 - access_type: Deepwater platform dry-tree / casing jacks
-  applicability: TLP or spar dry-tree access; Table 8-4 anchors 1700 / 3000 / 5000 ft (518 / 914 / 1524
-    m)
+  applicability: TLP dry-tree access (source); applied to spars as an assumption; Table 8-4 anchors 1700
+    / 3000 / 5000 ft (518 / 914 / 1524 m)
   asset: dry-tree deepwater platform, 60-well casing-jack campaign
   dollar_year: 2015
   scenario_id: deep_platform_pa
@@ -1073,8 +1083,8 @@ scenarios:
       value: 734356
       unit: USD/well
       asset: dry-tree deepwater platform, 60-well casing-jack campaign
-      applicability: TLP or spar dry-tree access; Table 8-4 anchors 1700 / 3000 / 5000 ft (518 / 914 /
-        1524 m)
+      applicability: TLP dry-tree access (source); applied to spars as an assumption; Table 8-4 anchors
+        1700 / 3000 / 5000 ft (518 / 914 / 1524 m)
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
@@ -1091,8 +1101,8 @@ scenarios:
       value: 987262
       unit: USD/well
       asset: dry-tree deepwater platform, 60-well casing-jack campaign
-      applicability: TLP or spar dry-tree access; Table 8-4 anchors 1700 / 3000 / 5000 ft (518 / 914 /
-        1524 m)
+      applicability: TLP dry-tree access (source); applied to spars as an assumption; Table 8-4 anchors
+        1700 / 3000 / 5000 ft (518 / 914 / 1524 m)
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
@@ -1109,8 +1119,8 @@ scenarios:
       value: 1374570
       unit: USD/well
       asset: dry-tree deepwater platform, 60-well casing-jack campaign
-      applicability: TLP or spar dry-tree access; Table 8-4 anchors 1700 / 3000 / 5000 ft (518 / 914 /
-        1524 m)
+      applicability: TLP dry-tree access (source); applied to spars as an assumption; Table 8-4 anchors
+        1700 / 3000 / 5000 ft (518 / 914 / 1524 m)
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International

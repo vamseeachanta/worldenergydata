@@ -3,6 +3,7 @@
 import argparse
 import json
 import math
+import re
 from pathlib import Path
 
 import pandas as pd
@@ -20,6 +21,11 @@ TEST_COMMAND = 'uv run --no-sync python -m pytest --noconftest -o addopts="" tes
 
 
 def table(frame):
+    frame = frame.replace(
+        {"500 to 1500 m": "500 to 1,500 m", "1500 m and deeper": "1,500 m and deeper"}
+    )
+    for column in frame.select_dtypes(include="integer"):
+        frame[column] = frame[column].map(lambda value: f"{value:,}")
     return frame.to_markdown(index=False, disable_numparse=True)
 
 
@@ -71,7 +77,9 @@ def main(pr_body=None, test_result="not run"):
             {
                 "Well / access type": r.access_type,
                 "Event": r.event,
-                "Applicability": r.applicability,
+                "Applicability": re.sub(
+                    r"\b\d{4}\b", lambda match: f"{int(match[0]):,}", r.applicability
+                ),
                 "Low / base / high (USD million, 2015)": (
                     " / ".join(million(v) for v in [r.low_usd, r.base_usd, r.high_usd])
                     if pd.notna(r.low_usd)
@@ -118,12 +126,12 @@ def main(pr_body=None, test_result="not run"):
                     )
                     else "not established"
                 ),
-                "Valid estimates, work / permanent abandonment": f'{int(f.loc["well work","estimates"])} / {int(f.loc["permanent abandonment","estimates"])}',
+                "Valid estimates, work / permanent abandonment": f'{int(f.loc["well work","estimates"]):,} / {int(f.loc["permanent abandonment","estimates"]):,}',
             }
         )
     war = pd.read_csv(OUT / "war_duration_crosscheck.csv")
     for col in ["q25_days", "median_days", "q75_days"]:
-        war[col] = war[col].map(lambda v: f"{v:.0f}")
+        war[col] = war[col].map(lambda v: f"{v:,.0f}")
     war = war[war.raw_war_code.eq("selected tokens combined")].drop(
         columns="raw_war_code"
     )
@@ -137,6 +145,7 @@ def main(pr_body=None, test_result="not run"):
         "liftboat / jack-up",
         "intervention vessel",
         "drillship / semisubmersible",
+        "non-rig operation (recorded)",
         "none named",
         "other",
     ]
@@ -148,6 +157,7 @@ def main(pr_body=None, test_result="not run"):
         "Liftboat / jack-up",
         "Intervention vessel",
         "Drillship / semi",
+        "Non-rig operation (recorded)",
         "None named",
         "Other",
     ]
@@ -185,7 +195,8 @@ def main(pr_body=None, test_result="not run"):
     assumed_note = (
         f"At 1 January 2025, {int(assumed.assumed_standing.sum()):,} wells are **assumed standing**: "
         f"{int(assumed.no_non_superseded_bore.sum()):,} have no non-superseded bore and "
-        f"{int(assumed.missing_terminal_status_date.sum()):,} have a missing terminal status date (categories can overlap). "
+        f"{int(assumed.missing_terminal_status_date.sum()):,} "
+        f"{'has' if assumed.missing_terminal_status_date.sum() == 1 else 'have'} a missing terminal status date (categories can overlap). "
         f'{s["inventory_missing_first_spud"]:,} API10 wells lack any non-cancelled first-spud date and are excluded; their historical stock cannot be dated.'
     )
     charts = """- [01 — Approved permits to modify by depth](output/01_approved_interventions.png) · [SVG](output/01_approved_interventions.svg)
@@ -236,7 +247,7 @@ An earlier snapshot of 31 Oct 2026 (not retained here) supplies the comparison: 
 
 ## Unit and access evidence
 
-The permit's `RIG_ID_NUM` joins the archive's `mv_apm_rig_view` fields `RIG_TYPE_CODE` and `RIG_NAME` with a validated many-to-one join. The type code selects the category; names are retained in [the lookup](output/unit_type_lookup.csv) but are not used to guess equipment. The mapping below is also retained in [CSV](output/unit_type_mapping.csv). NR denotes a non-rig operation and enters none named; an unmatched nonblank ID or unmapped type enters other. SU is a submersible and is not classified as a semisubmersible. A permit's named unit need not be the unit ultimately deployed.
+The permit's `RIG_ID_NUM` joins the archive's `mv_apm_rig_view` fields `RIG_TYPE_CODE` and `RIG_NAME` with a validated many-to-one join. The type code selects the category; names are retained in [the lookup](output/unit_type_lookup.csv) but are not used to guess equipment. The mapping below is also retained in [CSV](output/unit_type_mapping.csv). NR enters **non-rig operation (recorded)**; only blank unit information enters **none named**. Of the 369 under-100-m permanent-abandonment approvals previously grouped as none named, 355 carry the regulator's unit type "non rig PA operation" and 14 remain none named. An unmatched nonblank ID or unmapped type enters other. SU is a submersible and is not classified as a semisubmersible. A permit's named unit need not be the unit ultimately deployed.
 
 {table(rules)}
 

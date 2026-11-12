@@ -1,13 +1,5 @@
 {
   "criteria_revision": 2,
-  "disclosure_review": {
-    "audience": "public GitHub PR 1949",
-    "reviewer": "Codex",
-    "reviewed_date": "2026-11-12",
-    "verdict": "verified",
-    "scope": "Derived CSV/PNG/SVG, README and implementation; raw archives and source PDFs excluded",
-    "limitations": "Approval assumption, retrospective standing stock and source-year access scenarios remain explicit in the README"
-  },
   "software": {
     "python": "3.14.3",
     "pandas": "3.1.1",
@@ -16,18 +8,18 @@
     "pyyaml": "6.0.3"
   },
   "code_and_basis_sha256": {
-    "examples/bsee/interventions_by_depth/build_cost_basis.py": "4274cfaa15b4b6f08689cb967419b8e04f699fd82748f9768dc9e3b6784ee64b",
-    "examples/bsee/interventions_by_depth/cost_basis.yml": "7ecc22c42f7339f3de4e1c3c70d1e616345d2069ecc5ce276897ae0875c5e4e6",
-    "examples/bsee/interventions_by_depth/count_interventions.py": "392d734027937eb0c1ca84aca913450a4ab247abe261da0a472a30d30c4aa57b",
+    "examples/bsee/interventions_by_depth/build_cost_basis.py": "26cd0b2fe590a7818a4aeac9ed6d74404b74006e9e91989d035a6d58d4d9aef5",
+    "examples/bsee/interventions_by_depth/cost_basis.yml": "45b6112c47800f02b88380c1efa8e3f7ece23e4743b725b3b297a09197752bd7",
+    "examples/bsee/interventions_by_depth/count_interventions.py": "8ba587bd8964a78d73124b3abb77a214645f88d86d232596b3003e21f91bec17",
     "examples/bsee/interventions_by_depth/download_data.py": "8c7772a8c338c52cc20611dd5b7aa2e23eceedd7f0dac8e869873bd8ab5627ce",
     "examples/bsee/interventions_by_depth/estimate_costs.py": "1fabea436175506bf84debd71d5667cec889970adf3bd93ce1d44f27eecfac69",
-    "examples/bsee/interventions_by_depth/plot_charts.py": "99c35e99a9d2c5fd200f0161d0b33a82306f762352fd6031db44dde39cf18b5b",
-    "examples/bsee/interventions_by_depth/README.md": "c4648546d74d0187549f5923c307ad5c1e8c84511ee084661d32024dbc488fea",
+    "examples/bsee/interventions_by_depth/plot_charts.py": "a351beff4285c56db0129677747d699ee5a9392f64c10ca79ee99640f66381e8",
+    "examples/bsee/interventions_by_depth/README.md": "f68eaed2163cc321d08c0ff1f936c619f94abfa731e97936d7b9266381031989",
     "examples/bsee/interventions_by_depth/requirements.txt": "8f149ddae6071cc2877d558e304a4261933def6c82f3062142da3603e1e673d6",
     "examples/bsee/interventions_by_depth/verify_cost_sources.py": "a213275d3601830fd295bfa582cf7cc51b1905ec46d2bd87fe12cb7a31b26436",
-    "examples/bsee/interventions_by_depth/verify_outputs.py": "96f12a44c5fdf842ad44ed88466dcfbfa2df1a5608ce1b17bd786324f4670301",
-    "examples/bsee/interventions_by_depth/write_results_note.py": "147a9937875209ca807d43bcfc7b7934ec28bf031ef21bc06f916c829fb68723",
-    "tests/unit/bsee/test_interventions_by_depth.py": "7bfdd4f3fa1de1ee214eaefa7f2d736885765cea91ea952028fd15f8f1656a22"
+    "examples/bsee/interventions_by_depth/verify_outputs.py": "4e7ccec9ef78209fafbef6b1214a09423e76e6fd38af87648d679ebd4b291b5b",
+    "examples/bsee/interventions_by_depth/write_results_note.py": "a6e7075206f844f99918dee81c984e9066bf572c7f430c5e0ed66202e12a582c",
+    "tests/unit/bsee/test_interventions_by_depth.py": "87b5b8f375f623c0748187c49c7143dbde6cfa63548c771b27dc93fbe1c0bc43"
   },
   "checks": [
     "all selected-year APM approvals partitioned",
@@ -44,18 +36,18 @@
     "PNG width at least 1600"
   ],
   "files": {
-    "01_approved_interventions.png": "a593b9e3113f7b8d7619b3c068456000c8cfaa84c3ecbb9ddbfcfbef9f2e3082",
-    "01_approved_interventions.svg": "7e98cc8d019eaf38ea892fac26362d230b30d58ca796c51b3f25fe34c5acb564",
-    "02_rates_per_standing_well.png": "3c8af0c0b5df08618bb2b225dd92d0041c34f60fe25dc2d5da55b1f921b27f13",
-    "02_rates_per_standing_well.svg": "b52094dc233604a5aa709c17b5099f6dece1aee9694dd4cb772434c98c5357a0",
-    "03_cost_per_event.png": "3bc03adc2396ee650ab8b9fa5f648dcdf062052f975226edbce832abe940cd44",
-    "03_cost_per_event.svg": "d5982b9921a92f6161630d2d63663ce1caebaa80846f51e122022d3d1a8d6366",
-    "04_unit_types_by_depth.png": "3f3e31a9161e64ee95e044dec6dbf87bace5699e70f95df87d02d221ea2b5f87",
-    "04_unit_types_by_depth.svg": "48fec37fd2870a9562904869d440f0783f84c31f9365fb84f3ba78ad02c25904",
+    "01_approved_interventions.png": "2975dbe495e419046562c384f317a56ed3d8609bb25dcce0daf6492b6bd4aab5",
+    "01_approved_interventions.svg": "4f733972724ce4fd7accc82ac2166479a1707413a0668b7e3539c28fd158f088",
+    "02_rates_per_standing_well.png": "c65f1100db45076cd8fba59f5b52743384ae19284714d822bc4673a45129df85",
+    "02_rates_per_standing_well.svg": "c4e081fac0e6b4f3b946a17e768826949c91abcded89fed7980522b074d64a70",
+    "03_cost_per_event.png": "d813ba9e40400657dbb024c51a8bcaf41b49012c77d7d8e2ada02c2ba02d7fa8",
+    "03_cost_per_event.svg": "7c1125fe41001f77993fe1630f0117edb51c0df1d92c8e2f1f24d6f81be914d3",
+    "04_unit_types_by_depth.png": "44f4d823cb5010b02978a52cac776f13b279aed1ae3d64d7bdfa8250213be401",
+    "04_unit_types_by_depth.svg": "174632e27165ef0554413922ae85bee007529c9636ff919c968902745644cd3e",
     "approvals_per_distinct_well.csv": "ee92347376bce837825a65fad21233f5e644044221d9be410bae0fdf8ff35f9c",
     "code_mapping.csv": "16e3394b248143af1eea1cdebada88c9b4dbe0b6fee9fd2826c1071b76f14ae4",
     "cost_source_manifest.json": "380ee729327b890167c8dd1dcfebbaf0099d7ba7347846c0d153e958a59bec94",
-    "cost_table.csv": "3cb7070c0e0e5bd7fbdab55130217b0372a5a44d41a31270a858f55723d37703",
+    "cost_table.csv": "7cafb7e35802efe1df68afde91196d954ad3ef49affd5e9009b255efb0a2d9e8",
     "counts_by_year_band_group.csv": "03bc976a269ecabf043d388a5109f991f102e9f20046a881a3f0783ea4be7cdc",
     "coverage_by_month.csv": "7694504f2cb6b55962d3c5aa68431a6900c2746a0d65c75f2d723a134053fe92",
     "eor_by_year_band.csv": "3237400c8f720f152946d4795642eac1afcbcf7d18a29759a55806790ac16817",
@@ -72,9 +64,9 @@
     "suboperation_mapping.csv": "1ffe6ca14571e7ad66bf6733833e8e518cc1b03a91163491a205cd6493731cce",
     "subsea_completion_shares.csv": "24696bead7334c6ac634370280a4a8e3c155317b93a50c9f26e114fad5b6bfa6",
     "summary.json": "1ac295a54418fe7b3457b38af53caa696b34cecda25b0ba28a834b9f4f320f2c",
-    "unit_type_lookup.csv": "1ac35b8578f3da85ad205c38ae5a4353b33cbeffdaabc8334c3397caae13ef08",
-    "unit_type_mapping.csv": "9d9f8eed59e8594c67703d700979f275963280faa3eb2273f64825976f0b0b6f",
-    "unit_type_shares.csv": "ec757a143799700aa8517ff0f8ebb6bda9c894ab524819759450295d4bcd7a67",
+    "unit_type_lookup.csv": "4fc028f5223c37ecb17d63f15bcaa65e4c48ec953d0a306abb8f843b5f73fb84",
+    "unit_type_mapping.csv": "4c4926e10153d5e48f4951f1865825e18cf7161ba8eceeec0c30f7ed04343b54",
+    "unit_type_shares.csv": "0e02d38b6ba4f0b23f765b3af35b122f47070b2923a4a42120966898a791f448",
     "war_duration_crosscheck.csv": "0d25ae7d9663f83c614b3a0652fd7aca58efe2a507111c0e65ee8d88cd0b0a52"
   }
 }

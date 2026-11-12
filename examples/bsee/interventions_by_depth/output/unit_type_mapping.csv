@@ -10,7 +10,7 @@ RIG_TYPE_CODE,WI,intervention vessel,exact type code; joined via RIG_ID_NUM; no 
 RIG_TYPE_CODE,DS,drillship / semisubmersible,exact type code; joined via RIG_ID_NUM; no name inference
 RIG_TYPE_CODE,SS,drillship / semisubmersible,exact type code; joined via RIG_ID_NUM; no name inference
 RIG_TYPE_CODE,SD,drillship / semisubmersible,exact type code; joined via RIG_ID_NUM; no name inference
-RIG_TYPE_CODE,NR,none named,exact type code; joined via RIG_ID_NUM; no name inference
+RIG_TYPE_CODE,NR,non-rig operation (recorded),exact type code; joined via RIG_ID_NUM; no name inference
 RIG_TYPE_CODE,BG,other,exact type code; joined via RIG_ID_NUM; no name inference
 RIG_TYPE_CODE,BR,other,exact type code; joined via RIG_ID_NUM; no name inference
 RIG_TYPE_CODE,PL,other,exact type code; joined via RIG_ID_NUM; no name inference

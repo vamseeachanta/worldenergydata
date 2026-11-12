@@ -266,7 +266,7 @@ def test_unit_type_mapping():
     assert unit_category("SD", "SEMI", "2") == "drillship / semisubmersible"
     assert unit_category("CT", "COILED TUBING", "3") == "coiled tubing"
     assert unit_category("SB", "SNUBBING", "4") == "hydraulic workover / snubbing"
-    assert unit_category("NR", "NON RIG PA", "5") == "none named"
+    assert unit_category("NR", "NON RIG PA", "5") == "non-rig operation (recorded)"
     assert unit_category("", "", "") == "none named"
     assert unit_category("UNKNOWN", "UNKNOWN RIG", "6") == "other"
     assert unit_category("", "", "999") == "other"
