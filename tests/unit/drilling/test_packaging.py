@@ -16,6 +16,7 @@ MEMBER = Path(__file__).resolve().parents[3] / "packages/worldenergydata-drillin
 PACK = "worldenergydata/drilling/docs/agent-pack.md"
 # These documents are supplied by main; they are absent from this source tree.
 DETECTOR_CONTRACT = "worldenergydata/drilling/docs/detector-contracts.md"
+INPUT_CONTRACT = "worldenergydata/drilling/docs/input-contracts.md"
 IMPLEMENTATION_MAP = "worldenergydata/drilling/docs/implementation-map.json"
 
 
@@ -51,7 +52,7 @@ def test_wheel_ships_exact_knowledge_pack(drilling_wheel):
 
 def test_wheel_ships_only_declared_data(drilling_wheel):
     """Require deliberate additions and exact bytes for every drilling data file."""
-    expected = {PACK}
+    expected = {PACK, INPUT_CONTRACT}
     for document in (DETECTOR_CONTRACT, IMPLEMENTATION_MAP):
         if (MEMBER / "src" / document).is_file():
             expected.add(document)
