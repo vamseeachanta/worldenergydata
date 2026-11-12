@@ -1,5 +1,5 @@
 {
-  "crosswalk_sha256": "f37f4327c41bf85a60a3e26993a9608ed7b36b53ef9b0fcb96edde02c821fcc6",
+  "crosswalk_sha256": "9b4363b0d0f3c85c01d7a303d209533d83beec1b45c78584b7d2746d04121c5a",
   "dataset_id": "cost-project-field-crosswalk",
   "digest_domain": "utf8-lf",
   "inputs": {
@@ -11,7 +11,9 @@
     "data/modules/cost/curated/fdas_project_cost_crosswalk.csv": "f5e2fb5f0f3619964e100bee02c12bc4bd1c6e5be102d02f606d238ec093c236",
     "data/modules/cost/curated/project_asset_requirements.csv": "3fa8344ebf78976a06ea39455d9cd1ac45e0339a88efe0e061517361ccf86b80",
     "data/modules/cost/curated/project_cost_statements.csv": "7c1a32b8a5fd51409a217a314f07a9fcb984140a37b1b285dd2cf72530eca1e7",
+    "data/modules/cost/curated/sanctioned_project_cost_years.csv": "d36b870e50377dc99d566fb02b74e7260221852ddd18f15b2a1066c326e7fe1a",
     "data/modules/cost/curated/sanctioned_projects.csv": "b71e98598f3b46d8e088a700cd8b0a21b6055b1a843d96243a4a7e103b515d09",
+    "data/modules/cost/curated/sanctioned_projects_2026.csv": "7467d50663d5b24ff7b4a03a77bb7d13b5273a7d61f3ed8d28c360acd0010a91",
     "src/worldenergydata/field_development/past_projects.yml": "ccfe6d3c790be6eed7c2c0b7edb878166b3cd6955fd675e31d215ccb1c6c1928"
   },
   "schema_version": 1,

@@ -253,6 +253,36 @@ def test_inventory_includes_staging_and_preserves_existing_ids(api, tmp_path):
         api.validate_crosswalk(rows, api.load_cost_projects(tmp_path), fields)
 
 
+@pytest.mark.parametrize(
+    "table", ["sanctioned_projects_2026.csv", "sanctioned_project_cost_years.csv"]
+)
+def test_escalation_tables_are_pinned_in_held_crosswalk_evidence(api, table):
+    path = api.CURATED / table
+    manifest = json.loads((ROOT / api.MANIFEST).read_text(encoding="utf-8"))
+    assert manifest["inputs"][path.as_posix()] == api.text_digest(ROOT / path)
+    _, source_rows = api.read_csv(ROOT / path)
+    _, held_rows = api.read_csv(ROOT / api.CROSSWALK)
+    assert source_rows
+    for source in source_rows:
+        links = [row for row in held_rows if row["PROJECT"] == source["PROJECT"]]
+        assert links
+        for row in links:
+            evidence = json.loads(row["EVIDENCE"])
+            assert (
+                f"{path.as_posix()}#PROJECT={source['PROJECT']}"
+                in evidence["project_sources"]
+            )
+
+
+def test_new_curated_source_is_discovered_recursively(api, tmp_path):
+    path = api.CURATED / "new_region" / "new_projects.csv"
+    write_csv(tmp_path / path, ["PROJECT"], [dict(PROJECT="New project")])
+    projects = api.load_cost_projects(tmp_path)
+    assert [project["name"] for project in projects] == ["New project"]
+    assert projects[0]["sources"] == [f"{path.as_posix()}#PROJECT=New project"]
+    assert path.as_posix() in api.input_paths(tmp_path)
+
+
 def test_inventory_rejects_dangling_id_reference(api, tmp_path):
     write_csv(
         tmp_path / "data/modules/cost/staging/references.csv",
