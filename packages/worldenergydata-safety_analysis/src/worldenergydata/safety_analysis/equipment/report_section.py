@@ -1,5 +1,5 @@
-# ABOUTME: Fill the standard "HSE and safety" report appendix for one equipment class from the table.
-# ABOUTME: Every number carries its source and retrieval date; causes are only those the sources state.
+# ABOUTME: Fill the HSE and safety report appendix for one equipment class from the table.
+# ABOUTME: Every number carries its source and retrieval date; causes are those the sources state.
 
 """HSE and safety report section.
 
@@ -251,11 +251,22 @@ def render_markdown(section: HseSection, *, max_records: int = 12) -> str:
         [(m["label"], m["records"]) for m in s["by_failure_mode"]],
     )
     out.append("")
-    if s["mechanism_stated"]:
+    if s["cause_coded"]:
         out += _table(
             ("Cause as coded by the source", "Records"),
-            [(m["label"], m["records"]) for m in s["by_mechanism"]],
+            [(m["label"], m["records"]) for m in s["by_coded_cause"]],
         )
+        out.append("")
+        out.append(
+            f"The source codes a cause for {s['cause_coded']} of the "
+            f"{s['records']} records; it codes {s['cause_coded_unknown']} of "
+            "those as unknown."
+        )
+        if s["cause_not_coded"]:
+            out.append(
+                f"The other {s['cause_not_coded']} records come from a data set "
+                "that gives the event type only and state no cause."
+            )
     else:
         out.append(
             f"None of the {s['records']} records states a cause: the data set "

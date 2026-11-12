@@ -1,5 +1,5 @@
-# ABOUTME: Equipment failure table: incidents mapped to equipment class, failure mode and stated mechanism.
-# ABOUTME: Feeds the standard "HSE and safety" report appendix; see docs/hse/equipment-failure-table.md.
+# ABOUTME: Equipment failure table: incidents by equipment class, failure mode and stated cause.
+# ABOUTME: Feeds the HSE and safety report appendix; see docs/hse/equipment-failure-table.md.
 
 """Equipment failure taxonomy, table and report section."""
 

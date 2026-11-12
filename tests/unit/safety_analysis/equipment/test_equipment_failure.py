@@ -607,8 +607,8 @@ def test_ruled_out_factor_is_never_printed_as_a_cause(source_files):
     other = parse_case({**CASE, "id": "mooring-synthetic-2"})
     text = render_markdown(build_section("mooring_line", rows, stats, [case, other]))
     assert (
-        "- Ruled out or found unlikely by the investigation: Direct collision, for which there was no evidence (p. 4);"
-        in text
+        "- Ruled out or found unlikely by the investigation: "
+        "Direct collision, for which there was no evidence (p. 4);" in text
     )
     assert "Cause stated by the investigation: Direct collision" not in text
 
@@ -618,3 +618,158 @@ def test_packaged_cases_keep_ruled_out_factors_apart():
     tlp = by_id["mooring-2005-gc237-tendon-connector"]
     assert len(tlp.ruled_out) == 1 and "1000-year" in tlp.ruled_out[0].statement
     assert all("1000-year" not in c.statement for c in tlp.cause_statements)
+
+
+# --- second review round -----------------------------------------------------------
+AGENCY_HEADER = (
+    "REPORT_NUMBER",
+    "SUPPLEMENTAL_NUMBER",
+    "LOCAL_DATETIME",
+    "ON_OFF_SHORE",
+    "ONSHORE_STATE_ABBREVIATION",
+    "IGNITE_IND",
+    "EXPLODE_IND",
+    "FATAL",
+    "INJURE",
+    "CAUSE",
+    "CAUSE_DETAILS",
+)
+
+
+def _agency_file(path, rows, delimiter="\t"):
+    lines = [delimiter.join(AGENCY_HEADER)] + [delimiter.join(r) for r in rows]
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return SourceFile(
+        "phmsa_hazardous_liquid", path, "https://example.org/hl.zip", "2026-01-31"
+    )
+
+
+def test_tab_separated_agency_layout_is_read_and_classified(tmp_path):
+    source = _agency_file(
+        tmp_path / "hl.txt",
+        [
+            (
+                "20200001",
+                "0",
+                "3/4/2020 10:15",
+                "OFFSHORE",
+                "",
+                "NO",
+                "NO",
+                "0",
+                "0",
+                "CORROSION FAILURE",
+                "INTERNAL CORROSION",
+            ),
+            (
+                "20200002",
+                "0",
+                "5/6/2021 08:00",
+                "ONSHORE",
+                "TX",
+                "YES",
+                "NO",
+                "0",
+                "1",
+                "INCORRECT OPERATION",
+                "VALVE LEFT OR PLACED IN WRONG POSITION",
+            ),
+        ],
+    )
+    rows, stats = build_table([source])
+    assert (stats[0].records_read, stats[0].records_classified) == (2, 2)
+    assert [r.mechanism for r in rows] == ["corrosion_internal", "incorrect_operation"]
+    assert rows[0].equipment_subclass == "offshore" and rows[1].injury
+    assert (stats[0].first_date, stats[0].last_date) == ("2020-03-04", "2021-05-06")
+
+
+def test_file_without_the_required_columns_is_an_error_not_zero_records(tmp_path):
+    bad = tmp_path / "hl.txt"
+    bad.write_text("ID;WHEN\n1;2020\n", encoding="utf-8")
+    source = SourceFile(
+        "phmsa_hazardous_liquid", bad, "https://example.org/hl.zip", "2026-01-31"
+    )
+    with pytest.raises(ValueError, match="lacks required column"):
+        build_table([source])
+    b = tmp_path / "inv.txt"
+    b.write_text("DATE_OCCURRED,AREA_BLOCK\n1/2/2001,XX 1\n", encoding="cp1252")
+    with pytest.raises(ValueError, match="ACCIDENT_TYPE"):
+        build_table(
+            [
+                SourceFile(
+                    "bsee_incident_investigations",
+                    b,
+                    "https://example.org/b",
+                    "2026-01-31",
+                )
+            ]
+        )
+
+
+def test_two_files_of_one_source_are_refused(tmp_path):
+    one = _agency_file(tmp_path / "a.txt", [])
+    two = _agency_file(tmp_path / "b.txt", [])
+    with pytest.raises(ValueError, match="one file per source"):
+        build_table([one, two])
+
+
+def test_unknown_coded_cause_is_printed_as_unknown_not_as_event_type_only(tmp_path):
+    source = _agency_file(
+        tmp_path / "hl.txt",
+        [
+            (
+                "20200003",
+                "0",
+                "7/8/2022 09:00",
+                "ONSHORE",
+                "LA",
+                "NO",
+                "NO",
+                "0",
+                "0",
+                "OTHER INCIDENT CAUSE",
+                "UNKNOWN",
+            )
+        ],
+    )
+    rows, stats = build_table([source])
+    text = render_markdown(build_section("pipeline", rows, stats, []))
+    assert "| Cause coded as unknown by the source | 1 |" in text
+    assert (
+        "The source codes a cause for 1 of the 1 records; it codes 1 of those as unknown."
+        in text
+    )
+    assert "event type only" not in text
+
+
+def test_coded_and_uncoded_records_are_explained_separately(source_files):
+    rows, stats = build_table(source_files)
+    s = summarise(query(rows, "pipeline"))
+    assert (s["cause_coded"], s["cause_coded_unknown"], s["cause_not_coded"]) == (
+        2,
+        0,
+        1,
+    )
+    text = render_markdown(build_section("pipeline", rows, stats, []))
+    assert (
+        "The source codes a cause for 2 of the 3 records; it codes 0 of those as unknown."
+        in text
+    )
+    assert (
+        "The other 1 records come from a data set that gives the event type only"
+        in text
+    )
+
+
+def test_reference_names_no_company_and_carries_the_digest():
+    for case in load_cases():
+        ref = case.reference().lower()
+        for word in ("exxon", "equinor", "shell"):
+            assert word not in ref, case.id
+        assert case.sha256 and case.sha256 in case.reference()
+        assert "Available from https://www.bsee.gov/" in case.reference()
+
+
+def test_bad_digest_is_refused():
+    with pytest.raises(ValueError, match="sha256"):
+        parse_case({**CASE, "sha256": "abc123"})

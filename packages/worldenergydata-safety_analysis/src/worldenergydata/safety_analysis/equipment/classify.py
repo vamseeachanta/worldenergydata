@@ -1,5 +1,5 @@
-# ABOUTME: Rule-based mapping of public incident records to equipment class, failure mode and mechanism.
-# ABOUTME: Rules read only source fields; a mechanism comes from a source-coded cause, never from inference.
+# ABOUTME: Rule-based mapping of incident records to equipment class, failure mode and mechanism.
+# ABOUTME: Rules read source fields only; a mechanism comes from a coded cause, never inference.
 
 """Classify incident records against the equipment failure taxonomy.
 

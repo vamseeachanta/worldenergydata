@@ -71,6 +71,11 @@ row, and `source_url` with `retrieved` gives the citation for any count.
 A new source needs a classifier function in `classify.py`, an entry in
 `CLASSIFIERS` and tests.
 
+Input files are delimited text. The delimiter (tab, comma or pipe) is read from
+the header line, so the tab-separated agency exports and the comma-separated
+curated export both load. A file without the columns its classifier needs is
+refused. One file per source is supported; join the files of one source first.
+
 ## Build and query
 
 List the inputs in a JSON file; each keeps its URL and retrieval date.
@@ -160,3 +165,8 @@ supports it. A mechanism other than `not_stated` needs a cause statement. Give
 `area_block` as the incident data set writes it, so the appendix can check
 whether the case is among the counted records. The
 loader rejects quoted report text, unknown terms and non-https links.
+
+A factor the report rules out goes under `ruled_out`, never under
+`cause_statements`. Where the direct file address of a report carries a company
+name, `url` is the regulator's listing page; the title (block and date) and the
+`sha256` of the file read identify the report.

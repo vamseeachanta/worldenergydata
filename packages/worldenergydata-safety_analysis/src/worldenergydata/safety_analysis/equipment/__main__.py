@@ -1,5 +1,5 @@
-# ABOUTME: Command line for the equipment failure table: build it, show coverage, write a report section.
-# ABOUTME: Inputs are listed in a small JSON file so each source keeps its URL and retrieval date.
+# ABOUTME: Command line for the equipment failure table: build, coverage, report section.
+# ABOUTME: Inputs are listed in a JSON file so each source keeps its URL and retrieval date.
 
 """Command line.
 

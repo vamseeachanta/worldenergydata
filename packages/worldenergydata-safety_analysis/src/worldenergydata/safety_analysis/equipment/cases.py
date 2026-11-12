@@ -98,10 +98,17 @@ class PublicCase:
     sha256: str = ""
 
     def reference(self) -> str:
-        """Web-reference line: title, owner, link and date read."""
+        """Web-reference line: owner, title, where it is published, date read.
+
+        ``url`` is the regulator's page for the report. Where the direct file
+        address carries a company name, the register gives the regulator's
+        listing page instead; the title (block and date) and the digest of the
+        file read identify the report.
+        """
+        digest = f" SHA-256 of the file read: {self.sha256}." if self.sha256 else ""
         return (
             f"{self.authority}, {self.title}, {self.report_ref}. "
-            f"{self.url} (read {self.retrieved})."
+            f"Available from {self.url} (read {self.retrieved}).{digest}"
         )
 
 
@@ -119,6 +126,13 @@ def _statement(raw: Any, where: str) -> Statement:
     if not isinstance(page, int) or isinstance(page, bool) or page < 1:
         raise ValueError(f"{where}: page must be a positive integer")
     return Statement(text, page)
+
+
+def _sha256(value: Any, where: str) -> str:
+    text = str(value or "").strip().lower()
+    if text and (len(text) != 64 or set(text) - set("0123456789abcdef")):
+        raise ValueError(f"{where}: sha256 must be 64 hexadecimal characters")
+    return text
 
 
 def _statements(raw: Any, where: str) -> tuple[Statement, ...]:
@@ -175,7 +189,7 @@ def parse_case(raw: dict) -> PublicCase:
         report_ref=str(raw["report_ref"]),
         url=url,
         retrieved=_date(raw["retrieved"], f"{where} retrieved"),
-        sha256=str(raw.get("sha256", "")),
+        sha256=_sha256(raw.get("sha256", ""), where),
         what_failed=_statement(raw["what_failed"], f"{where} what_failed"),
         failure_modes=modes,
         mechanism=mechanism,

@@ -1,4 +1,4 @@
-# ABOUTME: Build, write and query the equipment failure table (one row per incident and equipment class).
+# ABOUTME: Build, write and query the equipment failure table (one row per incident and class).
 # ABOUTME: Each source is read with its URL and retrieval date so every count can be cited.
 
 """Equipment failure table.
@@ -27,6 +27,8 @@ from worldenergydata.safety_analysis.equipment.classify import (
     classify_records,
 )
 from worldenergydata.safety_analysis.equipment.taxonomy import (
+    BASIS_SOURCE_CODED,
+    UNKNOWN,
     EQUIPMENT_CLASSES,
     FAILURE_MECHANISMS,
     FAILURE_MODES,
@@ -78,17 +80,59 @@ class SourceStats:
         return dict(self.__dict__)
 
 
+# Each group lists alternative column names; one of each group must be present.
+REQUIRED_HEADERS: dict[str, tuple[tuple[str, ...], ...]] = {
+    "bsee_incident_investigations": (("DATE_OCCURRED",), ("ACCIDENT_TYPE",)),
+    "phmsa_hazardous_liquid": (
+        ("REPORT_NUMBER", "Report Number"),
+        ("LOCAL_DATETIME", "Accident Date/Time"),
+        ("CAUSE", "Cause Category"),
+    ),
+}
+_DELIMITERS = ("\t", ",", "|")
+
+
 def read_records(source: SourceFile) -> list[dict]:
-    """Read a delimited source file into dictionaries."""
+    """Read a delimited source file into dictionaries.
+
+    The delimiter is taken from the header line (tab, comma or pipe), because
+    the agency text exports are tab-separated and the curated exports are
+    comma-separated. A file without the columns its classifier needs is an
+    error, so a wrong layout cannot pass as zero matching records.
+    """
     encoding = _ENCODINGS.get(source.source_id, "utf-8")
     with open(source.path, encoding=encoding, errors="replace", newline="") as fh:
-        return list(csv.DictReader(fh))
+        header = fh.readline()
+        delimiter = max(_DELIMITERS, key=header.count)
+        fh.seek(0)
+        reader = csv.DictReader(fh, delimiter=delimiter)
+        names = {
+            (name or "").strip().lstrip("\ufeff") for name in reader.fieldnames or []
+        }
+        missing = [
+            " or ".join(group)
+            for group in REQUIRED_HEADERS.get(source.source_id, ())
+            if not names & set(group)
+        ]
+        if missing:
+            raise ValueError(
+                f"{source.source_id}: {source.path.name} lacks required "
+                f"column(s): {'; '.join(missing)}"
+            )
+        return list(reader)
 
 
 def build_table(
     sources: Sequence[SourceFile],
 ) -> tuple[list[EquipmentFailureRow], list[SourceStats]]:
     """Classify every source file; return the rows and per-source statistics."""
+    ids = [source.source_id for source in sources]
+    repeated = sorted({i for i in ids if ids.count(i) > 1})
+    if repeated:
+        raise ValueError(
+            f"one file per source is supported; repeated: {', '.join(repeated)}. "
+            "Join the files of one source before building the table."
+        )
     rows: list[EquipmentFailureRow] = []
     stats: list[SourceStats] = []
     for source in sources:
@@ -180,6 +224,7 @@ def summarise(rows: Sequence[EquipmentFailureRow]) -> dict:
         for mode in r.failure_modes.split(";"):
             modes[mode] += 1
     mechanisms = Counter(r.mechanism for r in rows)
+    coded = [r for r in rows if r.mechanism_basis == BASIS_SOURCE_CODED]
     dates = sorted(r.date for r in rows if r.date)
     decades: Counter = Counter(f"{d[:3]}0s" for d in dates)
     return {
@@ -200,6 +245,17 @@ def summarise(rows: Sequence[EquipmentFailureRow]) -> dict:
             for k, n in sorted(mechanisms.items(), key=lambda kv: (-kv[1], kv[0]))
         ],
         "mechanism_stated": sum(1 for r in rows if r.mechanism not in NO_CAUSE),
+        # Records whose source has a coded cause field (the code may be "unknown").
+        "cause_coded": len(coded),
+        "cause_coded_unknown": sum(1 for r in coded if r.mechanism == UNKNOWN),
+        "cause_not_coded": len(rows) - len(coded),
+        "by_coded_cause": [
+            {"key": k, "label": FAILURE_MECHANISMS[k].label, "records": n}
+            for k, n in sorted(
+                Counter(r.mechanism for r in coded).items(),
+                key=lambda kv: (-kv[1], kv[0]),
+            )
+        ],
         "with_fatality": sum(1 for r in rows if r.fatality),
         "with_injury": sum(1 for r in rows if r.injury),
         "with_pollution": sum(1 for r in rows if r.pollution),
