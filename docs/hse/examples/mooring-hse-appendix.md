@@ -48,7 +48,7 @@ A record with two event types counts under both, so the counts can add up to mor
 | Collision or contact | 1 |
 | Structural damage or collapse | 1 |
 
-None of the 7 records states a cause: the data set gives the event type only. The causes on record are those in the investigation reports of Section F.4.
+None of the 7 records states a cause. Records from a data set that gives the event type only: 7. That data set has no cause field. The causes on record are those in the investigation reports of Section F.4.
 
 ### F.4 Illustrative public cases
 
@@ -86,7 +86,7 @@ None of the 7 records states a cause: the data set gives the event type only. Th
 
 | Finding or recommendation stated by the investigation | Case | Addressed in |
 |---|---|---|
-| The regulator recommended a study of this mooring system, to find possible short-term remedies for existing tension-leg platforms that use it and to decide whether it remains acceptable for floating installations (p. 5) | 1 | Section 4.3: this system is a chain and polyester spread mooring with no tendon bottom connector; the connector capacities are checked in Section 6.2 |
+| The regulator recommended a study of this mooring system, covering possible short-term remedies for existing tension-leg platforms that use it and its continued use on floating installations (p. 5) | 1 | Section 4.3: this system is a chain and polyester spread mooring with no tendon bottom connector; the connector capacities are checked in Section 6.2 |
 | Follow-up hardness testing of links up to 15 links away from the failure found high hardness in each tested link (p. 3) | 2 | Section 4.4: chain grade and maximum hardness are stated in the material data; Section 3.3 recommends hardness records for every chain batch |
 | The report records that a significant decrease in the tension of this line was found on a daily marine report on 11 March 2022 (p. 3) | 3 | Section 6.3: top-chain fatigue life; Section 3.3 recommends a line-tension alarm with a stated response time |
 

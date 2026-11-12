@@ -286,16 +286,32 @@ def _modes_and_causes(section: HseSection) -> list[str]:
             f"{s['records']} records; it codes {s['cause_coded_unknown']} of "
             "those as unknown."
         )
-        if s["cause_not_coded"]:
-            out.append(
-                f"The other {s['cause_not_coded']} records come from a data set "
-                "that gives the event type only and state no cause."
-            )
+        out += _without_cause(s)
     else:
+        parts = [f"None of the {s['records']} records states a cause."]
+        parts += _without_cause(s)
+        parts.append(
+            "The causes on record are those in the investigation reports of "
+            f"Section {L}.4."
+        )
+        out.append(" ".join(parts))
+    return out
+
+
+def _without_cause(s: dict) -> list[str]:
+    """Say why records carry no cause: a blank field, or no cause field."""
+    blank = s["cause_field_blank"]
+    no_field = s["cause_not_coded"] - blank
+    out = []
+    if blank:
         out.append(
-            f"None of the {s['records']} records states a cause: the data set "
-            "gives the event type only. The causes on record are those in the "
-            f"investigation reports of Section {L}.4."
+            f"Records with a blank cause field: {blank}. The data set has a "
+            "cause field; the source left it blank for these records."
+        )
+    if no_field:
+        out.append(
+            f"Records from a data set that gives the event type only: {no_field}. "
+            "That data set has no cause field."
         )
     return out
 

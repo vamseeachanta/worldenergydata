@@ -755,10 +755,8 @@ def test_coded_and_uncoded_records_are_explained_separately(source_files):
         "The source codes a cause for 2 of the 3 records; it codes 0 of those as unknown."
         in text
     )
-    assert (
-        "The other 1 records come from a data set that gives the event type only"
-        in text
-    )
+    assert "Records from a data set that gives the event type only: 1." in text
+    assert "blank cause field" not in text
 
 
 def test_reference_names_no_company_and_carries_the_digest():
@@ -825,3 +823,58 @@ def test_one_case_on_file_is_shown_and_marked_not_established(source_files):
     assert (
         "Not established: fewer than two investigated public cases are on file" in text
     )
+
+
+@pytest.mark.parametrize("prefix", ["\ufeff", "  ", "\ufeff "])
+def test_header_with_byte_order_mark_or_spaces_is_still_classified(tmp_path, prefix):
+    path = tmp_path / "phmsa.csv"
+    record = phmsa()
+    with open(path, "w", encoding="utf-8", newline="") as fh:
+        fh.write(prefix)
+        w = csv.DictWriter(fh, fieldnames=list(record))
+        w.writeheader()
+        w.writerow(record)
+    source = SourceFile(
+        "phmsa_hazardous_liquid", path, "https://example.org/p.zip", "2026-01-31"
+    )
+    rows, stats = build_table([source])
+    assert (stats[0].records_read, len(rows)) == (1, 1)
+    assert rows[0].source_record_id == "20100001"
+    assert rows[0].mechanism == "corrosion_external"
+
+
+def _pipeline_file(tmp_path, records):
+    path = tmp_path / "phmsa_blank.csv"
+    with open(path, "w", encoding="utf-8", newline="") as fh:
+        w = csv.DictWriter(fh, fieldnames=list(records[0]))
+        w.writeheader()
+        w.writerows(records)
+    return SourceFile(
+        "phmsa_hazardous_liquid", path, "https://example.org/p.zip", "2026-01-31"
+    )
+
+
+BLANK_CAUSE = {"Cause Category": "", "Cause Subcategory": ""}
+
+
+def test_all_blank_cause_fields_are_not_explained_as_event_type_only(tmp_path):
+    source = _pipeline_file(tmp_path, [phmsa(**BLANK_CAUSE)])
+    rows, stats = build_table([source])
+    s = summarise(query(rows, "pipeline"))
+    assert (s["cause_coded"], s["cause_not_coded"], s["cause_field_blank"]) == (0, 1, 1)
+    text = render_markdown(build_section("pipeline", rows, stats, []))
+    assert "None of the 1 records states a cause." in text
+    assert "Records with a blank cause field: 1." in text
+    assert "event type only" not in text
+
+
+def test_blank_coded_and_event_only_records_are_counted_apart(source_files, tmp_path):
+    blank = phmsa(**{"Report Number": "20100009"}, **BLANK_CAUSE)
+    mixed = _pipeline_file(tmp_path, [phmsa(), blank])
+    rows, stats = build_table([source_files[0], mixed])
+    s = summarise(query(rows, "pipeline"))
+    assert (s["cause_coded"], s["cause_not_coded"], s["cause_field_blank"]) == (1, 2, 1)
+    text = render_markdown(build_section("pipeline", rows, stats, []))
+    assert "The source codes a cause for 1 of the 3 records" in text
+    assert "Records with a blank cause field: 1." in text
+    assert "Records from a data set that gives the event type only: 1." in text

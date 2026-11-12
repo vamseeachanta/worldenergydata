@@ -98,7 +98,7 @@ class PublicCase:
     sha256: str = ""
 
     def reference(self) -> str:
-        """Web-reference line: owner, title, where it is published, date read.
+        """Web-reference line: authority, title, where it is published, date read.
 
         ``url`` is the regulator's page for the report. Where the direct file
         address carries a company name, the register gives the regulator's

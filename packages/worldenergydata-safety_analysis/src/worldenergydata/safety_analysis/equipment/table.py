@@ -28,12 +28,16 @@ from worldenergydata.safety_analysis.equipment.classify import (
 )
 from worldenergydata.safety_analysis.equipment.taxonomy import (
     BASIS_SOURCE_CODED,
-    UNKNOWN,
     EQUIPMENT_CLASSES,
     FAILURE_MECHANISMS,
     FAILURE_MODES,
     NO_CAUSE,
+    UNKNOWN,
 )
+
+# Sources whose record layout has a coded cause field. A record of such a
+# source can still leave the field blank.
+CAUSE_FIELD_SOURCES = frozenset({"phmsa_hazardous_liquid"})
 
 # Text encodings by source: the BSEE export is Windows-1252.
 _ENCODINGS = {
@@ -106,9 +110,13 @@ def read_records(source: SourceFile) -> list[dict]:
         delimiter = max(_DELIMITERS, key=header.count)
         fh.seek(0)
         reader = csv.DictReader(fh, delimiter=delimiter)
-        names = {
-            (name or "").strip().lstrip("\ufeff") for name in reader.fieldnames or []
-        }
+        # A byte-order mark or stray spaces around a column name must not hide
+        # the column from the classifier, so the cleaned names become the keys.
+        reader.fieldnames = [
+            (name or "").replace("\ufeff", "").strip()
+            for name in reader.fieldnames or []
+        ]
+        names = set(reader.fieldnames)
         missing = [
             " or ".join(group)
             for group in REQUIRED_HEADERS.get(source.source_id, ())
@@ -249,6 +257,13 @@ def summarise(rows: Sequence[EquipmentFailureRow]) -> dict:
         "cause_coded": len(coded),
         "cause_coded_unknown": sum(1 for r in coded if r.mechanism == UNKNOWN),
         "cause_not_coded": len(rows) - len(coded),
+        # Of those: the source has a cause field and it is blank for the record.
+        "cause_field_blank": sum(
+            1
+            for r in rows
+            if r.mechanism_basis != BASIS_SOURCE_CODED
+            and r.source_id in CAUSE_FIELD_SOURCES
+        ),
         "by_coded_cause": [
             {"key": k, "label": FAILURE_MECHANISMS[k].label, "records": n}
             for k, n in sorted(
