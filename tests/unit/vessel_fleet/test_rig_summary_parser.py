@@ -669,7 +669,7 @@ def test_seadrill_operating_draft_is_not_load_line():
 
 
 def test_unqualified_jackup_draft_is_not_inferred_as_load_line():
-    assert "RAW_DRAFT_LOAD_LINE_FT" not in parse_rig_summary_text("Drafts  22 ft\n")
+    assert parse_rig_summary_text("Drafts  22 ft\n") == {}
 
 
 def test_seadrill_operating_and_load_line_drafts_remain_distinct():

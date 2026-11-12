@@ -36,8 +36,9 @@ the data ships in the built wheel.
 
 ### Field behavior and provenance
 
-`RAW_DRAFT_LOAD_LINE_FT` identifies a draft explicitly labelled as load line in
-the source specification. The parser, packaged extractions and spec-ingestion
+`RAW_DRAFT_LOAD_LINE_FT` identifies a draft labelled as load line in
+the source specification, subject to the transcription limitation below.
+The parser, packaged extractions and spec-ingestion
 script preserve this field. For these values, `RAW_DRAFT_OPERATING_FT` remains
 as a deprecated compatibility alias. Other layouts still use the legacy key
 for explicitly stated operating drafts; an older unqualified draft also retains
@@ -47,6 +48,17 @@ that key. Its name alone does not establish the draft condition.
 For a load-line record it describes load-line draft, not operating draft. A
 separately stated operating draft takes precedence for `DRAFT_M` and the legacy
 operating key. Transit drafts remain under `RAW_DRAFT_TRANSIT_FT`.
+
+When ingestion receives `DRAFT_M`, it replaces `RAW_DRAFT_LOAD_LINE_FT` with
+the supplied value or `None` if the key is absent. This applies to both raw
+output and curated updates, including alias matches. An update supplying
+neither draft field preserves the existing pair.
+
+The two `image_transcription` records carrying the added load-line field are
+classified provisionally by analogy with sister records. Their individual
+source-page labels have not been independently verified; `--reparse` skips
+image transcriptions. Their classification requires source-page confirmation
+before engineering use and is not covered by the text-parser regression.
 
 The committed load-line example contains a draft of 21.9 ft, rounded to
 6.7 m. Its public specification URL and document digest are recorded in the
