@@ -41,8 +41,20 @@ from worldenergydata.safety_analysis.equipment.taxonomy import (
 )
 
 BSEE_ROWS = [
-    ("1/2/2001", "10:00", "G00001", "XX 100", "- Pollution - Capsized - Mooring Failure "),
-    ("3/4/2005", "11:00", "G00002", "XX 200", "- Pollution - Accidental Riser Disconnect"),
+    (
+        "1/2/2001",
+        "10:00",
+        "G00001",
+        "XX 100",
+        "- Pollution - Capsized - Mooring Failure ",
+    ),
+    (
+        "3/4/2005",
+        "11:00",
+        "G00002",
+        "XX 200",
+        "- Pollution - Accidental Riser Disconnect",
+    ),
     ("5/6/2010", "12:00", "G00003", "XX 300", "- Fatality - Crane - Dropped Object"),
     ("7/8/2015", "13:00", "G00004", "XX 400", "- Fire - Explosion "),
     ("9/10/2020", "14:00", "G00005", "XX 500", "- LTA (>3 days) "),
@@ -91,20 +103,37 @@ def source_files(tmp_path):
     p = tmp_path / "phmsa.csv"
     records = [
         phmsa(),
-        phmsa(**{"Report Number": "20100002", "Pipeline Location": "ONSHORE",
-                 "Accident State": "TX", "Cause Category": "INCORRECT OPERATION",
-                 "Cause Subcategory": "INCORRECT VALVE POSITION",
-                 "Liquid Ignition": "YES", "All Injuries": "2"}),
+        phmsa(
+            **{
+                "Report Number": "20100002",
+                "Pipeline Location": "ONSHORE",
+                "Accident State": "TX",
+                "Cause Category": "INCORRECT OPERATION",
+                "Cause Subcategory": "INCORRECT VALVE POSITION",
+                "Liquid Ignition": "YES",
+                "All Injuries": "2",
+            }
+        ),
     ]
     with open(p, "w", encoding="utf-8", newline="") as fh:
         w = csv.DictWriter(fh, fieldnames=list(records[0]))
         w.writeheader()
         w.writerows(records)
     return [
-        SourceFile("bsee_incident_investigations", b, "https://example.org/b.zip",
-                   "2026-01-31", title="Synthetic investigations"),
-        SourceFile("phmsa_hazardous_liquid", p, "https://example.org/p.zip",
-                   "2026-01-31", title="Synthetic pipeline reports"),
+        SourceFile(
+            "bsee_incident_investigations",
+            b,
+            "https://example.org/b.zip",
+            "2026-01-31",
+            title="Synthetic investigations",
+        ),
+        SourceFile(
+            "phmsa_hazardous_liquid",
+            p,
+            "https://example.org/p.zip",
+            "2026-01-31",
+            title="Synthetic pipeline reports",
+        ),
     ]
 
 
@@ -144,8 +173,13 @@ def test_bsee_equipment_classes(text, expected):
 def test_bsee_riser_subclass_only_when_named():
     assert classify_bsee(bsee("- Riser Disconnect"))[0].equipment_subclass == NOT_STATED
     assert classify_bsee(bsee("- SCR leak"))[0].equipment_subclass == "scr"
-    assert classify_bsee(bsee("- flexible riser leak"))[0].equipment_subclass == "flexible"
-    assert classify_bsee(bsee("- Prod. Riser Disconnect"))[0].equipment_subclass == "production_riser"
+    assert (
+        classify_bsee(bsee("- flexible riser leak"))[0].equipment_subclass == "flexible"
+    )
+    assert (
+        classify_bsee(bsee("- Prod. Riser Disconnect"))[0].equipment_subclass
+        == "production_riser"
+    )
 
 
 @pytest.mark.parametrize(
@@ -154,10 +188,26 @@ def test_bsee_riser_subclass_only_when_named():
         ("CORROSION", "EXTERNAL", "corrosion_external"),
         ("CORROSION", "INTERNAL", "corrosion_internal"),
         ("CORROSION FAILURE", "", "corrosion"),
-        ("MATERIAL/WELD/EQUIP FAILURE", "ENVIRONMENTAL CRACKING-RELATED", "environmental_cracking"),
-        ("MATERIAL/WELD/EQUIP FAILURE", "CONSTRUCTION, INSTALLATION OR FABRICATION-RELATED", "installation_or_fabrication_error"),
-        ("MATERIAL/WELD/EQUIP FAILURE", "MANUFACTURING-RELATED", "manufacturing_defect"),
-        ("MATERIAL/WELD/EQUIP FAILURE", "PUMP OR PUMP-RELATED EQUIPMENT", "material_weld_or_equipment_failure"),
+        (
+            "MATERIAL/WELD/EQUIP FAILURE",
+            "ENVIRONMENTAL CRACKING-RELATED",
+            "environmental_cracking",
+        ),
+        (
+            "MATERIAL/WELD/EQUIP FAILURE",
+            "CONSTRUCTION, INSTALLATION OR FABRICATION-RELATED",
+            "installation_or_fabrication_error",
+        ),
+        (
+            "MATERIAL/WELD/EQUIP FAILURE",
+            "MANUFACTURING-RELATED",
+            "manufacturing_defect",
+        ),
+        (
+            "MATERIAL/WELD/EQUIP FAILURE",
+            "PUMP OR PUMP-RELATED EQUIPMENT",
+            "material_weld_or_equipment_failure",
+        ),
         ("INCORRECT OPERATION", "OTHER", "incorrect_operation"),
         ("NATURAL FORCE DAMAGE", "EARTH MOVEMENT", "natural_force"),
         ("EXCAVATION DAMAGE", "", "outside_force"),
@@ -183,8 +233,14 @@ def test_phmsa_row_keeps_source_text_and_basis():
 
 def test_phmsa_agency_column_names_and_blank_cause():
     (row,) = classify_phmsa(
-        {"REPORT_NUMBER": "1", "LOCAL_DATETIME": "2/3/2015 10:00", "ON_OFF_SHORE": "ONSHORE",
-         "ONSHORE_STATE_ABBREVIATION": "LA", "IGNITE_IND": "YES", "FATAL": "1"}
+        {
+            "REPORT_NUMBER": "1",
+            "LOCAL_DATETIME": "2/3/2015 10:00",
+            "ON_OFF_SHORE": "ONSHORE",
+            "ONSHORE_STATE_ABBREVIATION": "LA",
+            "IGNITE_IND": "YES",
+            "FATAL": "1",
+        }
     )
     assert row.mechanism == NOT_STATED and row.mechanism_basis == BASIS_NONE
     assert row.failure_modes == "fire;loss_of_containment"
@@ -210,7 +266,10 @@ def test_build_table_counts_and_provenance(source_files):
     b = stats[0]
     assert (b.records_read, b.records_classified) == (8, 7)  # the LTA row has no class
     assert (b.first_date, b.last_date) == ("2001-01-02", "2023-02-03")
-    assert all(r.source_url.startswith("https://") and r.retrieved == "2026-01-31" for r in rows)
+    assert all(
+        r.source_url.startswith("https://") and r.retrieved == "2026-01-31"
+        for r in rows
+    )
 
 
 def test_summary_counts_a_record_under_each_mode(source_files):
@@ -218,7 +277,10 @@ def test_summary_counts_a_record_under_each_mode(source_files):
     s = summarise(query(rows, "mooring_line"))
     assert s["records"] == 1 and s["mechanism_stated"] == 0
     assert {m["key"] for m in s["by_failure_mode"]} == {
-        "loss_of_containment", "loss_of_station", "structural_damage"}
+        "loss_of_containment",
+        "loss_of_station",
+        "structural_damage",
+    }
     assert all(m["key"] in FAILURE_MODES for m in s["by_failure_mode"])
     assert s["by_decade"] == {"2000s": 1}
     with pytest.raises(KeyError):
@@ -255,7 +317,9 @@ CASE = {
     "what_failed": {"statement": "A chain link parted", "page": 2},
     "failure_modes": ["loss_of_station"],
     "mechanism": "fatigue",
-    "cause_statements": [{"statement": "The link most likely failed by fatigue", "page": 3}],
+    "cause_statements": [
+        {"statement": "The link most likely failed by fatigue", "page": 3}
+    ],
     "lessons": [{"statement": "Inspect the top chain", "page": 4}],
 }
 
@@ -278,9 +342,15 @@ def test_packaged_register_is_valid_and_names_no_mechanism_without_a_cause():
         ({"url": "http://example.org/r.pdf"}, "https"),
         ({"date": "2 Jan 2001"}, "YYYY-MM-DD"),
         ({"operator": "named"}, "unknown keys"),
-        ({"what_failed": {"statement": 'It said "parted"', "page": 2}}, "paraphrase only"),
+        (
+            {"what_failed": {"statement": 'It said "parted"', "page": 2}},
+            "paraphrase only",
+        ),
         ({"what_failed": {"statement": "x " * 61, "page": 2}}, "over 60 words"),
-        ({"what_failed": {"statement": "A link parted", "page": 0}}, "positive integer"),
+        (
+            {"what_failed": {"statement": "A link parted", "page": 0}},
+            "positive integer",
+        ),
     ],
 )
 def test_case_validation(change, match):
@@ -298,7 +368,14 @@ def test_section_cites_every_number_and_flags_open_lessons(source_files):
     rows, stats = build_table(source_files)
     cases = [
         parse_case(CASE),
-        parse_case({**CASE, "id": "mooring-synthetic-2", "date": "2019-05-05", "area_block": "XX 900"}),
+        parse_case(
+            {
+                **CASE,
+                "id": "mooring-synthetic-2",
+                "date": "2019-05-05",
+                "area_block": "XX 900",
+            }
+        ),
     ]
     section = build_section("mooring_line", rows, stats, cases)
     assert section.open_items == [
@@ -306,9 +383,14 @@ def test_section_cites_every_number_and_flags_open_lessons(source_files):
         "lesson mooring-synthetic-2#1 has no design response",
     ]
     text = render_markdown(section)
-    for heading in ("F.1 Data used", "F.2 Incident history", "F.3 Failure modes and stated causes",
-                    "F.4 Illustrative public cases", "F.5 Lessons for this design",
-                    "F.6 References for this appendix"):
+    for heading in (
+        "F.1 Data used",
+        "F.2 Incident history",
+        "F.3 Failure modes and stated causes",
+        "F.4 Illustrative public cases",
+        "F.5 Lessons for this design",
+        "F.6 References for this appendix",
+    ):
         assert f"### {heading}" in text
     assert "https://example.org/b.zip (read 2026-01-31)" in text
     assert "https://example.org/report.pdf (read 2026-01-31)" in text
@@ -321,7 +403,10 @@ def test_section_cites_every_number_and_flags_open_lessons(source_files):
 def test_section_with_design_links_has_no_open_items(source_files):
     rows, stats = build_table(source_files)
     cases = [parse_case(CASE), parse_case({**CASE, "id": "mooring-synthetic-2"})]
-    links = {"mooring-synthetic-1#1": "Section 6.3", "mooring-synthetic-2#1": "Section 3.3"}
+    links = {
+        "mooring-synthetic-1#1": "Section 6.3",
+        "mooring-synthetic-2#1": "Section 3.3",
+    }
     section = build_section("mooring_line", rows, stats, cases, design_links=links)
     assert section.open_items == []
     assert "Section 6.3" in render_markdown(section)
@@ -337,39 +422,98 @@ def test_section_for_coded_causes_prints_the_cause_table(source_files):
 
 def test_cli_build_and_section(source_files, tmp_path, capsys):
     listing = tmp_path / "sources.json"
-    listing.write_text(json.dumps([
-        {"source_id": s.source_id, "path": s.path.name, "url": s.url,
-         "retrieved": s.retrieved, "title": s.title} for s in source_files]))
-    assert main(["build", "--sources", str(listing), "--out-dir", str(tmp_path / "out")]) == 0
-    summary = json.loads((tmp_path / "out" / "equipment-failure-summary.json").read_text())
+    listing.write_text(
+        json.dumps(
+            [
+                {
+                    "source_id": s.source_id,
+                    "path": s.path.name,
+                    "url": s.url,
+                    "retrieved": s.retrieved,
+                    "title": s.title,
+                }
+                for s in source_files
+            ]
+        )
+    )
+    assert (
+        main(["build", "--sources", str(listing), "--out-dir", str(tmp_path / "out")])
+        == 0
+    )
+    summary = json.loads(
+        (tmp_path / "out" / "equipment-failure-summary.json").read_text()
+    )
     assert summary["by_class"]["riser"]["records"] == 2
     out = tmp_path / "out" / "section.md"
-    rc = main(["section", "--sources", str(listing), "--equipment-class", "mooring_line",
-               "--out", str(out)])
+    rc = main(
+        [
+            "section",
+            "--sources",
+            str(listing),
+            "--equipment-class",
+            "mooring_line",
+            "--out",
+            str(out),
+        ]
+    )
     assert rc == 1 and out.exists()  # packaged cases have lessons without design links
-    assert main(["section", "--sources", str(listing), "--equipment-class", "mooring_line",
-                 "--out", str(out), "--allow-open"]) == 0
-    assert main(["build", "--sources", str(tmp_path / "missing.json"), "--out-dir", str(tmp_path)]) == 2
+    assert (
+        main(
+            [
+                "section",
+                "--sources",
+                str(listing),
+                "--equipment-class",
+                "mooring_line",
+                "--out",
+                str(out),
+                "--allow-open",
+            ]
+        )
+        == 0
+    )
+    assert (
+        main(
+            [
+                "build",
+                "--sources",
+                str(tmp_path / "missing.json"),
+                "--out-dir",
+                str(tmp_path),
+            ]
+        )
+        == 2
+    )
 
 
 # --- review findings (regressions) -------------------------------------------------
 REPO = Path(__file__).resolve().parents[4]
-PHMSA_EXPORT = REPO / "data/modules/pipeline_safety/raw/kaggle_usdot_pipeline/database.csv"
+PHMSA_EXPORT = (
+    REPO / "data/modules/pipeline_safety/raw/kaggle_usdot_pipeline/database.csv"
+)
 
 
 def test_unknown_coded_cause_is_kept_but_not_counted_as_stated():
-    (row,) = classify_phmsa(phmsa(**{"Cause Category": "ALL OTHER CAUSES", "Cause Subcategory": "UNKNOWN"}))
+    (row,) = classify_phmsa(
+        phmsa(**{"Cause Category": "ALL OTHER CAUSES", "Cause Subcategory": "UNKNOWN"})
+    )
     assert row.mechanism == "unknown"
     assert row.mechanism_source_text == "ALL OTHER CAUSES / UNKNOWN"
     s = summarise([row])
     assert s["mechanism_stated"] == 0
     assert s["by_mechanism"] == [
-        {"key": "unknown", "label": "Cause coded as unknown by the source", "records": 1}
+        {
+            "key": "unknown",
+            "label": "Cause coded as unknown by the source",
+            "records": 1,
+        }
     ]
 
 
 def test_committed_pipeline_export_has_exact_stated_cause_count():
-    source = SourceFile("phmsa_hazardous_liquid", PHMSA_EXPORT, "https://example.org/p", "2026-05-05")
+    source = SourceFile(
+        "phmsa_hazardous_liquid", PHMSA_EXPORT, "https://example.org/p", "2026-05-05"
+    )
     rows, stats = build_table([source])
     s = summarise(query(rows, "pipeline"))
     unknown = sum(1 for r in rows if r.mechanism == "unknown")
@@ -380,7 +524,10 @@ def test_committed_pipeline_export_has_exact_stated_cause_count():
 def test_blank_design_response_keeps_the_lesson_open(source_files, response):
     rows, stats = build_table(source_files)
     cases = [parse_case(CASE), parse_case({**CASE, "id": "mooring-synthetic-2"})]
-    links = {"mooring-synthetic-1#1": response, "mooring-synthetic-2#1": " Section 3.3 "}
+    links = {
+        "mooring-synthetic-1#1": response,
+        "mooring-synthetic-2#1": " Section 3.3 ",
+    }
     section = build_section("mooring_line", rows, stats, cases, design_links=links)
     assert section.open_items == ["lesson mooring-synthetic-1#1 has no design response"]
     assert section.lessons[0]["addressed_in"] == "not yet assigned"
@@ -391,26 +538,54 @@ def test_repeated_or_unknown_case_ids_are_refused(source_files):
     rows, stats = build_table(source_files)
     cases = [parse_case(CASE), parse_case({**CASE, "id": "mooring-synthetic-2"})]
     with pytest.raises(ValueError, match="distinct"):
-        build_section("mooring_line", rows, stats, cases,
-                      case_ids=["mooring-synthetic-1", "mooring-synthetic-1"])
+        build_section(
+            "mooring_line",
+            rows,
+            stats,
+            cases,
+            case_ids=["mooring-synthetic-1", "mooring-synthetic-1"],
+        )
     with pytest.raises(ValueError, match="no case"):
         build_section("mooring_line", rows, stats, cases, case_ids=["missing"])
-    one = build_section("mooring_line", rows, stats, cases, case_ids=["mooring-synthetic-1"])
+    one = build_section(
+        "mooring_line", rows, stats, cases, case_ids=["mooring-synthetic-1"]
+    )
     assert "fewer than two illustrative public cases on file" in one.open_items
 
 
 def test_case_membership_uses_date_and_area_block(source_files):
     rows, stats = build_table(source_files)
     same_day_elsewhere = parse_case({**CASE, "id": "c2", "area_block": "YY 9"})
-    no_block = parse_case({k: v for k, v in {**CASE, "id": "c3"}.items() if k != "area_block"})
-    text = render_markdown(build_section("mooring_line", rows, stats, [parse_case(CASE), same_day_elsewhere, no_block]))
+    no_block = parse_case(
+        {k: v for k, v in {**CASE, "id": "c3"}.items() if k != "area_block"}
+    )
+    text = render_markdown(
+        build_section(
+            "mooring_line",
+            rows,
+            stats,
+            [parse_case(CASE), same_day_elsewhere, no_block],
+        )
+    )
     assert "The count is a lower bound: 1 of the 3 cases" in text
     assert "For 1 of the 3 cases the area block is not on file" in text
-    matched = render_markdown(build_section("mooring_line", rows, stats, [parse_case(CASE), parse_case({**CASE, "id": "c4", "area_block": "xx-100"})]))
+    matched = render_markdown(
+        build_section(
+            "mooring_line",
+            rows,
+            stats,
+            [
+                parse_case(CASE),
+                parse_case({**CASE, "id": "c4", "area_block": "xx-100"}),
+            ],
+        )
+    )
     assert "lower bound" not in matched and "not verified" not in matched
 
 
-@pytest.mark.parametrize("value", ["XXXXXXXXXX", "2026-02-30", "2026-1-31 ", "20260131", ""])
+@pytest.mark.parametrize(
+    "value", ["XXXXXXXXXX", "2026-02-30", "2026-1-31 ", "20260131", ""]
+)
 def test_retrieval_date_must_be_a_real_calendar_date(tmp_path, value):
     with pytest.raises(ValueError, match="YYYY-MM-DD"):
         SourceFile("x", tmp_path, "https://example.org", value)

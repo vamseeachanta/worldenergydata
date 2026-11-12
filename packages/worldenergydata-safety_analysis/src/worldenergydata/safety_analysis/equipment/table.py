@@ -98,9 +98,7 @@ def build_table(
         )
         all_dates = sorted(
             d
-            for d in (
-                classify_date(source.source_id, record) for record in records
-            )
+            for d in (classify_date(source.source_id, record) for record in records)
             if d
         )
         stats.append(

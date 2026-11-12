@@ -158,7 +158,9 @@ def render_markdown(section: HseSection, *, max_records: int = 12) -> str:
     s, L = section.summary, section.letter
     refs = {text: f"[H{i}]" for i, text in enumerate(section.references, start=1)}
     src_ref = {
-        st.source_id: refs[f"{st.title or st.source_id}. {st.url} (read {st.retrieved})."]
+        st.source_id: refs[
+            f"{st.title or st.source_id}. {st.url} (read {st.retrieved})."
+        ]
         for st in section.sources
     }
     out: list[str] = [f"## Appendix {L} HSE and safety", ""]
@@ -169,7 +171,14 @@ def render_markdown(section: HseSection, *, max_records: int = 12) -> str:
     )
     out += ["", f"### {L}.1 Data used", ""]
     out += _table(
-        ("Source", "Records read", "Records for this equipment", "Period", "Read on", "Ref."),
+        (
+            "Source",
+            "Records read",
+            "Records for this equipment",
+            "Period",
+            "Read on",
+            "Ref.",
+        ),
         [
             (
                 st.title or st.source_id,
@@ -218,14 +227,17 @@ def render_markdown(section: HseSection, *, max_records: int = 12) -> str:
             )
         if EQUIPMENT_CLASSES[section.equipment_class].note:
             out.append(EQUIPMENT_CLASSES[section.equipment_class].note)
-        out += [""] + _table(
-            ("Decade", "Records"), list(s["by_decade"].items())
-        )
-        shown = sorted(section.records, key=lambda r: r.date, reverse=True)[:max_records]
+        out += [""] + _table(("Decade", "Records"), list(s["by_decade"].items()))
+        shown = sorted(section.records, key=lambda r: r.date, reverse=True)[
+            :max_records
+        ]
         out += ["", f"The {len(shown)} most recent records are listed below.", ""]
         out += _table(
             ("Date", "Location", "Event type as recorded", "Ref."),
-            [(r.date, r.location or "not given", r.event_text, src_ref[r.source_id]) for r in shown],
+            [
+                (r.date, r.location or "not given", r.event_text, src_ref[r.source_id])
+                for r in shown
+            ],
         )
     else:
         out.append("The data sets read hold no record for this equipment.")
@@ -281,9 +293,17 @@ def render_markdown(section: HseSection, *, max_records: int = 12) -> str:
     if section.lessons:
         case_no = {c.id: i for i, c in enumerate(section.cases, start=1)}
         out += _table(
-            ("Finding or recommendation stated by the investigation", "Case", "Addressed in"),
+            (
+                "Finding or recommendation stated by the investigation",
+                "Case",
+                "Addressed in",
+            ),
             [
-                (f"{x['lesson']} (p. {x['page']})", case_no[x["case_id"]], x["addressed_in"])
+                (
+                    f"{x['lesson']} (p. {x['page']})",
+                    case_no[x["case_id"]],
+                    x["addressed_in"],
+                )
                 for x in section.lessons
             ],
         )
