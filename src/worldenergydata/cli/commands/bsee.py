@@ -14,6 +14,8 @@ Examples:
     worldenergydata bsee refresh --type well
 """
 
+import subprocess
+import sys
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
@@ -1024,19 +1026,45 @@ def refresh(
     verbose: bool = typer.Option(  # noqa: B008
         False, "--verbose", "-v", help="Enable verbose output"
     ),
+    dry_run: bool = typer.Option(  # noqa: B008
+        False, "--dry-run", help="Preview the full refresh without downloading data"
+    ),
 ) -> None:
     """
     Refresh BSEE data from source.
 
-    Downloads and updates local BSEE data cache from official sources.
+    The default full refresh runs scripts/refresh_bsee_all.py from a repository
+    checkout, using its URL registry, progress output and backup handling.
+    Other data types use the existing refresh router.
 
     Examples:
+        worldenergydata bsee refresh --dry-run
         worldenergydata bsee refresh --type well
         worldenergydata bsee refresh --type production --force
         worldenergydata bsee refresh --type platform
         worldenergydata bsee refresh --type infrastructure
         worldenergydata bsee refresh --type all --verbose
     """
+    if dry_run and data_type != DataType.all:
+        raise typer.BadParameter("--dry-run is only supported with --type all")
+
+    if data_type == DataType.all:
+        script = Path(__file__).resolve().parents[4] / "scripts" / "refresh_bsee_all.py"
+        if not script.is_file():
+            console.print("[red]Full refresh requires a repository checkout.[/red]")
+            raise typer.Exit(1)
+        command = [sys.executable, str(script)]
+        if force:
+            command.append("--force")
+        if dry_run:
+            command.append("--dry-run")
+        try:
+            result = subprocess.run(command, check=False)
+        except OSError as exc:
+            console.print(f"[red]Could not start full refresh:[/red] {exc}")
+            raise typer.Exit(1) from exc
+        raise typer.Exit(result.returncode)
+
     try:
         console.print(
             Panel(
@@ -1136,6 +1164,7 @@ def refresh(
                     f"[yellow]Warning:[/yellow] Could not import refresh module: {e}"
                 )
                 console.print("[dim]Ensure all dependencies are installed.[/dim]")
+                raise typer.Exit(1) from e
 
     except Exception as e:
         console.print(f"[red]Error:[/red] {str(e)}")
