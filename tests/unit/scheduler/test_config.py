@@ -12,6 +12,17 @@ from worldenergydata.scheduler.config import (
     validate_config,
 )
 
+
+def test_shipped_eia_output_directory():
+    config_path = (
+        Path(__file__).resolve().parents[3] / "config/scheduler/scheduler_config.yml"
+    )
+    config = load_config(str(config_path))
+    assert config.get_job_config("eia_us_refresh")["output_dir"] == (
+        "data/modules/eia_us"
+    )
+
+
 VALID_YAML = """
 jobs:
   - name: bsee_refresh
@@ -120,7 +131,7 @@ class TestLoadConfig:
             "bsee_refresh": "data/modules/bsee",
             "hse_refresh": "data/modules/hse",
             "sodir_refresh": "data/modules/sodir",
-            "eia_us_refresh": "data/modules/eia",
+            "eia_us_refresh": "data/modules/eia_us",
             "metocean_refresh": "data/modules/metocean",
             "brazil_anp_refresh": "data/modules/brazil_anp",
             "ukcs_refresh": "data/modules/ukcs",

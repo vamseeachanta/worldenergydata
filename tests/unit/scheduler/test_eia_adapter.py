@@ -15,6 +15,43 @@ class TestEiaUsRefreshJob:
     """Tests for the wired EIA adapter."""
 
     @patch("worldenergydata.scheduler.jobs.eia_us_refresh.EIAIngestionSync")
+    def test_missing_credentials_skips_before_ingestion(
+        self, mock_sync_cls, monkeypatch, tmp_path, caplog
+    ):
+        from worldenergydata.scheduler.jobs.eia_us_refresh import EiaUsRefreshJob
+
+        monkeypatch.delenv("EIA_API_KEY", raising=False)
+        output_dir = tmp_path / "output"
+        result = EiaUsRefreshJob().run({"output_dir": str(output_dir)})
+
+        assert result.status == "skipped"
+        assert result.records_updated == 0
+        assert result.error_msg == "credential_absent"
+        assert result.retryable is False
+        assert "EIA_API_KEY not set" in caplog.text
+        mock_sync_cls.assert_not_called()
+        assert not output_dir.exists()
+
+    @pytest.mark.parametrize("config_key", [None, "configured-fixture"])
+    @patch("worldenergydata.scheduler.jobs.eia_us_refresh.EIAIngestionSync")
+    def test_environment_fallback_and_config_precedence(
+        self, mock_sync_cls, config_key, monkeypatch, tmp_path
+    ):
+        from worldenergydata.scheduler.jobs.eia_us_refresh import EiaUsRefreshJob
+
+        monkeypatch.setenv("EIA_API_KEY", "environment-fixture")
+        mock_sync_cls.return_value.output_dir = tmp_path
+        mock_sync_cls.return_value.run_all.return_value = []
+        result = EiaUsRefreshJob().run(
+            {"api_key": config_key, "output_dir": str(tmp_path)}
+        )
+
+        assert result.status == "success"
+        assert mock_sync_cls.call_args.kwargs["api_key"] == (
+            config_key or "environment-fixture"
+        )
+
+    @patch("worldenergydata.scheduler.jobs.eia_us_refresh.EIAIngestionSync")
     def test_run_calls_run_all_and_returns_success(self, mock_sync_cls, tmp_path):
         """EiaUsRefreshJob.run() calls EIAIngestionSync.run_all() and returns
         JobResult with status='success' and records_updated = sum of records_written."""
