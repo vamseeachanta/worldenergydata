@@ -26,7 +26,7 @@ jobs:
     runs-on: >-
       ${{ (github.event_name != 'pull_request' ||
           github.event.pull_request.head.repo.full_name == github.repository) &&
-          fromJSON('["self-hosted","x64","linux"]') || 'ubuntu-latest' }}
+          fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7

@@ -34,6 +34,16 @@ import pytest
 import yaml
 
 WORKFLOWS = Path(__file__).resolve().parents[2] / ".github/workflows"
+# Trusted jobs request either Linux architecture, or Linux x64 where needed.
+SELF_HOSTED_LINUX = "self-hosted Linux"
+TRUSTED_LABEL_SETS = ({"self-hosted", "linux"}, {"self-hosted", "linux", "x64"})
+
+
+def is_trusted_linux(labels: object) -> bool:
+    return (
+        isinstance(labels, list)
+        and {label.casefold() for label in labels} in TRUSTED_LABEL_SETS
+    )
 
 
 def load_workflow(name: str) -> dict:
@@ -80,10 +90,10 @@ def runner_labels(expression: str, context: dict) -> object:
         ("pull_request", None, None, "ubuntu-latest"),
         ("pull_request", False, None, "ubuntu-latest"),
         ("pull_request", False, "different", "ubuntu-latest"),
-        ("pull_request", False, "same", ["self-hosted", "x64", "linux"]),
-        ("push", None, None, ["self-hosted", "x64", "linux"]),
-        ("schedule", None, None, ["self-hosted", "x64", "linux"]),
-        ("workflow_dispatch", None, None, ["self-hosted", "x64", "linux"]),
+        ("pull_request", False, "same", SELF_HOSTED_LINUX),
+        ("push", None, None, SELF_HOSTED_LINUX),
+        ("schedule", None, None, SELF_HOSTED_LINUX),
+        ("workflow_dispatch", None, None, SELF_HOSTED_LINUX),
     ],
 )
 def test_every_job_routes_trusted_events_and_isolates_forks(
@@ -124,15 +134,15 @@ def test_every_job_routes_trusted_events_and_isolates_forks(
                     "schedule",
                     "workflow_dispatch",
                 }, "Literal runners require trusted triggers"
-                assert {"self-hosted", "x64", "linux"} <= set(
+                assert is_trusted_linux(
                     job["runs-on"]
-                ), "Trusted runners require Linux x64"
+                ), "Trusted runners require self-hosted Linux"
                 continue
-            assert runner_labels(job["runs-on"], context) == expected, (
-                path.name,
-                job_id,
-                event,
-            )
+            labels = runner_labels(job["runs-on"], context)
+            if expected == SELF_HOSTED_LINUX:
+                assert is_trusted_linux(labels), (path.name, job_id, event, labels)
+            else:
+                assert labels == expected, (path.name, job_id, event)
 
 
 @pytest.mark.parametrize("event", ["push", "schedule", "workflow_dispatch"])
@@ -147,7 +157,7 @@ def test_routing_accepts_literal_labels_for_trusted_workflows(
     (tmp_path / "trusted.yml").write_text(yaml.safe_dump(workflow), encoding="utf-8")
     monkeypatch.setattr(sys.modules[__name__], "WORKFLOWS", tmp_path)
     test_every_job_routes_trusted_events_and_isolates_forks(
-        event, None, None, ["self-hosted", "x64", "linux"]
+        event, None, None, SELF_HOSTED_LINUX
     )
 
 
@@ -201,9 +211,11 @@ def test_literal_runners_require_linux(tmp_path, monkeypatch):
     }
     (tmp_path / "trusted.yml").write_text(yaml.safe_dump(workflow), encoding="utf-8")
     monkeypatch.setattr(sys.modules[__name__], "WORKFLOWS", tmp_path)
-    with pytest.raises(AssertionError, match="Trusted runners require Linux x64"):
+    with pytest.raises(
+        AssertionError, match="Trusted runners require self-hosted Linux"
+    ):
         test_every_job_routes_trusted_events_and_isolates_forks(
-            "workflow_dispatch", None, None, ["self-hosted", "x64", "linux"]
+            "workflow_dispatch", None, None, SELF_HOSTED_LINUX
         )
 
 

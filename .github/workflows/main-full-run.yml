@@ -1,9 +1,19 @@
 name: Main full run
 
-# Dispatch the full main-branch checks once a day or on a branch for validation.
-# Pull requests use the fast gate in ci.yml; this workflow keeps the full suite,
-# generated-artifact currency, type, docs, build, security and benchmark checks.
-# The existing quarantine policy is applied by tests/conftest.py.
+# Daily full run on main (owner ruling 28 Oct 2026). Pull requests run only the
+# fast gate in ci.yml (lint, secret scan, touched-module tests); everything
+# slow or repo-wide runs here once a day instead: the whole test suite on all
+# supported Pythons, the generated-artifact currency checks (lockfile, report
+# inventory, evidence maps), type check, docs, package build, bandit,
+# dependency audit and benchmarks.
+#
+# There is deliberately no `schedule:` trigger. Our cron on ace-linux-1
+# dispatches it once every 24 h:
+#   gh workflow run main-full-run.yml --repo vamseeachanta/worldenergydata --ref main
+# Dispatching it on a branch (--ref <branch>) gives a PR the full tree on demand.
+#
+# Tests listed in scripts/ci/quarantine.txt run here as xfail(strict=False)
+# (tests/conftest.py), so a green run means every other test passed.
 on:
   workflow_dispatch:
 
@@ -20,7 +30,7 @@ env:
 jobs:
   full-suite:
     name: Full suite (Python ${{ matrix.python-version }})
-    runs-on: [self-hosted, x64, linux]
+    runs-on: [self-hosted, x64, Linux]
     timeout-minutes: 240
     strategy:
       fail-fast: false
@@ -93,7 +103,7 @@ jobs:
 
   lockfile:
     name: Lockfile currency
-    runs-on: [self-hosted, x64, linux]
+    runs-on: [self-hosted, Linux]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -130,7 +140,7 @@ jobs:
     name: F821 inventory
     # Repeated undefined-name inventories (docs/ci/f821-scans.md). Five runs
     # with a 300 s budget each are too slow for the PR lint gate.
-    runs-on: [self-hosted, x64, linux]
+    runs-on: [self-hosted, x64, Linux]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -163,7 +173,7 @@ jobs:
 
   type-check:
     name: Type Check
-    runs-on: [self-hosted, x64, linux]
+    runs-on: [self-hosted, x64, Linux]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -190,7 +200,7 @@ jobs:
 
   docs:
     name: Documentation
-    runs-on: [self-hosted, x64, linux]
+    runs-on: [self-hosted, Linux]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -218,7 +228,7 @@ jobs:
 
   build:
     name: Build Package
-    runs-on: [self-hosted, x64, linux]
+    runs-on: [self-hosted, Linux]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -245,7 +255,7 @@ jobs:
 
   security-deep:
     name: Security Scan (deep)
-    runs-on: [self-hosted, x64, linux]
+    runs-on: [self-hosted, Linux]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -266,7 +276,7 @@ jobs:
 
   dependency-audit:
     name: Dependency Audit
-    runs-on: [self-hosted, x64, linux]
+    runs-on: [self-hosted, x64, Linux]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -293,7 +303,7 @@ jobs:
 
   performance-benchmark:
     name: Performance Benchmark
-    runs-on: [self-hosted, x64, linux]
+    runs-on: [self-hosted, x64, Linux]
     needs: [full-suite]
     if: ${{ !cancelled() }}
     steps:
@@ -330,7 +340,7 @@ jobs:
 
   notify-failure:
     name: Notify on Failure
-    runs-on: [self-hosted, x64, linux]
+    runs-on: [self-hosted, Linux]
     needs: [full-suite, lockfile, f821-inventory, docs, build, dependency-audit]
     if: failure() && github.ref == 'refs/heads/main'
     permissions:

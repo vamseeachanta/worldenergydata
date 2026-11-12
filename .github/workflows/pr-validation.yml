@@ -1,5 +1,10 @@
 name: PR Validation
 
+# PR fast gate (28 Oct 2026): only quick checks run here. Check Sensitive Files
+# is required; the title, file-size and knowledge-pack lints are advisory or
+# path-scoped. The advisory-only Changelog and Code Owners notices were removed
+# with their required-check status.
+
 on:
   pull_request:
     types: [opened, synchronize, reopened, edited]

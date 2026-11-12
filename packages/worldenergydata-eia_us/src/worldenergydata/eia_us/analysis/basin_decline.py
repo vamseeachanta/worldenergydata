@@ -21,14 +21,11 @@ Terminal decline switch:
 Reference: Arps, J.J. (1945). SPE-945228-G.
 """
 
-import logging
 from dataclasses import dataclass
 from typing import Optional
 
 import numpy as np
 from scipy.optimize import curve_fit
-
-logger = logging.getLogger(__name__)
 
 # b-factor threshold for terminal decline switch
 TERMINAL_B_FACTOR: float = 0.5
@@ -136,7 +133,12 @@ class HyperbolicDeclineModel:
 
 @dataclass
 class ShaleDeclineResult:
-    """Fitted shale hyperbolic decline result for a basin."""
+    """Fitted shale hyperbolic decline result for a basin.
+
+    Diagnostics describe the fitted hyperbolic objective at observation times,
+    before the forecast terminal switch. R-squared can be negative; RMSE has
+    the same production-rate unit as the supplied observations.
+    """
 
     basin: str
     model: HyperbolicDeclineModel
@@ -149,6 +151,13 @@ class ShaleDeclineResult:
 
 
 # ── Analyzer ───────────────────────────────────────────────────────────────────
+
+
+class DeclineFitError(RuntimeError):
+    """The optimizer failed; no fitted result is available.
+
+    The original optimizer exception is retained as the chained cause.
+    """
 
 
 class ShaleDeclineAnalyzer:
@@ -174,6 +183,8 @@ class ShaleDeclineAnalyzer:
 
         Raises:
             ValueError: If production has fewer than _MIN_DATA_POINTS.
+            DeclineFitError: If curve_fit raises RuntimeError or ValueError;
+                initial guesses are never returned as a fitted result.
         """
         if len(production) < _MIN_DATA_POINTS:
             raise ValueError(
@@ -200,14 +211,11 @@ class ShaleDeclineAnalyzer:
             )
             qi_fit, di_fit, b_fit = popt
         except (RuntimeError, ValueError) as exc:
-            logger.warning(
-                "curve_fit failed for %s: %s — using initial guess", basin, exc
-            )
-            qi_fit, di_fit, b_fit = qi_guess, di_guess, b_guess
+            raise DeclineFitError("Hyperbolic decline fit failed.") from exc
 
         model = HyperbolicDeclineModel(qi=qi_fit, di=di_fit, b=b_fit)
 
-        predicted = model.predict(len(production))
+        predicted = arps_hyperbolic(t, qi_fit, di_fit, b_fit)
         r_squared = self._r_squared(production, predicted)
         rmse = float(np.sqrt(np.mean((production - predicted) ** 2)))
 
@@ -220,10 +228,13 @@ class ShaleDeclineAnalyzer:
 
     @staticmethod
     def _r_squared(observed: np.ndarray, predicted: np.ndarray) -> float:
-        """Compute coefficient of determination R²."""
+        """Compute R² without clipping negative values.
+
+        Constant observations have undefined R². Preserve the existing
+        degenerate convention: one for an exact match, zero otherwise.
+        """
         ss_res = np.sum((observed - predicted) ** 2)
         ss_tot = np.sum((observed - np.mean(observed)) ** 2)
         if ss_tot == 0.0:
             return 1.0 if ss_res == 0.0 else 0.0
-        r2 = 1.0 - ss_res / ss_tot
-        return float(np.clip(r2, 0.0, 1.0))
+        return float(1.0 - ss_res / ss_tot)

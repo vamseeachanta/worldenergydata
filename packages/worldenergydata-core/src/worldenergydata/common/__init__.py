@@ -44,6 +44,9 @@ def load_config(path: PathLike) -> JSONDict:
 ```
 """
 
+from importlib import import_module
+from typing import TYPE_CHECKING
+
 from worldenergydata.common.config import Settings, get_settings
 from worldenergydata.common.constants import UNIT_CONVERSIONS, EnergyUnits
 from worldenergydata.common.exceptions import (
@@ -56,15 +59,43 @@ from worldenergydata.common.exceptions import (
     WorldEnergyDataError,
 )
 from worldenergydata.common.logging import configure_logging, get_logger
-from worldenergydata.common.types import (
-    CacheProtocol,
-    DataFrameLike,
-    DataSourceProtocol,
-    JSONDict,
-    JSONList,
-    PathLike,
-    ValidatorProtocol,
-)
+
+# Type aliases import pandas to retain concrete dataframe types. Defer that
+# work until a caller requests a type export; settings do not need dataframes.
+if TYPE_CHECKING:
+    from worldenergydata.common.types import (
+        CacheProtocol,
+        DataFrameLike,
+        DataSourceProtocol,
+        JSONDict,
+        JSONList,
+        PathLike,
+        ValidatorProtocol,
+    )
+
+_TYPE_EXPORTS = {
+    "CacheProtocol",
+    "DataFrameLike",
+    "DataSourceProtocol",
+    "JSONDict",
+    "JSONList",
+    "PathLike",
+    "ValidatorProtocol",
+}
+
+
+def __getattr__(name: str):
+    """Resolve the existing public type exports only when requested."""
+    if name in _TYPE_EXPORTS:
+        value = getattr(import_module("worldenergydata.common.types"), name)
+        globals()[name] = value
+        return value
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
+
+def __dir__():
+    return sorted(set(globals()) | _TYPE_EXPORTS)
+
 
 __all__ = [
     # Logging
