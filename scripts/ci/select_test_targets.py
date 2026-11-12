@@ -85,6 +85,13 @@ CATALOG_CONTRACTS = (
 
 # Exact paths may select one contract suite or several related test files.
 CONTRACT_ROUTES = {
+    "config/fields.yml": "tests/unit/cost/test_project_field_crosswalk.py",
+    "src/worldenergydata/field_development/past_projects.yml": (
+        "tests/unit/cost/test_project_field_crosswalk.py",
+        "tests/unit/field_development",
+        "tests/modules/field_development/test_past_projects.py",
+    ),
+    "scripts/cost/validate_project_field_crosswalk.py": "tests/unit/cost/test_project_field_crosswalk.py",
     "scripts/build_pages.py": PAGES_CONTRACTS,
     "scripts/pages_scope.py": "tests/test_pages_scope.py",
     ".github/workflows/pages.yml": PAGES_CONTRACTS,
@@ -141,6 +148,7 @@ CONTRACT_ROUTES = {
 # (results.json, eval.py, PROMPT.md, run records and the shared evalkit) are
 # checked by tests/report_evals.
 CONTRACT_PREFIX_ROUTES = (
+    ("data/modules/cost/", "tests/unit/cost"),
     ("examples/report-evals/", "tests/report_evals"),
     ("tests/report_evals/", "tests/report_evals"),
 )
