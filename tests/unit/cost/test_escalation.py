@@ -641,7 +641,7 @@ def test_cli_reproduces_committed_table_and_protects_inputs(tmp_path):
 def test_held_index_factor_matches_independent_arithmetic():
     rows = read_timeseries_csv(CURATED / "cost_component_timeseries.csv")
     result = CostEscalator(rows).factor(2009)
-    expected = (229 / 206) * 0.5 * (332.822 / 263.7667 + 396.3942 / 433.7167)
+    expected = (229 / 206) * _held_ppi_blend_2013_to_2026(rows)
     assert result.factor == pytest.approx(expected)
     assert "PARTIAL YEAR" in result.note
 
@@ -667,11 +667,30 @@ def test_historical_caveats_are_not_presented_as_current_null_findings():
             assert "populated nominal label takes precedence" in row["ESCALATION_NOTE"]
 
 
+def _held_ppi_blend_2013_to_2026(rows) -> float:
+    """Independent 50:50 endpoint-ratio blend from the held 2013 and 2026 prints.
+
+    The 2026 values are read from the held rows because the monthly reference
+    refresh re-prints the partial-year mean; the complete 2013 values are fixed.
+    """
+    held = {
+        (row.component.value, row.year): row.value
+        for row in rows
+        if row.component.value in ("index_ppi_machinery", "index_ppi_drilling")
+    }
+    assert held[("index_ppi_machinery", 2013)] == 263.7667
+    assert held[("index_ppi_drilling", 2013)] == 433.7167
+    return 0.5 * (
+        held[("index_ppi_machinery", 2026)] / 263.7667
+        + held[("index_ppi_drilling", 2026)] / 433.7167
+    )
+
+
 @pytest.mark.parametrize("year,ucci", [(2010, 207), (2013, 229)])
 def test_held_blackout_uses_2013_join_not_2020(year, ucci):
     rows = read_timeseries_csv(CURATED / "cost_component_timeseries.csv")
     result = CostEscalator(rows).factor(year)
-    expected = (229 / ucci) * 0.5 * (332.822 / 263.7667 + 396.3942 / 433.7167)
+    expected = (229 / ucci) * _held_ppi_blend_2013_to_2026(rows)
     assert result.factor == pytest.approx(expected)
     assert "2013:2026" in result.index_used
     assert "2010:2020" not in result.index_used

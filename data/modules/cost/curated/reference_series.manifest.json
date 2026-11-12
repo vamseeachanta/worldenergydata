@@ -1,0 +1,112 @@
+{
+  "reduction": "calendar-year arithmetic mean of monthly observations",
+  "retrieved_date": "2026-11-12",
+  "schema": "cost_reference_series_manifest.v1",
+  "series": [
+    {
+      "annual_rows": 29,
+      "component": "index_cpi",
+      "first_observation": "1947-01-01",
+      "last_observation": "2026-10-01",
+      "monthly_observations": 957,
+      "observations_sha256": "ea381042f9b41411e4db5308c1e2471eba6288d88ea5ba559c751c722305170f",
+      "publisher": "U.S. Bureau of Labor Statistics via FRED",
+      "series_id": "CPIAUCSL",
+      "source_url": "https://fred.stlouisfed.org/series/CPIAUCSL",
+      "title": "CPI for All Urban Consumers: All Items in U.S. City Average",
+      "unit": "index_1982_84_eq_100"
+    },
+    {
+      "annual_rows": 29,
+      "component": "index_ppi_drilling",
+      "first_observation": "1985-12-01",
+      "last_observation": "2026-09-01",
+      "monthly_observations": 490,
+      "observations_sha256": "661aaa1f1e750d441c0eb0efb20f1310a41cc3a448b538d7f5aeb4d4a8f565c5",
+      "publisher": "U.S. Bureau of Labor Statistics via FRED",
+      "series_id": "PCU213111213111",
+      "source_url": "https://fred.stlouisfed.org/series/PCU213111213111",
+      "title": "PPI by Industry: Drilling Oil and Gas Wells (NAICS 213111)",
+      "unit": "index_dec_1985_eq_100"
+    },
+    {
+      "annual_rows": 29,
+      "component": "index_ppi_support",
+      "first_observation": "1985-12-01",
+      "last_observation": "2026-09-01",
+      "monthly_observations": 490,
+      "observations_sha256": "8eab9a0436aa607bdf71535c1c2e2ab8fc00fff7002ec28aae232fdcae3b9bc4",
+      "publisher": "U.S. Bureau of Labor Statistics via FRED",
+      "series_id": "PCU213112213112",
+      "source_url": "https://fred.stlouisfed.org/series/PCU213112213112",
+      "title": "PPI by Industry: Support Activities for Oil and Gas Operations (NAICS 213112)",
+      "unit": "index_dec_1985_eq_100"
+    },
+    {
+      "annual_rows": 29,
+      "component": "index_ppi_machinery",
+      "first_observation": "1965-01-01",
+      "last_observation": "2026-09-01",
+      "monthly_observations": 741,
+      "observations_sha256": "916b6fc8e6919995f12797cc7f6feb8df4678550c090d55c7757f30844ebf8a2",
+      "publisher": "U.S. Bureau of Labor Statistics via FRED",
+      "series_id": "PCU333132333132",
+      "source_url": "https://fred.stlouisfed.org/series/PCU333132333132",
+      "title": "PPI by Industry: Oil and Gas Field Machinery and Equipment (NAICS 333132)",
+      "unit": "index_1965_eq_100"
+    },
+    {
+      "annual_rows": 29,
+      "component": "index_ppi_steel_mill",
+      "first_observation": "1939-01-01",
+      "last_observation": "2026-09-01",
+      "monthly_observations": 1053,
+      "observations_sha256": "82936418700d65410609f3e1f801e40897e8ef628f5e72658ab53c6e8e55008e",
+      "publisher": "U.S. Bureau of Labor Statistics via FRED",
+      "series_id": "WPU1017",
+      "source_url": "https://fred.stlouisfed.org/series/WPU1017",
+      "title": "PPI by Commodity: Metals and Metal Products: Steel Mill Products",
+      "unit": "index_1982_eq_100"
+    },
+    {
+      "annual_rows": 29,
+      "component": "index_ppi_steel_pipe",
+      "first_observation": "1982-06-01",
+      "last_observation": "2026-09-01",
+      "monthly_observations": 532,
+      "observations_sha256": "5ae29df198a92f4262a67089051fd1c46909e0c20e9ec4c6d6ae5df0dededb8e",
+      "publisher": "U.S. Bureau of Labor Statistics via FRED",
+      "series_id": "WPU101706",
+      "source_url": "https://fred.stlouisfed.org/series/WPU101706",
+      "title": "PPI by Commodity: Metals and Metal Products: Steel Pipe and Tube",
+      "unit": "index_jun_1982_eq_100"
+    },
+    {
+      "annual_rows": 29,
+      "component": "oil_price_brent",
+      "first_observation": "1987-05-01",
+      "last_observation": "2026-10-01",
+      "monthly_observations": 474,
+      "observations_sha256": "73e420e972a391db6d5dcfba3edb6251b7e5ffda33332ce704aefa664717d421",
+      "publisher": "U.S. EIA via FRED",
+      "series_id": "MCOILBRENTEU",
+      "source_url": "https://fred.stlouisfed.org/series/MCOILBRENTEU",
+      "title": "Crude Oil Prices: Brent — Europe",
+      "unit": "usd_per_bbl"
+    },
+    {
+      "annual_rows": 29,
+      "component": "oil_price_wti",
+      "first_observation": "1986-01-01",
+      "last_observation": "2026-10-01",
+      "monthly_observations": 490,
+      "observations_sha256": "a4a4106b75169d7ba41cf5b701ec0ad430f475a8d88509719bf887793321c8f7",
+      "publisher": "U.S. EIA via FRED",
+      "series_id": "MCOILWTICO",
+      "source_url": "https://fred.stlouisfed.org/series/MCOILWTICO",
+      "title": "Crude Oil Prices: West Texas Intermediate (WTI) — Cushing, Oklahoma",
+      "unit": "usd_per_bbl"
+    }
+  ],
+  "start_year": 1998
+}

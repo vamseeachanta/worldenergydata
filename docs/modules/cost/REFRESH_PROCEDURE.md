@@ -61,6 +61,18 @@ uv sync                                            # once
 # 1. Re-pull the reference/deflator series from FRED (network).
 uv run python -m worldenergydata.cost.timeseries.refresh
 
+# 1b. Rebuild the derived constant-dollar view from the refreshed indices.
+uv run python -m worldenergydata.cost.escalation \n    --output data/modules/cost/curated/sanctioned_projects_2026.csv
+
+# 1b'. The crosswalk manifest pins the derived view's digest. Re-pin it by the
+#      refresh steps in PROJECT_FIELD_CROSSWALK.md (build_manifest, then
+#      validate_repository); project labels do not change in an index refresh.
+uv run python scripts/cost/validate_project_field_crosswalk.py
+
+# 1c. Offline check (no network): exits 1 when the last pull is older than 45 days
+#     or the held rows no longer match the manifest.
+uv run python -m worldenergydata.cost.timeseries.refresh --check
+
 # 2. Rebuild the report + derived CSVs from the curated data (no network).
 uv run python scripts/cost/build_cost_basis_report.py
 
@@ -69,7 +81,8 @@ uv run pytest tests/unit/cost/ -v
 ```
 
 Step 1 rewrites **only** the reference-series rows (CPI, PPI, Brent, WTI) — the
-rows it owns and can fetch deterministically. It does **not** touch the
+rows it owns and can fetch deterministically (a row is owned when its
+`SOURCE_URL` is the FRED page of a pinned series). It does **not** touch the
 hand-curated rig/vessel/project rows, which are research outputs, not API pulls.
 That separation is deliberate: an automated refresh must never be able to silently
 overwrite a human-sourced, hand-cited figure.
@@ -103,8 +116,19 @@ not guessed at.
 | PPI: drilling oil & gas wells (NAICS 213111) | `PCU213111213111` | BLS |
 | PPI: support activities for O&G (NAICS 213112) | `PCU213112213112` | BLS |
 | PPI: oil & gas field machinery (NAICS 333132) | `PCU333132333132` | BLS |
+| PPI: steel mill products (commodity 1017) | `WPU1017` | BLS |
+| PPI: steel pipe and tube (commodity 101706) | `WPU101706` | BLS |
 | Brent | `MCOILBRENTEU` | EIA |
 | WTI | `MCOILWTICO` | EIA |
+
+The refresh validates before it writes. It stops, and leaves the curated file
+and manifest untouched, when a series returns nothing, has a gap in its years,
+holds a non-positive value, has lost a year that was held, has a newest
+observation more than 120 days old, or has a complete year that moved by more
+than 5 % (a rebase, not a revision). Smaller revisions to complete years are
+printed. `data/modules/cost/curated/reference_series.manifest.json` records the
+retrieval date, first and last monthly observation and an observation digest
+for each series.
 
 Monthly observations are reduced to a **calendar-year mean** (the right reduction
 for a cost basis: a project spending through a year pays close to the year's
