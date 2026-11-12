@@ -1,0 +1,192 @@
+schema_version: 1
+user_agent: "worldenergydata-hse-refresh/1 (+https://github.com/vamseeachanta/worldenergydata)"
+sources:
+  - id: bsee_incident_investigations
+    authority: "US Bureau of Safety and Environmental Enforcement (BSEE)"
+    description: "Incident investigation records (district and panel), tab/comma-delimited text in a zip"
+    licence: "US federal government work"
+    terms_url: "https://www.bsee.gov/"
+    kind: bulk_file
+    expect: zip
+    required: true
+    enabled: true
+    urls:
+      - "https://www.data.bsee.gov/Other/Files/IncInvRawData.zip"
+  - id: bsee_incs
+    authority: "US Bureau of Safety and Environmental Enforcement (BSEE)"
+    description: "Incidents of non-compliance (INC) raw data, delimited text in a zip"
+    licence: "US federal government work"
+    terms_url: "https://www.bsee.gov/"
+    kind: bulk_file
+    expect: zip
+    required: false
+    enabled: true
+    urls:
+      - "https://www.data.bsee.gov/Company/Files/INCSRawData.zip"
+  - id: bsee_panel_reports_listing
+    authority: "US Bureau of Safety and Environmental Enforcement (BSEE)"
+    description: "Listing page of panel investigation reports (links and titles only)"
+    licence: "US federal government work"
+    terms_url: "https://www.bsee.gov/"
+    kind: listing_page
+    expect: html
+    required: false
+    enabled: true
+    urls:
+      - "https://www.bsee.gov/what-we-do/incident-investigations/offshore-incident-investigations/panel-investigation-reports"
+  - id: bsee_safety_alerts_listing
+    authority: "US Bureau of Safety and Environmental Enforcement (BSEE)"
+    description: "Listing page of safety alerts (links and titles only)"
+    licence: "US federal government work"
+    terms_url: "https://www.bsee.gov/"
+    kind: listing_page
+    expect: html
+    required: false
+    enabled: true
+    urls:
+      - "https://www.bsee.gov/guidance-and-regulations/guidance/safety-alerts-program"
+  - id: phmsa_pipeline_incidents
+    authority: "US Pipeline and Hazardous Materials Safety Administration (PHMSA)"
+    description: "Pipeline incident flagged files; the site returned HTTP 403 to non-browser clients on 2026-11-12, so this is a manual browser download"
+    licence: "US federal government work"
+    terms_url: "https://www.phmsa.dot.gov/"
+    kind: manual
+    expect: zip
+    required: false
+    enabled: true
+    urls:
+      - "https://www.phmsa.dot.gov/data-and-statistics/pipeline/distribution-transmission-gathering-lng-and-liquid-accident-and-incident-data"
+    manual_drop_dir: "phmsa_pipeline_incidents/manual"
+  - id: bsee_district_reports_listing
+    authority: "US Bureau of Safety and Environmental Enforcement (BSEE)"
+    description: "Listing page of district investigation reports (links and titles only)"
+    licence: "US federal government work"
+    terms_url: "https://www.bsee.gov/"
+    kind: listing_page
+    expect: html
+    required: false
+    enabled: true
+    urls:
+      - "https://www.bsee.gov/what-we-do/incident-investigations/offshore-incident-investigations/district-investigation-reports"
+  - id: bsee_incident_statistics_listing
+    authority: "US Bureau of Safety and Environmental Enforcement (BSEE)"
+    description: "Offshore incident statistics page (annual counts and links to yearly workbooks)"
+    licence: "US federal government work"
+    terms_url: "https://www.bsee.gov/"
+    kind: listing_page
+    expect: html
+    required: false
+    enabled: true
+    urls:
+      - "https://www.bsee.gov/stats-facts/offshore-incident-statistics"
+  - id: uscg_nrc
+    authority: "US Coast Guard National Response Center"
+    description: "Initial spill and release reports, workbook for the current calendar year (change the year in the URL each January)"
+    licence: "US federal government work"
+    terms_url: "https://nrc.uscg.mil/"
+    kind: bulk_file
+    expect: xlsx
+    required: false
+    enabled: true
+    urls:
+      - "https://nrc.uscg.mil/FOIAFiles/CY26.xlsx"
+  - id: uk_maib_reports
+    authority: "UK Marine Accident Investigation Branch"
+    description: "List of MAIB investigation reports from the GOV.UK search API (titles, links, dates)"
+    licence: "Open Government Licence v3.0"
+    terms_url: "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+    kind: bulk_file
+    expect: json
+    required: false
+    enabled: true
+    urls:
+      - "https://www.gov.uk/api/search.json?filter_format=maib_report&count=1500&order=-public_timestamp&fields=title,link,public_timestamp,description"
+  - id: uk_hse_offshore_statistics
+    authority: "UK Health and Safety Executive"
+    description: "Offshore statistics page (links to the annual offshore statistics and regulatory activity report)"
+    licence: "Open Government Licence v3.0"
+    terms_url: "https://www.hse.gov.uk/help/copyright.htm"
+    kind: listing_page
+    expect: html
+    required: false
+    enabled: true
+    urls:
+      - "https://www.hse.gov.uk/offshore/statistics.htm"
+  - id: tsb_canada_marsis
+    authority: "Transportation Safety Board of Canada"
+    description: "Marine occurrence database (MARSIS) occurrence table"
+    licence: "Open Government Licence - Canada (per the open data portal; not confirmed on the source page)"
+    terms_url: "https://www.tsb.gc.ca/eng/stats/marine/data-6.html"
+    kind: bulk_file
+    expect: csv
+    required: false
+    enabled: true
+    urls:
+      - "https://www.tsb.gc.ca/sites/default/files/stats/MARSISdb_MDOTW_VW_OCCURRENCE_PUBLIC.csv"
+  - id: havtil_rnnp_listing
+    authority: "Havtil (Norwegian Ocean Industry Authority)"
+    description: "RNNP page (links to the annual risk-level reports)"
+    licence: "Reuse free of charge with credit to Havtil"
+    terms_url: "https://www.havtil.no/en/contact-us/loose-pages-contact-us/copyright/"
+    kind: listing_page
+    expect: html
+    required: false
+    enabled: true
+    urls:
+      - "https://www.havtil.no/en/explore-technical-subjects2/rnnp/"
+  - id: havtil_investigations_listing
+    authority: "Havtil (Norwegian Ocean Industry Authority)"
+    description: "Investigation report list (links and titles only)"
+    licence: "Reuse free of charge with credit to Havtil"
+    terms_url: "https://www.havtil.no/en/contact-us/loose-pages-contact-us/copyright/"
+    kind: listing_page
+    expect: html
+    required: false
+    enabled: true
+    urls:
+      - "https://www.havtil.no/en/supervision/investigation-reports/"
+  - id: emsa_emcip_listing
+    authority: "European Maritime Safety Agency"
+    description: "EMCIP page (links to the annual overview of marine casualties and incidents)"
+    licence: "Reproduction authorised with acknowledgement of the source"
+    terms_url: "https://www.emsa.europa.eu/disclaimer.html"
+    kind: listing_page
+    expect: html
+    required: false
+    enabled: true
+    urls:
+      - "https://www.emsa.europa.eu/emcip.html"
+  - id: csb_investigations_listing
+    authority: "US Chemical Safety and Hazard Investigation Board"
+    description: "Completed investigations list (links and titles only)"
+    licence: "US federal government work"
+    terms_url: "https://www.csb.gov/"
+    kind: listing_page
+    expect: html
+    required: false
+    enabled: true
+    urls:
+      - "https://www.csb.gov/investigations/completed-investigations/"
+  - id: imca_safety_flashes_listing
+    authority: "International Marine Contractors Association"
+    description: "Safety flashes list (links and titles only; documents are not downloaded)"
+    licence: "Copyright IMCA; shared freely with the industry"
+    terms_url: "https://www.imca-int.com/resources/safety/safety-flashes/"
+    kind: listing_page
+    expect: html
+    required: false
+    enabled: true
+    urls:
+      - "https://www.imca-int.com/resources/safety/safety-flashes/"
+  - id: uscg_misle
+    authority: "US Coast Guard"
+    description: "Marine casualty and pollution data for researchers; the site returned HTTP 403 to non-browser clients on 2026-11-12, so this is a manual browser download"
+    licence: "US federal government work"
+    terms_url: "https://www.dco.uscg.mil/"
+    kind: manual
+    expect: zip
+    required: false
+    enabled: true
+    urls:
+      - "https://www.dco.uscg.mil/Our-Organization/Assistant-Commandant-for-Prevention-Policy-CG-5P/Inspections-Compliance-CG-5PC-/Office-of-Investigations-Casualty-Analysis/Marine-Casualty-and-Pollution-Data-for-Researchers/"
+    manual_drop_dir: "uscg_misle/manual"

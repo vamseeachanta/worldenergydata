@@ -22,6 +22,14 @@ jobs:
     # Downloads BSEE incident/INC raw archives to data/modules/hse/raw/bsee;
     # keeps the grounded-analysis incident corpus (#486/#489) fresh.
 
+  - name: hse_sources_refresh
+    interval: monthly
+    time: "03:30"
+    enabled: true
+    output_dir: data/modules/hse/sources
+    # Monthly pull of every public HSE source in config/hse/monthly_sources.yml
+    # (raw files and manifests live on external storage, not in git).
+
   - name: sodir_refresh
     interval: daily
     time: "03:00"

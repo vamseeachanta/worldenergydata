@@ -1,0 +1,567 @@
+# HSE source inventory: every incident and safety data source we hold or should hold.
+# One entry per source. Facts were checked on the date in `checked`; a value of
+# "not confirmed" means the check could not be made, not that the answer is no.
+#
+# access:  public_bulk   machine-readable download, no login
+#          public_docs   public PDF or HTML only
+#          blocked       public, but the site refused non-browser clients on the check date
+#          login         free registration required
+#          paid          paywall, membership or internal-use-only terms
+# held:    yes | partial | links_only | no
+# refresh: monthly (in config/hse/monthly_sources.yml) | manual | none
+# decision: owner (needs an account, payment or a terms decision) | none
+# last_run: date of the last pull. 2026-11-12 is the trial run of the monthly runner into a
+#          temporary folder; the held copy on external storage keeps the date in held_note.
+schema_version: 1
+checked: "2026-11-12"
+sources:
+  # --- United States ---------------------------------------------------------
+  - id: bsee_incident_investigations
+    group: US offshore
+    authority: US Bureau of Safety and Environmental Enforcement (BSEE)
+    what: Incident investigation records, district and panel (date, area block, event type, status)
+    url: https://www.data.bsee.gov/Other/Files/IncInvRawData.zip
+    terms: US federal government data; site disclaimer says the data is from a working database (https://www.data.bsee.gov/Main/HtmlPage.aspx?page=Disclaimer)
+    format: zip of delimited text
+    access: public_bulk
+    held: "yes"
+    held_where: /mnt/ace/worldenergydata/data/modules/hse/raw/bsee/IncInvRawData (external storage)
+    held_records: 1987
+    held_latest_date: "2026-01-08"
+    held_note: Held copy dated 2026-02-16. The file read on 2026-11-12 has 2,032 records to 2026-10-24.
+    refresh: monthly
+    refresh_script: python -m worldenergydata.hse.monthly_refresh (also scheduler job hse_refresh)
+    last_run: "2026-11-12"
+    decision: none
+  - id: bsee_incs
+    group: US offshore
+    authority: US Bureau of Safety and Environmental Enforcement (BSEE)
+    what: Incidents of non-compliance (INC) by operator, inspections, shut-ins and warnings
+    url: https://www.data.bsee.gov/Company/Files/INCSRawData.zip
+    terms: US federal government data; same disclaimer as above
+    format: zip of delimited text
+    access: public_bulk
+    held: "yes"
+    held_where: /mnt/ace/worldenergydata/data/modules/hse/raw/bsee/INCSRawData (external storage)
+    held_records: 51872
+    held_latest_date: not confirmed
+    held_note: Record count is the operator-level file only. Held copy dated 2026-02-16.
+    refresh: monthly
+    refresh_script: python -m worldenergydata.hse.monthly_refresh (also scheduler job hse_refresh)
+    last_run: "2026-11-12"
+    decision: none
+  - id: bsee_incident_statistics
+    group: US offshore
+    authority: US Bureau of Safety and Environmental Enforcement (BSEE)
+    what: Annual offshore incident statistics (fatalities, injuries, fires, spills, loss of well control), yearly workbooks
+    url: https://www.bsee.gov/stats-facts/offshore-incident-statistics
+    terms: US federal government data; no explicit licence statement found
+    format: HTML tables and one XLSX per year
+    access: public_docs
+    held: partial
+    held_where: importer bsee_statistics_importer_url.py; no dated holding found on external storage
+    held_records: not confirmed
+    held_latest_date: not confirmed
+    held_note: The catalogue URL data.bsee.gov/Other/Files/IncidentStatisticsRawData.zip returned an HTML page, not a zip, on 2026-11-12.
+    refresh: monthly
+    refresh_script: listing page in monthly_sources.yml; yearly workbook parser not written
+    last_run: "2026-11-12"
+    decision: none
+  - id: bsee_investigation_reports
+    group: US offshore
+    authority: US Bureau of Safety and Environmental Enforcement (BSEE)
+    what: District and panel investigation reports (PDF, with stated cause and recommendations)
+    url: https://www.bsee.gov/what-we-do/incident-investigations/offshore-incident-investigations/district-investigation-reports
+    terms: US federal government documents; third-party content scope not verified (see source_registry.json)
+    format: HTML lists by year linking to PDF, 2014 to 2026; older reports on other pages
+    access: public_docs
+    held: links_only
+    held_where: data/modules/hse/offshore (curated links); four mooring cases in the equipment case register
+    held_records: 4
+    held_latest_date: "2023-06-19"
+    held_note: The MMS-era panel list returned HTTP 403 on 2026-11-12.
+    refresh: monthly
+    refresh_script: listing pages in monthly_sources.yml (links and titles only)
+    last_run: "2026-11-12"
+    decision: none
+  - id: bsee_safety_alerts
+    group: US offshore
+    authority: US Bureau of Safety and Environmental Enforcement (BSEE)
+    what: Safety alerts and bulletins (latest seen No. 526, 30 October 2026)
+    url: https://www.bsee.gov/guidance-and-regulations/guidance/safety-alerts-program
+    terms: US federal government documents
+    format: paginated HTML and PDF
+    access: public_docs
+    held: "no"
+    refresh: monthly
+    refresh_script: listing page in monthly_sources.yml (links and titles only)
+    last_run: "2026-11-12"
+    decision: none
+  - id: phmsa_pipeline_incidents
+    group: US pipelines
+    authority: US Pipeline and Hazardous Materials Safety Administration (PHMSA)
+    what: Pipeline incident flagged files (hazardous liquid, gas transmission and gathering, gas distribution, LNG) with coded cause
+    url: https://www.phmsa.dot.gov/data-and-statistics/pipeline/distribution-transmission-gathering-lng-and-liquid-accident-and-incident-data
+    terms: US federal government data; data.gov lists rights as public
+    format: zip of delimited text or XLSX
+    access: blocked
+    held: partial
+    held_where: data/modules/pipeline_safety/raw/kaggle_usdot_pipeline/database.csv (in git); a 2010-to-present hazardous liquid workbook on external storage dated 2026-02-08
+    held_records: 2795
+    held_latest_date: "2017-01-09"
+    held_note: Count and date are for the curated export in git (hazardous liquid, 2010 to 2017). The site and its robots.txt returned HTTP 403 to non-browser clients on 2026-11-12.
+    refresh: manual
+    refresh_script: browser download into the manual folder; the monthly runner records the file
+    last_run: "2026-05-05"
+    decision: none
+  - id: uscg_misle
+    group: US marine
+    authority: US Coast Guard
+    what: Marine Casualty and Pollution Data for Researchers (MISLE extract), reported as covering 2002 to 2015
+    url: https://www.dco.uscg.mil/Our-Organization/Assistant-Commandant-for-Prevention-Policy-CG-5P/Inspections-Compliance-CG-5PC-/Office-of-Investigations-Casualty-Analysis/Marine-Casualty-and-Pollution-Data-for-Researchers/
+    terms: US federal government data; licence not stated
+    format: zip of delimited text
+    access: blocked
+    held: "no"
+    held_note: The site returned HTTP 403 on 2026-11-12. Coverage is from the data.gov catalogue and is not confirmed. Open issue 153.
+    refresh: manual
+    refresh_script: scripts/refresh_uscg_misle.sh and acquirers/uscg_misle_acquirer.py exist; browser download needed
+    last_run: none
+    decision: none
+  - id: uscg_cgmix
+    group: US marine
+    authority: US Coast Guard
+    what: CGMIX incident investigation report search
+    url: https://cgmix.uscg.mil/IIR/IIRSearch.aspx
+    terms: not confirmed
+    format: HTML search form, no bulk file
+    access: public_docs
+    held: partial
+    held_where: marine_safety database on external storage
+    held_records: 15
+    held_latest_date: "2024-10-12"
+    held_note: A 2024 test pull only.
+    refresh: none
+    refresh_script: none (terms on automated queries not confirmed)
+    last_run: not confirmed
+    decision: none
+  - id: uscg_boating_accidents
+    group: US marine
+    authority: US Coast Guard
+    what: Recreational boating accident reports (BARD), 1995 to 2012
+    url: https://www.uscgboating.org/statistics/accident_statistics.php
+    terms: US federal government data
+    format: CSV
+    access: public_bulk
+    held: "yes"
+    held_where: marine_safety database on external storage
+    held_records: 63340
+    held_latest_date: "2012-12-31"
+    held_note: Static historical set; recreational craft, not offshore equipment. The source URL was not re-checked on 2026-11-12.
+    refresh: none
+    refresh_script: scripts/marine_safety/import_boating_data.py (import only)
+    last_run: "2025-10-05"
+    decision: none
+  - id: noaa_incident_news
+    group: US marine
+    authority: US NOAA Office of Response and Restoration
+    what: Oil and chemical spill incident records
+    url: https://incidentnews.noaa.gov/
+    terms: US federal government data
+    format: CSV
+    access: public_bulk
+    held: "yes"
+    held_where: marine_safety database on external storage
+    held_records: 4797
+    held_latest_date: "2025-09-29"
+    held_note: The source URL was not re-checked on 2026-11-12.
+    refresh: none
+    refresh_script: scripts/marine_safety/import_noaa_data.py (import only)
+    last_run: "2025-10-05"
+    decision: none
+  - id: ntsb_marine
+    group: US marine
+    authority: US National Transportation Safety Board
+    what: Marine accident investigations (CAROL query, reports and briefs), marine data from 2010
+    url: https://www.ntsb.gov/Pages/carol.aspx
+    terms: US federal government data; no documented public API
+    format: per-query CSV or JSON; PDF reports
+    access: login
+    held: "no"
+    held_note: On 2026-11-12 the CAROL addresses redirected to my.ntsb.gov. Whether anonymous download still works needs a browser check.
+    refresh: manual
+    refresh_script: scripts/refresh_ntsb_marine.sh and acquirers/ntsb_carol_acquirer.py exist; not run against the new address
+    last_run: none
+    decision: owner
+  - id: uscg_nrc
+    group: US marine
+    authority: US Coast Guard National Response Center
+    what: Initial spill and release reports, one workbook per year from 1990
+    url: https://nrc.uscg.mil/
+    terms: US federal government data; the page says the data is initial and not validated
+    format: XLSX per year (the 2026 file was 11 MB, modified 2026-11-09)
+    access: blocked
+    held: "no"
+    held_note: The file is public, but the site's robots.txt request redirected to a non-HTTPS address on 2026-11-12, so the monthly runner did not fetch it.
+    refresh: manual
+    refresh_script: listed in monthly_sources.yml, which records the status each month; browser download until the robots address is fixed
+    last_run: "2026-11-12"
+    decision: none
+  - id: csb
+    group: US process safety
+    authority: US Chemical Safety and Hazard Investigation Board
+    what: Completed investigation reports; accidental release reporting-rule data
+    url: https://www.csb.gov/investigations/completed-investigations/
+    terms: US federal government documents; licence not stated; registry policy is links and metadata only
+    format: HTML, PDF, one XLSX
+    access: public_docs
+    held: "no"
+    refresh: monthly
+    refresh_script: listing page in monthly_sources.yml (links and titles only)
+    last_run: "2026-11-12"
+    decision: none
+  - id: osha
+    group: US occupational
+    authority: US Occupational Safety and Health Administration
+    what: Inspection, violation and accident records (all industries)
+    url: https://enforcedata.dol.gov/views/data_catalogs.php
+    terms: US federal government data
+    format: zip of CSV
+    access: public_bulk
+    held: "yes"
+    held_where: /mnt/ace/worldenergydata/data/modules/hse/raw/osha (external storage, 6.6 GB)
+    held_records: not confirmed
+    held_latest_date: not confirmed
+    held_note: Held copy dated 2026-02-16. Mostly onshore; not routed to offshore equipment classes.
+    refresh: manual
+    refresh_script: scripts/refresh_osha_data.sh
+    last_run: "2026-02-16"
+    decision: none
+  - id: epa_tri
+    group: US environment
+    authority: US Environmental Protection Agency
+    what: Toxics Release Inventory
+    url: https://www.epa.gov/toxics-release-inventory-tri-program
+    terms: US federal government data
+    format: CSV by API
+    access: public_bulk
+    held: "yes"
+    held_where: /mnt/ace/worldenergydata/data/modules/hse/raw/epa_tri (external storage, 64 MB)
+    held_records: 51487
+    held_latest_date: not confirmed
+    held_note: Record count is the toxic_releases table of the HSE database. Held copy dated 2026-02-10.
+    refresh: manual
+    refresh_script: scripts/refresh_epa_tri.sh
+    last_run: "2026-02-10"
+    decision: none
+  # --- United Kingdom ----------------------------------------------------------
+  - id: uk_hse_offshore_statistics
+    group: UK
+    authority: UK Health and Safety Executive
+    what: Offshore statistics and regulatory activity report (injuries, dangerous occurrences, hydrocarbon releases; RIDDOR offshore tables are inside it)
+    url: https://www.hse.gov.uk/offshore/statistics.htm
+    terms: Open Government Licence v3.0 (https://www.hse.gov.uk/help/copyright.htm); robots.txt disallows spreadsheet paths
+    format: annual PDF
+    access: public_docs
+    held: "no"
+    held_note: Recorded as not acquired in the refresh contract. The hydrocarbon release spreadsheet exists only as a National Archives copy.
+    refresh: monthly
+    refresh_script: listing page and annual PDF in monthly_sources.yml; table extraction not written
+    last_run: "2026-11-12"
+    decision: none
+  - id: uk_hcr
+    group: UK
+    authority: Offshore Energies UK (current); UK HSE (archived)
+    what: Hydrocarbon release statistics
+    url: https://oeuk.org.uk/industry-support/hse/hydrocarbon-release/
+    terms: not confirmed for the current publisher
+    format: quarterly PDF; archived XLSX
+    access: public_docs
+    held: "no"
+    refresh: none
+    refresh_script: none
+    last_run: none
+    decision: owner
+  - id: uk_maib
+    group: UK
+    authority: UK Marine Accident Investigation Branch
+    what: Marine accident investigation reports (1,106 listed; latest 2026-10-15) and annual reports
+    url: https://www.gov.uk/maib-reports
+    terms: Open Government Licence v3.0
+    format: JSON search API and PDF
+    access: public_bulk
+    held: "no"
+    held_note: An importer exists (importers/maib_importer.py); the held database has no MAIB rows.
+    refresh: monthly
+    refresh_script: python -m worldenergydata.hse.monthly_refresh (report list as JSON)
+    last_run: "2026-11-12"
+    decision: none
+  - id: opred_pon1
+    group: UK
+    authority: UK Offshore Petroleum Regulator for Environment and Decommissioning
+    what: PON1 oil and chemical release notifications
+    url: https://itportal.energysecurity.gov.uk/irs/publications/pon1/
+    terms: Open Government Licence v3.0 (source_registry.json)
+    format: HTML and spreadsheet
+    access: public_docs
+    held: links_only
+    held_where: data/modules/hse/offshore (pilot)
+    refresh: none
+    refresh_script: offline loader pilot only (issue 1685)
+    last_run: none
+    decision: none
+  - id: step_change_in_safety
+    group: UK
+    authority: Step Change in Safety
+    what: Safety alerts and learnings from UK offshore operators
+    url: https://www.stepchangeinsafety.com/alerts-learnings
+    terms: reuse terms not stated
+    format: HTML
+    access: public_docs
+    held: "no"
+    refresh: none
+    refresh_script: none
+    last_run: none
+    decision: owner
+  # --- Norway, Europe ------------------------------------------------------------
+  - id: havtil_rnnp
+    group: Norway
+    authority: Havtil (Norwegian Ocean Industry Authority, formerly PSA)
+    what: RNNP annual risk-level reports; investigation reports
+    url: https://www.havtil.no/en/explore-technical-subjects2/rnnp/
+    terms: reuse free of charge with credit to Havtil (https://www.havtil.no/en/contact-us/loose-pages-contact-us/copyright/)
+    format: annual PDF; HTML list of investigation reports
+    access: public_docs
+    held: "no"
+    refresh: monthly
+    refresh_script: listing pages in monthly_sources.yml (links and titles only)
+    last_run: "2026-11-12"
+    decision: none
+  - id: emsa_emcip
+    group: Europe
+    authority: European Maritime Safety Agency
+    what: EMCIP annual overview of marine casualties and incidents; public portal
+    url: https://www.emsa.europa.eu/emcip.html
+    terms: reproduction authorised with acknowledgement of the source (https://www.emsa.europa.eu/disclaimer.html)
+    format: annual PDF; portal is a web application
+    access: public_docs
+    held: "no"
+    held_note: An importer exists (importers/emsa_importer.py); no data held.
+    refresh: monthly
+    refresh_script: listing page in monthly_sources.yml (links and titles only)
+    last_run: "2026-11-12"
+    decision: none
+  - id: eu_offshore_safety_reports
+    group: Europe
+    authority: European Commission
+    what: Annual reports on the safety of offshore oil and gas operations (2016 to 2024)
+    url: https://energy.ec.europa.eu/topics/energy-security/safety-offshore-oil-and-gas-operations_en
+    terms: European Commission reuse policy (not checked)
+    format: PDF
+    access: public_docs
+    held: "no"
+    refresh: none
+    refresh_script: none
+    last_run: none
+    decision: none
+  - id: dmaib
+    group: Europe
+    authority: Danish Maritime Accident Investigation Board
+    what: Marine accident investigation reports
+    url: https://dmaib.com/reports/
+    terms: not confirmed
+    format: PDF
+    access: public_docs
+    held: "no"
+    refresh: none
+    refresh_script: none
+    last_run: none
+    decision: none
+  - id: helcom
+    group: Europe
+    authority: Baltic Marine Environment Protection Commission (HELCOM)
+    what: Baltic Sea shipping accidents, data to 2023
+    url: https://helcom.fi/baltic-sea-trends/maritime/accidents/
+    terms: licence not stated; robots.txt blocks named AI crawlers
+    format: map service dataset
+    access: public_docs
+    held: "no"
+    refresh: none
+    refresh_script: none
+    last_run: none
+    decision: owner
+  # --- Australia, Canada, Brazil -------------------------------------------------
+  - id: nopsema
+    group: Australia
+    authority: NOPSEMA
+    what: Industry performance reports and data reports
+    url: https://www.nopsema.gov.au/about/planning-and-reporting/industry-and-nopsema-performance-reports
+    terms: not confirmed (the site timed out on 2026-11-12)
+    format: annual PDF; spreadsheets not confirmed
+    access: public_docs
+    held: "no"
+    refresh: none
+    refresh_script: none until the site and its terms are checked from a browser
+    last_run: none
+    decision: none
+  - id: atsb_marine
+    group: Australia
+    authority: Australian Transport Safety Bureau
+    what: Marine occurrence investigations
+    url: https://www.atsb.gov.au/
+    terms: not confirmed (the site timed out on 2026-11-12)
+    format: not confirmed
+    access: public_docs
+    held: "no"
+    held_note: An importer exists (importers/atsb_importer.py); no data held.
+    refresh: none
+    refresh_script: none
+    last_run: none
+    decision: none
+  - id: tsb_canada_marsis
+    group: Canada
+    authority: Transportation Safety Board of Canada
+    what: Marine occurrence database (MARSIS) from 1995, with vessel, injury and equipment tables
+    url: https://www.tsb.gc.ca/eng/stats/marine/data-6.html
+    terms: Open Government Licence - Canada per a portal mirror; not confirmed on the source page
+    format: six CSV files (occurrence table 97 MB, modified 2026-10-21)
+    access: blocked
+    held: "no"
+    held_note: An importer exists (importers/tsb_importer.py); no data held. The site refused the runner's declared client on 2026-11-12.
+    refresh: manual
+    refresh_script: listed in monthly_sources.yml, which records the status each month; browser download
+    last_run: "2026-11-12"
+    decision: none
+  - id: cnloer
+    group: Canada
+    authority: Canada-Newfoundland and Labrador Offshore Energy Regulator
+    what: Offshore incident bulletins, 2010 to 2026
+    url: https://www.cnlopb.ca/incidents/
+    terms: site disclaimer not read
+    format: HTML
+    access: public_docs
+    held: "no"
+    refresh: none
+    refresh_script: none
+    last_run: none
+    decision: none
+  - id: brazil_anp_incidents
+    group: Brazil
+    authority: Brazil ANP
+    what: Operational safety incident open data (incidents, classification, injuries, substances, type)
+    url: https://www.gov.br/anp/pt-br/centrais-de-conteudo/dados-abertos/incidentes-seguranca-operacional
+    terms: Creative Commons Attribution-NoDerivatives 3.0 per the page footer
+    format: five CSV files
+    access: public_bulk
+    held: "no"
+    held_note: A HEAD request to the CSV returned HTTP 403 on 2026-11-12; GET was not tested. The no-derivatives term limits publishing a re-coded table.
+    refresh: none
+    refresh_script: none until the licence question is settled
+    last_run: none
+    decision: owner
+  # --- International and industry bodies -----------------------------------------
+  - id: imo_gisis
+    group: International
+    authority: International Maritime Organization
+    what: GISIS Marine Casualties and Incidents module
+    url: https://gisis.imo.org/Public/MCI/Default.aspx
+    terms: free public account required; terms on automated access not confirmed
+    format: web application
+    access: login
+    held: "no"
+    held_note: Download scripts and page captures exist (scripts/marine_safety/download_imo_*.py, data/modules/marine_safety/raw/imo_gisis); the held database has no IMO rows.
+    refresh: none
+    refresh_script: none without an account and a reading of the terms
+    last_run: none
+    decision: owner
+  - id: iogp
+    group: Industry body
+    authority: International Association of Oil and Gas Producers
+    what: Safety performance indicators and fatal incident data
+    url: https://data.iogp.org/
+    terms: member and non-member areas behind sign-in; what is public is not confirmed
+    format: web application; report PDFs from the bookstore
+    access: login
+    held: "no"
+    refresh: none
+    refresh_script: none
+    last_run: none
+    decision: owner
+  - id: iadc_isp
+    group: Industry body
+    authority: International Association of Drilling Contractors
+    what: Incident Statistics Program annual summaries, 2014 to 2025
+    url: https://iadc.org/health-safety-environment/incident-statistics-program/
+    terms: all rights reserved; charts may be reproduced for internal company reports and not modified
+    format: PDF behind an acceptance page
+    access: paid
+    held: "no"
+    refresh: none
+    refresh_script: none
+    last_run: none
+    decision: owner
+  - id: imca_safety_flashes
+    group: Industry body
+    authority: International Marine Contractors Association
+    what: Safety flashes (latest seen SF 19/26, 5 November 2026)
+    url: https://www.imca-int.com/resources/safety/safety-flashes/
+    terms: copyright IMCA; shared freely with the industry
+    format: HTML and PDF
+    access: public_docs
+    held: "no"
+    refresh: monthly
+    refresh_script: listing page in monthly_sources.yml (links and titles only)
+    last_run: "2026-11-12"
+    decision: none
+  - id: itopf
+    group: Industry body
+    authority: ITOPF
+    what: Oil tanker spill statistics, annual
+    url: https://www.itopf.org/knowledge-resources/data-statistics/oil-tanker-spill-statistics-2025/
+    terms: all rights reserved; no direct database access
+    format: PDF
+    access: public_docs
+    held: "no"
+    refresh: none
+    refresh_script: none
+    last_run: none
+    decision: none
+  - id: oreda
+    group: Reliability data
+    authority: OREDA
+    what: Offshore and onshore reliability data (equipment failure rates and modes)
+    url: https://oreda.com/
+    terms: paid access
+    format: web application
+    access: paid
+    held: "no"
+    refresh: none
+    refresh_script: none
+    last_run: none
+    decision: owner
+  - id: dnv_woad
+    group: Reliability data
+    authority: DNV
+    what: World Offshore Accident Database
+    url: https://www.dnv.com/
+    terms: paid access (not confirmed on 2026-11-12; the site returned HTTP 403)
+    format: database
+    access: paid
+    held: "no"
+    refresh: none
+    refresh_script: none
+    last_run: none
+    decision: owner
+  - id: sintef_blowout
+    group: Reliability data
+    authority: SINTEF
+    what: Offshore Blowout Database
+    url: https://www.sintef.no/
+    terms: member access (not confirmed on 2026-11-12)
+    format: database
+    access: paid
+    held: "no"
+    refresh: none
+    refresh_script: none
+    last_run: none
+    decision: owner
