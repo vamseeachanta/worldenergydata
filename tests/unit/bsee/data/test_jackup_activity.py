@@ -240,6 +240,35 @@ def test_deep_8831_ft_jackup_is_retained_flagged_and_cross_checked():
     assert counts["deep_water_records"] == 1
 
 
+@pytest.mark.parametrize("depth", ["8831", "8831.0", "8.831e3", " 8831 "])
+def test_source_depth_audit_compares_numeric_values(depth):
+    _, counts = pipeline().derive_table(
+        [activity(WATER_DEPTH=depth)], [borehole()], [rig()], [], []
+    )
+    assert len(counts["source_8831_ft_record_audit"]) == 1
+
+
+def test_data_card_uses_current_depth_audit():
+    from pathlib import Path
+
+    manifest = json.loads(
+        Path("data/modules/bsee/jackup_liftboat_activity/manifest.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    manifest["counts"]["source_8831_ft_record_audit"] = [
+        {"rig_name": "PUBLIC RIG <A>", "disposition": "retained_flagged"},
+        {"rig_name": "PUBLIC RIG <A>", "disposition": "other_rig_type"},
+    ]
+    card = pipeline().data_card(manifest)
+    assert "2 source WAR records at 8,831 ft" in card
+    assert "PUBLIC RIG &lt;A&gt;" in card
+    assert "retained_flagged: 1" in card
+    assert "other_rig_type: 1" in card
+    manifest["counts"]["source_8831_ft_record_audit"] = []
+    assert "0 source WAR records at 8,831 ft" in pipeline().data_card(manifest)
+
+
 @pytest.mark.parametrize(
     "depth,flag",
     [("500", "false"), ("501", "true"), ("", "unknown"), ("-1", "unknown")],

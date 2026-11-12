@@ -2,6 +2,7 @@
 
 import copy
 import csv
+import gzip
 import hashlib
 import io
 import json
@@ -401,13 +402,10 @@ def test_retained_public_quality_accounting_and_provenance():
     qa = json.loads((directory / "qa.json").read_text(encoding="utf-8"))
     quality = json.loads((directory / "data_quality.json").read_text(encoding="utf-8"))
     manifest = json.loads((directory / "manifest.json").read_text(encoding="utf-8"))
-    workflow = Path(
-        "packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/drilling_refresh.py"
-    )
-    assert qa["workflow_sha256"] == refresh._workflow_digest(workflow), (
-        "Rebuild with python -m worldenergydata.bsee.analysis.drilling_refresh "
-        "config/analysis/bsee/drilling_refresh.json using new data and output directories"
-    )
+    # This historical receipt belongs to the archived implementation, not later fixes.
+    workflow = gzip.decompress((directory / "workflow_source.py.gz").read_bytes())
+    assert b"\r" not in workflow
+    assert qa["workflow_sha256"] == hashlib.sha256(workflow).hexdigest()
     assert qa["sources"] == manifest["files"]
     assert qa["data_quality"] == quality
     assert quality["synthetic"] is False
@@ -952,7 +950,8 @@ def test_source_stage_failures_always_leave_a_receipt(setup_run, failure):
                 setup_run, "war", lambda rows: rows[0].update(EXTRA="x" * 129)
             )
             csv.field_size_limit(128)
-        with pytest.raises(QualityError, match="source evaluation"):
+        message = "configuration date" if failure == "date_bound" else "source evaluation"
+        with pytest.raises(QualityError, match=message):
             analyse(setup_run)
     finally:
         csv.field_size_limit(limit)
