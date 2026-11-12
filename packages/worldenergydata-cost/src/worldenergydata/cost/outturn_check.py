@@ -19,7 +19,7 @@ import sys
 from collections.abc import Sequence
 from pathlib import Path
 
-from worldenergydata.cost.escalation import CostEscalator
+from worldenergydata.cost.escalation import CostEscalator, _json
 from worldenergydata.cost.timeseries.dataset import read_timeseries_csv
 
 __all__ = ["COLUMNS", "FINAL_KINDS", "build_outturn_checks", "main"]
@@ -43,8 +43,11 @@ COLUMNS = (
     "INDEX_CHANGE",
     "FINAL_OVER_ESCALATED_SANCTION",
     "SANCTION_SOURCE_URL",
+    "SANCTION_ACCESSED_DATE",
     "FINAL_SOURCE_URL",
+    "FINAL_ACCESSED_DATE",
     "ESCALATION_NOTE",
+    "INDEX_TRACE",
 )
 
 
@@ -53,6 +56,21 @@ def _year(statement_date: str) -> int:
     if not 1970 <= year <= 2040:
         raise ValueError(f"statement year out of range: {statement_date}")
     return year
+
+
+def _date_parts(statement_date: str) -> tuple[int, ...]:
+    """``YYYY``, ``YYYY-MM`` or ``YYYY-MM-DD`` as integers, for ordering."""
+    parts = tuple(int(part) for part in statement_date.strip().split("-"))
+    if not 1 <= len(parts) <= 3:
+        raise ValueError(f"unsupported statement date: {statement_date}")
+    return parts
+
+
+def _precedes(later: str, earlier: str) -> bool:
+    """True when ``later`` is before ``earlier`` at their shared precision."""
+    a, b = _date_parts(later), _date_parts(earlier)
+    shared = min(len(a), len(b))
+    return a[:shared] < b[:shared]
 
 
 def _amount(row: dict[str, str]) -> float:
@@ -93,7 +111,7 @@ def build_outturn_checks(trails: Path, indices: Path) -> list[dict[str, str]]:
             out.append(_skip(project, "no final outturn or final forecast held"))
             continue
         sanction = sanctions[0]
-        final = max(finals, key=lambda row: row["STATEMENT_DATE"])
+        final = max(finals, key=lambda row: _date_parts(row["STATEMENT_DATE"]))
         if sanction["CURRENCY"] != "USD" or final["CURRENCY"] != "USD":
             out.append(
                 _skip(
@@ -103,7 +121,7 @@ def build_outturn_checks(trails: Path, indices: Path) -> list[dict[str, str]]:
             continue
         base = _year(sanction["STATEMENT_DATE"])
         target = _year(final["STATEMENT_DATE"])
-        if target < base:
+        if _precedes(final["STATEMENT_DATE"], sanction["STATEMENT_DATE"]):
             out.append(
                 _skip(project, "final statement precedes the sanction statement")
             )
@@ -132,8 +150,11 @@ def build_outturn_checks(trails: Path, indices: Path) -> list[dict[str, str]]:
                 "INDEX_CHANGE": repr(factor.factor - 1.0),
                 "FINAL_OVER_ESCALATED_SANCTION": repr(stated / escalated - 1.0),
                 "SANCTION_SOURCE_URL": sanction["SOURCE_URL"],
+                "SANCTION_ACCESSED_DATE": sanction["ACCESSED_DATE"],
                 "FINAL_SOURCE_URL": final["SOURCE_URL"],
+                "FINAL_ACCESSED_DATE": final["ACCESSED_DATE"],
                 "ESCALATION_NOTE": factor.note,
+                "INDEX_TRACE": _json(list(factor.trace)),
             }
         )
     return out
@@ -149,9 +170,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     )
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args(argv)
-    if args.output.resolve() in (args.trails.resolve(), args.indices.resolve()):
-        print("outturn_check: output must not overwrite an input", file=sys.stderr)
-        return 2
+    for source in (args.trails, args.indices):
+        if args.output.resolve() == source.resolve() or (
+            args.output.exists() and args.output.samefile(source)
+        ):
+            print("outturn_check: output must not overwrite an input", file=sys.stderr)
+            return 2
     rows = build_outturn_checks(args.trails, args.indices)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     with args.output.open("w", encoding="utf-8", newline="") as handle:

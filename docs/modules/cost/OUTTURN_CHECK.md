@@ -24,8 +24,14 @@ python -m worldenergydata.cost.outturn_check --output reports/cost/sanction_vs_o
 
 A project is evaluated when the trail holds exactly one `sanction_estimate` and
 at least one `final_outturn` or `final_forecast`, both in USD, and the final
-statement does not precede the sanction statement. The latest final statement
-is used. The statement year is the first four characters of `STATEMENT_DATE`.
+statement does not precede the sanction statement. Dates are compared at the
+precision both statements give (year, month or day), so a final statement dated
+earlier in the sanction year is not evaluated. The latest final statement is
+used. The escalation year is the year of each `STATEMENT_DATE`.
+
+Each evaluated row carries both statement URLs with their access dates, and
+`INDEX_TRACE`: the index values used, with each value's source and retrieval
+date.
 
 For sanction amount `S` in year `a` and final amount `F` in year `b`:
 

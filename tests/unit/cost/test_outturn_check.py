@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import csv
+import json
+import os
 from pathlib import Path
 
 import pytest
@@ -136,26 +138,67 @@ def test_cli_writes_table_and_protects_inputs(tmp_path: Path, capsys) -> None:
 
 
 def test_published_table_matches_held_inputs() -> None:
-    """Statuses and statement figures are stable; index columns move on refresh."""
-    stable = (
-        "PROJECT",
-        "STATUS",
-        "REASON",
-        "SANCTION_YEAR",
-        "SANCTION_USD_MM",
-        "FINAL_YEAR",
-        "FINAL_KIND",
-        "FINAL_USD_MM",
-        "INDEX_USED",
-    )
+    """Every column, derived arithmetic included, equals a rebuild from held inputs."""
     with Path("reports/cost/sanction_vs_outturn.csv").open(
         encoding="utf-8", newline=""
     ) as handle:
-        published = [
-            {key: row[key] for key in stable} for row in csv.DictReader(handle)
-        ]
-    rebuilt = [
-        {key: row[key] for key in stable}
+        reader = csv.DictReader(handle)
+        assert tuple(reader.fieldnames or ()) == COLUMNS
+        published = list(reader)
+    assert published == build_outturn_checks(TRAILS, INDICES)
+
+
+def test_reversed_dates_within_one_year_are_not_evaluated(tmp_path: Path) -> None:
+    trails = _trail(
+        tmp_path,
+        _row("A", "2016-12", "100", "USD", "sanction_estimate"),
+        _row("A", "2016-01", "150", "USD", "final_outturn"),
+        _row("B", "2016-12", "100", "USD", "sanction_estimate"),
+        _row("B", "2016", "150", "USD", "final_outturn"),
+        _row("C", "2016-03-20", "100", "USD", "sanction_estimate"),
+        _row("C", "2016-03-05", "150", "USD", "final_outturn"),
+        _row("D", "2012", "100", "USD", "sanction_estimate"),
+        _row("D", "2016-09", "120", "USD", "final_forecast"),
+        _row("D", "2016-10", "150", "USD", "final_outturn"),
+    )
+    rows = {row["PROJECT"]: row for row in build_outturn_checks(trails, INDICES)}
+    assert "precedes" in rows["A"]["REASON"]
+    assert "precedes" in rows["C"]["REASON"]
+    assert rows["B"]["STATUS"] == "EVALUATED"  # year-only final: same year allowed
+    assert float(rows["B"]["INDEX_FACTOR"]) == pytest.approx(1.0)
+    assert rows["D"]["FINAL_USD_MM"] == "150.0"  # latest by date, not by text
+
+
+def test_evaluated_rows_carry_retrieval_dates_and_index_sources() -> None:
+    evaluated = [
+        row
         for row in build_outturn_checks(TRAILS, INDICES)
+        if row["STATUS"] == "EVALUATED"
     ]
-    assert published == rebuilt
+    assert evaluated
+    for row in evaluated:
+        assert row["SANCTION_ACCESSED_DATE"] and row["FINAL_ACCESSED_DATE"]
+        trace = json.loads(row["INDEX_TRACE"])
+        assert trace
+        for step in trace:
+            for anchor in step["anchors"]:
+                for source in anchor["sources"]:
+                    assert source["source_url"].startswith("https://")
+                    assert source["accessed_date"]
+
+
+def test_cli_refuses_output_hardlinked_to_an_input(tmp_path: Path) -> None:
+    trails = tmp_path / "trails.csv"
+    indices = tmp_path / "indices.csv"
+    trails.write_bytes(TRAILS.read_bytes())
+    indices.write_bytes(INDICES.read_bytes())
+    for source in (trails, indices):
+        link = tmp_path / f"link-{source.name}"
+        try:
+            os.link(source, link)
+        except OSError:
+            pytest.skip("hard links are not available on this file system")
+        before = source.read_bytes()
+        args = ["--trails", str(trails), "--indices", str(indices)]
+        assert main([*args, "--output", str(link)]) == 2
+        assert source.read_bytes() == before
