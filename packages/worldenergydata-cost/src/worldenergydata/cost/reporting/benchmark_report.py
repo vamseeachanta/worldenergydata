@@ -7,7 +7,7 @@ from hashlib import sha256
 from html import escape
 from math import isfinite
 from pathlib import Path
-from statistics import median, quantiles
+from statistics import quantiles
 from string import Template
 from urllib.parse import urlsplit
 
@@ -102,12 +102,27 @@ def _group_cost_points(cost_points):
 _COHORT_FIELDS = ("region", "water_depth_band", "cost_type", "activity_type")
 
 
+def percentile_summary(values):
+    """Return P10/P50/P90 by inclusive linear interpolation over observations.
+
+    Each observation has equal weight. A singleton has three equal percentiles;
+    an empty or nonpositive/nonfinite sample has no cost summary.
+    """
+    values = sorted(values)
+    if not values or any(not isfinite(v) or v <= 0 for v in values):
+        raise ValueError("Cost percentiles require finite positive observations")
+    if len(values) == 1:
+        return (values[0],) * 3
+    deciles = quantiles(values, n=10, method="inclusive")
+    return deciles[0], deciles[4], deciles[8]
+
+
 def _cohort_summary(key, observations):
     values = sorted(amount for _, amount, _ in observations)
     cohort = dict(zip(_COHORT_FIELDS, key))
     cohort.update(
         count=len(values),
-        median_usd_mm=median(values),
+        median_usd_mm=percentile_summary(values)[1],
         year_min=min(year for year, _, _ in observations),
         year_max=max(year for year, _, _ in observations),
         outlier_status="NOT_EVALUATED",
