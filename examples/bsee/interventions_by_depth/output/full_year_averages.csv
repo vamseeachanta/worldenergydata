@@ -1,11 +1,11 @@
 band,family,mean_annual_permits,mean_annual_rate
-100 to 500 m,abandonment,264.523810,15.682298
-100 to 500 m,well work,150.095238,8.725853
-1500 m and deeper,abandonment,80.476190,18.800910
-1500 m and deeper,well work,145.190476,33.430983
-500 to 1500 m,abandonment,157.000000,17.517158
-500 to 1500 m,well work,213.142857,24.282211
-no depth,abandonment,0.000000,
-no depth,well work,0.000000,
-under 100 m,abandonment,2049.571429,14.902872
-under 100 m,well work,980.095238,6.829704
+100 to 500 m,abandonment,264.523810,22.942552
+100 to 500 m,well work,150.095238,12.341772
+1500 m and deeper,abandonment,80.476190,24.913926
+1500 m and deeper,well work,145.190476,44.896049
+500 to 1500 m,abandonment,157.000000,24.898457
+500 to 1500 m,well work,213.142857,33.690496
+no depth,abandonment,0.000000,0.000000
+no depth,well work,0.000000,0.000000
+under 100 m,abandonment,2049.571429,22.393720
+under 100 m,well work,980.095238,9.708193

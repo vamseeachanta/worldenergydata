@@ -5,6 +5,7 @@ from pathlib import Path
 
 import pandas as pd
 import pytest
+import yaml
 
 EXAMPLE = Path(__file__).resolve().parents[3] / "examples/bsee/interventions_by_depth"
 sys.path.insert(0, str(EXAMPLE))
@@ -20,7 +21,7 @@ from count_interventions import (
     rate_per_100,
     standing_wells,
 )
-from estimate_costs import event_cost
+from estimate_costs import estimate, event_cost
 
 
 @pytest.mark.parametrize(
@@ -142,7 +143,7 @@ def test_new_hole_narratives_and_false_positives():
     )
 
 
-def test_standing_wells_dates_and_original_hole():
+def test_standing_wells_at_start_of_year():
     b = pd.DataFrame(
         {
             "API_WELL_NUMBER": [
@@ -172,7 +173,8 @@ def test_standing_wells_dates_and_original_hole():
             "REGION_CODE": ["G"] * 5,
         }
     )
-    assert standing_wells(b, [2025]).standing_wells.sum() == 2
+    assert standing_wells(b, [2025]).standing_wells.sum() == 3
+    assert standing_wells(b, [2026]).standing_wells.sum() == 2
 
 
 def test_rate_zero_is_missing():
@@ -207,3 +209,85 @@ def test_cost_and_mobilisation():
 def test_partial_never_in_average():
     f = pd.DataFrame({"year": [2024, 2025, 2026], "count": [10, 20, 1000]})
     assert full_year_average(f, "count", 2025) == 15
+
+
+def well_bores(statuses, status_dates, spuds=None):
+    return pd.DataFrame(
+        {
+            "API_WELL_NUMBER": [f"6080000001{i:02d}" for i in range(len(statuses))],
+            "WELL_NAME_SUFFIX": ["ST00BP00"] + ["ST01BP00"] * (len(statuses) - 1),
+            "WELL_SPUD_DATE": spuds or ["2020-01-01"] * len(statuses),
+            "BOREHOLE_STAT_CD": statuses,
+            "BOREHOLE_STAT_DT": status_dates,
+            "WATER_DEPTH": [100] * len(statuses),
+            "REGION_CODE": ["G"] * len(statuses),
+        }
+    )
+
+
+def test_superseded_original_with_abandoned_sidetrack():
+    b = well_bores(["ST", "PA"], ["2021-01-01", "2025-06-01"])
+    assert standing_wells(b, [2025]).standing_wells.sum() == 1
+    assert standing_wells(b, [2026]).standing_wells.sum() == 0
+    assert standing_wells(b, [2025], at="year_end").standing_wells.sum() == 0
+
+
+def test_superseded_original_with_live_sidetrack():
+    b = well_bores(["ST", "COM"], ["2021-01-01", "2022-01-01"])
+    assert standing_wells(b, [2026]).standing_wells.sum() == 1
+
+
+def test_cancelled_bore_ignored_in_status_and_first_spud():
+    b = well_bores(["CNL", "PA"], ["", "2025-06-01"], ["2000-01-01", "2020-01-01"])
+    assert standing_wells(b, [2010]).standing_wells.sum() == 0
+    assert standing_wells(b, [2026]).standing_wells.sum() == 0
+    assert standing_wells(b.iloc[:1], [2025]).standing_wells.sum() == 0
+
+
+@pytest.mark.parametrize(
+    "statuses, dates_", [(["ST", "BP"], ["", ""]), (["ST", "PA"], ["2021-01-01", ""])]
+)
+def test_unresolved_terminal_status_kept_and_counted(statuses, dates_):
+    f = standing_wells(well_bores(statuses, dates_), [2026])
+    assert f.standing_wells.sum() == 1
+    assert f.assumed_standing.sum() == 1
+
+
+def test_all_terminal_bores_must_be_abandoned_and_dates_inclusive():
+    b = well_bores(["ST", "PA", "PA"], ["2020-01-01", "2024-01-01", "2026-01-01"])
+    assert standing_wells(b, [2025]).standing_wells.sum() == 1
+    assert standing_wells(b, [2026]).standing_wells.sum() == 0
+
+
+def test_unit_type_mapping():
+    from count_interventions import unit_category
+
+    assert unit_category("DS", "DRILLSHIP", "1") == "drillship / semisubmersible"
+    assert unit_category("SD", "SEMI", "2") == "drillship / semisubmersible"
+    assert unit_category("CT", "COILED TUBING", "3") == "coiled tubing"
+    assert unit_category("SB", "SNUBBING", "4") == "hydraulic workover / snubbing"
+    assert unit_category("NR", "NON RIG PA", "5") == "none named"
+    assert unit_category("", "", "") == "none named"
+    assert unit_category("UNKNOWN", "UNKNOWN RIG", "6") == "other"
+    assert unit_category("", "", "999") == "other"
+
+
+@pytest.mark.parametrize(
+    "scenario_id,case,expected",
+    [
+        ("platform_casing_work", "low_usd", 554454),  # 68,424 x 7 + 75,486 = 554,454
+        ("platform_rigless_pa", "low_usd", 269076),  # 64,530 x 3 + 75,486 = 269,076
+        ("subsea_work", "low_usd", 4722200),  # 674,600 x 7 + 0 = 4,722,200
+        ("deep_platform_pa", "high_usd", 1374570),  # Table 8-4, 5,000 ft
+    ],
+)
+def test_real_cost_literals_from_yaml(scenario_id, case, expected):
+    basis = yaml.safe_load((EXAMPLE / "cost_basis.yml").read_text(encoding="utf-8"))
+    assert estimate(basis).set_index("scenario_id").loc[scenario_id, case] == expected
+
+
+def test_deep_platform_work_is_unpriced():
+    basis = yaml.safe_load((EXAMPLE / "cost_basis.yml").read_text(encoding="utf-8"))
+    row = estimate(basis).set_index("scenario_id").loc["deep_platform_work"]
+    assert pd.isna(row.low_usd)
+    assert row.pricing_method == "not priced"

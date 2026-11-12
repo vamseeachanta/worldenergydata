@@ -181,36 +181,252 @@ def classify_operation(code, subcodes, narrative=""):
     raise ValueError(f"unmapped primary operation {code!r}")
 
 
-def standing_wells(bore, years, as_of=None):
-    b = bore[bore.REGION_CODE.eq("G") & bore.WELL_NAME_SUFFIX.eq("ST00BP00")].copy()
+def well_inventory(bore):
+    """One API10, all non-cancelled bores; current statuses are a history proxy."""
+    b = bore[bore.REGION_CODE.eq("G") & bore.BOREHOLE_STAT_CD.ne("CNL")].copy()
     b["api10"] = normalize_api(b.API_WELL_NUMBER).str[:10]
     b = b[b.api10.ne("")].drop_duplicates()
-    # Two source wells carry a second ST00BP00 record ending in 70. Prefer
-    # the canonical API12 ending 00; then earliest spud, then API12.
-    b["not_suffix00"] = ~b.API_WELL_NUMBER.str.endswith("00")
-    b["spud"] = dates(b.WELL_SPUD_DATE)
-    b = b.sort_values(
-        ["not_suffix00", "spud", "API_WELL_NUMBER"], kind="stable"
-    ).drop_duplicates("api10")
     b["spud"] = dates(b.WELL_SPUD_DATE)
     b["status_date"] = dates(b.BOREHOLE_STAT_DT)
-    b["band"] = b.WATER_DEPTH.map(band_from_feet)
+    b["depth_ft"] = pd.to_numeric(b.WATER_DEPTH, errors="coerce")
+    b["depth_ft"] = b.depth_ft.where(b.depth_ft.ge(0) & b.depth_ft.lt(float("inf")))
+    depths = unique_map(b, "api10", "depth_ft")
+    # The inventory is a stock of wells, so use a stable surface/original-hole
+    # depth where supplied. Bore depths can differ within an API10. Preserve
+    # the previous canonical-original tie break; status/spud still use ALL bores.
+    originals = b[b.WELL_NAME_SUFFIX.eq("ST00BP00")].copy()
+    originals["not_suffix00"] = ~originals.API_WELL_NUMBER.str.endswith("00")
+    originals = originals.sort_values(
+        ["not_suffix00", "spud", "API_WELL_NUMBER"], kind="stable"
+    ).drop_duplicates("api10")
+    depths = originals.set_index("api10").depth_ft.combine_first(depths)
+    rows = []
+    for api, g in b.groupby("api10", sort=True):
+        terminal = g[~g.BOREHOLE_STAT_CD.isin(["ST", "BP"])]
+        missing_date = terminal.status_date.isna().any()
+        all_pa = len(terminal) > 0 and terminal.BOREHOLE_STAT_CD.eq("PA").all()
+        rows.append(
+            dict(
+                api10=api,
+                spud=g.spud.min(),
+                abandoned=(
+                    terminal.status_date.max()
+                    if all_pa and not missing_date
+                    else pd.NaT
+                ),
+                assumed_standing=bool(len(terminal) == 0 or missing_date),
+                no_non_superseded_bore=bool(len(terminal) == 0),
+                missing_terminal_status_date=bool(missing_date),
+                band=band_from_feet(depths.get(api)),
+            )
+        )
+    return pd.DataFrame(
+        rows,
+        columns=[
+            "api10",
+            "spud",
+            "abandoned",
+            "assumed_standing",
+            "no_non_superseded_bore",
+            "missing_terminal_status_date",
+            "band",
+        ],
+    )
+
+
+def standing_wells(bore, years, as_of=None, at="start"):
+    if at not in {"start", "year_end"}:
+        raise ValueError("inventory date must be start or year_end")
+    b = well_inventory(bore)
     rows = []
     for year in years:
-        end = pd.Timestamp(year=year + 1, month=1, day=1)
-        if as_of is not None:
-            end = min(end, pd.Timestamp(as_of).normalize() + pd.Timedelta(days=1))
-        abandoned = b.BOREHOLE_STAT_CD.eq("PA") & b.status_date.lt(end)
-        # PA without its date cannot establish any year-end status. Exclude
-        # these explicitly and report their number in the quality summary.
-        unknown_pa = b.BOREHOLE_STAT_CD.eq("PA") & b.status_date.isna()
-        active = b[b.spud.lt(end) & ~abandoned & ~unknown_pa]
-        counts = active.groupby("band").size()
-        rows.extend(
-            dict(year=year, band=band, standing_wells=int(counts.get(band, 0)))
-            for band in BANDS
+        end = (
+            pd.Timestamp(year=year, month=1, day=1)
+            if at == "start"
+            else pd.Timestamp(year=year, month=12, day=31)
         )
+        if as_of is not None:
+            end = min(end, pd.Timestamp(as_of).normalize())
+        active = b[b.spud.le(end) & ~(b.abandoned.notna() & b.abandoned.le(end))]
+        for band in BANDS:
+            g = active[active.band.eq(band)]
+            rows.append(
+                dict(
+                    year=year,
+                    band=band,
+                    stock_date=str(end.date()),
+                    standing_wells=len(g),
+                    assumed_standing=int(g.assumed_standing.sum()),
+                    no_non_superseded_bore=int(g.no_non_superseded_bore.sum()),
+                    missing_terminal_status_date=int(
+                        g.missing_terminal_status_date.sum()
+                    ),
+                )
+            )
     return pd.DataFrame(rows)
+
+
+UNIT_TYPES = {
+    "WL": "wireline unit",
+    "CT": "coiled tubing",
+    "HW": "hydraulic workover / snubbing",
+    "SB": "hydraulic workover / snubbing",
+    "PF": "platform rig",
+    "LB": "liftboat / jack-up",
+    "JU": "liftboat / jack-up",
+    "WI": "intervention vessel",
+    "DS": "drillship / semisubmersible",
+    "SS": "drillship / semisubmersible",
+    "SD": "drillship / semisubmersible",
+    "NR": "none named",
+    "BG": "other",
+    "BR": "other",
+    "PL": "other",
+    "SU": "other",
+}
+UNIT_CATEGORIES = list(dict.fromkeys(UNIT_TYPES.values()))
+
+
+def unit_category(code, name, rig_id):
+    """Use supplied type codes; names do not prove deployed equipment."""
+    if code in UNIT_TYPES:
+        return UNIT_TYPES[code]
+    return "none named" if not code and not name and not rig_id else "other"
+
+
+def access_outputs(apm, data_dir, out, last_full_year):
+    rigs = read_table(data_dir, "eWellAPMRawData.zip", "mv_apm_rig_view")
+    fields = ["RIG_ID_NUM", "RIG_NAME", "RIG_TYPE_CODE"]
+    rigs = rigs[fields].drop_duplicates()
+    if rigs.RIG_ID_NUM.duplicated().any():
+        raise ValueError("conflicting rig lookup keys")
+    rigs["unit_category"] = [
+        unit_category(r.RIG_TYPE_CODE, r.RIG_NAME, r.RIG_ID_NUM)
+        for r in rigs.itertuples()
+    ]
+    write_csv(rigs, out, "unit_type_lookup")
+    rules = [
+        dict(
+            source_field="RIG_TYPE_CODE",
+            raw_value=k,
+            unit_category=v,
+            rule="exact type code; joined via RIG_ID_NUM; no name inference",
+        )
+        for k, v in UNIT_TYPES.items()
+    ]
+    rules.extend(
+        [
+            dict(
+                source_field="RIG_ID_NUM / RIG_NAME / RIG_TYPE_CODE",
+                raw_value="all blank",
+                unit_category="none named",
+                rule="no unit information",
+            ),
+            dict(
+                source_field="RIG_ID_NUM / RIG_TYPE_CODE",
+                raw_value="unmatched ID or unmapped code",
+                unit_category="other",
+                rule="retained unresolved unit; SU is submersible, not a semisubmersible",
+            ),
+        ]
+    )
+    write_csv(pd.DataFrame(rules), out, "unit_type_mapping")
+    a = apm.merge(rigs, on="RIG_ID_NUM", how="left", validate="many_to_one").fillna(
+        {"RIG_NAME": "", "RIG_TYPE_CODE": ""}
+    )
+    a["unit_category"] = [
+        unit_category(r.RIG_TYPE_CODE, r.RIG_NAME, r.RIG_ID_NUM) for r in a.itertuples()
+    ]
+    eor = read_table(
+        data_dir,
+        "eWellEORRawData.zip",
+        "mv_eor_mainquery",
+        ["API_WELL_NUMBER", "SUBSEA_COMPLETION_FLAG"],
+    )
+    eor["api10"] = normalize_api(eor.API_WELL_NUMBER).str[:10]
+    # Ever flagged YES at API10 in the retained EOR snapshot. A missing YES is
+    # not evidence of a dry-tree completion; preserve unknown/no distinctions.
+    flags = eor[eor.api10.ne("")].groupby("api10").SUBSEA_COMPLETION_FLAG.agg(set)
+    a["api10"] = a.API_WELL_NUMBER.str[:10]
+    a["subsea_flag"] = a.api10.map(flags).map(
+        lambda x: (
+            "yes"
+            if isinstance(x, set) and "YES" in x
+            else "no" if isinstance(x, set) and "NO" in x else "unknown"
+        )
+    )
+    a["event"] = a["family"].where(a.family.eq("well work"), a["group"])
+    rows, shares, estimates = [], [], []
+    for period, first in [
+        (str(last_full_year), last_full_year),
+        (f"{last_full_year-4}-{last_full_year}", last_full_year - 4),
+    ]:
+        for band in BANDS:
+            for event in ["well work", "permanent abandonment"]:
+                g = a[
+                    a.year.between(first, last_full_year)
+                    & a.band.eq(band)
+                    & a.event.eq(event)
+                ]
+                for category in UNIT_CATEGORIES:
+                    n = int(g.unit_category.eq(category).sum())
+                    rows.append(
+                        dict(
+                            period=period,
+                            band=band,
+                            event=event,
+                            unit_category=category,
+                            approvals=n,
+                            total_approvals=len(g),
+                            share_percent=n / len(g) * 100 if len(g) else float("nan"),
+                        )
+                    )
+                shares.append(
+                    dict(
+                        period=period,
+                        band=band,
+                        event=event,
+                        approvals=len(g),
+                        subsea_flag_yes=int(g.subsea_flag.eq("yes").sum()),
+                        subsea_flag_no=int(g.subsea_flag.eq("no").sum()),
+                        subsea_flag_unknown=int(g.subsea_flag.eq("unknown").sum()),
+                        subsea_share_percent=g.subsea_flag.eq("yes").mean() * 100,
+                    )
+                )
+                if first == last_full_year:
+                    days = pd.to_numeric(g.EST_OPERATION_DAYS, errors="coerce")
+                    valid = days[days.gt(0) & days.lt(float("inf"))]
+                    estimates.append(
+                        dict(
+                            year=last_full_year,
+                            band=band,
+                            event=event,
+                            approvals=len(g),
+                            estimates=len(valid),
+                            missing_or_nonpositive=len(g) - len(valid),
+                            median_est_operation_days=valid.median(),
+                        )
+                    )
+    write_csv(pd.DataFrame(rows), out, "unit_type_shares")
+    write_csv(pd.DataFrame(shares), out, "subsea_completion_shares")
+    write_csv(pd.DataFrame(estimates), out, "permit_duration_estimates")
+    ratios = []
+    for band in BANDS:
+        for family in ["well work", "abandonment"]:
+            g = a[a.year.eq(last_full_year) & a.band.eq(band) & a.family.eq(family)]
+            wells = g.loc[g.api10.ne(""), "api10"].nunique()
+            ratios.append(
+                dict(
+                    year=last_full_year,
+                    band=band,
+                    family=family,
+                    approvals=len(g),
+                    distinct_wells=wells,
+                    approvals_per_well=len(g) / wells if wells else float("nan"),
+                    missing_api10=int(g.api10.eq("").sum()),
+                )
+            )
+    write_csv(pd.DataFrame(ratios), out, "approvals_per_distinct_well")
 
 
 def rate_per_100(events, wells):
@@ -462,6 +678,12 @@ def run(data_dir, out, last_full_year):
     )
     apm = apm[apm.year.isin(years)].copy()
     apm["year"] = apm.year.astype(int)
+    access_outputs(apm, data_dir, out, last_full_year)
+    write_csv(
+        apm.groupby(["year", "APM_OP_CD"]).size().rename("approvals").reset_index(),
+        out,
+        "primary_code_by_year",
+    )
     quality["depth_join"] = (
         apm[apm.family.ne("excluded")].depth_join.value_counts().to_dict()
     )
@@ -512,8 +734,19 @@ def run(data_dir, out, last_full_year):
     standing = standing_wells(bore, years, as_of=file_date)
     standing["partial_year"] = standing.year.gt(last_full_year)
     write_csv(standing, out, "standing_wells")
-    # For partial year, denominator is the snapshot date, not a forecast year end.
-    # The original-hole table contains no future measured statuses/spuds in this run.
+    write_csv(
+        standing_wells(bore, years, as_of=file_date, at="year_end"),
+        out,
+        "standing_wells_year_end",
+    )
+    inventory = well_inventory(bore)
+    quality["inventory_missing_first_spud"] = int(inventory.spud.isna().sum())
+    quality["inventory_basis"] = (
+        "all non-cancelled bores per API10; stock on 1 January, inclusive dates"
+    )
+    quality["assumed_standing_last_full_year"] = int(
+        standing.loc[standing.year.eq(last_full_year), "assumed_standing"].sum()
+    )
     rates = []
     for r in standing.itertuples():
         for family, selected in [
@@ -535,6 +768,7 @@ def run(data_dir, out, last_full_year):
                     family=family,
                     permits=n,
                     standing_wells=r.standing_wells,
+                    stock_date=r.stock_date,
                     per_100_standing_wells=rate_per_100(n, r.standing_wells),
                     partial_year=r.partial_year,
                 )

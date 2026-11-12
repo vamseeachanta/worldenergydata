@@ -21,16 +21,35 @@ def event_cost(spread_dayrate, duration_days, mobilisation_usd):
 def estimate(basis):
     rows = []
     for scenario in basis["scenarios"]:
-        row = {k: scenario[k] for k in ("band", "event", "asset", "dollar_year")}
-        for case in ("low", "base", "high"):
-            inputs = scenario[case]
-            row[case + "_usd"] = event_cost(
-                *(
-                    inputs[k]["value"]
-                    for k in ("spread_dayrate", "duration", "mobilisation")
-                )
+        row = {
+            k: scenario[k]
+            for k in (
+                "scenario_id",
+                "access_type",
+                "applicability",
+                "event",
+                "asset",
+                "dollar_year",
+                "pricing_method",
             )
-        if not row["low_usd"] <= row["base_usd"] <= row["high_usd"]:
+        }
+        for case in ("low", "base", "high"):
+            if scenario["pricing_method"] == "not priced":
+                row[case + "_usd"] = float("nan")
+            elif scenario["pricing_method"] == "published total":
+                row[case + "_usd"] = scenario[case]["published_cost"]["value"]
+            else:
+                inputs = scenario[case]
+                row[case + "_usd"] = event_cost(
+                    *(
+                        inputs[k]["value"]
+                        for k in ("spread_dayrate", "duration", "mobilisation")
+                    )
+                )
+        if (
+            scenario["pricing_method"] != "not priced"
+            and not row["low_usd"] <= row["base_usd"] <= row["high_usd"]
+        ):
             raise ValueError("scenario ranges must increase")
         rows.append(row)
     return pd.DataFrame(rows)

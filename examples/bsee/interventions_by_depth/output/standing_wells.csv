@@ -1,111 +1,111 @@
-year,band,standing_wells,partial_year
-2005,under 100 m,16618,False
-2005,100 to 500 m,1867,False
-2005,500 to 1500 m,676,False
-2005,1500 m and deeper,198,False
-2005,no depth,0,False
-2006,under 100 m,16612,False
-2006,100 to 500 m,1886,False
-2006,500 to 1500 m,719,False
-2006,1500 m and deeper,222,False
-2006,no depth,0,False
-2007,under 100 m,16358,False
-2007,100 to 500 m,1889,False
-2007,500 to 1500 m,751,False
-2007,1500 m and deeper,264,False
-2007,no depth,0,False
-2008,under 100 m,16144,False
-2008,100 to 500 m,1891,False
-2008,500 to 1500 m,776,False
-2008,1500 m and deeper,282,False
-2008,no depth,0,False
-2009,under 100 m,15678,False
-2009,100 to 500 m,1877,False
-2009,500 to 1500 m,794,False
-2009,1500 m and deeper,307,False
-2009,no depth,0,False
-2010,under 100 m,15139,False
-2010,100 to 500 m,1830,False
-2010,500 to 1500 m,802,False
-2010,1500 m and deeper,314,False
-2010,no depth,0,False
-2011,under 100 m,14588,False
-2011,100 to 500 m,1778,False
-2011,500 to 1500 m,810,False
-2011,1500 m and deeper,330,False
-2011,no depth,0,False
-2012,under 100 m,14208,False
-2012,100 to 500 m,1738,False
-2012,500 to 1500 m,856,False
-2012,1500 m and deeper,361,False
-2012,no depth,0,False
-2013,under 100 m,13904,False
-2013,100 to 500 m,1734,False
-2013,500 to 1500 m,872,False
-2013,1500 m and deeper,387,False
-2013,no depth,0,False
-2014,under 100 m,13625,False
-2014,100 to 500 m,1722,False
-2014,500 to 1500 m,882,False
-2014,1500 m and deeper,402,False
-2014,no depth,0,False
-2015,under 100 m,13401,False
-2015,100 to 500 m,1696,False
-2015,500 to 1500 m,903,False
-2015,1500 m and deeper,422,False
-2015,no depth,0,False
-2016,under 100 m,13029,False
-2016,100 to 500 m,1677,False
-2016,500 to 1500 m,911,False
-2016,1500 m and deeper,443,False
-2016,no depth,0,False
-2017,under 100 m,12815,False
-2017,100 to 500 m,1666,False
-2017,500 to 1500 m,919,False
-2017,1500 m and deeper,455,False
-2017,no depth,0,False
-2018,under 100 m,12645,False
-2018,100 to 500 m,1634,False
-2018,500 to 1500 m,934,False
-2018,1500 m and deeper,485,False
-2018,no depth,0,False
-2019,under 100 m,12512,False
-2019,100 to 500 m,1624,False
-2019,500 to 1500 m,936,False
-2019,1500 m and deeper,514,False
-2019,no depth,0,False
-2020,under 100 m,12461,False
-2020,100 to 500 m,1577,False
-2020,500 to 1500 m,938,False
-2020,1500 m and deeper,530,False
-2020,no depth,0,False
-2021,under 100 m,12314,False
-2021,100 to 500 m,1572,False
-2021,500 to 1500 m,940,False
-2021,1500 m and deeper,536,False
-2021,no depth,0,False
-2022,under 100 m,12122,False
-2022,100 to 500 m,1567,False
-2022,500 to 1500 m,939,False
-2022,1500 m and deeper,555,False
-2022,no depth,0,False
-2023,under 100 m,11833,False
-2023,100 to 500 m,1562,False
-2023,500 to 1500 m,941,False
-2023,1500 m and deeper,575,False
-2023,no depth,0,False
-2024,under 100 m,11699,False
-2024,100 to 500 m,1555,False
-2024,500 to 1500 m,942,False
-2024,1500 m and deeper,590,False
-2024,no depth,0,False
-2025,under 100 m,11440,False
-2025,100 to 500 m,1525,False
-2025,500 to 1500 m,952,False
-2025,1500 m and deeper,604,False
-2025,no depth,0,False
-2026,under 100 m,11234,True
-2026,100 to 500 m,1515,True
-2026,500 to 1500 m,956,True
-2026,1500 m and deeper,628,True
-2026,no depth,0,True
+year,band,stock_date,standing_wells,assumed_standing,no_non_superseded_bore,missing_terminal_status_date,partial_year
+2005,under 100 m,2005-01-01,13914,133,133,0,False
+2005,100 to 500 m,2005-01-01,1519,2,2,0,False
+2005,500 to 1500 m,2005-01-01,521,1,0,1,False
+2005,1500 m and deeper,2005-01-01,163,0,0,0,False
+2005,no depth,2005-01-01,7,0,0,0,False
+2006,under 100 m,2006-01-01,13855,133,133,0,False
+2006,100 to 500 m,2006-01-01,1515,2,2,0,False
+2006,500 to 1500 m,2006-01-01,546,1,0,1,False
+2006,1500 m and deeper,2006-01-01,174,0,0,0,False
+2006,no depth,2006-01-01,7,0,0,0,False
+2007,under 100 m,2007-01-01,13720,133,133,0,False
+2007,100 to 500 m,2007-01-01,1525,2,2,0,False
+2007,500 to 1500 m,2007-01-01,581,1,0,1,False
+2007,1500 m and deeper,2007-01-01,198,0,0,0,False
+2007,no depth,2007-01-01,7,0,0,0,False
+2008,under 100 m,2008-01-01,13222,133,133,0,False
+2008,100 to 500 m,2008-01-01,1514,2,2,0,False
+2008,500 to 1500 m,2008-01-01,608,1,0,1,False
+2008,1500 m and deeper,2008-01-01,238,0,0,0,False
+2008,no depth,2008-01-01,7,0,0,0,False
+2009,under 100 m,2009-01-01,12794,133,133,0,False
+2009,100 to 500 m,2009-01-01,1505,2,2,0,False
+2009,500 to 1500 m,2009-01-01,630,1,0,1,False
+2009,1500 m and deeper,2009-01-01,249,0,0,0,False
+2009,no depth,2009-01-01,7,0,0,0,False
+2010,under 100 m,2010-01-01,12077,133,133,0,False
+2010,100 to 500 m,2010-01-01,1475,2,2,0,False
+2010,500 to 1500 m,2010-01-01,643,1,0,1,False
+2010,1500 m and deeper,2010-01-01,269,0,0,0,False
+2010,no depth,2010-01-01,6,0,0,0,False
+2011,under 100 m,2011-01-01,11267,133,133,0,False
+2011,100 to 500 m,2011-01-01,1402,2,2,0,False
+2011,500 to 1500 m,2011-01-01,644,1,0,1,False
+2011,1500 m and deeper,2011-01-01,271,0,0,0,False
+2011,no depth,2011-01-01,6,0,0,0,False
+2012,under 100 m,2012-01-01,10448,133,133,0,False
+2012,100 to 500 m,2012-01-01,1316,2,2,0,False
+2012,500 to 1500 m,2012-01-01,643,1,0,1,False
+2012,1500 m and deeper,2012-01-01,286,0,0,0,False
+2012,no depth,2012-01-01,6,0,0,0,False
+2013,under 100 m,2013-01-01,9812,133,133,0,False
+2013,100 to 500 m,2013-01-01,1251,2,2,0,False
+2013,500 to 1500 m,2013-01-01,676,1,0,1,False
+2013,1500 m and deeper,2013-01-01,307,0,0,0,False
+2013,no depth,2013-01-01,6,0,0,0,False
+2014,under 100 m,2014-01-01,9356,133,133,0,False
+2014,100 to 500 m,2014-01-01,1237,2,2,0,False
+2014,500 to 1500 m,2014-01-01,682,1,0,1,False
+2014,1500 m and deeper,2014-01-01,322,0,0,0,False
+2014,no depth,2014-01-01,6,0,0,0,False
+2015,under 100 m,2015-01-01,8893,133,133,0,False
+2015,100 to 500 m,2015-01-01,1211,2,2,0,False
+2015,500 to 1500 m,2015-01-01,682,1,0,1,False
+2015,1500 m and deeper,2015-01-01,323,0,0,0,False
+2015,no depth,2015-01-01,6,0,0,0,False
+2016,under 100 m,2016-01-01,8547,133,133,0,False
+2016,100 to 500 m,2016-01-01,1166,2,2,0,False
+2016,500 to 1500 m,2016-01-01,683,1,0,1,False
+2016,1500 m and deeper,2016-01-01,326,0,0,0,False
+2016,no depth,2016-01-01,5,0,0,0,False
+2017,under 100 m,2017-01-01,7988,133,133,0,False
+2017,100 to 500 m,2017-01-01,1130,2,2,0,False
+2017,500 to 1500 m,2017-01-01,663,1,0,1,False
+2017,1500 m and deeper,2017-01-01,330,0,0,0,False
+2017,no depth,2017-01-01,5,0,0,0,False
+2018,under 100 m,2018-01-01,7664,133,133,0,False
+2018,100 to 500 m,2018-01-01,1103,2,2,0,False
+2018,500 to 1500 m,2018-01-01,654,1,0,1,False
+2018,1500 m and deeper,2018-01-01,333,0,0,0,False
+2018,no depth,2018-01-01,5,0,0,0,False
+2019,under 100 m,2019-01-01,7375,133,133,0,False
+2019,100 to 500 m,2019-01-01,1053,2,2,0,False
+2019,500 to 1500 m,2019-01-01,657,1,0,1,False
+2019,1500 m and deeper,2019-01-01,356,0,0,0,False
+2019,no depth,2019-01-01,5,0,0,0,False
+2020,under 100 m,2020-01-01,7155,133,133,0,False
+2020,100 to 500 m,2020-01-01,1029,2,2,0,False
+2020,500 to 1500 m,2020-01-01,651,1,0,1,False
+2020,1500 m and deeper,2020-01-01,382,0,0,0,False
+2020,no depth,2020-01-01,5,0,0,0,False
+2021,under 100 m,2021-01-01,7076,133,133,0,False
+2021,100 to 500 m,2021-01-01,957,2,2,0,False
+2021,500 to 1500 m,2021-01-01,641,1,0,1,False
+2021,1500 m and deeper,2021-01-01,390,0,0,0,False
+2021,no depth,2021-01-01,5,0,0,0,False
+2022,under 100 m,2022-01-01,6850,133,133,0,False
+2022,100 to 500 m,2022-01-01,948,2,2,0,False
+2022,500 to 1500 m,2022-01-01,621,1,0,1,False
+2022,1500 m and deeper,2022-01-01,384,0,0,0,False
+2022,no depth,2022-01-01,5,0,0,0,False
+2023,under 100 m,2023-01-01,6538,133,133,0,False
+2023,100 to 500 m,2023-01-01,924,2,2,0,False
+2023,500 to 1500 m,2023-01-01,594,1,0,1,False
+2023,1500 m and deeper,2023-01-01,400,0,0,0,False
+2023,no depth,2023-01-01,5,0,0,0,False
+2024,under 100 m,2024-01-01,6000,133,133,0,False
+2024,100 to 500 m,2024-01-01,897,2,2,0,False
+2024,500 to 1500 m,2024-01-01,580,1,0,1,False
+2024,1500 m and deeper,2024-01-01,415,0,0,0,False
+2024,no depth,2024-01-01,5,0,0,0,False
+2025,under 100 m,2025-01-01,5750,133,133,0,False
+2025,100 to 500 m,2025-01-01,887,2,2,0,False
+2025,500 to 1500 m,2025-01-01,568,1,0,1,False
+2025,1500 m and deeper,2025-01-01,426,0,0,0,False
+2025,no depth,2025-01-01,5,0,0,0,False
+2026,under 100 m,2026-01-01,5255,133,133,0,True
+2026,100 to 500 m,2026-01-01,844,2,2,0,True
+2026,500 to 1500 m,2026-01-01,564,1,0,1,True
+2026,1500 m and deeper,2026-01-01,435,0,0,0,True
+2026,no depth,2026-01-01,5,0,0,0,True

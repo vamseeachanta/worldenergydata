@@ -1,17 +1,19 @@
-schema_version: 1
+schema_version: 2
 retrieval_date: '2026-11-12'
-currency: Unescalated 2015 study USD; later and earlier duration sources change time only, not currency.
-method: cost = total spread dayrate x duration + mobilisation. Scenario ranges, not confidence intervals,
-  bids or observed averages.
+currency: Unescalated 2015 study USD; duration-source dates do not alter the dollar year.
+method: 'Spread scenarios: dayrate x duration + mobilisation; deep platform P&A: published Table 8-4 total.
+  Scenarios are not outcome distributions.'
+duration_case_labels:
+  low: median 7 days
+  base: midpoint 10.5 days
+  high: two weeks 14 days
 assumptions:
-- Dry-tree casing-jack spread used for both platform bands. A jackup/liftboat quote for the requested
-  heavy-work scope is not established.
-- MODU heavy scope used for both deeper bands. A riserless vessel serves lighter work and is not priced
-  here.
-- Quoted total spreads include the study's services. No extra materials, logistics, standby, weather or
-  engineering markups are added.
-- 'No total Gulf expenditure is estimated: administrative, light, temporary and repeated approvals cannot
-  be priced as one heavy event each.'
+- Access method selects cost; depth only states source applicability.
+- Deepwater dry-tree well work is not priced without a cited basis.
+- Permanent-abandonment costs do not apply to temporary or unspecified abandonment approvals.
+- 'No expenditure estimate: approvals include repeats, administration and light work.'
+- Additional logistics, materials, standby, weather and engineering are excluded unless present in the
+  cited spread or published total.
 sources:
   bsee738: &id001
     title: Decommissioning Methodology and Cost Evaluation, TAP-738
@@ -19,8 +21,7 @@ sources:
     date: '2015-07-31'
     url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
     retrieval_date: '2026-11-12'
-    note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-      not the rehosting year.
+    note: 2015 study market; later rehosting does not change the dollar year.
   bsee735:
     title: Decommissioning Cost Update for Pacific OCS Region Facilities, Volume 2
     publisher: BSEE / TSB Offshore
@@ -40,79 +41,80 @@ sources:
     url: https://espis.boem.gov/final%20reports/5179.pdf
     retrieval_date: '2026-11-12'
 scenarios:
-- band: under 100 m
+- scenario_id: platform_rigless_work
+  access_type: Platform dry-tree / rigless spread
+  applicability: Shelf; source case 50-400 ft (15-122 m)
   event: well work
-  asset: platform casing-jack heavy unit (proxy)
+  asset: rigless platform spread
   dollar_year: 2015
+  pricing_method: spread scenario
   low:
     spread_dayrate:
-      value: 68424
+      value: 64530
       unit: USD/day
-      asset: platform casing-jack heavy unit (proxy)
-      band: under 100 m
+      asset: rigless platform spread
+      applicability: Shelf; source case 50-400 ft (15-122 m)
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
         date: '2015-07-31'
         url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
         retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
-        location: Table 8-3, p.8-14 (PDF p.145)
-      interpretation: Published total spread. Transfer to workover is a scenario assumption; casing-jack
-        package is a heavy-unit proxy, not a quoted workover rig rate.
+        note: 2015 study market; later rehosting does not change the dollar year.
+        location: 'Table 8-2, p.8-12 (PDF p.143): USD 225856 / 84 hr x 24, rounded to USD 64530/day'
+      interpretation: Published spread (rigless rate derived from published task cost and hours). Transfer
+        to well work is an explicit scenario, not a quoted workover rate.
     duration:
       value: 7
       unit: day/event
-      asset: platform casing-jack heavy unit (proxy)
-      band: under 100 m
+      asset: rigless platform spread
+      applicability: Shelf; source case 50-400 ft (15-122 m)
       citation:
         title: Gulf of Mexico OCS Oil and Gas Lease Sales 2017-2022, Final EIS, Volume I, BOEM 2016-018
         publisher: BOEM
         date: '2016'
         url: https://www.boem.gov/sites/default/files/environmental-stewardship/Environmental-Assessment/NEPA/BOEM-EIS-2016-018-v1.pdf
         retrieval_date: '2026-11-12'
-        location: 'Section 3.1.3.5, p.3-37 (PDF p.163): median 7 days'
-      interpretation: 'Scenario 7 / 10.5 / 14 days: published Gulf median, midpoint and upper end of published
-        Alaska 7-14-day range. Alaska duration is transferred explicitly; not a Gulf depth-specific estimate.'
+        location: 'Section 3.1.3.5, p.3-37 (PDF p.163): Gulf median 7 days; range 1 day to several months'
+      interpretation: Median 7 days / midpoint 10.5 days / two weeks 14 days. Duration scenarios, not
+        low/base/high outcome quantiles. Alaska interval transferred to Gulf spread; no access-specific
+        observed distribution established.
     mobilisation:
       value: 75486
       unit: USD/event
-      asset: platform casing-jack heavy unit (proxy)
-      band: under 100 m
+      asset: rigless platform spread
+      applicability: Shelf; source case 50-400 ft (15-122 m)
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
         date: '2015-07-31'
         url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
         retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
-        location: 'Table 8-2, p.8-12 (PDF p.143): mob and demob each USD 37743'
-      interpretation: Two published standalone transport charges, no campaign sharing; transferred to
-        casing-jack scenario.
+        note: 2015 study market; later rehosting does not change the dollar year.
+        location: 'Table 8-2, p.8-12: mob and demob USD 37743 each'
+      interpretation: Two standalone transport charges; no campaign sharing. Transferred to casing-jack
+        spread where applicable.
   base:
     spread_dayrate:
-      value: 68424
+      value: 64530
       unit: USD/day
-      asset: platform casing-jack heavy unit (proxy)
-      band: under 100 m
+      asset: rigless platform spread
+      applicability: Shelf; source case 50-400 ft (15-122 m)
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
         date: '2015-07-31'
         url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
         retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
-        location: Table 8-3, p.8-14 (PDF p.145)
-      interpretation: Published total spread. Transfer to workover is a scenario assumption; casing-jack
-        package is a heavy-unit proxy, not a quoted workover rig rate.
+        note: 2015 study market; later rehosting does not change the dollar year.
+        location: 'Table 8-2, p.8-12 (PDF p.143): USD 225856 / 84 hr x 24, rounded to USD 64530/day'
+      interpretation: Published spread (rigless rate derived from published task cost and hours). Transfer
+        to well work is an explicit scenario, not a quoted workover rate.
     duration:
       value: 10.5
       unit: day/event
-      asset: platform casing-jack heavy unit (proxy)
-      band: under 100 m
+      asset: rigless platform spread
+      applicability: Shelf; source case 50-400 ft (15-122 m)
       citation:
         title: MAG-PLAN Alaska Update, BOEM 2011-059
         publisher: BOEM / Northern Economics
@@ -120,46 +122,45 @@ scenarios:
         url: https://espis.boem.gov/final%20reports/5179.pdf
         retrieval_date: '2026-11-12'
         location: 'Section 3.5.5.4, p.108 (PDF p.117): one to two weeks'
-      interpretation: 'Scenario 7 / 10.5 / 14 days: published Gulf median, midpoint and upper end of published
-        Alaska 7-14-day range. Alaska duration is transferred explicitly; not a Gulf depth-specific estimate.'
+      interpretation: Median 7 days / midpoint 10.5 days / two weeks 14 days. Duration scenarios, not
+        low/base/high outcome quantiles. Alaska interval transferred to Gulf spread; no access-specific
+        observed distribution established.
     mobilisation:
       value: 75486
       unit: USD/event
-      asset: platform casing-jack heavy unit (proxy)
-      band: under 100 m
+      asset: rigless platform spread
+      applicability: Shelf; source case 50-400 ft (15-122 m)
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
         date: '2015-07-31'
         url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
         retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
-        location: 'Table 8-2, p.8-12 (PDF p.143): mob and demob each USD 37743'
-      interpretation: Two published standalone transport charges, no campaign sharing; transferred to
-        casing-jack scenario.
+        note: 2015 study market; later rehosting does not change the dollar year.
+        location: 'Table 8-2, p.8-12: mob and demob USD 37743 each'
+      interpretation: Two standalone transport charges; no campaign sharing. Transferred to casing-jack
+        spread where applicable.
   high:
     spread_dayrate:
-      value: 68424
+      value: 64530
       unit: USD/day
-      asset: platform casing-jack heavy unit (proxy)
-      band: under 100 m
+      asset: rigless platform spread
+      applicability: Shelf; source case 50-400 ft (15-122 m)
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
         date: '2015-07-31'
         url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
         retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
-        location: Table 8-3, p.8-14 (PDF p.145)
-      interpretation: Published total spread. Transfer to workover is a scenario assumption; casing-jack
-        package is a heavy-unit proxy, not a quoted workover rig rate.
+        note: 2015 study market; later rehosting does not change the dollar year.
+        location: 'Table 8-2, p.8-12 (PDF p.143): USD 225856 / 84 hr x 24, rounded to USD 64530/day'
+      interpretation: Published spread (rigless rate derived from published task cost and hours). Transfer
+        to well work is an explicit scenario, not a quoted workover rate.
     duration:
       value: 14
       unit: day/event
-      asset: platform casing-jack heavy unit (proxy)
-      band: under 100 m
+      asset: rigless platform spread
+      applicability: Shelf; source case 50-400 ft (15-122 m)
       citation:
         title: MAG-PLAN Alaska Update, BOEM 2011-059
         publisher: BOEM / Northern Economics
@@ -167,50 +168,52 @@ scenarios:
         url: https://espis.boem.gov/final%20reports/5179.pdf
         retrieval_date: '2026-11-12'
         location: 'Section 3.5.5.4, p.108 (PDF p.117): one to two weeks'
-      interpretation: 'Scenario 7 / 10.5 / 14 days: published Gulf median, midpoint and upper end of published
-        Alaska 7-14-day range. Alaska duration is transferred explicitly; not a Gulf depth-specific estimate.'
+      interpretation: Median 7 days / midpoint 10.5 days / two weeks 14 days. Duration scenarios, not
+        low/base/high outcome quantiles. Alaska interval transferred to Gulf spread; no access-specific
+        observed distribution established.
     mobilisation:
       value: 75486
       unit: USD/event
-      asset: platform casing-jack heavy unit (proxy)
-      band: under 100 m
+      asset: rigless platform spread
+      applicability: Shelf; source case 50-400 ft (15-122 m)
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
         date: '2015-07-31'
         url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
         retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
-        location: 'Table 8-2, p.8-12 (PDF p.143): mob and demob each USD 37743'
-      interpretation: Two published standalone transport charges, no campaign sharing; transferred to
-        casing-jack scenario.
-- band: under 100 m
+        note: 2015 study market; later rehosting does not change the dollar year.
+        location: 'Table 8-2, p.8-12: mob and demob USD 37743 each'
+      interpretation: Two standalone transport charges; no campaign sharing. Transferred to casing-jack
+        spread where applicable.
+- scenario_id: platform_rigless_pa
+  access_type: Platform dry-tree / rigless spread
+  applicability: Shelf; source case 50-400 ft (15-122 m)
   event: permanent abandonment
-  asset: platform casing-jack heavy unit (proxy)
+  asset: rigless platform spread
   dollar_year: 2015
+  pricing_method: spread scenario
   low:
     spread_dayrate:
-      value: 68424
+      value: 64530
       unit: USD/day
-      asset: platform casing-jack heavy unit (proxy)
-      band: under 100 m
+      asset: rigless platform spread
+      applicability: Shelf; source case 50-400 ft (15-122 m)
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
         date: '2015-07-31'
         url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
         retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
-        location: Table 8-3, p.8-14 (PDF p.145)
-      interpretation: Published total spread. Transfer to workover is a scenario assumption; casing-jack
-        package is a heavy-unit proxy, not a quoted workover rig rate.
+        note: 2015 study market; later rehosting does not change the dollar year.
+        location: 'Table 8-2, p.8-12 (PDF p.143): USD 225856 / 84 hr x 24, rounded to USD 64530/day'
+      interpretation: Published spread (rigless rate derived from published task cost and hours). Transfer
+        to well work is an explicit scenario, not a quoted workover rate.
     duration:
       value: 3
       unit: day/event
-      asset: platform casing-jack heavy unit (proxy)
-      band: under 100 m
+      asset: rigless platform spread
+      applicability: Shelf; source case 50-400 ft (15-122 m)
       citation:
         title: Decommissioning Cost Update for Pacific OCS Region Facilities, Volume 2
         publisher: BSEE / TSB Offshore
@@ -218,46 +221,44 @@ scenarios:
         url: https://www.bsee.gov/sites/bsee.gov/files/technology-assessment-program-tap/735ab.pdf
         retrieval_date: '2026-11-12'
         location: Appendix 2, p.A-2 (PDF p.5), Days/Well 3, 4, 5, 8
-      interpretation: Low, medium-low and high trouble-free rigless P&A durations transferred to the heavier
-        casing-jack unit. Pacific duration proxy; materials and contingencies excluded from arithmetic.
+      interpretation: Pacific trouble-free rigless duration choices 3 / 4 / 8 days; transferred to Gulf
+        spread. Casing-jack transfer is a scenario assumption.
     mobilisation:
       value: 75486
       unit: USD/event
-      asset: platform casing-jack heavy unit (proxy)
-      band: under 100 m
+      asset: rigless platform spread
+      applicability: Shelf; source case 50-400 ft (15-122 m)
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
         date: '2015-07-31'
         url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
         retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
-        location: 'Table 8-2, p.8-12 (PDF p.143): mob and demob each USD 37743'
-      interpretation: Two published standalone transport charges, no campaign sharing; transferred to
-        casing-jack scenario.
+        note: 2015 study market; later rehosting does not change the dollar year.
+        location: 'Table 8-2, p.8-12: mob and demob USD 37743 each'
+      interpretation: Two standalone transport charges; no campaign sharing. Transferred to casing-jack
+        spread where applicable.
   base:
     spread_dayrate:
-      value: 68424
+      value: 64530
       unit: USD/day
-      asset: platform casing-jack heavy unit (proxy)
-      band: under 100 m
+      asset: rigless platform spread
+      applicability: Shelf; source case 50-400 ft (15-122 m)
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
         date: '2015-07-31'
         url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
         retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
-        location: Table 8-3, p.8-14 (PDF p.145)
-      interpretation: Published total spread. Transfer to workover is a scenario assumption; casing-jack
-        package is a heavy-unit proxy, not a quoted workover rig rate.
+        note: 2015 study market; later rehosting does not change the dollar year.
+        location: 'Table 8-2, p.8-12 (PDF p.143): USD 225856 / 84 hr x 24, rounded to USD 64530/day'
+      interpretation: Published spread (rigless rate derived from published task cost and hours). Transfer
+        to well work is an explicit scenario, not a quoted workover rate.
     duration:
       value: 4
       unit: day/event
-      asset: platform casing-jack heavy unit (proxy)
-      band: under 100 m
+      asset: rigless platform spread
+      applicability: Shelf; source case 50-400 ft (15-122 m)
       citation:
         title: Decommissioning Cost Update for Pacific OCS Region Facilities, Volume 2
         publisher: BSEE / TSB Offshore
@@ -265,46 +266,44 @@ scenarios:
         url: https://www.bsee.gov/sites/bsee.gov/files/technology-assessment-program-tap/735ab.pdf
         retrieval_date: '2026-11-12'
         location: Appendix 2, p.A-2 (PDF p.5), Days/Well 3, 4, 5, 8
-      interpretation: Low, medium-low and high trouble-free rigless P&A durations transferred to the heavier
-        casing-jack unit. Pacific duration proxy; materials and contingencies excluded from arithmetic.
+      interpretation: Pacific trouble-free rigless duration choices 3 / 4 / 8 days; transferred to Gulf
+        spread. Casing-jack transfer is a scenario assumption.
     mobilisation:
       value: 75486
       unit: USD/event
-      asset: platform casing-jack heavy unit (proxy)
-      band: under 100 m
+      asset: rigless platform spread
+      applicability: Shelf; source case 50-400 ft (15-122 m)
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
         date: '2015-07-31'
         url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
         retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
-        location: 'Table 8-2, p.8-12 (PDF p.143): mob and demob each USD 37743'
-      interpretation: Two published standalone transport charges, no campaign sharing; transferred to
-        casing-jack scenario.
+        note: 2015 study market; later rehosting does not change the dollar year.
+        location: 'Table 8-2, p.8-12: mob and demob USD 37743 each'
+      interpretation: Two standalone transport charges; no campaign sharing. Transferred to casing-jack
+        spread where applicable.
   high:
     spread_dayrate:
-      value: 68424
+      value: 64530
       unit: USD/day
-      asset: platform casing-jack heavy unit (proxy)
-      band: under 100 m
+      asset: rigless platform spread
+      applicability: Shelf; source case 50-400 ft (15-122 m)
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
         date: '2015-07-31'
         url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
         retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
-        location: Table 8-3, p.8-14 (PDF p.145)
-      interpretation: Published total spread. Transfer to workover is a scenario assumption; casing-jack
-        package is a heavy-unit proxy, not a quoted workover rig rate.
+        note: 2015 study market; later rehosting does not change the dollar year.
+        location: 'Table 8-2, p.8-12 (PDF p.143): USD 225856 / 84 hr x 24, rounded to USD 64530/day'
+      interpretation: Published spread (rigless rate derived from published task cost and hours). Transfer
+        to well work is an explicit scenario, not a quoted workover rate.
     duration:
       value: 8
       unit: day/event
-      asset: platform casing-jack heavy unit (proxy)
-      band: under 100 m
+      asset: rigless platform spread
+      applicability: Shelf; source case 50-400 ft (15-122 m)
       citation:
         title: Decommissioning Cost Update for Pacific OCS Region Facilities, Volume 2
         publisher: BSEE / TSB Offshore
@@ -312,97 +311,97 @@ scenarios:
         url: https://www.bsee.gov/sites/bsee.gov/files/technology-assessment-program-tap/735ab.pdf
         retrieval_date: '2026-11-12'
         location: Appendix 2, p.A-2 (PDF p.5), Days/Well 3, 4, 5, 8
-      interpretation: Low, medium-low and high trouble-free rigless P&A durations transferred to the heavier
-        casing-jack unit. Pacific duration proxy; materials and contingencies excluded from arithmetic.
+      interpretation: Pacific trouble-free rigless duration choices 3 / 4 / 8 days; transferred to Gulf
+        spread. Casing-jack transfer is a scenario assumption.
     mobilisation:
       value: 75486
       unit: USD/event
-      asset: platform casing-jack heavy unit (proxy)
-      band: under 100 m
+      asset: rigless platform spread
+      applicability: Shelf; source case 50-400 ft (15-122 m)
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
         date: '2015-07-31'
         url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
         retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
-        location: 'Table 8-2, p.8-12 (PDF p.143): mob and demob each USD 37743'
-      interpretation: Two published standalone transport charges, no campaign sharing; transferred to
-        casing-jack scenario.
-- band: 100 to 500 m
+        note: 2015 study market; later rehosting does not change the dollar year.
+        location: 'Table 8-2, p.8-12: mob and demob USD 37743 each'
+      interpretation: Two standalone transport charges; no campaign sharing. Transferred to casing-jack
+        spread where applicable.
+- scenario_id: platform_casing_work
+  access_type: Platform dry-tree / casing jacks
+  applicability: Platform-based spread; source casing-jack case above 400 ft; shelf example
   event: well work
-  asset: platform casing-jack heavy unit (proxy)
+  asset: platform casing-jack spread
   dollar_year: 2015
+  pricing_method: spread scenario
   low:
     spread_dayrate:
       value: 68424
       unit: USD/day
-      asset: platform casing-jack heavy unit (proxy)
-      band: 100 to 500 m
+      asset: platform casing-jack spread
+      applicability: Platform-based spread; source casing-jack case above 400 ft; shelf example
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
         date: '2015-07-31'
         url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
         retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
-        location: Table 8-3, p.8-14 (PDF p.145)
-      interpretation: Published total spread. Transfer to workover is a scenario assumption; casing-jack
-        package is a heavy-unit proxy, not a quoted workover rig rate.
+        note: 2015 study market; later rehosting does not change the dollar year.
+        location: 'Table 8-3, p.8-14 (PDF p.145): total spread/day'
+      interpretation: Published spread (rigless rate derived from published task cost and hours). Transfer
+        to well work is an explicit scenario, not a quoted workover rate.
     duration:
       value: 7
       unit: day/event
-      asset: platform casing-jack heavy unit (proxy)
-      band: 100 to 500 m
+      asset: platform casing-jack spread
+      applicability: Platform-based spread; source casing-jack case above 400 ft; shelf example
       citation:
         title: Gulf of Mexico OCS Oil and Gas Lease Sales 2017-2022, Final EIS, Volume I, BOEM 2016-018
         publisher: BOEM
         date: '2016'
         url: https://www.boem.gov/sites/default/files/environmental-stewardship/Environmental-Assessment/NEPA/BOEM-EIS-2016-018-v1.pdf
         retrieval_date: '2026-11-12'
-        location: 'Section 3.1.3.5, p.3-37 (PDF p.163): median 7 days'
-      interpretation: 'Scenario 7 / 10.5 / 14 days: published Gulf median, midpoint and upper end of published
-        Alaska 7-14-day range. Alaska duration is transferred explicitly; not a Gulf depth-specific estimate.'
+        location: 'Section 3.1.3.5, p.3-37 (PDF p.163): Gulf median 7 days; range 1 day to several months'
+      interpretation: Median 7 days / midpoint 10.5 days / two weeks 14 days. Duration scenarios, not
+        low/base/high outcome quantiles. Alaska interval transferred to Gulf spread; no access-specific
+        observed distribution established.
     mobilisation:
       value: 75486
       unit: USD/event
-      asset: platform casing-jack heavy unit (proxy)
-      band: 100 to 500 m
+      asset: platform casing-jack spread
+      applicability: Platform-based spread; source casing-jack case above 400 ft; shelf example
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
         date: '2015-07-31'
         url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
         retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
-        location: 'Table 8-2, p.8-12 (PDF p.143): mob and demob each USD 37743'
-      interpretation: Two published standalone transport charges, no campaign sharing; transferred to
-        casing-jack scenario.
+        note: 2015 study market; later rehosting does not change the dollar year.
+        location: 'Table 8-2, p.8-12: mob and demob USD 37743 each'
+      interpretation: Two standalone transport charges; no campaign sharing. Transferred to casing-jack
+        spread where applicable.
   base:
     spread_dayrate:
       value: 68424
       unit: USD/day
-      asset: platform casing-jack heavy unit (proxy)
-      band: 100 to 500 m
+      asset: platform casing-jack spread
+      applicability: Platform-based spread; source casing-jack case above 400 ft; shelf example
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
         date: '2015-07-31'
         url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
         retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
-        location: Table 8-3, p.8-14 (PDF p.145)
-      interpretation: Published total spread. Transfer to workover is a scenario assumption; casing-jack
-        package is a heavy-unit proxy, not a quoted workover rig rate.
+        note: 2015 study market; later rehosting does not change the dollar year.
+        location: 'Table 8-3, p.8-14 (PDF p.145): total spread/day'
+      interpretation: Published spread (rigless rate derived from published task cost and hours). Transfer
+        to well work is an explicit scenario, not a quoted workover rate.
     duration:
       value: 10.5
       unit: day/event
-      asset: platform casing-jack heavy unit (proxy)
-      band: 100 to 500 m
+      asset: platform casing-jack spread
+      applicability: Platform-based spread; source casing-jack case above 400 ft; shelf example
       citation:
         title: MAG-PLAN Alaska Update, BOEM 2011-059
         publisher: BOEM / Northern Economics
@@ -410,46 +409,45 @@ scenarios:
         url: https://espis.boem.gov/final%20reports/5179.pdf
         retrieval_date: '2026-11-12'
         location: 'Section 3.5.5.4, p.108 (PDF p.117): one to two weeks'
-      interpretation: 'Scenario 7 / 10.5 / 14 days: published Gulf median, midpoint and upper end of published
-        Alaska 7-14-day range. Alaska duration is transferred explicitly; not a Gulf depth-specific estimate.'
+      interpretation: Median 7 days / midpoint 10.5 days / two weeks 14 days. Duration scenarios, not
+        low/base/high outcome quantiles. Alaska interval transferred to Gulf spread; no access-specific
+        observed distribution established.
     mobilisation:
       value: 75486
       unit: USD/event
-      asset: platform casing-jack heavy unit (proxy)
-      band: 100 to 500 m
+      asset: platform casing-jack spread
+      applicability: Platform-based spread; source casing-jack case above 400 ft; shelf example
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
         date: '2015-07-31'
         url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
         retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
-        location: 'Table 8-2, p.8-12 (PDF p.143): mob and demob each USD 37743'
-      interpretation: Two published standalone transport charges, no campaign sharing; transferred to
-        casing-jack scenario.
+        note: 2015 study market; later rehosting does not change the dollar year.
+        location: 'Table 8-2, p.8-12: mob and demob USD 37743 each'
+      interpretation: Two standalone transport charges; no campaign sharing. Transferred to casing-jack
+        spread where applicable.
   high:
     spread_dayrate:
       value: 68424
       unit: USD/day
-      asset: platform casing-jack heavy unit (proxy)
-      band: 100 to 500 m
+      asset: platform casing-jack spread
+      applicability: Platform-based spread; source casing-jack case above 400 ft; shelf example
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
         date: '2015-07-31'
         url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
         retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
-        location: Table 8-3, p.8-14 (PDF p.145)
-      interpretation: Published total spread. Transfer to workover is a scenario assumption; casing-jack
-        package is a heavy-unit proxy, not a quoted workover rig rate.
+        note: 2015 study market; later rehosting does not change the dollar year.
+        location: 'Table 8-3, p.8-14 (PDF p.145): total spread/day'
+      interpretation: Published spread (rigless rate derived from published task cost and hours). Transfer
+        to well work is an explicit scenario, not a quoted workover rate.
     duration:
       value: 14
       unit: day/event
-      asset: platform casing-jack heavy unit (proxy)
-      band: 100 to 500 m
+      asset: platform casing-jack spread
+      applicability: Platform-based spread; source casing-jack case above 400 ft; shelf example
       citation:
         title: MAG-PLAN Alaska Update, BOEM 2011-059
         publisher: BOEM / Northern Economics
@@ -457,50 +455,52 @@ scenarios:
         url: https://espis.boem.gov/final%20reports/5179.pdf
         retrieval_date: '2026-11-12'
         location: 'Section 3.5.5.4, p.108 (PDF p.117): one to two weeks'
-      interpretation: 'Scenario 7 / 10.5 / 14 days: published Gulf median, midpoint and upper end of published
-        Alaska 7-14-day range. Alaska duration is transferred explicitly; not a Gulf depth-specific estimate.'
+      interpretation: Median 7 days / midpoint 10.5 days / two weeks 14 days. Duration scenarios, not
+        low/base/high outcome quantiles. Alaska interval transferred to Gulf spread; no access-specific
+        observed distribution established.
     mobilisation:
       value: 75486
       unit: USD/event
-      asset: platform casing-jack heavy unit (proxy)
-      band: 100 to 500 m
+      asset: platform casing-jack spread
+      applicability: Platform-based spread; source casing-jack case above 400 ft; shelf example
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
         date: '2015-07-31'
         url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
         retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
-        location: 'Table 8-2, p.8-12 (PDF p.143): mob and demob each USD 37743'
-      interpretation: Two published standalone transport charges, no campaign sharing; transferred to
-        casing-jack scenario.
-- band: 100 to 500 m
+        note: 2015 study market; later rehosting does not change the dollar year.
+        location: 'Table 8-2, p.8-12: mob and demob USD 37743 each'
+      interpretation: Two standalone transport charges; no campaign sharing. Transferred to casing-jack
+        spread where applicable.
+- scenario_id: platform_casing_pa
+  access_type: Platform dry-tree / casing jacks
+  applicability: Platform-based spread; source casing-jack case above 400 ft; shelf example
   event: permanent abandonment
-  asset: platform casing-jack heavy unit (proxy)
+  asset: platform casing-jack spread
   dollar_year: 2015
+  pricing_method: spread scenario
   low:
     spread_dayrate:
       value: 68424
       unit: USD/day
-      asset: platform casing-jack heavy unit (proxy)
-      band: 100 to 500 m
+      asset: platform casing-jack spread
+      applicability: Platform-based spread; source casing-jack case above 400 ft; shelf example
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
         date: '2015-07-31'
         url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
         retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
-        location: Table 8-3, p.8-14 (PDF p.145)
-      interpretation: Published total spread. Transfer to workover is a scenario assumption; casing-jack
-        package is a heavy-unit proxy, not a quoted workover rig rate.
+        note: 2015 study market; later rehosting does not change the dollar year.
+        location: 'Table 8-3, p.8-14 (PDF p.145): total spread/day'
+      interpretation: Published spread (rigless rate derived from published task cost and hours). Transfer
+        to well work is an explicit scenario, not a quoted workover rate.
     duration:
       value: 3
       unit: day/event
-      asset: platform casing-jack heavy unit (proxy)
-      band: 100 to 500 m
+      asset: platform casing-jack spread
+      applicability: Platform-based spread; source casing-jack case above 400 ft; shelf example
       citation:
         title: Decommissioning Cost Update for Pacific OCS Region Facilities, Volume 2
         publisher: BSEE / TSB Offshore
@@ -508,46 +508,44 @@ scenarios:
         url: https://www.bsee.gov/sites/bsee.gov/files/technology-assessment-program-tap/735ab.pdf
         retrieval_date: '2026-11-12'
         location: Appendix 2, p.A-2 (PDF p.5), Days/Well 3, 4, 5, 8
-      interpretation: Low, medium-low and high trouble-free rigless P&A durations transferred to the heavier
-        casing-jack unit. Pacific duration proxy; materials and contingencies excluded from arithmetic.
+      interpretation: Pacific trouble-free rigless duration choices 3 / 4 / 8 days; transferred to Gulf
+        spread. Casing-jack transfer is a scenario assumption.
     mobilisation:
       value: 75486
       unit: USD/event
-      asset: platform casing-jack heavy unit (proxy)
-      band: 100 to 500 m
+      asset: platform casing-jack spread
+      applicability: Platform-based spread; source casing-jack case above 400 ft; shelf example
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
         date: '2015-07-31'
         url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
         retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
-        location: 'Table 8-2, p.8-12 (PDF p.143): mob and demob each USD 37743'
-      interpretation: Two published standalone transport charges, no campaign sharing; transferred to
-        casing-jack scenario.
+        note: 2015 study market; later rehosting does not change the dollar year.
+        location: 'Table 8-2, p.8-12: mob and demob USD 37743 each'
+      interpretation: Two standalone transport charges; no campaign sharing. Transferred to casing-jack
+        spread where applicable.
   base:
     spread_dayrate:
       value: 68424
       unit: USD/day
-      asset: platform casing-jack heavy unit (proxy)
-      band: 100 to 500 m
+      asset: platform casing-jack spread
+      applicability: Platform-based spread; source casing-jack case above 400 ft; shelf example
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
         date: '2015-07-31'
         url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
         retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
-        location: Table 8-3, p.8-14 (PDF p.145)
-      interpretation: Published total spread. Transfer to workover is a scenario assumption; casing-jack
-        package is a heavy-unit proxy, not a quoted workover rig rate.
+        note: 2015 study market; later rehosting does not change the dollar year.
+        location: 'Table 8-3, p.8-14 (PDF p.145): total spread/day'
+      interpretation: Published spread (rigless rate derived from published task cost and hours). Transfer
+        to well work is an explicit scenario, not a quoted workover rate.
     duration:
       value: 4
       unit: day/event
-      asset: platform casing-jack heavy unit (proxy)
-      band: 100 to 500 m
+      asset: platform casing-jack spread
+      applicability: Platform-based spread; source casing-jack case above 400 ft; shelf example
       citation:
         title: Decommissioning Cost Update for Pacific OCS Region Facilities, Volume 2
         publisher: BSEE / TSB Offshore
@@ -555,46 +553,44 @@ scenarios:
         url: https://www.bsee.gov/sites/bsee.gov/files/technology-assessment-program-tap/735ab.pdf
         retrieval_date: '2026-11-12'
         location: Appendix 2, p.A-2 (PDF p.5), Days/Well 3, 4, 5, 8
-      interpretation: Low, medium-low and high trouble-free rigless P&A durations transferred to the heavier
-        casing-jack unit. Pacific duration proxy; materials and contingencies excluded from arithmetic.
+      interpretation: Pacific trouble-free rigless duration choices 3 / 4 / 8 days; transferred to Gulf
+        spread. Casing-jack transfer is a scenario assumption.
     mobilisation:
       value: 75486
       unit: USD/event
-      asset: platform casing-jack heavy unit (proxy)
-      band: 100 to 500 m
+      asset: platform casing-jack spread
+      applicability: Platform-based spread; source casing-jack case above 400 ft; shelf example
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
         date: '2015-07-31'
         url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
         retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
-        location: 'Table 8-2, p.8-12 (PDF p.143): mob and demob each USD 37743'
-      interpretation: Two published standalone transport charges, no campaign sharing; transferred to
-        casing-jack scenario.
+        note: 2015 study market; later rehosting does not change the dollar year.
+        location: 'Table 8-2, p.8-12: mob and demob USD 37743 each'
+      interpretation: Two standalone transport charges; no campaign sharing. Transferred to casing-jack
+        spread where applicable.
   high:
     spread_dayrate:
       value: 68424
       unit: USD/day
-      asset: platform casing-jack heavy unit (proxy)
-      band: 100 to 500 m
+      asset: platform casing-jack spread
+      applicability: Platform-based spread; source casing-jack case above 400 ft; shelf example
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
         date: '2015-07-31'
         url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
         retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
-        location: Table 8-3, p.8-14 (PDF p.145)
-      interpretation: Published total spread. Transfer to workover is a scenario assumption; casing-jack
-        package is a heavy-unit proxy, not a quoted workover rig rate.
+        note: 2015 study market; later rehosting does not change the dollar year.
+        location: 'Table 8-3, p.8-14 (PDF p.145): total spread/day'
+      interpretation: Published spread (rigless rate derived from published task cost and hours). Transfer
+        to well work is an explicit scenario, not a quoted workover rate.
     duration:
       value: 8
       unit: day/event
-      asset: platform casing-jack heavy unit (proxy)
-      band: 100 to 500 m
+      asset: platform casing-jack spread
+      applicability: Platform-based spread; source casing-jack case above 400 ft; shelf example
       citation:
         title: Decommissioning Cost Update for Pacific OCS Region Facilities, Volume 2
         publisher: BSEE / TSB Offshore
@@ -602,97 +598,96 @@ scenarios:
         url: https://www.bsee.gov/sites/bsee.gov/files/technology-assessment-program-tap/735ab.pdf
         retrieval_date: '2026-11-12'
         location: Appendix 2, p.A-2 (PDF p.5), Days/Well 3, 4, 5, 8
-      interpretation: Low, medium-low and high trouble-free rigless P&A durations transferred to the heavier
-        casing-jack unit. Pacific duration proxy; materials and contingencies excluded from arithmetic.
+      interpretation: Pacific trouble-free rigless duration choices 3 / 4 / 8 days; transferred to Gulf
+        spread. Casing-jack transfer is a scenario assumption.
     mobilisation:
       value: 75486
       unit: USD/event
-      asset: platform casing-jack heavy unit (proxy)
-      band: 100 to 500 m
+      asset: platform casing-jack spread
+      applicability: Platform-based spread; source casing-jack case above 400 ft; shelf example
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
         date: '2015-07-31'
         url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
         retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
-        location: 'Table 8-2, p.8-12 (PDF p.143): mob and demob each USD 37743'
-      interpretation: Two published standalone transport charges, no campaign sharing; transferred to
-        casing-jack scenario.
-- band: 500 to 1500 m
+        note: 2015 study market; later rehosting does not change the dollar year.
+        location: 'Table 8-2, p.8-12: mob and demob USD 37743 each'
+      interpretation: Two standalone transport charges; no campaign sharing. Transferred to casing-jack
+        spread where applicable.
+- scenario_id: subsea_work
+  access_type: Subsea wet-tree / drillship or semisubmersible
+  applicability: Subsea access; durations anchored at 3000 ft (914 m); not all wells in a depth band
   event: well work
-  asset: semisubmersible or drillship MODU spread
+  asset: drillship or semisubmersible total spread
   dollar_year: 2015
+  pricing_method: spread scenario
   low:
     spread_dayrate:
       value: 674600
       unit: USD/day
-      asset: semisubmersible or drillship MODU spread
-      band: 500 to 1500 m
+      asset: drillship or semisubmersible total spread
+      applicability: Subsea access; durations anchored at 3000 ft (914 m); not all wells in a depth band
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
         date: '2015-07-31'
         url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
         retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
-        location: Section 8.3.2.3, p.8-18 (PDF p.149)
-      interpretation: Published total spread. Transfer to workover is a scenario assumption; casing-jack
-        package is a heavy-unit proxy, not a quoted workover rig rate.
+        note: 2015 study market; later rehosting does not change the dollar year.
+        location: 'Section 8.3.2.3, p.8-18 (PDF p.149): total MODU spread'
+      interpretation: Published spread (rigless rate derived from published task cost and hours). Transfer
+        to well work is an explicit scenario, not a quoted workover rate.
     duration:
       value: 7
       unit: day/event
-      asset: semisubmersible or drillship MODU spread
-      band: 500 to 1500 m
+      asset: drillship or semisubmersible total spread
+      applicability: Subsea access; durations anchored at 3000 ft (914 m); not all wells in a depth band
       citation:
         title: Gulf of Mexico OCS Oil and Gas Lease Sales 2017-2022, Final EIS, Volume I, BOEM 2016-018
         publisher: BOEM
         date: '2016'
         url: https://www.boem.gov/sites/default/files/environmental-stewardship/Environmental-Assessment/NEPA/BOEM-EIS-2016-018-v1.pdf
         retrieval_date: '2026-11-12'
-        location: 'Section 3.1.3.5, p.3-37 (PDF p.163): median 7 days'
-      interpretation: 'Scenario 7 / 10.5 / 14 days: published Gulf median, midpoint and upper end of published
-        Alaska 7-14-day range. Alaska duration is transferred explicitly; not a Gulf depth-specific estimate.'
+        location: 'Section 3.1.3.5, p.3-37 (PDF p.163): Gulf median 7 days; range 1 day to several months'
+      interpretation: Median 7 days / midpoint 10.5 days / two weeks 14 days. Duration scenarios, not
+        low/base/high outcome quantiles. Alaska interval transferred to Gulf spread; no access-specific
+        observed distribution established.
     mobilisation:
       value: 0
       unit: USD/event
-      asset: semisubmersible or drillship MODU spread
-      band: 500 to 1500 m
+      asset: drillship or semisubmersible total spread
+      applicability: Subsea access; durations anchored at 3000 ft (914 m); not all wells in a depth band
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
         date: '2015-07-31'
         url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
         retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
-        location: 'Section 8.3.2.3, p.8-18: mobilisation costs not included'
-      interpretation: EXCLUDED cost, not a finding of zero expense. Scenario assumes an already mobilised
-        unit; no cited floating-unit mobilisation amount is available.
+        note: 2015 study market; later rehosting does not change the dollar year.
+        location: 'Section 8.3.2.3, p.8-18: mobilisation excluded'
+      interpretation: EXCLUDED, not zero actual expense; already mobilised unit.
   base:
     spread_dayrate:
       value: 674600
       unit: USD/day
-      asset: semisubmersible or drillship MODU spread
-      band: 500 to 1500 m
+      asset: drillship or semisubmersible total spread
+      applicability: Subsea access; durations anchored at 3000 ft (914 m); not all wells in a depth band
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
         date: '2015-07-31'
         url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
         retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
-        location: Section 8.3.2.3, p.8-18 (PDF p.149)
-      interpretation: Published total spread. Transfer to workover is a scenario assumption; casing-jack
-        package is a heavy-unit proxy, not a quoted workover rig rate.
+        note: 2015 study market; later rehosting does not change the dollar year.
+        location: 'Section 8.3.2.3, p.8-18 (PDF p.149): total MODU spread'
+      interpretation: Published spread (rigless rate derived from published task cost and hours). Transfer
+        to well work is an explicit scenario, not a quoted workover rate.
     duration:
       value: 10.5
       unit: day/event
-      asset: semisubmersible or drillship MODU spread
-      band: 500 to 1500 m
+      asset: drillship or semisubmersible total spread
+      applicability: Subsea access; durations anchored at 3000 ft (914 m); not all wells in a depth band
       citation:
         title: MAG-PLAN Alaska Update, BOEM 2011-059
         publisher: BOEM / Northern Economics
@@ -700,46 +695,44 @@ scenarios:
         url: https://espis.boem.gov/final%20reports/5179.pdf
         retrieval_date: '2026-11-12'
         location: 'Section 3.5.5.4, p.108 (PDF p.117): one to two weeks'
-      interpretation: 'Scenario 7 / 10.5 / 14 days: published Gulf median, midpoint and upper end of published
-        Alaska 7-14-day range. Alaska duration is transferred explicitly; not a Gulf depth-specific estimate.'
+      interpretation: Median 7 days / midpoint 10.5 days / two weeks 14 days. Duration scenarios, not
+        low/base/high outcome quantiles. Alaska interval transferred to Gulf spread; no access-specific
+        observed distribution established.
     mobilisation:
       value: 0
       unit: USD/event
-      asset: semisubmersible or drillship MODU spread
-      band: 500 to 1500 m
+      asset: drillship or semisubmersible total spread
+      applicability: Subsea access; durations anchored at 3000 ft (914 m); not all wells in a depth band
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
         date: '2015-07-31'
         url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
         retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
-        location: 'Section 8.3.2.3, p.8-18: mobilisation costs not included'
-      interpretation: EXCLUDED cost, not a finding of zero expense. Scenario assumes an already mobilised
-        unit; no cited floating-unit mobilisation amount is available.
+        note: 2015 study market; later rehosting does not change the dollar year.
+        location: 'Section 8.3.2.3, p.8-18: mobilisation excluded'
+      interpretation: EXCLUDED, not zero actual expense; already mobilised unit.
   high:
     spread_dayrate:
       value: 674600
       unit: USD/day
-      asset: semisubmersible or drillship MODU spread
-      band: 500 to 1500 m
+      asset: drillship or semisubmersible total spread
+      applicability: Subsea access; durations anchored at 3000 ft (914 m); not all wells in a depth band
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
         date: '2015-07-31'
         url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
         retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
-        location: Section 8.3.2.3, p.8-18 (PDF p.149)
-      interpretation: Published total spread. Transfer to workover is a scenario assumption; casing-jack
-        package is a heavy-unit proxy, not a quoted workover rig rate.
+        note: 2015 study market; later rehosting does not change the dollar year.
+        location: 'Section 8.3.2.3, p.8-18 (PDF p.149): total MODU spread'
+      interpretation: Published spread (rigless rate derived from published task cost and hours). Transfer
+        to well work is an explicit scenario, not a quoted workover rate.
     duration:
       value: 14
       unit: day/event
-      asset: semisubmersible or drillship MODU spread
-      band: 500 to 1500 m
+      asset: drillship or semisubmersible total spread
+      applicability: Subsea access; durations anchored at 3000 ft (914 m); not all wells in a depth band
       citation:
         title: MAG-PLAN Alaska Update, BOEM 2011-059
         publisher: BOEM / Northern Economics
@@ -747,509 +740,441 @@ scenarios:
         url: https://espis.boem.gov/final%20reports/5179.pdf
         retrieval_date: '2026-11-12'
         location: 'Section 3.5.5.4, p.108 (PDF p.117): one to two weeks'
-      interpretation: 'Scenario 7 / 10.5 / 14 days: published Gulf median, midpoint and upper end of published
-        Alaska 7-14-day range. Alaska duration is transferred explicitly; not a Gulf depth-specific estimate.'
+      interpretation: Median 7 days / midpoint 10.5 days / two weeks 14 days. Duration scenarios, not
+        low/base/high outcome quantiles. Alaska interval transferred to Gulf spread; no access-specific
+        observed distribution established.
     mobilisation:
       value: 0
       unit: USD/event
-      asset: semisubmersible or drillship MODU spread
-      band: 500 to 1500 m
+      asset: drillship or semisubmersible total spread
+      applicability: Subsea access; durations anchored at 3000 ft (914 m); not all wells in a depth band
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
         date: '2015-07-31'
         url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
         retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
-        location: 'Section 8.3.2.3, p.8-18: mobilisation costs not included'
-      interpretation: EXCLUDED cost, not a finding of zero expense. Scenario assumes an already mobilised
-        unit; no cited floating-unit mobilisation amount is available.
-- band: 500 to 1500 m
+        note: 2015 study market; later rehosting does not change the dollar year.
+        location: 'Section 8.3.2.3, p.8-18: mobilisation excluded'
+      interpretation: EXCLUDED, not zero actual expense; already mobilised unit.
+- scenario_id: subsea_pa
+  access_type: Subsea wet-tree / drillship or semisubmersible
+  applicability: Subsea access; durations anchored at 3000 ft (914 m); not all wells in a depth band
   event: permanent abandonment
-  asset: semisubmersible or drillship MODU spread
+  asset: drillship or semisubmersible total spread
   dollar_year: 2015
+  pricing_method: spread scenario
   low:
     spread_dayrate:
       value: 674600
       unit: USD/day
-      asset: semisubmersible or drillship MODU spread
-      band: 500 to 1500 m
+      asset: drillship or semisubmersible total spread
+      applicability: Subsea access; durations anchored at 3000 ft (914 m); not all wells in a depth band
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
         date: '2015-07-31'
         url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
         retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
-        location: Section 8.3.2.3, p.8-18 (PDF p.149)
-      interpretation: Published total spread. Transfer to workover is a scenario assumption; casing-jack
-        package is a heavy-unit proxy, not a quoted workover rig rate.
+        note: 2015 study market; later rehosting does not change the dollar year.
+        location: 'Section 8.3.2.3, p.8-18 (PDF p.149): total MODU spread'
+      interpretation: Published spread (rigless rate derived from published task cost and hours). Transfer
+        to well work is an explicit scenario, not a quoted workover rate.
     duration:
       value: 17
       unit: day/event
-      asset: semisubmersible or drillship MODU spread
-      band: 500 to 1500 m
+      asset: drillship or semisubmersible total spread
+      applicability: Subsea access; durations anchored at 3000 ft (914 m); not all wells in a depth band
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
         date: '2015-07-31'
         url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
         retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
+        note: 2015 study market; later rehosting does not change the dollar year.
         location: Figure 8-9, p.8-19 (PDF p.150)
-      interpretation: 'Approximate rounded graphic readings: MODU leaving wellhead at 3000 ft (~17); MODU
-        at 3000 ft (~19) and 6000 ft (~23). Scenario anchors span adjacent depths; not band quantiles.'
+      interpretation: Approximate rounded graphic readings; scenario anchors, not depth-band quantiles.
+        MODU leaving wellhead at 3000 ft (~17 days), MODU at 3000 ft (~19) and 6000 ft (~23).
     mobilisation:
       value: 0
       unit: USD/event
-      asset: semisubmersible or drillship MODU spread
-      band: 500 to 1500 m
+      asset: drillship or semisubmersible total spread
+      applicability: Subsea access; durations anchored at 3000 ft (914 m); not all wells in a depth band
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
         date: '2015-07-31'
         url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
         retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
-        location: 'Section 8.3.2.3, p.8-18: mobilisation costs not included'
-      interpretation: EXCLUDED cost, not a finding of zero expense. Scenario assumes an already mobilised
-        unit; no cited floating-unit mobilisation amount is available.
+        note: 2015 study market; later rehosting does not change the dollar year.
+        location: 'Section 8.3.2.3, p.8-18: mobilisation excluded'
+      interpretation: EXCLUDED, not zero actual expense; already mobilised unit.
   base:
     spread_dayrate:
       value: 674600
       unit: USD/day
-      asset: semisubmersible or drillship MODU spread
-      band: 500 to 1500 m
+      asset: drillship or semisubmersible total spread
+      applicability: Subsea access; durations anchored at 3000 ft (914 m); not all wells in a depth band
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
         date: '2015-07-31'
         url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
         retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
-        location: Section 8.3.2.3, p.8-18 (PDF p.149)
-      interpretation: Published total spread. Transfer to workover is a scenario assumption; casing-jack
-        package is a heavy-unit proxy, not a quoted workover rig rate.
+        note: 2015 study market; later rehosting does not change the dollar year.
+        location: 'Section 8.3.2.3, p.8-18 (PDF p.149): total MODU spread'
+      interpretation: Published spread (rigless rate derived from published task cost and hours). Transfer
+        to well work is an explicit scenario, not a quoted workover rate.
     duration:
       value: 19
       unit: day/event
-      asset: semisubmersible or drillship MODU spread
-      band: 500 to 1500 m
+      asset: drillship or semisubmersible total spread
+      applicability: Subsea access; durations anchored at 3000 ft (914 m); not all wells in a depth band
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
         date: '2015-07-31'
         url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
         retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
+        note: 2015 study market; later rehosting does not change the dollar year.
         location: Figure 8-9, p.8-19 (PDF p.150)
-      interpretation: 'Approximate rounded graphic readings: MODU leaving wellhead at 3000 ft (~17); MODU
-        at 3000 ft (~19) and 6000 ft (~23). Scenario anchors span adjacent depths; not band quantiles.'
+      interpretation: Approximate rounded graphic readings; scenario anchors, not depth-band quantiles.
+        MODU leaving wellhead at 3000 ft (~17 days), MODU at 3000 ft (~19) and 6000 ft (~23).
     mobilisation:
       value: 0
       unit: USD/event
-      asset: semisubmersible or drillship MODU spread
-      band: 500 to 1500 m
+      asset: drillship or semisubmersible total spread
+      applicability: Subsea access; durations anchored at 3000 ft (914 m); not all wells in a depth band
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
         date: '2015-07-31'
         url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
         retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
-        location: 'Section 8.3.2.3, p.8-18: mobilisation costs not included'
-      interpretation: EXCLUDED cost, not a finding of zero expense. Scenario assumes an already mobilised
-        unit; no cited floating-unit mobilisation amount is available.
+        note: 2015 study market; later rehosting does not change the dollar year.
+        location: 'Section 8.3.2.3, p.8-18: mobilisation excluded'
+      interpretation: EXCLUDED, not zero actual expense; already mobilised unit.
   high:
     spread_dayrate:
       value: 674600
       unit: USD/day
-      asset: semisubmersible or drillship MODU spread
-      band: 500 to 1500 m
+      asset: drillship or semisubmersible total spread
+      applicability: Subsea access; durations anchored at 3000 ft (914 m); not all wells in a depth band
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
         date: '2015-07-31'
         url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
         retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
-        location: Section 8.3.2.3, p.8-18 (PDF p.149)
-      interpretation: Published total spread. Transfer to workover is a scenario assumption; casing-jack
-        package is a heavy-unit proxy, not a quoted workover rig rate.
+        note: 2015 study market; later rehosting does not change the dollar year.
+        location: 'Section 8.3.2.3, p.8-18 (PDF p.149): total MODU spread'
+      interpretation: Published spread (rigless rate derived from published task cost and hours). Transfer
+        to well work is an explicit scenario, not a quoted workover rate.
     duration:
       value: 23
       unit: day/event
-      asset: semisubmersible or drillship MODU spread
-      band: 500 to 1500 m
+      asset: drillship or semisubmersible total spread
+      applicability: Subsea access; durations anchored at 3000 ft (914 m); not all wells in a depth band
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
         date: '2015-07-31'
         url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
         retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
+        note: 2015 study market; later rehosting does not change the dollar year.
         location: Figure 8-9, p.8-19 (PDF p.150)
-      interpretation: 'Approximate rounded graphic readings: MODU leaving wellhead at 3000 ft (~17); MODU
-        at 3000 ft (~19) and 6000 ft (~23). Scenario anchors span adjacent depths; not band quantiles.'
+      interpretation: Approximate rounded graphic readings; scenario anchors, not depth-band quantiles.
+        MODU leaving wellhead at 3000 ft (~17 days), MODU at 3000 ft (~19) and 6000 ft (~23).
     mobilisation:
       value: 0
       unit: USD/event
-      asset: semisubmersible or drillship MODU spread
-      band: 500 to 1500 m
+      asset: drillship or semisubmersible total spread
+      applicability: Subsea access; durations anchored at 3000 ft (914 m); not all wells in a depth band
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
         date: '2015-07-31'
         url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
         retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
-        location: 'Section 8.3.2.3, p.8-18: mobilisation costs not included'
-      interpretation: EXCLUDED cost, not a finding of zero expense. Scenario assumes an already mobilised
-        unit; no cited floating-unit mobilisation amount is available.
-- band: 1500 m and deeper
-  event: well work
-  asset: semisubmersible or drillship MODU spread
-  dollar_year: 2015
-  low:
-    spread_dayrate:
-      value: 674600
-      unit: USD/day
-      asset: semisubmersible or drillship MODU spread
-      band: 1500 m and deeper
-      citation:
-        title: Decommissioning Methodology and Cost Evaluation, TAP-738
-        publisher: BSEE / ICF International
-        date: '2015-07-31'
-        url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
-        retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
-        location: Section 8.3.2.3, p.8-18 (PDF p.149)
-      interpretation: Published total spread. Transfer to workover is a scenario assumption; casing-jack
-        package is a heavy-unit proxy, not a quoted workover rig rate.
-    duration:
-      value: 7
-      unit: day/event
-      asset: semisubmersible or drillship MODU spread
-      band: 1500 m and deeper
-      citation:
-        title: Gulf of Mexico OCS Oil and Gas Lease Sales 2017-2022, Final EIS, Volume I, BOEM 2016-018
-        publisher: BOEM
-        date: '2016'
-        url: https://www.boem.gov/sites/default/files/environmental-stewardship/Environmental-Assessment/NEPA/BOEM-EIS-2016-018-v1.pdf
-        retrieval_date: '2026-11-12'
-        location: 'Section 3.1.3.5, p.3-37 (PDF p.163): median 7 days'
-      interpretation: 'Scenario 7 / 10.5 / 14 days: published Gulf median, midpoint and upper end of published
-        Alaska 7-14-day range. Alaska duration is transferred explicitly; not a Gulf depth-specific estimate.'
-    mobilisation:
-      value: 0
-      unit: USD/event
-      asset: semisubmersible or drillship MODU spread
-      band: 1500 m and deeper
-      citation:
-        title: Decommissioning Methodology and Cost Evaluation, TAP-738
-        publisher: BSEE / ICF International
-        date: '2015-07-31'
-        url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
-        retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
-        location: 'Section 8.3.2.3, p.8-18: mobilisation costs not included'
-      interpretation: EXCLUDED cost, not a finding of zero expense. Scenario assumes an already mobilised
-        unit; no cited floating-unit mobilisation amount is available.
-  base:
-    spread_dayrate:
-      value: 674600
-      unit: USD/day
-      asset: semisubmersible or drillship MODU spread
-      band: 1500 m and deeper
-      citation:
-        title: Decommissioning Methodology and Cost Evaluation, TAP-738
-        publisher: BSEE / ICF International
-        date: '2015-07-31'
-        url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
-        retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
-        location: Section 8.3.2.3, p.8-18 (PDF p.149)
-      interpretation: Published total spread. Transfer to workover is a scenario assumption; casing-jack
-        package is a heavy-unit proxy, not a quoted workover rig rate.
-    duration:
-      value: 10.5
-      unit: day/event
-      asset: semisubmersible or drillship MODU spread
-      band: 1500 m and deeper
-      citation:
-        title: MAG-PLAN Alaska Update, BOEM 2011-059
-        publisher: BOEM / Northern Economics
-        date: '2012-05-31'
-        url: https://espis.boem.gov/final%20reports/5179.pdf
-        retrieval_date: '2026-11-12'
-        location: 'Section 3.5.5.4, p.108 (PDF p.117): one to two weeks'
-      interpretation: 'Scenario 7 / 10.5 / 14 days: published Gulf median, midpoint and upper end of published
-        Alaska 7-14-day range. Alaska duration is transferred explicitly; not a Gulf depth-specific estimate.'
-    mobilisation:
-      value: 0
-      unit: USD/event
-      asset: semisubmersible or drillship MODU spread
-      band: 1500 m and deeper
-      citation:
-        title: Decommissioning Methodology and Cost Evaluation, TAP-738
-        publisher: BSEE / ICF International
-        date: '2015-07-31'
-        url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
-        retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
-        location: 'Section 8.3.2.3, p.8-18: mobilisation costs not included'
-      interpretation: EXCLUDED cost, not a finding of zero expense. Scenario assumes an already mobilised
-        unit; no cited floating-unit mobilisation amount is available.
-  high:
-    spread_dayrate:
-      value: 674600
-      unit: USD/day
-      asset: semisubmersible or drillship MODU spread
-      band: 1500 m and deeper
-      citation:
-        title: Decommissioning Methodology and Cost Evaluation, TAP-738
-        publisher: BSEE / ICF International
-        date: '2015-07-31'
-        url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
-        retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
-        location: Section 8.3.2.3, p.8-18 (PDF p.149)
-      interpretation: Published total spread. Transfer to workover is a scenario assumption; casing-jack
-        package is a heavy-unit proxy, not a quoted workover rig rate.
-    duration:
-      value: 14
-      unit: day/event
-      asset: semisubmersible or drillship MODU spread
-      band: 1500 m and deeper
-      citation:
-        title: MAG-PLAN Alaska Update, BOEM 2011-059
-        publisher: BOEM / Northern Economics
-        date: '2012-05-31'
-        url: https://espis.boem.gov/final%20reports/5179.pdf
-        retrieval_date: '2026-11-12'
-        location: 'Section 3.5.5.4, p.108 (PDF p.117): one to two weeks'
-      interpretation: 'Scenario 7 / 10.5 / 14 days: published Gulf median, midpoint and upper end of published
-        Alaska 7-14-day range. Alaska duration is transferred explicitly; not a Gulf depth-specific estimate.'
-    mobilisation:
-      value: 0
-      unit: USD/event
-      asset: semisubmersible or drillship MODU spread
-      band: 1500 m and deeper
-      citation:
-        title: Decommissioning Methodology and Cost Evaluation, TAP-738
-        publisher: BSEE / ICF International
-        date: '2015-07-31'
-        url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
-        retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
-        location: 'Section 8.3.2.3, p.8-18: mobilisation costs not included'
-      interpretation: EXCLUDED cost, not a finding of zero expense. Scenario assumes an already mobilised
-        unit; no cited floating-unit mobilisation amount is available.
-- band: 1500 m and deeper
+        note: 2015 study market; later rehosting does not change the dollar year.
+        location: 'Section 8.3.2.3, p.8-18: mobilisation excluded'
+      interpretation: EXCLUDED, not zero actual expense; already mobilised unit.
+- scenario_id: subsea_pa_6000_9000ft
+  access_type: Subsea wet-tree / drillship or semisubmersible
+  applicability: Subsea access; 6000-9000 ft (1829-2743 m) anchors; extrapolation beyond 9000 ft not established
   event: permanent abandonment
-  asset: semisubmersible or drillship MODU spread
+  asset: drillship or semisubmersible total spread
   dollar_year: 2015
+  pricing_method: spread scenario
   low:
     spread_dayrate:
       value: 674600
       unit: USD/day
-      asset: semisubmersible or drillship MODU spread
-      band: 1500 m and deeper
+      asset: drillship or semisubmersible total spread
+      applicability: Subsea access; 6000-9000 ft (1829-2743 m) anchors; extrapolation beyond 9000 ft not
+        established
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
         date: '2015-07-31'
         url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
         retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
-        location: Section 8.3.2.3, p.8-18 (PDF p.149)
-      interpretation: Published total spread. Transfer to workover is a scenario assumption; casing-jack
-        package is a heavy-unit proxy, not a quoted workover rig rate.
+        note: 2015 study market; later rehosting does not change the dollar year.
+        location: 'Section 8.3.2.3, p.8-18 (PDF p.149): total MODU spread'
+      interpretation: Published spread (rigless rate derived from published task cost and hours). Transfer
+        to well work is an explicit scenario, not a quoted workover rate.
     duration:
       value: 21
       unit: day/event
-      asset: semisubmersible or drillship MODU spread
-      band: 1500 m and deeper
+      asset: drillship or semisubmersible total spread
+      applicability: Subsea access; 6000-9000 ft (1829-2743 m) anchors; extrapolation beyond 9000 ft not
+        established
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
         date: '2015-07-31'
         url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
         retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
+        note: 2015 study market; later rehosting does not change the dollar year.
         location: Figure 8-9, p.8-19 (PDF p.150)
-      interpretation: 'Approximate rounded graphic readings: MODU leaving wellhead at 6000 ft (~21); MODU
-        at 6000 ft (~23) and 9000 ft (~27). No estimate above the chart''s 9000-ft anchor is established.'
+      interpretation: Approximate rounded graphic readings; scenario anchors, not depth-band quantiles.
+        MODU leaving wellhead at 6000 ft (~21), MODU at 6000 ft (~23) and 9000 ft (~27).
     mobilisation:
       value: 0
       unit: USD/event
-      asset: semisubmersible or drillship MODU spread
-      band: 1500 m and deeper
+      asset: drillship or semisubmersible total spread
+      applicability: Subsea access; 6000-9000 ft (1829-2743 m) anchors; extrapolation beyond 9000 ft not
+        established
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
         date: '2015-07-31'
         url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
         retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
-        location: 'Section 8.3.2.3, p.8-18: mobilisation costs not included'
-      interpretation: EXCLUDED cost, not a finding of zero expense. Scenario assumes an already mobilised
-        unit; no cited floating-unit mobilisation amount is available.
+        note: 2015 study market; later rehosting does not change the dollar year.
+        location: 'Section 8.3.2.3, p.8-18: mobilisation excluded'
+      interpretation: EXCLUDED, not zero actual expense; already mobilised unit.
   base:
     spread_dayrate:
       value: 674600
       unit: USD/day
-      asset: semisubmersible or drillship MODU spread
-      band: 1500 m and deeper
+      asset: drillship or semisubmersible total spread
+      applicability: Subsea access; 6000-9000 ft (1829-2743 m) anchors; extrapolation beyond 9000 ft not
+        established
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
         date: '2015-07-31'
         url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
         retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
-        location: Section 8.3.2.3, p.8-18 (PDF p.149)
-      interpretation: Published total spread. Transfer to workover is a scenario assumption; casing-jack
-        package is a heavy-unit proxy, not a quoted workover rig rate.
+        note: 2015 study market; later rehosting does not change the dollar year.
+        location: 'Section 8.3.2.3, p.8-18 (PDF p.149): total MODU spread'
+      interpretation: Published spread (rigless rate derived from published task cost and hours). Transfer
+        to well work is an explicit scenario, not a quoted workover rate.
     duration:
       value: 23
       unit: day/event
-      asset: semisubmersible or drillship MODU spread
-      band: 1500 m and deeper
+      asset: drillship or semisubmersible total spread
+      applicability: Subsea access; 6000-9000 ft (1829-2743 m) anchors; extrapolation beyond 9000 ft not
+        established
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
         date: '2015-07-31'
         url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
         retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
+        note: 2015 study market; later rehosting does not change the dollar year.
         location: Figure 8-9, p.8-19 (PDF p.150)
-      interpretation: 'Approximate rounded graphic readings: MODU leaving wellhead at 6000 ft (~21); MODU
-        at 6000 ft (~23) and 9000 ft (~27). No estimate above the chart''s 9000-ft anchor is established.'
+      interpretation: Approximate rounded graphic readings; scenario anchors, not depth-band quantiles.
+        MODU leaving wellhead at 6000 ft (~21), MODU at 6000 ft (~23) and 9000 ft (~27).
     mobilisation:
       value: 0
       unit: USD/event
-      asset: semisubmersible or drillship MODU spread
-      band: 1500 m and deeper
+      asset: drillship or semisubmersible total spread
+      applicability: Subsea access; 6000-9000 ft (1829-2743 m) anchors; extrapolation beyond 9000 ft not
+        established
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
         date: '2015-07-31'
         url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
         retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
-        location: 'Section 8.3.2.3, p.8-18: mobilisation costs not included'
-      interpretation: EXCLUDED cost, not a finding of zero expense. Scenario assumes an already mobilised
-        unit; no cited floating-unit mobilisation amount is available.
+        note: 2015 study market; later rehosting does not change the dollar year.
+        location: 'Section 8.3.2.3, p.8-18: mobilisation excluded'
+      interpretation: EXCLUDED, not zero actual expense; already mobilised unit.
   high:
     spread_dayrate:
       value: 674600
       unit: USD/day
-      asset: semisubmersible or drillship MODU spread
-      band: 1500 m and deeper
+      asset: drillship or semisubmersible total spread
+      applicability: Subsea access; 6000-9000 ft (1829-2743 m) anchors; extrapolation beyond 9000 ft not
+        established
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
         date: '2015-07-31'
         url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
         retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
-        location: Section 8.3.2.3, p.8-18 (PDF p.149)
-      interpretation: Published total spread. Transfer to workover is a scenario assumption; casing-jack
-        package is a heavy-unit proxy, not a quoted workover rig rate.
+        note: 2015 study market; later rehosting does not change the dollar year.
+        location: 'Section 8.3.2.3, p.8-18 (PDF p.149): total MODU spread'
+      interpretation: Published spread (rigless rate derived from published task cost and hours). Transfer
+        to well work is an explicit scenario, not a quoted workover rate.
     duration:
       value: 27
       unit: day/event
-      asset: semisubmersible or drillship MODU spread
-      band: 1500 m and deeper
+      asset: drillship or semisubmersible total spread
+      applicability: Subsea access; 6000-9000 ft (1829-2743 m) anchors; extrapolation beyond 9000 ft not
+        established
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
         date: '2015-07-31'
         url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
         retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
+        note: 2015 study market; later rehosting does not change the dollar year.
         location: Figure 8-9, p.8-19 (PDF p.150)
-      interpretation: 'Approximate rounded graphic readings: MODU leaving wellhead at 6000 ft (~21); MODU
-        at 6000 ft (~23) and 9000 ft (~27). No estimate above the chart''s 9000-ft anchor is established.'
+      interpretation: Approximate rounded graphic readings; scenario anchors, not depth-band quantiles.
+        MODU leaving wellhead at 6000 ft (~21), MODU at 6000 ft (~23) and 9000 ft (~27).
     mobilisation:
       value: 0
       unit: USD/event
-      asset: semisubmersible or drillship MODU spread
-      band: 1500 m and deeper
+      asset: drillship or semisubmersible total spread
+      applicability: Subsea access; 6000-9000 ft (1829-2743 m) anchors; extrapolation beyond 9000 ft not
+        established
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
         date: '2015-07-31'
         url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
         retrieval_date: '2026-11-12'
-        note: Project completed in 2015; attachment rehosted in 2023. Cost basis is the study's 2015 market,
-          not the rehosting year.
-        location: 'Section 8.3.2.3, p.8-18: mobilisation costs not included'
-      interpretation: EXCLUDED cost, not a finding of zero expense. Scenario assumes an already mobilised
-        unit; no cited floating-unit mobilisation amount is available.
+        note: 2015 study market; later rehosting does not change the dollar year.
+        location: 'Section 8.3.2.3, p.8-18: mobilisation excluded'
+      interpretation: EXCLUDED, not zero actual expense; already mobilised unit.
+- access_type: Deepwater platform dry-tree / casing jacks
+  applicability: TLP or spar dry-tree access; Table 8-4 anchors 1700 / 3000 / 5000 ft (518 / 914 / 1524
+    m)
+  asset: dry-tree deepwater platform, 60-well casing-jack campaign
+  dollar_year: 2015
+  scenario_id: deep_platform_work
+  event: well work
+  pricing_method: not priced
+  limitation: A cited well-work basis on this deepwater platform spread is not established; no price transferred
+    from the subsea case.
+- access_type: Deepwater platform dry-tree / casing jacks
+  applicability: TLP or spar dry-tree access; Table 8-4 anchors 1700 / 3000 / 5000 ft (518 / 914 / 1524
+    m)
+  asset: dry-tree deepwater platform, 60-well casing-jack campaign
+  dollar_year: 2015
+  scenario_id: deep_platform_pa
+  event: permanent abandonment
+  pricing_method: published total
+  low:
+    published_cost:
+      value: 734356
+      unit: USD/well
+      asset: dry-tree deepwater platform, 60-well casing-jack campaign
+      applicability: TLP or spar dry-tree access; Table 8-4 anchors 1700 / 3000 / 5000 ft (518 / 914 /
+        1524 m)
+      citation:
+        title: Decommissioning Methodology and Cost Evaluation, TAP-738
+        publisher: BSEE / ICF International
+        date: '2015-07-31'
+        url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
+        retrieval_date: '2026-11-12'
+        note: 2015 study market; later rehosting does not change the dollar year.
+        location: 'Table 8-4, p.8-15 (PDF p.146), 1700 ft, final column: normalized cost per well'
+      interpretation: Published 60-well campaign total divided by 60; includes work provision, engineering,
+        weather and shared mobilisation. Barrier work; conductor removal separate. Cases are depth anchors,
+        not outcome quantiles.
+  base:
+    published_cost:
+      value: 987262
+      unit: USD/well
+      asset: dry-tree deepwater platform, 60-well casing-jack campaign
+      applicability: TLP or spar dry-tree access; Table 8-4 anchors 1700 / 3000 / 5000 ft (518 / 914 /
+        1524 m)
+      citation:
+        title: Decommissioning Methodology and Cost Evaluation, TAP-738
+        publisher: BSEE / ICF International
+        date: '2015-07-31'
+        url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
+        retrieval_date: '2026-11-12'
+        note: 2015 study market; later rehosting does not change the dollar year.
+        location: 'Table 8-4, p.8-15 (PDF p.146), 3000 ft, final column: normalized cost per well'
+      interpretation: Published 60-well campaign total divided by 60; includes work provision, engineering,
+        weather and shared mobilisation. Barrier work; conductor removal separate. Cases are depth anchors,
+        not outcome quantiles.
+  high:
+    published_cost:
+      value: 1374570
+      unit: USD/well
+      asset: dry-tree deepwater platform, 60-well casing-jack campaign
+      applicability: TLP or spar dry-tree access; Table 8-4 anchors 1700 / 3000 / 5000 ft (518 / 914 /
+        1524 m)
+      citation:
+        title: Decommissioning Methodology and Cost Evaluation, TAP-738
+        publisher: BSEE / ICF International
+        date: '2015-07-31'
+        url: https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf
+        retrieval_date: '2026-11-12'
+        note: 2015 study market; later rehosting does not change the dollar year.
+        location: 'Table 8-4, p.8-15 (PDF p.146), 5000 ft, final column: normalized cost per well'
+      interpretation: Published 60-well campaign total divided by 60; includes work provision, engineering,
+        weather and shared mobilisation. Barrier work; conductor removal separate. Cases are depth anchors,
+        not outcome quantiles.
 published_pa_comparators:
-- band: under 100 m
-  scope: dry-tree rigless T&A barrier work; conductor removal separate
+- access_type: Platform dry-tree / rigless
+  applicability: 50-400 ft source case
   low_usd: 344405
   high_usd: 421853
+  location: 'Table 8-2, p.8-12: 20-well and standalone campaigns'
   dollar_year: 2015
-  source: bsee738
-  location: 'Table 8-2, p.8-12: 20-well versus standalone campaign'
   unit: USD/well
-  asset: published study scenario
+  source: bsee738
   citation: *id001
-- band: 100 to 500 m
-  scope: dry-tree T&A with casing jacks; 60-well campaign
+  scope: Permanent-abandonment barrier work; dry-tree conductor removal separate; subsea mobilisation
+    excluded
+- access_type: Platform dry-tree / casing jacks
+  applicability: 400 and 1600 ft anchors
   low_usd: 479820
   high_usd: 713836
+  location: 'Table 8-4, p.8-15: 60-well campaign'
   dollar_year: 2015
-  source: bsee738
-  location: 'Table 8-4, p.8-15: 400 and 1600 ft; conductor removal separate'
   unit: USD/well
-  asset: published study scenario
+  source: bsee738
   citation: *id001
-- band: 500 to 1500 m
-  scope: wet-tree MODU P&A; approximate graphic readings; no mob/demob
-  low_usd: 11200000
+  scope: Permanent-abandonment barrier work; dry-tree conductor removal separate; subsea mobilisation
+    excluded
+- access_type: Deepwater platform dry-tree / casing jacks
+  applicability: 1700 and 5000 ft anchors
+  low_usd: 734356
+  high_usd: 1374570
+  location: 'Table 8-4, p.8-15: 60-well campaign'
+  dollar_year: 2015
+  unit: USD/well
+  source: bsee738
+  citation: *id001
+  scope: Permanent-abandonment barrier work; dry-tree conductor removal separate; subsea mobilisation
+    excluded
+- access_type: Subsea wet-tree / drillship or semisubmersible
+  applicability: 3000 ft point (914 m), within 500-1500 m
+  low_usd: 13400000
   high_usd: 13400000
+  location: 'Figure 8-10, p.8-20: approximate MODU reading at 3000 ft; not 1000 ft'
   dollar_year: 2015
-  source: bsee738
-  location: 'Figure 8-10, p.8-20: 1000 and 3000 ft anchors, not band bounds'
   unit: USD/well
-  asset: published study scenario
+  source: bsee738
   citation: *id001
-- band: 1500 m and deeper
-  scope: wet-tree MODU P&A; approximate graphic readings; no mob/demob
+  scope: Permanent-abandonment barrier work; dry-tree conductor removal separate; subsea mobilisation
+    excluded
+- access_type: Subsea wet-tree / drillship or semisubmersible
+  applicability: 6000 and 9000 ft anchors
   low_usd: 16400000
   high_usd: 18700000
+  location: 'Figure 8-10, p.8-20: approximate MODU readings'
   dollar_year: 2015
-  source: bsee738
-  location: 'Figure 8-10, p.8-20: 6000 and 9000 ft anchors'
   unit: USD/well
-  asset: published study scenario
+  source: bsee738
   citation: *id001
+  scope: Permanent-abandonment barrier work; dry-tree conductor removal separate; subsea mobilisation
+    excluded

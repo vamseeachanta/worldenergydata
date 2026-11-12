@@ -24,6 +24,9 @@
   },
   "events_with_depth_fraction": 1.0,
   "file_date": "2026-11-12",
+  "inventory_missing_first_spud": 17,
+  "inventory_basis": "all non-cancelled bores per API10; stock on 1 January, inclusive dates",
+  "assumed_standing_last_full_year": 136,
   "eor_invalid_status_dates": 0,
   "checkpoint_eor_last_full_year": {
     "A": 891,
@@ -41,8 +44,9 @@
       "band": "under 100 m",
       "family": "well work",
       "permits": 316,
-      "standing_wells": 11440,
-      "per_100_standing_wells": 2.762237762237762,
+      "standing_wells": 5750,
+      "stock_date": "2025-01-01",
+      "per_100_standing_wells": 5.495652173913043,
       "partial_year": false
     },
     {
@@ -50,8 +54,9 @@
       "band": "under 100 m",
       "family": "abandonment",
       "permits": 1963,
-      "standing_wells": 11440,
-      "per_100_standing_wells": 17.15909090909091,
+      "standing_wells": 5750,
+      "stock_date": "2025-01-01",
+      "per_100_standing_wells": 34.13913043478261,
       "partial_year": false
     },
     {
@@ -59,8 +64,9 @@
       "band": "100 to 500 m",
       "family": "well work",
       "permits": 99,
-      "standing_wells": 1525,
-      "per_100_standing_wells": 6.491803278688526,
+      "standing_wells": 887,
+      "stock_date": "2025-01-01",
+      "per_100_standing_wells": 11.161217587373168,
       "partial_year": false
     },
     {
@@ -68,8 +74,9 @@
       "band": "100 to 500 m",
       "family": "abandonment",
       "permits": 282,
-      "standing_wells": 1525,
-      "per_100_standing_wells": 18.491803278688522,
+      "standing_wells": 887,
+      "stock_date": "2025-01-01",
+      "per_100_standing_wells": 31.79255918827508,
       "partial_year": false
     },
     {
@@ -77,8 +84,9 @@
       "band": "500 to 1500 m",
       "family": "well work",
       "permits": 185,
-      "standing_wells": 952,
-      "per_100_standing_wells": 19.432773109243698,
+      "standing_wells": 568,
+      "stock_date": "2025-01-01",
+      "per_100_standing_wells": 32.57042253521127,
       "partial_year": false
     },
     {
@@ -86,8 +94,9 @@
       "band": "500 to 1500 m",
       "family": "abandonment",
       "permits": 284,
-      "standing_wells": 952,
-      "per_100_standing_wells": 29.831932773109244,
+      "standing_wells": 568,
+      "stock_date": "2025-01-01",
+      "per_100_standing_wells": 50.0,
       "partial_year": false
     },
     {
@@ -95,8 +104,9 @@
       "band": "1500 m and deeper",
       "family": "well work",
       "permits": 165,
-      "standing_wells": 604,
-      "per_100_standing_wells": 27.31788079470199,
+      "standing_wells": 426,
+      "stock_date": "2025-01-01",
+      "per_100_standing_wells": 38.732394366197184,
       "partial_year": false
     },
     {
@@ -104,8 +114,9 @@
       "band": "1500 m and deeper",
       "family": "abandonment",
       "permits": 81,
-      "standing_wells": 604,
-      "per_100_standing_wells": 13.410596026490065,
+      "standing_wells": 426,
+      "stock_date": "2025-01-01",
+      "per_100_standing_wells": 19.014084507042252,
       "partial_year": false
     },
     {
@@ -113,8 +124,9 @@
       "band": "no depth",
       "family": "well work",
       "permits": 0,
-      "standing_wells": 0,
-      "per_100_standing_wells": null,
+      "standing_wells": 5,
+      "stock_date": "2025-01-01",
+      "per_100_standing_wells": 0.0,
       "partial_year": false
     },
     {
@@ -122,8 +134,9 @@
       "band": "no depth",
       "family": "abandonment",
       "permits": 0,
-      "standing_wells": 0,
-      "per_100_standing_wells": null,
+      "standing_wells": 5,
+      "stock_date": "2025-01-01",
+      "per_100_standing_wells": 0.0,
       "partial_year": false
     }
   ]

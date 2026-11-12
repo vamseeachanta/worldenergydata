@@ -1,0 +1,11 @@
+year,band,event,approvals,estimates,missing_or_nonpositive,median_est_operation_days
+2025,under 100 m,well work,316,305,11,3.000000
+2025,under 100 m,permanent abandonment,1098,1093,5,14.000000
+2025,100 to 500 m,well work,99,96,3,6.000000
+2025,100 to 500 m,permanent abandonment,94,94,0,10.000000
+2025,500 to 1500 m,well work,185,167,18,15.000000
+2025,500 to 1500 m,permanent abandonment,157,152,5,25.000000
+2025,1500 m and deeper,well work,165,136,29,14.000000
+2025,1500 m and deeper,permanent abandonment,38,37,1,21.000000
+2025,no depth,well work,0,0,0,
+2025,no depth,permanent abandonment,0,0,0,

@@ -30,6 +30,7 @@ def verify():
     )
     assert (rates.standing_wells >= 0).all()
     for row in rates.itertuples():
+        assert row.stock_date == f"{row.year}-01-01"
         groups = (
             ["workover and recompletion", "production enhancement", "other well work"]
             if row.family == "well work"
@@ -69,6 +70,9 @@ def verify():
     saved = pd.read_csv(out / "cost_table.csv")
     pd.testing.assert_frame_equal(saved, generated, check_dtype=False)
     for scenario in basis["scenarios"]:
+        if scenario["pricing_method"] == "not priced":
+            assert scenario["limitation"]
+            continue
         for case in ["low", "base", "high"]:
             for fact in scenario[case].values():
                 assert all(
@@ -77,7 +81,7 @@ def verify():
                         "value",
                         "unit",
                         "asset",
-                        "band",
+                        "applicability",
                         "citation",
                         "interpretation",
                     ]
@@ -93,6 +97,57 @@ def verify():
                         "location",
                     ]
                 )
+    units = pd.read_csv(out / "unit_type_shares.csv")
+    for (_, _, _), g in units.groupby(["period", "band", "event"]):
+        total = g.approvals.sum()
+        assert g.total_approvals.eq(total).all()
+        if total:
+            assert np.isclose(g.share_percent.sum(), 100, atol=1e-5)
+            np.testing.assert_allclose(
+                g.share_percent, g.approvals / total * 100, atol=1e-6
+            )
+        else:
+            assert g.share_percent.isna().all()
+    subsea = pd.read_csv(out / "subsea_completion_shares.csv")
+    assert (
+        subsea[["subsea_flag_yes", "subsea_flag_no", "subsea_flag_unknown"]].sum(axis=1)
+        == subsea.approvals
+    ).all()
+    ratios = pd.read_csv(out / "approvals_per_distinct_well.csv")
+    assert (ratios.distinct_wells <= ratios.approvals).all()
+    assert ratios.missing_api10.eq(0).all()
+    for r in ratios.itertuples():
+        n = rates.loc[
+            rates.year.eq(r.year) & rates.band.eq(r.band) & rates.family.eq(r.family),
+            "permits",
+        ].item()
+        assert n == r.approvals
+        if r.distinct_wells:
+            assert np.isclose(
+                r.approvals_per_well, r.approvals / r.distinct_wells, atol=1e-6
+            )
+        else:
+            assert pd.isna(r.approvals_per_well)
+    from plot_charts import COLORS
+
+    for color in COLORS:
+        srgb = [int(color[i : i + 2], 16) / 255 for i in (1, 3, 5)]
+        rgb = [
+            v / 12.92 if v <= 0.04045 else ((v + 0.055) / 1.055) ** 2.4 for v in srgb
+        ]
+        luminance = sum(v * w for v, w in zip(rgb, [0.2126, 0.7152, 0.0722]))
+        assert 1.05 / (luminance + 0.05) >= 3
+    for stem in [
+        "01_approved_interventions",
+        "02_rates_per_standing_well",
+        "03_cost_per_event",
+        "04_unit_types_by_depth",
+    ]:
+        assert (out / f"{stem}.png").exists() and (out / f"{stem}.svg").exists()
+        svg = (out / f"{stem}.svg").read_text(encoding="utf-8")
+        assert "cost_basis.yml" not in svg
+        if not stem.startswith("03"):
+            assert "cost basis" not in svg
     files = sorted(
         p
         for p in out.iterdir()
@@ -103,7 +158,15 @@ def verify():
         with Image.open(png) as img:
             assert img.width >= 1600
     receipt = dict(
-        criteria_revision=1,
+        criteria_revision=2,
+        disclosure_review=dict(
+            audience="public GitHub PR 1949",
+            reviewer="Codex",
+            reviewed_date="2026-11-12",
+            verdict="verified",
+            scope="Derived CSV/PNG/SVG, README and implementation; raw archives and source PDFs excluded",
+            limitations="Approval assumption, retrospective standing stock and source-year access scenarios remain explicit in the README",
+        ),
         software=dict(
             python=platform.python_version(),
             pandas=pd.__version__,
@@ -131,6 +194,12 @@ def verify():
             "partial year excluded from averages",
             "cost table equals cited YAML arithmetic",
             "all cost inputs carry provenance",
+            "unit shares partition each approval cohort and sum to 100 percent",
+            "subsea flags retain yes no and unknown counts",
+            "approval to distinct-well ratios reconcile",
+            "all rate stock dates are 1 January",
+            "ordered band palette contrast at least 3 to 1 on white",
+            "all four figure pairs present without internal basis filenames",
             "PNG width at least 1600",
         ],
         files={p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in files},

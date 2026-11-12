@@ -1,0 +1,19 @@
+source_field,raw_value,unit_category,rule
+RIG_TYPE_CODE,WL,wireline unit,exact type code; joined via RIG_ID_NUM; no name inference
+RIG_TYPE_CODE,CT,coiled tubing,exact type code; joined via RIG_ID_NUM; no name inference
+RIG_TYPE_CODE,HW,hydraulic workover / snubbing,exact type code; joined via RIG_ID_NUM; no name inference
+RIG_TYPE_CODE,SB,hydraulic workover / snubbing,exact type code; joined via RIG_ID_NUM; no name inference
+RIG_TYPE_CODE,PF,platform rig,exact type code; joined via RIG_ID_NUM; no name inference
+RIG_TYPE_CODE,LB,liftboat / jack-up,exact type code; joined via RIG_ID_NUM; no name inference
+RIG_TYPE_CODE,JU,liftboat / jack-up,exact type code; joined via RIG_ID_NUM; no name inference
+RIG_TYPE_CODE,WI,intervention vessel,exact type code; joined via RIG_ID_NUM; no name inference
+RIG_TYPE_CODE,DS,drillship / semisubmersible,exact type code; joined via RIG_ID_NUM; no name inference
+RIG_TYPE_CODE,SS,drillship / semisubmersible,exact type code; joined via RIG_ID_NUM; no name inference
+RIG_TYPE_CODE,SD,drillship / semisubmersible,exact type code; joined via RIG_ID_NUM; no name inference
+RIG_TYPE_CODE,NR,none named,exact type code; joined via RIG_ID_NUM; no name inference
+RIG_TYPE_CODE,BG,other,exact type code; joined via RIG_ID_NUM; no name inference
+RIG_TYPE_CODE,BR,other,exact type code; joined via RIG_ID_NUM; no name inference
+RIG_TYPE_CODE,PL,other,exact type code; joined via RIG_ID_NUM; no name inference
+RIG_TYPE_CODE,SU,other,exact type code; joined via RIG_ID_NUM; no name inference
+RIG_ID_NUM / RIG_NAME / RIG_TYPE_CODE,all blank,none named,no unit information
+RIG_ID_NUM / RIG_TYPE_CODE,unmatched ID or unmapped code,other,"retained unresolved unit; SU is submersible, not a semisubmersible"

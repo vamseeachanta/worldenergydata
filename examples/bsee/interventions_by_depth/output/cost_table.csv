@@ -1,9 +1,10 @@
-band,event,asset,dollar_year,low_usd,base_usd,high_usd
-under 100 m,well work,platform casing-jack heavy unit (proxy),2015,554454,793938.0,1033422
-under 100 m,permanent abandonment,platform casing-jack heavy unit (proxy),2015,280758,349182.0,622878
-100 to 500 m,well work,platform casing-jack heavy unit (proxy),2015,554454,793938.0,1033422
-100 to 500 m,permanent abandonment,platform casing-jack heavy unit (proxy),2015,280758,349182.0,622878
-500 to 1500 m,well work,semisubmersible or drillship MODU spread,2015,4722200,7083300.0,9444400
-500 to 1500 m,permanent abandonment,semisubmersible or drillship MODU spread,2015,11468200,12817400.0,15515800
-1500 m and deeper,well work,semisubmersible or drillship MODU spread,2015,4722200,7083300.0,9444400
-1500 m and deeper,permanent abandonment,semisubmersible or drillship MODU spread,2015,14166600,15515800.0,18214200
+scenario_id,access_type,applicability,event,asset,dollar_year,pricing_method,low_usd,base_usd,high_usd
+platform_rigless_work,Platform dry-tree / rigless spread,Shelf; source case 50-400 ft (15-122 m),well work,rigless platform spread,2015,spread scenario,527196.0,753051.0,978906.0
+platform_rigless_pa,Platform dry-tree / rigless spread,Shelf; source case 50-400 ft (15-122 m),permanent abandonment,rigless platform spread,2015,spread scenario,269076.0,333606.0,591726.0
+platform_casing_work,Platform dry-tree / casing jacks,Platform-based spread; source casing-jack case above 400 ft; shelf example,well work,platform casing-jack spread,2015,spread scenario,554454.0,793938.0,1033422.0
+platform_casing_pa,Platform dry-tree / casing jacks,Platform-based spread; source casing-jack case above 400 ft; shelf example,permanent abandonment,platform casing-jack spread,2015,spread scenario,280758.0,349182.0,622878.0
+subsea_work,Subsea wet-tree / drillship or semisubmersible,Subsea access; durations anchored at 3000 ft (914 m); not all wells in a depth band,well work,drillship or semisubmersible total spread,2015,spread scenario,4722200.0,7083300.0,9444400.0
+subsea_pa,Subsea wet-tree / drillship or semisubmersible,Subsea access; durations anchored at 3000 ft (914 m); not all wells in a depth band,permanent abandonment,drillship or semisubmersible total spread,2015,spread scenario,11468200.0,12817400.0,15515800.0
+subsea_pa_6000_9000ft,Subsea wet-tree / drillship or semisubmersible,Subsea access; 6000-9000 ft (1829-2743 m) anchors; extrapolation beyond 9000 ft not established,permanent abandonment,drillship or semisubmersible total spread,2015,spread scenario,14166600.0,15515800.0,18214200.0
+deep_platform_work,Deepwater platform dry-tree / casing jacks,TLP or spar dry-tree access; Table 8-4 anchors 1700 / 3000 / 5000 ft (518 / 914 / 1524 m),well work,"dry-tree deepwater platform, 60-well casing-jack campaign",2015,not priced,,,
+deep_platform_pa,Deepwater platform dry-tree / casing jacks,TLP or spar dry-tree access; Table 8-4 anchors 1700 / 3000 / 5000 ft (518 / 914 / 1524 m),permanent abandonment,"dry-tree deepwater platform, 60-well casing-jack campaign",2015,published total,734356.0,987262.0,1374570.0

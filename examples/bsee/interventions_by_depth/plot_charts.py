@@ -1,4 +1,4 @@
-"""Render three publication-size PNG/SVG figures from committed CSVs."""
+"""Render four publication-size PNG/SVG figures from derived CSVs."""
 
 from __future__ import annotations
 
@@ -13,6 +13,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from matplotlib.lines import Line2D
+from matplotlib.patches import Patch
+from matplotlib.ticker import FormatStrFormatter
 
 BANDS = [
     "under 100 m",
@@ -21,20 +23,32 @@ BANDS = [
     "1500 m and deeper",
     "no depth",
 ]
-COLORS = ["#d9e6f2", "#91b8d5", "#397da8", "#123b56", "#888888"]
+# Ordered light-to-dark blues; even the lightest exceeds 3:1 on white.
+COLORS = ["#6588a6", "#427298", "#245476", "#102e46", "#777777"]
 MARKERS = ["o", "s", "^", "D", "x"]
 STYLES = ["-", "--", "-.", ":", "--"]
 HATCHES = ["", "//", "..", "xx", "\\\\"]
+COST_SOURCES = (
+    "Sources: BSEE TAP-738, 2015; BOEM EIS 2016-018, 2016;\n"
+    "BOEM MAG-PLAN Alaska update, 2012; BSEE Pacific cost update vol. 2, 2015."
+)
 
 
-def finish(fig, out, stem, date, extra=""):
-    fig.text(0.07, 0.075, extra, fontsize=10, color="#333333")
-    fig.text(
-        0.07,
-        0.035,
-        f"Source: BSEE Data Center raw data, files of {date}; cost basis: see cost_basis.yml",
-        fontsize=9,
+def million(value):
+    if pd.isna(value):
+        return "not priced"
+    x = value / 1e6
+    return f"{x:.{max(0, 1-int(np.floor(np.log10(abs(x)))))}f}" if x else "0"
+
+
+def finish(fig, out, stem, date, extra="", cost=False, eor=False):
+    fig.text(0.07, 0.15 if cost else 0.10, extra, fontsize=9, color="#333333", va="top")
+    source = (
+        COST_SOURCES
+        if cost
+        else f"Source: BSEE BoreholeRawData.zip, eWellAPMRawData.zip{' and eWellEORRawData.zip' if eor else ''}; {date}."
     )
+    fig.text(0.07, 0.025, source, fontsize=9, va="bottom")
     fig.savefig(out / (stem + ".png"), dpi=180, facecolor="white")
     fig.savefig(out / (stem + ".svg"), metadata={"Date": None}, facecolor="white")
     svg = out / (stem + ".svg")
@@ -49,6 +63,13 @@ def finish(fig, out, stem, date, extra=""):
     plt.close(fig)
 
 
+def year_axis(axes, years, last):
+    ticks = years[::2] + ([years[-1]] if years[-1] not in years[::2] else [])
+    axes[-1].set_xticks(ticks)
+    axes[-1].set_xticklabels([f"{y}\npartial" if y > last else str(y) for y in ticks])
+    axes[-1].set_xlabel("Approval year")
+
+
 def plot(out):
     plt.rcParams.update(
         {
@@ -56,19 +77,21 @@ def plot(out):
             "font.size": 11,
             "axes.spines.top": False,
             "axes.spines.right": False,
-            "svg.hashsalt": "gom-interventions-v1",
+            "svg.hashsalt": "gom-interventions-v2",
         }
     )
-    summary = json.loads((out / "summary.json").read_text())
+    summary = json.loads((out / "summary.json").read_text(encoding="utf-8"))
     date, last = summary["file_date"], summary["last_full_year"]
     rates = pd.read_csv(out / "rates.csv")
     years = sorted(rates.year.unique())
+    active = [b for b in BANDS if rates.loc[rates.band.eq(b), "permits"].sum() > 0]
     legend = [
         Line2D([], [], color=c, marker=m, linestyle=s, label=b)
         for b, c, m, s in zip(BANDS, COLORS, MARKERS, STYLES)
+        if b in active
     ]
     fig, axes = plt.subplots(2, 1, figsize=(12, 9), sharex=True)
-    fig.subplots_adjust(left=0.09, right=0.97, top=0.91, bottom=0.18, hspace=0.28)
+    fig.subplots_adjust(left=0.09, right=0.97, top=0.89, bottom=0.22, hspace=0.30)
     for ax, family in zip(axes, ["well work", "abandonment"]):
         frame = (
             rates[rates.family.eq(family)]
@@ -77,51 +100,51 @@ def plot(out):
         )
         bottom = np.zeros(len(years))
         for band, color, hatch in zip(BANDS, COLORS, HATCHES):
+            if band not in active:
+                continue
             vals = frame[band].to_numpy()
             ax.bar(
                 years,
                 vals,
                 bottom=bottom,
                 color=color,
-                edgecolor="#454545",
+                edgecolor="#333333",
                 linewidth=0.4,
                 hatch=hatch,
                 label=band,
             )
             bottom += vals
         ax.axvspan(last + 0.5, last + 1.5, color="#cccccc", alpha=0.3)
-        ax.set_title(f"APM approvals: {family}", loc="left", fontsize=13)
+        ax.set_title(f"Approved permits to modify: {family}", loc="left", fontsize=13)
         ax.set_ylabel("Approved permits (count)")
+        ax.set_ylim(bottom=0)
         ax.grid(axis="y", alpha=0.2)
         ax.set_axisbelow(True)
         ax.set_xlim(min(years) - 0.7, max(years) + 0.6)
     fig.legend(
         *axes[0].get_legend_handles_labels(),
-        ncol=5,
+        ncol=len(active),
         loc="upper center",
         bbox_to_anchor=(0.51, 0.98),
         fontsize=9,
         frameon=False,
     )
-    axes[1].set_xticks(
-        years[::2] + ([years[-1]] if years[-1] not in years[::2] else [])
-    )
-    axes[1].set_xticklabels(
-        [f"{y}\npartial" if y > last else str(y) for y in axes[1].get_xticks()]
-    )
-    axes[1].set_xlabel("Approval year")
+    year_axis(axes, years, last)
     finish(
         fig,
         out,
         "01_approved_interventions",
         date,
-        "Initial completions and new-hole preparation excluded. Unspecified abandonment retained. 2026 through 12 November.",
+        "Initial completions and new-hole preparation excluded; unspecified abandonment retained. 2026 through 12 November.\n"
+        "OTHER fell from 309-509/year (2005-2020) to 0 from 2023 as WORKOVER rose; coding changes limit long-run comparisons.",
     )
 
     fig, axes = plt.subplots(2, 1, figsize=(12, 9), sharex=True)
-    fig.subplots_adjust(left=0.09, right=0.97, top=0.89, bottom=0.18, hspace=0.30)
+    fig.subplots_adjust(left=0.09, right=0.97, top=0.89, bottom=0.22, hspace=0.30)
     for ax, family in zip(axes, ["well work", "abandonment"]):
         for band, color, marker, style in zip(BANDS, COLORS, MARKERS, STYLES):
+            if band not in active:
+                continue
             f = rates[rates.family.eq(family) & rates.band.eq(band)].sort_values("year")
             full = f[f.year.le(last)]
             ax.plot(
@@ -135,98 +158,230 @@ def plot(out):
                 markeredgewidth=0.5,
             )
             partial = f[f.year.gt(last)]
-            if partial.per_100_standing_wells.notna().any():
-                ax.scatter(
-                    partial.year,
-                    partial.per_100_standing_wells,
-                    color=color,
-                    marker=marker,
-                    edgecolors="#333333",
-                    s=45,
-                )
+            ax.scatter(
+                partial.year,
+                partial.per_100_standing_wells,
+                color=color,
+                marker=marker,
+                edgecolors="#333333",
+                s=45,
+            )
         ax.axvspan(last + 0.5, last + 1.5, color="#cccccc", alpha=0.3)
         ax.set_title(
-            f"APM approvals per standing well: {family}", loc="left", fontsize=13
+            f"Approved permits to modify per 100 standing wells: {family}",
+            loc="left",
+            fontsize=13,
         )
         ax.set_ylabel("Permits / 100 standing wells")
+        ax.yaxis.set_major_formatter(FormatStrFormatter("%.1f"))
+        ax.set_ylim(bottom=0)
         ax.grid(axis="y", alpha=0.25)
         ax.set_xlim(min(years) - 0.5, max(years) + 0.6)
     fig.legend(
         handles=legend,
-        ncol=5,
+        ncol=len(active),
         loc="upper center",
-        bbox_to_anchor=(0.51, 0.97),
+        bbox_to_anchor=(0.51, 0.98),
         frameon=False,
         fontsize=9,
     )
-    axes[1].set_xticks(
-        years[::2] + ([years[-1]] if years[-1] not in years[::2] else [])
-    )
-    axes[1].set_xticklabels(
-        [
-            f"{int(y)}\npartial" if y > last else str(int(y))
-            for y in axes[1].get_xticks()
-        ]
-    )
-    axes[1].set_xlabel("Approval year")
+    year_axis(axes, years, last)
     finish(
         fig,
         out,
         "02_rates_per_standing_well",
         date,
-        "Original-hole year-end inventory proxy; 2026 uses the file date and is not annualised. No-depth rate is missing.",
+        "Denominator: wells standing on 1 January, all non-cancelled bores per well; 2026 approvals are partial, not annualised.\n"
+        "Approval intensity includes repeated permits; it is not the percentage of wells receiving work.",
     )
 
-    costs = pd.read_csv(out / "cost_table.csv")
-    fig, axes = plt.subplots(1, 2, figsize=(12, 6), sharey=True)
-    fig.subplots_adjust(left=0.18, right=0.98, top=0.80, bottom=0.24, wspace=0.32)
-    for ax, kind in zip(axes, ["well work", "permanent abandonment"]):
-        f = costs[costs.event.eq(kind)].set_index("band").reindex(BANDS[:-1])
-        for y, (band, r) in enumerate(f.iterrows()):
+    costs = pd.read_csv(out / "cost_table.csv").set_index("scenario_id")
+    order = [
+        "platform_rigless_work",
+        "platform_rigless_pa",
+        "platform_casing_work",
+        "platform_casing_pa",
+        "deep_platform_work",
+        "deep_platform_pa",
+        "subsea_work",
+        "subsea_pa",
+        "subsea_pa_6000_9000ft",
+    ]
+    labels = [
+        "Platform dry-tree / rigless: well work",
+        "Platform dry-tree / rigless: permanent abandonment",
+        "Platform dry-tree / casing jacks: well work",
+        "Platform dry-tree / casing jacks: permanent abandonment",
+        "Deepwater platform dry-tree: well work",
+        "Deepwater platform dry-tree: permanent abandonment",
+        "Subsea wet-tree / drillship or semi: well work",
+        "Subsea wet-tree / drillship or semi: permanent abandonment\n3000-ft anchor",
+        "Subsea wet-tree / drillship or semi: permanent abandonment\n6000-9000-ft anchors",
+    ]
+    fig, ax = plt.subplots(figsize=(12, 9))
+    fig.subplots_adjust(left=0.43, right=0.79, top=0.83, bottom=0.28)
+    for y, key in enumerate(order):
+        r = costs.loc[key]
+        color = COLORS[1] if r.event == "well work" else COLORS[3]
+        if pd.notna(r.low_usd):
             ax.plot(
                 [r.low_usd / 1e6, r.high_usd / 1e6],
                 [y, y],
-                color=COLORS[y],
-                linewidth=7,
+                color=color,
+                linewidth=6,
                 solid_capstyle="butt",
             )
-            ax.plot(r.base_usd / 1e6, y, marker="D", color="black", markersize=6)
-        ax.set_title(kind.capitalize(), fontsize=13)
-        ax.set_xlabel("Cost per event\n(million 2015 USD; log scale)")
-        ax.set_yticks(range(4), BANDS[:-1])
-        ax.grid(axis="x", alpha=0.25)
-        ax.set_xscale("log")
-        ax.set_xlim(0.2, 25)
-        ax.set_xticks(
-            [0.2, 0.5, 1, 2, 5, 10, 20], ["0.2", "0.5", "1", "2", "5", "10", "20"]
-        )
-    axes[0].invert_yaxis()
-    axes[0].set_ylabel("Water-depth band")
-    fig.suptitle("Indicative heavy-work cost scenarios", x=0.18, ha="left", fontsize=15)
-    fig.legend(
-        handles=[
-            Line2D([], [], color="#397da8", lw=6, label="Low–high scenario"),
-            Line2D(
-                [],
-                [],
-                color="black",
-                marker="D",
-                linestyle="None",
-                label="Base scenario",
+            ax.plot(r.base_usd / 1e6, y, marker="D", color="black", markersize=5)
+        ax.text(
+            1.04,
+            y,
+            (
+                " / ".join(million(r[c]) for c in ["low_usd", "base_usd", "high_usd"])
+                if pd.notna(r.low_usd)
+                else "not priced"
             ),
-        ],
-        loc="upper right",
-        bbox_to_anchor=(0.98, 0.96),
-        frameon=False,
+            transform=ax.get_yaxis_transform(),
+            va="center",
+            fontsize=10,
+        )
+    ax.set_yticks(range(len(order)), labels, fontsize=9)
+    ax.invert_yaxis()
+    ax.set_xscale("log")
+    ax.set_xlim(0.2, 25)
+    ax.set_xticks(
+        [0.2, 0.5, 1, 2, 5, 10, 20], ["0.20", "0.50", "1.0", "2.0", "5.0", "10", "20"]
+    )
+    ax.set_xlabel("USD million per well / event (2015; log scale)")
+    ax.grid(axis="x", alpha=0.25)
+    ax.text(
+        1.04,
+        1.05,
+        "Low / base / high\nUSD million (2015)",
+        transform=ax.transAxes,
+        fontsize=10,
+    )
+    fig.suptitle(
+        "Cost scenarios by well and access type", x=0.07, ha="left", fontsize=16, y=0.97
+    )
+    fig.text(
+        0.07,
+        0.90,
+        "Rigless: source case 50-400 ft; casing jacks: above 400 ft. Deep platform: 1700 / 3000 / 5000 ft published anchors.\n"
+        "Subsea access requires a wet tree; depth alone does not select a spread.",
+        fontsize=10,
     )
     finish(
         fig,
         out,
         "03_cost_per_event",
         date,
-        "Platform casing-jack proxy / deepwater MODU. Unescalated source-year USD; floating-unit mobilisation excluded.",
+        "Well work: median 7 days / midpoint 10.5 days / two weeks 14 days; scenarios, not outcome quantiles.\n"
+        "Permanent-abandonment costs apply only to that subtype (1387 of 2610 abandonment approvals in 2025).\n"
+        "Subsea rig mobilisation excluded. Dry-tree conductor removal separate; published deep-platform totals include allowances.",
+        cost=True,
     )
-    print(json.dumps({"charts": 3, "formats": ["png", "svg"], "png_width_px": 2160}))
+
+    units = pd.read_csv(out / "unit_type_shares.csv")
+    units = units[units.period.astype(str).eq(str(last))]
+    categories = [
+        "wireline unit",
+        "coiled tubing",
+        "hydraulic workover / snubbing",
+        "platform rig",
+        "liftboat / jack-up",
+        "intervention vessel",
+        "drillship / semisubmersible",
+        "none named",
+        "other",
+    ]
+    unit_colors = [
+        "#376c9b",
+        "#007c78",
+        "#8c4b8e",
+        "#9a5c1f",
+        "#697725",
+        "#aa4444",
+        "#17364c",
+        "#777777",
+        "#765c49",
+    ]
+    active_units = [
+        c
+        for c in categories
+        if units.loc[units.unit_category.eq(c), "approvals"].sum() > 0
+    ]
+    fig, axes = plt.subplots(2, 1, figsize=(12, 10), sharex=True)
+    fig.subplots_adjust(left=0.20, right=0.94, top=0.75, bottom=0.20, hspace=0.38)
+    for ax, event in zip(axes, ["well work", "permanent abandonment"]):
+        f = units[units.event.eq(event)]
+        bands = [b for b in BANDS if f.loc[f.band.eq(b), "approvals"].sum() > 0]
+        left = np.zeros(len(bands))
+        for category, color in zip(categories, unit_colors):
+            vals = (
+                f[f.unit_category.eq(category)]
+                .set_index("band")
+                .reindex(bands)
+                .share_percent.to_numpy()
+            )
+            ax.barh(
+                bands,
+                vals,
+                left=left,
+                color=color,
+                edgecolor="white",
+                linewidth=0.6,
+                height=0.65,
+            )
+            for y, v in enumerate(vals):
+                if v >= 7:
+                    ax.text(
+                        left[y] + v / 2,
+                        y,
+                        f"{v:.1f}%",
+                        ha="center",
+                        va="center",
+                        color="white",
+                        fontsize=9,
+                    )
+            left += vals
+        for y, band in enumerate(bands):
+            n = int(f[f.band.eq(band)].approvals.sum())
+            ax.text(101, y, f"n={n}", va="center", fontsize=9)
+        ax.invert_yaxis()
+        ax.set_title(event.capitalize(), loc="left", fontsize=13)
+        ax.set_xlim(0, 100)
+        ax.set_xticks([0, 25, 50, 75, 100], ["0%", "25%", "50%", "75%", "100%"])
+        ax.grid(axis="x", alpha=0.15)
+        ax.set_axisbelow(True)
+    axes[-1].set_xlabel("Share of approved permits (%)")
+    fig.suptitle(
+        f"Unit types named on approved permits to modify, {last}",
+        x=0.07,
+        ha="left",
+        y=0.97,
+        fontsize=16,
+    )
+    fig.legend(
+        handles=[
+            Patch(facecolor=c, label=k)
+            for k, c in zip(categories, unit_colors)
+            if k in active_units
+        ],
+        ncol=3,
+        loc="upper center",
+        bbox_to_anchor=(0.51, 0.92),
+        frameon=False,
+        fontsize=10,
+    )
+    finish(
+        fig,
+        out,
+        "04_unit_types_by_depth",
+        date,
+        "Unit types follow the permit rig/unit lookup; they do not establish deployed equipment or access configuration.\n"
+        "Permanent-abandonment panel: 1387 approvals; temporary and unspecified abandonment are excluded.",
+    )
+    print(json.dumps({"charts": 4, "formats": ["png", "svg"], "png_width_px": 2160}))
 
 
 if __name__ == "__main__":
