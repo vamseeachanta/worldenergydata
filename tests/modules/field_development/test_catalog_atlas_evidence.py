@@ -38,21 +38,37 @@ def test_atlas_attaches_exact_evidence_and_public_source_urls(api, inputs):
         assert row["current_configuration_verified"] is False
 
 
-def test_atlas_nonfields_expose_cost_scope_without_adding_field_rows(api, inputs):
+def test_atlas_nonfields_expose_cost_scope_without_adding_field_rows(
+    api, inputs, tmp_path, monkeypatch
+):
     """By hand: each input entity is either field or nonfield, exactly once.
 
     Costs stay on the typed development candidate; nonfields never inflate the
     fields collection. Global catalog and country badge values are unchanged.
     """
-    bundle = api.build_integration(*inputs)
-    # Pin the real atlas input solely for this in-memory projection test.
-    # No curated fixture bytes or publication eligibility are changed.
-    import hashlib
-
-    bundle["manifest"]["input_hashes"]["legacy_catalog"] = hashlib.sha256(
-        atlas.FIELDS_CSV.read_bytes()
-    ).hexdigest()
+    snapshot, _, parent = inputs
+    fields = tmp_path / "independent-fields.csv"
+    fields.write_text(
+        "FIELD_ID,FIELD_NAME,COUNTRY,BLOCK,CURRENT_STATUS,RESERVE_TYPE,"
+        "WATER_DEPTH_FT,US_GOM_FLAG\n"
+        "independent,Synthetic field,Angola,A1,Discovery,Oil,100,\n",
+        encoding="utf-8",
+        newline="\n",
+    )
+    coverage = tmp_path / "coverage.csv"
+    coverage.write_text("by_country,Angola,1,0\n", encoding="utf-8", newline="\n")
+    roster = tmp_path / "roster.json"
+    roster.write_text("[]", encoding="utf-8", newline="\n")
+    scorecard = tmp_path / "scorecard.json"
+    scorecard.write_text('{"modules": {}}', encoding="utf-8", newline="\n")
+    monkeypatch.setattr(atlas, "FIELDS_CSV", fields)
+    monkeypatch.setattr(atlas, "COVERAGE_CSV", coverage)
+    monkeypatch.setattr(atlas, "ROSTER", roster)
+    monkeypatch.setattr(atlas, "SCORECARD", scorecard)
+    bundle = api.build_integration(snapshot, fields, parent)
     baseline = atlas.build()
+    assert len(baseline["fields"]) == 1
+    assert len(baseline["countries"]) == 1
     feed = atlas.build(integration=bundle)
     metadata = feed["meta"]["catalog_extension"]
     nonfields = metadata["nonfield_entities"]

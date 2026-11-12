@@ -22,35 +22,24 @@ from worldenergydata.field_development.portfolio_matched import (
 )
 
 
-def _match(name="Allegheny", concept=ConceptType.TLP):
+def _match(name="Synthetic Alpha", concept=ConceptType.TLP):
     return CrosswalkMatch(
         og_field_name=name,
         block="Green Canyon 254",
         bsee_block_code="GC254",
         host_concept=concept,
-        operator="ENI (NOC)",
+        operator="Synthetic operator",
     )
 
 
 # --------------------------------------------------------------------------- #
 # Crosswalk loading
 # --------------------------------------------------------------------------- #
-def test_load_matched_crosswalk_returns_only_matched_rows():
-    rows = load_matched_crosswalk()
-    # 115 rows carry matched==1 (CSV-parsed; some ``block`` cells embed commas,
-    # so a naive field split under-counts).
-    assert len(rows) == 115
-    assert all(isinstance(r, CrosswalkMatch) for r in rows)
-    # 75 carry a host_concept (the as-built ground truth).
-    assert sum(r.host_concept is not None for r in rows) == 75
+def test_default_matched_crosswalk_is_withheld():
+    import pytest
 
-
-def test_load_matched_crosswalk_parses_host_concept_to_enum():
-    rows = {r.og_field_name: r for r in load_matched_crosswalk()}
-    assert rows["Allegheny"].host_concept == ConceptType.TLP
-    assert rows["Aconcagua"].host_concept == ConceptType.SUBSEA_TIEBACK
-    # A matched row with no host_concept stays None (no ground truth).
-    assert rows["Amethyst"].host_concept is None
+    with pytest.raises(RuntimeError, match="redistribution-terms review"):
+        load_matched_crosswalk()
 
 
 # --------------------------------------------------------------------------- #
@@ -58,16 +47,16 @@ def test_load_matched_crosswalk_parses_host_concept_to_enum():
 # --------------------------------------------------------------------------- #
 def test_to_concept_carries_actual_concept_and_inputs():
     base = FieldConcept(
-        name="Allegheny",
+        name="Synthetic Alpha",
         region="US",
-        water_depth_m=989.0,
+        water_depth_m=1234.0,
     )
     c = to_concept_from_crosswalk(_match(), base=base)
-    assert c.name == "Allegheny"
+    assert c.name == "Synthetic Alpha"
     assert c.concept_type == ConceptType.TLP  # the actual/as-built concept
-    assert c.operator == "ENI (NOC)"
+    assert c.operator == "Synthetic operator"
     assert c.region == "US"
-    assert c.water_depth_m == 989.0
+    assert c.water_depth_m == 1234.0
 
 
 def test_to_concept_without_base_has_no_depth():
@@ -166,19 +155,8 @@ def test_portfolio_row_is_match_property():
 # --------------------------------------------------------------------------- #
 # End-to-end build over the real curated data
 # --------------------------------------------------------------------------- #
-def test_build_portfolio_over_real_data():
-    rows = build_portfolio()
-    assert len(rows) == 115
-    # Every row keeps a recommendation (depth-less fields still rank all concepts).
-    assert all(r.recommended is not None for r in rows)
-    s = summarize(rows)
-    # 75 fields carry a ground-truth concept (correct_satellite_labels may
-    # relabel some to subsea_tieback, but never drops the count).
-    assert s["n_with_actual"] == 75
-    # The engine lands a non-trivial share of top-1 picks: 36/75 = 48% measured
-    # on current main. Pin n_matched exactly so an engine change that shifts the
-    # rate fails loudly instead of passing under a wide band. (GoM-only subset,
-    # the engine's hardest — spar/semisub/TLP confusion — so below the global
-    # ~55%; in-sample, see calibration-v2.md.)
-    assert s["n_matched"] == 36
-    assert s["top1_match_rate"] == 36 / 75
+def test_default_portfolio_requires_available_source():
+    import pytest
+
+    with pytest.raises(RuntimeError, match="redistribution-terms review"):
+        build_portfolio()
