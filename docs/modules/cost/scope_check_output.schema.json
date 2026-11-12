@@ -1,0 +1,375 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Scope cost-check result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "range",
+    "comparables",
+    "cost_basis",
+    "indicative_only",
+    "matched_group",
+    "method",
+    "benchmark_sha256",
+    "unbenchmarked_elements",
+    "limitations",
+    "escalation_basis"
+  ],
+  "properties": {
+    "range": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": false,
+          "properties": {
+            "capex_per_well": {
+              "$ref": "#/$defs/interval"
+            },
+            "capex_per_tree": {
+              "$ref": "#/$defs/interval"
+            },
+            "capex_per_surf_km": {
+              "$ref": "#/$defs/interval"
+            },
+            "capex_per_kboed": {
+              "$ref": "#/$defs/interval"
+            },
+            "capex_per_boe": {
+              "$ref": "#/$defs/interval"
+            }
+          }
+        }
+      ]
+    },
+    "comparables": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "\\S"
+      },
+      "uniqueItems": true
+    },
+    "cost_basis": {
+      "enum": [
+        "USD_2026",
+        "nominal",
+        null
+      ]
+    },
+    "indicative_only": {
+      "type": "boolean"
+    },
+    "matched_group": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "capex_per_well": {
+          "$ref": "#/$defs/group"
+        },
+        "capex_per_tree": {
+          "$ref": "#/$defs/group"
+        },
+        "capex_per_surf_km": {
+          "$ref": "#/$defs/group"
+        },
+        "capex_per_kboed": {
+          "$ref": "#/$defs/group"
+        },
+        "capex_per_boe": {
+          "$ref": "#/$defs/group"
+        }
+      }
+    },
+    "method": {
+      "const": "per-metric alternative project CAPEX ranges; no aggregation"
+    },
+    "benchmark_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "unbenchmarked_elements": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "wells",
+          "trees",
+          "surf_km",
+          "peak_production_kboed",
+          "recoverable_resource_boe",
+          "manifolds",
+          "umbilical_km",
+          "risers"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "limitations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "\\S"
+      }
+    },
+    "reason": {
+      "const": "no close comparables"
+    },
+    "escalation_basis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "conversion_applied",
+        "index",
+        "factor",
+        "limitation"
+      ],
+      "properties": {
+        "conversion_applied": {
+          "const": false
+        },
+        "index": {
+          "type": "null"
+        },
+        "factor": {
+          "type": "null"
+        },
+        "limitation": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        }
+      }
+    },
+    "quote_position": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": false,
+          "properties": {
+            "capex_per_well": {
+              "enum": [
+                "below p10",
+                "p10-p50",
+                "p50-p90",
+                "above p90"
+              ]
+            },
+            "capex_per_tree": {
+              "enum": [
+                "below p10",
+                "p10-p50",
+                "p50-p90",
+                "above p90"
+              ]
+            },
+            "capex_per_surf_km": {
+              "enum": [
+                "below p10",
+                "p10-p50",
+                "p50-p90",
+                "above p90"
+              ]
+            },
+            "capex_per_kboed": {
+              "enum": [
+                "below p10",
+                "p10-p50",
+                "p50-p90",
+                "above p90"
+              ]
+            },
+            "capex_per_boe": {
+              "enum": [
+                "below p10",
+                "p10-p50",
+                "p50-p90",
+                "above p90"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "range": {
+            "type": "null"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "reason"
+        ],
+        "properties": {
+          "comparables": {
+            "maxItems": 0
+          },
+          "matched_group": {
+            "maxProperties": 0
+          },
+          "cost_basis": {
+            "type": "null"
+          },
+          "indicative_only": {
+            "const": true
+          },
+          "quote_position": {
+            "type": "null"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "comparables": {
+            "minItems": 1
+          },
+          "cost_basis": {
+            "enum": [
+              "USD_2026",
+              "nominal"
+            ]
+          },
+          "matched_group": {
+            "minProperties": 1
+          }
+        },
+        "not": {
+          "required": [
+            "reason"
+          ]
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "interval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "p10",
+        "p50",
+        "p90",
+        "unit",
+        "benchmark_unit",
+        "quantity",
+        "n",
+        "comparables"
+      ],
+      "properties": {
+        "p10": {
+          "type": "number",
+          "minimum": 0
+        },
+        "p50": {
+          "type": "number",
+          "minimum": 0
+        },
+        "p90": {
+          "type": "number",
+          "minimum": 0
+        },
+        "unit": {
+          "const": "USD"
+        },
+        "benchmark_unit": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "quantity": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "n": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "comparables": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "uniqueItems": true,
+          "minItems": 1
+        }
+      }
+    },
+    "group": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "water_depth_band",
+        "region",
+        "development_type",
+        "host_type",
+        "dropped_keys"
+      ],
+      "properties": {
+        "water_depth_band": {
+          "enum": [
+            "shallow",
+            "mid",
+            "deep",
+            "ultra_deep"
+          ]
+        },
+        "region": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "development_type": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "host_type": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "dropped_keys": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "region",
+              "development_type"
+            ]
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "error": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "error"
+      ],
+      "properties": {
+        "error": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        }
+      }
+    }
+  },
+  "$comment": "Runtime also enforces ordered finite percentiles, matching range/group/quote keys, and exactly n unique comparable identifiers per interval."
+}

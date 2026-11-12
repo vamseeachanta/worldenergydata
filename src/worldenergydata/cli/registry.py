@@ -124,6 +124,13 @@ COMMAND_FAMILIES: dict[str, CommandFamily] = {
         info_desc="Arps decline curve — fit, EUR, production forecast",
         key_commands="fit, forecast, report",
     ),
+    "cost-check": CommandFamily(
+        module="worldenergydata.cli.commands.cost_check",
+        attr="cost_check",
+        help="Return comparable-based scope ranges and quote positions as JSON.",
+        info_desc="Comparable-based scope cost checks",
+        key_commands="SCOPE_FILE [--benchmarks FILE]",
+    ),
 }
 
 INFO_ROW_ORDER: tuple[str, ...] = (
@@ -145,4 +152,5 @@ INFO_ROW_ORDER: tuple[str, ...] = (
     "landman",
     "lng-terminals",
     "safety-analysis",
+    "cost-check",
 )

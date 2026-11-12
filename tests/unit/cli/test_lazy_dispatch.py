@@ -25,6 +25,7 @@ EXPECTED_FAMILIES = (
     "lng-terminals",
     "safety-analysis",
     "forecast",
+    "cost-check",
 )
 EXPECTED_INFO_ORDER = (
     "bsee",
@@ -45,6 +46,7 @@ EXPECTED_INFO_ORDER = (
     "landman",
     "lng-terminals",
     "safety-analysis",
+    "cost-check",
 )
 DENIED_MODULES = {
     "pandas",
@@ -96,6 +98,23 @@ def test_bare_import_stays_within_startup_budget():
 @pytest.mark.parametrize("family", ["landman", "fdas"])
 def test_family_help_loads_only_selected_family(family):
     _startup_probe([family, "--help"], family)
+
+
+def test_cost_check_preserves_standalone_command_help_and_argument_parsing():
+    import typer
+    from typer.testing import CliRunner
+
+    from worldenergydata.cli.commands.cost_check import cost_check
+    from worldenergydata.cli.main import app
+
+    eager = typer.Typer(callback=lambda: None, rich_markup_mode="rich")
+    eager.command("cost-check")(cost_check)
+    runner = CliRunner()
+    for args in (["cost-check", "--help"], ["cost-check"]):
+        actual = runner.invoke(app, args, prog_name="worldenergydata")
+        expected = runner.invoke(eager, args, prog_name="worldenergydata")
+        assert actual.exit_code == expected.exit_code
+        assert actual.output == expected.output
 
 
 @pytest.mark.parametrize("color", [False, True], ids=["plain", "ansi"])
