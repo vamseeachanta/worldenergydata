@@ -216,8 +216,8 @@ def plot(out):
         "Deepwater platform dry-tree: well work",
         "Deepwater platform dry-tree: permanent abandonment",
         "Subsea wet-tree / drillship or semi: well work",
-        "Subsea wet-tree / drillship or semi: permanent abandonment\n3000-ft anchor",
-        "Subsea wet-tree / drillship or semi: permanent abandonment\n6000-9000-ft anchors",
+        "Subsea wet-tree / drillship or semi: permanent abandonment\nstudy case at 3,000 ft water depth",
+        "Subsea wet-tree / drillship or semi: permanent abandonment\nstudy cases at 6,000-9,000 ft water depth",
     ]
     fig, ax = plt.subplots(figsize=(12, 9))
     fig.subplots_adjust(left=0.43, right=0.79, top=0.83, bottom=0.28)
@@ -267,8 +267,8 @@ def plot(out):
     fig.text(
         0.07,
         0.90,
-        "Rigless: source case 50-400 ft; casing jacks: above 400 ft. Deep platform: 1700 / 3000 / 5000 ft published anchors.\n"
-        "Subsea access requires a wet tree; depth alone does not select a spread.",
+        "Rigless: source case 50-400 ft; casing jacks: above 400 ft. Deep platform: published cases at 1,700 / 3,000 / 5,000 ft water depth.\n"
+        "Subsea wells have a wet tree on the seabed; depth alone does not select a spread.",
         fontsize=10,
     )
     finish(
@@ -306,7 +306,7 @@ def plot(out):
         "#17364c",
         "#4d6570",
         "#777777",
-        "#765c49",
+        "#c9c3b8",
     ]
     active_units = [
         c
@@ -343,7 +343,7 @@ def plot(out):
                         f"{v:.1f}%",
                         ha="center",
                         va="center",
-                        color="white",
+                        color="#1f2328" if color == "#c9c3b8" else "white",
                         fontsize=9,
                     )
             left += vals

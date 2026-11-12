@@ -825,7 +825,7 @@ L 812.159994 187.563025
 L 812.159994 214.499827
 L 812.159994 214.499827
 z
-" clip-path="url(#pe9591bfb2a)" style="fill: #765c49; stroke: #ffffff; stroke-width: 0.6; stroke-linejoin: miter"/>
+" clip-path="url(#pe9591bfb2a)" style="fill: #c9c3b8; stroke: #ffffff; stroke-width: 0.6; stroke-linejoin: miter"/>
    </g>
    <g id="patch_40">
     <path d="M 799.24363 229.004259
@@ -833,7 +833,7 @@ L 812.159994 229.004259
 L 812.159994 255.941061
 L 799.24363 255.941061
 z
-" clip-path="url(#pe9591bfb2a)" style="fill: #765c49; stroke: #ffffff; stroke-width: 0.6; stroke-linejoin: miter"/>
+" clip-path="url(#pe9591bfb2a)" style="fill: #c9c3b8; stroke: #ffffff; stroke-width: 0.6; stroke-linejoin: miter"/>
    </g>
    <g id="patch_41">
     <path d="M 805.248007 270.445493
@@ -841,7 +841,7 @@ L 812.160006 270.445493
 L 812.160006 297.382295
 L 805.248007 297.382295
 z
-" clip-path="url(#pe9591bfb2a)" style="fill: #765c49; stroke: #ffffff; stroke-width: 0.6; stroke-linejoin: miter"/>
+" clip-path="url(#pe9591bfb2a)" style="fill: #c9c3b8; stroke: #ffffff; stroke-width: 0.6; stroke-linejoin: miter"/>
    </g>
    <g id="patch_42">
     <path d="M 804.410183 311.886727
@@ -849,7 +849,7 @@ L 812.16 311.886727
 L 812.16 338.823529
 L 804.410183 338.823529
 z
-" clip-path="url(#pe9591bfb2a)" style="fill: #765c49; stroke: #ffffff; stroke-width: 0.6; stroke-linejoin: miter"/>
+" clip-path="url(#pe9591bfb2a)" style="fill: #c9c3b8; stroke: #ffffff; stroke-width: 0.6; stroke-linejoin: miter"/>
    </g>
    <g id="patch_43">
     <path d="M 172.8 346.386555
@@ -2094,7 +2094,7 @@ L 812.160006 417.176471
 L 812.160006 444.113273
 L 758.588857 444.113273
 z
-" clip-path="url(#p9ad3d0f7c8)" style="fill: #765c49; stroke: #ffffff; stroke-width: 0.6; stroke-linejoin: miter"/>
+" clip-path="url(#p9ad3d0f7c8)" style="fill: #c9c3b8; stroke: #ffffff; stroke-width: 0.6; stroke-linejoin: miter"/>
    </g>
    <g id="patch_83">
     <path d="M 730.539571 458.617705
@@ -2102,7 +2102,7 @@ L 812.159994 458.617705
 L 812.159994 485.554507
 L 730.539571 485.554507
 z
-" clip-path="url(#p9ad3d0f7c8)" style="fill: #765c49; stroke: #ffffff; stroke-width: 0.6; stroke-linejoin: miter"/>
+" clip-path="url(#p9ad3d0f7c8)" style="fill: #c9c3b8; stroke: #ffffff; stroke-width: 0.6; stroke-linejoin: miter"/>
    </g>
    <g id="patch_84">
     <path d="M 812.160006 500.058939
@@ -2110,7 +2110,7 @@ L 812.160006 500.058939
 L 812.160006 526.995741
 L 812.160006 526.995741
 z
-" clip-path="url(#p9ad3d0f7c8)" style="fill: #765c49; stroke: #ffffff; stroke-width: 0.6; stroke-linejoin: miter"/>
+" clip-path="url(#p9ad3d0f7c8)" style="fill: #c9c3b8; stroke: #ffffff; stroke-width: 0.6; stroke-linejoin: miter"/>
    </g>
    <g id="patch_85">
     <path d="M 812.160006 541.500173
@@ -2118,7 +2118,7 @@ L 812.160006 541.500173
 L 812.160006 568.436975
 L 812.160006 568.436975
 z
-" clip-path="url(#p9ad3d0f7c8)" style="fill: #765c49; stroke: #ffffff; stroke-width: 0.6; stroke-linejoin: miter"/>
+" clip-path="url(#p9ad3d0f7c8)" style="fill: #c9c3b8; stroke: #ffffff; stroke-width: 0.6; stroke-linejoin: miter"/>
    </g>
    <g id="patch_86">
     <path d="M 172.8 576
@@ -2240,7 +2240,7 @@ L 812.16 576
    </g>
    <g id="text_48">
     <!-- 8.4% -->
-    <g style="fill: #ffffff" transform="translate(773.942322 432.982762) scale(0.09 -0.09)">
+    <g style="fill: #1f2328" transform="translate(773.942322 432.982762) scale(0.09 -0.09)">
      <use xlink:href="#DejaVuSans-1b"/>
      <use xlink:href="#DejaVuSans-11" transform="translate(63.625 0)"/>
      <use xlink:href="#DejaVuSans-17" transform="translate(95.40625 0)"/>
@@ -2249,7 +2249,7 @@ L 812.16 576
    </g>
    <g id="text_49">
     <!-- 12.8% -->
-    <g style="fill: #ffffff" transform="translate(757.054548 474.423996) scale(0.09 -0.09)">
+    <g style="fill: #1f2328" transform="translate(757.054548 474.423996) scale(0.09 -0.09)">
      <use xlink:href="#DejaVuSans-14"/>
      <use xlink:href="#DejaVuSans-15" transform="translate(63.625 0)"/>
      <use xlink:href="#DejaVuSans-11" transform="translate(127.25 0)"/>
@@ -3377,7 +3377,7 @@ L 566.294688 104.2
 L 566.294688 97.2
 L 546.294688 97.2
 z
-" style="fill: #765c49"/>
+" style="fill: #c9c3b8"/>
    </g>
    <g id="text_67">
     <!-- other -->
