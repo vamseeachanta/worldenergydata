@@ -10,6 +10,7 @@ from typing import Iterable
 import pandas as pd
 
 from worldenergydata.texas_rrc.data.loaders.pdq_loader import PDQLoader
+from worldenergydata.texas_rrc.district_inputs import require_district_names
 from worldenergydata.texas_rrc.processors.production_processor import (
     ProductionProcessor,
 )
@@ -103,7 +104,8 @@ def normalize_production_frame(
     frame: pd.DataFrame,
     sort_rows: bool = True,
 ) -> pd.DataFrame:
-    """Normalize official PDQ production columns into atlas-ready rows."""
+    """Normalize production columns; numeric district IDs require qualification."""
+    require_district_names(frame.columns)
     if frame.empty:
         return _empty_normalized_frame()
     renamed = frame.rename(columns=_rename_map(frame))
@@ -153,6 +155,7 @@ def normalize_production_frame(
 
 def is_usable_production_frame(frame: pd.DataFrame) -> bool:
     """Return True when a raw frame has the minimum recognizable PDQ columns."""
+    require_district_names(frame.columns)
     if frame.empty:
         return False
     columns = set(frame.rename(columns=_rename_map(frame)).columns)
@@ -176,6 +179,7 @@ def is_usable_production_frame(frame: pd.DataFrame) -> bool:
 
 def build_production_atlas(frame: pd.DataFrame) -> pd.DataFrame:
     """Build field, lease, district, operator, and statewide production summaries."""
+    require_district_names(frame.columns)
     if frame.empty:
         return pd.DataFrame(columns=ATLAS_COLUMNS)
     production = (
@@ -219,6 +223,7 @@ def build_production_atlas_from_chunks(
     """Build the production atlas from bounded raw or normalized chunks."""
     accumulator = _ProductionAtlasAccumulator()
     for chunk in chunks:
+        require_district_names(chunk.columns)
         if chunk.empty:
             continue
         production = (

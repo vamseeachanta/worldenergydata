@@ -10,6 +10,10 @@ from typing import Iterable, Sequence
 
 import pandas as pd
 
+from worldenergydata.texas_rrc.data.loaders.pdq_loader import PDQLoader
+from worldenergydata.texas_rrc.processors.production_processor import (
+    ProductionProcessor,
+)
 from worldenergydata.texas_rrc.production_atlas.atlas import (
     is_usable_production_frame,
     normalize_production_frame,
@@ -249,7 +253,14 @@ def _preferred_usecols(first_line: str, separator: str | None) -> list[str]:
     if separator is None:
         return []
     columns = [column.strip() for column in first_line.rstrip("\r\n").split(separator)]
-    return [column for column in columns if column.upper() in PRODUCTION_USE_COLUMNS]
+    # Preserve both name and numeric-ID fields so validation sees the schema.
+    supported = (
+        PRODUCTION_USE_COLUMNS
+        | set(ProductionProcessor.COLUMN_MAPPINGS)
+        | set(PDQLoader.PRODUCTION_FIELD_MAPPING)
+        | {"DISTRICT"}
+    )
+    return [column for column in columns if column.upper() in supported]
 
 
 def _separator(first_line: str) -> str | None:
