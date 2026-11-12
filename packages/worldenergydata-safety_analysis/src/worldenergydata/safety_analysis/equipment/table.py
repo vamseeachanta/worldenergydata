@@ -39,10 +39,12 @@ from worldenergydata.safety_analysis.equipment.taxonomy import (
 # source can still leave the field blank.
 CAUSE_FIELD_SOURCES = frozenset({"phmsa_hazardous_liquid"})
 
-# Text encodings by source: the BSEE export is Windows-1252.
+# Text encodings by source: the BSEE export is Windows-1252. UTF-8 files are
+# read as "utf-8-sig", which drops a leading byte-order mark before the CSV
+# reader sees the first column name, quoted or not.
 _ENCODINGS = {
     "bsee_incident_investigations": "cp1252",
-    "phmsa_hazardous_liquid": "utf-8",
+    "phmsa_hazardous_liquid": "utf-8-sig",
 }
 
 
@@ -104,7 +106,7 @@ def read_records(source: SourceFile) -> list[dict]:
     comma-separated. A file without the columns its classifier needs is an
     error, so a wrong layout cannot pass as zero matching records.
     """
-    encoding = _ENCODINGS.get(source.source_id, "utf-8")
+    encoding = _ENCODINGS.get(source.source_id, "utf-8-sig")
     with open(source.path, encoding=encoding, errors="replace", newline="") as fh:
         header = fh.readline()
         delimiter = max(_DELIMITERS, key=header.count)

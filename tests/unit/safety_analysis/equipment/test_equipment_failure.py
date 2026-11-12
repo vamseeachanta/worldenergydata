@@ -878,3 +878,24 @@ def test_blank_coded_and_event_only_records_are_counted_apart(source_files, tmp_
     assert "The source codes a cause for 1 of the 3 records" in text
     assert "Records with a blank cause field: 1." in text
     assert "Records from a data set that gives the event type only: 1." in text
+
+
+@pytest.mark.parametrize("delimiter", [",", "\t"])
+def test_quoted_header_after_a_byte_order_mark_is_read(tmp_path, delimiter):
+    path = tmp_path / "phmsa_quoted.csv"
+    record = phmsa()
+    with open(path, "w", encoding="utf-8", newline="") as fh:
+        fh.write("\ufeff")
+        w = csv.DictWriter(
+            fh, fieldnames=list(record), quoting=csv.QUOTE_ALL, delimiter=delimiter
+        )
+        w.writeheader()
+        w.writerow(record)
+    assert path.read_bytes().startswith(b'\xef\xbb\xbf"Report Number"')
+    source = SourceFile(
+        "phmsa_hazardous_liquid", path, "https://example.org/p.zip", "2026-01-31"
+    )
+    rows, stats = build_table([source])
+    assert (stats[0].records_read, len(rows)) == (1, 1)
+    assert rows[0].source_record_id == "20100001"
+    assert rows[0].mechanism == "corrosion_external"

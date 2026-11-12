@@ -141,11 +141,19 @@ section that answers it. The command exits 1 and lists the open items while a
 lesson has no design response, the class has no records, or fewer than two
 cases are on file; `--allow-open` is for drafts.
 
-Where the table holds no record, or fewer than two cases, for the class, the
-appendix is generated with `--allow-open`. It then lists every data set read
-with zero records, states "Not established" under the failure modes, the cases
-and the lessons, and prints the text given with `--missing-data`, which names
-the missing data and the issue raised for it.
+Two gaps are handled separately; in both the appendix is generated with
+`--allow-open`, and the text given with `--missing-data` names the missing data
+and the issue raised for it.
+
+- No record for the class. The appendix lists every data set read with zero
+  records and states "Not established" under the failure modes.
+- Fewer than two cases on file. The appendix shows the case on file, if there
+  is one, with its lessons, then states "Not established: fewer than two
+  investigated public cases are on file for this equipment." With no case, the
+  lessons subsection states "Not established."
+
+Where the class has records and only the second gap applies, the counts, the
+period and the failure-mode table are printed as usual.
 
 ## Worked example
 
