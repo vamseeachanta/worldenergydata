@@ -72,6 +72,8 @@ def test_column_order_and_file_creation_order_do_not_change_counts(tmp_path):
     write_csv(tmp_path, "osha_violation2.csv", [ROW])
     first = profile(tmp_path, tmp_path / "first.sqlite")
     second = profile(tmp_path, tmp_path / "second.sqlite")
+    assert first.pop("index_db") == "first.sqlite"
+    assert second.pop("index_db") == "second.sqlite"
     assert first == second
     assert first["unique_rows"] == first["unique_candidate_keys"] == 1
     assert [item["name"] for item in first["files"]] == [
@@ -133,7 +135,9 @@ def test_empty_fragment_has_explicit_zero_counts(tmp_path):
 def test_successful_index_is_marked_complete(tmp_path, rows):
     write_csv(tmp_path, "osha_violation2.csv", rows)
     index_db = tmp_path / "index.sqlite"
-    profile(tmp_path, index_db)
+    result = profile(tmp_path, index_db)
+    assert result["index_complete"] is True
+    assert result["index_db"] == index_db.name
     with sqlite3.connect(index_db) as index:
         assert index.execute("SELECT complete FROM meta").fetchall() == [(1,)]
 
@@ -189,6 +193,24 @@ def test_existing_index_is_never_overwritten(tmp_path):
     assert index.read_bytes() == b"existing data"
 
 
+def test_incomplete_index_is_never_reused(tmp_path):
+    write_csv(tmp_path, "osha_violation2.csv", [ROW])
+    broken = tmp_path / "osha_violation3.csv"
+    broken.write_bytes(b"id,extra\na\n")
+    index_db = tmp_path / "index.sqlite"
+    with pytest.raises(ValueError, match="Malformed record"):
+        profile(tmp_path, index_db)
+    before = index_db.read_bytes()
+    # Repairing the input still requires a new index path.
+    write_csv(tmp_path, broken.name, [ROW])
+    with pytest.raises(FileExistsError):
+        profile(tmp_path, index_db)
+    assert index_db.read_bytes() == before
+    with sqlite3.connect(index_db) as index:
+        assert index.execute("SELECT complete FROM meta").fetchall() == [(0,)]
+        assert index.execute("SELECT COUNT(*) FROM exact_rows").fetchone() == (1,)
+
+
 @pytest.mark.parametrize(
     "content",
     [
@@ -232,7 +254,10 @@ def test_cli_outputs_json_without_absolute_paths(tmp_path):
         check=False,
     )
     assert completed.returncode == 0, completed.stderr
-    assert json.loads(completed.stdout)["rows"] == 1
+    result = json.loads(completed.stdout)
+    assert result["rows"] == 1
+    assert result["index_complete"] is True
+    assert result["index_db"] == "index.sqlite"
     assert str(tmp_path) not in completed.stdout
 
 

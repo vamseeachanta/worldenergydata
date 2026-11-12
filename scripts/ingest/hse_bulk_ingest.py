@@ -200,6 +200,8 @@ def profile_fragments(raw_dir: Path, index_db: Path) -> dict:
             )
         }
         inventory = {
+            "index_db": index_db.name,
+            "index_complete": True,
             "candidate_key": list(CANDIDATE_KEY),
             "files": files,
             **total,
