@@ -1,5 +1,5 @@
 {
-  "crosswalk_sha256": "f37f4327c41bf85a60a3e26993a9608ed7b36b53ef9b0fcb96edde02c821fcc6",
+  "crosswalk_sha256": "c6fc113e845dc2be6620f70788204e0049495f2c49dd53dcd0f497b0f3079b3b",
   "dataset_id": "cost-project-field-crosswalk",
   "digest_domain": "utf8-lf",
   "inputs": {
@@ -12,6 +12,7 @@
     "data/modules/cost/curated/project_asset_requirements.csv": "3fa8344ebf78976a06ea39455d9cd1ac45e0339a88efe0e061517361ccf86b80",
     "data/modules/cost/curated/project_cost_statements.csv": "7c1a32b8a5fd51409a217a314f07a9fcb984140a37b1b285dd2cf72530eca1e7",
     "data/modules/cost/curated/sanctioned_projects.csv": "b71e98598f3b46d8e088a700cd8b0a21b6055b1a843d96243a4a7e103b515d09",
+    "data/modules/cost/staging/asia-pacific-caspian-2016-2026.csv": "0e66d03576a5045ea0e786d55ea5c1d8656a76c93e52c58d5d9e82d1136aae59",
     "src/worldenergydata/field_development/past_projects.yml": "ccfe6d3c790be6eed7c2c0b7edb878166b3cd6955fd675e31d215ccb1c6c1928"
   },
   "schema_version": 1,

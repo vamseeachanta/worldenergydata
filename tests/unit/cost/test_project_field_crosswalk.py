@@ -519,7 +519,8 @@ def test_candidate_readback_does_not_require_the_held_output_digest(api, tmp_pat
     manual["EVIDENCE"] = json.dumps(evidence)
     candidate = tmp_path / "candidate.csv"
     write_csv(candidate, api.COLUMNS, rows)
-    assert api.validate_repository(ROOT, candidate)["accounted_for"] == 85
+    expected = len(api.load_cost_projects(ROOT))
+    assert api.validate_repository(ROOT, candidate)["accounted_for"] == expected
 
 
 def test_opaque_cost_id_cannot_be_forged(api, projects, fields):
