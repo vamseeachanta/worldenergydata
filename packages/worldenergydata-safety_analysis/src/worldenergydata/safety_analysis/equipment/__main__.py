@@ -80,6 +80,11 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         "--design-links", type=Path, help='JSON {"<case id>#<n>": "Section ..."}'
     )
     section.add_argument("--letter", default="F", help="appendix letter")
+    section.add_argument(
+        "--missing-data",
+        default="",
+        help="names the missing data and the issue raised for it",
+    )
     section.add_argument("--out", required=True, type=Path)
     section.add_argument(
         "--allow-open", action="store_true", help="exit 0 with open items"
@@ -114,6 +119,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             design_links=links,
             case_ids=args.case_id,
             letter=args.letter,
+            missing_data=args.missing_data,
         )
     except (ValueError, KeyError) as exc:
         print(f"error: {exc}", file=sys.stderr)

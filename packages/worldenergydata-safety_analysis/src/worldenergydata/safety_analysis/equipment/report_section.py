@@ -51,6 +51,7 @@ class HseSection:
     lessons: list[dict]
     references: list[str]
     open_items: list[str] = field(default_factory=list)
+    missing_data: str = ""
 
     def to_dict(self) -> dict:
         return {
@@ -63,6 +64,7 @@ class HseSection:
             "lessons": self.lessons,
             "references": self.references,
             "open_items": self.open_items,
+            "missing_data": self.missing_data,
         }
 
 
@@ -75,8 +77,14 @@ def build_section(
     design_links: Optional[Mapping[str, str]] = None,
     case_ids: Optional[Sequence[str]] = None,
     letter: str = "F",
+    missing_data: str = "",
 ) -> HseSection:
     """Assemble the section for ``equipment_class``.
+
+    When the table holds no record for the class, every data set read is still
+    listed (with zero records) and cited, and the text says what is not
+    established. ``missing_data`` names the data that is missing and the issue
+    raised for it; it is printed at the end of the incident history.
 
     ``design_links`` maps ``"<case id>#<lesson number>"`` to the report section
     that answers that lesson. A lesson without a link is listed in
@@ -84,7 +92,7 @@ def build_section(
     """
     term = EQUIPMENT_CLASSES[equipment_class]
     picked = query(rows, equipment_class)
-    used_sources = {r.source_id for r in picked}
+    used_sources = {r.source_id for r in picked} or {s.source_id for s in stats}
     class_cases = cases_for(list(cases), equipment_class)
     if case_ids is not None:
         if len(set(case_ids)) != len(case_ids):
@@ -135,6 +143,7 @@ def build_section(
         lessons=lessons,
         references=references,
         open_items=open_items,
+        missing_data=" ".join(missing_data.split()),
     )
 
 
@@ -241,7 +250,22 @@ def render_markdown(section: HseSection, *, max_records: int = 12) -> str:
         )
     else:
         out.append("The data sets read hold no record for this equipment.")
+    if section.missing_data:
+        out += ["", f"Missing data: {section.missing_data}"]
     out += ["", f"### {L}.3 Failure modes and stated causes", ""]
+    if not s["records"]:
+        out.append(
+            "Not established: the data sets read hold no record for this equipment."
+        )
+    else:
+        out += _modes_and_causes(section)
+    out += _cases_lessons_references(section, refs)
+    return "\n".join(out) + "\n"
+
+
+def _modes_and_causes(section: HseSection) -> list[str]:
+    s, L = section.summary, section.letter
+    out: list[str] = []
     out.append(
         "A record with two event types counts under both, so the counts can "
         "add up to more than the number of records."
@@ -273,9 +297,12 @@ def render_markdown(section: HseSection, *, max_records: int = 12) -> str:
             "gives the event type only. The causes on record are those in the "
             f"investigation reports of Section {L}.4."
         )
-    out += ["", f"### {L}.4 Illustrative public cases", ""]
-    if not section.cases:
-        out.append("No investigated public case is on file for this equipment.")
+    return out
+
+
+def _cases_lessons_references(section: HseSection, refs: dict) -> list[str]:
+    L = section.letter
+    out = ["", f"### {L}.4 Illustrative public cases", ""]
     for n, case in enumerate(section.cases, start=1):
         ref = refs[case.reference()]
         out.append(
@@ -304,6 +331,12 @@ def render_markdown(section: HseSection, *, max_records: int = 12) -> str:
         for c in case.consequences:
             out.append(f"- Consequence: {c.cite()};")
         out.append("")
+    if len(section.cases) < 2:
+        out += [
+            "Not established: fewer than two investigated public cases are on "
+            "file for this equipment.",
+            "",
+        ]
     out += [f"### {L}.5 Lessons for this design", ""]
     if section.lessons:
         case_no = {c.id: i for i, c in enumerate(section.cases, start=1)}
@@ -322,8 +355,10 @@ def render_markdown(section: HseSection, *, max_records: int = 12) -> str:
                 for x in section.lessons
             ],
         )
-    else:
+    elif section.cases:
         out.append("The cited investigations state no recommendation.")
+    else:
+        out.append("Not established.")
     out += ["", f"### {L}.6 References for this appendix", ""]
     out += [f"- {tag} {text}" for text, tag in refs.items()]
-    return "\n".join(out) + "\n"
+    return out

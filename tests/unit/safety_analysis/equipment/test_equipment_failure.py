@@ -773,3 +773,55 @@ def test_reference_names_no_company_and_carries_the_digest():
 def test_bad_digest_is_refused():
     with pytest.raises(ValueError, match="sha256"):
         parse_case({**CASE, "sha256": "abc123"})
+
+
+def test_no_data_appendix_states_what_is_not_established(source_files):
+    rows, stats = build_table(source_files[:1])
+    rows = [r for r in rows if r.equipment_class != "jack_up"]
+    section = build_section(
+        "jack_up",
+        rows,
+        stats,
+        [],
+        missing_data="investigation reports for\n jack-up legs (issue 1932).",
+    )
+    assert section.open_items == [
+        "no records for this equipment class in the table",
+        "fewer than two illustrative public cases on file",
+    ]
+    text = render_markdown(section)
+    assert (
+        "| Synthetic investigations | 8 | 0 | 2001-01-02 to 2023-02-03 | 2026-01-31 | [H1] |"
+        in text
+    )
+    assert "The data sets read hold no record for this equipment." in text
+    assert "Missing data: investigation reports for jack-up legs (issue 1932)." in text
+    assert (
+        "Not established: the data sets read hold no record for this equipment." in text
+    )
+    assert (
+        "Not established: fewer than two investigated public cases are on file" in text
+    )
+    assert "### F.5 Lessons for this design\n\nNot established.\n" in text
+    assert (
+        "- [H1] Synthetic investigations. https://example.org/b.zip (read 2026-01-31)."
+        in text
+    )
+    assert "None of the 0 records" not in text and "Failure mode | Records" not in text
+
+
+def test_one_case_on_file_is_shown_and_marked_not_established(source_files):
+    rows, stats = build_table(source_files)
+    section = build_section(
+        "mooring_line",
+        rows,
+        stats,
+        [parse_case(CASE)],
+        design_links={"mooring-synthetic-1#1": "Section 6.3"},
+    )
+    assert section.open_items == ["fewer than two illustrative public cases on file"]
+    text = render_markdown(section)
+    assert "**Case 1: Spar" in text
+    assert (
+        "Not established: fewer than two investigated public cases are on file" in text
+    )

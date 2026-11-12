@@ -141,6 +141,12 @@ section that answers it. The command exits 1 and lists the open items while a
 lesson has no design response, the class has no records, or fewer than two
 cases are on file; `--allow-open` is for drafts.
 
+Where the table holds no record, or fewer than two cases, for the class, the
+appendix is generated with `--allow-open`. It then lists every data set read
+with zero records, states "Not established" under the failure modes, the cases
+and the lessons, and prints the text given with `--missing-data`, which names
+the missing data and the issue raised for it.
+
 ## Worked example
 
 [Mooring appendix](examples/mooring-hse-appendix.md), generated from the data
