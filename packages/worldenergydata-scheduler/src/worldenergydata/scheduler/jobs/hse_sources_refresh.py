@@ -33,19 +33,48 @@ class HseSourcesRefreshJob(AbstractJob):
     def run(self, config: dict) -> JobResult:
         start = datetime.now()
         if not config.get("output_dir"):
-            return JobResult(self.name, start, datetime.now(), "skipped", 0,
-                             "HSE source refresh requires an explicit output_dir")
+            return JobResult(
+                self.name,
+                start,
+                datetime.now(),
+                "skipped",
+                0,
+                "HSE source refresh requires an explicit output_dir",
+            )
         try:
             from worldenergydata.hse.monthly_refresh import load_config
 
-            summary = self._runner()(load_config(self._config_path(config)),
-                                     Path(config["output_dir"]))
-            rows = sum(member.get("rows", 0) for source in summary["sources"]
-                       for file in source.get("files", []) for member in file.get("members", []))
+            summary = self._runner()(
+                load_config(self._config_path(config)), Path(config["output_dir"])
+            )
+            rows = sum(
+                member.get("rows", 0)
+                for source in summary["sources"]
+                for file in source.get("files", [])
+                for member in file.get("members", [])
+            )
             failures = summary["required_failures"]
-            error = "Required HSE sources failed: " + ", ".join(failures) if failures else None
-            return JobResult(self.name, start, datetime.now(), "failure" if failures else "success",
-                             rows, error, retryable=False)
+            error = (
+                "Required HSE sources failed: " + ", ".join(failures)
+                if failures
+                else None
+            )
+            return JobResult(
+                self.name,
+                start,
+                datetime.now(),
+                "failure" if failures else "success",
+                rows,
+                error,
+                retryable=False,
+            )
         except Exception as exc:
-            return JobResult(self.name, start, datetime.now(), "failure", 0,
-                             f"HSE source refresh failed: {exc}", retryable=False)
+            return JobResult(
+                self.name,
+                start,
+                datetime.now(),
+                "failure",
+                0,
+                f"HSE source refresh failed: {exc}",
+                retryable=False,
+            )

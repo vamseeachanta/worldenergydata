@@ -24,7 +24,13 @@ import httpx
 import yaml
 
 from worldenergydata.hse.monthly_refresh_fetch import (
-    CitizenFetcher, FetchError, ListingParser, check_content, file_record, url_filename, validate_url,
+    CitizenFetcher,
+    FetchError,
+    ListingParser,
+    check_content,
+    file_record,
+    url_filename,
+    validate_url,
 )
 
 
@@ -77,16 +83,35 @@ def _keys(value: Any, required: set[str], optional: set[str]) -> None:
 
 
 def _relative_path(value: Any) -> str:
-    if (not isinstance(value, str) or not value.strip() or "\\" in value or ":" in value
-            or PurePosixPath(value).is_absolute() or ".." in value.split("/")
-            or not PurePosixPath(value).parts or any(not c.isprintable() for c in value)):
-        raise ValueError("manual_drop_dir must be a non-empty relative path without traversal")
+    if (
+        not isinstance(value, str)
+        or not value.strip()
+        or "\\" in value
+        or ":" in value
+        or PurePosixPath(value).is_absolute()
+        or ".." in value.split("/")
+        or not PurePosixPath(value).parts
+        or any(not c.isprintable() for c in value)
+    ):
+        raise ValueError(
+            "manual_drop_dir must be a non-empty relative path without traversal"
+        )
     return value
 
 
 def _source(value: Any) -> SourceConfig:
-    required = {"id", "authority", "description", "licence", "terms_url", "kind",
-                "expect", "required", "enabled", "urls"}
+    required = {
+        "id",
+        "authority",
+        "description",
+        "licence",
+        "terms_url",
+        "kind",
+        "expect",
+        "required",
+        "enabled",
+        "urls",
+    }
     _keys(value, required, {"manual_drop_dir"})
     for field in ("id", "authority", "description", "licence", "kind", "expect"):
         if not isinstance(value[field], str) or not value[field].strip():
@@ -130,8 +155,11 @@ def load_config(path: str | Path) -> RefreshConfig:
     if type(value["schema_version"]) is not int or value["schema_version"] != 1:
         raise ValueError("schema_version must be integer 1")
     agent = value["user_agent"]
-    if (not isinstance(agent, str) or not agent.strip()
-            or any(ord(c) < 32 or ord(c) > 126 for c in agent)):
+    if (
+        not isinstance(agent, str)
+        or not agent.strip()
+        or any(ord(c) < 32 or ord(c) > 126 for c in agent)
+    ):
         raise ValueError("user_agent must be non-empty printable ASCII")
     if not isinstance(value["sources"], list) or not value["sources"]:
         raise ValueError("sources must be a non-empty list")
@@ -161,7 +189,9 @@ def _contained(root: Path, relative: str) -> Path:
 
 def _write(path: Path, payload: bytes) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    with tempfile.NamedTemporaryFile(dir=path.parent, prefix=".refresh-", delete=False) as stream:
+    with tempfile.NamedTemporaryFile(
+        dir=path.parent, prefix=".refresh-", delete=False
+    ) as stream:
         temporary = Path(stream.name)
         try:
             stream.write(payload)
@@ -202,9 +232,15 @@ def _latest(root: Path, source_id: str) -> dict:
     if not path.exists():
         return {}
     value = json.loads(path.read_text(encoding="utf-8"))
-    if (not isinstance(value, dict) or not isinstance(value.get("files"), list)
-            or any(not isinstance(r, dict) or not isinstance(r.get("url"), str) for r in value["files"])
-            or not isinstance(value.get("month"), str)):
+    if (
+        not isinstance(value, dict)
+        or not isinstance(value.get("files"), list)
+        or any(
+            not isinstance(r, dict) or not isinstance(r.get("url"), str)
+            for r in value["files"]
+        )
+        or not isinstance(value.get("month"), str)
+    ):
         raise ValueError("invalid latest.json manifest")
     return value
 
@@ -215,18 +251,25 @@ def _manual(source: SourceConfig, root: Path, manifest: dict) -> None:
         if path.is_symlink():
             raise ValueError("manual files must not be symlinks")
         if path.is_file():
-            manifest["files"].append({
-                "name": path.name, "path": path.relative_to(root).as_posix(),
-                "bytes": path.stat().st_size, "sha256": _sha(path.read_bytes()),
-                "mtime": _utc(datetime.fromtimestamp(path.stat().st_mtime, timezone.utc)),
-            })
+            manifest["files"].append(
+                {
+                    "name": path.name,
+                    "path": path.relative_to(root).as_posix(),
+                    "bytes": path.stat().st_size,
+                    "sha256": _sha(path.read_bytes()),
+                    "mtime": _utc(
+                        datetime.fromtimestamp(path.stat().st_mtime, timezone.utc)
+                    ),
+                }
+            )
     manifest["status"] = "manual_present" if manifest["files"] else "manual_pending"
     if not manifest["files"]:
         manifest["reason"] = "Download manually from " + ", ".join(source.urls)
 
 
-def _downloads(source: SourceConfig, fetcher: CitizenFetcher, manifest: dict,
-               timestamp: str | None) -> dict[str, bytes]:
+def _downloads(
+    source: SourceConfig, fetcher: CitizenFetcher, manifest: dict, timestamp: str | None
+) -> dict[str, bytes]:
     payloads = {}
     for url in source.urls:
         response = None
@@ -234,7 +277,9 @@ def _downloads(source: SourceConfig, fetcher: CitizenFetcher, manifest: dict,
             response = fetcher.fetch(url)
             record = file_record(url, timestamp or _utc(), response)
             record["encoding"] = response.encoding or "utf-8-sig"
-            record["members"] = check_content(response.content, source.expect, record["encoding"])
+            record["members"] = check_content(
+                response.content, source.expect, record["encoding"]
+            )
             record["status"] = "success"
             payloads[url] = response.content
         except FetchError as exc:
@@ -244,8 +289,9 @@ def _downloads(source: SourceConfig, fetcher: CitizenFetcher, manifest: dict,
             record = file_record(url, timestamp or _utc(), response)
             record.update(status="unexpected_content", reason=str(exc))
         manifest["files"].append(record)
-    manifest["status"] = next((r["status"] for r in manifest["files"]
-                               if r["status"] != "success"), "success")
+    manifest["status"] = next(
+        (r["status"] for r in manifest["files"] if r["status"] != "success"), "success"
+    )
     return payloads
 
 
@@ -256,11 +302,14 @@ def _reuse(root: Path, record: dict, old: dict | None) -> bool:
     return path.is_file() and _sha(path.read_bytes()) == record["sha256"]
 
 
-def _store(source: SourceConfig, root: Path, manifest: dict, payloads: dict[str, bytes]) -> dict[Path, bytes]:
+def _store(
+    source: SourceConfig, root: Path, manifest: dict, payloads: dict[str, bytes]
+) -> dict[Path, bytes]:
     latest = _latest(root, source.id)
     previous = {row["url"]: row for row in latest.get("files", [])}
-    unchanged = (set(previous) == set(source.urls)
-                 and all(_reuse(root, r, previous.get(r["url"])) for r in manifest["files"]))
+    unchanged = set(previous) == set(source.urls) and all(
+        _reuse(root, r, previous.get(r["url"])) for r in manifest["files"]
+    )
     if unchanged:
         manifest["status"] = "unchanged"
     links: dict[str, str] = {}
@@ -277,22 +326,38 @@ def _store(source: SourceConfig, root: Path, manifest: dict, payloads: dict[str,
         else:
             target = _contained(root, relative)
             if latest.get("month", "") > manifest["month"] and any(
-                    r.get("path") == relative for r in latest.get("files", [])):
-                raise ValueError("backfill would replace bytes referenced by latest.json")
+                r.get("path") == relative for r in latest.get("files", [])
+            ):
+                raise ValueError(
+                    "backfill would replace bytes referenced by latest.json"
+                )
             outputs[target] = payloads[record["url"]]
             record["path"] = relative
     if source.kind == "listing_page":
         index = [{"url": url, "text": links[url]} for url in sorted(links)]
-        outputs[_contained(root, f"{source.id}/{manifest['month']}/links.json")] = _json_bytes(index)
+        outputs[_contained(root, f"{source.id}/{manifest['month']}/links.json")] = (
+            _json_bytes(index)
+        )
     return outputs
 
 
-def _run_source(source: SourceConfig, root: Path, month: str, dry_run: bool,
-                fetcher: CitizenFetcher, timestamp: str | None) -> dict:
+def _run_source(
+    source: SourceConfig,
+    root: Path,
+    month: str,
+    dry_run: bool,
+    fetcher: CitizenFetcher,
+    timestamp: str | None,
+) -> dict:
     manifest: dict[str, Any] = {
-        "source_id": source.id, "month": month, "status": "success", "files": [],
-        "authority": source.authority, "description": source.description,
-        "licence": source.licence, "terms_url": source.terms_url,
+        "source_id": source.id,
+        "month": month,
+        "status": "success",
+        "files": [],
+        "authority": source.authority,
+        "description": source.description,
+        "licence": source.licence,
+        "terms_url": source.terms_url,
         "urls": list(source.urls),
     }
     outputs: dict[Path, bytes] = {}
@@ -310,14 +375,18 @@ def _run_source(source: SourceConfig, root: Path, month: str, dry_run: bool,
     except (OSError, ValueError, KeyError, TypeError) as exc:
         manifest.update(status="failed", reason=str(exc))
     manifest["bytes"] = sum(r.get("bytes", 0) for r in manifest["files"])
-    manifest["rows"] = sum(m.get("rows", 0) for r in manifest["files"] for m in r.get("members", []))
+    manifest["rows"] = sum(
+        m.get("rows", 0) for r in manifest["files"] for m in r.get("members", [])
+    )
     if not dry_run:
         path = _contained(root, f"{source.id}/{month}/manifest.json")
         try:
             outputs[path] = _json_bytes(manifest)
             if manifest["status"] in {"success", "unchanged"}:
                 if month >= _latest(root, source.id).get("month", ""):
-                    outputs[_contained(root, f"{source.id}/latest.json")] = _json_bytes(manifest)
+                    outputs[_contained(root, f"{source.id}/latest.json")] = _json_bytes(
+                        manifest
+                    )
             _commit(outputs)
         except (OSError, ValueError) as exc:
             manifest.update(status="failed", reason=str(exc))
@@ -327,37 +396,61 @@ def _run_source(source: SourceConfig, root: Path, month: str, dry_run: bool,
     return manifest
 
 
-def run_refresh(config: RefreshConfig, output_root: str | Path | None, *,
-                month: str | None = None, only: Iterable[str] | None = None,
-                dry_run: bool = False, client: httpx.Client | None = None,
-                now: datetime | None = None, sleep: Callable[[float], None] = time.sleep,
-                clock: Callable[[], float] = time.monotonic) -> dict:
+def run_refresh(
+    config: RefreshConfig,
+    output_root: str | Path | None,
+    *,
+    month: str | None = None,
+    only: Iterable[str] | None = None,
+    dry_run: bool = False,
+    client: httpx.Client | None = None,
+    now: datetime | None = None,
+    sleep: Callable[[float], None] = time.sleep,
+    clock: Callable[[], float] = time.monotonic,
+) -> dict:
     """Collect configured sources; dry runs return a summary without IO or requests."""
     started = _utc(now)
     month = month if month is not None else started[:7]
     if not re.fullmatch(r"\d{4}-(0[1-9]|1[0-2])", month) or month.startswith("0000"):
         raise ValueError("month must be YYYY-MM")
-    destination = output_root if output_root is not None else os.environ.get("WED_HSE_SOURCES_ROOT")
+    destination = (
+        output_root
+        if output_root is not None
+        else os.environ.get("WED_HSE_SOURCES_ROOT")
+    )
     if destination is None or not str(destination).strip():
         raise ValueError("output_root or WED_HSE_SOURCES_ROOT must be given explicitly")
     root = Path(destination).resolve()
-    selected = set([only] if isinstance(only, str) else only) if only is not None else None
+    selected = (
+        set([only] if isinstance(only, str) else only) if only is not None else None
+    )
     if selected is not None and selected - {s.id for s in config.sources}:
         raise ValueError("unknown source id in --source")
     with ExitStack() as stack:
         if client is None:
             client = stack.enter_context(httpx.Client(timeout=300, trust_env=False))
         fetcher = CitizenFetcher(client, config.user_agent, sleep, clock)
-        sources = [_run_source(s, root, month, dry_run, fetcher, started if now is not None else None)
-                   for s in config.sources if selected is None or s.id in selected]
+        sources = [
+            _run_source(
+                s, root, month, dry_run, fetcher, started if now is not None else None
+            )
+            for s in config.sources
+            if selected is None or s.id in selected
+        ]
     passing = {"success", "unchanged", "manual_present", "skipped_disabled", "dry_run"}
     required = {s.id for s in config.sources if s.required}
     summary = {
-        "sources": sources, "counts": dict(Counter(s["status"] for s in sources)),
-        "required_failures": [s["source_id"] for s in sources
-                              if s["source_id"] in required and s["status"] not in passing],
-        "started_at_utc": started, "finished_at_utc": _utc(now),
-        "config_path": config.path, "config_sha256": config.sha256,
+        "sources": sources,
+        "counts": dict(Counter(s["status"] for s in sources)),
+        "required_failures": [
+            s["source_id"]
+            for s in sources
+            if s["source_id"] in required and s["status"] not in passing
+        ],
+        "started_at_utc": started,
+        "finished_at_utc": _utc(now),
+        "config_path": config.path,
+        "config_sha256": config.sha256,
     }
     if not dry_run:
         _json(_contained(root, "refresh-summary.json"), summary)
@@ -366,7 +459,9 @@ def run_refresh(config: RefreshConfig, output_root: str | Path | None, *,
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--config", type=Path, default=Path("config/hse/monthly_sources.yml"))
+    parser.add_argument(
+        "--config", type=Path, default=Path("config/hse/monthly_sources.yml")
+    )
     parser.add_argument("--output-root", type=Path)
     parser.add_argument("--source", action="extend", nargs="+", dest="only")
     parser.add_argument("--month")
@@ -374,8 +469,13 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args(argv)
     try:
-        result = run_refresh(load_config(args.config), args.output_root, month=args.month,
-                             only=args.only, dry_run=args.dry_run)
+        result = run_refresh(
+            load_config(args.config),
+            args.output_root,
+            month=args.month,
+            only=args.only,
+            dry_run=args.dry_run,
+        )
     except ValueError as exc:
         print(f"configuration error: {exc}", file=sys.stderr)
         return 2
@@ -383,8 +483,10 @@ def main(argv: list[str] | None = None) -> int:
         print(f"refresh storage failure: {exc}", file=sys.stderr)
         return 1
     for source in result["sources"]:
-        print(f"{source['source_id']} {source['status']} {source['bytes']} bytes {source['rows']} rows",
-              file=sys.stderr if args.json else sys.stdout)
+        print(
+            f"{source['source_id']} {source['status']} {source['bytes']} bytes {source['rows']} rows",
+            file=sys.stderr if args.json else sys.stdout,
+        )
     if args.json:
         print(json.dumps(result, indent=2))
     return 1 if result["required_failures"] else 0

@@ -14,11 +14,20 @@ def test_skipped_without_output_dir() -> None:
 
 def test_success(tmp_path: Path) -> None:
     calls = []
+
     def runner(config: Any, output_root: Path) -> dict:
         calls.append(output_root)
-        return {"required_failures": [], "sources": [{"files": [
-            {"members": [{"rows": 2}, {"rows": 3}, {"name": "readme"}]},
-        ]}]}
+        return {
+            "required_failures": [],
+            "sources": [
+                {
+                    "files": [
+                        {"members": [{"rows": 2}, {"rows": 3}, {"name": "readme"}]},
+                    ]
+                }
+            ],
+        }
+
     job = HseSourcesRefreshJob()
     job._runner = lambda: runner
     result = job.run({"output_dir": str(tmp_path)})
@@ -29,7 +38,10 @@ def test_success(tmp_path: Path) -> None:
 
 def test_required_failure(tmp_path: Path) -> None:
     job = HseSourcesRefreshJob()
-    job._runner = lambda: lambda *args: {"required_failures": ["synthetic"], "sources": []}
+    job._runner = lambda: lambda *args: {
+        "required_failures": ["synthetic"],
+        "sources": [],
+    }
     result = job.run({"output_dir": str(tmp_path)})
     assert result.status == "failure"
     assert result.retryable is False

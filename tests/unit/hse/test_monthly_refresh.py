@@ -24,17 +24,26 @@ UA = "synthetic-hse-refresh/1 (+https://example.org/project)"
 
 def source(**changes: Any) -> dict[str, Any]:
     return {
-        "id": "synthetic", "authority": "Synthetic public authority",
-        "description": "Synthetic test records", "licence": "Synthetic fixture",
-        "terms_url": "https://example.org/terms", "kind": "bulk_file",
-        "expect": "zip", "required": True, "enabled": True,
+        "id": "synthetic",
+        "authority": "Synthetic public authority",
+        "description": "Synthetic test records",
+        "licence": "Synthetic fixture",
+        "terms_url": "https://example.org/terms",
+        "kind": "bulk_file",
+        "expect": "zip",
+        "required": True,
+        "enabled": True,
         "urls": ["https://example.org/data.zip"],
     } | changes
 
 
 def config_file(tmp_path: Path, *rows: dict[str, Any]) -> Path:
     path = tmp_path / "sources.yml"
-    payload = {"schema_version": 1, "user_agent": UA, "sources": list(rows or [source()])}
+    payload = {
+        "schema_version": 1,
+        "user_agent": UA,
+        "sources": list(rows or [source()]),
+    }
     path.write_text(yaml.safe_dump(payload), encoding="utf-8")
     return path
 
@@ -59,20 +68,34 @@ def corrupt_archive(compression: int = ZIP_DEFLATED) -> bytes:
 def refresh(tmp_path: Path, handler: Any, *rows: dict[str, Any], **kwargs: Any) -> dict:
     config = load_config(config_file(tmp_path, *rows))
     with httpx.Client(transport=httpx.MockTransport(handler)) as client:
-        return run_refresh(config, tmp_path / "output", client=client, now=NOW,
-                           sleep=lambda _: None, **kwargs)
+        return run_refresh(
+            config,
+            tmp_path / "output",
+            client=client,
+            now=NOW,
+            sleep=lambda _: None,
+            **kwargs,
+        )
 
 
-def response_handler(payload: bytes, requests: list | None = None, content_type: str = "application/zip") -> Any:
+def response_handler(
+    payload: bytes, requests: list | None = None, content_type: str = "application/zip"
+) -> Any:
     def handle(request: httpx.Request) -> httpx.Response:
         if requests is not None:
             requests.append(request)
         if request.url.path == "/robots.txt":
             return httpx.Response(404)
-        return httpx.Response(200, content=payload, headers={
-            "Content-Type": content_type, "ETag": '"fixture-1"',
-            "Last-Modified": "Thu, 12 Nov 2026 08:00:00 GMT",
-        })
+        return httpx.Response(
+            200,
+            content=payload,
+            headers={
+                "Content-Type": content_type,
+                "ETag": '"fixture-1"',
+                "Last-Modified": "Thu, 12 Nov 2026 08:00:00 GMT",
+            },
+        )
+
     return handle
 
 
@@ -90,33 +113,55 @@ def test_missing_source_fields(tmp_path: Path, field: str) -> None:
         load_config(config_file(tmp_path, row))
 
 
-@pytest.mark.parametrize("changes", [
-    {"unknown": 1}, {"id": "Bad-ID"}, {"id": "../escape"},
-    {"authority": " "}, {"description": None}, {"licence": ""},
-    {"kind": "api"}, {"expect": "txt"}, {"expect": ["zip"]},
-    {"required": "true"}, {"enabled": 1}, {"urls": []},
-    {"urls": "https://example.org/data.zip"},
-    {"urls": ["http://example.org/data.zip"]},
-    {"urls": ["https://account:secret@example.org/data.zip"]},
-    {"urls": ["https://example.org:bad/data.zip"]},
-    {"urls": ["https://example.org/bad path.zip"]},
-    {"terms_url": "file:terms"}, {"kind": "manual"},
-    {"kind": "manual", "manual_drop_dir": "../escape"},
-    {"kind": "manual", "manual_drop_dir": "C:\\escape"}, {"kind": "manual", "manual_drop_dir": "/escape"},
-    {"urls": ["https://example.org/a.zip", "https://example.org/other/a.zip"]},
-    {"urls": ["https://example.org/manifest.json"]}, {"urls": ["https://example.org/links.json"]},
-    {"urls": ["https://example.org/%2e%2e"]},
-])
+@pytest.mark.parametrize(
+    "changes",
+    [
+        {"unknown": 1},
+        {"id": "Bad-ID"},
+        {"id": "../escape"},
+        {"authority": " "},
+        {"description": None},
+        {"licence": ""},
+        {"kind": "api"},
+        {"expect": "txt"},
+        {"expect": ["zip"]},
+        {"required": "true"},
+        {"enabled": 1},
+        {"urls": []},
+        {"urls": "https://example.org/data.zip"},
+        {"urls": ["http://example.org/data.zip"]},
+        {"urls": ["https://account:secret@example.org/data.zip"]},
+        {"urls": ["https://example.org:bad/data.zip"]},
+        {"urls": ["https://example.org/bad path.zip"]},
+        {"terms_url": "file:terms"},
+        {"kind": "manual"},
+        {"kind": "manual", "manual_drop_dir": "../escape"},
+        {"kind": "manual", "manual_drop_dir": "C:\\escape"},
+        {"kind": "manual", "manual_drop_dir": "/escape"},
+        {"urls": ["https://example.org/a.zip", "https://example.org/other/a.zip"]},
+        {"urls": ["https://example.org/manifest.json"]},
+        {"urls": ["https://example.org/links.json"]},
+        {"urls": ["https://example.org/%2e%2e"]},
+    ],
+)
 def test_invalid_source(tmp_path: Path, changes: dict) -> None:
     with pytest.raises(ValueError):
         load_config(config_file(tmp_path, source(**changes)))
 
 
-@pytest.mark.parametrize("change", [
-    {"schema_version": True}, {"schema_version": "1"}, {"schema_version": 2},
-    {"sources": []}, {"sources": {}}, {"user_agent": ""},
-    {"user_agent": "agent\r\nInjected: yes"}, {"unknown": True},
-])
+@pytest.mark.parametrize(
+    "change",
+    [
+        {"schema_version": True},
+        {"schema_version": "1"},
+        {"schema_version": 2},
+        {"sources": []},
+        {"sources": {}},
+        {"user_agent": ""},
+        {"user_agent": "agent\r\nInjected: yes"},
+        {"unknown": True},
+    ],
+)
 def test_invalid_root(tmp_path: Path, change: dict) -> None:
     path = config_file(tmp_path)
     path.write_text(yaml.safe_dump(yaml.safe_load(path.read_text()) | change))
@@ -155,7 +200,10 @@ def test_zip_success_provenance_and_unchanged(tmp_path: Path) -> None:
     assert (output / record["path"]).read_bytes() == payload
     latest_path = output / "synthetic/latest.json"
     assert json.loads(latest_path.read_text()) == manifest
-    assert first["config_sha256"] == hashlib.sha256((tmp_path / "sources.yml").read_bytes()).hexdigest()
+    assert (
+        first["config_sha256"]
+        == hashlib.sha256((tmp_path / "sources.yml").read_bytes()).hexdigest()
+    )
     assert json.loads((output / "refresh-summary.json").read_text()) == first
     second = refresh(tmp_path, handler, month="2026-12")
     assert second["sources"][0]["status"] == "unchanged"
@@ -165,16 +213,27 @@ def test_zip_success_provenance_and_unchanged(tmp_path: Path) -> None:
     assert all(request.headers["User-Agent"] == UA for request in requests)
 
 
-@pytest.mark.parametrize("kind,status", [("html", "unexpected_content"),
-                                         (403, "blocked"), (401, "blocked"),
-                                         (429, "blocked"), (500, "failed")])
+@pytest.mark.parametrize(
+    "kind,status",
+    [
+        ("html", "unexpected_content"),
+        (403, "blocked"),
+        (401, "blocked"),
+        (429, "blocked"),
+        (500, "failed"),
+    ],
+)
 def test_data_failure_not_retried(tmp_path: Path, kind: Any, status: str) -> None:
     requests = []
+
     def handler(request: httpx.Request) -> httpx.Response:
         requests.append(str(request.url))
         if request.url.path == "/robots.txt":
             return httpx.Response(404)
-        return httpx.Response(200 if kind == "html" else kind, text="<html>denied</html>")
+        return httpx.Response(
+            200 if kind == "html" else kind, text="<html>denied</html>"
+        )
+
     summary = refresh(tmp_path, handler)
     assert summary["sources"][0]["status"] == status
     assert summary["sources"][0]["files"][0]["reason"]
@@ -183,13 +242,21 @@ def test_data_failure_not_retried(tmp_path: Path, kind: Any, status: str) -> Non
     assert not list((tmp_path / "output").rglob("*.zip"))
 
 
-@pytest.mark.parametrize("code,status", [(403, "blocked"), (401, "blocked"),
-                                        (500, "robots_unavailable"), (429, "success")])
+@pytest.mark.parametrize(
+    "code,status",
+    [(403, "blocked"), (401, "blocked"), (500, "robots_unavailable"), (429, "success")],
+)
 def test_robots_responses(tmp_path: Path, code: int, status: str) -> None:
     requests = []
+
     def handler(request: httpx.Request) -> httpx.Response:
         requests.append(str(request.url))
-        return httpx.Response(code) if request.url.path == "/robots.txt" else httpx.Response(200, content=archive())
+        return (
+            httpx.Response(code)
+            if request.url.path == "/robots.txt"
+            else httpx.Response(200, content=archive())
+        )
+
     assert refresh(tmp_path, handler)["sources"][0]["status"] == status
     assert len(requests) == (2 if status == "success" else 1)
 
@@ -197,20 +264,31 @@ def test_robots_responses(tmp_path: Path, code: int, status: str) -> None:
 def test_robots_disallow_and_timeout(tmp_path: Path) -> None:
     def handler(request: httpx.Request) -> httpx.Response:
         assert request.url.path == "/robots.txt"
-        return httpx.Response(200, text="User-agent: synthetic-hse-refresh\nDisallow: /\n")
+        return httpx.Response(
+            200, text="User-agent: synthetic-hse-refresh\nDisallow: /\n"
+        )
+
     assert refresh(tmp_path, handler)["sources"][0]["status"] == "disallowed_by_robots"
+
     def unavailable(request: httpx.Request) -> httpx.Response:
         raise httpx.ConnectError("synthetic offline error", request=request)
-    assert refresh(tmp_path, unavailable)["sources"][0]["status"] == "robots_unavailable"
+
+    assert (
+        refresh(tmp_path, unavailable)["sources"][0]["status"] == "robots_unavailable"
+    )
 
 
 @pytest.mark.parametrize("encoding", ["utf-8", "iso-8859-1"])
 def test_listing_links_and_reuse(tmp_path: Path, encoding: str) -> None:
-    html = '''<html><a href="/reports/a.pdf">A café <b>report</b></a>
+    html = """<html><a href="/reports/a.pdf">A café <b>report</b></a>
     <a href="/reports/a.pdf">Duplicate</a><a href="/sites/file">Site</a>
-    <a href="https://example.org/media/item">Media</a><a href="https://[">Broken</a></html>'''
-    listing = source(kind="listing_page", expect="html", urls=["https://example.org/listing"])
-    handler = response_handler(html.encode(encoding), content_type=f"text/html; charset={encoding}")
+    <a href="https://example.org/media/item">Media</a><a href="https://[">Broken</a></html>"""
+    listing = source(
+        kind="listing_page", expect="html", urls=["https://example.org/listing"]
+    )
+    handler = response_handler(
+        html.encode(encoding), content_type=f"text/html; charset={encoding}"
+    )
     summary = refresh(tmp_path, handler, listing)
     assert summary["sources"][0]["status"] == "success"
     path = tmp_path / "output/synthetic/2026-11/links.json"
@@ -225,8 +303,10 @@ def test_listing_links_and_reuse(tmp_path: Path, encoding: str) -> None:
 
 def test_manual_pending_and_present(tmp_path: Path) -> None:
     row = source(kind="manual", manual_drop_dir="synthetic/manual")
+
     def no_network(request: httpx.Request) -> httpx.Response:
         pytest.fail("manual source attempted a request")
+
     summary = refresh(tmp_path, no_network, row)
     assert summary["sources"][0]["status"] == "manual_pending"
     assert "https://example.org/data.zip" in summary["sources"][0]["reason"]
@@ -249,20 +329,37 @@ def test_archive_member_traversal_never_extracted(tmp_path: Path) -> None:
     assert not list(tmp_path.rglob("escaped.csv"))
 
 
-def test_cli_failure_and_configuration_error(tmp_path: Path, monkeypatch: Any, capsys: Any) -> None:
+def test_cli_failure_and_configuration_error(
+    tmp_path: Path, monkeypatch: Any, capsys: Any
+) -> None:
     import worldenergydata.hse.monthly_refresh as module
+
     real_client = httpx.Client
-    monkeypatch.setattr(module.httpx, "Client", lambda **kw: real_client(
-        transport=httpx.MockTransport(lambda req: httpx.Response(403))))
-    args = ["--config", str(config_file(tmp_path)), "--output-root", str(tmp_path / "output")]
+    monkeypatch.setattr(
+        module.httpx,
+        "Client",
+        lambda **kw: real_client(
+            transport=httpx.MockTransport(lambda req: httpx.Response(403))
+        ),
+    )
+    args = [
+        "--config",
+        str(config_file(tmp_path)),
+        "--output-root",
+        str(tmp_path / "output"),
+    ]
     assert main(args + ["--json"]) == 1
     assert json.loads(capsys.readouterr().out)["required_failures"] == ["synthetic"]
     assert main(args + ["--source", "unknown"]) == 2
     assert main(args + ["--month", "2026-13"]) == 2
 
 
-def test_dry_run_disabled_and_environment_root(tmp_path: Path, monkeypatch: Any) -> None:
-    config = load_config(config_file(tmp_path, source(), source(id="disabled", enabled=False)))
+def test_dry_run_disabled_and_environment_root(
+    tmp_path: Path, monkeypatch: Any
+) -> None:
+    config = load_config(
+        config_file(tmp_path, source(), source(id="disabled", enabled=False))
+    )
     monkeypatch.delenv("WED_HSE_SOURCES_ROOT", raising=False)
     with pytest.raises(ValueError, match="output"):
         run_refresh(config, None)
@@ -272,7 +369,9 @@ def test_dry_run_disabled_and_environment_root(tmp_path: Path, monkeypatch: Any)
     assert not (tmp_path / "output").exists()
 
 
-def test_same_month_reuse_and_older_month_does_not_replace_latest(tmp_path: Path) -> None:
+def test_same_month_reuse_and_older_month_does_not_replace_latest(
+    tmp_path: Path,
+) -> None:
     handler = response_handler(archive())
     refresh(tmp_path, handler)
     assert refresh(tmp_path, handler)["sources"][0]["status"] == "unchanged"
@@ -288,72 +387,119 @@ def test_same_month_reuse_and_older_month_does_not_replace_latest(tmp_path: Path
 
 def test_redirects_checked_and_paced(tmp_path: Path) -> None:
     requests, sleeps = [], []
+
     def handler(request: httpx.Request) -> httpx.Response:
         requests.append(str(request.url))
         if request.url.path == "/robots.txt":
             return httpx.Response(404)
         if request.url.host == "example.org":
-            return httpx.Response(302, headers={"Location": "https://example.net/data.zip"})
+            return httpx.Response(
+                302, headers={"Location": "https://example.net/data.zip"}
+            )
         return httpx.Response(200, content=archive())
+
     config = load_config(config_file(tmp_path))
-    with httpx.Client(transport=httpx.MockTransport(handler), follow_redirects=True) as client:
-        result = run_refresh(config, tmp_path / "output", client=client, now=NOW,
-                             sleep=sleeps.append, clock=lambda: 0.0)
+    with httpx.Client(
+        transport=httpx.MockTransport(handler), follow_redirects=True
+    ) as client:
+        result = run_refresh(
+            config,
+            tmp_path / "output",
+            client=client,
+            now=NOW,
+            sleep=sleeps.append,
+            clock=lambda: 0.0,
+        )
     assert result["sources"][0]["status"] == "success"
-    assert requests == ["https://example.org/robots.txt", "https://example.org/data.zip",
-                        "https://example.net/robots.txt", "https://example.net/data.zip"]
+    assert requests == [
+        "https://example.org/robots.txt",
+        "https://example.org/data.zip",
+        "https://example.net/robots.txt",
+        "https://example.net/data.zip",
+    ]
     assert sleeps == [1.0, 1.0]
 
 
 def test_insecure_redirect_never_requested(tmp_path: Path) -> None:
     requests = []
+
     def handler(request: httpx.Request) -> httpx.Response:
         requests.append(str(request.url))
-        return (httpx.Response(404) if request.url.path == "/robots.txt" else
-                httpx.Response(302, headers={"Location": "http://example.org/plain.zip"}))
+        return (
+            httpx.Response(404)
+            if request.url.path == "/robots.txt"
+            else httpx.Response(
+                302, headers={"Location": "http://example.org/plain.zip"}
+            )
+        )
+
     assert refresh(tmp_path, handler)["sources"][0]["status"] == "failed"
     assert len(requests) == 2
 
 
 @pytest.mark.parametrize("failure", ["network", "payload", "manifest"])
-def test_partial_same_month_failure_preserves_latest_bytes(tmp_path: Path, monkeypatch: Any, failure: str) -> None:
-    row = source(urls=["https://example.org/first.zip", "https://example.org/second.zip"])
+def test_partial_same_month_failure_preserves_latest_bytes(
+    tmp_path: Path, monkeypatch: Any, failure: str
+) -> None:
+    row = source(
+        urls=["https://example.org/first.zip", "https://example.org/second.zip"]
+    )
     initial = refresh(tmp_path, response_handler(archive()), row)
     output = tmp_path / "output"
     latest_bytes = (output / "synthetic/latest.json").read_bytes()
-    retained = {r["path"]: (output / r["path"]).read_bytes() for r in initial["sources"][0]["files"]}
+    retained = {
+        r["path"]: (output / r["path"]).read_bytes()
+        for r in initial["sources"][0]["files"]
+    }
+
     def partial(request: httpx.Request) -> httpx.Response:
         if request.url.path == "/robots.txt":
             return httpx.Response(404)
         if failure == "network" and request.url.path == "/second.zip":
             return httpx.Response(403)
         return httpx.Response(200, content=archive("changed.csv"))
+
     if failure != "network":
         import worldenergydata.hse.monthly_refresh as module
+
         original = module._write
+
         def fail_write(path: Path, payload: bytes) -> None:
             target = "second.zip" if failure == "payload" else "manifest.json"
             if path.name == target and b'"status": "failed"' not in payload:
                 raise OSError("synthetic storage failure")
             original(path, payload)
+
         monkeypatch.setattr(module, "_write", fail_write)
     result = refresh(tmp_path, partial, row)
     assert result["required_failures"] == ["synthetic"]
     assert (output / "synthetic/latest.json").read_bytes() == latest_bytes
-    assert all((output / path).read_bytes() == content for path, content in retained.items())
+    assert all(
+        (output / path).read_bytes() == content for path, content in retained.items()
+    )
 
 
 def test_multiple_listing_pages_share_sorted_index(tmp_path: Path) -> None:
-    row = source(kind="listing_page", expect="html", urls=[
-        "https://example.org/first", "https://example.org/second"])
+    row = source(
+        kind="listing_page",
+        expect="html",
+        urls=["https://example.org/first", "https://example.org/second"],
+    )
+
     def handler(request: httpx.Request) -> httpx.Response:
         if request.url.path == "/robots.txt":
             return httpx.Response(404)
         link = "a" if request.url.path == "/first" else "b"
-        return httpx.Response(200, text=f'<html><a href="/{link}.pdf">{link}</a></html>')
+        return httpx.Response(
+            200, text=f'<html><a href="/{link}.pdf">{link}</a></html>'
+        )
+
     refresh(tmp_path, handler, row)
     links = json.loads((tmp_path / "output/synthetic/2026-11/links.json").read_text())
-    assert [r["url"] for r in links] == ["https://example.org/a.pdf", "https://example.org/b.pdf"]
+    assert [r["url"] for r in links] == [
+        "https://example.org/a.pdf",
+        "https://example.org/b.pdf",
+    ]
 
 
 def test_manual_symlink_escape_is_not_consumed(tmp_path: Path) -> None:
@@ -371,30 +517,51 @@ def test_manual_symlink_escape_is_not_consumed(tmp_path: Path) -> None:
 @pytest.mark.parametrize("location", ["/robots-next.txt", "http://example.org/plain"])
 def test_redirected_robots_failure_blocks_data(tmp_path: Path, location: str) -> None:
     requests = []
+
     def handler(request: httpx.Request) -> httpx.Response:
         requests.append(str(request.url))
         if request.url.path == "/robots.txt":
             return httpx.Response(302, headers={"Location": location})
         return httpx.Response(503)
+
     assert refresh(tmp_path, handler)["sources"][0]["status"] == "robots_unavailable"
     assert "https://example.org/data.zip" not in requests
 
 
-@pytest.mark.parametrize("expect,payload,valid", [
-    ("json", b'{"synthetic": true}', True), ("json", b'<html>error</html>', False),
-    ("csv", b'id,value\n1,synthetic\n', True), ("csv", b'<html>error</html>', False),
-    ("pdf", b'%PDF-1.7\nsynthetic', True), ("pdf", b'plain text', False),
-    ("html", b'<html>synthetic</html>', True), ("html", b'plain text', False),
-    ("zip", b'PKinvalid archive', False), ("xlsx", archive(), False),
-    ("zip", corrupt_archive(), False), ("csv", b'plain text', False),
-    ("zip", corrupt_archive(ZIP_LZMA), False),
-])
-def test_content_sniffs(tmp_path: Path, expect: str, payload: bytes, valid: bool) -> None:
+@pytest.mark.parametrize(
+    "expect,payload,valid",
+    [
+        ("json", b'{"synthetic": true}', True),
+        ("json", b"<html>error</html>", False),
+        ("csv", b"id,value\n1,synthetic\n", True),
+        ("csv", b"<html>error</html>", False),
+        ("pdf", b"%PDF-1.7\nsynthetic", True),
+        ("pdf", b"plain text", False),
+        ("html", b"<html>synthetic</html>", True),
+        ("html", b"plain text", False),
+        ("zip", b"PKinvalid archive", False),
+        ("xlsx", archive(), False),
+        ("zip", corrupt_archive(), False),
+        ("csv", b"plain text", False),
+        ("zip", corrupt_archive(ZIP_LZMA), False),
+    ],
+)
+def test_content_sniffs(
+    tmp_path: Path, expect: str, payload: bytes, valid: bool
+) -> None:
     row = source(expect=expect, urls=[f"https://example.org/file.{expect}"])
     handler = response_handler(payload)
     control = source(id="control", urls=["https://example.org/control.zip"])
+
     def responses(request: httpx.Request) -> httpx.Response:
-        return httpx.Response(200, content=archive()) if request.url.path == "/control.zip" else handler(request)
+        return (
+            httpx.Response(200, content=archive())
+            if request.url.path == "/control.zip"
+            else handler(request)
+        )
+
     result = refresh(tmp_path, responses, row, control)
-    assert result["sources"][0]["status"] == ("success" if valid else "unexpected_content")
+    assert result["sources"][0]["status"] == (
+        "success" if valid else "unexpected_content"
+    )
     assert result["sources"][1]["status"] == "success"

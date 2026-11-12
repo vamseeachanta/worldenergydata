@@ -13,18 +13,41 @@ MONTHLY = REPO / "config" / "hse" / "monthly_sources.yml"
 DOC = REPO / "docs" / "hse" / "source-inventory.md"
 
 REQUIRED = {
-    "id", "group", "authority", "what", "url", "terms", "format", "access",
-    "held", "refresh", "refresh_script", "last_run", "decision",
+    "id",
+    "group",
+    "authority",
+    "what",
+    "url",
+    "terms",
+    "format",
+    "access",
+    "held",
+    "refresh",
+    "refresh_script",
+    "last_run",
+    "decision",
 }
 OPTIONAL = {"held_where", "held_records", "held_latest_date", "held_note"}
 ACCESS = {"public_bulk", "public_docs", "blocked", "login", "paid"}
 HELD = {"yes", "partial", "links_only", "no"}
 REFRESH = {"monthly", "manual", "none"}
 CANDIDATES = {
-    "bsee_incident_investigations", "bsee_investigation_reports", "bsee_safety_alerts",
-    "phmsa_pipeline_incidents", "uscg_misle", "uscg_cgmix", "ntsb_marine", "imo_gisis",
-    "uk_hse_offshore_statistics", "uk_maib", "havtil_rnnp", "nopsema", "emsa_emcip",
-    "iogp", "csb", "iadc_isp",
+    "bsee_incident_investigations",
+    "bsee_investigation_reports",
+    "bsee_safety_alerts",
+    "phmsa_pipeline_incidents",
+    "uscg_misle",
+    "uscg_cgmix",
+    "ntsb_marine",
+    "imo_gisis",
+    "uk_hse_offshore_statistics",
+    "uk_maib",
+    "havtil_rnnp",
+    "nopsema",
+    "emsa_emcip",
+    "iogp",
+    "csb",
+    "iadc_isp",
 }
 
 
