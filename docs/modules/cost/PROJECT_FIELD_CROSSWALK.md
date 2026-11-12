@@ -81,9 +81,10 @@ The held snapshot contains 227 projects, with 9 mapped and 218 explained
 The 43 Asia-Pacific and Caspian staging projects and the 66 Europe staging
 projects are all explained with the reason class "Outside catalog scope
 (non-GoM)"; none receives a catalog ID. Of the 33 Americas staging projects,
-30 outside the US Gulf of Mexico (including Mexican-waters Gulf projects) carry
-the same reason class. Shenandoah South and Monument carry "GoM field not yet
-in catalog": both are US Gulf fields with no catalog entry or held alias, so
+14 outside the Gulf of Mexico carry the same reason class. The 16 Mexico
+projects carry "Outside catalog scope (Mexican Gulf of Mexico; catalog holds US
+Gulf only)". Shenandoah South and Monument carry "GoM field not yet in
+catalog": both are US Gulf fields with no catalog entry or held alias, so
 neither receives an invented ID. Buckskin Phase 1A is a manual link to
 `buckskin`.
 The field catalog contains 11 Gulf of Mexico entries and an empty worldwide
