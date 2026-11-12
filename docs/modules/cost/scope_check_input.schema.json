@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Scope cost-check input",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "host_type"
+  ],
+  "anyOf": [
+    {
+      "required": [
+        "water_depth_m"
+      ]
+    },
+    {
+      "required": [
+        "water_depth_band"
+      ]
+    }
+  ],
+  "properties": {
+    "surf_km": {
+      "type": "number",
+      "minimum": 0
+    },
+    "umbilical_km": {
+      "type": "number",
+      "minimum": 0
+    },
+    "water_depth_m": {
+      "type": "number",
+      "minimum": 0
+    },
+    "peak_production_kboed": {
+      "type": "number",
+      "minimum": 0
+    },
+    "recoverable_resource_boe": {
+      "type": "number",
+      "minimum": 0
+    },
+    "quote": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Whole-project CAPEX in USD, compared independently with each metric range."
+    },
+    "wells": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "trees": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "manifolds": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "risers": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "region": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "development_type": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "host_type": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "water_depth_band": {
+      "enum": [
+        "shallow",
+        "mid",
+        "deep",
+        "ultra_deep"
+      ]
+    },
+    "award_year": {
+      "type": "integer",
+      "minimum": 1900,
+      "maximum": 2200
+    },
+    "fid_year": {
+      "type": "integer",
+      "minimum": 1900,
+      "maximum": 2200
+    },
+    "invented": {
+      "type": "boolean",
+      "description": "True identifies an invented demonstration scope."
+    },
+    "quote_cost_basis": {
+      "enum": [
+        "USD_2026",
+        "nominal"
+      ],
+      "default": "USD_2026",
+      "description": "Whole-project quote basis; a nominal comparison requires an asserted common price year."
+    }
+  },
+  "$comment": "If depth and band are both supplied, runtime validation requires agreement. Non-finite numbers are rejected."
+}
