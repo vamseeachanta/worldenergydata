@@ -1,7 +1,9 @@
 """Report calculations checked against independent hand calculations."""
 
+import json
 import math
 from dataclasses import replace
+from hashlib import sha256
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -24,6 +26,7 @@ def points(values=(10, 20, 30, 40, 100)):
             operator="Operator A",
             year_sanction=2020,
             cost_usd_mm=value,
+            source="Supplied arithmetic fixture",
         )
         for value in values
     ]
@@ -134,6 +137,71 @@ def test_outliers_retain_operator_and_source_identity():
     assert facts["outliers"][0]["operator"] == "Operator A"
     assert facts["outliers"][0]["source_record_index"] == 5
     assert len(facts["outliers"][0]["source_record_sha256"]) == 64
+
+
+@pytest.mark.parametrize("calibration_values", [(1,), (10000,) * 4])
+def test_calibration_rows_do_not_enter_disclosure_statistics(calibration_values):
+    from worldenergydata.cost.reporting.benchmark_report import render_html
+
+    observed = points()
+    calibration = points(calibration_values)
+    for point in calibration:
+        point.source += "; derived calibration sub-observation"
+        point.operator = "Calibration fixture"
+        point.year_sanction = 2009
+    inputs = [*calibration, *observed]
+    original = [vars(point).copy() for point in inputs]
+
+    facts = build_report_facts([], inputs, "2026-10-20")
+
+    cohort = facts["cohorts"][0]
+    assert len(facts["cohorts"]) == 1
+    assert cohort["count"] == 5
+    assert cohort["median_usd_mm"] == 30
+    assert cohort["q1_usd_mm"] == 20
+    assert cohort["q3_usd_mm"] == 40
+    assert cohort["year_min"] == cohort["year_max"] == 2020
+    assert [row["cost_usd_mm"] for row in facts["outliers"]] == [100]
+    outlier = facts["outliers"][0]
+    assert outlier["source_record_index"] == len(inputs)
+    assert (
+        outlier["source_record_sha256"]
+        == sha256(json.dumps(vars(observed[-1]), sort_keys=True).encode()).hexdigest()
+    )
+    assert "Calibration fixture" not in json.dumps(facts)
+    assert "Calibration fixture" not in render_html(facts)
+    assert "derived calibration rows excluded" in facts["cohort_basis"]
+    assert "derived calibration rows excluded" in render_html(facts)
+    assert [vars(point) for point in inputs] == original
+
+
+def test_public_calibration_rows_are_excluded_from_reported_observations():
+    from worldenergydata.cost.data_collection.public_dataset import load_public_dataset
+    from worldenergydata.cost.reporting.benchmark_report import render_html
+
+    inputs = load_public_dataset()
+    disclosed = [
+        point
+        for point in inputs
+        if "derived calibration sub-observation" not in point.source
+    ]
+    assert len(disclosed) < len(inputs)
+    facts = build_report_facts([], inputs, "2026-10-20")
+    expected = build_report_facts([], disclosed, "2026-10-20")
+
+    assert facts["cohorts"] == expected["cohorts"]
+    assert sum(cohort["count"] for cohort in facts["cohorts"]) == len(disclosed)
+    assert facts["outliers"] == expected["outliers"]
+    assert render_html(facts) == render_html(expected)
+    for row in facts["outliers"]:
+        point = inputs[row["source_record_index"] - 1]
+        assert "derived calibration sub-observation" not in point.source
+        assert (
+            row["source_record_sha256"]
+            == sha256(
+                json.dumps(point.model_dump(mode="json"), sort_keys=True).encode()
+            ).hexdigest()
+        )
 
 
 def test_yoy_gap_zero_and_comparability_are_explicit():
