@@ -26,7 +26,8 @@ cases:
         page: 4
       - statement: Metallurgical analysis of recovered material, believed to be from the load shoulder, showed evidence of shear ductile overload and plastic deformation
         page: 4
-      - statement: Maximum conditions in the hurricane were below the 1000-year storm criteria, and there was no evidence of direct collision
+    ruled_out:
+      - statement: Direct collision, for which there was no evidence, and metocean conditions beyond the survival design; maximum conditions in the hurricane were below the 1000-year storm criteria
         page: 4
     lessons:
       - statement: The regulator recommended a study of this mooring system, to find possible quick fixes for existing tension-leg platforms that use it and to decide whether it remains acceptable for floating installations
@@ -54,13 +55,16 @@ cases:
     cause_statements:
       - statement: The fractures initiated from hydrogen embrittlement. The link's material properties were not satisfactory for grade R4 chain; its high hardness made it susceptible and was likely the result of improper heat treatment
         page: 3
-      - statement: There was no evidence that stress from out-of-plane bending or twisting contributed to the fractures
+    ruled_out:
+      - statement: Stress from out-of-plane bending or twisting, for which there was no evidence of a contribution to the fractures
         page: 2
     lessons:
       - statement: Follow-up hardness testing of links up to 15 links away from the failure found high hardness in each tested link
         page: 3
     consequences:
-      - statement: No injury or pollution was recorded; the cost was estimated at 10 million US dollars
+      - statement: No injury or pollution was recorded
+        page: 1
+      - statement: The cost was estimated at 10 million US dollars
         page: 3
   - id: mooring-2023-mc941-chain-fatigue
     equipment_class: mooring_line
@@ -75,7 +79,7 @@ cases:
     retrieved: "2026-11-12"
     sha256: e73418680aaef7ad5edee6b7e36748071edd32dc985953777fbf3b7d293ba24f
     what_failed:
-      statement: A 5-inch grade RQ4 chain link in one of 12 mooring lines parted in service
+      statement: A 5-inch grade RQ4 chain link in a mooring line parted in service
       page: 2
     failure_modes: [loss_of_station]
     mechanism: fatigue

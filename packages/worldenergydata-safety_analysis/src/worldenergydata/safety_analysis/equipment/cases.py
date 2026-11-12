@@ -8,7 +8,8 @@ paraphrase with a page reference, what the report says failed, what it states
 as the cause and what it recommends. Report text is not copied (the HSE source
 registry stores links and paraphrase only), and nothing is added that the
 report does not state: a case whose report gives no cause keeps the mechanism
-``not_stated``.
+``not_stated``. A factor the report rules out is recorded under ``ruled_out``,
+never as a cause.
 """
 
 from __future__ import annotations
@@ -48,6 +49,7 @@ _CASE_KEYS = {
     "failure_modes",
     "mechanism",
     "cause_statements",
+    "ruled_out",
     "lessons",
     "consequences",
 }
@@ -55,6 +57,7 @@ _REQUIRED = _CASE_KEYS - {
     "equipment_subclass",
     "area_block",
     "sha256",
+    "ruled_out",
     "consequences",
     "lessons",
 }
@@ -87,6 +90,7 @@ class PublicCase:
     failure_modes: tuple[str, ...]
     mechanism: str
     cause_statements: tuple[Statement, ...]
+    ruled_out: tuple[Statement, ...] = ()
     lessons: tuple[Statement, ...] = ()
     consequences: tuple[Statement, ...] = ()
     equipment_subclass: str = NOT_STATED
@@ -176,6 +180,7 @@ def parse_case(raw: dict) -> PublicCase:
         failure_modes=modes,
         mechanism=mechanism,
         cause_statements=causes,
+        ruled_out=_statements(raw.get("ruled_out"), f"{where} ruled_out"),
         lessons=_statements(raw.get("lessons"), f"{where} lessons"),
         consequences=_statements(raw.get("consequences"), f"{where} consequences"),
     )

@@ -282,6 +282,10 @@ def render_markdown(section: HseSection, *, max_records: int = 12) -> str:
                 out.append(f"- Cause stated by the investigation: {c.cite()};")
         else:
             out.append("- Cause: the investigation does not state one;")
+        for c in case.ruled_out:
+            out.append(
+                f"- Ruled out or found unlikely by the investigation: {c.cite()};"
+            )
         if case.mechanism != NOT_STATED:
             out.append(
                 f"- Mechanism as stated: {FAILURE_MECHANISMS[case.mechanism].label};"

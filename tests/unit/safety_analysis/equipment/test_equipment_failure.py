@@ -589,3 +589,32 @@ def test_case_membership_uses_date_and_area_block(source_files):
 def test_retrieval_date_must_be_a_real_calendar_date(tmp_path, value):
     with pytest.raises(ValueError, match="YYYY-MM-DD"):
         SourceFile("x", tmp_path, "https://example.org", value)
+
+
+def test_ruled_out_factor_is_never_printed_as_a_cause(source_files):
+    rows, stats = build_table(source_files)
+    case = parse_case(
+        {
+            **CASE,
+            "ruled_out": [
+                {
+                    "statement": "Direct collision, for which there was no evidence",
+                    "page": 4,
+                }
+            ],
+        }
+    )
+    other = parse_case({**CASE, "id": "mooring-synthetic-2"})
+    text = render_markdown(build_section("mooring_line", rows, stats, [case, other]))
+    assert (
+        "- Ruled out or found unlikely by the investigation: Direct collision, for which there was no evidence (p. 4);"
+        in text
+    )
+    assert "Cause stated by the investigation: Direct collision" not in text
+
+
+def test_packaged_cases_keep_ruled_out_factors_apart():
+    by_id = {c.id: c for c in load_cases()}
+    tlp = by_id["mooring-2005-gc237-tendon-connector"]
+    assert len(tlp.ruled_out) == 1 and "1000-year" in tlp.ruled_out[0].statement
+    assert all("1000-year" not in c.statement for c in tlp.cause_statements)

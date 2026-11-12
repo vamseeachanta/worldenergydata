@@ -58,7 +58,7 @@ None of the 7 records states a cause: the data set gives the event type only. Th
 - Failure mode: Loss of station or mooring failure; Structural damage or collapse;
 - Cause stated by the investigation: The most probable cause of the capsize was loss of integrity of the mooring system on one pontoon, specifically the bottom connector system at two piles (p. 4);
 - Cause stated by the investigation: Metallurgical analysis of recovered material, believed to be from the load shoulder, showed evidence of shear ductile overload and plastic deformation (p. 4);
-- Cause stated by the investigation: Maximum conditions in the hurricane were below the 1000-year storm criteria, and there was no evidence of direct collision (p. 4);
+- Ruled out or found unlikely by the investigation: Direct collision, for which there was no evidence, and metocean conditions beyond the survival design; maximum conditions in the hurricane were below the 1000-year storm criteria (p. 4);
 - Mechanism as stated: Overload;
 - Consequence: The facility capsized and was a complete loss (p. 5);
 
@@ -67,13 +67,14 @@ None of the 7 records states a cause: the data set gives the event type only. Th
 - What failed: One of 12 mooring lines was lost when a 160 mm grade R4 chain link failed after about 20 years in service; the link had two fractures, one at a crown and one at the flash weld (p. 2);
 - Failure mode: Loss of station or mooring failure;
 - Cause stated by the investigation: The fractures initiated from hydrogen embrittlement. The link's material properties were not satisfactory for grade R4 chain; its high hardness made it susceptible and was likely the result of improper heat treatment (p. 3);
-- Cause stated by the investigation: There was no evidence that stress from out-of-plane bending or twisting contributed to the fractures (p. 2);
+- Ruled out or found unlikely by the investigation: Stress from out-of-plane bending or twisting, for which there was no evidence of a contribution to the fractures (p. 2);
 - Mechanism as stated: Hydrogen embrittlement;
-- Consequence: No injury or pollution was recorded; the cost was estimated at 10 million US dollars (p. 3);
+- Consequence: No injury or pollution was recorded (p. 1);
+- Consequence: The cost was estimated at 10 million US dollars (p. 3);
 
 **Case 3: Spar, Mississippi Canyon block 941, US Gulf of Mexico, 2023-06-19** [H4]
 
-- What failed: A 5-inch grade RQ4 chain link in one of 12 mooring lines parted in service (p. 2);
+- What failed: A 5-inch grade RQ4 chain link in a mooring line parted in service (p. 2);
 - Failure mode: Loss of station or mooring failure;
 - Cause stated by the investigation: The line most likely failed due to fatigue that initiated at the top of the link crown, where stresses are high (p. 3);
 - Cause stated by the investigation: Corrosion likely contributed to the crown cracks, but the corrosion mechanism could not be determined; hydrogen may have contributed, but the fracture surfaces were too corroded to confirm it (p. 3);
