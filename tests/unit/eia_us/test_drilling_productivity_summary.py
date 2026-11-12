@@ -1,5 +1,6 @@
 """Independent normalized-frame examples for DPR summaries (issue #1607).
 
+Benchmark basis: eia_us/docs/closed-form-benchmarks.md, revision 1.
 All inputs are arbitrary synthetic examples. Each basin has January and February
 observations: rig counts 3 then 5 for basin A, 7 then 2 for basin B. Latest counts
 therefore sort as A: 5, B: 2. Hand calculations in bbl/day are 120 + (-50) = 70
@@ -32,9 +33,16 @@ def normalized_frame():
     )
 
 
+@pytest.mark.parametrize("index_kind", ["unique", "per_basin", "shared"])
 @pytest.mark.parametrize("reverse_input", [False, True])
-def test_latest_rig_count_and_order(normalized_frame, reverse_input):
-    frame = normalized_frame.iloc[::-1] if reverse_input else normalized_frame
+def test_latest_rig_count_and_order(normalized_frame, reverse_input, index_kind):
+    frame = normalized_frame.copy(deep=True)
+    if index_kind == "per_basin":
+        frame.index = ["b", "a", "b", "a"]
+    elif index_kind == "shared":
+        frame.index = [0, 0, 0, 0]
+    if reverse_input:
+        frame = frame.iloc[::-1]
     before = frame.copy(deep=True)
 
     result = DrillingProductivityReport().rig_count_summary(frame)
@@ -46,7 +54,7 @@ def test_latest_rig_count_and_order(normalized_frame, reverse_input):
             "rig_count": [5, 2],
         }
     )
-    assert_frame_equal(result, expected, check_exact=True)
+    assert_frame_equal(result, expected, check_exact=True, check_index_type=True)
     assert_frame_equal(frame, before, check_exact=True)
 
 
@@ -64,7 +72,7 @@ def test_net_change_hand_arithmetic(normalized_frame):
             "net_change_bopd": [-20.0, 70.0, -20.0, 70.0],
         }
     )
-    assert_frame_equal(result, expected, check_exact=True)
+    assert_frame_equal(result, expected, check_exact=True, check_index_type=True)
     assert_frame_equal(normalized_frame, before, check_exact=True)
 
 
@@ -82,4 +90,29 @@ def test_empty_summary_schema(normalized_frame, with_columns):
     assert list(rigs.columns) == ["basin", "period", "rig_count"]
     assert net.empty
     assert list(net.columns) == ["basin", "period", "net_change_bopd"]
+    assert_frame_equal(frame, before, check_exact=True)
+
+
+def test_latest_period_tie_keeps_first_observation():
+    """Equal latest dates retain the first input observation, even with shared labels."""
+    frame = pd.DataFrame(
+        {
+            "basin": ["A", "A"],
+            "period": pd.to_datetime(["2024-02-01", "2024-02-01"]),
+            "rig_count": [8, 2],
+        },
+        index=[1, 1],
+    )
+    before = frame.copy(deep=True)
+
+    result = DrillingProductivityReport().rig_count_summary(frame)
+
+    expected = pd.DataFrame(
+        {
+            "basin": ["A"],
+            "period": pd.to_datetime(["2024-02-01"]),
+            "rig_count": [8],
+        }
+    )
+    assert_frame_equal(result, expected, check_exact=True, check_index_type=True)
     assert_frame_equal(frame, before, check_exact=True)
