@@ -9,6 +9,7 @@ from types import SimpleNamespace
 
 import pytest
 import typer
+from typer.core import TyperGroup
 from typer.main import get_command
 from typer.testing import CliRunner
 
@@ -104,13 +105,28 @@ def test_proxy_invoke_supports_click_calling_convention(synthetic):
     assert events == [("family", "normal", "direct"), ("leaf", "answer")]
 
 
-@pytest.mark.parametrize("operation", ["get_params", "to_info_dict"])
+@pytest.mark.parametrize(
+    "operation",
+    [
+        "get_params",
+        pytest.param(
+            "to_info_dict",
+            marks=pytest.mark.skipif(
+                not hasattr(TyperGroup, "to_info_dict"),
+                reason="This Typer version does not expose Click's to_info_dict API",
+            ),
+        ),
+    ],
+)
 def test_direct_context_introspection_preserves_family_options(synthetic, operation):
     root, imports, events = synthetic
     proxy = get_command(root).commands["sample"]
     with typer.Context(proxy) as ctx:
         if operation == "get_params":
-            params = [param.to_info_dict() for param in proxy.get_params(ctx)]
+            params = [
+                {"name": param.name, "opts": param.opts, "default": param.default}
+                for param in proxy.get_params(ctx)
+            ]
         else:
             info = proxy.to_info_dict(ctx)
             assert "nested" in info["commands"]
@@ -135,6 +151,36 @@ def test_missing_family_affects_only_selected_command(monkeypatch):
     assert CliRunner().invoke(root, ["--help"]).exit_code == 0
     result = CliRunner().invoke(root, ["missing", "--help"])
     assert isinstance(result.exception, ModuleNotFoundError)
+
+
+@pytest.mark.parametrize("app_help", [None, "App description"])
+@pytest.mark.parametrize("registration_help", [None, "Registration description"])
+def test_family_help_matches_eager_registration(monkeypatch, app_help, registration_help):
+    family = typer.Typer(**({"help": app_help} if app_help else {}))
+
+    @family.callback()
+    def setup():
+        """Callback description."""
+
+    @family.command()
+    def echo():
+        pass
+
+    monkeypatch.setattr(
+        "worldenergydata.cli.lazy.import_module",
+        lambda name: SimpleNamespace(app=family),
+    )
+    options = {"help": registration_help} if registration_help else {}
+    eager = typer.Typer()
+    eager.add_typer(family, name="sample", **options)
+    lazy = typer.Typer()
+    lazy.add_typer(lazy_app("test.family"), name="sample", **options)
+
+    expected = CliRunner().invoke(eager, ["sample", "--help"])
+    actual = CliRunner().invoke(lazy, ["sample", "--help"])
+    assert expected.exit_code == actual.exit_code == 0
+    assert (registration_help or app_help or "Callback description") in expected.output
+    assert actual.output == expected.output
 
 
 @pytest.mark.parametrize("name", ["lower_tertiary", "production_forecast"])

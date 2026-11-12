@@ -15,6 +15,10 @@ import subprocess
 import sys
 
 import pytest
+import typer
+from typer.main import get_command
+
+from worldenergydata.cli.main import app
 
 # Independent metadata snapshot from cli/main.py at the base revision in
 # docs/development/cli-startup.md; changing the live registry cannot change it.
@@ -134,6 +138,13 @@ def test_invalid_command_does_not_import_families(installed_console):
 
 
 # Click recommends loading every registered family's help.
+def test_public_family_snapshot_covers_live_registry():
+    command = get_command(app)
+    with typer.Context(command) as ctx:
+        families = set(command.list_commands(ctx)) - {"version", "info", "status"}
+    assert families == set(PUBLIC_FAMILIES)
+
+
 @pytest.mark.parametrize("family", PUBLIC_FAMILIES)
 def test_every_registered_family_can_load_help(installed_console, family):
     result, _ = installed_console(family, "--help")

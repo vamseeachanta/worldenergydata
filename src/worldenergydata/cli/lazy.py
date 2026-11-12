@@ -27,8 +27,9 @@ def lazy_app(module_path: str) -> typer.Typer:
                 # Use normal add_typer conversion to retain child callbacks,
                 # context settings, nested commands, and the root help override.
                 wrapper = typer.Typer(rich_markup_mode=self.rich_markup_mode)
+                options = {"help": self.help} if self.help else {}
                 wrapper.add_typer(
-                    import_module(module_path).app, name=self.name, help=self.help
+                    import_module(module_path).app, name=self.name, **options
                 )
                 self._loaded = get_command(wrapper).commands[self.name]
             return self._loaded
