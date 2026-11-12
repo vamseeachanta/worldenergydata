@@ -30,7 +30,7 @@ env:
 jobs:
   full-suite:
     name: Full suite (Python ${{ matrix.python-version }})
-    runs-on: [self-hosted, x64]
+    runs-on: [self-hosted, x64, Linux]
     timeout-minutes: 240
     strategy:
       fail-fast: false
@@ -103,7 +103,7 @@ jobs:
 
   lockfile:
     name: Lockfile currency
-    runs-on: [self-hosted, x64]
+    runs-on: [self-hosted, Linux]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -140,7 +140,7 @@ jobs:
     name: F821 inventory
     # Repeated undefined-name inventories (docs/ci/f821-scans.md). Five runs
     # with a 300 s budget each are too slow for the PR lint gate.
-    runs-on: [self-hosted, x64]
+    runs-on: [self-hosted, x64, Linux]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -173,7 +173,7 @@ jobs:
 
   type-check:
     name: Type Check
-    runs-on: [self-hosted, x64]
+    runs-on: [self-hosted, x64, Linux]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -200,7 +200,7 @@ jobs:
 
   docs:
     name: Documentation
-    runs-on: [self-hosted, x64]
+    runs-on: [self-hosted, Linux]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -228,7 +228,7 @@ jobs:
 
   build:
     name: Build Package
-    runs-on: [self-hosted, x64]
+    runs-on: [self-hosted, Linux]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -255,7 +255,7 @@ jobs:
 
   security-deep:
     name: Security Scan (deep)
-    runs-on: [self-hosted, x64]
+    runs-on: [self-hosted, Linux]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -276,7 +276,7 @@ jobs:
 
   dependency-audit:
     name: Dependency Audit
-    runs-on: [self-hosted, x64]
+    runs-on: [self-hosted, x64, Linux]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -303,7 +303,7 @@ jobs:
 
   performance-benchmark:
     name: Performance Benchmark
-    runs-on: [self-hosted, x64]
+    runs-on: [self-hosted, x64, Linux]
     needs: [full-suite]
     if: ${{ !cancelled() }}
     steps:
@@ -340,7 +340,7 @@ jobs:
 
   notify-failure:
     name: Notify on Failure
-    runs-on: [self-hosted, x64]
+    runs-on: [self-hosted, Linux]
     needs: [full-suite, lockfile, f821-inventory, docs, build, dependency-audit]
     if: failure() && github.ref == 'refs/heads/main'
     permissions:

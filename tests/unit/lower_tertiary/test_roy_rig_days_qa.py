@@ -197,7 +197,10 @@ def test_page_is_self_contained(page):
         assert forbidden not in page, forbidden
 
 
-def test_external_links_are_github_only(page):
+def test_external_links_are_github_or_basis_decision(page):
+    from lower_tertiary.war_methodology import DECISION_URL
+
+    page = page.replace(f'href="{DECISION_URL}"', "")
     for url in re.findall(r'href="(https?://[^"]+)"', page):
         assert url.startswith("https://github.com/vamseeachanta/worldenergydata"), url
 

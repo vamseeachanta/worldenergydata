@@ -1,0 +1,898 @@
+{
+ "$schema": "https://www.aceengineer.com/assets/data/report-evals/results.schema.json",
+ "schema_version": "1.0",
+ "report": {
+  "id": "issue-002-gom-well-permits",
+  "title": "Gulf of Mexico well permits by rig type: a public US data file",
+  "url": "https://www.aceengineer.com/newsletter/issue-002-public-data/",
+  "published": "2026-11-03",
+  "family": "newsletter"
+ },
+ "code": {
+  "repo": "https://github.com/vamseeachanta/worldenergydata",
+  "commit": "f5af5b6da87710bb395552f9cda5e34d1f324479",
+  "paths": [
+   "examples/bsee/rawdata_fact_check/count_rawdata.py",
+   "examples/bsee/rawdata_fact_check/README.md"
+  ],
+  "python": "3.10 or later, standard library only",
+  "install": "none: the counting script uses the standard library"
+ },
+ "inputs": [
+  {
+   "id": "apd_raw_data",
+   "description": "BSEE Application for Permit to Drill raw data: permit type, requested spud date, water depth, rig name and rig type",
+   "source": "US Bureau of Safety and Environmental Enforcement, BSEE Data Center",
+   "url": "https://www.data.bsee.gov/Well/Files/APDRawData.zip",
+   "licence": "US federal government data",
+   "version_or_date": "page counts: file of 2 November 2026; eval: file of the run date",
+   "sha256_published": "b4ab66063de5a95c78d0e4d33d220ea806ef07f114bd2add6efa9e8561d299c0",
+   "updates": "daily",
+   "supplied_by": "public",
+   "required": true
+  },
+  {
+   "id": "incident_raw_data",
+   "description": "BSEE Incident Investigations raw data; the pinned counting script reads it as well, although the permit counts do not use it",
+   "source": "US Bureau of Safety and Environmental Enforcement, BSEE Data Center",
+   "url": "https://www.data.bsee.gov/Other/Files/IncInvRawData.zip",
+   "licence": "US federal government data",
+   "version_or_date": "file of the run date",
+   "updates": "daily",
+   "supplied_by": "public",
+   "required": true
+  },
+  {
+   "id": "fig1_csv",
+   "description": "Published Figure 1 data: new-well permits by year and rig type",
+   "source": "aceengineer.com",
+   "url": "https://www.aceengineer.com/assets/data/newsletter/issue-002/fig-p1-new-well-permits-by-rig-type.csv",
+   "version_or_date": "2026-11-03",
+   "sha256_published": "a53aee488587f01551aed29223fafc35d1a3dd0853b9d139c1ced3109b7db1b8",
+   "updates": "never",
+   "supplied_by": "public",
+   "required": true
+  }
+ ],
+ "missing_data": [
+  {
+   "id": "apd_counted_copy",
+   "what": "The APD file of 2 November 2026 (SHA-256 b4ab6606...)",
+   "why": "BSEE replaces the file daily and does not keep old copies.",
+   "how_to_supply": "Not needed while today's file gives the same counts; the published Figure 1 CSV holds the counted values.",
+   "effect": "A later file can differ by a few permits; the eval reports that as drift."
+  },
+  {
+   "id": "script_on_main",
+   "what": "The counting script on the main branch of worldenergydata",
+   "why": "The pinned commit is on a branch that is not merged yet.",
+   "how_to_supply": "Not needed: the eval reads the script from the pinned commit of any clone (it fetches the commit if needed).",
+   "effect": "Step 1 fetches the pinned commit by its SHA, or else through refs/pull/1844/head, which GitHub keeps after the branch is deleted, so the pin stays fetchable after a squash merge as long as PR 1844 is not force-pushed past it. Once PR 1844 merges, the results are re-pinned to the commit on main. A candidate run needs the script on main."
+  }
+ ],
+ "cannot_do": [
+  "Say which rig actually drilled each well: the file names the rig type of the permit.",
+  "Rebuild the exact file of 2 November 2026: BSEE does not archive daily copies."
+ ],
+ "eval": {
+  "command": "python examples/report-evals/issue-002-gom-well-permits/eval.py",
+  "prompt": "examples/report-evals/issue-002-gom-well-permits/PROMPT.md",
+  "cadence": "weekly",
+  "runtime_s": 15,
+  "network": true,
+  "ref": "main"
+ },
+ "results": [
+  {
+   "id": "permits_all_2005_2026",
+   "label": "New-well permits, all rig types",
+   "page_ref": "Table 1",
+   "value": 2895,
+   "unit": "permits",
+   "period": "2005 to 2026 (2026 to the file of 2 November 2026)",
+   "source": "BSEE Application for Permit to Drill raw data (APDRawData.zip), file of 2 November 2026, SHA-256 b4ab6606...299c0",
+   "method": "examples/bsee/rawdata_fact_check/README.md (counting rule) and count_rawdata.py; examples/report-evals/issue-002-gom-well-permits/eval.py",
+   "repo": "https://github.com/vamseeachanta/worldenergydata",
+   "commit": "f5af5b6da87710bb395552f9cda5e34d1f324479",
+   "tolerance": {
+    "rel_pct": 1.0
+   },
+   "basis": "live",
+   "limits": [
+    "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected."
+   ]
+  },
+  {
+   "id": "permits_jackup",
+   "label": "New-well permits naming a jack-up",
+   "page_ref": "Table 1",
+   "value": 1333,
+   "unit": "permits",
+   "period": "2005 to 2026 (2026 to the file of 2 November 2026)",
+   "source": "BSEE Application for Permit to Drill raw data (APDRawData.zip), file of 2 November 2026, SHA-256 b4ab6606...299c0",
+   "method": "examples/bsee/rawdata_fact_check/README.md (counting rule) and count_rawdata.py; examples/report-evals/issue-002-gom-well-permits/eval.py",
+   "repo": "https://github.com/vamseeachanta/worldenergydata",
+   "commit": "f5af5b6da87710bb395552f9cda5e34d1f324479",
+   "tolerance": {
+    "rel_pct": 1.0
+   },
+   "basis": "live",
+   "limits": [
+    "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
+    "The rig type is the one named in the permit; the page leaves open how often a different rig drilled the well.",
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected."
+   ]
+  },
+  {
+   "id": "median_depth_ft_jackup",
+   "label": "Median water depth, Jack-up",
+   "page_ref": "Table 1",
+   "value": 101,
+   "unit": "ft",
+   "period": "2005 to 2026 (2026 to the file of 2 November 2026)",
+   "source": "BSEE Application for Permit to Drill raw data (APDRawData.zip), file of 2 November 2026, SHA-256 b4ab6606...299c0",
+   "method": "examples/bsee/rawdata_fact_check/README.md (counting rule) and count_rawdata.py; examples/report-evals/issue-002-gom-well-permits/eval.py",
+   "repo": "https://github.com/vamseeachanta/worldenergydata",
+   "commit": "f5af5b6da87710bb395552f9cda5e34d1f324479",
+   "tolerance": {
+    "rel_pct": 1.0
+   },
+   "basis": "live",
+   "limits": [
+    "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected."
+   ]
+  },
+  {
+   "id": "min_depth_ft_jackup",
+   "label": "Shallowest water depth, Jack-up",
+   "page_ref": "Table 1",
+   "value": 9,
+   "unit": "ft",
+   "period": "2005 to 2026 (2026 to the file of 2 November 2026)",
+   "source": "BSEE Application for Permit to Drill raw data (APDRawData.zip), file of 2 November 2026, SHA-256 b4ab6606...299c0",
+   "method": "examples/bsee/rawdata_fact_check/README.md (counting rule) and count_rawdata.py; examples/report-evals/issue-002-gom-well-permits/eval.py",
+   "repo": "https://github.com/vamseeachanta/worldenergydata",
+   "commit": "f5af5b6da87710bb395552f9cda5e34d1f324479",
+   "tolerance": {
+    "abs": 0
+   },
+   "basis": "live",
+   "limits": [
+    "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected.",
+    "Depth extremes include the open year 2026; a new or corrected permit can change the extreme and is reported as drift with zero tolerance."
+   ]
+  },
+  {
+   "id": "max_depth_ft_jackup",
+   "label": "Deepest water depth, Jack-up",
+   "page_ref": "Table 1",
+   "value": 395,
+   "unit": "ft",
+   "period": "2005 to 2026 (2026 to the file of 2 November 2026)",
+   "source": "BSEE Application for Permit to Drill raw data (APDRawData.zip), file of 2 November 2026, SHA-256 b4ab6606...299c0",
+   "method": "examples/bsee/rawdata_fact_check/README.md (counting rule) and count_rawdata.py; examples/report-evals/issue-002-gom-well-permits/eval.py",
+   "repo": "https://github.com/vamseeachanta/worldenergydata",
+   "commit": "f5af5b6da87710bb395552f9cda5e34d1f324479",
+   "tolerance": {
+    "abs": 0
+   },
+   "basis": "live",
+   "limits": [
+    "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected.",
+    "Depth extremes include the open year 2026; a new or corrected permit can change the extreme and is reported as drift with zero tolerance."
+   ]
+  },
+  {
+   "id": "permits_drillship",
+   "label": "New-well permits naming a drillship",
+   "page_ref": "Table 1",
+   "value": 758,
+   "unit": "permits",
+   "period": "2005 to 2026 (2026 to the file of 2 November 2026)",
+   "source": "BSEE Application for Permit to Drill raw data (APDRawData.zip), file of 2 November 2026, SHA-256 b4ab6606...299c0",
+   "method": "examples/bsee/rawdata_fact_check/README.md (counting rule) and count_rawdata.py; examples/report-evals/issue-002-gom-well-permits/eval.py",
+   "repo": "https://github.com/vamseeachanta/worldenergydata",
+   "commit": "f5af5b6da87710bb395552f9cda5e34d1f324479",
+   "tolerance": {
+    "rel_pct": 1.0
+   },
+   "basis": "live",
+   "limits": [
+    "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
+    "The rig type is the one named in the permit; the page leaves open how often a different rig drilled the well.",
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected."
+   ]
+  },
+  {
+   "id": "median_depth_ft_drillship",
+   "label": "Median water depth, Drillship",
+   "page_ref": "Table 1",
+   "value": 5187,
+   "unit": "ft",
+   "period": "2005 to 2026 (2026 to the file of 2 November 2026)",
+   "source": "BSEE Application for Permit to Drill raw data (APDRawData.zip), file of 2 November 2026, SHA-256 b4ab6606...299c0",
+   "method": "examples/bsee/rawdata_fact_check/README.md (counting rule) and count_rawdata.py; examples/report-evals/issue-002-gom-well-permits/eval.py",
+   "repo": "https://github.com/vamseeachanta/worldenergydata",
+   "commit": "f5af5b6da87710bb395552f9cda5e34d1f324479",
+   "tolerance": {
+    "rel_pct": 1.0
+   },
+   "basis": "live",
+   "limits": [
+    "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected."
+   ]
+  },
+  {
+   "id": "min_depth_ft_drillship",
+   "label": "Shallowest water depth, Drillship",
+   "page_ref": "Table 1",
+   "value": 1296,
+   "unit": "ft",
+   "period": "2005 to 2026 (2026 to the file of 2 November 2026)",
+   "source": "BSEE Application for Permit to Drill raw data (APDRawData.zip), file of 2 November 2026, SHA-256 b4ab6606...299c0",
+   "method": "examples/bsee/rawdata_fact_check/README.md (counting rule) and count_rawdata.py; examples/report-evals/issue-002-gom-well-permits/eval.py",
+   "repo": "https://github.com/vamseeachanta/worldenergydata",
+   "commit": "f5af5b6da87710bb395552f9cda5e34d1f324479",
+   "tolerance": {
+    "abs": 0
+   },
+   "basis": "live",
+   "limits": [
+    "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected.",
+    "Depth extremes include the open year 2026; a new or corrected permit can change the extreme and is reported as drift with zero tolerance."
+   ]
+  },
+  {
+   "id": "max_depth_ft_drillship",
+   "label": "Deepest water depth, Drillship",
+   "page_ref": "Table 1",
+   "value": 9808,
+   "unit": "ft",
+   "period": "2005 to 2026 (2026 to the file of 2 November 2026)",
+   "source": "BSEE Application for Permit to Drill raw data (APDRawData.zip), file of 2 November 2026, SHA-256 b4ab6606...299c0",
+   "method": "examples/bsee/rawdata_fact_check/README.md (counting rule) and count_rawdata.py; examples/report-evals/issue-002-gom-well-permits/eval.py",
+   "repo": "https://github.com/vamseeachanta/worldenergydata",
+   "commit": "f5af5b6da87710bb395552f9cda5e34d1f324479",
+   "tolerance": {
+    "abs": 0
+   },
+   "basis": "live",
+   "limits": [
+    "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected.",
+    "Depth extremes include the open year 2026; a new or corrected permit can change the extreme and is reported as drift with zero tolerance."
+   ]
+  },
+  {
+   "id": "permits_semisub",
+   "label": "New-well permits naming a semisubmersible",
+   "page_ref": "Table 1",
+   "value": 282,
+   "unit": "permits",
+   "period": "2005 to 2026 (2026 to the file of 2 November 2026)",
+   "source": "BSEE Application for Permit to Drill raw data (APDRawData.zip), file of 2 November 2026, SHA-256 b4ab6606...299c0",
+   "method": "examples/bsee/rawdata_fact_check/README.md (counting rule) and count_rawdata.py; examples/report-evals/issue-002-gom-well-permits/eval.py",
+   "repo": "https://github.com/vamseeachanta/worldenergydata",
+   "commit": "f5af5b6da87710bb395552f9cda5e34d1f324479",
+   "tolerance": {
+    "rel_pct": 1.0
+   },
+   "basis": "live",
+   "limits": [
+    "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
+    "The rig type is the one named in the permit; the page leaves open how often a different rig drilled the well.",
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected."
+   ]
+  },
+  {
+   "id": "median_depth_ft_semisub",
+   "label": "Median water depth, Semisubmersible",
+   "page_ref": "Table 1",
+   "value": 3233,
+   "unit": "ft",
+   "period": "2005 to 2026 (2026 to the file of 2 November 2026)",
+   "source": "BSEE Application for Permit to Drill raw data (APDRawData.zip), file of 2 November 2026, SHA-256 b4ab6606...299c0",
+   "method": "examples/bsee/rawdata_fact_check/README.md (counting rule) and count_rawdata.py; examples/report-evals/issue-002-gom-well-permits/eval.py",
+   "repo": "https://github.com/vamseeachanta/worldenergydata",
+   "commit": "f5af5b6da87710bb395552f9cda5e34d1f324479",
+   "tolerance": {
+    "rel_pct": 1.0
+   },
+   "basis": "live",
+   "limits": [
+    "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected."
+   ]
+  },
+  {
+   "id": "min_depth_ft_semisub",
+   "label": "Shallowest water depth, Semisubmersible",
+   "page_ref": "Table 1",
+   "value": 407,
+   "unit": "ft",
+   "period": "2005 to 2026 (2026 to the file of 2 November 2026)",
+   "source": "BSEE Application for Permit to Drill raw data (APDRawData.zip), file of 2 November 2026, SHA-256 b4ab6606...299c0",
+   "method": "examples/bsee/rawdata_fact_check/README.md (counting rule) and count_rawdata.py; examples/report-evals/issue-002-gom-well-permits/eval.py",
+   "repo": "https://github.com/vamseeachanta/worldenergydata",
+   "commit": "f5af5b6da87710bb395552f9cda5e34d1f324479",
+   "tolerance": {
+    "abs": 0
+   },
+   "basis": "live",
+   "limits": [
+    "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected.",
+    "Depth extremes include the open year 2026; a new or corrected permit can change the extreme and is reported as drift with zero tolerance."
+   ]
+  },
+  {
+   "id": "max_depth_ft_semisub",
+   "label": "Deepest water depth, Semisubmersible",
+   "page_ref": "Table 1",
+   "value": 9356,
+   "unit": "ft",
+   "period": "2005 to 2026 (2026 to the file of 2 November 2026)",
+   "source": "BSEE Application for Permit to Drill raw data (APDRawData.zip), file of 2 November 2026, SHA-256 b4ab6606...299c0",
+   "method": "examples/bsee/rawdata_fact_check/README.md (counting rule) and count_rawdata.py; examples/report-evals/issue-002-gom-well-permits/eval.py",
+   "repo": "https://github.com/vamseeachanta/worldenergydata",
+   "commit": "f5af5b6da87710bb395552f9cda5e34d1f324479",
+   "tolerance": {
+    "abs": 0
+   },
+   "basis": "live",
+   "limits": [
+    "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected.",
+    "Depth extremes include the open year 2026; a new or corrected permit can change the extreme and is reported as drift with zero tolerance."
+   ]
+  },
+  {
+   "id": "permits_dp_semisub",
+   "label": "New-well permits naming a dp semisubmersible",
+   "page_ref": "Table 1",
+   "value": 260,
+   "unit": "permits",
+   "period": "2005 to 2026 (2026 to the file of 2 November 2026)",
+   "source": "BSEE Application for Permit to Drill raw data (APDRawData.zip), file of 2 November 2026, SHA-256 b4ab6606...299c0",
+   "method": "examples/bsee/rawdata_fact_check/README.md (counting rule) and count_rawdata.py; examples/report-evals/issue-002-gom-well-permits/eval.py",
+   "repo": "https://github.com/vamseeachanta/worldenergydata",
+   "commit": "f5af5b6da87710bb395552f9cda5e34d1f324479",
+   "tolerance": {
+    "rel_pct": 1.0
+   },
+   "basis": "live",
+   "limits": [
+    "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
+    "The rig type is the one named in the permit; the page leaves open how often a different rig drilled the well.",
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected."
+   ]
+  },
+  {
+   "id": "median_depth_ft_dp_semisub",
+   "label": "Median water depth, DP semisubmersible",
+   "page_ref": "Table 1",
+   "value": 5263.5,
+   "unit": "ft",
+   "period": "2005 to 2026 (2026 to the file of 2 November 2026)",
+   "source": "BSEE Application for Permit to Drill raw data (APDRawData.zip), file of 2 November 2026, SHA-256 b4ab6606...299c0",
+   "method": "examples/bsee/rawdata_fact_check/README.md (counting rule) and count_rawdata.py; examples/report-evals/issue-002-gom-well-permits/eval.py",
+   "repo": "https://github.com/vamseeachanta/worldenergydata",
+   "commit": "f5af5b6da87710bb395552f9cda5e34d1f324479",
+   "tolerance": {
+    "rel_pct": 1.0
+   },
+   "basis": "live",
+   "limits": [
+    "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected.",
+    "Even count (260): the median is the mean of the two middle depths."
+   ]
+  },
+  {
+   "id": "min_depth_ft_dp_semisub",
+   "label": "Shallowest water depth, DP semisubmersible",
+   "page_ref": "Table 1",
+   "value": 470,
+   "unit": "ft",
+   "period": "2005 to 2026 (2026 to the file of 2 November 2026)",
+   "source": "BSEE Application for Permit to Drill raw data (APDRawData.zip), file of 2 November 2026, SHA-256 b4ab6606...299c0",
+   "method": "examples/bsee/rawdata_fact_check/README.md (counting rule) and count_rawdata.py; examples/report-evals/issue-002-gom-well-permits/eval.py",
+   "repo": "https://github.com/vamseeachanta/worldenergydata",
+   "commit": "f5af5b6da87710bb395552f9cda5e34d1f324479",
+   "tolerance": {
+    "abs": 0
+   },
+   "basis": "live",
+   "limits": [
+    "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected.",
+    "Depth extremes include the open year 2026; a new or corrected permit can change the extreme and is reported as drift with zero tolerance."
+   ]
+  },
+  {
+   "id": "max_depth_ft_dp_semisub",
+   "label": "Deepest water depth, DP semisubmersible",
+   "page_ref": "Table 1",
+   "value": 10139,
+   "unit": "ft",
+   "period": "2005 to 2026 (2026 to the file of 2 November 2026)",
+   "source": "BSEE Application for Permit to Drill raw data (APDRawData.zip), file of 2 November 2026, SHA-256 b4ab6606...299c0",
+   "method": "examples/bsee/rawdata_fact_check/README.md (counting rule) and count_rawdata.py; examples/report-evals/issue-002-gom-well-permits/eval.py",
+   "repo": "https://github.com/vamseeachanta/worldenergydata",
+   "commit": "f5af5b6da87710bb395552f9cda5e34d1f324479",
+   "tolerance": {
+    "abs": 0
+   },
+   "basis": "live",
+   "limits": [
+    "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected.",
+    "Depth extremes include the open year 2026; a new or corrected permit can change the extreme and is reported as drift with zero tolerance."
+   ]
+  },
+  {
+   "id": "permits_platform_rig",
+   "label": "New-well permits naming a platform rig",
+   "page_ref": "Table 1",
+   "value": 162,
+   "unit": "permits",
+   "period": "2005 to 2026 (2026 to the file of 2 November 2026)",
+   "source": "BSEE Application for Permit to Drill raw data (APDRawData.zip), file of 2 November 2026, SHA-256 b4ab6606...299c0",
+   "method": "examples/bsee/rawdata_fact_check/README.md (counting rule) and count_rawdata.py; examples/report-evals/issue-002-gom-well-permits/eval.py",
+   "repo": "https://github.com/vamseeachanta/worldenergydata",
+   "commit": "f5af5b6da87710bb395552f9cda5e34d1f324479",
+   "tolerance": {
+    "rel_pct": 1.0
+   },
+   "basis": "live",
+   "limits": [
+    "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
+    "The rig type is the one named in the permit; the page leaves open how often a different rig drilled the well.",
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected."
+   ]
+  },
+  {
+   "id": "median_depth_ft_platform_rig",
+   "label": "Median water depth, Platform rig",
+   "page_ref": "Table 1",
+   "value": 392,
+   "unit": "ft",
+   "period": "2005 to 2026 (2026 to the file of 2 November 2026)",
+   "source": "BSEE Application for Permit to Drill raw data (APDRawData.zip), file of 2 November 2026, SHA-256 b4ab6606...299c0",
+   "method": "examples/bsee/rawdata_fact_check/README.md (counting rule) and count_rawdata.py; examples/report-evals/issue-002-gom-well-permits/eval.py",
+   "repo": "https://github.com/vamseeachanta/worldenergydata",
+   "commit": "f5af5b6da87710bb395552f9cda5e34d1f324479",
+   "tolerance": {
+    "rel_pct": 1.0
+   },
+   "basis": "live",
+   "limits": [
+    "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected."
+   ]
+  },
+  {
+   "id": "min_depth_ft_platform_rig",
+   "label": "Shallowest water depth, Platform rig",
+   "page_ref": "Table 1",
+   "value": 11,
+   "unit": "ft",
+   "period": "2005 to 2026 (2026 to the file of 2 November 2026)",
+   "source": "BSEE Application for Permit to Drill raw data (APDRawData.zip), file of 2 November 2026, SHA-256 b4ab6606...299c0",
+   "method": "examples/bsee/rawdata_fact_check/README.md (counting rule) and count_rawdata.py; examples/report-evals/issue-002-gom-well-permits/eval.py",
+   "repo": "https://github.com/vamseeachanta/worldenergydata",
+   "commit": "f5af5b6da87710bb395552f9cda5e34d1f324479",
+   "tolerance": {
+    "abs": 0
+   },
+   "basis": "live",
+   "limits": [
+    "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected.",
+    "Depth extremes include the open year 2026; a new or corrected permit can change the extreme and is reported as drift with zero tolerance."
+   ]
+  },
+  {
+   "id": "max_depth_ft_platform_rig",
+   "label": "Deepest water depth, Platform rig",
+   "page_ref": "Table 1",
+   "value": 4428,
+   "unit": "ft",
+   "period": "2005 to 2026 (2026 to the file of 2 November 2026)",
+   "source": "BSEE Application for Permit to Drill raw data (APDRawData.zip), file of 2 November 2026, SHA-256 b4ab6606...299c0",
+   "method": "examples/bsee/rawdata_fact_check/README.md (counting rule) and count_rawdata.py; examples/report-evals/issue-002-gom-well-permits/eval.py",
+   "repo": "https://github.com/vamseeachanta/worldenergydata",
+   "commit": "f5af5b6da87710bb395552f9cda5e34d1f324479",
+   "tolerance": {
+    "abs": 0
+   },
+   "basis": "live",
+   "limits": [
+    "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected.",
+    "Depth extremes include the open year 2026; a new or corrected permit can change the extreme and is reported as drift with zero tolerance."
+   ]
+  },
+  {
+   "id": "permits_submersible",
+   "label": "New-well permits naming a submersible",
+   "page_ref": "Table 1",
+   "value": 81,
+   "unit": "permits",
+   "period": "2005 to 2026 (2026 to the file of 2 November 2026)",
+   "source": "BSEE Application for Permit to Drill raw data (APDRawData.zip), file of 2 November 2026, SHA-256 b4ab6606...299c0",
+   "method": "examples/bsee/rawdata_fact_check/README.md (counting rule) and count_rawdata.py; examples/report-evals/issue-002-gom-well-permits/eval.py",
+   "repo": "https://github.com/vamseeachanta/worldenergydata",
+   "commit": "f5af5b6da87710bb395552f9cda5e34d1f324479",
+   "tolerance": {
+    "rel_pct": 1.0
+   },
+   "basis": "live",
+   "limits": [
+    "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
+    "The rig type is the one named in the permit; the page leaves open how often a different rig drilled the well.",
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected.",
+    "The 1 % band is less than one permit for this group, so any integer change is reported as drift."
+   ]
+  },
+  {
+   "id": "median_depth_ft_submersible",
+   "label": "Median water depth, Submersible",
+   "page_ref": "Table 1",
+   "value": 40,
+   "unit": "ft",
+   "period": "2005 to 2026 (2026 to the file of 2 November 2026)",
+   "source": "BSEE Application for Permit to Drill raw data (APDRawData.zip), file of 2 November 2026, SHA-256 b4ab6606...299c0",
+   "method": "examples/bsee/rawdata_fact_check/README.md (counting rule) and count_rawdata.py; examples/report-evals/issue-002-gom-well-permits/eval.py",
+   "repo": "https://github.com/vamseeachanta/worldenergydata",
+   "commit": "f5af5b6da87710bb395552f9cda5e34d1f324479",
+   "tolerance": {
+    "rel_pct": 1.0
+   },
+   "basis": "live",
+   "limits": [
+    "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected.",
+    "The 1 % band is less than one foot for this median, so any change in the median is reported as drift."
+   ]
+  },
+  {
+   "id": "min_depth_ft_submersible",
+   "label": "Shallowest water depth, Submersible",
+   "page_ref": "Table 1",
+   "value": 12,
+   "unit": "ft",
+   "period": "2005 to 2026 (2026 to the file of 2 November 2026)",
+   "source": "BSEE Application for Permit to Drill raw data (APDRawData.zip), file of 2 November 2026, SHA-256 b4ab6606...299c0",
+   "method": "examples/bsee/rawdata_fact_check/README.md (counting rule) and count_rawdata.py; examples/report-evals/issue-002-gom-well-permits/eval.py",
+   "repo": "https://github.com/vamseeachanta/worldenergydata",
+   "commit": "f5af5b6da87710bb395552f9cda5e34d1f324479",
+   "tolerance": {
+    "abs": 0
+   },
+   "basis": "live",
+   "limits": [
+    "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected.",
+    "Depth extremes include the open year 2026; a new or corrected permit can change the extreme and is reported as drift with zero tolerance."
+   ]
+  },
+  {
+   "id": "max_depth_ft_submersible",
+   "label": "Deepest water depth, Submersible",
+   "page_ref": "Table 1",
+   "value": 72,
+   "unit": "ft",
+   "period": "2005 to 2026 (2026 to the file of 2 November 2026)",
+   "source": "BSEE Application for Permit to Drill raw data (APDRawData.zip), file of 2 November 2026, SHA-256 b4ab6606...299c0",
+   "method": "examples/bsee/rawdata_fact_check/README.md (counting rule) and count_rawdata.py; examples/report-evals/issue-002-gom-well-permits/eval.py",
+   "repo": "https://github.com/vamseeachanta/worldenergydata",
+   "commit": "f5af5b6da87710bb395552f9cda5e34d1f324479",
+   "tolerance": {
+    "abs": 0
+   },
+   "basis": "live",
+   "limits": [
+    "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected.",
+    "Depth extremes include the open year 2026; a new or corrected permit can change the extreme and is reported as drift with zero tolerance."
+   ]
+  },
+  {
+   "id": "permits_other",
+   "label": "New-well permits, other rig types",
+   "page_ref": "Table 1",
+   "value": 19,
+   "unit": "permits",
+   "period": "2005 to 2026 (2026 to the file of 2 November 2026)",
+   "source": "BSEE Application for Permit to Drill raw data (APDRawData.zip), file of 2 November 2026, SHA-256 b4ab6606...299c0",
+   "method": "examples/bsee/rawdata_fact_check/README.md (counting rule) and count_rawdata.py; examples/report-evals/issue-002-gom-well-permits/eval.py",
+   "repo": "https://github.com/vamseeachanta/worldenergydata",
+   "commit": "f5af5b6da87710bb395552f9cda5e34d1f324479",
+   "tolerance": {
+    "rel_pct": 1.0
+   },
+   "basis": "live",
+   "limits": [
+    "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
+    "The rig type is the one named in the permit; the page leaves open how often a different rig drilled the well.",
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected.",
+    "The 1 % band is less than one permit for this group, so any integer change is reported as drift."
+   ]
+  },
+  {
+   "id": "median_depth_ft_other",
+   "label": "Median water depth, Other (barge, barge rig, well intervention vessel)",
+   "page_ref": "Table 1",
+   "value": 12,
+   "unit": "ft",
+   "period": "2005 to 2026 (2026 to the file of 2 November 2026)",
+   "source": "BSEE Application for Permit to Drill raw data (APDRawData.zip), file of 2 November 2026, SHA-256 b4ab6606...299c0",
+   "method": "examples/bsee/rawdata_fact_check/README.md (counting rule) and count_rawdata.py; examples/report-evals/issue-002-gom-well-permits/eval.py",
+   "repo": "https://github.com/vamseeachanta/worldenergydata",
+   "commit": "f5af5b6da87710bb395552f9cda5e34d1f324479",
+   "tolerance": {
+    "rel_pct": 1.0
+   },
+   "basis": "live",
+   "limits": [
+    "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected.",
+    "The 1 % band is less than one foot for this median, so any change in the median is reported as drift."
+   ]
+  },
+  {
+   "id": "min_depth_ft_other",
+   "label": "Shallowest water depth, Other (barge, barge rig, well intervention vessel)",
+   "page_ref": "Table 1",
+   "value": 10,
+   "unit": "ft",
+   "period": "2005 to 2026 (2026 to the file of 2 November 2026)",
+   "source": "BSEE Application for Permit to Drill raw data (APDRawData.zip), file of 2 November 2026, SHA-256 b4ab6606...299c0",
+   "method": "examples/bsee/rawdata_fact_check/README.md (counting rule) and count_rawdata.py; examples/report-evals/issue-002-gom-well-permits/eval.py",
+   "repo": "https://github.com/vamseeachanta/worldenergydata",
+   "commit": "f5af5b6da87710bb395552f9cda5e34d1f324479",
+   "tolerance": {
+    "abs": 0
+   },
+   "basis": "live",
+   "limits": [
+    "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected.",
+    "Depth extremes include the open year 2026; a new or corrected permit can change the extreme and is reported as drift with zero tolerance."
+   ]
+  },
+  {
+   "id": "max_depth_ft_other",
+   "label": "Deepest water depth, Other (barge, barge rig, well intervention vessel)",
+   "page_ref": "Table 1",
+   "value": 5422,
+   "unit": "ft",
+   "period": "2005 to 2026 (2026 to the file of 2 November 2026)",
+   "source": "BSEE Application for Permit to Drill raw data (APDRawData.zip), file of 2 November 2026, SHA-256 b4ab6606...299c0",
+   "method": "examples/bsee/rawdata_fact_check/README.md (counting rule) and count_rawdata.py; examples/report-evals/issue-002-gom-well-permits/eval.py",
+   "repo": "https://github.com/vamseeachanta/worldenergydata",
+   "commit": "f5af5b6da87710bb395552f9cda5e34d1f324479",
+   "tolerance": {
+    "abs": 0
+   },
+   "basis": "live",
+   "limits": [
+    "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected.",
+    "Depth extremes include the open year 2026; a new or corrected permit can change the extreme and is reported as drift with zero tolerance."
+   ]
+  },
+  {
+   "id": "permits_2005_total",
+   "label": "New-well permits, 2005",
+   "page_ref": "Opening paragraph",
+   "value": 322,
+   "unit": "permits",
+   "period": "2005",
+   "source": "BSEE Application for Permit to Drill raw data (APDRawData.zip), file of 2 November 2026, SHA-256 b4ab6606...299c0",
+   "method": "examples/bsee/rawdata_fact_check/README.md (counting rule) and count_rawdata.py; examples/report-evals/issue-002-gom-well-permits/eval.py",
+   "repo": "https://github.com/vamseeachanta/worldenergydata",
+   "commit": "f5af5b6da87710bb395552f9cda5e34d1f324479",
+   "tolerance": {
+    "abs": 0
+   },
+   "basis": "live",
+   "limits": [
+    "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected."
+   ]
+  },
+  {
+   "id": "permits_2005_jackup",
+   "label": "New-well permits naming a jack-up, 2005",
+   "page_ref": "Opening paragraph",
+   "value": 234,
+   "unit": "permits",
+   "period": "2005",
+   "source": "BSEE Application for Permit to Drill raw data (APDRawData.zip), file of 2 November 2026, SHA-256 b4ab6606...299c0",
+   "method": "examples/bsee/rawdata_fact_check/README.md (counting rule) and count_rawdata.py; examples/report-evals/issue-002-gom-well-permits/eval.py",
+   "repo": "https://github.com/vamseeachanta/worldenergydata",
+   "commit": "f5af5b6da87710bb395552f9cda5e34d1f324479",
+   "tolerance": {
+    "abs": 0
+   },
+   "basis": "live",
+   "limits": [
+    "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
+    "The rig type is the one named in the permit; the page leaves open how often a different rig drilled the well.",
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected."
+   ]
+  },
+  {
+   "id": "permits_2005_drillship",
+   "label": "New-well permits naming a drillship, 2005",
+   "page_ref": "Opening paragraph",
+   "value": 15,
+   "unit": "permits",
+   "period": "2005",
+   "source": "BSEE Application for Permit to Drill raw data (APDRawData.zip), file of 2 November 2026, SHA-256 b4ab6606...299c0",
+   "method": "examples/bsee/rawdata_fact_check/README.md (counting rule) and count_rawdata.py; examples/report-evals/issue-002-gom-well-permits/eval.py",
+   "repo": "https://github.com/vamseeachanta/worldenergydata",
+   "commit": "f5af5b6da87710bb395552f9cda5e34d1f324479",
+   "tolerance": {
+    "abs": 0
+   },
+   "basis": "live",
+   "limits": [
+    "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
+    "The rig type is the one named in the permit; the page leaves open how often a different rig drilled the well.",
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected."
+   ]
+  },
+  {
+   "id": "permits_2025_total",
+   "label": "New-well permits, 2025",
+   "page_ref": "Opening paragraph",
+   "value": 47,
+   "unit": "permits",
+   "period": "2025",
+   "source": "BSEE Application for Permit to Drill raw data (APDRawData.zip), file of 2 November 2026, SHA-256 b4ab6606...299c0",
+   "method": "examples/bsee/rawdata_fact_check/README.md (counting rule) and count_rawdata.py; examples/report-evals/issue-002-gom-well-permits/eval.py",
+   "repo": "https://github.com/vamseeachanta/worldenergydata",
+   "commit": "f5af5b6da87710bb395552f9cda5e34d1f324479",
+   "tolerance": {
+    "abs": 0
+   },
+   "basis": "live",
+   "limits": [
+    "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected."
+   ]
+  },
+  {
+   "id": "permits_2025_jackup",
+   "label": "New-well permits naming a jack-up, 2025",
+   "page_ref": "Opening paragraph",
+   "value": 1,
+   "unit": "permits",
+   "period": "2025",
+   "source": "BSEE Application for Permit to Drill raw data (APDRawData.zip), file of 2 November 2026, SHA-256 b4ab6606...299c0",
+   "method": "examples/bsee/rawdata_fact_check/README.md (counting rule) and count_rawdata.py; examples/report-evals/issue-002-gom-well-permits/eval.py",
+   "repo": "https://github.com/vamseeachanta/worldenergydata",
+   "commit": "f5af5b6da87710bb395552f9cda5e34d1f324479",
+   "tolerance": {
+    "abs": 0
+   },
+   "basis": "live",
+   "limits": [
+    "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
+    "The rig type is the one named in the permit; the page leaves open how often a different rig drilled the well.",
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected."
+   ]
+  },
+  {
+   "id": "permits_2025_drillship",
+   "label": "New-well permits naming a drillship, 2025",
+   "page_ref": "Opening paragraph",
+   "value": 44,
+   "unit": "permits",
+   "period": "2025",
+   "source": "BSEE Application for Permit to Drill raw data (APDRawData.zip), file of 2 November 2026, SHA-256 b4ab6606...299c0",
+   "method": "examples/bsee/rawdata_fact_check/README.md (counting rule) and count_rawdata.py; examples/report-evals/issue-002-gom-well-permits/eval.py",
+   "repo": "https://github.com/vamseeachanta/worldenergydata",
+   "commit": "f5af5b6da87710bb395552f9cda5e34d1f324479",
+   "tolerance": {
+    "abs": 0
+   },
+   "basis": "live",
+   "limits": [
+    "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
+    "The rig type is the one named in the permit; the page leaves open how often a different rig drilled the well.",
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected."
+   ]
+  },
+  {
+   "id": "other_grouped_permits",
+   "label": "Permits grouped as other: barge, barge rig, well intervention vessel",
+   "page_ref": "Text above Figure 1",
+   "value": 19,
+   "unit": "permits",
+   "period": "2005 to 2026 (2026 to the file of 2 November 2026)",
+   "source": "BSEE Application for Permit to Drill raw data (APDRawData.zip), file of 2 November 2026, SHA-256 b4ab6606...299c0",
+   "method": "examples/bsee/rawdata_fact_check/README.md (counting rule) and count_rawdata.py; examples/report-evals/issue-002-gom-well-permits/eval.py",
+   "repo": "https://github.com/vamseeachanta/worldenergydata",
+   "commit": "f5af5b6da87710bb395552f9cda5e34d1f324479",
+   "tolerance": {
+    "abs": 0
+   },
+   "basis": "live",
+   "limits": [
+    "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected.",
+    "This total includes the open year 2026 and has zero tolerance; any new or corrected permit is reported as drift."
+   ]
+  },
+  {
+   "id": "fig1_cells_differing_2005_2025",
+   "label": "Cells of Figure 1 (2005 to 2025, total and seven rig types, 168 cells) that differ from the published CSV",
+   "page_ref": "Figure 1",
+   "value": 0,
+   "unit": "cells",
+   "period": "2005 to 2025",
+   "source": "BSEE Application for Permit to Drill raw data (APDRawData.zip), file of 2 November 2026, SHA-256 b4ab6606...299c0; published CSV fig-p1-new-well-permits-by-rig-type.csv",
+   "method": "examples/bsee/rawdata_fact_check/README.md (counting rule) and count_rawdata.py; examples/report-evals/issue-002-gom-well-permits/eval.py",
+   "repo": "https://github.com/vamseeachanta/worldenergydata",
+   "commit": "f5af5b6da87710bb395552f9cda5e34d1f324479",
+   "tolerance": {
+    "abs": 0
+   },
+   "basis": "live",
+   "limits": [
+    "One permit per well: its first New Well permit, in the year of its requested spud date, with the rig type that permit names.",
+    "The BSEE file is updated daily; counts may move a little as permits are added or corrected.",
+    "2026 is left out: the year is still being filled."
+   ]
+  },
+  {
+   "id": "script_self_test_passed",
+   "label": "Counting script self-test passes",
+   "page_ref": "Data note",
+   "value": true,
+   "unit": "-",
+   "period": "not applicable",
+   "source": "count_rawdata.py --self-test",
+   "method": "examples/bsee/rawdata_fact_check/README.md (counting rule) and count_rawdata.py; examples/report-evals/issue-002-gom-well-permits/eval.py",
+   "repo": "https://github.com/vamseeachanta/worldenergydata",
+   "commit": "f5af5b6da87710bb395552f9cda5e34d1f324479",
+   "tolerance": {
+    "abs": 0
+   },
+   "basis": "fixed",
+   "limits": [
+    "Synthetic records only; it checks the counting rule, not the BSEE file."
+   ]
+  },
+  {
+   "id": "script_matches_pinned_commit",
+   "label": "The counting script run by the eval is byte-identical (LF line endings) to the script at the pinned commit",
+   "page_ref": "Data note",
+   "value": true,
+   "unit": "-",
+   "period": "not applicable",
+   "source": "worldenergydata git history",
+   "method": "examples/report-evals/issue-002-gom-well-permits/eval.py resolve_script() (on main)",
+   "repo": "https://github.com/vamseeachanta/worldenergydata",
+   "commit": "f5af5b6da87710bb395552f9cda5e34d1f324479",
+   "tolerance": {
+    "abs": 0
+   },
+   "basis": "fixed",
+   "scope": "pinned",
+   "limits": [
+    "Checks code identity only; the counts are graded by the other results."
+   ]
+  }
+ ]
+}

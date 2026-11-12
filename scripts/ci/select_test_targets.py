@@ -85,6 +85,13 @@ CATALOG_CONTRACTS = (
 
 # Exact paths may select one contract suite or several related test files.
 CONTRACT_ROUTES = {
+    "config/fields.yml": "tests/unit/cost/test_project_field_crosswalk.py",
+    "src/worldenergydata/field_development/past_projects.yml": (
+        "tests/unit/cost/test_project_field_crosswalk.py",
+        "tests/unit/field_development",
+        "tests/modules/field_development/test_past_projects.py",
+    ),
+    "scripts/cost/validate_project_field_crosswalk.py": "tests/unit/cost/test_project_field_crosswalk.py",
     "scripts/build_pages.py": PAGES_CONTRACTS,
     "scripts/pages_scope.py": "tests/test_pages_scope.py",
     ".github/workflows/pages.yml": PAGES_CONTRACTS,
@@ -136,6 +143,15 @@ CONTRACT_ROUTES = {
     "reports/capabilities/pdf/sec-wells.html": "tests/test_capability_onepagers.py",
     "reports/capabilities/pdf/well-path.html": "tests/test_capability_onepagers.py",
 }
+
+# Prefix routes: any change under the prefix selects the suite. Report evals
+# (results.json, eval.py, PROMPT.md, run records and the shared evalkit) are
+# checked by tests/report_evals.
+CONTRACT_PREFIX_ROUTES = (
+    ("data/modules/cost/", "tests/unit/cost"),
+    ("examples/report-evals/", "tests/report_evals"),
+    ("tests/report_evals/", "tests/report_evals"),
+)
 
 # Paths that exercise the durable-workflow registry (covered by tests/workflows,
 # already in ALWAYS_XDIST) but should still count as "test-relevant".
@@ -219,6 +235,13 @@ def select(changed: list[str], root: Path) -> dict:
             contracts.add("tests/repo_structure")
             relevant = True
             continue
+        prefix_targets = [
+            t for prefix, t in CONTRACT_PREFIX_ROUTES if p.startswith(prefix)
+        ]
+        if prefix_targets:
+            contracts.update(prefix_targets)
+            relevant = True
+            continue
         if p in CONTRACT_ROUTES:
             targets = CONTRACT_ROUTES[p]
             contracts.update((targets,) if isinstance(targets, str) else targets)
@@ -255,7 +278,8 @@ def select(changed: list[str], root: Path) -> dict:
             seq_modules.add(mi.group(1))
             relevant = True
         # anything else (reports/, notebooks/, *.md, docs/ non-registry,
-        # scripts/ non-ci, examples/ non-workflow) is not test-relevant.
+        # scripts/ non-ci, examples/ other than workflows and report evals)
+        # is not test-relevant.
 
     xdist = list(ALWAYS_XDIST)
     for mod in sorted(modules):

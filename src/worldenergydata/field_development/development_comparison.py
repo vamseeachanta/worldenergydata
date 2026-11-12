@@ -24,6 +24,7 @@ import json
 from collections.abc import Iterable
 from pathlib import Path
 
+from worldenergydata.field_development.data_availability import require_available_source
 from worldenergydata.field_development.enums import ConceptType
 from worldenergydata.field_development.host_enrichment import _curated_path
 from worldenergydata.field_development.portfolio_matched import (
@@ -180,6 +181,8 @@ def build_comparison(
         ("field_catalog", fields_path or _curated_fields_path()),
         ("host_registry", _curated_path()),
     ]
+    for _, path in inputs:
+        require_available_source(path)
     digests = [hashlib.sha256(path.read_bytes()).hexdigest() for _, path in inputs]
     result = compare_portfolio(
         build_portfolio(crosswalk_path=crosswalk_path, fields_path=fields_path)

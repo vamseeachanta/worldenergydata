@@ -49,6 +49,9 @@ data/modules/bsee/directional_survey_validation/** -text
 packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/well_api12.py text eol=lf
 packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/directional_survey_validation.py text eol=lf
 
+# Preserve the raw-byte digests and sizes used by the lease snapshot manifest.
+data/modules/bsee/leases/** -text
+
 # Preserve the benchmark source digest across platform checkout conventions.
 reports/lower_tertiary/lt_well_benchmark_lower_tertiary_2010_latest.csv text eol=lf
 
