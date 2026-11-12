@@ -17,6 +17,12 @@ frozen assumption set rather than a sourced, time-varying basis.
 | `curated/SANCTIONED_PROJECTS.md` | Provenance doc for the project table. |
 | `curated/sanctioned_project_cost_years.csv` | Reviewed statement/historical cost-year decisions with verbatim held evidence. |
 | `curated/sanctioned_projects_2026.csv` | **Derived view**, not a disclosure input: original nominal fields plus 2026 USD, index path, factor, trace and input digests; separate sanctioned and actual/revised rows. |
+| `curated/project_field_crosswalk.csv` | Cost project locators linked to held field-development catalog IDs, or explicit unmatched reasons. |
+| `curated/project_field_crosswalk.manifest.json` | Input set and LF-normalized SHA-256 provenance for the identity crosswalk. |
+
+The [project/field crosswalk guide](../../../docs/modules/cost/PROJECT_FIELD_CROSSWALK.md)
+defines join keys, one-to-many links, evidence, limitations and refresh steps.
+Validate it offline with `python scripts/cost/validate_project_field_crosswalk.py`.
 
 ## The one rule
 
