@@ -75,6 +75,10 @@ def _value(value):
 def _group_cost_points(cost_points):
     groups = {}
     for index, point in enumerate(cost_points, start=1):
+        # Supplemental training rows derive amounts, activities and years;
+        # the loader's explicit source marker distinguishes them from disclosures.
+        if "derived calibration sub-observation" in getattr(point, "source", ""):
+            continue
         if not isfinite(point.cost_usd_mm) or point.cost_usd_mm <= 0:
             raise ValueError("Cohort costs must be finite and positive")
         key = tuple(
@@ -170,7 +174,10 @@ def build_report_facts(records, cost_points, report_date: str) -> dict:
         "cohorts": cohorts,
         "outliers": outliers,
         "method_source": METHOD_SOURCE,
-        "cohort_basis": "Nominal as-reported USD million; no inflation or currency qualification",
+        "cohort_basis": (
+            "Nominal curated source costs in USD million; no inflation or currency qualification. "
+            "Supplemental calibration rows excluded"
+        ),
         "field_type_basis": "Water-depth band is a proxy, not reservoir or onshore classification",
         "cohort_source": "cost/data_collection/public_dataset.py; curated inputs, not reverified filings",
         "pending": {
@@ -414,7 +421,11 @@ unestablished normalization, comparability and restatement assumptions. No opera
 <p>Cohorts: ${slot3}</p><p>OPEX: NOT_EVALUATED</p></div></header>
 <section><h2>Revision history</h2><table><thead><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr></thead>
 <tbody><tr><td>Initial</td><td>${slot4}</td><td>Cited historical seed and descriptive cohorts expose the disclosure analytics.</td></tr></tbody>
-<tbody><tr><td>Interface</td><td>2026-11-12</td><td>Added offline YAML workflow and portable issue references; source data unchanged.</td></tr></tbody></table>
+<tbody><tr><td>Interface</td><td>2026-11-12</td><td>Added offline YAML workflow and portable
+issue references; source data unchanged.</td></tr></tbody>
+<tbody><tr><td>Disclosure cohorts</td><td>2026-11-12</td>
+<td>Excluded derived calibration rows from cohort statistics and outliers;
+retained original source indexes.</td></tr></tbody></table>
 <p class="caption">Report edition history.</p></section>
 <label for="operator-selector">Operator</label> <select id="operator-selector">${slot5}</select>
 ${slot6}

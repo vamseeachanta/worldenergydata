@@ -136,6 +136,59 @@ def test_outliers_retain_operator_and_source_identity():
     assert len(facts["outliers"][0]["source_record_sha256"]) == 64
 
 
+@pytest.mark.parametrize("only_calibration", [False, True])
+def test_supplemental_calibration_rows_are_excluded(only_calibration):
+    reported = points()
+    calibration = points((10000,))[0]
+    calibration.source = "Fixture citation; derived calibration sub-observation"
+    mixed = (
+        [calibration] if only_calibration else [reported[0], calibration, *reported[1:]]
+    )
+    expected = build_report_facts(
+        [], [] if only_calibration else reported, "2026-10-20"
+    )
+    facts = build_report_facts([], mixed, "2026-10-20")
+
+    assert facts["cohorts"] == expected["cohorts"]
+    assert [r["cost_usd_mm"] for r in facts["outliers"]] == [
+        r["cost_usd_mm"] for r in expected["outliers"]
+    ]
+    if not only_calibration:
+        # Filtering must retain the original source index and row digest.
+        assert facts["outliers"][0]["source_record_index"] == len(mixed)
+        assert (
+            facts["outliers"][0]["source_record_sha256"]
+            == expected["outliers"][0]["source_record_sha256"]
+        )
+
+
+def test_exported_cohorts_exclude_curated_calibration_rows(tmp_path):
+    import json
+
+    from worldenergydata.cost.data_collection.public_dataset import load_public_dataset
+    from worldenergydata.cost.reporting.benchmark_report import write_report
+
+    inputs = load_public_dataset()
+    calibration_indexes = {
+        index
+        for index, point in enumerate(inputs, start=1)
+        if "derived calibration sub-observation" in point.source
+    }
+    assert calibration_indexes
+    outputs = write_report(tmp_path, "2026-10-20")
+    facts = json.loads(outputs["facts"].read_text())
+    assert sum(c["count"] for c in facts["cohorts"]) == len(inputs) - len(
+        calibration_indexes
+    )
+    assert all(
+        row["source_record_index"] not in calibration_indexes
+        for row in facts["outliers"]
+    )
+    exclusion = "Supplemental calibration rows excluded"
+    assert exclusion in facts["cohort_basis"]
+    assert exclusion in outputs["html"].read_text()
+
+
 def test_yoy_gap_zero_and_comparability_are_explicit():
     """Hand calculation: (20-10)/10=1; a zero prior has no ratio.
 
