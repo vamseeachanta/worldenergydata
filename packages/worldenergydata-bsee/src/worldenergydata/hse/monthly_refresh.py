@@ -49,6 +49,8 @@ class SourceConfig:
     enabled: bool
     urls: tuple[str, ...]
     manual_drop_dir: str | None = None
+    link_patterns: tuple[str, ...] | None = None
+    link_classes: tuple[str, ...] | None = None
 
 
 @dataclass(frozen=True)
@@ -99,6 +101,30 @@ def _relative_path(value: Any) -> str:
     return value
 
 
+def _link_selectors(value: dict) -> dict:
+    selectors = {}
+    for field in ("link_patterns", "link_classes"):
+        if field not in value:
+            continue
+        if value["kind"] != "listing_page":
+            raise ValueError(f"{field} is allowed only for listing_page sources")
+        items = value[field]
+        if not isinstance(items, list) or any(
+            not isinstance(item, str) or not item.strip() for item in items
+        ):
+            raise ValueError(f"{field} must be a list of non-empty strings")
+        for item in items:
+            if field == "link_patterns":
+                try:
+                    re.compile(item)
+                except re.error as exc:
+                    raise ValueError(f"invalid link_patterns regex: {exc}") from exc
+            elif any(c.isspace() for c in item):
+                raise ValueError("link_classes entries must be single class tokens")
+        selectors[field] = tuple(items)
+    return selectors
+
+
 def _source(value: Any) -> SourceConfig:
     required = {
         "id",
@@ -112,7 +138,7 @@ def _source(value: Any) -> SourceConfig:
         "enabled",
         "urls",
     }
-    _keys(value, required, {"manual_drop_dir"})
+    _keys(value, required, {"manual_drop_dir", "link_patterns", "link_classes"})
     for field in ("id", "authority", "description", "licence", "kind", "expect"):
         if not isinstance(value[field], str) or not value[field].strip():
             raise ValueError(f"{field} must be a non-empty string")
@@ -141,7 +167,7 @@ def _source(value: Any) -> SourceConfig:
         raise ValueError("manual sources require manual_drop_dir")
     if "manual_drop_dir" in value:
         _relative_path(value["manual_drop_dir"])
-    return SourceConfig(**(value | {"urls": tuple(urls)}))
+    return SourceConfig(**(value | {"urls": tuple(urls)} | _link_selectors(value)))
 
 
 def load_config(path: str | Path) -> RefreshConfig:
@@ -288,6 +314,8 @@ def _downloads(
         except (ValueError, zipfile.BadZipFile, RuntimeError, OSError, EOFError) as exc:
             record = file_record(url, timestamp or _utc(), response)
             record.update(status="unexpected_content", reason=str(exc))
+        if source.kind == "listing_page":
+            record["retained"] = "links_only"
         manifest["files"].append(record)
     manifest["status"] = next(
         (r["status"] for r in manifest["files"] if r["status"] != "success"), "success"
@@ -295,11 +323,55 @@ def _downloads(
     return payloads
 
 
-def _reuse(root: Path, record: dict, old: dict | None) -> bool:
-    if not old or old.get("sha256") != record["sha256"] or not old.get("path"):
+def _reuse(root: Path, record: dict, old: dict | None, *, links_only: bool) -> bool:
+    if not old or old.get("sha256") != record["sha256"]:
+        return False
+    if links_only:
+        return True
+    if not old.get("path"):
         return False
     path = _contained(root, old["path"])
     return path.is_file() and _sha(path.read_bytes()) == record["sha256"]
+
+
+def _listing_outputs(
+    source: SourceConfig, root: Path, manifest: dict, payloads: dict[str, bytes]
+) -> dict[Path, bytes]:
+    links: dict[str, str] = {}
+    for record in manifest["files"]:
+        parser = ListingParser(
+            record["effective_url"], source.link_patterns, source.link_classes
+        )
+        parser.feed(payloads[record["url"]].decode(record["encoding"]))
+        parser.close()
+        for url, text in parser.links.items():
+            if not links.get(url):
+                links[url] = text
+    if not links:
+        manifest.update(status="no_links", reason="Listing pages yielded no kept links")
+    index = [{"url": url, "text": links[url]} for url in sorted(links)]
+    path = _contained(root, f"{source.id}/{manifest['month']}/links.json")
+    return {path: _json_bytes(index)}
+
+
+def _payload_path(
+    root: Path, relative: str, payload: bytes, outputs: dict[Path, bytes]
+) -> str:
+    """Stage new bytes without replacing an existing or pending payload."""
+    target = _contained(root, relative)
+    candidates = (target, target.with_name(f"{_sha(payload)[:12]}-{target.name}"))
+    for candidate in candidates:
+        candidate = _contained(root, candidate.relative_to(root).as_posix())
+        if candidate in outputs:
+            if outputs[candidate] == payload:
+                return candidate.relative_to(root).as_posix()
+        elif candidate.exists():
+            if candidate.read_bytes() == payload:
+                return candidate.relative_to(root).as_posix()
+        else:
+            outputs[candidate] = payload
+            return candidate.relative_to(root).as_posix()
+    raise ValueError("digest-prefixed payload path contains different bytes")
 
 
 def _store(
@@ -308,36 +380,25 @@ def _store(
     latest = _latest(root, source.id)
     previous = {row["url"]: row for row in latest.get("files", [])}
     unchanged = set(previous) == set(source.urls) and all(
-        _reuse(root, r, previous.get(r["url"])) for r in manifest["files"]
+        _reuse(
+            root, r, previous.get(r["url"]), links_only=source.kind == "listing_page"
+        )
+        for r in manifest["files"]
     )
     if unchanged:
         manifest["status"] = "unchanged"
-    links: dict[str, str] = {}
+    if source.kind == "listing_page":
+        return _listing_outputs(source, root, manifest, payloads)
     outputs: dict[Path, bytes] = {}
     for record in manifest["files"]:
-        if source.kind == "listing_page":
-            parser = ListingParser(record["effective_url"])
-            parser.feed(payloads[record["url"]].decode(record["encoding"]))
-            for url, text in parser.links.items():
-                links.setdefault(url, text)
-        relative = f"{source.id}/{manifest['month']}/{url_filename(record['url'], source.expect)}"
         if unchanged:
             record["path"] = previous[record["url"]]["path"]
         else:
-            target = _contained(root, relative)
-            if latest.get("month", "") > manifest["month"] and any(
-                r.get("path") == relative for r in latest.get("files", [])
-            ):
-                raise ValueError(
-                    "backfill would replace bytes referenced by latest.json"
-                )
-            outputs[target] = payloads[record["url"]]
-            record["path"] = relative
-    if source.kind == "listing_page":
-        index = [{"url": url, "text": links[url]} for url in sorted(links)]
-        outputs[_contained(root, f"{source.id}/{manifest['month']}/links.json")] = (
-            _json_bytes(index)
-        )
+            filename = url_filename(record["url"], source.expect)
+            relative = f"{source.id}/{manifest['month']}/{filename}"
+            record["path"] = _payload_path(
+                root, relative, payloads[record["url"]], outputs
+            )
     return outputs
 
 
@@ -374,6 +435,8 @@ def _run_source(
                 outputs = _store(source, root, manifest, payloads)
     except (OSError, ValueError, KeyError, TypeError) as exc:
         manifest.update(status="failed", reason=str(exc))
+        for record in manifest["files"]:
+            record.pop("path", None)
     manifest["bytes"] = sum(r.get("bytes", 0) for r in manifest["files"])
     manifest["rows"] = sum(
         m.get("rows", 0) for r in manifest["files"] for m in r.get("members", [])
@@ -484,7 +547,8 @@ def main(argv: list[str] | None = None) -> int:
         return 1
     for source in result["sources"]:
         print(
-            f"{source['source_id']} {source['status']} {source['bytes']} bytes {source['rows']} rows",
+            f"{source['source_id']} {source['status']} "
+            f"{source['bytes']} bytes {source['rows']} rows",
             file=sys.stderr if args.json else sys.stdout,
         )
     if args.json:

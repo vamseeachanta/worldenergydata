@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 # Monthly public HSE collection; raw files remain on external storage.
-# 17 3 2 * * WED_HSE_SOURCES_ROOT=/mnt/ace/worldenergydata/data/modules/hse/sources <repo>/scripts/cron/hse-monthly-refresh.sh
+# 17 3 2 * * WED_HSE_SOURCES_ROOT=<output_root> <repo>/scripts/cron/hse-monthly-refresh.sh
 set -uo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/lib/cadence-common.sh"
+REPO_ROOT="${REPO_ROOT:-$(cd "${SCRIPT_DIR}/../.." && pwd)}"; export REPO_ROOT
 cadence_init_repo_root
 
 if [[ -z "${WED_HSE_SOURCES_ROOT:-}" ]]; then

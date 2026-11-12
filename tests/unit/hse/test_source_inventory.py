@@ -27,7 +27,13 @@ REQUIRED = {
     "last_run",
     "decision",
 }
-OPTIONAL = {"held_where", "held_records", "held_latest_date", "held_note"}
+OPTIONAL = {
+    "held_where",
+    "held_records",
+    "held_records_basis",
+    "held_latest_date",
+    "held_note",
+}
 ACCESS = {"public_bulk", "public_docs", "blocked", "login", "paid"}
 HELD = {"yes", "partial", "links_only", "no"}
 REFRESH = {"monthly", "manual", "none"}
@@ -94,3 +100,18 @@ def test_doc_lists_every_source() -> None:
     text = DOC.read_text(encoding="utf-8")
     for s in _sources():
         assert f"`{s['id']}`" in text, s["id"]
+
+
+def test_every_count_states_how_it_was_obtained() -> None:
+    for s in _sources():
+        if isinstance(s.get("held_records"), int):
+            basis = s.get("held_records_basis", "")
+            assert len(basis.split()) >= 6, s["id"]
+        else:
+            assert "held_records_basis" not in s, s["id"]
+
+
+def test_sources_not_held_carry_no_count() -> None:
+    for s in _sources():
+        if s["held"] == "no":
+            assert "held_records" not in s, s["id"]

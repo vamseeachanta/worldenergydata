@@ -40,6 +40,7 @@ sources:
     licence: "US federal government work"
     terms_url: "https://www.bsee.gov/"
     kind: listing_page
+    link_patterns: ['/safety-alerts/', '\.pdf$']
     expect: html
     required: false
     enabled: true
@@ -129,6 +130,7 @@ sources:
     licence: "Reuse free of charge with credit to Havtil"
     terms_url: "https://www.havtil.no/en/contact-us/loose-pages-contact-us/copyright/"
     kind: listing_page
+    link_patterns: ['/en/explore-technical-subjects2/rnnp/.+', '\.pdf$']
     expect: html
     required: false
     enabled: true
@@ -140,6 +142,7 @@ sources:
     licence: "Reuse free of charge with credit to Havtil"
     terms_url: "https://www.havtil.no/en/contact-us/loose-pages-contact-us/copyright/"
     kind: listing_page
+    link_patterns: ['/en/supervision/investigation-reports/[0-9]{4}/']
     expect: html
     required: false
     enabled: true
@@ -151,6 +154,7 @@ sources:
     licence: "Reproduction authorised with acknowledgement of the source"
     terms_url: "https://www.emsa.europa.eu/disclaimer.html"
     kind: listing_page
+    link_patterns: ['/emcip/items\.html\?cid=']
     expect: html
     required: false
     enabled: true
@@ -162,6 +166,7 @@ sources:
     licence: "US federal government work"
     terms_url: "https://www.csb.gov/"
     kind: listing_page
+    link_classes: ['linkHd']
     expect: html
     required: false
     enabled: true
@@ -173,6 +178,7 @@ sources:
     licence: "Copyright IMCA; shared freely with the industry"
     terms_url: "https://www.imca-int.com/resources/safety/safety-flashes/"
     kind: listing_page
+    link_patterns: ['/resources/safety/safety-flashes/[0-9]{4}-']
     expect: html
     required: false
     enabled: true

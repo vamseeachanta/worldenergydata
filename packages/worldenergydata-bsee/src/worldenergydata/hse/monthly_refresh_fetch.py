@@ -175,7 +175,7 @@ class CitizenFetcher:
         except FetchError as exc:
             return FetchError("robots_unavailable", f"robots unavailable: {exc}", url)
         code = response.status_code
-        if code in {401, 403}:
+        if code in {401, 403, 429}:
             return FetchError(
                 "blocked", f"robots.txt returned HTTP {code}", url, response
             )
@@ -260,15 +260,26 @@ def check_content(
 class ListingParser(HTMLParser):
     """Collect document URLs and visible link text, without fetching documents."""
 
-    def __init__(self, base_url: str) -> None:
+    def __init__(
+        self,
+        base_url: str,
+        link_patterns: tuple[str, ...] | None = None,
+        link_classes: tuple[str, ...] | None = None,
+    ) -> None:
         super().__init__(convert_charrefs=True)
         self.base_url, self.href = base_url, None
+        self.filtered = link_patterns is not None or link_classes is not None
+        self.patterns = tuple(re.compile(pattern) for pattern in link_patterns or ())
+        self.classes = frozenset(link_classes or ())
+        self.anchor_classes: set[str] = set()
         self.text: list[str] = []
         self.links: dict[str, str] = {}
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         if tag == "a":
-            self.href = dict(attrs).get("href")
+            attributes = dict(attrs)
+            self.href = attributes.get("href")
+            self.anchor_classes = set((attributes.get("class") or "").split())
             self.text = []
 
     def handle_data(self, data: str) -> None:
@@ -284,8 +295,16 @@ class ListingParser(HTMLParser):
         except ValueError:
             self.href = None
             return
-        if parsed.scheme in {"http", "https"} and (
-            parsed.path.lower().endswith(".pdf") or "/sites/" in url or "/media/" in url
-        ):
-            self.links.setdefault(url, " ".join("".join(self.text).split()))
+        if self.filtered:
+            keep = any(pattern.search(url) for pattern in self.patterns) or bool(
+                self.classes & self.anchor_classes
+            )
+        else:
+            keep = (
+                parsed.path.lower().endswith(".pdf")
+                or "/sites/" in url
+                or "/media/" in url
+            )
+        if parsed.scheme in {"http", "https"} and keep and not self.links.get(url):
+            self.links[url] = " ".join("".join(self.text).split())
         self.href = None

@@ -1,10 +1,10 @@
 # Monthly public HSE refresh
 
 The runner collects the enabled sources in `config/hse/monthly_sources.yml`.
-The initial set contains BSEE investigation and non-compliance archives, two
-BSEE listing pages and a manual PHMSA landing page. It retains raw downloads
-and provenance. It does not import records into a database or qualify them for
-engineering analysis. Retrieval time records collection, not source-data vintage.
+The configuration includes public investigation archives, statistics files,
+listing pages and manual sources. It retains bulk downloads, selected listing
+links and provenance. It does not import records into a database or qualify them
+for engineering analysis. Retrieval time records collection, not source-data vintage.
 
 ```bash
 uv run python scripts/hse/refresh_hse_sources.py \
@@ -23,8 +23,9 @@ and 2 for configuration errors. Optional failures remain visible in the summary.
 
 ## Configuration
 
-Unknown and duplicate YAML keys are errors. All source fields below are required
-except `manual_drop_dir`. Boolean fields require YAML booleans.
+Unknown and duplicate YAML keys are errors. The optional fields are
+`manual_drop_dir`, `link_patterns` and `link_classes`. All other source fields
+below are required. Boolean fields require YAML booleans.
 
 | Field | Scope | Value |
 | --- | --- | --- |
@@ -42,15 +43,20 @@ except `manual_drop_dir`. Boolean fields require YAML booleans.
 | `enabled` | Source | Whether collection is enabled |
 | `urls` | Source | Non-empty unique HTTPS URLs without credentials |
 | `manual_drop_dir` | Manual source | Required relative directory under the output root |
+| `link_patterns` | Listing source | Optional list of regular expressions searched against absolute URLs |
+| `link_classes` | Listing source | Optional list of single anchor class tokens |
 
 Download basenames must be distinct within a source, portable and free of path
 traversal. The names `manifest.json`, `latest.json` and `links.json` are reserved.
+Invalid regular expressions, non-list selectors and selectors on other source
+kinds are configuration errors. Selector entries require non-empty strings;
+class entries contain one token each.
 
 ## Access rules
 
 Before a data request to an origin, the runner reads its HTTPS `robots.txt`
 with the configured identity and applies `urllib.robotparser`. A disallow rule
-prevents the data request. HTTP 401 or 403 on robots blocks that origin. Other
+prevents the data request. HTTP 401, 403 or 429 on robots blocks that origin. Other
 4xx robots responses allow collection. Network errors and 5xx responses prevent
 collection with `robots_unavailable`.
 
@@ -70,9 +76,10 @@ record validity. Other formats receive a light signature or syntax check.
 
 | Status | Meaning |
 | --- | --- |
-| `success` | Every URL returned content matching the configured format |
-| `unchanged` | Every digest matches verified retained files referenced by latest |
-| `blocked` | Robots returned 401/403, or a data URL returned 401/403/429 |
+| `success` | Every URL passed its format check; listing pages yielded kept links |
+| `unchanged` | Every digest matches latest; bulk files also pass retained-byte verification |
+| `no_links` | The listing pages yielded no links matching the source rules |
+| `blocked` | Robots or a data URL returned 401, 403 or 429 |
 | `disallowed_by_robots` | Robots rules prohibit the data URL |
 | `robots_unavailable` | Robots policy could not be obtained |
 | `unexpected_content` | A returned body failed its content check |
@@ -82,17 +89,26 @@ record validity. Other formats receive a light signature or syntax check.
 | `skipped_disabled` | The configuration disables the source |
 | `dry_run` | The source would be processed in a live run |
 
-A failure of any URL fails that source. Required `manual_pending` also fails the
-run. Disabled sources and dry runs do not count as required failures. Manual
-presence records received files; it does not validate their contents or freshness.
+A failure of any URL fails that source. Required `manual_pending` and `no_links`
+also fail the run. Disabled sources and dry runs do not count as required failures.
+Manual presence records received files; it does not validate their contents or freshness.
 
-## Retained files
+## What is kept
+
+Bulk sources retain downloaded files and provenance. Listing pages retain only
+the selected URLs, visible link text and response metadata. Full HTML and
+navigation text are not written to disk. Linked documents are not downloaded.
+The listing rules select public report metadata; personal names are outside
+the collection scope described in [the source registry](source-registry.md).
+
+## Output layout
 
 ```text
 <output_root>/
   <source_id>/
     <YYYY-MM>/
-      <URL basename>
+      <URL basename>      # bulk files only
+      <digest>-<basename> # changed bulk bytes in an existing month, when needed
       manifest.json
       links.json          # listing pages only
     latest.json
@@ -104,9 +120,20 @@ Each URL record includes the requested and effective URLs, HTTP status, byte
 count, SHA-256, content type, ETag, Last-Modified and UTC retrieval timestamp.
 ZIP member records include names, sizes and text row counts. Failures carry a
 reason. Retained file paths are relative to the output root.
+Listing page records have `retained: links_only` and no `path`; their digest and
+byte count describe the fetched page held in memory, not a retained HTML file.
 
-An unchanged manifest points at the earlier retained files; duplicate bytes are
-discarded. Its listing index is regenerated in the selected month. `latest.json`
+Bulk payload files are write-once. Identical bytes reuse an existing path. If a
+month's basename already contains different bytes, the new file uses the first
+12 hexadecimal characters of its SHA-256 followed by `-` and that basename.
+A conflicting digest-prefixed path causes a failure and retains the existing
+bytes. Earlier manifests continue to reference bytes matching their recorded
+digests.
+
+An unchanged bulk manifest points at the earlier retained files. Listing page
+digests are compared with the previous latest manifest without a stored HTML
+file. The listing index is regenerated in the selected month, including when
+the page is unchanged. An empty combined index gives `no_links`. `latest.json`
 copies the newest `success` or `unchanged` manifest by calendar month; older
 backfills do not move the pointer backwards. A partial download failure leaves
 the previous latest pointer and its bytes intact. Manual files remain in the
@@ -115,8 +142,11 @@ required failures, UTC start/finish times and the path and digest of the parsed
 configuration. These local saves do not establish backup or publication.
 
 Listing indexes contain sorted, deduplicated absolute links and their visible
-text for PDF targets and URLs containing `/sites/` or `/media/`. Linked
-documents are not downloaded.
+text. When either selector field is configured, a URL pattern match or an exact
+anchor class token match retains the link. Without either field, PDF targets
+and URLs containing `/sites/` or `/media/` are retained. Explicit empty lists
+select no links unless the other field matches. For duplicate URLs, the first
+non-empty title is retained; a later non-empty title replaces an empty one.
 
 To add a source, append a mapping to the YAML file, verify its public access and
 reuse terms, choose a unique id and run a dry run. No runner changes are needed.
@@ -125,12 +155,14 @@ For manual collection, place received files under `manual_drop_dir` and rerun.
 ## Scheduling and offline example
 
 ```cron
-17 3 2 * * WED_HSE_SOURCES_ROOT=/mnt/ace/worldenergydata/data/modules/hse/sources <repo>/scripts/cron/hse-monthly-refresh.sh
+17 3 2 * * WED_HSE_SOURCES_ROOT=<output_root> <repo>/scripts/cron/hse-monthly-refresh.sh
 ```
 
-The wrapper requires the environment variable, runs from the repository root,
-appends a dated exit code to `refresh.log` and returns the runner's code. The
-scheduler job `hse_sources_refresh` uses its explicit `output_dir`. Its existing
+The placeholders identify the selected external directory and checkout. The
+wrapper requires `WED_HSE_SOURCES_ROOT`, resolves the checkout from its own
+location and preserves an explicit `REPO_ROOT` environment override. It runs
+from that root, appends a dated exit code to `refresh.log` and returns the runner's
+code. The scheduler job `hse_sources_refresh` uses its explicit `output_dir`. Its existing
 `monthly` interval means every 30 days at 03:30, rather than a calendar day.
 Select one scheduling mechanism to avoid duplicate runs.
 
