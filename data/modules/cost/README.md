@@ -15,6 +15,8 @@ frozen assumption set rather than a sourced, time-varying basis.
 | `curated/sanctioned_projects.csv` | Deepwater projects with disclosed FID CAPEX and scope — the **top-down anchor** the bottom-up component series is cross-checked against. |
 | `curated/COST_COMPONENT_TIMESERIES.md` | Provenance doc for the component series. |
 | `curated/SANCTIONED_PROJECTS.md` | Provenance doc for the project table. |
+| `curated/sanctioned_project_cost_years.csv` | Reviewed statement/historical cost-year decisions with verbatim held evidence. |
+| `curated/sanctioned_projects_2026.csv` | **Derived view**, not a disclosure input: original nominal fields plus 2026 USD, index path, factor, trace and input digests; separate sanctioned and actual/revised rows. |
 | `curated/project_field_crosswalk.csv` | Cost project locators linked to held field-development catalog IDs, or explicit unmatched reasons. |
 | `curated/project_field_crosswalk.manifest.json` | Input set and LF-normalized SHA-256 provenance for the identity crosswalk. |
 
@@ -59,6 +61,23 @@ for sources, cadence and the re-run command.
 ```bash
 uv run python scripts/cost/seed_cost_timeseries.py       # re-pull reference series, rewrite CSVs
 uv run python scripts/cost/build_cost_basis_report.py    # rebuild the report
+```
+
+## Constant 2026 USD view
+
+The method and held source limitations are documented in
+[`ESCALATION.md`](../../../docs/modules/cost/ESCALATION.md). The 2026 indices are
+partial-year means, so the derived view is provisional. Nominal CSVs remain
+unchanged.
+
+The derived row key is `(PROJECT, NOMINAL_COST_COLUMN)`. Select the sanctioned or
+actual/revised cost column before joining or aggregating; a PROJECT-only join
+duplicates costs. Existing source readers continue using their named inputs.
+
+Regenerate from the repository root with installed namespace members:
+
+```bash
+python -m worldenergydata.cost.escalation --output data/modules/cost/curated/sanctioned_projects_2026.csv
 ```
 
 ## Report

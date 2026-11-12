@@ -112,6 +112,15 @@ loudly. Staging currently holds the Asia-Pacific and Caspian tranche and the
 Europe tranche; adding or removing a staging project intentionally requires
 reconciliation and manifest refresh in the same change.
 
+This inventory rule includes `sanctioned_projects_2026.csv` (a derived
+restatement) and `sanctioned_project_cost_years.csv` (statement-year metadata).
+Their labels refer to projects already held in `sanctioned_projects.csv`:
+they add source locators and manifest inputs, not independent observations or
+additional projects. Derived and sidecar filenames receive no implicit exclusion;
+new project-bearing source tables continue to be discovered recursively.
+Regenerating either table requires crosswalk evidence reconciliation and
+manifest refresh under the procedure below, even if project labels are unchanged.
+
 For a refresh:
 
 1. Load `load_cost_projects(root)` and `load_catalog(root)`. The catalog loader
