@@ -58,7 +58,7 @@ def projects():
             "QUOTED_TEXT": "Invented test data",
             "ACCESSED_DATE": "2026-01-01",
             "CONFIDENCE": "high",
-            "SOURCE_PRIORITY": "operator_primary",
+            "SOURCE_PRIORITY": "press_release",
             "NOTES": "Invented",
             "SCOPE_IS_OFFSHORE_ONLY": "True",
             "CATALOG_FIELD_IDS": f"invented-field-{i}",
@@ -403,3 +403,50 @@ def test_conflicting_crosswalk_metadata_is_rejected(projects, tmp_path):
     assert result.returncode != 0
     assert "crosswalk" in result.stderr.lower()
     assert not output.exists()
+
+
+def test_project_ids_supplied_on_project_rows_do_not_need_new_registry_rows(
+    projects, tmp_path
+):
+    root = inputs(tmp_path, projects[:1])
+    path = root / "sanctioned_projects.csv"
+    rows = list(csv.DictReader(path.open(encoding="utf-8")))
+    rows[0]["PROJECT_ID"] = "invented-1"
+    write_csv(path, rows)
+    identity = root / "cost_project_identity.csv"
+    identity.write_text(
+        "OPAQUE_ID,ENTITY_KIND,ACTIVE,SOURCE_TABLE,SOURCE_RECORD_LOCATOR\n",
+        encoding="utf-8",
+    )
+    from worldenergydata.cost.benchmarks import load_projects
+
+    assert well_row(build(load_projects(root)))["comparables"] == "invented-1"
+
+
+def test_unregistered_project_is_explained_without_discarding_registered_projects(
+    projects, tmp_path
+):
+    root = inputs(tmp_path, projects)
+    identity = root / "cost_project_identity.csv"
+    rows = list(csv.DictReader(identity.open(encoding="utf-8")))
+    write_csv(identity, rows[:-1])
+    from worldenergydata.cost.benchmarks import load_projects
+
+    facts = build(load_projects(root))
+    assert well_row(facts)["n"] == 4
+    assert any(
+        "PROJECT_ID" in e["reason"] and e.get("project_name") == "Invented project 5"
+        for e in facts["exclusions"]
+    )
+
+
+def test_small_positive_figures_are_not_published_as_zero(projects, tmp_path):
+    projects[0]["RECOVERABLE_RESOURCE_MMBOE"] = "100000"
+    root = inputs(tmp_path, projects[:1])
+    output = tmp_path / "reports"
+    result = cli(root, output)
+    assert result.returncode == 0, result.stderr
+    with (output / "unit_cost_benchmarks.csv").open(encoding="utf-8") as stream:
+        rows = list(csv.DictReader(stream))
+    resource = next(r for r in rows if r["metric"] == "capex_per_boe")
+    assert float(resource["p50"]) == pytest.approx(0.001)
