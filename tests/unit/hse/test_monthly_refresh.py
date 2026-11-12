@@ -733,8 +733,7 @@ def test_listing_without_links_is_failure(
         assert manifest["reason"]
         assert result["required_failures"] == (["synthetic"] if required else [])
     assert not (tmp_path / "output/synthetic/latest.json").exists()
-    index = tmp_path / "output/synthetic/2026-11/links.json"
-    assert json.loads(index.read_text()) == []
+    assert not (tmp_path / "output/synthetic/2026-11/links.json").exists()
 
 
 def test_listing_selectors_or_and_first_nonempty_title(tmp_path: Path) -> None:
@@ -865,6 +864,25 @@ def test_empty_selection_overrides_unchanged_page(tmp_path: Path) -> None:
     assert result["sources"][0]["status"] == "no_links"
     assert result["required_failures"] == ["synthetic"]
     assert (tmp_path / "output/synthetic/latest.json").read_bytes() == latest
+
+
+def test_rerun_without_links_keeps_the_successful_index(tmp_path: Path) -> None:
+    row = source(kind="listing_page", expect="html")
+    good = response_handler(b'<html><a href="/report.pdf">Report</a></html>')
+    assert refresh(tmp_path, good, row)["sources"][0]["status"] == "success"
+    output = tmp_path / "output/synthetic"
+    index = (output / "2026-11/links.json").read_bytes()
+    latest = (output / "latest.json").read_bytes()
+    assert json.loads(index) == [
+        {"url": "https://example.org/report.pdf", "text": "Report"}
+    ]
+    # Same month, changed page with no kept link.
+    empty = response_handler(b"<html><p>Maintenance</p></html>")
+    result = refresh(tmp_path, empty, row)
+    assert result["sources"][0]["status"] == "no_links"
+    assert (output / "2026-11/links.json").read_bytes() == index
+    assert (output / "latest.json").read_bytes() == latest
+    assert json.loads(latest)["status"] == "success"
 
 
 def test_robots_429_blocks_all_urls_on_origin(tmp_path: Path) -> None:

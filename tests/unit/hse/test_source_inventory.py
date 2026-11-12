@@ -31,12 +31,14 @@ OPTIONAL = {
     "held_where",
     "held_records",
     "held_records_basis",
+    "held_records_status",
     "held_latest_date",
     "held_note",
 }
 ACCESS = {"public_bulk", "public_docs", "blocked", "login", "paid"}
 HELD = {"yes", "partial", "links_only", "no"}
 REFRESH = {"monthly", "manual", "none"}
+COUNT_STATUS = {"repeatable_from_repository", "unverified"}
 CANDIDATES = {
     "bsee_incident_investigations",
     "bsee_investigation_reports",
@@ -107,8 +109,18 @@ def test_every_count_states_how_it_was_obtained() -> None:
         if isinstance(s.get("held_records"), int):
             basis = s.get("held_records_basis", "")
             assert len(basis.split()) >= 6, s["id"]
+            assert s.get("held_records_status") in COUNT_STATUS, s["id"]
         else:
             assert "held_records_basis" not in s, s["id"]
+            assert "held_records_status" not in s, s["id"]
+
+
+def test_inventory_names_no_storage_mount_point() -> None:
+    text = INVENTORY.read_text(encoding="utf-8")
+    assert "/mnt/" not in text
+    for s in _sources():
+        where = s.get("held_where", "")
+        assert not where.startswith("/"), s["id"]
 
 
 def test_sources_not_held_carry_no_count() -> None:

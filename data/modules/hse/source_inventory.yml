@@ -13,6 +13,9 @@
 # held_records_basis: how the count was obtained and when. The held files are on external
 #          storage and are not in git, so a count can be repeated only there; a count
 #          without a basis is not allowed.
+# held_records_status: repeatable_from_repository when the count can be repeated from
+#          files committed in this repository; unverified when it was counted once on
+#          files outside git and no audit record of the count is retained.
 # last_run: date of the last pull. 2026-11-12 is the trial run of the monthly runner into a
 #          temporary folder; the held copy on external storage keeps the date in held_note.
 schema_version: 1
@@ -28,11 +31,12 @@ sources:
     format: zip of delimited text
     access: public_bulk
     held: "yes"
-    held_where: /mnt/ace/worldenergydata/data/modules/hse/raw/bsee/IncInvRawData (external storage)
+    held_where: <external storage>/data/modules/hse/raw/bsee/IncInvRawData (external storage)
     held_records: 1987
     held_records_basis: Lines minus the header line of mv_acc_investigations.txt in the held folder (file dated 2026-02-16), counted 2026-11-12. Latest date is the source vintage in data/source-refresh-acceptance-contract.json.
+    held_records_status: unverified
     held_latest_date: "2026-01-08"
-    held_note: Held copy dated 2026-02-16. The archive read on 2026-11-12 (35,896 bytes, SHA-256 547df07ba05393fa194cf8c4cac0334be847aae3b70d886840a003d889c22de2) has 2,032 records to 2026-10-24; that archive was read in a trial and is not retained, and the source file changes daily.
+    held_note: Held copy dated 2026-02-16. The archive read on 2026-11-12 (35,896 bytes, SHA-256 547df07ba05393fa194cf8c4cac0334be847aae3b70d886840a003d889c22de2) had 2,032 records to 2026-10-24. That figure is unverified, because the archive was read in a trial and is not retained and the source file changes daily; the count cannot be repeated.
     refresh: monthly
     refresh_script: python -m worldenergydata.hse.monthly_refresh (monthly scheduler job hse_sources_refresh; the older weekly job hse_refresh has never run on a schedule)
     last_run: "2026-11-12"
@@ -46,9 +50,10 @@ sources:
     format: zip of delimited text
     access: public_bulk
     held: "yes"
-    held_where: /mnt/ace/worldenergydata/data/modules/hse/raw/bsee/INCSRawData (external storage)
+    held_where: <external storage>/data/modules/hse/raw/bsee/INCSRawData (external storage)
     held_records: 51872
     held_records_basis: Lines minus the header line of mv_incs_by_oper.txt in the held folder (file dated 2026-02-16), counted 2026-11-12.
+    held_records_status: unverified
     held_latest_date: not confirmed
     held_note: Record count is the operator-level file only. Held copy dated 2026-02-16.
     refresh: monthly
@@ -84,6 +89,7 @@ sources:
     held_where: data/modules/hse/offshore (curated links); four mooring cases in the equipment case register
     held_records: 4
     held_records_basis: Cases in safety_analysis/equipment/data/public_cases.yml, each with the SHA-256 of the report file read.
+    held_records_status: repeatable_from_repository
     held_latest_date: "2023-06-19"
     held_note: The MMS-era panel list returned HTTP 403 on 2026-11-12.
     refresh: monthly
@@ -115,6 +121,7 @@ sources:
     held_where: data/modules/pipeline_safety/raw/kaggle_usdot_pipeline/database.csv (in git); a 2010-to-present hazardous liquid workbook on external storage dated 2026-02-08
     held_records: 2795
     held_records_basis: Rows and latest accident date of the committed file database.csv (SHA-256 1d4abf457565e2661b70f735c590a793204d59b3537c1995725d376dafc52c76).
+    held_records_status: repeatable_from_repository
     held_latest_date: "2017-01-09"
     held_note: Count and date are for the curated export in git (hazardous liquid, 2010 to 2017). The site and its robots.txt returned HTTP 403 to non-browser clients on 2026-11-12.
     refresh: manual
@@ -147,6 +154,7 @@ sources:
     held_where: marine_safety database on external storage
     held_records: 15
     held_records_basis: Rows with source_agency USCG in the incidents table of the held marine safety database (file dated 2025-10-05), queried 2026-11-12.
+    held_records_status: unverified
     held_latest_date: "2024-10-12"
     held_note: A 2024 test pull only.
     refresh: none
@@ -165,6 +173,7 @@ sources:
     held_where: marine_safety database on external storage
     held_records: 63340
     held_records_basis: Rows with source_agency USCG_BARD in the incidents table of the held marine safety database (file dated 2025-10-05), queried 2026-11-12.
+    held_records_status: unverified
     held_latest_date: "2012-12-31"
     held_note: Static historical set; recreational craft, not offshore equipment. The source URL was not re-checked on 2026-11-12.
     refresh: none
@@ -183,6 +192,7 @@ sources:
     held_where: marine_safety database on external storage
     held_records: 4797
     held_records_basis: Rows with source_agency NOAA_ORR in the incidents table of the held marine safety database (file dated 2025-10-05), queried 2026-11-12.
+    held_records_status: unverified
     held_latest_date: "2025-09-29"
     held_note: The source URL was not re-checked on 2026-11-12.
     refresh: none
@@ -239,7 +249,7 @@ sources:
     format: zip of CSV
     access: public_bulk
     held: "yes"
-    held_where: /mnt/ace/worldenergydata/data/modules/hse/raw/osha (external storage, 6.6 GB)
+    held_where: <external storage>/data/modules/hse/raw/osha (external storage, 6.6 GB)
     held_records: not confirmed
     held_latest_date: not confirmed
     held_note: Held copy dated 2026-02-16. Mostly onshore; not routed to offshore equipment classes.
@@ -256,9 +266,10 @@ sources:
     format: CSV by API
     access: public_bulk
     held: "yes"
-    held_where: /mnt/ace/worldenergydata/data/modules/hse/raw/epa_tri (external storage, 64 MB)
+    held_where: <external storage>/data/modules/hse/raw/epa_tri (external storage, 64 MB)
     held_records: 51487
     held_records_basis: Rows of the toxic_releases table of the held HSE database (file dated 2026-02-10), queried 2026-11-12.
+    held_records_status: unverified
     held_latest_date: not confirmed
     held_note: Record count is the toxic_releases table of the HSE database. Held copy dated 2026-02-10.
     refresh: manual

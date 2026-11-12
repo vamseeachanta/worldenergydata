@@ -61,7 +61,13 @@ prevents the data request. HTTP 401, 403 or 429 on robots blocks that origin. Ot
 collection with `robots_unavailable`.
 
 Every request, including robots and redirects, observes a minimum one-second
-interval per host. Redirects require HTTPS without credentials. A redirected
+interval per host. A monthly run makes a few requests per host, so the fixed
+pace costs seconds and needs no tuning for any one site. At most ten redirects
+are followed for one URL, which ends a redirect loop; a moved file normally
+needs one or two. Each phase of a request (connect, read, write) is allowed 300
+seconds, so a slow server can send a large archive and a stalled connection
+cannot hold the job without end. The three limits are design choices, not
+measured values. Redirects require HTTPS without credentials. A redirected
 data destination receives its own robots check. The runner never retries with a
 different identity, adds browser-like headers or retries HTTP 401, 403 or 429.
 Blocked access requires a manual download permitted by the source terms or a
@@ -133,7 +139,8 @@ digests.
 An unchanged bulk manifest points at the earlier retained files. Listing page
 digests are compared with the previous latest manifest without a stored HTML
 file. The listing index is regenerated in the selected month, including when
-the page is unchanged. An empty combined index gives `no_links`. `latest.json`
+the page is unchanged. An empty combined index gives `no_links` and writes no
+index, so an index from an earlier successful run of that month is kept. `latest.json`
 copies the newest `success` or `unchanged` manifest by calendar month; older
 backfills do not move the pointer backwards. A partial download failure leaves
 the previous latest pointer and its bytes intact. Manual files remain in the

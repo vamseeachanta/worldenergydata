@@ -93,6 +93,16 @@ class FetchError(Exception):
         self.status, self.url, self.response = status, url, response
 
 
+# Both limits are design choices, not measured values.
+# Minimum seconds between two requests to one host. A monthly run makes a few
+# requests per host, so a fixed slow pace costs seconds and needs no tuning
+# for any one site.
+MIN_INTERVAL_S = 1.0
+# Redirects followed for one URL. The bound ends a redirect loop; a moved
+# file normally needs one or two hops, so ten leaves a wide margin.
+MAX_REDIRECTS = 10
+
+
 class CitizenFetcher:
     """Cache robots policy per origin and pace every request per hostname."""
 
@@ -111,7 +121,7 @@ class CitizenFetcher:
     def _get(self, url: str) -> httpx.Response:
         host = urlsplit(url).hostname or ""
         if host in self.last_request:
-            delay = 1.0 - (self.clock() - self.last_request[host])
+            delay = MIN_INTERVAL_S - (self.clock() - self.last_request[host])
             if delay > 0:
                 self.sleep(delay)
         self.last_request[host] = self.clock()
@@ -123,7 +133,7 @@ class CitizenFetcher:
         )
 
     def _request(self, url: str, *, robots: bool = False) -> httpx.Response:
-        for _ in range(11):
+        for _ in range(MAX_REDIRECTS + 1):
             try:
                 validate_url(url)
             except ValueError as exc:

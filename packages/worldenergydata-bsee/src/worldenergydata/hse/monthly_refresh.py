@@ -33,6 +33,12 @@ from worldenergydata.hse.monthly_refresh_fetch import (
     validate_url,
 )
 
+# Seconds allowed for each phase of a request (connect, read, write). The
+# value is a design choice, not a measured limit: long enough for a slow
+# public server to send a large archive, short enough that an unattended
+# monthly job cannot wait without end on a stalled connection.
+REQUEST_TIMEOUT_S = 300
+
 
 @dataclass(frozen=True)
 class SourceConfig:
@@ -348,7 +354,10 @@ def _listing_outputs(
             if not links.get(url):
                 links[url] = text
     if not links:
+        # Nothing is staged: an index written by an earlier successful run of
+        # the same month stays as it is, and latest.json still describes it.
         manifest.update(status="no_links", reason="Listing pages yielded no kept links")
+        return {}
     index = [{"url": url, "text": links[url]} for url in sorted(links)]
     path = _contained(root, f"{source.id}/{manifest['month']}/links.json")
     return {path: _json_bytes(index)}
@@ -491,7 +500,9 @@ def run_refresh(
         raise ValueError("unknown source id in --source")
     with ExitStack() as stack:
         if client is None:
-            client = stack.enter_context(httpx.Client(timeout=300, trust_env=False))
+            client = stack.enter_context(
+                httpx.Client(timeout=REQUEST_TIMEOUT_S, trust_env=False)
+            )
         fetcher = CitizenFetcher(client, config.user_agent, sleep, clock)
         sources = [
             _run_source(

@@ -19,6 +19,7 @@ The record is [`data/modules/hse/source_inventory.yml`](../../data/modules/hse/s
 | `access` | `public_bulk` machine-readable download; `public_docs` public PDF or HTML only; `blocked` public, but the site refused non-browser clients on the check date; `login` free registration; `paid` paywall, membership or internal-use-only terms |
 | `held` | `yes`, `partial`, `links_only` or `no`, with `held_where`, `held_records` and `held_latest_date` where known |
 | `held_records_basis` | How each count was obtained and when. Held files are on external storage, not in git, so a count can be repeated only there |
+| `held_records_status` | `repeatable_from_repository`: the count can be repeated from files committed here. `unverified`: counted once on files outside git, with no retained audit record; in the table such a count is marked (u) |
 | `refresh` | `monthly` (in `config/hse/monthly_sources.yml`), `manual` or `none`, with the script and the date of the last pull |
 | `decision` | `owner` when the source needs an account, a payment or a terms decision; nothing is signed up for or scraped until then |
 
@@ -26,21 +27,21 @@ The record is [`data/modules/hse/source_inventory.yml`](../../data/modules/hse/s
 
 | Source | Authority | Access | Held | Records held | Latest date held | Refresh | Last pull | Decision |
 |---|---|---|---|---|---|---|---|---|
-| [`bsee_incident_investigations`](https://www.data.bsee.gov/Other/Files/IncInvRawData.zip) | US Bureau of Safety and Environmental Enforcement (BSEE) | public_bulk | yes | 1987 | 2026-01-08 | monthly | 2026-11-12 | none |
-| [`bsee_incs`](https://www.data.bsee.gov/Company/Files/INCSRawData.zip) | US Bureau of Safety and Environmental Enforcement (BSEE) | public_bulk | yes | 51872 | not confirmed | monthly | 2026-11-12 | none |
+| [`bsee_incident_investigations`](https://www.data.bsee.gov/Other/Files/IncInvRawData.zip) | US Bureau of Safety and Environmental Enforcement (BSEE) | public_bulk | yes | 1987 (u) | 2026-01-08 | monthly | 2026-11-12 | none |
+| [`bsee_incs`](https://www.data.bsee.gov/Company/Files/INCSRawData.zip) | US Bureau of Safety and Environmental Enforcement (BSEE) | public_bulk | yes | 51872 (u) | not confirmed | monthly | 2026-11-12 | none |
 | [`bsee_incident_statistics`](https://www.bsee.gov/stats-facts/offshore-incident-statistics) | US Bureau of Safety and Environmental Enforcement (BSEE) | public_docs | partial | not confirmed | not confirmed | monthly | 2026-11-12 | none |
 | [`bsee_investigation_reports`](https://www.bsee.gov/what-we-do/incident-investigations/offshore-incident-investigations/district-investigation-reports) | US Bureau of Safety and Environmental Enforcement (BSEE) | public_docs | links_only | 4 | 2023-06-19 | monthly | 2026-11-12 | none |
 | [`bsee_safety_alerts`](https://www.bsee.gov/guidance-and-regulations/guidance/safety-alerts-program) | US Bureau of Safety and Environmental Enforcement (BSEE) | public_docs | no | - | - | monthly | 2026-11-12 | none |
 | [`phmsa_pipeline_incidents`](https://www.phmsa.dot.gov/data-and-statistics/pipeline/distribution-transmission-gathering-lng-and-liquid-accident-and-incident-data) | US Pipeline and Hazardous Materials Safety Administration (PHMSA) | blocked | partial | 2795 | 2017-01-09 | manual | 2026-05-05 | none |
 | [`uscg_misle`](https://www.dco.uscg.mil/Our-Organization/Assistant-Commandant-for-Prevention-Policy-CG-5P/Inspections-Compliance-CG-5PC-/Office-of-Investigations-Casualty-Analysis/Marine-Casualty-and-Pollution-Data-for-Researchers/) | US Coast Guard | blocked | no | - | - | manual | none | none |
-| [`uscg_cgmix`](https://cgmix.uscg.mil/IIR/IIRSearch.aspx) | US Coast Guard | public_docs | partial | 15 | 2024-10-12 | none | not confirmed | none |
-| [`uscg_boating_accidents`](https://www.uscgboating.org/statistics/accident_statistics.php) | US Coast Guard | public_bulk | yes | 63340 | 2012-12-31 | none | 2025-10-05 | none |
-| [`noaa_incident_news`](https://incidentnews.noaa.gov/) | US NOAA Office of Response and Restoration | public_bulk | yes | 4797 | 2025-09-29 | none | 2025-10-05 | none |
+| [`uscg_cgmix`](https://cgmix.uscg.mil/IIR/IIRSearch.aspx) | US Coast Guard | public_docs | partial | 15 (u) | 2024-10-12 | none | not confirmed | none |
+| [`uscg_boating_accidents`](https://www.uscgboating.org/statistics/accident_statistics.php) | US Coast Guard | public_bulk | yes | 63340 (u) | 2012-12-31 | none | 2025-10-05 | none |
+| [`noaa_incident_news`](https://incidentnews.noaa.gov/) | US NOAA Office of Response and Restoration | public_bulk | yes | 4797 (u) | 2025-09-29 | none | 2025-10-05 | none |
 | [`ntsb_marine`](https://www.ntsb.gov/Pages/carol.aspx) | US National Transportation Safety Board | login | no | - | - | manual | none | owner |
 | [`uscg_nrc`](https://nrc.uscg.mil/) | US Coast Guard National Response Center | blocked | no | - | - | manual | 2026-11-12 | none |
 | [`csb`](https://www.csb.gov/investigations/completed-investigations/) | US Chemical Safety and Hazard Investigation Board | public_docs | no | - | - | monthly | 2026-11-12 | none |
 | [`osha`](https://enforcedata.dol.gov/views/data_catalogs.php) | US Occupational Safety and Health Administration | public_bulk | yes | not confirmed | not confirmed | manual | 2026-02-16 | none |
-| [`epa_tri`](https://www.epa.gov/toxics-release-inventory-tri-program) | US Environmental Protection Agency | public_bulk | yes | 51487 | not confirmed | manual | 2026-02-10 | none |
+| [`epa_tri`](https://www.epa.gov/toxics-release-inventory-tri-program) | US Environmental Protection Agency | public_bulk | yes | 51487 (u) | not confirmed | manual | 2026-02-10 | none |
 | [`uk_hse_offshore_statistics`](https://www.hse.gov.uk/offshore/statistics.htm) | UK Health and Safety Executive | public_docs | no | - | - | monthly | 2026-11-12 | none |
 | [`uk_hcr`](https://oeuk.org.uk/industry-support/hse/hydrocarbon-release/) | Offshore Energies UK (current); UK HSE (archived) | public_docs | no | - | - | none | none | owner |
 | [`uk_maib`](https://www.gov.uk/maib-reports) | UK Marine Accident Investigation Branch | public_bulk | no | - | - | monthly | 2026-11-12 | none |
@@ -68,7 +69,7 @@ The record is [`data/modules/hse/source_inventory.yml`](../../data/modules/hse/s
 ## Gaps
 
 - No scheduler entry ran any HSE refresh before this inventory; the held BSEE copy was 269 days old on the check date (2026-02-16 to 2026-11-12).
-- Counts of held records come from the held files and databases on the check date; each entry states its basis. The trial download of 2026-11-12 was not retained.
+- Counts of held records come from the held files and databases on the check date; each entry states its basis. Counts marked (u) are unverified: they were made once on files outside git and no audit record is retained. The trial download of 2026-11-12 was not retained, so its record count is unverified as well.
 - Machine-readable causes are held for pipelines only. For the other equipment classes the causes are in investigation reports, held as links.
 - `phmsa_pipeline_incidents`: public, but automated download was refused on 2026-11-12; a browser download is needed.
 - `uscg_misle`: public, but automated download was refused on 2026-11-12; a browser download is needed.
