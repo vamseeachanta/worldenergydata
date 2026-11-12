@@ -30,7 +30,7 @@ sources:
     held_latest_date: "2026-01-08"
     held_note: Held copy dated 2026-02-16. The file read on 2026-11-12 has 2,032 records to 2026-10-24.
     refresh: monthly
-    refresh_script: python -m worldenergydata.hse.monthly_refresh (also scheduler job hse_refresh)
+    refresh_script: python -m worldenergydata.hse.monthly_refresh (monthly scheduler job hse_sources_refresh; the older weekly job hse_refresh has never run on a schedule)
     last_run: "2026-11-12"
     decision: none
   - id: bsee_incs
@@ -47,7 +47,7 @@ sources:
     held_latest_date: not confirmed
     held_note: Record count is the operator-level file only. Held copy dated 2026-02-16.
     refresh: monthly
-    refresh_script: python -m worldenergydata.hse.monthly_refresh (also scheduler job hse_refresh)
+    refresh_script: python -m worldenergydata.hse.monthly_refresh (monthly scheduler job hse_sources_refresh; the older weekly job hse_refresh has never run on a schedule)
     last_run: "2026-11-12"
     decision: none
   - id: bsee_incident_statistics
