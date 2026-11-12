@@ -24,10 +24,6 @@ on:
 permissions:
   contents: read
 
-concurrency:
-  group: release-publishing
-  cancel-in-progress: false
-
 env:
   PYTHON_VERSION: "3.11"
 
@@ -134,6 +130,8 @@ jobs:
           name: dist
           path: dist/
 
+  # Publishing exception: keep TestPyPI tokens and OIDC uploads on ephemeral
+  # GitHub-hosted runners, away from persistent self-hosted runners.
   publish-testpypi:
     name: Publish to Test PyPI
     runs-on: ubuntu-latest
@@ -185,6 +183,8 @@ jobs:
             python -c "import worldenergydata"
         continue-on-error: true
 
+  # Publishing exception: keep PyPI tokens and OIDC uploads on ephemeral
+  # GitHub-hosted runners, away from persistent self-hosted runners.
   publish-pypi:
     name: Publish to PyPI
     runs-on: ubuntu-latest

@@ -261,10 +261,39 @@ def test_superseded_pr_runs_cancel_within_the_same_workflow_and_ref(name):
         )
 
 
-def test_releases_serialize_across_tags_without_cancelling():
-    assert load_workflow("release.yml")["concurrency"] == {
-        "group": "release-publishing",
-        "cancel-in-progress": False,
+def test_release_preserves_independent_runs():
+    """Release runs retain main's behavior: no shared pending-run queue."""
+    workflow = load_workflow("release.yml")
+    assert "concurrency" not in workflow
+    assert all("concurrency" not in job for job in workflow["jobs"].values())
+
+
+@pytest.mark.parametrize("event", ["push", "workflow_dispatch"])
+def test_only_index_publish_jobs_are_hosted_on_trusted_events(event):
+    """Only index uploads keep tokens and OIDC off persistent workers."""
+    context = {
+        "github.event_name": event,
+        "github.event.pull_request.head.repo.full_name": "same",
+        "github.repository": "same",
+    }
+    hosted = set()
+    for path in sorted(WORKFLOWS.glob("*.yml")):
+        for job_id, job in load_workflow(path.name)["jobs"].items():
+            if "uses" in job:
+                continue
+            selector = job["runs-on"]
+            labels = (
+                runner_labels(selector, context)
+                if isinstance(selector, str) and selector.startswith("${{")
+                else selector
+            )
+            if is_trusted_linux(labels):
+                continue
+            assert labels == "ubuntu-latest", (path.name, job_id, event, labels)
+            hosted.add((path.name, job_id))
+    assert hosted == {
+        ("release.yml", "publish-testpypi"),
+        ("release.yml", "publish-pypi"),
     }
 
 
