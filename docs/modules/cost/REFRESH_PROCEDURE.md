@@ -62,7 +62,8 @@ uv sync                                            # once
 uv run python -m worldenergydata.cost.timeseries.refresh
 
 # 1b. Rebuild the derived constant-dollar view from the refreshed indices.
-uv run python -m worldenergydata.cost.escalation \n    --output data/modules/cost/curated/sanctioned_projects_2026.csv
+uv run python -m worldenergydata.cost.escalation \
+    --output data/modules/cost/curated/sanctioned_projects_2026.csv
 
 # 1b'. The crosswalk manifest pins the derived view's digest. Re-pin it by the
 #      refresh steps in PROJECT_FIELD_CROSSWALK.md (build_manifest, then
@@ -115,7 +116,7 @@ not guessed at.
 | CPI-U, all items | `CPIAUCSL` | BLS |
 | PPI: drilling oil & gas wells (NAICS 213111) | `PCU213111213111` | BLS |
 | PPI: support activities for O&G (NAICS 213112) | `PCU213112213112` | BLS |
-| PPI: oil & gas field machinery (NAICS 333132) | `PCU333132333132` | BLS |
+| PPI: oil & gas field machinery (NAICS 333132), Dec 1980=100 | `PCU333132333132` | BLS |
 | PPI: steel mill products (commodity 1017) | `WPU1017` | BLS |
 | PPI: steel pipe and tube (commodity 101706) | `WPU101706` | BLS |
 | Brent | `MCOILBRENTEU` | EIA |
@@ -127,8 +128,12 @@ holds a non-positive value, has lost a year that was held, has a newest
 observation more than 120 days old, or has a complete year that moved by more
 than 5 % (a rebase, not a revision). Smaller revisions to complete years are
 printed. `data/modules/cost/curated/reference_series.manifest.json` records the
-retrieval date, first and last monthly observation and an observation digest
-for each series.
+retrieval date, first and last monthly observation, an observation digest and
+a digest of the held annual rows (year, value, unit) for each series. `--check`
+recomputes that digest, so an edited value or unit fails the check. Each
+monthly observation is validated before it is averaged. The CSV and the
+manifest are replaced as a pair; if either write fails, the previous pair is
+restored.
 
 Monthly observations are reduced to a **calendar-year mean** (the right reduction
 for a cost basis: a project spending through a year pays close to the year's

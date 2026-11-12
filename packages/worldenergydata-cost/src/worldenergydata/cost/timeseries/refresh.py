@@ -177,6 +177,30 @@ def validate_reference_rows(
     return tuple(revisions)
 
 
+def _rows_digest(rows: Sequence[CostObservation]) -> str:
+    """Digest of the held annual rows of one series: year, value and unit."""
+    payload = "".join(
+        f"{row.year},{row.value!r},{row.unit}\n"
+        for row in sorted(rows, key=lambda row: row.year)
+    )
+    return hashlib.sha256(payload.encode()).hexdigest()
+
+
+def _validate_monthly(series_id: str, observations: list[tuple[date, float]]) -> None:
+    """Every monthly observation must be finite and positive before averaging."""
+    bad = [
+        day.isoformat()
+        for day, value in observations
+        if not math.isfinite(value) or value <= 0
+    ]
+    if bad:
+        raise RefreshError(
+            f"{series_id}: non-finite or non-positive monthly observation at "
+            f"{', '.join(bad[:3])}"
+            + (f" and {len(bad) - 3} more" if len(bad) > 3 else "")
+        )
+
+
 def _manifest(
     fetched: Sequence[CostObservation],
     monthly: dict[str, list[tuple[date, float]]],
@@ -202,6 +226,9 @@ def _manifest(
                 "last_observation": observations[-1][0].isoformat(),
                 "monthly_observations": len(observations),
                 "annual_rows": sum(row.source_url == url for row in fetched),
+                "annual_rows_sha256": _rows_digest(
+                    [row for row in fetched if row.source_url == url]
+                ),
                 "observations_sha256": hashlib.sha256(payload.encode()).hexdigest(),
             }
         )
@@ -214,14 +241,27 @@ def _manifest(
     }
 
 
-def _write_json(payload: dict, path: Path) -> None:
+def _stage_json(payload: dict, path: Path) -> Path:
+    """Write the manifest beside its destination and return the staged path."""
     text = json.dumps(payload, indent=2, sort_keys=True, ensure_ascii=False) + "\n"
     with tempfile.NamedTemporaryFile(
         mode="w", encoding="utf-8", newline="\n", dir=path.parent, delete=False
     ) as handle:
         handle.write(text)
-        temporary = Path(handle.name)
-    os.replace(temporary, path)
+    return Path(handle.name)
+
+
+def _replace_pair(
+    staged_csv: Path, csv_path: Path, staged_manifest: Path, manifest_path: Path
+) -> None:
+    """Replace the CSV and its manifest together; restore the CSV on failure."""
+    previous = csv_path.read_bytes()
+    os.replace(staged_csv, csv_path)
+    try:
+        os.replace(staged_manifest, manifest_path)
+    except BaseException:
+        csv_path.write_bytes(previous)
+        raise
 
 
 def refresh(
@@ -235,8 +275,10 @@ def refresh(
     monthly: dict[str, list[tuple[date, float]]] = {}
 
     def recording_fetch(series_id: str) -> list[tuple[date, float]]:
-        monthly[series_id] = list(fetch(series_id))
-        return monthly[series_id]
+        observations = list(fetch(series_id))
+        _validate_monthly(series_id, observations)
+        monthly[series_id] = observations
+        return observations
 
     existing = read_timeseries_csv(timeseries_path)
     fetched = build_reference_observations(
@@ -251,14 +293,18 @@ def refresh(
     merged = merge_reference_rows(existing, fetched, specs)
     manifest = _manifest(fetched, monthly, accessed_date, specs)
 
+    target_manifest = manifest_path or timeseries_path.with_name(MANIFEST_NAME)
     staged = timeseries_path.with_name(f".{timeseries_path.name}.tmp")
+    staged_manifest: Path | None = None
     try:
         written = write_timeseries_csv(merged, staged)
         read_timeseries_csv(staged)  # the staged file must pass the row contract
-        os.replace(staged, timeseries_path)
+        staged_manifest = _stage_json(manifest, target_manifest)
+        _replace_pair(staged, timeseries_path, staged_manifest, target_manifest)
     finally:
         staged.unlink(missing_ok=True)
-    _write_json(manifest, manifest_path or timeseries_path.with_name(MANIFEST_NAME))
+        if staged_manifest is not None:
+            staged_manifest.unlink(missing_ok=True)
     return RefreshResult(written, len(fetched), revisions, manifest)
 
 
@@ -302,6 +348,10 @@ def check_freshness(
             )
         if any(row.accessed_date != retrieved for row in held):
             problems.append(f"{spec.series_id}: row access date differs from manifest")
+        if _rows_digest(held) != entry.get("annual_rows_sha256"):
+            problems.append(
+                f"{spec.series_id}: held years, values or units differ from manifest"
+            )
     return problems
 
 

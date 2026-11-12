@@ -5,6 +5,7 @@
   "series": [
     {
       "annual_rows": 29,
+      "annual_rows_sha256": "60ddb650b678deb1dcab3180a928dbdb8a5018ebf20706138fc0ee66c2f1f169",
       "component": "index_cpi",
       "first_observation": "1947-01-01",
       "last_observation": "2026-10-01",
@@ -18,6 +19,7 @@
     },
     {
       "annual_rows": 29,
+      "annual_rows_sha256": "4059f6a3535d0b82df765384be4f664ffc1ed3910a5182bd11c7650c3e55db36",
       "component": "index_ppi_drilling",
       "first_observation": "1985-12-01",
       "last_observation": "2026-09-01",
@@ -31,6 +33,7 @@
     },
     {
       "annual_rows": 29,
+      "annual_rows_sha256": "d74b422f22b6617ecd30c971123447b8751ddc2f4c3e48f6c09cbb6e35a478b9",
       "component": "index_ppi_support",
       "first_observation": "1985-12-01",
       "last_observation": "2026-09-01",
@@ -44,6 +47,7 @@
     },
     {
       "annual_rows": 29,
+      "annual_rows_sha256": "3f82a6b1505cfcf9e2225e82788c8442c4940344bdb72797ffab40c4e543b190",
       "component": "index_ppi_machinery",
       "first_observation": "1965-01-01",
       "last_observation": "2026-09-01",
@@ -53,10 +57,11 @@
       "series_id": "PCU333132333132",
       "source_url": "https://fred.stlouisfed.org/series/PCU333132333132",
       "title": "PPI by Industry: Oil and Gas Field Machinery and Equipment (NAICS 333132)",
-      "unit": "index_1965_eq_100"
+      "unit": "index_dec_1980_eq_100"
     },
     {
       "annual_rows": 29,
+      "annual_rows_sha256": "ff3211a2c87eaecd80614f552098875d342f5b43fea61b3094d4d7af1470ce7d",
       "component": "index_ppi_steel_mill",
       "first_observation": "1939-01-01",
       "last_observation": "2026-09-01",
@@ -70,6 +75,7 @@
     },
     {
       "annual_rows": 29,
+      "annual_rows_sha256": "9c018917ec2a2dd3ee5b03366157ecbf9b2a801c8447a19a56bc71af210f2595",
       "component": "index_ppi_steel_pipe",
       "first_observation": "1982-06-01",
       "last_observation": "2026-09-01",
@@ -83,6 +89,7 @@
     },
     {
       "annual_rows": 29,
+      "annual_rows_sha256": "375c5f77268699cb4d762ddbce9603784f6eff95f508cf9e5644d7e0363bae21",
       "component": "oil_price_brent",
       "first_observation": "1987-05-01",
       "last_observation": "2026-10-01",
@@ -96,6 +103,7 @@
     },
     {
       "annual_rows": 29,
+      "annual_rows_sha256": "153131331bbc2945324c71a5d2d545d7b0ef36692bbeeb6f2cd3b71dee5f7832",
       "component": "oil_price_wti",
       "first_observation": "1986-01-01",
       "last_observation": "2026-10-01",

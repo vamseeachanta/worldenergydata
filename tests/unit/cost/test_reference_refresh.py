@@ -8,6 +8,7 @@ from pathlib import Path
 
 import pytest
 
+from worldenergydata.cost.timeseries import refresh as refresh_module
 from worldenergydata.cost.timeseries.dataset import (
     read_timeseries_csv,
     write_timeseries_csv,
@@ -141,3 +142,77 @@ def test_curated_snapshot_is_consistent_with_its_manifest() -> None:
     manifest = json.loads(CURATED.with_name(MANIFEST_NAME).read_text(encoding="utf-8"))
     retrieved = date.fromisoformat(manifest["retrieved_date"])
     assert check_freshness(CURATED, retrieved) == []
+
+
+def test_annual_values_match_independent_arithmetic(held: Path) -> None:
+    """Fixture month m of year y is 100 + (y - 1998) + m/100."""
+    refresh(held, ACCESSED, fetch=_fetch())
+    owned = _owned(read_timeseries_csv(held))
+    by_year: dict[int, set[float]] = {}
+    for row in owned:
+        by_year.setdefault(row.year, set()).add(row.value)
+    assert by_year[1998] == {100.065}  # mean of 100.01 .. 100.12
+    assert by_year[2026] == {128.05}  # January to September: 128.01 .. 128.09
+    partial = {row.year for row in owned if "PARTIAL YEAR" in (row.notes or "")}
+    assert partial == {2026}
+
+
+def test_one_bad_month_blocks_before_averaging(held: Path) -> None:
+    snapshot = held.read_bytes()
+
+    def mixed(series_id: str):
+        months = _monthly(1998, date(2026, 9, 1))
+        months[-1] = (months[-1][0], -1.0)  # annual mean stays positive
+        return months
+
+    with pytest.raises(RefreshError, match="monthly observation at 2026-09-01"):
+        refresh(held, ACCESSED, fetch=mixed)
+    assert held.read_bytes() == snapshot
+    assert not held.with_name(MANIFEST_NAME).exists()
+
+
+def test_check_detects_edited_value_and_unit(held: Path) -> None:
+    refresh(held, ACCESSED, fetch=_fetch())
+    rows = read_timeseries_csv(held)
+    target = next(
+        row
+        for row in rows
+        if row.component.value == "index_ppi_drilling" and row.year == 2026
+    )
+    scaled = [
+        row.model_copy(update={"value": row.value * 100}) if row is target else row
+        for row in rows
+    ]
+    write_timeseries_csv(scaled, held)
+    assert any("values or units" in line for line in check_freshness(held, ACCESSED))
+    relabelled = [
+        row.model_copy(update={"unit": "index_other"}) if row is target else row
+        for row in rows
+    ]
+    write_timeseries_csv(relabelled, held)
+    assert any("values or units" in line for line in check_freshness(held, ACCESSED))
+    write_timeseries_csv(rows, held)
+    assert check_freshness(held, ACCESSED) == []
+
+
+def test_manifest_write_failure_restores_previous_pair(held: Path, monkeypatch) -> None:
+    refresh(held, ACCESSED, fetch=_fetch())
+    manifest_path = held.with_name(MANIFEST_NAME)
+    csv_before, manifest_before = held.read_bytes(), manifest_path.read_bytes()
+    real_replace = refresh_module.os.replace
+
+    def failing_replace(source, destination):
+        if Path(destination) == manifest_path:
+            raise OSError("manifest write failed")
+        return real_replace(source, destination)
+
+    monkeypatch.setattr(refresh_module.os, "replace", failing_replace)
+    with pytest.raises(OSError, match="manifest write failed"):
+        refresh(held, date(2026, 11, 13), fetch=_fetch(level=100.5))
+    monkeypatch.undo()
+    assert held.read_bytes() == csv_before
+    assert manifest_path.read_bytes() == manifest_before
+    assert sorted(path.name for path in held.parent.iterdir()) == sorted(
+        [held.name, MANIFEST_NAME]
+    )
+    assert check_freshness(held, ACCESSED) == []

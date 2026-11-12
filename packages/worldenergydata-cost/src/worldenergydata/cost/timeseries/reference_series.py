@@ -101,7 +101,8 @@ REFERENCE_SERIES: tuple[ReferenceSeriesSpec, ...] = (
         series_id="PCU333132333132",
         component=CostComponent.INDEX_PPI_MACHINERY,
         title="PPI by Industry: Oil and Gas Field Machinery and Equipment (NAICS 333132)",
-        unit="index_1965_eq_100",
+        # FRED states "Index Dec 1980=100"; 1965 is only the first observation.
+        unit="index_dec_1980_eq_100",
         publisher="U.S. Bureau of Labor Statistics via FRED",
         is_index=True,
     ),
