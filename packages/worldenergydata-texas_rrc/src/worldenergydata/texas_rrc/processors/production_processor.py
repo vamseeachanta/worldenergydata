@@ -14,6 +14,7 @@ from typing import Any, Dict, Iterator, List, Optional, Union
 
 import pandas as pd
 
+from ..district_inputs import require_district_names
 from ..validators import TexasDataValidator
 
 logger = logging.getLogger(__name__)
@@ -40,7 +41,10 @@ class ProductionProcessor:
 
     # Column name mappings for common PDQ formats
     COLUMN_MAPPINGS = {
-        "DISTRICT_NO": "district",
+        "DISTRICT_NO": "district_no",
+        "OG_DIST_NO": "district_no",
+        "DIST_NO": "district_no",
+        "DISTRICT_NAME": "district",
         "LEASE_NO": "lease_number",
         "LEASE_NAME": "lease_name",
         "OPERATOR_NO": "operator_number",
@@ -89,7 +93,10 @@ class ProductionProcessor:
             Processed data in the same format as input
         """
         if isinstance(data, pd.DataFrame):
+            require_district_names(data.columns)
             return self._process_dataframe(data, validate)
+        for record in data:
+            require_district_names(record)
         return self._process_records(data, validate)
 
     def _process_dataframe(

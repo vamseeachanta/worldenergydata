@@ -23,8 +23,8 @@ from worldenergydata.texas_rrc.texas_rrc import TexasRRC
 @pytest.mark.parametrize("route", ["string", "file", "stream"])
 def test_csv_preserves_district_codes(district, route, tmp_path):
     """A district is a text identifier; exact equality is the criterion."""
-    content = f"DISTRICT_NO\n{district}\n"
-    mapping = {"DISTRICT_NO": "district"}
+    content = f"DISTRICT_NAME\n{district}\n"
+    mapping = {"DISTRICT_NAME": "district"}
     loader = CSVLoader()
     if route == "string":
         records = loader.load_from_string(content, field_mapping=mapping)
@@ -94,7 +94,7 @@ def test_pdq_stream_matches_bulk_district_conversion(district, tmp_path):
     with zipfile.ZipFile(path, "w") as archive:
         archive.writestr(
             "production.csv",
-            f"OG_DIST_NO,OG_OIL_PROD,OG_WELL_CNT\n{district},100,2\n",
+            f"DISTRICT_NAME,OG_OIL_PROD,OG_WELL_CNT\n{district},100,2\n",
         )
     loader = PDQLoader()
     bulk = loader.load_zip(path)

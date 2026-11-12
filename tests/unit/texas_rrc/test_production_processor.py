@@ -174,7 +174,8 @@ class TestNormalizeColumns:
         proc = ProductionProcessor()
         df = pd.DataFrame({"DISTRICT_NO": [1], "OIL_BBL": [100]})
         result = proc._normalize_columns(df)
-        assert "district" in result.columns
+        assert "district_no" in result.columns
+        assert "district" not in result.columns
         assert "oil_production" in result.columns
 
     def test_custom_columns(self):
@@ -200,7 +201,7 @@ class TestProcessDataFrame:
         proc = ProductionProcessor()
         df = pd.DataFrame(
             {
-                "DISTRICT_NO": ["01"],
+                "DISTRICT_NAME": ["01"],
                 "OIL_BBL": ["100"],
                 "GAS_MCF": ["500"],
             }

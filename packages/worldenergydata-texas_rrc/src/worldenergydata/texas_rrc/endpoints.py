@@ -11,6 +11,8 @@ Defines all available Texas Railroad Commission data endpoints including:
 - Completion reports
 """
 
+from .validators import TexasDataValidator
+
 # Texas RRC base URLs
 RRC_BASE_URLS = {
     "main": "https://www.rrc.texas.gov",
@@ -281,11 +283,7 @@ def get_district_info(district_code: str) -> dict:
         ValueError: If district code is not valid
     """
     # Normalize district code
-    normalized = (
-        district_code.upper().zfill(2)
-        if district_code.isdigit()
-        else district_code.upper()
-    )
+    normalized = TexasDataValidator().normalize_district(district_code)
     if normalized not in TEXAS_DISTRICTS:
         raise ValueError(
             f"Invalid district code: {district_code}. "
