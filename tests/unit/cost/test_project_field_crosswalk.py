@@ -77,9 +77,9 @@ def link(**changes):
         json.dumps(
             dict(
                 project_sources=["curated/example.csv#PROJECT=Example A"],
-                catalog_fields=[row["CATALOG_FIELD_ID"]]
-                if row["CATALOG_FIELD_ID"]
-                else [],
+                catalog_fields=(
+                    [row["CATALOG_FIELD_ID"]] if row["CATALOG_FIELD_ID"] else []
+                ),
                 basis="Synthetic identity evidence",
                 limitation="Field identity only; project scope retained; no cost allocation or scope equivalence.",
             )
