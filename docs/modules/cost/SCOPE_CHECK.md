@@ -11,6 +11,7 @@ are not established by matching these groups.
 | Revision | Date | Change and reason |
 | --- | --- | --- |
 | 0 | 2026-11-12 | Introduce explicit per-metric screening ranges and JSON interfaces without adding overlapping CAPEX estimates. |
+| 1 | 2026-11-12 | Compare equally close groups together and reject unusable tables, missing quantities and unrecognised labels so input defects cannot appear as missing comparables. |
 
 ## Python and command line
 
@@ -29,7 +30,11 @@ Both arguments are local files. The table defaults to
 `reports/cost/unit_cost_benchmarks.csv`, relative to the current working directory.
 A missing table produces an explicit error; invented fixture values are never
 substituted. The CLI writes JSON and exits nonzero on invalid input or an absent
-table. A valid scope without close comparables produces `range: null` and
+table. A header-only table or a table without a row with `n >= 1` is invalid.
+A scope requires at least one positive `wells`, `trees`, `surf_km`,
+`peak_production_kboed` or `recoverable_resource_boe` quantity; unsupported-only
+and all-zero quantities are rejected. A valid scope without close comparables
+produces `range: null` and
 `reason: "no close comparables"` with a successful exit.
 
 `examples/cost_check_invented_scope.json` contains an **invented** scope and quote,
@@ -48,22 +53,43 @@ absent table. Its result is a JSON-serializable dictionary.
 Water-depth band and host type are mandatory and never relaxed. Depths in metres
 map to `shallow` through 300, `mid` above 300 through 1000, `deep` above 1000 through
 2000, and `ultra_deep` above 2000. A supplied depth band and depth must agree.
-Labels are matched exactly after surrounding whitespace is removed.
+These bands follow the table convention in
+`data_collection.calibration_schema.WaterDepthBand`; each shared boundary belongs
+to the shallower band here. Labels are matched exactly after surrounding
+whitespace is removed. The supplied table defines the case-sensitive region,
+development-type and host labels. A host label must occur in a usable table row;
+an unrecognised spelling is an input error. The producer's `unknown` placeholder
+is rejected, case-insensitively, in scope grouping keys. Omit an unknown optional
+scope key instead. Table rows carrying that placeholder in any grouping key are
+excluded from matching and the host vocabulary. A sampled excluded row is counted
+in the output limitations and makes the result indicative; a table without any
+remaining usable row is rejected. Usable table depth bands must use the four
+labels above.
+Static schema validation does not establish membership in a supplied table's
+host vocabulary; runtime validation performs that check after loading the table.
 
 For each metric with a positive supplied quantity, an exact group is tried first.
-Fallback will drop `region`, then `development_type`, then both. Omitted optional
-group keys are also listed as dropped. Only a unique existing table row with
-`n >= 1` is usable at a matching stage. Multiple rows are ambiguous: the result
-will not pick an arbitrary row or pool their summary percentiles. Each selected
-row's actual keys and `dropped_keys` are returned under `matched_group[metric]`.
+Fallback considers both one-key relaxations together, then dropping both keys.
+Omitted optional group keys are also listed as dropped. At each stage all
+distinct matching rows across its relaxations are considered together. The
+nearest nonempty stage is used only if it contains exactly one row with
+`n >= 1`. Multiple rows are ambiguous even when one relaxation has a singleton
+and another has several matches. A wider stage cannot resolve that tie. The
+limitation names the group count and the total omitted plus relaxed key count;
+`range: null` retains `reason: "no close comparables"` when no metric is usable.
+The result will not pick an arbitrary row or pool their summary percentiles.
+Each selected row's actual keys and `dropped_keys` are returned under
+`matched_group[metric]`.
 A different region's row can therefore serve only as an explicitly flagged
 proxy. Dropped keys make the output indicative, regardless of sample size.
 
 Every range includes its own comparables; the top-level `comparables` is their
 sorted union. A row must name exactly `n` unique project identifiers. Duplicate
 metric/group rows, unsupported units, invalid sample counts and non-finite or
-unordered percentiles are rejected. Fewer than five comparables makes a result
-indicative even if the input flag disagrees. Unsupported or unmatched positive
+unordered percentiles are rejected for rows with samples. Zero-sample rows do
+not qualify for matching or establish the host vocabulary. Fewer than five
+comparables makes a result indicative even if the input flag disagrees.
+Unsupported or unmatched positive
 scope quantities are listed in `unbenchmarked_elements` and also make a result
 indicative.
 

@@ -12,6 +12,7 @@ from pathlib import Path
 
 DEFAULT_BENCHMARKS = Path("reports/cost/unit_cost_benchmarks.csv")
 GROUP_KEYS = ("water_depth_band", "region", "development_type", "host_type")
+DEPTH_BANDS = {"shallow", "mid", "deep", "ultra_deep"}
 # These denominators describe alternative whole-project estimates, not elements.
 METRICS = {
     "capex_per_well": ("wells", "well"),
@@ -63,8 +64,13 @@ def _scope_group(scope):
     if "host_type" not in scope:
         raise ValueError("host_type is required")
     group = {key: scope[key].strip() for key in GROUP_KEYS if key in scope}
+    for key, label in group.items():
+        if label.casefold() == "unknown":
+            raise ValueError(f"{key} must match a known benchmark label")
     if "water_depth_m" in scope:
         depth = _number(scope["water_depth_m"], "water_depth_m")
+        # Table convention: data_collection.calibration_schema.WaterDepthBand.
+        # The consumer assigns each shared boundary to the shallower band.
         band = next(
             (
                 band
@@ -76,11 +82,13 @@ def _scope_group(scope):
         if "water_depth_band" in group and group["water_depth_band"] != band:
             raise ValueError("water_depth_band disagrees with water_depth_m")
         group["water_depth_band"] = band
-    if group.get("water_depth_band") not in {"shallow", "mid", "deep", "ultra_deep"}:
+    if group.get("water_depth_band") not in DEPTH_BANDS:
         raise ValueError("water_depth_m or a valid water_depth_band is required")
     for key in QUANTITIES:
         if key in scope:
             _number(scope[key], key, integer=key in COUNTS)
+    if not any(scope.get(quantity, 0) > 0 for quantity, _unit in METRICS.values()):
+        raise ValueError("at least one positive benchmarkable quantity is required")
     if "quote" in scope:
         _number(scope["quote"], "quote")
     if scope.get("quote_cost_basis", "USD_2026") not in ("USD_2026", "nominal"):
@@ -139,6 +147,7 @@ def _load_table(path):
     if not required <= set(reader.fieldnames or ()):
         raise ValueError("benchmark table is missing required columns")
     rows, seen = [], set()
+    excluded_unknown = 0
     for raw in reader:
         if any(value is None for value in raw.values()) or None in raw:
             raise ValueError("benchmark row has an invalid column count")
@@ -155,6 +164,11 @@ def _load_table(path):
             raise ValueError("benchmark n must be nonnegative")
         if count == 0:
             continue
+        if (
+            row["water_depth_band"] not in DEPTH_BANDS
+            and row["water_depth_band"].casefold() != "unknown"
+        ):
+            raise ValueError("benchmark water_depth_band must use a defined band")
         row["n"] = count
         basis = row["cost_basis"]
         if basis not in {"USD_2026", "nominal"}:
@@ -190,8 +204,13 @@ def _load_table(path):
         if identity in seen:
             raise ValueError("duplicate benchmark group")
         seen.add(identity)
+        if any(row[key].casefold() == "unknown" for key in GROUP_KEYS):
+            excluded_unknown += 1
+            continue
         rows.append(row)
-    return rows, sha256(content).hexdigest()
+    if not rows:
+        raise ValueError("benchmark table has no usable benchmark rows with n >= 1")
+    return rows, sha256(content).hexdigest(), excluded_unknown
 
 
 def _select(rows, metric, group):
@@ -205,18 +224,23 @@ def _select(rows, metric, group):
     missing = [key for key in optional if key not in group]
     supplied = [key for key in optional if key in group]
     for size in range(len(supplied) + 1):
+        stage = {}
         for relaxed in combinations(supplied, size):
             dropped = missing + list(relaxed)
-            matches = [
-                row
-                for row in candidates
-                if all(key in dropped or row[key] == group[key] for key in optional)
-            ]
-            if len(matches) == 1:
-                return matches[0], sorted(dropped), False
-            if len(matches) > 1:
-                return None, [], True
-    return None, [], False
+            for row in candidates:
+                if all(key in dropped or row[key] == group[key] for key in optional):
+                    identity = tuple(row[key] for key in GROUP_KEYS)
+                    stage[identity] = (row, sorted(dropped))
+        if len(stage) == 1:
+            row, dropped = next(iter(stage.values()))
+            return row, dropped, None
+        if len(stage) > 1:
+            return (
+                None,
+                [],
+                f"{len(stage)} groups at {len(missing) + size} dropped optional keys",
+            )
+    return None, [], None
 
 
 def _position(quote, interval):
@@ -237,7 +261,9 @@ def check_scope(scope: dict, benchmark_path=DEFAULT_BENCHMARKS) -> dict:
     Nominal input stays nominal. Escalation is never reconstructed or invented.
     """
     group = _scope_group(scope)
-    rows, digest = _load_table(benchmark_path)
+    rows, digest, excluded_unknown = _load_table(benchmark_path)
+    if group["host_type"] not in {row["host_type"] for row in rows}:
+        raise ValueError("host_type must match a known benchmark label in the table")
     result = {
         "range": None,
         "comparables": [],
@@ -262,8 +288,13 @@ def check_scope(scope: dict, benchmark_path=DEFAULT_BENCHMARKS) -> dict:
             "contract; no conversion is applied.",
         },
     }
+    if excluded_unknown:
+        result["limitations"].append(
+            "Excluded benchmark rows with unknown grouping labels: "
+            f"{excluded_unknown}; these rows cannot qualify as comparables."
+        )
     intervals, bases, ids = {}, set(), set()
-    indicative = False
+    indicative = bool(excluded_unknown)
     for metric, (quantity_key, _unit) in METRICS.items():
         quantity = scope.get(quantity_key, 0)
         if not quantity:
@@ -273,7 +304,8 @@ def check_scope(scope: dict, benchmark_path=DEFAULT_BENCHMARKS) -> dict:
             result["unbenchmarked_elements"].append(quantity_key)
             if ambiguous:
                 result["limitations"].append(
-                    f"{metric}: ambiguous comparable groups; summary percentiles cannot be pooled."
+                    f"{metric}: ambiguous comparable groups; {ambiguous}; "
+                    "summary percentiles cannot be pooled."
                 )
             continue
         interval = {

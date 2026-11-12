@@ -73,7 +73,8 @@
     "host_type": {
       "type": "string",
       "minLength": 1,
-      "pattern": "\\S"
+      "pattern": "\\S",
+      "description": "Case-sensitive label present in a usable benchmark table row; runtime validation rejects an absent label or the unknown placeholder."
     },
     "water_depth_band": {
       "enum": [
@@ -106,5 +107,61 @@
       "description": "Whole-project quote basis; a nominal comparison requires an asserted common price year."
     }
   },
-  "$comment": "If depth and band are both supplied, runtime validation requires agreement. Non-finite numbers are rejected."
+  "$comment": "If depth and band are both supplied, runtime validation requires agreement. Non-finite numbers and unknown grouping labels are rejected. Host vocabulary is validated at runtime against the supplied table.",
+  "allOf": [
+    {
+      "anyOf": [
+        {
+          "required": [
+            "wells"
+          ],
+          "properties": {
+            "wells": {
+              "exclusiveMinimum": 0
+            }
+          }
+        },
+        {
+          "required": [
+            "trees"
+          ],
+          "properties": {
+            "trees": {
+              "exclusiveMinimum": 0
+            }
+          }
+        },
+        {
+          "required": [
+            "surf_km"
+          ],
+          "properties": {
+            "surf_km": {
+              "exclusiveMinimum": 0
+            }
+          }
+        },
+        {
+          "required": [
+            "peak_production_kboed"
+          ],
+          "properties": {
+            "peak_production_kboed": {
+              "exclusiveMinimum": 0
+            }
+          }
+        },
+        {
+          "required": [
+            "recoverable_resource_boe"
+          ],
+          "properties": {
+            "recoverable_resource_boe": {
+              "exclusiveMinimum": 0
+            }
+          }
+        }
+      ]
+    }
+  ]
 }
