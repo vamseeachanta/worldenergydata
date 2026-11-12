@@ -1,5 +1,5 @@
 {
-  "crosswalk_sha256": "9b4363b0d0f3c85c01d7a303d209533d83beec1b45c78584b7d2746d04121c5a",
+  "crosswalk_sha256": "9b7e3d8f20af342eda1b15e5ced063c725747e147b536a360c0847c777b52c89",
   "dataset_id": "cost-project-field-crosswalk",
   "digest_domain": "utf8-lf",
   "inputs": {
@@ -14,6 +14,8 @@
     "data/modules/cost/curated/sanctioned_project_cost_years.csv": "d36b870e50377dc99d566fb02b74e7260221852ddd18f15b2a1066c326e7fe1a",
     "data/modules/cost/curated/sanctioned_projects.csv": "b71e98598f3b46d8e088a700cd8b0a21b6055b1a843d96243a4a7e103b515d09",
     "data/modules/cost/curated/sanctioned_projects_2026.csv": "7467d50663d5b24ff7b4a03a77bb7d13b5273a7d61f3ed8d28c360acd0010a91",
+    "data/modules/cost/staging/asia-pacific-caspian-2016-2026.csv": "0e66d03576a5045ea0e786d55ea5c1d8656a76c93e52c58d5d9e82d1136aae59",
+    "data/modules/cost/staging/europe-2016-2026.csv": "321b52a9df6d4e18350c0c63bc97bd5917a52e9211ab5b6addfa2a3eb11a748c",
     "src/worldenergydata/field_development/past_projects.yml": "ccfe6d3c790be6eed7c2c0b7edb878166b3cd6955fd675e31d215ccb1c6c1928"
   },
   "schema_version": 1,

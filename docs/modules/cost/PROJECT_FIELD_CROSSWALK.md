@@ -76,8 +76,11 @@ is JSON with the following keys:
 
 Table 1. Evidence fields are revalidated against the inventory and linked ID.
 
-The held snapshot contains 85 projects, with 8 mapped and 77 explained
-(85/85 accounted for, exceeding the issue's 90% mapped-or-explained criterion).
+The held snapshot contains 194 projects, with 8 mapped and 186 explained
+(194/194 accounted for, exceeding the issue's 90% mapped-or-explained criterion).
+The 43 Asia-Pacific and Caspian staging projects and the 66 Europe staging
+projects are all explained with the reason class "Outside catalog scope
+(non-GoM)"; none receives a catalog ID.
 The field catalog contains 11 Gulf of Mexico entries and an empty worldwide
 slice. The mapped count is separate from explained coverage. Three manual links
 retain initial-phase or rename wording already present in the cost register.
@@ -105,8 +108,9 @@ Inventory includes all PROJECT- or PROJECT_ID-bearing CSVs recursively under
 `data/modules/cost/curated/` and `staging/`, excluding exactly the crosswalk
 itself. Other CSVs do not add projects. The four current register tables
 (sanctions, awards, statements, revisions) are required. Malformed CSVs fail
-loudly. Staging is absent from this snapshot; adding or removing a staging
-project intentionally requires reconciliation and manifest refresh.
+loudly. Staging currently holds the Asia-Pacific and Caspian tranche and the
+Europe tranche; adding or removing a staging project intentionally requires
+reconciliation and manifest refresh in the same change.
 
 This inventory rule includes `sanctioned_projects_2026.csv` (a derived
 restatement) and `sanctioned_project_cost_years.csv` (statement-year metadata).
