@@ -11,6 +11,7 @@ project IDs behind the statistics. A group with fewer than five projects carries
 | --- | --- | --- |
 | Initial | 2026-11-12 | Define project intensities, source lineage and fail-closed input requirements. |
 | Interface update | 2026-11-12 | Reconcile upstream crosswalk and escalation tables, retain unmatched reasons, add depth marginals and preserve numeric CSV precision. |
+| Bound and provenance correction | 2026-11-12 | Exclude curated lower and upper bounds anywhere in the basis and reject derived tables that disagree with an available nominal source. |
 
 Table 1. Method edition history.
 
@@ -41,8 +42,14 @@ imputed or invented by this module. The input files are:
   A missing escalation column prevents report generation. An individual missing
   or invalid cost or lineage value excludes that project with a reason.
   `--projects` explicitly selects a complete alternative table, such as the
-  upstream derived `sanctioned_projects_2026.csv`; the default project table is
-  then neither read nor hashed. No columns or values fall back to nominal input.
+  upstream derived `sanctioned_projects_2026.csv`. When a separate nominal
+  `sanctioned_projects.csv` is present, every selected row shall carry
+  `PROJECTS_SHA256` matching its UTF-8/LF-normalized SHA-256 and
+  `INPUT_DIGEST_BASIS=sha256_utf8_lf`. Missing, invalid or mismatched provenance
+  stops generation before either output is written. The nominal table is read
+  only for this correspondence check and input hashing; its columns and values
+  never replace derived inputs. Without the nominal table, source correspondence
+  cannot be checked; the selected table's own input digest still is recorded.
 - `cost_project_identity.csv`: active project IDs and exact
   `sanctioned_projects.csv` locators of the form `PROJECT=<project>`.
   An explicit `PROJECT_ID` on the project row must agree with the registry and
@@ -112,11 +119,15 @@ HTML. Missing source, escalation or invalid crosswalk lineage excludes all its m
 Missing source values remain missing; zero is not a replacement.
 An explicit unmatched field is not missing cost provenance.
 
-Disclosed lower bounds are excluded from point percentiles. The declared rule
+Disclosed lower and upper bounds are excluded from point percentiles. The declared rule
 matches a stripped `CAPEX_BASIS` starting with `FLOOR`, `LOWER-BOUND`,
-`LOWER BOUND`, `IN EXCESS OF` or `AT LEAST`, case-insensitive, followed by
-whitespace, a colon or the end of text. A bound is not converted to a point
-estimate. Reasons and exclusion counts appear in the HTML. Other free-text
+`LOWER BOUND`, `UPPER-BOUND`, `UPPER BOUND`, `IN EXCESS OF` or `AT LEAST`,
+case-insensitive, followed by whitespace, a colon or the end of text.
+The curated uppercase whole tokens `FLOOR`, `LOWER-BOUND`, `LOWER BOUND`,
+`UPPER-BOUND` and `UPPER BOUND` are also detected anywhere in the basis.
+This anywhere rule is case-sensitive, so incidental lowercase wording such as
+`not a floor` and `floor-mounted` does not imply a bound. A bound is not converted
+to a point estimate. Reasons and exclusion counts appear in the HTML. Other free-text
 qualifications remain subject to source review; this vocabulary does not
 establish that every bound has been identified or predict the effect of
 exclusion on a percentile.
@@ -153,6 +164,10 @@ digests, and a facts digest. An edition date or hash does not establish source
 freshness or upstream correctness.
 The selected project-table basename is shown beside the input digests; an
 explicit alternative table is hashed under `projects_table`.
+An available separate nominal source is hashed under `nominal_projects_table`.
+Its raw input digest is checked before and after calculation; the correspondence
+check uses universal-newline normalization, matching the upstream escalation
+table's `sha256_utf8_lf` convention.
 Input-byte digests are compared before and after loading and calculation;
 a detected change prevents output. This is a stability check, not an atomic
 snapshot against a writer that changes and restores bytes between reads.

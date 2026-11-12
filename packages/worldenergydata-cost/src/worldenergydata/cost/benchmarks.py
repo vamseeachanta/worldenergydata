@@ -124,12 +124,13 @@ def _project_cost(row):
         if not _text(row, column):
             raise ValueError(f"missing {column}")
     # Declared source qualifications are bounds, not observed point costs.
+    basis = _text(row, "CAPEX_BASIS")
     if re.match(
-        r"^(?:FLOOR|LOWER[- ]BOUND|IN EXCESS OF|AT LEAST)(?:\s|:|$)",
-        _text(row, "CAPEX_BASIS"),
+        r"^(?:FLOOR|LOWER[- ]BOUND|UPPER[- ]BOUND|IN EXCESS OF|AT LEAST)(?:\s|:|$)",
+        basis,
         re.IGNORECASE,
-    ):
-        raise ValueError("CAPEX_BASIS declares a lower bound, not a point cost")
+    ) or re.search(r"\b(?:FLOOR|LOWER[- ]BOUND|UPPER[- ]BOUND)\b", basis):
+        raise ValueError("CAPEX_BASIS declares a bound, not a point cost")
     if _text(row, "MATCH_METHOD").lower() == "unmatched":
         if _text(row, "CATALOG_FIELD_IDS") or not _text(row, "MATCH_REASON"):
             raise ValueError("unmatched crosswalk requires a reason and no field ID")
@@ -319,6 +320,30 @@ def load_projects(data_dir, projects_path=None):
     missing += [column for column in ESCALATION_COLUMNS if column not in fields]
     if missing:
         raise ValueError("Missing input: " + ", ".join(missing))
+    source = data_dir / INPUT_FILES[0]
+    if (
+        projects_path is not None
+        and source.is_file()
+        and path.resolve() != source.resolve()
+    ):
+        digest = sha256(source.read_text(encoding="utf-8").encode("utf-8")).hexdigest()
+        rebuild = (
+            "rebuild with python -m worldenergydata.cost.escalation "
+            "--output <derived-table>"
+        )
+        for row in rows:
+            if _text(row, "INPUT_DIGEST_BASIS") != "sha256_utf8_lf" or not _text(
+                row, "PROJECTS_SHA256"
+            ):
+                raise ValueError(
+                    "Derived project provenance requires PROJECTS_SHA256 and "
+                    f"INPUT_DIGEST_BASIS=sha256_utf8_lf; {rebuild}"
+                )
+            if _text(row, "PROJECTS_SHA256") != digest:
+                raise ValueError(
+                    "Derived projects source digest does not match the UTF-8/LF "
+                    f"SHA-256 of sanctioned_projects.csv; {rebuild}"
+                )
     # Reuse the existing sanctioned-project reader for its schema and CAPEX-basis check.
     sanctioned = read_sanctioned_csv(path)
     identities = {}
@@ -656,10 +681,12 @@ No fuzzy aliases are applied. A project is counted once in each metric.</p>
 <p>The separate marginal table groups by depth alone; its rows are excluded from
 the CSV. Explicit unmatched field links retain the upstream reason and do not
 exclude an otherwise sourced project cost. CAPEX bases starting with FLOOR,
-LOWER-BOUND, LOWER BOUND, IN EXCESS OF or AT LEAST (followed by whitespace,
-a colon or end of text, case-insensitive) declare lower bounds and are excluded
+LOWER-BOUND, LOWER BOUND, UPPER-BOUND, UPPER BOUND, IN EXCESS OF or AT LEAST
+(followed by whitespace, a colon or end of text, case-insensitive) declare bounds.
+Uppercase whole tokens FLOOR, LOWER-BOUND, LOWER BOUND, UPPER-BOUND or UPPER BOUND
+anywhere in the basis also declare bounds. Both lower and upper bounds are excluded
 from point percentiles. Other free-text qualifications require source review;
-this prefix vocabulary does not establish that every bound is identified.</p>
+this declared vocabulary does not establish that every bound is identified.</p>
 <p>Every row belonging to a repeated project ID is excluded from both views;
 the alternative costs are shown below and no cost is selected or averaged.</p>
 <p>These ratios divide total project CAPEX by scope quantities;
@@ -686,6 +713,9 @@ def write_benchmarks(data_dir, output_dir, report_date, projects_path=None):
     }
     if projects_path is not None:
         input_paths["projects_table"] = Path(projects_path)
+        source = Path(data_dir) / INPUT_FILES[0]
+        if source.is_file() and source.resolve() != Path(projects_path).resolve():
+            input_paths["nominal_projects_table"] = source
     for name, path in input_paths.items():
         if not path.is_file():
             raise ValueError(f"Missing input: {name}")

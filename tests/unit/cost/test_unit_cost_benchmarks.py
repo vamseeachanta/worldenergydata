@@ -5,6 +5,7 @@ import os
 import subprocess
 import sys
 from copy import deepcopy
+from hashlib import sha256
 
 import pytest
 
@@ -629,19 +630,24 @@ def test_cli_explicit_derived_projects_table_and_no_nominal_fallback(
     root = inputs(tmp_path, projects)
     original = root / "sanctioned_projects.csv"
     selected = root / "sanctioned_projects_2026.csv"
-    selected.write_bytes(original.read_bytes())
     with original.open(encoding="utf-8") as stream:
         rows = list(csv.DictReader(stream))
     write_csv(
         original,
         [{k: v for k, v in row.items() if k != "CAPEX_USD_MM_2026"} for row in rows],
     )
+    digest = sha256(original.read_text(encoding="utf-8").encode("utf-8")).hexdigest()
+    for row in rows:
+        row.update(PROJECTS_SHA256=digest, INPUT_DIGEST_BASIS="sha256_utf8_lf")
+    write_csv(selected, rows)
     output = tmp_path / "reports"
     result = cli(root, output, "--projects", selected.as_posix())
     assert result.returncode == 0, result.stderr
     before = {p.name: p.read_bytes() for p in output.iterdir()}
     write_csv(original, [{**row, "SANCTIONED_CAPEX_USD_MM": "999999"} for row in rows])
-    assert cli(root, output, "--projects", selected.as_posix()).returncode == 0
+    result = cli(root, output, "--projects", selected.as_posix())
+    assert result.returncode == 2
+    assert "source digest" in result.stderr
     assert before == {p.name: p.read_bytes() for p in output.iterdir()}
     write_csv(
         selected, [{k: v for k, v in row.items() if k != "INDEX_USED"} for row in rows]
@@ -688,12 +694,31 @@ def test_csv_retains_small_percentile_precision(projects, tmp_path):
         "AT LEAST disclosed amount",
         "FLOOR",
         "FLOOR: disclosed amount",
+        # Curated basis wording; identifying references use invented labels.
+        "pre-sanction gross estimate FLOOR: 'in excess of US$2 billion' "
+        "per 44% partner Invented partner 6-K (May 2002 FEED/long-lead "
+        "approval, ahead of full 2002 sanction)",
+        "gross capital cost FLOOR 'more than $4 billion' at FID for the "
+        "initial 6-well phase (subsea tieback to Invented host FPU)",
+        "gross project cost at FID, phase 1 only. Operator stated as "
+        "'LESS THAN $5 billion' — this is an UPPER BOUND, not a point estimate",
+        "upper-bound disclosed amount",
+        "gross cost LOWER BOUND: disclosed amount",
     ],
 )
 def test_bound_costs_are_excluded_from_point_percentiles(projects, basis):
     projects[0]["CAPEX_BASIS"] = basis
     facts = build(projects)
-    assert well_row(facts)["n"] == 4
+    for row in facts["rows"] + facts["marginal_rows"]:
+        assert row["n"] == 4
+        assert row["indicative_only"] is True
+        assert "invented-1" not in row["comparables"]
+    row = well_row(facts)
+    # Remaining [20,30,40,100]: h=3p; P10=20+.3*10=23,
+    # P50=30+.5*10=35, P90=40+.7*60=82 (inclusive interpolation).
+    assert tuple(row[key] for key in ("p10", "p50", "p90")) == pytest.approx(
+        (23, 35, 82)
+    )
     assert any("bound" in r["reason"] for r in facts["exclusions"])
 
 
@@ -704,6 +729,8 @@ def test_bound_costs_are_excluded_from_point_percentiles(projects, basis):
         "point estimate confirmed by at least two sources",
         "not in excess of disclosed amount",
         "floor-mounted equipment cost",
+        "FLOORING equipment point cost",
+        "point cost for UPPER BOUNDARY equipment",
     ],
 )
 def test_point_estimate_mentioning_floor_is_not_a_bound(projects, basis):
@@ -799,12 +826,23 @@ def test_project_names_strip_only_outer_whitespace(projects, tmp_path):
     assert well_row(build(load_projects(root)))["n"] == 1
 
 
+@pytest.mark.parametrize("use_derived", [False, True])
 def test_changed_input_bytes_stop_generation_before_writing(
-    projects, tmp_path, monkeypatch
+    projects, tmp_path, monkeypatch, use_derived
 ):
     import worldenergydata.cost.benchmarks as module
 
     root = inputs(tmp_path, projects)
+    selected = None
+    if use_derived:
+        source = root / "sanctioned_projects.csv"
+        with source.open(encoding="utf-8") as stream:
+            rows = list(csv.DictReader(stream))
+        digest = sha256(source.read_text(encoding="utf-8").encode("utf-8")).hexdigest()
+        for row in rows:
+            row.update(PROJECTS_SHA256=digest, INPUT_DIGEST_BASIS="sha256_utf8_lf")
+        selected = root / "sanctioned_projects_2026.csv"
+        write_csv(selected, rows)
     original_load = module.load_projects
 
     def changing_load(*args):
@@ -816,5 +854,74 @@ def test_changed_input_bytes_stop_generation_before_writing(
     monkeypatch.setattr(module, "load_projects", changing_load)
     output = tmp_path / "reports"
     with pytest.raises(ValueError, match="Input bytes changed"):
-        module.write_benchmarks(root, output, "2026-01-01")
+        module.write_benchmarks(root, output, "2026-01-01", selected)
     assert not output.exists()
+
+
+@pytest.mark.parametrize(
+    "defect",
+    [
+        "stale_source",
+        "missing_columns",
+        "blank_digest",
+        "invalid_digest",
+        "wrong_digest",
+        "wrong_basis",
+    ],
+)
+def test_selected_table_rejects_invalid_source_provenance(projects, tmp_path, defect):
+    from worldenergydata.cost.benchmarks import write_benchmarks
+
+    root = inputs(tmp_path, projects)
+    source = root / "sanctioned_projects.csv"
+    with source.open(encoding="utf-8") as stream:
+        rows = list(csv.DictReader(stream))
+    digest = sha256(source.read_text(encoding="utf-8").encode("utf-8")).hexdigest()
+    for row in rows:
+        row.update(PROJECTS_SHA256=digest, INPUT_DIGEST_BASIS="sha256_utf8_lf")
+    if defect == "stale_source":
+        source.write_bytes(source.read_bytes() + b"\n")
+    elif defect == "missing_columns":
+        for row in rows:
+            del row["PROJECTS_SHA256"]
+            del row["INPUT_DIGEST_BASIS"]
+    else:
+        column, value = {
+            "blank_digest": ("PROJECTS_SHA256", ""),
+            "invalid_digest": ("PROJECTS_SHA256", "invalid"),
+            "wrong_digest": ("PROJECTS_SHA256", "0" * 64),
+            "wrong_basis": ("INPUT_DIGEST_BASIS", "raw_bytes"),
+        }[defect]
+        # Invalid evidence on a later row must also prevent publication.
+        rows[-1][column] = value
+    selected = root / "sanctioned_projects_2026.csv"
+    write_csv(selected, rows)
+    output = tmp_path / "reports"
+    write_benchmarks(root, output, "2026-01-01")
+    before = {p.name: p.read_bytes() for p in output.iterdir()}
+    result = cli(root, output, "--projects", selected.as_posix())
+    assert result.returncode == 2
+    assert "provenance" in result.stderr or "digest" in result.stderr
+    assert before == {p.name: p.read_bytes() for p in output.iterdir()}
+
+
+@pytest.mark.parametrize("line_ending", ["\n", "\r\n", "\r"])
+def test_selected_table_source_digest_uses_utf8_and_normalized_newlines(
+    projects, tmp_path, line_ending
+):
+    from worldenergydata.cost.benchmarks import load_projects
+
+    root = inputs(tmp_path, projects)
+    source = root / "sanctioned_projects.csv"
+    with source.open(encoding="utf-8") as stream:
+        rows = list(csv.DictReader(stream))
+    rows[0]["NOTES"] = "Invented café"
+    write_csv(source, rows)
+    normalized = source.read_text(encoding="utf-8")
+    source.write_bytes(normalized.replace("\n", line_ending).encode("utf-8"))
+    digest = sha256(normalized.encode("utf-8")).hexdigest()
+    for row in rows:
+        row.update(PROJECTS_SHA256=digest, INPUT_DIGEST_BASIS="sha256_utf8_lf")
+    selected = root / "sanctioned_projects_2026.csv"
+    write_csv(selected, rows)
+    assert well_row(build(load_projects(root, selected)))["n"] == 5
