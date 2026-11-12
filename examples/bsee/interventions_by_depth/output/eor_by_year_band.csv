@@ -1,0 +1,331 @@
+year,band,group,reports,partial_year
+2005,under 100 m,workover,141,False
+2005,under 100 m,abandonment,682,False
+2005,under 100 m,completion,473,False
+2005,100 to 500 m,workover,22,False
+2005,100 to 500 m,abandonment,37,False
+2005,100 to 500 m,completion,37,False
+2005,500 to 1500 m,workover,32,False
+2005,500 to 1500 m,abandonment,48,False
+2005,500 to 1500 m,completion,32,False
+2005,1500 m and deeper,workover,4,False
+2005,1500 m and deeper,abandonment,22,False
+2005,1500 m and deeper,completion,20,False
+2005,no depth,workover,0,False
+2005,no depth,abandonment,0,False
+2005,no depth,completion,0,False
+2006,under 100 m,workover,150,False
+2006,under 100 m,abandonment,1110,False
+2006,under 100 m,completion,595,False
+2006,100 to 500 m,workover,9,False
+2006,100 to 500 m,abandonment,75,False
+2006,100 to 500 m,completion,38,False
+2006,500 to 1500 m,workover,28,False
+2006,500 to 1500 m,abandonment,105,False
+2006,500 to 1500 m,completion,41,False
+2006,1500 m and deeper,workover,15,False
+2006,1500 m and deeper,abandonment,45,False
+2006,1500 m and deeper,completion,35,False
+2006,no depth,workover,0,False
+2006,no depth,abandonment,0,False
+2006,no depth,completion,0,False
+2007,under 100 m,workover,119,False
+2007,under 100 m,abandonment,1530,False
+2007,under 100 m,completion,519,False
+2007,100 to 500 m,workover,11,False
+2007,100 to 500 m,abandonment,168,False
+2007,100 to 500 m,completion,59,False
+2007,500 to 1500 m,workover,16,False
+2007,500 to 1500 m,abandonment,97,False
+2007,500 to 1500 m,completion,53,False
+2007,1500 m and deeper,workover,15,False
+2007,1500 m and deeper,abandonment,49,False
+2007,1500 m and deeper,completion,35,False
+2007,no depth,workover,0,False
+2007,no depth,abandonment,0,False
+2007,no depth,completion,0,False
+2008,under 100 m,workover,90,False
+2008,under 100 m,abandonment,1459,False
+2008,under 100 m,completion,383,False
+2008,100 to 500 m,workover,10,False
+2008,100 to 500 m,abandonment,131,False
+2008,100 to 500 m,completion,38,False
+2008,500 to 1500 m,workover,27,False
+2008,500 to 1500 m,abandonment,92,False
+2008,500 to 1500 m,completion,68,False
+2008,1500 m and deeper,workover,6,False
+2008,1500 m and deeper,abandonment,57,False
+2008,1500 m and deeper,completion,14,False
+2008,no depth,workover,0,False
+2008,no depth,abandonment,0,False
+2008,no depth,completion,0,False
+2009,under 100 m,workover,70,False
+2009,under 100 m,abandonment,1880,False
+2009,under 100 m,completion,203,False
+2009,100 to 500 m,workover,15,False
+2009,100 to 500 m,abandonment,194,False
+2009,100 to 500 m,completion,37,False
+2009,500 to 1500 m,workover,18,False
+2009,500 to 1500 m,abandonment,82,False
+2009,500 to 1500 m,completion,45,False
+2009,1500 m and deeper,workover,16,False
+2009,1500 m and deeper,abandonment,45,False
+2009,1500 m and deeper,completion,27,False
+2009,no depth,workover,0,False
+2009,no depth,abandonment,0,False
+2009,no depth,completion,0,False
+2010,under 100 m,workover,65,False
+2010,under 100 m,abandonment,1747,False
+2010,under 100 m,completion,239,False
+2010,100 to 500 m,workover,7,False
+2010,100 to 500 m,abandonment,198,False
+2010,100 to 500 m,completion,12,False
+2010,500 to 1500 m,workover,13,False
+2010,500 to 1500 m,abandonment,49,False
+2010,500 to 1500 m,completion,28,False
+2010,1500 m and deeper,workover,8,False
+2010,1500 m and deeper,abandonment,33,False
+2010,1500 m and deeper,completion,9,False
+2010,no depth,workover,0,False
+2010,no depth,abandonment,0,False
+2010,no depth,completion,0,False
+2011,under 100 m,workover,38,False
+2011,under 100 m,abandonment,1740,False
+2011,under 100 m,completion,197,False
+2011,100 to 500 m,workover,4,False
+2011,100 to 500 m,abandonment,191,False
+2011,100 to 500 m,completion,14,False
+2011,500 to 1500 m,workover,17,False
+2011,500 to 1500 m,abandonment,54,False
+2011,500 to 1500 m,completion,38,False
+2011,1500 m and deeper,workover,6,False
+2011,1500 m and deeper,abandonment,12,False
+2011,1500 m and deeper,completion,8,False
+2011,no depth,workover,0,False
+2011,no depth,abandonment,0,False
+2011,no depth,completion,0,False
+2012,under 100 m,workover,34,False
+2012,under 100 m,abandonment,1599,False
+2012,under 100 m,completion,231,False
+2012,100 to 500 m,workover,1,False
+2012,100 to 500 m,abandonment,163,False
+2012,100 to 500 m,completion,3,False
+2012,500 to 1500 m,workover,22,False
+2012,500 to 1500 m,abandonment,101,False
+2012,500 to 1500 m,completion,25,False
+2012,1500 m and deeper,workover,10,False
+2012,1500 m and deeper,abandonment,57,False
+2012,1500 m and deeper,completion,13,False
+2012,no depth,workover,0,False
+2012,no depth,abandonment,0,False
+2012,no depth,completion,0,False
+2013,under 100 m,workover,59,False
+2013,under 100 m,abandonment,1610,False
+2013,under 100 m,completion,167,False
+2013,100 to 500 m,workover,6,False
+2013,100 to 500 m,abandonment,79,False
+2013,100 to 500 m,completion,9,False
+2013,500 to 1500 m,workover,10,False
+2013,500 to 1500 m,abandonment,75,False
+2013,500 to 1500 m,completion,42,False
+2013,1500 m and deeper,workover,8,False
+2013,1500 m and deeper,abandonment,65,False
+2013,1500 m and deeper,completion,19,False
+2013,no depth,workover,0,False
+2013,no depth,abandonment,0,False
+2013,no depth,completion,0,False
+2014,under 100 m,workover,35,False
+2014,under 100 m,abandonment,1344,False
+2014,under 100 m,completion,201,False
+2014,100 to 500 m,workover,2,False
+2014,100 to 500 m,abandonment,100,False
+2014,100 to 500 m,completion,10,False
+2014,500 to 1500 m,workover,17,False
+2014,500 to 1500 m,abandonment,83,False
+2014,500 to 1500 m,completion,28,False
+2014,1500 m and deeper,workover,7,False
+2014,1500 m and deeper,abandonment,68,False
+2014,1500 m and deeper,completion,23,False
+2014,no depth,workover,0,False
+2014,no depth,abandonment,0,False
+2014,no depth,completion,0,False
+2015,under 100 m,workover,9,False
+2015,under 100 m,abandonment,820,False
+2015,under 100 m,completion,114,False
+2015,100 to 500 m,workover,6,False
+2015,100 to 500 m,abandonment,120,False
+2015,100 to 500 m,completion,10,False
+2015,500 to 1500 m,workover,19,False
+2015,500 to 1500 m,abandonment,85,False
+2015,500 to 1500 m,completion,45,False
+2015,1500 m and deeper,workover,26,False
+2015,1500 m and deeper,abandonment,86,False
+2015,1500 m and deeper,completion,68,False
+2015,no depth,workover,0,False
+2015,no depth,abandonment,0,False
+2015,no depth,completion,0,False
+2016,under 100 m,workover,14,False
+2016,under 100 m,abandonment,874,False
+2016,under 100 m,completion,39,False
+2016,100 to 500 m,workover,2,False
+2016,100 to 500 m,abandonment,87,False
+2016,100 to 500 m,completion,8,False
+2016,500 to 1500 m,workover,7,False
+2016,500 to 1500 m,abandonment,94,False
+2016,500 to 1500 m,completion,24,False
+2016,1500 m and deeper,workover,12,False
+2016,1500 m and deeper,abandonment,66,False
+2016,1500 m and deeper,completion,23,False
+2016,no depth,workover,0,False
+2016,no depth,abandonment,0,False
+2016,no depth,completion,0,False
+2017,under 100 m,workover,8,False
+2017,under 100 m,abandonment,628,False
+2017,under 100 m,completion,35,False
+2017,100 to 500 m,workover,9,False
+2017,100 to 500 m,abandonment,176,False
+2017,100 to 500 m,completion,20,False
+2017,500 to 1500 m,workover,8,False
+2017,500 to 1500 m,abandonment,80,False
+2017,500 to 1500 m,completion,22,False
+2017,1500 m and deeper,workover,23,False
+2017,1500 m and deeper,abandonment,37,False
+2017,1500 m and deeper,completion,37,False
+2017,no depth,workover,0,False
+2017,no depth,abandonment,0,False
+2017,no depth,completion,0,False
+2018,under 100 m,workover,16,False
+2018,under 100 m,abandonment,600,False
+2018,under 100 m,completion,69,False
+2018,100 to 500 m,workover,8,False
+2018,100 to 500 m,abandonment,98,False
+2018,100 to 500 m,completion,19,False
+2018,500 to 1500 m,workover,17,False
+2018,500 to 1500 m,abandonment,68,False
+2018,500 to 1500 m,completion,35,False
+2018,1500 m and deeper,workover,9,False
+2018,1500 m and deeper,abandonment,57,False
+2018,1500 m and deeper,completion,25,False
+2018,no depth,workover,0,False
+2018,no depth,abandonment,0,False
+2018,no depth,completion,0,False
+2019,under 100 m,workover,15,False
+2019,under 100 m,abandonment,509,False
+2019,under 100 m,completion,45,False
+2019,100 to 500 m,workover,1,False
+2019,100 to 500 m,abandonment,66,False
+2019,100 to 500 m,completion,13,False
+2019,500 to 1500 m,workover,16,False
+2019,500 to 1500 m,abandonment,90,False
+2019,500 to 1500 m,completion,36,False
+2019,1500 m and deeper,workover,9,False
+2019,1500 m and deeper,abandonment,68,False
+2019,1500 m and deeper,completion,19,False
+2019,no depth,workover,0,False
+2019,no depth,abandonment,0,False
+2019,no depth,completion,0,False
+2020,under 100 m,workover,5,False
+2020,under 100 m,abandonment,221,False
+2020,under 100 m,completion,11,False
+2020,100 to 500 m,workover,4,False
+2020,100 to 500 m,abandonment,108,False
+2020,100 to 500 m,completion,12,False
+2020,500 to 1500 m,workover,10,False
+2020,500 to 1500 m,abandonment,63,False
+2020,500 to 1500 m,completion,22,False
+2020,1500 m and deeper,workover,20,False
+2020,1500 m and deeper,abandonment,57,False
+2020,1500 m and deeper,completion,30,False
+2020,no depth,workover,0,False
+2020,no depth,abandonment,0,False
+2020,no depth,completion,0,False
+2021,under 100 m,workover,3,False
+2021,under 100 m,abandonment,399,False
+2021,under 100 m,completion,26,False
+2021,100 to 500 m,workover,2,False
+2021,100 to 500 m,abandonment,21,False
+2021,100 to 500 m,completion,5,False
+2021,500 to 1500 m,workover,8,False
+2021,500 to 1500 m,abandonment,91,False
+2021,500 to 1500 m,completion,15,False
+2021,1500 m and deeper,workover,5,False
+2021,1500 m and deeper,abandonment,36,False
+2021,1500 m and deeper,completion,23,False
+2021,no depth,workover,0,False
+2021,no depth,abandonment,0,False
+2021,no depth,completion,0,False
+2022,under 100 m,workover,5,False
+2022,under 100 m,abandonment,676,False
+2022,under 100 m,completion,40,False
+2022,100 to 500 m,workover,6,False
+2022,100 to 500 m,abandonment,65,False
+2022,100 to 500 m,completion,13,False
+2022,500 to 1500 m,workover,12,False
+2022,500 to 1500 m,abandonment,81,False
+2022,500 to 1500 m,completion,30,False
+2022,1500 m and deeper,workover,7,False
+2022,1500 m and deeper,abandonment,40,False
+2022,1500 m and deeper,completion,22,False
+2022,no depth,workover,0,False
+2022,no depth,abandonment,0,False
+2022,no depth,completion,0,False
+2023,under 100 m,workover,4,False
+2023,under 100 m,abandonment,990,False
+2023,under 100 m,completion,26,False
+2023,100 to 500 m,workover,1,False
+2023,100 to 500 m,abandonment,126,False
+2023,100 to 500 m,completion,2,False
+2023,500 to 1500 m,workover,5,False
+2023,500 to 1500 m,abandonment,80,False
+2023,500 to 1500 m,completion,21,False
+2023,1500 m and deeper,workover,3,False
+2023,1500 m and deeper,abandonment,48,False
+2023,1500 m and deeper,completion,21,False
+2023,no depth,workover,0,False
+2023,no depth,abandonment,0,False
+2023,no depth,completion,0,False
+2024,under 100 m,workover,4,False
+2024,under 100 m,abandonment,435,False
+2024,under 100 m,completion,21,False
+2024,100 to 500 m,workover,2,False
+2024,100 to 500 m,abandonment,60,False
+2024,100 to 500 m,completion,3,False
+2024,500 to 1500 m,workover,2,False
+2024,500 to 1500 m,abandonment,64,False
+2024,500 to 1500 m,completion,15,False
+2024,1500 m and deeper,workover,4,False
+2024,1500 m and deeper,abandonment,44,False
+2024,1500 m and deeper,completion,24,False
+2024,no depth,workover,0,False
+2024,no depth,abandonment,0,False
+2024,no depth,completion,0,False
+2025,under 100 m,workover,6,False
+2025,under 100 m,abandonment,719,False
+2025,under 100 m,completion,15,False
+2025,100 to 500 m,workover,1,False
+2025,100 to 500 m,abandonment,74,False
+2025,100 to 500 m,completion,2,False
+2025,500 to 1500 m,workover,2,False
+2025,500 to 1500 m,abandonment,62,False
+2025,500 to 1500 m,completion,22,False
+2025,1500 m and deeper,workover,3,False
+2025,1500 m and deeper,abandonment,36,False
+2025,1500 m and deeper,completion,36,False
+2025,no depth,workover,0,False
+2025,no depth,abandonment,0,False
+2025,no depth,completion,0,False
+2026,under 100 m,workover,1,True
+2026,under 100 m,abandonment,563,True
+2026,under 100 m,completion,12,True
+2026,100 to 500 m,workover,0,True
+2026,100 to 500 m,abandonment,20,True
+2026,100 to 500 m,completion,1,True
+2026,500 to 1500 m,workover,0,True
+2026,500 to 1500 m,abandonment,33,True
+2026,500 to 1500 m,completion,10,True
+2026,1500 m and deeper,workover,0,True
+2026,1500 m and deeper,abandonment,36,True
+2026,1500 m and deeper,completion,21,True
+2026,no depth,workover,0,True
+2026,no depth,abandonment,0,True
+2026,no depth,completion,0,True

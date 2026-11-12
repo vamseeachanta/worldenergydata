@@ -1,0 +1,22 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Interventions verification</title>
+<body><h1>Verification record — 12 November 2026</h1>
+<p>Audience and destination: public repository pull request. The supplied task authorises this publication; no deployment or merge is included.</p>
+<h2>Defect-focused checks</h2><ul>
+<li>The plan identifies APM submission grain, EOR timing, missing depth, status-history limits and scenario transfers before implementation.</li>
+<li>Repeated APM rows are deduplicated by submission identity. Conflicting core identities fail. One-to-many suboperations cannot multiply event counts.</li>
+<li>Current borehole status is not used to infer historical permit operations. Abandonment subtypes come from suboperations. Unknown subtype stays explicit.</li>
+<li>The initial code rejected duplicate original-hole suffixes. Inspection identified two API10s with a second record ending 70. The canonical ending-00 record is selected and tested.</li>
+<li>Structured PLUGBACK and explicit legacy drilling descriptions are excluded. Future work and flow-path bypasses are checked as false positives. Narrative capture remains limited.</li>
+<li>The 2025 raw APM checkpoint reconciles exactly. The EOR snapshot has one additional abandonment report and one additional completion report.</li>
+<li>All 2026 values are partial. The full-year average output is independently recalculated without partial-year rows.</li>
+<li>Cost arithmetic is recalculated from the YAML. Source-year dollars, heavy-unit proxies, transferred durations, unpriced floating mobilisation and dry-tree conductor exclusions are stated.</li>
+<li>All citation PDFs return HTTP 200. Their URLs, retrieval times, bytes and digests are retained in output/cost_source_manifest.json.</li>
+<li>All three PNGs are visually inspected. A clipped legend is corrected. Cost ranges use a labelled log scale and ordered depth colours. PNG widths are 2,160 pixels.</li></ul>
+<h2>Validation evidence</h2>
+<p>29 synthetic example tests pass. The example plus the existing API-normalizer tests pass together: 41 tests. The exact commands are in README.md. Black 25.9.0 and isort 8.0.1 pass for the changed Python files. The engineering-register check reports zero violations in README.md. A private-key and credential-token pattern scan finds no matches.</p>
+<p>A complete regeneration from the retained archives produces byte-identical output files. output/verification.json pins the delivered CSV, JSON and chart bytes and the counting code, cost basis, report source and tests. Source hashes are checked before raw data are read.</p>
+<h2>Review boundary</h2>
+<p>Checks are performed in the requested single analysis session. No independent model/provider review is claimed. The user's explicit prohibition on other models governs this task. The results are descriptive public-record analysis, not qualified engineering estimates or actual expenditure.</p>
+<h2>Retention and cleanup</h2>
+<p>Expected local residue: ignored dated public-source archives, selected study-page inspection images, the task virtual environment and package/formatter caches. No raw archive, extracted raw table, study PDF, credential or local absolute path belongs to the outgoing bundle. Existing worktrees and interactive sessions are preserved. No task stash, partial download, temporary authoring script or cleanup lock is retained.</p>
+</body></html>

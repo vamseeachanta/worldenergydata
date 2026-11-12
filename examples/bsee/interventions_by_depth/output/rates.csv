@@ -1,0 +1,221 @@
+year,band,family,permits,standing_wells,per_100_standing_wells,partial_year
+2005,under 100 m,well work,1261,16618,7.588157,False
+2005,under 100 m,abandonment,835,16618,5.024672,False
+2005,100 to 500 m,well work,134,1867,7.177290,False
+2005,100 to 500 m,abandonment,44,1867,2.356722,False
+2005,500 to 1500 m,well work,58,676,8.579882,False
+2005,500 to 1500 m,abandonment,32,676,4.733728,False
+2005,1500 m and deeper,well work,35,198,17.676768,False
+2005,1500 m and deeper,abandonment,16,198,8.080808,False
+2005,no depth,well work,0,0,,False
+2005,no depth,abandonment,0,0,,False
+2006,under 100 m,well work,1751,16612,10.540573,False
+2006,under 100 m,abandonment,1739,16612,10.468336,False
+2006,100 to 500 m,well work,130,1886,6.892895,False
+2006,100 to 500 m,abandonment,126,1886,6.680806,False
+2006,500 to 1500 m,well work,153,719,21.279555,False
+2006,500 to 1500 m,abandonment,58,719,8.066759,False
+2006,1500 m and deeper,well work,65,222,29.279279,False
+2006,1500 m and deeper,abandonment,25,222,11.261261,False
+2006,no depth,well work,0,0,,False
+2006,no depth,abandonment,0,0,,False
+2007,under 100 m,well work,1863,16358,11.388923,False
+2007,under 100 m,abandonment,2100,16358,12.837755,False
+2007,100 to 500 m,well work,190,1889,10.058232,False
+2007,100 to 500 m,abandonment,234,1889,12.387507,False
+2007,500 to 1500 m,well work,160,751,21.304927,False
+2007,500 to 1500 m,abandonment,76,751,10.119840,False
+2007,1500 m and deeper,well work,120,264,45.454545,False
+2007,1500 m and deeper,abandonment,41,264,15.530303,False
+2007,no depth,well work,0,0,,False
+2007,no depth,abandonment,0,0,,False
+2008,under 100 m,well work,1658,16144,10.270069,False
+2008,under 100 m,abandonment,2308,16144,14.296333,False
+2008,100 to 500 m,well work,175,1891,9.254363,False
+2008,100 to 500 m,abandonment,184,1891,9.730301,False
+2008,500 to 1500 m,well work,180,776,23.195876,False
+2008,500 to 1500 m,abandonment,82,776,10.567010,False
+2008,1500 m and deeper,well work,84,282,29.787234,False
+2008,1500 m and deeper,abandonment,47,282,16.666667,False
+2008,no depth,well work,0,0,,False
+2008,no depth,abandonment,0,0,,False
+2009,under 100 m,well work,1355,15678,8.642684,False
+2009,under 100 m,abandonment,3284,15678,20.946549,False
+2009,100 to 500 m,well work,228,1877,12.147043,False
+2009,100 to 500 m,abandonment,304,1877,16.196058,False
+2009,500 to 1500 m,well work,169,794,21.284635,False
+2009,500 to 1500 m,abandonment,71,794,8.942065,False
+2009,1500 m and deeper,well work,59,307,19.218241,False
+2009,1500 m and deeper,abandonment,33,307,10.749186,False
+2009,no depth,well work,0,0,,False
+2009,no depth,abandonment,0,0,,False
+2010,under 100 m,well work,1484,15139,9.802497,False
+2010,under 100 m,abandonment,2882,15139,19.036924,False
+2010,100 to 500 m,well work,153,1830,8.360656,False
+2010,100 to 500 m,abandonment,444,1830,24.262295,False
+2010,500 to 1500 m,well work,137,802,17.082294,False
+2010,500 to 1500 m,abandonment,61,802,7.605985,False
+2010,1500 m and deeper,well work,75,314,23.885350,False
+2010,1500 m and deeper,abandonment,67,314,21.337580,False
+2010,no depth,well work,0,0,,False
+2010,no depth,abandonment,0,0,,False
+2011,under 100 m,well work,1318,14588,9.034823,False
+2011,under 100 m,abandonment,3064,14588,21.003565,False
+2011,100 to 500 m,well work,209,1778,11.754781,False
+2011,100 to 500 m,abandonment,264,1778,14.848144,False
+2011,500 to 1500 m,well work,209,810,25.802469,False
+2011,500 to 1500 m,abandonment,87,810,10.740741,False
+2011,1500 m and deeper,well work,36,330,10.909091,False
+2011,1500 m and deeper,abandonment,27,330,8.181818,False
+2011,no depth,well work,0,0,,False
+2011,no depth,abandonment,0,0,,False
+2012,under 100 m,well work,1192,14208,8.389640,False
+2012,under 100 m,abandonment,3004,14208,21.143018,False
+2012,100 to 500 m,well work,174,1738,10.011507,False
+2012,100 to 500 m,abandonment,227,1738,13.060990,False
+2012,500 to 1500 m,well work,262,856,30.607477,False
+2012,500 to 1500 m,abandonment,163,856,19.042056,False
+2012,1500 m and deeper,well work,105,361,29.085873,False
+2012,1500 m and deeper,abandonment,68,361,18.836565,False
+2012,no depth,well work,0,0,,False
+2012,no depth,abandonment,0,0,,False
+2013,under 100 m,well work,1178,13904,8.472382,False
+2013,under 100 m,abandonment,3347,13904,24.072209,False
+2013,100 to 500 m,well work,204,1734,11.764706,False
+2013,100 to 500 m,abandonment,258,1734,14.878893,False
+2013,500 to 1500 m,well work,212,872,24.311927,False
+2013,500 to 1500 m,abandonment,164,872,18.807339,False
+2013,1500 m and deeper,well work,90,387,23.255814,False
+2013,1500 m and deeper,abandonment,84,387,21.705426,False
+2013,no depth,well work,0,0,,False
+2013,no depth,abandonment,0,0,,False
+2014,under 100 m,well work,1024,13625,7.515596,False
+2014,under 100 m,abandonment,2587,13625,18.987156,False
+2014,100 to 500 m,well work,155,1722,9.001161,False
+2014,100 to 500 m,abandonment,264,1722,15.331010,False
+2014,500 to 1500 m,well work,188,882,21.315193,False
+2014,500 to 1500 m,abandonment,154,882,17.460317,False
+2014,1500 m and deeper,well work,164,402,40.796020,False
+2014,1500 m and deeper,abandonment,161,402,40.049751,False
+2014,no depth,well work,0,0,,False
+2014,no depth,abandonment,0,0,,False
+2015,under 100 m,well work,840,13401,6.268189,False
+2015,under 100 m,abandonment,1829,13401,13.648235,False
+2015,100 to 500 m,well work,182,1696,10.731132,False
+2015,100 to 500 m,abandonment,256,1696,15.094340,False
+2015,500 to 1500 m,well work,262,903,29.014396,False
+2015,500 to 1500 m,abandonment,202,903,22.369878,False
+2015,1500 m and deeper,well work,189,422,44.786730,False
+2015,1500 m and deeper,abandonment,142,422,33.649289,False
+2015,no depth,well work,0,0,,False
+2015,no depth,abandonment,0,0,,False
+2016,under 100 m,well work,825,13029,6.332029,False
+2016,under 100 m,abandonment,1787,13029,13.715558,False
+2016,100 to 500 m,well work,140,1677,8.348241,False
+2016,100 to 500 m,abandonment,306,1677,18.246869,False
+2016,500 to 1500 m,well work,243,911,26.673985,False
+2016,500 to 1500 m,abandonment,228,911,25.027442,False
+2016,1500 m and deeper,well work,202,443,45.598194,False
+2016,1500 m and deeper,abandonment,143,443,32.279910,False
+2016,no depth,well work,0,0,,False
+2016,no depth,abandonment,0,0,,False
+2017,under 100 m,well work,859,12815,6.703082,False
+2017,under 100 m,abandonment,1604,12815,12.516582,False
+2017,100 to 500 m,well work,143,1666,8.583433,False
+2017,100 to 500 m,abandonment,475,1666,28.511405,False
+2017,500 to 1500 m,well work,313,919,34.058760,False
+2017,500 to 1500 m,abandonment,173,919,18.824810,False
+2017,1500 m and deeper,well work,185,455,40.659341,False
+2017,1500 m and deeper,abandonment,95,455,20.879121,False
+2017,no depth,well work,0,0,,False
+2017,no depth,abandonment,0,0,,False
+2018,under 100 m,well work,845,12645,6.682483,False
+2018,under 100 m,abandonment,1456,12645,11.514433,False
+2018,100 to 500 m,well work,116,1634,7.099143,False
+2018,100 to 500 m,abandonment,317,1634,19.400245,False
+2018,500 to 1500 m,well work,278,934,29.764454,False
+2018,500 to 1500 m,abandonment,175,934,18.736617,False
+2018,1500 m and deeper,well work,207,485,42.680412,False
+2018,1500 m and deeper,abandonment,68,485,14.020619,False
+2018,no depth,well work,0,0,,False
+2018,no depth,abandonment,0,0,,False
+2019,under 100 m,well work,675,12512,5.394821,False
+2019,under 100 m,abandonment,1270,12512,10.150256,False
+2019,100 to 500 m,well work,160,1624,9.852217,False
+2019,100 to 500 m,abandonment,206,1624,12.684729,False
+2019,500 to 1500 m,well work,303,936,32.371795,False
+2019,500 to 1500 m,abandonment,161,936,17.200855,False
+2019,1500 m and deeper,well work,229,514,44.552529,False
+2019,1500 m and deeper,abandonment,116,514,22.568093,False
+2019,no depth,well work,0,0,,False
+2019,no depth,abandonment,0,0,,False
+2020,under 100 m,well work,429,12461,3.442741,False
+2020,under 100 m,abandonment,710,12461,5.697777,False
+2020,100 to 500 m,well work,102,1577,6.467977,False
+2020,100 to 500 m,abandonment,177,1577,11.223843,False
+2020,500 to 1500 m,well work,247,938,26.332623,False
+2020,500 to 1500 m,abandonment,145,938,15.458422,False
+2020,1500 m and deeper,well work,206,530,38.867925,False
+2020,1500 m and deeper,abandonment,105,530,19.811321,False
+2020,no depth,well work,0,0,,False
+2020,no depth,abandonment,0,0,,False
+2021,under 100 m,well work,514,12314,4.174111,False
+2021,under 100 m,abandonment,1179,12314,9.574468,False
+2021,100 to 500 m,well work,155,1572,9.860051,False
+2021,100 to 500 m,abandonment,216,1572,13.740458,False
+2021,500 to 1500 m,well work,207,940,22.021277,False
+2021,500 to 1500 m,abandonment,277,940,29.468085,False
+2021,1500 m and deeper,well work,206,536,38.432836,False
+2021,1500 m and deeper,abandonment,104,536,19.402985,False
+2021,no depth,well work,0,0,,False
+2021,no depth,abandonment,0,0,,False
+2022,under 100 m,well work,551,12122,4.545455,False
+2022,under 100 m,abandonment,2139,12122,17.645603,False
+2022,100 to 500 m,well work,143,1567,9.125718,False
+2022,100 to 500 m,abandonment,150,1567,9.572431,False
+2022,500 to 1500 m,well work,284,939,30.244941,False
+2022,500 to 1500 m,abandonment,290,939,30.883919,False
+2022,1500 m and deeper,well work,229,555,41.261261,False
+2022,1500 m and deeper,abandonment,71,555,12.792793,False
+2022,no depth,well work,0,0,,False
+2022,no depth,abandonment,0,0,,False
+2023,under 100 m,well work,325,11833,2.746556,False
+2023,under 100 m,abandonment,2851,11833,24.093636,False
+2023,100 to 500 m,well work,100,1562,6.402049,False
+2023,100 to 500 m,abandonment,583,1562,37.323944,False
+2023,500 to 1500 m,well work,215,941,22.848034,False
+2023,500 to 1500 m,abandonment,208,941,22.104145,False
+2023,1500 m and deeper,well work,246,575,42.782609,False
+2023,1500 m and deeper,abandonment,87,575,15.130435,False
+2023,no depth,well work,0,0,,False
+2023,no depth,abandonment,0,0,,False
+2024,under 100 m,well work,319,11699,2.726729,False
+2024,under 100 m,abandonment,1103,11699,9.428156,False
+2024,100 to 500 m,well work,60,1555,3.858521,False
+2024,100 to 500 m,abandonment,238,1555,15.305466,False
+2024,500 to 1500 m,well work,211,942,22.399151,False
+2024,500 to 1500 m,abandonment,206,942,21.868365,False
+2024,1500 m and deeper,well work,152,590,25.762712,False
+2024,1500 m and deeper,abandonment,109,590,18.474576,False
+2024,no depth,well work,0,0,,False
+2024,no depth,abandonment,0,0,,False
+2025,under 100 m,well work,316,11440,2.762238,False
+2025,under 100 m,abandonment,1963,11440,17.159091,False
+2025,100 to 500 m,well work,99,1525,6.491803,False
+2025,100 to 500 m,abandonment,282,1525,18.491803,False
+2025,500 to 1500 m,well work,185,952,19.432773,False
+2025,500 to 1500 m,abandonment,284,952,29.831933,False
+2025,1500 m and deeper,well work,165,604,27.317881,False
+2025,1500 m and deeper,abandonment,81,604,13.410596,False
+2025,no depth,well work,0,0,,False
+2025,no depth,abandonment,0,0,,False
+2026,under 100 m,well work,238,11234,2.118569,True
+2026,under 100 m,abandonment,1869,11234,16.636995,True
+2026,100 to 500 m,well work,115,1515,7.590759,True
+2026,100 to 500 m,abandonment,229,1515,15.115512,True
+2026,500 to 1500 m,well work,194,956,20.292887,True
+2026,500 to 1500 m,abandonment,118,956,12.343096,True
+2026,1500 m and deeper,well work,123,628,19.585987,True
+2026,1500 m and deeper,abandonment,75,628,11.942675,True
+2026,no depth,well work,0,0,,True
+2026,no depth,abandonment,0,0,,True

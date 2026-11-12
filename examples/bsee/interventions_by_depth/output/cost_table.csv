@@ -1,0 +1,9 @@
+band,event,asset,dollar_year,low_usd,base_usd,high_usd
+under 100 m,well work,platform casing-jack heavy unit (proxy),2015,554454,793938.0,1033422
+under 100 m,permanent abandonment,platform casing-jack heavy unit (proxy),2015,280758,349182.0,622878
+100 to 500 m,well work,platform casing-jack heavy unit (proxy),2015,554454,793938.0,1033422
+100 to 500 m,permanent abandonment,platform casing-jack heavy unit (proxy),2015,280758,349182.0,622878
+500 to 1500 m,well work,semisubmersible or drillship MODU spread,2015,4722200,7083300.0,9444400
+500 to 1500 m,permanent abandonment,semisubmersible or drillship MODU spread,2015,11468200,12817400.0,15515800
+1500 m and deeper,well work,semisubmersible or drillship MODU spread,2015,4722200,7083300.0,9444400
+1500 m and deeper,permanent abandonment,semisubmersible or drillship MODU spread,2015,14166600,15515800.0,18214200

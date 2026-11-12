@@ -1,0 +1,56 @@
+{
+  "criteria_revision": 1,
+  "software": {
+    "python": "3.14.3",
+    "pandas": "3.1.1",
+    "numpy": "2.5.4",
+    "matplotlib": "3.11.2",
+    "pyyaml": "6.0.3"
+  },
+  "code_and_basis_sha256": {
+    "examples/bsee/interventions_by_depth/build_cost_basis.py": "69ea573989557a2278f316f87a3e5678ec0d6666bf06088ac712ae9139f880a5",
+    "examples/bsee/interventions_by_depth/cost_basis.yml": "5356c123c4bf5edfe0b7aa3170af2983225e33c28275d8d27ea8da56912055c2",
+    "examples/bsee/interventions_by_depth/count_interventions.py": "776b3e1b2906eaddd9ccb851591da1e7ae701851955b4c2f147f258a5d1827d3",
+    "examples/bsee/interventions_by_depth/download_data.py": "8c7772a8c338c52cc20611dd5b7aa2e23eceedd7f0dac8e869873bd8ab5627ce",
+    "examples/bsee/interventions_by_depth/estimate_costs.py": "18f8e62f2a88f18afc60f2bbede77e31c62ba75e28ba05c14bdde6f40f40cb9c",
+    "examples/bsee/interventions_by_depth/plot_charts.py": "b899ac54fd1950e3ede17f00dff31d1cbd8c480f8d4ec5ffcf4a7a8e299b6ac6",
+    "examples/bsee/interventions_by_depth/README.md": "54fb1f30eb276035cd47562f49a8fe2a1e5f3e86edba5b0f31cbf86e5e4044f6",
+    "examples/bsee/interventions_by_depth/requirements.txt": "8f149ddae6071cc2877d558e304a4261933def6c82f3062142da3603e1e673d6",
+    "examples/bsee/interventions_by_depth/verify_cost_sources.py": "a213275d3601830fd295bfa582cf7cc51b1905ec46d2bd87fe12cb7a31b26436",
+    "examples/bsee/interventions_by_depth/verify_outputs.py": "2c0a60205ea7c495b5e989e98483212834c8bef508fe4595ad0b94379d9152b7",
+    "examples/bsee/interventions_by_depth/write_results_note.py": "517308e4bbd4394fef54a1b66f75b7f6ea2b5099221983f35a14b8885ef346fc",
+    "tests/unit/bsee/test_interventions_by_depth.py": "62df11ed4493dd196e8ca2f45633d869f9c5c4ab182a642ec8f40b2cfca6319a"
+  },
+  "checks": [
+    "all selected-year APM approvals partitioned",
+    "rates reconcile with groups and denominator",
+    "partial year excluded from averages",
+    "cost table equals cited YAML arithmetic",
+    "all cost inputs carry provenance",
+    "PNG width at least 1600"
+  ],
+  "files": {
+    "01_approved_interventions.png": "326480e24cf372e8149c707ae98c29cd1c9b0682bcc552017474d8d6c43cb9af",
+    "01_approved_interventions.svg": "e36152e56d9de76caeb31433a7a6774f7d70175d230a40a55ee4b0e19e8871b6",
+    "02_rates_per_standing_well.png": "3577aba489883846f07a4fe78799bb0bb41a34ebe61d91feec79a2204687d133",
+    "02_rates_per_standing_well.svg": "0110c170e6443444fb7113e95dff68122e6a7810bbf71500b1289d964da86c80",
+    "03_cost_per_event.png": "e3363ff0233052671680a0c3f347c15952c0eb76a4df058537ab41b2d522b982",
+    "03_cost_per_event.svg": "dec02600875750c2d57a265d8949b5f3b8d069daa0b03bde66e134848f837cde",
+    "code_mapping.csv": "16e3394b248143af1eea1cdebada88c9b4dbe0b6fee9fd2826c1071b76f14ae4",
+    "cost_source_manifest.json": "380ee729327b890167c8dd1dcfebbaf0099d7ba7347846c0d153e958a59bec94",
+    "cost_table.csv": "25767d9d85d6389f7c3b020195646fede97a8e085eb19b7dcab2db9501d02c1f",
+    "counts_by_year_band_group.csv": "03bc976a269ecabf043d388a5109f991f102e9f20046a881a3f0783ea4be7cdc",
+    "coverage_by_month.csv": "7694504f2cb6b55962d3c5aa68431a6900c2746a0d65c75f2d723a134053fe92",
+    "eor_by_year_band.csv": "3237400c8f720f152946d4795642eac1afcbcf7d18a29759a55806790ac16817",
+    "eor_permit_ratios.csv": "7d5b3f78b5055f3cf2f99f3203c02959b18046d4d7d6299d350a2768948b1121",
+    "exclusion_audit.csv": "21cfaa485f59a40387f30b80162e5ff800df2f93240e7d154ca1f36d565848af",
+    "full_year_averages.csv": "0373adf7fdb4e8a5978178d2dd23e41707d4181eea11d6a5459442b36fd5f367",
+    "manifest.json": "9f959e57367e9aaf378a42a280b156899bd11dd357b5787480bd493b5a799623",
+    "published_pa_comparators.csv": "83b43efdcb875b5fdb91325390ff7af23fcdf05baa8f9477091bf72a69567d94",
+    "rates.csv": "d46226dc504c2907883d03779be2f4a5b5bfb852efac68bae2c44a8a4e7ea6eb",
+    "standing_wells.csv": "48f5884cea099acee36dadfb66a2beb606605d1f4e9112527be6bbedfdb887ad",
+    "suboperation_mapping.csv": "1ffe6ca14571e7ad66bf6733833e8e518cc1b03a91163491a205cd6493731cce",
+    "summary.json": "eb6f90d34461ac80280bc76154c39f3d10eafeabdb62b8669d0843d772bfc985",
+    "war_duration_crosscheck.csv": "0d25ae7d9663f83c614b3a0652fd7aca58efe2a507111c0e65ee8d88cd0b0a52"
+  }
+}
