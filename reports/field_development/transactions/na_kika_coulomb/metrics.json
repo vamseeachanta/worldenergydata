@@ -8,6 +8,10 @@
         "value": null,
         "unit": "USD/(boe)",
         "reason": "Reserves for this exact acquired-interest scope are not verified",
+        "consideration_as_of": "2026-10-20",
+        "consideration_effective_date": null,
+        "denominator_as_of": null,
+        "limitation": "Inputs have different dates; no date alignment is applied",
         "inputs": {
           "consideration": {
             "value": 1700000000,
@@ -32,6 +36,10 @@
         "value": null,
         "unit": "USD/(boe/d)",
         "reason": "Production period and acquired-interest scope are not verified",
+        "consideration_as_of": "2026-10-20",
+        "consideration_effective_date": null,
+        "denominator_as_of": null,
+        "limitation": "Inputs have different dates; no date alignment is applied",
         "inputs": {
           "consideration": {
             "value": 1700000000,
@@ -58,6 +66,10 @@
         "value": 36.95652173913044,
         "unit": "USD/(boe)",
         "reason": "",
+        "consideration_as_of": "2026-06-30",
+        "consideration_effective_date": "2025-07-01",
+        "denominator_as_of": "2025-12-31",
+        "limitation": "Issuer-stated reserves net of P&A; underlying reserves report not independently reviewed; Inputs have different dates; no date alignment is applied; Year-end 2025 reserves post-date the 1 July 2025 effective date by six months; no roll-back is applied",
         "inputs": {
           "consideration": {
             "value": 850000000,
@@ -69,7 +81,8 @@
               "source_id": "talos_release",
               "locator": "Opening paragraph: cash consideration net to Talos; subject to adjustments"
             },
-            "approximate": false
+            "approximate": false,
+            "effective_date": "2025-07-01"
           },
           "denominator": {
             "value": 23000000,
@@ -83,7 +96,8 @@
             },
             "approximate": true,
             "reserve_category": "proved",
-            "qualification": "Issuer-stated reserves net of P&A; underlying reserves report not independently reviewed"
+            "qualification": "Issuer-stated reserves net of P&A; underlying reserves report not independently reviewed",
+            "temporal_limitation": "Year-end 2025 reserves post-date the 1 July 2025 effective date by six months; no roll-back is applied"
           }
         }
       },
@@ -92,6 +106,10 @@
         "value": 53125.0,
         "unit": "USD/(boe/d)",
         "reason": "",
+        "consideration_as_of": "2026-06-30",
+        "consideration_effective_date": "2025-07-01",
+        "denominator_as_of": "2026-03-31",
+        "limitation": "Inputs have different dates; no date alignment is applied; 2026-Q1 average production post-dates the 1 July 2025 effective date; no roll-back is applied",
         "inputs": {
           "consideration": {
             "value": 850000000,
@@ -103,7 +121,8 @@
               "source_id": "talos_release",
               "locator": "Opening paragraph: cash consideration net to Talos; subject to adjustments"
             },
-            "approximate": false
+            "approximate": false,
+            "effective_date": "2025-07-01"
           },
           "denominator": {
             "value": 16000,
@@ -116,7 +135,8 @@
               "locator": "GULF OF AMERICA BOLT-ON ACQUISITION: first quarter average for interests Talos is acquiring"
             },
             "approximate": true,
-            "measurement_period": "2026-Q1"
+            "measurement_period": "2026-Q1",
+            "temporal_limitation": "2026-Q1 average production post-dates the 1 July 2025 effective date; no roll-back is applied"
           }
         }
       }
@@ -127,6 +147,10 @@
         "value": null,
         "unit": "USD/(boe)",
         "reason": "",
+        "consideration_as_of": "2026-06-30",
+        "consideration_effective_date": "2025-07-01",
+        "denominator_as_of": "2025-12-31",
+        "limitation": "Expected net cash excluding the USD 42.5 million deposit after estimated interim cash flow; not total cash paid; Issuer-stated reserves net of P&A; underlying reserves report not independently reviewed; Inputs have different dates; no date alignment is applied; Year-end 2025 reserves post-date the 1 July 2025 effective date by six months; no roll-back is applied",
         "inputs": {
           "consideration": {
             "value": null,
@@ -143,7 +167,7 @@
               450000000,
               500000000
             ],
-            "reason": "Expected final net cash range after estimated interim cash flow; excludes the credited deposit",
+            "reason": "Expected net cash excluding the USD 42.5 million deposit after estimated interim cash flow; not total cash paid",
             "effective_date": "2025-07-01",
             "excludes_deposit_usd": 42500000
           },
@@ -159,7 +183,8 @@
             },
             "approximate": true,
             "reserve_category": "proved",
-            "qualification": "Issuer-stated reserves net of P&A; underlying reserves report not independently reviewed"
+            "qualification": "Issuer-stated reserves net of P&A; underlying reserves report not independently reviewed",
+            "temporal_limitation": "Year-end 2025 reserves post-date the 1 July 2025 effective date by six months; no roll-back is applied"
           }
         },
         "range": [
@@ -172,6 +197,10 @@
         "value": null,
         "unit": "USD/(boe/d)",
         "reason": "",
+        "consideration_as_of": "2026-06-30",
+        "consideration_effective_date": "2025-07-01",
+        "denominator_as_of": "2026-03-31",
+        "limitation": "Expected net cash excluding the USD 42.5 million deposit after estimated interim cash flow; not total cash paid; Inputs have different dates; no date alignment is applied; 2026-Q1 average production post-dates the 1 July 2025 effective date; no roll-back is applied",
         "inputs": {
           "consideration": {
             "value": null,
@@ -188,7 +217,7 @@
               450000000,
               500000000
             ],
-            "reason": "Expected final net cash range after estimated interim cash flow; excludes the credited deposit",
+            "reason": "Expected net cash excluding the USD 42.5 million deposit after estimated interim cash flow; not total cash paid",
             "effective_date": "2025-07-01",
             "excludes_deposit_usd": 42500000
           },
@@ -203,7 +232,8 @@
               "locator": "GULF OF AMERICA BOLT-ON ACQUISITION: first quarter average for interests Talos is acquiring"
             },
             "approximate": true,
-            "measurement_period": "2026-Q1"
+            "measurement_period": "2026-Q1",
+            "temporal_limitation": "2026-Q1 average production post-dates the 1 July 2025 effective date; no roll-back is applied"
           }
         },
         "range": [
@@ -218,6 +248,10 @@
         "value": null,
         "unit": "USD/(boe)",
         "reason": "Buyer allocation or net consideration not verified from an accessible source; Reserves for this exact acquired-interest scope are not verified",
+        "consideration_as_of": null,
+        "consideration_effective_date": null,
+        "denominator_as_of": null,
+        "limitation": "Buyer allocation or net consideration not verified from an accessible source",
         "inputs": {
           "consideration": {
             "value": null,
@@ -236,6 +270,10 @@
         "value": null,
         "unit": "USD/(boe/d)",
         "reason": "Buyer allocation or net consideration not verified from an accessible source; Production period and acquired-interest scope are not verified",
+        "consideration_as_of": null,
+        "consideration_effective_date": null,
+        "denominator_as_of": null,
+        "limitation": "Buyer allocation or net consideration not verified from an accessible source",
         "inputs": {
           "consideration": {
             "value": null,

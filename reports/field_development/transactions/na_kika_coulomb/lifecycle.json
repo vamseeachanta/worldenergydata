@@ -1,18 +1,14 @@
 {
   "title": "Na Kika hub and field lifecycle",
-  "limitation": "Catalog dates are unqualified historical labels. A block match is not a verified field-production join. The semisub host label does not classify each satellite. Herschel Expansion timing and East Anstey sale membership remain NOT_EVALUATED.",
+  "limitation": "Discovery dates, first-production dates, block codes and host classification remain NOT_EVALUATED pending independently publishable evidence. BP preferential-right exercise would remove the Na Kika interests, leaving only Coulomb. Closing and exercise outcomes are unverified.",
   "assets": [
     {
       "name": "Na Kika",
       "kind": "hub",
       "host": null,
       "host_citation": null,
-      "host_concept": "semisub_fps",
-      "host_concept_citation": {
-        "source_id": "catalog_host",
-        "locator": "VESSEL_NAME=NA KIKA; FACILITY_TYPE=SemiSub",
-        "row_name": "NA KIKA"
-      },
+      "host_concept": null,
+      "host_concept_citation": null,
       "field_concept": null,
       "field_concept_citation": null,
       "transaction_membership_status": "SOURCE_SUPPORTED",
@@ -20,7 +16,8 @@
         "source_id": "shell_release",
         "locator": "meta[name=description]: interests included in the sale"
       },
-      "transaction_membership_reason": "Named interest in the seller announcement; closing remains unverified",
+      "transaction_membership_reason": "Named interest in the seller announcement; closing remains unverified; BP preferential-right exercise would remove the Na Kika interests, leaving only Coulomb; closing and exercise outcome remain unverified",
+      "host_concept_reason": "Host classification is withheld pending independently publishable evidence",
       "catalog_host_concept": null,
       "catalog_discovery": null,
       "catalog_first_production": null,
@@ -29,7 +26,8 @@
       "block_match": false,
       "block_citation": null,
       "lifecycle_status": "NOT_EVALUATED",
-      "generated_page_status": "missing",
+      "lifecycle_reason": "Lifecycle evidence is unavailable or withheld pending redistribution review",
+      "generated_page_status": "NOT_EVALUATED",
       "report_path": null
     },
     {
@@ -41,25 +39,23 @@
       "host_concept_citation": null,
       "field_concept": null,
       "field_concept_citation": null,
-      "transaction_membership_status": "NOT_EVALUATED",
-      "transaction_membership_citation": null,
-      "transaction_membership_reason": "Sale membership for this entry is not established by the cited input",
-      "catalog_host_concept": "semisub_fps",
-      "catalog_discovery": "Jun 1995",
-      "catalog_first_production": "Apr 2004",
-      "catalog_citation": {
-        "source_id": "catalog_fields",
-        "locator": "FIELD_NAME=Ariel"
+      "transaction_membership_status": "SOURCE_SUPPORTED",
+      "transaction_membership_citation": {
+        "source_id": "talos_release",
+        "locator": "GULF OF AMERICA BOLT-ON ACQUISITION: four associated fields, including Kepler, Ariel, Fourier, and Herschel"
       },
-      "block": "MC429",
-      "block_match": true,
-      "block_citation": {
-        "source_id": "catalog_crosswalk",
-        "locator": "og_field_name=Ariel"
-      },
-      "lifecycle_status": "CATALOG_ONLY",
-      "generated_page_status": "present",
-      "report_path": "reports/field_development/bsee_matched/ariel.html"
+      "transaction_membership_reason": "Named associated field in the buyer announcement; BP preferential-right exercise would remove the Na Kika interests, leaving only Coulomb; closing and exercise outcome remain unverified",
+      "catalog_host_concept": null,
+      "catalog_discovery": null,
+      "catalog_first_production": null,
+      "catalog_citation": null,
+      "block": null,
+      "block_match": false,
+      "block_citation": null,
+      "lifecycle_status": "NOT_EVALUATED",
+      "lifecycle_reason": "Lifecycle evidence is unavailable or withheld pending redistribution review",
+      "generated_page_status": "NOT_EVALUATED",
+      "report_path": null
     },
     {
       "name": "Coulomb",
@@ -82,22 +78,17 @@
         "locator": "meta[name=description]: interests included in the sale"
       },
       "transaction_membership_reason": "Named interest in the seller announcement; closing remains unverified",
-      "catalog_host_concept": "semisub_fps",
-      "catalog_discovery": "Jan 1988",
-      "catalog_first_production": "Jun 2004",
-      "catalog_citation": {
-        "source_id": "catalog_fields",
-        "locator": "FIELD_NAME=Coulomb"
-      },
-      "block": "MC657",
-      "block_match": true,
-      "block_citation": {
-        "source_id": "catalog_crosswalk",
-        "locator": "og_field_name=Coulomb"
-      },
-      "lifecycle_status": "CATALOG_ONLY",
-      "generated_page_status": "present",
-      "report_path": "reports/field_development/bsee_matched/coulomb.html"
+      "catalog_host_concept": null,
+      "catalog_discovery": null,
+      "catalog_first_production": null,
+      "catalog_citation": null,
+      "block": null,
+      "block_match": false,
+      "block_citation": null,
+      "lifecycle_status": "NOT_EVALUATED",
+      "lifecycle_reason": "Lifecycle evidence is unavailable or withheld pending redistribution review",
+      "generated_page_status": "NOT_EVALUATED",
+      "report_path": null
     },
     {
       "name": "East Anstey",
@@ -111,22 +102,17 @@
       "transaction_membership_status": "NOT_EVALUATED",
       "transaction_membership_citation": null,
       "transaction_membership_reason": "Sale membership for this entry is not established by the cited input",
-      "catalog_host_concept": "semisub_fps",
-      "catalog_discovery": "Dec 1997",
-      "catalog_first_production": "Dec 2003",
-      "catalog_citation": {
-        "source_id": "catalog_fields",
-        "locator": "FIELD_NAME=East Anstey"
-      },
-      "block": "MC607",
-      "block_match": true,
-      "block_citation": {
-        "source_id": "catalog_crosswalk",
-        "locator": "og_field_name=East Anstey"
-      },
-      "lifecycle_status": "CATALOG_ONLY",
-      "generated_page_status": "present",
-      "report_path": "reports/field_development/bsee_matched/east-anstey.html"
+      "catalog_host_concept": null,
+      "catalog_discovery": null,
+      "catalog_first_production": null,
+      "catalog_citation": null,
+      "block": null,
+      "block_match": false,
+      "block_citation": null,
+      "lifecycle_status": "NOT_EVALUATED",
+      "lifecycle_reason": "Lifecycle evidence is unavailable or withheld pending redistribution review",
+      "generated_page_status": "NOT_EVALUATED",
+      "report_path": null
     },
     {
       "name": "Fourier",
@@ -137,25 +123,23 @@
       "host_concept_citation": null,
       "field_concept": null,
       "field_concept_citation": null,
-      "transaction_membership_status": "NOT_EVALUATED",
-      "transaction_membership_citation": null,
-      "transaction_membership_reason": "Sale membership for this entry is not established by the cited input",
-      "catalog_host_concept": "semisub_fps",
-      "catalog_discovery": "Jul 1989",
-      "catalog_first_production": "Jan 2003",
-      "catalog_citation": {
-        "source_id": "catalog_fields",
-        "locator": "FIELD_NAME=Fourier"
+      "transaction_membership_status": "SOURCE_SUPPORTED",
+      "transaction_membership_citation": {
+        "source_id": "talos_release",
+        "locator": "GULF OF AMERICA BOLT-ON ACQUISITION: four associated fields, including Kepler, Ariel, Fourier, and Herschel"
       },
-      "block": "MC522",
-      "block_match": true,
-      "block_citation": {
-        "source_id": "catalog_crosswalk",
-        "locator": "og_field_name=Fourier"
-      },
-      "lifecycle_status": "CATALOG_ONLY",
-      "generated_page_status": "present",
-      "report_path": "reports/field_development/bsee_matched/fourier.html"
+      "transaction_membership_reason": "Named associated field in the buyer announcement; BP preferential-right exercise would remove the Na Kika interests, leaving only Coulomb; closing and exercise outcome remain unverified",
+      "catalog_host_concept": null,
+      "catalog_discovery": null,
+      "catalog_first_production": null,
+      "catalog_citation": null,
+      "block": null,
+      "block_match": false,
+      "block_citation": null,
+      "lifecycle_status": "NOT_EVALUATED",
+      "lifecycle_reason": "Lifecycle evidence is unavailable or withheld pending redistribution review",
+      "generated_page_status": "NOT_EVALUATED",
+      "report_path": null
     },
     {
       "name": "Herschel",
@@ -166,24 +150,22 @@
       "host_concept_citation": null,
       "field_concept": null,
       "field_concept_citation": null,
-      "transaction_membership_status": "NOT_EVALUATED",
-      "transaction_membership_citation": null,
-      "transaction_membership_reason": "Sale membership for this entry is not established by the cited input",
-      "catalog_host_concept": "semisub_fps",
-      "catalog_discovery": "Jun 1996",
-      "catalog_first_production": "Dec 2003",
-      "catalog_citation": {
-        "source_id": "catalog_fields",
-        "locator": "FIELD_NAME=Herschel"
+      "transaction_membership_status": "SOURCE_SUPPORTED",
+      "transaction_membership_citation": {
+        "source_id": "talos_release",
+        "locator": "GULF OF AMERICA BOLT-ON ACQUISITION: four associated fields, including Kepler, Ariel, Fourier, and Herschel"
       },
-      "block": "MC520",
+      "transaction_membership_reason": "Named associated field in the buyer announcement; BP preferential-right exercise would remove the Na Kika interests, leaving only Coulomb; closing and exercise outcome remain unverified",
+      "catalog_host_concept": null,
+      "catalog_discovery": null,
+      "catalog_first_production": null,
+      "catalog_citation": null,
+      "block": null,
       "block_match": false,
-      "block_citation": {
-        "source_id": "catalog_crosswalk",
-        "locator": "og_field_name=Herschel"
-      },
-      "lifecycle_status": "CATALOG_ONLY",
-      "generated_page_status": "missing",
+      "block_citation": null,
+      "lifecycle_status": "NOT_EVALUATED",
+      "lifecycle_reason": "Lifecycle evidence is unavailable or withheld pending redistribution review",
+      "generated_page_status": "NOT_EVALUATED",
       "report_path": null
     },
     {
@@ -195,25 +177,23 @@
       "host_concept_citation": null,
       "field_concept": null,
       "field_concept_citation": null,
-      "transaction_membership_status": "NOT_EVALUATED",
-      "transaction_membership_citation": null,
-      "transaction_membership_reason": "Sale membership for this entry is not established by the cited input",
-      "catalog_host_concept": "semisub_fps",
-      "catalog_discovery": "Dec 1987",
-      "catalog_first_production": "Dec 2003",
-      "catalog_citation": {
-        "source_id": "catalog_fields",
-        "locator": "FIELD_NAME=Kepler"
+      "transaction_membership_status": "SOURCE_SUPPORTED",
+      "transaction_membership_citation": {
+        "source_id": "talos_release",
+        "locator": "GULF OF AMERICA BOLT-ON ACQUISITION: four associated fields, including Kepler, Ariel, Fourier, and Herschel"
       },
-      "block": "MC383",
-      "block_match": true,
-      "block_citation": {
-        "source_id": "catalog_crosswalk",
-        "locator": "og_field_name=Kepler"
-      },
-      "lifecycle_status": "CATALOG_ONLY",
-      "generated_page_status": "present",
-      "report_path": "reports/field_development/bsee_matched/kepler.html"
+      "transaction_membership_reason": "Named associated field in the buyer announcement; BP preferential-right exercise would remove the Na Kika interests, leaving only Coulomb; closing and exercise outcome remain unverified",
+      "catalog_host_concept": null,
+      "catalog_discovery": null,
+      "catalog_first_production": null,
+      "catalog_citation": null,
+      "block": null,
+      "block_match": false,
+      "block_citation": null,
+      "lifecycle_status": "NOT_EVALUATED",
+      "lifecycle_reason": "Lifecycle evidence is unavailable or withheld pending redistribution review",
+      "generated_page_status": "NOT_EVALUATED",
+      "report_path": null
     },
     {
       "name": "Herschel Expansion",
@@ -235,9 +215,10 @@
       "block_match": false,
       "block_citation": null,
       "lifecycle_status": "NOT_EVALUATED",
-      "generated_page_status": "missing",
+      "lifecycle_reason": "Lifecycle evidence is unavailable or withheld pending redistribution review",
+      "generated_page_status": "NOT_EVALUATED",
       "report_path": null
     }
   ],
-  "coverage_note": "Requested roster only; not an exhaustive or verified sale-perimeter inventory. Catalog dates are historical source labels, not independently verified lifecycle events."
+  "coverage_note": "Requested roster only; six entries have source-supported announced membership. East Anstey and Herschel Expansion remain NOT_EVALUATED. Catalog-derived lifecycle claims and field-report links are withheld pending redistribution review."
 }

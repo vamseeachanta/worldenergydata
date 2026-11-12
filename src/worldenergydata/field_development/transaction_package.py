@@ -7,6 +7,7 @@ working-interest adjustment, discount rate, or acceptance threshold is supplied.
 
 from __future__ import annotations
 
+import copy
 import csv
 import hashlib
 import json
@@ -67,6 +68,15 @@ def _finite_ratio(amount: Decimal, quantity: Decimal) -> float:
     return value
 
 
+def _ratio_limitation(consideration: dict, denominator: dict) -> str:
+    notes = [consideration.get("reason", ""), denominator.get("qualification", "")]
+    if consideration.get("as_of") != denominator.get("as_of"):
+        notes.append("Inputs have different dates; no date alignment is applied")
+    if denominator.get("temporal_limitation"):
+        notes.append(denominator["temporal_limitation"])
+    return "; ".join(note for note in notes if note)
+
+
 def valuation_metrics(consideration: dict, reserves: dict, production: dict) -> dict:
     """Calculate two independent ratios with their input evidence echoed.
 
@@ -107,6 +117,10 @@ def valuation_metrics(consideration: dict, reserves: dict, production: dict) -> 
             ),
             "unit": f"USD/({unit})",
             "reason": "; ".join(reasons),
+            "consideration_as_of": consideration.get("as_of"),
+            "consideration_effective_date": consideration.get("effective_date"),
+            "denominator_as_of": denominator.get("as_of"),
+            "limitation": _ratio_limitation(consideration, denominator),
             "inputs": {"consideration": consideration, "denominator": denominator},
         }
         if evaluated and len(amounts) == 2:
@@ -134,7 +148,17 @@ def _verify_sources(sources: dict, root: Path) -> None:
             path = (root / source["path"]).resolve()
             if not path.is_relative_to(root.resolve()):
                 raise ValueError("Source path must stay inside the repository")
-            content = path.read_bytes()
+            if source["access"] != "available":
+                continue
+            try:
+                content = path.read_bytes()
+            except FileNotFoundError as exc:
+                if not source.get("optional"):
+                    raise ValueError("Required source file is missing") from exc
+                source.update(
+                    access="unavailable", reason="Optional source file is missing"
+                )
+                continue
             domain = source.get("digest_domain", "source-bytes")
             if domain == "UTF-8 text; CRLF normalized to LF":
                 content = content.decode("utf-8").replace("\r\n", "\n").encode("utf-8")
@@ -151,7 +175,9 @@ def _verify_citation(citation: dict, sources: dict) -> None:
         raise ValueError("Known facts cannot cite unavailable sources")
 
 
-def _catalog(source: dict, root: Path) -> list[dict]:
+def _catalog(source: dict | None, root: Path) -> list[dict]:
+    if source is None or source["access"] != "available":
+        return []
     with (root / source["path"]).open(newline="", encoding="utf-8") as stream:
         return list(csv.DictReader(stream))
 
@@ -177,20 +203,28 @@ def _verify_host_concept(asset: dict, sources: dict, root: Path) -> None:
 
 def _lifecycle(data: dict, root: Path) -> list[dict]:
     fields = {
-        r["FIELD_NAME"]: r for r in _catalog(data["sources"]["catalog_fields"], root)
+        r["FIELD_NAME"]: r
+        for r in _catalog(data["sources"].get("catalog_fields"), root)
     }
     crosswalk = {
         r["og_field_name"]: r
-        for r in _catalog(data["sources"]["catalog_crosswalk"], root)
+        for r in _catalog(data["sources"].get("catalog_crosswalk"), root)
     }
     assets = []
     for asset in data["assets"]:
         name = asset["name"]
         field = fields.get(name, {})
         cross = crosswalk.get(name, {})
-        slug = name.lower().replace(" ", "-")
-        relative_page = f"reports/field_development/bsee_matched/{slug}.html"
-        page_exists = (root / relative_page).is_file()
+        citation = asset.get("host_concept_citation") or {}
+        if (
+            citation.get("source_id") == "catalog_host"
+            and data["sources"].get("catalog_host", {}).get("access") != "available"
+        ):
+            asset.update(
+                host_concept=None,
+                host_concept_citation=None,
+                host_concept_reason="Host catalog evidence is unavailable or withheld",
+            )
         assets.append(
             {
                 **asset,
@@ -213,8 +247,14 @@ def _lifecycle(data: dict, root: Path) -> list[dict]:
                     else None
                 ),
                 "lifecycle_status": "CATALOG_ONLY" if field else "NOT_EVALUATED",
-                "generated_page_status": "present" if page_exists else "missing",
-                "report_path": relative_page if page_exists else None,
+                "lifecycle_reason": (
+                    "Catalog labels only; not independently qualified"
+                    if field
+                    else "Lifecycle evidence is unavailable or withheld "
+                    "pending redistribution review"
+                ),
+                "generated_page_status": "NOT_EVALUATED",
+                "report_path": None,
             }
         )
     for asset in assets:
@@ -251,9 +291,14 @@ def build_package(data: dict, root: Path) -> dict:
     """
     if data.get("schema_version") != 1:
         raise ValueError("Unsupported transaction input schema")
+    data = copy.deepcopy(data)
+    input_snapshot = copy.deepcopy(data)
     sources = data["sources"]
     _verify_sources(sources, root)
     _verify_citation(data["transaction"]["buyer_group_citation"], sources)
+    for term in data["transaction"]["terms"].values():
+        if term.get("citation"):
+            _verify_citation(term["citation"], sources)
     for fact in data["transaction"]["working_interests"]:
         value = _number(fact, "fraction")
         if value is None or value > 1:
@@ -298,8 +343,8 @@ def build_package(data: dict, root: Path) -> dict:
         for asset in assets
         if asset["kind"] == "field"
     ]
-    canonical = json.dumps(
-        data, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False
+    canonical = (
+        json.dumps(input_snapshot, indent=2, ensure_ascii=False, allow_nan=False) + "\n"
     ).encode("utf-8")
     return {
         "title": data["title"],
@@ -325,8 +370,8 @@ def build_package(data: dict, root: Path) -> dict:
         "provenance": {
             "input_sha256": hashlib.sha256(canonical).hexdigest(),
             "digest_domain": (
-                "UTF-8 JSON, sorted keys, compact separators, "
-                "ensure_ascii=False, allow_nan=False"
+                "UTF-8 JSON, indent=2, ensure_ascii=False, allow_nan=False, "
+                "LF with trailing newline; exact serialized input bytes"
             ),
             "sources": sources,
         },

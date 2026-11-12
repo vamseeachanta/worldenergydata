@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import html
 import json
-import os
 from pathlib import Path
 
 
@@ -52,7 +51,6 @@ details{{margin:1rem 0}}a{{color:#125e83}}.status{{border-left:5px solid #b96b00
 
 def _lifecycle_body(package: dict, out: Path, root: Path) -> str:
     rows = []
-    links = []
     for asset in package["lifecycle"]["assets"]:
         rows.append(
             [
@@ -64,23 +62,9 @@ def _lifecycle_body(package: dict, out: Path, root: Path) -> str:
                 asset["catalog_first_production"],
                 asset["transaction_membership_status"],
                 asset["transaction_membership_reason"],
-                asset["generated_page_status"],
+                asset["lifecycle_reason"],
             ]
         )
-        if asset["report_path"]:
-            try:
-                target = Path(
-                    os.path.relpath(root / asset["report_path"], out)
-                ).as_posix()
-            except ValueError:
-                links.append(
-                    f'<li>{_text(asset["name"])}: link omitted because output and '
-                    "repository use different drives.</li>"
-                )
-                continue
-            links.append(
-                f'<li><a href="{_text(target)}">{_text(asset["name"])}</a></li>'
-            )
     return (
         f'<p>{_text(package["lifecycle"]["coverage_note"])}</p>'
         + _table(
@@ -93,14 +77,12 @@ def _lifecycle_body(package: dict, out: Path, root: Path) -> str:
                 "Catalog first production",
                 "Sale membership",
                 "Membership basis or limitation",
-                "Existing page",
+                "Lifecycle limitation",
             ],
             rows,
         )
         + f'<p>{_text(package["lifecycle"]["limitation"])}</p>'
-        + "<h2>Existing field-development pages</h2><ul>"
-        + "".join(links)
-        + "</ul>"
+        + "<p>Catalog-derived field-report links are withheld pending redistribution review.</p>"
     )
 
 
@@ -129,7 +111,10 @@ def _transaction_body(package: dict) -> str:
                     value,
                     result["unit"],
                     input_values,
-                    result["reason"]
+                    result["consideration_as_of"],
+                    result["consideration_effective_date"],
+                    result["denominator_as_of"],
+                    "; ".join(filter(None, (result["reason"], result["limitation"])))
                     or "Same basis and acquired-interest subject; no return threshold",
                 ]
             )
@@ -151,15 +136,30 @@ def _transaction_body(package: dict) -> str:
         )
         + f'<p>Closing: {_text(package["transaction"]["closing_status"])}</p>'
         + _table(
-            ["Subject", "Sold working interest (fraction)", "Source locator"],
+            ["Basis", "Subject", "Working interest (fraction)", "Source locator"],
             [
-                [fact["subject"], fact["value"], fact["citation"]["locator"]]
+                [
+                    fact["basis"],
+                    fact["subject"],
+                    fact["value"],
+                    fact["citation"]["locator"],
+                ]
                 for fact in package["transaction"]["working_interests"]
             ],
         )
         + "<h2>Transaction ratios</h2>"
         + _table(
-            ["Basis", "Metric", "Result", "Unit", "Inputs", "Criterion or limitation"],
+            [
+                "Basis",
+                "Metric",
+                "Result",
+                "Unit",
+                "Inputs",
+                "Consideration as of",
+                "Consideration effective date",
+                "Denominator as of",
+                "Criterion or limitation",
+            ],
             rows,
         )
         + "<p>Method: consideration USD / acquired-interest reserves boe; "
@@ -168,7 +168,7 @@ def _transaction_body(package: dict) -> str:
         "assumed cash-flow parameters are applied.</p>"
         + "<h2>Terms and preferential-right scenarios</h2>"
         + _table(
-            ["Term", "Status", "Missing evidence"],
+            ["Term", "Amount status", "Terms and remaining limitation"],
             [
                 [key, term["status"], term["reason"]]
                 for key, term in package["transaction"]["terms"].items()

@@ -1,6 +1,6 @@
 {
-  "input_sha256": "9c8a2c2fa62952da8f457889e39a758f9debabde0698bca591f03cffd8167e3f",
-  "digest_domain": "UTF-8 JSON, sorted keys, compact separators, ensure_ascii=False, allow_nan=False",
+  "input_sha256": "1d042665d63b0acc6b2bfa723266741300887c1a804ce4ea95f3dc34cf9eec72",
+  "digest_domain": "UTF-8 JSON, indent=2, ensure_ascii=False, allow_nan=False, LF with trailing newline; exact serialized input bytes",
   "sources": {
     "shell_release": {
       "url": "https://www.shell.com/news-and-insights/newsroom/news-and-media-releases/2026/shell-to-sell-interest-in-gulf-of-america-platform.html",
@@ -40,29 +40,35 @@
     "catalog_fields": {
       "path": "data/modules/offshore_assets/curated/fields.csv",
       "revision": "d867ba1e011bb7558e0e9dd02e118160657f9633",
-      "access": "available",
-      "sha256": "c57f927fbcaac53b880d585e1d8e2fe2beaaa1858fe047766827fc61d35dbc79",
+      "access": "withheld",
+      "sha256": "6a5a2be298295da8bbea9b0dc5099397abe6edd97b6c4d621d7d4c05ac09bd63",
       "coverage": "Existing curated catalog; not independently qualified production or reserves",
-      "readiness": "partial",
-      "digest_domain": "UTF-8 text; CRLF normalized to LF"
+      "readiness": "NOT_EVALUATED",
+      "digest_domain": "source-bytes",
+      "optional": true,
+      "reason": "Catalog use is suspended pending redistribution-terms and merge-sequencing review"
     },
     "catalog_crosswalk": {
       "path": "data/modules/offshore_assets/curated/subseaiq_bsee_block_crosswalk.csv",
       "revision": "d867ba1e011bb7558e0e9dd02e118160657f9633",
-      "access": "available",
-      "sha256": "be18f03e26cbf904d64e34a6a086f3753c60420853909a21944c860363e79593",
+      "access": "withheld",
+      "sha256": "ff481c0cc9ba1c08551314f3e38da98c4c139332b5bd3b9b6921ba051200a804",
       "coverage": "Existing curated catalog; not independently qualified production or reserves",
-      "readiness": "partial",
-      "digest_domain": "UTF-8 text; CRLF normalized to LF"
+      "readiness": "NOT_EVALUATED",
+      "digest_domain": "source-bytes",
+      "optional": true,
+      "reason": "Catalog use is suspended pending redistribution-terms and merge-sequencing review"
     },
     "catalog_host": {
       "path": "data/modules/offshore_assets/curated/host_facilities.csv",
       "revision": "d867ba1e011bb7558e0e9dd02e118160657f9633",
-      "access": "available",
-      "sha256": "7d4d052990083dd2740acfef8c6c48b3d0e35f2ee97a5a6410b69bf94c7a61a3",
+      "access": "withheld",
+      "sha256": "cef18b57d3178a65f996d5d9099d3f06f78f33a285096b54b4b3da5ae7d152ba",
       "coverage": "Existing curated catalog; not independently qualified production or reserves",
-      "readiness": "partial",
-      "digest_domain": "UTF-8 text; CRLF normalized to LF"
+      "readiness": "NOT_EVALUATED",
+      "digest_domain": "source-bytes",
+      "optional": true,
+      "reason": "Catalog use is suspended pending redistribution-terms and merge-sequencing review"
     }
   }
 }
