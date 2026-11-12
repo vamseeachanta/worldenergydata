@@ -925,3 +925,146 @@ def test_selected_table_source_digest_uses_utf8_and_normalized_newlines(
     selected = root / "sanctioned_projects_2026.csv"
     write_csv(selected, rows)
     assert well_row(build(load_projects(root, selected)))["n"] == 5
+
+
+@pytest.mark.parametrize(
+    "column,metric",
+    [
+        ("WELL_COUNT", "capex_per_well"),
+        ("SURF_KM", "capex_per_surf_km"),
+        ("PEAK_PRODUCTION_BOEPD", "capex_per_kboed"),
+        ("RECOVERABLE_RESOURCE_MMBOE", "capex_per_boe"),
+    ],
+)
+@pytest.mark.parametrize("value", ["unknown", "nan", "inf", "0", "-1", ""])
+def test_cli_invalid_quantity_excludes_only_affected_metric(
+    projects, tmp_path, column, metric, value
+):
+    from worldenergydata.cost.benchmarks import load_projects
+
+    projects[-1][column] = value
+    root = inputs(tmp_path, projects)
+    # The boundary must preserve the source value for metric-local validation.
+    assert load_projects(root)[-1][column] == value
+    output = tmp_path / "reports"
+    result = cli(root, output)
+    assert result.returncode == 0, result.stderr
+    with (output / "unit_cost_benchmarks.csv").open(encoding="utf-8") as stream:
+        rows = {r["metric"]: r for r in csv.DictReader(stream)}
+    expected = {r["metric"]: r for r in build(projects)["rows"]}
+    assert rows.keys() == expected.keys()
+    for name, row in rows.items():
+        assert row["n"] == ("4" if name == metric else "5")
+        assert row["comparables"] == expected[name]["comparables"]
+        assert row["indicative_only"] == str(expected[name]["indicative_only"]).lower()
+        for percentile in ("p10", "p50", "p90"):
+            assert float(row[percentile]) == expected[name][percentile]
+    html = (output / "unit_cost_benchmarks.html").read_text(encoding="utf-8")
+    assert f"missing or invalid {column}" in html or (
+        f"{column} must be finite and positive" in html
+    )
+
+
+@pytest.mark.parametrize("value", ["unknown", "nan", "inf", "-1", ""])
+def test_cli_invalid_depth_uses_unknown_band_without_losing_metrics(
+    projects, tmp_path, value
+):
+    from worldenergydata.cost.benchmarks import load_projects
+
+    projects[-1]["WATER_DEPTH_M"] = value
+    root = inputs(tmp_path, projects)
+    assert load_projects(root)[-1]["WATER_DEPTH_M"] == value
+    output = tmp_path / "reports"
+    result = cli(root, output)
+    assert result.returncode == 0, result.stderr
+    with (output / "unit_cost_benchmarks.csv").open(encoding="utf-8") as stream:
+        rows = list(csv.DictReader(stream))
+    expected = build(projects)["rows"]
+    assert len(rows) == len(expected) == 10
+    assert sum(int(row["n"]) for row in rows) == 25
+    for row, want in zip(rows, expected, strict=True):
+        assert row["water_depth_band"] == want["water_depth_band"]
+        assert row["comparables"] == want["comparables"]
+        if row["water_depth_band"] == "unknown":
+            assert row["n"] == "1"
+            assert row["comparables"] == "invented-5"
+        else:
+            assert row["water_depth_band"] == "deep"
+            assert row["n"] == "4"
+        for percentile in ("p10", "p50", "p90"):
+            assert float(row[percentile]) == want[percentile]
+
+
+@pytest.mark.parametrize(
+    "column,value,error",
+    [
+        ("FID_YEAR", "unknown", "could not convert"),
+        ("FIRST_OIL_YEAR", "unknown", "could not convert"),
+        ("SANCTIONED_CAPEX_USD_MM", "unknown", "could not convert"),
+        ("ACTUAL_COST_USD_MM", "unknown", "could not convert"),
+        ("USD_PER_BOE", "unknown", "could not convert"),
+        ("ACCESSED_DATE", "unknown", "Invalid isoformat"),
+        ("CONFIDENCE", "unknown", "DisclosureConfidence"),
+        ("SOURCE_PRIORITY", "unknown", "SourcePriority"),
+        ("CAPEX_BASIS", "", "capex_basis"),
+        ("PROJECT_ID", "invented-conflict", "identity registry disagree"),
+    ],
+)
+def test_cli_invalid_quantity_does_not_suppress_metadata_errors(
+    projects, tmp_path, column, value, error
+):
+    root = inputs(tmp_path, projects)
+    output = tmp_path / "reports"
+    assert cli(root, output).returncode == 0
+    before = {p.name: p.read_bytes() for p in output.iterdir()}
+    path = root / "sanctioned_projects.csv"
+    with path.open(encoding="utf-8") as stream:
+        rows = list(csv.DictReader(stream))
+    rows[-1].update(WELL_COUNT="nan", SURF_KM="unknown", WATER_DEPTH_M="unknown")
+    if column == "PROJECT_ID":
+        for row in rows:
+            row[column] = ""
+    rows[-1][column] = value
+    write_csv(path, rows)
+    result = cli(root, output)
+    assert result.returncode == 2
+    assert error in result.stderr
+    assert before == {p.name: p.read_bytes() for p in output.iterdir()}
+
+
+@pytest.mark.parametrize("column", ["SOURCE_URL", "WELL_COUNT", "ACCESSED_DATE"])
+def test_cli_invalid_quantity_does_not_suppress_missing_headers(
+    projects, tmp_path, column
+):
+    projects[-1]["WELL_COUNT"] = "nan"
+    root = inputs(tmp_path, projects)
+    path = root / "sanctioned_projects.csv"
+    with path.open(encoding="utf-8") as stream:
+        rows = list(csv.DictReader(stream))
+    write_csv(path, [{k: v for k, v in row.items() if k != column} for row in rows])
+    output = tmp_path / "reports"
+    result = cli(root, output)
+    assert result.returncode == 2
+    assert column in result.stderr
+    assert not output.exists()
+
+
+@pytest.mark.parametrize(
+    "column,value", [("SOURCE_URL", "invalid"), ("SOURCE_TITLE", "")]
+)
+def test_cli_invalid_quantity_does_not_bypass_source_exclusions(
+    projects, tmp_path, column, value
+):
+    projects[-1].update(WELL_COUNT="nan", SURF_KM="unknown", WATER_DEPTH_M="unknown")
+    projects[-1][column] = value
+    root = inputs(tmp_path, projects)
+    output = tmp_path / "reports"
+    result = cli(root, output)
+    assert result.returncode == 0, result.stderr
+    with (output / "unit_cost_benchmarks.csv").open(encoding="utf-8") as stream:
+        rows = list(csv.DictReader(stream))
+    assert len(rows) == 5
+    assert all(row["n"] == "4" for row in rows)
+    assert all("invented-5" not in row["comparables"] for row in rows)
+    html = (output / "unit_cost_benchmarks.html").read_text(encoding="utf-8")
+    assert column in html

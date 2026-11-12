@@ -26,7 +26,8 @@ from worldenergydata.cost.reporting.benchmark_report import (
     facts_digest,
     percentile_summary,
 )
-from worldenergydata.cost.timeseries.dataset import read_sanctioned_csv
+from worldenergydata.cost.timeseries.dataset import SANCTIONED_CSV_COLUMNS
+from worldenergydata.cost.timeseries.schema import DisclosureConfidence, SourcePriority
 
 CSV_COLUMNS = (
     "metric",
@@ -307,6 +308,39 @@ def _read_csv(path):
         ]
 
 
+def _validate_project_metadata(fields, rows):
+    """Keep sanctioned schema/source checks separate from metric quantities.
+
+    The typed sanctioned reader coerces quantities eagerly. Benchmarks retain
+    their raw text so each denominator can fail independently and invalid depth
+    can use the unknown band, without masking metadata or identity errors.
+    """
+    required = {
+        name.upper()
+        for name in SANCTIONED_CSV_COLUMNS
+        if name != "scope_is_offshore_only"
+    }
+    missing = sorted(required.difference(fields))
+    if missing:
+        raise ValueError("Missing input: " + ", ".join(missing))
+    for row in rows:
+        for column in (
+            "SANCTIONED_CAPEX_USD_MM",
+            "ACTUAL_COST_USD_MM",
+            "USD_PER_BOE",
+        ):
+            if _text(row, column):
+                float(_text(row, column))
+        for column in ("FID_YEAR", "FIRST_OIL_YEAR"):
+            if _text(row, column):
+                int(float(_text(row, column)))
+        date.fromisoformat(row["ACCESSED_DATE"])
+        DisclosureConfidence(row["CONFIDENCE"])
+        SourcePriority(row["SOURCE_PRIORITY"])
+        if _text(row, "SANCTIONED_CAPEX_USD_MM") and not _text(row, "CAPEX_BASIS"):
+            raise ValueError("A CAPEX figure without a stated capex_basis is unusable")
+
+
 def load_projects(data_dir, projects_path=None):
     """Read upstream files without substituting a cost basis or inventing links."""
     data_dir = Path(data_dir)
@@ -344,8 +378,7 @@ def load_projects(data_dir, projects_path=None):
                     "Derived projects source digest does not match the UTF-8/LF "
                     f"SHA-256 of sanctioned_projects.csv; {rebuild}"
                 )
-    # Reuse the existing sanctioned-project reader for its schema and CAPEX-basis check.
-    sanctioned = read_sanctioned_csv(path)
+    _validate_project_metadata(fields, rows)
     identities = {}
     for identity in _read_csv(data_dir / "cost_project_identity.csv")[1]:
         if (
@@ -418,7 +451,7 @@ def load_projects(data_dir, projects_path=None):
         ):
             requirements[_text(requirement, "PROJECT_ID")].append(requirement)
     result = []
-    for raw, _ in zip(rows, sanctioned, strict=True):
+    for raw in rows:
         name = _text(raw, "PROJECT")
         # Crosswalk and quantity evidence belong to their own input tables.
         raw = {
