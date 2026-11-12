@@ -234,6 +234,9 @@ def test_depth_bands_follow_benchmark_contract(table, scope, depth, band):
         {"typo": 1},
         {"water_depth_band": "shallow"},
         {"award_year": "2020"},
+        {"quote_cost_basis": []},
+        {"wells": 10**1000},
+        {"water_depth_m": 10**1000},
     ],
 )
 def test_invalid_scope_is_rejected(table, scope, change):
