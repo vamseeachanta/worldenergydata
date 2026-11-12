@@ -132,9 +132,15 @@ class DrillingRiserLoader:
         missing_columns = [field for field in _REQUIRED_COLUMNS if field not in df]
         if missing_columns:
             raise ValueError("Missing required column " + ", ".join(missing_columns))
+        if len(identities) != len(df):
+            raise ValueError(
+                "CSV parser row count mismatch: "
+                f"strict reader={len(identities)}, pandas={len(df)}"
+            )
         # Use the checked CSV strings: the C engine silently truncates at NUL,
         # while the Python engine applies NA coercion even with a converter.
-        df["COMPONENT_ID"] = pd.Series(identities, dtype=object)
+        # An array assigns by position and retains string access for empty input.
+        df["COMPONENT_ID"] = pd.array(identities, dtype=object)
         for field in ("DATA_SOURCE", "NOTES", "COMPONENT_ID"):
             missing = df[field].isna() | df[field].astype(str).str.strip().eq("")
             if missing.any():

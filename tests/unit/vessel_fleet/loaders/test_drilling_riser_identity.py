@@ -222,11 +222,11 @@ def test_invalid_identity_reports_physical_line(
     """The bad record starts at line 5 after a quoted newline and an empty line."""
     write_catalog(tmp_path, ["A", component_id])
     path = tmp_path / CSV_NAME
-    content = path.read_text()
+    content = path.read_bytes().decode("utf-8")
     content = content.replace("Identity validation only", '"first\nsecond"', 1)
     first_record_end = content.index('second"') + len('second"')
     line_end = content.index("\n", first_record_end)
-    path.write_text(content[:line_end] + "\n" + content[line_end:])
+    path.write_bytes((content[:line_end] + "\n" + content[line_end:]).encode("utf-8"))
 
     loader = DrillingRiserLoader(tmp_path)
     with pytest.raises(ValueError, match=rf"COMPONENT_ID.*{reason}.*CSV line 5$"):
@@ -324,10 +324,11 @@ def test_canonical_duplicate_reports_physical_lines_and_allows_retry(
     """Canonical or literal duplicates start on lines 2 and 5, not row indices."""
     write_catalog(tmp_path, ids)
     path = tmp_path / CSV_NAME
-    content = path.read_text().replace("Identity validation only", '"first\nsecond"', 1)
+    content = path.read_bytes().decode("utf-8")
+    content = content.replace("Identity validation only", '"first\nsecond"', 1)
     lines = content.splitlines(keepends=True)
     lines.insert(3, "\n")
-    path.write_text("".join(lines))
+    path.write_bytes("".join(lines).encode("utf-8"))
     loader = DrillingRiserLoader(tmp_path)
     with pytest.raises(ValueError, match="Duplicate COMPONENT_ID.*CSV lines 2, 5$"):
         loader.load()
@@ -345,7 +346,11 @@ def test_control_character_identity_is_not_cached(
     """Embedded Cc characters cannot create invisible identity differences."""
     write_catalog(tmp_path, [component_id])
     loader = DrillingRiserLoader(tmp_path)
-    with pytest.raises(ValueError, match="COMPONENT_ID.*control.*CSV line 2$"):
+    message = "COMPONENT_ID.*control.*CSV line 2$"
+    if "\x00" in component_id:
+        # Python 3.10 rejects NUL in csv.reader before identity validation.
+        message += "|^Malformed CSV at line 2: line contains NUL$"
+    with pytest.raises(ValueError, match=message):
         loader.load()
     assert loader._df is None
     write_catalog(tmp_path, ["A"])
