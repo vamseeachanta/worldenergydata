@@ -17,10 +17,22 @@ python -m worldenergydata.cost.outturn_check --output reports/cost/sanction_vs_o
 
 - `data/modules/cost/curated/cost_revision_trails.csv`: dated cost statements
   per project, each with its source URL and quoted text.
+- `data/modules/cost/curated/cost_revision_trail_qualifiers.csv`: for each
+  statement used here, how its source words the amount (`exact`,
+  `approximate`, `lower_bound`, `upper_bound` or `unsupported`), the wording
+  relied on and the review date. The key column is `TRAIL_PROJECT`; the table
+  adds no project and is not a cost register.
 - `data/modules/cost/curated/cost_component_timeseries.csv`: the held annual
   index rows, refreshed by `worldenergydata.cost.timeseries.refresh`.
 
 ## Method
+
+A comparison needs two amounts. A statement that gives a bound ("more than",
+"under", "within") is not an amount, so a project is evaluated only when both
+its statements are reviewed as `exact` or `approximate`. A bound, a statement
+whose source does not support its recorded date and kind, or a statement not
+yet reviewed gives `NOT_EVALUATED` with the wording as the reason. Evaluated
+rows carry both qualifiers and both source confidence levels.
 
 A project is evaluated when the trail holds exactly one `sanction_estimate` and
 at least one `final_outturn` or `final_forecast`, both in USD, and the final
@@ -59,9 +71,11 @@ accepts any pair of years the held series cover, in either direction.
 - The indices are United States series. Projects outside the United States
   are evaluated only when both statements are in USD; no exchange rate is
   applied and local cost movement is not represented.
-- Projects with statements in other currencies, with no final statement, or
-  with more than one sanction estimate are listed as `NOT_EVALUATED` with the
-  reason.
+- Projects with statements in other currencies, with no final statement,
+  without exactly one sanction estimate, or with a bounded or unsupported
+  statement are listed as `NOT_EVALUATED` with the reason.
+- An `approximate` amount is used at its stated value. A low-confidence
+  trade-press figure is used as stated and is marked in `FINAL_CONFIDENCE`.
 - A `final_forecast` is a statement made at or near first production, not an
   audited outturn. `FINAL_KIND` records which one a row uses.
 
