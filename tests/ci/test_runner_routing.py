@@ -1,4 +1,4 @@
-"""Keep Linux routing open to both architectures without changing fork routing."""
+"""Keep Linux routing open to both architectures; fork PRs stay on hosted runners."""
 
 import json
 from pathlib import Path
@@ -8,14 +8,17 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
 FORK_PREFIX = (
-    "${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('"
+    "${{ (github.event_name != 'pull_request' || "
+    "github.event.pull_request.head.repo.full_name == github.repository) && fromJSON('"
 )
-FORK_ROUTING = FORK_PREFIX + '["self-hosted","Linux"]\') }}'
+FORK_SUFFIX = "') || 'ubuntu-latest' }}"
+FORK_ROUTING = FORK_PREFIX + '["self-hosted","Linux"]' + FORK_SUFFIX
 WORKFLOWS = [
     ("ci.yml", 6),
     ("main-full-run.yml", 10),
     ("docs.yml", 1),
     ("brand-guard.yml", 1),
+    ("wheel-ownership.yml", 1),
 ]
 X64_ONLY = {
     "full-suite",
@@ -35,27 +38,35 @@ def _local_jobs(filename):
 
 def _required_labels(selector):
     if isinstance(selector, str):
+        selector = " ".join(selector.split())
         assert selector.startswith(FORK_PREFIX)
-        assert selector.endswith("') }}")
-        selector = json.loads(selector.removeprefix(FORK_PREFIX).removesuffix("') }}"))
+        assert selector.endswith(FORK_SUFFIX)
+        selector = json.loads(
+            selector.removeprefix(FORK_PREFIX).removesuffix(FORK_SUFFIX)
+        )
     return {label.casefold() for label in selector}
 
 
 @pytest.mark.parametrize("filename, job_count", WORKFLOWS)
 def test_linux_runner_routing(filename, job_count):
-    """Hand count: 6 + 10 + 1 + 1 = 18 local jobs; one CI job is reusable.
+    """Hand count: 6 + 10 + 1 + 1 + 1 = 19 local jobs; one CI job is reusable.
 
-    Compatible jobs request Linux; frozen all-extras jobs retain x64.
-    The unchanged fork predicate selects ubuntu-latest.
+    Compatible jobs request Linux; frozen all-extras jobs retain Linux x64.
+    The same-repository predicate sends fork PRs to ubuntu-latest.
     Reusable workflows own their runner selection outside this repository.
     """
     jobs = _local_jobs(filename)
     assert len(jobs) == job_count
     for name, job in jobs.items():
-        expected = FORK_ROUTING
         if filename == "main-full-run.yml":
-            expected = ["self-hosted", "x64" if name in X64_ONLY else "Linux"]
-        assert job["runs-on"] == expected, name
+            expected = (
+                ["self-hosted", "x64", "Linux"]
+                if name in X64_ONLY
+                else ["self-hosted", "Linux"]
+            )
+            assert job["runs-on"] == expected, name
+        else:
+            assert " ".join(job["runs-on"].split()) == FORK_ROUTING, name
 
 
 def test_frozen_all_extras_jobs_stay_x64():
@@ -71,7 +82,11 @@ def test_frozen_all_extras_jobs_stay_x64():
     }
     assert frozen_jobs == X64_ONLY
     for name in frozen_jobs:
-        assert _required_labels(jobs[name]["runs-on"]) == {"self-hosted", "x64"}, name
+        assert _required_labels(jobs[name]["runs-on"]) == {
+            "self-hosted",
+            "x64",
+            "linux",
+        }, name
 
 
 @pytest.mark.parametrize("filename, job_count", WORKFLOWS)

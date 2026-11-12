@@ -23,13 +23,19 @@ concurrency:
     ${{ github.event_name == 'pull_request' &&
     (github.event.action != 'edited' || github.event.changes.base != null) }}
 
+permissions:
+  contents: read
+
 env:
   PYTHON_VERSION_DEFAULT: "3.11"
 
 jobs:
   mode:
     name: Gate mode
-    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","Linux"]') }}
+    runs-on: >-
+      ${{ (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository) &&
+          fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
     permissions:
       contents: read
       actions: read
@@ -108,8 +114,8 @@ jobs:
   # The aggregate `pr-gate` job is the single required test check.
 
   # The discover -> test-domain (matrix) -> aggregate scaffolding now lives in
-  # the shared reusable workflow (workspace-hub#.../domain-matrix.yml, P4
-  # worldenergydata#530). wed's conventions match the reusable defaults exactly
+  # the local reusable workflow. Its conventions match the shared defaults
+  # while preserving the x64 and fork-isolation policy. The defaults are
   # (selector scripts/ci/select_test_targets.py, uv sync --all-extras, quarantine
   # scripts/ci/quarantine.txt, python-setup uv, max-parallel 10). The only
   # override sets WED_FAST_GATE=1 so tests/conftest.py skips repo-wide
@@ -119,13 +125,17 @@ jobs:
     if: >-
       !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && github.event_name
       == 'pull_request'
-    uses: vamseeachanta/workspace-hub/.github/workflows/domain-matrix.yml@main
+    uses: ./.github/workflows/domain-matrix.yml
     with:
       test-runner: env WED_FAST_GATE=1 uv run --with pytest-xdist pytest
 
   lint:
     name: Lint (full)
-    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","Linux"]') }}
+    runs-on: >-
+      ${{ (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository) &&
+          fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
+    timeout-minutes: 30
     needs: [mode]
     if: >-
       !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true')
@@ -239,7 +249,11 @@ jobs:
   security:
     name: Security Scan (full)
     # PR/push: secret scan only. Bandit runs in the daily Main full run.
-    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","Linux"]') }}
+    runs-on: >-
+      ${{ (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository) &&
+          fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
+    timeout-minutes: 30
     needs: [mode]
     if: >-
       !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true')
@@ -320,7 +334,10 @@ jobs:
     name: Lint
     needs: [mode, lint]
     if: ${{ !cancelled() }}
-    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","Linux"]') }}
+    runs-on: >-
+      ${{ (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository) &&
+          fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
     permissions:
       contents: read
       actions: read
@@ -346,7 +363,10 @@ jobs:
     name: Security Scan
     needs: [mode, security]
     if: ${{ !cancelled() }}
-    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","Linux"]') }}
+    runs-on: >-
+      ${{ (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository) &&
+          fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
     permissions:
       contents: read
       actions: read
@@ -372,7 +392,10 @@ jobs:
     name: Test (PR gate)
     needs: [mode, domain-tests]
     if: ${{ !cancelled() && github.event_name == 'pull_request' }}
-    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","Linux"]') }}
+    runs-on: >-
+      ${{ (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository) &&
+          fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
     permissions:
       contents: read
       actions: read

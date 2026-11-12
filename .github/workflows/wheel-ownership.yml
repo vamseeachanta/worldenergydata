@@ -13,7 +13,10 @@ env:
 jobs:
   wheel-ownership:
     name: Build and check workspace wheels
-    runs-on: ubuntu-latest
+    runs-on: >-
+      ${{ (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository) &&
+          fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
     timeout-minutes: 20
     steps:
       - name: Checkout repository
