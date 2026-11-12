@@ -16,6 +16,7 @@ and identity lookup; it does not establish engineering suitability of the data.
 | 3 | 2026-10-21 | Reject padded IDs and locate missing provenance by physical CSV line so ambiguous or incomplete records can be corrected. |
 | 4 | 2026-10-21 | Reject Unicode format characters in IDs to prevent invisible or directional formatting from creating ambiguous lookups. |
 | 5 | 2026-11-05 | Reject canonically equivalent duplicates and Unicode controls, bound physical-line diagnostics, and consolidate overlapping tests. |
+| 6 | 2026-11-12 | Reject parser row-count disagreement, assign literal IDs by position, and clarify version-dependent NUL rejection. |
 
 ## Input contract and method
 
@@ -33,9 +34,11 @@ reads a single UTF-8 snapshot (a byte-order mark is accepted), then:
 2. Counts logical CSV fields, respecting quoted commas and newlines. Each record
    must have the header's field count. Width errors give the physical start line,
    expected count and actual count. Only empty physical lines are skipped.
-3. Parses the same snapshot with pandas, using literal ID strings from the
-   strict CSV reader (including NUL for rejection rather than truncation), and
-   checks the required query columns and populated `DATA_SOURCE` and `NOTES`.
+3. Parses the same snapshot with pandas and checks the required query columns.
+   Rejects a row-count mismatch with the strict CSV reader before assigning
+   literal ID strings by position, then checks populated `DATA_SOURCE` and `NOTES`.
+   On Python 3.11 and later, the strict reader preserves NUL for identity rejection
+   rather than truncation; Python 3.10 rejects it earlier as malformed CSV.
    Missing provenance errors give each affected record's physical start line.
 4. Checks `COMPONENT_ID` strings for blank or padded values, Unicode control
    and format characters (categories `Cc` and `Cf`), and duplicates using NFC
