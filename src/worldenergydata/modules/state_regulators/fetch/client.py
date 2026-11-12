@@ -57,10 +57,19 @@ class Fetcher:
         state = self.store.state["hosts"].setdefault(
             host, {"attempts": [], "next_at": 0}
         )
-        delay = max(0.0, state["next_at"] - self.clock())
+        now = self.clock()
+        attempts = sorted(
+            t for t in state["attempts"] if t > now - self.config.budget_window
+        )
+        ready_at = max(now, state["next_at"])
+        if len(attempts) >= self.config.budget_requests:
+            ready_at = max(
+                ready_at,
+                attempts[-self.config.budget_requests] + self.config.budget_window,
+            )
+        delay = ready_at - now
         if delay > self.config.max_sleep_seconds:
-            resume = datetime.fromtimestamp(state["next_at"], timezone.utc)
-            raise BudgetExceeded(f"Wait for {host}; resume at {resume.isoformat()} UTC")
+            raise BudgetExceeded(origin_of(url), ready_at)
         if delay:
             self.sleep(delay)
         now = self.clock()
@@ -69,7 +78,9 @@ class Fetcher:
         ]
         if len(state["attempts"]) >= self.config.budget_requests:
             raise BudgetExceeded(
-                f"Request budget exhausted for {host}; resume after the window"
+                origin_of(url),
+                sorted(state["attempts"])[-self.config.budget_requests]
+                + self.config.budget_window,
             )
         state["attempts"].append(now)
         state["next_at"] = now + self.config.fallback_interval
@@ -144,9 +155,7 @@ class Fetcher:
                 if isinstance(reason, socket.gaierror)
                 else "network-reachability"
             )
-            raise UnreachableTarget(
-                f"{layer}: target={origin_of(url)} machine=the build host; {reason}"
-            ) from error
+            raise UnreachableTarget(origin_of(url), layer) from error
 
     def preflight(self, url: str) -> FetchResult:
         """Reachability is verified by the first budgeted fetch, retaining its bytes."""
@@ -182,7 +191,8 @@ class Fetcher:
             "assumptions": (
                 "Serial pacing baseline; excludes latency and retries. "
                 "Unknown vendor window uses configured window. "
-                "Budget exhaustion stops execution for later resume."
+                "Window release waits within max_sleep_seconds proceed in this run; "
+                "longer waits require a later invocation."
             ),
         }
 
@@ -199,7 +209,10 @@ class Fetcher:
                 t for t in attempts if t > projected - self.config.budget_window
             ]
             if len(attempts) >= self.config.budget_requests:
-                projected = max(projected, attempts[0] + self.config.budget_window)
+                projected = max(
+                    projected,
+                    attempts[-self.config.budget_requests] + self.config.budget_window,
+                )
                 attempts = [
                     t for t in attempts if t > projected - self.config.budget_window
                 ]

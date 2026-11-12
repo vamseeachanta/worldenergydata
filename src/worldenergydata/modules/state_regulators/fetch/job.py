@@ -11,14 +11,26 @@ import os
 import re
 from pathlib import Path
 from typing import Any
+from urllib.error import HTTPError
 
 from .client import Fetcher
-from .policy import FetchConfig, TermsCheck, TermsDenied, choose_route, origin_of
+from .policy import (
+    BudgetExceeded,
+    FetchConfig,
+    ResponseTooLarge,
+    TermsCheck,
+    TermsDenied,
+    UnreachableTarget,
+    choose_route,
+    origin_of,
+)
+from .storage import CacheIntegrityError
 
 
 def _storage_path(value: str) -> Path:
     expanded = os.path.expandvars(value)
-    if "$" in expanded or not Path(expanded).is_absolute():
+    unresolved = re.search(r"\$\{[^}]+\}|\$[A-Za-z_][A-Za-z0-9_]*|%[^%]+%", expanded)
+    if unresolved or not Path(expanded).is_absolute():
         raise ValueError("Storage paths must be absolute with resolved variables")
     return Path(expanded).resolve()
 
@@ -70,11 +82,11 @@ class FetchJob:
             origin_of(url)
         if settings["use_crawl"] and not crawl:
             raise ValueError("Crawl override requires crawl URLs")
-        route = choose_route(
+        choose_route(
             bulk, crawl[0] if crawl else bulk[0], use_crawl=settings["use_crawl"]
         )
         self.urls = list(
-            dict.fromkeys(crawl if settings["use_crawl"] or not bulk else [route])
+            dict.fromkeys(crawl if settings["use_crawl"] or not bulk else bulk)
         )
         self.route = "crawl" if settings["use_crawl"] or not bulk else "bulk"
 
@@ -94,6 +106,34 @@ class FetchJob:
         return fetcher.run(self.urls)
 
 
+def _failure(error: Exception) -> tuple[int, str]:
+    """Stable exit categories without echoing paths, queries or OS error text."""
+    if isinstance(error, TermsDenied):
+        return 3, "TermsDenied: recorded permission is required"
+    if isinstance(error, BudgetExceeded):
+        return (
+            4,
+            f"BudgetExceeded: origin={error.origin}; resume_at={error.resume_at} UTC",
+        )
+    if isinstance(error, UnreachableTarget):
+        return 5, f"UnreachableTarget: origin={error.origin}; layer={error.layer}"
+    if isinstance(error, CacheIntegrityError):
+        return 6, "CacheIntegrityError: preserve and inspect retained cache evidence"
+    if isinstance(error, ResponseTooLarge):
+        return 8, "ResponseTooLarge: response exceeds the configured byte cap"
+    if isinstance(error, HTTPError):
+        return 9, f"HTTPError: status={error.code}"
+    if isinstance(error, OSError):
+        return 7, "OSError: configuration or cache access failed"
+    if isinstance(error, RuntimeError):
+        return 10, "RuntimeError: collection failed"
+    if isinstance(error, KeyError):
+        return 11, "KeyError: a required configuration field is missing"
+    if isinstance(error, TypeError):
+        return 12, "TypeError: a configuration field has the wrong type"
+    return 2, "ValueError: invalid collection configuration"
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("config", type=Path, help="Collection configuration JSON")
@@ -102,17 +142,14 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
     try:
-        settings = json.loads(args.config.read_text())
+        settings = json.loads(args.config.read_text(encoding="utf-8"))
         job = FetchJob(
             settings, execution_role=os.environ.get("STATE_FETCH_EXECUTION_ROLE", "")
         )
         result = job.run(job.fetcher(), execute=args.execute)
-    except (ValueError, KeyError, TypeError, OSError, RuntimeError):
-        # Do not echo configuration, URLs, filesystem locations or OS error text.
-        parser.exit(
-            1,
-            "Collection refused; check deployment, terms, budget and cache evidence.\n",
-        )
+    except (ValueError, KeyError, TypeError, OSError, RuntimeError) as error:
+        code, message = _failure(error)
+        parser.exit(code, message + "\n")
     if args.execute:
         result = {
             "completed_urls": len(result),
