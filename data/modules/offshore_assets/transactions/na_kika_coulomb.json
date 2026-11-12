@@ -41,29 +41,35 @@
     "catalog_fields": {
       "path": "data/modules/offshore_assets/curated/fields.csv",
       "revision": "d867ba1e011bb7558e0e9dd02e118160657f9633",
-      "access": "available",
-      "sha256": "c57f927fbcaac53b880d585e1d8e2fe2beaaa1858fe047766827fc61d35dbc79",
+      "access": "withheld",
+      "sha256": "6a5a2be298295da8bbea9b0dc5099397abe6edd97b6c4d621d7d4c05ac09bd63",
       "coverage": "Existing curated catalog; not independently qualified production or reserves",
-      "readiness": "partial",
-      "digest_domain": "UTF-8 text; CRLF normalized to LF"
+      "readiness": "NOT_EVALUATED",
+      "digest_domain": "source-bytes",
+      "optional": true,
+      "reason": "Catalog use is suspended pending redistribution-terms and merge-sequencing review"
     },
     "catalog_crosswalk": {
       "path": "data/modules/offshore_assets/curated/subseaiq_bsee_block_crosswalk.csv",
       "revision": "d867ba1e011bb7558e0e9dd02e118160657f9633",
-      "access": "available",
-      "sha256": "be18f03e26cbf904d64e34a6a086f3753c60420853909a21944c860363e79593",
+      "access": "withheld",
+      "sha256": "ff481c0cc9ba1c08551314f3e38da98c4c139332b5bd3b9b6921ba051200a804",
       "coverage": "Existing curated catalog; not independently qualified production or reserves",
-      "readiness": "partial",
-      "digest_domain": "UTF-8 text; CRLF normalized to LF"
+      "readiness": "NOT_EVALUATED",
+      "digest_domain": "source-bytes",
+      "optional": true,
+      "reason": "Catalog use is suspended pending redistribution-terms and merge-sequencing review"
     },
     "catalog_host": {
       "path": "data/modules/offshore_assets/curated/host_facilities.csv",
       "revision": "d867ba1e011bb7558e0e9dd02e118160657f9633",
-      "access": "available",
-      "sha256": "7d4d052990083dd2740acfef8c6c48b3d0e35f2ee97a5a6410b69bf94c7a61a3",
+      "access": "withheld",
+      "sha256": "cef18b57d3178a65f996d5d9099d3f06f78f33a285096b54b4b3da5ae7d152ba",
       "coverage": "Existing curated catalog; not independently qualified production or reserves",
-      "readiness": "partial",
-      "digest_domain": "UTF-8 text; CRLF normalized to LF"
+      "readiness": "NOT_EVALUATED",
+      "digest_domain": "source-bytes",
+      "optional": true,
+      "reason": "Catalog use is suspended pending redistribution-terms and merge-sequencing review"
     }
   },
   "transaction": {
@@ -99,6 +105,28 @@
           "source_id": "shell_release",
           "locator": "meta[name=description]: wholly owned tieback"
         }
+      },
+      {
+        "value": 0.5,
+        "unit": "fraction",
+        "basis": "talos_announced",
+        "subject": "Coulomb field",
+        "as_of": "2026-06-30",
+        "citation": {
+          "source_id": "talos_release",
+          "locator": "GULF OF AMERICA BOLT-ON ACQUISITION: 50% working interest and operatorship in Coulomb"
+        }
+      },
+      {
+        "value": 0.25,
+        "unit": "fraction",
+        "basis": "talos_announced",
+        "subject": "Na Kika platform and Kepler, Ariel, Fourier, Herschel fields",
+        "as_of": "2026-06-30",
+        "citation": {
+          "source_id": "talos_release",
+          "locator": "GULF OF AMERICA BOLT-ON ACQUISITION: 25% non-operated working interest in Na Kika and four associated fields"
+        }
       }
     ],
     "terms": {
@@ -111,8 +139,16 @@
       "upside": {
         "status": "NOT_EVALUATED",
         "value": null,
-        "reason": "Contingent-payment triggers and amounts are not available in the accessible metadata",
-        "source_id": "shell_release"
+        "reason": "50% upside sharing from closing through year-end 2027, subject to commodity-price-based thresholds if realized price exceeds USD 60/Bbl; payment amount remains NOT_EVALUATED",
+        "source_id": "talos_release",
+        "sharing_fraction": 0.5,
+        "effective_from": "closing",
+        "effective_through": "2027-12-31",
+        "realized_price_threshold_usd_per_bbl": 60,
+        "citation": {
+          "source_id": "talos_release",
+          "locator": "GULF OF AMERICA BOLT-ON ACQUISITION: upside sharing agreement and commodity-price thresholds"
+        }
       },
       "orri": {
         "status": "NOT_EVALUATED",
@@ -136,7 +172,7 @@
       {
         "id": "preferential_exercise",
         "status": "NOT_EVALUATED",
-        "reason": "Conditional branch only; revised consideration and acquired scope required"
+        "reason": "BP preferential-right exercise would remove the Na Kika interests, leaving only Coulomb; closing and exercise outcome remain unverified; revised consideration is not calculated"
       }
     ]
   },
@@ -175,7 +211,8 @@
           "source_id": "talos_release",
           "locator": "Opening paragraph: cash consideration net to Talos; subject to adjustments"
         },
-        "approximate": false
+        "approximate": false,
+        "effective_date": "2025-07-01"
       },
       "reserves": {
         "value": 23000000,
@@ -189,7 +226,8 @@
         },
         "approximate": true,
         "reserve_category": "proved",
-        "qualification": "Issuer-stated reserves net of P&A; underlying reserves report not independently reviewed"
+        "qualification": "Issuer-stated reserves net of P&A; underlying reserves report not independently reviewed",
+        "temporal_limitation": "Year-end 2025 reserves post-date the 1 July 2025 effective date by six months; no roll-back is applied"
       },
       "production": {
         "value": 16000,
@@ -202,7 +240,8 @@
           "locator": "GULF OF AMERICA BOLT-ON ACQUISITION: first quarter average for interests Talos is acquiring"
         },
         "approximate": true,
-        "measurement_period": "2026-Q1"
+        "measurement_period": "2026-Q1",
+        "temporal_limitation": "2026-Q1 average production post-dates the 1 July 2025 effective date; no roll-back is applied"
       },
       "probable_reserves": {
         "value": 10000000,
@@ -216,7 +255,8 @@
         },
         "approximate": true,
         "reserve_category": "probable",
-        "qualification": "Issuer-stated probable category retained separately; excluded from proved-reserves ratios"
+        "qualification": "Issuer-stated probable category retained separately; excluded from proved-reserves ratios",
+        "temporal_limitation": "Year-end 2025 reserves post-date the 1 July 2025 effective date by six months; no roll-back is applied"
       }
     },
     "talos_net": {
@@ -235,7 +275,7 @@
           450000000,
           500000000
         ],
-        "reason": "Expected final net cash range after estimated interim cash flow; excludes the credited deposit",
+        "reason": "Expected net cash excluding the USD 42.5 million deposit after estimated interim cash flow; not total cash paid",
         "effective_date": "2025-07-01",
         "excludes_deposit_usd": 42500000
       },
@@ -251,7 +291,8 @@
         },
         "approximate": true,
         "reserve_category": "proved",
-        "qualification": "Issuer-stated reserves net of P&A; underlying reserves report not independently reviewed"
+        "qualification": "Issuer-stated reserves net of P&A; underlying reserves report not independently reviewed",
+        "temporal_limitation": "Year-end 2025 reserves post-date the 1 July 2025 effective date by six months; no roll-back is applied"
       },
       "production": {
         "value": 16000,
@@ -264,7 +305,8 @@
           "locator": "GULF OF AMERICA BOLT-ON ACQUISITION: first quarter average for interests Talos is acquiring"
         },
         "approximate": true,
-        "measurement_period": "2026-Q1"
+        "measurement_period": "2026-Q1",
+        "temporal_limitation": "2026-Q1 average production post-dates the 1 July 2025 effective date; no roll-back is applied"
       },
       "probable_reserves": {
         "value": 10000000,
@@ -278,7 +320,8 @@
         },
         "approximate": true,
         "reserve_category": "probable",
-        "qualification": "Issuer-stated probable category retained separately; excluded from proved-reserves ratios"
+        "qualification": "Issuer-stated probable category retained separately; excluded from proved-reserves ratios",
+        "temporal_limitation": "Year-end 2025 reserves post-date the 1 July 2025 effective date by six months; no roll-back is applied"
       }
     },
     "ridgewood": {
@@ -305,12 +348,8 @@
       "kind": "hub",
       "host": null,
       "host_citation": null,
-      "host_concept": "semisub_fps",
-      "host_concept_citation": {
-        "source_id": "catalog_host",
-        "locator": "VESSEL_NAME=NA KIKA; FACILITY_TYPE=SemiSub",
-        "row_name": "NA KIKA"
-      },
+      "host_concept": null,
+      "host_concept_citation": null,
       "field_concept": null,
       "field_concept_citation": null,
       "transaction_membership_status": "SOURCE_SUPPORTED",
@@ -318,7 +357,8 @@
         "source_id": "shell_release",
         "locator": "meta[name=description]: interests included in the sale"
       },
-      "transaction_membership_reason": "Named interest in the seller announcement; closing remains unverified"
+      "transaction_membership_reason": "Named interest in the seller announcement; closing remains unverified; BP preferential-right exercise would remove the Na Kika interests, leaving only Coulomb; closing and exercise outcome remain unverified",
+      "host_concept_reason": "Host classification is withheld pending independently publishable evidence"
     },
     {
       "name": "Ariel",
@@ -329,9 +369,12 @@
       "host_concept_citation": null,
       "field_concept": null,
       "field_concept_citation": null,
-      "transaction_membership_status": "NOT_EVALUATED",
-      "transaction_membership_citation": null,
-      "transaction_membership_reason": "Sale membership for this entry is not established by the cited input"
+      "transaction_membership_status": "SOURCE_SUPPORTED",
+      "transaction_membership_citation": {
+        "source_id": "talos_release",
+        "locator": "GULF OF AMERICA BOLT-ON ACQUISITION: four associated fields, including Kepler, Ariel, Fourier, and Herschel"
+      },
+      "transaction_membership_reason": "Named associated field in the buyer announcement; BP preferential-right exercise would remove the Na Kika interests, leaving only Coulomb; closing and exercise outcome remain unverified"
     },
     {
       "name": "Coulomb",
@@ -377,9 +420,12 @@
       "host_concept_citation": null,
       "field_concept": null,
       "field_concept_citation": null,
-      "transaction_membership_status": "NOT_EVALUATED",
-      "transaction_membership_citation": null,
-      "transaction_membership_reason": "Sale membership for this entry is not established by the cited input"
+      "transaction_membership_status": "SOURCE_SUPPORTED",
+      "transaction_membership_citation": {
+        "source_id": "talos_release",
+        "locator": "GULF OF AMERICA BOLT-ON ACQUISITION: four associated fields, including Kepler, Ariel, Fourier, and Herschel"
+      },
+      "transaction_membership_reason": "Named associated field in the buyer announcement; BP preferential-right exercise would remove the Na Kika interests, leaving only Coulomb; closing and exercise outcome remain unverified"
     },
     {
       "name": "Herschel",
@@ -390,9 +436,12 @@
       "host_concept_citation": null,
       "field_concept": null,
       "field_concept_citation": null,
-      "transaction_membership_status": "NOT_EVALUATED",
-      "transaction_membership_citation": null,
-      "transaction_membership_reason": "Sale membership for this entry is not established by the cited input"
+      "transaction_membership_status": "SOURCE_SUPPORTED",
+      "transaction_membership_citation": {
+        "source_id": "talos_release",
+        "locator": "GULF OF AMERICA BOLT-ON ACQUISITION: four associated fields, including Kepler, Ariel, Fourier, and Herschel"
+      },
+      "transaction_membership_reason": "Named associated field in the buyer announcement; BP preferential-right exercise would remove the Na Kika interests, leaving only Coulomb; closing and exercise outcome remain unverified"
     },
     {
       "name": "Kepler",
@@ -403,9 +452,12 @@
       "host_concept_citation": null,
       "field_concept": null,
       "field_concept_citation": null,
-      "transaction_membership_status": "NOT_EVALUATED",
-      "transaction_membership_citation": null,
-      "transaction_membership_reason": "Sale membership for this entry is not established by the cited input"
+      "transaction_membership_status": "SOURCE_SUPPORTED",
+      "transaction_membership_citation": {
+        "source_id": "talos_release",
+        "locator": "GULF OF AMERICA BOLT-ON ACQUISITION: four associated fields, including Kepler, Ariel, Fourier, and Herschel"
+      },
+      "transaction_membership_reason": "Named associated field in the buyer announcement; BP preferential-right exercise would remove the Na Kika interests, leaving only Coulomb; closing and exercise outcome remain unverified"
     },
     {
       "name": "Herschel Expansion",
@@ -421,9 +473,9 @@
       "transaction_membership_reason": "Sale membership for this entry is not established by the cited input"
     }
   ],
-  "coverage_note": "Requested roster only; not an exhaustive or verified sale-perimeter inventory. Catalog dates are historical source labels, not independently verified lifecycle events.",
+  "coverage_note": "Requested roster only; six entries have source-supported announced membership. East Anstey and Herschel Expansion remain NOT_EVALUATED. Catalog-derived lifecycle claims and field-report links are withheld pending redistribution review.",
   "lifecycle_title": "Na Kika hub and field lifecycle",
-  "lifecycle_limitation": "Catalog dates are unqualified historical labels. A block match is not a verified field-production join. The semisub host label does not classify each satellite. Herschel Expansion timing and East Anstey sale membership remain NOT_EVALUATED.",
+  "lifecycle_limitation": "Discovery dates, first-production dates, block codes and host classification remain NOT_EVALUATED pending independently publishable evidence. BP preferential-right exercise would remove the Na Kika interests, leaving only Coulomb. Closing and exercise outcomes are unverified.",
   "revision_history": [
     [
       "Initial",
@@ -434,6 +486,11 @@
       "Evidence refresh",
       "2026-11-06",
       "Capture accessible buyer evidence, move lifecycle claims into cited input and regenerate retained outputs."
+    ],
+    [
+      "Review corrections",
+      "2026-11-12",
+      "Complete buyer membership and interests, suspend catalog derivatives, and expose cash-basis and date limitations."
     ]
   ]
 }
