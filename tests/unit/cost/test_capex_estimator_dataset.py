@@ -123,6 +123,34 @@ def test_missing_features_are_visible_and_training_requires_target_features():
     assert "water_depth_m" in cohort.missing_features
 
 
+def test_omitted_and_null_features_report_the_same_missing_inputs():
+    """Invented records: omitting an unavailable driver cannot hide its absence."""
+    implicit = snapshot()
+    explicit = snapshot(
+        features=implicit.features
+        | {
+            "water_depth_m": None,
+            "capacity_boe_day": None,
+            "asset_quantity": None,
+            "vintage_year": None,
+        }
+    )
+    omitted = select_cohort([record()], implicit, DAY)
+    nulls = select_cohort([record()], explicit, DAY)
+    assert (
+        omitted.missing_features
+        == nulls.missing_features
+        == (
+            "asset_quantity",
+            "capacity_boe_day",
+            "vintage_year",
+            "water_depth_m",
+        )
+    )
+    assert omitted.feature_names == nulls.feature_names == ("well_count",)
+    assert omitted.records == nulls.records
+
+
 @pytest.mark.parametrize("value", [float("nan"), float("inf"), -1])
 def test_invalid_physical_values(value):
     with pytest.raises(ValidationError):
