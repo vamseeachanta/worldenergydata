@@ -413,7 +413,8 @@ unestablished normalization, comparability and restatement assumptions. No opera
 <div class="kpis"><p>Operators: ${slot1}</p><p>Operator-year rows: ${slot2}</p>
 <p>Cohorts: ${slot3}</p><p>OPEX: NOT_EVALUATED</p></div></header>
 <section><h2>Revision history</h2><table><thead><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr></thead>
-<tbody><tr><td>Initial</td><td>${slot4}</td><td>Cited historical seed and descriptive cohorts expose the disclosure analytics.</td></tr></tbody></table>
+<tbody><tr><td>Initial</td><td>${slot4}</td><td>Cited historical seed and descriptive cohorts expose the disclosure analytics.</td></tr></tbody>
+<tbody><tr><td>Interface</td><td>2026-11-12</td><td>Added offline YAML workflow and portable issue references; source data unchanged.</td></tr></tbody></table>
 <p class="caption">Report edition history.</p></section>
 <label for="operator-selector">Operator</label> <select id="operator-selector">${slot5}</select>
 ${slot6}
@@ -456,8 +457,7 @@ def render_html(facts: dict) -> str:
     citations = _citations_table(facts)
     sources = _source_links(facts)
     pending = "".join(
-        f'<li><a href="https://github.com/vamseeachanta/worldenergydata/issues/{key}">'
-        f"#{key}</a>: {escape(value)}</li>"
+        f"<li>#{escape(key)}: {escape(value)}</li>"
         for key, value in sorted(facts["pending"].items())
     )
     return _REPORT_TEMPLATE.substitute(

@@ -9,6 +9,26 @@
 schema_version: 2
 invocation: "uv run python -m worldenergydata {input}"
 workflows:
+  - id: cost-disclosure-benchmark
+    basename: cost
+    title: Operator cost benchmarking report from annual-disclosure seed data
+    input: examples/workflows/cost-disclosure-benchmark/input.yml
+    result:
+      kind: files
+    outputs:
+      - examples/workflows/cost-disclosure-benchmark/outputs/operator_cost_benchmarking.html
+      - examples/workflows/cost-disclosure-benchmark/outputs/operator_cost_benchmarking_facts.json
+    assertions:
+      json:
+        - path: examples/workflows/cost-disclosure-benchmark/outputs/operator_cost_benchmarking_facts.json
+          equals:
+            operators_covered: 3
+    test: tests/workflows/test_durable_workflows.py::test_registry_workflow_outputs[cost-disclosure-benchmark]
+    runtime: offline
+    data_source:
+      type: bundled-fixture
+      network_required: false
+      fixtures: []  # Inputs are bundled in the cost package.
   - id: bsee-production-summary
     basename: bsee
     title: BSEE production summary from bundled CSV data

@@ -11,6 +11,7 @@ shows the inputs, method and a worked answer. Both outputs run offline.
 | Revision | Date | Change and reason |
 | --- | --- | --- |
 | Initial | 2026-10-20 | Cited historical disclosures and descriptive cohorts expose the FDAS analytics surface. |
+| Interface | 2026-11-12 | Registered offline YAML invocation and portable issue references; source data unchanged. |
 
 Table 1. Documentation revision history.
 
@@ -83,5 +84,19 @@ SVG and selector logic; source hyperlinks are citations, not external assets.
 - [Lineage](https://github.com/vamseeachanta/worldenergydata/issues/344): restatement and amendment status is NOT_EVALUATED.
 - [Citation sidecars](https://github.com/vamseeachanta/worldenergydata/issues/361): the existing provenance mapping is retained pending schema adoption.
 
-OPEX is NOT_EVALUATED because no qualified OPEX series is supplied. A durable
-workflow registration remains separate from this notebook and HTML artifact.
+OPEX is NOT_EVALUATED because no qualified OPEX series is supplied.
+
+## Registered workflow
+
+The `cost-disclosure-benchmark` workflow reuses the same inputs and report
+builder. Run the bundled example through the engine:
+
+```bash
+uv run python -m worldenergydata examples/workflows/cost-disclosure-benchmark/input.yml
+```
+
+The example pins the same report edition as the notebook and writes the HTML
+and facts JSON into its adjacent `outputs/` directory. The workflow registry
+checks that three operators are covered. The engine records completion and
+both output paths under `cost` in the returned configuration. Missing required
+settings, unsupported analysis types and write failures propagate as errors.

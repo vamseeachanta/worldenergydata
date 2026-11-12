@@ -98,6 +98,16 @@ def test_render_is_offline_escaped_and_repeatable(tmp_path):
     assert 'href="javascript:' not in rendered
 
 
+def test_pending_dependencies_use_portable_issue_references():
+    from worldenergydata.cost.reporting.benchmark_report import render_html
+
+    facts = build_report_facts([], [], "2026-10-20")
+    rendered = render_html(facts)
+    assert 'href="https://github.com/' not in rendered
+    for issue, description in facts["pending"].items():
+        assert f"#{issue}: {description}" in rendered
+
+
 @pytest.mark.parametrize("kind", ["html", "facts"])
 def test_report_uses_lf_with_crlf_platform_default(tmp_path, monkeypatch, kind):
     from worldenergydata.cost.reporting.benchmark_report import write_report
