@@ -11,6 +11,7 @@ Root help, info, version, invalid commands and root completion need no family.
 | --- | --- | --- |
 | Initial | 2026-10-20 | Defer family imports and document reproducible startup checks. |
 | Update | 2026-10-29 | Preserve family options during introspection and test supported Click help exits. |
+| Update | 2026-11-12 | Preserve inherited family help, check registry coverage, and verify both Typer versions. |
 
 ## Method and sources
 
@@ -26,7 +27,9 @@ The public names, descriptions and ordering come from `cli/main.py` at base
 commit `d867ba1e011bb7558e0e9dd02e118160657f9633`. That revision is also the
 baseline for the measurements below. The regression tests exercise the installed
 `worldenergydata` console from a synchronized workspace, rather than invoking
-only a child app. Every registered family's help is tested offline.
+only a child app. Every registered family's help is tested offline. A live-registry
+assertion requires the family snapshot to include every registered family, so new
+registrations require corresponding help coverage.
 
 ## Deterministic startup budget
 
@@ -99,14 +102,15 @@ Use an environment containing the installed workspace and pytest. The repository
 AGENTS contract permits `--noconftest`; overriding default coverage output keeps
 test artifacts outside the checkout. New tests also exercise nested callbacks,
 parent context, family options, completion, repeated loading and an unavailable
-family. The probe has independent hand-calculated timing and timeout tests. The final
+family. The probe has independent hand-calculated timing and timeout tests. The initial
 focused suite passed 183 tests, including 41 new tests. Root help and `info`
 were compared byte-for-byte with the pinned baseline at the same terminal
 width and were identical. The two omitted lazy command exports are now listed
 explicitly: `lower_tertiary` and `production_forecast`.
 
-Direct Click introspection through `get_params` or `to_info_dict` loads the
-selected family and retains its callback options without executing callbacks.
+Direct introspection through `get_params` loads the selected family and retains
+its callback options without executing callbacks. On Typer versions that expose
+Click's `to_info_dict`, that method also loads the selected family.
 Root help and root completion continue to use metadata without loading families.
 Introspection and dispatch are separate loading paths; regression tests cover
 both paths and require the cached family to be imported once.
@@ -116,9 +120,24 @@ Click 8.3.0 returns 2. The startup regression permits either help exit status,
 requires help output and retains the empty family import set. Explicit help,
 info and version requests still require exit status 0.
 
-The updated focused suite passes 185 tests, including the two direct-context
-introspection cases. A separate Click 8.1.8 selection passes 13 tests covering
-the lazy groups and root import budget. Neither run skips any selected case.
+The subsequent focused suite passed 185 tests (43 added), including the two
+direct-context introspection cases. A separate Click 8.1.8 selection passed 13
+tests covering the lazy groups and root import budget. Neither historical run
+skipped any selected case.
+
+The review follow-up adds five cases: four eager-versus-lazy help comparisons
+and one live-registry assertion. The selected lazy-group, registry and CLI
+integration suite passed 114 tests with Typer 0.21.1 and Click 8.3.0. With
+Typer 0.27.3 and Click 8.3.0, it passed 113 tests and skipped the legacy
+`to_info_dict` case because the upstream group no longer exposes that API.
+The `get_params` case runs on both versions. Omitting registration help preserves
+the family's app help or callback docstring; explicit descriptions still override
+both. The two omitted-help cases failed before the fix and passed afterward.
+
+These follow-up results do not replace the historical full-suite results above.
+Installed-console verification was not completed because package installation
+and pytest temporary-directory access failed. Integration with main's HSE family,
+the complete main lock and hosted verification remain outstanding.
 
 This change defers each family as a unit. Heavy dependencies needed by the
 selected family can still load. It does not change provider routing, acquire
