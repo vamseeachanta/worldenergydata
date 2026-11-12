@@ -8,6 +8,7 @@ cases:
     equipment_class: mooring_line
     date: "2005-09-23"
     location: Green Canyon block 237, US Gulf of Mexico
+    area_block: GC 237
     facility_type: Tension-leg platform
     authority: US Minerals Management Service (now BSEE), Gulf of Mexico Region
     title: Accident Investigation Report, Green Canyon block 237, 23 September 2005
@@ -37,6 +38,7 @@ cases:
     equipment_class: mooring_line
     date: "2021-07-18"
     location: Alaminos Canyon block 25, US Gulf of Mexico
+    area_block: AC 25
     facility_type: Spar
     authority: US Bureau of Safety and Environmental Enforcement (BSEE), Gulf of Mexico Region
     title: Accident Investigation Report, Alaminos Canyon block 25, 18 July 2021
@@ -64,6 +66,7 @@ cases:
     equipment_class: mooring_line
     date: "2023-06-19"
     location: Mississippi Canyon block 941, US Gulf of Mexico
+    area_block: MC 941
     facility_type: Spar
     authority: US Bureau of Safety and Environmental Enforcement (BSEE), Gulf of Mexico Region
     title: Accident Investigation Report, Mississippi Canyon block 941, 19 June 2023
@@ -93,6 +96,7 @@ cases:
     equipment_class: mooring_line
     date: "2020-01-29"
     location: Mississippi Canyon block 437, US Gulf of Mexico
+    area_block: MC 437
     facility_type: Floating production facility
     authority: US Bureau of Safety and Environmental Enforcement (BSEE), Gulf of Mexico Region
     title: Accident Investigation Report, Mississippi Canyon block 437, 29 January 2020

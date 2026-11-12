@@ -21,6 +21,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 NOT_STATED = "not_stated"
+UNKNOWN = "unknown"
+# Terms that do not count as a stated cause.
+NO_CAUSE = frozenset({NOT_STATED, UNKNOWN})
 
 # Basis of a recorded mechanism.
 BASIS_SOURCE_CODED = "source_coded"  # agency-coded cause field in the data set
@@ -118,7 +121,8 @@ FAILURE_MECHANISMS: dict[str, Term] = {
             "Material, weld or equipment failure (not further stated)",
         ),
         Term("incorrect_operation", "Incorrect operation (human factors)"),
-        Term("other_or_unknown", "Other or unknown, as coded by the source"),
+        Term("other", "Other cause, as coded by the source"),
+        Term("unknown", "Cause coded as unknown by the source"),
         Term(NOT_STATED, "Cause not stated in the source"),
     )
 }

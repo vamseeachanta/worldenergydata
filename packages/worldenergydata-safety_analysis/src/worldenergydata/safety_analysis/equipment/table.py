@@ -14,6 +14,7 @@ repository can read it without importing this package.
 from __future__ import annotations
 
 import csv
+import datetime as dt
 import json
 from collections import Counter
 from dataclasses import dataclass
@@ -29,7 +30,7 @@ from worldenergydata.safety_analysis.equipment.taxonomy import (
     EQUIPMENT_CLASSES,
     FAILURE_MECHANISMS,
     FAILURE_MODES,
-    NOT_STATED,
+    NO_CAUSE,
 )
 
 # Text encodings by source: the BSEE export is Windows-1252.
@@ -53,7 +54,11 @@ class SourceFile:
     def __post_init__(self) -> None:
         if not self.url.startswith("https://"):
             raise ValueError(f"{self.source_id}: source url must be https")
-        if len(self.retrieved) != 10:
+        try:
+            ok = dt.date.fromisoformat(self.retrieved).isoformat() == self.retrieved
+        except (TypeError, ValueError):
+            ok = False
+        if not ok:
             raise ValueError(f"{self.source_id}: retrieved must be YYYY-MM-DD")
 
 
@@ -196,7 +201,7 @@ def summarise(rows: Sequence[EquipmentFailureRow]) -> dict:
             {"key": k, "label": FAILURE_MECHANISMS[k].label, "records": n}
             for k, n in sorted(mechanisms.items(), key=lambda kv: (-kv[1], kv[0]))
         ],
-        "mechanism_stated": sum(1 for r in rows if r.mechanism != NOT_STATED),
+        "mechanism_stated": sum(1 for r in rows if r.mechanism not in NO_CAUSE),
         "with_fatality": sum(1 for r in rows if r.fatality),
         "with_injury": sum(1 for r in rows if r.injury),
         "with_pollution": sum(1 for r in rows if r.pollution),

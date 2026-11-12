@@ -28,6 +28,7 @@ from worldenergydata.safety_analysis.equipment.taxonomy import (
     BASIS_NONE,
     BASIS_SOURCE_CODED,
     NOT_STATED,
+    UNKNOWN,
 )
 
 COLUMNS = (
@@ -284,8 +285,10 @@ def phmsa_mechanism(cause: str, detail: str) -> str:
         return "natural_force"
     if "EXCAVATION" in c or "OUTSIDE FORCE" in c:
         return "outside_force"
+    if "UNKNOWN" in c or "UNKNOWN" in d:
+        return UNKNOWN
     if c:
-        return "other_or_unknown"
+        return "other"
     return NOT_STATED
 
 

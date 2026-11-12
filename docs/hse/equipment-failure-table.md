@@ -109,13 +109,14 @@ records, 2010-01-01 to 2017-01-09).
 |---|---|---|---|
 | Risers | 13 | 1999-10-22 to 2017-10-16 | 0 |
 | Mooring lines and station keeping | 7 | 2004-08-26 to 2025-03-28 | 0 |
-| Pipelines | 2,805 | 1997-02-02 to 2022-06-08 | 2,795 |
+| Pipelines | 2,805 | 1997-02-02 to 2022-06-08 | 2,753 |
 | Jack-ups and liftboats | 6 | 1998-12-31 to 2013-06-05 | 0 |
 | Lifting and rigging | 340 | 1996-07-19 to 2026-09-12 | 0 |
 | Wellheads and conductors | 79 | 1996-01-24 to 2024-01-18 | 0 |
 | Topsides process | 594 | 1995-01-04 to 2026-10-24 | 0 |
 
-Stated causes exist for pipelines only. For the other classes the causes on
+Stated causes exist for pipelines only; 42 pipeline records are coded as unknown
+by the agency and are not counted as stated. For the other classes the causes on
 record are in investigation reports, of which the case register holds four,
 all for mooring.
 
@@ -155,5 +156,7 @@ above for a codenamed spread-moored floating production unit.
 Add an entry to
 `packages/worldenergydata-safety_analysis/src/worldenergydata/safety_analysis/equipment/data/public_cases.yml`.
 Each statement is an original paraphrase of at most 60 words with the page that
-supports it. A mechanism other than `not_stated` needs a cause statement. The
+supports it. A mechanism other than `not_stated` needs a cause statement. Give
+`area_block` as the incident data set writes it, so the appendix can check
+whether the case is among the counted records. The
 loader rejects quoted report text, unknown terms and non-https links.

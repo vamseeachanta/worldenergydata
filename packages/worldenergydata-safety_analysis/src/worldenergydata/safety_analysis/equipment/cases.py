@@ -36,6 +36,7 @@ _CASE_KEYS = {
     "equipment_subclass",
     "date",
     "location",
+    "area_block",
     "facility_type",
     "authority",
     "title",
@@ -50,7 +51,13 @@ _CASE_KEYS = {
     "lessons",
     "consequences",
 }
-_REQUIRED = _CASE_KEYS - {"equipment_subclass", "sha256", "consequences", "lessons"}
+_REQUIRED = _CASE_KEYS - {
+    "equipment_subclass",
+    "area_block",
+    "sha256",
+    "consequences",
+    "lessons",
+}
 
 
 @dataclass(frozen=True)
@@ -83,6 +90,7 @@ class PublicCase:
     lessons: tuple[Statement, ...] = ()
     consequences: tuple[Statement, ...] = ()
     equipment_subclass: str = NOT_STATED
+    area_block: str = ""  # as the incident data set writes it, for matching
     sha256: str = ""
 
     def reference(self) -> str:
@@ -156,6 +164,7 @@ def parse_case(raw: dict) -> PublicCase:
         equipment_subclass=raw.get("equipment_subclass", NOT_STATED),
         date=_date(raw["date"], f"{where} date"),
         location=str(raw["location"]),
+        area_block=str(raw.get("area_block", "")).strip(),
         facility_type=str(raw["facility_type"]),
         authority=str(raw["authority"]),
         title=str(raw["title"]),

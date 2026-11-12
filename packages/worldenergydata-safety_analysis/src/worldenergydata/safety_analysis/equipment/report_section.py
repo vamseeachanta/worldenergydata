@@ -87,7 +87,12 @@ def build_section(
     used_sources = {r.source_id for r in picked}
     class_cases = cases_for(list(cases), equipment_class)
     if case_ids is not None:
+        if len(set(case_ids)) != len(case_ids):
+            raise ValueError("case ids must be distinct")
         by_id = {c.id: c for c in class_cases}
+        unknown = [i for i in case_ids if i not in by_id]
+        if unknown:
+            raise ValueError(f"no case {unknown} for {equipment_class}")
         class_cases = [by_id[i] for i in case_ids]
     class_cases = class_cases[:MAX_CASES]
     links = dict(design_links or {})
@@ -95,7 +100,10 @@ def build_section(
     for case in class_cases:
         for n, lesson in enumerate(case.lessons, start=1):
             key = f"{case.id}#{n}"
-            answered = links.get(key, UNASSIGNED)
+            answered = links.get(key)
+            if not isinstance(answered, str) or not answered.strip():
+                answered = UNASSIGNED
+            answered = answered.strip()
             if answered == UNASSIGNED:
                 open_items.append(f"lesson {key} has no design response")
             lessons.append(
@@ -109,7 +117,7 @@ def build_section(
             )
     if not picked:
         open_items.append("no records for this equipment class in the table")
-    if len(class_cases) < 2:
+    if len({c.id for c in class_cases}) < 2:
         open_items.append("fewer than two illustrative public cases on file")
     references = [
         f"{s.title or s.source_id}. {s.url} (read {s.retrieved})."
@@ -134,6 +142,11 @@ def _table(header: Sequence[str], body: Sequence[Sequence[object]]) -> list[str]
     lines = ["| " + " | ".join(header) + " |", "|" + "---|" * len(header)]
     lines += ["| " + " | ".join(str(c) for c in row) + " |" for row in body]
     return lines
+
+
+def _block(text: str) -> str:
+    """Area block reduced to letters and digits, upper case."""
+    return "".join(ch for ch in text.upper() if ch.isalnum())
 
 
 def _modes(joined: str) -> str:
@@ -185,14 +198,23 @@ def render_markdown(section: HseSection, *, max_records: int = 12) -> str:
             f"Records with a fatality: {s['with_fatality']}; with an injury: "
             f"{s['with_injury']}; with pollution: {s['with_pollution']}."
         )
-        dates = {r.date for r in section.records}
-        outside = [c for c in section.cases if c.date not in dates]
+        keys = {(r.date, _block(r.location)) for r in section.records}
+        located = [c for c in section.cases if c.area_block]
+        outside = [c for c in located if (c.date, _block(c.area_block)) not in keys]
+        unverified = len(section.cases) - len(located)
         if outside:
             out.append(
                 f"The count is a lower bound: {len(outside)} of the "
                 f"{len(section.cases)} cases in Section {L}.4 are not among these "
-                "records, because the event type recorded for them does not name "
-                "this equipment or the data set does not hold them."
+                "records by date and area block, because the event type recorded "
+                "for them does not name this equipment or the data set does not "
+                "hold them."
+            )
+        if unverified:
+            out.append(
+                f"For {unverified} of the {len(section.cases)} cases the area "
+                "block is not on file, so whether the case is among these records "
+                "is not verified."
             )
         if EQUIPMENT_CLASSES[section.equipment_class].note:
             out.append(EQUIPMENT_CLASSES[section.equipment_class].note)

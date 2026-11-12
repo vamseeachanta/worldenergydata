@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import csv
 import json
+from pathlib import Path
 
 import pytest
 
@@ -161,7 +162,8 @@ def test_bsee_riser_subclass_only_when_named():
         ("NATURAL FORCE DAMAGE", "EARTH MOVEMENT", "natural_force"),
         ("EXCAVATION DAMAGE", "", "outside_force"),
         ("OTHER OUTSIDE FORCE DAMAGE", "", "outside_force"),
-        ("ALL OTHER CAUSES", "UNKNOWN", "other_or_unknown"),
+        ("ALL OTHER CAUSES", "UNKNOWN", "unknown"),
+        ("ALL OTHER CAUSES", "MISCELLANEOUS", "other"),
         ("", "", NOT_STATED),
     ],
 )
@@ -243,6 +245,7 @@ CASE = {
     "equipment_class": "mooring_line",
     "date": "2001-01-02",
     "location": "Block XX 100",
+    "area_block": "XX 100",
     "facility_type": "Spar",
     "authority": "Synthetic regulator",
     "title": "Investigation report",
@@ -293,7 +296,10 @@ def test_case_without_a_stated_cause_is_allowed():
 # --- report section ---------------------------------------------------------------
 def test_section_cites_every_number_and_flags_open_lessons(source_files):
     rows, stats = build_table(source_files)
-    cases = [parse_case(CASE), parse_case({**CASE, "id": "mooring-synthetic-2", "date": "2019-05-05"})]
+    cases = [
+        parse_case(CASE),
+        parse_case({**CASE, "id": "mooring-synthetic-2", "date": "2019-05-05", "area_block": "XX 900"}),
+    ]
     section = build_section("mooring_line", rows, stats, cases)
     assert section.open_items == [
         "lesson mooring-synthetic-1#1 has no design response",
@@ -344,3 +350,67 @@ def test_cli_build_and_section(source_files, tmp_path, capsys):
     assert main(["section", "--sources", str(listing), "--equipment-class", "mooring_line",
                  "--out", str(out), "--allow-open"]) == 0
     assert main(["build", "--sources", str(tmp_path / "missing.json"), "--out-dir", str(tmp_path)]) == 2
+
+
+# --- review findings (regressions) -------------------------------------------------
+REPO = Path(__file__).resolve().parents[4]
+PHMSA_EXPORT = REPO / "data/modules/pipeline_safety/raw/kaggle_usdot_pipeline/database.csv"
+
+
+def test_unknown_coded_cause_is_kept_but_not_counted_as_stated():
+    (row,) = classify_phmsa(phmsa(**{"Cause Category": "ALL OTHER CAUSES", "Cause Subcategory": "UNKNOWN"}))
+    assert row.mechanism == "unknown"
+    assert row.mechanism_source_text == "ALL OTHER CAUSES / UNKNOWN"
+    s = summarise([row])
+    assert s["mechanism_stated"] == 0
+    assert s["by_mechanism"] == [
+        {"key": "unknown", "label": "Cause coded as unknown by the source", "records": 1}
+    ]
+
+
+def test_committed_pipeline_export_has_exact_stated_cause_count():
+    source = SourceFile("phmsa_hazardous_liquid", PHMSA_EXPORT, "https://example.org/p", "2026-05-05")
+    rows, stats = build_table([source])
+    s = summarise(query(rows, "pipeline"))
+    unknown = sum(1 for r in rows if r.mechanism == "unknown")
+    assert (stats[0].records_read, unknown, s["mechanism_stated"]) == (2795, 42, 2753)
+
+
+@pytest.mark.parametrize("response", ["", "   ", None, 7, "not yet assigned"])
+def test_blank_design_response_keeps_the_lesson_open(source_files, response):
+    rows, stats = build_table(source_files)
+    cases = [parse_case(CASE), parse_case({**CASE, "id": "mooring-synthetic-2"})]
+    links = {"mooring-synthetic-1#1": response, "mooring-synthetic-2#1": " Section 3.3 "}
+    section = build_section("mooring_line", rows, stats, cases, design_links=links)
+    assert section.open_items == ["lesson mooring-synthetic-1#1 has no design response"]
+    assert section.lessons[0]["addressed_in"] == "not yet assigned"
+    assert section.lessons[1]["addressed_in"] == "Section 3.3"
+
+
+def test_repeated_or_unknown_case_ids_are_refused(source_files):
+    rows, stats = build_table(source_files)
+    cases = [parse_case(CASE), parse_case({**CASE, "id": "mooring-synthetic-2"})]
+    with pytest.raises(ValueError, match="distinct"):
+        build_section("mooring_line", rows, stats, cases,
+                      case_ids=["mooring-synthetic-1", "mooring-synthetic-1"])
+    with pytest.raises(ValueError, match="no case"):
+        build_section("mooring_line", rows, stats, cases, case_ids=["missing"])
+    one = build_section("mooring_line", rows, stats, cases, case_ids=["mooring-synthetic-1"])
+    assert "fewer than two illustrative public cases on file" in one.open_items
+
+
+def test_case_membership_uses_date_and_area_block(source_files):
+    rows, stats = build_table(source_files)
+    same_day_elsewhere = parse_case({**CASE, "id": "c2", "area_block": "YY 9"})
+    no_block = parse_case({k: v for k, v in {**CASE, "id": "c3"}.items() if k != "area_block"})
+    text = render_markdown(build_section("mooring_line", rows, stats, [parse_case(CASE), same_day_elsewhere, no_block]))
+    assert "The count is a lower bound: 1 of the 3 cases" in text
+    assert "For 1 of the 3 cases the area block is not on file" in text
+    matched = render_markdown(build_section("mooring_line", rows, stats, [parse_case(CASE), parse_case({**CASE, "id": "c4", "area_block": "xx-100"})]))
+    assert "lower bound" not in matched and "not verified" not in matched
+
+
+@pytest.mark.parametrize("value", ["XXXXXXXXXX", "2026-02-30", "2026-1-31 ", "20260131", ""])
+def test_retrieval_date_must_be_a_real_calendar_date(tmp_path, value):
+    with pytest.raises(ValueError, match="YYYY-MM-DD"):
+        SourceFile("x", tmp_path, "https://example.org", value)

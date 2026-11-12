@@ -15,7 +15,7 @@ The records are matched to the equipment by rules on the source's own fields. A 
 ### F.2 Incident history
 
 The data holds 7 records whose event type names this equipment, dated 2004-08-26 to 2025-03-28 [H1]. Records with a fatality: 0; with an injury: 0; with pollution: 4.
-The count is a lower bound: 2 of the 3 cases in Section F.4 are not among these records, because the event type recorded for them does not name this equipment or the data set does not hold them.
+The count is a lower bound: 2 of the 3 cases in Section F.4 are not among these records by date and area block, because the event type recorded for them does not name this equipment or the data set does not hold them.
 Includes loss-of-station events of dynamically positioned units, which the source event type does not separate from moored units.
 
 | Decade | Records |
