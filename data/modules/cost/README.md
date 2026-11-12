@@ -15,6 +15,12 @@ frozen assumption set rather than a sourced, time-varying basis.
 | `curated/sanctioned_projects.csv` | Deepwater projects with disclosed FID CAPEX and scope — the **top-down anchor** the bottom-up component series is cross-checked against. |
 | `curated/COST_COMPONENT_TIMESERIES.md` | Provenance doc for the component series. |
 | `curated/SANCTIONED_PROJECTS.md` | Provenance doc for the project table. |
+| `curated/project_field_crosswalk.csv` | Cost project locators linked to held field-development catalog IDs, or explicit unmatched reasons. |
+| `curated/project_field_crosswalk.manifest.json` | Input set and LF-normalized SHA-256 provenance for the identity crosswalk. |
+
+The [project/field crosswalk guide](../../../docs/modules/cost/PROJECT_FIELD_CROSSWALK.md)
+defines join keys, one-to-many links, evidence, limitations and refresh steps.
+Validate it offline with `python scripts/cost/validate_project_field_crosswalk.py`.
 
 ## The one rule
 
