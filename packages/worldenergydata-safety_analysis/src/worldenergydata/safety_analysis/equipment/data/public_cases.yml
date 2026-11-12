@@ -1,0 +1,120 @@
+# Register of illustrative public incident cases, by equipment class.
+# Each statement is an original paraphrase of the cited investigation report,
+# with the PDF page that supports it. No report text is copied and nothing is
+# added that the report does not state. Facilities and companies are not named.
+schema_version: 1
+cases:
+  - id: mooring-2005-gc237-tendon-connector
+    equipment_class: mooring_line
+    date: "2005-09-23"
+    location: Green Canyon block 237, US Gulf of Mexico
+    facility_type: Tension-leg platform
+    authority: US Minerals Management Service (now BSEE), Gulf of Mexico Region
+    title: Accident Investigation Report, Green Canyon block 237, 23 September 2005
+    report_ref: district investigation, approved 1 January 2007
+    url: https://www.bsee.gov/sites/bsee.gov/files/reports/safety/050923-pdf.pdf
+    retrieved: "2026-11-12"
+    sha256: 3f7b44571a0c9d6e877222a2b6b4f0ebb2491c606dbfe240b79e2b49d747e059
+    what_failed:
+      statement: The tendon bottom connector system. Three recovered bottom connectors had separated bodies and their lock rings were missing
+      page: 3
+    failure_modes: [loss_of_station, structural_damage]
+    mechanism: overload
+    cause_statements:
+      - statement: The most probable cause of the capsize was loss of integrity of the mooring system on one pontoon, specifically the bottom connector system at two piles
+        page: 4
+      - statement: Metallurgical analysis of recovered material, believed to be from the load shoulder, showed evidence of shear ductile overload and plastic deformation
+        page: 4
+      - statement: Maximum conditions in the hurricane were below the 1000-year storm criteria, and there was no evidence of direct collision
+        page: 4
+    lessons:
+      - statement: The regulator recommended a study of this mooring system, to find possible quick fixes for existing tension-leg platforms that use it and to decide whether it remains acceptable for floating installations
+        page: 5
+    consequences:
+      - statement: The facility capsized and was a complete loss
+        page: 5
+  - id: mooring-2021-ac25-chain-link
+    equipment_class: mooring_line
+    date: "2021-07-18"
+    location: Alaminos Canyon block 25, US Gulf of Mexico
+    facility_type: Spar
+    authority: US Bureau of Safety and Environmental Enforcement (BSEE), Gulf of Mexico Region
+    title: Accident Investigation Report, Alaminos Canyon block 25, 18 July 2021
+    report_ref: district investigation, approved 3 January 2022
+    url: https://www.bsee.gov/sites/bsee.gov/files/ac25-18july2021-exonmobil.pdf
+    retrieved: "2026-11-12"
+    sha256: 5eaef6b4225695724e3ff54d37defec0490d748fec4d233d3dee758d57a0ecf6
+    what_failed:
+      statement: One of 12 mooring lines was lost when a 160 mm grade R4 chain link failed after about 20 years in service; the link had two fractures, one at a crown and one at the flash weld
+      page: 2
+    failure_modes: [loss_of_station]
+    mechanism: hydrogen_embrittlement
+    cause_statements:
+      - statement: The fractures initiated from hydrogen embrittlement. The link's material properties were not satisfactory for grade R4 chain; its high hardness made it susceptible and was likely the result of improper heat treatment
+        page: 3
+      - statement: There was no evidence that stress from out-of-plane bending or twisting contributed to the fractures
+        page: 2
+    lessons:
+      - statement: Follow-up hardness testing of links up to 15 links away from the failure found high hardness in each tested link
+        page: 3
+    consequences:
+      - statement: No injury or pollution was recorded; the cost was estimated at 10 million US dollars
+        page: 3
+  - id: mooring-2023-mc941-chain-fatigue
+    equipment_class: mooring_line
+    date: "2023-06-19"
+    location: Mississippi Canyon block 941, US Gulf of Mexico
+    facility_type: Spar
+    authority: US Bureau of Safety and Environmental Enforcement (BSEE), Gulf of Mexico Region
+    title: Accident Investigation Report, Mississippi Canyon block 941, 19 June 2023
+    report_ref: district investigation, approved 26 January 2024
+    url: https://www.bsee.gov/sites/bsee.gov/files/2024-01/MC%20941-A%20Equinor%2019-June-2023.pdf
+    retrieved: "2026-11-12"
+    sha256: e73418680aaef7ad5edee6b7e36748071edd32dc985953777fbf3b7d293ba24f
+    what_failed:
+      statement: A 5-inch grade RQ4 chain link in one of 12 mooring lines parted in service
+      page: 2
+    failure_modes: [loss_of_station]
+    mechanism: fatigue
+    cause_statements:
+      - statement: The line most likely failed due to fatigue that initiated at the top of the link crown, where stresses are high
+        page: 3
+      - statement: Corrosion likely contributed to the crown cracks, but the corrosion mechanism could not be determined; hydrogen may have contributed, but the fracture surfaces were too corroded to confirm it
+        page: 3
+      - statement: Contributing cause, a weakness in the maintenance management programme for the mooring system, where reliance on third-party vendors delayed corrective maintenance
+        page: 3
+    lessons:
+      - statement: The report records that a significant decrease in the tension of this line was found on a daily marine report on 11 March 2022
+        page: 3
+    consequences:
+      - statement: Replacement of the line was estimated at 5 million US dollars
+        page: 4
+  - id: mooring-2020-mc437-chain-payout
+    equipment_class: mooring_line
+    date: "2020-01-29"
+    location: Mississippi Canyon block 437, US Gulf of Mexico
+    facility_type: Floating production facility
+    authority: US Bureau of Safety and Environmental Enforcement (BSEE), Gulf of Mexico Region
+    title: Accident Investigation Report, Mississippi Canyon block 437, 29 January 2020
+    report_ref: district investigation, approved 15 September 2020
+    url: https://www.bsee.gov/sites/bsee.gov/files/mc-437-shell-29-jan-2020.pdf
+    retrieved: "2026-11-12"
+    sha256: 62dc41781e974ba0ab35c5320907d30481e8665acd2a8d68264824400715234b
+    what_failed:
+      statement: After annual winch maintenance, a mooring chain paid out 22 links from the chain locker and the chain stopper parts were forced out of their frame
+      page: 2
+    failure_modes: [loss_of_station]
+    mechanism: incorrect_operation
+    cause_statements:
+      - statement: The maintenance crew assumed the chain was in the lock position when the work was completed and did not visually confirm it
+        page: 4
+      - statement: Contributing cause, the design had no proximity switches or programmed interlocks to confirm that the stoppers were fully extended
+        page: 4
+    lessons:
+      - statement: The district recommended that the regulator provide training on mooring for large platforms
+        page: 4
+      - statement: The operator permanently reinstated a gripper, used during installation, as a secondary barrier against unplanned chain payout
+        page: 4
+    consequences:
+      - statement: No injury or pollution was recorded; the cost was 5.75 million US dollars
+        page: 4
