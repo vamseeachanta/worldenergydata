@@ -115,9 +115,15 @@ from the implementation because this slice performs no emissions calculations.
 
 The standalone example tests execute each intended use in a subprocess, parse
 its JSON, and check the independent recommendation table, source dates, source
-keys and unresolved findings. Network operations and further subprocesses are
-denied inside the example process. Unknown and omitted choices are rejected.
-No numerical model is imported or run.
+keys and unresolved findings. Inside the example process, an audit hook denies
+events prefixed with `socket.` or `subprocess.`, plus `os.system`, `os.exec`,
+`os.posix_spawn`, `os.spawn`, `os.fork`, `os.forkpty`, `os.startfile` and
+`_winapi.CreateProcess`. Parametrized `sys.audit` probes check these denials
+without performing network or process operations. The guard matches audit event
+names; it is not an operating-system sandbox. Native calls that raise no audit
+event, such as POSIX `_posixsubprocess.fork_exec` or calls through `ctypes`, are
+not covered. Unknown and omitted choices are rejected. No numerical model is
+imported or run.
 
 ## Later slices
 
