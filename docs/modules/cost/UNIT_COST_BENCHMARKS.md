@@ -127,13 +127,22 @@ one space. The declared rule then matches:
 - `lower bound`, `upper bound` (also without a separator, as in `LOWERBOUND`) and
   `in excess of` anywhere in the basis, case-insensitive;
 - the uppercase whole token `FLOOR` anywhere in the basis;
-- a leading `floor` in any case followed by a non-letter other than a hyphen or
-  underscore, such as `Floor;` or `FLOOR:`;
+- a leading `floor` in any case that is followed by nothing or by a character
+  other than a letter, digit, underscore, hyphen or dash, such as `Floor;`,
+  `FLOOR:` or `Floor area`;
 - a leading `at least`, case-insensitive.
 
-An anywhere match preceded by `not`, `not a` or `not an` (for example
-`NOT A FLOOR` or `not in excess of`) is not a bound. Lowercase `floor` elsewhere,
-`floor-mounted`, `FLOORING` and `UPPER BOUNDARY` do not imply a bound. A bound is not converted
+Negation never turns this vocabulary into a point cost. `not in excess of`
+states a maximum and is an upper bound. Where `not`, `not a` or `not an`
+precedes `lower bound`, `upper bound` or the uppercase token `FLOOR` (for
+example `NOT A FLOOR`), the basis cannot be classified from the text: the
+project is excluded with that reason for source review and is not used as a
+point cost. Lowercase `floor` elsewhere, lowercase `floor-mounted`, `FLOORING`
+and `UPPER BOUNDARY` do not match the vocabulary. The rule also matches some
+equipment wording: uppercase `FLOOR-MOUNTED` or `FLOOR_MOUNTED` normalises to
+the token `FLOOR`, and a leading `floor plan` or `Floor area` matches the
+leading-floor rule. Those projects are excluded with the bound reason shown,
+not silently included. A bound is not converted
 to a point estimate. Reasons and exclusion counts appear in the HTML. Other free-text
 qualifications remain subject to source review; this vocabulary does not
 establish that every bound has been identified or predict the effect of
@@ -188,8 +197,17 @@ The implementation extends `reporting.benchmark_report` with
 `percentile_summary` for unit-cost grouping. The existing `_cohort_summary`
 retains `statistics.median` and its established floating-point arithmetic.
 Existing `_table`, `_source_links` and `facts_digest` handle
-escaped tables, cited links and reproducible facts. `timeseries.dataset` supplies
-`read_sanctioned_csv`, including its existing CAPEX-basis validation.
+escaped tables, cited links and reproducible facts. From `timeseries.dataset`
+the module imports only `SANCTIONED_CSV_COLUMNS`; it does not call
+`read_sanctioned_csv`, because that reader coerces quantities eagerly. The
+module duplicates the sanctioned-table metadata validation (numeric fields,
+access date, confidence, source priority and the CAPEX-basis requirement) on
+raw text. A change to the typed reader's validation is not inherited and must
+be repeated here; no parity test binds the two.
+
+Rows with `SCOPE_IS_OFFSHORE_ONLY=False` are not filtered: they contribute to
+the percentiles alongside offshore-only rows, and the flag is shown per
+comparable in the HTML.
 
 `calibration.observed_benchmark.benchmark_observed_costs` compares observations
 with supplied proxies using mean, bias and RMSE. It does not calculate project

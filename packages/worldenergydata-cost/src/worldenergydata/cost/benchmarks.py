@@ -75,25 +75,35 @@ _BOUND_UPPERCASE_FLOOR = re.compile(r"\bFLOOR\b")
 _BOUND_LEADING = re.compile(r"at least\b")
 _BOUND_LEADING_FLOOR = re.compile(r"floor(?![\w\-‐-―])", re.IGNORECASE)
 _BOUND_NEGATION = re.compile(r"\bnot (?:an? )?$")
+_BOUND_REASON = "CAPEX_BASIS declares a bound, not a point cost"
+_UNCLASSIFIED_BOUND_REASON = (
+    "CAPEX_BASIS negates bound wording; bound or point cost cannot be "
+    "classified from the text and requires source review"
+)
 
 
-def _declares_bound(basis):
-    """Return whether a CAPEX basis declares a lower or upper bound."""
+def _bound_reason(basis):
+    """Return why a CAPEX basis is not a point cost, or None.
+
+    Negation never turns bound vocabulary into a point cost. "Not in excess of"
+    states a maximum, so it is an upper bound. A negated noun such as "not a
+    floor" cannot be classified from the text and is excluded for review.
+    """
     normal = _BOUND_SEPARATORS.sub(" ", basis).strip()
     folded = normal.casefold()
-
-    def asserted(matches, text):
-        return any(
-            not _BOUND_NEGATION.search(text[: match.start()].casefold())
-            for match in matches
-        )
-
-    return (
-        asserted(_BOUND_ANYWHERE.finditer(folded), folded)
-        or asserted(_BOUND_UPPERCASE_FLOOR.finditer(normal), normal)
-        or bool(_BOUND_LEADING.match(folded))
-        or bool(_BOUND_LEADING_FLOOR.match(basis.strip()))
-    )
+    matches = [(m, folded) for m in _BOUND_ANYWHERE.finditer(folded)]
+    matches += [(m, normal) for m in _BOUND_UPPERCASE_FLOOR.finditer(normal)]
+    negated = False
+    for match, text in matches:
+        if match.group(0).casefold() != "in excess of" and _BOUND_NEGATION.search(
+            text[: match.start()].casefold()
+        ):
+            negated = True
+        else:
+            return _BOUND_REASON
+    if _BOUND_LEADING.match(folded) or _BOUND_LEADING_FLOOR.match(basis.strip()):
+        return _BOUND_REASON
+    return _UNCLASSIFIED_BOUND_REASON if negated else None
 
 
 def _text(row, column):
@@ -153,8 +163,9 @@ def _project_cost(row):
         if not _text(row, column):
             raise ValueError(f"missing {column}")
     # Declared source qualifications are bounds, not observed point costs.
-    if _declares_bound(_text(row, "CAPEX_BASIS")):
-        raise ValueError("CAPEX_BASIS declares a bound, not a point cost")
+    bound = _bound_reason(_text(row, "CAPEX_BASIS"))
+    if bound:
+        raise ValueError(bound)
     if _text(row, "MATCH_METHOD").lower() == "unmatched":
         if _text(row, "CATALOG_FIELD_IDS") or not _text(row, "MATCH_REASON"):
             raise ValueError("unmatched crosswalk requires a reason and no field ID")
@@ -357,6 +368,10 @@ def _validate_project_metadata(fields, rows):
         for column in ("FID_YEAR", "FIRST_OIL_YEAR"):
             if _text(row, column):
                 int(float(_text(row, column)))
+        # A short CSV row reads as None; report it as missing, not a TypeError.
+        for column in ("ACCESSED_DATE", "CONFIDENCE", "SOURCE_PRIORITY"):
+            if not _text(row, column):
+                raise ValueError(f"missing {column}")
         date.fromisoformat(row["ACCESSED_DATE"])
         DisclosureConfidence(row["CONFIDENCE"])
         SourcePriority(row["SOURCE_PRIORITY"])
@@ -745,11 +760,15 @@ the CSV. Explicit unmatched field links retain the upstream reason and do not
 exclude an otherwise sourced project cost. Whitespace, underscores, hyphens and
 dashes in the CAPEX basis are read as one space. LOWER BOUND, UPPER BOUND
 (also written without a separator) and IN EXCESS OF anywhere in the basis,
-case-insensitive, declare bounds unless preceded by NOT, NOT A or NOT AN.
-The uppercase whole token FLOOR anywhere, with the same negation, a leading
-FLOOR in any case followed by a non-letter other than a hyphen, and a leading
-AT LEAST also declare bounds. Both lower and upper bounds are excluded
-from point percentiles. Other free-text qualifications require source review;
+case-insensitive, the uppercase whole token FLOOR anywhere,
+a leading FLOOR in any case that is followed by nothing or by a character
+other than a letter, digit, underscore, hyphen or dash, and a leading
+AT LEAST declare bounds. NOT IN EXCESS OF states a maximum and is an upper bound.
+Where NOT, NOT A or NOT AN precedes LOWER BOUND, UPPER BOUND or FLOOR, the basis
+cannot be classified from the text: it is excluded for source review, not
+used as a point cost. Uppercase FLOOR-MOUNTED and a leading floor plan or
+Floor area are also excluded, with the reason shown. Both lower and upper bounds
+are excluded from point percentiles. Other free-text qualifications require source review;
 this declared vocabulary does not establish that every bound is identified.</p>
 <p>Every row belonging to a repeated project ID is excluded from both views;
 the alternative costs are shown below and no cost is selected or averaged.</p>

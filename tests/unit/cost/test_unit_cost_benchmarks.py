@@ -716,6 +716,11 @@ def test_csv_retains_small_percentile_precision(projects, tmp_path):
         "Floor, more than US$2 billion",
         "gross estimate 'in excess of US$2 billion'",
         "  lower\tbound disclosed amount",
+        # "Not in excess of" states a maximum: an upper bound, never a point.
+        "cost not in excess of US$2 billion",
+        "not in excess of disclosed amount",
+        "gross cost NOT IN EXCESS OF US$2 billion",
+        "gross cost not_in-excess–of US$2 billion",
     ],
 )
 def test_bound_costs_are_excluded_from_point_percentiles(projects, basis):
@@ -737,21 +742,105 @@ def test_bound_costs_are_excluded_from_point_percentiles(projects, basis):
 @pytest.mark.parametrize(
     "basis",
     [
+        # Lowercase "floor" outside the leading position is not bound vocabulary.
         "point estimate; not a floor",
         "point estimate confirmed by at least two sources",
-        "not in excess of disclosed amount",
         "floor-mounted equipment cost",
         "FLOORING equipment point cost",
         "point cost for UPPER BOUNDARY equipment",
-        "NOT A FLOOR: disclosed point cost",
-        "point estimate; NOT A LOWER BOUND",
-        "point estimate, not an upper bound",
         "floor_mounted equipment cost",
     ],
 )
 def test_point_estimate_mentioning_floor_is_not_a_bound(projects, basis):
     projects[0]["CAPEX_BASIS"] = basis
     assert well_row(build(projects))["n"] == 5
+
+
+@pytest.mark.parametrize(
+    "basis",
+    [
+        "NOT A FLOOR: disclosed point cost",
+        "point estimate; NOT A FLOOR",
+        "point estimate; NOT A LOWER BOUND",
+        "point estimate, not an upper bound",
+        "point estimate; not lower bound",
+    ],
+)
+def test_negated_bound_wording_is_unclassified_not_a_point_cost(projects, basis):
+    """Negated bound nouns are excluded for source review, never kept as points."""
+    projects[0]["CAPEX_BASIS"] = basis
+    facts = build(projects)
+    assert well_row(facts)["n"] == 4
+    assert "invented-1" not in well_row(facts)["comparables"]
+    reasons = [r["reason"] for r in facts["exclusions"]]
+    assert any("cannot be classified" in r and "source review" in r for r in reasons)
+
+
+@pytest.mark.parametrize(
+    "basis",
+    [
+        # Review wording: equipment text the declared vocabulary also matches.
+        "FLOOR-MOUNTED equipment cost",
+        "FLOOR_MOUNTED equipment cost",
+        "Floor area module cost",
+        "floor plan module cost",
+    ],
+)
+def test_equipment_floor_wording_is_a_visible_bound_exclusion(projects, basis):
+    """Documented limit: these are excluded with a reason, never silently kept."""
+    projects[0]["CAPEX_BASIS"] = basis
+    facts = build(projects)
+    assert well_row(facts)["n"] == 4
+    assert any("bound" in r["reason"] for r in facts["exclusions"])
+
+
+def _flat(text):
+    return " ".join(text.split())
+
+
+def _method_document():
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[3]
+    path = root / "docs" / "modules" / "cost" / "UNIT_COST_BENCHMARKS.md"
+    return _flat(path.read_text(encoding="utf-8"))
+
+
+def _method_html(projects, tmp_path):
+    from worldenergydata.cost.benchmarks import write_benchmarks
+
+    root = inputs(tmp_path, projects)
+    paths = write_benchmarks(root, tmp_path / "reports", "2026-01-01")
+    return _flat(paths["html"].read_text(encoding="utf-8"))
+
+
+LEADING_FLOOR_RULE = (
+    "a leading floor in any case that is followed by nothing or by a character "
+    "other than a letter, digit, underscore, hyphen or dash"
+)
+
+
+def test_method_text_describes_bound_rules_as_coded(projects, tmp_path):
+    html = _method_html(projects, tmp_path).replace("<p>", " ").replace("</p>", " ")
+    document = _method_document().replace("`", "")
+    for text in (_flat(html).casefold(), document.casefold()):
+        assert LEADING_FLOOR_RULE in text
+        assert "not in excess of" in text
+        assert "cannot be classified" in text
+        assert "unless preceded by not" not in text
+        assert "is not a bound" not in text
+    assert "floor-mounted, FLOORING and UPPER BOUNDARY do not imply a bound" not in (
+        document
+    )
+    assert "FLOOR-MOUNTED" in document and "floor plan" in document
+
+
+def test_method_document_states_reuse_and_scope_limits():
+    document = _method_document()
+    assert "supplies `read_sanctioned_csv`" not in document
+    assert "imports only `SANCTIONED_CSV_COLUMNS`" in document
+    assert "duplicates" in document and "metadata validation" in document
+    assert "`SCOPE_IS_OFFSHORE_ONLY=False`" in document
 
 
 def test_excluded_sole_member_cohort_does_not_abort_other_cohorts(projects):
@@ -1084,3 +1173,23 @@ def test_cli_invalid_quantity_does_not_bypass_source_exclusions(
     assert all("invented-5" not in row["comparables"] for row in rows)
     html = (output / "unit_cost_benchmarks.html").read_text(encoding="utf-8")
     assert column in html
+
+
+def test_cli_truncated_derived_row_exits_2_without_traceback(projects, tmp_path):
+    """A short CSV row reads as None fields; metadata checks report it as missing."""
+    root = inputs(tmp_path, projects)
+    nominal = root / "sanctioned_projects.csv"
+    with nominal.open(encoding="utf-8") as stream:
+        rows = list(csv.DictReader(stream))
+    selected = root / "sanctioned_projects_2026.csv"
+    write_csv(selected, rows)
+    lines = selected.read_text(encoding="utf-8").splitlines()
+    lines[-1] = ",".join(lines[-1].split(",")[:5])
+    selected.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    nominal.unlink()
+    output = tmp_path / "reports"
+    result = cli(root, output, "--projects", selected.as_posix())
+    assert result.returncode == 2, result.stderr
+    assert "Traceback" not in result.stderr
+    assert "missing ACCESSED_DATE" in result.stderr
+    assert not output.exists() or not any(output.iterdir())
