@@ -196,7 +196,8 @@ class CostPredictor:
         Raises
         ------
         ValueError
-            If fewer than _MIN_RECORDS_FOR_FIT records are supplied.
+            If fewer than _MIN_RECORDS_FOR_FIT records are supplied or index
+            coverage is missing. A failed fit preserves the previous model.
         """
         if len(records) < _MIN_RECORDS_FOR_FIT:
             raise ValueError(
@@ -204,10 +205,9 @@ class CostPredictor:
                 f"to fit; received {len(records)}."
             )
 
-        self._train_records = list(records)
-        self._n_train = len(records)
+        train_records = list(records)
 
-        X_dicts = _extract_features(records)
+        X_dicts = _extract_features(train_records)
         X_df = _dicts_to_array(X_dicts)
 
         # Log-transform target: stabilise variance across the cost range
@@ -215,14 +215,13 @@ class CostPredictor:
             [
                 r.cost_usd_mm
                 * self.index_adjustment.factor(r.year_sanction, _BASE_YEAR).factor
-                for r in records
+                for r in train_records
             ]
         )
         y = np.log(y_raw)
 
         pipeline = _build_pipeline()
         pipeline.fit(X_df, y)
-        self._pipeline = pipeline
 
         # Extract feature names after fitting
         preprocessor = pipeline.named_steps["preprocessor"]
@@ -233,6 +232,10 @@ class CostPredictor:
                 ["subsea", "region", "rig_type", "water_depth_band"]
             )
         )
+        # Publish state only after every validation and fitting step succeeds.
+        self._pipeline = pipeline
+        self._train_records = train_records
+        self._n_train = len(train_records)
         self._feature_names_out = num_names + cat_names
 
         return self
