@@ -1,0 +1,11 @@
+year,band,type,reports,permits,reports_per_permit
+2025,under 100 m,workover,6,159,0.037736
+2025,under 100 m,abandonment,719,1963,0.366276
+2025,100 to 500 m,workover,1,57,0.017544
+2025,100 to 500 m,abandonment,74,282,0.262411
+2025,500 to 1500 m,workover,2,73,0.027397
+2025,500 to 1500 m,abandonment,62,284,0.218310
+2025,1500 m and deeper,workover,3,48,0.062500
+2025,1500 m and deeper,abandonment,36,81,0.444444
+2025,no depth,workover,0,0,
+2025,no depth,abandonment,0,0,

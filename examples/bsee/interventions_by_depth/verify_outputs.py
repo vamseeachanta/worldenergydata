@@ -1,0 +1,241 @@
+"""Reconcile delivered aggregates and chart dimensions without network/raw files."""
+
+import hashlib
+import json
+import platform
+from pathlib import Path
+
+import matplotlib
+import numpy as np
+import pandas as pd
+import yaml
+from estimate_costs import estimate
+from PIL import Image
+
+ROOT = Path(__file__).resolve().parent
+
+
+def verify(out=ROOT / "output"):
+    out = Path(out)
+    counts = pd.read_csv(out / "counts_by_year_band_group.csv")
+    monthly = pd.read_csv(out / "coverage_by_month.csv")
+    rates = pd.read_csv(out / "rates.csv")
+    summary = json.loads((out / "summary.json").read_text())
+    last = summary["last_full_year"]
+    selected_months = (
+        monthly.month.str[:4].astype(int).between(summary["first_full_year"], last + 1)
+    )
+    assert (
+        counts.permits.sum() == monthly.loc[selected_months, "approved_permits"].sum()
+    )
+    assert (rates.standing_wells >= 0).all()
+    for row in rates.itertuples():
+        assert row.stock_date == f"{row.year}-01-01"
+        groups = (
+            ["workover and recompletion", "production enhancement", "other well work"]
+            if row.family == "well work"
+            else [
+                "temporary abandonment",
+                "permanent abandonment",
+                "abandonment unspecified",
+            ]
+        )
+        n = counts.loc[
+            counts.year.eq(row.year)
+            & counts.band.eq(row.band)
+            & counts.group.isin(groups),
+            "permits",
+        ].sum()
+        assert n == row.permits
+        if row.standing_wells:
+            assert np.isclose(
+                row.per_100_standing_wells, n / row.standing_wells * 100, atol=1e-6
+            )
+        else:
+            assert pd.isna(row.per_100_standing_wells)
+    averages = pd.read_csv(out / "full_year_averages.csv").set_index(["band", "family"])
+    actual = (
+        rates[rates.year.le(last)]
+        .groupby(["band", "family"])
+        .agg(
+            mean_annual_permits=("permits", "mean"),
+            mean_annual_rate=("per_100_standing_wells", "mean"),
+        )
+    )
+    np.testing.assert_allclose(
+        averages, actual.reindex(averages.index), atol=1e-6, equal_nan=True
+    )
+    basis = yaml.safe_load((ROOT / "cost_basis.yml").read_text(encoding="utf-8"))
+    generated = estimate(basis)
+    saved = pd.read_csv(out / "cost_table.csv")
+    pd.testing.assert_frame_equal(saved, generated, check_dtype=False)
+    for scenario in basis["scenarios"]:
+        if scenario["pricing_method"] == "not priced":
+            assert scenario["limitation"]
+            continue
+        for case in ["low", "base", "high"]:
+            for fact in scenario[case].values():
+                assert all(
+                    k in fact
+                    for k in [
+                        "value",
+                        "unit",
+                        "asset",
+                        "applicability",
+                        "citation",
+                        "interpretation",
+                    ]
+                )
+                assert all(
+                    k in fact["citation"]
+                    for k in [
+                        "title",
+                        "publisher",
+                        "date",
+                        "url",
+                        "retrieval_date",
+                        "location",
+                    ]
+                )
+    units = pd.read_csv(out / "unit_type_shares.csv")
+    for (_, _, _), g in units.groupby(["period", "band", "event"]):
+        total = g.approvals.sum()
+        assert g.total_approvals.eq(total).all()
+        if total:
+            assert np.isclose(g.share_percent.sum(), 100, atol=1e-5)
+            np.testing.assert_allclose(
+                g.share_percent, g.approvals / total * 100, atol=1e-6
+            )
+        else:
+            assert g.share_percent.isna().all()
+    subsea = pd.read_csv(out / "subsea_completion_shares.csv")
+    assert (
+        subsea[["subsea_flag_yes", "subsea_flag_no", "subsea_flag_unknown"]].sum(axis=1)
+        == subsea.approvals
+    ).all()
+    ratios = pd.read_csv(out / "approvals_per_distinct_well.csv")
+    assert (ratios.distinct_wells <= ratios.approvals).all()
+    assert ratios.missing_api10.eq(0).all()
+    for r in ratios.itertuples():
+        n = rates.loc[
+            rates.year.eq(r.year) & rates.band.eq(r.band) & rates.family.eq(r.family),
+            "permits",
+        ].item()
+        assert n == r.approvals
+        if r.distinct_wells:
+            assert np.isclose(
+                r.approvals_per_well, r.approvals / r.distinct_wells, atol=1e-6
+            )
+        else:
+            assert pd.isna(r.approvals_per_well)
+    checks = pd.read_csv(out / "life_cycle_reconciliation.csv").set_index("stage")
+    life = json.loads((out / "life_cycle_summary.json").read_text(encoding="utf-8"))
+    assert life["file_date"] == summary["file_date"]
+    window = range(summary["first_full_year"], summary["partial_year"] + 1)
+    in_window = counts[counts.year.isin(window)]
+    for stage, groups in {
+        "temporary abandonment": ["temporary abandonment"],
+        "permanent abandonment": ["permanent abandonment"],
+        "abandonment, type not stated": ["abandonment unspecified"],
+        "intervention, all": [
+            "workover and recompletion",
+            "production enhancement",
+            "other well work",
+        ],
+    }.items():
+        published = in_window.loc[in_window.group.isin(groups), "permits"].sum()
+        row = checks.loc[stage]
+        assert row.published_permits == published == row.permits_in_events
+        assert row.assigned_to_dated_wells + row.not_assigned == published
+    weights = pd.read_csv(out / "intervention_weight_by_year.csv")
+    work = rates[rates.family.eq("well work")].groupby("year").permits.sum()
+    assert weights.groupby("year").approvals.sum().reindex(work.index).equals(work)
+    reach = pd.read_csv(out / "life_cycle_stage_reach.csv")
+    assert (reach.wells_reaching <= reach.wells).all()
+    assert (reach.wells_reaching <= reach.events).all()
+    hist = pd.read_csv(out / "life_cycle_life_histogram.csv")
+    assert hist.wells.sum() == life["dated_wells"] - life["life_not_established"]
+    assert life["permanently_abandoned"] + life["standing"] == life["dated_wells"]
+    from plot_charts import COLORS
+
+    for color in COLORS:
+        srgb = [int(color[i : i + 2], 16) / 255 for i in (1, 3, 5)]
+        rgb = [
+            v / 12.92 if v <= 0.04045 else ((v + 0.055) / 1.055) ** 2.4 for v in srgb
+        ]
+        luminance = sum(v * w for v, w in zip(rgb, [0.2126, 0.7152, 0.0722]))
+        assert 1.05 / (luminance + 0.05) >= 3
+    for stem in [
+        "01_approved_interventions",
+        "02_rates_per_standing_well",
+        "03_cost_per_event",
+        "04_unit_types_by_depth",
+        "05_well_life",
+        "06_well_life_stages",
+    ]:
+        for suffix in (".png", ".svg"):
+            assert (out / f"{stem}{suffix}").is_file(), f"missing chart {stem}{suffix}"
+        svg = (out / f"{stem}.svg").read_text(encoding="utf-8")
+        assert "cost_basis.yml" not in svg
+        if not stem.startswith("03"):
+            assert "cost basis" not in svg
+    files = sorted(
+        p
+        for p in out.iterdir()
+        if p.suffix in [".csv", ".json", ".png", ".svg"]
+        and p.name != "verification.json"
+    )
+    for png in out.glob("*.png"):
+        with Image.open(png) as img:
+            assert img.width >= 1600
+    receipt = dict(
+        criteria_revision=3,
+        software=dict(
+            python=platform.python_version(),
+            pandas=pd.__version__,
+            numpy=np.__version__,
+            matplotlib=matplotlib.__version__,
+            pyyaml=yaml.__version__,
+        ),
+        code_and_basis_sha256={
+            p.relative_to(ROOT.parents[2])
+            .as_posix(): hashlib.sha256(p.read_bytes())
+            .hexdigest()
+            for p in sorted(
+                list(ROOT.glob("*.py"))
+                + [
+                    ROOT / "cost_basis.yml",
+                    ROOT / "README.md",
+                    ROOT / "requirements.txt",
+                    ROOT.parents[2] / "tests/unit/bsee/test_interventions_by_depth.py",
+                    ROOT.parents[2] / "tests/unit/bsee/test_well_life_cycle.py",
+                ]
+            )
+        },
+        checks=[
+            "all selected-year APM approvals partitioned",
+            "rates reconcile with groups and denominator",
+            "partial year excluded from averages",
+            "cost table equals cited YAML arithmetic",
+            "all cost inputs carry provenance",
+            "unit shares partition each approval cohort and sum to 100 percent",
+            "subsea flags retain yes no and unknown counts",
+            "approval to distinct-well ratios reconcile",
+            "all rate stock dates are 1 January",
+            "ordered band palette contrast at least 3 to 1 on white",
+            "life-cycle permits reconcile with published groups over the window",
+            "light and heavy by year partition each year's well work",
+            "life-cycle well counts and histogram reconcile",
+            "all six figure pairs present without internal basis filenames",
+            "PNG width at least 1600",
+        ],
+        files={p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in files},
+    )
+    (out / "verification.json").write_text(
+        json.dumps(receipt, indent=2) + "\n", encoding="utf-8", newline="\n"
+    )
+    print(json.dumps({"checks": len(receipt["checks"]), "verified_files": len(files)}))
+
+
+if __name__ == "__main__":
+    verify()

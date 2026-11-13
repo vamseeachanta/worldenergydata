@@ -1,0 +1,103 @@
+well_type,status,bin_start_years,wells
+development,permanently abandoned,0,2205
+development,permanently abandoned,5,1506
+development,permanently abandoned,10,1844
+development,permanently abandoned,15,1892
+development,permanently abandoned,20,1660
+development,permanently abandoned,25,1617
+development,permanently abandoned,30,1818
+development,permanently abandoned,35,1644
+development,permanently abandoned,40,1151
+development,permanently abandoned,45,707
+development,permanently abandoned,50,475
+development,permanently abandoned,55,223
+development,permanently abandoned,60,71
+development,permanently abandoned,65,33
+development,permanently abandoned,70,9
+development,permanently abandoned,75,3
+development,permanently abandoned,80,0
+development,standing,0,88
+development,standing,5,119
+development,standing,10,210
+development,standing,15,239
+development,standing,20,391
+development,standing,25,518
+development,standing,30,453
+development,standing,35,497
+development,standing,40,810
+development,standing,45,755
+development,standing,50,437
+development,standing,55,492
+development,standing,60,304
+development,standing,65,208
+development,standing,70,41
+development,standing,75,8
+development,standing,80,0
+exploration,permanently abandoned,0,9526
+exploration,permanently abandoned,5,1291
+exploration,permanently abandoned,10,935
+exploration,permanently abandoned,15,644
+exploration,permanently abandoned,20,418
+exploration,permanently abandoned,25,256
+exploration,permanently abandoned,30,219
+exploration,permanently abandoned,35,101
+exploration,permanently abandoned,40,61
+exploration,permanently abandoned,45,46
+exploration,permanently abandoned,50,26
+exploration,permanently abandoned,55,6
+exploration,permanently abandoned,60,2
+exploration,permanently abandoned,65,0
+exploration,permanently abandoned,70,0
+exploration,permanently abandoned,75,0
+exploration,permanently abandoned,80,0
+exploration,standing,0,112
+exploration,standing,5,111
+exploration,standing,10,152
+exploration,standing,15,120
+exploration,standing,20,126
+exploration,standing,25,154
+exploration,standing,30,139
+exploration,standing,35,70
+exploration,standing,40,54
+exploration,standing,45,35
+exploration,standing,50,20
+exploration,standing,55,23
+exploration,standing,60,24
+exploration,standing,65,16
+exploration,standing,70,3
+exploration,standing,75,1
+exploration,standing,80,0
+other or not stated,permanently abandoned,0,209
+other or not stated,permanently abandoned,5,9
+other or not stated,permanently abandoned,10,16
+other or not stated,permanently abandoned,15,13
+other or not stated,permanently abandoned,20,13
+other or not stated,permanently abandoned,25,7
+other or not stated,permanently abandoned,30,7
+other or not stated,permanently abandoned,35,11
+other or not stated,permanently abandoned,40,19
+other or not stated,permanently abandoned,45,22
+other or not stated,permanently abandoned,50,9
+other or not stated,permanently abandoned,55,3
+other or not stated,permanently abandoned,60,1
+other or not stated,permanently abandoned,65,0
+other or not stated,permanently abandoned,70,1
+other or not stated,permanently abandoned,75,0
+other or not stated,permanently abandoned,80,0
+other or not stated,standing,0,0
+other or not stated,standing,5,0
+other or not stated,standing,10,0
+other or not stated,standing,15,0
+other or not stated,standing,20,2
+other or not stated,standing,25,0
+other or not stated,standing,30,3
+other or not stated,standing,35,0
+other or not stated,standing,40,1
+other or not stated,standing,45,0
+other or not stated,standing,50,9
+other or not stated,standing,55,17
+other or not stated,standing,60,8
+other or not stated,standing,65,2
+other or not stated,standing,70,3
+other or not stated,standing,75,0
+other or not stated,standing,80,0
