@@ -1,0 +1,133 @@
+{
+  "schema": "scheduler-output-readback/1",
+  "criteria_version": 1,
+  "external_cap_required_minutes": 90,
+  "verification": "NOT_VERIFIED",
+  "classification": "PARTIAL",
+  "source_id": "bsee-data-center",
+  "owner": "worldenergydata",
+  "started_utc": "2026-11-13T20:23:46.208036+00:00",
+  "datasets": {
+    "platform": {
+      "file": "bsee_platform_structures.parquet",
+      "source_url": "https://www.data.bsee.gov/Platform/Files/PlatStrucRawData.zip",
+      "disposition": "written",
+      "rows": 7091,
+      "sha256": "6a8afed4ee0b1a8ff5aedadc9adc4fe331f3d63f87ff1b976af13b6ab12b3016"
+    },
+    "pipeline_permit": {
+      "file": "bsee_pipeline_permits.parquet",
+      "source_url": "https://www.data.bsee.gov/Pipeline/Files/PipePermRawData.zip",
+      "disposition": "absent",
+      "rows": null,
+      "sha256": null
+    },
+    "pipeline_location": {
+      "file": "bsee_pipeline_locations.parquet",
+      "source_url": "https://www.data.bsee.gov/Pipeline/Files/PipeLocRawData.zip",
+      "disposition": "written",
+      "rows": 2006082,
+      "sha256": "0a38bc770562d5210764ef404f7b23f2b309d80449fe0d17eb906a4b5b25432f"
+    },
+    "deepwater_structure": {
+      "file": "bsee_deepwater_structures.parquet",
+      "source_url": "https://www.data.bsee.gov/Other/Files/PermStrucRawData.zip",
+      "disposition": "written",
+      "rows": 57,
+      "sha256": "b1948c7f0fc0f526865989801630617f8b44594b8464935e7292f04f3d320914"
+    },
+    "deepqual": {
+      "file": "bsee_deepwater_qualified_fields.parquet",
+      "source_url": "https://www.data.bsee.gov/Other/Files/DeepQualRawData.zip",
+      "disposition": "written",
+      "rows": 703,
+      "sha256": "92ffe4080e2830e69957e16572e17c09ae0cbab83c1810d0664f90a1253efa7c"
+    }
+  },
+  "checks_failed": [
+    "full_native_success"
+  ],
+  "retention": "Runtime products and logs retained outside Git; no backup or publication established.",
+  "limits": "One registered BSEE observation; no live coverage claim for other adapters or engineering input qualification.",
+  "code_sha256": {
+    "packages/worldenergydata-scheduler/src/worldenergydata/scheduler/cli.py": "9558b9e83f92207e6522a6d3490100e42dbac9f7c62ab1ae00d99801d7f901d9",
+    "packages/worldenergydata-scheduler/src/worldenergydata/scheduler/scheduler.py": "573c30f1c76dec01250bfd46c0a5dfb6666b45d998aab5f914bf4b586b11fa26",
+    "packages/worldenergydata-scheduler/src/worldenergydata/scheduler/output.py": "321e7bdd32d6e911f07a3a975895780ce40eb73386d888b2d8865ee8518aa2a1",
+    "packages/worldenergydata-scheduler/src/worldenergydata/scheduler/config.py": "ebe20c38e550b05ba1dfb86629679cec83835bf658e1682cbb50a62cb2345db4",
+    "packages/worldenergydata-scheduler/src/worldenergydata/scheduler/monitor.py": "2d09714e7a05238315cab59efe2f037a707192ae551b41599cfb379053d653a8",
+    "packages/worldenergydata-scheduler/src/worldenergydata/scheduler/alerting.py": "7578a7431cad199ecc20184677582fb16bfaf40812f70f4160dde5e67e8a3f56",
+    "packages/worldenergydata-scheduler/src/worldenergydata/scheduler/status_enricher.py": "d99503f918a42ccec51978fd2559d1e9d83e465dc24a740d02f00aa13f0149d1",
+    "packages/worldenergydata-scheduler/src/worldenergydata/scheduler/staleness.py": "70c15426e802a884b9f73f2f0e196c6481f078c228f66fc15e4bf1d172cb5434",
+    "packages/worldenergydata-scheduler/src/worldenergydata/scheduler/jobs/base.py": "4e0a2f07269861c35a68582751eb0aeb0351f4497ad28fea9577ea687f56ab69",
+    "packages/worldenergydata-scheduler/src/worldenergydata/scheduler/jobs/bsee_refresh.py": "85db0ebd94ceefe9bc83927adc3f89f46df5eb52443a3c29c3dee41d90017782",
+    "packages/worldenergydata-bsee/src/worldenergydata/bsee/data/scrapers/bsee_web.py": "0bbd5899c114743bb03ac45e71043eba6008ef73acd997e8cc3c36217b04b704",
+    "packages/worldenergydata-bsee/src/worldenergydata/bsee/data/refresh/payload.py": "ba4d5cc3dce909b47a820d5b07827cd33902eb850d6648a3282fd104846b6893",
+    "scripts/validation/verify_scheduler_output_run.py": "51bc02a44564dba71dbae4a8723f4d53ffad8d3dcf16f4dff782b49e9e3bef3b",
+    "config/scheduler/scheduler_config.yml": "53bdff2164bda5bddcd67941dad426d68564127b2068b28ef103acf57dbeba51",
+    "config/bsee.yml": "272897ee1bb8b7cdd029294f8a8077d9cb973555e45bba6f4edd18b506fb8049"
+  },
+  "base_commit": "1e35ee97d665432e35b3c5e7b5bd09788982a185",
+  "runtime_configuration": {
+    "jobs": [
+      {
+        "catalog_path": "REPO_ROOT/config/bsee.yml",
+        "enabled": true,
+        "interval": "weekly",
+        "name": "bsee_refresh",
+        "output_dir": "data/modules/bsee",
+        "time": "02:00"
+      }
+    ],
+    "monitoring": {
+      "log_dir": "RUN_ROOT/logs",
+      "retry_backoff_seconds": 0,
+      "retry_max": 1,
+      "status_file": "RUN_ROOT/status.json"
+    }
+  },
+  "runtime_configuration_sha256": "fe1f5e11e51ff226ec44e0d94a688e7bf5907dc87a9050d3e4ee35de7982c477",
+  "routing": {
+    "branch": "data-prefixed relative-path relocation",
+    "configured": "data/modules/bsee",
+    "override": "WORLDENERGYDATA_DATA_DIR",
+    "expected": "RUN_ROOT/data/modules/bsee",
+    "actual": "RUN_ROOT/data/modules/bsee",
+    "working_directory": "RUN_ROOT/cwd"
+  },
+  "result": {
+    "job_name": "bsee_refresh",
+    "start_time": "2026-11-13T20:23:46.235201+00:00",
+    "end_time": "2026-11-13T20:23:58.005705+00:00",
+    "status": "success",
+    "records_updated": 2013933,
+    "error_msg": "Native diagnostic retained with runtime artifacts",
+    "retryable": true
+  },
+  "failure_layer": "payload_or_parsing",
+  "native_error_class": "deterministic_partial",
+  "ended_utc": "2026-11-13T20:23:58.439713+00:00",
+  "execution_receipt_sha256": "4b565ea1338223dab73a76c4deb99710fcc17f2a9618dc7088e867f3119d4e08",
+  "failure_observation": "The pipeline_permit archive has no member matching the configured primary-member pattern; full-catalog acceptance is not established.",
+  "partial_readback": {
+    "scope": "Written products only; the absent fifth dataset prevents full-catalog verification.",
+    "rows": {
+      "platform": 7091,
+      "pipeline_location": 2006082,
+      "deepwater_structure": 57,
+      "deepqual": 703
+    },
+    "summed_rows": 2013933,
+    "payload_sha256": {
+      "_metadata.json": "9fb22b8d2b4e0e04962f41f64291c5883be6ddb626c45c1d5535415981f3528b",
+      "bsee_pipeline_locations.parquet": "0a38bc770562d5210764ef404f7b23f2b309d80449fe0d17eb906a4b5b25432f",
+      "bsee_deepwater_qualified_fields.parquet": "92ffe4080e2830e69957e16572e17c09ae0cbab83c1810d0664f90a1253efa7c",
+      "bsee_deepwater_structures.parquet": "b1948c7f0fc0f526865989801630617f8b44594b8464935e7292f04f3d320914",
+      "bsee_platform_structures.parquet": "6a8afed4ee0b1a8ff5aedadc9adc4fe331f3d63f87ff1b976af13b6ab12b3016"
+    },
+    "new_snapshots": 1,
+    "snapshot": "RUN_ROOT/data/modules/bsee/runs/20261113T202358.006472-daf3d0181cf34e32a44155bb1b841f66Z",
+    "manifests_agree_on_partial_result": true,
+    "manifest_error_present": true,
+    "checked_utc": "2026-11-13T20:29:17.799073+00:00"
+  }
+}
