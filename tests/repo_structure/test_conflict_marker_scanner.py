@@ -27,9 +27,10 @@ def _hangup_disposition(action):
 
     A non-interactive shell cannot trap a signal that was ignored when it
     started, so the disposition the scanner inherits decides whether its HUP
-    trap can run. ``None`` keeps the disposition of the test process.
+    trap can run. CI runners and nohup callers can pass SIGHUP ignored, so
+    every scan sets it explicitly instead of inheriting it from pytest.
     """
-    if action is None or not hasattr(signal, "SIGHUP"):
+    if not hasattr(signal, "SIGHUP"):
         return None
     handler = signal.SIG_IGN if action == "ignore" else signal.SIG_DFL
     return lambda: signal.signal(signal.SIGHUP, handler)
@@ -65,7 +66,7 @@ def staged_repo(tmp_path):
         )
         return path
 
-    def scan(file_limit=False, hangup=None, **overrides):
+    def scan(file_limit=False, hangup="default", **overrides):
         index = tmp_path / ".git/index"
         before = index.read_bytes()
         command = ["bash", str(SCANNER)]
@@ -388,8 +389,6 @@ def test_hangup_ignored_by_the_caller_still_fails_closed(
     # (scan() asserts the scratch directory is empty).
     stage, scan = staged_repo
     stage("sample.txt", MARKERS)
-    result = scan(
-        hangup="ignore", **_signalling_wrapper(tmp_path / "bin", tool, "HUP")
-    )
+    result = scan(hangup="ignore", **_signalling_wrapper(tmp_path / "bin", tool, "HUP"))
     assert result.returncode == 1
     assert result.stderr == error
