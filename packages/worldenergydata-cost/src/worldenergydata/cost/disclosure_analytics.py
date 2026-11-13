@@ -140,6 +140,12 @@ class DisclosureBenchmarkResult:
     comparability_status: str
 
 
+def _annual_identity(row: DisclosureRecord) -> tuple[str, int, str, Optional[str]]:
+    """Match annual view grouping; optional labels do not split operator totals."""
+    project = None if row.scope == SCOPE_OPERATOR else row.project_name
+    return row.operator, row.fiscal_year, row.scope, project
+
+
 def _revision_groups(
     records: list[DisclosureRecord],
 ) -> tuple[dict[str, list[DisclosureRecord]], dict[str, int]]:
@@ -151,20 +157,18 @@ def _revision_groups(
             groups.setdefault(row.revision.logical_disclosure_key, []).append(row)
     depths = disclosure_revision_depths(revisions)
     for rows in groups.values():
-        identities = {
-            (r.operator, r.fiscal_year, r.scope, r.project_name) for r in rows
-        }
+        identities = {_annual_identity(r) for r in rows}
         if len(identities) != 1:
             raise ValueError("logical disclosure key cannot span annual scope groups")
     owners: dict[tuple, str] = {}
     for key, family in groups.items():
         first = family[0]
-        identity = (first.operator, first.fiscal_year, first.scope, first.project_name)
+        identity = _annual_identity(first)
         if identity in owners:
             raise ValueError("multiple logical keys for one annual capex group")
         owners[identity] = key
     for row in records:
-        identity = (row.operator, row.fiscal_year, row.scope, row.project_name)
+        identity = _annual_identity(row)
         if row.revision is None and identity in owners:
             raise ValueError("annual group mixes versioned and unversioned disclosures")
     return groups, depths
@@ -196,6 +200,8 @@ def load_current_effective_disclosure_rows(
     participates. Consumers needing historical evidence use the history API.
     Versioned annual groups cannot mix logical keys or unversioned rows: attach
     metadata to every original in a family before adopting revision selection.
+    Annual identity uses operator/year for operator scope and
+    operator/project/year for project scope.
     """
     rows = list(records)
     groups, depths = _revision_groups(rows)
@@ -251,11 +257,12 @@ def load_project_cost_revision_view(
     a derived row per current-effective row with YoY delta and YoY percent when a prior-year
     row exists in the same group.
 
-    Operator-scope rows and rows missing ``project_name`` are excluded — they
-    belong to the operator view, never this one.
+    Operator-scope rows and rows missing ``project_name`` are excluded before
+    revision validation. Eligible project rows require complete lineages.
     """
-    records = load_current_effective_disclosure_rows(records)
-    project_rows = [r for r in records if r.scope == SCOPE_PROJECT and r.project_name]
+    project_rows = load_current_effective_disclosure_rows(
+        r for r in records if r.scope == SCOPE_PROJECT and r.project_name
+    )
     groups: dict[tuple[str, str], list[DisclosureRecord]] = {}
     for r in project_rows:
         groups.setdefault((r.operator, r.project_name), []).append(r)
@@ -298,10 +305,12 @@ def load_operator_annual_capex_view(
     Revised prior-year amounts become the comparison basis; the chosen revision
     metadata annotates each derived row, and history retains original evidence.
 
-    Project-scope rows are excluded.
+    Project-scope rows are excluded before revision validation. Eligible
+    operator rows require complete lineages.
     """
-    records = load_current_effective_disclosure_rows(records)
-    operator_rows = [r for r in records if r.scope == SCOPE_OPERATOR]
+    operator_rows = load_current_effective_disclosure_rows(
+        r for r in records if r.scope == SCOPE_OPERATOR
+    )
     groups: dict[str, list[DisclosureRecord]] = {}
     for r in operator_rows:
         groups.setdefault(r.operator, []).append(r)
