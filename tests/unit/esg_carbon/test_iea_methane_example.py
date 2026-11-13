@@ -24,7 +24,7 @@ def deny_external_operations(event, arguments):
         raise RuntimeError("Network access denied by the example test")
     if event.startswith("subprocess.") or event in (
         "os.system", "os.exec", "os.posix_spawn", "os.spawn",
-        "os.fork", "os.forkpty", "os.startfile"
+        "os.fork", "os.forkpty", "os.startfile", "_winapi.CreateProcess"
     ):
         raise RuntimeError("Process creation denied by the example test")
 
@@ -133,6 +133,7 @@ def example_probe(tmp_path, monkeypatch):
         ("os.fork", "Process creation denied by the example test"),
         ("os.forkpty", "Process creation denied by the example test"),
         ("os.startfile", "Process creation denied by the example test"),
+        ("_winapi.CreateProcess", "Process creation denied by the example test"),
     ],
 )
 def test_offline_runner_denial_messages(tmp_path, example_probe, event, message):
