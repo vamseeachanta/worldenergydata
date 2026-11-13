@@ -58,8 +58,11 @@ def archive(name: str = "records.csv") -> bytes:
 
 def corrupt_archive(compression: int = ZIP_DEFLATED) -> bytes:
     stream = io.BytesIO()
-    with ZipFile(stream, "w", compression=compression) as zipped:
-        zipped.writestr("records.csv", "id,value\n1,synthetic\n")
+    member = ZipInfo("records.csv", date_time=(1980, 1, 1, 0, 0, 0))
+    member.compress_type = compression
+    member.external_attr = 0o600 << 16
+    with ZipFile(stream, "w") as zipped:
+        zipped.writestr(member, "id,value\n1,synthetic\n")
     payload = bytearray(stream.getvalue())
     payload[30 + len("records.csv") + (4 if compression == ZIP_LZMA else 0)] = 255
     return bytes(payload)
@@ -545,6 +548,21 @@ def test_redirected_robots_failure_blocks_data(tmp_path: Path, location: str) ->
         ("zip", corrupt_archive(), False),
         ("csv", b"plain text", False),
         ("zip", corrupt_archive(ZIP_LZMA), False),
+    ],
+    ids=[
+        "json-valid",
+        "json-html",
+        "csv-valid",
+        "csv-html",
+        "pdf-valid",
+        "pdf-plain-text",
+        "html-valid",
+        "html-plain-text",
+        "zip-invalid",
+        "xlsx-missing-workbook",
+        "zip-corrupt-deflate",
+        "csv-plain-text",
+        "zip-corrupt-lzma",
     ],
 )
 def test_content_sniffs(
