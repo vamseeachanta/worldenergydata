@@ -15,9 +15,14 @@ Contracts live in `capex_estimator_schema` in the same package.
 - Allowed numeric features are water depth (m), well count, capacity (boe/day),
   asset quantity and vintage year. Counts/quantities are nonnegative physical
   inputs. Feature availability dates cannot follow the snapshot date.
-- Omit an unavailable feature or supply `None`. Completeness is relative to the
-  keys declared by the request; it is not completeness against every possible
-  project driver. No available features means `NOT_EVALUATED`.
+- Omit an unavailable feature or supply `None`; both are listed as missing.
+  Completeness is the number of available features divided by the five supported
+  feature names above. A request supplying only well count is 20.0% complete,
+  whether the other keys are omitted or explicitly null. Missing features are
+  excluded from fitting; omission and nulls produce the same comparable cohort
+  and numerical prediction. No available features means `NOT_EVALUATED` and 0.0%
+  completeness. Full completeness describes supported inputs, not coverage of
+  every possible project driver or qualification of engineering evidence.
 - `TrainingRecord` holds a positive cost amount in currency millions, disclosure
   date, source, derivation and bound type separately. Only disclosed point
   observations qualify. Synthetic, modeled, allocated, award-derived and censored

@@ -2,7 +2,7 @@
 
 **Development:** Jack St Malo (subsea15) &middot; **Lease:** 6 leases (G17015, G17016, G18745, G18753, G20394, G21245) &middot; **First oil:** 2014-12-01 &middot; **Discount rate:** 10% annual
 
-**Data window:** 2000-09 -> 2026-04
+**Data window:** 2000-09 -> 2026-04 &middot; **NPV @ 10%:** **$-804.5 M**
 
 ## Summary
 
@@ -11,6 +11,12 @@ On public BSEE production + cost data, **Jack St Malo** is **NPV-negative at 10%
 - **438.7 MMbbl** oil produced from **22 producing wells** (**73 total wellbores**), generating **$27,891 M** gross revenue.
 - A **high-capex, deepwater** signature: **$12,850 M** of one-time D&C + facilities capital is the dominant driver of the NPV.
 - The cumulative-NPV path bottomed at **$-3,154.7 M** in **2014** and has since recovered **$+2,350.2 M** as production paid back capital.
+
+## Revision history
+
+| Revision | Date | Change and reason |
+|---|---|---|
+| 1 | 2026-11-05 | Header NPV added from the financial summary to keep the reported development and data window consistent. |
 
 > Generated from public BSEE OGOR-A production and drilling/WAR records run through a monthly cashflow + trimmed-discount model (`build_field_npv_timeline`), covering field life through the latest available BSEE OGOR-A month. The NPV timeline below is an additive presentation layer over that model; it does not alter the computed final NPV.
 
@@ -338,7 +344,7 @@ _Exact, not sampled: NPV is affine in a uniform price multiplier (revenue and ro
 
 ## Next Steps
 
-- **Get a tailored analysis.** Want this for your own assets — a different field, a custom price deck, sensitivities, or a partner-level working-interest view? **AceEngineer** builds traceable field economics from public data. Contact **vamsee.achanta@aceengineer.com** to scope an engagement.
+- **Get a tailored analysis.** Want this for your own assets — a different field, a custom price deck, sensitivities, or a partner-level working-interest view? **AceEngineer** builds traceable field economics from public data. Visit **[AceEngineer](https://www.aceengineer.com)** to scope an engagement.
 - **Explore the full play.** Jack St Malo is one of **10 Lower Tertiary (Wilcox) fields** covered by this model. Regenerate any field with `--dev <Field>`, or ask for the **portfolio economics report** for the whole-play NPV view (Jack/St. Malo, Stones, Big Foot, Anchor, Cascade/Chinook, and more).
 - **See the methodology.** Every number here traces to **public BSEE OGOR-A production + drilling/WAR records** run through a transparent cashflow model — no black box. The pipeline (BSEE public data → parsed `.bin` → NPV) is reproducible end-to-end.
 - **Run it yourself.** Refresh the data and regenerate this report:

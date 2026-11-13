@@ -249,26 +249,11 @@ def test_hand_authored_fixes_survive_clean_build(public):
         assert sn.MARKER in (public / rel).read_text(), rel
 
 
-def test_roster_poster_targets_exist(public):
-    # lifecycle_id is computed at BUILD time (build_field_atlas.py L34-37) and
-    # never lands in the on-disk roster — the previous read of
-    # e.get("lifecycle_id") was always None, so this check asserted nothing
-    # (#946 r1 finding 3). Recompute ids exactly as the generator does.
-    from worldenergydata.common.fields_registry import load_fields
-
-    roster = json.loads((REPO / "reports/field-atlas/_roster.json").read_text())
-    entries = roster if isinstance(roster, list) else roster.get("fields", [])
-    registry = load_fields()
-    resolved = [registry.resolve(e["name"]) for e in entries if e.get("has_lifecycle")]
-    assert resolved and all(resolved), "rich roster entries must resolve to ids"
+def test_independent_regulator_posters_retain_explorer_targets(public):
     explorer = _explorer(public)
-    missing = [
-        rid
-        for rid in resolved
-        if not (public / f"lifecycle/{rid}_lifecycle.html").exists()
-        or rid not in explorer["fields"]
-    ]
-    assert not missing, f"roster ids without posters/explorer payloads: {missing}"
+    for fact in FACTS:
+        assert (public / f"lifecycle/{fact['id']}_lifecycle.html").exists()
+        assert fact["id"] in explorer["fields"]
 
 
 # --- Explorer shell contract (issue #946) ----------------------------------
@@ -346,9 +331,12 @@ def test_underwriting_risk_signals(public):
         "tiber",
     }
     assert fields["big_foot"]["risk"]["hpht"] is None
-    assert set(decom) == {"big_foot", "jack_st_malo", "stones"}
-    assert decom["big_foot"]["confidence"] == "modeled"
-    assert decom["jack_st_malo"]["confidence"] == "low"
+    assert decom == {}
+    assert all(
+        field["risk"]["decommissioning_status"]
+        == "withheld_pending_redistribution_review"
+        for field in fields.values()
+    )
     # Parity: severity recomputed from each field's reservoir matches the sidecar.
     facts = {f["id"]: f for f in FACTS}
     for fid, sig in hpht.items():
@@ -474,123 +462,18 @@ def test_explorer_identity_with_posters(public):
         assert embedded == explorer["fields"][f["id"]], f["id"]
 
 
-def test_atlas_shell_pins(public):
-    # Zero-regression pins for the in-place rebuild of /field-atlas/ (#946):
-    # the funnel survives, the shell is present, and the page keeps exactly
-    # one <h1 so the fail-closed nav-spine inject stays unambiguous.
+def test_withheld_atlas_has_one_heading_and_no_embedded_payload(public):
     text = (public / "field-atlas/index.html").read_text()
-    roster = json.loads((REPO / "reports/field-atlas/_roster.json").read_text())
-    m = re.search(r"const ROSTER = (\[.*?\]);", text, re.S)
-    assert m, "embedded roster missing"
-    assert len(json.loads(m.group(1))) == len(roster)
-    for pin in (
-        'id="f-country"',
-        'id="f-play"',
-        'id="f-search"',
-        'id="f-tiers"',
-        'id="x-panel"',
-        "#/field/",
-        "_explorer.json",
-    ):
-        assert pin in text, pin
+    assert "held privately pending redistribution-terms review" in text
     assert text.count("<h1") == 1
+    assert "const ROSTER" not in text and "const COUNTRIES" not in text
 
 
-# --- Global atlas feed contract (issue #947) --------------------------------
+def test_restricted_atlas_feed_is_not_published(public):
+    assert not (public / "field-atlas/_atlas_feed.json").exists()
 
 
-def _atlas_feed(public):
-    return json.loads((public / "field-atlas/_atlas_feed.json").read_text())
-
-
-def _coverage_countries():
-    with (REPO / "data/modules/offshore_assets/curated/coverage_summary.csv").open(
-        newline="", encoding="utf-8"
-    ) as f:
-        return [r for r in csv.reader(f) if r and r[0] == "by_country"]
-
-
-def test_atlas_feed_published_contract(public):
-    feed = _atlas_feed(public)
-    assert len(feed["countries"]) == len(_coverage_countries())
-    names = {c["country"] for c in feed["countries"]}
-    assert all(f["country"] in names for f in feed["fields"])
-    # Every row must carry domain (the funnel filter requires it — #947 r1 f5)
-    assert all(f["domain"] == "offshore" for f in feed["fields"])
-    # Per-field tier is ALWAYS roadmap for catalog rows (name/block only —
-    # the country badge is a separate dimension, #947 r1 f3).
-    assert all(f["density_tier"] == "roadmap" for f in feed["fields"])
-
-
-def test_atlas_feed_badge_parity(public):
-    # Parity against the shared rule, ALL THREE branches (#947 r1 f2).
-    statuses = cb.load_scorecard(REPO / "data/freshness-scorecard.json")
-    feed = _atlas_feed(public)
-    for c in feed["countries"]:
-        raw = "US" if c["country"] == "USA" else c["country"]
-        badge, module, _status = cb.badge_for(raw, statuses)
-        assert (c["badge"], c["module"]) == (badge, module), c["country"]
-    by = {c["country"]: c for c in feed["countries"]}
-    assert by["USA"]["badge"] == "RICH"  # branch 1: US override
-    assert by["Norway"]["module"] == "sodir"  # branch 2: module country
-    assert by["Angola"]["badge"] == "SAMPLE"  # branch 3: no-module default
-    assert "reference" in by["Angola"]["module"]
-
-
-def test_atlas_feed_dedup_invariants(public):
-    baf_spec = importlib.util.spec_from_file_location(
-        "build_atlas_feed_ig", REPO / "scripts/field_atlas/build_atlas_feed.py"
-    )
-    baf = importlib.util.module_from_spec(baf_spec)
-    baf_spec.loader.exec_module(baf)
-
-    with (REPO / "data/modules/offshore_assets/curated/fields.csv").open(
-        newline="", encoding="utf-8"
-    ) as f:
-        catalog = list(csv.DictReader(f))
-    gom = [r for r in catalog if r["US_GOM_FLAG"].strip()]
-    roster = json.loads((REPO / "reports/field-atlas/_roster.json").read_text())
-    suppressed, _report, _unmatched = baf.dedup_gom([e["name"] for e in roster], gom)
-    feed_gom = [f for f in _atlas_feed(public)["fields"] if f["gom"]]
-    assert len(suppressed) + len(feed_gom) == len(gom)
-    # Ambiguity guard (#947 r1 f4): Big Bend (Petrobras) is a DISTINCT field
-    # and must survive the roster's Big Bend (Noble); exactly one Big Bend
-    # remains in the tail.
-    assert any(f["name"] == "Big Bend (Petrobras)" for f in feed_gom)
-    assert sum(1 for f in feed_gom if "big bend" in f["name"].lower()) == 1
-    # No feed GoM row duplicates a roster name in the exact-normalized sense.
-    roster_keys = {baf.norm_exact(e["name"]) for e in roster}
-    dupes = [f["name"] for f in feed_gom if baf.norm_exact(f["name"]) in roster_keys]
-    assert not dupes, f"feed GoM rows shadowing roster entries: {dupes}"
-
-
-def test_all_regions_badges_match_lifted_rule(public):
-    # Badge-lift identity (#947 T1/D6d): the committed coverage CSV (date-free)
-    # must agree with the lifted shared rule for every country.
-    statuses = cb.load_scorecard(REPO / "data/freshness-scorecard.json")
-    with (REPO / "reports/field_development/all_regions_coverage.csv").open(
-        newline="", encoding="utf-8"
-    ) as f:
-        rows = list(csv.DictReader(f))
-    assert rows
-    for r in rows:
-        badge, module, status = cb.badge_for(r["country"], statuses)
-        assert (r["badge"], r["source_module"], r["catalog_status"]) == (
-            badge,
-            module,
-            status,
-        ), r["country"]
-
-
-def test_atlas_funnel_global_pins(public):
-    text = (public / "field-atlas/index.html").read_text()
-    for pin in (
-        "const COUNTRIES",
-        "(unattributed)",
-        "_atlas_feed.json",
-        'id="f-cbadge"',
-    ):
-        assert pin in text, pin
-    m = re.search(r"const COUNTRIES = (\[.*?\]);", text, re.S)
-    assert m, "embedded country index missing"
-    assert len(json.loads(m.group(1))) == len(_coverage_countries())
+def test_all_regions_report_is_withheld(public):
+    text = (public / "all-regions-atlas.html").read_text()
+    assert "held privately pending redistribution-terms review" in text
+    assert "<table" not in text
