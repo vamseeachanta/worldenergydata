@@ -70,6 +70,16 @@ def test_full_refresh_preserves_failure_exit_code(dispatch, code):
     legacy.assert_not_called()
 
 
+@pytest.mark.parametrize("code,expected", [(-2, 130), (-9, 137), (-15, 143)])
+def test_full_refresh_maps_signal_exit_code(dispatch, code, expected):
+    child, legacy = dispatch
+    child.return_value = subprocess.CompletedProcess([], code)
+    result = runner.invoke(bsee.app, ["refresh"])
+    assert result.exit_code == expected
+    assert "completed successfully" not in result.output
+    legacy.assert_not_called()
+
+
 def test_full_refresh_reports_process_start_failure(dispatch):
     child, legacy = dispatch
     child.side_effect = OSError("process unavailable")
@@ -92,9 +102,23 @@ def test_missing_script_reports_checkout_requirement(dispatch, tmp_path, monkeyp
 
 
 @pytest.mark.parametrize(
-    "data_type", ["well", "production", "platform", "infrastructure"]
+    "data_type,enabled",
+    [
+        ("well", {"apm"}),
+        ("production", {"production"}),
+        ("block", set()),
+        ("lease", set()),
+        ("platform", {"platform"}),
+        ("pipeline_permit", {"pipeline_permit"}),
+        ("deepwater_structure", {"deepwater_structure"}),
+        ("pipeline_location", {"pipeline_location"}),
+        (
+            "infrastructure",
+            {"platform", "pipeline_permit", "deepwater_structure", "pipeline_location"},
+        ),
+    ],
 )
-def test_typed_refresh_retains_existing_router(dispatch, data_type):
+def test_typed_refresh_retains_existing_router(dispatch, data_type, enabled):
     child, legacy = dispatch
     result = runner.invoke(bsee.app, ["refresh", "--type", data_type])
     assert result.exit_code == 0, result.output
@@ -103,8 +127,13 @@ def test_typed_refresh_retains_existing_router(dispatch, data_type):
     legacy.return_value.router.assert_called_once()
     config = legacy.return_value.router.call_args.args[0]
     assert config["data"]["refresh"] is True
+    assert {
+        name for name, value in config["data"].items() if value and name != "refresh"
+    } == enabled
     assert config["meta"]["mode"] == (
-        "legacy" if data_type in ("well", "production") else "enhanced"
+        "legacy"
+        if data_type in ("well", "production", "block", "lease")
+        else "enhanced"
     )
 
 
@@ -136,6 +165,15 @@ def test_refresh_help_includes_safe_preview(dispatch):
     legacy.assert_not_called()
 
 
+def test_refresh_help_limits_verbose_to_typed_refreshes(dispatch):
+    result = runner.invoke(bsee.app, ["refresh", "--help"])
+    assert result.exit_code == 0
+    output = _plain(result.output)
+    assert "Enable verbose output for typed refreshes only" in output
+    assert "refresh --type all --verbose" not in output
+
+
+@pytest.mark.integration
 def test_full_refresh_dry_run_from_another_directory(tmp_path):
     result = subprocess.run(
         [
