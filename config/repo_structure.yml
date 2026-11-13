@@ -138,6 +138,7 @@ temporary_exceptions:
       - reports/cost/cost_timeseries_presentation.html
       - reports/cost/inflation_verdicts.csv
       - reports/cost/reconciliation.csv
+      - reports/cost/sanction_vs_outturn.csv
       - reports/cost/stage_allocations.csv
       - reports/field-atlas/onepagers/field-anchor.html
       - reports/field-atlas/onepagers/field-anchor.pdf
