@@ -1,5 +1,6 @@
 """Reject parser disagreement before literal identities can be misassigned."""
 
+from io import StringIO
 from pathlib import Path
 from unittest.mock import patch
 
@@ -51,3 +52,48 @@ def test_literal_id_assignment_uses_row_position(tmp_path: Path) -> None:
         result = DrillingRiserLoader(tmp_path).load()
     assert result["COMPONENT_ID"].tolist() == ["01", "NA"]
     assert result["NOTES"].tolist() == ["First record", "Second record"]
+
+
+@pytest.mark.parametrize("index", [[1, 0], [10, 20], ["left", "right"], [0, 0]])
+@pytest.mark.parametrize(
+    ("component_id", "source", "notes", "message", "lines"),
+    [
+        ("NA", "", "Second record", "DATA_SOURCE must be populated", "5"),
+        ("NA", "Synthetic source", "", "NOTES must be populated", "5"),
+        ("", "Synthetic source", "Second record", "COMPONENT_ID must be populated", "5"),
+        (" NA", "Synthetic source", "Second record", "COMPONENT_ID.*whitespace", "5"),
+        ("N\u200bA", "Synthetic source", "Second record", "COMPONENT_ID.*format", "5"),
+        ("N\x07A", "Synthetic source", "Second record", "COMPONENT_ID.*control", "5"),
+        ("01", "Synthetic source", "Second record", "Duplicate COMPONENT_ID", "2, 5"),
+    ],
+)
+def test_validation_lines_use_row_position(
+    index: list,
+    component_id: str,
+    source: str,
+    notes: str,
+    message: str,
+    lines: str,
+) -> None:
+    """Index labels cannot replace physical starts after a multiline record."""
+    valid_content = (
+        "COMPONENT_ID,DATA_SOURCE,NOTES,COMPONENT_TYPE,OD_IN,"
+        "PRESSURE_RATING_PSI,BORE_SIZE_IN,BOP_TYPE,MANUFACTURER\n"
+        '01,Synthetic source,"First\nrecord",riser_joint,,,,,\n'
+        "\nNA,Synthetic source,Second record,riser_joint,,,,,\n"
+    )
+    content = valid_content.replace(
+        "NA,Synthetic source,Second record", f"{component_id},{source},{notes}"
+    )
+    frame = pd.read_csv(StringIO(content))
+    frame.index = index
+    loader = DrillingRiserLoader(Path("."))
+    with (
+        patch.object(Path, "exists", return_value=True),
+        patch.object(Path, "read_text", side_effect=[content, valid_content]),
+    ):
+        with patch("pandas.read_csv", return_value=frame):
+            with pytest.raises(ValueError, match=rf"{message}.*CSV lines? {lines}$"):
+                loader.load()
+        assert loader._df is None
+        assert loader.load()["COMPONENT_ID"].tolist() == ["01", "NA"]

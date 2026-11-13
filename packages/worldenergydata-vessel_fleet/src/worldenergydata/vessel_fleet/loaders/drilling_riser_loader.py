@@ -137,6 +137,8 @@ class DrillingRiserLoader:
                 "CSV parser row count mismatch: "
                 f"strict reader={len(identities)}, pandas={len(df)}"
             )
+        # Physical CSV starts follow row positions, regardless of index labels.
+        df = df.reset_index(drop=True)
         # Use the checked CSV strings: the C engine silently truncates at NUL,
         # while the Python engine applies NA coercion even with a converter.
         # An array assigns by position and retains string access for empty input.
