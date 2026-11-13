@@ -35,7 +35,7 @@ Revision 2 corrects the comparator selector and cashflow failures in SF1: unknow
 | --- | --- | --- |
 | 0 | 2026-10-15 | Initial implementation inventory and regression evidence |
 | 1 | 2026-10-16 | Record silent failures and detection gaps; distinguish a pagination regression that encodes row loss from completeness evidence |
-| 2 | 2026-11-13 | Reject unknown comparator selectors and retain signed cashflows; add synthetic regressions and separate current comparator evidence from historical package evidence |
+| 2 | 2026-11-13 | Reject unknown comparator selectors and retain signed cashflows; add synthetic regressions and separate current comparator evidence from historical package evidence; record the silent-failure sweep count, command and match dispositions |
 
 ## 2. Inputs and outputs
 
@@ -127,7 +127,22 @@ Additional detection procedures for section 6: D1 force SciPy fitting to raise a
 C2.4 detects the repaired SF1 selector and signed-cashflow failures. It does not qualify government-take aggregation or current fiscal law. The finite-net-cashflow assertion does not detect omitted capital in SF2. C0.3 concerns well values only; no detection check exists for zero-filled production measurements. G1 regression counts do not clear these data or economics paths. This comparator revision does not reconcile the historical production and paging rows.
 
 ## 6. Known failure modes and pitfalls
-sweep: not run (legacy pack)
+
+sweep: 5 found
+
+Run on 2026-11-13 over the package path in the header at revision `b8ad2ac42d3535c72febee1d44c4c434007e1fe3`; the same five lines match at the header code pin, and `decline_curves.py` is unchanged between the two revisions. The count is matching lines, not confirmed defects. Command run, with that package path substituted for `$PACKAGE`:
+
+```bash
+rg -n '^\s*(except\b|return (None\b|\[\]|\{\})|pass\b)' "$PACKAGE" --glob '*.py'
+```
+
+| Sweep file | Matching line | Count | Disposition |
+| --- | --- | --- | --- |
+| `production/decline_curves.py` | 154, 189, 217 | 3 | Broad optimisation fallbacks; recorded in the decline-fit row below, issue pending (1). |
+| `production/decline_curves.py` | 113 | 1 | `best_fit` skips a model whose `fit` raises. Each model method handles its own optimisation errors at lines 154, 189 and 217, so the exceptions reaching this handler come from the shared input checks; when every model raises, `best_fit` raises `ValueError` without the original exception attached. A two-point series and a non-numeric series both returned the same generic message on 2026-11-13. This is an explicit failure with a lost cause, not a silent result; no detection check exists for the discarded cause. Issue pending (1). [packages/worldenergydata-ukcs/src/worldenergydata/ukcs/production/decline_curves.py:L85-L91] [packages/worldenergydata-ukcs/src/worldenergydata/ukcs/production/decline_curves.py:L106-L117] |
+| `production/nsta_client.py` | 19 | 1 | Optional `requests` import; a download without it raises `RuntimeError`, so the fallback is not silent. Recorded in section 9. [packages/worldenergydata-ukcs/src/worldenergydata/ukcs/production/nsta_client.py:L15-L20] [packages/worldenergydata-ukcs/src/worldenergydata/ukcs/production/nsta_client.py:L73-L77] |
+
+This syntax search does not detect the dropped rows, defaulted values and unflagged omissions in the rows below; those were found by reading the code.
 
 The entries below record observations against the code pin, checked on 2026-10-15; issue references identify existing work or numbered issue drafts, not completed corrections. [packages/worldenergydata-ukcs/src/worldenergydata/ukcs/production/decline_curves.py:L154-L161] [packages/worldenergydata-ukcs/src/worldenergydata/ukcs/production/nsta_client.py:L69-L71]
 
