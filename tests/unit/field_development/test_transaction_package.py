@@ -375,7 +375,8 @@ def test_report_omits_catalog_links_with_a_reason(tmp_path):
     assert "bsee_matched" not in text
 
 
-def test_retained_outputs_match_fresh_build(tmp_path):
+@pytest.mark.parametrize("newline", [b"\n", b"\r\n"])
+def test_retained_outputs_match_fresh_build(tmp_path, newline):
     data = json.loads(INPUT.read_text(encoding="utf-8"))
     retained = ROOT / "reports/field_development/transactions/na_kika_coulomb"
     # Render links for the retained destination while writing only in temporary storage.
@@ -384,7 +385,15 @@ def test_retained_outputs_match_fresh_build(tmp_path):
     )
     assert len(outputs) == 6
     for output in outputs:
-        assert output.read_bytes() == (retained / output.name).read_bytes(), (
+        checkout = tmp_path / ("checkout-" + output.name)
+        checkout.write_bytes(
+            (retained / output.name)
+            .read_bytes()
+            .replace(b"\r\n", b"\n")
+            .replace(b"\n", newline)
+        )
+        assert b"\r" not in output.read_bytes()
+        assert output.read_bytes() == checkout.read_bytes().replace(b"\r\n", b"\n"), (
             "Retained output drift; rebuild with PYTHONPATH=src python "
             "scripts/field_development/build_na_kika_coulomb_transaction.py"
         )
