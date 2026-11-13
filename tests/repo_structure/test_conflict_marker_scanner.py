@@ -3,6 +3,7 @@
 import gzip
 import os
 import shutil
+import signal
 import subprocess
 from pathlib import Path
 
@@ -19,6 +20,20 @@ LINE_SENTINELS = (
     b"// CONFLICT_MARKER_FORENSIC_OK",
     b"<!-- CONFLICT_MARKER_FORENSIC_OK -->",
 )
+
+
+def _hangup_disposition(action):
+    """Return a child hook that sets the scanner's SIGHUP disposition.
+
+    A non-interactive shell cannot trap a signal that was ignored when it
+    started, so the disposition the scanner inherits decides whether its HUP
+    trap can run. CI runners and nohup callers can pass SIGHUP ignored, so
+    every scan sets it explicitly instead of inheriting it from pytest.
+    """
+    if not hasattr(signal, "SIGHUP"):
+        return None
+    handler = signal.SIG_IGN if action == "ignore" else signal.SIG_DFL
+    return lambda: signal.signal(signal.SIGHUP, handler)
 
 
 @pytest.fixture
@@ -51,7 +66,7 @@ def staged_repo(tmp_path):
         )
         return path
 
-    def scan(file_limit=False, **overrides):
+    def scan(file_limit=False, hangup="default", **overrides):
         index = tmp_path / ".git/index"
         before = index.read_bytes()
         command = ["bash", str(SCANNER)]
@@ -68,6 +83,7 @@ def staged_repo(tmp_path):
             cwd=tmp_path,
             env={**env, **overrides},
             capture_output=True,
+            preexec_fn=_hangup_disposition(hangup),
         )
         assert index.read_bytes() == before
         assert list(scratch.iterdir()) == []
@@ -325,6 +341,26 @@ def test_snapshot_read_and_matcher_errors_are_blocking(
     assert b"ERROR: Cannot read staged content: docs/plans/example.md" in result.stderr
 
 
+def _signalling_wrapper(bin_dir, tool, signal_name):
+    """Install a ``tool`` wrapper that signals the scanner, then fails."""
+    bin_dir.mkdir()
+    wrapper = bin_dir / tool
+    trigger = '[ "$1" = show ]' if tool == "git" else "true"
+    wrapper.write_text(
+        f"#!/bin/sh\nif {trigger}; then\n"
+        '  "$SCANNER_TEST_TOOL" "$@"\n'
+        f'  kill -{signal_name} "$PPID"\n  exit 1\nfi\n'
+        'exec "$SCANNER_TEST_TOOL" "$@"\n',
+        encoding="utf-8",
+        newline="\n",
+    )
+    wrapper.chmod(0o755)
+    return {
+        "PATH": str(bin_dir) + os.pathsep + os.environ["PATH"],
+        "SCANNER_TEST_TOOL": shutil.which(tool),
+    }
+
+
 @pytest.mark.parametrize("signal, exit_code", [("TERM", 143), ("HUP", 129)])
 @pytest.mark.parametrize("tool", ["git", "mktemp"])
 def test_termination_exits_nonzero_and_cleans_snapshot(
@@ -332,21 +368,27 @@ def test_termination_exits_nonzero_and_cleans_snapshot(
 ):
     stage, scan = staged_repo
     stage("sample.txt", MARKERS)
-    bin_dir = tmp_path / "bin"
-    bin_dir.mkdir()
-    wrapper = bin_dir / tool
-    trigger = '[ "$1" = show ]' if tool == "git" else "true"
-    wrapper.write_text(
-        f"#!/bin/sh\nif {trigger}; then\n"
-        '  "$SCANNER_TEST_TOOL" "$@"\n'
-        f'  kill -{signal} "$PPID"\n  exit 1\nfi\n'
-        'exec "$SCANNER_TEST_TOOL" "$@"\n',
-        encoding="utf-8",
-        newline="\n",
-    )
-    wrapper.chmod(0o755)
-    result = scan(
-        PATH=str(bin_dir) + os.pathsep + os.environ["PATH"],
-        SCANNER_TEST_TOOL=shutil.which(tool),
-    )
+    result = scan(**_signalling_wrapper(tmp_path / "bin", tool, signal))
     assert result.returncode == exit_code
+
+
+@pytest.mark.skipif(not hasattr(signal, "SIGHUP"), reason="POSIX signals only")
+@pytest.mark.parametrize(
+    "tool, error",
+    [
+        ("git", b"ERROR: Cannot snapshot staged content: sample.txt\n"),
+        ("mktemp", b"ERROR: Cannot create staged-content snapshot.\n"),
+    ],
+)
+def test_hangup_ignored_by_the_caller_still_fails_closed(
+    staged_repo, tmp_path, tool, error
+):
+    # A caller that ignores SIGHUP (nohup, some service managers) keeps it
+    # ignored in the scanner: bash cannot trap it, so the hangup has no effect.
+    # The failed snapshot step must still block, and the snapshot is removed
+    # (scan() asserts the scratch directory is empty).
+    stage, scan = staged_repo
+    stage("sample.txt", MARKERS)
+    result = scan(hangup="ignore", **_signalling_wrapper(tmp_path / "bin", tool, "HUP"))
+    assert result.returncode == 1
+    assert result.stderr == error
