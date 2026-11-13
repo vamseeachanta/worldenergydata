@@ -200,3 +200,56 @@ class TestCostPredictorCrossValidation:
         predictor = CostPredictor()
         scores = predictor.cross_validate(public_dataset, cv=3)
         assert scores["mean_r2"] <= 1.0
+
+
+def test_all_predictor_paths_share_public_basis_and_inverse(monkeypatch):
+    """100 nominal * mean(2,3)=250 base; point and bounds divide by 2.5."""
+    from sklearn.pipeline import Pipeline
+
+    from tests.unit.cost.test_index_adjustment import synthetic_escalator
+
+    targets = []
+    for method in ("fit", "score"):
+        original = getattr(Pipeline, method)
+
+        def capture(self, x, y, *args, _original=original, **kwargs):
+            targets.append(np.asarray(y))
+            return _original(self, x, y, *args, **kwargs)
+
+        monkeypatch.setattr(Pipeline, method, capture)
+    records = [
+        load_public_dataset()[0].model_copy(
+            update={"year_sanction": year, "cost_usd_mm": cost}
+        )
+        for year, cost in [(2019, 100.0), (2020, 250.0)] * 3
+    ]
+    predictor = CostPredictor(escalator=synthetic_escalator()).fit(records)
+    predictor.training_r2_score(records)
+    predictor.cross_validate(records, cv=3)
+    result = predictor.predict(records[0])
+    assert result.cost_usd_mm == pytest.approx(100)
+    assert result.ci_lower_usd_mm == pytest.approx(100)
+    assert result.ci_upper_usd_mm == pytest.approx(100)
+    assert len(targets) >= 200
+    assert all(np.allclose(y, np.log(250)) for y in targets)
+
+
+@pytest.mark.parametrize(
+    "method",
+    [
+        "fit",
+        "training_r2_score",
+        "cross_validate",
+        "_predict_single_log",
+        "_bootstrap_ci",
+    ],
+)
+def test_missing_index_coverage_escapes_every_predictor_path(method):
+    from tests.unit.cost.test_index_adjustment import synthetic_escalator
+
+    record = load_public_dataset()[0].model_copy(update={"year_sanction": 2020})
+    predictor = CostPredictor(escalator=synthetic_escalator()).fit([record] * 6)
+    missing = record.model_copy(update={"year_sanction": 2035})
+    argument = missing if method.startswith("_") else [missing] * 6
+    with pytest.raises(ValueError, match="coverage"):
+        getattr(predictor, method)(argument)

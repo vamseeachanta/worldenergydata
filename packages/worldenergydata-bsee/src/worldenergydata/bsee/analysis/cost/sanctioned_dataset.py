@@ -5,13 +5,14 @@
 
 Implements:
 - ``synthetic_dataset(n_records, seed)`` — reproducible test data with >=100 records
-- ``inflation_adjust(df, base_year)`` — CPI-like escalation to a common year
+- ``inflation_adjust(df, base_year)`` — Public-index escalation to a common year
 - ``validate_schema(df)`` — check required columns and value constraints
 """
 
 from __future__ import annotations
 
 import logging
+from pathlib import Path
 from typing import List
 
 import numpy as np
@@ -25,6 +26,8 @@ from worldenergydata.bsee.analysis.cost.models import (
     classify_water_depth_band,
     classify_well_depth_band,
 )
+from worldenergydata.cost.calibration.index_adjustment import IndexAdjustment
+from worldenergydata.cost.escalation import CostEscalator
 
 logger = logging.getLogger(__name__)
 
@@ -51,32 +54,6 @@ REQUIRED_COLUMNS = [
     "source",
     "confidence",
 ]
-
-# Approximate annual CPI / upstream cost index escalation relative to 2022 base
-# Source: BLS CPI + IHS CERA upstream proxy; simplified linear for implementation
-_INFLATION_INDEX: dict[int, float] = {
-    2005: 0.62,
-    2006: 0.65,
-    2007: 0.68,
-    2008: 0.75,
-    2009: 0.71,
-    2010: 0.74,
-    2011: 0.79,
-    2012: 0.82,
-    2013: 0.84,
-    2014: 0.86,
-    2015: 0.80,
-    2016: 0.78,
-    2017: 0.80,
-    2018: 0.85,
-    2019: 0.87,
-    2020: 0.86,
-    2021: 0.91,
-    2022: 1.00,
-    2023: 1.07,
-    2024: 1.12,
-    2025: 1.15,
-}
 
 _VALID_REGIONS = ["gom", "north_sea", "brazil", "west_africa", "asia_pacific"]
 
@@ -128,11 +105,18 @@ class SanctionedProjectDataset:
         df = pd.DataFrame(rows)
         return df
 
-    def inflation_adjust(self, df: pd.DataFrame, base_year: int = 2022) -> pd.DataFrame:
+    def inflation_adjust(
+        self,
+        df: pd.DataFrame,
+        base_year: int = 2022,
+        *,
+        index_path: Path | None = None,
+        escalator: CostEscalator | None = None,
+    ) -> pd.DataFrame:
         """Add ``cost_usd_mm_real`` column — cost inflated to base_year USD.
 
-        Uses the internal ``_INFLATION_INDEX`` table.  Years outside the table
-        are clamped to the nearest available year.
+        Uses held public indices from drilling year to base year. Missing
+        coverage raises; index path, notes and trace remain in index_adjustment.
 
         Args:
             df: DataFrame with ``cost_usd_mm`` and ``year_drilling`` columns.
@@ -141,14 +125,13 @@ class SanctionedProjectDataset:
         Returns:
             Copy of df with additional ``cost_usd_mm_real`` column.
         """
-        base_index = self._get_inflation_index(base_year)
+        self.index_adjustment = IndexAdjustment(index_path, escalator=escalator)
         result = df.copy()
-        result["cost_usd_mm_real"] = result.apply(
-            lambda row: row["cost_usd_mm"]
-            * base_index
-            / self._get_inflation_index(int(row["year_drilling"])),
-            axis=1,
-        )
+        factors = [
+            self.index_adjustment.factor(year, base_year).factor
+            for year in result["year_drilling"]
+        ]
+        result["cost_usd_mm_real"] = result["cost_usd_mm"] * factors
         return result
 
     def validate_schema(self, df: pd.DataFrame) -> List[str]:
@@ -327,17 +310,6 @@ class SanctionedProjectDataset:
         cost_usd_mm = max(cost_usd_mm, 0.5)
 
         return water_depth_m, well_depth_m, rig_type, activity_type, cost_usd_mm
-
-    @staticmethod
-    def _get_inflation_index(year: int) -> float:
-        """Return CPI index for year, clamping to table bounds."""
-        if year in _INFLATION_INDEX:
-            return _INFLATION_INDEX[year]
-        min_year = min(_INFLATION_INDEX.keys())
-        max_year = max(_INFLATION_INDEX.keys())
-        if year < min_year:
-            return _INFLATION_INDEX[min_year]
-        return _INFLATION_INDEX[max_year]
 
 
 def _proxy_day_rate(water_depth_m: float, region: str) -> float:

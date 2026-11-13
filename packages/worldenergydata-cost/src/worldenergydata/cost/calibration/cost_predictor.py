@@ -11,14 +11,14 @@ Design decisions
 - **Bootstrap confidence intervals** — 200-sample bootstrap gives CI without
   parametric assumptions; fast enough on <200 data points.
 - **Inflation adjustment** — applied at fit time; costs are scaled to a common
-  base year (2020) using a fixed upstream CAPEX escalation factor of 3% per year.
-  This is a simplification of the IHS CERA UCCI; replace with real index data
-  when available in Phase 4.
+  base year (2020) using held public indices. Nominal predictions divide by
+  the same source-year to base-year factor; endpoint blends are not reciprocal.
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Optional
 
 import numpy as np
@@ -28,14 +28,15 @@ from sklearn.model_selection import cross_val_score
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
+from worldenergydata.cost.calibration.index_adjustment import IndexAdjustment
 from worldenergydata.cost.data_collection.calibration_schema import CostDataPoint
+from worldenergydata.cost.escalation import CostEscalator
 
 # ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------
 
 _BASE_YEAR = 2020
-_ESCALATION_RATE = 0.03  # 3 % per year — simplified upstream CAPEX escalation
 _BOOTSTRAP_SAMPLES = 200
 _CI_PERCENTILE_LOW = 5.0
 _CI_PERCENTILE_HIGH = 95.0
@@ -72,25 +73,6 @@ class PredictionResult:
 # ---------------------------------------------------------------------------
 # Feature helpers
 # ---------------------------------------------------------------------------
-
-
-def _inflate_to_base(cost_usd_mm: float, year: int) -> float:
-    """Adjust a cost figure to the base year using a fixed escalation rate.
-
-    Parameters
-    ----------
-    cost_usd_mm:
-        Reported cost in USD MM.
-    year:
-        Year of FID / sanction.
-
-    Returns
-    -------
-    float
-        Inflation-adjusted cost in USD MM (base year = _BASE_YEAR).
-    """
-    delta = _BASE_YEAR - year
-    return cost_usd_mm * ((1.0 + _ESCALATION_RATE) ** delta)
 
 
 def _extract_features(records: list[CostDataPoint]) -> tuple[np.ndarray, list[str]]:
@@ -167,7 +149,10 @@ class CostPredictor:
     >>> print(result.cost_usd_mm, result.ci_lower_usd_mm, result.ci_upper_usd_mm)
     """
 
-    def __init__(self) -> None:
+    def __init__(
+        self, *, index_path: Path | None = None, escalator: CostEscalator | None = None
+    ) -> None:
+        self.index_adjustment = IndexAdjustment(index_path, escalator=escalator)
         self._pipeline: Optional[Pipeline] = None
         self._train_records: list[CostDataPoint] = []
         self._feature_names_out: list[str] = []
@@ -227,7 +212,11 @@ class CostPredictor:
 
         # Log-transform target: stabilise variance across the cost range
         y_raw = np.array(
-            [_inflate_to_base(r.cost_usd_mm, r.year_sanction) for r in records]
+            [
+                r.cost_usd_mm
+                * self.index_adjustment.factor(r.year_sanction, _BASE_YEAR).factor
+                for r in records
+            ]
         )
         y = np.log(y_raw)
 
@@ -309,7 +298,11 @@ class CostPredictor:
         X_dicts = _extract_features(records)
         X_df = _dicts_to_array(X_dicts)
         y_raw = np.array(
-            [_inflate_to_base(r.cost_usd_mm, r.year_sanction) for r in records]
+            [
+                r.cost_usd_mm
+                * self.index_adjustment.factor(r.year_sanction, _BASE_YEAR).factor
+                for r in records
+            ]
         )
         y = np.log(y_raw)
         return float(self._pipeline.score(X_df, y))
@@ -333,7 +326,11 @@ class CostPredictor:
         X_dicts = _extract_features(records)
         X_df = _dicts_to_array(X_dicts)
         y_raw = np.array(
-            [_inflate_to_base(r.cost_usd_mm, r.year_sanction) for r in records]
+            [
+                r.cost_usd_mm
+                * self.index_adjustment.factor(r.year_sanction, _BASE_YEAR).factor
+                for r in records
+            ]
         )
         y = np.log(y_raw)
 
@@ -363,11 +360,13 @@ class CostPredictor:
         # Reverse log transform, then reverse inflation adjustment back to
         # the record's own year (so the prediction is in nominal USD MM).
         cost_base_year = float(np.exp(log_pred))
-        delta = record.year_sanction - _BASE_YEAR
-        return cost_base_year * ((1.0 + _ESCALATION_RATE) ** delta)
+        factor = self.index_adjustment.factor(record.year_sanction, _BASE_YEAR).factor
+        return cost_base_year / factor
 
     def _bootstrap_ci(self, record: CostDataPoint) -> tuple[float, float]:
         """Estimate 90 % CI via bootstrap resampling of training data."""
+        # Validate coverage outside the resampling exception handler.
+        factor = self.index_adjustment.factor(record.year_sanction, _BASE_YEAR).factor
         rng = np.random.default_rng(seed=42)
         bootstrap_preds: list[float] = []
 
@@ -375,7 +374,8 @@ class CostPredictor:
         X_df = _dicts_to_array(X_dicts)
         y_raw = np.array(
             [
-                _inflate_to_base(r.cost_usd_mm, r.year_sanction)
+                r.cost_usd_mm
+                * self.index_adjustment.factor(r.year_sanction, _BASE_YEAR).factor
                 for r in self._train_records
             ]
         )
@@ -394,8 +394,7 @@ class CostPredictor:
                 pipe.fit(X_boot, y_boot)
                 log_pred = pipe.predict(X_query_df)[0]
                 cost_base = float(np.exp(log_pred))
-                delta = record.year_sanction - _BASE_YEAR
-                bootstrap_preds.append(cost_base * ((1.0 + _ESCALATION_RATE) ** delta))
+                bootstrap_preds.append(cost_base / factor)
             except Exception:
                 # Some bootstrap samples may be degenerate; skip them
                 continue

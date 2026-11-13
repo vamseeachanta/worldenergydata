@@ -169,3 +169,35 @@ class TestValidateSchema:
     def test_empty_dataframe_returns_error(self, dataset):
         errors = dataset.validate_schema(pd.DataFrame())
         assert len(errors) > 0
+
+
+def test_public_adjustment_preserves_nominal_rows_and_order(dataset):
+    """2019->2020 mean(2,3)=2.5; same-year cost stays 100 USD million."""
+    from tests.unit.cost.test_index_adjustment import synthetic_escalator
+
+    df = pd.DataFrame(
+        {"year_drilling": [2019, 2020, 2019], "cost_usd_mm": [100.0] * 3},
+        index=[9, 2, 9],
+    )
+    before = df.copy(deep=True)
+    adjusted = dataset.inflation_adjust(df, 2020, escalator=synthetic_escalator())
+    assert adjusted["cost_usd_mm_real"].tolist() == [250, 100, 250]
+    pd.testing.assert_frame_equal(adjusted.drop(columns="cost_usd_mm_real"), before)
+    adjusted.iloc[0, 0] = 2000
+    pd.testing.assert_frame_equal(df, before)
+
+
+@pytest.mark.parametrize("year", [1990, 2035, 2020.5, True, "bad", None])
+def test_adjustment_rejects_uncovered_or_malformed_year(dataset, year):
+    from tests.unit.cost.test_index_adjustment import synthetic_escalator
+
+    df = pd.DataFrame({"year_drilling": [year], "cost_usd_mm": [100.0]})
+    with pytest.raises(ValueError):
+        dataset.inflation_adjust(df, 2020, escalator=synthetic_escalator())
+
+
+def test_adjustment_requires_indices_outside_repository(dataset, tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    df = pd.DataFrame({"year_drilling": [2020], "cost_usd_mm": [100.0]})
+    with pytest.raises(FileNotFoundError, match="index"):
+        dataset.inflation_adjust(df)
