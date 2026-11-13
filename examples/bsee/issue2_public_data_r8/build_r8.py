@@ -32,15 +32,12 @@ FILES = {n: URL_BASE + n for n in ['APDRawData.zip', 'eWellAPMRawData.zip', 'Bor
 FILES['plotly-2.35.2.min.js'] = 'https://cdn.plot.ly/plotly-2.35.2.min.js'
 OLD_SHA = 'b4ab66063de5a95c78d0e4d33d220ea806ef07f114bd2add6efa9e8561d299c0'
 
-
 def significant(value, digits=4):
     return format(float(value), f'.{digits}g') if value is not None and math.isfinite(float(value)) else 'Not available'
-
 
 def count_display(value):
     rounded = float(significant(value))
     return ('≈' if rounded != value else '') + format(rounded, ',.0f')
-
 
 def band_from_feet(value):
     try:
@@ -49,12 +46,10 @@ def band_from_feet(value):
         return 'Missing depth'
     return BANDS[sum(metres >= e for e in [100, 500, 1500])] if math.isfinite(metres) and metres >= 0 else 'Missing depth'
 
-
 def pie_years(years):
     if not {2005, 2015, 2025}.issubset(set(years)):
         raise ValueError('Missing fixed representative full year')
     return [2005, 2015, 2025]
-
 
 def classify_operation(code, subcodes):
     if 'PLUGBACK' in subcodes or code in {'SIDETRACK', 'BYPASS', 'DEEPEN'}:
@@ -70,18 +65,15 @@ def classify_operation(code, subcodes):
         return 'Excluded: other or administrative scope'
     raise ValueError(f'Unmapped primary operation: {code}')
 
-
 def unique_records(frame, key):
     result = frame.drop_duplicates().copy()
     if result[key].eq('').any() or result[key].duplicated().any():
         raise ValueError(f'Missing or conflicting records for {key}')
     return result.sort_values(key, kind='stable').reset_index(drop=True)
 
-
 def dates(values):
     full = pd.to_datetime(values, errors='coerce', format='%m/%d/%Y %I:%M:%S %p')
     return full.fillna(pd.to_datetime(values, errors='coerce', format='%m/%d/%Y'))
-
 
 def prepare_boreholes(bore):
     b = unique_records(bore, 'API_WELL_NUMBER')
@@ -105,7 +97,6 @@ def prepare_boreholes(bore):
         invalid_nonblank_td_selected=int((dates(b.TOTAL_DEPTH_DATE).isna() & b.TOTAL_DEPTH_DATE.ne('')).sum()),
         zero_interval_selected=int(b.days.eq(0).sum()), negative_interval_selected=int(b.days.lt(0).sum()))
     return b[['activity', 'band', 'days']], audit
-
 
 def prepare_apm(apm, sub, bore):
     fields = ['SN_APM', 'API_WELL_NUMBER', 'ACC_STATUS_DATE', 'APM_OP_CD', 'EST_OPERATION_DAYS', 'WATER_DEPTH']
@@ -134,7 +125,6 @@ def prepare_apm(apm, sub, bore):
     events.attrs['subtype_activity'] = cross.groupby(['activity', 'primary', 'subtype']).size().rename('submissions').reset_index()
     events.attrs['sensitivity'] = latest_key_sensitivity(a)
     return events, audit
-
 
 def summarize_days(events):
     rows = []
@@ -257,18 +247,20 @@ def count_figures(rig, depth, out):
             row = frame[frame.year.eq(year)].iloc[0]
             values = [int(row[k]) for k in keys]
             total = sum(values)
+            pie_rows.extend(dict(year=year, category=l, permits=v, total=total, share_percent=v / total * 100) for l, v in zip(labels, values))
+            shown = [(v, l, c) for v, l, c in zip(values, labels, colours) if v > 0]
+            values, pie_labels, pie_colours = map(list, zip(*shown))
+            shares = [f'{v / total * 100:.1f}%' for v in values]
             fig, ax = plt.subplots(figsize=(6, 5.2), layout='constrained')
-            wedges, _, _ = ax.pie(values, colors=colours, startangle=90,
-                autopct=lambda p: significant(p, 3) + '%' if p > 0 else '', pctdistance=.75,
+            share_labels = iter(shares)
+            wedges, _, _ = ax.pie(values, colors=pie_colours, startangle=90,
+                autopct=lambda p: next(share_labels), pctdistance=.75,
                 textprops={'fontsize': 8}, wedgeprops={'edgecolor': 'white'})
-            shares = [f'{l}: {significant(v / total * 100, 3)}%' for l, v in zip(labels, values)]
-            ax.legend(wedges, shares, loc='lower center', bbox_to_anchor=(.5, -.16), ncol=2, fontsize=8)
+            ax.legend(wedges, [f'{l}: {s}' for l, s in zip(pie_labels, shares)], loc='lower center', bbox_to_anchor=(.5, -.16), ncol=2, fontsize=8)
             ax.set_title(f'{year}: {total} permits')
             name = f'pie-{kind}-{year}'
             save_figure(fig, out, name)
-            payload.append(dict(id=name, kind='pie', values=values, labels=labels, colours=colours, year=year, total=total,
-                shares=[significant(v / total * 100, 3) + '%' if v else '' for v in values]))
-            pie_rows.extend(dict(year=year, category=l, permits=v, total=total, share_percent=v / total * 100) for l, v in zip(labels, values))
+            payload.append(dict(id=name, kind='pie', values=values, labels=pie_labels, colours=pie_colours, year=year, total=total, shares=shares))
         write_csv(pd.DataFrame(pie_rows), out, 'pies-' + kind)
     return payload
 
@@ -289,13 +281,40 @@ def days_figure(stats, out):
     save_figure(fig, out, 'fig-days')
 
 
-def days_table(stats):
-    columns = ['Activity and basis', 'Water depth (m)', 'Records (-)', 'Used (-)', 'Missing/invalid (-)', 'Nonpositive (-)', 'Q1 (d)', 'Median (d)', 'Q3 (d)']
+def day_observations(csv_path):
+    stats = pd.read_csv(csv_path).set_index(['activity', 'band'])
+    medians = {a: stats.loc[a].loc[BANDS, 'median_days'] for a in ACTIVITIES}
+    bullets = []
+    for activity, label in [('Completion', 'Completion estimate'), ('Spud to total depth', 'Recorded spud-to-total-depth')]:
+        values = medians[activity]
+        if not values.map(math.isfinite).all() or not values.is_monotonic_increasing or values.iloc[0] >= values.iloc[-1]:
+            raise ValueError('Review rising-median observation: ' + activity)
+        bullets.append(f'{label} medians rise with water depth, from {significant(values.iloc[0])} d under 100 m to {significant(values.iloc[-1])} d at 1,500 m and deeper.')
+    if not all(medians[a].map(math.isfinite).all() for a in ['Intervention', 'Permanent abandonment']):
+        raise ValueError('Range observation requires medians for all four depth bands')
+    ranges = [f'{significant(medians[a].min())} to {significant(medians[a].max())}' for a in ['Intervention', 'Permanent abandonment']]
+    bullets.append(f'Across the four depth bands, intervention estimate medians range from {ranges[0]} d; permanent-abandonment estimate medians range from {ranges[1]} d.')
+    return bullets
+
+
+def page_date(value):
+    date = datetime.fromisoformat(value[:10])
+    return f'{date.day} {date.strftime("%B %Y")}'
+
+
+def days_table(stats, detailed=False):
+    columns = ['Activity and basis', 'Water depth', 'Used (-)', 'Q1 (d)', 'Median (d)', 'Q3 (d)']
+    if detailed:
+        columns[2:3] = ['Records (-)', 'Used (-)', 'Missing/invalid (-)', 'Nonpositive (-)']
+    else:
+        if stats.loc[~stats.band.isin(BANDS), 'records'].sum():
+            raise ValueError('Selected records have missing depth; review the page statement')
+        stats = stats[stats.band.isin(BANDS)]
     rows = []
     for row in stats.itertuples():
         basis = 'recorded interval' if row.activity == ACTIVITIES[-1] else 'estimate'
-        values = [row.activity + ' (' + basis + ')', row.band] + [count_display(v) for v in
-            [row.records, row.n, row.missing_invalid_days, row.nonpositive_days]] + [significant(v) for v in [row.q1_days, row.median_days, row.q3_days]]
+        counts = [row.records, row.n, row.missing_invalid_days, row.nonpositive_days] if detailed else [row.n]
+        values = [row.activity + ' (' + basis + ')', row.band] + [count_display(v) for v in counts] + [significant(v) for v in [row.q1_days, row.median_days, row.q3_days]]
         rows.append('<tr>' + ''.join('<td>' + html.escape(v) + '</td>' for v in values) + '</tr>')
     return '<div class="nl-tablewrap days-table"><table><thead><tr>' + ''.join('<th scope="col">' + c + '</th>' for c in columns) + '</tr></thead><tbody>' + ''.join(rows) + '</tbody></table></div>'
 
@@ -306,11 +325,13 @@ def build_html(out, cache, payload, stats, sources, audit):
     delta = (check.latest_key_median_days - check.median_days).abs().dropna()
     summary = f'{len(delta[delta.gt(0)])} of {len(delta)} comparable cell medians change. The largest absolute change is {significant(delta.max())} d.'
     page = page.replace('@@SENSITIVITY_RESULT@@', summary)
-    source_list = ''.join('<li>' + html.escape(str(r.file)) + ': <a href="' + r.url + '">' + r.url + '</a>; retrieved ' + r.retrieved_utc[:10] + ' (UTC). ' + html.escape(r.role) + '</li>' for r in sources.itertuples())
+    source_list = ''.join('<li>' + html.escape(str(r.file)) + ': <a href="' + r.url + '">' + r.url + '</a>; retrieved ' + page_date(r.retrieved_utc) + '. ' + html.escape(r.role) + '</li>' for r in sources.itertuples())
     audit_rows = '<ul>' + ''.join('<li>' + html.escape(r.source + ': ' + r.rule.replace('_', ' ')) + ' — ' + count_display(r.records) + ' records.</li>' for r in audit.itertuples()) + '</ul>'
     page = page.replace('@@DAYS_TABLE@@', days_table(stats)).replace('@@SOURCES@@', source_list).replace('@@AUDIT@@', audit_rows)
+    page = page.replace('@@DAYS_DETAIL_TABLE@@', days_table(stats, detailed=True))
+    page = page.replace('@@DAY_OBSERVATIONS@@', ''.join('<li>' + html.escape(b) + '</li>' for b in day_observations(out / 'data' / 'days-summary.csv')))
     for token, source in [('APM', 'eWellAPMRawData.zip'), ('BORE', 'BoreholeRawData.zip'), ('SCHEMA', 'APDRawData.zip')]:
-        date = sources.loc[sources.file.eq(source), 'retrieved_utc'].iloc[0][:10]
+        date = page_date(sources.loc[sources.file.eq(source), 'retrieved_utc'].iloc[0])
         page = page.replace('@@' + token + '_DATE@@', date)
     page = page.replace('@@CHART_DATA@@', json.dumps(payload, separators=(',', ':')).replace('<', '\\u003c'))
     for name in ['fig-rig', 'fig-depth', 'fig-days'] + [f'pie-{k}-{y}' for k in ['rig', 'depth'] for y in [2005, 2015, 2025]]:

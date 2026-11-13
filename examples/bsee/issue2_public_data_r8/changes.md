@@ -12,13 +12,13 @@ Section 1 turns the trend sentences into three observations, each linked to its 
 
 > Following this, can we also add. the distinction between drilling days. completion days intervention days and abandonment days, Etcetera. If we have those inside, I think we do Let us add that as another section. and let us number the sections and subsections so that people can easily follow. in this new letter
 
-Section 3 distinguishes estimates from recorded intervals, with quartiles, counts and exclusions. Sections and subsections are numbered; the prompt remains Appendix A.
+Sections 3.1 to 3.3 distinguish estimates from recorded intervals, give observation bullets, short rules, quartiles and usable counts. Appendix B holds detailed rules and exclusions. Sections and subsections are numbered; the prompt remains Appendix A.
 
 ## Comment 3
 
 > Convert bullets where possible to keep the reading clear. and nice.
 
-Sections 2 and 3 use bullets for record fields and counting rules.
+Sections 1 and 3.1 give observation bullets. Section 3.2 has five short rules, and Table 2 in section 3.3 has six columns. Detailed rules and counts are in Appendix B.
 
 ## Comment 4
 
@@ -42,13 +42,13 @@ Section 2.2 adds water-depth pies for the same full years, using the Figure 2 co
   the supplied r7 receipt. The new APD download is used only to inspect schema.
 - Pies use fixed full years 2005, 2015 and 2025. They are illustrative decade
   years, not medians selected by an unstated criterion. Shares are calculated
-  from the exact r7 annual counts and shown with at most three significant
-  figures. Year totals are in the pie titles. Partial 2026 is excluded.
+  from the exact r7 annual counts and shown with one decimal
+  place. Zero-permit categories remain in the CSVs but are omitted from pie labels and legends. Year totals are in the pie titles. Partial 2026 is excluded.
 - Section 3 uses APM and borehole files retrieved 13 November 2026 UTC. Each URL,
   retrieval time and SHA-256 is recorded in data/sources.csv. The HTML source
   list and Appendix A name every raw file, its URL and retrieval date.
 - Neither inspected APDRawData member contains an estimated-days field. No
-  drilling estimate is invented. Section 3.1 states this absence.
+  drilling estimate is invented. Section 3.2 states this absence; Appendix B.1 dates the schema check.
 - APM uses SN_APM, API_WELL_NUMBER, ACC_STATUS_DATE, APM_OP_CD,
   EST_OPERATION_DAYS and WATER_DEPTH. Subtypes join through SN_APM_FK and
   APM_SUBOP_CD. VALUE and DESCRIP in the primary and subtype dictionaries
@@ -75,12 +75,12 @@ Section 2.2 adds water-depth pies for the same full years, using the Figure 2 co
   conditional on recorded completed intervals; no imputation is applied.
 - The four depth bands use 0.3048 m/ft, lower-inclusive edges and an open upper
   band. Negative, nonnumeric and nonfinite depths are kept as missing depth,
-  outside the four-band figure. Table 2 includes the missing-depth rows even
-  when their counts are zero. Quantiles use linear interpolation. No upper-tail
+  outside the four-band figure. Appendix B, Table B1 retains all five missing-depth rows, whose
+  counts are zero. Table 2 omits these rows. Quantiles use linear interpolation. No upper-tail
   trimming, cost data or job-duration equivalence between sources is used.
 - Figure 3 and Table 2 pool the retained 2005 to 2025 cohorts. Coding and coverage
   can change over that period. The medians do not establish present-day job
-  durations. Each cell reports its usable count and missing/nonpositive counts.
+  durations. Table 2 reports usable counts; Table B1 reports total, usable, missing/invalid and nonpositive counts.
 - Table 1, both hypothesis paragraphs, the try-it sentence, leaves-open sentence,
   closing invitation, footer and inherited byline are preserved. The review panel
   explicitly limits that earlier approval: revision 8 remains pending review.
@@ -102,10 +102,10 @@ Section 2.2 adds water-depth pies for the same full years, using the Figure 2 co
 - The borehole status column is required. US month/day date parsing rejects an
   invalid month instead of swapping its components. These changes leave the
   issued medians, quartiles and usable counts unchanged.
-- Section 3.2 links the subtype/activity cross-tab, discloses ZONE precedence
+- Appendix B.2 links the subtype/activity cross-tab, discloses ZONE precedence
   even with INITCOMP, and distinguishes repeated submissions from unique jobs.
   Zero-depth and repeated API/operation/year diagnostics are counted.
-- Section 3.1 dates the APD schema inspection. Unresolved image placeholders and
+- Appendix B.1 dates the APD schema inspection. Unresolved image placeholders and
   script-closing text fail the build. Table 1 HTML, CSV and annual aggregates
   are reconciled in tests. Pie legends also state every category's percentage,
   so small slices retain readable share labels.
@@ -118,9 +118,50 @@ Section 2.2 adds water-depth pies for the same full years, using the Figure 2 co
   negative date intervals are reported separately; both remain excluded under
   the requested nonpositive-day rule. Zero days can include work within one day.
 - No archive replica is claimed. The cache must be retained locally for later
-  reproduction if BSEE replaces the downloadable files. Section 3.2 links a
+  reproduction if BSEE replaces the downloadable files. Appendix B.2 links a
   repeat-key sensitivity CSV retaining the latest status date per API, primary
   operation and status year, with text-order SN_APM as the tie-break. Shared
   keys do not establish revisions, so this alternative does not replace the
   requested permit-submission results. Counts and medians for both bases are
   retained in the CSV.
+
+## Revision round 2
+
+The owner's standing readability requests of 12 November 2026 (generic access
+for readers, and clear reading at 21:50 UTC) apply throughout the body.
+
+1. Section 3.2 now has five plain bullets and one link to Appendix B. Appendix
+   B.1 retains the source-field definitions; B.2 retains all detailed counting,
+   precedence and tie rules, the repeat-key sensitivity result and selection
+   counts before day exclusions. No calculation or source selection changed.
+2. Section 3.3, Table 2 now has six columns: activity and basis, water depth,
+   used count, Q1, median and Q3. All five zero-count missing-depth rows are
+   omitted. The page states that every selected record has a water depth; the
+   build rejects that statement if missing-depth records appear. Appendix B.3,
+   Table B1 and `days-summary.csv` retain all record and exclusion columns.
+3. Section 3.1 starts with “Some of the observations are as follows:” and three
+   bullets. The build reads `days-summary.csv` for the completion and drilling
+   endpoint medians and the intervention/permanent-abandonment ranges. Tests
+   compare the bullets with the CSV and change an input median to verify linkage.
+4. The two hypothesis paragraphs, try-it paragraph and leaves-open paragraph
+   follow Figure 3, immediately before the closing invitation. Their text is
+   unchanged from the preceding commit.
+5. Section 1 names APD, APM and borehole files explicitly in plain words.
+6. Page retrieval dates use day, full month name and year. ISO retrieval
+   timestamps remain unchanged in `sources.csv`.
+7. Figure 1, Figures 1a–c, Figure 2, Figures 2a–c and Table 1 captions name BSEE
+   Application for Permit to Drill raw data, the archive, file date and retrieval
+   date. The redundant Table 1 footnote is removed; table values are unchanged.
+8. All pie shares use one decimal place, in static images and interactive
+   labels/legends. Zero-permit categories are hidden in both presentations;
+   each pie caption notes this. Exact source and pie CSV values are unchanged.
+9. `review-plan.html` is removed. The template contains only the concise r8
+   review panel; no inherited pull-request, commit or gate-run panel remains.
+10. The top panel has one bullet per original owner comment plus one section 3
+    data bullet. The inherited approval byline remains qualified as earlier
+    approval; revision 8 has not been published.
+11. The requested render profile and two probe HTML files were removed from
+    `cache/`. Source archives, Plotly and their receipts remain for offline use.
+
+README describes the revised sections, tables and share formatting. The generated
+HTML remains an output of the script and template, never an authored edit.

@@ -197,7 +197,7 @@ def test_rendered_html_contract():
     assert re.search(r'Some of the observations are as follows:</p>\s*<ul>', page)
     assert 'Appendix A Reusable prompts' in page
     headings = re.findall(r'<h[23][^>]*>(.*?)</h[23]>', page)
-    assert all(re.match(r'(\d+(\.\d+)? |Appendix A )', h) for h in headings)
+    assert all(re.match(r'(\d+(\.\d+)? |B\.\d+ |Appendix [AB] )', h) for h in headings)
     assert not re.search(r'[A-Z]:[\\/]|file://|/mnt/|/Users/', page)
     assert not re.search(r'\b(acceptable|conservative|safe)\b', page, re.I)
     assert page.count('Our hypothesis:') == 2
@@ -205,3 +205,122 @@ def test_rendered_html_contract():
     assert 'EST_OPERATION_DAYS' in page
     assert 'TOTAL_DEPTH_DATE' in page
     assert '.viz{display:none}' in page
+
+
+def rendered_prose():
+    page = (ROOT / 'issue2-public-data-r8.html').read_text(encoding='utf-8')
+    return re.sub(r'<script\b[^>]*>.*?</script>', '', page, flags=re.S)
+
+
+def test_section3_observations_read_csv_and_match_page(tmp_path):
+    stats = pd.read_csv(ROOT / 'data/days-summary.csv')
+    def medians(activity):
+        return stats[stats.activity.eq(activity) & stats.band.isin(build.BANDS)].median_days
+    completion, drilling = medians('Completion'), medians('Spud to total depth')
+    intervention, abandonment = medians('Intervention'), medians('Permanent abandonment')
+    expected = [
+        f'Completion estimate medians rise with water depth, from {completion.iloc[0]:g} d under 100 m to {completion.iloc[-1]:g} d at 1,500 m and deeper.',
+        f'Recorded spud-to-total-depth medians rise with water depth, from {drilling.iloc[0]:g} d under 100 m to {drilling.iloc[-1]:g} d at 1,500 m and deeper.',
+        f'Across the four depth bands, intervention estimate medians range from {intervention.min():g} to {intervention.max():g} d; permanent-abandonment estimate medians range from {abandonment.min():g} to {abandonment.max():g} d.',
+    ]
+    assert build.day_observations(ROOT / 'data/days-summary.csv') == expected
+    section = rendered_prose().split('<h3>3.1 ')[1].split('<h3>3.2 ')[0]
+    assert re.findall(r'<li>(.*?)</li>', section, re.S) == expected
+    stats.loc[stats.activity.eq('Completion') & stats.band.eq(build.BANDS[0]), 'median_days'] = 11
+    changed = tmp_path / 'days.csv'
+    stats.to_csv(changed, index=False)
+    assert 'from 11 d' in build.day_observations(changed)[0]
+
+
+def test_body_rules_are_short_and_details_are_in_appendix_b():
+    page = rendered_prose()
+    rules = page.split('<h3>3.2 ')[1].split('<h3>3.3 ')[0]
+    bullets = re.findall(r'<li>(.*?)</li>', rules, re.S)
+    assert len(bullets) == 5
+    assert all(len(re.sub('<[^>]+>', '', b).split()) <= 30 for b in bullets)
+    assert rules.count('href="#counting-rules"') == 1
+    body, appendix = page.split('<h2 id="counting-rules">')
+    for detail in ['SN_APM', 'ZONE', 'PERMABAN', 'PLUGBACK', 'REGION_CODE', 'ST00BP00', 'Selection counts before day exclusions', 'repeat-key sensitivity check']:
+        assert detail not in body.split('<h2>3 ')[1].split('<h2 id="reusable-prompts">')[0]
+        assert detail in appendix
+    assert page.index('Appendix A Reusable prompts') < page.index('Appendix B Counting rules and record counts for section 3')
+
+
+def test_body_table_is_six_columns_with_full_audit_in_appendix():
+    page = rendered_prose()
+    body, appendix = page.split('<h2 id="counting-rules">')
+    table = re.findall(r'<table>.*?</table>', body, re.S)[1]
+    assert re.findall(r'<th\b[^>]*>(.*?)</th>', table) == ['Activity and basis', 'Water depth', 'Used (-)', 'Q1 (d)', 'Median (d)', 'Q3 (d)']
+    assert table.count('<tr>') == 21
+    assert 'Missing depth' not in table
+    assert 'Every selected record has a water depth.' in body
+    assert 'Missing/invalid (-)' in appendix and 'Nonpositive (-)' in appendix
+    assert 'Missing depth' in appendix
+
+
+def test_closing_paragraphs_move_unchanged_after_figure3():
+    import os
+    import subprocess
+    old = subprocess.run(['git', 'show', 'c7fc424d:examples/bsee/issue2_public_data_r8/inputs/page-template.html'],
+        cwd=ROOT, capture_output=True, check=True, encoding='utf-8',
+        creationflags=getattr(subprocess, 'CREATE_NO_WINDOW', 0),
+        env={k: v for k, v in os.environ.items() if k not in {'GIT_DIR', 'GIT_WORK_TREE', 'GIT_COMMON_DIR'}}).stdout
+    page = rendered_prose()
+    paragraphs = re.findall(r'<p(?: class="q")?>(?:Our hypothesis:|To try it out|Each count here).*?</p>', old)
+    assert len(paragraphs) == 4
+    assert '\n'.join(paragraphs) in page
+    for paragraph in paragraphs:
+        assert page.count(paragraph) == 1
+        assert page.index('Figure 3 -') < page.index(paragraph) < page.index('<p>If you have run your own analysis')
+
+
+def test_page_dates_captions_and_concise_review_panel():
+    page = rendered_prose()
+    assert not re.search(r'\d{4}-\d{2}-\d{2}|\(UTC\)', re.sub(r'<style.*?</style>', '', page, flags=re.S))
+    source = 'Source: BSEE Application for Permit to Drill raw data (<a href="https://www.data.bsee.gov/Well/Files/APDRawData.zip">APDRawData.zip</a>), file of 2 November 2026, retrieved 3 November 2026. Data:'
+    assert page.count(source) == 9
+    assert '<sup>a</sup>' not in page
+    assert page.count('Types with no permits in that year are not shown.') == 6
+    panel = page.split('<div class="review-panel">')[1].split('</div>')[0]
+    assert panel.count('<li>') == 6
+    assert 'Section 3 data: operator estimates (APM) and recorded spud-to-total-depth dates (borehole files), retrieved 13 November 2026; the APD file has no estimated drilling days.' in panel
+    assert not re.search(r'pull/|gate run|[0-9a-f]{40}', panel, re.I)
+    assert not (ROOT / 'review-plan.html').exists()
+
+
+def test_pie_payload_and_static_labels_skip_zero_use_one_decimal(tmp_path, monkeypatch):
+    captured = {}
+    def capture(fig, out, name):
+        if name.startswith('pie-'):
+            captured[name] = ([t.get_text() for t in fig.axes[0].get_legend().get_texts()],
+                              [t.get_text() for t in fig.axes[0].texts if t.get_text()])
+        build.plt.close(fig)
+    monkeypatch.setattr(build, 'save_figure', capture)
+    (tmp_path / 'data').mkdir()
+    rig = pd.read_csv(ROOT / 'inputs/fig-p1-new-well-permits-by-rig-type.csv')
+    depth = pd.read_csv(ROOT / 'inputs/new-well-permits-by-water-depth-r7.csv')
+    payload = build.count_figures(rig, depth, tmp_path)
+    for chart in payload:
+        if chart['kind'] != 'pie':
+            continue
+        assert all(v > 0 for v in chart['values'])
+        assert chart['shares'] == [f'{v / chart["total"] * 100:.1f}%' for v in chart['values']]
+        legends, labels = captured[chart['id']]
+        assert legends == [f'{label}: {share}' for label, share in zip(chart['labels'], chart['shares'])]
+        assert labels == chart['shares']
+
+
+def test_depth_statement_fails_closed_for_new_missing_depth():
+    stats = pd.read_csv(ROOT / 'data/days-summary.csv')
+    stats.loc[stats.band.eq('Missing depth'), 'records'] = 1
+    with pytest.raises(ValueError, match='missing depth'):
+        build.days_table(stats)
+
+
+def test_range_observation_rejects_a_missing_band_median(tmp_path):
+    stats = pd.read_csv(ROOT / 'data/days-summary.csv')
+    stats.loc[stats.activity.eq('Intervention') & stats.band.eq(build.BANDS[0]), 'median_days'] = float('nan')
+    path = tmp_path / 'days.csv'
+    stats.to_csv(path, index=False)
+    with pytest.raises(ValueError, match='four depth bands'):
+        build.day_observations(path)
