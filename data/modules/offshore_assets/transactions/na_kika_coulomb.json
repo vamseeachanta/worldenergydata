@@ -134,7 +134,10 @@
         "status": "NOT_EVALUATED",
         "value": null,
         "reason": "The release describes a 30-day right; exercise outcome and adjusted acquired scope are not established",
-        "source_id": "talos_release"
+        "citation": {
+          "source_id": "talos_release",
+          "locator": "GULF OF AMERICA BOLT-ON ACQUISITION: BP 30-day preferential purchase right"
+        }
       },
       "upside": {
         "status": "NOT_EVALUATED",
@@ -153,14 +156,12 @@
       "orri": {
         "status": "NOT_EVALUATED",
         "value": null,
-        "reason": "Royalty terms are not verified",
-        "source_id": "talos_release"
+        "reason": "Royalty terms are not verified"
       },
       "decommissioning": {
         "status": "NOT_EVALUATED",
         "value": null,
-        "reason": "Liability allocation is not verified",
-        "source_id": "talos_release"
+        "reason": "Liability allocation is not verified"
       }
     },
     "scenarios": [

@@ -1,6 +1,6 @@
 {
-  "input_sha256": "1d042665d63b0acc6b2bfa723266741300887c1a804ce4ea95f3dc34cf9eec72",
-  "digest_domain": "UTF-8 JSON, indent=2, ensure_ascii=False, allow_nan=False, LF with trailing newline; exact serialized input bytes",
+  "input_sha256": "48d5fbc873b255bb076779abe22cb0b10df416029a1d7406b2f547228b1f3010",
+  "digest_domain": "UTF-8 JSON, indent=2, ensure_ascii=False, allow_nan=False, CRLF normalized to LF with trailing newline; canonical input bytes",
   "sources": {
     "shell_release": {
       "url": "https://www.shell.com/news-and-insights/newsroom/news-and-media-releases/2026/shell-to-sell-interest-in-gulf-of-america-platform.html",

@@ -78,6 +78,39 @@ def test_unknown_term_source_is_refused():
         build_package(data, ROOT)
 
 
+@pytest.mark.parametrize("citation", [None, {}, {"source_id": "talos_release"}])
+def test_substantive_term_requires_source_and_locator(citation):
+    data = snapshot()
+    term = data["transaction"]["terms"]["upside"]
+    term.pop("citation")
+    term.pop("source_id")
+    if citation is not None:
+        term["citation"] = citation
+    with pytest.raises(ValueError, match="Citation"):
+        build_package(data, ROOT)
+
+
+def test_bare_term_source_identifier_requires_citation():
+    data = snapshot()
+    data["transaction"]["terms"] = {
+        "synthetic": {
+            "status": "NOT_EVALUATED",
+            "value": None,
+            "reason": "Synthetic terms are unverified",
+            "source_id": "talos_release",
+        }
+    }
+    with pytest.raises(ValueError, match="Citation"):
+        build_package(data, ROOT)
+
+
+def test_unknown_term_without_claim_fields_remains_unevaluated():
+    data = snapshot()
+    term = {"status": "NOT_EVALUATED", "value": None, "reason": "Unverified"}
+    data["transaction"]["terms"] = {"synthetic": term}
+    assert build_package(data, ROOT)["transaction"]["terms"]["synthetic"] == term
+
+
 @pytest.mark.parametrize("state", ["absent", "withheld", "missing"])
 def test_optional_catalogs_do_not_block_or_publish_derived_claims(tmp_path, state):
     data = snapshot()
@@ -155,11 +188,24 @@ def test_ratio_rows_expose_both_dates_effective_date_and_cash_basis(tmp_path):
     )
 
 
-def test_input_digest_matches_exact_binary_lf_snapshot():
-    raw = INPUT.read_bytes()
-    assert b"\r" not in raw
+@pytest.mark.parametrize("newline", [b"\n", b"\r\n"])
+def test_input_digest_matches_binary_snapshot_after_lf_normalization(newline):
+    raw = INPUT.read_bytes().replace(b"\r\n", b"\n").replace(b"\n", newline)
     provenance = build_package(json.loads(raw), ROOT)["provenance"]
-    assert provenance["input_sha256"] == hashlib.sha256(raw).hexdigest()
+    assert "CRLF normalized to LF" in provenance["digest_domain"]
+    assert (
+        provenance["input_sha256"]
+        == hashlib.sha256(raw.replace(b"\r\n", b"\n")).hexdigest()
+    )
+
+
+def test_retained_input_digest_matches_binary_readback():
+    retained = ROOT / "reports/field_development/transactions/na_kika_coulomb"
+    provenance = json.loads((retained / "provenance.json").read_bytes())
+    assert (
+        provenance["input_sha256"]
+        == hashlib.sha256(INPUT.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
+    )
 
 
 def test_catalog_receipt_digests_match_committed_binary_bytes():
