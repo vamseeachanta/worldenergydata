@@ -54,6 +54,11 @@ produce is stamped `fitted` and rendered differently in the report.
 
 ## 3. Re-run command
 
+Prepare in a fresh external directory: `uv run python -m worldenergydata.cost.monthly_refresh --prepare --stage <destination>`.
+Five products and `refresh-prepared.json` record `PREPARED`, hashes and `promoted: false`; source bytes remain unchanged.
+Revalidate source hashes before promotion; publication, locking, rollback and scheduling are deferred.
+Failed stages have no successful receipt: retain for diagnosis or explicitly discard; the manual sequence follows.
+
 ```bash
 cd <repo root>
 uv sync                                            # once
