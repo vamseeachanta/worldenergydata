@@ -12,6 +12,7 @@ shows the inputs, method and a worked answer. Both outputs run offline.
 | --- | --- | --- |
 | Initial | 2026-10-20 | Cited historical disclosures and descriptive cohorts expose the FDAS analytics surface. |
 | Interface | 2026-11-12 | Registered offline YAML invocation and portable issue references; source data unchanged. |
+| Cohort basis | 2026-11-12 | Excluded supplemental derived calibration rows from cohort statistics and outliers because their amounts and years are manufactured. |
 
 Table 1. Documentation revision history.
 
@@ -32,6 +33,9 @@ different types and activities are never pooled into the same cohort. Region
 and water-depth bands are descriptive proxies; onshore and reservoir-play
 comparisons are not established. Repeated project observations may occur in
 the curated inputs; cohort counts mean observations, not unique projects.
+Supplemental calibration rows that the dataset marks as derived sub-observations
+are excluded from cohorts and outliers, because their amounts and years are
+generated rather than disclosed.
 Outliers carry an operator, sanction year, one-based source row and canonical
 source-record SHA-256 in the facts JSON, allowing the originating observation
 to be located without replicating project-specific text in the report.
