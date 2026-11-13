@@ -184,7 +184,9 @@ uv run pre-commit install
 
 # Populate BSEE data (not stored in git, ~300 MB download)
 make data
-# or: python3 scripts/refresh_bsee_all.py
+# or: uv run worldenergydata bsee refresh
+# Preview the registry download plan without writing data:
+uv run worldenergydata bsee refresh --dry-run
 
 # Verify installation
 uv run worldenergydata --help
@@ -212,6 +214,9 @@ uv run worldenergydata forecast --help
 **Data-required commands** (run `make data` first):
 
 ```bash
+# Populate the registry-backed binary cache from a repository checkout:
+make data # or: uv run worldenergydata bsee refresh
+
 # BSEE data analysis — requires local BSEE dataset (~300 MB)
 uv run worldenergydata bsee analyze --field "Jack"
 uv run worldenergydata bsee report --type block --id 759 --format excel
@@ -229,6 +234,11 @@ uv run worldenergydata eia fetch  # ⚠ credential-required
 ```
 
 > **Note:** `bsee refresh`, `marine-safety scrape`, and scheduler commands download large datasets.
+> The default `bsee refresh` uses `scripts/refresh_bsee_all.py` and writes to
+> `data/modules/bsee/bin/`. Existing non-pointer binaries are skipped; `--force`
+> backs them up before replacement. This checks cache presence, not content integrity.
+> For recent production, use `scripts/refresh_bsee_ogor_recent.py`; the full
+> refresh script's OGOR-A year mapping is stale.
 > See [MODULE_INDEX.md](MODULE_INDEX.md) for the full module list and data prerequisites.
 > See [docs/CLI.md](docs/CLI.md) for complete CLI reference with safety classifications.
 
