@@ -1,0 +1,27 @@
+[
+  {
+    "file": "fig-p1-new-well-permits-by-rig-type.csv",
+    "sha256": "a53aee488587f01551aed29223fafc35d1a3dd0853b9d139c1ced3109b7db1b8",
+    "basis": "retained content of the published page"
+  },
+  {
+    "file": "new-well-permits-by-water-depth.csv",
+    "sha256": "3034eb409e405d18d843f90458a69e4df5c5d1fc80fc1c33a027d9f6022c1d2c",
+    "basis": "retained content of the published page"
+  },
+  {
+    "file": "page-template.html",
+    "sha256": "0165bfc62ac963df1e2092f1f342ffea20bd3c0090c805a8953e705b905f3deb",
+    "basis": "r9 page template: r8 CSS and retained prose, with short titles, numbered notes, map, grouped pies and well-life day charts"
+  },
+  {
+    "file": "table1.csv",
+    "sha256": "676b0198148b5283bf0f5852bb6b50ab961b86427cd281b76f906f791c14e924",
+    "basis": "retained content of the published page"
+  },
+  {
+    "file": "source-pins.json",
+    "sha256": "55e19663e374307e976a515925f7116ed90366b56cf335a687805aaaa897bf3d",
+    "basis": "Issued r8 source archive and library hashes, plus the r9 Natural Earth land outline"
+  }
+]

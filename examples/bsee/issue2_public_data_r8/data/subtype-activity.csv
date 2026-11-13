@@ -1,0 +1,199 @@
+activity,primary,subtype,submissions
+Completion,COMP,ACIDIZE,58
+Completion,COMP,CASING,9
+Completion,COMP,DESAND,65
+Completion,COMP,FRAC,1899
+Completion,COMP,INITCOMP,6632
+Completion,COMP,INJECT,50
+Completion,COMP,JET,45
+Completion,COMP,LIFT,98
+Completion,COMP,OTHER,397
+Completion,COMP,OTHRCOMP,124
+Completion,COMP,OTHRENPR,2
+Completion,COMP,OTHRINFO,7
+Completion,COMP,OTHRWKVR,8
+Completion,COMP,PERF,1020
+Completion,COMP,REPERF,387
+Completion,COMP,SURFPLAT,20
+Completion,COMP,TEMPABAN,23
+Completion,COMP,TUBING,45
+Completion,COMP,WELLNAME,386
+Completion,COMP,ZONEISO,6
+Excluded: new hole,ABANDON,ACIDIZE,2
+Excluded: new hole,ABANDON,CASING,4
+Excluded: new hole,ABANDON,DESAND,2
+Excluded: new hole,ABANDON,INITCOMP,6
+Excluded: new hole,ABANDON,OTHER,67
+Excluded: new hole,ABANDON,OTHRABAN,9
+Excluded: new hole,ABANDON,PERF,1
+Excluded: new hole,ABANDON,PERMABAN,18
+Excluded: new hole,ABANDON,PLUGBACK,4748
+Excluded: new hole,ABANDON,SURFPLAT,7
+Excluded: new hole,ABANDON,TEMPABAN,31
+Excluded: new hole,ABANDON,TUBING,6
+Excluded: new hole,ABANDON,WELLNAME,5
+Excluded: new hole,ABANDON,ZONE,1
+Excluded: new hole,ABANDON,ZONEISO,1
+Excluded: new hole,COMP,INITCOMP,2
+Excluded: new hole,COMP,PLUGBACK,4
+Excluded: new hole,COMP,ZONE,1
+Excluded: new hole,ENHANCE,PERMABAN,1
+Excluded: new hole,ENHANCE,PLUGBACK,13
+Excluded: new hole,INFORM,PLUGBACK,4
+Excluded: new hole,INFORM,SURFPLAT,1
+Excluded: new hole,OTHER,OTHER,15
+Excluded: new hole,OTHER,PLUGBACK,28
+Excluded: new hole,OTHER,WELLNAME,1
+Excluded: new hole,UTIL,PLUGBACK,2
+Excluded: new hole,WORKOVER,CASING,1
+Excluded: new hole,WORKOVER,DESAND,1
+Excluded: new hole,WORKOVER,PLUGBACK,5
+Excluded: new hole,WORKOVER,TUBING,1
+Excluded: other or administrative scope,INFORM,CASING,2
+Excluded: other or administrative scope,INFORM,CLEARNCE,53
+Excluded: other or administrative scope,INFORM,INITCOMP,9
+Excluded: other or administrative scope,INFORM,OTHER,228
+Excluded: other or administrative scope,INFORM,OTHRINFO,63
+Excluded: other or administrative scope,INFORM,PERMABAN,17
+Excluded: other or administrative scope,INFORM,SURFPLAT,2905
+Excluded: other or administrative scope,INFORM,TEMPABAN,14
+Excluded: other or administrative scope,INFORM,WELLNAME,400
+Excluded: other or administrative scope,INFORM,ZONE,2
+Excluded: other or administrative scope,OTHER,ACIDIZE,15
+Excluded: other or administrative scope,OTHER,CASING,51
+Excluded: other or administrative scope,OTHER,CLEARNCE,10
+Excluded: other or administrative scope,OTHER,DESAND,29
+Excluded: other or administrative scope,OTHER,INITCOMP,18
+Excluded: other or administrative scope,OTHER,INJECT,7
+Excluded: other or administrative scope,OTHER,JET,5
+Excluded: other or administrative scope,OTHER,LIFT,27
+Excluded: other or administrative scope,OTHER,OTHER,6701
+Excluded: other or administrative scope,OTHER,PERF,25
+Excluded: other or administrative scope,OTHER,PERMABAN,36
+Excluded: other or administrative scope,OTHER,REPERF,14
+Excluded: other or administrative scope,OTHER,SURFPLAT,51
+Excluded: other or administrative scope,OTHER,TEMPABAN,111
+Excluded: other or administrative scope,OTHER,TUBING,18
+Excluded: other or administrative scope,OTHER,WELLNAME,40
+Excluded: other or administrative scope,OTHER,ZONE,86
+Excluded: other or administrative scope,UTIL,CASING,1
+Excluded: other or administrative scope,UTIL,FLUIDS,53
+Excluded: other or administrative scope,UTIL,INITCOMP,1
+Excluded: other or administrative scope,UTIL,INJECT,67
+Excluded: other or administrative scope,UTIL,LIFT,1
+Excluded: other or administrative scope,UTIL,OTHER,21
+Excluded: other or administrative scope,UTIL,OTHRUTIL,35
+Excluded: other or administrative scope,UTIL,PERMABAN,1
+Excluded: other or administrative scope,UTIL,SURFPLAT,1
+Excluded: other or administrative scope,UTIL,TEMPABAN,2
+Excluded: other or administrative scope,UTIL,ZONE,1
+Excluded: unspecified abandonment,ABANDON,CASING,110
+Excluded: unspecified abandonment,ABANDON,CLEARNCE,811
+Excluded: unspecified abandonment,ABANDON,DESAND,2
+Excluded: unspecified abandonment,ABANDON,INITCOMP,1
+Excluded: unspecified abandonment,ABANDON,OTHER,278
+Excluded: unspecified abandonment,ABANDON,OTHRABAN,106
+Excluded: unspecified abandonment,ABANDON,OTHRINFO,8
+Excluded: unspecified abandonment,ABANDON,OTHRWKVR,1
+Excluded: unspecified abandonment,ABANDON,REPERF,2
+Excluded: unspecified abandonment,ABANDON,TUBING,4
+Excluded: unspecified abandonment,ABANDON,ZONE,5
+Excluded: unspecified abandonment,ABANDON,ZONEISO,427
+Intervention,COMP,ACIDIZE,28
+Intervention,COMP,CASING,21
+Intervention,COMP,DESAND,90
+Intervention,COMP,FRAC,391
+Intervention,COMP,INITCOMP,3
+Intervention,COMP,INJECT,3
+Intervention,COMP,JET,12
+Intervention,COMP,LIFT,77
+Intervention,COMP,OTHER,167
+Intervention,COMP,OTHRABAN,8
+Intervention,COMP,OTHRCOMP,2
+Intervention,COMP,OTHRENPR,9
+Intervention,COMP,OTHRWKVR,1
+Intervention,COMP,PERF,47
+Intervention,COMP,PERMABAN,1
+Intervention,COMP,REPERF,13
+Intervention,COMP,TEMPABAN,29
+Intervention,COMP,TUBING,246
+Intervention,COMP,WELLNAME,5
+Intervention,COMP,ZONE,9165
+Intervention,COMP,ZONEISO,46
+Intervention,ENHANCE,ACIDIZE,1254
+Intervention,ENHANCE,CASING,45
+Intervention,ENHANCE,CLEARNCE,10
+Intervention,ENHANCE,DESAND,1378
+Intervention,ENHANCE,FLUIDS,3
+Intervention,ENHANCE,FRAC,38
+Intervention,ENHANCE,INITCOMP,35
+Intervention,ENHANCE,INJECT,12
+Intervention,ENHANCE,JET,266
+Intervention,ENHANCE,LIFT,1511
+Intervention,ENHANCE,OTHER,1054
+Intervention,ENHANCE,OTHRABAN,1
+Intervention,ENHANCE,OTHRCOMP,8
+Intervention,ENHANCE,OTHRENPR,233
+Intervention,ENHANCE,OTHRINFO,2
+Intervention,ENHANCE,OTHRUTIL,4
+Intervention,ENHANCE,OTHRWKVR,64
+Intervention,ENHANCE,PERF,112
+Intervention,ENHANCE,PERMABAN,41
+Intervention,ENHANCE,REPERF,94
+Intervention,ENHANCE,SURFPLAT,24
+Intervention,ENHANCE,TEMPABAN,46
+Intervention,ENHANCE,TUBING,43
+Intervention,ENHANCE,WELLNAME,4
+Intervention,ENHANCE,ZONE,269
+Intervention,ENHANCE,ZONEISO,11
+Intervention,WORKOVER,ACIDIZE,66
+Intervention,WORKOVER,CASING,2339
+Intervention,WORKOVER,DESAND,106
+Intervention,WORKOVER,FLUIDS,2
+Intervention,WORKOVER,FRAC,59
+Intervention,WORKOVER,INITCOMP,2
+Intervention,WORKOVER,INJECT,6
+Intervention,WORKOVER,JET,12
+Intervention,WORKOVER,LIFT,75
+Intervention,WORKOVER,OTHER,1402
+Intervention,WORKOVER,OTHRABAN,4
+Intervention,WORKOVER,OTHRCOMP,6
+Intervention,WORKOVER,OTHRENPR,13
+Intervention,WORKOVER,OTHRINFO,8
+Intervention,WORKOVER,OTHRWKVR,945
+Intervention,WORKOVER,PERF,64
+Intervention,WORKOVER,PERMABAN,18
+Intervention,WORKOVER,REPERF,100
+Intervention,WORKOVER,TEMPABAN,103
+Intervention,WORKOVER,TUBING,1366
+Intervention,WORKOVER,WELLNAME,3
+Intervention,WORKOVER,ZONE,315
+Intervention,WORKOVER,ZONEISO,82
+Permanent abandonment,ABANDON,CASING,134
+Permanent abandonment,ABANDON,CLEARNCE,126
+Permanent abandonment,ABANDON,DESAND,7
+Permanent abandonment,ABANDON,FLUIDS,6
+Permanent abandonment,ABANDON,INITCOMP,1
+Permanent abandonment,ABANDON,OTHER,275
+Permanent abandonment,ABANDON,OTHRABAN,4
+Permanent abandonment,ABANDON,OTHRWKVR,2
+Permanent abandonment,ABANDON,PERMABAN,23465
+Permanent abandonment,ABANDON,SURFPLAT,3
+Permanent abandonment,ABANDON,TEMPABAN,16
+Permanent abandonment,ABANDON,WELLNAME,2
+Permanent abandonment,ABANDON,ZONE,4
+Temporary abandonment,ABANDON,CASING,483
+Temporary abandonment,ABANDON,CLEARNCE,1
+Temporary abandonment,ABANDON,DESAND,41
+Temporary abandonment,ABANDON,INITCOMP,7
+Temporary abandonment,ABANDON,INJECT,1
+Temporary abandonment,ABANDON,OTHER,558
+Temporary abandonment,ABANDON,OTHRABAN,14
+Temporary abandonment,ABANDON,OTHRINFO,8
+Temporary abandonment,ABANDON,PERF,3
+Temporary abandonment,ABANDON,SURFPLAT,8
+Temporary abandonment,ABANDON,TEMPABAN,28516
+Temporary abandonment,ABANDON,TUBING,7
+Temporary abandonment,ABANDON,WELLNAME,5
+Temporary abandonment,ABANDON,ZONE,16
+Temporary abandonment,ABANDON,ZONEISO,46

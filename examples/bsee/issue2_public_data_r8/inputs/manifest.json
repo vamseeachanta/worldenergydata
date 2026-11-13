@@ -1,0 +1,27 @@
+[
+  {
+    "file": "fig-p1-new-well-permits-by-rig-type.csv",
+    "sha256": "a53aee488587f01551aed29223fafc35d1a3dd0853b9d139c1ced3109b7db1b8",
+    "basis": "retained content of the published page"
+  },
+  {
+    "file": "new-well-permits-by-water-depth.csv",
+    "sha256": "3034eb409e405d18d843f90458a69e4df5c5d1fc80fc1c33a027d9f6022c1d2c",
+    "basis": "retained content of the published page"
+  },
+  {
+    "file": "page-template.html",
+    "sha256": "a74036d563d84769717c704a2560a36163d439fb2faeca7e095e5fd5aa5f4896",
+    "basis": "page template derived from the published page CSS and retained prose"
+  },
+  {
+    "file": "table1.csv",
+    "sha256": "676b0198148b5283bf0f5852bb6b50ab961b86427cd281b76f906f791c14e924",
+    "basis": "retained content of the published page"
+  },
+  {
+    "file": "source-pins.json",
+    "sha256": "9965034a37fbfa4ed0ae499b6a10253327182099ede833d65678ee0d2f391ad2",
+    "basis": "Issued r8 source archive and library hashes"
+  }
+]
