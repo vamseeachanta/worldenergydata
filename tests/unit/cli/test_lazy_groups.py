@@ -154,7 +154,7 @@ def test_missing_family_affects_only_selected_command(monkeypatch):
 
 
 @pytest.mark.parametrize("app_help", [None, "App description"])
-@pytest.mark.parametrize("registration_help", [None, "Registration description"])
+@pytest.mark.parametrize("registration_help", [None, "", "Registration description"])
 def test_family_help_matches_eager_registration(monkeypatch, app_help, registration_help):
     family = typer.Typer(**({"help": app_help} if app_help else {}))
 
@@ -170,7 +170,7 @@ def test_family_help_matches_eager_registration(monkeypatch, app_help, registrat
         "worldenergydata.cli.lazy.import_module",
         lambda name: SimpleNamespace(app=family),
     )
-    options = {"help": registration_help} if registration_help else {}
+    options = {"help": registration_help} if registration_help is not None else {}
     eager = typer.Typer()
     eager.add_typer(family, name="sample", **options)
     lazy = typer.Typer()
@@ -179,7 +179,11 @@ def test_family_help_matches_eager_registration(monkeypatch, app_help, registrat
     expected = CliRunner().invoke(eager, ["sample", "--help"])
     actual = CliRunner().invoke(lazy, ["sample", "--help"])
     assert expected.exit_code == actual.exit_code == 0
-    assert (registration_help or app_help or "Callback description") in expected.output
+    if registration_help == "":
+        assert "App description" not in expected.output
+        assert "Callback description" not in expected.output
+    else:
+        assert (registration_help or app_help or "Callback description") in expected.output
     assert actual.output == expected.output
 
 
