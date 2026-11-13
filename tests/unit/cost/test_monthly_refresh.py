@@ -3,7 +3,7 @@
 import hashlib
 import json
 import shutil
-from datetime import date
+from datetime import date, datetime, timezone
 from pathlib import Path
 
 import pytest
@@ -92,7 +92,62 @@ def test_stage_failure(source, tmp_path, monkeypatch, target):
     with pytest.raises(ValueError, match="injected|failed"):
         api.prepare(source, stage, fetch, TODAY)
     assert snapshot(source) == before
-    assert not (stage / "refresh-prepared.json").exists()
+    assert not list(stage.glob("refresh-prepared.*"))
+
+
+@pytest.mark.parametrize(
+    "failure", ["write", "read", "receipt", "product", "source", "rename"]
+)
+def test_late_failure_removes_pending_receipt(source, tmp_path, monkeypatch, failure):
+    before, stage = snapshot(source), tmp_path / "stage"
+    pending = stage / "refresh-prepared.pending"
+    write_text, read_text, rename = Path.write_text, Path.read_text, Path.rename
+    injected = []
+
+    def write(path, text, *args, **kwargs):
+        result = write_text(path, text, *args, **kwargs)
+        if path == pending:
+            injected.append(True)
+            if failure == "write":
+                raise OSError("injected receipt write failure")
+            if failure == "receipt":
+                receipt = json.loads(text)
+                receipt["promoted"] = True
+                write_text(path, json.dumps(receipt), encoding="utf-8")
+            elif failure in ("product", "source"):
+                changed = (
+                    stage / INDEX
+                    if failure == "product"
+                    else source / crosswalk.CATALOG
+                )
+                changed.write_bytes(changed.read_bytes() + b"\n")
+        return result
+
+    def read(path, *args, **kwargs):
+        if path == pending and failure == "read":
+            raise OSError("injected receipt read failure")
+        return read_text(path, *args, **kwargs)
+
+    def publish(path, target):
+        if path == pending and failure == "rename":
+            raise OSError("injected receipt rename failure")
+        return rename(path, target)
+
+    monkeypatch.setattr(Path, "write_text", write)
+    monkeypatch.setattr(Path, "read_text", read)
+    monkeypatch.setattr(Path, "rename", publish)
+    message = {
+        "receipt": "receipt readback mismatch",
+        "product": "product readback mismatch",
+        "source": "source changed before receipt publication",
+    }.get(failure, "injected receipt")
+    with pytest.raises((OSError, ValueError), match=message):
+        api.prepare(source, stage, fetch, TODAY)
+    assert injected == [True]
+    assert not list(stage.glob("refresh-prepared.*"))
+    assert all((stage / path).is_file() for path in api.PRODUCTS)
+    if failure != "source":
+        assert snapshot(source) == before
 
 
 @pytest.mark.parametrize(
@@ -135,7 +190,7 @@ def test_changed_stage_inputs_require_review(source, tmp_path, monkeypatch, chan
     with pytest.raises(ValueError, match="review|source changed"):
         api.prepare(source, stage, fetch, TODAY)
     assert snapshot(source) == before
-    assert not (stage / "refresh-prepared.json").exists()
+    assert not list(stage.glob("refresh-prepared.*"))
 
 
 @pytest.mark.parametrize("kind", ["inside", "ancestor", "existing", "symlink", "input"])
@@ -162,3 +217,35 @@ def test_cli_requires_prepare_and_stage():
     with pytest.raises(SystemExit) as error:
         api.main([])
     assert error.value.code == 2
+
+
+def test_cli_uses_utc_access_date(tmp_path, monkeypatch, capsys):
+    calls = []
+    instant = datetime(2001, 1, 1, tzinfo=timezone.utc)
+
+    class Clock:
+        @staticmethod
+        def now(tz):
+            assert tz is timezone.utc
+            return instant
+
+    monkeypatch.setattr(api, "datetime", Clock)
+    monkeypatch.setattr(api, "prepare", lambda *args: calls.append(args))
+    stage, root = tmp_path / "stage", tmp_path / "source"
+    assert api.main(["--prepare", "--stage", str(stage), "--root", str(root)]) == 0
+    assert calls == [(root, stage, api.reference.fetch_fred_series, instant.date())]
+    assert capsys.readouterr().out == "PREPARED; promoted: false\n"
+
+
+@pytest.mark.parametrize("error", [ValueError, OSError, RuntimeError])
+def test_cli_reports_preparation_failure(tmp_path, monkeypatch, capsys, error):
+    def fail(*args, **kwargs):
+        raise error("injected preparation failure")
+
+    monkeypatch.setattr(api, "prepare", fail)
+    with pytest.raises(SystemExit) as exit_error:
+        api.main(["--prepare", "--stage", str(tmp_path / "stage")])
+    assert exit_error.value.code == 2
+    output = capsys.readouterr()
+    assert output.out == ""
+    assert output.err == "preparation failed: injected preparation failure\n"

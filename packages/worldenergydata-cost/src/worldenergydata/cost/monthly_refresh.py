@@ -4,7 +4,7 @@ import argparse
 import hashlib
 import json
 import shutil
-from datetime import date, datetime, timezone
+from datetime import datetime, timezone
 from pathlib import Path
 
 from worldenergydata.cost import escalation, outturn_check
@@ -151,15 +151,19 @@ def prepare(root, stage, fetch, accessed_date, *, source_revision=None):
     )
     _require(_snapshot(root) == before, "source changed during preparation")
     pending = stage / "refresh-prepared.pending"
-    pending.write_text(
-        json.dumps(receipt, indent=2, sort_keys=True) + "\n", encoding="utf-8"
-    )
-    readback = json.loads(pending.read_text(encoding="utf-8"))
-    _require(readback == receipt, "receipt readback mismatch")
-    for p, digest in readback["products"].items():
-        _require(_digest(stage / p) == digest, "product readback mismatch")
-    _require(_snapshot(root) == before, "source changed before receipt publication")
-    pending.rename(stage / "refresh-prepared.json")
+    try:
+        pending.write_text(
+            json.dumps(receipt, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+        )
+        readback = json.loads(pending.read_text(encoding="utf-8"))
+        _require(readback == receipt, "receipt readback mismatch")
+        for p, digest in readback["products"].items():
+            _require(_digest(stage / p) == digest, "product readback mismatch")
+        _require(_snapshot(root) == before, "source changed before receipt publication")
+        pending.rename(stage / "refresh-prepared.json")
+    except Exception:
+        pending.unlink(missing_ok=True)
+        raise
     return readback
 
 
@@ -170,7 +174,12 @@ def main(argv=None):
     parser.add_argument("--root", type=Path, default=Path.cwd())
     args = parser.parse_args(argv)
     try:
-        prepare(args.root, args.stage, reference.fetch_fred_series, date.today())
+        prepare(
+            args.root,
+            args.stage,
+            reference.fetch_fred_series,
+            datetime.now(timezone.utc).date(),
+        )
     except (ValueError, OSError, RuntimeError) as error:
         parser.exit(2, f"preparation failed: {error}\n")
     print("PREPARED; promoted: false")
