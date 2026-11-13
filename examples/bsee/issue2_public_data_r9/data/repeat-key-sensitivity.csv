@@ -1,0 +1,17 @@
+activity,band,n,median_days,latest_key_n,latest_key_median_days
+Completion,Under 100 m,4410,10,2699,10
+Completion,100 to 500 m,636,20,280,14
+Completion,"500 to 1,500 m",1614,30,623,27
+Completion,"1,500 m and deeper",1566,40,518,35
+Intervention,Under 100 m,14364,7,8810,7
+Intervention,100 to 500 m,2190,10,1218,7
+Intervention,"500 to 1,500 m",2547,10,1127,7
+Intervention,"1,500 m and deeper",1525,22,500,11
+Temporary abandonment,Under 100 m,23216,10,9836,8
+Temporary abandonment,100 to 500 m,3321,14,1268,14
+Temporary abandonment,"500 to 1,500 m",1258,10,578,6
+Temporary abandonment,"1,500 m and deeper",619,5,372,5
+Permanent abandonment,Under 100 m,18912,7,12756,5
+Permanent abandonment,100 to 500 m,1957,12,1184,10
+Permanent abandonment,"500 to 1,500 m",1544,20,448,10
+Permanent abandonment,"1,500 m and deeper",863,14,266,10
