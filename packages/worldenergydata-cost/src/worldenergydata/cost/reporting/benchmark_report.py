@@ -106,6 +106,21 @@ def _group_cost_points(cost_points):
 _COHORT_FIELDS = ("region", "water_depth_band", "cost_type", "activity_type")
 
 
+def percentile_summary(values):
+    """Return P10/P50/P90 by inclusive linear interpolation over observations.
+
+    Each observation has equal weight. A singleton has three equal percentiles;
+    an empty or nonpositive/nonfinite sample has no cost summary.
+    """
+    values = sorted(values)
+    if not values or any(not isfinite(v) or v <= 0 for v in values):
+        raise ValueError("Cost percentiles require finite positive observations")
+    if len(values) == 1:
+        return (values[0],) * 3
+    deciles = quantiles(values, n=10, method="inclusive")
+    return deciles[0], deciles[4], deciles[8]
+
+
 def _cohort_summary(key, observations):
     values = sorted(amount for _, amount, _ in observations)
     cohort = dict(zip(_COHORT_FIELDS, key))
@@ -402,8 +417,7 @@ def _source_links(facts):
     )
 
 
-_REPORT_TEMPLATE = Template(
-    """<!doctype html>
+_REPORT_TEMPLATE = Template("""<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width">
 <title>Operator cost benchmarking analysis</title><style>
 body{font:16px system-ui,sans-serif;background:#f4f7fa;color:#183044;margin:0 auto;padding:2rem;max-width:1200px}
@@ -453,8 +467,7 @@ function selectOperator() {
 selector.addEventListener('change', selectOperator);
 selectOperator();
 </script></body></html>
-"""
-)
+""")
 
 
 def render_html(facts: dict) -> str:
