@@ -75,6 +75,10 @@ def _value(value):
 def _group_cost_points(cost_points):
     groups = {}
     for index, point in enumerate(cost_points, start=1):
+        # public_dataset marks manufactured supplemental amounts in their source.
+        # Keep the original input index for retained observation provenance.
+        if "derived calibration sub-observation" in getattr(point, "source", ""):
+            continue
         if not isfinite(point.cost_usd_mm) or point.cost_usd_mm <= 0:
             raise ValueError("Cohort costs must be finite and positive")
         key = tuple(
@@ -170,7 +174,11 @@ def build_report_facts(records, cost_points, report_date: str) -> dict:
         "cohorts": cohorts,
         "outliers": outliers,
         "method_source": METHOD_SOURCE,
-        "cohort_basis": "Nominal as-reported USD million; no inflation or currency qualification",
+        "cohort_basis": (
+            "Nominal curated source costs in USD million; "
+            "supplemental derived calibration rows excluded; "
+            "no inflation or currency qualification"
+        ),
         "field_type_basis": "Water-depth band is a proxy, not reservoir or onshore classification",
         "cohort_source": "cost/data_collection/public_dataset.py; curated inputs, not reverified filings",
         "pending": {
@@ -413,7 +421,13 @@ unestablished normalization, comparability and restatement assumptions. No opera
 <div class="kpis"><p>Operators: ${slot1}</p><p>Operator-year rows: ${slot2}</p>
 <p>Cohorts: ${slot3}</p><p>OPEX: NOT_EVALUATED</p></div></header>
 <section><h2>Revision history</h2><table><thead><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr></thead>
-<tbody><tr><td>Initial</td><td>${slot4}</td><td>Cited historical seed and descriptive cohorts expose the disclosure analytics.</td></tr></tbody></table>
+<tbody><tr><td>Initial</td><td>${slot4}</td><td>Cited historical seed and descriptive cohorts expose the disclosure analytics.</td></tr></tbody>
+<tbody><tr><td>Interface</td><td>2026-11-12</td><td>
+Added offline YAML workflow and portable issue references; source data unchanged.
+</td></tr></tbody>
+<tbody><tr><td>Cohort basis</td><td>2026-11-12</td><td>
+Excluded supplemental derived calibration rows from cohort statistics and outlier observations
+because their amounts and years are manufactured.</td></tr></tbody></table>
 <p class="caption">Report edition history.</p></section>
 <label for="operator-selector">Operator</label> <select id="operator-selector">${slot5}</select>
 ${slot6}
@@ -456,8 +470,7 @@ def render_html(facts: dict) -> str:
     citations = _citations_table(facts)
     sources = _source_links(facts)
     pending = "".join(
-        f'<li><a href="https://github.com/vamseeachanta/worldenergydata/issues/{key}">'
-        f"#{key}</a>: {escape(value)}</li>"
+        f"<li>#{escape(key)}: {escape(value)}</li>"
         for key, value in sorted(facts["pending"].items())
     )
     return _REPORT_TEMPLATE.substitute(
