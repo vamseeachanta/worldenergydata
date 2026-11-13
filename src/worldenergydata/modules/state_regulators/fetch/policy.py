@@ -229,6 +229,8 @@ def choose_route(
     if bulk_urls and not use_crawl:
         return bulk_urls[0]
     logging.getLogger(__name__).warning(
-        "crawl selected: %s; available official bulk routes: %s", crawl_url, bulk_urls
+        "crawl selected: %s; available official bulk routes: %s",
+        origin_of(crawl_url),
+        [origin_of(url) for url in bulk_urls],
     )
     return crawl_url
