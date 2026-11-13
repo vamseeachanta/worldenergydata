@@ -1166,6 +1166,8 @@ def refresh(
                 console.print("[dim]Ensure all dependencies are installed.[/dim]")
                 raise typer.Exit(1) from e
 
+    except typer.Exit:
+        raise
     except Exception as e:
         console.print(f"[red]Error:[/red] {str(e)}")
         if verbose:

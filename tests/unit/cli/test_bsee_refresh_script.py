@@ -1,5 +1,6 @@
 """Full refresh delegates to the existing registry script without network I/O."""
 
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -15,6 +16,16 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
 SCRIPT = REPO_ROOT / "scripts" / "refresh_bsee_all.py"
 LEGACY_MODULE = "worldenergydata.bsee.data.refresh.data_refresh"
 runner = CliRunner()
+# Typer forces Rich colour output when GITHUB_ACTIONS is set, which inserts
+# ANSI escapes between option-name fragments and draws wrapped panels.
+_ANSI_ESCAPE = re.compile(r"\x1b\[[0-9;]*m")
+_PANEL_BORDER = re.compile(r"[\u2500-\u257f]")
+
+
+def _plain(output):
+    """Return CLI output as plain text with panel borders and wrapping removed."""
+    text = _PANEL_BORDER.sub(" ", _ANSI_ESCAPE.sub("", output))
+    return " ".join(text.split())
 
 
 @pytest.fixture
@@ -101,7 +112,7 @@ def test_typed_refresh_rejects_unsupported_dry_run(dispatch):
     child, legacy = dispatch
     result = runner.invoke(bsee.app, ["refresh", "--type", "well", "--dry-run"])
     assert result.exit_code == 2
-    assert "only supported with --type all" in result.output
+    assert "only supported with --type all" in _plain(result.output)
     child.assert_not_called()
     legacy.assert_not_called()
 
@@ -112,6 +123,7 @@ def test_typed_refresh_import_failure_is_unsuccessful(dispatch):
     result = runner.invoke(bsee.app, ["refresh", "--type", "well"])
     assert result.exit_code == 1
     assert "refresh dependency unavailable" in result.output
+    assert "Error:" not in _plain(result.output)
     child.assert_not_called()
 
 
@@ -119,7 +131,7 @@ def test_refresh_help_includes_safe_preview(dispatch):
     child, legacy = dispatch
     result = runner.invoke(bsee.app, ["refresh", "--help"])
     assert result.exit_code == 0
-    assert "dry-run" in result.output
+    assert "dry-run" in _plain(result.output)
     child.assert_not_called()
     legacy.assert_not_called()
 
