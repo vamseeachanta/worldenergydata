@@ -59,7 +59,9 @@ This is a **living** dataset. See
 for sources, cadence and the re-run command.
 
 ```bash
-uv run python scripts/cost/seed_cost_timeseries.py       # re-pull reference series, rewrite CSVs
+uv run python -m worldenergydata.cost.timeseries.refresh            # monthly: re-pull the FRED reference rows only
+uv run python -m worldenergydata.cost.timeseries.refresh --check    # offline: fail when the pull is older than 45 days
+uv run python -m worldenergydata.cost.escalation --output data/modules/cost/curated/sanctioned_projects_2026.csv
 uv run python scripts/cost/build_cost_basis_report.py    # rebuild the report
 ```
 

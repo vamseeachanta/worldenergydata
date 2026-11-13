@@ -5,6 +5,7 @@
 import math
 import warnings
 from datetime import datetime
+from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from typing import Any
 
@@ -160,10 +161,16 @@ class MissingSourceColumnWarning(UserWarning):
 
 def _safe_int(value: Any) -> int | None:
     """Missing stays unknown; malformed or fractional counts raise."""
-    number = _safe_float(value)
-    if number is None:
+    if _safe_float(value) is None:
         return None
-    if not number.is_integer():
+    # Validate the source token before binary-float rounding can hide a fraction.
+    try:
+        number = Decimal(str(value))
+    except InvalidOperation as exc:
+        raise ValueError("integer field cannot be parsed") from exc
+    if not number.is_finite():
+        raise ValueError("integer field must be finite")
+    if number != number.to_integral_value():
         raise ValueError("integer field is fractional")
     return int(number)
 
@@ -325,6 +332,11 @@ class PHMSAImporter:
                     filepath,
                     sheet_name=sheet_name,
                     engine="openpyxl",
+                    # Preserve count tokens before validation; retain ID inference.
+                    dtype={
+                        col: object
+                        for col in ("FAT", "INJ", *FATALITY_COLUMNS, *INJURY_COLUMNS)
+                    },
                 )
             except (OSError, ValueError, ImportError) as exc:
                 logger.error("Failed to read %s: %s", filename, exc)

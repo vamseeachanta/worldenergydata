@@ -329,9 +329,9 @@
         {
           "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/production/alaska_production.py",
           "symbol": "AlaskaFieldRecord.total_liquids_bopd",
-          "line": 37,
-          "end_line": 39,
-          "file_sha256": "3fce9c708d6f2850cc16e9195d5f953e17979f6bb1f618ac3ade2786fcb90eba",
+          "line": 34,
+          "end_line": 36,
+          "file_sha256": "66e07baae5f6200e663106a429cbfae1caa8280f2020c94a87ef4461239e24d1",
           "relation": "independent",
           "basis": "Own implementation; no delegation to another enrolled method.",
           "targets": []
@@ -339,9 +339,9 @@
         {
           "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/production/alaska_production.py",
           "symbol": "AlaskaProductionLoader.load",
-          "line": 47,
-          "end_line": 73,
-          "file_sha256": "3fce9c708d6f2850cc16e9195d5f953e17979f6bb1f618ac3ade2786fcb90eba",
+          "line": 44,
+          "end_line": 70,
+          "file_sha256": "66e07baae5f6200e663106a429cbfae1caa8280f2020c94a87ef4461239e24d1",
           "relation": "independent",
           "basis": "Own implementation; no delegation to another enrolled method.",
           "targets": []
@@ -349,9 +349,9 @@
         {
           "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/production/alaska_production.py",
           "symbol": "AlaskaProductionLoader.filter_field",
-          "line": 75,
-          "end_line": 77,
-          "file_sha256": "3fce9c708d6f2850cc16e9195d5f953e17979f6bb1f618ac3ade2786fcb90eba",
+          "line": 72,
+          "end_line": 74,
+          "file_sha256": "66e07baae5f6200e663106a429cbfae1caa8280f2020c94a87ef4461239e24d1",
           "relation": "helper",
           "basis": "Configuration, selection, representation or key construction; no independent engineering equation.",
           "targets": []
@@ -359,9 +359,9 @@
         {
           "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/production/alaska_production.py",
           "symbol": "AlaskaProductionLoader.filter_period",
-          "line": 79,
-          "end_line": 81,
-          "file_sha256": "3fce9c708d6f2850cc16e9195d5f953e17979f6bb1f618ac3ade2786fcb90eba",
+          "line": 76,
+          "end_line": 78,
+          "file_sha256": "66e07baae5f6200e663106a429cbfae1caa8280f2020c94a87ef4461239e24d1",
           "relation": "helper",
           "basis": "Configuration, selection, representation or key construction; no independent engineering equation.",
           "targets": []
@@ -369,9 +369,9 @@
         {
           "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/production/alaska_production.py",
           "symbol": "AlaskaProductionLoader.annual_total",
-          "line": 83,
-          "end_line": 98,
-          "file_sha256": "3fce9c708d6f2850cc16e9195d5f953e17979f6bb1f618ac3ade2786fcb90eba",
+          "line": 80,
+          "end_line": 95,
+          "file_sha256": "66e07baae5f6200e663106a429cbfae1caa8280f2020c94a87ef4461239e24d1",
           "relation": "independent",
           "basis": "Own implementation; no delegation to another enrolled method.",
           "targets": []
@@ -379,9 +379,9 @@
         {
           "path": "packages/worldenergydata-eia_us/src/worldenergydata/eia_us/production/alaska_production.py",
           "symbol": "AlaskaProductionLoader.to_records",
-          "line": 100,
-          "end_line": 112,
-          "file_sha256": "3fce9c708d6f2850cc16e9195d5f953e17979f6bb1f618ac3ade2786fcb90eba",
+          "line": 97,
+          "end_line": 109,
+          "file_sha256": "66e07baae5f6200e663106a429cbfae1caa8280f2020c94a87ef4461239e24d1",
           "relation": "helper",
           "basis": "Configuration, selection, representation or key construction; no independent engineering equation.",
           "targets": []

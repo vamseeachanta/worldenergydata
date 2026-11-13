@@ -3,9 +3,14 @@
 import hashlib
 import importlib.util
 import json
+import os
+import subprocess
+import sys
 from pathlib import Path
 
 import pytest
+
+from worldenergydata.field_development.data_availability import DatasetUnavailableError
 
 REPO = Path(__file__).resolve().parents[3]
 SCRIPT = REPO / "scripts/hf_export/build_field_development_dataset.py"
@@ -59,7 +64,7 @@ def sample():
 def write_source(root, data):
     path = root / SOURCE
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(data), encoding="utf-8")
+    path.write_text(json.dumps(data), encoding="utf-8", newline="\n")
     return path
 
 
@@ -168,7 +173,7 @@ def test_invalid_summary_is_rejected(tmp_path, change):
 def test_ambiguous_json_is_rejected(tmp_path, raw):
     """Duplicate keys and non-finite tokens cannot form an auditable input."""
     path = write_source(tmp_path, sample())
-    path.write_text(raw, encoding="utf-8")
+    path.write_text(raw, encoding="utf-8", newline="\n")
     with pytest.raises(ValueError):
         exporter().build_dataset(tmp_path)
 
@@ -261,17 +266,49 @@ def test_cli_preserves_changed_existing_output(tmp_path):
     }
 
 
-def test_committed_source_projection_matches_independent_counts():
-    """Compute coverage independently from committed rows, without fixed counts."""
-    source = json.loads((REPO / SOURCE).read_bytes())
-    files = exporter().build_dataset(REPO)
-    manifest = json.loads(files["manifest.json"])
-    config = manifest["configs"]["matched_concepts"]
-    assert config["rows"] == len(source["fields"])
-    assert config["unknown_actual"] == len(
-        [row for row in source["fields"] if row["actual"] is None]
+def test_committed_source_is_withheld_and_saved_outputs_are_preserved(tmp_path):
+    """The default source is a notice; fail before creating or changing output."""
+    assert json.loads((REPO / SOURCE).read_bytes())["status"] == "withheld"
+    output = tmp_path / "candidate"
+    output.mkdir()
+    saved = output / "matched_concepts.jsonl"
+    saved.write_bytes(b"saved independent output")
+    with pytest.raises(DatasetUnavailableError, match="redistribution-terms review"):
+        exporter().main(["--output", str(output)])
+    assert {p.name: p.read_bytes() for p in output.iterdir()} == {
+        saved.name: b"saved independent output"
+    }
+
+
+def test_stale_default_summary_is_rejected_before_output(tmp_path, monkeypatch):
+    from worldenergydata.field_development import data_availability
+
+    root = tmp_path / "source"
+    source = write_source(root, sample())
+    before = source.read_bytes()
+    monkeypatch.setattr(data_availability, "ROOT", root)
+    output = tmp_path / "candidate"
+    with pytest.raises(DatasetUnavailableError, match="redistribution-terms review"):
+        exporter().main(["--repo-root", str(root), "--output", str(output)])
+    assert not output.exists()
+    assert source.read_bytes() == before
+
+
+def test_direct_cli_rejects_default_notice_without_injected_source_path(tmp_path):
+    env = os.environ.copy()
+    env.pop("PYTHONPATH", None)
+    output = tmp_path / "candidate"
+    result = subprocess.run(
+        [sys.executable, str(SCRIPT), "--output", str(output)],
+        env=env,
+        capture_output=True,
+        text=True,
+        check=False,
     )
-    assert len(files["matched_concepts.jsonl"].splitlines()) == len(source["fields"])
+    assert result.returncode != 0
+    assert "DatasetUnavailableError" in result.stderr
+    assert "ModuleNotFoundError" not in result.stderr
+    assert not output.exists()
 
 
 def test_cli_invalid_source_creates_no_output(tmp_path):

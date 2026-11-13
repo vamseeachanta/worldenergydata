@@ -1,418 +1,19 @@
-# JSON type string|null permits JSON null; optional controls property absence independently.
-# A foreign_key list denotes the union of its targets, not a composite key.
-# CSV types describe decoded cells; native None is serialized as empty text.
-# Manifest presence maps describe draft/export emission; optional gate pins come from CLI inputs.
 module: offshore_assets
-description: Global O&G fields, production facilities, host vessels and drilling rigs
-  from legacy reference extraction, plus jackups from public contractor specifications.
-  Complements US-GoM BSEE.
+description: Offshore asset schemas; historical scrape payloads are withheld pending
+  redistribution-terms review.
 datasets:
-- name: country_centroids.csv
-  path: data/modules/offshore_assets/curated/country_centroids.csv
-  format: csv
-  columns:
-  - name: COUNTRY
-    type: string
-    description: ''
-    unit: ''
-  - name: LATITUDE
-    type: string
-    description: ''
-    unit: ''
-  - name: LONGITUDE
-    type: float
-    description: ''
-    unit: ''
-  row_count: 205
-  size_bytes: 6409
-  last_modified: '2026-06-22T17:06:49.955460+00:00'
-- name: coverage_summary.csv
-  path: data/modules/offshore_assets/curated/coverage_summary.csv
-  format: csv
-  description: Derived roll-up counts over fields.csv and production_facilities.csv
-    (by country, reserve type/duty, status, host type, water-depth band, US-GoM vs ROW).
-  columns:
-  - name: CATEGORY
-    type: string
-    description: roll-up axis
-    unit: ''
-  - name: DIMENSION
-    type: string
-    description: bucket value within the axis
-    unit: ''
-  - name: FIELDS_COUNT
-    type: integer
-    description: count of fields.csv rows in the bucket
-    unit: ''
-  - name: FACILITIES_COUNT
-    type: integer
-    description: count of production_facilities.csv rows in the bucket
-    unit: ''
-  row_count: 135
-  size_bytes: 4177
-  last_modified: '2026-06-22T17:06:49.955460+00:00'
-- name: drilling_rigs.csv
-  path: data/modules/offshore_assets/curated/drilling_rigs.csv
-  format: csv
-  columns:
-  - name: RIG_NAME
-    type: string
-    description: ''
-    unit: ''
-  - name: VESSEL_TYPE
-    type: string
-    description: ''
-    unit: ''
-  - name: VESSEL_DESIGN
-    type: string
-    description: ''
-    unit: ''
-  - name: CONSTRUCTION_YEAR
-    type: integer
-    description: ''
-    unit: ''
-  - name: UPGRADE_YEAR
-    type: integer
-    description: ''
-    unit: ''
-  - name: CLASSIFICATION_SOCIETY
-    type: string
-    description: ''
-    unit: ''
-  - name: MAX_WATER_DEPTH_RATING_FT
-    type: integer
-    description: ''
-    unit: ''
-  - name: MAX_DRILLING_DEPTH_FT
-    type: integer
-    description: ''
-    unit: ''
-  - name: TOTAL_VESSEL_POWER_HP
-    type: integer
-    description: ''
-    unit: ''
-  - name: QUARTERS_CAPACITY
-    type: integer
-    description: ''
-    unit: ''
-  - name: LENGTH_FT
-    type: float
-    description: ''
-    unit: ''
-  - name: WIDTH_FT
-    type: float
-    description: ''
-    unit: ''
-  - name: OPERATING_DRAFT_FT
-    type: float
-    description: ''
-    unit: ''
-  - name: MAX_VARIABLE_LOAD_ST
-    type: integer
-    description: ''
-    unit: ''
-  - name: DERRICK_RATING_KIPS
-    type: integer
-    description: ''
-    unit: ''
-  - name: DRAWWORKS_HP
-    type: float
-    description: ''
-    unit: ''
-  - name: BOP_OPERATING_PRESSURE_KSI
-    type: integer
-    description: ''
-    unit: ''
-  row_count: 163
-  size_bytes: 15854
-  last_modified: '2026-06-22T17:06:49.955460+00:00'
-- name: fields.csv
-  path: data/modules/offshore_assets/curated/fields.csv
-  format: csv
-  columns:
-  - name: FIELD_ID
-    type: integer
-    description: ''
-    unit: ''
-  - name: FIELD_NAME
-    type: string
-    description: ''
-    unit: ''
-  - name: COUNTRY
-    type: string
-    description: ''
-    unit: ''
-  - name: BLOCK
-    type: string
-    description: ''
-    unit: ''
-  - name: RESERVE_TYPE
-    type: string
-    description: ''
-    unit: ''
-  - name: CURRENT_STATUS
-    type: string
-    description: ''
-    unit: ''
-  - name: DISCOVERY_DATE
-    type: string
-    description: ''
-    unit: ''
-  - name: PRODUCTION_START
-    type: string
-    description: ''
-    unit: ''
-  - name: WATER_DEPTH_M
-    type: integer
-    description: ''
-    unit: ''
-  - name: WATER_DEPTH_FT
-    type: integer
-    description: ''
-    unit: ''
-  - name: US_GOM_FLAG
-    type: string
-    description: ''
-    unit: ''
-  row_count: 2149
-  size_bytes: 160020
-  last_modified: '2026-06-22T17:06:49.955460+00:00'
-- name: host_facilities.csv
-  path: data/modules/offshore_assets/curated/host_facilities.csv
-  format: csv
-  columns:
-  - name: FACILITY_TYPE
-    type: string
-    description: ''
-    unit: ''
-  - name: VESSEL_NAME
-    type: string
-    description: ''
-    unit: ''
-  - name: CLASSIFICATION
-    type: string
-    description: ''
-    unit: ''
-  - name: LENGTH_M
-    type: integer
-    description: ''
-    unit: ''
-  - name: WIDTH_M
-    type: integer
-    description: ''
-    unit: ''
-  - name: DEPTH_M
-    type: integer
-    description: ''
-    unit: ''
-  - name: MAX_OPERATING_DRAFT_M
-    type: integer
-    description: ''
-    unit: ''
-  - name: HULL_CONSTRUCTION
-    type: string
-    description: ''
-    unit: ''
-  - name: DEADWEIGHT_DWT_TONNES
-    type: integer
-    description: ''
-    unit: ''
-  - name: CONSTRUCTION_TYPE
-    type: string
-    description: ''
-    unit: ''
-  - name: HULL_FAB_YEAR
-    type: integer
-    description: ''
-    unit: ''
-  - name: LATEST_UPGRADE_YEAR
-    type: integer
-    description: ''
-    unit: ''
-  - name: MAX_OIL_PROD_MBOPD
-    type: integer
-    description: ''
-    unit: ''
-  - name: GAS_PROCESSING_MMSCFD
-    type: float
-    description: ''
-    unit: ''
-  - name: TOTAL_THROUGHPUT_MBOED
-    type: integer
-    description: ''
-    unit: ''
-  - name: STORAGE_CAPACITY_MBBLS
-    type: integer
-    description: ''
-    unit: ''
-  - name: TOTAL_RISERS
-    type: integer
-    description: ''
-    unit: ''
-  - name: UMBILICALS
-    type: integer
-    description: ''
-    unit: ''
-  - name: QUARTERS_CAPACITY
-    type: integer
-    description: ''
-    unit: ''
-  - name: MOORING_SYSTEM_TYPE
-    type: string
-    description: ''
-    unit: ''
-  - name: PERMANENT_OR_DISCONNECTABLE
-    type: string
-    description: ''
-    unit: ''
-  - name: NUMBER_OF_ANCHOR_LEGS
-    type: integer
-    description: ''
-    unit: ''
-  row_count: 245
-  size_bytes: 17398
-  last_modified: '2026-06-22T17:06:49.955460+00:00'
-- name: jackups.csv
-  path: data/modules/offshore_assets/curated/jackups.csv
-  format: csv
-  description: Public contractor specifications and overview pages retrieved 2026-10-27.
-    Missing particulars are empty, never zero. Lengths converted from metres to feet
-    and rounded to one decimal foot. The collection includes indexed source evidence
-    without direct-sheet readback for fourteen rows; see README.md for limitations.
-  columns:
-  - name: RIG_NAME
-    type: string
-    description: ''
-    unit: ''
-  - name: RIG_DESIGN_MODEL
-    type: string
-    description: ''
-    unit: ''
-  - name: YEAR_DELIVERED
-    type: integer
-    description: Source year; may be build, delivery or entered-service year.
-    unit: ''
-  - name: COUNTRY_BUILT
-    type: string
-    description: ''
-    unit: ''
-  - name: CLASSIFICATION_SOCIETY
-    type: string
-    description: ''
-    unit: ''
-  - name: MAX_WATER_DEPTH_RATING_FT
-    type: float
-    description: Source maximum design or operating rating; conditions vary.
-    unit: ft
-  - name: MIN_WATER_DEPTH_FT
-    type: float
-    description: ''
-    unit: ''
-  - name: OVERALL_LEG_LENGTH_FT
-    type: float
-    description: ''
-    unit: ft
-  - name: SPUD_CAN_DIAMETER_FT
-    type: float
-    description: ''
-    unit: ft
-  - name: MAX_DRILLING_DEPTH_FT
-    type: float
-    description: ''
-    unit: ft
-  - name: QUARTERS_CAPACITY
-    type: integer
-    description: ''
-    unit: ''
-  - name: OVERALL_HULL_LENGTH_FT
-    type: float
-    description: ''
-    unit: ft
-  - name: DERRICK_RATING_KIPS
-    type: integer
-    description: ''
-    unit: ''
-  - name: DRAWWORKS_HP
-    type: integer
-    description: ''
-    unit: ''
-  - name: BOP_OPERATING_PRESSURE_KSI
-    type: integer
-    description: ''
-    unit: ''
-  - name: source_url
-    type: string
-    description: Public contractor source URLs, separated by semicolons when multiple.
-    unit: ''
-  row_count: 163
-  size_bytes: 29495
-  last_modified: '2026-10-27T00:00:00+00:00'
-- name: production_facilities.csv
-  path: data/modules/offshore_assets/curated/production_facilities.csv
-  format: csv
-  columns:
-  - name: FACILITY_ID
-    type: integer
-    description: ''
-    unit: ''
-  - name: FACILITY_NAME
-    type: string
-    description: ''
-    unit: ''
-  - name: DUTY
-    type: string
-    description: ''
-    unit: ''
-  - name: OPERATOR
-    type: string
-    description: ''
-    unit: ''
-  - name: HOST_TYPE
-    type: string
-    description: ''
-    unit: ''
-  - name: CURRENT_STATUS
-    type: string
-    description: ''
-    unit: ''
-  - name: STATUS_SINCE_YEAR
-    type: integer
-    description: ''
-    unit: ''
-  - name: WATER_DEPTH_M
-    type: integer
-    description: ''
-    unit: ''
-  - name: WATER_DEPTH_FT
-    type: integer
-    description: ''
-    unit: ''
-  - name: COUNTRY
-    type: string
-    description: ''
-    unit: ''
-  - name: LOCATION
-    type: string
-    description: ''
-    unit: ''
-  - name: US_GOM_FLAG
-    type: string
-    description: ''
-    unit: ''
-  row_count: 836
-  size_bytes: 79624
-  last_modified: '2026-06-22T17:06:49.955460+00:00'
 - name: entity_registry.csv
   path: <output-dir>/entity_registry.csv
   format: csv
-  description: Angola evidence-extension entity registry (partial research only; not a national completeness
-    claim). Namespaced entity_id is a lookup ID, origin_* preserve original IDs.
+  description: Angola evidence-extension entity registry (partial research only; not
+    a national completeness claim). Namespaced entity_id is a lookup ID, origin_*
+    preserve original IDs.
   status: local_draft_public_export_requires_maintainer_eligibility
   contract_only: true
-  csv_dialect: UTF-8 without BOM, LF line endings, comma delimiter, double-quote quotechar with doubled
-    quotes and minimal quoting; strict csv.DictReader parse with newline=''; header = sorted union of
-    row keys (alphabetical); list/dict cells serialized as compact sorted-key JSON; booleans as True/False;
-    None as empty
+  csv_dialect: UTF-8 without BOM, LF line endings, comma delimiter, double-quote quotechar
+    with doubled quotes and minimal quoting; strict csv.DictReader parse with newline='';
+    header = sorted union of row keys (alphabetical); list/dict cells serialized as
+    compact sorted-key JSON; booleans as True/False; None as empty
   empty_table: An empty table is a zero-byte file without a header.
   dialect:
     encoding: UTF-8 without BOM
@@ -494,16 +95,16 @@ datasets:
 - name: legacy_entity_crosswalk.csv
   path: <output-dir>/legacy_entity_crosswalk.csv
   format: csv
-  description: Candidate and maintainer-adjudicated links between registry entities and legacy fields.csv fingerprint
-    groups. Key (entity_id, legacy_row_fingerprint, relation_type); each fingerprint group has at most
-    one accepted same_entity target (field scope only). Pending/conflicting/composite links never act
-    as join equivalence.
+  description: Candidate and maintainer-adjudicated links between registry entities
+    and legacy fields.csv fingerprint groups. Key (entity_id, legacy_row_fingerprint,
+    relation_type); each fingerprint group has at most one accepted same_entity target
+    (field scope only). Pending/conflicting/composite links never act as join equivalence.
   status: local_draft_public_export_requires_maintainer_eligibility
   contract_only: true
-  csv_dialect: UTF-8 without BOM, LF line endings, comma delimiter, double-quote quotechar with doubled
-    quotes and minimal quoting; strict csv.DictReader parse with newline=''; header = sorted union of
-    row keys (alphabetical); list/dict cells serialized as compact sorted-key JSON; booleans as True/False;
-    None as empty
+  csv_dialect: UTF-8 without BOM, LF line endings, comma delimiter, double-quote quotechar
+    with doubled quotes and minimal quoting; strict csv.DictReader parse with newline='';
+    header = sorted union of row keys (alphabetical); list/dict cells serialized as
+    compact sorted-key JSON; booleans as True/False; None as empty
   empty_table: An empty table is a zero-byte file without a header.
   dialect:
     encoding: UTF-8 without BOM
@@ -534,8 +135,8 @@ datasets:
     optional: true
   - name: candidate_payload
     type: dict
-    description: JSON of the original candidate row; its fingerprint must equal candidate_sha256 and its
-      status must be pending or conflicting
+    description: JSON of the original candidate row; its fingerprint must equal candidate_sha256
+      and its status must be pending or conflicting
     unit: ''
   - name: candidate_sha256
     type: string
@@ -564,7 +165,8 @@ datasets:
     primary_key: true
   - name: match_status
     type: string
-    description: disposition; builder emits pending or conflicting, maintainer decisions may set the rest
+    description: disposition; builder emits pending or conflicting, maintainer decisions
+      may set the rest
     unit: ''
     enum: &id003
     - accepted
@@ -620,7 +222,8 @@ datasets:
       - ','
       - ':'
       allow_nan: false
-    native_values: null stays null; lists retain order; objects have sorted names; no CSV conversion
+    native_values: null stays null; lists retain order; objects have sorted names;
+      no CSV conversion
     recomputation:
       value:
         entity_id: synthetic:field:alpha
@@ -638,14 +241,15 @@ datasets:
 - name: legacy_catalog_ledger.csv
   path: <output-dir>/legacy_catalog_ledger.csv
   format: csv
-  description: One row per distinct legacy fields.csv Angola row fingerprint group; legacy-only rows stay
-    visible. Group identity is the fingerprint, not FIELD_ID or row order.
+  description: One row per distinct legacy fields.csv Angola row fingerprint group;
+    legacy-only rows stay visible. Group identity is the fingerprint, not FIELD_ID
+    or row order.
   status: local_draft_public_export_requires_maintainer_eligibility
   contract_only: true
-  csv_dialect: UTF-8 without BOM, LF line endings, comma delimiter, double-quote quotechar with doubled
-    quotes and minimal quoting; strict csv.DictReader parse with newline=''; header = sorted union of
-    row keys (alphabetical); list/dict cells serialized as compact sorted-key JSON; booleans as True/False;
-    None as empty
+  csv_dialect: UTF-8 without BOM, LF line endings, comma delimiter, double-quote quotechar
+    with doubled quotes and minimal quoting; strict csv.DictReader parse with newline='';
+    header = sorted union of row keys (alphabetical); list/dict cells serialized as
+    compact sorted-key JSON; booleans as True/False; None as empty
   empty_table: An empty table is a zero-byte file without a header.
   dialect:
     encoding: UTF-8 without BOM
@@ -663,7 +267,8 @@ datasets:
     algorithm: SHA-256
     encoding: UTF-8
     json_options: *id001
-    native_values: null stays null; lists retain order; objects have sorted names; no CSV conversion
+    native_values: null stays null; lists retain order; objects have sorted names;
+      no CSV conversion
     recomputation:
       value:
       - synthetic Ω
@@ -689,8 +294,8 @@ datasets:
     unit: ''
   - name: original_header
     type: list
-    description: JSON list of original CSV header names in original order; unique; same set as attributes
-      keys
+    description: JSON list of original CSV header names in original order; unique;
+      same set as attributes keys
     unit: ''
   - name: status
     type: string
@@ -707,10 +312,10 @@ datasets:
   description: Source-backed memberships between registry entities.
   status: local_draft_public_export_requires_maintainer_eligibility
   contract_only: true
-  csv_dialect: UTF-8 without BOM, LF line endings, comma delimiter, double-quote quotechar with doubled
-    quotes and minimal quoting; strict csv.DictReader parse with newline=''; header = sorted union of
-    row keys (alphabetical); list/dict cells serialized as compact sorted-key JSON; booleans as True/False;
-    None as empty
+  csv_dialect: UTF-8 without BOM, LF line endings, comma delimiter, double-quote quotechar
+    with doubled quotes and minimal quoting; strict csv.DictReader parse with newline='';
+    header = sorted union of row keys (alphabetical); list/dict cells serialized as
+    compact sorted-key JSON; booleans as True/False; None as empty
   empty_table: An empty table is a zero-byte file without a header.
   dialect:
     encoding: UTF-8 without BOM
@@ -760,7 +365,8 @@ datasets:
     - hosted_by
   - name: relationship_id
     type: string
-    description: <dataset>:relationship:<SHA-256 of the native pre-ID object specified by fingerprint>
+    description: <dataset>:relationship:<SHA-256 of the native pre-ID object specified
+      by fingerprint>
     unit: ''
     primary_key: true
   - name: source_refs
@@ -800,7 +406,8 @@ datasets:
     algorithm: SHA-256
     encoding: UTF-8
     json_options: *id001
-    native_values: null stays null; lists retain order; objects have sorted names; no CSV conversion
+    native_values: null stays null; lists retain order; objects have sorted names;
+      no CSV conversion
     recomputation:
       object:
         subject_entity_id: synthetic:field:alpha
@@ -819,21 +426,23 @@ datasets:
 - name: catalog_links.json
   path: <output-dir>/catalog_links.json
   format: json
-  description: Object with records[] (one per evidence record group, with multiplicity) and parent_references[]
-    (inherited-cost parent rows). Record ID is <dataset>:<table>:<explicit entity_id|cost_id|source_ref,
-    else content fingerprint>.
+  description: Object with records[] (one per evidence record group, with multiplicity)
+    and parent_references[] (inherited-cost parent rows). Record ID is <dataset>:<table>:<explicit
+    entity_id|cost_id|source_ref, else content fingerprint>.
   status: local_draft_public_export_requires_maintainer_eligibility
   contract_only: true
   schema_version: 1
   columns:
   - name: records
     type: list
-    description: 'array of link objects: record_id, table, sha256, multiplicity, subject, entity_id, link_status,
-      dependencies; inherited_cost_records also carry parent_row_fingerprint and parent_record_id'
+    description: 'array of link objects: record_id, table, sha256, multiplicity, subject,
+      entity_id, link_status, dependencies; inherited_cost_records also carry parent_row_fingerprint
+      and parent_record_id'
     unit: ''
   - name: parent_references
     type: list
-    description: 'array of {record_id: sanctioned_projects:row:<sha256>, sha256, table: parent_reference}'
+    description: 'array of {record_id: sanctioned_projects:row:<sha256>, sha256, table:
+      parent_reference}'
     unit: ''
   - name: link_status
     type: string
@@ -857,12 +466,13 @@ datasets:
     - inherited_cost_records
   fingerprint:
     inputs:
-      record: complete native evidence object; parent digest uses parsed parent cells in pinned header
-        order
+      record: complete native evidence object; parent digest uses parsed parent cells
+        in pinned header order
     algorithm: SHA-256
     encoding: UTF-8
     json_options: *id001
-    native_values: null stays null; lists retain order; objects have sorted names; no CSV conversion
+    native_values: null stays null; lists retain order; objects have sorted names;
+      no CSV conversion
     recomputation:
       value:
         subject: synthetic Ω
@@ -874,9 +484,9 @@ datasets:
 - name: publication_eligibility.json
   path: <output-dir>/publication_eligibility.json
   format: json
-  description: Record-level publication matrix over records plus parent references; missing decisions
-    fail closed and deferral cascades through dependencies. Signoff is an evidence claim, not authenticated
-    authority.
+  description: Record-level publication matrix over records plus parent references;
+    missing decisions fail closed and deferral cascades through dependencies. Signoff
+    is an evidence claim, not authenticated authority.
   status: local_draft_public_export_requires_maintainer_eligibility
   contract_only: true
   columns:
@@ -911,14 +521,14 @@ datasets:
     unit: ''
   - name: basis
     type: string|null
-    description: public basis for decision; null until reviewed; property is always present, null until
-      reviewed
+    description: public basis for decision; null until reviewed; property is always
+      present, null until reviewed
     unit: ''
     optional: false
   - name: reviewer
     type: string|null
-    description: must be the repository maintainer for eligible decisions; property is always present, null
-      until reviewed
+    description: must be the repository maintainer for eligible decisions; property
+      is always present, null until reviewed
     unit: ''
     optional: false
   - name: approval_ref
@@ -943,8 +553,9 @@ datasets:
 - name: catalog_match_decisions.json
   path: <output-dir>/catalog_match_decisions.json
   format: json
-  description: 'Sole authority for equivalence adjudication: array of maintainer decisions bound to crosswalk
-    candidates by (entity_id, legacy_row_fingerprint, relation_type) and candidate_sha256.'
+  description: 'Sole authority for equivalence adjudication: array of maintainer decisions
+    bound to crosswalk candidates by (entity_id, legacy_row_fingerprint, relation_type)
+    and candidate_sha256.'
   status: local_draft_public_export_requires_maintainer_eligibility
   contract_only: true
   columns:
@@ -986,8 +597,8 @@ datasets:
 - name: integration_manifest.json
   path: <output-dir>/integration_manifest.json
   format: json
-  description: Pins schema version, input/output/decision hashes, counts and readiness for the extension;
-    never pins its own hash. Machine-readable JSON Schema is data/modules/offshore_assets/catalog_integration_schema.json.
+  description: Pins schema version, input/output/decision hashes, counts and readiness
+    for the extension; never pins its own hash. Machine-readable JSON Schema is data/modules/offshore_assets/catalog_integration_schema.json.
     Raw-source hashes are unknown_not_retained.
   status: local_draft_public_export_requires_maintainer_eligibility
   contract_only: true
@@ -1035,8 +646,8 @@ datasets:
     optional: false
   - name: input_hashes
     type: dict
-    description: filename -> SHA-256 for the five evidence tables (.json), legacy_catalog, inherited_cost_parent,
-      original_manifest
+    description: filename -> SHA-256 for the five evidence tables (.json), legacy_catalog,
+      inherited_cost_parent, original_manifest
     unit: ''
     presence:
       draft: present
@@ -1086,8 +697,8 @@ datasets:
       export: optional
     value_schema:
       type: object
-      description: Optional raw CLI gate-file byte digests; separate from normalized semantic decision
-        digests and not authentication.
+      description: Optional raw CLI gate-file byte digests; separate from normalized
+        semantic decision digests and not authentication.
       properties:
         match_decisions:
           type: string
@@ -1172,8 +783,8 @@ datasets:
       export: present
   - name: as_of
     type: string|null
-    description: Original snapshot as_of; property is always present in both modes, null when the snapshot
-      omits the date
+    description: Original snapshot as_of; property is always present in both modes,
+      null when the snapshot omits the date
     unit: ''
     optional: false
     presence:
@@ -1202,8 +813,50 @@ datasets:
     algorithm: SHA-256
     encoding: UTF-8
     json_options: *id001
-    native_values: null stays null; lists retain order; objects have sorted names; no CSV conversion
+    native_values: null stays null; lists retain order; objects have sorted names;
+      no CSV conversion
     recomputation:
       value: []
       sha256: 4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945
 binary_stores: []
+withheld_datasets:
+- name: country_centroids.csv
+  status: withheld
+  notice: curated/country_centroids.csv.md
+  loader: worldenergydata.field_development.data_availability.load_withheld_dataset
+- name: coverage_summary.csv
+  status: withheld
+  notice: curated/coverage_summary.csv.md
+  loader: worldenergydata.field_development.data_availability.load_withheld_dataset
+- name: drilling_rigs.csv
+  status: withheld
+  notice: curated/drilling_rigs.csv.md
+  loader: worldenergydata.field_development.data_availability.load_withheld_dataset
+- name: fields.csv
+  status: withheld
+  notice: curated/fields.csv.md
+  loader: worldenergydata.field_development.data_availability.load_withheld_dataset
+- name: host_facilities.csv
+  status: withheld
+  notice: curated/host_facilities.csv.md
+  loader: worldenergydata.field_development.data_availability.load_withheld_dataset
+- name: jackups.csv
+  status: withheld
+  notice: curated/jackups.csv.md
+  loader: worldenergydata.field_development.data_availability.load_withheld_dataset
+- name: production_facilities.csv
+  status: withheld
+  notice: curated/production_facilities.csv.md
+  loader: worldenergydata.field_development.data_availability.load_withheld_dataset
+- name: bsee_field_crosswalk.csv
+  status: withheld
+  notice: curated/bsee_field_crosswalk.csv.md
+  loader: worldenergydata.field_development.data_availability.load_withheld_dataset
+- name: subseaiq_hosts.csv
+  status: withheld
+  notice: curated/subseaiq_hosts.csv.md
+  loader: worldenergydata.field_development.data_availability.load_withheld_dataset
+- name: subseaiq_bsee_block_crosswalk.csv
+  status: withheld
+  notice: curated/subseaiq_bsee_block_crosswalk.csv.md
+  loader: worldenergydata.field_development.data_availability.load_withheld_dataset
