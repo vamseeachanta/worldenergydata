@@ -175,6 +175,7 @@ def _revision_groups(
 
 
 def _revision_order(row: DisclosureRecord, depths: Mapping[str, int]) -> tuple:
+    """Order audit history with parents before descendants."""
     revision = row.revision
     assert revision is not None
     return (
@@ -185,22 +186,32 @@ def _revision_order(row: DisclosureRecord, depths: Mapping[str, int]) -> tuple:
     )
 
 
+def _current_revision_order(row: DisclosureRecord, depths: Mapping[str, int]) -> tuple:
+    revision = row.revision
+    assert revision is not None
+    return (
+        revision.effective_date or date.min,
+        revision.publication_date or date.min,
+        depths[revision.version_id],
+        revision.version_id,
+    )
+
+
 def load_current_effective_disclosure_rows(
     records: Iterable[DisclosureRecord],
 ) -> list[DisclosureRecord]:
     """Select one current row per logical key; keep unversioned rows unchanged.
 
-    Prefer greatest chain depth, then latest explicit effective date, then
-    publication date, then greatest lexical version ID. Missing dates sort
-    before supplied dates; publication dates are never substituted for effective
-    dates. Complete lineages are required. Selection is independent of input
-    order for versioned rows. Plain rows retain their original relative order.
+    Only leaf versions (not superseded by any supplied version) are eligible.
+    Prefer latest explicit effective date, then publication date, then greatest
+    chain depth, then greatest lexical version ID. Missing dates sort before
+    supplied dates; publication dates are never substituted for effective dates.
+    Complete lineages are required. Selection is independent of input order for
+    versioned rows. Plain rows retain their original relative order.
 
-    Depth outranks dates even across branches: given original o, amendments
-    o -> a1 -> a2 published in June/July 2023, and a restatement r superseding
-    o directly with publication and effective dates in March 2024, a2 wins.
-    Data entry must supersede the latest known version when a later filing
-    should replace it; branching from the original does not ensure selection.
+    A later-dated restatement leaf outranks an older, deeper amendment branch.
+    Superseded parents are excluded even when they have later dates than their
+    descendants. All branches remain available through the history API.
 
     This selector has no as-of cutoff: a supplied future effective date still
     participates. Consumers needing historical evidence use the history API.
@@ -212,10 +223,13 @@ def load_current_effective_disclosure_rows(
     rows = list(records)
     groups, depths = _revision_groups(rows)
     selected = [r for r in rows if r.revision is None]
-    selected.extend(
-        max(groups[key], key=lambda row: _revision_order(row, depths))
-        for key in sorted(groups)
-    )
+    for key in sorted(groups):
+        family = groups[key]
+        superseded = {row.revision.supersedes_version_id for row in family}
+        leaves = (row for row in family if row.revision.version_id not in superseded)
+        selected.append(
+            max(leaves, key=lambda row: _current_revision_order(row, depths))
+        )
     return [
         replace(row, provenance=_copy_provenance(row.provenance)) for row in selected
     ]
@@ -224,7 +238,7 @@ def load_current_effective_disclosure_rows(
 def load_disclosure_revision_history(
     records: Iterable[DisclosureRecord],
 ) -> list[DisclosureRecord]:
-    """Return every version, ordered by logical key and increasing precedence.
+    """Return every version, ordered by logical key, depth and dates.
 
     Parents precede descendants; competing branches remain in the audit trail.
     Unversioned rows precede versioned families in input order. Returned rows

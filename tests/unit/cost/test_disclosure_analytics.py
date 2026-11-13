@@ -559,41 +559,47 @@ def test_current_effective_selector_uses_defined_precedence(
         assert [r.revision.version_id for r in selected] == [winner]
 
 
-def test_chain_depth_precedes_dates_and_missing_effective_date_is_oldest(
-    analytics_module,
+@pytest.mark.parametrize("reverse", [False, True])
+def test_superseded_parent_is_excluded_and_missing_effective_date_is_oldest(
+    analytics_module, reverse
 ):
     root = _revision_record(analytics_module)
     newer_date = _revision_record(
         analytics_module, "a", "v1", revision_changes={"effective_date": "2025-01-01"}
     )
     deeper = _revision_record(analytics_module, "b", "a")
-    assert (
-        analytics_module.load_current_effective_disclosure_rows(
-            [root, newer_date, deeper]
-        )[0].revision.version_id
-        == "b"
-    )
+    rows = [root, newer_date, deeper]
+    if reverse:
+        rows.reverse()
+    selected = analytics_module.load_current_effective_disclosure_rows(iter(rows))
+    assert selected[0].revision.version_id == "b"
     no_effective = _revision_record(
         analytics_module, "z", "v1", revision_changes={"publication_date": "2026-01-01"}
     )
-    assert (
-        analytics_module.load_current_effective_disclosure_rows(
-            [root, newer_date, no_effective]
-        )[0].revision.version_id
-        == "a"
-    )
+    rows = [root, newer_date, no_effective]
+    if reverse:
+        rows.reverse()
+    selected = analytics_module.load_current_effective_disclosure_rows(iter(rows))
+    assert selected[0].revision.version_id == "a"
 
 
 @pytest.mark.parametrize("reverse", [False, True])
-def test_deeper_amendment_outranks_later_restatement_branch(analytics_module, reverse):
+@pytest.mark.parametrize("scope", ["operator", "project"])
+def test_later_restatement_leaf_outranks_deeper_amendment_branch(
+    analytics_module, reverse, scope
+):
     root = _revision_record(
         analytics_module,
+        scope=scope,
+        project_name="Example asset" if scope == "project" else None,
         revision_changes={"publication_date": "2023-03-01"},
     )
     first = _revision_record(
         analytics_module,
         "a1",
         "v1",
+        scope=root.scope,
+        project_name=root.project_name,
         reported_capex_usd_mm=2.0,
         revision_changes={"publication_date": "2023-06-01"},
     )
@@ -601,6 +607,8 @@ def test_deeper_amendment_outranks_later_restatement_branch(analytics_module, re
         analytics_module,
         "a2",
         "a1",
+        scope=root.scope,
+        project_name=root.project_name,
         reported_capex_usd_mm=3.0,
         revision_changes={"publication_date": "2023-07-01"},
     )
@@ -608,6 +616,8 @@ def test_deeper_amendment_outranks_later_restatement_branch(analytics_module, re
         analytics_module,
         "r",
         "v1",
+        scope=root.scope,
+        project_name=root.project_name,
         reported_capex_usd_mm=9.0,
         revision_changes={
             "revision_classification": "restated",
@@ -619,10 +629,61 @@ def test_deeper_amendment_outranks_later_restatement_branch(analytics_module, re
     if reverse:
         rows.reverse()
     selected = analytics_module.load_current_effective_disclosure_rows(iter(rows))
-    assert [row.revision.version_id for row in selected] == ["a2"]
-    assert [row.reported_capex_usd_mm for row in selected] == [3.0]
+    assert [row.revision.version_id for row in selected] == ["r"]
+    assert [row.reported_capex_usd_mm for row in selected] == [9.0]
+    following = _revision_record(
+        analytics_module,
+        "next-year",
+        scope=root.scope,
+        project_name=root.project_name,
+        fiscal_year=2024,
+        reported_capex_usd_mm=18.0,
+        revision_changes={"logical_disclosure_key": "annual-capex-2024"},
+    )
+    annual_rows = [*rows, following] if not reverse else [following, *rows]
+    view = (
+        analytics_module.load_operator_annual_capex_view
+        if scope == "operator"
+        else analytics_module.load_project_cost_revision_view
+    )
+    annual = view(iter(annual_rows))
+    assert [row.revision.version_id for row in annual] == ["r", "next-year"]
+    assert [row.reported_capex_usd_mm for row in annual] == [9.0, 18.0]
+    assert annual[0].yoy_delta_usd_mm is None
+    assert annual[1].yoy_delta_usd_mm == 9.0
+    assert annual[1].yoy_delta_pct == pytest.approx(1.0)
     history = analytics_module.load_disclosure_revision_history(iter(rows))
     assert [row.revision.version_id for row in history] == ["v1", "a1", "r", "a2"]
+
+
+@pytest.mark.parametrize("reverse", [False, True])
+@pytest.mark.parametrize(
+    "shallow_dates,deep_dates,winner",
+    [
+        ({"effective_date": "2024-05-01"}, {"effective_date": "2024-04-01"}, "z"),
+        (
+            {"effective_date": "2024-05-01", "publication_date": "2024-04-01"},
+            {"effective_date": "2024-05-01"},
+            "z",
+        ),
+        ({"publication_date": "2024-04-01"}, {}, "z"),
+        ({}, {}, "a2"),
+    ],
+)
+def test_leaf_dates_precede_depth_with_depth_breaking_date_ties(
+    analytics_module, reverse, shallow_dates, deep_dates, winner
+):
+    root = _revision_record(analytics_module)
+    first = _revision_record(analytics_module, "a1", "v1")
+    deeper = _revision_record(analytics_module, "a2", "a1", revision_changes=deep_dates)
+    shallow = _revision_record(
+        analytics_module, "z", "v1", revision_changes=shallow_dates
+    )
+    rows = [root, first, deeper, shallow]
+    if reverse:
+        rows.reverse()
+    selected = analytics_module.load_current_effective_disclosure_rows(iter(rows))
+    assert [row.revision.version_id for row in selected] == [winner]
 
 
 def test_current_selection_is_per_logical_key_and_preserves_plain_rows(
