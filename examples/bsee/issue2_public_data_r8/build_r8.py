@@ -319,6 +319,14 @@ def days_table(stats, detailed=False):
     return '<div class="nl-tablewrap days-table"><table><thead><tr>' + ''.join('<th scope="col">' + c + '</th>' for c in columns) + '</tr></thead><tbody>' + ''.join(rows) + '</tbody></table></div>'
 
 
+BUILD_COMMIT = 'dashwork/issue2-public-data-r8'  # replaced by --build-commit: the commit that holds this script
+
+
+def versions():
+    import sys
+    return f'Python {sys.version.split()[0]}, pandas {pd.__version__} and matplotlib {matplotlib.__version__}'
+
+
 def build_html(out, cache, payload, stats, sources, audit):
     page = (ROOT / 'inputs' / 'page-template.html').read_text(encoding='utf-8')
     check = pd.read_csv(out / 'data' / 'repeat-key-sensitivity.csv')
@@ -327,10 +335,12 @@ def build_html(out, cache, payload, stats, sources, audit):
     page = page.replace('@@SENSITIVITY_RESULT@@', summary)
     holds = {'APDRawData.zip (file of 2 November 2026)': ('Application for Permit to Drill', 'file of 2 November 2026', 'permit type, requested spud date, water depth, rig name and rig type'),
              'eWellAPMRawData.zip': ('Application for Permit to Modify', 'file of 12 November 2026', 'operation codes and sub-operations, estimated operation days, status date and water depth'),
-             'BoreholeRawData.zip': ('Boreholes', 'file of 12 November 2026', 'region, well-name suffix, spud and total-depth dates, status and water depth')}
+             'BoreholeRawData.zip': ('Boreholes', 'file of 12 November 2026', 'region, well-name suffix, spud and total-depth dates, status and water depth'),
+             'APDRawData.zip': ('Application for Permit to Drill', 'file of 12 November 2026', 'column check only: neither table holds an estimated-days field')}
     source_list = ''.join('<li>' + holds[r.file][0] + ' (<a href="' + r.url + '">' + html.escape(r.file.split(' ')[0]) + '</a>), ' + holds[r.file][1] + ', downloaded ' + page_date(r.retrieved_utc) + ', SHA-256 <code>' + r.sha256 + '</code>: ' + holds[r.file][2] + '.</li>' for r in sources.itertuples() if r.file in holds)
     audit_rows = '<ul>' + ''.join('<li>' + html.escape(r.source + ': ' + r.rule.replace('_', ' ')) + ' — ' + count_display(r.records) + ' records.</li>' for r in audit.itertuples()) + '</ul>'
     days_table(stats)  # fails closed if a selected record has no water depth
+    page = page.replace('@@VERSIONS@@', versions()).replace('@@BUILD_COMMIT@@', BUILD_COMMIT).replace('@@BUILD_SHORT@@', BUILD_COMMIT[:8])
     page = page.replace('@@SOURCES@@', source_list).replace('@@AUDIT@@', audit_rows)
     for token, activity in [('CHECK_COMPLETION', 'Completion'), ('CHECK_SPUD', 'Spud to total depth')]:
         values = stats[stats.activity.eq(activity) & stats.band.isin(BANDS)].set_index('band').loc[BANDS, 'median_days']
@@ -363,7 +373,10 @@ def main(argv=None):
     parser.add_argument('--data-dir', type=Path, default=ROOT / 'cache')
     parser.add_argument('--output-dir', type=Path, default=ROOT)
     parser.add_argument('--offline', action='store_true')
+    parser.add_argument('--build-commit', default=None, help='commit of this script, linked from Appendix A')
     args = parser.parse_args(argv)
+    global BUILD_COMMIT
+    BUILD_COMMIT = args.build_commit or BUILD_COMMIT
     out, cache = args.output_dir.resolve(), args.data_dir.resolve()
     cache.mkdir(parents=True, exist_ok=True)
     for folder in ['data', 'figures']:

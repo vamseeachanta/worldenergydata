@@ -790,7 +790,6 @@ nav.toc ol{margin:0 0 var(--hs-s2);padding-left:1.4em}
 <nav class="toc" aria-label="Contents"><p><strong>In this article</strong></p>
 <ol><li><a href="#s1">Public permit data</a></li><li><a href="#s2">Well permits by rig type and water depth</a></li><li><a href="#s3">Drilling intervals and permit day estimates</a></li><li><a href="#s4">Outlook and open points</a></li></ol>
 <p>Appendix A <a href="#reusable-prompts">Reusable prompts</a>; Appendix B <a href="#counting-rules">Counting rules and record counts</a></p></nav>
-<p class="dc">Prepared: Analyst Deckhand &middot; Checked: Editor Deckhand &middot; Approved: Vamsee Achanta &middot; 3 November 2026</p>
 <h2 id="s1">1 Public permit data</h2>
 <p class="lead">Public data shows how new-well permits in US federal waters of the Gulf of America (formerly the Gulf of Mexico) have changed since 2005. The counts come from the Application for Permit to Drill (APD) raw data of the US Bureau of Safety and Environmental Enforcement (BSEE). Section 3 adds day figures from its Application for Permit to Modify (APM) and borehole raw data.</p>
 <p>Some of the observations are as follows:</p>
@@ -802,12 +801,15 @@ nav.toc ol{margin:0 0 var(--hs-s2);padding-left:1.4em}
 <p>The <a href="https://www.data.bsee.gov/Main/RawData.aspx">raw data page</a> of the BSEE Data Center lists the files used here, and files on platform structures, pipelines, production and offshore statistics by water depth.</p>
 
 <h2 id="s2">2 Well permits by rig type and water depth</h2>
-<p>For each application for a permit to drill in US federal waters, the permit file gives the permit type, the requested spud date (the date drilling is to start), the water depth, and the rig name and rig type.</p>
+<p>The permit file holds each application for a permit to drill in US federal waters. Each record gives:</p>
+<ul><li>The permit type.</li><li>The requested spud date: the date drilling is to start.</li><li>The water depth.</li><li>The rig name and rig type.</li></ul>
 <p>The counting rules are:</p>
 <ul><li>Count each well once, at its first New Well permit in the Gulf of Mexico region.</li><li>Use the requested spud year and the rig type named on that permit.</li></ul>
 <p>From 2005 to 2026, 2,895 wells are counted this way. The rule leaves out each well's later permits, and the 10 wells whose first New Well permit gives no requested spud date. The year 2026 runs only to the file of 2 November 2026.</p>
 <h3>2.1 Rig type</h3>
-<p>The counting script names six rig types: jack-up, drillship, semisubmersible, DP semisubmersible (dynamically positioned, held on station by its thrusters), platform rig and submersible. Barge, barge rig and well intervention vessel (19 permits) are grouped as other. Figure 1 shows the new-well permits each year by rig type. Figures 1a to 1c show the shares in 2005, 2015 and 2025, one full year per decade.</p>
+<p>The counting script names six rig types:</p>
+<ul><li>Jack-up.</li><li>Drillship.</li><li>Semisubmersible.</li><li>DP semisubmersible: dynamically positioned, held on station by its thrusters.</li><li>Platform rig.</li><li>Submersible.</li></ul>
+<p>Barge, barge rig and well intervention vessel (19 permits) are grouped as other. Figure 1 shows the new-well permits each year by rig type. Figures 1a to 1c show the shares in 2005, 2015 and 2025, one full year per decade.</p>
 <figure>
 <div id="fig-rig" class="viz" style="height:420px" role="img" aria-label="New-well permits by rig"></div><img class="chart-fallback" data-for="fig-rig" src="@@IMAGE:fig-rig@@" alt="New-well permits by rig">
 <figcaption>Figure 1 - New-well permits by rig type, Gulf of Mexico, 2005 to 2026, by year of requested spud date. One permit per well. Source: BSEE Application for Permit to Drill raw data (<a href="https://www.data.bsee.gov/Well/Files/APDRawData.zip">APDRawData.zip</a>), file of 2 November 2026, retrieved 3 November 2026. Data: <a href="data/fig-p1-new-well-permits-by-rig-type.csv">fig-p1-new-well-permits-by-rig-type.csv</a>.</figcaption>
@@ -833,7 +835,7 @@ nav.toc ol{margin:0 0 var(--hs-s2);padding-left:1.4em}
 <h3>3.2 Counting rules and exclusions</h3>
 <ul>
 <li>Days on completion, intervention and abandonment permits are the operator's estimate on each permit (APM file).</li>
-<li>Drilling days are the recorded dates from spud to total depth of each original borehole (borehole file); they include any interruptions.</li>
+<li>Drilling days are the recorded dates from spud to total depth of each original borehole (borehole file).</li>
 <li>Each permit or original borehole is counted once, for 2005 to 2025, in the same four water-depth bands.</li>
 <li>Missing, invalid, zero or negative days are left out and counted.</li>
 <li>The APD file holds no estimated drilling days.</li>
@@ -849,13 +851,15 @@ nav.toc ol{margin:0 0 var(--hs-s2);padding-left:1.4em}
 <h3>4.2 Open points</h3>
 <ul>
 <li>Each count takes the rig type named in a well's first permit. How often a different type of rig drilled the well is open.</li>
-<li>Operator estimates and recorded calendar intervals describe different records, so Figure 3 reads them side by side.</li>
-<li>The medians pool 2005 to 2025; present-day job durations are read from current permits.</li>
+<li>Figure 3 shows operator estimates and recorded intervals side by side; they come from different records and are not paired.</li>
+<li>The medians describe 2005 to 2025 as a whole.</li>
 </ul>
 <h3>4.3 Try it out</h3>
 <p>To try it out or adapt the analysis, see <a href="#reusable-prompts">reusable prompt</a>.</p>
 <div class="offer"><p>AceEngineer carries out fixed-scope engineering projects, and helps engineering firms build AI into everyday engineering work, including analysis of public offshore data such as this.</p></div>
 <p>If you have run your own analysis, see a way to improve this one, or have an idea for a future issue, write to support@aceengineer.com. We read every reply and credit the ideas we use and provide results we obtained.</p>
+
+<p class="dc">Prepared: Analyst Deckhand &middot; Checked: Editor Deckhand &middot; Approved: Vamsee Achanta &middot; 3 November 2026</p>
 
 <h2 id="reusable-prompts">Appendix A Reusable prompts</h2>
 <p>This prompt lets your team recount new-well permits by rig type and water depth from the public BSEE permit file, and read permit-day estimates and recorded drilling intervals by water depth from two further BSEE files. To have a study of your own public offshore data done for you instead, see below.</p>
@@ -870,9 +874,9 @@ nav.toc ol{margin:0 0 var(--hs-s2);padding-left:1.4em}
 <p>Give this prompt to your assistant:</p>
 <p class="prompt1">Count each well once, at its first New Well permit in the Gulf of Mexico region, by requested spud year, rig type and water-depth band, from the Application for Permit to Drill file of 2 November 2026. The bands are under 100 m, 100 to 500 m, 500 to 1,500 m, and 1,500 m and deeper, from feet at 0.3048 m per foot, with a depth on an edge in the deeper band. Then compute medians and quartiles by band for 2005 to 2025 from the Application for Permit to Modify and borehole files of 12 November 2026: completion, intervention, temporary abandonment and permanent abandonment estimates, and recorded spud-to-total-depth days. Use the rules in Appendix B. Keep operator estimates apart from recorded intervals. Do not use cost data.</p>
 <ul>
-<li>Piece: Gulf of Mexico well permits: a public US data file, Deckhand newsletter, issue 2.</li>
-<li>Code: <a href="https://github.com/vamseeachanta/worldenergydata/blob/70be06e193dcb12ed24d56d1a07518bf124735ec/examples/bsee/issue2_public_data_r8/build_r8.py">build_r8.py</a> at commit 70be06e1 of worldenergydata, in a draft pull request not yet merged. The counting script of the permit file is <a href="https://github.com/vamseeachanta/worldenergydata/tree/f5af5b6da87710bb395552f9cda5e34d1f324479/examples/bsee/rawdata_fact_check">rawdata_fact_check</a> at commit f5af5b6d.</li>
-<li>Software: Python 3 with pandas and matplotlib. Charts embed Plotly 2.35.2.</li>
+<li>Piece: Gulf of Mexico well permits: a public US data file, Deckhand newsletter issue 2, version of 13 November 2026.</li>
+<li>Code: <a href="https://github.com/vamseeachanta/worldenergydata/blob/@@BUILD_COMMIT@@/examples/bsee/issue2_public_data_r8/build_r8.py">build_r8.py</a> at commit @@BUILD_SHORT@@ of worldenergydata, which builds this page, in a draft pull request not yet merged. The counting script of the permit file is <a href="https://github.com/vamseeachanta/worldenergydata/tree/f5af5b6da87710bb395552f9cda5e34d1f324479/examples/bsee/rawdata_fact_check">rawdata_fact_check</a> at commit f5af5b6d, in an open pull request not yet merged.</li>
+<li>Software: @@VERSIONS@@. Charts embed Plotly 2.35.2. The permit counting script needs only the Python 3.10 or later standard library.</li>
 <li>Check values: 2,895 wells; band totals 1,476 (under 100 m), 175 (100 to 500 m), 589 (500 to 1,500 m) and 655 (1,500 m and deeper). Table B1 gives the quartiles and counts. Completion estimate medians by band: @@CHECK_COMPLETION@@ d. Recorded spud-to-total-depth medians by band: @@CHECK_SPUD@@ d.</li>
 </ul>
 <h3>Adapt it to your project</h3>
@@ -885,15 +889,15 @@ nav.toc ol{margin:0 0 var(--hs-s2);padding-left:1.4em}
 <h3>B.1 Estimates and recorded intervals</h3>
 <ul>
 <li>APD: in the permit file retrieved @@SCHEMA_DATE@@, neither inspected APDRawData table has an estimated-days field. No drilling estimate is calculated from that file.</li>
-<li>APM: <code>EST_OPERATION_DAYS</code> is the operator's estimate on the permit. It is not a measured job duration.</li>
-<li>Borehole: <code>TOTAL_DEPTH_DATE</code> minus <code>WELL_SPUD_DATE</code> gives a recorded spud-to-total-depth calendar interval. It can include interruptions. It is not active drilling time.</li>
+<li>APM: <code>EST_OPERATION_DAYS</code> is the operator's estimate on the permit.</li>
+<li>Borehole: <code>TOTAL_DEPTH_DATE</code> minus <code>WELL_SPUD_DATE</code> gives a recorded spud-to-total-depth calendar interval.</li>
 </ul>
 <p>Figure 3 and Table B1 use full cohort years 2005 to 2025.</p>
 <h3>B.2 Detailed counting rules and exclusions</h3>
 <ul>
-<li>APM: count each <code>SN_APM</code> once. Duplicate rows must agree on API, status date, operation code, days and depth. Conflicts stop the build. Separate submissions for the same well remain separate observations. These are not unique jobs; repeat API, operation and year keys are counted as a diagnostic below.</li>
+<li>APM: count each <code>SN_APM</code> once. Duplicate rows must agree on API, status date, operation code, days and depth. Conflicts stop the build. Separate submissions for the same well remain separate observations; repeat API, operation and year keys are counted as a diagnostic below.</li>
 <li>Match the APM <code>API_WELL_NUMBER</code> exactly to an unambiguous borehole <code>REGION_CODE=G</code>. Exclude unmatched or conflicting regions. Use APM <code>WATER_DEPTH</code>.</li>
-<li>Select APM <code>ACC_STATUS_DATE</code> years 2005 to 2025. This is the status-date basis used in the prior permit analysis. The file has no separate approval-status field; approved-only coverage is not established.</li>
+<li>Select APM <code>ACC_STATUS_DATE</code> years 2005 to 2025. The file has no separate approval-status field; approved-only coverage is not established.</li>
 <li>Completion: <code>COMP</code> without <code>ZONE</code>. Intervention: <code>WORKOVER</code>, <code>ENHANCE</code>, or <code>COMP</code> with <code>ZONE</code>. This groups workover, production enhancement and recompletion. Completion does not mean initial completion only. ZONE takes precedence even when INITCOMP also occurs.</li>
 <li>Abandonment: <code>ABANDON</code> with <code>PERMABAN</code> or <code>TEMPABAN</code>. Permanent takes precedence if both occur. The estimate covers the whole submission, not an isolated subtype.</li>
 <li>Exclude any <code>PLUGBACK</code> subtype as new-hole work. Exclude unspecified abandonment and <code>OTHER</code>, <code>INFORM</code> and <code>UTIL</code>; their physical scope is unresolved. Unknown primary codes stop the build.</li>
@@ -909,7 +913,7 @@ nav.toc ol{margin:0 0 var(--hs-s2);padding-left:1.4em}
 <details><summary>Selection counts before day exclusions</summary>@@AUDIT@@<p>Exact counts: <a href="data/exclusions.csv">exclusions.csv</a>. Activity totals partition the selected APM records; other lines describe selection steps or named repeat-key and zero-depth diagnostics.</p></details>
 <h3>B.3 Records and day exclusions by water depth</h3>
 @@DAYS_DETAIL_TABLE@@
-<p class="dc">Table B1 - Full record counts, day exclusions and quartiles for the section 3 cohorts. Missing-depth rows are retained here, including zero counts. Used is the count behind each median; missing or invalid days and nonpositive days are excluded. Displayed values use at most four significant figures; ≈ marks rounded counts. Source: <a href="https://www.data.bsee.gov/Well/Files/eWellAPMRawData.zip">eWellAPMRawData.zip</a>, retrieved @@APM_DATE@@, and <a href="https://www.data.bsee.gov/Well/Files/BoreholeRawData.zip">BoreholeRawData.zip</a>, retrieved @@BORE_DATE@@. Data: <a href="data/days-summary.csv">days-summary.csv</a>.</p>
+<p class="dc">Table B1 - Full record counts, day exclusions and quartiles for the section 3 cohorts. Missing-depth rows are retained here, including zero counts. Used is the count behind each median; missing or invalid days and nonpositive days are excluded. Displayed values use at most four significant figures; ≈ marks rounded counts. Source: <a href="https://www.data.bsee.gov/Well/Files/eWellAPMRawData.zip">eWellAPMRawData.zip</a>, file of 12 November 2026, retrieved @@APM_DATE@@, and <a href="https://www.data.bsee.gov/Well/Files/BoreholeRawData.zip">BoreholeRawData.zip</a>, file of 12 November 2026, retrieved @@BORE_DATE@@. Data: <a href="data/days-summary.csv">days-summary.csv</a>.</p>
 
 <div class="foot"><p>Questions: <a href="mailto:support@aceengineer.com">support@aceengineer.com</a> &middot; <a href="https://www.aceengineer.com/">AceEngineer</a> &middot; &copy; 2026 AceEngineer &middot; 11511 Piping Rock Dr., Houston, TX 77077</p>
 <p>Deckhand: Make Engineering Enjoyable Again</p></div>
@@ -927,7 +931,7 @@ if(c.kind==='bar'){
 traces=c.keys.map((k,i)=>({type:'bar',name:c.labels[i],x:c.rows.map(r=>r.year),y:c.rows.map(r=>r[k]),marker:{color:c.colours[i]},hovertemplate:'%{x}<br>'+c.labels[i]+': %{y}<extra></extra>'}));
 layout={barmode:'stack',margin:{l:65,r:12,t:el.clientWidth<560?160:80,b:60},legend:{orientation:'h',y:1.02,yanchor:'bottom'},xaxis:{title:'Year of requested spud date',dtick:2},yaxis:{title:'New-well permits (-)',rangemode:'tozero'}};
 }else{
-traces=[{type:'pie',labels:c.labels.map((l,i)=>l+': '+c.shares[i]),values:c.values,text:c.shares,textinfo:'text',textposition:'inside',sort:false,marker:{colors:c.colours,line:{color:'#fff',width:1}},hovertemplate:'%{label}<br>%{value} permits<extra></extra>'}];
+traces=[{type:'pie',labels:c.labels.map((l,i)=>l+': '+c.shares[i]),values:c.values,text:c.shares.map((s,i)=>c.values[i]/c.total*100>=5?s:''),textinfo:'text',textposition:'inside',sort:false,marker:{colors:c.colours,line:{color:'#fff',width:1}},hovertemplate:'%{label}<br>%{value} permits<extra></extra>'}];
 layout={title:{text:c.year+': '+c.total+' permits'},margin:{l:8,r:8,t:48,b:100},legend:{orientation:'h',x:0,y:-.12,font:{size:10}}};
 }
 layout.font=font;layout.paper_bgcolor=v('--hs-surface');layout.plot_bgcolor=v('--hs-surface');

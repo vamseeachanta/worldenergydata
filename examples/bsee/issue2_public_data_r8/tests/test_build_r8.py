@@ -325,3 +325,16 @@ def test_range_observation_rejects_a_missing_band_median(tmp_path):
     stats.to_csv(path, index=False)
     with pytest.raises(ValueError, match='four depth bands'):
         build.day_observations(path)
+
+
+def test_byline_at_foot_limits_once_and_plotly_blanks_small_slices():
+    page = rendered_prose()
+    byline = page.index('Prepared: Analyst Deckhand')
+    assert page.index('If you have run your own analysis') < byline < page.index('<h2 id="reusable-prompts">')
+    for phrase in ['not active drilling time', 'not a measured job duration', 'These are not unique jobs',
+                   'present-day job durations', 'status-date basis used in the prior']:
+        assert phrase not in page
+    assert page.count('are not paired') == 1
+    raw = (ROOT / 'issue2-public-data-r8.html').read_text(encoding='utf-8')
+    assert "c.values[i]/c.total*100>=5?s:''" in raw
+    assert 'SHA-256 <code>8f5ce969' in page and 'file of 12 November 2026' in page.split('Table B1 -')[1].split('</p>')[0]
