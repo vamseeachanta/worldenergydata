@@ -12,6 +12,7 @@ project IDs behind the statistics. A group with fewer than five projects carries
 | Initial | 2026-11-12 | Define project intensities, source lineage and fail-closed input requirements. |
 | Interface update | 2026-11-12 | Reconcile upstream crosswalk and escalation tables, retain unmatched reasons, add depth marginals and preserve numeric CSV precision. |
 | Bound and provenance correction | 2026-11-12 | Exclude curated lower and upper bounds anywhere in the basis and reject derived tables that disagree with an available nominal source. |
+| Bound matching | 2026-11-13 | Normalise separators and match lower and upper bounds in any case and position, with negation, so separator and case variants are not treated as point costs. |
 
 Table 1. Method edition history.
 
@@ -119,14 +120,20 @@ HTML. Missing source, escalation or invalid crosswalk lineage excludes all its m
 Missing source values remain missing; zero is not a replacement.
 An explicit unmatched field is not missing cost provenance.
 
-Disclosed lower and upper bounds are excluded from point percentiles. The declared rule
-matches a stripped `CAPEX_BASIS` starting with `FLOOR`, `LOWER-BOUND`,
-`LOWER BOUND`, `UPPER-BOUND`, `UPPER BOUND`, `IN EXCESS OF` or `AT LEAST`,
-case-insensitive, followed by whitespace, a colon or the end of text.
-The curated uppercase whole tokens `FLOOR`, `LOWER-BOUND`, `LOWER BOUND`,
-`UPPER-BOUND` and `UPPER BOUND` are also detected anywhere in the basis.
-This anywhere rule is case-sensitive, so incidental lowercase wording such as
-`not a floor` and `floor-mounted` does not imply a bound. A bound is not converted
+Disclosed lower and upper bounds are excluded from point percentiles. Before
+matching, whitespace, underscores, hyphens and dashes in `CAPEX_BASIS` collapse to
+one space. The declared rule then matches:
+
+- `lower bound`, `upper bound` (also without a separator, as in `LOWERBOUND`) and
+  `in excess of` anywhere in the basis, case-insensitive;
+- the uppercase whole token `FLOOR` anywhere in the basis;
+- a leading `floor` in any case followed by a non-letter other than a hyphen or
+  underscore, such as `Floor;` or `FLOOR:`;
+- a leading `at least`, case-insensitive.
+
+An anywhere match preceded by `not`, `not a` or `not an` (for example
+`NOT A FLOOR` or `not in excess of`) is not a bound. Lowercase `floor` elsewhere,
+`floor-mounted`, `FLOORING` and `UPPER BOUNDARY` do not imply a bound. A bound is not converted
 to a point estimate. Reasons and exclusion counts appear in the HTML. Other free-text
 qualifications remain subject to source review; this vocabulary does not
 establish that every bound has been identified or predict the effect of

@@ -66,6 +66,34 @@ ESCALATION_COLUMNS = (
     "INDEX_BASE_YEAR",
     "ESCALATION_FACTOR",
 )
+# Bound vocabulary is matched after whitespace, underscores, hyphens and dashes
+# collapse to one space. "floor" alone stays restricted (uppercase token or a
+# leading word) because lowercase "floor" also describes equipment.
+_BOUND_SEPARATORS = re.compile(r"[\s_\-‐-―]+")
+_BOUND_ANYWHERE = re.compile(r"\b(?:lower ?bound|upper ?bound|in excess of)\b")
+_BOUND_UPPERCASE_FLOOR = re.compile(r"\bFLOOR\b")
+_BOUND_LEADING = re.compile(r"at least\b")
+_BOUND_LEADING_FLOOR = re.compile(r"floor(?![\w\-‐-―])", re.IGNORECASE)
+_BOUND_NEGATION = re.compile(r"\bnot (?:an? )?$")
+
+
+def _declares_bound(basis):
+    """Return whether a CAPEX basis declares a lower or upper bound."""
+    normal = _BOUND_SEPARATORS.sub(" ", basis).strip()
+    folded = normal.casefold()
+
+    def asserted(matches, text):
+        return any(
+            not _BOUND_NEGATION.search(text[: match.start()].casefold())
+            for match in matches
+        )
+
+    return (
+        asserted(_BOUND_ANYWHERE.finditer(folded), folded)
+        or asserted(_BOUND_UPPERCASE_FLOOR.finditer(normal), normal)
+        or bool(_BOUND_LEADING.match(folded))
+        or bool(_BOUND_LEADING_FLOOR.match(basis.strip()))
+    )
 
 
 def _text(row, column):
@@ -125,12 +153,7 @@ def _project_cost(row):
         if not _text(row, column):
             raise ValueError(f"missing {column}")
     # Declared source qualifications are bounds, not observed point costs.
-    basis = _text(row, "CAPEX_BASIS")
-    if re.match(
-        r"^(?:FLOOR|LOWER[- ]BOUND|UPPER[- ]BOUND|IN EXCESS OF|AT LEAST)(?:\s|:|$)",
-        basis,
-        re.IGNORECASE,
-    ) or re.search(r"\b(?:FLOOR|LOWER[- ]BOUND|UPPER[- ]BOUND)\b", basis):
+    if _declares_bound(_text(row, "CAPEX_BASIS")):
         raise ValueError("CAPEX_BASIS declares a bound, not a point cost")
     if _text(row, "MATCH_METHOD").lower() == "unmatched":
         if _text(row, "CATALOG_FIELD_IDS") or not _text(row, "MATCH_REASON"):
@@ -679,6 +702,12 @@ def _html(facts, report_date):
                 "Exact crosswalk joins, explicit unmatched reasons, depth marginals "
                 "and bound-cost exclusions expose usable coverage.",
             ],
+            [
+                "Bound matching",
+                "2026-11-13",
+                "Separator, case and position variants of declared bound wording "
+                "are excluded instead of entering point percentiles.",
+            ],
         ],
         "Report edition history.",
     )
@@ -713,11 +742,13 @@ mid (&gt;300–1000 m), deep (&gt;1000–2000 m), ultra_deep (&gt;2000 m); absen
 No fuzzy aliases are applied. A project is counted once in each metric.</p>
 <p>The separate marginal table groups by depth alone; its rows are excluded from
 the CSV. Explicit unmatched field links retain the upstream reason and do not
-exclude an otherwise sourced project cost. CAPEX bases starting with FLOOR,
-LOWER-BOUND, LOWER BOUND, UPPER-BOUND, UPPER BOUND, IN EXCESS OF or AT LEAST
-(followed by whitespace, a colon or end of text, case-insensitive) declare bounds.
-Uppercase whole tokens FLOOR, LOWER-BOUND, LOWER BOUND, UPPER-BOUND or UPPER BOUND
-anywhere in the basis also declare bounds. Both lower and upper bounds are excluded
+exclude an otherwise sourced project cost. Whitespace, underscores, hyphens and
+dashes in the CAPEX basis are read as one space. LOWER BOUND, UPPER BOUND
+(also written without a separator) and IN EXCESS OF anywhere in the basis,
+case-insensitive, declare bounds unless preceded by NOT, NOT A or NOT AN.
+The uppercase whole token FLOOR anywhere, with the same negation, a leading
+FLOOR in any case followed by a non-letter other than a hyphen, and a leading
+AT LEAST also declare bounds. Both lower and upper bounds are excluded
 from point percentiles. Other free-text qualifications require source review;
 this declared vocabulary does not establish that every bound is identified.</p>
 <p>Every row belonging to a repeated project ID is excluded from both views;

@@ -704,6 +704,18 @@ def test_csv_retains_small_percentile_precision(projects, tmp_path):
         "'LESS THAN $5 billion' — this is an UPPER BOUND, not a point estimate",
         "upper-bound disclosed amount",
         "gross cost LOWER BOUND: disclosed amount",
+        # Separator, case and position variants of the declared vocabulary.
+        "gross estimate, lower bound of US$2 billion",
+        "gross estimate, Lower Bound: US$2 billion",
+        "gross estimate LOWER  BOUND disclosed amount",
+        "gross estimate LOWER_BOUND disclosed amount",
+        "gross estimate LOWER–BOUND disclosed amount",
+        "gross estimate LOWERBOUND disclosed amount",
+        "gross estimate upper—bound disclosed amount",
+        "Floor; more than US$2 billion",
+        "Floor, more than US$2 billion",
+        "gross estimate 'in excess of US$2 billion'",
+        "  lower\tbound disclosed amount",
     ],
 )
 def test_bound_costs_are_excluded_from_point_percentiles(projects, basis):
@@ -731,6 +743,10 @@ def test_bound_costs_are_excluded_from_point_percentiles(projects, basis):
         "floor-mounted equipment cost",
         "FLOORING equipment point cost",
         "point cost for UPPER BOUNDARY equipment",
+        "NOT A FLOOR: disclosed point cost",
+        "point estimate; NOT A LOWER BOUND",
+        "point estimate, not an upper bound",
+        "floor_mounted equipment cost",
     ],
 )
 def test_point_estimate_mentioning_floor_is_not_a_bound(projects, basis):
