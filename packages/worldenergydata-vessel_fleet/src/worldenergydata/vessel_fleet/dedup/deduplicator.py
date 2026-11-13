@@ -222,7 +222,9 @@ def _merge_records(records: list[dict[str, Any]]) -> dict[str, Any]:
     """Merge multiple records for the same vessel.
 
     For each field, prefer the value from the highest-priority source.
-    If priorities are equal, prefer the non-None value.
+    If priorities are equal, the last non-None value wins. The load-line
+    condition always comes from the record supplying the winning draft,
+    including a missing or explicitly None condition.
     """
     if len(records) == 1:
         return dict(records[0])
@@ -241,5 +243,11 @@ def _merge_records(records: list[dict[str, Any]]) -> dict[str, Any]:
         for key, value in record.items():
             if value is not None:
                 merged[key] = value
+
+    # Bind the condition to the draft after all independent field merges.
+    for record in reversed(sorted_records):
+        if record.get("DRAFT_M") is not None:
+            merged["RAW_DRAFT_LOAD_LINE_FT"] = record.get("RAW_DRAFT_LOAD_LINE_FT")
+            break
 
     return merged

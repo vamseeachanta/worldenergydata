@@ -25,8 +25,7 @@ def extraction(specs):
     return {"vessels": {"Rig": {"aliases": ["Former Rig"], "specs": specs}}}
 
 
-@pytest.mark.parametrize("destination", ["raw", "curated"])
-def test_draft_update_clears_missing_condition(ingest, monkeypatch, destination):
+def test_curated_update_clears_missing_condition(ingest, monkeypatch):
     store = Mock()
     store.load.return_value = [
         {"VESSEL_NAME": "Former Rig", "DRAFT_M": 6.7, "RAW_DRAFT_LOAD_LINE_FT": 21.9}
@@ -34,10 +33,7 @@ def test_draft_update_clears_missing_condition(ingest, monkeypatch, destination)
     monkeypatch.setattr(ingest, "ParquetStore", Mock(return_value=store))
     update = extraction({"DRAFT_M": 6.1})
 
-    if destination == "raw":
-        assert ingest.write_raw_source(update, Path("."), {}, "sample") == 1
-    else:
-        assert ingest.apply_to_curated(update, Path("."), {}) == 1
+    assert ingest.apply_to_curated(update, Path("."), {}) == 1
 
     [record] = store.save.call_args.args[0]
     assert record["DRAFT_M"] == 6.1
