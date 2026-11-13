@@ -20,6 +20,8 @@ from __future__ import annotations
 import re
 from typing import Any, Optional
 
+from worldenergydata.vessel_fleet.parsers.spec_dp import parse_spec_dp
+
 FT_TO_M = 0.3048
 KIPS_PER_SHORT_TON = 2.0  # 1 short ton = 2,000 lb; 1 kip = 1,000 lb
 SHORT_TONS_PER_TONNE = 1.10231
@@ -79,6 +81,7 @@ def parse_rig_summary_text(text: str) -> dict[str, Any]:
     Only fields present in the text are returned; absent fields are omitted
     (never None-filled) so callers can distinguish "not stated" from parsed.
     """
+    dp_specs = parse_spec_dp(text)
     text = _normalize(text)
     out: dict[str, Any] = {}
 
@@ -201,6 +204,9 @@ def parse_rig_summary_text(text: str) -> dict[str, Any]:
 
     # Cross-layout equipment capabilities (#1006) — same fill-the-gaps merge.
     for field, value in _parse_equipment(text).items():
+        out.setdefault(field, value)
+
+    for field, value in dp_specs.items():
         out.setdefault(field, value)
 
     return out
