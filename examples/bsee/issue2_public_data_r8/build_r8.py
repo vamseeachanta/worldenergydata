@@ -8,6 +8,7 @@ import html
 import json
 import math
 import re
+import urllib.parse
 import urllib.request
 import zipfile
 from datetime import datetime, timezone
@@ -19,6 +20,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parent
+PAGE = 'issue2-public-data-r8.html'
 BANDS = ['Under 100 m', '100 to 500 m', '500 to 1,500 m', '1,500 m and deeper']
 ACTIVITIES = ['Completion', 'Intervention', 'Temporary abandonment',
               'Permanent abandonment', 'Spud to total depth']
@@ -29,7 +31,14 @@ WC = ['#9cc8e2', '#4f9bcb', '#1f6aa5', '#0b3d5c']
 WK = ['under_100_m', '100_to_500_m', '500_to_1500_m', '1500_m_and_deeper']
 URL_BASE = 'https://www.data.bsee.gov/Well/Files/'
 FILES = {n: URL_BASE + n for n in ['APDRawData.zip', 'eWellAPMRawData.zip', 'BoreholeRawData.zip']}
-FILES['plotly-2.35.2.min.js'] = 'https://cdn.plot.ly/plotly-2.35.2.min.js'
+PLOTLY = 'plotly-2.35.2.min.js'
+FILES[PLOTLY] = 'https://cdn.plot.ly/plotly-2.35.2.min.js'
+SIZE_LIMIT = 1_024_000   # check-added-large-files --maxkb=1000 in .pre-commit-config.yaml
+# International foot: 1 ft = 0.3048 m exactly. NIST Special Publication 811 (2008 edition),
+# Guide for the Use of the International System of Units (SI), Appendix B.8, Factors for Units
+# Listed Alphabetically: foot (ft) to meter (m), 3.048 E-01 (boldface: exact).
+# https://www.nist.gov/pml/special-publication-811/nist-guide-si-appendix-b-conversion-factors/nist-guide-si-appendix-b8
+FT_TO_M = 0.3048
 OLD_SHA = 'b4ab66063de5a95c78d0e4d33d220ea806ef07f114bd2add6efa9e8561d299c0'
 
 def significant(value, digits=4):
@@ -41,7 +50,7 @@ def count_display(value):
 
 def band_from_feet(value):
     try:
-        metres = float(value) * .3048
+        metres = float(value) * FT_TO_M
     except (ValueError, TypeError):
         return 'Missing depth'
     return BANDS[sum(metres >= e for e in [100, 500, 1500])] if math.isfinite(metres) and metres >= 0 else 'Missing depth'
@@ -164,8 +173,7 @@ def cache_source(cache, name, url, offline, expected_sha=None):
     if not path.exists():
         if offline:
             raise FileNotFoundError(f'Offline cache missing: {name}')
-        with urllib.request.urlopen(url, timeout=600) as response:
-            content = response.read()
+        content = fetch(url)
         if expected_sha and hashlib.sha256(content).hexdigest() != expected_sha:
             raise ValueError(f'Download differs from issued source pin: {name}')
         path.write_bytes(content)
@@ -319,7 +327,71 @@ def days_table(stats, detailed=False):
     return '<div class="nl-tablewrap days-table"><table><thead><tr>' + ''.join('<th scope="col">' + c + '</th>' for c in columns) + '</tr></thead><tbody>' + ''.join(rows) + '</tbody></table></div>'
 
 
-BUILD_COMMIT = 'dashwork/issue2-public-data-r8'  # replaced by --build-commit: the commit that holds this script
+BUILD_COMMIT = None  # set from the required --build-commit: full SHA of the commit that holds this script
+
+
+def require_https(url):
+    """Reject every scheme except https (no file:, ftp:, http: or data: reads)."""
+    if urllib.parse.urlsplit(url).scheme != 'https':
+        raise ValueError('Only https downloads are allowed: ' + url)
+    return url
+
+
+class HttpsOnlyRedirect(urllib.request.HTTPRedirectHandler):
+    """Follow a redirect only when its target is also https."""
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        return super().redirect_request(req, fp, code, msg, headers, require_https(newurl))
+
+
+def https_opener():
+    """Opener with an https handler only; no file, ftp, data or plain-http handler is installed."""
+    opener = urllib.request.OpenerDirector()
+    for handler in (urllib.request.HTTPSHandler(), HttpsOnlyRedirect(),
+                    urllib.request.HTTPDefaultErrorHandler(), urllib.request.HTTPErrorProcessor()):
+        opener.add_handler(handler)
+    return opener
+
+
+def fetch(url, timeout=600):
+    url = require_https(url)   # checked before any opener exists
+    with https_opener().open(url, timeout=timeout) as response:
+        return response.read()
+
+
+def check_build_commit(value):
+    """Issued rebuilds cite an immutable revision: a full 40-character commit SHA, never a branch."""
+    if not isinstance(value, str) or not re.fullmatch(r'[0-9a-f]{40}', value):
+        raise ValueError('--build-commit needs the full 40-character SHA of the commit that holds this script')
+    return value
+
+
+def plotly_script(cache, bundle=False):
+    """Tracked page: pinned release URL with a sub-resource integrity hash of the pinned bytes.
+    Bundle: the same pinned bytes inlined, for an offline interactive copy kept outside the repository."""
+    library = (cache / PLOTLY).read_bytes()
+    if bundle:
+        text = library.decode('utf-8')
+        if '</script' in text.lower():
+            raise ValueError('Unexpected script closing tag in library')
+        return '<script>' + text + '</script>'
+    integrity = 'sha384-' + base64.b64encode(hashlib.sha384(library).digest()).decode()
+    return f'<script src="{FILES[PLOTLY]}" integrity="{integrity}" crossorigin="anonymous"></script>'
+
+
+def write_pages(out, cache, page, bundle=None):
+    if re.search(r'@@[^@\s]+@@', page.replace('@@PLOTLY_SCRIPT@@', '')):
+        raise ValueError('Unresolved page token')
+    tracked = page.replace('@@PLOTLY_SCRIPT@@', plotly_script(cache)).encode('utf-8')
+    if len(tracked) >= SIZE_LIMIT:
+        raise ValueError(f'Page is {len(tracked):,} bytes; the commit limit is {SIZE_LIMIT:,}')
+    (out / PAGE).write_bytes(tracked)
+    if bundle is not None:
+        bundle = bundle.resolve()
+        if bundle == ROOT or ROOT in bundle.parents:
+            raise ValueError('Write the bundled page outside the tracked example folder')
+        bundle.parent.mkdir(parents=True, exist_ok=True)
+        bundle.write_bytes(page.replace('@@PLOTLY_SCRIPT@@', plotly_script(cache, bundle=True)).encode('utf-8'))
 
 
 def versions():
@@ -327,7 +399,7 @@ def versions():
     return f'Python {sys.version.split()[0]}, pandas {pd.__version__} and matplotlib {matplotlib.__version__}'
 
 
-def build_html(out, cache, payload, stats, sources, audit):
+def build_html(out, cache, payload, stats, sources, audit, bundle=None):
     page = (ROOT / 'inputs' / 'page-template.html').read_text(encoding='utf-8')
     check = pd.read_csv(out / 'data' / 'repeat-key-sensitivity.csv')
     delta = (check.latest_key_median_days - check.median_days).abs().dropna()
@@ -353,13 +425,7 @@ def build_html(out, cache, payload, stats, sources, audit):
     page = page.replace('@@CHART_DATA@@', json.dumps(payload, separators=(',', ':')).replace('<', '\\u003c'))
     for name in ['fig-rig', 'fig-depth', 'fig-days'] + [f'pie-{k}-{y}' for k in ['rig', 'depth'] for y in [2005, 2015, 2025]]:
         page = page.replace('@@IMAGE:' + name + '@@', 'data:image/png;base64,' + base64.b64encode((out / 'figures' / (name + '.png')).read_bytes()).decode())
-    library = (cache / 'plotly-2.35.2.min.js').read_text(encoding='utf-8')
-    if '</script' in library.lower():
-        raise ValueError('Unexpected script closing tag in library')
-    if re.search(r'@@[^@\s]+@@', page.replace('@@PLOTLY_LIBRARY@@', '')):
-        raise ValueError('Unresolved page token')
-    page = page.replace('@@PLOTLY_LIBRARY@@', library)
-    (out / 'issue2-public-data-r8.html').write_text(page, encoding='utf-8', newline='\n')
+    write_pages(out, cache, page, bundle)
 
 
 def validate_inputs():
@@ -373,10 +439,17 @@ def main(argv=None):
     parser.add_argument('--data-dir', type=Path, default=ROOT / 'cache')
     parser.add_argument('--output-dir', type=Path, default=ROOT)
     parser.add_argument('--offline', action='store_true')
-    parser.add_argument('--build-commit', default=None, help='commit of this script, linked from Appendix A')
+    parser.add_argument('--build-commit', required=True,
+                        help='full 40-character SHA of the commit that holds this script, linked from Appendix A')
+    parser.add_argument('--bundle', type=Path, default=None,
+                        help='also write an offline interactive copy with the pinned chart library inlined; '
+                             'the path must lie outside this example folder')
     args = parser.parse_args(argv)
     global BUILD_COMMIT
-    BUILD_COMMIT = args.build_commit or BUILD_COMMIT
+    try:
+        BUILD_COMMIT = check_build_commit(args.build_commit)
+    except ValueError as error:
+        parser.error(str(error))
     out, cache = args.output_dir.resolve(), args.data_dir.resolve()
     cache.mkdir(parents=True, exist_ok=True)
     for folder in ['data', 'figures']:
@@ -385,7 +458,7 @@ def main(argv=None):
     pins = json.loads((ROOT / 'inputs' / 'source-pins.json').read_text(encoding='utf-8'))
     records = [cache_source(cache, n, u, args.offline, pins[n]) for n, u in FILES.items()]
     for record in records:
-        record['role'] = 'Column check of the permit file' if record['file'] == 'APDRawData.zip' else 'Offline chart library' if record['file'].endswith('.js') else 'Duration analysis'
+        record['role'] = 'Column check of the permit file' if record['file'] == 'APDRawData.zip' else 'Chart library' if record['file'].endswith('.js') else 'Duration analysis'
     records.insert(0, dict(file='APDRawData.zip (file of 2 November 2026)', url=URL_BASE+'APDRawData.zip', retrieved_utc='2026-11-03T02:28Z', sha256=OLD_SHA, role='Counts for Figures 1 and 2 and Table 1'))
     sources, headers = pd.DataFrame(records), []
     for member in ['mv_apddata_all', 'mv_apd_main_all']:
@@ -412,7 +485,7 @@ def main(argv=None):
     matplotlib.rcParams.update({'svg.hashsalt': 'issue2-public-data-r8', 'font.family': 'DejaVu Sans', 'font.size': 10, 'axes.spines.top': False, 'axes.spines.right': False})
     payload = count_figures(rig, depth, out)
     days_figure(stats, out)
-    build_html(out, cache, payload, stats, sources, audit)
+    build_html(out, cache, payload, stats, sources, audit, args.bundle)
     print(stats.to_string(index=False), flush=True)
 
 

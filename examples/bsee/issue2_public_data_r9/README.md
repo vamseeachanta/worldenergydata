@@ -11,14 +11,22 @@ removing the review panel alone does not establish approval of this revision.
 From the repository root:
 
 ```sh
-uv run --no-project --with pandas --with matplotlib --with pytest python examples/bsee/issue2_public_data_r9/build_r9.py
-uv run --no-project --with pandas --with matplotlib --with pytest python examples/bsee/issue2_public_data_r9/build_r9.py --offline
+uv run --no-project --with pandas --with matplotlib --with pytest python examples/bsee/issue2_public_data_r9/build_r9.py --build-commit "$(git rev-parse HEAD)"
+uv run --no-project --with pandas --with matplotlib --with pytest python examples/bsee/issue2_public_data_r9/build_r9.py --offline --build-commit "$(git rev-parse HEAD)"
 uv run --no-project --with pandas --with matplotlib --with pytest python -m pytest --noconftest -o addopts='' examples/bsee/issue2_public_data_r9/tests/test_build_r9.py -q
 ```
 
+`--build-commit` is required: the full 40-character SHA of a commit that already
+holds this `build_r9.py`. Appendix A links the script at that commit, so a
+branch name or short SHA is refused. Commit the script first, then build the
+page from that checkout. `--bundle PATH` also writes an offline interactive copy
+with the pinned Plotly bytes inlined; the path must lie outside this example
+folder, and the copy is not committed.
+
 `--data-dir` selects the raw download cache; the default is the ignored `cache/`
 directory beside the script. `--output-dir` selects a separate artifact folder.
-Network access uses standard-library `urllib`, only for missing files. Each
+Network access uses a standard-library `urllib` opener with an HTTPS handler
+only, only for missing files; any other scheme, and any redirect to one, is refused. Each
 cached file needs its adjacent `.receipt.json`. The receipt records the URL,
 retrieval time in UTC and SHA-256. Existing files with absent or mismatched
 receipts fail closed; their retrieval date is never guessed. All five sources
@@ -54,11 +62,15 @@ inspected table. The page and `changes.md` define the cohorts and exclusions.
 
 Each of the ten charts has PNG and SVG exports: the map, two bar charts, two
 pie sets (three pies each, one legend) and five day charts, one per stage of a
-well's life. The page embeds the static PNGs and the pinned Plotly library.
-Every chart has an interactive view and keeps its PNG as the fallback. No chart
-needs network access. The `id="deckhand-opening"` element is the slot for the
+well's life. The page embeds the static PNGs and loads the pinned Plotly 2.35.2
+release from its release address with a SHA-384 integrity hash of the pinned
+bytes, which keeps the tracked page under the 1,000 KiB commit limit. Every
+chart has an interactive view and keeps its PNG as the fallback; without network
+access, or if the library fails its integrity check, the PNGs stay. Pie legends
+do not hide slices, so the printed shares stay true. The map's period buttons
+keep the depth bands hidden or isolated through its legend. The `id="deckhand-opening"` element is the slot for the
 shared Deckhand opening graphic; the script draws nothing in it.
-The library's upstream license notice is retained. The body tables, Appendix B table and every
+The `--bundle` copy retains the library's upstream license notice. The body tables, Appendix B table and every
 figure have CSV data. Display values use at most four significant figures;
 pie shares use one decimal place. Zero-permit types are omitted from that year's pie, but retained in CSVs; shares
 under 5 % are listed under each pie. Approximate count displays carry an ≈ mark. CSVs retain exact counts and higher precision quartiles

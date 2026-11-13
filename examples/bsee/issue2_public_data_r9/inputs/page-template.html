@@ -853,7 +853,7 @@ ol.fn{margin:0 0 0 1.4em;padding:0;font-size:12.5px}
 </ol></figcaption>
 </figure>
 <h3>2.2 Water depth</h3>
-<p>Every permit counted records a water depth. The file gives it in feet; this page gives it in metres (1 ft = 0.3048 m). Figure 4 shows the new-well permits each year in four water-depth bands: under 100 m, 100 to 500 m, 500 to 1,500 m, and 1,500 m and deeper. A depth on a band edge is counted in the deeper band. Figure 5 shows the shares in the same three years.</p>
+<p>Every permit counted records a water depth. The file gives it in feet; this page gives it in metres (1 ft = 0.3048 m exactly, <a href="https://www.nist.gov/pml/special-publication-811/nist-guide-si-appendix-b-conversion-factors/nist-guide-si-appendix-b8">NIST SP 811, Appendix B.8</a>). Figure 4 shows the new-well permits each year in four water-depth bands: under 100 m, 100 to 500 m, 500 to 1,500 m, and 1,500 m and deeper. A depth on a band edge is counted in the deeper band. Figure 5 shows the shares in the same three years.</p>
 <figure>
 <div id="fig-depth" class="viz" style="height:420px" role="img" aria-label="New-well permits each year by water depth"></div><img class="chart-fallback" data-for="fig-depth" src="@@IMAGE:fig-depth@@" alt="New-well permits each year by water depth">
 <figcaption><p class="ft">Figure 4 - New-well permits by water depth</p>
@@ -942,7 +942,7 @@ ol.fn{margin:0 0 0 1.4em;padding:0;font-size:12.5px}
 <ul>
 <li>Piece: Gulf of Mexico well permits: a public US data file, Deckhand newsletter issue 2, version of 13 November 2026.</li>
 <li>Code: <a href="https://github.com/vamseeachanta/worldenergydata/blob/@@BUILD_COMMIT@@/examples/bsee/issue2_public_data_r9/build_r9.py">build_r9.py</a> at commit @@BUILD_SHORT@@ of worldenergydata, which builds this page, in a draft pull request not yet merged. The counting script of the permit file is <a href="https://github.com/vamseeachanta/worldenergydata/tree/f5af5b6da87710bb395552f9cda5e34d1f324479/examples/bsee/rawdata_fact_check">rawdata_fact_check</a> at commit f5af5b6d, in an open pull request not yet merged.</li>
-<li>Software: @@VERSIONS@@. Charts embed Plotly 2.35.2. The permit counting script needs only the Python 3.10 or later standard library.</li>
+<li>Software: @@VERSIONS@@. Interactive charts load Plotly 2.35.2 from its release address with an integrity check; without it, each chart shows its static image. The permit counting script needs only the Python 3.10 or later standard library.</li>
 <li>Check values: 2,895 wells; band totals 1,476 (under 100 m), 175 (100 to 500 m), 589 (500 to 1,500 m) and 655 (1,500 m and deeper). Mapped wells: @@CHECK_MAP@@. Table B1 gives the quartiles and counts. Recorded spud-to-total-depth medians by band: @@CHECK_SPUD@@ d. Completion estimate medians by band: @@CHECK_COMPLETION@@ d.</li>
 </ul>
 <h3>Adapt it to your project</h3>
@@ -970,7 +970,7 @@ ol.fn{margin:0 0 0 1.4em;padding:0;font-size:12.5px}
 <li>Abandonment: <code>ABANDON</code> with <code>PERMABAN</code> or <code>TEMPABAN</code>. Permanent takes precedence if both occur. The estimate covers the whole submission, not an isolated subtype.</li>
 <li>Exclude any <code>PLUGBACK</code> subtype as new-hole work. Exclude unspecified abandonment and <code>OTHER</code>, <code>INFORM</code> and <code>UTIL</code>; their physical scope is unresolved. Unknown primary codes stop the build.</li>
 <li>The <a href="data/code_mapping.csv">code mapping</a> retains the source descriptions and analysis rules. Subtypes join through <code>SN_APM_FK</code>; they do not multiply observations. Classification uses codes, not free-text narratives. The <a href="data/subtype-activity.csv">subtype cross-tab</a> shows the assigned activity. A submission can have several subtypes, so its rows are not additive.</li>
-<li>Convert feet to metres at 1 ft = 0.3048 m. Use under 100 m, 100 to 500 m, 500 to 1,500 m, and 1,500 m and deeper. Band edges go to the deeper band.</li>
+<li>Convert feet to metres at 1 ft = 0.3048 m exactly (NIST SP 811, Appendix B.8). Use under 100 m, 100 to 500 m, 500 to 1,500 m, and 1,500 m and deeper. Band edges go to the deeper band.</li>
 <li>Exclude missing, invalid, infinite and nonpositive days from each median. Count those exclusions in Table B1 and days-summary.csv. Missing or invalid depth remains a separate row outside the four depth bands.</li>
 <li>Use linear interpolation for the 25th and 75th percentiles. Pool the full period without trimming large positive intervals. A missing median means no usable observations, not zero days.</li>
 </ul>
@@ -992,9 +992,10 @@ ol.fn{margin:0 0 0 1.4em;padding:0;font-size:12.5px}
 <p>Deckhand: Make Engineering Enjoyable Again</p></div>
 </div>
 
-<script>@@PLOTLY_LIBRARY@@</script>
+@@PLOTLY_SCRIPT@@
 <script>
 (function(){
+if(typeof Plotly==='undefined')return;
 const charts=@@CHART_DATA@@;
 const css=getComputedStyle(document.documentElement),v=n=>css.getPropertyValue(n).trim();
 const font={family:'Segoe UI, Helvetica, Arial, sans-serif',size:12,color:v('--hs-text')};
@@ -1010,22 +1011,33 @@ domain:{x:[i/n+.02,(i+1)/n-.02],y:[.22,.92]},title:{text:String(p.year),position
 marker:{colors:p.colours,line:{color:'#fff',width:1}},
 hovertemplate:'%{label}<br>%{value} of '+p.total+' permits (%{customdata})<extra>'+p.year+'</extra>'}));
 const ann=c.pies.map((p,i)=>({x:(i+.5)/n,y:.2,xref:'paper',yref:'paper',xanchor:'center',yanchor:'top',showarrow:false,font:{size:10},text:p.small.join('<br>')}));
-return [traces,{margin:{l:8,r:8,t:10,b:10},annotations:ann,legend:{orientation:'h',x:.5,xanchor:'center',y:0,yanchor:'top',font:{size:11}}}];
+return [traces,{margin:{l:8,r:8,t:10,b:10},annotations:ann,legend:{orientation:'h',x:.5,xanchor:'center',y:0,yanchor:'top',font:{size:11},itemclick:false,itemdoubleclick:false}}];
+}
+function mapVisible(traces,fixed,s){
+return traces.map((t,j)=>j===0?true:j>=fixed&&t.meta!==s.period?false:s.hidden.includes(t.legendgroup)?'legendonly':true);
 }
 function map(c){
 const lx=[],ly=[];c.land.forEach(r=>{r.forEach(p=>{lx.push(p[0]);ly.push(p[1]);});lx.push(null);ly.push(null);});
 const traces=[{type:'scatter',mode:'lines',x:lx,y:ly,fill:'toself',fillcolor:'#e4e2dc',line:{color:'#a9a69e',width:.6},hoverinfo:'skip',showlegend:false}];
 c.bands.forEach((b,i)=>traces.push({type:'scatter',mode:'markers',x:[null],y:[null],name:b,legendgroup:b,marker:{color:c.traces[i].colour,size:9}}));
-c.traces.forEach(t=>traces.push({type:'scatter',mode:'markers',x:t.lon,y:t.lat,name:t.band,legendgroup:t.band,showlegend:false,visible:t.axis===0,
+c.traces.forEach(t=>traces.push({type:'scatter',mode:'markers',x:t.lon,y:t.lat,name:t.band,legendgroup:t.band,showlegend:false,visible:t.axis===0,meta:t.axis,
 customdata:t.year.map((y,j)=>[y,t.depth[j]]),marker:{color:t.colour,size:6,line:{color:'#0b3d5c',width:.3}},
 hovertemplate:'Spud %{customdata[0]}<br>Water depth %{customdata[1]:,} m<extra>'+t.band+'</extra>'}));
-const fixed=1+c.bands.length,vis=k=>traces.map((t,j)=>j<fixed?true:c.traces[j-fixed].axis===k);
-const buttons=c.periods.map((p,k)=>({label:p,method:'restyle',args:[{visible:vis(k)}]}));
+const fixed=1+c.bands.length,state={period:0,hidden:[]};
+const buttons=c.periods.map(p=>({label:p,method:'skip',args:[]}));
+const after=el=>{
+const apply=()=>Plotly.restyle(el,{visible:mapVisible(traces,fixed,state)});
+const band=e=>traces[e.curveNumber].legendgroup;
+el.on('plotly_buttonclicked',e=>{state.period=e.active;apply();});
+el.on('plotly_legendclick',e=>{const b=band(e);state.hidden=state.hidden.includes(b)?state.hidden.filter(x=>x!==b):state.hidden.concat([b]);apply();return false;});
+el.on('plotly_legenddoubleclick',e=>{const b=band(e),others=c.bands.filter(x=>x!==b);
+state.hidden=others.every(x=>state.hidden.includes(x))&&!state.hidden.includes(b)?[]:others;apply();return false;});
+};
 const lab=c.labels.map(l=>({x:l[0],y:l[1],text:l[2].replace('\n','<br>'),showarrow:false,font:{size:12,color:'#4f6d7a'}}));
 return [traces,{margin:{l:60,r:12,t:48,b:96},showlegend:true,legend:{orientation:'h',x:.5,xanchor:'center',y:-.16,yanchor:'top',title:{text:'Water depth '}},
 xaxis:{range:[c.box[0],c.box[1]],title:'Longitude (°)',constrain:'domain',zeroline:false,showgrid:false},
 yaxis:{range:[c.box[2],c.box[3]],title:'Latitude (°)',scaleanchor:'x',scaleratio:c.aspect,constrain:'domain',zeroline:false,showgrid:false},
-annotations:lab,updatemenus:[{type:'buttons',direction:'right',x:0,xanchor:'left',y:1.02,yanchor:'bottom',showactive:true,active:0,buttons:buttons}]}];
+annotations:lab,updatemenus:[{type:'buttons',direction:'right',x:0,xanchor:'left',y:1.02,yanchor:'bottom',showactive:true,active:0,buttons:buttons}]},after];
 }
 function interval(c){
 const top=Math.max(1,...c.q3.filter(x=>x!==null))*1.35;
@@ -1039,9 +1051,9 @@ return [traces,{margin:{l:130,r:16,t:8,b:44},xaxis:{title:'Days (d)',range:[0,to
 const kinds={bar,pieset,map,interval};
 charts.forEach(c=>{
 const el=document.getElementById(c.id); el.style.display='block';
-const [traces,layout]=kinds[c.kind](c,el);
+const [traces,layout,after]=kinds[c.kind](c,el);
 layout.font=font;layout.paper_bgcolor=v('--hs-surface');layout.plot_bgcolor=c.kind==='map'?'#eef4f8':v('--hs-surface');
-Plotly.newPlot(el,traces,layout,{displayModeBar:false,responsive:true}).then(()=>{document.querySelector('[data-for="'+c.id+'"]').hidden=true;}).catch(()=>{el.style.display='none';});
+Plotly.newPlot(el,traces,layout,{displayModeBar:false,responsive:true}).then(()=>{if(after)after(el);document.querySelector('[data-for="'+c.id+'"]').hidden=true;}).catch(()=>{el.style.display='none';});
 });
 if(window.ResizeObserver){const ro=new ResizeObserver(es=>es.forEach(e=>{if(e.target.data)Plotly.Plots.resize(e.target);}));document.querySelectorAll('.viz').forEach(d=>ro.observe(d));}
 })();

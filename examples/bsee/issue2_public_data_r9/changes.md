@@ -98,3 +98,35 @@ pies (now Figure 5) and the day chart (now Figure 6).
   New Well permit gives no requested spud date" is carried from the published
   permit counter at commit f5af5b6d; the Appendix B selection list keeps the
   build's rule names.
+
+## Review-gate round 2 fixes
+
+Second-provider review of 13 November 2026 at the previous head. Counts, day
+statistics, figures and data files are unchanged; `data/sources.csv` changes
+only in the role of the chart library. Changes a reader can see:
+
+- Conversion source: section 2.2 now reads "1 ft = 0.3048 m exactly" and links
+  NIST SP 811, Appendix B.8; the Appendix A conversion rule cites the same
+  source.
+- Chart library: the page loads Plotly 2.35.2 from its release address with an
+  integrity check instead of embedding it, so the page is 1,016,299 bytes
+  instead of 5,573,727. Without network access, or if the check fails, each
+  chart shows its static image. The Appendix A software line says so.
+- Pies (Figures 3 and 5): a legend click no longer hides a slice, so the shares
+  in the slices, the under-5 % lists and the hover text always refer to the
+  year total.
+- Map (Figure 1): depth bands hidden or isolated through the legend stay so
+  when the period buttons switch between 2005 to 2009 and 2021 to 2025.
+- Appendix A code link: `build_r9.py` at the full SHA of the commit that holds
+  the script, as before; the commit is new.
+- `data/sources.csv`: the Plotly role reads "Chart library" (was "Offline
+  chart library").
+- Revision 8 page: the same conversion citation, software line, chart library
+  loading, pie legend behaviour and code link change; 718,849 bytes instead of
+  5,277,002. Its counts and figures are unchanged.
+
+Not visible on the page: downloads accept HTTPS only, including redirects; the
+build requires `--build-commit` as a full 40-character SHA; `--bundle PATH`
+writes an offline interactive copy outside the example folder; both READMEs
+give the rebuild commands with `--build-commit`, and the revision 8 README no
+longer mentions a Table 2.

@@ -1,7 +1,13 @@
 """Offline regression cases for the newsletter's counting contract."""
+import hashlib
 import importlib.util
+import json
 import math
 import re
+import shutil
+import subprocess
+import urllib.request
+from fractions import Fraction
 from pathlib import Path
 
 import pandas as pd
@@ -11,6 +17,48 @@ ROOT = Path(__file__).resolve().parents[1]
 spec = importlib.util.spec_from_file_location('build_r8', ROOT / 'build_r8.py')
 build = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(build)
+FOLDER = 'issue2_public_data_r8'
+BUILD_FILE = 'build_r8.py'
+PAGE_FILE = ROOT / 'issue2-public-data-r8.html'
+
+CHART_HARNESS = r"""
+const input = JSON.parse(require('fs').readFileSync(0, 'utf8'));
+const plots = [], restyles = [], results = [], els = {}, touched = [];
+const el = id => els[id] || (els[id] = {id, style: {}, clientWidth: 900, handlers: {},
+  on(name, f) { this.handlers[name] = f; }});
+global.window = {};
+global.getComputedStyle = () => ({getPropertyValue: () => ' #123456 '});
+global.document = {documentElement: {}, querySelectorAll: () => [],
+  getElementById: id => { touched.push(id); return el(id); },
+  querySelector: () => ({hidden: false})};
+if (input.plotly) {
+  global.Plotly = {Plots: {resize() {}},
+    newPlot(e, traces, layout) { plots.push({id: e.id, traces, layout}); return Promise.resolve(); },
+    restyle(e, update) { restyles.push({id: e.id, visible: update.visible}); return Promise.resolve(); }};
+}
+new Function(input.script)();
+setTimeout(() => {
+  for (const [id, name, data] of input.events) results.push(el(id).handlers[name](data));
+  process.stdout.write(JSON.stringify({plots, restyles, results, touched}));
+}, 0);
+"""
+
+
+def run_chart_script(script, events=(), plotly=True):
+    """Run the page's chart script in Node with a recording Plotly stand-in and replay legend and button events."""
+    node = shutil.which('node')
+    if node is None:
+        pytest.skip('Node.js is needed for the chart interaction test')
+    done = subprocess.run([node, '-e', CHART_HARNESS],
+                          input=json.dumps({'script': script, 'events': list(events), 'plotly': plotly}),
+                          capture_output=True, text=True, encoding='utf-8', timeout=120, check=True)
+    return json.loads(done.stdout)
+
+
+def chart_script():
+    scripts = re.findall(r'<script>(\s*\(function\(\)\{.*?)</script>', PAGE_FILE.read_text(encoding='utf-8'), re.S)
+    assert len(scripts) == 1
+    return scripts[0]
 
 
 @pytest.mark.parametrize('metres,index', [(0, 0), (99.9, 0), (100, 1),
@@ -107,6 +155,7 @@ def test_apm_join_does_not_multiply_subtypes_or_use_ambiguous_regions():
 def test_offline_cache_missing_and_tampered(tmp_path, monkeypatch):
     import json
     monkeypatch.setattr(build.urllib.request, 'urlopen', lambda *a, **k: pytest.fail('Network access in offline test'))
+    monkeypatch.setattr(build, 'fetch', lambda *a, **k: pytest.fail('Network access in offline test'))
     with pytest.raises(FileNotFoundError):
         build.cache_source(tmp_path, 'source.zip', 'https://example.org/source.zip', True)
     (tmp_path / 'source.zip').write_bytes(b'changed')
@@ -338,3 +387,162 @@ def test_byline_at_foot_limits_once_and_plotly_blanks_small_slices():
     raw = (ROOT / 'issue2-public-data-r8.html').read_text(encoding='utf-8')
     assert "c.values[i]/c.total*100>=5?s:''" in raw
     assert 'SHA-256 <code>8f5ce969' in page and 'file of 12 November 2026' in page.split('Table B1 -')[1].split('</p>')[0]
+
+
+# Review-gate round 2 fixes (second-provider review at aa9e55aa) -------------------------------
+
+PLOTLY_SHA256 = '6d21266ce1bd7d9e5ab4e115989c70c20de0382fd973a8f26ab58619eba4d603'
+# Sub-resource integrity of the same pinned bytes (SHA-384, base64), recorded when the pin was checked.
+PLOTLY_SRI = 'sha384-cCVCZkAjYNxaYKbM8lsArLznDF/SvMFr1jcZrvOpSTCa0W40ZAdLzHCEulnUa5i7'
+# FIPS 180-2 test vector: SHA-384 of b'abc', in base64.
+ABC_SRI = 'sha384-ywB1P0WjXou1oD1pmsZQBycsMqsO3tFjGotgWkP/W+2AhgcroefMI1i67KE0yCWn'
+
+
+def test_tracked_page_is_under_the_unchanged_commit_size_limit():
+    config = (ROOT.parents[2] / '.pre-commit-config.yaml').read_text(encoding='utf-8')
+    maxkb = int(re.search(r'id: check-added-large-files\s+args: \[--maxkb=(\d+)\]', config)[1])
+    assert build.SIZE_LIMIT == maxkb * 1024 == 1_024_000
+    assert PAGE_FILE.stat().st_size < build.SIZE_LIMIT
+
+
+def test_page_writer_refuses_oversized_pages_and_bundles_inside_the_example(tmp_path):
+    cache, out = tmp_path / 'cache', tmp_path / 'out'
+    cache.mkdir()
+    out.mkdir()
+    (cache / build.PLOTLY).write_bytes(b'abc')
+    with pytest.raises(ValueError, match='commit limit'):
+        build.write_pages(out, cache, '@@PLOTLY_SCRIPT@@' + 'x' * build.SIZE_LIMIT)
+    assert not (out / build.PAGE).exists()
+    with pytest.raises(ValueError, match='Unresolved page token'):
+        build.write_pages(out, cache, '@@PLOTLY_SCRIPT@@@@CHART_DATA@@')
+    inside = build.ROOT / 'bundle-test.html'
+    with pytest.raises(ValueError, match='outside the tracked example folder'):
+        build.write_pages(out, cache, '<p>page</p>@@PLOTLY_SCRIPT@@', bundle=inside)
+    assert not inside.exists()
+    bundle = tmp_path / 'offline' / 'page.html'
+    build.write_pages(out, cache, '<p>page</p>@@PLOTLY_SCRIPT@@', bundle=bundle)
+    assert (out / build.PAGE).read_text(encoding='utf-8') == (
+        '<p>page</p><script src="https://cdn.plot.ly/plotly-2.35.2.min.js" '
+        f'integrity="{ABC_SRI}" crossorigin="anonymous"></script>')
+    assert bundle.read_text(encoding='utf-8') == '<p>page</p><script>abc</script>'
+
+
+def test_page_loads_the_pinned_plotly_release_with_integrity_and_keeps_static_fallbacks():
+    raw = PAGE_FILE.read_text(encoding='utf-8')
+    assert re.findall(r'<script\b[^>]*>', raw) == [
+        f'<script src="https://cdn.plot.ly/plotly-2.35.2.min.js" integrity="{PLOTLY_SRI}" crossorigin="anonymous">',
+        '<script>']
+    assert 'plotly.js v2.35.2' not in raw
+    pins = json.loads((ROOT / 'inputs/source-pins.json').read_text(encoding='utf-8'))
+    assert pins[build.PLOTLY] == PLOTLY_SHA256
+    assert build.FILES[build.PLOTLY] == 'https://cdn.plot.ly/plotly-2.35.2.min.js'
+    assert chart_script().lstrip().startswith("(function(){\nif(typeof Plotly==='undefined')return;\n")
+    cached = ROOT / 'cache' / build.PLOTLY
+    if cached.exists() and hashlib.sha256(cached.read_bytes()).hexdigest() == PLOTLY_SHA256:
+        assert f'integrity="{PLOTLY_SRI}"' in build.plotly_script(ROOT / 'cache')
+
+
+def test_without_plotly_the_charts_stay_static():
+    ran = run_chart_script(chart_script(), plotly=False)
+    assert ran['plots'] == [] and ran['touched'] == []
+
+
+@pytest.mark.parametrize('url', ['http://www.data.bsee.gov/Well/Files/APDRawData.zip', 'file:///C:/Windows/win.ini',
+                                 'ftp://example.org/a.zip', 'data:text/plain,abc',
+                                 'www.data.bsee.gov/Well/Files/APDRawData.zip'])
+def test_downloads_accept_https_only(url, monkeypatch):
+    monkeypatch.setattr(build, 'https_opener', lambda: pytest.fail('opener built for a refused address'))
+    with pytest.raises(ValueError, match='Only https downloads'):
+        build.fetch(url)
+
+
+def test_https_opener_has_no_file_ftp_data_or_plain_http_handler():
+    handlers = build.https_opener().handlers
+    assert any(type(h) is urllib.request.HTTPSHandler for h in handlers)
+    banned = (urllib.request.HTTPHandler, urllib.request.FileHandler, urllib.request.FTPHandler,
+              urllib.request.DataHandler, urllib.request.UnknownHandler, urllib.request.ProxyHandler)
+    assert not [h for h in handlers if isinstance(h, banned)]
+    assert 'urlopen(' not in (ROOT / BUILD_FILE).read_text(encoding='utf-8')
+
+
+def test_redirects_are_followed_only_to_https():
+    handler = build.HttpsOnlyRedirect()
+    request = urllib.request.Request('https://www.data.bsee.gov/Well/Files/APDRawData.zip')
+    with pytest.raises(ValueError, match='Only https downloads'):
+        handler.redirect_request(request, None, 302, 'Found', {}, 'http://www.data.bsee.gov/Well/Files/APDRawData.zip')
+    moved = handler.redirect_request(request, None, 302, 'Found', {}, 'https://mirror.example.org/APDRawData.zip')
+    assert moved.full_url == 'https://mirror.example.org/APDRawData.zip'
+
+
+def test_foot_to_metre_factor_is_the_exact_international_foot():
+    # Independent of the build constant: 1 ft = 12 in and 1 in = 25.4 mm exactly.
+    assert Fraction(str(build.FT_TO_M)) == 12 * Fraction('0.0254') == Fraction(3048, 10000)
+    source = (ROOT / BUILD_FILE).read_text(encoding='utf-8')
+    assert 'NIST Special Publication 811' in source and 'nist-guide-si-appendix-b8' in source
+    code = '\n'.join(line for line in source.splitlines() if not line.lstrip().startswith('#'))
+    assert re.findall(r'.*\.3048.*', code) == ['FT_TO_M = 0.3048']
+
+
+@pytest.mark.parametrize('feet,index', [
+    # Metres worked by hand as feet x 12 in x 25.4 mm: 328.08 ft = 99.998784 m, 328.09 ft = 100.001832 m,
+    # 1,640.41 ft = 499.996968 m, 1,640.42 ft = 500.000016 m, 4,921.25 ft = 1,499.997 m,
+    # 4,921.26 ft = 1,500.000048 m.
+    (328.08, 0), (328.09, 1), (1640.41, 1), (1640.42, 2), (4921.25, 2), (4921.26, 3)])
+def test_band_edges_from_hand_worked_feet(feet, index):
+    assert build.band_from_feet(feet) == build.BANDS[index]
+
+
+def test_page_cites_the_conversion_definition():
+    page = rendered_prose()
+    assert page.count('1 ft = 0.3048 m exactly') == 2
+    assert page.count('nist-guide-si-appendix-b8">NIST SP 811, Appendix B.8</a>') == 1
+    assert page.count('(NIST SP 811, Appendix B.8)') == 1
+
+
+@pytest.mark.parametrize('value', [None, '', 'dashwork/issue2-public-data-r8', 'HEAD', 'aa9e55aa',
+                                   'aa9e55aa91427a54002caec8ba9dcf0fe6953d2',
+                                   'AA9E55AA91427A54002CAEC8BA9DCF0FE6953D20',
+                                   'aa9e55aa91427a54002caec8ba9dcf0fe6953d20\n'])
+def test_rebuild_citation_needs_a_full_commit_sha(value):
+    with pytest.raises(ValueError, match='full 40-character SHA'):
+        build.check_build_commit(value)
+
+
+def test_build_refuses_a_missing_or_branch_build_commit_before_writing(tmp_path):
+    for argv in ([], ['--build-commit', 'dashwork/issue2-public-data-r8']):
+        with pytest.raises(SystemExit) as stop:
+            build.main(['--offline', '--data-dir', str(tmp_path / 'cache'), '--output-dir', str(tmp_path / 'out')] + argv)
+        assert stop.value.code == 2
+    assert list(tmp_path.iterdir()) == []
+    sha = 'aa9e55aa91427a54002caec8ba9dcf0fe6953d20'
+    assert build.check_build_commit(sha) == sha
+
+
+def test_appendix_links_the_script_at_a_full_commit_sha():
+    raw = PAGE_FILE.read_text(encoding='utf-8')
+    links = re.findall(r'href="https://github\.com/vamseeachanta/worldenergydata/blob/([^/"]+)/examples/bsee/'
+                       + re.escape(FOLDER) + '/' + re.escape(BUILD_FILE) + '"', raw)
+    assert len(links) == 1 and re.fullmatch(r'[0-9a-f]{40}', links[0])
+    assert f'at commit {links[0][:8]} of worldenergydata' in rendered_prose()
+    readme = (ROOT / 'README.md').read_text(encoding='utf-8')
+    assert readme.count('--build-commit "$(git rev-parse HEAD)"') == 2
+
+
+def test_retained_inputs_match_the_manifest_and_text_files_use_lf():
+    build.validate_inputs()
+    text = [p for p in ROOT.rglob('*') if p.is_file() and not {'cache', '__pycache__'} & set(p.relative_to(ROOT).parts)
+            and p.suffix in {'.json', '.csv', '.md', '.py', '.html', '.svg', '.txt'}]
+    assert ROOT / 'inputs' / 'manifest.json' in text
+    assert [p.relative_to(ROOT).as_posix() for p in text if b'\r' in p.read_bytes()] == []
+
+
+def test_pie_legend_clicks_cannot_hide_slices():
+    ran = run_chart_script(chart_script())
+    pies = [p for p in ran['plots'] if p['traces'][0]['type'] == 'pie']
+    assert [p['id'] for p in pies] == [f'pie-{k}-{y}' for k in ['rig', 'depth'] for y in [2005, 2015, 2025]]
+    for pie in pies:
+        assert pie['layout']['legend']['itemclick'] is False and pie['layout']['legend']['itemdoubleclick'] is False
+        # Shares in the labels are fixed text against the year total, so every slice must stay drawn.
+        assert all(label.rsplit(': ', 1)[1].endswith('%') for label in pie['traces'][0]['labels'])
+    bars = [p for p in ran['plots'] if p['traces'][0]['type'] == 'bar']
+    assert len(bars) == 2 and all('itemclick' not in p['layout']['legend'] for p in bars)
