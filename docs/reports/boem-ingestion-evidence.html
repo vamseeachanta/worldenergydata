@@ -27,7 +27,8 @@ These findings support partial evidence, rather than closure of the original mis
 <table>
 <thead><tr><th>Revision</th><th>Date (UTC)</th><th>Change and reason</th></tr></thead>
 <tbody><tr><td>1</td><td>2026-11-12</td><td>Record existing ingestion evidence and unresolved criteria before any closure decision.</td></tr>
-<tr><td>2</td><td>2026-11-12</td><td>Clarify lessee-record terminology, shell setup and platform limits for the reported checks.</td></tr></tbody>
+<tr><td>2</td><td>2026-11-12</td><td>Clarify lessee-record terminology, shell setup and platform limits for the reported checks.</td></tr>
+<tr><td>3</td><td>2026-11-13</td><td>Distinguish current and terminated lessee assignments and identify the commit for the Windows results.</td></tr></tbody>
 <caption>Table 1. Report revision history.</caption>
 </table>
 <h2>Scope and evidence pin</h2>
@@ -43,7 +44,7 @@ it does not establish availability in another installation or freshness at the s
 <thead><tr><th>Artifact</th><th>Observed records (count)</th><th>Criterion and result</th></tr></thead>
 <tbody>
 <tr><td><code>data/modules/bsee/leases/leases.json</code></td><td>20</td><td>Matches extract-manifest count; 20 of 20 registry lookups resolve.</td></tr>
-<tr><td><code>data/modules/bsee/leases/owners.json</code></td><td>729</td><td>Historical lessee (record-holder) rows, distinct from the lease count.</td></tr>
+<tr><td><code>data/modules/bsee/leases/owners.json</code></td><td>729</td><td>Lessee-assignment rows: 57 current (C) and 672 terminated (T), distinct from the lease count.</td></tr>
 <tr><td><code>data/modules/bsee/leases/operators.json</code></td><td>727</td><td>Historical operator rows, distinct from the lease count.</td></tr>
 <tr><td><code>data/modules/bsee/leases/panel_values.json</code></td><td>20</td><td>One panel record per extracted lease.</td></tr>
 <tr><td><code>data/modules/bsee/leases/missing.json</code></td><td>0</td><td>No missing lease among the selected 20; this is not evidence of complete offshore coverage.</td></tr>
@@ -101,7 +102,7 @@ uv run --no-project --with pytest --with pyyaml --with pandas python -m pytest t
 27 tests. The catalog suite generates temporary catalogs; it does not certify every
 checked-in catalog path. Coverage-output defaults are replaced for these focused
 runs so generated test outputs remain outside the repository.</p>
-<p>A separate check on Windows with Python 3.12 at the report's initial revision
+<p>A separate check on Windows with Python 3.12 at commit <code>81e70fd0</code>
 recorded 14 passed and 3 failed in the lease suite, and 27 passed in the catalog suite.
 The lease failures concern newline handling: the multiline CSV assertion and two
 panel HTML readback checks. The Linux counts do not establish Windows compatibility;
