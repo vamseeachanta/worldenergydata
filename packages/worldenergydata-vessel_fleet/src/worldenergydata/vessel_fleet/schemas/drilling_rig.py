@@ -15,6 +15,11 @@ class DrillingRigSchema(BaseVesselSchema):
 
     Extends BaseVesselSchema with rig-specific fields for water depth,
     drilling equipment, BOP, derrick, and rig configuration.
+
+    DRAFT_M is the source-condition draft, not necessarily an operating draft.
+    RAW_DRAFT_LOAD_LINE_FT explicitly identifies a load-line draft. The legacy
+    RAW_DRAFT_OPERATING_FT key is a deprecated alias for those load-line values;
+    older extractions can also contain drafts with no stated condition.
     """
 
     # Rig identification
@@ -28,6 +33,11 @@ class DrillingRigSchema(BaseVesselSchema):
     DRILLING_DEPTH_RATING_FT: Optional[float] = None
     MAX_WATER_DEPTH_FT: Optional[float] = None
 
+    # Source-condition draft provenance (feet); metre values remain in DRAFT_M.
+    RAW_DRAFT_LOAD_LINE_FT: Optional[float] = Field(
+        default=None,
+        description="Source-labelled load-line draft in feet; not operating draft.",
+    )
     # Drilling equipment
     DERRICK_HEIGHT_FT: Optional[float] = None
     HOOKLOAD_RATING_KIPS: Optional[float] = None
@@ -149,6 +159,7 @@ class DrillingRigSchema(BaseVesselSchema):
         "WATER_DEPTH_RATING_FT",
         "DRILLING_DEPTH_RATING_FT",
         "MAX_WATER_DEPTH_FT",
+        "RAW_DRAFT_LOAD_LINE_FT",
         "DERRICK_HEIGHT_FT",
         "HOOKLOAD_RATING_KIPS",
         "DRAWWORKS_HP",
@@ -198,6 +209,7 @@ class DrillingRigSchema(BaseVesselSchema):
         "WATER_DEPTH_RATING_FT",
         "DRILLING_DEPTH_RATING_FT",
         "MAX_WATER_DEPTH_FT",
+        "RAW_DRAFT_LOAD_LINE_FT",
         "DERRICK_HEIGHT_FT",
         "HOOKLOAD_RATING_KIPS",
         "DRAWWORKS_HP",
