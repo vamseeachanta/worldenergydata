@@ -3,11 +3,11 @@
 **Dataset:** `data/modules/cost/curated/cost_component_timeseries.csv`
 **Issue:** [#844](https://github.com/vamseeachanta/worldenergydata/issues/844)
 **Contract:** every row validates against `worldenergydata.cost.timeseries.schema.CostObservation`
-**Accessed:** 2026-07-14
+**Accessed:** research rows 2026-07-14; FRED reference rows 2026-11-12 (see `reference_series.manifest.json`)
 
 `year × cost-component × band`, with full provenance on every row.
 
-## Composition (349 rows)
+## Composition (407 rows)
 
 | Component | Rows | Span | Primary source |
 |---|---|---|---|
@@ -19,7 +19,7 @@
 | `vessel_day_rate_msv` | 8 | 2012–2019 | Bourbon Subsea Services — the only public MSV series |
 | `surf_cost` (lump-sum awards) | 5 | 2023–2024 | Saipem, McDermott, Subsea7 award releases |
 | `index_ucci` / `index_uoci` | 24 | 2006–2020 | Oil & Gas Journal, Offshore Magazine (IHS/S&P quotes) |
-| `index_cpi`, `index_ppi_*`, `oil_price_*` | 174 | 1998–2026 | FRED (BLS, EIA) — fetched, not typed |
+| `index_cpi`, `index_ppi_*`, `oil_price_*` | 232 | 1998–2026 | FRED (BLS, EIA) — fetched, not typed; includes `index_ppi_steel_mill` and `index_ppi_steel_pipe` |
 
 ## Read this before using the day-rate series
 

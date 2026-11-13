@@ -133,8 +133,23 @@ def test_decode_upstream_positions(monkeypatch):
 
     hs, tp = _make_hs_tp()
     pdf, grid = np.array([0.2, 0.1]), np.array([1.0, 2.0])
-    raw = (1, 2, 3, 4, 5, 6, pdf, grid, [], [], [50], pd.DataFrame())
-    monkeypatch.setattr(module.ms, "joint_distribution_Hs_Tp", lambda *a, **kw: raw)
+    # The adapter contract now requires a consistent contour and branch table.
+    table = pd.DataFrame({"hs_50": [1.0], "t1_50": [2.0], "t2_50": [3.0]})
+    raw = (
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        pdf,
+        grid,
+        [np.array([2.0, 3.0, 2.0])],
+        [np.array([1.0, 1.0, 1.0])],
+        [50],
+        table,
+    )
+    monkeypatch.setattr(module, "fit_joint_distribution", lambda *a, **kw: raw)
     model = JointProbabilityModel().fit(hs, tp, periods=[50])
     assert model.conditional_tp == {
         "model": "lognormal_conditional",

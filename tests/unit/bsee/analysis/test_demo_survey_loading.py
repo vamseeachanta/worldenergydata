@@ -12,6 +12,8 @@ import importlib.util
 import io
 import pickle
 import runpy
+import shutil
+import socket
 import zipfile
 from pathlib import Path
 from unittest.mock import Mock
@@ -22,6 +24,45 @@ import pytest
 
 DEMO_PATH = Path(__file__).resolve().parents[4] / "scripts/bsee/demo_well_path_julia.py"
 ROW = "000000000001,10,0,100,N,20,0,E,99,1,2,-90,28\n"
+DESERIALIZATION_EVENTS = []
+
+
+def record_deserialization():
+    """Record a harmless canary decode, including through unpatched aliases."""
+    DESERIALIZATION_EVENTS.append("decoded")
+
+
+class DeserializationCanary:
+    def __reduce__(self):
+        return record_deserialization, ()
+
+
+@pytest.fixture
+def forbid_deserialization(monkeypatch):
+    """Reject deserialization, extraction and unexpected network calls."""
+    DESERIALIZATION_EVENTS.clear()
+    guards = []
+    for target, attribute in (
+        (pickle, "load"),
+        (pickle, "loads"),
+        (pickle, "Unpickler"),
+        (pd, "read_pickle"),
+        (zipfile.ZipFile, "extract"),
+        (zipfile.ZipFile, "extractall"),
+        (shutil, "unpack_archive"),
+        (httpx.Client, "send"),
+        (httpx.AsyncClient, "send"),
+        (socket, "create_connection"),
+        (socket.socket, "connect"),
+        (socket.socket, "connect_ex"),
+    ):
+        guard = Mock(side_effect=AssertionError(f"Forbidden call: {attribute}"))
+        monkeypatch.setattr(target, attribute, guard)
+        guards.append(guard)
+    yield
+    assert DESERIALIZATION_EVENTS == []
+    for guard in guards:
+        guard.assert_not_called()
 
 
 @pytest.fixture
@@ -37,16 +78,42 @@ def demo(tmp_path, monkeypatch):
     return module
 
 
-def archive_bytes(text=ROW, member="dsptsdelimit.txt"):
+def archive_bytes(text=ROW, member="dsptsdelimit.txt", pickle_payload=None):
     output = io.BytesIO()
     with zipfile.ZipFile(output, "w") as archive:
         archive.writestr(member, text)
+        if pickle_payload is not None:
+            archive.writestr("dsptsdelimit.bin", pickle_payload)
     return output.getvalue()
 
 
 def local_archive(demo, data):
     Path(demo.DSPTS_ZIP).write_bytes(data)
     return hashlib.sha256(data).hexdigest()
+
+
+def mock_download(demo, monkeypatch, data, status=200):
+    response = httpx.Response(
+        status,
+        content=data,
+        headers={"Location": "https://example.com/other.zip"},
+        request=httpx.Request("GET", demo.DSPTS_URL),
+    )
+    stream = Mock()
+    stream.return_value.__enter__ = Mock(return_value=response)
+    stream.return_value.__exit__ = Mock(return_value=False)
+    monkeypatch.setattr(httpx, "stream", stream)
+    return stream
+
+
+@pytest.mark.parametrize("protocol", [0, 4])
+def test_deserialization_canary_records_an_unpatched_decode(protocol):
+    """Establish the canary signal separately from the guarded loader calls."""
+    DESERIALIZATION_EVENTS.clear()
+    payload = pickle.dumps(DeserializationCanary(), protocol=protocol)
+    assert pickle.loads(payload) is None
+    assert DESERIALIZATION_EVENTS == ["decoded"]
+    DESERIALIZATION_EVENTS.clear()
 
 
 def test_verified_text_preserves_first_record_and_string_identifiers(demo):
@@ -114,18 +181,63 @@ def test_legacy_pickle_is_never_read_or_replaced(demo, monkeypatch, tmp_path):
     ]
 
 
-def test_missing_archive_is_downloaded_and_verified(demo, monkeypatch):
-    data = archive_bytes()
-    response = httpx.Response(
-        200, content=data, request=httpx.Request("GET", demo.DSPTS_URL)
-    )
-    stream = Mock()
-    stream.return_value.__enter__ = Mock(return_value=response)
-    stream.return_value.__exit__ = Mock(return_value=False)
-    monkeypatch.setattr(httpx, "stream", stream)
+@pytest.mark.parametrize("legacy_cache", [False, True])
+def test_missing_archive_is_downloaded_and_verified(
+    demo, monkeypatch, tmp_path, forbid_deserialization, legacy_cache
+):
+    payload = pickle.dumps(DeserializationCanary(), protocol=4)
+    legacy = tmp_path / "dsptsdelimit.bin"
+    if legacy_cache:
+        legacy.write_bytes(payload)
+    data = archive_bytes(pickle_payload=payload)
+    stream = mock_download(demo, monkeypatch, data)
     result = demo.load_surveys(hashlib.sha256(data).hexdigest())
-    assert len(result) == 1
+    assert result["API_WELL_NUMBER"].tolist() == ["000000000001"]
+    assert result["SURVEY_POINT_MD"].tolist() == [100]
+    assert result["SURVEY_POINT_TVD"].tolist() == [99]
     assert Path(demo.DSPTS_ZIP).read_bytes() == data
+    stream.assert_called_once_with("GET", demo.DSPTS_URL, follow_redirects=False)
+    expected_paths = ["dsptsdelimit.ZIP"]
+    if legacy_cache:
+        assert legacy.read_bytes() == payload
+        expected_paths.append("dsptsdelimit.bin")
+    assert sorted(path.name for path in tmp_path.iterdir()) == sorted(expected_paths)
+
+
+@pytest.mark.parametrize("protocol", [0, 4])
+@pytest.mark.parametrize("layout", ["raw", "pickle-only-zip", "pickle-as-text"])
+def test_downloaded_pickle_is_rejected_without_deserialization(
+    demo, monkeypatch, tmp_path, forbid_deserialization, protocol, layout
+):
+    payload = pickle.dumps(DeserializationCanary(), protocol=protocol)
+    data = payload
+    error_type, message = zipfile.BadZipFile, "File is not a zip file"
+    if layout == "pickle-only-zip":
+        data = archive_bytes(payload, member="dsptsdelimit.bin")
+        error_type, message = ValueError, "exactly one dsptsdelimit.txt"
+    elif layout == "pickle-as-text":
+        data = archive_bytes(payload)
+        error_type, message = ValueError, "survey schema"
+    stream = mock_download(demo, monkeypatch, data)
+    with pytest.raises(error_type, match=message) as error:
+        demo.load_surveys(hashlib.sha256(data).hexdigest())
+    if layout == "pickle-as-text":
+        if protocol == 4:
+            assert isinstance(error.value.__cause__, UnicodeDecodeError)
+        else:
+            assert "field count in record 1" in str(error.value.__cause__)
+    assert Path(demo.DSPTS_ZIP).read_bytes() == data
+    assert [path.name for path in tmp_path.iterdir()] == ["dsptsdelimit.ZIP"]
+    stream.assert_called_once_with("GET", demo.DSPTS_URL, follow_redirects=False)
+
+
+def test_download_redirect_creates_no_archive(
+    demo, monkeypatch, forbid_deserialization
+):
+    stream = mock_download(demo, monkeypatch, b"", status=302)
+    with pytest.raises(httpx.HTTPStatusError, match="302"):
+        demo.load_surveys(hashlib.sha256(b"approved").hexdigest())
+    assert not Path(demo.DSPTS_ZIP).exists()
     stream.assert_called_once_with("GET", demo.DSPTS_URL, follow_redirects=False)
 
 
@@ -140,16 +252,18 @@ def test_http_failure_does_not_create_archive(demo, monkeypatch):
     assert not Path(demo.DSPTS_ZIP).exists()
 
 
-def test_download_mismatch_is_rejected(demo, monkeypatch):
-    response = httpx.Response(
-        200, content=archive_bytes(), request=httpx.Request("GET", demo.DSPTS_URL)
+def test_download_mismatch_is_rejected(demo, monkeypatch, forbid_deserialization):
+    data = archive_bytes(
+        pickle_payload=pickle.dumps(DeserializationCanary(), protocol=4)
     )
-    stream = Mock()
-    stream.return_value.__enter__ = Mock(return_value=response)
-    stream.return_value.__exit__ = Mock(return_value=False)
-    monkeypatch.setattr(httpx, "stream", stream)
+    stream = mock_download(demo, monkeypatch, data)
+    parser = Mock(side_effect=AssertionError("ZIP parsed before verification"))
+    monkeypatch.setattr(zipfile, "ZipFile", parser)
     with pytest.raises(ValueError, match="SHA-256 mismatch"):
         demo.load_surveys(hashlib.sha256(b"different archive").hexdigest())
+    parser.assert_not_called()
+    assert Path(demo.DSPTS_ZIP).read_bytes() == data
+    stream.assert_called_once_with("GET", demo.DSPTS_URL, follow_redirects=False)
 
 
 @pytest.mark.parametrize(
