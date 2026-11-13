@@ -169,7 +169,7 @@ def test_table1_html_csv_and_annual_counts_agree():
     table = pd.read_csv(ROOT / 'data/table1.csv', dtype=str, keep_default_na=False)
     assert cells.rows == [list(table.columns)] + table.values.tolist()
     rig = pd.read_csv(ROOT / 'data/fig-p1-new-well-permits-by-rig-type.csv')
-    depth = pd.read_csv(ROOT / 'data/new-well-permits-by-water-depth-r7.csv')
+    depth = pd.read_csv(ROOT / 'data/new-well-permits-by-water-depth.csv')
     for i, category in enumerate(build.RIGS):
         assert int(table.iloc[i, 1].replace(',', '')) == rig[category].sum()
     for i, column in enumerate(build.WK):
@@ -178,7 +178,7 @@ def test_table1_html_csv_and_annual_counts_agree():
 
 def test_r7_count_conservation_and_exact_pies():
     rig = pd.read_csv(ROOT / 'data/fig-p1-new-well-permits-by-rig-type.csv')
-    depth = pd.read_csv(ROOT / 'data/new-well-permits-by-water-depth-r7.csv')
+    depth = pd.read_csv(ROOT / 'data/new-well-permits-by-water-depth.csv')
     assert rig.total.sum() == 2895
     assert rig[build.RIGS].sum(axis=1).equals(rig.total)
     assert depth[build.WK].sum(axis=1).equals(depth.permits)
@@ -197,11 +197,16 @@ def test_rendered_html_contract():
     assert re.search(r'Some of the observations are as follows:</p>\s*<ul>', page)
     assert 'Appendix A Reusable prompts' in page
     headings = re.findall(r'<h[23][^>]*>(.*?)</h[23]>', page)
-    assert all(re.match(r'(\d+(\.\d+)? |B\.\d+ |Appendix [AB] )', h) for h in headings)
+    assert all(re.match(r'(\d+(\.\d+)? |B\.\d+ |Appendix [AB] )', h) or h in ('What you need to run this', 'Reproduce the published result', 'Adapt it to your project') for h in headings)
+    assert '4 Outlook and open points' in headings
+    assert '<blockquote class="takeaway">' in page and 'class="toc"' in page and 'class="offer"' in page
+    assert 'Table 2' not in page
+    assert not re.search(r'r7|r8|receipt|snapshot|-r7\.csv|b26eb928', page)
+    assert '<sup>a</sup>' in page and 'a. The counts here are from the file of 2 November 2026.' in page
     assert not re.search(r'[A-Z]:[\\/]|file://|/mnt/|/Users/', page)
     assert not re.search(r'\b(acceptable|conservative|safe)\b', page, re.I)
     assert page.count('Our hypothesis:') == 2
-    assert '2026 is partial' in page
+    assert 'The year 2026 runs only to the file of 2 November 2026.' in page
     assert 'EST_OPERATION_DAYS' in page
     assert 'TOTAL_DEPTH_DATE' in page
     assert '.viz{display:none}' in page
@@ -241,50 +246,46 @@ def test_body_rules_are_short_and_details_are_in_appendix_b():
     assert rules.count('href="#counting-rules"') == 1
     body, appendix = page.split('<h2 id="counting-rules">')
     for detail in ['SN_APM', 'ZONE', 'PERMABAN', 'PLUGBACK', 'REGION_CODE', 'ST00BP00', 'Selection counts before day exclusions', 'repeat-key sensitivity check']:
-        assert detail not in body.split('<h2>3 ')[1].split('<h2 id="reusable-prompts">')[0]
+        assert detail not in body.split('<h2 id="s3">3 ')[1].split('<h2 id="reusable-prompts">')[0]
         assert detail in appendix
     assert page.index('Appendix A Reusable prompts') < page.index('Appendix B Counting rules and record counts for section 3')
 
 
-def test_body_table_is_six_columns_with_full_audit_in_appendix():
+def test_body_holds_figure_3_and_table_1_and_appendix_holds_full_audit():
     page = rendered_prose()
     body, appendix = page.split('<h2 id="counting-rules">')
-    table = re.findall(r'<table>.*?</table>', body, re.S)[1]
-    assert re.findall(r'<th\b[^>]*>(.*?)</th>', table) == ['Activity and basis', 'Water depth', 'Used (-)', 'Q1 (d)', 'Median (d)', 'Q3 (d)']
-    assert table.count('<tr>') == 21
-    assert 'Missing depth' not in table
-    assert 'Every selected record has a water depth.' in body
+    assert len(re.findall(r'<table>.*?</table>', body, re.S)) == 1
+    assert 'Table 2' not in page
+    assert 'Figure 3 -' in body
     assert 'Missing/invalid (-)' in appendix and 'Nonpositive (-)' in appendix
     assert 'Missing depth' in appendix
 
 
-def test_closing_paragraphs_move_unchanged_after_figure3():
-    import os
-    import subprocess
-    old = subprocess.run(['git', 'show', 'c7fc424d:examples/bsee/issue2_public_data_r8/inputs/page-template.html'],
-        cwd=ROOT, capture_output=True, check=True, encoding='utf-8',
-        creationflags=getattr(subprocess, 'CREATE_NO_WINDOW', 0),
-        env={k: v for k, v in os.environ.items() if k not in {'GIT_DIR', 'GIT_WORK_TREE', 'GIT_COMMON_DIR'}}).stdout
+def test_outlook_section_holds_hypotheses_open_points_and_closing_order():
     page = rendered_prose()
-    paragraphs = re.findall(r'<p(?: class="q")?>(?:Our hypothesis:|To try it out|Each count here).*?</p>', old)
-    assert len(paragraphs) == 4
-    assert '\n'.join(paragraphs) in page
-    for paragraph in paragraphs:
-        assert page.count(paragraph) == 1
-        assert page.index('Figure 3 -') < page.index(paragraph) < page.index('<p>If you have run your own analysis')
+    section = page.split('<h2 id="s4">')[1].split('<h2 id="reusable-prompts">')[0]
+    assert section.count('Our hypothesis:') == 2
+    assert 'To try it out or adapt the analysis, see <a href="#reusable-prompts">reusable prompt</a>.' in section
+    assert section.index('Our hypothesis:') < section.index('Open points') < section.index('class="offer"') < section.index('If you have run your own analysis')
+    assert 'support@aceengineer.com' not in section.split('class="offer"')[1].split('</div>')[0]
+    assert page.index('Figure 3 -') < page.index('<h2 id="s4">')
+    for part in ['What you need to run this', 'Reproduce the published result', 'Adapt it to your project']:
+        assert page.count('<h3>' + part + '</h3>') == 1
+    appendix = page.split('<h2 id="reusable-prompts">')[1].split('<h2 id="counting-rules">')[0]
+    assert 'SHA-256' in appendix and 'file of 12 November 2026' in appendix
+    assert appendix.rstrip().endswith('write to support@aceengineer.com.</p>')
 
 
-def test_page_dates_captions_and_concise_review_panel():
+def test_page_dates_captions_and_minimal_review_marker():
     page = rendered_prose()
     assert not re.search(r'\d{4}-\d{2}-\d{2}|\(UTC\)', re.sub(r'<style.*?</style>', '', page, flags=re.S))
     source = 'Source: BSEE Application for Permit to Drill raw data (<a href="https://www.data.bsee.gov/Well/Files/APDRawData.zip">APDRawData.zip</a>), file of 2 November 2026, retrieved 3 November 2026. Data:'
-    assert page.count(source) == 9
-    assert '<sup>a</sup>' not in page
-    assert page.count('Types with no permits in that year are not shown.') == 6
-    panel = page.split('<div class="review-panel">')[1].split('</div>')[0]
-    assert panel.count('<li>') == 6
-    assert 'Section 3 data: operator estimates (APM) and recorded spud-to-total-depth dates (borehole files), retrieved 13 November 2026; the APD file has no estimated drilling days.' in panel
-    assert not re.search(r'pull/|gate run|[0-9a-f]{40}', panel, re.I)
+    assert page.count(source) == 2
+    assert page.count('types with no permits that year are not shown.') == 3
+    assert page.count('bands with no permits that year are not shown.') == 3
+    assert 'not statistical medians' not in page
+    panel = page.split('<div class="review-panel"')[1].split('</div>')[0]
+    assert 'Review copy' in panel
     assert not (ROOT / 'review-plan.html').exists()
 
 
@@ -298,7 +299,7 @@ def test_pie_payload_and_static_labels_skip_zero_use_one_decimal(tmp_path, monke
     monkeypatch.setattr(build, 'save_figure', capture)
     (tmp_path / 'data').mkdir()
     rig = pd.read_csv(ROOT / 'inputs/fig-p1-new-well-permits-by-rig-type.csv')
-    depth = pd.read_csv(ROOT / 'inputs/new-well-permits-by-water-depth-r7.csv')
+    depth = pd.read_csv(ROOT / 'inputs/new-well-permits-by-water-depth.csv')
     payload = build.count_figures(rig, depth, tmp_path)
     for chart in payload:
         if chart['kind'] != 'pie':
@@ -307,7 +308,7 @@ def test_pie_payload_and_static_labels_skip_zero_use_one_decimal(tmp_path, monke
         assert chart['shares'] == [f'{v / chart["total"] * 100:.1f}%' for v in chart['values']]
         legends, labels = captured[chart['id']]
         assert legends == [f'{label}: {share}' for label, share in zip(chart['labels'], chart['shares'])]
-        assert labels == chart['shares']
+        assert labels == [x for x, v in zip(chart['shares'], chart['values']) if v / chart['total'] * 100 >= 5]
 
 
 def test_depth_statement_fails_closed_for_new_missing_depth():

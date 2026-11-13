@@ -1,6 +1,6 @@
 file,url,retrieved_utc,sha256,role
-APDRawData.zip (r7 snapshot),https://www.data.bsee.gov/Well/Files/APDRawData.zip,2026-11-03T02:28Z,b4ab66063de5a95c78d0e4d33d220ea806ef07f114bd2add6efa9e8561d299c0,Inherited r7 receipt; counts preserved; original zip not supplied
-APDRawData.zip,https://www.data.bsee.gov/Well/Files/APDRawData.zip,2026-11-13T00:51:51.796773+00:00,8f5ce969356ab4fd1349a5218b238c161a348d62efca85c5296102341ed4ba21,Schema inspection only
+APDRawData.zip (file of 2 November 2026),https://www.data.bsee.gov/Well/Files/APDRawData.zip,2026-11-03T02:28Z,b4ab66063de5a95c78d0e4d33d220ea806ef07f114bd2add6efa9e8561d299c0,Counts for Figures 1 and 2 and Table 1
+APDRawData.zip,https://www.data.bsee.gov/Well/Files/APDRawData.zip,2026-11-13T00:51:51.796773+00:00,8f5ce969356ab4fd1349a5218b238c161a348d62efca85c5296102341ed4ba21,Column check of the permit file
 eWellAPMRawData.zip,https://www.data.bsee.gov/Well/Files/eWellAPMRawData.zip,2026-11-13T00:52:09.955638+00:00,02b798158b5b9128637a04daa4b38dcb99aa349bd38a50211e8b9a85316f4629,Duration analysis
 BoreholeRawData.zip,https://www.data.bsee.gov/Well/Files/BoreholeRawData.zip,2026-11-13T00:51:53.257985+00:00,41d201b17c9982484fe781f797c1e621529e4d5469178d3c978843a316ae444e,Duration analysis
 plotly-2.35.2.min.js,https://cdn.plot.ly/plotly-2.35.2.min.js,2026-11-13T00:57:15.613251+00:00,6d21266ce1bd7d9e5ab4e115989c70c20de0382fd973a8f26ab58619eba4d603,Offline chart library

@@ -2,22 +2,22 @@
   {
     "file": "fig-p1-new-well-permits-by-rig-type.csv",
     "sha256": "a53aee488587f01551aed29223fafc35d1a3dd0853b9d139c1ced3109b7db1b8",
-    "basis": "r7 retained content"
+    "basis": "retained content of the published page"
   },
   {
-    "file": "new-well-permits-by-water-depth-r7.csv",
+    "file": "new-well-permits-by-water-depth.csv",
     "sha256": "3034eb409e405d18d843f90458a69e4df5c5d1fc80fc1c33a027d9f6022c1d2c",
-    "basis": "r7 retained content"
+    "basis": "retained content of the published page"
   },
   {
     "file": "page-template.html",
-    "sha256": "7de4d599aebf926ab68eafe78ad5cf84b4b31c3153eaccdd8653e244e059f722",
-    "basis": "r8 page template derived from r7 CSS and retained prose"
+    "sha256": "b8951cea4a31b79ceeca09aaf32947111fa252ae40fd8b286e1a4dba2f160bd6",
+    "basis": "page template derived from the published page CSS and retained prose"
   },
   {
     "file": "table1.csv",
     "sha256": "676b0198148b5283bf0f5852bb6b50ab961b86427cd281b76f906f791c14e924",
-    "basis": "r7 retained content"
+    "basis": "retained content of the published page"
   },
   {
     "file": "source-pins.json",

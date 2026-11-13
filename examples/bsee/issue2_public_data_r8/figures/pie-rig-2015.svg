@@ -292,15 +292,6 @@ z
     </g>
    </g>
    <g id="text_3">
-    <!-- 4.8% -->
-    <g transform="translate(276.492885 233.730624) scale(0.08 -0.08)">
-     <use xlink:href="#DejaVuSans-17"/>
-     <use xlink:href="#DejaVuSans-11" transform="translate(63.625 0)"/>
-     <use xlink:href="#DejaVuSans-1b" transform="translate(95.40625 0)"/>
-     <use xlink:href="#DejaVuSans-8" transform="translate(159.03125 0)"/>
-    </g>
-   </g>
-   <g id="text_4">
     <!-- 26.5% -->
     <g transform="translate(291.991546 148.312082) scale(0.08 -0.08)">
      <defs>
@@ -366,7 +357,7 @@ z
      <use xlink:href="#DejaVuSans-8" transform="translate(222.65625 0)"/>
     </g>
    </g>
-   <g id="text_5">
+   <g id="text_4">
     <!-- 7.2% -->
     <g transform="translate(226.64174 84.166627) scale(0.08 -0.08)">
      <defs>
@@ -387,7 +378,7 @@ z
      <use xlink:href="#DejaVuSans-8" transform="translate(159.03125 0)"/>
     </g>
    </g>
-   <g id="text_6">
+   <g id="text_5">
     <!-- 2015: 83 permits -->
     <g transform="translate(164.408437 12.118365) scale(0.12 -0.12)">
      <defs>
@@ -623,7 +614,7 @@ L 82.23625 336.661602
 z
 " style="fill: #0b3d5c; stroke: #ffffff; stroke-linejoin: miter"/>
     </g>
-    <g id="text_7">
+    <g id="text_6">
      <!-- Jack-up: 8.4% -->
      <g transform="translate(104.63625 342.261602) scale(0.08 -0.08)">
       <defs>
@@ -761,7 +752,7 @@ L 82.23625 348.662227
 z
 " style="fill: #2bb2a6; stroke: #ffffff; stroke-linejoin: miter"/>
     </g>
-    <g id="text_8">
+    <g id="text_7">
      <!-- Drillship: 53.0% -->
      <g transform="translate(104.63625 354.262227) scale(0.08 -0.08)">
       <defs>
@@ -837,7 +828,7 @@ L 82.23625 360.662852
 z
 " style="fill: #e69f00; stroke: #ffffff; stroke-linejoin: miter"/>
     </g>
-    <g id="text_9">
+    <g id="text_8">
      <!-- Semisubmersible: 4.8% -->
      <g transform="translate(104.63625 366.262852) scale(0.08 -0.08)">
       <defs>
@@ -930,7 +921,7 @@ L 215.1475 336.661602
 z
 " style="fill: #56b4e9; stroke: #ffffff; stroke-linejoin: miter"/>
     </g>
-    <g id="text_10">
+    <g id="text_9">
      <!-- DP semisubmersible: 26.5% -->
      <g transform="translate(237.5475 342.261602) scale(0.08 -0.08)">
       <defs>
@@ -991,7 +982,7 @@ L 215.1475 348.662227
 z
 " style="fill: #cc79a7; stroke: #ffffff; stroke-linejoin: miter"/>
     </g>
-    <g id="text_11">
+    <g id="text_10">
      <!-- Platform rig: 7.2% -->
      <g transform="translate(237.5475 354.262227) scale(0.08 -0.08)">
       <defs>

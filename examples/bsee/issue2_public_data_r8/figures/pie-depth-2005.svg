@@ -222,15 +222,6 @@ z
     </g>
    </g>
    <g id="text_2">
-    <!-- 4.0% -->
-    <g transform="translate(288.286409 132.484634) scale(0.08 -0.08)">
-     <use xlink:href="#DejaVuSans-17"/>
-     <use xlink:href="#DejaVuSans-11" transform="translate(63.625 0)"/>
-     <use xlink:href="#DejaVuSans-13" transform="translate(95.40625 0)"/>
-     <use xlink:href="#DejaVuSans-8" transform="translate(159.03125 0)"/>
-    </g>
-   </g>
-   <g id="text_3">
     <!-- 9.3% -->
     <g transform="translate(264.148425 102.517624) scale(0.08 -0.08)">
      <defs>
@@ -303,7 +294,7 @@ z
      <use xlink:href="#DejaVuSans-8" transform="translate(159.03125 0)"/>
     </g>
    </g>
-   <g id="text_4">
+   <g id="text_3">
     <!-- 6.2% -->
     <g transform="translate(223.753251 83.547595) scale(0.08 -0.08)">
      <defs>
@@ -368,7 +359,7 @@ z
      <use xlink:href="#DejaVuSans-8" transform="translate(159.03125 0)"/>
     </g>
    </g>
-   <g id="text_5">
+   <g id="text_4">
     <!-- 2005: 322 permits -->
     <g transform="translate(160.590937 12.118365) scale(0.12 -0.12)">
      <defs>
@@ -616,7 +607,7 @@ L 90.58875 348.662227
 z
 " style="fill: #9cc8e2; stroke: #ffffff; stroke-linejoin: miter"/>
     </g>
-    <g id="text_6">
+    <g id="text_5">
      <!-- Under 100 m: 80.4% -->
      <g transform="translate(112.98875 354.262227) scale(0.08 -0.08)">
       <defs>
@@ -725,7 +716,7 @@ L 90.58875 360.662852
 z
 " style="fill: #4f9bcb; stroke: #ffffff; stroke-linejoin: miter"/>
     </g>
-    <g id="text_7">
+    <g id="text_6">
      <!-- 100 to 500 m: 4.0% -->
      <g transform="translate(112.98875 366.262852) scale(0.08 -0.08)">
       <defs>
@@ -779,7 +770,7 @@ L 212.0025 348.662227
 z
 " style="fill: #1f6aa5; stroke: #ffffff; stroke-linejoin: miter"/>
     </g>
-    <g id="text_8">
+    <g id="text_7">
      <!-- 500 to 1,500 m: 9.3% -->
      <g transform="translate(234.4025 354.262227) scale(0.08 -0.08)">
       <defs>
@@ -823,7 +814,7 @@ L 212.0025 360.662852
 z
 " style="fill: #0b3d5c; stroke: #ffffff; stroke-linejoin: miter"/>
     </g>
-    <g id="text_9">
+    <g id="text_8">
      <!-- 1,500 m and deeper: 6.2% -->
      <g transform="translate(234.4025 366.262852) scale(0.08 -0.08)">
       <defs>

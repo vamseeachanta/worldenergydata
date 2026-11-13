@@ -1,4 +1,4 @@
-"""Rebuild the r8 public-data page from pinned counts and a receipted cache."""
+"""Rebuild the public-data page from pinned counts and a receipted cache."""
 from __future__ import annotations
 
 import argparse
@@ -254,7 +254,7 @@ def count_figures(rig, depth, out):
             fig, ax = plt.subplots(figsize=(6, 5.2), layout='constrained')
             share_labels = iter(shares)
             wedges, _, _ = ax.pie(values, colors=pie_colours, startangle=90,
-                autopct=lambda p: next(share_labels), pctdistance=.75,
+                autopct=lambda p: (lambda text: text if p >= 5 else '')(next(share_labels)), pctdistance=.75,
                 textprops={'fontsize': 8}, wedgeprops={'edgecolor': 'white'})
             ax.legend(wedges, [f'{l}: {s}' for l, s in zip(pie_labels, shares)], loc='lower center', bbox_to_anchor=(.5, -.16), ncol=2, fontsize=8)
             ax.set_title(f'{year}: {total} permits')
@@ -325,9 +325,16 @@ def build_html(out, cache, payload, stats, sources, audit):
     delta = (check.latest_key_median_days - check.median_days).abs().dropna()
     summary = f'{len(delta[delta.gt(0)])} of {len(delta)} comparable cell medians change. The largest absolute change is {significant(delta.max())} d.'
     page = page.replace('@@SENSITIVITY_RESULT@@', summary)
-    source_list = ''.join('<li>' + html.escape(str(r.file)) + ': <a href="' + r.url + '">' + r.url + '</a>; retrieved ' + page_date(r.retrieved_utc) + '. ' + html.escape(r.role) + '</li>' for r in sources.itertuples())
+    holds = {'APDRawData.zip (file of 2 November 2026)': ('Application for Permit to Drill', 'file of 2 November 2026', 'permit type, requested spud date, water depth, rig name and rig type'),
+             'eWellAPMRawData.zip': ('Application for Permit to Modify', 'file of 12 November 2026', 'operation codes and sub-operations, estimated operation days, status date and water depth'),
+             'BoreholeRawData.zip': ('Boreholes', 'file of 12 November 2026', 'region, well-name suffix, spud and total-depth dates, status and water depth')}
+    source_list = ''.join('<li>' + holds[r.file][0] + ' (<a href="' + r.url + '">' + html.escape(r.file.split(' ')[0]) + '</a>), ' + holds[r.file][1] + ', downloaded ' + page_date(r.retrieved_utc) + ', SHA-256 <code>' + r.sha256 + '</code>: ' + holds[r.file][2] + '.</li>' for r in sources.itertuples() if r.file in holds)
     audit_rows = '<ul>' + ''.join('<li>' + html.escape(r.source + ': ' + r.rule.replace('_', ' ')) + ' — ' + count_display(r.records) + ' records.</li>' for r in audit.itertuples()) + '</ul>'
-    page = page.replace('@@DAYS_TABLE@@', days_table(stats)).replace('@@SOURCES@@', source_list).replace('@@AUDIT@@', audit_rows)
+    days_table(stats)  # fails closed if a selected record has no water depth
+    page = page.replace('@@SOURCES@@', source_list).replace('@@AUDIT@@', audit_rows)
+    for token, activity in [('CHECK_COMPLETION', 'Completion'), ('CHECK_SPUD', 'Spud to total depth')]:
+        values = stats[stats.activity.eq(activity) & stats.band.isin(BANDS)].set_index('band').loc[BANDS, 'median_days']
+        page = page.replace('@@' + token + '@@', ', '.join(significant(v) for v in values))
     page = page.replace('@@DAYS_DETAIL_TABLE@@', days_table(stats, detailed=True))
     page = page.replace('@@DAY_OBSERVATIONS@@', ''.join('<li>' + html.escape(b) + '</li>' for b in day_observations(out / 'data' / 'days-summary.csv')))
     for token, source in [('APM', 'eWellAPMRawData.zip'), ('BORE', 'BoreholeRawData.zip'), ('SCHEMA', 'APDRawData.zip')]:
@@ -365,8 +372,8 @@ def main(argv=None):
     pins = json.loads((ROOT / 'inputs' / 'source-pins.json').read_text(encoding='utf-8'))
     records = [cache_source(cache, n, u, args.offline, pins[n]) for n, u in FILES.items()]
     for record in records:
-        record['role'] = 'Schema inspection only' if record['file'] == 'APDRawData.zip' else 'Offline chart library' if record['file'].endswith('.js') else 'Duration analysis'
-    records.insert(0, dict(file='APDRawData.zip (r7 snapshot)', url=URL_BASE+'APDRawData.zip', retrieved_utc='2026-11-03T02:28Z', sha256=OLD_SHA, role='Inherited r7 receipt; counts preserved; original zip not supplied'))
+        record['role'] = 'Column check of the permit file' if record['file'] == 'APDRawData.zip' else 'Offline chart library' if record['file'].endswith('.js') else 'Duration analysis'
+    records.insert(0, dict(file='APDRawData.zip (file of 2 November 2026)', url=URL_BASE+'APDRawData.zip', retrieved_utc='2026-11-03T02:28Z', sha256=OLD_SHA, role='Counts for Figures 1 and 2 and Table 1'))
     sources, headers = pd.DataFrame(records), []
     for member in ['mv_apddata_all', 'mv_apd_main_all']:
         apd = read_table(cache, 'APDRawData.zip', member, headers)
@@ -384,10 +391,10 @@ def main(argv=None):
     audit = pd.DataFrame([dict(source=s, rule=k, records=v) for s, d in [('APM', aa), ('Borehole', ba)] for k, v in d.items()])
     for frame, name in [(sources, 'sources'), (pd.DataFrame(headers), 'source_columns'), (mapping_table(primary, subdefs), 'code_mapping'), (stats, 'days-summary'), (audit, 'exclusions')]:
         write_csv(frame, out, name)
-    rig, depth, table = [pd.read_csv(ROOT / 'inputs' / n) for n in ['fig-p1-new-well-permits-by-rig-type.csv', 'new-well-permits-by-water-depth-r7.csv', 'table1.csv']]
+    rig, depth, table = [pd.read_csv(ROOT / 'inputs' / n) for n in ['fig-p1-new-well-permits-by-rig-type.csv', 'new-well-permits-by-water-depth.csv', 'table1.csv']]
     if not rig.total.equals(depth.permits) or not rig.year.equals(depth.year):
-        raise ValueError('r7 annual totals differ')
-    for frame, name in [(rig, 'fig-p1-new-well-permits-by-rig-type'), (depth, 'new-well-permits-by-water-depth-r7'), (table, 'table1')]:
+        raise ValueError('Annual totals differ between the rig-type and water-depth files')
+    for frame, name in [(rig, 'fig-p1-new-well-permits-by-rig-type'), (depth, 'new-well-permits-by-water-depth'), (table, 'table1')]:
         write_csv(frame, out, name)
     matplotlib.rcParams.update({'svg.hashsalt': 'issue2-public-data-r8', 'font.family': 'DejaVu Sans', 'font.size': 10, 'axes.spines.top': False, 'axes.spines.right': False})
     payload = count_figures(rig, depth, out)
