@@ -94,7 +94,7 @@ is `worldenergydata`; this example owns only the r9 derivatives.
   joined subtype sets, abandonment precedence, finite positive estimates and
   explicit missing-depth handling. No checkout or mutation of that branch.
 
-Full source receipts are in `data/sources.csv`. Classification source labels
+Full source receipts are in `data/sources.csv`, with each archive's file date read from the date stamps of its data members. Classification source labels
 and analysis rules are in `data/code_mapping.csv`. Exact selection counts are in
 `data/exclusions.csv`; per-band duration exclusions are in `data/days-summary.csv`.
 `data/subtype-activity.csv` provides an activity/primary/subtype cross-tab.

@@ -303,6 +303,15 @@ def archive_members(cache):
     return pd.DataFrame(rows)
 
 
+def archive_date(path):
+    """Publication date of a BSEE archive: the newest date stamp on its data members."""
+    with zipfile.ZipFile(path) as z:
+        stamps = {i.date_time[:3] for i in z.infolist() if i.filename.endswith('.txt')}
+    if not stamps:
+        raise ValueError('No dated data member in ' + path.name)
+    return '%04d-%02d-%02d' % max(stamps)
+
+
 def write_csv(frame, out, name):
     frame.to_csv(out / 'data' / (name + '.csv'), index=False, lineterminator='\n', float_format='%.12g')
 
@@ -412,7 +421,7 @@ def pie_set(frame, keys, labels, colours, kind, out):
 def small_share_lines(labels, values, shares, total, per_line=2):
     """Shares under 5 % as short lines printed under the pie, so no label is lost or overlaps."""
     small = [f'{l} {s}' for l, v, s in zip(labels, values, shares) if v / total * 100 < 5]
-    return ['Under 5 %:'] + ['; '.join(small[i:i + per_line]) for i in range(0, len(small), per_line)] if small else []
+    return ['Under 5%:'] + ['; '.join(small[i:i + per_line]) for i in range(0, len(small), per_line)] if small else []
 
 
 def label_shares(ax, wedges, labels, values, shares, total):
@@ -453,7 +462,8 @@ def days_figures(stats, out):
         payload.append(dict(id='days-' + slug, kind='interval', bands=BANDS, colours=WC,
             q1=[none_if_nan(v) for v in rows.q1_days], median=[none_if_nan(v) for v in rows.median_days],
             q3=[none_if_nan(v) for v in rows.q3_days], n=[int(v) for v in rows.n],
-            nlabel=[count_label(v) for v in rows.n]))
+            nlabel=[count_label(v) for v in rows.n],
+            shown=[[significant(v) for v in (r.q1_days, r.median_days, r.q3_days)] for r in rows.itertuples()]))
     return payload
 
 
@@ -534,7 +544,7 @@ def versions():
 def map_footnote(summary, audit):
     parts = []
     for period, row in summary.iterrows():
-        bands = ', '.join(f'{row[b]:,} {b[0].lower() + b[1:]}' for b in BANDS)
+        bands = '; '.join(f'{b[0].lower() + b[1:]}: {row[b]:,}' for b in BANDS)
         parts.append(f'{period}: {row.total:,} wells ({bands})')
     dropped = int(audit.missing_or_outside_coordinates.sum())
     return '; '.join(parts) + f'. Wells without coordinates in the map area: {dropped:,}.'
@@ -550,10 +560,10 @@ def build_html(out, cache, payload, stats, sources, audit, map_info):
     summary = f'{len(delta[delta.gt(0)])} of {len(delta)} comparable cell medians change. The largest absolute change is {significant(delta.max())} d.'
     page = page.replace('@@SENSITIVITY_RESULT@@', summary)
     holds = {'APDRawData.zip (file of 2 November 2026)': ('Application for Permit to Drill', 'file of 2 November 2026', 'permit type, requested spud date, water depth, rig name and rig type'),
-             'eWellAPMRawData.zip': ('Application for Permit to Modify', 'file of 12 November 2026', 'operation codes and sub-operations, estimated operation days, status date and water depth'),
-             'BoreholeRawData.zip': ('Boreholes', 'file of 12 November 2026', 'region, well-name suffix, spud and total-depth dates, status, water depth and surface location'),
-             'APDRawData.zip': ('Application for Permit to Drill', 'file of 12 November 2026', 'column check only: neither table holds an estimated-days field')}
-    source_list = ''.join('<li>' + holds[r.file][0] + ' (<a href="' + r.url + '">' + html.escape(r.file.split(' ')[0]) + '</a>), ' + holds[r.file][1] + ', downloaded ' + page_date(r.retrieved_utc) + ', SHA-256 <code>' + r.sha256 + '</code>: ' + holds[r.file][2] + '.</li>' for r in sources.itertuples() if r.file in holds)
+             'eWellAPMRawData.zip': ('Application for Permit to Modify', '@@FILEDATE@@', 'operation codes and sub-operations, estimated operation days, status date and water depth'),
+             'BoreholeRawData.zip': ('Boreholes', '@@FILEDATE@@', 'region, well-name suffix, spud and total-depth dates, status, water depth and surface location'),
+             'APDRawData.zip': ('Application for Permit to Drill', '@@FILEDATE@@', 'column check only: neither table holds an estimated-days field')}
+    source_list = ''.join('<li>' + holds[r.file][0] + ' (<a href="' + r.url + '">' + html.escape(r.file.split(' ')[0]) + '</a>), ' + holds[r.file][1].replace('@@FILEDATE@@', 'file of ' + page_date(r.file_date)) + ', downloaded ' + page_date(r.retrieved_utc) + ', SHA-256 <code>' + r.sha256 + '</code>: ' + holds[r.file][2] + '.</li>' for r in sources.itertuples() if r.file in holds)
     land = sources[sources.file.eq(LAND)].iloc[0]
     source_list += ('<li>Map land outline: Natural Earth 1:50m land (<a href="' + land.url + '">' + LAND + '</a>, version 5.1.2, public domain), downloaded '
                     + page_date(land.retrieved_utc) + ', SHA-256 <code>' + land.sha256 + '</code>.</li>')
@@ -575,8 +585,9 @@ def build_html(out, cache, payload, stats, sources, audit, map_info):
     page = page.replace('@@DAYS_DETAIL_TABLE@@', days_table(stats, detailed=True))
     page = page.replace('@@DAY_OBSERVATIONS@@', ''.join('<li>' + html.escape(b) + '</li>' for b in day_observations(out / 'data' / 'days-summary.csv')))
     for token, source in [('APM', 'eWellAPMRawData.zip'), ('BORE', 'BoreholeRawData.zip'), ('SCHEMA', 'APDRawData.zip')]:
-        date = page_date(sources.loc[sources.file.eq(source), 'retrieved_utc'].iloc[0])
-        page = page.replace('@@' + token + '_DATE@@', date)
+        row = sources[sources.file.eq(source)].iloc[0]
+        page = page.replace('@@' + token + '_DATE@@', page_date(row.retrieved_utc))
+        page = page.replace('@@' + token + '_FILE@@', page_date(row.file_date))
     page = page.replace('@@CHART_DATA@@', json.dumps(payload, separators=(',', ':'), ensure_ascii=False).replace('<', '\\u003c'))
     for name in IMAGES:
         page = page.replace('@@IMAGE:' + name + '@@', 'data:image/png;base64,' + base64.b64encode((out / 'figures' / (name + '.png')).read_bytes()).decode())
@@ -616,8 +627,10 @@ def main(argv=None):
     for record in records:
         record['role'] = ('Column check of the permit file' if record['file'] == 'APDRawData.zip' else
                           'Offline chart library' if record['file'].endswith('.js') else
-                          'Map land outline' if record['file'] == LAND else 'Duration analysis and map')
-    records.insert(0, dict(file='APDRawData.zip (file of 2 November 2026)', url=URL_BASE+'APDRawData.zip', retrieved_utc='2026-11-03T02:28Z', sha256=OLD_SHA, role='Counts for Figures 2 to 5 and Table 1'))
+                          'Map land outline' if record['file'] == LAND else
+                          'Duration analysis and map' if record['file'] == 'BoreholeRawData.zip' else 'Duration analysis')
+        record['file_date'] = archive_date(cache / record['file']) if record['file'].endswith('.zip') else ''
+    records.insert(0, dict(file='APDRawData.zip (file of 2 November 2026)', url=URL_BASE+'APDRawData.zip', retrieved_utc='2026-11-03T02:28Z', sha256=OLD_SHA, role='Counts for Figures 2 to 5 and Table 1', file_date='2026-11-02'))
     sources, headers = pd.DataFrame(records), []
     for member in ['mv_apddata_all', 'mv_apd_main_all']:
         apd = read_table(cache, 'APDRawData.zip', member, headers)

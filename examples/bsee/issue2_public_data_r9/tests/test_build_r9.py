@@ -335,13 +335,13 @@ def test_each_pie_set_is_one_figure_with_one_legend_and_only_years_on_pies(tmp_p
             for share in pie['shares']:   # every share is printed, inside or in the under-5 % list
                 assert any(share in t for t in texts)
     rig2005 = sets[0]['pies'][0]
-    assert rig2005['small'] == ['Under 5 %:', 'Drillship 4.7%; DP semisubmersible 2.8%', 'Platform rig 3.1%; Other 0.9%']
+    assert rig2005['small'] == ['Under 5%:', 'Drillship 4.7%; DP semisubmersible 2.8%', 'Platform rig 3.1%; Other 0.9%']
     page = rendered_prose()
     assert 'Permits each year: 322 in 2005, 83 in 2015, 47 in 2025.' in page
 
 
 def test_small_share_lines_group_two_per_line():
-    assert build.small_share_lines(['A', 'B', 'C'], [96, 3, 1], ['96.0%', '3.0%', '1.0%'], 100) == ['Under 5 %:', 'B 3.0%; C 1.0%']
+    assert build.small_share_lines(['A', 'B', 'C'], [96, 3, 1], ['96.0%', '3.0%', '1.0%'], 100) == ['Under 5%:', 'B 3.0%; C 1.0%']
     assert build.small_share_lines(['A'], [10], ['100.0%'], 10) == []
 
 
@@ -479,3 +479,39 @@ def test_page_dates_and_source_lines():
     assert page.count(source) == 3   # Figures 2 and 4 and Table 1; the pie sets point to them
     assert page.count('file of 12 November 2026, retrieved 13 November 2026') >= 3
     assert not (ROOT / 'review-plan.html').exists()
+
+
+# Review-gate round 1 fixes ---------------------------------------------------------------------
+
+def test_archive_date_is_the_newest_data_member_stamp(tmp_path):
+    import zipfile
+    path = tmp_path / 'a.zip'
+    with zipfile.ZipFile(path, 'w') as z:
+        z.writestr(zipfile.ZipInfo('a/old.txt', (2026, 11, 2, 1, 0, 0)), 'x')
+        z.writestr(zipfile.ZipInfo('a/new.txt', (2026, 11, 12, 23, 0, 0)), 'y')
+        z.writestr(zipfile.ZipInfo('a/readme.pdf', (2026, 12, 1, 0, 0, 0)), 'z')
+    assert build.archive_date(path) == '2026-11-12'
+
+
+def test_sources_record_file_dates_and_roles_used_on_the_page():
+    sources = pd.read_csv(ROOT / 'data/sources.csv', keep_default_na=False).set_index('file')
+    assert sources.loc['BoreholeRawData.zip', 'file_date'] == '2026-11-12'
+    assert sources.loc['eWellAPMRawData.zip', 'file_date'] == '2026-11-12'
+    assert sources.loc['APDRawData.zip (file of 2 November 2026)', 'file_date'] == '2026-11-02'
+    assert sources.loc['eWellAPMRawData.zip', 'role'] == 'Duration analysis'
+    assert sources.loc['BoreholeRawData.zip', 'role'] == 'Duration analysis and map'
+    assert '12 November 2026' not in (ROOT / 'build_r9.py').read_text(encoding='utf-8')
+    assert '12 November 2026' not in (ROOT / 'inputs/page-template.html').read_text(encoding='utf-8')
+    assert rendered_prose().count('file of 12 November 2026') >= 7
+
+
+def test_hover_values_use_the_table_rounding():
+    payload = {c['id']: c for c in chart_payload()}
+    # Table B1 shows Q3 115.25 d as 115.2 (four significant figures); the hover must show the same text.
+    assert payload['days-drilling']['shown'][2] == ['30', '55.5', '115.2']
+    assert 'c.shown[i][1]' in raw_page() and 'toPrecision(4)' not in raw_page().split('const charts=')[1]
+
+
+def test_map_counts_note_labels_each_band():
+    note = re.search(r'<li>Counts: (.*?)</li>', rendered_prose())[1]
+    assert note.startswith('2005 to 2009: 1,584 wells (under 100 m: 1,089; 100 to 500 m: 126; 500 to 1,500 m: 209; 1,500 m and deeper: 160)')

@@ -80,3 +80,21 @@ pies (now Figure 5) and the day chart (now Figure 6).
 - New source: Natural Earth 1:50m land, version 5.1.2 (public domain), pinned
   to commit f1890d9f of natural-earth-vector and by SHA-256 in
   `inputs/source-pins.json`. It draws the land outline only.
+
+## Review-gate round 1 fixes
+
+- File dates (12 November 2026 for the APM, borehole and APD column-check
+  files; 2 November 2026 for the counting APD file) are now read from the
+  date stamps of each archive's data members, recorded in the new
+  `file_date` column of `data/sources.csv` and placed on the page from there.
+- `data/sources.csv` gives the APM file the role "Duration analysis"; only the
+  borehole file feeds the map.
+- Day-chart hover values use the same four-significant-figure text as Table B1
+  (for example drilling Q3 115.2 d in 500 to 1,500 m).
+- The Figure 1 counts note labels each band ("100 to 500 m: 126").
+- The under-5 % list on the pies reads "Under 5%:", matching the slice labels.
+- Left open: the sign-off date "3 November 2026" is the earlier approval and
+  needs the reviewer's own update before publication; "10 wells whose first
+  New Well permit gives no requested spud date" is carried from the published
+  permit counter at commit f5af5b6d; the Appendix B selection list keeps the
+  build's rule names.

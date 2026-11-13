@@ -1,7 +1,7 @@
-file,url,retrieved_utc,sha256,role
-APDRawData.zip (file of 2 November 2026),https://www.data.bsee.gov/Well/Files/APDRawData.zip,2026-11-03T02:28Z,b4ab66063de5a95c78d0e4d33d220ea806ef07f114bd2add6efa9e8561d299c0,Counts for Figures 2 to 5 and Table 1
-APDRawData.zip,https://www.data.bsee.gov/Well/Files/APDRawData.zip,2026-11-13T00:51:51.796773+00:00,8f5ce969356ab4fd1349a5218b238c161a348d62efca85c5296102341ed4ba21,Column check of the permit file
-eWellAPMRawData.zip,https://www.data.bsee.gov/Well/Files/eWellAPMRawData.zip,2026-11-13T00:52:09.955638+00:00,02b798158b5b9128637a04daa4b38dcb99aa349bd38a50211e8b9a85316f4629,Duration analysis and map
-BoreholeRawData.zip,https://www.data.bsee.gov/Well/Files/BoreholeRawData.zip,2026-11-13T00:51:53.257985+00:00,41d201b17c9982484fe781f797c1e621529e4d5469178d3c978843a316ae444e,Duration analysis and map
-plotly-2.35.2.min.js,https://cdn.plot.ly/plotly-2.35.2.min.js,2026-11-13T00:57:15.613251+00:00,6d21266ce1bd7d9e5ab4e115989c70c20de0382fd973a8f26ab58619eba4d603,Offline chart library
-ne_50m_land.geojson,https://raw.githubusercontent.com/nvkelso/natural-earth-vector/f1890d9f152c896d250a77557a5751a93d494776/geojson/ne_50m_land.geojson,2026-11-13T14:35:07.403825+00:00,e874b27a51d146452be360cafb3cc50c86001074a67d534113e6534682f9826b,Map land outline
+file,url,retrieved_utc,sha256,role,file_date
+APDRawData.zip (file of 2 November 2026),https://www.data.bsee.gov/Well/Files/APDRawData.zip,2026-11-03T02:28Z,b4ab66063de5a95c78d0e4d33d220ea806ef07f114bd2add6efa9e8561d299c0,Counts for Figures 2 to 5 and Table 1,2026-11-02
+APDRawData.zip,https://www.data.bsee.gov/Well/Files/APDRawData.zip,2026-11-13T00:51:51.796773+00:00,8f5ce969356ab4fd1349a5218b238c161a348d62efca85c5296102341ed4ba21,Column check of the permit file,2026-11-12
+eWellAPMRawData.zip,https://www.data.bsee.gov/Well/Files/eWellAPMRawData.zip,2026-11-13T00:52:09.955638+00:00,02b798158b5b9128637a04daa4b38dcb99aa349bd38a50211e8b9a85316f4629,Duration analysis,2026-11-12
+BoreholeRawData.zip,https://www.data.bsee.gov/Well/Files/BoreholeRawData.zip,2026-11-13T00:51:53.257985+00:00,41d201b17c9982484fe781f797c1e621529e4d5469178d3c978843a316ae444e,Duration analysis and map,2026-11-12
+plotly-2.35.2.min.js,https://cdn.plot.ly/plotly-2.35.2.min.js,2026-11-13T00:57:15.613251+00:00,6d21266ce1bd7d9e5ab4e115989c70c20de0382fd973a8f26ab58619eba4d603,Offline chart library,
+ne_50m_land.geojson,https://raw.githubusercontent.com/nvkelso/natural-earth-vector/f1890d9f152c896d250a77557a5751a93d494776/geojson/ne_50m_land.geojson,2026-11-13T14:35:07.403825+00:00,e874b27a51d146452be360cafb3cc50c86001074a67d534113e6534682f9826b,Map land outline,

@@ -818,7 +818,7 @@ ol.fn{margin:0 0 0 1.4em;padding:0;font-size:12.5px}
 <ol class="fn">
 <li>Each dot is the surface location of an original borehole in the BSEE Gulf of Mexico region, spudded in 2005 to 2009 or in 2021 to 2025; cancelled boreholes are left out.</li>
 <li>Counts: @@MAP_COUNTS@@</li>
-<li>Sources: BSEE borehole raw data (<a href="https://www.data.bsee.gov/Well/Files/BoreholeRawData.zip">BoreholeRawData.zip</a>), file of 12 November 2026, retrieved @@BORE_DATE@@; land outline from Natural Earth 1:50m land, version 5.1.2, public domain (<a href="@@LAND_URL@@">ne_50m_land.geojson</a>), retrieved @@LAND_DATE@@.</li>
+<li>Sources: BSEE borehole raw data (<a href="https://www.data.bsee.gov/Well/Files/BoreholeRawData.zip">BoreholeRawData.zip</a>), file of @@BORE_FILE@@, retrieved @@BORE_DATE@@; land outline from Natural Earth 1:50m land, version 5.1.2, public domain (<a href="@@LAND_URL@@">ne_50m_land.geojson</a>), retrieved @@LAND_DATE@@.</li>
 <li>Data: <a href="data/map-wells.csv">map-wells.csv</a> and <a href="data/map-summary.csv">map-summary.csv</a>.</li>
 </ol></figcaption>
 </figure>
@@ -904,7 +904,7 @@ ol.fn{margin:0 0 0 1.4em;padding:0;font-size:12.5px}
 <li>By water-depth band. Dots are medians; bars run from the first to the third quartile. Labels give the count behind each median; ≈ marks rounding to four significant figures.</li>
 <li>Drilling is the recorded calendar interval from spud to total depth of original boreholes spudded from 2005 to 2025. The other stages are operator estimates on permits to modify with status dates from 2005 to 2025.</li>
 <li>Each chart has its own day scale.</li>
-<li>Sources: BSEE <a href="https://www.data.bsee.gov/Well/Files/BoreholeRawData.zip">BoreholeRawData.zip</a>, file of 12 November 2026, retrieved @@BORE_DATE@@, and <a href="https://www.data.bsee.gov/Well/Files/eWellAPMRawData.zip">eWellAPMRawData.zip</a>, file of 12 November 2026, retrieved @@APM_DATE@@.</li>
+<li>Sources: BSEE <a href="https://www.data.bsee.gov/Well/Files/BoreholeRawData.zip">BoreholeRawData.zip</a>, file of @@BORE_FILE@@, retrieved @@BORE_DATE@@, and <a href="https://www.data.bsee.gov/Well/Files/eWellAPMRawData.zip">eWellAPMRawData.zip</a>, file of @@APM_FILE@@, retrieved @@APM_DATE@@.</li>
 <li>Data: <a href="data/days-summary.csv">days-summary.csv</a>; full counts in <a href="#table-b1">Table B1</a>.</li>
 </ol></figcaption>
 </figure>
@@ -938,7 +938,7 @@ ol.fn{margin:0 0 0 1.4em;padding:0;font-size:12.5px}
 </ul>
 <h3>Reproduce the published result</h3>
 <p>Give this prompt to your assistant:</p>
-<p class="prompt1">Count each well once, at its first New Well permit in the Gulf of Mexico region, by requested spud year, rig type and water-depth band, from the Application for Permit to Drill file of 2 November 2026. The bands are under 100 m, 100 to 500 m, 500 to 1,500 m, and 1,500 m and deeper, from feet at 0.3048 m per foot, with a depth on an edge in the deeper band. Map the surface locations of original, not cancelled Gulf of Mexico boreholes spudded in 2005 to 2009 and in 2021 to 2025, by water-depth band, from the borehole file of 12 November 2026. Then compute medians and quartiles by band for 2005 to 2025, in the order of a well's life: recorded spud-to-total-depth days from the borehole file, then completion, intervention, temporary abandonment and permanent abandonment estimates from the Application for Permit to Modify file of 12 November 2026. Use the rules in Appendix B. Keep operator estimates apart from recorded intervals. Do not use cost data.</p>
+<p class="prompt1">Count each well once, at its first New Well permit in the Gulf of Mexico region, by requested spud year, rig type and water-depth band, from the Application for Permit to Drill file of 2 November 2026. The bands are under 100 m, 100 to 500 m, 500 to 1,500 m, and 1,500 m and deeper, from feet at 0.3048 m per foot, with a depth on an edge in the deeper band. Map the surface locations of original, not cancelled Gulf of Mexico boreholes spudded in 2005 to 2009 and in 2021 to 2025, by water-depth band, from the borehole file of @@BORE_FILE@@. Then compute medians and quartiles by band for 2005 to 2025, in the order of a well's life: recorded spud-to-total-depth days from the borehole file, then completion, intervention, temporary abandonment and permanent abandonment estimates from the Application for Permit to Modify file of @@APM_FILE@@. Use the rules in Appendix B. Keep operator estimates apart from recorded intervals. Do not use cost data.</p>
 <ul>
 <li>Piece: Gulf of Mexico well permits: a public US data file, Deckhand newsletter issue 2, version of 13 November 2026.</li>
 <li>Code: <a href="https://github.com/vamseeachanta/worldenergydata/blob/@@BUILD_COMMIT@@/examples/bsee/issue2_public_data_r9/build_r9.py">build_r9.py</a> at commit @@BUILD_SHORT@@ of worldenergydata, which builds this page, in a draft pull request not yet merged. The counting script of the permit file is <a href="https://github.com/vamseeachanta/worldenergydata/tree/f5af5b6da87710bb395552f9cda5e34d1f324479/examples/bsee/rawdata_fact_check">rawdata_fact_check</a> at commit f5af5b6d, in an open pull request not yet merged.</li>
@@ -984,7 +984,7 @@ ol.fn{margin:0 0 0 1.4em;padding:0;font-size:12.5px}
 <li>Stages in the order of a well's life, 2005 to 2025. Missing-depth rows are kept here, including zero counts.</li>
 <li>Used is the count behind each median; missing or invalid days and nonpositive days are left out.</li>
 <li>Displayed values use at most four significant figures; ≈ marks rounded counts.</li>
-<li>Sources: BSEE <a href="https://www.data.bsee.gov/Well/Files/BoreholeRawData.zip">BoreholeRawData.zip</a>, file of 12 November 2026, retrieved @@BORE_DATE@@, and <a href="https://www.data.bsee.gov/Well/Files/eWellAPMRawData.zip">eWellAPMRawData.zip</a>, file of 12 November 2026, retrieved @@APM_DATE@@.</li>
+<li>Sources: BSEE <a href="https://www.data.bsee.gov/Well/Files/BoreholeRawData.zip">BoreholeRawData.zip</a>, file of @@BORE_FILE@@, retrieved @@BORE_DATE@@, and <a href="https://www.data.bsee.gov/Well/Files/eWellAPMRawData.zip">eWellAPMRawData.zip</a>, file of @@APM_FILE@@, retrieved @@APM_DATE@@.</li>
 <li>Data: <a href="data/days-summary.csv">days-summary.csv</a>.</li>
 </ol></div>
 
@@ -998,7 +998,6 @@ ol.fn{margin:0 0 0 1.4em;padding:0;font-size:12.5px}
 const charts=@@CHART_DATA@@;
 const css=getComputedStyle(document.documentElement),v=n=>css.getPropertyValue(n).trim();
 const font={family:'Segoe UI, Helvetica, Arial, sans-serif',size:12,color:v('--hs-text')};
-const fmt=x=>Number(x.toPrecision(4)).toLocaleString('en-US');
 function bar(c,el){
 const traces=c.keys.map((k,i)=>({type:'bar',name:c.labels[i],x:c.rows.map(r=>r.year),y:c.rows.map(r=>r[k]),marker:{color:c.colours[i]},hovertemplate:'%{x}<br>'+c.labels[i]+': %{y} permits<extra></extra>'}));
 return [traces,{barmode:'stack',margin:{l:65,r:12,t:el.clientWidth<560?160:80,b:60},legend:{orientation:'h',y:1.02,yanchor:'bottom'},xaxis:{title:'Year of requested spud date',dtick:2},yaxis:{title:'New-well permits (-)',rangemode:'tozero'}}];
@@ -1033,7 +1032,7 @@ const top=Math.max(1,...c.q3.filter(x=>x!==null))*1.35;
 const traces=c.bands.map((b,i)=>({type:'scatter',mode:'markers',name:b,x:[c.median[i]],y:[b],showlegend:false,
 error_x:{type:'data',symmetric:false,array:[c.q3[i]-c.median[i]],arrayminus:[c.median[i]-c.q1[i]],thickness:5,width:0,color:c.colours[i]},
 marker:{color:c.colours[i],size:10,line:{color:'#0b3d5c',width:1}},
-hovertemplate:b+'<br>Median '+fmt(c.median[i])+' d<br>Quartiles '+fmt(c.q1[i])+' to '+fmt(c.q3[i])+' d<br>'+c.nlabel[i]+'<extra></extra>'}));
+hovertemplate:b+'<br>Median '+c.shown[i][1]+' d<br>Quartiles '+c.shown[i][0]+' to '+c.shown[i][2]+' d<br>'+c.nlabel[i]+'<extra></extra>'}));
 const ann=c.bands.map((b,i)=>({x:c.q3[i],y:b,text:c.nlabel[i],xanchor:'left',xshift:6,showarrow:false,font:{size:11}}));
 return [traces,{margin:{l:130,r:16,t:8,b:44},xaxis:{title:'Days (d)',range:[0,top],rangemode:'tozero'},yaxis:{categoryorder:'array',categoryarray:c.bands,autorange:'reversed',ticksuffix:'  '},annotations:ann}];
 }

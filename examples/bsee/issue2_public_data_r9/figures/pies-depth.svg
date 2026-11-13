@@ -360,8 +360,8 @@ z
     </g>
    </g>
    <g id="text_4">
-    <!-- Under 5 %: -->
-    <g style="fill: #333333" transform="translate(120.26043 316.944695) scale(0.085 -0.085)">
+    <!-- Under 5%: -->
+    <g style="fill: #333333" transform="translate(121.611133 316.944695) scale(0.085 -0.085)">
      <defs>
       <path id="DejaVuSans-38" d="M 556 4666
 L 1191 4666
@@ -514,9 +514,8 @@ z
      <use xlink:href="#DejaVuSans-55" transform="translate(261.578125 0)"/>
      <use xlink:href="#DejaVuSans-3" transform="translate(302.6875 0)"/>
      <use xlink:href="#DejaVuSans-18" transform="translate(334.46875 0)"/>
-     <use xlink:href="#DejaVuSans-3" transform="translate(398.09375 0)"/>
-     <use xlink:href="#DejaVuSans-8" transform="translate(429.875 0)"/>
-     <use xlink:href="#DejaVuSans-1d" transform="translate(524.890625 0)"/>
+     <use xlink:href="#DejaVuSans-8" transform="translate(398.09375 0)"/>
+     <use xlink:href="#DejaVuSans-1d" transform="translate(493.109375 0)"/>
     </g>
     <!-- 100 to 500 m 4.0% -->
     <g style="fill: #333333" transform="translate(103.169453 327.146356) scale(0.085 -0.085)">
@@ -707,8 +706,8 @@ z
     </g>
    </g>
    <g id="text_9">
-    <!-- Under 5 %: -->
-    <g style="fill: #333333" transform="translate(408.26043 316.944695) scale(0.085 -0.085)">
+    <!-- Under 5%: -->
+    <g style="fill: #333333" transform="translate(409.611133 316.944695) scale(0.085 -0.085)">
      <use xlink:href="#DejaVuSans-38"/>
      <use xlink:href="#DejaVuSans-51" transform="translate(73.1875 0)"/>
      <use xlink:href="#DejaVuSans-47" transform="translate(136.5625 0)"/>
@@ -716,9 +715,8 @@ z
      <use xlink:href="#DejaVuSans-55" transform="translate(261.578125 0)"/>
      <use xlink:href="#DejaVuSans-3" transform="translate(302.6875 0)"/>
      <use xlink:href="#DejaVuSans-18" transform="translate(334.46875 0)"/>
-     <use xlink:href="#DejaVuSans-3" transform="translate(398.09375 0)"/>
-     <use xlink:href="#DejaVuSans-8" transform="translate(429.875 0)"/>
-     <use xlink:href="#DejaVuSans-1d" transform="translate(524.890625 0)"/>
+     <use xlink:href="#DejaVuSans-8" transform="translate(398.09375 0)"/>
+     <use xlink:href="#DejaVuSans-1d" transform="translate(493.109375 0)"/>
     </g>
     <!-- 100 to 500 m 3.6% -->
     <g style="fill: #333333" transform="translate(391.169453 327.146356) scale(0.085 -0.085)">
@@ -823,8 +821,8 @@ z
     </g>
    </g>
    <g id="text_13">
-    <!-- Under 5 %: -->
-    <g style="fill: #333333" transform="translate(696.26043 316.944695) scale(0.085 -0.085)">
+    <!-- Under 5%: -->
+    <g style="fill: #333333" transform="translate(697.611133 316.944695) scale(0.085 -0.085)">
      <use xlink:href="#DejaVuSans-38"/>
      <use xlink:href="#DejaVuSans-51" transform="translate(73.1875 0)"/>
      <use xlink:href="#DejaVuSans-47" transform="translate(136.5625 0)"/>
@@ -832,9 +830,8 @@ z
      <use xlink:href="#DejaVuSans-55" transform="translate(261.578125 0)"/>
      <use xlink:href="#DejaVuSans-3" transform="translate(302.6875 0)"/>
      <use xlink:href="#DejaVuSans-18" transform="translate(334.46875 0)"/>
-     <use xlink:href="#DejaVuSans-3" transform="translate(398.09375 0)"/>
-     <use xlink:href="#DejaVuSans-8" transform="translate(429.875 0)"/>
-     <use xlink:href="#DejaVuSans-1d" transform="translate(524.890625 0)"/>
+     <use xlink:href="#DejaVuSans-8" transform="translate(398.09375 0)"/>
+     <use xlink:href="#DejaVuSans-1d" transform="translate(493.109375 0)"/>
     </g>
     <!-- Under 100 m 2.1%; 100 to 500 m 4.3% -->
     <g style="fill: #333333" transform="translate(636.421758 327.14702) scale(0.085 -0.085)">
