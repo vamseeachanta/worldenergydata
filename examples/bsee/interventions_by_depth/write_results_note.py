@@ -30,7 +30,7 @@ BASIS = {
     "published total": "published total; includes source allowances",
     "not priced": "not priced",
 }
-TEST_COMMAND = 'uv run --no-sync python -m pytest --noconftest -o addopts="" tests/unit/bsee/test_interventions_by_depth.py tests/unit/bsee/data/utils/test_api_well_normalizer.py -q'
+TEST_COMMAND = 'uv run --no-sync python -m pytest --noconftest -o addopts="" tests/unit/bsee/test_interventions_by_depth.py tests/unit/bsee/test_well_life_cycle.py tests/unit/bsee/data/utils/test_api_well_normalizer.py -q'
 
 
 def table(frame):
@@ -52,6 +52,64 @@ def million(value):
     v = value / 1e6
     decimals = max(0, 1 - int(math.floor(math.log10(abs(v))))) if v else 0
     return f"{v:.{decimals}f}" if v else "0"
+
+
+def well_life_section(out, summary):
+    """README section on the per-well life cycle, read from the life-cycle tables."""
+    life = json.loads((out / "life_cycle_summary.json").read_text(encoding="utf-8"))
+    if life["file_date"] != summary["file_date"]:
+        raise ValueError("life-cycle tables come from a different snapshot")
+    years = pd.read_csv(out / "life_cycle_life_years.csv").set_index(
+        ["group", "status"]
+    )
+    reach = pd.read_csv(out / "life_cycle_stage_reach.csv")
+    checks = pd.read_csv(out / "life_cycle_reconciliation.csv")
+    first, last = summary["first_full_year"], summary["last_full_year"]
+    life_rows = years.reset_index()
+    life_rows = life_rows[
+        life_rows.group.isin(
+            ["development wells", "exploration wells"] + list(reach.group.unique())
+        )
+    ]
+    life_rows = life_rows[
+        ["group", "status", "wells", "q25_years", "median_years", "q75_years"]
+    ]
+    for c in ["q25_years", "median_years", "q75_years"]:
+        life_rows[c] = life_rows[c].map(lambda v: f"{v:.1f}")
+    stage = reach.pivot(index="stage", columns="group", values="share_percent").reindex(
+        reach.stage.unique()
+    )
+    per_well = reach.pivot(
+        index="stage", columns="group", values="events_per_well"
+    ).reindex(reach.stage.unique())
+    groups = list(reach.group.unique())
+    stage_rows = pd.DataFrame(
+        {"stage": stage.index}
+        | {
+            f"{g}: share of wells (%) / events per well": [
+                f"{stage.loc[i, g]:.1f} / {per_well.loc[i, g]:.2f}" for i in stage.index
+            ]
+            for g in groups
+        }
+    )
+    return f"""## Well life cycle
+
+Each well (API10) is followed from its first non-cancelled spud to permanent abandonment (the stock rule in Method: every non-superseded bore PA, at the latest PA date) or to the file date while it stands. Drilling counts bores with a spud date (original hole, sidetracks and bypasses). Interventions, temporary and permanent abandonments are the approved permits of this example, from {first} to the file date. Interventions are **light** when the permit names a wireline unit (WL), coiled tubing (CT), intervention vessel (WI), liftboat (LB) or recorded non-rig operation (NR), and **heavy** for a hydraulic workover or snubbing unit (HW, SB), platform rig (PF), jack-up (JU), drillship or semisubmersible (DS, SS, SD); otherwise light or heavy is not established. These keep the unit categories below, except that "liftboat / jack-up" is divided by its two source codes ([mapping](output/intervention_weight_mapping.csv)). Development and exploration follow `WELL_TYPE_CODE` (D, E) of the canonical original hole.
+
+Of {life["dated_wells"]:,} dated wells, {life["permanently_abandoned"]:,} are permanently abandoned and {life["standing"]:,} stand; {life["wells_without_first_spud"]:,} lack a first spud and {life["life_not_established"]:,} have an abandonment date before spud (life not established). Life in years:
+
+{table(life_rows)}
+
+Per-well stages for wells first drilled {first}-{last}, whose whole life lies inside the permit record:
+
+{stage_rows.to_markdown(index=False, disable_numparse=True)}
+
+Reconciliation with the permit counts over {life["window"]} ([CSV](output/life_cycle_reconciliation.csv)): the life-cycle events equal the published groups, and permits on wells with no dated life are counted separately.
+
+{table(checks)}
+
+[Event ages](output/life_cycle_event_ages.csv) give the age of the well at every sidetrack spud and approval in the window, for all wells; older wells contribute only their later events. [Light and heavy by year](output/intervention_weight_by_year.csv) partition the well-work approvals of each year.
+""".rstrip("\n")
 
 
 def main(pr_body=None, test_result="not run", out=OUT, readme=ROOT / "README.md"):
@@ -274,7 +332,10 @@ def main(pr_body=None, test_result="not run", out=OUT, readme=ROOT / "README.md"
         f"{'has' if assumed.missing_terminal_status_date.sum() == 1 else 'have'} a missing terminal status date (categories can overlap). "
         f'{s["inventory_missing_first_spud"]:,} API10 wells lack any non-cancelled first-spud date and are excluded; their historical stock cannot be dated.'
     )
-    charts = f"""- [01 — Approved permits to modify by depth](output/01_approved_interventions.png) · [SVG](output/01_approved_interventions.svg)
+    life_section = well_life_section(out, s)
+    charts = f"""- [05 — How long Gulf of Mexico wells last](output/05_well_life.png) · [SVG](output/05_well_life.svg)
+- [06 — The life of a well, stage by stage](output/06_well_life_stages.png) · [SVG](output/06_well_life_stages.svg)
+- [01 — Approved permits to modify by depth](output/01_approved_interventions.png) · [SVG](output/01_approved_interventions.svg)
 - [02 — Approved permits to modify per 100 standing wells](output/02_rates_per_standing_well.png) · [SVG](output/02_rates_per_standing_well.svg)
 - [03 — Cost scenarios by well and access type](output/03_cost_per_event.png) · [SVG](output/03_cost_per_event.svg)
 - [04 — Unit types named on {last} approvals by depth](output/04_unit_types_by_depth.png) · [SVG](output/04_unit_types_by_depth.svg)"""
@@ -307,6 +368,8 @@ The collection owner is worldenergydata; the catalog source ID is `bsee-data-cen
 {assumed_note}
 
 {coding_note} The feed begins in {feed_start}; [monthly coverage](output/coverage_by_month.csv) retains the early ramp. Current bore statuses and dates provide a retrospective proxy, not a complete state-transition history; earlier abandonments followed by reopening cannot be reconstructed.
+
+{life_section}
 
 ## Headline results
 
@@ -375,9 +438,14 @@ uv run --no-sync python examples/bsee/interventions_by_depth/count_interventions
 uv run --no-sync python examples/bsee/interventions_by_depth/build_cost_basis.py
 uv run --no-sync python examples/bsee/interventions_by_depth/estimate_costs.py --out examples/bsee/interventions_by_depth/output
 uv run --no-sync python examples/bsee/interventions_by_depth/plot_charts.py --out examples/bsee/interventions_by_depth/output
+uv run --no-sync python examples/bsee/interventions_by_depth/well_life_cycle.py --data-dir data/modules/bsee/zip/{s["snapshot"]}
+uv run --no-sync python examples/bsee/interventions_by_depth/plot_life_cycle.py
 uv run --no-sync python examples/bsee/interventions_by_depth/write_results_note.py --test-result '{test_result}'
 uv run --no-sync python examples/bsee/interventions_by_depth/verify_outputs.py
+uv run --no-sync python examples/bsee/interventions_by_depth/build_article.py --build-commit <commit holding the outputs>
 ```
+
+The article page is [article/gom-well-interventions-r3.html](article/gom-well-interventions-r3.html); its text is generated from the same tables.
 
 Focused example plus existing API-normalizer tests, PowerShell:
 

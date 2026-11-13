@@ -623,6 +623,55 @@ def full_year_bounds(approval_dates, file_date):
     return int(first_full), int(last_full)
 
 
+def classified_permits(data_dir, bore):
+    """Deduplicated Gulf APM approvals with depth band, year, group and family.
+
+    Shared by the count outputs and the per-well life cycle, so both use one
+    classification. Returns the raw rows, the classified Gulf permits, the
+    region counts before the Gulf filter and the suboperation rows.
+    """
+    raw = read_table(data_dir, "eWellAPMRawData.zip", "mv_apm_main")
+    apm = dedupe_permits(raw)
+    apm = gulf_only(apm, bore)
+    region_counts = apm.region.value_counts().to_dict()
+    apm = attach_depth(apm[apm.region.eq("G")], bore)
+    apm["year"] = dates(apm.ACC_STATUS_DATE).dt.year
+    sub = read_table(data_dir, "eWellAPMRawData.zip", "mv_apm_suboperations")
+    subcodes = sub.groupby("SN_APM_FK").APM_SUBOP_CD.agg(set).to_dict()
+    # Latin-1 preserves every source byte; some narrative bytes are undefined
+    # in cp1252. The screen uses ASCII words only; narratives are never exported.
+    prop = read_table(
+        data_dir, "eWellAPMRawData.zip", "mv_apm_main_prop", encoding="latin1"
+    )
+    # Separate descriptions are joined by a blank line, which ends a clause for
+    # the narrative screen; single line breaks are wraps within a description.
+    narratives = (
+        prop.groupby("SN_APM")
+        .APM_OP_DESC.agg(lambda s: "\n\n".join(sorted(set(s))))
+        .to_dict()
+    )
+    apm["group"] = [
+        classify_operation(
+            r.APM_OP_CD, subcodes.get(r.SN_APM, set()), narratives.get(r.SN_APM, "")
+        )
+        for r in apm.itertuples()
+    ]
+    apm["exclusion_basis"] = [
+        exclusion_basis(
+            r.APM_OP_CD, subcodes.get(r.SN_APM, set()), narratives.get(r.SN_APM, "")
+        )
+        for r in apm.itertuples()
+    ]
+    apm["family"] = apm.group.map(
+        lambda g: (
+            "well work"
+            if g in WELL_WORK
+            else "abandonment" if g in ABANDONMENT else "excluded"
+        )
+    )
+    return raw, apm, region_counts, sub
+
+
 def run(data_dir, out, last_full_year=None):
     data_dir, out = Path(data_dir), Path(out)
     out.mkdir(parents=True, exist_ok=True)
@@ -664,45 +713,7 @@ def run(data_dir, out, last_full_year=None):
             "BOREHOLE_STAT_DT",
         ],
     )
-    raw = read_table(data_dir, "eWellAPMRawData.zip", "mv_apm_main")
-    apm = dedupe_permits(raw)
-    apm = gulf_only(apm, bore)
-    region_counts = apm.region.value_counts().to_dict()
-    apm = attach_depth(apm[apm.region.eq("G")], bore)
-    apm["year"] = dates(apm.ACC_STATUS_DATE).dt.year
-    sub = read_table(data_dir, "eWellAPMRawData.zip", "mv_apm_suboperations")
-    subcodes = sub.groupby("SN_APM_FK").APM_SUBOP_CD.agg(set).to_dict()
-    # Latin-1 preserves every source byte; some narrative bytes are undefined
-    # in cp1252. The screen uses ASCII words only; narratives are never exported.
-    prop = read_table(
-        data_dir, "eWellAPMRawData.zip", "mv_apm_main_prop", encoding="latin1"
-    )
-    # Separate descriptions are joined by a blank line, which ends a clause for
-    # the narrative screen; single line breaks are wraps within a description.
-    narratives = (
-        prop.groupby("SN_APM")
-        .APM_OP_DESC.agg(lambda s: "\n\n".join(sorted(set(s))))
-        .to_dict()
-    )
-    apm["group"] = [
-        classify_operation(
-            r.APM_OP_CD, subcodes.get(r.SN_APM, set()), narratives.get(r.SN_APM, "")
-        )
-        for r in apm.itertuples()
-    ]
-    apm["exclusion_basis"] = [
-        exclusion_basis(
-            r.APM_OP_CD, subcodes.get(r.SN_APM, set()), narratives.get(r.SN_APM, "")
-        )
-        for r in apm.itertuples()
-    ]
-    apm["family"] = apm.group.map(
-        lambda g: (
-            "well work"
-            if g in WELL_WORK
-            else "abandonment" if g in ABANDONMENT else "excluded"
-        )
-    )
+    raw, apm, region_counts, sub = classified_permits(data_dir, bore)
     # Year bounds come from the approval dates and the snapshot file date; a
     # requested last full year must be a complete year in this snapshot.
     # No claim of complete regulatory capture is made.

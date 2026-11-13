@@ -425,6 +425,8 @@ STEMS = [
     "02_rates_per_standing_well",
     "03_cost_per_event",
     "04_unit_types_by_depth",
+    "05_well_life",
+    "06_well_life_stages",
 ]
 
 
@@ -456,7 +458,7 @@ def test_verifier_passes_on_the_delivered_outputs(output_copy):
     (output_copy / "verification.json").unlink()
     verify_outputs.verify(output_copy)
     receipt = json.loads((output_copy / "verification.json").read_text())
-    assert len(receipt["checks"]) == 12
+    assert len(receipt["checks"]) == 15
 
 
 def test_note_headline_follows_consistent_aggregates(output_copy, tmp_path):

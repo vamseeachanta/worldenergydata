@@ -128,6 +128,34 @@ def verify(out=ROOT / "output"):
             )
         else:
             assert pd.isna(r.approvals_per_well)
+    checks = pd.read_csv(out / "life_cycle_reconciliation.csv").set_index("stage")
+    life = json.loads((out / "life_cycle_summary.json").read_text(encoding="utf-8"))
+    assert life["file_date"] == summary["file_date"]
+    window = range(summary["first_full_year"], summary["partial_year"] + 1)
+    in_window = counts[counts.year.isin(window)]
+    for stage, groups in {
+        "temporary abandonment": ["temporary abandonment"],
+        "permanent abandonment": ["permanent abandonment"],
+        "abandonment, type not stated": ["abandonment unspecified"],
+        "intervention, all": [
+            "workover and recompletion",
+            "production enhancement",
+            "other well work",
+        ],
+    }.items():
+        published = in_window.loc[in_window.group.isin(groups), "permits"].sum()
+        row = checks.loc[stage]
+        assert row.published_permits == published == row.permits_in_events
+        assert row.assigned_to_dated_wells + row.not_assigned == published
+    weights = pd.read_csv(out / "intervention_weight_by_year.csv")
+    work = rates[rates.family.eq("well work")].groupby("year").permits.sum()
+    assert weights.groupby("year").approvals.sum().reindex(work.index).equals(work)
+    reach = pd.read_csv(out / "life_cycle_stage_reach.csv")
+    assert (reach.wells_reaching <= reach.wells).all()
+    assert (reach.wells_reaching <= reach.events).all()
+    hist = pd.read_csv(out / "life_cycle_life_histogram.csv")
+    assert hist.wells.sum() == life["dated_wells"] - life["life_not_established"]
+    assert life["permanently_abandoned"] + life["standing"] == life["dated_wells"]
     from plot_charts import COLORS
 
     for color in COLORS:
@@ -142,6 +170,8 @@ def verify(out=ROOT / "output"):
         "02_rates_per_standing_well",
         "03_cost_per_event",
         "04_unit_types_by_depth",
+        "05_well_life",
+        "06_well_life_stages",
     ]:
         for suffix in (".png", ".svg"):
             assert (out / f"{stem}{suffix}").is_file(), f"missing chart {stem}{suffix}"
@@ -159,7 +189,7 @@ def verify(out=ROOT / "output"):
         with Image.open(png) as img:
             assert img.width >= 1600
     receipt = dict(
-        criteria_revision=2,
+        criteria_revision=3,
         software=dict(
             python=platform.python_version(),
             pandas=pd.__version__,
@@ -178,6 +208,7 @@ def verify(out=ROOT / "output"):
                     ROOT / "README.md",
                     ROOT / "requirements.txt",
                     ROOT.parents[2] / "tests/unit/bsee/test_interventions_by_depth.py",
+                    ROOT.parents[2] / "tests/unit/bsee/test_well_life_cycle.py",
                 ]
             )
         },
@@ -192,7 +223,10 @@ def verify(out=ROOT / "output"):
             "approval to distinct-well ratios reconcile",
             "all rate stock dates are 1 January",
             "ordered band palette contrast at least 3 to 1 on white",
-            "all four figure pairs present without internal basis filenames",
+            "life-cycle permits reconcile with published groups over the window",
+            "light and heavy by year partition each year's well work",
+            "life-cycle well counts and histogram reconcile",
+            "all six figure pairs present without internal basis filenames",
             "PNG width at least 1600",
         ],
         files={p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in files},

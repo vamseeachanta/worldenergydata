@@ -33,6 +33,48 @@ At 1 January 2025, 136 wells are **assumed standing**: 135 have no non-supersede
 
 Primary OTHER approvals numbered 309–509 per year in 2005–2020, then 174 in 2021, 11 in 2022 and zero from 2023, while WORKOVER approvals averaged 233 per year in 2005–2020 and 439 in 2021–2025. Part of the apparent well-work decline reflects a coding change. The 2025 count should not be compared with the long-run mean without this qualification; electronic coverage also changes in the early years. The feed begins in April 2004; [monthly coverage](output/coverage_by_month.csv) retains the early ramp. Current bore statuses and dates provide a retrospective proxy, not a complete state-transition history; earlier abandonments followed by reopening cannot be reconstructed.
 
+## Well life cycle
+
+Each well (API10) is followed from its first non-cancelled spud to permanent abandonment (the stock rule in Method: every non-superseded bore PA, at the latest PA date) or to the file date while it stands. Drilling counts bores with a spud date (original hole, sidetracks and bypasses). Interventions, temporary and permanent abandonments are the approved permits of this example, from 2005 to the file date. Interventions are **light** when the permit names a wireline unit (WL), coiled tubing (CT), intervention vessel (WI), liftboat (LB) or recorded non-rig operation (NR), and **heavy** for a hydraulic workover or snubbing unit (HW, SB), platform rig (PF), jack-up (JU), drillship or semisubmersible (DS, SS, SD); otherwise light or heavy is not established. These keep the unit categories below, except that "liftboat / jack-up" is divided by its two source codes ([mapping](output/intervention_weight_mapping.csv)). Development and exploration follow `WELL_TYPE_CODE` (D, E) of the canonical original hole.
+
+Of 37,512 dated wells, 30,737 are permanently abandoned and 6,775 stand; 17 lack a first spud and 8 have an abandonment date before spud (life not established). Life in years:
+
+| group                                     | status                | wells   | q25_years   | median_years   | q75_years   |
+|:------------------------------------------|:----------------------|:--------|:------------|:---------------|:------------|
+| development wells                         | permanently abandoned | 16,860  | 11.3        | 23.0           | 35.3        |
+| development wells                         | standing              | 5,570   | 28.6        | 42.0           | 50.6        |
+| exploration wells                         | permanently abandoned | 13,537  | 0.1         | 0.2            | 7.2         |
+| exploration wells                         | standing              | 1,160   | 12.6        | 23.5           | 32.7        |
+| development wells first drilled 2005-2025 | permanently abandoned | 484     | 4.8         | 9.2            | 13.3        |
+| development wells first drilled 2005-2025 | standing              | 751     | 10.0        | 14.4           | 19.0        |
+| exploration wells first drilled 2005-2025 | permanently abandoned | 1,127   | 0.1         | 0.6            | 7.3         |
+| exploration wells first drilled 2005-2025 | standing              | 528     | 7.1         | 12.2           | 17.1        |
+
+Per-well stages for wells first drilled 2005-2025, whose whole life lies inside the permit record:
+
+| stage                                        | development wells first drilled 2005-2025: share of wells (%) / events per well   | exploration wells first drilled 2005-2025: share of wells (%) / events per well   |
+|:---------------------------------------------|:----------------------------------------------------------------------------------|:----------------------------------------------------------------------------------|
+| drilling                                     | 100.0 / 1.00                                                                      | 100.0 / 1.00                                                                      |
+| sidetrack or bypass                          | 36.1 / 0.56                                                                       | 33.4 / 0.53                                                                       |
+| light intervention                           | 39.8 / 1.34                                                                       | 16.4 / 0.61                                                                       |
+| heavy intervention                           | 59.2 / 1.57                                                                       | 65.0 / 1.39                                                                       |
+| intervention, light or heavy not established | 62.6 / 1.28                                                                       | 55.5 / 1.15                                                                       |
+| temporary abandonment                        | 55.8 / 1.35                                                                       | 48.0 / 1.08                                                                       |
+| abandonment, type not stated                 | 8.5 / 0.13                                                                        | 19.4 / 0.22                                                                       |
+| permanent abandonment                        | 40.3 / 0.85                                                                       | 67.1 / 1.33                                                                       |
+| permanently abandoned (bore status)          | 39.2 / 0.39                                                                       | 68.1 / 0.68                                                                       |
+
+Reconciliation with the permit counts over 2005-2026 ([CSV](output/life_cycle_reconciliation.csv)): the life-cycle events equal the published groups, and permits on wells with no dated life are counted separately.
+
+| stage                        | published_permits   | permits_in_events   | assigned_to_dated_wells   | not_assigned   |
+|:-----------------------------|:--------------------|:--------------------|:--------------------------|:---------------|
+| temporary abandonment        | 29,470              | 29,470              | 29,470                    | 0              |
+| permanent abandonment        | 24,572              | 24,572              | 24,567                    | 5              |
+| abandonment, type not stated | 1,866               | 1,866               | 1,866                     | 0              |
+| intervention, all            | 31,932              | 31,932              | 31,916                    | 16             |
+
+[Event ages](output/life_cycle_event_ages.csv) give the age of the well at every sidetrack spud and approval in the window, for all wells; older wells contribute only their later events. [Light and heavy by year](output/intervention_weight_by_year.csv) partition the well-work approvals of each year.
+
 ## Headline results
 
 2025 approvals and distinct API10 wells are shown separately. A well can appear in both event families; the two distinct-well columns must not be added as disjoint populations. The cost cases below apply to permanent abandonment only (1,387 of 2,610 abandonment approvals).
@@ -175,23 +217,30 @@ uv run --no-sync python examples/bsee/interventions_by_depth/count_interventions
 uv run --no-sync python examples/bsee/interventions_by_depth/build_cost_basis.py
 uv run --no-sync python examples/bsee/interventions_by_depth/estimate_costs.py --out examples/bsee/interventions_by_depth/output
 uv run --no-sync python examples/bsee/interventions_by_depth/plot_charts.py --out examples/bsee/interventions_by_depth/output
-uv run --no-sync python examples/bsee/interventions_by_depth/write_results_note.py --test-result '78 passed (tests/unit/bsee/test_interventions_by_depth.py); the API-normalizer file needs the full package environment and was not collected here'
+uv run --no-sync python examples/bsee/interventions_by_depth/well_life_cycle.py --data-dir data/modules/bsee/zip/2026-11-13
+uv run --no-sync python examples/bsee/interventions_by_depth/plot_life_cycle.py
+uv run --no-sync python examples/bsee/interventions_by_depth/write_results_note.py --test-result '104 passed (tests/unit/bsee/test_interventions_by_depth.py and tests/unit/bsee/test_well_life_cycle.py); the API-normalizer file needs the full package environment and was not collected here'
 uv run --no-sync python examples/bsee/interventions_by_depth/verify_outputs.py
+uv run --no-sync python examples/bsee/interventions_by_depth/build_article.py --build-commit <commit holding the outputs>
 ```
+
+The article page is [article/gom-well-interventions-r3.html](article/gom-well-interventions-r3.html); its text is generated from the same tables.
 
 Focused example plus existing API-normalizer tests, PowerShell:
 
 ```powershell
 $env:PYTHONPATH='packages/worldenergydata-bsee/src;packages/worldenergydata-core/src;../../assetutilities/src;src'
-uv run --no-sync python -m pytest --noconftest -o addopts="" tests/unit/bsee/test_interventions_by_depth.py tests/unit/bsee/data/utils/test_api_well_normalizer.py -q
+uv run --no-sync python -m pytest --noconftest -o addopts="" tests/unit/bsee/test_interventions_by_depth.py tests/unit/bsee/test_well_life_cycle.py tests/unit/bsee/data/utils/test_api_well_normalizer.py -q
 ```
 
-Result: **78 passed (tests/unit/bsee/test_interventions_by_depth.py); the API-normalizer file needs the full package environment and was not collected here**. Tests cover all-bore stock, date boundaries, cancelled bores, assumed standing, unit categories, three hand-worked cost literals read through YAML and published deepwater dry-tree pricing. Tests use no network or retained raw files. Aggregate reconciliation, input provenance, output digests and software versions are retained in [verification.json](output/verification.json).
+Result: **104 passed (tests/unit/bsee/test_interventions_by_depth.py and tests/unit/bsee/test_well_life_cycle.py); the API-normalizer file needs the full package environment and was not collected here**. Tests cover all-bore stock, date boundaries, cancelled bores, assumed standing, unit categories, three hand-worked cost literals read through YAML and published deepwater dry-tree pricing. Tests use no network or retained raw files. Aggregate reconciliation, input provenance, output digests and software versions are retained in [verification.json](output/verification.json).
 
 ## Charts
 
 PNG width is 2,160 pixels; SVG versions are retained. Footers identify the raw files and date on activity figures and the four cost studies on the cost figure.
 
+- [05 — How long Gulf of Mexico wells last](output/05_well_life.png) · [SVG](output/05_well_life.svg)
+- [06 — The life of a well, stage by stage](output/06_well_life_stages.png) · [SVG](output/06_well_life_stages.svg)
 - [01 — Approved permits to modify by depth](output/01_approved_interventions.png) · [SVG](output/01_approved_interventions.svg)
 - [02 — Approved permits to modify per 100 standing wells](output/02_rates_per_standing_well.png) · [SVG](output/02_rates_per_standing_well.svg)
 - [03 — Cost scenarios by well and access type](output/03_cost_per_event.png) · [SVG](output/03_cost_per_event.svg)
