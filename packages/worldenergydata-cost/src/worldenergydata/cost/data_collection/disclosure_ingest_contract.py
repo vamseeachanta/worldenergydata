@@ -293,13 +293,23 @@ def classify_disclosure_row(
     version identity: valid backward-linked revisions append even when their
     business key and value match. Reused identities conflict if evidence changes;
     missing parents or inconsistent logical families are explicitly invalid.
+    A business key shared by versioned and unversioned rows is invalid in either
+    direction, before duplicate or conflict classification. Attach revision
+    metadata to every original before adopting versioned ingestion for that key.
     """
-    if new_row.revision is not None:
-        return _classify_versioned_row(
-            list(existing_rows) + list(batch_seen_rows), new_row
-        )
+    corpus = list(existing_rows) + list(batch_seen_rows)
     new_key = disclosure_business_key(new_row)
-    for candidate in list(existing_rows) + list(batch_seen_rows):
+    for candidate in corpus:
+        if disclosure_business_key(candidate) == new_key and (
+            (candidate.revision is None) != (new_row.revision is None)
+        ):
+            return ClassificationDecision(
+                status=DisclosureIngestStatus.INVALID,
+                errors=("business key mixes versioned and unversioned disclosures",),
+            )
+    if new_row.revision is not None:
+        return _classify_versioned_row(corpus, new_row)
+    for candidate in corpus:
         if disclosure_business_key(candidate) != new_key:
             continue
 

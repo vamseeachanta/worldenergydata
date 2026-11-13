@@ -205,6 +205,55 @@ def test_non_revision_rows_follow_existing_ingest_behavior():
     assert result.accepted[0].row.revision is None
 
 
+@pytest.mark.parametrize("existing", [False, True])
+@pytest.mark.parametrize("versioned_first", [False, True])
+@pytest.mark.parametrize("value", [100.0, 120.0])
+def test_mixed_revision_business_key_is_invalid_in_either_order(
+    existing, versioned_first, value
+):
+    rows = [raw_row(), raw_row(metadata(), metric_value=value)]
+    if versioned_first:
+        rows.reverse()
+    snapshot = deepcopy(rows)
+    existing_rows = [DisclosureRow(**rows[0])] if existing else []
+    raw_rows = rows[1:] if existing else rows
+
+    result = ingest_disclosure_rows(
+        raw_rows=iter(raw_rows), existing_rows=existing_rows
+    )
+
+    assert len(result.accepted) == (0 if existing else 1)
+    assert len(result.invalid) == 1
+    assert result.invalid[0].index == (0 if existing else 1)
+    assert result.invalid[0].errors == (
+        "business key mixes versioned and unversioned disclosures",
+    )
+    assert not (result.duplicates or result.conflicts)
+    assert rows == snapshot
+    if existing:
+        assert existing_rows == [DisclosureRow(**snapshot[0])]
+    else:
+        assert result.accepted[0].row == DisclosureRow(**snapshot[0])
+
+
+@pytest.mark.parametrize(
+    "changes",
+    [
+        {"operator": "Another operator"},
+        {"fiscal_year": 2022},
+        {"scope_type": "segment"},
+        {"normalized_metric_name": "other_capex"},
+        {"project_name": "Example asset"},
+    ],
+)
+def test_plain_and_versioned_rows_with_distinct_business_keys_can_coexist(changes):
+    result = ingest_disclosure_rows(
+        raw_rows=[raw_row(), raw_row(metadata(), **changes)]
+    )
+    assert len(result.accepted) == 2
+    assert not (result.invalid or result.duplicates or result.conflicts)
+
+
 def test_invalid_metadata_is_reported_in_invalid_partition():
     result = ingest_disclosure_rows(raw_rows=[raw_row(amended(publication_date=None))])
     assert len(result.invalid) == 1

@@ -19,6 +19,7 @@ from __future__ import annotations
 import copy
 import importlib
 import inspect
+from types import MappingProxyType
 
 import pytest
 
@@ -466,6 +467,79 @@ def test_revision_history_returns_full_ordered_lineage(analytics_module):
     assert rows == snapshot
 
 
+@pytest.mark.parametrize("versioned", [False, True])
+@pytest.mark.parametrize(
+    "consumer,scope",
+    [
+        ("load_current_effective_disclosure_rows", "operator"),
+        ("load_current_effective_disclosure_rows", "project"),
+        ("load_disclosure_revision_history", "operator"),
+        ("load_disclosure_revision_history", "project"),
+        ("load_operator_annual_capex_view", "operator"),
+        ("load_project_cost_revision_view", "project"),
+        ("operator_capex", "operator"),
+        ("project_revision", "project"),
+    ],
+)
+def test_immutable_provenance_is_copied_for_each_result(
+    analytics_module, consumer, scope, versioned
+):
+    from worldenergydata.cost.data_collection import DisclosureRevisionMetadata
+
+    evidence = {"citation": {"pages": [1]}}
+    provenance = MappingProxyType(evidence)
+    records = []
+    for year, value in [(2022, 100.0), (2023, 120.0)]:
+        revision = (
+            DisclosureRevisionMetadata(
+                logical_disclosure_key=f"annual-capex-{year}",
+                version_id=f"v-{year}",
+                revision_classification="original",
+            )
+            if versioned
+            else None
+        )
+        records.append(
+            analytics_module.DisclosureRecord(
+                operator="Example operator",
+                fiscal_year=year,
+                reported_capex_usd_mm=value,
+                scope=scope,
+                project_name="Example asset" if scope == "project" else None,
+                provenance=provenance,
+                revision=revision,
+            )
+        )
+    if consumer in ("operator_capex", "project_revision"):
+        from worldenergydata.fdas import disclosure_analytics
+
+        load = getattr(disclosure_analytics, consumer)
+    else:
+        load = getattr(analytics_module, consumer)
+    result = load(iter(records))
+
+    assert [row.fiscal_year for row in result] == [2022, 2023]
+    assert [row.reported_capex_usd_mm for row in result] == [100.0, 120.0]
+    for source, derived in zip(records, result):
+        assert source.provenance is provenance
+        assert derived is not source
+        assert isinstance(derived.provenance, dict)
+        assert derived.provenance == evidence
+        assert derived.provenance["citation"] is not evidence["citation"]
+        if versioned:
+            assert derived.revision == source.revision
+    if hasattr(result[0], "yoy_delta_usd_mm"):
+        assert result[0].yoy_delta_usd_mm is None
+        assert result[1].yoy_delta_usd_mm == 20.0
+        assert result[1].yoy_delta_pct == pytest.approx(0.2)
+
+    result[0].provenance["citation"]["pages"].append(2)
+    result[0].provenance["extra"] = "derived only"
+    assert result[1].provenance == {"citation": {"pages": [1]}}
+    assert evidence == {"citation": {"pages": [1]}}
+    assert all(row.provenance is provenance for row in records)
+
+
 @pytest.mark.parametrize(
     "left,right,winner",
     [
@@ -508,6 +582,47 @@ def test_chain_depth_precedes_dates_and_missing_effective_date_is_oldest(
         )[0].revision.version_id
         == "a"
     )
+
+
+@pytest.mark.parametrize("reverse", [False, True])
+def test_deeper_amendment_outranks_later_restatement_branch(analytics_module, reverse):
+    root = _revision_record(
+        analytics_module,
+        revision_changes={"publication_date": "2023-03-01"},
+    )
+    first = _revision_record(
+        analytics_module,
+        "a1",
+        "v1",
+        reported_capex_usd_mm=2.0,
+        revision_changes={"publication_date": "2023-06-01"},
+    )
+    second = _revision_record(
+        analytics_module,
+        "a2",
+        "a1",
+        reported_capex_usd_mm=3.0,
+        revision_changes={"publication_date": "2023-07-01"},
+    )
+    restated = _revision_record(
+        analytics_module,
+        "r",
+        "v1",
+        reported_capex_usd_mm=9.0,
+        revision_changes={
+            "revision_classification": "restated",
+            "publication_date": "2024-03-01",
+            "effective_date": "2024-03-01",
+        },
+    )
+    rows = [root, first, second, restated]
+    if reverse:
+        rows.reverse()
+    selected = analytics_module.load_current_effective_disclosure_rows(iter(rows))
+    assert [row.revision.version_id for row in selected] == ["a2"]
+    assert [row.reported_capex_usd_mm for row in selected] == [3.0]
+    history = analytics_module.load_disclosure_revision_history(iter(rows))
+    assert [row.revision.version_id for row in history] == ["v1", "a1", "r", "a2"]
 
 
 def test_current_selection_is_per_logical_key_and_preserves_plain_rows(

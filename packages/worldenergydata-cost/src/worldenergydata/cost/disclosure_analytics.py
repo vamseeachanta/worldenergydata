@@ -32,7 +32,7 @@ depend on the canonical type without changing its public API.
 from __future__ import annotations
 
 from copy import deepcopy
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import date
 from typing import Any, Iterable, Mapping, Optional
 
@@ -196,6 +196,12 @@ def load_current_effective_disclosure_rows(
     dates. Complete lineages are required. Selection is independent of input
     order for versioned rows. Plain rows retain their original relative order.
 
+    Depth outranks dates even across branches: given original o, amendments
+    o -> a1 -> a2 published in June/July 2023, and a restatement r superseding
+    o directly with publication and effective dates in March 2024, a2 wins.
+    Data entry must supersede the latest known version when a later filing
+    should replace it; branching from the original does not ensure selection.
+
     This selector has no as-of cutoff: a supplied future effective date still
     participates. Consumers needing historical evidence use the history API.
     Versioned annual groups cannot mix logical keys or unversioned rows: attach
@@ -210,7 +216,9 @@ def load_current_effective_disclosure_rows(
         max(groups[key], key=lambda row: _revision_order(row, depths))
         for key in sorted(groups)
     )
-    return deepcopy(selected)
+    return [
+        replace(row, provenance=_copy_provenance(row.provenance)) for row in selected
+    ]
 
 
 def load_disclosure_revision_history(
@@ -231,7 +239,9 @@ def load_disclosure_revision_history(
         history.extend(
             sorted(groups[key], key=lambda row: _revision_order(row, depths))
         )
-    return deepcopy(history)
+    return [
+        replace(row, provenance=_copy_provenance(row.provenance)) for row in history
+    ]
 
 
 def _copy_provenance(src: Mapping[str, Any]) -> dict:
