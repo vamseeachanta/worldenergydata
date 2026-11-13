@@ -7,7 +7,7 @@
     "data/modules/cost/curated/award_asset_links.csv": "2064ee7b514613b87d2e67aa6eb2e8eba6e7261a7b29cd7e2d57ffc150a7c70f",
     "data/modules/cost/curated/contract_awards.csv": "55062aa7dd443999af2ea3794118a2d0b0a1e6629d1b4cda9a49ed24578a1160",
     "data/modules/cost/curated/cost_project_identity.csv": "b8848a968b8d5b2d38bc18dbabfdc6c03f81c7f903fb6d6f9fa24cfca725d6bd",
-    "data/modules/cost/curated/cost_revision_trails.csv": "403f108b4a04de50de341e9f36649d0e33f855dcd39caf460cabdbbfa1412540",
+    "data/modules/cost/curated/cost_revision_trails.csv": "c729dd50e55e9af3f165500ab96e38261830550f02b466c9297dd7b481100bb9",
     "data/modules/cost/curated/fdas_project_cost_crosswalk.csv": "f5e2fb5f0f3619964e100bee02c12bc4bd1c6e5be102d02f606d238ec093c236",
     "data/modules/cost/curated/project_asset_requirements.csv": "3fa8344ebf78976a06ea39455d9cd1ac45e0339a88efe0e061517361ccf86b80",
     "data/modules/cost/curated/project_cost_statements.csv": "7c1a32b8a5fd51409a217a314f07a9fcb984140a37b1b285dd2cf72530eca1e7",
