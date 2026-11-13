@@ -5,6 +5,7 @@ Fixtures are synthetic CSV records, not engineering properties or design limits.
 """
 
 import csv
+import sys
 from pathlib import Path
 from unittest.mock import patch
 
@@ -344,10 +345,14 @@ def test_control_character_identity_is_not_cached(
     tmp_path: Path, component_id: str
 ) -> None:
     """Embedded Cc characters cannot create invisible identity differences."""
-    write_catalog(tmp_path, [component_id])
+    content = (
+        ",".join(HEADER) + "\n"
+        f"{component_id},Synthetic CSV example,Identity validation only,riser_joint,,,,,\n"
+    )
+    (tmp_path / CSV_NAME).write_bytes(content.encode("utf-8"))
     loader = DrillingRiserLoader(tmp_path)
     message = "COMPONENT_ID.*control.*CSV line 2$"
-    if "\x00" in component_id:
+    if sys.version_info < (3, 11) and "\x00" in component_id:
         # Python 3.10 rejects NUL in csv.reader before identity validation.
         message += "|^Malformed CSV at line 2: line contains NUL$"
     with pytest.raises(ValueError, match=message):
