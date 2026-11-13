@@ -1,0 +1,17 @@
+TRAIL_PROJECT,STATEMENT_DATE,KIND,QUALIFIER,EVIDENCE,REVIEWED_DATE
+Big Foot,2010,sanction_estimate,exact,"held quote: 'Project Cost: $4 billion'",2026-11-12
+Big Foot,2018,final_outturn,unsupported,"the cited article is dated 30 April 2015 and says 'The platform cost approximately $5.1 billion' for a platform ready to begin drilling; it does not state a 2018 final project cost",2026-11-12
+Gorgon (incl. Jansz-Io),2009-09,sanction_estimate,exact,"held quote: 'Total estimated project costs for the first phase of development are $37 billion.'",2026-11-12
+Gorgon (incl. Jansz-Io),2016-03,final_outturn,exact,"held quote: '$54 billion Gorgon LNG project'; trade-press figure, low confidence",2026-11-12
+Jubilee Phase 1,2009-07,sanction_estimate,exact,"source text (1 Dec 2010): 'compared with the original budget of $3.15 billion'",2026-11-12
+Jubilee Phase 1,2010-12,final_forecast,exact,"held quote: '$3.3 billion world-class Jubilee Field development offshore the Republic of Ghana'",2026-11-12
+Kraken,2013-11,sanction_estimate,exact,"held quote, operator restatement at first oil: 'down from $3.2 billion'",2026-11-12
+Kraken,2017-06,final_forecast,approximate,"held quote: 'currently estimated to be approximately $2.5 billion'",2026-11-12
+Mariner,2012-12,sanction_estimate,lower_bound,"held quote: 'investments of more than USD 7 billion'",2026-11-12
+Mariner,2019-08,final_outturn,lower_bound,"operator release (15 Aug 2019): 'A gross investment of more than $7.7 billion'",2026-11-12
+Peregrino Phase 2,2015-02,sanction_estimate,approximate,"held quote: 'investments of approximately USD 3,5 billion'",2026-11-12
+Peregrino Phase 2,2022-10,final_outturn,upper_bound,"operator release (13 Oct 2022): 'delivered within the original USD 3 billion cost estimate'",2026-11-12
+Sangomar Phase 1,2020-01,sanction_estimate,exact,"held quote: 'US$4.2 billion Sangomar oil project'",2026-11-12
+Sangomar Phase 1,2025-02,final_outturn,approximate,"held quote: 'The final Sangomar Field Development Phase 1 cost was approximately $5.0 billion'",2026-11-12
+TEN (Tweneboa-Enyenra-Ntomme),2013-05,sanction_estimate,exact,"held quote: 'the $4-billion figure we approved at sanction'",2026-11-12
+TEN (Tweneboa-Enyenra-Ntomme),2016-08,final_forecast,upper_bound,"held quote: 'our capital costs to first oil will come in under the $4-billion figure we approved at sanction'",2026-11-12
