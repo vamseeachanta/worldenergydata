@@ -50,9 +50,14 @@ separately stated operating draft takes precedence for `DRAFT_M` and the legacy
 operating key. Transit drafts remain under `RAW_DRAFT_TRANSIT_FT`.
 
 When ingestion receives `DRAFT_M`, it replaces `RAW_DRAFT_LOAD_LINE_FT` with
-the supplied value or `None` if the key is absent. This applies to both raw
-output and curated updates, including alias matches. An update supplying
-neither draft field preserves the existing pair.
+the supplied value or `None` if the key is absent, in both raw output and
+curated updates. Alias matching applies only to curated updates. A curated
+update supplying neither draft field preserves the existing pair.
+
+During source-priority fusion, the winning non-`None` `DRAFT_M` and its
+`RAW_DRAFT_LOAD_LINE_FT` come from the same record, including a missing or
+explicitly `None` condition. Later equal-priority drafts win; a record without
+a draft cannot relabel the winning pair.
 
 The two `image_transcription` records carrying the added load-line field are
 classified provisionally by analogy with sister records. Their individual
