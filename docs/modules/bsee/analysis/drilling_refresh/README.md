@@ -206,9 +206,11 @@ mismatches, resume behaviour and immutable output directories.
 
 Run `tests/unit/bsee/analysis/test_drilling_refresh.py` with the existing
 `test_war_rig_days*.py` regression files using pytest. These tests download no
-data, start no browser and use no licensed solver. The historical receipt keeps
-its original workflow digest; the current retained receipt is checked against
-the normalized source digest and names the rebuild command on mismatch.
+data, start no browser and use no licensed solver. The retained historical
+receipt's `workflow_sha256` is checked against the decompressed bytes of
+`quality/workflow_source.py.gz`, not the current implementation. New receipts
+are checked against the normalized source digest of the implementation that
+produces them; the archive check does not validate a new run.
 
 ## Quality example ordering
 
@@ -221,3 +223,47 @@ original lexicographic examples. Its `workflow_sha256` is checked against
 source at revision `0ece088f3b02bdaad290d4c33aefe637e8e22c99`. The archive preserves
 the existing receipt's provenance; the historical results have not been
 regenerated with the revised implementation.
+
+## Workflow archive regeneration
+
+The archive was regenerated with `python -`, supplying the following Python
+block on standard input from the repository root, using CPython 3.14.6. Source
+and receipt bytes are read directly from Git objects, without checkout newline
+conversion. The historical receipt and its digest are unchanged.
+
+```python
+import gzip
+import hashlib
+import json
+import subprocess
+from pathlib import Path
+
+
+def committed_bytes(revision, path):
+    return subprocess.run(
+        ["git", "-c", "core.autocrlf=false", "show", f"{revision}:{path}"],
+        check=True,
+        capture_output=True,
+        creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
+    ).stdout
+
+
+revision = "0ece088f3b02bdaad290d4c33aefe637e8e22c99"
+source_path = (
+    "packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/"
+    "drilling_refresh.py"
+)
+directory = Path("docs/modules/bsee/analysis/drilling_refresh/quality")
+source = committed_bytes(revision, source_path)
+receipt = json.loads(committed_bytes("HEAD", (directory / "qa.json").as_posix()))
+assert b"\r" not in source
+assert hashlib.sha256(source).hexdigest() == receipt["workflow_sha256"]
+archive = directory / "workflow_source.py.gz"
+archive.write_bytes(gzip.compress(source, compresslevel=9, mtime=0))
+assert gzip.decompress(archive.read_bytes()) == source
+```
+
+Only the decompressed LF source bytes are verified against `workflow_sha256`.
+The gzip stream is a transport container: even with level 9 and `mtime=0`, its
+compressed bytes may differ between Python or compression-library versions.
+Compressed-byte reproducibility is not an acceptance criterion.
