@@ -15,7 +15,11 @@ from worldenergydata.modules.state_regulators.fetch.job import (
     _storage_path,
     main,
 )
-from worldenergydata.modules.state_regulators.fetch.storage import CacheStore
+from worldenergydata.modules.state_regulators.fetch.storage import (
+    CacheIntegrityError,
+    CacheStore,
+    _checked_path,
+)
 
 from .fetch_cases import Clock, server, settings
 
@@ -178,9 +182,44 @@ def test_cache_root_itself_cannot_be_a_symlink(tmp_path: Path) -> None:
     actual.mkdir()
     linked = tmp_path / "linked"
     linked.symlink_to(actual, target_is_directory=True)
-    with pytest.raises(ValueError, match="symlinks"):
+    with pytest.raises(CacheIntegrityError, match="symlinks"):
         CacheStore(linked)
     assert list(actual.iterdir()) == []
+
+
+@pytest.mark.parametrize("entry", ["objects", "records", "progress.json"])
+def test_cli_linked_cache_entry_is_cache_failure(
+    tmp_path: Path, monkeypatch: Any, capsys: Any, entry: str
+) -> None:
+    path = cli_config(tmp_path, "https://records.example.org", monkeypatch)
+    cache = tmp_path / "cache"
+    cache.mkdir()
+    target = tmp_path / "retained"
+    if entry == "progress.json":
+        target.write_bytes(b"retained\n")
+    else:
+        target.mkdir()
+        (target / "evidence").write_bytes(b"retained\n")
+    linked = cache / entry
+    linked.symlink_to(target, target_is_directory=target.is_dir())
+    with pytest.raises(SystemExit) as error:
+        main([str(path), "--execute"])
+    assert error.value.code == 6
+    assert capsys.readouterr().err == (
+        "CacheIntegrityError: preserve and inspect retained cache evidence\n"
+    )
+    assert linked.is_symlink()
+    evidence = target / "evidence" if target.is_dir() else target
+    assert evidence.read_bytes() == b"retained\n"
+
+
+@pytest.mark.parametrize("traversal", [False, True])
+def test_cache_escape_is_integrity_failure(tmp_path: Path, traversal: bool) -> None:
+    root = tmp_path / "cache"
+    path = root / ".." / "outside" if traversal else tmp_path / "outside"
+    with pytest.raises(CacheIntegrityError, match="within the cache root"):
+        _checked_path(path, root)
+    assert not root.exists()
 
 
 def test_literal_dollar_is_a_valid_storage_path() -> None:

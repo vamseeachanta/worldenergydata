@@ -28,14 +28,14 @@ def _checked_path(path: Path, root: Path) -> Path:
     This checks a stable directory tree; concurrent replacement is unsupported.
     """
     if not path.is_relative_to(root):
-        raise ValueError("Cache path must remain within the cache root")
+        raise CacheIntegrityError("Cache path must remain within the cache root")
     current = root
     for part in ("", *path.relative_to(root).parts):
         current = current / part
         if current.is_symlink():
-            raise ValueError("Cache path must not contain symlinks")
+            raise CacheIntegrityError("Cache path must not contain symlinks")
     if not path.resolve().is_relative_to(root.resolve()):
-        raise ValueError("Cache path must remain within the cache root")
+        raise CacheIntegrityError("Cache path must remain within the cache root")
     return path
 
 

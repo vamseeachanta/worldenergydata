@@ -148,6 +148,7 @@ def test_resume_after_interrupt_uses_retained_objects(
 def test_per_host_budget_survives_restart_and_counts_retries(
     tmp_path: Any, server: Any
 ) -> None:
+    """Restart refuses a retained window wait above the configured sleep cap."""
     origin, state = server
     clock = Clock()
     state["responses"] = [(429, {"Retry-After": "1"}, b"wait")]
@@ -231,13 +232,33 @@ def test_same_bytes_keep_each_urls_provenance(tmp_path: Any, server: Any) -> Non
     assert a.metadata["url"] != b.metadata["url"]
 
 
-def test_bulk_preference_and_crawl_audit(caplog: Any) -> None:
-    bulk = "https://records.example.org/wells.zip"
-    crawl = "https://records.example.org/search"
-    assert choose_route([bulk], crawl) == bulk
+@pytest.mark.parametrize("has_bulk", [False, True])
+def test_bulk_preference_and_crawl_audit(
+    caplog: Any, capsys: Any, has_bulk: bool
+) -> None:
+    bulk = "https://records.example.org/wells.zip?key=SYNTHETIC_BULK_MARKER"
+    crawl = "https://crawl.example.org/search?key=SYNTHETIC_CRAWL_MARKER"
+    routes = [bulk] if has_bulk else []
+    if has_bulk:
+        assert choose_route(routes, crawl) == bulk
+        assert not caplog.records
     with caplog.at_level("WARNING"):
-        assert choose_route([bulk], crawl, use_crawl=True) == crawl
-    assert bulk in caplog.text and "crawl" in caplog.text
+        assert choose_route(routes, crawl, use_crawl=has_bulk) == crawl
+    assert len(caplog.records) == 1
+    bulk_origins = ["https://records.example.org:443"] if has_bulk else []
+    assert caplog.records[0].getMessage() == (
+        "crawl selected: https://crawl.example.org:443; "
+        f"available official bulk routes: {bulk_origins}"
+    )
+    captured = capsys.readouterr()
+    output = caplog.text + captured.out + captured.err
+    for value in (
+        "SYNTHETIC_BULK_MARKER",
+        "SYNTHETIC_CRAWL_MARKER",
+        "/search",
+        "/wells.zip",
+    ):
+        assert value not in output
 
 
 def test_redirect_is_not_followed(tmp_path: Any, server: Any) -> None:
