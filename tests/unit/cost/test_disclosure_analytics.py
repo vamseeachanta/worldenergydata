@@ -428,3 +428,198 @@ class TestCostPackageExports:
         assert hasattr(cost, "PredictionResult")
         assert hasattr(cost, "CostDataPoint")
         assert hasattr(cost, "load_public_dataset")
+
+
+# Explicit revision selectors retain history separately from annual series.
+def _revision_record(analytics_module, version_id="v1", parent=None, **changes):
+    from worldenergydata.cost.data_collection import DisclosureRevisionMetadata
+
+    revision = dict(
+        logical_disclosure_key="annual-capex-2023",
+        version_id=version_id,
+        supersedes_version_id=parent,
+        revision_classification="amended" if parent else "original",
+        publication_date="2024-03-01" if parent else None,
+    )
+    revision.update(changes.pop("revision_changes", {}))
+    payload = dict(
+        operator="Example operator",
+        fiscal_year=2023,
+        reported_capex_usd_mm=100.0,
+        scope=analytics_module.SCOPE_OPERATOR,
+        revision=DisclosureRevisionMetadata(**revision),
+        provenance={"citation": {"page": "table 1"}},
+    )
+    payload.update(changes)
+    return analytics_module.DisclosureRecord(**payload)
+
+
+def test_revision_history_returns_full_ordered_lineage(analytics_module):
+    original = _revision_record(analytics_module)
+    amended = _revision_record(analytics_module, "v2", "v1")
+    restated = _revision_record(analytics_module, "v3", "v2")
+    rows = [restated, original, amended]
+    snapshot = copy.deepcopy(rows)
+    history = analytics_module.load_disclosure_revision_history(iter(rows))
+    assert [r.revision.version_id for r in history] == ["v1", "v2", "v3"]
+    history[0].provenance["citation"]["page"] = "changed"
+    assert rows == snapshot
+
+
+@pytest.mark.parametrize(
+    "left,right,winner",
+    [
+        ({"effective_date": "2024-05-01"}, {"effective_date": "2024-04-01"}, "a"),
+        ({"publication_date": "2024-04-01"}, {}, "a"),
+        ({}, {}, "z"),
+    ],
+)
+def test_current_effective_selector_uses_defined_precedence(
+    analytics_module, left, right, winner
+):
+    root = _revision_record(analytics_module)
+    a = _revision_record(analytics_module, "a", "v1", revision_changes=left)
+    z = _revision_record(analytics_module, "z", "v1", revision_changes=right)
+    for rows in ([root, a, z], [z, root, a]):
+        selected = analytics_module.load_current_effective_disclosure_rows(iter(rows))
+        assert [r.revision.version_id for r in selected] == [winner]
+
+
+def test_chain_depth_precedes_dates_and_missing_effective_date_is_oldest(
+    analytics_module,
+):
+    root = _revision_record(analytics_module)
+    newer_date = _revision_record(
+        analytics_module, "a", "v1", revision_changes={"effective_date": "2025-01-01"}
+    )
+    deeper = _revision_record(analytics_module, "b", "a")
+    assert (
+        analytics_module.load_current_effective_disclosure_rows(
+            [root, newer_date, deeper]
+        )[0].revision.version_id
+        == "b"
+    )
+    no_effective = _revision_record(
+        analytics_module, "z", "v1", revision_changes={"publication_date": "2026-01-01"}
+    )
+    assert (
+        analytics_module.load_current_effective_disclosure_rows(
+            [root, newer_date, no_effective]
+        )[0].revision.version_id
+        == "a"
+    )
+
+
+def test_current_selection_is_per_logical_key_and_preserves_plain_rows(
+    analytics_module,
+):
+    root = _revision_record(analytics_module)
+    other = _revision_record(
+        analytics_module,
+        "other",
+        fiscal_year=2022,
+        revision_changes={"logical_disclosure_key": "annual-capex-2022"},
+    )
+    plain = analytics_module.DisclosureRecord("Example operator", 2021, 80, "operator")
+    result = analytics_module.load_current_effective_disclosure_rows(
+        [root, other, plain]
+    )
+    assert len(result) == 3
+    assert {r.fiscal_year for r in result} == {2021, 2022, 2023}
+    assert analytics_module.load_disclosure_revision_history([]) == []
+
+
+@pytest.mark.parametrize(
+    "view", ["load_operator_annual_capex_view", "load_project_cost_revision_view"]
+)
+def test_annual_series_selects_effective_revision_before_yoy(analytics_module, view):
+    scope = "operator" if "operator" in view else "project"
+    project = None if scope == "operator" else "Example asset"
+    root = _revision_record(analytics_module, scope=scope, project_name=project)
+    revised = _revision_record(
+        analytics_module,
+        "v2",
+        "v1",
+        reported_capex_usd_mm=120,
+        scope=scope,
+        project_name=project,
+    )
+    following = analytics_module.DisclosureRecord(
+        "Example operator", 2024, 150, scope, project_name=project
+    )
+    result = getattr(analytics_module, view)([revised, following, root])
+    assert [r.reported_capex_usd_mm for r in result] == [120, 150]
+    assert result[0].yoy_delta_usd_mm is None
+    assert result[1].yoy_delta_usd_mm == 30
+    assert result[1].yoy_delta_pct == pytest.approx(0.25)
+    assert result[0].revision.version_id == "v2"
+    assert not hasattr(result[1], "revision")
+
+
+@pytest.mark.parametrize(
+    "kind", ["dangling", "foreign", "cycle", "duplicate", "two-roots"]
+)
+@pytest.mark.parametrize(
+    "selector",
+    ["load_current_effective_disclosure_rows", "load_disclosure_revision_history"],
+)
+def test_analytics_rejects_invalid_lineage(analytics_module, kind, selector):
+    root = _revision_record(analytics_module)
+    second = _revision_record(analytics_module, "v2", "v1")
+    if kind == "dangling":
+        rows = [second]
+    elif kind == "foreign":
+        rows = [
+            root,
+            _revision_record(
+                analytics_module,
+                "v2",
+                "v1",
+                revision_changes={"logical_disclosure_key": "other"},
+            ),
+        ]
+    elif kind == "cycle":
+        rows = [_revision_record(analytics_module, "v1", "v2"), second]
+    elif kind == "duplicate":
+        rows = [root, root]
+    else:
+        rows = [root, _revision_record(analytics_module, "v2")]
+    with pytest.raises(ValueError):
+        getattr(analytics_module, selector)(rows)
+
+
+@pytest.mark.parametrize("kind", ["plain", "other-key", "changed-year"])
+def test_revision_selector_rejects_ambiguous_annual_groups(analytics_module, kind):
+    root = _revision_record(analytics_module)
+    if kind == "plain":
+        second = analytics_module.DisclosureRecord(
+            "Example operator", 2023, 80, "operator"
+        )
+    elif kind == "other-key":
+        second = _revision_record(
+            analytics_module,
+            "other",
+            revision_changes={"logical_disclosure_key": "other"},
+        )
+    else:
+        second = _revision_record(analytics_module, "v2", "v1", fiscal_year=2024)
+    with pytest.raises(ValueError):
+        analytics_module.load_current_effective_disclosure_rows([root, second])
+
+
+@pytest.mark.parametrize(
+    "view", ["load_operator_annual_capex_view", "load_project_cost_revision_view"]
+)
+def test_plain_derived_serialization_keeps_legacy_shape(analytics_module, view):
+    from dataclasses import asdict
+
+    scope = "operator" if "operator" in view else "project"
+    plain = analytics_module.DisclosureRecord(
+        "Example operator", 2023, 100, scope, project_name="Example asset"
+    )
+    assert "revision" not in asdict(getattr(analytics_module, view)([plain])[0])
+    versioned = _revision_record(
+        analytics_module, scope=scope, project_name="Example asset"
+    )
+    derived = getattr(analytics_module, view)([versioned])[0]
+    assert asdict(derived)["revision"].version_id == "v1"

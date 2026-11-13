@@ -33,11 +33,21 @@ from __future__ import annotations
 
 from copy import deepcopy
 from dataclasses import dataclass, field
+from datetime import date
 from typing import Any, Iterable, Mapping, Optional
+
+from worldenergydata.cost.data_collection.disclosure_revision_contract import (
+    DisclosureRevisionMetadata,
+    disclosure_revision_depths,
+)
 
 __all__ = [
     "DisclosureRecord",
+    "load_current_effective_disclosure_rows",
+    "load_disclosure_revision_history",
     "ProjectRevisionRow",
+    "VersionedProjectRevisionRow",
+    "VersionedOperatorCapexRow",
     "OperatorCapexRow",
     "DisclosureBenchmarkResult",
     "load_project_cost_revision_view",
@@ -72,6 +82,7 @@ class DisclosureRecord:
     comparability_status: Optional[str] = None
     comparability_basis: Optional[str] = None
     currency: Optional[str] = None
+    revision: Optional[DisclosureRevisionMetadata] = None
 
 
 @dataclass
@@ -101,6 +112,20 @@ class OperatorCapexRow:
     comparability_status: Optional[str]
 
 
+@dataclass
+class VersionedProjectRevisionRow(ProjectRevisionRow):
+    """Selected project revision; legacy rows retain their serialized shape."""
+
+    revision: DisclosureRevisionMetadata
+
+
+@dataclass
+class VersionedOperatorCapexRow(OperatorCapexRow):
+    """Selected operator revision with its auditable version identity."""
+
+    revision: DisclosureRevisionMetadata
+
+
 @dataclass(frozen=True)
 class DisclosureBenchmarkResult:
     """Outcome of the gated cost-vs-disclosure comparison."""
@@ -113,6 +138,94 @@ class DisclosureBenchmarkResult:
     absolute_delta_usd_mm: float
     pct_delta: float
     comparability_status: str
+
+
+def _revision_groups(
+    records: list[DisclosureRecord],
+) -> tuple[dict[str, list[DisclosureRecord]], dict[str, int]]:
+    groups: dict[str, list[DisclosureRecord]] = {}
+    revisions = []
+    for row in records:
+        if row.revision is not None:
+            revisions.append(row.revision)
+            groups.setdefault(row.revision.logical_disclosure_key, []).append(row)
+    depths = disclosure_revision_depths(revisions)
+    for rows in groups.values():
+        identities = {
+            (r.operator, r.fiscal_year, r.scope, r.project_name) for r in rows
+        }
+        if len(identities) != 1:
+            raise ValueError("logical disclosure key cannot span annual scope groups")
+    owners: dict[tuple, str] = {}
+    for key, family in groups.items():
+        first = family[0]
+        identity = (first.operator, first.fiscal_year, first.scope, first.project_name)
+        if identity in owners:
+            raise ValueError("multiple logical keys for one annual capex group")
+        owners[identity] = key
+    for row in records:
+        identity = (row.operator, row.fiscal_year, row.scope, row.project_name)
+        if row.revision is None and identity in owners:
+            raise ValueError("annual group mixes versioned and unversioned disclosures")
+    return groups, depths
+
+
+def _revision_order(row: DisclosureRecord, depths: Mapping[str, int]) -> tuple:
+    revision = row.revision
+    assert revision is not None
+    return (
+        depths[revision.version_id],
+        revision.effective_date or date.min,
+        revision.publication_date or date.min,
+        revision.version_id,
+    )
+
+
+def load_current_effective_disclosure_rows(
+    records: Iterable[DisclosureRecord],
+) -> list[DisclosureRecord]:
+    """Select one current row per logical key; keep unversioned rows unchanged.
+
+    Prefer greatest chain depth, then latest explicit effective date, then
+    publication date, then greatest lexical version ID. Missing dates sort
+    before supplied dates; publication dates are never substituted for effective
+    dates. Complete lineages are required. Selection is independent of input
+    order for versioned rows. Plain rows retain their original relative order.
+
+    This selector has no as-of cutoff: a supplied future effective date still
+    participates. Consumers needing historical evidence use the history API.
+    Versioned annual groups cannot mix logical keys or unversioned rows: attach
+    metadata to every original in a family before adopting revision selection.
+    """
+    rows = list(records)
+    groups, depths = _revision_groups(rows)
+    selected = [r for r in rows if r.revision is None]
+    selected.extend(
+        max(groups[key], key=lambda row: _revision_order(row, depths))
+        for key in sorted(groups)
+    )
+    return deepcopy(selected)
+
+
+def load_disclosure_revision_history(
+    records: Iterable[DisclosureRecord],
+) -> list[DisclosureRecord]:
+    """Return every version, ordered by logical key and increasing precedence.
+
+    Parents precede descendants; competing branches remain in the audit trail.
+    Unversioned rows precede versioned families in input order. Returned rows
+    copy provenance so callers cannot mutate the raw evidence through a view.
+    Do not feed history directly into annual YoY arithmetic: annual views first
+    select current-effective revisions, including revised prior-year values.
+    """
+    rows = list(records)
+    groups, depths = _revision_groups(rows)
+    history = [r for r in rows if r.revision is None]
+    for key in sorted(groups):
+        history.extend(
+            sorted(groups[key], key=lambda row: _revision_order(row, depths))
+        )
+    return deepcopy(history)
 
 
 def _copy_provenance(src: Mapping[str, Any]) -> dict:
@@ -135,12 +248,13 @@ def load_project_cost_revision_view(
     """Build the project annual cost revision view.
 
     Groups by ``(operator, project_name)``, sorts by ``fiscal_year``, and emits
-    a derived row per raw row with YoY delta and YoY percent when a prior-year
+    a derived row per current-effective row with YoY delta and YoY percent when a prior-year
     row exists in the same group.
 
     Operator-scope rows and rows missing ``project_name`` are excluded — they
     belong to the operator view, never this one.
     """
+    records = load_current_effective_disclosure_rows(records)
     project_rows = [r for r in records if r.scope == SCOPE_PROJECT and r.project_name]
     groups: dict[tuple[str, str], list[DisclosureRecord]] = {}
     for r in project_rows:
@@ -152,8 +266,13 @@ def load_project_cost_revision_view(
         prior_capex: Optional[float] = None
         for r in rows_sorted:
             delta, pct = _yoy(r.reported_capex_usd_mm, prior_capex)
+            row_type = (
+                VersionedProjectRevisionRow
+                if r.revision is not None
+                else ProjectRevisionRow
+            )
             result.append(
-                ProjectRevisionRow(
+                row_type(
                     operator=r.operator,
                     project_name=r.project_name,
                     fiscal_year=r.fiscal_year,
@@ -162,6 +281,7 @@ def load_project_cost_revision_view(
                     yoy_delta_pct=pct,
                     provenance=_copy_provenance(r.provenance),
                     comparability_status=r.comparability_status,
+                    **({"revision": r.revision} if r.revision is not None else {}),
                 )
             )
             prior_capex = r.reported_capex_usd_mm
@@ -174,10 +294,13 @@ def load_operator_annual_capex_view(
     """Build the operator annual capex view.
 
     Groups by ``operator``, sorts by ``fiscal_year``, and emits a derived row
-    per raw row with YoY deltas computed within-group only.
+    per current-effective row with YoY deltas computed within-group only.
+    Revised prior-year amounts become the comparison basis; the chosen revision
+    metadata annotates each derived row, and history retains original evidence.
 
     Project-scope rows are excluded.
     """
+    records = load_current_effective_disclosure_rows(records)
     operator_rows = [r for r in records if r.scope == SCOPE_OPERATOR]
     groups: dict[str, list[DisclosureRecord]] = {}
     for r in operator_rows:
@@ -189,8 +312,13 @@ def load_operator_annual_capex_view(
         prior_capex: Optional[float] = None
         for r in rows_sorted:
             delta, pct = _yoy(r.reported_capex_usd_mm, prior_capex)
+            row_type = (
+                VersionedOperatorCapexRow
+                if r.revision is not None
+                else OperatorCapexRow
+            )
             result.append(
-                OperatorCapexRow(
+                row_type(
                     operator=r.operator,
                     fiscal_year=r.fiscal_year,
                     reported_capex_usd_mm=r.reported_capex_usd_mm,
@@ -198,6 +326,7 @@ def load_operator_annual_capex_view(
                     yoy_delta_pct=pct,
                     provenance=_copy_provenance(r.provenance),
                     comparability_status=r.comparability_status,
+                    **({"revision": r.revision} if r.revision is not None else {}),
                 )
             )
             prior_capex = r.reported_capex_usd_mm
