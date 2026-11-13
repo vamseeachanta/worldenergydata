@@ -32,7 +32,14 @@ def wellbore_district_parameter(district: str) -> int:
 
 
 def require_district_names(columns: Iterable[str]) -> None:
-    """Reject numeric-ID schemas, even if a name column is also supplied."""
+    """Reject numeric IDs as the sole district source; never convert them."""
+    columns = list(columns)
+    if any(
+        str(column).strip().upper().replace(" ", "_").replace("-", "_")
+        in {"DISTRICT", "DISTRICT_NAME"}
+        for column in columns
+    ):
+        return
     numeric_columns = [
         str(column)
         for column in columns

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import csv
 import zipfile
 from dataclasses import dataclass
 from io import StringIO, TextIOWrapper
@@ -10,10 +11,7 @@ from typing import Iterable, Sequence
 
 import pandas as pd
 
-from worldenergydata.texas_rrc.data.loaders.pdq_loader import PDQLoader
-from worldenergydata.texas_rrc.processors.production_processor import (
-    ProductionProcessor,
-)
+from worldenergydata.texas_rrc.district_inputs import require_district_names
 from worldenergydata.texas_rrc.production_atlas.atlas import (
     is_usable_production_frame,
     normalize_production_frame,
@@ -22,35 +20,6 @@ from worldenergydata.texas_rrc.production_atlas.atlas import (
 PRODUCTION_PDQ_RELATIVE_DIR = Path("raw") / "production" / "pdq"
 SUPPORTED_MEMBER_SUFFIXES = (".csv", ".txt", ".dsv")
 PREFERRED_PRODUCTION_MEMBERS = ("OG_LEASE_CYCLE_DATA_TABLE",)
-PRODUCTION_USE_COLUMNS = {
-    "CYCLE_MONTH",
-    "CYCLE_YEAR",
-    "CYCLE_YEAR_MONTH",
-    "DISTRICT_NO",
-    "DIST_OIL_PROD_VOL",
-    "DIST_GAS_PROD_VOL",
-    "DIST_COND_PROD_VOL",
-    "DIST_CSGD_PROD_VOL",
-    "FIELD_NO",
-    "FIELD_NAME",
-    "FIELD_OIL_PROD_VOL",
-    "FIELD_GAS_PROD_VOL",
-    "FIELD_COND_PROD_VOL",
-    "FIELD_CSGD_PROD_VOL",
-    "LEASE_NO",
-    "LEASE_NAME",
-    "LEASE_OIL_PROD_VOL",
-    "LEASE_GAS_PROD_VOL",
-    "LEASE_COND_PROD_VOL",
-    "LEASE_CSGD_PROD_VOL",
-    "OPERATOR_NO",
-    "OPERATOR_NAME",
-    "OPER_OIL_PROD_VOL",
-    "OPER_GAS_PROD_VOL",
-    "OPER_COND_PROD_VOL",
-    "OPER_CSGD_PROD_VOL",
-    "PROD_REPORT_FILED_FLAG",
-}
 
 
 @dataclass(frozen=True)
@@ -237,30 +206,17 @@ def _member_first_line(archive: zipfile.ZipFile, name: str) -> str:
 
 
 def _csv_reader_kwargs(first_line: str, separator: str | None) -> dict[str, object]:
+    header = first_line.lstrip("\ufeff")
+    delimiter = separator or csv.Sniffer().sniff(header).delimiter
+    require_district_names(next(csv.reader([header], delimiter=delimiter)))
     kwargs: dict[str, object] = {
         "dtype": str,
         "keep_default_na": False,
     }
     if separator is None:
         kwargs["engine"] = "python"
-    usecols = _preferred_usecols(first_line, separator)
-    if usecols:
-        kwargs["usecols"] = usecols
+    # Retain all fields: canonical metrics and dates need not use PDQ aliases.
     return kwargs
-
-
-def _preferred_usecols(first_line: str, separator: str | None) -> list[str]:
-    if separator is None:
-        return []
-    columns = [column.strip() for column in first_line.rstrip("\r\n").split(separator)]
-    # Preserve both name and numeric-ID fields so validation sees the schema.
-    supported = (
-        PRODUCTION_USE_COLUMNS
-        | set(ProductionProcessor.COLUMN_MAPPINGS)
-        | set(PDQLoader.PRODUCTION_FIELD_MAPPING)
-        | {"DISTRICT"}
-    )
-    return [column for column in columns if column.upper() in supported]
 
 
 def _separator(first_line: str) -> str | None:

@@ -14,7 +14,7 @@ from typing import Any, Dict, Iterator, List, Optional, Union
 
 import pandas as pd
 
-from ..district_inputs import require_district_names
+from ..district_inputs import NUMERIC_DISTRICT_COLUMNS, require_district_names
 from ..validators import TexasDataValidator
 
 logger = logging.getLogger(__name__)
@@ -211,11 +211,11 @@ class ProductionProcessor:
         # Create mapping from uppercase to standard names
         rename_map = {}
         for col in df.columns:
-            upper_col = col.upper().replace(" ", "_")
+            upper_col = col.strip().upper().replace(" ", "_").replace("-", "_")
             if upper_col in self.COLUMN_MAPPINGS:
                 rename_map[col] = self.COLUMN_MAPPINGS[upper_col]
             else:
-                rename_map[col] = col.lower().replace(" ", "_")
+                rename_map[col] = upper_col.lower()
 
         return df.rename(columns=rename_map)
 
@@ -323,6 +323,11 @@ class ProductionProcessor:
             Processed record
         """
         processed = record.copy()
+        for column in record:
+            key = column.strip().upper().replace(" ", "_").replace("-", "_")
+            if key in NUMERIC_DISTRICT_COLUMNS or key in {"DISTRICT", "DISTRICT_NAME"}:
+                value = processed.pop(column)
+                processed[self.COLUMN_MAPPINGS.get(key, key.lower())] = value
 
         # Normalize district
         if "district" in processed:
