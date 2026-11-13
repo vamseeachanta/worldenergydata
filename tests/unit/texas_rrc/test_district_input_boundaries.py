@@ -130,9 +130,10 @@ def test_local_csv_route_rejects_numeric_ids(tmp_path):
 
 
 def test_numeric_id_and_name_columns_are_not_silently_combined():
-    frame = pd.DataFrame({"DISTRICT_NO": ["08"], "district": ["08"]})
-    with pytest.raises(ValueError, match="numeric district IDs"):
-        normalize_production_frame(frame)
+    frame = pd.DataFrame({"DISTRICT_NO": ["08"], "district": ["7B"]})
+    result = normalize_production_frame(frame)
+    assert result["district"].tolist() == ["7B"]
+    assert result["district_no"].tolist() == ["08"]
 
 
 def test_explicit_district_names_remain_supported_by_atlas():
@@ -166,6 +167,7 @@ def test_pre_normalized_frame_cannot_bypass_numeric_id_check(chunked):
         pd.DataFrame({"district": ["08"], "OIL_BBL": [10]})
     )
     frame["district_no"] = "08"
+    frame = frame.drop(columns="district")
     with pytest.raises(ValueError, match="numeric district IDs"):
         if chunked:
             build_production_atlas_from_chunks([frame])

@@ -33,11 +33,14 @@ The manual distinguishes names from internal numeric `DISTRICT_NO` values:
 internal `07` means `6E`, `08` means `7B`, and `10` means district `08`.
 Numeric-ID conversion is not established by this change. Production processing
 and atlas normalization reject inputs containing `DISTRICT_NO`, `OG_DIST_NO`,
-`DIST_NO` or their lowercase forms with an explicit numeric-ID qualification
-error, even when a name column is also present. No district totals are emitted
-from those inputs. The PDQ loader retains numeric IDs as `district_no`, separate
-from names; its output requires a qualified conversion before production use.
-Simply renaming an ID column does not qualify a conversion.
+`DIST_NO` or their lowercase forms when no explicit `district` or
+`DISTRICT_NAME` column is present. Mixed input uses the name column and retains
+numeric IDs separately as `district_no`; IDs never supply missing or invalid
+names. Official PDQ members carrying both fields can therefore be processed
+without converting IDs. ID-only input requires a qualified upstream conversion.
+Simply renaming an ID column does not qualify a conversion. Bulk and chunked
+delimited readers validate parsed headers and retain all columns, including
+canonical production dates and volumes.
 
 The local CSV route lowercases headers and reads district **names** from
 `district`; it does not apply PDQ aliases. DataFrame production processing and

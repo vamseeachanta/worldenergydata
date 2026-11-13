@@ -111,6 +111,8 @@ def normalize_production_frame(
     renamed = frame.rename(columns=_rename_map(frame))
     processor = ProductionProcessor()
     normalized = pd.DataFrame(index=renamed.index)
+    if "district_no" in renamed:
+        normalized["district_no"] = renamed["district_no"].map(_text_value)
     for column in IDENTIFIER_COLUMNS:
         normalized[column] = (
             renamed[column].map(_text_value) if column in renamed else ""
@@ -184,7 +186,7 @@ def build_production_atlas(frame: pd.DataFrame) -> pd.DataFrame:
         return pd.DataFrame(columns=ATLAS_COLUMNS)
     production = (
         frame
-        if "production_month" in frame.columns
+        if _is_normalized_production_frame(frame)
         else normalize_production_frame(frame)
     )
     max_month = _max_month(production)
@@ -228,11 +230,18 @@ def build_production_atlas_from_chunks(
             continue
         production = (
             chunk
-            if "production_month" in chunk.columns
+            if _is_normalized_production_frame(chunk)
             else normalize_production_frame(chunk, sort_rows=False)
         )
         accumulator.add(production)
     return accumulator.to_frame()
+
+
+def _is_normalized_production_frame(frame: pd.DataFrame) -> bool:
+    """A raw canonical date header alone does not establish normalized rows."""
+    return {"production_month", *IDENTIFIER_COLUMNS, *METRIC_COLUMNS}.issubset(
+        frame.columns
+    )
 
 
 @dataclass
