@@ -136,30 +136,79 @@ def dedupe_permits(frame):
     return frame.sort_values(keys, kind="stable").drop_duplicates("SN_APM").copy()
 
 
+NEW_HOLE_CODES = {"SIDETRACK", "BYPASS", "DEEPEN"}
+_NEW_HOLE_TEXT = re.compile(
+    r"\bdrill(?:ing)?\s+(?:a\s+)?(?:new\s+)?(?:sidetrack|bypass)\b"
+    r"|\bAPM for (?:Bypass|Sidetrack)\b|\binadvertently sidetrack\b"
+    r"|\bAPM.*?in lieu of.*?\bto sidetrack\b",
+    re.I | re.S,
+)
+_DEEPEN_TEXT = re.compile(r"\bdeepen(?:ing)?\b", re.I)
+# A clause ends at sentence punctuation or a blank line (descriptions are joined
+# with a blank line); a single line break is a wrap inside one description.
+_CLAUSE_END = re.compile(r"[.;!?]|\n\s*\n")
+# Negation before the drilling words, in the same clause.
+_NEGATION = re.compile(
+    r"\b(?:not|never|without|nor)\b|n't\b|\bno\s+(?:plans?|intent(?:ion)?|further)\b",
+    re.I,
+)
+# Drilling that belongs to a later or different permit, anywhere in the clause.
+# A bare "subsequently" is past narration ("we subsequently started drilling a
+# bypass"), so deferral needs a permit noun, "future" or "later date".
+_FUTURE = re.compile(
+    r"\bfuture\b|\blater\s+(?:date|time|stage)\b"
+    r"|\b(?:subsequent|separate|another|next|new|later)\s+"
+    r"(?:permit|APM|APD|application|submittal)\b",
+    re.I,
+)
+
+
+def _authorised_now(text, match):
+    """True unless the matched drilling is negated or deferred in its clause."""
+    starts = [m.end() for m in _CLAUSE_END.finditer(text, 0, match.start())]
+    start = starts[-1] if starts else 0
+    end = _CLAUSE_END.search(text, match.end())
+    clause = text[start : end.start() if end else len(text)]
+    return not (_NEGATION.search(text[start : match.start()]) or _FUTURE.search(clause))
+
+
 def narrative_new_hole(code, text):
-    """Narrow literal screen; future plans and flow-path bypasses are retained.
+    """Narrow literal screen for drilling the current permit authorises.
 
     OTHER/deepen covers legacy paper deepening approvals entered through APM.
-    No current borehole status is used to classify historic permits.
+    Drilling that is negated ("do not drill a sidetrack") or deferred to a
+    later or separate permit ("drill a sidetrack under a subsequent permit")
+    does not override the structured abandonment or operation codes.
+    Flow-path bypasses are retained. The screen can only remove matches of the
+    literal patterns; it never adds one. No current borehole status is used to
+    classify historic permits.
     """
-    if code == "OTHER" and re.search(r"\bdeepen(?:ing)?\b", text, re.I):
-        return True
-    return bool(
-        re.search(
-            r"\bdrill(?:ing)?\s+(?:a\s+)?(?:new\s+)?(?:sidetrack|bypass)\b"
-            r"|\bAPM for (?:Bypass|Sidetrack)\b|\binadvertently sidetrack\b"
-            r"|\bAPM.*?in lieu of.*?\bto sidetrack\b",
-            text,
-            re.I | re.S,
-        )
+    patterns = [_NEW_HOLE_TEXT] + ([_DEEPEN_TEXT] if code == "OTHER" else [])
+    return any(
+        _authorised_now(text, match)
+        for pattern in patterns
+        for match in pattern.finditer(text)
     )
+
+
+def exclusion_basis(code, subcodes, narrative=""):
+    """Name the route that excludes a permit, in classification precedence."""
+    if "PLUGBACK" in subcodes:
+        return "PLUGBACK subcode"
+    if code in NEW_HOLE_CODES:
+        return "primary new-hole code"
+    if narrative_new_hole(code, narrative):
+        return "explicit new-hole narrative"
+    if classify_operation(code, subcodes, narrative) == GROUPS[7]:
+        return "completion without ZONE"
+    return "included"
 
 
 def classify_operation(code, subcodes, narrative=""):
     # Precedence is deliberate: a permanent abandonment may also contain a
     # temporary stage; new-hole preparation is excluded even within ABANDON.
     if (
-        code in {"SIDETRACK", "BYPASS", "DEEPEN"}
+        code in NEW_HOLE_CODES
         or "PLUGBACK" in subcodes
         or narrative_new_hole(code, narrative)
     ):
@@ -552,7 +601,29 @@ def war_crosscheck(data_dir, bore, out, first_year, last_full_year):
     )
 
 
-def run(data_dir, out, last_full_year):
+def snapshot_file_date(manifest):
+    """Latest raw-page update date among the downloaded archives."""
+    return max(
+        pd.Timestamp(r["page_last_updated"]).date()
+        for r in manifest["files"]
+        if r["status"] == "downloaded"
+    )
+
+
+def full_year_bounds(approval_dates, file_date):
+    """First and last complete calendar years, derived from the data.
+
+    The electronic feed can begin part-way through a year, so the first full
+    year is the first year whose January is in the feed. The last full year is
+    the year before the snapshot's file date, unless that date is 31 December.
+    """
+    first = approval_dates.min()
+    first_full = first.year if first.month == 1 else first.year + 1
+    last_full = file_date.year - int((file_date.month, file_date.day) != (12, 31))
+    return int(first_full), int(last_full)
+
+
+def run(data_dir, out, last_full_year=None):
     data_dir, out = Path(data_dir), Path(out)
     out.mkdir(parents=True, exist_ok=True)
     manifest = json.loads((data_dir / "manifest.json").read_text(encoding="utf-8"))
@@ -606,9 +677,11 @@ def run(data_dir, out, last_full_year):
     prop = read_table(
         data_dir, "eWellAPMRawData.zip", "mv_apm_main_prop", encoding="latin1"
     )
+    # Separate descriptions are joined by a blank line, which ends a clause for
+    # the narrative screen; single line breaks are wraps within a description.
     narratives = (
         prop.groupby("SN_APM")
-        .APM_OP_DESC.agg(lambda s: "\n".join(sorted(set(s))))
+        .APM_OP_DESC.agg(lambda s: "\n\n".join(sorted(set(s))))
         .to_dict()
     )
     apm["group"] = [
@@ -618,14 +691,8 @@ def run(data_dir, out, last_full_year):
         for r in apm.itertuples()
     ]
     apm["exclusion_basis"] = [
-        (
-            "PLUGBACK subcode"
-            if "PLUGBACK" in subcodes.get(r.SN_APM, set())
-            else (
-                "explicit new-hole narrative"
-                if narrative_new_hole(r.APM_OP_CD, narratives.get(r.SN_APM, ""))
-                else "completion without ZONE" if r.group == GROUPS[7] else "included"
-            )
+        exclusion_basis(
+            r.APM_OP_CD, subcodes.get(r.SN_APM, set()), narratives.get(r.SN_APM, "")
         )
         for r in apm.itertuples()
     ]
@@ -636,9 +703,20 @@ def run(data_dir, out, last_full_year):
             else "abandonment" if g in ABANDONMENT else "excluded"
         )
     )
-    # 2004 begins in April and ramps sharply; 2005 is the first full calendar
-    # year represented. No claim of complete regulatory capture is made.
-    first_year = 2005
+    # Year bounds come from the approval dates and the snapshot file date; a
+    # requested last full year must be a complete year in this snapshot.
+    # No claim of complete regulatory capture is made.
+    file_date = snapshot_file_date(manifest)
+    first_year, latest_full_year = full_year_bounds(
+        dates(apm.ACC_STATUS_DATE).dropna(), file_date
+    )
+    if last_full_year is None:
+        last_full_year = latest_full_year
+    if not first_year <= last_full_year <= latest_full_year:
+        raise ValueError(
+            f"last full year {last_full_year} is outside the complete years "
+            f"{first_year}-{latest_full_year} of this snapshot"
+        )
     years = list(range(first_year, last_full_year + 2))
     quality = dict(
         raw_apm_rows=len(raw),
@@ -646,6 +724,7 @@ def run(data_dir, out, last_full_year):
         duplicate_apm_rows_removed=len(raw) - len(dedupe_permits(raw)),
         region_counts=region_counts,
         invalid_approval_dates=int(apm.year.isna().sum()),
+        snapshot=data_dir.name,
         first_full_year=first_year,
         last_full_year=last_full_year,
         partial_year=last_full_year + 1,
@@ -673,9 +752,9 @@ def run(data_dir, out, last_full_year):
         .reset_index()
     )
     write_csv(monthly, out, "coverage_by_month")
-    raw_2025 = raw[dates(raw.ACC_STATUS_DATE).dt.year.eq(last_full_year)]
+    raw_last = raw[dates(raw.ACC_STATUS_DATE).dt.year.eq(last_full_year)]
     quality["checkpoint_raw_last_full_year"] = (
-        raw_2025.APM_OP_CD.value_counts().to_dict()
+        raw_last.APM_OP_CD.value_counts().to_dict()
     )
     apm = apm[apm.year.isin(years)].copy()
     apm["year"] = apm.year.astype(int)
@@ -726,11 +805,6 @@ def run(data_dir, out, last_full_year):
         .astype(int)
     )
     write_csv(submap, out, "suboperation_mapping")
-    file_date = max(
-        pd.Timestamp(r["page_last_updated"]).date()
-        for r in manifest["files"]
-        if r["status"] == "downloaded"
-    )
     quality["file_date"] = str(file_date)
     standing = standing_wells(bore, years, as_of=file_date)
     standing["partial_year"] = standing.year.gt(last_full_year)
@@ -879,6 +953,10 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--data-dir", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
-    parser.add_argument("--last-full-year", type=int, default=2025)
+    parser.add_argument(
+        "--last-full-year",
+        type=int,
+        help="default: the last complete year before the snapshot file date",
+    )
     args = parser.parse_args()
     print(json.dumps(run(args.data_dir, args.out, args.last_full_year), sort_keys=True))

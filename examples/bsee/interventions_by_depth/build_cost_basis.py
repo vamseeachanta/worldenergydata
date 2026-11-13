@@ -71,7 +71,7 @@ def build():
         (
             "subsea",
             "Subsea wet-tree / drillship or semisubmersible",
-            "Subsea access; durations anchored at 3000 ft (914 m); not all wells in a depth band",
+            "Subsea access; low/base durations read at 3000 ft (914 m), high at 6000 ft (1829 m); not all wells in a depth band",
             "drillship or semisubmersible total spread",
             674600,
             "Section 8.3.2.3, p.8-18 (PDF p.149): total MODU spread",
@@ -96,7 +96,7 @@ def build():
                 app = (
                     applicability
                     if not suffix
-                    else "Subsea access; 6000-9000 ft (1829-2743 m) anchors; extrapolation beyond 9000 ft not established"
+                    else "Subsea access; low/base durations read at 6000 ft (1829 m), high at 9000 ft (2743 m); extrapolation beyond 9000 ft not established"
                 )
                 if prefix == "subsea" and event == "well work":
                     app = "Subsea access; duration cases 7 / 10.5 / 14 days, not depth-specific; not all wells in a depth band"

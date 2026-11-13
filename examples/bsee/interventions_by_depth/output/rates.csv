@@ -209,13 +209,13 @@ year,band,family,permits,standing_wells,stock_date,per_100_standing_wells,partia
 2025,1500 m and deeper,abandonment,81,426,2025-01-01,19.014085,False
 2025,no depth,well work,0,5,2025-01-01,0.000000,False
 2025,no depth,abandonment,0,5,2025-01-01,0.000000,False
-2026,under 100 m,well work,238,5255,2026-01-01,4.529020,True
-2026,under 100 m,abandonment,1869,5255,2026-01-01,35.566127,True
-2026,100 to 500 m,well work,115,844,2026-01-01,13.625592,True
-2026,100 to 500 m,abandonment,229,844,2026-01-01,27.132701,True
+2026,under 100 m,well work,239,5255,2026-01-01,4.548049,True
+2026,under 100 m,abandonment,1895,5255,2026-01-01,36.060894,True
+2026,100 to 500 m,well work,116,844,2026-01-01,13.744076,True
+2026,100 to 500 m,abandonment,231,844,2026-01-01,27.369668,True
 2026,500 to 1500 m,well work,194,564,2026-01-01,34.397163,True
 2026,500 to 1500 m,abandonment,118,564,2026-01-01,20.921986,True
-2026,1500 m and deeper,well work,123,435,2026-01-01,28.275862,True
-2026,1500 m and deeper,abandonment,75,435,2026-01-01,17.241379,True
+2026,1500 m and deeper,well work,124,435,2026-01-01,28.505747,True
+2026,1500 m and deeper,abandonment,81,435,2026-01-01,18.620690,True
 2026,no depth,well work,0,5,2026-01-01,0.000000,True
 2026,no depth,abandonment,0,5,2026-01-01,0.000000,True

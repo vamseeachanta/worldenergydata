@@ -285,7 +285,7 @@ year,band,group,reports,partial_year
 2023,no depth,abandonment,0,False
 2023,no depth,completion,0,False
 2024,under 100 m,workover,4,False
-2024,under 100 m,abandonment,435,False
+2024,under 100 m,abandonment,436,False
 2024,under 100 m,completion,21,False
 2024,100 to 500 m,workover,2,False
 2024,100 to 500 m,abandonment,60,False
@@ -315,7 +315,7 @@ year,band,group,reports,partial_year
 2025,no depth,abandonment,0,False
 2025,no depth,completion,0,False
 2026,under 100 m,workover,1,True
-2026,under 100 m,abandonment,563,True
+2026,under 100 m,abandonment,564,True
 2026,under 100 m,completion,12,True
 2026,100 to 500 m,workover,0,True
 2026,100 to 500 m,abandonment,20,True

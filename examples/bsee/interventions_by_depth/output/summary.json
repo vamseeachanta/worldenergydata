@@ -1,11 +1,12 @@
 {
-  "raw_apm_rows": 102040,
-  "unique_apm": 101833,
+  "raw_apm_rows": 102078,
+  "unique_apm": 101871,
   "duplicate_apm_rows_removed": 207,
   "region_counts": {
-    "G": 101833
+    "G": 101871
   },
   "invalid_approval_dates": 0,
+  "snapshot": "2026-11-13",
   "first_full_year": 2005,
   "last_full_year": 2025,
   "partial_year": 2026,
@@ -20,10 +21,10 @@
     "UTIL": 19
   },
   "depth_join": {
-    "api12": 87803
+    "api12": 87840
   },
   "events_with_depth_fraction": 1.0,
-  "file_date": "2026-11-12",
+  "file_date": "2026-11-13",
   "inventory_missing_first_spud": 17,
   "inventory_basis": "all non-cancelled bores per API10; stock on 1 January, inclusive dates",
   "assumed_standing_last_full_year": 136,
@@ -34,7 +35,7 @@
     "O": 36,
     "W": 12
   },
-  "war_rows": 370515,
+  "war_rows": 370540,
   "selected_valid_rows": 109109,
   "proxy_episodes": 24908,
   "invalid_selected_spans": 2,

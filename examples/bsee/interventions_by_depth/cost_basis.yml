@@ -769,7 +769,8 @@ scenarios:
       interpretation: EXCLUDED, not zero actual expense; already mobilised unit.
 - scenario_id: subsea_pa
   access_type: Subsea wet-tree / drillship or semisubmersible
-  applicability: Subsea access; durations anchored at 3000 ft (914 m); not all wells in a depth band
+  applicability: Subsea access; low/base durations read at 3000 ft (914 m), high at 6000 ft (1829 m);
+    not all wells in a depth band
   event: permanent abandonment
   asset: drillship or semisubmersible total spread
   dollar_year: 2015
@@ -779,7 +780,8 @@ scenarios:
       value: 674600
       unit: USD/day
       asset: drillship or semisubmersible total spread
-      applicability: Subsea access; durations anchored at 3000 ft (914 m); not all wells in a depth band
+      applicability: Subsea access; low/base durations read at 3000 ft (914 m), high at 6000 ft (1829
+        m); not all wells in a depth band
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
@@ -794,7 +796,8 @@ scenarios:
       value: 17
       unit: day/event
       asset: drillship or semisubmersible total spread
-      applicability: Subsea access; durations anchored at 3000 ft (914 m); not all wells in a depth band
+      applicability: Subsea access; low/base durations read at 3000 ft (914 m), high at 6000 ft (1829
+        m); not all wells in a depth band
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
@@ -809,7 +812,8 @@ scenarios:
       value: 0
       unit: USD/event
       asset: drillship or semisubmersible total spread
-      applicability: Subsea access; durations anchored at 3000 ft (914 m); not all wells in a depth band
+      applicability: Subsea access; low/base durations read at 3000 ft (914 m), high at 6000 ft (1829
+        m); not all wells in a depth band
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
@@ -824,7 +828,8 @@ scenarios:
       value: 674600
       unit: USD/day
       asset: drillship or semisubmersible total spread
-      applicability: Subsea access; durations anchored at 3000 ft (914 m); not all wells in a depth band
+      applicability: Subsea access; low/base durations read at 3000 ft (914 m), high at 6000 ft (1829
+        m); not all wells in a depth band
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
@@ -839,7 +844,8 @@ scenarios:
       value: 19
       unit: day/event
       asset: drillship or semisubmersible total spread
-      applicability: Subsea access; durations anchored at 3000 ft (914 m); not all wells in a depth band
+      applicability: Subsea access; low/base durations read at 3000 ft (914 m), high at 6000 ft (1829
+        m); not all wells in a depth band
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
@@ -854,7 +860,8 @@ scenarios:
       value: 0
       unit: USD/event
       asset: drillship or semisubmersible total spread
-      applicability: Subsea access; durations anchored at 3000 ft (914 m); not all wells in a depth band
+      applicability: Subsea access; low/base durations read at 3000 ft (914 m), high at 6000 ft (1829
+        m); not all wells in a depth band
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
@@ -869,7 +876,8 @@ scenarios:
       value: 674600
       unit: USD/day
       asset: drillship or semisubmersible total spread
-      applicability: Subsea access; durations anchored at 3000 ft (914 m); not all wells in a depth band
+      applicability: Subsea access; low/base durations read at 3000 ft (914 m), high at 6000 ft (1829
+        m); not all wells in a depth band
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
@@ -884,7 +892,8 @@ scenarios:
       value: 23
       unit: day/event
       asset: drillship or semisubmersible total spread
-      applicability: Subsea access; durations anchored at 3000 ft (914 m); not all wells in a depth band
+      applicability: Subsea access; low/base durations read at 3000 ft (914 m), high at 6000 ft (1829
+        m); not all wells in a depth band
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
@@ -899,7 +908,8 @@ scenarios:
       value: 0
       unit: USD/event
       asset: drillship or semisubmersible total spread
-      applicability: Subsea access; durations anchored at 3000 ft (914 m); not all wells in a depth band
+      applicability: Subsea access; low/base durations read at 3000 ft (914 m), high at 6000 ft (1829
+        m); not all wells in a depth band
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
@@ -911,7 +921,8 @@ scenarios:
       interpretation: EXCLUDED, not zero actual expense; already mobilised unit.
 - scenario_id: subsea_pa_6000_9000ft
   access_type: Subsea wet-tree / drillship or semisubmersible
-  applicability: Subsea access; 6000-9000 ft (1829-2743 m) anchors; extrapolation beyond 9000 ft not established
+  applicability: Subsea access; low/base durations read at 6000 ft (1829 m), high at 9000 ft (2743 m);
+    extrapolation beyond 9000 ft not established
   event: permanent abandonment
   asset: drillship or semisubmersible total spread
   dollar_year: 2015
@@ -921,8 +932,8 @@ scenarios:
       value: 674600
       unit: USD/day
       asset: drillship or semisubmersible total spread
-      applicability: Subsea access; 6000-9000 ft (1829-2743 m) anchors; extrapolation beyond 9000 ft not
-        established
+      applicability: Subsea access; low/base durations read at 6000 ft (1829 m), high at 9000 ft (2743
+        m); extrapolation beyond 9000 ft not established
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
@@ -937,8 +948,8 @@ scenarios:
       value: 21
       unit: day/event
       asset: drillship or semisubmersible total spread
-      applicability: Subsea access; 6000-9000 ft (1829-2743 m) anchors; extrapolation beyond 9000 ft not
-        established
+      applicability: Subsea access; low/base durations read at 6000 ft (1829 m), high at 9000 ft (2743
+        m); extrapolation beyond 9000 ft not established
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
@@ -953,8 +964,8 @@ scenarios:
       value: 0
       unit: USD/event
       asset: drillship or semisubmersible total spread
-      applicability: Subsea access; 6000-9000 ft (1829-2743 m) anchors; extrapolation beyond 9000 ft not
-        established
+      applicability: Subsea access; low/base durations read at 6000 ft (1829 m), high at 9000 ft (2743
+        m); extrapolation beyond 9000 ft not established
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
@@ -969,8 +980,8 @@ scenarios:
       value: 674600
       unit: USD/day
       asset: drillship or semisubmersible total spread
-      applicability: Subsea access; 6000-9000 ft (1829-2743 m) anchors; extrapolation beyond 9000 ft not
-        established
+      applicability: Subsea access; low/base durations read at 6000 ft (1829 m), high at 9000 ft (2743
+        m); extrapolation beyond 9000 ft not established
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
@@ -985,8 +996,8 @@ scenarios:
       value: 23
       unit: day/event
       asset: drillship or semisubmersible total spread
-      applicability: Subsea access; 6000-9000 ft (1829-2743 m) anchors; extrapolation beyond 9000 ft not
-        established
+      applicability: Subsea access; low/base durations read at 6000 ft (1829 m), high at 9000 ft (2743
+        m); extrapolation beyond 9000 ft not established
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
@@ -1001,8 +1012,8 @@ scenarios:
       value: 0
       unit: USD/event
       asset: drillship or semisubmersible total spread
-      applicability: Subsea access; 6000-9000 ft (1829-2743 m) anchors; extrapolation beyond 9000 ft not
-        established
+      applicability: Subsea access; low/base durations read at 6000 ft (1829 m), high at 9000 ft (2743
+        m); extrapolation beyond 9000 ft not established
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
@@ -1017,8 +1028,8 @@ scenarios:
       value: 674600
       unit: USD/day
       asset: drillship or semisubmersible total spread
-      applicability: Subsea access; 6000-9000 ft (1829-2743 m) anchors; extrapolation beyond 9000 ft not
-        established
+      applicability: Subsea access; low/base durations read at 6000 ft (1829 m), high at 9000 ft (2743
+        m); extrapolation beyond 9000 ft not established
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
@@ -1033,8 +1044,8 @@ scenarios:
       value: 27
       unit: day/event
       asset: drillship or semisubmersible total spread
-      applicability: Subsea access; 6000-9000 ft (1829-2743 m) anchors; extrapolation beyond 9000 ft not
-        established
+      applicability: Subsea access; low/base durations read at 6000 ft (1829 m), high at 9000 ft (2743
+        m); extrapolation beyond 9000 ft not established
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International
@@ -1049,8 +1060,8 @@ scenarios:
       value: 0
       unit: USD/event
       asset: drillship or semisubmersible total spread
-      applicability: Subsea access; 6000-9000 ft (1829-2743 m) anchors; extrapolation beyond 9000 ft not
-        established
+      applicability: Subsea access; low/base durations read at 6000 ft (1829 m), high at 9000 ft (2743
+        m); extrapolation beyond 9000 ft not established
       citation:
         title: Decommissioning Methodology and Cost Evaluation, TAP-738
         publisher: BSEE / ICF International

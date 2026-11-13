@@ -15,6 +15,13 @@ import pandas as pd
 from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
 from matplotlib.ticker import FormatStrFormatter
+from report_text import (
+    check_selection,
+    coding_caption,
+    long_date,
+    permanent_caption,
+    unit_panel_total,
+)
 
 BANDS = [
     "under 100 m",
@@ -27,8 +34,17 @@ BANDS = [
 COLORS = ["#6588a6", "#427298", "#245476", "#102e46", "#777777"]
 MARKERS = ["o", "s", "^", "D", "x"]
 STYLES = ["-", "--", "-.", ":", "--"]
-BAND_LABELS = {"500 to 1500 m": "500 to 1,500 m", "1500 m and deeper": "1,500 m and deeper"}
+BAND_LABELS = {
+    "500 to 1500 m": "500 to 1,500 m",
+    "1500 m and deeper": "1,500 m and deeper",
+}
 HATCHES = ["", "//", "..", "xx", "\\\\"]
+# Inclusion basis per pricing method, shown beside each cost row.
+COST_BASIS = {
+    "spread scenario": "spread scenario; no allowances",
+    "published total": "published total; includes allowances",
+    "not priced": "",
+}
 COST_SOURCES = (
     "Sources: BSEE TAP-738, 2015; BOEM EIS 2016-018, 2016;\n"
     "BOEM MAG-PLAN Alaska update, 2012; BSEE Pacific cost update vol. 2, 2015."
@@ -82,7 +98,13 @@ def plot(out):
         }
     )
     summary = json.loads((out / "summary.json").read_text(encoding="utf-8"))
-    date, last = summary["file_date"], summary["last_full_year"]
+    date, first = summary["file_date"], int(summary["first_full_year"])
+    all_units = pd.read_csv(out / "unit_type_shares.csv")
+    # Captions are derived from these tables; reject a mixed-year output set.
+    last = check_selection(summary, {"unit_type_shares.csv": all_units.period})
+    partial_year = int(summary["partial_year"])
+    primary = pd.read_csv(out / "primary_code_by_year.csv")
+    counts = pd.read_csv(out / "counts_by_year_band_group.csv")
     rates = pd.read_csv(out / "rates.csv")
     years = sorted(rates.year.unique())
     active = [b for b in BANDS if rates.loc[rates.band.eq(b), "permits"].sum() > 0]
@@ -136,8 +158,9 @@ def plot(out):
         out,
         "01_approved_interventions",
         date,
-        "Initial completions and new-hole preparation excluded; unspecified abandonment retained. 2026 through 12 November.\n"
-        "OTHER fell from 309-509/year (2005-2020) to 0 from 2023 as WORKOVER rose; coding changes limit long-run comparisons.",
+        "Initial completions and new-hole preparation excluded; unspecified abandonment retained. "
+        f"{partial_year} through {long_date(date, year=False)}.\n"
+        + coding_caption(primary, first, last),
     )
 
     fig, axes = plt.subplots(2, 1, figsize=(12, 9), sharex=True)
@@ -192,7 +215,7 @@ def plot(out):
         out,
         "02_rates_per_standing_well",
         date,
-        "Denominator: wells standing on 1 January, all non-cancelled bores per well; 2026 approvals are partial, not annualised.\n"
+        f"Denominator: wells standing on 1 January, all non-cancelled bores per well; {partial_year} approvals are partial, not annualised.\n"
         "Approval intensity includes repeated permits; it is not the percentage of wells receiving work.",
     )
 
@@ -216,8 +239,8 @@ def plot(out):
         "Deepwater platform dry-tree: well work",
         "Deepwater platform dry-tree: permanent abandonment",
         "Subsea wet-tree / drillship or semi: well work",
-        "Subsea wet-tree / drillship or semi: permanent abandonment\nstudy case at 3,000 ft water depth",
-        "Subsea wet-tree / drillship or semi: permanent abandonment\nstudy cases at 6,000-9,000 ft water depth",
+        "Subsea wet-tree / drillship or semi: permanent abandonment\nstudy cases 3,000 ft (low/base); 6,000 ft (high)",
+        "Subsea wet-tree / drillship or semi: permanent abandonment\nstudy cases 6,000 ft (low/base); 9,000 ft (high)",
     ]
     fig, ax = plt.subplots(figsize=(12, 9))
     fig.subplots_adjust(left=0.43, right=0.79, top=0.83, bottom=0.28)
@@ -238,12 +261,14 @@ def plot(out):
             y,
             (
                 " / ".join(million(r[c]) for c in ["low_usd", "base_usd", "high_usd"])
+                + "\n"
+                + COST_BASIS[r.pricing_method]
                 if pd.notna(r.low_usd)
                 else "not priced"
             ),
             transform=ax.get_yaxis_transform(),
             va="center",
-            fontsize=10,
+            fontsize=10 if pd.isna(r.low_usd) else 8.5,
         )
     ax.set_yticks(range(len(order)), labels, fontsize=9)
     ax.invert_yaxis()
@@ -257,7 +282,7 @@ def plot(out):
     ax.text(
         1.04,
         1.05,
-        "Low / base / high\nUSD million (2015)",
+        "Low / base / high\nUSD million (2015); basis",
         transform=ax.transAxes,
         fontsize=10,
     )
@@ -277,13 +302,13 @@ def plot(out):
         "03_cost_per_event",
         date,
         "Well work: median 7 days / midpoint 10.5 days / two weeks 14 days; scenarios, not outcome quantiles.\n"
-        "Permanent-abandonment costs apply only to that subtype (1,387 of 2,610 abandonment approvals in 2025).\n"
-        "Subsea rig mobilisation excluded. Dry-tree conductor removal separate; published deep-platform totals include allowances.",
+        + permanent_caption(counts, last)
+        + "\nSubsea rig mobilisation excluded. Dry-tree conductor removal separate; "
+        "spread rows exclude the source's allowances; published deep-platform totals include them.",
         cost=True,
     )
 
-    units = pd.read_csv(out / "unit_type_shares.csv")
-    units = units[units.period.astype(str).eq(str(last))]
+    units = all_units[all_units.period.astype(str).eq(str(last))]
     categories = [
         "wireline unit",
         "coiled tubing",
@@ -383,7 +408,7 @@ def plot(out):
         "04_unit_types_by_depth",
         date,
         "Unit types follow the permit rig/unit lookup; they do not establish deployed equipment or access configuration.\n"
-        "Permanent-abandonment panel: 1,387 approvals; temporary and unspecified abandonment are excluded.",
+        f"Permanent-abandonment panel: {unit_panel_total(all_units, last):,} approvals; temporary and unspecified abandonment are excluded.",
     )
     print(json.dumps({"charts": 4, "formats": ["png", "svg"], "png_width_px": 2160}))
 

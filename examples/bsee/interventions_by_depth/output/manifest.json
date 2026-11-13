@@ -5,37 +5,37 @@
     {
       "name": "BoreholeRawData.zip",
       "url": "https://www.data.bsee.gov/Well/Files/BoreholeRawData.zip",
-      "page_last_updated": "11/12/2026 4:31:16 AM",
-      "download_utc": "2026-11-12T21:55:44.998439+00:00",
-      "bytes": 3485049,
-      "sha256": "41d201b17c9982484fe781f797c1e621529e4d5469178d3c978843a316ae444e",
+      "page_last_updated": "11/13/2026 4:31:20 AM",
+      "download_utc": "2026-11-13T16:17:33.924678+00:00",
+      "bytes": 3490322,
+      "sha256": "66f39baea0ef50ed97a8992dea88d7a0bee24f270b345ea20721abfc8a0ee100",
       "status": "downloaded"
     },
     {
       "name": "eWellAPMRawData.zip",
       "url": "https://www.data.bsee.gov/Well/Files/eWellAPMRawData.zip",
-      "page_last_updated": "11/12/2026 4:36:05 AM",
-      "download_utc": "2026-11-12T21:55:46.650013+00:00",
-      "bytes": 35763339,
-      "sha256": "02b798158b5b9128637a04daa4b38dcb99aa349bd38a50211e8b9a85316f4629",
+      "page_last_updated": "11/13/2026 4:43:02 AM",
+      "download_utc": "2026-11-13T16:17:34.942025+00:00",
+      "bytes": 35837505,
+      "sha256": "6db08210b85e822b48c33002e9527d4f52baa5441f252ee79ff7937731be4050",
       "status": "downloaded"
     },
     {
       "name": "eWellEORRawData.zip",
       "url": "https://www.data.bsee.gov/Well/Files/eWellEORRawData.zip",
-      "page_last_updated": "11/12/2026 4:36:12 AM",
-      "download_utc": "2026-11-12T21:55:55.108257+00:00",
-      "bytes": 4501925,
-      "sha256": "18f593abd41c52dfcffd7c847f84c82804195dab767d83513ca02ebdf2426deb",
+      "page_last_updated": "11/13/2026 4:43:33 AM",
+      "download_utc": "2026-11-13T16:17:58.142731+00:00",
+      "bytes": 4503968,
+      "sha256": "d1db6e6c53577ec595273768c925e3e24261be0b289fc6325151ba37fc81d127",
       "status": "downloaded"
     },
     {
       "name": "eWellWARRawData.zip",
       "url": "https://www.data.bsee.gov/Well/Files/eWellWARRawData.zip",
-      "page_last_updated": "11/12/2026 4:43:46 AM",
-      "download_utc": "2026-11-12T21:55:57.283332+00:00",
-      "bytes": 131767229,
-      "sha256": "3a63e4392c33236eed6e3bc5bd5c86f7114317963df11abf90781a48d7890323",
+      "page_last_updated": "11/13/2026 4:55:32 AM",
+      "download_utc": "2026-11-13T16:18:00.472400+00:00",
+      "bytes": 130732385,
+      "sha256": "b7a086c1fb9d270e673c5931ce3822f202ff4e6e8af5cc98e19dd3ddf03d525c",
       "status": "downloaded"
     }
   ]

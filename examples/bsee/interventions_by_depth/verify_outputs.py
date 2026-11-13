@@ -15,8 +15,8 @@ from PIL import Image
 ROOT = Path(__file__).resolve().parent
 
 
-def verify():
-    out = ROOT / "output"
+def verify(out=ROOT / "output"):
+    out = Path(out)
     counts = pd.read_csv(out / "counts_by_year_band_group.csv")
     monthly = pd.read_csv(out / "coverage_by_month.csv")
     rates = pd.read_csv(out / "rates.csv")
@@ -143,7 +143,8 @@ def verify():
         "03_cost_per_event",
         "04_unit_types_by_depth",
     ]:
-        assert (out / f"{stem}.png").exists() and (out / f"{stem}.svg").exists()
+        for suffix in (".png", ".svg"):
+            assert (out / f"{stem}{suffix}").is_file(), f"missing chart {stem}{suffix}"
         svg = (out / f"{stem}.svg").read_text(encoding="utf-8")
         assert "cost_basis.yml" not in svg
         if not stem.startswith("03"):

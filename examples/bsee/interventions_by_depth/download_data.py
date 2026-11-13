@@ -1,5 +1,6 @@
 """Fetch only links confirmed on the BSEE raw-data page; retain a receipt."""
 
+import argparse
 import hashlib
 import json
 import os
@@ -13,9 +14,21 @@ from pathlib import Path
 PAGE = "https://www.data.bsee.gov/Main/RawData.aspx"
 
 
-def main():
+def main(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--snapshot",
+        default=datetime.now(timezone.utc).date().isoformat(),
+        help="snapshot folder under data/modules/bsee/zip (default: today, UTC)",
+    )
+    snapshot = parser.parse_args(argv).snapshot
+    if not re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", snapshot):
+        raise ValueError("snapshot must be a YYYY-MM-DD folder name")
     repo_root = Path(__file__).resolve().parents[3]
-    root = repo_root / "data/modules/bsee/zip/2026-11-12"
+    root = repo_root / "data/modules/bsee/zip" / snapshot
+    # A retained snapshot is evidence for published outputs; never replace it.
+    if (root / "manifest.json").exists():
+        raise FileExistsError(f"snapshot {snapshot} already has a manifest")
     env = {
         k: v
         for k, v in os.environ.items()

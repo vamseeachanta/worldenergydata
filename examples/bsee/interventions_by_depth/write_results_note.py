@@ -7,6 +7,14 @@ import re
 from pathlib import Path
 
 import pandas as pd
+from report_text import (
+    abandonment_split,
+    check_selection,
+    coding_sentence,
+    family_totals,
+    long_date,
+    reconciliation,
+)
 
 ROOT = Path(__file__).resolve().parent
 OUT = ROOT / "output"
@@ -17,6 +25,11 @@ BANDS = [
     "1500 m and deeper",
     "no depth",
 ]
+BASIS = {
+    "spread scenario": "spread x days + mobilisation; source allowances not included",
+    "published total": "published total; includes source allowances",
+    "not priced": "not priced",
+}
 TEST_COMMAND = 'uv run --no-sync python -m pytest --noconftest -o addopts="" tests/unit/bsee/test_interventions_by_depth.py tests/unit/bsee/data/utils/test_api_well_normalizer.py -q'
 
 
@@ -41,14 +54,39 @@ def million(value):
     return f"{v:.{decimals}f}" if v else "0"
 
 
-def main(pr_body=None, test_result="not run"):
-    s = json.loads((OUT / "summary.json").read_text(encoding="utf-8"))
-    manifest = json.loads((OUT / "manifest.json").read_text(encoding="utf-8"))
-    rates = pd.read_csv(OUT / "rates.csv")
-    latest = rates[rates.year.eq(2025)].set_index(["band", "family"])
-    ratios = pd.read_csv(OUT / "approvals_per_distinct_well.csv").set_index(
-        ["band", "family"]
+def main(pr_body=None, test_result="not run", out=OUT, readme=ROOT / "README.md"):
+    s = json.loads((out / "summary.json").read_text(encoding="utf-8"))
+    manifest = json.loads((out / "manifest.json").read_text(encoding="utf-8"))
+    rates = pd.read_csv(out / "rates.csv")
+    ratio_frame = pd.read_csv(out / "approvals_per_distinct_well.csv")
+    durations = pd.read_csv(out / "permit_duration_estimates.csv")
+    shares = pd.read_csv(out / "unit_type_shares.csv")
+    subsea = pd.read_csv(out / "subsea_completion_shares.csv")
+    # Every year-tagged table must be built for the summary's selection;
+    # otherwise the note would mix years. Nothing is written on failure.
+    last = check_selection(
+        s,
+        {
+            "approvals_per_distinct_well.csv": ratio_frame.year,
+            "permit_duration_estimates.csv": durations.year,
+            "unit_type_shares.csv": shares.period,
+            "subsea_completion_shares.csv": subsea.period,
+        },
     )
+    first, partial = int(s["first_full_year"]), int(s["partial_year"])
+    if sorted(rates.year.unique()) != list(range(first, partial + 1)):
+        raise ValueError("rates.csv years do not match summary.json")
+    pooled = next(p for p in shares.period.astype(str).unique() if "-" in p)
+    counts = pd.read_csv(out / "counts_by_year_band_group.csv")
+    totals = family_totals(rates, last)
+    split = abandonment_split(counts, last)
+    permanent = split["permanent abandonment"]
+    snapshot_date = long_date(s["snapshot"])
+    coverage = pd.read_csv(out / "coverage_by_month.csv")
+    feed_start = pd.Timestamp(coverage.month.min() + "-01").strftime("%B %Y")
+    file_through = long_date(s["file_date"], year=False)
+    latest = rates[rates.year.eq(last)].set_index(["band", "family"])
+    ratios = ratio_frame.set_index(["band", "family"])
     rows, ratio_rows = [], []
     for band in BANDS:
         w, a = latest.loc[(band, "well work")], latest.loc[(band, "abandonment")]
@@ -70,13 +108,14 @@ def main(pr_body=None, test_result="not run"):
             }
         )
     headline = table(pd.DataFrame(rows))
-    cost_frame = pd.read_csv(OUT / "cost_table.csv")
+    cost_frame = pd.read_csv(out / "cost_table.csv")
     cost_rows = []
     for r in cost_frame.itertuples():
         cost_rows.append(
             {
                 "Well / access type": r.access_type,
                 "Event": r.event,
+                "Basis": BASIS[r.pricing_method],
                 "Applicability": re.sub(
                     r"\b\d{4}\b", lambda match: f"{int(match[0]):,}", r.applicability
                 ),
@@ -98,16 +137,14 @@ def main(pr_body=None, test_result="not run"):
                 "SHA-256": f'`{r["sha256"]}`',
             }
         )
-    codes = pd.read_csv(OUT / "code_mapping.csv")
-    primary = pd.read_csv(OUT / "primary_code_by_year.csv")
-    other = primary[
-        primary.APM_OP_CD.eq("OTHER") & primary.year.between(2005, 2020)
-    ].approvals
+    codes = pd.read_csv(out / "code_mapping.csv")
+    primary = pd.read_csv(out / "primary_code_by_year.csv")
     coding_note = (
-        f"Primary OTHER approvals numbered {other.min()}–{other.max()} per year in 2005–2020, then 174 in 2021, 11 in 2022 and zero from 2023, while WORKOVER rose. "
-        "Part of the apparent well-work decline reflects a coding change. The 2025 count should not be compared with the long-run mean without this qualification; electronic coverage also changes in the early years."
+        coding_sentence(primary, first, last)
+        + " Part of the apparent well-work decline reflects a coding change. "
+        f"The {last} count should not be compared with the long-run mean without this qualification; electronic coverage also changes in the early years."
     )
-    durations = pd.read_csv(OUT / "permit_duration_estimates.csv")
+    reconcile = reconciliation(s, codes, totals)
     duration_rows = []
     for band in BANDS:
         f = durations[durations.band.eq(band)].set_index("event")
@@ -129,14 +166,31 @@ def main(pr_body=None, test_result="not run"):
                 "Valid estimates, work / permanent abandonment": f'{int(f.loc["well work","estimates"]):,} / {int(f.loc["permanent abandonment","estimates"]):,}',
             }
         )
-    war = pd.read_csv(OUT / "war_duration_crosscheck.csv")
+    medians = {
+        event: " / ".join(
+            (f"{v:.0f}" if pd.notna(v) else "not established")
+            for v in durations[durations.event.eq(event)]
+            .set_index("band")
+            .reindex(BANDS[:-1])
+            .median_est_operation_days
+        )
+        for event in ["well work", "permanent abandonment"]
+    }
+    war = pd.read_csv(out / "war_duration_crosscheck.csv")
+    deepest_wo = war.loc[
+        war.band.eq(BANDS[3]) & war.raw_war_code.eq("WO"), "median_days"
+    ]
+    deepest_wo_text = (
+        f"including the deepest WO-token median of {deepest_wo.iloc[0]:.0f} days"
+        if len(deepest_wo)
+        else "including each depth band's WO-token median"
+    )
     for col in ["q25_days", "median_days", "q75_days"]:
         war[col] = war[col].map(lambda v: f"{v:,.0f}")
     war = war[war.raw_war_code.eq("selected tokens combined")].drop(
         columns="raw_war_code"
     )
-    shares = pd.read_csv(OUT / "unit_type_shares.csv")
-    shares = shares[shares.period.astype(str).eq("2025")]
+    shares = shares[shares.period.astype(str).eq(str(last))]
     categories = [
         "wireline unit",
         "coiled tubing",
@@ -173,14 +227,13 @@ def main(pr_body=None, test_result="not run"):
         )
         frame.columns = short
         unit_tables.append(
-            f"{event.capitalize()} — share of approvals, 2025:\n\n"
+            f"{event.capitalize()} — share of approvals, {last}:\n\n"
             + table(frame.reset_index())
         )
-    subsea = pd.read_csv(OUT / "subsea_completion_shares.csv")
     subsea_rows = []
     for band in BANDS:
         f = subsea[
-            subsea.period.astype(str).eq("2025") & subsea.band.eq(band)
+            subsea.period.astype(str).eq(str(last)) & subsea.band.eq(band)
         ].set_index("event")
         subsea_rows.append(
             {
@@ -189,29 +242,51 @@ def main(pr_body=None, test_result="not run"):
                 "Unknown, work / permanent abandonment": f'{int(f.loc["well work","subsea_flag_unknown"])} / {int(f.loc["permanent abandonment","subsea_flag_unknown"])}',
             }
         )
-    rules = pd.read_csv(OUT / "unit_type_mapping.csv")
-    inventory = pd.read_csv(OUT / "standing_wells.csv")
-    assumed = inventory[inventory.year.eq(2025)]
+
+    def unit_count(band, event, category):
+        f = shares[
+            shares.band.eq(band)
+            & shares.event.eq(event)
+            & shares.unit_category.eq(category)
+        ]
+        return int(f.approvals.sum()), int(f.total_approvals.sum())
+
+    nr, shallow_pa = unit_count(
+        BANDS[0], "permanent abandonment", "non-rig operation (recorded)"
+    )
+    none_named, _ = unit_count(BANDS[0], "permanent abandonment", "none named")
+    floater, mid_pa = unit_count(
+        BANDS[2], "permanent abandonment", "drillship / semisubmersible"
+    )
+    mid_flags = subsea[
+        subsea.period.astype(str).eq(str(last))
+        & subsea.band.eq(BANDS[2])
+        & subsea.event.eq("permanent abandonment")
+    ].iloc[0]
+    no_yes = int(mid_flags.subsea_flag_no + mid_flags.subsea_flag_unknown)
+    rules = pd.read_csv(out / "unit_type_mapping.csv")
+    inventory = pd.read_csv(out / "standing_wells.csv")
+    assumed = inventory[inventory.year.eq(last)]
     assumed_note = (
-        f"At 1 January 2025, {int(assumed.assumed_standing.sum()):,} wells are **assumed standing**: "
+        f"At 1 January {last}, {int(assumed.assumed_standing.sum()):,} wells are **assumed standing**: "
         f"{int(assumed.no_non_superseded_bore.sum()):,} have no non-superseded bore and "
         f"{int(assumed.missing_terminal_status_date.sum()):,} "
         f"{'has' if assumed.missing_terminal_status_date.sum() == 1 else 'have'} a missing terminal status date (categories can overlap). "
         f'{s["inventory_missing_first_spud"]:,} API10 wells lack any non-cancelled first-spud date and are excluded; their historical stock cannot be dated.'
     )
-    charts = """- [01 — Approved permits to modify by depth](output/01_approved_interventions.png) · [SVG](output/01_approved_interventions.svg)
+    charts = f"""- [01 — Approved permits to modify by depth](output/01_approved_interventions.png) · [SVG](output/01_approved_interventions.svg)
 - [02 — Approved permits to modify per 100 standing wells](output/02_rates_per_standing_well.png) · [SVG](output/02_rates_per_standing_well.svg)
 - [03 — Cost scenarios by well and access type](output/03_cost_per_event.png) · [SVG](output/03_cost_per_event.svg)
-- [04 — Unit types named on 2025 approvals by depth](output/04_unit_types_by_depth.png) · [SVG](output/04_unit_types_by_depth.svg)"""
+- [04 — Unit types named on {last} approvals by depth](output/04_unit_types_by_depth.png) · [SVG](output/04_unit_types_by_depth.svg)"""
     note = f"""# Gulf of Mexico well interventions by water depth
 
 ## What this adds
 
-Approved permits to modify existing wells are counted separately from new-well drilling permits. One submission is one event, not one well or evidence of completed work. In 2025, **765 well-work approvals + 2,610 abandonment approvals = 3,375 events**. Permanent-abandonment costs apply only to the **1,387 permanent approvals**, not the 1,060 temporary or 163 unspecified abandonment approvals. No expenditure is inferred from counts.
+Approved permits to modify existing wells are counted separately from new-well drilling permits. One submission is one event, not one well or evidence of completed work. In {last}, **{totals["well work"]:,} well-work approvals + {totals["abandonment"]:,} abandonment approvals = {totals["all"]:,} events**. Permanent-abandonment costs apply only to the **{permanent:,} permanent approvals**, not the {split["temporary abandonment"]:,} temporary or {split["abandonment unspecified"]:,} unspecified abandonment approvals. No expenditure is inferred from counts.
 
 ## Data
 
-The collection owner is worldenergydata; the catalog source ID is `bsee-data-center`. The four retained BSEE raw archives are dated 12 November 2026. Their size and SHA-256 are verified before use; this revision uses the retained files without downloading again. Raw archives are ignored and are not backed up by this PR. Only small derived aggregates and charts are committed.
+The collection owner is worldenergydata; the catalog source ID is `bsee-data-center`. The four BSEE raw archives were downloaded on {snapshot_date} (snapshot folder `{s["snapshot"]}`). Their size and SHA-256 are verified against the manifest before use. Raw archives are ignored and are not backed up by this PR. Only small derived aggregates and charts are committed.
 
 {table(pd.DataFrame(files))}
 
@@ -226,16 +301,16 @@ The collection owner is worldenergydata; the catalog source ID is `bsee-data-cen
 - PLUGBACK (the source's Plugback To Sidetrack/Bypass), primary new-hole codes and narrow explicit new-hole narratives are excluded. Current ST/BP status is never used to exclude historical approvals. COMP without ZONE is excluded. Narrative screening does not establish exhaustive capture of drilling descriptions. [Primary mapping](output/code_mapping.csv), [suboperations](output/suboperation_mapping.csv) and [exclusion audit](output/exclusion_audit.csv) retain the classification evidence.
 - **Standing stock is rebuilt per API10 over all bores**, with CNL (cancelled) bores dropped before both first-spud and status evaluation. A well enters on its first non-cancelled spud date. ST and BP bores are superseded and cannot by themselves keep a well alive. A well leaves when every non-superseded bore is PA with a known status date on or before the stock date; the removal date is the latest of those PA dates. Any live terminal bore retains the well. A well with no non-superseded bore is retained as **assumed standing**, rather than treating the empty terminal set as proof of abandonment. A missing status date on any terminal bore also retains the well and is counted as assumed standing. Spud and status cutoffs are inclusive.
 - Inventory depth uses the canonical original-hole depth (ST00BP00; API12 ending 00 preferred, then earliest spud/API12); a unique depth across remaining bores is used where no usable original depth exists. This preserves a stable well-level depth without discarding other bores' statuses. Conflicting fallback depths remain no depth.
-- Rates use **wells standing on 1 January**, not year-end stock: approvals during the year can concern wells removed before year end. The numerator includes approvals during the year, including wells first spudded later in that year, so this is approval intensity against opening stock, not a matched-cohort probability. [Standing wells](output/standing_wells.csv) includes stock dates and assumed counts; [year-end stock](output/standing_wells_year_end.csv) is retained separately (partial 2026 capped at the file date). Zero stock yields a missing rate, not zero.
-- Full years run 2005–2025; [full-year averages](output/full_year_averages.csv) exclude partial 2026 through 12 November. The 2026 denominator remains 1 January stock and its rates are not annualised. EOR W/A/C counts use one `SN_EOR` and the borehole-status date; these are not a matched APM completion cohort. [EOR counts](output/eor_by_year_band.csv) and [same-year ratios](output/eor_permit_ratios.csv) remain descriptive.
+- Rates use **wells standing on 1 January**, not year-end stock: approvals during the year can concern wells removed before year end. The numerator includes approvals during the year, including wells first spudded later in that year, so this is approval intensity against opening stock, not a matched-cohort probability. [Standing wells](output/standing_wells.csv) includes stock dates and assumed counts; [year-end stock](output/standing_wells_year_end.csv) is retained separately (partial {partial} capped at the file date). Zero stock yields a missing rate, not zero.
+- Full years run {first}–{last}, from the first January in the feed to the year before the file date; [full-year averages](output/full_year_averages.csv) exclude partial {partial} through {file_through}. The {partial} denominator remains 1 January stock and its rates are not annualised. EOR W/A/C counts use one `SN_EOR` and the borehole-status date; these are not a matched APM completion cohort. [EOR counts](output/eor_by_year_band.csv) and [same-year ratios](output/eor_permit_ratios.csv) remain descriptive.
 
 {assumed_note}
 
-{coding_note} The feed begins in April 2004; [monthly coverage](output/coverage_by_month.csv) retains the early ramp. Current bore statuses and dates provide a retrospective proxy, not a complete state-transition history; earlier abandonments followed by reopening cannot be reconstructed.
+{coding_note} The feed begins in {feed_start}; [monthly coverage](output/coverage_by_month.csv) retains the early ramp. Current bore statuses and dates provide a retrospective proxy, not a complete state-transition history; earlier abandonments followed by reopening cannot be reconstructed.
 
 ## Headline results
 
-2025 approvals and distinct API10 wells are shown separately. A well can appear in both event families; the two distinct-well columns must not be added as disjoint populations. The cost cases below apply to permanent abandonment only (1,387 of 2,610 abandonment approvals).
+{last} approvals and distinct API10 wells are shown separately. A well can appear in both event families; the two distinct-well columns must not be added as disjoint populations. The cost cases below apply to permanent abandonment only ({permanent:,} of {totals["abandonment"]:,} abandonment approvals).
 
 {headline}
 
@@ -243,42 +318,43 @@ Approval-to-well ratios, from [the CSV](output/approvals_per_distinct_well.csv):
 
 {table(pd.DataFrame(ratio_rows))}
 
-An earlier snapshot of 31 Oct 2026 (not retained here) supplies the comparison: the 2025 raw rows remain **523 WORKOVER + ENHANCE; 2,734 ABANDON; 3,833 all codes**. Exclusions are 127 new-hole preparations (124 ABANDON, 3 ENHANCE) and 331 COMP without ZONE. Retaining 145 COMP/ZONE and 100 INFORM/UTIL gives 523 − 3 + 145 + 100 = 765 well work, and 2,734 − 124 = 2,610 abandonment. EOR counts are 12 W, 891 A and 75 C: W unchanged, A and C each one higher than that earlier snapshot. The old snapshot cannot be independently re-read from this PR.
+{reconcile}
 
 ## Unit and access evidence
 
-The permit's `RIG_ID_NUM` joins the archive's `mv_apm_rig_view` fields `RIG_TYPE_CODE` and `RIG_NAME` with a validated many-to-one join. The type code selects the category; names are retained in [the lookup](output/unit_type_lookup.csv) but are not used to guess equipment. The mapping below is also retained in [CSV](output/unit_type_mapping.csv). NR enters **non-rig operation (recorded)**; only blank unit information enters **none named**. Of the 369 under-100-m permanent-abandonment approvals previously grouped as none named, 355 carry the regulator's unit type "non rig PA operation" and 14 remain none named. An unmatched nonblank ID or unmapped type enters other. SU is a submersible and is not classified as a semisubmersible. A permit's named unit need not be the unit ultimately deployed.
+The permit's `RIG_ID_NUM` joins the archive's `mv_apm_rig_view` fields `RIG_TYPE_CODE` and `RIG_NAME` with a validated many-to-one join. The type code selects the category; names are retained in [the lookup](output/unit_type_lookup.csv) but are not used to guess equipment. The mapping below is also retained in [CSV](output/unit_type_mapping.csv). NR enters **non-rig operation (recorded)**; only blank unit information enters **none named**. Of the {shallow_pa:,} under-100-m permanent-abandonment approvals in {last}, {nr:,} carry the regulator's unit type "non rig PA operation" and {none_named:,} name no unit. An unmatched nonblank ID or unmapped type enters other. SU is a submersible and is not classified as a semisubmersible. A permit's named unit need not be the unit ultimately deployed.
 
 {table(rules)}
 
 {chr(10).join(unit_tables)}
 
-[Unit shares](output/unit_type_shares.csv) also retain pooled 2021–2025 counts and all zero/no-depth rows. Chart 04 uses 2025 to align with the headline counts. In 500–1,500 m, only **90 of 157** permanent-abandonment approvals name a drillship or semisubmersible, and **79 of 157** have no YES subsea-completion flag. Water depth cannot select an access method.
+[Unit shares](output/unit_type_shares.csv) also retain pooled {pooled.replace("-", "–")} counts and all zero/no-depth rows. Chart 04 uses {last} to align with the headline counts. In 500–1,500 m, only **{floater:,} of {mid_pa:,}** permanent-abandonment approvals name a drillship or semisubmersible, and **{no_yes:,} of {mid_pa:,}** have no YES subsea-completion flag. Water depth cannot select an access method.
 
-The share with an EOR `SUBSEA_COMPLETION_FLAG=YES` follows. This is an **ever-YES flag at API10 in the retained snapshot**, not a contemporaneous access classification: any YES wins across the well's EOR bores; absent YES with a recorded NO is no, and no usable flag is unknown. Unknown records remain in the approval denominator. The complement of YES is not proof of a dry tree. [The CSV](output/subsea_completion_shares.csv) retains YES, NO and unknown counts, plus pooled 2021–2025.
+The share with an EOR `SUBSEA_COMPLETION_FLAG=YES` follows. This is an **ever-YES flag at API10 in the retained snapshot**, not a contemporaneous access classification: any YES wins across the well's EOR bores; absent YES with a recorded NO is no, and no usable flag is unknown. Unknown records remain in the approval denominator. The complement of YES is not proof of a dry tree. [The CSV](output/subsea_completion_shares.csv) retains YES, NO and unknown counts, plus pooled {pooled.replace("-", "–")}.
 
 {table(pd.DataFrame(subsea_rows))}
 
 ## Duration checks
 
-The permit's own `EST_OPERATION_DAYS` medians are the **operator's estimate on the permit, not observed job length**. Only finite positive estimates enter a median; missing and nonpositive values remain counted in [the CSV](output/permit_duration_estimates.csv). In band order, well-work medians are **3 / 6 / 15 / 14 days**, and permanent-abandonment medians are **14 / 10 / 25 / 21 days**.
+The permit's own `EST_OPERATION_DAYS` medians are the **operator's estimate on the permit, not observed job length**. Only finite positive estimates enter a median; missing and nonpositive values remain counted in [the CSV](output/permit_duration_estimates.csv). In band order, well-work medians are **{medians["well work"]} days**, and permanent-abandonment medians are **{medians["permanent abandonment"]} days**.
 
 {table(pd.DataFrame(duration_rows))}
 
-Beside those estimates, the weekly-report check unions overlapping or adjacent inclusive intervals of 1–90 days for the same API12, named unit and raw code in 2005–2025. A gap or changed code/unit starts a new proxy episode. Missing/placeholder units are excluded. WO, REC, TA and PA are an interpreted non-drilling token subset; several meanings lack a published BSEE definition. Full-year filtering precedes union and can censor endpoints. The {s["proxy_episodes"]:,} episodes are neither permits nor proven complete heavy-rig jobs. [The weekly-report CSV](output/war_duration_crosscheck.csv) preserves each raw-code stratum, including the deepest WO-token median of 18 days.
+Beside those estimates, the weekly-report check unions overlapping or adjacent inclusive intervals of 1–90 days for the same API12, named unit and raw code in {first}–{last}. A gap or changed code/unit starts a new proxy episode. Missing/placeholder units are excluded. WO, REC, TA and PA are an interpreted non-drilling token subset; several meanings lack a published BSEE definition. Full-year filtering precedes union and can censor endpoints. The {s["proxy_episodes"]:,} episodes are neither permits nor proven complete heavy-rig jobs. [The weekly-report CSV](output/war_duration_crosscheck.csv) preserves each raw-code stratum, {deepest_wo_text}.
 
 {table(war)}
 
 ## Cost basis
 
-**Access method selects the cost, with depth as source applicability only.** Values are scenario costs per well/event in **unescalated 2015 USD millions, two significant figures**. Permanent-abandonment costs apply only to the 1,387 permanent approvals out of 2,610 abandonment approvals in 2025; they do not price temporary or unspecified abandonment. No count is multiplied by a cost to claim expenditure.
+**Access method selects the cost, with depth as source applicability only.** Values are scenario costs per well/event in **unescalated 2015 USD millions, two significant figures**. Permanent-abandonment costs apply only to the {permanent:,} permanent approvals out of {totals["abandonment"]:,} abandonment approvals in {last}; they do not price temporary or unspecified abandonment. No count is multiplied by a cost to claim expenditure.
 
 {cost_table}
 
+- Spread scenarios are rate x days + mobilisation and **leave out the source's allowances**: TAP-738 multiplies wet-tree operations time by weather, work-provision and engineering/project-management allowances (p. 8-18) and applies similar allowances to dry-tree work (Table 8-2). The deep-platform row is a published total that includes them. The Basis column marks each row, so the step between the two platform rows is not a depth effect.
 - [BSEE TAP-738](https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf), 2015: Table 8-2, printed p. 8-12 (PDF p. 143), prices rigless dry-tree wells for 50–400 ft. Its USD 225,856 P&A work charge over 84 hours implies USD 64,530/day rounded. Standalone mob and demob are USD 37,743 each. Setup, rig-down and study contingencies are outside the simple dayrate-times-duration arithmetic.
 - TAP-738 Table 8-3, p. 8-14 (PDF p. 145), gives USD 68,424/day for the casing-jack spread. The study uses casing jacks above 400 ft and describes dry-tree TLP wells at about 1,500 to over 4,600 ft. The platform work durations and the shallow rigless transport charges are transferred explicitly to the shelf casing-jack scenarios.
 - **Deepwater dry-tree platform permanent abandonment** uses the **published** Table 8-4, p. 8-15 (PDF p. 146), final-column totals: USD 734,356 / 987,262 / 1,374,570 per well at 1,700 / 3,000 / 5,000 ft, respectively (USD **0.73 / 0.99 / 1.4 million** at two significant figures). These are 60-well campaign totals normalised per well and include work provision, engineering, weather and shared mobilisation. They are depth anchors, not statistical low/base/high outcomes. A cited deepwater dry-tree well-work basis is not established, so that row is **not priced**. Dry-tree conductor removal is separate.
-- TAP-738 section 8.3.2.3, p. 8-18 (PDF p. 149), gives the drillship/semisubmersible total spread as USD 674,600/day. **Rig mobilisation is excluded**, rather than assumed free. Subsea permanent-abandonment durations follow approximate graphic readings of Figure 8-9, p. 8-19: 17 / 19 / 23 days around the 3,000-ft anchor and 21 / 23 / 27 days around 6,000–9,000 ft. These cases do not classify every approval at those depths. Beyond the 9,000-ft anchor, cost applicability is not established.
+- TAP-738 section 8.3.2.3, p. 8-18 (PDF p. 149), gives the drillship/semisubmersible total spread as USD 674,600/day. **Rig mobilisation is excluded**, rather than assumed free. Subsea permanent-abandonment durations follow approximate graphic readings of Figure 8-9, p. 8-19. The 3,000-ft row uses 17 days (MODU leaving the wellhead) and 19 days (MODU) at 3,000 ft for low and base, and 23 days, the MODU reading at **6,000 ft**, for high. The deeper row uses 21 and 23 days at 6,000 ft and 27 days at 9,000 ft. These cases do not classify every approval at those depths. Beyond the 9,000-ft anchor, cost applicability is not established.
 - The well-work duration labels are **median 7 days / midpoint 10.5 days / two weeks 14 days**. The [BOEM Gulf EIS 2016-018](https://www.boem.gov/sites/default/files/environmental-stewardship/Environmental-Assessment/NEPA/BOEM-EIS-2016-018-v1.pdf), section 3.1.3.5, p. 3-37 (PDF p. 163), reports a Gulf median of 7 days with a range from 1 day to several months. [BOEM MAG-PLAN Alaska update](https://espis.boem.gov/final%20reports/5179.pdf), 2012, section 3.5.5.4, p. 108 (PDF p. 117), provides one to two weeks; 10.5 days is its arithmetic midpoint. These are transferred duration scenarios, **not a spread of observed outcomes**. The midpoint retains its half day to avoid changing the arithmetic; other reported duration summaries use integer days.
 - [BSEE Pacific cost update, vol. 2](https://www.bsee.gov/sites/bsee.gov/files/technology-assessment-program-tap/735ab.pdf), 2015, Appendix 2, p. A-2 (PDF p. 5), provides 3, 4, 5 and 8 trouble-free rigless days per well. The 3 / 4 / 8-day selections are scenario inputs; transfer to casing jacks is an assumption. Operator permit estimates and the weekly-report proxy above do not validate these duration scenarios.
 
@@ -292,10 +368,10 @@ Cost cases are neither bids nor confidence intervals. Additional materials, logi
 
 ## Tests and reproduction
 
-From the repository root, use the retained archives in `data/modules/bsee/zip/2026-11-12/` with the manifest digests. A new BSEE download is a different snapshot. The example requires the packages in [requirements.txt](requirements.txt).
+From the repository root, use the retained archives in `data/modules/bsee/zip/{s["snapshot"]}/` with the manifest digests. A new BSEE download (`download_data.py --snapshot <YYYY-MM-DD>`) is a different snapshot; the year selection and all report figures follow it. The example requires the packages in [requirements.txt](requirements.txt).
 
 ```sh
-uv run --no-sync python examples/bsee/interventions_by_depth/count_interventions.py --data-dir data/modules/bsee/zip/2026-11-12 --out examples/bsee/interventions_by_depth/output --last-full-year 2025
+uv run --no-sync python examples/bsee/interventions_by_depth/count_interventions.py --data-dir data/modules/bsee/zip/{s["snapshot"]} --out examples/bsee/interventions_by_depth/output
 uv run --no-sync python examples/bsee/interventions_by_depth/build_cost_basis.py
 uv run --no-sync python examples/bsee/interventions_by_depth/estimate_costs.py --out examples/bsee/interventions_by_depth/output
 uv run --no-sync python examples/bsee/interventions_by_depth/plot_charts.py --out examples/bsee/interventions_by_depth/output
@@ -318,7 +394,7 @@ PNG width is 2,160 pixels; SVG versions are retained. Footers identify the raw f
 
 {charts}
 """
-    (ROOT / "README.md").write_text(note, encoding="utf-8", newline="\n")
+    readme.write_text(note, encoding="utf-8", newline="\n")
     if pr_body:
         body = f"""## What this adds
 
@@ -326,7 +402,7 @@ A reproducible Gulf of Mexico existing-well activity example: approval counts, d
 
 ## Data
 
-The four retained BSEE Borehole, approved-permit, end-of-operations and weekly-report archives are dated 12 November 2026; their existing SHA-256 manifest is verified before use. Raw files are not committed or re-downloaded. Only derived aggregates are published. **ASSUMED - to be confirmed:** every APM main row represents an approved permit; the feed has no separate approval-status field.
+The four BSEE Borehole, approved-permit, end-of-operations and weekly-report archives were downloaded on {snapshot_date}; their SHA-256 manifest is verified before use. Raw files are not committed. Only derived aggregates are published. **ASSUMED - to be confirmed:** every APM main row represents an approved permit; the feed has no separate approval-status field.
 
 ## Method
 
@@ -336,19 +412,19 @@ Unit type follows the permit rig ID and the supplied rig-type lookup; EOR ever-Y
 
 ## Headline results
 
-2025: **765 well-work + 2,610 abandonment approvals = 3,375**. Cost applies to **permanent abandonment only: 1,387 of 2,610 abandonment approvals** (the remainder is 1,060 temporary and 163 unspecified).
+{last}: **{totals["well work"]:,} well-work + {totals["abandonment"]:,} abandonment approvals = {totals["all"]:,}**. Cost applies to **permanent abandonment only: {permanent:,} of {totals["abandonment"]:,} abandonment approvals** (the remainder is {split["temporary abandonment"]:,} temporary and {split["abandonment unspecified"]:,} unspecified).
 
 {headline}
 
-An earlier snapshot of 31 Oct 2026 (not retained here) gives the prior comparison. Raw 2025 rows remain 523 WORKOVER/ENHANCE, 2,734 ABANDON and 3,833 total. Removing 127 new-hole preparations and 331 initial completions yields the table above; 145 COMP/ZONE and 100 INFORM/UTIL remain in well work. EOR reports are 12 workover, 891 abandonment and 75 completion; the last two are each one above that earlier snapshot.
+{reconcile}
 
-Costs follow **well and access method**, with depth only as source applicability. Low/base/high are **scenario columns, USD million (2015), two significant figures**. Permanent-abandonment costs apply only to permanent approvals (1,387 of 2,610 in 2025).
+Costs follow **well and access method**, with depth only as source applicability. Low/base/high are **scenario columns, USD million (2015), two significant figures**. Permanent-abandonment costs apply only to permanent approvals ({permanent:,} of {totals["abandonment"]:,} in {last}). Spread scenarios leave out the source's allowances; the deep-platform row is a published total that includes them.
 
 {cost_table}
 
 Sources: [BSEE TAP-738, 2015](https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf), Tables 8-2/8-3/8-4, pp. 8-12/8-14/8-15, and subsea section 8.3.2.3; [BOEM EIS 2016-018](https://www.boem.gov/sites/default/files/environmental-stewardship/Environmental-Assessment/NEPA/BOEM-EIS-2016-018-v1.pdf), p. 3-37; [BOEM MAG-PLAN Alaska update, 2012](https://espis.boem.gov/final%20reports/5179.pdf), p. 108; [BSEE Pacific update vol. 2, 2015](https://www.bsee.gov/sites/bsee.gov/files/technology-assessment-program-tap/735ab.pdf), p. A-2. Rigless spread: USD 64,530/day derived from Table 8-2; casing jacks: USD 68,424/day; subsea total spread: USD 674,600/day. Deepwater dry-tree P&A uses the published 60-well Table 8-4 totals at 1,700/3,000/5,000 ft, not a subsea rate; its work row is not priced. The 500–1,500-m subsea comparison uses 3,000 ft, not 1,000 ft.
 
-Well-work duration cases are **median 7 days / midpoint 10.5 days / two weeks 14 days**, not an outcome range: the Gulf source spans 1 day to several months. The permit's own operator-estimated medians by band are **3 / 6 / 15 / 14 days** for well work and **14 / 10 / 25 / 21 days** for permanent abandonment, not observed job lengths. The README places these beside the weekly-report check and includes all approval/well ratios, unit categories and EOR flag shares. In 500–1,500 m, only 90/157 permanent approvals name a drillship or semi and 79/157 lack a YES subsea flag, illustrating why depth alone does not price access.
+Well-work duration cases are **median 7 days / midpoint 10.5 days / two weeks 14 days**, not an outcome range: the Gulf source spans 1 day to several months. The permit's own operator-estimated medians by band are **{medians["well work"]} days** for well work and **{medians["permanent abandonment"]} days** for permanent abandonment, not observed job lengths. The README places these beside the weekly-report check and includes all approval/well ratios, unit categories and EOR flag shares. In 500–1,500 m, only {floater:,}/{mid_pa:,} permanent approvals name a drillship or semi and {no_yes:,}/{mid_pa:,} lack a YES subsea flag, illustrating why depth alone does not price access.
 
 ## Limits
 
@@ -370,7 +446,7 @@ Result: **{test_result}**. Coverage includes ST original/PA sidetrack, live side
 - `01_approved_interventions.png` / `.svg`: approved permits to modify by depth; coding-change note.
 - `02_rates_per_standing_well.png` / `.svg`: approved permits to modify per 100 wells standing on 1 January; zero-based axes.
 - `03_cost_per_event.png` / `.svg`: cost scenarios by well/access type, with cost-study sources.
-- `04_unit_types_by_depth.png` / `.svg`: 2025 well-work and permanent-abandonment approval shares, 100% stacked by unit type and depth.
+- `04_unit_types_by_depth.png` / `.svg`: {last} well-work and permanent-abandonment approval shares, 100% stacked by unit type and depth.
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 """
@@ -381,5 +457,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--pr-body", type=Path)
     parser.add_argument("--test-result", default="not run")
+    parser.add_argument("--out", type=Path, default=OUT)
+    parser.add_argument("--readme", type=Path, default=ROOT / "README.md")
     args = parser.parse_args()
-    main(args.pr_body, args.test_result)
+    main(args.pr_body, args.test_result, args.out, args.readme)

@@ -841,16 +841,16 @@ year,band,group,permits,partial_year
 2025,no depth,initial completion excluded,0,False
 2026,under 100 m,workover and recompletion,201,True
 2026,under 100 m,production enhancement,27,True
-2026,under 100 m,temporary abandonment,799,True
-2026,under 100 m,permanent abandonment,882,True
-2026,under 100 m,other well work,10,True
-2026,under 100 m,abandonment unspecified,188,True
+2026,under 100 m,temporary abandonment,816,True
+2026,under 100 m,permanent abandonment,890,True
+2026,under 100 m,other well work,11,True
+2026,under 100 m,abandonment unspecified,189,True
 2026,under 100 m,new hole excluded,37,True
 2026,under 100 m,initial completion excluded,46,True
 2026,100 to 500 m,workover and recompletion,77,True
-2026,100 to 500 m,production enhancement,36,True
-2026,100 to 500 m,temporary abandonment,88,True
-2026,100 to 500 m,permanent abandonment,115,True
+2026,100 to 500 m,production enhancement,37,True
+2026,100 to 500 m,temporary abandonment,89,True
+2026,100 to 500 m,permanent abandonment,116,True
 2026,100 to 500 m,other well work,2,True
 2026,100 to 500 m,abandonment unspecified,26,True
 2026,100 to 500 m,new hole excluded,0,True
@@ -865,12 +865,12 @@ year,band,group,permits,partial_year
 2026,500 to 1500 m,initial completion excluded,55,True
 2026,1500 m and deeper,workover and recompletion,63,True
 2026,1500 m and deeper,production enhancement,26,True
-2026,1500 m and deeper,temporary abandonment,31,True
-2026,1500 m and deeper,permanent abandonment,30,True
-2026,1500 m and deeper,other well work,34,True
-2026,1500 m and deeper,abandonment unspecified,14,True
+2026,1500 m and deeper,temporary abandonment,32,True
+2026,1500 m and deeper,permanent abandonment,31,True
+2026,1500 m and deeper,other well work,35,True
+2026,1500 m and deeper,abandonment unspecified,18,True
 2026,1500 m and deeper,new hole excluded,36,True
-2026,1500 m and deeper,initial completion excluded,119,True
+2026,1500 m and deeper,initial completion excluded,120,True
 2026,no depth,workover and recompletion,0,True
 2026,no depth,production enhancement,0,True
 2026,no depth,temporary abandonment,0,True

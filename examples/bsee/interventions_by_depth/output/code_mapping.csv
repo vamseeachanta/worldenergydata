@@ -1,15 +1,15 @@
 primary_code,group,permits,description,last_full_year_permits
-ABANDON,abandonment unspecified,1861,Abandonment Of Well Bore,163
+ABANDON,abandonment unspecified,1866,Abandonment Of Well Bore,163
 ABANDON,new hole excluded,4875,Abandonment Of Well Bore,124
-ABANDON,permanent abandonment,24562,Abandonment Of Well Bore,1387
-ABANDON,temporary abandonment,29451,Abandonment Of Well Bore,1060
-COMP,initial completion excluded,8467,Completion,331
+ABANDON,permanent abandonment,24572,Abandonment Of Well Bore,1387
+ABANDON,temporary abandonment,29470,Abandonment Of Well Bore,1060
+COMP,initial completion excluded,8468,Completion,331
 COMP,new hole excluded,4,Completion,0
 COMP,workover and recompletion,9305,Completion,145
 ENHANCE,new hole excluded,14,Enhance Production,3
-ENHANCE,production enhancement,5817,Enhance Production,183
+ENHANCE,production enhancement,5818,Enhance Production,183
 INFORM,new hole excluded,4,Information,0
-INFORM,other well work,3579,Information,81
+INFORM,other well work,3581,Information,81
 OTHER,new hole excluded,67,Other Operation,0
 OTHER,other well work,6850,Other Operation,0
 UTIL,new hole excluded,2,Utility,0
