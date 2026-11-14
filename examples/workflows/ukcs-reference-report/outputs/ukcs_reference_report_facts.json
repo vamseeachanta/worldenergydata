@@ -164,6 +164,28 @@
     }
   ],
   "economics_label": "chain_plumbing_pre_tax",
+  "cashflow_basis": {
+    "development_system": "dry",
+    "development_system_basis": "classified from water_depth_m",
+    "assumptions_source": "FDAS DEFAULT_ASSUMPTIONS",
+    "oil_price_usd_bbl": 75.0,
+    "variable_opex_usd_per_bbl": 8.0,
+    "assumed_first_oil": "2024-01",
+    "first_oil_basis": "first selected production observation",
+    "cashflow_window": {
+      "first_period": "2024-01",
+      "last_period": "2024-12",
+      "row_count": 12
+    },
+    "host_capex_assumption_mm_usd": 0.0,
+    "applied_costs_usd": {
+      "variable_opex": 897192.0,
+      "fixed_opex": 0.0,
+      "drilling_capex": 0.0,
+      "facilities_capex": 0.0,
+      "host_capex": 0.0
+    }
+  },
   "pre_tax_metrics": {
     "months": 12.0,
     "gross_revenue_usd": 8411175.0,
@@ -176,6 +198,7 @@
     "url": "https://services-eu1.arcgis.com/OZMfUznmLTnWccBc/arcgis/rest/services/UKCS_hydrocarbon_field_production_reports_PPRS_points_(WGS84)/FeatureServer/0/query",
     "licence": "NSTA Open User Licence",
     "refreshed_at": null,
+    "raw_bytes_retained_in_repository": null,
     "raw_sha256": {
       "sample_nsta_production.csv": "91119a5aedd03da2c4c628f9ad0e235522c10a4eee54a34df59360f3759bd056"
     }
@@ -186,7 +209,7 @@
     "water_bbl": "bbl",
     "pre_tax_metrics": "USD except months"
   },
-  "generated_at": "2026-11-14T02:18:13.355865+00:00",
+  "generated_at": "2026-11-14T03:05:38.935426+00:00",
   "input_echo": {
     "field_name": "Forties",
     "field_meta": {

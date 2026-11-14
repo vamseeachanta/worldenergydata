@@ -96,6 +96,7 @@ def build_report_facts(
         },
         "ranked_concepts": ranked,
         "economics_label": chain_result["economics_label"],
+        "cashflow_basis": chain_result.get("cashflow_basis"),
         "pre_tax_metrics": {
             key: float(value) for key, value in chain_result["pre_tax_metrics"].items()
         },
@@ -105,6 +106,7 @@ def build_report_facts(
             "url": source_url,
             "licence": licence,
             "refreshed_at": refreshed_at if live else None,
+            "raw_bytes_retained_in_repository": False if live else None,
         },
         "units": {
             "oil_bbl": "bbl",
@@ -175,6 +177,42 @@ def _production_svg(history):
     return "".join(charts)
 
 
+def _cashflow_basis_html(basis):
+    if not basis:
+        return "<p>Cashflow basis not established.</p>"
+    window, costs = basis["cashflow_window"], basis["applied_costs_usd"]
+    rows = [
+        ["Development system", basis["development_system"]],
+        ["Development-system basis", basis["development_system_basis"]],
+        ["Assumptions source", basis["assumptions_source"]],
+        ["Oil price scenario (pre-tax USD/bbl)", basis["oil_price_usd_bbl"]],
+        ["Variable opex (pre-tax USD/bbl)", basis["variable_opex_usd_per_bbl"]],
+        ["Assumed first oil", basis["assumed_first_oil"]],
+        ["First-oil basis", basis["first_oil_basis"]],
+        ["Cashflow first period", window["first_period"]],
+        ["Cashflow last period", window["last_period"]],
+        ["Cashflow monthly rows", window["row_count"]],
+        ["Default HOST_CAPEX_MM (million USD)", basis["host_capex_assumption_mm_usd"]],
+        ["Host capital applied (pre-tax USD)", costs["host_capex"]],
+    ]
+    rows.extend(
+        [name.replace("_", " ") + " applied (pre-tax USD)", value]
+        for name, value in costs.items()
+        if name != "host_capex"
+    )
+    capital = (
+        "A default host capital is applied by the existing chain. Known scale defect: "
+        "HOST_CAPEX_MM is passed as USD without the million-to-USD conversion; "
+        "the applied amount above is not a valid development cost estimate. "
+        "The default schedule includes assumed first oil and the preceding 23 months."
+        if costs["host_capex"]
+        else "No host capital is applied."
+    )
+    return (
+        _table(["Cashflow basis / pre-tax cost", "Value"], rows) + f"<p>{capital}</p>"
+    )
+
+
 def render_report_html(facts) -> str:
     """Render escaped facts using inline CSS/SVG only; no external assets."""
     source = facts["source"]
@@ -219,6 +257,21 @@ def render_report_html(facts) -> str:
         _display(source.get("refreshed_at")) if live else "Fixture; no live refresh"
     )
     echo = _escape(json.dumps(facts["input_echo"], indent=2, allow_nan=False))
+    evidence_note = (
+        "Source bytes are not retained in the repository; the live numbers "
+        "cannot be re-derived from the digest alone. A re-fetch may return different bytes."
+        if live
+        else "Bundled synthetic fixture; no live retrieval."
+    )
+    refresh_mode = _display(source.get("force_refresh"))
+    if type(source.get("force_refresh")) is bool:
+        refresh_mode = str(source["force_refresh"]).lower()
+    refresh_note = (
+        f"<p>Force refresh requested: {refresh_mode}. False permits cache reuse; "
+        "the timestamp identifies cache retrieval, not source publication or proof of freshness.</p>"
+        if live
+        else ""
+    )
     scope = _escape(
         source.get(
             "coverage_note",
@@ -250,15 +303,18 @@ NOT a UK investment NPV. After-tax UK fiscal treatment is deferred to
 <section><h2>Concept screening</h2><p>Sparse metadata; relative screening is a chain-wiring demonstration, not a field-development recommendation.
 Water depth (m): {_display(facts['field_concept'].get('water_depth_m'))}.</p><div class="table-wrap">{concepts}</div></section>
 <section><h2>Pre-tax metrics</h2>{metrics}<p>The assumed oil price is an input scenario, not a fetched market quote.
-Drilling and development capital inputs are not supplied. These cashflows cannot establish project value.</p></section>
+Explicit drilling and development capital inputs are not supplied. These cashflows cannot establish project value.</p>
+{_cashflow_basis_html(facts.get('cashflow_basis'))}</section>
 <section><details><summary>Input echo</summary><pre>{echo}</pre></details></section>
 <footer><p>{citation} · {_escape(source['licence'])}</p><p>Refresh timestamp: {timestamp}</p>
+<p>{evidence_note}</p>{refresh_note}
 <p>Generated (UTC): {_escape(facts['generated_at'])}</p></footer></body></html>"""
 
 
 def generate_report(output_dir=None) -> dict:
     """Regenerate the committed fixture report, offline, into the selected directory."""
     import yaml
+
     from worldenergydata.ukcs.ukcs import Ukcs
 
     example = _REPO_ROOT / "examples/workflows/ukcs-reference-report"

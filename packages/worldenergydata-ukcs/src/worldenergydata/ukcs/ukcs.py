@@ -151,6 +151,7 @@ class Ukcs:
                 "raw_sha256": digests,
                 "cache_refreshed_at": timestamps,
                 "max_records_per_year": limit,
+                "force_refresh": force_refresh,
                 "coverage_note": "Selected-field observations from the requested year(s). "
                 "A record cap may omit fields or months; complete UKCS coverage is not established.",
             },

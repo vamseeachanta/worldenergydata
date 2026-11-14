@@ -2,7 +2,6 @@
 
 import json
 from datetime import datetime
-from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -13,6 +12,16 @@ from worldenergydata.production.unified.adapters.ukcs_adapter import UkcsAdapter
 from worldenergydata.ukcs.production.field_production import UKCSFieldProductionLoader
 from worldenergydata.ukcs.production.nsta_client import DEFAULT_BASE_URL
 from worldenergydata.ukcs.reference_chain import run_ukcs_reference_chain
+
+
+@pytest.fixture(autouse=True)
+def no_http(monkeypatch):
+    import requests
+
+    def refused(*args, **kwargs):
+        raise AssertionError("HTTP is forbidden in report unit tests")
+
+    monkeypatch.setattr(requests.sessions.Session, "request", refused)
 
 
 @pytest.fixture
@@ -207,6 +216,7 @@ def test_nullable_missing_source_tag_fails_closed(chain):
 
 def test_production_chart_preserves_calendar_gaps(chain):
     import re
+
     from worldenergydata.ukcs.report import render_report_html
 
     facts = facts_for(chain, provenance="fixture", refreshed_at=None)
@@ -219,3 +229,51 @@ def test_production_chart_preserves_calendar_gaps(chain):
     line = soup.find("svg").find("path", stroke="#176a75")["d"]
     x_values = [float(v) for v in re.findall(r"[ML]([\d.]+),", line)]
     assert x_values == pytest.approx([70.0, 273.333333, 680.0], abs=0.01)
+
+
+def test_report_tests_deny_http_before_transport(monkeypatch):
+    import requests
+
+    def transport_must_not_run(*args, **kwargs):
+        raise AssertionError("HTTP reached transport")
+
+    monkeypatch.setattr(requests.adapters.HTTPAdapter, "send", transport_must_not_run)
+    with pytest.raises(AssertionError, match="HTTP is forbidden in report unit tests"):
+        requests.Session().get("https://example.invalid/")
+
+
+def test_committed_live_report_discloses_defaults_and_evidence():
+    from worldenergydata.ukcs.report import _REPO_ROOT, render_report_html
+
+    facts = json.loads((_REPO_ROOT / "reports/ukcs_reference/_facts.json").read_text())
+    basis = facts["cashflow_basis"]
+    assert basis["development_system"] == "subsea15"
+    assert basis["variable_opex_usd_per_bbl"] == 12.0
+    assert basis["cashflow_window"] == {
+        "first_period": "2023-02",
+        "last_period": "2025-12",
+        "row_count": 35,
+    }
+    assert basis["applied_costs_usd"]["host_capex"] == 300.0
+    assert facts["pre_tax_metrics"]["net_cashflow_usd"] == pytest.approx(
+        facts["pre_tax_metrics"]["gross_revenue_usd"]
+        - facts["pre_tax_metrics"]["royalty_usd"]
+        - sum(basis["applied_costs_usd"].values())
+    )
+    assert facts["source"]["raw_bytes_retained_in_repository"] is False
+    assert facts["source"]["force_refresh"] is True
+    assert (
+        _REPO_ROOT / "reports/ukcs_reference/index.html"
+    ).read_text() == render_report_html(facts)
+
+
+def test_live_report_discloses_unretained_raw_bytes(chain):
+    from worldenergydata.ukcs.report import render_report_html
+
+    facts = facts_for(
+        chain, provenance="nsta_live", refreshed_at="2026-11-13T10:00:00Z"
+    )
+    assert facts["source"]["raw_bytes_retained_in_repository"] is False
+    visible = BeautifulSoup(render_report_html(facts), "html.parser").get_text()
+    assert "Source bytes are not retained in the repository" in visible
+    assert "cannot be re-derived from the digest alone" in visible

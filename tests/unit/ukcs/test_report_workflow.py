@@ -216,9 +216,25 @@ def test_registry_keeps_ukcs_fixture_only():
     }
 
 
-def test_live_cache_paths_are_ignored():
+@pytest.mark.parametrize("windows_text_mode", [False, True])
+def test_live_cache_paths_are_ignored(monkeypatch, windows_text_mode):
     import subprocess
 
+    run = subprocess.run
+
+    def platform_run(*args, **kwargs):
+        # Model Windows TextIOWrapper newline translation on any platform.
+        text_mode = kwargs.get("text", False)
+        if windows_text_mode and text_mode and isinstance(kwargs.get("input"), str):
+            kwargs["input"] = kwargs["input"].replace("\n", "\r\n").encode()
+            kwargs["text"] = False
+            result = run(*args, **kwargs)
+            result.stdout = result.stdout.decode()
+            result.stderr = result.stderr.decode()
+            return result
+        return run(*args, **kwargs)
+
+    monkeypatch.setattr(subprocess, "run", platform_run)
     paths = [
         "packages/worldenergydata-ukcs/src/worldenergydata/ukcs/data/nsta_production_2024_monthly.csv",
         "data/modules/ukcs/raw/nsta_production_2024_monthly.csv",
@@ -226,13 +242,13 @@ def test_live_cache_paths_are_ignored():
         "examples/workflows/ukcs-reference-report/data/modules/ukcs/raw/nsta_production_2024_monthly.csv",
     ]
     result = subprocess.run(
-        ["git", "check-ignore", "--no-index", "--stdin"],
-        input="\n".join(paths),
+        ["git", "check-ignore", "--no-index", "--stdin", "-z"],
+        input=b"\0".join(path.encode() for path in paths) + b"\0",
         cwd=ROOT,
-        text=True,
         capture_output=True,
     )
-    assert set(result.stdout.splitlines()) == set(paths)
+    assert result.returncode == 0, result.stderr
+    assert set(result.stdout.decode().strip("\0").split("\0")) == set(paths)
 
 
 def test_live_cache_file_cannot_escape_root_via_symlink(cfg, tmp_path):
@@ -250,3 +266,101 @@ def test_live_cache_file_cannot_escape_root_via_symlink(cfg, tmp_path):
         assert not Path(cfg["Analysis"]["result_folder"]).exists()
     finally:
         external.unlink()
+
+
+@pytest.mark.parametrize(
+    "depth, system, rate, host, months, first_period",
+    [
+        (128.0, "dry", 8.0, 0.0, 2, "2024-01"),
+        (None, "subsea15", 12.0, 300.0, 25, "2022-02"),
+    ],
+)
+def test_cashflow_defaults_and_window_are_reconcilable(
+    cfg, depth, system, rate, host, months, first_period
+):
+    from bs4 import BeautifulSoup
+
+    if depth is None:
+        cfg["report"]["field_meta"].pop("water_depth_m")
+    result = route(cfg)
+    facts = read_facts(result)
+    basis = facts["cashflow_basis"]
+    assert basis["development_system"] == system
+    assert basis["development_system_basis"] == (
+        "fallback: water depth unknown"
+        if depth is None
+        else "classified from water_depth_m"
+    )
+    assert basis["variable_opex_usd_per_bbl"] == rate
+    assert basis["assumed_first_oil"] == "2024-01"
+    assert basis["first_oil_basis"] == "first selected production observation"
+    assert basis["cashflow_window"] == {
+        "first_period": first_period,
+        "last_period": "2024-02",
+        "row_count": months,
+    }
+    assert facts["pre_tax_metrics"]["months"] == months
+    assert basis["host_capex_assumption_mm_usd"] == host
+    costs = basis["applied_costs_usd"]
+    assert costs["host_capex"] == host  # Existing chain's scale defect is disclosed.
+    assert costs["variable_opex"] == pytest.approx(
+        sum(row["oil_bbl"] for row in facts["production_history"]) * rate
+    )
+    assert (
+        costs["fixed_opex"] == costs["drilling_capex"] == costs["facilities_capex"] == 0
+    )
+    assert facts["pre_tax_metrics"]["net_cashflow_usd"] == pytest.approx(
+        facts["pre_tax_metrics"]["gross_revenue_usd"]
+        - facts["pre_tax_metrics"]["royalty_usd"]
+        - sum(costs.values())
+    )
+    html = BeautifulSoup(Path(result["ukcs"]["report_html"]).read_text(), "html.parser")
+    visible = html.get_text(" ", strip=True)
+    for expected in (
+        system,
+        str(rate),
+        first_period,
+        "2024-02",
+        str(months),
+        "Variable opex (pre-tax USD/bbl)",
+        "Host capital applied (pre-tax USD)",
+        "first selected production observation",
+    ):
+        assert expected in visible
+    if host:
+        assert "fallback: water depth unknown" in visible
+        assert "300.0" in visible
+        assert "HOST_CAPEX_MM" in visible and "scale defect" in visible
+        assert "default host capital is applied" in visible
+
+
+@pytest.mark.parametrize("force_refresh", [None, False, True])
+def test_live_refresh_mode_and_unretained_source_are_visible(cfg, force_refresh):
+    from bs4 import BeautifulSoup
+
+    root = Path(cfg["Analysis"]["analysis_root_folder"])
+    (root / "cache").mkdir()
+    shutil.copy2(
+        root / "production.csv", root / "cache/nsta_production_2024_monthly.csv"
+    )
+    cfg["data"] = {"source": "nsta_live", "cache_dir": "cache", "year": 2024}
+    if force_refresh is not None:
+        cfg["data"]["force_refresh"] = force_refresh
+    # Exercise the real cache-hit path. For a forced refresh only mock download.
+    if force_refresh:
+        from unittest.mock import patch
+
+        with patch("worldenergydata.ukcs.ukcs.NSTAClient.download"):
+            result = route(cfg)
+    else:
+        result = route(cfg)
+    facts = read_facts(result)
+    assert facts["source"]["force_refresh"] is bool(force_refresh)
+    assert facts["source"]["raw_bytes_retained_in_repository"] is False
+    visible = BeautifulSoup(
+        Path(result["ukcs"]["report_html"]).read_text(), "html.parser"
+    ).get_text()
+    assert "Source bytes are not retained in the repository" in visible
+    assert "cannot be re-derived from the digest alone" in visible
+    assert "Force refresh requested: " + str(bool(force_refresh)).lower() in visible
+    assert "cache retrieval, not source publication or proof of freshness" in visible

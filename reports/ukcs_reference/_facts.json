@@ -194,6 +194,28 @@
     }
   ],
   "economics_label": "chain_plumbing_pre_tax",
+  "cashflow_basis": {
+    "development_system": "subsea15",
+    "development_system_basis": "fallback: water depth unknown",
+    "assumptions_source": "FDAS DEFAULT_ASSUMPTIONS",
+    "oil_price_usd_bbl": 75.0,
+    "variable_opex_usd_per_bbl": 12.0,
+    "assumed_first_oil": "2025-01",
+    "first_oil_basis": "first selected production observation",
+    "cashflow_window": {
+      "first_period": "2023-02",
+      "last_period": "2025-12",
+      "row_count": 35
+    },
+    "host_capex_assumption_mm_usd": 300.0,
+    "applied_costs_usd": {
+      "variable_opex": 54149350.855332,
+      "fixed_opex": 0.0,
+      "drilling_capex": 0.0,
+      "facilities_capex": 0.0,
+      "host_capex": 300.0
+    }
+  },
   "pre_tax_metrics": {
     "months": 35.0,
     "gross_revenue_usd": 338433442.845825,
@@ -206,6 +228,7 @@
     "url": "https://services-eu1.arcgis.com/OZMfUznmLTnWccBc/arcgis/rest/services/UKCS_hydrocarbon_field_production_reports_PPRS_points_(WGS84)/FeatureServer/0/query",
     "licence": "NSTA Open User Licence",
     "refreshed_at": "2026-11-14T02:08:18.835151+00:00",
+    "raw_bytes_retained_in_repository": false,
     "raw_sha256": {
       "nsta_production_2025_monthly.csv": "2bdf40b4320e99c51bbad32636082ddccc4b7d6a64d70002ef38bb9dbcd17238"
     },
@@ -213,7 +236,9 @@
       "nsta_production_2025_monthly.csv": "2026-11-14T02:08:18.835151+00:00"
     },
     "max_records_per_year": 6000,
-    "coverage_note": "Selected-field observations from the requested year(s). A record cap may omit fields or months; complete UKCS coverage is not established."
+    "coverage_note": "Selected-field observations from the requested year(s). A record cap may omit fields or months; complete UKCS coverage is not established.",
+    "force_refresh": true,
+    "derivation_note": "Disclosures rebuilt from committed normalized production observations and original source evidence without a new download; original totals and refresh timestamp preserved."
   },
   "units": {
     "oil_bbl": "bbl",
@@ -221,7 +246,7 @@
     "water_bbl": "bbl",
     "pre_tax_metrics": "USD except months"
   },
-  "generated_at": "2026-11-14T02:08:18.950044+00:00",
+  "generated_at": "2026-11-14T03:05:38.927987+00:00",
   "input_echo": {
     "field_name": "Forties",
     "field_meta": {
