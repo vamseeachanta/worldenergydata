@@ -35,7 +35,7 @@ Revision 2 corrects the comparator selector and cashflow failures in SF1: unknow
 | --- | --- | --- |
 | 0 | 2026-10-15 | Initial implementation inventory and regression evidence |
 | 1 | 2026-10-16 | Record silent failures and detection gaps; distinguish a pagination regression that encodes row loss from completeness evidence |
-| 2 | 2026-11-13 | Reject unknown comparator selectors and retain signed cashflows; add synthetic regressions and separate current comparator evidence from historical package evidence; record the silent-failure sweep count, command and match dispositions |
+| 2 | 2026-11-13 | Reject unknown comparator selectors and retain signed cashflows; add synthetic regressions and separate current comparator evidence from historical package evidence; record the silent-failure sweep count, command and match dispositions; include the same-day comparator replay addendum |
 
 ## 2. Inputs and outputs
 
@@ -133,7 +133,7 @@ The approved #1284 comparator slice was already present in main commit `d6e2c080
 For the historical red replay, the unchanged current comparator tests ran against only the comparator module from parent commit `1e35ee97d665432e35b3c5e7b5bd09788982a185`, loaded in an isolated process. The 21 failures comprise 17 selector-validation cases and 4 signed-cashflow cases. This is historical regression evidence; no still-reproducing comparator defect was found on main.
 
 | Replay | Pytest selection under `tests/unit/ukcs` | Passed | Failed | Skipped / xfailed / deselected |
-| --- | --- | --- | --- | --- | --- |
+| --- | --- | --- | --- | --- |
 | Historical comparator source | `test_cross_basin.py` | 19 | 21 | 0 / 0 / 0 |
 | Current focused suites | `test_cross_basin.py test_reference_chain.py test_field_economics.py test_nsta_client.py` | 102 | 0 | 0 / 0 / 0 |
 | Current complete UKCS suite | All nine `test_*.py` files | 199 | 0 | 0 / 0 / 0 |
