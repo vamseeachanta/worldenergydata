@@ -418,21 +418,44 @@ def execute_run(repo, run_root):
     return persist_runtime_receipt(root, receipt)
 
 
-def save_reports(receipt, directory):
-    directory.mkdir(parents=True, exist_ok=True)
-    text = json.dumps(receipt, indent=2) + "\n"
+def available_report_paths(directory):
+    """Refuse existing evidence before execution and again before saving."""
     json_path = directory / "issue-271-output-readback.json"
     html_path = directory / "issue-271-output-readback.html"
     if any(path.exists() or path.is_symlink() for path in (json_path, html_path)):
         raise FileExistsError(
             "Public reports already exist; use a new reports directory"
         )
+    return json_path, html_path
+
+
+def report_summary(receipt):
+    datasets = receipt["datasets"]
+    if datasets:
+        written = [
+            item for item in datasets.values() if item["disposition"] == "written"
+        ]
+        rows = sum(item["rows"] for item in written)
+        summary = (
+            f"{len(written)} of {len(datasets)} datasets were written ({rows:,} rows)."
+        )
+    else:
+        summary = "No dataset observations are available."
+    if receipt["checks_failed"]:
+        summary += " Failing criteria: " + ", ".join(receipt["checks_failed"]) + "."
+    return summary
+
+
+def save_reports(receipt, directory):
+    directory.mkdir(parents=True, exist_ok=True)
+    json_path, html_path = available_report_paths(directory)
+    text = json.dumps(receipt, indent=2) + "\n"
     with json_path.open("x", encoding="utf-8") as stream:
         stream.write(text)
     page = f"""<!doctype html>
 <html lang="en"><meta charset="utf-8"><title>Scheduler output readback</title>
 <body><h1>Scheduler output readback</h1><p>{html.escape(receipt['verification'])}:
-one registered BSEE run against the full five-entry catalog.</p>
+{html.escape(report_summary(receipt))}</p>
 <h2>Revision history</h2><table><tr>
 <th>Revision</th><th>Date (UTC)</th><th>Change and reason</th></tr>
 <tr><td>1</td><td>{receipt['started_utc'][:10]}</td>
@@ -459,6 +482,7 @@ def main():
     parser.add_argument("--run-root", type=Path, required=True)
     parser.add_argument("--reports-dir", type=Path, required=True)
     args = parser.parse_args()
+    available_report_paths(args.reports_dir)
     logging.basicConfig(level=logging.INFO)
 
     def timeout_received(signum, frame):

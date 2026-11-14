@@ -5,6 +5,7 @@ import json
 import signal
 import socket
 import sys
+from html import unescape
 from pathlib import Path
 
 import pandas as pd
@@ -376,3 +377,101 @@ def test_existing_public_reports_are_preserved(verifier, tmp_path, existing):
     with pytest.raises(FileExistsError):
         verifier.save_reports(receipt, reports)
     assert {path.name: path.read_bytes() for path in reports.iterdir()} == originals
+
+
+@pytest.mark.parametrize("existing", ["json", "html", "both"])
+def test_cli_refuses_existing_reports_before_execution(
+    verifier, tmp_path, monkeypatch, existing
+):
+    reports = tmp_path / "reports"
+    reports.mkdir()
+    extensions = ("json", "html") if existing == "both" else (existing,)
+    for extension in extensions:
+        (reports / f"issue-271-output-readback.{extension}").write_text("retained")
+    originals = {path.name: path.read_bytes() for path in reports.iterdir()}
+    calls = []
+
+    def record_execution(*args):
+        calls.append(args)
+        return {"verification": "NOT_VERIFIED", "started_utc": "2026-01-01"}
+
+    monkeypatch.setattr(verifier, "execute_run", record_execution)
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            str(SCRIPT),
+            "--run-root",
+            str(tmp_path / "execution"),
+            "--reports-dir",
+            str(reports),
+        ],
+    )
+    previous = signal.getsignal(signal.SIGTERM)
+    try:
+        with pytest.raises(FileExistsError, match="Public reports already exist"):
+            verifier.main()
+    finally:
+        signal.signal(signal.SIGTERM, previous)
+    assert calls == []
+    assert not (tmp_path / "execution").exists()
+    assert {path.name: path.read_bytes() for path in reports.iterdir()} == originals
+
+
+@pytest.mark.parametrize(
+    "written_rows,absent,checks_failed,expected",
+    [
+        ([2, 3], 0, [], "2 of 2 datasets were written (5 rows)."),
+        (
+            [7091, 2006082, 57, 703],
+            1,
+            ["full_native_success"],
+            "4 of 5 datasets were written (2,013,933 rows). "
+            "Failing criteria: full_native_success.",
+        ),
+        (
+            [],
+            5,
+            ["ElapsedTimeCap"],
+            "0 of 5 datasets were written (0 rows). Failing criteria: ElapsedTimeCap.",
+        ),
+        (
+            [],
+            0,
+            ["import_origin"],
+            "No dataset observations are available. Failing criteria: import_origin.",
+        ),
+        (
+            [2],
+            1,
+            ["<first>", "second"],
+            "1 of 2 datasets were written (2 rows). Failing criteria: <first>, second.",
+        ),
+    ],
+)
+def test_generated_report_summarizes_observed_result(
+    verifier, tmp_path, written_rows, absent, checks_failed, expected
+):
+    datasets = {
+        f"written_{index}": {"disposition": "written", "rows": rows}
+        for index, rows in enumerate(written_rows)
+    }
+    datasets.update(
+        {
+            f"absent_{index}": {"disposition": "absent", "rows": None}
+            for index in range(absent)
+        }
+    )
+    receipt = {
+        "verification": "NOT_VERIFIED" if checks_failed else "VERIFIED",
+        "started_utc": "2026-01-01",
+        "datasets": datasets,
+        "checks_failed": checks_failed,
+    }
+    verifier.save_reports(receipt, tmp_path / "reports")
+    page = (tmp_path / "reports/issue-271-output-readback.html").read_text()
+    summary = page.split("<p>", 1)[1].split("</p>", 1)[0]
+    assert expected in unescape(summary)
+    assert "<first>" not in summary
+    saved = page.split('<pre id="receipt">', 1)[1].split("</pre>", 1)[0]
+    assert json.loads(unescape(saved)) == receipt
