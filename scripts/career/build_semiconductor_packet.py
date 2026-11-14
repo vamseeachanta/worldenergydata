@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import shlex
 from html import escape
 from pathlib import Path
 from urllib.parse import quote, urlsplit
@@ -83,8 +84,21 @@ def validate(packet: dict, root: Path) -> None:
             raise ValueError("unknown research source")
 
 
-def render(packet: dict, root: Path, output: Path) -> str:
+def render(packet: dict, root: Path, output: Path, data: Path | None = None) -> str:
     """Render deterministic HTML with links relative to its destination."""
+    root, output = root.resolve(), output.resolve()
+    data = (data if data is not None else root / DATA.relative_to(ROOT)).resolve()
+    data_name = Path(os.path.relpath(data, root)).as_posix()
+    command = shlex.join(
+        [
+            "python",
+            "scripts/career/build_semiconductor_packet.py",
+            "--data",
+            data_name,
+            "--output",
+            Path(os.path.relpath(output, root)).as_posix(),
+        ]
+    )
     validate(packet, root)
     sources = {s["id"]: s for s in packet["sources"]}
     artifacts = {a["id"]: a for a in packet["artifacts"]}
@@ -197,10 +211,9 @@ def render(packet: dict, root: Path, output: Path) -> str:
     parts.extend(
         [
             "</ul><p>Data:",
-            local("docs/career/semiconductor-packet.json"),
+            local(data_name),
             (
-                "</p><p>Regenerate from the repository root: <code>python "
-                "scripts/career/build_semiconductor_packet.py</code>. "
+                f"</p><p>Regenerate from the repository root: <code>{escape(command)}</code>. "
                 "Generation is offline and uses the Python standard library.</p>"
             ),
             "<h2>Known limits and later work</h2><ul>",
@@ -217,7 +230,7 @@ def main() -> None:
     parser.add_argument("--output", type=Path, default=REPORT)
     args = parser.parse_args()
     packet = json.loads(args.data.read_text(encoding="utf-8"))
-    content = render(packet, ROOT, args.output.resolve())
+    content = render(packet, ROOT, args.output.resolve(), args.data.resolve())
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(content, encoding="utf-8")
 

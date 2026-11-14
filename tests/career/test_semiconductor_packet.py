@@ -9,8 +9,11 @@ used. Issue #1087 acceptance criteria are the source of this contract.
 import copy
 import importlib.util
 import json
+import os
+import shlex
 import subprocess
 import sys
+from html import unescape
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import unquote
@@ -156,3 +159,64 @@ def test_cli_writes_report_outside_repository(tmp_path):
     )
     assert result.returncode == 0, result.stderr
     assert "Semiconductor career packet" in output.read_text(encoding="utf-8")
+
+
+def test_custom_input_provenance_reproduces_report(packet, tmp_path):
+    data = tmp_path / "custom & 'quoted' <packet>.json"
+    output = tmp_path / "nested reports" / "custom & 'quoted' <report>.html"
+    packet["summary"] = "Synthetic custom packet for provenance regression."
+    data.write_text(json.dumps(packet), encoding="utf-8")
+    result = subprocess.run(
+        [sys.executable, str(SCRIPT), "--data", str(data), "--output", str(output)],
+        cwd=tmp_path,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert result.returncode == 0, result.stderr
+    content = output.read_text(encoding="utf-8")
+    assert packet["summary"] in content
+    parser = Links()
+    parser.feed(content)
+    local_targets = {
+        (output.parent / unquote(href)).resolve()
+        for href in parser.hrefs
+        if not href.startswith("https://")
+    }
+    assert data in local_targets
+    assert DATA not in local_targets
+    command = shlex.split(unescape(content.split("<code>")[1].split("</code>")[0]))
+    assert command == [
+        "python",
+        "scripts/career/build_semiconductor_packet.py",
+        "--data",
+        Path(os.path.relpath(data, ROOT)).as_posix(),
+        "--output",
+        Path(os.path.relpath(output, ROOT)).as_posix(),
+    ]
+    output.unlink()
+    replay = subprocess.run(
+        [sys.executable, *command[1:]],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert replay.returncode == 0, replay.stderr
+    assert output.read_text(encoding="utf-8") == content
+
+
+def test_resume_templates_keep_contribution_placeholder_when_copied(packet):
+    claims = {claim["id"]: claim["text"] for claim in packet["claims"]}
+    assert claims["packet-tooling"].startswith("[Built/Contributed to]")
+    assert claims["data-validation"].startswith("[Implemented/Contributed to]")
+    rendered = builder().render(packet, ROOT, REPORT)
+    assert "[Built/Contributed to]" in rendered
+    assert "[Implemented/Contributed to]" in rendered
+
+
+def test_experience_transfer_is_explicit_remaining_work(packet):
+    limit = next(item for item in packet["limits"] if "experience transfers" in item)
+    assert "Later work:" in limit
+    assert "verified" in limit
+    assert limit in builder().render(packet, ROOT, REPORT)

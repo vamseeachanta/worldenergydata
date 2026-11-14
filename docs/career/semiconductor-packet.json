@@ -90,12 +90,12 @@
   "claims": [
     {
       "id": "packet-tooling",
-      "text": "Built an offline HTML portfolio packet generator with artifact-linked claims and tests that reject missing files and unsupported built-work claims.",
+      "text": "[Built/Contributed to] an offline HTML portfolio packet generator with artifact-linked claims and tests that reject missing files and unsupported built-work claims.",
       "evidence": ["reports"]
     },
     {
       "id": "data-validation",
-      "text": "Implemented Python field validation with structured errors and unit-test examples for required values, types and ranges.",
+      "text": "[Implemented/Contributed to] Python field validation with structured errors and unit-test examples for required values, types and ranges.",
       "evidence": ["validation"]
     }
   ],
@@ -173,6 +173,7 @@
     "The cited documentation is mutable and undated. No tool version, installed environment or live job-market fit is asserted.",
     "The thermal-expansion documentation request returned HTTP 403; no content or engineering value was inferred from that response.",
     "Later work: attach reproducible EDA and CAD/layout demonstrations, then independently inspect the externally described FEM benchmark and its provenance before adding result claims.",
-    "Later work: complete sourced thermal, thermo-mechanical and reliability interview answers and tailor against an actual posting."
+    "Later work: complete sourced thermal, thermo-mechanical and reliability interview answers and tailor against an actual posting.",
+    "Later work: explain how prior engineering experience transfers to semiconductor-adjacent roles, using verified public artifacts and confirmed personal contributions."
   ]
 }
