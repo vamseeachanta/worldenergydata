@@ -88,7 +88,7 @@ def _read_valid_rows(path: Path) -> tuple[list[dict[str, str]], int]:
 
 def _normalize_pressure_frame(frame: pd.DataFrame, source_name: str) -> pd.DataFrame:
     counties = load_kansas_counties()
-    result = frame.copy()
+    result = frame.replace(r"^\s*$", pd.NA, regex=True)
     result["well_kid"] = result["WELL_KID"].astype("string")
     result["api10"] = result["API_NUMBER"].map(_api10)
     result["api_state_code"] = result["API_NUMBER"].map(_api_part(0))
@@ -114,14 +114,14 @@ def _numeric(frame: pd.DataFrame, column: str) -> pd.Series:
 
 
 def _api10(value: object) -> str | None:
-    if value is None or pd.isna(value):
+    if value is None or pd.isna(value) or not str(value).strip():
         return None
     return "".join(str(value).split("-"))[:10]
 
 
 def _api_part(index: int):
     def parse(value: object) -> str | None:
-        if value is None or pd.isna(value):
+        if value is None or pd.isna(value) or not str(value).strip():
             return None
         parts = str(value).split("-")
         return parts[index] if len(parts) > index else None

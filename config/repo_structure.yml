@@ -83,11 +83,16 @@ temporary_exceptions:
   reports:
     category: durable-evidence
     owner: worldenergydata maintainers
-    review_date: "2026-06-30"
+    review_date: "2027-01-31"
     follow_up: https://github.com/vamseeachanta/worldenergydata/issues/394
-    justification: Tracked HTML, Markdown, Python, and JSON report artifacts are preserved as existing durable evidence until a dedicated generated-evidence migration classifies retention, relocation, or deletion.
+    justification: >-
+      Tracked HTML, Markdown, Python, CSV, and JSON report artifacts are preserved as existing durable evidence
+      until a dedicated generated-evidence migration classifies retention, relocation, or deletion.
     allowed_paths:
       - reports/.gitkeep
+      - reports/gtm/README.md
+      - reports/gtm/operator_cost_benchmarking.html
+      - reports/gtm/operator_cost_benchmarking_facts.json
       - reports/IMO_GISIS_Executive_Report.html
       - reports/REPORT_SUMMARY.md
       - reports/anchor_field_demo_report.html
@@ -133,6 +138,7 @@ temporary_exceptions:
       - reports/cost/cost_timeseries_presentation.html
       - reports/cost/inflation_verdicts.csv
       - reports/cost/reconciliation.csv
+      - reports/cost/sanction_vs_outturn.csv
       - reports/cost/stage_allocations.csv
       - reports/field-atlas/onepagers/field-anchor.html
       - reports/field-atlas/onepagers/field-anchor.pdf
@@ -281,15 +287,22 @@ temporary_exceptions:
       - reports/field_development/portfolio/README.md
       - reports/field_development/portfolio/_research.json
       - reports/field_development/portfolio/aconcagua.html
+      - reports/field_development/portfolio/anchor.html
+      - reports/field_development/portfolio/big-foot.html
       - reports/field_development/portfolio/camden-hills.html
       - reports/field_development/portfolio/cheyenne.html
       - reports/field_development/portfolio/chinook.html
       - reports/field_development/portfolio/coulomb.html
       - reports/field_development/portfolio/great-white.html
       - reports/field_development/portfolio/index.html
+      - reports/field_development/portfolio/jack-st-malo.html
       - reports/field_development/portfolio/julia.html
+      - reports/field_development/portfolio/kaskida.html
       - reports/field_development/portfolio/king.html
+      - reports/field_development/portfolio/north-platte.html
+      - reports/field_development/portfolio/shenandoah.html
       - reports/field_development/portfolio/stones.html
+      - reports/field_development/portfolio/tiber.html
       - reports/field_development/portfolio/tobago.html
       - reports/field_development/showcase/index.html
       - reports/gtm/2026-05-04-bsee-field-analysis-comprehensive.html
@@ -303,8 +316,14 @@ temporary_exceptions:
       - reports/gtm/seasonal-intervention-risk-windows-2026-07-05.json
       - reports/gtm/seasonal-intervention-risk-windows-2026-07-05.md
       - reports/gtm/seasonal_intervention_risk_windows.py
+      - reports/hse/drilling-area-values.csv
       - reports/hse/drilling-hse-patterns-2026-07-05.html
       - reports/hse/drilling-hse-patterns-2026-07-05.json
+      - reports/hse/drilling-phase-values.csv
+      - reports/hse/drilling-severity-values.csv
+      - reports/hse/drilling-year-values.csv
+      - reports/hse/incinv-manifest.json
+      - reports/hse/incinv-qa.json
       - reports/hse/intervention-hse-patterns-2026-05-18-explore.json
       - reports/hse/intervention-hse-patterns-2026-05-18.md
       - reports/hse/mooring-fatigue-grounded-card.html

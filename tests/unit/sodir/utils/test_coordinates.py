@@ -1,8 +1,37 @@
 """Tests for SODIR coordinate transformation utilities."""
 
 import math
+import warnings
+
+import pytest
 
 from worldenergydata.sodir.utils.coordinates import CoordinateTransformer
+
+
+class TestPyprojCoordinateConversion:
+    def test_equator_axis_order_without_deprecated_api(self):
+        ct = CoordinateTransformer()
+        assert ct.use_pyproj
+        with warnings.catch_warnings():
+            warnings.simplefilter("error", FutureWarning)
+            latitude, longitude = ct.utm_to_wgs84(500000, 0, 31)
+            easting, northing, zone = ct.wgs84_to_utm(latitude, longitude)
+        assert (latitude, longitude) == pytest.approx((0, 3))
+        assert (easting, northing, zone) == pytest.approx((500000, 0, 31))
+        assert ct.conversions_count == 2
+        assert ct.error_count == 0
+
+    @pytest.mark.parametrize("latitude", [10, -10])
+    def test_roundtrip_preserves_hemisphere(self, latitude):
+        ct = CoordinateTransformer()
+        assert ct.use_pyproj
+        with warnings.catch_warnings():
+            warnings.simplefilter("error", FutureWarning)
+            easting, northing, zone = ct.wgs84_to_utm(latitude, 3)
+            result = ct.utm_to_wgs84(easting, northing, zone, latitude >= 0)
+        assert result == pytest.approx((latitude, 3))
+        assert ct.conversions_count == 2
+        assert ct.error_count == 0
 
 
 class TestCoordinateTransformerInit:

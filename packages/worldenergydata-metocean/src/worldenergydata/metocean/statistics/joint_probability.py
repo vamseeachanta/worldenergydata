@@ -2,20 +2,24 @@
 ABOUTME: Joint probability model for Hs-Tp (or any two-variable) analysis.
 ABOUTME: Wraps metocean-stats joint_distribution_Hs_Tp and calculate_scatter.
 
-Uses real metocean-stats library (v1.1.9) as the statistical backend.
+Tuple contract audited against metocean-stats v.1.2.0 extreme.py L610-L766.
 All visualisations use Plotly — metocean-stats matplotlib outputs are converted.
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Optional
 
 import metocean_stats.stats as ms
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+
+from worldenergydata.metocean.statistics._joint_backend import (
+    fit_joint_distribution,
+    validate_joint_result,
+)
 
 
 @dataclass
@@ -28,17 +32,21 @@ class JointModel:
     """Parameters of the conditional Tp|Hs distribution."""
     n_samples: int
     """Number of data points used to fit the model."""
-    hs_samples: Optional[np.ndarray] = None
-    """Monte-Carlo Hs samples from the fitted model."""
-    tp_samples: Optional[np.ndarray] = None
-    """Monte-Carlo Tp samples from the fitted model."""
-    _raw_result: Optional[tuple] = field(default=None, repr=False)
+    hs_samples: np.ndarray | None = None
+    """Observed Hs values supplied to the fit (not Monte Carlo draws)."""
+    tp_samples: np.ndarray | None = None
+    """Observed Tp values supplied to the fit (before backend correction)."""
+    fitted_periods: tuple[float, ...] = ()
+    """Backend year labels; label 1 uses its inherited 1.5873-year level."""
+    state_duration_hours: float | None = None
+    """Effective duration inferred by the backend from the time index."""
+    _raw_result: tuple | None = field(default=None, repr=False)
     """Raw tuple returned by metocean-stats joint_distribution_Hs_Tp."""
 
 
 class JointProbabilityModel:
     """
-    Hs-Tp (or any two-variable) joint probability via metocean-stats CMA.
+    Hs-Tp joint probability via the native metocean-stats LoNoWe route.
 
     Wraps ``metocean_stats.stats.joint_distribution_Hs_Tp`` and
     ``metocean_stats.stats.calculate_scatter`` with a clean API and
@@ -68,7 +76,7 @@ class JointProbabilityModel:
         self,
         hs: pd.Series,
         tp: pd.Series,
-        periods: list[int] = None,
+        periods: list[int] | None = None,
     ) -> JointModel:
         """
         Fit a conditional Hs-Tp joint model using metocean-stats.
@@ -88,40 +96,51 @@ class JointProbabilityModel:
         """
         if periods is None:
             periods = [50, 100]
+        if not periods or any(not np.isfinite(p) or p <= 0 for p in periods):
+            raise ValueError("Return periods must be finite and positive")
+        if len(set(periods)) != len(periods):
+            raise ValueError("Return periods must be unique")
+        if not isinstance(hs.index, pd.DatetimeIndex) or not hs.index.equals(tp.index):
+            raise ValueError("Paired observations require the same DatetimeIndex")
+        if not hs.index.is_monotonic_increasing or not hs.index.is_unique:
+            raise ValueError("Observation index must be increasing and unique")
+        if len(hs) < 2 or not (
+            not hs.isna().any()
+            and not tp.isna().any()
+            and np.isfinite(hs).all()
+            and np.isfinite(tp).all()
+            and (hs > 0).all()
+            and (tp > 0).all()
+        ):
+            raise ValueError("Paired observations must be finite and positive")
 
         df = pd.DataFrame({"hs": hs.values, "tp": tp.values}, index=hs.index)
-
-        # metocean-stats returns a 12-element tuple
-        raw = ms.joint_distribution_Hs_Tp(
-            df,
-            var_hs="hs",
-            var_tp="tp",
-            periods=periods,
-        )
-
-        # Decode the tuple (indices documented in aux_funcs.py)
-        a1, b1, a2, b2, mu_tp, sigma_tp = raw[0], raw[1], raw[2], raw[3], raw[4], raw[5]
-        hs_samples = raw[6]
-        tp_samples = raw[7]
-
+        raw = fit_joint_distribution(df, periods)
+        validate_joint_result(raw, periods)
+        a1, a2, a3, b1, b2, b3, pdf_hs, h, _t3, _h3, fitted, _df = raw
         marginal_hs = {
-            "distribution": "Weibull_2P",
-            "params": (float(a1), float(b1)),
-            "shape_a2": float(a2),
-            "shape_b2": float(b2),
+            "distribution": "LoNoWe",
+            "pdf": np.asarray(pdf_hs),
+            "grid": np.asarray(h),
         }
+        # v.1.2.0 extreme.py L740-L746: mu=a1+a2*h**a3;
+        # variance=b1+b2*exp(-b3*h), NOT standard deviation.
         conditional_tp = {
             "model": "lognormal_conditional",
-            "mu": float(mu_tp),
-            "sigma": float(sigma_tp),
+            "mu": {"a1": float(a1), "a2": float(a2), "a3": float(a3)},
+            "variance": {"b1": float(b1), "b2": float(b2), "b3": float(b3)},
         }
-
+        # Same effective-interval convention as extreme.py L748; not the
+        # timestamp spacing and not an independently chosen sea-state duration.
+        duration = ((df.index[-1] - df.index[0]).days + 1) * 24 / len(df)
         return JointModel(
             marginal_hs=marginal_hs,
             conditional_tp=conditional_tp,
             n_samples=len(hs),
-            hs_samples=hs_samples,
-            tp_samples=tp_samples,
+            hs_samples=hs.to_numpy(copy=True),
+            tp_samples=tp.to_numpy(copy=True),
+            fitted_periods=tuple(fitted),
+            state_duration_hours=duration,
             _raw_result=raw,
         )
 
@@ -133,8 +152,8 @@ class JointProbabilityModel:
         self,
         hs: pd.Series,
         tp: pd.Series,
-        hs_bins: Optional[np.ndarray] = None,
-        tp_bins: Optional[np.ndarray] = None,
+        hs_bins: np.ndarray | None = None,
+        tp_bins: np.ndarray | None = None,
     ) -> pd.DataFrame:
         """
         Compute a 2D Hs-Tp occurrence table in percent.
@@ -263,7 +282,7 @@ class JointProbabilityModel:
         fig.update_layout(
             title="Hs-Tp Joint Distribution",
             template="plotly_white",
-            xaxis3=dict(title="Tp (s)"),
-            yaxis3=dict(title="Hs (m)"),
+            xaxis3={"title": "Tp (s)"},
+            yaxis3={"title": "Hs (m)"},
         )
         return fig

@@ -75,6 +75,77 @@ def test_steady_state_hashes_match_synthetic_bytes_in_two_runs(tmp_path):
     assert runs == [expected, expected]
 
 
+def test_alias_identities_keep_independent_fingerprints(tmp_path):
+    """Aliases retain separate entries for identical fixture bytes.
+
+    Hand count: ``shared`` has six ASCII letters; one LF makes seven bytes.
+    Digest reference: SHA-256, computed independently with hashlib.sha256.
+    """
+    source = tmp_path / "shared.dat"
+    source.write_bytes(b"shared\n")
+    pins = {
+        "first": sha256(b"shared\n").hexdigest(),
+        "second": sha256(b"shared\n").hexdigest(),
+    }
+    with _freeze({"first": source, "second": source}, expected_sha256=pins) as frozen:
+        assert dict(frozen.bytes) == {"first": b"shared\n", "second": b"shared\n"}
+        assert dict(frozen.size) == {"first": 7, "second": 7}
+        assert dict(frozen.sha256) == pins
+
+
+def test_alias_pin_mismatch_prevents_entry(tmp_path):
+    """Only the later alias pin differs; SHA-256 pins use literal fixtures."""
+    source = tmp_path / "shared.dat"
+    source.write_bytes(b"shared\n")
+    pins = {
+        "first": sha256(b"shared\n").hexdigest(),
+        "second": sha256(b"shared\n").hexdigest(),
+    }
+    pins["second"] = sha256(b"different\n").hexdigest()
+    entered = False
+    output = tmp_path / "published.dat"
+    with pytest.raises(input_snapshot.InputIntegrityError) as caught:
+        with _freeze({"first": source, "second": source}, expected_sha256=pins):
+            entered = True
+        output.write_bytes(b"published")
+    assert caught.value.reason == "pin-mismatch"
+    assert caught.value.identity == "second"
+    assert not entered
+    assert not output.exists()
+
+
+def test_missing_later_input_prevents_entry(tmp_path):
+    """A missing later input blocks context entry and publication."""
+    source = tmp_path / "source.dat"
+    source.write_bytes(b"shared\n")
+    absent = tmp_path / "absent.dat"
+    entered = False
+    output = tmp_path / "published.dat"
+    with pytest.raises(input_snapshot.InputIntegrityError) as caught:
+        with _freeze({"first": source, "absent": absent}):
+            entered = True
+        output.write_bytes(b"published")
+    assert caught.value.reason == "unreadable"
+    assert caught.value.identity == "absent"
+    assert not entered
+    assert not output.exists()
+
+
+def test_empty_inputs_yield_empty_immutable_maps():
+    """Empty inputs yield empty maps that reject insertion."""
+    with _freeze({}) as frozen:
+        assert frozen.algorithm == "sha256"
+        for result, value in (
+            (frozen.bytes, b"x"),
+            (frozen.size, len(b"x")),
+            (frozen.sha256, sha256(b"x").hexdigest()),
+        ):
+            assert dict(result) == {}
+            with pytest.raises(TypeError):
+                result["added"] = value
+            assert dict(result) == {}
+
+
 def test_render_reads_frozen_bytes_after_live_source_changes(tmp_path):
     source = tmp_path / "source.dat"
     source.write_bytes(b"original")

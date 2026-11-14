@@ -101,5 +101,7 @@ between these fields merely because their letters match.
 
 The enquiry is **drafted on the issue, not sent as of 2026-10-12**. Both drafts
 remain there; no reply is recorded. Sending the enquiry is an owner action.
-Interim results with and without PND and a later reply or documented wait remain
+The [paired PND reporting API](pnd_sensitivity.md) now emits both interim
+scenarios with an explicit unvalidated definition status. Adopting it in
+published results and recording a later reply or documented wait remain
 separate work. This note neither chooses an operational basis nor changes results.

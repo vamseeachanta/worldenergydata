@@ -1,7 +1,7 @@
 """Tests for safety_analysis.taxonomy.cli argument parsing and CSV loading."""
 
-import csv
 import logging
+from pathlib import Path
 
 import pytest
 
@@ -27,8 +27,8 @@ class TestParseArgs:
         )
         assert args.command == "classify"
         assert args.source == "bsee"
-        assert str(args.input) == "/tmp/data.csv"
-        assert str(args.output) == "/tmp/out.csv"
+        assert args.input == Path("/tmp/data.csv")
+        assert args.output == Path("/tmp/out.csv")
         assert args.limit == 0
 
     def test_classify_with_limit(self):

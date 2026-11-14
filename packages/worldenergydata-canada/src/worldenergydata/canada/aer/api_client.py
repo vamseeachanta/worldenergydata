@@ -815,6 +815,10 @@ class AERClient:
 
         Returns:
             List of matching well records
+
+        Raises:
+            CanadaValidationError: A requested filter has no matching column.
+            Exception: Download, parsing and filtering failures propagate to the caller.
         """
         logger.info(
             f"Searching AER wells - field: {field_name}, operator: {operator}, "
@@ -825,10 +829,16 @@ class AERClient:
             df = self.download_well_infrastructure(use_cache=use_cache)
 
             # Apply filters
-            mask = pd.Series([True] * len(df))
+            mask = pd.Series(True, index=df.index, dtype=bool)
 
             if field_name:
                 field_cols = [c for c in df.columns if "field" in c.lower()]
+                if not field_cols:
+                    raise CanadaValidationError(
+                        "Cannot apply field_name filter: no matching column",
+                        code="AER_UNSUPPORTED_FILTER",
+                        context={"filter": "field_name"},
+                    )
                 if field_cols:
                     mask &= (
                         df[field_cols[0]]
@@ -842,6 +852,12 @@ class AERClient:
                     for c in df.columns
                     if "operator" in c.lower() or "licensee" in c.lower()
                 ]
+                if not op_cols:
+                    raise CanadaValidationError(
+                        "Cannot apply operator filter: no matching column",
+                        code="AER_UNSUPPORTED_FILTER",
+                        context={"filter": "operator"},
+                    )
                 if op_cols:
                     mask &= (
                         df[op_cols[0]]
@@ -851,6 +867,12 @@ class AERClient:
 
             if well_status:
                 status_cols = [c for c in df.columns if "status" in c.lower()]
+                if not status_cols:
+                    raise CanadaValidationError(
+                        "Cannot apply well_status filter: no matching column",
+                        code="AER_UNSUPPORTED_FILTER",
+                        context={"filter": "well_status"},
+                    )
                 if status_cols:
                     mask &= (
                         df[status_cols[0]].astype(str).str.upper()
@@ -862,7 +884,7 @@ class AERClient:
 
         except Exception as e:
             logger.error(f"Error searching wells: {e}")
-            return []
+            raise
 
     def close(self) -> None:
         """Close the client session and clean up resources."""

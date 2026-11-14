@@ -463,7 +463,10 @@ if (FIELD.architecture) {
   const A = FIELD.architecture;
   let body;
   if (A.svg) {
-    body = `<h3 style="margin:0 0 6px;font-size:15px">Architecture &mdash; ${A.caption || ""}</h3>`
+    const caption = (A.caption || "").replace(/[&<>]/g, c => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;"
+    }[c]));
+    body = `<h3 style="margin:0 0 6px;font-size:15px">Architecture &mdash; ${caption}</h3>`
       + `<div style="overflow:auto;max-width:100%">${A.svg}</div>`;
   } else {
     const iss = `https://github.com/vamseeachanta/worldenergydata/issues/${A.pending_issue}`;

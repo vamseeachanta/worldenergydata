@@ -87,9 +87,12 @@ modules:
     related_wrk: [WRK-017, WRK-111, WRK-239, WRK-254, WRK-261]
 
   - id: hse
-    name: "BSEE HSE Incidents"
+    name: "HSE Incidents and Offshore Evidence"
     package: "worldenergydata.hse"
-    region: [gulf_of_mexico, usa]
+    source_authorities: [BSEE, OSHA, EPA]
+    uk_hse_offshore_statistics_status: not_acquired
+    source_registry: data/modules/hse/offshore/source_registry.json
+    region: [gulf_of_mexico, usa, global_offshore]
     domain: [hse, regulatory]
     data_types:
       - hse_incidents
@@ -99,6 +102,8 @@ modules:
       - equipment_failures
       - penalties
       - toxic_releases
+      - offshore_events
+      - offshore_source_documents
     key_classes:
       - HSEIncident
       - BSEEIncidentsImporter
@@ -108,9 +113,12 @@ modules:
       - DataQualityValidator
     status: stable
     entry_point: "from worldenergydata.hse import HSEIncident, BSEEIncidentsImporter"
-    notes: "BSEE HSE incident management — injuries, spills, violations, equipment failures, penalties, and EPA TRI toxic releases for GOM offshore."
+    notes: >-
+      Existing authorities: BSEE, OSHA and EPA. Source-neutral public offshore
+      evidence registers UK HSE notices, OPRED, Havtil, NOPSEMA and US CSB; registry
+      records acquisition gaps. UK HSE offshore statistics: not acquired.
     in_scheduler: false
-    public_cli: false
+    public_cli: true
     catalog_status: sample
     capability_source: manifest
     related_wrk: [WRK-163, WRK-198, WRK-249]

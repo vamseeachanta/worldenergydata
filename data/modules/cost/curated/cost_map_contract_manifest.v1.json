@@ -71,7 +71,7 @@
     },
     {
       "path": "data/modules/cost/curated/cost_revision_trails.csv",
-      "sha256": "6e339cc7f4a8590e8b31eb76f087cb35af26843bfaf1433fba231073b07d290b"
+      "sha256": "9120526da1bd74a0896fd28d827dbd91790451bccb9e9a361aae5c02c22fa4b3"
     },
     {
       "path": "data/modules/cost/curated/fdas_project_cost_crosswalk.csv",

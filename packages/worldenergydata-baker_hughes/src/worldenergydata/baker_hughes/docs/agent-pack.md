@@ -1,13 +1,32 @@
 # Baker Hughes module knowledge pack
 
+Summary: section 12 defines strict counts, depth validation and declared units
+for #1334. Section 13 defines schema, exact-filter and report-completeness
+detection for #1335, superseding the retained F7–F10/F13–F19 gaps in sections
+10–12. Section 14 corrects context-dependent depth conversion and records
+current numeric regression evidence, supplementing section 12's numeric
+contract for F1–F6 and F11–F12. Section 11 retains the date completeness
+contract. Sections 1–10 remain historical evidence at the code revision below;
+source qualification remains unestablished.
+
+## Revision history
+
+| Revision | Date | What changed and why |
+| --- | --- | --- |
+| 3 | 2026-10-19 | Added date completeness detection and tests so empty or missing dates cannot imply complete bounds. Earlier revision evidence remains below. |
+| 4 | 2026-10-22 | Add count rejection, explicit depth units and detection tests; distinguish input validation from source qualification. |
+| 5 | 2026-11-04 | Removed caller-dependent rounding from depth conversion and added value-preservation tests after a remaining arithmetic gap was reproduced. |
+| 6 | 2026-11-04 | Added the representation-limit citation and exponent-bound derivation beside the guard; executable behavior and boundary tests are retained. |
+| 7 | 2026-11-04 | Define workbook schemas and expose missing metadata and unmatched filters so incomplete ingestion cannot imply complete reporting. |
+
 | Header | Value |
 | --- | --- |
 | Module | baker_hughes |
 | Repository | worldenergydata |
 | Path | packages/worldenergydata-baker_hughes/src/worldenergydata/baker_hughes |
-| Pack revision | 2 |
-| Pack date | 2026-10-17 |
-| Code revision | b1394197a66f95d78615425b4e1ad4ff78bd9de2 |
+| Pack revision | 7 |
+| Pack date | 2026-11-04 |
+| Code revision (historical sections 1–10) | b1394197a66f95d78615425b4e1ad4ff78bd9de2 |
 | Analysis family | EC; data pipeline; AQG r0 Python calculations gate set |
 | Quality role | Calculations quality manager; deputy: to be appointed |
 | Status | DRAFT; second-provider clearance pending |
@@ -165,3 +184,307 @@ Documentation discovery readback:
 - The package-split ADR lists it among isolated packages. [docs/adr/0001-domain-package-split.md:L47-L47]
 
 These discovery claims will not replace source qualification or current test evidence; #1336.
+
+## 11. Date completeness contract (issue #1335, slice 1)
+
+`generate_report` adds `completeness.date_range` with `status`, `reason` and
+`missing_count`. This is a date-only assessment, independent of the source
+label. It establishes neither schema completeness nor source accuracy.
+The contract is implementation-defined for #1335 (2026-10-19), F13 and F19;
+no engineering equation, coefficient or tolerance is used. Counts are direct
+row enumeration. Test docstrings independently enumerate synthetic inputs;
+they do not qualify a source workbook.
+
+| Input condition, in precedence order | Status | Reason | Missing count | Bounds |
+| --- | --- | --- | --- | --- |
+| No rows | incomplete | `empty_input` | Count if date column exists; otherwise null | Omitted |
+| Rows but no date column | incomplete | `missing_date_column` | null (unknown) | Omitted |
+| All dates missing | incomplete | `all_dates_missing` | Number of rows | Omitted |
+| Some dates missing | incomplete | `missing_dates` | Number of missing dates | Observed dates only |
+| Nonempty input with no missing dates | complete | null | No missing dates | Observed minimum and maximum |
+
+Dates must already be parsed, as returned by the loaders. No dates are filled
+or inferred. Available bounds remain calendar-date strings, and existing
+record counts and dimension inventories are preserved. All-missing input now
+omits `date_range` instead of publishing `"NaT"` strings. Consumers must read
+the status before treating partially observed bounds as complete. No overall
+report completeness flag is provided because dimension checks remain open.
+
+Detection tests are in `tests/unit/baker_hughes/test_report.py`:
+
+| Case | Detection test or retained limitation |
+| --- | --- |
+| F7 | Retained: unmatched country filter returns empty data; the report detects empty input but cannot identify the filter cause. |
+| F8 | Retained: unmatched basin filter returns empty data; filter-specific diagnostics remain open. |
+| F9 | Retained: summary identifier column schema remains unchecked. |
+| F10 | Retained: summary date-header selection remains unchecked. |
+| F13 | `test_empty_input_reports_incomplete_dates` and `test_missing_date_column_reports_unknown_missing_count`. |
+| F14 | Retained: null basin values still disappear from dimension inventory. |
+| F15 | Retained: null state values still disappear from dimension inventory. |
+| F16 | Retained: null country values still disappear from dimension inventory. |
+| F17 | Retained: pivot missing/extra column detection remains open. |
+| F18 | Retained: absent dimension columns still omit their inventories. |
+| F19 | `test_partial_missing_dates_flag_observed_bounds` and `test_all_missing_dates_omit_bounds`. |
+
+`test_complete_dates_preserve_report_fields` checks complete dates, existing
+fields, source-label independence, input preservation and scalar serialization.
+Expected values use reversed calendar dates to establish min/max independently;
+partial and all-missing cases count the explicitly listed missing entries.
+The new file has ten parametrized cases. Together with the existing loader
+and package smoke tests, 25 cases pass. Later slices of #1335 address the
+retained schema, filter and dimension checks above; #1334 and #1336 retain
+numeric and independent source-qualification gaps.
+
+
+## 12. Numeric ingestion contract (issue #1334)
+
+The loaders reject an entire workbook with `ValueError` on an invalid count
+or a present invalid depth. The error names the output field and row index;
+there is no repaired partial result, zero imputation or integer truncation.
+Summary row indices refer to the melted table. Validation precedes pivot
+filters, so filtering cannot hide corrupt cells.
+
+Counts must be finite, nonnegative whole numbers. Blank, missing, invalid,
+fractional and grouped values are rejected; no locale is inferred.
+Decimal and scientific notation without grouping are supported.
+Decimal parsing avoids a float round trip for textual whole counts. These
+are input-domain rules from #1334, not engineering acceptance thresholds.
+
+Empty depth cells remain missing; other cells must be finite nonnegative
+numbers representable as finite floats without underflow to zero. `WellDepth` and `WaterDepth` require caller `depth_unit="ft"` or
+`depth_unit="m"`. Alternatively `WellDepth_ft`, `WellDepth_m`, `WaterDepth_ft`
+and `WaterDepth_m` declare units per field. Each field requires exactly one
+source column. A declaration conflicting with a suffix is rejected. An
+unlabelled external workbook now requires caller action, including fixtures
+whose source units have not independently been qualified.
+
+Outputs retain `well_depth_ft` and `water_depth_ft`, always in international
+feet after validation and conversion. The equation is
+`depth_ft = depth_m / 0.3048` for metre inputs; feet inputs are unchanged.
+Source: [NIST SP 811 (2008), Appendix B.6](https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication811e2008.pdf),
+the 1959 agreement defines the international foot as exactly 0.3048 m.
+Survey feet and other units are unsupported. No datum conversion is performed.
+
+Successful DataFrames expose `attrs["numeric_validation"]`: the count rejection
+policy and, for pivots, source units, output unit and missing-depth policy.
+The ordinary ingestion report is unchanged; rejection is communicated by the
+exception and accepted-input metadata stays on the returned DataFrame.
+
+Tests below are in `tests/unit/baker_hughes/test_numeric_contract.py`.
+Parametrized nodes independently exercise both loaders or depth fields.
+
+| Gap | Detection test node | Current disposition |
+| --- | --- | --- |
+| F1 | `tests/unit/baker_hughes/test_numeric_contract.py::test_rejects_bad_counts` | Pivot missing/invalid/locale inputs rejected, including literal NA. |
+| F2 | `tests/unit/baker_hughes/test_numeric_contract.py::test_rejects_bad_counts`; `tests/unit/baker_hughes/test_numeric_contract.py::test_preserves_whole_counts` | Fractions rejected; exact whole values preserved, including a large textual integer. |
+| F3 | `tests/unit/baker_hughes/test_numeric_contract.py::test_invalid_depth_rejected` | Present invalid well depth rejected; blank remains missing in the conversion test. |
+| F4 | `tests/unit/baker_hughes/test_numeric_contract.py::test_invalid_depth_rejected` | Present invalid water depth rejected; blank remains missing in the conversion test. |
+| F5 | `tests/unit/baker_hughes/test_numeric_contract.py::test_ambiguous_depth_requires_declaration`; `tests/unit/baker_hughes/test_numeric_contract.py::test_header_declaration_mismatch_rejected`; `tests/unit/baker_hughes/test_numeric_contract.py::test_declared_metres_converted_to_labelled_feet` | Well source unit required or read from suffix; mismatch rejected; metres converted to feet. |
+| F6 | `tests/unit/baker_hughes/test_numeric_contract.py::test_header_declaration_mismatch_rejected`; `tests/unit/baker_hughes/test_numeric_contract.py::test_detects_units_per_header` | Water source unit independently validated; mixed labelled units converted per field. |
+| F11 | `tests/unit/baker_hughes/test_numeric_contract.py::test_rejects_bad_counts` | Summary missing/invalid/locale inputs rejected. |
+| F12 | `tests/unit/baker_hughes/test_numeric_contract.py::test_rejects_bad_counts`; `tests/unit/baker_hughes/test_numeric_contract.py::test_preserves_whole_counts` | Summary fractions rejected and whole values preserved. |
+
+`test_unsupported_unit_rejected`, `test_duplicate_depth_representation_rejected`
+`test_invalid_count_is_checked_before_filter`,
+`test_undeclared_separators_rejected` and
+`test_unrepresentable_or_grouped_depth_rejected` cover contract boundaries.
+Fixture tests now explicitly declare feet, preserving their original schema
+and expected counts; this declaration is not external source qualification.
+
+UNVERIFIED: A caller declaration or header suffix can be factually wrong.
+Source workbook revision, independent source counts, physical depth units,
+datum and signed fingerprinted evidence remain unqualified under #1336.
+Schema, filter diagnostics and dimension completeness gaps remain as stated
+in section 11. No claim of engineering qualification follows from these tests.
+
+
+The shared worked example is `docs/examples/tabular-input-validation.md`,
+with inputs in `tests/fixtures/tabular_validation/` and executable nodes in
+`tests/unit/test_tabular_validation_example.py`. Its hand check derives
+`3.048 m / (0.3048 m/ft) = 10 ft` from NIST SP 811 (2008), Appendix B.6;
+component checks independently evaluate sign, finiteness and literal text.
+The example does not qualify external data or engineering capacity.
+
+Current offline results on the uncommitted tree (2026-10-22): 88 module
+cases passed; 31 shared-example cases also passed in the same combined
+invocation. The combined total is 236 passing cases. The downstream
+CAD test module retains its existing import skip because CadQuery is absent;
+no CAD result is claimed. Ruff passed on changed Python files. These current
+results supplement rather than rewrite historical result tables.
+
+## 13. Schema and report completeness contract
+
+This section supersedes the schema, filter and dimension limitations retained
+in sections 10–12 for #1335.
+The rules describe supported input layouts and direct enumeration of supplied
+records. They are implementation contracts, not engineering acceptance limits.
+
+Pivot inputs require `PublishDate`, `RigCount` and exactly one representation
+of each depth field as defined in section 12. The optional source columns are
+`Country`, `StateProvince`, `County`, `BasinName`, `DrillFor`, `Location`,
+`Trajectory` and `WellType`. Absent optional columns remain absent and are
+listed, using their source names, in `DataFrame.attrs["schema_validation"]`:
+`status: incomplete`, `missing_columns: [...]`, `extra_columns: []`.
+A full schema has `status: complete` and both lists empty. Missing required
+columns or unexpected columns raise `ValueError`; extra columns cannot silently
+pass through or overwrite normalized output names. Depth-presence checks and
+numeric rejection remain as defined in section 12.
+
+Country and basin filters retain exact case and whitespace comparisons.
+An absent filter dimension or no matching records raises `ValueError` naming
+the filter. Combined filters apply in country/basin order. Schema and numeric
+validation precede filtering, so filters cannot hide invalid input cells.
+A valid empty pivot without a filter remains empty and reports incomplete;
+an explicit filter on that input raises a no-match error.
+
+Summary inputs require exactly one `State` or `state` column in any position.
+Every other column must identify a unique calendar date. Supported headers are
+strict `YYYY-MM-DD` strings, explicit month-first `M/D/YYYY` strings, or naive
+midnight Excel date/datetime cells. Month-first headers preserve the existing
+repository fixture layout; no day-first or locale inference is performed.
+Mixed supported header formats are parsed independently. Numeric Excel serial
+headers, invalid dates, timezone-bearing text, non-midnight datetimes, unknown
+identifier names, extra metadata columns, duplicate calendar dates and no date
+columns raise descriptive `ValueError`. Nothing is silently excluded before
+melting. Valid empty tables retain their standardized columns and schema metadata.
+Accepted summaries have complete schema metadata with empty missing/extra lists.
+
+Reports retain `source`, `record_count`, observed bounds and available dimension
+inventories. `completeness.date_range` keeps the precedence and reasons defined
+in section 11. Nonempty dates must already have a pandas datetime dtype;
+unparsed values raise `ValueError` rather than producing bounds or an attribute
+error. Partial date bounds remain explicitly incomplete. Missing/all-missing
+dates never yield the string `"NaT"` as a bound.
+
+`completeness.dimensions` contains `basins`, `states` and `countries`, each with
+`status`, `reason` and `missing_count`. Inventories list sorted distinct observed
+values. Null, empty and whitespace-only cells count as missing and are excluded
+from the inventory; literal `NA` remains an observed value in both loaders.
+
+| Dimension condition | Status | Reason | Missing count | Inventory |
+| --- | --- | --- | --- | --- |
+| Absent basin/country, `source == "summary"` | not_applicable | `not_in_summary_schema` | null | Omitted |
+| Other absent dimension | incomplete | `missing_dimension_column` | null (unknown) | Omitted |
+| Present column, no rows | incomplete | `empty_input` | 0 | Empty list |
+| All values missing | incomplete | `all_values_missing` | Number of rows | Empty list |
+| Some values missing | incomplete | `missing_values` | Number missing | Observed values only |
+| Nonempty column, no missing values | complete | null | 0 | Observed values |
+
+Table 13-1. Dimension completeness for supplied report records; absence takes precedence over row count.
+
+The public `source` argument selects dimension applicability: only the exact
+label `summary` permits absent basin/country columns. Every other label expects
+all three dimensions. Present columns are checked for every label.
+`completeness.schema` copies loader schema metadata when available, including
+after a successful filter. Without metadata it states `status: not_evaluated`
+and `reason: loader_metadata_unavailable`; a report does not reconstruct a
+workbook schema from a bare DataFrame.
+
+`completeness.status` is incomplete when date coverage, any applicable dimension
+or available loader schema metadata is incomplete; otherwise it is complete
+for those supplied fields. The adjacent schema entry can still be not_evaluated.
+Neither status establishes source correctness, freshness, geographic coverage,
+source-workbook compatibility or engineering qualification. DataFrame attrs
+may be lost in downstream transformations; schema provenance then remains
+explicitly not_evaluated. The report is a snapshot and does not mutate its input.
+
+Detection nodes below use complete repository test paths. Parametrized
+basin/state/country cases independently enumerate the missing values.
+
+| Case | Detection test or retained limitation |
+| --- | --- |
+| F7 | `tests/unit/baker_hughes/test_schema_contract.py::test_unmatched_exact_filters_are_errors`; `tests/unit/baker_hughes/test_schema_contract.py::test_filter_on_absent_dimension_is_error`; `tests/unit/baker_hughes/test_schema_contract.py::test_filter_on_empty_pivot_is_no_match`; `tests/unit/baker_hughes/test_schema_contract.py::test_filter_whitespace_is_exact` |
+| F8 | `tests/unit/baker_hughes/test_schema_contract.py::test_unmatched_exact_filters_are_errors` (basin and combined-filter parameters); `tests/unit/baker_hughes/test_schema_contract.py::test_filter_on_absent_dimension_is_error` |
+| F9 | `tests/unit/baker_hughes/test_schema_contract.py::test_summary_selects_state_by_name_not_position`; `tests/unit/baker_hughes/test_schema_contract.py::test_summary_rejects_unknown_identifier`; `tests/unit/baker_hughes/test_schema_contract.py::test_summary_rejects_ambiguous_identifier` |
+| F10 | `tests/unit/baker_hughes/test_schema_contract.py::test_summary_rejects_non_date_headers`; `tests/unit/baker_hughes/test_schema_contract.py::test_summary_extra_column_cannot_be_silently_dropped`; `tests/unit/baker_hughes/test_schema_contract.py::test_summary_requires_date_columns`; `tests/unit/baker_hughes/test_schema_contract.py::test_summary_rejects_duplicate_calendar_dates`; `tests/unit/baker_hughes/test_schema_contract.py::test_summary_month_first_headers_are_explicit` |
+| F13 | `tests/unit/baker_hughes/test_report.py::test_empty_input_reports_incomplete_dates`; `tests/unit/baker_hughes/test_report.py::test_missing_date_column_reports_unknown_missing_count`; `tests/unit/baker_hughes/test_schema_contract.py::test_empty_workbooks_keep_schema_and_report_incomplete` |
+| F14 | `tests/unit/baker_hughes/test_dimension_contract.py::test_null_dimension_values_are_counted` (basin); `tests/unit/baker_hughes/test_schema_contract.py::test_blank_excel_dimensions_are_incomplete` (BasinName) |
+| F15 | `tests/unit/baker_hughes/test_dimension_contract.py::test_null_dimension_values_are_counted` (state); `tests/unit/baker_hughes/test_schema_contract.py::test_blank_excel_dimensions_are_incomplete` (StateProvince) |
+| F16 | `tests/unit/baker_hughes/test_dimension_contract.py::test_null_dimension_values_are_counted` (country); `tests/unit/baker_hughes/test_schema_contract.py::test_blank_excel_dimensions_are_incomplete` (Country) |
+| F17 | `tests/unit/baker_hughes/test_schema_contract.py::test_missing_optional_pivot_column_is_reported`; `tests/unit/baker_hughes/test_schema_contract.py::test_pivot_missing_required_column_is_schema_error`; `tests/unit/baker_hughes/test_schema_contract.py::test_extra_pivot_columns_are_rejected`; `tests/unit/baker_hughes/test_schema_contract.py::test_filtered_pivot_retains_schema_diagnostics` |
+| F18 | `tests/unit/baker_hughes/test_dimension_contract.py::test_absent_dimension_has_unknown_missing_count`; `tests/unit/baker_hughes/test_dimension_contract.py::test_summary_absent_pivot_dimensions_are_not_applicable`; `tests/unit/baker_hughes/test_dimension_contract.py::test_summary_still_requires_state_dimension` |
+| F19 | `tests/unit/baker_hughes/test_report.py::test_partial_missing_dates_flag_observed_bounds`; `tests/unit/baker_hughes/test_report.py::test_all_missing_dates_omit_bounds`; `tests/unit/baker_hughes/test_schema_contract.py::test_missing_pivot_dates_reach_report_without_nat_bounds`; `tests/unit/baker_hughes/test_dimension_contract.py::test_unparsed_dates_raise_descriptive_error` |
+
+Table 13-2. Detection coverage for F7–F10 and F13–F19.
+
+The existing exact-dictionary report test gains only additive completeness
+expectations. Counts, inventories and date-bound assertions remain in place.
+The tests use synthetic inputs and the existing repository fixtures. Ingestion
+of the current public workbook is untested and may raise for a changed or
+unsupported header layout. No additional aliases or schema-version negotiation
+are provided. Source revision, independently checked values and engineering
+qualification remain open under #1336.
+
+## 14. Depth arithmetic correction and current numeric evidence
+
+F20: the earlier metre conversion used the caller's active Decimal context.
+Reduced precision or altered rounding changed accepted depths; enabled rounding
+traps or restricted exponents rejected otherwise valid values. Even at the
+default precision, rounding to Decimal before float could lose the distinction
+above a binary rounding midpoint. The new regression tests reproduce these
+defects independently of the source-unit checks in F5 and F6.
+
+Metre conversion now uses the exact rational parsed decimal and international-foot ratio
+from section 12, followed by one float rounding. Numeric cells are parsed from
+`str(read_back_value)`; the conversion does not recover precision lost before
+Excel readback. No Decimal arithmetic context
+is used for that conversion. Nonzero metre inputs are checked by their adjusted
+decimal exponent before constructing ratios: only decades -325 through 308 can
+produce finite nonzero binary64 feet. These loose representation bounds are
+not physical depth limits. The existing overflow and underflow checks still
+reject boundary values that cannot produce a finite nonzero float. Signed zero
+is retained in both units. This guard limits compact extreme-exponent depth
+inputs; it does not establish general workbook or count resource budgets.
+Compact-exponent count allocation remains open under #1859.
+
+The guard comments cite the November 2005 *Numerical Computation Guide*,
+sections 2.1.1 (rounding) and 2.2.3 (double format), Tables 2-4 and 2-5,
+and derive the excluded decimal decades from the zero-rounding midpoint
+and an outer overflow bound. Decade 308 remains deliberately loose; final
+float validation still decides acceptance. This documents the existing
+preflight without changing executable behavior or its boundary tests.
+
+Both well and water depths, explicit declarations and suffixed headers, feet and
+metres are exercised under altered precision, rounding, exponent limits and
+traps. The tests also check that caller settings and flags remain unchanged.
+The modified-default-context case in the current thread is an invariance
+guard; the new-thread case detects inheritance from modified defaults.
+Exact-ratio rounding, long mantissas and float boundaries have separate checks.
+
+All nodes below are in `tests/unit/baker_hughes/test_numeric_contract.py`.
+
+| Gap | Detection test node | Current disposition |
+| --- | --- | --- |
+| F1 | `tests/unit/baker_hughes/test_numeric_contract.py::test_rejects_bad_counts` | Pivot missing, invalid and locale-separated counts remain rejected. |
+| F2 | `tests/unit/baker_hughes/test_numeric_contract.py::test_preserves_whole_counts`; `tests/unit/baker_hughes/test_numeric_contract.py::test_count_contract_with_restrictive_decimal_context` | Whole pivot counts stay exact; fractions remain rejected under restrictive contexts. |
+| F3 | `tests/unit/baker_hughes/test_numeric_contract.py::test_invalid_depth_rejected` | Invalid well depths remain rejected; valid-conversion detection is recorded under F20. |
+| F4 | `tests/unit/baker_hughes/test_numeric_contract.py::test_invalid_depth_rejected` | Invalid water depths remain rejected; valid-conversion detection is recorded under F20. |
+| F5 | `tests/unit/baker_hughes/test_numeric_contract.py::test_ambiguous_depth_requires_declaration`; `tests/unit/baker_hughes/test_numeric_contract.py::test_header_declaration_mismatch_rejected` | Undeclared and conflicting well-depth units remain rejected. |
+| F6 | `tests/unit/baker_hughes/test_numeric_contract.py::test_header_declaration_mismatch_rejected`; `tests/unit/baker_hughes/test_numeric_contract.py::test_detects_units_per_header` | Water-depth declarations and mixed-unit headers remain independently checked. |
+| F11 | `tests/unit/baker_hughes/test_numeric_contract.py::test_rejects_bad_counts` | Summary missing, invalid and locale-separated counts remain rejected. |
+| F12 | `tests/unit/baker_hughes/test_numeric_contract.py::test_preserves_whole_counts`; `tests/unit/baker_hughes/test_numeric_contract.py::test_count_contract_with_restrictive_decimal_context` | Whole summary counts stay exact; fractions remain rejected under restrictive contexts. |
+| F20 | `tests/unit/baker_hughes/test_numeric_contract.py::test_depth_conversion_is_independent_of_decimal_context`; `tests/unit/baker_hughes/test_numeric_contract.py::test_depth_conversion_does_not_inherit_default_context`; `tests/unit/baker_hughes/test_numeric_contract.py::test_depth_conversion_rounds_exact_ratio_once` | Context-dependent arithmetic and intermediate Decimal rounding are removed. |
+
+`test_metres_at_float_range_boundaries`,
+`test_metres_outside_float_range_rejected` and `test_zero_depth_sign_is_preserved`
+check representation boundaries and zero preservation. The pre-change focused
+suite contains 131 passing cases in `tests/test_baker_hughes_loader.py` and
+`tests/unit/baker_hughes/`. The extended suite contains 182 cases; all pass
+after the correction (2026-11-04, uncommitted tree). Before the correction, the altered metre contexts,
+new-thread default context and near-midpoint case fail on the main loader.
+
+UNVERIFIED: source workbook revision, independently verified physical depth
+units, datum, independent counts and signed QA evidence remain open under
+#1336. Unit declarations and synthetic regression tests do not qualify external
+data. Section 13 supersedes the retained schema, filter and report gaps for
+F7–F10 and F13–F19; this numeric correction addresses depth arithmetic only.
+
+`test_compact_extreme_exponents_rejected_before_ratio_allocation` checks the
+preflight before an allocation sentinel can be reached.
+`test_numeric_metres_use_read_back_decimal_value` checks a numeric Excel cell.
+
+Revision-5 arithmetic evidence (SHA-256 of `loader.py`):
+`0cb734e83711866c3849c483ac166a1b4bb10400c82046b4b7c59695cdfb6c60`. The header code pin applies only to historical sections 1–10.
+
+Revision-6 documentation evidence (SHA-256 of `loader.py`):
+`df6f6a7d6fe4f3d906bb4dcb4198507cac65631aa9ab2a60e9078e754bc5e33c`.
