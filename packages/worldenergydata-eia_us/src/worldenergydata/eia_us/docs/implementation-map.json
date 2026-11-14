@@ -674,6 +674,10 @@
             "classification": "test_consumer"
           },
           {
+            "path": "tests/unit/spain/test_cores_review_regressions.py",
+            "classification": "test_consumer"
+          },
+          {
             "path": "tests/unit/ukcs/test_field_production.py",
             "classification": "test_consumer"
           },

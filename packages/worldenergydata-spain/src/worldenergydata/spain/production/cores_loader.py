@@ -106,7 +106,7 @@ def parse_cores_frame(
     Returns:
         DataFrame ``[field_name, year, month, <oil_bbl|gas_mcf>]`` — only real
         monthly rows (annual ``Total`` rows and no-year tail rows dropped), only
-        non-null field values.
+        observations and interior missing cells within each field's observed life.
     """
     if product not in ("oil", "gas"):
         raise CoresParseError(f"product must be 'oil'|'gas', got {product!r}")
@@ -164,7 +164,9 @@ def _source_number(value: object) -> float:
         value = value.strip()
         if value in {"", "-", "—", "..", "..."}:
             return float("nan")
-        if not re.fullmatch(r"[+-]?(?:\d+|\d{1,3}(?:\.\d{3})+)(?:,\d+)?", value):
+        if not re.fullmatch(
+            r"[+-]?(?:[0-9]+|[0-9]{1,3}(?:\.[0-9]{3})+)(?:,[0-9]+)?", value
+        ):
             raise CoresParseError("invalid Spanish numeric text")
         value = value.replace(".", "").replace(",", ".")
     elif pd.isna(value):
@@ -197,7 +199,13 @@ def _melt_field_values(df: pd.DataFrame, field_cols: list[Any]) -> pd.DataFrame:
         value_name="_val",
     )
     long["_val"] = long["_val"].map(_source_number)
-    long = long[long["_val"].notna()].copy()
+    # Existing source rows inside a field's observed life remain unknown when
+    # blank. Zero is an observation; no missing calendar row is invented.
+    periods = long["_year"] * 12 + long["_month"]
+    observed_periods = periods.where(long["_val"].notna())
+    grouped = observed_periods.groupby(long["field_name"], sort=False)
+    first, last = grouped.transform("min"), grouped.transform("max")
+    long = long[periods.between(first, last)].copy()
     # Spain agent pack (2026), section 6 SF10: production is nonnegative.
     if (long["_val"] < 0).any():
         raise CoresParseError("negative production quantity")

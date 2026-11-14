@@ -110,7 +110,12 @@ class SpainCoresRefreshJob(AbstractJob):
                 retryable=self._is_retryable_exception(exc),
             )
 
-        self._write_refresh_metadata(output_dir, records_updated, loader.metadata())
+        self._write_refresh_metadata(
+            output_dir,
+            records_updated,
+            loader.metadata(),
+            latest_observation_period=self._latest_observation_period(production),
+        )
         logger.info(
             "Spain CORES refresh wrote %d production rows to %s",
             records_updated,
@@ -204,8 +209,24 @@ class SpainCoresRefreshJob(AbstractJob):
         )
 
     @staticmethod
+    def _latest_observation_period(production: Any) -> str | None:
+        """Return the latest observed quantity's month; zero is observed."""
+        quantities = [c for c in ("oil_bbl", "gas_mcf") if c in production.columns]
+        if not quantities or not {"year", "month"}.issubset(production.columns):
+            return None
+        observed = production.loc[production[quantities].notna().any(axis=1)]
+        if observed.empty:
+            return None
+        latest = observed.sort_values(["year", "month"]).iloc[-1]
+        return f"{int(latest['year']):04d}-{int(latest['month']):02d}"
+
+    @staticmethod
     def _write_refresh_metadata(
-        output_dir: Path, records_updated: int, source_metadata: dict[str, Any]
+        output_dir: Path,
+        records_updated: int,
+        source_metadata: dict[str, Any],
+        *,
+        latest_observation_period: str | None = None,
     ) -> None:
         """Write Spain CORES freshness metadata with the correct CSV format."""
         output_dir.mkdir(parents=True, exist_ok=True)
@@ -225,6 +246,8 @@ class SpainCoresRefreshJob(AbstractJob):
             "module": "spain_cores",
             "last_refresh": source_metadata.get("refreshed_at_utc"),
             "last_checked": datetime.now(tz=timezone.utc).isoformat(),
+            "latest_observation_period": latest_observation_period,
+            "source_updated_date": source_metadata.get("source_updated_date"),
             "record_count": records_updated,
             "file_count": len(csv_files),
             "sidecar_file_count": len(sidecar_files),
@@ -233,8 +256,10 @@ class SpainCoresRefreshJob(AbstractJob):
             ),
             "source_url": "https://www.cores.es/en/estadisticas",
             "format": "csv",
-            "files": [str(p.relative_to(output_dir)) for p in csv_files],
-            "sidecar_files": [str(p.relative_to(output_dir)) for p in sidecar_files],
+            "files": [p.relative_to(output_dir).as_posix() for p in csv_files],
+            "sidecar_files": [
+                p.relative_to(output_dir).as_posix() for p in sidecar_files
+            ],
         }
         (output_dir / "_metadata.json").write_text(
             json.dumps(metadata, indent=2) + "\n",

@@ -3,10 +3,8 @@
 from __future__ import annotations
 
 import json
-import warnings
 from collections.abc import Iterable, Mapping
 from dataclasses import asdict, dataclass
-from email.utils import parsedate_to_datetime
 from pathlib import Path
 from typing import Any, cast
 
@@ -34,6 +32,7 @@ from worldenergydata.spain.production.cores_source import (
     CoresSourceError,
     CoresWorkbook,
     CoresWorkbookSource,
+    _source_updated_date,
     utc_now_iso,
 )
 
@@ -338,21 +337,6 @@ def _factor_map(factors: Iterable[CoresCrudeDensityFactor]) -> dict[str, float]:
         if factor.bbl_per_tonne is not None:
             values[factor.field_name] = factor.bbl_per_tonne
     return values
-
-
-def _source_updated_date(oil_metadata: Mapping[str, Any]) -> str | None:
-    last_modified = oil_metadata.get("last_modified")
-    if not last_modified:
-        return _optional_str(oil_metadata.get("source_updated_date"))
-    try:
-        return parsedate_to_datetime(str(last_modified)).date().isoformat()
-    except (TypeError, ValueError):
-        warnings.warn(
-            "invalid CORES Last-Modified date; source date is unverified",
-            RuntimeWarning,
-            stacklevel=2,
-        )
-        return _optional_str(oil_metadata.get("source_updated_date"))
 
 
 def _sort_production(frame: pd.DataFrame) -> pd.DataFrame:

@@ -4,9 +4,11 @@ from __future__ import annotations
 
 import hashlib
 import json
+import warnings
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass, replace
 from datetime import datetime, timezone
+from email.utils import parsedate_to_datetime
 from html.parser import HTMLParser
 from pathlib import Path
 from typing import Any
@@ -202,23 +204,51 @@ class CoresWorkbookSource:
             for product in DEFAULT_WORKBOOKS
         ]
         refreshed = (
-            min(
-                acquired,
-                key=lambda value: datetime.fromisoformat(value.replace("Z", "+00:00")),
-            )
+            min(_utc_instant(value) for value in acquired)
+            .isoformat()
+            .replace("+00:00", "Z")
             if all(acquired)
             else None
         )
+        updated_dates = [
+            _source_updated_date(workbook_entries.get(product, {}))
+            for product in DEFAULT_WORKBOOKS
+        ]
         metadata = {
             "statistics_page": STATISTICS_PAGE_URL,
             "refreshed_at_utc": refreshed,
             "checked_at_utc": self._clock(),
+            "source_updated_date": min(updated_dates) if all(updated_dates) else None,
             "workbooks": workbook_entries,
         }
         self.metadata_path.write_text(
             json.dumps(metadata, indent=2, sort_keys=True) + "\n",
             encoding="utf-8",
         )
+
+
+def _utc_instant(value: str) -> datetime:
+    """Treat legacy naive acquisitions as UTC before comparing instants."""
+    instant = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    if instant.tzinfo is None:
+        instant = instant.replace(tzinfo=timezone.utc)
+    return instant.astimezone(timezone.utc)
+
+
+def _source_updated_date(workbook_metadata: Mapping[str, Any]) -> str | None:
+    """Read a publisher date independently of download/check timestamps."""
+    last_modified = workbook_metadata.get("last_modified")
+    fallback = workbook_metadata.get("source_updated_date")
+    if last_modified:
+        try:
+            return parsedate_to_datetime(str(last_modified)).date().isoformat()
+        except (TypeError, ValueError):
+            warnings.warn(
+                "invalid CORES Last-Modified date; source date is unverified",
+                RuntimeWarning,
+                stacklevel=2,
+            )
+    return None if fallback is None else str(fallback)
 
 
 class _HrefParser(HTMLParser):
