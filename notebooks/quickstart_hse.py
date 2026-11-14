@@ -11,11 +11,12 @@
 # ## Revision history
 #
 # Revision 1, 2026-10-20: introduce a reproducible query and calculation example.
+# Revision 2, 2026-11-13: use the incident entry point from the approved API plan.
 
 # %%
 from worldenergydata.hse.api import (
     EpaTriQuery,
-    IncidentsQuery,
+    HSEIncidentsQuery,
     OshaQuery,
     PenaltiesQuery,
     StatisticsQuery,
@@ -28,7 +29,7 @@ def main():
     session = build_synthetic_session()
     engine = session.get_bind()
     try:
-        incidents = IncidentsQuery(session).query(year=2022, severity="fatality")
+        incidents = HSEIncidentsQuery(session).query(year=2022, severity="fatality")
         penalties = PenaltiesQuery(session).query(year=2022, min_amount=10000)
         statistics = StatisticsQuery(session).query(year=2022, metric="total_incidents")
         releases = EpaTriQuery(session).query(year=2022)

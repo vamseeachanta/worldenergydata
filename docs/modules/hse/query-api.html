@@ -21,6 +21,8 @@ established by a successful query.</p>
 <tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr>
 <tr><td>1</td><td>2026-10-20</td><td>Document configured queries, asynchronous access
 and schema limits so examples can be reproduced.</td></tr>
+<tr><td>2</td><td>2026-11-13</td><td>Expose the approved HSEIncidentsQuery name,
+package export and incident defaults.</td></tr>
 <caption>Table 1. Document revisions.</caption>
 </table>
 <h2>Connection and result contract</h2>
@@ -48,6 +50,19 @@ column. Empty results retain their selected columns. Frames carry
 <code>attrs["data_kind"]</code> and <code>attrs["workflow_id"]</code>. Module
 singletons retain the compatibility sample with <code>data_kind="synthetic"</code>.
 That metadata does not certify injected data or survive every serialization.</p>
+<h2>Incident entry point from the approved plan</h2>
+<pre><code>from worldenergydata.hse import HSEIncidentsQuery
+
+# db_session is a caller-owned SQLAlchemy session for the existing HSE database.
+query = HSEIncidentsQuery(session=db_session)
+incidents = query.query(year=2022, operator="Example A")</code></pre>
+<p><code>HSEIncidentsQuery</code> is also exported from the API module. Its
+defaults are <code>source="bsee_inc"</code> and <code>limit=100</code>, as specified
+by the approved plan. Explicit filters override those defaults;
+<code>source=None</code> includes all supported sources and <code>limit=None</code>
+removes the row limit. The same defaults apply to asynchronous queries and
+query envelopes. Existing <code>IncidentsQuery</code> and module singleton
+defaults are preserved.</p>
 <h2>Surface semantics</h2>
 <table>
 <tr><th>Surface</th><th>Selection</th><th>Limits</th></tr>
