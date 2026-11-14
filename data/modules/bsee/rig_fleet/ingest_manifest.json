@@ -1,0 +1,241 @@
+{
+  "version": 1,
+  "datasets": [
+    {
+      "name": "rig_fleet",
+      "path": "data/modules/bsee/rig_fleet/20261113_rig_fleet.csv",
+      "format": "csv",
+      "columns": [
+        {
+          "name": "RIG_NAME",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "WELLS_DRILLED_COUNT",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "LAST_WAR_DATE",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "RIG_TYPE",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        }
+      ],
+      "row_count": 16,
+      "source_row_count": 16,
+      "duplicate_rows": 0,
+      "size_bytes": 0,
+      "sha256": "0cf9f02dc8cfe5bb3aa2e3c0b94d4da37a9822d07949dd77d2d1a9490946f7ab",
+      "last_modified": "2026-11-14T04:39:45.390532+00:00",
+      "ingested_at": "2026-11-14T04:39:45.390532+00:00",
+      "source_id": "bsee-data-center",
+      "source": "bin/rig_fleet/rig_fleet.bin",
+      "source_member": null,
+      "source_format": "pickle",
+      "source_sha256": "f0c5327c15e02fa9519b1cda0f36151b27dd1798c210c2cd901d71cd8e4b60f6",
+      "source_modified_at": "2026-02-08T14:01:59.551614+00:00",
+      "schema_status": "source_columns",
+      "encoding": null,
+      "data_status": "real",
+      "readiness_status": "partial",
+      "source_vintage": {
+        "state": "unknown",
+        "reason": "File modification time does not establish source vintage"
+      },
+      "deduplication": {
+        "method": "exact_full_row_same_schema",
+        "status": "no_comparable_schema",
+        "compared_files": [],
+        "compared_sources": []
+      },
+      "measured_size_bytes": 891,
+      "local_only": true,
+      "availability": "missing"
+    },
+    {
+      "name": "rig_fleet_full",
+      "path": "data/modules/bsee/rig_fleet/20261113_rig_fleet_full.csv",
+      "format": "csv",
+      "columns": [
+        {
+          "name": "RIG_NAME",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "RIG_TYPE",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "RIG_STATUS",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "OWNER",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "OPERATOR",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "IMO_NUMBER",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "FLAG_STATE",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "WATER_DEPTH_RATING_FT",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "DRILLING_DEPTH_RATING_FT",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "MAX_WATER_DEPTH_FT",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "LOA_M",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "BEAM_M",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "DISPLACEMENT_TONNES",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "MOONPOOL_DIAMETER_M",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "DP_CLASS",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "YEAR_BUILT",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "WELLS_DRILLED_COUNT",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "LAST_WAR_DATE",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "FIRST_WAR_DATE",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "LAST_AREA_CODE",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "LAST_BLOCK_NUMBER",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "DATA_SOURCE",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "IS_OFFSHORE",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        }
+      ],
+      "row_count": 2268,
+      "source_row_count": 2268,
+      "duplicate_rows": 0,
+      "size_bytes": 0,
+      "sha256": "ad7e4c26be844845bbcfcdf61ddad8a37f2bc6f67b976576866b5cc9e2202830",
+      "last_modified": "2026-11-14T04:39:45.390532+00:00",
+      "ingested_at": "2026-11-14T04:39:45.390532+00:00",
+      "source_id": "bsee-data-center",
+      "source": "bin/rig_fleet/rig_fleet_full.bin",
+      "source_member": null,
+      "source_format": "pickle",
+      "source_sha256": "e240d6133307ea65fc17e4ad732437cbac74fcb347cc97995d62c9d39718de2c",
+      "source_modified_at": "2026-02-13T13:36:19.172655+00:00",
+      "schema_status": "source_columns",
+      "encoding": null,
+      "data_status": "real",
+      "readiness_status": "partial",
+      "source_vintage": {
+        "state": "unknown",
+        "reason": "File modification time does not establish source vintage"
+      },
+      "deduplication": {
+        "method": "exact_full_row_same_schema",
+        "status": "no_comparable_schema",
+        "compared_files": [],
+        "compared_sources": []
+      },
+      "measured_size_bytes": 206566,
+      "local_only": true,
+      "availability": "missing"
+    }
+  ]
+}

@@ -68,3 +68,14 @@ No production fragments have been profiled with this command. Whether every
 production fragment carries the catalogued header, and whether `issuance_date`
 values are in ISO form, is therefore not established; both are reported, not
 assumed, when the command runs.
+
+
+## BSEE binary ingestion
+
+The local BSEE command converts existing borehole, WAR, rig-fleet and directional
+survey sources to timestamped CSV or Parquet and registers measured counts and
+source digests in the existing catalog. Use `make unpack-bsee` with the source
+and current-tier roots configured; pickle sources require `--trust-pickles`.
+The command does not download data or run a solver. See the
+[format, execution and validation contract](../../docs/data/bsee-binary-formats.html)
+for interpreter compatibility, source layout, exact-row comparison and limits.
