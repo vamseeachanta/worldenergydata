@@ -56,11 +56,13 @@ def run_ukcs_reference_chain(
         for year_month in fdas_production.get("YEAR_MONTH", pd.Series(dtype="object"))
     }
     dev_system = dev_system_from_water_depth_m(field_concept.water_depth_m)
-    if dev_system == "unknown":
+    fallback = dev_system == "unknown"
+    if fallback:
         dev_system = "subsea15"
 
+    assumptions = AssumptionsManager()
     cashflows = CashflowEngine(
-        AssumptionsManager(),
+        assumptions,
         dev_system=dev_system,
         fiscal_terms=get_fiscal_terms("uk"),
     ).generate_monthly_cashflow(
@@ -79,6 +81,39 @@ def run_ukcs_reference_chain(
         "ranked_concepts": ranked_concepts,
         "economics_label": "chain_plumbing_pre_tax",
         "pre_tax_metrics": _pre_tax_metrics(cashflows),
+        "cashflow_basis": {
+            "development_system": dev_system,
+            "development_system_basis": (
+                "fallback: water depth unknown"
+                if fallback
+                else "classified from water_depth_m"
+            ),
+            "assumptions_source": "FDAS DEFAULT_ASSUMPTIONS",
+            "oil_price_usd_bbl": oil_price_usd_bbl,
+            "variable_opex_usd_per_bbl": assumptions.get(
+                dev_system, "VARIABLE_OPEX_$/BBL", 12.0
+            ),
+            "assumed_first_oil": first_oil.strftime("%Y-%m"),
+            "first_oil_basis": "first selected production observation",
+            "cashflow_window": {
+                "first_period": cashflows[0].year_month if cashflows else None,
+                "last_period": cashflows[-1].year_month if cashflows else None,
+                "row_count": len(cashflows),
+            },
+            "host_capex_assumption_mm_usd": assumptions.get(
+                dev_system, "HOST_CAPEX_MM"
+            ),
+            "applied_costs_usd": {
+                name: float(sum(getattr(cf, name + "_usd") for cf in cashflows))
+                for name in (
+                    "variable_opex",
+                    "fixed_opex",
+                    "drilling_capex",
+                    "facilities_capex",
+                    "host_capex",
+                )
+            },
+        },
     }
 
 
