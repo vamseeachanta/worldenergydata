@@ -1,15 +1,12 @@
-"""LNG terminal capacity/utilization data refresh job -- Tier 2 (scaffolding only).
+"""Disabled LNG refresh placeholder with an explicit non-retryable failure.
 
-TODO: Implement data fetching for LNG terminal data.
-- Identify LNG terminal data sources (GIIGNL, IHS, public datasets)
-- Add HTTP client or data loader logic
-- Write Parquet output to data/lng_terminals/ directory
-- Add tests in tests/unit/scheduler/test_lng_terminals_adapter.py
+Issue #458 permits disabling the adapter until a real upstream refresh exists.
+Invoking it directly or accidentally enabling it must expose the implementation
+gap without backoff or a successful freshness manifest.
 """
 
 import logging
 from datetime import datetime
-from pathlib import Path
 
 from worldenergydata.common.data_resolver import get_module_data_safe
 from worldenergydata.scheduler.jobs.base import AbstractJob, JobResult
@@ -20,35 +17,27 @@ _DEFAULT_OUTPUT_DIR = get_module_data_safe("lng_terminals")
 
 
 class LngTerminalsRefreshJob(AbstractJob):
-    """Refresh LNG terminal capacity/utilization data -- Tier 2 stub.
-
-    This adapter follows the standard pattern (D-17) but data
-    fetching is not yet implemented. Returns a skipped result
-    until implementation is complete.
-    """
+    """Reject refresh requests until upstream collection is implemented."""
 
     name = "lng_terminals_refresh"
+    implemented = False
     default_output_dir = _DEFAULT_OUTPUT_DIR
 
     def run(self, config: dict) -> JobResult:
-        """Return skipped result until LNG terminal fetching is implemented.
-
-        Args:
-            config: Reserved for future use (e.g., data_path, output_dir).
-
-        Returns:
-            JobResult with status="skipped".
-        """
+        """Return actionable failure without collection, writes, or retries."""
         start = datetime.now()
-        output_dir = Path(config.get("output_dir", self.default_output_dir))
-        # Scaffolded for future adapter implementation; path is intentionally resolved now.
-        logger.info("%s: Tier 2 stub -- not yet implemented.", self.name)
-        logger.debug("%s output directory: %s", self.name, output_dir)
+        reason = (
+            "LNG terminal refresh is not implemented; keep enabled: false "
+            "in scheduler configuration until an upstream adapter writes data "
+            "and reports success (issue #458)."
+        )
+        logger.error("%s: %s", self.name, reason)
         return JobResult(
             job_name=self.name,
             start_time=start,
             end_time=datetime.now(),
-            status="skipped",
+            status="failure",
             records_updated=0,
-            error_msg=None,
+            error_msg=reason,
+            retryable=False,
         )

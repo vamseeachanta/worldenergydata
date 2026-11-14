@@ -1,73 +1,141 @@
 {
   "module": "pipeline",
-  "generated_at": "2026-05-15T03:45:14.630094+00:00",
-  "last_refresh": "2026-05-15",
+  "generated_at": "2026-10-26T10:14:12.717287+00:00",
+  "last_refresh": "2026-10-26",
   "record_count": 0,
-  "file_count": 6,
-  "total_size_bytes": 83030,
-  "total_size_human": "81.1 KB",
+  "file_count": 16,
+  "total_size_bytes": 1207643,
+  "total_size_human": "1.2 MB",
   "source_url": null,
-  "format": "(no ext),.csv,.json,.md,.yaml",
+  "format": "(no ext),.csv,.html,.json,.md,.yaml,.yml",
   "format_breakdown": {
     "(no ext)": {
       "count": 1,
       "size_bytes": 1223
     },
     ".csv": {
-      "count": 2,
-      "size_bytes": 74589
+      "count": 3,
+      "size_bytes": 218003
+    },
+    ".html": {
+      "count": 1,
+      "size_bytes": 50947
     },
     ".json": {
-      "count": 1,
-      "size_bytes": 1676
+      "count": 5,
+      "size_bytes": 915722
     },
     ".md": {
-      "count": 1,
-      "size_bytes": 3482
+      "count": 2,
+      "size_bytes": 9168
     },
     ".yaml": {
+      "count": 3,
+      "size_bytes": 12487
+    },
+    ".yml": {
       "count": 1,
-      "size_bytes": 2060
+      "size_bytes": 93
     }
   },
   "has_external_data": false,
   "external_data_root": null,
   "files": [
     {
+      "name": "README.md",
+      "path": "README.md",
+      "size_bytes": 5616,
+      "modified": "2026-10-26"
+    },
+    {
       "name": "_metadata.json",
       "path": "_metadata.json",
-      "size_bytes": 1676,
-      "modified": "2026-05-15"
+      "size_bytes": 3177,
+      "modified": "2026-10-26"
     },
     {
       "name": "api_5l_pipe_schedule.csv",
       "path": "api_5l_pipe_schedule.csv",
-      "size_bytes": 3861,
-      "modified": "2026-03-03"
+      "size_bytes": 84,
+      "modified": "2026-10-26"
     },
     {
       "name": "LICENSE",
       "path": "raw/kaggle_pipe_thickness_loss/LICENSE",
       "size_bytes": 1223,
-      "modified": "2026-05-06"
+      "modified": "2026-10-26"
     },
     {
       "name": "README.md",
       "path": "raw/kaggle_pipe_thickness_loss/README.md",
-      "size_bytes": 3482,
-      "modified": "2026-05-06"
+      "size_bytes": 3552,
+      "modified": "2026-10-26"
     },
     {
       "name": "market_pipe_thickness_loss_dataset.csv",
       "path": "raw/kaggle_pipe_thickness_loss/market_pipe_thickness_loss_dataset.csv",
       "size_bytes": 70728,
-      "modified": "2026-05-06"
+      "modified": "2026-10-26"
     },
     {
       "name": "schema.yaml",
       "path": "schema.yaml",
-      "size_bytes": 2060,
-      "modified": "2026-05-15"
+      "size_bytes": 2066,
+      "modified": "2026-10-26"
+    },
+    {
+      "name": "defaults.yaml",
+      "path": "screening/defaults.yaml",
+      "size_bytes": 3882,
+      "modified": "2026-10-26"
+    },
+    {
+      "name": "manifest.json",
+      "path": "screening/manifest.json",
+      "size_bytes": 472478,
+      "modified": "2026-10-26"
+    },
+    {
+      "name": "qa.html",
+      "path": "screening/qa.html",
+      "size_bytes": 50947,
+      "modified": "2026-10-26"
+    },
+    {
+      "name": "qa.json",
+      "path": "screening/qa.json",
+      "size_bytes": 39037,
+      "modified": "2026-10-26"
+    },
+    {
+      "name": "revision.json",
+      "path": "screening/revision.json",
+      "size_bytes": 807,
+      "modified": "2026-10-26"
+    },
+    {
+      "name": "sample.csv",
+      "path": "screening/sample.csv",
+      "size_bytes": 147191,
+      "modified": "2026-10-26"
+    },
+    {
+      "name": "schema.yaml",
+      "path": "screening/schema.yaml",
+      "size_bytes": 6539,
+      "modified": "2026-10-26"
+    },
+    {
+      "name": "sources.json",
+      "path": "screening/sources.json",
+      "size_bytes": 400223,
+      "modified": "2026-10-26"
+    },
+    {
+      "name": "sources.yml",
+      "path": "sources.yml",
+      "size_bytes": 93,
+      "modified": "2026-10-26"
     }
   ],
   "files_truncated": false

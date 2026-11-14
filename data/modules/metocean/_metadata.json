@@ -13,6 +13,10 @@
     {
       "name": "schema.yaml",
       "path": "schema.yaml"
+    },
+    {
+      "name": "table_sources.json",
+      "path": "table_sources.json"
     }
   ],
   "files_truncated": false,
@@ -24,7 +28,8 @@
       "citation": "API RP 2MET, Derivation of Metocean Design and Operating Conditions; edition and table titles: to be completed from the licensed copy",
       "loader": "worldenergydata.metocean.licensed_tables.load_licensed_table",
       "argument": "copy_path",
-      "environment_variable": "METOCEAN_LICENSED_DATA_DIR"
+      "environment_variable": "METOCEAN_LICENSED_DATA_DIR",
+      "source_record": "table_sources.json#/tables/api_rp2met_hurricane_gom_extremes.csv"
     },
     {
       "name": "api_rp2met_us_zone_100yr_waves.csv",
@@ -33,7 +38,8 @@
       "citation": "API RP 2MET, Derivation of Metocean Design and Operating Conditions; edition and table titles: to be completed from the licensed copy",
       "loader": "worldenergydata.metocean.licensed_tables.load_licensed_table",
       "argument": "copy_path",
-      "environment_variable": "METOCEAN_LICENSED_DATA_DIR"
+      "environment_variable": "METOCEAN_LICENSED_DATA_DIR",
+      "source_record": "table_sources.json#/tables/api_rp2met_us_zone_100yr_waves.csv"
     },
     {
       "name": "api_rp2met_gom_extremes_by_region.csv",
@@ -42,7 +48,8 @@
       "citation": "API RP 2MET, Derivation of Metocean Design and Operating Conditions; edition and table titles: to be completed from the licensed copy",
       "loader": "worldenergydata.metocean.licensed_tables.load_licensed_table",
       "argument": "copy_path",
-      "environment_variable": "METOCEAN_LICENSED_DATA_DIR"
+      "environment_variable": "METOCEAN_LICENSED_DATA_DIR",
+      "source_record": "table_sources.json#/tables/api_rp2met_gom_extremes_by_region.csv"
     },
     {
       "name": "api_rp2met_us_zone_100yr_winds.csv",
@@ -51,7 +58,8 @@
       "citation": "API RP 2MET, Derivation of Metocean Design and Operating Conditions; edition and table titles: to be completed from the licensed copy",
       "loader": "worldenergydata.metocean.licensed_tables.load_licensed_table",
       "argument": "copy_path",
-      "environment_variable": "METOCEAN_LICENSED_DATA_DIR"
+      "environment_variable": "METOCEAN_LICENSED_DATA_DIR",
+      "source_record": "table_sources.json#/tables/api_rp2met_us_zone_100yr_winds.csv"
     },
     {
       "name": "marine_growth_terminal_thickness.csv",
@@ -60,7 +68,8 @@
       "citation": "API RP 2MET, Derivation of Metocean Design and Operating Conditions; edition and table titles: to be completed from the licensed copy",
       "loader": "worldenergydata.metocean.licensed_tables.load_licensed_table",
       "argument": "copy_path",
-      "environment_variable": "METOCEAN_LICENSED_DATA_DIR"
+      "environment_variable": "METOCEAN_LICENSED_DATA_DIR",
+      "source_record": "table_sources.json#/tables/marine_growth_terminal_thickness.csv"
     },
     {
       "name": "metocean_regional_extremes.csv",
@@ -69,7 +78,8 @@
       "citation": "API RP 2MET, Derivation of Metocean Design and Operating Conditions; edition and table titles: to be completed from the licensed copy",
       "loader": "worldenergydata.metocean.licensed_tables.load_licensed_table",
       "argument": "copy_path",
-      "environment_variable": "METOCEAN_LICENSED_DATA_DIR"
+      "environment_variable": "METOCEAN_LICENSED_DATA_DIR",
+      "source_record": "table_sources.json#/tables/metocean_regional_extremes.csv"
     },
     {
       "name": "metocean_hs_tp_occurrence.csv",
@@ -78,7 +88,8 @@
       "citation": "API RP 2MET, Derivation of Metocean Design and Operating Conditions; edition and table titles: to be completed from the licensed copy",
       "loader": "worldenergydata.metocean.licensed_tables.load_licensed_table",
       "argument": "copy_path",
-      "environment_variable": "METOCEAN_LICENSED_DATA_DIR"
+      "environment_variable": "METOCEAN_LICENSED_DATA_DIR",
+      "source_record": "table_sources.json#/tables/metocean_hs_tp_occurrence.csv"
     },
     {
       "name": "metocean_temperature_ranges.csv",
@@ -87,7 +98,8 @@
       "citation": "API RP 2MET, Derivation of Metocean Design and Operating Conditions; edition and table titles: to be completed from the licensed copy",
       "loader": "worldenergydata.metocean.licensed_tables.load_licensed_table",
       "argument": "copy_path",
-      "environment_variable": "METOCEAN_LICENSED_DATA_DIR"
+      "environment_variable": "METOCEAN_LICENSED_DATA_DIR",
+      "source_record": "table_sources.json#/tables/metocean_temperature_ranges.csv"
     }
   ]
 }

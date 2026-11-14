@@ -102,8 +102,10 @@ def _line_chart(
     y_fmt: str = "{:,.0f}",
     height: int = 320,
 ) -> str:
-    """Multi-series line chart. Dots mark actual sourced observations and carry
-    native tooltips (year + value), so sparse series read as sparse."""
+    """Chart sourced annual means with hover titles and direct end labels.
+
+    Missing calendar years start new subpaths; isolated points remain visible.
+    """
     width = 960
     pad_l, pad_r, pad_t, pad_b = 78, 170, 26, 40
     plot_w, plot_h = width - pad_l - pad_r, height - pad_t - pad_b
@@ -150,9 +152,13 @@ def _line_chart(
         if not data:
             continue
         pts = [(px(y), py(v), y, v) for y, v in sorted(data.items())]
+        # Issue #1017: absent calendar years stay unbridged. One year is
+        # calendar adjacency, not a fitted gap-fill tolerance. SVG 2 (2018),
+        # sections 9.3.3 and 9.3.5: M starts a subpath; L joins adjacent points.
+        # https://www.w3.org/TR/2018/CR-SVG2-20181004/paths.html
         path = " ".join(
-            ("M" if i == 0 else "L") + f"{x:.1f},{y:.1f}"
-            for i, (x, y, *_) in enumerate(pts)
+            ("M" if i == 0 or yr != pts[i - 1][2] + 1 else "L") + f"{x:.1f},{y:.1f}"
+            for i, (x, y, yr, _) in enumerate(pts)
         )
         p.append(
             f'<path d="{path}" fill="none" stroke="{color}" stroke-width="2" '
@@ -312,6 +318,45 @@ def _verdict_table(rows) -> str:
         '<div class="tscroll"><table><thead><tr><th>Component</th>'
         "<th>Sourced window</th><th>Nominal CAGR</th><th>CPI CAGR</th>"
         "<th>Excess vs CPI</th><th>Verdict</th></tr></thead>"
+        f"<tbody>{''.join(body)}</tbody></table></div>"
+    )
+
+
+def _source_table(rows) -> str:
+    """Expose the input citations using exactly the chart aggregation lenses.
+
+    Selecting each row through annual_means reuses its currency, figure-type,
+    region and provenance rules without duplicating them in the renderer.
+    """
+    lenses = [(c, name, "global") for c, name, _ in INDEXED_SERIES]
+    lenses.extend(
+        [
+            (CostComponent.INDEX_CPI, "US CPI-U", "US"),
+            (CostComponent.OIL_PRICE_BRENT, "Brent", "global"),
+        ]
+    )
+    body = []
+    for component, name, region in lenses:
+        contributing = [
+            row for row in rows if annual_means([row], component, region=region)
+        ]
+        for row in sorted(contributing, key=lambda r: (r.year, r.source_url)):
+            body.append(
+                "<tr>"
+                f"<td>{_esc(name)}</td><td>{row.year}</td>"
+                f"<td class='num'>{row.value}</td><td>{_esc(row.unit)}</td>"
+                f"<td>{_esc(row.currency)}</td><td>{_esc(row.figure_type.value)}</td>"
+                f"<td><a href='{_esc(row.source_url)}' rel='noopener'>"
+                f"{_esc(row.source_title)}</a><br>{_esc(row.page_reference or '—')}</td>"
+                f"<td>{_esc(row.quoted_text)}</td><td>{row.accessed_date}</td>"
+                "</tr>"
+            )
+    if not body:
+        return '<p class="mini muted">No sourced observations contribute to these charts.</p>'
+    return (
+        '<div class="tscroll"><table><thead><tr><th>Series</th><th>Year</th>'
+        "<th>Source value</th><th>Unit</th><th>Currency</th><th>Figure type</th>"
+        "<th>Source / page</th><th>Quote</th><th>Access date</th></tr></thead>"
         f"<tbody>{''.join(body)}</tbody></table></div>"
     )
 
@@ -633,14 +678,24 @@ figures. Every judgement call is quarantined in section 5, awaiting approval.</p
 </header>
 <main>
 <nav class="toc"><strong class="mini">Contents</strong><br>
+<a href="#revisions">Revision history</a>
 <a href="#read">How to read this</a> <a href="#rates">1 · Day rates</a>
 <a href="#inflation">2 · Against inflation</a>
 <a href="#sanctioned">3 · Sanctioned projects</a>
 <a href="#findings">4 · What the data says</a>
 <a href="#assumptions">5 · Assumptions awaiting approval</a>
-<a href="#sequence">6 · The sequence</a></nav>
+<a href="#sequence">6 · The sequence</a>
+<a href="#sources">7 · Chart sources</a></nav>
 
 {_stat_tiles(rows, projects)}
+
+<section id="revisions"><h2>Revision history</h2>
+<table><thead><tr><th>Revision</th><th>Date</th><th>What changed and why</th></tr></thead>
+<tbody><tr><td>1</td><td>2026-10-19</td><td>Started the revision record.
+Chart lines now stop at missing calendar years to keep gaps visible in the
+sourced evidence. Added the contributing source rows so chart inputs can be
+traced within this file.</td></tr></tbody></table>
+</section>
 
 <section id="read"><h2>How to read this</h2>
 <div class="card"><p>Every figure in the underlying dataset carries a
@@ -653,8 +708,9 @@ dataset&nbsp;·&nbsp;
 here&nbsp;·&nbsp;
 <span class="prov" style="background:var(--todo)">todo</span>
 &nbsp;a known gap — rendered blank, never zero.</p>
-<p class="mini muted">Dots on the charts are actual observations; a line
-through three dots is three facts, not a dense series. Hover any dot for its
+<p class="mini muted">Dots on the charts are sourced annual means.
+Missing years break the line; segments join adjacent calendar years only
+and do not supply within-year values. Hover any dot for its
 value. Full citations: <a href="{repo}/blob/main/data/modules/cost/curated/">curated CSVs</a>.</p></div>
 </section>
 
@@ -742,6 +798,15 @@ starting with per-region drilling durations.</li>
 <li>The dataset stays living: sources are re-pulled on the documented refresh
 cadence, and this page regenerates from the CSVs.</li>
 </ol></div>
+</section>
+
+<section id="sources"><h2>7 · Chart sources</h2>
+<p>These sourced rows contribute to the day-rate, indexed and Brent comparison
+series. Source values are individual inputs; a chart dot can average several
+rows. The currency, region and figure-type filters match the charts.
+This table transcribes the curated citations; it does not revalidate the cited
+pages.</p>
+{_source_table(rows)}
 </section>
 </main>
 <footer>Generated {generated} by <code>scripts/cost/build_stakeholder_presentation.py</code>

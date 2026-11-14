@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
+
 
 def test_proration_parser_repairs_malformed_second_line(tmp_path: Path) -> None:
     from worldenergydata.kansas_kgs.pressure import parse_proration_pressure
@@ -39,13 +41,27 @@ def test_proration_parser_preserves_zero_and_normalizes_api(tmp_path: Path) -> N
 def test_proration_parser_sets_pressure_fields_and_test_policy(
     tmp_path: Path,
 ) -> None:
+    """Hand count: fixture positives occur in 1997 and 1998, one per year.
+
+    The chosen 1997 subset therefore has one positive row; both positive
+    fixture rows must carry the annual tag and no invented calendar date.
+    Values below are literal inputs in _pressure_fixture, not builder results.
+    """
     from worldenergydata.kansas_kgs.pressure import parse_proration_pressure
 
     pressure_path = tmp_path / "kansas_proration_pressures.txt"
     pressure_path.write_text(_pressure_fixture(), encoding="utf-8")
 
     normalized = parse_proration_pressure(pressure_path).normalized
-    positive = normalized.loc[normalized["test_year"].eq(1997)].iloc[0]
+    positives = normalized.loc[normalized["pressure_psig_raw"].gt(0)]
+    selected = positives.loc[positives["test_year"].eq(1997)]
+    assert len(positives) == 2
+    assert len(selected) == 1
+    policy_mismatches = (
+        positives["test_type"].ne("KS_PRORATION") | positives["test_date"].notna()
+    )
+    assert policy_mismatches.sum() == 0
+    positive = selected.iloc[0]
 
     assert positive["pressure_psig_raw"] == 47.3
     assert positive["working_pressure_psig"] == 38.8
@@ -98,6 +114,16 @@ def test_proration_parser_empty_valid_rows_returns_schema(tmp_path: Path) -> Non
     assert parsed.normalized.empty
     assert list(parsed.normalized.columns) == NORMALIZED_PRESSURE_COLUMNS
     assert parsed.quality["bad_field_count_rows"] == 1
+
+
+@pytest.mark.parametrize("blank", ["", " ", "\t"])
+def test_blank_api_helper_has_no_identifier(blank: str) -> None:
+    """Issue #1352 (2026): blank strings contain no identity characters."""
+    from worldenergydata.kansas_kgs.pressure import _api10, _api_part
+
+    assert _api10(blank) is None
+    assert _api_part(0)(blank) is None
+    assert _api_part(1)(blank) is None
 
 
 def _pressure_fixture() -> str:
