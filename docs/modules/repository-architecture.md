@@ -332,9 +332,11 @@ and external attributes, and initializes with an empty template without replacin
 resolved repository root; disposable checkout commands receive no trust override.
 Hostile external configuration and attributes reproduce CRLF filter output without
 isolation; the isolated probe requires the committed LF bytes for both autocrlf modes.
-Regressions check caller and decoy files, complete Git metadata, external fixture files
-and the parent environment for preservation. These are Linux conversion probes;
-native Windows: NOT RUN. A real system-attributes incident remains unreproduced.
+A boundary test independently pins the arguments, working directory and environment
+of every Git call. Preservation tests check caller and decoy files, complete Git
+metadata, external fixture files and the parent environment. Linux and Windows
+results are recorded in the pull request; a real system-attributes incident remains
+unreproduced.
 The separately quarantined CSV-currency check does not establish inventory freshness.
 
 The classification is deliberately evidence-limited: unresolved older reports require
