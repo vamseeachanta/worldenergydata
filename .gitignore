@@ -204,6 +204,16 @@ data/modules/vessel_fleet/curated/
 # Local data - not synced to git (large files, downloaded on demand)
 data/modules/bsee/.local/
 
+# Derived binary-ingest tables; counts and provenance remain in the catalog.
+data/modules/bsee/borehole/[0-9]*.csv
+data/modules/bsee/borehole/[0-9]*.parquet
+data/modules/bsee/war/[0-9]*.csv
+data/modules/bsee/war/[0-9]*.parquet
+data/modules/bsee/rig_fleet/[0-9]*.csv
+data/modules/bsee/rig_fleet/[0-9]*.parquet
+data/modules/bsee/directional_survey/[0-9]*.csv
+data/modules/bsee/directional_survey/[0-9]*.parquet
+
 # Marine safety raw data (regenerate: download_datasets.py)
 data/modules/marine_safety/raw/**/*.csv
 data/modules/marine_safety/raw/**/*.xlsx
