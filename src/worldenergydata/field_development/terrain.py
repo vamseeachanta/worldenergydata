@@ -12,12 +12,13 @@ shipped next to this module) — **no URLs are hardcoded here**. Every catalog
 entry records the license, format, resolution and the live-verification
 evidence (``verified_on`` / ``verification``) for that source.
 
-The one network helper, :func:`fetch_dem`, clips an arbitrary bounding box
+The network helper :func:`fetch_dem` clips an arbitrary bounding box
 from the USGS 3DEP dynamic image service and writes a small GeoTIFF — the
 public-DEM path the onshore tracer (digitalmodel#1508) needs. Bulk products
 (3DEP staged tiles, GEBCO, NOAA CRM, BOEM bathymetry) are catalogued for
 fetch-on-demand use; they are hundreds of MB to GB and must never be
-committed to git.
+committed to git. :func:`find_dem_tiles` discovers a bounded page of USGS
+staged products and retains their source metadata without downloading rasters.
 """
 
 from __future__ import annotations
@@ -32,8 +33,9 @@ import yaml
 __all__ = [
     "TERRAIN_SOURCES_PATH",
     "TerrainFetchError",
-    "load_terrain_sources",
     "fetch_dem",
+    "find_dem_tiles",
+    "load_terrain_sources",
 ]
 
 TERRAIN_SOURCES_PATH = Path(__file__).parent / "terrain_sources.yml"
@@ -157,7 +159,8 @@ def fetch_dem(
         not be committed to the repository.
     size:
         Output raster size ``(width, height)`` in pixels; the service clips
-        and resamples, so small sizes stay small on disk.
+        and resamples without adjusting the requested extent. Both dimensions
+        must be positive integers; pixels need not be square in map units.
     source_id:
         Catalog entry to use; must be ``status: verified`` and expose an
         ``export_image`` endpoint (default: USGS 3DEP dynamic image service).
@@ -174,7 +177,7 @@ def fetch_dem(
     """
     _validate_bbox(bbox)
     width, height = size
-    if width <= 0 or height <= 0:
+    if any(type(value) is not int or value <= 0 for value in (width, height)):
         raise ValueError(f"size must be positive pixels, got {size}")
 
     sources = load_terrain_sources(catalog_path)
@@ -201,13 +204,17 @@ def fetch_dem(
     out_path = Path(out_path)
 
     params = {
-        "bbox": ",".join(f"{v:.6f}" for v in bbox),
+        "bbox": ",".join(str(v) for v in bbox),
         "bboxSR": "4326",
         "imageSR": "4326",
         "size": f"{width},{height}",
         "format": "tiff",
         "pixelType": "F32",
         "f": "image",
+        # Esri ArcGIS REST Export Image, adjustAspectRatio (2026 access):
+        # https://developers.arcgis.com/rest/services-reference/enterprise/export-image/
+        # The default true expands bbox to match size; retain the caller's extent.
+        "adjustAspectRatio": "false",
     }
     http = session or requests
     response = http.get(export_url, params=params, timeout=timeout)
@@ -224,3 +231,72 @@ def fetch_dem(
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_bytes(content)
     return out_path
+
+
+def find_dem_tiles(
+    bbox: tuple[float, float, float, float],
+    *,
+    max_items: int,
+    offset: int = 0,
+    catalog_path: Path | None = None,
+    timeout: float = _DEFAULT_TIMEOUT_S,
+    session: requests.Session | None = None,
+) -> dict[str, Any]:
+    """Discover one page of staged USGS DEM products without downloading tiles.
+
+    Return the TNM response envelope unchanged, retaining ``total``, ``items``,
+    source IDs, download URLs, dates and available spatial metadata. This is
+    discovery metadata, not validated elevation input. Callers explicitly
+    select page size and advance offset by the number of returned items;
+    a page does not establish complete coverage. HTTP failures propagate.
+
+    Protocol: USGS TNM Access API v1, Products parameters (2026 access),
+    https://tnmaccess.nationalmap.gov/api/v1/docs . ``offset`` defaults to zero;
+    above 100, ``max`` must be a multiple of 5. No engineering equations or
+    resolution conversions are applied.
+    """
+    _validate_bbox(bbox)
+    if type(max_items) is not int or max_items <= 0:
+        raise ValueError("max_items must be a positive integer")
+    if type(offset) is not int or offset < 0:
+        raise ValueError("offset must be a nonnegative integer")
+    # USGS TNM v1 Products, max/offset parameters, URL in docstring above.
+    if offset > 100 and max_items % 5:
+        raise ValueError("max_items must be a multiple of 5 when offset > 100")
+
+    entry = load_terrain_sources(catalog_path)["usgs_3dep_staged_tiles"]
+    if entry["status"] != "verified":
+        raise TerrainFetchError("staged DEM source is not verified")
+    params = dict(entry["query_parameters"])
+    params.update(
+        bbox=",".join(str(value) for value in bbox),
+        max=max_items,
+        offset=offset,
+        outputFormat="JSON",
+    )
+    http = session or requests
+    response = http.get(
+        entry["endpoints"]["tnm_products_api"], params=params, timeout=timeout
+    )
+    response.raise_for_status()
+    try:
+        payload = response.json()
+    except ValueError as exc:
+        raise TerrainFetchError("TNM products response is not JSON") from exc
+    _validate_products_page(payload, max_items, offset)
+    return payload
+
+
+def _validate_products_page(payload: Any, max_items: int, offset: int) -> None:
+    """Reject service errors and invalid counts instead of reporting no coverage."""
+    if not isinstance(payload, dict) or "error" in payload:
+        raise TerrainFetchError("TNM products response is invalid")
+    total, items = payload.get("total"), payload.get("items")
+    if (
+        type(total) is not int
+        or total < 0
+        or not isinstance(items, list)
+        or any(not isinstance(item, dict) for item in items)
+        or len(items) > min(max_items, max(total - offset, 0))
+    ):
+        raise TerrainFetchError("TNM products page has invalid items or total")

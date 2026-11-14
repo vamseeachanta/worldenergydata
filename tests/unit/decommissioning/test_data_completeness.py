@@ -3,6 +3,7 @@
 
 """Unit tests for worldenergydata.decommissioning.data_completeness."""
 
+import numpy as np
 import pandas as pd
 import pytest
 
@@ -229,3 +230,43 @@ def test_portfolio_scores_empty_input(scorer):
     df = scorer.portfolio_scores([])
     assert isinstance(df, pd.DataFrame)
     assert len(df) == 0
+
+
+@pytest.mark.parametrize("category", _ALL_CATEGORIES)
+@pytest.mark.parametrize("missing", [float("nan"), np.float32("nan"), pd.NA, None])
+def test_missing_scalar_is_absent_and_identified_as_gap(scorer, category, missing):
+    """Issue #1281 requires NaN to follow the missing-data policy.
+
+    Hand calculation: absent availability = 0; every other category is
+    omitted, so the weighted sum is sum(weight * 0) = 0 for any weights.
+    pandas 2.2.3 (2024), pandas.isna, Examples, identifies NaN and NA as missing:
+    https://pandas.pydata.org/pandas-docs/version/2.2/reference/api/pandas.isna.html
+    """
+    result = scorer.score("Synthetic", {category: missing})
+
+    assert getattr(result, category) == 0.0  # Issue #1281: missing means absent.
+    assert result.overall_score == 0.0  # Hand calculation above.
+    assert category in result.gaps
+    assert result.risk_level == scorer.score("Synthetic", {}).risk_level
+
+
+def test_portfolio_nan_categories_remain_missing(scorer):
+    """Hand calculation: all five missing scores are 0, so sum(weight * 0) = 0.
+
+    The missing policy comes from issue #1281; NaN recognition follows pandas
+    2.2.3 (2024), pandas.isna, Examples (URL in the scalar regression above).
+    The first category is a gap because every category is absent.
+    """
+    frame = scorer.portfolio_scores(
+        [
+            {
+                "field_name": "Synthetic",
+                "available_data": dict.fromkeys(_ALL_CATEGORIES, float("nan")),
+            }
+        ]
+    )
+
+    assert frame.loc[0, "overall_score"] == 0.0  # Hand calculation above.
+    assert frame.loc[0, "top_gap"] == "as_built_drawings"
+    for category in _ALL_CATEGORIES:
+        assert frame.loc[0, category] == 0.0  # Issue #1281: absent availability.

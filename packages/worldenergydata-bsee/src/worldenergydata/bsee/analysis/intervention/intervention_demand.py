@@ -166,14 +166,15 @@ def rig_days_by_band_year(
         if end_col in resolved.columns
         else pd.Series([None] * len(resolved), index=resolved.index)
     )
-    for idx, band_key in resolved["_band"].items():
+    # Pair dates by row position: repeated index labels still identify separate records.
+    for pos, band_key in enumerate(resolved["_band"]):
         if band_key not in out:
             continue
-        year = _parse_year(starts.loc[idx]) if starts is not None else None
+        year = _parse_year(starts.iloc[pos]) if starts is not None else None
         if year is None:
             continue
         days, _ = _record_rig_days(
-            starts.loc[idx] if starts is not None else None, ends.loc[idx]
+            starts.iloc[pos] if starts is not None else None, ends.iloc[pos]
         )
         if days <= 0:
             continue

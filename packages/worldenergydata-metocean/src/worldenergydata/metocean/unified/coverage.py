@@ -15,7 +15,6 @@ Coverage zones:
 - ERDDAP:     global gridded (any lat/lon) — slower, used as fallback
 """
 
-from typing import List
 
 # Source priority order within each tier
 # Tier 0 = measured observations (highest priority)
@@ -74,7 +73,7 @@ class MetoceanCoverage:
             and self._MET_NORWAY_LON_MIN <= lon <= self._MET_NORWAY_LON_MAX
         )
 
-    def get_clients(self, lat: float, lon: float) -> List[str]:
+    def get_clients(self, lat: float, lon: float) -> list[str]:
         """
         Return source names that cover the given coordinate, ordered by priority.
 
@@ -88,7 +87,7 @@ class MetoceanCoverage:
         Returns:
             Ordered list of source identifier strings
         """
-        sources: List[str] = []
+        sources: list[str] = []
 
         # Regional measured sources (highest priority)
         if self._covers_ndbc(lat, lon):
@@ -101,6 +100,8 @@ class MetoceanCoverage:
         # Global sources (always available)
         sources.append("open_meteo")
         sources.append("erddap")
+        # Dataset-specific access is evaluated by configured adapters.
+        sources.extend(["era5", "cmems"])
 
         # Sort by priority tier (stable sort preserves insertion order within tier)
         sources.sort(key=lambda s: _SOURCE_PRIORITY.get(s, 99))
