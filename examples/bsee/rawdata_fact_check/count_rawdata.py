@@ -12,9 +12,12 @@ Counting rules
 - A new-well permit is counted once per well (API well number): the permit with the
   lowest SN_APD among the "New Well" permits of that well in the Gulf of Mexico region
   (REGION_CODE "G"), by the year of its requested spud date, with the rig type that
-  permit names. Wells whose first permit gives no requested spud date are left out and
-  counted in ``no_spud_date``.
-- Rig types: a fixed list of six RIG_TYPE_CODE values is named (see MAJOR below).
+  permit names. SN_APD order is taken as submission order. Wells whose first permit
+  gives no readable requested spud date are left out and counted in ``no_spud_date``
+  across all years. Eligible rows without an API well number are excluded and counted
+  as rows (not wells) in ``no_api_well_number``.
+- Rig types: JACKUP, DRILLSHIP, SEMISUBMERSIBLE, DP SEMISUBMERSIBLE, PLATFORM and
+  SUBMERSIBLE are named after trimming and upper-casing RIG_TYPE_CODE.
   Every other value, including a blank or unknown code, is grouped as "Other", and the
   grouped codes are printed in ``other_grouped``. No share threshold is computed.
 - Investigations are counted by kind (DISTRICT or PANEL) and status (as listed).
@@ -102,13 +105,21 @@ def read_member(zip_path: Path, member: str) -> list[dict]:
     return list(csv.DictReader(io.StringIO(raw, newline="")))
 
 
+def is_gulf_new_well(row: dict) -> bool:
+    return (
+        row["PERMIT_TYPE"].strip() == "New Well" and row["REGION_CODE"].strip() == "G"
+    )
+
+
 def first_new_well_permits(apd_rows: list[dict]) -> list[dict]:
     """One permit per well: the lowest SN_APD among its Gulf of Mexico New Well permits."""
     best = {}
     for r in apd_rows:
-        if r["PERMIT_TYPE"].strip() != "New Well" or r["REGION_CODE"].strip() != "G":
+        if not is_gulf_new_well(r):
             continue
         api = r["API_WELL_NUMBER"].strip()
+        if not api:
+            continue
         sn = int(r["SN_APD"])
         if api not in best or sn < int(best[api]["SN_APD"]):
             best[api] = r
@@ -301,17 +312,21 @@ def main(argv=None) -> int:
     ap.add_argument("--last-year", type=int, default=datetime.now(timezone.utc).year)
     ap.add_argument("--self-test", action="store_true")
     a = ap.parse_args(argv)
+    if a.first_year > a.last_year:
+        ap.error("--first-year must not exceed --last-year")
     sys.stdout.reconfigure(encoding="utf-8")
     if a.self_test:
         self_test()
         return 0
     files = fetch(a.data_dir)
-    permits = first_new_well_permits(
-        read_member(Path(files["APDRawData.zip"]["path"]), APD_MEMBER)
+    apd_rows = read_member(Path(files["APDRawData.zip"]["path"]), APD_MEMBER)
+    permits = count_permits(first_new_well_permits(apd_rows), a.first_year, a.last_year)
+    permits["no_api_well_number"] = sum(
+        1 for r in apd_rows if is_gulf_new_well(r) and not r["API_WELL_NUMBER"].strip()
     )
     result = {
         "files": files,
-        "permits": count_permits(permits, a.first_year, a.last_year),
+        "permits": permits,
         "investigations": count_investigations(
             read_member(Path(files["IncInvRawData.zip"]["path"]), INV_MEMBER)
         ),
