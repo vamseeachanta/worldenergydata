@@ -19,6 +19,10 @@ pins to. It replaces the revision 3 page, which this change does not carry.
 - The data tables, the chart and the reusable prompt are pinned to their own
   commits: data links to the data change, chart links, the study link and the
   prompt to the commit that also holds the charts and scripts.
+- Appendix A, "Permits", states the assumption that the README already marks
+  as assumed: BSEE's permit table has no separate approval-status field, so
+  every row is taken to be an approved permit and `ACC_STATUS_DATE` is read as
+  its approval date, both to be confirmed. No number changes with it.
 
 ### Numbers that changed from revision 3
 
