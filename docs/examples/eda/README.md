@@ -10,6 +10,7 @@ the expected artifacts to semiconductor role keywords.
 | Revision | Date | What changed and why |
 | --- | --- | --- |
 | Initial | 2026-10-19 | Add deterministic evidence reporting before collecting physical-design results. |
+| Second | 2026-11-14 | Reject cyclic artifact paths and record report revisions in the manifest. |
 
 ## Replay from a fresh checkout
 
@@ -44,17 +45,25 @@ The [sample manifest](manifest.json) is intentionally empty evidence. Copy it
 beside a retained run's evidence before populating it. Paths resolve relative to
 the manifest directory, independently of the current working directory.
 
-Only these top-level objects are accepted:
+Only these top-level fields are accepted:
 
 | Object | Allowed fields | Meaning |
 | --- | --- | --- |
 | `provenance` | `openlane_version`, `container_image_digest`, `pdk_revision`, `standard_cell_library` | Nonempty text or null; record exact run identifiers from retained evidence. |
 | `artifacts` | `rtl`, `config`, `metrics`, `timing`, `power`, `drc`, `lvs`, `def`, `gds`, `log` | Each entry is null or an object containing `path` and optional `sha256`. |
 | `observations` | `timing`, `area`, `power`, `drc`, `lvs` | Each entry is null or an object containing nonempty `key`, `unit`, and `basis`. |
+| `revisions` | `revision`, `date`, `description` | An ordered list of objects; all three fields are required nonempty text, with a calendar date in `YYYY-MM-DD` form. |
 
-Omitted entries and null entries mean evidence has not been supplied.
+Report revision rows come from `revisions` in the manifest, in supplied order.
+Retain earlier rows and append a row when reissuing a report. An omitted or empty
+list produces an explicit `NOT_EVALUATED` history row; no date or revision is
+inferred. These rows record supplied history without authenticating it.
+
+For provenance, artifacts and observations, omitted entries and null entries
+mean evidence has not been supplied.
 Unknown fields, duplicate JSON keys, invalid types, ambiguous paths, paths that
-escape the evidence directory through symlinks, and invalid digests are errors.
+escape the evidence directory through symlinks, symlink loops, and invalid
+digests are errors.
 Artifact paths use forward slashes without empty, current-directory or parent
 segments. Directories are not file artifacts. Missing files are `NOT_EVALUATED`;
 a missing file with an expected digest is an integrity error. SHA-256 digests are

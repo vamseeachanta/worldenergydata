@@ -48,6 +48,8 @@ def test_missing_evidence_never_passes(tmp_path):
     assert "PASS" not in text
     assert "No flow was executed" in text
     assert "Revision history" in text
+    assert "No report revisions supplied by the manifest." in text
+    assert "| Initial | 2026-10-19 |" not in text
 
 
 def test_published_digest_and_replay_are_deterministic(tmp_path):
@@ -125,7 +127,7 @@ def test_invalid_metric_values_fail_closed(tmp_path, value):
             "drc": {"key": "test", "unit": "count", "basis": "literal fixture"}
         },
     )
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="finite numeric data"):
         report.build_report(path)
 
 
@@ -291,9 +293,15 @@ def test_nested_metric_data_is_not_flattened(tmp_path):
     assert "| Timing | NOT_EVALUATED |" in report.build_report(path)
 
 
-def test_symlink_loop_produces_controlled_error(tmp_path):
-    (tmp_path / "loop.v").symlink_to("loop.v")
-    path = manifest(tmp_path, artifacts={"rtl": {"path": "loop.v"}})
+@pytest.mark.parametrize("kind", ["self", "mutual", "directory"])
+def test_symlink_loop_produces_controlled_error(tmp_path, kind):
+    if kind == "mutual":
+        (tmp_path / "loop.v").symlink_to("other.v")
+        (tmp_path / "other.v").symlink_to("loop.v")
+    else:
+        (tmp_path / "loop.v").symlink_to("loop.v")
+    relative = "loop.v/input.v" if kind == "directory" else "loop.v"
+    path = manifest(tmp_path, artifacts={"rtl": {"path": relative}})
     with pytest.raises(ValueError, match="invalid relative artifact path"):
         report.build_report(path)
 
@@ -396,3 +404,101 @@ def test_cli_decoding_error_does_not_echo_evidence(tmp_path):
     assert "invalid evidence:" in result.stderr
     assert "private-input" not in result.stderr
     assert "0xff" not in result.stderr
+
+
+@pytest.mark.parametrize("relative", ["absent.v", "absent/input.v", "dangling.v"])
+def test_missing_artifacts_remain_not_evaluated(tmp_path, relative):
+    (tmp_path / "dangling.v").symlink_to("absent/input.v")
+    path = manifest(tmp_path, artifacts={"rtl": {"path": relative}})
+    text = report.build_report(path)
+    assert f"| rtl | NOT_EVALUATED | {relative} (missing) | unavailable |" in text
+
+
+def test_valid_artifact_symlink_is_hashed(tmp_path):
+    (tmp_path / "input.v").write_bytes(HASH_INPUT)
+    (tmp_path / "linked.v").symlink_to("input.v")
+    path = manifest(tmp_path, artifacts={"rtl": {"path": "linked.v"}})
+    assert f"| rtl | PRESENT | linked.v | {HASH_EXPECTED} |" in report.build_report(
+        path
+    )
+
+
+def test_report_revisions_come_from_manifest_in_order(tmp_path):
+    revisions = [
+        {
+            "revision": "First",
+            "date": "2030-03-04",
+            "description": "Collect evidence.",
+        },
+        {
+            "revision": "Second",
+            "date": "2030-03-05",
+            "description": "Update <basis>|.",
+        },
+    ]
+    text = report.build_report(manifest(tmp_path, revisions=revisions))
+    first = "| First | 2030-03-04 | Collect evidence. |"
+    second = "| Second | 2030-03-05 | Update &lt;basis&gt;&#124;. |"
+    assert first in text
+    assert second in text
+    assert text.index(first) < text.index(second)
+    assert text.index("## Summary") < text.index("## Revision history")
+    assert text.index("## Revision history") < text.index("## Recorded environment")
+    assert "| Initial | 2026-10-19 |" not in text
+
+
+@pytest.mark.parametrize(
+    "revisions",
+    [
+        None,
+        {},
+        "Initial",
+        [None],
+        [{}],
+        [{"revision": "First", "date": "2030-03-04"}],
+        [
+            {
+                "revision": "First",
+                "date": "2030-03-04",
+                "description": "",
+            }
+        ],
+        [
+            {
+                "revision": True,
+                "date": "2030-03-04",
+                "description": "Collect evidence.",
+            }
+        ],
+        [
+            {
+                "revision": "First",
+                "date": "2030-02-30",
+                "description": "Collect evidence.",
+            }
+        ],
+        [
+            {
+                "revision": "First",
+                "date": "20300304",
+                "description": "Collect evidence.",
+            }
+        ],
+        [
+            {
+                "revision": "First",
+                "date": "2030-03-04",
+                "description": "Collect evidence.",
+                "extra": 1,
+            }
+        ],
+    ],
+)
+def test_invalid_report_revisions_are_rejected(tmp_path, revisions):
+    with pytest.raises((TypeError, ValueError), match="invalid revision"):
+        report.build_report(manifest(tmp_path, revisions=revisions))
+
+
+def test_empty_revision_list_is_explicitly_unavailable(tmp_path):
+    text = report.build_report(manifest(tmp_path, revisions=[]))
+    assert "No report revisions supplied by the manifest." in text

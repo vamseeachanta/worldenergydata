@@ -14,6 +14,7 @@ import html
 import json
 import re
 import sys
+from datetime import date
 from decimal import Decimal
 from pathlib import Path
 
@@ -102,7 +103,13 @@ def _artifact_path(root: Path, value: object) -> Path:
     if any(part in ("", ".", "..") for part in value.split("/")):
         raise ValueError("invalid relative artifact path")
     try:
-        candidate = (root / value).resolve()
+        # Strict resolution detects loops on Python 3.13+, where non-strict
+        # resolution suppresses them. Only missing evidence is tolerated.
+        candidate = root / value
+        try:
+            candidate = candidate.resolve(strict=True)
+        except FileNotFoundError:
+            candidate = candidate.resolve()
     except (OSError, RuntimeError) as error:
         raise ValueError("invalid relative artifact path") from error
     if not candidate.is_relative_to(root):
@@ -129,8 +136,26 @@ def build_report(manifest: Path) -> str:
     """
     root = manifest.resolve().parent
     data = _mapping(
-        _load(manifest), {"provenance", "artifacts", "observations"}, "manifest"
+        _load(manifest),
+        {"provenance", "artifacts", "observations", "revisions"},
+        "manifest",
     )
+    revisions = data.get("revisions", [])
+    if not isinstance(revisions, list):
+        raise TypeError("invalid revisions: expected a list")
+    for revision in revisions:
+        fields = {"revision", "date", "description"}
+        revision = _mapping(revision, fields, "revision")
+        if revision.keys() != fields or not all(_text(v) for v in revision.values()):
+            raise ValueError(
+                "invalid revision: revision, date and description required"
+            )
+        try:
+            parsed_date = date.fromisoformat(revision["date"])
+        except ValueError as error:
+            raise ValueError("invalid revision date: expected YYYY-MM-DD") from error
+        if parsed_date.isoformat() != revision["date"]:
+            raise ValueError("invalid revision date: expected YYYY-MM-DD")
     provenance = _mapping(data.get("provenance", {}), set(PROVENANCE), "provenance")
     for value in provenance.values():
         if value is not None and not _text(value):
@@ -217,7 +242,20 @@ def build_report(manifest: Path) -> str:
         "",
         "| Revision | Date | What changed and why |",
         "| --- | --- | --- |",
-        "| Initial | 2026-10-19 | Add evidence replay before collecting run evidence. |",
+    ]
+    lines.extend(
+        "| "
+        + " | ".join(
+            _cell(revision[field]) for field in ("revision", "date", "description")
+        )
+        + " |"
+        for revision in revisions
+    )
+    if not revisions:
+        lines.append(
+            "| NOT_EVALUATED | NOT_EVALUATED | No report revisions supplied by the manifest. |"
+        )
+    lines += [
         "",
         "## Recorded environment",
         "",

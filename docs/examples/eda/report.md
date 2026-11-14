@@ -12,6 +12,7 @@ Missing evidence is NOT_EVALUATED; no acceptance limits are assumed.
 | Revision | Date | What changed and why |
 | --- | --- | --- |
 | Initial | 2026-10-19 | Add evidence replay before collecting run evidence. |
+| Second | 2026-11-14 | Record report revisions in the manifest to avoid a fixed history. |
 
 ## Recorded environment
 
