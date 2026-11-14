@@ -415,3 +415,22 @@ def test_report_eval_paths_select_their_suite(paths):
         targets = [t for shard in matrix["include"] for t in shard["targets"].split()]
         assert matrix["scope"] == "modules"
         assert targets.count("tests/report_evals") == 1
+
+
+@pytest.mark.parametrize(
+    "path",
+    [
+        "data/modules/bsee/boem_lease_history_layout.json",
+        "tests/fixtures/bsee/boem_raw/LABRawData/mv_lease_area_block.txt",
+    ],
+)
+def test_boem_layout_paths_select_bsee(path):
+    for chooser in (select, select_fast):
+        result = chooser([path], REPO_ROOT)
+        assert result["scope"] == "modules"
+        assert result["xdist"].count("tests/unit/bsee") == 1
+    for fast in (False, True):
+        matrix = to_matrix([path], REPO_ROOT, fast=fast)
+        targets = [t for shard in matrix["include"] for t in shard["targets"].split()]
+        assert matrix["scope"] == "modules"
+        assert targets.count("tests/unit/bsee") == 1

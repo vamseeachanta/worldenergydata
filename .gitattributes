@@ -52,6 +52,9 @@ packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/directional_surv
 # Preserve the raw-byte digests and sizes used by the lease snapshot manifest.
 data/modules/bsee/leases/** -text
 
+# BOEM raw-file fixture cuts keep source bytes (cp1252, CRLF records, LF inside quoted fields) for their recorded digests.
+tests/fixtures/bsee/boem_raw/**/*.txt -text whitespace=cr-at-eol
+
 # Preserve the benchmark source digest across platform checkout conventions.
 reports/lower_tertiary/lt_well_benchmark_lower_tertiary_2010_latest.csv text eol=lf
 
