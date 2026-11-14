@@ -22,6 +22,18 @@ REPO = Path(__file__).resolve().parents[3]
 BUILDER_PATH = REPO / "scripts/lower_tertiary/build_lifecycle_posters.py"
 SYNTHETIC_ID = "synthetic_extension"
 SVG_SENTINEL = "<svg><!-- synthetic layout sentinel --></svg>"
+SAVED_FIELD_IDS = (
+    "anchor",
+    "big_foot",
+    "cascade_chinook",
+    "jack_st_malo",
+    "julia",
+    "kaskida",
+    "north_platte",
+    "shenandoah",
+    "stones",
+    "tiber",
+)
 
 
 @pytest.fixture
@@ -162,30 +174,11 @@ def test_concept_name_cannot_break_script_embedding(builder, monkeypatch, name):
     assert "<svg" in decoded["architecture"]["svg"]
 
 
-@pytest.mark.parametrize(
-    "following_comment",
-    ["// Lease & landman panel", "// Following panel"],
-)
-@pytest.mark.parametrize(
-    "name",
-    [
-        "Synthetic <b>concept</b>",
-        'Synthetic <img src=x onerror="void 0">',
-        'Synthetic &amp; < > "quotes" café',
-    ],
-)
-def test_architecture_caption_is_literal_text(
-    builder, monkeypatch, name, following_comment
-):
+def _render_architecture_panel(script, field):
+    """Execute a real saved or freshly rendered panel with a DOM target stub."""
     node = shutil.which("node")
     if node is None:
         pytest.fail("Node.js is required to execute the architecture panel regression")
-    field = _synthetic_field(builder, monkeypatch, name)
-    page = _PosterParser()
-    page.feed(
-        builder.render(field).replace("// Lease & landman panel", following_comment)
-    )
-    script = page.scripts[0]
     start = script.index("if (FIELD.architecture) {")
     assignment = script.index('$("f-arch").innerHTML =', start)
     end = script.index("\n}", assignment) + len("\n}")
@@ -205,12 +198,101 @@ def test_architecture_caption_is_literal_text(
         encoding="utf-8",
         check=True,
     )
-    panel = _PosterParser()
-    panel.feed(result.stdout)
+    return result.stdout
 
+
+def _assert_literal_architecture_caption(script, field):
+    html = _render_architecture_panel(script, field)
+    panel = _PosterParser()
+    panel.feed(html)
+
+    name = field["architecture"]["caption"]
     assert panel.headings == [f"Architecture — {name}"]
     assert not {"b", "img", "script"}.intersection(panel.tags)
-    assert field["architecture"]["svg"] in result.stdout
+    assert field["architecture"]["svg"] in html
+
+
+@pytest.mark.parametrize(
+    "following_comment",
+    ["// Lease & landman panel", "// Following panel"],
+)
+@pytest.mark.parametrize(
+    "name",
+    [
+        "Synthetic <b>concept</b>",
+        'Synthetic <img src=x onerror="void 0">',
+        'Synthetic &amp; < > "quotes" café',
+    ],
+)
+def test_architecture_caption_is_literal_text(
+    builder, monkeypatch, name, following_comment
+):
+    field = _synthetic_field(builder, monkeypatch, name)
+    page = _PosterParser()
+    page.feed(
+        builder.render(field).replace("// Lease & landman panel", following_comment)
+    )
+    _assert_literal_architecture_caption(page.scripts[0], field)
+
+
+@pytest.mark.parametrize("field_id", SAVED_FIELD_IDS)
+@pytest.mark.parametrize(
+    "has_svg", [True, False], ids=["literal-caption", "placeholder"]
+)
+def test_saved_poster_architecture_panel(field_id, has_svg):
+    directory = REPO / "reports/lower_tertiary/lifecycle"
+    assert set(SAVED_FIELD_IDS) == {
+        path.name.removesuffix("_lifecycle.html")
+        for path in directory.glob("*_lifecycle.html")
+    }, "Saved poster inventory must match SAVED_FIELD_IDS"
+    page = _PosterParser()
+    page.feed((directory / f"{field_id}_lifecycle.html").read_text(encoding="utf-8"))
+
+    assert len(page.scripts) == 1
+    script = page.scripts[0]
+    embedded = script.split("const FIELD = ", 1)[1]
+    field, _ = json.JSONDecoder().raw_decode(embedded)
+    sidecar = json.loads((directory / "_explorer.json").read_text(encoding="utf-8"))
+    assert field["id"] == field_id
+    assert field == sidecar["fields"][field_id]
+
+    # Synthetic inputs exercise each saved renderer without rewriting reports.
+    field["architecture"] = (
+        {"svg": SVG_SENTINEL, "caption": "Synthetic <b>concept</b> & café"}
+        if has_svg
+        else {"svg": None, "pending_issue": 962}
+    )
+    if has_svg:
+        _assert_literal_architecture_caption(script, field)
+    else:
+        html = _render_architecture_panel(script, field)
+        panel = _PosterParser()
+        panel.feed(html)
+        assert panel.headings == ["Architecture"]
+        assert not {"svg", "b", "img", "script"}.intersection(panel.tags)
+        assert (
+            'href="https://github.com/vamseeachanta/worldenergydata/issues/962"' in html
+        )
+        assert "field architecture pending" in html
+
+
+@pytest.mark.parametrize("inventory_change", ["added", "missing"])
+def test_saved_poster_inventory_mismatch_is_rejected(
+    tmp_path, monkeypatch, inventory_change
+):
+    source = REPO / "reports/lower_tertiary/lifecycle"
+    directory = tmp_path / "reports/lower_tertiary/lifecycle"
+    directory.mkdir(parents=True)
+    for path in [*source.glob("*_lifecycle.html"), source / "_explorer.json"]:
+        shutil.copy2(path, directory / path.name)
+    if inventory_change == "added":
+        (directory / "unlisted_lifecycle.html").touch()
+    else:
+        (directory / "tiber_lifecycle.html").unlink()
+    monkeypatch.setitem(globals(), "REPO", tmp_path)
+
+    with pytest.raises(AssertionError, match="Saved poster inventory"):
+        test_saved_poster_architecture_panel("anchor", has_svg=False)
 
 
 def test_architecture_caption_requires_node(builder, monkeypatch):

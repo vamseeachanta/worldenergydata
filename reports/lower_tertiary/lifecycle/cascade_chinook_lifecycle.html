@@ -511,7 +511,7 @@ const FIELD = {
     "equip_rating_psi": null,
     "temp_f": 260,
     "tvd_ft": 25600,
-    "fluid": "black oil (low GOR; CO₂ <1.5%, no H₂S)",
+    "fluid": "black oil (low GOR; CO₂ \u003c1.5%, no H₂S)",
     "api": null,
     "source_note": "OTC-24162/24163 + JPT: initial reservoir pressure ~19,500 psi, BHT ~256–260F, reservoir mid-point ~25,600 ft TVD."
   },
@@ -712,7 +712,10 @@ if (FIELD.architecture) {
   const A = FIELD.architecture;
   let body;
   if (A.svg) {
-    body = `<h3 style="margin:0 0 6px;font-size:15px">Architecture &mdash; ${A.caption || ""}</h3>`
+    const caption = (A.caption || "").replace(/[&<>]/g, c => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;"
+    }[c]));
+    body = `<h3 style="margin:0 0 6px;font-size:15px">Architecture &mdash; ${caption}</h3>`
       + `<div style="overflow:auto;max-width:100%">${A.svg}</div>`;
   } else {
     const iss = `https://github.com/vamseeachanta/worldenergydata/issues/${A.pending_issue}`;
