@@ -7,10 +7,8 @@ to establish baselines and detect performance regressions.
 
 import os
 import sys
-import time
 import tracemalloc
 from pathlib import Path
-from typing import Any
 
 import numpy as np
 import numpy_financial as npf
@@ -112,8 +110,11 @@ class TestCriticalOperationsPerformance:
         result = benchmark(calculate_npv)
         assert "npv" in result
 
-        # Performance threshold
-        assert benchmark.stats["mean"] < 0.25  # Should calculate in < 250ms on CI
+        # Issue #560 (2026), description: the existing 0.25 s local budget
+        # flakes on shared CI. Keep collecting timings and checking results
+        # there; a nonempty CI variable disables only this wall-clock gate.
+        if not os.environ.get("CI"):
+            assert benchmark.stats["mean"] < 0.25
 
     def test_large_dataset_aggregation_performance(self, benchmark, large_dataset):
         """Test performance with large datasets (1M rows)."""
@@ -183,6 +184,73 @@ class TestCriticalOperationsPerformance:
         assert benchmark.stats["mean"] < 0.5  # Should calculate in < 500ms
 
 
+@pytest.mark.parametrize("ci", [None, "", "true"])
+@pytest.mark.parametrize("mean", [0.125, 0.25, 0.51])
+def test_financial_benchmark_budget(monkeypatch, ci, mean):
+    """Keep calculation coverage in CI and enforce the local budget.
+
+    Timing inputs: issue #560 documents the existing 0.25 s budget and a
+    0.51 s CI observation; 0.125 s is half that budget (a passing case).
+    An unset or empty CI variable means local execution.
+
+    Independent hand calculation with synthetic inputs: periods [1, 2],
+    revenue [0, 150], opex [0, 18], capex [120, 0] give cash flows [-120, 132].
+    The benchmark's assumed annual rate 0.10 divided by 12 gives 1/120 monthly.
+    NPV = -120*(120/121) + 132*(120/121)**2 = 158400/14641.
+    IRR solves -120 + 132/(1+r) = 0, so r = 132/120 - 1 = 0.10.
+    Totals are revenue 150, opex 18 and capex 120; no reference calculation
+    calls the implementation under test. Floating comparisons use pytest's
+    default approximation tolerance.
+
+    Equation source: numpy-financial v1.0.0 (2019), npv and irr Notes:
+    https://github.com/numpy/numpy-financial/blob/v1.0.0/numpy_financial/_financial.py
+    Budget source: repository issue #560 (2026), description.
+    """
+    if ci is None:
+        monkeypatch.delenv("CI", raising=False)
+    else:
+        monkeypatch.setenv("CI", ci)
+
+    data = pd.DataFrame(
+        {
+            "period": [1, 2],
+            "revenue": [0, 150],
+            "opex": [0, 18],
+            "capex": [120, 0],
+        }
+    )
+    original = data.copy(deep=True)
+
+    class RecordedBenchmark:
+        """Run the calculation once with a deterministic timing observation."""
+
+        def __init__(self):
+            self.stats = {"mean": mean}
+            self.result = None
+
+        def __call__(self, calculation):
+            self.result = calculation()
+            return self.result
+
+    benchmark = RecordedBenchmark()
+    run = TestCriticalOperationsPerformance().test_financial_calculation_performance
+    # Source: issue #560's existing local budget; equality remains a failure.
+    if not ci and mean >= 0.25:
+        with pytest.raises(AssertionError):
+            run(benchmark, data)
+    else:
+        run(benchmark, data)
+
+    assert benchmark.result == {
+        "npv": pytest.approx(158400 / 14641),
+        "irr": pytest.approx(0.10),
+        "total_revenue": 150,
+        "total_opex": 18,
+        "total_capex": 120,
+    }
+    pd.testing.assert_frame_equal(data, original)
+
+
 class TestMemoryPerformance:
     """Test memory usage for critical operations."""
 
@@ -194,9 +262,9 @@ class TestMemoryPerformance:
         tracemalloc.start()
 
         # Load data
-        df = pd.read_csv(csv_path)
+        _df = pd.read_csv(csv_path)
 
-        current, peak = tracemalloc.get_traced_memory()
+        _current, peak = tracemalloc.get_traced_memory()
         tracemalloc.stop()
 
         # Convert to MB
@@ -211,7 +279,7 @@ class TestMemoryPerformance:
 
         # Perform memory-intensive operations
         df_copy = large_dataset.copy()
-        grouped = df_copy.groupby("category").agg(
+        _grouped = df_copy.groupby("category").agg(
             {
                 "value1": ["mean", "std"],
                 "value2": ["mean", "std"],
@@ -219,7 +287,7 @@ class TestMemoryPerformance:
             }
         )
 
-        current, peak = tracemalloc.get_traced_memory()
+        _current, peak = tracemalloc.get_traced_memory()
         tracemalloc.stop()
 
         # Convert to MB
