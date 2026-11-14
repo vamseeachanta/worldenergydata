@@ -486,3 +486,65 @@ def test_verified_eor_archive_supplies_the_subsea_flag(tmp_path):
     assert (
         shares.loc[deep & shares.event.eq("well work"), "subsea_flag_yes"].item() == 1
     )
+
+
+def publish(data, out):
+    """Run every C6a data step on one snapshot, then the delivered verifier."""
+    import count_interventions
+    import verify_outputs
+    import well_life_cycle
+
+    count_interventions.run(data, out)
+    well_life_cycle.run(data, out)
+    basis = yaml.safe_load((EXAMPLE / "cost_basis.yml").read_text(encoding="utf-8"))
+    estimate(basis).to_csv(out / "cost_table.csv", index=False, lineterminator="\n")
+    verify_outputs.verify(out)
+    return json.loads((out / "verification.json").read_text(encoding="utf-8"))
+
+
+@pytest.mark.parametrize("war", ["omitted", "failed"])
+def test_reused_output_folder_drops_stale_war_statistics(tmp_path, war):
+    import verify_outputs
+
+    from tests.unit.bsee import interventions_archives as fixture
+
+    out = tmp_path / "output"
+    publish(fixture.build(tmp_path / "2026-11-13", war="downloaded"), out)
+    stale = (out / "war_duration_crosscheck.csv").read_bytes()
+    # A later snapshot in the same folder whose WAR receipt is missing or
+    # failed: the earlier WAR table must not survive or be verified afresh.
+    receipt = publish(fixture.build(tmp_path / "2026-11-14", war=war), out)
+    assert not (out / "war_duration_crosscheck.csv").exists()
+    assert "war_duration_crosscheck.csv" not in receipt["files"]
+    assert "war_rows" not in summary_of(out)
+    # A WAR table without a WAR read in this summary is not verified either.
+    (out / "war_duration_crosscheck.csv").write_bytes(stale)
+    with pytest.raises(AssertionError, match="WAR"):
+        verify_outputs.verify(out)
+
+
+def test_year_end_snapshot_adds_no_unobserved_year(tmp_path):
+    from tests.unit.bsee import interventions_archives as fixture
+
+    # File date 31 December 2026: 2026 is the last full year and no part of
+    # 2027 has been observed.
+    data = fixture.build(tmp_path / "2026-12-31", page_updated="12/31/2026 4:31:20 AM")
+    out = tmp_path / "output"
+    receipt = publish(data, out)
+    summary = summary_of(out)
+    assert summary["last_full_year"] == 2026
+    assert summary["partial_year"] is None
+    for name in [
+        "counts_by_year_band_group",
+        "standing_wells",
+        "standing_wells_year_end",
+        "rates",
+        "eor_by_year_band",
+        "intervention_weight_by_year",
+    ]:
+        table = pd.read_csv(out / f"{name}.csv")
+        assert table.year.max() == 2026, name
+    assert not pd.read_csv(out / "rates.csv").partial_year.any()
+    life = json.loads((out / "life_cycle_summary.json").read_text(encoding="utf-8"))
+    assert life["window"] == "2024-2026"
+    assert len(receipt["checks"]) >= 12
