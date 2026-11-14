@@ -148,6 +148,98 @@ def synthetic_v30(monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 class TestLocalSnapshot:
+    @pytest.mark.parametrize(
+        ("through", "expected_months", "expected_prices"),
+        [
+            ("2026-03-01", [], []),
+            ("2026-04-01", ["2026-04-01"], [10.0]),
+            ("2026-04-30", ["2026-04-01"], [10.0]),
+            ("2026-05-01", ["2026-04-01", "2026-05-01"], [10.0, 20.0]),
+        ],
+    )
+    def test_requested_month_caps_workbook(
+        self, monkeypatch, through, expected_months, expected_prices
+    ) -> None:
+        """Hand selection: April=10, May=20; retain only months <= target.
+
+        Synthetic USD/bbl inputs are test data, not engineering observations.
+        March precedes both rows; April includes one; May includes both.
+        """
+        workbook = pd.DataFrame(
+            {
+                "Month": pd.to_datetime(["2026-04-01", "2026-05-01"]),
+                "WTI_USD": [10.0, 20.0],
+            }
+        )
+        monkeypatch.setattr(wti_prices, "_load_v30", lambda: workbook)
+        result = wti_prices.load_extended_wti_prices(through)
+        assert result["Month"].tolist() == list(pd.to_datetime(expected_months))
+        assert result["WTI_USD"].tolist() == expected_prices
+        assert set(result["source"]) <= {"v30_xlsx"}
+        assert list(result.index) == list(range(len(expected_months)))
+        assert list(workbook.columns) == ["Month", "WTI_USD"]
+
+    @pytest.mark.parametrize(
+        "observation_source", [None, "local_snapshot", "eia_github", "fred_api"]
+    )
+    def test_flat_forward_uses_preceding_observation(
+        self, monkeypatch, caplog, observation_source
+    ) -> None:
+        """Hand calculation using FPP3 (2021), section 5.2, naive method.
+
+        Synthetic workbook: April=10, May=20, deliberately unsorted.
+        With no extension, June=July=August=20 (last observation, May).
+        With July=30 from each source, June=20 and August=30; July must
+        not be used to fill June. All inputs and expected USD/bbl are synthetic.
+        """
+        workbook = pd.DataFrame(
+            {
+                "Month": pd.to_datetime(["2026-05-01", "2026-04-01"]),
+                "WTI_USD": [20.0, 10.0],
+            }
+        )
+        monkeypatch.setattr(wti_prices, "_load_v30", lambda: workbook)
+        readers = {
+            "local_snapshot": "_load_local_snapshot_prices",
+            "eia_github": "_fetch_eia_github_prices",
+            "fred_api": "_fetch_fred_prices",
+        }
+        for source, reader in readers.items():
+            observed = None
+            if source == observation_source:
+                observed = pd.DataFrame(
+                    {
+                        "Month": pd.to_datetime(["2026-07-01"]),
+                        "WTI_USD": [30.0],
+                        "source": [source],
+                    }
+                )
+            monkeypatch.setattr(wti_prices, reader, lambda *args, data=observed: data)
+        with caplog.at_level(logging.WARNING):
+            result = wti_prices.load_extended_wti_prices("2026-08-01")
+        assert result["Month"].tolist() == list(
+            pd.date_range("2026-04-01", "2026-08-01", freq="MS")
+        )
+        assert result["WTI_USD"].tolist() == (
+            [10.0, 20.0, 20.0, 20.0, 20.0]
+            if observation_source is None
+            else [10.0, 20.0, 20.0, 30.0, 30.0]
+        )
+        assert result["source"].tolist() == (
+            [
+                "v30_xlsx",
+                "v30_xlsx",
+                "flat_forward",
+                observation_source or "flat_forward",
+                "flat_forward",
+            ]
+        )
+        assert "2026-05" in caplog.text
+        assert "v30_xlsx" in caplog.text
+        if observation_source:
+            assert "2026-07" in caplog.text
+            assert observation_source in caplog.text
+
     def test_committed_snapshot_coverage_and_overlap(self) -> None:
         snapshot = wti_prices.LOCAL_SNAPSHOT_PATH
         assert snapshot.is_file()
@@ -250,6 +342,12 @@ class TestLocalSnapshot:
     def test_partial_snapshot_keeps_local_values(
         self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path, synthetic_v30: None
     ) -> None:
+        """Synthetic hand calculation: last observation Sep=20 => Oct=20.
+
+        FPP3 (2021), section 5.2, naive method. The workbook price is
+        preserved; snapshot Aug=10 outranks mirror Aug=99; mirror Sep=20
+        becomes the October fallback basis. Values are synthetic USD/bbl.
+        """
         snapshot = tmp_path / "synthetic-wti.csv"
         snapshot.write_text("Date,Price\n2025-08-15,10\n")
         monkeypatch.setattr(wti_prices, "LOCAL_SNAPSHOT_PATH", snapshot)
@@ -262,7 +360,7 @@ class TestLocalSnapshot:
         )
         monkeypatch.setattr(wti_prices, "_fetch_eia_github_prices", lambda *a: fetched)
         result = wti_prices.load_extended_wti_prices("2025-10-01")
-        assert list(result["WTI_USD"]) == [68.39, 10.0, 20.0, 68.39]
+        assert list(result["WTI_USD"]) == [68.39, 10.0, 20.0, 20.0]
         assert list(result["source"])[1:] == [
             "local_snapshot",
             "eia_github",

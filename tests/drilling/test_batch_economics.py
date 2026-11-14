@@ -4,6 +4,8 @@
 """Unit tests for worldenergydata.drilling.batch_economics (WRK-219)."""
 
 import math
+import sys
+from decimal import Decimal
 
 import pandas as pd
 import pytest
@@ -100,16 +102,19 @@ class TestMobilizationSavings:
         mob = 20_000_000.0
         standalone = self.calc.mobilization_savings(mob, n_wells_batch=1)
         batch_2 = self.calc.mobilization_savings(mob, n_wells_batch=2)
-        assert math.isclose(
-            batch_2, standalone / 2.0, rel_tol=1e-9
-        ), f"Expected {standalone/2.0}, got {batch_2}"
+        assert standalone == 20_000_000.0
+        assert batch_2 == 10_000_000.0
 
     def test_mobilization_savings_4_wells(self):
         """Per-well mob cost in a 4-well batch should be a quarter of standalone."""
         mob = 20_000_000.0
-        standalone = self.calc.mobilization_savings(mob, n_wells_batch=1)
         batch_4 = self.calc.mobilization_savings(mob, n_wells_batch=4)
-        assert math.isclose(batch_4, standalone / 4.0, rel_tol=1e-9)
+        assert batch_4 == 5_000_000.0
+
+    @pytest.mark.parametrize("standalone_count", [0, 1, 3, 99])
+    def test_legacy_standalone_count_is_ignored(self, standalone_count):
+        """Compatibility: the result is allocated cost, not a savings difference."""
+        assert self.calc.mobilization_savings(1200.0, 3, standalone_count) == 400.0
 
     def test_mobilization_savings_decreasing_with_more_wells(self):
         """Per-well cost must monotonically decrease as batch size grows."""
@@ -130,42 +135,79 @@ class TestBreakEven:
     def setup_method(self):
         self.calc = BatchDrillingEconomics()
 
-    def test_break_even_at_1_is_no_savings(self):
-        """Break-even of 1 well means batch = standalone (no additional benefit)."""
-        n = self.calc.break_even_n_wells(
-            mob_cost=20_000_000.0,
-            day_rate=350_000.0,
-            base_well_days=60.0,
-            lc_factor=1.0,  # No learning, so break-even is 1
-        )
-        # With no learning curve, there is no saving from batching — break-even is 1
-        assert n >= 1
+    def test_no_learning_saves_one_mobilization_at_two_wells(self):
+        """Hand calculation: M=100, R=10, T=20, LC=1 (synthetic inputs).
 
-    def test_break_even_increases_with_higher_mob_cost(self):
-        """Higher mobilization cost requires more wells to reach break-even."""
-        n_low = self.calc.break_even_n_wells(
-            mob_cost=5_000_000.0,
-            day_rate=350_000.0,
-            base_well_days=60.0,
-        )
-        n_high = self.calc.break_even_n_wells(
-            mob_cost=50_000_000.0,
-            day_rate=350_000.0,
-            base_well_days=60.0,
-        )
-        assert (
-            n_high >= n_low
-        ), f"Higher mob cost should need >= wells: got n_low={n_low}, n_high={n_high}"
+        Source: drilling/docs/agent-pack.md, revision 2 (2026), section 3.
+        At N=1: B=S=100+10*20=300. At N=2: B=100+10*40=500,
+        S=2*(100+10*20)=600. Strict savings first occur at two wells.
+        """
+        assert self.calc.break_even_n_wells(100.0, 10.0, 20.0, 1.0) == 2
 
-    def test_break_even_positive_integer(self):
-        """Break-even result must be a positive integer."""
-        n = self.calc.break_even_n_wells(
-            mob_cost=20_000_000.0,
-            day_rate=350_000.0,
-            base_well_days=60.0,
+    @pytest.mark.parametrize("mobilization", [100.0, 1000.0])
+    def test_higher_mobilization_still_saves_at_two_wells(self, mobilization):
+        """Hand calculation with synthetic R=10, T=20, LC=0.5.
+
+        Source: drilling/docs/agent-pack.md, revision 2 (2026), section 3.
+        At N=1 both costs are M+200. At N=2, T_2=10, B=M+300,
+        S=2*M+400, so savings=M+100: 200 for M=100, 1100 for M=1000.
+        Both cases first save at two wells; greater M increases the saving.
+        """
+        campaign = _make_campaign(n_wells=2, lc_factor=0.5).model_copy(
+            update={"mobilization_cost_usd": mobilization, "rig_day_rate_usd": 10.0}
         )
+        batch = self.calc.campaign_total_cost(campaign, base_days_per_well=20.0)
+        expected = {100.0: 400.0, 1000.0: 1300.0}
+        assert batch == pytest.approx(expected[mobilization], abs=0.01, rel=0)
+        assert self.calc.break_even_n_wells(mobilization, 10.0, 20.0, 0.5) == 2
+
+    def test_learning_alone_saves_at_two_wells(self):
+        """Hand calculation: M=0, R=10, T=20, LC=0.5 (synthetic inputs).
+
+        Source: drilling/docs/agent-pack.md, revision 2 (2026), section 3.
+        At N=1: B=S=200. At N=2: B=10*(20+10)=300, S=2*200=400.
+        The exact integer threshold is two wells even without mobilization.
+        """
+        n = self.calc.break_even_n_wells(0.0, 10.0, 20.0, 0.5)
         assert isinstance(n, int)
-        assert n >= 1
+        assert n == 2
+
+    @pytest.mark.parametrize("n_wells", [1, 2, 200])
+    def test_legacy_no_savings_sentinel_is_not_break_even(self, n_wells):
+        """Zero mobilization and no learning tie; 1 means no strict saving.
+
+        Synthetic depths give 20000/400 + 5000/2000 + 10 = 62.5 days.
+        Each well costs 350000 * 62.5 = 21875000 USD in either scenario.
+        """
+        campaign = _make_campaign(n_wells, lc_factor=1.0).model_copy(
+            update={"mobilization_cost_usd": 0.0}
+        )
+        result = self.calc.batch_vs_standalone_npv(campaign)
+        assert result == {
+            "batch_npv": n_wells * 21_875_000.0,
+            "standalone_npv": n_wells * 21_875_000.0,
+            "batch_savings": 0.0,
+        }
+        assert self.calc.break_even_n_wells(0.0, 350_000.0, 62.5, 1.0) == 1
+
+    def test_fractional_duration_can_report_false_savings(self):
+        """Synthetic zero-mobilization, no-learning costs tie in decimal arithmetic.
+
+        At 21 wells, 350000 * (21 * 62.6) = 460110000 USD in both cases.
+        CPython summation before 3.12 yields a spurious threshold of 21;
+        the changed sum in CPython 3.12 yields the no-savings sentinel here.
+        The output pin applies to CPython only; decimal equality is universal.
+        These are compatibility observations, not economic break-even.
+        """
+        rate = Decimal("350000")
+        duration = Decimal("62.6")
+        batch = rate * sum(duration for _ in range(21))
+        standalone = 21 * (rate * duration)
+        assert batch == standalone == Decimal("460110000")
+
+        if sys.implementation.name == "cpython":
+            expected = 21 if sys.version_info < (3, 12) else 1
+            assert self.calc.break_even_n_wells(0.0, 350_000.0, 62.6, 1.0) == expected
 
 
 # ---------------------------------------------------------------------------
@@ -178,40 +220,72 @@ class TestBatchVsStandaloneNPV:
         self.calc = BatchDrillingEconomics()
 
     def test_batch_npv_lower_than_standalone(self):
-        """Batch campaign total cost should be less than sum of standalone costs
-        when N wells > break-even (learning curve + mob sharing produce savings)."""
+        """Synthetic 62.5-day base, LC=0.85; independent USD totals to cents.
+
+        The summed per-position drilling cost plus one 20M mobilization
+        is compared with five full 41.875M wells.
+        """
         campaign = _make_campaign(n_wells=5, lc_factor=0.85)
         result = self.calc.batch_vs_standalone_npv(campaign, discount_rate=0.10)
-        assert result["batch_npv"] < result["standalone_npv"], (
-            f"Expected batch_npv < standalone_npv: "
-            f"batch={result['batch_npv']:.0f} standalone={result['standalone_npv']:.0f}"
+        assert result == pytest.approx(
+            {
+                "batch_npv": 108_180_004.02,
+                "standalone_npv": 209_375_000.0,
+                "batch_savings": 101_194_995.98,
+            },
+            abs=0.01,
+            rel=0,
         )
 
     def test_batch_savings_positive_for_multi_well(self):
-        """batch_savings must be positive for a multi-well campaign."""
+        """Four synthetic wells use a 62.5-day base and LC=0.85; totals to cents."""
         campaign = _make_campaign(n_wells=4, lc_factor=0.85)
         result = self.calc.batch_vs_standalone_npv(campaign, discount_rate=0.10)
-        assert (
-            result["batch_savings"] > 0.0
-        ), f"Expected positive savings, got {result['batch_savings']}"
-
-    def test_single_well_no_mob_savings(self):
-        """Single-well campaign: batch NPV should equal standalone (no mob savings)."""
-        campaign = _make_campaign(n_wells=1)
-        result = self.calc.batch_vs_standalone_npv(campaign, discount_rate=0.10)
-        assert math.isclose(
-            result["batch_npv"], result["standalone_npv"], rel_tol=1e-6
-        ), (
-            f"Single well: batch={result['batch_npv']:.2f} "
-            f"standalone={result['standalone_npv']:.2f}"
+        assert result == pytest.approx(
+            {
+                "batch_npv": 93_180_949.55,
+                "standalone_npv": 167_500_000.0,
+                "batch_savings": 74_319_050.45,
+            },
+            abs=0.01,
+            rel=0,
         )
 
+    def test_single_well_no_mob_savings(self):
+        """One well costs 20M + 350000 * 62.5 = 41.875M USD in both cases."""
+        campaign = _make_campaign(n_wells=1)
+        result = self.calc.batch_vs_standalone_npv(campaign, discount_rate=0.10)
+        assert result == {
+            "batch_npv": 41_875_000.0,
+            "standalone_npv": 41_875_000.0,
+            "batch_savings": 0.0,
+        }
+
     def test_result_has_required_keys(self):
-        """Result dict must contain batch_npv, standalone_npv, batch_savings."""
-        campaign = _make_campaign(n_wells=3)
+        """Legacy keys/default rate retain undiscounted costs with no learning."""
+        campaign = _make_campaign(n_wells=3, lc_factor=1.0)
         result = self.calc.batch_vs_standalone_npv(campaign)
-        for key in ("batch_npv", "standalone_npv", "batch_savings"):
-            assert key in result, f"Missing key: {key}"
+        assert result == {
+            "batch_npv": 85_625_000.0,
+            "standalone_npv": 125_625_000.0,
+            "batch_savings": 40_000_000.0,
+        }
+
+    @pytest.mark.parametrize("discount_rate", [0.0, 0.10, 0.75])
+    def test_legacy_discount_rate_is_ignored(self, discount_rate):
+        """Compatibility: 62.5 + 31.25 days, one mobilization, no discounting."""
+        campaign = _make_campaign(n_wells=2, lc_factor=0.5)
+        result = self.calc.batch_vs_standalone_npv(campaign, discount_rate)
+        assert result == pytest.approx(
+            {
+                "batch_npv": 52_812_500.0,
+                "standalone_npv": 83_750_000.0,
+                "batch_savings": 30_937_500.0,
+            },
+            abs=0.01,
+            rel=0,
+        )
+        assert self.calc.campaign_total_cost(campaign, 62.5) == result["batch_npv"]
 
 
 # ---------------------------------------------------------------------------
@@ -223,12 +297,27 @@ class TestCampaignTotalCost:
     def setup_method(self):
         self.calc = BatchDrillingEconomics()
 
+    @pytest.mark.parametrize(
+        "n_wells,expected", [(4, 93_180_949.55), (5, 108_180_004.02)]
+    )
+    def test_campaign_total_cost_with_original_learning_factor(self, n_wells, expected):
+        """LC=0.85: 20M + 350000 * 62.5 * sum(i**(log(0.85)/log(2))).
+
+        Sum positions 1 through N; independent decimal totals rounded to cents.
+        These are the four- and five-well hand totals used by the NPV checks.
+        """
+        campaign = _make_campaign(n_wells=n_wells, lc_factor=0.85)
+        total = self.calc.campaign_total_cost(campaign, base_days_per_well=62.5)
+        assert total == pytest.approx(expected, abs=0.01, rel=0)
+
     def test_campaign_total_cost_decreases_with_more_wells(self):
         """Average per-well cost should decrease as campaign grows (learning curve)."""
         costs = []
-        for n in [2, 4, 6]:
-            campaign = _make_campaign(n_wells=n, lc_factor=0.85)
+        # LC=0.5 gives per-position days 60, 30, 20, 15, 12, 10.
+        for n, expected in [(2, 51_500_000), (4, 63_750_000), (6, 71_450_000)]:
+            campaign = _make_campaign(n_wells=n, lc_factor=0.5)
             total = self.calc.campaign_total_cost(campaign, base_days_per_well=60.0)
+            assert total == pytest.approx(expected, abs=0.01, rel=0)
             costs.append(total / n)  # average per-well cost
 
         for i in range(len(costs) - 1):
@@ -238,19 +327,19 @@ class TestCampaignTotalCost:
             )
 
     def test_campaign_total_cost_positive(self):
-        """Total campaign cost must always be positive."""
-        campaign = _make_campaign(n_wells=3)
+        """Three 60-day wells plus one mobilization cost 83M USD, LC=1."""
+        campaign = _make_campaign(n_wells=3, lc_factor=1.0)
         total = self.calc.campaign_total_cost(campaign, base_days_per_well=60.0)
-        assert total > 0.0
+        assert total == 83_000_000.0
 
     def test_campaign_total_cost_includes_mobilization(self):
-        """Total cost without mob savings should exceed day-rate-only cost."""
-        campaign = _make_campaign(n_wells=3)
+        """With no learning, 83M total minus 63M drilling is exactly 20M mob."""
+        campaign = _make_campaign(n_wells=3, lc_factor=1.0)
         total = self.calc.campaign_total_cost(campaign, base_days_per_well=60.0)
-        min_day_rate_cost = campaign.rig_day_rate_usd * 60.0 * 3
-        assert (
-            total > min_day_rate_cost
-        ), "Total cost should include mobilization on top of day-rate cost"
+        zero_mob = campaign.model_copy(update={"mobilization_cost_usd": 0.0})
+        drilling_only = self.calc.campaign_total_cost(zero_mob, base_days_per_well=60.0)
+        assert drilling_only == 63_000_000.0
+        assert total - drilling_only == 20_000_000.0
 
 
 # ---------------------------------------------------------------------------

@@ -12,6 +12,7 @@ from pathlib import Path
 import pandas as pd
 
 from worldenergydata.common.data_resolver import get_module_data_safe
+from worldenergydata.eia.client import EIAKeyError
 from worldenergydata.eia.ingestion import EIAIngestionSync
 from worldenergydata.scheduler.jobs.base import (
     AbstractJob,
@@ -83,6 +84,8 @@ class EiaUsRefreshJob(AbstractJob):
                 status="failure",
                 records_updated=0,
                 error_msg=str(exc),
+                # EIAFeedClient.__init__ defines the missing-credential contract.
+                retryable=not isinstance(exc, EIAKeyError),
             )
 
     def _write_parquet_snapshots(self, output_dir: Path) -> None:

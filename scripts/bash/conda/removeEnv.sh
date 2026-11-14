@@ -7,7 +7,7 @@
 # 3. miniconda 
 
 # hardcoded. fix this soon. 
-proj_home="/c/Users/sivak/Desktop/siva/personal/2024-odd-projects/assetutilities"
+proj_home="$HOME/Desktop/client-a/personal/2024-odd-projects/assetutilities"
 env_file_path="${proj_home}/dev_tools"
 env_file=${env_file_path}"/environment.yml"
 
@@ -19,7 +19,7 @@ if conda info --envs | grep -q "$env_name"; then
     conda deactivate
     conda env remove -n "$env_name"
     conda clean --all
-    echo "Siva - Environment '$env_name' has been removed."
+    echo "Environment '$env_name' has been removed."
 else
-    echo "Siva - Environment '$env_name' does not exist."
+    echo "Environment '$env_name' does not exist."
 fi

@@ -47,6 +47,7 @@ if str(_SCRIPTS) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS))
 import site_nav  # noqa: E402  (nav-spine helper, issue #850)
 
+from worldenergydata.field_development.data_availability import require_available_source  # noqa: E402
 from worldenergydata.field_development.enums import ConceptType  # noqa: E402
 from worldenergydata.field_development.recommendation import _DRY_TREE  # noqa: E402
 
@@ -221,6 +222,7 @@ REGION_ORDER = [
 
 
 def build_table() -> pd.DataFrame:
+    require_available_source(CURATED / "production_facilities.csv")
     pf = pd.read_csv(CURATED / "production_facilities.csv")
     rows = []
     unmapped_countries = set()
@@ -738,13 +740,13 @@ def main() -> None:
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     df = build_table()
     out_csv = OUT_DIR / "region_devtype_matrix.csv"
-    df.to_csv(out_csv, index=False)
-    print("wrote", out_csv, "rows", len(df))
+    df.to_csv(out_csv, index=False, encoding="utf-8", lineterminator="\n")
+    print("wrote", out_csv.relative_to(PROJECT_ROOT).as_posix(), "rows", len(df))
     stats = compute_stats(df)
     html = site_nav.inject_for(render_html(stats), "devtype")
     out_html = OUT_DIR / "region_devtype_comparison.html"
-    out_html.write_text(html, encoding="utf-8")
-    print("wrote", out_html, "bytes", len(html))
+    out_html.write_text(html, encoding="utf-8", newline="\n")
+    print("wrote", out_html.relative_to(PROJECT_ROOT).as_posix(), "bytes", len(html))
 
 
 if __name__ == "__main__":

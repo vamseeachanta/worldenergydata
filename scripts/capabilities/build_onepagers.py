@@ -47,6 +47,15 @@ _LOGO = """<svg viewBox="0 0 400 64" xmlns="http://www.w3.org/2000/svg" aria-lab
 # Editorial revision; independent of the print date.
 REVISION_DATE = "2026-10-13"
 
+_WITHHELD_CARDS = frozenset({
+    "sec-playbook", "fd-showcase", "fd-playbook", "fd-portfolio", "fd-bsee-matched",
+})
+_WITHHELD_NOTICE = """<!doctype html>
+<html lang="en"><meta charset="utf-8"><title>Data unavailable</title>
+<main><h1>Data unavailable</h1><p>The data set is held privately pending redistribution-terms review.</p>
+<p>The public report is withheld with its source data.</p>
+<p><a href="https://www.data.bsee.gov/">Independent BSEE public records</a></p></main></html>"""
+
 # id, kind, title, source and data basis, live path, deliverable, figures, bullets.
 SPECS: list[dict] = [{'id': 'sec-economics',
   'kind': 'section',
@@ -484,6 +493,8 @@ _TEMPLATE = """<!doctype html><html lang="en"><head><meta charset="utf-8">
 def _render_html(spec: dict, brand_css: str = "") -> str:
     _validate_spec(spec)
     _validate_brand(brand_css)
+    if spec["id"] in _WITHHELD_CARDS:
+        return _WITHHELD_NOTICE
     figs = ""
     if spec["figures"]:
         cells = "".join(
@@ -596,7 +607,7 @@ def build_onepager(
     text = _render_html(spec, brand_css)
     out_dir.mkdir(parents=True, exist_ok=True)
     source = out_dir / f"{spec['id']}.html"
-    source.write_text(text + "\n", encoding="utf-8")
+    source.write_text(text + "\n", encoding="utf-8", newline="\n")
     return source
 
 
@@ -625,7 +636,7 @@ def main(argv: list[str] | None = None) -> None:
     for spec in SPECS:
         build_onepager(spec, _OUT, brand_css=brand_css)
     print(
-        f"Wrote {len(SPECS)} capability HTML cards into {_OUT.relative_to(_REPO)}/"
+        f"Wrote {len(SPECS)} capability HTML cards into {_OUT.relative_to(_REPO).as_posix()}/"
     )
 
 

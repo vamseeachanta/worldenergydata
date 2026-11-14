@@ -34,7 +34,10 @@ def run_ukcs_reference_chain(
     end: Optional[str] = None,
     oil_price_usd_bbl: float = 75.0,
 ) -> Dict[str, Any]:
-    """Run the #717 one-field UKCS chain slice."""
+    """Run the UKCS chain with a flat assumed Brent price in USD/BBL.
+
+    oil_price_usd_bbl is a scenario input, not a fetched benchmark quote.
+    """
     unified = adapter.fetch(
         ProductionQuery(
             regions=["ukcs"],
@@ -65,6 +68,7 @@ def run_ukcs_reference_chain(
         {"drilling_monthly": {}},
         price_deck,
         first_oil,
+        oil_prices_by_marker={"brent": price_deck},
     )
 
     return {

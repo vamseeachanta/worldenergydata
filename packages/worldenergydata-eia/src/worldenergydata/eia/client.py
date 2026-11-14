@@ -128,6 +128,7 @@ class EIAFeedClient:
         """Execute a paginated GET against an EIA v2 data endpoint.
 
         Fetches all pages using offset/length pagination, merging results.
+        Weekly feed rows are ordered by (period, series) to break period ties.
 
         Args:
             path: Endpoint path (no leading/trailing slash needed).
@@ -146,6 +147,11 @@ class EIAFeedClient:
             "data[]": "value",
             "sort[0][column]": "period",
             "sort[0][direction]": "asc",
+            # EIA APIv2 docs, "Sort Results" (accessed 2026-10-19):
+            # https://www.eia.gov/opendata/documentation.php#SortResults
+            # Sort precedence is zero-based; series breaks weekly period ties.
+            "sort[1][column]": "series",
+            "sort[1][direction]": "asc",
             "length": DEFAULT_PAGE_SIZE,
             "offset": 0,
         }
@@ -176,8 +182,10 @@ class EIAFeedClient:
             page_records = self.parse_response(raw)
             all_records.extend(page_records)
 
-            total = raw.get("response", {}).get("total", 0)
-            offset += DEFAULT_PAGE_SIZE
+            # Same EIA documentation, length/offset section: total can be a
+            # decimal string, and offset counts rows skipped, not page sizes.
+            total = int(raw.get("response", {}).get("total", 0))
+            offset += len(page_records)
             if offset >= total or not page_records:
                 break
 

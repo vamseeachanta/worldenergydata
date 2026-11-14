@@ -10,6 +10,10 @@ per-source refresh jobs import the source-domain members
 member depends on each of them — but no carved domain imports the scheduler
 back, so there is no dependency cycle.
 
+Scheduled jobs share output-directory resolution and retain timestamped copies
+after successful refreshes. See the [output directory guide](../../docs/guides/scheduler-output-directories.md)
+for configuration precedence, retention limits and a runnable synthetic example.
+
 Importable transparently as `worldenergydata.scheduler` once the workspace is
 installed (`uv sync --all-extras`).
 
@@ -27,3 +31,11 @@ For operator runs that should persist outside the checkout, set:
 output_dir: /mnt/ace/worldenergydata/data/spain/cores
 refresh_fixture: false
 ```
+
+## LNG refresh readiness
+
+`lng_terminals_refresh` remains disabled until upstream collection is implemented.
+Direct or accidentally enabled execution returns a non-retryable failure with a
+corrective message and preserves existing success evidence. See the
+[LNG readiness guide](../../docs/data/lng-scheduler-readiness.md) for the input
+settings, expected results, worked example and requirements before enabling it.
