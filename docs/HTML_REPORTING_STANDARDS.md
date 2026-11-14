@@ -232,7 +232,7 @@ d3.csv('../data/processed/results.csv').then(data => {
 
 ### 1. **Relative Path Convention**
 
-**Always use relative paths from the report location:**
+**Use relative paths; this example assumes the report's directory is the working directory:**
 
 ```python
 # ✅ CORRECT: Relative path from report
@@ -245,46 +245,21 @@ df = pd.read_csv('/mnt/github/workspace-hub/repo/data/results.csv')
 df = pd.read_csv('C:/Users/user/data/results.csv')
 ```
 
-### 2. **Path Resolution Utility**
+### 2. **Repository-Relative CSV Paths**
 
-**Create reusable path resolver:**
+**Self-contained example, run from the repository root:**
+
+The illustrative `analysis.csv` is a user-supplied input, not a bundled dataset.
+Supply that CSV at the relative location below before running the example.
 
 ```python
-<<<<<<< HEAD
-# src/worldenergydata/modules/reporting/utils/path_utils.py
-=======
-# src/reporting/path_utils.py
->>>>>>> origin/main
 from pathlib import Path
 
-def get_data_path(filename, data_type='processed'):
-    """
-    Get data file path relative to project root.
-
-    Args:
-        filename: CSV filename
-        data_type: 'raw', 'processed', or 'results'
-
-    Returns:
-        Path object to data file
-    """
-    # Get project root (assuming standard structure)
-<<<<<<< HEAD
-    project_root = Path(__file__).parent.parent.parent.parent.parent
-=======
-    project_root = Path(__file__).parent.parent.parent
->>>>>>> origin/main
-    return project_root / 'data' / data_type / filename
-
-# Usage in report generation
 import pandas as pd
-<<<<<<< HEAD
-from worldenergydata.reporting.utils.path_utils import get_data_path
-=======
-from reporting.path_utils import get_data_path
->>>>>>> origin/main
 
-df = pd.read_csv(get_data_path('analysis.csv'))
+repo_root = Path.cwd()
+csv_path = repo_root / "data" / "processed" / "analysis.csv"
+df = pd.read_csv(csv_path)
 ```
 
 ### 3. **CSV File Standards**
@@ -747,37 +722,10 @@ reports/*.html
 
 ### 4. **Automated Generation**
 
-**Add to CI/CD pipeline:**
-
-```yaml
-# .github/workflows/generate-reports.yml
-name: Generate Reports
-
-on:
-  push:
-    paths:
-      - 'data/processed/**'
-
-jobs:
-  generate:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-      - run: |
-          pip install plotly pandas
-<<<<<<< HEAD
-          python src/worldenergydata/modules/reporting/auto_report.py
-=======
-          python src/reporting/auto_report.py
->>>>>>> origin/main
-      - uses: actions/upload-artifact@v3
-        with:
-          name: reports
-          path: reports/*.html
-```
+Configure automation to invoke the module's report entry point after its input
+CSV files are updated. Adapt the existing [report template](../packages/worldenergydata-reporting/src/worldenergydata/reporting/templates/plotly_report_template.py)
+to that entry point and publish the resulting HTML reports as build artifacts.
+No generic report-generation executable is provided by this example.
 
 ## Validation Checklist
 
@@ -808,13 +756,9 @@ Before deploying any module, ensure:
 - **Statistical reports:** Use `altair-analysis-agent`
 
 ### Templates
-<<<<<<< HEAD
-- **Report templates:** `src/worldenergydata/modules/reporting/templates/`
-- **Example scripts:** `src/worldenergydata/modules/reporting/examples/`
-=======
-- **Report templates:** `modules/reporting/templates/`
-- **Example scripts:** `modules/reporting/examples/`
->>>>>>> origin/main
+
+- **Report template:** [Plotly report template](../packages/worldenergydata-reporting/src/worldenergydata/reporting/templates/plotly_report_template.py)
+- **Examples directory:** [Reporting examples](../packages/worldenergydata-reporting/src/worldenergydata/reporting/examples/) (currently empty except for `.gitkeep`).
 
 ---
 
