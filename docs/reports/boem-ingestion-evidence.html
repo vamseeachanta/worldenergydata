@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BOEM ingestion evidence review</title>
+<style>
+body { max-width: 72rem; margin: 2rem auto; padding: 0 1rem; font: 1rem/1.6 sans-serif; color: #182433; }
+table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+th, td { border: 1px solid #bcc8d4; padding: .5rem; text-align: left; vertical-align: top; }
+caption { caption-side: bottom; text-align: left; padding: .5rem 0; }
+pre { overflow-x: auto; padding: 1rem; background: #eef3f8; }
+code { overflow-wrap: anywhere; }
+</style>
+</head>
+<body>
+<main>
+<h1>BOEM ingestion evidence review</h1>
+<h2>Summary</h2>
+<p>The completion criterion in issue 124 is not established: BOEM lease, well API,
+and platform-permit ingestion must be observable through artifacts, catalog resolution,
+record counts and a sample query. The existing BSEE lease snapshot contains 20 leases;
+all 20 resolve through the canonical registry. Eight manifested artifacts match their
+recorded sizes and SHA-256 digests. Neither checked-in catalog indexes this snapshot.
+These findings support partial evidence, rather than closure of the original mission.</p>
+<h2>Revision history</h2>
+<table>
+<thead><tr><th>Revision</th><th>Date (UTC)</th><th>Change and reason</th></tr></thead>
+<tbody><tr><td>1</td><td>2026-11-12</td><td>Record existing ingestion evidence and unresolved criteria before any closure decision.</td></tr>
+<tr><td>2</td><td>2026-11-12</td><td>Clarify lessee-record terminology, shell setup and platform limits for the reported checks.</td></tr>
+<tr><td>3</td><td>2026-11-13</td><td>Distinguish current and terminated lessee assignments and identify the commit for the Windows results.</td></tr></tbody>
+<caption>Table 1. Report revision history.</caption>
+</table>
+<h2>Scope and evidence pin</h2>
+<p>The June 10 plan on issue 124 requires checking existing artifacts, catalog resolution
+and a sample query. This report records that check; it introduces no ingestion behavior.
+Repository evidence is pinned to commit
+<code>460694320ebbb36f33d18c4771dbbece1288e745</code>, equal to the local
+<code>origin/main</code> reference at inspection. Observations were made on
+2026-11-12 at 12:14 UTC. Local resolution describes this checkout at inspection;
+it does not establish availability in another installation or freshness at the source.</p>
+<h2>Artifact and count evidence</h2>
+<table>
+<thead><tr><th>Artifact</th><th>Observed records (count)</th><th>Criterion and result</th></tr></thead>
+<tbody>
+<tr><td><code>data/modules/bsee/leases/leases.json</code></td><td>20</td><td>Matches extract-manifest count; 20 of 20 registry lookups resolve.</td></tr>
+<tr><td><code>data/modules/bsee/leases/owners.json</code></td><td>729</td><td>Lessee-assignment rows: 57 current (C) and 672 terminated (T), distinct from the lease count.</td></tr>
+<tr><td><code>data/modules/bsee/leases/operators.json</code></td><td>727</td><td>Historical operator rows, distinct from the lease count.</td></tr>
+<tr><td><code>data/modules/bsee/leases/panel_values.json</code></td><td>20</td><td>One panel record per extracted lease.</td></tr>
+<tr><td><code>data/modules/bsee/leases/missing.json</code></td><td>0</td><td>No missing lease among the selected 20; this is not evidence of complete offshore coverage.</td></tr>
+<tr><td><code>data/modules/bsee/leases/registry.json</code></td><td>20</td><td>All selected leases have registry results.</td></tr>
+<tr><td><code>data/modules/bsee/current/wells/well_data.csv</code></td><td>57,281</td><td>CSV parsed with 19 columns, including API_WELL_NUMBER; row count matches both checked-in catalogs.</td></tr>
+</tbody>
+<caption>Table 2. Counts read from retained artifacts at the evidence pin.</caption>
+</table>
+<p>The eight files in <code>data/modules/bsee/leases/extract_manifest.json</code>
+are checked for both size and digest by
+<code>test_committed_extract_integrity_and_complete_inventory</code> in
+<code>tests/unit/bsee/data/test_lease_ingest.py</code>. The source-manifest digest
+also matches the extract manifest. Full raw archives are not present in this snapshot;
+the manifest's source-row counts are provenance claims, not counts recomputed here.</p>
+<p>The lease source manifest records BSEE retrieval on 2026-10-11. Its URLs use
+<code>www.data.bsee.gov</code>. Retrieval time is not a source update date.
+The well CSV is cataloged against BSEE's <code>APDRawData.zip</code>;
+its source update date and current-source equivalence are not established by this review.</p>
+<h2>Catalog resolution</h2>
+<table>
+<thead><tr><th>Surface</th><th>Observed result</th><th>Effect on the completion criterion</th></tr></thead>
+<tbody>
+<tr><td><code>data/catalog.yaml</code> and <code>data/catalog/data-catalog.yml</code></td><td>Zero entries for paths beneath <code>data/modules/bsee/leases/</code>.</td><td>The retained lease snapshot cannot be discovered through these catalog entries.</td></tr>
+<tr><td>Well CSV in both catalogs</td><td>The referenced file resolves; 57,281 CSV records are read.</td><td>Local BSEE well evidence exists; direct BOEM well ingestion is not established.</td></tr>
+<tr><td><code>data/catalog.yaml</code> binary-store roots</td><td><code>data/modules/bsee/bin/leaseowner</code>, <code>data/modules/bsee/bin/permstruc</code> and <code>data/modules/bsee/bin/platstruc</code> do not resolve in this checkout.</td><td>Catalog metadata alone does not establish lessee-record or platform-permit availability.</td></tr>
+<tr><td><code>data/catalog/data-catalog.yml</code> binary stores</td><td><code>data/modules/bsee/bin/leaseowner/mv_lease_owners_main.bin</code> and <code>data/modules/bsee/bin/permstruc/mv_perm_platforms.bin</code> do not resolve.</td><td>Native row counts and a platform-permit sample query cannot be verified here.</td></tr>
+<tr><td><code>data/catalog/source-registry.yml</code>, BOEM entry</td><td>Two datasets: <code>FieldReservesTables</code> and <code>FieldReservesMaster</code>.</td><td>Reserves registration does not satisfy lease, well or platform-permit ingestion.</td></tr>
+</tbody>
+<caption>Table 3. Local path checks and their limits.</caption>
+</table>
+<h2>Sample query and reproducible checks</h2>
+<p>The retained lease query selects <code>G16942</code>, returns status
+<code>PROD</code> and effective date <code>1996-09-01</code>, and resolves through
+<code>by_lease</code>. It checks a local BSEE snapshot, without a BOEM network request.</p>
+<pre><code>import json
+from pathlib import Path
+from worldenergydata.common.fields_registry import load_fields
+
+root = Path.cwd()
+rows = json.loads((root / "data/modules/bsee/leases/leases.json").read_text())
+row = next(item for item in rows if item["lease_num"] == "G16942")
+assert (row["status"], row["effective_date"]) == ("PROD", "1996-09-01")
+assert load_fields(root / "config/fields.yml").by_lease(row["lease_num"]) is not None
+</code></pre>
+<p>Run from the repository root in Bash on Linux, with <code>TMPDIR</code> set to an
+existing writable temporary directory. Set the root, core and BSEE source directories on
+<code>PYTHONPATH</code> as shown. The focused test environment supplies pytest, PyYAML,
+pydantic-settings, loguru and httpx; catalog tests additionally use pandas.</p>
+<pre><code>: "${TMPDIR:?Set TMPDIR to an existing writable temporary directory}"
+export PYTHONPATH="src:packages/worldenergydata-core/src:packages/worldenergydata-bsee/src"
+uv run --no-project --with pytest --with pyyaml --with pydantic-settings --with loguru --with httpx python -m pytest tests/unit/bsee/data/test_lease_ingest.py -q -rA -p no:cacheprovider --noconftest -o addopts='' --basetemp="$TMPDIR/lease-tests"
+uv run --no-project --with pytest --with pyyaml --with pandas python -m pytest tests/test_catalog.py -q -rA -p no:cacheprovider --noconftest -o addopts='' --basetemp="$TMPDIR/catalog-tests"
+</code></pre>
+<p>On Linux at the evidence pin, the lease suite passes 17 tests and the catalog suite passes
+27 tests. The catalog suite generates temporary catalogs; it does not certify every
+checked-in catalog path. Coverage-output defaults are replaced for these focused
+runs so generated test outputs remain outside the repository.</p>
+<p>A separate check on Windows with Python 3.12 at commit <code>81e70fd0</code>
+recorded 14 passed and 3 failed in the lease suite, and 27 passed in the catalog suite.
+The lease failures concern newline handling: the multiline CSV assertion and two
+panel HTML readback checks. The Linux counts do not establish Windows compatibility;
+the existing implementation and tests require follow-up under issue 124.</p>
+<h2>Known limits and way forward</h2>
+<ul>
+<li>Direct BOEM ingestion, complete offshore coverage and current-source freshness
+remain unverified. Existing BSEE results cannot substitute for these criteria without
+an explicit scope decision.</li>
+<li>The legacy downloader declares a BOEM lessee-record URL in
+<code>packages/worldenergydata-bsee/src/worldenergydata/bsee/paleowells/data_downloader.py</code>.
+A declared URL is not evidence of retained data, successful ingestion or catalog resolution.
+No downloader is executed by this review.</li>
+<li>Missing binary-store paths are observations of this checkout. They do not prove
+the datasets are unavailable elsewhere. No external data location is inspected.</li>
+<li>No package is modified. The silent-failure sweep has zero changed modules to inspect;
+existing ingestion defaults and error handling are not qualified by this report.</li>
+<li>Issue 124 should remain open pending a scoped follow-up: establish the intended
+BOEM sources and acceptance counts, restore or ingest missing platform-permit artifacts,
+and connect retained datasets to catalogs with a successful native sample query.
+No new pipeline or catalog rewrite is authorized by this verification-only plan.</li>
+</ul>
+</main>
+</body>
+</html>
