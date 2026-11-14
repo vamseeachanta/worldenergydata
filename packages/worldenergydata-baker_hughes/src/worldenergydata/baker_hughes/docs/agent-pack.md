@@ -6,7 +6,8 @@ detection for #1335, superseding the retained F7–F10/F13–F19 gaps in section
 10–12. Section 14 corrects context-dependent depth conversion and records
 current numeric regression evidence, supplementing section 12's numeric
 contract for F1–F6 and F11–F12. Section 11 retains the date completeness
-contract. Sections 1–10 remain historical evidence at the code revision below;
+contract. Section 15 adds count-token and integer-allocation resource budgets
+for #1859. Sections 1–10 remain historical evidence at the code revision below;
 source qualification remains unestablished.
 
 ## Revision history
@@ -18,14 +19,15 @@ source qualification remains unestablished.
 | 5 | 2026-11-04 | Removed caller-dependent rounding from depth conversion and added value-preservation tests after a remaining arithmetic gap was reproduced. |
 | 6 | 2026-11-04 | Added the representation-limit citation and exponent-bound derivation beside the guard; executable behavior and boundary tests are retained. |
 | 7 | 2026-11-04 | Define workbook schemas and expose missing metadata and unmatched filters so incomplete ingestion cannot imply complete reporting. |
+| 8 | 2026-11-13 | Bound count parsing and integer allocation while preserving exact in-budget counts; record synthetic resource-budget detection. |
 
 | Header | Value |
 | --- | --- |
 | Module | baker_hughes |
 | Repository | worldenergydata |
 | Path | packages/worldenergydata-baker_hughes/src/worldenergydata/baker_hughes |
-| Pack revision | 7 |
-| Pack date | 2026-11-04 |
+| Pack revision | 8 |
+| Pack date | 2026-11-13 |
 | Code revision (historical sections 1–10) | b1394197a66f95d78615425b4e1ad4ff78bd9de2 |
 | Analysis family | EC; data pipeline; AQG r0 Python calculations gate set |
 | Quality role | Calculations quality manager; deputy: to be appointed |
@@ -434,8 +436,8 @@ produce finite nonzero binary64 feet. These loose representation bounds are
 not physical depth limits. The existing overflow and underflow checks still
 reject boundary values that cannot produce a finite nonzero float. Signed zero
 is retained in both units. This guard limits compact extreme-exponent depth
-inputs; it does not establish general workbook or count resource budgets.
-Compact-exponent count allocation remains open under #1859.
+inputs; section 15 separately bounds count parsing and integer allocation.
+No whole-workbook resource budget is established.
 
 The guard comments cite the November 2005 *Numerical Computation Guide*,
 sections 2.1.1 (rounding) and 2.2.3 (double format), Tables 2-4 and 2-5,
@@ -488,3 +490,39 @@ Revision-5 arithmetic evidence (SHA-256 of `loader.py`):
 
 Revision-6 documentation evidence (SHA-256 of `loader.py`):
 `df6f6a7d6fe4f3d906bb4dcb4198507cac65631aa9ab2a60e9078e754bc5e33c`.
+
+## 15. Count parsing resource budget (issue #1859)
+
+Both loaders apply count-only software representation budgets before integer
+allocation. `_MAX_COUNT_TOKEN_CHARS` permits at most 4,096 stripped token
+characters, checked before Decimal parsing. `_MAX_COUNT_INTEGER_DIGITS` permits
+at most 4,096 expanded integer decimal digits: nonzero counts with
+`adjusted() + 1 > 4096` are rejected before integrality checking and `int`.
+Zero and signed zero bypass only the expanded-digit check; their tokens remain
+subject to the character budget. Resource errors identify `rig_count`, the row
+index and explicit rejection, without expanding or echoing the rejected value.
+
+These limits bound representation work; they do not define a physical rig-count
+maximum. Within the budgets, finite nonnegative whole counts remain exact,
+including scientific notation and `9007199254740993`. Counts above `2**64 - 1`
+retain Python integers in an object-dtype Series; ordinary counts retain pandas
+numeric dtype inference. Caller Decimal settings and flags are unchanged. The
+shared decimal-token parser and depth conversion are unchanged.
+
+| Detection test node | Criterion |
+| --- | --- |
+| `tests/unit/baker_hughes/test_count_resource_budget.py::test_rejects_expanded_count_before_integer_allocation` | Both real XLSX routes reject compact extreme exponents and 4,097 expanded digits before an allocation sentinel. |
+| `tests/unit/baker_hughes/test_count_resource_budget.py::test_public_loaders_preserve_counts_within_budgets` | Both routes preserve exact boundary values, long mantissas, scientific notation, stripped tokens and extreme-exponent zero. |
+| `tests/unit/baker_hughes/test_count_resource_budget.py::test_unsigned_storage_boundary_keeps_exact_values` | Values at and above the unsigned 64-bit storage boundary retain exact integers. |
+| `tests/unit/baker_hughes/test_count_resource_budget.py::test_overlong_token_is_rejected_before_decimal_parsing`; `tests/unit/baker_hughes/test_count_resource_budget.py::test_public_loaders_reject_overlong_count_token` | 4,097-character tokens, including zero, are rejected before Decimal parsing and through both XLSX routes. |
+| `tests/unit/baker_hughes/test_count_resource_budget.py::test_budget_boundaries_preserve_decimal_context_and_series_identity`; `tests/unit/baker_hughes/test_count_resource_budget.py::test_existing_invalid_count_diagnostics_are_retained`; `tests/unit/baker_hughes/test_count_resource_budget.py::test_count_token_limit_does_not_change_depth_parsing` | Context, Series identity, existing invalid-count diagnostics and shared depth parsing remain unchanged. |
+
+Table 15-1. Synthetic count resource-budget detection criteria.
+
+Whole-workbook size, worksheet cardinality and general depth-token resource
+budgets remain unestablished. Synthetic regressions do not qualify source
+workbooks; source revision, independent counts, physical depth units, datum and
+signed QA evidence remain UNVERIFIED under #1336.
+
+Revision-8 count-budget evidence (SHA-256 of `loader.py`):
+`58320c57e0450143e9cede309e27224214db365aac1277ef403b2f4cbe563dfd`.
