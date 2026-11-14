@@ -1,0 +1,11 @@
+group,status,wells,life_not_established,q25_years,median_years,q75_years,under_1_year
+all dated wells,permanently abandoned,30737,8,0.177960,10.981520,27.233402,10346
+all dated wells,standing,6775,0,25.240246,38.992471,49.489391,38
+development wells,permanently abandoned,16860,2,11.283368,22.982888,35.295688,1565
+development wells,standing,5570,0,28.635866,41.990418,50.605749,18
+exploration wells,permanently abandoned,13537,6,0.076660,0.205339,7.201916,8583
+exploration wells,standing,1160,0,12.623546,23.474333,32.670773,20
+development wells first drilled 2005-2025,permanently abandoned,484,2,4.776181,9.206023,13.282683,79
+development wells first drilled 2005-2025,standing,751,0,9.973990,14.428474,19.040383,0
+exploration wells first drilled 2005-2025,permanently abandoned,1127,4,0.136893,0.637919,7.270363,589
+exploration wells first drilled 2005-2025,standing,528,0,7.103354,12.225873,17.084189,3
