@@ -439,6 +439,11 @@ def report_summary(receipt):
         summary = (
             f"{len(written)} of {len(datasets)} datasets were written ({rows:,} rows)."
         )
+        unreadable = sum(
+            item["disposition"] == "unreadable" for item in datasets.values()
+        )
+        if unreadable:
+            summary += f" Unreadable datasets: {unreadable}."
     else:
         summary = "No dataset observations are available."
     if receipt["checks_failed"]:

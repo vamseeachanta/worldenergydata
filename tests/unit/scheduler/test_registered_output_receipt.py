@@ -419,12 +419,13 @@ def test_cli_refuses_existing_reports_before_execution(
 
 
 @pytest.mark.parametrize(
-    "written_rows,absent,checks_failed,expected",
+    "written_rows,absent,unreadable,checks_failed,expected",
     [
-        ([2, 3], 0, [], "2 of 2 datasets were written (5 rows)."),
+        ([2, 3], 0, 0, [], "2 of 2 datasets were written (5 rows)."),
         (
             [7091, 2006082, 57, 703],
             1,
+            0,
             ["full_native_success"],
             "4 of 5 datasets were written (2,013,933 rows). "
             "Failing criteria: full_native_success.",
@@ -432,11 +433,13 @@ def test_cli_refuses_existing_reports_before_execution(
         (
             [],
             5,
+            0,
             ["ElapsedTimeCap"],
             "0 of 5 datasets were written (0 rows). Failing criteria: ElapsedTimeCap.",
         ),
         (
             [],
+            0,
             0,
             ["import_origin"],
             "No dataset observations are available. Failing criteria: import_origin.",
@@ -444,13 +447,22 @@ def test_cli_refuses_existing_reports_before_execution(
         (
             [2],
             1,
+            0,
             ["<first>", "second"],
             "1 of 2 datasets were written (2 rows). Failing criteria: <first>, second.",
+        ),
+        (
+            [2],
+            1,
+            1,
+            ["full_native_success"],
+            "1 of 3 datasets were written (2 rows). Unreadable datasets: 1. "
+            "Failing criteria: full_native_success.",
         ),
     ],
 )
 def test_generated_report_summarizes_observed_result(
-    verifier, tmp_path, written_rows, absent, checks_failed, expected
+    verifier, tmp_path, written_rows, absent, unreadable, checks_failed, expected
 ):
     datasets = {
         f"written_{index}": {"disposition": "written", "rows": rows}
@@ -460,6 +472,12 @@ def test_generated_report_summarizes_observed_result(
         {
             f"absent_{index}": {"disposition": "absent", "rows": None}
             for index in range(absent)
+        }
+    )
+    datasets.update(
+        {
+            f"unreadable_{index}": {"disposition": "unreadable", "rows": None}
+            for index in range(unreadable)
         }
     )
     receipt = {
