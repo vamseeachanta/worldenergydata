@@ -1,0 +1,198 @@
+{
+  "version": 1,
+  "datasets": [
+    {
+      "name": "mv_boreholes_all",
+      "path": "data/modules/bsee/borehole/20261113.csv",
+      "format": "csv",
+      "columns": [
+        {
+          "name": "API_WELL_NUMBER",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "WELL_NAME",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "WELL_NAME_SUFFIX",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "BOTM_LEASE_NUMBER",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "BOTM_AREA_CODE",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "BOTM_BLOCK_NUMBER",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "COMPANY_NAME",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "WELL_SPUD_DATE",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "BH_TOTAL_MD",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "WELL_BORE_TVD",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "WELL_TD_SS",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "RKB_ELEVATION",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "WELL_BP_ST_KICKOFF_MD",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "TOTAL_DEPTH_DATE",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "BOREHOLE_STAT_DT",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "WELL_TYPE_CODE",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "BOREHOLE_STAT_CD",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "CASING_CUT_CODE",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "WATER_DEPTH",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "UNDWTR_COMP_STUB",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "SURF_LEASE_NUMBER",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "SURF_LATITUDE",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "SURF_LONGITUDE",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "BOTM_LATITUDE",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "BOTM_LONGITUDE",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "REGION_CODE",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        }
+      ],
+      "row_count": 57354,
+      "source_row_count": 57354,
+      "duplicate_rows": 0,
+      "size_bytes": 0,
+      "sha256": "bb58691785b8e570292a5d0b7c9aa78a68c7d4c93ed6a4a3eee8422b463f851f",
+      "last_modified": "2026-11-14T04:45:13.034870+00:00",
+      "ingested_at": "2026-11-14T04:45:13.034870+00:00",
+      "source_id": "bsee-data-center",
+      "source": "bin/borehole/BoreholeRawData.zip",
+      "source_member": "BoreholeRawData/mv_boreholes_all.txt",
+      "source_format": "zip",
+      "source_sha256": "dc9df8eae467fc19e69bacd212eff576b7ad9f9ffb8c74b3939036edf9dfa56d",
+      "source_modified_at": "2026-02-09T10:31:56+00:00",
+      "schema_status": "source_columns",
+      "encoding": "latin-1",
+      "data_status": "real",
+      "readiness_status": "partial",
+      "source_vintage": {
+        "state": "unknown",
+        "reason": "File modification time does not establish source vintage"
+      },
+      "deduplication": {
+        "method": "exact_full_row_same_schema",
+        "status": "no_comparable_schema",
+        "compared_files": [],
+        "compared_sources": []
+      },
+      "measured_size_bytes": 10936434,
+      "local_only": true,
+      "availability": "missing"
+    }
+  ]
+}
