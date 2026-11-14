@@ -207,7 +207,7 @@ def load_current_effective_disclosure_rows(
     chain depth, then greatest lexical version ID. Missing dates sort before
     supplied dates; publication dates are never substituted for effective dates.
     A later-published restatement with no effective date, or an earlier one,
-    can therefore rank below an earlier-published amendment with a later
+    therefore ranks below an earlier-published amendment with a later
     effective date.
     Complete lineages are required. Selection is independent of input order for
     versioned rows. Plain rows retain their original relative order.
