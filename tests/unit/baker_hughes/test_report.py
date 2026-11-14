@@ -37,7 +37,16 @@ def test_complete_dates_preserve_report_fields(source):
         "states": ["X", "Y"],
         "countries": ["Z"],
         "completeness": {
-            "date_range": {"status": "complete", "reason": None, "missing_count": 0}
+            "date_range": {"status": "complete", "reason": None, "missing_count": 0},
+            "dimensions": {
+                field: {"status": "complete", "reason": None, "missing_count": 0}
+                for field in ("basins", "states", "countries")
+            },
+            "schema": {
+                "status": "not_evaluated",
+                "reason": "loader_metadata_unavailable",
+            },
+            "status": "complete",
         },
     }
     pd.testing.assert_frame_equal(df, original)

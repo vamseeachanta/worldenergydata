@@ -49,8 +49,17 @@ data/modules/bsee/directional_survey_validation/** -text
 packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/well_api12.py text eol=lf
 packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/directional_survey_validation.py text eol=lf
 
+# Preserve the raw-byte digests and sizes used by the lease snapshot manifest.
+data/modules/bsee/leases/** -text
+
 # Preserve the benchmark source digest across platform checkout conventions.
 reports/lower_tertiary/lt_well_benchmark_lower_tertiary_2010_latest.csv text eol=lf
+
+# Workflow and notebook regeneration is compared byte for byte with these reports.
+reports/gtm/operator_cost_benchmarking.html text eol=lf
+reports/gtm/operator_cost_benchmarking_facts.json text eol=lf
+examples/workflows/cost-disclosure-benchmark/outputs/operator_cost_benchmarking.html text eol=lf
+examples/workflows/cost-disclosure-benchmark/outputs/operator_cost_benchmarking_facts.json text eol=lf
 
 # Preserve the exact exported bytes referenced by the sample DCA manifest.
 docs/reports/bsee-dca-sample/** -text

@@ -17,6 +17,7 @@ from select_test_targets import (  # noqa: E402
     ALWAYS_XDIST,
     _has_tests,
     select,
+    select_fast,
     to_matrix,
 )
 
@@ -36,6 +37,22 @@ def test_core_change_runs_full_tree():
 
 def test_selector_self_change_is_core():
     assert select(["scripts/ci/select_test_targets.py"], REPO_ROOT)["scope"] == "full"
+
+
+@pytest.mark.parametrize(
+    "path",
+    [
+        "scripts/hf_export/publish_explorer_refresh_to_hf.py",
+        "reports/field-atlas/atlas_template.html",
+        "reports/field-atlas/index.html",
+        "reports/lower_tertiary/lifecycle/_performance.json",
+        "reports/lower_tertiary/parametric/lt_economics_parametric.json",
+        "reports/field-atlas/results/explorer_results_bundle.json",
+    ],
+)
+def test_economics_release_inputs_always_run_site_contracts(path):
+    result = select([path], REPO_ROOT)
+    assert "tests/unit/site" in result["xdist"]
 
 
 def test_hse_change_is_module_scoped_not_full():
@@ -299,3 +316,102 @@ def test_reporting_contracts_join_always_on_targets(path):
     assert target in always["targets"].split()
     targets = [t for shard in matrix["include"] for t in shard["targets"].split()]
     assert targets.count(target) == 1
+
+
+PAGES_CONTRACTS = ("tests/test_build_pages_assets.py", "tests/test_pages_scope.py")
+CATALOG_CONTRACTS = (
+    "tests/modules/field_development/test_catalog_atlas_evidence.py",
+    "tests/modules/field_development/test_catalog_evidence.py",
+    "tests/modules/field_development/test_catalog_evidence_example.py",
+)
+
+
+@pytest.mark.parametrize("fast", [False, True])
+@pytest.mark.parametrize(
+    "path,expected",
+    [
+        *[(path, (path,)) for path in PAGES_CONTRACTS + CATALOG_CONTRACTS],
+        ("scripts/build_pages.py", PAGES_CONTRACTS),
+        ("scripts/pages_scope.py", (PAGES_CONTRACTS[1],)),
+        (".github/workflows/pages.yml", PAGES_CONTRACTS),
+        (
+            "config/analysis/lower_tertiary/v50_assumptions_change_log.html",
+            PAGES_CONTRACTS,
+        ),
+        ("reports/lower_tertiary/fdas_revision_comparison.md", PAGES_CONTRACTS),
+        (
+            "src/worldenergydata/field_development/catalog_integration.py",
+            CATALOG_CONTRACTS,
+        ),
+        (
+            "src/worldenergydata/field_development/catalog_evidence.py",
+            CATALOG_CONTRACTS,
+        ),
+        ("tests/modules/field_development/catalog_test_support.py", CATALOG_CONTRACTS),
+        ("scripts/field_atlas/build_atlas_feed.py", CATALOG_CONTRACTS),
+        ("scripts/field_atlas/catalog_extension.py", CATALOG_CONTRACTS),
+        ("scripts/field_development/example_catalog_evidence.py", CATALOG_CONTRACTS),
+    ],
+)
+def test_publication_contract_inputs_run_their_tests(path, expected, fast):
+    matrix = to_matrix([path], REPO_ROOT, fast=fast)
+    assert matrix["scope"] == "modules"
+    targets = [
+        target for shard in matrix["include"] for target in shard["targets"].split()
+    ]
+    for test in expected:
+        assert (
+            sum(test == target or test.startswith(target + "/") for target in targets)
+            == 1
+        )
+
+
+@pytest.mark.parametrize("fast", [False, True])
+def test_catalog_contract_routing_preserves_unit_selection(fast):
+    matrix = to_matrix(
+        ["src/worldenergydata/field_development/catalog_integration.py"],
+        REPO_ROOT,
+        fast=fast,
+    )
+    targets = [
+        target for shard in matrix["include"] for target in shard["targets"].split()
+    ]
+    assert targets.count("tests/unit/field_development") == 1
+    assert all(target in targets for target in ALWAYS_XDIST)
+
+
+@pytest.mark.parametrize("fast", [False, True])
+@pytest.mark.parametrize("path", PAGES_CONTRACTS + CATALOG_CONTRACTS)
+def test_publication_shard_names_can_be_used_in_artifact_names(path, fast):
+    matrix = to_matrix([path], REPO_ROOT, fast=fast)
+    assert matrix["include"]
+    for shard in matrix["include"]:
+        assert "/" not in shard["name"]
+        assert "\\" not in shard["name"]
+
+
+REPORT_EVAL_PATHS = [
+    "examples/report-evals/README.md",
+    "examples/report-evals/evalkit.py",
+    "examples/report-evals/results.schema.json",
+    "examples/report-evals/issue-002-gom-well-permits/PROMPT.md",
+    "examples/report-evals/issue-002-gom-well-permits/eval.py",
+    "examples/report-evals/issue-002-gom-well-permits/last-run.json",
+    "examples/report-evals/issue-002-gom-well-permits/results.json",
+    "tests/report_evals/test_report_evals.py",
+]
+
+
+@pytest.mark.parametrize(
+    "paths", [REPORT_EVAL_PATHS, *[[p] for p in REPORT_EVAL_PATHS]]
+)
+def test_report_eval_paths_select_their_suite(paths):
+    for chooser in (select, select_fast):
+        result = chooser(paths, REPO_ROOT)
+        assert result["scope"] == "modules", chooser.__name__
+        assert result["xdist"].count("tests/report_evals") == 1, chooser.__name__
+    for fast in (False, True):
+        matrix = to_matrix(paths, REPO_ROOT, fast=fast)
+        targets = [t for shard in matrix["include"] for t in shard["targets"].split()]
+        assert matrix["scope"] == "modules"
+        assert targets.count("tests/report_evals") == 1

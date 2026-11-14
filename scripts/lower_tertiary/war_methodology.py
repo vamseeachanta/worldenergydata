@@ -1,4 +1,4 @@
-"""One publication note for the legacy WAR-derived D&C surfaces."""
+"""Shared publication disclosures for WAR-derived duration surfaces."""
 
 from html import escape
 
@@ -95,8 +95,44 @@ source; they do not change this page's date-subtraction calculation.
 Decision: {DECISION_LINK}"""
 
 
-def methodology_html(*, calendar: bool = False) -> str:
+ACTIVITY_DEPTH_BASIS = """Depth basis: measured depth (MD), MAX_BH_TOTAL_MD,
+and true vertical depth (TVD), MAX_WELL_BORE_TVD, are distinct geometry fields;
+no depth-normalized ratio is calculated on this comparison page. No MD or TVD
+denominator is implied by its day totals."""
+
+ACTIVITY_DURATION_BASIS = f"""Publisher-declared basis: this page compares activity-code days,
+with inclusive, adjacency-merged reporting intervals. DRL_COM counts drilling
+and completion codes separately; PND and temporarily abandoned time remain
+separate. It does not apply the milestone default to the displayed figures.
+No definition of active rig-time was found in the sources cited here.
+The superseding decision sets milestone days as the default: drilling days =
+total-depth date minus spud date; completion days = every reported day from
+total depth onward, all activity codes, with unreported gaps left out.
+All methods are retained side by side. Wider-population confirmation is
+required before published figures are replaced. Decision: {DECISION_LINK}"""
+
+
+def methodology_metadata() -> dict[str, str]:
+    """Export capability data_limits without converting caveats into thresholds.
+
+    Coverage remains unconfirmed by the agency pages cited in WAR_METHODOLOGY;
+    SPE-87117-MS (2004), abstract paragraph 4, does not settle comparability.
+    Consumers shall display data_limits with duration values rather than
+    treating NOT_EVALUATED as evidence of completeness or a failed well.
+    """
+    return {
+        "data_limits": WAR_METHODOLOGY,
+        "basis_decision_url": DECISION_URL,
+        "coverage_floor_status": "NOT_EVALUATED",
+        "reference_comparability_status": "NOT_EVALUATED",
+        "depth_denominator_policy": "explicit MD or TVD required",
+    }
+
+
+def methodology_html(*, calendar: bool = False, activity: bool = False) -> str:
     """Render the same note without requiring site-builder dependencies."""
+    if calendar and activity:
+        raise ValueError("calendar and activity disclosures are mutually exclusive")
     heading, *paragraphs = WAR_METHODOLOGY.strip().split("\n\n")
     blocks = []
     for paragraph in paragraphs:
@@ -104,6 +140,10 @@ def methodology_html(*, calendar: bool = False) -> str:
             paragraph = CALENDAR_DEPTH_BASIS
         elif calendar and paragraph.startswith("Publisher-declared basis:"):
             paragraph = CALENDAR_DURATION_BASIS
+        elif activity and paragraph.startswith("Depth basis:"):
+            paragraph = ACTIVITY_DEPTH_BASIS
+        elif activity and paragraph.startswith("Publisher-declared basis:"):
+            paragraph = ACTIVITY_DURATION_BASIS
         if paragraph.startswith("- "):
             items = "".join(
                 f"<li>{escape(line.removeprefix('- '))}</li>"

@@ -160,6 +160,13 @@ def test_empty_portfolio_has_no_evaluated_coverage():
     assert report["totals"]["coverage_fraction"] is None
 
 
+@pytest.fixture(autouse=True)
+def independent_host_input(monkeypatch, tmp_path):
+    path = tmp_path / "synthetic_hosts.csv"
+    path.write_text("host_name,host_concept\nSynthetic host,spar\n")
+    monkeypatch.setattr(comparison, "_curated_path", lambda: path)
+
+
 def test_builder_delegates_to_existing_portfolio(monkeypatch, tmp_path):
     paths = (tmp_path / "crosswalk.csv", tmp_path / "fields.csv")
     for path in paths:
@@ -226,20 +233,8 @@ def test_cli_rejects_an_input_as_output(tmp_path):
     assert source.read_text(encoding="utf-8") == "preserved"
 
 
-def test_real_portfolio_reconciles_without_pinning_stale_counts():
-    """Independent enumeration: all rows contribute once to exactly one cell.
-
-    Counts are derived directly from the actual labels, separately from the
-    aggregation. The test establishes reconciliation, not source freshness.
-    """
+def test_default_portfolio_is_withheld():
     from worldenergydata.field_development.portfolio_matched import build_portfolio
 
-    rows = build_portfolio()
-    report = comparison.compare_portfolio(rows)
-    assert report["totals"]["total"] == len(rows)
-    assert report["totals"]["typed"] == sum(row.actual is not None for row in rows)
-    assert report["totals"]["untyped"] == sum(row.actual is None for row in rows)
-    assert sum(r["total"] for r in report["regions"]) == len(rows)
-    assert all(
-        r["dry"] + r["wet"] + r["other"] == r["total"] for r in report["regions"]
-    )
+    with pytest.raises(RuntimeError, match="redistribution-terms review"):
+        build_portfolio()
