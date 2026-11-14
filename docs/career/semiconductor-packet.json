@@ -5,6 +5,11 @@
       "revision": "Initial",
       "date": "2026-10-19",
       "change": "Add an evidence-linked index, conditional application material and interview prompts to keep claims within available artifacts."
+    },
+    {
+      "revision": "Review corrections",
+      "date": "2026-11-14",
+      "change": "Keep contribution placeholders in copyable claims, identify custom-input provenance, and record the experience-transfer follow-up. Require credential-free source URLs and support Windows paths and portable fixtures so the packet remains auditable and reproducible."
     }
   ],
   "sources": [

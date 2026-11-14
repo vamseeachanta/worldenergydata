@@ -28,7 +28,7 @@ def validate(packet: dict, root: Path) -> None:
     sources = {}
     for source in packet["sources"]:
         parsed = urlsplit(source["url"])
-        if parsed.scheme != "https" or not parsed.netloc or parsed.username:
+        if parsed.scheme != "https" or not parsed.netloc or parsed.username is not None:
             raise ValueError("sources must use public HTTPS URLs")
         if source["id"] in sources:
             raise ValueError("duplicate source")
@@ -84,11 +84,20 @@ def validate(packet: dict, root: Path) -> None:
             raise ValueError("unknown research source")
 
 
+def path_reference(path: Path, start: Path, *, link: bool = False) -> str:
+    """Use a relative reference, or an absolute one across Windows mounts."""
+    try:
+        relative = Path(os.path.relpath(path, start)).as_posix()
+    except ValueError:
+        return path.as_uri() if link else path.as_posix()
+    return quote(relative) if link else relative
+
+
 def render(packet: dict, root: Path, output: Path, data: Path | None = None) -> str:
     """Render deterministic HTML with links relative to its destination."""
     root, output = root.resolve(), output.resolve()
     data = (data if data is not None else root / DATA.relative_to(ROOT)).resolve()
-    data_name = Path(os.path.relpath(data, root)).as_posix()
+    data_name = path_reference(data, root)
     command = shlex.join(
         [
             "python",
@@ -96,7 +105,7 @@ def render(packet: dict, root: Path, output: Path, data: Path | None = None) -> 
             "--data",
             data_name,
             "--output",
-            Path(os.path.relpath(output, root)).as_posix(),
+            path_reference(output, root),
         ]
     )
     validate(packet, root)
@@ -105,7 +114,7 @@ def render(packet: dict, root: Path, output: Path, data: Path | None = None) -> 
     claims = {c["id"]: c for c in packet["claims"]}
 
     def local(name: str) -> str:
-        href = quote(Path(os.path.relpath(root / name, output.parent)).as_posix())
+        href = path_reference((root / name).resolve(), output.parent, link=True)
         return f'<a href="{href}">{escape(name)}</a>'
 
     def citations(keys: list[str]) -> str:
