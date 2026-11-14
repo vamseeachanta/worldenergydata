@@ -14,6 +14,13 @@ from pathlib import Path
 import pytest
 
 SCRIPT = Path(__file__).resolve().parents[1] / "scripts/capabilities/build_onepagers.py"
+WITHHELD_CARDS = (
+    "sec-playbook",
+    "fd-showcase",
+    "fd-playbook",
+    "fd-portfolio",
+    "fd-bsee-matched",
+)
 
 
 def load_builder():
@@ -67,7 +74,7 @@ def assert_page(text, title):
     assert not re.search(
         r"@import\b|(?:url|image|(?:-webkit-)?image-set|src)\s*\(", styles, re.I
     )
-    assert "<svg" in text
+    assert ("<svg" in text) == (title != "Data unavailable")
     assert not re.search(r"\btmp[a-z0-9_]{6,}\.html\b", text)
     assert str(Path.home()) not in text
     assert str(SCRIPT.resolve().parents[2]) not in text
@@ -90,7 +97,8 @@ def test_default_build_writes_html_only_without_browser(tmp_path, monkeypatch):
     }
     assert not list(out.rglob("*.pdf"))
     for spec in mod.SPECS:
-        assert_page((out / f"{spec['id']}.html").read_text(), spec["title"])
+        title = "Data unavailable" if spec["id"] in WITHHELD_CARDS else spec["title"]
+        assert_page((out / f"{spec['id']}.html").read_text(encoding="utf-8"), title)
 
 
 @pytest.mark.parametrize("escaped", [False, True])
@@ -108,14 +116,15 @@ def test_every_spec_has_nonempty_title():
     mod = load_builder()
     for spec in mod.SPECS:
         assert spec["title"].strip()
-        assert_page(mod._render_html(spec), spec["title"])
+        title = "Data unavailable" if spec["id"] in WITHHELD_CARDS else spec["title"]
+        assert_page(mod._render_html(spec), title)
 
 
 def test_cli_brand_is_inline_after_defaults(tmp_path, monkeypatch):
     mod = load_builder()
     brand = tmp_path / "brand.css"
     css = "h1 { color: #123456; }\n"
-    brand.write_text(css, encoding="utf-8")
+    brand.write_text(css, encoding="utf-8", newline="\n")
     out = tmp_path / "output"
     monkeypatch.setattr(mod, "_OUT", out)
     monkeypatch.setattr(mod, "_REPO", tmp_path)
@@ -136,7 +145,7 @@ def test_bad_brand_writes_nothing(tmp_path, monkeypatch, capsys, kind):
     if kind == "directory":
         brand.mkdir()
     if kind == "unreadable":
-        brand.write_text("body {}", encoding="utf-8")
+        brand.write_text("body {}", encoding="utf-8", newline="\n")
         original = Path.read_text
 
         def read_text(path, *args, **kwargs):
@@ -360,7 +369,11 @@ def test_each_page_states_source_and_data_basis() -> None:
             spec["std"],
         ), spec["id"]
         assert spec["std"].split("data as of:")[0].strip(" ·"), spec["id"]
-        assert spec["std"] in html.unescape(load_builder()._render_html(spec))
+        text = html.unescape(load_builder()._render_html(spec))
+        if spec["id"] in WITHHELD_CARDS:
+            assert "held privately pending redistribution-terms review" in text
+        else:
+            assert spec["std"] in text
 
 
 def test_footer_has_fixed_revision_date() -> None:
@@ -368,7 +381,11 @@ def test_footer_has_fixed_revision_date() -> None:
     mod = load_builder()
     assert getattr(mod, "REVISION_DATE", None) == "2026-10-13"
     for spec in mod.SPECS:
-        assert f"Revision: {mod.REVISION_DATE}" in mod._render_html(spec)
+        text = mod._render_html(spec)
+        if spec["id"] in WITHHELD_CARDS:
+            assert "<title>Data unavailable</title>" in text
+        else:
+            assert f"Revision: {mod.REVISION_DATE}" in text
 
 
 def test_pages_embed_committed_font_weights() -> None:
@@ -380,6 +397,9 @@ def test_pages_embed_committed_font_weights() -> None:
     assert (font_dir / "OFL.txt").is_file()
     for spec in mod.SPECS:
         text = mod._render_html(spec)
+        if spec["id"] in WITHHELD_CARDS:
+            assert "@font-face" not in text
+            continue
         assert "Arial" not in text and "Helvetica" not in text
         faces = re.findall(r"@font-face\s*\{([^}]+)\}", text)
         assert len(faces) == 3
@@ -447,7 +467,11 @@ NAMED_REFERENCES = (
 def committed_copy_fields(directory: Path) -> list:
     """Collect readable text from retained pages without embedded font payloads."""
     return [
-        (page.name, "readable text", " ".join(VisibleCopy(page.read_text()).parts))
+        (
+            page.name,
+            "readable text",
+            " ".join(VisibleCopy(page.read_text(encoding="utf-8")).parts),
+        )
         for page in sorted(directory.glob("*.html"))
     ]
 
@@ -457,7 +481,7 @@ def assert_economics_cutoff(specs: list[dict]) -> None:
     data_path = (
         SCRIPT.parents[2] / "reports/lower_tertiary/data/all_fields_economics.json"
     )
-    vintage_text = json.loads(data_path.read_text())["meta"]["vintage"]
+    vintage_text = json.loads(data_path.read_text(encoding="utf-8"))["meta"]["vintage"]
     vintage = re.search(r"through (\d{4}-\d{2})", vintage_text).group(1)
     for spec in specs:
         if spec["id"] in {"sec-economics", "portfolio", "benchmark"} or spec[
@@ -481,10 +505,14 @@ def test_committed_html_copy_excludes_banned_wording() -> None:
 
 def test_committed_html_negative_control(tmp_path: Path) -> None:
     """Detect a prohibited phrase in retained text but ignore font styles."""
-    (tmp_path / "page.html").write_text("<style>never</style><p>NEVER</p>")
+    (tmp_path / "page.html").write_text(
+        "<style>never</style><p>NEVER</p>", encoding="utf-8", newline="\n"
+    )
     assert wording_findings(committed_copy_fields(tmp_path), "absolutes")
     visible_url = "https://example.org/guarantee"
-    (tmp_path / "url.html").write_text(f"<p>{visible_url}</p>")
+    (tmp_path / "url.html").write_text(
+        f"<p>{visible_url}</p>", encoding="utf-8", newline="\n"
+    )
     assert ("url.html", "readable text", "guarantee") in wording_findings(
         committed_copy_fields(tmp_path), "promotional"
     )
@@ -555,6 +583,10 @@ def test_page_basis_and_plain_label(spec: dict) -> None:
     if "Price:" in spec["std"]:
         assert "pre-tax" in spec["std"], spec["id"]
     text = mod._render_html(spec)
+    if spec["id"] in WITHHELD_CARDS:
+        assert "<title>Data unavailable</title>" in text
+        assert "<script" not in text
+        return
     assert "Capability summary" in text
     assert '<span class="cta">' not in text
     assert '<a class="live" href="' in text
@@ -572,3 +604,31 @@ def test_builder_has_no_pdf_print_interface(tmp_path):
     assert source == tmp_path / f"{spec['id']}.html"
     assert list(tmp_path.iterdir()) == [source]
     assert not list(tmp_path.rglob("*.pdf"))
+
+
+@pytest.mark.parametrize("card_id", WITHHELD_CARDS)
+def test_withdrawn_card_regeneration_matches_committed_notice(card_id, tmp_path):
+    mod = load_builder()
+    spec = next(spec for spec in mod.SPECS if spec["id"] == card_id)
+    # Stale descriptions and totals cannot override the withdrawal decision.
+    stale = dict(
+        spec,
+        blurb="Restricted synthetic description",
+        figures=[["999", "Restricted total"]],
+    )
+    output = mod.build_onepager(stale, tmp_path)
+    committed = SCRIPT.parents[2] / "reports/capabilities/pdf" / output.name
+    text = output.read_text(encoding="utf-8")
+    assert "held privately pending redistribution-terms review" in text
+    assert text == committed.read_text(encoding="utf-8")
+    assert "Restricted" not in text
+    assert "999" not in text
+    assert not Page(text).resources
+
+
+def test_available_card_regeneration_keeps_content(tmp_path):
+    mod = load_builder()
+    spec = dict(mod.SPECS[0], blurb="Independent synthetic description")
+    text = mod.build_onepager(spec, tmp_path).read_text(encoding="utf-8")
+    assert "Independent synthetic description" in text
+    assert_page(text, spec["title"])

@@ -1,0 +1,1500 @@
+{
+  "by_field": {
+    "complete_annual_maxima": {
+      "DEFAULT": 0,
+      "DERIVED": 2136,
+      "PUBLIC": 0,
+      "UNKNOWN": 6440
+    },
+    "concrete_density_kg_m3": {
+      "DEFAULT": 0,
+      "DERIVED": 0,
+      "PUBLIC": 0,
+      "UNKNOWN": 8576
+    },
+    "contents_density_kg_m3": {
+      "DEFAULT": 4288,
+      "DERIVED": 0,
+      "PUBLIC": 0,
+      "UNKNOWN": 4288
+    },
+    "corrosion_coating": {
+      "DEFAULT": 0,
+      "DERIVED": 0,
+      "PUBLIC": 0,
+      "UNKNOWN": 8576
+    },
+    "corrosion_coating_thickness_m": {
+      "DEFAULT": 0,
+      "DERIVED": 0,
+      "PUBLIC": 0,
+      "UNKNOWN": 8576
+    },
+    "friction_coefficient": {
+      "DEFAULT": 8576,
+      "DERIVED": 0,
+      "PUBLIC": 0,
+      "UNKNOWN": 0
+    },
+    "governing_case": {
+      "DEFAULT": 8576,
+      "DERIVED": 0,
+      "PUBLIC": 0,
+      "UNKNOWN": 0
+    },
+    "grade": {
+      "DEFAULT": 8576,
+      "DERIVED": 0,
+      "PUBLIC": 0,
+      "UNKNOWN": 0
+    },
+    "hoop_yield_wall_at_assumed_smys_m": {
+      "DEFAULT": 0,
+      "DERIVED": 6290,
+      "PUBLIC": 0,
+      "UNKNOWN": 2286
+    },
+    "hs_100yr_distribution": {
+      "DEFAULT": 0,
+      "DERIVED": 0,
+      "PUBLIC": 0,
+      "UNKNOWN": 8576
+    },
+    "hs_100yr_lower_ci_m": {
+      "DEFAULT": 0,
+      "DERIVED": 0,
+      "PUBLIC": 0,
+      "UNKNOWN": 8576
+    },
+    "hs_100yr_m": {
+      "DEFAULT": 0,
+      "DERIVED": 0,
+      "PUBLIC": 0,
+      "UNKNOWN": 8576
+    },
+    "hs_100yr_upper_ci_m": {
+      "DEFAULT": 0,
+      "DERIVED": 0,
+      "PUBLIC": 0,
+      "UNKNOWN": 8576
+    },
+    "hs_10yr_distribution": {
+      "DEFAULT": 0,
+      "DERIVED": 0,
+      "PUBLIC": 0,
+      "UNKNOWN": 8576
+    },
+    "hs_10yr_lower_ci_m": {
+      "DEFAULT": 0,
+      "DERIVED": 0,
+      "PUBLIC": 0,
+      "UNKNOWN": 8576
+    },
+    "hs_10yr_m": {
+      "DEFAULT": 0,
+      "DERIVED": 0,
+      "PUBLIC": 0,
+      "UNKNOWN": 8576
+    },
+    "hs_10yr_upper_ci_m": {
+      "DEFAULT": 0,
+      "DERIVED": 0,
+      "PUBLIC": 0,
+      "UNKNOWN": 8576
+    },
+    "hs_max_observed_m": {
+      "DEFAULT": 0,
+      "DERIVED": 2058,
+      "PUBLIC": 0,
+      "UNKNOWN": 6518
+    },
+    "length_m": {
+      "DEFAULT": 0,
+      "DERIVED": 8208,
+      "PUBLIC": 0,
+      "UNKNOWN": 368
+    },
+    "load_case": {
+      "DEFAULT": 0,
+      "DERIVED": 8576,
+      "PUBLIC": 0,
+      "UNKNOWN": 0
+    },
+    "maop_pa": {
+      "DEFAULT": 0,
+      "DERIVED": 7566,
+      "PUBLIC": 0,
+      "UNKNOWN": 1010
+    },
+    "mean_bearing_deg": {
+      "DEFAULT": 0,
+      "DERIVED": 8208,
+      "PUBLIC": 0,
+      "UNKNOWN": 368
+    },
+    "midpoint_latitude_deg": {
+      "DEFAULT": 0,
+      "DERIVED": 8212,
+      "PUBLIC": 0,
+      "UNKNOWN": 364
+    },
+    "midpoint_longitude_deg": {
+      "DEFAULT": 0,
+      "DERIVED": 8212,
+      "PUBLIC": 0,
+      "UNKNOWN": 364
+    },
+    "nominal_size_m": {
+      "DEFAULT": 0,
+      "DERIVED": 7224,
+      "PUBLIC": 0,
+      "UNKNOWN": 1352
+    },
+    "observed_maximum_years": {
+      "DEFAULT": 0,
+      "DERIVED": 2058,
+      "PUBLIC": 0,
+      "UNKNOWN": 6518
+    },
+    "od_m": {
+      "DEFAULT": 7224,
+      "DERIVED": 0,
+      "PUBLIC": 0,
+      "UNKNOWN": 1352
+    },
+    "permit_length_m": {
+      "DEFAULT": 0,
+      "DERIVED": 8530,
+      "PUBLIC": 0,
+      "UNKNOWN": 46
+    },
+    "permit_length_unit": {
+      "DEFAULT": 8576,
+      "DERIVED": 0,
+      "PUBLIC": 0,
+      "UNKNOWN": 0
+    },
+    "product_code": {
+      "DEFAULT": 0,
+      "DERIVED": 0,
+      "PUBLIC": 8576,
+      "UNKNOWN": 0
+    },
+    "record_length_years": {
+      "DEFAULT": 0,
+      "DERIVED": 2136,
+      "PUBLIC": 0,
+      "UNKNOWN": 6440
+    },
+    "retained_observations": {
+      "DEFAULT": 0,
+      "DERIVED": 2136,
+      "PUBLIC": 0,
+      "UNKNOWN": 6440
+    },
+    "route_rejection_reason": {
+      "DEFAULT": 0,
+      "DERIVED": 2,
+      "PUBLIC": 0,
+      "UNKNOWN": 8574
+    },
+    "seabed_current_m_s": {
+      "DEFAULT": 0,
+      "DERIVED": 0,
+      "PUBLIC": 0,
+      "UNKNOWN": 8576
+    },
+    "segment_id": {
+      "DEFAULT": 0,
+      "DERIVED": 0,
+      "PUBLIC": 8576,
+      "UNKNOWN": 0
+    },
+    "service_state": {
+      "DEFAULT": 0,
+      "DERIVED": 0,
+      "PUBLIC": 8576,
+      "UNKNOWN": 0
+    },
+    "size_code": {
+      "DEFAULT": 0,
+      "DERIVED": 0,
+      "PUBLIC": 7470,
+      "UNKNOWN": 1106
+    },
+    "smys_pa": {
+      "DEFAULT": 8576,
+      "DERIVED": 0,
+      "PUBLIC": 0,
+      "UNKNOWN": 0
+    },
+    "soil_sample_distance_m": {
+      "DEFAULT": 0,
+      "DERIVED": 5708,
+      "PUBLIC": 0,
+      "UNKNOWN": 2868
+    },
+    "soil_type": {
+      "DEFAULT": 0,
+      "DERIVED": 5708,
+      "PUBLIC": 0,
+      "UNKNOWN": 2868
+    },
+    "station_distance_m": {
+      "DEFAULT": 0,
+      "DERIVED": 2136,
+      "PUBLIC": 0,
+      "UNKNOWN": 6440
+    },
+    "station_id": {
+      "DEFAULT": 0,
+      "DERIVED": 0,
+      "PUBLIC": 2136,
+      "UNKNOWN": 6440
+    },
+    "station_water_depth_m": {
+      "DEFAULT": 0,
+      "DERIVED": 0,
+      "PUBLIC": 0,
+      "UNKNOWN": 8576
+    },
+    "status": {
+      "DEFAULT": 0,
+      "DERIVED": 0,
+      "PUBLIC": 8576,
+      "UNKNOWN": 0
+    },
+    "tp_at_hs_max_s": {
+      "DEFAULT": 0,
+      "DERIVED": 1468,
+      "PUBLIC": 0,
+      "UNKNOWN": 7108
+    },
+    "wall_thickness_m": {
+      "DEFAULT": 0,
+      "DERIVED": 0,
+      "PUBLIC": 0,
+      "UNKNOWN": 8576
+    },
+    "wave_direction_deg": {
+      "DEFAULT": 8208,
+      "DERIVED": 0,
+      "PUBLIC": 0,
+      "UNKNOWN": 368
+    }
+  },
+  "hoop_yield_wall_at_assumed_smys": {
+    "count": 3145,
+    "count_below_1_mm": 242,
+    "median_m": 0.004220276663576269,
+    "minimum_m": 2.4422897358658963e-07,
+    "scope": "unique segments; not installed wall thickness"
+  },
+  "length_outliers": {
+    "count": 192,
+    "criterion": "route/permit < 0.67 or > 1.5",
+    "segments": [
+      {
+        "permit_length_m": 1497.7872,
+        "ratio": 5.662926714265427,
+        "route_length_m": 8481.859147164814,
+        "segment_id": "10094"
+      },
+      {
+        "permit_length_m": 1524.6096,
+        "ratio": 5.579135197391462,
+        "route_length_m": 8506.003081640918,
+        "segment_id": "10098"
+      },
+      {
+        "permit_length_m": 1403.2992000000002,
+        "ratio": 3.1495185649536928,
+        "route_length_m": 4419.716882584666,
+        "segment_id": "10151"
+      },
+      {
+        "permit_length_m": 437.38800000000003,
+        "ratio": 7.110559823713616,
+        "route_length_m": 3110.0735401744514,
+        "segment_id": "10237"
+      },
+      {
+        "permit_length_m": 735.1776,
+        "ratio": 1.9926183514234337,
+        "route_length_m": 1464.9283773154366,
+        "segment_id": "10311"
+      },
+      {
+        "permit_length_m": 690.6768000000001,
+        "ratio": 2.1114833692756396,
+        "route_length_m": 1458.3525767445171,
+        "segment_id": "10312"
+      },
+      {
+        "permit_length_m": 534.6192,
+        "ratio": 2.5824290641958414,
+        "route_length_m": 1380.6161603571293,
+        "segment_id": "10314"
+      },
+      {
+        "permit_length_m": 524.5608,
+        "ratio": 2.0574223683596307,
+        "route_length_m": 1079.2431234846224,
+        "segment_id": "10316"
+      },
+      {
+        "permit_length_m": 1103.6808,
+        "ratio": 1.887892168857251,
+        "route_length_m": 2083.630339238106,
+        "segment_id": "10452"
+      },
+      {
+        "permit_length_m": 11825.6304,
+        "ratio": 1.734649633766519,
+        "route_length_m": 20513.325442418212,
+        "segment_id": "10727"
+      },
+      {
+        "permit_length_m": 1595.9328,
+        "ratio": 0.6086211044827646,
+        "route_length_m": 971.3183834162711,
+        "segment_id": "10754"
+      },
+      {
+        "permit_length_m": 18248.376,
+        "ratio": 1.815544002937154,
+        "route_length_m": 33130.72961014229,
+        "segment_id": "10793"
+      },
+      {
+        "permit_length_m": 105380.3328,
+        "ratio": 1.6367000081240535,
+        "route_length_m": 172475.99154987547,
+        "segment_id": "11161"
+      },
+      {
+        "permit_length_m": 1652.016,
+        "ratio": 0.6198177186727984,
+        "route_length_m": 1023.9487883309619,
+        "segment_id": "11403"
+      },
+      {
+        "permit_length_m": 13.716000000000001,
+        "ratio": 1.975725500233989,
+        "route_length_m": 27.099050961209397,
+        "segment_id": "11448"
+      },
+      {
+        "permit_length_m": 3267.7608,
+        "ratio": 2.608486813849564,
+        "route_length_m": 8523.910957614502,
+        "segment_id": "11468"
+      },
+      {
+        "permit_length_m": 2292.7056000000002,
+        "ratio": 3.80294560362327,
+        "route_length_m": 8719.034681922452,
+        "segment_id": "11901"
+      },
+      {
+        "permit_length_m": 483.7176,
+        "ratio": 2.1980565958275613,
+        "route_length_m": 1063.238661197878,
+        "segment_id": "12035"
+      },
+      {
+        "permit_length_m": 461.46720000000005,
+        "ratio": 1.9780730052211295,
+        "route_length_m": 912.8158111149801,
+        "segment_id": "12155"
+      },
+      {
+        "permit_length_m": 2519.172,
+        "ratio": 0.356621363879802,
+        "route_length_m": 898.3905544878085,
+        "segment_id": "12158"
+      },
+      {
+        "permit_length_m": 476.0976,
+        "ratio": 1.912977651530177,
+        "route_length_m": 910.7640687471536,
+        "segment_id": "12165"
+      },
+      {
+        "permit_length_m": 6269.4312,
+        "ratio": 0.45218682316339137,
+        "route_length_m": 2834.9541773694486,
+        "segment_id": "12254"
+      },
+      {
+        "permit_length_m": 3108.96,
+        "ratio": 0.5082396233989395,
+        "route_length_m": 1580.096659562367,
+        "segment_id": "12333"
+      },
+      {
+        "permit_length_m": 238.0488,
+        "ratio": 4.761550651707203,
+        "route_length_m": 1133.4814187781176,
+        "segment_id": "12804"
+      },
+      {
+        "permit_length_m": 15.24,
+        "ratio": 150.71720509039605,
+        "route_length_m": 2296.9302055776357,
+        "segment_id": "12832"
+      },
+      {
+        "permit_length_m": 43.281600000000005,
+        "ratio": 41.31105162657519,
+        "route_length_m": 1788.008412080777,
+        "segment_id": "12843"
+      },
+      {
+        "permit_length_m": 64.61760000000001,
+        "ratio": 4.012281685139506,
+        "route_length_m": 259.26401301767055,
+        "segment_id": "12852"
+      },
+      {
+        "permit_length_m": 1402.0800000000002,
+        "ratio": 1.6400097647074372,
+        "route_length_m": 2299.424890901004,
+        "segment_id": "12872"
+      },
+      {
+        "permit_length_m": 274.32,
+        "ratio": 0.5952256697073197,
+        "route_length_m": 163.28230571411194,
+        "segment_id": "12958"
+      },
+      {
+        "permit_length_m": 1097.28,
+        "ratio": 1.5706500851130472,
+        "route_length_m": 1723.4429253928442,
+        "segment_id": "13049"
+      },
+      {
+        "permit_length_m": 152.4,
+        "ratio": 14.021533785830066,
+        "route_length_m": 2136.881748960502,
+        "segment_id": "13062"
+      },
+      {
+        "permit_length_m": 31206.643200000002,
+        "ratio": 1.778147313114682,
+        "route_length_m": 55490.00875740857,
+        "segment_id": "13101"
+      },
+      {
+        "permit_length_m": 963.4728,
+        "ratio": 5.621334031638398,
+        "route_length_m": 5416.002439197936,
+        "segment_id": "13104"
+      },
+      {
+        "permit_length_m": 690.6768000000001,
+        "ratio": 2.1738396312027075,
+        "route_length_m": 1501.4206001922662,
+        "segment_id": "13242"
+      },
+      {
+        "permit_length_m": 32.308800000000005,
+        "ratio": 3.9372413697892643,
+        "route_length_m": 127.2075439682474,
+        "segment_id": "13286"
+      },
+      {
+        "permit_length_m": 77.724,
+        "ratio": 1.596350402424968,
+        "route_length_m": 124.07473867807822,
+        "segment_id": "13287"
+      },
+      {
+        "permit_length_m": 7089.9528,
+        "ratio": 2.229273073685259,
+        "route_length_m": 15805.440870739409,
+        "segment_id": "13421"
+      },
+      {
+        "permit_length_m": 51862.0248,
+        "ratio": 1.5563318608769519,
+        "route_length_m": 80714.52156583063,
+        "segment_id": "13782"
+      },
+      {
+        "permit_length_m": 20921.472,
+        "ratio": 1.731430977028442,
+        "route_length_m": 36224.08470583319,
+        "segment_id": "1394"
+      },
+      {
+        "permit_length_m": 50637.948000000004,
+        "ratio": 1.5385174114580682,
+        "route_length_m": 77907.36467850827,
+        "segment_id": "13972"
+      },
+      {
+        "permit_length_m": 2888.5896000000002,
+        "ratio": 3.2372894672664803,
+        "route_length_m": 9351.200687335497,
+        "segment_id": "14470"
+      },
+      {
+        "permit_length_m": 15.24,
+        "ratio": 0.10029300580781496,
+        "route_length_m": 1.5284654085111,
+        "segment_id": "14507"
+      },
+      {
+        "permit_length_m": 2341.4736000000003,
+        "ratio": 1.510909475887903,
+        "route_length_m": 3537.7546497813614,
+        "segment_id": "15266"
+      },
+      {
+        "permit_length_m": 2341.4736000000003,
+        "ratio": 1.510909475887903,
+        "route_length_m": 3537.7546497813614,
+        "segment_id": "15267"
+      },
+      {
+        "permit_length_m": 2145.1824,
+        "ratio": 1.5853094030804997,
+        "route_length_m": 3400.777830042794,
+        "segment_id": "15279"
+      },
+      {
+        "permit_length_m": 26920.2408,
+        "ratio": 1.6303244262812018,
+        "route_length_m": 43888.7261376118,
+        "segment_id": "1548"
+      },
+      {
+        "permit_length_m": 33.528,
+        "ratio": 1.8595078137073204,
+        "route_length_m": 62.34557797797904,
+        "segment_id": "15723"
+      },
+      {
+        "permit_length_m": 16691.7624,
+        "ratio": 2.3380773425882646,
+        "route_length_m": 39026.63147530671,
+        "segment_id": "15776"
+      },
+      {
+        "permit_length_m": 30.48,
+        "ratio": 0.5349706545034619,
+        "route_length_m": 16.30590554926552,
+        "segment_id": "1586"
+      },
+      {
+        "permit_length_m": 20330.16,
+        "ratio": 1.7798561838235367,
+        "route_length_m": 36184.76099412191,
+        "segment_id": "1589"
+      },
+      {
+        "permit_length_m": 4060.2408,
+        "ratio": 3.7541975581524234,
+        "route_length_m": 15242.946096870843,
+        "segment_id": "16019"
+      },
+      {
+        "permit_length_m": 1400.8608000000002,
+        "ratio": 1.6075130188560203,
+        "route_length_m": 2251.90197360506,
+        "segment_id": "16099"
+      },
+      {
+        "permit_length_m": 1745.2848000000001,
+        "ratio": 2.6127746280432826,
+        "route_length_m": 4560.0358441495955,
+        "segment_id": "16199"
+      },
+      {
+        "permit_length_m": 2041.5504,
+        "ratio": 1.5689384122107082,
+        "route_length_m": 3203.0668430241362,
+        "segment_id": "16287"
+      },
+      {
+        "permit_length_m": 612.3432,
+        "ratio": 1.5254514825209706,
+        "route_length_m": 934.0998422516353,
+        "segment_id": "17081"
+      },
+      {
+        "permit_length_m": 3509.7720000000004,
+        "ratio": 0.005851225213138655,
+        "route_length_m": 20.536466418768086,
+        "segment_id": "17084"
+      },
+      {
+        "permit_length_m": 2739.2376,
+        "ratio": 1.9794672568482257,
+        "route_length_m": 5422.231137927517,
+        "segment_id": "17138"
+      },
+      {
+        "permit_length_m": 1557.528,
+        "ratio": 5.622337599838469,
+        "route_length_m": 8756.94823720121,
+        "segment_id": "17475"
+      },
+      {
+        "permit_length_m": 31.0896,
+        "ratio": 1.9254014102650148,
+        "route_length_m": 59.8599596845752,
+        "segment_id": "17695"
+      },
+      {
+        "permit_length_m": 5765.292,
+        "ratio": 0.6553248463871857,
+        "route_length_m": 3778.1390942772705,
+        "segment_id": "17849"
+      },
+      {
+        "permit_length_m": 740.9688,
+        "ratio": 9.218433655456279,
+        "route_length_m": 6830.571723563052,
+        "segment_id": "18060"
+      },
+      {
+        "permit_length_m": 3048.0,
+        "ratio": 0.5617205773101553,
+        "route_length_m": 1712.1243196413534,
+        "segment_id": "18153"
+      },
+      {
+        "permit_length_m": 282.8544,
+        "ratio": 18.34467753532126,
+        "route_length_m": 5188.872757446774,
+        "segment_id": "18361"
+      },
+      {
+        "permit_length_m": 23.1648,
+        "ratio": 13.190483950615027,
+        "route_length_m": 305.554922619207,
+        "segment_id": "18404"
+      },
+      {
+        "permit_length_m": 23.4696,
+        "ratio": 26.30763045393116,
+        "route_length_m": 617.4295637015828,
+        "segment_id": "18406"
+      },
+      {
+        "permit_length_m": 366.0648,
+        "ratio": 3.1199975209532274,
+        "route_length_m": 1142.121268508239,
+        "segment_id": "1841"
+      },
+      {
+        "permit_length_m": 2750.2104,
+        "ratio": 1.5637293030111115,
+        "route_length_m": 4300.58459192591,
+        "segment_id": "18488"
+      },
+      {
+        "permit_length_m": 1347.2160000000001,
+        "ratio": 2.3908277810879546,
+        "route_length_m": 3220.96143992619,
+        "segment_id": "18489"
+      },
+      {
+        "permit_length_m": 1079.9064,
+        "ratio": 2.669712319179587,
+        "route_length_m": 2883.039419640879,
+        "segment_id": "18490"
+      },
+      {
+        "permit_length_m": 3413.4552000000003,
+        "ratio": 10.048562991257032,
+        "route_length_m": 34300.31959503388,
+        "segment_id": "18540"
+      },
+      {
+        "permit_length_m": 32.9184,
+        "ratio": 1.6795319509123632,
+        "route_length_m": 55.287504572913534,
+        "segment_id": "18724"
+      },
+      {
+        "permit_length_m": 504.444,
+        "ratio": 3.228798551192212,
+        "route_length_m": 1628.7480563576044,
+        "segment_id": "18930"
+      },
+      {
+        "permit_length_m": 543.7632,
+        "ratio": 3.147596678546229,
+        "route_length_m": 1711.5472422356688,
+        "segment_id": "18933"
+      },
+      {
+        "permit_length_m": 814.7304,
+        "ratio": 1.603062839428044,
+        "route_length_m": 1306.064028392346,
+        "segment_id": "19166"
+      },
+      {
+        "permit_length_m": 6427.9272,
+        "ratio": 15.99594385455245,
+        "route_length_m": 102820.76259235054,
+        "segment_id": "19184"
+      },
+      {
+        "permit_length_m": 30.48,
+        "ratio": 168.1224439875937,
+        "route_length_m": 5124.372092741856,
+        "segment_id": "19294"
+      },
+      {
+        "permit_length_m": 28.041600000000003,
+        "ratio": 0.5828708712138241,
+        "route_length_m": 16.34463182222957,
+        "segment_id": "19384"
+      },
+      {
+        "permit_length_m": 27.432000000000002,
+        "ratio": 2.0084418078697763,
+        "route_length_m": 55.09557567348371,
+        "segment_id": "19514"
+      },
+      {
+        "permit_length_m": 1219.2,
+        "ratio": 6.144399079953506,
+        "route_length_m": 7491.251358279314,
+        "segment_id": "19613"
+      },
+      {
+        "permit_length_m": 2255.52,
+        "ratio": 0.6036036583968513,
+        "route_length_m": 1361.440123587266,
+        "segment_id": "19628"
+      },
+      {
+        "permit_length_m": 6339.84,
+        "ratio": 0.3371389080126972,
+        "route_length_m": 2137.4067345752183,
+        "segment_id": "19629"
+      },
+      {
+        "permit_length_m": 1584.96,
+        "ratio": 1.77574884359426,
+        "route_length_m": 2814.4908871431585,
+        "segment_id": "19631"
+      },
+      {
+        "permit_length_m": 762.0,
+        "ratio": 1.9612384548787647,
+        "route_length_m": 1494.4637026176188,
+        "segment_id": "19632"
+      },
+      {
+        "permit_length_m": 274.32,
+        "ratio": 5.634578080207146,
+        "route_length_m": 1545.6774589624242,
+        "segment_id": "19633"
+      },
+      {
+        "permit_length_m": 288.3408,
+        "ratio": 0.5470063677022371,
+        "route_length_m": 157.7242536683572,
+        "segment_id": "19708"
+      },
+      {
+        "permit_length_m": 3851.148,
+        "ratio": 1.5300315258497796,
+        "route_length_m": 5892.3778507133275,
+        "segment_id": "19796"
+      },
+      {
+        "permit_length_m": 482.8032,
+        "ratio": 3.6426258424817535,
+        "route_length_m": 1758.6714131528865,
+        "segment_id": "19849"
+      },
+      {
+        "permit_length_m": 34652.1024,
+        "ratio": 1.5814410323308479,
+        "route_length_m": 54800.256591890255,
+        "segment_id": "19868"
+      },
+      {
+        "permit_length_m": 46.3296,
+        "ratio": 0.5399309584021804,
+        "route_length_m": 25.014785330389657,
+        "segment_id": "19900"
+      },
+      {
+        "permit_length_m": 19043.294400000002,
+        "ratio": 1.9878533196002288,
+        "route_length_m": 37855.27598916445,
+        "segment_id": "20002"
+      },
+      {
+        "permit_length_m": 24.9936,
+        "ratio": 0.6152481102273758,
+        "route_length_m": 15.37726516777894,
+        "segment_id": "20050"
+      },
+      {
+        "permit_length_m": 3333.9024,
+        "ratio": 1.9774602113009028,
+        "route_length_m": 6592.659344360587,
+        "segment_id": "20215"
+      },
+      {
+        "permit_length_m": 16.764,
+        "ratio": 1.8966039916004604,
+        "route_length_m": 31.794669315190117,
+        "segment_id": "20227"
+      },
+      {
+        "permit_length_m": 824.1792,
+        "ratio": 1.7006717549469066,
+        "route_length_m": 1401.6582864547377,
+        "segment_id": "20413"
+      },
+      {
+        "permit_length_m": 967.4352,
+        "ratio": 1.5356450547231923,
+        "route_length_m": 1485.6370806451425,
+        "segment_id": "20453"
+      },
+      {
+        "permit_length_m": 967.4352,
+        "ratio": 1.5356450547231923,
+        "route_length_m": 1485.6370806451425,
+        "segment_id": "20454"
+      },
+      {
+        "permit_length_m": 2087.5752,
+        "ratio": 0.2291140822778577,
+        "route_length_m": 478.29287613401533,
+        "segment_id": "20486"
+      },
+      {
+        "permit_length_m": 14949.5256,
+        "ratio": 0.09296194736823293,
+        "route_length_m": 1389.737012007251,
+        "segment_id": "20508"
+      },
+      {
+        "permit_length_m": 9763.9632,
+        "ratio": 1.8701875202394844,
+        "route_length_m": 18260.44212471758,
+        "segment_id": "20576"
+      },
+      {
+        "permit_length_m": 9438.741600000001,
+        "ratio": 2.7978481689775845,
+        "route_length_m": 26408.16590301256,
+        "segment_id": "20578"
+      },
+      {
+        "permit_length_m": 817.1688,
+        "ratio": 0.008538894908707182,
+        "route_length_m": 6.977718505874359,
+        "segment_id": "20668"
+      },
+      {
+        "permit_length_m": 1223.7720000000002,
+        "ratio": 8.608740257256212,
+        "route_length_m": 10535.13528210295,
+        "segment_id": "20732"
+      },
+      {
+        "permit_length_m": 2355.4944,
+        "ratio": 0.09170092241636585,
+        "route_length_m": 216.00100922658422,
+        "segment_id": "20861"
+      },
+      {
+        "permit_length_m": 2336.5968000000003,
+        "ratio": 0.08388420314662505,
+        "route_length_m": 196.00356064295406,
+        "segment_id": "20862"
+      },
+      {
+        "permit_length_m": 1588.6176,
+        "ratio": 2.0360505778016655,
+        "route_length_m": 3234.505782385895,
+        "segment_id": "20942"
+      },
+      {
+        "permit_length_m": 32.9184,
+        "ratio": 3.7137907164828987,
+        "route_length_m": 122.25204832147065,
+        "segment_id": "20992"
+      },
+      {
+        "permit_length_m": 22.86,
+        "ratio": 0.4549653699568109,
+        "route_length_m": 10.400508357212697,
+        "segment_id": "21159"
+      },
+      {
+        "permit_length_m": 441.65520000000004,
+        "ratio": 6.989934915264891,
+        "route_length_m": 3087.141102988299,
+        "segment_id": "21185"
+      },
+      {
+        "permit_length_m": 30.1752,
+        "ratio": 0.11846096212117892,
+        "route_length_m": 3.574583224198998,
+        "segment_id": "21266"
+      },
+      {
+        "permit_length_m": 25.908,
+        "ratio": 222522.88793259696,
+        "route_length_m": 5765122.980557722,
+        "segment_id": "21562"
+      },
+      {
+        "permit_length_m": 3602.7360000000003,
+        "ratio": 1.8535234671391572,
+        "route_length_m": 6677.7557219070595,
+        "segment_id": "21597"
+      },
+      {
+        "permit_length_m": 434.64480000000003,
+        "ratio": 3.802052839098537,
+        "route_length_m": 1652.542495839416,
+        "segment_id": "21665"
+      },
+      {
+        "permit_length_m": 0.3048,
+        "ratio": 44569.44102296781,
+        "route_length_m": 13584.76562380059,
+        "segment_id": "21675"
+      },
+      {
+        "permit_length_m": 3200.4,
+        "ratio": 0.5916157425078578,
+        "route_length_m": 1893.4070223221481,
+        "segment_id": "2817"
+      },
+      {
+        "permit_length_m": 472.44,
+        "ratio": 0.5921361634452449,
+        "route_length_m": 279.7488090580715,
+        "segment_id": "2967"
+      },
+      {
+        "permit_length_m": 609.6,
+        "ratio": 1.7404700311907162,
+        "route_length_m": 1060.9905310138606,
+        "segment_id": "3208"
+      },
+      {
+        "permit_length_m": 152.4,
+        "ratio": 1.6772687763598768,
+        "route_length_m": 255.61576151724523,
+        "segment_id": "3282"
+      },
+      {
+        "permit_length_m": 5486.400000000001,
+        "ratio": 1.7649692765239162,
+        "route_length_m": 9683.327438720815,
+        "segment_id": "3351"
+      },
+      {
+        "permit_length_m": 14653.8696,
+        "ratio": 2.385639843961343,
+        "route_length_m": 34958.855185973865,
+        "segment_id": "3413"
+      },
+      {
+        "permit_length_m": 8046.72,
+        "ratio": 1.619361203428682,
+        "route_length_m": 13030.546182853644,
+        "segment_id": "3421"
+      },
+      {
+        "permit_length_m": 8255.8128,
+        "ratio": 1.782143676837846,
+        "route_length_m": 14713.044578676952,
+        "segment_id": "3425"
+      },
+      {
+        "permit_length_m": 6537.96,
+        "ratio": 1.87889848985548,
+        "route_length_m": 12284.163170735534,
+        "segment_id": "3441"
+      },
+      {
+        "permit_length_m": 6059.424,
+        "ratio": 1.9447193824754132,
+        "route_length_m": 11783.879299436698,
+        "segment_id": "3443"
+      },
+      {
+        "permit_length_m": 48425.100000000006,
+        "ratio": 2.6356690662906224,
+        "route_length_m": 127632.53810203004,
+        "segment_id": "3474"
+      },
+      {
+        "permit_length_m": 43867.120800000004,
+        "ratio": 2.7647070311421333,
+        "route_length_m": 121279.73731172134,
+        "segment_id": "3476"
+      },
+      {
+        "permit_length_m": 1219.2,
+        "ratio": 6.144399079953506,
+        "route_length_m": 7491.251358279314,
+        "segment_id": "3501"
+      },
+      {
+        "permit_length_m": 5730.240000000001,
+        "ratio": 2.390362474653007,
+        "route_length_m": 13697.35066675565,
+        "segment_id": "3519"
+      },
+      {
+        "permit_length_m": 7406.64,
+        "ratio": 5.113264571814882,
+        "route_length_m": 37872.109908186976,
+        "segment_id": "3542"
+      },
+      {
+        "permit_length_m": 4007.2056000000002,
+        "ratio": 5.193843585797775,
+        "route_length_m": 20812.799102532925,
+        "segment_id": "3548"
+      },
+      {
+        "permit_length_m": 5470.2456,
+        "ratio": 2.0135515086211906,
+        "route_length_m": 11014.62128040843,
+        "segment_id": "3556"
+      },
+      {
+        "permit_length_m": 18427.9032,
+        "ratio": 1.6887053187651135,
+        "route_length_m": 31119.298147528658,
+        "segment_id": "3600"
+      },
+      {
+        "permit_length_m": 762.0,
+        "ratio": 2.8289248034170895,
+        "route_length_m": 2155.6407002038222,
+        "segment_id": "3716"
+      },
+      {
+        "permit_length_m": 8246.668800000001,
+        "ratio": 2.032579191114386,
+        "route_length_m": 16762.007398892245,
+        "segment_id": "3795"
+      },
+      {
+        "permit_length_m": 1147.8768,
+        "ratio": 0.6360503824054723,
+        "route_length_m": 730.1074775943698,
+        "segment_id": "393"
+      },
+      {
+        "permit_length_m": 6667.5,
+        "ratio": 5.429655133426553,
+        "route_length_m": 36202.22560212154,
+        "segment_id": "4074"
+      },
+      {
+        "permit_length_m": 60.96,
+        "ratio": 16.937676813671874,
+        "route_length_m": 1032.5207785614375,
+        "segment_id": "4135"
+      },
+      {
+        "permit_length_m": 1219.2,
+        "ratio": 4.086411176078776,
+        "route_length_m": 4982.152505875243,
+        "segment_id": "4139"
+      },
+      {
+        "permit_length_m": 1219.2,
+        "ratio": 4.086411176078776,
+        "route_length_m": 4982.152505875243,
+        "segment_id": "4140"
+      },
+      {
+        "permit_length_m": 91.44,
+        "ratio": 8.07175155624018,
+        "route_length_m": 738.0809623026021,
+        "segment_id": "4141"
+      },
+      {
+        "permit_length_m": 17373.600000000002,
+        "ratio": 2.3643725367451043,
+        "route_length_m": 41077.66270439475,
+        "segment_id": "4246"
+      },
+      {
+        "permit_length_m": 670.5600000000001,
+        "ratio": 0.622996567389042,
+        "route_length_m": 417.756578228396,
+        "segment_id": "4423"
+      },
+      {
+        "permit_length_m": 335.28000000000003,
+        "ratio": 0.6699020585208635,
+        "route_length_m": 224.60476218087513,
+        "segment_id": "4553"
+      },
+      {
+        "permit_length_m": 822.96,
+        "ratio": 1.641850318787583,
+        "route_length_m": 1351.1771383494295,
+        "segment_id": "4787"
+      },
+      {
+        "permit_length_m": 4191.0,
+        "ratio": 3.895013616913695,
+        "route_length_m": 16324.002068485295,
+        "segment_id": "4840"
+      },
+      {
+        "permit_length_m": 632.46,
+        "ratio": 14.58962314764639,
+        "route_length_m": 9227.353055960437,
+        "segment_id": "4892"
+      },
+      {
+        "permit_length_m": 2327.148,
+        "ratio": 8.058898867631266,
+        "route_length_m": 18754.250382010367,
+        "segment_id": "5103"
+      },
+      {
+        "permit_length_m": 466.03920000000005,
+        "ratio": 1.5854515588613065,
+        "route_length_m": 738.8825761304763,
+        "segment_id": "5272"
+      },
+      {
+        "permit_length_m": 184.7088,
+        "ratio": 0.5844282297354843,
+        "route_length_m": 107.94903700056561,
+        "segment_id": "5520"
+      },
+      {
+        "permit_length_m": 254.8128,
+        "ratio": 0.6259400229578156,
+        "route_length_m": 159.49752988194527,
+        "segment_id": "5526"
+      },
+      {
+        "permit_length_m": 726.0336000000001,
+        "ratio": 0.30852446127280014,
+        "route_length_m": 223.99912530595168,
+        "segment_id": "5538"
+      },
+      {
+        "permit_length_m": 361.79760000000005,
+        "ratio": 0.35187502970020573,
+        "route_length_m": 127.30754124546317,
+        "segment_id": "5539"
+      },
+      {
+        "permit_length_m": 9707.270400000001,
+        "ratio": 1.712027982213267,
+        "route_length_m": 16619.118555710575,
+        "segment_id": "5771"
+      },
+      {
+        "permit_length_m": 8061.6552,
+        "ratio": 1.7272295482046787,
+        "route_length_m": 13924.329068877898,
+        "segment_id": "5780"
+      },
+      {
+        "permit_length_m": 20598.6888,
+        "ratio": 1.5789177079163488,
+        "route_length_m": 32523.634506178165,
+        "segment_id": "6119"
+      },
+      {
+        "permit_length_m": 30.7848,
+        "ratio": 9.282056413606176,
+        "route_length_m": 285.7462502815834,
+        "segment_id": "6190"
+      },
+      {
+        "permit_length_m": 1737.3600000000001,
+        "ratio": 1.5265166178254355,
+        "route_length_m": 2652.108911145199,
+        "segment_id": "621"
+      },
+      {
+        "permit_length_m": 609.6,
+        "ratio": 3.2243870765624236,
+        "route_length_m": 1965.5863618724536,
+        "segment_id": "6292"
+      },
+      {
+        "permit_length_m": 4903.9272,
+        "ratio": 3.4200947477701136,
+        "route_length_m": 16771.895660167,
+        "segment_id": "638"
+      },
+      {
+        "permit_length_m": 3945.9408000000003,
+        "ratio": 1.9674554776412139,
+        "route_length_m": 7763.462841407954,
+        "segment_id": "6480"
+      },
+      {
+        "permit_length_m": 3352.8,
+        "ratio": 2.505675495349482,
+        "route_length_m": 8401.028800807744,
+        "segment_id": "657"
+      },
+      {
+        "permit_length_m": 785.1648,
+        "ratio": 0.6618929377236028,
+        "route_length_m": 519.6950360691651,
+        "segment_id": "6690"
+      },
+      {
+        "permit_length_m": 1767.8400000000001,
+        "ratio": 0.6034870397544526,
+        "route_length_m": 1066.8685283595116,
+        "segment_id": "6910"
+      },
+      {
+        "permit_length_m": 1767.8400000000001,
+        "ratio": 0.47628101301547754,
+        "route_length_m": 841.9886260492818,
+        "segment_id": "6911"
+      },
+      {
+        "permit_length_m": 182.88,
+        "ratio": 0.003656985078722545,
+        "route_length_m": 0.668789431196779,
+        "segment_id": "6947"
+      },
+      {
+        "permit_length_m": 583.0824,
+        "ratio": 1.877804622392709,
+        "route_length_m": 1094.9148259558344,
+        "segment_id": "6992"
+      },
+      {
+        "permit_length_m": 565.0992,
+        "ratio": 1.9208162921606557,
+        "route_length_m": 1085.4517500469528,
+        "segment_id": "6993"
+      },
+      {
+        "permit_length_m": 198.12,
+        "ratio": 0.33180008115342324,
+        "route_length_m": 65.73623207811622,
+        "segment_id": "7170"
+      },
+      {
+        "permit_length_m": 1243.8888000000002,
+        "ratio": 0.46341416263175345,
+        "route_length_m": 576.4356866590167,
+        "segment_id": "7224"
+      },
+      {
+        "permit_length_m": 640.08,
+        "ratio": 1.7253409636912158,
+        "route_length_m": 1104.3562440394735,
+        "segment_id": "7244"
+      },
+      {
+        "permit_length_m": 26710.5384,
+        "ratio": 1.9511952535451356,
+        "route_length_m": 52117.475745715084,
+        "segment_id": "7262"
+      },
+      {
+        "permit_length_m": 967.4352,
+        "ratio": 0.430298623065035,
+        "route_length_m": 416.2860344646468,
+        "segment_id": "7305"
+      },
+      {
+        "permit_length_m": 701.0400000000001,
+        "ratio": 0.6229656937573559,
+        "route_length_m": 436.7238699516568,
+        "segment_id": "7491"
+      },
+      {
+        "permit_length_m": 712.9272000000001,
+        "ratio": 1.7251263831262482,
+        "route_length_m": 1229.8895219683236,
+        "segment_id": "7535"
+      },
+      {
+        "permit_length_m": 712.9272000000001,
+        "ratio": 1.7251263831262482,
+        "route_length_m": 1229.8895219683236,
+        "segment_id": "7536"
+      },
+      {
+        "permit_length_m": 1126.5408,
+        "ratio": 0.4706372482851436,
+        "route_length_m": 530.1920621929443,
+        "segment_id": "770"
+      },
+      {
+        "permit_length_m": 609.6,
+        "ratio": 2.0753819530191997,
+        "route_length_m": 1265.1528385605043,
+        "segment_id": "776"
+      },
+      {
+        "permit_length_m": 10956.3408,
+        "ratio": 1.8041204328387987,
+        "route_length_m": 19766.55830642539,
+        "segment_id": "7908"
+      },
+      {
+        "permit_length_m": 967.4352,
+        "ratio": 0.43501581523267496,
+        "route_length_m": 420.8496122127859,
+        "segment_id": "7940"
+      },
+      {
+        "permit_length_m": 859.5360000000001,
+        "ratio": 2.0922436604616195,
+        "route_length_m": 1798.3587469385388,
+        "segment_id": "8030"
+      },
+      {
+        "permit_length_m": 457.20000000000005,
+        "ratio": 4.209280422002939,
+        "route_length_m": 1924.4830089397437,
+        "segment_id": "8031"
+      },
+      {
+        "permit_length_m": 87.47760000000001,
+        "ratio": 8.15159648042776,
+        "route_length_m": 713.0820962762674,
+        "segment_id": "8193"
+      },
+      {
+        "permit_length_m": 3049.5240000000003,
+        "ratio": 2.165135491281577,
+        "route_length_m": 6602.632643914961,
+        "segment_id": "8335"
+      },
+      {
+        "permit_length_m": 222.50400000000002,
+        "ratio": 0.6582514162918439,
+        "route_length_m": 146.46357313060045,
+        "segment_id": "8609"
+      },
+      {
+        "permit_length_m": 491.9472,
+        "ratio": 5.333137629231246,
+        "route_length_m": 2623.6221239149495,
+        "segment_id": "8684"
+      },
+      {
+        "permit_length_m": 18246.852000000003,
+        "ratio": 1.769067297897582,
+        "route_length_m": 32279.909162777098,
+        "segment_id": "9084"
+      },
+      {
+        "permit_length_m": 22414.0776,
+        "ratio": 0.5496336453680645,
+        "route_length_m": 12319.531178850677,
+        "segment_id": "9379"
+      },
+      {
+        "permit_length_m": 3987.3936000000003,
+        "ratio": 0.15742083086597192,
+        "route_length_m": 627.698813501659,
+        "segment_id": "9519"
+      },
+      {
+        "permit_length_m": 164.592,
+        "ratio": 1.6955576353944775,
+        "route_length_m": 279.07522232484786,
+        "segment_id": "9576"
+      },
+      {
+        "permit_length_m": 365.4552,
+        "ratio": 4.972236719384798,
+        "route_length_m": 1817.129764730115,
+        "segment_id": "9629"
+      },
+      {
+        "permit_length_m": 365.4552,
+        "ratio": 4.972236719384798,
+        "route_length_m": 1817.129764730115,
+        "segment_id": "9630"
+      },
+      {
+        "permit_length_m": 365.4552,
+        "ratio": 4.972236719384798,
+        "route_length_m": 1817.129764730115,
+        "segment_id": "9631"
+      },
+      {
+        "permit_length_m": 24406.86,
+        "ratio": 2.1658035925510486,
+        "route_length_m": 52860.46507089049,
+        "segment_id": "9954"
+      }
+    ]
+  },
+  "rejected_routes": {
+    "count": 1,
+    "segments": [
+      {
+        "reason": "ValueError: Conflicting route sequence",
+        "segment_id": "19376"
+      }
+    ]
+  },
+  "rows": 8576,
+  "segments": 4288,
+  "selection": {
+    "excluded_raw_records_by_code": {
+      "APMO": 16,
+      "CNCL": 1809,
+      "COMB": 1131,
+      "DECP": 8950,
+      "DECR": 1260,
+      "OPMO": 19,
+      "PROP": 349,
+      "REM": 1
+    },
+    "raw_records_by_code": {
+      "ACT": 3090,
+      "APMO": 16,
+      "CNCL": 1809,
+      "COMB": 1131,
+      "DECP": 8950,
+      "DECR": 1260,
+      "OPMO": 19,
+      "OUT": 754,
+      "PABN": 400,
+      "PREM": 126,
+      "PROP": 349,
+      "REM": 1
+    },
+    "selected_unique_segments_by_code": {
+      "ACT": 3022,
+      "OUT": 745,
+      "PABN": 395,
+      "PREM": 126
+    }
+  },
+  "source_classes": {
+    "DEFAULT": 62600,
+    "DERIVED": 96572,
+    "PUBLIC": 43910,
+    "UNKNOWN": 199990
+  }
+}

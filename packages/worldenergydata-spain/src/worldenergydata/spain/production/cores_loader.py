@@ -70,7 +70,8 @@ _MONTHS = {
 # Non-field columns present in the workbooks.
 _YEAR_COLS = {"año", "year"}
 _MONTH_COLS = {"mes", "month"}
-_TOTAL_COLS = {"grand total", "total general"}
+# Spain agent pack (2026), section 6 SF2: plain Total is also an aggregate.
+_TOTAL_COLS = {"total", "grand total", "total general"}
 _DATA_ROOT = files("worldenergydata.spain").joinpath("data/cores")
 DEFAULT_FIXTURE_CSV = _DATA_ROOT.joinpath("ayoluengo_oil_sample.csv")
 DEFAULT_METADATA_JSON = _DATA_ROOT.joinpath("_metadata.json")

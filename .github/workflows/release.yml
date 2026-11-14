@@ -21,13 +21,19 @@ on:
         type: boolean
         default: true
 
+permissions:
+  contents: read
+
 env:
   PYTHON_VERSION: "3.11"
 
 jobs:
   validate:
     name: Validate Release
-    runs-on: ubuntu-latest
+    runs-on: >-
+      ${{ (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository) &&
+          fromJSON('["self-hosted","x64","linux"]') || 'ubuntu-latest' }}
     outputs:
       version: ${{ steps.version.outputs.version }}
 
@@ -58,7 +64,10 @@ jobs:
 
   test:
     name: Run Tests
-    runs-on: ubuntu-latest
+    runs-on: >-
+      ${{ (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository) &&
+          fromJSON('["self-hosted","x64","linux"]') || 'ubuntu-latest' }}
     needs: validate
 
     steps:
@@ -81,7 +90,10 @@ jobs:
 
   build:
     name: Build Package
-    runs-on: ubuntu-latest
+    runs-on: >-
+      ${{ (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository) &&
+          fromJSON('["self-hosted","x64","linux"]') || 'ubuntu-latest' }}
     needs: [validate, test]
 
     steps:
@@ -110,8 +122,7 @@ jobs:
 
       - name: Verify package
         run: |
-          uv pip install twine
-          uv run twine check dist/*
+          uv run --no-project --with twine twine check dist/*
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v7
@@ -119,10 +130,13 @@ jobs:
           name: dist
           path: dist/
 
+  # Publishing exception: keep TestPyPI tokens and OIDC uploads on ephemeral
+  # GitHub-hosted runners, away from persistent self-hosted runners.
   publish-testpypi:
     name: Publish to Test PyPI
     runs-on: ubuntu-latest
-    needs: build
+    timeout-minutes: 15
+    needs: [validate, build]
     if: |
       (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')) ||
       (github.event_name == 'workflow_dispatch' && github.event.inputs.publish_testpypi == 'true')
@@ -131,11 +145,17 @@ jobs:
       url: https://test.pypi.org/project/worldenergydata/
 
     steps:
+      - name: Prepare isolated distribution directory
+        id: release_dist
+        run: |
+          dist_dir=$(mktemp -d "$RUNNER_TEMP/publish-dist.XXXXXX")
+          echo "path=$dist_dir" >> "$GITHUB_OUTPUT"
+
       - name: Download build artifacts
         uses: actions/download-artifact@v8
         with:
           name: dist
-          path: dist/
+          path: ${{ steps.release_dist.outputs.path }}
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
@@ -144,22 +164,31 @@ jobs:
         run: uv python install ${{ env.PYTHON_VERSION }}
 
       - name: Publish to Test PyPI
+        working-directory: ${{ runner.temp }}
         run: |
-          uv pip install twine
-          uv run twine upload --repository testpypi dist/*
+          uv run --no-project --with twine twine upload --repository testpypi "$DIST_DIR"/*
         env:
+          DIST_DIR: ${{ steps.release_dist.outputs.path }}
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.TEST_PYPI_API_TOKEN }}
 
       - name: Test installation from Test PyPI
+        working-directory: ${{ runner.temp }}
         run: |
           sleep 30  # Wait for package to be available
-          uv pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ worldenergydata==${{ needs.validate.outputs.version }}
+          uv run --no-project \
+            --with "worldenergydata==${{ needs.validate.outputs.version }}" \
+            --index-url https://test.pypi.org/simple/ \
+            --extra-index-url https://pypi.org/simple/ \
+            python -c "import worldenergydata"
         continue-on-error: true
 
+  # Publishing exception: keep PyPI tokens and OIDC uploads on ephemeral
+  # GitHub-hosted runners, away from persistent self-hosted runners.
   publish-pypi:
     name: Publish to PyPI
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     needs: [build, publish-testpypi]
     if: |
       always() &&
@@ -171,11 +200,17 @@ jobs:
       url: https://pypi.org/project/worldenergydata/
 
     steps:
+      - name: Prepare isolated distribution directory
+        id: release_dist
+        run: |
+          dist_dir=$(mktemp -d "$RUNNER_TEMP/publish-dist.XXXXXX")
+          echo "path=$dist_dir" >> "$GITHUB_OUTPUT"
+
       - name: Download build artifacts
         uses: actions/download-artifact@v8
         with:
           name: dist
-          path: dist/
+          path: ${{ steps.release_dist.outputs.path }}
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
@@ -184,16 +219,20 @@ jobs:
         run: uv python install ${{ env.PYTHON_VERSION }}
 
       - name: Publish to PyPI
+        working-directory: ${{ runner.temp }}
         run: |
-          uv pip install twine
-          uv run twine upload dist/*
+          uv run --no-project --with twine twine upload "$DIST_DIR"/*
         env:
+          DIST_DIR: ${{ steps.release_dist.outputs.path }}
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
 
   github-release:
     name: Create GitHub Release
-    runs-on: ubuntu-latest
+    runs-on: >-
+      ${{ (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository) &&
+          fromJSON('["self-hosted","x64","linux"]') || 'ubuntu-latest' }}
     needs: [validate, build, publish-pypi]
     if: |
       always() &&

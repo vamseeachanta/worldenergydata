@@ -1,0 +1,15 @@
+basename: cost
+
+meta:
+  label: cost_disclosure_benchmark
+
+file_management:
+  flag: false
+  output_directory: outputs
+
+analysis:
+  flag: true
+  type: disclosure_benchmark
+
+report:
+  report_date: "2026-10-20"
