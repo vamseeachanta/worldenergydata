@@ -7,7 +7,7 @@
     "runs_attempted": 1,
     "runs_completed": 1,
     "datasets_attempted": 5,
-    "datasets_completed": 5,
+    "datasets_terminal": 5,
     "datasets_written": 4,
     "deterministic_failures": 1,
     "transient_failures": 0,
@@ -18,6 +18,11 @@
       "revision": 1,
       "date": "2026-11-13",
       "change": "Record one live scheduler run, readback and deterministic catalog failure."
+    },
+    {
+      "revision": 2,
+      "date": "2026-11-14",
+      "change": "Distinguish terminal outcomes from writes, qualify historical operator checks and identify the separate earlier invocation."
     }
   ],
   "provenance": {
@@ -204,8 +209,8 @@
       "network_deselected": 1
     },
     "new_behavior_tests": "Not applicable: production behavior and tests remain unchanged.",
-    "report_readback": "PASS: JSON/HTML receipt equality; positive Parquet rows, snapshot bytes, metadata and UTC manifests agree.",
-    "public_text": "PASS: outgoing metadata only; no source data records or restricted locators; final scan recorded separately."
+    "report_readback": "UNCOMMITTED OPERATOR CHECK: JSON/HTML receipt equality; positive Parquet rows, snapshot bytes, metadata and UTC manifests agree. The procedure and detailed check record are not committed.",
+    "public_text": "UNCOMMITTED OPERATOR CHECK: outgoing metadata was inspected for source records and restricted locators. The procedure and final scan record are not committed or referenced; this is a historical operator assertion."
   },
   "retention": {
     "location": "Task-owned local evidence storage, addressed relative to EVIDENCE_ROOT.",
@@ -225,7 +230,9 @@
     "Catalog volume is not inferred from historical estimates. Source bytes were not archived.",
     "No production modules changed: the mandatory changed-module silent-failure sweep has zero modules in scope.",
     "Existing catalog fallback and best-effort metadata/manifest writers remain unchanged; catalog digest and manifest/metadata readback prevent those omissions from qualifying this receipt.",
-    "Hosted checks and independent provider review remain pending publication."
+    "Hosted checks and independent provider review remain pending publication.",
+    "The historical runtime readback and public-text checks are uncommitted operator checks. Runtime products remain outside Git; those checks are not independently reproducible from this report.",
+    "This receipt covers one invocation beginning at 20:37:56 UTC on 2026-11-13. A separate earlier invocation that day is recorded in #1971; runs_attempted and runs_completed count only the invocation covered here."
   ],
   "next_action": "Maintain the partial disposition; decide whether a separate compatibility correction should select a newly verified permit member matching the intended dataset."
 }
