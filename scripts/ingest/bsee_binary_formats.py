@@ -73,10 +73,12 @@ def text_chunks(handle, name: str, chunk_size: int, encoding: str):
     codec = "utf-8-sig" if sample.startswith(b"\xef\xbb\xbf") else encoding
     # A byte-limited sample may end within a character. The full reader below
     # still decodes strictly, including any invalid or truncated final bytes.
-    text = codecs.getincrementaldecoder(codec)().decode(sample, final=False)
+    decoder = codecs.getincrementaldecoder(codec)()
+    text = decoder.decode(sample, final=False)
     if text.startswith("version https://git-lfs.github.com/spec/v1"):
         raise ValueError("LFS pointer requires the actual payload")
     if not text:
+        decoder.decode(b"", final=True)
         raise ValueError("Empty input")
     first_line = text.splitlines()[0]
     try:

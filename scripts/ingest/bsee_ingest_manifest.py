@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 
 MANIFEST_NAME = "ingest_manifest.json"
 
@@ -67,6 +67,7 @@ def stage_manifests(
             json.dumps({"version": 1, "datasets": list(previous.values())}, indent=2)
             + "\n",
             encoding="utf-8",
+            newline="\n",
         )
         destinations.append((staged, path))
     return destinations
@@ -91,5 +92,7 @@ def preserve_ingest_entries(schema: dict, module_path: Path, root: Path) -> None
             entry["size_bytes"] = entry["measured_size_bytes"] if present else 0
             preserved[entry["path"]] = entry
     schema["datasets"] = [
-        entry for entry in schema["datasets"] if entry["path"] not in preserved
+        entry
+        for entry in schema["datasets"]
+        if PureWindowsPath(entry["path"]).as_posix() not in preserved
     ] + list(preserved.values())
