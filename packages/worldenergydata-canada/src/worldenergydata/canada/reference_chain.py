@@ -5,10 +5,9 @@ Minimal vertical slice mirroring the merged Norway (#716) / Spain (#763) chains:
 ``build_canada_field_concept`` -> ``recommend``. Economics are explicitly pre-tax
 chain plumbing, not a Canada investment NPV headline.
 
-Dev-system: the primary field Hibernia is a shallow-water (~80 m) Gravity-Based
-Structure with dry trees, so the depth classifier's ``dry`` result is accurate.
-For the FPSO+subsea fields it is a documented simplification (see
-``dev_system_source`` in the metrics + the #719 per-field-concept follow-on).
+Explicit field-concept overrides (#815) select dry-tree GBS or FPSO/subsea
+economics even in shallow water. Unmapped fields retain depth classification;
+``dev_system_source`` records the selection method in the result and metrics.
 """
 
 from __future__ import annotations
@@ -20,11 +19,11 @@ from typing import Any
 import pandas as pd
 
 from worldenergydata.canada.development_wells import DevelopmentWell
-from worldenergydata.canada.field_concept import build_canada_field_concept
-from worldenergydata.fdas.adapters.contract import to_fdas_production
-from worldenergydata.fdas.adapters.field_concept_normalizer import (
-    dev_system_from_water_depth_m,
+from worldenergydata.canada.field_concept import (
+    build_canada_field_concept,
+    resolve_canada_dev_system,
 )
+from worldenergydata.fdas.adapters.contract import to_fdas_production
 from worldenergydata.fdas.analysis.cashflow import CashflowEngine
 from worldenergydata.fdas.core.config import AssumptionsManager
 from worldenergydata.field_development.recommendation import recommend
@@ -61,9 +60,9 @@ def run_canada_reference_chain(
         str(year_month): oil_price_usd_bbl
         for year_month in fdas_production.get("YEAR_MONTH", pd.Series(dtype="object"))
     }
-    dev_system = dev_system_from_water_depth_m(field_concept.water_depth_m)
-    if dev_system == "unknown":
-        dev_system = "subsea15"
+    dev_system, dev_system_source = resolve_canada_dev_system(
+        field_name, field_concept.water_depth_m
+    )
 
     cashflows = CashflowEngine(
         AssumptionsManager(), dev_system=dev_system
@@ -82,7 +81,8 @@ def run_canada_reference_chain(
         "ranked_concepts": ranked_concepts,
         "economics_label": "chain_plumbing_pre_tax",
         "dev_system": dev_system,
-        "pre_tax_metrics": _pre_tax_metrics(cashflows, dev_system),
+        "dev_system_source": dev_system_source,
+        "pre_tax_metrics": _pre_tax_metrics(cashflows, dev_system, dev_system_source),
     }
 
 
@@ -93,14 +93,15 @@ def _first_oil_date(fdas_production: pd.DataFrame) -> datetime:
     return datetime.strptime(first_period, "%Y-%m")
 
 
-def _pre_tax_metrics(cashflows, dev_system: str) -> dict[str, Any]:
+def _pre_tax_metrics(
+    cashflows, dev_system: str, dev_system_source: str
+) -> dict[str, Any]:
     return {
         "months": len(cashflows),
         "gross_revenue_usd": float(sum(cf.oil_revenue_usd for cf in cashflows)),
         "royalty_usd": float(sum(cf.royalty_usd for cf in cashflows)),
         "host_capex_usd": float(sum(cf.host_capex_usd for cf in cashflows)),
         "net_cashflow_usd": float(sum(cf.net_cashflow_usd for cf in cashflows)),
-        # dev_system from the depth classifier (see module docstring); per-field
-        # GBS-vs-FPSO/subsea concept override is a #719 follow-on.
-        "dev_system_source": "depth_classifier",
+        # Record whether a field-concept override or depth classification was used.
+        "dev_system_source": dev_system_source,
     }

@@ -19,6 +19,7 @@ from worldenergydata.canada.development_wells import (
 from worldenergydata.fdas.adapters.field_concept_normalizer import (
     FieldMapEntry,
     FieldMetaMapping,
+    dev_system_from_water_depth_m,
     number_from,
     to_field_concept,
 )
@@ -34,6 +35,16 @@ CANADA_WATER_DEPTH_M = {
     "north amethyst": 120.0,
 }
 
+# Explicit concepts prevent shallow FPSO/subsea fields being costed as dry-tree.
+# These dev_system tokens select CAPEX profiles, not literal depth ranges.
+CANADA_FIELD_CONCEPT = {
+    "hibernia": {"concept": "gbs_dry_tree", "dev_system": "dry"},
+    "hebron": {"concept": "gbs_dry_tree", "dev_system": "dry"},
+    "terra nova": {"concept": "fpso_subsea", "dev_system": "subsea15"},
+    "white rose": {"concept": "fpso_subsea", "dev_system": "subsea15"},
+    "north amethyst": {"concept": "fpso_subsea_tieback", "dev_system": "subsea15"},
+}
+
 _CANADA_MAPPING = FieldMetaMapping(
     {
         "name": FieldMapEntry("field_name"),
@@ -44,6 +55,23 @@ _CANADA_MAPPING = FieldMetaMapping(
         "data_source": FieldMapEntry("source"),
     }
 )
+
+
+def resolve_canada_dev_system(field_name: str, water_depth_m: Any) -> tuple[str, str]:
+    """Resolve the economics bucket and its source using field concepts (#815).
+
+    ``dry``, ``subsea15`` and ``subsea20`` are CashflowEngine CAPEX-profile
+    buckets, not literal depth statements. Known GBS and FPSO/subsea concepts
+    take precedence; unmapped fields retain the depth classifier and its
+    ``unknown`` to ``subsea15`` fallback.
+    """
+    concept = CANADA_FIELD_CONCEPT.get(str(field_name).strip().lower())
+    if concept is not None:
+        return concept["dev_system"], "field_concept_override"
+    dev_system = dev_system_from_water_depth_m(water_depth_m)
+    if dev_system == "unknown":
+        dev_system = "subsea15"
+    return dev_system, "depth_classifier"
 
 
 def canada_field_to_concept(
