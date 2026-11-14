@@ -1,0 +1,21 @@
+basename: ukcs
+default:
+  log_level: INFO
+  config:
+    overwrite:
+      output: true
+meta:
+  label: ukcs_reference_report
+file_management:
+  flag: false
+  output_directory: outputs
+data:
+  source: csv
+  input_path: sample_nsta_production.csv
+report:
+  field_name: Forties
+  field_meta:
+    field_name: FORTIES
+    water_depth_m: 128.0
+    source: synthetic fixture metadata
+  oil_price_usd_bbl: 75.0
