@@ -1,0 +1,28 @@
+VALUE,DESCRIP,occurrences_in_selected_permits
+ACIDIZE,Acidize,1492
+CASING,Casing Pressure Repair,3383
+CLEARNCE,Site Clearance,1039
+DESAND,Wash/Desand Well,1754
+FLUIDS,Additional Fluids For Injection,64
+FRAC,Hydraulic Fracking,2613
+INITCOMP,Initial Completion,6925
+INJECT,Initial Injection Well,160
+JET,Jet Well,340
+LIFT,Artifical Lift,1829
+OTHER,Describe Operation(S),11164
+OTHRABAN,Other Abandonment,168
+OTHRCOMP,Other Completion,152
+OTHRENPR,Other Enhance Production,310
+OTHRINFO,Other Information,110
+OTHRUTIL,Other Utility,41
+OTHRWKVR,Other Workover,1205
+PERF,Modify Perforations,1281
+PERMABAN,Permanent Abandonment,24712
+PLUGBACK,Plugback To Sidetrack/Bypass,4928
+REPERF,Reperforation,610
+SURFPLAT,Surface Location Plat,3062
+TEMPABAN,Temporary Abandonment,29852
+TUBING,Change Tubing,1773
+WELLNAME,Change Well Name,865
+ZONE,Change Zone,10050
+ZONEISO,Zone Isolation,890

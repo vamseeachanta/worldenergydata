@@ -1,0 +1,19 @@
+group,wells,stage,wells_reaching,share_percent,events,events_per_well
+development wells first drilled 2005-2025,1235,drilling,1235,100.000000,1235,1.000000
+development wells first drilled 2005-2025,1235,sidetrack or bypass,446,36.113360,696,0.563563
+development wells first drilled 2005-2025,1235,light intervention,492,39.838057,1650,1.336032
+development wells first drilled 2005-2025,1235,heavy intervention,731,59.190283,1935,1.566802
+development wells first drilled 2005-2025,1235,"intervention, light or heavy not established",773,62.591093,1582,1.280972
+development wells first drilled 2005-2025,1235,temporary abandonment,689,55.789474,1671,1.353036
+development wells first drilled 2005-2025,1235,"abandonment, type not stated",105,8.502024,159,0.128745
+development wells first drilled 2005-2025,1235,permanent abandonment,498,40.323887,1045,0.846154
+development wells first drilled 2005-2025,1235,permanently abandoned (bore status),484,39.190283,484,0.391903
+exploration wells first drilled 2005-2025,1655,drilling,1655,100.000000,1655,1.000000
+exploration wells first drilled 2005-2025,1655,sidetrack or bypass,553,33.413897,882,0.532931
+exploration wells first drilled 2005-2025,1655,light intervention,271,16.374622,1005,0.607251
+exploration wells first drilled 2005-2025,1655,heavy intervention,1075,64.954683,2307,1.393958
+exploration wells first drilled 2005-2025,1655,"intervention, light or heavy not established",919,55.528701,1907,1.152266
+exploration wells first drilled 2005-2025,1655,temporary abandonment,794,47.975831,1786,1.079154
+exploration wells first drilled 2005-2025,1655,"abandonment, type not stated",321,19.395770,371,0.224169
+exploration wells first drilled 2005-2025,1655,permanent abandonment,1111,67.129909,2207,1.333535
+exploration wells first drilled 2005-2025,1655,permanently abandoned (bore status),1127,68.096677,1127,0.680967
