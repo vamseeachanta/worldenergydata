@@ -35,22 +35,22 @@ reports/cost/a1_evidence_pack.html,undetermined,no decisive publication or repla
 reports/cost/big_foot_cost_map.html,undetermined,no decisive publication or replacement evidence under these rules
 reports/cost/cost_basis_timeseries.html,undetermined,no decisive publication or replacement evidence under these rules
 reports/cost/cost_timeseries_presentation.html,undetermined,no decisive publication or replacement evidence under these rules
-reports/decommissioning/pa_liability_wave.html,current,scripts/build_pages.py:883-904 (build_decommissioning)
-reports/decommissioning/regional_liability.html,current,scripts/build_pages.py:883-904 (build_decommissioning)
+reports/decommissioning/pa_liability_wave.html,current,scripts/build_pages.py:884-905 (build_decommissioning)
+reports/decommissioning/regional_liability.html,current,scripts/build_pages.py:884-905 (build_decommissioning)
 reports/field-atlas/atlas_template.html,undetermined,no decisive publication or replacement evidence under these rules
-reports/field-atlas/index.html,current,scripts/build_pages.py:846-869 (build_field_atlas)
-reports/field-atlas/onepagers/field-anchor.html,current,scripts/build_pages.py:846-869 (build_field_atlas)
-reports/field-atlas/onepagers/field-big_foot.html,current,scripts/build_pages.py:846-869 (build_field_atlas)
-reports/field-atlas/onepagers/field-cascade_chinook.html,current,scripts/build_pages.py:846-869 (build_field_atlas)
-reports/field-atlas/onepagers/field-jack_st_malo.html,current,scripts/build_pages.py:846-869 (build_field_atlas)
-reports/field-atlas/onepagers/field-julia.html,current,scripts/build_pages.py:846-869 (build_field_atlas)
-reports/field-atlas/onepagers/field-kaskida.html,current,scripts/build_pages.py:846-869 (build_field_atlas)
-reports/field-atlas/onepagers/field-north_platte.html,current,scripts/build_pages.py:846-869 (build_field_atlas)
-reports/field-atlas/onepagers/field-shenandoah.html,current,scripts/build_pages.py:846-869 (build_field_atlas)
-reports/field-atlas/onepagers/field-stones.html,current,scripts/build_pages.py:846-869 (build_field_atlas)
-reports/field-atlas/onepagers/field-tiber.html,current,scripts/build_pages.py:846-869 (build_field_atlas)
+reports/field-atlas/index.html,current,scripts/build_pages.py:846-870 (build_field_atlas)
+reports/field-atlas/onepagers/field-anchor.html,current,scripts/build_pages.py:846-870 (build_field_atlas)
+reports/field-atlas/onepagers/field-big_foot.html,current,scripts/build_pages.py:846-870 (build_field_atlas)
+reports/field-atlas/onepagers/field-cascade_chinook.html,current,scripts/build_pages.py:846-870 (build_field_atlas)
+reports/field-atlas/onepagers/field-jack_st_malo.html,current,scripts/build_pages.py:846-870 (build_field_atlas)
+reports/field-atlas/onepagers/field-julia.html,current,scripts/build_pages.py:846-870 (build_field_atlas)
+reports/field-atlas/onepagers/field-kaskida.html,current,scripts/build_pages.py:846-870 (build_field_atlas)
+reports/field-atlas/onepagers/field-north_platte.html,current,scripts/build_pages.py:846-870 (build_field_atlas)
+reports/field-atlas/onepagers/field-shenandoah.html,current,scripts/build_pages.py:846-870 (build_field_atlas)
+reports/field-atlas/onepagers/field-stones.html,current,scripts/build_pages.py:846-870 (build_field_atlas)
+reports/field-atlas/onepagers/field-tiber.html,current,scripts/build_pages.py:846-870 (build_field_atlas)
 reports/field_analysis_report.html,undetermined,no decisive publication or replacement evidence under these rules
-reports/field_benchmark/index.html,current,scripts/build_pages.py:907-927 (build_field_benchmark)
+reports/field_benchmark/index.html,current,scripts/build_pages.py:908-928 (build_field_benchmark)
 reports/field_development/all_regions_atlas.html,current,scripts/build_pages.py:703-746 (build_field_development)
 reports/field_development/bsee_matched/aconcagua.html,current,scripts/build_pages.py:703-746 (build_field_development)
 reports/field_development/bsee_matched/allegheny.html,current,scripts/build_pages.py:703-746 (build_field_development)
@@ -197,6 +197,7 @@ reports/gtm/2026-06-17-julia-field-economics-by-well-block-field.html,undetermin
 reports/gtm/2026-06-17-lower-tertiary-field-deepdive.html,undetermined,no decisive publication or replacement evidence under these rules
 reports/gtm/2026-06-17-lower-tertiary-portfolio-economics.html,undetermined,no decisive publication or replacement evidence under these rules
 reports/gtm/decommissioning-market-outlook-2026-07-05.html,undetermined,no decisive publication or replacement evidence under these rules
+reports/gtm/operator_cost_benchmarking.html,undetermined,no decisive publication or replacement evidence under these rules
 reports/gtm/seasonal-intervention-risk-windows-2026-07-05.html,undetermined,no decisive publication or replacement evidence under these rules
 reports/hse/drilling-hse-patterns-2026-07-05.html,current,scripts/build_pages.py:831-843 (build_hse)
 reports/hse/mooring-fatigue-grounded-card.html,current,scripts/build_pages.py:831-843 (build_hse)
@@ -303,5 +304,5 @@ reports/metocean/test_wave_rose.html,one-off,filename demo/test marker; not sele
 reports/modules/marketing/hurricane_mooring_risk_avoidance_infographic.html,undetermined,no decisive publication or replacement evidence under these rules
 reports/modules/marketing/hurricane_mooring_risk_avoidance_infographic_client_markup_white.html,undetermined,no decisive publication or replacement evidence under these rules
 reports/modules/marketing/reference_hurricane_mooring_safety_infographic_prior_draft.html,undetermined,no decisive publication or replacement evidence under these rules
-reports/pressure-atlas/index.html,current,scripts/build_pages.py:872-880 (build_pressure_atlas)
+reports/pressure-atlas/index.html,current,scripts/build_pages.py:873-881 (build_pressure_atlas)
 reports/rig-selector/index.html,undetermined,no decisive publication or replacement evidence under these rules

@@ -1,0 +1,7 @@
+basename: cost
+
+default:
+  log_level: INFO
+  config:
+    overwrite:
+      output: true

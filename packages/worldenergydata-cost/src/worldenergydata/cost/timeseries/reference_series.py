@@ -32,7 +32,7 @@ import urllib.request
 from collections import defaultdict
 from dataclasses import dataclass
 from datetime import date
-from typing import Optional
+from typing import Callable, Optional
 
 from worldenergydata.cost.timeseries.schema import (
     CostComponent,
@@ -101,7 +101,26 @@ REFERENCE_SERIES: tuple[ReferenceSeriesSpec, ...] = (
         series_id="PCU333132333132",
         component=CostComponent.INDEX_PPI_MACHINERY,
         title="PPI by Industry: Oil and Gas Field Machinery and Equipment (NAICS 333132)",
-        unit="index_1965_eq_100",
+        # FRED states "Index Dec 1980=100"; 1965 is only the first observation.
+        unit="index_dec_1980_eq_100",
+        publisher="U.S. Bureau of Labor Statistics via FRED",
+        is_index=True,
+    ),
+    # Added 2026-11-12; both verified live (HTTP 200, observations to 2026-09);
+    # titles and base periods read from the FRED series pages the same day.
+    ReferenceSeriesSpec(
+        series_id="WPU1017",
+        component=CostComponent.INDEX_PPI_STEEL_MILL,
+        title="PPI by Commodity: Metals and Metal Products: Steel Mill Products",
+        unit="index_1982_eq_100",
+        publisher="U.S. Bureau of Labor Statistics via FRED",
+        is_index=True,
+    ),
+    ReferenceSeriesSpec(
+        series_id="WPU101706",
+        component=CostComponent.INDEX_PPI_STEEL_PIPE,
+        title="PPI by Commodity: Metals and Metal Products: Steel Pipe and Tube",
+        unit="index_jun_1982_eq_100",
         publisher="U.S. Bureau of Labor Statistics via FRED",
         is_index=True,
     ),
@@ -174,6 +193,7 @@ def build_reference_observations(
     start_year: int = 1990,
     end_year: Optional[int] = None,
     specs: tuple[ReferenceSeriesSpec, ...] = REFERENCE_SERIES,
+    fetch: Callable[[str], list[tuple[date, float]]] | None = None,
 ) -> list[CostObservation]:
     """Fetch every reference series and emit them as ``CostObservation`` rows.
 
@@ -185,7 +205,7 @@ def build_reference_observations(
     """
     rows: list[CostObservation] = []
     for spec in specs:
-        annual = annualize(fetch_fred_series(spec.series_id))
+        annual = annualize((fetch or fetch_fred_series)(spec.series_id))
         for year, (mean_value, n_months) in annual.items():
             if year < start_year:
                 continue

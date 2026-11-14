@@ -14,6 +14,8 @@ Examples:
     worldenergydata bsee refresh --type well
 """
 
+import subprocess
+import sys
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
@@ -1022,21 +1024,52 @@ def refresh(
         False, "--force", "-f", help="Force refresh even if data is current"
     ),
     verbose: bool = typer.Option(  # noqa: B008
-        False, "--verbose", "-v", help="Enable verbose output"
+        False,
+        "--verbose",
+        "-v",
+        help="Enable verbose output for typed refreshes only",
+    ),
+    dry_run: bool = typer.Option(  # noqa: B008
+        False, "--dry-run", help="Preview the full refresh without downloading data"
     ),
 ) -> None:
     """
     Refresh BSEE data from source.
 
-    Downloads and updates local BSEE data cache from official sources.
+    The default full refresh runs scripts/refresh_bsee_all.py from a repository
+    checkout, using its URL registry, progress output and backup handling.
+    Other data types use the existing refresh router.
 
     Examples:
-        worldenergydata bsee refresh --type well
+        worldenergydata bsee refresh --dry-run
+        worldenergydata bsee refresh --type well --verbose
         worldenergydata bsee refresh --type production --force
         worldenergydata bsee refresh --type platform
         worldenergydata bsee refresh --type infrastructure
-        worldenergydata bsee refresh --type all --verbose
     """
+    if dry_run and data_type != DataType.all:
+        raise typer.BadParameter("--dry-run is only supported with --type all")
+
+    if data_type == DataType.all:
+        script = Path(__file__).resolve().parents[4] / "scripts" / "refresh_bsee_all.py"
+        if not script.is_file():
+            console.print("[red]Full refresh requires a repository checkout.[/red]")
+            raise typer.Exit(1)
+        command = [sys.executable, str(script)]
+        if force:
+            command.append("--force")
+        if dry_run:
+            command.append("--dry-run")
+        try:
+            result = subprocess.run(command, check=False)
+        except OSError as exc:
+            console.print(f"[red]Could not start full refresh:[/red] {exc}")
+            raise typer.Exit(1) from exc
+        exit_code = result.returncode
+        if exit_code < 0:
+            exit_code = 128 - exit_code
+        raise typer.Exit(exit_code)
+
     try:
         console.print(
             Panel(
@@ -1074,37 +1107,33 @@ def refresh(
                     DataType.deepwater_structure,
                     DataType.pipeline_location,
                     DataType.infrastructure,
-                    DataType.all,
                 ]
 
-                # Use enhanced mode for infrastructure types and 'all'
+                # Use enhanced mode for infrastructure types
                 use_enhanced = data_type in infrastructure_types
 
                 cfg = {
                     "basename": "bsee",
                     "data": {
                         "refresh": True,
-                        "apm": data_type in [DataType.well, DataType.all],
-                        "production": data_type in [DataType.production, DataType.all],
+                        "apm": data_type == DataType.well,
+                        "production": data_type == DataType.production,
                         "platform": data_type
-                        in [DataType.platform, DataType.infrastructure, DataType.all],
+                        in [DataType.platform, DataType.infrastructure],
                         "pipeline_permit": data_type
                         in [
                             DataType.pipeline_permit,
                             DataType.infrastructure,
-                            DataType.all,
                         ],
                         "deepwater_structure": data_type
                         in [
                             DataType.deepwater_structure,
                             DataType.infrastructure,
-                            DataType.all,
                         ],
                         "pipeline_location": data_type
                         in [
                             DataType.pipeline_location,
                             DataType.infrastructure,
-                            DataType.all,
                         ],
                     },
                     "meta": {
@@ -1136,7 +1165,10 @@ def refresh(
                     f"[yellow]Warning:[/yellow] Could not import refresh module: {e}"
                 )
                 console.print("[dim]Ensure all dependencies are installed.[/dim]")
+                raise typer.Exit(1) from e
 
+    except typer.Exit:
+        raise
     except Exception as e:
         console.print(f"[red]Error:[/red] {str(e)}")
         if verbose:

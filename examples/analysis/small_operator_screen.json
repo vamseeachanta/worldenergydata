@@ -1,0 +1,124 @@
+{
+  "description": "Synthetic arithmetic example; not a field validation dataset.",
+  "config": {
+    "as_of": "2024-03",
+    "history_months": 3,
+    "min_operator_wells": 1,
+    "max_operator_wells": 10,
+    "peer_group": {
+      "vintage_years": 5,
+      "depth_band_ft": null
+    },
+    "sensitivity_peer_group": {
+      "vintage_years": 1,
+      "depth_band_ft": 1000
+    },
+    "min_peers": 2,
+    "thresholds": {
+      "underperformance": 0.4,
+      "decline": 0.3,
+      "step_change": 0.3,
+      "idle": 1,
+      "erratic": 0.2
+    },
+    "min_prior_rate_bopd": 1,
+    "weights": {
+      "underperformance": 1,
+      "decline": 1,
+      "step_change": 1,
+      "idle": 1,
+      "erratic": 1
+    },
+    "concentration_weight": 1,
+    "policy_source": "Synthetic arithmetic example in test docstrings, 2026",
+    "validation": {
+      "min_recall": 1,
+      "max_false_positive_rate": 0
+    }
+  },
+  "data": {
+    "registry": [
+      {
+        "operator_no": "op-a",
+        "well_count_total": 1,
+        "source": "Synthetic"
+      },
+      {
+        "operator_no": "op-b",
+        "well_count_total": 2,
+        "source": "Synthetic"
+      }
+    ],
+    "wells": [
+      {
+        "well_key": "a",
+        "operator_no": "op-a",
+        "field_key": "f-a",
+        "first_production_year": 2020,
+        "depth_ft": 2000,
+        "production_basis": "well",
+        "source": "Synthetic monthly records, 2026",
+        "production": [
+          {
+            "month": "2024-01",
+            "oil_bbl": 310
+          },
+          {
+            "month": "2024-02",
+            "oil_bbl": 145
+          },
+          {
+            "month": "2024-03",
+            "oil_bbl": 62
+          }
+        ]
+      },
+      {
+        "well_key": "b",
+        "operator_no": "op-b",
+        "field_key": "f-a",
+        "first_production_year": 2020,
+        "depth_ft": 2000,
+        "production_basis": "well",
+        "source": "Synthetic monthly records, 2026",
+        "production": [
+          {
+            "month": "2024-01",
+            "oil_bbl": 310
+          },
+          {
+            "month": "2024-02",
+            "oil_bbl": 290
+          },
+          {
+            "month": "2024-03",
+            "oil_bbl": 310
+          }
+        ]
+      },
+      {
+        "well_key": "c",
+        "operator_no": "op-b",
+        "field_key": "f-a",
+        "first_production_year": 2020,
+        "depth_ft": 2000,
+        "production_basis": "well",
+        "source": "Synthetic monthly records, 2026",
+        "production": [
+          {
+            "month": "2024-01",
+            "oil_bbl": 310
+          },
+          {
+            "month": "2024-02",
+            "oil_bbl": 290
+          },
+          {
+            "month": "2024-03",
+            "oil_bbl": 310
+          }
+        ]
+      }
+    ]
+  }
+}

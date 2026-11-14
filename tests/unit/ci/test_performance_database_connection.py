@@ -10,6 +10,7 @@ These are hand-calculated test inputs, not production timing requirements.
 
 import sqlite3
 import time
+from datetime import datetime
 from types import SimpleNamespace
 from unittest.mock import Mock
 
@@ -149,6 +150,128 @@ def test_setup_includes_sqlite_wait_in_deadline(setup_retry):
     assert raised.value is error
     assert state.timeouts == [3.0]
     state.connections[0].close.assert_called_once()
+
+
+def test_setup_clips_sleep_to_fractional_remaining_budget(setup_retry):
+    """A 2.5 s SQLite wait leaves 3 - 2.5 = 0.5 s for the final sleep.
+
+    Synthetic inputs use the fixture's three-second budget. Python 3.11
+    time.monotonic documents elapsed-time differences; no real wait is used.
+    After sleeping to t=3, no second connection may be opened.
+    """
+    state = setup_retry
+    error = _error(5)
+
+    def wait_then_fail(*args):
+        state.clock.now += 2.5
+        raise error
+
+    state.outcomes[:] = [wait_then_fail]
+    with pytest.raises(sqlite3.OperationalError) as raised, state.db._get_connection():
+        pytest.fail("A final partial sleep must exhaust the setup budget")
+    assert raised.value is error
+    assert state.timeouts == [3.0]
+    assert state.clock.now == 3.0
+    state.connections[0].close.assert_called_once()
+
+
+def test_setup_preserves_fractional_timeout_on_retry(setup_retry):
+    """A 1.5 s wait plus a 1 s sleep leaves 3 - 1.5 - 1 = 0.5 s.
+
+    These synthetic inputs verify that the remaining budget is not rounded
+    up or reset. Python 3.11 sqlite3.connect specifies timeout in seconds.
+    """
+    state = setup_retry
+
+    def wait_then_fail(*args):
+        state.clock.now += 1.5
+        raise _error(5)
+
+    state.outcomes[:] = [wait_then_fail, None]
+    with state.db._get_connection() as conn:
+        assert conn is state.connections[-1]
+    assert state.timeouts == [3.0, 0.5]
+    assert state.clock.now == 2.5
+    assert all(conn.close.call_count == 1 for conn in state.connections)
+
+
+@pytest.mark.parametrize("error", [KeyboardInterrupt(), SystemExit()])
+def test_setup_interruption_closes_connection_without_retry(setup_retry, error):
+    """An interruption propagates after one open and one close, with no sleep.
+
+    Python 3.11 exceptions documents both interruptions under BaseException;
+    neither is SQLite contention eligible for another setup attempt.
+    """
+    state = setup_retry
+    state.outcomes[:] = [error]
+    with pytest.raises(type(error)) as raised, state.db._get_connection():
+        pytest.fail("An interrupted setup must never yield a connection")
+    assert raised.value is error
+    assert state.timeouts == [3.0]
+    assert state.clock.now == 0.0
+    state.connections[0].close.assert_called_once()
+
+
+@pytest.mark.parametrize("error", [KeyboardInterrupt(), SystemExit()])
+def test_body_interruption_closes_connection_without_retry(setup_retry, error):
+    """One yielded body interrupted once must close once and never replay.
+
+    Python 3.11 contextlib.contextmanager documents propagation of exceptions
+    from the with body back into the generator at its yield.
+    """
+    state = setup_retry
+    state.outcomes[:] = [None]
+    with pytest.raises(type(error)) as raised, state.db._get_connection():
+        raise error
+    assert raised.value is error
+    assert state.timeouts == [3.0]
+    assert state.clock.now == 0.0
+    state.connections[0].close.assert_called_once()
+
+
+def test_failed_record_rolls_back_metrics_and_statistics(monkeypatch, tmp_path):
+    """An aborted insert leaves zero rows; one later success leaves one each.
+
+    Independent calculation: (executions, statistics) starts at (0, 0), an
+    uncommitted write followed by connection close rolls back to (0, 0), and
+    one committed write gives (1, 1), with total_runs=total_passes=1.
+    Source: Python 3.11 sqlite3, Transaction control: closing without commit
+    loses pending changes. Timestamp and duration are synthetic record inputs.
+    """
+    db = database.PerformanceDatabase(tmp_path / "atomic.db")
+    record = database.TestExecutionRecord(
+        test_name="test_atomic_record",
+        module="test_sample.py",
+        duration=1.0,
+        status="passed",
+        timestamp=datetime.fromisoformat("2026-01-01T00:00:00"),
+    )
+    error = _error(5)
+    update_statistics = db._update_statistics
+    updates = []
+
+    def update_then_fail(conn, execution):
+        update_statistics(conn, execution)
+        updates.append(execution)
+        raise error
+
+    monkeypatch.setattr(db, "_update_statistics", update_then_fail)
+    with pytest.raises(sqlite3.OperationalError) as raised:
+        db.record_execution(record)
+    assert raised.value is error
+    assert updates == [record]
+    with sqlite3.connect(db.db_path) as conn:
+        assert conn.execute("SELECT COUNT(*) FROM test_executions").fetchone() == (0,)
+        assert conn.execute("SELECT COUNT(*) FROM test_statistics").fetchone() == (0,)
+
+    monkeypatch.setattr(db, "_update_statistics", update_statistics)
+    db.record_execution(record)
+    with sqlite3.connect(db.db_path) as conn:
+        assert conn.execute("SELECT COUNT(*) FROM test_executions").fetchone() == (1,)
+        assert conn.execute("SELECT COUNT(*) FROM test_statistics").fetchone() == (1,)
+        assert conn.execute(
+            "SELECT total_runs, total_passes, total_failures FROM test_statistics"
+        ).fetchone() == (1, 1, 0)
 
 
 @pytest.mark.parametrize(

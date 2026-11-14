@@ -205,8 +205,6 @@ class BLMProvider(BaseProvider):
         This implementation provides a framework for BLM data access.
         Actual BLM LR2000 system requires authenticated access for bulk queries.
         """
-        claims = []
-
         query_url = urljoin(self.LR2000_URL, "reports/serialsearch")
 
         params: Dict[str, Any] = {
@@ -232,23 +230,17 @@ class BLMProvider(BaseProvider):
         if claimant:
             params["claimant"] = claimant.upper()
 
-        try:
-            data = self._get_json(query_url, params=params)
-            claims = self._parse_mining_claims(data, state)
-        except Exception as e:
-            self.logger.warning(
-                f"BLM mining claims query returned empty results: {e}. "
-                "Note: BLM LR2000 requires authentication for bulk data access."
-            )
-
-        return claims
+        data = self._get_json(
+            query_url, params=params, record_keys=("results", "records")
+        )
+        return self._parse_mining_claims(data, state)
 
     def _parse_mining_claims(
         self, data: Dict[str, Any], state: str
     ) -> List[MiningClaim]:
         """Parse BLM response into MiningClaim objects."""
         claims = []
-        records = data.get("results", data.get("records", []))
+        records = self._record_list(data, ("results", "records"))
 
         for record in records:
             case_number = record.get("case_nr") or record.get("serial_nr")
@@ -367,8 +359,6 @@ class BLMProvider(BaseProvider):
         This implementation provides a framework for BLM data access.
         Actual BLM LR2000 system requires authenticated access for bulk queries.
         """
-        leases = []
-
         query_url = urljoin(self.LR2000_URL, "reports/fluidminerals")
 
         params: Dict[str, Any] = {
@@ -394,23 +384,17 @@ class BLMProvider(BaseProvider):
         if status:
             params["status"] = status
 
-        try:
-            data = self._get_json(query_url, params=params)
-            leases = self._parse_fluid_minerals(data, state)
-        except Exception as e:
-            self.logger.warning(
-                f"BLM fluid minerals query returned empty results: {e}. "
-                "Note: BLM LR2000 requires authentication for bulk data access."
-            )
-
-        return leases
+        data = self._get_json(
+            query_url, params=params, record_keys=("results", "records")
+        )
+        return self._parse_fluid_minerals(data, state)
 
     def _parse_fluid_minerals(
         self, data: Dict[str, Any], state: str
     ) -> List[FluidMineralLease]:
         """Parse BLM response into FluidMineralLease objects."""
         leases = []
-        records = data.get("results", data.get("records", []))
+        records = self._record_list(data, ("results", "records"))
 
         for record in records:
             case_number = record.get("case_nr") or record.get("serial_nr")

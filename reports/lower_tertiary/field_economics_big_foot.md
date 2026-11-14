@@ -2,7 +2,7 @@
 
 **Development:** Big Foot (dry) &middot; **Lease:** G16942 &middot; **First oil:** 2018-11-01 &middot; **Discount rate:** 10% annual
 
-**Data window:** 2000-09 -> 2026-04
+**Data window:** 2000-09 -> 2026-04 &middot; **NPV @ 10%:** **$-989.0 M**
 
 ## Summary
 
@@ -11,6 +11,12 @@ On public BSEE production + cost data, **Big Foot** is **NPV-negative at 10%** l
 - **78.7 MMbbl** oil produced from **7 producing wells** (**38 total wellbores**), generating **$5,571 M** gross revenue.
 - A **high-capex, deepwater** signature: **$4,517 M** of one-time D&C + facilities capital is the dominant driver of the NPV.
 - The cumulative-NPV path bottomed at **$-1,484.3 M** in **2018** and has since recovered **$+495.3 M** as production paid back capital.
+
+## Revision history
+
+| Revision | Date | Change and reason |
+|---|---|---|
+| 1 | 2026-11-05 | Header NPV added from the financial summary to keep the reported development and data window consistent. |
 
 > Generated from public BSEE OGOR-A production and drilling/WAR records run through a monthly cashflow + trimmed-discount model (`build_field_npv_timeline`), covering field life through the latest available BSEE OGOR-A month. The NPV timeline below is an additive presentation layer over that model; it does not alter the computed final NPV.
 
@@ -229,7 +235,7 @@ _Exact, not sampled: NPV is affine in a uniform price multiplier (revenue and ro
 
 ## Next Steps
 
-- **Get a tailored analysis.** Want this for your own assets — a different field, a custom price deck, sensitivities, or a partner-level working-interest view? **AceEngineer** builds traceable field economics from public data. Contact **vamsee.achanta@aceengineer.com** to scope an engagement.
+- **Get a tailored analysis.** Want this for your own assets — a different field, a custom price deck, sensitivities, or a partner-level working-interest view? **AceEngineer** builds traceable field economics from public data. Visit **[AceEngineer](https://www.aceengineer.com)** to scope an engagement.
 - **Explore the full play.** Big Foot is one of **10 Lower Tertiary (Wilcox) fields** covered by this model. Regenerate any field with `--dev <Field>`, or ask for the **portfolio economics report** for the whole-play NPV view (Jack/St. Malo, Stones, Big Foot, Anchor, Cascade/Chinook, and more).
 - **See the methodology.** Every number here traces to **public BSEE OGOR-A production + drilling/WAR records** run through a transparent cashflow model — no black box. The pipeline (BSEE public data → parsed `.bin` → NPV) is reproducible end-to-end.
 - **Run it yourself.** Refresh the data and regenerate this report:

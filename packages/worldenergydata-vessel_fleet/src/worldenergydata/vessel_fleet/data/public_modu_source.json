@@ -1,0 +1,55 @@
+{
+  "schema_version": "1",
+  "record_id": "public-modu-candidate",
+  "rig_source_id": "public-rig-page:table.our-rigs:tbody:tr:first-child",
+  "rig_class": "floater_unspecified",
+  "rig_evidence": {
+    "source_id": "public-rig-page",
+    "locator": "table.our-rigs > tbody > tr:first-child"
+  },
+  "physical_id": null,
+  "imo": null,
+  "fallback": null,
+  "aliases": [],
+  "identity_evidence": null,
+  "geometry_evidence": null,
+  "condition": null,
+  "frame": null,
+  "quantities": {},
+  "sources": [
+    {
+      "source_id": "public-rig-page",
+      "url": "https://www.deepwater.com/our-fleet/our-rigs",
+      "captured_at": "2026-10-20T06:04:12Z",
+      "http_status": 200,
+      "sha256": "0fd582aaa40ea2f8b2c183205e2d124956def23e00ced681364410cb6960bc0b",
+      "size_bytes": 26009,
+      "origin": "public",
+      "redistribution": "unknown",
+      "rights_evidence": "Publicly accessible rig page. No republication permission established; source bytes and names are not redistributed."
+    }
+  ],
+  "missing_evidence": {
+    "length": "Selected public table row does not provide condition-bound evidence.",
+    "beam": "Selected public table row does not provide condition-bound evidence.",
+    "depth": "Selected public table row does not provide condition-bound evidence.",
+    "draft": "Selected public table row does not provide condition-bound evidence.",
+    "displacement": "Selected public table row does not provide condition-bound evidence.",
+    "cog_x": "Selected public table row does not provide condition-bound evidence.",
+    "cog_y": "Selected public table row does not provide condition-bound evidence.",
+    "cog_z": "Selected public table row does not provide condition-bound evidence.",
+    "i_xx": "Selected public table row does not provide condition-bound evidence.",
+    "i_yy": "Selected public table row does not provide condition-bound evidence.",
+    "i_zz": "Selected public table row does not provide condition-bound evidence.",
+    "i_xy": "Selected public table row does not provide condition-bound evidence.",
+    "i_xz": "Selected public table row does not provide condition-bound evidence.",
+    "i_yz": "Selected public table row does not provide condition-bound evidence.",
+    "physical_identity": "IMO or a reviewed fallback is not provided by the selected row.",
+    "aliases": "Display-name evidence is locatable in the captured row but withheld; aliases cannot establish physical identity.",
+    "geometry": "No verified hull geometry reference is provided by the selected row.",
+    "loading_condition": "No explicit loading condition is provided by the selected row.",
+    "coordinate_frame": "No coordinate or inertia convention is provided by the selected row.",
+    "rig_class": "Selected row states an operational capability category, not a hull class.",
+    "public_eligibility": "Public access is established; redistribution rights remain unverified."
+  }
+}

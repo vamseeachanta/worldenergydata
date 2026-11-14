@@ -5,21 +5,23 @@
 | Module | drilling |
 | Repository | worldenergydata |
 | Path | `packages/worldenergydata-drilling/src/worldenergydata/drilling` |
-| Pack revision | 3, 2026-10-19 |
-| Code revision | `b1394197a66f95d78615425b4e1ad4ff78bd9de2` |
+| Pack revision | 7 (source traceability and runtime output), 2026-11-06 |
+| Code revision | `a814fe13149465d1daeb8a06ca2f024b60a335a1` |
+| Cost-contract source revision | `88c983611ff1c892a5fb3bd29bca9e73a9c17085` |
 | Analysis family | EC; Python calculations gate set, AQG r0 section 10 |
 | Quality role | Calculations quality manager; data-pipeline coverage |
 | Status | DRAFT; independent clearance pending |
 
-## 1. Purpose and scope
+The source pin includes the reviewed detector commit
+`88c8c3efe56ff63216cb81a8f3e642059b158d3b` (#1533). Runtime sources are unchanged
+by this refresh. Reconciliation and parsing are covered by regression evidence;
+physical applicability remains unqualified.
 
-The package exposes `BatchDrillingEconomics`, `BSEEBatchDetector`, `DrillCampaign` and `DrillingSite`. [packages/worldenergydata-drilling/src/worldenergydata/drilling/__init__.py:L6-L18]
-
-The calculator evaluates power-law drilling durations, shared mobilization costs, a finite break-even search and campaign costs; the detector groups activity rows and fits a learning factor. [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L38-L62] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L68-L136] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L142-L228] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L38-L161]
-
-The implementation is a stateless cost calculator and a DataFrame heuristic, rather than an optimization solver: cost methods count wells and sum position-based durations without searching schedules or consuming `ordered_wells()`. [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L170-L196] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L219-L228] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/models.py:L62-L73]
-
-The package metadata declares Alpha maturity and Python >=3.10; this declaration does not establish engineering validation. [packages/worldenergydata-drilling/pyproject.toml:L6-L22]
+Revision 7 retains the revision-4 cost contract and stronger arithmetic regressions
+for #1345, corrects row 50 to the historical code pin and qualifies C9 as a CPython output pin.
+The code revision and earlier evidence below remain historical pins; this revision does not refresh
+their source digests or qualify the duration model.
+Stale pin/enrollment checks remain tracked by #1804.
 
 ### Revision history
 
@@ -28,6 +30,21 @@ The package metadata declares Alpha maturity and Python >=3.10; this declaration
 | 0 | 2026-10-17 | Initial inputs, methods, regression examples and failure inventory to guide package use. |
 | 1 | 2026-10-17 | Record constant break-even output, stronger numeric gates, pinned digests and node outcomes to expose weak regression oracles. |
 | 3 | 2026-10-19 | Add a pinned mobilization enrollment proposal and exact allocation checks; defer counted inventory changes until review. |
+| 3 (detector refresh) | 2026-10-22 | Refresh the partial revision 3 against the reviewed detector, resolve detector failure rows with regression nodes and enroll the remaining calculation/grouping families. |
+| 4 | 2026-11-04 | Clarify undiscounted costs, ignored compatibility arguments and the no-savings sentinel; replace weak cost oracles with exact monetary expectations for #1345. |
+| 5 | 2026-11-04 | Qualify the exact-arithmetic no-savings claim and characterize fractional-duration false savings across Python versions without changing production arithmetic. |
+| 6 | 2026-11-04 | Qualify both active break-even table rows as exact-arithmetic results and reference C9 for runtime-dependent floating-point comparisons. |
+| 7 | 2026-11-06 | Correct row 50 to the declared code pin, qualify the CPython output check and retain direct campaign-cost coverage at LC=0.85. |
+
+## 1. Purpose and scope
+
+The package exposes `BatchDrillingEconomics`, `BSEEBatchDetector`, `DrillCampaign` and `DrillingSite`. [packages/worldenergydata-drilling/src/worldenergydata/drilling/__init__.py:L6-L18]
+
+The calculator evaluates power-law drilling durations, shared mobilization costs, a finite break-even search and campaign costs; the detector groups activity rows and fits a learning factor. [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L38-L62] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L68-L136] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L142-L228] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L1-L341]
+
+The implementation is a stateless cost calculator and a DataFrame heuristic, rather than an optimization solver: cost methods count wells and sum position-based durations without searching schedules or consuming `ordered_wells()`. [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L170-L196] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L219-L228] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/models.py:L62-L73]
+
+The package metadata declares Alpha maturity and Python >=3.10; this declaration does not establish engineering validation. [packages/worldenergydata-drilling/pyproject.toml:L6-L22]
 
 ## 2. Inputs and outputs
 
@@ -45,8 +62,8 @@ The package metadata declares Alpha maturity and Python >=3.10; this declaration
 | `base_time_days`, `base_well_days`, `base_days_per_well`, `well_position` | days, one-based count | Required; direct calls do not enforce positive days or positive integer positions | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L38-L62] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L96-L136] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L202-L228] |
 | `mob_cost`, `n_wells_batch`, `n_wells_standalone` | USD, wells, wells | Batch denominator >0 checked; standalone denominator defaults to 1 but is unused | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L68-L90] |
 | `discount_rate` | Annual fraction | Default 0.10; accepted but unused | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L23-L24] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L142-L196] |
-| Activity DataFrame | `well_id`, `rig_name`, `field_name`, `spud_date`; dates parsed by pandas | Four columns required; window defaults to 12 months; no key/date null checks | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L22-L22] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L38-L75] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L167-L171] |
-| Learning DataFrame | `well_position` (one-based), `days_to_drill` (days) | Cast to floats; retain positive pairs; substitute 0.85 for fewer than two usable pairs | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L122-L160] |
+| Activity DataFrame | Required `well_id`, `rig_name`, `field_name`, `spud_date`; complete ISO dates normalized to UTC | Nonblank text keys; integral numeric well IDs normalized to decimal text; exact normalized duplicates excluded; malformed/missing fields rejected with all reasons; positive integer calendar window (legacy default 12 months) | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L155-L213] |
+| Learning DataFrame | Positive integral position; positive finite elapsed days; decimal/scientific numeric text only | Missing, nonfinite and malformed rows rejected explicitly; fewer than two usable distinct positions default with a reason; duplicate positions remain observations | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L259-L302] |
 
 ### Outputs
 
@@ -54,16 +71,28 @@ The package metadata declares Alpha maturity and Python >=3.10; this declaration
 | --- | --- | --- |
 | `learning_curve_time` | days; first-position base or power-law duration | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L55-L62] |
 | `mobilization_savings` | USD/well; allocated cost, not the difference from standalone | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L74-L90] |
-| `break_even_n_wells` | wells; for positive finite rate/duration, nonnegative mobilization and 0<LC<=1: 2 whenever mobilization>0 or LC<1; otherwise 1; section-6 row 50 and C7 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L122-L136] |
+| `break_even_n_wells` | wells; in exact arithmetic, for positive finite rate/duration, nonnegative mobilization and 0<LC<=1: 2 whenever mobilization>0 or LC<1; otherwise sentinel 1; strict floating-point comparisons can hide real savings or manufacture false savings, with runtime-dependent results (C9); section-6 row 50 and C7 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L122-L136] |
 | `batch_npv`, `standalone_npv`, `batch_savings` | USD; cost totals without negation, savings = standalone minus batch; no discounting | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L170-L196] |
 | `campaign_total_cost` | USD; one mobilization plus sum of duration times rate | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L219-L228] |
-| Detected batches | `batch_id`, grouping IDs, `well_ids`, `batch_size` (wells), start/end timestamps, `span_days` (integer days) | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L97-L120] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L173-L187] |
-| Fitted factor | Dimensionless; clipped to [0.5,1.0], despite docstring's open lower bound | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L134-L160] |
+| Detected batches | IDs, event-row `batch_size`, `well_ids` (possibly repeated), UTC start/end; `span_days` retains fractional elapsed days | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L216-L248] |
+| Fitted factor | Factor plus diagnostic `raw_factor`, status, reason, records, counts and `qualification=NOT_EVALUATED`; legacy bounds [0.5,1.0] inclusive and fallback 0.85 are compatibility policy | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L49-L66] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L288-L328] |
 | `ordered_wells` | Site list; empty sequence preserves insertion order, unknown IDs are omitted | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/models.py:L62-L73] |
 
-No phase convention is used by the cost or date-grouping calculations; `location_coords` is stored by the model and is not read by these methods. [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/models.py:L29-L36] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L170-L255] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L38-L120]
+Diagnostic methods return one `records` row per positional input, including
+its original index, disposition and reason. Required columns and unique column
+labels are checked before processing. Counts obey
+`input = accepted + rejected + excluded`, and detection additionally obeys
+`sum(batch_size) = accepted`. Empty schema-valid input has zero counts; missing
+columns are errors. Numeric well IDs accept integral types and exact integral
+Python float/NumPy float64 values strictly within the binary64 exact-integer
+range; float32, Booleans and nonintegral floats are rejected. Leading-zero text
+is preserved. See [detector-contracts.md](detector-contracts.md) for the full
+policy, independent calendar arithmetic and disposition tables.
+[packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L26-L213]
 
-These entry points consume in-memory objects and return scalars, dictionaries, lists or DataFrames; their bodies contain no file reader, serializer or cache writer. [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L38-L255] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L38-L187] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/models.py:L62-L73]
+No phase convention is used by the cost or date-grouping calculations; `location_coords` is stored by the model and is not read by these methods. [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/models.py:L29-L36] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L170-L255] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L1-L341]
+
+These entry points consume in-memory objects and return scalars, dictionaries, lists or DataFrames; their bodies contain no file reader, serializer or cache writer. [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L38-L255] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L1-L341] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/models.py:L62-L73]
 
 ## 3. Method and governing standards
 
@@ -71,18 +100,90 @@ These entry points consume in-memory objects and return scalars, dictionaries, l
 | --- | --- | --- |
 | Duration | `T(N)=T1*N**(log(LC)/log(2))`; N<=1 returns T1. The docstring attributes the law to Wright (1936) and calls it cumulative average, while callers sum it as individual durations. | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L44-L62] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L124-L128] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L224-L228] |
 | Mobilization allocation | `mob_cost/n_wells_batch`; rejects nonpositive batch count | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L68-L90] |
-| Break-even | First N with `mob + rate*sum(T(i)) < N*(mob+rate*T1)` over 1..200; for valid positive rate/duration, output is constant at 2 if mob>0 or LC<1, otherwise 1. At N=2 one mobilization is saved; higher mobilization favours batching. See section-6 row 50 and C7 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L122-L136] |
+| Break-even | First N with `mob + rate*sum(T(i)) < N*(mob+rate*T1)` over 1..200; in exact arithmetic, for positive finite rate/duration, nonnegative mobilization and 0<LC<=1, the result is 2 if mob>0 or LC<1, otherwise sentinel 1. At N=2 one mobilization is saved; higher mobilization favours batching. Strict floating-point comparisons can hide real savings or manufacture false savings, with runtime-dependent results (C9). See section-6 row 50 and C7 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L122-L136] |
 | Cost comparison | Base duration from average depths; standalone = N*(mob+rate*base); batch = mob+rate*sum(T(i)); outputs are undiscounted | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L170-L196] |
 | Depth heuristic | `max(mean_MD/400 + mean_water_depth/2000 + 10, 30)` days; empty wells return 60 days; the prose instead describes a 20-day fixed term | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L234-L255] |
 | Campaign total | One mobilization plus rate times sum of supplied-base power-law durations | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L202-L228] |
-| Grouping | Sort by spud date, group by rig and field, anchor each next unassigned row, include rows within `months*30.44` days; singleton batches are allowed | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L45-L47] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L66-L120] |
-| Learning fit | Least-squares slope of log(days) against log(position); return `2**slope` clipped to [0.5,1.0]; nonpositive pairs are filtered | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L138-L161] |
+| Grouping | Sort by date within rig/field; anchor each first unassigned event; inclusive endpoint `first+DateOffset(months=M)`; windows do not chain; `span_days=(last-first)/Timedelta(days=1)` | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L216-L248] |
+| Learning fit | `x=log(N)`, `y=log(T)`; centered slope `b=sum((x-mean(x))*(y-mean(y)))/sum((x-mean(x))**2)`; raw doubling factor `2**b`; expose filtering, fallback and clipping | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L259-L328] |
 
-UNVERIFIED: the original Wright publication, individual-versus-cumulative-average interpretation, and empirical basis of the depth heuristic and default factors have not been independently established; #1342. [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L44-L53] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L234-L255] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L134-L160]
+UNVERIFIED: the original duration-law publication, individual-versus-cumulative-average interpretation, and empirical basis of the depth heuristic and default factors have not been independently established; #1342. [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L44-L53] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L234-L255] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L1-L341]
 
-No governing engineering standard or `Citation` sidecar is declared in these calculation/model definitions; standards-derived certification is not established by these methods. [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L1-L255] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L1-L187] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/models.py:L1-L73]
+No governing engineering standard or `Citation` sidecar is declared in these calculation/model definitions; standards-derived certification is not established by these methods. [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L1-L255] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L1-L341] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/models.py:L1-L73]
+
+Calendar arithmetic and UTC normalization follow the pandas Time series guide
+(DateOffset objects) and `to_datetime` reference (online editions accessed 2026).
+The centered least-squares formula follows NIST/SEMATECH, *e-Handbook of
+Statistical Methods*, section 4.4.3.1, Least Squares (online edition accessed 2026).
+The doubling ratio follows algebraically from the declared log-linear model.
+Fallback 0.85 and bounds [0.5,1.0] retain historical application policy from
+revision 2; neither is an engineering acceptance limit. Every fit remains
+`NOT_EVALUATED` for physical qualification. Two distinct usable positions are
+required; endpoint equality is fitted, and the raw value is retained even when
+clipped. Sources and exact equations are retained in the implementation map.
+Independent physical duration-law qualification remains outside scope (#1342).
+
+### Cost and break-even compatibility (revisions 4 and 5)
+
+`BatchDrillingEconomics.batch_vs_standalone_npv` returns undiscounted USD cost
+magnitudes under legacy key names. No revenue, dated cash flows, discounting or
+negative-outflow convention is applied. For the nonempty synthetic campaigns
+below, both cost totals are positive. `batch_savings` is standalone cost minus
+batch cost. Each standalone well pays a full mobilization and the unadjusted base
+duration; the batch pays one mobilization and sums per-position durations.
+The section-3 equations retained from revision 2 remain the arithmetic basis;
+their historical citations do not establish engineering qualification.
+
+`discount_rate` and `n_wells_standalone` remain accepted and ignored for call
+compatibility, without new warnings or validation. The latter does not change
+the allocated cost `mob_cost / n_wells_batch`: `mobilization_savings` returns a
+cost per well, rather than a savings difference. Signature defaults, result keys
+and numerical behavior remain unchanged. Discounted cash flows, renamed APIs or
+a new fallback contract require a separately reviewed behavior change.
+
+For positive rate and base duration, nonnegative mobilization and `0 < LC <= 1`,
+the one-well costs tie in exact arithmetic. At two wells the saving is
+`mobilization + rate * base_days * (1 - LC)`. Thus the ordinary strict-saving
+threshold is 2 when mobilization is positive or learning reduces duration.
+No learning still saves one mobilization at two wells. In exact arithmetic,
+zero mobilization and no learning give equal costs at every size, so the legacy
+search through 200 wells would return **1 as a no-savings sentinel**, not evidence
+of economic break-even. The cap is application policy, not an engineering limit.
+The implemented comparisons remain strict floating-point comparisons with no
+monetary tolerance: rounding can hide real savings or manufacture false savings
+and a spurious threshold. For example, `break_even_n_wells(0.0, 350000.0, 62.6, 1.0)`
+returns 21 on CPython 3.11 despite exact cost equality; the same input returns 1
+on CPython 3.12 with its changed float summation. The result is runtime-dependent.
+Revenue break-even and recovery of an added investment are not calculated.
+
+The following synthetic regression inputs use a 350,000 USD/day rate and a
+20,000,000 USD mobilization. The actual depth heuristic gives
+`20000/400 + 5000/2000 + 10 = 62.5` days, above the 30-day floor. Its calibration
+and the conflicting helper prose remain unqualified under #1342.
+
+| Wells | LC | Batch cost (USD) | Standalone cost (USD) | Saving (USD) |
+| --- | --- | --- | --- | --- |
+| 1 | 0.85 | 41,875,000 | 41,875,000 | 0 |
+| 2 | 0.5 | 52,812,500 | 83,750,000 | 30,937,500 |
+| 3 | 1.0 | 85,625,000 | 125,625,000 | 40,000,000 |
+
+These examples characterize existing arithmetic, not measured engineering input.
+The five- and four-well LC=0.85 regressions retain the original scenarios and
+compare independently calculated totals rounded to cents, with 0.01 USD absolute
+tolerance and zero relative tolerance. Evidence:
+`tests/drilling/test_batch_economics.py::TestBatchVsStandaloneNPV`,
+`tests/drilling/test_batch_economics.py::TestMobilizationSavings::test_legacy_standalone_count_is_ignored`
+and `tests/drilling/test_batch_economics.py::TestBreakEven::test_legacy_no_savings_sentinel_is_not_break_even`.
+The latter uses exactly representable 62.5-day durations and pins equal costs at
+1, 2 and 200 wells alongside the fallback of 1. The fractional 62.6-day case is
+covered separately by
+`tests/drilling/test_batch_economics.py::TestBreakEven::test_fractional_duration_can_report_false_savings`:
+independent decimal arithmetic gives equal batch and standalone costs of
+460,110,000 USD at 21 wells, while the test pins the runtime-dependent output.
 
 ## 4. Validated worked examples
+
+The current mixed-disposition example is [detector-contracts.md, Worked example](detector-contracts.md#worked-example), checked by `tests/unit/drilling/test_detector_regression.py::test_worked_example_dispositions_and_learning_line`. It accounts for seven event rows and four learning rows and writes out the fitted line by hand. This is numerical regression evidence, not an independently validated physical example.
 
 Validated examples: **0**; regression examples: **8** below. R4 and R6 assert only type/positivity and sign; R8 permits empty output. These are weak oracles, even when they pass; C7 and C8 below supply exact break-even and fitted-factor outputs. These tests use local fixture inputs and invariants rather than a cited independent engineering benchmark; the mobilization test derives its expected allocation from another call to the same method. [tests/drilling/test_batch_economics.py:L22-L43] [tests/drilling/test_batch_economics.py:L98-L105] [tests/drilling/test_batch_economics.py:L370-L380]
 
@@ -97,7 +198,7 @@ Validated examples: **0**; regression examples: **8** below. R4 and R6 assert on
 | R7 | Learning fit | Positions [1,2,3,4], durations [60,52,48,45] days; existing test checks range only; C8 replaces the range-only pack gate with LC 0.866799 and recovered slope -0.206231, each within 1e-6 | `tests/drilling/test_batch_economics.py::TestBSEEBatchDetector::test_fit_learning_curve_returns_float` | PASS at the code pin in both comparison runs; [tests/drilling/test_batch_economics.py:L370-L380] |
 | R8 | Separate grouping keys | Two rows with distinct rig IDs; every returned batch has 1 well; assertion permits empty output | `tests/drilling/test_batch_economics.py::TestBSEEBatchDetector::test_detect_batches_separate_rigs` | PASS at the code pin in both comparison runs; [tests/drilling/test_batch_economics.py:L302-L327] |
 
-Offline observations on 2026-10-17, Python 3.11.15, at the header code pin: baseline 24 run / 24 passed / 0 failed / 0 skipped / 0 NOT_RUN; after 24 / 24 / 0 / 0 / 0; changed node outcomes 0. [tests/drilling/test_batch_economics.py:L51-L380] [tests/unit/drilling/test_smoke.py:L8-L19]
+Historical offline observations on 2026-10-17, Python 3.11.15, at the earlier code pin: baseline 24 run / 24 passed / 0 failed / 0 skipped / 0 NOT_RUN; after 24 / 24 / 0 / 0 / 0; changed node outcomes 0. [tests/drilling/test_batch_economics.py:L51-L380] [tests/unit/drilling/test_smoke.py:L8-L19]
 
 Both comparison commands used `uv run python -m pytest tests/drilling tests/unit/drilling -q -rA -p no:cacheprovider --allow-existing-tree-changes`, with separate scratch basetemp, coverage-data and coverage-report destinations; each exited 0 on the uncommitted tree. The documented preservation mode hashes existing changed files and rejects altered bytes or additional changes. [docs/development/index.md:L48-L61] [tests/conftest.py:L410-L450]
 
@@ -113,7 +214,7 @@ Applicability follows AQG r0 section 10, Python calculations, with G5 from secti
 | --- | --- | --- |
 | G0 | Applicable: schema, units and provenance | C0, C1 |
 | G1 | Applicable: Python imports and offline tests; no solver load route | C2, C3 |
-| G2 | Applicable: hand calculation against computed values | C4, C5, C7, C8 |
+| G2 | Applicable: hand calculation against computed values | C4, C5, C7, C8, C9 |
 | G3 | NOT_APPLICABLE: no time-domain simulation in these methods | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L170-L228] |
 | G4 | NOT_APPLICABLE: no diffraction mesh or hydrodynamic calculation | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L170-L228] |
 | G5 | Applicable: evidence and limitations for any issued calculation | C6 |
@@ -129,6 +230,7 @@ Applicability follows AQG r0 section 10, Python calculations, with G5 from secti
 | C6 | Resolve every pack source range at the pin and map all 8 examples to the **C6 before/after node table** below. Compare the original 24 node-ID-to-status entries from both JUnit outputs with this table; require the eight R-node IDs to occur in it. Revision 2 accounts separately for the five new numeric-gate nodes above. Retain section-6 dispositions. | 0 broken ranges; 8/8 example nodes present; 24/24 original node IDs and statuses match the table in both runs; 0 changed outcomes; 50/50 sweep rows carry dispositions; clearance pending | G5 |
 | C7 | `tests/unit/drilling/test_pack_numeric_gates.py::test_c7_break_even_outputs`. Call `break_even_n_wells(20e6,350e3,60,1.0)` and require exactly 2 wells, contradicting the no-learning docstring. Repeat mobilization 5/20/50 MUSD with LC 0.85; require 2 each. With zero mobilization and LC 1 require 1; with zero mobilization and LC 0.85 require 2. See section-6 row 50. | 6/6 exact integer outputs match (wells); observed PASS | G2 |
 | C8 | `tests/unit/drilling/test_pack_numeric_gates.py::test_c8_learning_fit`. For R7 positions 1–4 and durations 60/52/48/45 days, compute the independent scalar log-space covariance/variance slope and `2**slope`; compare `fit_learning_curve` output and its recovered slope. | Absolute factor error <=1e-6 against 0.866799; recovered slope error <=1e-6 against -0.206231; observed PASS | G2 |
+| C9 | `tests/drilling/test_batch_economics.py::TestBreakEven::test_fractional_duration_can_report_false_savings`. Use zero mobilization, 350,000 USD/day, 62.6 days and LC=1. The check pins the runtime-dependent output against independent decimal equality; the float search can manufacture a strict saving. | Exact decimal batch and standalone costs both 460,110,000 USD; CPython threshold 21 before 3.12 and sentinel 1 from 3.12; other implementations check decimal equality only; observed PASS on Python 3.10, 3.11 and 3.12 | G2 |
 
 C0, C4, C5, C7 and C8 are reproducible directly with public constructors and the explicit inputs above; their hand-check inputs do not contain operational records. [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/models.py:L54-L60] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L68-L90] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L38-L62]
 
@@ -140,9 +242,18 @@ Paths are relative to the header package; SHA-256 is over the raw file bytes at 
 | --- | --- |
 | `__init__.py` | `f882f5b9b7c7a3e0536e849cf303c5ed400dfa63845e1e5f180adba39b29dad0` |
 | `batch_economics/__init__.py` | `ae2a143c4857ecde2e8cceef694aa89ed0c0b25499a30a6f145ab06057dd20ab` |
-| `batch_economics/bsee_batch_detector.py` | `e4dcd3117697a474d204362eab8e80f65436ed635173c42e954c6e9f25c8e52e` |
+| `batch_economics/bsee_batch_detector.py` | `22c003b37e4941e41f0d5c4ad112b916636ea31ab2502cdfa16226f6b95037e5` |
 | `batch_economics/economics.py` | `a14564ea9372b26481bb41e4387b11a1dcb908c7e3bd5a230ba7dea327ab58c4` |
 | `batch_economics/models.py` | `dda57364683385ac3af3e10d0971921f9295f94bfbf1b85819c2f6b487ecff46` |
+
+### Current detector and pack checks
+
+Run both drilling test directories with repository conftest, existing-change
+preservation and coverage active. Retain outputs outside the source tree.
+The current regression run and test count are recorded in the accompanying
+change description; historical tables below retain their original scope.
+All source citations are resolved at the header pin; new regression-node
+citations refer to the current proposed test tree, not historical outcomes.
 
 ### Reproducible numeric gates
 
@@ -152,9 +263,9 @@ Revision-2 validation: the original 24 tests passed before the edit; all 29 test
 
 ### C6 before/after node table
 
-This retained revision-1 table covers the original 24 nodes. Revision-2 JUnit comparison confirms those same 24 outcomes plus five passing numeric-gate nodes. The runtime code pin is unchanged; the new test nodes belong to the revision-2 PR head.
+This retained revision-1 table covers the original 24 nodes. Revision-2 JUnit comparison confirms those same 24 outcomes plus five passing numeric-gate nodes. These historical test outcomes concern the revision-2 code pin; they are not a rerun of the refreshed detector.
 
-Comparison of the reviewed documentation baseline with this revision: 24 run, 24 passed, 0 failed, 0 skipped and 0 NOT_RUN in each run; 0 changed node outcomes. The code files match the C1 pin byte for byte. Tests ran serially with repository conftest and coverage active. The after run used the documented `--allow-existing-tree-changes` mode to preserve the modified pack. Both commands exited 0 before committing.
+Comparison of the reviewed documentation baseline with this revision: 24 run, 24 passed, 0 failed, 0 skipped and 0 NOT_RUN in each run; 0 changed node outcomes. The code files matched the historical C1 pin byte for byte. Tests ran serially with repository conftest and coverage active. The after run used the documented `--allow-existing-tree-changes` mode to preserve the modified pack. Both commands exited 0 before committing.
 
 The command was `uv run --no-project --with pytest --with pytest-cov --with 'numpy>=2.2.6,<3' --with 'pandas>=2.3.3,<3' --with 'pydantic>=2.13.4,<3' --with 'plotly>=5.18,<6' --with psutil --with pydantic-settings --with pyyaml python -m pytest tests/drilling tests/unit/drilling -q -rA -p no:cacheprovider`, with separate scratch basetemp, coverage and JUnit destinations, plus the preservation option after editing. Source, drilling and core member roots were on `PYTHONPATH`. Raw logs and JUnit files remain in scratch; this table is the retained output artifact. Independent engineering validation remains absent.
 
@@ -189,7 +300,7 @@ The command was `uv run --no-project --with pytest --with pytest-cov --with 'num
 
 sweep: 50 found
 
-The two recorded searches were repeated over all five package Python files and inspected by definition. The 49 original sites remain; the constant break-even result adds row 50. The inventory below includes benign bookkeeping/default sites as well as failure risks, so a match is not automatically a defect; each row is tied to its pinned code. The scan also found no `except` handler, `return None`, `return []`, `return {}`, epoch default or cache writer in the five package files. [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L1-L255] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L1-L187] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/models.py:L1-L73]
+The table retains 50 historical disposition categories rather than claiming 50 unchanged lexical matches. Detector rows now describe the reviewed contract and cite regression nodes; other model/economics limitations remain open. The two searches below were replayed at the refreshed pin. Parser rejection returns and exception handlers are intentional and are not silent record loss. [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L1-L255] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L1-L341] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/models.py:L1-L73]
 
 Commands run on the package Python files, with the package path from the header substituted for `$PACKAGE`:
 
@@ -200,22 +311,22 @@ rg -n 'return|Field|log|polyfit|mask|sum|depth|days|usd|coords|sequence|well_map
 
 | # | Symptom or sweep site | Cause or disposition | Existing detection | Tracking and date | Pinned source |
 | --- | --- | --- | --- | --- | --- |
-| 1 | Empty activity input returns schema-only output | `detect_batches` returns `_empty_result()` after column validation; empty is not proof of no campaigns | no detection check exists | #1343; 2026-10-17 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L61-L64] |
-| 2 | Spud date interpretation depends on pandas parsing | No format, timezone or missing-date validation is supplied | no detection check exists | #1343; 2026-10-17 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L66-L68] |
-| 3 | Month boundary differs from calendar months | Each month is assumed to be 30.44 days; nonpositive window is not rejected | no detection check exists | #1343; 2026-10-17 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L70-L70] |
-| 4 | Rows with null rig or field can disappear | `groupby` uses its default missing-key behavior; no input/output reconciliation | no detection check exists | #1343; 2026-10-17 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L75-L76] |
-| 5 | Missing spud dates can be omitted | Comparison of NaT with window end admits no members; index still advances | no detection check exists | #1343; 2026-10-17 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L85-L97] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L115-L118] |
-| 6 | Assigned-row continue | Already-assigned rows are skipped; this is intended de-duplication, not an error handler | no detection check exists | #1343; 2026-10-17 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L81-L83] |
-| 7 | No emitted batches looks like an empty source | Second empty-result branch carries no rejection reason | no detection check exists | #1343; 2026-10-17 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L117-L118] |
-| 8 | Fitted value replaced with assumed factor | Empty or one-row fit logs a warning and returns 0.85 | no detection check exists | #1343; 2026-10-17 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L138-L140] |
-| 9 | External position strings are cast directly | `astype(float)` has no locale/thousands normalization | no detection check exists | #1343; 2026-10-17 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L142-L142] |
-| 10 | External duration strings are cast directly | `astype(float)` has no locale/thousands normalization | no detection check exists | #1343; 2026-10-17 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L143-L143] |
-| 11 | Nonpositive training records disappear | Mask excludes position<=0 or time<=0 without reporting excluded count | no detection check exists | #1343; 2026-10-17 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L145-L146] |
-| 12 | Filtered fit substitutes 0.85 silently | Fewer than two retained pairs return a default without the first branch warning | no detection check exists | #1343; 2026-10-17 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L147-L148] |
-| 13 | Out-of-range fitted trend becomes a boundary factor | `2**slope` is clipped to [0.5,1.0]; lower bound conflicts with documented (0.5,1.0] | C3/R7 checks range only; no detection check exists for clipping | #1343; 2026-10-17 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L134-L160] [tests/drilling/test_batch_economics.py:L370-L380] |
-| 14 | Nonfinite or repeated training positions are not rejected | Positive mask and polyfit have no finite/distinct-position preflight | no detection check exists | #1343; 2026-10-17 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L142-L160] |
-| 15 | Zero batch counter | Counter initializes to 0 then increments before ID emission; bookkeeping, not an assumed measurement | no detection check exists | #1343; 2026-10-17 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L72-L74] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L97-L104] |
-| 16 | Zero row index | Index initializes to 0 and advances even without members; bookkeeping | no detection check exists | #1343; 2026-10-17 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L79-L83] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L115-L115] |
+| 1 | Empty activity input | Declared columns required; schema-only batches and zero diagnostic counts are explicit | `tests/unit/drilling/test_detector_regression.py::test_empty_rejected_and_accepted_inputs_conserve_counts` | #1343; updated 2026-10-22 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L155-L213] |
+| 2 | Spud date parsing | Complete extended ISO dates only; naive dates mean UTC; numeric epochs and ambiguous text rejected | `tests/unit/drilling/test_detector_contracts.py::test_missing_ambiguous_and_epoch_dates_are_rejected`; `tests/unit/drilling/test_detector_contracts.py::test_timezones_and_normalized_duplicates` | #1343; updated 2026-10-22 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L91-L105] |
+| 3 | Calendar month boundary | Inclusive calendar offset replaces fixed-day months; nonpositive or nonintegral windows rejected | `tests/unit/drilling/test_detector_regression.py::test_calendar_endpoint_one_second_either_side`; `tests/unit/drilling/test_detector_contracts.py::test_invalid_window_is_rejected_even_on_empty_data` | #1343; updated 2026-10-22 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L155-L248] |
+| 4 | Missing rig or field keys | Rejected with explicit reasons before grouping; positional conservation checked | `tests/unit/drilling/test_detector_regression.py::test_record_conservation_and_all_rejection_reasons` | #1343; updated 2026-10-22 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L177-L213] |
+| 5 | Missing spud dates | Rejected with invalid_spud_date; no row can silently disappear | `tests/unit/drilling/test_detector_regression.py::test_empty_rejected_and_accepted_inputs_conserve_counts` | #1343; updated 2026-10-22 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L199-L213] |
+| 6 | Duplicate activity records | Only exact normalized required-field duplicates excluded; first valid record retained | `tests/unit/drilling/test_detector_regression.py::test_record_conservation_and_all_rejection_reasons` | #1343; updated 2026-10-22 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L203-L213] |
+| 7 | No emitted batches | Empty versus all-rejected input is distinguishable through records and counts | `tests/unit/drilling/test_detector_regression.py::test_empty_rejected_and_accepted_inputs_conserve_counts` | #1343; updated 2026-10-22 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L216-L219] |
+| 8 | Insufficient fit data | Zero or one usable observation returns explicit defaulted/insufficient_data; fallback unqualified | `tests/unit/drilling/test_detector_regression.py::test_identifiability_boundary` | #1343; updated 2026-10-22 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L288-L292] |
+| 9 | Numeric position text | Decimal/scientific grammar; integral positive finite position required; no locale inference | `tests/unit/drilling/test_detector_contracts.py::test_learning_numeric_text_and_rejection_reasons` | #1343; updated 2026-10-22 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L108-L135] |
+| 10 | Numeric duration text | Decimal/scientific grammar; positive finite days; missing or malformed rows rejected | `tests/unit/drilling/test_detector_regression.py::test_duration_parsing_conserves_filtered_rows` | #1343; updated 2026-10-22 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L108-L135] |
+| 11 | Filtered learning rows | Rejected rows carry field reasons and counts; valid replicated positions are retained | `tests/unit/drilling/test_detector_regression.py::test_duration_parsing_conserves_filtered_rows`; `tests/unit/drilling/test_detector_regression.py::test_replicated_learning_positions_remain_observations` | #1343; updated 2026-10-22 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L272-L287] |
+| 12 | Default after filtering | Explicit default status and reason after filtering; scalar wrapper logs dispositions | `tests/unit/drilling/test_detector_contracts.py::test_degenerate_fits_expose_legacy_default`; `tests/unit/drilling/test_detector_contracts.py::test_learning_filtered_scalar_reports_dispositions` | #1343; updated 2026-10-22 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L250-L302] |
+| 13 | Learning fit clipping | Raw value and lower/upper clipping statuses exposed; equality is fitted; limits unqualified | `tests/unit/drilling/test_detector_regression.py::test_clipping_boundary_and_one_duration_step_either_side`; `tests/unit/drilling/test_detector_contracts.py::test_lower_boundary_roundoff_is_not_reported_as_clipping` | #1343; updated 2026-10-22 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L303-L328] |
+| 14 | Nonfinite or constant positions | Nonfinite values rejected; constant position defaults explicitly; repeated positions may remain identifiable | `tests/unit/drilling/test_detector_contracts.py::test_infinite_learning_values_remain_nonfinite`; `tests/unit/drilling/test_detector_contracts.py::test_degenerate_fits_expose_legacy_default` | #1343; updated 2026-10-22 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L272-L302] |
+| 15 | Batch counter bookkeeping | IDs increase as groups are emitted; no measurement is defaulted | `tests/unit/drilling/test_detector_contracts.py::test_calendar_month_boundary_and_fractional_days` | #1343; updated 2026-10-22 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L216-L248] |
+| 16 | Anchored grouping progress | Every accepted event consumed once; next window starts at the first event outside the current anchor | `tests/unit/drilling/test_detector_regression.py::test_windows_anchor_to_first_member_not_last_member` | #1343; updated 2026-10-22 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L223-L247] |
 | 17 | Implicit bore-design default | `standard` is accepted without an enum or qualification | no detection check exists | #1344; 2026-10-17 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/models.py:L29-L36] |
 | 18 | Implicit pressure-management default | `mpd_required=False` can conceal missing source classification | no detection check exists | #1344; 2026-10-17 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/models.py:L29-L36] |
 | 19 | Default empty sequence | Model supplies an empty list, and ordered_wells falls back to insertion order | no detection check exists | #1344; 2026-10-17 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/models.py:L59-L73] |
@@ -228,10 +339,10 @@ rg -n 'return|Field|log|polyfit|mask|sum|depth|days|usd|coords|sequence|well_map
 | 26 | Float coercion of duration result | Derived arithmetic is cast to float, with no finite-value check; not external-text conversion | C5 covers two valid positions only; no detection check exists for nonfinite outputs | #1344; 2026-10-17 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L61-L62] |
 | 27 | Calculator default factor in duration | Default 0.85 is applied without campaign-specific evidence | C5 checks arithmetic only; no detection check exists for calibration | #1342; 2026-10-17 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L38-L62] |
 | 28 | Calculator default factor in break-even | Default 0.85 is applied without campaign-specific evidence | no detection check exists | #1342; 2026-10-17 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L96-L102] |
-| 29 | Standalone denominator ignored | `n_wells_standalone=1` is accepted but never used | C3/R3 covers batch division only; no detection check exists for the unused argument | #1345; 2026-10-17 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L68-L90] |
-| 30 | Break-even sentinel resembles success | After 200 candidates, fallback 1 does not distinguish no solution from a result | C3/R4 checks positivity only; no detection check exists for the sentinel | #1345; 2026-10-17 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L122-L136] [tests/drilling/test_batch_economics.py:L160-L168] |
-| 31 | Discount rate ignored | Default 0.10 and any supplied rate have no role in the returned costs | no detection check exists | #1345; 2026-10-17 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L23-L24] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L142-L196] |
-| 32 | Unnegated totals contradict negative-cash-flow prose | Returned NPV keys contain cost totals with no discount schedule | C3/R5 checks equality only; no detection check exists for sign/basis | #1345; 2026-10-17 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L147-L168] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L180-L196] |
+| 29 | Standalone denominator ignored | Accepted and ignored for compatibility; allocation uses only the batch count | `tests/drilling/test_batch_economics.py::TestMobilizationSavings::test_legacy_standalone_count_is_ignored` pins 400 USD for 1200 USD over 3 wells at four standalone-count values | #1345; 2026-11-04 | Revision-4 cost contract above |
+| 30 | Break-even sentinel resembles success | Fallback 1 means no strict saving found through 200 candidates, not break-even | `tests/drilling/test_batch_economics.py::TestBreakEven::test_legacy_no_savings_sentinel_is_not_break_even` pins equal costs and zero savings at 1, 2 and 200 wells | #1345; 2026-11-04 | Revision-4 cost contract above |
+| 31 | Discount rate ignored | Accepted and ignored for compatibility; outputs remain undiscounted | `tests/drilling/test_batch_economics.py::TestBatchVsStandaloneNPV::test_legacy_discount_rate_is_ignored` pins all three USD amounts for rates 0, 0.10 and 0.75 | #1345; 2026-11-04 | Revision-4 cost contract above |
+| 32 | Legacy NPV names can imply signed discounted cash flows | The current runtime docstring and revision-4 contract define positive cost magnitudes for nonempty valid campaigns, with no discount schedule | `tests/drilling/test_batch_economics.py::TestBatchVsStandaloneNPV` pins complete monetary outputs, including a single-well tie and zero savings | #1345; 2026-11-04 | Revision-4 cost contract above |
 | 33 | Empty campaign still incurs mobilization in comparison | N=0 gives standalone zero and batch=mob, after a default base-duration lookup | no detection check exists | #1344; 2026-10-17 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L170-L195] |
 | 34 | Empty campaign still incurs mobilization in total cost | Empty duration sum is zero; return is mobilization | no detection check exists | #1344; 2026-10-17 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L219-L228] |
 | 35 | Empty campaign base duration is assumed | `_estimate_base_well_days` returns 60.0 days | no detection check exists | #1342; 2026-10-17 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L247-L248] |
@@ -243,15 +354,15 @@ rg -n 'return|Field|log|polyfit|mask|sum|depth|days|usd|coords|sequence|well_map
 | 41 | Invalid direct calculator inputs bypass campaign schema | Batch count has a guard, but rate, duration and LC arguments are otherwise unconstrained | C0 covers model only; no detection check exists for direct-call validation | #1344; 2026-10-17 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L38-L62] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L68-L90] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L96-L136] |
 | 42 | Cost methods ignore sequence | They use well count and average depths rather than ordered wells | no detection check exists | #1344; 2026-10-17 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L170-L188] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L219-L228] |
 | 43 | Break-even tests have misleading prose and weak oracles | One test permits any positive count despite its equality narrative; another gives both costs without an independent economic reference | C7 detects the constant output; no independent economic benchmark exists | #1345; 2026-10-17 | [tests/drilling/test_batch_economics.py:L133-L168] |
-| 44 | Fractional-day batch spans are truncated | Timestamp difference is reported with .days, so sub-day spans become integer days | no detection check exists | #1343; 2026-10-17 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L109-L111] |
-| 45 | Repeated activity rows count as additional wells | batch_size=len(members) and well_ids retains every row; no well-ID de-duplication | no detection check exists | #1343; 2026-10-17 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L97-L111] |
+| 44 | Fractional elapsed-day spans | Timedelta division preserves sub-day duration without inclusive-day counting | `tests/unit/drilling/test_detector_contracts.py::test_calendar_month_boundary_and_fractional_days` | #1343; updated 2026-10-22 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L241-L243] |
+| 45 | Repeated activity and well IDs | Exact events excluded; different events for the same well remain accepted; batch_size counts events | `tests/unit/drilling/test_detector_contracts.py::test_repeated_well_with_distinct_event_is_retained`; `tests/unit/drilling/test_detector_contracts.py::test_numeric_and_text_well_ids_share_duplicate_identity` | #1343; updated 2026-10-22 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L203-L248] |
 | 46 | Currency labels are assumed rather than converted | Methods accept plain numbers documented as USD and USD/day; no currency metadata accompanies them | no detection check exists | #1344; 2026-10-17 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L80-L90] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/models.py:L45-L60] |
 | 47 | Duration labels are assumed rather than converted | Base durations are plain floats documented in days, without a unit conversion boundary | C5 checks day-based inputs only; no detection check exists for unit mismatch | #1344; 2026-10-17 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L49-L62] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L212-L228] |
 | 48 | Geometry labels are assumed rather than converted | Site depths are documented as feet and coordinates as degrees, without datum or unit-tag validation | no detection check exists | #1344; 2026-10-17 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/models.py:L19-L36] |
 | 49 | Financial input finiteness is unqualified | Campaign financial fields declare lower bounds but no finite-value constraint | C0 covers lower bounds only; no detection check exists for finiteness | #1344; 2026-10-17 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/models.py:L54-L60] |
-| 50 | Break-even output is constant across ordinary valid inputs | Positive finite rate/duration and nonnegative mobilization with 0<LC<=1 give 2 whenever mobilization>0 or LC<1; only zero mobilization with LC=1 returns 1. At N=1 costs are equal; N=2 saves one mobilization and may save drilling time. The LC=1 docstring and higher-mobilization test narrative are contradicted. | C7 records six exact outputs, including LC=1 with positive mobilization; no independent economic benchmark exists | #1345; 2026-10-17 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L96-L136] [tests/drilling/test_batch_economics.py:L133-L168] |
+| 50 | Break-even rounding can hide real savings or manufacture false savings | In exact arithmetic, positive finite rate/duration, nonnegative mobilization and 0<LC<=1 give 2 when mobilization>0 or LC<1, otherwise costs tie and the search would return sentinel 1. With zero mobilization, LC=1 and 62.6 days, strict float comparison returns a spurious 21 on CPython 3.11 and 1 on CPython 3.12. The runtime docstring's return description omits false savings. | C7 retains ordinary integer outputs; C9 pins the runtime-dependent output against independent decimal equality for CPython; no independent economic benchmark exists | #1345; 2026-11-04 | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L122-L136]; revision-5 cost limits above |
 
-The rows above identify code paths and coverage limitations; no historical incident is attributed. [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L1-L255] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L1-L187] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/models.py:L1-L73]
+The rows above identify code paths and coverage limitations; no historical incident is attributed. [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L1-L255] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L1-L341] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/models.py:L1-L73]
 
 ## 7. Lessons log
 
@@ -272,7 +383,7 @@ The calculations quality manager will review the data-pipeline pack, with a calc
 | --- | --- | --- |
 | NumPy, pandas, Pydantic, core namespace | Declared member dependencies; no solver version or binary is declared | [packages/worldenergydata-drilling/pyproject.toml:L30-L35] |
 | Public API consumers | The package root and batch subpackage re-export the same four objects; tests import the public and implementation paths | [packages/worldenergydata-drilling/src/worldenergydata/drilling/__init__.py:L6-L18] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/__init__.py:L6-L17] [tests/drilling/test_batch_economics.py:L11-L15] [tests/unit/drilling/test_smoke.py:L5-L19] |
-| Activity source | Detector takes an already-normalized in-memory DataFrame; it does not download BSEE data or join upstream records | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L38-L75] |
+| Activity source | Detector takes an already-normalized in-memory DataFrame; it does not download BSEE data or join upstream records | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L1-L341] |
 | Historical data and solver datasets | No operational dataset is qualified by the local fixture tests; external record provenance is not tested | [tests/drilling/test_batch_economics.py:L22-L43] [tests/drilling/test_batch_economics.py:L261-L300] |
 
 ### Implementation map
@@ -281,42 +392,55 @@ Map source: `digitalmodel`, `docs/registry/implementation-map.yaml`, branch `cod
 
 Inventory at that map-file commit: **0 in-package implementation rows; 0 module map families; 0 counted families**. No path in the map lies under the package in this header. A8 inventory is empty; counted-family grep is `NOT_APPLICABLE` because the map has no in-package rows. Further second implementations counted for A8: 0; this is not a claim that all methods are mapped.
 
-Map follow-up, #1346: add the duration law, mobilization allocation, break-even comparison, campaign cost comparison/total, anchored time-window grouping and log-space learning fit before they can become counted families. The implementations in this package are already described in section 3. [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L38-L228] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L38-L161]
+Map follow-up, #1346: add the duration law, mobilization allocation, break-even comparison, campaign cost comparison/total, anchored time-window grouping and log-space learning fit before they can become counted families. The implementations in this package are already described in section 3. [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L38-L228] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L1-L341]
 
 ### Package-local enrollment proposal
 
-Slice 1 of #1346 is recorded in [implementation-map.json](implementation-map.json).
-The JSON contains one mobilization-allocation family with its implementation
-location, source-file digest, repository revision, exact test nodes and replayable
-duplicate-discovery results. It is a package-local proposal, not a replacement for
-the external map described above. The family is `pending_review` and `counted: false`;
-the reviewed inventory at the external map pin remains unchanged.
+[implementation-map.json](implementation-map.json) records **6 families; 10 implementation/API rows; 0 counted families**.
+Each row includes a definition range, source-file SHA-256 and repository pin.
+Each family has exact regression nodes, a source basis, explicit limits,
+`status: pending_review`, `counted: false` and `qualification: NOT_EVALUATED`.
+The historical external inventory remains **0 external in-package rows**; this
+local proposal does not modify that registry or claim reviewed enrollment.
 
-The allocation equation is fixed cost divided by unit count: OpenStax,
-*Principles of Accounting, Volume 2: Managerial Accounting* (2019),
-[section 2.2, Average fixed cost](https://openstax.org/books/principles-managerial-accounting/pages/2-2-identify-and-apply-basic-cost-behavior-patterns).
-Mobilization is treated as a fixed cost and wells as equal allocation units.
-The test docstring writes out independent arithmetic with synthetic inputs;
-this supports allocation arithmetic and does not establish drilling cost calibration.
-[tests/unit/drilling/test_implementation_map.py::test_mobilization_hand_calculation]
+| Family | Implementation symbols | Rows | Evidence |
+| --- | --- | --- | --- |
+| Duration | `BatchDrillingEconomics.learning_curve_time` | 1 | `tests/unit/drilling/test_implementation_map.py::test_duration_and_campaign_cost_hand_calculations` |
+| Mobilization allocation | `BatchDrillingEconomics.mobilization_savings` | 1 | `tests/unit/drilling/test_implementation_map.py::test_mobilization_hand_calculation` |
+| Break-even comparison | `BatchDrillingEconomics.break_even_n_wells` | 1 | `tests/unit/drilling/test_pack_numeric_gates.py::test_c7_break_even_outputs` |
+| Campaign cost | `BatchDrillingEconomics.batch_vs_standalone_npv`, `BatchDrillingEconomics.campaign_total_cost` | 2 | `tests/unit/drilling/test_implementation_map.py::test_duration_and_campaign_cost_hand_calculations` |
+| Anchored time-window grouping | `BSEEBatchDetector.detect_batches`, `BSEEBatchDetector.detect_batches_with_diagnostics`, `BSEEBatchDetector._group` | 3 | `tests/unit/drilling/test_detector_regression.py::test_windows_anchor_to_first_member_not_last_member` |
+| Log-space learning fit | `BSEEBatchDetector.fit_learning_curve`, `BSEEBatchDetector.fit_learning_curve_with_diagnostics` | 2 | `tests/unit/drilling/test_detector_regression.py::test_clipping_boundary_and_one_duration_step_either_side` |
 
-The recorded whole-repository name/division search retains the definition and
-two test consumers at its revision. No further definition was found by that
-bounded search; differently named allocation algorithms are not excluded.
-[tests/unit/drilling/test_implementation_map.py::test_mobilization_discovery_evidence]
-
-Duration, break-even, campaign costs, anchored grouping and learning-fit enrollment
-remain later slices of #1346. After review, reconcile the external map and update
-the counted pack inventory. Engineering qualification remains `NOT_EVALUATED`.
+Allocation uses OpenStax, *Principles of Accounting, Volume 2: Managerial
+Accounting* (2019), [section 2.2, Average fixed cost](https://openstax.org/books/principles-managerial-accounting/pages/2-2-identify-and-apply-basic-cost-behavior-patterns).
+The method returns allocated cost despite its savings name. Learning fitting uses
+the [NIST least-squares equations](https://www.itl.nist.gov/div898/handbook/pmd/section4/pmd431.htm).
+Calendar grouping uses the [pandas DateOffset guide](https://pandas.pydata.org/docs/user_guide/timeseries.html#dateoffset-objects).
+Duration and campaign formulas are enrolled as implementation equations with
+physical provenance unqualified; no empirical constants are introduced.
 
 ### Whole-repository duplicate discovery
 
-At the code pin, tracked Python files across the whole repository, including `scripts/`, were searched with the following separate queries; retained results were the package definitions, re-exports and local tests, with no further computational definition for these named methods. This search is narrower than a proof of algorithmic uniqueness; new candidates require semantic classification. [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L38-L228] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L38-L161] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/models.py:L15-L73]
+The JSON retains one replayable exact-definition-name query per family over all
+tracked Python blobs at the header pin, including scripts and tests. Every match
+is classified as a computational implementation or an API delegate; no further
+same-name definition was found. The grouping wrappers and scalar-fit wrapper
+share their enrolled implementation and are not independent duplicate algorithms.
+Differently named or algebraically equivalent algorithms remain outside this
+bounded search; no uniqueness conclusion is drawn. A second, broader case-insensitive search for learning curves/rates,
+mobilization allocation and batch-cost keywords found eight files at the pin:
+two enrolled runtime modules, one schema, four drilling test consumers and an
+unrelated optimizer hyperparameter fixture. The JSON retains the command,
+classifications and pinned digests. No additional computational definition was
+found by that search; semantic review and external registry reconciliation remain
+follow-ups to #1346.
 
-```bash
-git grep -n -E 'def (learning_curve_time|mobilization_savings|break_even_n_wells|batch_vs_standalone_npv|campaign_total_cost|detect_batches|fit_learning_curve)|class (DrillCampaign|DrillingSite)|Wright|log\(lc_factor\)' "$PIN" -- '*.py'
-git grep -l -i -E 'learning_curve|learning.?rate|mobilization_savings|batch_cost' "$PIN" -- '*.py'
-```
+`tests/unit/drilling/test_implementation_map.py::test_all_six_family_enrollments`
+checks definitions, source digests, evidence-node existence and counted status.
+`tests/unit/drilling/test_implementation_map.py::test_family_discovery_evidence`
+checks retained search matches. `tests/unit/drilling/test_pack_evidence.py`
+checks the pack manifest, reference ranges and detector failure-row evidence.
 
 ## 10. Coverage and open items
 
@@ -327,7 +451,7 @@ git grep -l -i -E 'learning_curve|learning.?rate|mobilization_savings|batch_cost
 | `__init__.py` and `batch_economics/__init__.py` within the header package | All exports [packages/worldenergydata-drilling/src/worldenergydata/drilling/__init__.py:L1-L18] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/__init__.py:L1-L17] |
 | `batch_economics/models.py` | Complete [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/models.py:L1-L73] |
 | `batch_economics/economics.py` | Complete [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L1-L255] |
-| `batch_economics/bsee_batch_detector.py` | Complete [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L1-L187] |
+| `batch_economics/bsee_batch_detector.py` | Complete [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L1-L341] |
 | Member README and package metadata | Complete README and packaging/dependency definitions [packages/worldenergydata-drilling/README.md:L1-L8] [packages/worldenergydata-drilling/pyproject.toml:L1-L57] |
 | `tests/drilling/test_batch_economics.py`, `tests/drilling/__init__.py`, `tests/unit/drilling/test_smoke.py`, `tests/unit/drilling/__init__.py` | Both test directories; 22 economics/detector cases plus 2 smoke cases [tests/drilling/test_batch_economics.py:L51-L380] [tests/unit/drilling/test_smoke.py:L8-L19] |
 | `docs/reports/2026-04-26-worldenergydata-capability-readiness-matrix.md` and its YAML companion | Discovery documents identify a historical empty package and a separate historical planning path; their old counts are not used here [docs/reports/2026-04-26-worldenergydata-capability-readiness-matrix.md:L84-L93] [docs/reports/2026-04-26-worldenergydata-capability-readiness-matrix.yaml:L736-L752] |
@@ -343,10 +467,10 @@ The seven follow-ups below are filed as #1342–#1348; the PR #1333 description 
 | Item | Evidence and limit | Responsible role and tracking |
 | --- | --- | --- |
 | Method provenance and independent validation | Section-3 UNVERIFIED claim; no independent section-4 reference; depth terms disagree with prose | Maintainer; #1342 [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L44-L62] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L234-L255] |
-| Data loss, fit defaults and parser contracts | Section-6 detector rows; no rejected-record accounting or locale contract | Maintainer; #1343 [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L61-L160] |
+| Data loss, fit defaults and parser contracts | Per-row accounting, calendar windows, numeric-ID normalization and fit dispositions implemented in #1533; current regression nodes and worked tables retained here | Maintainer; #1343 [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L1-L341] |
 | Input, sequence and empty-campaign contracts | Section-6 model/direct-call rows; no completeness or uniqueness checks | Maintainer; #1344 [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/models.py:L29-L73] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L170-L228] |
-| Cost and break-even semantics | Unused discount/standalone arguments, fallback 1, constant output (row 50) and weak existing break-even test oracles; C7 records current behaviour | Maintainer; #1345 [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L68-L196] [tests/drilling/test_batch_economics.py:L133-L168] |
-| Map coverage | No in-package map rows at the section-9 map pin; all section-3 method families need enrollment | Maintainer; #1346 |
+| Cost and break-even semantics | Revisions 4 and 5 document ignored compatibility arguments, undiscounted USD totals, fallback 1 and runtime-dependent false savings; exact monetary regressions replace weak oracles. Discounting, fallback redesign, runtime-docstring qualification and independent qualification remain outside this compatibility change. | Maintainer; #1345; cost contract and regression nodes above |
+| Map coverage | Six package-local families proposed; counted and external inventories remain unchanged pending review | Maintainer; #1346 |
 | Documentation and distribution | Historical readiness text describes an empty domain; the existing nested-Markdown package-data glob matches the new pack, so wheel exclusion is not established; packaging is unchanged | Maintainer; #1347 [docs/reports/2026-04-26-worldenergydata-capability-readiness-matrix.md:L84-L84] [packages/worldenergydata-drilling/pyproject.toml:L56-L57] |
 | Clearance and evidence retention | A different-provider clearance, deputy appointment, durable test-evidence attachment and shared-log registration remain outstanding under AQG r0 sections 9–11 | Maintainer; #1348 |
 

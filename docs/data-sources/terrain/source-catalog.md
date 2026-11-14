@@ -64,3 +64,6 @@ directory. **Rasters are fetch-on-demand only — never commit them to git**
 Tests: `tests/modules/field_development/test_terrain.py` (offline by default;
 the live smoke test is opt-in via `WED_LIVE_NETWORK_TESTS=1` and the
 `network` marker).
+
+For selected staged products, see [bounded DEM downloads](staged-dem-download.md)
+for resource limits, provenance receipts and an offline worked example.

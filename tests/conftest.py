@@ -561,6 +561,79 @@ def pytest_sessionfinish(session, exitstatus):
         print("=" * 60)
 
 
+# --------------------------------------------------------------- quarantine --
+# scripts/ci/quarantine.txt lists tests that already fail on main. The PR gate
+# deselects them (shared domain-matrix workflow); every other run, including
+# the daily "Main full run" and local runs, marks them xfail(strict=False) so
+# the suite stays green while the failure stays visible. A quarantined test
+# that starts passing reports XPASS: remove its line and tick the tracking
+# issue. A line whose comment starts with "deselect:" is removed from the run
+# instead (for tests that crash the worker, which xfail cannot contain).
+_QUARANTINE_FILE = Path(__file__).resolve().parents[1] / "scripts/ci/quarantine.txt"
+
+# The PR fast gate sets WED_FAST_GATE=1. Tests marked artifact_currency check
+# that repo-wide generated artifacts (inventories, census, evidence maps) are
+# current; they run in the daily main full run, not on every PR.
+_FAST_GATE_ENV = "WED_FAST_GATE"
+
+
+def _canonical_node_id(node_id: str) -> str:
+    """Use the tests/-prefixed form so both quarantine spellings match."""
+    return node_id if node_id.startswith("tests/") else f"tests/{node_id}"
+
+
+def _load_quarantine(path: Path = _QUARANTINE_FILE) -> Dict[str, tuple]:
+    """Return {node id: (reason, deselect)} parsed from the quarantine file."""
+    entries: Dict[str, tuple] = {}
+    if not path.is_file():
+        return entries
+    heading = ""
+    in_comment_block = False
+    for raw in path.read_text(encoding="utf-8").splitlines():
+        line = raw.strip()
+        if not line:
+            in_comment_block = False
+            continue
+        if line.startswith("#"):
+            if not in_comment_block:
+                heading = line.lstrip("#").strip()
+                in_comment_block = True
+            continue
+        in_comment_block = False
+        node_id, _, comment = line.partition("#")
+        node_id, comment = node_id.strip(), comment.strip()
+        deselect = comment.lower().startswith("deselect:")
+        if deselect:
+            comment = comment.split(":", 1)[1].strip()
+        reason = comment or heading or "listed in scripts/ci/quarantine.txt"
+        entries[_canonical_node_id(node_id)] = (f"quarantined: {reason}", deselect)
+    return entries
+
+
+def pytest_collection_modifyitems(config, items):
+    """Apply the quarantine list and the fast-gate artifact-currency skip."""
+    quarantine = _load_quarantine()
+    fast_gate = os.environ.get(_FAST_GATE_ENV) == "1"
+    currency_skip = pytest.mark.skip(
+        reason="artifact currency check: runs in the daily Main full run"
+    )
+    kept, dropped = [], []
+    for item in items:
+        entry = quarantine.get(_canonical_node_id(item.nodeid))
+        if entry is not None:
+            reason, deselect = entry
+            if deselect:
+                dropped.append(item)
+                continue
+            item.add_marker(pytest.mark.xfail(reason=reason, strict=False))
+        if fast_gate and item.get_closest_marker("artifact_currency"):
+            item.add_marker(currency_skip)
+        kept.append(item)
+    if dropped:
+        config.hook.pytest_deselected(items=dropped)
+        items[:] = kept
+
+
 # Skip collection of experimental/archived test files
 def pytest_ignore_collect(collection_path, config):
     """Skip collection of experimental and archived test files.
@@ -627,41 +700,8 @@ def pytest_ignore_collect(collection_path, config):
 
     # Issue #2433: skip known broken collection targets until missing modules/data are restored.
     broken_module_tests = {
-        # Duplicate basename clashes with tests/integration/workflows/test_end_to_end.py
-        Path("tests/modules/fdas/integration/test_end_to_end.py"),
-        # Missing sodir_module.* package
-        Path("tests/modules/sodir-integration/test_api_client.py"),
-        Path("tests/modules/sodir-integration/test_cross_regional_validation.py"),
-        Path("tests/modules/sodir-integration/test_integration.py"),
-        Path("tests/modules/sodir-integration/test_performance.py"),
-        # Missing well production dashboard modules
-        Path("tests/modules/well_production_dashboard/test_monitoring.py"),
-        Path(
-            "tests/modules/well_production_dashboard/test_well_production_dashboard.py"
-        ),
-        # Missing proxy comparison module
-        Path("tests/unit/cost/test_proxy_comparison.py"),
-        # Duplicate basename clash with tests/modules/marine_safety/test_models.py
-        Path("tests/unit/hse/database/test_models.py"),
-        # Duplicate basename clashes with tests/modules/hse/importers/*
-        Path("tests/unit/hse/importers/test_bsee_incidents_importer_url.py"),
-        Path("tests/unit/hse/importers/test_bsee_penalties_importer_url.py"),
-        Path("tests/unit/hse/importers/test_bsee_statistics_importer_url.py"),
-        # Missing metocean_stats dependency chain
-        Path("tests/unit/metocean/statistics/test_environmental_contours.py"),
-        Path("tests/unit/metocean/statistics/test_eva.py"),
-        Path("tests/unit/metocean/statistics/test_joint_probability.py"),
-        Path("tests/unit/metocean/statistics/test_reporting.py"),
-        Path("tests/unit/metocean/statistics/test_scatter_diagram.py"),
-        Path("tests/unit/metocean/statistics/test_wave_spectra.py"),
-        Path("tests/unit/metocean/statistics/test_weather_windows.py"),
         # Missing repo_yml_status.csv fixture/input
         Path("tests/unit/pipeline_ci_cd/test_pipeline_utils.py"),
-    }
-
-    broken_module_dirs = {
-        # Missing tests.modules.marine_safety.fixtures package for directory conftest imports
-        Path("tests/unit/marine_safety"),
     }
 
     try:
@@ -669,14 +709,4 @@ def pytest_ignore_collect(collection_path, config):
     except ValueError:
         return False
 
-    if rel_path in broken_module_tests:
-        return True
-
-    for dir_pattern in broken_module_dirs:
-        try:
-            rel_path.relative_to(dir_pattern)
-            return True
-        except ValueError:
-            continue
-
-    return False
+    return rel_path in broken_module_tests

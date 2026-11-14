@@ -22,10 +22,10 @@ trails, which now bracket the whole distribution):
 | Tyra (DKK) | 21.0bn | ~27.0bn | +29% |
 | Sangomar Ph1 (USD) | $4.2bn | $5.0bn | +19% |
 | Aasta Hansteen (NOK) | 32.0bn | 37.5bn | +17% |
-| Mariner (USD) | $7.0bn | ~$7.7bn | +10% |
+| Mariner (USD) | >$7.0bn | >$7.7bn | both lower bounds; not computable |
 | Jubilee Ph1 (USD) | $3.15bn | $3.3bn | +5% |
 | TEN (USD) | $4.0bn | <$4.0bn | ~0% |
-| Peregrino Ph2 (USD) | $3.5bn | ~$3.0bn | −14% |
+| Peregrino Ph2 (USD) | ~$3.5bn | within $3.0bn | −14% or lower (upper bound) |
 | Kraken (USD) | $3.2bn | $2.5bn | −22% |
 | Johan Sverdrup Ph1 (NOK) | ~123bn | 83bn | **−33%** |
 

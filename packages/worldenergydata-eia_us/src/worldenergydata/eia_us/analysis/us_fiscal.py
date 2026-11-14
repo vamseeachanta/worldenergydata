@@ -228,11 +228,22 @@ class GoMCrosscheck:
         Returns:
             Dict with keys:
               eia_kbd, bsee_kbd, difference_kbd, pct_difference, within_tolerance.
+            The production values and signed difference are in kbd.
+            pct_difference is the dimensionless absolute relative difference
+            against BSEE, expressed as a fraction, not percentage points.
+            within_tolerance includes equality with the dimensionless
+            tolerance_pct limit. For a zero BSEE reference and nonzero EIA
+            production, pct_difference and within_tolerance are both None:
+            relative agreement is indeterminate, with no absolute tolerance
+            assumed. Exact zero/zero agreement returns 0.0 and True by convention.
         """
         difference = eia_production_kbd - bsee_production_kbd
-        reference = bsee_production_kbd if bsee_production_kbd != 0.0 else 1.0
-        pct_diff = abs(difference) / abs(reference)
-        within_tolerance = pct_diff <= self.tolerance_pct
+        if bsee_production_kbd == 0.0:
+            pct_diff = 0.0 if difference == 0.0 else None
+            within_tolerance = True if difference == 0.0 else None
+        else:
+            pct_diff = abs(difference) / abs(bsee_production_kbd)
+            within_tolerance = pct_diff <= self.tolerance_pct
 
         return {
             "eia_kbd": eia_production_kbd,

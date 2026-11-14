@@ -7,6 +7,7 @@ and rule building capabilities.
 
 import json
 from dataclasses import dataclass, field
+from numbers import Real
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
@@ -20,6 +21,47 @@ from worldenergydata.bsee.analysis.well_data_verification.base import (
     VerificationResult,
 )
 from worldenergydata.validation.base import ValidationResult, ValidationRule
+
+
+def _is_finite_real_number(value: Any) -> bool:
+    """Recognize real numeric values without coercing configuration text."""
+    if not isinstance(value, Real) or isinstance(value, bool):
+        return False
+    try:
+        return bool(np.isfinite(value))
+    except (OverflowError, TypeError, ValueError):
+        return False
+
+
+def _has_finite_numeric_values(values: pd.Series) -> bool:
+    """Require numeric measurements without coercing text labels."""
+    if not isinstance(values, pd.Series) or pd.api.types.is_bool_dtype(values.dtype):
+        return False
+    if pd.api.types.is_numeric_dtype(values.dtype):
+        return bool(np.isfinite(values).fillna(False).all())
+    return pd.api.types.is_object_dtype(values.dtype) and all(
+        _is_finite_real_number(value) for value in values
+    )
+
+
+def _has_numeric_object_values(values: pd.Series) -> bool:
+    """Recognize numeric object containers without reinterpreting text labels."""
+    if not isinstance(values, pd.Series) or not pd.api.types.is_object_dtype(
+        values.dtype
+    ):
+        return False
+    numeric = [
+        isinstance(value, Real) and not isinstance(value, bool) for value in values
+    ]
+    return any(numeric) and all(
+        is_numeric or value is None or value is pd.NA
+        for is_numeric, value in zip(numeric, values)
+    )
+
+
+def _is_positive_finite_number(value: Any) -> bool:
+    """Validate a positive criterion without coercing configuration text."""
+    return _is_finite_real_number(value) and bool(value > 0)
 
 
 @dataclass
@@ -38,7 +80,7 @@ class QualityConfig:
     def from_yaml(cls, yaml_content: Union[str, Path]) -> "QualityConfig":
         """Load configuration from YAML."""
         if isinstance(yaml_content, Path):
-            yaml_content = yaml_content.read_text()
+            yaml_content = yaml_content.read_text(encoding="utf-8")
 
         data = yaml.safe_load(yaml_content)
         config_data = data.get("quality_config", data)
@@ -75,7 +117,7 @@ class QualityConfig:
             }
         }
 
-        with open(path, "w") as f:
+        with open(path, "w", encoding="utf-8", newline="\n") as f:
             yaml.dump(config_dict, f, default_flow_style=False)
 
 
@@ -456,19 +498,36 @@ class OutlierDetector:
         result = ValidationResult()
         result.metadata["validator"] = "OutlierDetector"
         result.metadata["method"] = "zscore"
+        result.metadata["field"] = column
 
         if column not in data.columns:
             result.add_error(column, f"Column {column} not found")
             return result
 
-        threshold = threshold or self.default_zscore_threshold
+        threshold = self.default_zscore_threshold if threshold is None else threshold
+        if not _is_positive_finite_number(threshold):
+            result.add_error(
+                column,
+                "Z-score threshold must be a finite positive number",
+                rule="positive_threshold",
+            )
+            return result
+        result.metadata["threshold"] = threshold
 
         # Calculate Z-scores
-        values = data[column].dropna()
-        if len(values) < 2:
+        values = data[column]
+        if values.empty or not _has_finite_numeric_values(values):
+            result.add_error(
+                column,
+                "Z-score measurements must contain finite numeric values",
+                rule="finite_numeric",
+            )
+            return result
+        result.metadata["sample_count"] = len(values)
+        if values.nunique() == 1:
             return result
 
-        z_scores = np.abs(stats.zscore(values))
+        z_scores = np.abs(stats.zscore(np.asarray(values.tolist())))
         outlier_mask = z_scores > threshold
 
         if outlier_mask.any():
@@ -504,16 +563,38 @@ class OutlierDetector:
         result = ValidationResult()
         result.metadata["validator"] = "OutlierDetector"
         result.metadata["method"] = "iqr"
+        result.metadata["field"] = column
 
         if column not in data.columns:
             result.add_error(column, f"Column {column} not found")
             return result
 
-        multiplier = multiplier or self.default_iqr_multiplier
+        multiplier = self.default_iqr_multiplier if multiplier is None else multiplier
+        if not _is_positive_finite_number(multiplier):
+            result.add_error(
+                column,
+                "IQR multiplier must be a finite positive number",
+                rule="positive_multiplier",
+            )
+            return result
+        result.metadata["multiplier"] = multiplier
 
         # Calculate IQR
-        values = data[column].dropna()
+        values = data[column]
+        if values.empty or not _has_finite_numeric_values(values):
+            result.add_error(
+                column,
+                "IQR measurements must contain finite numeric values",
+                rule="finite_numeric",
+            )
+            return result
+        result.metadata["sample_count"] = len(values)
         if len(values) < 4:
+            result.add_warning(
+                column,
+                "Insufficient data for IQR outlier detection; at least 4 samples required",
+                rule="sample_count",
+            )
             return result
 
         Q1 = values.quantile(0.25)
@@ -557,14 +638,39 @@ class OutlierDetector:
         result.metadata["validator"] = "OutlierDetector"
         result.metadata["method"] = "mahalanobis"
 
+        if columns is None or len(columns) == 0:
+            result.add_error(
+                "columns", "At least one measurement column is required", rule="columns"
+            )
+            return result
+        result.metadata["columns"] = list(columns)
+
         # Check columns exist
         missing_cols = [col for col in columns if col not in data.columns]
         if missing_cols:
             result.add_error("columns", f"Columns not found: {missing_cols}")
             return result
 
-        # Get data for specified columns
-        subset = data[columns].dropna()
+        if data.empty:
+            result.add_error(
+                "data",
+                "Outlier detection requires nonempty input",
+                rule="nonempty_input",
+            )
+            return result
+        for column in columns:
+            if not _has_finite_numeric_values(data[column]):
+                result.add_error(
+                    column,
+                    "Multivariate measurements must contain finite numeric values",
+                    rule="finite_numeric",
+                )
+        if result.errors:
+            return result
+
+        # Get data for specified columns after validating every measurement.
+        subset = data[columns]
+        result.metadata["sample_count"] = len(subset)
         if len(subset) < len(columns) + 1:
             result.add_warning(
                 "data", "Insufficient data for multivariate outlier detection"
@@ -904,6 +1010,36 @@ class DataQualityFramework:
         """
         result = VerificationResult()
         result.metadata["quality_framework"] = "DataQualityFramework"
+        result.metadata["total_rows"] = len(data)
+        result.metadata["total_columns"] = len(data.columns)
+
+        if data.empty:
+            result.add_error(
+                "data", "Quality checks require nonempty input", rule="nonempty_input"
+            )
+            result.metadata["quality_score"] = 0.0
+            return result
+
+        numeric_cols = data.select_dtypes(include=[np.number]).columns.tolist()
+        measurement_cols = list(numeric_cols)
+        for column in ("oil_volume", "gas_volume"):
+            if column in data.columns and column not in measurement_cols:
+                measurement_cols.append(column)
+        for column in data.columns:
+            if column not in measurement_cols and _has_numeric_object_values(
+                data[column]
+            ):
+                measurement_cols.append(column)
+        for column in measurement_cols:
+            if not _has_finite_numeric_values(data[column]):
+                result.add_error(
+                    column,
+                    "Measurements must contain finite numeric values",
+                    rule="finite_numeric",
+                )
+        if result.errors:
+            result.metadata["quality_score"] = 0.0
+            return result
 
         # Run completeness checks
         if self.config.enable_completeness_check:
@@ -914,7 +1050,6 @@ class DataQualityFramework:
                 result.merge(completeness_result)
 
             # Check for zero values in numeric columns
-            numeric_cols = data.select_dtypes(include=[np.number]).columns.tolist()
             zero_result = self.completeness_checker.check_zero_values(
                 data, numeric_cols
             )
@@ -931,7 +1066,6 @@ class DataQualityFramework:
 
         # Run outlier detection
         if self.config.enable_outlier_detection:
-            numeric_cols = data.select_dtypes(include=[np.number]).columns.tolist()
             for col in numeric_cols:
                 outlier_result = self.outlier_detector.detect_outliers_zscore(
                     data, col, self.config.outlier_threshold
@@ -947,12 +1081,10 @@ class DataQualityFramework:
         total_issues = len(result.errors) + len(result.warnings)
         total_checks = len(data) * len(data.columns)
         quality_score = (
-            max(0, 1 - (total_issues / total_checks)) if total_checks > 0 else 1.0
+            max(0, 1 - (total_issues / total_checks)) if total_checks > 0 else 0.0
         )
 
         result.metadata["quality_score"] = quality_score
-        result.metadata["total_rows"] = len(data)
-        result.metadata["total_columns"] = len(data.columns)
 
         return result
 
@@ -1041,7 +1173,7 @@ class DataQualityFramework:
             format: Export format ('json', 'csv')
         """
         if format == "json":
-            with open(path, "w") as f:
+            with open(path, "w", encoding="utf-8", newline="\n") as f:
                 json.dump(result.to_dict(), f, indent=2, default=str)
 
         elif format == "csv":
@@ -1072,6 +1204,7 @@ class DataQualityFramework:
                 )
 
             df = pd.DataFrame(issues)
-            df.to_csv(path, index=False)
+            with open(path, "w", encoding="utf-8", newline="\n") as stream:
+                df.to_csv(stream, index=False, lineterminator="\n")
 
-        logger.info(f"Exported quality results to {path}")
+        logger.info(f"Exported quality results to {Path(path).as_posix()}")

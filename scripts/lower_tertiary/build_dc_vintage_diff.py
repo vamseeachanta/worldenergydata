@@ -8,11 +8,14 @@ movement new data arriving? Output is a committed CSV consumed by
 "Drilling-days resolution" section.
 
 Requires pandas + openpyxl (reads the frozen ``.xlsx``); run manually when
-either input changes, then re-run ``build_wo_per_well_dc.py``.
+either input changes. Publication requires a digest-bound frozen sidecar and
+labelled candidate. Cross-rule differences do not establish drilling stability;
+``same_basis`` identifies whether the recorded rules agree.
 """
 
 from __future__ import annotations
 
+import argparse
 import sys
 from pathlib import Path
 
@@ -21,7 +24,13 @@ import pandas as pd
 if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from lower_tertiary.dc_provenance import carries_basis, validate_day_schema, vintage_labels
+from lower_tertiary.dc_provenance import (
+    carries_basis,
+    provenance,
+    validate_day_schema,
+    vintage_labels,
+)
+from lower_tertiary.frozen_dc_metadata import load_frozen
 
 REPO = Path(__file__).resolve().parents[2]
 V30_DIR = REPO / "docs/modules/bsee/analysis/production/FDAS_V30"
@@ -112,16 +121,56 @@ def build_diff(frozen: pd.DataFrame, cand: pd.DataFrame) -> pd.DataFrame:
     return out
 
 
-def main() -> None:
-    frozen = pd.ExcelFile(FROZEN_XLSX).parse("Sheet1")
+def main(argv: list[str] | None = None) -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--frozen-metadata",
+        type=Path,
+        help="Digest-bound JSON sidecar; defaults to the workbook's provenance.json",
+    )
+    args = parser.parse_args(argv)
+    frozen = load_frozen(FROZEN_XLSX, args.frozen_metadata)
     cand = pd.read_csv(CANDIDATE_CSV, dtype={"API_WELL_NUMBER": str})
+    # Publication contract: issue #1633, acceptance; archived unknown coverage
+    # is allowed only through the digest-bound frozen loader, never inferred.
+    required = {"BASIS", "PND_DAYS", "DAYS_STATUS"}
+    if not required.issubset(cand.columns) or cand.empty:
+        raise ValueError("candidate requires recorded provenance")
+    statuses = {"war_covered", "no_war_activity", "war_covered_no_activity_code"}
+    for row in cand.to_dict("records"):
+        provenance(row)
+        if row["DAYS_STATUS"] not in statuses:
+            raise ValueError("unsupported candidate coverage provenance")
     out = build_diff(frozen, cand)
+    for suffix, frame in (("v30", frozen), ("wed", cand)):
+        labels = {
+            str(row["API_WELL_NUMBER"]).strip().removesuffix(".0"): provenance(row)
+            for row in frame.dropna(subset=["API_WELL_NUMBER"]).to_dict("records")
+        }
+        absent = "wed_only" if suffix == "v30" else "v30_only"
+        present = out["category"].ne(absent)
+        if out.loc[present, f"basis_{suffix}"].isna().any():
+            raise ValueError("present vintage side requires recorded provenance")
+        for column in ("pnd_days", "days_status"):
+            out[f"{column}_{suffix}"] = [
+                labels.get(api, {}).get(column) for api in out["api12"]
+            ]
+        out[f"pnd_days_{suffix}"] = out[f"pnd_days_{suffix}"].astype("Int64")
+        out[f"days_status_{suffix}"] = out[f"days_status_{suffix}"].astype("string")
+    # Keep legacy numeric differences for existing consumers; this flag marks
+    # whether they compare two present sides on the same recorded rule.
+    out["same_basis"] = (
+        out["basis_v30"].notna()
+        & out["basis_wed"].notna()
+        & out["basis_v30"].eq(out["basis_wed"])
+    ).fillna(False)
     OUT_CSV.parent.mkdir(parents=True, exist_ok=True)
     out.to_csv(OUT_CSV, index=False)
     n_changed = (out["category"] == "drilling_changed").sum()
     print(
         f"wrote {OUT_CSV} — {len(out)} bores; "
-        f"drilling_changed={n_changed} (0 = drilling days are stable), "
+        f"drilling_changed={n_changed}, "
+        f"same_basis={out['same_basis'].sum()} (cross-rule counts are archival), "
         f"late_data={(out['category'] == 'late_data').sum()}, "
         f"servicing_accrual={(out['category'] == 'servicing_accrual').sum()}, "
         f"wed_only={(out['category'] == 'wed_only').sum()}"
