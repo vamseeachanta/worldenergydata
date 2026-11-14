@@ -126,6 +126,22 @@ Additional detection procedures for section 6: D1 force SciPy fitting to raise a
 
 C2.4 detects the repaired SF1 selector and signed-cashflow failures. It does not qualify government-take aggregation or current fiscal law. The finite-net-cashflow assertion does not detect omitted capital in SF2. C0.3 concerns well values only; no detection check exists for zero-filled production measurements. G1 regression counts do not clear these data or economics paths. This comparator revision does not reconcile the historical production and paging rows.
 
+### Comparator replay on main, 2026-11-13
+
+The approved #1284 comparator slice was already present in main commit `d6e2c080107972b193fbff0b4616685f3f8d22fe` (merged #1968) at implementation-job checkout. Its source and test fingerprints match the revision-2 digests above. This addendum records a fresh replay of that implementation; production code and tests required no further edits.
+
+For the historical red replay, the unchanged current comparator tests ran against only the comparator module from parent commit `1e35ee97d665432e35b3c5e7b5bd09788982a185`, loaded in an isolated process. The 21 failures comprise 17 selector-validation cases and 4 signed-cashflow cases. This is historical regression evidence; no still-reproducing comparator defect was found on main.
+
+| Replay | Pytest selection under `tests/unit/ukcs` | Passed | Failed | Skipped / xfailed / deselected |
+| --- | --- | --- | --- | --- | --- |
+| Historical comparator source | `test_cross_basin.py` | 19 | 21 | 0 / 0 / 0 |
+| Current focused suites | `test_cross_basin.py test_reference_chain.py test_field_economics.py test_nsta_client.py` | 102 | 0 | 0 / 0 / 0 |
+| Current complete UKCS suite | All nine `test_*.py` files | 199 | 0 | 0 / 0 / 0 |
+
+All runs used Python 3.12.15, pytest 9.2.0, `-q -m "not solver"`, the repository conftest and coverage configuration, and a temporary writable `MPLCONFIGDIR`. The replay harness registered the `solver` marker for strict marker-expression checking and guarded against importing OrcFxAPI; there were zero solver import attempts. Focused and complete-suite passes include the unchanged short-page and reference-chain regressions. These passes do not establish drilling-capital completeness, reject empty reference-chain production, resolve the FDAS rig-rate unit boundary, or validate current fiscal law.
+
+Tracked Git searches for `CrossBasinComparator`, `cross_basin_example`, `npv_by_basin` and `government_take_by_basin` identified only the comparator implementation, its dedicated test caller, and citations in the UKCS and economics packs. Additional searches for cross-basin and price-sensitivity terms across reports, examples, documentation, source and scripts found no retained numeric output attributable to this comparator. No dependent amount requiring regeneration was identified; no frozen output was used as a golden result.
+
 ## 6. Known failure modes and pitfalls
 
 sweep: 5 found
