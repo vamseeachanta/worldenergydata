@@ -149,6 +149,18 @@ CONTRACT_ROUTES = {
 # checked by tests/report_evals.
 CONTRACT_PREFIX_ROUTES = (
     ("data/modules/cost/", "tests/unit/cost"),
+    (
+        "data/modules/facility_specs/",
+        "tests/modules/field_development/test_withheld_data.py",
+    ),
+    ("data/modules/frontier_basins/", "tests/unit/canada"),
+    ("data/modules/offshore_assets/", "tests/unit/field_development"),
+    (
+        "data/modules/offshore_assets/",
+        "tests/modules/field_development/test_withheld_data.py",
+    ),
+    ("data/modules/subsea/", "tests/unit/subsea"),
+    ("data/modules/subsea/", "tests/unit/curated"),
     ("examples/report-evals/", "tests/report_evals"),
     ("tests/report_evals/", "tests/report_evals"),
 )
