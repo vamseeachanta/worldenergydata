@@ -1,0 +1,25 @@
+# Opt-in only: never registered as an offline workflow.
+basename: ukcs
+default:
+  log_level: INFO
+  config:
+    overwrite:
+      output: true
+meta:
+  label: ukcs_reference_live
+file_management:
+  flag: false
+  output_directory: outputs
+data:
+  source: nsta_live
+  # Relative to this input's analysis root, including in embed mode.
+  cache_dir: data/modules/ukcs/raw
+  year: 2025
+  max_records: 6000
+  force_refresh: true
+report:
+  field_name: Forties
+  field_meta:
+    field_name: FORTIES
+    source: NSTA
+  oil_price_usd_bbl: 75.0

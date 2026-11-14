@@ -1,0 +1,199 @@
+{
+  "field_name": "Forties",
+  "field_concept": {
+    "schema_version": "1.0.0",
+    "name": "Forties",
+    "operator": null,
+    "region": "uk",
+    "reservoir_depth_tvd_m": null,
+    "reservoir_pressure_psi": null,
+    "reservoir_temperature_f": null,
+    "recoverable_reserves_mmboe": null,
+    "fluid_type": null,
+    "api_gravity": null,
+    "gor_scf_stb": null,
+    "viscosity_cp": null,
+    "wax_appearance_temp_c": null,
+    "sour": null,
+    "hpht": null,
+    "reservoir_distribution": null,
+    "plateau_rate_boed": null,
+    "flowline_liquid_rate_bpd": null,
+    "per_well_rate_boed": null,
+    "num_wells": null,
+    "num_trees": null,
+    "num_manifolds": null,
+    "water_injection": null,
+    "gas_injection": null,
+    "field_life_years": null,
+    "water_depth_m": 128.0,
+    "distance_to_host_km": null,
+    "host_spare_capacity": null,
+    "distance_to_shore_km": null,
+    "seabed_terrain": null,
+    "concept_type": null,
+    "tree_type": null,
+    "tieback_distance_km": null,
+    "topology": null,
+    "flowline_diameter_in": null,
+    "flowline_material": null,
+    "riser_type": null,
+    "metocean_regime": null,
+    "oil_price_usd_bbl": null,
+    "gas_price_usd_mmbtu": null,
+    "discount_rate": null,
+    "year_concept": null,
+    "year_feed": null,
+    "year_fid": null,
+    "year_first_oil": null,
+    "data_source": "synthetic fixture metadata"
+  },
+  "production_history": [
+    {
+      "period": "2024-01",
+      "oil_bbl": 7330.0,
+      "gas_mcf": 1059.441,
+      "water_bbl": 628.98
+    },
+    {
+      "period": "2024-02",
+      "oil_bbl": 7696.5,
+      "gas_mcf": 1130.0704,
+      "water_bbl": 691.8779999999999
+    },
+    {
+      "period": "2024-03",
+      "oil_bbl": 8063.0,
+      "gas_mcf": 1200.6998,
+      "water_bbl": 754.776
+    },
+    {
+      "period": "2024-04",
+      "oil_bbl": 8429.5,
+      "gas_mcf": 1271.3292000000001,
+      "water_bbl": 817.674
+    },
+    {
+      "period": "2024-05",
+      "oil_bbl": 8796.0,
+      "gas_mcf": 1341.9586,
+      "water_bbl": 880.5719999999999
+    },
+    {
+      "period": "2024-06",
+      "oil_bbl": 9162.5,
+      "gas_mcf": 1412.588,
+      "water_bbl": 943.4699999999999
+    },
+    {
+      "period": "2024-07",
+      "oil_bbl": 9529.0,
+      "gas_mcf": 1483.2174,
+      "water_bbl": 1006.3679999999999
+    },
+    {
+      "period": "2024-08",
+      "oil_bbl": 9895.5,
+      "gas_mcf": 1553.8468,
+      "water_bbl": 1069.2659999999998
+    },
+    {
+      "period": "2024-09",
+      "oil_bbl": 10262.0,
+      "gas_mcf": 1624.4762,
+      "water_bbl": 1132.164
+    },
+    {
+      "period": "2024-10",
+      "oil_bbl": 10628.5,
+      "gas_mcf": 1695.1056,
+      "water_bbl": 1195.062
+    },
+    {
+      "period": "2024-11",
+      "oil_bbl": 10995.0,
+      "gas_mcf": 1765.7350000000001,
+      "water_bbl": 1257.96
+    },
+    {
+      "period": "2024-12",
+      "oil_bbl": 11361.5,
+      "gas_mcf": 1836.3644000000002,
+      "water_bbl": 1320.858
+    }
+  ],
+  "coverage": {
+    "row_count": 12,
+    "first_period": "2024-01",
+    "last_period": "2024-12"
+  },
+  "ranked_concepts": [
+    {
+      "name": "fixed_jacket / dry",
+      "total_score": 0.847,
+      "rationale": [
+        "typical of north sea development practice"
+      ],
+      "warnings": []
+    },
+    {
+      "name": "subsea_to_shore / wet",
+      "total_score": 0.688,
+      "rationale": [],
+      "warnings": []
+    },
+    {
+      "name": "nui / dry",
+      "total_score": 0.6572,
+      "rationale": [],
+      "warnings": []
+    },
+    {
+      "name": "fpso / wet",
+      "total_score": 0.515,
+      "rationale": [
+        "typical of north sea development practice"
+      ],
+      "warnings": []
+    },
+    {
+      "name": "flng / wet",
+      "total_score": 0.354,
+      "rationale": [],
+      "warnings": []
+    }
+  ],
+  "economics_label": "chain_plumbing_pre_tax",
+  "pre_tax_metrics": {
+    "months": 12.0,
+    "gross_revenue_usd": 8411175.0,
+    "royalty_usd": 0.0,
+    "net_cashflow_usd": 7513983.0
+  },
+  "provenance": "fixture",
+  "source": {
+    "source_id": "uk-nsta-opendata",
+    "url": "https://services-eu1.arcgis.com/OZMfUznmLTnWccBc/arcgis/rest/services/UKCS_hydrocarbon_field_production_reports_PPRS_points_(WGS84)/FeatureServer/0/query",
+    "licence": "NSTA Open User Licence",
+    "refreshed_at": null,
+    "raw_sha256": {
+      "sample_nsta_production.csv": "91119a5aedd03da2c4c628f9ad0e235522c10a4eee54a34df59360f3759bd056"
+    }
+  },
+  "units": {
+    "oil_bbl": "bbl",
+    "gas_mcf": "Mcf",
+    "water_bbl": "bbl",
+    "pre_tax_metrics": "USD except months"
+  },
+  "generated_at": "2026-11-14T02:18:13.355865+00:00",
+  "input_echo": {
+    "field_name": "Forties",
+    "field_meta": {
+      "field_name": "FORTIES",
+      "water_depth_m": 128.0,
+      "source": "synthetic fixture metadata"
+    },
+    "oil_price_usd_bbl": 75.0
+  }
+}

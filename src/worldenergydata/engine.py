@@ -1,6 +1,7 @@
 # Standard library imports
 import sys
 from contextlib import contextmanager
+from copy import deepcopy
 
 from assetutilities.common.ApplicationManager import ConfigureApplicationInputs
 
@@ -88,6 +89,8 @@ def engine(
         # router writes under root.
         if root_folder is None:
             raise ValueError("engine(embed=True) requires root_folder")
+        if basename == "ukcs":
+            cfg = deepcopy(cfg)
         fm = FileManagement()
         cfg_base = ConfigureApplicationInputs().configure_embed(
             cfg, basename, root_folder, log_to_file=log_to_file
@@ -121,6 +124,12 @@ def engine(
 
         sodir_app = Sodir()
         cfg_base = sodir_app.router(cfg_base)
+
+    elif basename in ["ukcs"]:
+        from worldenergydata.ukcs.ukcs import Ukcs
+
+        ukcs_app = Ukcs()
+        cfg_base = ukcs_app.router(cfg_base)
 
     elif basename in ["texas_rrc"]:
         from worldenergydata.texas_rrc.texas_rrc import TexasRRC
