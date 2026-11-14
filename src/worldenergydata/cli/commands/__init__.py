@@ -29,6 +29,8 @@ _COMMAND_MODULES = {
     "kansas_kgs",
     "landman",
     "lng_terminals",
+    "lower_tertiary",
+    "production_forecast",
     "marine_safety",
     "metocean",
     "mexico_cnh",
@@ -63,4 +65,6 @@ __all__ = [
     "mexico_cnh",
     "landman",
     "lng_terminals",
+    "lower_tertiary",
+    "production_forecast",
 ]
