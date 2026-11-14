@@ -437,7 +437,7 @@ def test_verifier_passes_on_the_delivered_outputs(output_copy):
     (output_copy / "verification.json").unlink()
     verify_outputs.verify(output_copy)
     receipt = json.loads((output_copy / "verification.json").read_text())
-    assert len(receipt["checks"]) == 12
+    assert len(receipt["checks"]) == 15
 
 
 def test_full_year_bounds_follow_feed_start_and_file_date():
