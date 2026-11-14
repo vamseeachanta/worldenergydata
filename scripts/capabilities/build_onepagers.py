@@ -524,6 +524,18 @@ def _render_html(spec: dict, brand_css: str = "") -> str:
     )
 
 
+def _has_economic_bases(basis: str) -> bool:
+    """Require a value within each price/cost field's own marker boundaries."""
+    markers = list(re.finditer(r"\b(?:Price|cost):", basis))
+    if {marker.group() for marker in markers} != {"Price:", "cost:"}:
+        return False
+    for index, marker in enumerate(markers):
+        end = markers[index + 1].start() if index + 1 < len(markers) else len(basis)
+        if not re.match(r"\s*\w", basis[marker.end():end]):
+            return False
+    return True
+
+
 def _validate_spec(spec: dict) -> None:
     """Check the editorial contract before rendering or creating output paths."""
     page = spec["id"]
@@ -546,7 +558,7 @@ def _validate_spec(spec: dict) -> None:
     )
     if (
         not separator
-        or not source.strip(" ·\t\r\n")
+        or not source.replace("·", "").strip()
         or basis.count("data as of:") != 1
         or recorded is None
     ):
@@ -566,9 +578,8 @@ def _validate_spec(spec: dict) -> None:
     economic_pages = {
         "sec-economics", "portfolio", "benchmark", "sec-playbook", "fd-showcase"
     }
-    if (page in economic_pages or page.startswith("economics-")) and not all(
-        re.search(rf"\b{label}:\s*\w", basis) for label in ("Price", "cost")
-    ):
+    is_economic = page in economic_pages or page.startswith("economics-")
+    if is_economic and not _has_economic_bases(basis):
         raise ValueError(f"{page}: economics basis requires price and cost assumptions")
 
 

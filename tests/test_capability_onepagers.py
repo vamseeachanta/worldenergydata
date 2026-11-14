@@ -688,7 +688,7 @@ def test_basis_preserves_recorded_precision(cutoff, tmp_path):
     basis = f"Public source · data as of: {cutoff}"
     spec = dict(mod.SPECS[0], id="sample", std=basis)
     source = mod.build_onepager(spec, tmp_path)
-    assert basis in html.unescape(source.read_text())
+    assert basis in html.unescape(source.read_text(encoding="utf-8"))
 
 
 @pytest.mark.parametrize("missing", ["Price", "cost"])
@@ -716,10 +716,12 @@ def test_revision_requires_a_calendar_day(revision, tmp_path, monkeypatch):
 
 @pytest.mark.parametrize("spec", load_builder().SPECS, ids=lambda spec: spec["id"])
 def test_retained_html_reproduces_exactly(spec, tmp_path):
-    """Issue #1199: retained UTF-8 HTML is the independent expected artifact.
+    """Issue #1199: retained UTF-8 HTML supplies golden regression bytes.
 
     Compare complete bytes, including embedded font payloads and the final
     newline, rather than reconstructing expected output from the template.
+    Independent evidence is the base-revision content and font comparison
+    recorded in the PR 1438 description; regeneration alone cannot supply it.
     """
     mod = load_builder()
     retained = SCRIPT.parents[2] / "reports/capabilities/pdf" / f"{spec['id']}.html"
