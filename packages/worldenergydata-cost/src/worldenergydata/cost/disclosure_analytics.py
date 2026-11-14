@@ -212,7 +212,8 @@ def load_current_effective_disclosure_rows(
     Complete lineages are required. Selection is independent of input order for
     versioned rows. Plain rows retain their original relative order.
 
-    A later-dated restatement leaf outranks an older, deeper amendment branch.
+    A restatement leaf with a later effective date outranks an older, deeper
+    amendment branch.
     Superseded parents are excluded even when they have later dates than their
     descendants. All branches remain available through the history API.
 
