@@ -200,3 +200,111 @@ class TestCostPredictorCrossValidation:
         predictor = CostPredictor()
         scores = predictor.cross_validate(public_dataset, cv=3)
         assert scores["mean_r2"] <= 1.0
+
+
+def test_all_predictor_paths_share_public_basis_and_inverse(monkeypatch):
+    """100 nominal * mean(2,3)=250 base; point and bounds divide by 2.5."""
+    from sklearn.pipeline import Pipeline
+
+    from tests.unit.cost.test_index_adjustment import synthetic_escalator
+
+    targets = []
+    for method in ("fit", "score"):
+        original = getattr(Pipeline, method)
+
+        def capture(self, x, y, *args, _original=original, **kwargs):
+            targets.append(np.asarray(y))
+            return _original(self, x, y, *args, **kwargs)
+
+        monkeypatch.setattr(Pipeline, method, capture)
+    records = [
+        load_public_dataset()[0].model_copy(
+            update={"year_sanction": year, "cost_usd_mm": cost}
+        )
+        for year, cost in [(2019, 100.0), (2020, 250.0)] * 3
+    ]
+    predictor = CostPredictor(escalator=synthetic_escalator()).fit(records)
+    predictor.training_r2_score(records)
+    predictor.cross_validate(records, cv=3)
+    result = predictor.predict(records[0])
+    assert result.cost_usd_mm == pytest.approx(100)
+    assert result.ci_lower_usd_mm == pytest.approx(100)
+    assert result.ci_upper_usd_mm == pytest.approx(100)
+    assert len(targets) >= 200
+    assert all(np.allclose(y, np.log(250)) for y in targets)
+
+
+@pytest.mark.parametrize(
+    "method",
+    [
+        "fit",
+        "training_r2_score",
+        "cross_validate",
+        "_predict_single_log",
+        "_bootstrap_ci",
+    ],
+)
+def test_missing_index_coverage_escapes_every_predictor_path(method):
+    from tests.unit.cost.test_index_adjustment import synthetic_escalator
+
+    record = load_public_dataset()[0].model_copy(update={"year_sanction": 2020})
+    predictor = CostPredictor(escalator=synthetic_escalator()).fit([record] * 6)
+    missing = record.model_copy(update={"year_sanction": 2035})
+    before = predictor.predict(record)
+    pipeline = predictor._pipeline
+    train_records = list(predictor._train_records)
+    feature_names = predictor.feature_names
+    coefficients = predictor.coefficients
+    argument = missing if method.startswith("_") else [missing] * 7
+    with pytest.raises(ValueError, match="coverage"):
+        getattr(predictor, method)(argument)
+    assert predictor.is_fitted
+    assert predictor._pipeline is pipeline
+    assert predictor._train_records == train_records
+    assert predictor._n_train == before.source_record_count == 6
+    assert predictor.feature_names == feature_names
+    assert predictor.coefficients == coefficients
+    assert predictor.predict(record) == before
+
+
+@pytest.mark.parametrize("already_fitted", [False, True])
+@pytest.mark.parametrize("failure_stage", ["pipeline_fit", "feature_names"])
+def test_failed_fit_preserves_model_state(monkeypatch, already_fitted, failure_stage):
+    """Publish fitted state only after fitting and feature extraction succeed."""
+    from sklearn.pipeline import Pipeline
+    from sklearn.preprocessing import OneHotEncoder
+
+    from tests.unit.cost.test_index_adjustment import synthetic_escalator
+
+    record = load_public_dataset()[0].model_copy(update={"year_sanction": 2020})
+    predictor = CostPredictor(escalator=synthetic_escalator())
+    before = None
+    if already_fitted:
+        predictor.fit([record] * 6)
+        before = predictor.predict(record)
+    pipeline = predictor._pipeline
+    train_records = list(predictor._train_records)
+    feature_names = list(predictor._feature_names_out)
+    n_train = predictor._n_train
+
+    def fail(*args, **kwargs):
+        raise ValueError("synthetic fitting failure")
+
+    with monkeypatch.context() as patch:
+        if failure_stage == "pipeline_fit":
+            patch.setattr(Pipeline, "fit", fail)
+        else:
+            patch.setattr(OneHotEncoder, "get_feature_names_out", fail)
+        with pytest.raises(ValueError, match="synthetic fitting failure"):
+            predictor.fit([record.model_copy(update={"cost_usd_mm": 250.0})] * 7)
+
+    assert predictor.is_fitted is already_fitted
+    assert predictor._pipeline is pipeline
+    assert predictor._train_records == train_records
+    assert predictor._n_train == n_train
+    assert predictor._feature_names_out == feature_names
+    if already_fitted:
+        assert predictor.predict(record) == before
+    else:
+        with pytest.raises(RuntimeError, match="not fitted"):
+            predictor.predict(record)
