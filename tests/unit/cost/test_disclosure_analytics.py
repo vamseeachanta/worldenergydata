@@ -657,6 +657,63 @@ def test_later_restatement_leaf_outranks_deeper_amendment_branch(
 
 
 @pytest.mark.parametrize("reverse", [False, True])
+@pytest.mark.parametrize("scope", ["operator", "project"])
+@pytest.mark.parametrize("restatement_effective_date", [None, "2023-01-01"])
+def test_later_restatement_publication_does_not_replace_effective_date(
+    analytics_module, reverse, scope, restatement_effective_date
+):
+    root = _revision_record(
+        analytics_module,
+        scope=scope,
+        project_name="Example asset" if scope == "project" else None,
+    )
+    amendment = _revision_record(
+        analytics_module,
+        "a",
+        "v1",
+        scope=root.scope,
+        project_name=root.project_name,
+        reported_capex_usd_mm=3.0,
+        revision_changes={
+            "publication_date": "2023-08-01",
+            "effective_date": "2023-07-01",
+        },
+    )
+    restatement = _revision_record(
+        analytics_module,
+        "r",
+        "v1",
+        scope=root.scope,
+        project_name=root.project_name,
+        reported_capex_usd_mm=9.0,
+        revision_changes={
+            "revision_classification": "restated",
+            "publication_date": "2024-03-01",
+            "effective_date": restatement_effective_date,
+        },
+    )
+    rows = [root, amendment, restatement]
+    if reverse:
+        rows.reverse()
+    selected = analytics_module.load_current_effective_disclosure_rows(iter(rows))
+    assert [row.revision.version_id for row in selected] == ["a"]
+    view = (
+        analytics_module.load_operator_annual_capex_view
+        if scope == "operator"
+        else analytics_module.load_project_cost_revision_view
+    )
+    annual = view(iter(rows))
+    assert [row.revision.version_id for row in annual] == ["a"]
+    assert [row.reported_capex_usd_mm for row in annual] == [3.0]
+    history = analytics_module.load_disclosure_revision_history(iter(rows))
+    assert history[0].revision.version_id == "v1"
+    assert {row.revision.version_id for row in history} == {"v1", "a", "r"}
+    assert [
+        row.reported_capex_usd_mm for row in history if row.revision.version_id == "r"
+    ] == [9.0]
+
+
+@pytest.mark.parametrize("reverse", [False, True])
 @pytest.mark.parametrize(
     "shallow_dates,deep_dates,winner",
     [
