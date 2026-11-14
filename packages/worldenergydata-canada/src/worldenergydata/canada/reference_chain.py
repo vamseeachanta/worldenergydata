@@ -6,7 +6,9 @@ Minimal vertical slice mirroring the merged Norway (#716) / Spain (#763) chains:
 chain plumbing, not a Canada investment NPV headline.
 
 Explicit field-concept overrides (#815) select dry-tree GBS or FPSO/subsea
-economics even in shallow water. Unmapped fields retain depth classification;
+buckets even in shallow water. Royalty and OPEX remain generic bucket defaults,
+not Canada fiscal terms; host CAPEX retains the engine's MM/USD unit defect.
+Unmapped fields retain depth classification or the missing-depth default;
 ``dev_system_source`` records the selection method in the result and metrics.
 """
 
@@ -29,6 +31,12 @@ from worldenergydata.fdas.core.config import AssumptionsManager
 from worldenergydata.field_development.recommendation import recommend
 from worldenergydata.production.unified.query import ProductionQuery
 
+_ECONOMICS_LIMITATIONS = (
+    "Royalty and OPEX are generic bucket defaults, not Canada fiscal terms.",
+    "Host CAPEX uses MM inputs emitted in a USD-labelled metric without conversion; "
+    "these outputs are not a qualified USD capital valuation.",
+)
+
 
 def run_canada_reference_chain(
     *,
@@ -41,6 +49,14 @@ def run_canada_reference_chain(
     oil_price_usd_bbl: float = 75.0,
 ) -> dict[str, Any]:
     """Run the #719 one-field Canada C-NLOER chain slice."""
+    field_concept = build_canada_field_concept(
+        field_meta, development_wells=development_wells
+    )
+    if str(field_name).strip().casefold() != str(field_concept.name).strip().casefold():
+        raise ValueError("field_name must match the field_meta field name")
+    dev_system, dev_system_source = resolve_canada_dev_system(
+        field_concept.name, field_concept.water_depth_m
+    )
     unified = adapter.fetch(
         ProductionQuery(
             regions=["canada"],
@@ -50,9 +66,6 @@ def run_canada_reference_chain(
         )
     )
     fdas_production = to_fdas_production(unified)
-    field_concept = build_canada_field_concept(
-        field_meta, development_wells=development_wells
-    )
     ranked_concepts = recommend(field_concept)
 
     first_oil = _first_oil_date(fdas_production)
@@ -60,9 +73,6 @@ def run_canada_reference_chain(
         str(year_month): oil_price_usd_bbl
         for year_month in fdas_production.get("YEAR_MONTH", pd.Series(dtype="object"))
     }
-    dev_system, dev_system_source = resolve_canada_dev_system(
-        field_name, field_concept.water_depth_m
-    )
 
     cashflows = CashflowEngine(
         AssumptionsManager(), dev_system=dev_system
@@ -82,6 +92,7 @@ def run_canada_reference_chain(
         "economics_label": "chain_plumbing_pre_tax",
         "dev_system": dev_system,
         "dev_system_source": dev_system_source,
+        "economics_limitations": _ECONOMICS_LIMITATIONS,
         "pre_tax_metrics": _pre_tax_metrics(cashflows, dev_system, dev_system_source),
     }
 
@@ -102,6 +113,7 @@ def _pre_tax_metrics(
         "royalty_usd": float(sum(cf.royalty_usd for cf in cashflows)),
         "host_capex_usd": float(sum(cf.host_capex_usd for cf in cashflows)),
         "net_cashflow_usd": float(sum(cf.net_cashflow_usd for cf in cashflows)),
-        # Record whether a field-concept override or depth classification was used.
+        # Record the override, depth classification or missing-depth default.
         "dev_system_source": dev_system_source,
+        "economics_limitations": _ECONOMICS_LIMITATIONS,
     }

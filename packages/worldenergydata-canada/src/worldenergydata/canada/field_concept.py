@@ -23,6 +23,7 @@ from worldenergydata.fdas.adapters.field_concept_normalizer import (
     number_from,
     to_field_concept,
 )
+from worldenergydata.fdas.core.config import DEFAULT_ASSUMPTIONS
 
 # Representative water depth (m) per NL offshore field (C-NLOER / public record).
 # Legacy fallback only: assumed, based on previous experience; not a measured
@@ -38,11 +39,67 @@ CANADA_WATER_DEPTH_M = {
 # Explicit concepts prevent shallow FPSO/subsea fields being costed as dry-tree.
 # These dev_system tokens select CAPEX profiles, not literal depth ranges.
 CANADA_FIELD_CONCEPT = {
-    "hibernia": {"concept": "gbs_dry_tree", "dev_system": "dry"},
-    "hebron": {"concept": "gbs_dry_tree", "dev_system": "dry"},
-    "terra nova": {"concept": "fpso_subsea", "dev_system": "subsea15"},
-    "white rose": {"concept": "fpso_subsea", "dev_system": "subsea15"},
-    "north amethyst": {"concept": "fpso_subsea_tieback", "dev_system": "subsea15"},
+    "hibernia": {
+        "concept": "gbs_dry_tree",
+        "dev_system": "dry",
+        "source": {
+            "title": "C-NLOPB Decision 90.01: Hibernia Development Plan Update",
+            "year": 1990,
+            "url": "https://www.cnloer.ca/information/decisions/d1990_01_en/",
+        },
+    },
+    "hebron": {
+        "concept": "gbs_dry_tree",
+        "dev_system": "dry",
+        "source": {
+            "title": "C-NLOPB Staff Analysis: Hebron Development Plan, section 6.5.1",
+            "year": 2012,
+            "url": "https://www.cnlopb.ca/wp-content/uploads/news/sahebdevplan.pdf",
+        },
+    },
+    "terra nova": {
+        "concept": "fpso_subsea",
+        "dev_system": "subsea15",
+        "source": {
+            "title": "C-NLOPB Decision 97.02: Terra Nova Development Application",
+            "year": 1997,
+            "url": "https://www.cnlopb.ca/wp-content/uploads/news/d97_02e.pdf",
+        },
+    },
+    "white rose": {
+        "concept": "fpso_subsea",
+        "dev_system": "subsea15",
+        "source": {
+            "title": "C-NLOPB Decision 2001.01: White Rose Development Application",
+            "year": 2001,
+            "url": "https://www.cnlopb.ca/wp-content/uploads/news/d01_01.pdf",
+        },
+        "note": (
+            "This bucket represents the original FPSO/subsea development. "
+            "The West White Rose extension adds a fixed wellhead platform "
+            "tied back to the SeaRose FPSO; this is not a complete facility inventory."
+        ),
+        "note_source": {
+            "title": "NL Government: Supports Restart of West White Rose Project",
+            "year": 2022,
+            "url": "https://www.gov.nl.ca/releases/2022/exec/0531n03/",
+        },
+    },
+    "north amethyst": {
+        "concept": "fpso_subsea_tieback",
+        "dev_system": "subsea15",
+        "source": {
+            "title": "C-NLOPB Decision 2008.03: North Amethyst Satellite Tie-back to SeaRose FPSO",
+            "year": 2008,
+            "url": "https://www.cnlopb.ca/wp-content/uploads/news/dec0803e.pdf",
+        },
+    },
+}
+
+_CONCEPT_DEV_SYSTEM = {
+    "gbs_dry_tree": "dry",
+    "fpso_subsea": "subsea15",
+    "fpso_subsea_tieback": "subsea15",
 }
 
 _CANADA_MAPPING = FieldMetaMapping(
@@ -63,14 +120,23 @@ def resolve_canada_dev_system(field_name: str, water_depth_m: Any) -> tuple[str,
     ``dry``, ``subsea15`` and ``subsea20`` are CashflowEngine CAPEX-profile
     buckets, not literal depth statements. Known GBS and FPSO/subsea concepts
     take precedence; unmapped fields retain the depth classifier and its
-    ``unknown`` to ``subsea15`` fallback.
+    ``unknown`` to ``subsea15`` fallback, labelled ``missing_depth_default``.
+    Invalid curated concepts or bucket tokens raise ValueError rather than
+    silently selecting the engine's default assumptions.
     """
     concept = CANADA_FIELD_CONCEPT.get(str(field_name).strip().lower())
     if concept is not None:
-        return concept["dev_system"], "field_concept_override"
+        dev_system = concept.get("dev_system")
+        if (
+            dev_system not in DEFAULT_ASSUMPTIONS["DEV_SYSTEM"]
+            or dev_system == "default"
+            or _CONCEPT_DEV_SYSTEM.get(concept.get("concept")) != dev_system
+        ):
+            raise ValueError("Invalid Canada field concept override")
+        return dev_system, "field_concept_override"
     dev_system = dev_system_from_water_depth_m(water_depth_m)
     if dev_system == "unknown":
-        dev_system = "subsea15"
+        return "subsea15", "missing_depth_default"
     return dev_system, "depth_classifier"
 
 
