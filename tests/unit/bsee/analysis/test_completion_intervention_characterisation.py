@@ -518,6 +518,8 @@ def test_activity_strata_survive_json_product(tmp_path):
     saved = json.loads((tmp_path / "results.json").read_text())
     for source in ("eor", "war"):
         assert saved[source + "_activity_strata"] == result[source + "_activity_strata"]
+
+
 def area_scenario():
     """Synthetic inventory: two conflicting areas for one API, one unique area.
 
