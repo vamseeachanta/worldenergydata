@@ -85,6 +85,14 @@ CATALOG_CONTRACTS = (
 
 # Exact paths may select one contract suite or several related test files.
 CONTRACT_ROUTES = {
+    "scripts/career/build_semiconductor_packet.py": "tests/career/test_semiconductor_packet.py",
+    "docs/career/semiconductor-packet.json": "tests/career/test_semiconductor_packet.py",
+    "docs/reports/semiconductor-career-packet.html": "tests/career/test_semiconductor_packet.py",
+    "tests/career/test_semiconductor_packet.py": "tests/career/test_semiconductor_packet.py",
+    "tests/ci/test_career_routes.py": (
+        "tests/career/test_semiconductor_packet.py",
+        "tests/ci/test_career_routes.py",
+    ),
     "config/fields.yml": "tests/unit/cost/test_project_field_crosswalk.py",
     "src/worldenergydata/field_development/past_projects.yml": (
         "tests/unit/cost/test_project_field_crosswalk.py",
