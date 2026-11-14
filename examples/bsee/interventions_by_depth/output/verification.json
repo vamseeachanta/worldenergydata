@@ -9,15 +9,15 @@
   "code_and_basis_sha256": {
     "examples/bsee/interventions_by_depth/build_cost_basis.py": "6ee8f3fcb50433b51f7bbb96e7eb4faf3e6617cfcbff0da6de9cb7131c481071",
     "examples/bsee/interventions_by_depth/cost_basis.yml": "d788f355c4bc43db462ebe1e689c4ad863464960c0aad3268f22865f05d0e630",
-    "examples/bsee/interventions_by_depth/count_interventions.py": "528c96a0d9987576b693285224755ca6e2d3647cfa638ec3b2ee60ad4ef5a706",
+    "examples/bsee/interventions_by_depth/count_interventions.py": "cf29f5565d9e212106c36582fd2f4ec8a08ba5814437c5aabd5c9761c999d624",
     "examples/bsee/interventions_by_depth/download_data.py": "c99840b2e69d7a5e89e5b3ca39e983c777137e68e832b8148c68d2d69239c158",
     "examples/bsee/interventions_by_depth/estimate_costs.py": "1fabea436175506bf84debd71d5667cec889970adf3bd93ce1d44f27eecfac69",
     "examples/bsee/interventions_by_depth/requirements.txt": "8f149ddae6071cc2877d558e304a4261933def6c82f3062142da3603e1e673d6",
     "examples/bsee/interventions_by_depth/verify_cost_sources.py": "a213275d3601830fd295bfa582cf7cc51b1905ec46d2bd87fe12cb7a31b26436",
     "examples/bsee/interventions_by_depth/verify_outputs.py": "6064135c9540e99aa5b632cc473b1a34e73a9c99f32cf271942e62f97ace05f9",
-    "examples/bsee/interventions_by_depth/well_life_cycle.py": "a2cc196cce3f35eefa6918d40ed4431899b65ff35d422619874d0fc325e69c43",
-    "tests/unit/bsee/test_interventions_by_depth.py": "a1dc80c9b59c5a7606f55b4bfd0ea9c72bdfbcf754966e1aaf89af5bba684f4c",
-    "tests/unit/bsee/test_well_life_cycle.py": "b18c104e44d86dc9ea8a4ba5b9a769f2388ffdde3878f793f963dcd25c2e5c54"
+    "examples/bsee/interventions_by_depth/well_life_cycle.py": "2d25170d5823dfa0e0ad616d5803b4650997783bcb8016ff8c5923d10704a9f0",
+    "tests/unit/bsee/test_interventions_by_depth.py": "fae99b76958b348cf5149bbc2b49fcc2bd247fc850e946974ed8b82072b7277b",
+    "tests/unit/bsee/test_well_life_cycle.py": "34e99c6b0174b87e7ace7616ec58850653349c48d2ef6dbc8495edcfe330389a"
   },
   "checks": [
     "all selected-year APM approvals partitioned",
@@ -46,7 +46,7 @@
     "full_year_averages.csv": "6ede40eee109c73dd2566063683e074f2d602485609907e91a017c30413ed08e",
     "intervention_weight_by_year.csv": "04fd709fd36f820f1bfd478a7bacad79c2fa3e538360502047d7b03035fc1980",
     "intervention_weight_mapping.csv": "16470348346bc2b991153248995947aea19b9261a9a979f819ce7ae895b74560",
-    "life_cycle_event_ages.csv": "739c3ff23f15748630860ee7e4aa5f15bbad4399ce1070ebe2273731de7541c1",
+    "life_cycle_event_ages.csv": "623bb51c0b82068be756e70489807d95cdbce271b8762d720e147ad103453edb",
     "life_cycle_life_histogram.csv": "e5cae20f12c5e6015045765bab3697826dc68b6212e32e837432921c4527f44d",
     "life_cycle_life_years.csv": "d5eae2f2e021da20b48c29bf5b3cd13927ff6ccb3d733c0d052576194c864fe1",
     "life_cycle_reconciliation.csv": "23c23272667914f1e1386b80bffc400517e37c0b56792d1c708ed58a1ac0b4c5",

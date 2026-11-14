@@ -1,7 +1,8 @@
 """Count BSEE approved APM submissions; retain unknowns and audit exclusions.
 
 Read zipped CSV members directly, without extracting raw files. All aggregations
-are deterministic. The retained manifest is required and verified before use.
+are deterministic. The retained manifest is required: an archive is read only
+if its receipt says downloaded and its size and SHA-256 match the file.
 """
 
 from __future__ import annotations
@@ -601,6 +602,39 @@ def war_crosscheck(data_dir, bore, out, first_year, last_full_year):
     )
 
 
+BOREHOLE_ARCHIVE = "BoreholeRawData.zip"
+APM_ARCHIVE = "eWellAPMRawData.zip"
+EOR_ARCHIVE = "eWellEORRawData.zip"
+WAR_ARCHIVE = "eWellWARRawData.zip"
+# Archives every run reads: stock and depth, permits and unit types, and the
+# EOR subsea-completion flags of the unit and access tables.
+REQUIRED_ARCHIVES = {BOREHOLE_ARCHIVE, APM_ARCHIVE, EOR_ARCHIVE}
+
+
+def verified_archives(data_dir, manifest, names=None):
+    """Names of archives whose bytes match a downloaded manifest receipt.
+
+    Each receipt with status "downloaded" (restricted to `names` if given) is
+    checked for size and SHA-256 against the file in data_dir; a mismatch
+    raises. An archive with no receipt or a receipt of any other status is
+    not verified, whether or not a file is on disk, and must not be read.
+    """
+    verified = set()
+    for receipt in manifest["files"]:
+        if receipt["status"] != "downloaded":
+            continue
+        if names is not None and receipt["name"] not in names:
+            continue
+        path = Path(data_dir) / receipt["name"]
+        if (
+            path.stat().st_size != receipt["bytes"]
+            or hashlib.sha256(path.read_bytes()).hexdigest() != receipt["sha256"]
+        ):
+            raise ValueError(f"archive digest mismatch: {path.name}")
+        verified.add(receipt["name"])
+    return verified
+
+
 def snapshot_file_date(manifest):
     """Latest raw-page update date among the downloaded archives."""
     return max(
@@ -676,24 +710,16 @@ def run(data_dir, out, last_full_year=None):
     data_dir, out = Path(data_dir), Path(out)
     out.mkdir(parents=True, exist_ok=True)
     manifest = json.loads((data_dir / "manifest.json").read_text(encoding="utf-8"))
-    for receipt in manifest["files"]:
-        if receipt["status"] == "downloaded":
-            path = data_dir / receipt["name"]
-            if (
-                path.stat().st_size != receipt["bytes"]
-                or hashlib.sha256(path.read_bytes()).hexdigest() != receipt["sha256"]
-            ):
-                raise ValueError(f"archive digest mismatch: {path.name}")
-    available = {r["name"] for r in manifest["files"] if r["status"] == "downloaded"}
+    # Only archives verified against their receipt are read; an archive on
+    # disk without a downloaded receipt is unavailable.
+    available = verified_archives(data_dir, manifest)
     (out / "manifest.json").write_text(
         json.dumps(manifest, indent=2) + "\n", encoding="utf-8", newline="\n"
     )
-    if not {"BoreholeRawData.zip", "eWellAPMRawData.zip"}.issubset(available):
+    if not REQUIRED_ARCHIVES.issubset(available):
         summary = dict(
             status="insufficient inputs",
-            unavailable=sorted(
-                {"BoreholeRawData.zip", "eWellAPMRawData.zip"} - available
-            ),
+            unavailable=sorted(REQUIRED_ARCHIVES - available),
         )
         (out / "summary.json").write_text(
             json.dumps(summary, indent=2) + "\n", encoding="utf-8", newline="\n"
@@ -871,74 +897,72 @@ def run(data_dir, out, last_full_year=None):
         .reset_index()
     )
     write_csv(averages, out, "full_year_averages")
-    if "eWellEORRawData.zip" in available:
-        eor = read_table(
-            data_dir,
-            "eWellEORRawData.zip",
-            "mv_eor_mainquery",
-            [
-                "SN_EOR",
-                "API_WELL_NUMBER",
-                "EOR_OPERATION_CD",
-                "BOREHOLE_STAT_DT",
-                "SURF_LEASE_NUMBER",
-            ],
-        )
-        eor = eor.drop_duplicates()
-        if eor.SN_EOR.duplicated().any():
-            raise ValueError("conflicting EOR keys")
-        eor = gulf_only(eor, bore)
-        eor = attach_depth(eor[eor.region.eq("G")], bore)
-        eor["year"] = dates(eor.BOREHOLE_STAT_DT).dt.year
-        quality["eor_invalid_status_dates"] = int(eor.year.isna().sum())
-        quality["checkpoint_eor_last_full_year"] = (
-            eor[eor.year.eq(last_full_year)].EOR_OPERATION_CD.value_counts().to_dict()
-        )
-        eor["group"] = eor.EOR_OPERATION_CD.map(
-            {"W": "workover", "A": "abandonment", "C": "completion"}
-        )
-        ec = grid_counts(
-            eor[eor.year.isin(years)],
-            "reports",
-            ["workover", "abandonment", "completion"],
-            years,
-        )
-        ec["partial_year"] = ec.year.gt(last_full_year)
-        write_csv(ec, out, "eor_by_year_band")
-        ratios = []
-        for band in BANDS:
-            for kind, codes in [
-                ("workover", {"WORKOVER"}),
-                ("abandonment", {"ABANDON"}),
-            ]:
-                n = int(
-                    ec.loc[
-                        ec.year.eq(last_full_year)
-                        & ec.band.eq(band)
-                        & ec.group.eq(kind),
-                        "reports",
-                    ].sum()
+    # EOR is a required input, verified above.
+    eor = read_table(
+        data_dir,
+        "eWellEORRawData.zip",
+        "mv_eor_mainquery",
+        [
+            "SN_EOR",
+            "API_WELL_NUMBER",
+            "EOR_OPERATION_CD",
+            "BOREHOLE_STAT_DT",
+            "SURF_LEASE_NUMBER",
+        ],
+    )
+    eor = eor.drop_duplicates()
+    if eor.SN_EOR.duplicated().any():
+        raise ValueError("conflicting EOR keys")
+    eor = gulf_only(eor, bore)
+    eor = attach_depth(eor[eor.region.eq("G")], bore)
+    eor["year"] = dates(eor.BOREHOLE_STAT_DT).dt.year
+    quality["eor_invalid_status_dates"] = int(eor.year.isna().sum())
+    quality["checkpoint_eor_last_full_year"] = (
+        eor[eor.year.eq(last_full_year)].EOR_OPERATION_CD.value_counts().to_dict()
+    )
+    eor["group"] = eor.EOR_OPERATION_CD.map(
+        {"W": "workover", "A": "abandonment", "C": "completion"}
+    )
+    ec = grid_counts(
+        eor[eor.year.isin(years)],
+        "reports",
+        ["workover", "abandonment", "completion"],
+        years,
+    )
+    ec["partial_year"] = ec.year.gt(last_full_year)
+    write_csv(ec, out, "eor_by_year_band")
+    ratios = []
+    for band in BANDS:
+        for kind, codes in [
+            ("workover", {"WORKOVER"}),
+            ("abandonment", {"ABANDON"}),
+        ]:
+            n = int(
+                ec.loc[
+                    ec.year.eq(last_full_year) & ec.band.eq(band) & ec.group.eq(kind),
+                    "reports",
+                ].sum()
+            )
+            p = int(
+                (
+                    apm.year.eq(last_full_year)
+                    & apm.band.eq(band)
+                    & apm.APM_OP_CD.isin(codes)
+                    & apm.family.ne("excluded")
+                ).sum()
+            )
+            ratios.append(
+                dict(
+                    year=last_full_year,
+                    band=band,
+                    type=kind,
+                    reports=n,
+                    permits=p,
+                    reports_per_permit=n / p if p else float("nan"),
                 )
-                p = int(
-                    (
-                        apm.year.eq(last_full_year)
-                        & apm.band.eq(band)
-                        & apm.APM_OP_CD.isin(codes)
-                        & apm.family.ne("excluded")
-                    ).sum()
-                )
-                ratios.append(
-                    dict(
-                        year=last_full_year,
-                        band=band,
-                        type=kind,
-                        reports=n,
-                        permits=p,
-                        reports_per_permit=n / p if p else float("nan"),
-                    )
-                )
-        write_csv(pd.DataFrame(ratios), out, "eor_permit_ratios")
-    if "eWellWARRawData.zip" in available:
+            )
+    write_csv(pd.DataFrame(ratios), out, "eor_permit_ratios")
+    if WAR_ARCHIVE in available:
         quality.update(war_crosscheck(data_dir, bore, out, first_year, last_full_year))
     headline = rates[rates.year.eq(last_full_year)].astype(object)
     quality["headline"] = headline.where(headline.notna(), None).to_dict("records")

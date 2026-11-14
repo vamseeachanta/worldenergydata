@@ -8,6 +8,8 @@ sidetrack or bypass with a spud date. Interventions, temporary and permanent
 abandonments are approved permits to modify, classified exactly as in
 count_interventions.classified_permits, counted over the years of the
 published permit tables (first full year through the snapshot file date).
+Event ages use the same window for sidetracks and permits, and the age table
+states it.
 
 Interventions are split light or heavy by the unit type the permit names
 (RIG_TYPE_CODE through RIG_ID_NUM, the lookup the branch already uses):
@@ -164,14 +166,22 @@ def well_table(inventory, bores, events, types, file_date):
     return w.reset_index(drop=True)
 
 
-def event_ages(bores, events, wells):
-    """Age of the well, in years after first spud, at each dated event."""
+def event_ages(bores, events, wells, window):
+    """Age of the well, in years after first spud, at each event in the window.
+
+    Sidetrack and bypass spuds are limited to the calendar years of the permit
+    window, the rule permit_events applies to approval dates, so both stages
+    describe the same observation period.
+    """
     spud = wells.set_index("api10").spud
+    sidetracks = bores[
+        bores.spud.notna()
+        & bores.stage.eq("sidetrack or bypass")
+        & bores.spud.dt.year.isin(window)
+    ]
     rows = pd.concat(
         [
-            bores[bores.spud.notna() & bores.stage.eq("sidetrack or bypass")].rename(
-                columns={"spud": "date"}
-            )[["api10", "stage", "date"]],
+            sidetracks.rename(columns={"spud": "date"})[["api10", "stage", "date"]],
             events[["api10", "stage", "date"]],
         ]
     )
@@ -181,9 +191,10 @@ def event_ages(bores, events, wells):
     return rows
 
 
-def age_summary(ages):
+def age_summary(ages, window):
     """Quartiles of well age at each event, by well type and in total."""
     out = []
+    event_window = f"{window[0]}-{window[-1]}"
     for well_type in ["all wells"] + TYPE_ORDER:
         part = ages if well_type == "all wells" else ages[ages.well_type.eq(well_type)]
         for stage in STAGES[1:]:
@@ -199,6 +210,7 @@ def age_summary(ages):
                     q25_years=q.loc[0.25] if q is not None else np.nan,
                     median_years=q.loc[0.5] if q is not None else np.nan,
                     q75_years=q.loc[0.75] if q is not None else np.nan,
+                    event_window=event_window,
                 )
             )
     return pd.DataFrame(out)
@@ -385,6 +397,12 @@ def run(data_dir, out):
     saved = json.loads((out / "manifest.json").read_text(encoding="utf-8"))
     if manifest != saved:
         raise ValueError("raw-data manifest differs from the published output set")
+    # Equal manifests do not prove the archives are the ones they describe:
+    # check the size and SHA-256 of each archive read here before reading it.
+    consumed = {ci.BOREHOLE_ARCHIVE, ci.APM_ARCHIVE}
+    missing = consumed - ci.verified_archives(data_dir, manifest, consumed)
+    if missing:
+        raise ValueError(f"raw archive not verified: {', '.join(sorted(missing))}")
     file_date = pd.Timestamp(summary["file_date"])
     first, last = int(summary["first_full_year"]), int(summary["last_full_year"])
     window = list(range(first, int(summary["partial_year"]) + 1))
@@ -419,7 +437,9 @@ def run(data_dir, out):
     write_csv(life_histogram(wells), out, "life_cycle_life_histogram")
     write_csv(stage_reach(wells, groups), out, "life_cycle_stage_reach")
     write_csv(
-        age_summary(event_ages(bores, events, wells)), out, "life_cycle_event_ages"
+        age_summary(event_ages(bores, events, wells, window), window),
+        out,
+        "life_cycle_event_ages",
     )
     write_csv(
         weight_by_year(events, standing, window), out, "intervention_weight_by_year"
