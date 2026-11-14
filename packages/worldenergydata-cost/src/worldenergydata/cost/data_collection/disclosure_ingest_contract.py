@@ -24,6 +24,11 @@ from typing import Any, Iterable, Mapping, Optional, Sequence, Tuple
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator
 
+from worldenergydata.cost.data_collection.disclosure_revision_contract import (
+    DisclosureRevisionMetadata,
+    disclosure_revision_depths,
+)
+
 # ---------------------------------------------------------------------------
 # Enums
 # ---------------------------------------------------------------------------
@@ -91,6 +96,7 @@ class DisclosureIngestStatus(str, Enum):
 class ConflictReasonCode(str, Enum):
     """Why two rows with the same business key disagree."""
 
+    VERSION_ID_CONFLICT = "version_id_conflict"
     VALUE_MISMATCH = "value_mismatch"
     CITATION_MISMATCH = "citation_mismatch"
     SOURCE_PRIORITY_CONFLICT = "source_priority_conflict"
@@ -152,6 +158,7 @@ class DisclosureRow(BaseModel):
     metric_unit: str = Field(..., min_length=1)
     citation: DisclosureCitation
     project_name: Optional[str] = None
+    revision: Optional[DisclosureRevisionMetadata] = None
 
 
 # ---------------------------------------------------------------------------
@@ -223,6 +230,7 @@ class ClassificationDecision(BaseModel):
     matched_row: Optional[DisclosureRow] = None
     existing_priority: Optional[SourcePriority] = None
     incoming_priority: Optional[SourcePriority] = None
+    errors: Tuple[str, ...] = ()
 
 
 def _citation_payload_equal(a: DisclosureCitation, b: DisclosureCitation) -> bool:
@@ -236,6 +244,41 @@ def _citation_payload_equal(a: DisclosureCitation, b: DisclosureCitation) -> boo
     )
 
 
+def _classify_versioned_row(
+    corpus: Sequence[DisclosureRow], new_row: DisclosureRow
+) -> ClassificationDecision:
+    """Append a new identity; repeated identities must preserve all evidence."""
+    revision = new_row.revision
+    assert revision is not None
+    versioned = [row for row in corpus if row.revision is not None]
+    for candidate in versioned:
+        if candidate.revision.version_id == revision.version_id:
+            if candidate == new_row:
+                return ClassificationDecision(
+                    status=DisclosureIngestStatus.DUPLICATE, matched_row=candidate
+                )
+            return ClassificationDecision(
+                status=DisclosureIngestStatus.CONFLICT,
+                reason_code=ConflictReasonCode.VERSION_ID_CONFLICT,
+                matched_row=candidate,
+            )
+        if (
+            candidate.revision.logical_disclosure_key == revision.logical_disclosure_key
+            and disclosure_business_key(candidate) != disclosure_business_key(new_row)
+        ):
+            return ClassificationDecision(
+                status=DisclosureIngestStatus.INVALID,
+                errors=("logical disclosure key cannot span business keys",),
+            )
+    try:
+        disclosure_revision_depths([row.revision for row in versioned] + [revision])
+    except ValueError as exc:
+        return ClassificationDecision(
+            status=DisclosureIngestStatus.INVALID, errors=(str(exc),)
+        )
+    return ClassificationDecision(status=DisclosureIngestStatus.ACCEPTED)
+
+
 def classify_disclosure_row(
     *,
     existing_rows: Sequence[DisclosureRow],
@@ -246,10 +289,27 @@ def classify_disclosure_row(
 
     Search order is: dataset rows first, then earlier rows in the same
     batch. The first business-key collision determines the outcome — there
-    is no merging across multiple matches.
+    is no merging across multiple matches. Versioned rows branch first on
+    version identity: valid backward-linked revisions append even when their
+    business key and value match. Reused identities conflict if evidence changes;
+    missing parents or inconsistent logical families are explicitly invalid.
+    A business key shared by versioned and unversioned rows is invalid in either
+    direction, before duplicate or conflict classification. Attach revision
+    metadata to every original before adopting versioned ingestion for that key.
     """
+    corpus = list(existing_rows) + list(batch_seen_rows)
     new_key = disclosure_business_key(new_row)
-    for candidate in list(existing_rows) + list(batch_seen_rows):
+    for candidate in corpus:
+        if disclosure_business_key(candidate) == new_key and (
+            (candidate.revision is None) != (new_row.revision is None)
+        ):
+            return ClassificationDecision(
+                status=DisclosureIngestStatus.INVALID,
+                errors=("business key mixes versioned and unversioned disclosures",),
+            )
+    if new_row.revision is not None:
+        return _classify_versioned_row(corpus, new_row)
+    for candidate in corpus:
         if disclosure_business_key(candidate) != new_key:
             continue
 
@@ -369,7 +429,8 @@ def ingest_disclosure_rows(
     Successfully parsed rows are classified against `existing_rows` and
     against rows already accepted earlier in the same batch, then
     partitioned into accepted/duplicates/conflicts. Within each partition,
-    original input order is preserved.
+    original input order is preserved. Revision parents must already exist in
+    the dataset or earlier accepted batch rows; rejected rows never become parents.
     """
     accepted: list[AcceptedRecord] = []
     duplicates: list[DuplicateRecord] = []
@@ -397,7 +458,9 @@ def ingest_disclosure_rows(
             batch_seen_rows=accepted_rows,
             new_row=row,
         )
-        if decision.status == DisclosureIngestStatus.ACCEPTED:
+        if decision.status == DisclosureIngestStatus.INVALID:
+            invalid.append(InvalidRecord(index=index, raw=raw, errors=decision.errors))
+        elif decision.status == DisclosureIngestStatus.ACCEPTED:
             accepted.append(AcceptedRecord(index=index, row=row))
             accepted_rows.append(row)
         elif decision.status == DisclosureIngestStatus.DUPLICATE:
