@@ -213,7 +213,9 @@
       "nsta_production_2025_monthly.csv": "2026-11-14T02:08:18.835151+00:00"
     },
     "max_records_per_year": 6000,
-    "coverage_note": "Selected-field observations from the requested year(s). A record cap may omit fields or months; complete UKCS coverage is not established."
+    "coverage_note": "Selected-field observations from the requested year(s). A record cap may omit fields or months; complete UKCS coverage is not established. Cashflow basis was reconstructed from the retained normalized production history; the original source bytes were not re-fetched.",
+    "force_refresh": true,
+    "raw_bytes_retained_in_repository": false
   },
   "units": {
     "oil_bbl": "bbl",
@@ -229,5 +231,16 @@
       "source": "NSTA"
     },
     "oil_price_usd_bbl": 75.0
+  },
+  "cashflow_basis": {
+    "development_system": "subsea15",
+    "development_system_basis": "fallback_unknown_water_depth",
+    "variable_opex_usd_bbl": 12.0,
+    "assumed_first_oil": "2025-01",
+    "first_period": "2023-02",
+    "last_period": "2025-12",
+    "month_count": 35,
+    "host_capex_assumption_mm_usd": 300.0,
+    "host_capex_usd": 300.0
   }
 }

@@ -47,6 +47,12 @@ publication or proof of freshness. The source identity is `uk-nsta-opendata`.
 The report cites the existing client's NSTA ArcGIS URL and NSTA Open User Licence.
 Live raw CSV and parquet caches are not committed.
 
+The facts and HTML disclose `force_refresh` and whether source bytes are retained
+in the repository. A live report whose raw cache is absent cannot be re-derived
+from its digest alone; a new fetch may return different bytes. The committed
+live snapshot retains its original normalized history, metrics and source digest;
+its cashflow basis was reconstructed from that history without re-fetching it.
+
 A bounded query may omit fields or months. If Forties is absent from the returned
 records, execution fails without inventing a result. The report establishes only
 the selected observations, not complete annual or UKCS coverage. Live metadata
@@ -69,6 +75,18 @@ Every monetary result is **pre-tax chain plumbing**, labelled
 `chain_plumbing_pre_tax`, **not a UK investment NPV**. After-tax UK fiscal
 integration remains deferred to [issue 736](https://github.com/vamseeachanta/worldenergydata/issues/736).
 Sparse concept rankings demonstrate wiring, not a field-development recommendation.
+
+The cashflow basis records the development system, its water-depth or fallback
+basis, variable opex in USD/bbl, assumed first oil and the actual cashflow window.
+First oil means the earliest selected observation. Unknown water depth selects
+`subsea15`, whose variable opex is 12 USD/bbl; the 128 m fixture selects `dry`
+at 8 USD/bbl. Default host-capital periods can extend the cashflow window before
+the production coverage. Field-specific capital inputs are absent, but default
+host capital can still be applied. Both its million-USD assumption and the amount
+actually passed into USD cashflows are disclosed: the shared chain currently
+omits the million-USD conversion for `HOST_CAPEX_MM`. Correcting that scale is a
+follow-up; the report preserves the existing chain arithmetic and exposes the
+limitation. Drilling and facilities capital remain zero.
 Future shared citation-panel adoption is tracked in
 [issue 361](https://github.com/vamseeachanta/worldenergydata/issues/361).
 The separate benchmark report's `ukcs`/`nsta` source-tag mismatch is outside

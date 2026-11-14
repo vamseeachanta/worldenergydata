@@ -79,7 +79,11 @@ class Ukcs:
             path = _within_root(root, data.get("input_path"), "input_path")
             raw = pd.read_csv(path)
             provenance, refreshed_at = "fixture", None
-            evidence = {"raw_sha256": {path.name: _digest(path)}}
+            evidence = {
+                "raw_sha256": {path.name: _digest(path)},
+                "force_refresh": None,
+                "raw_bytes_retained_in_repository": None,
+            }
         else:
             raw, refreshed_at, evidence = self._live_data(data, root)
             provenance = "nsta_live"
@@ -151,6 +155,8 @@ class Ukcs:
                 "raw_sha256": digests,
                 "cache_refreshed_at": timestamps,
                 "max_records_per_year": limit,
+                "force_refresh": force_refresh,
+                "raw_bytes_retained_in_repository": False,
                 "coverage_note": "Selected-field observations from the requested year(s). "
                 "A record cap may omit fields or months; complete UKCS coverage is not established.",
             },

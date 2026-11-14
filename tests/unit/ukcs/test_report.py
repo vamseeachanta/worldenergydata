@@ -2,7 +2,6 @@
 
 import json
 from datetime import datetime
-from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -13,6 +12,16 @@ from worldenergydata.production.unified.adapters.ukcs_adapter import UkcsAdapter
 from worldenergydata.ukcs.production.field_production import UKCSFieldProductionLoader
 from worldenergydata.ukcs.production.nsta_client import DEFAULT_BASE_URL
 from worldenergydata.ukcs.reference_chain import run_ukcs_reference_chain
+
+
+@pytest.fixture(autouse=True)
+def no_http(monkeypatch):
+    import requests
+
+    def refused(*args, **kwargs):
+        raise AssertionError("HTTP is forbidden in report unit tests")
+
+    monkeypatch.setattr(requests.sessions.Session, "request", refused)
 
 
 @pytest.fixture
@@ -207,6 +216,7 @@ def test_nullable_missing_source_tag_fails_closed(chain):
 
 def test_production_chart_preserves_calendar_gaps(chain):
     import re
+
     from worldenergydata.ukcs.report import render_report_html
 
     facts = facts_for(chain, provenance="fixture", refreshed_at=None)
@@ -219,3 +229,87 @@ def test_production_chart_preserves_calendar_gaps(chain):
     line = soup.find("svg").find("path", stroke="#176a75")["d"]
     x_values = [float(v) for v in re.findall(r"[ML]([\d.]+),", line)]
     assert x_values == pytest.approx([70.0, 273.333333, 680.0], abs=0.01)
+
+
+def test_facts_and_html_disclose_cashflow_basis(chain):
+    from worldenergydata.ukcs.report import render_report_html
+
+    facts = facts_for(chain)
+    basis = facts["cashflow_basis"]
+    assert basis["development_system"] == "dry"
+    assert basis["development_system_basis"] == "water_depth_m"
+    assert basis["variable_opex_usd_bbl"] == 8.0
+    assert basis["assumed_first_oil"] == "2024-01"
+    assert basis["first_period"] == "2024-01"
+    assert basis["last_period"] == "2024-02"
+    assert basis["month_count"] == 2
+    assert basis["host_capex_usd"] == 0.0
+    text = BeautifulSoup(render_report_html(facts), "html.parser").get_text(" ")
+    for label in (
+        "Development system",
+        "water_depth_m",
+        "Variable opex (USD/bbl)",
+        "Cashflow first period",
+        "Cashflow last period",
+        "Cashflow month count",
+        "Applied host capital (USD)",
+        "earliest selected production observation",
+    ):
+        assert label in text
+
+
+@pytest.mark.parametrize("retained", [True, False])
+def test_html_discloses_source_byte_retention(chain, retained):
+    from worldenergydata.ukcs.report import render_report_html
+
+    facts = facts_for(chain)
+    facts["source"]["raw_bytes_retained_in_repository"] = retained
+    text = BeautifulSoup(render_report_html(facts), "html.parser").get_text(" ")
+    expected = (
+        "Source bytes are retained in the repository"
+        if retained
+        else "Source bytes are not retained in the repository"
+    )
+    assert expected in text
+    if not retained:
+        assert "cannot be re-derived from the digest alone" in text
+
+
+def test_cached_source_discloses_refresh_control(chain):
+    from worldenergydata.ukcs.report import render_report_html
+
+    facts = facts_for(
+        chain, provenance="nsta_live", refreshed_at="2026-11-13T10:00:00Z"
+    )
+    facts["source"]["force_refresh"] = False
+    text = BeautifulSoup(render_report_html(facts), "html.parser").get_text(" ")
+    assert "Force refresh requested: False" in text
+    assert "not source publication or proof of freshness" in text
+
+
+def test_committed_live_report_discloses_limits_and_preserves_metrics():
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[3] / "reports/ukcs_reference"
+    facts = json.loads((root / "_facts.json").read_text())
+    basis = facts["cashflow_basis"]
+    assert basis["development_system"] == "subsea15"
+    assert basis["development_system_basis"] == "fallback_unknown_water_depth"
+    assert basis["variable_opex_usd_bbl"] == 12.0
+    assert (basis["first_period"], basis["last_period"], basis["month_count"]) == (
+        "2023-02",
+        "2025-12",
+        35,
+    )
+    assert basis["host_capex_usd"] == 300.0
+    assert facts["source"]["force_refresh"] is True
+    assert facts["source"]["raw_bytes_retained_in_repository"] is False
+    metrics = facts["pre_tax_metrics"]
+    assert metrics["gross_revenue_usd"] - metrics["net_cashflow_usd"] == pytest.approx(
+        sum(r["oil_bbl"] for r in facts["production_history"]) * 12 + 300
+    )
+    text = BeautifulSoup((root / "index.html").read_text(), "html.parser").get_text(" ")
+    for value in ("subsea15", "2023-02", "2025-12", "35", "300.0", "HOST_CAPEX_MM"):
+        assert value in text
+    assert "Source bytes are not retained in the repository" in text
+    assert "Drilling and development capital inputs are not supplied" not in text

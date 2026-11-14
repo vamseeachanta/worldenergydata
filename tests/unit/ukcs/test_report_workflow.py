@@ -67,6 +67,8 @@ def test_csv_workflow_runs_without_http_and_records_outputs(cfg):
     assert facts["provenance"] == "fixture"
     assert facts["coverage"]["row_count"] == 2
     assert facts["source"]["refreshed_at"] is None
+    assert facts["source"]["force_refresh"] is None
+    assert facts["source"]["raw_bytes_retained_in_repository"] is None
     assert len(facts["source"]["raw_sha256"]["production.csv"]) == 64
     assert facts["input_echo"] == cfg["report"]
     assert Path(result["ukcs"]["report_html"]).parent == Path(
@@ -111,6 +113,22 @@ def test_sparse_metadata_keeps_depth_unknown(cfg):
     cfg["report"]["field_meta"].pop("water_depth_m")
     facts = read_facts(route(cfg))
     assert facts["field_concept"]["water_depth_m"] is None
+    basis = facts["cashflow_basis"]
+    assert basis["development_system"] == "subsea15"
+    assert basis["development_system_basis"] == "fallback_unknown_water_depth"
+    assert basis["variable_opex_usd_bbl"] == 12.0
+    assert basis["assumed_first_oil"] == "2024-01"
+    assert (basis["first_period"], basis["last_period"], basis["month_count"]) == (
+        "2022-02",
+        "2024-02",
+        25,
+    )
+    assert basis["host_capex_assumption_mm_usd"] == 300.0
+    assert basis["host_capex_usd"] == 300.0
+    metrics = facts["pre_tax_metrics"]
+    assert metrics["gross_revenue_usd"] - metrics["net_cashflow_usd"] == pytest.approx(
+        sum(r["oil_bbl"] for r in facts["production_history"]) * 12 + 300
+    )
 
 
 def test_live_cache_proves_timestamp_and_records_download_controls(cfg, monkeypatch):
@@ -143,6 +161,27 @@ def test_live_cache_proves_timestamp_and_records_download_controls(cfg, monkeypa
     assert facts["source"]["refreshed_at"]
     assert len(facts["source"]["raw_sha256"]) == 2
     assert facts["source"]["max_records_per_year"] == 10
+    assert facts["source"]["force_refresh"] is True
+    assert facts["source"]["raw_bytes_retained_in_repository"] is False
+
+
+def test_existing_live_cache_records_no_forced_refresh(cfg, monkeypatch):
+    from worldenergydata.ukcs.production.nsta_client import NSTAClient
+
+    root = Path(cfg["Analysis"]["analysis_root_folder"])
+    cache = root / "cache"
+    cache.mkdir()
+    shutil.copy2(root / "production.csv", cache / "nsta_production_2024_monthly.csv")
+
+    def download(self, year, dataset="monthly", force_refresh=False, max_records=None):
+        assert force_refresh is False
+        return pd.read_csv(self.cache_dir / f"nsta_production_{year}_monthly.csv")
+
+    monkeypatch.setattr(NSTAClient, "download", download)
+    cfg["data"] = {"source": "nsta_live", "cache_dir": "cache", "year": 2024}
+    facts = read_facts(route(cfg))
+    assert facts["source"]["force_refresh"] is False
+    assert facts["source"]["raw_bytes_retained_in_repository"] is False
 
 
 @pytest.mark.parametrize(
@@ -216,7 +255,7 @@ def test_registry_keeps_ukcs_fixture_only():
     }
 
 
-def test_live_cache_paths_are_ignored():
+def test_live_cache_paths_are_ignored(monkeypatch):
     import subprocess
 
     paths = [
@@ -225,14 +264,24 @@ def test_live_cache_paths_are_ignored():
         "data/modules/ukcs/normalized/production.parquet",
         "examples/workflows/ukcs-reference-report/data/modules/ukcs/raw/nsta_production_2024_monthly.csv",
     ]
+    run = subprocess.run
+
+    def binary_stdin(*args, **kwargs):
+        # Binary, NUL-delimited input avoids Windows text-mode CRLF translation.
+        assert kwargs.get("text") is not True
+        assert isinstance(kwargs["input"], bytes)
+        assert "-z" in args[0]
+        return run(*args, **kwargs)
+
+    monkeypatch.setattr(subprocess, "run", binary_stdin)
     result = subprocess.run(
-        ["git", "check-ignore", "--no-index", "--stdin"],
-        input="\n".join(paths),
+        ["git", "check-ignore", "--no-index", "--stdin", "-z"],
+        input=("\0".join(paths) + "\0").encode("utf-8"),
         cwd=ROOT,
-        text=True,
         capture_output=True,
     )
-    assert set(result.stdout.splitlines()) == set(paths)
+    assert result.returncode == 0
+    assert set(result.stdout.decode("utf-8").rstrip("\0").split("\0")) == set(paths)
 
 
 def test_live_cache_file_cannot_escape_root_via_symlink(cfg, tmp_path):

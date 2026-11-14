@@ -96,6 +96,7 @@ def build_report_facts(
         },
         "ranked_concepts": ranked,
         "economics_label": chain_result["economics_label"],
+        "cashflow_basis": chain_result["cashflow_basis"],
         "pre_tax_metrics": {
             key: float(value) for key, value in chain_result["pre_tax_metrics"].items()
         },
@@ -211,6 +212,41 @@ def render_report_html(facts) -> str:
             for key, value in facts["pre_tax_metrics"].items()
         ],
     )
+    basis = facts["cashflow_basis"]
+    assumptions = _table(
+        ["Cashflow basis", "Value"],
+        [
+            ["Development system", basis["development_system"]],
+            ["Development system basis", basis["development_system_basis"]],
+            ["Variable opex (USD/bbl)", basis["variable_opex_usd_bbl"]],
+            ["Assumed first oil", basis["assumed_first_oil"]],
+            ["Cashflow first period", basis["first_period"]],
+            ["Cashflow last period", basis["last_period"]],
+            ["Cashflow month count", basis["month_count"]],
+            [
+                "Host capital assumption (million USD)",
+                basis["host_capex_assumption_mm_usd"],
+            ],
+            ["Applied host capital (USD)", basis["host_capex_usd"]],
+        ],
+    )
+    capital_note = (
+        "Default host capital is included as shown. The shared chain currently passes "
+        "HOST_CAPEX_MM to USD cashflows without the million-USD conversion; "
+        "the scale correction is a follow-up."
+        if basis["host_capex_assumption_mm_usd"]
+        else "The selected development system applies zero default host capital."
+    )
+    source_bytes_note = (
+        "Source bytes are retained in the repository."
+        if source.get("raw_bytes_retained_in_repository") is True
+        else (
+            "Source bytes are not retained in the repository; this snapshot "
+            "cannot be re-derived from the digest alone. A new fetch may return different bytes."
+            if source.get("raw_bytes_retained_in_repository") is False
+            else "Source-byte retention in the repository is not established by this report."
+        )
+    )
     url = str(source["url"])
     citation = _escape(url)
     if urlsplit(url).scheme in {"http", "https"}:
@@ -244,21 +280,28 @@ a{{color:#176a75}}.table-wrap{{overflow-x:auto}}
 <p class="banner">Economics shown are pre-tax chain plumbing (<code>{_escape(facts['economics_label'])}</code>) —
 NOT a UK investment NPV. After-tax UK fiscal treatment is deferred to
 <a href="https://github.com/vamseeachanta/worldenergydata/issues/736">#736</a>.</p></header>
-<section><h2>Source coverage</h2><p>{scope}</p>{coverage}</section>
+<section><h2>Source coverage</h2><p>{scope}</p>{coverage}<p>{source_bytes_note}</p></section>
 <section><h2>Production history</h2>{_production_svg(facts['production_history'])}<div class="table-wrap">{production}</div>
 <p>Missing measurements are not established; a true zero remains zero.</p></section>
 <section><h2>Concept screening</h2><p>Sparse metadata; relative screening is a chain-wiring demonstration, not a field-development recommendation.
 Water depth (m): {_display(facts['field_concept'].get('water_depth_m'))}.</p><div class="table-wrap">{concepts}</div></section>
-<section><h2>Pre-tax metrics</h2>{metrics}<p>The assumed oil price is an input scenario, not a fetched market quote.
-Drilling and development capital inputs are not supplied. These cashflows cannot establish project value.</p></section>
+<section><h2>Pre-tax metrics</h2>{metrics}{assumptions}<p>The assumed oil price is an input scenario, not a fetched market quote.
+First oil is assumed to be the earliest selected production observation, not established historical first oil.
+Unknown water depth uses the subsea15 fallback; the cashflow window also includes default host-capital periods when applied.</p>
+<p>Field-specific capital inputs are not supplied. Drilling and facilities capital are zero.
+{capital_note} These cashflows cannot establish project value.</p></section>
 <section><details><summary>Input echo</summary><pre>{echo}</pre></details></section>
 <footer><p>{citation} · {_escape(source['licence'])}</p><p>Refresh timestamp: {timestamp}</p>
-<p>Generated (UTC): {_escape(facts['generated_at'])}</p></footer></body></html>"""
+<p>Force refresh requested: {_display(source.get('force_refresh'))}. The timestamp identifies cache retrieval,
+not source publication or proof of freshness. A false refresh setting permits an existing cache.</p>
+<p>Generated (UTC): {_escape(facts['generated_at'])}</p></footer></body></html>
+"""
 
 
 def generate_report(output_dir=None) -> dict:
     """Regenerate the committed fixture report, offline, into the selected directory."""
     import yaml
+
     from worldenergydata.ukcs.ukcs import Ukcs
 
     example = _REPO_ROOT / "examples/workflows/ukcs-reference-report"
