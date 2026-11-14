@@ -170,6 +170,12 @@ def engine(
         marine_safety_app = MarineSafety()
         cfg_base = marine_safety_app.router(cfg_base)
 
+    elif basename in ["cost"]:
+        from worldenergydata.cost.workflow import CostWorkflow
+
+        cost_app = CostWorkflow()
+        cfg_base = cost_app.router(cfg_base)
+
     elif basename in ["dwnld_from_zipurl"]:
         dwnld_from_zipurl = zip()
         cfg_base = dwnld_from_zipurl.router(cfg_base)

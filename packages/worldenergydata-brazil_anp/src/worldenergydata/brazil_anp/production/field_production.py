@@ -48,15 +48,16 @@ class FieldProductionAggregator:
         return agg
 
     def get_field_summary(self, agg_df: pd.DataFrame, field_name: str) -> Dict:
+        """Summarize observed field-month rows, including recorded zeros.
+
+        Raises:
+            ValueError: If no observations match ``field_name``, including when
+                the aggregate is empty. Missing observations cannot establish
+                zero production.
+        """
         field_data = agg_df[agg_df["field"] == field_name]
         if field_data.empty:
-            return {
-                "total_oil_bbl": 0.0,
-                "avg_daily_rate": 0.0,
-                "max_water_cut": 0.0,
-                "total_months": 0,
-                "peak_oil_bbl": 0.0,
-            }
+            raise ValueError(f"No production records for field {field_name!r}")
 
         return {
             "total_oil_bbl": field_data["oil_bbl"].sum(),
