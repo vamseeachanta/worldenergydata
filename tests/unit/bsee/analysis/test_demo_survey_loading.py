@@ -37,9 +37,31 @@ class DeserializationCanary:
         return record_deserialization, ()
 
 
+@pytest.fixture(autouse=True)
+def forbid_network(monkeypatch, request):
+    """Reject network calls, including attempts whose errors are swallowed."""
+    guards = {}
+    for target, attribute in (
+        (httpx, "stream"),
+        (httpx.Client, "send"),
+        (httpx.AsyncClient, "send"),
+        (socket, "create_connection"),
+        (socket.socket, "connect"),
+        (socket.socket, "connect_ex"),
+    ):
+        guard = Mock(side_effect=AssertionError(f"Forbidden call: {attribute}"))
+        monkeypatch.setattr(target, attribute, guard)
+        guards[target, attribute] = guard
+    expected = getattr(request, "param", {})
+    assert set(expected).issubset(guards)
+    yield guards
+    for key, guard in guards.items():
+        assert guard.call_count == expected.get(key, 0), key
+
+
 @pytest.fixture
-def forbid_deserialization(monkeypatch):
-    """Reject deserialization, extraction and unexpected network calls."""
+def forbid_deserialization(monkeypatch, forbid_network):
+    """Reject deserialization and extraction; retain the decode canary."""
     DESERIALIZATION_EVENTS.clear()
     guards = []
     for target, attribute in (
@@ -50,11 +72,6 @@ def forbid_deserialization(monkeypatch):
         (zipfile.ZipFile, "extract"),
         (zipfile.ZipFile, "extractall"),
         (shutil, "unpack_archive"),
-        (httpx.Client, "send"),
-        (httpx.AsyncClient, "send"),
-        (socket, "create_connection"),
-        (socket.socket, "connect"),
-        (socket.socket, "connect_ex"),
     ):
         guard = Mock(side_effect=AssertionError(f"Forbidden call: {attribute}"))
         monkeypatch.setattr(target, attribute, guard)
@@ -66,15 +83,12 @@ def forbid_deserialization(monkeypatch):
 
 
 @pytest.fixture
-def demo(tmp_path, monkeypatch):
+def demo(tmp_path, monkeypatch, forbid_network):
     spec = importlib.util.spec_from_file_location("survey_demo", DEMO_PATH)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     monkeypatch.setattr(module, "DSPTS_DIR", str(tmp_path))
     monkeypatch.setattr(module, "DSPTS_ZIP", str(tmp_path / "dsptsdelimit.ZIP"))
-    monkeypatch.setattr(
-        httpx, "stream", Mock(side_effect=AssertionError("Unexpected network access"))
-    )
     return module
 
 
@@ -104,6 +118,25 @@ def mock_download(demo, monkeypatch, data, status=200):
     stream.return_value.__exit__ = Mock(return_value=False)
     monkeypatch.setattr(httpx, "stream", stream)
     return stream
+
+
+@pytest.mark.parametrize(
+    "forbid_network", [{(httpx.Client, "send"): 1}], indirect=True, ids=["send-probe"]
+)
+@pytest.mark.parametrize("route", ["top-level", "client"])
+def test_alternate_http_routes_are_rejected_before_transport(
+    demo, monkeypatch, forbid_network, route
+):
+    """Probe the network boundary without allowing transport dispatch."""
+    transport = Mock(side_effect=AssertionError("Transport backstop reached"))
+    monkeypatch.setattr(httpx.HTTPTransport, "handle_request", transport)
+    with pytest.raises(AssertionError, match="Forbidden call: send"):
+        if route == "top-level":
+            httpx.get("https://example.invalid/survey.zip", trust_env=False)
+        else:
+            with httpx.Client(trust_env=False) as client:
+                client.get("https://example.invalid/survey.zip")
+    transport.assert_not_called()
 
 
 @pytest.mark.parametrize("protocol", [0, 4])
