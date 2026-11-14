@@ -193,3 +193,17 @@ def test_article_rejects_event_ages_with_mixed_windows(output_copy, tmp_path):
     with pytest.raises(ValueError, match="more than one window"):
         build_article.build(out=output_copy, page=tmp_path / "page.html")
     assert not (tmp_path / "page.html").exists()
+
+
+def test_note_refuses_a_summary_without_a_partial_year(output_copy, tmp_path):
+    import write_results_note
+
+    # A 31 December snapshot publishes no partial year; the README wording
+    # names one, so the note must stop with a stated reason, writing nothing.
+    summary = summary_of(output_copy)
+    summary["partial_year"] = None
+    (output_copy / "summary.json").write_text(json.dumps(summary), encoding="utf-8")
+    readme = tmp_path / "README.md"
+    with pytest.raises(ValueError, match="no partial year"):
+        write_results_note.main(out=output_copy, readme=readme)
+    assert not readme.exists()

@@ -102,7 +102,9 @@ def plot(out):
     all_units = pd.read_csv(out / "unit_type_shares.csv")
     # Captions are derived from these tables; reject a mixed-year output set.
     last = check_selection(summary, {"unit_type_shares.csv": all_units.period})
-    partial_year = int(summary["partial_year"])
+    # A snapshot dated 31 December publishes no partial year; captions and the
+    # shaded band then name only the full years.
+    partial_year = summary["partial_year"]
     primary = pd.read_csv(out / "primary_code_by_year.csv")
     counts = pd.read_csv(out / "counts_by_year_band_group.csv")
     rates = pd.read_csv(out / "rates.csv")
@@ -137,7 +139,8 @@ def plot(out):
                 label=BAND_LABELS.get(band, band),
             )
             bottom += vals
-        ax.axvspan(last + 0.5, last + 1.5, color="#cccccc", alpha=0.3)
+        if partial_year is not None:
+            ax.axvspan(last + 0.5, last + 1.5, color="#cccccc", alpha=0.3)
         ax.set_title(f"Approved permits to modify: {family}", loc="left", fontsize=13)
         ax.set_ylabel("Approved permits (count)")
         ax.set_ylim(bottom=0)
@@ -159,7 +162,11 @@ def plot(out):
         "01_approved_interventions",
         date,
         "Initial completions and new-hole preparation excluded; unspecified abandonment retained. "
-        f"{partial_year} through {long_date(date, year=False)}.\n"
+        + (
+            f"{partial_year} through {long_date(date, year=False)}.\n"
+            if partial_year is not None
+            else f"Full years {first}-{last}; no partial year.\n"
+        )
         + coding_caption(primary, first, last),
     )
 
@@ -190,7 +197,8 @@ def plot(out):
                 edgecolors="#333333",
                 s=45,
             )
-        ax.axvspan(last + 0.5, last + 1.5, color="#cccccc", alpha=0.3)
+        if partial_year is not None:
+            ax.axvspan(last + 0.5, last + 1.5, color="#cccccc", alpha=0.3)
         ax.set_title(
             f"Approved permits to modify per 100 standing wells: {family}",
             loc="left",
@@ -215,8 +223,13 @@ def plot(out):
         out,
         "02_rates_per_standing_well",
         date,
-        f"Denominator: wells standing on 1 January, all non-cancelled bores per well; {partial_year} approvals are partial, not annualised.\n"
-        "Approval intensity includes repeated permits; it is not the percentage of wells receiving work.",
+        "Denominator: wells standing on 1 January, all non-cancelled bores per well"
+        + (
+            f"; {partial_year} approvals are partial, not annualised.\n"
+            if partial_year is not None
+            else ".\n"
+        )
+        + "Approval intensity includes repeated permits; it is not the percentage of wells receiving work.",
     )
 
     costs = pd.read_csv(out / "cost_table.csv").set_index("scenario_id")

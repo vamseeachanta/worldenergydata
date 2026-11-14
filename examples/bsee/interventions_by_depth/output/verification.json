@@ -14,7 +14,7 @@
     "examples/bsee/interventions_by_depth/count_interventions.py": "2139aede8544f5f41a2b2ef019efbddef454b56131fe00abfc48e49d236f23f5",
     "examples/bsee/interventions_by_depth/download_data.py": "c99840b2e69d7a5e89e5b3ca39e983c777137e68e832b8148c68d2d69239c158",
     "examples/bsee/interventions_by_depth/estimate_costs.py": "1fabea436175506bf84debd71d5667cec889970adf3bd93ce1d44f27eecfac69",
-    "examples/bsee/interventions_by_depth/plot_charts.py": "f327eea9fb2d0b17bf515f76d23a0ea5ef3e28e1965b544684ab1f3506688a3f",
+    "examples/bsee/interventions_by_depth/plot_charts.py": "65168097680deab77c2ee753b96a3cd147c1d723f31aca7d9bf3c91413f3e325",
     "examples/bsee/interventions_by_depth/plot_life_cycle.py": "8af25b5ef928d1a8215da95c2e5f3a4e70ed5ca758c3809ffe759e2a268aa672",
     "examples/bsee/interventions_by_depth/README.md": "90c3e8d3d2c7890a4dccdf3e828959f736124b8a43e2a3d8d48e2eb03e9d0fdb",
     "examples/bsee/interventions_by_depth/report_text.py": "98358e0f48b6a39bfd2b54e5f253c872f76aa52b23c4d2cbe843b70335e2cc54",
@@ -22,9 +22,9 @@
     "examples/bsee/interventions_by_depth/verify_cost_sources.py": "a213275d3601830fd295bfa582cf7cc51b1905ec46d2bd87fe12cb7a31b26436",
     "examples/bsee/interventions_by_depth/verify_outputs.py": "eb897451a23acc478bbd5f15493e9c685d468c6cf8177ac04e0fab91f3196c78",
     "examples/bsee/interventions_by_depth/well_life_cycle.py": "6a28c449869d51cbc33de62068d27f8ee410ac2120930c51dece91707ce97d98",
-    "examples/bsee/interventions_by_depth/write_results_note.py": "d21c1823ae85ab7f96acaa5c0d36452c94d20d564c27335dbd1ce11504cd975e",
-    "tests/unit/bsee/test_interventions_by_depth.py": "23b98fe67d1a831cf46307f235d325fb46be5592b06f51a811831e3ea948b420",
-    "tests/unit/bsee/test_interventions_report.py": "29b7dfee9b360392b467f62df0c6c283fea1216aa9b4a59bd2892ae83fca976b",
+    "examples/bsee/interventions_by_depth/write_results_note.py": "050594a2ff250c3c6a84047734da36c556f90b97037c3a56892c8aba2e201304",
+    "tests/unit/bsee/test_interventions_by_depth.py": "189e9e2e6637dc3f6e900949d16fff4d4c46d005c00de373826563f4ced5e750",
+    "tests/unit/bsee/test_interventions_report.py": "57fc2c0ea42f649c27af8747d4e03140d569cf770ce13a4132a401e1a71a0015",
     "tests/unit/bsee/test_well_life_cycle.py": "20ecac4f394456d5bff5097354dfdd6f84d6ee85cb6e131c41baef2ae39d4036"
   },
   "checks": [

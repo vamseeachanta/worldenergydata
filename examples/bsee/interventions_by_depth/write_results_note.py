@@ -8,6 +8,7 @@ from pathlib import Path
 
 import pandas as pd
 from build_article import PAGE
+from count_interventions import report_years
 from report_text import (
     abandonment_split,
     check_selection,
@@ -133,8 +134,15 @@ def main(pr_body=None, test_result="not run", out=OUT, readme=ROOT / "README.md"
             "subsea_completion_shares.csv": subsea.period,
         },
     )
+    # The Method wording names the partial year; a 31 December snapshot has
+    # none, and its wording is not written yet.
+    if s["partial_year"] is None:
+        raise ValueError(
+            "summary.json has no partial year (31 December snapshot); "
+            "the README wording assumes one"
+        )
     first, partial = int(s["first_full_year"]), int(s["partial_year"])
-    if sorted(rates.year.unique()) != list(range(first, partial + 1)):
+    if sorted(rates.year.unique()) != list(report_years(s)):
         raise ValueError("rates.csv years do not match summary.json")
     pooled = next(p for p in shares.period.astype(str).unique() if "-" in p)
     counts = pd.read_csv(out / "counts_by_year_band_group.csv")
