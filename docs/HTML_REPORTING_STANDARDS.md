@@ -232,7 +232,7 @@ d3.csv('../data/processed/results.csv').then(data => {
 
 ### 1. **Relative Path Convention**
 
-**Always use relative paths from the report location:**
+**Use relative paths; this example assumes the report's directory is the working directory:**
 
 ```python
 # ✅ CORRECT: Relative path from report
