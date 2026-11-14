@@ -437,7 +437,7 @@ def test_verifier_passes_on_the_delivered_outputs(output_copy):
     (output_copy / "verification.json").unlink()
     verify_outputs.verify(output_copy)
     receipt = json.loads((output_copy / "verification.json").read_text())
-    assert len(receipt["checks"]) == 12
+    assert len(receipt["checks"]) == 13
 
 
 def test_full_year_bounds_follow_feed_start_and_file_date():
@@ -547,4 +547,4 @@ def test_year_end_snapshot_adds_no_unobserved_year(tmp_path):
     assert not pd.read_csv(out / "rates.csv").partial_year.any()
     life = json.loads((out / "life_cycle_summary.json").read_text(encoding="utf-8"))
     assert life["window"] == "2024-2026"
-    assert len(receipt["checks"]) >= 12
+    assert len(receipt["checks"]) == 13

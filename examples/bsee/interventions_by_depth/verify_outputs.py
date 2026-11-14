@@ -8,6 +8,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import yaml
+from count_interventions import report_years
 from estimate_costs import estimate
 
 ROOT = Path(__file__).resolve().parent
@@ -20,9 +21,8 @@ def verify(out=ROOT / "output"):
     rates = pd.read_csv(out / "rates.csv")
     summary = json.loads((out / "summary.json").read_text())
     last = summary["last_full_year"]
-    selected_months = (
-        monthly.month.str[:4].astype(int).between(summary["first_full_year"], last + 1)
-    )
+    window = report_years(summary)
+    selected_months = monthly.month.str[:4].astype(int).isin(window)
     assert (
         counts.permits.sum() == monthly.loc[selected_months, "approved_permits"].sum()
     )
@@ -129,7 +129,6 @@ def verify(out=ROOT / "output"):
     checks = pd.read_csv(out / "life_cycle_reconciliation.csv").set_index("stage")
     life = json.loads((out / "life_cycle_summary.json").read_text(encoding="utf-8"))
     assert life["file_date"] == summary["file_date"]
-    window = range(summary["first_full_year"], summary["partial_year"] + 1)
     in_window = counts[counts.year.isin(window)]
     for stage, groups in {
         "temporary abandonment": ["temporary abandonment"],
@@ -154,6 +153,10 @@ def verify(out=ROOT / "output"):
     hist = pd.read_csv(out / "life_cycle_life_histogram.csv")
     assert hist.wells.sum() == life["dated_wells"] - life["life_not_established"]
     assert life["permanently_abandoned"] + life["standing"] == life["dated_wells"]
+    # The optional WAR table belongs to the run whose summary records its read.
+    assert (out / "war_duration_crosscheck.csv").exists() == (
+        "war_rows" in summary
+    ), "WAR cross-check table does not match this run's WAR read"
     files = sorted(
         p
         for p in out.iterdir()
@@ -195,6 +198,7 @@ def verify(out=ROOT / "output"):
             "life-cycle permits reconcile with published groups over the window",
             "light and heavy by year partition each year's well work",
             "life-cycle well counts and histogram reconcile",
+            "WAR cross-check present only with this run's verified WAR read",
         ],
         files={p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in files},
     )

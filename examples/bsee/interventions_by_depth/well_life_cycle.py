@@ -405,7 +405,7 @@ def run(data_dir, out):
         raise ValueError(f"raw archive not verified: {', '.join(sorted(missing))}")
     file_date = pd.Timestamp(summary["file_date"])
     first, last = int(summary["first_full_year"]), int(summary["last_full_year"])
-    window = list(range(first, int(summary["partial_year"]) + 1))
+    window = list(ci.report_years(summary))
     bore = ci.read_table(
         data_dir, "BoreholeRawData.zip", "mv_boreholes_all", BORE_COLUMNS
     )

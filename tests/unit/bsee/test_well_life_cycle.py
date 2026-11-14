@@ -33,6 +33,7 @@ from count_interventions import (  # noqa: E402
     UNIT_TYPES,
     WELL_WORK,
     classify_operation,
+    report_years,
     well_inventory,
 )
 
@@ -262,7 +263,7 @@ def test_light_heavy_by_year_partitions_well_work():
 def test_delivered_tables_reconcile_with_published_counts():
     out = EXAMPLE / "output"
     summary = json.loads((out / "summary.json").read_text(encoding="utf-8"))
-    window = range(summary["first_full_year"], summary["partial_year"] + 1)
+    window = report_years(summary)
     counts = pd.read_csv(out / "counts_by_year_band_group.csv")
     counts = counts[counts.year.isin(window)]
     checks = pd.read_csv(out / "life_cycle_reconciliation.csv").set_index("stage")
