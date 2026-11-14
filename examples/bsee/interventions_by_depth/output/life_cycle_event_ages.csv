@@ -1,0 +1,29 @@
+well_type,stage,events,before_first_spud,q25_years,median_years,q75_years
+all wells,sidetrack or bypass,17284,0,0.087611,0.290212,10.831622
+all wells,light intervention,11888,0,11.583847,21.163587,33.265572
+all wells,heavy intervention,9061,68,1.963039,9.470226,20.542094
+all wells,"intervention, light or heavy not established",10967,33,3.627652,11.225188,25.236824
+all wells,temporary abandonment,29470,2,17.314168,29.704312,38.885695
+all wells,"abandonment, type not stated",1866,1,11.726215,22.299795,34.379192
+all wells,permanent abandonment,24567,3,15.000684,27.791923,39.313484
+development,sidetrack or bypass,11621,0,0.101300,1.620808,16.030116
+development,light intervention,9358,0,13.832991,24.091718,35.939083
+development,heavy intervention,5532,38,4.538672,13.262149,25.906913
+development,"intervention, light or heavy not established",7352,11,6.223135,16.542094,30.335387
+development,temporary abandonment,23604,0,21.740589,32.301164,40.594798
+development,"abandonment, type not stated",1052,0,18.982204,27.578371,40.091034
+development,permanent abandonment,17904,0,21.273101,32.981520,42.187543
+exploration,sidetrack or bypass,5349,0,0.076660,0.172485,0.689938
+exploration,light intervention,2511,0,7.273101,13.429158,20.726899
+exploration,heavy intervention,3492,27,0.139630,4.793977,11.879535
+exploration,"intervention, light or heavy not established",3595,22,1.218344,5.388090,11.096509
+exploration,temporary abandonment,5691,2,7.567420,16.273785,24.952772
+exploration,"abandonment, type not stated",799,1,5.271047,13.793292,23.492129
+exploration,permanent abandonment,6506,3,6.943190,13.409993,21.727584
+other or not stated,sidetrack or bypass,314,0,0.000000,0.000000,0.000000
+other or not stated,light intervention,19,0,36.332649,43.356605,46.499658
+other or not stated,heavy intervention,37,3,0.104723,0.553046,33.087611
+other or not stated,"intervention, light or heavy not established",20,0,4.783025,23.893224,38.229295
+other or not stated,temporary abandonment,175,0,39.390828,44.114990,55.274470
+other or not stated,"abandonment, type not stated",15,0,0.499658,1.084189,49.590691
+other or not stated,permanent abandonment,157,0,36.268309,42.680356,47.189596

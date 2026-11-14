@@ -1,0 +1,881 @@
+year,band,group,permits,partial_year
+2005,under 100 m,workover and recompletion,594,False
+2005,under 100 m,production enhancement,256,False
+2005,under 100 m,temporary abandonment,491,False
+2005,under 100 m,permanent abandonment,343,False
+2005,under 100 m,other well work,411,False
+2005,under 100 m,abandonment unspecified,1,False
+2005,under 100 m,new hole excluded,229,False
+2005,under 100 m,initial completion excluded,356,False
+2005,100 to 500 m,workover and recompletion,44,False
+2005,100 to 500 m,production enhancement,22,False
+2005,100 to 500 m,temporary abandonment,39,False
+2005,100 to 500 m,permanent abandonment,5,False
+2005,100 to 500 m,other well work,68,False
+2005,100 to 500 m,abandonment unspecified,0,False
+2005,100 to 500 m,new hole excluded,11,False
+2005,100 to 500 m,initial completion excluded,32,False
+2005,500 to 1500 m,workover and recompletion,10,False
+2005,500 to 1500 m,production enhancement,18,False
+2005,500 to 1500 m,temporary abandonment,21,False
+2005,500 to 1500 m,permanent abandonment,11,False
+2005,500 to 1500 m,other well work,30,False
+2005,500 to 1500 m,abandonment unspecified,0,False
+2005,500 to 1500 m,new hole excluded,32,False
+2005,500 to 1500 m,initial completion excluded,30,False
+2005,1500 m and deeper,workover and recompletion,4,False
+2005,1500 m and deeper,production enhancement,4,False
+2005,1500 m and deeper,temporary abandonment,10,False
+2005,1500 m and deeper,permanent abandonment,6,False
+2005,1500 m and deeper,other well work,27,False
+2005,1500 m and deeper,abandonment unspecified,0,False
+2005,1500 m and deeper,new hole excluded,9,False
+2005,1500 m and deeper,initial completion excluded,13,False
+2005,no depth,workover and recompletion,0,False
+2005,no depth,production enhancement,0,False
+2005,no depth,temporary abandonment,0,False
+2005,no depth,permanent abandonment,0,False
+2005,no depth,other well work,0,False
+2005,no depth,abandonment unspecified,0,False
+2005,no depth,new hole excluded,0,False
+2005,no depth,initial completion excluded,0,False
+2006,under 100 m,workover and recompletion,696,False
+2006,under 100 m,production enhancement,310,False
+2006,under 100 m,temporary abandonment,841,False
+2006,under 100 m,permanent abandonment,873,False
+2006,under 100 m,other well work,745,False
+2006,under 100 m,abandonment unspecified,25,False
+2006,under 100 m,new hole excluded,258,False
+2006,under 100 m,initial completion excluded,531,False
+2006,100 to 500 m,workover and recompletion,51,False
+2006,100 to 500 m,production enhancement,36,False
+2006,100 to 500 m,temporary abandonment,98,False
+2006,100 to 500 m,permanent abandonment,28,False
+2006,100 to 500 m,other well work,43,False
+2006,100 to 500 m,abandonment unspecified,0,False
+2006,100 to 500 m,new hole excluded,19,False
+2006,100 to 500 m,initial completion excluded,43,False
+2006,500 to 1500 m,workover and recompletion,23,False
+2006,500 to 1500 m,production enhancement,30,False
+2006,500 to 1500 m,temporary abandonment,35,False
+2006,500 to 1500 m,permanent abandonment,23,False
+2006,500 to 1500 m,other well work,100,False
+2006,500 to 1500 m,abandonment unspecified,0,False
+2006,500 to 1500 m,new hole excluded,77,False
+2006,500 to 1500 m,initial completion excluded,53,False
+2006,1500 m and deeper,workover and recompletion,8,False
+2006,1500 m and deeper,production enhancement,2,False
+2006,1500 m and deeper,temporary abandonment,18,False
+2006,1500 m and deeper,permanent abandonment,7,False
+2006,1500 m and deeper,other well work,55,False
+2006,1500 m and deeper,abandonment unspecified,0,False
+2006,1500 m and deeper,new hole excluded,17,False
+2006,1500 m and deeper,initial completion excluded,30,False
+2006,no depth,workover and recompletion,0,False
+2006,no depth,production enhancement,0,False
+2006,no depth,temporary abandonment,0,False
+2006,no depth,permanent abandonment,0,False
+2006,no depth,other well work,0,False
+2006,no depth,abandonment unspecified,0,False
+2006,no depth,new hole excluded,0,False
+2006,no depth,initial completion excluded,0,False
+2007,under 100 m,workover and recompletion,815,False
+2007,under 100 m,production enhancement,403,False
+2007,under 100 m,temporary abandonment,802,False
+2007,under 100 m,permanent abandonment,1273,False
+2007,under 100 m,other well work,645,False
+2007,under 100 m,abandonment unspecified,25,False
+2007,under 100 m,new hole excluded,255,False
+2007,under 100 m,initial completion excluded,467,False
+2007,100 to 500 m,workover and recompletion,78,False
+2007,100 to 500 m,production enhancement,47,False
+2007,100 to 500 m,temporary abandonment,94,False
+2007,100 to 500 m,permanent abandonment,139,False
+2007,100 to 500 m,other well work,65,False
+2007,100 to 500 m,abandonment unspecified,1,False
+2007,100 to 500 m,new hole excluded,33,False
+2007,100 to 500 m,initial completion excluded,41,False
+2007,500 to 1500 m,workover and recompletion,21,False
+2007,500 to 1500 m,production enhancement,22,False
+2007,500 to 1500 m,temporary abandonment,51,False
+2007,500 to 1500 m,permanent abandonment,22,False
+2007,500 to 1500 m,other well work,117,False
+2007,500 to 1500 m,abandonment unspecified,3,False
+2007,500 to 1500 m,new hole excluded,66,False
+2007,500 to 1500 m,initial completion excluded,55,False
+2007,1500 m and deeper,workover and recompletion,10,False
+2007,1500 m and deeper,production enhancement,7,False
+2007,1500 m and deeper,temporary abandonment,34,False
+2007,1500 m and deeper,permanent abandonment,7,False
+2007,1500 m and deeper,other well work,103,False
+2007,1500 m and deeper,abandonment unspecified,0,False
+2007,1500 m and deeper,new hole excluded,23,False
+2007,1500 m and deeper,initial completion excluded,32,False
+2007,no depth,workover and recompletion,0,False
+2007,no depth,production enhancement,0,False
+2007,no depth,temporary abandonment,0,False
+2007,no depth,permanent abandonment,0,False
+2007,no depth,other well work,0,False
+2007,no depth,abandonment unspecified,0,False
+2007,no depth,new hole excluded,0,False
+2007,no depth,initial completion excluded,0,False
+2008,under 100 m,workover and recompletion,893,False
+2008,under 100 m,production enhancement,268,False
+2008,under 100 m,temporary abandonment,1032,False
+2008,under 100 m,permanent abandonment,1233,False
+2008,under 100 m,other well work,497,False
+2008,under 100 m,abandonment unspecified,43,False
+2008,under 100 m,new hole excluded,265,False
+2008,under 100 m,initial completion excluded,408,False
+2008,100 to 500 m,workover and recompletion,62,False
+2008,100 to 500 m,production enhancement,41,False
+2008,100 to 500 m,temporary abandonment,94,False
+2008,100 to 500 m,permanent abandonment,89,False
+2008,100 to 500 m,other well work,72,False
+2008,100 to 500 m,abandonment unspecified,1,False
+2008,100 to 500 m,new hole excluded,49,False
+2008,100 to 500 m,initial completion excluded,33,False
+2008,500 to 1500 m,workover and recompletion,33,False
+2008,500 to 1500 m,production enhancement,28,False
+2008,500 to 1500 m,temporary abandonment,53,False
+2008,500 to 1500 m,permanent abandonment,27,False
+2008,500 to 1500 m,other well work,119,False
+2008,500 to 1500 m,abandonment unspecified,2,False
+2008,500 to 1500 m,new hole excluded,73,False
+2008,500 to 1500 m,initial completion excluded,79,False
+2008,1500 m and deeper,workover and recompletion,14,False
+2008,1500 m and deeper,production enhancement,6,False
+2008,1500 m and deeper,temporary abandonment,25,False
+2008,1500 m and deeper,permanent abandonment,20,False
+2008,1500 m and deeper,other well work,64,False
+2008,1500 m and deeper,abandonment unspecified,2,False
+2008,1500 m and deeper,new hole excluded,18,False
+2008,1500 m and deeper,initial completion excluded,16,False
+2008,no depth,workover and recompletion,0,False
+2008,no depth,production enhancement,0,False
+2008,no depth,temporary abandonment,0,False
+2008,no depth,permanent abandonment,0,False
+2008,no depth,other well work,0,False
+2008,no depth,abandonment unspecified,0,False
+2008,no depth,new hole excluded,0,False
+2008,no depth,initial completion excluded,0,False
+2009,under 100 m,workover and recompletion,700,False
+2009,under 100 m,production enhancement,234,False
+2009,under 100 m,temporary abandonment,1604,False
+2009,under 100 m,permanent abandonment,1623,False
+2009,under 100 m,other well work,421,False
+2009,under 100 m,abandonment unspecified,57,False
+2009,under 100 m,new hole excluded,89,False
+2009,under 100 m,initial completion excluded,231,False
+2009,100 to 500 m,workover and recompletion,85,False
+2009,100 to 500 m,production enhancement,34,False
+2009,100 to 500 m,temporary abandonment,165,False
+2009,100 to 500 m,permanent abandonment,136,False
+2009,100 to 500 m,other well work,109,False
+2009,100 to 500 m,abandonment unspecified,3,False
+2009,100 to 500 m,new hole excluded,33,False
+2009,100 to 500 m,initial completion excluded,36,False
+2009,500 to 1500 m,workover and recompletion,34,False
+2009,500 to 1500 m,production enhancement,52,False
+2009,500 to 1500 m,temporary abandonment,48,False
+2009,500 to 1500 m,permanent abandonment,20,False
+2009,500 to 1500 m,other well work,83,False
+2009,500 to 1500 m,abandonment unspecified,3,False
+2009,500 to 1500 m,new hole excluded,51,False
+2009,500 to 1500 m,initial completion excluded,55,False
+2009,1500 m and deeper,workover and recompletion,0,False
+2009,1500 m and deeper,production enhancement,1,False
+2009,1500 m and deeper,temporary abandonment,18,False
+2009,1500 m and deeper,permanent abandonment,15,False
+2009,1500 m and deeper,other well work,58,False
+2009,1500 m and deeper,abandonment unspecified,0,False
+2009,1500 m and deeper,new hole excluded,28,False
+2009,1500 m and deeper,initial completion excluded,36,False
+2009,no depth,workover and recompletion,0,False
+2009,no depth,production enhancement,0,False
+2009,no depth,temporary abandonment,0,False
+2009,no depth,permanent abandonment,0,False
+2009,no depth,other well work,0,False
+2009,no depth,abandonment unspecified,0,False
+2009,no depth,new hole excluded,0,False
+2009,no depth,initial completion excluded,0,False
+2010,under 100 m,workover and recompletion,871,False
+2010,under 100 m,production enhancement,221,False
+2010,under 100 m,temporary abandonment,1358,False
+2010,under 100 m,permanent abandonment,1503,False
+2010,under 100 m,other well work,392,False
+2010,under 100 m,abandonment unspecified,21,False
+2010,under 100 m,new hole excluded,155,False
+2010,under 100 m,initial completion excluded,284,False
+2010,100 to 500 m,workover and recompletion,48,False
+2010,100 to 500 m,production enhancement,53,False
+2010,100 to 500 m,temporary abandonment,147,False
+2010,100 to 500 m,permanent abandonment,290,False
+2010,100 to 500 m,other well work,52,False
+2010,100 to 500 m,abandonment unspecified,7,False
+2010,100 to 500 m,new hole excluded,18,False
+2010,100 to 500 m,initial completion excluded,18,False
+2010,500 to 1500 m,workover and recompletion,45,False
+2010,500 to 1500 m,production enhancement,24,False
+2010,500 to 1500 m,temporary abandonment,37,False
+2010,500 to 1500 m,permanent abandonment,23,False
+2010,500 to 1500 m,other well work,68,False
+2010,500 to 1500 m,abandonment unspecified,1,False
+2010,500 to 1500 m,new hole excluded,32,False
+2010,500 to 1500 m,initial completion excluded,53,False
+2010,1500 m and deeper,workover and recompletion,9,False
+2010,1500 m and deeper,production enhancement,2,False
+2010,1500 m and deeper,temporary abandonment,30,False
+2010,1500 m and deeper,permanent abandonment,34,False
+2010,1500 m and deeper,other well work,64,False
+2010,1500 m and deeper,abandonment unspecified,3,False
+2010,1500 m and deeper,new hole excluded,14,False
+2010,1500 m and deeper,initial completion excluded,14,False
+2010,no depth,workover and recompletion,0,False
+2010,no depth,production enhancement,0,False
+2010,no depth,temporary abandonment,0,False
+2010,no depth,permanent abandonment,0,False
+2010,no depth,other well work,0,False
+2010,no depth,abandonment unspecified,0,False
+2010,no depth,new hole excluded,0,False
+2010,no depth,initial completion excluded,0,False
+2011,under 100 m,workover and recompletion,781,False
+2011,under 100 m,production enhancement,170,False
+2011,under 100 m,temporary abandonment,1476,False
+2011,under 100 m,permanent abandonment,1561,False
+2011,under 100 m,other well work,367,False
+2011,under 100 m,abandonment unspecified,27,False
+2011,under 100 m,new hole excluded,189,False
+2011,under 100 m,initial completion excluded,267,False
+2011,100 to 500 m,workover and recompletion,84,False
+2011,100 to 500 m,production enhancement,56,False
+2011,100 to 500 m,temporary abandonment,103,False
+2011,100 to 500 m,permanent abandonment,154,False
+2011,100 to 500 m,other well work,69,False
+2011,100 to 500 m,abandonment unspecified,7,False
+2011,100 to 500 m,new hole excluded,16,False
+2011,100 to 500 m,initial completion excluded,13,False
+2011,500 to 1500 m,workover and recompletion,74,False
+2011,500 to 1500 m,production enhancement,61,False
+2011,500 to 1500 m,temporary abandonment,43,False
+2011,500 to 1500 m,permanent abandonment,43,False
+2011,500 to 1500 m,other well work,74,False
+2011,500 to 1500 m,abandonment unspecified,1,False
+2011,500 to 1500 m,new hole excluded,37,False
+2011,500 to 1500 m,initial completion excluded,47,False
+2011,1500 m and deeper,workover and recompletion,6,False
+2011,1500 m and deeper,production enhancement,6,False
+2011,1500 m and deeper,temporary abandonment,6,False
+2011,1500 m and deeper,permanent abandonment,21,False
+2011,1500 m and deeper,other well work,24,False
+2011,1500 m and deeper,abandonment unspecified,0,False
+2011,1500 m and deeper,new hole excluded,5,False
+2011,1500 m and deeper,initial completion excluded,29,False
+2011,no depth,workover and recompletion,0,False
+2011,no depth,production enhancement,0,False
+2011,no depth,temporary abandonment,0,False
+2011,no depth,permanent abandonment,0,False
+2011,no depth,other well work,0,False
+2011,no depth,abandonment unspecified,0,False
+2011,no depth,new hole excluded,0,False
+2011,no depth,initial completion excluded,0,False
+2012,under 100 m,workover and recompletion,612,False
+2012,under 100 m,production enhancement,240,False
+2012,under 100 m,temporary abandonment,1810,False
+2012,under 100 m,permanent abandonment,1138,False
+2012,under 100 m,other well work,340,False
+2012,under 100 m,abandonment unspecified,56,False
+2012,under 100 m,new hole excluded,217,False
+2012,under 100 m,initial completion excluded,286,False
+2012,100 to 500 m,workover and recompletion,55,False
+2012,100 to 500 m,production enhancement,57,False
+2012,100 to 500 m,temporary abandonment,165,False
+2012,100 to 500 m,permanent abandonment,58,False
+2012,100 to 500 m,other well work,62,False
+2012,100 to 500 m,abandonment unspecified,4,False
+2012,100 to 500 m,new hole excluded,10,False
+2012,100 to 500 m,initial completion excluded,10,False
+2012,500 to 1500 m,workover and recompletion,86,False
+2012,500 to 1500 m,production enhancement,47,False
+2012,500 to 1500 m,temporary abandonment,108,False
+2012,500 to 1500 m,permanent abandonment,50,False
+2012,500 to 1500 m,other well work,129,False
+2012,500 to 1500 m,abandonment unspecified,5,False
+2012,500 to 1500 m,new hole excluded,50,False
+2012,500 to 1500 m,initial completion excluded,45,False
+2012,1500 m and deeper,workover and recompletion,8,False
+2012,1500 m and deeper,production enhancement,22,False
+2012,1500 m and deeper,temporary abandonment,29,False
+2012,1500 m and deeper,permanent abandonment,38,False
+2012,1500 m and deeper,other well work,75,False
+2012,1500 m and deeper,abandonment unspecified,1,False
+2012,1500 m and deeper,new hole excluded,29,False
+2012,1500 m and deeper,initial completion excluded,32,False
+2012,no depth,workover and recompletion,0,False
+2012,no depth,production enhancement,0,False
+2012,no depth,temporary abandonment,0,False
+2012,no depth,permanent abandonment,0,False
+2012,no depth,other well work,0,False
+2012,no depth,abandonment unspecified,0,False
+2012,no depth,new hole excluded,0,False
+2012,no depth,initial completion excluded,0,False
+2013,under 100 m,workover and recompletion,564,False
+2013,under 100 m,production enhancement,178,False
+2013,under 100 m,temporary abandonment,2237,False
+2013,under 100 m,permanent abandonment,1041,False
+2013,under 100 m,other well work,436,False
+2013,under 100 m,abandonment unspecified,69,False
+2013,under 100 m,new hole excluded,244,False
+2013,under 100 m,initial completion excluded,275,False
+2013,100 to 500 m,workover and recompletion,88,False
+2013,100 to 500 m,production enhancement,53,False
+2013,100 to 500 m,temporary abandonment,180,False
+2013,100 to 500 m,permanent abandonment,63,False
+2013,100 to 500 m,other well work,63,False
+2013,100 to 500 m,abandonment unspecified,15,False
+2013,100 to 500 m,new hole excluded,32,False
+2013,100 to 500 m,initial completion excluded,28,False
+2013,500 to 1500 m,workover and recompletion,56,False
+2013,500 to 1500 m,production enhancement,26,False
+2013,500 to 1500 m,temporary abandonment,86,False
+2013,500 to 1500 m,permanent abandonment,71,False
+2013,500 to 1500 m,other well work,130,False
+2013,500 to 1500 m,abandonment unspecified,7,False
+2013,500 to 1500 m,new hole excluded,38,False
+2013,500 to 1500 m,initial completion excluded,87,False
+2013,1500 m and deeper,workover and recompletion,8,False
+2013,1500 m and deeper,production enhancement,17,False
+2013,1500 m and deeper,temporary abandonment,43,False
+2013,1500 m and deeper,permanent abandonment,39,False
+2013,1500 m and deeper,other well work,65,False
+2013,1500 m and deeper,abandonment unspecified,2,False
+2013,1500 m and deeper,new hole excluded,45,False
+2013,1500 m and deeper,initial completion excluded,40,False
+2013,no depth,workover and recompletion,0,False
+2013,no depth,production enhancement,0,False
+2013,no depth,temporary abandonment,0,False
+2013,no depth,permanent abandonment,0,False
+2013,no depth,other well work,0,False
+2013,no depth,abandonment unspecified,0,False
+2013,no depth,new hole excluded,0,False
+2013,no depth,initial completion excluded,0,False
+2014,under 100 m,workover and recompletion,541,False
+2014,under 100 m,production enhancement,124,False
+2014,under 100 m,temporary abandonment,1649,False
+2014,under 100 m,permanent abandonment,910,False
+2014,under 100 m,other well work,359,False
+2014,under 100 m,abandonment unspecified,28,False
+2014,under 100 m,new hole excluded,168,False
+2014,under 100 m,initial completion excluded,315,False
+2014,100 to 500 m,workover and recompletion,90,False
+2014,100 to 500 m,production enhancement,15,False
+2014,100 to 500 m,temporary abandonment,192,False
+2014,100 to 500 m,permanent abandonment,70,False
+2014,100 to 500 m,other well work,50,False
+2014,100 to 500 m,abandonment unspecified,2,False
+2014,100 to 500 m,new hole excluded,15,False
+2014,100 to 500 m,initial completion excluded,28,False
+2014,500 to 1500 m,workover and recompletion,32,False
+2014,500 to 1500 m,production enhancement,49,False
+2014,500 to 1500 m,temporary abandonment,60,False
+2014,500 to 1500 m,permanent abandonment,84,False
+2014,500 to 1500 m,other well work,107,False
+2014,500 to 1500 m,abandonment unspecified,10,False
+2014,500 to 1500 m,new hole excluded,66,False
+2014,500 to 1500 m,initial completion excluded,75,False
+2014,1500 m and deeper,workover and recompletion,32,False
+2014,1500 m and deeper,production enhancement,23,False
+2014,1500 m and deeper,temporary abandonment,30,False
+2014,1500 m and deeper,permanent abandonment,127,False
+2014,1500 m and deeper,other well work,109,False
+2014,1500 m and deeper,abandonment unspecified,4,False
+2014,1500 m and deeper,new hole excluded,33,False
+2014,1500 m and deeper,initial completion excluded,87,False
+2014,no depth,workover and recompletion,0,False
+2014,no depth,production enhancement,0,False
+2014,no depth,temporary abandonment,0,False
+2014,no depth,permanent abandonment,0,False
+2014,no depth,other well work,0,False
+2014,no depth,abandonment unspecified,0,False
+2014,no depth,new hole excluded,0,False
+2014,no depth,initial completion excluded,0,False
+2015,under 100 m,workover and recompletion,489,False
+2015,under 100 m,production enhancement,78,False
+2015,under 100 m,temporary abandonment,1102,False
+2015,under 100 m,permanent abandonment,709,False
+2015,under 100 m,other well work,273,False
+2015,under 100 m,abandonment unspecified,18,False
+2015,under 100 m,new hole excluded,89,False
+2015,under 100 m,initial completion excluded,164,False
+2015,100 to 500 m,workover and recompletion,93,False
+2015,100 to 500 m,production enhancement,50,False
+2015,100 to 500 m,temporary abandonment,155,False
+2015,100 to 500 m,permanent abandonment,94,False
+2015,100 to 500 m,other well work,39,False
+2015,100 to 500 m,abandonment unspecified,7,False
+2015,100 to 500 m,new hole excluded,13,False
+2015,100 to 500 m,initial completion excluded,36,False
+2015,500 to 1500 m,workover and recompletion,53,False
+2015,500 to 1500 m,production enhancement,80,False
+2015,500 to 1500 m,temporary abandonment,70,False
+2015,500 to 1500 m,permanent abandonment,125,False
+2015,500 to 1500 m,other well work,129,False
+2015,500 to 1500 m,abandonment unspecified,7,False
+2015,500 to 1500 m,new hole excluded,57,False
+2015,500 to 1500 m,initial completion excluded,97,False
+2015,1500 m and deeper,workover and recompletion,51,False
+2015,1500 m and deeper,production enhancement,36,False
+2015,1500 m and deeper,temporary abandonment,48,False
+2015,1500 m and deeper,permanent abandonment,88,False
+2015,1500 m and deeper,other well work,102,False
+2015,1500 m and deeper,abandonment unspecified,6,False
+2015,1500 m and deeper,new hole excluded,34,False
+2015,1500 m and deeper,initial completion excluded,115,False
+2015,no depth,workover and recompletion,0,False
+2015,no depth,production enhancement,0,False
+2015,no depth,temporary abandonment,0,False
+2015,no depth,permanent abandonment,0,False
+2015,no depth,other well work,0,False
+2015,no depth,abandonment unspecified,0,False
+2015,no depth,new hole excluded,0,False
+2015,no depth,initial completion excluded,0,False
+2016,under 100 m,workover and recompletion,526,False
+2016,under 100 m,production enhancement,87,False
+2016,under 100 m,temporary abandonment,881,False
+2016,under 100 m,permanent abandonment,896,False
+2016,under 100 m,other well work,212,False
+2016,under 100 m,abandonment unspecified,10,False
+2016,under 100 m,new hole excluded,23,False
+2016,under 100 m,initial completion excluded,92,False
+2016,100 to 500 m,workover and recompletion,66,False
+2016,100 to 500 m,production enhancement,28,False
+2016,100 to 500 m,temporary abandonment,154,False
+2016,100 to 500 m,permanent abandonment,144,False
+2016,100 to 500 m,other well work,46,False
+2016,100 to 500 m,abandonment unspecified,8,False
+2016,100 to 500 m,new hole excluded,6,False
+2016,100 to 500 m,initial completion excluded,25,False
+2016,500 to 1500 m,workover and recompletion,52,False
+2016,500 to 1500 m,production enhancement,68,False
+2016,500 to 1500 m,temporary abandonment,49,False
+2016,500 to 1500 m,permanent abandonment,159,False
+2016,500 to 1500 m,other well work,123,False
+2016,500 to 1500 m,abandonment unspecified,20,False
+2016,500 to 1500 m,new hole excluded,26,False
+2016,500 to 1500 m,initial completion excluded,80,False
+2016,1500 m and deeper,workover and recompletion,59,False
+2016,1500 m and deeper,production enhancement,40,False
+2016,1500 m and deeper,temporary abandonment,45,False
+2016,1500 m and deeper,permanent abandonment,82,False
+2016,1500 m and deeper,other well work,103,False
+2016,1500 m and deeper,abandonment unspecified,16,False
+2016,1500 m and deeper,new hole excluded,37,False
+2016,1500 m and deeper,initial completion excluded,82,False
+2016,no depth,workover and recompletion,0,False
+2016,no depth,production enhancement,0,False
+2016,no depth,temporary abandonment,0,False
+2016,no depth,permanent abandonment,0,False
+2016,no depth,other well work,0,False
+2016,no depth,abandonment unspecified,0,False
+2016,no depth,new hole excluded,0,False
+2016,no depth,initial completion excluded,0,False
+2017,under 100 m,workover and recompletion,503,False
+2017,under 100 m,production enhancement,147,False
+2017,under 100 m,temporary abandonment,912,False
+2017,under 100 m,permanent abandonment,671,False
+2017,under 100 m,other well work,209,False
+2017,under 100 m,abandonment unspecified,21,False
+2017,under 100 m,new hole excluded,83,False
+2017,under 100 m,initial completion excluded,109,False
+2017,100 to 500 m,workover and recompletion,66,False
+2017,100 to 500 m,production enhancement,23,False
+2017,100 to 500 m,temporary abandonment,375,False
+2017,100 to 500 m,permanent abandonment,96,False
+2017,100 to 500 m,other well work,54,False
+2017,100 to 500 m,abandonment unspecified,4,False
+2017,100 to 500 m,new hole excluded,31,False
+2017,100 to 500 m,initial completion excluded,36,False
+2017,500 to 1500 m,workover and recompletion,88,False
+2017,500 to 1500 m,production enhancement,89,False
+2017,500 to 1500 m,temporary abandonment,58,False
+2017,500 to 1500 m,permanent abandonment,88,False
+2017,500 to 1500 m,other well work,136,False
+2017,500 to 1500 m,abandonment unspecified,27,False
+2017,500 to 1500 m,new hole excluded,51,False
+2017,500 to 1500 m,initial completion excluded,61,False
+2017,1500 m and deeper,workover and recompletion,35,False
+2017,1500 m and deeper,production enhancement,59,False
+2017,1500 m and deeper,temporary abandonment,29,False
+2017,1500 m and deeper,permanent abandonment,49,False
+2017,1500 m and deeper,other well work,91,False
+2017,1500 m and deeper,abandonment unspecified,17,False
+2017,1500 m and deeper,new hole excluded,28,False
+2017,1500 m and deeper,initial completion excluded,96,False
+2017,no depth,workover and recompletion,0,False
+2017,no depth,production enhancement,0,False
+2017,no depth,temporary abandonment,0,False
+2017,no depth,permanent abandonment,0,False
+2017,no depth,other well work,0,False
+2017,no depth,abandonment unspecified,0,False
+2017,no depth,new hole excluded,0,False
+2017,no depth,initial completion excluded,0,False
+2018,under 100 m,workover and recompletion,469,False
+2018,under 100 m,production enhancement,96,False
+2018,under 100 m,temporary abandonment,986,False
+2018,under 100 m,permanent abandonment,456,False
+2018,under 100 m,other well work,280,False
+2018,under 100 m,abandonment unspecified,14,False
+2018,under 100 m,new hole excluded,88,False
+2018,under 100 m,initial completion excluded,142,False
+2018,100 to 500 m,workover and recompletion,65,False
+2018,100 to 500 m,production enhancement,22,False
+2018,100 to 500 m,temporary abandonment,255,False
+2018,100 to 500 m,permanent abandonment,47,False
+2018,100 to 500 m,other well work,29,False
+2018,100 to 500 m,abandonment unspecified,15,False
+2018,100 to 500 m,new hole excluded,26,False
+2018,100 to 500 m,initial completion excluded,33,False
+2018,500 to 1500 m,workover and recompletion,87,False
+2018,500 to 1500 m,production enhancement,69,False
+2018,500 to 1500 m,temporary abandonment,59,False
+2018,500 to 1500 m,permanent abandonment,96,False
+2018,500 to 1500 m,other well work,122,False
+2018,500 to 1500 m,abandonment unspecified,20,False
+2018,500 to 1500 m,new hole excluded,60,False
+2018,500 to 1500 m,initial completion excluded,100,False
+2018,1500 m and deeper,workover and recompletion,61,False
+2018,1500 m and deeper,production enhancement,51,False
+2018,1500 m and deeper,temporary abandonment,36,False
+2018,1500 m and deeper,permanent abandonment,19,False
+2018,1500 m and deeper,other well work,95,False
+2018,1500 m and deeper,abandonment unspecified,13,False
+2018,1500 m and deeper,new hole excluded,39,False
+2018,1500 m and deeper,initial completion excluded,81,False
+2018,no depth,workover and recompletion,0,False
+2018,no depth,production enhancement,0,False
+2018,no depth,temporary abandonment,0,False
+2018,no depth,permanent abandonment,0,False
+2018,no depth,other well work,0,False
+2018,no depth,abandonment unspecified,0,False
+2018,no depth,new hole excluded,0,False
+2018,no depth,initial completion excluded,0,False
+2019,under 100 m,workover and recompletion,341,False
+2019,under 100 m,production enhancement,70,False
+2019,under 100 m,temporary abandonment,824,False
+2019,under 100 m,permanent abandonment,426,False
+2019,under 100 m,other well work,264,False
+2019,under 100 m,abandonment unspecified,20,False
+2019,under 100 m,new hole excluded,84,False
+2019,under 100 m,initial completion excluded,88,False
+2019,100 to 500 m,workover and recompletion,83,False
+2019,100 to 500 m,production enhancement,12,False
+2019,100 to 500 m,temporary abandonment,111,False
+2019,100 to 500 m,permanent abandonment,86,False
+2019,100 to 500 m,other well work,65,False
+2019,100 to 500 m,abandonment unspecified,9,False
+2019,100 to 500 m,new hole excluded,32,False
+2019,100 to 500 m,initial completion excluded,45,False
+2019,500 to 1500 m,workover and recompletion,114,False
+2019,500 to 1500 m,production enhancement,70,False
+2019,500 to 1500 m,temporary abandonment,90,False
+2019,500 to 1500 m,permanent abandonment,60,False
+2019,500 to 1500 m,other well work,119,False
+2019,500 to 1500 m,abandonment unspecified,11,False
+2019,500 to 1500 m,new hole excluded,78,False
+2019,500 to 1500 m,initial completion excluded,127,False
+2019,1500 m and deeper,workover and recompletion,39,False
+2019,1500 m and deeper,production enhancement,52,False
+2019,1500 m and deeper,temporary abandonment,49,False
+2019,1500 m and deeper,permanent abandonment,56,False
+2019,1500 m and deeper,other well work,138,False
+2019,1500 m and deeper,abandonment unspecified,11,False
+2019,1500 m and deeper,new hole excluded,38,False
+2019,1500 m and deeper,initial completion excluded,51,False
+2019,no depth,workover and recompletion,0,False
+2019,no depth,production enhancement,0,False
+2019,no depth,temporary abandonment,0,False
+2019,no depth,permanent abandonment,0,False
+2019,no depth,other well work,0,False
+2019,no depth,abandonment unspecified,0,False
+2019,no depth,new hole excluded,0,False
+2019,no depth,initial completion excluded,0,False
+2020,under 100 m,workover and recompletion,241,False
+2020,under 100 m,production enhancement,28,False
+2020,under 100 m,temporary abandonment,362,False
+2020,under 100 m,permanent abandonment,316,False
+2020,under 100 m,other well work,160,False
+2020,under 100 m,abandonment unspecified,32,False
+2020,under 100 m,new hole excluded,45,False
+2020,under 100 m,initial completion excluded,40,False
+2020,100 to 500 m,workover and recompletion,59,False
+2020,100 to 500 m,production enhancement,14,False
+2020,100 to 500 m,temporary abandonment,72,False
+2020,100 to 500 m,permanent abandonment,89,False
+2020,100 to 500 m,other well work,29,False
+2020,100 to 500 m,abandonment unspecified,16,False
+2020,100 to 500 m,new hole excluded,23,False
+2020,100 to 500 m,initial completion excluded,53,False
+2020,500 to 1500 m,workover and recompletion,94,False
+2020,500 to 1500 m,production enhancement,47,False
+2020,500 to 1500 m,temporary abandonment,54,False
+2020,500 to 1500 m,permanent abandonment,51,False
+2020,500 to 1500 m,other well work,106,False
+2020,500 to 1500 m,abandonment unspecified,40,False
+2020,500 to 1500 m,new hole excluded,36,False
+2020,500 to 1500 m,initial completion excluded,90,False
+2020,1500 m and deeper,workover and recompletion,50,False
+2020,1500 m and deeper,production enhancement,53,False
+2020,1500 m and deeper,temporary abandonment,29,False
+2020,1500 m and deeper,permanent abandonment,54,False
+2020,1500 m and deeper,other well work,103,False
+2020,1500 m and deeper,abandonment unspecified,22,False
+2020,1500 m and deeper,new hole excluded,23,False
+2020,1500 m and deeper,initial completion excluded,144,False
+2020,no depth,workover and recompletion,0,False
+2020,no depth,production enhancement,0,False
+2020,no depth,temporary abandonment,0,False
+2020,no depth,permanent abandonment,0,False
+2020,no depth,other well work,0,False
+2020,no depth,abandonment unspecified,0,False
+2020,no depth,new hole excluded,0,False
+2020,no depth,initial completion excluded,0,False
+2021,under 100 m,workover and recompletion,391,False
+2021,under 100 m,production enhancement,46,False
+2021,under 100 m,temporary abandonment,663,False
+2021,under 100 m,permanent abandonment,463,False
+2021,under 100 m,other well work,77,False
+2021,under 100 m,abandonment unspecified,53,False
+2021,under 100 m,new hole excluded,57,False
+2021,under 100 m,initial completion excluded,67,False
+2021,100 to 500 m,workover and recompletion,128,False
+2021,100 to 500 m,production enhancement,11,False
+2021,100 to 500 m,temporary abandonment,132,False
+2021,100 to 500 m,permanent abandonment,72,False
+2021,100 to 500 m,other well work,16,False
+2021,100 to 500 m,abandonment unspecified,12,False
+2021,100 to 500 m,new hole excluded,24,False
+2021,100 to 500 m,initial completion excluded,32,False
+2021,500 to 1500 m,workover and recompletion,75,False
+2021,500 to 1500 m,production enhancement,50,False
+2021,500 to 1500 m,temporary abandonment,107,False
+2021,500 to 1500 m,permanent abandonment,104,False
+2021,500 to 1500 m,other well work,82,False
+2021,500 to 1500 m,abandonment unspecified,66,False
+2021,500 to 1500 m,new hole excluded,61,False
+2021,500 to 1500 m,initial completion excluded,125,False
+2021,1500 m and deeper,workover and recompletion,76,False
+2021,1500 m and deeper,production enhancement,67,False
+2021,1500 m and deeper,temporary abandonment,18,False
+2021,1500 m and deeper,permanent abandonment,69,False
+2021,1500 m and deeper,other well work,63,False
+2021,1500 m and deeper,abandonment unspecified,17,False
+2021,1500 m and deeper,new hole excluded,22,False
+2021,1500 m and deeper,initial completion excluded,92,False
+2021,no depth,workover and recompletion,0,False
+2021,no depth,production enhancement,0,False
+2021,no depth,temporary abandonment,0,False
+2021,no depth,permanent abandonment,0,False
+2021,no depth,other well work,0,False
+2021,no depth,abandonment unspecified,0,False
+2021,no depth,new hole excluded,0,False
+2021,no depth,initial completion excluded,0,False
+2022,under 100 m,workover and recompletion,469,False
+2022,under 100 m,production enhancement,62,False
+2022,under 100 m,temporary abandonment,1386,False
+2022,under 100 m,permanent abandonment,697,False
+2022,under 100 m,other well work,20,False
+2022,under 100 m,abandonment unspecified,56,False
+2022,under 100 m,new hole excluded,72,False
+2022,under 100 m,initial completion excluded,105,False
+2022,100 to 500 m,workover and recompletion,115,False
+2022,100 to 500 m,production enhancement,20,False
+2022,100 to 500 m,temporary abandonment,68,False
+2022,100 to 500 m,permanent abandonment,65,False
+2022,100 to 500 m,other well work,8,False
+2022,100 to 500 m,abandonment unspecified,17,False
+2022,100 to 500 m,new hole excluded,19,False
+2022,100 to 500 m,initial completion excluded,24,False
+2022,500 to 1500 m,workover and recompletion,168,False
+2022,500 to 1500 m,production enhancement,78,False
+2022,500 to 1500 m,temporary abandonment,65,False
+2022,500 to 1500 m,permanent abandonment,197,False
+2022,500 to 1500 m,other well work,38,False
+2022,500 to 1500 m,abandonment unspecified,28,False
+2022,500 to 1500 m,new hole excluded,59,False
+2022,500 to 1500 m,initial completion excluded,108,False
+2022,1500 m and deeper,workover and recompletion,99,False
+2022,1500 m and deeper,production enhancement,84,False
+2022,1500 m and deeper,temporary abandonment,30,False
+2022,1500 m and deeper,permanent abandonment,28,False
+2022,1500 m and deeper,other well work,46,False
+2022,1500 m and deeper,abandonment unspecified,13,False
+2022,1500 m and deeper,new hole excluded,20,False
+2022,1500 m and deeper,initial completion excluded,128,False
+2022,no depth,workover and recompletion,0,False
+2022,no depth,production enhancement,0,False
+2022,no depth,temporary abandonment,0,False
+2022,no depth,permanent abandonment,0,False
+2022,no depth,other well work,0,False
+2022,no depth,abandonment unspecified,0,False
+2022,no depth,new hole excluded,0,False
+2022,no depth,initial completion excluded,0,False
+2023,under 100 m,workover and recompletion,266,False
+2023,under 100 m,production enhancement,38,False
+2023,under 100 m,temporary abandonment,1593,False
+2023,under 100 m,permanent abandonment,1192,False
+2023,under 100 m,other well work,21,False
+2023,under 100 m,abandonment unspecified,66,False
+2023,under 100 m,new hole excluded,63,False
+2023,under 100 m,initial completion excluded,58,False
+2023,100 to 500 m,workover and recompletion,73,False
+2023,100 to 500 m,production enhancement,22,False
+2023,100 to 500 m,temporary abandonment,438,False
+2023,100 to 500 m,permanent abandonment,66,False
+2023,100 to 500 m,other well work,5,False
+2023,100 to 500 m,abandonment unspecified,79,False
+2023,100 to 500 m,new hole excluded,0,False
+2023,100 to 500 m,initial completion excluded,23,False
+2023,500 to 1500 m,workover and recompletion,88,False
+2023,500 to 1500 m,production enhancement,94,False
+2023,500 to 1500 m,temporary abandonment,67,False
+2023,500 to 1500 m,permanent abandonment,74,False
+2023,500 to 1500 m,other well work,33,False
+2023,500 to 1500 m,abandonment unspecified,67,False
+2023,500 to 1500 m,new hole excluded,48,False
+2023,500 to 1500 m,initial completion excluded,66,False
+2023,1500 m and deeper,workover and recompletion,131,False
+2023,1500 m and deeper,production enhancement,76,False
+2023,1500 m and deeper,temporary abandonment,38,False
+2023,1500 m and deeper,permanent abandonment,33,False
+2023,1500 m and deeper,other well work,39,False
+2023,1500 m and deeper,abandonment unspecified,16,False
+2023,1500 m and deeper,new hole excluded,60,False
+2023,1500 m and deeper,initial completion excluded,133,False
+2023,no depth,workover and recompletion,0,False
+2023,no depth,production enhancement,0,False
+2023,no depth,temporary abandonment,0,False
+2023,no depth,permanent abandonment,0,False
+2023,no depth,other well work,0,False
+2023,no depth,abandonment unspecified,0,False
+2023,no depth,new hole excluded,0,False
+2023,no depth,initial completion excluded,0,False
+2024,under 100 m,workover and recompletion,255,False
+2024,under 100 m,production enhancement,39,False
+2024,under 100 m,temporary abandonment,495,False
+2024,under 100 m,permanent abandonment,579,False
+2024,under 100 m,other well work,25,False
+2024,under 100 m,abandonment unspecified,29,False
+2024,under 100 m,new hole excluded,35,False
+2024,under 100 m,initial completion excluded,77,False
+2024,100 to 500 m,workover and recompletion,43,False
+2024,100 to 500 m,production enhancement,12,False
+2024,100 to 500 m,temporary abandonment,114,False
+2024,100 to 500 m,permanent abandonment,78,False
+2024,100 to 500 m,other well work,5,False
+2024,100 to 500 m,abandonment unspecified,46,False
+2024,100 to 500 m,new hole excluded,4,False
+2024,100 to 500 m,initial completion excluded,31,False
+2024,500 to 1500 m,workover and recompletion,106,False
+2024,500 to 1500 m,production enhancement,76,False
+2024,500 to 1500 m,temporary abandonment,41,False
+2024,500 to 1500 m,permanent abandonment,119,False
+2024,500 to 1500 m,other well work,29,False
+2024,500 to 1500 m,abandonment unspecified,46,False
+2024,500 to 1500 m,new hole excluded,27,False
+2024,500 to 1500 m,initial completion excluded,96,False
+2024,1500 m and deeper,workover and recompletion,69,False
+2024,1500 m and deeper,production enhancement,48,False
+2024,1500 m and deeper,temporary abandonment,34,False
+2024,1500 m and deeper,permanent abandonment,63,False
+2024,1500 m and deeper,other well work,35,False
+2024,1500 m and deeper,abandonment unspecified,12,False
+2024,1500 m and deeper,new hole excluded,51,False
+2024,1500 m and deeper,initial completion excluded,150,False
+2024,no depth,workover and recompletion,0,False
+2024,no depth,production enhancement,0,False
+2024,no depth,temporary abandonment,0,False
+2024,no depth,permanent abandonment,0,False
+2024,no depth,other well work,0,False
+2024,no depth,abandonment unspecified,0,False
+2024,no depth,new hole excluded,0,False
+2024,no depth,initial completion excluded,0,False
+2025,under 100 m,workover and recompletion,243,False
+2025,under 100 m,production enhancement,46,False
+2025,under 100 m,temporary abandonment,792,False
+2025,under 100 m,permanent abandonment,1098,False
+2025,under 100 m,other well work,27,False
+2025,under 100 m,abandonment unspecified,73,False
+2025,under 100 m,new hole excluded,34,False
+2025,under 100 m,initial completion excluded,51,False
+2025,100 to 500 m,workover and recompletion,71,False
+2025,100 to 500 m,production enhancement,23,False
+2025,100 to 500 m,temporary abandonment,175,False
+2025,100 to 500 m,permanent abandonment,94,False
+2025,100 to 500 m,other well work,5,False
+2025,100 to 500 m,abandonment unspecified,13,False
+2025,100 to 500 m,new hole excluded,0,False
+2025,100 to 500 m,initial completion excluded,17,False
+2025,500 to 1500 m,workover and recompletion,100,False
+2025,500 to 1500 m,production enhancement,55,False
+2025,500 to 1500 m,temporary abandonment,68,False
+2025,500 to 1500 m,permanent abandonment,157,False
+2025,500 to 1500 m,other well work,30,False
+2025,500 to 1500 m,abandonment unspecified,59,False
+2025,500 to 1500 m,new hole excluded,43,False
+2025,500 to 1500 m,initial completion excluded,90,False
+2025,1500 m and deeper,workover and recompletion,68,False
+2025,1500 m and deeper,production enhancement,59,False
+2025,1500 m and deeper,temporary abandonment,25,False
+2025,1500 m and deeper,permanent abandonment,38,False
+2025,1500 m and deeper,other well work,38,False
+2025,1500 m and deeper,abandonment unspecified,18,False
+2025,1500 m and deeper,new hole excluded,50,False
+2025,1500 m and deeper,initial completion excluded,173,False
+2025,no depth,workover and recompletion,0,False
+2025,no depth,production enhancement,0,False
+2025,no depth,temporary abandonment,0,False
+2025,no depth,permanent abandonment,0,False
+2025,no depth,other well work,0,False
+2025,no depth,abandonment unspecified,0,False
+2025,no depth,new hole excluded,0,False
+2025,no depth,initial completion excluded,0,False
+2026,under 100 m,workover and recompletion,201,True
+2026,under 100 m,production enhancement,27,True
+2026,under 100 m,temporary abandonment,816,True
+2026,under 100 m,permanent abandonment,890,True
+2026,under 100 m,other well work,11,True
+2026,under 100 m,abandonment unspecified,189,True
+2026,under 100 m,new hole excluded,37,True
+2026,under 100 m,initial completion excluded,46,True
+2026,100 to 500 m,workover and recompletion,77,True
+2026,100 to 500 m,production enhancement,37,True
+2026,100 to 500 m,temporary abandonment,89,True
+2026,100 to 500 m,permanent abandonment,116,True
+2026,100 to 500 m,other well work,2,True
+2026,100 to 500 m,abandonment unspecified,26,True
+2026,100 to 500 m,new hole excluded,0,True
+2026,100 to 500 m,initial completion excluded,4,True
+2026,500 to 1500 m,workover and recompletion,92,True
+2026,500 to 1500 m,production enhancement,88,True
+2026,500 to 1500 m,temporary abandonment,17,True
+2026,500 to 1500 m,permanent abandonment,74,True
+2026,500 to 1500 m,other well work,14,True
+2026,500 to 1500 m,abandonment unspecified,27,True
+2026,500 to 1500 m,new hole excluded,51,True
+2026,500 to 1500 m,initial completion excluded,55,True
+2026,1500 m and deeper,workover and recompletion,63,True
+2026,1500 m and deeper,production enhancement,26,True
+2026,1500 m and deeper,temporary abandonment,32,True
+2026,1500 m and deeper,permanent abandonment,31,True
+2026,1500 m and deeper,other well work,35,True
+2026,1500 m and deeper,abandonment unspecified,18,True
+2026,1500 m and deeper,new hole excluded,36,True
+2026,1500 m and deeper,initial completion excluded,120,True
+2026,no depth,workover and recompletion,0,True
+2026,no depth,production enhancement,0,True
+2026,no depth,temporary abandonment,0,True
+2026,no depth,permanent abandonment,0,True
+2026,no depth,other well work,0,True
+2026,no depth,abandonment unspecified,0,True
+2026,no depth,new hole excluded,0,True
+2026,no depth,initial completion excluded,0,True
