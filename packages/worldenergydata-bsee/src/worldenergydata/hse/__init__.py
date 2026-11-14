@@ -67,6 +67,7 @@ from worldenergydata.hse.importers.epa_tri_importer import EPATRIImporter
 # Query API (wed#363 / workspace-hub#3286): typed-query surfaces on the shared
 # TypedQuery base. Surfaced at the top level as ``wed.hse_api``.
 from worldenergydata.hse import api
+from worldenergydata.hse.api import HSEIncidentsQuery
 
 __version__ = "1.0.0"
 __all__ = [
@@ -92,6 +93,7 @@ __all__ = [
     "ground_and_log",
     # Query API (wed#363)
     "api",
+    "HSEIncidentsQuery",
 ]
 
 _logger = get_logger(__name__)
