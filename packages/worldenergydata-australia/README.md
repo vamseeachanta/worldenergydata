@@ -83,12 +83,19 @@ summaries = monthly_supply(
 
 Select the facility and location by their report identifiers. The reader
 preserves identifiers as text and distinguishes locations within a facility.
+Surrounding whitespace is stripped from both report identifiers and selections;
+blank selections are rejected.
 It does not identify which facility types represent production or allocate a
 facility's throughput to a field. Duplicate facility/location/gas-day keys are
 rejected, even if update timestamps differ; revision precedence is unqualified.
 
 The monthly result sums the observed `Supply` readings only, without adding
-`Demand`, storage or transfers. `observed_supply_total` remains in **unqualified
+`Demand`, storage or transfers. Nonblank readings use signed or unsigned integers
+or fixed-point decimal text with digits on both sides of the decimal point.
+Exponent notation and underscore grouping are rejected. Totals retain the exact
+decimal value independently of the caller's decimal precision and exponent bounds;
+the caller's decimal context is preserved.
+`observed_supply_total` remains in **unqualified
 report units**, with no rate integration, calorific-value assumption or gas-volume
 conversion. A blank `Supply` makes the total `None`. A reported zero contributes
 zero. Missing days are listed in `missing_dates`; months with no observations are
@@ -97,7 +104,8 @@ including leap days. It establishes coverage only. A partial month's numeric
 total must not be presented as full-month production or extrapolated silently.
 
 Every summary carries `unit_status`, `reuse_status` and `production_status` as
-`NOT_EVALUATED`. `AustraliaAdapter` and the reference chain remain screening-only.
+`NOT_EVALUATED`; constructors and `dataclasses.replace` cannot override these
+states. `AustraliaAdapter` and the reference chain remain screening-only.
 No engineering coefficient, price or acceptance threshold is supplied.
 
 ### Source observations and limits

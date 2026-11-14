@@ -6,8 +6,9 @@ are invented arithmetic inputs in unqualified report units, not gas volumes.
 """
 
 import csv
+from dataclasses import fields, replace
 from datetime import date
-from decimal import Decimal
+from decimal import ROUND_DOWN, ROUND_HALF_EVEN, Decimal, Inexact, localcontext
 
 import pytest
 
@@ -215,3 +216,124 @@ def test_rejects_ragged_records(tmp_path):
     path.write_text(",".join(HEADER) + "\n2024/02/01,too,few\n")
     with pytest.raises(ValueError, match="column count"):
         read_actual_flow_csv(path)
+
+
+@pytest.mark.parametrize(
+    "supplies, expected",
+    [
+        (["12.34", "0.005"], "12.345"),
+        (["12345678901234567890123456789"], "12345678901234567890123456789"),
+        (["999.999", "0.001"], "1000.000"),
+        (["0.00012345", "0.00000005"], "0.00012350"),
+        (
+            [
+                "10000000000000000000000000000",
+                "0.005",
+                "-10000000000000000000000000000",
+            ],
+            "0.005",
+        ),
+    ],
+)
+@pytest.mark.parametrize(
+    "precision, emax, emin, rounding, clamp",
+    [
+        (28, 999999, -999999, ROUND_HALF_EVEN, 0),
+        (4, 999999, -999999, ROUND_HALF_EVEN, 0),
+        (2, 2, -2, ROUND_DOWN, 1),
+    ],
+)
+@pytest.mark.parametrize("trap_inexact", [False, True])
+def test_rollup_is_exact_and_preserves_caller_decimal_context(
+    tmp_path, supplies, expected, precision, emax, emin, rounding, clamp, trap_inexact
+):
+    """Literal base-ten sums include carry, cancellation and a 29-digit reading.
+
+    12345 hundred-millionths + 5 hundred-millionths = 12350 hundred-millionths;
+    equal opposite large integers cancel, leaving the literal 0.005 reading.
+    Context settings are synthetic arithmetic stress cases, not source limits.
+    """
+    rows = [
+        _row(f"2024/02/{day:02d}", supply)
+        for day, supply in enumerate(supplies, start=1)
+    ]
+    records = read_actual_flow_csv(_write(tmp_path, rows))
+    with localcontext() as context:
+        context.prec = precision
+        context.Emax = emax
+        context.Emin = emin
+        context.rounding = rounding
+        context.clamp = clamp
+        context.traps[Inexact] = trap_inexact
+        context.clear_flags()
+        original = context.copy()
+        (summary,) = monthly_supply(records, facility_id="F-A", location_id="L-A")
+        assert summary.observed_supply_total == Decimal(expected)
+        assert context.prec == original.prec
+        assert context.Emax == original.Emax
+        assert context.Emin == original.Emin
+        assert context.rounding == original.rounding
+        assert context.clamp == original.clamp
+        assert context.traps == original.traps
+        assert context.flags == original.flags
+
+
+@pytest.mark.parametrize(
+    "facility_id, location_id",
+    [(" F-A", "L-A"), ("F-A", "L-A \t"), (" F-A ", " L-A ")],
+)
+def test_selection_strips_whitespace_like_parsed_identifiers(
+    tmp_path, facility_id, location_id
+):
+    records = read_actual_flow_csv(
+        _write(tmp_path, [_row(FacilityId=" F-A ", LocationId=" L-A ")])
+    )
+    (summary,) = monthly_supply(
+        records, facility_id=facility_id, location_id=location_id
+    )
+    assert summary.facility_id == "F-A"
+    assert summary.location_id == "L-A"
+    assert summary.observed_supply_total == Decimal("2.5")
+
+
+@pytest.mark.parametrize("selection", ["facility_id", "location_id"])
+def test_selection_rejects_blank_identifiers(tmp_path, selection):
+    records = read_actual_flow_csv(_write(tmp_path, [_row()]))
+    arguments = {"facility_id": "F-A", "location_id": "L-A", selection: " \t"}
+    with pytest.raises(ValueError, match="required"):
+        monthly_supply(records, **arguments)
+
+
+@pytest.mark.parametrize("status", ["unit_status", "reuse_status", "production_status"])
+def test_qualification_cannot_be_promoted_by_replace(tmp_path, status):
+    records = read_actual_flow_csv(_write(tmp_path, [_row()]))
+    (summary,) = monthly_supply(records, facility_id="F-A", location_id="L-A")
+    with pytest.raises(ValueError, match=status):
+        replace(summary, **{status: "QUALIFIED"})
+    assert getattr(replace(summary, reported_days=1), status) == "NOT_EVALUATED"
+
+
+@pytest.mark.parametrize("status", ["unit_status", "reuse_status", "production_status"])
+def test_qualification_cannot_be_promoted_in_constructor(tmp_path, status):
+    records = read_actual_flow_csv(_write(tmp_path, [_row()]))
+    (summary,) = monthly_supply(records, facility_id="F-A", location_id="L-A")
+    arguments = {
+        field.name: getattr(summary, field.name)
+        for field in fields(summary)
+        if field.init
+    }
+    arguments[status] = "QUALIFIED"
+    with pytest.raises(TypeError, match=status):
+        type(summary)(**arguments)
+
+
+@pytest.mark.parametrize("supply", ["1_000", "1E+3", "1e-3", "1E+1000000"])
+def test_rejects_non_report_decimal_notation(tmp_path, supply):
+    with pytest.raises(ValueError, match="Supply"):
+        read_actual_flow_csv(_write(tmp_path, [_row(supply=supply)]))
+
+
+@pytest.mark.parametrize("supply", ["0", "-1.25", "+2.50", "001.250", " 2.5 "])
+def test_accepts_signed_fixed_point_supply(tmp_path, supply):
+    (record,) = read_actual_flow_csv(_write(tmp_path, [_row(supply=supply)]))
+    assert record.supply == Decimal(supply.strip())

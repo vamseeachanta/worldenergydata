@@ -11,16 +11,27 @@ from __future__ import annotations
 
 import calendar
 import csv
+import re
 from collections import defaultdict
 from collections.abc import Iterable
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import date, datetime
-from decimal import Decimal, InvalidOperation
+from decimal import (
+    MAX_EMAX,
+    MIN_EMIN,
+    Context,
+    Decimal,
+    Inexact,
+    InvalidOperation,
+    Overflow,
+    localcontext,
+)
 from pathlib import Path
 
 SOURCE_URL = (
     "https://nemweb.com.au/Reports/Current/GBB/GasBBActualFlowStorageLast31.CSV"
 )
+_SUPPLY_PATTERN = re.compile(r"[+-]?[0-9]+(?:\.[0-9]+)?")
 _REQUIRED_COLUMNS = frozenset(
     {
         "GasDate",
@@ -74,9 +85,9 @@ class MonthlySupply:
 
     # No source-specific units, reuse permission or field allocation has been
     # qualified; a complete month must not silently promote any of these states.
-    unit_status: str = "NOT_EVALUATED"
-    reuse_status: str = "NOT_EVALUATED"
-    production_status: str = "NOT_EVALUATED"
+    unit_status: str = field(default="NOT_EVALUATED", init=False)
+    reuse_status: str = field(default="NOT_EVALUATED", init=False)
+    production_status: str = field(default="NOT_EVALUATED", init=False)
 
 
 def read_actual_flow_csv(path: str | Path) -> tuple[ActualFlowRecord, ...]:
@@ -116,6 +127,8 @@ def read_actual_flow_csv(path: str | Path) -> tuple[ActualFlowRecord, ...]:
             supply_text = row["Supply"].strip()
             supply = None
             if supply_text:
+                if _SUPPLY_PATTERN.fullmatch(supply_text) is None:
+                    raise ValueError(f"row {row_number}: invalid Supply")
                 try:
                     supply = Decimal(supply_text)
                 except InvalidOperation:
@@ -148,7 +161,9 @@ def monthly_supply(
     facility-to-field mapping or production-facility classification is assumed.
     Months with no records are absent, never synthesized with zero supply.
     """
-    if not facility_id.strip() or not location_id.strip():
+    facility_id = facility_id.strip()
+    location_id = location_id.strip()
+    if not facility_id or not location_id:
         raise ValueError("facility_id and location_id are required")
     selected = tuple(
         record
@@ -177,7 +192,9 @@ def monthly_supply(
         total = (
             None
             if missing_supply_days
-            else sum((record.supply for record in group), Decimal(0))
+            else _sum_exact(
+                tuple(record.supply for record in group if record.supply is not None)
+            )
         )
         summaries.append(
             MonthlySupply(
@@ -193,6 +210,25 @@ def monthly_supply(
             )
         )
     return tuple(summaries)
+
+
+def _sum_exact(values: tuple[Decimal, ...]) -> Decimal:
+    """Sum a nonempty group with enough places for every input and any carry."""
+    lowest_place = min(value.as_tuple().exponent for value in values)
+    highest_place = max(value.adjusted() for value in values)
+    # Aligned coefficients occupy at most this many places. A sum of n such
+    # coefficients needs at most len(str(n)) further places, even before
+    # cancellation. Precision and exponent bounds never inherit caller state.
+    precision = highest_place - lowest_place + 1 + len(str(len(values)))
+    context = Context(
+        prec=precision,
+        Emax=MAX_EMAX,
+        Emin=MIN_EMIN,
+        clamp=0,
+        traps=[Inexact, InvalidOperation, Overflow],
+    )
+    with localcontext(context):
+        return sum(values, Decimal(0))
 
 
 def _parse_timestamp(
