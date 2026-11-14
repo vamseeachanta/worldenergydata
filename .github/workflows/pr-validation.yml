@@ -24,7 +24,7 @@ jobs:
     runs-on: >-
       ${{ (github.event_name != 'pull_request' ||
           github.event.pull_request.head.repo.full_name == github.repository) &&
-          fromJSON('["self-hosted","x64","linux"]') || 'ubuntu-latest' }}
+          fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
 
     steps:
       - name: Check PR title format
@@ -55,7 +55,7 @@ jobs:
     runs-on: >-
       ${{ (github.event_name != 'pull_request' ||
           github.event.pull_request.head.repo.full_name == github.repository) &&
-          fromJSON('["self-hosted","x64","linux"]') || 'ubuntu-latest' }}
+          fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
 
     steps:
       - name: Checkout repository
@@ -86,7 +86,7 @@ jobs:
     runs-on: >-
       ${{ (github.event_name != 'pull_request' ||
           github.event.pull_request.head.repo.full_name == github.repository) &&
-          fromJSON('["self-hosted","x64","linux"]') || 'ubuntu-latest' }}
+          fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
 
     steps:
       - name: Checkout repository
@@ -149,7 +149,7 @@ jobs:
     runs-on: >-
       ${{ (github.event_name != 'pull_request' ||
           github.event.pull_request.head.repo.full_name == github.repository) &&
-          fromJSON('["self-hosted","x64","linux"]') || 'ubuntu-latest' }}
+          fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
     permissions:
       contents: read
 
