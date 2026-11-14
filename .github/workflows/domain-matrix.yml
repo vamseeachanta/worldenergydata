@@ -1,6 +1,6 @@
 name: Domain Matrix (reusable)
 
-# Keep domain discovery, tests and aggregation on the same runner policy.
+# Discovery admits either Linux architecture; tests and aggregation retain x64.
 permissions:
   contents: read
 
@@ -60,7 +60,7 @@ jobs:
     runs-on: >-
       ${{ (github.event_name != 'pull_request' ||
           github.event.pull_request.head.repo.full_name == github.repository) &&
-          fromJSON('["self-hosted","x64","linux"]') || 'ubuntu-latest' }}
+          fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
     timeout-minutes: 10
     outputs:
       matrix: ${{ steps.sel.outputs.matrix }}

@@ -19,6 +19,8 @@ WORKFLOWS = [
     ("docs.yml", 1),
     ("brand-guard.yml", 1),
     ("wheel-ownership.yml", 1),
+    ("pr-validation.yml", 4),
+    ("domain-matrix.yml", 3),
 ]
 X64_ONLY = {
     "full-suite",
@@ -27,6 +29,14 @@ X64_ONLY = {
     "dependency-audit",
     "performance-benchmark",
 }
+DOMAIN_X64_ONLY = {"test-domain", "aggregate"}
+LIGHTWEIGHT_PR_JOBS = [
+    ("pr-validation.yml", "pr-title"),
+    ("pr-validation.yml", "file-size"),
+    ("pr-validation.yml", "sensitive-files"),
+    ("pr-validation.yml", "pack-lint"),
+    ("domain-matrix.yml", "discover"),
+]
 
 
 def _local_jobs(filename):
@@ -49,11 +59,11 @@ def _required_labels(selector):
 
 @pytest.mark.parametrize("filename, job_count", WORKFLOWS)
 def test_linux_runner_routing(filename, job_count):
-    """Hand count: 6 + 10 + 1 + 1 + 1 = 19 local jobs; one CI job is reusable.
+    """Hand count: 6 + 10 + 1 + 1 + 1 + 4 + 3 = 26 local jobs.
 
     Compatible jobs request Linux; frozen all-extras jobs retain Linux x64.
     The same-repository predicate sends fork PRs to ubuntu-latest.
-    Reusable workflows own their runner selection outside this repository.
+    The local reusable domain workflow owns three of these selectors.
     """
     jobs = _local_jobs(filename)
     assert len(jobs) == job_count
@@ -65,8 +75,28 @@ def test_linux_runner_routing(filename, job_count):
                 else ["self-hosted", "Linux"]
             )
             assert job["runs-on"] == expected, name
+        elif filename == "domain-matrix.yml" and name in DOMAIN_X64_ONLY:
+            assert " ".join(job["runs-on"].split()) == (
+                FORK_PREFIX + '["self-hosted","x64","linux"]' + FORK_SUFFIX
+            ), name
         else:
             assert " ".join(job["runs-on"].split()) == FORK_ROUTING, name
+
+
+@pytest.mark.parametrize("filename, job_id", LIGHTWEIGHT_PR_JOBS)
+def test_lightweight_pr_jobs_allow_both_architectures(filename, job_id):
+    """Pin each moved job and preserve the exact fork-isolation expression."""
+    selector = _local_jobs(filename)[job_id]["runs-on"]
+    assert " ".join(selector.split()) == FORK_ROUTING
+
+
+@pytest.mark.parametrize("job_id", sorted(DOMAIN_X64_ONLY))
+def test_domain_tests_and_summary_stay_x64(job_id):
+    """CAD-dependent tests and their summary retain the existing x64 policy."""
+    selector = _local_jobs("domain-matrix.yml")[job_id]["runs-on"]
+    assert " ".join(selector.split()) == (
+        FORK_PREFIX + '["self-hosted","x64","linux"]' + FORK_SUFFIX
+    )
 
 
 def test_frozen_all_extras_jobs_stay_x64():
@@ -97,6 +127,8 @@ def test_linux_runner_label_matching(filename, job_count, architecture):
     jobs = _local_jobs(filename)
     assert len(jobs) == job_count
     for name, job in jobs.items():
-        x64_only = filename == "main-full-run.yml" and name in X64_ONLY
+        x64_only = (
+            filename == "main-full-run.yml" and name in X64_ONLY
+        ) or (filename == "domain-matrix.yml" and name in DOMAIN_X64_ONLY)
         matches = _required_labels(job["runs-on"]) <= runner_labels
         assert matches == (not x64_only or architecture == "X64"), name
