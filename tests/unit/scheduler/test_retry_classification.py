@@ -47,7 +47,7 @@ def test_unimplemented_adapter_failure_is_terminal(tmp_path):
 
 
 def test_missing_eia_credentials_is_terminal(monkeypatch, tmp_path):
-    """EIAFeedClient.__init__ raises EIAKeyError before any HTTP request."""
+    """The adapter skips missing credentials before any HTTP request."""
     from worldenergydata.scheduler.jobs.eia_us_refresh import EiaUsRefreshJob
     from worldenergydata.scheduler.monitor import RetryManager
 
@@ -61,9 +61,9 @@ def test_missing_eia_credentials_is_terminal(monkeypatch, tmp_path):
         patch("worldenergydata.eia.client.requests.get") as get,
     ):
         result = manager.run_with_retry(run)
-    assert result.status == "failure"
+    assert result.status == "skipped"
     assert result.retryable is False
-    assert "EIA_API_KEY not set" in result.error_msg
+    assert result.error_msg == "credential_absent"
     run.assert_called_once_with()
     sleep.assert_not_called()
     get.assert_not_called()
@@ -242,7 +242,7 @@ def test_run_once_records_terminal_source_without_backoff(
             b"<html>missing</html>"
         )
         result = scheduler.run_once(job.name)
-    expected_status = "failure"
+    expected_status = "skipped" if source == "eia" else "failure"
     assert result.status == expected_status
     assert result.job_name == job.name
     run.assert_called_once()
@@ -302,7 +302,11 @@ def test_transient_eia_error_can_recover(tmp_path):
     from worldenergydata.scheduler.monitor import RetryManager
 
     job = EiaUsRefreshJob()
-    run = Mock(side_effect=lambda: job.run({"output_dir": str(tmp_path)}))
+    run = Mock(
+        side_effect=lambda: job.run(
+            {"api_key": "configured-fixture", "output_dir": str(tmp_path)}
+        )
+    )
     sync = Mock(output_dir=tmp_path)
     sync.run_all.return_value = []
     manager = RetryManager(max_retries=3, backoff_seconds=1)

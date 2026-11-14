@@ -46,11 +46,22 @@ class EiaUsRefreshJob(AbstractJob):
                 - "output_dir": Output directory path (defaults to "data/modules/eia")
 
         Returns:
-            JobResult indicating success or failure.
+            JobResult indicating success, failure, or a missing-credential skip.
         """
         start = datetime.now()
         try:
             api_key = config.get("api_key") or os.environ.get("EIA_API_KEY")
+            if not api_key:
+                logger.warning("EIA_API_KEY not set; skipping eia_us_refresh")
+                return JobResult(
+                    job_name=self.name,
+                    start_time=start,
+                    end_time=datetime.now(),
+                    status="skipped",
+                    records_updated=0,
+                    error_msg="credential_absent",
+                    retryable=False,
+                )
             output_dir = Path(config.get("output_dir", self.default_output_dir))
 
             sync = EIAIngestionSync(api_key=api_key, output_dir=output_dir)

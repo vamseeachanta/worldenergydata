@@ -41,8 +41,9 @@ jobs:
     day: 5
     time: "04:00"
     enabled: true
-    output_dir: data/modules/eia
-    # api_key: null  # Set to your EIA API key for authenticated endpoints
+    output_dir: data/modules/eia_us
+    # EIA_API_KEY is required; see docs/ops/credentials.md.
+    # A nonempty api_key setting overrides the environment variable.
 
   - name: metocean_refresh
     interval: daily
