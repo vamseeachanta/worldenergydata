@@ -127,8 +127,8 @@ def test_linux_runner_label_matching(filename, job_count, architecture):
     jobs = _local_jobs(filename)
     assert len(jobs) == job_count
     for name, job in jobs.items():
-        x64_only = (
-            filename == "main-full-run.yml" and name in X64_ONLY
-        ) or (filename == "domain-matrix.yml" and name in DOMAIN_X64_ONLY)
+        x64_only = (filename == "main-full-run.yml" and name in X64_ONLY) or (
+            filename == "domain-matrix.yml" and name in DOMAIN_X64_ONLY
+        )
         matches = _required_labels(job["runs-on"]) <= runner_labels
         assert matches == (not x64_only or architecture == "X64"), name
