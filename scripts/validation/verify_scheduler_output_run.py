@@ -437,7 +437,8 @@ def report_summary(receipt):
         ]
         rows = sum(item["rows"] for item in written)
         summary = (
-            f"{len(written)} of {len(datasets)} datasets were written ({rows:,} rows)."
+            f"{len(written)} of {len(datasets)} datasets were written and readable "
+            f"({rows:,} rows)."
         )
         unreadable = sum(
             item["disposition"] == "unreadable" for item in datasets.values()
