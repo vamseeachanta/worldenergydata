@@ -28,6 +28,7 @@ The issue's earlier report counts are therefore not the inventory baseline.
 | Inventory reconciliation | 2026-10-19 | Counts and Pages selections are reconciled with the current tree; the README embeds the drawing and regression checks detect drift. |
 | Provenance reconciliation | 2026-10-21 | Source descriptions are reconciled with the surviving work specifications; symbol locators and stronger regression checks detect stale provenance and avoid line-number drift. |
 | Report count reconciliation | 2026-10-27 | Report and category counts match the HTML tree and inventory CSV after integration. |
+| Checkout isolation | 2026-11-14 | Inventory checkout probes exclude inherited Git settings and external attributes, with hostile-filter and caller-preservation regressions. |
 
 ## Drawing
 
@@ -322,6 +323,19 @@ records copy inputs, and requires every selected report HTML file to be current 
 explicitly unverified.
 The builder performs no network acquisition; report SHA-256 digests are compared
 before and after verification. No report is opened for writing.
+
+The inventory checkout probe reads the inventory blob, mode and `.gitattributes`
+from one pinned commit, then performs real checkout conversion in a disposable
+repository. It strips inherited `GIT_*` settings, disables system/global configuration
+and external attributes, and initializes with an empty template without replacing
+`HOME`. Caller-side reads receive only command-scope ownership trust for the exact
+resolved repository root; disposable checkout commands receive no trust override.
+Hostile external configuration and attributes reproduce CRLF filter output without
+isolation; the isolated probe requires the committed LF bytes for both autocrlf modes.
+Regressions check caller and decoy files, complete Git metadata, external fixture files
+and the parent environment for preservation. These are Linux conversion probes;
+native Windows: NOT RUN. A real system-attributes incident remains unreproduced.
+The separately quarantined CSV-currency check does not establish inventory freshness.
 
 The classification is deliberately evidence-limited: unresolved older reports require
 retention review. Mermaid rendering and live upstream source availability are not verified.
