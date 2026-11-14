@@ -454,3 +454,35 @@ def test_download_snapshot_name_is_validated_before_any_request():
 
     with pytest.raises(ValueError, match="YYYY-MM-DD"):
         download_data.main(["--snapshot", "13-11-2026"])
+
+
+@pytest.mark.parametrize("eor", ["omitted", "failed"])
+def test_unverified_eor_archive_is_never_read(tmp_path, eor):
+    import count_interventions
+
+    from tests.unit.bsee import interventions_archives as fixture
+
+    # The EOR archive is on disk and carries a YES subsea flag, but its
+    # manifest receipt is missing or failed, so its bytes are not verified.
+    data = fixture.build(tmp_path / "2026-11-13", eor=eor)
+    out = tmp_path / "output"
+    summary = count_interventions.run(data, out)
+    assert summary["status"] == "insufficient inputs"
+    assert fixture.EOR in summary["unavailable"]
+    for name in ["subsea_completion_shares", "eor_by_year_band", "unit_type_shares"]:
+        assert not (out / f"{name}.csv").exists(), name
+
+
+def test_verified_eor_archive_supplies_the_subsea_flag(tmp_path):
+    import count_interventions
+
+    from tests.unit.bsee import interventions_archives as fixture
+
+    data = fixture.build(tmp_path / "2026-11-13")
+    out = tmp_path / "output"
+    count_interventions.run(data, out)
+    shares = pd.read_csv(out / "subsea_completion_shares.csv")
+    deep = shares.period.eq("2025") & shares.band.eq(BANDS[3])
+    assert (
+        shares.loc[deep & shares.event.eq("well work"), "subsea_flag_yes"].item() == 1
+    )

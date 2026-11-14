@@ -241,11 +241,11 @@ def test_stage_reach_and_event_ages_by_hand():
     )
     exp = "exploration wells first drilled 2005-2025"
     assert reach.loc[(exp, "permanent abandonment"), "events_per_well"] == 1
-    ages = lc.event_ages(lc.gulf_bores(bore), events, wells)
+    ages = lc.event_ages(lc.gulf_bores(bore), events, wells, WINDOW)
     sidetrack = ages[ages.stage.eq("sidetrack or bypass")].age_years.item()
     # 1 Mar 2006 to 1 Jun 2010: 4 years with 1 leap day (2008), then 92 days.
     assert sidetrack == pytest.approx((4 * 365 + 1 + 92) / 365.25)
-    summary = lc.age_summary(ages).set_index(["well_type", "stage"])
+    summary = lc.age_summary(ages, WINDOW).set_index(["well_type", "stage"])
     assert summary.loc[("all wells", "light intervention"), "events"] == 2
 
 
@@ -292,3 +292,44 @@ def test_delivered_tables_reconcile_with_published_counts():
     life = json.loads((out / "life_cycle_summary.json").read_text(encoding="utf-8"))
     assert hist.wells.sum() == life["dated_wells"] - life["life_not_established"]
     assert life["permanently_abandoned"] + life["standing"] == life["dated_wells"]
+
+
+def test_raw_archives_are_verified_before_the_life_cycle_reads_them(tmp_path):
+    import count_interventions as ci
+
+    from tests.unit.bsee import interventions_archives as fixture
+
+    data = fixture.build(tmp_path / "2026-11-13")
+    out = tmp_path / "output"
+    ci.run(data, out)
+    lc.run(data, out)
+    before = {p.name: p.read_bytes() for p in out.glob("life_cycle_*")}
+    # Change a first-spud date after the manifest was written. Both manifests
+    # stay equal and the permit totals still reconcile; only the bytes differ.
+    fixture.write_borehole(data, first_spud="03/01/2001")
+    with pytest.raises(ValueError, match="digest mismatch: BoreholeRawData.zip"):
+        lc.run(data, out)
+    assert {p.name: p.read_bytes() for p in out.glob("life_cycle_*")} == before
+
+
+def test_sidetrack_ages_use_the_permit_window():
+    bore = _bore()
+    # A 1991 sidetrack on W3 lies before the 2005-2026 permit window.
+    extra = bore.iloc[[3]].assign(
+        API_WELL_NUMBER="608174000301",
+        WELL_NAME_SUFFIX="ST01BP00",
+        WELL_SPUD_DATE="06/01/1991",
+    )
+    bore = pd.concat([bore, extra], ignore_index=True)
+    bores = lc.gulf_bores(bore)
+    events = lc.permit_events(_permits(), RIGS, WINDOW)
+    wells = lc.well_table(
+        well_inventory(bore), bores, events, lc.well_types(bore), FILE_DATE
+    )
+    ages = lc.event_ages(bores, events, wells, WINDOW)
+    assert ages.date.dt.year.isin(WINDOW).all()
+    sidetracks = ages[ages.stage.eq("sidetrack or bypass")]
+    assert sidetracks.api10.tolist() == ["6081740001"]
+    summary = lc.age_summary(ages, WINDOW).set_index(["well_type", "stage"])
+    assert summary.loc[("all wells", "sidetrack or bypass"), "events"] == 1
+    assert summary.event_window.eq("2005-2026").all()
