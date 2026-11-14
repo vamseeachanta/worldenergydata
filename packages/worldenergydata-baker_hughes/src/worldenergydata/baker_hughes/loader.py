@@ -124,14 +124,24 @@ def _decimal_number(value: object) -> Decimal:
     return Decimal(text)
 
 
+# Software representation budgets (#1859), not physical rig-count limits.
+_MAX_COUNT_TOKEN_CHARS = 4096
+_MAX_COUNT_INTEGER_DIGITS = 4096
+
+
 def _validated_counts(values: pd.Series) -> pd.Series:
     """Reject rather than repair counts (issue #1334, F1/F2/F11/F12).
 
     The count domain is the nonnegative integers; zero is a true count,
     never an imputed missing value. Decimal avoids a float round trip.
+    Count-only budgets bound token parsing and expanded integer allocation.
     """
     counts = []
     for row, value in values.items():
+        if len(str(value).strip()) > _MAX_COUNT_TOKEN_CHARS:
+            raise ValueError(
+                f"rig_count row {row}: count token resource budget exceeded; rejected"
+            )
         try:
             number = _decimal_number(value)
         except InvalidOperation:
@@ -140,13 +150,23 @@ def _validated_counts(values: pd.Series) -> pd.Series:
             isinstance(value, bool)
             or not number.is_finite()
             or number < 0
-            or number != number.to_integral_value()
         ):
             raise ValueError(
                 f"rig_count row {row}: expected a nonnegative integer; rejected"
             )
+        if not number.is_zero() and number.adjusted() + 1 > _MAX_COUNT_INTEGER_DIGITS:
+            raise ValueError(
+                f"rig_count row {row}: expanded integer resource budget exceeded; rejected"
+            )
+        if number != number.to_integral_value():
+            raise ValueError(
+                f"rig_count row {row}: expected a nonnegative integer; rejected"
+            )
         counts.append(int(number))
-    return pd.Series(counts, index=values.index, name=values.name)
+    # Preserve exact Python integers beyond pandas' unsigned 64-bit storage;
+    # ordinary counts retain the existing numeric dtype inference.
+    dtype = object if any(count >= 2**64 for count in counts) else None
+    return pd.Series(counts, index=values.index, name=values.name, dtype=dtype)
 
 
 # NIST SP 811 (2008), Appendix B.6: international foot, defined by the
