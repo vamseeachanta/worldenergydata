@@ -37,14 +37,19 @@ def synthetic_production(oil=(0.0, 0.0), gas=(100.0, 200.0)):
 
 
 def run_cashflow(production, gas_prices, fiscal_terms=None):
+    # Synthetic price fixture; zero oil volume contributes zero oil revenue.
+    oil_prices = {"2025-01": 75.0, "2025-02": 75.0}
     return CashflowEngine(
         AssumptionsManager(), "dry", fiscal_terms=fiscal_terms
     ).generate_monthly_cashflow(
         production,
         {"drilling_monthly": {"2025-01": 0.0}},
-        {"2025-01": 75.0, "2025-02": 75.0},
+        oil_prices,
         datetime(2025, 1, 1),
         gas_prices=gas_prices,
+        oil_prices_by_marker=(
+            {fiscal_terms.price_marker: oil_prices} if fiscal_terms else None
+        ),
     )
 
 

@@ -12,6 +12,66 @@ from worldenergydata.vessel_fleet.models.drilling_riser import (
 
 
 class TestRiserJointEntry:
+    @pytest.mark.parametrize(
+        "od,buoyed,expected", [(21.0, 49.0, 7 / 3), (18.75, 44.0, 176 / 75)]
+    )
+    def test_buoyancy_od_ratio(self, od, buoyed, expected):
+        """Issue 1138 / curated CSV: 49/21=7/3; 44/18.75=176/75 by hand.
+
+        The tolerance is numerical comparison precision, not an engineering limit.
+        """
+        joint = RiserJointEntry(
+            component_id="ratio",
+            od_in=od,
+            buoyancy_od_in=buoyed,
+            buoyancy_coverage_pct=100,
+        )
+        assert joint.buoyancy_od_ratio == pytest.approx(expected)
+
+    @pytest.mark.parametrize(
+        "overrides",
+        [
+            {"od_in": None},
+            {"od_in": 0},
+            {"od_in": -1},
+            {"od_in": float("nan")},
+            {"od_in": float("inf")},
+            {"buoyancy_od_in": None},
+            {"buoyancy_od_in": 0},
+            {"buoyancy_od_in": -1},
+            {"buoyancy_od_in": float("nan")},
+            {"buoyancy_od_in": float("inf")},
+            {"buoyancy_coverage_pct": 0},
+            {"buoyancy_coverage_pct": None},
+            {"buoyancy_coverage_pct": float("nan")},
+            {"buoyancy_coverage_pct": float("inf")},
+        ],
+    )
+    def test_ratio_unavailable_for_missing_bare_or_invalid_inputs(self, overrides):
+        """Synthetic invalid inputs exercise the mathematical domain, not design limits."""
+        fields = dict(od_in=21.0, buoyancy_od_in=49.0, buoyancy_coverage_pct=100)
+        fields.update(overrides)
+        assert (
+            RiserJointEntry(component_id="invalid", **fields).buoyancy_od_ratio is None
+        )
+
+    def test_lift_bundle_preserves_main_bore_and_auxiliary_functions(self):
+        """Synthetic schema example: independent lines; no material properties inferred."""
+        from worldenergydata.vessel_fleet.models.drilling_riser import RiserLineEntry
+
+        line = RiserLineEntry(function="service", od_in=2.0, wall_thickness_in=0.25)
+        joint = RiserJointEntry(
+            component_id="lift", riser_class="lift", auxiliary_lines=[line]
+        )
+        assert joint.auxiliary_lines[0].function == "service"
+        assert joint.component_type == "riser_joint"
+        assert RiserJointEntry(component_id="legacy").riser_class == "drilling"
+        assert RiserJointEntry(component_id="legacy").auxiliary_lines == []
+
+    def test_invalid_riser_class_rejected(self):
+        with pytest.raises(ValueError, match="riser_class"):
+            RiserJointEntry(component_id="invalid", riser_class="unknown")
+
     def test_od_m_conversion(self):
         rj = RiserJointEntry(component_id="RJ-1", od_in=21.0)
         assert rj.od_m == pytest.approx(0.5334, abs=0.001)

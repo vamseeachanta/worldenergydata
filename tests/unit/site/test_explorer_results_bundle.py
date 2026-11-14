@@ -13,7 +13,10 @@ mod = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(mod)
 
 
-def test_bundle_matches_sources_and_is_hf_safe():
+def test_bundle_matches_sources_and_is_hf_safe(monkeypatch, tmp_path):
+    atlas = tmp_path / "synthetic_atlas.json"
+    atlas.write_text(json.dumps({"countries": [], "fields": []}))
+    monkeypatch.setattr(mod, "ATLAS_JSON", atlas)
     explorer = json.loads(mod.EXPLORER_JSON.read_text(encoding="utf-8"))
     expected_fields = len(explorer["fields"])
     expected_wells = len(explorer["wells"]["wells"])
@@ -48,3 +51,10 @@ def test_sanitize_nulls_non_finite_floats():
     assert clean["b"] == [None, 1.0]
     assert clean["c"]["d"] is None
     assert "NaN" not in json.dumps(clean, allow_nan=False)
+
+
+def test_default_results_bundle_is_withheld():
+    import pytest
+
+    with pytest.raises(RuntimeError, match="redistribution-terms review"):
+        mod.build_bundle()

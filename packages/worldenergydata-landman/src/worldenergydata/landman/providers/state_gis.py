@@ -9,11 +9,13 @@ information, and operator records. Supports Texas RRC, New Mexico OCD,
 Oklahoma OCC, North Dakota DMR, and Colorado COGCC.
 """
 
+import typing
 from datetime import date
 from typing import Any, Dict, List, Optional
 from urllib.parse import urljoin
 
 from worldenergydata.landman.exceptions import (
+    ProviderError,
     RecordNotFoundError,
     StateNotSupportedError,
 )
@@ -175,6 +177,9 @@ class StateGISProvider(BaseProvider):
 
         Returns:
             WellSearchResult with matching wells
+
+        Raises:
+            ProviderError: If the ESRI request or response decoding fails
         """
         config = self._get_state_config(state)
         state_upper = state.upper()
@@ -199,6 +204,16 @@ class StateGISProvider(BaseProvider):
             source=f"{self.PROVIDER_NAME}:{state_upper}",
         )
 
+    @staticmethod
+    def _sql_value(value: str) -> str:
+        """Escape a string value, preserving intentional LIKE wildcards.
+
+        Esri SQL reference, Searching strings, online edition accessed
+        2026-10-22: double embedded apostrophes inside string literals.
+        https://doc.esri.com/en/arcgis-pro/latest/help/mapping/navigation/sql-reference-for-elements-used-in-query-expressions.html
+        """
+        return value.replace("'", "''")
+
     def _search_esri_wells(
         self,
         config: Dict[str, str],
@@ -213,13 +228,13 @@ class StateGISProvider(BaseProvider):
         service = config["well_service"]
         query_url = urljoin(base_url, f"{service}/0/query")
 
-        where_clauses = [f"UPPER(COUNTY) = '{county.upper()}'"]
+        where_clauses = [f"UPPER(COUNTY) = '{self._sql_value(county.upper())}'"]
         if section:
-            where_clauses.append(f"SECTION = '{section}'")
+            where_clauses.append(f"SECTION = '{self._sql_value(section)}'")
         if township:
-            where_clauses.append(f"TOWNSHIP = '{township}'")
+            where_clauses.append(f"TOWNSHIP = '{self._sql_value(township)}'")
         if range_:
-            where_clauses.append(f"RANGE = '{range_}'")
+            where_clauses.append(f"RANGE = '{self._sql_value(range_)}'")
 
         params = {
             "where": " AND ".join(where_clauses),
@@ -229,19 +244,15 @@ class StateGISProvider(BaseProvider):
             "resultRecordCount": limit,
         }
 
-        try:
-            data = self._get_json(query_url, params=params)
-            return self._parse_esri_wells(data, config)
-        except Exception as e:
-            self.logger.warning(f"ESRI query failed: {e}")
-            return []
+        data = self._get_json(query_url, params=params, record_keys=("features",))
+        return self._parse_esri_wells(data, config)
 
     def _parse_esri_wells(
         self, data: Dict[str, Any], config: Dict[str, str]
     ) -> List[WellInfo]:
         """Parse ESRI REST response into WellInfo objects."""
         wells = []
-        features = data.get("features", [])
+        features = self._record_list(data, ("features",))
 
         for feature in features:
             attrs = feature.get("attributes", {})
@@ -288,11 +299,16 @@ class StateGISProvider(BaseProvider):
         range_: Optional[str],
         limit: int,
     ) -> List[WellInfo]:
-        """Query custom state APIs for wells."""
-        self.logger.info(
-            f"Custom well search for {state} - results may vary by state API"
+        """Reject custom state searches until an adapter is implemented."""
+        self._raise_custom_unimplemented(state)
+
+    def _raise_custom_unimplemented(self, state: str) -> typing.NoReturn:
+        """No request means neither absence of records nor not-found is known."""
+        raise ProviderError(
+            message=f"Custom GIS search is not implemented for {state}",
+            error_code="SEARCH_UNSUPPORTED",
+            details={"provider": self.PROVIDER_NAME, "state": state},
         )
-        return []
 
     def _map_well_status(self, status_str: str) -> WellStatus:
         """Map string status to WellStatus enum."""
@@ -328,6 +344,9 @@ class StateGISProvider(BaseProvider):
 
         Returns:
             WellSearchResult with matching wells
+
+        Raises:
+            ProviderError: If the ESRI request or response decoding fails
         """
         config = self._get_state_config(state)
         state_upper = state.upper()
@@ -344,18 +363,17 @@ class StateGISProvider(BaseProvider):
             query_url = urljoin(base_url, f"{service}/0/query")
 
             params = {
-                "where": f"UPPER(OPERATOR) LIKE '%{operator_name.upper()}%'",
+                "where": f"UPPER(OPERATOR) LIKE '%{self._sql_value(operator_name.upper())}%'",
                 "outFields": "*",
                 "returnGeometry": "true",
                 "f": "json",
                 "resultRecordCount": limit,
             }
 
-            try:
-                data = self._get_json(query_url, params=params)
-                wells = self._parse_esri_wells(data, config)
-            except Exception as e:
-                self.logger.warning(f"Operator search failed: {e}")
+            data = self._get_json(query_url, params=params, record_keys=("features",))
+            wells = self._parse_esri_wells(data, config)
+        else:
+            self._raise_custom_unimplemented(state_upper)
 
         return WellSearchResult(
             total_count=len(wells),
@@ -381,6 +399,7 @@ class StateGISProvider(BaseProvider):
 
         Raises:
             RecordNotFoundError: If well not found
+            ProviderError: If the ESRI request or response decoding fails
         """
         if state is None:
             state = self._derive_state_from_api(api_number)
@@ -396,19 +415,20 @@ class StateGISProvider(BaseProvider):
 
             cleaned_api = api_number.replace("-", "")
             params = {
-                "where": f"API_NUMBER = '{api_number}' OR API_NUMBER = '{cleaned_api}'",
+                "where": f"API_NUMBER = '{self._sql_value(api_number)}' OR API_NUMBER = '{self._sql_value(cleaned_api)}'",
                 "outFields": "*",
                 "returnGeometry": "true",
                 "f": "json",
             }
 
-            try:
-                data = self._get_json(query_url, params=params, use_cache=False)
-                wells = self._parse_esri_wells(data, config)
-                if wells:
-                    return wells[0]
-            except Exception as e:
-                self.logger.error(f"Well detail query failed: {e}")
+            data = self._get_json(
+                query_url, params=params, use_cache=False, record_keys=("features",)
+            )
+            wells = self._parse_esri_wells(data, config)
+            if wells:
+                return wells[0]
+        else:
+            self._raise_custom_unimplemented(state.upper())
 
         raise RecordNotFoundError(
             record_type="Well",
@@ -463,15 +483,30 @@ class StateGISProvider(BaseProvider):
             state: Two-letter state code
             county: Optional county name
             operator: Optional operator name
-            start_date: Optional start date filter
-            end_date: Optional end date filter
+            start_date: Requested start date; date filtering is not supported
+            end_date: Requested end date; date filtering is not supported
             limit: Maximum results to return
 
         Returns:
             PermitSearchResult with matching permits
+
+        Raises:
+            StateNotSupportedError: If state is not supported
+            ProviderError: If either date bound is supplied; permit-date fields
+                have not been verified for the configured services
+            ProviderError: If the ESRI request or response decoding fails
         """
         config = self._get_state_config(state)
         state_upper = state.upper()
+
+        # #1259 permits explicit rejection when a service cannot filter by date.
+        # Do not guess a date field or silently return an unfiltered result.
+        if start_date is not None or end_date is not None:
+            raise ProviderError(
+                message=f"Permit date filtering is not supported for {state_upper}",
+                error_code="PERMIT_DATE_FILTER_UNSUPPORTED",
+                details={"provider": self.PROVIDER_NAME, "state": state_upper},
+            )
 
         self.logger.info(f"Searching permits in {state_upper}")
 
@@ -484,9 +519,13 @@ class StateGISProvider(BaseProvider):
 
             where_clauses = ["1=1"]
             if county:
-                where_clauses.append(f"UPPER(COUNTY) = '{county.upper()}'")
+                where_clauses.append(
+                    f"UPPER(COUNTY) = '{self._sql_value(county.upper())}'"
+                )
             if operator:
-                where_clauses.append(f"UPPER(OPERATOR) LIKE '%{operator.upper()}%'")
+                where_clauses.append(
+                    f"UPPER(OPERATOR) LIKE '%{self._sql_value(operator.upper())}%'"
+                )
 
             params = {
                 "where": " AND ".join(where_clauses),
@@ -496,11 +535,10 @@ class StateGISProvider(BaseProvider):
                 "resultRecordCount": limit,
             }
 
-            try:
-                data = self._get_json(query_url, params=params)
-                permits = self._parse_esri_permits(data, state_upper)
-            except Exception as e:
-                self.logger.warning(f"Permit search failed: {e}")
+            data = self._get_json(query_url, params=params, record_keys=("features",))
+            permits = self._parse_esri_permits(data, state_upper)
+        else:
+            self._raise_custom_unimplemented(state_upper)
 
         return PermitSearchResult(
             total_count=len(permits),
@@ -512,7 +550,7 @@ class StateGISProvider(BaseProvider):
     def _parse_esri_permits(self, data: Dict[str, Any], state: str) -> List[PermitInfo]:
         """Parse ESRI REST response into PermitInfo objects."""
         permits = []
-        features = data.get("features", [])
+        features = self._record_list(data, ("features",))
 
         for feature in features:
             attrs = feature.get("attributes", {})

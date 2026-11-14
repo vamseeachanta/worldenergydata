@@ -89,6 +89,9 @@ modules:
   - id: hse
     name: "HSE Incidents and Offshore Evidence"
     package: "worldenergydata.hse"
+    source_authorities: [BSEE, OSHA, EPA]
+    uk_hse_offshore_statistics_status: not_acquired
+    source_registry: data/modules/hse/offshore/source_registry.json
     region: [gulf_of_mexico, usa, global_offshore]
     domain: [hse, regulatory]
     data_types:
@@ -115,7 +118,7 @@ modules:
       evidence registers UK HSE notices, OPRED, Havtil, NOPSEMA and US CSB; registry
       records acquisition gaps. UK HSE offshore statistics: not acquired.
     in_scheduler: false
-    public_cli: false
+    public_cli: true
     catalog_status: sample
     capability_source: manifest
     related_wrk: [WRK-163, WRK-198, WRK-249]

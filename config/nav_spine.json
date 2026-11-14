@@ -122,7 +122,7 @@
         {"label": "Capabilities", "path": "capabilities/index.html"},
         {"label": "Insights", "path": "capabilities/insights.html"}
       ],
-      "leaf": "Drilling performance"
+      "leaf": "Calendar cycle time"
     },
     {
       "key": "devtype",

@@ -1,11 +1,8 @@
-"""Alaska North Slope field-level crude + NGL production breakdown.
+"""Alaska field-level crude + NGL record transforms.
 
-Fields covered:
-  - Prudhoe Bay   — largest Alaska field, declining since 1988 peak
-  - Kuparuk River — second-largest, supergiant
-  - Point Thomson — newer development, NGL-rich
-
-Production data derived from EIA Alaska state series + AOGCC field reports.
+The example catalogue uses synthetic field labels, not an inventory of actual fields.
+Test fixtures use generated values, not measured production.
+The loader preserves caller-supplied labels without requiring catalogue membership.
 """
 
 import logging
@@ -16,11 +13,11 @@ import pandas as pd
 
 logger = logging.getLogger(__name__)
 
-# Alaska North Slope fields
+# Synthetic example labels, not an inventory of actual fields.
 ALASKA_FIELDS: List[str] = [
-    "Prudhoe Bay",
-    "Kuparuk",
-    "Point Thomson",
+    "Synthetic Field A",
+    "Synthetic Field B",
+    "Synthetic Field C",
 ]
 
 

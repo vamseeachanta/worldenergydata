@@ -6,12 +6,14 @@ Visualization for Metocean Extrapolation
 
 Provides Plotly-based interactive visualizations:
 - plot_source_map: map of target, nearest sources, and coverage circles
-- plot_correction_breakdown: bar chart of raw vs. corrected parameter values
+- plot_correction_breakdown: synthetic baseline and target values with provenance
 """
 
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
+
+from worldenergydata.metocean.extrapolation import _BASELINE
 
 if TYPE_CHECKING:
     import plotly.graph_objects as go
@@ -105,7 +107,7 @@ def plot_source_map(
 
 def plot_correction_breakdown(result) -> "go.Figure":
     """
-    Plot a grouped bar chart showing raw (baseline) vs corrected parameter values.
+    Plot synthetic baseline and target values with explicit data provenance.
 
     Args:
         result: ExtrapolationResult from extrapolate()
@@ -120,12 +122,11 @@ def plot_correction_breakdown(result) -> "go.Figure":
             "plotly is required for visualization. " "Install with: pip install plotly"
         ) from exc
 
-    # Baseline values (before corrections)
-    _BASELINE = {
-        "Hs (m)": 2.5,
-        "Tp (s)": 9.0,
-        "Wind (m/s)": 10.0,
-        "Current (m/s)": 0.3,
+    baseline = {
+        "Hs (m)": _BASELINE["Hs"],
+        "Tp (s)": _BASELINE["Tp"],
+        "Wind (m/s)": _BASELINE["wind_speed"],
+        "Current (m/s)": _BASELINE["current_speed"],
     }
     corrected = {
         "Hs (m)": result.Hs_m,
@@ -134,15 +135,24 @@ def plot_correction_breakdown(result) -> "go.Figure":
         "Current (m/s)": result.current_speed_ms,
     }
 
-    params = list(_BASELINE.keys())
-    raw_vals = [_BASELINE[p] for p in params]
+    params = list(baseline.keys())
+    raw_vals = [baseline[p] for p in params]
     corr_vals = [corrected[p] for p in params]
 
     fig = go.Figure(
         data=[
-            go.Bar(name="Baseline", x=params, y=raw_vals, marker_color="steelblue"),
             go.Bar(
-                name="Corrected (target)",
+                name="Synthetic baseline",
+                x=params,
+                y=raw_vals,
+                marker_color="steelblue",
+            ),
+            go.Bar(
+                name=(
+                    "Target (synthetic baseline)"
+                    if result.data_basis == "synthetic_baseline"
+                    else "Target"
+                ),
                 x=params,
                 y=corr_vals,
                 marker_color="tomato",
@@ -160,6 +170,7 @@ def plot_correction_breakdown(result) -> "go.Figure":
             f"Correction Breakdown — {result.source}<br>"
             f"<sup>Distance: {result.distance_km:.1f} km | "
             f"Confidence: {result.confidence} | "
+            f"Basis: {result.data_basis} | "
             f"Corrections: {corrections_text}</sup>"
         ),
         xaxis_title="Parameter",

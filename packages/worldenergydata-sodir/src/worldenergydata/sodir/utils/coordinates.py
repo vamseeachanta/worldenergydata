@@ -144,14 +144,14 @@ class CoordinateTransformer:
         Returns:
             Tuple of (latitude, longitude) in decimal degrees
         """
-        # Create projection strings
-        utm_proj = self.pyproj.Proj(
-            proj="utm", zone=zone, ellps="WGS84", south=not northern_hemisphere
+        # Define the UTM coordinate reference system.
+        utm_crs = self.pyproj.CRS.from_dict(
+            dict(proj="utm", zone=zone, ellps="WGS84", south=not northern_hemisphere)
         )
-        wgs84_proj = self.pyproj.Proj(proj="latlong", ellps="WGS84")
-
-        # Transform coordinates
-        lon, lat = self.pyproj.transform(utm_proj, wgs84_proj, easting, northing)
+        transformer = self.pyproj.Transformer.from_crs(
+            utm_crs, "EPSG:4326", always_xy=True
+        )
+        lon, lat = transformer.transform(easting, northing)
 
         self.conversions_count += 1
         return (lat, lon)
@@ -172,16 +172,14 @@ class CoordinateTransformer:
         # Calculate UTM zone
         zone = self._calculate_utm_zone(longitude)
 
-        # Create projection strings
-        utm_proj = self.pyproj.Proj(
-            proj="utm", zone=zone, ellps="WGS84", south=(latitude < 0)
+        # Define the UTM coordinate reference system.
+        utm_crs = self.pyproj.CRS.from_dict(
+            dict(proj="utm", zone=zone, ellps="WGS84", south=(latitude < 0))
         )
-        wgs84_proj = self.pyproj.Proj(proj="latlong", ellps="WGS84")
-
-        # Transform coordinates
-        easting, northing = self.pyproj.transform(
-            wgs84_proj, utm_proj, longitude, latitude
+        transformer = self.pyproj.Transformer.from_crs(
+            "EPSG:4326", utm_crs, always_xy=True
         )
+        easting, northing = transformer.transform(longitude, latitude)
 
         self.conversions_count += 1
         return (easting, northing, zone)

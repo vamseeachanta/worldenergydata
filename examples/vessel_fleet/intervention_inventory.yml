@@ -1,0 +1,38 @@
+# Artificial inputs for set/count arithmetic, not specifications or limits.
+# Expected answer is calculated by hand in the accompanying documentation.
+vessels:
+  - name: synthetic-alpha
+    vessel_type: rlwi_monohull
+    intervention_class: light
+    riser_capable: false
+    water_depth_rating_m: 100
+    gom_resident: true
+    source: synthetic observation A
+    confidence: synthetic
+  - name: synthetic-alpha
+    vessel_type: rlwi_monohull
+    intervention_class: light
+    riser_capable: false
+    water_depth_rating_m: 200
+    gom_resident: true
+    source: synthetic observation B
+    confidence: synthetic
+  - name: synthetic-beta
+    vessel_type: rlwi_monohull
+    water_depth_rating_m: 200
+    source: synthetic observation C
+    confidence: synthetic
+  - name: synthetic-gamma
+    vessel_type: heavy_intervention_semi
+    intervention_class: heavy
+    riser_capable: true
+    water_depth_rating_m: 300
+    gom_resident: false
+    source: synthetic observation D
+    confidence: synthetic
+  - name: synthetic-delta
+    vessel_type: mpsv
+    water_depth_rating_m: 300
+    gom_resident: true
+    source: synthetic observation E
+    confidence: synthetic

@@ -22,10 +22,12 @@ remaining failures are deterministic the JobResult is marked
 import logging
 import zipfile
 from datetime import datetime
+from http import HTTPStatus
 from pathlib import Path
 from typing import Optional
 
 import yaml
+from requests.exceptions import HTTPError
 
 from worldenergydata.bsee.data.refresh.payload import (
     DatasetFailure,
@@ -401,7 +403,25 @@ class BseeRefreshJob(AbstractJob):
         logger.info("BSEE downloading %s from %s", dataset_name, url)
 
         try:
-            payload = scraper.download_zip_to_memory(url, data_type=url_key)
+            payload = scraper.download_zip_to_memory(
+                url, data_type=url_key, raise_on_not_found=True
+            )
+        except HTTPError as exc:
+            # RFC 9110 (2022), section 15.5.5. This is a per-run policy
+            # for configured endpoints, not a claim of permanent absence.
+            not_found = (
+                exc.response is not None
+                and exc.response.status_code == HTTPStatus.NOT_FOUND
+            )
+            return DatasetFailure(
+                dataset_name,
+                (
+                    "configured endpoint not found; check the dataset catalog"
+                    if not_found
+                    else f"download error: {exc}"
+                ),
+                FailureClass.DETERMINISTIC if not_found else FailureClass.TRANSIENT,
+            )
         except Exception as exc:
             return DatasetFailure(
                 dataset_name, f"download error: {exc}", FailureClass.TRANSIENT

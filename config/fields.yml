@@ -50,7 +50,7 @@ fields:
       leases: [G16942]
     bsee_block_note: "Walker Ridge 29"
     fdp_slug: big-foot
-    surfaces: {lifecycle_poster: true, economics_page: true, fdp_page: false}
+    surfaces: {lifecycle_poster: true, economics_page: true, fdp_page: true}
   - canonical_id: anchor
     display_name: "Anchor"
     aliases: []
@@ -61,7 +61,7 @@ fields:
       leases: [G31751, G31752]
     bsee_block_note: "Green Canyon 807"
     fdp_slug: anchor
-    surfaces: {lifecycle_poster: true, economics_page: true, fdp_page: false}
+    surfaces: {lifecycle_poster: true, economics_page: true, fdp_page: true}
   - canonical_id: cascade_chinook
     display_name: "Cascade/Chinook"
     aliases: ["Cascade Chinook", "Cascade", "Chinook"]
@@ -83,7 +83,7 @@ fields:
       leases: [G17015, G17016, G18745, G18753, G20394, G21245]
     bsee_block_note: "Walker Ridge 678 (St. Malo) / 758-759 (Jack)"
     fdp_slug: jack-st-malo
-    surfaces: {lifecycle_poster: true, economics_page: true, fdp_page: false}
+    surfaces: {lifecycle_poster: true, economics_page: true, fdp_page: true}
   - canonical_id: julia
     display_name: "Julia"
     aliases: []
@@ -105,7 +105,7 @@ fields:
       leases: [G19555, G25792]
     bsee_block_note: "Keathley Canyon 292"
     fdp_slug: kaskida
-    surfaces: {lifecycle_poster: true, economics_page: false, fdp_page: false}
+    surfaces: {lifecycle_poster: true, economics_page: false, fdp_page: true}
   - canonical_id: north_platte
     display_name: "North Platte (renamed Sparta)"
     aliases: ["North Platte", "North Platte (Sparta)", "Sparta"]
@@ -116,7 +116,7 @@ fields:
       leases: [G30876, G32460]
     bsee_block_note: "Garden Banks 959 (straddles GB 915/916/958/959)"
     fdp_slug: north-platte
-    surfaces: {lifecycle_poster: true, economics_page: false, fdp_page: false}
+    surfaces: {lifecycle_poster: true, economics_page: false, fdp_page: true}
   - canonical_id: shenandoah
     display_name: "Shenandoah"
     aliases: []
@@ -127,7 +127,7 @@ fields:
       leases: [G25232, G31938]
     bsee_block_note: "Walker Ridge 52 (blocks 51, 52, N/2 53)"
     fdp_slug: shenandoah
-    surfaces: {lifecycle_poster: true, economics_page: true, fdp_page: false}
+    surfaces: {lifecycle_poster: true, economics_page: true, fdp_page: true}
   - canonical_id: stones
     display_name: "Stones"
     aliases: []
@@ -149,7 +149,7 @@ fields:
       leases: [G25782]
     bsee_block_note: "Keathley Canyon 102"
     fdp_slug: tiber
-    surfaces: {lifecycle_poster: true, economics_page: false, fdp_page: false}
+    surfaces: {lifecycle_poster: true, economics_page: false, fdp_page: true}
   # --- KC-ingest-recovered field (issue #842/#851): the crosswalk gap that motivated
   #     the D&C reconciliation. Included here so the canonical registry never re-loses it.
   - canonical_id: buckskin

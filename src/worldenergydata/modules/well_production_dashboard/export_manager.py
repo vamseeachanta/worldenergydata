@@ -25,9 +25,7 @@ try:
     from worldenergydata.bsee.reports.comprehensive.exporters.base import (
         ExportResult as BaseExportResult,
     )
-    from worldenergydata.bsee.reports.comprehensive.exporters.base import (
-        ReportExporter,
-    )
+    from worldenergydata.bsee.reports.comprehensive.exporters.base import ReportExporter
     from worldenergydata.bsee.reports.comprehensive.exporters.batch import (
         BatchExporter,
     )
@@ -404,7 +402,7 @@ class WellDashboardExportManager:
             output_path = Path(output_path)
             output_path.parent.mkdir(parents=True, exist_ok=True)
 
-            with open(output_path, "w") as f:
+            with open(output_path, "w", encoding="utf-8", newline="\n") as f:
                 json.dump(json_data, f, indent=2, default=str)
 
             file_size = output_path.stat().st_size
