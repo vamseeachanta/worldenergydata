@@ -657,6 +657,14 @@ def full_year_bounds(approval_dates, file_date):
     return int(first_full), int(last_full)
 
 
+def report_years(summary):
+    """Years with published rows: the full years and any observed partial year."""
+    last = summary["partial_year"]
+    if last is None:
+        last = summary["last_full_year"]
+    return range(int(summary["first_full_year"]), int(last) + 1)
+
+
 def classified_permits(data_dir, bore):
     """Deduplicated Gulf APM approvals with depth band, year, group and family.
 
@@ -754,7 +762,13 @@ def run(data_dir, out, last_full_year=None):
             f"last full year {last_full_year} is outside the complete years "
             f"{first_year}-{latest_full_year} of this snapshot"
         )
-    years = list(range(first_year, last_full_year + 2))
+    # The year after the last full year is reported, as a partial year, only
+    # when the snapshot has observed part of it: a 31 December file date has
+    # observed none of the next year.
+    partial_year = last_full_year + 1 if last_full_year < file_date.year else None
+    years = list(range(first_year, last_full_year + 1))
+    if partial_year is not None:
+        years.append(partial_year)
     quality = dict(
         raw_apm_rows=len(raw),
         unique_apm=len(dedupe_permits(raw)),
@@ -764,7 +778,7 @@ def run(data_dir, out, last_full_year=None):
         snapshot=data_dir.name,
         first_full_year=first_year,
         last_full_year=last_full_year,
-        partial_year=last_full_year + 1,
+        partial_year=partial_year,
         original_holes_missing_spud=int(
             (
                 bore.REGION_CODE.eq("G")
@@ -962,8 +976,13 @@ def run(data_dir, out, last_full_year=None):
                 )
             )
     write_csv(pd.DataFrame(ratios), out, "eor_permit_ratios")
+    # The WAR cross-check is optional. Without a verified WAR receipt in this
+    # snapshot, a table left in the folder by an earlier run describes another
+    # snapshot and is removed rather than published with this one.
     if WAR_ARCHIVE in available:
         quality.update(war_crosscheck(data_dir, bore, out, first_year, last_full_year))
+    else:
+        (out / "war_duration_crosscheck.csv").unlink(missing_ok=True)
     headline = rates[rates.year.eq(last_full_year)].astype(object)
     quality["headline"] = headline.where(headline.notna(), None).to_dict("records")
     (out / "summary.json").write_text(

@@ -19,6 +19,7 @@ import pandas as pd
 BOREHOLE = "BoreholeRawData.zip"
 APM = "eWellAPMRawData.zip"
 EOR = "eWellEORRawData.zip"
+WAR = "eWellWARRawData.zip"
 PAGE_UPDATED = "11/13/2026 4:31:20 AM"
 FIRST_SPUD = "03/01/2006"
 
@@ -130,6 +131,25 @@ def _members_eor():
     }
 
 
+def _members_war():
+    # One workover by a named drillship on the development well in 2025.
+    return {
+        "mv_war_main": pd.DataFrame(
+            {
+                "SN_WAR": ["W1"],
+                "API_WELL_NUMBER": ["608174000100"],
+                "WAR_START_DT": ["06/01/2025"],
+                "WAR_END_DT": ["06/05/2025"],
+                "RIG_NAME": ["DRILLSHIP"],
+                "SURF_LEASE_NUM": ["G00001"],
+            }
+        ),
+        "mv_war_main_prop": pd.DataFrame(
+            {"SN_WAR": ["W1"], "WELL_ACTIVITY_CD": ["WO"]}
+        ),
+    }
+
+
 def write_archive(path, members):
     with zipfile.ZipFile(path, "w") as z:
         for member, frame in members.items():
@@ -144,12 +164,12 @@ def write_borehole(data_dir, first_spud=FIRST_SPUD):
     )
 
 
-def receipt(data_dir, name, status="downloaded"):
+def receipt(data_dir, name, status="downloaded", page_updated=PAGE_UPDATED):
     path = Path(data_dir) / name
     return dict(
         name=name,
         url=f"https://www.data.bsee.gov/Well/Files/{name}",
-        page_last_updated=PAGE_UPDATED,
+        page_last_updated=page_updated,
         download_utc="2026-11-13T16:17:33+00:00",
         bytes=path.stat().st_size,
         sha256=hashlib.sha256(path.read_bytes()).hexdigest(),
@@ -157,20 +177,31 @@ def receipt(data_dir, name, status="downloaded"):
     )
 
 
-def build(data_dir, eor="downloaded"):
+def build(data_dir, eor="downloaded", war=None, page_updated=PAGE_UPDATED):
     """Write the three archives and a manifest.
 
     eor: "downloaded" (verified receipt), "failed" (receipt marked failed) or
     "omitted" (no receipt). The EOR archive is on disk in every case.
+    war: None (no WAR archive) or one of the eor states; the optional WAR
+    archive is then on disk with that receipt state.
+    page_updated: the raw-page update date of every receipt, which sets the
+    snapshot file date.
     """
     data_dir = Path(data_dir)
     data_dir.mkdir(parents=True, exist_ok=True)
     write_borehole(data_dir)
     write_archive(data_dir / APM, _members_apm())
     write_archive(data_dir / EOR, _members_eor())
-    files = [receipt(data_dir, BOREHOLE), receipt(data_dir, APM)]
+    files = [
+        receipt(data_dir, BOREHOLE, page_updated=page_updated),
+        receipt(data_dir, APM, page_updated=page_updated),
+    ]
     if eor != "omitted":
-        files.append(receipt(data_dir, EOR, eor))
+        files.append(receipt(data_dir, EOR, eor, page_updated))
+    if war is not None:
+        write_archive(data_dir / WAR, _members_war())
+        if war != "omitted":
+            files.append(receipt(data_dir, WAR, war, page_updated))
     manifest = dict(source_id="bsee-data-center", files=files)
     (data_dir / "manifest.json").write_text(
         json.dumps(manifest, indent=2) + "\n", encoding="utf-8"
