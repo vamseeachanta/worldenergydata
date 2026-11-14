@@ -33,6 +33,10 @@ from worldenergydata.cost.data_collection.disclosure_normalization import (
     normalize_disclosure_money,
     normalize_disclosure_money_rows,
 )
+from worldenergydata.cost.data_collection.disclosure_revision_contract import (
+    DisclosureRevisionMetadata,
+    disclosure_revision_depths,
+)
 from worldenergydata.cost.data_collection.linkage import (
     CostDataPointLinkResult,
     LinkageStatus,
@@ -71,6 +75,8 @@ __all__ = [
     "DisclosureConfidence",
     "DisclosureIngestStatus",
     "DisclosureRow",
+    "DisclosureRevisionMetadata",
+    "disclosure_revision_depths",
     "DisclosureScope",
     "DocumentEvidence",
     "DuplicateRecord",
