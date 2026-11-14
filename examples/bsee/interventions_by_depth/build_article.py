@@ -95,6 +95,14 @@ class Data:
             raise ValueError("life-cycle tables come from a different snapshot")
         self.units = pd.read_csv(out / "unit_type_shares.csv")
         self.last = check_selection(self.summary, {"units": self.units.period})
+        # The page names the year after the last full year as the partial
+        # year; a 31 December snapshot has none, and its wording is not
+        # written yet.
+        if self.summary["partial_year"] is None:
+            raise ValueError(
+                "summary.json has no partial year (31 December snapshot); "
+                "the article wording assumes one"
+            )
         self.first = int(self.summary["first_full_year"])
         self.date = self.summary["file_date"]
         self.rates = pd.read_csv(out / "rates.csv")
@@ -580,8 +588,10 @@ and exploration (E) follow the well type of the original hole (suffix ST00BP00).
 <li><strong>Drilling.</strong> Each bore with a spud date: the original hole and each sidetrack
 or bypass. Permits that prepare new hole (PLUGBACK, sidetrack, bypass or deepen) are excluded
 from the permit counts so that drilling is not counted twice.</li>
-<li><strong>Permits.</strong> One approved permit to modify (one submission ID) is one event.
-WORKOVER, ENHANCE, COMP with ZONE, OTHER, INFORM and UTIL are interventions (well work). ABANDON
+<li><strong>Permits.</strong> BSEE's permit table (eWellAPM) has no separate approval-status
+field. Assumed, to be confirmed: every row is an approved permit, and its ACC_STATUS_DATE (the
+Approved Date column of BSEE's permit query) is the approval date; a row without a valid date
+is not counted. One approved permit to modify (one submission ID) is one event. WORKOVER, ENHANCE, COMP with ZONE, OTHER, INFORM and UTIL are interventions (well work). ABANDON
 with PERMABAN is permanent abandonment, else with TEMPABAN temporary abandonment, else of unstated
 type. COMP without ZONE (initial completion) is excluded. Approvals from {d.first} to
 {date_text} are counted; the feed begins part-way through {d.first - 1}.</li>

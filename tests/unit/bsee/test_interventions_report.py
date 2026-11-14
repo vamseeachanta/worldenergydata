@@ -237,7 +237,7 @@ def test_note_runs_without_dataframe_map(output_copy, tmp_path, monkeypatch):
     write_results_note.main(out=output_copy, readme=readme)
     expected = readme.read_bytes()
     readme.unlink()
-    monkeypatch.delattr(pd.DataFrame, "map")
+    monkeypatch.delattr(pd.DataFrame, "map", raising=False)  # absent before 2.1
     write_results_note.main(out=output_copy, readme=readme)
     assert readme.read_bytes() == expected
 

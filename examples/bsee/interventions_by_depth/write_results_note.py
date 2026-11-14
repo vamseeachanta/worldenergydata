@@ -290,8 +290,12 @@ def main(pr_body=None, test_result="not run", out=OUT, readme=ROOT / "README.md"
             .pivot(index="band", columns="unit_category", values="share_percent")
             .reindex(BANDS)
         )
-        frame = frame[categories].map(
-            lambda v: rate(v) + "%" if pd.notna(v) else "not established"
+        # Series.map per column: DataFrame.map needs pandas 2.1, and
+        # requirements.txt allows 2.0.
+        frame = frame[categories].apply(
+            lambda column: column.map(
+                lambda v: rate(v) + "%" if pd.notna(v) else "not established"
+            )
         )
         frame.columns = short
         unit_tables.append(
