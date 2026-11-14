@@ -1,0 +1,230 @@
+{
+  "version": 1,
+  "datasets": [
+    {
+      "name": "directdelimit",
+      "path": "data/modules/bsee/directional_survey/20261113_directdelimit.csv",
+      "format": "csv",
+      "columns": [
+        {
+          "name": "API_WELL_NUMBER",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "SOURCE_COLUMN_02",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "SOURCE_COLUMN_03",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "SOURCE_COLUMN_04",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "SOURCE_COLUMN_05",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "SOURCE_COLUMN_06",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "SOURCE_COLUMN_07",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "SOURCE_COLUMN_08",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "SOURCE_COLUMN_09",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "SOURCE_COLUMN_10",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "SOURCE_COLUMN_11",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        }
+      ],
+      "row_count": 4924967,
+      "source_row_count": 4924967,
+      "duplicate_rows": 0,
+      "size_bytes": 0,
+      "sha256": "36db21833e91594a7bb11e9581214fd5a36e8ead415dfde9bdaf382420cbbe9a",
+      "last_modified": "2026-11-14T04:39:45.390532+00:00",
+      "ingested_at": "2026-11-14T04:39:45.390532+00:00",
+      "source_id": "bsee-data-center",
+      "source": "zip/directional_survey/directdelimit.zip",
+      "source_member": "directdelimit.txt",
+      "source_format": "zip",
+      "source_sha256": "286f8e4e0e2a91034ca046062d5a8435b2d74a43163f94b795527711f580669b",
+      "source_modified_at": "2026-01-18T14:05:14+00:00",
+      "schema_status": "positional_unverified",
+      "encoding": "latin-1",
+      "data_status": "real",
+      "readiness_status": "partial",
+      "source_vintage": {
+        "state": "unknown",
+        "reason": "File modification time does not establish source vintage"
+      },
+      "deduplication": {
+        "method": "exact_full_row_same_schema",
+        "status": "no_comparable_schema",
+        "compared_files": [],
+        "compared_sources": []
+      },
+      "measured_size_bytes": 546039007,
+      "local_only": true,
+      "availability": "missing"
+    },
+    {
+      "name": "dsptsdelimit",
+      "path": "data/modules/bsee/directional_survey/20261113_dsptsdelimit.csv",
+      "format": "csv",
+      "columns": [
+        {
+          "name": "API_WELL_NUMBER",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "INCL_ANG_DEG_VAL",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "INCL_ANG_MIN_VAL",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "SURVEY_POINT_MD",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "WELL_N_S_CODE",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "DIR_DEG_VAL",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "DIR_MINS_VAL",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "WELL_E_W_CODE",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "SURVEY_POINT_TVD",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "DELTA_X",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "DELTA_Y",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "SURF_LONGITUDE",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        },
+        {
+          "name": "SURF_LATITUDE",
+          "type": "string",
+          "description": "",
+          "unit": ""
+        }
+      ],
+      "row_count": 4925141,
+      "source_row_count": 4925141,
+      "duplicate_rows": 0,
+      "size_bytes": 0,
+      "sha256": "455b708465ae2b49aefc0d3b4dd6feda8be56ad0ba0b80a7514fb41cf0247238",
+      "last_modified": "2026-11-14T04:39:45.390532+00:00",
+      "ingested_at": "2026-11-14T04:39:45.390532+00:00",
+      "source_id": "bsee-data-center",
+      "source": "zip/directional_survey/dsptsdelimit.zip",
+      "source_member": "dsptsdelimit.txt",
+      "source_format": "zip",
+      "source_sha256": "a4d377e71a64701a7efa9db4e8c4a6f765d718a51eb18de23e9449cacd37e091",
+      "source_modified_at": "2026-01-18T13:52:22+00:00",
+      "schema_status": "source_columns",
+      "encoding": "latin-1",
+      "data_status": "real",
+      "readiness_status": "partial",
+      "source_vintage": {
+        "state": "unknown",
+        "reason": "File modification time does not establish source vintage"
+      },
+      "deduplication": {
+        "method": "exact_full_row_same_schema",
+        "status": "exact_text_only",
+        "compared_files": [
+          "wells/well_directional_surveys.csv"
+        ],
+        "compared_sources": [
+          {
+            "path": "wells/well_directional_surveys.csv",
+            "sha256": "e61de0480595250ecce5db4c7abb0d1eb86395c6f16f0709ab60bdb2ee616972"
+          }
+        ]
+      },
+      "measured_size_bytes": 1034279791,
+      "local_only": true,
+      "availability": "missing"
+    }
+  ]
+}

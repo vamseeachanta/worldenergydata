@@ -26,11 +26,12 @@ caption{caption-side:bottom;text-align:left;font-size:.9rem;padding:8px 0}code,p
  comma-delimited mv_boreholes_all.txt table.</td><td>The actual source is CSV,
  rather than the tab-separated example in the original plan. Comma, tab and pipe
  separators are detected. All columns are retained.</td></tr>
-<tr><td>eWell WAR</td><td>Eight headered tables in the cached original ZIP;
- corresponding local .bin tables contain DataFrames.</td><td>Every data member
+<tr><td>eWell WAR</td><td>ZIP input is supported; the eight recorded WAR
+ exports were read from parsed local DataFrame pickles.</td><td>Every data member
  is read. An original ZIP takes precedence over an already parsed table of the
  same name. Different table names remain separate datasets. Colliding archive table names
- fail the run instead of silently dropping a member.</td></tr>
+ fail the run instead of silently dropping a member. ZIP precedence is covered
+ by synthetic tests; it was not exercised in the recorded live run.</td></tr>
 <tr><td>Rig fleet</td><td>Protocol-4 DataFrame sample and full-fleet sources are available.</td>
 <td>The mounted binary tier contains the sample; the full-fleet file named in the
  issue is retained in the existing cache. They remain distinct tables. A compatible
@@ -63,11 +64,19 @@ caption{caption-side:bottom;text-align:left;font-size:.9rem;padding:8px 0}code,p
 <p>Outputs use the run date and table name; the borehole main table uses only the
  date. A rerun with the same date and format overwrites the corresponding output
  and upserts its catalog entry. Different dates remain separate snapshots.
- Generated tables remain local and are ignored by Git. Catalog records retain
+ Generated tables remain local and are ignored by Git. A tracked
+ <code>ingest_manifest.json</code> in each output group retains the measured
+ records across standard catalog regeneration. Catalog records retain
  source/member identifiers, SHA-256 digests, row counts, byte sizes, source file
  modification time, ingestion timestamp and comparison evidence. Original inputs
  remain with their existing owner; a local export does not establish backup or
- publication.</p>
+ publication. Records are marked <code>local_only: true</code>. Regeneration
+ verifies present outputs against their recorded digest and byte size, and
+ reports <code>availability: missing</code> when an export is absent. Missing
+ exports contribute zero to <code>size_bytes</code> and the available-byte total;
+ <code>measured_size_bytes</code> retains the original run measurement.
+ The manifest itself is metadata and is not scanned as a dataset. Retain or
+ commit the manifests alongside catalog updates when retaining a new run.</p>
 <h2>Validation and limits</h2>
 <p>Text fields remain strings: identifiers retain leading zeros, literal NA
  remains text, and quoted delimiters, escaped quotes and embedded newlines are
@@ -77,7 +86,10 @@ caption{caption-side:bottom;text-align:left;font-size:.9rem;padding:8px 0}code,p
  are processed in bounded chunks. The current-tier row index is held in memory.</p>
 <p>Deduplication removes only exact full-row matches against current-tier files
  with the same column set, independent of column order. Original field text is
- compared without trimming, numeric coercion or date normalization. An equal
+ compared without trimming, numeric coercion or date normalization. A comparable
+ schema is reported as <code>exact_text_only</code>, because pandas-rewritten
+ numbers such as <code>0.0</code> and <code>0</code> will not match. A zero exact
+ duplicate count does not establish absence of numeric or key overlap. An equal
  well identifier alone does not justify deleting different measurements or
  additional columns. A different schema is recorded as no_comparable_schema;
  that status does not establish absence of overlap. Duplicate counts include
@@ -91,7 +103,10 @@ caption{caption-side:bottom;text-align:left;font-size:.9rem;padding:8px 0}code,p
  uses per-file atomic renames; the group of renames is not a filesystem-wide
  transaction in the event of a disk failure.</p>
 <div class="limit"><p>File modification time does not establish source vintage or
- freshness. Exported data remains marked partial for engineering readiness.
+ freshness. The recorded WAR exports use older parsed snapshots with unknown
+ vintage, rather than a newly downloaded archive. They do not establish current
+ coverage; a later public archive may contain more rows. No source refresh was
+ performed by this review fix. Exported data remains marked partial for engineering readiness.
  The positional directdelimit fields need an authoritative schema before
  physical interpretation. Broader overlap between different schemas and
  qualification of units are not established by this extraction.</p></div>

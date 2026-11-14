@@ -11,6 +11,8 @@ import yaml
 
 from tests.bsee_ingest_support import SCRIPT, entries, run_ingest, workspace, write_zip
 
+__all__ = ["workspace"]  # Re-export the shared pytest fixture.
+
 
 def test_borehole_zip_roundtrip_preserves_ids_and_removes_current_overlap(workspace):
     source, project, current = workspace
@@ -40,7 +42,7 @@ def test_borehole_zip_roundtrip_preserves_ids_and_removes_current_overlap(worksp
     assert record["sha256"] == hashlib.sha256(target.read_bytes()).hexdigest()
     assert record["source_id"] == "bsee-data-center"
     assert record["source_member"] == "BoreholeRawData/mv_boreholes_all.txt"
-    assert record["deduplication"]["status"] == "checked"
+    assert record["deduplication"]["status"] == "exact_text_only"
     assert (
         "existing"
         in yaml.safe_load((project / "data/catalog.yaml").read_text())["modules"]
@@ -346,7 +348,7 @@ def test_content_detection_is_independent_of_file_extension(workspace):
 def test_quoted_multiline_current_values_with_escaped_quotes_match_exactly(workspace):
     source, project, current = workspace
     body = 'SN_WAR,TEXT_REMARK\n01,"He said ""NA, Inc"".\nSecond line"\n'
-    (current / "remarks.csv").write_text(body)
+    (current / "remarks.csv").write_bytes(body.encode("utf-8"))
     write_zip(source, "bin/war/eWellWARRawData.zip", {"mv_war_main.txt": body})
     result = run_ingest(workspace, "--dataset", "war")
     assert result.returncode == 0, result.stderr

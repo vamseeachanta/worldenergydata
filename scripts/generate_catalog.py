@@ -31,6 +31,11 @@ from typing import Any
 
 import yaml
 
+try:
+    from .ingest.bsee_ingest_manifest import preserve_ingest_entries
+except ImportError:  # Direct script execution.
+    from ingest.bsee_ingest_manifest import preserve_ingest_entries
+
 CONTRACT_ONLY_STATUS = "local_draft_public_export_requires_maintainer_eligibility"
 
 _DATE_RE = [
@@ -113,7 +118,7 @@ _SKIP_DIRS = {
     "cache",
     ".temp_downloads",
 }
-_SKIP_FILES = {"_metadata.json"}
+_SKIP_FILES = {"_metadata.json", "ingest_manifest.json"}
 
 
 def _humanize_bytes(n: int) -> str:
@@ -659,6 +664,7 @@ def generate_catalog(
         use_osha = osha_dict if name == "hse" else None
         schema = scan_module(mp, root, external_mod_path=ext_mp, osha_dict=use_osha)
         _preserve_contract_entries(schema, mp / "schema.yaml")
+        preserve_ingest_entries(schema, mp, root)
         mods[name] = schema
         if not dry_run and mp.is_relative_to(root):
             sp = destination_root / mp.relative_to(root) / "schema.yaml"

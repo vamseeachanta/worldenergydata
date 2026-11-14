@@ -3,7 +3,7 @@ generated_at: '2026-11-14T04:45:13.034870+00:00'
 total_modules: 12
 total_datasets: 62
 total_binary_stores: 37
-total_size_bytes: 4864211626
+total_size_bytes: 2846309606
 modules:
   bsee:
     module: bsee
@@ -643,7 +643,7 @@ modules:
       row_count: 54714
       source_row_count: 54714
       duplicate_rows: 0
-      size_bytes: 3521694
+      size_bytes: 0
       sha256: 4a8c11b96f9ed1773dbdc72d7aa58accb89381c62c8439a89847965de0c99e07
       last_modified: '2026-11-14T04:39:45.390532+00:00'
       ingested_at: '2026-11-14T04:39:45.390532+00:00'
@@ -665,6 +665,9 @@ modules:
         status: no_comparable_schema
         compared_files: []
         compared_sources: []
+      measured_size_bytes: 3521694
+      local_only: true
+      availability: missing
     - name: mv_war_main
       path: data/modules/bsee/war/20261113_mv_war_main.csv
       format: csv
@@ -764,7 +767,7 @@ modules:
       row_count: 363786
       source_row_count: 363786
       duplicate_rows: 0
-      size_bytes: 64464944
+      size_bytes: 0
       sha256: 2b93ac509cdc2f4c9894a5a677ce6e1c0c347e648a1d53e9b810403de28a2fda
       last_modified: '2026-11-14T04:39:45.390532+00:00'
       ingested_at: '2026-11-14T04:39:45.390532+00:00'
@@ -786,6 +789,9 @@ modules:
         status: no_comparable_schema
         compared_files: []
         compared_sources: []
+      measured_size_bytes: 64464944
+      local_only: true
+      availability: missing
     - name: mv_war_main_prop
       path: data/modules/bsee/war/20261113_mv_war_main_prop.csv
       format: csv
@@ -853,7 +859,7 @@ modules:
       row_count: 361756
       source_row_count: 361756
       duplicate_rows: 0
-      size_bytes: 28178796
+      size_bytes: 0
       sha256: 9a081ce53a5d889b63aa47332abb9e217c8bb752292ebd6501443578b660dd74
       last_modified: '2026-11-14T04:39:45.390532+00:00'
       ingested_at: '2026-11-14T04:39:45.390532+00:00'
@@ -875,6 +881,9 @@ modules:
         status: no_comparable_schema
         compared_files: []
         compared_sources: []
+      measured_size_bytes: 28178796
+      local_only: true
+      availability: missing
     - name: mv_war_main_prop_remark
       path: data/modules/bsee/war/20261113_mv_war_main_prop_remark.csv
       format: csv
@@ -890,7 +899,7 @@ modules:
       row_count: 361756
       source_row_count: 361756
       duplicate_rows: 0
-      size_bytes: 295879865
+      size_bytes: 0
       sha256: 058580a376f65d776d224f366f2b36e95c1bf19988226efc231dfbce697ad6f4
       last_modified: '2026-11-14T04:39:45.390532+00:00'
       ingested_at: '2026-11-14T04:39:45.390532+00:00'
@@ -912,6 +921,9 @@ modules:
         status: no_comparable_schema
         compared_files: []
         compared_sources: []
+      measured_size_bytes: 295879865
+      local_only: true
+      availability: missing
     - name: mv_war_open_hole_runs
       path: data/modules/bsee/war/20261113_mv_war_open_hole_runs.csv
       format: csv
@@ -947,7 +959,7 @@ modules:
       row_count: 32694
       source_row_count: 32694
       duplicate_rows: 0
-      size_bytes: 2056073
+      size_bytes: 0
       sha256: bf0cf028d6e93a1131e2ba4e730c47e170154d040a6be816540b716712c3d24e
       last_modified: '2026-11-14T04:39:45.390532+00:00'
       ingested_at: '2026-11-14T04:39:45.390532+00:00'
@@ -969,6 +981,9 @@ modules:
         status: no_comparable_schema
         compared_files: []
         compared_sources: []
+      measured_size_bytes: 2056073
+      local_only: true
+      availability: missing
     - name: mv_war_open_hole_tools
       path: data/modules/bsee/war/20261113_mv_war_open_hole_tools.csv
       format: csv
@@ -984,7 +999,7 @@ modules:
       row_count: 83927
       source_row_count: 83927
       duplicate_rows: 0
-      size_bytes: 865884
+      size_bytes: 0
       sha256: 6fa461f52aaac380b35d7183ff0f1c4cbef78b4ab48bf679fb77f038692b0d91
       last_modified: '2026-11-14T04:39:45.390532+00:00'
       ingested_at: '2026-11-14T04:39:45.390532+00:00'
@@ -1006,6 +1021,9 @@ modules:
         status: no_comparable_schema
         compared_files: []
         compared_sources: []
+      measured_size_bytes: 865884
+      local_only: true
+      availability: missing
     - name: mv_war_tubular_summaries
       path: data/modules/bsee/war/20261113_mv_war_tubular_summaries.csv
       format: csv
@@ -1053,7 +1071,7 @@ modules:
       row_count: 389840
       source_row_count: 389840
       duplicate_rows: 0
-      size_bytes: 22104755
+      size_bytes: 0
       sha256: a80e16b9888b1faecf0bcaac80e226c2588119a84f0aef948e805d1bc4643839
       last_modified: '2026-11-14T04:39:45.390532+00:00'
       ingested_at: '2026-11-14T04:39:45.390532+00:00'
@@ -1075,6 +1093,9 @@ modules:
         status: no_comparable_schema
         compared_files: []
         compared_sources: []
+      measured_size_bytes: 22104755
+      local_only: true
+      availability: missing
     - name: mv_war_tubular_summaries_prop
       path: data/modules/bsee/war/20261113_mv_war_tubular_summaries_prop.csv
       format: csv
@@ -1098,7 +1119,7 @@ modules:
       row_count: 389840
       source_row_count: 389840
       duplicate_rows: 0
-      size_bytes: 9367320
+      size_bytes: 0
       sha256: cef83b8832574b4524b7e0e02e962d528d5398ea3ed307bc3098686266c04e79
       last_modified: '2026-11-14T04:39:45.390532+00:00'
       ingested_at: '2026-11-14T04:39:45.390532+00:00'
@@ -1120,6 +1141,9 @@ modules:
         status: no_comparable_schema
         compared_files: []
         compared_sources: []
+      measured_size_bytes: 9367320
+      local_only: true
+      availability: missing
     - name: rig_fleet
       path: data/modules/bsee/rig_fleet/20261113_rig_fleet.csv
       format: csv
@@ -1143,7 +1167,7 @@ modules:
       row_count: 16
       source_row_count: 16
       duplicate_rows: 0
-      size_bytes: 891
+      size_bytes: 0
       sha256: 0cf9f02dc8cfe5bb3aa2e3c0b94d4da37a9822d07949dd77d2d1a9490946f7ab
       last_modified: '2026-11-14T04:39:45.390532+00:00'
       ingested_at: '2026-11-14T04:39:45.390532+00:00'
@@ -1165,6 +1189,9 @@ modules:
         status: no_comparable_schema
         compared_files: []
         compared_sources: []
+      measured_size_bytes: 891
+      local_only: true
+      availability: missing
     - name: rig_fleet_full
       path: data/modules/bsee/rig_fleet/20261113_rig_fleet_full.csv
       format: csv
@@ -1264,7 +1291,7 @@ modules:
       row_count: 2268
       source_row_count: 2268
       duplicate_rows: 0
-      size_bytes: 206566
+      size_bytes: 0
       sha256: ad7e4c26be844845bbcfcdf61ddad8a37f2bc6f67b976576866b5cc9e2202830
       last_modified: '2026-11-14T04:39:45.390532+00:00'
       ingested_at: '2026-11-14T04:39:45.390532+00:00'
@@ -1286,6 +1313,9 @@ modules:
         status: no_comparable_schema
         compared_files: []
         compared_sources: []
+      measured_size_bytes: 206566
+      local_only: true
+      availability: missing
     - name: directdelimit
       path: data/modules/bsee/directional_survey/20261113_directdelimit.csv
       format: csv
@@ -1337,7 +1367,7 @@ modules:
       row_count: 4924967
       source_row_count: 4924967
       duplicate_rows: 0
-      size_bytes: 546039007
+      size_bytes: 0
       sha256: 36db21833e91594a7bb11e9581214fd5a36e8ead415dfde9bdaf382420cbbe9a
       last_modified: '2026-11-14T04:39:45.390532+00:00'
       ingested_at: '2026-11-14T04:39:45.390532+00:00'
@@ -1359,6 +1389,9 @@ modules:
         status: no_comparable_schema
         compared_files: []
         compared_sources: []
+      measured_size_bytes: 546039007
+      local_only: true
+      availability: missing
     - name: dsptsdelimit
       path: data/modules/bsee/directional_survey/20261113_dsptsdelimit.csv
       format: csv
@@ -1418,7 +1451,7 @@ modules:
       row_count: 4925141
       source_row_count: 4925141
       duplicate_rows: 0
-      size_bytes: 1034279791
+      size_bytes: 0
       sha256: 455b708465ae2b49aefc0d3b4dd6feda8be56ad0ba0b80a7514fb41cf0247238
       last_modified: '2026-11-14T04:39:45.390532+00:00'
       ingested_at: '2026-11-14T04:39:45.390532+00:00'
@@ -1437,12 +1470,15 @@ modules:
         reason: File modification time does not establish source vintage
       deduplication:
         method: exact_full_row_same_schema
-        status: checked
+        status: exact_text_only
         compared_files:
         - wells/well_directional_surveys.csv
         compared_sources:
         - path: wells/well_directional_surveys.csv
           sha256: e61de0480595250ecce5db4c7abb0d1eb86395c6f16f0709ab60bdb2ee616972
+      measured_size_bytes: 1034279791
+      local_only: true
+      availability: missing
     - name: mv_boreholes_all
       path: data/modules/bsee/borehole/20261113.csv
       format: csv
@@ -1554,7 +1590,7 @@ modules:
       row_count: 57354
       source_row_count: 57354
       duplicate_rows: 0
-      size_bytes: 10936434
+      size_bytes: 0
       sha256: bb58691785b8e570292a5d0b7c9aa78a68c7d4c93ed6a4a3eee8422b463f851f
       last_modified: '2026-11-14T04:45:13.034870+00:00'
       ingested_at: '2026-11-14T04:45:13.034870+00:00'
@@ -1576,6 +1612,9 @@ modules:
         status: no_comparable_schema
         compared_files: []
         compared_sources: []
+      measured_size_bytes: 10936434
+      local_only: true
+      availability: missing
     binary_stores:
     - name: Well_APD_Default
       path: data/modules/bsee/bin/Well_APD_Default

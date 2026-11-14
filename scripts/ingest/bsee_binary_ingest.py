@@ -28,6 +28,7 @@ try:  # Direct script execution and repository-package import.
         digest,
         tables,
     )
+    from .bsee_ingest_manifest import stage_manifests
 except ImportError:
     from bsee_binary_formats import (
         SUFFIXES,
@@ -36,6 +37,7 @@ except ImportError:
         digest,
         tables,
     )
+    from bsee_ingest_manifest import stage_manifests
 
 GROUPS = ("borehole", "war", "rig_fleet", "directional_survey")
 
@@ -222,6 +224,9 @@ def ingest(
                             "source_row_count": source_count,
                             "duplicate_rows": source_count - count,
                             "size_bytes": staged.stat().st_size,
+                            "measured_size_bytes": staged.stat().st_size,
+                            "local_only": True,
+                            "availability": "present",
                             "sha256": digest(staged),
                             "last_modified": timestamp,
                             "ingested_at": timestamp,
@@ -248,7 +253,9 @@ def ingest(
                             "deduplication": {
                                 "method": "exact_full_row_same_schema",
                                 "status": (
-                                    "checked" if compared else "no_comparable_schema"
+                                    "exact_text_only"
+                                    if compared
+                                    else "no_comparable_schema"
                                 ),
                                 "compared_files": compared,
                                 "compared_sources": [
@@ -260,6 +267,7 @@ def ingest(
                     destinations.append((staged, target))
                 if digest(path) != source_hash:
                     raise ValueError("Source changed while being read")
+        destinations.extend(stage_manifests(records, project_root, scratch))
         update_catalog(catalog, records, timestamp)
         staged_catalog = scratch / "catalog.yaml"
         staged_catalog.write_text(

@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
+import codecs
 import csv
-import hashlib
 import io
 import re
 import zipfile
@@ -11,6 +11,11 @@ from itertools import islice
 from pathlib import Path, PurePosixPath
 
 import pandas as pd
+
+try:
+    from .bsee_ingest_manifest import digest
+except ImportError:  # Direct ingestion script execution.
+    from bsee_ingest_manifest import digest
 
 # Published dspts layout already used by bsee.data.sources.zip.well_data.
 SURVEY_COLUMNS = [
@@ -31,15 +36,6 @@ SURVEY_COLUMNS = [
 # The remaining directdelimit field meanings/units have not been verified.
 DIRECT_COLUMNS = ["API_WELL_NUMBER"] + [f"SOURCE_COLUMN_{n:02d}" for n in range(2, 12)]
 SUFFIXES = {".zip", ".bin", ".pkl", ".pickle", ".txt", ".csv", ".tsv"}
-
-
-def digest(path: Path) -> str:
-    """Hash source/output bytes with bounded memory."""
-    sha = hashlib.sha256()
-    with path.open("rb") as handle:
-        for block in iter(lambda: handle.read(1024 * 1024), b""):
-            sha.update(block)
-    return sha.hexdigest()
 
 
 def detect_format(path: Path) -> str:
@@ -75,7 +71,9 @@ def text_chunks(handle, name: str, chunk_size: int, encoding: str):
     sample = handle.read(8192)
     handle.seek(0)
     codec = "utf-8-sig" if sample.startswith(b"\xef\xbb\xbf") else encoding
-    text = sample.decode(codec)
+    # A byte-limited sample may end within a character. The full reader below
+    # still decodes strictly, including any invalid or truncated final bytes.
+    text = codecs.getincrementaldecoder(codec)().decode(sample, final=False)
     if text.startswith("version https://git-lfs.github.com/spec/v1"):
         raise ValueError("LFS pointer requires the actual payload")
     if not text:
@@ -135,8 +133,10 @@ def tables(path: Path, chunk_size: int, encoding: str, trust_pickles: bool):
                 }:
                     raise ValueError("Unsupported archive member format")
                 with archive.open(member) as handle:
-                    yield name, member.filename, text_chunks(
-                        handle, name, chunk_size, encoding
+                    yield (
+                        name,
+                        member.filename,
+                        text_chunks(handle, name, chunk_size, encoding),
                     )
     elif kind == "pickle":
         if not trust_pickles:
