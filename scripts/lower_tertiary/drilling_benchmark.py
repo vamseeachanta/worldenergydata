@@ -6,20 +6,29 @@ web edition retrieved 2026-10-19,
 straight-line least squares estimates of slope and intercept:
 https://www.itl.nist.gov/div898/handbook/pmd/section4/pmd431.htm
 
-The workbook-derived durations include partial-scope intervals. A fitted ratio
-is descriptive, not evidence of learning, efficiency, or engineering acceptance.
+The current saved cohort contains spud-to-TD calendar intervals, not rig-time.
+Legacy drilling-day inputs remain a separate basis. A fitted ratio is descriptive,
+not evidence of learning, efficiency, or engineering acceptance.
 """
 
 from __future__ import annotations
 
 import csv
 import math
+from datetime import date
 from pathlib import Path
 
-COLUMNS = {"api_well_number", "max_well_bore_tvd_ft", "drilling_days"}
+COLUMNS = {"api_well_number", "max_well_bore_tvd_ft"}
+CALENDAR_DAYS = "spud_to_td_calendar_days"
+DAY_COLUMNS = {"drilling_days", CALENDAR_DAYS}
 LIMITATION = (
     "Workbook-derived days; partial-scope intervals included; descriptive only, "
     "not an acceptance criterion or a causal learning measure."
+)
+CALENDAR_LIMITATION = (
+    "Spud-to-TD elapsed calendar days, including waiting and suspension; not "
+    "active rig-time. Descriptive only, not an acceptance criterion or a causal "
+    "learning measure."
 )
 
 
@@ -29,8 +38,11 @@ def load_benchmark_rows(path: Path) -> list[dict]:
         return []
     with path.open(encoding="utf-8", newline="") as stream:
         reader = csv.DictReader(stream)
-        if not COLUMNS.issubset(reader.fieldnames or []):
+        columns = set(reader.fieldnames or [])
+        if not COLUMNS.issubset(columns) or not DAY_COLUMNS.intersection(columns):
             raise ValueError("Drilling benchmark CSV lacks required columns")
+        if DAY_COLUMNS.issubset(columns):
+            raise ValueError("Drilling benchmark CSV has an ambiguous duration basis")
         return list(reader)
 
 
@@ -52,28 +64,57 @@ def _positive(value) -> float | None:
     return number if math.isfinite(number) and number > 0 else None
 
 
+def _calendar_days(well: dict) -> float | None:
+    """TD minus spud, without inclusive adjustment; never fall back to rig-days.
+
+    Matches build_drilling_insights.load_wells and the milestone decision:
+    https://github.com/vamseeachanta/worldenergydata/issues/1064#issuecomment-6132640847
+    """
+    try:
+        spud = date.fromisoformat(well.get("spud_date"))
+        td = date.fromisoformat(well.get("td_date"))
+    except (TypeError, ValueError):
+        return None
+    return _positive((td - spud).days)
+
+
 def benchmark_well(well: dict, rows: list[dict] | tuple = ()) -> dict:
     """Compare a matching well to other unique API rows within their depth range.
 
     Two distinct peer depths are the algebraic minimum for slope/intercept,
     not a statistical adequacy threshold. No extrapolation is supplied.
     """
+    day_column = (
+        CALENDAR_DAYS if any(CALENDAR_DAYS in row for row in rows) else "drilling_days"
+    )
+    calendar = day_column == CALENDAR_DAYS
     result = {
         "status": "NOT_EVALUATED",
         "reason": "",
         "peer_count": 0,
         "fitted_days": None,
         "observed_to_fitted": None,
-        "limitation": LIMITATION,
+        "duration_basis": day_column,
+        "limitation": CALENDAR_LIMITATION if calendar else LIMITATION,
     }
 
     def unavailable(reason):
         return dict(result, reason=reason)
 
+    if any(
+        day_column not in row or len(DAY_COLUMNS.intersection(row)) != 1 for row in rows
+    ):
+        return unavailable("Saved benchmark contains an inconsistent duration basis")
     api = _api(well.get("api"))
     depth = _positive(well.get("max_tvd_ft"))
-    days = _positive(well.get("drilling_rig_days"))
+    days = (
+        _calendar_days(well) if calendar else _positive(well.get("drilling_rig_days"))
+    )
     if api is None or depth is None or days is None:
+        if calendar:
+            return unavailable(
+                "API, positive TVD and positive spud-to-TD calendar days are required"
+            )
         return unavailable("API, positive TVD and positive drilling days are required")
     keyed = {}
     for row in rows:
@@ -88,14 +129,14 @@ def benchmark_well(well: dict, rows: list[dict] | tuple = ()) -> dict:
         return unavailable("No matching API in the saved drilling insight CSV")
     if (
         _positive(target.get("max_well_bore_tvd_ft")) != depth
-        or _positive(target.get("drilling_days")) != days
+        or _positive(target.get(day_column)) != days
     ):
         return unavailable("Stage facts and saved benchmark TVD or days disagree")
     peers = [
         (x, y)
         for row in keyed.values()
         if (x := _positive(row.get("max_well_bore_tvd_ft"))) is not None
-        and (y := _positive(row.get("drilling_days"))) is not None
+        and (y := _positive(row.get(day_column))) is not None
     ]
     result["peer_count"] = len(peers)
     return _fit_comparison(depth, days, peers, result)

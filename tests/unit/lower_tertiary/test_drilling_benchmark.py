@@ -137,11 +137,12 @@ def test_csv_loader_preserves_api_and_missing_file_is_explicit(tmp_path):
     path = tmp_path / "cohort.csv"
     path.write_text(
         "api_well_number,max_well_bore_tvd_ft,drilling_days\n"
-        "100000000001.0,20000,60\n"
+        "100000000001.0,20000,60\n",
+        encoding="utf-8",
     )
     assert load_benchmark_rows(path) == [_row("100000000001.0", "20000", "60")]
     assert load_benchmark_rows(tmp_path / "absent.csv") == []
-    path.write_text("unrelated\nvalue\n")
+    path.write_text("unrelated\nvalue\n", encoding="utf-8")
     with pytest.raises(ValueError, match="columns"):
         load_benchmark_rows(path)
 
@@ -217,13 +218,15 @@ def test_generator_reads_saved_cohort_and_writes_badge(tmp_path, monkeypatch):
                 "fields": {"example": {"display_name": "Example"}},
                 "wells": [well],
             }
-        )
+        ),
+        encoding="utf-8",
     )
     cohort.write_text(
         "api_well_number,max_well_bore_tvd_ft,drilling_days\n"
         "100000000001.0,20000,60\n"
         "100000000002.0,10000,20\n"
-        "100000000003.0,30000,40\n"
+        "100000000003.0,30000,40\n",
+        encoding="utf-8",
     )
     we = SimpleNamespace(
         compute_well_economics=lambda *a, **k: SimpleNamespace(to_json=dict),
@@ -247,7 +250,7 @@ def test_generator_reads_saved_cohort_and_writes_badge(tmp_path, monkeypatch):
         ),
     )
     builder.main()
-    page = (tmp_path / "example_A_well.html").read_text()
+    page = (tmp_path / "example_A_well.html").read_text(encoding="utf-8")
     assert "Days vs depth · 2.0× fitted" in page
     assert '"peer_count": 2' in page
     assert '"fitted_days": 30.0' in page
