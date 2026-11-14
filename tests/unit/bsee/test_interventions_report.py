@@ -207,3 +207,49 @@ def test_note_refuses_a_summary_without_a_partial_year(output_copy, tmp_path):
     with pytest.raises(ValueError, match="no partial year"):
         write_results_note.main(out=output_copy, readme=readme)
     assert not readme.exists()
+
+
+def test_article_states_the_approval_status_assumption(tmp_path):
+    import re
+
+    import build_article
+
+    page = build_article.build(
+        out=EXAMPLE / "output", page=tmp_path / "page.html"
+    ).read_text(encoding="utf-8")
+    # The permit table has no approval-status field: the README marks "every
+    # row is an approved permit" and the approval-date reading as assumed.
+    # The standalone article must carry both, in its counting rules.
+    rules = page[page.index('id="appendix-a"') : page.index('id="appendix-b"')]
+    text = " ".join(re.sub(r"<[^>]+>", " ", rules).split())
+    assert "no separate approval-status field" in text
+    assert "Assumed, to be confirmed" in text
+    assert "ACC_STATUS_DATE" in text
+    assert "approval date" in text
+
+
+def test_note_runs_without_dataframe_map(output_copy, tmp_path, monkeypatch):
+    import write_results_note
+
+    # requirements.txt allows pandas 2.0, which has no DataFrame.map (added in
+    # 2.1.0); the note must use API that the declared minimum provides.
+    readme = tmp_path / "README.md"
+    write_results_note.main(out=output_copy, readme=readme)
+    expected = readme.read_bytes()
+    readme.unlink()
+    monkeypatch.delattr(pd.DataFrame, "map")
+    write_results_note.main(out=output_copy, readme=readme)
+    assert readme.read_bytes() == expected
+
+
+def test_article_refuses_a_summary_without_a_partial_year(output_copy, tmp_path):
+    import build_article
+
+    # The figure 1 notes name the partial year; a 31 December snapshot has
+    # none, so the build stops with a stated reason and writes no page.
+    summary = summary_of(output_copy)
+    summary["partial_year"] = None
+    (output_copy / "summary.json").write_text(json.dumps(summary), encoding="utf-8")
+    with pytest.raises(ValueError, match="no partial year"):
+        build_article.build(out=output_copy, page=tmp_path / "page.html")
+    assert not (tmp_path / "page.html").exists()
