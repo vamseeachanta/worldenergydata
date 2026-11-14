@@ -111,6 +111,18 @@ def test_pending_dependencies_use_portable_issue_references():
         assert f"#{issue}: {description}" in rendered
 
 
+def test_each_seed_row_marks_pending_qualification_with_badges():
+    from worldenergydata.cost.reporting.benchmark_report import render_html
+
+    records = load_seed_disclosure_records()
+    html = render_html(build_report_facts(records, [], "2026-10-20"))
+    for status in ("ungated — #336 pending", "NOT_EVALUATED — pending #344"):
+        assert html.count(f'<span class="badge-pending">{status}</span>') == len(
+            records
+        )
+    assert ".badge-pending{" in html
+
+
 @pytest.mark.parametrize("kind", ["html", "facts"])
 def test_report_uses_lf_with_crlf_platform_default(tmp_path, monkeypatch, kind):
     from worldenergydata.cost.reporting.benchmark_report import write_report

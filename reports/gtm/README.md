@@ -1,4 +1,13 @@
-# Operator cost benchmarking analysis
+# GTM report index
+
+This directory also contains the [decommissioning market outlook](decommissioning-market-outlook-2026-07-05.html),
+[seasonal intervention risk windows](seasonal-intervention-risk-windows-2026-07-05.html),
+[field-development economics](2026-05-04-fdas-field-development-economics.html),
+[production decline forecast](2026-05-04-gtm-production-decline-forecast.html),
+and [Lower Tertiary portfolio economics](2026-06-17-lower-tertiary-portfolio-economics.html).
+Each artifact documents its own inputs and qualification limits.
+
+## Operator cost benchmarking analysis
 
 [Open the report](operator_cost_benchmarking.html). The companion
 [facts JSON](operator_cost_benchmarking_facts.json) retains computational
@@ -6,17 +15,18 @@ precision, source metadata and descriptive cohort statistics. The
 [percent-format notebook](../../notebooks/gtm/operator_cost_benchmarking.py)
 shows the inputs, method and a worked answer. Both outputs run offline.
 
-## Revision history
+### Revision history
 
 | Revision | Date | Change and reason |
 | --- | --- | --- |
 | Initial | 2026-10-20 | Cited historical disclosures and descriptive cohorts expose the FDAS analytics surface. |
 | Interface | 2026-11-12 | Registered offline YAML invocation and portable issue references; source data unchanged. |
 | Cohort basis | 2026-11-12 | Excluded supplemental derived calibration rows from cohort statistics and outliers because their amounts and years are manufactured. |
+| Presentation | 2026-11-13 | Added tabular notebook views and pending qualification badges; source data unchanged. |
 
 Table 1. Documentation revision history.
 
-## Inputs and qualification
+### Inputs and qualification
 
 The annual seed covers Chevron, Shell and BP for fiscal years 2020–2023.
 Every value is transcribed from the linked annual-report table, with publisher,
@@ -40,7 +50,7 @@ Outliers carry an operator, sanction year, one-based source row and canonical
 source-record SHA-256 in the facts JSON, allowing the originating observation
 to be located without replicating project-specific text in the report.
 
-## Method and worked example
+### Method and worked example
 
 Arithmetic annual change is current CAPEX minus previous CAPEX, and relative
 change is that difference divided by previous CAPEX. A missing year or zero
@@ -65,7 +75,7 @@ significance. For the independent test fixture `[10, 20, 30, 40, 100]`, median
 = 30, Q1 = 20, Q3 = 40, IQR = 20 and the upper fence = 70; only 100 is flagged.
 No fiscal amounts are added to the sanction-cost distribution.
 
-## Regeneration and checks
+### Regeneration and checks
 
 From an installed repository environment:
 
@@ -79,8 +89,11 @@ the input vintage. `OPERATOR_COST_REPORT_OUT` redirects both outputs for
 isolated execution. The integration test executes the notebook and compares
 both outputs byte for byte against the committed artifacts. HTML embeds CSS,
 SVG and selector logic; source hyperlinks are citations, not external assets.
+The notebook exposes annual operator profiles, regional cohorts, outlier
+observations and complete per-row citations as pandas DataFrames. The report
+retains visible pending badges for comparability and restatement qualification.
 
-## Pending dependencies
+### Pending dependencies
 
 - [Annual dataset](https://github.com/vamseeachanta/worldenergydata/issues/334): canonical ingestion is absent; cited seed inputs are supplied here.
 - [Comparability](https://github.com/vamseeachanta/worldenergydata/issues/336): FX, inflation and fiscal-definition qualification remain pending.
@@ -90,7 +103,7 @@ SVG and selector logic; source hyperlinks are citations, not external assets.
 
 OPEX is NOT_EVALUATED because no qualified OPEX series is supplied.
 
-## Registered workflow
+### Registered workflow
 
 The `cost-disclosure-benchmark` workflow reuses the same inputs and report
 builder. Run the bundled example through the engine:

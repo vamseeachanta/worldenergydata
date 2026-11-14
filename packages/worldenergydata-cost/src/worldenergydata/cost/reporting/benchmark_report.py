@@ -217,6 +217,8 @@ def _table(headers, rows, caption):
     def cell(value):
         if value == SEED_BADGE:
             return f'<span class="badge-seed">{SEED_BADGE}</span>'
+        if value in ("ungated — #336 pending", "NOT_EVALUATED — pending #344"):
+            return f'<span class="badge-pending">{escape(value)}</span>'
         return escape(str(value))
 
     body = "".join(
@@ -424,6 +426,7 @@ body{font:16px system-ui,sans-serif;background:#f4f7fa;color:#183044;margin:0 au
 section,header{background:white;border:1px solid #d6e0e8;border-radius:8px;margin:1rem 0;padding:1.4rem}
 h1,h2{color:#123f59}.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem}
 .kpis p{background:#eaf2f7;padding:1rem}.badge-seed{background:#fdf3e0;color:#8a5a12;border:1px solid #f0dcae;padding:.2rem .4rem}
+.badge-pending{background:#edf2f7;color:#334155;border:1px solid #cbd5e1;padding:.2rem .4rem}
 .table-wrap{overflow-x:auto}table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:.65rem;border-bottom:1px solid #d6e0e8}
 th{background:#eaf2f7}td{overflow-wrap:anywhere}.caption{font-size:.85rem;color:#456}svg{max-width:600px;width:100%}
 rect{fill:#267a99}select{font:inherit;padding:.5rem}a{color:#145d83}[hidden]{display:none}
@@ -441,7 +444,10 @@ Added offline YAML workflow and portable issue references; source data unchanged
 </td></tr></tbody>
 <tbody><tr><td>Cohort basis</td><td>2026-11-12</td><td>
 Excluded supplemental derived calibration rows from cohort statistics and outlier observations
-because their amounts and years are manufactured.</td></tr></tbody></table>
+because their amounts and years are manufactured.</td></tr></tbody>
+<tbody><tr><td>Presentation</td><td>2026-11-13</td><td>
+Added tabular notebook views and pending qualification badges; source data unchanged.
+</td></tr></tbody></table>
 <p class="caption">Report edition history.</p></section>
 <label for="operator-selector">Operator</label> <select id="operator-selector">${slot5}</select>
 ${slot6}

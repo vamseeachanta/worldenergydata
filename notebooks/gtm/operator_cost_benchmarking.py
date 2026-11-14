@@ -19,6 +19,8 @@
 import os
 from pathlib import Path
 
+import pandas as pd
+
 from worldenergydata.cost.data_collection.disclosure_seed_dataset import (
     load_seed_disclosure_records,
 )
@@ -56,6 +58,51 @@ for row in operator_view:
     print(
         f"{row.operator} {row.fiscal_year}: {row.reported_capex_usd_mm:,.1f} USD million"
     )
+
+# %% [markdown]
+# ## Annual operator profiles
+# Illustrative seed — not yet ingested. These tabular views use the same
+# FDAS-derived facts as the HTML. Raw YoY changes remain ungated; qualified
+# changes and restatement status retain their explicit pending indicators.
+
+# %%
+operator_frame = pd.DataFrame(facts["operator_rows"]).drop(columns="provenance")
+operator_frame
+
+# %% [markdown]
+# ## Regional and field-type proxy cohorts
+# Derived descriptive statistics from curated public sanction observations.
+# Water-depth bands are proxies; sparse cohorts have no quartile evaluation.
+
+# %%
+cohort_frame = pd.DataFrame(facts["cohorts"])
+cohort_frame
+
+# %% [markdown]
+# ## Outlier observations
+# These are descriptive IQR flags, with source-row identities retained.
+
+# %%
+outlier_frame = pd.DataFrame(facts["outliers"])
+outlier_frame
+
+# %% [markdown]
+# ## Per-row citations and freshness
+# Illustrative seed — not yet ingested. Filing editions, retrieval dates,
+# fiscal definitions and source digests accompany every annual figure.
+
+# %%
+citations_frame = pd.DataFrame(
+    [
+        {
+            "operator": row["operator"],
+            "fiscal_year": row["fiscal_year"],
+            **row["provenance"],
+        }
+        for row in facts["operator_rows"]
+    ]
+)
+citations_frame
 
 # %% [markdown]
 # ## Worked example: input, method, answer
