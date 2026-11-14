@@ -89,6 +89,7 @@ def test_registered_relocation_and_report_readback(verifier, tmp_path, monkeypat
     assert saved == receipt
     html = (reports / "issue-271-output-readback.html").read_text()
     assert "Revision history" in html
+    assert "Table 1. Revision history." in html
     assert "VERIFIED" in html
     assert str(root) not in html
     assert str(REPO) not in json.dumps(receipt)
@@ -109,29 +110,33 @@ def tamper_manifest(path, defect):
 
 
 @pytest.mark.parametrize(
-    "defect",
+    "defect,criterion",
     [
-        "missing_live",
-        "missing_snapshot",
-        "changed_live",
-        "changed_snapshot",
-        "missing_live_manifest",
-        "missing_snapshot_manifest",
-        "wrong_job",
-        "wrong_rows",
-        "wrong_time",
-        "manifest_error",
-        "wrong_status",
-        "row_sum",
-        "empty_parquet",
-        "extra_snapshot",
-        "nested_history",
-        "external_symlink",
-        "metadata_mismatch",
-        "runtime_configuration",
+        ("missing_live", "same_payload_file_set"),
+        ("missing_snapshot", "same_payload_file_set"),
+        ("changed_live", "retained_payload_digests"),
+        ("changed_snapshot", "retained_payload_digests"),
+        ("missing_live_manifest", "native_manifest_readback"),
+        ("missing_snapshot_manifest", "native_manifest_readback"),
+        ("wrong_job", "native_manifest_readback"),
+        ("wrong_rows", "native_manifest_readback"),
+        ("wrong_time", "native_manifest_readback"),
+        ("manifest_error", "native_manifest_readback"),
+        ("wrong_status", "native_manifest_readback"),
+        ("row_sum", "summed_rows_equal_native_result"),
+        ("empty_parquet", "positive_dataset_rows"),
+        ("extra_snapshot", "one_new_snapshot"),
+        ("nested_history", "nested_history"),
+        ("external_symlink", "payload_symlink"),
+        ("metadata_mismatch", "retained_payload_digests"),
+        ("runtime_configuration", "unchanged_runtime_configuration"),
+        ("extra_payload", "catalog_payload_file_set"),
+        ("missing_metadata", "catalog_payload_file_set"),
     ],
 )
-def test_incomplete_readback_never_verifies(verifier, tmp_path, monkeypatch, defect):
+def test_incomplete_readback_never_verifies(
+    verifier, tmp_path, monkeypatch, defect, criterion
+):
     root = tmp_path / "execution"
     real_run = verifier.cmd_run_job
 
@@ -139,7 +144,7 @@ def test_incomplete_readback_never_verifies(verifier, tmp_path, monkeypatch, def
         result = real_run(*args, **kwargs)
         live, retained = output_root(root), snapshot(root)
         payload = next(live.glob("*.parquet")).name
-        if defect.startswith("missing_"):
+        if defect.startswith("missing_") and defect != "missing_metadata":
             parent = retained if "snapshot" in defect else live
             name = "manifest.json" if "manifest" in defect else payload
             (parent / name).unlink()
@@ -159,7 +164,14 @@ def test_incomplete_readback_never_verifies(verifier, tmp_path, monkeypatch, def
         elif defect == "row_sum":
             result.records_updated = 11
         elif defect == "empty_parquet":
-            pd.DataFrame({"synthetic": []}).to_parquet(live / payload)
+            for directory in (live, retained):
+                pd.DataFrame({"synthetic": []}).to_parquet(directory / payload)
+        elif defect == "extra_payload":
+            for directory in (live, retained):
+                (directory / "undeclared.txt").write_text("undeclared payload")
+        elif defect == "missing_metadata":
+            for directory in (live, retained):
+                (directory / "_metadata.json").unlink()
         elif defect == "extra_snapshot":
             (live / "runs/extra").mkdir()
         elif defect == "nested_history":
@@ -177,7 +189,7 @@ def test_incomplete_readback_never_verifies(verifier, tmp_path, monkeypatch, def
     receipt = verifier.execute_run(REPO, root)
     assert receipt["verification"] == "NOT_VERIFIED"
     assert receipt["classification"] == "readback"
-    assert receipt["checks_failed"]
+    assert receipt["checks_failed"] == [criterion]
 
 
 @pytest.mark.parametrize(
@@ -348,3 +360,19 @@ def test_mixed_native_failures_remain_retryable_in_public_receipt(
     assert receipt["verification"] == "NOT_VERIFIED"
     assert receipt["result"]["retryable"] is True
     assert receipt["native_error_class"] == "mixed_or_transient"
+
+
+@pytest.mark.parametrize("existing", ["json", "html", "both"])
+def test_existing_public_reports_are_preserved(verifier, tmp_path, existing):
+    receipt = {"verification": "NOT_VERIFIED", "started_utc": "2026-01-01"}
+    reports = tmp_path / "reports"
+    reports.mkdir()
+    extensions = ("json", "html") if existing == "both" else (existing,)
+    originals = {}
+    for extension in extensions:
+        path = reports / f"issue-271-output-readback.{extension}"
+        path.write_text("retained historical evidence")
+        originals[path.name] = path.read_bytes()
+    with pytest.raises(FileExistsError):
+        verifier.save_reports(receipt, reports)
+    assert {path.name: path.read_bytes() for path in reports.iterdir()} == originals

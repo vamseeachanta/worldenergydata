@@ -1,12 +1,26 @@
 <!doctype html>
 <html lang="en"><meta charset="utf-8"><title>Scheduler output readback</title>
 <body><h1>Scheduler output readback</h1><p>NOT_VERIFIED:
-one registered BSEE run against the full five-entry catalog.</p>
+four of five datasets were written (2,013,933 rows).
+The pipeline_permit dataset is absent because no archive member matches the
+configured primary-member pattern. The source-member contract under #267 and
+a full-catalog run for #271 remain open.</p>
 <h2>Revision history</h2><table><tr>
 <th>Revision</th><th>Date (UTC)</th><th>Change and reason</th></tr>
 <tr><td>1</td><td>2026-11-13</td>
-<td>Record observed routing and readback against explicit full-run criteria.</td></tr></table>
-<p>Table 1. Initial execution receipt.</p><h2>Evidence and limitations</h2>
+<td>Record observed routing and readback against explicit full-run criteria.</td></tr>
+<tr><td>2</td><td>2026-11-14</td><td>Disclose the separate post-execution
+procedure that appended execution_receipt_sha256, failure_observation and
+partial_readback on 2026-11-13. The appended evidence records a digest of the
+runtime execution receipt, a diagnosis from the native diagnostic, and readback
+of four written Parquets, metadata, the retained snapshot and both native
+manifests. It reports row totals and payload digests, compares the manifests
+against the partial native result and records whether a manifest error is
+present. This separate procedure is not reproduced by the committed verifier;
+its runtime inputs were not available for an independent repeat of that
+readback. Preserve the historical receipt and clarify this provenance and the
+remaining acceptance work.</td></tr></table>
+<p>Table 1. Revision history.</p><h2>Evidence and limitations</h2>
 <pre id="receipt">{
   &quot;schema&quot;: &quot;scheduler-output-readback/1&quot;,
   &quot;criteria_version&quot;: 1,

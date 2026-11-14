@@ -131,6 +131,16 @@ def readback(output, datasets, result, before, receipt):
     )
     live_files, saved_files = payload_files(output, live=True), payload_files(retained)
     require(live_files.keys() == saved_files.keys(), "same_payload_file_set")
+    expected_files = {entry["output_file"] for entry in datasets.values()} | {
+        "_metadata.json"
+    }
+    require(live_files.keys() == expected_files, "catalog_payload_file_set")
+    hashes = {name: digest(path) for name, path in live_files.items()}
+    require(
+        hashes == {name: digest(path) for name, path in saved_files.items()},
+        "retained_payload_digests",
+    )
+    receipt["payload_sha256"] = hashes
     total = 0
     for name, entry in datasets.items():
         filename = entry["output_file"]
@@ -141,12 +151,6 @@ def readback(output, datasets, result, before, receipt):
         total += rows
         receipt["datasets"][name].update(rows=rows, sha256=digest(live_files[filename]))
     require(total == result.records_updated, "summed_rows_equal_native_result")
-    hashes = {name: digest(path) for name, path in live_files.items()}
-    require(
-        hashes == {name: digest(path) for name, path in saved_files.items()},
-        "retained_payload_digests",
-    )
-    receipt["payload_sha256"] = hashes
     expected = {
         "job_name": JOB,
         "status": "success",
@@ -158,7 +162,9 @@ def readback(output, datasets, result, before, receipt):
         "error_msg": None,
     }
     for directory in (output, retained):
-        manifest = json.loads((directory / "manifest.json").read_text(encoding="utf-8"))
+        path = directory / "manifest.json"
+        require(path.is_file(), "native_manifest_readback")
+        manifest = json.loads(path.read_text(encoding="utf-8"))
         require(manifest == expected, "native_manifest_readback")
     receipt.update(
         manifests_match=True,
@@ -417,7 +423,12 @@ def save_reports(receipt, directory):
     text = json.dumps(receipt, indent=2) + "\n"
     json_path = directory / "issue-271-output-readback.json"
     html_path = directory / "issue-271-output-readback.html"
-    json_path.write_text(text, encoding="utf-8")
+    if any(path.exists() or path.is_symlink() for path in (json_path, html_path)):
+        raise FileExistsError(
+            "Public reports already exist; use a new reports directory"
+        )
+    with json_path.open("x", encoding="utf-8") as stream:
+        stream.write(text)
     page = f"""<!doctype html>
 <html lang="en"><meta charset="utf-8"><title>Scheduler output readback</title>
 <body><h1>Scheduler output readback</h1><p>{html.escape(receipt['verification'])}:
@@ -426,10 +437,11 @@ one registered BSEE run against the full five-entry catalog.</p>
 <th>Revision</th><th>Date (UTC)</th><th>Change and reason</th></tr>
 <tr><td>1</td><td>{receipt['started_utc'][:10]}</td>
 <td>Record observed routing and readback against explicit full-run criteria.</td></tr></table>
-<p>Table 1. Initial execution receipt.</p><h2>Evidence and limitations</h2>
+<p>Table 1. Revision history.</p><h2>Evidence and limitations</h2>
 <pre id="receipt">{html.escape(text)}</pre></body></html>
 """
-    html_path.write_text(page, encoding="utf-8")
+    with html_path.open("x", encoding="utf-8") as stream:
+        stream.write(page)
     require(
         json.loads(json_path.read_text(encoding="utf-8")) == receipt,
         "saved_public_json",
