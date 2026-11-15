@@ -253,3 +253,227 @@ def test_article_refuses_a_summary_without_a_partial_year(output_copy, tmp_path)
     with pytest.raises(ValueError, match="no partial year"):
         build_article.build(out=output_copy, page=tmp_path / "page.html")
     assert not (tmp_path / "page.html").exists()
+
+
+# Review copy r4 fix-up: pre-review gate findings -------------------------------
+
+
+@pytest.fixture(scope="module")
+def r4_page(tmp_path_factory):
+    import build_article
+
+    page = tmp_path_factory.mktemp("r4") / "page.html"
+    build_article.build(
+        out=EXAMPLE / "output",
+        page=page,
+        build_commit="DATACOMMIT",
+        chart_commit="CHARTCOMMIT",
+        build_date="2026-11-14",
+    )
+    return page.read_text(encoding="utf-8")
+
+
+def plain(fragment):
+    import html
+    import re
+
+    fragment = re.sub(r'src="data:[^"]*"', "", fragment)
+    return " ".join(html.unescape(re.sub(r"<[^>]+>", " ", fragment)).split())
+
+
+def between(page, start, end):
+    begin = page.index(start)
+    return page[begin : page.index(end, begin)]
+
+
+def test_article_embeds_the_deckhand_opening_graphic(r4_page):
+    import base64
+    import re
+
+    assets = EXAMPLE / "article" / "assets"
+    for name in ["opening.svg", "opening.png", "opening-alt.txt"]:
+        assert (assets / name).is_file(), name
+    alt = (assets / "opening-alt.txt").read_text(encoding="utf-8").strip()
+    png = base64.b64encode((assets / "opening.png").read_bytes()).decode()
+    slot = re.search(r'<div id="deckhand-opening"[^>]*>(.*?)</div>', r4_page, re.S)
+    assert slot, "opening slot missing"
+    assert 'aria-hidden="true"' not in slot.group(0)
+    img = slot.group(1)
+    assert f'src="data:image/png;base64,{png}"' in img
+    assert f'alt="{alt}"' in img
+    # The graphic heads the page, before the masthead and the title.
+    assert r4_page.index('id="deckhand-opening"') < r4_page.index('class="masthead"')
+
+
+def test_section_1_names_our_scenarios_and_the_derived_day_rate(r4_page):
+    s1 = plain(between(r4_page, 'id="s1"', 'id="s2"'))
+    page = plain(r4_page)
+    assert "study's cost cases" not in page
+    assert "our scenarios, built from TAP-738 day rates and BOEM durations" in s1
+    for number in ["0.53", "0.98", "4.7", "9.4"]:
+        assert number in s1
+    assert (
+        "USD 64,530 a day, derived from a TAP-738 P&A spread "
+        "(Table 8-2: USD 225,856 over 84 hours)"
+    ) in page
+
+
+def test_cost_method_and_figure_6_state_rig_mobilisation_is_excluded(r4_page):
+    rule = "Rig mobilisation is excluded from the drillship or semisubmersible row"
+    appendix_b = plain(between(r4_page, 'id="appendix-b"', 'id="appendix-c"'))
+    figure_6 = plain(between(r4_page, 'id="figure-6"', "</figure>"))
+    assert rule in appendix_b
+    assert rule in figure_6
+    assert "mobilisation is added only for the platform spreads" in appendix_b
+    assert "add mobilisation:" not in appendix_b
+
+
+def test_version_line_carries_the_build_date_and_the_data_date(r4_page):
+    version = plain(between(r4_page, 'class="version"', "</p>"))
+    assert version.startswith(
+        "Revision 4, 14 November 2026. Data: BSEE raw well data, files of "
+        "13 November 2026."
+    )
+
+
+def test_takeaway_compares_heavy_and_light_ages_and_separates_populations(r4_page):
+    takeaway = plain(between(r4_page, "<blockquote>", "</blockquote>"))
+    assert "rig-based" not in takeaway
+    assert "median 13.3 years" in takeaway and "24.1 years" in takeaway
+    assert "hydraulic workover" in takeaway
+    assert "23.0" in takeaway and "33.0" in takeaway
+    assert "different populations" in takeaway
+    assert "1,500 m and deeper" in takeaway
+    assert "deeper than 1,500 m" not in takeaway
+
+
+def test_sign_off_names_prepared_checked_and_approved(r4_page):
+    assert (
+        '<p class="signoff">Prepared: Petroleum Engineer Deckhand, Data Analyst '
+        "Deckhand. Checked: Editor Deckhand. Approved: Vamsee Achanta (pending, "
+        "C6 review copy r4).</p>"
+    ) in r4_page
+
+
+def test_references_follow_the_sign_off(r4_page):
+    import build_article
+
+    refs = between(r4_page, 'id="references"', 'id="appendix-a"')
+    assert r4_page.index('class="signoff"') < r4_page.index('id="references"')
+    for url in [
+        build_article.BOEM,
+        build_article.TAP738,
+        "https://espis.boem.gov/final%20reports/5179.pdf",
+        "https://www.data.bsee.gov/Main/RawData.aspx",
+        "https://www.data.bsee.gov/Well/eWellAPM/Default.aspx",
+    ]:
+        assert f'href="{url}"' in refs, url
+    text = plain(refs)
+    assert "Gulf of Mexico OCS Oil and Gas Lease Sales 2017-2022" in text
+    assert "Decommissioning Methodology and Cost Evaluation" in text
+    assert "July 2015" in text
+    assert "MAG-PLAN Alaska Update" in text
+
+
+@pytest.mark.parametrize("number", [1, 2, 3, 5])
+def test_a_lead_in_sentence_comes_before_figures_1_2_3_and_5(r4_page, number):
+    before = r4_page[: r4_page.index(f'<figure id="figure-{number}"')]
+    last_paragraph = before[before.rindex("<p>") :]
+    assert plain(last_paragraph).startswith(f"Figure {number} shows ")
+
+
+def test_readable_part_is_800_words_or_fewer_and_keeps_the_owner_order(r4_page):
+    import build_article
+
+    assert build_article.readable_words(r4_page) <= 800
+    order = [
+        'id="s1">1. Why interventions matter',
+        'id="s2">2. The life of a Gulf of Mexico well',
+        'id="figure-1"',
+        'id="figure-3"',
+        "What the rate means",
+        'id="s5">5. Abandonment',
+    ]
+    positions = [r4_page.index(marker) for marker in order]
+    assert positions == sorted(positions)
+    assert "next article" in plain(between(r4_page, 'id="s5"', 'id="charts"'))
+
+
+def test_readable_words_counts_sections_without_figures_or_table():
+    import build_article
+
+    page = (
+        '<h2 id="s1">1. One two</h2><p>three four</p>'
+        '<figure id="figure-1"><img alt="x y z"><figcaption>a b c</figcaption></figure>'
+        '<div class="tablewrap"><table><tr><td>d e</td></tr></table></div>'
+        '<h2 id="charts">Charts</h2><p>not counted</p>'
+    )
+    assert build_article.readable_words(page) == 5
+
+
+def test_build_stops_when_the_readable_part_is_too_long(tmp_path, monkeypatch):
+    import build_article
+
+    monkeypatch.setattr(build_article, "READABLE_WORD_LIMIT", 100)
+    page = tmp_path / "page.html"
+    with pytest.raises(ValueError, match="readable part"):
+        build_article.build(out=EXAMPLE / "output", page=page)
+    assert not page.exists()
+
+
+def test_shelf_is_defined_at_first_use_and_the_quote_is_the_sources(r4_page):
+    body = plain(r4_page[r4_page.index("<body>") :])
+    first = body.index("shelf")
+    assert body[first:].startswith("shelf (under 100 m water depth)")
+    assert "traditionally" not in body
+    assert '"require[s] that a rig be moved on location"' in body
+
+
+def test_changes_panel_comes_from_changes_md_and_is_hidden_in_print(r4_page):
+    import re
+
+    import build_article
+
+    items = build_article.changes_since_r2()
+    assert len(items) >= 5
+    panel = between(r4_page, '<aside id="changes"', "</aside>")
+    assert 'class="no-print"' in panel
+    assert re.search(r"@media print\s*\{[^}]*\.no-print\s*\{\s*display:\s*none", r4_page)
+    text = plain(panel)
+    for item in items:
+        assert plain(item) in text
+    assert r4_page.index('<aside id="changes"') < r4_page.index('id="s1"')
+
+
+def test_changes_panel_refuses_a_changes_file_without_the_section(tmp_path):
+    import build_article
+
+    changes = tmp_path / "changes.md"
+    changes.write_text("# Article revisions\n\n## Revision 4\n\n- x\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="What changed since revision 2"):
+        build_article.changes_since_r2(changes)
+
+
+def test_charts_carry_no_title_that_repeats_the_page_caption(output_copy, monkeypatch):
+    import matplotlib.figure
+
+    import plot_charts
+    import plot_life_cycle
+
+    seen = {}
+    save = matplotlib.figure.Figure.savefig
+
+    def record(fig, fname, *args, **kwargs):
+        title = fig._suptitle.get_text() if fig._suptitle is not None else ""
+        panels = [ax.get_title(loc="left") for ax in fig.axes]
+        seen[Path(str(fname)).stem] = (title, panels)
+        return save(fig, fname, *args, **kwargs)
+
+    monkeypatch.setattr(matplotlib.figure.Figure, "savefig", record)
+    plot_charts.plot(output_copy)
+    plot_life_cycle.plot(output_copy)
+    assert sorted(seen) == sorted(STEMS)
+    for stem, (title, panels) in seen.items():
+        assert title == "", f"{stem} carries the title {title!r}"
+        for panel in panels:
+            assert "permits to modify" not in panel, f"{stem}: {panel!r}"
