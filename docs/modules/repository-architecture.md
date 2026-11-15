@@ -29,7 +29,6 @@ The issue's earlier report counts are therefore not the inventory baseline.
 | Provenance reconciliation | 2026-10-21 | Source descriptions are reconciled with the surviving work specifications; symbol locators and stronger regression checks detect stale provenance and avoid line-number drift. |
 | Report count reconciliation | 2026-10-27 | Report and category counts match the HTML tree and inventory CSV after integration. |
 | Checkout isolation | 2026-11-14 | Inventory checkout probes exclude inherited Git settings and external attributes, with hostile-filter and caller-preservation regressions. |
-| Checkout evidence reference | 2026-11-15 | A plain pull request reference replaces a relative link that resolves incorrectly on branch names containing a slash. |
 
 ## Drawing
 
