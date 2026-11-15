@@ -174,14 +174,33 @@ def test_article_pins_data_links_and_chart_links_to_their_own_commits(tmp_path):
         page=tmp_path / "page.html",
         build_commit="DATACOMMIT",
         chart_commit="CHARTCOMMIT",
+        code_commit="CODECOMMIT",
     ).read_text(encoding="utf-8")
     folder = "examples/bsee/interventions_by_depth"
     assert f"/blob/DATACOMMIT/{folder}/output/rates.csv" in page
     assert f"/blob/CHARTCOMMIT/{folder}/output/05_well_life.png" in page
     assert f"/blob/DATACOMMIT/{folder}/output/05_well_life.png" not in page
-    assert f"/tree/CHARTCOMMIT/{folder}" in page
-    assert "repository at commit CHARTCOMMIT" in page
+    # The study link and the reproduction prompt name the code commit: the
+    # builder and scripts that made this page, not the commit of the charts.
+    assert f"/tree/CODECOMMIT/{folder}" in page
+    assert "repository at commit CODECOMMIT" in page
+    assert "/tree/CHARTCOMMIT/" not in page
+    assert "/tree/DATACOMMIT/" not in page
+    assert "commit CHARTCOMMIT" not in page
     assert "events 2005 to 2026)" in page
+
+
+def test_article_refuses_a_chart_pin_without_a_code_pin(tmp_path):
+    import build_article
+
+    with pytest.raises(ValueError, match="code commit"):
+        build_article.build(
+            out=EXAMPLE / "output",
+            page=tmp_path / "page.html",
+            build_commit="DATACOMMIT",
+            chart_commit="CHARTCOMMIT",
+        )
+    assert not (tmp_path / "page.html").exists()
 
 
 def test_article_rejects_event_ages_with_mixed_windows(output_copy, tmp_path):
@@ -268,6 +287,7 @@ def r4_page(tmp_path_factory):
         page=page,
         build_commit="DATACOMMIT",
         chart_commit="CHARTCOMMIT",
+        code_commit="CODECOMMIT",
         build_date="2026-11-14",
     )
     return page.read_text(encoding="utf-8")
@@ -501,9 +521,9 @@ def test_takeaway_states_the_33_year_median_counts_approvals_not_wells(r4_page):
     assert "33.0-year median age at permanent-abandonment approval" in takeaway
     assert "17,904 permanent-abandonment approvals" in takeaway
     assert "counts approvals, not wells" in takeaway
-    # The 23.0-year life stays the life of the development wells abandoned.
-    assert "life of the 16,860 development wells abandoned so far" in takeaway
-    assert "median of 16,860 abandoned wells" in takeaway
+    # The 23.0-year life is the median over the abandoned development wells
+    # with an established life (fix round 3 states both counts; see below).
+    assert "16,860 development wells abandoned so far" in takeaway
 
 
 def test_section_2_gives_abandonment_ages_as_ages_at_approval(r4_page):
@@ -551,3 +571,218 @@ def test_opening_graphic_carries_this_title_and_no_chart():
     assert f"<h1>{build_article.TITLE}</h1>" in (
         EXAMPLE / "article" / "gom-well-interventions-r4.html"
     ).read_text(encoding="utf-8")
+
+
+# Fix round 3: both counts behind the 23.0-year life ---------------------------
+
+
+def test_takeaway_states_abandoned_wells_and_wells_with_an_established_life(r4_page):
+    takeaway = plain(between(r4_page, "<blockquote>", "</blockquote>"))
+    assert (
+        "16,860 development wells abandoned so far, of which 16,858 have an "
+        "established life" in takeaway
+    )
+    assert "the 23.0-year median is over those 16,858" in takeaway
+    assert "median of 16,860" not in takeaway
+    assert "life of the 16,860" not in takeaway
+
+
+def test_established_life_count_comes_from_the_life_table(tmp_path, output_copy):
+    import build_article
+
+    years = pd.read_csv(output_copy / "life_cycle_life_years.csv")
+    row = years.group.eq("development wells") & years.status.eq("permanently abandoned")
+    years.loc[row, "life_not_established"] = 5
+    years.to_csv(output_copy / "life_cycle_life_years.csv", index=False)
+    page = tmp_path / "page.html"
+    build_article.build(out=output_copy, page=page, build_date="2026-11-14")
+    takeaway = plain(
+        between(page.read_text(encoding="utf-8"), "<blockquote>", "</blockquote>")
+    )
+    assert "16,860 development wells abandoned so far, of which 16,855" in takeaway
+    assert "over those 16,855" in takeaway
+
+
+# Fix round 3: the reproduction prompt pins the builder that made the page -----
+
+GIT_BINDINGS = ("GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR", "GIT_INDEX_FILE")
+
+
+def git_env():
+    """The environment without inherited Git repository bindings."""
+    import os
+
+    return {k: v for k, v in os.environ.items() if k not in GIT_BINDINGS}
+
+
+def git(cwd, *args, binary=False):
+    import subprocess
+
+    result = subprocess.run(
+        ["git", "-c", "core.autocrlf=false", "-C", str(cwd), *args],
+        capture_output=True,
+        env=git_env(),
+        check=True,
+    )
+    return result.stdout if binary else result.stdout.decode().strip()
+
+
+def published_pins(page):
+    """The data, chart and code pins and the revision date of a built page."""
+    import re
+    from datetime import datetime
+
+    folder = "examples/bsee/interventions_by_depth"
+    blob = r"/blob/([0-9a-f]{40})/" + folder + r"/output/[^\"]+\."
+    data = set(re.findall(blob + r"csv\"", page))
+    charts = set(re.findall(blob + r"(?:png|svg)\"", page))
+    study = set(re.findall(r"/tree/([0-9a-f]{40})/" + folder + '"', page))
+    prompt = re.findall(r"repository at commit ([0-9a-f]{40}), folder " + folder, page)
+    revision = re.search(r"Revision \d+, (\d{1,2} [A-Z][a-z]+ \d{4})\.", page)
+    assert len(data) == 1, f"data pins {data}"
+    assert len(charts) == 1, f"chart pins {charts}"
+    assert len(prompt) == 1, f"prompt pins {prompt}"
+    assert study == set(prompt), f"study link {study} against prompt {prompt}"
+    assert revision, "revision line missing"
+    return {
+        "data": data.pop(),
+        "chart": charts.pop(),
+        "code": prompt[0],
+        "date": datetime.strptime(revision.group(1), "%d %B %Y").date().isoformat(),
+    }
+
+
+def test_published_prompt_pins_the_builder_that_made_the_page(tmp_path):
+    """The prompt's code pin holds today's scripts and rebuilds the page as committed.
+
+    Fails when build_article.py, any other study script, changes.md or the
+    opening graphic changed after the commit the page names, and when the
+    builder at that commit, run on the tables at that commit with the page's
+    own pins and date, does not give the committed page byte for byte.
+    """
+    import io
+    import subprocess
+    import sys
+    import tarfile
+
+    folder = "examples/bsee/interventions_by_depth"
+    committed = (EXAMPLE / "article" / "gom-well-interventions-r4.html").read_bytes()
+    pins = published_pins(committed.decode("utf-8"))
+    code = pins["code"]
+    assert pins["chart"] != pins["data"]
+    git(EXAMPLE, "cat-file", "-e", f"{code}^{{commit}}")
+
+    # 1. Nothing the builder runs or reads, besides the tables, changed after
+    #    the pinned commit.
+    inputs = ["*.py", "article/changes.md", "article/assets"]
+    changed = git(EXAMPLE, "diff", "--name-only", code, "--", *inputs)
+    assert changed == "", f"changed after the prompt's code pin {code[:8]}: {changed}"
+    assert (
+        git(EXAMPLE, "ls-files", "--others", "--exclude-standard", "--", "*.py") == ""
+    )
+
+    # 2. The tables at the code pin are the tables at the data pin.
+    tables = git(EXAMPLE, "diff", "--name-only", pins["data"], code, "--", "output")
+    assert not [
+        t
+        for t in tables.splitlines()
+        if t.endswith((".csv", ".json")) and not t.endswith("verification.json")
+    ], tables
+
+    # 3. The pinned builder, on the pinned tree, rebuilds the committed page.
+    tree = tmp_path / "pinned"
+    archive = git(EXAMPLE, "archive", "--format=tar", f"{code}:{folder}", binary=True)
+    with tarfile.open(fileobj=io.BytesIO(archive)) as tar:
+        tar.extractall(tree, filter="data")
+    rebuilt = tmp_path / "rebuilt.html"
+    run = subprocess.run(
+        [
+            sys.executable,
+            "build_article.py",
+            "--build-commit",
+            pins["data"],
+            "--chart-commit",
+            pins["chart"],
+            "--code-commit",
+            code,
+            "--build-date",
+            pins["date"],
+            "--page",
+            str(rebuilt),
+        ],
+        cwd=tree,
+        env=git_env(),
+        capture_output=True,
+        text=True,
+    )
+    assert run.returncode == 0, run.stderr
+    page = rebuilt.read_bytes()
+    assert b"age at permanent-abandonment approval" in page
+    assert b"wells abandoned under approvals" not in page
+    assert page == committed, "the pinned builder does not reproduce the page"
+
+
+def test_last_code_commit_is_the_newest_change_to_the_scripts(tmp_path):
+    import build_article
+
+    repo = tmp_path / "repo"
+    study = repo / "study"
+    (study / "output").mkdir(parents=True)
+    git(tmp_path, "init", "-q", str(repo))
+
+    def commit(message):
+        git(repo, "add", "-A")
+        git(
+            repo,
+            "-c",
+            "user.name=Test",
+            "-c",
+            "user.email=test@example.invalid",
+            "-c",
+            "commit.gpgsign=false",
+            "commit",
+            "--no-verify",
+            "-q",
+            "-m",
+            message,
+        )
+        return git(repo, "rev-parse", "HEAD")
+
+    (study / "build_article.py").write_text("print(1)\n", encoding="utf-8")
+    (study / "output" / "rates.csv").write_text("a\n1\n", encoding="utf-8")
+    first = commit("scripts")
+    (study / "output" / "rates.csv").write_text("a\n2\n", encoding="utf-8")
+    commit("tables only")
+    assert build_article.last_code_commit(study) == first
+
+    (study / "report_text.py").write_text("X = 1\n", encoding="utf-8")
+    second = commit("a second script")
+    assert build_article.last_code_commit(study) == second
+
+    (study / "build_article.py").write_text("print(2)\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="uncommitted"):
+        build_article.last_code_commit(study)
+
+
+def test_command_line_defaults_the_code_pin_to_the_last_script_commit(
+    tmp_path, monkeypatch
+):
+    import build_article
+
+    monkeypatch.setattr(build_article, "last_code_commit", lambda folder: "GITCODE")
+    page = tmp_path / "page.html"
+    build_article.main(
+        [
+            "--build-commit",
+            "DATACOMMIT",
+            "--chart-commit",
+            "CHARTCOMMIT",
+            "--build-date",
+            "2026-11-14",
+            "--page",
+            str(page),
+        ]
+    )
+    text = page.read_text(encoding="utf-8")
+    assert "repository at commit GITCODE" in text
+    assert "/tree/GITCODE/" in text
