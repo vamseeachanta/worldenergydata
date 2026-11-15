@@ -48,6 +48,8 @@ def test_root_help_info_and_version_are_bounded_safe():
         ("--help",),
         ("info",),
         ("version",),
+        ("landman", "--help"),
+        ("fdas", "--help"),
     ]
 
     for command in commands:
