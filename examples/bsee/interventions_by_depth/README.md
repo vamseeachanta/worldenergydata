@@ -219,7 +219,7 @@ uv run --no-sync python examples/bsee/interventions_by_depth/estimate_costs.py -
 uv run --no-sync python examples/bsee/interventions_by_depth/plot_charts.py --out examples/bsee/interventions_by_depth/output
 uv run --no-sync python examples/bsee/interventions_by_depth/well_life_cycle.py --data-dir data/modules/bsee/zip/2026-11-13
 uv run --no-sync python examples/bsee/interventions_by_depth/plot_life_cycle.py
-uv run --no-sync python examples/bsee/interventions_by_depth/write_results_note.py --test-result '136 passed (tests/unit/bsee/test_interventions_by_depth.py, tests/unit/bsee/test_well_life_cycle.py and tests/unit/bsee/test_interventions_report.py); the API-normalizer file needs the full package environment and was not collected here'
+uv run --no-sync python examples/bsee/interventions_by_depth/write_results_note.py --test-result '137 passed (tests/unit/bsee/test_interventions_by_depth.py, tests/unit/bsee/test_well_life_cycle.py and tests/unit/bsee/test_interventions_report.py); the API-normalizer file needs the full package environment and was not collected here'
 uv run --no-sync python examples/bsee/interventions_by_depth/verify_outputs.py
 uv run --no-sync python examples/bsee/interventions_by_depth/build_article.py --build-commit <commit holding the data tables> --chart-commit <commit holding the charts and scripts>
 ```
@@ -233,7 +233,7 @@ $env:PYTHONPATH='packages/worldenergydata-bsee/src;packages/worldenergydata-core
 uv run --no-sync python -m pytest --noconftest -o addopts="" tests/unit/bsee/test_interventions_by_depth.py tests/unit/bsee/test_well_life_cycle.py tests/unit/bsee/test_interventions_report.py tests/unit/bsee/data/utils/test_api_well_normalizer.py -q
 ```
 
-Result: **136 passed (tests/unit/bsee/test_interventions_by_depth.py, tests/unit/bsee/test_well_life_cycle.py and tests/unit/bsee/test_interventions_report.py); the API-normalizer file needs the full package environment and was not collected here**. Tests cover all-bore stock, date boundaries, cancelled bores, assumed standing, unit categories, archive receipts checked before every read, one event window for sidetrack and permit ages, three hand-worked cost literals read through YAML and published deepwater dry-tree pricing. Tests use no network or retained raw files. Aggregate reconciliation, input provenance, output digests and software versions are retained in [verification.json](output/verification.json).
+Result: **137 passed (tests/unit/bsee/test_interventions_by_depth.py, tests/unit/bsee/test_well_life_cycle.py and tests/unit/bsee/test_interventions_report.py); the API-normalizer file needs the full package environment and was not collected here**. Tests cover all-bore stock, date boundaries, cancelled bores, assumed standing, unit categories, archive receipts checked before every read, one event window for sidetrack and permit ages, three hand-worked cost literals read through YAML and published deepwater dry-tree pricing. Tests use no network or retained raw files. Aggregate reconciliation, input provenance, output digests and software versions are retained in [verification.json](output/verification.json).
 
 ## Charts
 

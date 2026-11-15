@@ -344,7 +344,7 @@ def build(
     fl = link(build_commit)
     cl = link(chart_commit)
     study = f"{REPO}/tree/{chart_commit}/{FOLDER}"
-    prompt_href = "#appendix-c"
+    prompt_href = "#appendix-d"
 
     def dev_age(stage):
         return yrs(age.loc[("development", stage), "median_years"])
@@ -576,7 +576,7 @@ years and has been lower since {d.last - 2}: {yrs(work_early.min())} to
 <li><strong>Light or heavy?</strong> Light work is about twice as frequent as heavy work, and
 both are
 {'lower' if wt['light_late'] < wt['light_early'] and wt['heavy_late'] < wt['heavy_early'] else 'mixed'}
-in {wt['late'][0]}-{wt['late'][1]} than in {wt['early'][0]}-{wt['early'][1]} (Appendix D).</li>
+in {wt['late'][0]}-{wt['late'][1]} than in {wt['early'][0]}-{wt['early'][1]} (Appendix C).</li>
 <li><strong>Deeper water, more work per well.</strong> The {d.last} rate rises with depth
 ({'; '.join(f"{BAND_TEXT[b]}: {yrs(h['rate'][(b, 'well work')])}" for b in BANDS)}).</li>
 <li><strong>Abandonment</strong> ran at {yrs(a_last.per100)} approvals per 100 standing wells
@@ -677,7 +677,32 @@ The deepwater dry-tree
 abandonment row is TAP-738's published per-well total (Table 8-4, p. 8-15). Costs are 2015
 dollars, not escalated, and are scenarios, not bids. The full table, every input and its source
 page are in the <a href="{study}">full study</a> ({fl('cost_table.csv')}).</p>
-<h2 id="appendix-c">Appendix C. Reusable prompt</h2>
+<h2 id="appendix-c">Appendix C. Detail behind sections 2 and 3</h2>
+<ul>
+<li><strong>Heavy work.</strong> {pct(dev['any_heavy'])} of development wells drilled since
+{d.first} have had at least one heavy intervention approved; development wells still standing
+from that group are a median {yrs(dev['age_standing'])} years old. Two in three exploration
+wells drilled since {d.first} are already permanently abandoned, most within a year of
+spud.</li>
+<li><strong>Interventions by depth.</strong> In {d.last}, the {n(h['work'])} intervention
+approvals were {'; '.join(f"{BAND_TEXT[b]}: {n(work_split[b])}" for b in BANDS)}.</li>
+<li><strong>Count against rate.</strong> The count of intervention approvals fell further than
+the rate, from {n(t_first.permits)} in {d.first + 1} to {n(t_last.permits)} in {d.last}, mostly
+because there are fewer wells.</li>
+<li><strong>Light or heavy.</strong> From {wt['start']}, at least three in four intervention
+approvals name a unit that can be classified ({wt['named_last']:.0f}% in {d.last}). Since then
+light work has run at {yrs(wt['light_range'][0])} to {yrs(wt['light_range'][1])} approvals per
+100 standing wells a year and heavy work at {yrs(wt['heavy_range'][0])} to
+{yrs(wt['heavy_range'][1])}. Light work averaged {yrs(wt['light_early'])} in
+{wt['early'][0]}-{wt['early'][1]} and {yrs(wt['light_late'])} in
+{wt['late'][0]}-{wt['late'][1]}; heavy work averaged {yrs(wt['heavy_early'])} and
+{yrs(wt['heavy_late'])}.</li>
+<li><strong>Depth.</strong> Deepwater wells are fewer and more often subsea, and the operators'
+own estimates on their permits put a well-work job at a median
+{durations[('1500 m and deeper', 'well work')]:.0f} days at 1,500 m and deeper against
+{durations[('under 100 m', 'well work')]:.0f} under 100 m.</li>
+</ul>
+<h2 id="appendix-d">Appendix D. Reusable prompt</h2>
 <p>This prompt rebuilds the life of every Gulf of Mexico well and the intervention counts from
 BSEE's public raw data, and adapts them to your own field or depth range. To have a study of
 your own wells done for you instead, see below.</p>
@@ -703,31 +728,6 @@ temporary and permanent abandonment approvals, with the counting rules of Append
 Keep approvals separate from completed jobs, and state the unit rule you use.</pre>
 <p>Data set: BSEE Data Center raw well data (public), files of {snap}.</p>
 <p>To have a study of your own wells done for you, write to support@aceengineer.com.</p>
-<h2 id="appendix-d">Appendix D. Detail behind sections 2 and 3</h2>
-<ul>
-<li><strong>Heavy work.</strong> {pct(dev['any_heavy'])} of development wells drilled since
-{d.first} have had at least one heavy intervention approved; development wells still standing
-from that group are a median {yrs(dev['age_standing'])} years old. Two in three exploration
-wells drilled since {d.first} are already permanently abandoned, most within a year of
-spud.</li>
-<li><strong>Interventions by depth.</strong> In {d.last}, the {n(h['work'])} intervention
-approvals were {'; '.join(f"{BAND_TEXT[b]}: {n(work_split[b])}" for b in BANDS)}.</li>
-<li><strong>Count against rate.</strong> The count of intervention approvals fell further than
-the rate, from {n(t_first.permits)} in {d.first + 1} to {n(t_last.permits)} in {d.last}, mostly
-because there are fewer wells.</li>
-<li><strong>Light or heavy.</strong> From {wt['start']}, at least three in four intervention
-approvals name a unit that can be classified ({wt['named_last']:.0f}% in {d.last}). Since then
-light work has run at {yrs(wt['light_range'][0])} to {yrs(wt['light_range'][1])} approvals per
-100 standing wells a year and heavy work at {yrs(wt['heavy_range'][0])} to
-{yrs(wt['heavy_range'][1])}. Light work averaged {yrs(wt['light_early'])} in
-{wt['early'][0]}-{wt['early'][1]} and {yrs(wt['light_late'])} in
-{wt['late'][0]}-{wt['late'][1]}; heavy work averaged {yrs(wt['heavy_early'])} and
-{yrs(wt['heavy_late'])}.</li>
-<li><strong>Depth.</strong> Deepwater wells are fewer and more often subsea, and the operators'
-own estimates on their permits put a well-work job at a median
-{durations[('1500 m and deeper', 'well work')]:.0f} days at 1,500 m and deeper against
-{durations[('under 100 m', 'well work')]:.0f} under 100 m.</li>
-</ul>
 """)
 
     toc = "".join(

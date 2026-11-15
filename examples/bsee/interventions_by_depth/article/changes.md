@@ -13,7 +13,7 @@
 - **The life story of a well, before the interventions** (comment 2): section
   2, with Figures 1 and 2 and Table 1, comes before Figure 3.
 - **What the rate means** (comment 3): section 3, "What the rate means", under
-  Figure 4; the light and heavy detail is in Appendix D.
+  Figure 4; the light and heavy detail is in Appendix C.
 - **Abandonment in the next article** (comment 2): counted and rated here;
   section 5 says the next article covers it.
 - **Across all articles and worldwide wells** (general comment): not in this
@@ -24,7 +24,7 @@
 The review copy of revision 4 failed the pre-review gate. The page is rebuilt
 from the same tables (data files of 13 November 2026). No number in a table
 changes, and every number of the earlier page is still on the page; some move
-from the sections to Appendix B or the new Appendix D.
+from the sections to Appendix B or the new Appendix C.
 
 - Opening graphic: `assets/opening.svg`, `assets/opening.png` and
   `assets/opening-alt.txt` are the shared Deckhand opening graphic of revision
@@ -62,7 +62,8 @@ from the sections to Appendix B or the new Appendix D.
   the 2025 interventions by depth, the 2006-to-2025 count, the light and heavy
   rates, the share of wells with heavy work, the age of standing wells, the
   exploration abandonment share and the per-job duration estimates to the new
-  Appendix D. Dropped as repetition: the paragraph listing sections 2 to 4 and
+  Appendix C, before the reusable prompt, which becomes Appendix D and
+  stays last. Dropped as repetition: the paragraph listing sections 2 to 4 and
   BOEM's list of other uses of a reentry. The build stops above 800 words.
 - Charts: the figure titles that repeated the page captions (Figures 1, 2, 5
   and 6) are removed, and the panel titles of Figures 3 and 4 are shortened to
