@@ -111,9 +111,11 @@ snapshot_contains() {
 }
 
 violations=()
+processed_paths=0
 
 # Consume only a complete, successfully acquired path list; ACMR excludes deletions.
 while IFS= read -r -d '' file; do
+  processed_paths=$((processed_paths + 1))
   # Keep each diagnostic on one line, including paths ending in a newline.
   if ! display_file="$(printf '%s' "${file//$'\n'/^J}" | cat -vT)"; then
     printf 'ERROR: Cannot render staged path.\n' >&2
@@ -189,7 +191,17 @@ while IFS= read -r -d '' file; do
     done <<< "$matches"
   fi
 
-done < "$staged_paths"
+done < "$staged_paths" || {
+  printf 'ERROR: Cannot enumerate staged paths.\n' >&2
+  exit 1
+}
+
+# A failed read must not look like EOF, including after a skipped entry.
+if ! expected_paths="$(tr -cd '\0' < "$staged_paths" | wc -c)" ||
+   [[ "$processed_paths" -ne "$expected_paths" ]]; then
+  printf 'ERROR: Cannot enumerate staged paths.\n' >&2
+  exit 1
+fi
 
 if [[ ${#violations[@]} -eq 0 ]]; then
   exit 0

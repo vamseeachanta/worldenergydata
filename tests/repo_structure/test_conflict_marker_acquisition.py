@@ -47,7 +47,7 @@ def repository(tmp_path):
         scratch.mkdir()
         tools = tmp_path / (label + "-tools")
         tools.mkdir()
-        for tool in ("git", "mktemp"):
+        for tool in ("git", "mktemp", "tr", "wc"):
             wrapper = tools / tool
             wrapper.write_text(
                 f"#!{sys.executable}\n"
@@ -56,6 +56,7 @@ def repository(tmp_path):
                 "tool = pathlib.Path(sys.argv[0]).name\n"
                 "if any(x.startswith('--format') for x in a): sys.exit(99)\n"
                 "point = a[1] if a and a[0] == '--literal-pathspecs' else (a[0] if a else '')\n"
+                "if tool in ('tr', 'wc'): point = tool\n"
                 "if tool == 'mktemp':\n"
                 " p = pathlib.Path(os.environ['CALLS'])\n"
                 " n = int(p.read_text()) + 1 if p.exists() else 1\n"
@@ -67,6 +68,24 @@ def repository(tmp_path):
                 "os.execv(os.environ['REAL_' + tool.upper()], [tool, *a])\n"
             )
             wrapper.chmod(0o755)
+        bash_env = tools / "bash-env"
+        bash_env.write_text(
+            "read() {\n"
+            " if [[ ${!#} == file ]]; then\n"
+            "  path_reads=$(( ${path_reads:-0} + 1 ))\n"
+            "  if [[ $path_reads -eq $READ_FAILURE ]]; then return 2; fi\n"
+            " fi\n"
+            ' builtin read "$@"\n'
+            "}\n"
+            "git() {\n"
+            ' command git "$@"\n'
+            " local status=$?\n"
+            " if [[ ${1-} == diff && $REMOVE_PATH_LIST == 1 ]]; then\n"
+            '  rm -f -- "$staged_paths"\n'
+            " fi\n"
+            ' return "$status"\n'
+            "}\n"
+        )
 
         def stage(name=NAME, content=b"clean\n", mode="100644", oid=None):
             path = root / name
@@ -79,7 +98,14 @@ def repository(tmp_path):
             git("update-index", "--add", "--cacheinfo", mode, oid, name)
             return oid
 
-        def scan(point="", output=b"", status=1, allocation=0):
+        def scan(
+            point="",
+            output=b"",
+            status=1,
+            allocation=0,
+            read_failure=0,
+            remove_list=False,
+        ):
             before = _snapshot(root)
             result = subprocess.run(
                 ["bash", str(SCANNER)],
@@ -92,6 +118,11 @@ def repository(tmp_path):
                     "PATH": str(tools) + os.pathsep + env["PATH"],
                     "REAL_GIT": real_git,
                     "REAL_MKTEMP": shutil.which("mktemp"),
+                    "REAL_TR": shutil.which("tr"),
+                    "REAL_WC": shutil.which("wc"),
+                    "BASH_ENV": str(bash_env),
+                    "READ_FAILURE": str(read_failure),
+                    "REMOVE_PATH_LIST": str(int(remove_list)),
                     "POINT": point,
                     "OUTPUT": output.hex(),
                     "STATUS": str(status),
@@ -122,6 +153,30 @@ def test_failed_enumeration(repository, content, output):
     _, _, stage, scan = repository()
     stage(content=content)
     _error(scan("diff", output), "Cannot enumerate staged paths", path=False)
+
+
+@pytest.mark.parametrize("read_failure", [1, 2])
+def test_incomplete_path_list_read(repository, read_failure):
+    _, _, stage, scan = repository()
+    stage("first", mode="160000", oid="f" * 40)
+    stage("second", content=MARKERS)
+    _error(scan(read_failure=read_failure), "Cannot enumerate staged paths", path=False)
+
+
+def test_missing_path_list(repository):
+    _, _, stage, scan = repository()
+    stage(content=MARKERS)
+    result = scan(remove_list=True)
+    assert result.returncode == 1
+    assert result.stdout == b""
+    assert b"ERROR: Cannot enumerate staged paths.\n" in result.stderr
+
+
+@pytest.mark.parametrize("point", ["tr", "wc"])
+def test_failed_path_count(repository, point):
+    _, _, stage, scan = repository()
+    stage()
+    _error(scan(point), "Cannot enumerate staged paths", path=False)
 
 
 @pytest.mark.parametrize("content", [b"clean\n", MARKERS])
