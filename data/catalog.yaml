@@ -1,9 +1,9 @@
 version: 2.1.0
-generated_at: '2026-05-15T03:45:11.039235+00:00'
+generated_at: '2026-11-14T04:45:13.034870+00:00'
 total_modules: 12
-total_datasets: 49
+total_datasets: 62
 total_binary_stores: 37
-total_size_bytes: 2846313383
+total_size_bytes: 2846309606
 modules:
   bsee:
     module: bsee
@@ -608,6 +608,1013 @@ modules:
       row_count: 6362
       size_bytes: 646179
       last_modified: '2026-03-15T13:06:39.668970+00:00'
+    - name: mv_war_boreholes_view
+      path: data/modules/bsee/war/20261113_mv_war_boreholes_view.csv
+      format: csv
+      columns:
+      - name: API_WELL_NUMBER
+        type: string
+        description: ''
+        unit: ''
+      - name: BOTM_LEASE_NUM
+        type: string
+        description: ''
+        unit: ''
+      - name: WELL_SPUD_DATE
+        type: string
+        description: ''
+        unit: ''
+      - name: TOTAL_DEPTH_DATE
+        type: string
+        description: ''
+        unit: ''
+      - name: BOREHOLE_STAT_DT
+        type: string
+        description: ''
+        unit: ''
+      - name: BH_TOTAL_MD
+        type: string
+        description: ''
+        unit: ''
+      - name: WELL_BORE_TVD
+        type: string
+        description: ''
+        unit: ''
+      row_count: 54714
+      source_row_count: 54714
+      duplicate_rows: 0
+      size_bytes: 0
+      sha256: 4a8c11b96f9ed1773dbdc72d7aa58accb89381c62c8439a89847965de0c99e07
+      last_modified: '2026-11-14T04:39:45.390532+00:00'
+      ingested_at: '2026-11-14T04:39:45.390532+00:00'
+      source_id: bsee-ewell-war
+      source: bin/war/mv_war_boreholes_view.bin
+      source_member: null
+      source_format: pickle
+      source_sha256: d8549d45d231b93d80bf9a433d2427d735d712093e69a208a2a5d8b3ff7f4313
+      source_modified_at: '2026-02-20T04:26:24.176511+00:00'
+      schema_status: source_columns
+      encoding: null
+      data_status: real
+      readiness_status: partial
+      source_vintage:
+        state: unknown
+        reason: File modification time does not establish source vintage
+      deduplication:
+        method: exact_full_row_same_schema
+        status: no_comparable_schema
+        compared_files: []
+        compared_sources: []
+      measured_size_bytes: 3521694
+      local_only: true
+      availability: missing
+    - name: mv_war_main
+      path: data/modules/bsee/war/20261113_mv_war_main.csv
+      format: csv
+      columns:
+      - name: SN_WAR
+        type: string
+        description: ''
+        unit: ''
+      - name: WAR_START_DT
+        type: string
+        description: ''
+        unit: ''
+      - name: WAR_END_DT
+        type: string
+        description: ''
+        unit: ''
+      - name: CONTACT_NAME
+        type: string
+        description: ''
+        unit: ''
+      - name: PHONE_NUMBER
+        type: string
+        description: ''
+        unit: ''
+      - name: RIG_NAME
+        type: string
+        description: ''
+        unit: ''
+      - name: WATER_DEPTH
+        type: string
+        description: ''
+        unit: ''
+      - name: RKB_ELEVATION
+        type: string
+        description: ''
+        unit: ''
+      - name: BOP_TEST_DATE
+        type: string
+        description: ''
+        unit: ''
+      - name: RAM_TST_PRSS
+        type: string
+        description: ''
+        unit: ''
+      - name: ANNULAR_TST_PRSS
+        type: string
+        description: ''
+        unit: ''
+      - name: BUS_ASC_NAME
+        type: string
+        description: ''
+        unit: ''
+      - name: MMS_COMPANY_NUM
+        type: string
+        description: ''
+        unit: ''
+      - name: API_WELL_NUMBER
+        type: string
+        description: ''
+        unit: ''
+      - name: WELL_NAME
+        type: string
+        description: ''
+        unit: ''
+      - name: WELL_NM_BP_SFIX
+        type: string
+        description: ''
+        unit: ''
+      - name: WELL_NM_ST_SFIX
+        type: string
+        description: ''
+        unit: ''
+      - name: SURF_LEASE_NUM
+        type: string
+        description: ''
+        unit: ''
+      - name: SURF_AREA_CODE
+        type: string
+        description: ''
+        unit: ''
+      - name: SURF_BLOCK_NUM
+        type: string
+        description: ''
+        unit: ''
+      - name: BOTM_LEASE_NUM
+        type: string
+        description: ''
+        unit: ''
+      - name: BOTM_AREA_CODE
+        type: string
+        description: ''
+        unit: ''
+      - name: BOTM_BLOCK_NUM
+        type: string
+        description: ''
+        unit: ''
+      row_count: 363786
+      source_row_count: 363786
+      duplicate_rows: 0
+      size_bytes: 0
+      sha256: 2b93ac509cdc2f4c9894a5a677ce6e1c0c347e648a1d53e9b810403de28a2fda
+      last_modified: '2026-11-14T04:39:45.390532+00:00'
+      ingested_at: '2026-11-14T04:39:45.390532+00:00'
+      source_id: bsee-ewell-war
+      source: bin/war/mv_war_main.bin
+      source_member: null
+      source_format: pickle
+      source_sha256: fbb5e0be31deb59ef86138109ac20fdd5401db3a58512245e5a987bedfb30f68
+      source_modified_at: '2026-02-20T04:26:26.131844+00:00'
+      schema_status: source_columns
+      encoding: null
+      data_status: real
+      readiness_status: partial
+      source_vintage:
+        state: unknown
+        reason: File modification time does not establish source vintage
+      deduplication:
+        method: exact_full_row_same_schema
+        status: no_comparable_schema
+        compared_files: []
+        compared_sources: []
+      measured_size_bytes: 64464944
+      local_only: true
+      availability: missing
+    - name: mv_war_main_prop
+      path: data/modules/bsee/war/20261113_mv_war_main_prop.csv
+      format: csv
+      columns:
+      - name: SN_WAR
+        type: string
+        description: ''
+        unit: ''
+      - name: WELL_NAME_SUFFIX
+        type: string
+        description: ''
+        unit: ''
+      - name: WELL_ACTV_START_DT
+        type: string
+        description: ''
+        unit: ''
+      - name: TOTAL_DEPTH_DATE
+        type: string
+        description: ''
+        unit: ''
+      - name: WELL_ACTIVITY_CD
+        type: string
+        description: ''
+        unit: ''
+      - name: WELL_ACTV_END_DT
+        type: string
+        description: ''
+        unit: ''
+      - name: DRILLING_MD
+        type: string
+        description: ''
+        unit: ''
+      - name: DRILLING_TVD
+        type: string
+        description: ''
+        unit: ''
+      - name: DRILL_FLUID_WGT
+        type: string
+        description: ''
+        unit: ''
+      - name: GEOCHEM_SMPL_COLLECTED_CD
+        type: string
+        description: ''
+        unit: ''
+      - name: LITHO_SAMPLE_COLLECTED_CD
+        type: string
+        description: ''
+        unit: ''
+      - name: PALEO_SAMPLE_COLLECTED_CD
+        type: string
+        description: ''
+        unit: ''
+      - name: SIDEWALL_SMPL_COLLECTED_CD
+        type: string
+        description: ''
+        unit: ''
+      - name: CONV_CORE_COLLECTED_CD
+        type: string
+        description: ''
+        unit: ''
+      - name: VELOCITY_SURV_COLLECTED_CD
+        type: string
+        description: ''
+        unit: ''
+      row_count: 361756
+      source_row_count: 361756
+      duplicate_rows: 0
+      size_bytes: 0
+      sha256: 9a081ce53a5d889b63aa47332abb9e217c8bb752292ebd6501443578b660dd74
+      last_modified: '2026-11-14T04:39:45.390532+00:00'
+      ingested_at: '2026-11-14T04:39:45.390532+00:00'
+      source_id: bsee-ewell-war
+      source: bin/war/mv_war_main_prop.bin
+      source_member: null
+      source_format: pickle
+      source_sha256: c3c7de95a350ee05194470583051689bb345d649c65556cd17754490a9e43970
+      source_modified_at: '2026-02-20T04:26:25.028181+00:00'
+      schema_status: source_columns
+      encoding: null
+      data_status: real
+      readiness_status: partial
+      source_vintage:
+        state: unknown
+        reason: File modification time does not establish source vintage
+      deduplication:
+        method: exact_full_row_same_schema
+        status: no_comparable_schema
+        compared_files: []
+        compared_sources: []
+      measured_size_bytes: 28178796
+      local_only: true
+      availability: missing
+    - name: mv_war_main_prop_remark
+      path: data/modules/bsee/war/20261113_mv_war_main_prop_remark.csv
+      format: csv
+      columns:
+      - name: SN_WAR
+        type: string
+        description: ''
+        unit: ''
+      - name: TEXT_REMARK
+        type: string
+        description: ''
+        unit: ''
+      row_count: 361756
+      source_row_count: 361756
+      duplicate_rows: 0
+      size_bytes: 0
+      sha256: 058580a376f65d776d224f366f2b36e95c1bf19988226efc231dfbce697ad6f4
+      last_modified: '2026-11-14T04:39:45.390532+00:00'
+      ingested_at: '2026-11-14T04:39:45.390532+00:00'
+      source_id: bsee-ewell-war
+      source: bin/war/mv_war_main_prop_remark.bin
+      source_member: null
+      source_format: pickle
+      source_sha256: ce5aeb7b4c2ccdae950fa49644492ee78ef41282bc935cf61621f61098d6eb60
+      source_modified_at: '2026-02-20T04:26:29.929801+00:00'
+      schema_status: source_columns
+      encoding: null
+      data_status: real
+      readiness_status: partial
+      source_vintage:
+        state: unknown
+        reason: File modification time does not establish source vintage
+      deduplication:
+        method: exact_full_row_same_schema
+        status: no_comparable_schema
+        compared_files: []
+        compared_sources: []
+      measured_size_bytes: 295879865
+      local_only: true
+      availability: missing
+    - name: mv_war_open_hole_runs
+      path: data/modules/bsee/war/20261113_mv_war_open_hole_runs.csv
+      format: csv
+      columns:
+      - name: SN_WAR_FK
+        type: string
+        description: ''
+        unit: ''
+      - name: BUS_ASC_NAME
+        type: string
+        description: ''
+        unit: ''
+      - name: OPERATIONS_COMPLETED_DATE
+        type: string
+        description: ''
+        unit: ''
+      - name: TOOL_LOGGING_METHOD_NAME
+        type: string
+        description: ''
+        unit: ''
+      - name: LOG_INTV_TOP_MD
+        type: string
+        description: ''
+        unit: ''
+      - name: LOG_INTV_BOTM_MD
+        type: string
+        description: ''
+        unit: ''
+      - name: SN_OPEN_HOLE
+        type: string
+        description: ''
+        unit: ''
+      row_count: 32694
+      source_row_count: 32694
+      duplicate_rows: 0
+      size_bytes: 0
+      sha256: bf0cf028d6e93a1131e2ba4e730c47e170154d040a6be816540b716712c3d24e
+      last_modified: '2026-11-14T04:39:45.390532+00:00'
+      ingested_at: '2026-11-14T04:39:45.390532+00:00'
+      source_id: bsee-ewell-war
+      source: bin/war/mv_war_open_hole_runs.bin
+      source_member: null
+      source_format: pickle
+      source_sha256: fac4c9929cff6dac1634962351daa8896635ad6539da1b48892956d6868e649e
+      source_modified_at: '2026-02-20T04:26:26.182345+00:00'
+      schema_status: source_columns
+      encoding: null
+      data_status: real
+      readiness_status: partial
+      source_vintage:
+        state: unknown
+        reason: File modification time does not establish source vintage
+      deduplication:
+        method: exact_full_row_same_schema
+        status: no_comparable_schema
+        compared_files: []
+        compared_sources: []
+      measured_size_bytes: 2056073
+      local_only: true
+      availability: missing
+    - name: mv_war_open_hole_tools
+      path: data/modules/bsee/war/20261113_mv_war_open_hole_tools.csv
+      format: csv
+      columns:
+      - name: SN_OPEN_HOLE_FK
+        type: string
+        description: ''
+        unit: ''
+      - name: LOG_TOOL_TYPE_CODE
+        type: string
+        description: ''
+        unit: ''
+      row_count: 83927
+      source_row_count: 83927
+      duplicate_rows: 0
+      size_bytes: 0
+      sha256: 6fa461f52aaac380b35d7183ff0f1c4cbef78b4ab48bf679fb77f038692b0d91
+      last_modified: '2026-11-14T04:39:45.390532+00:00'
+      ingested_at: '2026-11-14T04:39:45.390532+00:00'
+      source_id: bsee-ewell-war
+      source: bin/war/mv_war_open_hole_tools.bin
+      source_member: null
+      source_format: pickle
+      source_sha256: 8875ea2f89b930ded6e1754f9639d2bf113b14f0d47447c9b4d8b686b48a5075
+      source_modified_at: '2026-02-20T04:26:26.195429+00:00'
+      schema_status: source_columns
+      encoding: null
+      data_status: real
+      readiness_status: partial
+      source_vintage:
+        state: unknown
+        reason: File modification time does not establish source vintage
+      deduplication:
+        method: exact_full_row_same_schema
+        status: no_comparable_schema
+        compared_files: []
+        compared_sources: []
+      measured_size_bytes: 865884
+      local_only: true
+      availability: missing
+    - name: mv_war_tubular_summaries
+      path: data/modules/bsee/war/20261113_mv_war_tubular_summaries.csv
+      format: csv
+      columns:
+      - name: SN_WAR_FK
+        type: string
+        description: ''
+        unit: ''
+      - name: CSNG_INTV_TYPE_CD
+        type: string
+        description: ''
+        unit: ''
+      - name: CSNG_HOLE_SIZE
+        type: string
+        description: ''
+        unit: ''
+      - name: CASING_SIZE
+        type: string
+        description: ''
+        unit: ''
+      - name: CASING_WEIGHT
+        type: string
+        description: ''
+        unit: ''
+      - name: CASING_GRADE
+        type: string
+        description: ''
+        unit: ''
+      - name: CSNG_LINER_TEST_PRSS
+        type: string
+        description: ''
+        unit: ''
+      - name: CSNG_SHOE_TEST_PRSS
+        type: string
+        description: ''
+        unit: ''
+      - name: CSNG_CEMENT_VOL
+        type: string
+        description: ''
+        unit: ''
+      - name: SN_WAR_CSNG_INTV
+        type: string
+        description: ''
+        unit: ''
+      row_count: 389840
+      source_row_count: 389840
+      duplicate_rows: 0
+      size_bytes: 0
+      sha256: a80e16b9888b1faecf0bcaac80e226c2588119a84f0aef948e805d1bc4643839
+      last_modified: '2026-11-14T04:39:45.390532+00:00'
+      ingested_at: '2026-11-14T04:39:45.390532+00:00'
+      source_id: bsee-ewell-war
+      source: bin/war/mv_war_tubular_summaries.bin
+      source_member: null
+      source_format: pickle
+      source_sha256: b1f12434e6d3150d8bab5c344220027eafb6c5affd6db08687494e15d4aacb6b
+      source_modified_at: '2026-02-20T04:26:26.478571+00:00'
+      schema_status: source_columns
+      encoding: null
+      data_status: real
+      readiness_status: partial
+      source_vintage:
+        state: unknown
+        reason: File modification time does not establish source vintage
+      deduplication:
+        method: exact_full_row_same_schema
+        status: no_comparable_schema
+        compared_files: []
+        compared_sources: []
+      measured_size_bytes: 22104755
+      local_only: true
+      availability: missing
+    - name: mv_war_tubular_summaries_prop
+      path: data/modules/bsee/war/20261113_mv_war_tubular_summaries_prop.csv
+      format: csv
+      columns:
+      - name: SN_WAR_CSNG_INTV_FK
+        type: string
+        description: ''
+        unit: ''
+      - name: SN_WAR_FK
+        type: string
+        description: ''
+        unit: ''
+      - name: CSNG_SETTING_BOTM_MD
+        type: string
+        description: ''
+        unit: ''
+      - name: CSNG_SETTING_TOP_MD
+        type: string
+        description: ''
+        unit: ''
+      row_count: 389840
+      source_row_count: 389840
+      duplicate_rows: 0
+      size_bytes: 0
+      sha256: cef83b8832574b4524b7e0e02e962d528d5398ea3ed307bc3098686266c04e79
+      last_modified: '2026-11-14T04:39:45.390532+00:00'
+      ingested_at: '2026-11-14T04:39:45.390532+00:00'
+      source_id: bsee-ewell-war
+      source: bin/war/mv_war_tubular_summaries_prop.bin
+      source_member: null
+      source_format: pickle
+      source_sha256: c31bf89d10535fe515aff3802750ea8d7a57e0e9d43f5980edbf37ade64fce28
+      source_modified_at: '2026-02-20T04:26:26.547009+00:00'
+      schema_status: source_columns
+      encoding: null
+      data_status: real
+      readiness_status: partial
+      source_vintage:
+        state: unknown
+        reason: File modification time does not establish source vintage
+      deduplication:
+        method: exact_full_row_same_schema
+        status: no_comparable_schema
+        compared_files: []
+        compared_sources: []
+      measured_size_bytes: 9367320
+      local_only: true
+      availability: missing
+    - name: rig_fleet
+      path: data/modules/bsee/rig_fleet/20261113_rig_fleet.csv
+      format: csv
+      columns:
+      - name: RIG_NAME
+        type: string
+        description: ''
+        unit: ''
+      - name: WELLS_DRILLED_COUNT
+        type: string
+        description: ''
+        unit: ''
+      - name: LAST_WAR_DATE
+        type: string
+        description: ''
+        unit: ''
+      - name: RIG_TYPE
+        type: string
+        description: ''
+        unit: ''
+      row_count: 16
+      source_row_count: 16
+      duplicate_rows: 0
+      size_bytes: 0
+      sha256: 0cf9f02dc8cfe5bb3aa2e3c0b94d4da37a9822d07949dd77d2d1a9490946f7ab
+      last_modified: '2026-11-14T04:39:45.390532+00:00'
+      ingested_at: '2026-11-14T04:39:45.390532+00:00'
+      source_id: bsee-data-center
+      source: bin/rig_fleet/rig_fleet.bin
+      source_member: null
+      source_format: pickle
+      source_sha256: f0c5327c15e02fa9519b1cda0f36151b27dd1798c210c2cd901d71cd8e4b60f6
+      source_modified_at: '2026-02-08T14:01:59.551614+00:00'
+      schema_status: source_columns
+      encoding: null
+      data_status: real
+      readiness_status: partial
+      source_vintage:
+        state: unknown
+        reason: File modification time does not establish source vintage
+      deduplication:
+        method: exact_full_row_same_schema
+        status: no_comparable_schema
+        compared_files: []
+        compared_sources: []
+      measured_size_bytes: 891
+      local_only: true
+      availability: missing
+    - name: rig_fleet_full
+      path: data/modules/bsee/rig_fleet/20261113_rig_fleet_full.csv
+      format: csv
+      columns:
+      - name: RIG_NAME
+        type: string
+        description: ''
+        unit: ''
+      - name: RIG_TYPE
+        type: string
+        description: ''
+        unit: ''
+      - name: RIG_STATUS
+        type: string
+        description: ''
+        unit: ''
+      - name: OWNER
+        type: string
+        description: ''
+        unit: ''
+      - name: OPERATOR
+        type: string
+        description: ''
+        unit: ''
+      - name: IMO_NUMBER
+        type: string
+        description: ''
+        unit: ''
+      - name: FLAG_STATE
+        type: string
+        description: ''
+        unit: ''
+      - name: WATER_DEPTH_RATING_FT
+        type: string
+        description: ''
+        unit: ''
+      - name: DRILLING_DEPTH_RATING_FT
+        type: string
+        description: ''
+        unit: ''
+      - name: MAX_WATER_DEPTH_FT
+        type: string
+        description: ''
+        unit: ''
+      - name: LOA_M
+        type: string
+        description: ''
+        unit: ''
+      - name: BEAM_M
+        type: string
+        description: ''
+        unit: ''
+      - name: DISPLACEMENT_TONNES
+        type: string
+        description: ''
+        unit: ''
+      - name: MOONPOOL_DIAMETER_M
+        type: string
+        description: ''
+        unit: ''
+      - name: DP_CLASS
+        type: string
+        description: ''
+        unit: ''
+      - name: YEAR_BUILT
+        type: string
+        description: ''
+        unit: ''
+      - name: WELLS_DRILLED_COUNT
+        type: string
+        description: ''
+        unit: ''
+      - name: LAST_WAR_DATE
+        type: string
+        description: ''
+        unit: ''
+      - name: FIRST_WAR_DATE
+        type: string
+        description: ''
+        unit: ''
+      - name: LAST_AREA_CODE
+        type: string
+        description: ''
+        unit: ''
+      - name: LAST_BLOCK_NUMBER
+        type: string
+        description: ''
+        unit: ''
+      - name: DATA_SOURCE
+        type: string
+        description: ''
+        unit: ''
+      - name: IS_OFFSHORE
+        type: string
+        description: ''
+        unit: ''
+      row_count: 2268
+      source_row_count: 2268
+      duplicate_rows: 0
+      size_bytes: 0
+      sha256: ad7e4c26be844845bbcfcdf61ddad8a37f2bc6f67b976576866b5cc9e2202830
+      last_modified: '2026-11-14T04:39:45.390532+00:00'
+      ingested_at: '2026-11-14T04:39:45.390532+00:00'
+      source_id: bsee-data-center
+      source: bin/rig_fleet/rig_fleet_full.bin
+      source_member: null
+      source_format: pickle
+      source_sha256: e240d6133307ea65fc17e4ad732437cbac74fcb347cc97995d62c9d39718de2c
+      source_modified_at: '2026-02-13T13:36:19.172655+00:00'
+      schema_status: source_columns
+      encoding: null
+      data_status: real
+      readiness_status: partial
+      source_vintage:
+        state: unknown
+        reason: File modification time does not establish source vintage
+      deduplication:
+        method: exact_full_row_same_schema
+        status: no_comparable_schema
+        compared_files: []
+        compared_sources: []
+      measured_size_bytes: 206566
+      local_only: true
+      availability: missing
+    - name: directdelimit
+      path: data/modules/bsee/directional_survey/20261113_directdelimit.csv
+      format: csv
+      columns:
+      - name: API_WELL_NUMBER
+        type: string
+        description: ''
+        unit: ''
+      - name: SOURCE_COLUMN_02
+        type: string
+        description: ''
+        unit: ''
+      - name: SOURCE_COLUMN_03
+        type: string
+        description: ''
+        unit: ''
+      - name: SOURCE_COLUMN_04
+        type: string
+        description: ''
+        unit: ''
+      - name: SOURCE_COLUMN_05
+        type: string
+        description: ''
+        unit: ''
+      - name: SOURCE_COLUMN_06
+        type: string
+        description: ''
+        unit: ''
+      - name: SOURCE_COLUMN_07
+        type: string
+        description: ''
+        unit: ''
+      - name: SOURCE_COLUMN_08
+        type: string
+        description: ''
+        unit: ''
+      - name: SOURCE_COLUMN_09
+        type: string
+        description: ''
+        unit: ''
+      - name: SOURCE_COLUMN_10
+        type: string
+        description: ''
+        unit: ''
+      - name: SOURCE_COLUMN_11
+        type: string
+        description: ''
+        unit: ''
+      row_count: 4924967
+      source_row_count: 4924967
+      duplicate_rows: 0
+      size_bytes: 0
+      sha256: 36db21833e91594a7bb11e9581214fd5a36e8ead415dfde9bdaf382420cbbe9a
+      last_modified: '2026-11-14T04:39:45.390532+00:00'
+      ingested_at: '2026-11-14T04:39:45.390532+00:00'
+      source_id: bsee-data-center
+      source: zip/directional_survey/directdelimit.zip
+      source_member: directdelimit.txt
+      source_format: zip
+      source_sha256: 286f8e4e0e2a91034ca046062d5a8435b2d74a43163f94b795527711f580669b
+      source_modified_at: '2026-01-18T14:05:14+00:00'
+      schema_status: positional_unverified
+      encoding: latin-1
+      data_status: real
+      readiness_status: partial
+      source_vintage:
+        state: unknown
+        reason: File modification time does not establish source vintage
+      deduplication:
+        method: exact_full_row_same_schema
+        status: no_comparable_schema
+        compared_files: []
+        compared_sources: []
+      measured_size_bytes: 546039007
+      local_only: true
+      availability: missing
+    - name: dsptsdelimit
+      path: data/modules/bsee/directional_survey/20261113_dsptsdelimit.csv
+      format: csv
+      columns:
+      - name: API_WELL_NUMBER
+        type: string
+        description: ''
+        unit: ''
+      - name: INCL_ANG_DEG_VAL
+        type: string
+        description: ''
+        unit: ''
+      - name: INCL_ANG_MIN_VAL
+        type: string
+        description: ''
+        unit: ''
+      - name: SURVEY_POINT_MD
+        type: string
+        description: ''
+        unit: ''
+      - name: WELL_N_S_CODE
+        type: string
+        description: ''
+        unit: ''
+      - name: DIR_DEG_VAL
+        type: string
+        description: ''
+        unit: ''
+      - name: DIR_MINS_VAL
+        type: string
+        description: ''
+        unit: ''
+      - name: WELL_E_W_CODE
+        type: string
+        description: ''
+        unit: ''
+      - name: SURVEY_POINT_TVD
+        type: string
+        description: ''
+        unit: ''
+      - name: DELTA_X
+        type: string
+        description: ''
+        unit: ''
+      - name: DELTA_Y
+        type: string
+        description: ''
+        unit: ''
+      - name: SURF_LONGITUDE
+        type: string
+        description: ''
+        unit: ''
+      - name: SURF_LATITUDE
+        type: string
+        description: ''
+        unit: ''
+      row_count: 4925141
+      source_row_count: 4925141
+      duplicate_rows: 0
+      size_bytes: 0
+      sha256: 455b708465ae2b49aefc0d3b4dd6feda8be56ad0ba0b80a7514fb41cf0247238
+      last_modified: '2026-11-14T04:39:45.390532+00:00'
+      ingested_at: '2026-11-14T04:39:45.390532+00:00'
+      source_id: bsee-data-center
+      source: zip/directional_survey/dsptsdelimit.zip
+      source_member: dsptsdelimit.txt
+      source_format: zip
+      source_sha256: a4d377e71a64701a7efa9db4e8c4a6f765d718a51eb18de23e9449cacd37e091
+      source_modified_at: '2026-01-18T13:52:22+00:00'
+      schema_status: source_columns
+      encoding: latin-1
+      data_status: real
+      readiness_status: partial
+      source_vintage:
+        state: unknown
+        reason: File modification time does not establish source vintage
+      deduplication:
+        method: exact_full_row_same_schema
+        status: exact_text_only
+        compared_files:
+        - wells/well_directional_surveys.csv
+        compared_sources:
+        - path: wells/well_directional_surveys.csv
+          sha256: e61de0480595250ecce5db4c7abb0d1eb86395c6f16f0709ab60bdb2ee616972
+      measured_size_bytes: 1034279791
+      local_only: true
+      availability: missing
+    - name: mv_boreholes_all
+      path: data/modules/bsee/borehole/20261113.csv
+      format: csv
+      columns:
+      - name: API_WELL_NUMBER
+        type: string
+        description: ''
+        unit: ''
+      - name: WELL_NAME
+        type: string
+        description: ''
+        unit: ''
+      - name: WELL_NAME_SUFFIX
+        type: string
+        description: ''
+        unit: ''
+      - name: BOTM_LEASE_NUMBER
+        type: string
+        description: ''
+        unit: ''
+      - name: BOTM_AREA_CODE
+        type: string
+        description: ''
+        unit: ''
+      - name: BOTM_BLOCK_NUMBER
+        type: string
+        description: ''
+        unit: ''
+      - name: COMPANY_NAME
+        type: string
+        description: ''
+        unit: ''
+      - name: WELL_SPUD_DATE
+        type: string
+        description: ''
+        unit: ''
+      - name: BH_TOTAL_MD
+        type: string
+        description: ''
+        unit: ''
+      - name: WELL_BORE_TVD
+        type: string
+        description: ''
+        unit: ''
+      - name: WELL_TD_SS
+        type: string
+        description: ''
+        unit: ''
+      - name: RKB_ELEVATION
+        type: string
+        description: ''
+        unit: ''
+      - name: WELL_BP_ST_KICKOFF_MD
+        type: string
+        description: ''
+        unit: ''
+      - name: TOTAL_DEPTH_DATE
+        type: string
+        description: ''
+        unit: ''
+      - name: BOREHOLE_STAT_DT
+        type: string
+        description: ''
+        unit: ''
+      - name: WELL_TYPE_CODE
+        type: string
+        description: ''
+        unit: ''
+      - name: BOREHOLE_STAT_CD
+        type: string
+        description: ''
+        unit: ''
+      - name: CASING_CUT_CODE
+        type: string
+        description: ''
+        unit: ''
+      - name: WATER_DEPTH
+        type: string
+        description: ''
+        unit: ''
+      - name: UNDWTR_COMP_STUB
+        type: string
+        description: ''
+        unit: ''
+      - name: SURF_LEASE_NUMBER
+        type: string
+        description: ''
+        unit: ''
+      - name: SURF_LATITUDE
+        type: string
+        description: ''
+        unit: ''
+      - name: SURF_LONGITUDE
+        type: string
+        description: ''
+        unit: ''
+      - name: BOTM_LATITUDE
+        type: string
+        description: ''
+        unit: ''
+      - name: BOTM_LONGITUDE
+        type: string
+        description: ''
+        unit: ''
+      - name: REGION_CODE
+        type: string
+        description: ''
+        unit: ''
+      row_count: 57354
+      source_row_count: 57354
+      duplicate_rows: 0
+      size_bytes: 0
+      sha256: bb58691785b8e570292a5d0b7c9aa78a68c7d4c93ed6a4a3eee8422b463f851f
+      last_modified: '2026-11-14T04:45:13.034870+00:00'
+      ingested_at: '2026-11-14T04:45:13.034870+00:00'
+      source_id: bsee-data-center
+      source: bin/borehole/BoreholeRawData.zip
+      source_member: BoreholeRawData/mv_boreholes_all.txt
+      source_format: zip
+      source_sha256: dc9df8eae467fc19e69bacd212eff576b7ad9f9ffb8c74b3939036edf9dfa56d
+      source_modified_at: '2026-02-09T10:31:56+00:00'
+      schema_status: source_columns
+      encoding: latin-1
+      data_status: real
+      readiness_status: partial
+      source_vintage:
+        state: unknown
+        reason: File modification time does not establish source vintage
+      deduplication:
+        method: exact_full_row_same_schema
+        status: no_comparable_schema
+        compared_files: []
+        compared_sources: []
+      measured_size_bytes: 10936434
+      local_only: true
+      availability: missing
     binary_stores:
     - name: Well_APD_Default
       path: data/modules/bsee/bin/Well_APD_Default
