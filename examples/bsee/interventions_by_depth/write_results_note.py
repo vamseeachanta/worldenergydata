@@ -456,7 +456,7 @@ uv run --no-sync python examples/bsee/interventions_by_depth/well_life_cycle.py 
 uv run --no-sync python examples/bsee/interventions_by_depth/plot_life_cycle.py
 uv run --no-sync python examples/bsee/interventions_by_depth/write_results_note.py --test-result '{test_result}'
 uv run --no-sync python examples/bsee/interventions_by_depth/verify_outputs.py
-uv run --no-sync python examples/bsee/interventions_by_depth/build_article.py --build-commit <commit holding the data tables> --chart-commit <commit holding the charts and scripts>
+uv run --no-sync python examples/bsee/interventions_by_depth/build_article.py --build-commit <commit holding the data tables> --chart-commit <commit holding the charts> --code-commit <commit holding the builder and scripts (default: the last commit that changed them)>
 ```
 
 The article page is [{page}]({page}); its text is generated from the same tables.

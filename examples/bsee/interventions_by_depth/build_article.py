@@ -3,11 +3,16 @@
 Every count, share, year and date in the page is read from output/*.csv,
 output/*.json or cost_table.csv. Quoted source text carries its page. The page
 embeds the PNG charts, so it opens offline. Run after the count, life-cycle,
-cost and chart scripts. --build-commit names the commit that holds the data
-tables; data links pin to it. --chart-commit names the commit that also holds
-the charts, README and scripts; chart links, the study link and the reusable
-prompt pin to it (default: the build commit). --build-date is the revision
-date on the page (default: today); the data date comes from summary.json.
+cost and chart scripts. Three pins, each for what it names:
+--build-commit holds the data tables; data links pin to it. --chart-commit
+holds the charts; chart links pin to it. --code-commit holds the builder and
+scripts that make this page; the study link and the reusable prompt pin to
+it, so the published reproduction path runs this builder, not the one the
+charts were drawn with. On the command line --code-commit defaults to the
+last commit that changed the study scripts, changes.md or the opening graphic,
+and the build stops if any of them has uncommitted changes. --build-date is
+the revision date on the page (default: today); the data date comes from
+summary.json.
 
 The page opens with the shared Deckhand opening graphic (article/assets), whose
 slot carries TITLE and no chart, and a
@@ -22,7 +27,9 @@ import argparse
 import base64
 import html
 import json
+import os
 import re
+import subprocess
 from datetime import date
 from pathlib import Path
 
@@ -307,14 +314,54 @@ def opening_graphic(assets=ASSETS):
     return f'<img src="data:image/png;base64,{png}" alt="{html.escape(alt)}">'
 
 
+# What the builder runs or reads besides the tables: the code pin must hold
+# these as they are when the page is built.
+CODE_PATHS = ("*.py", "article/changes.md", "article/assets")
+GIT_BINDINGS = ("GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR", "GIT_INDEX_FILE")
+
+
+def last_code_commit(folder=ROOT):
+    """The newest commit that changed CODE_PATHS in folder, if they are committed."""
+    env = {k: v for k, v in os.environ.items() if k not in GIT_BINDINGS}
+
+    def git(*args):
+        return subprocess.run(
+            ["git", "-C", str(folder), *args],
+            capture_output=True,
+            text=True,
+            env=env,
+            check=True,
+        ).stdout.strip()
+
+    dirty = git("status", "--porcelain", "--untracked-files=all", "--", *CODE_PATHS)
+    if dirty:
+        raise ValueError(
+            "the study scripts have uncommitted changes; commit them, or pass "
+            f"--code-commit:\n{dirty}"
+        )
+    commit = git("log", "-1", "--format=%H", "--", *CODE_PATHS)
+    if not commit:
+        raise ValueError(f"no commit holds the study scripts in {folder}")
+    return commit
+
+
 def build(
     out=OUT,
     page=PAGE,
     build_commit="analysis/gom-interventions-data",
     chart_commit=None,
     build_date=None,
+    code_commit=None,
 ):
+    # A pinned chart commit says nothing about the builder: a builder fix
+    # after the charts were drawn would leave the prompt on the old builder.
+    if chart_commit and not code_commit:
+        raise ValueError(
+            "name the code commit that holds this builder (--code-commit) "
+            "when the charts are pinned"
+        )
     chart_commit = chart_commit or build_commit
+    code_commit = code_commit or build_commit
     # The revision date is the day the page is built; the data date is the
     # date of the BSEE files.
     revision_date = long_date(build_date or date.today().isoformat())
@@ -349,7 +396,7 @@ def build(
 
     fl = link(build_commit)
     cl = link(chart_commit)
-    study = f"{REPO}/tree/{chart_commit}/{FOLDER}"
+    study = f"{REPO}/tree/{code_commit}/{FOLDER}"
     prompt_href = "#appendix-d"
 
     def dev_age(stage):
@@ -387,16 +434,20 @@ def build(
     pa_approvals = int(age.loc[("development", "permanent abandonment"), "events"])
     if not pa_age > pa_dev.median_years:
         raise ValueError("review the takeaway's 'different populations' sentence")
+    # The median life is over the abandoned wells whose life is established
+    # (an abandonment date before spud leaves it unknown).
+    pa_established = int(pa_dev.wells - pa_dev.life_not_established)
     takeaway = (
         f"A Gulf of Mexico development well lives about {yrs(pa_dev.median_years)} years "
-        f"from first spud to permanent abandonment (median of {n(pa_dev.wells)} abandoned "
-        f"wells). Across today's wells, heavy work with a rig or a hydraulic workover unit "
-        f"comes at a median {yrs(heavy_age)} years after spud, and light wireline and "
-        f"coiled-tubing work later, at {yrs(light_age)} years. The "
-        f"{yrs(pa_dev.median_years)}-year life and the {yrs(pa_age)}-year median age at "
-        f"permanent-abandonment approval describe different populations: the first is "
-        f"the life of the {n(pa_dev.wells)} development wells abandoned so far, the "
-        f"second the age of the well at {n(pa_approvals)} permanent-abandonment approvals "
+        f"from first spud to permanent abandonment. The data hold {n(pa_dev.wells)} "
+        f"development wells abandoned so far, of which {n(pa_established)} have an "
+        f"established life; the {yrs(pa_dev.median_years)}-year median is over those "
+        f"{n(pa_established)}. Across today's wells, heavy work with a rig or a "
+        f"hydraulic workover unit comes at a median {yrs(heavy_age)} years after spud, "
+        f"and light wireline and coiled-tubing work later, at {yrs(light_age)} years. "
+        f"The {yrs(pa_dev.median_years)}-year life and the {yrs(pa_age)}-year median "
+        f"age at permanent-abandonment approval describe different populations: the "
+        f"first is the life of those abandoned wells, the second the age of the well at {n(pa_approvals)} permanent-abandonment approvals "
         f"from {d.event_window.replace('-', ' to ')}, and counts approvals, not wells: a "
         f"well approved twice counts twice, and a well still standing can count. "
         f"In {d.last}, BSEE approved "
@@ -726,7 +777,7 @@ your own wells done for you instead, see below.</p>
 <li>Changes over time: BSEE refreshes the files daily, so a new download gives slightly different recent counts.</li>
 </ul>
 <h3>Reproduce the published result</h3>
-<pre>Using the worldenergydata repository at commit {chart_commit}, folder {FOLDER}:
+<pre>Using the worldenergydata repository at commit {code_commit}, folder {FOLDER}:
 download the four BSEE archives with download_data.py --snapshot {d.summary['snapshot']}
 (or use a later snapshot and expect small changes in recent years), then run
 count_interventions.py, well_life_cycle.py, build_cost_basis.py, estimate_costs.py,
@@ -825,7 +876,7 @@ pre {{ white-space: pre-wrap; background: #f4f8fb; padding: .8rem; font-size: .8
     return page
 
 
-if __name__ == "__main__":
+def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", type=Path, default=OUT)
     parser.add_argument("--page", type=Path, default=PAGE)
@@ -836,16 +887,31 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--chart-commit",
-        help="commit that holds the charts, README and scripts; chart links, the "
-        "study link and the reusable prompt pin to it (default: --build-commit)",
+        help="commit that holds the charts; chart links pin to it "
+        "(default: --build-commit)",
+    )
+    parser.add_argument(
+        "--code-commit",
+        help="commit that holds this builder and the study scripts; the study "
+        "link and the reusable prompt pin to it (default: the last commit that "
+        "changed them; the build stops if they have uncommitted changes)",
     )
     parser.add_argument(
         "--build-date",
         help="revision date shown on the page, YYYY-MM-DD (default: today)",
     )
-    args = parser.parse_args()
-    print(
-        build(
-            args.out, args.page, args.build_commit, args.chart_commit, args.build_date
-        )
+    args = parser.parse_args(argv)
+    page = build(
+        args.out,
+        args.page,
+        args.build_commit,
+        args.chart_commit,
+        args.build_date,
+        code_commit=args.code_commit or last_code_commit(ROOT),
     )
+    print(page)
+    return page
+
+
+if __name__ == "__main__":
+    main()

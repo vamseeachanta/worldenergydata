@@ -19,6 +19,30 @@
 - **Across all articles and worldwide wells** (general comment): not in this
   article; passed on for planning.
 
+## Revision 4, review fix-up 3 (built 14 November 2026)
+
+The second-provider review of fix-up 2 found that the reproduction prompt
+named the chart commit, whose builder predates the fix-up 2 wording: run as
+published, it gave back "wells abandoned under approvals". The cause is in the
+design: one pin served both the charts and the code. The page now carries
+three pins, each for what it names. Data links pin to the commit of the data
+tables, as before. Chart links pin to the commit of the charts, as before. The
+study link and the reusable prompt pin to the commit that holds the builder
+and scripts that made this page (`--code-commit`; on the command line it
+defaults to the last commit that changed the scripts, this file or the opening
+graphic, and the build stops if any of them has uncommitted changes). A test
+reads the pins from the committed page, checks that nothing the builder runs
+or reads changed after the code pin, and runs the builder from the code pin on
+the tables there: it must give back the committed page byte for byte. Same
+data and chart pins and build date; no chart changes.
+
+- Takeaway: "The data hold 16,860 development wells abandoned so far, of which
+  16,858 have an established life; the 23.0-year median is over those 16,858."
+  Two abandoned wells have an abandonment date before spud, so their life is
+  not established. The populations sentence calls the first value "the life of
+  those abandoned wells". Both counts are read from
+  `life_cycle_life_years.csv`.
+
 ## Revision 4, review fix-up 2 (built 14 November 2026)
 
 The second-provider review of the fix-up found that the takeaway called the
