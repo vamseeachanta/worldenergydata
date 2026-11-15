@@ -99,9 +99,6 @@ def life_figure(out, date):
         ax.grid(axis="y", alpha=0.2)
         ax.set_axisbelow(True)
     axes[0].set_ylabel("Wells (count)")
-    fig.suptitle(
-        "How long Gulf of Mexico wells last", x=0.07, ha="left", y=0.97, fontsize=16
-    )
     fig.legend(
         handles=[
             Patch(
@@ -201,13 +198,6 @@ def stages_figure(out, date, first, last):
         )
         for k in ["development", "exploration"]
     }
-    fig.suptitle(
-        "The life of a Gulf of Mexico well, stage by stage",
-        x=0.07,
-        ha="left",
-        y=0.97,
-        fontsize=16,
-    )
     fig.legend(
         handles=[
             Patch(

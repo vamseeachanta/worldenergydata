@@ -2290,87 +2290,6 @@ z
    </g>
   </g>
   <g id="text_37">
-   <!-- How long Gulf of Mexico wells last -->
-   <g transform="translate(60.48 25.9815) scale(0.16 -0.16)">
-    <defs>
-     <path id="DejaVuSans-2b" d="M 628 4666
-L 1259 4666
-L 1259 2753
-L 3553 2753
-L 3553 4666
-L 4184 4666
-L 4184 0
-L 3553 0
-L 3553 2222
-L 1259 2222
-L 1259 0
-L 628 0
-L 628 4666
-z
-" transform="scale(0.015625)"/>
-     <path id="DejaVuSans-2a" d="M 3809 666
-L 3809 1919
-L 2778 1919
-L 2778 2438
-L 4434 2438
-L 4434 434
-Q 4069 175 3628 42
-Q 3188 -91 2688 -91
-Q 1594 -91 976 548
-Q 359 1188 359 2328
-Q 359 3472 976 4111
-Q 1594 4750 2688 4750
-Q 3144 4750 3555 4637
-Q 3966 4525 4313 4306
-L 4313 3634
-Q 3963 3931 3569 4081
-Q 3175 4231 2741 4231
-Q 1884 4231 1454 3753
-Q 1025 3275 1025 2328
-Q 1025 1384 1454 906
-Q 1884 428 2741 428
-Q 3075 428 3337 486
-Q 3600 544 3809 666
-z
-" transform="scale(0.015625)"/>
-    </defs>
-    <use xlink:href="#DejaVuSans-2b"/>
-    <use xlink:href="#DejaVuSans-52" transform="translate(75.203125 0)"/>
-    <use xlink:href="#DejaVuSans-5a" transform="translate(136.390625 0)"/>
-    <use xlink:href="#DejaVuSans-3" transform="translate(218.171875 0)"/>
-    <use xlink:href="#DejaVuSans-4f" transform="translate(249.953125 0)"/>
-    <use xlink:href="#DejaVuSans-52" transform="translate(277.734375 0)"/>
-    <use xlink:href="#DejaVuSans-51" transform="translate(338.921875 0)"/>
-    <use xlink:href="#DejaVuSans-4a" transform="translate(402.296875 0)"/>
-    <use xlink:href="#DejaVuSans-3" transform="translate(465.78125 0)"/>
-    <use xlink:href="#DejaVuSans-2a" transform="translate(497.5625 0)"/>
-    <use xlink:href="#DejaVuSans-58" transform="translate(575.046875 0)"/>
-    <use xlink:href="#DejaVuSans-4f" transform="translate(638.421875 0)"/>
-    <use xlink:href="#DejaVuSans-49" transform="translate(666.203125 0)"/>
-    <use xlink:href="#DejaVuSans-3" transform="translate(701.40625 0)"/>
-    <use xlink:href="#DejaVuSans-52" transform="translate(733.1875 0)"/>
-    <use xlink:href="#DejaVuSans-49" transform="translate(794.375 0)"/>
-    <use xlink:href="#DejaVuSans-3" transform="translate(829.578125 0)"/>
-    <use xlink:href="#DejaVuSans-30" transform="translate(861.359375 0)"/>
-    <use xlink:href="#DejaVuSans-48" transform="translate(947.640625 0)"/>
-    <use xlink:href="#DejaVuSans-5b" transform="translate(1007.421875 0)"/>
-    <use xlink:href="#DejaVuSans-4c" transform="translate(1066.609375 0)"/>
-    <use xlink:href="#DejaVuSans-46" transform="translate(1094.390625 0)"/>
-    <use xlink:href="#DejaVuSans-52" transform="translate(1149.375 0)"/>
-    <use xlink:href="#DejaVuSans-3" transform="translate(1210.5625 0)"/>
-    <use xlink:href="#DejaVuSans-5a" transform="translate(1242.34375 0)"/>
-    <use xlink:href="#DejaVuSans-48" transform="translate(1324.125 0)"/>
-    <use xlink:href="#DejaVuSans-4f" transform="translate(1385.65625 0)"/>
-    <use xlink:href="#DejaVuSans-4f" transform="translate(1413.4375 0)"/>
-    <use xlink:href="#DejaVuSans-56" transform="translate(1441.21875 0)"/>
-    <use xlink:href="#DejaVuSans-3" transform="translate(1493.3125 0)"/>
-    <use xlink:href="#DejaVuSans-4f" transform="translate(1525.09375 0)"/>
-    <use xlink:href="#DejaVuSans-44" transform="translate(1552.875 0)"/>
-    <use xlink:href="#DejaVuSans-56" transform="translate(1614.15625 0)"/>
-    <use xlink:href="#DejaVuSans-57" transform="translate(1666.25 0)"/>
-   </g>
-  </g>
-  <g id="text_38">
    <!-- One well is one API10; life runs from the first non-cancelled spud of any bore. Development and exploration follow -->
    <g style="fill: #333333" transform="translate(60.48 422.459473) scale(0.09 -0.09)">
     <defs>
@@ -2725,7 +2644,7 @@ z
     <use xlink:href="#DejaVuSans-11" transform="translate(6457.21875 0)"/>
    </g>
   </g>
-  <g id="text_39">
+  <g id="text_38">
    <!-- Source: BSEE BoreholeRawData.zip, eWellAPMRawData.zip; 2026-11-13. -->
    <g transform="translate(60.48 447.117891) scale(0.09 -0.09)">
     <defs>
@@ -2911,7 +2830,7 @@ L 154.832344 51.070437
 z
 " style="fill: #245476"/>
    </g>
-   <g id="text_40">
+   <g id="text_39">
     <!-- Permanently abandoned: life from first spud to abandonment -->
     <g transform="translate(182.832344 58.070437) scale(0.1 -0.1)">
      <use xlink:href="#DejaVuSans-33"/>
@@ -2981,7 +2900,7 @@ L 509.993281 51.070437
 z
 " style="fill: url(#h8fe954b10c); stroke: #ffffff; stroke-linejoin: miter"/>
    </g>
-   <g id="text_41">
+   <g id="text_40">
     <!-- Still standing: age on 13 November 2026 -->
     <g transform="translate(537.993281 58.070437) scale(0.1 -0.1)">
      <defs>

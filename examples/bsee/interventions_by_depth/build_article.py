@@ -6,7 +6,13 @@ embeds the PNG charts, so it opens offline. Run after the count, life-cycle,
 cost and chart scripts. --build-commit names the commit that holds the data
 tables; data links pin to it. --chart-commit names the commit that also holds
 the charts, README and scripts; chart links, the study link and the reusable
-prompt pin to it (default: the build commit).
+prompt pin to it (default: the build commit). --build-date is the revision
+date on the page (default: today); the data date comes from summary.json.
+
+The page opens with the shared Deckhand opening graphic (article/assets) and a
+"What changed since revision 2" panel read from article/changes.md, hidden in
+print. The build stops if sections 1 to 5, without figures and Table 1, run
+over READABLE_WORD_LIMIT words.
 """
 
 from __future__ import annotations
@@ -16,6 +22,7 @@ import base64
 import html
 import json
 import re
+from datetime import date
 from pathlib import Path
 
 import pandas as pd
@@ -25,6 +32,11 @@ ROOT = Path(__file__).resolve().parent
 OUT = ROOT / "output"
 REVISION = 4
 PAGE = ROOT / "article" / f"gom-well-interventions-r{REVISION}.html"
+ASSETS = ROOT / "article" / "assets"
+CHANGES = ROOT / "article" / "changes.md"
+CHANGES_HEADING = "## What changed since revision 2"
+# Sections 1 to 5, without figures and Table 1, must stay short enough to read.
+READABLE_WORD_LIMIT = 800
 REPO = "https://github.com/vamseeachanta/worldenergydata"
 FOLDER = "examples/bsee/interventions_by_depth"
 BOEM = (
@@ -32,6 +44,21 @@ BOEM = (
     "Environmental-Assessment/NEPA/BOEM-EIS-2016-018-v1.pdf"
 )
 TAP738 = "https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf"
+MAGPLAN = "https://espis.boem.gov/final%20reports/5179.pdf"
+PACIFIC = "https://www.bsee.gov/sites/bsee.gov/files/technology-assessment-program-tap/735ab.pdf"
+RAW_DATA = "https://www.data.bsee.gov/Main/RawData.aspx"
+APM_QUERY = "https://www.data.bsee.gov/Well/eWellAPM/Default.aspx"
+MOBILISATION = (
+    "Rig mobilisation is excluded from the drillship or semisubmersible rows "
+    "(TAP-738, p. 8-18), not assumed free; mobilisation is added only for the "
+    "platform spreads: the rigless case, from TAP-738 Table 8-2, and the "
+    "casing-jack case, which borrows it."
+)
+SIGNOFF = (
+    "Prepared: Petroleum Engineer Deckhand, Data Analyst Deckhand. "
+    "Checked: Editor Deckhand. "
+    f"Approved: Vamsee Achanta (pending, C6 review copy r{REVISION})."
+)
 BANDS = ["under 100 m", "100 to 500 m", "500 to 1500 m", "1500 m and deeper"]
 BAND_TEXT = {
     "under 100 m": "under 100 m",
@@ -235,13 +262,56 @@ def table(headers, rows, number, title, notes):
     )
 
 
+def readable_words(page_html):
+    """Words in sections 1 to 5, without figures and the table."""
+    part = page_html[
+        page_html.index('<h2 id="s1"') : page_html.index('<h2 id="charts"')
+    ]
+    part = re.sub(r"<figure.*?</figure>", " ", part, flags=re.S)
+    part = re.sub(r'<div class="tablewrap">.*?</div>', " ", part, flags=re.S)
+    return len(html.unescape(re.sub(r"<[^>]+>", " ", part)).split())
+
+
+def changes_since_r2(path=CHANGES):
+    """The list items of the 'What changed since revision 2' section, as HTML."""
+    lines = path.read_text(encoding="utf-8").splitlines()
+    if CHANGES_HEADING not in lines:
+        raise ValueError(
+            f"{path.name} has no '{CHANGES_HEADING[3:]}' section for the page panel"
+        )
+    items = []
+    for line in lines[lines.index(CHANGES_HEADING) + 1 :]:
+        if line.startswith("## "):
+            break
+        if line.startswith("- "):
+            items.append(line[2:].strip())
+        elif line.startswith("  ") and items:
+            items[-1] += " " + line.strip()
+    if not items:
+        raise ValueError(f"{path.name}: '{CHANGES_HEADING[3:]}' lists nothing")
+    return [
+        re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", esc(item)) for item in items
+    ]
+
+
+def opening_graphic(assets=ASSETS):
+    """The shared Deckhand opening graphic, embedded as in revision 2."""
+    alt = (assets / "opening-alt.txt").read_text(encoding="utf-8").strip()
+    png = base64.b64encode((assets / "opening.png").read_bytes()).decode()
+    return f'<img src="data:image/png;base64,{png}" alt="{html.escape(alt)}">'
+
+
 def build(
     out=OUT,
     page=PAGE,
     build_commit="analysis/gom-interventions-data",
     chart_commit=None,
+    build_date=None,
 ):
     chart_commit = chart_commit or build_commit
+    # The revision date is the day the page is built; the data date is the
+    # date of the BSEE files.
+    revision_date = long_date(build_date or date.today().isoformat())
     d = Data(out)
     h = headline(d)
     t = totals_by_year(d)
@@ -282,16 +352,6 @@ def build(
     def exp_age(stage):
         return yrs(age.loc[("exploration", stage), "median_years"])
 
-    takeaway = (
-        f"A Gulf of Mexico development well lives about {yrs(pa_dev.median_years)} years "
-        f"from first spud to permanent abandonment (median of {n(pa_dev.wells)} abandoned "
-        f"wells). Heavy, rig-based work comes early in that life and light wireline and "
-        f"coiled-tubing work later. In {d.last}, BSEE approved {n(h['work'])} "
-        f"interventions and {n(h['aban'])} abandonments; per standing well, interventions "
-        f"are seven times as frequent in water deeper than 1,500 m as on the shelf "
-        f"({yrs(h['rate'][('1500 m and deeper', 'well work')])} against "
-        f"{yrs(h['rate'][('under 100 m', 'well work')])} approvals per 100 wells)."
-    )
     ratio = (
         h["rate"][("1500 m and deeper", "well work")]
         / h["rate"][("under 100 m", "well work")]
@@ -315,40 +375,45 @@ def build(
         sidetrack_age, heavy_age
     ):
         raise ValueError("review 'at similar ages' and 'light work follows'")
+    pa_age = age.loc[("development", "permanent abandonment"), "median_years"]
+    if not pa_age > pa_dev.median_years:
+        raise ValueError("review the takeaway's 'different populations' sentence")
+    takeaway = (
+        f"A Gulf of Mexico development well lives about {yrs(pa_dev.median_years)} years "
+        f"from first spud to permanent abandonment (median of {n(pa_dev.wells)} abandoned "
+        f"wells). Across today's wells, heavy work with a rig or a hydraulic workover unit "
+        f"comes at a median {yrs(heavy_age)} years after spud, and light wireline and "
+        f"coiled-tubing work later, at {yrs(light_age)} years. The "
+        f"{yrs(pa_dev.median_years)}-year life and the {yrs(pa_age)}-year median age at "
+        f"permanent abandonment describe different populations: the first covers every "
+        f"development well abandoned so far, the second the wells abandoned under "
+        f"approvals from {d.event_window.replace('-', ' to ')}. In {d.last}, BSEE approved "
+        f"{n(h['work'])} interventions and {n(h['aban'])} abandonments; per standing well, "
+        f"interventions are seven times as frequent at 1,500 m and deeper as on the shelf "
+        f"(under 100 m water depth): {yrs(h['rate'][('1500 m and deeper', 'well work')])} "
+        f"against {yrs(h['rate'][('under 100 m', 'well work')])} approvals per 100 wells."
+    )
 
     sections = []
     # 1. Why interventions matter ---------------------------------------------
     sections.append(f"""
 <h2 id="s1">1. Why interventions matter</h2>
-<p>A well intervention is any job that goes back into a completed well to keep it working. The
-Bureau of Ocean Energy Management (BOEM) describes it this way in its Gulf of Mexico
-environmental study: completed and
-producing wells "may require periodic reentry that is designed to maintain or restore a desired
-flow rate", and the same work is used to test another reservoir zone, recomplete to it, or plug
-part of the well (<a href="{BOEM}">BOEM 2016-018</a>, section 3.1.3.5, p. 3-37). The study
-expects a producing well to have "seven workovers or other well activities during its lifetime"
-(p. 3-38).</p>
-<p><strong>Light and heavy.</strong> A light intervention works through the well's existing
-tubing with wireline or coiled tubing, from the platform, a liftboat or a vessel, without a rig.
-A heavy intervention brings in a rig or a hydraulic workover unit that can pull the tubing out of
-the well. On a subsea well, a workover traditionally "require[s] that a rig be moved on location"
-(BOEM, p. 3-37); purpose-built intervention vessels that run wireline or coiled tubing are "very
-cost effective in decommissioning subsea wells compared to using a drilling rig"
+<p>A well intervention is any job that goes back into a completed well to keep it producing.
+The Bureau of Ocean Energy Management (BOEM) says producing wells "may require periodic reentry
+that is designed to maintain or restore a desired flow rate" (<a href="{BOEM}">BOEM
+2016-018</a>, section 3.1.3.5, p. 3-37) and expects "seven workovers or other well activities
+during its lifetime" (p. 3-38).</p>
+<p><strong>Light and heavy.</strong> A light intervention works through the tubing with
+wireline or coiled tubing, without a rig; a heavy one brings in a rig or a hydraulic workover
+unit that can pull the tubing. On a subsea well, a workover "require[s]
+that a rig be moved on location" (BOEM, p. 3-37); intervention vessels are "very cost effective
+in decommissioning subsea wells compared to using a drilling rig"
 (<a href="{TAP738}">BSEE TAP-738</a>, 2015, p. 5-21).</p>
-<p><strong>What it costs and saves.</strong> Most jobs take days, not months: the Gulf median
-is 7 days, within a range of 1 day to several months (BOEM, p. 3-37). The day rate is set by
-what has to be brought to the well. In the study's cost cases (2015 dollars), a rigless spread
-on a shelf platform costs about USD {n(64530)} a day and a light well-work job USD
-{musd(rigless.low_usd)} to {musd(rigless.high_usd)} million; a subsea well that needs a
-drillship or semisubmersible costs about USD {n(674600)} a day and USD {musd(subsea.low_usd)}
-to {musd(subsea.high_usd)} million (TAP-738, Table 8-2, p. 8-12, and p. 8-18; the cost
-method is in Appendix B). Choosing the lighter route saves rig days: a typical deepwater
-intervention takes 12 to 15 days with a rig against eight to 10 days with a vessel-deployed
-wireline system (TAP-738, p. 6-9). An intervention also keeps an existing well producing,
-which is the reason operators do one.</p>
-<p>This article follows the wells first: how long a Gulf well lasts and what happens to it on
-the way (section 2). It then counts the interventions by water depth (section 3) and prices
-them by access type (section 4).</p>
+<p><strong>What it costs and saves.</strong> In our scenarios, built from TAP-738 day rates
+and BOEM durations (2015 dollars; Appendix B), a light well-work job on a shelf platform costs
+USD {musd(rigless.low_usd)} to {musd(rigless.high_usd)} million and a subsea job from a
+drillship or semisubmersible USD {musd(subsea.low_usd)} to {musd(subsea.high_usd)} million.
+A vessel saves rig days: eight to 10 days against 12 to 15 with a rig (TAP-738, p. 6-9).</p>
 """)
 
     # 2. Life of a well ----------------------------------------------------------
@@ -423,37 +488,34 @@ them by access type (section 4).</p>
     ]
     sections.append(f"""
 <h2 id="s2">2. The life of a Gulf of Mexico well</h2>
-<p>BSEE's borehole file lists every well drilled in the Gulf, with its spud date, its sidetracks
-and bypasses, and the date each bore was permanently abandoned. Its permit-to-modify file lists
-every approved intervention and abandonment from {d.first} on. Together they give each well a
-life story. Of the {n(life['dated_wells'])} Gulf wells with a spud date,
-{n(life['permanently_abandoned'])} are permanently abandoned and {n(life['standing'])} still
-stand.</p>
+<p>BSEE's borehole file and permits to modify give each well a life story. Of the
+{n(life['dated_wells'])} Gulf wells with a spud date, {n(life['permanently_abandoned'])} are
+permanently abandoned and {n(life['standing'])} still stand.</p>
+<p>Figure 1 shows how long wells last, development and exploration, abandoned and still
+standing.</p>
 {figure('05_well_life', 1, 'How long Gulf of Mexico wells last', life_notes,
         'Two histograms of well life in five-year bins: development wells spread from 0 to 60 years, exploration wells mostly under 5 years.')}
 <ul>
-<li>Exploration wells have short lives: {n(pa_exp.under_1_year)} of the {n(pa_exp.wells)} abandoned exploration wells were plugged within a year of spud (median {yrs(pa_exp.median_years)} years).</li>
-<li>Development wells that have been abandoned lived a median {yrs(pa_dev.median_years)} years, the middle half between {yrs(pa_dev.q25_years)} and {yrs(pa_dev.q75_years)} years. The {n(st_dev.wells)} development wells still standing are a median {yrs(st_dev.median_years)} years old.</li>
+<li>Exploration wells have short lives: {n(pa_exp.under_1_year)} of the {n(pa_exp.wells)} abandoned ones were plugged within a year of spud (median {yrs(pa_exp.median_years)} years).</li>
+<li>Abandoned development wells lived a median {yrs(pa_dev.median_years)} years, the middle half between {yrs(pa_dev.q25_years)} and {yrs(pa_dev.q75_years)}; the {n(st_dev.wells)} still standing are a median {yrs(st_dev.median_years)} years old.</li>
 </ul>
+<p>Figure 2 shows the share of wells reaching each stage and the well's age at each kind of
+work.</p>
 {figure('06_well_life_stages', 2, 'The life of a well, stage by stage', stage_notes,
         'Left: share of wells reaching each stage, development and exploration. Right: median and middle half of well age at each event.')}
 {table(['Per well', f'Development, first drilled {d.first}-{d.last}', f'Exploration, first drilled {d.first}-{d.last}'],
        rows, 1, 'A Gulf of Mexico well in numbers', table_notes)}
 <h3>The life story of a development well</h3>
-<p>A development well is drilled, and {pct(dev['sidetrack_share'])} of those drilled since
-{d.first} have been sidetracked or bypassed. Read across today's wells (Figure 2, right,
-events {d.event_window.replace('-', ' to ')}), sidetracks and heavy work with a rig or
-workover unit come at similar ages: medians of {dev_age('sidetrack or bypass')} and
-{dev_age('heavy intervention')} years after spud. {pct(dev['any_heavy'])} of development
-wells drilled since {d.first} have had at least one heavy intervention approved. Light wireline and
-coiled-tubing work follows as the well ages, at a median {dev_age('light intervention')} years. Temporary abandonment comes at a median
-{dev_age('temporary abandonment')} years and permanent abandonment at
-{dev_age('permanent abandonment')} years. Development wells drilled since {d.first} have had
-{dev['interventions']:.1f} intervention approvals each so far, against BOEM's
-expectation of seven workovers or other well activities in a lifetime; the ones still standing
-are a median {yrs(dev['age_standing'])} years old. An exploration well's story is short: two in
-three of those drilled since {d.first} are already permanently abandoned, most within a year
-of spud, and its heavy work comes early (median age {exp_age('heavy intervention')} years).</p>
+<p>{pct(dev['sidetrack_share'])} of development wells drilled since {d.first} have been
+sidetracked or bypassed. Across today's wells (Figure 2, right,
+events {d.event_window.replace('-', ' to ')}), sidetracks and heavy work come at similar ages, medians
+of {dev_age('sidetrack or bypass')} and {dev_age('heavy intervention')} years after spud.
+Light work follows at a median {dev_age('light intervention')} years, temporary abandonment at
+{dev_age('temporary abandonment')} and permanent abandonment at
+{dev_age('permanent abandonment')}. Wells drilled since {d.first} have had
+{dev['interventions']:.1f} intervention approvals each so far, against the seven in a lifetime
+that BOEM expects. Exploration wells get their heavy work early, at a median
+{exp_age('heavy intervention')} years.</p>
 """)
 
     # 3. Interventions by depth ---------------------------------------------------
@@ -487,14 +549,12 @@ of spud, and its heavy work comes early (median age {exp_age('heavy intervention
     ]
     sections.append(f"""
 <h2 id="s3">3. Interventions by water depth</h2>
-<p>In {d.last}, BSEE approved {n(h['work'])} interventions (well work) and
-{n(h['aban'])} abandonments, {n(h['total'])} approvals in all. By water depth, the
-interventions were {'; '.join(f"{BAND_TEXT[b]}: {n(work_split[b])}" for b in BANDS)}.
-The abandonments were
+<p>In {d.last}, BSEE approved {n(h['work'])} interventions and
+{n(h['aban'])} abandonments, {n(h['total'])} approvals in all. The abandonments were
 {n(split['temporary abandonment'])} temporary, {n(split['permanent abandonment'])} permanent and
-{n(split['abandonment unspecified'])} of unstated type. {share_text(aban_shallow, h['aban'])} of
-the abandonment approvals ({n(aban_shallow)} of {n(h['aban'])}) were for wells in less than 100 m
-of water.</p>
+{n(split['abandonment unspecified'])} of unstated type; {share_text(aban_shallow, h['aban']).lower()}
+of them ({n(aban_shallow)} of {n(h['aban'])}) were for wells in less than 100 m of water.</p>
+<p>Figure 3 shows each year's approvals by water depth, for well work and for abandonment.</p>
 {figure('01_approved_interventions', 3, 'Approved permits to modify, by water depth', approvals_notes,
         'Stacked bars of approved permits by year and water-depth band, well work and abandonment.')}
 {figure('02_rates_per_standing_well', 4, 'Approvals per 100 standing wells', rate_notes,
@@ -506,34 +566,23 @@ about {h['rate'][('1500 m and deeper', 'well work')] / 100:.1f} intervention app
 standing deepwater well; {yrs(h['rate'][('under 100 m', 'well work')])} on the shelf means about
 one for every {100 / h['rate'][('under 100 m', 'well work')]:.0f} standing shelf wells. The rate
 takes out the shrinking number of wells: {n(t.loc[(d.first, 'well work'), 'standing_wells'])}
-wells stood on 1 January {d.first} and {n(t_last.standing_wells)} on 1 January {d.last}.</p>
+stood on 1 January {d.first} and {n(t_last.standing_wells)} on 1 January {d.last}.</p>
 <ul>
-<li><strong>Is intervention going up or down?</strong> Per standing well, it held in a narrow
-band for many years and has been lower since {d.last - 2}. Across all depths, intervention approvals ran at {yrs(work_early.min())} to
-{yrs(work_early.max())} per 100 standing wells a year from {d.first + 1} to
-{CODING_CHANGE_YEAR - 2}, and at {yrs(work_late.min())} to {yrs(work_late.max())} from
-{d.last - 2} to {d.last}. The count fell further, from {n(t_first.permits)} in {d.first + 1}
-to {n(t_last.permits)} in {d.last}, mostly because there are fewer wells. Part of the recent step down
-is the coding change in note 2 of Figure 3.</li>
-<li><strong>Light or heavy?</strong> From {wt['start']}, at least three in four intervention
-approvals name a unit that can be classified ({wt['named_last']:.0f}% in {d.last}). Since then
-light work has run at {yrs(wt['light_range'][0])} to {yrs(wt['light_range'][1])} approvals per
-100 standing wells a year and heavy work at {yrs(wt['heavy_range'][0])} to
-{yrs(wt['heavy_range'][1])}. Light work averaged {yrs(wt['light_early'])} in
-{wt['early'][0]}-{wt['early'][1]} and {yrs(wt['light_late'])} in
-{wt['late'][0]}-{wt['late'][1]}; heavy work averaged {yrs(wt['heavy_early'])} and
-{yrs(wt['heavy_late'])}. Light work is about twice as frequent as heavy work, and both are
+<li><strong>Up or down?</strong> Per standing well, intervention held in a narrow band for
+years and has been lower since {d.last - 2}: {yrs(work_early.min())} to
+{yrs(work_early.max())} approvals per 100 standing wells a year from {d.first + 1} to
+{CODING_CHANGE_YEAR - 2}, {yrs(work_late.min())} to {yrs(work_late.max())} from {d.last - 2} to
+{d.last}. Part of the step down is the coding change in note 2 of Figure 3.</li>
+<li><strong>Light or heavy?</strong> Light work is about twice as frequent as heavy work, and
+both are
 {'lower' if wt['light_late'] < wt['light_early'] and wt['heavy_late'] < wt['heavy_early'] else 'mixed'}
-in the last three years than in {wt['early'][0]}-{wt['early'][1]}.</li>
-<li><strong>Deeper water, more work per well.</strong> In {d.last} the intervention rate rises
-with depth ({'; '.join(f"{BAND_TEXT[b]}: {yrs(h['rate'][(b, 'well work')])}" for b in BANDS)}).
-Deepwater wells are fewer and more often subsea, and the operators' own
-estimates put the job at a median {durations[('1500 m and deeper', 'well work')]:.0f} days
-there against {durations[('under 100 m', 'well work')]:.0f} on the shelf.</li>
+in {wt['late'][0]}-{wt['late'][1]} than in {wt['early'][0]}-{wt['early'][1]} (Appendix D).</li>
+<li><strong>Deeper water, more work per well.</strong> The {d.last} rate rises with depth
+({'; '.join(f"{BAND_TEXT[b]}: {yrs(h['rate'][(b, 'well work')])}" for b in BANDS)}).</li>
 <li><strong>Abandonment</strong> ran at {yrs(a_last.per100)} approvals per 100 standing wells
-in {d.last}, against {yrs(t_last.per100)} for interventions. Abandonment is counted here and
-studied in the next article.</li>
+in {d.last}, against {yrs(t_last.per100)} for interventions.</li>
 </ul>
+<p>Figure 5 shows which units the {d.last} approvals name, by water depth.</p>
 {figure('04_unit_types_by_depth', 5, f'Units named on {d.last} approvals, by depth',
         [f"Share of {d.last} approvals by the unit type the permit names, through the regulator's rig lookup; a named unit is not proof of the unit used.", f"Data: {fl('unit_type_shares.csv')}."],
         'Horizontal 100 percent bars of unit types by water depth for well work and permanent abandonment.')}
@@ -542,17 +591,17 @@ studied in the next article.</li>
     # 4. Cost --------------------------------------------------------------------
     sections.append(f"""
 <h2 id="s4">4. Cost per intervention, by access type</h2>
-<p>Cost follows how the well is reached, not depth alone. A dry-tree platform well can be worked
-from a rigless spread or casing jacks; a subsea well needs a vessel, a drillship or a
-semisubmersible. Figure 6 gives low, base and high cases per event in 2015 dollars from the
-BSEE and BOEM cost studies; the method and every source page are in Appendix B.</p>
+<p>Cost follows how the well is reached, not depth alone: a dry-tree platform well can be
+worked from a rigless spread or casing jacks, a subsea well needs a vessel, a drillship or a
+semisubmersible. Figure 6 gives our low, base and high scenarios per event (2015 dollars;
+method in Appendix B).</p>
 {figure('03_cost_per_event', 6, 'Cost per event, by well and access type',
-        ["Scenario costs per event in USD million (2015), two significant figures; spread rows exclude the source's allowances, the deep-platform row is a published total that includes them.", f"Data: {fl('cost_table.csv')}."],
+        ["Scenario costs per event in USD million (2015), two significant figures; spread rows exclude the source's allowances, the deep-platform row is a published total that includes them.", MOBILISATION, f"Data: {fl('cost_table.csv')}."],
         'Horizontal ranges of low, base and high cost per event for each well and access type.')}
 <h2 id="s5">5. Abandonment</h2>
-<p>Abandonment approvals appear in this article only as counts and rates. The next article
-covers abandonment, temporary and permanent, in the same depth: why wells are left temporarily
-abandoned, how long they stay that way, and what permanent abandonment costs.</p>
+<p>This article shows abandonment only as counts and rates. The next article covers it in the
+same depth: why wells are left temporarily abandoned, how long they stay so, and what permanent
+abandonment costs.</p>
 """)
 
     charts = [
@@ -572,7 +621,15 @@ abandoned, how long they stay that way, and what permanent abandonment costs.</p
 <ul>{chart_list}</ul>
 <p>To try it out or adapt the analysis, see <a href="{prompt_href}">reusable prompt</a>.</p>
 <p class="closing">{esc(CLOSING)}</p>
-<p class="signoff">Petroleum Engineer Deckhand and Data Analyst Deckhand. Approval: pending.</p>
+<p class="signoff">{esc(SIGNOFF)}</p>
+<h2 id="references">References</h2>
+<ol class="references">
+<li>BOEM (2016). <a href="{BOEM}">Gulf of Mexico OCS Oil and Gas Lease Sales 2017-2022, Final EIS, Volume I</a>, OCS EIS/EA BOEM 2016-018. Section 3.1.3.5, pp. 3-37 and 3-38.</li>
+<li>BSEE / ICF International (July 2015). <a href="{TAP738}">Decommissioning Methodology and Cost Evaluation</a>, TAP-738. Pages 5-21, 6-9 and 8-12 to 8-19.</li>
+<li>BOEM / Northern Economics (May 2012). <a href="{MAGPLAN}">MAG-PLAN Alaska Update</a>, BOEM 2011-059. Section 3.5.5.4, p. 108.</li>
+<li>BSEE / TSB Offshore (February 2015). <a href="{PACIFIC}">Decommissioning Cost Update for Pacific OCS Region Facilities, Volume 2</a>. Appendix 2, p. A-2 (rigless durations behind Figure 6).</li>
+<li>BSEE Data Center. <a href="{RAW_DATA}">Raw data downloads</a>: BoreholeRawData.zip, eWellAPMRawData.zip, eWellEORRawData.zip and eWellWARRawData.zip, files of {snap}; <a href="{APM_QUERY}">permit to modify (eWellAPM) query</a>, Approved Date column.</li>
+</ol>
 <p class="hashtags">{esc(HASHTAGS)}</p>
 """)
 
@@ -607,11 +664,16 @@ is divided by its two source codes. Mapping: {fl('intervention_weight_mapping.cs
 <li><strong>Standing wells</strong> on 1 January use the same start and end rule as item 1.</li>
 </ol>
 <h2 id="appendix-b">Appendix B. Cost method</h2>
-<p>Spread scenarios multiply a published day rate by low, base and high durations and add
-mobilisation: rigless platform spread USD {n(64530)} a day (derived from TAP-738, Table 8-2, p. 8-12),
-casing jacks USD {n(68424)} a day (Table 8-3, p. 8-14), drillship or semisubmersible USD
-{n(674600)} a day (p. 8-18). Well-work durations are 7, 10.5 and 14 days (BOEM 2016-018 p. 3-37
-median; one to two weeks from the BOEM Alaska update, 2012, p. 108). The deepwater dry-tree
+<p>Our spread scenarios multiply a published day rate by low, base and high durations. The
+rigless platform spread is USD {n(64530)} a day, derived from a TAP-738 P&amp;A spread
+(Table 8-2: USD {n(225856)} over 84 hours) on p. 8-12; casing jacks USD {n(68424)} a day
+(Table 8-3, p. 8-14); a drillship or semisubmersible USD {n(674600)} a day (p. 8-18).
+{MOBILISATION} Well-work durations are 7, 10.5 and 14 days (BOEM 2016-018, p. 3-37: a Gulf
+median of 7 days, within a range of 1 day to several months; one to two weeks from the BOEM
+Alaska update, 2012, p. 108). On these inputs a light well-work job on a shelf platform costs
+USD {musd(rigless.low_usd)} to {musd(rigless.high_usd)} million and a subsea job from a
+drillship or semisubmersible USD {musd(subsea.low_usd)} to {musd(subsea.high_usd)} million.
+The deepwater dry-tree
 abandonment row is TAP-738's published per-well total (Table 8-4, p. 8-15). Costs are 2015
 dollars, not escalated, and are scenarios, not bids. The full table, every input and its source
 page are in the <a href="{study}">full study</a> ({fl('cost_table.csv')}).</p>
@@ -641,6 +703,31 @@ temporary and permanent abandonment approvals, with the counting rules of Append
 Keep approvals separate from completed jobs, and state the unit rule you use.</pre>
 <p>Data set: BSEE Data Center raw well data (public), files of {snap}.</p>
 <p>To have a study of your own wells done for you, write to support@aceengineer.com.</p>
+<h2 id="appendix-d">Appendix D. Detail behind sections 2 and 3</h2>
+<ul>
+<li><strong>Heavy work.</strong> {pct(dev['any_heavy'])} of development wells drilled since
+{d.first} have had at least one heavy intervention approved; development wells still standing
+from that group are a median {yrs(dev['age_standing'])} years old. Two in three exploration
+wells drilled since {d.first} are already permanently abandoned, most within a year of
+spud.</li>
+<li><strong>Interventions by depth.</strong> In {d.last}, the {n(h['work'])} intervention
+approvals were {'; '.join(f"{BAND_TEXT[b]}: {n(work_split[b])}" for b in BANDS)}.</li>
+<li><strong>Count against rate.</strong> The count of intervention approvals fell further than
+the rate, from {n(t_first.permits)} in {d.first + 1} to {n(t_last.permits)} in {d.last}, mostly
+because there are fewer wells.</li>
+<li><strong>Light or heavy.</strong> From {wt['start']}, at least three in four intervention
+approvals name a unit that can be classified ({wt['named_last']:.0f}% in {d.last}). Since then
+light work has run at {yrs(wt['light_range'][0])} to {yrs(wt['light_range'][1])} approvals per
+100 standing wells a year and heavy work at {yrs(wt['heavy_range'][0])} to
+{yrs(wt['heavy_range'][1])}. Light work averaged {yrs(wt['light_early'])} in
+{wt['early'][0]}-{wt['early'][1]} and {yrs(wt['light_late'])} in
+{wt['late'][0]}-{wt['late'][1]}; heavy work averaged {yrs(wt['heavy_early'])} and
+{yrs(wt['heavy_late'])}.</li>
+<li><strong>Depth.</strong> Deepwater wells are fewer and more often subsea, and the operators'
+own estimates on their permits put a well-work job at a median
+{durations[('1500 m and deeper', 'well work')]:.0f} days at 1,500 m and deeper against
+{durations[('under 100 m', 'well work')]:.0f} under 100 m.</li>
+</ul>
 """)
 
     toc = "".join(
@@ -678,17 +765,26 @@ table {{ border-collapse: collapse; font-size: .9rem; width: 100%; }}
 th, td {{ border-bottom: 1px solid #d5dde5; padding: .35rem .5rem; text-align: left; }}
 td:not(:first-child), th:not(:first-child) {{ text-align: right; }}
 pre {{ white-space: pre-wrap; background: #f4f8fb; padding: .8rem; font-size: .85rem; }}
-#deckhand-opening {{ min-height: 0; }}
+#deckhand-opening {{ margin: 0 0 1rem; }}
+#deckhand-opening img {{ width: 100%; height: auto; display: block; }}
+#changes {{ font-family: 'Segoe UI', Arial, sans-serif; font-size: .85rem; background: #fdf6e3; border: 1px solid #e6d8a8; padding: .5rem 1rem; margin: 1rem 0; }}
+#changes h2 {{ font-size: 1rem; margin: .3rem 0; border: 0; padding: 0; }}
 .hashtags, .signoff {{ font-size: .9rem; color: #4f6d7a; }}
+.references {{ font-size: .9rem; }}
+@media print {{ .no-print {{ display: none; }} }}
 </style>
 </head>
 <body>
-<div id="deckhand-opening" class="deckhand-slot" aria-hidden="true"></div>
+<div id="deckhand-opening" class="deckhand-slot">{opening_graphic()}</div>
+<aside id="changes" class="no-print" aria-label="What changed since revision 2">
+<h2>What changed since revision 2 (review copy; not printed)</h2>
+<ul>{''.join(f'<li>{item}</li>' for item in changes_since_r2())}</ul>
+</aside>
 <p class="masthead">{esc(MASTHEAD)}</p>
 <p class="label">Energy Street · Well interventions</p>
 <h1>Gulf of Mexico well interventions: the life of a well, then the work by water depth</h1>
 <blockquote>{esc(takeaway)}</blockquote>
-<p class="version">Revision {REVISION}, {date_text}. Data: BSEE raw well data, files of {snap}.
+<p class="version">Revision {REVISION}, {revision_date}. Data: BSEE raw well data, files of {snap}.
 <a href="{study}">Read the full study</a>.</p>
 <p><strong>In this article</strong></p>
 <ol>{toc}</ol>
@@ -706,6 +802,12 @@ pre {{ white-space: pre-wrap; background: #f4f8fb; padding: .8rem; font-size: .8
     text = re.sub(r"data:image/png;base64,[A-Za-z0-9+/=]+", "", page_html)
     if FORBIDDEN.search(text):
         raise ValueError(f"forbidden public wording: {FORBIDDEN.search(text).group(0)}")
+    words = readable_words(page_html)
+    if words > READABLE_WORD_LIMIT:
+        raise ValueError(
+            f"readable part (sections 1 to 5 without figures and Table 1) has "
+            f"{words} words; the limit is {READABLE_WORD_LIMIT}"
+        )
     page.parent.mkdir(parents=True, exist_ok=True)
     page.write_text(page_html, encoding="utf-8", newline="\n")
     return page
@@ -725,5 +827,13 @@ if __name__ == "__main__":
         help="commit that holds the charts, README and scripts; chart links, the "
         "study link and the reusable prompt pin to it (default: --build-commit)",
     )
+    parser.add_argument(
+        "--build-date",
+        help="revision date shown on the page, YYYY-MM-DD (default: today)",
+    )
     args = parser.parse_args()
-    print(build(args.out, args.page, args.build_commit, args.chart_commit))
+    print(
+        build(
+            args.out, args.page, args.build_commit, args.chart_commit, args.build_date
+        )
+    )

@@ -141,7 +141,7 @@ def plot(out):
             bottom += vals
         if partial_year is not None:
             ax.axvspan(last + 0.5, last + 1.5, color="#cccccc", alpha=0.3)
-        ax.set_title(f"Approved permits to modify: {family}", loc="left", fontsize=13)
+        ax.set_title(family.capitalize(), loc="left", fontsize=13)
         ax.set_ylabel("Approved permits (count)")
         ax.set_ylim(bottom=0)
         ax.grid(axis="y", alpha=0.2)
@@ -199,11 +199,7 @@ def plot(out):
             )
         if partial_year is not None:
             ax.axvspan(last + 0.5, last + 1.5, color="#cccccc", alpha=0.3)
-        ax.set_title(
-            f"Approved permits to modify per 100 standing wells: {family}",
-            loc="left",
-            fontsize=13,
-        )
+        ax.set_title(family.capitalize(), loc="left", fontsize=13)
         ax.set_ylabel("Permits / 100 standing wells")
         ax.yaxis.set_major_formatter(FormatStrFormatter("%.1f"))
         ax.set_ylim(bottom=0)
@@ -299,9 +295,6 @@ def plot(out):
         transform=ax.transAxes,
         fontsize=10,
     )
-    fig.suptitle(
-        "Cost scenarios by well and access type", x=0.07, ha="left", fontsize=16, y=0.97
-    )
     fig.text(
         0.07,
         0.90,
@@ -396,13 +389,6 @@ def plot(out):
         ax.grid(axis="x", alpha=0.15)
         ax.set_axisbelow(True)
     axes[-1].set_xlabel("Share of approved permits (%)")
-    fig.suptitle(
-        f"Unit types named on approved permits to modify, {last}",
-        x=0.07,
-        ha="left",
-        y=0.97,
-        fontsize=16,
-    )
     fig.legend(
         handles=[
             Patch(facecolor=c, label=k)

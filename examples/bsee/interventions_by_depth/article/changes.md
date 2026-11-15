@@ -1,5 +1,79 @@
 # Article revisions
 
+## What changed since revision 2
+
+`../build_article.py` shows the list below in a panel at the top of the page
+(hidden in print). Each item names an owner ask on revision 2 and where it went.
+
+- **Opening graphic** (road map note, 13 November: "add the deckhand opening
+  graphic to each of the newsletters"): the shared Deckhand opening graphic
+  heads the page, embedded as in revision 2.
+- **Why interventions matter, first** (comment 1): section 1 opens the article;
+  its cost detail is in Appendix B.
+- **The life story of a well, before the interventions** (comment 2): section
+  2, with Figures 1 and 2 and Table 1, comes before Figure 3.
+- **What the rate means** (comment 3): section 3, "What the rate means", under
+  Figure 4; the light and heavy detail is in Appendix D.
+- **Abandonment in the next article** (comment 2): counted and rated here;
+  section 5 says the next article covers it.
+- **Across all articles and worldwide wells** (general comment): not in this
+  article; passed on for planning.
+
+## Revision 4, review copy fix-up (built 14 November 2026)
+
+The review copy of revision 4 failed the pre-review gate. The page is rebuilt
+from the same tables (data files of 13 November 2026). No number in a table
+changes, and every number of the earlier page is still on the page; some move
+from the sections to Appendix B or the new Appendix D.
+
+- Opening graphic: `assets/opening.svg`, `assets/opening.png` and
+  `assets/opening-alt.txt` are the shared Deckhand opening graphic of revision
+  2. The page embeds the PNG with its alt text in the opening slot, as revision
+  2 did. The graphic still shows the revision 2 title and chart in its slot.
+- Section 1: the costs are "our scenarios, built from TAP-738 day rates and
+  BOEM durations", not the study's cost cases. The day rates move to
+  Appendix B, where USD 64,530 a day is "derived from a TAP-738 P&A spread
+  (Table 8-2: USD 225,856 over 84 hours)". The 1-day-to-several-months range
+  also moves there. "Traditionally" is dropped from the BOEM quote line; it is
+  not the source's word.
+- Appendix B and the Figure 6 note state that rig mobilisation is excluded
+  from the drillship or semisubmersible rows (README: "Rig mobilisation is
+  excluded"). Mobilisation is added only for the platform spreads: the rigless
+  case (TAP-738 Table 8-2), and the casing-jack case, which borrows it in
+  `cost_basis.yml`. Appendix B previously said every spread adds mobilisation.
+- Version line: the revision date is the build date (`--build-date`,
+  14 November 2026); the data date stays "files of 13 November 2026".
+- Takeaway: heavy work (a rig or a hydraulic workover unit) at a median 13.3
+  years after spud, light work later at 24.1 years, in place of "heavy,
+  rig-based work comes early". A new sentence separates the 23.0-year life
+  (every development well abandoned so far) from the 33.0-year median age at
+  permanent-abandonment approvals from 2005 to 2026. The band is named
+  "1,500 m and deeper", and the shelf is defined at first use (under 100 m
+  water depth).
+- Sign-off: "Prepared: Petroleum Engineer Deckhand, Data Analyst Deckhand.
+  Checked: Editor Deckhand. Approved: Vamsee Achanta (pending, C6 review copy
+  r4)." A References list follows it: BOEM 2016-018, BSEE TAP-738 (July
+  2015), the BOEM MAG-PLAN Alaska update (2012), the BSEE Pacific cost update
+  (February 2015, the rigless durations behind Figure 6) and the BSEE raw data
+  and permit query pages.
+- Figures 1, 2, 3 and 5 each have a one-sentence lead-in.
+- Length: sections 1 to 5, without figures and Table 1, are 790 words (1,214
+  before). Moved, not deleted: the day rates and duration range to Appendix B;
+  the 2025 interventions by depth, the 2006-to-2025 count, the light and heavy
+  rates, the share of wells with heavy work, the age of standing wells, the
+  exploration abandonment share and the per-job duration estimates to the new
+  Appendix D. Dropped as repetition: the paragraph listing sections 2 to 4 and
+  BOEM's list of other uses of a reentry. The build stops above 800 words.
+- Charts: the figure titles that repeated the page captions (Figures 1, 2, 5
+  and 6) are removed, and the panel titles of Figures 3 and 4 are shortened to
+  "Well work" and "Abandonment". The notes and source lines inside the PNGs
+  stay, so a downloaded chart still carries its source. All six charts are
+  regenerated from the unchanged tables with matplotlib 3.11.2, the version
+  the verification receipt records (Figures 3 to 6 were last drawn with
+  3.10.6).
+- A "What changed since revision 2" panel, from the section above, heads the
+  page and is hidden in print.
+
 ## Revision 4
 
 Revision 4 is `gom-well-interventions-r4.html`. It applies no new owner

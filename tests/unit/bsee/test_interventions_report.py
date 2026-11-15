@@ -329,7 +329,7 @@ def test_cost_method_and_figure_6_state_rig_mobilisation_is_excluded(r4_page):
 
 
 def test_version_line_carries_the_build_date_and_the_data_date(r4_page):
-    version = plain(between(r4_page, 'class="version"', "</p>"))
+    version = plain(between(r4_page, '<p class="version">', "</p>"))
     assert version.startswith(
         "Revision 4, 14 November 2026. Data: BSEE raw well data, files of "
         "13 November 2026."
@@ -391,7 +391,7 @@ def test_readable_part_is_800_words_or_fewer_and_keeps_the_owner_order(r4_page):
         'id="s2">2. The life of a Gulf of Mexico well',
         'id="figure-1"',
         'id="figure-3"',
-        "What the rate means",
+        "<h3>What the rate means</h3>",
         'id="s5">5. Abandonment',
     ]
     positions = [r4_page.index(marker) for marker in order]
@@ -438,7 +438,9 @@ def test_changes_panel_comes_from_changes_md_and_is_hidden_in_print(r4_page):
     assert len(items) >= 5
     panel = between(r4_page, '<aside id="changes"', "</aside>")
     assert 'class="no-print"' in panel
-    assert re.search(r"@media print\s*\{[^}]*\.no-print\s*\{\s*display:\s*none", r4_page)
+    assert re.search(
+        r"@media print\s*\{[^}]*\.no-print\s*\{\s*display:\s*none", r4_page
+    )
     text = plain(panel)
     for item in items:
         assert plain(item) in text
@@ -449,14 +451,15 @@ def test_changes_panel_refuses_a_changes_file_without_the_section(tmp_path):
     import build_article
 
     changes = tmp_path / "changes.md"
-    changes.write_text("# Article revisions\n\n## Revision 4\n\n- x\n", encoding="utf-8")
+    changes.write_text(
+        "# Article revisions\n\n## Revision 4\n\n- x\n", encoding="utf-8"
+    )
     with pytest.raises(ValueError, match="What changed since revision 2"):
         build_article.changes_since_r2(changes)
 
 
 def test_charts_carry_no_title_that_repeats_the_page_caption(output_copy, monkeypatch):
     import matplotlib.figure
-
     import plot_charts
     import plot_life_cycle
 

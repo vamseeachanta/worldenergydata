@@ -2392,118 +2392,6 @@ z
    </g>
   </g>
   <g id="text_52">
-   <!-- The life of a Gulf of Mexico well, stage by stage -->
-   <g transform="translate(60.48 27.7095) scale(0.16 -0.16)">
-    <defs>
-     <path id="DejaVuSans-2a" d="M 3809 666
-L 3809 1919
-L 2778 1919
-L 2778 2438
-L 4434 2438
-L 4434 434
-Q 4069 175 3628 42
-Q 3188 -91 2688 -91
-Q 1594 -91 976 548
-Q 359 1188 359 2328
-Q 359 3472 976 4111
-Q 1594 4750 2688 4750
-Q 3144 4750 3555 4637
-Q 3966 4525 4313 4306
-L 4313 3634
-Q 3963 3931 3569 4081
-Q 3175 4231 2741 4231
-Q 1884 4231 1454 3753
-Q 1025 3275 1025 2328
-Q 1025 1384 1454 906
-Q 1884 428 2741 428
-Q 3075 428 3337 486
-Q 3600 544 3809 666
-z
-" transform="scale(0.015625)"/>
-     <path id="DejaVuSans-30" d="M 628 4666
-L 1569 4666
-L 2759 1491
-L 3956 4666
-L 4897 4666
-L 4897 0
-L 4281 0
-L 4281 4097
-L 3078 897
-L 2444 897
-L 1241 4097
-L 1241 0
-L 628 0
-L 628 4666
-z
-" transform="scale(0.015625)"/>
-     <path id="DejaVuSans-5b" d="M 3513 3500
-L 2247 1797
-L 3578 0
-L 2900 0
-L 1881 1375
-L 863 0
-L 184 0
-L 1544 1831
-L 300 3500
-L 978 3500
-L 1906 2253
-L 2834 3500
-L 3513 3500
-z
-" transform="scale(0.015625)"/>
-    </defs>
-    <use xlink:href="#DejaVuSans-37"/>
-    <use xlink:href="#DejaVuSans-4b" transform="translate(61.078125 0)"/>
-    <use xlink:href="#DejaVuSans-48" transform="translate(124.453125 0)"/>
-    <use xlink:href="#DejaVuSans-3" transform="translate(185.984375 0)"/>
-    <use xlink:href="#DejaVuSans-4f" transform="translate(217.765625 0)"/>
-    <use xlink:href="#DejaVuSans-4c" transform="translate(245.546875 0)"/>
-    <use xlink:href="#DejaVuSans-49" transform="translate(273.328125 0)"/>
-    <use xlink:href="#DejaVuSans-48" transform="translate(308.53125 0)"/>
-    <use xlink:href="#DejaVuSans-3" transform="translate(370.0625 0)"/>
-    <use xlink:href="#DejaVuSans-52" transform="translate(401.84375 0)"/>
-    <use xlink:href="#DejaVuSans-49" transform="translate(463.03125 0)"/>
-    <use xlink:href="#DejaVuSans-3" transform="translate(498.234375 0)"/>
-    <use xlink:href="#DejaVuSans-44" transform="translate(530.015625 0)"/>
-    <use xlink:href="#DejaVuSans-3" transform="translate(591.296875 0)"/>
-    <use xlink:href="#DejaVuSans-2a" transform="translate(623.078125 0)"/>
-    <use xlink:href="#DejaVuSans-58" transform="translate(700.5625 0)"/>
-    <use xlink:href="#DejaVuSans-4f" transform="translate(763.9375 0)"/>
-    <use xlink:href="#DejaVuSans-49" transform="translate(791.71875 0)"/>
-    <use xlink:href="#DejaVuSans-3" transform="translate(826.921875 0)"/>
-    <use xlink:href="#DejaVuSans-52" transform="translate(858.703125 0)"/>
-    <use xlink:href="#DejaVuSans-49" transform="translate(919.890625 0)"/>
-    <use xlink:href="#DejaVuSans-3" transform="translate(955.09375 0)"/>
-    <use xlink:href="#DejaVuSans-30" transform="translate(986.875 0)"/>
-    <use xlink:href="#DejaVuSans-48" transform="translate(1073.15625 0)"/>
-    <use xlink:href="#DejaVuSans-5b" transform="translate(1132.9375 0)"/>
-    <use xlink:href="#DejaVuSans-4c" transform="translate(1192.125 0)"/>
-    <use xlink:href="#DejaVuSans-46" transform="translate(1219.90625 0)"/>
-    <use xlink:href="#DejaVuSans-52" transform="translate(1274.890625 0)"/>
-    <use xlink:href="#DejaVuSans-3" transform="translate(1336.078125 0)"/>
-    <use xlink:href="#DejaVuSans-5a" transform="translate(1367.859375 0)"/>
-    <use xlink:href="#DejaVuSans-48" transform="translate(1449.640625 0)"/>
-    <use xlink:href="#DejaVuSans-4f" transform="translate(1511.171875 0)"/>
-    <use xlink:href="#DejaVuSans-4f" transform="translate(1538.953125 0)"/>
-    <use xlink:href="#DejaVuSans-f" transform="translate(1566.734375 0)"/>
-    <use xlink:href="#DejaVuSans-3" transform="translate(1598.515625 0)"/>
-    <use xlink:href="#DejaVuSans-56" transform="translate(1630.296875 0)"/>
-    <use xlink:href="#DejaVuSans-57" transform="translate(1682.390625 0)"/>
-    <use xlink:href="#DejaVuSans-44" transform="translate(1721.59375 0)"/>
-    <use xlink:href="#DejaVuSans-4a" transform="translate(1782.875 0)"/>
-    <use xlink:href="#DejaVuSans-48" transform="translate(1846.359375 0)"/>
-    <use xlink:href="#DejaVuSans-3" transform="translate(1907.890625 0)"/>
-    <use xlink:href="#DejaVuSans-45" transform="translate(1939.671875 0)"/>
-    <use xlink:href="#DejaVuSans-5c" transform="translate(2003.15625 0)"/>
-    <use xlink:href="#DejaVuSans-3" transform="translate(2062.34375 0)"/>
-    <use xlink:href="#DejaVuSans-56" transform="translate(2094.125 0)"/>
-    <use xlink:href="#DejaVuSans-57" transform="translate(2146.21875 0)"/>
-    <use xlink:href="#DejaVuSans-44" transform="translate(2185.421875 0)"/>
-    <use xlink:href="#DejaVuSans-4a" transform="translate(2246.703125 0)"/>
-    <use xlink:href="#DejaVuSans-48" transform="translate(2310.1875 0)"/>
-   </g>
-  </g>
-  <g id="text_53">
    <!-- Drilling: bores with a spud date; other stages: approved permits to modify. Light: wireline, coiled tubing, vessel, liftboat or non-rig unit; -->
    <g style="fill: #333333" transform="translate(60.48 474.299473) scale(0.09 -0.09)">
     <defs>
@@ -2886,7 +2774,7 @@ z
     <use xlink:href="#DejaVuSans-11" transform="translate(7603.171875 0)"/>
    </g>
   </g>
-  <g id="text_54">
+  <g id="text_53">
    <!-- Source: BSEE BoreholeRawData.zip, eWellAPMRawData.zip; 2026-11-13. -->
    <g transform="translate(60.48 503.277891) scale(0.09 -0.09)">
     <defs>
@@ -2948,6 +2836,22 @@ L 275 525
 L 2438 3041
 L 353 3041
 L 353 3500
+z
+" transform="scale(0.015625)"/>
+     <path id="DejaVuSans-30" d="M 628 4666
+L 1569 4666
+L 2759 1491
+L 3956 4666
+L 4897 4666
+L 4897 0
+L 4281 0
+L 4281 4097
+L 3078 897
+L 2444 897
+L 1241 4097
+L 1241 0
+L 628 0
+L 628 4666
 z
 " transform="scale(0.015625)"/>
     </defs>
@@ -3028,7 +2932,7 @@ L 192.339844 56.254437
 z
 " style="fill: #245476"/>
    </g>
-   <g id="text_55">
+   <g id="text_54">
     <!-- Development wells (1,235 first drilled 2005-2025) -->
     <g transform="translate(220.339844 63.254437) scale(0.1 -0.1)">
      <use xlink:href="#DejaVuSans-27"/>
@@ -3089,9 +2993,26 @@ L 490.422656 56.254437
 z
 " style="fill: url(#h8fe954b10c); stroke: #ffffff; stroke-linejoin: miter"/>
    </g>
-   <g id="text_56">
+   <g id="text_55">
     <!-- Exploration wells (1,655 first drilled 2005-2025) -->
     <g transform="translate(518.422656 63.254437) scale(0.1 -0.1)">
+     <defs>
+      <path id="DejaVuSans-5b" d="M 3513 3500
+L 2247 1797
+L 3578 0
+L 2900 0
+L 1881 1375
+L 863 0
+L 184 0
+L 1544 1831
+L 300 3500
+L 978 3500
+L 1906 2253
+L 2834 3500
+L 3513 3500
+z
+" transform="scale(0.015625)"/>
+     </defs>
      <use xlink:href="#DejaVuSans-28"/>
      <use xlink:href="#DejaVuSans-5b" transform="translate(63.1875 0)"/>
      <use xlink:href="#DejaVuSans-53" transform="translate(122.375 0)"/>
