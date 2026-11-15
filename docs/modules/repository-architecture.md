@@ -336,7 +336,7 @@ A boundary test checks every Git call's environment, its leading attributes-file
 override and that `safe.directory` trust is given only to commands run in the caller
 root. Preservation tests check caller and decoy files, complete Git metadata,
 external fixture files and the parent environment. Linux and Windows results are
-recorded in #1994; a real system-attributes incident remains unreproduced.
+recorded in [PR 1994](../../../../pull/1994); a real system-attributes incident remains unreproduced.
 The separately quarantined CSV-currency check does not establish inventory freshness.
 
 The classification is deliberately evidence-limited: unresolved older reports require
