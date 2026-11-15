@@ -1,0 +1,11 @@
+year,band,family,approvals,distinct_wells,approvals_per_well,missing_api10
+2025,under 100 m,well work,316,180,1.755556,0
+2025,under 100 m,abandonment,1963,805,2.438509,0
+2025,100 to 500 m,well work,99,44,2.250000,0
+2025,100 to 500 m,abandonment,282,101,2.792079,0
+2025,500 to 1500 m,well work,185,81,2.283951,0
+2025,500 to 1500 m,abandonment,284,53,5.358491,0
+2025,1500 m and deeper,well work,165,77,2.142857,0
+2025,1500 m and deeper,abandonment,81,28,2.892857,0
+2025,no depth,well work,0,0,,0
+2025,no depth,abandonment,0,0,,0
