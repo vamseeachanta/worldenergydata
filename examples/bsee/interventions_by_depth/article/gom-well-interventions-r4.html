@@ -40,9 +40,9 @@ pre { white-space: pre-wrap; background: #f4f8fb; padding: .8rem; font-size: .85
 <p class="masthead">The Deckhand Chronicles is AceEngineer's newsletter. We help build AI into everyday engineering work.</p>
 <p class="label">Energy Street · Well interventions</p>
 <h1>Gulf of Mexico well interventions: the life of a well, then the work by water depth</h1>
-<blockquote>A Gulf of Mexico development well lives about 23.0 years from first spud to permanent abandonment (median of 16,860 abandoned wells). Across today's wells, heavy work with a rig or a hydraulic workover unit comes at a median 13.3 years after spud, and light wireline and coiled-tubing work later, at 24.1 years. The 23.0-year life and the 33.0-year median age at permanent-abandonment approval describe different populations: the first is the life of the 16,860 development wells abandoned so far, the second the age of the well at 17,904 permanent-abandonment approvals from 2005 to 2026, and counts approvals, not wells: a well approved twice counts twice, and a well still standing can count. In 2025, BSEE approved 765 interventions and 2,610 abandonments; per standing well, interventions are seven times as frequent at 1,500 m and deeper as on the shelf (under 100 m water depth): 38.7 against 5.5 approvals per 100 wells.</blockquote>
+<blockquote>A Gulf of Mexico development well lives about 23.0 years from first spud to permanent abandonment. The data hold 16,860 development wells abandoned so far, of which 16,858 have an established life; the 23.0-year median is over those 16,858. Across today's wells, heavy work with a rig or a hydraulic workover unit comes at a median 13.3 years after spud, and light wireline and coiled-tubing work later, at 24.1 years. The 23.0-year life and the 33.0-year median age at permanent-abandonment approval describe different populations: the first is the life of those abandoned wells, the second the age of the well at 17,904 permanent-abandonment approvals from 2005 to 2026, and counts approvals, not wells: a well approved twice counts twice, and a well still standing can count. In 2025, BSEE approved 765 interventions and 2,610 abandonments; per standing well, interventions are seven times as frequent at 1,500 m and deeper as on the shelf (under 100 m water depth): 38.7 against 5.5 approvals per 100 wells.</blockquote>
 <p class="version">Revision 4, 14 November 2026. Data: BSEE raw well data, files of 13 November 2026.
-<a href="https://github.com/vamseeachanta/worldenergydata/tree/32e79fe83fa9fd5c58012ada1ecc05d2da21d590/examples/bsee/interventions_by_depth">Read the full study</a>.</p>
+<a href="https://github.com/vamseeachanta/worldenergydata/tree/24744b528298f26c51bfce4cb3b66fa4f676eb02/examples/bsee/interventions_by_depth">Read the full study</a>.</p>
 <p><strong>In this article</strong></p>
 <ol><li><a href="#s1">Why interventions matter</a></li><li><a href="#s2">The life of a Gulf of Mexico well</a></li><li><a href="#s3">Interventions by water depth</a></li><li><a href="#s4">Cost per intervention, by access type</a></li><li><a href="#s5">Abandonment</a></li><li><a href="#charts">Charts and data</a></li></ol>
 
@@ -193,7 +193,7 @@ drillship or semisubmersible USD 4.7 to 9.4 million.
 The deepwater dry-tree
 abandonment row is TAP-738's published per-well total (Table 8-4, p. 8-15). Costs are 2015
 dollars, not escalated, and are scenarios, not bids. The full table, every input and its source
-page are in the <a href="https://github.com/vamseeachanta/worldenergydata/tree/32e79fe83fa9fd5c58012ada1ecc05d2da21d590/examples/bsee/interventions_by_depth">full study</a> (<a href="https://github.com/vamseeachanta/worldenergydata/blob/78f1a9183a75e56adb7f31e88b271864f0b69d37/examples/bsee/interventions_by_depth/output/cost_table.csv">cost_table.csv</a>).</p>
+page are in the <a href="https://github.com/vamseeachanta/worldenergydata/tree/24744b528298f26c51bfce4cb3b66fa4f676eb02/examples/bsee/interventions_by_depth">full study</a> (<a href="https://github.com/vamseeachanta/worldenergydata/blob/78f1a9183a75e56adb7f31e88b271864f0b69d37/examples/bsee/interventions_by_depth/output/cost_table.csv">cost_table.csv</a>).</p>
 <h2 id="appendix-c">Appendix C. Detail behind sections 2 and 3</h2>
 <ul>
 <li><strong>Heavy work.</strong> 59% of development wells drilled since
@@ -231,7 +231,7 @@ your own wells done for you instead, see below.</p>
 <li>Changes over time: BSEE refreshes the files daily, so a new download gives slightly different recent counts.</li>
 </ul>
 <h3>Reproduce the published result</h3>
-<pre>Using the worldenergydata repository at commit 32e79fe83fa9fd5c58012ada1ecc05d2da21d590, folder examples/bsee/interventions_by_depth:
+<pre>Using the worldenergydata repository at commit 24744b528298f26c51bfce4cb3b66fa4f676eb02, folder examples/bsee/interventions_by_depth:
 download the four BSEE archives with download_data.py --snapshot 2026-11-13
 (or use a later snapshot and expect small changes in recent years), then run
 count_interventions.py, well_life_cycle.py, build_cost_basis.py, estimate_costs.py,
