@@ -480,3 +480,13 @@ def test_charts_carry_no_title_that_repeats_the_page_caption(output_copy, monkey
         assert title == "", f"{stem} carries the title {title!r}"
         for panel in panels:
             assert "permits to modify" not in panel, f"{stem}: {panel!r}"
+
+
+def test_reusable_prompt_is_the_last_appendix_and_the_link_reaches_it(r4_page):
+    import re
+
+    heads = [plain(h) for h in re.findall(r"<h2\b[^>]*>.*?</h2>", r4_page, re.S)]
+    assert heads[-1] == "Appendix D. Reusable prompt"
+    assert heads[-2] == "Appendix C. Detail behind sections 2 and 3"
+    assert '<a href="#appendix-d">reusable prompt</a>' in r4_page
+    assert '<h2 id="appendix-d">Appendix D. Reusable prompt</h2>' in r4_page
