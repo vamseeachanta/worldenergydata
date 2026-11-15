@@ -7,7 +7,7 @@
 
 - **Opening graphic** (road map note, 13 November: "add the deckhand opening
   graphic to each of the newsletters"): the shared Deckhand opening graphic
-  heads the page, embedded as in revision 2.
+  heads the page; its slot carries this article's title, with no chart.
 - **Why interventions matter, first** (comment 1): section 1 opens the article;
   its cost detail is in Appendix B.
 - **The life story of a well, before the interventions** (comment 2): section
@@ -18,6 +18,33 @@
   section 5 says the next article covers it.
 - **Across all articles and worldwide wells** (general comment): not in this
   article; passed on for planning.
+
+## Revision 4, review fix-up 2 (built 14 November 2026)
+
+The second-provider review of the fix-up found that the takeaway called the
+33.0-year value an age of wells "abandoned under approvals". It is the median
+age of the well at 17,904 permanent-abandonment approvals from 2005 to 2026:
+`life_cycle_event_ages.csv` has one row per approved permit, so repeated
+approvals on one well each count and a well that still stands can count. The
+page is rebuilt with the same pins and build date. No number changes and no
+chart changes.
+
+- Takeaway: "the 33.0-year median age at permanent-abandonment approval",
+  "the age of the well at 17,904 permanent-abandonment approvals from 2005 to
+  2026, and counts approvals, not wells: a well approved twice counts twice,
+  and a well still standing can count". The 23.0-year value stays "the life of
+  the 16,860 development wells abandoned so far". The approval count is read
+  from the age table.
+- Section 2, life story: "temporary-abandonment approval at 32.3 and
+  permanent-abandonment approval at 33.0, ages that count approvals, not
+  wells". Sections 1 to 5 are now 796 words.
+- Opening graphic: the slot of `assets/opening.svg` no longer carries the
+  revision 2 chart picture or title. It now shows the label "ENERGY STREET ·
+  WELL INTERVENTIONS" under the teal rule and this page's title, "Gulf of
+  Mexico well interventions: the life of a well, then the work by water
+  depth", with no chart. The frame, hand mark, rope, bollard, wordmark and
+  type are unchanged. `assets/opening.png` is rendered from the SVG at
+  1200 x 627 and `assets/opening-alt.txt` describes the new slot.
 
 ## Revision 4, review copy fix-up (built 14 November 2026)
 

@@ -490,3 +490,64 @@ def test_reusable_prompt_is_the_last_appendix_and_the_link_reaches_it(r4_page):
     assert heads[-2] == "Appendix C. Detail behind sections 2 and 3"
     assert '<a href="#appendix-d">reusable prompt</a>' in r4_page
     assert '<h2 id="appendix-d">Appendix D. Reusable prompt</h2>' in r4_page
+
+
+# Fix round 2: the 33.0-year value is an age at approval, not a well count ------
+
+
+def test_takeaway_states_the_33_year_median_counts_approvals_not_wells(r4_page):
+    takeaway = plain(between(r4_page, "<blockquote>", "</blockquote>"))
+    assert "wells abandoned under approvals" not in takeaway
+    assert "33.0-year median age at permanent-abandonment approval" in takeaway
+    assert "17,904 permanent-abandonment approvals" in takeaway
+    assert "counts approvals, not wells" in takeaway
+    # The 23.0-year life stays the life of the development wells abandoned.
+    assert "life of the 16,860 development wells abandoned so far" in takeaway
+    assert "median of 16,860 abandoned wells" in takeaway
+
+
+def test_section_2_gives_abandonment_ages_as_ages_at_approval(r4_page):
+    s2 = plain(between(r4_page, 'id="s2"', 'id="s3"'))
+    assert "permanent abandonment at 33.0" not in s2
+    assert "permanent-abandonment approval at 33.0" in s2
+    assert "temporary-abandonment approval at 32.3" in s2
+    assert "count approvals, not wells" in s2
+
+
+def test_takeaway_approval_count_comes_from_the_event_ages_table(tmp_path, output_copy):
+    import build_article
+
+    ages = pd.read_csv(output_copy / "life_cycle_event_ages.csv")
+    pa = ages.well_type.eq("development") & ages.stage.eq("permanent abandonment")
+    ages.loc[pa, "events"] = 12345
+    ages.to_csv(output_copy / "life_cycle_event_ages.csv", index=False)
+    page = tmp_path / "page.html"
+    build_article.build(out=output_copy, page=page, build_date="2026-11-14")
+    takeaway = plain(
+        between(page.read_text(encoding="utf-8"), "<blockquote>", "</blockquote>")
+    )
+    assert "12,345 permanent-abandonment approvals" in takeaway
+
+
+def test_opening_graphic_carries_this_title_and_no_chart():
+    import re
+
+    import build_article
+
+    assets = EXAMPLE / "article" / "assets"
+    svg = (assets / "opening.svg").read_text(encoding="utf-8")
+    alt = (assets / "opening-alt.txt").read_text(encoding="utf-8").strip()
+    r2_title = "approvals each year and cost per event by access type"
+    assert "<image" not in svg, "no chart picture inside the graphic"
+    assert r2_title not in svg and r2_title not in alt
+    assert "chart" not in alt
+    words = [
+        w
+        for text in re.findall(r'<text[^>]*class="slot-title"[^>]*>([^<]*)</text>', svg)
+        for w in text.split()
+    ]
+    assert " ".join(words) == build_article.TITLE
+    assert build_article.TITLE in alt
+    assert f"<h1>{build_article.TITLE}</h1>" in (
+        EXAMPLE / "article" / "gom-well-interventions-r4.html"
+    ).read_text(encoding="utf-8")

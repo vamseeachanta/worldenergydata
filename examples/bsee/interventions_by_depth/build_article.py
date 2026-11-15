@@ -9,7 +9,8 @@ the charts, README and scripts; chart links, the study link and the reusable
 prompt pin to it (default: the build commit). --build-date is the revision
 date on the page (default: today); the data date comes from summary.json.
 
-The page opens with the shared Deckhand opening graphic (article/assets) and a
+The page opens with the shared Deckhand opening graphic (article/assets), whose
+slot carries TITLE and no chart, and a
 "What changed since revision 2" panel read from article/changes.md, hidden in
 print. The build stops if sections 1 to 5, without figures and Table 1, run
 over READABLE_WORD_LIMIT words.
@@ -31,6 +32,11 @@ from report_text import CODING_CHANGE_YEAR, check_selection, long_date
 ROOT = Path(__file__).resolve().parent
 OUT = ROOT / "output"
 REVISION = 4
+# The page title; the opening graphic (article/assets) carries the same words.
+TITLE = (
+    "Gulf of Mexico well interventions: the life of a well, then the work by "
+    "water depth"
+)
 PAGE = ROOT / "article" / f"gom-well-interventions-r{REVISION}.html"
 ASSETS = ROOT / "article" / "assets"
 CHANGES = ROOT / "article" / "changes.md"
@@ -295,7 +301,7 @@ def changes_since_r2(path=CHANGES):
 
 
 def opening_graphic(assets=ASSETS):
-    """The shared Deckhand opening graphic, embedded as in revision 2."""
+    """The shared Deckhand opening graphic; its slot carries this page's TITLE."""
     alt = (assets / "opening-alt.txt").read_text(encoding="utf-8").strip()
     png = base64.b64encode((assets / "opening.png").read_bytes()).decode()
     return f'<img src="data:image/png;base64,{png}" alt="{html.escape(alt)}">'
@@ -376,6 +382,9 @@ def build(
     ):
         raise ValueError("review 'at similar ages' and 'light work follows'")
     pa_age = age.loc[("development", "permanent abandonment"), "median_years"]
+    # Ages at approval: one row per approved permit, so repeated approvals on
+    # one well each count, and a well that still stands can contribute.
+    pa_approvals = int(age.loc[("development", "permanent abandonment"), "events"])
     if not pa_age > pa_dev.median_years:
         raise ValueError("review the takeaway's 'different populations' sentence")
     takeaway = (
@@ -385,9 +394,12 @@ def build(
         f"comes at a median {yrs(heavy_age)} years after spud, and light wireline and "
         f"coiled-tubing work later, at {yrs(light_age)} years. The "
         f"{yrs(pa_dev.median_years)}-year life and the {yrs(pa_age)}-year median age at "
-        f"permanent abandonment describe different populations: the first covers every "
-        f"development well abandoned so far, the second the wells abandoned under "
-        f"approvals from {d.event_window.replace('-', ' to ')}. In {d.last}, BSEE approved "
+        f"permanent-abandonment approval describe different populations: the first is "
+        f"the life of the {n(pa_dev.wells)} development wells abandoned so far, the "
+        f"second the age of the well at {n(pa_approvals)} permanent-abandonment approvals "
+        f"from {d.event_window.replace('-', ' to ')}, and counts approvals, not wells: a "
+        f"well approved twice counts twice, and a well still standing can count. "
+        f"In {d.last}, BSEE approved "
         f"{n(h['work'])} interventions and {n(h['aban'])} abandonments; per standing well, "
         f"interventions are seven times as frequent at 1,500 m and deeper as on the shelf "
         f"(under 100 m water depth): {yrs(h['rate'][('1500 m and deeper', 'well work')])} "
@@ -510,9 +522,9 @@ work.</p>
 sidetracked or bypassed. Across today's wells (Figure 2, right,
 events {d.event_window.replace('-', ' to ')}), sidetracks and heavy work come at similar ages, medians
 of {dev_age('sidetrack or bypass')} and {dev_age('heavy intervention')} years after spud.
-Light work follows at a median {dev_age('light intervention')} years, temporary abandonment at
-{dev_age('temporary abandonment')} and permanent abandonment at
-{dev_age('permanent abandonment')}. Wells drilled since {d.first} have had
+Light work follows at a median {dev_age('light intervention')} years, temporary-abandonment
+approval at {dev_age('temporary abandonment')} and permanent-abandonment approval at
+{dev_age('permanent abandonment')}, ages that count approvals, not wells. Wells drilled since {d.first} have had
 {dev['interventions']:.1f} intervention approvals each so far, against the seven in a lifetime
 that BOEM expects. Exploration wells get their heavy work early, at a median
 {exp_age('heavy intervention')} years.</p>
@@ -782,7 +794,7 @@ pre {{ white-space: pre-wrap; background: #f4f8fb; padding: .8rem; font-size: .8
 </aside>
 <p class="masthead">{esc(MASTHEAD)}</p>
 <p class="label">Energy Street · Well interventions</p>
-<h1>Gulf of Mexico well interventions: the life of a well, then the work by water depth</h1>
+<h1>{esc(TITLE)}</h1>
 <blockquote>{esc(takeaway)}</blockquote>
 <p class="version">Revision {REVISION}, {revision_date}. Data: BSEE raw well data, files of {snap}.
 <a href="{study}">Read the full study</a>.</p>
