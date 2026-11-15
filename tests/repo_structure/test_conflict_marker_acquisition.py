@@ -172,11 +172,14 @@ def test_missing_path_list(repository):
     assert b"ERROR: Cannot enumerate staged paths.\n" in result.stderr
 
 
-@pytest.mark.parametrize("point", ["tr", "wc"])
-def test_failed_path_count(repository, point):
+@pytest.mark.parametrize(
+    "point, output",
+    [("tr", b""), ("wc", b""), ("tr", b"\0"), ("wc", b"1\n")],
+)
+def test_failed_path_count(repository, point, output):
     _, _, stage, scan = repository()
     stage()
-    _error(scan(point), "Cannot enumerate staged paths", path=False)
+    _error(scan(point, output), "Cannot enumerate staged paths", path=False)
 
 
 @pytest.mark.parametrize("content", [b"clean\n", MARKERS])
