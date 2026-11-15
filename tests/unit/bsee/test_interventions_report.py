@@ -690,9 +690,14 @@ def test_published_prompt_pins_the_builder_that_made_the_page(tmp_path):
     ], tables
 
     # 3. The pinned builder, on the pinned tree, rebuilds the committed page.
+    #    git archive run in a subdirectory keeps only that subdirectory, so it
+    #    runs from the top of the repository.
     tree = tmp_path / "pinned"
-    archive = git(EXAMPLE, "archive", "--format=tar", f"{code}:{folder}", binary=True)
+    top = git(EXAMPLE, "rev-parse", "--show-toplevel")
+    archive = git(top, "archive", "--format=tar", f"{code}:{folder}", binary=True)
     with tarfile.open(fileobj=io.BytesIO(archive)) as tar:
+        names = tar.getnames()
+        assert "build_article.py" in names, "the code pin holds no builder"
         tar.extractall(tree, filter="data")
     rebuilt = tmp_path / "rebuilt.html"
     run = subprocess.run(
