@@ -149,6 +149,8 @@ CONTRACT_ROUTES = {
 # checked by tests/report_evals.
 CONTRACT_PREFIX_ROUTES = (
     ("data/modules/cost/", "tests/unit/cost"),
+    ("data/modules/bsee/boem_lease_history_layout.json", "tests/unit/bsee"),
+    ("tests/fixtures/bsee/boem_raw/", "tests/unit/bsee"),
     ("examples/report-evals/", "tests/report_evals"),
     ("tests/report_evals/", "tests/report_evals"),
 )
