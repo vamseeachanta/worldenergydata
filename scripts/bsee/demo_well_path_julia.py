@@ -9,16 +9,14 @@ Drives the existing BSEE well-path pipeline + the two shared 3D renderers
    **The directional-survey data is NOT in this git repo.** It lives at an
    OFF-REPO data location: ``data/modules/bsee/bin/dsptsdelimit/`` is excluded
    by ``.gitignore`` (``/data/modules/bsee/bin`` + ``**/*.bin``) per the
-   project's Local Data Pattern (``docs/data/LOCAL_DATA_PATTERN.md``) — the
-   ~140 MB ZIP / 1.17 GB raw / 4.9M-row pickle are far too large for git and
-   are freely re-downloadable from the public BSEE API. This script
-   regenerates that data on demand (auto-downloads the ZIP if the pickle is
-   missing); you can also run ``make data``. Do not commit anything under that
-   directory.
+   local data pattern (``docs/data/LOCAL_DATA_PATTERN.md``).
+   The archive and its text member remain local data. This script downloads
+   the ZIP only when missing and verifies it against a required SHA-256 pin
+   before parsing. Legacy binary caches are ignored and left untouched.
 
 Data sources (all public BSEE):
-  * Directional surveys: ``dsptsdelimit.ZIP`` (~140 MB) ->
-    ``data/modules/bsee/bin/dsptsdelimit/dsptsdelimit.{ZIP,bin}`` (OFF-REPO,
+  * Directional surveys: ``dsptsdelimit.ZIP`` ->
+    ``data/modules/bsee/bin/dsptsdelimit/dsptsdelimit.ZIP`` (OFF-REPO,
     gitignored — see note above).
     The headerless raw file is parsed with the 13 documented column names
     (see ``well_data.py:_get_column_names_for_dsptsdelimit_file``).
@@ -39,20 +37,26 @@ surface) coordinates, so a Walker-Ridge box mis-classifies these wells.
 
 Usage::
 
-    uv run python scripts/bsee/demo_well_path_julia.py
+    uv run python scripts/bsee/demo_well_path_julia.py --survey-sha256 "$SURVEY_SHA256"
 
-Assumes the pickle/zip is already present; downloads the ZIP if missing.
+The digest must come from an independently reviewed, trusted archive version.
+See ``docs/modules/bsee/survey-archive-integrity.md`` for the trust boundary and
+an offline worked example. No digest is inferred from a fresh download.
 """
 
 from __future__ import annotations
 
+import argparse
+import csv
+import hashlib
+import io
 import math
 import os
-import pickle
+import string
 import sys
-import urllib.request
 import zipfile
 
+import httpx
 import pandas as pd
 
 # ---------------------------------------------------------------------------
@@ -62,10 +66,9 @@ REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 sys.path.insert(0, os.path.join(REPO, "src"))
 
 # OFF-REPO data location: this tree is gitignored (see module note + .gitignore).
-# Nothing under DSPTS_DIR is tracked; the pickle is regenerated, never committed.
+# Nothing under DSPTS_DIR is tracked; only the text archive is read.
 DSPTS_DIR = os.path.join(REPO, "data", "modules", "bsee", "bin", "dsptsdelimit")
 DSPTS_ZIP = os.path.join(DSPTS_DIR, "dsptsdelimit.ZIP")
-DSPTS_BIN = os.path.join(DSPTS_DIR, "dsptsdelimit.bin")
 DSPTS_TXT_MEMBER = "dsptsdelimit.txt"
 DSPTS_URL = "https://www.data.bsee.gov/Well/Files/dsptsdelimit.ZIP"
 
@@ -79,7 +82,9 @@ THREEJS_OUT = os.path.join(REPORTS_DIR, "julia_well_path_threejs.html")
 
 FIELD_NAME = "Julia (Walker Ridge, lease G20351)"
 
-# 13 documented columns of the headerless dsptsdelimit raw file, in order.
+# Schema source: WellData._get_column_names_for_dsptsdelimit_file in
+# packages/worldenergydata-bsee/src/worldenergydata/bsee/data/sources/zip/well_data.py.
+# Preserve that documented headerless column order.
 DSPTS_COLS = [
     "API_WELL_NUMBER",
     "INCL_ANG_DEG_VAL",
@@ -105,62 +110,94 @@ FT_PER_DEG_LON_AT_EQ = 365000.0
 # Step 1: download (if missing) + verify
 # ---------------------------------------------------------------------------
 def ensure_zip() -> None:
-    if os.path.exists(DSPTS_ZIP) and os.path.getsize(DSPTS_ZIP) > 130_000_000:
+    """Download the fixed HTTPS source only when the local archive is absent.
+
+    Download success is not evidence of integrity; load_surveys verifies the
+    required digest before interpreting any archive contents. Redirects are
+    refused so an unexpected endpoint requires explicit investigation.
+    """
+    if os.path.exists(DSPTS_ZIP):
         return
     os.makedirs(DSPTS_DIR, exist_ok=True)
     print(f"Downloading {DSPTS_URL} ...")
-    urllib.request.urlretrieve(DSPTS_URL, DSPTS_ZIP)
-    size = os.path.getsize(DSPTS_ZIP)
-    with open(DSPTS_ZIP, "rb") as fh:
-        magic = fh.read(4)
-    if magic[:2] != b"PK":
-        raise RuntimeError(
-            f"Downloaded file is not a ZIP (magic={magic!r}); "
-            "BSEE likely returned an HTML error page."
-        )
-    print(f"  downloaded {size:,} bytes; PK magic OK")
+    with httpx.stream("GET", DSPTS_URL, follow_redirects=False) as response:
+        response.raise_for_status()
+        with open(DSPTS_ZIP, "xb") as output:
+            output.writelines(response.iter_bytes())
+
+
+def _validate_digest(expected_sha256: str) -> str:
+    """Require a SHA-256 hexadecimal pin, never an observed-download default."""
+    # Python hashlib documentation, hash.digest_size and hash.hexdigest:
+    # https://docs.python.org/3/library/hashlib.html#hash-objects
+    # Each digest byte has two hexadecimal digits.
+    if (
+        not isinstance(expected_sha256, str)
+        or len(expected_sha256) != hashlib.sha256().digest_size * 2
+        or any(character not in string.hexdigits for character in expected_sha256)
+    ):
+        raise ValueError("A complete hexadecimal SHA-256 pin is required")
+    return expected_sha256.lower()
 
 
 # ---------------------------------------------------------------------------
-# Step 2: parse -> pickle (or load existing pickle)
+# Step 2: verify archive bytes, then parse data-only text with the pinned schema
 # ---------------------------------------------------------------------------
-def load_surveys() -> pd.DataFrame:
-    """Return the full directional-survey DataFrame with proper headers.
+def load_surveys(expected_sha256: str) -> pd.DataFrame:
+    """Verify the archive against a trusted pin before reading its text member.
 
-    Prefers an already-built pickle; rebuilds it from the ZIP otherwise. The
-    raw file is headerless, so the 13 documented column names are applied in
-    order (a prior loader bug consumed the first data row as a header).
+    There is no binary-cache fallback. Cached ZIPs are reverified on every call.
+    Hashing and ZIP parsing use the same open file to avoid reopening a changed
+    path between verification and parsing. Invalid files are left for inspection.
     """
-
-    def _good_pickle(df: pd.DataFrame) -> bool:
-        return "API_WELL_NUMBER" in df.columns
-
-    if os.path.exists(DSPTS_BIN):
-        with open(DSPTS_BIN, "rb") as fh:
-            df = pickle.load(fh)
-        if _good_pickle(df):
-            print(f"Loaded existing pickle: {df.shape[0]:,} rows")
-            return _normalize(df)
-        print("Existing pickle lacks named columns; rebuilding from ZIP ...")
-
+    expected_sha256 = _validate_digest(expected_sha256)
     ensure_zip()
-    print("Parsing dsptsdelimit.txt from ZIP ...")
-    with zipfile.ZipFile(DSPTS_ZIP) as zf:
-        with zf.open(DSPTS_TXT_MEMBER) as raw:
-            df = pd.read_csv(
-                raw,
-                header=None,
-                names=DSPTS_COLS,
-                dtype={
-                    "API_WELL_NUMBER": str,
-                    "WELL_N_S_CODE": str,
-                    "WELL_E_W_CODE": str,
-                },
-            )
-    df = _normalize(df)
-    with open(DSPTS_BIN, "wb") as out:
-        pickle.dump(df, out)
-    print(f"Parsed + pickled: {df.shape[0]:,} rows")
+    with open(DSPTS_ZIP, "rb") as archive:
+        digest = hashlib.sha256()
+        for chunk in iter(lambda: archive.read(io.DEFAULT_BUFFER_SIZE), b""):
+            digest.update(chunk)
+        if digest.hexdigest() != expected_sha256:
+            raise ValueError("Survey archive SHA-256 mismatch; refusing to parse")
+        archive.seek(0)
+        with zipfile.ZipFile(archive) as zf:
+            if zf.namelist().count(DSPTS_TXT_MEMBER) != 1:
+                raise ValueError("Archive must contain exactly one dsptsdelimit.txt")
+            with zf.open(DSPTS_TXT_MEMBER) as raw:
+                try:
+                    # Check each CSV record before pandas can pad absent fields.
+                    # An explicit empty field still counts toward the schema.
+                    rows = []
+                    with io.TextIOWrapper(raw, encoding="utf-8", newline="") as text:
+                        for number, row in enumerate(csv.reader(text, strict=True), 1):
+                            if len(row) != len(DSPTS_COLS):
+                                raise ValueError(
+                                    f"Unexpected survey field count in record {number}"
+                                )
+                            rows.append(row)
+                    if not rows:
+                        raise ValueError("Empty survey text")
+                    df = pd.DataFrame(rows, columns=DSPTS_COLS)
+                    df = _normalize(df)
+                    if not df["API_WELL_NUMBER"].str.fullmatch(r"[0-9]+").all():
+                        raise ValueError("Invalid survey identifier")
+                    for column, codes in (
+                        ("WELL_N_S_CODE", ("N", "S")),
+                        ("WELL_E_W_CODE", ("E", "W")),
+                    ):
+                        if not df[column].isin(codes).all():
+                            raise ValueError("Invalid survey direction code")
+                    for column in DSPTS_COLS:
+                        if column not in (
+                            "API_WELL_NUMBER",
+                            "WELL_N_S_CODE",
+                            "WELL_E_W_CODE",
+                        ):
+                            df[column] = pd.to_numeric(df[column], errors="raise")
+                except (ValueError, csv.Error) as error:
+                    raise ValueError(
+                        "Text does not match the documented survey schema"
+                    ) from error
+    print(f"Verified + parsed: {df.shape[0]:,} rows")
     return df
 
 
@@ -292,14 +329,23 @@ def build_inputs(
 # ---------------------------------------------------------------------------
 # Step 5-6: run pipeline + render
 # ---------------------------------------------------------------------------
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description="Render verified survey text")
+    parser.add_argument(
+        "--survey-sha256",
+        required=True,
+        type=_validate_digest,
+        help="Trusted SHA-256 pin for the exact survey ZIP version",
+    )
+    args = parser.parse_args(argv)
+    surveys_all = load_surveys(args.survey_sha256)
+
     from worldenergydata.bsee.analysis.well_api12 import WellAPI12
     from worldenergydata.bsee.visualization import (
         render_well_paths_plotly,
         render_well_paths_threejs,
     )
 
-    surveys_all = load_surveys()
     julia_meta = julia_well_metadata()
     selected_apis = sorted(julia_meta["API_WELL_NUMBER"].unique())
     assert selected_apis, (

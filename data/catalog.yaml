@@ -1402,7 +1402,7 @@ modules:
     binary_stores: []
   pipeline:
     module: pipeline
-    description: Pipeline engineering reference data [72.8 KB]
+    description: Pipeline caller-input template and thickness-loss data
     datasets:
     - name: api_5l_pipe_schedule.csv
       path: data/modules/pipeline/api_5l_pipe_schedule.csv
@@ -1448,9 +1448,9 @@ modules:
         type: string
         description: ''
         unit: ''
-      row_count: 43
-      size_bytes: 3861
-      last_modified: '2026-03-03T22:30:40.761917+00:00'
+      row_count: 0
+      size_bytes: 84
+      last_modified: '2026-10-26T10:07:50.819841+00:00'
     - name: market_pipe_thickness_loss_dataset.csv
       path: data/modules/pipeline/raw/kaggle_pipe_thickness_loss/market_pipe_thickness_loss_dataset.csv
       format: csv

@@ -27,32 +27,32 @@ def _registry() -> list[HostRecord]:
     """A tiny synthetic registry: one spar host with two tieback satellites."""
     return [
         HostRecord(
-            host_name="HOLSTEIN",
+            host_name="SYNTHETIC ALPHA",
             host_concept=ConceptType.SPAR,
             general_location="GOM",
-            block_raw="GC 644, 645",
-            bsee_block_key="GC644",
-            water_depth_m=1324.0,
+            block_raw="GC 901, 902",
+            bsee_block_key="GC901",
+            water_depth_m=1234.0,
             reserves_mmboe=300.0,
             total_wells=15,
             dry_tree_wells=15,
             wet_tree_wells=0,
             throughput_mboed=135.0,
-            tieback_fields=["Holstein (15)"],  # self-reference, must be dropped
+            tieback_fields=["Synthetic Alpha (15)"],  # self-reference, must be dropped
         ),
         HostRecord(
-            host_name="PERDIDO",
+            host_name="SYNTHETIC BETA",
             host_concept=ConceptType.SPAR,
             general_location="GOM",
-            block_raw="AC 857",
-            bsee_block_key="AC857",
-            water_depth_m=2383.0,
+            block_raw="AC 903",
+            bsee_block_key="AC903",
+            water_depth_m=2345.0,
             reserves_mmboe=None,
             total_wells=35,
             dry_tree_wells=0,
             wet_tree_wells=35,
             throughput_mboed=133.0,
-            tieback_fields=["Great White (30)", "Tobago (1)"],
+            tieback_fields=["Synthetic Satellite (30)", "Synthetic Minor (1)"],
         ),
     ]
 
@@ -61,19 +61,19 @@ def _registry() -> list[HostRecord]:
 # Registry parsing helpers
 # --------------------------------------------------------------------------- #
 def test_match_tieback_resolves_satellite_to_host_and_wells():
-    link = match_tieback("Great White", _registry())
+    link = match_tieback("Synthetic Satellite", _registry())
     assert link is not None
-    assert link.host_name == "PERDIDO"
+    assert link.host_name == "SYNTHETIC BETA"
     assert link.wells == 30
 
 
 def test_self_referential_tieback_is_dropped():
-    # HOLSTEIN lists "Holstein (15)" as its own tieback — not a real satellite.
-    assert match_tieback("Holstein", _registry()) is None
+    # SYNTHETIC ALPHA lists "Synthetic Alpha (15)" as its own tieback — not a real satellite.
+    assert match_tieback("Synthetic Alpha", _registry()) is None
 
 
 def test_match_host_prefix_matches_field_to_vessel_name():
-    rec = match_host("Perdido", _registry())
+    rec = match_host("Synthetic Beta", _registry())
     assert rec is not None and rec.host_concept == ConceptType.SPAR
 
 
@@ -86,7 +86,7 @@ def test_match_host_requires_minimum_specificity():
 # Enrichment semantics
 # --------------------------------------------------------------------------- #
 def test_tieback_satellite_gains_distance_and_reachable_host():
-    fields = [FieldConcept(name="Great White", water_depth_m=2900.0)]
+    fields = [FieldConcept(name="Synthetic Satellite", water_depth_m=2500.0)]
     out = enrich_concepts(fields, registry=_registry())
     gw = out[0]
     assert gw.distance_to_host_km == GOM_TYPICAL_TIEBACK_KM
@@ -96,7 +96,7 @@ def test_tieback_satellite_gains_distance_and_reachable_host():
 
 
 def test_host_field_gains_reserves_and_wells_but_no_distance():
-    fields = [FieldConcept(name="Perdido", water_depth_m=2383.0)]
+    fields = [FieldConcept(name="Synthetic Beta", water_depth_m=2345.0)]
     out = enrich_concepts(fields, registry=_registry())
     p = out[0]
     assert p.num_wells == 35
@@ -108,8 +108,8 @@ def test_host_field_gains_reserves_and_wells_but_no_distance():
 def test_enrichment_never_overwrites_existing_inputs():
     fields = [
         FieldConcept(
-            name="Great White",
-            water_depth_m=2900.0,
+            name="Synthetic Satellite",
+            water_depth_m=2500.0,
             num_wells=7,
             distance_to_host_km=99.0,
         )
@@ -122,12 +122,12 @@ def test_enrichment_never_overwrites_existing_inputs():
 def test_host_branch_never_overwrites_existing_inputs():
     # The host-match branch (not the tieback branch) has its own None-guards on
     # reserves and well count — exercise them with a host field that already
-    # carries real values. "Holstein" matches the host HOLSTEIN (reserves 300,
+    # carries real values. "Synthetic Alpha" matches the host SYNTHETIC ALPHA (reserves 300,
     # wells 15 in the registry); the pre-set values must survive.
     fields = [
         FieldConcept(
-            name="Holstein",
-            water_depth_m=1324.0,
+            name="Synthetic Alpha",
+            water_depth_m=1234.0,
             recoverable_reserves_mmboe=42.0,
             num_wells=9,
         )
@@ -145,17 +145,17 @@ def test_unknown_field_is_returned_unchanged():
 
 
 # --------------------------------------------------------------------------- #
-# The real committed registry
+# The withheld default registry
 # --------------------------------------------------------------------------- #
-def test_real_registry_loads_and_has_gom_spar_hosts():
-    reg = load_host_registry()
-    assert len(reg) >= 18
-    assert all(isinstance(r, HostRecord) for r in reg)
-    # The detailed GoM records are spars in this data vintage.
-    assert any(r.host_name.startswith("PERDIDO") for r in reg)
-    assert any("Great White" in tb for r in reg for tb in r.tieback_fields)
+def test_default_registry_is_withheld():
+    import pytest
+
+    with pytest.raises(RuntimeError, match="redistribution-terms review"):
+        load_host_registry()
 
 
-def test_real_registry_enriches_known_tieback():
-    out = enrich_concepts([FieldConcept(name="Great White", water_depth_m=2900.0)])
-    assert out[0].distance_to_host_km == GOM_TYPICAL_TIEBACK_KM
+def test_default_enrichment_cannot_silently_skip_withheld_registry():
+    import pytest
+
+    with pytest.raises(RuntimeError, match="redistribution-terms review"):
+        enrich_concepts([FieldConcept(name="Synthetic satellite", water_depth_m=1200)])

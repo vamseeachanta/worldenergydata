@@ -318,6 +318,10 @@ archive/
 # Agent worktrees (local-only, must not be tracked as gitlinks)
 .claude/worktrees/
 examples/workflows/*/outputs/
+!examples/workflows/cost-disclosure-benchmark/outputs/
+examples/workflows/cost-disclosure-benchmark/outputs/*
+!examples/workflows/cost-disclosure-benchmark/outputs/operator_cost_benchmarking.html
+!examples/workflows/cost-disclosure-benchmark/outputs/operator_cost_benchmarking_facts.json
 data/modules/hse/grounding_demand.jsonl
 
 # Built static Pages output (regenerated in CI from reports/)

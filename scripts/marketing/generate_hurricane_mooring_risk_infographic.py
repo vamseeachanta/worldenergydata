@@ -352,11 +352,12 @@ def render_html(stats: dict[str, Any]) -> str:
   <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />
   <title>Hurricane Mooring Risk Avoidance Infographic</title>
   <style>
-    :root {{ --navy:#081827; --blue:#1e88e5; --cyan:#67e8f9; --amber:#f59e0b; --red:#ef4444; --ink:#e5edf5; --muted:#9fb2c6; --panel:#10263b; --line:#28445e; }}
+    /* Brand accents: reports/capabilities/assets/tokens.css:1. */
+    :root {{ --bg:#081827; --navy:#0B3D91; --teal:#0f8a7e; --cyan:#67e8f9; --amber:#f59e0b; --red:#ef4444; --ink:#e5edf5; --muted:#9fb2c6; --panel:#10263b; --line:#28445e; }}
     * {{ box-sizing: border-box; }}
-    body {{ margin:0; font-family: Inter, Segoe UI, Roboto, Arial, sans-serif; color:var(--ink); background: radial-gradient(circle at top left, #123a5a 0, var(--navy) 42%, #050b12 100%); }}
+    body {{ margin:0; font-family: Inter, Segoe UI, Roboto, Arial, sans-serif; color:var(--ink); background: radial-gradient(circle at top left, #123a5a 0, var(--bg) 42%, #050b12 100%); }}
     main {{ max-width: 1180px; margin: 0 auto; padding: 40px 24px 56px; }}
-    .hero {{ border:1px solid var(--line); border-radius:28px; padding:36px; background:linear-gradient(135deg, rgba(30,136,229,.22), rgba(8,24,39,.9)); box-shadow:0 24px 80px rgba(0,0,0,.35); }}
+    .hero {{ border:1px solid var(--navy); border-top-color:var(--teal); border-radius:28px; padding:36px; background:linear-gradient(135deg, var(--navy), var(--bg)); box-shadow:0 24px 80px rgba(0,0,0,.35); }}
     h1 {{ margin:0; max-width:920px; font-size: clamp(34px, 5vw, 68px); line-height:.95; letter-spacing:-.05em; }}
     h2 {{ margin:0 0 12px; font-size:30px; letter-spacing:-.03em; }}
     h3 {{ margin:0 0 8px; font-size:18px; }}
@@ -372,12 +373,12 @@ def render_html(stats: dict[str, Any]) -> str:
     .bar {{ margin:12px 0 18px; }}
     .bar-label {{ display:flex; justify-content:space-between; color:#cfe4f9; font-weight:700; }}
     .track {{ height:15px; background:#07131f; border-radius:999px; overflow:hidden; border:1px solid var(--line); }}
-    .fill {{ height:100%; background:linear-gradient(90deg, var(--blue), var(--cyan)); border-radius:999px; }}
+    .fill {{ height:100%; background:linear-gradient(90deg, var(--navy), var(--teal)); border-radius:999px; }}
     .decision {{ display:grid; grid-template-columns: repeat(3, 1fr); gap:14px; }}
     .node {{ border:1px solid var(--line); border-radius:18px; padding:16px; background:#0b1d2d; }}
     .node strong {{ display:block; color:#fff; margin-bottom:6px; }}
     .node.warn {{ border-color:rgba(239,68,68,.55); }}
-    .node.go {{ border-color:rgba(103,232,249,.55); }}
+    .node.go {{ border-color:var(--teal); }}
     details {{ margin-top:14px; border:1px solid var(--line); border-radius:16px; padding:14px 16px; background:#0a1724; }}
     summary {{ cursor:pointer; color:var(--cyan); font-weight:800; }}
     li {{ margin:7px 0; color:#c9d8e8; }}

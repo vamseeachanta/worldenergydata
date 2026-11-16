@@ -206,6 +206,7 @@ def search(
                 if result.errors:
                     for error in result.errors:
                         console.print(f"[red]Error:[/red] {error}")
+                    raise typer.Exit(1)
 
                 console.print(
                     f"\n[dim]Total records found: {result.total_records}[/dim]"

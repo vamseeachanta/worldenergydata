@@ -15,14 +15,20 @@ Source file:
 from __future__ import annotations
 
 import logging
+import math
 import os
 import re
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
+from urllib.parse import urlsplit
 
 from worldenergydata.vessel_fleet.parsers.numeric import (
+    _NON_NUMERIC_VALUES,
     parse_int_from_label,
     parse_numeric,
+)
+from worldenergydata.vessel_fleet.schemas.construction_vessel import (
+    ConstructionVesselSchema,
 )
 
 logger = logging.getLogger(__name__)
@@ -48,14 +54,123 @@ _SPEC_TABLE_HEADERS = (
     "main crane",
 )
 
+# Column units are the source-format contract, not inferred conversions.
+_REQUIRED_COLUMNS = {
+    "vessel name",
+    "type",
+    "loa (m)",
+    "beam (m)",
+    "draft (m)",
+    "main crane (mt)",
+}
+_MISSING = _NON_NUMERIC_VALUES | {""}
+_NUMBER = (
+    r"[+-]?(?:(?:[0-9]+|[0-9]{1,3}(?:,[0-9]{3})+)(?:\.[0-9]*)?"
+    r"|\.[0-9]+)(?:[eE][+-]?[0-9]+)?"
+)
+_METRES = r"m\.?|metres|meters"
+_TONNES = r"mt|t|tonnes"
+
+
+def _normalize_header(cell: str) -> str:
+    return " ".join(cell.lower().replace("²", "2").split())
+
+
+def _find_spec_table_with_header(
+    lines: list[str],
+) -> tuple[list[str], list[list[str]]]:
+    """Find a unit-labelled particulars table with an actual separator.
+
+    Match complete columns rather than substrings in unrelated headings.
+    Duplicate columns are ambiguous and are not accepted.
+    """
+    for idx, line in enumerate(lines):
+        if "|" not in line:
+            continue
+        header = [_normalize_header(cell) for cell in _split_md_row(line)]
+        if not _REQUIRED_COLUMNS.issubset(header) or len(header) != len(set(header)):
+            continue
+        following = lines[idx + 1 :]
+        if not following:
+            continue
+        separator = _split_md_row(following[0])
+        if len(separator) != len(header) or not _is_separator_row(separator):
+            continue
+        body: list[list[str]] = []
+        for body_line in following[1:]:
+            if "|" not in body_line:
+                break
+            cells = _split_md_row(body_line)
+            if _is_separator_row(cells) or "vessel name" in {
+                _normalize_header(cell) for cell in cells
+            }:
+                break
+            if not any(cells):
+                break
+            body.append(cells)
+        return header, body
+    return [], []
+
+
+def _optional_text(value: str | None) -> str | None:
+    if value is None or value.strip().lower() in _MISSING:
+        return None
+    return value.strip()
+
+
+def _checked_numeric(
+    value: str | None,
+    *,
+    units: str = "",
+    crane: bool = False,
+    draft: bool = False,
+) -> float | None:
+    """Validate the whole cell before stripping compatible units or grouping."""
+    value = _optional_text(value)
+    if value is None:
+        return None
+    literal = rf"({_NUMBER})(?:\s*(?:{units}))?" if units else rf"({_NUMBER})"
+    pattern = literal
+    if crane:
+        pattern = rf"(?:[0-9]+\s*[x×X]\s*)?{pattern}"
+    if draft:
+        pattern = rf"{pattern}(?:\s*/\s*{literal})?"
+    match = re.fullmatch(pattern, value, re.IGNORECASE)
+    if match is None:
+        raise ValueError("Invalid numeric particulars")
+    # The first capture retains per-crane capacity and transit draft.
+    parsed = parse_numeric(match.group(1))
+    # Sign rule: ConstructionVesselSchema._validate_non_negative_cv_floats
+    # and BaseVesselSchema._validate_non_negative_floats; no physical limit.
+    if parsed is None or not math.isfinite(parsed) or parsed < 0:
+        raise ValueError("Invalid numeric particulars")
+    return parsed
+
+
+def _source_url(value: str | None) -> str | None:
+    """Keep only plain HTTP(S) references without credentials or queries."""
+    value = _optional_text(value)
+    if value is None:
+        return None
+    url = urlsplit(value)
+    if (
+        url.scheme not in {"http", "https"}
+        or not url.hostname
+        or url.username is not None
+        or url.password is not None
+        or url.query
+        or url.fragment
+        or any(char.isspace() for char in value)
+    ):
+        raise ValueError("Invalid source reference")
+    return value
+
 
 def _split_md_row(line: str) -> list[str]:
     """Split a markdown table row into trimmed cells."""
     line = line.strip()
-    if line.startswith("|"):
-        line = line[1:]
-    if line.endswith("|"):
-        line = line[:-1]
+    line = line.removeprefix("|")
+    line = line.removesuffix("|")
     return [c.strip() for c in line.split("|")]
 
 
@@ -64,7 +179,7 @@ def _is_separator_row(cells: list[str]) -> bool:
     return bool(cells) and all(set(c) <= set("-: ") and c for c in cells)
 
 
-def _parse_crane(value: str) -> Optional[float]:
+def _parse_crane(value: str) -> float | None:
     """Parse a crane SWL cell like ``2×7,000`` or ``1,200`` -> per-crane tonnes."""
     if not value or value.strip() in {"-", "--"}:
         return None
@@ -73,7 +188,7 @@ def _parse_crane(value: str) -> Optional[float]:
     return parse_numeric(cleaned)
 
 
-def _parse_draft(value: str) -> Optional[float]:
+def _parse_draft(value: str) -> float | None:
     """Parse a draft cell.
 
     Values like ``12/26`` mean transit/operating -> take transit (first).
@@ -84,7 +199,7 @@ def _parse_draft(value: str) -> Optional[float]:
     return parse_numeric(first)
 
 
-def _parse_dp(value: str) -> Optional[int]:
+def _parse_dp(value: str) -> int | None:
     """Parse a DP-class cell. ``Anchored`` / non-DP -> ``None``."""
     if not value:
         return None
@@ -99,54 +214,60 @@ def _find_spec_table(lines: list[str]) -> list[list[str]]:
     Locates the markdown table whose header contains the spec columns and
     returns its data rows. Returns an empty list if not found.
     """
-    for idx, line in enumerate(lines):
-        if "|" not in line:
-            continue
-        header = [c.lower() for c in _split_md_row(line)]
-        header_joined = " ".join(header)
-        if all(h in header_joined for h in _SPEC_TABLE_HEADERS):
-            # Header found; the next line should be a separator.
-            body: list[list[str]] = []
-            for body_line in lines[idx + 1 :]:
-                if "|" not in body_line:
-                    break
-                cells = _split_md_row(body_line)
-                if _is_separator_row(cells):
-                    continue
-                if not any(cells):
-                    break
-                body.append(cells)
-            return body
-    return []
+    return _find_spec_table_with_header(lines)[1]
 
 
-def _map_spec_row(header: list[str], cells: list[str]) -> Optional[dict[str, Any]]:
+def _map_spec_row(header: list[str], cells: list[str]) -> dict[str, Any] | None:
     """Map a comparison-matrix row to the construction-vessel schema."""
     row = dict(zip(header, cells))
     name = (row.get("vessel name") or "").strip()
     if not name:
         return None
 
-    accommodation = parse_numeric(row.get("accommodation"))
+    accommodation = _checked_numeric(row.get("accommodation"))
+    if accommodation is not None and not accommodation.is_integer():
+        raise ValueError("Accommodation must be an integer headcount")
+    dp_text = _optional_text(row.get("dp class"))
+    if (
+        dp_text is not None
+        and "dp" in dp_text.lower()
+        and re.fullmatch(r"dp\s*\d+", dp_text, re.IGNORECASE) is None
+    ):
+        raise ValueError("Malformed DP label")
 
-    return {
+    mapped = {
         "VESSEL_NAME": name,
         "VESSEL_CATEGORY": _VESSEL_CATEGORY,
         "VESSEL_SUBTYPE": (row.get("type") or "").strip() or None,
         "DATA_SOURCE": DATA_SOURCE_MSIV,
-        "DATA_SOURCE_URL": None,
-        "LOA_M": parse_numeric(row.get("loa (m)")),
-        "BEAM_M": parse_numeric(row.get("beam (m)")),
-        "DRAFT_M": _parse_draft(row.get("draft (m)", "")),
-        "MAIN_CRANE_CAPACITY_T": _parse_crane(row.get("main crane (mt)", "")),
-        "AUX_CRANE_CAPACITY_T": _parse_crane(row.get("aux crane (mt)", "")),
-        "DP_CLASS": _parse_dp(row.get("dp class", "")),
+        "DATA_SOURCE_URL": _source_url(row.get("source url")),
+        "IMO_NUMBER": _optional_text(row.get("imo number") or row.get("imo")),
+        "LOA_M": _checked_numeric(row.get("loa (m)"), units=_METRES),
+        "BEAM_M": _checked_numeric(row.get("beam (m)"), units=_METRES),
+        "DRAFT_M": _checked_numeric(row.get("draft (m)"), units=_METRES, draft=True),
+        "MAIN_CRANE_CAPACITY_T": _checked_numeric(
+            row.get("main crane (mt)"), units=_TONNES, crane=True
+        ),
+        "AUX_CRANE_CAPACITY_T": _checked_numeric(
+            row.get("aux crane (mt)"), units=_TONNES, crane=True
+        ),
+        "DP_CLASS": _parse_dp(dp_text or ""),
         "QUARTERS_CAPACITY": int(accommodation) if accommodation is not None else None,
+        "DECK_AREA_M2": _checked_numeric(row.get("deck area (m2)"), units=r"m2|m²"),
+        "DECK_LOAD_CAPACITY_T": _checked_numeric(
+            row.get("deck load capacity (mt)"), units=_TONNES
+        ),
     }
+    # Format checks come from the existing schema, including the IMO format;
+    # schema validation does not establish registry identity or brochure truth.
+    validated = ConstructionVesselSchema(**mapped).model_dump(include=set(mapped))
+    if not validated["VESSEL_NAME"]:
+        raise ValueError("Missing normalized name")
+    return validated
 
 
 def collect_msiv_vessels(
-    source_dir: Optional[str | Path] = None,
+    source_dir: str | Path | None = None,
 ) -> list[dict[str, Any]]:
     """Collect ACMA MSIV vessels as schema-mapped dicts.
 
@@ -187,26 +308,25 @@ def parse_msiv_matrix(text: str) -> list[dict[str, Any]]:
     """
     lines = text.splitlines()
 
-    # Re-locate the header to zip column names against body rows.
-    header: list[str] = []
-    for idx, line in enumerate(lines):
-        if "|" not in line:
-            continue
-        candidate = [c.lower() for c in _split_md_row(line)]
-        if all(h in " ".join(candidate) for h in _SPEC_TABLE_HEADERS):
-            header = candidate
-            break
-
+    header, body = _find_spec_table_with_header(lines)
     if not header:
         logger.warning("MSIV spec table header not found")
         return []
 
-    body = _find_spec_table(lines)
     records: list[dict[str, Any]] = []
-    for cells in body:
+    for row_number, cells in enumerate(body, start=1):
         if len(cells) != len(header):
+            logger.warning(
+                "Skipping MSIV particulars row %d: column count mismatch", row_number
+            )
             continue
-        mapped = _map_spec_row(header, cells)
+        try:
+            mapped = _map_spec_row(header, cells)
+        except ValueError:
+            mapped = None
+        if mapped is None:
+            # Log structure only: source values may contain private content.
+            logger.warning("Skipping invalid MSIV particulars row %d", row_number)
         if mapped is not None:
             records.append(mapped)
     return records

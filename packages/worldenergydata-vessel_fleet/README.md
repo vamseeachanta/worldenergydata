@@ -7,6 +7,9 @@ Importable transparently as `worldenergydata.vessel_fleet` once the workspace
 is installed (`uv sync --all-extras`). Depends on `worldenergydata-core` for
 the shared `worldenergydata.common` layer.
 
+See [drilling riser CSV validation](docs/drilling-riser-csv.md) for the input
+contract, rejection behavior and a worked example of correcting malformed data.
+
 ## Data relocation (option (i) — data travels with the package)
 
 The curated dataset (construction vessels, drilling rigs, riser components;
@@ -14,6 +17,15 @@ The curated dataset (construction vessels, drilling rigs, riser components;
 is resolved package-relative by the loaders and `FleetRouter`. This makes the
 domain self-contained — no repo-root or external data mount is required — and
 the data ships in the built wheel.
+
+## Liftboats and public incidents
+
+[The liftboat database](LIFTBOATS.md) adds sourced technical observations,
+an explicit crosswalk of historical seed names, and public NTSB/BSEE incident
+records. `LiftboatLoader` is available from `worldenergydata.vessel_fleet`.
+Unreported values remain blank; source URLs, terms, retrieval timestamps and
+document digests are recorded in the packaged manifest. USCG report access and
+identity gaps are documented alongside the data.
 
 ## Riser classes, bundles and buoyancy OD ratio
 

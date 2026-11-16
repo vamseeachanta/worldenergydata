@@ -259,21 +259,31 @@ class WellAPI12:
 
         API10 = API12[:10] if API12 else ""
 
-        TOTAL_DEPTH_DATE = pd.to_datetime(
-            borehole_raw_data["TOTAL_DEPTH_DATE"].max(), errors="coerce"
-        )
-
-        WELL_SPUD_DATE = pd.to_datetime(
-            borehole_raw_data["WELL_SPUD_DATE"].max(), errors="coerce"
-        )
+        # Schema: data/modules/bsee/current/wells/well_data.csv (source names);
+        # prepare_well_paths below documents the legacy display aliases.
+        # Keep source columns authoritative and absent milestones unknown.
+        milestone_dates = {}
+        for source_column, display_column in (
+            ("TOTAL_DEPTH_DATE", "Total Depth Date"),
+            ("WELL_SPUD_DATE", "Spud Date"),
+        ):
+            values = borehole_raw_data.get(source_column)
+            if values is None:
+                values = borehole_raw_data.get(display_column)
+            # Parse before max: calendar order differs from string order.
+            milestone_dates[source_column] = (
+                pd.NaT
+                if values is None
+                else pd.to_datetime(values, errors="coerce", format="mixed").max()
+            )
 
         COMPLETION_NAME = ""
 
         api12_analysis_dict = {
             "API12": API12,
             "API10": API10,
-            "TOTAL_DEPTH_DATE": TOTAL_DEPTH_DATE,
-            "WELL_SPUD_DATE": WELL_SPUD_DATE,
+            "TOTAL_DEPTH_DATE": milestone_dates["TOTAL_DEPTH_DATE"],
+            "WELL_SPUD_DATE": milestone_dates["WELL_SPUD_DATE"],
             "COMPLETION_NAME": COMPLETION_NAME,
             "START_PRODUCTION_DATE": "",
             "LAST_PRODUCTION_DATE": "",
@@ -370,8 +380,10 @@ class WellAPI12:
 
         if api12_war_days is not None:
             api12_analysis["rigdays_by_war"] = json.dumps(api12_war_days)
-            api12_analysis["Drilling Days"] = api12_war_days.get("DRL", 0)
-            api12_analysis["Completion Days"] = api12_war_days.get("COM", 0)
+            api12_analysis["Drilling Days"] = rig_days_from_milestone["drilling_days"]
+            api12_analysis["Completion Days"] = rig_days_from_milestone[
+                "completion_days"
+            ]
         else:
             # WAR reports no activity for this bore.  Null, not zero: a
             # fabricated 0 is indistinguishable from a genuine one.
@@ -389,7 +401,7 @@ class WellAPI12:
             drilling_footage_ft = None
         api12_analysis.loc[df_row, "drilling_footage_ft"] = drilling_footage_ft
 
-        # Null drilling days (no WAR coverage) and zero footage both leave the
+        # Null drilling days (no measured phase) and zero footage both leave the
         # rate undefined rather than raising or reporting a made-up number.
         drilling_days_value = api12_analysis["Drilling Days"].iloc[df_row]
         if drilling_footage_ft and pd.notna(drilling_days_value):

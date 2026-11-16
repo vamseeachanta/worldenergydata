@@ -155,6 +155,8 @@ def classify_asset_class(
 
     rt = (rig_type or "").strip().lower()
     if rt:
+        if rt in {"rlwi_monohull", "heavy_intervention_semi"}:
+            return rt
         if rt == "drillship":
             return "modu_drillship"
         if rt in {"semi_submersible", "semisubmersible", "semi"}:

@@ -50,11 +50,11 @@ def test_missing_requested_link_matches_no_rows(matcher, column, missing):
 
 @pytest.mark.parametrize("name", ["SYNTHETIC", "nan", "none", "nat"])
 def test_missing_source_links_cannot_contaminate_valid_metadata(name):
-    """Only the explicitly named row contributes: depth 12 and one well.
+    """Only linked depths contribute; unresolved wells keep the count unknown.
 
     Hand calculation: eligible platform depths = [12]; mean = 12 / 1 = 12 m.
-    Eligible well identities = {test-well}; unique count = 1. The synthetic
-    magnitudes only distinguish rows; they are not published engineering data.
+    The linked well is known, but the unlinked wells' membership is unknown.
+    Synthetic magnitudes distinguish rows and are not published engineering data.
     Literal text 'nan', 'none', and 'nat' remains a valid name, not a null marker.
     """
     fields = pd.DataFrame({"CAMPO": MISSING + [name]})
@@ -77,7 +77,7 @@ def test_missing_source_links_cannot_contaminate_valid_metadata(name):
     result = build_brazil_field_meta(**kwargs)
     assert result["field_name"] == name
     assert result["water_depth_m"] == 12
-    assert result["well_count"] == 1
+    assert result["well_count"] is None
     assert build_brazil_field_meta(**kwargs) == result
     for frame, original in zip((fields, platforms, wells), originals):
         assert_frame_equal(frame, original)

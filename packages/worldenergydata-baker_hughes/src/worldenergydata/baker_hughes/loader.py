@@ -9,8 +9,12 @@ Two formats:
 """
 
 import logging
+import math
+import re
+from datetime import date, datetime
+from decimal import Decimal, DecimalException, InvalidOperation
+from fractions import Fraction
 from pathlib import Path
-from typing import Optional, Union
 
 import pandas as pd
 
@@ -32,13 +36,198 @@ _PIVOT_COLUMN_MAP = {
     "RigCount": "rig_count",
 }
 
+_PIVOT_OPTIONAL_COLUMNS = (
+    "Country",
+    "StateProvince",
+    "County",
+    "BasinName",
+    "DrillFor",
+    "Location",
+    "Trajectory",
+    "WellType",
+)
+
+
+def _pivot_schema(df: pd.DataFrame) -> dict:
+    """Detect drift without silently inventing optional metadata."""
+    missing = sorted({"PublishDate", "RigCount"} - set(df.columns))
+    if missing:
+        raise ValueError(f"pivot schema: missing required columns {missing}")
+    allowed = set(_PIVOT_COLUMN_MAP) | {
+        field + suffix
+        for field in ("WellDepth", "WaterDepth")
+        for suffix in ("_ft", "_m")
+    }
+    extra = [str(column) for column in df.columns if column not in allowed]
+    if extra:
+        raise ValueError(f"pivot schema: unexpected columns {extra}")
+    missing = sorted(set(_PIVOT_OPTIONAL_COLUMNS) - set(df.columns))
+    return {
+        "status": "incomplete" if missing else "complete",
+        "missing_columns": missing,
+        "extra_columns": [],
+    }
+
+
+def _summary_schema(df: pd.DataFrame) -> tuple[str, dict]:
+    """Select one named identifier and unique, unambiguous calendar dates."""
+    identifiers = [column for column in df.columns if column in {"State", "state"}]
+    if len(identifiers) != 1:
+        raise ValueError("summary schema: exactly one State/state column is required")
+    state_column = identifiers[0]
+    dates = {}
+    for column in df.columns:
+        if column == state_column:
+            continue
+        try:
+            if isinstance(column, (date, datetime)):
+                parsed = pd.Timestamp(column)
+            elif isinstance(column, str) and re.fullmatch(
+                r"[0-9]{4}-[0-9]{2}-[0-9]{2}", column
+            ):
+                parsed = pd.Timestamp(column)
+            elif isinstance(column, str) and re.fullmatch(
+                r"[0-9]{1,2}/[0-9]{1,2}/[0-9]{4}", column
+            ):
+                parsed = pd.Timestamp(datetime.strptime(column, "%m/%d/%Y"))
+            else:
+                raise ValueError
+            if (
+                pd.isna(parsed)
+                or parsed.tzinfo is not None
+                or parsed != parsed.normalize()
+            ):
+                raise ValueError
+        except (ValueError, TypeError, OverflowError):
+            raise ValueError(
+                f"summary schema: unexpected/non-date column {column!r}"
+            ) from None
+        if parsed in dates.values():
+            raise ValueError("summary schema: duplicate calendar date headers")
+        dates[column] = parsed
+    if not dates:
+        raise ValueError("summary schema: at least one date column is required")
+    return state_column, dates
+
+
+# Issue #1334: accept decimal/scientific notation with no locale/grouping
+# inference. Decimal alone would silently accept underscore grouping.
+_NUMERIC_TOKEN = re.compile(
+    r"[+-]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?"
+)
+
+
+def _decimal_number(value: object) -> Decimal:
+    text = str(value).strip()
+    if isinstance(value, bool) or not _NUMERIC_TOKEN.fullmatch(text):
+        raise InvalidOperation
+    return Decimal(text)
+
+
+def _validated_counts(values: pd.Series) -> pd.Series:
+    """Reject rather than repair counts (issue #1334, F1/F2/F11/F12).
+
+    The count domain is the nonnegative integers; zero is a true count,
+    never an imputed missing value. Decimal avoids a float round trip.
+    """
+    counts = []
+    for row, value in values.items():
+        try:
+            number = _decimal_number(value)
+        except InvalidOperation:
+            number = Decimal("NaN")
+        if (
+            isinstance(value, bool)
+            or not number.is_finite()
+            or number < 0
+            or number != number.to_integral_value()
+        ):
+            raise ValueError(
+                f"rig_count row {row}: expected a nonnegative integer; rejected"
+            )
+        counts.append(int(number))
+    return pd.Series(counts, index=values.index, name=values.name)
+
+
+# NIST SP 811 (2008), Appendix B.6: international foot, defined by the
+# 1959 agreement. https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication811e2008.pdf
+_METRES_PER_FOOT = Decimal("0.3048")
+
+
+def _depth_in_feet(number: Decimal, unit: str) -> float:
+    """Round the exact unit ratio once, without caller Decimal arithmetic."""
+    if unit == "ft" or number.is_zero():
+        return float(number)
+    # Numerical Computation Guide (November 2005), sections 2.1.1 (rounding)
+    # and 2.2.3, Tables 2-4/2-5 (double format):
+    # https://docs.oracle.com/cd/E19422-01/819-3693/ncg_math.html
+    # Least subnormal: 2**-1074 ft; nearest/even zero midpoint: 2**-1075 ft.
+    # 10**-325 < 0.3048 * 2**-1075 < 10**-324, so metre inputs with
+    # adjusted() < -325 round to zero. The midpoint tie also rounds to zero.
+    # Greatest finite: (2 - 2**-52) * 2**1023 ft. Even the outer overflow
+    # bound gives 0.3048 * 2**1024 < 10**308 m, so adjusted() > 308 cannot
+    # round to finite feet. Decade 308 is deliberately retained loosely.
+    # Check before constructing ratios for compact, enormous-exponent inputs;
+    # the existing float checks handle overflow/underflow in boundary decades.
+    if not -325 <= number.adjusted() <= 308:
+        raise ValueError
+    return float(Fraction(number) / Fraction(_METRES_PER_FOOT))
+
+
+def _validated_depths(df: pd.DataFrame, depth_unit: str | None) -> dict[str, str]:
+    """Validate source units and values before assigning feet-labelled columns.
+
+    Empty cells are absent depths; all other cells must be numeric, finite
+    and nonnegative (issue #1334, F3--F6 input contract). Unit suffixes are
+    declarations, not an inference from numeric magnitude.
+    """
+    if depth_unit is not None and depth_unit not in {"ft", "m"}:
+        raise ValueError("depth_unit must be 'ft' or 'm'")
+    units = {}
+    for source in ("WellDepth", "WaterDepth"):
+        columns = [c for c in (source, source + "_ft", source + "_m") if c in df]
+        if len(columns) != 1:
+            raise ValueError(f"{source}: exactly one source column is required")
+        column = columns[0]
+        tagged_unit = column.removeprefix(source + "_") if column != source else None
+        if tagged_unit and depth_unit and tagged_unit != depth_unit:
+            raise ValueError(f"{source}: source/declaration unit mismatch")
+        unit = tagged_unit or depth_unit
+        if unit is None:
+            raise ValueError(f"depth_unit is required for ambiguous {source} header")
+        output = _PIVOT_COLUMN_MAP[source]
+        values = []
+        for row, value in df[column].items():
+            if value is None or (isinstance(value, str) and not value.strip()):
+                values.append(float("nan"))
+                continue
+            try:
+                number = _decimal_number(value)
+                if not number.is_finite() or number < 0 or isinstance(value, bool):
+                    raise ValueError
+                # Output remains international feet; convert before labelling.
+                converted = _depth_in_feet(number, unit)
+                # A nonzero input must not silently underflow to zero.
+                if not math.isfinite(converted) or (number != 0 and converted == 0):
+                    raise ValueError
+            except (DecimalException, ValueError, OverflowError):
+                raise ValueError(
+                    f"{output} row {row}: expected finite nonnegative depth; rejected"
+                ) from None
+            values.append(converted)
+        df[output] = pd.Series(values, index=df.index, dtype=float)
+        df.drop(columns=[column], inplace=True)
+        units[output] = unit
+    return units
+
 
 def load_pivot_table(
-    path: Union[str, Path],
+    path: str | Path,
     *,
-    country: Optional[str] = None,
-    basin: Optional[str] = None,
+    country: str | None = None,
+    basin: str | None = None,
     sheet_name: str = "Pivot Table",
+    depth_unit: str | None = None,
 ) -> pd.DataFrame:
     """Load Baker Hughes NA pivot table Excel into a standardized DataFrame.
 
@@ -47,33 +236,52 @@ def load_pivot_table(
         country: Filter to a specific country (e.g. 'UNITED STATES').
         basin: Filter to a specific basin (e.g. 'PERMIAN').
         sheet_name: Excel sheet name to read.
+        depth_unit: Source depth unit, 'ft' (international feet) or 'm'.
+            Required for WellDepth/WaterDepth without a unit suffix. Headers
+            WellDepth_ft/WellDepth_m and WaterDepth_ft/WaterDepth_m declare
+            units per field; a conflicting explicit declaration is rejected.
 
     Returns:
         DataFrame with standardized columns: date, country, state, county,
         basin, drill_for, location, trajectory, well_type, well_depth_ft,
-        water_depth_ft, rig_count.
+        water_depth_ft, rig_count. Depth outputs are international feet after
+        conversion. DataFrame attrs['numeric_validation'] records the source
+        and output units and count policy. Invalid counts/depths raise
+        ValueError with field and row; empty depth cells remain NaN. Values
+        outside finite/nonzero float representation are rejected.
+        Missing optional metadata is listed in attrs['schema_validation'];
+        unknown columns, missing required fields and unmatched exact filters
+        raise ValueError. No spelling, case or whitespace normalization is used.
     """
-    df = pd.read_excel(path, sheet_name=sheet_name)
+    df = pd.read_excel(path, sheet_name=sheet_name, keep_default_na=False, dtype=object)
+    schema = _pivot_schema(df)
+    source_units = _validated_depths(df, depth_unit)
     df = df.rename(columns=_PIVOT_COLUMN_MAP)
 
     df["date"] = pd.to_datetime(df["date"])
-    df["rig_count"] = (
-        pd.to_numeric(df["rig_count"], errors="coerce").fillna(0).astype(int)
-    )
-    df["well_depth_ft"] = pd.to_numeric(df["well_depth_ft"], errors="coerce")
-    df["water_depth_ft"] = pd.to_numeric(df["water_depth_ft"], errors="coerce")
+    df["rig_count"] = _validated_counts(df["rig_count"])
+    df.attrs["numeric_validation"] = {
+        "rig_count": "nonnegative_integer_reject",
+        "source_depth_units": source_units,
+        "output_depth_unit": "ft",
+        "depth_policy": "empty_cell_missing_otherwise_finite_nonnegative_reject",
+    }
+    df.attrs["schema_validation"] = schema
 
-    if country is not None:
-        df = df[df["country"] == country].copy()
-    if basin is not None:
-        df = df[df["basin"] == basin].copy()
+    for field, value in (("country", country), ("basin", basin)):
+        if value is not None:
+            if field not in df.columns:
+                raise ValueError(f"{field} filter: missing dimension column")
+            df = df[df[field] == value].copy()
+            if df.empty:
+                raise ValueError(f"{field} filter: matched no records")
 
     logger.info("Loaded pivot table: %d records from %s", len(df), path)
     return df.reset_index(drop=True)
 
 
 def load_summary(
-    path: Union[str, Path],
+    path: str | Path,
     *,
     sheet_name: str = "Rigs by State",
 ) -> pd.DataFrame:
@@ -87,24 +295,36 @@ def load_summary(
         sheet_name: Excel sheet name to read.
 
     Returns:
-        DataFrame with columns: state, date, rig_count.
+        DataFrame with columns: state, date, rig_count. Counts must be
+        nonnegative integers; invalid/missing/fractional inputs raise ValueError
+        with field and melted row index. No locale separators are inferred.
+        DataFrame attrs['numeric_validation'] records the rejection policy.
+        Exactly one State/state column may appear in any position. All other
+        headers must be unique ISO YYYY-MM-DD or month-first M/D/YYYY strings,
+        or naive midnight Excel
+        dates. Missing/extra/ambiguous headers raise ValueError; accepted schema
+        metadata is recorded in attrs['schema_validation'].
     """
-    df = pd.read_excel(path, sheet_name=sheet_name)
+    df = pd.read_excel(path, sheet_name=sheet_name, keep_default_na=False, dtype=object)
 
-    state_col = df.columns[0]
-    date_cols = [c for c in df.columns if c != state_col]
+    state_col, dates = _summary_schema(df)
+    df = df.rename(columns=dates)
 
     melted = df.melt(
         id_vars=[state_col],
-        value_vars=date_cols,
+        value_vars=list(dates.values()),
         var_name="date",
         value_name="rig_count",
     )
     melted = melted.rename(columns={state_col: "state"})
     melted["date"] = pd.to_datetime(melted["date"])
-    melted["rig_count"] = (
-        pd.to_numeric(melted["rig_count"], errors="coerce").fillna(0).astype(int)
-    )
+    melted["rig_count"] = _validated_counts(melted["rig_count"])
+    melted.attrs["numeric_validation"] = {"rig_count": "nonnegative_integer_reject"}
+    melted.attrs["schema_validation"] = {
+        "status": "complete",
+        "missing_columns": [],
+        "extra_columns": [],
+    }
 
     logger.info("Loaded summary: %d records from %s", len(melted), path)
     return melted.reset_index(drop=True)

@@ -1,11 +1,25 @@
 # Subsea module knowledge pack
 
+Summary: section 11 supersedes S52–S59 with finite-value, weight, CSV-text
+and blank-key detection evidence for #1305. Earlier source and engineering
+qualification claims remain unverified; the historical code pin below is
+retained for sections 1–10.
+
+## Revision history
+
+| Revision | Date | Change and reason |
+| --- | --- | --- |
+| 0 | 2026-10-16 | Initial package inventory, checks and open items. |
+| 1 | 2026-10-16 | Add omitted silent paths, complete test references, distinguish issue drafts from filed issues and record executed CAD coverage. |
+| 2 | 2026-10-16 | Include and link the ten issue drafts, distinguish downstream geometry from package validation and make CAD coverage conditional on its environment. |
+| 3 | 2026-10-22 | Add finite-value and weight validation, literal CSV text preservation and regression evidence for blank supplier keys. |
+
 | Header | Value |
 | --- | --- |
 | Module | subsea |
 | Repository | worldenergydata |
 | Package path | `packages/worldenergydata-subsea/src/worldenergydata/subsea` |
-| Pack revision | 2 |
+| Pack revision | 3 |
 | Code pin | `6149361d36373afe24fe1b0c1fe59886375d46b7` |
 | Analysis family | EC; data pipeline; AQG r0 Python calculations gate set |
 | Family review role | Calculations quality manager |
@@ -21,13 +35,6 @@ Scope includes every Python file in the package, including both subpackages; the
 
 The module manifest labels subsea `stable`, while the distribution classifier labels it `Alpha`; these are declarations rather than independently established readiness (U2 in section 10). [module-manifest.yaml:L491-L504] [packages/worldenergydata-subsea/pyproject.toml:L15-L23]
 
-### Revision history
-
-| Revision | Date | Change and reason |
-| --- | --- | --- |
-| 0 | 2026-10-16 | Initial package inventory, checks and open items. |
-| 1 | 2026-10-16 | Add omitted silent paths, complete test references, distinguish issue drafts from filed issues and record executed CAD coverage. |
-| 2 | 2026-10-16 | Include and link the ten issue drafts, distinguish downstream geometry from package validation and make CAD coverage conditional on its environment. |
 
 ## 2. Inputs and outputs
 
@@ -373,3 +380,57 @@ Numbered issue-pending markers identify drafts, not filed issues. The accompanyi
 | Distribution and deputy | Maintainer: resolve U4 and U5 before relying on exclusion or review assignment | issue pending (9), issue pending (10). [packages/worldenergydata-subsea/pyproject.toml:L49-L55] (AQG r0, section 11.) |
 
 No module-routing registry is present at the code pin, so no registry file is changed; package registration remains in the existing module manifest. [module-manifest.yaml:L491-L506]
+
+
+## 11. Numeric and text ingestion contract (issue #1305)
+
+The four existing positive fields (OD, wall thickness, pressure and MBL)
+now require both finiteness and strict positivity. Both optional weights
+require finiteness and nonnegativity when present; zero and absence are
+allowed. These are the input-domain rules of #1305, not design limits or
+physical qualification. Pydantic raises field-specific validation errors
+for direct construction and CSV ingestion.
+
+Both component CSV readers disable pandas default missing-value tokens.
+Only empty cells are omitted before model construction. Literal `NA`, `N/A`,
+`null`, `None` and `nan` text survives unchanged in string fields. The same
+strings in numeric fields are validated, so an optional weight cannot hide
+an invalid token as absence. Identifiers remain text through CSV reading.
+
+The supplier `get` method already rejects blank/whitespace-only keys on the
+base revision. That guard is retained without a runtime change. Its existing
+regression tests also cover populated, empty and missing catalogues, and
+preserve nonblank substring behavior.
+
+| Gap or cited field | Detection test node | Current disposition |
+| --- | --- | --- |
+| S52; `od_in` | `tests/unit/subsea/test_component_numeric_contract.py::test_rejects_nonfinite_or_negative`; `tests/unit/subsea/test_component_numeric_contract.py::test_positive_fields_reject_zero` | Reject nonfinite and nonpositive values. |
+| S53; `wall_thickness_in` | `tests/unit/subsea/test_component_numeric_contract.py::test_rejects_nonfinite_or_negative`; `tests/unit/subsea/test_component_numeric_contract.py::test_positive_fields_reject_zero` | Reject nonfinite and nonpositive values. |
+| S54; `pressure_rating_psi` | `tests/unit/subsea/test_component_numeric_contract.py::test_rejects_nonfinite_or_negative`; `tests/unit/subsea/test_component_numeric_contract.py::test_positive_fields_reject_zero` | Reject nonfinite and nonpositive values. |
+| S55; `mbl_kn` | `tests/unit/subsea/test_component_numeric_contract.py::test_rejects_nonfinite_or_negative`; `tests/unit/subsea/test_component_numeric_contract.py::test_positive_fields_reject_zero` | Reject nonfinite and nonpositive values. |
+| S56; CSV positive infinity | `tests/unit/subsea/test_component_numeric_contract.py::test_rejects_nonfinite_or_negative` | Both direct and CSV routes reject infinity and NaN in all four fields. |
+| S57; empty supplier key | `tests/unit/subsea/test_supplier_lookup_keys.py::test_get_rejects_blank_key`; `tests/unit/subsea/test_supplier_lookup_keys.py::test_get_preserves_nonblank_lookup` | Existing guard retained; blank rejected and nonblank lookup preserved. |
+| S58; both optional weights | `tests/unit/subsea/test_component_numeric_contract.py::test_rejects_nonfinite_or_negative`; `tests/unit/subsea/test_component_numeric_contract.py::test_optional_weight_accepts_nonnegative_or_absent` | Negative and nonfinite present values rejected; zero and None accepted. |
+| S59; both component CSV readers | `tests/unit/subsea/test_component_numeric_contract.py::test_csv_preserves_literal_text`; `tests/unit/subsea/test_component_numeric_contract.py::test_csv_empty_optional_fields_remain_absent`; `tests/unit/subsea/test_component_numeric_contract.py::test_csv_na_in_numeric_field_rejected` | Preserve literal text, omit empty optional cells and reject invalid numeric tokens. |
+
+UNVERIFIED: Source catalog units, weight-unit discrepancies (S47/S50),
+geometry consistency, length/size positivity, completeness of optional data,
+missing-file/cache states and supplier depth coercion remain outside #1305's
+fixes. The unverified claims and remaining issue drafts in section 10 are
+retained. These tests establish input-domain detection, not engineering
+fitness or independent catalog accuracy.
+
+
+The shared worked example is `docs/examples/tabular-input-validation.md`,
+with inputs in `tests/fixtures/tabular_validation/` and executable nodes in
+`tests/unit/test_tabular_validation_example.py`. Its hand check derives
+`3.048 m / (0.3048 m/ft) = 10 ft` from NIST SP 811 (2008), Appendix B.6;
+component checks independently evaluate sign, finiteness and literal text.
+The example does not qualify external data or engineering capacity.
+
+Current offline results on the uncommitted tree (2026-10-22): 117 module
+cases passed; 31 shared-example cases also passed in the same combined
+invocation. The combined total is 236 passing cases. The downstream
+CAD test module retains its existing import skip because CadQuery is absent;
+no CAD result is claimed. Ruff passed on changed Python files. These current
+results supplement rather than rewrite historical result tables.

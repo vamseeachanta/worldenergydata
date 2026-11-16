@@ -16,6 +16,14 @@ class VesselCategory(str, Enum):
 
 
 @unique
+class InterventionClass(str, Enum):
+    """Intervention scope, independent of hull shape (issue #585 taxonomy)."""
+
+    LIGHT = "light"
+    HEAVY = "heavy"
+
+
+@unique
 class RigType(str, Enum):
     """Drilling rig sub-types."""
 

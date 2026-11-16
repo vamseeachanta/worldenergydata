@@ -1,13 +1,13 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "sources": [
     {
       "source": "uk_hse",
       "url": "https://resources.hse.gov.uk/notices",
-      "licence": "OGL-3.0 (scope not reconfirmed)",
+      "licence": "unverified",
       "terms_url": "https://www.hse.gov.uk/copyright.htm",
       "terms_status": "copyright link returned 404; issue cites OGL except otherwise stated",
-      "access_status": "unverified_transport_error_and_403",
+      "access_status": "blocked",
       "robots_status": "legacy transport error; current register 403; temporary spreadsheet disallowed",
       "notes": "Unverified notice retained as a candidate link only; no cached assertion is admitted as evidence.",
       "alternate_urls": [
@@ -16,7 +16,12 @@
       ],
       "access_date": "2026-10-17",
       "collection_policy": "links, public metadata and original paraphrases only; no report text, images or personal names",
-      "verification_basis": "current access attempted; notice not reached"
+      "verification_basis": "Recorded access attempt dated 2026-10-17; not rechecked by this registry migration",
+      "licence_statement": "OGL-3.0 (scope not reconfirmed)",
+      "access_detail": "unverified_transport_error_and_403",
+      "terms_verification": "unverified",
+      "terms_check_date": "2026-10-17",
+      "storage_policy": "metadata_only"
     },
     {
       "source": "opred",
@@ -29,12 +34,17 @@
       "notes": "Exact release metadata; observed time has no published timezone.",
       "access_date": "2026-10-17",
       "collection_policy": "links, public metadata and original paraphrases only; no report text, images or personal names",
-      "verification_basis": "independent public-source recheck in this run; see source_review.json"
+      "verification_basis": "Recorded source review dated 2026-10-17 in source_review.json; not rechecked by this registry migration",
+      "licence_statement": "OGL-3.0",
+      "access_detail": "public",
+      "terms_verification": "verified",
+      "terms_check_date": "2026-10-17",
+      "storage_policy": "metadata_only"
     },
     {
       "source": "bsee",
       "url": "https://www.bsee.gov/what-we-do/incident-investigations/offshore-incident-investigations/district-investigation-reports",
-      "licence": "US federal works; third-party exceptions not cleared",
+      "licence": "unverified",
       "terms_url": "https://www.bsee.gov/",
       "terms_status": "federal agency reports; no blanket clearance of third-party contributions",
       "access_status": "public",
@@ -42,12 +52,22 @@
       "notes": "District report candidates require existing incident/investigation index reconciliation; never copy existing rows.",
       "access_date": "2026-10-17",
       "collection_policy": "links, public metadata and original paraphrases only; no report text, images or personal names",
-      "verification_basis": "independent public-source recheck in this run; see source_review.json"
+      "verification_basis": "Recorded source review dated 2026-10-17 in source_review.json; not rechecked by this registry migration",
+      "licence_statement": "US federal works; third-party exceptions not cleared",
+      "access_detail": "public",
+      "terms_verification": "unverified",
+      "terms_check_date": "2026-10-17",
+      "storage_policy": "metadata_only",
+      "alternate_urls": [
+        "https://www.data.bsee.gov/Other/Files/IncInvRawData.zip",
+        "https://www.bsee.gov/what-we-do/incident-investigations/offshore-incident-investigations/panel-investigation-reports",
+        "https://www.bsee.gov/guidance-and-regulations/guidance/safety-alerts-program"
+      ]
     },
     {
       "source": "iogp",
       "url": "https://data.iogp.org/Safety/FatalIncidents",
-      "licence": "not established",
+      "licence": "unverified",
       "terms_url": "https://data.iogp.org/Home/Index",
       "terms_status": "no reuse licence displayed",
       "access_status": "public_landing_only",
@@ -59,12 +79,17 @@
       ],
       "access_date": null,
       "collection_policy": "links and public metadata only; no summaries, report text, images or personal names",
-      "verification_basis": "carried from earlier collection; not rechecked in this run"
+      "verification_basis": "carried from earlier collection; not rechecked in this run",
+      "licence_statement": "not established",
+      "access_detail": "public_landing_only",
+      "terms_verification": "unverified",
+      "terms_check_date": null,
+      "storage_policy": "metadata_only"
     },
     {
       "source": "havtil",
       "url": "https://www.havtil.no/en/supervision/investigation-reports/",
-      "licence": "Havtil reuse with credit; excludes third-party media",
+      "licence": "attribution-permitted",
       "terms_url": "https://www.havtil.no/en/contact-us/loose-pages-contact-us/copyright/",
       "terms_status": "confirmed reuse of website information with attribution; media exceptions excluded",
       "access_status": "public",
@@ -72,25 +97,35 @@
       "notes": "Official English and Norwegian pages; impossible migrated publication dates excluded or replaced only by explicit direction dates.",
       "access_date": "2026-10-17",
       "collection_policy": "links, public metadata and original paraphrases only; no report text, images or personal names",
-      "verification_basis": "independent public-source recheck in this run; see source_review.json"
+      "verification_basis": "Recorded source review dated 2026-10-17 in source_review.json; not rechecked by this registry migration",
+      "licence_statement": "Havtil reuse with credit; excludes third-party media",
+      "access_detail": "public",
+      "terms_verification": "verified",
+      "terms_check_date": "2026-10-17",
+      "storage_policy": "metadata_only"
     },
     {
       "source": "nopsema",
       "url": "https://www.nopsema.gov.au/offshore-industry/directions-notices-and-alerts/published-directions-and-notices",
-      "licence": "not established",
+      "licence": "unverified",
       "terms_url": null,
       "terms_status": "not verified",
-      "access_status": "timeout",
+      "access_status": "unavailable",
       "robots_status": "read timeout",
       "notes": "No collection attempted after timeout.",
       "access_date": null,
       "collection_policy": "links and public metadata only; no summaries, report text, images or personal names",
-      "verification_basis": "carried from earlier collection; not rechecked in this run"
+      "verification_basis": "carried from earlier collection; not rechecked in this run",
+      "licence_statement": "not established",
+      "access_detail": "timeout",
+      "terms_verification": "unverified",
+      "terms_check_date": null,
+      "storage_policy": "metadata_only"
     },
     {
       "source": "iadc",
       "url": "https://iadc.org/health-safety-environment/safety-alerts/",
-      "licence": "All rights reserved; metadata and original paraphrase only",
+      "licence": "all-rights-reserved",
       "terms_url": "https://iadc.org/safety-alerts/alert-24-6-uncontrolled-release-of-lower-marine-riser-package/",
       "terms_status": "confirmed All Rights Reserved in official alert footer; no report text or images retained",
       "access_status": "public",
@@ -98,51 +133,74 @@
       "notes": "Pilot alert omits event date and installation; association is curated from the issue seed, not automatic matching.",
       "access_date": "2026-10-17",
       "collection_policy": "links, public metadata and original paraphrases only; no report text, images or personal names",
-      "verification_basis": "independent public-source recheck in this run; see source_review.json"
+      "verification_basis": "Recorded source review dated 2026-10-17 in source_review.json; not rechecked by this registry migration",
+      "licence_statement": "All rights reserved; metadata and original paraphrase only",
+      "access_detail": "public",
+      "terms_verification": "verified",
+      "terms_check_date": "2026-10-17",
+      "storage_policy": "metadata_only"
     },
     {
       "source": "csb",
       "url": "https://www.csb.gov/investigations/",
-      "licence": "not established; US public record lead",
+      "licence": "unverified",
       "terms_url": null,
       "terms_status": "not verified",
-      "access_status": "blocked_403",
+      "access_status": "blocked",
       "robots_status": "403",
       "notes": "No bypass or report collection.",
       "access_date": null,
       "collection_policy": "links and public metadata only; no summaries, report text, images or personal names",
-      "verification_basis": "carried from earlier collection; not rechecked in this run"
+      "verification_basis": "carried from earlier collection; not rechecked in this run",
+      "licence_statement": "not established; US public record lead",
+      "access_detail": "blocked_403",
+      "terms_verification": "unverified",
+      "terms_check_date": null,
+      "storage_policy": "metadata_only"
     },
     {
       "source": "sec",
       "url": "https://www.sec.gov/Archives/edgar/data/0000949039/000119312524024116/d768599d8k.htm",
-      "licence": "issuer filing; reuse rights not cleared",
+      "licence": "unverified",
       "terms_url": "https://www.sec.gov/privacy.htm",
       "terms_status": "not verified; issuer content is not assumed federal-authored",
-      "access_status": "blocked_403",
+      "access_status": "blocked",
       "robots_status": "403",
       "notes": "Robots request returned 403; filing not requested. Context lead only.",
       "access_date": "2026-10-17",
       "collection_policy": "links, public metadata and original paraphrases only; no report text, images or personal names",
-      "verification_basis": "current robots request blocked; stopped"
+      "verification_basis": "Recorded access attempt dated 2026-10-17; not rechecked by this registry migration",
+      "licence_statement": "issuer filing; reuse rights not cleared",
+      "access_detail": "blocked_403",
+      "terms_verification": "unverified",
+      "terms_check_date": null,
+      "storage_policy": "metadata_only"
     },
     {
       "source": "osha",
       "url": "https://www.osha.gov/",
-      "licence": "not reverified",
+      "licence": "unverified",
       "terms_url": null,
       "terms_status": "existing holdings, not recollected",
-      "access_status": "blocked_403",
+      "access_status": "blocked",
       "robots_status": "403",
       "notes": "Legacy dataset authority; no new rows.",
       "access_date": null,
       "collection_policy": "links, public metadata and original paraphrases only; no report text, images or personal names",
-      "verification_basis": "carried from earlier collection; not rechecked in this run"
+      "verification_basis": "carried from earlier collection; not rechecked in this run",
+      "licence_statement": "not reverified",
+      "access_detail": "blocked_403",
+      "terms_verification": "unverified",
+      "terms_check_date": null,
+      "storage_policy": "metadata_only",
+      "alternate_urls": [
+        "https://enforcedata.dol.gov/views/data_catalogs/zip/osha_inspection.csv.zip"
+      ]
     },
     {
       "source": "epa",
       "url": "https://www.epa.gov/toxics-release-inventory-tri-program",
-      "licence": "not reverified",
+      "licence": "unverified",
       "terms_url": null,
       "terms_status": "existing holdings, not recollected",
       "access_status": "not_recollected",
@@ -150,7 +208,16 @@
       "notes": "Legacy TRI authority; no new rows.",
       "access_date": null,
       "collection_policy": "links, public metadata and original paraphrases only; no report text, images or personal names",
-      "verification_basis": "carried from earlier collection; not rechecked in this run"
+      "verification_basis": "carried from earlier collection; not rechecked in this run",
+      "licence_statement": "not reverified",
+      "access_detail": "not_recollected",
+      "terms_verification": "unverified",
+      "terms_check_date": null,
+      "storage_policy": "metadata_only",
+      "alternate_urls": [
+        "https://data.epa.gov/efservice/",
+        "https://enviro.epa.gov/triexplorer/release_fac?p_view=USFAC"
+      ]
     }
   ]
 }

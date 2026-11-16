@@ -1,0 +1,253 @@
+{
+  "vintage": "FDAS_V30",
+  "source": "docs/modules/bsee/analysis/production/FDAS_V30/generate_financial_summary_V30.py",
+  "workbooks": {
+    "lease_assumptions.xlsx": {
+      "sha256": "a1193f669db49ac33b87481733fb13af409844fed890e763b4e8726e329a1407",
+      "sheets": {
+        "assumptions": {
+          "rows": 40,
+          "columns": 7,
+          "headers": [
+            "DEV_SYSTEM",
+            "subsea15",
+            "subsea20",
+            "dry",
+            "tieback15",
+            "tieback20",
+            "Notes"
+          ]
+        }
+      }
+    },
+    "financial_project_summary.xlsx": {
+      "sha256": "00f200def283d307293bb93033f070718722618b9a8ace2bbbe11bfbffeddf04",
+      "sheets": {
+        "Project_Summary": {
+          "rows": 11,
+          "columns": 28,
+          "headers": [
+            "Project Name",
+            "DEV SYSTEM",
+            "FO Month",
+            "TOTAL OIL BBL",
+            "Host CAPEX USD",
+            "SURF USD",
+            "Booster Pump USD",
+            "Water Injection Pump USD",
+            "Dry Well System USD",
+            "Facilities Cost USD",
+            "DRILLING COST USD",
+            "COMPLETION COST USD",
+            "Drilling and Completion Total USD",
+            "Revenue USD",
+            "Royalty USD",
+            "Variable OPEX USD",
+            "Fixed OPEX USD",
+            "Net CashFlow USD",
+            "NPV USD",
+            "MIRR monthly",
+            "MIRR annual",
+            "PRODUCER WELLS",
+            "INJECTOR WELLS",
+            "Booster Pump Count",
+            "Water Injection Pump Count",
+            "TOTAL WELLBORES",
+            "TOTAL DRILLING DAYS",
+            "TOTAL COMPLETION DAYS"
+          ]
+        },
+        "Stones": {
+          "rows": 298,
+          "columns": 13,
+          "headers": [
+            "MONTH",
+            "WTI_USD",
+            "MONTHLY_OIL_VOLUME",
+            "Revenue_USD",
+            "Royalty_USD",
+            "Variable_OPEX_USD",
+            "Fixed_OPEX_USD",
+            "DRILLING_DAYS",
+            "DRILLING_COST_USD",
+            "COMPLETION_DAYS",
+            "COMPLETION_COST_USD",
+            "Facilities_USD",
+            "Net_CashFlow_USD"
+          ]
+        },
+        "Cascade Chinook": {
+          "rows": 298,
+          "columns": 13,
+          "headers": [
+            "MONTH",
+            "WTI_USD",
+            "MONTHLY_OIL_VOLUME",
+            "Revenue_USD",
+            "Royalty_USD",
+            "Variable_OPEX_USD",
+            "Fixed_OPEX_USD",
+            "DRILLING_DAYS",
+            "DRILLING_COST_USD",
+            "COMPLETION_DAYS",
+            "COMPLETION_COST_USD",
+            "Facilities_USD",
+            "Net_CashFlow_USD"
+          ]
+        },
+        "Julia": {
+          "rows": 298,
+          "columns": 13,
+          "headers": [
+            "MONTH",
+            "WTI_USD",
+            "MONTHLY_OIL_VOLUME",
+            "Revenue_USD",
+            "Royalty_USD",
+            "Variable_OPEX_USD",
+            "Fixed_OPEX_USD",
+            "DRILLING_DAYS",
+            "DRILLING_COST_USD",
+            "COMPLETION_DAYS",
+            "COMPLETION_COST_USD",
+            "Facilities_USD",
+            "Net_CashFlow_USD"
+          ]
+        },
+        "Anchor": {
+          "rows": 298,
+          "columns": 13,
+          "headers": [
+            "MONTH",
+            "WTI_USD",
+            "MONTHLY_OIL_VOLUME",
+            "Revenue_USD",
+            "Royalty_USD",
+            "Variable_OPEX_USD",
+            "Fixed_OPEX_USD",
+            "DRILLING_DAYS",
+            "DRILLING_COST_USD",
+            "COMPLETION_DAYS",
+            "COMPLETION_COST_USD",
+            "Facilities_USD",
+            "Net_CashFlow_USD"
+          ]
+        },
+        "Jack St Malo": {
+          "rows": 298,
+          "columns": 13,
+          "headers": [
+            "MONTH",
+            "WTI_USD",
+            "MONTHLY_OIL_VOLUME",
+            "Revenue_USD",
+            "Royalty_USD",
+            "Variable_OPEX_USD",
+            "Fixed_OPEX_USD",
+            "DRILLING_DAYS",
+            "DRILLING_COST_USD",
+            "COMPLETION_DAYS",
+            "COMPLETION_COST_USD",
+            "Facilities_USD",
+            "Net_CashFlow_USD"
+          ]
+        },
+        "Kaskida": {
+          "rows": 298,
+          "columns": 13,
+          "headers": [
+            "MONTH",
+            "WTI_USD",
+            "MONTHLY_OIL_VOLUME",
+            "Revenue_USD",
+            "Royalty_USD",
+            "Variable_OPEX_USD",
+            "Fixed_OPEX_USD",
+            "DRILLING_DAYS",
+            "DRILLING_COST_USD",
+            "COMPLETION_DAYS",
+            "COMPLETION_COST_USD",
+            "Facilities_USD",
+            "Net_CashFlow_USD"
+          ]
+        },
+        "Tiber": {
+          "rows": 298,
+          "columns": 13,
+          "headers": [
+            "MONTH",
+            "WTI_USD",
+            "MONTHLY_OIL_VOLUME",
+            "Revenue_USD",
+            "Royalty_USD",
+            "Variable_OPEX_USD",
+            "Fixed_OPEX_USD",
+            "DRILLING_DAYS",
+            "DRILLING_COST_USD",
+            "COMPLETION_DAYS",
+            "COMPLETION_COST_USD",
+            "Facilities_USD",
+            "Net_CashFlow_USD"
+          ]
+        },
+        "Shenandoah": {
+          "rows": 298,
+          "columns": 13,
+          "headers": [
+            "MONTH",
+            "WTI_USD",
+            "MONTHLY_OIL_VOLUME",
+            "Revenue_USD",
+            "Royalty_USD",
+            "Variable_OPEX_USD",
+            "Fixed_OPEX_USD",
+            "DRILLING_DAYS",
+            "DRILLING_COST_USD",
+            "COMPLETION_DAYS",
+            "COMPLETION_COST_USD",
+            "Facilities_USD",
+            "Net_CashFlow_USD"
+          ]
+        },
+        "North Platte": {
+          "rows": 298,
+          "columns": 13,
+          "headers": [
+            "MONTH",
+            "WTI_USD",
+            "MONTHLY_OIL_VOLUME",
+            "Revenue_USD",
+            "Royalty_USD",
+            "Variable_OPEX_USD",
+            "Fixed_OPEX_USD",
+            "DRILLING_DAYS",
+            "DRILLING_COST_USD",
+            "COMPLETION_DAYS",
+            "COMPLETION_COST_USD",
+            "Facilities_USD",
+            "Net_CashFlow_USD"
+          ]
+        },
+        "Big Foot": {
+          "rows": 298,
+          "columns": 13,
+          "headers": [
+            "MONTH",
+            "WTI_USD",
+            "MONTHLY_OIL_VOLUME",
+            "Revenue_USD",
+            "Royalty_USD",
+            "Variable_OPEX_USD",
+            "Fixed_OPEX_USD",
+            "DRILLING_DAYS",
+            "DRILLING_COST_USD",
+            "COMPLETION_DAYS",
+            "COMPLETION_COST_USD",
+            "Facilities_USD",
+            "Net_CashFlow_USD"
+          ]
+        }
+      }
+    }
+  }
+}

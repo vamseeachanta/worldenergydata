@@ -12,6 +12,8 @@ Source: Ported from FDAS build_multi_year_lease_matrix1.py
 import numpy as np
 import pandas as pd
 
+from worldenergydata.common.decline import exponential_rate, hyperbolic_rate
+
 
 class ProductionProcessingError(Exception):
     """Raised when production processing fails"""
@@ -320,7 +322,14 @@ class ProductionForecaster:
 
         # Generate forecast
         time_periods = np.arange(months)
-        forecast = initial_rate * (1 - monthly_decline) ** time_periods
+        # Preserve this adapter's effective annual decline convention.
+        # Manual section 2.1.1, evaluated at one year: nominal D = -ln(1 - effective decline).
+        # At complete effective depletion, retain the initial time-zero rate.
+        if monthly_decline == 1:
+            return np.where(time_periods == 0, initial_rate, 0.0)
+        forecast = exponential_rate(
+            time_periods, initial_rate, -np.log1p(-monthly_decline)
+        )
 
         return forecast
 
@@ -341,13 +350,4 @@ class ProductionForecaster:
         """
         time_periods = np.arange(months) / 12.0  # Convert to years
 
-        if b_factor == 0:
-            # Exponential decline
-            forecast = initial_rate * np.exp(-initial_decline * time_periods)
-        else:
-            # Hyperbolic decline
-            forecast = initial_rate / (
-                1 + b_factor * initial_decline * time_periods
-            ) ** (1 / b_factor)
-
-        return forecast
+        return hyperbolic_rate(time_periods, initial_rate, initial_decline, b_factor)

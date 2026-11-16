@@ -9,6 +9,26 @@
 schema_version: 2
 invocation: "uv run python -m worldenergydata {input}"
 workflows:
+  - id: cost-disclosure-benchmark
+    basename: cost
+    title: Operator cost benchmarking report from annual-disclosure seed data
+    input: examples/workflows/cost-disclosure-benchmark/input.yml
+    result:
+      kind: files
+    outputs:
+      - examples/workflows/cost-disclosure-benchmark/outputs/operator_cost_benchmarking.html
+      - examples/workflows/cost-disclosure-benchmark/outputs/operator_cost_benchmarking_facts.json
+    assertions:
+      json:
+        - path: examples/workflows/cost-disclosure-benchmark/outputs/operator_cost_benchmarking_facts.json
+          equals:
+            operators_covered: 3
+    test: tests/workflows/test_durable_workflows.py::test_registry_workflow_outputs[cost-disclosure-benchmark]
+    runtime: offline
+    data_source:
+      type: bundled-fixture
+      network_required: false
+      fixtures: []  # Inputs are bundled in the cost package.
   - id: bsee-production-summary
     basename: bsee
     title: BSEE production summary from bundled CSV data
@@ -112,18 +132,21 @@ workflows:
       json:
         - path: examples/workflows/pipeline-safety-ffs/outputs/pipeline_safety_ffs_summary.json
           equals:
-            verdict_summary.accept: 1
-            verdict_summary.monitor: 1
+            verdict_summary.accept: 2
+            verdict_summary.monitor: 0
             verdict_summary.replace: 1
           approx:
-            minimum_safe_pressure_mpa: 5.0341
+            # Synthetic CSV hand check: ORNL/TM-2019/1192 (2019),
+            # eqs. 2, 10; legacy flow=0.9*358.53 MPa, area=0.85*0.8.
+            # z=200^2/(323.85*9.53), M=sqrt(1+0.6275*z-0.003375*z^2).
+            # Pf=(2*9.53/323.85)*flow*(1-area)/(1-area/M); safe=Pf/1.39.
+            minimum_safe_pressure_mpa: 5.6953
       csv:
         - path: examples/workflows/pipeline-safety-ffs/outputs/pipeline_safety_ffs_report.csv
           row_count: 3
           column_counts:
             verdict:
-              accept: 1
-              monitor: 1
+              accept: 2
               replace: 1
     test: tests/workflows/test_durable_workflows.py::test_registry_workflow_outputs[pipeline-safety-ffs]
     runtime: offline

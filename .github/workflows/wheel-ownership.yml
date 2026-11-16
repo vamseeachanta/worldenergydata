@@ -1,0 +1,51 @@
+name: Wheel ownership
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  PYTHON_VERSION: "3.11"
+
+jobs:
+  wheel-ownership:
+    name: Build and check workspace wheels
+    runs-on: >-
+      ${{ (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository) &&
+          fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
+    timeout-minutes: 20
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+
+      - name: Set up Python
+        run: uv python install ${{ env.PYTHON_VERSION }}
+
+      - name: Test wheel ownership checker
+        run: >-
+          uv run --no-project --python ${{ env.PYTHON_VERSION }}
+          --with pytest python -m pytest --noconftest -o addopts=''
+          tests/unit/packaging/test_wheel_ownership.py -q
+
+      - name: Build workspace wheels
+        run: uv build --all-packages --wheel --out-dir "${{ runner.temp }}/wheel-artifacts"
+
+      - name: Check wheel namespace ownership
+        run: >-
+          uv run --no-project --python ${{ env.PYTHON_VERSION }}
+          python scripts/ci/check_wheel_ownership.py
+          "${{ runner.temp }}"/wheel-artifacts/*.whl
+
+      - name: Upload checked wheels
+        uses: actions/upload-artifact@v7
+        with:
+          name: checked-workspace-wheels
+          path: ${{ runner.temp }}/wheel-artifacts/*.whl
+          retention-days: 5

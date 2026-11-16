@@ -8,9 +8,10 @@ A comprehensive Python data library and analysis platform for the energy industr
 
 ## Why this exists — the engineering ↔ asset circle
 
-`digitalmodel` and `worldenergydata` are two halves of one loop.
+`worldenergydata` is the asset ledger in a shared engineering ↔ asset loop with
+`digitalmodel`: public-source observations give engineering analysis its asset context.
 
-- **digitalmodel** is the engineering brain — deterministic, code-based analysis (mooring, riser, fitness-for-service, hydrodynamics, structural, tubulars, installation): *what is possible and safe via engineering*.
+- **digitalmodel** is the engineering brain — deterministic, code-based analysis (mooring, riser, fitness-for-service, hydrodynamics, structural, tubulars, installation): *how a design performs against its declared engineering criteria*.
 - **worldenergydata** is the real-world asset ledger — public-source, reproducible field / well / facility data across the whole life cycle: *what was actually built, and how it performs*.
 
 Together they close a circle. Engineering designs an asset; it gets built and operated; operations feed back into engineering (inspection, fitness-for-service, fatigue re-assessment); at end of life it is decommissioned — itself an engineering problem — and the outcomes loop back as empirical priors for the next design. The **life-cycle timeline** is the shared spine: `worldenergydata` supplies each stage's real dates and assets, `digitalmodel` supplies each stage's engineering.
@@ -54,10 +55,107 @@ Live: [worldenergydata field life-cycle](https://vamseeachanta.github.io/worlden
 
 This repo is the **asset & data** half of that loop — the public-source field/well/facility ledger the engineering runs against.
 
+The diagrams describe the shared integration model. They do not establish data
+coverage or a verified engineering result for every asset or life-cycle stage.
+The same Mermaid blocks are shared with the companion README; the introductions
+explain each repository's role.
+
+### Worked reading example: mooring fatigue during Operate
+
+**Question and inputs.** Consider a mooring-fatigue question at the Operate stage
+of a field's life cycle. The existing bridge reads component geometry and minimum
+breaking load from the component catalog and pairs an engineering summary with
+public BSEE incident context. This is a reading example, without a solver run or
+an asset-specific numerical result.
+
+**Method.** Read the hierarchy as Region → Play → Field, with Operate locating
+the field on its timeline and the mooring as an associated asset. The
+[bridge adapter](scripts/demo/_mooring_live.py) passes engineering inputs to
+`digitalmodel` separately and reads its summary CSV back as data. The
+[card generator](scripts/demo/generate_mooring_grounded_card.py) combines that
+summary with incident context and uses an explicitly illustrative engineering
+panel when the engineering run is unavailable. The
+[card renderer](packages/worldenergydata-bsee/src/worldenergydata/hse/grounding_card.py)
+keeps the engineering basis and incident evidence visible together.
+
+**Answer and limits.** The result is a grounded card: an engineering summary
+beside incident context, with their respective bases. Incident records do not
+validate a fatigue-life prediction. The adapter's loading spectrum is
+illustrative because the component catalog has no cyclic tension history, even
+when the engineering computation runs. Asset-specific fatigue acceptance remains
+`NOT_EVALUATED` in this reading example until an applicable loading history,
+design criteria and a traceable engineering result are supplied.
+
 ## Repository architecture
 
 [Architecture drawing and report inventory](docs/modules/repository-architecture.md)
 covers ingestion, processing, capability provenance, publication and the bulk-data boundary.
+
+```mermaid
+flowchart TB
+  public_sources["BSEE; IMO GISIS; Texas RRC; other public sources"]
+  scheduler["Configured scheduler: eight implemented adapters; LNG stub"]
+  manual["Manual and on-demand acquisition; other automation not established"]
+  bulk["Bulk data outside git: WED_DATA_ROOT override; no bulk LFS"]
+  bsee["BSEE and HSE: ingestion, validation, analysis"]
+  marine["Marine safety: importers, normalization, analysis"]
+  regional["Regional and environmental packages: acquisition and processing"]
+  field_dev["Field development: catalogs, concepts, schematics"]
+  reports["Frozen reports and analysis tables"]
+  pages["Pages builder and deployment workflow"]
+  hub["Canonical capabilities website: redirect target"]
+  hf["Hugging Face: explicitly invoked export scripts and pilot configuration"]
+  subgraph capabilities["Surviving capability work specifications; provenance below"]
+    economics["Economics: field dimension, seven builder fields"]
+    portfolio["Economics portfolio"]
+    benchmark["Well benchmark"]
+    completion["Drilling and completion"]
+    well_path["Well paths"]
+    fd_showcase["Field-development showcase"]
+    fd_playbook["Interactive playbook"]
+    fd_portfolio["Development portfolio"]
+    fd_bsee_matched["BSEE-matched development"]
+    ms_exec["Marine safety executive summary"]
+    ms_fatality["Fatality analysis"]
+    ms_foundering["Foundering analysis"]
+    ms_hatch["Hatch analysis"]
+    imo["IMO GISIS analysis"]
+    mooring["Mooring incident-grounded screen"]
+  end
+  public_sources -.-> scheduler
+  public_sources -.-> manual
+  scheduler -.-> bulk
+  manual -.-> bulk
+  bulk -.-> bsee
+  bulk -.-> marine
+  bulk -.-> regional
+  bsee --> reports
+  marine --> reports
+  field_dev --> reports
+  bsee -.-> economics
+  economics -.-> portfolio
+  bsee -.-> benchmark
+  bsee -.-> completion
+  bsee -.-> well_path
+  bsee -.-> mooring
+  marine -.-> ms_exec
+  marine -.-> ms_fatality
+  marine -.-> ms_foundering
+  marine -.-> ms_hatch
+  manual -.-> imo
+  manual -.-> field_dev
+  field_dev -.-> fd_showcase
+  field_dev -.-> fd_playbook
+  field_dev -.-> fd_portfolio
+  field_dev -.-> fd_bsee_matched
+  reports --> pages
+  reports -.-> hf
+  pages --> hub
+```
+
+Figure 1. Repository architecture. Solid arrows show implemented relationships; dashed
+arrows show documented inputs or configured intent. Refresh execution, data freshness
+and completed publication require separate evidence; the linked page records provenance.
 
 ## Overview
 
@@ -86,7 +184,9 @@ uv run pre-commit install
 
 # Populate BSEE data (not stored in git, ~300 MB download)
 make data
-# or: python3 scripts/refresh_bsee_all.py
+# or: uv run worldenergydata bsee refresh
+# Preview the registry download plan without writing data:
+uv run worldenergydata bsee refresh --dry-run
 
 # Verify installation
 uv run worldenergydata --help
@@ -114,6 +214,9 @@ uv run worldenergydata forecast --help
 **Data-required commands** (run `make data` first):
 
 ```bash
+# Populate the registry-backed binary cache from a repository checkout:
+make data # or: uv run worldenergydata bsee refresh
+
 # BSEE data analysis — requires local BSEE dataset (~300 MB)
 uv run worldenergydata bsee analyze --field "Jack"
 uv run worldenergydata bsee report --type block --id 759 --format excel
@@ -131,6 +234,11 @@ uv run worldenergydata eia fetch  # ⚠ credential-required
 ```
 
 > **Note:** `bsee refresh`, `marine-safety scrape`, and scheduler commands download large datasets.
+> The default `bsee refresh` uses `scripts/refresh_bsee_all.py` and writes to
+> `data/modules/bsee/bin/`. Existing non-pointer binaries are skipped; `--force`
+> backs them up before replacement. This checks cache presence, not content integrity.
+> For recent production, use `scripts/refresh_bsee_ogor_recent.py`; the full
+> refresh script's OGOR-A year mapping is stale.
 > See [MODULE_INDEX.md](MODULE_INDEX.md) for the full module list and data prerequisites.
 > See [docs/CLI.md](docs/CLI.md) for complete CLI reference with safety classifications.
 

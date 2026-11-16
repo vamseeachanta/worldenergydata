@@ -46,8 +46,7 @@ def test_legacy_empty_cache_is_refused_and_preserved(tmp_path):
     )
     before = {p: p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()}
 
-    with pytest.raises(ValueError, match="empty payload"):
-        store.get(url)
+    assert store.get(url) is None
 
     assert {p: p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()} == before
 
