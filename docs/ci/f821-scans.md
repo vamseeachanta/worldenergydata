@@ -13,6 +13,7 @@ It does not establish the cause of the historical variance in #328.
 | Revision | Date | What changed and why |
 | --- | --- | --- |
 | Initial | 2026-10-20 | Added a scan protocol, regression cases and a worked example to prevent incomplete invocations being reported as clean inventories. |
+| Bytecode controls | 2026-11-16 | Added isolated cold and warm bytecode observations to distinguish cache state from environment synchronization. |
 
 ## Why counting output lines is insufficient
 
@@ -46,6 +47,53 @@ limit. `--uv` selects a particular uv executable. The uv launcher uses
 launcher without resolving the project; see the [uv CLI reference][uv].
 Direct execution uses `python -m flake8`, avoiding a missing console wrapper.
 Both launchers require the selected tool to be installed in that interpreter.
+
+### Control bytecode state
+
+Pass `--bytecode-root` and `--bytecode-policy` together to vary only Python's
+bytecode cache. Without these options, the existing invocation and inherited
+bytecode environment are preserved. The root must be new, outside all resolved
+scan targets, and separate from the evidence directory. Existing empty or
+nonempty roots are refused, including symlinks resolving into scan targets.
+No earlier cache is removed or reused.
+
+```bash
+experiment=$(mktemp -d "${TMPDIR:?}/f821-bytecode.XXXXXX")
+uv run --no-sync python scripts/ci/check_f821.py src/ tests/ packages/ \
+  --runs 10 --timeout 300 --allow-findings \
+  --bytecode-policy cold-per-run --bytecode-root "$experiment/direct-cold-cache" \
+  --output "$experiment/direct-cold"
+uv run --no-sync python scripts/ci/check_f821.py src/ tests/ packages/ \
+  --runs 11 --timeout 300 --allow-findings \
+  --bytecode-policy warm-shared --bytecode-root "$experiment/direct-warm-cache" \
+  --output "$experiment/direct-warm"
+uv run --no-sync python scripts/ci/check_f821.py src/ tests/ packages/ \
+  --launcher uv --runs 10 --timeout 300 --allow-findings \
+  --bytecode-policy cold-per-run --bytecode-root "$experiment/uv-cold-cache" \
+  --output "$experiment/uv-cold"
+uv run --no-sync python scripts/ci/check_f821.py src/ tests/ packages/ \
+  --launcher uv --runs 11 --timeout 300 --allow-findings \
+  --bytecode-policy warm-shared --bytecode-root "$experiment/uv-warm-cache" \
+  --output "$experiment/uv-warm"
+```
+
+All child processes receive `PYTHONPYCACHEPREFIX` pointing to their isolated
+directory. Controlled children also have `PYTHONDONTWRITEBYTECODE` removed so
+the experiment can populate caches when the caller disables writes. The parent
+environment is unchanged. Version queries use a dedicated `version` directory
+and cannot warm measurement directories. Cold mode creates a fresh empty
+`run-N` directory for each observation; warm mode creates one `shared` directory,
+labels its first observation `priming`, and labels subsequent observations
+`warm`. The warm run count includes priming: eleven runs give ten warm samples.
+The checker imports no scanned source modules or engineering programs.
+
+`report.json` records the policy, each child's bytecode directory and command,
+the version query, and each observation's state, source digest, full finding
+digest and exit status. Successful experiments include `source_after_sha256`.
+Failures retain raw streams and available metadata and keep the existing error
+exit contract. Raw evidence stays outside the repository because it can contain
+runtime paths. These controls do not create a fresh dependency environment,
+clear operating-system file caches, or reconstruct historical package versions.
 
 For exploratory inventories, `--allow-findings` accepts stable nonempty findings.
 It never accepts an incomplete, failed or inconsistent scan. CI omits this flag.
@@ -156,6 +204,45 @@ and failed invocation are unavailable in the supplied evidence. Clearing shared
 caches or rebuilding the full dependency environment is outside this change. Controlled
 direct/uv comparisons use an already prepared interpreter, so they isolate the
 invocation route, not environment synchronization or bytecode compilation.
+
+### Bytecode-cache observations, 2026-11-16
+
+The controlled experiment used Python 3.12.15, flake8 7.5.0, pyflakes
+4.1.0, pycodestyle 2.15.0 and mccabe 0.7.0 in one prepared interpreter, without
+synchronization. The commands were the four bytecode-control invocations above,
+with the same explicitly selected `src/`, `tests/` and `packages/` inputs.
+The baseline checker returned counts `[0, 0]` over 3,181 tracked Python
+files. The controlled inventory contained 3,182 files: the original files
+were unchanged, and the additional file was the new cache-control regression test.
+
+| Launcher | Bytecode condition | Observations | Repository findings | Result |
+| --- | --- | --- | --- | --- |
+| Direct | Fresh directory per run | 10 cold | 0 in every run | STABLE |
+| Direct | One shared directory | 1 priming + 10 warm | 0 in every run | STABLE |
+| uv, same interpreter | Fresh directory per run | 10 cold | 0 in every run | STABLE |
+| uv, same interpreter | One shared directory | 1 priming + 10 warm | 0 in every run | STABLE |
+
+All 42 raw linter observations exited `1` with the required positive probe;
+all four checker invocations exited `0` in inventory mode. Full inventories
+matched within and across conditions. Each cold condition used ten distinct
+measurement directories; each warm condition used exactly one. Each measurement
+directory contained 149 bytecode files after execution. Version-probe directories
+were separate. Offline subprocess tests additionally confirmed that every cold
+measurement and each priming measurement receives an initially empty directory.
+
+Before/after source digests agreed in all four conditions:
+`572458f8eff69148ed5f96269d82ec9fd73b74af09bf3481753e034e11ea3bb8`.
+The complete repository finding digest was:
+`4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945`.
+Commands, tool versions, per-observation metadata and raw streams remain in
+external evidence; this public summary contains no runtime locations.
+
+No bytecode-state variance was observed for these inputs and versions. This
+result does not disprove the historical synchronization hypothesis. Dependency
+environment preparation, historical version reconstruction and operating-system
+file-cache state were not varied. A synchronized-environment experiment still
+requires a separate bounded design. The existing completeness and boundary
+limitations below also apply to these observations.
 
 The probe confirms that the selected rule runs and its output is received. It
 cannot prove that a linter internally analyzed every file. Stable repeated
