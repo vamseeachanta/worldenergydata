@@ -138,19 +138,18 @@ def _validated_counts(values: pd.Series) -> pd.Series:
     """
     counts = []
     for row, value in values.items():
-        if len(str(value).strip()) > _MAX_COUNT_TOKEN_CHARS:
+        try:
+            if len(str(value).strip()) > _MAX_COUNT_TOKEN_CHARS:
+                raise ValueError
+        except ValueError:
             raise ValueError(
                 f"rig_count row {row}: count token resource budget exceeded; rejected"
-            )
+            ) from None
         try:
             number = _decimal_number(value)
         except InvalidOperation:
             number = Decimal("NaN")
-        if (
-            isinstance(value, bool)
-            or not number.is_finite()
-            or number < 0
-        ):
+        if isinstance(value, bool) or not number.is_finite() or number < 0:
             raise ValueError(
                 f"rig_count row {row}: expected a nonnegative integer; rejected"
             )

@@ -1,5 +1,6 @@
 """Synthetic representation-budget regressions; no source qualification (#1859)."""
 
+import sys
 from decimal import Inexact, Rounded, localcontext
 
 import pandas as pd
@@ -76,6 +77,23 @@ def test_overlong_token_is_rejected_before_decimal_parsing(monkeypatch, token):
     monkeypatch.setattr(loader, "_decimal_number", allocation_sentinel)
     with pytest.raises(ValueError, match=r"rig_count row 17:.*resource.*rejected"):
         loader._validated_counts(values)
+
+
+@pytest.mark.parametrize("sign", [-1, 1])
+def test_unprintable_integer_retains_row_diagnostic(monkeypatch, sign):
+    """Interpreter string limits must not remove the count and row diagnostic."""
+    values = pd.Series([sign * 10**5000], index=[17], dtype=object)
+    monkeypatch.setattr(loader, "_decimal_number", allocation_sentinel)
+    original_limit = sys.get_int_max_str_digits()
+    try:
+        sys.set_int_max_str_digits(4300)
+        with pytest.raises(
+            ValueError,
+            match=r"^rig_count row 17: count token resource budget exceeded; rejected$",
+        ):
+            loader._validated_counts(values)
+    finally:
+        sys.set_int_max_str_digits(original_limit)
 
 
 def test_count_token_limit_does_not_change_depth_parsing():

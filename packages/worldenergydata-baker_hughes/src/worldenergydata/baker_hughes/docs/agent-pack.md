@@ -7,7 +7,8 @@ detection for #1335, superseding the retained F7–F10/F13–F19 gaps in section
 current numeric regression evidence, supplementing section 12's numeric
 contract for F1–F6 and F11–F12. Section 11 retains the date completeness
 contract. Section 15 adds count-token and integer-allocation resource budgets
-for #1859. Sections 1–10 remain historical evidence at the code revision below;
+for #1859 and retains row diagnostics when integer string conversion is refused.
+Sections 1–10 remain historical evidence at the code revision below;
 source qualification remains unestablished.
 
 ## Revision history
@@ -20,14 +21,15 @@ source qualification remains unestablished.
 | 6 | 2026-11-04 | Added the representation-limit citation and exponent-bound derivation beside the guard; executable behavior and boundary tests are retained. |
 | 7 | 2026-11-04 | Define workbook schemas and expose missing metadata and unmatched filters so incomplete ingestion cannot imply complete reporting. |
 | 8 | 2026-11-13 | Bound count parsing and integer allocation while preserving exact in-budget counts; record synthetic resource-budget detection. |
+| 9 | 2026-11-15 | Retained count and row diagnostics when integer string conversion is refused; added regressions for both signs and refreshed loader evidence. |
 
 | Header | Value |
 | --- | --- |
 | Module | baker_hughes |
 | Repository | worldenergydata |
 | Path | packages/worldenergydata-baker_hughes/src/worldenergydata/baker_hughes |
-| Pack revision | 8 |
-| Pack date | 2026-11-13 |
+| Pack revision | 9 |
+| Pack date | 2026-11-15 |
 | Code revision (historical sections 1–10) | b1394197a66f95d78615425b4e1ad4ff78bd9de2 |
 | Analysis family | EC; data pipeline; AQG r0 Python calculations gate set |
 | Quality role | Calculations quality manager; deputy: to be appointed |
@@ -501,6 +503,10 @@ at most 4,096 expanded integer decimal digits: nonzero counts with
 Zero and signed zero bypass only the expanded-digit check; their tokens remain
 subject to the character budget. Resource errors identify `rig_count`, the row
 index and explicit rejection, without expanding or echoing the rejected value.
+If the interpreter refuses integer string conversion, the same token-budget
+error retains the count and row diagnostic before Decimal parsing. Regression
+tests impose a 4,300-digit interpreter limit on positive and negative
+5,001-digit Python integers and restore the original limit afterwards.
 
 These limits bound representation work; they do not define a physical rig-count
 maximum. Within the budgets, finite nonnegative whole counts remain exact,
@@ -515,6 +521,7 @@ shared decimal-token parser and depth conversion are unchanged.
 | `tests/unit/baker_hughes/test_count_resource_budget.py::test_public_loaders_preserve_counts_within_budgets` | Both routes preserve exact boundary values, long mantissas, scientific notation, stripped tokens and extreme-exponent zero. |
 | `tests/unit/baker_hughes/test_count_resource_budget.py::test_unsigned_storage_boundary_keeps_exact_values` | Values at and above the unsigned 64-bit storage boundary retain exact integers. |
 | `tests/unit/baker_hughes/test_count_resource_budget.py::test_overlong_token_is_rejected_before_decimal_parsing`; `tests/unit/baker_hughes/test_count_resource_budget.py::test_public_loaders_reject_overlong_count_token` | 4,097-character tokens, including zero, are rejected before Decimal parsing and through both XLSX routes. |
+| `tests/unit/baker_hughes/test_count_resource_budget.py::test_unprintable_integer_retains_row_diagnostic` | Positive and negative integers refused by the interpreter retain the exact count-token resource rejection and source row before Decimal parsing. |
 | `tests/unit/baker_hughes/test_count_resource_budget.py::test_budget_boundaries_preserve_decimal_context_and_series_identity`; `tests/unit/baker_hughes/test_count_resource_budget.py::test_existing_invalid_count_diagnostics_are_retained`; `tests/unit/baker_hughes/test_count_resource_budget.py::test_count_token_limit_does_not_change_depth_parsing` | Context, Series identity, existing invalid-count diagnostics and shared depth parsing remain unchanged. |
 
 Table 15-1. Synthetic count resource-budget detection criteria.
@@ -526,3 +533,9 @@ signed QA evidence remain UNVERIFIED under #1336.
 
 Revision-8 count-budget evidence (SHA-256 of `loader.py`):
 `58320c57e0450143e9cede309e27224214db365aac1277ef403b2f4cbe563dfd`.
+
+Revision-9 diagnostic evidence (SHA-256 of `loader.py`):
+`0cfee35d3bc04ae1c10193a7b3b40476d583caecf93431b00caefa4b95bd4a3b`.
+The domain suite passes all 318 cases in `tests/test_baker_hughes_loader.py`
+and `tests/unit/baker_hughes/`, compared with 316 at the preceding revision.
+The two added cases fail before the diagnostic change and pass afterwards.
