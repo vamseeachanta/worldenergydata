@@ -13,7 +13,7 @@ def example(name='illustrative example'):
     return ScenarioInputs(
         name=name, periods=Periods(1.0, (300.0,) * 3),
         wells=(WellSchedule(0, 0, 0, 0, 800.0, (1.0, 0.5, 0.5), (0.0,) * 3),),
-        expenditures=(Expenditure(0, 'capital', 3000000.0),
+        expenditures=(Expenditure(0, 'capital', 2500000.0),
                       Expenditure(1, 'operating', 20000.0)),
         oil_prices_usd_per_barrel=(60.0,) * 3,
         variable_costs_usd_per_barrel=(20.0,) * 3,
@@ -26,14 +26,14 @@ def test_complete_single_well_scenario():
     result = evaluate_scenario(example())
     volumes = (800 * 300, 400 * 300, 200 * 300)
     margins = tuple(v * (60 - 20) * 0.8 for v in volumes)
-    expected = (margins[0] - 3000000, margins[1] - 20000, margins[2])
-    assert result.production.volumes_barrels == volumes
-    assert result.gross_revenue_usd == tuple(v * 60 for v in volumes)
-    assert result.variable_operating_cost_usd == tuple(v * 20 for v in volumes)
-    assert result.net_margin_revenue_usd == margins
-    assert result.net_cash_flow_usd == expected
-    assert result.cumulative_cash_flow_usd == (
-        expected[0], expected[0] + expected[1], sum(expected))
+    expected = (margins[0] - 2500000, margins[1] - 20000, margins[2])
+    assert result.production.volumes_barrels == pytest.approx(volumes)
+    assert result.gross_revenue_usd == pytest.approx(tuple(v * 60 for v in volumes))
+    assert result.variable_operating_cost_usd == pytest.approx(tuple(v * 20 for v in volumes))
+    assert result.net_margin_revenue_usd == pytest.approx(margins)
+    assert result.net_cash_flow_usd == pytest.approx(expected)
+    assert result.cumulative_cash_flow_usd == pytest.approx((
+        expected[0], expected[0] + expected[1], sum(expected)))
     assert result.npv_usd == pytest.approx(
         expected[0] / 1.08 + expected[1] / 1.08 ** 2 + expected[2] / 1.08 ** 3)
 
@@ -43,8 +43,8 @@ def test_multiple_wells_and_no_well_limit():
     doubled = evaluate_scenario(replace(inputs, wells=inputs.wells * 2))
     assert doubled.production.rates_barrels_per_day == (1600, 800, 400)
     dry = evaluate_scenario(replace(inputs, wells=()))
-    assert dry.net_cash_flow_usd == (-3000000, -20000, 0)
-    assert dry.npv_usd == pytest.approx(-3000000 / 1.08 - 20000 / 1.08 ** 2)
+    assert dry.net_cash_flow_usd == pytest.approx((-2500000, -20000, 0))
+    assert dry.npv_usd == pytest.approx(-2500000 / 1.08 - 20000 / 1.08 ** 2)
 
 
 def test_comparison_retains_inputs_and_reports_incremental_npv():
@@ -54,7 +54,7 @@ def test_comparison_retains_inputs_and_reports_incremental_npv():
     assert tuple(item.name for item in comparison.scenarios) == (base.name, alternative.name)
     assert comparison.incremental_npv_usd[0] == 0.0
     assert comparison.incremental_npv_usd[1] == pytest.approx(
-        3000000 / 1.08 + 20000 / 1.08 ** 2)
+        2500000 / 1.08 + 20000 / 1.08 ** 2)
     with pytest.raises(ValueError):
         compare_scenarios((base, replace(alternative, first_discount_period=0)))
     with pytest.raises(ValueError):

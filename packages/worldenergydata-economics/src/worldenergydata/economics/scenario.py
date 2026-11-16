@@ -32,6 +32,14 @@ from .scenario_costs import (activity_cost_usd, cost_breakdown,
 from .scenario_finance import (discounted_cash_flow_usd, net_cash_flow_usd,
                                npv_usd, revenue_usd)
 
+__all__ = [
+    'Periods', 'ScenarioInputs', 'WellSchedule',
+    'ProductionProfile', 'ScenarioResult', 'ScenarioComparison',
+    'production_profile', 'evaluate_scenario', 'compare_scenarios',
+    'activity_cost_usd', 'cost_breakdown', 'expenditure_profile_usd',
+    'discounted_cash_flow_usd', 'net_cash_flow_usd', 'npv_usd', 'revenue_usd',
+]
+
 
 @dataclass(frozen=True)
 class ProductionProfile:
@@ -41,6 +49,8 @@ class ProductionProfile:
     volumes_barrels: tuple[float, ...]
 
     def __post_init__(self) -> None:
+        if len(self.rates_barrels_per_day) != len(self.volumes_barrels):
+            raise ValueError('Rates and volumes must share a horizon')
         _series(self.rates_barrels_per_day, 'rates_barrels_per_day', 0.0)
         _series(self.volumes_barrels, 'volumes_barrels', 0.0)
 

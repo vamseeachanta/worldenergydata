@@ -9,12 +9,12 @@ from worldenergydata.economics.scenario import (
 
 def test_engineering_and_contingency_bases_are_explicit():
     result = cost_breakdown(CostBreakdown((2000.0, 3000.0), 0.2, 0.25, True))
-    assert result.base_usd == 2000 + 3000
-    assert result.engineering_usd == (2000 + 3000) * 0.2
-    assert result.contingency_usd == (2000 + 3000) * (1 + 0.2) * 0.25
-    assert result.total_usd == (2000 + 3000) * (1 + 0.2) * (1 + 0.25)
+    assert result.base_usd == pytest.approx(2000 + 3000)
+    assert result.engineering_usd == pytest.approx((2000 + 3000) * 0.2)
+    assert result.contingency_usd == pytest.approx((2000 + 3000) * (1 + 0.2) * 0.25)
+    assert result.total_usd == pytest.approx((2000 + 3000) * (1 + 0.2) * (1 + 0.25))
     separate = cost_breakdown(CostBreakdown((2000.0, 3000.0), 0.2, 0.25, False))
-    assert separate.total_usd == 5000 * (1 + 0.2 + 0.25)
+    assert separate.total_usd == pytest.approx(5000 * (1 + 0.2 + 0.25))
     assert cost_breakdown(CostBreakdown((), 0.0, 0.0, False)).total_usd == 0
 
 

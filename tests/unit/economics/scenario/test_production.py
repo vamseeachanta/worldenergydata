@@ -4,7 +4,7 @@ from dataclasses import FrozenInstanceError, replace
 import pytest
 
 from worldenergydata.economics.scenario_inputs import Periods, WellSchedule
-from worldenergydata.economics.scenario import production_profile
+from worldenergydata.economics.scenario import ProductionProfile, production_profile
 
 
 def test_drilling_completion_then_single_well_decline():
@@ -60,3 +60,12 @@ def test_production_profile_rejects_volume_overflow():
     with pytest.raises(ValueError):
         production_profile(WellSchedule(0, 0, 0, 0, 1e308, (1.0,), (0.0,)),
                            Periods(1.0, (300.0,)))
+
+
+@pytest.mark.parametrize('rates, volumes', [
+    ((800.0, 400.0), (240000.0,)),
+    ((800.0,), (240000.0, 120000.0)),
+])
+def test_production_profile_rejects_mismatched_horizons(rates, volumes):
+    with pytest.raises(ValueError, match='Rates and volumes must share a horizon'):
+        ProductionProfile(rates, volumes)

@@ -28,6 +28,7 @@ def revenue_usd(volumes_barrels: tuple[float, ...],
     """Gross USD revenue using shared production-times-price arithmetic."""
     _aligned(volumes_barrels, prices_usd_per_barrel)
     _series(volumes_barrels, 'volumes_barrels', 0.0)
+    # Per-period construction is needed because build_cash_flow_schedule takes a single flat price.
     result = tuple(build_cash_flow_schedule(
         [0], [volume], price, 0.0, [0.0], 0.0, 0.0, 0.0).revenue[0]
         for volume, price in zip(volumes_barrels, prices_usd_per_barrel))
