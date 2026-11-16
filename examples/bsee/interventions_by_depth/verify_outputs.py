@@ -1,15 +1,17 @@
-"""Reconcile delivered aggregates without network or raw files."""
+"""Reconcile delivered aggregates and chart dimensions without network/raw files."""
 
 import hashlib
 import json
 import platform
 from pathlib import Path
 
+import matplotlib
 import numpy as np
 import pandas as pd
 import yaml
 from count_interventions import report_years
 from estimate_costs import estimate
+from PIL import Image
 
 ROOT = Path(__file__).resolve().parent
 
@@ -153,6 +155,29 @@ def verify(out=ROOT / "output"):
     hist = pd.read_csv(out / "life_cycle_life_histogram.csv")
     assert hist.wells.sum() == life["dated_wells"] - life["life_not_established"]
     assert life["permanently_abandoned"] + life["standing"] == life["dated_wells"]
+    from plot_charts import COLORS
+
+    for color in COLORS:
+        srgb = [int(color[i : i + 2], 16) / 255 for i in (1, 3, 5)]
+        rgb = [
+            v / 12.92 if v <= 0.04045 else ((v + 0.055) / 1.055) ** 2.4 for v in srgb
+        ]
+        luminance = sum(v * w for v, w in zip(rgb, [0.2126, 0.7152, 0.0722]))
+        assert 1.05 / (luminance + 0.05) >= 3
+    for stem in [
+        "01_approved_interventions",
+        "02_rates_per_standing_well",
+        "03_cost_per_event",
+        "04_unit_types_by_depth",
+        "05_well_life",
+        "06_well_life_stages",
+    ]:
+        for suffix in (".png", ".svg"):
+            assert (out / f"{stem}{suffix}").is_file(), f"missing chart {stem}{suffix}"
+        svg = (out / f"{stem}.svg").read_text(encoding="utf-8")
+        assert "cost_basis.yml" not in svg
+        if not stem.startswith("03"):
+            assert "cost basis" not in svg
     # The optional WAR table belongs to the run whose summary records its read.
     assert (out / "war_duration_crosscheck.csv").exists() == (
         "war_rows" in summary
@@ -163,12 +188,16 @@ def verify(out=ROOT / "output"):
         if p.suffix in [".csv", ".json", ".png", ".svg"]
         and p.name != "verification.json"
     )
+    for png in out.glob("*.png"):
+        with Image.open(png) as img:
+            assert img.width >= 1600
     receipt = dict(
         criteria_revision=3,
         software=dict(
             python=platform.python_version(),
             pandas=pd.__version__,
             numpy=np.__version__,
+            matplotlib=matplotlib.__version__,
             pyyaml=yaml.__version__,
         ),
         code_and_basis_sha256={
@@ -179,8 +208,10 @@ def verify(out=ROOT / "output"):
                 list(ROOT.glob("*.py"))
                 + [
                     ROOT / "cost_basis.yml",
+                    ROOT / "README.md",
                     ROOT / "requirements.txt",
                     ROOT.parents[2] / "tests/unit/bsee/test_interventions_by_depth.py",
+                    ROOT.parents[2] / "tests/unit/bsee/test_interventions_report.py",
                     ROOT.parents[2] / "tests/unit/bsee/test_well_life_cycle.py",
                 ]
             )
@@ -195,10 +226,13 @@ def verify(out=ROOT / "output"):
             "subsea flags retain yes no and unknown counts",
             "approval to distinct-well ratios reconcile",
             "all rate stock dates are 1 January",
+            "ordered band palette contrast at least 3 to 1 on white",
             "life-cycle permits reconcile with published groups over the window",
             "light and heavy by year partition each year's well work",
             "life-cycle well counts and histogram reconcile",
             "WAR cross-check present only with this run's verified WAR read",
+            "all six figure pairs present without internal basis filenames",
+            "PNG width at least 1600",
         ],
         files={p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in files},
     )
