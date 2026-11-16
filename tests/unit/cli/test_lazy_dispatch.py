@@ -1,5 +1,6 @@
 """Network-free startup budget and public lazy-dispatch compatibility."""
 
+import re
 import subprocess
 import sys
 
@@ -97,8 +98,15 @@ def test_family_help_loads_only_selected_family(family):
     _startup_probe([family, "--help"], family)
 
 
-def test_root_help_stays_lazy_and_lists_every_family():
+@pytest.mark.parametrize("color", [False, True], ids=["plain", "ansi"])
+def test_root_help_stays_lazy_and_lists_every_family(monkeypatch, color):
+    monkeypatch.setenv("TERM", "xterm-256color" if color else "dumb")
+    monkeypatch.setenv("FORCE_COLOR", "1")
+    monkeypatch.delenv("NO_COLOR", raising=False)
+    monkeypatch.setenv("COLUMNS", "80")
     output = _startup_probe(["--help"])
+    assert ("\x1b[" in output) is color
+    output = re.sub(r"\x1b\[[0-9;]*m", "", output)
     for name in EXPECTED_FAMILIES:
         assert name in output
     assert "install-completion" in output
