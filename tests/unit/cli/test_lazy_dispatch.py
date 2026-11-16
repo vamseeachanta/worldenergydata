@@ -16,6 +16,7 @@ import sys
 
 import pytest
 import typer
+from click import unstyle
 from typer.main import get_command
 
 from worldenergydata.cli.main import app
@@ -63,7 +64,9 @@ def record():
         or name in {"pandas", "numpy", "pydantic", "worldenergydata.bsee",
                     "worldenergydata.common", "worldenergydata.safety_analysis"}
     ))
-    with open(os.environ["CLI_IMPORT_REPORT"], "w") as stream:
+    with open(
+        os.environ["CLI_IMPORT_REPORT"], "w", encoding="utf-8", newline="\\n"
+    ) as stream:
         json.dump(names, stream)
 
 atexit.register(record)
@@ -71,24 +74,36 @@ atexit.register(record)
 
 
 @pytest.fixture
-def installed_console(tmp_path):
+def installed_console(tmp_path, monkeypatch):
     """Use the actual installed script; never fall back to a child Typer app."""
+    # Exercise every console path with a caller that requests color and a TTY.
+    monkeypatch.setenv("FORCE_COLOR", "1")
+    monkeypatch.setenv("TTY_COMPATIBLE", "1")
+    monkeypatch.setenv("TERM", "xterm-256color")
     executable = shutil.which("worldenergydata")
     assert executable, "Install the workspace before running console startup tests"
-    (tmp_path / "sitecustomize.py").write_text(AUDIT)
+    (tmp_path / "sitecustomize.py").write_text(AUDIT, encoding="utf-8", newline="\n")
     report = tmp_path / "imports.json"
     env = os.environ.copy()
     env["CLI_IMPORT_REPORT"] = str(report)
     env["PYTHONPATH"] = os.pathsep.join([str(tmp_path), env.get("PYTHONPATH", "")])
     env["COLUMNS"] = "120"
     env["NO_COLOR"] = "1"
+    # Typer and Rich can force styling from color or terminal hints.
+    for name in ("FORCE_COLOR", "PY_COLORS", "GITHUB_ACTIONS", "TTY_COMPATIBLE"):
+        env.pop(name, None)
     # Do not inherit a caller's shell-completion request.
     env.pop("_WORLDENERGYDATA_COMPLETE", None)
 
-    def run(*args, python_args=None):
+    def run(*args, python_args=None, force_color=None):
+        run_env = env.copy()
+        if force_color:
+            run_env["FORCE_COLOR"] = "1"
+            run_env.pop("NO_COLOR", None)
+            run_env["TERM"] = "xterm-256color"
         result = subprocess.run(
             [sys.executable, *python_args] if python_args else [executable, *args],
-            env=env,
+            env=run_env,
             cwd=tmp_path,
             capture_output=True,
             text=True,
@@ -96,7 +111,7 @@ def installed_console(tmp_path):
             check=False,
         )
         assert report.exists(), "The offline import recorder did not start"
-        return result, set(json.loads(report.read_text()))
+        return result, set(json.loads(report.read_text(encoding="utf-8")))
 
     return run
 
@@ -162,10 +177,19 @@ def test_every_registered_family_can_load_help(installed_console, family):
         (("eia", "sync", "--help"), "--feed"),
     ],
 )
-def test_real_nested_command_dispatch_is_offline(installed_console, args, expected):
-    result, imported = installed_console(*args)
+@pytest.mark.parametrize(
+    "force_color", [None, False, True], ids=["default", "plain", "color"]
+)
+def test_real_nested_command_dispatch_is_offline(
+    installed_console, args, expected, force_color
+):
+    result, imported = installed_console(*args, force_color=force_color)
     assert result.returncode == (1 if args[0] == "landman" else 0)
-    assert expected in result.stdout
+    if force_color:
+        assert "\x1b[" in result.stdout
+    else:
+        assert "\x1b[" not in result.stdout
+    assert expected in unstyle(result.stdout)
     assert imported == {f"worldenergydata.cli.commands.{args[0]}"}
 
 

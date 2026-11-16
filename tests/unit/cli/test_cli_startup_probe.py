@@ -3,7 +3,9 @@
 import importlib.util
 import json
 import subprocess
+import time
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -37,8 +39,12 @@ def test_probe_records_timings_and_import_stack(probe, monkeypatch, tmp_path):
         ],
     )
     monkeypatch.setattr(probe.shutil, "which", lambda name: "worldenergydata")
+    shared_counter = time.perf_counter
     times = iter([10, 11, 20, 22])
-    monkeypatch.setattr(probe.time, "perf_counter", lambda: next(times))
+    monkeypatch.setattr(
+        probe, "time", SimpleNamespace(perf_counter=lambda: next(times))
+    )
+    assert time.perf_counter is shared_counter
     calls = []
 
     def run(command, **kwargs):
