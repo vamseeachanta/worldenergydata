@@ -1,0 +1,17 @@
+{
+  "snapshot": "2026-11-13",
+  "file_date": "2026-11-13",
+  "window": "2005-2026",
+  "dated_wells": 37512,
+  "wells_without_first_spud": 17,
+  "life_not_established": 8,
+  "permanently_abandoned": 30737,
+  "standing": 6775,
+  "bores_with_spud": 54554,
+  "bores_without_spud": 35,
+  "bores_not_in_dated_wells": 0,
+  "group_sizes": {
+    "development wells first drilled 2005-2025": 1235,
+    "exploration wells first drilled 2005-2025": 1655
+  }
+}

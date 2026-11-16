@@ -124,18 +124,45 @@ class AssumptionsManager:
     values, matching the behavior of FDAS Aget() function.
     """
 
-    def __init__(self, assumptions_df: Optional[pd.DataFrame] = None):
+    def __init__(
+        self,
+        assumptions_df: Optional[pd.DataFrame] = None,
+        *,
+        version: Optional[str] = None,
+    ):
         """
         Initialize assumptions manager.
 
         Args:
             assumptions_df: DataFrame with development system assumptions
-                           If None, uses DEFAULT_ASSUMPTIONS
+                           If supplied, reports the version as "custom".
+            version: Built-in table: "legacy-v1" (default) or "source-note-v2".
+                     Cannot be combined with a custom DataFrame.
+
+        Raises:
+            ConfigurationError: Unknown version or conflicting custom input.
         """
+        if assumptions_df is not None and version is not None:
+            raise ConfigurationError("A custom table cannot select a built-in version")
+        if version is not None and version not in ("legacy-v1", "source-note-v2"):
+            raise ConfigurationError(f"Unknown assumptions version: {version!r}")
+
         if assumptions_df is None:
+            self.assumptions_version = version or "legacy-v1"
             self.assumptions = pd.DataFrame(DEFAULT_ASSUMPTIONS)
+            if self.assumptions_version == "source-note-v2":
+                # BOEM Sale 249 Final Notice (2017-07-14), p. 32579,
+                # "Royalty Rate": 18.75% at >=200 m; historical example only,
+                # not lease eligibility inferred from development-system keys.
+                # https://www.govinfo.gov/content/pkg/FR-2017-07-14/pdf/2017-14868.pdf#page=3
+                # NIST SP 811 (2008), section 7.10.2: percent represents 0.01.
+                # Both sources retrieved 2026-11-15; links in ROYALTY-VERSIONS.md.
+                self.assumptions.loc[
+                    self.assumptions["DEV_SYSTEM"] != "dry", "ROYALTY_RATE"
+                ] = (18.75 / 100)
         else:
-            self.assumptions = assumptions_df.copy()
+            self.assumptions_version = "custom"
+            self.assumptions = assumptions_df.copy(deep=True)
 
         # Normalize development system names
         if "DEV_SYSTEM" in self.assumptions.columns:
