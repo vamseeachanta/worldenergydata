@@ -38,7 +38,7 @@ build_package() {
     uv sync --extra build
     
     # Build the package
-    uv build
+    uv build --all-packages
     
     echo "✅ Build complete!"
     echo "📄 Build artifacts:"

@@ -243,14 +243,34 @@ addopts = [
 
 ```bash
 
-# Build package
+# Build the root distribution and all workspace members
 
-uv build
+bash scripts/uv_deploy.sh build
 
-# Test build locally
+# Equivalent build command after dependency setup
 
-./scripts/uv_deploy.sh test-build
+uv build --all-packages
 ```
+
+Both `scripts/uv_deploy.sh build` and the compatibility entry point
+`scripts/tools/uv_deploy.sh build` resolve the repository root from their script
+location. The compatibility entry point forwards arguments and exit status to
+the canonical helper. The build action retains `uv sync --extra build` before
+running `uv build --all-packages`; a failed synchronization or build exits without
+the build-success marker. Invoking either helper performs real work.
+
+The dispatch tests in `tests/unit/tooling/test_uv_deploy_build.py` copy the helpers
+into disposable layouts and substitute recording tools. They check the working
+directory, command arguments, failure status and fixture preservation. They do
+not synchronize dependencies, generate artifacts, install packages or upload
+anything. Passing these tests does not establish a releasable package set.
+
+An actual build generates artifacts under `dist/`. Before publication, validate
+exactly the wheels intended for a shared installation using the
+[package artifact ownership checks](package_artifact_checks.md). Ownership checks
+do not establish dependency closure, installed-domain behavior or release
+completeness. The existing `test-build` action performs cleanup and installation;
+it is separate from the isolated dispatch tests and requires its own validation.
 
 ### Publishing
 
@@ -266,6 +286,10 @@ export TESTPYPI_TOKEN="your-token"
 export PYPI_TOKEN="your-token"
 ./scripts/uv_deploy.sh publish
 ```
+
+TestPyPI and production publication are separate actions requiring the relevant
+credentials and release authorization. A successful local build or dispatch test
+does not authorize either upload.
 
 ### Build Configuration
 
