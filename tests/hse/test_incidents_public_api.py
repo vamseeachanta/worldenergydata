@@ -82,7 +82,9 @@ def test_planned_defaults_select_first_100_bsee_records(incident_database):
         ({"operator": "unknown"}, []),
     ],
 )
-def test_explicit_filters_override_planned_defaults(incident_database, filters, expected):
+def test_explicit_filters_override_planned_defaults(
+    incident_database, filters, expected
+):
     from worldenergydata.hse import HSEIncidentsQuery
 
     _, engine = incident_database
