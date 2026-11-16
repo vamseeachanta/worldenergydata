@@ -85,6 +85,14 @@ CATALOG_CONTRACTS = (
 
 # Exact paths may select one contract suite or several related test files.
 CONTRACT_ROUTES = {
+    "scripts/career/build_semiconductor_packet.py": "tests/career/test_semiconductor_packet.py",
+    "docs/career/semiconductor-packet.json": "tests/career/test_semiconductor_packet.py",
+    "docs/reports/semiconductor-career-packet.html": "tests/career/test_semiconductor_packet.py",
+    "tests/career/test_semiconductor_packet.py": "tests/career/test_semiconductor_packet.py",
+    "tests/ci/test_career_routes.py": (
+        "tests/career/test_semiconductor_packet.py",
+        "tests/ci/test_career_routes.py",
+    ),
     "config/fields.yml": "tests/unit/cost/test_project_field_crosswalk.py",
     "src/worldenergydata/field_development/past_projects.yml": (
         "tests/unit/cost/test_project_field_crosswalk.py",
@@ -110,6 +118,10 @@ CONTRACT_ROUTES = {
     "reports/lower_tertiary/lifecycle/_performance.json": "tests/unit/site",
     "reports/lower_tertiary/parametric/lt_economics_parametric.json": "tests/unit/site",
     "reports/field-atlas/results/explorer_results_bundle.json": "tests/unit/site",
+    "scripts/eda/report.py": "tests/unit/eda",
+    "docs/examples/eda/README.md": "tests/unit/eda",
+    "docs/examples/eda/manifest.json": "tests/unit/eda",
+    "docs/examples/eda/report.md": "tests/unit/eda",
     "config/repo_structure.yml": "tests/repo_structure",
     ".gitattributes": "tests/repo_structure",
     "scripts/maintenance/classify_report_inventory.py": "tests/repo_structure",
