@@ -12,6 +12,10 @@ Cheap checks performed against each recently-closed issue body:
   2. Referenced file / test paths: backticked ``path/to/file.py`` or
      ``tests/...`` references that do not exist in the local repo tree are
      flagged ("claimed deliverable missing").
+  * Opt-in ``--catalog data/catalog.yaml`` checks explicit checkboxes such as
+    "Catalog entry resolves:" followed by a backticked relative dataset path
+    in the selected catalog. Availability is local to the repository root;
+    unsupported claims and outside targets remain unverified.
   * Explicit symlink-presence checkboxes use issue #368's ``test -L`` semantics:
     a dangling link is present; a regular file is not a symlink.
 
@@ -38,6 +42,13 @@ from dataclasses import dataclass
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Callable, Sequence
+
+from closure_catalog import (
+    CatalogError,
+    literal_path,
+    make_catalog_checker,
+    parse_catalog_claim,
+)
 
 # --------------------------------------------------------------------------- #
 # Constants
@@ -116,6 +127,7 @@ class IssueFinding:
     missing_paths: tuple[str, ...] = ()
     missing_symlinks: tuple[str, ...] = ()
     unverified_symlink_claims: tuple[str, ...] = ()
+    catalog_results: tuple[tuple[str, str], ...] = ()
 
     @property
     def has_drift(self) -> bool:
@@ -124,6 +136,7 @@ class IssueFinding:
             or self.missing_paths
             or self.missing_symlinks
             or self.unverified_symlink_claims
+            or any(status != "present" for _, status in self.catalog_results)
         )
 
 
@@ -206,6 +219,7 @@ def analyze_issue(
     issue: IssueRef,
     path_exists: Callable[[str], bool],
     link_exists: Callable[[str], bool] | None = None,
+    catalog_checker: Callable[[str], str] | None = None,
 ) -> IssueFinding:
     """Apply the cheap checks to one closed issue.
 
@@ -214,6 +228,7 @@ def analyze_issue(
       * referenced paths that fail ``path_exists`` -> flagged
       * explicit symlink presence claims that fail ``link_exists`` -> flagged
       * unsupported symlink wording or an absent checker -> unverified
+      * catalog checkboxes -> literal lookup or an explicit unverified result
 
     No gh calls, no real filesystem access (the checker is injected).
     """
@@ -221,7 +236,23 @@ def analyze_issue(
     ordinary_lines: list[str] = []
     links: list[str] = []
     unverified: list[str] = []
+    catalog_results: list[tuple[str, str]] = []
+    seen_catalog_claims: set[str] = set()
     for line in (issue.body or "").splitlines():
+        catalog_claim = parse_catalog_claim(line)
+        if catalog_claim is not None:
+            claim, token = catalog_claim
+            key = token or claim
+            if key in seen_catalog_claims:
+                continue
+            seen_catalog_claims.add(key)
+            status = (
+                "invalid_claim"
+                if token is None
+                else "unverified" if catalog_checker is None else catalog_checker(token)
+            )
+            catalog_results.append((key, status))
+            continue
         checkbox = _SYMLINK_CHECKBOX_RE.fullmatch(line)
         # Code spans contain literal paths or commands, not claim terminology.
         prose = _BACKTICK_RE.sub(" ", line)
@@ -253,6 +284,7 @@ def analyze_issue(
         missing_paths=missing,
         missing_symlinks=missing_links,
         unverified_symlink_claims=tuple(unverified),
+        catalog_results=tuple(catalog_results),
     )
 
 
@@ -369,6 +401,7 @@ def render_report(
     since_days: int,
     scanned: int,
     today: str | None = None,
+    catalog: str | None = None,
 ) -> str:
     """Render the markdown drift report (pure)."""
     today = today or date.today().isoformat()
@@ -380,11 +413,20 @@ def render_report(
     lines.append(f"- Window: issues closed in the last {since_days} days")
     lines.append(f"- Issues scanned: {scanned}")
     lines.append(f"- Issues with drift: {len(drifted)}")
+    if catalog is not None:
+        lines.append(f"- Catalog: `{catalog}`")
+    if catalog is not None or any(f.catalog_results for f in findings):
+        lines.append(
+            "Availability is local to the allowed root (the repository root). "
+            "Outside or unreadable targets, unsupported claims and disabled checks "
+            "are unverified; "
+            "no external existence claim is made."
+        )
     lines.append("")
     lines.append(
         "_Read-only verifier (#368). Drift = a closed issue with unchecked "
         "acceptance boxes, a claimed file/test path missing from the tree, "
-        "or a failed or unverified symlink presence claim. "
+        "or a failed or unverified symlink presence or catalog resolution claim. "
         "Human decides whether to reopen._"
     )
     lines.append("")
@@ -399,6 +441,11 @@ def render_report(
         if f.url:
             lines.append(f"{f.url}")
         lines.append("")
+        if f.catalog_results:
+            lines.append("**Catalog resolution claims (status):**")
+            for claim, status in f.catalog_results:
+                lines.append(f"- `{claim}`: {status}")
+            lines.append("")
         if f.missing_paths:
             lines.append(
                 "**Claimed deliverable missing (referenced but not in tree):**"
@@ -449,11 +496,28 @@ def main(argv: Sequence[str] | None = None) -> int:
         action="store_true",
         help="Print to stdout only; do not write a report file.",
     )
+    parser.add_argument(
+        "--catalog",
+        help="Opt-in catalog resolution using one repository-relative YAML catalog.",
+    )
     args = parser.parse_args(argv)
 
     repo_root = Path(args.repo_root).resolve()
     path_exists = make_repo_path_checker(repo_root)
     link_exists = make_repo_link_checker(repo_root)
+    catalog_checker = None
+    if args.catalog is not None:
+        try:
+            selection = literal_path(args.catalog)
+            if selection is None:
+                raise CatalogError(
+                    "catalog must use a literal repository-relative path"
+                )
+            catalog_checker = make_catalog_checker(repo_root / selection, repo_root)
+            args.catalog = selection
+        except CatalogError as exc:
+            print(f"ERROR: {exc}", file=sys.stderr)
+            return 2
 
     try:
         issues = fetch_recent_closed_issues(args.repo, args.since_days, args.max_issues)
@@ -461,12 +525,15 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(f"ERROR: could not fetch closed issues: {exc}", file=sys.stderr)
         return 2
 
-    findings = [analyze_issue(i, path_exists, link_exists) for i in issues]
+    findings = [
+        analyze_issue(i, path_exists, link_exists, catalog_checker) for i in issues
+    ]
     report = render_report(
         findings,
         owner_repo=args.repo,
         since_days=args.since_days,
         scanned=len(issues),
+        catalog=args.catalog,
     )
 
     if not args.no_report:
