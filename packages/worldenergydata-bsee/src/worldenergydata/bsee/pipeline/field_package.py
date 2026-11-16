@@ -9,6 +9,10 @@ from typing import Any
 
 import pandas as pd
 
+from worldenergydata.bsee.pipeline.field_component_details import (
+    render_component_details,
+)
+
 FIELD_PACKAGE_CONTRACT_VERSION = "field-infrastructure-package-v1"
 BSEE_SCANNED_DOCUMENTS = {
     "pipeline_map": {
@@ -76,6 +80,7 @@ def render_field_package_html(
         _summary_section(context, summary),
         _asset_inventory_section(bundle["structures"]),
         _pipeline_section(bundle["pipeline_segments"], bundle["appurtenances"]),
+        render_component_details(bundle["pipeline_segments"], bundle["appurtenances"]),
         _document_queue_section(document_queue),
         _evidence_section(),
     ]
@@ -117,8 +122,12 @@ def _load_bundle(bundle_dir: Path) -> dict[str, Any]:
         "context": _read_json(required["context"]),
         "summary": _read_json(required["summary"]),
         "structures": pd.read_csv(required["structures"]),
-        "pipeline_segments": pd.read_csv(required["pipeline_segments"]),
-        "appurtenances": pd.read_csv(required["appurtenances"]),
+        "pipeline_segments": pd.read_csv(
+            required["pipeline_segments"], dtype={"segment_number": "string"}
+        ),
+        "appurtenances": pd.read_csv(
+            required["appurtenances"], dtype={"segment_number": "string"}
+        ),
         "documents": pd.read_csv(required["documents"]),
     }
 
