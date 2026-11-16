@@ -46,6 +46,7 @@ def forbid_network(monkeypatch, request):
         (httpx.Client, "send"),
         (httpx.AsyncClient, "send"),
         (socket, "create_connection"),
+        (socket, "getaddrinfo"),
         (socket.socket, "connect"),
         (socket.socket, "connect_ex"),
     ):
@@ -137,6 +138,18 @@ def test_alternate_http_routes_are_rejected_before_transport(
             with httpx.Client(trust_env=False) as client:
                 client.get("https://example.invalid/survey.zip")
     transport.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    "forbid_network", [{(socket, "getaddrinfo"): 1}], indirect=True, ids=["dns-probe"]
+)
+def test_name_resolution_is_rejected_before_resolver(monkeypatch, forbid_network):
+    """Reject name resolution without entering the low-level resolver."""
+    resolver = Mock(side_effect=AssertionError("Resolver backstop reached"))
+    monkeypatch.setattr(socket._socket, "getaddrinfo", resolver)
+    with pytest.raises(AssertionError, match="Forbidden call: getaddrinfo"):
+        socket.getaddrinfo("example.invalid", 443)
+    resolver.assert_not_called()
 
 
 @pytest.mark.parametrize("protocol", [0, 4])
