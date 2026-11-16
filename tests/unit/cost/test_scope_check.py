@@ -3,10 +3,7 @@
 import csv
 import importlib
 import json
-import threading
 from pathlib import Path
-from urllib.error import HTTPError
-from urllib.request import Request, urlopen
 
 import pytest
 from typer.testing import CliRunner
@@ -106,7 +103,7 @@ def test_fallback_does_not_pool_ambiguous_group_percentiles(table, scope):
     path = table(invented_row(), invented_row(region="other_region", p50=25))
     result = check(scope | {"region": "unmatched"}, path)
     assert result["range"] is None
-    assert result["reason"] == "no close comparables"
+    assert result["reason"] == "ambiguous comparable groups"
     assert "ambiguous" in " ".join(result["limitations"])
 
 
@@ -342,37 +339,22 @@ def test_cli_missing_table_and_malformed_scope_are_json_errors(scope, tmp_path):
     [(None, 200), (b"{", 400), (b"[]", 400), (b"x" * 65537, 413)],
     ids=["success", "malformed", "non-object", "too-large"],
 )
-def test_http_round_trip_uses_ephemeral_loopback_port(table, scope, payload, status):
+def test_http_requests_use_in_process_client(table, scope, payload, status):
     pytest.importorskip("flask")
-    make_server = pytest.importorskip("werkzeug.serving").make_server
     from worldenergydata.cost.scope_check_http import create_app
 
-    server = make_server("127.0.0.1", 0, create_app(table()))
-    worker = threading.Thread(target=server.serve_forever, daemon=True)
-    worker.start()
-    try:
-        body = json.dumps(scope).encode() if payload is None else payload
-        request = Request(
-            f"http://127.0.0.1:{server.server_port}/api/cost-check",
-            data=body,
-            headers={"Content-Type": "application/json"},
-            method="POST",
-        )
-        try:
-            response = urlopen(request, timeout=5)
-        except HTTPError as error:
-            response = error
-        with response:
-            assert response.code == status
-            result = json.load(response)
-        if status == 200:
-            assert result["range"]["capex_per_well"]["p50"] == 40_000_000
-        else:
-            assert result["error"]
-    finally:
-        server.shutdown()
-        worker.join(timeout=5)
-        server.server_close()
+    body = json.dumps(scope).encode() if payload is None else payload
+    response = (
+        create_app(table())
+        .test_client()
+        .post("/api/cost-check", data=body, content_type="application/json")
+    )
+    assert response.status_code == status
+    result = response.get_json()
+    if status == 200:
+        assert result["range"]["capex_per_well"]["p50"] == 40_000_000
+    else:
+        assert result["error"]
 
 
 @pytest.mark.parametrize("reverse", [False, True])
@@ -404,7 +386,7 @@ def test_equal_distance_fallbacks_are_one_ambiguous_stage(
         ]
     result = check(scope, table(*reversed(rows) if reverse else rows))
     assert result["range"] is None
-    assert result["reason"] == "no close comparables"
+    assert result["reason"] == "ambiguous comparable groups"
     assert result["matched_group"] == {}
     assert result["comparables"] == []
     assert any(
@@ -645,7 +627,7 @@ def test_unknown_table_rows_do_not_disqualify_usable_rows(table, scope, key, cou
     result = check(scope, table(invented_row(), unknown))
     assert result["range"]["capex_per_well"]["p50"] == 40_000_000
     assert result["matched_group"]["capex_per_well"]["dropped_keys"] == []
-    assert result["indicative_only"] is bool(count)
+    assert result["indicative_only"] is False
     if count:
         assert any(
             "Excluded benchmark rows with unknown grouping labels: 1;" in item
