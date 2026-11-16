@@ -16,6 +16,7 @@ import sys
 
 import pytest
 import typer
+from click import unstyle
 from typer.main import get_command
 
 from worldenergydata.cli.main import app
@@ -85,10 +86,17 @@ def installed_console(tmp_path):
     # Do not inherit a caller's shell-completion request.
     env.pop("_WORLDENERGYDATA_COMPLETE", None)
 
-    def run(*args, python_args=None):
+    def run(*args, python_args=None, force_color=None):
+        run_env = env.copy()
+        if force_color is False:
+            run_env.pop("FORCE_COLOR", None)
+        if force_color:
+            run_env["FORCE_COLOR"] = "1"
+            run_env.pop("NO_COLOR", None)
+            run_env["TERM"] = "xterm-256color"
         result = subprocess.run(
             [sys.executable, *python_args] if python_args else [executable, *args],
-            env=env,
+            env=run_env,
             cwd=tmp_path,
             capture_output=True,
             text=True,
@@ -162,10 +170,15 @@ def test_every_registered_family_can_load_help(installed_console, family):
         (("eia", "sync", "--help"), "--feed"),
     ],
 )
-def test_real_nested_command_dispatch_is_offline(installed_console, args, expected):
-    result, imported = installed_console(*args)
+@pytest.mark.parametrize("force_color", [False, True], ids=["plain", "color"])
+def test_real_nested_command_dispatch_is_offline(
+    installed_console, args, expected, force_color
+):
+    result, imported = installed_console(*args, force_color=force_color)
     assert result.returncode == (1 if args[0] == "landman" else 0)
-    assert expected in result.stdout
+    if force_color:
+        assert "\x1b[" in result.stdout
+    assert expected in unstyle(result.stdout)
     assert imported == {f"worldenergydata.cli.commands.{args[0]}"}
 
 
