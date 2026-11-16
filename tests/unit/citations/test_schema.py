@@ -58,3 +58,15 @@ def test_routing_fields_round_trip(citation):
 def test_wiki_path_guards(citation, path):
     with pytest.raises(CitationValidationError):
         replace(citation, wiki_path=path)
+
+
+@pytest.mark.parametrize(
+    "value", [True, False, float("nan"), float("inf"), "0.125", None]
+)
+def test_cited_value_requires_finite_number(citation, value):
+    with pytest.raises(CitationValidationError, match="finite"):
+        CitedValue(value, citation, "dimensionless")
+
+
+def test_cited_value_accepts_integer(citation):
+    assert CitedValue(3, citation).value == 3

@@ -14,8 +14,6 @@ from pathlib import Path
 from .schema import CitationResolutionError, _join_with_layout_detection
 
 _WALK_HARD_CAP = 8
-# Reserved for one-time resolution warnings in calculation consumers.
-_RESOLUTION_CACHE: dict[str, bool] = {}
 _LOGGER = logging.getLogger(__name__)
 
 

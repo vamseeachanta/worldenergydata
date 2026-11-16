@@ -8,13 +8,16 @@ Contract: docs/standards/calc-output-citation.md (workspace-hub).
 
 from __future__ import annotations
 
+import math
 import re
 from dataclasses import dataclass
+from numbers import Real
 from pathlib import Path
-from typing import Any, Mapping, Optional
+from typing import Optional
 
 _WIKI_PATH_PREFIX = "wikis/"
 _FORBIDDEN_SEGMENTS = ("..", "")
+_IDENTITY_FIELDS = ("code_id", "publisher", "revision")
 
 
 class CitationResolutionError(RuntimeError):
@@ -80,6 +83,17 @@ class CitedValue:
     citation: Citation
     units: str = ""
 
+    def __post_init__(self) -> None:
+        value = self.value
+        if (
+            isinstance(value, bool)
+            or not isinstance(value, Real)
+            or not math.isfinite(value)
+        ):
+            raise CitationValidationError(
+                f"CitedValue.value must be a finite number: got {value!r}"
+            )
+
 
 def _validate_wiki_path(wiki_path: str) -> None:
     if not wiki_path.startswith(_WIKI_PATH_PREFIX):
@@ -99,24 +113,57 @@ def _validate_wiki_path(wiki_path: str) -> None:
 _FRONTMATTER_RE = re.compile(r"^---\s*\n(.*?)\n---\s*\n", re.DOTALL)
 
 
-def _read_frontmatter(path: Path) -> Mapping[str, Any]:
-    text = path.read_text(encoding="utf-8")
+def _parse_frontmatter(text: str) -> tuple[dict[str, str], set[str]]:
+    """Return top-level scalar fields and the names of repeated top-level keys.
+
+    Minimal YAML-frontmatter parser covering the fields this validator needs;
+    avoids adding a yaml dependency for the pilot. Only unindented ``key: value``
+    lines count, so nested mappings cannot stand in for the page identity.
+    """
     m = _FRONTMATTER_RE.match(text)
     if not m:
-        return {}
-    # Minimal YAML-frontmatter parser covering the fields this validator needs.
-    # Avoids adding a yaml dependency for the pilot; the three fields are flat scalars.
+        return {}, set()
     fm: dict[str, str] = {}
+    duplicates: set[str] = set()
     for line in m.group(1).splitlines():
-        if ":" not in line or line.lstrip().startswith("#"):
+        if not line or line[0].isspace() or line.startswith("#") or ":" not in line:
             continue
         key, _, rest = line.partition(":")
         key = key.strip()
         value = rest.strip()
         if value.startswith('"') and value.endswith('"'):
             value = value[1:-1]
+        if key in fm:
+            duplicates.add(key)
         fm[key] = value
-    return fm
+    return fm, duplicates
+
+
+def _resolution_error(citation: Citation, reason: str) -> CitationResolutionError:
+    return CitationResolutionError(
+        code_id=citation.code_id, wiki_path=citation.wiki_path, reason=reason
+    )
+
+
+def _contained_page(base: Path, path: Path, citation: Citation) -> Path:
+    """Resolve the selected page and require it inside the resolved root."""
+    try:
+        resolved_base = base.resolve(strict=True)
+        resolved = path.resolve(strict=True)
+    except (OSError, RuntimeError) as error:
+        raise _resolution_error(citation, "page_missing") from error
+    if not resolved.is_relative_to(resolved_base):
+        raise _resolution_error(citation, "page_outside_root")
+    return resolved
+
+
+def _read_page(path: Path, citation: Citation) -> str:
+    """Read the page; failures keep the citation identity, not the local path."""
+    try:
+        return path.read_text(encoding="utf-8")
+    except (OSError, UnicodeError) as error:
+        reason = f"page_unreadable:{type(error).__name__}"
+        raise _resolution_error(citation, reason) from error
 
 
 def _join_with_layout_detection(base: Path, wiki_path: str) -> Path:
@@ -141,38 +188,37 @@ def validate_citation(
     """Fail-closed resolution check.
 
     Raises CitationResolutionError if:
-    - the cited wiki page does not exist
-    - the page frontmatter lacks code_id / publisher / revision
+    - the cited wiki page does not exist, or resolves outside the wiki root
+    - the page cannot be read or decoded as UTF-8
+    - the top-level frontmatter lacks or repeats code_id / publisher / revision
     - any of the three fields disagree with the citation
 
     When repo_root is None, defers to the resolver (LLM_WIKI_PATH precedence chain).
     When repo_root is provided, joins directly but tries both standalone and
-    workspace-hub-overlay layouts to find the file.
+    workspace-hub-overlay layouts to find the file. On both routes the selected
+    page, after following symlinks, must lie inside the resolved root.
 
     Does NOT validate the `section` locator — that's a human-readable field.
     """
     if repo_root is None:
         # Defer to resolver for path resolution
-        from worldenergydata.citations.resolver import resolve_wiki_path
+        from worldenergydata.citations.resolver import resolve_wiki_base
 
         try:
-            path = resolve_wiki_path(citation.wiki_path)
+            base = resolve_wiki_base()
         except CitationResolutionError as error:
-            raise CitationResolutionError(
-                code_id=citation.code_id,
-                wiki_path=citation.wiki_path,
-                reason=error.reason,
-            ) from error
+            raise _resolution_error(citation, error.reason) from error
     else:
-        path = _join_with_layout_detection(Path(repo_root), citation.wiki_path)
+        base = Path(repo_root)
+    path = _join_with_layout_detection(base, citation.wiki_path)
     if not path.is_file():
-        raise CitationResolutionError(
-            code_id=citation.code_id,
-            wiki_path=citation.wiki_path,
-            reason="page_missing",
-        )
-    fm = _read_frontmatter(path)
-    for field_name in ("code_id", "publisher", "revision"):
+        raise _resolution_error(citation, "page_missing")
+    path = _contained_page(base, path, citation)
+    fm, duplicates = _parse_frontmatter(_read_page(path, citation))
+    for field_name in _IDENTITY_FIELDS:
+        if field_name in duplicates:
+            raise _resolution_error(citation, f"frontmatter_duplicate:{field_name}")
+    for field_name in _IDENTITY_FIELDS:
         expected = getattr(citation, field_name)
         actual = fm.get(field_name)
         if actual is None:

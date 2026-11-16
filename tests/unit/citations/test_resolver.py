@@ -1,6 +1,7 @@
 """Resolver precedence, layout detection, containment and log hygiene."""
 
 import logging
+import os
 from pathlib import Path
 
 import pytest
@@ -108,7 +109,7 @@ def test_logs_redact_home_prefix(wiki_root, monkeypatch, caplog):
     with caplog.at_level(logging.INFO, logger="worldenergydata.citations.resolver"):
         resolver.resolve_wiki_base(override=wiki_root)
     assert str(wiki_root.parent) not in caplog.text
-    assert "~/fixtures" in caplog.text
+    assert "~" + os.sep + "fixtures" in caplog.text
 
 
 def test_redaction_without_home(monkeypatch):

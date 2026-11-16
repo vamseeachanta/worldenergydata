@@ -6,14 +6,11 @@ import pytest
 
 
 @pytest.fixture(autouse=True)
-def reset_resolution_cache(monkeypatch):
+def hermetic_resolver(monkeypatch):
     from worldenergydata.citations import resolver
 
-    resolver._RESOLUTION_CACHE.clear()
     monkeypatch.delenv("LLM_WIKI_PATH", raising=False)
     monkeypatch.setattr(resolver, "_sibling_candidates", lambda: ())
-    yield
-    resolver._RESOLUTION_CACHE.clear()
 
 
 @pytest.fixture
