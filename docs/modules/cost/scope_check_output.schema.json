@@ -118,7 +118,7 @@
       }
     },
     "reason": {
-      "const": "no close comparables"
+      "enum": ["no close comparables", "ambiguous comparable groups"]
     },
     "escalation_basis": {
       "type": "object",
