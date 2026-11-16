@@ -5,12 +5,24 @@ The inventory is derived from `git ls-tree -r --name-only origin/main` at
 directories named `curated` or `staging` beneath `data/` and `packages/`.
 `tests/unit/curated` contains validators, not input data.
 
+## Revision history
+
+| Revision | Date | Change and reason |
+| --- | --- | --- |
+| Initial | 2026-11-14 | Record tracked inputs, test owners, and validation limits. |
+| Clarification | 2026-11-15 | Distinguish module-wide routes from the input inventory and identify the schema-test gap. |
+
+## Routing scope
+
 The routes below are checked through `select`, `select_fast`, and both
 `to_matrix` modes. Each data-only edit selects module scope, its listed targets,
 and the always-on targets, without duplicates or nonexistent targets. Multiple
 targets for a prefix are additive; mixed source/test edits retain their original
 owning-domain shard. Trailing slashes keep near-prefix filenames and sibling
 directories outside these routes. Cost and package-member routing are retained.
+The `data/modules/<domain>/` prefixes cover every file in each routed module
+directory, including schemas and metadata; the curated/staging directories in
+Table 1 are an input inventory, not the route boundaries.
 
 | Tracked input directory | Representative file | Selected targets | Route |
 | --- | --- | --- | --- |
@@ -51,6 +63,13 @@ The facility matrix route establishes availability and metadata coverage only.
 An engineering validator for `mooring_facility_matrix.csv` contents is not
 established by the inspected tests. Acceptance of those contents as engineering
 input would require a separately established content validator.
+
+Edits to `data/modules/offshore_assets/schema.yaml` or
+`data/modules/offshore_assets/catalog_integration_schema.json` select
+`tests/unit/field_development` and the withheld-data contract, but do not select
+`tests/modules/field_development/test_catalog_schema_contract.py`, which reads
+both schema files. Complete schema-contract coverage is therefore not
+established by these routes.
 
 Withheld payloads remain unavailable. Their notices are availability evidence,
 not substitutes for private data or proof of its validity. Raw archives,
