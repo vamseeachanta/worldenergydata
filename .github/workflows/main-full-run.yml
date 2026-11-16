@@ -56,13 +56,68 @@ jobs:
         # instead of being silently re-resolved here.
         run: uv sync --frozen --all-extras --python ${{ matrix.python-version }}
 
+      - name: Select parallel test targets
+        id: test-targets
+        run: |
+          targets=$(find tests -maxdepth 1 -mindepth 1 \
+            \( -type d ! -name performance ! -name integration ! -name __pycache__ \) \
+            -o -maxdepth 1 -name 'test_*.py' | sort | tr '\n' ' ')
+          echo "targets=$targets" >> "$GITHUB_OUTPUT"
+
+      - name: Collect full suite
+        id: collection
+        env:
+          TEST_TARGETS: ${{ steps.test-targets.outputs.targets }}
+        run: |
+          evidence_dir="$RUNNER_TEMP/collection-evidence"
+          mkdir -p "$evidence_dir"
+          interpreter=$(uv run --frozen python --version)
+          set +e
+          uv run --frozen pytest $TEST_TARGETS tests/integration tests/performance \
+            --collect-only -q --color=no -p no:cacheprovider > "$evidence_dir/collection.log" 2>&1
+          pytest_status=$?
+          set -e
+          cat "$evidence_dir/collection.log"
+          selected=$(sed -nE -e 's/^([0-9]+)(\/[0-9]+)? tests? collected.*/\1/p' \
+            -e 's/^no tests collected.*/0/p' \
+            "$evidence_dir/collection.log" | tail -n 1)
+          status=$pytest_status
+          if [[ ! "$selected" =~ ^[0-9]+$ ]]; then
+            selected=unknown
+            if [[ "$status" == 0 ]]; then status=5; fi
+          elif [[ "$selected" == 0 && "$status" == 0 ]]; then
+            status=5
+          fi
+          {
+            echo "revision=$GITHUB_SHA"
+            echo "interpreter=$interpreter"
+            echo "selected_tests=$selected"
+            echo "pytest_status=$pytest_status"
+            echo "status=$status"
+          } > "$evidence_dir/summary.txt"
+          cat "$evidence_dir/summary.txt" >> "$GITHUB_STEP_SUMMARY"
+          exit "$status"
+
+      - name: Check collection contract
+        if: ${{ !cancelled() && steps.collection.outcome != 'skipped' }}
+        run: uv run --frozen pytest tests/ci/test_collection_contract.py -p no:cacheprovider
+
+      - name: Upload collection evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: collection-evidence-${{ matrix.python-version }}
+          path: ${{ runner.temp }}/collection-evidence/
+          if-no-files-found: warn
+
       - name: Run tests with coverage
+        env:
+          TEST_TARGETS: ${{ steps.test-targets.outputs.targets }}
         run: |
           # tests/integration kills xdist workers (a CLI edge-case test
           # hard-exits the process); tests/performance asserts wall-clock
           # budgets; both run sequentially in the next step.
-          targets=$(find tests -maxdepth 1 -mindepth 1 \( -type d ! -name performance ! -name integration ! -name __pycache__ \) -o -maxdepth 1 -name 'test_*.py' | sort | tr '\n' ' ')
-          uv run --frozen --with pytest-xdist pytest $targets \
+          uv run --frozen --with pytest-xdist pytest $TEST_TARGETS \
             -n auto \
             --tb=short \
             --cov=src \
