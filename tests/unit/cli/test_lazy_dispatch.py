@@ -64,7 +64,9 @@ def record():
         or name in {"pandas", "numpy", "pydantic", "worldenergydata.bsee",
                     "worldenergydata.common", "worldenergydata.safety_analysis"}
     ))
-    with open(os.environ["CLI_IMPORT_REPORT"], "w") as stream:
+    with open(
+        os.environ["CLI_IMPORT_REPORT"], "w", encoding="utf-8", newline="\\n"
+    ) as stream:
         json.dump(names, stream)
 
 atexit.register(record)
@@ -72,24 +74,27 @@ atexit.register(record)
 
 
 @pytest.fixture
-def installed_console(tmp_path):
+def installed_console(tmp_path, monkeypatch):
     """Use the actual installed script; never fall back to a child Typer app."""
+    # Exercise every console path with a caller that requests color.
+    monkeypatch.setenv("FORCE_COLOR", "1")
     executable = shutil.which("worldenergydata")
     assert executable, "Install the workspace before running console startup tests"
-    (tmp_path / "sitecustomize.py").write_text(AUDIT)
+    (tmp_path / "sitecustomize.py").write_text(AUDIT, encoding="utf-8", newline="\n")
     report = tmp_path / "imports.json"
     env = os.environ.copy()
     env["CLI_IMPORT_REPORT"] = str(report)
     env["PYTHONPATH"] = os.pathsep.join([str(tmp_path), env.get("PYTHONPATH", "")])
     env["COLUMNS"] = "120"
     env["NO_COLOR"] = "1"
+    # Typer can also force styling when either CI color hint is inherited.
+    for name in ("FORCE_COLOR", "PY_COLORS", "GITHUB_ACTIONS"):
+        env.pop(name, None)
     # Do not inherit a caller's shell-completion request.
     env.pop("_WORLDENERGYDATA_COMPLETE", None)
 
     def run(*args, python_args=None, force_color=None):
         run_env = env.copy()
-        if force_color is False:
-            run_env.pop("FORCE_COLOR", None)
         if force_color:
             run_env["FORCE_COLOR"] = "1"
             run_env.pop("NO_COLOR", None)
@@ -104,7 +109,7 @@ def installed_console(tmp_path):
             check=False,
         )
         assert report.exists(), "The offline import recorder did not start"
-        return result, set(json.loads(report.read_text()))
+        return result, set(json.loads(report.read_text(encoding="utf-8")))
 
     return run
 
@@ -170,7 +175,9 @@ def test_every_registered_family_can_load_help(installed_console, family):
         (("eia", "sync", "--help"), "--feed"),
     ],
 )
-@pytest.mark.parametrize("force_color", [False, True], ids=["plain", "color"])
+@pytest.mark.parametrize(
+    "force_color", [None, False, True], ids=["default", "plain", "color"]
+)
 def test_real_nested_command_dispatch_is_offline(
     installed_console, args, expected, force_color
 ):
@@ -178,6 +185,8 @@ def test_real_nested_command_dispatch_is_offline(
     assert result.returncode == (1 if args[0] == "landman" else 0)
     if force_color:
         assert "\x1b[" in result.stdout
+    else:
+        assert "\x1b[" not in result.stdout
     assert expected in unstyle(result.stdout)
     assert imported == {f"worldenergydata.cli.commands.{args[0]}"}
 
