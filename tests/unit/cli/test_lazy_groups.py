@@ -155,7 +155,9 @@ def test_missing_family_affects_only_selected_command(monkeypatch):
 
 @pytest.mark.parametrize("app_help", [None, "App description"])
 @pytest.mark.parametrize("registration_help", [None, "", "Registration description"])
-def test_family_help_matches_eager_registration(monkeypatch, app_help, registration_help):
+def test_family_help_matches_eager_registration(
+    monkeypatch, app_help, registration_help
+):
     family = typer.Typer(**({"help": app_help} if app_help else {}))
 
     @family.callback()
@@ -183,7 +185,9 @@ def test_family_help_matches_eager_registration(monkeypatch, app_help, registrat
         assert "App description" not in expected.output
         assert "Callback description" not in expected.output
     else:
-        assert (registration_help or app_help or "Callback description") in expected.output
+        assert (
+            registration_help or app_help or "Callback description"
+        ) in expected.output
     assert actual.output == expected.output
 
 
