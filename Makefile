@@ -55,6 +55,14 @@ data:  ## Download BSEE datasets (~300 MB, ~8 min)
 data-dry:  ## Show what data would be downloaded
 	PYTHONPATH="$(BSEE_PYTHONPATH)" uv run python scripts/refresh_bsee_all.py --dry-run
 
+# Existing local data only; pickle sources need an explicit --trust-pickles.
+.PHONY: unpack-bsee
+BSEE_INGEST_PYTHON ?= python3
+BSEE_SOURCE_ROOT ?= data/modules/bsee
+BSEE_INGEST_ARGS ?=
+unpack-bsee:  ## Convert local BSEE binary/ZIP tables and update the catalog
+	$(BSEE_INGEST_PYTHON) scripts/ingest/bsee_binary_ingest.py --source-root "$(BSEE_SOURCE_ROOT)" $(BSEE_INGEST_ARGS)
+
 # Parallel file processing example
 process-files:
 	@echo "📁 Processing files in parallel..."
