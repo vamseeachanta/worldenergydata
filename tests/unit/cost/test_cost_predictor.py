@@ -308,3 +308,18 @@ def test_failed_fit_preserves_model_state(monkeypatch, already_fitted, failure_s
     else:
         with pytest.raises(RuntimeError, match="not fitted"):
             predictor.predict(record)
+
+
+def test_predictor_builds_outside_repository_working_directory(tmp_path, monkeypatch):
+    """Construction resolves the default indices via the data root, not the CWD."""
+    from tests.unit.cost.test_index_adjustment import data_root, write_data_root
+
+    elsewhere = tmp_path / "elsewhere"
+    elsewhere.mkdir()
+    monkeypatch.chdir(elsewhere)
+    with data_root(monkeypatch):
+        assert CostPredictor().index_adjustment.csv_sha256 is not None
+    write_data_root(tmp_path / "data-root")
+    with data_root(monkeypatch, tmp_path / "data-root"):
+        predictor = CostPredictor()
+    assert predictor.index_adjustment.factor(2019, 2020).factor == 2.5

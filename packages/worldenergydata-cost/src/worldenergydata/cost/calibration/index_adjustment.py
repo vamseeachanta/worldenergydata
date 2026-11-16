@@ -1,27 +1,51 @@
 """One public-index snapshot with cached source-year to basis-year factors."""
 
 from hashlib import sha256
+from os import PathLike
 from pathlib import Path
 
-from worldenergydata.cost.escalation import CostEscalator, EscalationFactor, _year
-from worldenergydata.cost.timeseries.dataset import read_timeseries_csv
+from worldenergydata.common.data_resolver import DataNotFoundError, get_module_data
+from worldenergydata.cost.escalation import (
+    CostEscalator,
+    EscalationFactor,
+    validate_year,
+)
+from worldenergydata.cost.timeseries.dataset import TIMESERIES_CSV, read_timeseries_csv
 
-DEFAULT_INDEX_PATH = Path("data/modules/cost/curated/cost_component_timeseries.csv")
+
+def default_index_path() -> Path:
+    """Return the curated index CSV under the resolved cost module data folder.
+
+    Resolved at call time through ``get_module_data("cost")``: ``WED_DATA_ROOT``
+    first, then the workspace ``data`` folder located from the installed source,
+    so the result does not depend on the working directory.
+    """
+    try:
+        return get_module_data("cost") / "curated" / TIMESERIES_CSV
+    except DataNotFoundError as exc:
+        raise FileNotFoundError(
+            f"index CSV missing; supply index_path or escalator ({exc})"
+        ) from exc
 
 
 class IndexAdjustment:
     """Retain factors, notes and traces; divide by the same factor to invert.
 
-    File inputs retain a byte digest. Without an explicit input the curated path
-    is relative to the working directory. No fallback or network fetch is added.
+    File inputs retain a byte digest. Without an explicit input the curated CSV
+    is resolved by ``default_index_path``. No fallback or network fetch is added.
     """
 
-    def __init__(self, index_path=None, *, escalator: CostEscalator | None = None):
+    def __init__(
+        self,
+        index_path: str | PathLike[str] | None = None,
+        *,
+        escalator: CostEscalator | None = None,
+    ) -> None:
         if index_path is not None and escalator is not None:
             raise ValueError("supply either an index path or an escalator")
         self.csv_sha256: str | None = None
         if escalator is None:
-            path = Path(index_path) if index_path is not None else DEFAULT_INDEX_PATH
+            path = Path(index_path) if index_path is not None else default_index_path()
             if not path.is_file():
                 raise FileNotFoundError(
                     "index CSV missing; supply index_path or escalator"
@@ -33,9 +57,9 @@ class IndexAdjustment:
         self.escalator = escalator
         self.factors: dict[tuple[int, int], EscalationFactor] = {}
 
-    def factor(self, source_year, base_year) -> EscalationFactor:
+    def factor(self, source_year: object, base_year: object) -> EscalationFactor:
         """Validate before cache lookup, including same-year and boolean inputs."""
-        key = (_year(source_year), _year(base_year))
+        key = (validate_year(source_year), validate_year(base_year))
         if key not in self.factors:
             self.factors[key] = self.escalator.factor(*key, public_only=True)
         return self.factors[key]

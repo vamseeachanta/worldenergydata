@@ -1,5 +1,6 @@
 """Synthetic index arithmetic only; no observed cost or calibration claim."""
 
+from contextlib import contextmanager
 from hashlib import sha256
 
 import pytest
@@ -60,5 +61,59 @@ def test_explicit_csv_snapshot_and_missing_default(tmp_path, monkeypatch):
     assert adjustment.csv_sha256 == sha256(path.read_bytes()).hexdigest()
     monkeypatch.chdir(tmp_path)
     assert adjustment.factor(2019, 2020).factor == 2.5
-    with pytest.raises(FileNotFoundError, match="index"):
-        IndexAdjustment()
+    empty_root = tmp_path / "empty-data-root"
+    empty_root.mkdir()
+    with data_root(monkeypatch, empty_root):
+        with pytest.raises(FileNotFoundError, match="index"):
+            IndexAdjustment()
+
+
+@contextmanager
+def data_root(monkeypatch, root=None):
+    """Point the shared data resolver at ``root`` (or its default) uncached."""
+    from worldenergydata.common import data_resolver
+
+    if root is None:
+        monkeypatch.delenv("WED_DATA_ROOT", raising=False)
+    else:
+        monkeypatch.setenv("WED_DATA_ROOT", str(root))
+    data_resolver._clear_cache()
+    try:
+        yield
+    finally:
+        data_resolver._clear_cache()
+
+
+def write_data_root(root):
+    """Write the synthetic indices where the resolver expects the curated CSV."""
+    curated = root / "modules" / "cost" / "curated"
+    curated.mkdir(parents=True)
+    path = curated / "cost_component_timeseries.csv"
+    write_timeseries_csv(synthetic_observations(), path)
+    return path
+
+
+def test_default_index_resolves_from_data_root_not_working_directory(
+    tmp_path, monkeypatch
+):
+    from worldenergydata.cost.calibration.index_adjustment import IndexAdjustment
+
+    path = write_data_root(tmp_path / "data-root")
+    elsewhere = tmp_path / "elsewhere"
+    elsewhere.mkdir()
+    monkeypatch.chdir(elsewhere)
+    with data_root(monkeypatch, tmp_path / "data-root"):
+        adjustment = IndexAdjustment()
+    assert adjustment.csv_sha256 == sha256(path.read_bytes()).hexdigest()
+    assert adjustment.factor(2019, 2020).factor == 2.5
+
+
+def test_default_index_resolves_workspace_data_from_other_directory(
+    tmp_path, monkeypatch
+):
+    from worldenergydata.cost.calibration.index_adjustment import IndexAdjustment
+
+    monkeypatch.chdir(tmp_path)
+    with data_root(monkeypatch):
+        adjustment = IndexAdjustment()
+    assert adjustment.csv_sha256 is not None

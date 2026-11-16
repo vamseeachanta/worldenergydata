@@ -196,8 +196,26 @@ def test_adjustment_rejects_uncovered_or_malformed_year(dataset, year):
         dataset.inflation_adjust(df, 2020, escalator=synthetic_escalator())
 
 
-def test_adjustment_requires_indices_outside_repository(dataset, tmp_path, monkeypatch):
+def test_adjustment_requires_indices_in_data_root(dataset, tmp_path, monkeypatch):
+    from tests.unit.cost.test_index_adjustment import data_root
+
     monkeypatch.chdir(tmp_path)
     df = pd.DataFrame({"year_drilling": [2020], "cost_usd_mm": [100.0]})
-    with pytest.raises(FileNotFoundError, match="index"):
-        dataset.inflation_adjust(df)
+    with data_root(monkeypatch, tmp_path):
+        with pytest.raises(FileNotFoundError, match="index"):
+            dataset.inflation_adjust(df)
+
+
+def test_adjustment_default_indices_from_other_directory(
+    dataset, tmp_path, monkeypatch
+):
+    from tests.unit.cost.test_index_adjustment import data_root, write_data_root
+
+    write_data_root(tmp_path / "data-root")
+    elsewhere = tmp_path / "elsewhere"
+    elsewhere.mkdir()
+    monkeypatch.chdir(elsewhere)
+    df = pd.DataFrame({"year_drilling": [2019], "cost_usd_mm": [100.0]})
+    with data_root(monkeypatch, tmp_path / "data-root"):
+        result = dataset.inflation_adjust(df, 2020)
+    assert result["cost_usd_mm_real"].tolist() == [250.0]
