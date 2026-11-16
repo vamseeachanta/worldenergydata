@@ -8,6 +8,9 @@ CLI runs. It remains advisory until every added test selects the audit in its
 own PR gate; otherwise an unrelated full run could fail on an unseen addition.
 Path coverage does not prove pytest collection, successful imports or execution.
 
+The [curated and staging input routing audit](../development/data-input-test-routing.md)
+records input owners, module-wide prefix boundaries, and validation gaps.
+
 ## Revision history
 
 | Revision | Date | Change and reason |
@@ -15,6 +18,7 @@ Path coverage does not prove pytest collection, successful imports or execution.
 | Initial | 2026-10-22 | Document advisory reachability, static dependents and diff explanations. |
 | Update | 2026-11-06 | Cover current-main orphan tests and explain fast/full modes, merge-base diffs and rename context. |
 | Advisory update | 2026-11-06 | Report new and obsolete exceptions, exercise PR goldens on older trees and clarify CI diff inputs. |
+| Input routing reference | 2026-11-15 | Link the input inventory and its route and validation limits. |
 
 ## Audit a checkout
 
