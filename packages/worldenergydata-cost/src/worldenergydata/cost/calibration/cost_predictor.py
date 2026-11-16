@@ -18,7 +18,7 @@ Design decisions
 from __future__ import annotations
 
 from dataclasses import dataclass
-from pathlib import Path
+from os import PathLike
 from typing import Optional
 
 import numpy as np
@@ -150,7 +150,10 @@ class CostPredictor:
     """
 
     def __init__(
-        self, *, index_path: Path | None = None, escalator: CostEscalator | None = None
+        self,
+        *,
+        index_path: str | PathLike[str] | None = None,
+        escalator: CostEscalator | None = None,
     ) -> None:
         self.index_adjustment = IndexAdjustment(index_path, escalator=escalator)
         self._pipeline: Optional[Pipeline] = None

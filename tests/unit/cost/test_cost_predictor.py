@@ -202,11 +202,11 @@ class TestCostPredictorCrossValidation:
         assert scores["mean_r2"] <= 1.0
 
 
-def test_all_predictor_paths_share_public_basis_and_inverse(monkeypatch):
+def test_all_predictor_paths_share_public_basis_and_inverse(
+    monkeypatch, synthetic_escalator
+):
     """100 nominal * mean(2,3)=250 base; point and bounds divide by 2.5."""
     from sklearn.pipeline import Pipeline
-
-    from tests.unit.cost.test_index_adjustment import synthetic_escalator
 
     targets = []
     for method in ("fit", "score"):
@@ -223,7 +223,7 @@ def test_all_predictor_paths_share_public_basis_and_inverse(monkeypatch):
         )
         for year, cost in [(2019, 100.0), (2020, 250.0)] * 3
     ]
-    predictor = CostPredictor(escalator=synthetic_escalator()).fit(records)
+    predictor = CostPredictor(escalator=synthetic_escalator).fit(records)
     predictor.training_r2_score(records)
     predictor.cross_validate(records, cv=3)
     result = predictor.predict(records[0])
@@ -244,11 +244,11 @@ def test_all_predictor_paths_share_public_basis_and_inverse(monkeypatch):
         "_bootstrap_ci",
     ],
 )
-def test_missing_index_coverage_escapes_every_predictor_path(method):
-    from tests.unit.cost.test_index_adjustment import synthetic_escalator
-
+def test_missing_index_coverage_escapes_every_predictor_path(
+    method, synthetic_escalator
+):
     record = load_public_dataset()[0].model_copy(update={"year_sanction": 2020})
-    predictor = CostPredictor(escalator=synthetic_escalator()).fit([record] * 6)
+    predictor = CostPredictor(escalator=synthetic_escalator).fit([record] * 6)
     missing = record.model_copy(update={"year_sanction": 2035})
     before = predictor.predict(record)
     pipeline = predictor._pipeline
@@ -269,15 +269,15 @@ def test_missing_index_coverage_escapes_every_predictor_path(method):
 
 @pytest.mark.parametrize("already_fitted", [False, True])
 @pytest.mark.parametrize("failure_stage", ["pipeline_fit", "feature_names"])
-def test_failed_fit_preserves_model_state(monkeypatch, already_fitted, failure_stage):
+def test_failed_fit_preserves_model_state(
+    monkeypatch, already_fitted, failure_stage, synthetic_escalator
+):
     """Publish fitted state only after fitting and feature extraction succeed."""
     from sklearn.pipeline import Pipeline
     from sklearn.preprocessing import OneHotEncoder
 
-    from tests.unit.cost.test_index_adjustment import synthetic_escalator
-
     record = load_public_dataset()[0].model_copy(update={"year_sanction": 2020})
-    predictor = CostPredictor(escalator=synthetic_escalator())
+    predictor = CostPredictor(escalator=synthetic_escalator)
     before = None
     if already_fitted:
         predictor.fit([record] * 6)
@@ -310,16 +310,24 @@ def test_failed_fit_preserves_model_state(monkeypatch, already_fitted, failure_s
             predictor.predict(record)
 
 
-def test_predictor_builds_outside_repository_working_directory(tmp_path, monkeypatch):
+def test_predictor_builds_outside_repository_working_directory(
+    tmp_path, monkeypatch, data_root, write_data_root
+):
     """Construction resolves the default indices via the data root, not the CWD."""
-    from tests.unit.cost.test_index_adjustment import data_root, write_data_root
-
     elsewhere = tmp_path / "elsewhere"
     elsewhere.mkdir()
     monkeypatch.chdir(elsewhere)
-    with data_root(monkeypatch):
+    with data_root():
         assert CostPredictor().index_adjustment.csv_sha256 is not None
     write_data_root(tmp_path / "data-root")
-    with data_root(monkeypatch, tmp_path / "data-root"):
+    with data_root(tmp_path / "data-root"):
         predictor = CostPredictor()
     assert predictor.index_adjustment.factor(2019, 2020).factor == 2.5
+
+
+def test_predictor_index_path_annotation_accepts_string_and_pathlike():
+    from os import PathLike
+    from typing import get_type_hints
+
+    annotation = get_type_hints(CostPredictor.__init__)["index_path"]
+    assert annotation == str | PathLike[str] | None
