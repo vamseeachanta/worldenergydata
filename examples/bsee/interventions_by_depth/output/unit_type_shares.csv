@@ -1,0 +1,201 @@
+period,band,event,unit_category,approvals,total_approvals,share_percent
+2025,under 100 m,well work,wireline unit,229,316,72.468354
+2025,under 100 m,well work,coiled tubing,12,316,3.797468
+2025,under 100 m,well work,hydraulic workover / snubbing,0,316,0.000000
+2025,under 100 m,well work,platform rig,0,316,0.000000
+2025,under 100 m,well work,liftboat / jack-up,28,316,8.860759
+2025,under 100 m,well work,intervention vessel,0,316,0.000000
+2025,under 100 m,well work,drillship / semisubmersible,0,316,0.000000
+2025,under 100 m,well work,non-rig operation (recorded),8,316,2.531646
+2025,under 100 m,well work,none named,39,316,12.341772
+2025,under 100 m,well work,other,0,316,0.000000
+2025,under 100 m,permanent abandonment,wireline unit,455,1098,41.438980
+2025,under 100 m,permanent abandonment,coiled tubing,72,1098,6.557377
+2025,under 100 m,permanent abandonment,hydraulic workover / snubbing,18,1098,1.639344
+2025,under 100 m,permanent abandonment,platform rig,0,1098,0.000000
+2025,under 100 m,permanent abandonment,liftboat / jack-up,92,1098,8.378871
+2025,under 100 m,permanent abandonment,intervention vessel,0,1098,0.000000
+2025,under 100 m,permanent abandonment,drillship / semisubmersible,0,1098,0.000000
+2025,under 100 m,permanent abandonment,non-rig operation (recorded),355,1098,32.331512
+2025,under 100 m,permanent abandonment,none named,14,1098,1.275046
+2025,under 100 m,permanent abandonment,other,92,1098,8.378871
+2025,100 to 500 m,well work,wireline unit,35,99,35.353535
+2025,100 to 500 m,well work,coiled tubing,16,99,16.161616
+2025,100 to 500 m,well work,hydraulic workover / snubbing,0,99,0.000000
+2025,100 to 500 m,well work,platform rig,6,99,6.060606
+2025,100 to 500 m,well work,liftboat / jack-up,0,99,0.000000
+2025,100 to 500 m,well work,intervention vessel,2,99,2.020202
+2025,100 to 500 m,well work,drillship / semisubmersible,14,99,14.141414
+2025,100 to 500 m,well work,non-rig operation (recorded),11,99,11.111111
+2025,100 to 500 m,well work,none named,13,99,13.131313
+2025,100 to 500 m,well work,other,2,99,2.020202
+2025,100 to 500 m,permanent abandonment,wireline unit,42,94,44.680851
+2025,100 to 500 m,permanent abandonment,coiled tubing,4,94,4.255319
+2025,100 to 500 m,permanent abandonment,hydraulic workover / snubbing,0,94,0.000000
+2025,100 to 500 m,permanent abandonment,platform rig,0,94,0.000000
+2025,100 to 500 m,permanent abandonment,liftboat / jack-up,0,94,0.000000
+2025,100 to 500 m,permanent abandonment,intervention vessel,0,94,0.000000
+2025,100 to 500 m,permanent abandonment,drillship / semisubmersible,9,94,9.574468
+2025,100 to 500 m,permanent abandonment,non-rig operation (recorded),27,94,28.723404
+2025,100 to 500 m,permanent abandonment,none named,0,94,0.000000
+2025,100 to 500 m,permanent abandonment,other,12,94,12.765957
+2025,500 to 1500 m,well work,wireline unit,16,185,8.648649
+2025,500 to 1500 m,well work,coiled tubing,11,185,5.945946
+2025,500 to 1500 m,well work,hydraulic workover / snubbing,1,185,0.540541
+2025,500 to 1500 m,well work,platform rig,14,185,7.567568
+2025,500 to 1500 m,well work,liftboat / jack-up,0,185,0.000000
+2025,500 to 1500 m,well work,intervention vessel,12,185,6.486486
+2025,500 to 1500 m,well work,drillship / semisubmersible,83,185,44.864865
+2025,500 to 1500 m,well work,non-rig operation (recorded),13,185,7.027027
+2025,500 to 1500 m,well work,none named,33,185,17.837838
+2025,500 to 1500 m,well work,other,2,185,1.081081
+2025,500 to 1500 m,permanent abandonment,wireline unit,3,157,1.910828
+2025,500 to 1500 m,permanent abandonment,coiled tubing,19,157,12.101911
+2025,500 to 1500 m,permanent abandonment,hydraulic workover / snubbing,38,157,24.203822
+2025,500 to 1500 m,permanent abandonment,platform rig,1,157,0.636943
+2025,500 to 1500 m,permanent abandonment,liftboat / jack-up,0,157,0.000000
+2025,500 to 1500 m,permanent abandonment,intervention vessel,0,157,0.000000
+2025,500 to 1500 m,permanent abandonment,drillship / semisubmersible,90,157,57.324841
+2025,500 to 1500 m,permanent abandonment,non-rig operation (recorded),2,157,1.273885
+2025,500 to 1500 m,permanent abandonment,none named,4,157,2.547771
+2025,500 to 1500 m,permanent abandonment,other,0,157,0.000000
+2025,1500 m and deeper,well work,wireline unit,2,165,1.212121
+2025,1500 m and deeper,well work,coiled tubing,0,165,0.000000
+2025,1500 m and deeper,well work,hydraulic workover / snubbing,0,165,0.000000
+2025,1500 m and deeper,well work,platform rig,30,165,18.181818
+2025,1500 m and deeper,well work,liftboat / jack-up,0,165,0.000000
+2025,1500 m and deeper,well work,intervention vessel,31,165,18.787879
+2025,1500 m and deeper,well work,drillship / semisubmersible,48,165,29.090909
+2025,1500 m and deeper,well work,non-rig operation (recorded),6,165,3.636364
+2025,1500 m and deeper,well work,none named,46,165,27.878788
+2025,1500 m and deeper,well work,other,2,165,1.212121
+2025,1500 m and deeper,permanent abandonment,wireline unit,0,38,0.000000
+2025,1500 m and deeper,permanent abandonment,coiled tubing,7,38,18.421053
+2025,1500 m and deeper,permanent abandonment,hydraulic workover / snubbing,0,38,0.000000
+2025,1500 m and deeper,permanent abandonment,platform rig,2,38,5.263158
+2025,1500 m and deeper,permanent abandonment,liftboat / jack-up,0,38,0.000000
+2025,1500 m and deeper,permanent abandonment,intervention vessel,0,38,0.000000
+2025,1500 m and deeper,permanent abandonment,drillship / semisubmersible,28,38,73.684211
+2025,1500 m and deeper,permanent abandonment,non-rig operation (recorded),0,38,0.000000
+2025,1500 m and deeper,permanent abandonment,none named,1,38,2.631579
+2025,1500 m and deeper,permanent abandonment,other,0,38,0.000000
+2025,no depth,well work,wireline unit,0,0,
+2025,no depth,well work,coiled tubing,0,0,
+2025,no depth,well work,hydraulic workover / snubbing,0,0,
+2025,no depth,well work,platform rig,0,0,
+2025,no depth,well work,liftboat / jack-up,0,0,
+2025,no depth,well work,intervention vessel,0,0,
+2025,no depth,well work,drillship / semisubmersible,0,0,
+2025,no depth,well work,non-rig operation (recorded),0,0,
+2025,no depth,well work,none named,0,0,
+2025,no depth,well work,other,0,0,
+2025,no depth,permanent abandonment,wireline unit,0,0,
+2025,no depth,permanent abandonment,coiled tubing,0,0,
+2025,no depth,permanent abandonment,hydraulic workover / snubbing,0,0,
+2025,no depth,permanent abandonment,platform rig,0,0,
+2025,no depth,permanent abandonment,liftboat / jack-up,0,0,
+2025,no depth,permanent abandonment,intervention vessel,0,0,
+2025,no depth,permanent abandonment,drillship / semisubmersible,0,0,
+2025,no depth,permanent abandonment,non-rig operation (recorded),0,0,
+2025,no depth,permanent abandonment,none named,0,0,
+2025,no depth,permanent abandonment,other,0,0,
+2021-2025,under 100 m,well work,wireline unit,1364,2025,67.358025
+2021-2025,under 100 m,well work,coiled tubing,144,2025,7.111111
+2021-2025,under 100 m,well work,hydraulic workover / snubbing,65,2025,3.209877
+2021-2025,under 100 m,well work,platform rig,1,2025,0.049383
+2021-2025,under 100 m,well work,liftboat / jack-up,239,2025,11.802469
+2021-2025,under 100 m,well work,intervention vessel,0,2025,0.000000
+2021-2025,under 100 m,well work,drillship / semisubmersible,0,2025,0.000000
+2021-2025,under 100 m,well work,non-rig operation (recorded),54,2025,2.666667
+2021-2025,under 100 m,well work,none named,157,2025,7.753086
+2021-2025,under 100 m,well work,other,1,2025,0.049383
+2021-2025,under 100 m,permanent abandonment,wireline unit,1273,4029,31.595930
+2021-2025,under 100 m,permanent abandonment,coiled tubing,137,4029,3.400347
+2021-2025,under 100 m,permanent abandonment,hydraulic workover / snubbing,53,4029,1.315463
+2021-2025,under 100 m,permanent abandonment,platform rig,0,4029,0.000000
+2021-2025,under 100 m,permanent abandonment,liftboat / jack-up,434,4029,10.771904
+2021-2025,under 100 m,permanent abandonment,intervention vessel,0,4029,0.000000
+2021-2025,under 100 m,permanent abandonment,drillship / semisubmersible,0,4029,0.000000
+2021-2025,under 100 m,permanent abandonment,non-rig operation (recorded),1910,4029,47.406304
+2021-2025,under 100 m,permanent abandonment,none named,90,4029,2.233805
+2021-2025,under 100 m,permanent abandonment,other,132,4029,3.276247
+2021-2025,100 to 500 m,well work,wireline unit,237,557,42.549372
+2021-2025,100 to 500 m,well work,coiled tubing,72,557,12.926391
+2021-2025,100 to 500 m,well work,hydraulic workover / snubbing,7,557,1.256732
+2021-2025,100 to 500 m,well work,platform rig,51,557,9.156194
+2021-2025,100 to 500 m,well work,liftboat / jack-up,3,557,0.538600
+2021-2025,100 to 500 m,well work,intervention vessel,2,557,0.359066
+2021-2025,100 to 500 m,well work,drillship / semisubmersible,62,557,11.131059
+2021-2025,100 to 500 m,well work,non-rig operation (recorded),19,557,3.411131
+2021-2025,100 to 500 m,well work,none named,93,557,16.696589
+2021-2025,100 to 500 m,well work,other,11,557,1.974865
+2021-2025,100 to 500 m,permanent abandonment,wireline unit,113,375,30.133333
+2021-2025,100 to 500 m,permanent abandonment,coiled tubing,13,375,3.466667
+2021-2025,100 to 500 m,permanent abandonment,hydraulic workover / snubbing,0,375,0.000000
+2021-2025,100 to 500 m,permanent abandonment,platform rig,1,375,0.266667
+2021-2025,100 to 500 m,permanent abandonment,liftboat / jack-up,0,375,0.000000
+2021-2025,100 to 500 m,permanent abandonment,intervention vessel,0,375,0.000000
+2021-2025,100 to 500 m,permanent abandonment,drillship / semisubmersible,119,375,31.733333
+2021-2025,100 to 500 m,permanent abandonment,non-rig operation (recorded),109,375,29.066667
+2021-2025,100 to 500 m,permanent abandonment,none named,6,375,1.600000
+2021-2025,100 to 500 m,permanent abandonment,other,14,375,3.733333
+2021-2025,500 to 1500 m,well work,wireline unit,89,1102,8.076225
+2021-2025,500 to 1500 m,well work,coiled tubing,129,1102,11.705989
+2021-2025,500 to 1500 m,well work,hydraulic workover / snubbing,18,1102,1.633394
+2021-2025,500 to 1500 m,well work,platform rig,109,1102,9.891107
+2021-2025,500 to 1500 m,well work,liftboat / jack-up,0,1102,0.000000
+2021-2025,500 to 1500 m,well work,intervention vessel,103,1102,9.346642
+2021-2025,500 to 1500 m,well work,drillship / semisubmersible,381,1102,34.573503
+2021-2025,500 to 1500 m,well work,non-rig operation (recorded),102,1102,9.255898
+2021-2025,500 to 1500 m,well work,none named,126,1102,11.433757
+2021-2025,500 to 1500 m,well work,other,45,1102,4.083485
+2021-2025,500 to 1500 m,permanent abandonment,wireline unit,33,651,5.069124
+2021-2025,500 to 1500 m,permanent abandonment,coiled tubing,25,651,3.840246
+2021-2025,500 to 1500 m,permanent abandonment,hydraulic workover / snubbing,116,651,17.818740
+2021-2025,500 to 1500 m,permanent abandonment,platform rig,27,651,4.147465
+2021-2025,500 to 1500 m,permanent abandonment,liftboat / jack-up,0,651,0.000000
+2021-2025,500 to 1500 m,permanent abandonment,intervention vessel,2,651,0.307220
+2021-2025,500 to 1500 m,permanent abandonment,drillship / semisubmersible,409,651,62.826421
+2021-2025,500 to 1500 m,permanent abandonment,non-rig operation (recorded),9,651,1.382488
+2021-2025,500 to 1500 m,permanent abandonment,none named,29,651,4.454685
+2021-2025,500 to 1500 m,permanent abandonment,other,1,651,0.153610
+2021-2025,1500 m and deeper,well work,wireline unit,18,998,1.803607
+2021-2025,1500 m and deeper,well work,coiled tubing,35,998,3.507014
+2021-2025,1500 m and deeper,well work,hydraulic workover / snubbing,0,998,0.000000
+2021-2025,1500 m and deeper,well work,platform rig,136,998,13.627255
+2021-2025,1500 m and deeper,well work,liftboat / jack-up,0,998,0.000000
+2021-2025,1500 m and deeper,well work,intervention vessel,258,998,25.851703
+2021-2025,1500 m and deeper,well work,drillship / semisubmersible,302,998,30.260521
+2021-2025,1500 m and deeper,well work,non-rig operation (recorded),16,998,1.603206
+2021-2025,1500 m and deeper,well work,none named,199,998,19.939880
+2021-2025,1500 m and deeper,well work,other,34,998,3.406814
+2021-2025,1500 m and deeper,permanent abandonment,wireline unit,0,231,0.000000
+2021-2025,1500 m and deeper,permanent abandonment,coiled tubing,7,231,3.030303
+2021-2025,1500 m and deeper,permanent abandonment,hydraulic workover / snubbing,0,231,0.000000
+2021-2025,1500 m and deeper,permanent abandonment,platform rig,27,231,11.688312
+2021-2025,1500 m and deeper,permanent abandonment,liftboat / jack-up,0,231,0.000000
+2021-2025,1500 m and deeper,permanent abandonment,intervention vessel,0,231,0.000000
+2021-2025,1500 m and deeper,permanent abandonment,drillship / semisubmersible,190,231,82.251082
+2021-2025,1500 m and deeper,permanent abandonment,non-rig operation (recorded),0,231,0.000000
+2021-2025,1500 m and deeper,permanent abandonment,none named,6,231,2.597403
+2021-2025,1500 m and deeper,permanent abandonment,other,1,231,0.432900
+2021-2025,no depth,well work,wireline unit,0,0,
+2021-2025,no depth,well work,coiled tubing,0,0,
+2021-2025,no depth,well work,hydraulic workover / snubbing,0,0,
+2021-2025,no depth,well work,platform rig,0,0,
+2021-2025,no depth,well work,liftboat / jack-up,0,0,
+2021-2025,no depth,well work,intervention vessel,0,0,
+2021-2025,no depth,well work,drillship / semisubmersible,0,0,
+2021-2025,no depth,well work,non-rig operation (recorded),0,0,
+2021-2025,no depth,well work,none named,0,0,
+2021-2025,no depth,well work,other,0,0,
+2021-2025,no depth,permanent abandonment,wireline unit,0,0,
+2021-2025,no depth,permanent abandonment,coiled tubing,0,0,
+2021-2025,no depth,permanent abandonment,hydraulic workover / snubbing,0,0,
+2021-2025,no depth,permanent abandonment,platform rig,0,0,
+2021-2025,no depth,permanent abandonment,liftboat / jack-up,0,0,
+2021-2025,no depth,permanent abandonment,intervention vessel,0,0,
+2021-2025,no depth,permanent abandonment,drillship / semisubmersible,0,0,
+2021-2025,no depth,permanent abandonment,non-rig operation (recorded),0,0,
+2021-2025,no depth,permanent abandonment,none named,0,0,
+2021-2025,no depth,permanent abandonment,other,0,0,
