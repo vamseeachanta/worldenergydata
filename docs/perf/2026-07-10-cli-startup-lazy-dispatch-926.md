@@ -3,6 +3,13 @@
 Measurements were taken on 13 November 2026. The filename follows the approved
 plan dated 10 July 2026. This is CLI bootstrap evidence, not engineering input.
 
+## Revision history
+
+| Revision | Date | Change and reason |
+| --- | --- | --- |
+| 1 | 2026-11-13 | Recorded startup measurements and compatibility checks. |
+| 2 | 2026-11-15 | Clarified sample limits and separated smoke checks from gated coverage. |
+
 ## Revisions and environment
 
 - Original reproduction source: `0c5393b18590cf787b3eb020a7d418f3f36fb0f7`.
@@ -31,7 +38,10 @@ The measured command was `uv run --no-sync worldenergydata landman --help`.
 `--no-sync` excluded repeated dependency resolution after frozen synchronization.
 Cold means the first measured fresh process at each revision; warm means an
 immediate second fresh process. Filesystem and operating-system caches were not
-flushed. Each run had a 60-second bound and returned zero.
+flushed. Each run had a 60-second bound and returned zero. There were two
+samples per revision: one cold process and one warm process. No repeated-run
+median or spread was measured; these single observations cannot quantify timing
+variability.
 
 | Source | Cold process (s) | Warm process (s) |
 | --- | ---: | ---: |
@@ -131,15 +141,24 @@ Landman help and FDAS help load none of:
 Each family probe additionally requires its selected command module and rejects
 all other command-family modules. Bare import and root help load no families.
 No unit assertion depends on wall-clock performance. Installed-console smoke
-checks retain their existing 20-second bound and now include both light families.
+checks retain their existing 20-second bound and include Landman and FDAS help.
+Their node, `test_root_help_info_and_version_are_bounded_safe`, is listed in
+`scripts/ci/quarantine.txt` and deselected by the PR gate. These smoke additions
+therefore provide local coverage only. Gated lazy-dispatch coverage comes from
+`tests/unit/cli/test_lazy_dispatch.py`, including the selected-family import
+checks described above.
 
 ## Compatibility and review
 
 Current main has 18 families, including HSE added after the approved plan. All
 18 were retained in registration order. The independent info-table order and
 both description surfaces were copied verbatim; forecast follows lower-tertiary
-in that table. Root help and info were byte-identical to execution-base captures
-at 120 columns, with colors disabled consistently.
+in that table. The original run reported byte-identical root help and info
+against execution-base captures at 120 columns, with colors disabled
+consistently. Those captures were not committed, so that historical comparison
+cannot be independently checked from this document. The committed synthetic
+family-equivalence test compares lazy and eager Typer output byte for byte; it
+does not reproduce the historical root-help and info comparison.
 
 The lazy proxy uses TyperGroup so that the installed Typer's vendored Click is
 used consistently. A temporary Typer wrapper builds each selected family through
