@@ -249,6 +249,19 @@
       "default": null,
       "title": "Gas Price Usd Mmbtu"
     },
+    "geological_era": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Supplied field-level geological era; not a reservoir formation.",
+      "title": "Geological Era"
+    },
     "gor_scf_stb": {
       "anyOf": [
         {
@@ -385,6 +398,19 @@
       ],
       "default": null,
       "title": "Plateau Rate Boed"
+    },
+    "play_group": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Broad geological play grouping, not a formation-specific conclusion.",
+      "title": "Play Group"
     },
     "recoverable_reserves_mmboe": {
       "anyOf": [

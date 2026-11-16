@@ -20,6 +20,8 @@ lower_snake_case string `value`s shown below.
 ## Reservoir / fluid
 | Field | Type | Units | Notes |
 |---|---|---|---|
+| `geological_era` | str | — | Optional field-level geological era; nonblank when supplied. Not a producing-reservoir formation. |
+| `play_group` | str | — | Optional broad geological play grouping; nonblank when supplied. Not a formation-specific conclusion. |
 | `reservoir_depth_tvd_m` | float | m TVDSS | Supplied reservoir true vertical depth below mean sea level, positive downward, not water depth; finite and nonnegative. Omitted, unavailable or unknown-datum measurements are `None`. |
 | `reservoir_pressure_psi` | float | psi absolute (psia) | Supplied reservoir absolute pressure, not gauge pressure or a pressure gradient; finite and nonnegative. Omitted, unavailable or unknown-reference measurements are `None`. |
 | `reservoir_temperature_f` | float | °F | Supplied reservoir temperature; finite subzero values are allowed. Omitted or unavailable measurements are `None`. |
@@ -32,6 +34,27 @@ lower_snake_case string `value`s shown below.
 | `sour` | bool | — | H2S/CO2 present. |
 | `hpht` | bool | — | High pressure / high temperature. |
 | `reservoir_distribution` | enum | — | `compact_stacked`, `distributed` — drives dry-vs-wet tree. |
+
+### Optional geological context
+
+The BSEE `paleowells.concept_context.enrich_concept_context` adapter accepts a
+validated concept, an explicit field code, a caller-provided field-era map and
+a nonblank source-reference string. It performs an exact code lookup without
+file discovery, downloads or pickle loading. Missing, null or `Unknown` eras
+leave context unchanged and return no receipt. Malformed matched eras or
+metadata raise errors. Known eras populate `geological_era`; the existing
+`is_lower_tertiary` grouping supplies `Lower Tertiary` for Paleocene, Eocene and
+Oligocene. Other eras imply no alternative named play and preserve supplied
+play context. Conflicting non-null values raise rather than overwrite.
+
+The returned concept is revalidated and separate from the input. Existing
+measurements, fluid properties, `hpht` and `data_source` are preserved. A separate
+receipt records the field code, source reference, matched era, exact-code
+mapping method and geological limitation; it does not verify the raw source.
+When supplied by `build_field_era_map`, the map describes the dominant era of
+joined paleo wells, including nonproducing wells. This is field-level context,
+not proof of the producing reservoir's age or formation. Source enrichment,
+measurement backfill and catalog integration remain separate work under #761.
 
 ### Proposed reservoir input conventions
 
