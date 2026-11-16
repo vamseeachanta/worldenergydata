@@ -33,6 +33,10 @@
   .tierbtn{font-family:ui-monospace,monospace;font-size:12px;font-weight:700;padding:6px 12px;border-radius:20px;border:1px solid var(--line);background:#fff;color:var(--muted);cursor:pointer}
   .tierbtn.on{background:var(--navy);color:#fff;border-color:var(--navy)}
   .count{font-family:ui-monospace,monospace;font-size:13px;color:var(--muted);margin:10px 2px}
+  .pager{display:flex;gap:8px;margin:10px 0}
+  .pager button{font:inherit;font-size:13px;padding:6px 12px;border:1px solid var(--line);border-radius:9px;background:var(--panel);color:var(--ink);cursor:pointer}
+  .pager button:disabled{opacity:.5;cursor:default}
+  .pager button:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
   .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:15px 17px;display:flex;flex-direction:column;
         box-shadow:0 1px 2px rgba(16,40,80,.04);transition:transform .12s,border-color .12s,box-shadow .12s}
@@ -151,7 +155,11 @@
   </div>
   <div class="tiers" id="f-tiers"></div>
   <div class="count" id="f-cbadge"></div>
-  <div class="count" id="f-count"></div>
+  <div class="count" id="f-count" role="status" aria-live="polite" aria-atomic="true"></div>
+  <nav class="pager" aria-label="Field result pages">
+    <button id="f-prev" type="button" aria-controls="f-grid" disabled>Previous page</button>
+    <button id="f-next" type="button" aria-controls="f-grid" disabled>Next page</button>
+  </nav>
   <div class="grid" id="f-grid"></div>
 
   <section id="x-panel" hidden>
@@ -193,6 +201,8 @@ const CBADGE = Object.fromEntries(COUNTRIES.map(c=>[c.country, c]));
 const TIER_ORDER = {rich:0, sample:1, roadmap:2};
 const $ = id => document.getElementById(id);
 let tierFilter = "all";
+const PAGE_SIZE = 60;
+let currentPage = 1;
 
 /* Working set (#947): the embedded GoM roster, augmented by the global
    catalog feed once it has been lazily fetched. The initial paint (no
@@ -259,10 +269,14 @@ $("f-tiers").innerHTML = tiers.map(t=>`<button class="tierbtn${t==="all"?" on":"
 $("f-tiers").onclick = e => { if(!e.target.dataset.t) return;
   tierFilter = e.target.dataset.t;
   [...$("f-tiers").children].forEach(b=>b.classList.toggle("on", b.dataset.t===tierFilter));
-  render(); };
+  resetPage(); };
 
-$("f-country").addEventListener("input", () => { ensureFeed(); refreshSelects(); render(); });
-["f-domain","f-region","f-play","f-search"].forEach(id=>$(id).addEventListener("input", render));
+$("f-country").addEventListener("input", () => { ensureFeed(); refreshSelects(); resetPage(); });
+["f-domain","f-region","f-play","f-search"].forEach(id=>$(id).addEventListener("input", resetPage));
+$("f-prev").addEventListener("click", () => { currentPage--; render(); });
+$("f-next").addEventListener("click", () => { currentPage++; render(); });
+
+function resetPage(){ currentPage = 1; render(); }
 
 function render(){
   const c=$("f-country").value, d=$("f-domain").value, r=$("f-region").value, p=$("f-play").value,
@@ -273,8 +287,13 @@ function render(){
     (tierFilter==="all"||f.density_tier===tierFilter) &&
     (!q || (f.name+" "+(f.block||"")+" "+(f.operator||"")).toLowerCase().includes(q)));
   rows.sort((a,b)=> (TIER_ORDER[a.density_tier]-TIER_ORDER[b.density_tier]) || a.name.localeCompare(b.name));
-  $("f-count").textContent = `${rows.length} field${rows.length===1?"":"s"}`;
-  $("f-grid").innerHTML = rows.map(f=>{
+  const pageCount = Math.ceil(rows.length / PAGE_SIZE);
+  currentPage = Math.max(1, Math.min(currentPage, pageCount));
+  $("f-count").textContent = `${rows.length} field${rows.length===1?"":"s"} · page ${pageCount?currentPage:0} of ${pageCount}`;
+  $("f-prev").disabled = currentPage <= 1;
+  $("f-next").disabled = currentPage >= pageCount;
+  const pageRows = rows.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+  $("f-grid").innerHTML = pageRows.map(f=>{
     const go = f.lifecycle_id
       ? `<div class="go"><a href="../lifecycle/${f.lifecycle_id}_lifecycle.html">Life-cycle →</a></div>`
       : (f.concept ? `<div class="go"><span>concept: ${f.concept}</span></div>` : "");
