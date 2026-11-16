@@ -69,6 +69,7 @@ from worldenergydata.cli.commands import (
     sodir,
     texas_rrc,
 )
+from worldenergydata.cli.commands.cost_check import cost_check
 from worldenergydata.safety_analysis import cli as safety_analysis_cli
 
 # Initialize console for rich output
@@ -84,6 +85,7 @@ app = typer.Typer(
 )
 
 # Add module subcommands
+app.command("cost-check")(cost_check)
 app.add_typer(bsee.app, name="bsee", help="BSEE data operations and analysis")
 app.add_typer(
     dashboard.app,

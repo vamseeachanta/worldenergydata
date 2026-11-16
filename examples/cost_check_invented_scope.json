@@ -1,0 +1,16 @@
+{
+  "invented": true,
+  "wells": 2,
+  "trees": 2,
+  "manifolds": 1,
+  "surf_km": 3,
+  "umbilical_km": 3,
+  "risers": 1,
+  "water_depth_m": 1500,
+  "region": "invented_region",
+  "development_type": "subsea",
+  "host_type": "floating",
+  "fid_year": 2026,
+  "quote": 40000000,
+  "quote_cost_basis": "USD_2026"
+}
