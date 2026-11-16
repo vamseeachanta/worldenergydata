@@ -371,9 +371,16 @@ def test_domain_gate_keeps_all_three_jobs_and_read_only_permissions() -> None:
         "./.github/workflows/domain-matrix.yml"
     )
     caller = load_workflow("ci.yml")["jobs"]["domain-tests"]
-    assert caller["with"]["test-runner"] == (
-        "env WED_FAST_GATE=1 uv run --with pytest-xdist pytest"
+    # pytest-xdist goes into the job's own .venv, so tests that re-launch
+    # sys.executable never point at a `uv run --with` overlay environment in
+    # the runner's shared uv cache, which other jobs can remove mid-run.
+    assert caller["with"]["install-cmd"] == (
+        "uv sync --frozen --all-extras && uv pip install pytest-xdist==3.8.0"
     )
+    assert caller["with"]["test-runner"] == (
+        "env WED_FAST_GATE=1 uv run --no-sync pytest"
+    )
+    assert "--with" not in caller["with"]["test-runner"]
     workflow = load_workflow("domain-matrix.yml")
     assert "test-runner" in workflow[True]["workflow_call"]["inputs"]
     assert any(
