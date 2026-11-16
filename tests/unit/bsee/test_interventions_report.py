@@ -670,7 +670,21 @@ def test_published_prompt_pins_the_builder_that_made_the_page(tmp_path):
     pins = published_pins(committed.decode("utf-8"))
     code = pins["code"]
     assert pins["chart"] != pins["data"]
+    # A shallow checkout (CI checks out depth 1) does not hold the pinned
+    # history; only there may a missing pin skip. A full clone must hold both.
+    missing = [
+        pin
+        for pin in (code, pins["data"])
+        if subprocess.run(
+            ["git", "-C", str(EXAMPLE), "cat-file", "-e", f"{pin}^{{commit}}"],
+            capture_output=True,
+            env=git_env(),
+        ).returncode
+    ]
+    if missing and git(EXAMPLE, "rev-parse", "--is-shallow-repository") == "true":
+        pytest.skip(f"shallow clone lacks pinned commits {[m[:8] for m in missing]}")
     git(EXAMPLE, "cat-file", "-e", f"{code}^{{commit}}")
+    git(EXAMPLE, "cat-file", "-e", f"{pins['data']}^{{commit}}")
 
     # 1. Nothing the builder runs or reads, besides the tables, changed after
     #    the pinned commit.
