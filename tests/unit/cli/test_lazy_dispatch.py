@@ -76,8 +76,10 @@ atexit.register(record)
 @pytest.fixture
 def installed_console(tmp_path, monkeypatch):
     """Use the actual installed script; never fall back to a child Typer app."""
-    # Exercise every console path with a caller that requests color.
+    # Exercise every console path with a caller that requests color and a TTY.
     monkeypatch.setenv("FORCE_COLOR", "1")
+    monkeypatch.setenv("TTY_COMPATIBLE", "1")
+    monkeypatch.setenv("TERM", "xterm-256color")
     executable = shutil.which("worldenergydata")
     assert executable, "Install the workspace before running console startup tests"
     (tmp_path / "sitecustomize.py").write_text(AUDIT, encoding="utf-8", newline="\n")
@@ -87,8 +89,8 @@ def installed_console(tmp_path, monkeypatch):
     env["PYTHONPATH"] = os.pathsep.join([str(tmp_path), env.get("PYTHONPATH", "")])
     env["COLUMNS"] = "120"
     env["NO_COLOR"] = "1"
-    # Typer can also force styling when either CI color hint is inherited.
-    for name in ("FORCE_COLOR", "PY_COLORS", "GITHUB_ACTIONS"):
+    # Typer and Rich can force styling from color or terminal hints.
+    for name in ("FORCE_COLOR", "PY_COLORS", "GITHUB_ACTIONS", "TTY_COMPATIBLE"):
         env.pop(name, None)
     # Do not inherit a caller's shell-completion request.
     env.pop("_WORLDENERGYDATA_COMPLETE", None)
