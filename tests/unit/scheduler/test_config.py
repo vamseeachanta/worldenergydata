@@ -1,5 +1,6 @@
 """Tests for scheduler config loader and validation."""
 
+import json
 import os
 import tempfile
 from pathlib import Path
@@ -18,9 +19,15 @@ def test_shipped_eia_output_directory():
         Path(__file__).resolve().parents[3] / "config/scheduler/scheduler_config.yml"
     )
     config = load_config(str(config_path))
-    assert config.get_job_config("eia_us_refresh")["output_dir"] == (
-        "data/modules/eia_us"
+    contract_path = (
+        config_path.parents[2] / "data/source-refresh-acceptance-contract.json"
     )
+    contract = json.loads(contract_path.read_text(encoding="utf-8"))
+    eia = next(row for row in contract["sources"] if row["module_id"] == "eia_us")
+    assert config.get_job_config("eia_us_refresh")["output_dir"] == (
+        eia["scheduler_output_dir"]
+    )
+    assert eia["scheduler_output_dir"] == "data/modules/eia"
 
 
 VALID_YAML = """
@@ -131,7 +138,7 @@ class TestLoadConfig:
             "bsee_refresh": "data/modules/bsee",
             "hse_refresh": "data/modules/hse",
             "sodir_refresh": "data/modules/sodir",
-            "eia_us_refresh": "data/modules/eia_us",
+            "eia_us_refresh": "data/modules/eia",
             "metocean_refresh": "data/modules/metocean",
             "brazil_anp_refresh": "data/modules/brazil_anp",
             "ukcs_refresh": "data/modules/ukcs",

@@ -9,8 +9,9 @@ EIA documents the `api_key` request parameter in its
 
 Supply `EIA_API_KEY` in the environment of the scheduler process. An exported
 variable in an interactive shell does not configure a separate scheduled service.
-The scheduler does not load a `.env` file automatically. A nonempty `api_key`
-setting in the job configuration takes precedence over `EIA_API_KEY`; an empty
+The scheduler does not load a `.env` file automatically. Both credential sources
+are stripped of surrounding whitespace. A non-blank `api_key` setting in the job
+configuration takes precedence over `EIA_API_KEY`; an empty or whitespace-only
 setting falls back to the environment. Keep actual keys out of tracked files,
 command history, logs and shared run evidence.
 
@@ -20,11 +21,16 @@ that invocation: no ingestion request, output write or success manifest occurs.
 A skip is not evidence of fresh data. Invalid supplied keys still follow the
 normal ingestion failure path.
 
+Monitoring also logs a distinct `credential_absent` warning for this skip.
+The result envelope reports the missing credential instead of describing the job
+as disabled. Failure alerts and staleness checks retain their existing behavior.
+
 ## Output and run evidence
 
 The shipped `config/scheduler/scheduler_config.yml` explicitly sets
-`output_dir: data/modules/eia_us`. Without a configured override, the adapter's
-legacy default remains `data/modules/eia`. See the
+`output_dir: data/modules/eia`, matching the source-refresh acceptance contract
+and the adapter default. A directory rename is deferred to a separate change
+that updates the contract and its consumers together. See the
 [output directory guide](../guides/scheduler-output-directories.md) for data-root
 overrides and timestamped output snapshots.
 

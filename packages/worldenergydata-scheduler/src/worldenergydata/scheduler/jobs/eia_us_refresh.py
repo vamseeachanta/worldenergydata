@@ -50,7 +50,9 @@ class EiaUsRefreshJob(AbstractJob):
         """
         start = datetime.now()
         try:
-            api_key = config.get("api_key") or os.environ.get("EIA_API_KEY")
+            api_key = (config.get("api_key") or "").strip() or (
+                os.environ.get("EIA_API_KEY") or ""
+            ).strip()
             if not api_key:
                 logger.warning("EIA_API_KEY not set; skipping eia_us_refresh")
                 return JobResult(

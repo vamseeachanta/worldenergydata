@@ -49,6 +49,16 @@ def test_envelope_adapter_skipped_maps_ok_with_warning():
     assert any("skip" in w.lower() for w in env.warnings)
 
 
+def test_missing_credential_skip_is_not_reported_as_disabled():
+    env = job_result_to_envelope(
+        _job(status="skipped", records=0, error="credential_absent", retryable=False)
+    )
+    assert env.status == "ok"
+    assert "job skipped (credential_absent)" in env.warnings
+    assert "job skipped (disabled)" not in env.warnings
+    assert env.result["retryable"] is False
+
+
 def test_envelope_adapter_data_as_of_from_metadata(tmp_path):
     meta = tmp_path / "_metadata.json"
     meta.write_text(

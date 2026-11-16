@@ -55,7 +55,8 @@ def job_result_to_envelope(
 
     warnings = []
     if result.status == "skipped":
-        warnings.append("job skipped (disabled)")
+        reason = result.error_msg or "disabled"
+        warnings.append(f"job skipped ({reason})")
     if result.error_msg:
         warnings.append(result.error_msg)
 
