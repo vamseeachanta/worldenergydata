@@ -9,6 +9,7 @@ All visualisations use Plotly.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from numbers import Integral, Real
 from typing import Callable, Optional
 
 import numpy as np
@@ -27,25 +28,26 @@ _VALID_MODELS = frozenset({"exponential", "hyperbolic", "harmonic"})
 
 @dataclass
 class ForecastResult:
-    """Result returned by :meth:`ArpsDeclineCurve.fit`.
+    """Result returned by Arps curve fitting or forward simulation.
 
     Attributes
     ----------
     model:
         Decline model used: ``'exponential'``, ``'hyperbolic'``, or ``'harmonic'``.
     qi:
-        Fitted initial production rate (bbl/month).
+        Initial production rate (bbl/month).
     Di:
-        Fitted nominal decline rate (1/month).
+        Nominal decline rate (1/month).
     b:
         Hyperbolic exponent (0 = exponential, 1 = harmonic).
     r_squared:
-        Coefficient of determination for the fit.
+        Coefficient of determination for the fit; NaN for simulation.
     eur_bbl:
         Estimated ultimate recovery at the economic limit (bbl).
     forecast_df:
         Pre-populated forecast DataFrame with columns
-        ``month``, ``rate_bbl``, ``cumulative_bbl``.
+        ``month``, ``rate_bbl``, ``cumulative_bbl``. Rates are month-end
+        samples; cumulative values sum these samples, not integrated volumes.
     lower_ci:
         Lower confidence interval DataFrame (optional).
     upper_ci:
@@ -152,6 +154,76 @@ class ArpsDeclineCurve:
         """
         return self._build_forecast_df(
             result.qi, result.Di, result.b, result.model, months
+        )
+
+    def simulate(
+        self,
+        qi: float,
+        Di: float,
+        b: float,
+        model: str,
+        economic_limit: float,
+        months: int,
+    ) -> ForecastResult:
+        """Evaluate explicit decline parameters without fitting historical data.
+
+        ``qi`` and ``economic_limit`` are rates in bbl/month, ``Di`` is
+        nominal decline in 1/month, and ``b`` is dimensionless. Rates and
+        decline must be finite and positive. The exponent must be 0 for
+        exponential, 1 for harmonic, or strictly positive for hyperbolic.
+        ``months`` must be a positive integer; booleans are rejected.
+
+        EUR is in bbl and is zero when the limit is at or above ``qi``.
+        The limit must be at least 1 bbl/month, matching the existing EUR
+        helper's minimum. The profile follows :meth:`forecast`: month-end
+        rates at months 1 through ``months``, with their cumulative sum.
+        These samples are not integrated monthly volumes. The horizon is
+        fixed and is not truncated at the economic limit.
+
+        Returns a :class:`ForecastResult` with ``r_squared=NaN`` and no
+        confidence intervals because no fit occurred. Invalid inputs raise
+        ``ValueError``. Fitting bounds on the hyperbolic exponent do not
+        restrict this forward evaluation.
+        """
+        if not isinstance(model, str) or model not in _VALID_MODELS:
+            raise ValueError(
+                f"Unknown model '{model}'. Valid models: {sorted(_VALID_MODELS)}"
+            )
+        for name, value in (("qi", qi), ("Di", Di), ("economic_limit", economic_limit)):
+            if (
+                isinstance(value, bool)
+                or not isinstance(value, Real)
+                or not np.isfinite(value)
+                or value <= 0
+            ):
+                raise ValueError(f"{name} must be finite and positive")
+        if economic_limit < 1.0:
+            raise ValueError("economic_limit must be at least 1 bbl/month")
+        if (
+            isinstance(b, bool)
+            or not isinstance(b, Real)
+            or not np.isfinite(b)
+            or b < 0
+        ):
+            raise ValueError("b must be finite and nonnegative")
+        if (
+            (model == "exponential" and b != 0)
+            or (model == "harmonic" and b != 1)
+            or (model == "hyperbolic" and b <= 0)
+        ):
+            raise ValueError(f"b is inconsistent with model '{model}'")
+        if isinstance(months, bool) or not isinstance(months, Integral) or months <= 0:
+            raise ValueError("months must be a positive integer")
+
+        qi, Di, b = float(qi), float(Di), float(b)
+        return ForecastResult(
+            model=model,
+            qi=qi,
+            Di=Di,
+            b=b,
+            r_squared=float("nan"),
+            eur_bbl=self._compute_eur(qi, Di, b, float(economic_limit), model),
+            forecast_df=self._build_forecast_df(qi, Di, b, model, int(months)),
         )
 
     def plot(self, historical: pd.DataFrame, result: ForecastResult) -> go.Figure:
