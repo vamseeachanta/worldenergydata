@@ -319,8 +319,10 @@ def main(argv: list[str] | None = None) -> int:
             # Write progress after each completed observation; never overwrite old evidence.
             (output / "report.json").write_text(json.dumps(report, indent=2) + "\n")
         stable = len({run["findings_sha256"] for run in report["runs"]}) == 1
-        if bytecode_root is not None:
-            report["source_after_sha256"] = digest(snapshot(paths, root))
+        final_files = snapshot(paths, root)
+        report["source_after_sha256"] = digest(final_files)
+        if final_files != files:
+            raise ValueError("source inventory changed")
         report["status"] = "STABLE" if stable else "UNSTABLE"
     except (OSError, ValueError) as exc:
         report.update(status="ERROR", error=str(exc))

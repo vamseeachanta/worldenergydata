@@ -15,6 +15,7 @@ It does not establish the cause of the historical variance in #328.
 | Initial | 2026-10-20 | Added a scan protocol, regression cases and a worked example to prevent incomplete invocations being reported as clean inventories. |
 | Bytecode controls | 2026-11-16 | Added isolated cold and warm bytecode observations to distinguish cache state from environment synchronization. |
 | Evidence qualification | 2026-11-17 | Withdrew unsupported bytecode measurements and marked the experiment unverified until a retrievable record is available. |
+| Final source comparison | 2026-11-17 | Rejects input changes after the last progress write and retains both source digests to prevent invalid stability reports. |
 
 ## Why counting output lines is insufficient
 
@@ -90,7 +91,10 @@ The checker imports no scanned source modules or engineering programs.
 
 `report.json` records the policy, each child's bytecode directory and command,
 the version query, and each observation's state, source digest, full finding
-digest and exit status. Successful experiments include `source_after_sha256`.
+digest and exit status. A final snapshot after the last progress write is
+compared with the initial inventory for every invocation. Both `source_sha256`
+and `source_after_sha256` are retained when the snapshots differ; the checker
+reports `ERROR` and exits `2`. Unchanged inputs retain the existing exit contract.
 Failures retain raw streams and available metadata and keep the existing error
 exit contract. Raw evidence stays outside the repository because it can contain
 runtime paths. These controls do not create a fresh dependency environment,
@@ -123,6 +127,8 @@ It never accepts an incomplete, failed or inconsistent scan. CI omits this flag.
    removed files. Sort findings by path, row, column, code and message. Compare
    the complete records, including multiplicity, rather than only their count.
    Write progress after each completed observation and retain all failed evidence.
+   After the last progress write, record and compare a final source snapshot
+   before declaring findings stable.
 
 The arithmetic is set cardinality and equality: the count is the length of the
 validated repository diagnostic list, and stability requires every sorted list

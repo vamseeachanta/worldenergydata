@@ -63,6 +63,58 @@ def report(experiment):
     return json.loads((experiment[1] / "report.json").read_text())
 
 
+@pytest.mark.parametrize("policy", [None, "cold-per-run", "warm-shared"])
+@pytest.mark.parametrize("change_after_progress", [False, True])
+def test_final_snapshot_validates_source_after_last_progress(
+    experiment, monkeypatch, policy, change_after_progress
+):
+    """Real flake8 clean scans cannot validate a subsequently changed input."""
+    source, output, _ = experiment
+    sample = source / "sample.py"
+    sample.write_text("defined_name = None\n")
+    initial = check_f821.snapshot([source], source)
+    args = arguments(experiment)
+    args[args.index("--runs") + 1] = "2"
+    if policy is None:
+        del args[args.index("--bytecode-root") :]
+    else:
+        args.extend(["--bytecode-policy", policy])
+    write_text = Path.write_text
+    progress_seen = False
+
+    def write_then_change(path, content, *args, **kwargs):
+        nonlocal progress_seen
+        result = write_text(path, content, *args, **kwargs)
+        if path == output / "report.json" and not progress_seen:
+            progress = json.loads(content)
+            if len(progress["runs"]) == 2:
+                assert progress["status"] == "ERROR"
+                assert "source_after_sha256" not in progress
+                progress_seen = True
+                if change_after_progress:
+                    write_text(sample, "changed_name = None\n")
+        return result
+
+    monkeypatch.setattr(Path, "write_text", write_then_change)
+    assert check_f821.main(args) == (2 if change_after_progress else 0)
+    assert progress_seen
+    evidence = report(experiment)
+    assert evidence["files"] == initial
+    assert evidence["source_sha256"] == check_f821.digest(initial)
+    assert evidence["source_after_sha256"] == check_f821.digest(
+        check_f821.snapshot([source], source)
+    )
+    assert [run["count"] for run in evidence["runs"]] == [0, 0]
+    assert all(run["returncode"] == 1 for run in evidence["runs"])
+    if change_after_progress:
+        assert evidence["status"] == "ERROR"
+        assert evidence["error"] == "source inventory changed"
+        assert evidence["source_after_sha256"] != evidence["source_sha256"]
+    else:
+        assert evidence["status"] == "STABLE"
+        assert evidence["source_after_sha256"] == evidence["source_sha256"]
+
+
 @pytest.mark.parametrize("policy", ["cold-per-run", "warm-shared"])
 @pytest.mark.parametrize("launcher", ["direct", "uv"])
 def test_cache_policy_and_version_isolation(experiment, monkeypatch, policy, launcher):
