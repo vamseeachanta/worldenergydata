@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 import math
+from decimal import Decimal
 
 _COLUMNS = {
     "operator": "CURR_OPER",
@@ -31,6 +32,8 @@ def _finite_float(value):
     number = float(value)
     if not math.isfinite(number):
         raise ValueError("nonfinite JSON number")
+    if Decimal(value) != Decimal(str(number)):
+        raise ValueError("unsupported JSON decimal precision")
     return number
 
 
@@ -42,6 +45,8 @@ def read_field_metadata(
     Optional attributes accept only strings or null. Dates stay uninterpreted;
     coverage means present text, never engineering eligibility. Source URL and
     retrieval time are caller assertions. OBJECTID must be an integer.
+    JSON decimals must round-trip through finite floats without changing their
+    decimal value; unsupported precision (including underflow) is rejected.
     """
     if not isinstance(raw, bytes):
         raise TypeError("snapshot must be bytes")

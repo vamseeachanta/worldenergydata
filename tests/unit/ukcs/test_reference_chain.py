@@ -109,7 +109,12 @@ def test_reference_chain_returns_labeled_finite_pre_tax_metrics_and_zero_royalty
     assert result["ranked_concepts"]
 
 
-def test_enriched_metadata_retains_evidence_without_changing_screen_or_economics():
+@pytest.mark.parametrize(
+    "request_name", ["Synthetic Alpha", "synthetic alpha", "  SYNTHETIC ALPHA \t"]
+)
+def test_enriched_metadata_retains_evidence_without_changing_screen_or_economics(
+    request_name,
+):
     import json
 
     from worldenergydata.ukcs.field_metadata import read_field_metadata
@@ -121,6 +126,7 @@ def test_enriched_metadata_retains_evidence_without_changing_screen_or_economics
     class RecordingAdapter:
         def fetch(self, query):
             assert query.regions == ["ukcs"]
+            assert query.fields == [request_name]
             return UkcsAdapter(loader=SyntheticLoader()).fetch(query)
 
     raw = json.dumps(
@@ -151,7 +157,7 @@ def test_enriched_metadata_retains_evidence_without_changing_screen_or_economics
         return run_ukcs_reference_chain(
             adapter=RecordingAdapter(),
             field_meta=metadata,
-            field_name="Synthetic Alpha",
+            field_name=request_name,
         )
 
     first, second, original = run(meta), run(meta), run(sparse)
@@ -174,3 +180,27 @@ def test_enriched_metadata_retains_evidence_without_changing_screen_or_economics
     )
     assert first["pre_tax_metrics"] == original["pre_tax_metrics"]
     assert original["metadata_evidence"] is None
+
+
+@pytest.mark.parametrize("metadata_name", ["Synthetic Beta", "", None, 42])
+def test_enriched_metadata_mismatch_fails_before_production_fetch(metadata_name):
+    from worldenergydata.ukcs.field_metadata import read_field_metadata
+
+    meta = read_field_metadata(
+        b'{"features":[{"attributes":{"FIELDNAME":"Synthetic Beta","OBJECTID":1}}]}',
+        "Synthetic Beta",
+        source_url="https://example.invalid/0",
+        retrieved_at="2026-11-16T00:00:00Z",
+    )
+    meta["field_name"] = metadata_name
+
+    class UnusedAdapter:
+        def fetch(self, query):
+            raise AssertionError("production fetch must not run")
+
+    with pytest.raises(ValueError, match="metadata field.*production request"):
+        run_ukcs_reference_chain(
+            adapter=UnusedAdapter(),
+            field_meta=meta,
+            field_name="Synthetic Alpha",
+        )

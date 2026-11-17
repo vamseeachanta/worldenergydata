@@ -122,6 +122,35 @@ def test_conflicting_non_id_attributes_fail(key, value):
 
 
 @pytest.mark.parametrize(
+    "first,second",
+    [
+        ("0.1", "0.10000000000000001"),
+        ("0.0", "1e-9999"),
+        ('{"nested":[0.1]}', '{"nested":[0.10000000000000001]}'),
+    ],
+)
+def test_conflicting_decimal_attributes_are_not_rounded_to_equality(first, second):
+    rows = [
+        '{"attributes":{"FIELDNAME":"Synthetic Alpha","OBJECTID":'
+        + str(index)
+        + ',"OTHER":'
+        + value
+        + "}}"
+        for index, value in enumerate((first, second), start=1)
+    ]
+    raw = ('{"features":[' + ",".join(rows) + "]}").encode()
+    with pytest.raises(ValueError, match="conflicting|precision"):
+        read(raw)
+
+
+def test_supported_decimal_attributes_preserve_evidence_and_duplicate_ids():
+    row = {"FIELDNAME": "Synthetic Alpha", "OBJECTID": 1, "OTHER": 0.1}
+    evidence = read(snapshot(row, dict(row, OBJECTID=2)))["metadata_evidence"]
+    assert evidence["attributes"]["OTHER"] == 0.1
+    assert evidence["source_ids"] == [1, 2]
+
+
+@pytest.mark.parametrize(
     "raw",
     [
         b'{"features":[],"features":[]}',

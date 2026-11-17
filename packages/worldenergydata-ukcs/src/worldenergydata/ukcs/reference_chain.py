@@ -38,6 +38,15 @@ def run_ukcs_reference_chain(
 
     oil_price_usd_bbl is a scenario input, not a fetched benchmark quote.
     """
+    if field_meta.get("metadata_evidence") is not None:
+        metadata_name = field_meta.get("field_name")
+        if (
+            not isinstance(metadata_name, str)
+            or not isinstance(field_name, str)
+            or not metadata_name.strip()
+            or metadata_name.strip().casefold() != field_name.strip().casefold()
+        ):
+            raise ValueError("metadata field must match the production request")
     unified = adapter.fetch(
         ProductionQuery(
             regions=["ukcs"],
