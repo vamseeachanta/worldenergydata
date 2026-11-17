@@ -107,3 +107,70 @@ def test_reference_chain_returns_labeled_finite_pre_tax_metrics_and_zero_royalty
     assert math.isfinite(result["pre_tax_metrics"]["gross_revenue_usd"])
     assert math.isfinite(result["pre_tax_metrics"]["net_cashflow_usd"])
     assert result["ranked_concepts"]
+
+
+def test_enriched_metadata_retains_evidence_without_changing_screen_or_economics():
+    import json
+
+    from worldenergydata.ukcs.field_metadata import read_field_metadata
+
+    class SyntheticLoader:
+        def load_field_production(self, field_name):
+            return _normalized_nsta_frame().assign(field="SYNTHETIC ALPHA")
+
+    class RecordingAdapter:
+        def fetch(self, query):
+            assert query.regions == ["ukcs"]
+            return UkcsAdapter(loader=SyntheticLoader()).fetch(query)
+
+    raw = json.dumps(
+        {
+            "features": [
+                {
+                    "attributes": {
+                        "FIELDNAME": "Synthetic Alpha",
+                        "OBJECTID": 1,
+                        "CURR_OPER": "Synthetic Operator",
+                        "STATUS": "Producing",
+                        "PROD_DATE": "unparsed startup",
+                        "DISC_DATE": "unknown",
+                    }
+                }
+            ]
+        }
+    ).encode()
+    meta = read_field_metadata(
+        raw,
+        "Synthetic Alpha",
+        source_url="https://example.invalid/0",
+        retrieved_at="2026-11-16T00:00:00Z",
+    )
+    sparse = {"field_name": "Synthetic Alpha"}
+
+    def run(metadata):
+        return run_ukcs_reference_chain(
+            adapter=RecordingAdapter(),
+            field_meta=metadata,
+            field_name="Synthetic Alpha",
+        )
+
+    first, second, original = run(meta), run(meta), run(sparse)
+    concept = first["field_concept"]
+    assert concept.operator == "Synthetic Operator"
+    assert concept.region == "uk"
+    assert concept.year_first_oil is None
+    assert (
+        first["metadata_evidence"]
+        == second["metadata_evidence"]
+        == meta["metadata_evidence"]
+    )
+    assert first["metadata_label"] == "metadata_screening_only"
+    assert first["metadata_evidence"]["recommendation_ready"] is False
+    assert first["metadata_evidence"]["fdp_consent"] == "NOT_EVALUATED"
+    assert (
+        first["ranked_concepts"]
+        == second["ranked_concepts"]
+        == original["ranked_concepts"]
+    )
+    assert first["pre_tax_metrics"] == original["pre_tax_metrics"]
+    assert original["metadata_evidence"] is None

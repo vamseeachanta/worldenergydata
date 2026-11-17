@@ -79,6 +79,8 @@ def run_ukcs_reference_chain(
         "fdas_production": fdas_production,
         "field_concept": field_concept,
         "ranked_concepts": ranked_concepts,
+        "metadata_evidence": field_meta.get("metadata_evidence"),
+        "metadata_label": "metadata_screening_only",
         "economics_label": "chain_plumbing_pre_tax",
         "pre_tax_metrics": _pre_tax_metrics(cashflows),
         "cashflow_basis": {
