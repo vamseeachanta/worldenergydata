@@ -46,6 +46,12 @@ from worldenergydata.field_development.enums import (
 
 SCHEMA_VERSION = "1.0.0"
 
+# Explicit Python str.isspace() set keeps Pydantic and JSON Schema engines aligned.
+NONBLANK_CONTEXT_PATTERN = (
+    r"[^\u0009-\u000d\u001c-\u0020\u0085\u00a0\u1680"
+    r"\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]"
+)
+
 
 class FieldConcept(BaseModel):
     """An offshore field-development concept — the playbook's shared contract.
@@ -67,12 +73,12 @@ class FieldConcept(BaseModel):
     # --- Reservoir / fluid ---
     geological_era: Optional[str] = Field(
         None,
-        pattern=r"\S",
+        pattern=NONBLANK_CONTEXT_PATTERN,
         description="Supplied field-level geological era; not a reservoir formation.",
     )
     play_group: Optional[str] = Field(
         None,
-        pattern=r"\S",
+        pattern=NONBLANK_CONTEXT_PATTERN,
         description="Broad geological play grouping, not a formation-specific conclusion.",
     )
     # Proposed input conventions; rationale and source limits: data_dictionary.md.

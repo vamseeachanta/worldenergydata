@@ -240,9 +240,27 @@ def test_schema_generation_uses_temporary_output(tmp_path, monkeypatch):
     [
         ("", False),
         (" \t\n", False),
-        ("\u00a0", False),
+        *[
+            (chr(code), False)
+            for code in (
+                *range(0x0009, 0x000E),
+                *range(0x001C, 0x0021),
+                0x0085,
+                0x00A0,
+                0x1680,
+                *range(0x2000, 0x200B),
+                0x2028,
+                0x2029,
+                0x202F,
+                0x205F,
+                0x3000,
+            )
+        ],
         (None, True),
         ("Eocene", True),
+        ("\u001cEocene\u001f", True),
+        ("\u200b", True),
+        ("\ufeff", True),
         (" \tLower Tertiary\n", True),
         (7, False),
     ],
@@ -269,6 +287,9 @@ def test_context_constraints_are_visible_in_json_schema(
     if valid:
         concept = FieldConcept.model_validate(payload)
         assert getattr(concept, attribute) == value
+        assert FieldConcept.model_validate_json(json.dumps(payload)) == concept
     else:
         with pytest.raises(ValidationError):
             FieldConcept.model_validate(payload)
+        with pytest.raises(ValidationError):
+            FieldConcept.model_validate_json(json.dumps(payload))
