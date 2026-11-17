@@ -11,7 +11,7 @@ show_help() {
     echo "Usage: $0 <command>"
     echo ""
     echo "Commands:"
-    echo "  build         - Build the package"
+    echo "  build         - Build the root and all workspace member distributions"
     echo "  test-build    - Build and test the package locally"
     echo "  publish-test  - Publish to TestPyPI"
     echo "  publish       - Publish to PyPI (production)"

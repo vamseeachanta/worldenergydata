@@ -291,6 +291,11 @@ TestPyPI and production publication are separate actions requiring the relevant
 credentials and release authorization. A successful local build or dispatch test
 does not authorize either upload.
 
+Both `publish-test` and `publish` call the build action and upload `dist/*`.
+They therefore build and upload the root distribution and every workspace member
+distribution. The upload commands, credentials and confirmation prompts are
+unchanged.
+
 ### Build Configuration
 
 Building is configured in `pyproject.toml`:

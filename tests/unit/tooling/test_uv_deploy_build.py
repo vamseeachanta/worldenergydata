@@ -19,7 +19,7 @@ from pathlib import Path
 
 name = Path(sys.argv[0]).name
 args = sys.argv[1:]
-with open(os.environ['RECORD'], 'a') as stream:
+with open(os.environ['RECORD'], 'a', encoding='utf-8', newline='\\n') as stream:
     stream.write(json.dumps([name, os.getcwd(), args]) + '\\n')
 if name == 'uv' and args in (['sync', '--extra', 'build'],
                              ['build', '--all-packages']):
@@ -48,7 +48,7 @@ def _fixture(tmp_path):
     for name in ("pyproject.toml", "dist/keep.whl", "build/keep", "keep.egg-info/keep"):
         target = root / name
         target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_text("fixture sentinel\n", encoding="utf-8")
+        target.write_text("fixture sentinel\n", encoding="utf-8", newline="\n")
     tools = tmp_path / "tools"
     tools.mkdir()
     for name in ("bash", "dirname"):
@@ -57,7 +57,9 @@ def _fixture(tmp_path):
         (tools / name).symlink_to(executable)
     for name in ("uv", "ls", "rm", "pip", "python", "curl", "git"):
         tool = tools / name
-        tool.write_text(_TOOLS.format(python=sys.executable), encoding="utf-8")
+        tool.write_text(
+            _TOOLS.format(python=sys.executable), encoding="utf-8", newline="\n"
+        )
         tool.chmod(0o755)
     env = os.environ.copy()
     for key in tuple(env):
@@ -98,7 +100,8 @@ def test_build_dispatch(tmp_path, entry, failure):
         timeout=10,
     )
     records = [
-        json.loads(line) for line in Path(env["RECORD"]).read_text().splitlines()
+        json.loads(line)
+        for line in Path(env["RECORD"]).read_text(encoding="utf-8").splitlines()
     ]
     expected = [["uv", str(root), ["sync", "--extra", "build"]]]
     if failure != "sync":
@@ -117,6 +120,7 @@ def test_compatibility_wrapper_forwards_arguments_and_status(tmp_path):
     canonical.write_text(
         '#!/bin/bash\nprintf "%s\\n" "$@" > "$RECORD"\nexit 37\n',
         encoding="utf-8",
+        newline="\n",
     )
     before = _snapshot(root)
     arguments = ["a b", "", "*", "--help"]
@@ -130,5 +134,27 @@ def test_compatibility_wrapper_forwards_arguments_and_status(tmp_path):
         timeout=10,
     )
     assert result.returncode == 37, result.stderr
-    assert Path(env["RECORD"]).read_text().splitlines() == arguments
+    assert Path(env["RECORD"]).read_text(encoding="utf-8").splitlines() == arguments
+    assert _snapshot(root) == before
+
+
+@pytest.mark.parametrize("entry", _ENTRIES)
+def test_help_describes_workspace_build_without_running_tools(tmp_path, entry):
+    root, env = _fixture(tmp_path)
+    before = _snapshot(root)
+
+    result = subprocess.run(
+        ["bash", str(root / entry), "--help"],
+        cwd=tmp_path,
+        env=env,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        check=False,
+        timeout=10,
+    )
+
+    assert result.returncode == 0, result.stderr
+    assert "Build the root and all workspace member distributions" in result.stdout
+    assert not Path(env["RECORD"]).exists()
     assert _snapshot(root) == before
