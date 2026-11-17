@@ -14,6 +14,7 @@ It does not establish the cause of the historical variance in #328.
 | --- | --- | --- |
 | Initial | 2026-10-20 | Added a scan protocol, regression cases and a worked example to prevent incomplete invocations being reported as clean inventories. |
 | Bytecode controls | 2026-11-16 | Added isolated cold and warm bytecode observations to distinguish cache state from environment synchronization. |
+| Evidence qualification | 2026-11-17 | Withdrew unsupported bytecode measurements and marked the experiment unverified until a retrievable record is available. |
 
 ## Why counting output lines is insufficient
 
@@ -205,44 +206,32 @@ caches or rebuilding the full dependency environment is outside this change. Con
 direct/uv comparisons use an already prepared interpreter, so they isolate the
 invocation route, not environment synchronization or bytecode compilation.
 
-### Bytecode-cache observations, 2026-11-16
+### Bytecode-cache experiment: unverified
 
-The controlled experiment used Python 3.12.15, flake8 7.5.0, pyflakes
-4.1.0, pycodestyle 2.15.0 and mccabe 0.7.0 in one prepared interpreter, without
-synchronization. The commands were the four bytecode-control invocations above,
-with the same explicitly selected `src/`, `tests/` and `packages/` inputs.
-The baseline checker returned counts `[0, 0]` over 3,181 tracked Python
-files. The controlled inventory contained 3,182 files: the original files
-were unchanged, and the additional file was the new cache-control regression test.
+The reported bytecode-cache experiment is **UNVERIFIED**: this pull request
+provides no retrievable, head-bound evidence record for its inputs, tool versions,
+observation results, exit statuses, cross-condition agreement or cache population.
+The numerical results and source and finding digests have been withdrawn from
+this summary. No conclusion about observed bytecode-state variance is established.
 
-| Launcher | Bytecode condition | Observations | Repository findings | Result |
-| --- | --- | --- | --- | --- |
-| Direct | Fresh directory per run | 10 cold | 0 in every run | STABLE |
-| Direct | One shared directory | 1 priming + 10 warm | 0 in every run | STABLE |
-| uv, same interpreter | Fresh directory per run | 10 cold | 0 in every run | STABLE |
-| uv, same interpreter | One shared directory | 1 priming + 10 warm | 0 in every run | STABLE |
+The four bytecode-control commands above describe a comparison to run; their
+observation counts are example execution inputs, not verified measurements.
+Offline subprocess tests check directory allocation, cache-state labels,
+environment isolation and evidence handling. They do not substantiate a real
+experiment's observation counts, process statuses, agreement or bytecode-file
+counts.
 
-All 42 raw linter observations exited `1` with the required positive probe;
-all four checker invocations exited `0` in inventory mode. Full inventories
-matched within and across conditions. Each cold condition used ten distinct
-measurement directories; each warm condition used exactly one. Each measurement
-directory contained 149 bytecode files after execution. Version-probe directories
-were separate. Offline subprocess tests additionally confirmed that every cold
-measurement and each priming measurement receives an initially empty directory.
+Before reporting measurements, provide a sanitized evidence manifest tied to the
+exact tested commit and a stable record reference accessible to the maintainer.
+Record the commands and tool versions, before/after source digests, and each
+condition's per-observation process status, finding count and digest, cache state
+and measured cache population. Include hashes of the supporting records so the
+summary can be checked without publishing raw runtime paths.
 
-Before/after source digests agreed in all four conditions:
-`572458f8eff69148ed5f96269d82ec9fd73b74af09bf3481753e034e11ea3bb8`.
-The complete repository finding digest was:
-`4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945`.
-Commands, tool versions, per-observation metadata and raw streams remain in
-external evidence; this public summary contains no runtime locations.
-
-No bytecode-state variance was observed for these inputs and versions. This
-result does not disprove the historical synchronization hypothesis. Dependency
-environment preparation, historical version reconstruction and operating-system
-file-cache state were not varied. A synchronized-environment experiment still
-requires a separate bounded design. The existing completeness and boundary
-limitations below also apply to these observations.
+The historical synchronization hypothesis remains **NOT_EVALUATED**. A controlled
+bytecode comparison in a prepared interpreter would not vary dependency
+environment preparation, historical versions or operating-system file-cache state.
+A synchronized-environment experiment still requires a separate bounded design.
 
 The probe confirms that the selected rule runs and its output is received. It
 cannot prove that a linter internally analyzed every file. Stable repeated
