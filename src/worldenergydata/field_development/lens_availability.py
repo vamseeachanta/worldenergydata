@@ -23,6 +23,17 @@ _CONTRACTS = {
 }
 _ECON_LEVELS = ("npv_mm", "breakeven_wti", "sens_mm_per_dollar")
 _WITHHELD = ("withheld", "withheld_pending_redistribution_review")
+# Lifecycle statuses emitted by build_lifecycle_posters.STATUS. Older payloads
+# omit this key; any other explicit status suppresses stale panel evidence.
+_PAYLOAD_STATUSES = (
+    "producing",
+    "execution",
+    "sanctioned",
+    "appraisal",
+    "select",
+    "explore",
+    "abandoned",
+)
 
 
 def _state(status, missing=(), reason=None):
@@ -33,6 +44,14 @@ def _mapping(value):
     return value if isinstance(value, dict) else {}
 
 
+def _blocked_records(status, reason):
+    records = {name: _state(status, (name,), reason) for name in _CONTRACTS}
+    records["underwriting"]["subpanels"] = {
+        name: _state(status, (name,), reason) for name in ("hpht", "decommissioning")
+    }
+    return records
+
+
 def _finite(value):
     return not isinstance(value, bool) and (
         isinstance(value, int) or isinstance(value, float) and math.isfinite(value)
@@ -41,7 +60,7 @@ def _finite(value):
 
 def _economics(performance):
     status = performance.get("economics_status")
-    if status in _WITHHELD:
+    if status in (*_WITHHELD, "early_life"):
         return _state("withheld", ("economics_status",), "source_status")
     if status != "surfaced":
         return _state("unavailable", ("economics_status",), "source_status")
@@ -58,10 +77,13 @@ def _economics(performance):
 
 def _hpht(badge):
     severity = badge.get("severity")
+    classification = badge.get("class")
     if badge.get("basis") not in ("reservoir", "subsea_system"):
         return _state("unavailable", ("basis",), "unsupported_basis")
     if severity == "class-only" and (
-        badge.get("class") or _finite(badge.get("pressure_psi"))
+        isinstance(classification, str)
+        and classification.strip()
+        or _finite(badge.get("pressure_psi"))
     ):
         return _state("partial", ("reservoir_equipment_comparison",), "class_only")
     if severity not in ("within", "at-rating", "over-rating"):
@@ -148,8 +170,10 @@ def lens_availability(
 
     Unknown canonical ids and supplied payloads with absent or inconsistent ids
     raise ValueError. An absent payload is unavailable. Explicit withholding
-    takes precedence over stale values; unknown statuses fail closed. Each risk
-    subpanel keeps its own state. Lease ids establish only partial availability:
+    takes precedence over stale values; explicit statuses outside the producer's
+    lifecycle statuses fail closed. Legacy payloads may omit status. Each risk
+    subpanel keeps its own state, including when the payload is absent or blocked.
+    Lease ids establish only partial availability:
     the existing producer defers status, dates and per-lease ownership details.
     """
     field = registry.by_id(canonical_id)
@@ -158,14 +182,11 @@ def lens_availability(
     if payload is not None and payload.get("id") != canonical_id:
         raise ValueError("Payload identity does not match canonical id")
     if payload is None:
-        records = {
-            name: _state("unavailable", (name,), "absent_payload")
-            for name in _CONTRACTS
-        }
+        records = _blocked_records("unavailable", "absent_payload")
     elif payload.get("status") in _WITHHELD:
-        records = {
-            name: _state("withheld", (name,), "source_status") for name in _CONTRACTS
-        }
+        records = _blocked_records("withheld", "source_status")
+    elif "status" in payload and payload["status"] not in _PAYLOAD_STATUSES:
+        records = _blocked_records("unavailable", "source_status")
     else:
         records = {
             "economics": _economics(_mapping(payload.get("performance"))),

@@ -78,6 +78,14 @@ def test_absent_payload_preserves_registry_identity_and_region(registry, field_i
         assert record["reason"] == "absent_payload"
         assert record["missing_dimensions"]
         assert record["source_contract"]
+    parts = result["underwriting"]["subpanels"]
+    assert set(parts) == {"hpht", "decommissioning"}
+    for name, panel in parts.items():
+        assert panel == {
+            "status": "unavailable",
+            "reason": "absent_payload",
+            "missing_dimensions": [name],
+        }
 
 
 def test_independent_lenses_are_immutable_and_copy_no_results(registry):
@@ -95,12 +103,27 @@ def test_independent_lenses_are_immutable_and_copy_no_results(registry):
     assert value == before and PENDING_ATTRS
 
 
-@pytest.mark.parametrize("status", ["withheld", "early_life", "future", None])
-def test_economics_status_precedes_populated_stale_numbers(registry, status):
+@pytest.mark.parametrize(
+    "status, expected",
+    [
+        ("withheld", "withheld"),
+        ("withheld_pending_redistribution_review", "withheld"),
+        ("early_life", "withheld"),
+        ("future", "unavailable"),
+        (None, "unavailable"),
+    ],
+)
+@pytest.mark.parametrize("populated", [False, True])
+def test_economics_status_precedes_null_or_stale_numbers(
+    registry, status, expected, populated
+):
     value = payload()
     value["performance"]["economics_status"] = status
+    if not populated:
+        for key in ("npv_mm", "breakeven_wti", "sens_mm_per_dollar"):
+            value["performance"][key] = None
     record = project(registry, value)["economics"]
-    assert record["status"] == ("withheld" if status == "withheld" else "unavailable")
+    assert record["status"] == expected
     assert record["reason"] == "source_status"
 
 
@@ -145,6 +168,23 @@ def test_class_only_hpht_retains_partial_state(registry):
     )
 
 
+@pytest.mark.parametrize("classification", [True, False, "", "   ", "\t", None, 1])
+def test_class_only_hpht_requires_nonblank_string_or_pressure(registry, classification):
+    value = payload()
+    value["risk"]["hpht"] = {
+        "severity": "class-only",
+        "basis": "reservoir",
+        "class": classification,
+    }
+    record = project(registry, value)["underwriting"]["subpanels"]["hpht"]
+    assert record["status"] == "unavailable"
+    value["risk"]["hpht"]["pressure_psi"] = 10000
+    assert (
+        project(registry, value)["underwriting"]["subpanels"]["hpht"]["status"]
+        == "partial"
+    )
+
+
 @pytest.mark.parametrize("status", ["future", None])
 def test_unknown_decommissioning_status_is_unavailable(registry, status):
     value = payload()
@@ -173,10 +213,53 @@ def test_no_lease_identifiers_is_unavailable(registry, leases):
     assert project(registry, value)["landman"]["status"] == "unavailable"
 
 
-def test_whole_payload_withholding_precedes_stale_panels(registry):
+@pytest.mark.parametrize(
+    "status", ["withheld", "withheld_pending_redistribution_review"]
+)
+def test_whole_payload_withholding_precedes_stale_panels(registry, status):
     value = payload()
-    value["status"] = "withheld"
-    assert all(r["status"] == "withheld" for r in project(registry, value).values())
+    value["status"] = status
+    result = project(registry, value)
+    assert all(r["status"] == "withheld" for r in result.values())
+    parts = result["underwriting"]["subpanels"]
+    assert set(parts) == {"hpht", "decommissioning"}
+    for name, panel in parts.items():
+        assert panel == {
+            "status": "withheld",
+            "reason": "source_status",
+            "missing_dimensions": [name],
+        }
+
+
+@pytest.mark.parametrize("status", ["unavailable", "future", None, "", True, [], {}])
+def test_unsupported_whole_payload_status_blocks_stale_panels(registry, status):
+    value = payload()
+    value["status"] = status
+    result = project(registry, value)
+    assert all(record["status"] == "unavailable" for record in result.values())
+    assert all(record["reason"] == "source_status" for record in result.values())
+    for panel in result["underwriting"]["subpanels"].values():
+        assert panel["status"] == "unavailable"
+        assert panel["reason"] == "source_status"
+
+
+@pytest.mark.parametrize(
+    "status",
+    [
+        "producing",
+        "execution",
+        "sanctioned",
+        "appraisal",
+        "select",
+        "explore",
+        "abandoned",
+    ],
+)
+def test_supported_whole_payload_status_preserves_panel_evaluation(registry, status):
+    value = payload()
+    expected = project(registry, value)
+    value["status"] = status
+    assert project(registry, value) == expected
 
 
 @pytest.mark.parametrize("panel", [None, {}, []])
