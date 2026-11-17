@@ -123,10 +123,12 @@ def test_enriched_metadata_retains_evidence_without_changing_screen_or_economics
         def load_field_production(self, field_name):
             return _normalized_nsta_frame().assign(field="SYNTHETIC ALPHA")
 
+    requested_fields = []
+
     class RecordingAdapter:
         def fetch(self, query):
             assert query.regions == ["ukcs"]
-            assert query.fields == [request_name]
+            requested_fields.append(query.fields)
             return UkcsAdapter(loader=SyntheticLoader()).fetch(query)
 
     raw = json.dumps(
@@ -153,14 +155,27 @@ def test_enriched_metadata_retains_evidence_without_changing_screen_or_economics
     )
     sparse = {"field_name": "Synthetic Alpha"}
 
-    def run(metadata):
+    def run(metadata, name=request_name):
         return run_ukcs_reference_chain(
             adapter=RecordingAdapter(),
             field_meta=metadata,
-            field_name=request_name,
+            field_name=name,
         )
 
-    first, second, original = run(meta), run(meta), run(sparse)
+    first, second = run(meta), run(meta)
+    original = run(sparse, "Synthetic Alpha")
+    assert len(first["unified_production"]) == 2
+    assert first["fdas_production"]["YEAR_MONTH"].tolist() == ["1975-09", "1975-10"]
+    assert first["pre_tax_metrics"]["gross_revenue_usd"] > 0.0
+    pd.testing.assert_frame_equal(
+        first["unified_production"], original["unified_production"]
+    )
+    pd.testing.assert_frame_equal(first["fdas_production"], original["fdas_production"])
+    assert requested_fields == [
+        [request_name.strip()],
+        [request_name.strip()],
+        ["Synthetic Alpha"],
+    ]
     concept = first["field_concept"]
     assert concept.operator == "Synthetic Operator"
     assert concept.region == "uk"
