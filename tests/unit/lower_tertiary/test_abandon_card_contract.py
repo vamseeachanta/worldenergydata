@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import importlib.util
 import json
-import re
 from copy import deepcopy
 from html.parser import HTMLParser
 from pathlib import Path
@@ -65,27 +64,13 @@ class _Links(HTMLParser):
             self.hrefs.append(dict(attrs).get("href"))
 
 
-class _VisibleText(HTMLParser):
-    def __init__(self, html):
-        super().__init__()
-        self.parts = []
-        self.feed(html)
-
-    def handle_data(self, data):
-        self.parts.append(data)
-
-
-def _assert_no_liability_estimate(card):
-    for bullet in card["li"]:
-        text = "".join(_VisibleText(bullet).parts)
-        assert not re.search(
-            r"[$£€]|\b(?:USD|EUR|GBP|MUSD|MMbbl)\b|"
-            r"\b\d[\d,.]*\s*(?:million|billion|dollars?|pounds?|euros?)\b",
-            text,
-            re.IGNORECASE,
-        )
-        if "liability" in text.lower():
-            assert not re.search(r"\d", text)
+def _assert_abandon_bullets(card, observed_milestones=()):
+    assert card["li"] == [
+        *observed_milestones,
+        "P&A filing status not established",
+        "Liability not evaluated",
+        '<a href="../norms/abandon.html">P&A engineering context →</a>',
+    ]
 
 
 @pytest.mark.parametrize("status", ["producing", None, "abandoned", "inconsistent"])
@@ -107,7 +92,7 @@ def test_status_does_not_establish_filing_or_liability(timeline, well, status, g
     assert card["big"] == "—"
     assert gap in card["li"]
     assert _Links("".join(card["li"])).hrefs == [CONTEXT_HREF]
-    _assert_no_liability_estimate(card)
+    _assert_abandon_bullets(card)
     assert not any(
         text in " ".join(card["li"]).lower()
         for text in ("no p&a", "still producing", "verified", "filed")
@@ -116,12 +101,23 @@ def test_status_does_not_establish_filing_or_liability(timeline, well, status, g
 
 
 def test_dated_operation_preserves_evidence_gaps(timeline, well):
-    card = _abandon(timeline.facts_to_well(well, {"display_name": "Synthetic Field"}))
-    card["li"].insert(0, "2020-02-03 · Observed plugging operation (synthetic)")
+    well["workovers"] = [
+        {"date": "2020-02-03", "type": "Observed plugging operation (synthetic)"}
+    ]
+    payload = timeline.facts_to_well(well, {"display_name": "Synthetic Field"})
+    card = _abandon(payload)
+    _assert_abandon_bullets(card)
+    workover = next(card for card in payload["cards"] if card["t"] == "Workover")
+    milestone = "Feb 2020 · Observed plugging operation (synthetic)"
+    assert workover["li"][0] == milestone
 
-    assert "P&A filing status not established" in card["li"]
-    assert "Liability not evaluated" in card["li"]
-    _assert_no_liability_estimate(card)
+    # Model a future card carrying the observed source milestone, without
+    # treating that operation label as filing or liability evidence.
+    card["li"].insert(0, workover["li"][0])
+    _assert_abandon_bullets(card, observed_milestones=[milestone])
+    rendered = timeline.render(payload)
+    restored, _ = json.JSONDecoder().raw_decode(rendered.split("const WELL = ", 1)[1])
+    _assert_abandon_bullets(_abandon(restored), observed_milestones=[milestone])
 
 
 @pytest.mark.parametrize("estimate", ["0", "$12", "£12", "€12", "USD", "MUSD", "MMbbl"])
@@ -130,13 +126,14 @@ def test_liability_check_rejects_estimates(timeline, well, estimate):
     card["li"].append(f"Liability estimate (synthetic): {estimate}")
 
     with pytest.raises(AssertionError):
-        _assert_no_liability_estimate(card)
+        _assert_abandon_bullets(card)
 
 
 @pytest.mark.parametrize(
     "amount",
     [
         "USD 12 million",
+        "125,000",
         "12 million",
         "$12",
         "&pound;12",
@@ -149,22 +146,24 @@ def test_liability_check_rejects_estimates(timeline, well, estimate):
 )
 def test_liability_check_rejects_separate_cost_bullet(timeline, well, amount):
     card = _abandon(timeline.facts_to_well(well, {"display_name": "Synthetic Field"}))
-    card["li"].append(f"Estimated remaining P&A cost (synthetic): {amount}")
+    unit = "dollars" if amount == "125,000" else "synthetic"
+    card["li"].append(f"Estimated remaining P&A cost ({unit}): {amount}")
 
     assert "P&A filing status not established" in card["li"]
     assert "Liability not evaluated" in card["li"]
     with pytest.raises(AssertionError):
-        _assert_no_liability_estimate(card)
+        _assert_abandon_bullets(card)
 
 
-def test_liability_check_ignores_link_metadata(timeline, well):
+def test_abandon_contract_rejects_changed_context_link(timeline, well):
     card = _abandon(timeline.facts_to_well(well, {"display_name": "Synthetic Field"}))
-    card["li"].append(
+    card["li"][-1] = (
         '<a href="../norms/abandon.html?unit=USD&amp;value=12">'
-        "2020-02-03</a> · Observed plugging operation (synthetic)"
+        "P&A engineering context →</a>"
     )
 
-    _assert_no_liability_estimate(card)
+    with pytest.raises(AssertionError):
+        _assert_abandon_bullets(card)
 
 
 def test_status_inputs_preserve_other_cards_and_scales(timeline, well):
@@ -196,8 +195,7 @@ def test_abandon_gaps_survive_template_render(timeline, well):
 
     assert "__WELL_JSON__" not in rendered
     assert restored == original == payload
-    assert "P&A filing status not established" in _abandon(restored)["li"]
-    assert "Liability not evaluated" in _abandon(restored)["li"]
+    _assert_abandon_bullets(_abandon(restored))
     assert _Links("".join(_abandon(restored)["li"])).hrefs == [CONTEXT_HREF]
 
 
