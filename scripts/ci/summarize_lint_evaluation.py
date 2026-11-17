@@ -24,6 +24,15 @@ def digest(value: object) -> str:
     return hashlib.sha256(json.dumps(value, sort_keys=True).encode()).hexdigest()
 
 
+def unique_object(pairs: list[tuple[str, object]]) -> dict:
+    """Reject repeated JSON keys before decoding can discard evidence."""
+    result = {}
+    for key, value in pairs:
+        require(key not in result, "duplicate JSON key")
+        result[key] = value
+    return result
+
+
 def require(condition: bool, message: str) -> None:
     if not condition:
         raise ValueError(message)
@@ -41,6 +50,7 @@ def valid_path(value: object) -> bool:
 
 def validated_findings(tool: str, value: object, files: dict) -> list[dict]:
     require(isinstance(value, list), "findings must be a list")
+    formatter_paths = set()
     for item in value:
         require(isinstance(item, dict), "invalid diagnostic")
         require(
@@ -57,6 +67,9 @@ def validated_findings(tool: str, value: object, files: dict) -> list[dict]:
         require(isinstance(code, str), "invalid rule code")
         if tool in ("black", "isort", "ruff-format"):
             require(code == "FORMAT", "invalid formatter diagnostic")
+            require(item["row"] == item["column"] == 1, "invalid formatter location")
+            require(item["path"] not in formatter_paths, "duplicate formatter path")
+            formatter_paths.add(item["path"])
         else:
             require(
                 bool(re.fullmatch(r"[EWF]\d{3}", code))
@@ -216,7 +229,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("output", type=Path)
     args = parser.parse_args(argv)
     try:
-        result = summarize(json.loads(args.evidence.read_text(encoding="utf-8")))
+        result = summarize(
+            json.loads(
+                args.evidence.read_text(encoding="utf-8"),
+                object_pairs_hook=unique_object,
+            )
+        )
     except (OSError, ValueError, KeyError, TypeError) as exc:
         result = {
             "status": "ERROR",

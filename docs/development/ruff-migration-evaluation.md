@@ -15,6 +15,7 @@ retrievable, sanitized evidence record with a stable reference and digest.
 | --- | --- | --- |
 | Initial | 2026-11-16 | Added an evidence validator and a read-only comparison protocol before changing lint tooling. |
 | Update | 2026-11-17 | Rejected unsupported legacy import diagnostics and overflowing timings; marked numerical conclusions unverified because supporting records are unavailable. |
+| Record validation | 2026-11-17 | Rejected duplicate JSON keys, noncanonical formatter locations and repeated formatter paths to prevent lost or inflated findings. |
 
 ## Current policy and scope
 
@@ -131,6 +132,9 @@ its nonempty exact `version`, the identical `files` mapping and five `runs`:
 }
 ```
 
+JSON object keys must be unique at every nesting level. Repeated keys invalidate
+the input even when their values agree; decoding must never discard evidence.
+
 Each finding has `path`, positive integer `row` and `column`, `code`, and string
 `message`. Flake8 findings accept E/W/F codes only; I001 is accepted only from
 Ruff check and participates in the import comparison. Convert scanner filenames
@@ -140,6 +144,9 @@ diagnostics: flake8's formatted fields and Ruff's JSON `filename`, `location`,
 sorted file notices to one `FORMAT` record per path at `(1, 1)`; do the same for
 Ruff format's JSON filenames. Its message is `would reformat`. Never use stderr
 line totals as diagnostic counts. Any parser ambiguity is an evidence error.
+The validator requires formatter locations to be `(1, 1)` and permits each path
+only once per formatter run, even when messages differ. The same path may recur
+in separate observations or different tools.
 
 Exit 0 must accompany no findings; exit 1 must accompany findings. All other
 exits, parse failures, absent probes or versions, duplicates, changed inventories,

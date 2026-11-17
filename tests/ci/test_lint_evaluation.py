@@ -207,6 +207,79 @@ def test_cli_retains_valid_deltas(tmp_path, evidence):
     assert json.loads(output.read_text())["parity"] == "MATCH"
 
 
+@pytest.mark.parametrize("scope", ["top", "inventory", "tool", "run", "finding"])
+def test_cli_duplicate_json_keys_cannot_make_claims(tmp_path, evidence, scope):
+    raw = json.dumps(evidence)
+    if scope == "top":
+        entry = '"unsupported_rules": []'
+        raw = raw.replace(entry, entry + ", " + entry, 1)
+    elif scope == "inventory":
+        entry = (
+            json.dumps("src/sample.py")
+            + ": "
+            + json.dumps(evidence["files"]["src/sample.py"])
+        )
+        raw = raw.replace(entry, entry + ", " + entry, 1)
+    elif scope == "tool":
+        raw = raw.replace(
+            '"version": "fixture 1.0"',
+            '"version": "old", "version": "fixture 1.0"',
+            1,
+        )
+    elif scope == "run":
+        # A last-value-wins decoder would erase all five legacy findings.
+        raw = raw.replace('"returncode": 0', '"returncode": 1, "returncode": 0', 5)
+        raw = raw.replace(
+            '"findings": []',
+            '"findings": ' + json.dumps([finding()]) + ', "findings": []',
+            5,
+        )
+    else:
+        add_findings(evidence, "flake8", [finding()])
+        raw = json.dumps(evidence).replace('"row": 1', '"row": 2, "row": 1', 1)
+    source, output = tmp_path / "input.json", tmp_path / "summary.json"
+    source.write_text(raw)
+    assert evaluation.main([str(source), str(output)]) == 2
+    result = json.loads(output.read_text())
+    assert result["status"] == "ERROR"
+    assert result["parity"] == "UNVERIFIED"
+    assert result["timing"] is None
+
+
+@pytest.mark.parametrize("tool", ["black", "isort", "ruff-format"])
+@pytest.mark.parametrize("coordinate", ["row", "column"])
+def test_formatter_requires_whole_file_location(evidence, tool, coordinate):
+    item = finding("FORMAT")
+    item[coordinate] = 2
+    add_findings(evidence, tool, [item])
+    with pytest.raises(ValueError, match="formatter location"):
+        evaluation.summarize(evidence)
+
+
+@pytest.mark.parametrize("tool", ["black", "isort", "ruff-format"])
+def test_formatter_path_cannot_count_twice(evidence, tool):
+    first = finding("FORMAT")
+    second = dict(first, message="another notice for the same file")
+    add_findings(evidence, tool, [first, second])
+    with pytest.raises(ValueError, match="duplicate formatter path"):
+        evaluation.summarize(evidence)
+
+
+@pytest.mark.parametrize("tool", ["black", "isort", "ruff-format"])
+def test_formatter_distinct_paths_remain_valid_across_runs(evidence, tool):
+    evidence["files"]["tests/other.py"] = hashlib.sha256(b"pass\n").hexdigest()
+    source = evaluation.digest(evidence["files"])
+    for record in evidence["tools"].values():
+        for run in record["runs"]:
+            run.update(before=source, after=source)
+    first = finding("FORMAT")
+    second = dict(first, path="tests/other.py")
+    add_findings(evidence, tool, [first, second])
+    result = evaluation.summarize(evidence)
+    assert result["tools"][tool]["rules"] == {"FORMAT": 2}
+    assert len(result["tools"][tool]["findings"]) == 2
+
+
 @pytest.mark.parametrize("seconds", [10**400, 1e308], ids=["huge-int", "sum-overflow"])
 def test_unrepresentable_timing_rejected(evidence, seconds):
     for name in ("ruff-check", "ruff-format"):
