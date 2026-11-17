@@ -48,7 +48,7 @@ class _Page(HTMLParser):
 
 
 @pytest.fixture(params=["empty", "mixed", "concepts"])
-def benchmark(request):
+def benchmark_facts(request):
     if request.param == "empty":
         return {}
     result = {
@@ -79,12 +79,17 @@ def test_themes_and_sticky_navigation():
         "@media (prefers-color-scheme: dark)",
     ):
         assert rule in text
+    assert re.search(
+        r"@media\s*\(prefers-color-scheme:\s*dark\)\s*\{\s*"
+        r':root:not\(\[data-theme="light"\]\)\s*\{',
+        text,
+    )
     assert re.search(r"position:\s*sticky", text)
     assert re.search(r"overflow-x:\s*auto", text)
 
 
-def test_capability_navigation_and_breadcrumb(benchmark):
-    page = _Page(render_benchmark_html(benchmark))
+def test_capability_navigation_and_breadcrumb(benchmark_facts):
+    page = _Page(render_benchmark_html(benchmark_facts))
     nav = page.labelled("Capabilities")
     targets = {link["attrs"]["href"] for link in nav["links"]}
     assert {"../field-atlas/index.html", "../capabilities/insights.html"} <= targets
@@ -96,8 +101,8 @@ def test_capability_navigation_and_breadcrumb(benchmark):
     assert any(n["attrs"].get("aria-current") == "page" for n in page.nodes)
 
 
-def test_guided_path_resolves_and_omits_missing_concepts(benchmark):
-    page = _Page(render_benchmark_html(benchmark))
+def test_guided_path_resolves_and_omits_missing_concepts(benchmark_facts):
+    page = _Page(render_benchmark_html(benchmark_facts))
     paths = [n for n in page.nodes if "path" in n["attrs"].get("class", "").split()]
     assert len(paths) == 1
     assert "Guided reading path" in paths[0]["text"]
@@ -105,7 +110,7 @@ def test_guided_path_resolves_and_omits_missing_concepts(benchmark):
     assert links and all(link["text"].strip() for link in links)
     targets = [link["attrs"].get("href") for link in links]
     assert {"#provenance", "#benchmark", "#source"} <= set(targets)
-    assert ("#concepts" in targets) == bool(benchmark.get("concept_mix"))
+    assert ("#concepts" in targets) == bool(benchmark_facts.get("concept_mix"))
     ids = [n["attrs"]["id"] for n in page.nodes if "id" in n["attrs"]]
     assert len(ids) == len(set(ids))
     for node in page.nodes:
@@ -114,8 +119,8 @@ def test_guided_path_resolves_and_omits_missing_concepts(benchmark):
             assert href[1:] in ids
 
 
-def test_legend_explains_actual_evidence_states(benchmark):
-    page = _Page(render_benchmark_html(benchmark))
+def test_legend_explains_actual_evidence_states(benchmark_facts):
+    page = _Page(render_benchmark_html(benchmark_facts))
     legend = page.labelled("Evidence badge legend")["text"].lower()
     for label, explanation in (
         ("Real regulatory data", "ingested public regulatory production"),
@@ -132,8 +137,8 @@ def test_legend_explains_actual_evidence_states(benchmark):
     assert "reconciled" not in legend
 
 
-def test_source_footer_acknowledges_mixed_inputs(benchmark):
-    text = render_benchmark_html(benchmark)
+def test_source_footer_acknowledges_mixed_inputs(benchmark_facts):
+    text = render_benchmark_html(benchmark_facts)
     footers = [n for n in _Page(text).nodes if n["tag"] == "footer"]
     assert len(footers) == 1
     assert any(
