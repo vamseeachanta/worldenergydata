@@ -1,7 +1,7 @@
 """Check deployment build routing with recording tools in disposable layouts.
 
 These fixtures require POSIX symlinks and executable shebang stubs.
-Native Windows execution is unverified.
+Native Windows execution is skipped because these fixtures require POSIX.
 """
 
 import json
@@ -12,6 +12,10 @@ import sys
 from pathlib import Path
 
 import pytest
+
+pytestmark = pytest.mark.skipif(
+    os.name == "nt", reason="requires POSIX symlinks and executable shebang stubs"
+)
 
 _ROOT = Path(__file__).resolve().parents[3]
 _ENTRIES = ("scripts/uv_deploy.sh", "scripts/tools/uv_deploy.sh")
@@ -160,8 +164,7 @@ def test_help_describes_workspace_build_without_running_tools(tmp_path, entry):
 
     assert result.returncode == 0, result.stderr
     assert "Build the root and all workspace member distributions" in result.stdout
-    assert "Build and install the root and all workspace member wheels locally" in (
-        result.stdout
-    )
+    assert "Build all workspace wheels; installation is unvalidated" in result.stdout
+    assert "May install outside the temporary environment" in result.stdout
     assert not Path(env["RECORD"]).exists()
     assert _snapshot(root) == before

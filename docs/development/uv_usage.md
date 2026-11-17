@@ -269,8 +269,12 @@ An actual build generates artifacts under `dist/`. Before publication, validate
 exactly the wheels intended for a shared installation using the
 [package artifact ownership checks](package_artifact_checks.md). Ownership checks
 do not establish dependency closure, installed-domain behavior or release
-completeness. The existing `test-build` action performs cleanup and installation;
-it is separate from the isolated dispatch tests and requires its own validation.
+completeness. The existing `test-build` action cleans build artifacts, synchronizes
+the project environment and builds all distributions. Its installation is
+unvalidated: `uv venv` creates an environment without `pip`, so bare `pip install`
+may resolve outside the temporary environment. The import check may then run
+without the wheels installed. This action does not establish an isolated
+installation.
 
 ### Publishing
 
