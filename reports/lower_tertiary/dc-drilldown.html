@@ -163,7 +163,7 @@ footer.site a{color:var(--accent);text-decoration:none}
   <div class="crumb" id="crumb"></div>
 
   <section class="hero">
-    <p class="eyebrow">Retained source days · Lower Tertiary · Gulf of Mexico</p>
+    <p class="eyebrow">BSEE WAR · Retained source days · Lower Tertiary · Gulf of Mexico</p>
     <h1>D&amp;C Drill-Down</h1>
     <p class="lede">Start from a field or a block, drill to its bores, then to a single
       wellbore's full record — and on to that field's life-cycle, economics, and
@@ -191,7 +191,9 @@ footer.site a{color:var(--accent);text-decoration:none}
   <section class="note"><h2>Revision history</h2>
     <table><thead><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr></thead>
     <tbody><tr><td>1</td><td>2026-11-16</td><td>Qualify retained source duration labels
-      and display basis limits beside values to prevent unsupported timing claims.</td></tr></tbody></table>
+      and display basis limits beside values to prevent unsupported timing claims.</td></tr>
+    <tr><td>2</td><td>2026-11-17</td><td>Restore source provenance and shorten table
+      basis cells while retaining duration qualifications in summaries.</td></tr></tbody></table>
   </section>
 
   <div class="controls">
@@ -226,7 +228,7 @@ footer.site a{color:var(--accent);text-decoration:none}
       <span>D&amp;C drill-down — World Oil April 2026 QA/QC · Field ▸ Block ▸ Bore</span>
       <a href="https://huggingface.co/datasets/aceengineer/worldenergydata-explorer">Data &amp; provenance ↗</a>
     </div>
-    <p class="note">// self-contained: no external assets. Frozen extractor counts are
+    <p class="note">// self-contained: no external assets. Frozen extractor counts (BSEE WAR vintage 2026-02-19) are
       retained without changing their mixed calendar/WAR definitions. No basis is
       inferred from dates, day-count thresholds or category names. Basis qualification
       and wider publication corrections remain unresolved.</p>
@@ -359,7 +361,7 @@ function boreTable(list,showBlock){
       <td class="mono">${b.api}</td><td>${esc(b.name)}</td>${showBlock?`<td class="mono">${esc(b.block)}</td>`:''}
       <td class="mono">${b.spud||'—'}</td><td class="mono">${b.td||'—'}</td>
       <td class="num">${b.drill}</td><td class="num">${b.compl}</td><td class="num">${b.drill+b.compl}</td>
-      <td>${basisNote(b)}</td>
+      <td>${esc(b.basis||'unqualified')}</td>
       <td>${b.prod?'<span class="badge ok">producer</span> ':''}${b.st?'<span class="badge hold">ST</span>':''}</td>
     </tr>`).join('')}</tbody></table>`;
 }
