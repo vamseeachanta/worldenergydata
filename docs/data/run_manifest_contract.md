@@ -10,6 +10,7 @@ that supplied declarations pass this contract; it never grants publication right
 | --- | --- | --- |
 | Initial | 2026-11-16 | Define validated records before discovery and execution adapters. |
 | 1 | 2026-11-17 | Require limitations and clarify YAML types, errors and screening criteria. |
+| 2 | 2026-11-17 | Specify source translations so publication adapters preserve classification checks. |
 
 ## Record and serialization
 
@@ -58,11 +59,28 @@ are represented by opaque catalog/dataset IDs; filesystem locations are excluded
 An adapter must establish freshness and verify hashes, source inventory, citations,
 rights and authenticated review. This module performs none of those operations.
 
-For `wiki_publication.Source`, dataset ID/version, domain, authority, source class,
-URL, retrieval, vintage, content hash and derivation map directly; `license` maps
-to `terms_class`. Bundle catalog references must pin the catalog ID/version/hash.
-The downstream adapter must add findings, aggregate data vintage, review decisions,
-license-check date and clean-run evidence; this manifest cannot supply approval.
+For `wiki_publication.Source`, dataset ID/version, domain, URL, retrieval, vintage,
+content hash and derivation map directly; `dataset_id` becomes `source_id`, and
+`license` becomes `terms_class`. Source class and authority require these explicit
+adapter translations for eligible BSEE declarations:
+
+| Field | Manifest value | Publication value |
+| --- | --- | --- |
+| `source_class` | `public-federal-bsee` | `public-federal-data` |
+| `source_authority` | `BSEE` | `Bureau of Safety and Environmental Enforcement (US DOI)` |
+| `source_authority` | `Bureau of Safety and Environmental Enforcement (US DOI)` | `Bureau of Safety and Environmental Enforcement (US DOI)` |
+
+Other class or authority declarations must not be relabelled as public BSEE
+evidence. Copying the manifest class or short authority unchanged blocks public
+routing. The contract regression in `tests/unit/common/test_run_manifest.py`
+exercises this table against the publication router, including both accepted
+authority spellings and blocked incomplete translations.
+
+Bundle catalog references must pin the catalog ID/version/hash. The downstream
+adapter must supply the publication scope, findings, aggregate data vintage,
+source and bundle review decisions, license-check date and clean-run evidence.
+Translations establish declaration compatibility only; publication checks remain
+required, and this manifest cannot supply approval. No adapter is implemented here.
 
 ## Scanner ownership and later slices
 

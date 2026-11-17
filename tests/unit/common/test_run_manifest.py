@@ -1,9 +1,20 @@
 """Synthetic contract examples; declarations do not establish source rights."""
 
+import re
+from dataclasses import replace
+from pathlib import Path
+
 import pytest
 import yaml
 
 from worldenergydata.common.run_manifest import RunManifest
+from worldenergydata.wiki_publication import (
+    Bundle,
+    Review,
+    Source,
+    Target,
+    route_bundle,
+)
 
 
 @pytest.fixture
@@ -192,3 +203,98 @@ def test_derivation_requires_opaque_references(record):
 def test_yaml_rejects_object_construction():
     with pytest.raises(yaml.constructor.ConstructorError):
         RunManifest.from_yaml("!!python/object:builtins.object {}")
+
+
+@pytest.mark.parametrize(
+    "authority",
+    ["BSEE", "Bureau of Safety and Environmental Enforcement (US DOI)"],
+)
+def test_documented_publication_translations(record, authority):
+    record["datasets"][0]["source_authority"] = authority
+    manifest = RunManifest.from_dict(record)
+    assert manifest.readiness() == "declared-eligible"
+    dataset = manifest.datasets[0]
+    contract = (
+        Path(__file__).resolve().parents[3] / "docs/data/run_manifest_contract.md"
+    ).read_text(encoding="utf-8")
+    translations = {
+        (field, upstream): downstream
+        for field, upstream, downstream in re.findall(
+            r"^\| `(source_class|source_authority)` \| `([^`]+)` \| `([^`]+)` \|$",
+            contract,
+            re.MULTILINE,
+        )
+    }
+    assert ("source_class", dataset.source_class) in translations
+    assert ("source_authority", authority) in translations
+
+    # All other publication declarations are synthetic and supplied separately.
+    review = Review(Target.PUBLIC, Target.PUBLIC, "synthetic-review")
+    source = Source(
+        source_id=dataset.dataset_id,
+        dataset_version=dataset.dataset_version,
+        domain=dataset.domain,
+        source_class=dataset.source_class,
+        terms_class=dataset.license,
+        source_authority=authority,
+        source_url=dataset.source_url,
+        retrieved_at=dataset.retrieved_at,
+        data_as_of=dataset.data_as_of,
+        content_sha256=dataset.content_sha256,
+        derivation_path=dataset.derivation_path,
+        review=review,
+    )
+    bundle = Bundle(
+        run_id=manifest.run_id,
+        attempt_id=manifest.attempt_id,
+        code_ref=manifest.code_ref,
+        catalog_ref="synthetic-catalog-version-hash",
+        slug="synthetic-summary",
+        title="Synthetic summary",
+        findings="Synthetic declarations only; no source data inspected.",
+        sources=(source,),
+        data_as_of=dataset.data_as_of,
+        generated_at=manifest.created_at,
+        last_license_check=dataset.data_as_of,
+        limitations=manifest.limitations,
+        scope="all-public-bsee-available-data-summary",
+        content_kind="dataset-summary",
+        review=review,
+        safety_status="passed",
+    )
+    assert route_bundle(bundle).target is Target.NO_PUBLISH
+
+    translated = replace(
+        source,
+        source_class=translations[("source_class", dataset.source_class)],
+        source_authority=translations[("source_authority", authority)],
+    )
+    translated_bundle = replace(bundle, sources=(translated,))
+    assert route_bundle(translated_bundle).target is Target.PUBLIC
+    assert (
+        route_bundle(
+            replace(
+                translated_bundle,
+                sources=(replace(translated, source_class=source.source_class),),
+            )
+        ).target
+        is Target.NO_PUBLISH
+    )
+    if authority == "BSEE":
+        assert (
+            route_bundle(
+                replace(
+                    translated_bundle,
+                    sources=(replace(translated, source_authority=authority),),
+                )
+            ).target
+            is Target.NO_PUBLISH
+        )
+    assert (
+        route_bundle(replace(translated_bundle, review=None)).target
+        is Target.NO_PUBLISH
+    )
+    assert (
+        route_bundle(replace(translated_bundle, safety_status="NOT_EVALUATED")).target
+        is Target.NO_PUBLISH
+    )
