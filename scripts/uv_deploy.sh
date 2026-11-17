@@ -12,7 +12,7 @@ show_help() {
     echo ""
     echo "Commands:"
     echo "  build         - Build the root and all workspace member distributions"
-    echo "  test-build    - Build and test the package locally"
+    echo "  test-build    - Build and install the root and all workspace member wheels locally"
     echo "  publish-test  - Publish to TestPyPI"
     echo "  publish       - Publish to PyPI (production)"
     echo "  clean         - Clean build artifacts"

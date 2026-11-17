@@ -156,5 +156,8 @@ def test_help_describes_workspace_build_without_running_tools(tmp_path, entry):
 
     assert result.returncode == 0, result.stderr
     assert "Build the root and all workspace member distributions" in result.stdout
+    assert "Build and install the root and all workspace member wheels locally" in (
+        result.stdout
+    )
     assert not Path(env["RECORD"]).exists()
     assert _snapshot(root) == before

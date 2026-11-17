@@ -293,8 +293,8 @@ does not authorize either upload.
 
 Both `publish-test` and `publish` call the build action and upload `dist/*`.
 They therefore build and upload the root distribution and every workspace member
-distribution. The upload commands, credentials and confirmation prompts are
-unchanged.
+distribution. `publish` asks for confirmation before the production upload;
+`publish-test` does not.
 
 ### Build Configuration
 
