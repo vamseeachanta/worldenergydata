@@ -125,6 +125,7 @@ def test_ambiguous_evidence_is_blocked(record, key, value):
         (None, "probe_set", "probe"),
         (None, "outputs", []),
         (None, "datasets", []),
+        (None, "limitations", []),
         (None, "surprise", True),
         ("catalog_ref", "generated_at", "2026-11-30T12:00:00Z"),
         ("catalog_ref", "content_sha256", "not-a-hash"),

@@ -192,9 +192,9 @@ class RunManifest:
     def __post_init__(self):
         _validate(self)
         if self.schema_version != 1 or not all(
-            (self.probe_set, self.datasets, self.outputs)
+            (self.probe_set, self.datasets, self.outputs, self.limitations)
         ):
-            raise ValueError("v1 requires probes, datasets and output references")
+            raise ValueError("v1 requires probes, datasets, outputs and limitations")
         for values in (
             self.probe_set,
             tuple(s.dataset_id for s in self.datasets),
