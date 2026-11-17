@@ -146,3 +146,54 @@ def test_symlinks_exclusions_unknown_evidence_and_no_aliases(repo, tmp_path):
     assert sum(e["reason"] == "symlink" for e in result["exclusions"]) == 2
     (repo / "tests").rename(repo / "uninspected-tests")
     assert collector().build_inventory(repo)["modules"][0]["tests"] is None
+
+
+@pytest.mark.parametrize("package", [".hidden", "_private"])
+def test_hidden_and_private_packages_are_excluded(repo, package):
+    put(repo, f"packages/{package}/src/worldenergydata/phantom/code.py")
+    result = collector().build_inventory(repo)
+    assert "phantom" not in {row["module"] for row in result["modules"]}
+    assert {"path": f"packages/{package}", "reason": "non_production"} in result[
+        "exclusions"
+    ]
+
+
+@pytest.mark.parametrize(
+    "name",
+    [
+        "README.md",
+        "MODULE_INDEX.md",
+        "module-manifest.yaml",
+        "data/catalog.yaml",
+        "config/scheduler/scheduler_config.yml",
+    ],
+)
+@pytest.mark.parametrize(
+    "alias", ["direct", "normalized", "symlink", "parent_symlink", "hardlink"]
+)
+def test_output_aliases_preserve_input_bytes(repo, capsys, name, alias):
+    put(repo, "config/scheduler/scheduler_config.yml", "enabled: false\n")
+    source = repo / name
+    output = source
+    if alias == "normalized":
+        output = repo / "data" / ".." / name
+    elif alias == "symlink":
+        output = repo / "output.json"
+        output.symlink_to(source)
+    elif alias == "parent_symlink":
+        parent = repo / "output-parent"
+        parent.symlink_to(source.parent, target_is_directory=True)
+        output = parent / source.name
+    elif alias == "hardlink":
+        output = repo / "output.json"
+        output.hardlink_to(source)
+    before = source.read_bytes()
+    assert (
+        collector().main(["--project-root", str(repo), "--json-output", str(output)])
+        == 1
+    )
+    diagnostic = capsys.readouterr().err
+    assert "output aliases an input" in diagnostic
+    assert str(repo) not in diagnostic and len(diagnostic) < 200
+    assert source.read_bytes() == before
+    assert output.read_bytes() == before

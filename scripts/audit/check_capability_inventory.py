@@ -121,9 +121,13 @@ def build_inventory(project_root):
     bases = [root / "src/worldenergydata"]
     packages = root / "packages"
     if safe(packages) and packages.is_dir():
-        bases += [
-            p / "src/worldenergydata" for p in sorted(packages.iterdir()) if safe(p)
-        ]
+        for package in sorted(packages.iterdir()):
+            if not safe(package):
+                continue
+            if package.name.startswith((".", "_")):
+                exclusions[relative(package)] = "non_production"
+                continue
+            bases.append(package / "src/worldenergydata")
     for base in bases:
         if not safe(base) or not base.is_dir():
             continue
@@ -194,6 +198,13 @@ def main(argv=None):
     args = parser.parse_args(argv)
     try:
         payload = build_inventory(args.project_root)
+        output = args.json_output.resolve()
+        for name in payload["inputs"]:
+            source = args.project_root / name
+            if output == source.resolve() or (
+                output.exists() and output.samefile(source)
+            ):
+                raise ValueError("output aliases an input")
         args.json_output.write_text(
             json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8"
         )

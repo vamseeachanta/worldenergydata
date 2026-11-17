@@ -7,8 +7,11 @@ The collector records repository presence without evaluating execution readiness
 | Revision | Date | Change and reason |
 |---|---|---|
 | 1 | 2026-11-16 | Define the bounded collector for reproducible presence evidence. |
+| 2 | 2026-11-17 | Exclude hidden/private package roots and reject output aliases to text inputs to preserve inventory evidence. |
 
 Run `python scripts/audit/check_capability_inventory.py --project-root . --json-output <output.json>` with PyYAML installed. Both arguments are required; the output parent must already exist.
+
+An output destination that aliases a text input is rejected before writing, including normalized paths, symbolic links and hard links. Required text inputs and the optional scheduler configuration are protected; concurrent filesystem changes during collection are outside this check.
 
 Rows union module identifiers from Module-column index tables, manifest IDs, catalog keys and immediate Python domains in both source layouts. Namespace directories with Python descendants count; compatibility copies retain every owner path. Names remain literal, without alias inference.
 
