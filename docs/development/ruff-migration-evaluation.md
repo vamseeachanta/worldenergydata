@@ -16,6 +16,7 @@ retrievable, sanitized evidence record with a stable reference and digest.
 | Initial | 2026-11-16 | Added an evidence validator and a read-only comparison protocol before changing lint tooling. |
 | Update | 2026-11-17 | Rejected unsupported legacy import diagnostics and overflowing timings; marked numerical conclusions unverified because supporting records are unavailable. |
 | Record validation | 2026-11-17 | Rejected duplicate JSON keys, noncanonical formatter locations and repeated formatter paths to prevent lost or inflated findings. |
+| Evidence preservation | 2026-11-17 | Rejected output paths that alias the input so report generation preserves the original evidence. |
 
 ## Current policy and scope
 
@@ -114,6 +115,14 @@ writes a JSON report. It launches no scanners and requires no third-party import
 ```bash
 python scripts/ci/summarize_lint_evaluation.py "$evidence" "$summary"
 ```
+
+The output must name a different file from the input. The CLI rejects identical
+or resolved-equivalent paths, symbolic links to the input and existing hard links
+with exit 2 before reading or writing evidence. No report is written for this
+argument error, including when the input is malformed. Evidence bytes and links
+are preserved. Paths whose identity cannot be checked are also rejected. This
+check does not protect against another process changing paths during execution;
+use a private evidence directory while producing the summary.
 
 The top-level object contains `files` (relative Python paths to SHA-256 values),
 `unsupported_rules` (an explicit array), and `tools`. The latter must contain

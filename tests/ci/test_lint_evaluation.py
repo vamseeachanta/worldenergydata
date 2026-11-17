@@ -3,6 +3,8 @@
 import copy
 import hashlib
 import json
+import subprocess
+import sys
 
 import pytest
 
@@ -301,3 +303,48 @@ def test_cli_timing_overflow_writes_error_report(tmp_path, evidence, seconds):
     assert result["status"] == "ERROR"
     assert result["parity"] == "UNVERIFIED"
     assert result["timing"] is None
+
+
+@pytest.mark.parametrize(
+    "alias",
+    ["same", "relative", "parent", "input-symlink", "output-symlink", "hardlink"],
+)
+@pytest.mark.parametrize("valid", [True, False], ids=["valid", "malformed"])
+def test_cli_rejects_input_alias_without_changing_evidence(
+    tmp_path, evidence, alias, valid
+):
+    source = tmp_path / "input.json"
+    source.write_text(json.dumps(evidence) if valid else "not JSON", encoding="utf-8")
+    before = hashlib.sha256(source.read_bytes()).hexdigest()
+    original = source
+    output = source
+    if alias == "relative":
+        output = source.relative_to(tmp_path)
+    elif alias == "parent":
+        (tmp_path / "nested").mkdir()
+        output = tmp_path / "nested" / ".." / source.name
+    elif alias == "input-symlink":
+        source = tmp_path / "input-link.json"
+        source.symlink_to(original.name)
+    elif alias == "output-symlink":
+        output = tmp_path / "output-link.json"
+        output.symlink_to(source.name)
+    elif alias == "hardlink":
+        output = tmp_path / "output-link.json"
+        output.hardlink_to(source)
+    result = subprocess.run(
+        [sys.executable, str(evaluation.__file__), str(source), str(output)],
+        cwd=tmp_path,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert result.returncode == 2
+    assert "output must not overwrite evidence" in result.stderr
+    assert hashlib.sha256(original.read_bytes()).hexdigest() == before
+    assert hashlib.sha256(source.read_bytes()).hexdigest() == before
+    assert hashlib.sha256((tmp_path / output).read_bytes()).hexdigest() == before
+    if alias == "input-symlink":
+        assert source.is_symlink()
+    elif alias == "output-symlink":
+        assert output.is_symlink()

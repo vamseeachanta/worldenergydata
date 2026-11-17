@@ -229,6 +229,16 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("output", type=Path)
     args = parser.parse_args(argv)
     try:
+        same_file = args.evidence.resolve() == args.output.resolve() or (
+            args.evidence.exists()
+            and args.output.exists()
+            and args.evidence.samefile(args.output)
+        )
+    except (OSError, RuntimeError):
+        parser.error("cannot verify evidence and output paths")
+    if same_file:
+        parser.error("output must not overwrite evidence")
+    try:
         result = summarize(
             json.loads(
                 args.evidence.read_text(encoding="utf-8"),
