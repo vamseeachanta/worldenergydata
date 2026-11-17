@@ -10,6 +10,7 @@ source-qualified boundary image has been reviewed.
 | Revision | Date | Change and reason |
 | --- | --- | --- |
 | 1 | 2026-11-16 | Define normalized input and offline rendering to test polygon coverage. |
+| 2 | 2026-11-17 | Reject nested legacy CRS members so selected geometry cannot override the normalized source contract. |
 
 ## Input contract
 
@@ -26,8 +27,9 @@ Each feature has `type: "Feature"`, string properties `area` and `block`, and a
 values, unclosed rings, rings with fewer than four positions and zero signed
 area are rejected. The first ring is the exterior; subsequent rings are holes.
 All components and rings are retained with SVG's even-odd fill rule. Legacy
-GeoJSON `crs` members are rejected, including redundant declarations: the source
-adapter must explicitly normalize coordinates first.
+GeoJSON `crs` members on the collection, selected features and their geometries
+are rejected, including redundant declarations: the source adapter must explicitly
+normalize coordinates first.
 
 The collection must carry a `source` object with nonempty string fields:
 

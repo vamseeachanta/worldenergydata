@@ -44,12 +44,18 @@ def _signed_area(ring):
     )
 
 
+def _reject_legacy_crs(value):
+    if "crs" in value:
+        raise ValueError("Remove legacy CRS declarations after explicit normalization")
+
+
 def _polygons(geometry):
     if not isinstance(geometry, dict) or geometry.get("type") not in (
         "Polygon",
         "MultiPolygon",
     ):
         raise ValueError("Only Polygon and MultiPolygon geometry is supported")
+    _reject_legacy_crs(geometry)
     coordinates = geometry.get("coordinates")
     if not isinstance(coordinates, list) or not coordinates:
         raise ValueError("Geometry must contain polygons")
@@ -89,8 +95,7 @@ def select_blocks(document: dict, requested: dict[tuple[str, str], str]) -> dict
     """
     if not isinstance(document, dict) or document.get("type") != "FeatureCollection":
         raise ValueError("Expected a GeoJSON FeatureCollection")
-    if "crs" in document:
-        raise ValueError("Remove legacy CRS declarations after explicit normalization")
+    _reject_legacy_crs(document)
     source = document.get("source")
     required = ("source_id", "release", "sha256", "terms", "crs", "units")
     if not isinstance(source, dict) or not all(_text(source.get(k)) for k in required):
@@ -130,6 +135,7 @@ def select_blocks(document: dict, requested: dict[tuple[str, str], str]) -> dict
     selected = []
     for key, group in requested.items():
         feature = deepcopy(indexed[key])
+        _reject_legacy_crs(feature)
         _polygons(feature.get("geometry"))
         feature["properties"]["group"] = group
         selected.append(feature)

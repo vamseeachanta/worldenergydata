@@ -122,10 +122,24 @@ def test_source_contract_is_explicit(collection, key, value):
         select_blocks(collection, REQUESTED)
 
 
-def test_rejects_legacy_crs_declaration(collection):
-    collection["crs"] = {"type": "name", "properties": {"name": "EPSG:3857"}}
-    with pytest.raises(ValueError):
-        select_blocks(collection, REQUESTED)
+@pytest.mark.parametrize("operation", [select_blocks, render_svg])
+@pytest.mark.parametrize("level", ["collection", "feature", "geometry"])
+@pytest.mark.parametrize("crs", ["EPSG:3857", "EPSG:4326"])
+@pytest.mark.parametrize("geometry_type", ["Polygon", "MultiPolygon"])
+def test_rejects_legacy_crs_declaration(
+    collection, operation, level, crs, geometry_type
+):
+    feature = collection["features"][0]
+    geometry = feature["geometry"]
+    if geometry_type == "MultiPolygon":
+        geometry["type"] = geometry_type
+        geometry["coordinates"] = [geometry["coordinates"]]
+    target = {"collection": collection, "feature": feature, "geometry": geometry}[level]
+    target["crs"] = {"type": "name", "properties": {"name": crs}}
+    before = deepcopy(collection)
+    with pytest.raises(ValueError, match="legacy CRS"):
+        operation(collection, REQUESTED)
+    assert collection == before
 
 
 @pytest.mark.parametrize(
