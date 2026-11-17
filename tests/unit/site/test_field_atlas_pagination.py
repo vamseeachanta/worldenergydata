@@ -171,8 +171,12 @@ def test_field_results_have_bounded_pages(count):
     ],
 )
 def test_filter_input_resets_the_page(action):
-    start, second, reset = render_fields(121, ["f-next", action])
+    control = action.get("id", "f-search")
+    start, second, focused, reset = render_fields(
+        121, ["f-next", {"focus": control}, action]
+    )
     assert second["count"] == "121 fields · page 2 of 3"
+    assert focused["focused"] == reset["focused"] == control
     assert reset["names"] == start["names"]
     assert reset["count"] == "121 fields · page 1 of 3"
     assert reset["previous"] is True
@@ -218,7 +222,7 @@ def test_keyboard_focus_moves_to_enabled_control_at_page_boundary(count, control
 
 
 @pytest.mark.parametrize("control", ["f-prev", "f-next"])
-def test_programmatic_paging_preserves_focus_elsewhere(control):
+def test_pointer_paging_preserves_focus_elsewhere(control):
     setup = ["f-next"] if control == "f-prev" else []
     states = render_fields(61, [*setup, {"focus": "f-search"}, control])
     assert states[-1]["focused"] == "f-search"
@@ -262,12 +266,19 @@ def test_search_empty_and_restore_reset_paging():
 def test_feed_completion_preserves_current_page():
     states = render_fields(
         121,
-        [{"id": "f-country", "value": "USA"}, "f-next", "f-next", {"feed": True}],
+        [
+            {"id": "f-country", "value": "USA"},
+            "f-next",
+            "f-next",
+            {"focus": "f-country"},
+            {"feed": True},
+        ],
         feed=synthetic_fields(61, start=121),
     )
     assert states[-1]["count"] == "182 fields · page 3 of 4"
     assert states[-1]["names"] == [f"Example {i:03d}" for i in range(120, 180)]
     assert states[-1]["next"] is False
+    assert states[-2]["focused"] == states[-1]["focused"] == "f-country"
 
 
 @pytest.mark.parametrize("remaining", [0, 1, 60, 61])
