@@ -97,3 +97,15 @@ quoted as received; the lines below it say where revision 10 applies it.
   3.11.2, pytest 9.2.0, Node.js 26.13.0. `tests/test_build_r10.py`: 25 passed.
 - Not run: the revision 9 tests (revision 9 is unchanged) and a rerun of
   `build_r9.py` (it needs the pinned BSEE archives).
+
+## Review-gate round 1 fixes
+
+- Appendix A: the permit counting script at commit f5af5b6d is now described
+  as merged into the main branch on 16 November 2026 (pull request 1844);
+  the pin stays at f5af5b6d.
+- Infographic "What we found": shortened to "New wells moved to deep water:
+  68.8 % were in less than 100 m in 2005 to 2009, 13.4 % in 2021 to 2025.
+  Median drilling days rise with depth, from 21 d to 67 d." It is still
+  generated from the data and still stops the build if either trend reverses.
+- Page description: now names the water-depth counts, the map and the days
+  at each stage of a well's life.

@@ -242,3 +242,9 @@ def test_figures_have_png_and_svg_exports():
 def test_manifest_lists_hashes_that_match():
     for item in build.manifest():
         assert hashlib.sha256((ROOT / item['path']).read_bytes()).hexdigest() == item['sha256']
+
+
+def test_what_we_found_reads_as_reviewed():
+    text = ('New wells moved to deep water: 68.8 % were in less than 100 m in 2005 to 2009, 13.4 % in 2021 to 2025. '
+            'Median drilling days rise with depth, from 21 d to 67 d.')
+    assert '<p class="ig-k">What we found</p><p>' + text + '</p>' in page()

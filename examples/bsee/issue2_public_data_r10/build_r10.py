@@ -472,9 +472,9 @@ def infographic_found(summary, stats):
     drill = stage_rows(stats, RECORDED).median_days
     if not (shallow[1] < shallow[0] and deep[1] > deep[0] and drill.is_monotonic_increasing):
         raise ValueError('Review the infographic statement')
-    return (f'New wells moved to deep water: {shallow[0]:.1f} % of those started in 2005 to 2009 were in less than 100 m '
-            f'of water, against {shallow[1]:.1f} % of those started in 2021 to 2025. Median drilling days rise with depth, '
-            f'from {significant(drill.iloc[0])} d under 100 m to {significant(drill.iloc[-1])} d at 1,500 m and deeper.')
+    return (f'New wells moved to deep water: {shallow[0]:.1f} % were in less than 100 m in 2005 to 2009, '
+            f'{shallow[1]:.1f} % in 2021 to 2025. Median drilling days rise with depth, '
+            f'from {significant(drill.iloc[0])} d to {significant(drill.iloc[-1])} d.')
 
 
 BUILD_COMMIT = None  # set from the required --build-commit: full SHA of the commit that holds this script
