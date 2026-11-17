@@ -65,9 +65,27 @@ class _Links(HTMLParser):
             self.hrefs.append(dict(attrs).get("href"))
 
 
+class _VisibleText(HTMLParser):
+    def __init__(self, html):
+        super().__init__()
+        self.parts = []
+        self.feed(html)
+
+    def handle_data(self, data):
+        self.parts.append(data)
+
+
 def _assert_no_liability_estimate(card):
-    liability = " ".join(text for text in card["li"] if "liability" in text.lower())
-    assert not re.search(r"[\d$£€]|\b(?:USD|MUSD|MMbbl)\b", liability)
+    for bullet in card["li"]:
+        text = "".join(_VisibleText(bullet).parts)
+        assert not re.search(
+            r"[$£€]|\b(?:USD|EUR|GBP|MUSD|MMbbl)\b|"
+            r"\b\d[\d,.]*\s*(?:million|billion|dollars?|pounds?|euros?)\b",
+            text,
+            re.IGNORECASE,
+        )
+        if "liability" in text.lower():
+            assert not re.search(r"\d", text)
 
 
 @pytest.mark.parametrize("status", ["producing", None, "abandoned", "inconsistent"])
@@ -113,6 +131,40 @@ def test_liability_check_rejects_estimates(timeline, well, estimate):
 
     with pytest.raises(AssertionError):
         _assert_no_liability_estimate(card)
+
+
+@pytest.mark.parametrize(
+    "amount",
+    [
+        "USD 12 million",
+        "12 million",
+        "$12",
+        "&pound;12",
+        "€12",
+        "EUR 12",
+        "GBP 12",
+        "<strong>USD</strong> <span>12 million</span>",
+        "12 euros",
+    ],
+)
+def test_liability_check_rejects_separate_cost_bullet(timeline, well, amount):
+    card = _abandon(timeline.facts_to_well(well, {"display_name": "Synthetic Field"}))
+    card["li"].append(f"Estimated remaining P&A cost (synthetic): {amount}")
+
+    assert "P&A filing status not established" in card["li"]
+    assert "Liability not evaluated" in card["li"]
+    with pytest.raises(AssertionError):
+        _assert_no_liability_estimate(card)
+
+
+def test_liability_check_ignores_link_metadata(timeline, well):
+    card = _abandon(timeline.facts_to_well(well, {"display_name": "Synthetic Field"}))
+    card["li"].append(
+        '<a href="../norms/abandon.html?unit=USD&amp;value=12">'
+        "2020-02-03</a> · Observed plugging operation (synthetic)"
+    )
+
+    _assert_no_liability_estimate(card)
 
 
 def test_status_inputs_preserve_other_cards_and_scales(timeline, well):
