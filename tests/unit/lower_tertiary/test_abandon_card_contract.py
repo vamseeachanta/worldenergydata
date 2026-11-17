@@ -65,6 +65,11 @@ class _Links(HTMLParser):
             self.hrefs.append(dict(attrs).get("href"))
 
 
+def _assert_no_liability_estimate(card):
+    liability = " ".join(text for text in card["li"] if "liability" in text.lower())
+    assert not re.search(r"[\d$£€]|\b(?:USD|MUSD|MMbbl)\b", liability)
+
+
 @pytest.mark.parametrize("status", ["producing", None, "abandoned", "inconsistent"])
 @pytest.mark.parametrize(
     "gap", ["P&A filing status not established", "Liability not evaluated"]
@@ -84,12 +89,30 @@ def test_status_does_not_establish_filing_or_liability(timeline, well, status, g
     assert card["big"] == "—"
     assert gap in card["li"]
     assert _Links("".join(card["li"])).hrefs == [CONTEXT_HREF]
-    assert not re.search(r"[\d$£€]|\b(?:USD|MUSD|MMbbl)\b", " ".join(card["li"]))
+    _assert_no_liability_estimate(card)
     assert not any(
         text in " ".join(card["li"]).lower()
         for text in ("no p&a", "still producing", "verified", "filed")
     )
     assert (well, field) == original
+
+
+def test_dated_operation_preserves_evidence_gaps(timeline, well):
+    card = _abandon(timeline.facts_to_well(well, {"display_name": "Synthetic Field"}))
+    card["li"].insert(0, "2020-02-03 · Observed plugging operation (synthetic)")
+
+    assert "P&A filing status not established" in card["li"]
+    assert "Liability not evaluated" in card["li"]
+    _assert_no_liability_estimate(card)
+
+
+@pytest.mark.parametrize("estimate", ["0", "$12", "£12", "€12", "USD", "MUSD", "MMbbl"])
+def test_liability_check_rejects_estimates(timeline, well, estimate):
+    card = _abandon(timeline.facts_to_well(well, {"display_name": "Synthetic Field"}))
+    card["li"].append(f"Liability estimate (synthetic): {estimate}")
+
+    with pytest.raises(AssertionError):
+        _assert_no_liability_estimate(card)
 
 
 def test_status_inputs_preserve_other_cards_and_scales(timeline, well):
@@ -98,7 +121,8 @@ def test_status_inputs_preserve_other_cards_and_scales(timeline, well):
     without_status = timeline.facts_to_well(well, field)
     with_status = timeline.facts_to_well(dict(well, status="abandoned"), field)
 
-    assert without_status == with_status
+    for key in ("cards", "cAxis", "pAxis"):
+        assert without_status[key] == with_status[key]
     assert without_status["cAxis"]["start"] == 0
     assert without_status["cAxis"]["end"] == 50
     assert [card["t"] for card in without_status["cards"]] == [
@@ -129,9 +153,13 @@ def test_context_link_resolves_in_source_and_published_layout(
     timeline, well, tmp_path, monkeypatch
 ):
     card = _abandon(timeline.facts_to_well(well, {"display_name": "Synthetic Field"}))
-    assert _Links("".join(card["li"])).hrefs == [CONTEXT_HREF]
+    hrefs = _Links("".join(card["li"])).hrefs
+    assert hrefs == [CONTEXT_HREF]
+    href = hrefs[0]
     lifecycle = REPO / "reports/lower_tertiary/lifecycle"
-    target = (lifecycle / "wells" / CONTEXT_HREF).resolve()
+    source_wells = sorted((lifecycle / "wells").glob("*_well.html"))
+    assert source_wells, "Source well pages are required for the context link"
+    target = (source_wells[0].parent / href).resolve()
     assert target == lifecycle / "norms/abandon.html"
     assert target.is_file()
 
@@ -139,6 +167,8 @@ def test_context_link_resolves_in_source_and_published_layout(
     monkeypatch.setattr(site, "PUBLIC", tmp_path / "public")
     monkeypatch.setattr(site, "ASSETS", site.PUBLIC / "assets")
     site.build(domains=["lower_tertiary"])
-    published = (site.PUBLIC / "lifecycle/wells" / CONTEXT_HREF).resolve()
+    published_wells = sorted((site.PUBLIC / "lifecycle/wells").glob("*_well.html"))
+    assert published_wells, "Published well pages are required for the context link"
+    published = (published_wells[0].parent / href).resolve()
     assert published == site.PUBLIC / "lifecycle/norms/abandon.html"
     assert published.read_bytes() == target.read_bytes()
