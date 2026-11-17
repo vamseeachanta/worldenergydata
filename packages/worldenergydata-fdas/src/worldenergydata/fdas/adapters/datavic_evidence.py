@@ -79,6 +79,8 @@ def read_datavic_evidence(raw: bytes, metadata: Mapping) -> DataVicEvidence:
         "licence_source",
     ):
         require_text(metadata[key], key)
+    if re.search(r"[\s\x00-\x1f\x7f-\x9f]", metadata["query_url"]):
+        raise DataVicInputError("query_url must not contain whitespace or controls")
     url = urlsplit(metadata["query_url"])
     if url.scheme not in {"https", "http"} or not url.hostname:
         raise DataVicInputError("query_url must be an absolute HTTP(S) URL")

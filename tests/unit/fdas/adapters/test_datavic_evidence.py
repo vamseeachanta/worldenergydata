@@ -108,6 +108,18 @@ def test_evidenced_unit_and_known_vintage(unit, depth):
         ("query_url", "https://:443/wfs"),
         ("query_url", "https://example.invalid:invalid/wfs"),
         ("query_url", "https://example.invalid:65536/wfs"),
+        ("query_url", "https://exa mple.invalid/wfs"),
+        ("query_url", "https://exa\tmple.invalid/wfs"),
+        ("query_url", "https://exa\nmple.invalid/wfs"),
+        ("query_url", "https://exa\rmple.invalid/wfs"),
+        ("query_url", "https://exa\x00mple.invalid/wfs"),
+        ("query_url", "https://exa\x1fmple.invalid/wfs"),
+        ("query_url", "https://exa\x7fmple.invalid/wfs"),
+        ("query_url", "https://exa\x80mple.invalid/wfs"),
+        ("query_url", "https://exa\u00a0mple.invalid/wfs"),
+        ("query_url", " https://example.invalid/wfs"),
+        ("query_url", "https://example.invalid/wfs\t"),
+        ("query_url", "https://example.invalid/wfs?filter=site\x00id"),
         ("retrieved_at_utc", "2026-11-16"),
         ("retrieved_at_utc", "2026-11-16T12:00:00"),
         ("retrieved_at_utc", "2026-11-16T12:00:00+01:00"),
@@ -148,6 +160,7 @@ def test_bad_metadata_fails_before_normalization(monkeypatch, key, value):
         "http://example.invalid:0/wfs",
         "https://example.invalid:65535/wfs",
         "https://[::1]:443/wfs",
+        "https://example.invalid/wfs?filter=site%20id",
     ],
 )
 def test_valid_host_and_port_are_retained(query_url):
@@ -234,6 +247,8 @@ def test_empty_export_and_opaque_references():
     assert result.normalized.wells == ()
     assert result.development_links == ()
     assert result.licence_source == "citation:never-open-this"
+    with pytest.raises(ValueError, match="No wells for requested development"):
+        build_drilling_timeline(result.normalized.wells, [], development="Example")
 
 
 def test_metadata_does_not_supply_measured_activity():
