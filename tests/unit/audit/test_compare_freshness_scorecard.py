@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import importlib
 import json
+import os
+import shutil
 import subprocess
 import sys
 from copy import deepcopy
@@ -229,9 +231,11 @@ def test_cli_exit_contract_and_no_writes(
         ("module-manifest.yaml", None),
         ("module-manifest.yaml", "modules: ["),
         ("module-manifest.yaml", "modules: {}"),
+        ("module-manifest.yaml", "modules: !!int ''"),
         ("data/catalog.yaml", None),
         ("data/catalog.yaml", ""),
         ("data/catalog.yaml", "modules: []"),
+        ("data/catalog.yaml", "modules: !!int ''"),
     ],
 )
 def test_cli_invalid_inputs_are_distinct_and_sanitized(
@@ -249,8 +253,8 @@ def test_cli_invalid_inputs_are_distinct_and_sanitized(
     )
     output = capsys.readouterr()
     assert output.out == ""
-    assert file in output.err
-    assert ("missing" if contents is None else "invalid") in output.err
+    reason = "missing" if contents is None else "invalid"
+    assert output.err == f"{file}: {reason} input\n"
     assert str(tmp_path) not in output.err
     assert snapshot(tmp_path) == before
 
@@ -340,19 +344,81 @@ def test_real_builder_empty_catalog_is_valid_and_offline(
     assert snapshot(tmp_path) == before
 
 
-def test_script_entrypoint_from_another_directory(tmp_path):
+@pytest.mark.parametrize("module_id", ["caf\u00e9", "alpha"])
+def test_utf8_inputs_with_utf8_mode_disabled(comparator, tmp_path, module_id):
     write_project(tmp_path)
+    (tmp_path / "module-manifest.yaml").write_text(
+        f"modules:\n  - id: {module_id}\n", encoding="utf-8"
+    )
+    (tmp_path / "data/catalog.yaml").write_text(
+        f"modules:\n  {module_id}: {{}}\n", encoding="utf-8"
+    )
+    if module_id == "alpha":
+        metadata = tmp_path / "data/modules/alpha/_metadata.json"
+        metadata.parent.mkdir(parents=True)
+        metadata.write_text('{"last_refresh": "r\u00e9cent"}', encoding="utf-8")
+    saved = comparator.build_scorecard(tmp_path, report_date="2026-06-08")
+    del saved["modules"][module_id]["fixture_readiness"]
+    (tmp_path / "data/freshness-scorecard.json").write_text(
+        json.dumps(saved), encoding="utf-8"
+    )
     before = snapshot(tmp_path)
+    env = dict(os.environ, LC_ALL="C", PYTHONCOERCECLOCALE="0")
     result = subprocess.run(
         [
             sys.executable,
+            "-X",
+            "utf8=0",
             str(AUDIT / "compare_freshness_scorecard.py"),
             "--project-root",
             str(tmp_path),
             "--date",
             "2026-06-08",
         ],
-        cwd=tmp_path,
+        env=env,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        check=False,
+    )
+    assert result.returncode == 0, result.stderr
+    assert result.stderr == ""
+    differences = json.loads(result.stdout)
+    assert [d for d in differences if d["category"] != "generation_metadata"] == [
+        {
+            "path": f"/modules/{module_id}/fixture_readiness",
+            "category": "fixture_readiness",
+            "before_present": False,
+            "after_present": True,
+            "before": None,
+            "after": "none",
+        }
+    ]
+    assert snapshot(tmp_path) == before
+
+
+def test_script_entrypoint_from_another_directory(tmp_path):
+    write_project(tmp_path)
+    scripts = tmp_path / "scripts/audit"
+    scripts.mkdir(parents=True)
+    for name in ("compare_freshness_scorecard.py", "data_freshness_scorecard.py"):
+        shutil.copyfile(AUDIT / name, scripts / name)
+    before = snapshot(tmp_path)
+    env = os.environ.copy()
+    # Exercise the first invocation without inherited bytecode suppression.
+    env.pop("PYTHONDONTWRITEBYTECODE", None)
+    env.pop("PYTHONPYCACHEPREFIX", None)
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(scripts / "compare_freshness_scorecard.py"),
+            "--project-root",
+            str(tmp_path),
+            "--date",
+            "2026-06-08",
+        ],
+        cwd=tmp_path.parent,
+        env=env,
         capture_output=True,
         text=True,
         check=False,

@@ -16,6 +16,11 @@ from pathlib import Path
 from typing import Any
 
 import yaml
+
+if __name__ == "__main__":
+    # A read-only invocation must not create a cache beside the local builder.
+    sys.dont_write_bytecode = True
+
 from data_freshness_scorecard import build_scorecard
 
 _MISSING = object()
@@ -107,7 +112,11 @@ def _read_input(root: Path, relative: str, *, as_json: bool = False) -> Any:
             )
             _validate_scorecard(value)
         else:
-            value = yaml.safe_load(text)
+            try:
+                value = yaml.safe_load(text)
+            except IndexError:
+                # PyYAML can index an empty explicitly tagged scalar.
+                raise ValueError("invalid YAML scalar") from None
             if not isinstance(value, dict):
                 raise ValueError("expected mapping")
             modules = value.get("modules")
