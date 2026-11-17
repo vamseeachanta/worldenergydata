@@ -122,9 +122,7 @@ def _load_bundle(bundle_dir: Path) -> dict[str, Any]:
         "context": _read_json(required["context"]),
         "summary": _read_json(required["summary"]),
         "structures": pd.read_csv(required["structures"]),
-        "pipeline_segments": pd.read_csv(
-            required["pipeline_segments"], dtype={"segment_number": "string"}
-        ),
+        "pipeline_segments": pd.read_csv(required["pipeline_segments"], dtype="string"),
         "appurtenances": pd.read_csv(
             required["appurtenances"], dtype={"segment_number": "string"}
         ),

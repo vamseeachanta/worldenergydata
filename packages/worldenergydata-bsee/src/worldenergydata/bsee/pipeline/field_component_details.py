@@ -17,12 +17,21 @@ _COMPONENT_COLUMNS = (
     "join_key",
     "evidence_confidence",
 )
-_SEGMENT_COLUMNS = (
-    "segment_number",
+_SEGMENT_IDENTITY_COLUMNS = (
     "origin_name",
+    "origin_lease",
+    "origin_area",
+    "origin_block",
     "destination_name",
+    "destination_lease",
+    "destination_area",
+    "destination_block",
     "product_code",
     "pipeline_size_code",
+)
+_SEGMENT_COLUMNS = (
+    "segment_number",
+    *_SEGMENT_IDENTITY_COLUMNS,
     "source_table",
     "join_key",
     "evidence_confidence",
@@ -76,7 +85,7 @@ def render_component_details(
         for key, rows in groups.items()
         if any(
             len({_text(row.get(column)) for row in rows} - {""}) > 1
-            for column in _SEGMENT_COLUMNS[1:5]
+            for column in _SEGMENT_IDENTITY_COLUMNS
         )
     }
     matched: dict[str, list[tuple[int, dict[str, Any]]]] = defaultdict(list)

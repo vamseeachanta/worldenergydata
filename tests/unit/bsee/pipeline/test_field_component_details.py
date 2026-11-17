@@ -103,6 +103,95 @@ def test_conflicting_segment_endpoints_do_not_assign_components(tmp_path):
     assert "ambiguous" in "".join(unresolved.itertext()).lower()
 
 
+@pytest.mark.parametrize(
+    "column",
+    [
+        "origin_lease",
+        "origin_area",
+        "origin_block",
+        "destination_lease",
+        "destination_area",
+        "destination_block",
+    ],
+)
+def test_conflicting_endpoint_locations_with_blank_names_are_unresolved(
+    tmp_path, column
+):
+    segments = [
+        {
+            "segment_number": "1",
+            "origin_name": "",
+            "destination_name": "",
+            column: value,
+        }
+        for value in ["10", "11"]
+    ]
+    _, section = _build(tmp_path, segments, [{"segment_number": "1"}])
+    assert _members(section.find("details[@class='segment']")) == []
+    unresolved = section.find("details[@class='unresolved']")
+    assert unresolved is not None
+    assert len(_members(unresolved)) == 1
+    assert "Ambiguous segment inventory" in "".join(unresolved.itertext())
+    assert len(section.findall(".//details[@class='component']")) == 1
+
+
+@pytest.mark.parametrize(
+    "column",
+    [
+        "origin_name",
+        "destination_name",
+        "origin_lease",
+        "origin_area",
+        "origin_block",
+        "destination_lease",
+        "destination_area",
+        "destination_block",
+        "product_code",
+        "pipeline_size_code",
+    ],
+)
+def test_csv_endpoint_identifiers_and_codes_keep_leading_zeros(tmp_path, column):
+    segments = [{"segment_number": "1", column: value} for value in ["001", "1"]]
+    _, section = _build(tmp_path, segments, [{"segment_number": "1"}])
+    group = section.find("details[@class='segment']")
+    assert _members(group) == []
+    unresolved = section.find("details[@class='unresolved']")
+    assert unresolved is not None
+    assert len(_members(unresolved)) == 1
+    assert len(section.findall(".//details[@class='component']")) == 1
+    # Read the actual detail fields, rather than the capped overview table.
+    values = [
+        dict(
+            zip((e.text for e in dl.findall("dt")), (e.text for e in dl.findall("dd")))
+        )[column]
+        for dl in group.findall("div[@class='segment-record']/dl")
+    ]
+    assert values == ["001", "1"]
+
+
+@pytest.mark.parametrize("missing", [None, ""])
+def test_missing_endpoint_metadata_does_not_establish_conflict(tmp_path, missing):
+    metadata = {
+        "origin_name": "001",
+        "origin_lease": "001",
+        "origin_area": "01",
+        "origin_block": "010",
+        "destination_name": "002",
+        "destination_lease": "002",
+        "destination_area": "02",
+        "destination_block": "020",
+        "product_code": "01",
+        "pipeline_size_code": "02",
+    }
+    segments = [
+        {"segment_number": "1", **metadata},
+        {"segment_number": "1.0", **dict.fromkeys(metadata, missing)},
+    ]
+    _, section = _build(tmp_path, segments, [{"segment_number": "1"}])
+    assert len(_members(section.find("details[@class='segment']"))) == 1
+    assert section.find("details[@class='unresolved']") is None
+
+
 @pytest.mark.parametrize("key", ["00042.00", "9007199254740993.0", "ABC-7"])
 def test_keys_are_normalized_without_float_rounding(tmp_path, key):
     expected = {
