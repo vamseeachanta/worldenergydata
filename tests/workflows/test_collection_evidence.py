@@ -112,7 +112,10 @@ def _run_collection(tmp_path, script, case):
     evidence.mkdir()
     environment = {**os.environ}
     environment.pop("PYTEST_ADDOPTS", None)
+    environment.pop("PYTEST_PLUGINS", None)
     environment.update(
+        # Installed plugins must not write artifacts into the synthetic checkout.
+        PYTEST_DISABLE_PLUGIN_AUTOLOAD="1",
         PATH=str(bin_dir) + os.pathsep + environment["PATH"],
         COLLECTION_PYTHON=sys.executable,
         RUNNER_TEMP=str(evidence),
@@ -136,6 +139,38 @@ def _run_collection(tmp_path, script, case):
     assert summary["revision"] == "synthetic-revision"
     assert summary["interpreter"].startswith("Python ")
     return result, summary, log
+
+
+@pytest.mark.parametrize("plugin_source", ["autoload", "environment"])
+def test_collection_isolates_parent_plugins(tmp_path, monkeypatch, plugin_source):
+    plugins = tmp_path / "plugins"
+    plugins.mkdir()
+    (plugins / "parent_plugin.py").write_text(
+        "from pathlib import Path\nPath('.plugin-output').mkdir()\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setenv(
+        "PYTHONPATH",
+        str(plugins) + os.pathsep + os.environ.get("PYTHONPATH", ""),
+    )
+    monkeypatch.delenv("PYTEST_DISABLE_PLUGIN_AUTOLOAD", raising=False)
+    monkeypatch.delenv("PYTEST_PLUGINS", raising=False)
+    if plugin_source == "autoload":
+        metadata = plugins / "parent_plugin-1.0.dist-info"
+        metadata.mkdir()
+        (metadata / "METADATA").write_text(
+            "Metadata-Version: 2.1\nName: parent-plugin\nVersion: 1.0\n",
+            encoding="utf-8",
+        )
+        (metadata / "entry_points.txt").write_text(
+            "[pytest11]\nparent-plugin = parent_plugin\n", encoding="utf-8"
+        )
+    else:
+        monkeypatch.setenv("PYTEST_PLUGINS", "parent_plugin")
+    script = _contract(_workflow())["run"]
+    result, summary, _ = _run_collection(tmp_path, script, "passing")
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert summary["selected_tests"] == "3"
 
 
 @pytest.mark.parametrize(
