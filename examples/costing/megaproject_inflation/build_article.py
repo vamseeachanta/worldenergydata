@@ -114,12 +114,15 @@ def compute(d: dict) -> dict:
     br, dr = f.yoy(A["brent"]), f.yoy(A["drilling"])
     ys = [y for y in range(1988, y1 + 1) if y in br and y in dr and (y - 1) in br]
     corr = {"drilling_lag1": round(f.pearson([br[y - 1] for y in ys], [dr[y] for y in ys]), 2),
-            "drilling_same": round(f.pearson([br[y] for y in ys], [dr[y] for y in ys]), 2), "drilling_years": len(ys)}
+            "drilling_same": round(f.pearson([br[y] for y in ys], [dr[y] for y in ys]), 2), "drilling_years": len(ys),
+            "drilling_first": ys[0], "drilling_last": ys[-1]}
     for k in ("steel_mill", "machinery", "support", "shipbuilding", "engineering"):
         dk = f.yoy(A[k])
         yk = [y for y in range(1999, y1 + 1) if y in br and y in dk]
         corr[k] = round(f.pearson([br[y] for y in yk], [dk[y] for y in yk]), 2)
+        corr[k + "_lag1"] = round(f.pearson([br[y - 1] for y in yk], [dk[y] for y in yk]), 2)
         corr[k + "_years"] = len(yk)
+        corr["others_first"], corr["others_last"] = yk[0], yk[-1]
     res["corr"] = corr
     # quarterly blends against quoted UCCI values
     Bm = f.blend(Rm, f.BLEND_WEIGHTS)
@@ -136,7 +139,10 @@ def compute(d: dict) -> dict:
                    "calm_gap_min": min(u["gap_pct"] for u in calm), "calm_gap_max": max(u["gap_pct"] for u in calm),
                    "boom_two_min": min(u["gap_two_pct"] for u in boom), "boom_two_max": max(u["gap_two_pct"] for u in boom),
                    "calm_two_min": min(u["gap_two_pct"] for u in calm), "calm_two_max": max(u["gap_two_pct"] for u in calm),
-                   "peak": next(u for u in uc if u["quarter"] == "2008Q3")}
+                   "peak": next(u for u in uc if u["quarter"] == "2008Q3"),
+                   "boom_under_min": min(pct(u["blend"] / u["value"] - 1) for u in boom),
+                   "boom_under_max": max(pct(u["blend"] / u["value"] - 1) for u in boom),
+                   "gap_2006q3_pct": pct(next(u for u in uc if u["quarter"] == "2006Q4")["value"] / Bq["2006Q3"] - 1)}
     # escalation over execution windows
     esc = {}
     variants = {"blend": B, "two": B2,
@@ -358,7 +364,10 @@ def fig_escalation(res) -> tuple[str, list[list]]:
 
 def table_html(rows: list[list], cls="hs-table") -> str:
     head = "".join(f"<th>{esc_(c)}</th>" for c in rows[0])
-    body = "".join("<tr>" + "".join(f"<td>{esc_(c)}</td>" for c in r) + "</tr>" for r in rows[1:])
+    def cell(c):
+        c = str(c)
+        return "\u2212" + c[1:] if re.match(r"^-\d", c) else c
+    body = "".join("<tr>" + "".join(f"<td>{esc_(cell(c))}</td>" for c in r) + "</tr>" for r in rows[1:])
     return f'<div class="hs-table-wrap"><table class="{cls}"><thead><tr>{head}</tr></thead><tbody>{body}</tbody></table></div>'
 
 
@@ -543,6 +552,13 @@ def text_values(res: dict, rf: list[dict]) -> dict:
         "ytd_blend": f"{res['ytd']['blend_pct']:.1f}", "ytd_steel": f"{res['ytd']['steel_mill_pct']:.1f}",
         "ytd_brent": f"{res['ytd']['brent_pct']:.1f}",
         "r_drill": f"{c['drilling_lag1']:.2f}", "r_steel": f"{c['steel_mill']:.2f}", "r_eng": f"{c['engineering']:.2f}", "r_ship": f"{c['shipbuilding']:.2f}",
+        "r_eng_lag": f"{c['engineering_lag1']:.2f}", "r_ship_lag": f"{c['shipbuilding_lag1']:.2f}",
+        "r_drill_n": str(c["drilling_years"]), "r_drill_first": str(c["drilling_first"]),
+        "r_drill_last": str(c["drilling_last"]), "r_oth_n": str(c["steel_mill_years"]),
+        "r_oth_first": str(c["others_first"]), "r_oth_last": str(c["others_last"]),
+        "under_min": f"{abs(U['boom_under_max']):.1f}", "under_max": f"{abs(U['boom_under_min']):.1f}",
+        "gap_2006q3": sgn(U["gap_2006q3_pct"]), "r8_n": str(E["blend_real_8"]["n_windows"]),
+        "sens_lo_chk": f"{min(sens8[1:]):.1f}", "sens_hi_chk": f"{max(sens8[1:]):.1f}",
         "peak": f"{U['peak']['value']:.0f}", "peak_ref": str(peak_ref), "peak_blend": f"{U['peak']['blend']:.1f}",
         "boom_n": str(U["boom_n"]), "calm_n": str(len(U["points"]) - U["boom_n"]),
         "gap_min": f"{U['boom_gap_min']:.1f}", "gap_max": f"{U['boom_gap_max']:.1f}",

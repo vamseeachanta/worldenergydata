@@ -11,7 +11,7 @@
 <div class="ig-grid">
 <div class="ig-p"><p class="ig-k">Objective</p><p>Show how offshore project costs rose against consumer prices, and the escalation risk.</p></div>
 <div class="ig-p"><p class="ig-k">Starting point</p><p>Budgets fixed at sanction; spending runs five to eight years.</p></div>
-<div class="ig-p"><p class="ig-k">What we did</p><p>Eight public US price indexes against consumer prices.</p></div>
+<div class="ig-p"><p class="ig-k">What we did</p><p>Seven public US cost indexes against consumer prices.</p></div>
 <div class="ig-p"><p class="ig-k">What we found</p><p>Capital blend: {{T_blend_real}} % a year above consumer prices; {{T_boom1}} % rise, 2003 to 2008.</p></div>
 <div class="ig-p ig-act"><p class="ig-k">What you can do</p><p>Hold escalation contingency: 8-year P90 is {{T_r8_p90}} % above consumer prices.</p></div>
 </div>
@@ -51,7 +51,7 @@
 
 <!--BODY-START-->
 <h2 id="s1">Offshore cost indexes rose faster than consumer prices</h2>
-<p>Eight public US price indexes, each rebased to its 2000 mean, are compared with consumer prices from 2000 to 2025. The yearly growth of each above consumer prices is shown in Figure 1.</p>
+<p>Seven public US cost indexes, each rebased to its 2000 mean, are compared with consumer prices from 2000 to 2025. The yearly growth of each above consumer prices is shown in Figure 1.</p>
 <!--FIG-START-->
 {{FIG_GROW}}
 <figcaption><p class="cap"><strong>Figure 1 – Growth above consumer prices, 2000 to 2025</strong></p>
@@ -71,25 +71,25 @@
 <!--FIG-START-->
 {{FIG_CYC}}
 <figcaption><p class="cap"><strong>Figure 2 – Cost indexes and consumer prices, 2000 to 2026</strong></p>
-<ol class="fn hs-small"><li>Monthly values, each index divided by its 2000 mean, times 100 (vertical axis, 50 to 500); the last month is October 2026. Hover on a year for its annual mean.</li><li>Sources: [1]–[8], retrieved 17 Nov 2026. Data file: fig2-cycles.csv.</li></ol></figcaption>
+<ol class="fn hs-small"><li>Monthly values, each index divided by its 2000 mean, times 100 (vertical axis, 50 to 500); the last month is October 2026. Hover on a year for its annual mean.</li><li>Sources: [1]–[8], retrieved 17 Nov 2026. Data file: fig2-cycles.csv (annual means; the monthly values are in the data folder).</li></ol></figcaption>
 {{FIG_CYC_T}}
 <!--FIG-END-->
 <p>Some of the observations are as follows:</p>
 <ul>
 <li>2004 to 2008: the capital blend rose {{T_boom1}} % from 2003 to 2008, {{T_boom1_real}} % above consumer prices; drilling rose {{T_drill_boom1}} % [2].</li>
 <li>2014 to 2016: the blend fell {{T_bust}} % from 2014 to 2016; drilling fell {{T_drill_bust}} % from {{T_drill_bust_from}} to {{T_drill_bust_to}} [2].</li>
-<li>2021 to 2023: the blend rose {{T_boom3}} % from 2020 to 2023, only {{T_boom3_real}} % above consumer prices, which rose too; steel mill products rose {{T_steel_boom}} % from {{T_steel_boom_from}} to {{T_steel_boom_to}} [5].</li>
+<li>2021 to 2023: the blend rose {{T_boom3}} % from 2020 to 2023, {{T_boom3_real}} % above consumer prices; steel mill products rose {{T_steel_boom}} % from {{T_steel_boom_from}} to {{T_steel_boom_to}} [5].</li>
 <li>2026 so far: from January to October the blend averages {{T_ytd_blend}} % above its 2025 mean, steel mill products {{T_ytd_steel}} % and Brent crude oil {{T_ytd_brent}} % [5][9].</li>
 </ul>
-<div class="hyp"><p>Our hypothesis: the oil price sets the swing in drilling and steel costs, with drilling about a year behind, while engineering and yard fabrication costs move with consumer prices.</p></div>
-<p>From 1988 to 2025, the yearly change in drilling cost follows the Brent change of the year before with a correlation of {{T_r_drill}}. Steel mill products follow the same year's Brent change at {{T_r_steel}}, ship building at {{T_r_ship}} and engineering services at {{T_r_eng}} [9].</p>
+<div class="hyp"><p>Our hypothesis: the oil price sets the swing in drilling and steel costs, with drilling about a year behind; engineering and yard fabrication costs follow it more weakly and keep pace with consumer prices over the long run.</p></div>
+<p>From {{T_r_drill_first}} to {{T_r_drill_last}} ({{T_r_drill_n}} yearly changes), drilling cost follows the previous year's Brent change at a correlation of {{T_r_drill}}. From {{T_r_oth_first}} to {{T_r_oth_last}} ({{T_r_oth_n}} changes), steel mill products follow the same year's Brent change at {{T_r_steel}}; ship building and engineering services at {{T_r_ship}} and {{T_r_eng}}, or {{T_r_ship_lag}} and {{T_r_eng_lag}} on the previous year [9].</p>
 
 <h2 id="s3">Public indexes miss part of the 2008 to 2013 peak</h2>
 <p>The S&amp;P Global (formerly IHS) Upstream Capital Costs Index is licensed; its values are public only where the press quoted them {{UCCI_REFS}}. The quoted values beside the two public blends are shown in Figure 3.</p>
 <!--FIG-START-->
 {{FIG3}}
 <figcaption><p class="cap"><strong>Figure 3 – Public blends and the quoted sector index</strong></p>
-<ol class="fn hs-small"><li>Quarterly means, 2000 = 100 for all three. The two-index blend is the repository's escalation method {{REF_ESC}}.</li><li>Sources: [1]–[8] and the press articles {{UCCI_REFS}}; quoted words in Appendix A, Table A5. Data file: fig3-sector-index-check.csv.</li></ol></figcaption>
+<ol class="fn hs-small"><li>Quarterly means, 2000 = 100 for all three. The two-index blend uses the two indexes and equal weights of the repository's escalation method {{REF_ESC}}.</li><li>Sources: [1]–[8] and the press articles {{UCCI_REFS}}; quoted words in Appendix A, Table A5. Data file: fig3-sector-index-check.csv.</li></ol></figcaption>
 {{FIG3T}}
 <!--FIG-END-->
 <p>Some of the observations are as follows:</p>
@@ -97,11 +97,11 @@
 <li>The quoted index reached {{T_peak}} in the third quarter of 2008 [{{T_peak_ref}}]; the capital blend stood at {{T_peak_blend}} in that quarter.</li>
 <li>In the {{T_boom_n}} quoted values from 2008 to 2013, the quoted index sits {{T_gap_min}} % to {{T_gap_max}} % above the capital blend.</li>
 <li>In the {{T_calm_n}} quoted values of 2006, 2019 and 2020, it sits {{T_calm_lo}} % to {{T_calm_hi}} % below.</li>
-<li>The two-index blend matches the boom years more closely, within {{T_two_boom}}, but sits {{T_two_calm_lo}} % to {{T_two_calm_hi}} % above the quoted index in the other years.</li>
-<li>No value is public for 2014 to 2018 or after the third quarter of 2020.</li>
+<li>Against the two-index blend, the quoted index sits closer in the boom years, from {{T_two_boom}}, but {{T_two_calm_lo}} % to {{T_two_calm_hi}} % below it in the other years.</li>
+<li>We found no quoted value for 2014 to 2018 or after the third quarter of 2020.</li>
 </ul>
-<div class="hyp"><p>Our hypothesis: in a boom, global yard, vessel and subsea equipment markets add cost that US producer price indexes do not see, so an escalation built on them alone understates a boom by about a fifth.</p></div>
-<p>The fifth is the {{T_gap_min}} % to {{T_gap_max}} % gap of the boom-year values; outside the boom the two agree within {{T_calm_hi}} %.</p>
+<div class="hyp"><p>Our hypothesis: in a boom, global yard, vessel and subsea equipment markets add cost that US producer price indexes do not see, so an escalation built on them alone understates a boom.</p></div>
+<p>In level, the capital blend sits {{T_under_min}} % to {{T_under_max}} % below the {{T_boom_n}} quoted values of 2008 to 2013; outside those years the two agree within {{T_calm_hi}} %.</p>
 
 <h2 id="s4">A longer execution window widens the escalation range</h2>
 <p>For each sanction year, the estimate is set in that year's money and spent over 5 or 8 years on a bell-shaped profile. The escalation above consumer prices that each project would have met is shown in Figure 4.</p>
@@ -114,10 +114,10 @@
 <p>Some of the observations are as follows:</p>
 <ul>
 <li>5-year window, sanction years {{T_r5_first}} to {{T_r5_last}}: the median (P50, half the years met less) is {{T_r5_p50}} % above consumer prices; the P90 (nine in ten met less) is {{T_r5_p90}} %.</li>
-<li>8-year window, sanction years {{T_r8_first}} to {{T_r8_last}}: P50 {{T_r8_p50}} %, P90 {{T_r8_p90}} %; with consumer prices included, P50 {{T_n8_p50}} % and P90 {{T_n8_p90}} %.</li>
+<li>8-year window, {{T_r8_n}} overlapping sanction years from {{T_r8_first}} to {{T_r8_last}}: P50 {{T_r8_p50}} %, P90 {{T_r8_p90}} %; with consumer prices included, P50 {{T_n8_p50}} % and P90 {{T_n8_p90}} %.</li>
 <li>The worst sanction year is {{T_r8_max_fid}}: {{T_r8_max}} % above consumer prices over 8 years, {{T_n8_max}} % in all; the best is {{T_r8_min_fid}}, at {{T_r8_min}} %.</li>
 <li>On a P50 estimate, the escalation contingency to P90 is {{T_c5}} percentage points for 5 years and {{T_c8}} for 8 years, on top of the allowance for consumer prices.</li>
-<li>Other weights and an even spend give an 8-year P90 of {{T_sens_lo}} % to {{T_sens_hi}} %; further checks are given in Appendix A.</li>
+<li>Other weights and an even spend give an 8-year P90 of {{T_sens_lo_chk}} % to {{T_sens_hi_chk}} % (Appendix A).</li>
 </ul>
 <p class="pointer"><a href="#appendix-b">To try it out or adapt the analysis, see reusable prompt.</a></p>
 <p class="closing">If you have run your own analysis, see a way to improve this one, or have an idea for a future issue, write to support@aceengineer.com. We read every reply and credit the ideas we use and provide results we obtained.</p>
@@ -134,7 +134,7 @@
 <h2 id="appendix-a">Appendix A Method and data</h2>
 <p>This appendix gives the data, the method, the long tables, the checks and the limits of the work.</p>
 <h3>Data</h3>
-<p>Each series was downloaded from FRED as monthly values and saved unchanged; the files and their SHA-256 are given in Table A1. The US Bureau of Labor Statistics did not publish the consumer price index for October 2025, so the 2025 value is the mean of 11 months.</p>
+<p>Seven cost indexes, the consumer price index and the Brent price were downloaded from FRED as monthly values and saved unchanged; the files and their SHA-256 are given in Table A1. The US Bureau of Labor Statistics did not publish the consumer price index for October 2025, so the 2025 value is the mean of 11 months.</p>
 {{TAB_SOURCES}}
 <p class="cap"><strong>Table A1 – Series used, with retrieval time and SHA-256</strong></p>
 <h3>Method</h3>
@@ -142,7 +142,7 @@
 <li>Annual value: the calendar-year mean of the monthly values. Rebased index: the annual value over its 2000 value, times 100.</li>
 <li>Growth above consumer prices: the rebased index over the rebased consumer price index. Growth per year is compounded from 2000 to 2025.</li>
 <li>Capital blend: the weighted mean of seven rebased cost indexes, with the weights of Table A2. The weights are our assumption for the capital of a deepwater development; they are not measured cost shares.</li>
-<li>Cycles: the change in annual means from 2003 to 2008, 2014 to 2016 and 2020 to 2023 (Table A3). The turning months in the body are the highest and lowest monthly values in each period.</li>
+<li>Cycles: the change in annual means from 2003 to 2008, 2014 to 2016 and 2020 to 2023 (Table A3). The turning months in the body are the highest and lowest monthly values searched from 2012 to 2018 for drilling and from 2020 to 2024 for steel mill products.</li>
 <li>Escalation over a window: for sanction year s and a window of N years, the spend share of year s + k is proportional to sin(π(k + 0.5)/N); escalation is the spend-weighted index over its sanction-year value, less one. Percentiles interpolate linearly across the sanction years.</li>
 <li>Correlation: Pearson correlation of the yearly percentage changes of the annual means.</li>
 </ul>
@@ -151,10 +151,10 @@
 {{TAB_CYCLES}}
 <p class="cap"><strong>Table A3 – Change in each cycle, by index</strong></p>
 <h3>Checks</h3>
-<p>The escalation range is checked against other weights and an even spend profile in Table A4. The two-index blend is the escalation method already used in the repository {{REF_ESC}}; it starts in 1986, so it covers more sanction years.</p>
+<p>The escalation range is checked against other weights and an even spend profile in Table A4. The two-index blend uses the two indexes and equal weights of the escalation method already in the repository {{REF_ESC}}, applied to 2000-rebased levels; it starts in 1986, so it covers more sanction years.</p>
 {{TAB_SENS}}
 <p class="cap"><strong>Table A4 – Escalation above consumer prices, base case and checks</strong></p>
-<p>The quoted values of the Upstream Capital Costs Index, with the words quoted, are given in Table A5. The index is a licensed S&amp;P Global product; only values printed in press articles are used, each with its citation, and none is redistributed beyond those words.</p>
+<p>The quoted values of the Upstream Capital Costs Index, with the words quoted, are given in Table A5. The index is a licensed S&amp;P Global product; only values printed in press articles are used, each with its citation, and none is redistributed beyond those words. Two quarters are approximate: the 2006 value covers the six months ending 31 Oct 2006 and is taken as the fourth quarter (on the third quarter the gap is {{T_gap_2006q3}} %), and the 2011 value is implied by a stated cost of $2.18 billion with no quarter given and is taken as the second quarter.</p>
 {{TAB_UCCI}}
 <p class="cap"><strong>Table A5 – Quoted Upstream Capital Costs Index values (2000 = 100)</strong></p>
 <h3>Limits</h3>
