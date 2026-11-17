@@ -2,6 +2,7 @@
 
 import copy
 import json
+import re
 
 import pytest
 from pydantic import ValidationError
@@ -84,9 +85,55 @@ def test_known_era_updates_only_context_and_returns_provenance(era):
     assert receipt.field_code == "FX1"
     assert receipt.source_reference == "Synthetic era table"
     assert receipt.geological_era == era
-    assert receipt.mapping_method == "dominant_field_era_exact_code"
+    assert receipt.mapping_method == "exact_field_code_lookup"
+    assert receipt.source_derivation is None
     assert "producing reservoir" in receipt.limitation
     assert FieldConcept.model_validate_json(result.model_dump_json()) == result
+
+
+def test_direct_interpretation_map_does_not_claim_joined_well_derivation():
+    result, receipt = enrich(
+        FieldConcept(name="Synthetic"),
+        eras={"FX1": "Miocene"},
+        source="Synthetic direct interpretation",
+    )
+    assert result.geological_era == "Miocene"
+    assert receipt.source_reference == "Synthetic direct interpretation"
+    assert receipt.mapping_method == "exact_field_code_lookup"
+    assert receipt.source_derivation is None
+    assert "joined paleo wells" not in receipt.limitation
+    assert "dominant" not in receipt.limitation.lower()
+    assert "not verified" in receipt.limitation
+
+
+def test_caller_supplied_joined_well_derivation_is_retained():
+    from worldenergydata.bsee.paleowells.concept_context import enrich_concept_context
+
+    derivation = "Dominant era of joined paleo wells, including nonproducing wells."
+    _, receipt = enrich_concept_context(
+        FieldConcept(name="Synthetic"),
+        field_code="FX1",
+        field_era_map={"FX1": "Eocene"},
+        source_reference="Synthetic joined-well table",
+        source_derivation=derivation,
+    )
+    assert receipt.mapping_method == "exact_field_code_lookup"
+    assert receipt.source_derivation == derivation
+    assert "not verified" in receipt.limitation
+
+
+@pytest.mark.parametrize("value", ["", " \t", 7, {}])
+def test_invalid_source_derivation_raises_even_without_a_match(value):
+    from worldenergydata.bsee.paleowells.concept_context import enrich_concept_context
+
+    with pytest.raises(ValueError, match="non-empty string"):
+        enrich_concept_context(
+            FieldConcept(name="Synthetic"),
+            field_code="FX1",
+            field_era_map={},
+            source_reference="Synthetic era table",
+            source_derivation=value,
+        )
 
 
 @pytest.mark.parametrize(
@@ -184,3 +231,44 @@ def test_schema_generation_uses_temporary_output(tmp_path, monkeypatch):
     for attribute in ("geological_era", "play_group"):
         assert schema["properties"][attribute]["default"] is None
         assert attribute not in schema["required"]
+
+
+@pytest.mark.parametrize("attribute", ["geological_era", "play_group"])
+@pytest.mark.parametrize("schema_source", ["generated", "committed"])
+@pytest.mark.parametrize(
+    "value,valid",
+    [
+        ("", False),
+        (" \t\n", False),
+        ("\u00a0", False),
+        (None, True),
+        ("Eocene", True),
+        (" \tLower Tertiary\n", True),
+        (7, False),
+    ],
+)
+def test_context_constraints_are_visible_in_json_schema(
+    attribute, schema_source, value, valid
+):
+    schema = (
+        export_schema.build_schema()
+        if schema_source == "generated"
+        else json.loads(export_schema.SCHEMA_PATH.read_text())
+    )
+    branches = schema["properties"][attribute]["anyOf"]
+    assert {branch["type"] for branch in branches} == {"string", "null"}
+    string_constraint = next(
+        branch for branch in branches if branch["type"] == "string"
+    )
+    schema_accepts = value is None or (
+        isinstance(value, str)
+        and re.search(string_constraint["pattern"], value) is not None
+    )
+    payload = {"name": "Synthetic", attribute: value}
+    assert schema_accepts is valid
+    if valid:
+        concept = FieldConcept.model_validate(payload)
+        assert getattr(concept, attribute) == value
+    else:
+        with pytest.raises(ValidationError):
+            FieldConcept.model_validate(payload)

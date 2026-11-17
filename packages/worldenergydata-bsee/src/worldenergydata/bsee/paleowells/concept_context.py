@@ -1,8 +1,8 @@
 """Optional FieldConcept context from an explicit, caller-supplied era map.
 
-The legacy map represents dominant eras of joined paleo wells, including
-nonproducing wells. It does not establish the producing reservoir's formation.
-No source discovery or loading is performed here.
+Maps built by ``build_field_era_map`` represent dominant eras of joined paleo
+wells, including nonproducing wells. Other supplied maps may have a different
+derivation. No source discovery, loading or verification is performed here.
 """
 
 from __future__ import annotations
@@ -21,11 +21,12 @@ class GeologicalContextReceipt:
     field_code: str
     source_reference: str
     geological_era: str
-    mapping_method: str = "dominant_field_era_exact_code"
+    mapping_method: str = "exact_field_code_lookup"
     limitation: str = (
-        "Dominant era of joined paleo wells; not proof of the producing reservoir's "
-        "age or formation. Raw source not verified by this adapter."
+        "Supplied field-level context; not proof of the producing reservoir's "
+        "age or formation. Raw source and derivation not verified by this adapter."
     )
+    source_derivation: str | None = None
 
 
 def _require_text(value: str, label: str) -> None:
@@ -39,6 +40,7 @@ def enrich_concept_context(
     field_code: str,
     field_era_map: Mapping[str, str | None],
     source_reference: str,
+    source_derivation: str | None = None,
 ) -> tuple[FieldConcept, GeologicalContextReceipt | None]:
     """Return a revalidated concept and receipt, rejecting conflicting context.
 
@@ -46,9 +48,12 @@ def enrich_concept_context(
     Missing, null and explicit ``Unknown`` entries provide no update or receipt.
     Other nonblank era labels are retained without geological reclassification.
     A non-Lower-Tertiary era does not infer or clear a named play group.
+    Optional source derivation is retained as supplied, without verification.
     """
     _require_text(field_code, "field_code")
     _require_text(source_reference, "source_reference")
+    if source_derivation is not None:
+        _require_text(source_derivation, "source_derivation")
     # Preserve which fields were supplied, while rerunning all model validators.
     payload = concept.model_dump(exclude_unset=True)
     validated = FieldConcept.model_validate(payload)
@@ -65,4 +70,6 @@ def enrich_concept_context(
         if existing is not None and existing != value:
             raise ValueError(f"conflicting {attribute} for explicit field code")
     result = FieldConcept.model_validate({**payload, **updates})
-    return result, GeologicalContextReceipt(field_code, source_reference, era)
+    return result, GeologicalContextReceipt(
+        field_code, source_reference, era, source_derivation=source_derivation
+    )

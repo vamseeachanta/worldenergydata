@@ -252,6 +252,7 @@
     "geological_era": {
       "anyOf": [
         {
+          "pattern": "\\S",
           "type": "string"
         },
         {
@@ -402,6 +403,7 @@
     "play_group": {
       "anyOf": [
         {
+          "pattern": "\\S",
           "type": "string"
         },
         {

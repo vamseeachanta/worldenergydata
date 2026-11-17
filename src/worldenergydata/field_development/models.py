@@ -67,10 +67,12 @@ class FieldConcept(BaseModel):
     # --- Reservoir / fluid ---
     geological_era: Optional[str] = Field(
         None,
+        pattern=r"\S",
         description="Supplied field-level geological era; not a reservoir formation.",
     )
     play_group: Optional[str] = Field(
         None,
+        pattern=r"\S",
         description="Broad geological play grouping, not a formation-specific conclusion.",
     )
     # Proposed input conventions; rationale and source limits: data_dictionary.md.
@@ -169,14 +171,6 @@ class FieldConcept(BaseModel):
     # ------------------------------------------------------------------ #
     # Per-field validators (raise at construction)
     # ------------------------------------------------------------------ #
-    @field_validator("geological_era", "play_group")
-    @classmethod
-    def context_non_blank(cls, v: Optional[str]) -> Optional[str]:
-        """Supplied geological context must contain non-whitespace text."""
-        if v is not None and not v.strip():
-            raise ValueError("geological context must be a non-empty string")
-        return v
-
     @field_validator("name")
     @classmethod
     def name_non_empty(cls, v: str) -> str:
