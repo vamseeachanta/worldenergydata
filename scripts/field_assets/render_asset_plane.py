@@ -6,7 +6,7 @@
 components belong to assets or components. Node ``sources`` are observations,
 not installation or engineering claims. Sources are lists of {label, href}.
 Optional ``capability`` metadata has label, state and its own sources; state is
-available/unavailable/unverified. Missing evidence is visibly unavailable.
+available/unavailable/unverified. Missing evidence leaves capability state unknown.
 Text must be nonblank strings, ids use ASCII letters/digits/underscore/hyphen,
 and links must be HTTPS or relative paths without traversal. No units, counts,
 geometry, engineering results or source authenticity are inferred.
@@ -31,12 +31,22 @@ def _identifier(value):
 
 def _link(value):
     _text(value)
-    decoded = unquote(value)
-    if any(c.isspace() or ord(c) < 32 or ord(c) == 127 for c in decoded):
+    if any(c.isspace() or ord(c) < 32 or ord(c) == 127 for c in value):
         raise ValueError("Whitespace or control character in link")
-    if "\\" in decoded or "%" in decoded:
+    # Parse before decoding so escaped delimiters cannot change URL structure.
+    url = urlsplit(value)
+    decoded = [unquote(part) for part in url]
+    for position, part in enumerate(decoded):
+        if any(
+            ord(c) < 32
+            or ord(c) == 127
+            or (c.isspace() and not (position == 2 and c == " "))
+            for c in part
+        ):
+            raise ValueError("Whitespace or control character in link")
+    if any("\\" in part or "%" in part for part in decoded):
         raise ValueError("Ambiguous link encoding")
-    url = urlsplit(decoded)
+    path = decoded[2]
     if url.scheme == "https":
         if (
             not url.hostname
@@ -49,10 +59,10 @@ def _link(value):
     elif (
         url.scheme
         or url.netloc
-        or not url.path
-        or decoded.startswith("/")
-        or any(part in {".", ".."} for part in url.path.split("/"))
-        or ":" in url.path
+        or not path
+        or path.startswith("/")
+        or any(part in {".", ".."} for part in path.split("/"))
+        or ":" in path
     ):
         raise ValueError("Expected HTTPS or a repository-relative link")
     return escape(value, quote=True)
@@ -70,7 +80,7 @@ def _sources(value):
 
 def _capability(value):
     if value is None:
-        return "Capability unavailable: no metadata supplied"
+        return "Capability state unknown: no metadata supplied"
     if not isinstance(value, dict):
         raise ValueError("Capability must be metadata")
     label = _text(value.get("label"))
@@ -79,7 +89,7 @@ def _capability(value):
         raise ValueError("Unknown capability state")
     sources = _sources(value.get("sources"))
     if not sources:
-        return "Capability unavailable: source evidence missing"
+        return "Capability state unknown: source evidence missing"
     return f'<span class="tag" data-state="{state}">Capability {state}: {label}</span> · {sources}'
 
 
@@ -125,37 +135,36 @@ def render_asset_plane(record: dict) -> str:
             f'<p class="meta">{observation}</p>'
             f'<p>{_capability(node.get("capability"))}</p>'
         )
-    for ident, node in index.items():
-        chain, cursor = set(), ident
-        while cursor is not None:
-            if cursor not in index:
-                raise ValueError("Dangling parent id")
-            if cursor in chain:
-                raise ValueError("Cycle in hierarchy")
-            chain.add(cursor)
-            cursor = index[cursor]["parent_id"]
+    allowed = {
+        "facility": (None,),
+        "asset": ("facility",),
+        "component": ("asset", "component"),
+    }
+    for node in index.values():
         parent = node["parent_id"]
+        if parent is not None and parent not in index:
+            raise ValueError("Dangling parent id")
         parent_kind = index[parent]["kind"] if parent is not None else None
-        allowed = {
-            "facility": (None,),
-            "asset": ("facility",),
-            "component": ("asset", "component"),
-        }
         if parent_kind not in allowed[node["kind"]]:
             raise ValueError("Invalid parent kind")
     # Iterative traversal keeps deeply nested components independent of recursion limits.
     parts = []
+    visited = 0
     stack = [(ident, False) for ident in sorted(children[None], reverse=True)]
     while stack:
         ident, closing = stack.pop()
         if closing:
             parts.append("</ol></li>")
         else:
+            visited += 1
             parts.append(f'<li class="card" id="node-{ident}">{content[ident]}<ol>')
             stack.append((ident, True))
             stack.extend(
                 (child, False) for child in sorted(children[ident], reverse=True)
             )
+    # Each node has one parent; a cycle therefore cannot be reached from a root.
+    if visited != len(index):
+        raise ValueError("Cycle in hierarchy")
     inventory = (
         "<ol>" + "".join(parts) + "</ol>" if nodes else "<p>Inventory unavailable</p>"
     )

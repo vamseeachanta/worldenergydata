@@ -127,17 +127,31 @@ def test_missing_inventory(render, record):
 
 
 @pytest.mark.parametrize("sources", [None, []])
-def test_missing_evidence_does_not_claim_observed_inventory(render, record, sources):
-    record["nodes"][3]["sources"] = sources
+@pytest.mark.parametrize("state", ["available", "unavailable", "unverified"])
+def test_missing_evidence_does_not_claim_observed_inventory(
+    render, record, sources, state
+):
+    record["nodes"] = [record["nodes"][0], record["nodes"][3]]
+    node = record["nodes"][1]
+    node["sources"] = sources
     html = render(record)
     assert "Observation unavailable: source evidence missing" in html
-    record["nodes"][3]["capability"]["sources"] = sources
+    node["capability"].update(state=state, sources=sources)
     html = render(record)
-    assert "Capability unavailable: source evidence missing" in html
+    assert "Capability state unknown: source evidence missing" in html
+    assert not any("data-state" in attrs for _, attrs in Page(html).tags)
+    assert "Capability available" not in html
+    assert "Capability unavailable" not in html
+
+
+def test_sourced_unavailability_is_explicit(render, record):
+    page = Page(render(record))
+    assert "Capability unavailable: Synthetic inspection" in "".join(page.text)
+    assert any(attrs.get("data-state") == "unavailable" for _, attrs in page.tags)
 
 
 def test_absent_capability_is_visible(render, record):
-    assert "Capability unavailable: no metadata supplied" in render(record)
+    assert "Capability state unknown: no metadata supplied" in render(record)
 
 
 @pytest.mark.parametrize(
@@ -171,6 +185,60 @@ def test_invalid_hierarchy_is_explicit(render, record, problem):
         render(record)
 
 
+def test_deep_valid_chain_uses_linear_parent_lookups(render):
+    class CountedNode(dict):
+        parent_reads = 0
+
+        def __getitem__(self, key):
+            if key == "parent_id":
+                type(self).parent_reads += 1
+            return super().__getitem__(key)
+
+    nodes = [
+        CountedNode(id="facility", parent_id=None, kind="facility", name="Synthetic"),
+        CountedNode(id="asset", parent_id="facility", kind="asset", name="Synthetic"),
+    ]
+    parent = "asset"
+    for number in range(1500):
+        ident = f"component-{number}"
+        nodes.append(
+            CountedNode(id=ident, parent_id=parent, kind="component", name="Synthetic")
+        )
+        parent = ident
+    page = Page(render(dict(id="synthetic", name="Synthetic", nodes=nodes[::-1])))
+    assert page.ids == [f'node-{node["id"]}' for node in nodes]
+    assert page.parents[f"node-{parent}"] == "node-component-1498"
+    assert CountedNode.parent_reads <= 4 * len(nodes)
+
+
+def test_disconnected_component_cycle_is_rejected(render, record):
+    record["nodes"].extend(
+        [
+            dict(id="cycle-a", parent_id="cycle-b", kind="component", name="Synthetic"),
+            dict(id="cycle-b", parent_id="cycle-a", kind="component", name="Synthetic"),
+        ]
+    )
+    with pytest.raises(ValueError, match="Cycle in hierarchy"):
+        render(record)
+
+
+@pytest.mark.parametrize("target", ["observation", "capability"])
+@pytest.mark.parametrize(
+    "href",
+    [
+        "docs/field%20survey.pdf",
+        "https://example.org/field%20survey.pdf",
+        "docs/reference%23section%3F.pdf?edition=1#source",
+    ],
+)
+def test_escaped_path_preserved_in_each_evidence_channel(render, record, target, href):
+    owner = record["nodes"][3]
+    if target == "capability":
+        owner = owner["capability"]
+    owner["sources"][0]["href"] = href
+    assert href in Page(render(record)).links
+
+
 @pytest.mark.parametrize("target", ["observation", "capability"])
 @pytest.mark.parametrize(
     "href",
@@ -187,6 +255,15 @@ def test_invalid_hierarchy_is_explicit(render, record, problem):
         "data:text/html,test",
         "/absolute.html",
         "#fragment",
+        "docs/field survey.pdf",
+        "docs/%09survey.pdf",
+        "docs/%0asurvey.pdf",
+        "docs/%7fsurvey.pdf",
+        "docs/%252e%252e/outside.html",
+        "docs/%2e%2e%2foutside.html",
+        "%2fabsolute.html",
+        "docs/%5csource.pdf",
+        "https://example.org%2fother.invalid/source",
     ],
 )
 def test_unsafe_links_rejected_in_each_evidence_channel(render, record, target, href):
