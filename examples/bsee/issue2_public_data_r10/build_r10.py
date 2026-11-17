@@ -432,21 +432,21 @@ def scene_svg():
     stages of a well's life in order. Drawn from BANDS, WC and STAGES; no number of ours is on it."""
     w, x0, sea = 1040, 20, 46
     col = (w - 2 * x0) / 4
-    depths = [34, 62, 96, 132]
+    depths = [22, 52, 92, 136]   # drawn water depth of each band, shallow to deep (not to scale)
     parts = [f'<svg class="ig-svg" viewBox="0 0 {w} 300" role="img" aria-labelledby="ig-scene-t">'
-             '<title id="ig-scene-t">The four water-depth bands of this article as a stepped seabed, light to dark from shallow to deep, '
+             '<title id="ig-scene-t">The four water-depth bands of this article as water over a stepped seabed, light to dark from shallow to deep, '
              'with jack-ups on the shelf and drillships in deep water; below, the five stages of a well\'s life in order: '
              'drilling, completion, intervention, temporary abandonment and permanent abandonment</title>',
-             f'<rect x="{x0}" y="{sea}" width="{w - 2 * x0}" height="{max(depths) + 4}" fill="#eef4f8"/>',
+             f'<rect x="{x0}" y="{sea}" width="{w - 2 * x0}" height="{max(depths) + 4}" fill="#e4e2dc"/>',
              f'<line x1="{x0}" x2="{w - x0}" y1="{sea}" y2="{sea}" stroke="#0b3d5c" stroke-width="1.5"/>',
              f'<text x="{x0}" y="{sea - 30}" class="ig-t">Shelf: jack-ups</text>',
              f'<text x="{w - x0}" y="{sea - 30}" class="ig-t" text-anchor="end">Deep water: drillships</text>',
              f'<text x="{w / 2}" y="{sea - 10}" class="ig-n" text-anchor="middle">Water depth, shallow to deep</text>']
     for i, (band, colour, d) in enumerate(zip(BANDS, WC, depths)):
         x = x0 + i * col
-        parts.append(f'<rect x="{x:.1f}" y="{sea + d}" width="{col:.1f}" height="{max(depths) + 4 - d}" fill="{colour}" stroke="{EDGE}" stroke-width=".8"/>')
+        parts.append(f'<rect x="{x:.1f}" y="{sea}" width="{col:.1f}" height="{d}" fill="{colour}" stroke="{EDGE}" stroke-width=".8"/>')
         parts.append(f'<text x="{x + col / 2:.1f}" y="{sea + max(depths) + 24}" class="ig-t" text-anchor="middle">{html.escape(band)}</text>')
-    y, n = 230, len(ACTIVITIES)
+    y, n = 242, len(ACTIVITIES)
     step = (w - 2 * x0) / n
     for i, activity in enumerate(ACTIVITIES):
         x = x0 + i * step

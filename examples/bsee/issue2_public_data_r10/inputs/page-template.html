@@ -707,8 +707,9 @@ table td.rv-block, table th.rv-block { overflow-wrap: break-word; }
 .ig-svg{display:block;width:100%;height:auto;font-family:"Segoe UI",Helvetica,Arial,sans-serif}
 .ig-svg .ig-t{font-size:15px;font-weight:600;fill:#26323a}
 .ig-svg .ig-n{font-size:13px;fill:#5a6b76}
-.ig-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
-@media (max-width:760px){.ig-grid{grid-template-columns:1fr}}
+.ig-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.ig-grid .ig-p:first-child{grid-column:1 / -1}
+@media (max-width:560px){.ig-grid{grid-template-columns:1fr}}
 .ig-p{border:1px solid var(--hs-line);border-top:3px solid var(--ace-navy);padding:10px;background:var(--hs-surface)}
 .ig-p p{margin:.2em 0;font-size:15px;line-height:1.4}
 .ig-k{font:600 12px/1.3 "Segoe UI",Helvetica,Arial,sans-serif;text-transform:uppercase;letter-spacing:.04em;color:var(--hs-kicker)}
@@ -1130,7 +1131,7 @@ const traces=c.bands.map((b,i)=>{const r=c.stages.map(s=>c.rows.find(x=>x.stage=
 return {type:'bar',orientation:'h',name:b,showlegend:false,y:[r.map(()=>b),c.stages],x:r.map(x=>x.median),text:r.map(x=>x.shown),textposition:'outside',cliponaxis:false,
 customdata:r.map(x=>[x.stage,x.nlabel,x.shown]),marker:{color:c.colours[i],line:{color:c.edge,width:.6}},
 hovertemplate:'%{customdata[0]}<br>'+b+'<br>Median %{customdata[2]} d<br>%{customdata[1]}<extra></extra>'};});
-return [traces,{margin:{l:250,r:24,t:8,b:50},bargap:.18,xaxis:{title:'Median days (d)',range:[0,c.top],rangemode:'tozero'},
+return [traces,{margin:{l:310,r:24,t:8,b:50},bargap:.18,xaxis:{title:'Median days (d)',range:[0,c.top],rangemode:'tozero'},
 yaxis:{type:'multicategory',autorange:'reversed',ticksuffix:'  '}}];
 }
 const kinds={bar,pieset,map,interval,grouped,byband};

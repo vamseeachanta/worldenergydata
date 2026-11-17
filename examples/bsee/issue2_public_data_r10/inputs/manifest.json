@@ -1,7 +1,7 @@
 [
   {
     "path": "inputs/page-template.html",
-    "sha256": "771cd00dd90e389f23e53df56e03f0d7cb321ca4d05c371f703902b870010ded",
+    "sha256": "1ec555ef523fd32818aec641a36e4c8f9da3466fe28db60c63dee32e2252a49f",
     "basis": "r10 page template: the r9 template with the objective infographic, the three-part introduction, one water-depth palette, Figure 6 (median days of each stage by water depth), median and N labels on Figure 7, and notes before titles"
   },
   {
