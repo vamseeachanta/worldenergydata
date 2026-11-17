@@ -1,14 +1,12 @@
 Project,Currency,Sanction year,Final year,Final over sanction (%),Capital blend over the same years (%),Final figure
 Goliat,NOK,2009,2016,78.6,11.3,outturn; ASSUMED - to be confirmed
 Gorgon (incl. Jansz-Io),USD,2009,2016,45.9,11.3,outturn; ASSUMED - to be confirmed
-Jubilee Phase 1,USD,2009,2010,4.8,1.0,forecast at completion
-Big Foot,USD,2010,2018,27.5,9.0,outturn; ASSUMED - to be confirmed
-Mariner,USD,2012,2019,10.0,-2.0,outturn
-Martin Linge (ex-Hild),NOK,2012,2021,100.0,-2.1,outturn
-Aasta Hansteen,NOK,2013,2018,17.2,-5.0,outturn
-Kraken,USD,2013,2017,-21.9,-4.2,forecast at completion
-TEN (Tweneboa-Enyenra-Ntomme),USD,2013,2016,0.0,-2.4,forecast at completion
-Johan Sverdrup Phase 1,NOK,2015,2019,-32.5,-1.9,outturn
-Peregrino Phase 2,USD,2015,2022,-14.3,1.2,outturn
+Jubilee Phase 1,USD,2009,2010,4.8,1.0,forecast at completion; ASSUMED - to be confirmed
+Martin Linge (ex-Hild),NOK,2012,2021,100.0,-2.1,outturn; ASSUMED - to be confirmed
+Aasta Hansteen,NOK,2013,2018,17.2,-5.0,outturn; ASSUMED - to be confirmed
+Kraken,USD,2013,2017,−21.9,-4.2,forecast at completion
+TEN (Tweneboa-Enyenra-Ntomme),USD,2013,2016,at most 0.0,-2.4,forecast at completion; ASSUMED - to be confirmed
+Johan Sverdrup Phase 1,NOK,2015,2019,−32.5,-1.9,outturn; ASSUMED - to be confirmed
+Peregrino Phase 2,USD,2015,2022,at most −14.3,1.2,outturn; ASSUMED - to be confirmed
 Tyra Redevelopment,DKK,2017,2024,28.6,12.4,outturn; ASSUMED - to be confirmed
-Sangomar Phase 1,USD,2020,2025,19.0,22.1,outturn
+Sangomar Phase 1,USD,2020,2025,19.0,22.1,outturn; ASSUMED - to be confirmed
