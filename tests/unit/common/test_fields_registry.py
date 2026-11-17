@@ -22,6 +22,7 @@ from worldenergydata.common.fields_registry import (
     AREA_BLOCK_RE,
     LEASE_RE,
     load_fields,
+    load_fields_text,
     normalize_name,
 )
 
@@ -420,3 +421,47 @@ def test_global_registry_same_field_variants_roundtrip(
 def test_normalize_name_collapses_punctuation():
     assert normalize_name("Cascade/Chinook") == normalize_name("Cascade Chinook")
     assert normalize_name("Jack/St. Malo") == "jackstmalo"
+
+
+@unit
+def test_text_loader_preserves_path_and_default_loader_contract(
+    tmp_path, global_registry_fields, monkeypatch
+):
+    text = yaml.safe_dump({"fields": global_registry_fields})
+    path = tmp_path / "registry.yml"
+    path.write_text(text, encoding="utf-8")
+    monkeypatch.setattr(
+        "worldenergydata.common.fields_registry._default_path", lambda: path
+    )
+    registry = load_fields_text(text)
+    assert registry == load_fields(path) == load_fields()
+    assert registry.all_ids() == ["alpha", "beta"]
+    assert registry.resolve("SHARED / FIELD") == "alpha"
+    assert registry.by_lease("ocs-g 00001") == "alpha"
+    assert registry.by_lease("G99999") is None
+
+
+@unit
+@pytest.mark.parametrize("text", ["", "# empty registry\n", "fields: []\n"])
+def test_text_loader_preserves_empty_registry(text):
+    assert load_fields_text(text).all_ids() == []
+
+
+@unit
+@pytest.mark.parametrize("collision", ["id", "alias", "lease"])
+def test_text_loader_rejects_collisions(global_registry_fields, collision):
+    alpha, beta = global_registry_fields
+    if collision == "id":
+        beta["canonical_id"] = alpha["canonical_id"]
+    elif collision == "alias":
+        beta["aliases"] = ["shared / field"]
+    else:
+        beta["bsee"]["leases"] = ["ocs-g 00001"]
+    with pytest.raises(ValueError, match="Duplicate canonical_id|collision"):
+        load_fields_text(yaml.safe_dump({"fields": global_registry_fields}))
+
+
+@unit
+def test_text_loader_rejects_invalid_yaml():
+    with pytest.raises(yaml.YAMLError):
+        load_fields_text("fields: [")

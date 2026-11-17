@@ -19,7 +19,7 @@ from worldenergydata.bsee.lease_ingest import (
     poster_leases,
     registry_check,
 )
-from worldenergydata.common.fields_registry import load_fields
+from worldenergydata.common.fields_registry import FieldsRegistry, load_fields_text
 
 
 def write_json(path: Path, value: Any) -> dict[str, Any]:
@@ -194,13 +194,28 @@ def saved_tables(raw_dir: Path, output: Path, schema: dict[str, Any]) -> dict[st
     return tables
 
 
+def load_registry_snapshot(path: Path) -> tuple[FieldsRegistry, dict[str, Any]]:
+    """Parse and fingerprint one immutable capture, without retaining its path."""
+    content = path.read_bytes()
+    registry = load_fields_text(content.decode("utf-8"))
+    return registry, {
+        "role": "registry",
+        "status": "verified",
+        "sha256": hashlib.sha256(content).hexdigest(),
+        "size_bytes": len(content),
+    }
+
+
 def save_extract(
     output: Path,
     schema_path: Path,
     tables: dict[str, Any],
     leases: list[str],
     result: dict[str, Any],
+    *,
+    registry_provenance: dict[str, Any] | None = None,
 ) -> None:
+    """Write derived artifacts; omitted registry evidence is explicitly unavailable."""
     artifacts = [
         write_json(output / f"{name}.json", rows) for name, rows in result.items()
     ]
@@ -219,6 +234,15 @@ def save_extract(
         }
     )
     summary = {
+        "registry_input": (
+            registry_provenance
+            if registry_provenance is not None
+            else {
+                "role": "registry",
+                "status": "unavailable",
+                "reason": "Registry snapshot provenance was not supplied",
+            }
+        ),
         "source_row_counts": {kind: len(rows) for kind, rows in tables.items()},
         "target_leases": len(leases),
         "leases_ingested": len(result["leases"]),
@@ -295,11 +319,18 @@ def main() -> None:
             raise SystemExit(status)
     schema_path, schema = prepare_schema(output)
     tables = saved_tables(args.raw_dir, output, schema)
-    registry = load_fields(args.registry)
+    registry, registry_provenance = load_registry_snapshot(args.registry)
     leases = poster_leases(registry)
     result = curate(tables, leases)
     result["registry"] = registry_check(leases, registry)
-    save_extract(output, schema_path, tables, leases, result)
+    save_extract(
+        output,
+        schema_path,
+        tables,
+        leases,
+        result,
+        registry_provenance=registry_provenance,
+    )
 
 
 if __name__ == "__main__":
