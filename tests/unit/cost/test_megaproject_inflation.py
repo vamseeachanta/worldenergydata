@@ -98,7 +98,7 @@ def test_published_numbers(results):
     assert results["index"]["blend"]["real_cagr_pct"] == pytest.approx(0.79, abs=0.005)
     assert results["esc"]["blend_real_8"]["p50"] == pytest.approx(0.7, abs=0.05)
     assert results["esc"]["blend_real_8"]["p90"] == pytest.approx(22.8, abs=0.05)
-    assert results["ucci"]["boom_gap_min"] == pytest.approx(18.8, abs=0.05)
+    assert results["ucci"]["boom_gap_min"] == pytest.approx(20.5, abs=0.05)
     assert results["ucci"]["boom_gap_max"] == pytest.approx(24.7, abs=0.05)
 
 
@@ -106,3 +106,25 @@ def test_escalation_windows_cover_full_years_only(results):
     e8 = results["esc"]["blend_real_8"]
     assert e8["fid_first"] == 1997 and e8["fid_last"] == 2018
     assert e8["n_windows"] == 22
+
+
+def test_set_aside_quarter_left_out(results, tmp_path, monkeypatch):
+    # the 2013 Q3 value (229) is set aside: out of Figure 3, Table A5 and every number built on them, while its
+    # reference keeps its number (18) and Appendix A names it
+    b = _load("build_article")
+    monkeypatch.setattr(b, "OUT", tmp_path)        # the build writes its figures here, not into out/
+    U = results["ucci"]
+    assert [u["quarter"] for u in U["set_aside"]] == ["2013Q3"] and U["set_aside"][0]["value"] == 229.0
+    assert "2013Q3" not in {u["quarter"] for u in U["points"]}
+    assert len(U["points"]) == 12 and U["boom_n"] == 7
+    assert (U["boom_first"], U["boom_last"]) == (2008, 2012)
+    assert U["boom_under_max"] == pytest.approx(-17.1, abs=0.05)       # was -15.8 with 2013 Q3
+    assert U["boom_two_min"] == pytest.approx(1.0, abs=0.05)           # was -5.1 with 2013 Q3
+    d = b.load()
+    rf = b.refs(d, results)
+    oft = next(r for r in rf if r["url"] == U["set_aside"][0]["url"])
+    assert oft["n"] == 18
+    page, errs, _, _ = b.build("0" * 40, "17 Nov 2026, 00:00 UTC")
+    assert not errs
+    assert "2013 Q3 value (229, reference 18) set aside until its source is read again." in page
+    assert "<td>2013Q3</td>" not in page

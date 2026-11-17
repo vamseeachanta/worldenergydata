@@ -18,7 +18,7 @@ Give this prompt to your assistant:
 - Piece and version: "Offshore mega-project cost inflation over time", r1, 17 Nov 2026.
 - Software: Python 3.10 or later, standard library only for the build; pytest for the tests.
 - Data set: the files in `examples/costing/megaproject_inflation/data/`, retrieved from FRED on 17 Nov 2026 (times and SHA-256 in `sources.csv`).
-- Check values: consumer prices rose 87.0 % from 2000 to 2025; the capital blend grew 0.79 % a year above consumer prices; over an 8-year window the escalation above consumer prices has P50 0.7 % and P90 22.8 %; the 8 quoted sector-index values of 2008 to 2013 sit 18.8 % to 24.7 % above the capital blend.
+- Check values: consumer prices rose 87.0 % from 2000 to 2025; the capital blend grew 0.79 % a year above consumer prices; over an 8-year window the escalation above consumer prices has P50 0.7 % and P90 22.8 %; the 7 quoted sector-index values of 2008 to 2012 sit 20.5 % to 24.7 % above the capital blend (the 2013 value is set aside until its source is read again).
 
 A fresh download (without `--check`) gives the same values only while the series are not revised; the saved files reproduce the published result exactly.
 

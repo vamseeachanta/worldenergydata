@@ -55,6 +55,20 @@ COMPONENTS = ["drilling", "steel_pipe", "steel_mill", "machinery", "shipbuilding
 # passed with --leak-file, one regular expression per line.
 LEAK = [r"\b[A-Za-z]:[\\/]", r"/mnt/", r"\\\\", r"(?<![\w.])@[A-Za-z]", r"\?", "—"]
 
+# Quoted index values left out of Figure 3, Table A5 and every number built on them, by quarter, until their source
+# sentence is read again. The reference stays in the list and Appendix A names it.
+SET_ASIDE = {"2013Q3"}
+
+# Publication dates of the press articles whose title in the curated file carries none, by quoted quarter.
+ARTICLE_DATES = {"2006Q4": "1 Mar 2007", "2008Q3": "11 Dec 2008", "2010Q3": "9 Dec 2010", "2012Q1": "2 Jul 2012",
+                 "2019Q3": "2 Dec 2019", "2019Q4": "2 Mar 2020", "2020Q2": "7 Sep 2020", "2020Q3": "7 Dec 2020"}
+
+
+def dated(u: dict) -> dict:
+    """The quoted point with its article date added to the source title, as in "IHS CERA press release (11 Dec 2008)"."""
+    d = ARTICLE_DATES.get(u["quarter"])
+    return dict(u, source=f"{u['source']} ({d})") if d and "(" not in u["source"] else u
+
 
 # ------------------------------------------------------------------ data and results
 def load() -> dict:
@@ -67,7 +81,7 @@ def load() -> dict:
     if bad:
         raise SystemExit(f"sources check failed (hash mismatch): {bad}")
     monthly = {r["key"]: f.read_fred(HERE / r["local_file"]) for r in rows if r["key"] != "ucci_quoted"}
-    return {"sources": rows, "monthly": monthly, "ucci": f.read_ucci_quoted(UCCI_FILE)}
+    return {"sources": rows, "monthly": monthly, "ucci": [dated(u) for u in f.read_ucci_quoted(UCCI_FILE)]}
 
 
 def pct(x: float, d: int = 1) -> float:
@@ -130,11 +144,15 @@ def compute(d: dict) -> dict:
     Bq, B2q = f.quarter_means(Bm), f.quarter_means(B2m)
     uc = []
     for u in d["ucci"]:
+        if u["quarter"] in SET_ASIDE:
+            continue
         uc.append(dict(u, blend=round(Bq[u["quarter"]], 1), two=round(B2q[u["quarter"]], 1),
                        gap_pct=pct(u["value"] / Bq[u["quarter"]] - 1), gap_two_pct=pct(u["value"] / B2q[u["quarter"]] - 1)))
     boom = [u for u in uc if "2008" <= u["quarter"][:4] <= "2013"]
     calm = [u for u in uc if u not in boom]
-    res["ucci"] = {"points": uc, "boom_n": len(boom), "boom_gap_min": min(u["gap_pct"] for u in boom),
+    res["ucci"] = {"points": uc, "set_aside": [u for u in d["ucci"] if u["quarter"] in SET_ASIDE],
+                   "boom_n": len(boom), "boom_first": int(boom[0]["quarter"][:4]), "boom_last": int(boom[-1]["quarter"][:4]),
+                   "boom_gap_min": min(u["gap_pct"] for u in boom),
                    "boom_gap_max": max(u["gap_pct"] for u in boom),
                    "calm_gap_min": min(u["gap_pct"] for u in calm), "calm_gap_max": max(u["gap_pct"] for u in calm),
                    "boom_two_min": min(u["gap_two_pct"] for u in boom), "boom_two_max": max(u["gap_two_pct"] for u in boom),
@@ -479,7 +497,7 @@ def refs(d: dict, res: dict) -> list[dict]:
         out.append({"cite": f"{r['publisher']}, {r['title']} ({r['series_id']}), retrieved through FRED, Federal "
                             f"Reserve Bank of St. Louis, on {day(r['retrieved_utc'][:10])}", "url": r["url"]})
     seen = {}
-    for u in res["ucci"]["points"]:
+    for u in sorted(res["ucci"]["points"] + res["ucci"]["set_aside"], key=lambda p: p["quarter"]):
         if u["url"] not in seen:
             seen[u["url"]] = u
             out.append({"cite": f"{u['source']}, quoting the S&P Global (formerly IHS) Upstream Capital Costs Index; "
@@ -531,8 +549,12 @@ def text_values(res: dict, rf: list[dict]) -> dict:
     flat_max = max(abs(ix[k]["real_cagr_pct"]) for k in ("engineering", "shipbuilding", "support"))
     sens8 = [E[k]["p90"] for k in ("blend_real_8", "two_real_8", "equal_real_8", "flat_real_8")]
     peak_ref = next(r["n"] for r in rf if r["url"] == U["peak"]["url"])
-    two_boom = (f"{abs(U['boom_two_min']):.1f} % below to {U['boom_two_max']:.1f} % above"
-                if U["boom_two_min"] < 0 < U["boom_two_max"] else f"{U['boom_two_min']:.1f} % to {U['boom_two_max']:.1f} %")
+    if U["boom_two_min"] < 0 < U["boom_two_max"]:
+        two_boom = f"from {abs(U['boom_two_min']):.1f} % below to {U['boom_two_max']:.1f} % above it"
+    elif U["boom_two_min"] >= 0:
+        two_boom = f"{U['boom_two_min']:.1f} % to {U['boom_two_max']:.1f} % above it"
+    else:
+        two_boom = f"{abs(U['boom_two_max']):.1f} % to {abs(U['boom_two_min']):.1f} % below it"
     v = {
         "cpi_rise": f"{ix['cpi']['rise_pct']:.1f}", "cpi_cagr": f"{ix['cpi']['cagr_pct']:.2f}",
         "drill_rise": f"{ix['drilling']['rise_pct']:.1f}", "pipe_rise": f"{ix['steel_pipe']['rise_pct']:.1f}",
@@ -560,7 +582,8 @@ def text_values(res: dict, rf: list[dict]) -> dict:
         "gap_2006q3": sgn(U["gap_2006q3_pct"]), "r8_n": str(E["blend_real_8"]["n_windows"]),
         "sens_lo_chk": f"{min(sens8[1:]):.1f}", "sens_hi_chk": f"{max(sens8[1:]):.1f}",
         "peak": f"{U['peak']['value']:.0f}", "peak_ref": str(peak_ref), "peak_blend": f"{U['peak']['blend']:.1f}",
-        "boom_n": str(U["boom_n"]), "calm_n": str(len(U["points"]) - U["boom_n"]),
+        "boom_n": str(U["boom_n"]), "boom_y0": str(U["boom_first"]), "boom_y1": str(U["boom_last"]),
+        "n_quoted": str(len(U["points"])), "calm_n": str(len(U["points"]) - U["boom_n"]),
         "gap_min": f"{U['boom_gap_min']:.1f}", "gap_max": f"{U['boom_gap_max']:.1f}",
         "calm_lo": f"{abs(U['calm_gap_max']):.1f}", "calm_hi": f"{abs(U['calm_gap_min']):.1f}",
         "two_boom": two_boom, "two_calm_lo": f"{abs(U['calm_two_max']):.1f}", "two_calm_hi": f"{abs(U['calm_two_min']):.1f}",
@@ -581,6 +604,7 @@ def text_values(res: dict, rf: list[dict]) -> dict:
 def check(body_src: str, filled: str, page: str, refs_: list[dict], leak: list[str]) -> tuple[list[str], dict]:
     errs, facts = [], {}
     cited = {int(n) for n in re.findall(r"\[(\d+)\]", filled)}
+    cited |= {int(n) for n in re.findall(r"\breference (\d+)\b", filled)}  # a reference named in a note
     for a, b in re.findall(r"\[(\d+)\]–\[(\d+)\]", filled):
         cited |= set(range(int(a), int(b) + 1))
     ns = {r["n"] for r in refs_}
@@ -641,7 +665,21 @@ def build(pin: str, built: str, leak: list[str] | None = None) -> tuple[str, lis
     for name, svg, rows in (("fig2-cycles", f1, t1), ("fig1-growth-above-cpi", f2, t2), ("fig3-sector-index-check", f3, t3),
                             ("fig4-escalation-by-sanction-year", f4, t4)):
         write_static(name, svg, rows)
-    n_ucci = [r["n"] for r in rf if "Upstream Capital Costs" in r["cite"]]
+    used = {u["url"] for u in res["ucci"]["points"]}
+    n_ucci = [r["n"] for r in rf if "Upstream Capital Costs" in r["cite"] and r["url"] in used]
+    runs = []  # consecutive reference numbers as [a]–[b], a lone one as [a]
+    for n in n_ucci:
+        if runs and n == runs[-1][1] + 1:
+            runs[-1][1] = n
+        else:
+            runs.append([n, n])
+    ucci_refs = ", ".join(f"[{a}]–[{b}]" if b > a else f"[{a}]" for a, b in runs)
+    aside = " ".join(
+        f"{u['quarter'][:4]} Q{u['quarter'][5]} value ({u['value']:.0f}, reference "
+        f"{next(r['n'] for r in rf if r['url'] == u['url'])}) set aside until its source is read again."
+        for u in res["ucci"]["set_aside"])
+    if aside:
+        aside += (f" Figure 3, Table A5 and the text use the other {len(res['ucci']['points'])} quoted quarters.")
     E = res["esc"]
     weights = [["Index", "Weight", "What it stands for"]] + [
         [LABELS[k], f"{w:.2f}", txt] for k, w, txt in (
@@ -680,7 +718,7 @@ def build(pin: str, built: str, leak: list[str] | None = None) -> tuple[str, lis
         "FIG4": f'<figure>{f4}', "FIG4T": f'<details><summary>Figure 4 as a table</summary>{table_html(t4)}</details></figure>',
         "TAB_SOURCES": table_html(src_rows), "TAB_WEIGHTS": table_html(weights), "TAB_CYCLES": table_html(cyc),
         "TAB_SENS": table_html(sens), "TAB_UCCI": table_html([[r[0], r[1], r[2], r[4], r[6]] for r in t3]),
-        "UCCI_REFS": f"[{n_ucci[0]}]–[{n_ucci[-1]}]", "REF_ESC": f"[{rf[-1]['n']}]",
+        "UCCI_REFS": ucci_refs, "SET_ASIDE": aside, "REF_ESC": f"[{rf[-1]['n']}]",
         "PIN": pin, "PIN7": pin[:7], "PROMPT_URL": f"{REPO_URL}/blob/{pin}/{PROMPT_PATH}",
         "REFS": "<ol class=\"refs hs-small\">" + "".join(
             f'<li id="ref-{r["n"]}" value="{r["n"]}">{esc_(r["cite"])}. <a href="{esc_(r["url"])}">{esc_(r["url"])}</a>.</li>'
@@ -697,7 +735,7 @@ def build(pin: str, built: str, leak: list[str] | None = None) -> tuple[str, lis
             f"<title>{esc_(TITLE)}</title>"
             "<meta name=\"description\" content=\"Public US price indexes for offshore drilling, equipment, steel, "
             "fabrication and engineering, rebased to 2000 against consumer prices: the long-run rise above general "
-            "inflation, three boom and bust cycles, and the escalation range for a 5 to 8 year project.\">"
+            "inflation, three boom and bust cycles, and the escalation range for an assumed 5-year or 8-year spend.\">"
             f"<style>{CSS}</style></head><body><main class=\"art\">{filled}</main><script>{TIP_JS}</script></body></html>\n")
     errs, facts = check(body_src, plain_for_check, page, rf, LEAK + (leak or []))
     return page, errs, facts, res
