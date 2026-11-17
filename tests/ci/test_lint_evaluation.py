@@ -72,6 +72,12 @@ def test_equal_counts_do_not_establish_parity(evidence):
     assert result["tools"]["flake8"]["rules"] == {"F401": 1}
 
 
+def test_legacy_import_diagnostic_cannot_disappear(evidence):
+    add_findings(evidence, "flake8", [finding("I001")])
+    with pytest.raises(ValueError, match="unexpected rule"):
+        evaluation.summarize(evidence)
+
+
 def test_import_and_formatter_deltas_are_separate(evidence):
     add_findings(evidence, "isort", [finding("FORMAT")])
     result = evaluation.summarize(evidence)
@@ -199,3 +205,26 @@ def test_cli_retains_valid_deltas(tmp_path, evidence):
     source.write_text(json.dumps(evidence))
     assert evaluation.main([str(source), str(output)]) == 0
     assert json.loads(output.read_text())["parity"] == "MATCH"
+
+
+@pytest.mark.parametrize("seconds", [10**400, 1e308], ids=["huge-int", "sum-overflow"])
+def test_unrepresentable_timing_rejected(evidence, seconds):
+    for name in ("ruff-check", "ruff-format"):
+        for run in evidence["tools"][name]["runs"]:
+            run["seconds"] = seconds
+    with pytest.raises(ValueError, match="duration|combined"):
+        evaluation.summarize(evidence)
+
+
+@pytest.mark.parametrize("seconds", [10**400, 1e308], ids=["huge-int", "sum-overflow"])
+def test_cli_timing_overflow_writes_error_report(tmp_path, evidence, seconds):
+    for name in ("ruff-check", "ruff-format"):
+        for run in evidence["tools"][name]["runs"]:
+            run["seconds"] = seconds
+    source, output = tmp_path / "input.json", tmp_path / "summary.json"
+    source.write_text(json.dumps(evidence))
+    assert evaluation.main([str(source), str(output)]) == 2
+    result = json.loads(output.read_text())
+    assert result["status"] == "ERROR"
+    assert result["parity"] == "UNVERIFIED"
+    assert result["timing"] is None

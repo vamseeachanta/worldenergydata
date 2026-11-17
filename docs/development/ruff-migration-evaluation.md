@@ -6,12 +6,15 @@ This evaluation compares the existing lint stack with a candidate Ruff policy.
 It does not replace dependencies, CI commands or hooks, or format the source tree.
 Adoption requires reviewed rule and formatter compatibility as well as timing.
 The issue's full migration acceptance criteria remain open in #315.
+The measurement and inventory conclusions below are unverified pending a
+retrievable, sanitized evidence record with a stable reference and digest.
 
 ## Revision history
 
 | Revision | Date | What changed and why |
 | --- | --- | --- |
 | Initial | 2026-11-16 | Added an evidence validator and a read-only comparison protocol before changing lint tooling. |
+| Update | 2026-11-17 | Rejected unsupported legacy import diagnostics and overflowing timings; marked numerical conclusions unverified because supporting records are unavailable. |
 
 ## Current policy and scope
 
@@ -129,7 +132,9 @@ its nonempty exact `version`, the identical `files` mapping and five `runs`:
 ```
 
 Each finding has `path`, positive integer `row` and `column`, `code`, and string
-`message`. Convert scanner filenames to repository-relative paths. Preserve all
+`message`. Flake8 findings accept E/W/F codes only; I001 is accepted only from
+Ruff check and participates in the import comparison. Convert scanner filenames
+to repository-relative paths. Preserve all
 diagnostics: flake8's formatted fields and Ruff's JSON `filename`, `location`,
 `code` and `message`. Normalize Black's `would reformat` and isort's incorrectly
 sorted file notices to one `FORMAT` record per path at `(1, 1)`; do the same for
@@ -138,7 +143,8 @@ line totals as diagnostic counts. Any parser ambiguity is an evidence error.
 
 Exit 0 must accompany no findings; exit 1 must accompany findings. All other
 exits, parse failures, absent probes or versions, duplicates, changed inventories,
-nonfinite timings and unstable findings invalidate the evidence. CLI exit 2
+nonfinite or unrepresentable durations, nonfinite combined timings and unstable
+findings invalidate the evidence. CLI exit 2
 writes `ERROR`, `UNVERIFIED` parity and no timing claim. CLI exit 0 means valid
 evidence, even when parity is blocked or the timing criterion fails.
 
@@ -153,14 +159,26 @@ The under-30-second test uses the unrounded sum of Ruff check and format-check
 for each paired full-inventory observation; all five must be strictly below 30.
 It is independent of compatibility and must never be inferred from the CI subset.
 
-## Measured results
+## Reported measurements (unverified)
 
-Measurements on 2026-11-16 used Python 3.12.15 and a serial Linux process.
+Every numerical conclusion in this section, including inventory sizes, finding
+counts, rule and file deltas, stability and timing, is unverified. The referenced
+external records have no retrievable, durable reference or artifact digest in
+this guide. The figures are retained as previously reported observations, not
+validated evidence. A source-map digest identifies inputs; it cannot establish
+diagnostic totals, execution or elapsed time. No benchmark was repeated for this
+update. Verification requires the complete sanitized source map, normalized
+evidence, summary, commands and raw streams at a stable maintainer-accessible
+reference with artifact digests, followed by validation against those records.
+
+The previous evaluation reported measurements on 2026-11-16 using Python
+3.12.15 and a serial Linux process.
 The base commit was `efc4fd3f53c4d17eeda1cfdbf0d534e1727cc16e`.
 The measured inventory contained 3,182 Python files: 200 in `src/`, 1,688 in
 `tests/` and 1,294 in `packages/`. BASE contained 3,181 of those files; the
 additional file was the new evaluation test. The complete source map and every
-finding are enumerated in the external `evidence.json` and `summary.json`.
+finding were reportedly enumerated in external `evidence.json` and
+`summary.json`; those records are unavailable for verification here.
 
 The installed Ruff 0.17.1 distribution declares `License-Expression: MIT`, and
 its supplied licence text starts with `MIT License`. No dependency or lockfile
@@ -176,27 +194,31 @@ not measure a cold installation.
 | ruff-check | 0.17.1 | 3871 | 3871 | 0.1, 0.1, 0.1, 0.1, 0.1 | 0.1 | 0.1 |
 | ruff-format | 0.17.1 | 406 | 407 | 0.1, 0.1, 0.1, 0.1, 0.1 | 0.1 | 0.1 |
 
-Combined Ruff check plus format-check durations were 0.2, 0.2, 0.2, 0.2, 0.2 s; the median and maximum were 0.2 s. Every unrounded sum was strictly below 30 seconds. This meets the timing criterion for this recorded full inventory; compatibility remains blocked.
+Reported combined Ruff check plus format-check durations were 0.2, 0.2, 0.2,
+0.2, 0.2 s; the reported median and maximum were 0.2 s. These rounded figures
+cannot establish that every unrounded sum was strictly below 30 seconds. The
+timing criterion remains unverified pending the original observations.
 
-All five finding lists per tool agreed exactly. Each before/after source digest
-agreed with the frozen input map:
+The previous evaluation reported that all five finding lists per tool agreed
+exactly and each before/after source digest agreed with this frozen input map:
 
 ```text
 083e044b76e36733ede85b80b0a229bf14d41dea5b3a18000227ebc8c2aca110
 ```
 
-The benchmark preceded final Black formatting of the new evaluation test.
-Only that inventory member changed afterward; all existing inventory members
-remained unchanged. The final source-map digest is:
+The previous evaluation reported that the benchmark preceded final Black
+formatting of the new evaluation test and only that inventory member changed
+afterward. Its reported final source-map digest was:
 
 ```text
 7dd13c032f5a5da33f76fbcb8e910b3ff4661a2d697618986b76edf11f9f50bb
 ```
 
-Timings describe the frozen snapshot, not an extrapolation to the final digest.
-Final formatting checks pass on both new Python files.
+Reported timings refer to the earlier frozen snapshot. Neither digest verifies
+the elapsed times, counts or the current tree. Current file-level checks are
+reported separately in the pull request.
 
-### Rule and formatter differences
+### Reported rule and formatter differences (unverified)
 
 Ruff's installed rule metadata has no counterparts for E121, E122, E123, E124,
 E125, E126, E127, E128, E129, E131, E704, W503 or W504. Of these, E121, E123,
@@ -256,8 +278,10 @@ conditional-expression layout: Black kept a chain on one line while Ruff split
 it. Explicit branches now avoid that conflict in the new code. The existing
 codebase was not reformatted to remove the measured differences.
 
-The result is `BLOCKED` for policy parity. Counts, warm timing and repeated
-stability do not justify replacing the production lint stack in this change.
+The previous evaluation reported `BLOCKED` policy parity. Its numerical basis
+remains unverified pending the supporting records. Counts, warm timing and
+repeated stability do not justify replacing the production lint stack in this
+change.
 
 ## Migration sequence and rollback
 

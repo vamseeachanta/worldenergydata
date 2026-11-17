@@ -58,7 +58,11 @@ def validated_findings(tool: str, value: object, files: dict) -> list[dict]:
         if tool in ("black", "isort", "ruff-format"):
             require(code == "FORMAT", "invalid formatter diagnostic")
         else:
-            require(bool(re.fullmatch(r"[EWF]\d{3}|I001", code)), "unexpected rule")
+            require(
+                bool(re.fullmatch(r"[EWF]\d{3}", code))
+                or (tool == "ruff-check" and code == "I001"),
+                "unexpected rule",
+            )
             require(code not in ("E901", "E902", "E999"), "source parse failure")
     keys = [json.dumps(item, sort_keys=True) for item in value]
     require(len(set(keys)) == len(keys), "duplicate diagnostic")
@@ -71,6 +75,8 @@ def summarize(evidence: dict) -> dict:
         return _summarize(evidence)
     except (KeyError, TypeError) as exc:
         raise ValueError("invalid evidence structure") from exc
+    except OverflowError as exc:
+        raise ValueError("invalid duration in seconds") from exc
 
 
 def _summarize(evidence: dict) -> dict:
@@ -176,6 +182,7 @@ def _summarize(evidence: dict) -> dict:
         a + b
         for a, b in zip(tools["ruff-check"]["seconds"], tools["ruff-format"]["seconds"])
     ]
+    require(all(math.isfinite(value) for value in combined), "invalid combined timing")
     if unsupported:
         parity = "BLOCKED"
     elif different:
@@ -217,7 +224,9 @@ def main(argv: list[str] | None = None) -> int:
             "parity": "UNVERIFIED",
             "timing": None,
         }
-    args.output.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
+    args.output.write_text(
+        json.dumps(result, indent=2, allow_nan=False) + "\n", encoding="utf-8"
+    )
     return 0 if result["status"] == "VALID" else 2
 
 
