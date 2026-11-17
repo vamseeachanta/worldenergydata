@@ -1,4 +1,7 @@
-"""Exercise the actual atlas script with synthetic fields and a minimal DOM."""
+"""Exercise the actual atlas script with synthetic fields and a minimal DOM.
+
+Node is required; its absence fails these tests rather than skipping coverage.
+"""
 
 import json
 import re
@@ -19,7 +22,8 @@ const input = JSON.parse(fs.readFileSync(0, 'utf8'));
 class Element {
   constructor(tag, attrs) {
     this.tag = tag; this.attrs = attrs; this.value = ''; this.textContent = '';
-    this.disabled = /\bdisabled\b/.test(attrs); this.listeners = {};
+    this.isDisabled = /\bdisabled\b/.test(attrs); this.listeners = {};
+    this.id = /\bid="([^"]+)"/.exec(attrs)?.[1];
     this.children = []; this.html = '';
   }
   set innerHTML(html) {
@@ -30,6 +34,12 @@ class Element {
     }));
   }
   get innerHTML() { return this.html; }
+  get disabled() { return this.isDisabled; }
+  set disabled(value) {
+    this.isDisabled = value;
+    if (value && document.activeElement === this) document.activeElement = document.body;
+  }
+  focus() { if (!this.disabled) document.activeElement = this; }
   addEventListener(event, handler) { this.listeners[event] = handler; }
   click() {
     if (this.disabled) return;
@@ -43,11 +53,13 @@ const elements = Object.fromEntries(
     .map(m => [m[3], new Element(m[1], m[2])])
 );
 const location = {hash: ''};
+const document = {getElementById: id => elements[id] || null,
+  body: {id: 'body'}, baseURI: 'https://example.invalid/field-atlas/'};
+document.activeElement = document.body;
 let resolveFeed;
 const feed = {fields: input.feed};
 const context = vm.createContext({
-  document: {getElementById: id => elements[id] || null,
-    baseURI: 'https://example.invalid/field-atlas/'},
+  document,
   location, URL, console, window: {addEventListener() {}},
   fetch: url => {
     if (url !== '_atlas_feed.json') throw new Error('Unexpected fetch');
@@ -63,13 +75,15 @@ function snapshot() {
     ids: [...elements['f-grid'].innerHTML.matchAll(/data-fid="([^"]+)"/g)].map(m => m[1]),
     previous: elements['f-prev']?.disabled,
     next: elements['f-next']?.disabled,
-    hash: location.hash
+    hash: location.hash,
+    focused: document.activeElement.id
   };
 }
 const states = [snapshot()];
 (async () => {
 for (const action of input.actions) {
   if (typeof action === 'string') elements[action].click();
+  else if (action.focus) elements[action.focus].focus();
   else if (action.tier) elements['f-tiers'].onclick({target: {dataset: {t: action.tier}}});
   else if (action.feed) {
     resolveFeed({ok: true, json: async () => feed});
@@ -182,6 +196,42 @@ def test_pages_preserve_tier_order_and_every_field_once():
         field["name"] for field in expected
     ]
     assert len({name for page in pages for name in page["names"]}) == 121
+
+
+@pytest.mark.parametrize("count", [61, 121])
+@pytest.mark.parametrize("control", ["f-prev", "f-next"])
+def test_keyboard_focus_moves_to_enabled_control_at_page_boundary(count, control):
+    page_count = (count + 59) // 60
+    setup = ["f-next"] * (page_count - 1) if control == "f-prev" else []
+    states = render_fields(
+        count, [*setup, {"focus": control}, *[control] * (page_count - 1), control]
+    )
+    focused_states = states[len(setup) + 1 : -2]
+    assert all(state["focused"] == control for state in focused_states)
+    boundary = states[-2]
+    fallback = "f-next" if control == "f-prev" else "f-prev"
+    assert boundary["focused"] == fallback
+    assert boundary["previous" if control == "f-prev" else "next"] is True
+    page = 1 if control == "f-prev" else page_count
+    assert boundary["count"] == f"{count} fields · page {page} of {page_count}"
+    assert states[-1] == boundary
+
+
+@pytest.mark.parametrize("control", ["f-prev", "f-next"])
+def test_programmatic_paging_preserves_focus_elsewhere(control):
+    setup = ["f-next"] if control == "f-prev" else []
+    states = render_fields(61, [*setup, {"focus": "f-search"}, control])
+    assert states[-1]["focused"] == "f-search"
+
+
+def test_keyboard_paging_can_reverse_direction_at_each_boundary():
+    states = render_fields(61, [{"focus": "f-next"}, "f-next", "f-prev", "f-next"])
+    assert [state["focused"] for state in states[1:]] == [
+        "f-next",
+        "f-prev",
+        "f-next",
+        "f-prev",
+    ]
 
 
 def test_later_page_cards_keep_lifecycle_and_delegated_navigation():

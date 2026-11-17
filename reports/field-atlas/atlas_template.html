@@ -273,8 +273,15 @@ $("f-tiers").onclick = e => { if(!e.target.dataset.t) return;
 
 $("f-country").addEventListener("input", () => { ensureFeed(); refreshSelects(); resetPage(); });
 ["f-domain","f-region","f-play","f-search"].forEach(id=>$(id).addEventListener("input", resetPage));
-$("f-prev").addEventListener("click", () => { currentPage--; render(); });
-$("f-next").addEventListener("click", () => { currentPage++; render(); });
+$("f-prev").addEventListener("click", () => changePage(-1));
+$("f-next").addEventListener("click", () => changePage(1));
+
+function changePage(step){
+  const button = $(step < 0 ? "f-prev" : "f-next");
+  const hadFocus = document.activeElement === button;
+  currentPage += step; render();
+  if (hadFocus && button.disabled) $(step < 0 ? "f-next" : "f-prev").focus();
+}
 
 function resetPage(){ currentPage = 1; render(); }
 
