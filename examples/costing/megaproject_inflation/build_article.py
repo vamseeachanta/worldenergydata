@@ -194,7 +194,9 @@ def compute(d: dict) -> dict:
     # figure against the sanction estimate beside the capital blend (nominal) over the project's own years
     pj = d["projects"]
     cov = P.coverage(pj["sanctioned"], pj["awards"])
-    out = P.outturn(pj["trails"], pj["qualifiers"])
+    out_all = P.outturn(pj["trails"], pj["qualifiers"])
+    left_out = [o for o in out_all if o["final_qualifier"] == "unsupported"]
+    out = [o for o in out_all if o["final_qualifier"] != "unsupported"]
     for o in out:
         if o["final_year"] > y1:
             raise SystemExit(f"final statement after {y1}: {o['project']}")
@@ -207,6 +209,7 @@ def compute(d: dict) -> dict:
     res["projects"] = {
         "counts": P.award_counts(pj["awards"]), "summary": P.summary(cov, out), "confirm_by": P.CONFIRM_BY,
         "coverage": cov, "outturn": out,
+        "left_out": [{"project": o["project"], "final_date": o["final_date"]} for o in left_out],
         "boom": {"n": len(boom), "above": sum(above(o) for o in boom), "below": sum(below(o) for o in boom)},
         "bust": {"n": len(bust), "below": sum(below(o) for o in bust)},
         "market_min": min(o["market_pct"] for o in out), "market_max": max(o["market_pct"] for o in out),
@@ -759,7 +762,8 @@ def text_values(res: dict, rf: list[dict]) -> dict:
         "cov_max": f"{sm['share_max']:.1f}", "cov_max_p": short(sm["share_max_project"]),
         "out_n": str(sm["n_out"]), "out_assumed": str(sm["n_out_assumed"]), "out_fc": str(sm["n_out_forecast"]),
         "comp_n": str(sm["n_comp"]), "comp_assumed": str(sm["n_comp_assumed"]), "comp_fc": str(sm["n_comp_forecast"]),
-        "final_secondary": str(sm["n_final_secondary"]),
+        "final_secondary": str(sm["n_final_secondary"]), "comp_primary_hosts": str(sm["n_comp_primary_hosts"]),
+        "left_out": "; ".join(f"{o['project']} ({o['final_date']})" for o in pj["left_out"]) or "none",
         "out_min": f"{abs(sm['out_min']):.1f}", "out_min_p": short(sm["out_min_project"]), "out_min_y": str(sm["out_min_year"]),
         "out_max": f"{sm['out_max']:.1f}", "out_max_p": short(sm["out_max_project"]), "out_max_y": str(sm["out_max_year"]),
         "boom_pn": str(pj["boom"]["n"]), "boom_above": str(pj["boom"]["above"]), "bust_pn": str(pj["bust"]["n"]),
@@ -888,12 +892,11 @@ def build(pin: str, built: str, leak: list[str] | None = None) -> tuple[str, lis
     cover = [["Project", "Sanction year", "Estimate at sanction ($ million)", "Awards", "Awards with a value",
               "Awards set against the estimate", "Their value, low bound ($ million)", "Share of the estimate (%)"]]
     for c in pj["coverage"]:
-        cover.append([c["project"], str(c["fid"]), f"{c['gross_mm']:,.0f}" + ("" if c["gross_primary"] else " " + mark),
+        floor = "more than " if c["gross_floor"] else ""
+        cover.append([c["project"], str(c["fid"]), f"{floor}{c['gross_mm']:,.0f}" + ("" if c["gross_primary"] else " " + mark),
                       str(c["n_awards"]), str(c["n_valued"]), str(c["n_comparable"]),
                       f"{c['awards_low_mm']:,.0f}" + ("" if c["awards_primary"] or not c["n_comparable"] else " " + mark),
                       f"{c['share_low_pct']:.1f}"])
-    words_ = {"exact": "", "approximate": "about ", "lower_bound": "more than ", "upper_bound": "within ",
-              "derived": "derived ", "unsupported": "", "not reviewed": ""}
     outt = [["Project", "Currency", "Sanction estimate (million)", "Final figure (million)", "Final over sanction (%)",
              "Capital blend, same years (%)"]]
     for o in pj["outturn"]:
@@ -904,14 +907,12 @@ def build(pin: str, built: str, leak: list[str] | None = None) -> tuple[str, lis
             ch = (o["bound"] + " " if o["bound"] else "") + sgn(o["change_pct"])
             if o["conflict"]:
                 ch += f" ({o['conflict']})"
-        elif o["final_qualifier"] == "unsupported":
-            ch = "not computable: the source does not state a final cost"
         else:
-            ch = "not computable: both figures are lower bounds"
+            ch = "not computable: the sanction estimate is a lower bound"
         outt.append([o["project"], o["currency"],
-                     f"{words_[o['sanction_qualifier']]}{o['sanction_mm']:,.0f} ({o['sanction_date']}{sb})"
+                     f"{o['sanction_word'] + ' ' if o['sanction_word'] else ''}{o['sanction_mm']:,.0f} ({o['sanction_date']}{sb})"
                      + ("" if o["sanction_primary"] else " " + mark),
-                     f"{words_[o['final_qualifier']]}{o['final_mm']:,.0f} ({o['final_date']}, {kind}{fb})"
+                     f"{o['final_word'] + ' ' if o['final_word'] else ''}{o['final_mm']:,.0f} ({o['final_date']}, {kind}{fb})"
                      + ("" if o["final_primary"] else " " + mark),
                      ch, sgn(o["market_pct"])])
     lgd = ('<div class="lgd"><span><i class="s1" style="border-color:var(--s1)"></i>Index</span>'

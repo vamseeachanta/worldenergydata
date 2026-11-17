@@ -8,7 +8,10 @@ project_sources.csv beside this file:
   of a contractor's size word);
 - cost_revision_trails.csv: dated cost statements of a project, from the sanction estimate to the final figure;
 - cost_revision_trail_qualifiers.csv: the repository's review of a statement's words (exact, approximate, lower_bound,
-  upper_bound, unsupported). A statement whose note says its value is derived (not quoted) is taken as "derived".
+  upper_bound, unsupported). A statement with no review takes its reading from its own quoted words (about, around,
+  approx. or ~: approximate; more than, just over, passes, in excess of: lower bound; within, under: upper bound). A
+  statement whose note says its value is derived is taken as "derived". A final whose words say it is expected or
+  estimated is shown as a forecast at completion. An unsupported final is left out of the comparison.
 
 Rules (the same as the repository's reconciliation harness, worldenergydata.cost.timeseries.reconciliation, where it
 has one):
@@ -114,6 +117,8 @@ def coverage(sanctioned: list[dict], awards: list[dict]) -> list[dict]:
             "project": p, "operator": s["OPERATOR"], "fid": int(s["FID_YEAR"]), "gross_mm": gross,
             "gross_primary": s["SOURCE_PRIORITY"] in PRIMARY_SANCTION, "gross_source": s["SOURCE_TITLE"],
             "gross_url": s["SOURCE_URL"], "n_awards": len(rows),
+            "gross_floor": bool(re.search(r"(?:more than|in excess of)" + MONEY, s.get("QUOTED_TEXT", ""), flags=re.I)
+                                or re.search(r"\bfloor\b", s.get("CAPEX_BASIS", ""), flags=re.I)),
             "n_valued": sum(1 for a in rows if _num(a["VALUE_LOW_MM"]) is not None or _num(a["VALUE_HIGH_MM"]) is not None),
             "n_comparable": len(cmp_), "n_not_public": sum(1 for a in rows if a["VALUE_BASIS"] == "not_public"),
             "awards_low_mm": low, "awards_high_mm": high,
@@ -131,11 +136,42 @@ def qualifier(t: dict, quals: dict) -> str:
     """The repository's reading of a statement's words; "derived" where its note says the value is derived."""
     if re.search(r"\bvalue derived\b", t.get("NOTES", ""), flags=re.I):
         return "derived"
-    return quals.get((t["PROJECT"], t["STATEMENT_DATE"], t["KIND"]), "not reviewed")
+    q = quals.get((t["PROJECT"], t["STATEMENT_DATE"], t["KIND"]))
+    return q if q else words_qualifier(t.get("QUOTED_TEXT", ""))
+
+
+MONEY = r"\s*(?:the\s+)?(?:original\s+)?(?:us\$|usd|\$|nok|dkk|aud|eur|bnok|\d[\d.,]*\s*(?:billion|bn|milliard))"
+
+
+def words_qualifier(quoted: str) -> str:
+    """A statement's reading from its own quoted words, for rows the repository has not reviewed. Each word counts only
+    when a money figure follows it ("more than USD 7 billion", not "more than a decade")."""
+    q = quoted.lower()
+    if re.search(r"(?:approx\.?|approximately|\baround|\babout|~)" + MONEY, q):
+        return "approximate"
+    if re.search(r"(?:more than|just over|\bpasses|in excess of)" + MONEY, q):
+        return "lower_bound"
+    if re.search(r"(?:\bwithin|\bunder)" + MONEY, q):
+        return "upper_bound"
+    return "exact"
+
+
+def bound_word(t: dict, qual: str) -> str:
+    """The word a figure is printed with: the source's own where it gives one."""
+    q = t.get("QUOTED_TEXT", "").lower()
+    if qual == "upper_bound":
+        return "under" if re.search(r"\bunder\b", q) else "within"
+    return {"approximate": "about", "lower_bound": "more than", "derived": "derived"}.get(qual, "")
+
+
+NOT_READ = re.compile(r"\b403s?\b|verbatim deferred", flags=re.I)
+FORECAST_WORDS = re.compile(r"\bexpected to\b|\bwill come in\b|\bcurrently estimated\b", flags=re.I)
 
 
 def trail_is_primary(t: dict) -> bool:
-    return _host(t["SOURCE_URL"]) in PRIMARY_TRAIL_HOSTS and t["CONFIDENCE"] != "low"
+    """Read on a company, regulator or filing page, not rated low, and not noted as unread at that page."""
+    return (_host(t["SOURCE_URL"]) in PRIMARY_TRAIL_HOSTS and t["CONFIDENCE"] != "low"
+            and not NOT_READ.search(t.get("NOTES", "")))
 
 
 def basis(quoted: str) -> str:
@@ -168,8 +204,12 @@ def outturn(trails: list[dict], qualifiers: list[dict] | None = None) -> list[di
             sq, fq = qualifier(s, quals), qualifier(f, quals)
             computable = "unsupported" not in (sq, fq) and sq not in BOUNDS
             bound = {"upper_bound": "at most", "lower_bound": "at least"}.get(fq, "") if computable else ""
+            kind = f["KIND"]
+            if kind == "final_outturn" and FORECAST_WORDS.search(f.get("QUOTED_TEXT", "")):
+                kind = "final_forecast"
             out.append({
-                "project": p, "currency": ccy, "sanction_mm": sv, "final_mm": fv, "final_kind": f["KIND"],
+                "project": p, "currency": ccy, "sanction_mm": sv, "final_mm": fv, "final_kind": kind,
+                "sanction_word": bound_word(s, sq), "final_word": bound_word(f, fq),
                 "sanction_date": s["STATEMENT_DATE"], "final_date": f["STATEMENT_DATE"],
                 "sanction_year": _year(s["STATEMENT_DATE"]), "final_year": _year(f["STATEMENT_DATE"]),
                 "sanction_qualifier": sq, "final_qualifier": fq,
@@ -193,6 +233,7 @@ def market_escalation(index: dict[int, float], first: int, last: int, window) ->
 def summary(cov: list[dict], out: list[dict]) -> dict:
     shares = [c["share_low_pct"] for c in cov]
     top = max(cov, key=lambda c: c["share_low_pct"])
+    out = [o for o in out if o["final_qualifier"] != "unsupported"]
     comp = [o for o in out if o["computable"]]
     lo, hi = min(comp, key=lambda o: o["change_pct"]), max(comp, key=lambda o: o["change_pct"])
 
@@ -205,5 +246,6 @@ def summary(cov: list[dict], out: list[dict]) -> dict:
             "n_out_forecast": sum(1 for o in out if o["final_kind"] == "final_forecast"),
             "n_comp_forecast": sum(1 for o in comp if o["final_kind"] == "final_forecast"),
             "n_bound": sum(1 for o in comp if o["bound"]),
+            "n_comp_primary_hosts": sum(1 for o in comp if o["sanction_primary"] and (o["final_primary"] or o["conflict"])),
             "out_min": lo["change_pct"], "out_min_project": lo["project"], "out_min_year": lo["sanction_year"],
             "out_max": hi["change_pct"], "out_max_project": hi["project"], "out_max_year": hi["sanction_year"]}

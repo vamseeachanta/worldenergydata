@@ -178,22 +178,30 @@ def test_project_published_numbers(results):
     ml = next(c for c in pj["coverage"] if c["project"].startswith("Martin Linge"))
     assert ml["share_low_pct"] == pytest.approx(100 * 2600 / 4200)          # 61.90 %
     out = {o["project"]: o for o in pj["outturn"]}
-    assert sm["n_out"] == 13 and sm["n_comp"] == 11 and sm["n_comp_assumed"] == 10 and sm["n_out_forecast"] == 3
+    assert sm["n_out"] == 12 and sm["n_comp"] == 10 and sm["n_comp_assumed"] == 9 and sm["n_out_forecast"] == 4
     assert out["Johan Sverdrup Phase 1"]["change_pct"] == pytest.approx(100 * (83000 / 123000 - 1))   # -32.52 %
     assert out["Martin Linge (ex-Hild)"]["change_pct"] == pytest.approx(100.0)                         # 63000 / 31500
-    assert out["Goliat"]["change_pct"] == pytest.approx(100 * (50000 / 28000 - 1))                      # +78.57 %
-    assert not out["Goliat"]["final_primary"]
+    # Goliat, not reviewed in the qualifiers file: its words "just over 28 billion" make the sanction a lower bound,
+    # so the change is not computed; its sanction note says the government page was never read (403): not primary
+    assert out["Goliat"]["sanction_qualifier"] == "lower_bound" and not out["Goliat"]["computable"]
+    assert not out["Goliat"]["sanction_primary"] and not out["Goliat"]["final_primary"]
+    # Aasta Hansteen's final, "expected to amount to around NOK 37.5 billion": about, and a forecast at completion
+    assert out["Aasta Hansteen"]["final_word"] == "about" and out["Aasta Hansteen"]["final_kind"] == "final_forecast"
+    assert out["TEN (Tweneboa-Enyenra-Ntomme)"]["final_word"] == "under"
     # the repository's qualifiers: Mariner's two figures are both "more than" (not computable); Big Foot's cited article
     # states no final cost (not computable); Peregrino's final is "within" 3,000 (at most -14.29 %, and its words name
     # another original estimate, so ASSUMED); Johan Sverdrup's sanction value is derived (83 + 40), so ASSUMED
-    assert not out["Mariner"]["computable"] and not out["Big Foot"]["computable"]
+    assert not out["Mariner"]["computable"] and "Big Foot" not in out
+    assert [o["project"] for o in pj["left_out"]] == ["Big Foot"]
     assert out["Peregrino Phase 2"]["bound"] == "at most" and not out["Peregrino Phase 2"]["final_primary"]
     assert out["Peregrino Phase 2"]["change_pct"] == pytest.approx(100 * (3000 / 3500 - 1))          # -14.29 %
     assert out["Johan Sverdrup Phase 1"]["sanction_qualifier"] == "derived"
     assert out["Gorgon (incl. Jansz-Io)"]["final_qualifier"] == "exact"           # "Chevron-derived" is not a derived value
     assert out["Martin Linge (ex-Hild)"]["final_basis"] == "2021 NOK"
     assert out["Kraken"]["sanction_primary"] and out["Kraken"]["final_primary"]
-    assert (pj["boom"]["n"], pj["boom"]["above"], pj["bust"]["n"], pj["bust"]["below"]) == (7, 5, 2, 2)
+    assert (pj["boom"]["n"], pj["boom"]["above"], pj["bust"]["n"], pj["bust"]["below"]) == (6, 4, 2, 2)
+    # coverage: only Mariner's sanction estimate is stated as a floor ("more than USD 7 billion")
+    assert [c["project"] for c in pj["coverage"] if c["gross_floor"]] == ["Mariner"]
     assert pj["market_bb_min"] == pytest.approx(-5.0, abs=0.05) and pj["market_bb_max"] == pytest.approx(11.3, abs=0.05)
 
 
