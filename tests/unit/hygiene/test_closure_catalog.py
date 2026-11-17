@@ -1,8 +1,10 @@
 """Offline catalog-resolution contracts for closed-issue claims (#368)."""
 
+import stat
 import sys
 from importlib import import_module
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 import yaml
@@ -86,6 +88,84 @@ def test_duplicate_entries_are_deterministic(catalog, tmp_path):
     assert checker("data/item.csv") == "conflicting_duplicate"
 
 
+@pytest.mark.parametrize("spelling", ["./data/item.csv", "data//item.csv"])
+@pytest.mark.parametrize("other_format", ["csv", "json"])
+def test_equivalent_paths_compare_normalized_metadata(
+    catalog, tmp_path, spelling, other_format
+):
+    (tmp_path / "data").mkdir()
+    (tmp_path / "data/item.csv").touch()
+    checker = catalog.make_catalog_checker(
+        write_catalog(
+            tmp_path,
+            [
+                {"path": "data/item.csv", "format": "csv"},
+                {"path": spelling, "format": other_format},
+            ],
+        ),
+        tmp_path,
+    )
+    expected = "present" if other_format == "csv" else "conflicting_duplicate"
+    assert checker("data/item.csv") == expected
+    assert checker(spelling) == expected
+
+
+@pytest.fixture(params=[0xA0000003, 0xA000001D], ids=["junction", "unknown-reparse"])
+def reparse_point(request, monkeypatch):
+    """Model Windows lstat metadata without requiring Windows to reject it."""
+    original = Path.lstat
+
+    def install(redirect):
+        def contained_only(path, *args, **kwargs):
+            if path == redirect:
+                return SimpleNamespace(
+                    st_mode=stat.S_IFDIR | 0o755,
+                    st_file_attributes=stat.FILE_ATTRIBUTE_REPARSE_POINT,
+                    st_reparse_tag=request.param,
+                )
+            assert not path.is_relative_to(redirect), "External descendant inspected"
+            return original(path, *args, **kwargs)
+
+        monkeypatch.setattr(Path, "lstat", contained_only)
+
+    return install
+
+
+@pytest.mark.parametrize("target", ["escape/item.csv", "escape"])
+def test_dataset_reparse_points_are_unverified(
+    catalog, tmp_path, reparse_point, target
+):
+    repo, outside = tmp_path / "repo", tmp_path / "outside"
+    repo.mkdir()
+    outside.mkdir()
+    (outside / "item.csv").touch()
+    (repo / "escape").symlink_to(outside, target_is_directory=True)
+    checker = catalog.make_catalog_checker(
+        write_catalog(repo, [{"path": target}]), repo
+    )
+    reparse_point(repo / "escape")
+    assert checker(target) == "resolution_error"
+
+
+@pytest.mark.parametrize("selection", ["escape/catalog.yml", "escape"])
+def test_catalog_reparse_points_are_rejected_before_reading(
+    catalog, tmp_path, monkeypatch, reparse_point, selection
+):
+    repo, outside = tmp_path / "repo", tmp_path / "outside"
+    repo.mkdir()
+    outside.mkdir()
+    write_catalog(outside, [])
+    (repo / "escape").symlink_to(outside, target_is_directory=True)
+    reparse_point(repo / "escape")
+
+    def unexpected(*args, **kwargs):
+        pytest.fail("External catalog must never be read")
+
+    monkeypatch.setattr(Path, "read_text", unexpected)
+    with pytest.raises(catalog.CatalogError):
+        catalog.make_catalog_checker(repo / selection, repo)
+
+
 @pytest.mark.parametrize(
     "value",
     [
@@ -157,6 +237,20 @@ def test_internal_links_dangling_links_and_loops(catalog, tmp_path):
     assert checker("alias/item.csv") == "present"
     assert checker("dangling") == "missing_in_allowed_root"
     assert checker("loop") == "resolution_error"
+
+
+@pytest.mark.parametrize("count, expected", [(40, "present"), (41, "resolution_error")])
+def test_link_follow_limit_boundary(catalog, tmp_path, count, expected):
+    (tmp_path / "item.csv").touch()
+    target = "item.csv"
+    for index in range(count):
+        link = f"link-{index}"
+        (tmp_path / link).symlink_to(target)
+        target = link
+    checker = catalog.make_catalog_checker(
+        write_catalog(tmp_path, [{"path": target}]), tmp_path
+    )
+    assert checker(target) == expected
 
 
 @pytest.mark.parametrize("mark", ["x", "X", " "])

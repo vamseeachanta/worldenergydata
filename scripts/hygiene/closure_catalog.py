@@ -51,7 +51,8 @@ def _resolution_status(root: Path, relative: str) -> str:
     """Inspect contained components, rejecting link escapes before any external stat.
 
     Resolve links incrementally: Path.resolve on the complete path could follow
-    a second link outside the root. No target contents are opened.
+    a second link outside the root. Non-symlink reparse points, including Windows
+    junctions, remain unverified. No target contents are opened.
     """
     pending = deque(Path(relative).parts)
     current = root
@@ -75,6 +76,11 @@ def _resolution_status(root: Path, relative: str) -> str:
                     return "outside_allowed_root"
                 pending.extendleft(reversed(target.relative_to(root).parts))
                 current = root
+            elif (
+                getattr(info, "st_file_attributes", 0)
+                & stat.FILE_ATTRIBUTE_REPARSE_POINT
+            ):
+                return "resolution_error"
             else:
                 if pending and not stat.S_ISDIR(info.st_mode):
                     return "missing_in_allowed_root"
@@ -109,7 +115,7 @@ def load_catalog(path: Path) -> dict[str, list[dict]]:
             ):
                 raise CatalogError("catalog dataset path must be a nonempty string")
             key = literal_path(entry["path"]) or entry["path"]
-            entries.setdefault(key, []).append(entry)
+            entries.setdefault(key, []).append({**entry, "path": key})
     return entries
 
 
