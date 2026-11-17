@@ -1,4 +1,8 @@
-"""Check deployment build routing with recording tools in disposable layouts."""
+"""Check deployment build routing with recording tools in disposable layouts.
+
+These fixtures require POSIX symlinks and executable shebang stubs.
+Native Windows execution is unverified.
+"""
 
 import json
 import os
