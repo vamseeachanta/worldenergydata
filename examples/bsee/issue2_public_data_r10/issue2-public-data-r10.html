@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Gulf of Mexico well permits: a public US data file (Deckhand newsletter, issue 2)</title>
-<meta name="description" content="Counts from a raw data file of the US Bureau of Safety and Environmental Enforcement (BSEE): new-well permits in the US Gulf of Mexico by rig type, 2005 to 2026, with water depths.">
+<meta name="description" content="Counts from raw data files of the US Bureau of Safety and Environmental Enforcement (BSEE): new-well permits in the US Gulf of Mexico by rig type and water depth, 2005 to 2026, a map of new wells, and the days at each stage of a well's life.">
 <style>
 /* AceEngineer house style 1.6 */
 
@@ -823,7 +823,7 @@ ol.fn{margin:0 0 0 1.4em;padding:0;font-size:12.5px}
 <div class="ig-p"><p class="ig-k">Objective</p><p>Show where and how Gulf wells are drilled, and the days at each stage of a well's life, from free public files.</p></div>
 <div class="ig-p"><p class="ig-k">Starting point</p><p>The US Bureau of Safety and Environmental Enforcement (BSEE) publishes its well permit and borehole records for federal waters as free raw data files.</p></div>
 <div class="ig-p"><p class="ig-k">What we did</p><p>Counted new-well permits since 2005 by rig type and water depth, mapped new wells, and read the days at each stage of a well's life.</p></div>
-<div class="ig-p"><p class="ig-k">What we found</p><p>New wells moved to deep water: 68.8 % of those started in 2005 to 2009 were in less than 100 m of water, against 13.4 % of those started in 2021 to 2025. Median drilling days rise with depth, from 21 d under 100 m to 67 d at 1,500 m and deeper.</p></div>
+<div class="ig-p"><p class="ig-k">What we found</p><p>New wells moved to deep water: 68.8 % were in less than 100 m in 2005 to 2009, 13.4 % in 2021 to 2025. Median drilling days rise with depth, from 21 d to 67 d.</p></div>
 <div class="ig-p ig-act"><p class="ig-k">What you can do</p><p>Rerun the counts on the latest files and add your own questions, with the reusable prompt in Appendix A.</p></div>
 </div>
 <figcaption><p class="ft">Sources: BSEE raw data files (section 1 and Appendix A). Deckhand &middot; AceEngineer</p></figcaption>
@@ -837,7 +837,7 @@ ol.fn{margin:0 0 0 1.4em;padding:0;font-size:12.5px}
 <li>Anyone can rerun the counts on the latest file and add their own questions, such as days by water depth.</li>
 <li>The counting rules and a reusable prompt to rerun the counts.</li>
 </ul>
-<p class="prompt-line">Prompt: count new-well permits by year, rig type and water depth from the public permit file: <a href="https://github.com/vamseeachanta/worldenergydata/tree/e24be1f26a396748cb4e33ac8acf657ae55f38f5/examples/bsee/issue2_public_data_r10">worldenergydata on GitHub</a>.</p>
+<p class="prompt-line">Prompt: count new-well permits by year, rig type and water depth from the public permit file: <a href="https://github.com/vamseeachanta/worldenergydata/tree/4505a2f854dcd0998fb59fee1138b2b1369440b9/examples/bsee/issue2_public_data_r10">worldenergydata on GitHub</a>.</p>
 <h2>What is inside</h2>
 <p>It holds a map of new wells by water depth, and the permits by rig type and depth band. The day counts run from drilling to abandonment, in the order of a well's life. The reusable prompt is in Appendix A and the counting rules in Appendix B.</p>
 </section>
@@ -1008,7 +1008,7 @@ ol.fn{margin:0 0 0 1.4em;padding:0;font-size:12.5px}
 <p class="prompt1">Count each well once, at its first New Well permit in the Gulf of Mexico region, by requested spud year, rig type and water-depth band, from the Application for Permit to Drill file of 2 November 2026. The bands are under 100 m, 100 to 500 m, 500 to 1,500 m, and 1,500 m and deeper, from feet at 0.3048 m per foot, with a depth on an edge in the deeper band. Map the surface locations of original, not cancelled Gulf of Mexico boreholes spudded in 2005 to 2009 and in 2021 to 2025, by water-depth band, from the borehole file of 12 November 2026. Then compute medians and quartiles by band for 2005 to 2025, in the order of a well's life: recorded spud-to-total-depth days from the borehole file, then completion, intervention, temporary abandonment and permanent abandonment estimates from the Application for Permit to Modify file of 12 November 2026. Use the rules in Appendix B. Keep operator estimates apart from recorded intervals. Do not use cost data.</p>
 <ul>
 <li>Piece: Gulf of Mexico well permits: a public US data file, Deckhand newsletter issue 2, version of 17 November 2026.</li>
-<li>Code: <a href="https://github.com/vamseeachanta/worldenergydata/blob/e24be1f26a396748cb4e33ac8acf657ae55f38f5/examples/bsee/issue2_public_data_r10/build_r10.py">build_r10.py</a> at commit e24be1f2 of worldenergydata, which builds this page from the counts and day statistics that <a href="https://github.com/vamseeachanta/worldenergydata/blob/6b2dbc38e5454f750b550dd179ed3478174ed74f/examples/bsee/issue2_public_data_r9/build_r9.py">build_r9.py</a> at commit 6b2dbc38 derived from the BSEE files; both are in a draft pull request not yet merged. The counting script of the permit file is <a href="https://github.com/vamseeachanta/worldenergydata/tree/f5af5b6da87710bb395552f9cda5e34d1f324479/examples/bsee/rawdata_fact_check">rawdata_fact_check</a> at commit f5af5b6d, in an open pull request not yet merged.</li>
+<li>Code: <a href="https://github.com/vamseeachanta/worldenergydata/blob/4505a2f854dcd0998fb59fee1138b2b1369440b9/examples/bsee/issue2_public_data_r10/build_r10.py">build_r10.py</a> at commit 4505a2f8 of worldenergydata, which builds this page from the counts and day statistics that <a href="https://github.com/vamseeachanta/worldenergydata/blob/6b2dbc38e5454f750b550dd179ed3478174ed74f/examples/bsee/issue2_public_data_r9/build_r9.py">build_r9.py</a> at commit 6b2dbc38 derived from the BSEE files; both are in a draft pull request not yet merged. The counting script of the permit file is <a href="https://github.com/vamseeachanta/worldenergydata/tree/f5af5b6da87710bb395552f9cda5e34d1f324479/examples/bsee/rawdata_fact_check">rawdata_fact_check</a> at commit f5af5b6d, merged into the main branch on 16 November 2026.</li>
 <li>Software: Python 3.14.3, pandas 3.1.1 and matplotlib 3.11.2. Interactive charts load Plotly 2.35.2 from its release address with an integrity check; without it, each chart shows its static image. The permit counting script needs only the Python 3.10 or later standard library.</li>
 <li>Check values: 2,895 wells; band totals 1,476 (under 100 m), 175 (100 to 500 m), 589 (500 to 1,500 m) and 655 (1,500 m and deeper). Mapped wells: 1,584 (2005 to 2009) and 246 (2021 to 2025). Table B1 gives the quartiles and counts. Recorded spud-to-total-depth medians by band: 21, 35, 55.5, 67 d. Completion estimate medians by band: 10, 20, 30, 40 d.</li>
 </ul>

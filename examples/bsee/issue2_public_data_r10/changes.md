@@ -91,10 +91,10 @@ quoted as received; the lines below it say where revision 10 applies it.
 
 ## Build and tests
 
-- Built with `--build-commit e24be1f26a396748cb4e33ac8acf657ae55f38f5`, the
+- Built with `--build-commit 4505a2f854dcd0998fb59fee1138b2b1369440b9`, the
   commit that holds the current `build_r10.py`.
 - Verified environment: Windows 11, Python 3.14.3, pandas 3.1.1, matplotlib
-  3.11.2, pytest 9.2.0, Node.js 26.13.0. `tests/test_build_r10.py`: 25 passed.
+  3.11.2, pytest 9.2.0, Node.js 26.13.0. `tests/test_build_r10.py`: 26 passed.
 - Not run: the revision 9 tests (revision 9 is unchanged) and a rerun of
   `build_r9.py` (it needs the pinned BSEE archives).
 
