@@ -80,11 +80,17 @@ def read_datavic_evidence(raw: bytes, metadata: Mapping) -> DataVicEvidence:
     ):
         require_text(metadata[key], key)
     url = urlsplit(metadata["query_url"])
-    if url.scheme not in {"https", "http"} or not url.netloc:
+    if url.scheme not in {"https", "http"} or not url.hostname:
         raise DataVicInputError("query_url must be an absolute HTTP(S) URL")
-    retrieved = datetime.fromisoformat(
-        metadata["retrieved_at_utc"].replace("Z", "+00:00")
-    )
+    try:
+        _ = url.port  # Access validates numeric syntax and the port range.
+    except ValueError as exc:
+        raise DataVicInputError("query_url must have a valid port") from exc
+    retrieved_text = metadata["retrieved_at_utc"]
+    # Check the written offset: fromisoformat can discard fractional offsets.
+    if not re.search(r"(?:Z|[+-]00(?::?00){0,2}(?:[.,]0+)?)$", retrieved_text):
+        raise DataVicInputError("retrieved_at_utc must be timezone-aware UTC")
+    retrieved = datetime.fromisoformat(retrieved_text.replace("Z", "+00:00"))
     if retrieved.tzinfo is None or retrieved.utcoffset() != timedelta(0):
         raise DataVicInputError("retrieved_at_utc must be timezone-aware UTC")
     if metadata["source_vintage"] is not None:

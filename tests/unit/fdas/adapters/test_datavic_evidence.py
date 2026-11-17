@@ -105,9 +105,14 @@ def test_evidenced_unit_and_known_vintage(unit, depth):
         ("raw_sha256", "0" * 64),
         ("query_url", ""),
         ("query_url", "not a URL"),
+        ("query_url", "https://:443/wfs"),
+        ("query_url", "https://example.invalid:invalid/wfs"),
+        ("query_url", "https://example.invalid:65536/wfs"),
         ("retrieved_at_utc", "2026-11-16"),
         ("retrieved_at_utc", "2026-11-16T12:00:00"),
         ("retrieved_at_utc", "2026-11-16T12:00:00+01:00"),
+        ("retrieved_at_utc", "2026-11-16T12:00:00+00:00:00.5"),
+        ("retrieved_at_utc", "2026-11-16T12:00:00-00:00:00.5"),
         ("retrieved_at_utc", "invalid"),
         ("retrieved_at_utc", None),
         ("source_vintage", ""),
@@ -134,6 +139,40 @@ def test_bad_metadata_fails_before_normalization(monkeypatch, key, value):
     )
     with pytest.raises(ValueError):
         read_datavic_evidence(raw, metadata)
+
+
+@pytest.mark.parametrize(
+    "query_url",
+    [
+        "https://example.invalid:443/wfs",
+        "http://example.invalid:0/wfs",
+        "https://example.invalid:65535/wfs",
+        "https://[::1]:443/wfs",
+    ],
+)
+def test_valid_host_and_port_are_retained(query_url):
+    raw, metadata = inputs()
+    metadata["query_url"] = query_url
+    assert read_datavic_evidence(raw, metadata).query_url == query_url
+
+
+@pytest.mark.parametrize(
+    "retrieved_at_utc",
+    [
+        "2026-11-16T12:00:00Z",
+        "2026-11-16T12:00:00+00:00",
+        "2026-11-16T12:00:00-00:00",
+        "2026-11-16T12:00:00+0000",
+        "2026-11-16T12:00:00+00",
+        "2026-11-16T12:00:00+00:00:00",
+        "2026-11-16T12:00:00+00:00:00.000",
+        "2026-11-16T12:00:00.5Z",
+    ],
+)
+def test_zero_offset_forms_are_retained(retrieved_at_utc):
+    raw, metadata = inputs()
+    metadata["retrieved_at_utc"] = retrieved_at_utc
+    assert read_datavic_evidence(raw, metadata).retrieved_at_utc == retrieved_at_utc
 
 
 @pytest.mark.parametrize("key", list(inputs()[1]))
