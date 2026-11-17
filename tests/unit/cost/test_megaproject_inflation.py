@@ -118,7 +118,7 @@ def test_set_aside_quarter_left_out(results, tmp_path, monkeypatch):
     assert "2013Q3" not in {u["quarter"] for u in U["points"]}
     assert len(U["points"]) == 12 and U["boom_n"] == 7
     assert (U["boom_first"], U["boom_last"]) == (2008, 2012)
-    assert U["boom_under_max"] == pytest.approx(-17.1, abs=0.05)       # was -15.8 with 2013 Q3
+    assert U["boom_under_max"] == pytest.approx(-17.0, abs=0.05)       # was -15.8 with 2013 Q3; from the unrounded blend
     assert U["boom_two_min"] == pytest.approx(1.0, abs=0.05)           # was -5.1 with 2013 Q3
     d = b.load()
     rf = b.refs(d, results)

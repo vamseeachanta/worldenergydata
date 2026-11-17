@@ -158,8 +158,8 @@ def compute(d: dict) -> dict:
                    "boom_two_min": min(u["gap_two_pct"] for u in boom), "boom_two_max": max(u["gap_two_pct"] for u in boom),
                    "calm_two_min": min(u["gap_two_pct"] for u in calm), "calm_two_max": max(u["gap_two_pct"] for u in calm),
                    "peak": next(u for u in uc if u["quarter"] == "2008Q3"),
-                   "boom_under_min": min(pct(u["blend"] / u["value"] - 1) for u in boom),
-                   "boom_under_max": max(pct(u["blend"] / u["value"] - 1) for u in boom),
+                   "boom_under_min": min(pct(Bq[u["quarter"]] / u["value"] - 1) for u in boom),
+                   "boom_under_max": max(pct(Bq[u["quarter"]] / u["value"] - 1) for u in boom),
                    "gap_2006q3_pct": pct(next(u for u in uc if u["quarter"] == "2006Q4")["value"] / Bq["2006Q3"] - 1)}
     # escalation over execution windows
     esc = {}

@@ -784,7 +784,7 @@
   "boom_n": 7,
   "boom_two_max": 8.0,
   "boom_two_min": 1.0,
-  "boom_under_max": -17.1,
+  "boom_under_max": -17.0,
   "boom_under_min": -19.8,
   "calm_gap_max": -0.8,
   "calm_gap_min": -4.2,
