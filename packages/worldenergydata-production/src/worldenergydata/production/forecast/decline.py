@@ -189,23 +189,31 @@ class ArpsDeclineCurve:
             raise ValueError(
                 f"Unknown model '{model}'. Valid models: {sorted(_VALID_MODELS)}"
             )
-        for name, value in (("qi", qi), ("Di", Di), ("economic_limit", economic_limit)):
-            if (
-                isinstance(value, bool)
-                or not isinstance(value, Real)
-                or not np.isfinite(value)
-                or value <= 0
-            ):
-                raise ValueError(f"{name} must be finite and positive")
+        validated = {}
+        for name, value in (
+            ("qi", qi),
+            ("Di", Di),
+            ("economic_limit", economic_limit),
+            ("b", b),
+        ):
+            requirement = (
+                "finite and nonnegative" if name == "b" else "finite and positive"
+            )
+            if isinstance(value, bool) or not isinstance(value, Real):
+                raise ValueError(f"{name} must be {requirement}")
+            try:
+                value = float(value)
+            except OverflowError as exc:
+                raise ValueError(f"{name} must be {requirement}") from exc
+            if not np.isfinite(value) or (value < 0 if name == "b" else value <= 0):
+                raise ValueError(f"{name} must be {requirement}")
+            validated[name] = value
+        qi = validated["qi"]
+        Di = validated["Di"]
+        economic_limit = validated["economic_limit"]
+        b = validated["b"]
         if economic_limit < 1.0:
             raise ValueError("economic_limit must be at least 1 bbl/month")
-        if (
-            isinstance(b, bool)
-            or not isinstance(b, Real)
-            or not np.isfinite(b)
-            or b < 0
-        ):
-            raise ValueError("b must be finite and nonnegative")
         if (
             (model == "exponential" and b != 0)
             or (model == "harmonic" and b != 1)
@@ -215,14 +223,13 @@ class ArpsDeclineCurve:
         if isinstance(months, bool) or not isinstance(months, Integral) or months <= 0:
             raise ValueError("months must be a positive integer")
 
-        qi, Di, b = float(qi), float(Di), float(b)
         return ForecastResult(
             model=model,
             qi=qi,
             Di=Di,
             b=b,
             r_squared=float("nan"),
-            eur_bbl=self._compute_eur(qi, Di, b, float(economic_limit), model),
+            eur_bbl=self._compute_eur(qi, Di, b, economic_limit, model),
             forecast_df=self._build_forecast_df(qi, Di, b, model, int(months)),
         )
 
@@ -366,13 +373,12 @@ class ArpsDeclineCurve:
             eur = (qi / Di) * np.log(qi / q_econ)
 
         else:  # hyperbolic
-            if abs(b - 1.0) < 1e-6:
+            if b == 1.0:
                 # Degenerate case — use harmonic formula
                 eur = (qi / Di) * np.log(qi / q_econ)
             else:
-                eur = (qi**b / ((1.0 - b) * Di)) * (
-                    qi ** (1.0 - b) - q_econ ** (1.0 - b)
-                )
+                # Use the rate ratio to avoid overflowing separate powers.
+                eur = (qi / Di) * np.expm1((b - 1.0) * np.log(qi / q_econ)) / (b - 1.0)
 
         return float(max(eur, 0.0))
 

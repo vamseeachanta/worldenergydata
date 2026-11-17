@@ -1,10 +1,12 @@
 """Synthetic checks for deterministic Arps simulation without curve fitting."""
 
 import math
+from fractions import Fraction
 
 import numpy as np
 import pandas as pd
 import pytest
+from scipy.integrate import quad
 
 from worldenergydata.production.forecast.decline import ArpsDeclineCurve, ForecastResult
 
@@ -136,3 +138,59 @@ def test_rejects_invalid_months(months):
 def test_rejects_limit_below_one_barrel_per_month(economic_limit):
     with pytest.raises(ValueError, match="economic_limit"):
         _simulate(economic_limit=economic_limit)
+
+
+@pytest.mark.parametrize(
+    "name,value",
+    [
+        ("qi", Fraction(1000)),
+        ("Di", Fraction(1, 10)),
+        ("economic_limit", Fraction(100)),
+        ("b", Fraction(1, 2)),
+    ],
+)
+def test_simulate_accepts_fraction_parameters(name, value):
+    params = dict(model="hyperbolic", b=0.5)
+    params[name] = value
+    result = _simulate(**params)
+    expected = _simulate(model="hyperbolic", b=0.5)
+    assert (result.qi, result.Di, result.b) == (expected.qi, expected.Di, expected.b)
+    assert all(type(v) is float for v in (result.qi, result.Di, result.b))
+    assert result.eur_bbl == expected.eur_bbl
+    pd.testing.assert_frame_equal(result.forecast_df, expected.forecast_df)
+
+
+@pytest.mark.parametrize("name", ["qi", "Di", "economic_limit", "b"])
+@pytest.mark.parametrize(
+    "value", [10**400, Fraction(10**400)], ids=["integer", "fraction"]
+)
+def test_rejects_real_conversion_overflow(name, value):
+    with pytest.raises(ValueError, match=rf"^{name} must be finite"):
+        _simulate(**{name: value})
+
+
+@pytest.mark.parametrize(
+    "qi,b,economic_limit",
+    [
+        (100000.0, 64.0, 99999.0),
+        (1000.0, 1.0 - 5e-7, 100.0),
+        (1000.0, 1.0, 100.0),
+        (1000.0, 1.0 + 5e-7, 100.0),
+    ],
+)
+def test_hyperbolic_eur_matches_integrated_rate(qi, b, economic_limit):
+    decline = 0.1
+    end_month = math.expm1(b * math.log(qi / economic_limit)) / (b * decline)
+    expected, _ = quad(
+        lambda t: qi / (1.0 + b * decline * t) ** (1.0 / b), 0.0, end_month
+    )
+    result = _simulate(
+        qi=qi,
+        Di=decline,
+        b=b,
+        model="hyperbolic",
+        economic_limit=economic_limit,
+        months=1,
+    )
+    assert math.isfinite(result.eur_bbl)
+    assert result.eur_bbl == pytest.approx(expected, rel=1e-10)
