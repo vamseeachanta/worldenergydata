@@ -1,4 +1,4 @@
-"""Tests for examples/costing/megaproject_inflation (article "Offshore mega-project cost inflation over time", r1).
+"""Tests for examples/costing/megaproject_inflation (article "Offshore mega-project cost inflation over time", r2).
 
 Hand-worked values are given in the comments; the last tests are consistency checks of the published numbers against
 the saved public data.
@@ -26,6 +26,7 @@ def _load(name: str):
 
 
 f = _load("inflation")
+P = _load("projects")
 
 
 def test_spend_profile_hand_values():
@@ -128,3 +129,69 @@ def test_set_aside_quarter_left_out(results, tmp_path, monkeypatch):
     assert not errs
     assert "2013 Q3 value (229, reference 18) set aside until its source is read again." in page
     assert "<td>2013Q3</td>" not in page
+
+
+# ---------------------------------------------------------------- r2: project-level view from the curated records
+def test_project_rules_hand_values():
+    # final over sanction, harness rule: first sanction estimate, final outturn preferred over a final forecast
+    trails = [
+        {"PROJECT": "A", "CURRENCY": "NOK", "KIND": "sanction_estimate", "VALUE_MM": "120", "STATEMENT_DATE": "2015-02",
+         "PROVENANCE": "operator", "CONFIDENCE": "high", "SOURCE_TITLE": "s", "SOURCE_URL": "u"},
+        {"PROJECT": "A", "CURRENCY": "NOK", "KIND": "final_forecast", "VALUE_MM": "100", "STATEMENT_DATE": "2018",
+         "PROVENANCE": "operator", "CONFIDENCE": "high", "SOURCE_TITLE": "s", "SOURCE_URL": "u"},
+        {"PROJECT": "A", "CURRENCY": "NOK", "KIND": "final_outturn", "VALUE_MM": "90", "STATEMENT_DATE": "2019-10",
+         "PROVENANCE": "trade_press", "CONFIDENCE": "low", "SOURCE_TITLE": "s", "SOURCE_URL": "u"},
+    ]
+    o = P.outturn(trails)
+    assert len(o) == 1
+    # 90 / 120 - 1 = -0.25 -> -25 %; the outturn (2019) wins over the forecast (2018)
+    assert o[0]["change_pct"] == pytest.approx(-25.0) and o[0]["final_year"] == 2019
+    assert o[0]["sanction_primary"] and not o[0]["final_primary"]       # trade press, low: ASSUMED
+    # market escalation over the project's own years, 2000 to 2002 inclusive (n = 3):
+    # 0.25 * 1 + 0.5 * 1.1 + 0.25 * 1.21 - 1 = 0.1025
+    idx = {2000: 100.0, 2001: 110.0, 2002: 121.0}
+    assert P.market_escalation(idx, 2000, 2002, f.window_escalation) == pytest.approx(0.1025, abs=1e-12)
+
+
+def test_award_coverage_counts_capital_values_at_low_bound():
+    san = [{"PROJECT": "A", "OPERATOR": "o", "FID_YEAR": "2012", "SANCTIONED_CAPEX_USD_MM": "4000",
+            "SOURCE_PRIORITY": "press_release", "SOURCE_TITLE": "t", "SOURCE_URL": "u"}]
+    aw = [{"PROJECT": "A", "VALUE_BASIS": b, "VALUE_LOW_MM": lo, "VALUE_HIGH_MM": hi, "SOURCE_URL": url}
+          for b, lo, hi, url in (("point", "500", "500", "https://www.saipem.com/x"),
+                                 ("band", "300", "500", "https://www.offshore-energy.biz/y"),
+                                 ("lease_contract", "4600", "4600", "https://www.saipem.com/z"),
+                                 ("not_public", "", "", "https://www.saipem.com/w"))]
+    c = P.coverage(san, aw)[0]
+    # (500 + 300) / 4000 = 20 %; the lease value and the unpublished award are left out; the band is a press source
+    assert c["awards_low_mm"] == 800 and c["awards_high_mm"] == 1000 and c["share_low_pct"] == pytest.approx(20.0)
+    assert (c["n_awards"], c["n_valued"], c["n_comparable"], c["n_not_public"]) == (4, 3, 2, 1)
+    assert not c["awards_primary"]
+
+
+def test_project_published_numbers(results):
+    # consistency check against the curated tables (hashes in project_sources.csv); hand checks in the comments
+    pj = results["projects"]
+    k, sm = pj["counts"], pj["summary"]
+    assert (k["awards"], k["valued"], k["projects"], k["projects_valued"]) == (110, 59, 29, 27)
+    assert (k["valued_primary"], k["valued_secondary"]) == (26, 33)
+    assert sm["n_cov"] == 28 and sm["share_median"] == pytest.approx(12.08, abs=0.01)
+    ml = next(c for c in pj["coverage"] if c["project"].startswith("Martin Linge"))
+    assert ml["share_low_pct"] == pytest.approx(100 * 2600 / 4200)          # 61.90 %
+    out = {o["project"]: o for o in pj["outturn"]}
+    assert sm["n_out"] == 13 and sm["n_out_assumed"] == 4 and sm["n_out_forecast"] == 3
+    assert out["Johan Sverdrup Phase 1"]["change_pct"] == pytest.approx(100 * (83000 / 123000 - 1))   # -32.52 %
+    assert out["Martin Linge (ex-Hild)"]["change_pct"] == pytest.approx(100.0)                         # 63000 / 31500
+    assert out["Goliat"]["change_pct"] == pytest.approx(100 * (50000 / 28000 - 1))                      # +78.57 %
+    assert not out["Goliat"]["final_primary"]
+    assert (pj["boom"]["n"], pj["boom"]["above"], pj["bust"]["n"], pj["bust"]["below"]) == (9, 7, 2, 2)
+    assert pj["market_bb_min"] == pytest.approx(-5.0, abs=0.05) and pj["market_bb_max"] == pytest.approx(11.3, abs=0.05)
+
+
+def test_r2_page_opens_on_the_subject(tmp_path, monkeypatch):
+    # owner, 17 Nov 2026 (note 3 on r1): the introduction never says who asked
+    b = _load("build_article")
+    monkeypatch.setattr(b, "OUT", tmp_path)
+    page, errs, facts, _ = b.build("0" * 40, "17 Nov 2026, 00:00 UTC")
+    assert not errs
+    assert "asked our team" not in page and "Version r2" in page
+    assert facts["body_words"] <= 800 and facts["infographic_numbers"] <= 8

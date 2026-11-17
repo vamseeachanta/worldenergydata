@@ -1,16 +1,18 @@
-"""Build the article "Offshore mega-project cost inflation over time" (r1) from the public series in data/.
+"""Build the article "Offshore mega-project cost inflation over time" (r2) from the public series in data/.
 
 Inputs beside this file: data/*.csv (FRED downloads, recorded in sources.csv), article.body.html (the prose, with
-{{key}} placeholders that the build fills from the computed results), pictures/*.svg (the opening picture and its
-drawing). The quoted Upstream Capital Costs Index values are read from the repository's curated cost file.
+{{key}} placeholders that the build fills from the computed results), pictures/*.svg (the opening picture). The
+quoted Upstream Capital Costs Index values, the sanction estimates, the contract awards and the dated cost statements
+are read from the repository's curated cost files (projects.py; hashes in project_sources.csv).
 
 Outputs in out/: the article page, results.json, and for every figure a static SVG and the CSV of its data.
 
 Checks (the build fails on any of them):
 - sources: every saved file matches its SHA-256 in sources.csv;
 - architecture limits: "What we did" <= 70 words, "Why it matters" <= 70 (prompt line apart, <= 25), "What is inside"
-  <= 50, introduction 110 to 190 words; no digits in the first two parts except the request date; body 500 to 800
-  words; at most 2 hypotheses (a public data piece); infographic <= 70 words and <= 8 numbers, each also in the body;
+  <= 50, introduction 110 to 190 words; no digits in the first two parts; the introduction opens on its subject,
+  never on who asked (no "asked"); body 500 to 800 words; at most 2 hypotheses (a public data piece); infographic
+  <= 70 words and <= 8 numbers, each also in the body (its chart and caption line apart);
 - citations: every [n] is a reference and every reference is cited;
 - leak check on the visible text: local paths, @-mentions, question marks and em dashes, plus the patterns of an
   optional private file (names that must never appear in a public page).
@@ -35,6 +37,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import inflation as f  # noqa: E402
+import projects as P  # noqa: E402
 
 REPO = HERE.parents[2]
 UCCI_FILE = REPO / "data" / "modules" / "cost" / "curated" / "cost_component_timeseries.csv"
@@ -81,7 +84,8 @@ def load() -> dict:
     if bad:
         raise SystemExit(f"sources check failed (hash mismatch): {bad}")
     monthly = {r["key"]: f.read_fred(HERE / r["local_file"]) for r in rows if r["key"] != "ucci_quoted"}
-    return {"sources": rows, "monthly": monthly, "ucci": [dated(u) for u in f.read_ucci_quoted(UCCI_FILE)]}
+    return {"sources": rows, "monthly": monthly, "ucci": [dated(u) for u in f.read_ucci_quoted(UCCI_FILE)],
+            "projects": P.load()}
 
 
 def pct(x: float, d: int = 1) -> float:
@@ -186,6 +190,27 @@ def compute(d: dict) -> dict:
         e = esc[f"blend_real_{n}"]
         e["contingency_pts"] = round(e["p90"] - e["p50"], 1)
     res["esc"] = esc
+    # project-level view from the curated public records: award value against the sanction estimate, and the final
+    # figure against the sanction estimate beside the capital blend (nominal) over the project's own years
+    pj = d["projects"]
+    cov = P.coverage(pj["sanctioned"], pj["awards"])
+    out = P.outturn(pj["trails"])
+    for o in out:
+        if o["final_year"] > y1:
+            raise SystemExit(f"final statement after {y1}: {o['project']}")
+        o["market_pct"] = 100.0 * P.market_escalation(B, o["sanction_year"], o["final_year"], f.window_escalation)
+    boom = [o for o in out if 2009 <= o["sanction_year"] <= 2013]
+    bust = [o for o in out if o["sanction_year"] == 2015]
+    res["projects"] = {
+        "counts": P.award_counts(pj["awards"]), "summary": P.summary(cov, out), "confirm_by": P.CONFIRM_BY,
+        "coverage": cov, "outturn": out,
+        "boom": {"n": len(boom), "above": sum(o["change_pct"] > 0 for o in boom),
+                 "level": sum(o["change_pct"] == 0 for o in boom), "below": sum(o["change_pct"] < 0 for o in boom)},
+        "bust": {"n": len(bust), "below": sum(o["change_pct"] < 0 for o in bust)},
+        "market_min": min(o["market_pct"] for o in out), "market_max": max(o["market_pct"] for o in out),
+        "market_bb_min": min(o["market_pct"] for o in boom + bust), "market_bb_max": max(o["market_pct"] for o in boom + bust),
+        "read": sorted({r["ACCESSED_DATE"] for t in ("sanctioned", "awards", "trails") for r in pj[t]}),
+        "hashed": {r["file"]: r["hashed_utc"] for r in pj["record"].values()}}
     res["series"] = {"annual": {k: {str(y): round(v, 3) for y, v in R[k].items() if y >= 1997} for k in R},
                      "real": {k: {str(y): round(v, 3) for y, v in real[k].items() if y >= 1997} for k in real},
                      "monthly": {k: {ym: round(v, 3) for ym, v in Rm[k].items() if ym >= "2000-01"} for k in Rm},
@@ -197,6 +222,7 @@ def compute(d: dict) -> dict:
 # ------------------------------------------------------------------ figures
 STYLE_LIGHT = (".s1{stroke:#245c94}.f1{fill:#245c94}.s2{stroke:#1fa596}.f2{fill:#1fa596}.ref{stroke:#6b7780}"
                ".fref{fill:#6b7780}.grid{stroke:#e3e8ec}.axis{stroke:#8a969e}.band{fill:#eef4f8}.ring{stroke:#ffffff}"
+               ".s3{stroke:#c77c00}.f3{fill:#c77c00}.rim{stroke:#0b3d5c}.ring2{fill:#ffffff;stroke:#245c94}"
                "text{font:12px 'Segoe UI',Helvetica,Arial,sans-serif;fill:#26323a}.muted{fill:#5a6b76}")
 
 
@@ -316,7 +342,7 @@ def fig_ucci(res) -> tuple[str, list[list]]:
                    f'<text class="muted" x="{l - 6}" y="{sy(v) + 4:.1f}" text-anchor="end">{v}</text>')
     for yr in range(2000, 2027, 5):
         out.append(f'<text class="muted" x="{sx(yr):.1f}" y="{h - 8}" text-anchor="middle">{yr}</text>')
-    for series, cls in ((tq, "s2"), (bq, "s1")):
+    for series, cls in ((tq, "s1"), (bq, "s2")):
         pts = " ".join(f"{sx(qx(q)):.1f},{sy(v):.1f}" for q, v in sorted(series.items()))
         out.append(f'<polyline class="{cls}" fill="none" stroke-width="2" stroke-linejoin="round" points="{pts}"/>')
     rows = [["Quarter", "Quoted index value", "Capital blend", "Two-index blend", "Quoted over capital blend (%)",
@@ -331,9 +357,9 @@ def fig_ucci(res) -> tuple[str, list[list]]:
                    f'L{x - 6:.1f} {y:.1f} Z"/></g>')
         rows.append([u["quarter"], f"{u['value']:.1f}", f"{u['blend']:.1f}", f"{u['two']:.1f}", f"{u['gap_pct']:.1f}",
                      f"{u['source']}, {u['url']}", u["quoted"]])
-    lg = (f'<g class="lg"><line class="s1" x1="{l}" x2="{l + 22}" y1="12" y2="12" stroke-width="2"/>'
+    lg = (f'<g class="lg"><line class="s2" x1="{l}" x2="{l + 22}" y1="12" y2="12" stroke-width="2"/>'
           f'<text x="{l + 28}" y="16">Capital blend (seven indexes)</text>'
-          f'<line class="s2" x1="{l + 220}" x2="{l + 242}" y1="12" y2="12" stroke-width="2"/>'
+          f'<line class="s1" x1="{l + 220}" x2="{l + 242}" y1="12" y2="12" stroke-width="2"/>'
           f'<text x="{l + 248}" y="16">Two-index blend</text>'
           f'<path class="fref" d="M{l + 380} 6 L{l + 386} 12 L{l + 380} 18 L{l + 374} 12 Z"/>'
           f'<text x="{l + 392}" y="16">Quoted sector index</text></g>')
@@ -380,6 +406,104 @@ def fig_escalation(res) -> tuple[str, list[list]]:
     return "".join(out), rows
 
 
+CYCLE_NAMES = {(2004, 2008): "Boom 2004 to 2008", (2014, 2016): "Bust 2014 to 2016", (2021, 2023): "Boom 2021 to 2023"}
+
+
+def fig_grip(res) -> tuple[str, list[list]]:
+    """Top chart: the capital blend (drawn as the Deckhand rope), consumer prices and Brent crude oil, monthly,
+    2000 = 100, over the three cycle bands. The subject fills the frame: tight margins, large type."""
+    mon = res["series"]["monthly"]
+    blend_m = {ym: sum(w * mon[k][ym] for k, w in f.BLEND_WEIGHTS.items())
+               for ym in mon["cpi"] if all(ym in mon[k] for k in f.BLEND_WEIGHTS)}
+    w, h, l, r, t, b = 1040, 430, 56, 150, 58, 34
+    lo, hi = 50, 500
+    x0, x1 = 2000, 2027
+    sx = lambda yr: l + (yr - x0) / (x1 - x0) * (w - l - r)  # noqa: E731
+    sy = lambda v: t + (hi - min(max(v, lo), hi)) / (hi - lo) * (h - t - b)  # noqa: E731
+    out = [svg_open(w, h, "Getting a grip on offshore project cost: capital blend, consumer prices and Brent crude "
+                    "oil, monthly, 2000 = 100, with the three cost cycles", "f0"),
+           f'<text x="{l}" y="24" style="font-size:20px;font-weight:700">Getting a grip on offshore project cost</text>'
+           f'<text class="muted" x="{l}" y="46" style="font-size:14px">Monthly, each series over its 2000 mean, times 100</text>']
+    for (a, z), name in CYCLE_NAMES.items():
+        out.append(f'<rect class="band" x="{sx(a):.1f}" y="{t}" width="{sx(z + 1) - sx(a):.1f}" height="{h - t - b}"/>'
+                   f'<text class="muted" x="{sx(a) + 4:.1f}" y="{t + 16}" style="font-size:13px;font-weight:600">{name}</text>')
+    for v in (100, 200, 300, 400, 500):
+        out.append(f'<line class="grid" x1="{l}" x2="{w - r}" y1="{sy(v):.1f}" y2="{sy(v):.1f}"/>'
+                   f'<text class="muted" x="{l - 6}" y="{sy(v) + 5:.1f}" text-anchor="end" style="font-size:14px">{v}</text>')
+    for yr in range(2000, 2027, 5):
+        out.append(f'<text class="muted" x="{sx(yr):.1f}" y="{h - 10}" text-anchor="middle" style="font-size:14px">{yr}</text>')
+
+    def path(series):
+        return " ".join(f"{sx(int(ym[:4]) + (int(ym[5:7]) - 0.5) / 12):.1f},{sy(v):.1f}" for ym, v in sorted(series.items()))
+    out.append(f'<polyline class="s3" fill="none" stroke-width="1.6" stroke-dasharray="5 4" points="{path(mon["brent"])}"/>'
+               f'<polyline class="ref" fill="none" stroke-width="2.4" points="{path(mon["cpi"])}"/>'
+               f'<polyline class="rim" fill="none" stroke-width="9" stroke-linejoin="round" stroke-linecap="round" '
+               f'points="{path(blend_m)}"/><polyline class="s2" fill="none" stroke-width="5.5" stroke-linejoin="round" '
+               f'stroke-linecap="round" points="{path(blend_m)}"/>')
+    last = max(blend_m)
+    for key, val, name, cls in (("blend", blend_m[last], "Capital blend", "f2"), ("cpi", mon["cpi"][last], "Consumer prices", "fref"),
+                                ("brent", mon["brent"][last], "Brent crude oil", "f3")):
+        out.append(f'<text class="{cls}" x="{sx(2026.9) + 6:.1f}" y="{sy(val) + 5:.1f}" style="font-size:15px;font-weight:700">{name}</text>')
+    annual = res["series"]["annual"]
+    rows = [["Year", "Capital blend", "Consumer prices", "Brent crude oil"]]
+    for yr in range(2000, 2026):
+        y_ = str(yr)
+        tip = (f"{yr} (annual means, 2000 = 100): capital blend {annual['blend'][y_]:.1f}; consumer prices "
+               f"{annual['cpi'][y_]:.1f}; Brent crude oil {annual['brent'][y_]:.1f}")
+        out.append(f'<rect class="hit" x="{sx(yr):.1f}" y="{t}" width="{sx(yr + 1) - sx(yr):.1f}" height="{h - t - b}" '
+                   f'fill="transparent" data-tip="{esc_(tip)}"><title>{esc_(tip)}</title></rect>')
+        rows.append([y_, f"{annual['blend'][y_]:.1f}", f"{annual['cpi'][y_]:.1f}", f"{annual['brent'][y_]:.1f}"])
+    out.append("</svg>")
+    return "".join(out), rows
+
+
+def short(name: str) -> str:
+    """Project name without its bracketed note: "Martin Linge (ex-Hild)" -> "Martin Linge"."""
+    return name.split(" (")[0]
+
+
+def fig_projects(res) -> tuple[str, list[list]]:
+    """Figure 5: final over sanction, per project, beside the capital blend over the project's own years."""
+    out_ = res["projects"]["outturn"]
+    w, rowh, left, right, top = 700, 28, 290, 16, 44
+    h = top + rowh * len(out_) + 52
+    lo, hi = -40.0, 110.0
+    sx = lambda v: left + (v - lo) / (hi - lo) * (w - left - right)  # noqa: E731
+    out = [svg_open(w, h, "Final cost over the sanction estimate, by project, beside the capital blend over the same "
+                    "years", "f5")]
+    for v in range(-40, 111, 20):
+        out.append(f'<line class="{"axis" if v == 0 else "grid"}" x1="{sx(v):.1f}" x2="{sx(v):.1f}" y1="{top - 6}" '
+                   f'y2="{h - 46}"/><text class="muted" x="{sx(v):.1f}" y="{h - 30}" text-anchor="middle">'
+                   f'{sgn(v, 0).lstrip("+")}</text>')
+    rows = [["Project", "Currency", "Sanction year", "Final year", "Final over sanction (%)",
+             "Capital blend over the same years (%)", "Final figure"]]
+    for i, o in enumerate(out_):
+        y = top + i * rowh + rowh / 2
+        assumed = not (o["sanction_primary"] and o["final_primary"])
+        kind = "forecast at completion" if o["final_kind"] == "final_forecast" else "outturn"
+        lab = f"{short(o['project'])} ({o['currency']}), {o['sanction_year']} to {o['final_year']}"
+        tip = (f"{o['project']}: sanction estimate {o['sanction_mm']:,.0f} million {o['currency']} ({o['sanction_date']}); "
+               f"final {o['final_mm']:,.0f} million ({o['final_date']}, {kind}): {sgn(o['change_pct'])} %. Capital blend "
+               f"over the same years: {sgn(o['market_pct'])} %." + (" Final figure from a secondary source: ASSUMED - "
+                                                                     "to be confirmed." if assumed else ""))
+        xm, xp = sx(o["market_pct"]), sx(o["change_pct"])
+        dia = (f'<path class="{"ring2" if assumed else "f1 ring"}" stroke-width="2" d="M{xp:.1f} {y - 7:.1f} L{xp + 7:.1f} '
+               f'{y:.1f} L{xp:.1f} {y + 7:.1f} L{xp - 7:.1f} {y:.1f} Z"/>')
+        out.append(f'<g class="hit" tabindex="0" data-tip="{esc_(tip)}"><title>{esc_(tip)}</title>'
+                   f'<rect x="0" y="{y - rowh / 2:.1f}" width="{w}" height="{rowh}" fill="transparent"/>'
+                   f'<text x="{left - 8}" y="{y + 4:.1f}" text-anchor="end">{esc_(lab)}{" *" if assumed else ""}</text>'
+                   f'<circle class="f2 ring" stroke-width="2" cx="{xm:.1f}" cy="{y:.1f}" r="5.5"/>{dia}</g>')
+        rows.append([o["project"], o["currency"], str(o["sanction_year"]), str(o["final_year"]), f"{o['change_pct']:.1f}",
+                     f"{o['market_pct']:.1f}", kind + ("; ASSUMED - to be confirmed" if assumed else "")])
+    out.append(f'<text x="{(left + w - right) / 2:.1f}" y="{h - 8}" text-anchor="middle">Change from the sanction '
+               f'estimate (%)</text>'
+               f'<g class="lg"><path class="f1" d="M{left} 12 L{left + 7} 19 L{left} 26 L{left - 7} 19 Z"/>'
+               f'<text x="{left + 12}" y="23">Final over sanction</text>'
+               f'<circle class="f2" cx="{left + 168}" cy="19" r="5.5"/><text x="{left + 180}" y="23">Capital blend, same '
+               f'years</text></g></svg>')
+    return "".join(out), rows
+
+
 def table_html(rows: list[list], cls="hs-table") -> str:
     head = "".join(f"<th>{esc_(c)}</th>" for c in rows[0])
     def cell(c):
@@ -412,13 +536,14 @@ def write_static(name: str, svg: str, rows: list[list]) -> None:
 CSS = """
 :root{color-scheme:light;--bg:#ffffff;--surface:#ffffff;--text:#26323a;--muted:#5a6b76;--heading:#0b3d5c;--line:#d0d7de;
 --tint:#eef4f8;--accent:#1fa596;--kicker:#0d7680;--link:#0b5f8a;--s1:#245c94;--s2:#1fa596;--ref:#6b7780;--grid:#e3e8ec;
---axis:#8a969e;--band:#eef4f8;--ring:#ffffff}
+--axis:#8a969e;--band:#eef4f8;--ring:#ffffff;--s3:#c77c00;--rim:#0b3d5c}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#061a28;--surface:#0b2638;
 --text:#e4edf2;--muted:#9db2c0;--heading:#ffffff;--line:#21475f;--tint:#10324a;--accent:#2aa898;--kicker:#3FC4B8;
---link:#9fd3ff;--s1:#3a78b8;--s2:#2aa898;--ref:#9db2c0;--grid:#1b3d53;--axis:#4f7f99;--band:#10324a;--ring:#0b2638}}
+--link:#9fd3ff;--s1:#3a78b8;--s2:#2aa898;--ref:#9db2c0;--grid:#1b3d53;--axis:#4f7f99;--band:#10324a;--ring:#0b2638;
+--s3:#e69f00;--rim:#9fd3ff}}
 :root[data-theme="dark"]{color-scheme:dark;--bg:#061a28;--surface:#0b2638;--text:#e4edf2;--muted:#9db2c0;--heading:#ffffff;
 --line:#21475f;--tint:#10324a;--accent:#2aa898;--kicker:#3FC4B8;--link:#9fd3ff;--s1:#3a78b8;--s2:#2aa898;--ref:#9db2c0;
---grid:#1b3d53;--axis:#4f7f99;--band:#10324a;--ring:#0b2638}
+--grid:#1b3d53;--axis:#4f7f99;--band:#10324a;--ring:#0b2638;--s3:#e69f00;--rim:#9fd3ff}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font:17px/1.55 "Segoe UI",Helvetica,Arial,sans-serif}
 .art{max-width:920px;margin:0 auto;padding:24px 16px 64px}
@@ -440,6 +565,8 @@ figure{margin:12px 0}.viz{width:100%;height:auto;max-width:680px;display:block}
 .viz text{font:12px "Segoe UI",Helvetica,Arial,sans-serif;fill:var(--text)}.viz .muted{fill:var(--muted)}
 .s1{stroke:var(--s1)}.f1{fill:var(--s1)}.s2{stroke:var(--s2)}.f2{fill:var(--s2)}.ref{stroke:var(--ref)}.fref{fill:var(--ref)}
 .grid{stroke:var(--grid)}.axis{stroke:var(--axis)}.band{fill:var(--band)}.ring{stroke:var(--ring)}
+.s3{stroke:var(--s3)}.f3{fill:var(--s3)}.rim{stroke:var(--rim)}.ring2{fill:var(--surface);stroke:var(--s1)}
+.ig-scene{margin:0 0 8px}.ig-scene .viz{max-width:none}.ig-cap{margin:2px 0 10px}
 .smg .viz text{font-size:15px}.smg .viz text[font-weight]{font-size:16px}.smg{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}@media (max-width:760px){.smg{grid-template-columns:1fr 1fr}}
 .lgd{display:flex;flex-wrap:wrap;gap:14px;font-size:.86em;color:var(--muted);margin:4px 0}
 .lgd i{display:inline-block;width:18px;height:0;border-top:2px solid;vertical-align:middle;margin-right:5px}
@@ -504,6 +631,12 @@ def refs(d: dict, res: dict) -> list[dict]:
                                 f"read {day(u['accessed'])}", "url": u["url"]})
     out.append({"cite": "worldenergydata, escalation method note docs/modules/cost/ESCALATION.md",
                 "url": f"{REPO_URL}/blob/main/docs/modules/cost/ESCALATION.md"})
+    pj = d["projects"]
+    reads = sorted({r["ACCESSED_DATE"] for t in ("sanctioned", "awards", "trails") for r in pj[t]})
+    out.append({"cite": "worldenergydata, curated cost tables: sanctioned projects, contract awards and dated cost "
+                        "statements, each row with its source, the words quoted and the date read (rows read "
+                        f"{day(reads[0])} to {day(reads[-1])})",
+                "url": f"{REPO_URL}/tree/main/data/modules/cost/curated"})
     for i, r in enumerate(out, 1):
         r["n"] = i
     return out
@@ -521,8 +654,11 @@ def fill(body: str, res: dict, ctx: dict) -> str:
     return re.sub(r"\{\{([A-Za-z0-9_.\-]+)\}\}", rep, body)
 
 
+PICTURE_REV = "r2"
+
+
 def picture(kind: str) -> str:
-    p = HERE / "pictures" / f"megaproject-inflation-r1-{kind}.svg"
+    p = HERE / "pictures" / f"megaproject-inflation-{PICTURE_REV}-{kind}.svg"
     if not p.exists():
         return ""
     svg = p.read_text(encoding="utf-8")
@@ -530,7 +666,8 @@ def picture(kind: str) -> str:
     uri = "data:image/svg+xml;base64," + base64.b64encode(svg.encode("utf-8")).decode("ascii")
     if kind == "opening":
         return (f'<figure class="opening"><img src="{uri}" alt="{esc_(alt)}" width="1200"><figcaption class="hs-small">'
-                f'The Deckhand rope rises with the cost of an offshore development over the years.</figcaption></figure>')
+                f'Getting a grip on the cost: the Deckhand holds the rope that traces the capital blend from 2000 to 2025.'
+                f'</figcaption></figure>')
     return f'<p class="ig-scene"><img src="{uri}" alt="{esc_(alt)}" width="1040"></p>'
 
 
@@ -598,6 +735,23 @@ def text_values(res: dict, rf: list[dict]) -> dict:
         "c5": f"{E['blend_real_5']['contingency_pts']:.1f}", "c8": f"{E['blend_real_8']['contingency_pts']:.1f}",
         "sens_lo": f"{min(sens8):.1f}", "sens_hi": f"{max(sens8):.1f}",
     }
+    pj = res["projects"]
+    k, sm = pj["counts"], pj["summary"]
+    v.update({
+        "aw_n": str(k["awards"]), "aw_valued": str(k["valued"]), "aw_proj": str(k["projects"]),
+        "aw_primary": str(k["valued_primary"]), "aw_secondary": str(k["valued_secondary"]),
+        "cov_n": str(sm["n_cov"]), "cov_med": f"{sm['share_median']:.1f}", "cov_min": f"{sm['share_min']:.0f}",
+        "cov_max": f"{sm['share_max']:.1f}", "cov_max_p": short(sm["share_max_project"]),
+        "out_n": str(sm["n_out"]), "out_assumed": str(sm["n_out_assumed"]), "out_fc": str(sm["n_out_forecast"]),
+        "out_min": f"{abs(sm['out_min']):.1f}", "out_min_p": short(sm["out_min_project"]), "out_min_y": str(sm["out_min_year"]),
+        "out_max": f"{sm['out_max']:.1f}", "out_max_p": short(sm["out_max_project"]), "out_max_y": str(sm["out_max_year"]),
+        "boom_pn": str(pj["boom"]["n"]), "boom_above": str(pj["boom"]["above"]), "bust_pn": str(pj["bust"]["n"]),
+        "mkt_min": sgn(pj["market_min"]), "mkt_max": sgn(pj["market_max"]),
+        "mkt_bb_min": sgn(pj["market_bb_min"]), "mkt_bb_max": sgn(pj["market_bb_max"]),
+        "proj_read": f"{day(pj['read'][0])} to {day(pj['read'][-1])}",
+        "confirm_by": pj["confirm_by"]})
+    if pj["bust"]["below"] != pj["bust"]["n"]:
+        raise SystemExit("text says every 2015 sanction finished below its estimate; the data no longer does")
     return {"T_" + k: x for k, x in v.items()}
 
 
@@ -620,9 +774,12 @@ def check(body_src: str, filled: str, page: str, refs_: list[dict], leak: list[s
     facts.update(intro_what=what, intro_why=why, intro_inside=inside, intro_total=what + why + inside, prompt_line=pl)
     if what > 70 or why > 70 or inside > 50 or pl > 25 or not 110 <= what + why + inside <= 190:
         errs.append(f"introduction limits: {what}/{why}/{inside}, prompt line {pl}")
-    stray = numbers(" ".join(words(between(filled, "INTRO-WHAT") + why_wo))) - {"17", "2026"}
+    stray = numbers(" ".join(words(between(filled, "INTRO-WHAT") + why_wo)))
     if stray:
         errs.append(f"numbers in the first two parts of the introduction: {sorted(stray)}")
+    intro = " ".join(words(between(filled, "INTRO-WHAT") + why_src + between(filled, "INTRO-INSIDE")))
+    if re.search(r"asked|asks", intro, flags=re.I):
+        errs.append("the introduction says who asked; open on the subject and the facts")
     body = between(filled, "BODY")
     body_nofig = re.sub(r"<!--FIG-START-->.*?<!--FIG-END-->", " ", body, flags=re.S)
     facts["body_words"] = len(words(body_nofig))
@@ -632,7 +789,7 @@ def check(body_src: str, filled: str, page: str, refs_: list[dict], leak: list[s
     if facts["hypotheses"] > 2:
         errs.append("more than 2 hypotheses in a public data piece")
     ig = re.sub(r"<figcaption.*?</figcaption>", " ", between(filled, "INFOGRAPHIC"), flags=re.S)
-    ig = re.sub(r'<p class="ig-scene">.*?</p>', " ", ig, flags=re.S)
+    ig = re.sub(r"<!--SCENE-START-->.*?<!--SCENE-END-->", " ", ig, flags=re.S)
     facts["infographic_words"] = len(words(ig))
     ig_nums = numbers(" ".join(words(ig)))
     facts["infographic_numbers"] = len(ig_nums)
@@ -662,8 +819,11 @@ def build(pin: str, built: str, leak: list[str] | None = None) -> tuple[str, lis
     f1, t1 = fig_small_multiples(res)
     f3, t3 = fig_ucci(res)
     f4, t4 = fig_escalation(res)
+    f0, t0 = fig_grip(res)
+    f5, t5 = fig_projects(res)
     for name, svg, rows in (("fig2-cycles", f1, t1), ("fig1-growth-above-cpi", f2, t2), ("fig3-sector-index-check", f3, t3),
-                            ("fig4-escalation-by-sanction-year", f4, t4)):
+                            ("fig4-escalation-by-sanction-year", f4, t4), ("fig0-cost-grip", f0, t0),
+                            ("fig5-final-over-sanction", f5, t5)):
         write_static(name, svg, rows)
     used = {u["url"] for u in res["ucci"]["points"]}
     n_ucci = [r["n"] for r in rf if "Upstream Capital Costs" in r["cite"] and r["url"] in used]
@@ -705,11 +865,35 @@ def build(pin: str, built: str, leak: list[str] | None = None) -> tuple[str, lis
     src_rows = [["Series", "Publisher", "First and last month", "Retrieved (UTC)", "SHA-256 of the saved file"]] + [
         [r["series_id"], r["publisher"], f"{r['first_observation']} to {r['last_observation']}", r["retrieved_utc"],
          r["sha256"]] for r in d["sources"]]
+    pj = res["projects"]
+    mark = "†"   # dagger: a value from a secondary source, ASSUMED - to be confirmed (note above the table)
+    cover = [["Project", "Sanction year", "Estimate at sanction ($ million)", "Awards", "Awards with a value",
+              "Awards set against the estimate", "Their value, low bound ($ million)", "Share of the estimate (%)"]]
+    for c in pj["coverage"]:
+        cover.append([c["project"], str(c["fid"]), f"{c['gross_mm']:,.0f}" + ("" if c["gross_primary"] else " " + mark),
+                      str(c["n_awards"]), str(c["n_valued"]), str(c["n_comparable"]),
+                      f"{c['awards_low_mm']:,.0f}" + ("" if c["awards_primary"] or not c["n_comparable"] else " " + mark),
+                      f"{c['share_low_pct']:.1f}"])
+    outt = [["Project", "Currency", "Sanction estimate (million)", "Final figure (million)", "Final over sanction (%)",
+             "Capital blend, same years (%)"]]
+    for o in pj["outturn"]:
+        kind = "forecast at completion" if o["final_kind"] == "final_forecast" else "outturn"
+        outt.append([o["project"], o["currency"],
+                     f"{o['sanction_mm']:,.0f} ({o['sanction_date']})" + ("" if o["sanction_primary"] else " " + mark),
+                     f"{o['final_mm']:,.0f} ({o['final_date']}, {kind})" + ("" if o["final_primary"] else " " + mark),
+                     sgn(o["change_pct"]), sgn(o["market_pct"])])
     lgd = ('<div class="lgd"><span><i class="s1" style="border-color:var(--s1)"></i>Index</span>'
            '<span><i style="border-color:var(--ref)"></i>Consumer prices (CPI)</span>'
            '<span><b></b>Cycle years 2004 to 2008, 2014 to 2016, 2021 to 2023</span></div>')
     ctx = {
-        "OPENING": picture("opening"), "SCENE": picture("scene"), "BUILT": esc_(built),
+        "OPENING": picture("opening"), "BUILT": esc_(built),
+        "SCENE": (f'<!--SCENE-START--><div class="ig-scene">{f0}</div><p class="ig-cap hs-small">Getting a grip on the '
+                  f'cost: the capital blend, consumer prices and Brent crude oil, 2000 to 2026, with the three cost '
+                  f'cycles shaded. Hover on a year for its annual means.</p><!--SCENE-END-->'),
+        "FIG5": f'<figure>{f5}', "FIG5T": f'<details><summary>Figure 5 as a table</summary>{table_html(t5)}</details></figure>',
+        "TAB_COVER": table_html(cover), "TAB_OUTTURN": table_html(outt),
+        "REF_PROJ": f"[{next(r['n'] for r in rf if r['url'].endswith('/data/modules/cost/curated'))}]",
+        "REF_PROJ_N": str(next(r["n"] for r in rf if r["url"].endswith("/data/modules/cost/curated"))),
         "FIG_CYC": '<figure>' + lgd + f'<div class="smg">{f1}</div>',
         "FIG_CYC_T": f'<details><summary>Figure 2 as a table</summary>{table_html(t1)}</details></figure>',
         "FIG_GROW": f'<figure>{f2}', "FIG_GROW_T": f'<details><summary>Figure 1 as a table</summary>{table_html(t2)}</details></figure>',
@@ -718,7 +902,8 @@ def build(pin: str, built: str, leak: list[str] | None = None) -> tuple[str, lis
         "FIG4": f'<figure>{f4}', "FIG4T": f'<details><summary>Figure 4 as a table</summary>{table_html(t4)}</details></figure>',
         "TAB_SOURCES": table_html(src_rows), "TAB_WEIGHTS": table_html(weights), "TAB_CYCLES": table_html(cyc),
         "TAB_SENS": table_html(sens), "TAB_UCCI": table_html([[r[0], r[1], r[2], r[4], r[6]] for r in t3]),
-        "UCCI_REFS": ucci_refs, "SET_ASIDE": aside, "REF_ESC": f"[{rf[-1]['n']}]",
+        "UCCI_REFS": ucci_refs, "SET_ASIDE": aside,
+        "REF_ESC": f"[{next(r['n'] for r in rf if r['url'].endswith('/ESCALATION.md'))}]",
         "PIN": pin, "PIN7": pin[:7], "PROMPT_URL": f"{REPO_URL}/blob/{pin}/{PROMPT_PATH}",
         "REFS": "<ol class=\"refs hs-small\">" + "".join(
             f'<li id="ref-{r["n"]}" value="{r["n"]}">{esc_(r["cite"])}. <a href="{esc_(r["url"])}">{esc_(r["url"])}</a>.</li>'
@@ -729,13 +914,15 @@ def build(pin: str, built: str, leak: list[str] | None = None) -> tuple[str, lis
     filled = fill(body_src, res, ctx)
     filled = re.sub(r"\[(\d+)\]", r'<a class="cite" href="#ref-\1">[\1]</a>', filled)
     plain_for_check = fill(body_src, res, {**ctx, **{k: "" for k in ("FIG_CYC", "FIG_GROW", "FIG3", "FIG4", "FIG_CYC_T",
-                                                                      "FIG_GROW_T", "FIG3T", "FIG4T", "OPENING", "SCENE")}})
+                                                                      "FIG_GROW_T", "FIG3T", "FIG4T", "FIG5", "FIG5T",
+                                                                      "OPENING", "SCENE")}})
     page = ("<!doctype html>\n<html lang=\"en\"><head><meta charset=\"utf-8\">"
             "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
             f"<title>{esc_(TITLE)}</title>"
             "<meta name=\"description\" content=\"Public US price indexes for offshore drilling, equipment, steel, "
             "fabrication and engineering, rebased to 2000 against consumer prices: the long-run rise above general "
-            "inflation, three boom and bust cycles, and the escalation range for an assumed 5-year or 8-year spend.\">"
+            "inflation, three boom and bust cycles, the escalation range for an assumed 5-year or 8-year spend, and "
+            "the final cost of offshore projects against their sanction estimates from public records.\">"
             f"<style>{CSS}</style></head><body><main class=\"art\">{filled}</main><script>{TIP_JS}</script></body></html>\n")
     errs, facts = check(body_src, plain_for_check, page, rf, LEAK + (leak or []))
     return page, errs, facts, res
@@ -745,7 +932,7 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--pin", required=True, help="commit that holds PROMPT.md, for the pinned prompt link")
     ap.add_argument("--built", help='build time as shown on the page, e.g. "17 Nov 2026, 22:00 UTC"')
-    ap.add_argument("--out", default=str(OUT / "megaproject-cost-inflation-r1.html"))
+    ap.add_argument("--out", default=str(OUT / "megaproject-cost-inflation-r2.html"))
     ap.add_argument("--leak-file", help="private file of extra regular expressions that must not appear, one a line")
     a = ap.parse_args(argv)
     built = a.built or dt.datetime.now(dt.timezone.utc).strftime("%d %b %Y, %H:%M UTC").lstrip("0")
