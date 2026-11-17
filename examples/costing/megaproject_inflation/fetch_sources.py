@@ -78,7 +78,8 @@ def ucci_row(retrieved: str) -> dict:
             "publisher": "S&P Global (proprietary index)", "distributor": "trade press; each row cites its article",
             "url": "data/modules/cost/curated/cost_component_timeseries.csv",
             "licence": "proprietary index; only values published in press articles are used, each with its citation",
-            "retrieved_utc": retrieved, "sha256": sha256(raw), "first_observation": years[0],
+            "retrieved_utc": f"values read {min(r['ACCESSED_DATE'] for r in rows)}; file hashed {retrieved}",
+            "sha256": sha256(raw), "first_observation": years[0],
             "last_observation": years[-1], "rows": len(rows),
             "local_file": "data/modules/cost/curated/cost_component_timeseries.csv"}
 
