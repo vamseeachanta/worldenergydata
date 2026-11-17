@@ -194,19 +194,21 @@ def compute(d: dict) -> dict:
     # figure against the sanction estimate beside the capital blend (nominal) over the project's own years
     pj = d["projects"]
     cov = P.coverage(pj["sanctioned"], pj["awards"])
-    out = P.outturn(pj["trails"])
+    out = P.outturn(pj["trails"], pj["qualifiers"])
     for o in out:
         if o["final_year"] > y1:
             raise SystemExit(f"final statement after {y1}: {o['project']}")
         o["market_pct"] = 100.0 * P.market_escalation(B, o["sanction_year"], o["final_year"], f.window_escalation)
-    boom = [o for o in out if 2009 <= o["sanction_year"] <= 2013]
-    bust = [o for o in out if o["sanction_year"] == 2015]
+    comp = [o for o in out if o["computable"]]
+    boom = [o for o in comp if 2009 <= o["sanction_year"] <= 2013]
+    bust = [o for o in comp if o["sanction_year"] == 2015]
+    above = lambda o: o["change_pct"] > 0 and o["bound"] != "at most"  # noqa: E731
+    below = lambda o: o["change_pct"] < 0 and o["bound"] != "at least"  # noqa: E731
     res["projects"] = {
         "counts": P.award_counts(pj["awards"]), "summary": P.summary(cov, out), "confirm_by": P.CONFIRM_BY,
         "coverage": cov, "outturn": out,
-        "boom": {"n": len(boom), "above": sum(o["change_pct"] > 0 for o in boom),
-                 "level": sum(o["change_pct"] == 0 for o in boom), "below": sum(o["change_pct"] < 0 for o in boom)},
-        "bust": {"n": len(bust), "below": sum(o["change_pct"] < 0 for o in bust)},
+        "boom": {"n": len(boom), "above": sum(above(o) for o in boom), "below": sum(below(o) for o in boom)},
+        "bust": {"n": len(bust), "below": sum(below(o) for o in bust)},
         "market_min": min(o["market_pct"] for o in out), "market_max": max(o["market_pct"] for o in out),
         "market_bb_min": min(o["market_pct"] for o in boom + bust), "market_bb_max": max(o["market_pct"] for o in boom + bust),
         "read": sorted({r["ACCESSED_DATE"] for t in ("sanctioned", "awards", "trails") for r in pj[t]}),
@@ -222,7 +224,7 @@ def compute(d: dict) -> dict:
 # ------------------------------------------------------------------ figures
 STYLE_LIGHT = (".s1{stroke:#245c94}.f1{fill:#245c94}.s2{stroke:#1fa596}.f2{fill:#1fa596}.ref{stroke:#6b7780}"
                ".fref{fill:#6b7780}.grid{stroke:#e3e8ec}.axis{stroke:#8a969e}.band{fill:#eef4f8}.ring{stroke:#ffffff}"
-               ".s3{stroke:#c77c00}.f3{fill:#c77c00}.rim{stroke:#0b3d5c}.ring2{fill:#ffffff;stroke:#245c94}"
+               ".s3{stroke:#e69f00}.f3{fill:#e69f00}.rim{stroke:#0b3d5c}.ring2{fill:#ffffff;stroke:#245c94}"
                "text{font:12px 'Segoe UI',Helvetica,Arial,sans-serif;fill:#26323a}.muted{fill:#5a6b76}")
 
 
@@ -463,8 +465,9 @@ def short(name: str) -> str:
 
 
 def fig_projects(res) -> tuple[str, list[list]]:
-    """Figure 5: final over sanction, per project, beside the capital blend over the project's own years."""
-    out_ = res["projects"]["outturn"]
+    """Figure 5: final over sanction, per project where the statements' words allow it, beside the capital blend over
+    the project's own years. A final that is an upper bound is a triangle pointing left (the change is at most that)."""
+    out_ = [o for o in res["projects"]["outturn"] if o["computable"]]
     w, rowh, left, right, top = 700, 28, 290, 16, 44
     h = top + rowh * len(out_) + 52
     lo, hi = -40.0, 110.0
@@ -483,23 +486,35 @@ def fig_projects(res) -> tuple[str, list[list]]:
         kind = "forecast at completion" if o["final_kind"] == "final_forecast" else "outturn"
         lab = f"{short(o['project'])} ({o['currency']}), {o['sanction_year']} to {o['final_year']}"
         tip = (f"{o['project']}: sanction estimate {o['sanction_mm']:,.0f} million {o['currency']} ({o['sanction_date']}); "
-               f"final {o['final_mm']:,.0f} million ({o['final_date']}, {kind}): {sgn(o['change_pct'])} %. Capital blend "
-               f"over the same years: {sgn(o['market_pct'])} %." + (" Final figure from a secondary source: ASSUMED - "
-                                                                     "to be confirmed." if assumed else ""))
+               f"final {o['final_mm']:,.0f} million ({o['final_date']}, {kind}): {o['bound'] + ' ' if o['bound'] else ''}"
+               f"{sgn(o['change_pct'])} %. Capital blend over the same years: {sgn(o['market_pct'])} %."
+               + (" A figure from a secondary source, or derived: ASSUMED - to be confirmed." if assumed else ""))
         xm, xp = sx(o["market_pct"]), sx(o["change_pct"])
-        dia = (f'<path class="{"ring2" if assumed else "f1 ring"}" stroke-width="2" d="M{xp:.1f} {y - 7:.1f} L{xp + 7:.1f} '
-               f'{y:.1f} L{xp:.1f} {y + 7:.1f} L{xp - 7:.1f} {y:.1f} Z"/>')
+        cls = "ring2" if assumed else "f1 ring"
+        if o["bound"] == "at most":
+            mark = (f'<path class="{cls}" stroke-width="2" d="M{xp - 8:.1f} {y:.1f} L{xp + 5:.1f} {y - 7:.1f} '
+                    f'L{xp + 5:.1f} {y + 7:.1f} Z"/>')
+        elif o["bound"] == "at least":
+            mark = (f'<path class="{cls}" stroke-width="2" d="M{xp + 8:.1f} {y:.1f} L{xp - 5:.1f} {y - 7:.1f} '
+                    f'L{xp - 5:.1f} {y + 7:.1f} Z"/>')
+        else:
+            mark = (f'<path class="{cls}" stroke-width="2" d="M{xp:.1f} {y - 7:.1f} L{xp + 7:.1f} {y:.1f} L{xp:.1f} '
+                    f'{y + 7:.1f} L{xp - 7:.1f} {y:.1f} Z"/>')
         out.append(f'<g class="hit" tabindex="0" data-tip="{esc_(tip)}"><title>{esc_(tip)}</title>'
                    f'<rect x="0" y="{y - rowh / 2:.1f}" width="{w}" height="{rowh}" fill="transparent"/>'
                    f'<text x="{left - 8}" y="{y + 4:.1f}" text-anchor="end">{esc_(lab)}{" *" if assumed else ""}</text>'
-                   f'<circle class="f2 ring" stroke-width="2" cx="{xm:.1f}" cy="{y:.1f}" r="5.5"/>{dia}</g>')
-        rows.append([o["project"], o["currency"], str(o["sanction_year"]), str(o["final_year"]), f"{o['change_pct']:.1f}",
-                     f"{o['market_pct']:.1f}", kind + ("; ASSUMED - to be confirmed" if assumed else "")])
+                   f'<circle class="f2 ring" stroke-width="2" cx="{xm:.1f}" cy="{y:.1f}" r="5.5"/>{mark}</g>')
+        rows.append([o["project"], o["currency"], str(o["sanction_year"]), str(o["final_year"]),
+                     (o["bound"] + " " if o["bound"] else "") + f"{o['change_pct']:.1f}".replace("-", "\u2212"),
+                     f"{o['market_pct']:.1f}",
+                     kind + ("; ASSUMED - to be confirmed" if assumed else "")])
     out.append(f'<text x="{(left + w - right) / 2:.1f}" y="{h - 8}" text-anchor="middle">Change from the sanction '
                f'estimate (%)</text>'
                f'<g class="lg"><path class="f1" d="M{left} 12 L{left + 7} 19 L{left} 26 L{left - 7} 19 Z"/>'
                f'<text x="{left + 12}" y="23">Final over sanction</text>'
-               f'<circle class="f2" cx="{left + 168}" cy="19" r="5.5"/><text x="{left + 180}" y="23">Capital blend, same '
+               f'<path class="f1" d="M{left + 150} 19 L{left + 163} 12 L{left + 163} 26 Z"/>'
+               f'<text x="{left + 170}" y="23">At most</text>'
+               f'<circle class="f2" cx="{left + 250}" cy="19" r="5.5"/><text x="{left + 262}" y="23">Capital blend, same '
                f'years</text></g></svg>')
     return "".join(out), rows
 
@@ -536,7 +551,7 @@ def write_static(name: str, svg: str, rows: list[list]) -> None:
 CSS = """
 :root{color-scheme:light;--bg:#ffffff;--surface:#ffffff;--text:#26323a;--muted:#5a6b76;--heading:#0b3d5c;--line:#d0d7de;
 --tint:#eef4f8;--accent:#1fa596;--kicker:#0d7680;--link:#0b5f8a;--s1:#245c94;--s2:#1fa596;--ref:#6b7780;--grid:#e3e8ec;
---axis:#8a969e;--band:#eef4f8;--ring:#ffffff;--s3:#c77c00;--rim:#0b3d5c}
+--axis:#8a969e;--band:#eef4f8;--ring:#ffffff;--s3:#e69f00;--rim:#0b3d5c}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#061a28;--surface:#0b2638;
 --text:#e4edf2;--muted:#9db2c0;--heading:#ffffff;--line:#21475f;--tint:#10324a;--accent:#2aa898;--kicker:#3FC4B8;
 --link:#9fd3ff;--s1:#3a78b8;--s2:#2aa898;--ref:#9db2c0;--grid:#1b3d53;--axis:#4f7f99;--band:#10324a;--ring:#0b2638;
@@ -743,6 +758,8 @@ def text_values(res: dict, rf: list[dict]) -> dict:
         "cov_n": str(sm["n_cov"]), "cov_med": f"{sm['share_median']:.1f}", "cov_min": f"{sm['share_min']:.0f}",
         "cov_max": f"{sm['share_max']:.1f}", "cov_max_p": short(sm["share_max_project"]),
         "out_n": str(sm["n_out"]), "out_assumed": str(sm["n_out_assumed"]), "out_fc": str(sm["n_out_forecast"]),
+        "comp_n": str(sm["n_comp"]), "comp_assumed": str(sm["n_comp_assumed"]), "comp_fc": str(sm["n_comp_forecast"]),
+        "final_secondary": str(sm["n_final_secondary"]),
         "out_min": f"{abs(sm['out_min']):.1f}", "out_min_p": short(sm["out_min_project"]), "out_min_y": str(sm["out_min_year"]),
         "out_max": f"{sm['out_max']:.1f}", "out_max_p": short(sm["out_max_project"]), "out_max_y": str(sm["out_max_year"]),
         "boom_pn": str(pj["boom"]["n"]), "boom_above": str(pj["boom"]["above"]), "bust_pn": str(pj["bust"]["n"]),
@@ -774,7 +791,8 @@ def check(body_src: str, filled: str, page: str, refs_: list[dict], leak: list[s
     facts.update(intro_what=what, intro_why=why, intro_inside=inside, intro_total=what + why + inside, prompt_line=pl)
     if what > 70 or why > 70 or inside > 50 or pl > 25 or not 110 <= what + why + inside <= 190:
         errs.append(f"introduction limits: {what}/{why}/{inside}, prompt line {pl}")
-    stray = numbers(" ".join(words(between(filled, "INTRO-WHAT") + why_wo)))
+    stray = {n for n in numbers(" ".join(words(between(filled, "INTRO-WHAT") + why_wo)))
+             if not re.fullmatch(r"(19|20)\d\d", n)}       # years are not result numbers
     if stray:
         errs.append(f"numbers in the first two parts of the introduction: {sorted(stray)}")
     intro = " ".join(words(between(filled, "INTRO-WHAT") + why_src + between(filled, "INTRO-INSIDE")))
@@ -874,14 +892,28 @@ def build(pin: str, built: str, leak: list[str] | None = None) -> tuple[str, lis
                       str(c["n_awards"]), str(c["n_valued"]), str(c["n_comparable"]),
                       f"{c['awards_low_mm']:,.0f}" + ("" if c["awards_primary"] or not c["n_comparable"] else " " + mark),
                       f"{c['share_low_pct']:.1f}"])
+    words_ = {"exact": "", "approximate": "about ", "lower_bound": "more than ", "upper_bound": "within ",
+              "derived": "derived ", "unsupported": "", "not reviewed": ""}
     outt = [["Project", "Currency", "Sanction estimate (million)", "Final figure (million)", "Final over sanction (%)",
              "Capital blend, same years (%)"]]
     for o in pj["outturn"]:
         kind = "forecast at completion" if o["final_kind"] == "final_forecast" else "outturn"
+        sb = f", {o['sanction_basis']}" if o["sanction_basis"] else ""
+        fb = f", {o['final_basis']}" if o["final_basis"] else ""
+        if o["computable"]:
+            ch = (o["bound"] + " " if o["bound"] else "") + sgn(o["change_pct"])
+            if o["conflict"]:
+                ch += f" ({o['conflict']})"
+        elif o["final_qualifier"] == "unsupported":
+            ch = "not computable: the source does not state a final cost"
+        else:
+            ch = "not computable: both figures are lower bounds"
         outt.append([o["project"], o["currency"],
-                     f"{o['sanction_mm']:,.0f} ({o['sanction_date']})" + ("" if o["sanction_primary"] else " " + mark),
-                     f"{o['final_mm']:,.0f} ({o['final_date']}, {kind})" + ("" if o["final_primary"] else " " + mark),
-                     sgn(o["change_pct"]), sgn(o["market_pct"])])
+                     f"{words_[o['sanction_qualifier']]}{o['sanction_mm']:,.0f} ({o['sanction_date']}{sb})"
+                     + ("" if o["sanction_primary"] else " " + mark),
+                     f"{words_[o['final_qualifier']]}{o['final_mm']:,.0f} ({o['final_date']}, {kind}{fb})"
+                     + ("" if o["final_primary"] else " " + mark),
+                     ch, sgn(o["market_pct"])])
     lgd = ('<div class="lgd"><span><i class="s1" style="border-color:var(--s1)"></i>Index</span>'
            '<span><i style="border-color:var(--ref)"></i>Consumer prices (CPI)</span>'
            '<span><b></b>Cycle years 2004 to 2008, 2014 to 2016, 2021 to 2023</span></div>')

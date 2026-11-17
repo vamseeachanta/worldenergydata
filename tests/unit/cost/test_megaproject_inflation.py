@@ -136,7 +136,7 @@ def test_project_rules_hand_values():
     # final over sanction, harness rule: first sanction estimate, final outturn preferred over a final forecast
     trails = [
         {"PROJECT": "A", "CURRENCY": "NOK", "KIND": "sanction_estimate", "VALUE_MM": "120", "STATEMENT_DATE": "2015-02",
-         "PROVENANCE": "operator", "CONFIDENCE": "high", "SOURCE_TITLE": "s", "SOURCE_URL": "u"},
+         "PROVENANCE": "operator", "CONFIDENCE": "high", "SOURCE_TITLE": "s", "SOURCE_URL": "https://www.equinor.com/a"},
         {"PROJECT": "A", "CURRENCY": "NOK", "KIND": "final_forecast", "VALUE_MM": "100", "STATEMENT_DATE": "2018",
          "PROVENANCE": "operator", "CONFIDENCE": "high", "SOURCE_TITLE": "s", "SOURCE_URL": "u"},
         {"PROJECT": "A", "CURRENCY": "NOK", "KIND": "final_outturn", "VALUE_MM": "90", "STATEMENT_DATE": "2019-10",
@@ -178,12 +178,22 @@ def test_project_published_numbers(results):
     ml = next(c for c in pj["coverage"] if c["project"].startswith("Martin Linge"))
     assert ml["share_low_pct"] == pytest.approx(100 * 2600 / 4200)          # 61.90 %
     out = {o["project"]: o for o in pj["outturn"]}
-    assert sm["n_out"] == 13 and sm["n_out_assumed"] == 4 and sm["n_out_forecast"] == 3
+    assert sm["n_out"] == 13 and sm["n_comp"] == 11 and sm["n_comp_assumed"] == 10 and sm["n_out_forecast"] == 3
     assert out["Johan Sverdrup Phase 1"]["change_pct"] == pytest.approx(100 * (83000 / 123000 - 1))   # -32.52 %
     assert out["Martin Linge (ex-Hild)"]["change_pct"] == pytest.approx(100.0)                         # 63000 / 31500
     assert out["Goliat"]["change_pct"] == pytest.approx(100 * (50000 / 28000 - 1))                      # +78.57 %
     assert not out["Goliat"]["final_primary"]
-    assert (pj["boom"]["n"], pj["boom"]["above"], pj["bust"]["n"], pj["bust"]["below"]) == (9, 7, 2, 2)
+    # the repository's qualifiers: Mariner's two figures are both "more than" (not computable); Big Foot's cited article
+    # states no final cost (not computable); Peregrino's final is "within" 3,000 (at most -14.29 %, and its words name
+    # another original estimate, so ASSUMED); Johan Sverdrup's sanction value is derived (83 + 40), so ASSUMED
+    assert not out["Mariner"]["computable"] and not out["Big Foot"]["computable"]
+    assert out["Peregrino Phase 2"]["bound"] == "at most" and not out["Peregrino Phase 2"]["final_primary"]
+    assert out["Peregrino Phase 2"]["change_pct"] == pytest.approx(100 * (3000 / 3500 - 1))          # -14.29 %
+    assert out["Johan Sverdrup Phase 1"]["sanction_qualifier"] == "derived"
+    assert out["Gorgon (incl. Jansz-Io)"]["final_qualifier"] == "exact"           # "Chevron-derived" is not a derived value
+    assert out["Martin Linge (ex-Hild)"]["final_basis"] == "2021 NOK"
+    assert out["Kraken"]["sanction_primary"] and out["Kraken"]["final_primary"]
+    assert (pj["boom"]["n"], pj["boom"]["above"], pj["bust"]["n"], pj["bust"]["below"]) == (7, 5, 2, 2)
     assert pj["market_bb_min"] == pytest.approx(-5.0, abs=0.05) and pj["market_bb_max"] == pytest.approx(11.3, abs=0.05)
 
 

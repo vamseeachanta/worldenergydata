@@ -11,8 +11,8 @@
 <div class="ig-grid">
 <div class="ig-p"><p class="ig-k">Objective</p><p>Show cost growth against consumer prices, and final project costs.</p></div>
 <div class="ig-p"><p class="ig-k">Starting point</p><p>Budget fixed at sanction; spend assumed, 5 or 8 years.</p></div>
-<div class="ig-p"><p class="ig-k">What we did</p><p>Seven US cost indexes against consumer prices; {{T_out_n}} project outturns.</p></div>
-<div class="ig-p"><p class="ig-k">What we found</p><p>Blend: {{T_blend_real}} % a year above consumer prices; finals {{T_out_min}} % below to {{T_out_max}} % above sanction.</p></div>
+<div class="ig-p"><p class="ig-k">What we did</p><p>Seven US cost indexes against consumer prices, and project final costs.</p></div>
+<div class="ig-p"><p class="ig-k">What we found</p><p>Capital blend: {{T_blend_real}} % a year above consumer prices; {{T_boom1}} % rise, 2003 to 2008.</p></div>
 <div class="ig-p ig-act"><p class="ig-k">What you can do</p><p>Hold escalation contingency, 8-year P90: {{T_r8_p90}} % above consumer prices.</p></div>
 </div>
 <figcaption class="hs-small">Sources: References 1 to 9 and {{REF_PROJ_N}}, retrieved 17 Nov 2026. Deckhand · AceEngineer</figcaption>
@@ -22,7 +22,7 @@
 <section class="intro" aria-label="Introduction">
 <!--INTRO-WHAT-START-->
 <h2>What we did</h2>
-<p>A mega project fixes its budget at sanction, then spends it over several years while the prices of rigs, steel, equipment and engineering move. Public price indexes are set against consumer prices over a quarter of a century. The final costs of existing offshore projects are set against their sanction estimates, from public records. This article continues our series on costing toward mega projects, which grows with each project read.</p>
+<p>A mega project fixes its budget at sanction, then spends it over several years while the prices of rigs, steel, equipment and engineering move. Public price indexes are set against consumer prices from 2000 to 2025. The final costs of existing offshore projects are set against their sanction estimates, from public records. This article continues our series on costing toward mega projects, which grows with each project read.</p>
 <!--INTRO-WHAT-END-->
 <!--INTRO-WHY-START-->
 <h2>Why it matters</h2>
@@ -105,13 +105,13 @@
 <p>For each sanction year, the estimate is set in that year's money and spent over 5 or 8 years on a bell-shaped profile. The escalation above consumer prices each project would have met is shown in Figure 4.</p>
 <!--FIG-START-->
 {{FIG4}}
-<figcaption><ol class="fn hs-small"><li>Capital blend divided by the consumer price index; spend weighted over the window; one marker per sanction year.</li><li>Sources: [1]–[8], retrieved 17 Nov 2026. Data file: fig4-escalation-by-sanction-year.csv.</li></ol>
+<figcaption><ol class="fn hs-small"><li>Capital blend divided by the consumer price index; spend weighted over the window; one marker per sanction year.</li><li>P50: the median, half the sanction years met less. P90: nine in ten sanction years met less.</li><li>Sources: [1]–[8], retrieved 17 Nov 2026. Data file: fig4-escalation-by-sanction-year.csv.</li></ol>
 <p class="cap"><strong>Figure 4 – Escalation above consumer prices, by sanction year</strong></p></figcaption>
 {{FIG4T}}
 <!--FIG-END-->
 <p>Some of the observations are as follows:</p>
 <ul>
-<li>5-year window, sanction years {{T_r5_first}} to {{T_r5_last}}: the median (P50, half the years met less) is {{T_r5_p50}} % above consumer prices; the P90 (nine in ten met less) is {{T_r5_p90}} %.</li>
+<li>5-year window, sanction years {{T_r5_first}} to {{T_r5_last}}: P50 {{T_r5_p50}} % above consumer prices, P90 {{T_r5_p90}} %.</li>
 <li>8-year window, {{T_r8_n}} overlapping sanction years from {{T_r8_first}} to {{T_r8_last}}: P50 {{T_r8_p50}} %, P90 {{T_r8_p90}} %.</li>
 <li>The worst sanction year is {{T_r8_max_fid}}: {{T_r8_max}} % above consumer prices over 8 years, {{T_n8_max}} % in all; the best is {{T_r8_min_fid}}, at {{T_r8_min}} %.</li>
 <li>On a P50 estimate, the escalation contingency to P90 is {{T_c5}} percentage points for 5 years and {{T_c8}} for 8 years. Both come on top of the allowance for consumer prices.</li>
@@ -121,16 +121,16 @@
 <p>Project costs are read from public records: the estimate at sanction, valued contract awards and dated statements to the final figure {{REF_PROJ}}. Each final figure over its sanction estimate is shown in Figure 5, beside the capital blend.</p>
 <!--FIG-START-->
 {{FIG5}}
-<figcaption><ol class="fn hs-small"><li>Final over sanction: the final outturn, or the operator's forecast at completion where no outturn is published, over the first sanction estimate, in the project's own currency.</li><li>Capital blend, same years: the nominal capital blend from the sanction year to the year of the final figure, on the bell-shaped spend of section 4.</li><li>A hollow diamond and a name marked * use a figure from a secondary source: ASSUMED - to be confirmed by {{T_confirm_by}}.</li><li>Sources: {{REF_PROJ}} and [1]–[8]; values in Appendix A, Table A7. Data file: fig5-final-over-sanction.csv.</li></ol>
+<figcaption><ol class="fn hs-small"><li>Final over sanction: the final outturn, or the operator's forecast at completion where no outturn is published, over the first sanction estimate, in the project's own currency. Shown only where both statements' words allow it; a triangle is a final stated as an upper bound (the change is at most the value shown).</li><li>Capital blend, same years: the nominal capital blend from the sanction year to the year of the final figure, on the bell-shaped spend of section 4.</li><li>A hollow marker and a name marked * use a figure from a secondary source, or a derived one: ASSUMED - to be confirmed by {{T_confirm_by}}.</li><li>Sources: {{REF_PROJ}} and [1]–[8]; values in Appendix A, Table A7. Data file: fig5-final-over-sanction.csv.</li></ol>
 <p class="cap"><strong>Figure 5 – Final cost over the sanction estimate, by project</strong></p></figcaption>
 {{FIG5T}}
 <!--FIG-END-->
 <p>Some of the observations are as follows:</p>
 <ul>
-<li>Of {{T_aw_n}} public contract awards across {{T_aw_proj}} projects, {{T_aw_valued}} carry a value, {{T_aw_secondary}} of them from the trade press (Appendix A).</li>
+<li>Of {{T_aw_n}} public contract awards across {{T_aw_proj}} projects, {{T_aw_valued}} carry a value, {{T_aw_secondary}} of them from the trade press.</li>
 <li>Capital awards with a value cover a median {{T_cov_med}} % of the sanction estimate over {{T_cov_n}} projects, from {{T_cov_min}} % to {{T_cov_max}} % ({{T_cov_max_p}}).</li>
-<li>{{T_out_n}} projects publish a sanction estimate and a final figure in one currency; finals sit from {{T_out_min}} % below ({{T_out_min_p}}, sanctioned {{T_out_min_y}}) to {{T_out_max}} % above ({{T_out_max_p}}, {{T_out_max_y}}).</li>
-<li>Of the {{T_boom_pn}} sanctioned from 2009 to 2013, {{T_boom_above}} finished above their estimate, and the {{T_bust_pn}} sanctioned in 2015 below it; over those years the capital blend moved {{T_mkt_bb_min}} % to {{T_mkt_bb_max}} %.</li>
+<li>{{T_out_n}} projects publish a sanction estimate and a final figure in one currency; for {{T_comp_n}} the change can be computed, from {{T_out_min}} % below ({{T_out_min_p}}, sanctioned {{T_out_min_y}}) to {{T_out_max}} % above ({{T_out_max_p}}, {{T_out_max_y}}). {{T_comp_assumed}} of the {{T_comp_n}} rest on an ASSUMED figure.</li>
+<li>Of these, {{T_boom_above}} of the {{T_boom_pn}} sanctioned from 2009 to 2013 finished above their estimate, and the {{T_bust_pn}} sanctioned in 2015 below it; over those years the capital blend moved {{T_mkt_bb_min}} % to {{T_mkt_bb_max}} %.</li>
 </ul>
 <p class="pointer"><a href="#appendix-b">To try it out or adapt the analysis, see reusable prompt.</a></p>
 <p class="closing">If you have run your own analysis, see a way to improve this one, or have an idea for a future issue, write to support@aceengineer.com. We read every reply and credit the ideas we use and provide results we obtained.</p>
@@ -176,16 +176,16 @@
 <h3>Project costs</h3>
 <p>A project's cost is assembled from three kinds of public record, and each value is used as its source states it:</p>
 <ul>
-<li>Sources that count: the operator's or a partner's release, annual report, investor presentation or filing; a regulator's document; and a contractor's own release, for the figure each states. A value from the trade press, or from a later report that quotes the operator, is used only where no such source was found. It is marked † and is ASSUMED - to be confirmed by {{T_confirm_by}} against the operator's or the regulator's own document.</li>
+<li>Sources that count: the operator's or a partner's release, annual report, investor presentation or filing; a regulator's document; and a contractor's own release, for the figure each states. A value read in the trade press, or in a later report that quotes the operator, and a value derived rather than stated, are used only where no such source was found. Each is marked † and is ASSUMED - to be confirmed by {{T_confirm_by}} against the operator's or the regulator's own document.</li>
 <li>Estimate at sanction: the gross capital cost announced at the final investment decision, in US dollars, with a capitalised lease where its source includes one.</li>
 <li>Awards set against the estimate: point values, published ranges, contractor backlog values and the published range of a contractor's size word, at their low bound. Lease and operate values, third-party export lines, values that cover several projects and unpublished values are left out, so the share is a floor.</li>
-<li>Final over sanction: the first sanction estimate and the final outturn, or the forecast at completion, in one currency. Each figure is in money of the day or of a fixed year, with any allowance it holds, as its source gives it. The capital blend over the same years uses the bell-shaped spend from the sanction year to the year of the final figure.</li>
+<li>Final over sanction: the first sanction estimate and the final outturn, or the forecast at completion, in one currency. Each figure keeps its source's words (about, more than, within) and its money basis (money of the day or a fixed year's money), as Table A7 shows. The change is not computed where the source states no final cost or where the sanction estimate is itself a lower bound; a final stated as an upper bound gives a change of at most the value shown. The capital blend over the same years uses the bell-shaped spend from the sanction year to the year of the final figure.</li>
 </ul>
 {{TAB_COVER}}
 <ol class="fn hs-small"><li>† Secondary source: ASSUMED - to be confirmed by {{T_confirm_by}}.</li><li>Projects with at least one public contract award and an estimate at sanction; the share is the low-bound award value over the estimate.</li><li>Source: {{REF_PROJ}}, each row with its own source.</li></ol>
 <p class="cap"><strong>Table A6 – Contract awards against the estimate at sanction, by project</strong></p>
 {{TAB_OUTTURN}}
-<ol class="fn hs-small"><li>† Secondary source: ASSUMED - to be confirmed by {{T_confirm_by}}.</li><li>Dates are those of the statements; the capital blend runs over the same years.</li><li>Sources: {{REF_PROJ}} and [1]–[8].</li></ol>
+<ol class="fn hs-small"><li>† Secondary source, or a derived value: ASSUMED - to be confirmed by {{T_confirm_by}}.</li><li>The words before a figure are its source's: about, more than, within (an upper bound), derived (not stated). The money basis follows the date where the source states one.</li><li>Dates are those of the statements; the capital blend runs over the same years.</li><li>Sources: {{REF_PROJ}} and [1]–[8].</li></ol>
 <p class="cap"><strong>Table A7 – Final figure against the sanction estimate, by project</strong></p>
 <h3>Limits</h3>
 <p>The results are for setting the escalation allowance and its contingency on a US-dollar estimate at sanction. The indexes are US prices; equipment and yard work bought abroad meet their own markets, which is the gap Figure 3 shows in the boom years. The sanction-year windows overlap, so they are not independent samples, and the record holds two booms and two busts. The escalation is market price movement only; it holds no scope growth, schedule delay or productivity change. The project view holds only what operators, partners, regulators and contractors published: a project with no published final figure is not in Figure 5, and the US-dollar capital blend is set beside projects costed in other currencies.</p>
