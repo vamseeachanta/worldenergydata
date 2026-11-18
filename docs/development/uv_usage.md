@@ -255,9 +255,11 @@ uv build --all-packages
 Both `scripts/uv_deploy.sh build` and the compatibility entry point
 `scripts/tools/uv_deploy.sh build` resolve the repository root from their script
 location. The compatibility entry point forwards arguments and exit status to
-the canonical helper. The build action retains `uv sync --extra build` before
-running `uv build --all-packages`; a failed synchronization or build exits without
-the build-success marker. Invoking either helper performs real work.
+the canonical helper. The build action runs `uv sync` before
+`uv build --all-packages`. Synchronization uses the root manifest's default
+dependencies; no optional build extra is defined or requested. A failed
+synchronization or build exits without the build-success marker. Invoking either
+helper performs real work.
 
 The dispatch tests in `tests/unit/tooling/test_uv_deploy_build.py` copy the helpers
 into disposable layouts and substitute recording tools. They check the working
@@ -283,22 +285,22 @@ installation.
 # Publish to TestPyPI (for testing)
 
 export TESTPYPI_TOKEN="your-token"
-./scripts/uv_deploy.sh publish-test
+bash scripts/uv_deploy.sh publish-test
 
 # Publish to PyPI (production)
 
 export PYPI_TOKEN="your-token"
-./scripts/uv_deploy.sh publish
+bash scripts/uv_deploy.sh publish
 ```
 
 TestPyPI and production publication are separate actions requiring the relevant
 credentials and release authorization. A successful local build or dispatch test
 does not authorize either upload.
 
-Both `publish-test` and `publish` call the build action and upload `dist/*`.
-They therefore build and upload the root distribution and every workspace member
-distribution. `publish` asks for confirmation before the production upload;
-`publish-test` does not.
+Both `publish-test` and `publish` clean build artifacts first and, after a
+successful build, upload `dist/*`: the root distribution and every workspace
+member distribution. Only `publish` asks for confirmation before cleanup;
+`publish-test` does not prompt.
 
 ### Build Configuration
 

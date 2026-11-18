@@ -36,7 +36,7 @@ build_package() {
     cd "$PROJECT_DIR"
     
     # Ensure dependencies are up to date
-    uv sync --extra build
+    uv sync
     
     # Build the package
     uv build --all-packages

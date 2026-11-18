@@ -4,6 +4,7 @@ These fixtures require POSIX symlinks and executable shebang stubs.
 Native Windows execution is skipped because these fixtures require POSIX.
 """
 
+import argparse
 import json
 import os
 import shutil
@@ -12,6 +13,11 @@ import sys
 from pathlib import Path
 
 import pytest
+
+try:
+    import tomllib
+except ModuleNotFoundError:  # Python 3.10
+    import tomli as tomllib
 
 pytestmark = pytest.mark.skipif(
     os.name == "nt", reason="requires POSIX symlinks and executable shebang stubs"
@@ -29,8 +35,7 @@ name = Path(sys.argv[0]).name
 args = sys.argv[1:]
 with open(os.environ['RECORD'], 'a', encoding='utf-8', newline='\\n') as stream:
     stream.write(json.dumps([name, os.getcwd(), args]) + '\\n')
-if name == 'uv' and args in (['sync', '--extra', 'build'],
-                             ['build', '--all-packages']):
+if name == 'uv' and args in (['sync'], ['build', '--all-packages']):
     sys.exit(int(os.environ['FAIL_CODE'])
              if args[0] == os.environ['FAIL_ACTION'] else 0)
 if name == 'ls' and args == ['-la', 'dist/']:
@@ -111,7 +116,7 @@ def test_build_dispatch(tmp_path, entry, failure):
         json.loads(line)
         for line in Path(env["RECORD"]).read_text(encoding="utf-8").splitlines()
     ]
-    expected = [["uv", str(root), ["sync", "--extra", "build"]]]
+    expected = [["uv", str(root), ["sync"]]]
     if failure != "sync":
         expected.append(["uv", str(root), ["build", "--all-packages"]])
     if not failure:
@@ -120,6 +125,33 @@ def test_build_dispatch(tmp_path, entry, failure):
     assert result.returncode == (37 if failure else 0), result.stderr
     assert ("✅ Build complete!" in result.stdout) == (not failure)
     assert _snapshot(root) == before
+
+
+@pytest.mark.parametrize("entry", _ENTRIES)
+def test_sync_requests_only_extras_defined_in_root_manifest(tmp_path, entry):
+    root, env = _fixture(tmp_path)
+    manifest = tomllib.loads((_ROOT / "pyproject.toml").read_text(encoding="utf-8"))
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--extra", action="append", default=[])
+
+    result = subprocess.run(
+        ["bash", str(root / entry), "build"],
+        cwd=tmp_path,
+        env=env,
+        capture_output=True,
+        text=True,
+        check=False,
+        timeout=10,
+    )
+
+    assert result.returncode == 0, result.stderr
+    sync = json.loads(Path(env["RECORD"]).read_text(encoding="utf-8").splitlines()[0])
+    assert sync[:2] == ["uv", str(root)]
+    assert sync[2][0] == "sync"
+    requested_extras = set(parser.parse_args(sync[2][1:]).extra)
+    declared_extras = set(manifest["project"].get("optional-dependencies", {}))
+    undefined_extras = requested_extras - declared_extras
+    assert not undefined_extras, f"Undefined sync extras: {sorted(undefined_extras)}"
 
 
 def test_compatibility_wrapper_forwards_arguments_and_status(tmp_path):
