@@ -199,7 +199,8 @@ def estimate(project: str, reg: dict, inp: dict, rates: dict, case: str = "base"
     share = param(inp, "topsides_steel_share", "*", case)
     p["topsides"] = top * (share * ps + param(inp, "topsides_equipment_rate", "*", case)
                            + param(inp, "topsides_fab_rate", "*", case)) / 1e6
-    p["engineering"] = ((hull + jacket) * eh_s + top * eh_t) * er / 1e6
+    p["engineering_structure"] = (hull + jacket) * eh_s * er / 1e6
+    p["engineering_topsides"] = top * eh_t * er / 1e6
     pick = {"base": "median", "low": "min", "high": "max"}[case]
     trees = wells if project in TREES_ARE_WELLS else 0
     p["sps"] = trees * rates["sps_per_tree"][pick]

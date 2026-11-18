@@ -4,7 +4,8 @@ Anchor,wells_services,986.6
 Anchor,hull,195.8
 Anchor,jacket,0.0
 Anchor,topsides,454.1
-Anchor,engineering,110.6
+Anchor,engineering_structure,22.9
+Anchor,engineering_topsides,87.8
 Anchor,sps,119.3
 Anchor,surf,240.0
 Anchor,host_mod,0.0
@@ -16,7 +17,8 @@ Julia (initial phase),wells_services,872.0
 Julia (initial phase),hull,0.0
 Julia (initial phase),jacket,0.0
 Julia (initial phase),topsides,0.0
-Julia (initial phase),engineering,0.0
+Julia (initial phase),engineering_structure,0.0
+Julia (initial phase),engineering_topsides,0.0
 Julia (initial phase),sps,102.3
 Julia (initial phase),surf,240.0
 Julia (initial phase),host_mod,150.0
@@ -28,7 +30,8 @@ Martin Linge (ex-Hild),wells_services,1139.2
 Martin Linge (ex-Hild),hull,0.0
 Martin Linge (ex-Hild),jacket,76.3
 Martin Linge (ex-Hild),topsides,757.1
-Martin Linge (ex-Hild),engineering,160.8
+Martin Linge (ex-Hild),engineering_structure,14.6
+Martin Linge (ex-Hild),engineering_topsides,146.2
 Martin Linge (ex-Hild),sps,0.0
 Martin Linge (ex-Hild),surf,600.0
 Martin Linge (ex-Hild),host_mod,0.0

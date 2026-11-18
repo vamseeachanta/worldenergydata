@@ -197,7 +197,8 @@
      "hull": 195.8,
      "jacket": 0.0,
      "topsides": 454.05,
-     "engineering": 110.63,
+     "engineering_structure": 22.88,
+     "engineering_topsides": 87.75,
      "sps": 119.31818181818183,
      "surf": 240.0,
      "host_mod": 0.0,
@@ -322,8 +323,12 @@
      "factor": 0.039125347386226264
     },
     {
-     "package": "engineering",
-     "factor": 0.03627642590073929
+     "package": "engineering_topsides",
+     "factor": 0.028773898334898972
+    },
+    {
+     "package": "engineering_structure",
+     "factor": 0.0075025275658403235
     }
    ],
    "register": {
@@ -349,7 +354,8 @@
      "hull": 0.0,
      "jacket": 0.0,
      "topsides": 0.0,
-     "engineering": 0.0,
+     "engineering_structure": 0.0,
+     "engineering_topsides": 0.0,
      "sps": 102.27272727272728,
      "surf": 240.0,
      "host_mod": 150.0,
@@ -455,7 +461,8 @@
      "hull": 0.0,
      "jacket": 76.31666832015692,
      "topsides": 757.1339294572268,
-     "engineering": 160.81,
+     "engineering_structure": 14.56,
+     "engineering_topsides": 146.25,
      "sps": 0.0,
      "surf": 600.0,
      "host_mod": 0.0,
@@ -550,12 +557,16 @@
      "factor": 0.04462371788829492
     },
     {
-     "package": "engineering",
-     "factor": 0.04171716884153092
+     "package": "engineering_topsides",
+     "factor": 0.03794002825119021
     },
     {
      "package": "jacket",
      "factor": 0.01979799351865618
+    },
+    {
+     "package": "engineering_structure",
+     "factor": 0.0037771405903407147
     }
    ],
    "register": {
