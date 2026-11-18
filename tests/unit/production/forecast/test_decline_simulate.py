@@ -233,6 +233,29 @@ def test_hyperbolic_eur_avoids_intermediate_overflow(qi, decline, b):
     assert result.eur_bbl == pytest.approx(expected, rel=1e-12)
 
 
+@pytest.mark.parametrize(
+    "qi,decline,b,model",
+    [
+        (10.0, 1.0, 311.0, "hyperbolic"),
+        (1e6, 1e-3, 60.0, "hyperbolic"),
+        (1e6, 1e-303, 0.0, "exponential"),
+        (1e6, 1e-303, 1.0, "harmonic"),
+    ],
+)
+@pytest.mark.filterwarnings("error::RuntimeWarning")
+def test_simulate_rejects_eur_beyond_float_range(qi, decline, b, model):
+    # Synthetic cases with true recovery above the floating-point range.
+    with pytest.raises(ValueError, match="^EUR exceeds the floating-point range$"):
+        _simulate(
+            qi=qi,
+            Di=decline,
+            b=b,
+            model=model,
+            economic_limit=1.0,
+            months=1,
+        )
+
+
 def test_hyperbolic_approaches_exponential_as_exponent_tends_to_zero():
     exponential = _simulate(months=60)
     hyperbolic = _simulate(model="hyperbolic", b=1e-9, months=60)

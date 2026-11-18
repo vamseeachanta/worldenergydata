@@ -183,7 +183,9 @@ class ArpsDeclineCurve:
         Returns a :class:`ForecastResult` with ``r_squared=NaN`` and no
         confidence intervals because no fit occurred. Invalid inputs raise
         ``ValueError``. Fitting bounds on the hyperbolic exponent do not
-        restrict this forward evaluation.
+        restrict this forward evaluation. Hyperbolic exponents above 1 are
+        evaluated without physical qualification. If EUR is nonfinite,
+        ``ValueError("EUR exceeds the floating-point range")`` is raised.
         """
         if not isinstance(model, str) or model not in _VALID_MODELS:
             raise ValueError(
@@ -223,13 +225,18 @@ class ArpsDeclineCurve:
         if isinstance(months, bool) or not isinstance(months, Integral) or months <= 0:
             raise ValueError("months must be a positive integer")
 
+        with np.errstate(over="ignore", invalid="ignore"):
+            eur = self._compute_eur(qi, Di, b, economic_limit, model)
+        if not np.isfinite(eur):
+            raise ValueError("EUR exceeds the floating-point range")
+
         return ForecastResult(
             model=model,
             qi=qi,
             Di=Di,
             b=b,
             r_squared=float("nan"),
-            eur_bbl=self._compute_eur(qi, Di, b, economic_limit, model),
+            eur_bbl=eur,
             forecast_df=self._build_forecast_df(qi, Di, b, model, int(months)),
         )
 
