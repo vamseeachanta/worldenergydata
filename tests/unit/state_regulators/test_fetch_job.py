@@ -68,7 +68,7 @@ def test_symlink_cannot_escape_storage(tmp_path: Path) -> None:
 
 
 def test_bulk_route_preferred_and_override_audited(tmp_path: Path, caplog: Any) -> None:
-    config = settings(tmp_path, "https://records.example.org")
+    config = settings(tmp_path, "https://crawl.example.org")
     config["bulk_urls"] = ["https://records.example.org/all.zip"]
     job = FetchJob(config, execution_role="regulator-fetch")
     assert job.urls == config["bulk_urls"]
@@ -76,7 +76,8 @@ def test_bulk_route_preferred_and_override_audited(tmp_path: Path, caplog: Any) 
     with caplog.at_level("WARNING"):
         job = FetchJob(config, execution_role="regulator-fetch")
     assert job.urls == config["crawl_urls"]
-    assert "all.zip" in caplog.text
+    assert "https://records.example.org:443" in caplog.text
+    assert "all.zip" not in caplog.text
 
 
 def test_permission_for_all_urls_checked_before_first_request(

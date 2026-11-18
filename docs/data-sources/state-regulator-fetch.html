@@ -48,8 +48,9 @@ results = fetcher.run(planned_urls)</pre>
 permission. Missing or denied permission refuses all uncached network collection, including preflight. Validated records
 are retained as <code>terms-checks.json</code> before requests and in each fetched object's provenance. The library
 records caller-supplied decisions; it does not infer permission from a successful response or perform terms review.</p>
-<p><code>choose_route</code> prefers caller-verified official bulk candidates and logs any crawl selection, including
-available bulk alternatives. It does not discover endpoints or crawl. Redirects are refused; any redirect destination
+<p><code>choose_route</code> prefers caller-verified official bulk candidates. When it selects a crawl route, the warning
+lists only the origins (scheme, host and port) of that route and the available bulk alternatives.
+It does not discover endpoints or crawl. Redirects are refused; any redirect destination
 requires its own explicit source permission and URL selection. Every attempt is identified, timeout-bound, paced and
 charged against a per-host budget. An uncached first request serves as the reachability preflight and retains its payload,
 so there is no extra probe. A reachability failure identifies the build host by role in its runtime exception.</p>
@@ -105,12 +106,13 @@ no reachability probe. Current PDMS reachability remains <code>NOT_EVALUATED</co
 above must not be treated as a current measurement.</p>
 <p>The resolved cache directory must be inside the configured absolute storage root. Symlink escapes and unresolved
 variables are refused. This checks placement, not disk identity, free capacity or concurrent filesystem replacement;
-the deployment must provide a stable data directory. Run only one writer per cache root.</p>
+the deployment must provide a stable data directory. During cache access, a symlink at the cache root or in an entry's
+path, or a path that escapes the cache root, causes the CLI to exit with code 6. Run only one writer per cache root.</p>
 <p>List reviewed official archive, ArcGIS REST or shapefile URLs under <code>bulk_urls</code> and record crawl page URLs
 under <code>crawl_urls</code>. Every distinct bulk URL is collected in configured order when available. Duplicate URLs
 are requested only once. <code>use_crawl=true</code> requires
-crawl URLs and logs the available bulk alternatives. Endpoint discovery remains a human source-review step; this command
-does not scrape to discover routes. Before executing any uncached URL, the complete plan must have matching recorded
+crawl URLs and logs the origins of the available bulk alternatives. A maintainer reviews and supplies the endpoints.
+Before executing any uncached URL, the complete plan must have matching recorded
 <code>TermsCheck</code> entries. A terms record contains <code>origin</code>, <code>terms_url</code>,
 <code>checked_at</code> (UTC) and an explicit Boolean <code>bulk_allowed</code>. Successful HTTP access never supplies permission.</p>
 <h2>Command failures and scope</h2>
