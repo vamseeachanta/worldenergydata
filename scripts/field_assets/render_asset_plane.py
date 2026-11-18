@@ -21,8 +21,8 @@ from urllib.parse import unquote, urlsplit
 def _text(value):
     if not isinstance(value, str) or not value.strip():
         raise ValueError("Expected nonblank text")
-    if any(category(c) in {"Cc", "Cf"} for c in value):
-        raise ValueError("Control character in text")
+    if any(category(c) in {"Cc", "Cf", "Cs"} for c in value):
+        raise ValueError("Control or surrogate character in text")
     return escape(value, quote=True)
 
 
@@ -173,7 +173,7 @@ def render_asset_plane(record: dict) -> str:
     # Each node has one parent; a cycle therefore cannot be reached from a root.
     if len(visited) != len(index):
         ident = min(index.keys() - visited)
-        raise ValueError(f"Cycle in hierarchy: {ident}")
+        raise ValueError(f"Node unreachable because of a cycle: {ident}")
     inventory = (
         "<ol>" + "".join(parts) + "</ol>" if nodes else "<p>Inventory unavailable</p>"
     )

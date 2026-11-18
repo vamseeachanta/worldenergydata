@@ -220,9 +220,12 @@ def test_disconnected_component_cycle_is_rejected(render, record):
         [
             dict(id="cycle-a", parent_id="cycle-b", kind="component", name="Synthetic"),
             dict(id="cycle-b", parent_id="cycle-a", kind="component", name="Synthetic"),
+            dict(id="a-leaf", parent_id="cycle-a", kind="component", name="Synthetic"),
         ]
     )
-    with pytest.raises(ValueError, match="Cycle in hierarchy: cycle-a$"):
+    with pytest.raises(
+        ValueError, match="Node unreachable because of a cycle: a-leaf$"
+    ):
         render(record)
 
 
@@ -302,6 +305,9 @@ def test_escaped_path_preserved_in_each_evidence_channel(render, record, target,
         "docs/a%E2%80%AEb.pdf",
         "docs/search?title=a%E2%80%AEb",
         "docs/reference.html#a%E2%80%AEb",
+        "docs/a\ud800b.pdf",
+        "docs/search?title=a\ud800b",
+        "docs/reference.html#a\ud800b",
     ],
 )
 def test_unsafe_links_rejected_in_each_evidence_channel(render, record, target, href):
@@ -333,7 +339,19 @@ def test_https_links_and_all_supplied_text_are_escaped(render, record):
 
 @pytest.mark.parametrize(
     "control",
-    ["\x00", "\x7f", "\x80", "\x9b", "\x9f", "\u200b", "\u202e", "\u2066", "\ufeff"],
+    [
+        "\x00",
+        "\x7f",
+        "\x80",
+        "\x9b",
+        "\x9f",
+        "\u200b",
+        "\u202e",
+        "\u2066",
+        "\ufeff",
+        "\ud800",
+        "\udfff",
+    ],
 )
 @pytest.mark.parametrize(
     "target", ["field", "node", "capability", "observation-label", "capability-label"]
@@ -348,7 +366,7 @@ def test_control_characters_rejected_in_supplied_text(render, record, target, co
         "capability-label": (node["capability"]["sources"][0], "label"),
     }[target]
     owner[key] = f"Synthetic{control}text"
-    with pytest.raises(ValueError, match="Control character in text"):
+    with pytest.raises(ValueError, match="Control or surrogate character in text"):
         render(record)
 
 
@@ -359,7 +377,9 @@ def test_ordinary_unicode_text_preserved(render, record):
     node["name"] = node["capability"]["label"] = text
     node["sources"][0]["label"] = text
     node["capability"]["sources"][0]["label"] = text
-    assert "".join(Page(render(record)).text).count(text) == 5
+    html = render(record)
+    assert "".join(Page(html).text).count(text) == 5
+    assert text.encode("utf-8") in html.encode("utf-8")
 
 
 @pytest.mark.parametrize(
