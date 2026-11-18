@@ -131,8 +131,13 @@ def test_enriched_metadata_retains_evidence_without_changing_screen_or_economics
     from worldenergydata.ukcs.field_metadata import read_field_metadata
 
     class SyntheticLoader:
-        def load_field_production(self, field_name):
+        def load_all_production(self):
             normalized = _normalized_nsta_frame().assign(field=production_name)
+            unrelated = normalized.assign(field=production_name + " East")
+            return pd.concat([normalized, unrelated], ignore_index=True)
+
+        def load_field_production(self, field_name):
+            normalized = self.load_all_production()
             return normalized[
                 normalized["field"].str.strip().str.casefold()
                 == field_name.strip().casefold()
@@ -168,7 +173,7 @@ def test_enriched_metadata_retains_evidence_without_changing_screen_or_economics
         source_url="https://example.invalid/0",
         retrieved_at="2026-11-16T00:00:00Z",
     )
-    canonical_name = metadata_name.strip().casefold()
+    canonical_name = production_name.strip().title()
     sparse = {"field_name": canonical_name}
 
     def run(metadata, name=request_name):
@@ -188,11 +193,7 @@ def test_enriched_metadata_retains_evidence_without_changing_screen_or_economics
         first["unified_production"], original["unified_production"]
     )
     pd.testing.assert_frame_equal(first["fdas_production"], original["fdas_production"])
-    assert requested_fields == [
-        [canonical_name],
-        [canonical_name],
-        [canonical_name],
-    ]
+    assert requested_fields == [None, None, [canonical_name]]
     concept = first["field_concept"]
     assert concept.operator == "Synthetic Operator"
     assert concept.region == "uk"
@@ -212,6 +213,41 @@ def test_enriched_metadata_retains_evidence_without_changing_screen_or_economics
     )
     assert first["pre_tax_metrics"] == original["pre_tax_metrics"]
     assert original["metadata_evidence"] is None
+
+
+def test_enriched_chain_selects_equivalent_rows_after_date_filtering():
+    class MixedLoader:
+        def load_all_production(self):
+            matching = _normalized_nsta_frame().assign(
+                field=["  SYNTHETIC GRO\u00df \t", "SYNTHETIC GROSS"]
+            )
+            unrelated = matching.assign(field="SYNTHETIC GROSS EAST")
+            missing = matching.assign(field=None)
+            outside_window = matching.assign(year=1976)
+            return pd.concat(
+                [matching, unrelated, missing, outside_window], ignore_index=True
+            )
+
+        def load_field_production(self, field_name):
+            raise AssertionError("enriched lookup must use unfiltered production")
+
+    result = run_ukcs_reference_chain(
+        adapter=UkcsAdapter(loader=MixedLoader()),
+        field_meta={"field_name": "Synthetic Gross", "metadata_evidence": {}},
+        field_name="  Synthetic Gro\u00df \t",
+        start="1975-09",
+        end="1975-10",
+    )
+
+    assert result["unified_production"]["field_name"].tolist() == [
+        "Synthetic Gro\u00df",
+        "Synthetic Gross",
+    ]
+    assert result["unified_production"]["oil_bbl"].tolist() == [7330.0, 8063.0]
+    assert result["fdas_production"]["YEAR_MONTH"].tolist() == ["1975-09", "1975-10"]
+    assert result["pre_tax_metrics"]["gross_revenue_usd"] == pytest.approx(
+        (7330.0 + 8063.0) * 75.0
+    )
 
 
 @pytest.mark.parametrize("metadata_name", ["Synthetic Beta", "", None, 42])

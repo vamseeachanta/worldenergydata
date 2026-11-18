@@ -106,7 +106,7 @@ class AbstractProductionAdapter(ABC):
     ) -> pd.DataFrame:
         """Restrict rows to the requested field names.
 
-        Comparison uses exact trim/casefold equality.
+        Comparison is case-insensitive.
 
         Args:
             df: DataFrame with ``field_name`` column.
@@ -118,6 +118,6 @@ class AbstractProductionAdapter(ABC):
         if not fields or df.empty:
             return df
 
-        normalised = {f.strip().casefold() for f in fields}
-        mask = df["field_name"].str.strip().str.casefold().isin(normalised)
+        normalised = {f.lower() for f in fields}
+        mask = df["field_name"].str.lower().isin(normalised)
         return df[mask]

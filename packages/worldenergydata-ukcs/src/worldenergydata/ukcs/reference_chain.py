@@ -38,7 +38,7 @@ def run_ukcs_reference_chain(
 
     oil_price_usd_bbl is a scenario input, not a fetched benchmark quote.
     """
-    production_field_name = field_name
+    production_key = None
     if field_meta.get("metadata_evidence") is not None:
         metadata_name = field_meta.get("field_name")
         if (
@@ -48,15 +48,19 @@ def run_ukcs_reference_chain(
             or metadata_name.strip().casefold() != field_name.strip().casefold()
         ):
             raise ValueError("metadata field must match the production request")
-        production_field_name = field_name.strip().casefold()
+        production_key = field_name.strip().casefold()
     unified = adapter.fetch(
         ProductionQuery(
             regions=["ukcs"],
-            fields=[production_field_name],
+            # Enriched reads require a loader supporting unfiltered UKCS rows.
+            fields=None if production_key is not None else [field_name],
             start=start,
             end=end,
         )
     )
+    if production_key is not None:
+        matching = unified["field_name"].str.strip().str.casefold() == production_key
+        unified = unified.loc[matching].reset_index(drop=True)
     fdas_production = to_fdas_production(unified)
     field_concept = build_uk_field_concept(field_meta)
     ranked_concepts = recommend(field_concept)
