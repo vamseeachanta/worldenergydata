@@ -167,7 +167,7 @@ def save_panel_html(output: Path, rows: list[dict[str, Any]]) -> dict[str, Any]:
     html += "</table><p>Table 1. Source values for future panel wiring; status and interests "
     html += "apply to the snapshot recorded in source_manifest.json.</p></html>\n"
     path = output / "panel_values.html"
-    path.write_text(html, encoding="utf-8")
+    path.write_bytes(html.encode("utf-8"))
     content = path.read_bytes()
     if content.decode("utf-8") != html:
         raise OSError("Panel HTML readback mismatch")

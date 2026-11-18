@@ -120,6 +120,40 @@ def test_cli_records_exact_snapshot_and_literal_rows(script, prepared, ending):
         assert record["sha256"] == hashlib.sha256(content).hexdigest()
 
 
+def test_cli_writes_manifest_with_windows_text_newlines(script, prepared, monkeypatch):
+    _, output, _ = prepared
+    open_path = Path.open
+
+    def windows_text_open(path, mode="r", *args, **kwargs):
+        if "w" in mode and "b" not in mode and kwargs.get("newline") is None:
+            kwargs["newline"] = "\r\n"
+        return open_path(path, mode, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "open", windows_text_open)
+    script["main"]()
+    manifest = json.loads((output / "extract_manifest.json").read_text())
+    panel = (output / "panel_values.html").read_bytes()
+    assert b"\n" in panel
+    assert b"\r" not in panel
+    record = next(
+        item for item in manifest["artifacts"] if item["file"] == "panel_values.html"
+    )
+    assert record["size_bytes"] == len(panel)
+    assert record["sha256"] == hashlib.sha256(panel).hexdigest()
+
+
+def test_panel_readback_rejects_changed_bytes(script, tmp_path, monkeypatch):
+    read_bytes = Path.read_bytes
+
+    def changed_panel_bytes(path):
+        content = read_bytes(path)
+        return content + b"changed" if path.name == "panel_values.html" else content
+
+    monkeypatch.setattr(Path, "read_bytes", changed_panel_bytes)
+    with pytest.raises(OSError, match="Panel HTML readback mismatch"):
+        script["save_panel_html"](tmp_path, [])
+
+
 def test_line_endings_change_evidence_without_changing_registry(script, tmp_path):
     path = tmp_path / "registry.yml"
     path.write_bytes(REGISTRY.encode("utf-8"))
