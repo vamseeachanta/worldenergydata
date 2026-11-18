@@ -98,6 +98,7 @@ The runtime test selections and arguments remain the same.
 When target selection succeeds and the job is not cancelled, parallel runtime
 tests run even if collection or the collection contract fails. The collection
 failure still fails the job.
+Coverage is not uploaded to Codecov when collection fails.
 
 `tests/workflows/test_collection_evidence.py` checks the matrix, target sharing,
 step order and artifact location. Synthetic suites exercise successful, broken
