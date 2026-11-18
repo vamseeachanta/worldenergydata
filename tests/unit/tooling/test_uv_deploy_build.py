@@ -35,7 +35,7 @@ name = Path(sys.argv[0]).name
 args = sys.argv[1:]
 with open(os.environ['RECORD'], 'a', encoding='utf-8', newline='\\n') as stream:
     stream.write(json.dumps([name, os.getcwd(), args]) + '\\n')
-if name == 'uv' and args in (['sync'], ['build', '--all-packages']):
+if name == 'uv' and args in (['sync', '--locked', '--inexact'], ['build', '--all-packages']):
     sys.exit(int(os.environ['FAIL_CODE'])
              if args[0] == os.environ['FAIL_ACTION'] else 0)
 if name == 'ls' and args == ['-la', 'dist/']:
@@ -58,7 +58,13 @@ def _fixture(tmp_path):
         target = root / entry
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(_ROOT / entry, target)
-    for name in ("pyproject.toml", "dist/keep.whl", "build/keep", "keep.egg-info/keep"):
+    for name in (
+        "pyproject.toml",
+        "uv.lock",
+        "dist/keep.whl",
+        "build/keep",
+        "keep.egg-info/keep",
+    ):
         target = root / name
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text("fixture sentinel\n", encoding="utf-8", newline="\n")
@@ -116,7 +122,7 @@ def test_build_dispatch(tmp_path, entry, failure):
         json.loads(line)
         for line in Path(env["RECORD"]).read_text(encoding="utf-8").splitlines()
     ]
-    expected = [["uv", str(root), ["sync"]]]
+    expected = [["uv", str(root), ["sync", "--locked", "--inexact"]]]
     if failure != "sync":
         expected.append(["uv", str(root), ["build", "--all-packages"]])
     if not failure:
@@ -128,11 +134,13 @@ def test_build_dispatch(tmp_path, entry, failure):
 
 
 @pytest.mark.parametrize("entry", _ENTRIES)
-def test_sync_requests_only_extras_defined_in_root_manifest(tmp_path, entry):
+def test_sync_preserves_lock_and_environment_with_defined_extras(tmp_path, entry):
     root, env = _fixture(tmp_path)
     manifest = tomllib.loads((_ROOT / "pyproject.toml").read_text(encoding="utf-8"))
     parser = argparse.ArgumentParser()
     parser.add_argument("--extra", action="append", default=[])
+    parser.add_argument("--locked", action="store_true")
+    parser.add_argument("--inexact", action="store_true")
 
     result = subprocess.run(
         ["bash", str(root / entry), "build"],
@@ -148,7 +156,10 @@ def test_sync_requests_only_extras_defined_in_root_manifest(tmp_path, entry):
     sync = json.loads(Path(env["RECORD"]).read_text(encoding="utf-8").splitlines()[0])
     assert sync[:2] == ["uv", str(root)]
     assert sync[2][0] == "sync"
-    requested_extras = set(parser.parse_args(sync[2][1:]).extra)
+    options = parser.parse_args(sync[2][1:])
+    assert options.locked, "Synchronization must fail rather than rewrite a stale lock"
+    assert options.inexact, "Sync must preserve additional installed packages"
+    requested_extras = set(options.extra)
     declared_extras = set(manifest["project"].get("optional-dependencies", {}))
     undefined_extras = requested_extras - declared_extras
     assert not undefined_extras, f"Undefined sync extras: {sorted(undefined_extras)}"

@@ -255,11 +255,12 @@ uv build --all-packages
 Both `scripts/uv_deploy.sh build` and the compatibility entry point
 `scripts/tools/uv_deploy.sh build` resolve the repository root from their script
 location. The compatibility entry point forwards arguments and exit status to
-the canonical helper. The build action runs `uv sync` before
-`uv build --all-packages`. Synchronization uses the root manifest's default
-dependencies; no optional build extra is defined or requested. A failed
-synchronization or build exits without the build-success marker. Invoking either
-helper performs real work.
+the canonical helper. The build action runs `uv sync --locked --inexact` before
+`uv build --all-packages`. Synchronization fails rather than re-locking when the
+lockfile is stale, and preserves additional installed packages. It uses the root
+manifest's default dependencies; no optional build extra is defined or requested.
+A failed synchronization stops the action before building; a failed build exits
+without the build-success marker. Invoking either helper performs real work.
 
 The dispatch tests in `tests/unit/tooling/test_uv_deploy_build.py` copy the helpers
 into disposable layouts and substitute recording tools. They check the working

@@ -35,8 +35,8 @@ build_package() {
     echo "📦 Building package..."
     cd "$PROJECT_DIR"
     
-    # Ensure dependencies are up to date
-    uv sync
+    # Reject stale locks and preserve additional installed packages
+    uv sync --locked --inexact
     
     # Build the package
     uv build --all-packages
