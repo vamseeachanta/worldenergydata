@@ -1,0 +1,112 @@
+[
+  {
+    "path": "inputs/page-template.html",
+    "sha256": "38f7b01e704c3b4fa938630f43944f2579e980106fbb2648c5cc5d95d5732a57",
+    "basis": "r12 page template: the r11 template with the axis-colour and line-style cues of Figure 1b, legend titles, map legend counts, a label on the panel b shading, labelled key points, the part year marked and the permits under each pie; sign-off awaits the review of revision 12"
+  },
+  {
+    "path": "inputs/source-pins.json",
+    "sha256": "d3175afd79873f6ab6a6cc34503f6e3002772a159f11fcc42418af7f9f9ae86b",
+    "basis": "Issued hashes of the two files r10 downloads: Plotly 2.35.2 and the Natural Earth land outline, as pinned for r9"
+  },
+  {
+    "path": "../issue2_public_data_r9/data/days-summary.csv",
+    "sha256": "400c54a31046d3d59681d022322f6520457a40b8b0fc069e0453fbb5150615ba",
+    "basis": "r9 data file, reused unchanged: counts and day statistics stay those of r9"
+  },
+  {
+    "path": "../issue2_public_data_r9/data/map-wells.csv",
+    "sha256": "c764a762e9f7517f4fbfcfa1779f0b8dae8a7a56728deef58a526143ad42bd83",
+    "basis": "r9 data file, reused unchanged: counts and day statistics stay those of r9"
+  },
+  {
+    "path": "../issue2_public_data_r9/data/map-summary.csv",
+    "sha256": "d026d314208bafe031ce52a932c1e7cdf593b535e116ab5b6ba07f8135a7eb0a",
+    "basis": "r9 data file, reused unchanged: counts and day statistics stay those of r9"
+  },
+  {
+    "path": "../issue2_public_data_r9/data/map-selection.csv",
+    "sha256": "143c2542299bb415abaef0574f90ae07c8efe9739bc9d69d0b7c5839e7d7e00e",
+    "basis": "r9 data file, reused unchanged: counts and day statistics stay those of r9"
+  },
+  {
+    "path": "../issue2_public_data_r9/data/sources.csv",
+    "sha256": "f4a863d9de7aca57707b3c48f77ea216c6e6e75b74d8bca4218df095084d7a20",
+    "basis": "r9 data file, reused unchanged: counts and day statistics stay those of r9"
+  },
+  {
+    "path": "../issue2_public_data_r9/data/exclusions.csv",
+    "sha256": "04eea8590578c71e9257ee9aa26f92f95b61925470e3068f6b5272e5569d8a7b",
+    "basis": "r9 data file, reused unchanged: counts and day statistics stay those of r9"
+  },
+  {
+    "path": "../issue2_public_data_r9/data/repeat-key-sensitivity.csv",
+    "sha256": "6bd3e7913790a851172bac7257971c2ac8abaf0a354432656ece555afc51ce77",
+    "basis": "r9 data file, reused unchanged: counts and day statistics stay those of r9"
+  },
+  {
+    "path": "../issue2_public_data_r9/data/code_mapping.csv",
+    "sha256": "6aa33f6a81d8a52f78d8454212c42d48833beb0db966f650c78c3c598410e9b9",
+    "basis": "r9 data file, reused unchanged: counts and day statistics stay those of r9"
+  },
+  {
+    "path": "../issue2_public_data_r9/data/subtype-activity.csv",
+    "sha256": "2c48d143b8b609a22a7bcdbaefab9b42c128ae1b70b851d211bc9ecd9763d3c3",
+    "basis": "r9 data file, reused unchanged: counts and day statistics stay those of r9"
+  },
+  {
+    "path": "../issue2_public_data_r9/data/source-members.csv",
+    "sha256": "ca3b695d0139355ae2360af4287c61f50ede3cce086bd093f736513ed1a5230a",
+    "basis": "r9 data file, reused unchanged: counts and day statistics stay those of r9"
+  },
+  {
+    "path": "../issue2_public_data_r9/data/source_columns.csv",
+    "sha256": "4cee1fc377841b073d710abe1264bf11d0e30ed9e3531efdd43000fecf35e3ad",
+    "basis": "r9 data file, reused unchanged: counts and day statistics stay those of r9"
+  },
+  {
+    "path": "../issue2_public_data_r9/data/fig-p1-new-well-permits-by-rig-type.csv",
+    "sha256": "a53aee488587f01551aed29223fafc35d1a3dd0853b9d139c1ced3109b7db1b8",
+    "basis": "r9 data file, reused unchanged: counts and day statistics stay those of r9"
+  },
+  {
+    "path": "../issue2_public_data_r9/data/new-well-permits-by-water-depth.csv",
+    "sha256": "3034eb409e405d18d843f90458a69e4df5c5d1fc80fc1c33a027d9f6022c1d2c",
+    "basis": "r9 data file, reused unchanged: counts and day statistics stay those of r9"
+  },
+  {
+    "path": "../issue2_public_data_r9/data/table1.csv",
+    "sha256": "676b0198148b5283bf0f5852bb6b50ab961b86427cd281b76f906f791c14e924",
+    "basis": "r9 data file, reused unchanged: counts and day statistics stay those of r9"
+  },
+  {
+    "path": "inputs/counting-rules-template.md",
+    "sha256": "e3ee3503a258fc21e4e7519c85757b1aa0a6c22ab83012a076faa31157c55bd7",
+    "basis": "r12 counting-rules.md template: the r11 template with the r12 file names"
+  },
+  {
+    "path": "inputs/prompts-template.md",
+    "sha256": "08a84bc1733aca74d196223940cc822fb3232805bbe3f8585340da6f4eb2f7e1",
+    "basis": "r12 prompts/README.md template: the r11 template with the r12 file names"
+  },
+  {
+    "path": "data/map-wells-by-year.csv",
+    "sha256": "a6ef0eee92c5b2860951bdcd59d4e1b1bd7ea93515e11323a0ee1976d6b50349",
+    "basis": "Written by derive_r12.py from BoreholeRawData.zip (file of 12 November 2026, r9 pin): every original Gulf borehole spudded 2005 to 2025, r9 rule; 2005 to 2009 and 2021 to 2025 equal r9 well for well"
+  },
+  {
+    "path": "data/new-wells-by-year.csv",
+    "sha256": "44a6e832da8ca2db759142e5db32a1e1f300203feb4d5901a4e4f9bce9303d09",
+    "basis": "Written by derive_r12.py: the wells of map-wells-by-year.csv counted by spud year and water-depth band"
+  },
+  {
+    "path": "data/wti-annual.csv",
+    "sha256": "eb9e5e6d9ca81b983b4ac2e5b739f14aa06016278ed0f9b17b08ed1b8821dfa7",
+    "basis": "Written by derive_r12.py: calendar-year means of the repository WTI snapshot data/wti-monthly.csv (US EIA, Cushing WTI spot price)"
+  },
+  {
+    "path": "../../../data/wti-monthly.csv",
+    "sha256": "65a086d437474d707f7215d4c60b39c3b447ff488ec12be900cb1a0213d573ec",
+    "basis": "Repository WTI snapshot (US EIA Cushing WTI spot price, monthly), added in pull request 1185; provenance in data/wti-monthly.PROVENANCE.md"
+  }
+]
