@@ -11,7 +11,7 @@ For a project the estimate is the sum of:
 - owner's costs: a share of the subtotal.
 
 A probabilistic incident allowance is added beside it: the expected number of loss-of-well-control events (BSEE
-events per wellbore spudded, times the project's wells) times the rig spread days lost per event times the day cost.
+events per well spudded, times the project's wells) times the rig spread days lost per event times the day cost.
 It is an allowance (an expected value), not a forecast.
 
 Every input is read from the repository's data, derived from it with the rule stated here, or taken from
@@ -107,7 +107,7 @@ def award_rates() -> dict:
         out.setdefault(u["KIND"], {"rows": []})["rows"].append(
             {"project": u["PROJECT"], "year": int(u["AWARD_YEAR"]), "contractor": a["CONTRACTOR"], "count": float(u["COUNT"]),
              "count_text": u["COUNT_TEXT"], "value_mm": val, "basis": a["VALUE_BASIS"], "rate_mm": rate,
-             "source_url": a["SOURCE_URL"]})
+             "floor": bool(re.search(r"\(>\s*\$|more than", a["SCOPE_DESC"])), "source_url": a["SOURCE_URL"]})
     for k, d in out.items():
         rs = [r["rate_mm"] for r in d["rows"]]
         d.update({"median": median(rs), "min": min(rs), "max": max(rs), "n": len(rs)})
@@ -181,7 +181,11 @@ def lwc_frequency() -> dict:
     events = sum(counts[k] for k in window)
     w = _read(DATA / "bsee_window_counts.csv")[0]
     n = int(w["WELLBORES_SPUDDED"])
-    return {"events": events, "periods": len(window), "wellbores": n, "per_wellbore": events / n,
+    nw = int(w["WELLS_API10"])
+    # Events are counted for the whole outer continental shelf; the wells are the Gulf of America region's, which holds
+    # nearly all of the shelf's drilling. The rate is per well (10-digit API), so it multiplies a project's well count.
+    return {"events": events, "periods": len(window), "wellbores": n, "wells": nw, "per_wellbore": events / n,
+            "per_well": events / nw,
             "window": f"{w['WINDOW_START']} to {w['WINDOW_END']}", "by_period": {k: counts[k] for k in window}}
 
 
@@ -224,7 +228,7 @@ def estimate(project: str, reg: dict, inp: dict, rates: dict, case: str = "base"
     p["owner"] = sub * param(inp, "owner_share", "*", case)
     total = sum(p.values())
     lwc = lwc_frequency()
-    lam = wells * lwc["per_wellbore"]
+    lam = wells * lwc["per_well"]
     consequence = param(inp, "lwc_days_lost", "*", case) * day_cost
     return {"project": project, "case": case, "packages": p, "total": total,
             "inputs": {"wells": wells, "days_per_well": dpw, "rig_usd_per_day": rig["usd_per_day"], "rig_basis": rig["basis"],

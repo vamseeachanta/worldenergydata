@@ -184,6 +184,7 @@ def coverage(rows: list[dict], bsee: dict, gmap: dict) -> dict:
                                             r["sanction_usd_mm"] is not None])),
         "gom_deepwater_fields": len(bsee), "gom_fields_mapped": len(mapped & set(bsee)),
         "gom_fields_no_cost_record": len(set(bsee) - mapped),
+        "gom_fields_no_cost_produced": sum(1 for k in set(bsee) - mapped if bsee[k]["FIRST_PROD"].strip()),
     }
 
 

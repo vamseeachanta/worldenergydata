@@ -25,7 +25,8 @@
   "with_all_fields": 46,
   "gom_deepwater_fields": 283,
   "gom_fields_mapped": 21,
-  "gom_fields_no_cost_record": 262
+  "gom_fields_no_cost_record": 262,
+  "gom_fields_no_cost_produced": 188
  },
  "register_updates": [
   "Balder X / Balder Future",
@@ -44,6 +45,7 @@
      "value_mm": 230.0,
      "basis": "point",
      "rate_mm": 19.166666666666668,
+     "floor": false,
      "source_url": "https://www.offshore-technology.com/projects/jackstmalodeepwaterp/"
     },
     {
@@ -55,6 +57,7 @@
      "value_mm": 750.0,
      "basis": "band",
      "rate_mm": 18.29268292682927,
+     "floor": false,
      "source_url": "https://www.oedigital.com/news/482115-technipfmc-nets-large-subsea-order-from-exxon-for-payara-development-in-guyana"
     },
     {
@@ -66,6 +69,7 @@
      "value_mm": 750.0,
      "basis": "band",
      "rate_mm": 14.705882352941176,
+     "floor": false,
      "source_url": "https://www.upstreamonline.com/field-development/exxonmobil-hands-out-big-subsea-hardware-contract-for-guyanas-yellowtail-project/2-1-1098871"
     },
     {
@@ -77,6 +81,7 @@
      "value_mm": 750.0,
      "basis": "band",
      "rate_mm": 17.045454545454547,
+     "floor": false,
      "source_url": "https://oceannews.com/news/subsea-and-survey/technipfmc-awarded-major-subsea-contract-for-exxonmobil-s-guyana-uaru-project/"
     },
     {
@@ -88,6 +93,7 @@
      "value_mm": 750.0,
      "basis": "band",
      "rate_mm": 15.625,
+     "floor": false,
      "source_url": "https://www.businesswire.com/news/home/20240415018073/en/TechnipFMC-Awarded-Large-Subsea-Contract-for-ExxonMobil-Guyanas-Whiptail-Project"
     }
    ],
@@ -107,6 +113,7 @@
      "value_mm": 3500.0,
      "basis": "point",
      "rate_mm": 11.666666666666666,
+     "floor": false,
      "source_url": "https://www.offshore-mag.com/subsea/article/16783185/technip-heerema-land-giant-kaombo-surf-contract"
     },
     {
@@ -118,6 +125,7 @@
      "value_mm": 400.0,
      "basis": "band",
      "rate_mm": 11.11111111111111,
+     "floor": false,
      "source_url": "https://www.globenewswire.com/news-release/2020/03/03/1993972/0/en/Subsea-7-awarded-contract-offshore-Australia.html"
     },
     {
@@ -129,6 +137,7 @@
      "value_mm": 225.0,
      "basis": "range",
      "rate_mm": 6.25,
+     "floor": false,
      "source_url": "https://www.nsenergybusiness.com/news/contracts/subsea-7-awarded-contract-for-1-2bn-zinia-2-field-development-offshore-angola/"
     },
     {
@@ -140,6 +149,7 @@
      "value_mm": 150.0,
      "basis": "point",
      "rate_mm": 2.8846153846153846,
+     "floor": true,
      "source_url": "https://subseaworldnews.com/2015/09/01/subsea-7-wins-culzean-surf-prize/"
     },
     {
@@ -151,6 +161,7 @@
      "value_mm": 1900.0,
      "basis": "point",
      "rate_mm": 10.0,
+     "floor": false,
      "source_url": "https://www.saipem.com/en/media/press-releases/2024-11-14/saipem-new-offshore-contract-totalenergies-suriname-19-billion-usd"
     }
    ],
@@ -164,7 +175,9 @@
   "events": 59,
   "periods": 18,
   "wellbores": 4748,
+  "wells": 3134,
   "per_wellbore": 0.012426284751474306,
+  "per_well": 0.018825781748564134,
   "window": "2006-10-01 to 2023-12-31",
   "by_period": {
    "2023 CY": 5,
@@ -237,10 +250,10 @@
      }
     },
     "incident": {
-     "expected_events": 0.08698399326032014,
-     "p_at_least_one": 0.0833082312377732,
+     "expected_events": 0.13178047223994893,
+     "p_at_least_one": 0.12346660262688636,
      "consequence_mm": 20.010958904109593,
-     "allowance_mm": 1.7406331144476122
+     "allowance_mm": 2.637053614357773
     }
    },
    "low": 2691.802274894936,
@@ -394,10 +407,10 @@
      }
     },
     "incident": {
-     "expected_events": 0.07455770850884583,
-     "p_at_least_one": 0.07184608986468222,
+     "expected_events": 0.1129546904913848,
+     "p_at_least_one": 0.10680887074964396,
      "consequence_mm": 21.857000000000003,
-     "allowance_mm": 1.6296078348778436
+     "allowance_mm": 2.468850670070198
     }
    },
    "low": 1653.4665074280545,
@@ -489,10 +502,10 @@
      "well_days": null
     },
     "incident": {
-     "expected_events": 0.2609519797809604,
-     "p_at_least_one": 0.22968209043831334,
+     "expected_events": 0.3953414167198468,
+     "p_at_least_one": 0.32654992712094333,
      "consequence_mm": 16.575342465753423,
-     "allowance_mm": 4.3253684319857815
+     "allowance_mm": 6.5529193730275965
     }
    },
    "low": 1711.5716030489982,
@@ -612,7 +625,7 @@
    "URL": "https://www.sec.gov/Archives/edgar/data/1451505/000145150523000029/rig-20221231x10k.htm",
    "READ_UTC": "2026-11-18T03:35Z",
    "QUOTED_TEXT": "Deepwater Titan ... Drillship ... U.S. Gulf ... To be equipped with two 20,000 psi blowout preventers.",
-   "WHAT_IT_GIVES": "The rig of the Anchor drilling contract is a drillship with two 20,000 psi blowout preventers; no contract value"
+   "WHAT_IT_GIVES": "Deepwater Titan, the rig named in the Anchor drilling award (Table A1), is a drillship with two 20,000 psi blowout preventers; the report does not name Anchor and gives no contract value"
   },
   {
    "PROJECT": "Julia (initial phase)",
@@ -958,7 +971,7 @@
    "examples/costing/cost_basis/data/inputs.csv": "449ac18e0f7b9986deb0f884b24156c2fb6398ade9dd70a375cb6867cfc40ffa",
    "examples/costing/cost_basis/data/award_unit_rates.csv": "0ada3a7bc0a76ae94ea82a7b7c5b6df5f4cfad6627e0279e700c6f2d72c0f8f1",
    "examples/costing/cost_basis/data/bsee_window_counts.csv": "cde5f215cf72f4dae992c5a57736fbca2678f5198f76158f80302e3c42e575c7",
-   "examples/costing/cost_basis/data/annual_report_reads.csv": "0a2dc4e45af179a5369898d9525b3e91980376a01531c4d5c128d09848b4fc7e",
+   "examples/costing/cost_basis/data/annual_report_reads.csv": "5c9e587624025f67b30e3b0726e5f0b468aaa36096712f2c544431e44d048cd0",
    "data/modules/cost/curated/cost_component_timeseries.csv": "1d3b4ec463061b276b5c50a2eaa895b7ed8f6cad2db38e5ce51fd76b14da4015"
   }
  }

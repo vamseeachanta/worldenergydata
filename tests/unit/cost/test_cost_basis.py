@@ -63,6 +63,8 @@ def test_lwc_frequency():
     assert lwc["periods"] == 18  # FY2007 to FY2017, 2017 Q4, CY2018 to CY2023
     assert lwc["per_wellbore"] == pytest.approx(59 / 4748, rel=1e-12)
     assert lwc["per_wellbore"] == pytest.approx(0.012426, abs=1e-6)
+    # per well (3,134 distinct 10-digit API wells in the window): 59 / 3,134 = 0.018826
+    assert lwc["per_well"] == pytest.approx(0.018826, abs=1e-6)
 
 
 def test_sps_rate_median():
