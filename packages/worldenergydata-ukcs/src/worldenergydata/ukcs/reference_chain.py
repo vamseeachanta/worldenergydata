@@ -48,7 +48,7 @@ def run_ukcs_reference_chain(
             or metadata_name.strip().casefold() != field_name.strip().casefold()
         ):
             raise ValueError("metadata field must match the production request")
-        production_field_name = field_name.strip()
+        production_field_name = field_name.strip().casefold()
     unified = adapter.fetch(
         ProductionQuery(
             regions=["ukcs"],

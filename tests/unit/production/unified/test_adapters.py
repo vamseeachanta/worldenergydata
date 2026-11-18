@@ -3,6 +3,7 @@
 import pandas as pd
 import pytest
 
+from worldenergydata.production.unified.adapters.base import AbstractProductionAdapter
 from worldenergydata.production.unified.adapters.brazil_anp_adapter import (
     BrazilAnpAdapter,
 )
@@ -92,6 +93,27 @@ class TestAdapterSchemaCompliance:
 
 
 class TestAdapterFieldFiltering:
+    @pytest.mark.parametrize(
+        "request_name",
+        ["Synthetic Gross", "Synthetic Gro\u00df", "  Synthetic Gro\u00df \t"],
+    )
+    def test_field_filter_uses_exact_trim_casefold_key(self, request_name):
+        frame = pd.DataFrame(
+            {
+                "field_name": [
+                    "  Synthetic Gro\u00df \t",
+                    "Synthetic Gross",
+                    "Synthetic Gross East",
+                    None,
+                ],
+                "oil_bbl": [4.0, 5.0, 100.0, 200.0],
+            }
+        )
+
+        result = AbstractProductionAdapter._filter_by_fields(frame, [request_name])
+
+        pd.testing.assert_frame_equal(result, frame.iloc[:2])
+
     def test_sodir_field_filter(self):
         adapter = SodirAdapter()
         q = ProductionQuery(regions=["ncs"], fields=["Edvard Grieg"])

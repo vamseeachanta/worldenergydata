@@ -110,9 +110,20 @@ def test_reference_chain_returns_labeled_finite_pre_tax_metrics_and_zero_royalty
 
 
 @pytest.mark.parametrize(
-    "request_name", ["Synthetic Alpha", "synthetic alpha", "  SYNTHETIC ALPHA \t"]
+    "metadata_name, production_name, request_name",
+    [
+        ("Synthetic Alpha", "SYNTHETIC ALPHA", "Synthetic Alpha"),
+        ("Synthetic Alpha", "SYNTHETIC ALPHA", "synthetic alpha"),
+        ("Synthetic Alpha", "SYNTHETIC ALPHA", "  SYNTHETIC ALPHA \t"),
+        ("Synthetic Gross", "SYNTHETIC GROSS", "Synthetic Gross"),
+        ("Synthetic Gross", "SYNTHETIC GROSS", "Synthetic Gro\u00df"),
+        ("Synthetic Gro\u00df", "SYNTHETIC GRO\u00df", "Synthetic Gross"),
+        ("Synthetic Gro\u00df", "SYNTHETIC GRO\u00df", "  Synthetic Gro\u00df \t"),
+    ],
 )
 def test_enriched_metadata_retains_evidence_without_changing_screen_or_economics(
+    metadata_name,
+    production_name,
     request_name,
 ):
     import json
@@ -121,7 +132,11 @@ def test_enriched_metadata_retains_evidence_without_changing_screen_or_economics
 
     class SyntheticLoader:
         def load_field_production(self, field_name):
-            return _normalized_nsta_frame().assign(field="SYNTHETIC ALPHA")
+            normalized = _normalized_nsta_frame().assign(field=production_name)
+            return normalized[
+                normalized["field"].str.strip().str.casefold()
+                == field_name.strip().casefold()
+            ].copy()
 
     requested_fields = []
 
@@ -136,7 +151,7 @@ def test_enriched_metadata_retains_evidence_without_changing_screen_or_economics
             "features": [
                 {
                     "attributes": {
-                        "FIELDNAME": "Synthetic Alpha",
+                        "FIELDNAME": metadata_name,
                         "OBJECTID": 1,
                         "CURR_OPER": "Synthetic Operator",
                         "STATUS": "Producing",
@@ -149,11 +164,12 @@ def test_enriched_metadata_retains_evidence_without_changing_screen_or_economics
     ).encode()
     meta = read_field_metadata(
         raw,
-        "Synthetic Alpha",
+        request_name,
         source_url="https://example.invalid/0",
         retrieved_at="2026-11-16T00:00:00Z",
     )
-    sparse = {"field_name": "Synthetic Alpha"}
+    canonical_name = metadata_name.strip().casefold()
+    sparse = {"field_name": canonical_name}
 
     def run(metadata, name=request_name):
         return run_ukcs_reference_chain(
@@ -163,7 +179,8 @@ def test_enriched_metadata_retains_evidence_without_changing_screen_or_economics
         )
 
     first, second = run(meta), run(meta)
-    original = run(sparse, "Synthetic Alpha")
+    original = run(sparse, canonical_name)
+    assert meta["metadata_evidence"]["match_status"] == "matched"
     assert len(first["unified_production"]) == 2
     assert first["fdas_production"]["YEAR_MONTH"].tolist() == ["1975-09", "1975-10"]
     assert first["pre_tax_metrics"]["gross_revenue_usd"] > 0.0
@@ -172,9 +189,9 @@ def test_enriched_metadata_retains_evidence_without_changing_screen_or_economics
     )
     pd.testing.assert_frame_equal(first["fdas_production"], original["fdas_production"])
     assert requested_fields == [
-        [request_name.strip()],
-        [request_name.strip()],
-        ["Synthetic Alpha"],
+        [canonical_name],
+        [canonical_name],
+        [canonical_name],
     ]
     concept = first["field_concept"]
     assert concept.operator == "Synthetic Operator"
