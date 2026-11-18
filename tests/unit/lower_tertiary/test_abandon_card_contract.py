@@ -174,6 +174,9 @@ def test_status_inputs_preserve_other_cards_and_scales(timeline, well):
     without_status = timeline.facts_to_well(well, field)
     with_status = timeline.facts_to_well(dict(well, status="abandoned"), field)
 
+    # Compare cards and axes only; pSpans, statusLabel and current are not
+    # covered. Their fixed production assumptions need separate checks in #770.
+    # Card titles and the construction-axis bounds below are also pinned.
     for key in ("cards", "cAxis", "pAxis"):
         assert without_status[key] == with_status[key]
     assert without_status["cAxis"]["start"] == 0
