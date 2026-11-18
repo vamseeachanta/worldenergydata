@@ -297,8 +297,15 @@ def build_package(data: dict, root: Path) -> dict:
     _verify_sources(sources, root)
     _verify_citation(data["transaction"]["buyer_group_citation"], sources)
     for term in data["transaction"]["terms"].values():
-        if term.keys() - {"status", "value", "reason"}:
-            _verify_citation(term.get("citation") or {}, sources)
+        if (
+            term.keys() == {"status", "value", "reason"}
+            and term["status"] == "NOT_EVALUATED"
+            and term["value"] is None
+            and isinstance(term["reason"], str)
+            and term["reason"].strip()
+        ):
+            continue
+        _verify_citation(term.get("citation") or {}, sources)
     for fact in data["transaction"]["working_interests"]:
         value = _number(fact, "fraction")
         if value is None or value > 1:
@@ -370,8 +377,9 @@ def build_package(data: dict, root: Path) -> dict:
         "provenance": {
             "input_sha256": hashlib.sha256(canonical).hexdigest(),
             "digest_domain": (
-                "UTF-8 JSON, indent=2, ensure_ascii=False, allow_nan=False, "
-                "CRLF normalized to LF with trailing newline; canonical input bytes"
+                "SHA-256 of the canonical serialization of the parsed input "
+                "(UTF-8 JSON, indent=2, ensure_ascii=False, allow_nan=False, "
+                "LF line endings and one trailing LF)"
             ),
             "sources": sources,
         },
