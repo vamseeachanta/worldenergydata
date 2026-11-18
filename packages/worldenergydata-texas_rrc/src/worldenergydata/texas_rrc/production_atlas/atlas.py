@@ -127,6 +127,8 @@ def normalize_production_frame(
         ("well_count", "well_count"),
     ):
         values, available = _numeric_values_with_availability(renamed, source)
+        if source == "condensate" and target in renamed:
+            values = values.where(available, _numeric_values(renamed, target))
         normalized[target] = values
         availability_column = OPTIONAL_METRIC_AVAILABILITY.get(target)
         if availability_column:
@@ -173,6 +175,7 @@ def is_usable_production_frame(frame: pd.DataFrame) -> bool:
             "gas_production",
             "casinghead_gas",
             "condensate",
+            "condensate_bbl",
             "water_production",
         )
     )
@@ -184,11 +187,7 @@ def build_production_atlas(frame: pd.DataFrame) -> pd.DataFrame:
     require_district_names(frame.columns)
     if frame.empty:
         return pd.DataFrame(columns=ATLAS_COLUMNS)
-    production = (
-        frame
-        if _is_normalized_production_frame(frame)
-        else normalize_production_frame(frame)
-    )
+    production = _atlas_input_frame(frame, sort_rows=True)
     max_month = _max_month(production)
     rows: list[dict[str, object]] = []
     for level in AGGREGATION_LEVELS:
@@ -228,20 +227,21 @@ def build_production_atlas_from_chunks(
         require_district_names(chunk.columns)
         if chunk.empty:
             continue
-        production = (
-            chunk
-            if _is_normalized_production_frame(chunk)
-            else normalize_production_frame(chunk, sort_rows=False)
-        )
+        production = _atlas_input_frame(chunk, sort_rows=False)
         accumulator.add(production)
     return accumulator.to_frame()
 
 
-def _is_normalized_production_frame(frame: pd.DataFrame) -> bool:
-    """A raw canonical date header alone does not establish normalized rows."""
-    return {"production_month", *IDENTIFIER_COLUMNS, *METRIC_COLUMNS}.issubset(
-        frame.columns
-    )
+def _atlas_input_frame(frame: pd.DataFrame, *, sort_rows: bool) -> pd.DataFrame:
+    """Keep normalized metrics and availability flags when identifiers are omitted."""
+    required = {"production_month", "district", *METRIC_COLUMNS}
+    if required.issubset(frame.columns):
+        missing = {column: "" for column in IDENTIFIER_COLUMNS if column not in frame}
+        if not missing:
+            return frame
+        if all(pd.api.types.is_numeric_dtype(frame[col]) for col in METRIC_COLUMNS):
+            return frame.assign(**missing)
+    return normalize_production_frame(frame, sort_rows=sort_rows)
 
 
 @dataclass

@@ -14,6 +14,7 @@ from worldenergydata.texas_rrc.production_atlas import (
     build_production_atlas_from_chunks,
     normalize_production_frame,
 )
+from worldenergydata.texas_rrc.production_atlas.atlas import is_usable_production_frame
 from worldenergydata.texas_rrc.production_atlas.sources import (
     _read_pdq_member,
     _read_pdq_member_chunks,
@@ -137,3 +138,52 @@ def test_missing_or_invalid_names_never_fall_back_to_numeric_id(name):
     assert result["district"].tolist() == [""]
     assert result["district_no"].tolist() == ["08"]
     assert result["oil_bbl"].tolist() == [10]
+
+
+@pytest.mark.parametrize("chunked", [False, True])
+@pytest.mark.parametrize("normalized", [False, True], ids=["canonical", "normalized"])
+def test_atlas_preserves_condensate_without_field_name(chunked, normalized):
+    frame = pd.DataFrame(
+        {"district": ["7B"], "production_month": ["202301"], "condensate_bbl": ["10"]}
+    )
+    assert is_usable_production_frame(frame)
+    if normalized:
+        frame = normalize_production_frame(
+            frame.rename(columns={"condensate_bbl": "condensate"})
+        )
+        frame = frame.drop(columns="field_name")
+
+    atlas = (
+        build_production_atlas_from_chunks([frame])
+        if chunked
+        else build_production_atlas(frame)
+    )
+    statewide = atlas.loc[atlas["aggregation_level"] == "statewide"].iloc[0]
+    assert statewide["cumulative_condensate_bbl"] == 10
+    assert statewide["cumulative_boe"] == 10
+    assert statewide["still_producing"]
+    assert pd.isna(statewide["cumulative_water_bbl"])
+
+
+@pytest.mark.parametrize("reader", ["text", "bulk", "chunked"])
+def test_single_column_header_preserves_district(reader):
+    frames = read_frames("district\n7B\n", reader)
+    assert frames[0].to_dict("list") == {"district": ["7B"]}
+
+
+@pytest.mark.parametrize("reader", ["text", "bulk", "chunked"])
+def test_single_column_header_rejects_numeric_district_id(reader):
+    with pytest.raises(ValueError, match="numeric district IDs"):
+        read_frames("DISTRICT_NO\n08\n", reader)
+
+
+def test_condensate_aliases_across_snapshots_preserve_each_row():
+    frame = pd.DataFrame(
+        [
+            {"condensate_bbl": "10"},
+            {"OG_COND_PROD": "4"},
+            {"OG_COND_PROD": "0", "condensate_bbl": "8"},
+        ]
+    )
+    result = normalize_production_frame(frame, sort_rows=False)
+    assert result["condensate_bbl"].tolist() == [10, 4, 0]

@@ -205,23 +205,22 @@ def _member_first_line(archive: zipfile.ZipFile, name: str) -> str:
         return text_file.readline()
 
 
-def _csv_reader_kwargs(first_line: str, separator: str | None) -> dict[str, object]:
+def _csv_reader_kwargs(first_line: str, separator: str) -> dict[str, object]:
     header = first_line.lstrip("\ufeff")
-    delimiter = separator or csv.Sniffer().sniff(header).delimiter
-    require_district_names(next(csv.reader([header], delimiter=delimiter)))
-    kwargs: dict[str, object] = {
+    require_district_names(next(csv.reader([header], delimiter=separator)))
+    # Retain all fields: canonical metrics and dates need not use PDQ aliases.
+    return {
         "dtype": str,
         "keep_default_na": False,
     }
-    if separator is None:
-        kwargs["engine"] = "python"
-    # Retain all fields: canonical metrics and dates need not use PDQ aliases.
-    return kwargs
 
 
-def _separator(first_line: str) -> str | None:
+def _separator(first_line: str) -> str:
     if "}" in first_line:
         return "}"
     if "|" in first_line:
         return "|"
-    return None
+    try:
+        return csv.Sniffer().sniff(first_line, delimiters=",;\t").delimiter
+    except csv.Error:
+        return ","
