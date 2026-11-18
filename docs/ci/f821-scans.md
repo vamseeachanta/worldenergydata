@@ -18,6 +18,7 @@ It does not establish the cause of the historical variance in #328.
 | Final source comparison | 2026-11-17 | Rejects input changes after the last progress write and retains both source digests to prevent invalid stability reports. |
 | Regression evidence | 2026-11-18 | Records the current focused test count separately from the unverified bytecode experiment. |
 | Status interpretation | 2026-11-18 | Clarifies how callers distinguish inconsistent findings, invalid evidence and refused invocations when all exit with code 2. |
+| Missing summary | 2026-11-18 | Requires a summary from the current invocation before interpreting an exit code, because evidence directory creation can fail with exit 1. |
 
 ## Why counting output lines is insufficient
 
@@ -138,7 +139,7 @@ to equal the first. There are no fitted coefficients or engineering limits.
 The [F821 rule definition][f821], [flake8 options][flake8] and
 [Ruff configuration reference][ruff-config] define the tool protocol.
 
-The checker exit contract is:
+The table applies when the current invocation prints a status summary on stdout.
 
 | Status | Exit | Meaning |
 | --- | --- | --- |
@@ -146,11 +147,12 @@ The checker exit contract is:
 | STABLE | `1` | Identical nonempty repository inventories |
 | UNSTABLE / ERROR | `2` | Different findings or invalid/incomplete evidence |
 
-Exit `2` also covers argument and directory refusals, which print usage to stderr
-and write no report. Read `status` from the summary line the checker prints on
-stdout, or from the `report.json` it creates in the new evidence directory, to
-tell `UNSTABLE` from `ERROR`; treat exit `2` without that summary line as a refused
-invocation.
+Treat any exit without a stdout summary as a refused or failed invocation.
+Exit `1` without a summary can occur when the checker cannot create the evidence
+directory, for example when its parent is a regular file. Argument and directory
+validation refusals exit `2`, print usage to stderr and write no new report.
+When a summary is present, read `status` there or in the report created by this
+invocation to distinguish `UNSTABLE` from `ERROR`.
 
 These are checker interface values, not acceptance tolerances. The raw linter
 must exit `1` even for a clean repository because the probe is always a finding;
@@ -195,9 +197,9 @@ printf 'missing_name\n' > "$example/input/sample.py"
 )
 ```
 
-The expected nonzero exit means a stable finding, not a tool failure. The timeout
-in this example is an explicit execution input. Evidence directories remain
-available for inspection; choose a fresh directory for another example.
+For this input, expect exit `1` together with a `STABLE` summary and counts
+`[1, 1]`. The timeout is an explicit input. Choose a fresh directory for each
+invocation to preserve the previous evidence.
 
 ## Investigation and remaining limits
 
