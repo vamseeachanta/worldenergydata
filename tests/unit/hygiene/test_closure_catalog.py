@@ -3,7 +3,7 @@
 import stat
 import sys
 from importlib import import_module
-from pathlib import Path
+from pathlib import Path, PurePosixPath, PureWindowsPath
 from types import SimpleNamespace
 
 import pytest
@@ -189,6 +189,33 @@ def test_invalid_claim_never_inspects_filesystem(catalog, tmp_path, value, monke
     assert checker(value) == "invalid_claim"
 
 
+@pytest.mark.parametrize("parser", [PurePosixPath, PureWindowsPath])
+@pytest.mark.parametrize(
+    "value", ["/data/x", "//server/share/x", "Q:/data/x", "Q:data/x"]
+)
+def test_claim_and_catalog_literals_reject_anchors(catalog, monkeypatch, parser, value):
+    # Exercise native Windows parsing on any host, without touching a filesystem.
+    monkeypatch.setattr(catalog, "Path", parser)
+    assert catalog.literal_path(value) is None
+
+
+@pytest.mark.parametrize("windows", [False, True], ids=["posix", "windows"])
+def test_walk_checks_containment_before_each_stat(
+    catalog, tmp_path, monkeypatch, windows
+):
+    root = PureWindowsPath("Q:/repo") if windows else tmp_path
+    parser = PureWindowsPath if windows else Path
+    monkeypatch.setattr(catalog, "Path", parser)
+
+    def unexpected(*args, **kwargs):
+        pytest.fail("An anchored component must never inspect outside the root")
+
+    monkeypatch.setattr(type(root), "lstat", unexpected, raising=False)
+    assert (
+        catalog._resolution_status(root, "/escape/item.csv") == "outside_allowed_root"
+    )
+
+
 def test_links_are_contained_before_inspecting_external_targets(
     catalog, tmp_path, monkeypatch
 ):
@@ -279,13 +306,11 @@ def test_explicit_grammar_excludes_ordinary_path_checks(mark):
 @pytest.mark.parametrize(
     "claim",
     [
-        "Catalog entry resolves: `data/item.csv` and more",
-        "Catalog entries work: `data/item.csv`",
         "Catalog entry resolves: `../outside`",
         "Catalog entry resolves: `data/item.csv; false`",
     ],
 )
-def test_unsupported_catalog_claim_is_unverified(claim):
+def test_invalid_explicit_catalog_claim_is_unverified(claim):
     def unexpected(path):
         pytest.fail("Unsupported claim must not be executed or checked")
 
@@ -294,6 +319,51 @@ def test_unsupported_catalog_claim_is_unverified(claim):
     )
     assert finding.catalog_results == ((claim, "invalid_claim"),)
     assert finding.has_drift
+
+
+@pytest.mark.parametrize("with_catalog", [False, True])
+@pytest.mark.parametrize(
+    "claim, missing_paths",
+    [
+        ("Catalog entry resolves: `data/item.csv` and more", ("data/item.csv",)),
+        ("Catalog entries work: `data/item.csv`", ("data/item.csv",)),
+        (
+            "Add `scripts/missing_tool.py` and register it in the catalog",
+            ("scripts/missing_tool.py",),
+        ),
+        ("Update catalog docs", ()),
+    ],
+)
+def test_unsupported_catalog_wording_preserves_ordinary_checks(
+    with_catalog, claim, missing_paths
+):
+    calls = []
+
+    def exists(path):
+        calls.append(path)
+        return False
+
+    def unexpected(path):
+        pytest.fail("Unsupported catalog wording must never invoke a lookup")
+
+    finding = verifier.analyze_issue(
+        issue(f"- [x] {claim}"),
+        exists,
+        catalog_checker=unexpected if with_catalog else None,
+    )
+    assert finding.catalog_results == ((claim, "unsupported_claim"),)
+    assert finding.missing_paths == missing_paths
+    assert calls == list(missing_paths)
+    assert finding.has_drift
+
+
+def test_duplicate_unsupported_claims_keep_ordinary_path_checks():
+    claim = "Add `scripts/missing_tool.py` to the catalog"
+    finding = verifier.analyze_issue(
+        issue(f"- [x] {claim}\n- [x] {claim}"), lambda path: False
+    )
+    assert finding.catalog_results == ((claim, "unsupported_claim"),)
+    assert finding.missing_paths == ("scripts/missing_tool.py",)
 
 
 def test_opt_in_and_ordinary_mentions_preserve_default_behavior():

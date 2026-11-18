@@ -228,7 +228,8 @@ def analyze_issue(
       * referenced paths that fail ``path_exists`` -> flagged
       * explicit symlink presence claims that fail ``link_exists`` -> flagged
       * unsupported symlink wording or an absent checker -> unverified
-      * catalog checkboxes -> literal lookup or an explicit unverified result
+      * explicit catalog checkboxes -> literal lookup or an unverified result
+      * unsupported catalog wording -> unverified, with ordinary path checks
 
     No gh calls, no real filesystem access (the checker is injected).
     """
@@ -242,15 +243,21 @@ def analyze_issue(
         catalog_claim = parse_catalog_claim(line)
         if catalog_claim is not None:
             claim, token = catalog_claim
-            key = token or claim
+            if token is None:
+                ordinary_lines.append(line)
+            relative = literal_path(token) if token is not None else None
+            key = relative or claim
             if key in seen_catalog_claims:
                 continue
             seen_catalog_claims.add(key)
-            status = (
-                "invalid_claim"
-                if token is None
-                else "unverified" if catalog_checker is None else catalog_checker(token)
-            )
+            if token is None:
+                status = "unsupported_claim"
+            elif relative is None:
+                status = "invalid_claim"
+            elif catalog_checker is None:
+                status = "unverified"
+            else:
+                status = catalog_checker(relative)
             catalog_results.append((key, status))
             continue
         checkbox = _SYMLINK_CHECKBOX_RE.fullmatch(line)

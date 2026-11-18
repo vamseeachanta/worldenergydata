@@ -6,7 +6,7 @@ import os
 import re
 import stat
 from collections import deque
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Callable
 
 _CHECKBOX = re.compile(r"^\s*[-*]\s+\[[ xX]\]\s+(.*\S)\s*$")
@@ -20,11 +20,12 @@ class CatalogError(ValueError):
 
 def literal_path(token: str) -> str | None:
     """Normalize a literal relative path; reject traversal and command syntax."""
-    path = Path(token)
+    path = PurePosixPath(token)
     if (
         not token
         or not path.name
-        or path.is_absolute()
+        or path.anchor
+        or path.drive
         or ".." in path.parts
         or any(c.isspace() or c in "`*?<>|$;:\\\x00" for c in token)
         or token.endswith(("/", "/."))
@@ -34,17 +35,18 @@ def literal_path(token: str) -> str | None:
 
 
 def parse_catalog_claim(line: str) -> tuple[str, str | None] | None:
-    """Return (claim, literal path) for catalog checkboxes, including unsupported ones.
+    """Return (claim, raw token) for catalog checkboxes, including unsupported ones.
 
-    Terminology inside code spans is not prose. Only the complete explicit
-    grammar is executable as a lookup; other catalog checkboxes are unverified.
+    Terminology inside code spans is not prose. A token is returned only for
+    the complete explicit grammar; callers must validate it before lookup.
+    Other catalog wording is unsupported and still needs ordinary path checks.
     """
     checkbox = _CHECKBOX.fullmatch(line)
     if checkbox is None or not re.search(r"\bcatalog\b", _CODE.sub(" ", line), re.I):
         return None
     claim = checkbox.group(1).strip()
     match = _CLAIM.fullmatch(claim)
-    return claim, literal_path(match.group(1)) if match else None
+    return claim, match.group(1) if match else None
 
 
 def _resolution_status(root: Path, relative: str) -> str:
@@ -54,7 +56,7 @@ def _resolution_status(root: Path, relative: str) -> str:
     a second link outside the root. Non-symlink reparse points, including Windows
     junctions, remain unverified. No target contents are opened.
     """
-    pending = deque(Path(relative).parts)
+    pending = deque(PurePosixPath(relative).parts)
     current = root
     followed = 0
     try:
@@ -66,6 +68,8 @@ def _resolution_status(root: Path, relative: str) -> str:
                     return "outside_allowed_root"
                 continue
             candidate = current / component
+            if not candidate.is_relative_to(root):
+                return "outside_allowed_root"
             info = candidate.lstat()
             if stat.S_ISLNK(info.st_mode):
                 followed += 1
