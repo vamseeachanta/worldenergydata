@@ -40,11 +40,12 @@ def _link(value):
         if any(
             ord(c) < 32
             or ord(c) == 127
-            or (c.isspace() and not (position == 2 and c == " "))
+            or (c.isspace() and not (position >= 2 and c == " "))
             for c in part
         ):
             raise ValueError("Whitespace or control character in link")
-    if any("\\" in part or "%" in part for part in decoded):
+    # A decoded literal percent is safe unless it starts another escape sequence.
+    if any("\\" in part or re.search(r"%[0-9A-Fa-f]{2}", part) for part in decoded):
         raise ValueError("Ambiguous link encoding")
     path = decoded[2]
     if url.scheme == "https":

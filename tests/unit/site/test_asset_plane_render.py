@@ -229,6 +229,9 @@ def test_disconnected_component_cycle_is_rejected(render, record):
         "docs/field%20survey.pdf",
         "https://example.org/field%20survey.pdf",
         "docs/reference%23section%3F.pdf?edition=1#source",
+        "docs/search?title=field%20survey",
+        "docs/reference.html#:~:text=field%20survey",
+        "docs/50%25-complete.pdf",
     ],
 )
 def test_escaped_path_preserved_in_each_evidence_channel(render, record, target, href):
@@ -264,6 +267,12 @@ def test_escaped_path_preserved_in_each_evidence_channel(render, record, target,
         "%2fabsolute.html",
         "docs/%5csource.pdf",
         "https://example.org%2fother.invalid/source",
+        "docs/search?title=field%09survey",
+        "docs/reference.html#field%0asurvey",
+        "docs/search?title=field%7fsurvey",
+        "docs/reference.html#field%250asurvey",
+        "docs/search?title=field%2520survey",
+        "docs/%2525-complete.pdf",
     ],
 )
 def test_unsafe_links_rejected_in_each_evidence_channel(render, record, target, href):
