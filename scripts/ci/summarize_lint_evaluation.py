@@ -177,6 +177,31 @@ def _summarize(evidence: dict) -> dict:
         key: [json.loads(item) for item in values]
         for key, values in difference(*lint_sets).items()
     }
+    coordinate_fields = ("path", "row", "column", "code")
+    coordinate_maps = []
+    for name in ("flake8", "ruff-check"):
+        messages = {}
+        for item in tools[name]["findings"]:
+            if item["code"] != "I001":
+                key = tuple(item[field] for field in coordinate_fields)
+                messages.setdefault(key, set()).add(item["message"])
+        coordinate_maps.append(messages)
+    legacy_coordinates, candidate_coordinates = map(set, coordinate_maps)
+    coordinate_delta = {
+        key: [dict(zip(coordinate_fields, item)) for item in values]
+        for key, values in difference(legacy_coordinates, candidate_coordinates).items()
+    }
+    shared_coordinates = legacy_coordinates & candidate_coordinates
+    legacy_messages, candidate_messages = coordinate_maps
+    message_delta = [
+        dict(
+            zip(coordinate_fields, key),
+            legacy_messages=sorted(legacy_messages[key]),
+            candidate_messages=sorted(candidate_messages[key]),
+        )
+        for key in sorted(shared_coordinates)
+        if legacy_messages[key] != candidate_messages[key]
+    ]
     import_delta = difference(
         {item["path"] for item in tools["isort"]["findings"]},
         {i["path"] for i in tools["ruff-check"]["findings"] if i["code"] == "I001"},
@@ -204,6 +229,16 @@ def _summarize(evidence: dict) -> dict:
         parity = "UNVERIFIED"
     else:
         parity = "MATCH"
+    if unsupported:
+        coordinate_parity = "BLOCKED"
+    elif any(
+        any(delta.values()) for delta in (coordinate_delta, import_delta, format_delta)
+    ):
+        coordinate_parity = "DIFFERENT"
+    elif dirty_format:
+        coordinate_parity = "UNVERIFIED"
+    else:
+        coordinate_parity = "MATCH"
     return {
         "status": "VALID",
         "files": files,
@@ -212,6 +247,10 @@ def _summarize(evidence: dict) -> dict:
         "unsupported_rules": unsupported,
         "parity": parity,
         "lint_delta": lint_delta,
+        "coordinate_parity": coordinate_parity,
+        "coordinate_delta": coordinate_delta,
+        "coordinate_shared_count": len(shared_coordinates),
+        "message_delta": message_delta,
         "import_delta": import_delta,
         "format_delta": format_delta,
         "timing": {

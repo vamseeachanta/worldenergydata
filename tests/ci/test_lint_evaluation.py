@@ -74,6 +74,120 @@ def test_equal_counts_do_not_establish_parity(evidence):
     assert result["tools"]["flake8"]["rules"] == {"F401": 1}
 
 
+def coordinate(item):
+    return {key: item[key] for key in ("path", "row", "column", "code")}
+
+
+def test_message_only_difference_preserves_coordinate_agreement(evidence):
+    legacy = finding()
+    candidate = dict(legacy, message="candidate wording")
+    add_findings(evidence, "flake8", [legacy])
+    add_findings(evidence, "ruff-check", [candidate])
+    result = evaluation.summarize(evidence)
+    assert result["parity"] == "DIFFERENT"
+    assert result["lint_delta"] == {
+        "legacy_only": [legacy],
+        "candidate_only": [candidate],
+    }
+    assert result["coordinate_parity"] == "MATCH"
+    assert result["coordinate_delta"] == {"legacy_only": [], "candidate_only": []}
+    assert result["coordinate_shared_count"] == 1
+    assert result["message_delta"] == [
+        dict(
+            coordinate(legacy),
+            legacy_messages=[legacy["message"]],
+            candidate_messages=[candidate["message"]],
+        )
+    ]
+
+
+@pytest.mark.parametrize("field,value", [("row", 2), ("column", 2), ("code", "F841")])
+def test_coordinate_difference_retains_location_and_rule(evidence, field, value):
+    legacy = finding()
+    candidate = dict(legacy, **{field: value})
+    add_findings(evidence, "flake8", [legacy])
+    add_findings(evidence, "ruff-check", [candidate])
+    result = evaluation.summarize(evidence)
+    assert result["coordinate_parity"] == "DIFFERENT"
+    assert result["coordinate_delta"] == {
+        "legacy_only": [coordinate(legacy)],
+        "candidate_only": [coordinate(candidate)],
+    }
+    assert result["coordinate_shared_count"] == 0
+    assert result["message_delta"] == []
+
+
+@pytest.mark.parametrize(
+    "tool,side", [("flake8", "legacy"), ("ruff-check", "candidate")]
+)
+def test_one_sided_coordinate_is_reported(evidence, tool, side):
+    add_findings(evidence, tool, [finding()])
+    result = evaluation.summarize(evidence)
+    assert result["coordinate_parity"] == "DIFFERENT"
+    assert result["coordinate_delta"][side + "_only"] == [coordinate(finding())]
+    other = "candidate" if side == "legacy" else "legacy"
+    assert result["coordinate_delta"][other + "_only"] == []
+    assert result["coordinate_shared_count"] == 0
+    assert result["message_delta"] == []
+
+
+def test_messages_are_grouped_by_unique_coordinate(evidence):
+    first = finding()
+    second = dict(first, message="another legacy message")
+    candidate = dict(first, message="candidate message")
+    add_findings(evidence, "flake8", [first, second, finding(row=2)])
+    add_findings(evidence, "ruff-check", [candidate, finding(row=2)])
+    result = evaluation.summarize(evidence)
+    assert result["coordinate_parity"] == "MATCH"
+    assert result["coordinate_shared_count"] == 2
+    assert result["message_delta"] == [
+        dict(
+            coordinate(first),
+            legacy_messages=sorted([first["message"], second["message"]]),
+            candidate_messages=[candidate["message"]],
+        )
+    ]
+    for tool in ("flake8", "ruff-check"):
+        for run in evidence["tools"][tool]["runs"]:
+            run["findings"].reverse()
+    assert evaluation.summarize(evidence) == result
+
+
+@pytest.mark.parametrize("policy", ["unsupported", "imports", "format", "dirty"])
+def test_coordinate_parity_preserves_policy_and_formatter_limits(evidence, policy):
+    if policy == "unsupported":
+        evidence["unsupported_rules"] = ["W503"]
+        expected = "BLOCKED"
+    elif policy == "imports":
+        add_findings(evidence, "ruff-check", [finding("I001")])
+        expected = "DIFFERENT"
+    elif policy == "format":
+        add_findings(evidence, "black", [finding("FORMAT")])
+        expected = "DIFFERENT"
+    else:
+        for tool in ("black", "ruff-format"):
+            add_findings(evidence, tool, [finding("FORMAT")])
+        expected = "UNVERIFIED"
+    result = evaluation.summarize(evidence)
+    assert result["coordinate_parity"] == expected
+    assert result["coordinate_delta"] == {"legacy_only": [], "candidate_only": []}
+    assert result["coordinate_shared_count"] == 0
+    assert result["message_delta"] == []
+
+
+def test_cli_serializes_coordinate_and_message_views(tmp_path, evidence):
+    legacy = finding()
+    add_findings(evidence, "flake8", [legacy])
+    add_findings(evidence, "ruff-check", [dict(legacy, message="candidate wording")])
+    source, output = tmp_path / "input.json", tmp_path / "summary.json"
+    source.write_text(json.dumps(evidence))
+    assert evaluation.main([str(source), str(output)]) == 0
+    result = json.loads(output.read_text())
+    assert result == evaluation.summarize(evidence)
+    assert result["coordinate_parity"] == "MATCH"
+    assert result["parity"] == "DIFFERENT"
+
+
 def test_legacy_import_diagnostic_cannot_disappear(evidence):
     add_findings(evidence, "flake8", [finding("I001")])
     with pytest.raises(ValueError, match="unexpected rule"):
