@@ -11,6 +11,9 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
+import re
+import tempfile
 from pathlib import Path
 
 from worldenergydata.common.fields_registry import load_fields, normalize_lease
@@ -49,6 +52,8 @@ def _sha(content):
 
 
 def _index(rows, registry):
+    if not isinstance(rows, list) or any(not isinstance(row, dict) for row in rows):
+        raise ValueError("Snapshot table must be a JSON array of records")
     result = {}
     for row in rows:
         key = normalize_lease(row["lease_num"])
@@ -56,6 +61,29 @@ def _index(rows, registry):
             raise ValueError("Ambiguous or unregistered snapshot lease")
         result[key] = row
     return result
+
+
+def _publish(output, serialized, result):
+    temporary = None
+    try:
+        with tempfile.NamedTemporaryFile(
+            mode="w",
+            encoding="utf-8",
+            dir=output.parent,
+            prefix=f".{output.name}.",
+            suffix=".tmp",
+            delete=False,
+        ) as stream:
+            temporary = Path(stream.name)
+            stream.write(serialized)
+        if _json(temporary.read_bytes()) != result:
+            raise OSError("Export readback mismatch")
+        # A hard link publishes complete bytes atomically and refuses any
+        # destination created since the initial existence check.
+        os.link(temporary, output)
+    finally:
+        if temporary is not None:
+            temporary.unlink(missing_ok=True)
 
 
 def export_leases(
@@ -104,6 +132,14 @@ def export_leases(
         for key in ("source_url", "retrieved_at_utc", "sha256", "terms"):
             if not reference[key]:
                 raise ValueError("Source reference is incomplete")
+        digest = reference["sha256"]
+        if (
+            not isinstance(digest, str)
+            or re.fullmatch(r"[0-9a-fA-F]{64}", digest) is None
+        ):
+            raise ValueError(
+                "Source SHA-256 must be a string of 64 hexadecimal characters"
+            )
     registry_bytes = registry_path.read_bytes()
     registry = load_fields(registry_path)
     if registry_path.read_bytes() != registry_bytes:
@@ -172,10 +208,7 @@ def export_leases(
         },
     }
     serialized = json.dumps(result, allow_nan=False, sort_keys=True, indent=2) + "\n"
-    with output.open("x", encoding="utf-8") as stream:
-        stream.write(serialized)
-    if _json(output.read_bytes()) != result:
-        raise OSError("Export readback mismatch")
+    _publish(output, serialized, result)
     return result
 
 

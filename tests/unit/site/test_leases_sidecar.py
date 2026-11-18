@@ -1,6 +1,7 @@
 """Offline lease export contracts using only synthetic snapshot records."""
 
 import hashlib
+import io
 import json
 import subprocess
 import sys
@@ -90,10 +91,12 @@ source_manifest:
   - file: synthetic.zip
     source_url: https://example.org/synthetic.zip
     retrieved_at_utc: '2026-01-01T00:00:00Z'
-    sha256: synthetic-source-digest
-    size_bytes: 1
     terms: {limitations: Not a legal document}
 """
+    )
+    source_bytes = b"Synthetic source archive bytes\n"
+    inputs["source_manifest"]["files"][0].update(
+        sha256=hashlib.sha256(source_bytes).hexdigest(), size_bytes=len(source_bytes)
     )
     _write(registry, {"fields": inputs.pop("fields")})
     for name, value in inputs.items():
@@ -177,6 +180,112 @@ def test_missing_source_rows_have_nulls_and_reasons(case, name):
     )
     assert all(row[key] is None for key in keys)
     assert row["missing"][name]
+
+
+@pytest.mark.parametrize("name", ["leases.json", "panel_values.json"])
+@pytest.mark.parametrize("value", [{}, None, "", 42, False, [None], [1]])
+def test_tables_require_arrays_of_records(case, name, value):
+    _write(case[0] / name, value)
+    _seal(case[0])
+    with pytest.raises(ValueError, match="array of records"):
+        _export(case)
+    assert not case[2].exists()
+
+
+@pytest.mark.parametrize(
+    "digest",
+    ["placeholder", "a" * 63, "a" * 65, "g" * 64, "a" * 64 + "\n", 1, True, []],
+)
+def test_source_digest_requires_sha256_hex_string(case, digest):
+    _edit(
+        case,
+        "source_manifest.json",
+        lambda manifest: manifest["files"][0].update(sha256=digest),
+    )
+    with pytest.raises(ValueError):
+        _export(case)
+    assert not case[2].exists()
+
+
+def test_uppercase_source_digest_is_preserved(case):
+    digest = hashlib.sha256(b"Synthetic source archive bytes\n").hexdigest().upper()
+    _edit(
+        case,
+        "source_manifest.json",
+        lambda manifest: manifest["files"][0].update(sha256=digest),
+    )
+    assert _export(case)["metadata"]["source_references"][0]["sha256"] == digest
+
+
+def test_interrupted_write_leaves_destination_available_for_retry(case, monkeypatch):
+    original_open = io.open
+
+    class InterruptedStream:
+        def __init__(self, stream):
+            self.stream = stream
+
+        def __getattr__(self, name):
+            return getattr(self.stream, name)
+
+        def write(self, content):
+            assert not case[2].exists()
+            self.stream.write(content[:10])
+            raise OSError("Simulated interrupted write")
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            return self.stream.__exit__(*args)
+
+    def interrupted_open(file, mode="r", *args, **kwargs):
+        stream = original_open(file, mode, *args, **kwargs)
+        return InterruptedStream(stream) if "w" in mode or "x" in mode else stream
+
+    before = set(case[2].parent.iterdir())
+    with monkeypatch.context() as patch:
+        patch.setattr(io, "open", interrupted_open)
+        with pytest.raises(OSError, match="Simulated interrupted write"):
+            _export(case)
+    assert not case[2].exists()
+    assert set(case[2].parent.iterdir()) == before
+    result = _export(case)
+    assert json.loads(case[2].read_text()) == result
+
+
+def test_readback_failure_does_not_publish(case, monkeypatch):
+    original_read = Path.read_bytes
+    before = set(case[2].parent.iterdir())
+
+    def corrupt_read(path):
+        if path.parent == case[2].parent and path != case[1]:
+            return b"{}"
+        return original_read(path)
+
+    with monkeypatch.context() as patch:
+        patch.setattr(Path, "read_bytes", corrupt_read)
+        with pytest.raises(OSError, match="readback mismatch"):
+            _export(case)
+    assert not case[2].exists()
+    assert set(case[2].parent.iterdir()) == before
+    _export(case)
+
+
+def test_competing_destination_is_preserved(case, monkeypatch):
+    original_read = Path.read_bytes
+    before = set(case[2].parent.iterdir())
+
+    def competing_read(path):
+        content = original_read(path)
+        if path.parent == case[2].parent and path != case[1]:
+            case[2].write_text("competing output", encoding="utf-8")
+        return content
+
+    monkeypatch.setattr(Path, "read_bytes", competing_read)
+    with pytest.raises(FileExistsError):
+        _export(case)
+    assert case[2].read_text() == "competing output"
+    assert set(case[2].parent.iterdir()) == before | {case[2]}
 
 
 @pytest.mark.parametrize(
