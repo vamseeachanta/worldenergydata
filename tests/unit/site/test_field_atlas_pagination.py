@@ -171,6 +171,8 @@ def test_field_results_have_bounded_pages(count):
     ],
 )
 def test_filter_input_resets_the_page(action):
+    # The synthetic tier event keeps focus on search to check that its handler
+    # does not move focus; it does not simulate a browser focusing a tier button.
     control = action.get("id", "f-search")
     start, second, focused, reset = render_fields(
         121, ["f-next", {"focus": control}, action]
