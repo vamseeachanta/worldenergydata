@@ -344,17 +344,15 @@ def test_profile_preserves_subnormal_rates_after_scaling():
 
 
 @pytest.mark.filterwarnings("error::RuntimeWarning")
-def test_simulate_reports_unrepresentable_eur_intermediate():
-    # The exact recovery is finite; the existing helper's qi / Di is not.
+def test_exponential_eur_preserves_representable_recovery():
+    # Synthetic recovery is finite even though qi / Di overflows.
     with localcontext() as context:
         context.prec = 80
         expected = float((Decimal("1e308") - Decimal("9e307")) / Decimal("0.5"))
     assert math.isfinite(expected)
     assert expected == pytest.approx(2e307)
-    with pytest.raises(
-        ValueError, match="^EUR is not representable in floating point$"
-    ):
-        _simulate(qi=1e308, Di=0.5, economic_limit=9e307, months=1)
+    result = _simulate(qi=1e308, Di=0.5, economic_limit=9e307, months=1)
+    assert result.eur_bbl == pytest.approx(expected, rel=1e-14)
 
 
 def test_hyperbolic_approaches_exponential_as_exponent_tends_to_zero():
@@ -367,4 +365,81 @@ def test_hyperbolic_approaches_exponential_as_exponent_tends_to_zero():
         # The leading relative correction b * (Di*t)**2 / 2 is 1.8e-8 at t=60.
         rtol=2e-8,
         atol=0.0,
+    )
+
+
+@pytest.mark.parametrize(
+    "model,b",
+    [("exponential", 0.0), ("harmonic", 1.0), ("hyperbolic", 0.5), ("hyperbolic", 1.0)],
+)
+@pytest.mark.filterwarnings("error::RuntimeWarning")
+def test_eur_preserves_adjacent_initial_and_limit_rates(model, b):
+    # Use the exact binary inputs in an independent 100-digit closed form.
+    qi = np.nextafter(1000.0, np.inf)
+    decline = 1e-14
+    with localcontext() as context:
+        context.prec = 100
+        initial = Decimal.from_float(float(qi))
+        limit = Decimal(1000)
+        nominal = Decimal.from_float(decline)
+        exponent = Decimal.from_float(b)
+        if b == 0:
+            expected = (initial - limit) / nominal
+        elif b == 1:
+            expected = initial / nominal * (initial / limit).ln()
+        else:
+            expected = (
+                initial
+                / nominal
+                * (((exponent - 1) * (initial / limit).ln()).exp() - 1)
+                / (exponent - 1)
+            )
+    result = _simulate(
+        qi=qi, Di=decline, b=b, model=model, economic_limit=1000.0, months=1
+    )
+    assert result.eur_bbl == pytest.approx(float(expected), rel=1e-14)
+
+
+@pytest.mark.parametrize("b", [np.nextafter(0.0, 1.0), 1e-320, 1e-310])
+@pytest.mark.filterwarnings("error::RuntimeWarning")
+def test_hyperbolic_profile_preserves_subnormal_exponent(b):
+    # Synthetic closed form at 400 digits retains even the smallest exponent.
+    with localcontext() as context:
+        context.prec = 400
+        exponent = Decimal.from_float(float(b))
+        nominal = Decimal.from_float(0.1)
+        expected_rates = [
+            float(Decimal(1000) * (-(1 + exponent * nominal * t).ln() / exponent).exp())
+            for t in range(1, 13)
+        ]
+    result = _simulate(model="hyperbolic", b=b)
+    np.testing.assert_allclose(
+        result.forecast_df["rate_bbl"], expected_rates, rtol=1e-13, atol=0
+    )
+    np.testing.assert_allclose(
+        result.forecast_df["cumulative_bbl"],
+        np.cumsum(expected_rates),
+        rtol=1e-13,
+        atol=0,
+    )
+    pd.testing.assert_frame_equal(
+        result.forecast_df, ArpsDeclineCurve().forecast(result, months=12)
+    )
+
+
+@pytest.mark.filterwarnings("error::RuntimeWarning")
+def test_exponential_profile_scales_before_decay_underflows():
+    # Synthetic rate remains representable although exp(-750) rounds to zero.
+    with localcontext() as context:
+        context.prec = 100
+        expected = float(Decimal.from_float(1e300) * Decimal(-750).exp())
+    result = _simulate(qi=1e300, Di=750.0, economic_limit=1.0, months=1)
+    assert result.forecast_df["rate_bbl"].iloc[0] == pytest.approx(
+        expected, rel=1e-12, abs=0
+    )
+    assert result.forecast_df["cumulative_bbl"].iloc[0] == pytest.approx(
+        expected, rel=1e-12, abs=0
+    )
+    pd.testing.assert_frame_equal(
+        result.forecast_df, ArpsDeclineCurve().forecast(result, months=1)
     )

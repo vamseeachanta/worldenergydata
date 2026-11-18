@@ -186,8 +186,9 @@ class ArpsDeclineCurve:
         restrict this forward evaluation. Hyperbolic exponents above 1 are
         evaluated without physical qualification. Nonfinite EUR or profile
         fields raise ``ValueError`` without numerical overflow warnings.
-        Harmonic and hyperbolic profiles evaluate very small decay factors
-        in log space to preserve representable month-end rates.
+        Profiles evaluate very small decay factors in log space to preserve
+        representable month-end rates. Hyperbolic profiles preserve the
+        exponential limit when the exponent-decline product underflows.
         An overflowing EUR intermediate can trigger rejection even when
         the mathematical recovery is finite.
         """
@@ -381,20 +382,21 @@ class ArpsDeclineCurve:
         if qi <= q_econ:
             return 0.0
 
+        # Preserve adjacent floating-point rates before forming their ratio.
+        log_ratio = np.log1p((qi - q_econ) / q_econ)
         if model == "exponential":
-            t_econ = np.log(qi / q_econ) / Di
-            eur = (qi / Di) * (1.0 - np.exp(-Di * t_econ))
+            eur = (qi - q_econ) / Di
 
         elif model == "harmonic":
-            eur = (qi / Di) * np.log(qi / q_econ)
+            eur = (qi / Di) * log_ratio
 
         else:  # hyperbolic
             if b == 1.0:
                 # Degenerate case — use harmonic formula
-                eur = (qi / Di) * np.log(qi / q_econ)
+                eur = (qi / Di) * log_ratio
             else:
                 # Use the rate ratio to avoid overflowing separate powers.
-                x = (b - 1.0) * np.log(qi / q_econ)
+                x = (b - 1.0) * log_ratio
                 if x > 50.0:
                     # Scale in log space before exponentiating: expm1(x) can
                     # overflow even when the full recovery is representable.
@@ -436,7 +438,20 @@ class ArpsDeclineCurve:
         exponent = 1.0 if model == "harmonic" else b
         if model != "exponential" and qi > 0 and Di > 0 and exponent > 0:
             with np.errstate(over="ignore", under="ignore"):
-                decay = rate_fn(t, 1.0, Di, b)
+                log_decay = None
+                if exponent * Di < np.finfo(float).tiny:
+                    # Form Di*t first: rounding b*Di to a subnormal or zero
+                    # loses its relative precision before division by b.
+                    decline_time = Di * t
+                    product = exponent * decline_time
+                    correction = np.ones_like(product)
+                    np.divide(
+                        np.log1p(product), product, out=correction, where=product != 0
+                    )
+                    log_decay = -decline_time * correction
+                    decay = np.exp(log_decay)
+                else:
+                    decay = rate_fn(t, 1.0, Di, b)
                 rates = qi * decay
                 # An overflowing denominator or a subnormal decay factor can
                 # lose a representable rate before multiplication by qi.
@@ -444,10 +459,19 @@ class ArpsDeclineCurve:
                 if small.any():
                     # Whitson manual, Decline Curve Analysis, web ed. 2026-10-19, §2.1.
                     # log(q) = log(qi) - log(1 + b*Di*t)/b.
-                    log_product = np.log(exponent) + np.log(Di) + np.log(t[small])
-                    rates[small] = np.exp(
-                        np.log(qi) - np.logaddexp(0.0, log_product) / exponent
-                    )
+                    if log_decay is None:
+                        log_product = np.log(exponent) + np.log(Di) + np.log(t[small])
+                        small_log_decay = -np.logaddexp(0.0, log_product) / exponent
+                    else:
+                        small_log_decay = log_decay[small]
+                    rates[small] = np.exp(np.log(qi) + small_log_decay)
+        elif model == "exponential" and qi > 0 and Di > 0:
+            with np.errstate(over="ignore", under="ignore"):
+                decay = np.exp(-Di * t)
+                rates = qi * decay
+                small = decay < np.finfo(float).tiny
+                if small.any():
+                    rates[small] = np.exp(np.log(qi) - Di * t[small])
         else:
             rates = rate_fn(t, qi, Di, b)
         cumulative = np.cumsum(rates)
