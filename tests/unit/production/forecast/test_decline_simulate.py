@@ -1,6 +1,7 @@
 """Synthetic checks for deterministic Arps simulation without curve fitting."""
 
 import math
+from decimal import Decimal, localcontext
 from fractions import Fraction
 
 import numpy as np
@@ -194,3 +195,24 @@ def test_hyperbolic_eur_matches_integrated_rate(qi, b, economic_limit):
     )
     assert math.isfinite(result.eur_bbl)
     assert result.eur_bbl == pytest.approx(expected, rel=1e-10)
+
+
+def test_hyperbolic_eur_avoids_intermediate_multiplication_overflow():
+    # Synthetic parameters; evaluate the closed form independently at 70 digits.
+    with localcontext() as context:
+        context.prec = 70
+        qi = Decimal(65000)
+        decline = Decimal("0.1")
+        exponent = Decimal(64)
+        expected = float((qi / decline) * (qi ** (exponent - 1) - 1) / (exponent - 1))
+
+    result = _simulate(
+        qi=65000.0,
+        Di=0.1,
+        b=64.0,
+        model="hyperbolic",
+        economic_limit=1.0,
+        months=1,
+    )
+    assert math.isfinite(result.eur_bbl)
+    assert result.eur_bbl == pytest.approx(expected, rel=1e-12)

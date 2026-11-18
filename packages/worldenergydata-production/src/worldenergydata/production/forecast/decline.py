@@ -378,7 +378,9 @@ class ArpsDeclineCurve:
                 eur = (qi / Di) * np.log(qi / q_econ)
             else:
                 # Use the rate ratio to avoid overflowing separate powers.
-                eur = (qi / Di) * np.expm1((b - 1.0) * np.log(qi / q_econ)) / (b - 1.0)
+                # Divide before scaling to avoid intermediate multiplication overflow.
+                rate_integral = np.expm1((b - 1.0) * np.log(qi / q_econ)) / (b - 1.0)
+                eur = (qi / Di) * rate_integral
 
         return float(max(eur, 0.0))
 
