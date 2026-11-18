@@ -111,6 +111,7 @@ jobs:
           if-no-files-found: warn
 
       - name: Run tests with coverage
+        if: ${{ !cancelled() && steps.test-targets.outcome == 'success' }}
         env:
           TEST_TARGETS: ${{ steps.test-targets.outputs.targets }}
         run: |

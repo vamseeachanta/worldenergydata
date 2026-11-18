@@ -28,6 +28,9 @@ def _contract(workflow):
     runtime = next(step for step in steps if step["name"] == "Run tests with coverage")
     assert steps.index(install) < steps.index(selection) < steps.index(collect)
     assert steps.index(collect) < steps.index(runtime)
+    assert runtime.get("if") == (
+        "${{ !cancelled() && steps.test-targets.outcome == 'success' }}"
+    )
     assert not collect.get("continue-on-error", False)
     assert "if" not in collect
     assert collect["env"]["TEST_TARGETS"] == runtime["env"]["TEST_TARGETS"] == TARGETS
@@ -64,12 +67,19 @@ def test_daily_matrix_collects_the_runtime_union():
     _contract(_workflow())
 
 
-@pytest.mark.parametrize("mutation", ["version", "hidden-target", "masked-step"])
+@pytest.mark.parametrize(
+    "mutation", ["version", "hidden-target", "masked-step", "runtime-condition"]
+)
 def test_contract_rejects_missing_coverage(mutation):
     workflow = copy.deepcopy(_workflow())
     job = workflow["jobs"]["full-suite"]
     if mutation == "version":
         job["strategy"]["matrix"]["python-version"].pop()
+    elif mutation == "runtime-condition":
+        runtime = next(
+            step for step in job["steps"] if step["name"] == "Run tests with coverage"
+        )
+        runtime.pop("if", None)
     else:
         collect = next(step for step in job["steps"] if step.get("id") == "collection")
         if mutation == "hidden-target":

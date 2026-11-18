@@ -11,6 +11,7 @@ engineering calculations or their acceptance limits.
 | --- | --- | --- |
 | Initial | 2026-10-20 | Document collection rules and a reproducible duplicate-name example. |
 | 1 | 2026-11-16 | Separate matrix collection evidence from runtime outcomes. |
+| 2 | 2026-11-18 | Keep parallel runtime tests running after collection fails. |
 
 ## Package imports
 
@@ -94,11 +95,15 @@ The existing `tests/ci/test_collection_contract.py` also runs independently of
 the target expression, including after a collection failure. It guards the
 repaired imports, runtime dependency chain and duplicate test basenames.
 The runtime test selections and arguments remain the same.
+When target selection succeeds and the job is not cancelled, parallel runtime
+tests run even if collection or the collection contract fails. The collection
+failure still fails the job.
 
 `tests/workflows/test_collection_evidence.py` checks the matrix, target sharing,
 step order and artifact location. Synthetic suites exercise successful, broken
 and empty collection with real pytest; altered workflows demonstrate detection
-of omitted interpreters, hidden targets and failure masking.
+of omitted interpreters, hidden targets, failure masking and a missing runtime
+condition.
 
 Local regressions establish the workflow contract, not a passing hosted matrix.
 The final matrix criterion requires all three hosted collection steps to finish
