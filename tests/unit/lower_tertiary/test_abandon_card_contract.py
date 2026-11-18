@@ -111,8 +111,10 @@ def test_dated_operation_preserves_evidence_gaps(timeline, well):
     milestone = "Feb 2020 · Observed plugging operation (synthetic)"
     assert workover["li"][0] == milestone
 
-    # Model a future card carrying the observed source milestone, without
-    # treating that operation label as filing or liability evidence.
+    # This insertion checks template compatibility only; facts_to_well does
+    # not populate Abandon milestones. Replace it with generator-driven
+    # coverage when #770 wires observed milestones into the Abandon card.
+    # The operation label does not establish filing or liability evidence.
     card["li"].insert(0, workover["li"][0])
     _assert_abandon_bullets(card, observed_milestones=[milestone])
     rendered = timeline.render(payload)
