@@ -273,6 +273,11 @@ def test_escaped_path_preserved_in_each_evidence_channel(render, record, target,
         "docs/reference.html#field%250asurvey",
         "docs/search?title=field%2520survey",
         "docs/%2525-complete.pdf",
+        "docs/survey%",
+        "docs/survey%2",
+        "docs/survey%2G.pdf",
+        "docs/search?title=field%20survey%",
+        "docs/reference.html#field%2Gsurvey",
     ],
 )
 def test_unsafe_links_rejected_in_each_evidence_channel(render, record, target, href):

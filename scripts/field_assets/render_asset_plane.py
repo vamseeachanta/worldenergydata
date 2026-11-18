@@ -35,6 +35,8 @@ def _link(value):
         raise ValueError("Whitespace or control character in link")
     # Parse before decoding so escaped delimiters cannot change URL structure.
     url = urlsplit(value)
+    if any(re.search(r"%(?![0-9A-Fa-f]{2})", part) for part in url):
+        raise ValueError("Malformed percent escape in link")
     decoded = [unquote(part) for part in url]
     for position, part in enumerate(decoded):
         if any(
