@@ -194,7 +194,8 @@ def test_invalid_claim_never_inspects_filesystem(catalog, tmp_path, value, monke
     "value", ["/data/x", "//server/share/x", "Q:/data/x", "Q:data/x"]
 )
 def test_claim_and_catalog_literals_reject_anchors(catalog, monkeypatch, parser, value):
-    # Exercise native Windows parsing on any host, without touching a filesystem.
+    # Guard against returning to Path: PurePosixPath currently ignores this patch,
+    # but either host's Path must never admit anchors if used here in the future.
     monkeypatch.setattr(catalog, "Path", parser)
     assert catalog.literal_path(value) is None
 
