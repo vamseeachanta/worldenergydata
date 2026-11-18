@@ -1,7 +1,8 @@
 # Revision 11 changes
 
-Maintainer comments received 18 November 2026 on revision 10. Each comment is quoted as received; the lines below
-it say where revision 11 applies it.
+Maintainer comments received 18 November 2026 on revision 10. Comments 1 and 2 are quoted in full; comments 3, 4
+and 5 are quoted in part, as marked, with "..." where words are left out. The lines below each comment say where
+revision 11 applies it.
 
 ## Comment 1 (infographic below the opening picture)
 
@@ -31,38 +32,71 @@ it say where revision 11 applies it.
   Administration, Cushing WTI spot price; added in pull request 1185 with its provenance file). It is cited under
   Figure 1 and in `prompts/README.md`.
 - A new observation reads the rolling averages beside the price: from 2014 to 2015 the WTI annual mean fell from
-  USD 93.26 to 48.69 a barrel; the three-year average of new wells under 100 m fell from 62.0 a year (2012 to
-  2014) to 12.3 (2015 to 2017), in 500 m or more from 75.7 to 59.3. It is generated from the data and stops the
-  build if the reading no longer holds. A hypothesis and an open point in section 3 say that no cause is fitted.
+  USD 93.26 to 48.69 a barrel; the three-year average of new wells under 100 m fell from about 62 a year (2012 to
+  2014) to about 12 (2015 to 2017), in 500 m or more from about 76 to about 59. The exact values (62.0, 12.3, 75.7,
+  59.3) are in the Figure 1 notes. The text is generated from the data and stops the build if the reading no
+  longer holds. An open point in section 3 says that no cause is fitted.
 - Data: `derive_r11.py` applies the revision 9 borehole rule (`build_r9.map_wells`) one year at a time to the
   same pinned borehole file (12 November 2026). 2005 to 2009 and 2021 to 2025 equal the revision 9 map well for
   well; the test checks it.
 - The page uses Plotly 2.35.2 as before; the animation is inline script, no new library.
 
-## Comment 3 (section 3, days from drilling to abandonment)
+## Comment 3 (section 3, days from drilling to abandonment; quoted in part)
 
-> Can we roll this into the next series article? ... You make a judgment and move on. ... Some of this data may be better fitting in other articles, whatever you judge
+> Can we roll this into the next series article? ... You make a judgment and move on. ... Make sure other articles are reviewed. to ensure we do have. a well rounded answer and usage of all this data. Some of this data may be better fitting in other articles, whatever you judge
 
 - Judgement: the section moves to the series' plugging-and-abandonment article. A one-line pointer stays at the
   end of section 2; old section 4 is now section 3.
 - The section's text, code and data are parked in `../plug_abandonment_article/` (`section3-days.md`,
   `days_charts.py`, `days_charts.js`, `data/`), with a test that rebuilds its charts. The full day-statistics
   rules and Table B1 are in `counting-rules.md`, section 4.
+- Other articles checked: the four planned parts of the series on the life of a Gulf of America well (part 1 this
+  article; part 2 well interventions; part 3 well abandonment by water depth; part 4 worldwide wells) and the
+  planned jack-up, rig and costing articles.
+- Where each data set goes:
+  - Permit counts by rig type and water depth (Figures 2 to 5, Table 1), the yearly new wells and the WTI price
+    (Figure 1): stay in this article.
+  - Days at each stage (`days-summary.csv`, `days-overview.csv`, revision 10 Figures 6 and 7): part 3, well
+    abandonment, which carries the drilling and abandonment days and the side-by-side stage chart.
+  - Completion and intervention days (rows of the same files): also part 2, well interventions.
+  - Rig-type counts and shares (Figures 2 and 3, Table 1): the jack-up and rig articles, with the jack-up shift
+    from new wells to plugging and abandonment also in part 3.
+  - Yearly well counts by depth with the day statistics: activity inputs for the costing article.
+  - Part 4, worldwide wells: takes none of these files (US federal Gulf waters only).
+  - Open: which article carries the completion days on their own.
 
-## Comment 4 (Appendix A)
+## Comment 4 (Appendix A; quoted in part)
 
 > I need this short and sweet one to two lines. for this section. with a link to our key repo repository. ...
 
 - Appendix A is two purpose bullets and a link to `prompts/` in this folder, which holds the full prompt, the
   files, the check values and the sources.
 
-## Comment 5 (Appendix B)
+## Comment 5 (Appendix B; quoted in part)
 
 > Put the counting rules in the ecosystem. If somebody wants more details, they can look at it. Use a link. Use a github link. Provide a brief summary. ...
 
 - Appendix B is two purpose bullets and a GitHub link to `counting-rules.md` in this folder, which holds the full
   rules for the permits, the map and the rolling averages, and the full revision 10 Appendix B (day-statistics
   rules, selection counts and Table B1).
+
+## Review gate run 1 (18 November 2026)
+
+- Sign-off line: "Approved: awaiting the maintainer's review of revision 11" in place of the 3 November
+  approval, which belonged to an earlier revision; a test keeps the old date out of it. The release build takes
+  the date of the maintainer's approval of revision 11.
+- Section 3.1 keeps two hypotheses. The third (shallow-water wells follow the oil price more closely) is removed:
+  it had no source, and Figure 1b cuts against it (shallow-water wells fell from 2005 to 2011 while the price
+  rose). The section 1 observation and the open point in section 3.2 carry the price reading.
+- Section 1 names the public data set: two BSEE raw data files (permits to drill, boreholes) and the EIA WTI spot
+  price.
+- The rolling-average observation gives whole wells (about 62 to about 12 a year); the exact values are in the
+  Figure 1 notes.
+- Infographic source line: "Sources: BSEE raw data files; EIA WTI spot price (section 1, Figure 1)".
+- Section 3.3 has the maintainer's line as he wrote it: "To try it out or adapt the analysis, see reusable
+  prompt."
+- The review panel lists the other articles checked and where each data set goes (comment 3 above).
+- `tests/browser_check.mjs` exits 1 when any check is false and checks a click on the slider while playing.
 
 ## Data
 

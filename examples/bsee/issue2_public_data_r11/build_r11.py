@@ -283,8 +283,9 @@ def trend_figure(table, out):
                 wti=[float(v) for v in table['WTI (USD/bbl)']], roll=ROLL, window=WINDOW)
 
 
-def trend_observation(table):
-    """The rolling-average bullet, read from the trend table; it fails closed if the reading no longer holds."""
+def trend_values(table):
+    """The rolling-average reading: WTI annual means either side of the fall and the three-year averages before and
+    after it, under 100 m and in 500 m or more; it fails closed if the reading no longer holds."""
     t = table.set_index('year')
     a, b = PRICE_STEP
     before, after = (a - ROLL + 1, a), (b, b + ROLL - 1)
@@ -294,10 +295,26 @@ def trend_observation(table):
     price = [t.loc[a, 'WTI (USD/bbl)'], t.loc[b, 'WTI (USD/bbl)']]
     if not (price[1] < price[0] * .6 and shallow[1] < shallow[0] * .5 and deep[1] > deep[0] * .6):
         raise ValueError('Review the rolling-average observation')
-    return (f'When the WTI oil price fell from USD {price[0]:.2f} a barrel in {a} to USD {price[1]:.2f} in {b} (annual means), '
-            f'the three-year average of new wells in less than 100 m of water fell from {shallow[0]:.1f} a year '
-            f'({period_name(*before)}) to {shallow[1]:.1f} ({period_name(*after)}); in 500 m or more it fell from '
-            f'{deep[0]:.1f} to {deep[1]:.1f}')
+    return dict(price=price, shallow=shallow, deep=deep, before=before, after=after)
+
+
+def trend_observation(table):
+    """The rolling-average bullet in section 1, with the averages rounded to whole wells; the exact values are in the
+    Figure 1 notes (trend_note)."""
+    v = trend_values(table)
+    a, b = PRICE_STEP
+    return (f'When the WTI oil price fell from USD {v["price"][0]:.2f} a barrel in {a} to USD {v["price"][1]:.2f} in {b} '
+            f'(annual means), the three-year average of new wells in less than 100 m of water fell from about '
+            f'{v["shallow"][0]:.0f} a year ({period_name(*v["before"])}) to about {v["shallow"][1]:.0f} '
+            f'({period_name(*v["after"])}); in 500 m or more it fell from about {v["deep"][0]:.0f} to about {v["deep"][1]:.0f}')
+
+
+def trend_note(table):
+    """The Figure 1 note with the exact three-year averages behind the section 1 observation."""
+    v = trend_values(table)
+    return (f'Section 1 reads these three-year averages, new wells a year: under 100 m, {v["shallow"][0]:.1f} '
+            f'({period_name(*v["before"])}) and {v["shallow"][1]:.1f} ({period_name(*v["after"])}); 500 m or more, '
+            f'{v["deep"][0]:.1f} and {v["deep"][1]:.1f}.')
 
 
 def count_figures(rig, depth, out):
@@ -608,6 +625,7 @@ def build_html(out, cache, payload, sources, map_info, table):
     page = page.replace('@@BUILD_COMMIT@@', BUILD_COMMIT).replace('@@BUILD_SHORT@@', BUILD_COMMIT[:8])
     page = page.replace('@@MAP_OBSERVATION@@', html.escape(map_observation(map_info['summary'])))
     page = page.replace('@@TREND_OBSERVATION@@', html.escape(trend_observation(table)))
+    page = page.replace('@@TREND_NOTE@@', html.escape(trend_note(table)))
     page = page.replace('@@MAP_COUNTS@@', html.escape(map_footnote(map_info['summary'], map_info['audit'])))
     page = page.replace('@@IG_FOUND@@', html.escape(infographic_found(map_info['summary'], table)))
     page = page.replace('@@IG_SCENE@@', scene_svg(map_info['summary']))

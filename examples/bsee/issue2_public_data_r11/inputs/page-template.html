@@ -819,7 +819,9 @@ ol.fn{margin:0 0 0 1.4em;padding:0;font-size:12.5px}
 <body class="hs-doc">
 <div class="nl-wrap">
 <div class="review-panel" id="review-panel"><p><strong>Review copy, revision 11 (removed at publication)</strong></p>
-<p>Changes since revision 10: the infographic puts each water-depth band's new-well counts in the space below the shallow water; Figure 1 plays through every five-year window until you click, and a new panel b gives the new wells each year with three-year rolling averages beside the WTI oil price; the days from drilling to abandonment (old section 3) move to the series' plugging-and-abandonment article; Appendices A and B are now short purpose bullets with a link to the full text in the repository. Permit counts (Figures 2 to 5, Table 1) are unchanged.</p></div>
+<p>Changes since revision 10: the infographic puts each water-depth band's new-well counts in the space below the shallow water; Figure 1 plays through every five-year window until you click, and a new panel b gives the new wells each year with three-year rolling averages beside the WTI oil price; the days from drilling to abandonment (old section 3) move to the series' plugging-and-abandonment article; Appendices A and B are now short purpose bullets with a link to the full text in the repository. Permit counts (Figures 2 to 5, Table 1) are unchanged.</p>
+<p>Other articles checked: the four planned parts of the series on the life of a Gulf of America well (this article; well interventions; well abandonment by water depth; worldwide wells) and the planned jack-up, rig and costing articles. Where each data set goes: the permit counts, the yearly new wells and the oil price stay here; the days at each stage go to the abandonment article (Figure 6, drilling and abandonment days); the completion and intervention days also feed the well interventions article; the rig-type counts (Figures 2 and 3, Table 1) feed the jack-up and rig articles; the yearly well counts and the day statistics are activity inputs for the costing article; the worldwide wells article takes none of these files. Open: which article carries the completion days on their own.</p>
+<p>The sign-off line no longer carries the 3 November approval; it reads as awaiting your review of this revision.</p></div>
 <div id="deckhand-opening" class="deckhand-slot" role="img" aria-label="Deckhand opening graphic">Slot for the shared Deckhand opening graphic, placed at publication</div>
 <p class="nl-kicker" id="top">The Deckhand newsletter &middot; Issue 2 &middot; Public data</p>
 <h1>Gulf of Mexico well permits: a public US data file</h1>
@@ -833,7 +835,7 @@ ol.fn{margin:0 0 0 1.4em;padding:0;font-size:12.5px}
 <div class="ig-p"><p class="ig-k">What we found</p><p>@@IG_FOUND@@</p></div>
 <div class="ig-p ig-act"><p class="ig-k">What you can do</p><p>Rerun the counts on the latest files and add your own questions, with the reusable prompts linked in Appendix A.</p></div>
 </div>
-<figcaption><p class="ft">Sources: BSEE raw data files (section 1 and Appendix A). Deckhand &middot; AceEngineer</p></figcaption>
+<figcaption><p class="ft">Sources: BSEE raw data files; EIA WTI spot price (section 1, Figure 1). Deckhand &middot; AceEngineer</p></figcaption>
 </figure>
 <section class="intro" aria-label="Introduction">
 <h2>What we did</h2>
@@ -852,7 +854,7 @@ ol.fn{margin:0 0 0 1.4em;padding:0;font-size:12.5px}
 <ol><li><a href="#s1">Public permit data</a></li><li><a href="#s2">Well permits by rig type and water depth</a></li><li><a href="#s3">Outlook and open points</a></li></ol>
 <p>Appendix A <a href="#reusable-prompts">Reusable prompts</a>; Appendix B <a href="#counting-rules">Counting rules and record counts</a></p></nav>
 <h2 id="s1">1 Public permit data</h2>
-<p class="lead">Public data shows how new-well permits in US federal waters of the Gulf of America (formerly the Gulf of Mexico) have changed since 2005. The counts come from the Application for Permit to Drill (APD) raw data of the US Bureau of Safety and Environmental Enforcement (BSEE). The map uses its borehole raw data; the oil price is the US Energy Information Administration (EIA) WTI spot price.</p>
+<p class="lead">Public data shows how new-well permits in US federal waters of the Gulf of America (formerly the Gulf of Mexico) have changed since 2005. The counts come from the Application for Permit to Drill (APD) raw data of the US Bureau of Safety and Environmental Enforcement (BSEE). The map uses its borehole raw data; the oil price is the US Energy Information Administration (EIA) WTI spot price. The public data set is two BSEE raw data files (permits to drill, boreholes) and the EIA WTI spot price.</p>
 <p>Some of the observations are as follows:</p>
 <ul>
 <li>@@MAP_OBSERVATION@@ (<a href="#fig-map">Figure 1a</a>).</li>
@@ -871,7 +873,7 @@ ol.fn{margin:0 0 0 1.4em;padding:0;font-size:12.5px}
 <ol class="fn">
 <li>Each dot on the map is the surface location of an original borehole in the BSEE Gulf of Mexico region, spudded in the window shown; cancelled boreholes are left out. A window counts each well once; consecutive windows share four years.</li>
 <li>Counts: @@MAP_COUNTS@@ Every window: <a href="data/map-windows.csv">map-windows.csv</a>.</li>
-<li>Panel b: dots are the wells started each year; lines are the three-year rolling average (the year and the two before it), from 2007. The dashed line is the annual mean of the monthly Cushing WTI spot price (right axis). The price is shown beside the counts; no cause is fitted.</li>
+<li>Panel b: dots are the wells started each year; lines are the three-year rolling average (the year and the two before it), from 2007. The dashed line is the annual mean of the monthly Cushing WTI spot price (right axis). The price is shown beside the counts; no cause is fitted. @@TREND_NOTE@@</li>
 <li>Sources: BSEE borehole raw data (<a href="https://www.data.bsee.gov/Well/Files/BoreholeRawData.zip">BoreholeRawData.zip</a>), file of @@BORE_FILE@@, retrieved @@BORE_DATE@@; WTI spot price, US Energy Information Administration, as the repository snapshot <a href="@@WTI_URL@@">wti-monthly.csv</a> (<a href="@@WTI_PROV_URL@@">provenance</a>); land outline from Natural Earth 1:50m land, version 5.1.2, public domain (<a href="@@LAND_URL@@">ne_50m_land.geojson</a>), retrieved @@LAND_DATE@@.</li>
 <li>Data: <a href="data/map-wells-by-year.csv">map-wells-by-year.csv</a>, <a href="data/new-wells-trend.csv">new-wells-trend.csv</a> and <a href="data/wti-annual.csv">wti-annual.csv</a>.</li>
 </ol>
@@ -949,18 +951,17 @@ ol.fn{margin:0 0 0 1.4em;padding:0;font-size:12.5px}
 <h3>3.1 Our hypotheses</h3>
 <p>Our hypothesis: with few new-well permits now naming a jack-up (Figure 2), jack-up work in US federal Gulf of Mexico waters will turn further from new wells to plugging and abandonment.</p>
 <p>Our hypothesis: with deep-water permits falling far less than shallow-water permits (Figure 4), new-well engineering in these waters will centre further on deep-water drilling, risers and subsea equipment.</p>
-<p>Our hypothesis: new wells in shallow water follow the oil price more closely than deep-water wells, whose projects are planned years ahead (Figure 1b).</p>
 <h3>3.2 Open points</h3>
 <ul>
 <li>Each count takes the rig type named in a well's first permit. How often a different type of rig drilled the well is open.</li>
 <li>Figure 1b sets the oil price beside the well counts only. How much of each change follows the price, and how much follows other events such as changes in regulation, is open.</li>
 </ul>
 <h3>3.3 Try it out</h3>
-<p>To try it out or adapt the analysis, see the <a href="#reusable-prompts">reusable prompts</a>.</p>
+<p>To try it out or adapt the analysis, see <a href="#reusable-prompts">reusable prompt</a>.</p>
 <div class="offer"><p>AceEngineer carries out fixed-scope engineering projects, and helps engineering firms build AI into everyday engineering work, including analysis of public offshore data such as this.</p></div>
 <p>If you have run your own analysis, see a way to improve this one, or have an idea for a future issue, write to support@aceengineer.com. We read every reply and credit the ideas we use and provide results we obtained.</p>
 
-<p class="dc">Prepared: Analyst Deckhand &middot; Checked: Editor Deckhand &middot; Approved: Vamsee Achanta &middot; 3 November 2026</p>
+<p class="dc">Prepared: Analyst Deckhand &middot; Checked: Editor Deckhand &middot; Approved: awaiting the maintainer's review of revision 11</p>
 <p class="hashtags">#GulfOfAmerica #GulfOfMexico #OffshoreDrilling #Deepwater #PlugAndAbandonment #PublicData #BSEE #WellEngineering #DeckhandChronicles</p>
 
 <h2 id="reusable-prompts">Appendix A Reusable prompts</h2>

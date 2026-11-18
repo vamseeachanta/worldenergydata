@@ -105,9 +105,12 @@ def test_rolling_average_and_wti_hand_checks():
 
 def test_rolling_average_observation_reads_as_built():
     text = ('When the WTI oil price fell from USD 93.26 a barrel in 2014 to USD 48.69 in 2015 (annual means), the three-year '
-            'average of new wells in less than 100 m of water fell from 62.0 a year (2012 to 2014) to 12.3 (2015 to 2017); '
-            'in 500 m or more it fell from 75.7 to 59.3 (<a href="#fig-map-trend">Figure 1b</a>).')
+            'average of new wells in less than 100 m of water fell from about 62 a year (2012 to 2014) to about 12 (2015 to 2017); '
+            'in 500 m or more it fell from about 76 to about 59 (<a href="#fig-map-trend">Figure 1b</a>).')
     assert '<li>' + text + '</li>' in page()
+    exact = ('Section 1 reads these three-year averages, new wells a year: under 100 m, 62.0 (2012 to 2014) and 12.3 '
+             '(2015 to 2017); 500 m or more, 75.7 and 59.3.</li>')
+    assert exact in page()
 
 
 def test_oil_price_source_is_cited():
@@ -322,6 +325,25 @@ def test_figures_have_png_and_svg_exports():
 def test_manifest_lists_hashes_that_match():
     for item in build.manifest():
         assert hashlib.sha256((ROOT / item['path']).read_bytes()).hexdigest() == item['sha256']
+
+
+def test_sign_off_awaits_review_of_revision_11():
+    text = page()
+    sign_off = re.findall(r'<p class="dc">(.*?)</p>', text)
+    assert sign_off == ["Prepared: Analyst Deckhand &middot; Checked: Editor Deckhand &middot; "
+                        "Approved: awaiting the maintainer's review of revision 11"]
+    assert '3 November 2026' not in sign_off[0] and 'Approved: Vamsee' not in text
+    # "3 November 2026" stays only as the retrieval date of the permit file
+    assert text.count('3 November 2026') == text.count('retrieved 3 November 2026')
+
+
+def test_one_or_two_hypotheses_and_the_data_set_named():
+    text = page()
+    assert 1 <= text.count('<p>Our hypothesis:') <= 2
+    assert ('The public data set is two BSEE raw data files (permits to drill, boreholes) and the EIA WTI spot '
+            'price.') in text
+    assert '<p class="ft">Sources: BSEE raw data files; EIA WTI spot price (section 1, Figure 1).' in text
+    assert '<p>To try it out or adapt the analysis, see <a href="#reusable-prompts">reusable prompt</a>.</p>' in text
 
 
 def test_what_we_found_reads_as_reviewed():

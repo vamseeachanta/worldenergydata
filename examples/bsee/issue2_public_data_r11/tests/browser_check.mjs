@@ -1,5 +1,7 @@
 // Headless browser check of the revision 11 page: Figure 1 plays through the five-year windows, a click on the map
-// stops it, a click on a year in panel b moves the map to the window ending that year, and the console stays clean.
+// stops it, a click on a year in panel b moves the map to the window ending that year, a click on the slider while
+// playing stops it on the window clicked, and the console stays clean. Exits 1 on an error, a console error or
+// exception, or any check that is false.
 // Usage: node browser_check.mjs <browser executable> <page file> <output folder>
 // Writes fig1-playing.png, fig1-clicked.png, infographic.png and browser-check.json to the output folder.
 import { spawn } from 'node:child_process';
@@ -99,14 +101,31 @@ try {
   await sleep(2600);
   result.checks.stays_after_panel_b_click = (await frame()) === chosen;
   await shot('fig1-clicked.png', '#fig1');
+  // press Play, then click the slider a quarter of the way along: playing stops on the window under the click
+  await evaluate(`document.querySelector('.map-ctl button').click()`);
+  await sleep(1500);
+  result.checks.playing_again = (await evaluate(`document.querySelector('.map-ctl button').textContent`)) === 'Pause';
+  const bar = await evaluate(`(()=>{const e=document.querySelector('.map-ctl input[type=range]');e.scrollIntoView({block:'center'});
+    const r=e.getBoundingClientRect();return {x:r.left+r.width*.25,y:r.top+r.height/2};})()`);
+  await click(bar.x, bar.y);
+  await sleep(300);
+  const value = Number(await evaluate(`document.querySelector('.map-ctl input[type=range]').value`));
+  const sliderFrame = await frame();
+  result.checks.slider_click_value = value;
+  result.checks.slider_click_frame = sliderFrame;
+  result.checks.slider_click_moves_map = value > 0 && value < 8 && sliderFrame.startsWith(`${2005 + value} to ${2009 + value}`);
+  await sleep(2600);
+  result.checks.slider_click_stops = (await frame()) === sliderFrame &&
+    (await evaluate(`document.querySelector('.map-ctl button').textContent`)) === 'Play';
 } catch (error) {
   result.error = String(error && error.stack || error);
 } finally {
+  result.failed_checks = Object.entries(result.checks).filter(([, v]) => v === false).map(([k]) => k);
   writeFileSync(join(outDir, 'browser-check.json'), JSON.stringify(result, null, 2) + '\n');
   try { ws && ws.close(); } catch { }
   proc.kill();
   await sleep(800);
   try { rmSync(profile, { recursive: true, force: true }); } catch { }
   console.log(JSON.stringify(result, null, 2));
-  process.exit(result.error || result.exceptions.length || result.console.length ? 1 : 0);
+  process.exit(result.error || result.exceptions.length || result.console.length || result.failed_checks.length ? 1 : 0);
 }

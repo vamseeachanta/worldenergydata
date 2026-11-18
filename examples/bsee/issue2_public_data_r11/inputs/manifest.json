@@ -1,8 +1,8 @@
 [
   {
     "path": "inputs/page-template.html",
-    "sha256": "dcfabc23005af8d95155dd4b5af08de462ae1a7edc01bf82264db65eb6838daa",
-    "basis": "r11 page template: the r10 template with the counts in the infographic scene, the animated Figure 1 with rolling averages and the WTI price, section 3 moved out, and Appendices A and B as purpose bullets with links"
+    "sha256": "735ad6f7b29122634a711d8de47499e296ba0ba668ca96d3a706b33aad3d9f4c",
+    "basis": "r11 page template: the r10 template with the counts in the infographic scene, the animated Figure 1 with rolling averages and the WTI price, section 3 moved out, and Appendices A and B as purpose bullets with links; review gate run 1 fixes (sign-off line, two hypotheses, data set named, source line)"
   },
   {
     "path": "inputs/source-pins.json",

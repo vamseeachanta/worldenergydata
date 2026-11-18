@@ -1,8 +1,7 @@
 # Issue 2 public data, revision 11
 
 This local review copy applies the five maintainer comments of 18 November 2026 on revision 10 (see
-`changes.md`). It has not been published. The inherited page byline describes the earlier approval; it does not
-approve r11.
+`changes.md`). It has not been published.
 
 Revision 11 keeps the revision 9 permit counts (pinned by SHA-256 in `inputs/manifest.json` and copied byte for
 byte). Figure 1 adds the new wells of every year from 2005 to 2025, derived by `derive_r11.py` from the same
@@ -16,7 +15,8 @@ Section 3 of revision 10 (days from drilling to abandonment) is parked in `../pl
 - `prompts/README.md`: the full Appendix A (built from `inputs/prompts-template.md`).
 - `data/`, `figures/`: a CSV for every chart and table; PNG and SVG exports of the six charts.
 - `derive_r11.py`: writes the three Figure 1 data files from the pinned borehole file; run once.
-- `tests/test_build_r11.py`: offline tests; `tests/browser_check.mjs`: headless browser check of Figure 1.
+- `tests/test_build_r11.py`: offline tests; `tests/browser_check.mjs`: headless browser check of Figure 1
+  (exits 1 on any false check, console error or exception).
 
 ## Rebuild
 
