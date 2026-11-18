@@ -302,6 +302,47 @@ def test_simulate_accepts_finite_profile_after_intermediate_overflow():
     np.testing.assert_array_equal(result.forecast_df["cumulative_bbl"], 0.0)
 
 
+@pytest.mark.parametrize(
+    "model,b", [("harmonic", 1), ("hyperbolic", 1), ("hyperbolic", 2)]
+)
+@pytest.mark.filterwarnings("error::RuntimeWarning")
+def test_profile_preserves_rates_when_decline_times_month_overflows(model, b):
+    result = _simulate(
+        qi=1e308, Di=1e308, b=b, model=model, economic_limit=1e307, months=3
+    )
+    # For b=1, q(t) = 1 / (t + 1e-308), giving 1, 1/2 and 1/3.
+    # For b=2, q(t) = 1e154 / sqrt(2*t + 1e-308) at the same inputs.
+    if b == 1:
+        rates = [1.0, 0.5, 1 / 3]
+        cumulative = [1.0, 1.5, 11 / 6]
+    else:
+        rates = [1e154 / math.sqrt(2), 5e153, 1e154 / math.sqrt(6)]
+        cumulative = np.cumsum(rates)
+    np.testing.assert_allclose(
+        result.forecast_df["rate_bbl"], rates, rtol=1e-12, atol=0
+    )
+    np.testing.assert_allclose(
+        result.forecast_df["cumulative_bbl"], cumulative, rtol=1e-12, atol=0
+    )
+    pd.testing.assert_frame_equal(
+        result.forecast_df, ArpsDeclineCurve().forecast(result, months=3)
+    )
+
+
+@pytest.mark.filterwarnings("error::RuntimeWarning")
+def test_profile_preserves_subnormal_rates_after_scaling():
+    # q(t) = 1e308 / (1 + 0.5e308*t)**2 rounds to 4e-308/t**2.
+    result = _simulate(
+        qi=1e308, Di=1e308, b=0.5, model="hyperbolic", economic_limit=1e307, months=2
+    )
+    np.testing.assert_allclose(
+        result.forecast_df["rate_bbl"], [4e-308, 1e-308], rtol=1e-12, atol=0
+    )
+    np.testing.assert_allclose(
+        result.forecast_df["cumulative_bbl"], [4e-308, 5e-308], rtol=1e-12, atol=0
+    )
+
+
 @pytest.mark.filterwarnings("error::RuntimeWarning")
 def test_simulate_reports_unrepresentable_eur_intermediate():
     # The exact recovery is finite; the existing helper's qi / Di is not.

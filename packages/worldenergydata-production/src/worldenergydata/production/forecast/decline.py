@@ -186,6 +186,8 @@ class ArpsDeclineCurve:
         restrict this forward evaluation. Hyperbolic exponents above 1 are
         evaluated without physical qualification. Nonfinite EUR or profile
         fields raise ``ValueError`` without numerical overflow warnings.
+        Harmonic and hyperbolic profiles evaluate very small decay factors
+        in log space to preserve representable month-end rates.
         An overflowing EUR intermediate can trigger rejection even when
         the mathematical recovery is finite.
         """
@@ -430,7 +432,24 @@ class ArpsDeclineCurve:
     ) -> pd.DataFrame:
         """Build forecast DataFrame for *months* periods."""
         t = np.arange(1, months + 1, dtype=float)
-        rates = self._rate_fn(model)(t, qi, Di, b)
+        rate_fn = self._rate_fn(model)
+        exponent = 1.0 if model == "harmonic" else b
+        if model != "exponential" and qi > 0 and Di > 0 and exponent > 0:
+            with np.errstate(over="ignore", under="ignore"):
+                decay = rate_fn(t, 1.0, Di, b)
+                rates = qi * decay
+                # An overflowing denominator or a subnormal decay factor can
+                # lose a representable rate before multiplication by qi.
+                small = decay < np.finfo(float).tiny
+                if small.any():
+                    # Whitson manual, Decline Curve Analysis, web ed. 2026-10-19, §2.1.
+                    # log(q) = log(qi) - log(1 + b*Di*t)/b.
+                    log_product = np.log(exponent) + np.log(Di) + np.log(t[small])
+                    rates[small] = np.exp(
+                        np.log(qi) - np.logaddexp(0.0, log_product) / exponent
+                    )
+        else:
+            rates = rate_fn(t, qi, Di, b)
         cumulative = np.cumsum(rates)
         return pd.DataFrame(
             {
