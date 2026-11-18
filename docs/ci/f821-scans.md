@@ -17,7 +17,7 @@ It does not establish the cause of the historical variance in #328.
 | Evidence qualification | 2026-11-17 | Withdrew unsupported bytecode measurements and marked the experiment unverified until a retrievable record is available. |
 | Final source comparison | 2026-11-17 | Rejects input changes after the last progress write and retains both source digests to prevent invalid stability reports. |
 | Regression evidence | 2026-11-18 | Records the current focused test count separately from the unverified bytecode experiment. |
-| Status interpretation | 2026-11-18 | Clarifies how callers distinguish inconsistent findings from invalid evidence when both exit with code 2. |
+| Status interpretation | 2026-11-18 | Clarifies how callers distinguish inconsistent findings, invalid evidence and refused invocations when all exit with code 2. |
 
 ## Why counting output lines is insufficient
 
@@ -146,8 +146,11 @@ The checker exit contract is:
 | STABLE | `1` | Identical nonempty repository inventories |
 | UNSTABLE / ERROR | `2` | Different findings or invalid/incomplete evidence |
 
-Callers must read `status` in `report.json` to tell `UNSTABLE` from `ERROR`;
-both exit with code `2`.
+Exit `2` also covers argument and directory refusals, which print usage to stderr
+and write no report. Read `status` from the summary line the checker prints on
+stdout, or from the `report.json` it creates in the new evidence directory, to
+tell `UNSTABLE` from `ERROR`; treat exit `2` without that summary line as a refused
+invocation.
 
 These are checker interface values, not acceptance tolerances. The raw linter
 must exit `1` even for a clean repository because the probe is always a finding;
