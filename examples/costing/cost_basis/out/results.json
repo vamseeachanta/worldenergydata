@@ -1,0 +1,841 @@
+{
+ "coverage": {
+  "projects": 224,
+  "curated": 80,
+  "staged": 139,
+  "trail_only": 5,
+  "with_operator": 219,
+  "with_region": 219,
+  "with_water_depth": 107,
+  "water_depth_from_bsee": 4,
+  "with_development_type": 216,
+  "with_facility": 204,
+  "with_wells": 148,
+  "with_bsee_wells": 21,
+  "with_wells_any": 153,
+  "with_fid": 162,
+  "with_sanction": 107,
+  "with_final": 15,
+  "with_sanction_and_final": 10,
+  "with_awards": 29,
+  "with_award_value": 27,
+  "with_package_split": 12,
+  "with_three_packages": 4,
+  "with_all_fields": 46,
+  "gom_deepwater_fields": 283,
+  "gom_fields_mapped": 21,
+  "gom_fields_no_cost_record": 262
+ },
+ "register_updates": [
+  "Balder X / Balder Future",
+  "Barossa",
+  "Scarborough (incl. Pluto Train 2)"
+ ],
+ "rates": {
+  "sps_per_tree": {
+   "rows": [
+    {
+     "project": "Jack/St. Malo (initial phase)",
+     "year": 2010,
+     "contractor": "Cameron (OneSubsea)",
+     "count": 12.0,
+     "count_text": "12 subsea trees",
+     "value_mm": 230.0,
+     "basis": "point",
+     "rate_mm": 19.166666666666668,
+     "source_url": "https://www.offshore-technology.com/projects/jackstmalodeepwaterp/"
+    },
+    {
+     "project": "Payara",
+     "year": 2020,
+     "contractor": "TechnipFMC",
+     "count": 41.0,
+     "count_text": "41 EVDT trees",
+     "value_mm": 750.0,
+     "basis": "band",
+     "rate_mm": 18.29268292682927,
+     "source_url": "https://www.oedigital.com/news/482115-technipfmc-nets-large-subsea-order-from-exxon-for-payara-development-in-guyana"
+    },
+    {
+     "project": "Yellowtail",
+     "year": 2021,
+     "contractor": "TechnipFMC",
+     "count": 51.0,
+     "count_text": "51 EVDT trees",
+     "value_mm": 750.0,
+     "basis": "band",
+     "rate_mm": 14.705882352941176,
+     "source_url": "https://www.upstreamonline.com/field-development/exxonmobil-hands-out-big-subsea-hardware-contract-for-guyanas-yellowtail-project/2-1-1098871"
+    },
+    {
+     "project": "Uaru",
+     "year": 2023,
+     "contractor": "TechnipFMC",
+     "count": 44.0,
+     "count_text": "44 subsea trees",
+     "value_mm": 750.0,
+     "basis": "band",
+     "rate_mm": 17.045454545454547,
+     "source_url": "https://oceannews.com/news/subsea-and-survey/technipfmc-awarded-major-subsea-contract-for-exxonmobil-s-guyana-uaru-project/"
+    },
+    {
+     "project": "Whiptail",
+     "year": 2024,
+     "contractor": "TechnipFMC",
+     "count": 48.0,
+     "count_text": "48 subsea trees",
+     "value_mm": 750.0,
+     "basis": "band",
+     "rate_mm": 15.625,
+     "source_url": "https://www.businesswire.com/news/home/20240415018073/en/TechnipFMC-Awarded-Large-Subsea-Contract-for-ExxonMobil-Guyanas-Whiptail-Project"
+    }
+   ],
+   "median": 17.045454545454547,
+   "min": 14.705882352941176,
+   "max": 19.166666666666668,
+   "n": 5
+  },
+  "surf_per_km": {
+   "rows": [
+    {
+     "project": "Kaombo",
+     "year": 2014,
+     "contractor": "Technip / Heerema alliance",
+     "count": 300.0,
+     "count_text": "~300 km flowlines",
+     "value_mm": 3500.0,
+     "basis": "point",
+     "rate_mm": 11.666666666666666,
+     "source_url": "https://www.offshore-mag.com/subsea/article/16783185/technip-heerema-land-giant-kaombo-surf-contract"
+    },
+    {
+     "project": "Barossa",
+     "year": 2020,
+     "contractor": "Subsea 7",
+     "count": 36.0,
+     "count_text": "36 km infield flowlines",
+     "value_mm": 400.0,
+     "basis": "band",
+     "rate_mm": 11.11111111111111,
+     "source_url": "https://www.globenewswire.com/news-release/2020/03/03/1993972/0/en/Subsea-7-awarded-contract-offshore-Australia.html"
+    },
+    {
+     "project": "Zinia Phase 2",
+     "year": 2018,
+     "contractor": "Subsea 7",
+     "count": 36.0,
+     "count_text": "~36 km flowlines",
+     "value_mm": 225.0,
+     "basis": "range",
+     "rate_mm": 6.25,
+     "source_url": "https://www.nsenergybusiness.com/news/contracts/subsea-7-awarded-contract-for-1-2bn-zinia-2-field-development-offshore-angola/"
+    },
+    {
+     "project": "Culzean",
+     "year": 2015,
+     "contractor": "Subsea 7",
+     "count": 52.0,
+     "count_text": "52 km gas export",
+     "value_mm": 150.0,
+     "basis": "point",
+     "rate_mm": 2.8846153846153846,
+     "source_url": "https://subseaworldnews.com/2015/09/01/subsea-7-wins-culzean-surf-prize/"
+    },
+    {
+     "project": "GranMorgu (Block 58)",
+     "year": 2024,
+     "contractor": "Saipem",
+     "count": 190.0,
+     "count_text": "~100 km production + 90 km injection lines",
+     "value_mm": 1900.0,
+     "basis": "point",
+     "rate_mm": 10.0,
+     "source_url": "https://www.saipem.com/en/media/press-releases/2024-11-14/saipem-new-offshore-contract-totalenergies-suriname-19-billion-usd"
+    }
+   ],
+   "median": 10.0,
+   "min": 2.8846153846153846,
+   "max": 11.666666666666666,
+   "n": 5
+  }
+ },
+ "lwc": {
+  "events": 59,
+  "periods": 17,
+  "wellbores": 4748,
+  "per_wellbore": 0.012426284751474306,
+  "window": "2006-10-01 to 2023-12-31",
+  "by_period": {
+   "2023 CY": 5,
+   "2022 CY": 5,
+   "2021 CY": 4,
+   "2020 CY": 1,
+   "2019 CY": 2,
+   "2018 CY": 1,
+   "2017 FY": 0,
+   "2016 FY": 1,
+   "2015 FY": 3,
+   "2014 FY": 4,
+   "2013 FY": 9,
+   "2012 FY": 4,
+   "2011 FY": 5,
+   "2010 FY": 2,
+   "2009 FY": 3,
+   "2008 FY": 4,
+   "2007 FY": 6
+  }
+ },
+ "worked": [
+  {
+   "project": "Anchor",
+   "base": {
+    "project": "Anchor",
+    "case": "base",
+    "packages": {
+     "wells_rig": 822.154794520548,
+     "wells_services": 986.5857534246576,
+     "hull": 195.8,
+     "jacket": 0.0,
+     "topsides": 454.05,
+     "engineering": 110.63,
+     "sps": 119.31818181818183,
+     "surf": 240.0,
+     "host_mod": 0.0,
+     "installation": 121.10018181818182,
+     "owner": 365.95666938978826
+    },
+    "total": 3415.5955809713573,
+    "inputs": {
+     "wells": 7,
+     "days_per_well": 258.25,
+     "rig_usd_per_day": 454794.5205479452,
+     "rig_basis": "830 USD million over 5 years firm, Transocean",
+     "rig_source": "https://www.deepwater.com/news/detail?ID=23251",
+     "spread_factor": 1.2,
+     "day_cost_mm": 1.0005479452054797,
+     "steel_usd_t": 900.0,
+     "fab_year": 2020,
+     "hull_t": 22000.0,
+     "jacket_t": 0.0,
+     "topsides_t": 15000.0,
+     "trees": 7,
+     "surf_km": 24.0,
+     "well_days": {
+      "wellbores": 4,
+      "wells": 4,
+      "drilling_days": 356,
+      "completion_days": 677,
+      "per_well": 258.25,
+      "years": [
+       2019,
+       2021,
+       2022,
+       2023
+      ]
+     }
+    },
+    "incident": {
+     "expected_events": 0.08698399326032014,
+     "p_at_least_one": 0.0833082312377732,
+     "consequence_mm": 20.010958904109593,
+     "allowance_mm": 1.7406331144476122
+    }
+   },
+   "low": 2207.8940380140084,
+   "high": 5022.668976255708,
+   "reported": {
+    "sanction_usd_mm": 5700.0,
+    "sanction_local": "",
+    "final_mm": null,
+    "final_ccy": "",
+    "final_kind": "",
+    "packages": {
+     "facility": {
+      "low": 0.0,
+      "high": 0.0,
+      "valued": 0,
+      "not_public": 2,
+      "bases": []
+     },
+     "subsea": {
+      "low": 0.0,
+      "high": 0.0,
+      "valued": 0,
+      "not_public": 3,
+      "bases": []
+     },
+     "drilling": {
+      "low": 830.0,
+      "high": 830.0,
+      "valued": 1,
+      "not_public": 0,
+      "bases": [
+       "backlog"
+      ]
+     },
+     "installation": {
+      "low": 0.0,
+      "high": 0.0,
+      "valued": 0,
+      "not_public": 1,
+      "bases": []
+     },
+     "other": {
+      "low": 0.0,
+      "high": 0.0,
+      "valued": 0,
+      "not_public": 1,
+      "bases": []
+     }
+    }
+   },
+   "vs_sanction_pct": -40.077270509274435,
+   "low_vs_sanction_pct": -61.26501687694722,
+   "high_vs_sanction_pct": -11.883000416566524,
+   "sensitivity": [
+    {
+     "package": "wells_services",
+     "factor": 0.32350903894815725
+    },
+    {
+     "package": "wells_rig",
+     "factor": 0.2695908657901311
+    },
+    {
+     "package": "topsides",
+     "factor": 0.14888647907647723
+    },
+    {
+     "package": "surf",
+     "factor": 0.07869784159972366
+    },
+    {
+     "package": "hull",
+     "factor": 0.06420432243844122
+    },
+    {
+     "package": "installation",
+     "factor": 0.03970967886010421
+    },
+    {
+     "package": "sps",
+     "factor": 0.039125347386226264
+    },
+    {
+     "package": "engineering",
+     "factor": 0.03627642590073929
+    }
+   ],
+   "register": {
+    "operator": "Chevron",
+    "region": "US GOM - Green Canyon",
+    "water_depth_m": 1524.0,
+    "development_type": "new_host_semi",
+    "facility": "semi-submersible FPU (20,000 psi)",
+    "wells": 7,
+    "bsee_wellbores": 18,
+    "fid_year": "2019",
+    "first_oil_year": "2024"
+   }
+  },
+  {
+   "project": "Julia (initial phase)",
+   "base": {
+    "project": "Julia (initial phase)",
+    "case": "base",
+    "packages": {
+     "wells_rig": 726.6459000000001,
+     "wells_services": 871.9750800000002,
+     "hull": 0.0,
+     "jacket": 0.0,
+     "topsides": 0.0,
+     "engineering": 0.0,
+     "sps": 102.27272727272728,
+     "surf": 240.0,
+     "host_mod": 150.0,
+     "installation": 59.07272727272727,
+     "owner": 257.9959721454546
+    },
+    "total": 2407.9624066909096,
+    "inputs": {
+     "wells": 6,
+     "days_per_well": 243.8,
+     "rig_usd_per_day": 496750.0,
+     "rig_basis": "ultra-deepwater drillship fleet average, mean of 4 years (2014 to 2017)",
+     "rig_source": "https://www.deepwater.com/Documents/July%202017%20Fleet%20Status%20Report.pdf; https://www.deepwater.com/documents/February%202016%20Fleet%20Status%20Report.pdf; https://www.deepwater.com/documents/October%202014%20Fleet%20Status%20Report%20(PDF).pdf",
+     "spread_factor": 1.2,
+     "day_cost_mm": 1.09285,
+     "steel_usd_t": 976.6026793047533,
+     "fab_year": 2014,
+     "hull_t": 0.0,
+     "jacket_t": 0.0,
+     "topsides_t": 0.0,
+     "trees": 6,
+     "surf_km": 24.0,
+     "well_days": {
+      "wellbores": 6,
+      "wells": 5,
+      "drilling_days": 548,
+      "completion_days": 671,
+      "per_well": 243.8,
+      "years": [
+       2014,
+       2015,
+       2016,
+       2017
+      ]
+     }
+    },
+    "incident": {
+     "expected_events": 0.07455770850884583,
+     "p_at_least_one": 0.07184608986468222,
+     "consequence_mm": 21.857000000000003,
+     "allowance_mm": 1.6296078348778436
+    }
+   },
+   "low": 1683.748045889593,
+   "high": 3197.0676212000003,
+   "reported": {
+    "sanction_usd_mm": 4000.0,
+    "sanction_local": "",
+    "final_mm": null,
+    "final_ccy": "",
+    "final_kind": "",
+    "packages": {}
+   },
+   "vs_sanction_pct": -39.80093983272725,
+   "low_vs_sanction_pct": -57.90629885276017,
+   "high_vs_sanction_pct": -20.07330946999999,
+   "sensitivity": [
+    {
+     "package": "wells_services",
+     "factor": 0.40557613644063845
+    },
+    {
+     "package": "wells_rig",
+     "factor": 0.33798011370053194
+    },
+    {
+     "package": "surf",
+     "factor": 0.11162964972089937
+    },
+    {
+     "package": "host_mod",
+     "factor": 0.06976853107556208
+    },
+    {
+     "package": "sps",
+     "factor": 0.04756945300606507
+    },
+    {
+     "package": "installation",
+     "factor": 0.027476116056303183
+    }
+   ],
+   "register": {
+    "operator": "ExxonMobil",
+    "region": "US GOM - Walker Ridge",
+    "water_depth_m": 2134.0,
+    "development_type": "subsea_tieback",
+    "facility": "tieback to Jack/St. Malo semi FPU",
+    "wells": 6,
+    "bsee_wellbores": 10,
+    "fid_year": "2013",
+    "first_oil_year": "2016"
+   }
+  },
+  {
+   "project": "Martin Linge (ex-Hild)",
+   "base": {
+    "project": "Martin Linge (ex-Hild)",
+    "case": "base",
+    "packages": {
+     "wells_rig": 949.3150684931508,
+     "wells_services": 1139.1780821917807,
+     "hull": 0.0,
+     "jacket": 76.31666832015692,
+     "topsides": 757.1339294572268,
+     "engineering": 160.81,
+     "sps": 0.0,
+     "surf": 600.0,
+     "host_mod": 0.0,
+     "installation": 172.01407173328604,
+     "owner": 462.57213842347215
+    },
+    "total": 4317.3399586190735,
+    "inputs": {
+     "wells": 21.0,
+     "days_per_well": 120.0,
+     "rig_usd_per_day": 376712.3287671233,
+     "rig_basis": "550 USD million over 4 years firm, Maersk Drilling (Intrepid jack-up)",
+     "rig_source": "https://www.bairdmaritime.com/offshore/maersk-drilling-names-worlds-largest-jack-up-rig",
+     "spread_factor": 1.2,
+     "day_cost_mm": 0.8287671232876712,
+     "steel_usd_t": 951.1905942969223,
+     "fab_year": 2013,
+     "hull_t": 0.0,
+     "jacket_t": 14000.0,
+     "topsides_t": 25000.0,
+     "trees": 0,
+     "surf_km": 60.0,
+     "well_days": null
+    },
+    "incident": {
+     "expected_events": 0.2609519797809604,
+     "p_at_least_one": 0.22968209043831334,
+     "consequence_mm": 16.575342465753423,
+     "allowance_mm": 4.3253684319857815
+    }
+   },
+   "low": 1655.687433827532,
+   "high": 8319.578115651653,
+   "reported": {
+    "sanction_usd_mm": 4200.0,
+    "sanction_local": "31500 NOK",
+    "final_mm": 63000.0,
+    "final_ccy": "NOK",
+    "final_kind": "final_outturn",
+    "packages": {
+     "facility": {
+      "low": 1250.0,
+      "high": 1250.0,
+      "valued": 1,
+      "not_public": 1,
+      "bases": [
+       "point"
+      ]
+     },
+     "subsea": {
+      "low": 800.0,
+      "high": 800.0,
+      "valued": 1,
+      "not_public": 0,
+      "bases": [
+       "point"
+      ]
+     },
+     "drilling": {
+      "low": 550.0,
+      "high": 550.0,
+      "valued": 1,
+      "not_public": 0,
+      "bases": [
+       "backlog"
+      ]
+     }
+    }
+   },
+   "vs_sanction_pct": 2.7938085385493583,
+   "low_vs_sanction_pct": -60.578870623154,
+   "high_vs_sanction_pct": 98.08519322980128,
+   "sensitivity": [
+    {
+     "package": "wells_services",
+     "factor": 0.29552443501875447
+    },
+    {
+     "package": "wells_rig",
+     "factor": 0.24627036251562878
+    },
+    {
+     "package": "topsides",
+     "factor": 0.1964149242635339
+    },
+    {
+     "package": "surf",
+     "factor": 0.15565139795360083
+    },
+    {
+     "package": "installation",
+     "factor": 0.04462371788829492
+    },
+    {
+     "package": "engineering",
+     "factor": 0.04171716884153092
+    },
+    {
+     "package": "jacket",
+     "factor": 0.01979799351865618
+    }
+   ],
+   "register": {
+    "operator": "Total (Equinor operator from 2018)",
+    "region": "Norwegian North Sea",
+    "water_depth_m": 115.0,
+    "development_type": "new_host_fixed",
+    "facility": "fixed integrated platform + FSO, power from shore",
+    "wells": null,
+    "bsee_wellbores": null,
+    "fid_year": "2012",
+    "first_oil_year": "2021"
+   }
+  }
+ ],
+ "assumed": [
+  {
+   "KEY": "steel_price_2020",
+   "PROJECT": "*",
+   "VALUE": "900",
+   "LOW": "700",
+   "HIGH": "1300",
+   "UNIT": "USD/t",
+   "BASIS": "ASSUMED",
+   "SOURCE": "Offshore-grade plate and sections, delivered to the yard, in 2020; escalated to the fabrication year with the US producer price index for steel mill products (FRED, in the repository's cost component table)",
+   "CONFIRM_BY": "11 Dec 2026",
+   "WHY": "A round figure for structural plate in 2020; to be replaced by a published plate price series",
+   "PROJECT_SCOPE": "*"
+  },
+  {
+   "KEY": "hull_fab_rate",
+   "PROJECT": "*",
+   "VALUE": "8000",
+   "LOW": "5000",
+   "HIGH": "12000",
+   "UNIT": "USD/t",
+   "BASIS": "ASSUMED",
+   "SOURCE": "Hull fabrication and outfitting per tonne of hull steel, Asian yard",
+   "CONFIRM_BY": "11 Dec 2026",
+   "WHY": "About 110 to 150 work-hours per tonne at yard rates; to be measured from hull awards that state both value and tonnage",
+   "PROJECT_SCOPE": "*"
+  },
+  {
+   "KEY": "jacket_fab_rate",
+   "PROJECT": "*",
+   "VALUE": "4500",
+   "LOW": "3000",
+   "HIGH": "6500",
+   "UNIT": "USD/t",
+   "BASIS": "ASSUMED",
+   "SOURCE": "Jacket fabrication per tonne, European yard",
+   "CONFIRM_BY": "11 Dec 2026",
+   "WHY": "Simpler framing than a hull; to be measured from jacket awards that state value and tonnage",
+   "PROJECT_SCOPE": "*"
+  },
+  {
+   "KEY": "topsides_steel_share",
+   "PROJECT": "*",
+   "VALUE": "0.30",
+   "LOW": "0.25",
+   "HIGH": "0.40",
+   "UNIT": "fraction",
+   "BASIS": "ASSUMED",
+   "SOURCE": "Structural steel share of topsides dry weight",
+   "CONFIRM_BY": "11 Dec 2026",
+   "WHY": "Typical share for an integrated deck; to be read from a published weight breakdown",
+   "PROJECT_SCOPE": "*"
+  },
+  {
+   "KEY": "topsides_equipment_rate",
+   "PROJECT": "*",
+   "VALUE": "14000",
+   "LOW": "9000",
+   "HIGH": "20000",
+   "UNIT": "USD/t",
+   "BASIS": "ASSUMED",
+   "SOURCE": "Equipment and bulk materials (piping, electrical, instruments) per tonne of topsides dry weight",
+   "CONFIRM_BY": "11 Dec 2026",
+   "WHY": "To be measured from topsides awards that state value and dry weight",
+   "PROJECT_SCOPE": "*"
+  },
+  {
+   "KEY": "topsides_fab_rate",
+   "PROJECT": "*",
+   "VALUE": "16000",
+   "LOW": "10000",
+   "HIGH": "24000",
+   "UNIT": "USD/t",
+   "BASIS": "ASSUMED",
+   "SOURCE": "Topsides fabrication, integration and hook-up per tonne of dry weight",
+   "CONFIRM_BY": "11 Dec 2026",
+   "WHY": "About 200 work-hours per tonne at 80 USD/h",
+   "PROJECT_SCOPE": "*"
+  },
+  {
+   "KEY": "eng_hours_topsides",
+   "PROJECT": "*",
+   "VALUE": "45",
+   "LOW": "25",
+   "HIGH": "60",
+   "UNIT": "h/t",
+   "BASIS": "ASSUMED",
+   "SOURCE": "Engineering hours per tonne of topsides dry weight",
+   "CONFIRM_BY": "11 Dec 2026",
+   "WHY": "Detail and follow-on engineering of an integrated deck",
+   "PROJECT_SCOPE": "*"
+  },
+  {
+   "KEY": "eng_hours_structure",
+   "PROJECT": "*",
+   "VALUE": "8",
+   "LOW": "5",
+   "HIGH": "12",
+   "UNIT": "h/t",
+   "BASIS": "ASSUMED",
+   "SOURCE": "Engineering hours per tonne of hull or jacket",
+   "CONFIRM_BY": "11 Dec 2026",
+   "WHY": "Structural design and naval architecture",
+   "PROJECT_SCOPE": "*"
+  },
+  {
+   "KEY": "eng_rate",
+   "PROJECT": "*",
+   "VALUE": "130",
+   "LOW": "100",
+   "HIGH": "160",
+   "UNIT": "USD/h",
+   "BASIS": "ASSUMED",
+   "SOURCE": "Engineering cost per hour, all-in",
+   "CONFIRM_BY": "11 Dec 2026",
+   "WHY": "To be measured from engineering services prices",
+   "PROJECT_SCOPE": "*"
+  },
+  {
+   "KEY": "installation_share",
+   "PROJECT": "*",
+   "VALUE": "0.12",
+   "LOW": "0.08",
+   "HIGH": "0.18",
+   "UNIT": "fraction",
+   "BASIS": "ASSUMED",
+   "SOURCE": "Installation (transport, mooring, hook-up, offshore commissioning) as a share of fabricated facility and subsea cost",
+   "CONFIRM_BY": "11 Dec 2026",
+   "WHY": "To be replaced by vessel days times day rates once installation awards are read",
+   "PROJECT_SCOPE": "*"
+  },
+  {
+   "KEY": "owner_share",
+   "PROJECT": "*",
+   "VALUE": "0.12",
+   "LOW": "0.08",
+   "HIGH": "0.18",
+   "UNIT": "fraction",
+   "BASIS": "ASSUMED",
+   "SOURCE": "Owner's project team, insurance and certification as a share of the subtotal",
+   "CONFIRM_BY": "11 Dec 2026",
+   "WHY": "To be measured from operator filings that split owner's costs",
+   "PROJECT_SCOPE": "*"
+  },
+  {
+   "KEY": "spread_factor",
+   "PROJECT": "*",
+   "VALUE": "1.20",
+   "LOW": "0.80",
+   "HIGH": "1.60",
+   "UNIT": "ratio",
+   "BASIS": "ASSUMED",
+   "SOURCE": "Drilling and well services per rig day, as a ratio to the rig day rate: 455 over 380 USD million on one project's public awards (Bacalhau Phase 1 drilling and well services against the West Saturn rig)",
+   "CONFIRM_BY": "11 Dec 2026",
+   "WHY": "Measured on one project; transferred to the others",
+   "PROJECT_SCOPE": "*"
+  },
+  {
+   "KEY": "lwc_days_lost",
+   "PROJECT": "*",
+   "VALUE": "20",
+   "LOW": "5",
+   "HIGH": "60",
+   "UNIT": "days",
+   "BASIS": "ASSUMED",
+   "SOURCE": "Rig spread days lost per loss-of-well-control event",
+   "CONFIRM_BY": "11 Dec 2026",
+   "WHY": "To be measured from BSEE well activity reports for the events in the BSEE count",
+   "PROJECT_SCOPE": "*"
+  },
+  {
+   "KEY": "topsides_t",
+   "PROJECT": "Anchor",
+   "VALUE": "15000",
+   "LOW": "10000",
+   "HIGH": "20000",
+   "UNIT": "t",
+   "BASIS": "ASSUMED",
+   "SOURCE": "Topsides dry weight of the Anchor floating production unit",
+   "CONFIRM_BY": "4 Dec 2026",
+   "WHY": "Not stated in the sources read; set from the 22,000 t hull and a 75,000 bbl/d design",
+   "PROJECT_SCOPE": "Anchor"
+  },
+  {
+   "KEY": "wells",
+   "PROJECT": "Martin Linge (ex-Hild)",
+   "VALUE": "21",
+   "LOW": "15",
+   "HIGH": "25",
+   "UNIT": "wells",
+   "BASIS": "ASSUMED",
+   "SOURCE": "Platform wells of Martin Linge",
+   "CONFIRM_BY": "4 Dec 2026",
+   "WHY": "Not in our data; to be read from the Norwegian Offshore Directorate field pages",
+   "PROJECT_SCOPE": "Martin Linge (ex-Hild)"
+  },
+  {
+   "KEY": "days_per_well",
+   "PROJECT": "Martin Linge (ex-Hild)",
+   "VALUE": "120",
+   "LOW": "80",
+   "HIGH": "160",
+   "UNIT": "days",
+   "BASIS": "ASSUMED",
+   "SOURCE": "Drilling and completion days per platform well",
+   "CONFIRM_BY": "4 Dec 2026",
+   "WHY": "High-pressure gas and oil wells drilled by a jack-up; to be read from the wellbore entry and completion dates on the Directorate pages",
+   "PROJECT_SCOPE": "Martin Linge (ex-Hild)"
+  },
+  {
+   "KEY": "jacket_t",
+   "PROJECT": "Martin Linge (ex-Hild)",
+   "VALUE": "14000",
+   "LOW": "10000",
+   "HIGH": "18000",
+   "UNIT": "t",
+   "BASIS": "ASSUMED",
+   "SOURCE": "Weight of the eight-legged steel jacket in 115 m water depth",
+   "CONFIRM_BY": "4 Dec 2026",
+   "WHY": "Not in our data; to be read from the contractor's release",
+   "PROJECT_SCOPE": "Martin Linge (ex-Hild)"
+  },
+  {
+   "KEY": "surf_km",
+   "PROJECT": "Martin Linge (ex-Hild)",
+   "VALUE": "60",
+   "LOW": "30",
+   "HIGH": "100",
+   "UNIT": "km",
+   "BASIS": "ASSUMED",
+   "SOURCE": "Length of flowlines, risers and umbilicals in the SURF contract",
+   "CONFIRM_BY": "4 Dec 2026",
+   "WHY": "The award names the scope but no length",
+   "PROJECT_SCOPE": "Martin Linge (ex-Hild)"
+  },
+  {
+   "KEY": "host_mod",
+   "PROJECT": "Julia (initial phase)",
+   "VALUE": "150",
+   "LOW": "75",
+   "HIGH": "300",
+   "UNIT": "USD MM",
+   "BASIS": "ASSUMED",
+   "SOURCE": "Modifications and capacity at the Jack/St. Malo host for the Julia tieback",
+   "CONFIRM_BY": "11 Dec 2026",
+   "WHY": "Not in our data; to be read from the operators' filings",
+   "PROJECT_SCOPE": "Julia (initial phase)"
+  }
+ ],
+ "record": {
+  "inputs": {
+   "data/modules/cost/curated/sanctioned_projects.csv": "f938afc20d9aa3e173686e74dfda4ba19c4d41ccc1a3ae36b03b4074202807bb",
+   "data/modules/cost/curated/cost_revision_trails.csv": "9120526da1bd74a0896fd28d827dbd91790451bccb9e9a361aae5c02c22fa4b3",
+   "data/modules/cost/curated/contract_awards.csv": "7a5769b36f87a3d5a4290d165f338ce829d13d00b83cacdc81e8a639b5496dc1",
+   "examples/costing/cost_basis/data/bsee_deepwater_field_wells.csv": "f89b10944f431104f605e1682cde294fad4713942edadf9c08639d67d9ecc697",
+   "examples/costing/cost_basis/data/gom_field_map.csv": "a45397c56f3d748501f62e0aa5cc89ba594ebe65de9b832a6b27db2fcd494409",
+   "data/modules/cost/staging/americas-2016-2026.csv": "7a8775fb1a4cd5e32d53ca8728a611695a64c6257819a0d971df830b10cb00b4",
+   "data/modules/cost/staging/asia-pacific-caspian-2016-2026.csv": "0e66d03576a5045ea0e786d55ea5c1d8656a76c93e52c58d5d9e82d1136aae59",
+   "data/modules/cost/staging/europe-2016-2026.csv": "321b52a9df6d4e18350c0c63bc97bd5917a52e9211ab5b6addfa2a3eb11a748c",
+   "examples/costing/cost_basis/data/bsee_dc_days.csv": "e0fbdbf98ec72323aeea42e4ac4d33b02c7e328afd23974f4d80af48018b183f",
+   "data/modules/marine_safety/raw/bsee_incident_statistics.html": "4ac8779a913c3df1e55fe89f65484b6dfa61db67932a6e6bfcad9f0f329f8b91",
+   "examples/costing/cost_basis/data/inputs.csv": "addcaf308cc470025fbd907959b33fe8037da56cb45b01ef261448f2c5fbbd0a",
+   "examples/costing/cost_basis/data/award_unit_rates.csv": "0ada3a7bc0a76ae94ea82a7b7c5b6df5f4cfad6627e0279e700c6f2d72c0f8f1",
+   "examples/costing/cost_basis/data/bsee_window_counts.csv": "cde5f215cf72f4dae992c5a57736fbca2678f5198f76158f80302e3c42e575c7",
+   "data/modules/cost/curated/cost_component_timeseries.csv": "1d3b4ec463061b276b5c50a2eaa895b7ed8f6cad2db38e5ce51fd76b14da4015"
+  }
+ }
+}

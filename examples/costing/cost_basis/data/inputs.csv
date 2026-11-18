@@ -1,0 +1,24 @@
+KEY,PROJECT,VALUE,LOW,HIGH,UNIT,BASIS,SOURCE,CONFIRM_BY,WHY
+steel_price_2020,*,900,700,1300,USD/t,ASSUMED,"Offshore-grade plate and sections, delivered to the yard, in 2020; escalated to the fabrication year with the US producer price index for steel mill products (FRED, in the repository's cost component table)",11 Dec 2026,"A round figure for structural plate in 2020; to be replaced by a published plate price series"
+hull_fab_rate,*,8000,5000,12000,USD/t,ASSUMED,"Hull fabrication and outfitting per tonne of hull steel, Asian yard",11 Dec 2026,"About 110 to 150 work-hours per tonne at yard rates; to be measured from hull awards that state both value and tonnage"
+jacket_fab_rate,*,4500,3000,6500,USD/t,ASSUMED,"Jacket fabrication per tonne, European yard",11 Dec 2026,"Simpler framing than a hull; to be measured from jacket awards that state value and tonnage"
+topsides_steel_share,*,0.30,0.25,0.40,fraction,ASSUMED,"Structural steel share of topsides dry weight",11 Dec 2026,"Typical share for an integrated deck; to be read from a published weight breakdown"
+topsides_equipment_rate,*,14000,9000,20000,USD/t,ASSUMED,"Equipment and bulk materials (piping, electrical, instruments) per tonne of topsides dry weight",11 Dec 2026,"To be measured from topsides awards that state value and dry weight"
+topsides_fab_rate,*,16000,10000,24000,USD/t,ASSUMED,"Topsides fabrication, integration and hook-up per tonne of dry weight",11 Dec 2026,"About 200 work-hours per tonne at 80 USD/h"
+eng_hours_topsides,*,45,25,60,h/t,ASSUMED,"Engineering hours per tonne of topsides dry weight",11 Dec 2026,"Detail and follow-on engineering of an integrated deck"
+eng_hours_structure,*,8,5,12,h/t,ASSUMED,"Engineering hours per tonne of hull or jacket",11 Dec 2026,"Structural design and naval architecture"
+eng_rate,*,130,100,160,USD/h,ASSUMED,"Engineering cost per hour, all-in",11 Dec 2026,"To be measured from engineering services prices"
+installation_share,*,0.12,0.08,0.18,fraction,ASSUMED,"Installation (transport, mooring, hook-up, offshore commissioning) as a share of fabricated facility and subsea cost",11 Dec 2026,"To be replaced by vessel days times day rates once installation awards are read"
+owner_share,*,0.12,0.08,0.18,fraction,ASSUMED,"Owner's project team, insurance and certification as a share of the subtotal",11 Dec 2026,"To be measured from operator filings that split owner's costs"
+spread_factor,*,1.20,0.80,1.60,ratio,ASSUMED,"Drilling and well services per rig day, as a ratio to the rig day rate: 455 over 380 USD million on one project's public awards (Bacalhau Phase 1 drilling and well services against the West Saturn rig)",11 Dec 2026,"Measured on one project; transferred to the others"
+lwc_days_lost,*,20,5,60,days,ASSUMED,"Rig spread days lost per loss-of-well-control event",11 Dec 2026,"To be measured from BSEE well activity reports for the events in the BSEE count"
+topsides_t,Anchor,15000,10000,20000,t,ASSUMED,"Topsides dry weight of the Anchor floating production unit",4 Dec 2026,"Not stated in the sources read; set from the 22,000 t hull and a 75,000 bbl/d design"
+fab_year,Anchor,2020,2020,2020,year,derived,"The year after the final investment decision (2019)",,
+fab_year,Martin Linge (ex-Hild),2013,2013,2013,year,derived,"The year after the final investment decision (2012)",,
+wells,Martin Linge (ex-Hild),21,15,25,wells,ASSUMED,"Platform wells of Martin Linge",4 Dec 2026,"Not in our data; to be read from the Norwegian Offshore Directorate field pages"
+days_per_well,Martin Linge (ex-Hild),120,80,160,days,ASSUMED,"Drilling and completion days per platform well",4 Dec 2026,"High-pressure gas and oil wells drilled by a jack-up; to be read from the wellbore entry and completion dates on the Directorate pages"
+jacket_t,Martin Linge (ex-Hild),14000,10000,18000,t,ASSUMED,"Weight of the eight-legged steel jacket in 115 m water depth",4 Dec 2026,"Not in our data; to be read from the contractor's release"
+surf_km,Martin Linge (ex-Hild),60,30,100,km,ASSUMED,"Length of flowlines, risers and umbilicals in the SURF contract",4 Dec 2026,"The award names the scope but no length"
+surf_km,Julia (initial phase),24,15,35,km,derived,"Tieback length to the Jack/St. Malo host: up to about 15 miles (24 km), from the repository's field record",,
+host_mod,Julia (initial phase),150,75,300,USD MM,ASSUMED,"Modifications and capacity at the Jack/St. Malo host for the Julia tieback",11 Dec 2026,"Not in our data; to be read from the operators' filings"
+surf_km,Anchor,24,15,35,km,derived,"Length of the 20,000 psi umbilicals in the Anchor umbilical award (about 24 km), taken as the flowline length",,
