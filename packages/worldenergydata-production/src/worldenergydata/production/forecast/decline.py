@@ -378,9 +378,23 @@ class ArpsDeclineCurve:
                 eur = (qi / Di) * np.log(qi / q_econ)
             else:
                 # Use the rate ratio to avoid overflowing separate powers.
-                # Divide before scaling to avoid intermediate multiplication overflow.
-                rate_integral = np.expm1((b - 1.0) * np.log(qi / q_econ)) / (b - 1.0)
-                eur = (qi / Di) * rate_integral
+                x = (b - 1.0) * np.log(qi / q_econ)
+                if x > 50.0:
+                    # Scale in log space before exponentiating: expm1(x) can
+                    # overflow even when the full recovery is representable.
+                    log_eur = (
+                        np.log(qi)
+                        - np.log(Di)
+                        + x
+                        + np.log1p(-np.exp(-x))
+                        - np.log(b - 1.0)
+                    )
+                    eur = np.exp(log_eur)
+                else:
+                    # Preserve cancellation resistance near b = 1 and divide
+                    # before scaling to avoid multiplication overflow.
+                    rate_integral = np.expm1(x) / (b - 1.0)
+                    eur = (qi / Di) * rate_integral
 
         return float(max(eur, 0.0))
 

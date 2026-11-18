@@ -197,22 +197,50 @@ def test_hyperbolic_eur_matches_integrated_rate(qi, b, economic_limit):
     assert result.eur_bbl == pytest.approx(expected, rel=1e-10)
 
 
-def test_hyperbolic_eur_avoids_intermediate_multiplication_overflow():
-    # Synthetic parameters; evaluate the closed form independently at 70 digits.
+@pytest.mark.parametrize(
+    "qi,decline,b",
+    [
+        (65000.0, 0.1, 64.0),
+        (10.0, 1.0, 310.0),
+        (10.0, 1.0, 22.0),
+        (10.0, 1.0, 23.0),
+    ],
+)
+@pytest.mark.filterwarnings("error::RuntimeWarning")
+def test_hyperbolic_eur_avoids_intermediate_overflow(qi, decline, b):
+    # Synthetic parameters; evaluate the closed form independently at 80 digits.
+    # The last two cases straddle the log-space branch at x = 50.
     with localcontext() as context:
-        context.prec = 70
-        qi = Decimal(65000)
-        decline = Decimal("0.1")
-        exponent = Decimal(64)
-        expected = float((qi / decline) * (qi ** (exponent - 1) - 1) / (exponent - 1))
+        context.prec = 80
+        initial_rate = Decimal(str(qi))
+        nominal_decline = Decimal(str(decline))
+        exponent = Decimal(str(b))
+        expected = float(
+            (initial_rate / nominal_decline)
+            * (initial_rate ** (exponent - 1) - 1)
+            / (exponent - 1)
+        )
 
     result = _simulate(
-        qi=65000.0,
-        Di=0.1,
-        b=64.0,
+        qi=qi,
+        Di=decline,
+        b=b,
         model="hyperbolic",
         economic_limit=1.0,
-        months=1,
+        months=3,
     )
     assert math.isfinite(result.eur_bbl)
     assert result.eur_bbl == pytest.approx(expected, rel=1e-12)
+
+
+def test_hyperbolic_approaches_exponential_as_exponent_tends_to_zero():
+    exponential = _simulate(months=60)
+    hyperbolic = _simulate(model="hyperbolic", b=1e-9, months=60)
+    assert hyperbolic.eur_bbl == pytest.approx(exponential.eur_bbl, rel=1e-8)
+    np.testing.assert_allclose(
+        hyperbolic.forecast_df["rate_bbl"],
+        exponential.forecast_df["rate_bbl"],
+        # The leading relative correction b * (Di*t)**2 / 2 is 1.8e-8 at t=60.
+        rtol=2e-8,
+        atol=0.0,
+    )
