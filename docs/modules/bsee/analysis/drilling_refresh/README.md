@@ -227,9 +227,9 @@ regenerated with the revised implementation.
 ## Workflow archive regeneration
 
 The archive was regenerated with `python -`, supplying the following Python
-block on standard input from the repository root, using CPython 3.14.6. Source
-and receipt bytes are read directly from Git objects, without checkout newline
-conversion. The historical receipt and its digest are unchanged.
+block on standard input from the repository root, using CPython 3.14.6 with
+zlib-ng 2.2.4. The command reads the source and receipt from the same pinned
+Git revision, preserving the committed bytes.
 
 ```python
 import gzip
@@ -255,15 +255,18 @@ source_path = (
 )
 directory = Path("docs/modules/bsee/analysis/drilling_refresh/quality")
 source = committed_bytes(revision, source_path)
-receipt = json.loads(committed_bytes("HEAD", (directory / "qa.json").as_posix()))
+receipt = json.loads(committed_bytes(revision, (directory / "qa.json").as_posix()))
 assert b"\r" not in source
 assert hashlib.sha256(source).hexdigest() == receipt["workflow_sha256"]
 archive = directory / "workflow_source.py.gz"
 archive.write_bytes(gzip.compress(source, compresslevel=9, mtime=0))
-assert gzip.decompress(archive.read_bytes()) == source
+restored = gzip.decompress(archive.read_bytes())
+assert restored == source
+assert hashlib.sha256(restored).hexdigest() == receipt["workflow_sha256"]
 ```
 
 Only the decompressed LF source bytes are verified against `workflow_sha256`.
-The gzip stream is a transport container: even with level 9 and `mtime=0`, its
-compressed bytes may differ between Python or compression-library versions.
+The command overwrites the tracked archive. With a different Python build or
+compression library, Git may report a modified gzip file even when the
+decompressed source is byte-for-byte identical.
 Compressed-byte reproducibility is not an acceptance criterion.
