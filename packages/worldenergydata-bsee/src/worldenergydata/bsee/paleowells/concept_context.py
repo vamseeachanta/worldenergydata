@@ -8,7 +8,7 @@ derivation. No source discovery, loading or verification is performed here.
 from __future__ import annotations
 
 from collections.abc import Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 from worldenergydata.bsee.paleowells.field_era import is_lower_tertiary
 from worldenergydata.field_development.models import FieldConcept
@@ -24,11 +24,11 @@ class GeologicalContextReceipt:
     mapping_method: str = "exact_field_code_lookup"
     limitation: str = (
         "Supplied field-level context; not proof of the producing reservoir's "
-        "age or formation. Raw source and derivation not verified by this adapter. "
-        "A supplied Lower Tertiary play is retained even when the mapped era is "
-        "outside that grouping; era/play consistency is not verified."
+        "age or formation. Raw source and derivation not verified by this adapter."
     )
     source_derivation: str | None = None
+    play_group: str | None = None
+    play_group_rule: str = "no_play_supplied"
 
 
 def _require_text(value: str, label: str) -> None:
@@ -65,13 +65,31 @@ def enrich_concept_context(
     _require_text(era, "matched era")
 
     updates = {"geological_era": era}
-    if is_lower_tertiary(era):
+    lower_tertiary = is_lower_tertiary(era)
+    play_rule = "no_play_supplied"
+    if lower_tertiary:
         updates["play_group"] = "Lower Tertiary"
+        play_rule = "lower_tertiary_era"
+    elif validated.play_group is not None:
+        play_rule = "retained_supplied_play"
     for attribute, value in updates.items():
         existing = getattr(validated, attribute)
         if existing is not None and existing != value:
             raise ValueError(f"conflicting {attribute} for explicit field code")
     result = FieldConcept.model_validate({**payload, **updates})
-    return result, GeologicalContextReceipt(
-        field_code, source_reference, era, source_derivation=source_derivation
+    receipt = GeologicalContextReceipt(
+        field_code,
+        source_reference,
+        era,
+        source_derivation=source_derivation,
+        play_group=result.play_group,
+        play_group_rule=play_rule,
     )
+    if validated.play_group is not None and not lower_tertiary:
+        receipt = replace(
+            receipt,
+            limitation=receipt.limitation
+            + " A supplied play is retained for an era outside the Lower Tertiary "
+            "grouping; era/play consistency is not verified.",
+        )
+    return result, receipt

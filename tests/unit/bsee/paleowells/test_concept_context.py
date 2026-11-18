@@ -198,9 +198,39 @@ def test_other_era_retains_lower_tertiary_play_with_receipt_limitation():
     assert result.play_group == "Lower Tertiary"
     assert concept.model_dump() == original
     assert receipt.geological_era == "Miocene"
-    assert "A supplied Lower Tertiary play is retained" in receipt.limitation
-    assert "even when the mapped era is outside that grouping" in receipt.limitation
+    assert "A supplied play is retained" in receipt.limitation
+    assert "era outside the Lower Tertiary grouping" in receipt.limitation
     assert "consistency is not verified" in receipt.limitation
+
+
+@pytest.mark.parametrize(
+    "era,play,expected_play,rule,warns",
+    [
+        ("Paleocene", None, "Lower Tertiary", "lower_tertiary_era", False),
+        ("Eocene", None, "Lower Tertiary", "lower_tertiary_era", False),
+        ("Oligocene", None, "Lower Tertiary", "lower_tertiary_era", False),
+        ("Eocene", "Lower Tertiary", "Lower Tertiary", "lower_tertiary_era", False),
+        ("Miocene", None, None, "no_play_supplied", False),
+        ("Miocene", "Lower Tertiary", "Lower Tertiary", "retained_supplied_play", True),
+        (
+            "Miocene",
+            "Synthetic group",
+            "Synthetic group",
+            "retained_supplied_play",
+            True,
+        ),
+    ],
+)
+def test_receipt_records_play_rule_and_warns_only_for_unchecked_pairs(
+    era, play, expected_play, rule, warns
+):
+    concept = FieldConcept(name="Synthetic", play_group=play)
+    result, receipt = enrich(concept, eras={"FX1": era})
+    assert result.play_group == expected_play
+    assert ("consistency is not verified" in receipt.limitation) is warns
+    assert ("A supplied play is retained" in receipt.limitation) is warns
+    assert receipt.play_group == expected_play
+    assert receipt.play_group_rule == rule
 
 
 @pytest.mark.parametrize("keyword", ["field_code", "source"])

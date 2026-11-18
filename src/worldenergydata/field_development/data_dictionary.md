@@ -37,6 +37,17 @@ lower_snake_case string `value`s shown below.
 
 ### Optional geological context
 
+Both context strings must contain at least one character outside Python's
+`str.isspace()` set, including the U+001C–U+001F separators. The model and JSON
+Schema use the same explicit pattern; padded nonblank strings are retained.
+
+`schema_version` remains `1.0.0`, which has gained the two optional properties
+`geological_era` and `play_group`. Full dumps include both keys, null when unset.
+Validators built from the earlier schema reject these new full dumps because
+unknown properties are forbidden. Consumers should update their schema before
+accepting full dumps; accepting older inputs does not guarantee compatibility
+with older validators.
+
 The BSEE `paleowells.concept_context.enrich_concept_context` adapter accepts a
 validated concept, an explicit field code, a caller-provided field-era map and
 a nonblank source-reference string. It performs an exact code lookup without
@@ -52,12 +63,25 @@ mapped era is `Miocene`, although Miocene is outside that grouping. The receipt
 states that era/play consistency is not verified. Field-level context can
 include nonproducing wells and does not establish the producing reservoir's
 age, so this pair is retained without raising a conflict or reclassifying the
-supplied play. Callers must assess whether the pair is appropriate for use.
+supplied play. Callers should assess whether the pair is appropriate for use.
 
 The returned concept is revalidated and separate from the input. Existing
 measurements, fluid properties, `hpht` and `data_source` are preserved. A separate
 receipt records the field code, source reference, matched era, exact-code
-mapping method and geological limitation; it does not verify the raw source.
+mapping method, optional caller-supplied derivation and geological limitation;
+it does not verify the raw source. It also records the resulting `play_group`
+and the applied `play_group_rule`:
+
+| Rule | Meaning |
+|---|---|
+| `lower_tertiary_era` | Paleocene, Eocene or Oligocene sets or confirms `Lower Tertiary`; another supplied play raises a conflict. |
+| `retained_supplied_play` | An era outside that grouping retains the supplied play without a consistency check. |
+| `no_play_supplied` | An era outside that grouping and no supplied play leave `play_group` null. |
+
+Only `retained_supplied_play` receipts carry the warning that era/play
+consistency is not verified. No pair warning is added when the play was checked
+against the Lower Tertiary grouping or when no play exists.
+
 When supplied by `build_field_era_map`, the map describes the dominant era of
 joined paleo wells, including nonproducing wells. This is field-level context,
 not proof of the producing reservoir's age or formation. Source enrichment,
