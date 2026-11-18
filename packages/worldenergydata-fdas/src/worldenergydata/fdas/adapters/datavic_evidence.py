@@ -92,7 +92,10 @@ def read_datavic_evidence(raw: bytes, metadata: Mapping) -> DataVicEvidence:
     # Check the written offset: fromisoformat can discard fractional offsets.
     if not re.search(r"(?:Z|[+-]00(?::?00){0,2}(?:[.,]0+)?)$", retrieved_text):
         raise DataVicInputError("retrieved_at_utc must be timezone-aware UTC")
-    retrieved = datetime.fromisoformat(retrieved_text.replace("Z", "+00:00"))
+    try:
+        retrieved = datetime.fromisoformat(retrieved_text.replace("Z", "+00:00"))
+    except ValueError as exc:
+        raise DataVicInputError("retrieved_at_utc must be timezone-aware UTC") from exc
     if retrieved.tzinfo is None or retrieved.utcoffset() != timedelta(0):
         raise DataVicInputError("retrieved_at_utc must be timezone-aware UTC")
     if metadata["source_vintage"] is not None:

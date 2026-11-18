@@ -8,6 +8,7 @@ from dataclasses import FrozenInstanceError, asdict
 import pytest
 
 from worldenergydata.fdas.adapters.datavic_evidence import read_datavic_evidence
+from worldenergydata.fdas.adapters.datavic_wells import DataVicInputError
 from worldenergydata.fdas.data.country_drilling import build_drilling_timeline
 
 
@@ -126,6 +127,7 @@ def test_evidenced_unit_and_known_vintage(unit, depth):
         ("retrieved_at_utc", "2026-11-16T12:00:00+00:00:00.5"),
         ("retrieved_at_utc", "2026-11-16T12:00:00-00:00:00.5"),
         ("retrieved_at_utc", "invalid"),
+        ("retrieved_at_utc", "garbageZ"),
         ("retrieved_at_utc", None),
         ("source_vintage", ""),
         ("licence_identifier", " "),
@@ -150,6 +152,15 @@ def test_bad_metadata_fails_before_normalization(monkeypatch, key, value):
         "worldenergydata.fdas.adapters.datavic_evidence.read_datavic_wells", forbidden
     )
     with pytest.raises(ValueError):
+        read_datavic_evidence(raw, metadata)
+
+
+def test_unparseable_utc_timestamp_raises_input_error():
+    raw, metadata = inputs()
+    metadata["retrieved_at_utc"] = "garbageZ"
+    with pytest.raises(
+        DataVicInputError, match="^retrieved_at_utc must be timezone-aware UTC$"
+    ):
         read_datavic_evidence(raw, metadata)
 
 
