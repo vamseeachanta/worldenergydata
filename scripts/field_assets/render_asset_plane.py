@@ -21,7 +21,7 @@ from urllib.parse import unquote, urlsplit
 def _text(value):
     if not isinstance(value, str) or not value.strip():
         raise ValueError("Expected nonblank text")
-    if any(category(c) == "Cc" for c in value):
+    if any(category(c) in {"Cc", "Cf"} for c in value):
         raise ValueError("Control character in text")
     return escape(value, quote=True)
 
@@ -34,16 +34,20 @@ def _identifier(value):
 
 def _link(value):
     _text(value)
-    if any(c.isspace() or category(c) == "Cc" for c in value):
+    if any(c.isspace() or category(c) in {"Cc", "Cf"} for c in value):
         raise ValueError("Whitespace or control character in link")
     # Parse before decoding so escaped delimiters cannot change URL structure.
     url = urlsplit(value)
     if any(re.search(r"%(?![0-9A-Fa-f]{2})", part) for part in url):
         raise ValueError("Malformed percent escape in link")
-    decoded = [unquote(part) for part in url]
+    try:
+        decoded = [unquote(part, errors="strict") for part in url]
+    except UnicodeDecodeError as error:
+        raise ValueError("Invalid UTF-8 escape in link") from error
     for position, part in enumerate(decoded):
         if any(
-            category(c) == "Cc" or (c.isspace() and not (position >= 2 and c == " "))
+            category(c) in {"Cc", "Cf"}
+            or (c.isspace() and not (position >= 2 and c == " "))
             for c in part
         ):
             raise ValueError("Whitespace or control character in link")
@@ -147,7 +151,7 @@ def render_asset_plane(record: dict) -> str:
     for node in index.values():
         parent = node["parent_id"]
         if parent is not None and parent not in index:
-            raise ValueError(f"Dangling parent id: {node['id']}")
+            raise ValueError(f"Dangling parent for node {node['id']}")
         parent_kind = index[parent]["kind"] if parent is not None else None
         if parent_kind not in allowed[node["kind"]]:
             raise ValueError("Invalid parent kind")

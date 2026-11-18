@@ -186,7 +186,7 @@ def test_invalid_hierarchy_is_explicit(render, record, problem):
     if problem == "duplicate":
         assert str(error.value) == "Duplicate node id: facility"
     elif problem == "dangling":
-        assert str(error.value) == "Dangling parent id: asset-b"
+        assert str(error.value) == "Dangling parent for node asset-b"
 
 
 def test_deep_valid_chain_uses_linear_parent_lookups(render):
@@ -236,6 +236,8 @@ def test_disconnected_component_cycle_is_rejected(render, record):
         "docs/search?title=field%20survey",
         "docs/reference.html#:~:text=field%20survey",
         "docs/50%25-complete.pdf",
+        "docs/caf%C3%A9.pdf",
+        "docs/café.pdf",
     ],
 )
 def test_escaped_path_preserved_in_each_evidence_channel(render, record, target, href):
@@ -288,6 +290,18 @@ def test_escaped_path_preserved_in_each_evidence_channel(render, record, target,
         "docs/a%C2%80b.pdf",
         "docs/search?title=a%C2%9Bb",
         "docs/reference.html#a%C2%9Fb",
+        "docs/a%9Bb.pdf",
+        "docs/a%85b.pdf",
+        "docs/a%C0%80b.pdf",
+        "docs/%C3.pdf",
+        "docs/search?title=a%9Bb",
+        "docs/reference.html#a%C0%80b",
+        "docs/a\u202eb.pdf",
+        "docs/search?title=a\u202eb",
+        "docs/reference.html#a\u202eb",
+        "docs/a%E2%80%AEb.pdf",
+        "docs/search?title=a%E2%80%AEb",
+        "docs/reference.html#a%E2%80%AEb",
     ],
 )
 def test_unsafe_links_rejected_in_each_evidence_channel(render, record, target, href):
@@ -317,7 +331,10 @@ def test_https_links_and_all_supplied_text_are_escaped(render, record):
     assert 'https://example.org/ref?a=1&b="x"' in page.links
 
 
-@pytest.mark.parametrize("control", ["\x00", "\x7f", "\x80", "\x9b", "\x9f"])
+@pytest.mark.parametrize(
+    "control",
+    ["\x00", "\x7f", "\x80", "\x9b", "\x9f", "\u200b", "\u202e", "\u2066", "\ufeff"],
+)
 @pytest.mark.parametrize(
     "target", ["field", "node", "capability", "observation-label", "capability-label"]
 )
@@ -333,6 +350,16 @@ def test_control_characters_rejected_in_supplied_text(render, record, target, co
     owner[key] = f"Synthetic{control}text"
     with pytest.raises(ValueError, match="Control character in text"):
         render(record)
+
+
+def test_ordinary_unicode_text_preserved(render, record):
+    text = "Café Ærø — 油田"
+    record["name"] = text
+    node = record["nodes"][3]
+    node["name"] = node["capability"]["label"] = text
+    node["sources"][0]["label"] = text
+    node["capability"]["sources"][0]["label"] = text
+    assert "".join(Page(render(record)).text).count(text) == 5
 
 
 @pytest.mark.parametrize(
