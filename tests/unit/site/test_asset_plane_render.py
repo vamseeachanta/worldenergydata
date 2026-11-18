@@ -181,8 +181,12 @@ def test_invalid_hierarchy_is_explicit(render, record, problem):
         del record["nodes"][1]["parent_id"]
     else:
         del record["nodes"][1]["id"]
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as error:
         render(record)
+    if problem == "duplicate":
+        assert str(error.value) == "Duplicate node id: facility"
+    elif problem == "dangling":
+        assert str(error.value) == "Dangling parent id: asset-b"
 
 
 def test_deep_valid_chain_uses_linear_parent_lookups(render):
@@ -218,7 +222,7 @@ def test_disconnected_component_cycle_is_rejected(render, record):
             dict(id="cycle-b", parent_id="cycle-a", kind="component", name="Synthetic"),
         ]
     )
-    with pytest.raises(ValueError, match="Cycle in hierarchy"):
+    with pytest.raises(ValueError, match="Cycle in hierarchy: cycle-a$"):
         render(record)
 
 
@@ -278,6 +282,12 @@ def test_escaped_path_preserved_in_each_evidence_channel(render, record, target,
         "docs/survey%2G.pdf",
         "docs/search?title=field%20survey%",
         "docs/reference.html#field%2Gsurvey",
+        "docs/a\x80b.pdf",
+        "docs/a\x9bb.pdf",
+        "docs/a\x9fb.pdf",
+        "docs/a%C2%80b.pdf",
+        "docs/search?title=a%C2%9Bb",
+        "docs/reference.html#a%C2%9Fb",
     ],
 )
 def test_unsafe_links_rejected_in_each_evidence_channel(render, record, target, href):
@@ -305,6 +315,24 @@ def test_https_links_and_all_supplied_text_are_escaped(render, record):
     assert "&lt;script&gt;" in html and "&amp;" in html
     assert "".join(page.text).count(attack) == 5
     assert 'https://example.org/ref?a=1&b="x"' in page.links
+
+
+@pytest.mark.parametrize("control", ["\x00", "\x7f", "\x80", "\x9b", "\x9f"])
+@pytest.mark.parametrize(
+    "target", ["field", "node", "capability", "observation-label", "capability-label"]
+)
+def test_control_characters_rejected_in_supplied_text(render, record, target, control):
+    node = record["nodes"][3]
+    owner, key = {
+        "field": (record, "name"),
+        "node": (node, "name"),
+        "capability": (node["capability"], "label"),
+        "observation-label": (node["sources"][0], "label"),
+        "capability-label": (node["capability"]["sources"][0], "label"),
+    }[target]
+    owner[key] = f"Synthetic{control}text"
+    with pytest.raises(ValueError, match="Control character in text"):
+        render(record)
 
 
 @pytest.mark.parametrize(
