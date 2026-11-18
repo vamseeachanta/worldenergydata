@@ -257,7 +257,8 @@ Both `scripts/uv_deploy.sh build` and the compatibility entry point
 location. The compatibility entry point forwards arguments and exit status to
 the canonical helper. The build action runs `uv sync --locked --inexact` before
 `uv build --all-packages`. Synchronization fails rather than re-locking when the
-lockfile is stale, and preserves additional installed packages. It uses the root
+lockfile is stale. The `--inexact` flag keeps packages outside the lock, while
+locked packages are still synchronized to their locked versions. It uses the root
 manifest's default dependencies; no optional build extra is defined or requested.
 A failed synchronization stops the action before building; a failed build exits
 without the build-success marker. Invoking either helper performs real work.
@@ -301,7 +302,9 @@ does not authorize either upload.
 Both `publish-test` and `publish` clean build artifacts first and, after a
 successful build, upload `dist/*`: the root distribution and every workspace
 member distribution. Only `publish` asks for confirmation before cleanup;
-`publish-test` does not prompt.
+`publish-test` does not prompt. If synchronization or building fails, `dist/` has
+already been cleaned and nothing is uploaded. Uploading requires `twine` to be
+available through `uv run`; the root manifest does not declare it.
 
 ### Build Configuration
 
