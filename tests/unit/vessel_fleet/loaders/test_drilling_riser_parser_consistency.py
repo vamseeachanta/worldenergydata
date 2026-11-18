@@ -60,7 +60,13 @@ def test_literal_id_assignment_uses_row_position(tmp_path: Path) -> None:
     [
         ("NA", "", "Second record", "DATA_SOURCE must be populated", "5"),
         ("NA", "Synthetic source", "", "NOTES must be populated", "5"),
-        ("", "Synthetic source", "Second record", "COMPONENT_ID must be populated", "5"),
+        (
+            "",
+            "Synthetic source",
+            "Second record",
+            "COMPONENT_ID must be populated",
+            "5",
+        ),
         (" NA", "Synthetic source", "Second record", "COMPONENT_ID.*whitespace", "5"),
         ("N\u200bA", "Synthetic source", "Second record", "COMPONENT_ID.*format", "5"),
         ("N\x07A", "Synthetic source", "Second record", "COMPONENT_ID.*control", "5"),
