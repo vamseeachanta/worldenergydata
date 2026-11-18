@@ -64,6 +64,8 @@ def discounted_cash_flow_usd(cash_flows_usd: tuple[float, ...],
     _index(first_discount_period, 'first_discount_period')
     if discount_rate_per_period <= -1:
         raise ValueError('Discount rate must exceed minus one')
+    if not cash_flows_usd:
+        return ()
     zeros = (0.0,) * len(cash_flows_usd)
     discounted = calculate_npv(_schedule(cash_flows_usd, zeros, zeros),
                                discount_rate_per_period).discounted_cash_flows

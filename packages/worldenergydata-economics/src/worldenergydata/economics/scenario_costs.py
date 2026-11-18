@@ -49,7 +49,8 @@ def activity_cost_usd(duration_days: float, rate_usd_per_day: float,
     if rounding_increment_usd == 0:
         return value
     increment = Decimal(str(rounding_increment_usd))
-    return float((Decimal(str(value)) / increment).quantize(
+    decimal_value = Decimal(str(duration_days)) * Decimal(str(rate_usd_per_day))
+    return float((decimal_value / increment).quantize(
         Decimal('1'), rounding=ROUND_HALF_UP) * increment)
 
 

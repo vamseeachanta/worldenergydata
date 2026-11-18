@@ -2,8 +2,8 @@
 
 This model computes well production profiles, component and scheduled costs,
 margin revenue, period and cumulative cash flow, discounted cash flow and NPV.
-The method generalizes arithmetic in a legacy engineering workbook. No source
-scenario or source data is distributed.
+The formulas below are standalone model definitions. No workbook-specific
+method, scenario or source data is required.
 
 Import inputs from `worldenergydata.economics.scenario_inputs` and functions from
 `worldenergydata.economics.scenario`. The existing economics package supplies

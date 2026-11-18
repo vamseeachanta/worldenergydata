@@ -146,5 +146,6 @@ def compare_scenarios(inputs: tuple[ScenarioInputs, ...]) -> ScenarioComparison:
                 or item.first_discount_period != basis.first_discount_period):
             raise ValueError('Comparison requires identical period and discount bases')
     results = tuple(evaluate_scenario(item) for item in inputs)
-    return ScenarioComparison(results, tuple(item.npv_usd - results[0].npv_usd
-                                            for item in results))
+    increments = tuple(item.npv_usd - results[0].npv_usd for item in results)
+    _series(increments, 'incremental_npv_usd')
+    return ScenarioComparison(results, increments)
