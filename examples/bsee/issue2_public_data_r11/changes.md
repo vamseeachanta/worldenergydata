@@ -70,3 +70,15 @@ it say where revision 11 applies it.
   compare them byte for byte. No source file was downloaded again.
 - New files: `map-wells-by-year.csv`, `new-wells-by-year.csv` and `wti-annual.csv` (written by `derive_r11.py`,
   pinned in `inputs/manifest.json`); `map-windows.csv` and `new-wells-trend.csv` (written by the build).
+
+## Build and tests
+
+- Built with `--build-commit 0aeea0aa460b1799539a98a3f955934b273ca56e`, the commit that holds `build_r11.py`,
+  `counting-rules.md` and `prompts/`; page 518 KB.
+- Verified environment: Windows 11, Python 3.14.3, pandas 3.1.1, matplotlib 3.11.2, pytest 9.2.0, Node.js 26.13.0.
+- `tests/test_build_r11.py` and `../plug_abandonment_article/tests`: 33 passed; `../issue2_public_data_r10/tests`
+  (unchanged): 26 passed.
+- `tests/browser_check.mjs` in headless Microsoft Edge: Plotly loaded, six charts drawn, the map moved from
+  2005 to 2009 to 2008 to 2012 in 4.2 s, a click on the map stopped it (Play shown, window unchanged 3 s later),
+  a click on 2015 in panel b moved the map to 2011 to 2015 and shaded 2011 to 2015; no console errors or
+  exceptions.
