@@ -193,6 +193,8 @@ def apply_to_curated(extraction: dict, data_dir: Path, urls: dict[str, str]) -> 
         if entry is None:
             continue
         for field in _CURATED_FIELDS:
+            if field == "DP_CLASS" and entry["specs"].get(field) is None:
+                continue
             if field in entry["specs"]:
                 record[field] = entry["specs"][field]
         record["DIMENSION_CONFIDENCE"] = "measured"
