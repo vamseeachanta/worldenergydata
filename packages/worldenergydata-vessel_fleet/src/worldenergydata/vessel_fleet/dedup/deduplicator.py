@@ -244,10 +244,10 @@ def _merge_records(records: list[dict[str, Any]]) -> dict[str, Any]:
             if value is not None:
                 merged[key] = value
 
-    # Bind the condition to the draft after all independent field merges.
-    for record in reversed(sorted_records):
-        if record.get("DRAFT_M") is not None:
-            merged["RAW_DRAFT_LOAD_LINE_FT"] = record.get("RAW_DRAFT_LOAD_LINE_FT")
-            break
+    if any("RAW_DRAFT_LOAD_LINE_FT" in record for record in records):
+        for record in reversed(sorted_records):
+            if record.get("DRAFT_M") is not None:
+                merged["RAW_DRAFT_LOAD_LINE_FT"] = record.get("RAW_DRAFT_LOAD_LINE_FT")
+                break
 
     return merged
