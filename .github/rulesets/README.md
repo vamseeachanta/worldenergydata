@@ -66,6 +66,6 @@ uv run --no-project --with pytest --with pyyaml python -m pytest \
 ```
 
 The contract tests check activation, scope, bypasses, the exact workflow
-context and unconditional execution. Existing workflow tests execute the
+context and execution on code changes. Existing workflow tests execute the
 production shell with clean, `SWEEP`, `URL` and no-pack inputs. These are local
 regressions; they do not establish that a GitHub ruleset has been imported.
