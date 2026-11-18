@@ -6,6 +6,7 @@ required, including explicit zeros and empty tuples. Immutable tuples prevent
 mutation through a frozen dataclass. See scenario.py and scenario_README.md for
 method, limitations and the Input gaps register.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -14,20 +15,19 @@ from math import isfinite
 
 def _finite(value: float, name: str, minimum: float | None = None) -> None:
     if isinstance(value, bool) or not isinstance(value, (int, float)):
-        raise ValueError(f'{name} must be a finite number')
+        raise ValueError(f"{name} must be a finite number")
     if not isfinite(value) or (minimum is not None and value < minimum):
-        raise ValueError(f'{name} is outside its permitted range')
+        raise ValueError(f"{name} is outside its permitted range")
 
 
 def _index(value: int, name: str) -> None:
     if type(value) is not int or value < 0:
-        raise ValueError(f'{name} must be a nonnegative integer')
+        raise ValueError(f"{name} must be a nonnegative integer")
 
 
-def _series(values: tuple[float, ...], name: str,
-            minimum: float | None = None) -> None:
+def _series(values: tuple[float, ...], name: str, minimum: float | None = None) -> None:
     if not isinstance(values, tuple):
-        raise ValueError(f'{name} must be an immutable tuple')
+        raise ValueError(f"{name} must be an immutable tuple")
     for value in values:
         _finite(value, name, minimum)
 
@@ -40,10 +40,10 @@ class Periods:
     production_days: tuple[float, ...]
 
     def __post_init__(self) -> None:
-        _finite(self.duration_years, 'duration_years', 0.0)
-        _series(self.production_days, 'production_days', 0.0)
+        _finite(self.duration_years, "duration_years", 0.0)
+        _series(self.production_days, "production_days", 0.0)
         if self.duration_years == 0 or not self.production_days:
-            raise ValueError('Positive duration and a nonempty horizon are required')
+            raise ValueError("Positive duration and a nonempty horizon are required")
 
 
 @dataclass(frozen=True)
@@ -66,16 +66,20 @@ class WellSchedule:
     additions_barrels_per_day: tuple[float, ...]
 
     def __post_init__(self) -> None:
-        for name in ('drilling_start_period', 'drilling_periods',
-                     'completion_periods', 'production_delay_periods'):
+        for name in (
+            "drilling_start_period",
+            "drilling_periods",
+            "completion_periods",
+            "production_delay_periods",
+        ):
             _index(getattr(self, name), name)
-        _finite(self.initial_rate_barrels_per_day, 'initial rate', 0.0)
-        _series(self.retention_fractions, 'retention', 0.0)
-        _series(self.additions_barrels_per_day, 'additions', 0.0)
+        _finite(self.initial_rate_barrels_per_day, "initial rate", 0.0)
+        _series(self.retention_fractions, "retention", 0.0)
+        _series(self.additions_barrels_per_day, "additions", 0.0)
         if any(value > 1 for value in self.retention_fractions):
-            raise ValueError('Retention fractions must be at most one')
+            raise ValueError("Retention fractions must be at most one")
         if len(self.retention_fractions) != len(self.additions_barrels_per_day):
-            raise ValueError('Retention and additions must share a horizon')
+            raise ValueError("Retention and additions must share a horizon")
 
 
 @dataclass(frozen=True)
@@ -92,11 +96,11 @@ class CostBreakdown:
     contingency_includes_engineering: bool
 
     def __post_init__(self) -> None:
-        _series(self.components_usd, 'components_usd', 0.0)
-        _finite(self.engineering_fraction, 'engineering_fraction', 0.0)
-        _finite(self.contingency_fraction, 'contingency_fraction', 0.0)
+        _series(self.components_usd, "components_usd", 0.0)
+        _finite(self.engineering_fraction, "engineering_fraction", 0.0)
+        _finite(self.contingency_fraction, "contingency_fraction", 0.0)
         if type(self.contingency_includes_engineering) is not bool:
-            raise ValueError('Contingency basis must be an explicit boolean')
+            raise ValueError("Contingency basis must be an explicit boolean")
 
 
 @dataclass(frozen=True)
@@ -108,10 +112,10 @@ class Expenditure:
     amount_usd: float
 
     def __post_init__(self) -> None:
-        _index(self.period_index, 'period_index')
-        _finite(self.amount_usd, 'amount_usd', 0.0)
-        if self.category not in ('capital', 'operating'):
-            raise ValueError('Expenditure category must be capital or operating')
+        _index(self.period_index, "period_index")
+        _finite(self.amount_usd, "amount_usd", 0.0)
+        if self.category not in ("capital", "operating"):
+            raise ValueError("Expenditure category must be capital or operating")
 
 
 @dataclass(frozen=True)
@@ -136,24 +140,31 @@ class ScenarioInputs:
 
     def __post_init__(self) -> None:
         if not isinstance(self.name, str) or not self.name.strip():
-            raise ValueError('Scenario name is required')
+            raise ValueError("Scenario name is required")
         if not isinstance(self.periods, Periods):
-            raise ValueError('Scenario periods are required')
+            raise ValueError("Scenario periods are required")
         count = len(self.periods.production_days)
-        _series(self.oil_prices_usd_per_barrel, 'oil prices')
-        _series(self.variable_costs_usd_per_barrel, 'variable costs', 0.0)
-        _series(self.net_margin_fractions, 'net margin fractions', 0.0)
-        for values in (self.oil_prices_usd_per_barrel,
-                       self.variable_costs_usd_per_barrel, self.net_margin_fractions):
+        _series(self.oil_prices_usd_per_barrel, "oil prices")
+        _series(self.variable_costs_usd_per_barrel, "variable costs", 0.0)
+        _series(self.net_margin_fractions, "net margin fractions", 0.0)
+        for values in (
+            self.oil_prices_usd_per_barrel,
+            self.variable_costs_usd_per_barrel,
+            self.net_margin_fractions,
+        ):
             if len(values) != count:
-                raise ValueError('Scenario decks must span the horizon')
+                raise ValueError("Scenario decks must span the horizon")
         if any(value > 1 for value in self.net_margin_fractions):
-            raise ValueError('Net margin fractions must be at most one')
-        for values, kind in ((self.wells, WellSchedule),
-                             (self.expenditures, Expenditure)):
-            if not isinstance(values, tuple) or any(not isinstance(v, kind) for v in values):
-                raise ValueError('Scenario schedules must be immutable typed tuples')
-        _finite(self.discount_rate_per_period, 'discount rate')
-        _index(self.first_discount_period, 'first discount period')
+            raise ValueError("Net margin fractions must be at most one")
+        for values, kind in (
+            (self.wells, WellSchedule),
+            (self.expenditures, Expenditure),
+        ):
+            if not isinstance(values, tuple) or any(
+                not isinstance(v, kind) for v in values
+            ):
+                raise ValueError("Scenario schedules must be immutable typed tuples")
+        _finite(self.discount_rate_per_period, "discount rate")
+        _index(self.first_discount_period, "first discount period")
         if self.discount_rate_per_period <= -1:
-            raise ValueError('Discount rate must exceed minus one')
+            raise ValueError("Discount rate must exceed minus one")
