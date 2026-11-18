@@ -96,3 +96,11 @@ def test_raw_write_fuse_readback(tmp_path, monkeypatch, source, condition, expec
     assert exported["RAW_DRAFT_LOAD_LINE_FT"] == (
         "" if expected is None else str(expected)
     )
+
+
+@pytest.mark.parametrize("condition", [{}, {"RAW_DRAFT_LOAD_LINE_FT": None}])
+def test_merge_preserves_optional_condition_field(condition):
+    older = {"DRAFT_M": 6.7, **condition}
+    newer = {"DRAFT_M": 6.1}
+
+    assert _merge_records([older, newer]) == {"DRAFT_M": 6.1, **condition}

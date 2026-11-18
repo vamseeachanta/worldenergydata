@@ -265,7 +265,7 @@ Reading states distinguish main-path inspection from the remaining audit (issue 
 
 | Source file | Reading state | Pinned extent |
 | --- | --- | --- |
-| `__init__.py` | Inspected main path | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/__init__.py:L1-L45] |
+| `__init__.py` | Inspected main path | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/__init__.py:L1-L49] |
 | `bridge/__init__.py` | Remaining audit open | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/bridge/__init__.py:L1-L8] |
 | `bridge/rig_fleet_bridge.py` | Inspected main path | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/bridge/rig_fleet_bridge.py:L1-L83] |
 | `collectors/__init__.py` | Remaining audit open | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/collectors/__init__.py:L1-L1] |
@@ -278,37 +278,37 @@ Reading states distinguish main-path inspection from the remaining audit (issue 
 | `collectors/fleet_page_collector.py` | Inspected main path | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/collectors/fleet_page_collector.py:L1-L114] |
 | Off-repository particulars collector 2 of 2 | Remaining audit open; file identity withheld; sidecar entry: to be created (issue pending (1)) | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/collectors/] |
 | `collectors/scrape_parser.py` | Remaining audit open | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/collectors/scrape_parser.py:L1-L342] |
-| `collectors/spec_pdf_collector.py` | Inspected main path | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/collectors/spec_pdf_collector.py:L1-L108] |
+| `collectors/spec_pdf_collector.py` | Inspected main path | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/collectors/spec_pdf_collector.py:L1-L128] |
 | `config/__init__.py` | Remaining audit open | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/config/__init__.py:L1-L1] |
 | `config/construction/` | 11 Python files; 475 lines; remaining audit open; file-level identities withheld, sidecar entry: to be created (issue pending (1)) | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/config/construction/] |
 | `config/drilling/` | 14 Python files; 887 lines; remaining audit open; file-level identities withheld, sidecar entry: to be created (issue pending (1)) | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/config/drilling/] |
 | `config/intervention/` | 7 Python files; 427 lines; remaining audit open; file-level identities withheld, sidecar entry: to be created (issue pending (1)) | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/config/intervention/] |
-| `constants.py` | Inspected main path | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/constants.py:L1-L120] |
+| `constants.py` | Inspected main path | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/constants.py:L1-L128] |
 | `dayrate_snapshot.py` | Partial; remaining audit open | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/dayrate_snapshot.py:L1-L214] |
 | `dedup/__init__.py` | Remaining audit open | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/dedup/__init__.py:L1-L1] |
 | `dedup/deduplicator.py` | Inspected main path | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/dedup/deduplicator.py:L1-L253] |
 | `dedup/normalizer.py` | Inspected main path | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/dedup/normalizer.py:L1-L65] |
 | `exporters/__init__.py` | Remaining audit open | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/exporters/__init__.py:L1-L1] |
 | `exporters/war_export.py` | Inspected main path | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/exporters/war_export.py:L1-L71] |
-| `fleet_catalog.py` | Partial; remaining audit open | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/fleet_catalog.py:L1-L446] |
+| `fleet_catalog.py` | Partial; remaining audit open | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/fleet_catalog.py:L1-L448] |
 | `identity_crosswalk.py` | Partial; remaining audit open | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/identity_crosswalk.py:L1-L262] |
 | `identity_resolver.py` | Partial; remaining audit open | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/identity_resolver.py:L1-L455] |
-| `loaders/__init__.py` | Inspected main path | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/loaders/__init__.py:L1-L10] |
+| `loaders/__init__.py` | Inspected main path | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/loaders/__init__.py:L1-L11] |
 | `loaders/construction_vessel_loader.py` | Inspected main path | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/loaders/construction_vessel_loader.py:L1-L395] |
-| `loaders/drilling_riser_loader.py` | Inspected main path | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/loaders/drilling_riser_loader.py:L1-L257] |
+| `loaders/drilling_riser_loader.py` | Inspected main path | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/loaders/drilling_riser_loader.py:L1-L326] |
 | `loaders/historical_xlsx_loader.py` | Remaining audit open | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/loaders/historical_xlsx_loader.py:L1-L464] |
 | `loaders/intervention_osv_loader.py` | Remaining audit open | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/loaders/intervention_osv_loader.py:L1-L102] |
 | External brochure-derived loader | Remaining audit open | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/loaders/] |
 | `models/__init__.py` | Remaining audit open | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/models/__init__.py:L1-L1] |
 | `models/base.py` | Inspected main path | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/models/base.py:L1-L92] |
 | `models/construction_vessel.py` | Inspected main path | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/models/construction_vessel.py:L1-L101] |
-| `models/drilling_rig.py` | Inspected main path | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/models/drilling_rig.py:L1-L132] |
-| `models/drilling_riser.py` | Partial; remaining audit open | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/models/drilling_riser.py:L1-L191] |
+| `models/drilling_rig.py` | Inspected main path | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/models/drilling_rig.py:L1-L137] |
+| `models/drilling_riser.py` | Partial; remaining audit open | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/models/drilling_riser.py:L1-L244] |
 | `parsers/__init__.py` | Remaining audit open | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/parsers/__init__.py:L1-L1] |
 | `parsers/html.py` | Inspected main path | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/parsers/html.py:L1-L123] |
 | `parsers/myshiptracking.py` | Remaining audit open | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/parsers/myshiptracking.py:L1-L77] |
 | `parsers/numeric.py` | Inspected main path | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/parsers/numeric.py:L1-L175] |
-| `parsers/pdf.py` | Inspected main path | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/parsers/pdf.py:L1-L74] |
+| `parsers/pdf.py` | Inspected main path | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/parsers/pdf.py:L1-L81] |
 | `parsers/rig_summary.py` | Partial; remaining audit open | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/parsers/rig_summary.py:L1-L992] |
 | `parsers/xls.py` | Remaining audit open | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/parsers/xls.py:L1-L248] |
 | `quality/__init__.py` | Remaining audit open | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/quality/__init__.py:L1-L1] |
@@ -319,8 +319,8 @@ Reading states distinguish main-path inspection from the remaining audit (issue 
 | `schemas/base.py` | Inspected main path | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/schemas/base.py:L1-L170] |
 | `schemas/construction_vessel.py` | Inspected main path | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/schemas/construction_vessel.py:L1-L202] |
 | `schemas/drilling_rig.py` | Inspected main path | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/schemas/drilling_rig.py:L1-L268] |
-| `schemas/drilling_riser.py` | Inspected main path | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/schemas/drilling_riser.py:L1-L409] |
-| `schemas/intervention_vessel.py` | Inspected main path | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/schemas/intervention_vessel.py:L1-L73] |
+| `schemas/drilling_riser.py` | Inspected main path | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/schemas/drilling_riser.py:L1-L439] |
+| `schemas/intervention_vessel.py` | Inspected main path | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/schemas/intervention_vessel.py:L1-L75] |
 | `selection.py` | Inspected main path | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/selection.py:L1-L167] |
 | `spec_pdf_root.py` | Remaining audit open | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/spec_pdf_root.py:L1-L20] |
 | `storage/__init__.py` | Remaining audit open | [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/storage/__init__.py:L1-L1] |
@@ -342,7 +342,7 @@ Discovery identifies 61 module test files, listed below; inventory does not impl
 - `tests/unit/vessel_fleet/loaders/test_construction_vessel_loader.py` — [tests/unit/vessel_fleet/loaders/test_construction_vessel_loader.py:L1-L275]
 - `tests/unit/vessel_fleet/loaders/test_construction_vessel_loader_integration.py` — [tests/unit/vessel_fleet/loaders/test_construction_vessel_loader_integration.py:L1-L125]
 - `tests/unit/vessel_fleet/loaders/test_drilling_riser_alignment.py` — [tests/unit/vessel_fleet/loaders/test_drilling_riser_alignment.py:L1-L320]
-- `tests/unit/vessel_fleet/loaders/test_drilling_riser_loader.py` — [tests/unit/vessel_fleet/loaders/test_drilling_riser_loader.py:L1-L319]
+- `tests/unit/vessel_fleet/loaders/test_drilling_riser_loader.py` — [tests/unit/vessel_fleet/loaders/test_drilling_riser_loader.py:L1-L403]
 - `tests/unit/vessel_fleet/loaders/test_historical_xlsx_loader.py` — [tests/unit/vessel_fleet/loaders/test_historical_xlsx_loader.py:L1-L126]
 - `tests/unit/vessel_fleet/loaders/test_intervention_osv_loader.py` — [tests/unit/vessel_fleet/loaders/test_intervention_osv_loader.py:L1-L96]
 - External brochure-derived loader test — [tests/unit/vessel_fleet/loaders/]
@@ -351,16 +351,16 @@ Discovery identifies 61 module test files, listed below; inventory does not impl
 - `tests/unit/vessel_fleet/models/test_construction_vessel.py` — [tests/unit/vessel_fleet/models/test_construction_vessel.py:L1-L130]
 - `tests/unit/vessel_fleet/models/test_drilling_rig.py` — [tests/unit/vessel_fleet/models/test_drilling_rig.py:L1-L141]
 - `tests/unit/vessel_fleet/models/test_drilling_riser.py` — [tests/unit/vessel_fleet/models/test_drilling_riser.py:L1-L192]
-- `tests/unit/vessel_fleet/models/test_drilling_riser_model.py` — [tests/unit/vessel_fleet/models/test_drilling_riser_model.py:L1-L128]
+- `tests/unit/vessel_fleet/models/test_drilling_riser_model.py` — [tests/unit/vessel_fleet/models/test_drilling_riser_model.py:L1-L188]
 - `tests/unit/vessel_fleet/parsers/test_numeric.py` — [tests/unit/vessel_fleet/parsers/test_numeric.py:L1-L288]
 - `tests/unit/vessel_fleet/parsers/test_xls.py` — [tests/unit/vessel_fleet/parsers/test_xls.py:L1-L221]
 - `tests/unit/vessel_fleet/quality/test_completeness.py` — [tests/unit/vessel_fleet/quality/test_completeness.py:L1-L132]
 - `tests/unit/vessel_fleet/quality/test_validator.py` — [tests/unit/vessel_fleet/quality/test_validator.py:L1-L191]
 - `tests/unit/vessel_fleet/schemas/test_base.py` — [tests/unit/vessel_fleet/schemas/test_base.py:L1-L93]
 - `tests/unit/vessel_fleet/schemas/test_construction.py` — [tests/unit/vessel_fleet/schemas/test_construction.py:L1-L148]
-- `tests/unit/vessel_fleet/schemas/test_drilling_rig.py` — [tests/unit/vessel_fleet/schemas/test_drilling_rig.py:L1-L140]
+- `tests/unit/vessel_fleet/schemas/test_drilling_rig.py` — [tests/unit/vessel_fleet/schemas/test_drilling_rig.py:L1-L239]
 - `tests/unit/vessel_fleet/schemas/test_drilling_riser.py` — [tests/unit/vessel_fleet/schemas/test_drilling_riser.py:L1-L174]
-- `tests/unit/vessel_fleet/schemas/test_drilling_riser_schema.py` — [tests/unit/vessel_fleet/schemas/test_drilling_riser_schema.py:L1-L108]
+- `tests/unit/vessel_fleet/schemas/test_drilling_riser_schema.py` — [tests/unit/vessel_fleet/schemas/test_drilling_riser_schema.py:L1-L151]
 - `tests/unit/vessel_fleet/schemas/test_intervention.py` — [tests/unit/vessel_fleet/schemas/test_intervention.py:L1-L144]
 - `tests/unit/vessel_fleet/schemas/test_schemas.py` — [tests/unit/vessel_fleet/schemas/test_schemas.py:L1-L247]
 - `tests/unit/vessel_fleet/storage/test_parquet.py` — [tests/unit/vessel_fleet/storage/test_parquet.py:L1-L93]
@@ -386,7 +386,7 @@ Discovery identifies 61 module test files, listed below; inventory does not impl
 - `tests/unit/vessel_fleet/loaders/test_subsea_equipment_observations.py` — [tests/unit/vessel_fleet/loaders/test_subsea_equipment_observations.py:L1-L164]
 - `tests/unit/vessel_fleet/quality/test_merge_readiness.py` — [tests/unit/vessel_fleet/quality/test_merge_readiness.py:L1-L265]
 - `tests/unit/vessel_fleet/test_construction_evidence.py` — [tests/unit/vessel_fleet/test_construction_evidence.py:L1-L393]
-- `tests/unit/vessel_fleet/test_draft_fusion.py` — [tests/unit/vessel_fleet/test_draft_fusion.py:L1-L98]
+- `tests/unit/vessel_fleet/test_draft_fusion.py` — [tests/unit/vessel_fleet/test_draft_fusion.py:L1-L106]
 - `tests/unit/vessel_fleet/test_ingest_draft_updates.py` — [tests/unit/vessel_fleet/test_ingest_draft_updates.py:L1-L103]
 - `tests/unit/vessel_fleet/test_intervention_inventory.py` — [tests/unit/vessel_fleet/test_intervention_inventory.py:L1-L337]
 - `tests/unit/vessel_fleet/test_liftboat_source_fetch.py` — [tests/unit/vessel_fleet/test_liftboat_source_fetch.py:L1-L270]
