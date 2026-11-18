@@ -19,7 +19,8 @@ retrievable, sanitized evidence record with a stable reference and digest.
 | Evidence preservation | 2026-11-17 | Rejected output paths that alias the input so report generation preserves the original evidence. |
 | Validation record | 2026-11-17 | Distinguished historical test counts from current regression coverage and recorded unavailable Markdown lint; benchmark conclusions remain unverified. |
 | Publication text | 2026-11-17 | Added a replacement description that qualifies every numerical conclusion and omits obsolete validator line references. |
-| Coordinate comparison | 2026-11-17 | Added coordinate parity and separate message differences; removed unverified measurement tables and publication metadata from contributor guidance. |
+| Coordinate comparison | 2026-11-18 | Added coordinate parity and separate message differences; removed unverified measurement tables and publication metadata from contributor guidance. |
+| Guide clarification | 2026-11-18 | Corrected the coordinate comparison date to UTC and clarified that matching nonempty import-sorter sets also prevent verified parity. |
 
 ## Current policy and scope
 
@@ -184,7 +185,8 @@ version and digest. It provides these comparison views:
 - `coordinate_parity` uses the coordinate delta with the same import and
   formatter checks: unsupported rules produce `BLOCKED`; any coordinate,
   import-file or formatter-file difference produces `DIFFERENT`; matching but
-  nonempty formatter sets produce `UNVERIFIED`; otherwise it is `MATCH`.
+  nonempty formatter or import-sorter sets produce `UNVERIFIED`; otherwise it
+  is `MATCH`.
 
 I001 remains exclusive to the import-file comparison and is excluded from both
 lint views and message differences. All comparison lists have deterministic
