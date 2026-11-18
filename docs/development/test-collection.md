@@ -12,6 +12,7 @@ engineering calculations or their acceptance limits.
 | Initial | 2026-10-20 | Document collection rules and a reproducible duplicate-name example. |
 | 1 | 2026-11-16 | Separate matrix collection evidence from runtime outcomes. |
 | 2 | 2026-11-18 | Keep parallel runtime tests running after collection fails. |
+| 3 | 2026-11-18 | Clarify the interpreter and success conditions for Codecov uploads. |
 
 ## Package imports
 
@@ -98,7 +99,8 @@ The runtime test selections and arguments remain the same.
 When target selection succeeds and the job is not cancelled, parallel runtime
 tests run even if collection or the collection contract fails. The collection
 failure still fails the job.
-Coverage is not uploaded to Codecov when collection fails.
+Coverage is uploaded to Codecov only from the Python 3.11 leg, and only when
+every earlier step in that leg succeeds.
 
 `tests/workflows/test_collection_evidence.py` checks the matrix, target sharing,
 step order and artifact location. Synthetic suites exercise successful, broken
