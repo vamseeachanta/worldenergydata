@@ -235,16 +235,23 @@ def test_architecture_caption_is_literal_text(
     _assert_literal_architecture_caption(page.scripts[0], field)
 
 
+def _assert_saved_poster_inventory(directory):
+    assert set(SAVED_FIELD_IDS) == {
+        path.name.removesuffix("_lifecycle.html")
+        for path in directory.glob("*_lifecycle.html")
+    }, "Saved poster inventory must match SAVED_FIELD_IDS"
+
+
+def test_saved_poster_inventory():
+    _assert_saved_poster_inventory(REPO / "reports/lower_tertiary/lifecycle")
+
+
 @pytest.mark.parametrize("field_id", SAVED_FIELD_IDS)
 @pytest.mark.parametrize(
     "has_svg", [True, False], ids=["literal-caption", "placeholder"]
 )
 def test_saved_poster_architecture_panel(field_id, has_svg):
     directory = REPO / "reports/lower_tertiary/lifecycle"
-    assert set(SAVED_FIELD_IDS) == {
-        path.name.removesuffix("_lifecycle.html")
-        for path in directory.glob("*_lifecycle.html")
-    }, "Saved poster inventory must match SAVED_FIELD_IDS"
     page = _PosterParser()
     page.feed((directory / f"{field_id}_lifecycle.html").read_text(encoding="utf-8"))
 
@@ -277,22 +284,17 @@ def test_saved_poster_architecture_panel(field_id, has_svg):
 
 
 @pytest.mark.parametrize("inventory_change", ["added", "missing"])
-def test_saved_poster_inventory_mismatch_is_rejected(
-    tmp_path, monkeypatch, inventory_change
-):
-    source = REPO / "reports/lower_tertiary/lifecycle"
-    directory = tmp_path / "reports/lower_tertiary/lifecycle"
-    directory.mkdir(parents=True)
-    for path in [*source.glob("*_lifecycle.html"), source / "_explorer.json"]:
-        shutil.copy2(path, directory / path.name)
+def test_saved_poster_inventory_mismatch_is_rejected(tmp_path, inventory_change):
+    field_ids = list(SAVED_FIELD_IDS)
     if inventory_change == "added":
-        (directory / "unlisted_lifecycle.html").touch()
+        field_ids.append("unlisted")
     else:
-        (directory / "tiber_lifecycle.html").unlink()
-    monkeypatch.setitem(globals(), "REPO", tmp_path)
+        field_ids.pop()
+    for field_id in field_ids:
+        (tmp_path / f"{field_id}_lifecycle.html").touch()
 
     with pytest.raises(AssertionError, match="Saved poster inventory"):
-        test_saved_poster_architecture_panel("anchor", has_svg=False)
+        _assert_saved_poster_inventory(tmp_path)
 
 
 def test_architecture_caption_requires_node(builder, monkeypatch):
