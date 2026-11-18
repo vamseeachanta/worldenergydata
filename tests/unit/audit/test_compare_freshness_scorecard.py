@@ -232,10 +232,14 @@ def test_cli_exit_contract_and_no_writes(
         ("module-manifest.yaml", "modules: ["),
         ("module-manifest.yaml", "modules: {}"),
         ("module-manifest.yaml", "modules: !!int ''"),
+        ("module-manifest.yaml", "modules: !!bool invalid"),
+        ("module-manifest.yaml", "modules: !!timestamp invalid"),
         ("data/catalog.yaml", None),
         ("data/catalog.yaml", ""),
         ("data/catalog.yaml", "modules: []"),
         ("data/catalog.yaml", "modules: !!int ''"),
+        ("data/catalog.yaml", "modules: !!bool invalid"),
+        ("data/catalog.yaml", "modules: !!timestamp invalid"),
     ],
 )
 def test_cli_invalid_inputs_are_distinct_and_sanitized(

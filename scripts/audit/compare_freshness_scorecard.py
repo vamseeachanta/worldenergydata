@@ -114,8 +114,8 @@ def _read_input(root: Path, relative: str, *, as_json: bool = False) -> Any:
         else:
             try:
                 value = yaml.safe_load(text)
-            except IndexError:
-                # PyYAML can index an empty explicitly tagged scalar.
+            except (IndexError, KeyError, AttributeError):
+                # PyYAML constructors can fail on empty or malformed tagged scalars.
                 raise ValueError("invalid YAML scalar") from None
             if not isinstance(value, dict):
                 raise ValueError("expected mapping")
