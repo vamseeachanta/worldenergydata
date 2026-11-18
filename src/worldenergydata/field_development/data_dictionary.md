@@ -47,6 +47,13 @@ metadata raise errors. Known eras populate `geological_era`; the existing
 Oligocene. Other eras imply no alternative named play and preserve supplied
 play context. Conflicting non-null values raise rather than overwrite.
 
+For example, a supplied `play_group="Lower Tertiary"` is retained when the
+mapped era is `Miocene`, although Miocene is outside that grouping. The receipt
+states that era/play consistency is not verified. Field-level context can
+include nonproducing wells and does not establish the producing reservoir's
+age, so this pair is retained without raising a conflict or reclassifying the
+supplied play. Callers must assess whether the pair is appropriate for use.
+
 The returned concept is revalidated and separate from the input. Existing
 measurements, fluid properties, `hpht` and `data_source` are preserved. A separate
 receipt records the field code, source reference, matched era, exact-code

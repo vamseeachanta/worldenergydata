@@ -190,6 +190,19 @@ def test_other_era_does_not_erase_supplied_play():
     assert result.play_group == concept.play_group
 
 
+def test_other_era_retains_lower_tertiary_play_with_receipt_limitation():
+    concept = FieldConcept(name="Synthetic", play_group="Lower Tertiary")
+    original = concept.model_dump()
+    result, receipt = enrich(concept, eras={"FX1": "Miocene"})
+    assert result.geological_era == "Miocene"
+    assert result.play_group == "Lower Tertiary"
+    assert concept.model_dump() == original
+    assert receipt.geological_era == "Miocene"
+    assert "A supplied Lower Tertiary play is retained" in receipt.limitation
+    assert "even when the mapped era is outside that grouping" in receipt.limitation
+    assert "consistency is not verified" in receipt.limitation
+
+
 @pytest.mark.parametrize("keyword", ["field_code", "source"])
 @pytest.mark.parametrize("value", [None, "", " \t", 7, {}])
 def test_invalid_metadata_raises_even_without_a_match(keyword, value):

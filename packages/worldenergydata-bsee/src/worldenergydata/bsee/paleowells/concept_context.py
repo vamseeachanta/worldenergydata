@@ -24,7 +24,9 @@ class GeologicalContextReceipt:
     mapping_method: str = "exact_field_code_lookup"
     limitation: str = (
         "Supplied field-level context; not proof of the producing reservoir's "
-        "age or formation. Raw source and derivation not verified by this adapter."
+        "age or formation. Raw source and derivation not verified by this adapter. "
+        "A supplied Lower Tertiary play is retained even when the mapped era is "
+        "outside that grouping; era/play consistency is not verified."
     )
     source_derivation: str | None = None
 
