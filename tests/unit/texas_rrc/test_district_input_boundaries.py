@@ -162,7 +162,7 @@ def test_delimited_reader_cannot_discard_numeric_id_before_validation(column):
 
 
 @pytest.mark.parametrize("chunked", [False, True])
-def test_pre_normalized_frame_cannot_bypass_numeric_id_check(chunked):
+def test_id_only_normalized_frame_is_rejected(chunked):
     frame = normalize_production_frame(
         pd.DataFrame({"district": ["08"], "OIL_BBL": [10]})
     )
