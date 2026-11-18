@@ -52,3 +52,19 @@ The other charts, reviewed for legend placement, axis titles, units, key points 
 
 - No data changed. The permit counts (Figures 2 to 5, Table 1) are the revision 9 files, compared byte for byte by
   the tests; the Figure 1 files are the revision 11 files, pinned in `inputs/manifest.json`.
+
+## Build and tests
+
+- Built with `--build-commit 8c18f080938d4efea28dad6f696b125aacd028d8`, the commit that holds `build_r12.py`,
+  `counting-rules.md` and `prompts/`; page 568 KB.
+- Verified environment: Windows 11, Python 3.14.3, pandas 3.1.1, matplotlib 3.11.2, pytest 9.2.0, Node.js 26.13.0.
+- `tests/test_build_r12.py` and `../plug_abandonment_article/tests`: 39 passed (four new tests for the axis colour
+  and notes, the key points, the bar readings and the legend titles); `../issue2_public_data_r11/tests` and
+  `../issue2_public_data_r10/tests` (unchanged): 58 passed.
+- Document rules check: prompts appendix, data set, Prepared/Checked/Approved, no Monday heading and no P.E. or
+  AI-help line all pass; AI named three times (masthead line, offer box, Appendix A); no SAMPLE marks.
+- `tests/browser_check.mjs` in headless Microsoft Edge, exit 0 with no false check: six charts drawn; the right
+  axis title, numbers and line in `#D55E00`; both axis notes; the map legend with window counts; two key points
+  on Figures 2 and 4; the map moved from 2005 to 2009 to 2008 to 2012 while playing, stopped on a click, moved to
+  2011 to 2015 on a click on 2015 in panel b with the shading label following, and stopped on 2009 to 2013 on a
+  slider click; no console errors or exceptions.
