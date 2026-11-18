@@ -245,7 +245,9 @@ def test_hyperbolic_eur_avoids_intermediate_overflow(qi, decline, b):
 @pytest.mark.filterwarnings("error::RuntimeWarning")
 def test_simulate_rejects_eur_beyond_float_range(qi, decline, b, model):
     # Synthetic cases with true recovery above the floating-point range.
-    with pytest.raises(ValueError, match="^EUR exceeds the floating-point range$"):
+    with pytest.raises(
+        ValueError, match="^EUR is not representable in floating point$"
+    ):
         _simulate(
             qi=qi,
             Di=decline,
@@ -254,6 +256,64 @@ def test_simulate_rejects_eur_beyond_float_range(qi, decline, b, model):
             economic_limit=1.0,
             months=1,
         )
+
+
+@pytest.mark.parametrize("model", ["harmonic", "hyperbolic"])
+@pytest.mark.filterwarnings("error::RuntimeWarning")
+def test_simulate_rejects_nonfinite_profile_with_finite_eur(model):
+    # Synthetic rates keep EUR finite but overflow the cumulative sample sum.
+    with pytest.raises(
+        ValueError, match="^Profile is not representable in floating point$"
+    ):
+        _simulate(
+            qi=5e307,
+            Di=1.0,
+            b=1.0,
+            model=model,
+            economic_limit=2.5e307,
+            months=100,
+        )
+
+
+@pytest.mark.filterwarnings("error::RuntimeWarning")
+def test_simulate_preserves_finite_profile_near_cumulative_overflow():
+    result = _simulate(
+        qi=5e307,
+        Di=1.0,
+        b=1.0,
+        model="harmonic",
+        economic_limit=2.5e307,
+        months=54,
+    )
+    assert result.eur_bbl == pytest.approx(5e307 * math.log(2.0))
+    assert np.isfinite(result.forecast_df.to_numpy()).all()
+    expected_rates = 5e307 / (1.0 + np.arange(1, 55))
+    np.testing.assert_allclose(result.forecast_df["rate_bbl"], expected_rates)
+    np.testing.assert_allclose(
+        result.forecast_df["cumulative_bbl"], np.cumsum(expected_rates)
+    )
+
+
+@pytest.mark.filterwarnings("error::RuntimeWarning")
+def test_simulate_accepts_finite_profile_after_intermediate_overflow():
+    result = _simulate(Di=1e308, months=3)
+    assert result.eur_bbl == pytest.approx(9e-306, rel=1e-12, abs=0.0)
+    np.testing.assert_array_equal(result.forecast_df["rate_bbl"], 0.0)
+    np.testing.assert_array_equal(result.forecast_df["cumulative_bbl"], 0.0)
+
+
+@pytest.mark.filterwarnings("error::RuntimeWarning")
+def test_simulate_reports_unrepresentable_eur_intermediate():
+    # The exact recovery is finite; the existing helper's qi / Di is not.
+    with localcontext() as context:
+        context.prec = 80
+        expected = float((Decimal("1e308") - Decimal("9e307")) / Decimal("0.5"))
+    assert math.isfinite(expected)
+    assert expected == pytest.approx(2e307)
+    with pytest.raises(
+        ValueError, match="^EUR is not representable in floating point$"
+    ):
+        _simulate(qi=1e308, Di=0.5, economic_limit=9e307, months=1)
 
 
 def test_hyperbolic_approaches_exponential_as_exponent_tends_to_zero():

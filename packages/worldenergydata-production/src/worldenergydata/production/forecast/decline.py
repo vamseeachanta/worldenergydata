@@ -184,8 +184,10 @@ class ArpsDeclineCurve:
         confidence intervals because no fit occurred. Invalid inputs raise
         ``ValueError``. Fitting bounds on the hyperbolic exponent do not
         restrict this forward evaluation. Hyperbolic exponents above 1 are
-        evaluated without physical qualification. If EUR is nonfinite,
-        ``ValueError("EUR exceeds the floating-point range")`` is raised.
+        evaluated without physical qualification. Nonfinite EUR or profile
+        fields raise ``ValueError`` without numerical overflow warnings.
+        An overflowing EUR intermediate can trigger rejection even when
+        the mathematical recovery is finite.
         """
         if not isinstance(model, str) or model not in _VALID_MODELS:
             raise ValueError(
@@ -228,7 +230,12 @@ class ArpsDeclineCurve:
         with np.errstate(over="ignore", invalid="ignore"):
             eur = self._compute_eur(qi, Di, b, economic_limit, model)
         if not np.isfinite(eur):
-            raise ValueError("EUR exceeds the floating-point range")
+            raise ValueError("EUR is not representable in floating point")
+
+        with np.errstate(over="ignore", invalid="ignore"):
+            profile = self._build_forecast_df(qi, Di, b, model, int(months))
+        if not np.isfinite(profile.to_numpy()).all():
+            raise ValueError("Profile is not representable in floating point")
 
         return ForecastResult(
             model=model,
@@ -237,7 +244,7 @@ class ArpsDeclineCurve:
             b=b,
             r_squared=float("nan"),
             eur_bbl=eur,
-            forecast_df=self._build_forecast_df(qi, Di, b, model, int(months)),
+            forecast_df=profile,
         )
 
     def plot(self, historical: pd.DataFrame, result: ForecastResult) -> go.Figure:
