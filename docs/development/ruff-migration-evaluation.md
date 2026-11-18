@@ -17,6 +17,7 @@ retrievable, sanitized evidence record with a stable reference and digest.
 | Update | 2026-11-17 | Rejected unsupported legacy import diagnostics and overflowing timings; marked numerical conclusions unverified because supporting records are unavailable. |
 | Record validation | 2026-11-17 | Rejected duplicate JSON keys, noncanonical formatter locations and repeated formatter paths to prevent lost or inflated findings. |
 | Evidence preservation | 2026-11-17 | Rejected output paths that alias the input so report generation preserves the original evidence. |
+| Validation record | 2026-11-17 | Distinguished historical test counts from current regression coverage and recorded unavailable Markdown lint; benchmark conclusions remain unverified. |
 
 ## Current policy and scope
 
@@ -174,6 +175,26 @@ agreement on the scanned inputs, not general semantic equivalence of tools.
 The under-30-second test uses the unrounded sum of Ruff check and format-check
 for each paired full-inventory observation; all five must be strictly below 30.
 It is independent of compatibility and must never be inferred from the CI subset.
+
+## Validation record
+
+The initial test record of 34 evaluation cases and 36 existing F821 cases,
+70 passes in total, is historical. The current focused run passed all 68
+evaluation cases and 36 F821 cases, 104 in total, with no skips. It used:
+
+```bash
+uv run --no-project --with pytest --with flake8==7.4.1 --with ruff==0.17.1 \
+  python -m pytest tests/ci/test_lint_evaluation.py tests/ci/test_check_f821.py \
+  --noconftest -o addopts='' -q -rA -p no:cacheprovider \
+  --basetemp="$external_basetemp"
+```
+
+The temporary directory is outside the checkout. These synthetic regressions
+check evidence validation and scanner error handling; they do not verify any
+historical inventory, diagnostic count, rule or file delta, scan stability or
+timing. No full-repository suite or full-inventory benchmark was repeated.
+Markdown lint was unavailable because `markdownlint` was not installed; no
+Markdown lint pass is claimed.
 
 ## Reported measurements (unverified)
 
