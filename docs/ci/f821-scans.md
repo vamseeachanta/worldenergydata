@@ -16,6 +16,7 @@ It does not establish the cause of the historical variance in #328.
 | Bytecode controls | 2026-11-16 | Added isolated cold and warm bytecode observations to distinguish cache state from environment synchronization. |
 | Evidence qualification | 2026-11-17 | Withdrew unsupported bytecode measurements and marked the experiment unverified until a retrievable record is available. |
 | Final source comparison | 2026-11-17 | Rejects input changes after the last progress write and retains both source digests to prevent invalid stability reports. |
+| Regression evidence | 2026-11-18 | Records the current focused test count separately from the unverified bytecode experiment. |
 
 ## Why counting output lines is insufficient
 
@@ -211,6 +212,22 @@ and failed invocation are unavailable in the supplied evidence. Clearing shared
 caches or rebuilding the full dependency environment is outside this change. Controlled
 direct/uv comparisons use an already prepared interpreter, so they isolate the
 invocation route, not environment synchronization or bytecode compilation.
+
+### Focused regression verification
+
+On 2026-11-18, the focused suites `tests/ci/test_check_f821.py` and
+`tests/ci/test_f821_bytecode_state.py` passed all 56 tests with no skips at
+`175821297c7ff30e0946c4da0783e3197618f03c`. The six real-flake8 cases in
+`test_final_snapshot_validates_source_after_last_progress` cover changed and
+unchanged inputs after the last progress write under inherited, cold-per-run and
+warm-shared bytecode settings. Changed inputs retain distinct source digests and
+produce `ERROR` with exit `2`; unchanged controls retain matching digests and
+produce `STABLE` with exit `0`.
+
+These regression results establish the tested checker behavior. They do not
+establish historical experiment inventories, tool versions, cross-condition
+agreement or bytecode-file counts. The bytecode-cache experiment remains
+**UNVERIFIED** under the evidence requirements below.
 
 ### Bytecode-cache experiment: unverified
 
