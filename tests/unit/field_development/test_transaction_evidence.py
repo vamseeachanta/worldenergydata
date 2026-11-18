@@ -104,6 +104,25 @@ def test_bare_term_source_identifier_requires_citation():
         build_package(data, ROOT)
 
 
+@pytest.mark.parametrize(
+    "term",
+    [
+        {"status": "EVALUATED", "value": 123},
+        {"status": "NOT_EVALUATED", "value": 0, "reason": "Unverified"},
+        {"status": "BOGUS", "value": None, "reason": "Unverified"},
+        {"status": "NOT_EVALUATED", "value": None, "reason": ""},
+        {"status": "NOT_EVALUATED", "value": None, "reason": "  "},
+        {"status": "NOT_EVALUATED", "value": None, "reason": True},
+        {"status": "NOT_EVALUATED", "reason": "Unverified"},
+    ],
+)
+def test_only_complete_unevaluated_terms_can_omit_a_citation(term):
+    data = snapshot()
+    data["transaction"]["terms"] = {"synthetic": term}
+    with pytest.raises(ValueError, match="Citation"):
+        build_package(data, ROOT)
+
+
 def test_unknown_term_without_claim_fields_remains_unevaluated():
     data = snapshot()
     term = {"status": "NOT_EVALUATED", "value": None, "reason": "Unverified"}
@@ -192,7 +211,7 @@ def test_ratio_rows_expose_both_dates_effective_date_and_cash_basis(tmp_path):
 def test_input_digest_matches_binary_snapshot_after_lf_normalization(newline):
     raw = INPUT.read_bytes().replace(b"\r\n", b"\n").replace(b"\n", newline)
     provenance = build_package(json.loads(raw), ROOT)["provenance"]
-    assert "CRLF normalized to LF" in provenance["digest_domain"]
+    assert "canonical serialization of the parsed input" in provenance["digest_domain"]
     assert (
         provenance["input_sha256"]
         == hashlib.sha256(raw.replace(b"\r\n", b"\n")).hexdigest()
@@ -202,36 +221,62 @@ def test_input_digest_matches_binary_snapshot_after_lf_normalization(newline):
 def test_retained_input_digest_matches_binary_readback():
     retained = ROOT / "reports/field_development/transactions/na_kika_coulomb"
     provenance = json.loads((retained / "provenance.json").read_bytes())
+    committed = _git_bytes("show", ":" + INPUT.relative_to(ROOT).as_posix())
+    assert hashlib.sha256(committed).hexdigest() == provenance["input_sha256"]
     assert (
         provenance["input_sha256"]
         == hashlib.sha256(INPUT.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
     )
 
 
-def test_catalog_receipt_digests_match_committed_binary_bytes():
+def _git_bytes(*args):
     env = {
         key: value
         for key, value in os.environ.items()
         if key not in ("GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR")
     }
+    return subprocess.run(
+        ["git", "-c", "core.autocrlf=false", *args],
+        cwd=ROOT,
+        env=env,
+        capture_output=True,
+        check=True,
+        creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
+    ).stdout
+
+
+def test_catalog_receipt_digests_match_committed_binary_bytes():
+    # Recorded by git ls-tree at the receipt revision. A depth-one checkout
+    # still contains these blobs while the catalog files have the same bytes.
+    revision = "d867ba1e011bb7558e0e9dd02e118160657f9633"
+    blobs = {
+        "catalog_fields": ("fields.csv", "d0851e131cdc90d4f0b2d63f16f92a3f4092ade8"),
+        "catalog_crosswalk": (
+            "subseaiq_bsee_block_crosswalk.csv",
+            "844804c92b78b56635bc5e31565e739bb9e27b2f",
+        ),
+        "catalog_host": (
+            "host_facilities.csv",
+            "a44809a61bee1ac5073e4685b63534ed17803f64",
+        ),
+    }
+    shallow = _git_bytes("rev-parse", "--is-shallow-repository").strip() == b"true"
+    sources = snapshot()["sources"]
     for key in CATALOGS:
-        source = snapshot()["sources"][key]
-        result = subprocess.run(
-            [
-                "git",
-                "-c",
-                "core.autocrlf=false",
-                "show",
-                source["revision"] + ":" + source["path"],
-            ],
-            cwd=ROOT,
-            env=env,
-            capture_output=True,
-            check=True,
-            creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
-        )
+        source = sources[key]
+        assert source["revision"] == revision
+        path = source["path"]
+        filename, blob = blobs[key]
+        assert path == f"data/modules/offshore_assets/curated/{filename}"
+        if not shallow:
+            assert (
+                _git_bytes("rev-parse", f"{revision}:{path}").decode().strip() == blob
+            )
         assert source["digest_domain"] == "source-bytes"
-        assert hashlib.sha256(result.stdout).hexdigest() == source["sha256"]
+        assert (
+            hashlib.sha256(_git_bytes("cat-file", "blob", blob)).hexdigest()
+            == source["sha256"]
+        )
 
 
 def test_stale_host_claim_is_suppressed_when_optional_source_is_missing(tmp_path):
