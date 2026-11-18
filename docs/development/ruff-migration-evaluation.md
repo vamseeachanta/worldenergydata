@@ -18,6 +18,7 @@ retrievable, sanitized evidence record with a stable reference and digest.
 | Record validation | 2026-11-17 | Rejected duplicate JSON keys, noncanonical formatter locations and repeated formatter paths to prevent lost or inflated findings. |
 | Evidence preservation | 2026-11-17 | Rejected output paths that alias the input so report generation preserves the original evidence. |
 | Validation record | 2026-11-17 | Distinguished historical test counts from current regression coverage and recorded unavailable Markdown lint; benchmark conclusions remain unverified. |
+| Publication text | 2026-11-17 | Added a replacement description that qualifies every numerical conclusion and omits obsolete validator line references. |
 
 ## Current policy and scope
 
@@ -195,6 +196,37 @@ historical inventory, diagnostic count, rule or file delta, scan stability or
 timing. No full-repository suite or full-inventory benchmark was repeated.
 Markdown lint was unavailable because `markdownlint` was not installed; no
 Markdown lint pass is claimed.
+
+## Description for publication
+
+The following replacement description keeps regression coverage separate from
+unverified measurements. It requires a separate edit to the pull request
+description; adding it here does not update that description.
+
+> Added a standard-library evidence validator, synthetic regressions and an
+> evaluation guide before changing production lint tooling. The validator rejects
+> malformed or unstable evidence, repeated JSON keys, invalid formatter records,
+> overflowing durations and output paths that alias the input. Lint-record,
+> import-file and formatter-file differences are reported separately.
+>
+> The initial 34 evaluation cases and 36 F821 cases, 70 passes, are historical.
+> The current validation record in this guide reports 68 evaluation and 36 F821
+> cases, 104 passes with no skips. These synthetic tests validate the evidence
+> contract; they establish no historical benchmark result.
+>
+> All previously reported inventory sizes, diagnostic totals, rule and file
+> deltas, stability, timings and the numerical basis of the reported BLOCKED
+> verdict remain unverified. Supporting source maps, normalized evidence,
+> summaries, commands and raw streams require a retrievable sanitized record
+> with a stable reference and artifact digests. No claim is made that every
+> unrounded combined Ruff duration met the strict 30-second criterion.
+>
+> Markdown lint was unavailable because markdownlint was not installed; no pass
+> is claimed. No full-repository test run or benchmark is established by these
+> regressions. Production dependencies, CI commands, hooks and source formatting
+> remain unchanged. Compatibility review and production adoption remain open
+> in #315. Boundary snapshots are not atomic, probes do not prove internal file
+> coverage, and the validator cannot authenticate its producer.
 
 ## Reported measurements (unverified)
 
