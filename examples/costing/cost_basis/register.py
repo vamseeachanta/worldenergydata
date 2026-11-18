@@ -177,6 +177,8 @@ def coverage(rows: list[dict], bsee: dict, gmap: dict) -> dict:
         "with_awards": c(lambda r: r["n_awards"] > 0), "with_award_value": c(lambda r: r["n_awards_valued"] > 0),
         "with_package_split": c(lambda r: len(r["packages_valued"].split()) >= 2),
         "with_three_packages": c(lambda r: len(r["packages_valued"].split()) >= 3),
+        "with_wells_facility_depth": c(lambda r: r["water_depth_m"] is not None and bool(r["facility"])
+                                       and (r["wells"] is not None or r["bsee_wellbores"] is not None)),
         "with_all_fields": c(lambda r: all([r["water_depth_m"] is not None, r["development_type"], r["facility"],
                                             r["wells"] is not None or r["bsee_wellbores"] is not None,
                                             r["sanction_usd_mm"] is not None])),

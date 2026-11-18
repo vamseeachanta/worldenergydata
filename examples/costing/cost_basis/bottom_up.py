@@ -26,6 +26,7 @@ from __future__ import annotations
 
 import csv
 import hashlib
+import html
 import json
 import math
 import re
@@ -54,6 +55,8 @@ RIG_FLEET = {"Julia (initial phase)": ("rig_day_rate_drillship", "ultra_deepwate
 # Tonnages stated in a project's own award rows: (asset class, contractor prefix, words in the scope, tonnes).
 TONNAGE = {("Anchor", "hull_t"): ("production_hub", "Daewoo", "22,000 t", 22000),
            ("Martin Linge (ex-Hild)", "topsides_t"): ("production_hub", "Technip", "~25,000 t", 25000)}
+# Start of development drilling (year, month) where the operator's annual report states it; otherwise the sanction year.
+DEV_START = {"Anchor": (2021, 12)}  # Chevron 10-K 2021: "Drilling of the first development well began in December 2021."
 TREES_ARE_WELLS = {"Anchor", "Julia (initial phase)"}  # subsea wells, one tree each; Martin Linge has platform wells
 
 
@@ -115,7 +118,12 @@ def well_days(project: str, fid: int, first_oil: int) -> dict:
     """Drilling plus completion days per well, from the BSEE wellbores spudded from the sanction year to the year
     after first oil that carry days; per well = total days over distinct 10-digit API wells with days."""
     rows = [r for r in _read(DC_DAYS) if r["LEASE_NAME"] == DC_NAME[project] and r["WELL_SPUD_DATE"]]
-    use = [r for r in rows if fid <= int(r["WELL_SPUD_DATE"][-4:]) <= first_oil + 1
+    start = DEV_START.get(project, (fid, 1))
+
+    def spud(r):
+        m, _, y = r["WELL_SPUD_DATE"].split("/")
+        return (int(y), int(m))
+    use = [r for r in rows if start <= spud(r) and spud(r)[0] <= first_oil + 1
            and int(r["DRILLING_DAYS"] or 0) + int(r["COMPLETION_DAYS"] or 0) > 0]
     drill = sum(int(r["DRILLING_DAYS"]) for r in use)
     comp = sum(int(r["COMPLETION_DAYS"]) for r in use)
@@ -137,7 +145,9 @@ def rig_rate(project: str, years: list[int] | None = None) -> dict:
     ts = [r for r in _read(COST / "cost_component_timeseries.csv") if r["COMPONENT"] == comp and r["SEGMENT"] == seg
           and r["FIGURE_TYPE"] == "fleet_average" and int(r["YEAR"]) in set(years or [])]
     vals = [float(r["VALUE"]) for r in ts]
-    return {"usd_per_day": sum(vals) / len(vals), "basis": f"ultra-deepwater drillship fleet average, mean of {len(vals)} years "
+    who = sorted({r["SOURCE_TITLE"].split(" Fleet Status")[0] for r in ts})
+    return {"usd_per_day": sum(vals) / len(vals), "basis": f"{', '.join(who)} ultra-deepwater drillship fleet average (one fleet "
+            f"status report a year), mean of {len(vals)} years "
             f"({min(int(r['YEAR']) for r in ts)} to {max(int(r['YEAR']) for r in ts)})",
             "source_url": "; ".join(sorted({r['SOURCE_URL'] for r in ts}))}
 
@@ -157,9 +167,10 @@ def lwc_frequency() -> dict:
     """BSEE loss-of-well-control events, fiscal 2007 to calendar 2023 (Oct 2006 to Dec 2023), over the wellbores
     spudded in the same window."""
     s = LWC_PAGE.read_text(encoding="utf-8", errors="replace")
-    t = re.sub(r"<[^>]+>", "\n", s)
-    t = re.sub(r"\s*\n\s*", "\n", t)
-    heads = list(re.finditer(r"\n(20\d\d) (CY|FY|4th Qtr)\d?\n", t))
+    s = re.sub(r"<sup>(th)</sup>", r"\1", s)
+    t = html.unescape(re.sub(r"<[^>]+>", "\n", s)).replace("\xa0", " ")
+    t = re.sub(r"[ \t]*\n\s*", "\n", t)
+    heads = list(re.finditer(r"\n(20\d\d) (CY|FY|4th Qtr)\d? *\n", t))
     counts = {}
     for i, h in enumerate(heads):
         block = t[h.end(): heads[i + 1].start() if i + 1 < len(heads) else len(t)]
@@ -202,7 +213,7 @@ def estimate(project: str, reg: dict, inp: dict, rates: dict, case: str = "base"
     p["engineering_structure"] = (hull + jacket) * eh_s * er / 1e6
     p["engineering_topsides"] = top * eh_t * er / 1e6
     pick = {"base": "median", "low": "min", "high": "max"}[case]
-    trees = wells if project in TREES_ARE_WELLS else 0
+    trees = wells * param(inp, "trees_per_well", "*", case) if project in TREES_ARE_WELLS else 0
     p["sps"] = trees * rates["sps_per_tree"][pick]
     km = param(inp, "surf_km", project, case) if ("surf_km", project) in inp else 0.0
     p["surf"] = km * rates["surf_per_km"][pick]
@@ -275,9 +286,10 @@ def build() -> dict:
     assumed = [dict(r, KEY=k[0], PROJECT_SCOPE=k[1]) for k, r in inp.items() if r["BASIS"] == "ASSUMED"]
     recs = {"inputs": {**reg_built["inputs"], **{str(p.relative_to(ROOT)).replace("\\", "/"): register.sha256(p) for p in
                                                   [DC_DAYS, LWC_PAGE, DATA / "inputs.csv", DATA / "award_unit_rates.csv",
-                                                   DATA / "bsee_window_counts.csv", COST / "cost_component_timeseries.csv"]}}}
+                                                   DATA / "bsee_window_counts.csv", DATA / "annual_report_reads.csv",
+                                                   COST / "cost_component_timeseries.csv"]}}}
     return {"coverage": reg_built["coverage"], "register_updates": reg_built["updates"], "rates": rates,
-            "lwc": lwc_frequency(), "worked": worked, "assumed": assumed, "record": recs, "_rows": reg_built["rows"]}
+            "lwc": lwc_frequency(), "worked": worked, "annual_reports": _read(DATA / "annual_report_reads.csv"), "assumed": assumed, "record": recs, "_rows": reg_built["rows"]}
 
 
 def main() -> int:

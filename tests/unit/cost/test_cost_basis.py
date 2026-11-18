@@ -47,11 +47,20 @@ def test_julia_days_per_well():
     assert wd["per_well"] == pytest.approx(243.8, abs=1e-9)
 
 
+def test_anchor_days_per_well_from_development_start():
+    # Chevron 10-K 2021: first development well in December 2021. Wellbores from then: AP001 96+260 = 356,
+    # AP002 82+139 = 221, BP003 171+276 = 447; 1,024 days over 3 wells = 341.33 days per well (SB001 of 2019 is left out)
+    wd = B.well_days("Anchor", 2019, 2024)
+    assert (wd["wells"], wd["drilling_days"] + wd["completion_days"]) == (3, 1024)
+    assert wd["per_well"] == pytest.approx(1024 / 3, rel=1e-12)
+
+
 def test_lwc_frequency():
     # BSEE loss of well control, FY2007 to FY2017: 6+4+3+2+5+4+9+4+3+1+0 = 41; 2017 Q4: 0; CY2018 to CY2023:
     # 1+2+1+4+5+5 = 18; total 59 over 4,748 wellbores spudded = 0.012426 per wellbore
     lwc = B.lwc_frequency()
     assert lwc["events"] == 59
+    assert lwc["periods"] == 18  # FY2007 to FY2017, 2017 Q4, CY2018 to CY2023
     assert lwc["per_wellbore"] == pytest.approx(59 / 4748, rel=1e-12)
     assert lwc["per_wellbore"] == pytest.approx(0.012426, abs=1e-6)
 

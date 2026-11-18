@@ -17,8 +17,10 @@ fab_year,Anchor,2020,2020,2020,year,derived,"The year after the final investment
 fab_year,Martin Linge (ex-Hild),2013,2013,2013,year,derived,"The year after the final investment decision (2012)",,
 wells,Martin Linge (ex-Hild),21,15,25,wells,ASSUMED,"Platform wells of Martin Linge",4 Dec 2026,"Not in our data; to be read from the Norwegian Offshore Directorate field pages"
 days_per_well,Martin Linge (ex-Hild),120,80,160,days,ASSUMED,"Drilling and completion days per platform well",4 Dec 2026,"High-pressure gas and oil wells drilled by a jack-up; to be read from the wellbore entry and completion dates on the Directorate pages"
-jacket_t,Martin Linge (ex-Hild),14000,10000,18000,t,ASSUMED,"Weight of the eight-legged steel jacket in 115 m water depth",4 Dec 2026,"Not in our data; to be read from the contractor's release"
+jacket_t,Martin Linge (ex-Hild),21400,21400,21400,t,derived,"Jacket (16,500 t) and piles, about 21,400 t in all, the scope of the jacket contract (close to NOK 1.2 billion), as the contractor is quoted in the award article (gCaptain, 13 Feb 2012), read 18 Nov 2026",,
 surf_km,Martin Linge (ex-Hild),60,30,100,km,ASSUMED,"Length of flowlines, risers and umbilicals in the SURF contract",4 Dec 2026,"The award names the scope but no length"
-surf_km,Julia (initial phase),24,15,35,km,derived,"Tieback length to the Jack/St. Malo host: up to about 15 miles (24 km), from the repository's field record",,
+surf_km,Julia (initial phase),24,15,35,km,ASSUMED,"Flowline length taken as the tieback distance to the Jack/St. Malo host, up to about 15 miles (24 km) in the repository's field record",4 Dec 2026,"To be read from the SURF award or the operator's release"
 host_mod,Julia (initial phase),150,75,300,USD MM,ASSUMED,"Modifications and capacity at the Jack/St. Malo host for the Julia tieback",11 Dec 2026,"Not in our data; to be read from the operators' filings"
-surf_km,Anchor,24,15,35,km,derived,"Length of the 20,000 psi umbilicals in the Anchor umbilical award (about 24 km), taken as the flowline length",,
+surf_km,Anchor,24,15,35,km,ASSUMED,"Flowline length taken as the length of the 20,000 psi umbilicals in the Anchor umbilical award (about 24 km)",4 Dec 2026,"To be read from the SURF award or the operator's release"
+trees_per_well,*,1,1,1,trees,ASSUMED,"Subsea trees per subsea well",4 Dec 2026,"One tree per well; to be read from the subsea production system awards (Anchor, Julia)"
+lwc_frequency_transfer,Martin Linge (ex-Hild),1,1,1,ratio,ASSUMED,"The US outer continental shelf loss-of-well-control frequency applied to a Norwegian platform project",11 Dec 2026,"To be replaced by the Norwegian rate from the Norwegian Ocean Industry Authority's risk level reports"
