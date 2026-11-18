@@ -819,7 +819,9 @@ ol.fn{margin:0 0 0 1.4em;padding:0;font-size:12.5px}
 <body class="hs-doc">
 <div class="nl-wrap">
 <div class="review-panel" id="review-panel"><p><strong>Review copy, revision 11 (removed at publication)</strong></p>
-<p>Changes since revision 10: the infographic puts each water-depth band's new-well counts in the space below the shallow water; Figure 1 plays through every five-year window until you click, and a new panel b gives the new wells each year with three-year rolling averages beside the WTI oil price; the days from drilling to abandonment (old section 3) move to the series' plugging-and-abandonment article; Appendices A and B are now short purpose bullets with a link to the full text in the repository. Permit counts (Figures 2 to 5, Table 1) are unchanged.</p></div>
+<p>Changes since revision 10: the infographic puts each water-depth band's new-well counts in the space below the shallow water; Figure 1 plays through every five-year window until you click, and a new panel b gives the new wells each year with three-year rolling averages beside the WTI oil price; the days from drilling to abandonment (old section 3) move to the series' plugging-and-abandonment article; Appendices A and B are now short purpose bullets with a link to the full text in the repository. Permit counts (Figures 2 to 5, Table 1) are unchanged.</p>
+<p>Other articles checked: the four planned parts of the series on the life of a Gulf of America well (this article; well interventions; well abandonment by water depth; worldwide wells) and the planned jack-up, rig and costing articles. Where each data set goes: the permit counts, the yearly new wells and the oil price stay here; the days at each stage go to the abandonment article (Figure 6, drilling and abandonment days); the completion and intervention days also feed the well interventions article; the rig-type counts (Figures 2 and 3, Table 1) feed the jack-up and rig articles; the yearly well counts and the day statistics are activity inputs for the costing article; the worldwide wells article takes none of these files. Open: which article carries the completion days on their own.</p>
+<p>The sign-off line no longer carries the 3 November approval; it reads as awaiting your review of this revision.</p></div>
 <div id="deckhand-opening" class="deckhand-slot" role="img" aria-label="Deckhand opening graphic">Slot for the shared Deckhand opening graphic, placed at publication</div>
 <p class="nl-kicker" id="top">The Deckhand newsletter &middot; Issue 2 &middot; Public data</p>
 <h1>Gulf of Mexico well permits: a public US data file</h1>
@@ -833,7 +835,7 @@ ol.fn{margin:0 0 0 1.4em;padding:0;font-size:12.5px}
 <div class="ig-p"><p class="ig-k">What we found</p><p>New wells moved to deep water: 68.8 % were in less than 100 m in 2005 to 2009, 13.4 % in 2021 to 2025. After the oil price fell in 2015, shallow-water wells fell the most.</p></div>
 <div class="ig-p ig-act"><p class="ig-k">What you can do</p><p>Rerun the counts on the latest files and add your own questions, with the reusable prompts linked in Appendix A.</p></div>
 </div>
-<figcaption><p class="ft">Sources: BSEE raw data files (section 1 and Appendix A). Deckhand &middot; AceEngineer</p></figcaption>
+<figcaption><p class="ft">Sources: BSEE raw data files; EIA WTI spot price (section 1, Figure 1). Deckhand &middot; AceEngineer</p></figcaption>
 </figure>
 <section class="intro" aria-label="Introduction">
 <h2>What we did</h2>
@@ -844,7 +846,7 @@ ol.fn{margin:0 0 0 1.4em;padding:0;font-size:12.5px}
 <li>Anyone can rerun the counts on the latest file and add their own questions.</li>
 <li>The counting rules and reusable prompts to rerun the counts are in our public repository.</li>
 </ul>
-<p class="prompt-line">Prompt: count new-well permits by year, rig type and water depth from the public permit file: <a href="https://github.com/vamseeachanta/worldenergydata/tree/0aeea0aa460b1799539a98a3f955934b273ca56e/examples/bsee/issue2_public_data_r11/prompts">worldenergydata on GitHub</a>.</p>
+<p class="prompt-line">Prompt: count new-well permits by year, rig type and water depth from the public permit file: <a href="https://github.com/vamseeachanta/worldenergydata/tree/2ebd0d94f783e81c1ce6e971d586d04b2563c113/examples/bsee/issue2_public_data_r11/prompts">worldenergydata on GitHub</a>.</p>
 <h2>What is inside</h2>
 <p>It holds a map of new wells by water depth, year by year, with their rolling averages beside the oil price, and the permits by rig type and depth band. Links to the reusable prompts and the counting rules are in Appendices A and B.</p>
 </section>
@@ -852,11 +854,11 @@ ol.fn{margin:0 0 0 1.4em;padding:0;font-size:12.5px}
 <ol><li><a href="#s1">Public permit data</a></li><li><a href="#s2">Well permits by rig type and water depth</a></li><li><a href="#s3">Outlook and open points</a></li></ol>
 <p>Appendix A <a href="#reusable-prompts">Reusable prompts</a>; Appendix B <a href="#counting-rules">Counting rules and record counts</a></p></nav>
 <h2 id="s1">1 Public permit data</h2>
-<p class="lead">Public data shows how new-well permits in US federal waters of the Gulf of America (formerly the Gulf of Mexico) have changed since 2005. The counts come from the Application for Permit to Drill (APD) raw data of the US Bureau of Safety and Environmental Enforcement (BSEE). The map uses its borehole raw data; the oil price is the US Energy Information Administration (EIA) WTI spot price.</p>
+<p class="lead">Public data shows how new-well permits in US federal waters of the Gulf of America (formerly the Gulf of Mexico) have changed since 2005. The counts come from the Application for Permit to Drill (APD) raw data of the US Bureau of Safety and Environmental Enforcement (BSEE). The map uses its borehole raw data; the oil price is the US Energy Information Administration (EIA) WTI spot price. The public data set is two BSEE raw data files (permits to drill, boreholes) and the EIA WTI spot price.</p>
 <p>Some of the observations are as follows:</p>
 <ul>
 <li>Of the 1,584 new wells started from 2005 to 2009, 68.8 % were in less than 100 m of water and 23.3 % in 500 m or more; of the 246 started from 2021 to 2025, 13.4 % and 82.5 % (<a href="#fig-map">Figure 1a</a>).</li>
-<li>When the WTI oil price fell from USD 93.26 a barrel in 2014 to USD 48.69 in 2015 (annual means), the three-year average of new wells in less than 100 m of water fell from 62.0 a year (2012 to 2014) to 12.3 (2015 to 2017); in 500 m or more it fell from 75.7 to 59.3 (<a href="#fig-map-trend">Figure 1b</a>).</li>
+<li>When the WTI oil price fell from USD 93.26 a barrel in 2014 to USD 48.69 in 2015 (annual means), the three-year average of new wells in less than 100 m of water fell from about 62 a year (2012 to 2014) to about 12 (2015 to 2017); in 500 m or more it fell from about 76 to about 59 (<a href="#fig-map-trend">Figure 1b</a>).</li>
 <li>Each year now has far fewer permits than in the mid-2000s (<a href="#fig-rig">Figure 2</a>).</li>
 <li>Most permits once named a jack-up rig; since 2015, most name a drillship (<a href="#fig-rig">Figure 2</a>).</li>
 <li>Permits in less than 100 m fell the most. Those in 500 m or more changed far less; since 2015, they are most permits (<a href="#fig-depth">Figure 4</a>).</li>
@@ -871,7 +873,7 @@ ol.fn{margin:0 0 0 1.4em;padding:0;font-size:12.5px}
 <ol class="fn">
 <li>Each dot on the map is the surface location of an original borehole in the BSEE Gulf of Mexico region, spudded in the window shown; cancelled boreholes are left out. A window counts each well once; consecutive windows share four years.</li>
 <li>Counts: 2005 to 2009: 1,584 wells (under 100 m: 1,089; 100 to 500 m: 126; 500 to 1,500 m: 209; 1,500 m and deeper: 160); 2021 to 2025: 246 wells (under 100 m: 33; 100 to 500 m: 10; 500 to 1,500 m: 95; 1,500 m and deeper: 108). Wells without coordinates in the map area: 0. Every window: <a href="data/map-windows.csv">map-windows.csv</a>.</li>
-<li>Panel b: dots are the wells started each year; lines are the three-year rolling average (the year and the two before it), from 2007. The dashed line is the annual mean of the monthly Cushing WTI spot price (right axis). The price is shown beside the counts; no cause is fitted.</li>
+<li>Panel b: dots are the wells started each year; lines are the three-year rolling average (the year and the two before it), from 2007. The dashed line is the annual mean of the monthly Cushing WTI spot price (right axis). The price is shown beside the counts; no cause is fitted. Section 1 reads these three-year averages, new wells a year: under 100 m, 62.0 (2012 to 2014) and 12.3 (2015 to 2017); 500 m or more, 75.7 and 59.3.</li>
 <li>Sources: BSEE borehole raw data (<a href="https://www.data.bsee.gov/Well/Files/BoreholeRawData.zip">BoreholeRawData.zip</a>), file of 12 November 2026, retrieved 13 November 2026; WTI spot price, US Energy Information Administration, as the repository snapshot <a href="https://github.com/vamseeachanta/worldenergydata/blob/37e36be7c19d7e121d2d1208aff61ca9e6b1bb59/data/wti-monthly.csv">wti-monthly.csv</a> (<a href="https://github.com/vamseeachanta/worldenergydata/blob/37e36be7c19d7e121d2d1208aff61ca9e6b1bb59/data/wti-monthly.PROVENANCE.md">provenance</a>); land outline from Natural Earth 1:50m land, version 5.1.2, public domain (<a href="https://raw.githubusercontent.com/nvkelso/natural-earth-vector/f1890d9f152c896d250a77557a5751a93d494776/geojson/ne_50m_land.geojson">ne_50m_land.geojson</a>), retrieved 13 November 2026.</li>
 <li>Data: <a href="data/map-wells-by-year.csv">map-wells-by-year.csv</a>, <a href="data/new-wells-trend.csv">new-wells-trend.csv</a> and <a href="data/wti-annual.csv">wti-annual.csv</a>.</li>
 </ol>
@@ -949,18 +951,17 @@ ol.fn{margin:0 0 0 1.4em;padding:0;font-size:12.5px}
 <h3>3.1 Our hypotheses</h3>
 <p>Our hypothesis: with few new-well permits now naming a jack-up (Figure 2), jack-up work in US federal Gulf of Mexico waters will turn further from new wells to plugging and abandonment.</p>
 <p>Our hypothesis: with deep-water permits falling far less than shallow-water permits (Figure 4), new-well engineering in these waters will centre further on deep-water drilling, risers and subsea equipment.</p>
-<p>Our hypothesis: new wells in shallow water follow the oil price more closely than deep-water wells, whose projects are planned years ahead (Figure 1b).</p>
 <h3>3.2 Open points</h3>
 <ul>
 <li>Each count takes the rig type named in a well's first permit. How often a different type of rig drilled the well is open.</li>
 <li>Figure 1b sets the oil price beside the well counts only. How much of each change follows the price, and how much follows other events such as changes in regulation, is open.</li>
 </ul>
 <h3>3.3 Try it out</h3>
-<p>To try it out or adapt the analysis, see the <a href="#reusable-prompts">reusable prompts</a>.</p>
+<p>To try it out or adapt the analysis, see <a href="#reusable-prompts">reusable prompt</a>.</p>
 <div class="offer"><p>AceEngineer carries out fixed-scope engineering projects, and helps engineering firms build AI into everyday engineering work, including analysis of public offshore data such as this.</p></div>
 <p>If you have run your own analysis, see a way to improve this one, or have an idea for a future issue, write to support@aceengineer.com. We read every reply and credit the ideas we use and provide results we obtained.</p>
 
-<p class="dc">Prepared: Analyst Deckhand &middot; Checked: Editor Deckhand &middot; Approved: Vamsee Achanta &middot; 3 November 2026</p>
+<p class="dc">Prepared: Analyst Deckhand &middot; Checked: Editor Deckhand &middot; Approved: awaiting the maintainer's review of revision 11</p>
 <p class="hashtags">#GulfOfAmerica #GulfOfMexico #OffshoreDrilling #Deepwater #PlugAndAbandonment #PublicData #BSEE #WellEngineering #DeckhandChronicles</p>
 
 <h2 id="reusable-prompts">Appendix A Reusable prompts</h2>
@@ -968,14 +969,14 @@ ol.fn{margin:0 0 0 1.4em;padding:0;font-size:12.5px}
 <li>Rerun these counts and the map on the latest public BSEE files with your own AI assistant.</li>
 <li>Adapt them to another region, other years or other water-depth bands, and check your result against the published values.</li>
 </ul>
-<p>Prompts, files and check values: <a href="https://github.com/vamseeachanta/worldenergydata/tree/0aeea0aa460b1799539a98a3f955934b273ca56e/examples/bsee/issue2_public_data_r11/prompts">worldenergydata on GitHub, issue2_public_data_r11/prompts</a>.</p>
+<p>Prompts, files and check values: <a href="https://github.com/vamseeachanta/worldenergydata/tree/2ebd0d94f783e81c1ce6e971d586d04b2563c113/examples/bsee/issue2_public_data_r11/prompts">worldenergydata on GitHub, issue2_public_data_r11/prompts</a>.</p>
 
 <h2 id="counting-rules">Appendix B Counting rules and record counts</h2>
 <ul>
 <li>How each well is counted once, how water depth is banded, and what is left out.</li>
 <li>The record counts behind every number, so a rerun can be checked line by line.</li>
 </ul>
-<p>Full rules and counts: <a href="https://github.com/vamseeachanta/worldenergydata/blob/0aeea0aa460b1799539a98a3f955934b273ca56e/examples/bsee/issue2_public_data_r11/counting-rules.md">worldenergydata on GitHub, counting-rules.md</a>.</p>
+<p>Full rules and counts: <a href="https://github.com/vamseeachanta/worldenergydata/blob/2ebd0d94f783e81c1ce6e971d586d04b2563c113/examples/bsee/issue2_public_data_r11/counting-rules.md">worldenergydata on GitHub, counting-rules.md</a>.</p>
 
 <div class="foot"><p>Questions: <a href="mailto:support@aceengineer.com">support@aceengineer.com</a> &middot; <a href="https://www.aceengineer.com/">AceEngineer</a> &middot; &copy; 2026 AceEngineer &middot; 11511 Piping Rock Dr., Houston, TX 77077</p>
 <p>Deckhand: Make Engineering Enjoyable Again</p></div>

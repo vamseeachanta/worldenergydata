@@ -107,12 +107,14 @@ revision 11 applies it.
 
 ## Build and tests
 
-- Built with `--build-commit 0aeea0aa460b1799539a98a3f955934b273ca56e`, the commit that holds `build_r11.py`,
-  `counting-rules.md` and `prompts/`; page 518 KB.
+- Built with `--build-commit 2ebd0d94f783e81c1ce6e971d586d04b2563c113`, the commit that holds `build_r11.py`,
+  `counting-rules.md` and `prompts/` after review gate run 1; page 519 KB.
 - Verified environment: Windows 11, Python 3.14.3, pandas 3.1.1, matplotlib 3.11.2, pytest 9.2.0, Node.js 26.13.0.
-- `tests/test_build_r11.py` and `../plug_abandonment_article/tests`: 33 passed; `../issue2_public_data_r10/tests`
+- `tests/test_build_r11.py` and `../plug_abandonment_article/tests`: 35 passed; `../issue2_public_data_r10/tests`
   (unchanged): 26 passed.
-- `tests/browser_check.mjs` in headless Microsoft Edge: Plotly loaded, six charts drawn, the map moved from
-  2005 to 2009 to 2008 to 2012 in 4.2 s, a click on the map stopped it (Play shown, window unchanged 3 s later),
-  a click on 2015 in panel b moved the map to 2011 to 2015 and shaded 2011 to 2015; no console errors or
-  exceptions.
+- Document rules check: prompts appendix, data set, Prepared/Checked/Approved, no Monday heading and no P.E. or
+  AI-help line all pass; AI named three times (masthead line, offer box, Appendix A); no SAMPLE marks.
+- `tests/browser_check.mjs` in headless Microsoft Edge, exit 0 with no false check: Plotly loaded, six charts
+  drawn, the map moved from 2005 to 2009 to 2008 to 2012 in 4.2 s, a click on the map stopped it (Play shown,
+  window unchanged 3 s later), a click on 2015 in panel b moved the map to 2011 to 2015 and shaded 2011 to 2015,
+  and after Play a click on the slider stopped it on 2009 to 2013; no console errors or exceptions.

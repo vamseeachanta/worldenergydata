@@ -334,7 +334,7 @@ def test_sign_off_awaits_review_of_revision_11():
                         "Approved: awaiting the maintainer's review of revision 11"]
     assert '3 November 2026' not in sign_off[0] and 'Approved: Vamsee' not in text
     # "3 November 2026" stays only as the retrieval date of the permit file
-    assert text.count('3 November 2026') == text.count('retrieved 3 November 2026')
+    assert len(re.findall(r'\b3 November 2026', text)) == text.count('retrieved 3 November 2026')
 
 
 def test_one_or_two_hypotheses_and_the_data_set_named():
