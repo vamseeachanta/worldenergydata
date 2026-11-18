@@ -67,8 +67,8 @@ def render_component_details(
 ) -> str:
     """List every source row once; join only nonblank, unambiguous segment IDs.
 
-    Integer CSV IDs and their zero-fraction forms share a key without float
-    conversion. Conflicting nonblank endpoint/product/size values for a key
+    Integer CSV IDs with leading zeros and zero fractions share a key without
+    float conversion. Conflicting nonblank endpoint/product/size values for a key
     make its membership ambiguous. Missing metadata does not establish conflict.
     Input order determines generated anchors, never source text.
     """
