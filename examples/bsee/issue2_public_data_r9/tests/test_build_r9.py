@@ -336,7 +336,7 @@ def test_hashtag_line_closes_the_article_before_the_appendices():
     tags = line[0].split()
     assert 5 <= len(tags) <= 10 and all(re.fullmatch(r'#[A-Za-z]+', t) for t in tags)
     assert {'#GulfOfAmerica', '#GulfOfMexico'} <= set(tags)
-    assert page.index('Prepared: Analyst Deckhand') < page.index('class="hashtags"') < page.index('<h2 id="reusable-prompts">')
+    assert page.index('Approval: awaiting maintainer review') < page.index('class="hashtags"') < page.index('<h2 id="reusable-prompts">')
 
 
 # Owner comments 2 to 6: short titles, numbered notes, shared pie titles ----------------------
@@ -473,7 +473,7 @@ def test_rendered_html_contract():
     assert 'Table 2' not in page
     body = re.sub(r'data:image/png;base64,[^"]+', '', page.split('id="review-panel"')[1].split('</div>', 1)[1])
     assert not re.search(r'\br[0-9]\b|receipt|snapshot|b26eb928', body.replace('build_r9.py', '').replace('issue2_public_data_r9', ''))
-    assert not re.search(r'[A-Z]:[\\/]|file://|/mnt/|/Users/', page)
+    assert not re.search(r'[A-Z]:[\\/]|file://|/(?:mnt)/|/Users/', page)
     assert not re.search(r'\b(acceptable|conservative|safe)\b', page, re.I)
     assert '—' not in body
     assert page.count('Our hypothesis:') == 2
@@ -510,7 +510,7 @@ def test_outlook_section_holds_hypotheses_open_points_and_closing_order():
     assert '(Figure 2), jack-up work' in section and '(Figure 4), new-well engineering' in section
     assert 'To try it out or adapt the analysis, see <a href="#reusable-prompts">reusable prompt</a>.' in section
     assert section.index('Our hypothesis:') < section.index('Open points') < section.index('class="offer"') < section.index('If you have run your own analysis')
-    assert 'support@aceengineer.com' not in section.split('class="offer"')[1].split('</div>')[0]
+    assert 'the maintainers</a>' not in section.split('class="offer"')[1].split('</div>')[0]
     assert page.count('are not paired') == 1
     for part in ['What you need to run this', 'Reproduce the published result', 'Adapt it to your project']:
         assert page.count('<h3>' + part + '</h3>') == 1
@@ -518,7 +518,7 @@ def test_outlook_section_holds_hypotheses_open_points_and_closing_order():
     assert 'SHA-256' in appendix and 'file of 12 November 2026' in appendix and 'Natural Earth' in appendix
     assert 'Mapped wells: 1,584 (2005 to 2009) and 246 (2021 to 2025).' in appendix
     assert 'issue2_public_data_r9/build_r9.py' in appendix
-    assert appendix.rstrip().endswith('write to support@aceengineer.com.</p>')
+    assert appendix.rstrip().endswith('write to <a href="https://www.aceengineer.com/">the maintainers</a>.</p>')
 
 
 def test_page_dates_and_source_lines():
@@ -759,3 +759,12 @@ def test_map_period_buttons_keep_the_legend_band_selection():
         expected(1, others),           # and the isolation holds in the other period
         expected(1, set(bands)), expected(1, others), expected(1, set()),   # a second double click shows all
     ]
+
+
+@pytest.mark.parametrize('name', ['inputs/page-template.html', 'issue2-public-data-r9.html'])
+def test_contact_and_approval_metadata_are_neutral(name):
+    text = (ROOT / name).read_text(encoding='utf-8')
+    assert not re.search(r'[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}', text)
+    sign_off = re.findall(r'<p class="dc">(.*?)</p>', text)
+    assert sign_off == ["Approval: awaiting maintainer review of revision 9"]
+    assert '<a href="https://www.aceengineer.com/">Contact the maintainers</a>' in text

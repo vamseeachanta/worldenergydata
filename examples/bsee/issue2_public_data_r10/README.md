@@ -1,10 +1,8 @@
 # Issue 2 public data, revision 10
 
 This local review copy applies the five maintainer comments of 17 November 2026
-on revision 9 (see `changes.md`). It has not been published. The inherited page
-byline describes the earlier approval; it does not approve r10. Before
-publication, the approval byline needs a maintainer-confirmed update; removing
-the review panel alone does not establish approval of this revision.
+on revision 9 (see `changes.md`). It has not been published.
+Approval awaits maintainer review of revision 10.
 
 Revision 10 changes the presentation only. Its counts and day statistics are the
 revision 9 data files, read byte for byte from `../issue2_public_data_r9/data/`

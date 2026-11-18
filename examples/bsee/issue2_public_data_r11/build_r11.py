@@ -293,7 +293,7 @@ def trend_values(table):
     deep_cols = ['500 to 1,500 m', '1,500 m and deeper']
     deep = [sum(t.loc[w[1], c + ' (3-year mean)'] for c in deep_cols) for w in (before, after)]
     price = [t.loc[a, 'WTI (USD/bbl)'], t.loc[b, 'WTI (USD/bbl)']]
-    if not (price[1] < price[0] * .6 and shallow[1] < shallow[0] * .5 and deep[1] > deep[0] * .6):
+    if not (price[1] < price[0] * .6 and shallow[1] < shallow[0] * .5 and deep[0] * .6 < deep[1] < deep[0]):
         raise ValueError('Review the rolling-average observation')
     return dict(price=price, shallow=shallow, deep=deep, before=before, after=after)
 
@@ -655,15 +655,16 @@ def validate_inputs():
 
 
 def copy_reused(out):
-    """Copy the pinned revision 9 data files, byte for byte, to data/."""
+    """Copy reused and derived pinned data files, byte for byte, to data/."""
     pinned = {Path(i['path']).name for i in manifest()}
     for name in REUSED + DERIVED:
         if name + '.csv' not in pinned:
             raise ValueError('Data file is not pinned: ' + name)
-    for name in REUSED:
+    for name in REUSED + DERIVED:
+        source = ROOT / (R9 if name in REUSED else Path('data')) / (name + '.csv')
         target = out / 'data' / (name + '.csv')
-        if (ROOT / R9 / (name + '.csv')).resolve() != target.resolve():
-            shutil.copyfile(ROOT / R9 / (name + '.csv'), target)
+        if source.resolve() != target.resolve():
+            shutil.copyfile(source, target)
 
 
 def main(argv=None):
@@ -698,9 +699,9 @@ def main(argv=None):
     sources = sources.fillna('')
     map_audit = read('map-selection')
     summary = read('map-summary').set_index('period')
-    wells = pd.read_csv(ROOT / 'data' / 'map-wells-by-year.csv', dtype={'api_well_number': str})
-    counts = pd.read_csv(ROOT / 'data' / 'new-wells-by-year.csv')
-    wti = pd.read_csv(ROOT / 'data' / 'wti-annual.csv')
+    wells = pd.read_csv(out / 'data' / 'map-wells-by-year.csv', dtype={'api_well_number': str})
+    counts = pd.read_csv(out / 'data' / 'new-wells-by-year.csv')
+    wti = pd.read_csv(out / 'data' / 'wti-annual.csv')
     rig, depth = read('fig-p1-new-well-permits-by-rig-type'), read('new-well-permits-by-water-depth')
     if not rig.total.equals(depth.permits) or not rig.year.equals(depth.year):
         raise ValueError('Annual totals differ between the rig-type and water-depth files')

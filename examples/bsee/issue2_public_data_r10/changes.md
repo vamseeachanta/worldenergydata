@@ -10,12 +10,12 @@ quoted as received; the lines below it say where revision 10 applies it.
 - Infographic: after the title and the newsletter's masthead line, a figure
   built from the article's objective: a scene of the four water-depth bands
   as water over a stepped seabed in the depth colours, with the stages of a well's life
-  in order, and five panels (objective, starting point, what we did, what we
-  found, what you can do). The "What we found" sentence is generated from
+  in order, and five panels ("Objective", "Starting point", "What we did",
+  "What we found", "What you can do"). The "What we found" sentence is generated from
   `map-summary.csv` and `days-summary.csv` and fails closed if either trend
   reverses.
-- Introduction: three short parts (what we did, why it matters, what is
-  inside) with a one-line prompt linked to this folder. The revision 9
+- Introduction: three short parts ("What we did", "Why it matters", "What is inside")
+  with a one-line prompt linked to this folder. The revision 9
   takeaway quote is replaced; its content is in the "What we found" panel.
 - The release-day question concerns the publishing schedule, not this page;
   it is answered with the review copy.

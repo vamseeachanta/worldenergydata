@@ -959,9 +959,9 @@ ol.fn{margin:0 0 0 1.4em;padding:0;font-size:12.5px}
 <h3>3.3 Try it out</h3>
 <p>To try it out or adapt the analysis, see <a href="#reusable-prompts">reusable prompt</a>.</p>
 <div class="offer"><p>AceEngineer carries out fixed-scope engineering projects, and helps engineering firms build AI into everyday engineering work, including analysis of public offshore data such as this.</p></div>
-<p>If you have run your own analysis, see a way to improve this one, or have an idea for a future issue, write to support@aceengineer.com. We read every reply and credit the ideas we use and provide results we obtained.</p>
+<p>If you have run your own analysis, see a way to improve this one, or have an idea for a future issue, write to <a href="https://www.aceengineer.com/">the maintainers</a>. We read every reply and credit the ideas we use and provide results we obtained.</p>
 
-<p class="dc">Prepared: Analyst Deckhand &middot; Checked: Editor Deckhand &middot; Approved: awaiting the maintainer's review of revision 11</p>
+<p class="dc">Approval: awaiting maintainer review of revision 11</p>
 <p class="hashtags">#GulfOfAmerica #GulfOfMexico #OffshoreDrilling #Deepwater #PlugAndAbandonment #PublicData #BSEE #WellEngineering #DeckhandChronicles</p>
 
 <h2 id="reusable-prompts">Appendix A Reusable prompts</h2>
@@ -978,7 +978,7 @@ ol.fn{margin:0 0 0 1.4em;padding:0;font-size:12.5px}
 </ul>
 <p>Full rules and counts: <a href="https://github.com/vamseeachanta/worldenergydata/blob/2ebd0d94f783e81c1ce6e971d586d04b2563c113/examples/bsee/issue2_public_data_r11/counting-rules.md">worldenergydata on GitHub, counting-rules.md</a>.</p>
 
-<div class="foot"><p>Questions: <a href="mailto:support@aceengineer.com">support@aceengineer.com</a> &middot; <a href="https://www.aceengineer.com/">AceEngineer</a> &middot; &copy; 2026 AceEngineer &middot; 11511 Piping Rock Dr., Houston, TX 77077</p>
+<div class="foot"><p>Questions: <a href="https://www.aceengineer.com/">Contact the maintainers</a></p>
 <p>Deckhand: Make Engineering Enjoyable Again</p></div>
 </div>
 
@@ -1047,7 +1047,7 @@ annotations:lab},after];
 function trend(c,el){
 const traces=[];
 c.bands.forEach((b,i)=>{
-traces.push({type:'scatter',mode:'lines',x:c.years,y:c.means[i],showlegend:false,hoverinfo:'skip',line:{color:c.edge,width:4.6}});
+traces.push({type:'scatter',mode:'lines',x:c.years,y:c.means[i],legendgroup:b,showlegend:false,hoverinfo:'skip',line:{color:c.edge,width:4.6}});
 traces.push({type:'scatter',mode:'lines',x:c.years,y:c.means[i],name:b+' (3-year mean)',legendgroup:b,line:{color:c.colours[i],width:3},
 hovertemplate:'%{x}<br>'+b+': %{y:.1f} a year (3-year mean)<extra></extra>'});
 traces.push({type:'scatter',mode:'markers',x:c.years,y:c.counts[i],name:b+' (each year)',legendgroup:b,showlegend:false,

@@ -1,10 +1,7 @@
 # Issue 2 public data, revision 8
 
-This local review copy applies the five owner comments of 12 November 2026,
-21:50 UTC. It has not been published. The inherited page byline describes the
-earlier approval; it does not approve r8.
-Before publication, the approval byline needs an owner-confirmed update;
-removing the review panel alone does not establish approval of this revision.
+This local review copy applies the maintainer comments recorded in `changes.md`.
+It has not been published. Approval awaits maintainer review of revision 8.
 
 ## Rebuild
 

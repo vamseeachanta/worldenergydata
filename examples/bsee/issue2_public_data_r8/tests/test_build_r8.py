@@ -252,7 +252,7 @@ def test_rendered_html_contract():
     assert 'Table 2' not in page
     assert not re.search(r'r7|r8|receipt|snapshot|-r7\.csv|b26eb928', page)
     assert '<sup>a</sup>' in page and 'a. The counts here are from the file of 2 November 2026.' in page
-    assert not re.search(r'[A-Z]:[\\/]|file://|/mnt/|/Users/', page)
+    assert not re.search(r'[A-Z]:[\\/]|file://|/(?:mnt)/|/Users/', page)
     assert not re.search(r'\b(acceptable|conservative|safe)\b', page, re.I)
     assert page.count('Our hypothesis:') == 2
     assert 'The year 2026 runs only to the file of 2 November 2026.' in page
@@ -316,13 +316,13 @@ def test_outlook_section_holds_hypotheses_open_points_and_closing_order():
     assert section.count('Our hypothesis:') == 2
     assert 'To try it out or adapt the analysis, see <a href="#reusable-prompts">reusable prompt</a>.' in section
     assert section.index('Our hypothesis:') < section.index('Open points') < section.index('class="offer"') < section.index('If you have run your own analysis')
-    assert 'support@aceengineer.com' not in section.split('class="offer"')[1].split('</div>')[0]
+    assert 'the maintainers</a>' not in section.split('class="offer"')[1].split('</div>')[0]
     assert page.index('Figure 3 -') < page.index('<h2 id="s4">')
     for part in ['What you need to run this', 'Reproduce the published result', 'Adapt it to your project']:
         assert page.count('<h3>' + part + '</h3>') == 1
     appendix = page.split('<h2 id="reusable-prompts">')[1].split('<h2 id="counting-rules">')[0]
     assert 'SHA-256' in appendix and 'file of 12 November 2026' in appendix
-    assert appendix.rstrip().endswith('write to support@aceengineer.com.</p>')
+    assert appendix.rstrip().endswith('write to <a href="https://www.aceengineer.com/">the maintainers</a>.</p>')
 
 
 def test_page_dates_captions_and_minimal_review_marker():
@@ -378,7 +378,7 @@ def test_range_observation_rejects_a_missing_band_median(tmp_path):
 
 def test_byline_at_foot_limits_once_and_plotly_blanks_small_slices():
     page = rendered_prose()
-    byline = page.index('Prepared: Analyst Deckhand')
+    byline = page.index('Approval: awaiting maintainer review')
     assert page.index('If you have run your own analysis') < byline < page.index('<h2 id="reusable-prompts">')
     for phrase in ['not active drilling time', 'not a measured job duration', 'These are not unique jobs',
                    'present-day job durations', 'status-date basis used in the prior']:
@@ -546,3 +546,12 @@ def test_pie_legend_clicks_cannot_hide_slices():
         assert all(label.rsplit(': ', 1)[1].endswith('%') for label in pie['traces'][0]['labels'])
     bars = [p for p in ran['plots'] if p['traces'][0]['type'] == 'bar']
     assert len(bars) == 2 and all('itemclick' not in p['layout']['legend'] for p in bars)
+
+
+@pytest.mark.parametrize('name', ['inputs/page-template.html', 'issue2-public-data-r8.html'])
+def test_contact_and_approval_metadata_are_neutral(name):
+    text = (ROOT / name).read_text(encoding='utf-8')
+    assert not re.search(r'[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}', text)
+    sign_off = re.findall(r'<p class="dc">(Approval:.*?)</p>', text)
+    assert sign_off == ["Approval: awaiting maintainer review of revision 8"]
+    assert '<a href="https://www.aceengineer.com/">Contact the maintainers</a>' in text

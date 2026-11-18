@@ -1,7 +1,7 @@
 [
   {
     "path": "inputs/page-template.html",
-    "sha256": "38f7b01e704c3b4fa938630f43944f2579e980106fbb2648c5cc5d95d5732a57",
+    "sha256": "d540cd6d89a27c972eea079e2f66e71cdd5b808647c8c8265b7d27aa6f74f691",
     "basis": "r12 page template: the r11 template with the axis-colour and line-style cues of Figure 1b, legend titles, map legend counts, a label on the panel b shading, labelled key points, the part year marked and the permits under each pie; sign-off awaits the review of revision 12"
   },
   {

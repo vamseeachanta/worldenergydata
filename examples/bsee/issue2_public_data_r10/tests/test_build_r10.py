@@ -211,7 +211,7 @@ def test_page_is_complete_and_under_the_commit_limit():
 
 def test_no_local_paths_in_the_page():
     text = re.sub(r'data:image/png;base64,[A-Za-z0-9+/=]+', '', page())
-    assert not re.search(r'\b[A-Za-z]:[\\/]|/mnt/|/home/|Users[\\/]', text)
+    assert not re.search(r'\b[A-Za-z]:[\\/]|/(?:mnt|home)/|Users[\\/]', text)
 
 
 def test_chart_script_draws_every_chart():
@@ -248,3 +248,12 @@ def test_what_we_found_reads_as_reviewed():
     text = ('New wells moved to deep water: 68.8 % were in less than 100 m in 2005 to 2009, 13.4 % in 2021 to 2025. '
             'Median drilling days rise with depth, from 21 d to 67 d.')
     assert '<p class="ig-k">What we found</p><p>' + text + '</p>' in page()
+
+
+@pytest.mark.parametrize('name', ['inputs/page-template.html', 'issue2-public-data-r10.html'])
+def test_contact_and_approval_metadata_are_neutral(name):
+    text = (ROOT / name).read_text(encoding='utf-8')
+    assert not re.search(r'[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}', text)
+    sign_off = re.findall(r'<p class="dc">(.*?)</p>', text)
+    assert sign_off == ["Approval: awaiting maintainer review of revision 10"]
+    assert '<a href="https://www.aceengineer.com/">Contact the maintainers</a>' in text

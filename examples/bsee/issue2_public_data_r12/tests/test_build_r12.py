@@ -227,7 +227,7 @@ def test_full_appendix_text_is_in_the_repository():
     prompts = (ROOT / 'prompts' / 'README.md').read_text(encoding='utf-8')
     for text in (rules, prompts):
         assert not re.search(r'@@[^@\s]+@@', text)
-        assert not re.search(r'\b[A-Za-z]:[\\/]|/mnt/|/home/|Users[\\/]', text)
+        assert not re.search(r'\b[A-Za-z]:[\\/]|/(?:mnt|home)/|Users[\\/]', text)
     old = (R10 / 'issue2-public-data-r10.html').read_text(encoding='utf-8')
     b2 = re.search(r'<h3>B.2 Detailed counting rules and exclusions</h3>\n<ul>(.*?)</ul>', old, re.S).group(1)
     for item in re.findall(r'<li>(.*?)</li>', b2):
@@ -270,7 +270,7 @@ def test_page_is_complete_and_under_the_commit_limit():
 
 def test_no_local_paths_in_the_page():
     text = re.sub(r'data:image/png;base64,[A-Za-z0-9+/=]+', '', page())
-    assert not re.search(r'\b[A-Za-z]:[\\/]|/mnt/|/home/|Users[\\/]', text)
+    assert not re.search(r'\b[A-Za-z]:[\\/]|/(?:mnt|home)/|Users[\\/]', text)
 
 
 HARNESS = r"""
@@ -282,7 +282,7 @@ global.window={IntersectionObserver:undefined};global.getComputedStyle=()=>({get
 global.setInterval=(f,ms)=>{timers.push({f,ms});return timers.length;};global.clearInterval=()=>{};
 global.document={documentElement:{},createElement:node,querySelectorAll:()=>[],getElementById:id=>el(id),querySelector:()=>({hidden:false})};
 const calls=[];
-global.Plotly={Plots:{resize(){}},newPlot(e,t,l){plots.push({id:e.id,n:t.length,bg:l.paper_bgcolor,layout:l,names:t.map(x=>x.name)});return Promise.resolve();},
+global.Plotly={Plots:{resize(){}},newPlot(e,t,l){plots.push({id:e.id,traces:t,n:t.length,bg:l.paper_bgcolor,layout:l,names:t.map(x=>x.name)});return Promise.resolve();},
 restyle(e,u){calls.push(['restyle',e.id,u.x?u.x.map(a=>a.length):null]);return Promise.resolve();},relayout(e,u){calls.push(['relayout',e.id]);return Promise.resolve();}};
 new Function(s)();
 setTimeout(()=>{const box=made[0];const out=box&&box.children[2];
@@ -332,9 +332,8 @@ def test_manifest_lists_hashes_that_match():
 def test_sign_off_awaits_review_of_revision_12():
     text = page()
     sign_off = re.findall(r'<p class="dc">(.*?)</p>', text)
-    assert sign_off == ["Prepared: Analyst Deckhand &middot; Checked: Editor Deckhand &middot; "
-                        "Approved: awaiting the maintainer's review of revision 12"]
-    assert '3 November 2026' not in sign_off[0] and 'Approved: Vamsee' not in text
+    assert sign_off == ["Approval: awaiting maintainer review of revision 12"]
+    assert '3 November 2026' not in sign_off[0]
     # "3 November 2026" stays only as the retrieval date of the permit file
     assert len(re.findall(r'\b3 November 2026', text)) == text.count('retrieved 3 November 2026')
 
@@ -396,3 +395,51 @@ def test_legend_titles_say_how_to_read_the_colours():
     assert found['fig-depth']['key'].startswith(build.DEPTH_KEY) and 'stacked from the bottom' in found['fig-rig']['key']
     plots = {p['id']: p for p in run_script()['plots']}
     assert plots['fig-map']['names'][1:] == ['Under 100 m (1,089)', '100 to 500 m (126)', '500 to 1,500 m (209)', '1,500 m and deeper (160)']
+
+
+@pytest.mark.parametrize('ratio', [1.0, 1.2])
+def test_falling_deep_water_observation_rejects_equal_or_rising_means(ratio):
+    table = pd.read_csv(ROOT / 'data' / 'new-wells-trend.csv')
+    columns = [b + ' (3-year mean)' for b in build.BANDS[2:]]
+    earlier = table.loc[table.year.eq(2014), columns].iloc[0]
+    table.loc[table.year.eq(2017), columns] = earlier.to_numpy() * ratio
+    with pytest.raises(ValueError, match='rolling-average observation'):
+        build.trend_observation(table)
+
+
+def test_trend_legend_groups_include_outlines_lines_and_dots():
+    trend = next(p for p in run_script()['plots'] if p['id'] == 'fig-map-trend')
+    for index, band in enumerate(build.BANDS):
+        group = trend['traces'][index * 3:index * 3 + 3]
+        assert [t.get('legendgroup') for t in group] == [band] * 3
+        assert [t.get('showlegend', True) for t in group] == [False, True, False]
+
+
+def test_fresh_export_contains_page_and_appendix_csv_links(tmp_path, monkeypatch):
+    cache, out = tmp_path / 'cache', tmp_path / 'export'
+    def cached(cache, name, url, offline, pin):
+        (cache / name).write_text(';', encoding='utf-8')
+    monkeypatch.setattr(build, 'cache_source', cached)
+    monkeypatch.setattr(build, 'land_rings', lambda path: [])
+    build.main(['--output-dir', str(out), '--data-dir', str(cache), '--offline',
+                '--build-commit', subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()])
+    page_file = next(out.glob('issue2-public-data-*.html'))
+    links = set(re.findall(r'href="(data/[^"#]+\.csv)"', page_file.read_text(encoding='utf-8')))
+    for name in ['counting-rules.md', 'prompts/README.md']:
+        text = (out / name).read_text(encoding='utf-8')
+        links.update(re.findall(r'\]\((data/[\w-]+\.csv)\)', text))
+    assert {f'data/{name}.csv' for name in build.DERIVED} <= links
+    assert links
+    for link in links:
+        assert (out / link).is_file(), link
+    for name in build.DERIVED:
+        assert (out / 'data' / (name + '.csv')).read_bytes() == (ROOT / 'data' / (name + '.csv')).read_bytes()
+
+
+@pytest.mark.parametrize('name', ['inputs/page-template.html', 'issue2-public-data-r12.html'])
+def test_contact_and_approval_metadata_are_neutral(name):
+    text = (ROOT / name).read_text(encoding='utf-8')
+    assert not re.search(r'[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}', text)
+    sign_off = re.findall(r'<p class="dc">(.*?)</p>', text)
+    assert sign_off == ["Approval: awaiting maintainer review of revision 12"]
+    assert '<a href="https://www.aceengineer.com/">Contact the maintainers</a>' in text

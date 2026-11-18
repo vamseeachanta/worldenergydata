@@ -74,6 +74,29 @@ try {
   result.checks.controls = await evaluate(`!!document.querySelector('.map-ctl')`);
   result.checks.charts_drawn = await evaluate(`[...document.querySelectorAll('.viz')].filter(d=>d.data).map(d=>d.id)`);
   await shot('infographic.png', '#infographic');
+
+  // A band hides and isolates its outline, coloured mean and annual dots together.
+  await evaluate(`document.getElementById('fig-map-trend').scrollIntoView({block:'center'})`);
+  const legendPoint = await evaluate(`(()=>{const r=document.querySelector('#fig-map-trend .legend .traces .legendtoggle').getBoundingClientRect();
+    return {x:r.left+r.width/2,y:r.top+r.height/2};})()`);
+  const visibility = () => evaluate(`document.getElementById('fig-map-trend').data.map(t=>t.visible!=='legendonly'&&t.visible!==false)`);
+  await click(legendPoint.x, legendPoint.y);
+  await sleep(600);
+  const hidden = await visibility();
+  result.checks.trend_band_hides_together = hidden.slice(0,3).every(v=>!v) && hidden.slice(3).every(Boolean);
+  await click(legendPoint.x, legendPoint.y);
+  await sleep(600);
+  result.checks.trend_band_restores_together = (await visibility()).every(Boolean);
+  await click(legendPoint.x, legendPoint.y);
+  await click(legendPoint.x, legendPoint.y);
+  await sleep(600);
+  const isolated = await visibility();
+  result.checks.trend_band_isolates_together = isolated.slice(0,3).every(Boolean) && isolated.slice(3).every(v=>!v);
+  await click(legendPoint.x, legendPoint.y);
+  await click(legendPoint.x, legendPoint.y);
+  await sleep(600);
+  result.checks.trend_isolation_restores_all = (await visibility()).every(Boolean);
+
   await evaluate(`document.getElementById('fig1').scrollIntoView({block:'start'})`);
   const start = await frame();
   await sleep(4200);
