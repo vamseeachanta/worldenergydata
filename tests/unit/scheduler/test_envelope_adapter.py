@@ -46,7 +46,7 @@ def test_envelope_adapter_failure_maps_error():
 def test_envelope_adapter_skipped_maps_ok_with_warning():
     env = job_result_to_envelope(_job(status="skipped"))
     assert env.status == "ok"
-    assert any("skip" in w.lower() for w in env.warnings)
+    assert env.warnings == ["job skipped (disabled)"]
 
 
 def test_missing_credential_skip_is_not_reported_as_disabled():
@@ -54,8 +54,7 @@ def test_missing_credential_skip_is_not_reported_as_disabled():
         _job(status="skipped", records=0, error="credential_absent", retryable=False)
     )
     assert env.status == "ok"
-    assert "job skipped (credential_absent)" in env.warnings
-    assert "job skipped (disabled)" not in env.warnings
+    assert env.warnings == ["job skipped (credential_absent)"]
     assert env.result["retryable"] is False
 
 
