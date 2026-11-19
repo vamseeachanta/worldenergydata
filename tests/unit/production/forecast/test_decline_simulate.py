@@ -161,6 +161,28 @@ def test_simulate_accepts_fraction_parameters(name, value):
     pd.testing.assert_frame_equal(result.forecast_df, expected.forecast_df)
 
 
+def test_rejects_exact_fraction_limit_below_floor_before_rounding():
+    limit = Fraction(2**54 - 1, 2**54)
+    assert limit < 1 and float(limit) == 1.0
+    with pytest.raises(ValueError, match="economic_limit must be at least 1"):
+        _simulate(economic_limit=limit)
+
+
+@pytest.mark.parametrize(
+    "model,b",
+    [
+        ("harmonic", Fraction(2**54 + 1, 2**54)),
+        ("harmonic", Fraction(2**54 - 1, 2**54)),
+        ("exponential", Fraction(1, 2**1075)),
+        ("exponential", Fraction(-1, 2**1075)),
+    ],
+)
+def test_rejects_exact_fraction_exponent_before_rounding(model, b):
+    assert float(b) == (1.0 if model == "harmonic" else 0.0)
+    with pytest.raises(ValueError, match="b is inconsistent with model"):
+        _simulate(model=model, b=b)
+
+
 @pytest.mark.parametrize("name", ["qi", "Di", "economic_limit", "b"])
 @pytest.mark.parametrize(
     "value", [10**400, Fraction(10**400)], ids=["integer", "fraction"]

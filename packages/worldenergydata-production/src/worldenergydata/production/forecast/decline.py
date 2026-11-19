@@ -215,18 +215,19 @@ class ArpsDeclineCurve:
             if not np.isfinite(value) or (value < 0 if name == "b" else value <= 0):
                 raise ValueError(f"{name} must be {requirement}")
             validated[name] = value
-        qi = validated["qi"]
-        Di = validated["Di"]
-        economic_limit = validated["economic_limit"]
-        b = validated["b"]
+        # Enforce exact boundaries before rounding accepted real inputs to float.
         if economic_limit < 1.0:
             raise ValueError("economic_limit must be at least 1 bbl/month")
         if (
             (model == "exponential" and b != 0)
             or (model == "harmonic" and b != 1)
-            or (model == "hyperbolic" and b <= 0)
+            or (model == "hyperbolic" and (b <= 0 or validated["b"] <= 0))
         ):
             raise ValueError(f"b is inconsistent with model '{model}'")
+        qi = validated["qi"]
+        Di = validated["Di"]
+        economic_limit = validated["economic_limit"]
+        b = validated["b"]
         if isinstance(months, bool) or not isinstance(months, Integral) or months <= 0:
             raise ValueError("months must be a positive integer")
 
