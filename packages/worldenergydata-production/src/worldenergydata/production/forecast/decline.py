@@ -17,6 +17,7 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 from scipy.optimize import curve_fit
+from scipy.special import exprel
 
 from worldenergydata.common.decline import (
     exponential_rate,
@@ -27,11 +28,11 @@ from worldenergydata.common.decline import (
 _VALID_MODELS = frozenset({"exponential", "hyperbolic", "harmonic"})
 
 
-def _comparable_rate(rate: Real) -> Real:
-    """Keep NumPy promotion from rounding the other rate during comparison."""
+def _exact_rate(rate: Real) -> Real:
+    """Preserve the supplied rate in mixed integer, fraction and float arithmetic."""
     if isinstance(rate, np.integer):
         return int(rate)
-    if isinstance(rate, np.floating):
+    if isinstance(rate, (float, np.floating)):
         return Fraction(*rate.as_integer_ratio())
     return rate
 
@@ -187,6 +188,7 @@ class ArpsDeclineCurve:
         EUR is in bbl and is zero when the limit is at or above ``qi``.
         If ``qi`` exceeds ``economic_limit`` but both round to the same
         float, simulation raises ``ValueError`` for the two rates.
+        Otherwise EUR uses the difference between the supplied rates.
         The limit must be at least 1 bbl/month, matching the existing EUR
         helper's minimum. The profile follows :meth:`forecast`: month-end
         rates at months 1 through ``months``, with their cumulative sum.
@@ -238,11 +240,12 @@ class ArpsDeclineCurve:
         ):
             raise ValueError(f"b is inconsistent with model '{model}'")
         same_float_rate = validated["qi"] == validated["economic_limit"]
-        if same_float_rate and _comparable_rate(qi) > _comparable_rate(economic_limit):
+        initial_rate = _exact_rate(qi)
+        limit_rate = _exact_rate(economic_limit)
+        if same_float_rate and initial_rate > limit_rate:
             raise ValueError("qi and economic_limit coincide at float precision")
         qi = validated["qi"]
         Di = validated["Di"]
-        economic_limit = validated["economic_limit"]
         b = validated["b"]
         if (
             isinstance(months, (bool, np.timedelta64))
@@ -252,7 +255,7 @@ class ArpsDeclineCurve:
             raise ValueError("months must be a positive integer")
 
         with np.errstate(over="ignore", invalid="ignore"):
-            eur = self._compute_eur(qi, Di, b, economic_limit, model)
+            eur = self._compute_eur(initial_rate, Di, b, limit_rate, model)
         if not np.isfinite(eur):
             raise ValueError("EUR is not representable in floating point")
 
@@ -392,10 +395,10 @@ class ArpsDeclineCurve:
 
     def _compute_eur(
         self,
-        qi: float,
+        qi: Real,
         Di: float,
         b: float,
-        economic_limit: float,
+        economic_limit: Real,
         model: str,
     ) -> float:
         """Compute EUR (bbl) at *economic_limit* rate."""
@@ -403,10 +406,25 @@ class ArpsDeclineCurve:
         if qi <= q_econ:
             return 0.0
 
-        # Preserve adjacent floating-point rates before forming their ratio.
-        log_ratio = np.log1p((qi - q_econ) / q_econ)
+        # Subtract the supplied rates before rounding either endpoint.
+        rate_difference = qi - q_econ
+        relative_difference = float(rate_difference / q_econ)
+        if relative_difference < np.finfo(float).tiny:
+            # Whitson manual, Decline Curve Analysis, web ed. 2026-10-19, §2.1.
+            # When r = (qi - q_econ)/q_econ is below the normal float range,
+            # log1p(r)/r and qi/q_econ both round to one. Thus
+            # EUR = (gap/Di) * exprel((b-1)*r) to floating-point precision.
+            x = float(Fraction(b - 1) * rate_difference / q_econ)
+            correction = Fraction(float(exprel(x)))
+            try:
+                return float(rate_difference * correction / Fraction(Di))
+            except OverflowError as exc:
+                raise ValueError("EUR is not representable in floating point") from exc
+
+        log_ratio = np.log1p(relative_difference)
+        qi = float(qi)
         if model == "exponential":
-            eur = (qi - q_econ) / Di
+            eur = float(rate_difference) / Di
 
         elif model == "harmonic":
             eur = (qi / Di) * log_ratio

@@ -447,6 +447,70 @@ def test_rejects_positive_recovery_erased_by_rate_rounding(qi, limit):
         _simulate(qi=qi, Di=2**-45, economic_limit=limit, months=1)
 
 
+@pytest.mark.parametrize(
+    "model,b",
+    [("exponential", 0), ("harmonic", 1), ("hyperbolic", 0.5), ("hyperbolic", 1)],
+)
+def test_eur_across_float_rounding_midpoint(model, b):
+    limit = 1000 + Fraction(1, 2**44)
+    qi = limit + Fraction(1, 2**60)
+    assert float(qi) - float(limit) == 2**-43
+    # Exact exponential EUR = 2**-60 / 2**-60 = 1 bbl. For the other
+    # exponents the relative correction is smaller than (qi - limit) / limit.
+    result = _simulate(
+        qi=qi, Di=2**-60, b=b, model=model, economic_limit=limit, months=1
+    )
+    assert result.eur_bbl == pytest.approx(1.0, rel=1e-14, abs=0)
+
+
+@pytest.mark.parametrize(
+    "qi,limit",
+    [
+        (1000 + Fraction(3, 2**45), 1000.0),
+        (np.float64(1000), 1000 - Fraction(3, 2**45)),
+    ],
+)
+def test_eur_preserves_difference_of_fraction_and_float(qi, limit):
+    # (3 * 2**-45 bbl/month) / (2**-45 per month) = 3 bbl.
+    result = _simulate(qi=qi, Di=2**-45, economic_limit=limit, months=1)
+    assert result.eur_bbl == 3.0
+
+
+@pytest.mark.parametrize(
+    "model,b", [("exponential", 0), ("harmonic", 1), ("hyperbolic", 0.5)]
+)
+def test_midpoint_gap_smaller_than_a_float_keeps_representable_eur(model, b):
+    limit = 1000 + Fraction(1, 2**44)
+    qi = limit + Fraction(1, 2**1075)
+    # The gap divided by the decline is 2**-1075 / 2**-1074 = 0.5 bbl.
+    # The relative correction for these exponents is less than 2**-1075.
+    result = _simulate(
+        qi=qi, Di=2**-1074, b=b, model=model, economic_limit=limit, months=1
+    )
+    assert result.eur_bbl == 0.5
+
+
+@pytest.mark.parametrize(
+    "decline,expected",
+    [(2**-1024, math.expm1(0.5) / 0.5), (2**51, 2**-1074)],
+)
+def test_subnormal_relative_gap_retains_hyperbolic_exponent_effect(decline, expected):
+    limit = 1 + Fraction(1, 2**53)
+    qi = limit + Fraction(1, 2**1024)
+    # (b-1)*log(qi/limit) is 0.5 to one ulp. The gap divided by Di is
+    # 1 or 2**-1075. Multiplying by expm1(0.5)/0.5 before rounding makes
+    # the second recovery round up to the smallest positive float.
+    result = _simulate(
+        qi=qi,
+        Di=decline,
+        b=2**1023,
+        model="hyperbolic",
+        economic_limit=limit,
+        months=1,
+    )
+    assert result.eur_bbl == pytest.approx(expected, rel=1e-14, abs=0)
+
+
 @pytest.mark.parametrize("qi", [Fraction(1000), 1000 - Fraction(1, 2**45)])
 def test_exact_rate_at_or_below_rounded_cutoff_retains_zero_eur(qi):
     assert float(qi) == 1000.0
