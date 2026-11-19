@@ -22,7 +22,7 @@ def _text(value):
     if not isinstance(value, str) or not value.strip():
         raise ValueError("Expected nonblank text")
     if any(category(c) in {"Cc", "Cf", "Cs"} for c in value):
-        raise ValueError("Control or surrogate character in text")
+        raise ValueError("Control, format or surrogate character in text")
     return escape(value, quote=True)
 
 
@@ -35,7 +35,7 @@ def _identifier(value):
 def _link(value):
     _text(value)
     if any(c.isspace() or category(c) in {"Cc", "Cf"} for c in value):
-        raise ValueError("Whitespace or control character in link")
+        raise ValueError("Whitespace, control or format character in link")
     # Parse before decoding so escaped delimiters cannot change URL structure.
     url = urlsplit(value)
     if any(re.search(r"%(?![0-9A-Fa-f]{2})", part) for part in url):
@@ -50,7 +50,7 @@ def _link(value):
             or (c.isspace() and not (position >= 2 and c == " "))
             for c in part
         ):
-            raise ValueError("Whitespace or control character in link")
+            raise ValueError("Whitespace, control or format character in link")
     # A decoded literal percent is safe unless it starts another escape sequence.
     if any("\\" in part or re.search(r"%[0-9A-Fa-f]{2}", part) for part in decoded):
         raise ValueError("Ambiguous link encoding")

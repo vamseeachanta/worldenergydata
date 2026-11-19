@@ -305,9 +305,6 @@ def test_escaped_path_preserved_in_each_evidence_channel(render, record, target,
         "docs/a%E2%80%AEb.pdf",
         "docs/search?title=a%E2%80%AEb",
         "docs/reference.html#a%E2%80%AEb",
-        "docs/a\ud800b.pdf",
-        "docs/search?title=a\ud800b",
-        "docs/reference.html#a\ud800b",
     ],
 )
 def test_unsafe_links_rejected_in_each_evidence_channel(render, record, target, href):
@@ -316,6 +313,43 @@ def test_unsafe_links_rejected_in_each_evidence_channel(render, record, target, 
         owner = owner["capability"]
     owner["sources"][0]["href"] = href
     with pytest.raises(ValueError):
+        render(record)
+
+
+@pytest.mark.parametrize("target", ["observation", "capability"])
+@pytest.mark.parametrize("encoded", [False, True])
+@pytest.mark.parametrize(
+    "character, escaped", [("\u00ad", "%C2%AD"), ("\u200c", "%E2%80%8C")]
+)
+def test_format_links_raise_explicit_validation_error(
+    render, record, target, encoded, character, escaped
+):
+    owner = record["nodes"][3]
+    if target == "capability":
+        owner = owner["capability"]
+    owner["sources"][0]["href"] = f"docs/a{escaped if encoded else character}b.pdf"
+    message = (
+        "Whitespace, control or format character in link"
+        if encoded
+        else "Control, format or surrogate character in text"
+    )
+    with pytest.raises(ValueError, match=f"^{message}$"):
+        render(record)
+
+
+@pytest.mark.parametrize("target", ["observation", "capability"])
+@pytest.mark.parametrize(
+    "href",
+    ["docs/a\ud800b.pdf", "docs/search?title=a\ud800b", "docs/reference.html#a\ud800b"],
+)
+def test_surrogate_links_raise_explicit_validation_error(render, record, target, href):
+    owner = record["nodes"][3]
+    if target == "capability":
+        owner = owner["capability"]
+    owner["sources"][0]["href"] = href
+    with pytest.raises(
+        ValueError, match="^Control, format or surrogate character in text$"
+    ):
         render(record)
 
 
@@ -345,6 +379,8 @@ def test_https_links_and_all_supplied_text_are_escaped(render, record):
         "\x80",
         "\x9b",
         "\x9f",
+        "\u00ad",
+        "\u200c",
         "\u200b",
         "\u202e",
         "\u2066",
@@ -366,7 +402,9 @@ def test_control_characters_rejected_in_supplied_text(render, record, target, co
         "capability-label": (node["capability"]["sources"][0], "label"),
     }[target]
     owner[key] = f"Synthetic{control}text"
-    with pytest.raises(ValueError, match="Control or surrogate character in text"):
+    with pytest.raises(
+        ValueError, match="^Control, format or surrogate character in text$"
+    ):
         render(record)
 
 
