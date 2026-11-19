@@ -104,10 +104,12 @@ the deployment controls the environment variable. Actual source reachability is 
 a connection or name-resolution failure stops the plan without retrying or starting later URLs. Cached payloads need
 no reachability probe. Current PDMS reachability remains <code>NOT_EVALUATED</code>; the historical observations
 above must not be treated as a current measurement.</p>
-<p>The resolved cache directory must be inside the configured absolute storage root. Symlink escapes and unresolved
-variables are refused. This checks placement, not disk identity, free capacity or concurrent filesystem replacement;
-the deployment must provide a stable data directory. During cache access, a symlink at the cache root or in an entry's
-path, or a path that escapes the cache root, causes the CLI to exit with code 6. Run only one writer per cache root.</p>
+<p>At configuration time, the CLI requires absolute storage and cache paths and resolves both before checking containment.
+If the configured cache root is a symlink to a directory within the storage root, the CLI uses that directory.
+A target outside the storage root or an unresolved variable in either path causes a configuration error (exit code 2).</p>
+<p>During cache access, the integrity check rejects a symlink in a cache entry's path or a path that escapes the
+resolved cache root. The CLI reports <code>CacheIntegrityError</code> (exit code 6) in either case. The placement
+check does not verify disk identity or free capacity. Use a stable data directory and one writer per cache root.</p>
 <p>List reviewed official archive, ArcGIS REST or shapefile URLs under <code>bulk_urls</code> and record crawl page URLs
 under <code>crawl_urls</code>. Every distinct bulk URL is collected in configured order when available. Duplicate URLs
 are requested only once. <code>use_crawl=true</code> requires
