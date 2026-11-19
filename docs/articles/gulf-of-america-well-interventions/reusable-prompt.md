@@ -2,34 +2,53 @@
 
 Article: "Public Data for Gulf of America: well interventions", The Deckhand Chronicles, revision 6 of 19 Nov 2026. This page holds in full what Appendix B of the article summarises.
 
-This prompt rebuilds the life of every Gulf of America well and the intervention counts from BSEE's public raw data, and adapts them to your own field or depth range.
+## Reproduce the published analysis
 
-## What you need to run this
+Use the study at `24744b528298f26c51bfce4cb3b66fa4f676eb02`. A historical rerun requires the four BSEE ZIP files downloaded on 13 November 2026. The repository contains the [published manifest](https://api.github.com/repositories/574746314/contents/examples/bsee/interventions_by_depth/output/manifest.json?ref=24744b528298f26c51bfce4cb3b66fa4f676eb02) and derived tables. BSEE's downloader retrieves current files, and its `--snapshot` argument only names the destination folder.
 
-- Data required: BSEE raw data, BoreholeRawData.zip and eWellAPMRawData.zip (and eWellEORRawData.zip and eWellWARRawData.zip for the cross-checks), from data.bsee.gov.
-- Data required to adapt: a list of API numbers, or a lease, area or depth range.
-- Paid or behind an account: nothing.
-- Changes over time: BSEE refreshes the files daily, so a new download gives slightly different recent counts.
+From the directory holding the four archives, check their bytes against the SHA-256 values in the published manifest. Continue only if all four files match. In PowerShell, `Get-FileHash *.zip -Algorithm SHA256` also gives the hashes for comparison by filename.
 
-## Reproduce the published result
-
-```text
-Using the worldenergydata repository at commit 24744b528298f26c51bfce4cb3b66fa4f676eb02, folder examples/bsee/interventions_by_depth:
-download the four BSEE archives with download_data.py --snapshot 2026-11-13
-(or use a later snapshot and expect small changes in recent years), then run
-count_interventions.py, well_life_cycle.py, build_cost_basis.py, estimate_costs.py,
-plot_charts.py, plot_life_cycle.py and build_article.py. Check that
-output/life_cycle_reconciliation.csv shows the same published and counted totals,
-and that 2025 gives 765 intervention and 2,610 abandonment approvals.
+```sh
+sha256sum --check <<'SUMS'
+66f39baea0ef50ed97a8992dea88d7a0bee24f270b345ea20721abfc8a0ee100  BoreholeRawData.zip
+6db08210b85e822b48c33002e9527d4f52baa5441f252ee79ff7937731be4050  eWellAPMRawData.zip
+d1db6e6c53577ec595273768c925e3e24261be0b289fc6325151ba37fc81d127  eWellEORRawData.zip
+b7a086c1fb9d270e673c5931ce3822f202ff4e6e8af5cc98e19dd3ddf03d525c  eWellWARRawData.zip
+SUMS
 ```
 
-## Adapt it to your project
+Use the verified archives and the published `manifest.json` together in `data/modules/bsee/zip/2026-11-13/`. For a new analysis, run `python examples/bsee/interventions_by_depth/download_data.py` in a separate study checkout. Its default folder uses the actual download date (UTC). Retain the new manifest and report that date with the new results.
 
-```text
-Filter the borehole and permit tables to your wells before the life-cycle step.
-Report, per well: life in years, bores drilled, light and heavy interventions,
-temporary and permanent abandonment approvals, with the counting rules of counting-rules.md.
-Keep approvals separate from completed jobs, and state the unit rule you use.
+From the root of the pinned study checkout, install the dependencies listed in the [study README](https://api.github.com/repositories/574746314/contents/examples/bsee/interventions_by_depth/README.md?ref=24744b528298f26c51bfce4cb3b66fa4f676eb02). Its “Tests and reproduction” section gives these analysis commands:
+
+```sh
+study=examples/bsee/interventions_by_depth
+data=data/modules/bsee/zip/2026-11-13
+python "$study/count_interventions.py" --data-dir "$data" --out "$study/output"
+python "$study/build_cost_basis.py"
+python "$study/estimate_costs.py" --out "$study/output"
+python "$study/plot_charts.py" --out "$study/output"
+python "$study/well_life_cycle.py" --data-dir "$data"
+python "$study/plot_life_cycle.py"
 ```
 
-Data set: BSEE Data Center raw well data (public), files of 13 November 2026.
+Check that the life-cycle event totals equal the published permit totals for each group and that 2025 has 765 well-work approvals and 2,610 abandonment approvals. This replay covers the analysis. The study's article builder generates revision 4.
+
+Without the four matching archives, use the published [annual counts](https://api.github.com/repositories/574746314/contents/examples/bsee/interventions_by_depth/output/counts_by_year_band_group.csv?ref=78f1a9183a75e56adb7f31e88b271864f0b69d37) and [life-cycle reconciliation](https://api.github.com/repositories/574746314/contents/examples/bsee/interventions_by_depth/output/life_cycle_reconciliation.csv?ref=78f1a9183a75e56adb7f31e88b271864f0b69d37) to check the figures.
+
+## Adapt the analysis to a field or depth range
+
+```text
+Build the well inventory first. Select API10 identifiers for the requested field,
+lease, API list or inventory depth band. Retain all eligible bores and permits
+for those identifiers, including bores with a different or missing depth.
+Apply the counting rules to those complete well histories. For this cohort,
+regenerate the permit comparison totals and opening stocks, then reconcile the
+life-cycle events and calculate rates against those stocks.
+
+Report each well's life in years, bores drilled, light and heavy interventions,
+and temporary and permanent abandonment approvals. State how units are classified
+and distinguish approved permits from completed jobs.
+```
+
+See the [counting rules](counting-rules.md) for depth assignment and well life.
