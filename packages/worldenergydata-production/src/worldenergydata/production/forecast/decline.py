@@ -448,9 +448,8 @@ class ArpsDeclineCurve:
                     )
                     eur = np.exp(log_eur)
                 else:
-                    # Preserve cancellation resistance near b = 1 and divide
-                    # before scaling to avoid multiplication overflow.
-                    rate_integral = np.expm1(x) / (b - 1.0)
+                    # exprel(0) = 1 keeps the log ratio even when x underflows.
+                    rate_integral = log_ratio * exprel(x)
                     eur = (qi / Di) * rate_integral
 
         return float(max(eur, 0.0))

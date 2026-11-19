@@ -491,6 +491,27 @@ def test_midpoint_gap_smaller_than_a_float_keeps_representable_eur(model, b):
 
 
 @pytest.mark.parametrize(
+    "gap_multiple,b",
+    [
+        (1.0, math.nextafter(1.0, 0.0)),
+        (1.5, math.nextafter(1.0, 0.0)),
+        (2.5, math.nextafter(1.0, 2.0)),
+    ],
+)
+def test_normal_relative_gap_preserves_eur_near_harmonic_exponent(gap_multiple, b):
+    limit = 1 + Fraction(1, 2**53)
+    decline = gap_multiple * 2.0**-1022
+    qi = limit * (1 + Fraction(decline))
+    # Integrate the Whitson manual's decline rate (Decline Curve Analysis,
+    # web ed. 2026-10-19, §2.1) and expand for relative gap r = Di:
+    # EUR = limit * (1 + b*r/2 + O(r**2)), just above the rounding midpoint.
+    result = _simulate(
+        qi=qi, Di=decline, b=b, model="hyperbolic", economic_limit=limit, months=1
+    )
+    assert result.eur_bbl == math.nextafter(1.0, 2.0)
+
+
+@pytest.mark.parametrize(
     "decline,expected",
     [(2**-1024, math.expm1(0.5) / 0.5), (2**51, 2**-1074)],
 )
