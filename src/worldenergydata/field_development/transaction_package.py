@@ -169,7 +169,12 @@ def _verify_sources(sources: dict, root: Path) -> None:
 
 
 def _verify_citation(citation: dict, sources: dict) -> None:
-    if not citation.get("locator") or citation.get("source_id") not in sources:
+    locator = citation.get("locator")
+    if (
+        not isinstance(locator, str)
+        or not locator.strip()
+        or citation.get("source_id") not in sources
+    ):
         raise ValueError("Citation requires a known source and claim locator")
     if sources[citation["source_id"]]["access"] != "available":
         raise ValueError("Known facts cannot cite unavailable sources")
