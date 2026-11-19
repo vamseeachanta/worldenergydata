@@ -122,17 +122,25 @@ def test_excluded_row_competes_across_equal_distance_relaxations(
     validate_output(result)
 
 
-def test_excluded_singleton_never_supplies_a_range(table, scope):
-    result = check(
-        scope,
-        table(
-            invented_row(region="unknown"),
-            invented_row(metric="capex_per_tree", unit="USD_MM_2026/tree"),
-        ),
-    )
+@pytest.mark.parametrize("with_wider_group", [False, True])
+def test_excluded_singleton_never_supplies_a_range(table, scope, with_wider_group):
+    rows = [
+        invented_row(region="unknown"),
+        invented_row(metric="capex_per_tree", unit="USD_MM_2026/tree"),
+    ]
+    if with_wider_group:
+        rows.append(invented_row(region="other", development_type="other"))
+    path = table(*rows)
+    result = check(scope, path)
     assert result["range"] is None
     assert result["reason"] == "no close comparables"
     assert result["comparables"] == []
+    assert result["unbenchmarked_elements"] == ["wells"]
+    assert (
+        "capex_per_well: nearest group has an unknown grouping label; "
+        "wider stages were not considered." in result["limitations"]
+    )
+    assert result["benchmark_sha256"] == sha256(path.read_bytes()).hexdigest()
     validate_output(result)
 
 
