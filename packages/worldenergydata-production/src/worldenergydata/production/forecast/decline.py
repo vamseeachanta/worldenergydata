@@ -79,7 +79,10 @@ class ForecastResult:
 class ArpsDeclineCurve:
     """Arps decline curve analysis for oil/gas production forecasting.
 
-    Supports exponential (b=0), hyperbolic (0<b<2), and harmonic (b=1) models.
+    Supports exponential (b=0), hyperbolic, and harmonic (b=1) models.
+    Hyperbolic fitting bounds the exponent to 0<b<2. Simulation accepts any
+    finite positive hyperbolic exponent that passes its numerical checks;
+    exponents above 1 are evaluated without physical qualification.
 
     Examples
     --------
