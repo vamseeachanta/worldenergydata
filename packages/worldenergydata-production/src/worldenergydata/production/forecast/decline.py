@@ -221,11 +221,11 @@ class ArpsDeclineCurve:
             ("economic_limit", economic_limit),
             ("b", b),
         ):
+            if isinstance(value, (bool, np.timedelta64)) or not isinstance(value, Real):
+                raise ValueError(f"{name} must be a real number")
             requirement = (
                 "finite and nonnegative" if name == "b" else "finite and positive"
             )
-            if isinstance(value, (bool, np.timedelta64)) or not isinstance(value, Real):
-                raise ValueError(f"{name} must be {requirement}")
             try:
                 value = float(value)
             except OverflowError as exc:

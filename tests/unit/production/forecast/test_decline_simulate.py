@@ -152,22 +152,21 @@ def test_rejects_limit_below_one_barrel_per_month(economic_limit):
 
 @pytest.mark.parametrize(
     "name,value",
-    [
-        ("qi", Fraction(1000)),
-        ("Di", Fraction(1, 10)),
-        ("economic_limit", Fraction(100)),
-        ("b", Fraction(1, 2)),
-    ],
+    [("qi", "1000"), ("Di", "0.1"), ("economic_limit", "100"), ("b", "0.5")],
 )
-def test_simulate_accepts_fraction_parameters(name, value):
+def test_simulate_accepts_fraction_and_rejects_decimal(name, value):
     params = dict(model="hyperbolic", b=0.5)
-    params[name] = value
+    params[name] = Fraction(value)
     result = _simulate(**params)
     expected = _simulate(model="hyperbolic", b=0.5)
     assert (result.qi, result.Di, result.b) == (expected.qi, expected.Di, expected.b)
     assert all(type(v) is float for v in (result.qi, result.Di, result.b))
     assert result.eur_bbl == expected.eur_bbl
     pd.testing.assert_frame_equal(result.forecast_df, expected.forecast_df)
+
+    params[name] = Decimal(value)
+    with pytest.raises(ValueError, match=rf"^{name} must be a real number$"):
+        _simulate(**params)
 
 
 def test_rejects_exact_fraction_limit_below_floor_before_rounding():
