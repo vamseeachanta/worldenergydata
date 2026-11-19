@@ -57,7 +57,7 @@ def job_result_to_envelope(
     if result.status == "skipped":
         reason = result.error_msg or "disabled"
         warnings.append(f"job skipped ({reason})")
-    if result.error_msg:
+    elif result.error_msg:
         warnings.append(result.error_msg)
 
     data_as_of = _read_last_refresh(metadata_path)
