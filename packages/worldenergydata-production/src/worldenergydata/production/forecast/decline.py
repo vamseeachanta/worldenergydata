@@ -9,6 +9,7 @@ All visualisations use Plotly.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from fractions import Fraction
 from numbers import Integral, Real
 from typing import Callable, Optional
 
@@ -24,6 +25,15 @@ from worldenergydata.common.decline import (
 )
 
 _VALID_MODELS = frozenset({"exponential", "hyperbolic", "harmonic"})
+
+
+def _comparable_rate(rate: Real) -> Real:
+    """Keep NumPy promotion from rounding the other rate during comparison."""
+    if isinstance(rate, np.integer):
+        return int(rate)
+    if isinstance(rate, np.floating):
+        return Fraction(*rate.as_integer_ratio())
+    return rate
 
 
 @dataclass
@@ -171,9 +181,12 @@ class ArpsDeclineCurve:
         nominal decline in 1/month, and ``b`` is dimensionless. Rates and
         decline must be finite and positive. The exponent must be 0 for
         exponential, 1 for harmonic, or strictly positive for hyperbolic.
-        ``months`` must be a positive integer; booleans are rejected.
+        ``months`` must be a positive integer. Booleans and duration scalars
+        are invalid for all numeric parameters.
 
         EUR is in bbl and is zero when the limit is at or above ``qi``.
+        If ``qi`` exceeds ``economic_limit`` but both round to the same
+        float, simulation raises ``ValueError`` for the two rates.
         The limit must be at least 1 bbl/month, matching the existing EUR
         helper's minimum. The profile follows :meth:`forecast`: month-end
         rates at months 1 through ``months``, with their cumulative sum.
@@ -206,7 +219,7 @@ class ArpsDeclineCurve:
             requirement = (
                 "finite and nonnegative" if name == "b" else "finite and positive"
             )
-            if isinstance(value, bool) or not isinstance(value, Real):
+            if isinstance(value, (bool, np.timedelta64)) or not isinstance(value, Real):
                 raise ValueError(f"{name} must be {requirement}")
             try:
                 value = float(value)
@@ -224,11 +237,18 @@ class ArpsDeclineCurve:
             or (model == "hyperbolic" and (b <= 0 or validated["b"] <= 0))
         ):
             raise ValueError(f"b is inconsistent with model '{model}'")
+        same_float_rate = validated["qi"] == validated["economic_limit"]
+        if same_float_rate and _comparable_rate(qi) > _comparable_rate(economic_limit):
+            raise ValueError("qi and economic_limit coincide at float precision")
         qi = validated["qi"]
         Di = validated["Di"]
         economic_limit = validated["economic_limit"]
         b = validated["b"]
-        if isinstance(months, bool) or not isinstance(months, Integral) or months <= 0:
+        if (
+            isinstance(months, (bool, np.timedelta64))
+            or not isinstance(months, Integral)
+            or months <= 0
+        ):
             raise ValueError("months must be a positive integer")
 
         with np.errstate(over="ignore", invalid="ignore"):

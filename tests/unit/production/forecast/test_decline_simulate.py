@@ -135,6 +135,15 @@ def test_rejects_invalid_months(months):
         _simulate(months=months)
 
 
+@pytest.mark.parametrize("unit", ["D", "ns"])
+@pytest.mark.parametrize("name", ["qi", "Di", "economic_limit", "b", "months"])
+def test_rejects_duration_in_numeric_field(name, unit):
+    params = dict(model="harmonic", b=1, months=1)
+    params[name] = np.timedelta64(1, unit)
+    with pytest.raises(ValueError, match=rf"^{name} must be "):
+        _simulate(**params)
+
+
 @pytest.mark.parametrize("economic_limit", [0.1, 0.99])
 def test_rejects_limit_below_one_barrel_per_month(economic_limit):
     with pytest.raises(ValueError, match="economic_limit"):
@@ -420,6 +429,28 @@ def test_eur_preserves_adjacent_initial_and_limit_rates(model, b):
         qi=qi, Di=decline, b=b, model=model, economic_limit=1000.0, months=1
     )
     assert result.eur_bbl == pytest.approx(float(expected), rel=1e-14)
+
+
+@pytest.mark.parametrize(
+    "qi,limit",
+    [
+        (1000 + Fraction(1, 2**45), 1000),
+        (1000, 1000 - Fraction(1, 2**45)),
+        (np.uint64(2**63 + 1), float(2**63)),
+        (2**63 + 1, np.float64(2**63)),
+    ],
+)
+def test_rejects_positive_recovery_erased_by_rate_rounding(qi, limit):
+    # In the first two cases, (qi - limit) / Di = 2**-45 / 2**-45 = 1 bbl.
+    assert float(qi) == float(limit)
+    with pytest.raises(ValueError, match=r"qi.*economic_limit.*precision"):
+        _simulate(qi=qi, Di=2**-45, economic_limit=limit, months=1)
+
+
+@pytest.mark.parametrize("qi", [Fraction(1000), 1000 - Fraction(1, 2**45)])
+def test_exact_rate_at_or_below_rounded_cutoff_retains_zero_eur(qi):
+    assert float(qi) == 1000.0
+    assert _simulate(qi=qi, economic_limit=1000).eur_bbl == 0.0
 
 
 @pytest.mark.parametrize("b", [np.nextafter(0.0, 1.0), 1e-320, 1e-310])
