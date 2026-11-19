@@ -77,8 +77,11 @@ For each metric with a positive supplied quantity, an exact group is tried first
 Fallback considers both one-key relaxations together, then dropping both keys.
 Omitted optional group keys are also listed as dropped. At each stage all
 distinct matching rows across its relaxations are considered together. The
-nearest nonempty stage is used only if it contains exactly one row with
-`n >= 1`. Multiple rows are ambiguous even when one relaxation has a singleton
+nearest nonempty stage supplies a range only if it contains exactly one sampled
+row with known grouping labels. If its only row has an `unknown` label, the
+search stops for that metric. Its limitation explains why wider stages were
+not considered, even when a usable group exists there.
+Multiple rows are ambiguous even when one relaxation has a singleton
 and another has several matches. A wider stage cannot resolve that tie. The
 limitation names the group count and the total omitted plus relaxed key count;
 `range: null` carries `reason: "ambiguous comparable groups"` when at least one

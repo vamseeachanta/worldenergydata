@@ -207,10 +207,10 @@ def _load_table(path):
     return rows, sha256(content).hexdigest(), excluded_unknown
 
 
-def _select(rows, metric, group, excluded):
+def _nearest_group(rows, metric, group):
     candidates = [
         row
-        for row in rows + excluded
+        for row in rows
         if row["metric"] == metric
         and all(row[key] == group[key] for key in ("water_depth_band", "host_type"))
     ]
@@ -227,8 +227,6 @@ def _select(rows, metric, group, excluded):
                     stage[identity] = (row, sorted(dropped))
         if len(stage) == 1:
             row, dropped = next(iter(stage.values()))
-            if row in excluded:
-                return None, [], None
             return row, dropped, None
         if len(stage) > 1:
             return (
@@ -291,14 +289,20 @@ def check_scope(scope: dict, benchmark_path=DEFAULT_BENCHMARKS) -> dict:
         )
     intervals, bases, ids = {}, set(), set()
     indicative = ambiguous_found = False
+    sampled_rows = rows + excluded_unknown
     for metric, (quantity_key, _unit) in METRICS.items():
         quantity = scope.get(quantity_key, 0)
         if not quantity:
             continue
-        row, dropped, ambiguous = _select(rows, metric, group, excluded_unknown)
-        if row is None:
+        row, dropped, ambiguous = _nearest_group(sampled_rows, metric, group)
+        if row is None or row in excluded_unknown:
             result["unbenchmarked_elements"].append(quantity_key)
-            if ambiguous:
+            if row is not None:
+                result["limitations"].append(
+                    f"{metric}: nearest group has an unknown grouping label; "
+                    "wider stages were not considered."
+                )
+            elif ambiguous:
                 ambiguous_found = True
                 result["limitations"].append(
                     f"{metric}: ambiguous comparable groups; {ambiguous}; "
