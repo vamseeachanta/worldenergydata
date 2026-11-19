@@ -6,7 +6,7 @@ Approved permits to modify existing wells are counted separately from new-well d
 
 ## Data
 
-The collection owner is worldenergydata; the catalog source ID is `bsee-data-center`. The four BSEE raw archives were downloaded on 13 November 2026 (snapshot folder `2026-11-13`). Their size and SHA-256 are verified against the manifest before use. Raw archives are ignored and are not backed up by this PR. Only small derived aggregates and charts are committed.
+The collection owner is worldenergydata; the catalog source ID is `bsee-data-center`. The 4 BSEE raw archives in the manifest were downloaded on 13 November 2026 (snapshot folder `2026-11-13`). Their size and SHA-256 are verified against the manifest before use. Raw archives are ignored and are not backed up by this PR. Only small derived aggregates and charts are committed.
 
 | File                                                                            | Page updated          | Bytes       | SHA-256                                                            |
 |:--------------------------------------------------------------------------------|:----------------------|:------------|:-------------------------------------------------------------------|
@@ -37,18 +37,18 @@ Primary OTHER approvals numbered 309–509 per year in 2005–2020, then 174 in 
 
 Each well (API10) is followed from its first non-cancelled spud to permanent abandonment (the stock rule in Method: every non-superseded bore PA, at the latest PA date) or to the file date while it stands. Drilling counts bores with a spud date (original hole, sidetracks and bypasses). Interventions, temporary and permanent abandonments are the approved permits of this example, from 2005 to the file date. Interventions are **light** when the permit names a wireline unit (WL), coiled tubing (CT), intervention vessel (WI), liftboat (LB) or recorded non-rig operation (NR), and **heavy** for a hydraulic workover or snubbing unit (HW, SB), platform rig (PF), jack-up (JU), drillship or semisubmersible (DS, SS, SD); otherwise light or heavy is not established. These keep the unit categories below, except that "liftboat / jack-up" is divided by its two source codes ([mapping](output/intervention_weight_mapping.csv)). Development and exploration follow `WELL_TYPE_CODE` (D, E) of the canonical original hole.
 
-Of 37,512 dated wells, 30,737 are permanently abandoned and 6,775 stand; 17 lack a first spud and 8 have an abandonment date before spud (life not established). Life in years:
+Of 37,512 dated wells, 30,737 are permanently abandoned and 6,775 stand; 17 lack a first spud and 8 have an abandonment date before spud (life not established). The life quantiles use wells with established life and are reported in years:
 
-| group                                     | status                | wells   | q25_years   | median_years   | q75_years   |
-|:------------------------------------------|:----------------------|:--------|:------------|:---------------|:------------|
-| development wells                         | permanently abandoned | 16,860  | 11.3        | 23.0           | 35.3        |
-| development wells                         | standing              | 5,570   | 28.6        | 42.0           | 50.6        |
-| exploration wells                         | permanently abandoned | 13,537  | 0.1         | 0.2            | 7.2         |
-| exploration wells                         | standing              | 1,160   | 12.6        | 23.5           | 32.7        |
-| development wells first drilled 2005-2025 | permanently abandoned | 484     | 4.8         | 9.2            | 13.3        |
-| development wells first drilled 2005-2025 | standing              | 751     | 10.0        | 14.4           | 19.0        |
-| exploration wells first drilled 2005-2025 | permanently abandoned | 1,127   | 0.1         | 0.6            | 7.3         |
-| exploration wells first drilled 2005-2025 | standing              | 528     | 7.1         | 12.2           | 17.1        |
+| group                                     | status                | wells   | Wells with established life   | q25_years   | median_years   | q75_years   |
+|:------------------------------------------|:----------------------|:--------|:------------------------------|:------------|:---------------|:------------|
+| development wells                         | permanently abandoned | 16,860  | 16,858                        | 11.3        | 23.0           | 35.3        |
+| development wells                         | standing              | 5,570   | 5,570                         | 28.6        | 42.0           | 50.6        |
+| exploration wells                         | permanently abandoned | 13,537  | 13,531                        | 0.1         | 0.2            | 7.2         |
+| exploration wells                         | standing              | 1,160   | 1,160                         | 12.6        | 23.5           | 32.7        |
+| development wells first drilled 2005-2025 | permanently abandoned | 484     | 482                           | 4.8         | 9.2            | 13.3        |
+| development wells first drilled 2005-2025 | standing              | 751     | 751                           | 10.0        | 14.4           | 19.0        |
+| exploration wells first drilled 2005-2025 | permanently abandoned | 1,127   | 1,123                         | 0.1         | 0.6            | 7.3         |
+| exploration wells first drilled 2005-2025 | standing              | 528     | 528                           | 7.1         | 12.2           | 17.1        |
 
 Per-well stages for wells first drilled 2005-2025, whose whole life lies inside the permit record:
 
@@ -198,7 +198,7 @@ Beside those estimates, the weekly-report check unions overlapping or adjacent i
 - **Deepwater dry-tree platform permanent abandonment** uses the **published** Table 8-4, p. 8-15 (PDF p. 146), final-column totals: USD 734,356 / 987,262 / 1,374,570 per well at 1,700 / 3,000 / 5,000 ft, respectively (USD **0.73 / 0.99 / 1.4 million** at two significant figures). These are 60-well campaign totals normalised per well and include work provision, engineering, weather and shared mobilisation. They are depth anchors, not statistical low/base/high outcomes. A cited deepwater dry-tree well-work basis is not established, so that row is **not priced**. Dry-tree conductor removal is separate.
 - TAP-738 section 8.3.2.3, p. 8-18 (PDF p. 149), gives the drillship/semisubmersible total spread as USD 674,600/day. **Rig mobilisation is excluded**, rather than assumed free. Subsea permanent-abandonment durations follow approximate graphic readings of Figure 8-9, p. 8-19. The 3,000-ft row uses 17 days (MODU leaving the wellhead) and 19 days (MODU) at 3,000 ft for low and base, and 23 days, the MODU reading at **6,000 ft**, for high. The deeper row uses 21 and 23 days at 6,000 ft and 27 days at 9,000 ft. These cases do not classify every approval at those depths. Beyond the 9,000-ft anchor, cost applicability is not established.
 - The well-work duration labels are **median 7 days / midpoint 10.5 days / two weeks 14 days**. The [BOEM Gulf EIS 2016-018](https://www.boem.gov/sites/default/files/environmental-stewardship/Environmental-Assessment/NEPA/BOEM-EIS-2016-018-v1.pdf), section 3.1.3.5, p. 3-37 (PDF p. 163), reports a Gulf median of 7 days with a range from 1 day to several months. [BOEM MAG-PLAN Alaska update](https://espis.boem.gov/final%20reports/5179.pdf), 2012, section 3.5.5.4, p. 108 (PDF p. 117), provides one to two weeks; 10.5 days is its arithmetic midpoint. These are transferred duration scenarios, **not a spread of observed outcomes**. The midpoint retains its half day to avoid changing the arithmetic; other reported duration summaries use integer days.
-- [BSEE Pacific cost update, vol. 2](https://www.bsee.gov/sites/bsee.gov/files/technology-assessment-program-tap/735ab.pdf), 2015, Appendix 2, p. A-2 (PDF p. 5), provides 3, 4, 5 and 8 trouble-free rigless days per well. The 3 / 4 / 8-day selections are scenario inputs; transfer to casing jacks is an assumption. Operator permit estimates and the weekly-report proxy above do not validate these duration scenarios.
+- [BSEE Pacific cost update, vol. 2](https://www.bsee.gov/sites/bsee.gov/files/technology-assessment-program-tap/735ab.pdf), 2015, Appendix 2, p. A-2 (PDF p. 5), provides 3, 4, 5 and 8 trouble-free rigless days per well. The 3 / 4 / 8-day selections are scenario inputs; transfer to casing jacks is an assumption. The duration scenarios come from the cited studies.
 
 Every numeric input and its citation are retained in [cost_basis.yml](cost_basis.yml), generated by [build_cost_basis.py](build_cost_basis.py). [Full-precision costs](output/cost_table.csv) and [published comparisons](output/published_pa_comparators.csv) retain the arithmetic. The subsea comparator for 500–1,500 m is Figure 8-10's **3,000-ft (914-m) point**, about **USD 13 million** at two significant figures; the 1,000-ft point is outside that band and is not used. The 6,000/9,000-ft comparator is about USD 16 / 19 million. The rigless published total is USD 0.34–0.42 million per well. Published totals include their stated allowances and campaign assumptions and are not equal to the simpler spread scenarios. [Citation receipts](output/cost_source_manifest.json) retain source URLs and PDF digests; a 2015 study rehosted later remains a 2015 dollar basis.
 
@@ -219,7 +219,7 @@ uv run --no-sync python examples/bsee/interventions_by_depth/estimate_costs.py -
 uv run --no-sync python examples/bsee/interventions_by_depth/plot_charts.py --out examples/bsee/interventions_by_depth/output
 uv run --no-sync python examples/bsee/interventions_by_depth/well_life_cycle.py --data-dir data/modules/bsee/zip/2026-11-13
 uv run --no-sync python examples/bsee/interventions_by_depth/plot_life_cycle.py
-uv run --no-sync python examples/bsee/interventions_by_depth/write_results_note.py --test-result '148 passed (tests/unit/bsee/test_interventions_by_depth.py, tests/unit/bsee/test_well_life_cycle.py and tests/unit/bsee/test_interventions_report.py); the API-normalizer file needs the full package environment and was not collected here'
+uv run --no-sync python examples/bsee/interventions_by_depth/write_results_note.py --test-result '94 study tests passed under pytest. Temporary-directory permissions prevented 59 cases from starting. One Git fixture was excluded'
 uv run --no-sync python examples/bsee/interventions_by_depth/verify_outputs.py
 uv run --no-sync python examples/bsee/interventions_by_depth/build_article.py --build-commit <commit holding the data tables> --chart-commit <commit holding the charts> --code-commit <commit holding the builder and scripts (default: the last commit that changed them)>
 ```
@@ -233,7 +233,7 @@ $env:PYTHONPATH='packages/worldenergydata-bsee/src;packages/worldenergydata-core
 uv run --no-sync python -m pytest --noconftest -o addopts="" tests/unit/bsee/test_interventions_by_depth.py tests/unit/bsee/test_well_life_cycle.py tests/unit/bsee/test_interventions_report.py tests/unit/bsee/data/utils/test_api_well_normalizer.py -q
 ```
 
-Result: **148 passed (tests/unit/bsee/test_interventions_by_depth.py, tests/unit/bsee/test_well_life_cycle.py and tests/unit/bsee/test_interventions_report.py); the API-normalizer file needs the full package environment and was not collected here**. Tests cover all-bore stock, date boundaries, cancelled bores, assumed standing, unit categories, archive receipts checked before every read, one event window for sidetrack and permit ages, three hand-worked cost literals read through YAML and published deepwater dry-tree pricing. Tests use no network or retained raw files. Aggregate reconciliation, input provenance, output digests and software versions are retained in [verification.json](output/verification.json).
+Result: **94 study tests passed under pytest. Temporary-directory permissions prevented 59 cases from starting. One Git fixture was excluded**. Tests cover all-bore stock, date boundaries, cancelled bores, assumed standing, unit categories, archive receipts checked before every read, one event window for sidetrack and permit ages, three hand-worked cost literals read through YAML and published deepwater dry-tree pricing. Tests use no network or retained raw files. Aggregate reconciliation, input provenance, output digests and software versions are retained in [verification.json](output/verification.json).
 
 ## Charts
 
