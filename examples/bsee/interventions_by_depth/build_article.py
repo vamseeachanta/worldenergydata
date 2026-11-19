@@ -67,11 +67,7 @@ MOBILISATION = (
     "platform spreads: the rigless case, from TAP-738 Table 8-2, and the "
     "casing-jack case, which borrows it."
 )
-SIGNOFF = (
-    "Prepared: Petroleum Engineer Deckhand, Data Analyst Deckhand. "
-    "Checked: Editor Deckhand. "
-    f"Approved: Vamsee Achanta (pending, C6 review copy r{REVISION})."
-)
+SIGNOFF = "Send article corrections to the maintainers."
 BANDS = ["under 100 m", "100 to 500 m", "500 to 1500 m", "1500 m and deeper"]
 BAND_TEXT = {
     "under 100 m": "under 100 m",
@@ -84,9 +80,8 @@ MASTHEAD = (
     "We help build AI into everyday engineering work."
 )
 CLOSING = (
-    "If you have run your own analysis, see a way to improve this one, or have an "
-    "idea for a future issue, write to support@aceengineer.com. We read every reply "
-    "and credit the ideas we use and provide results we obtained."
+    "Send suggestions for future issues and results from related analyses "
+    "to the maintainers."
 )
 HASHTAGS = (
     "#GulfOfMexico #OffshoreWells #WellIntervention #WellLifeCycle "
@@ -94,7 +89,10 @@ HASHTAGS = (
 )
 # Public text must not carry internal or machine wording.
 FORBIDDEN = re.compile(
-    r"\b(?:lane|desk|seat|rds02|ws014|ace-linux|vamseea)\b|[A-Z]:\\|/mnt/", re.I
+    r"\b(?:lane|desk|seat)\b|\b(?:ws|rds)-?[a-f\d]{2,3}\b|"
+    r"\b[a-z]+-(?:linux|windows)(?:-\d+)?\b|\b[a-z]:[\\/]|"
+    r"/(?:mnt|home|Users)/|[\w.+-]+@[\w.-]+\.[a-z]{2,}\b",
+    re.I,
 )
 
 
@@ -790,7 +788,7 @@ Report, per well: life in years, bores drilled, light and heavy interventions,
 temporary and permanent abandonment approvals, with the counting rules of Appendix A.
 Keep approvals separate from completed jobs, and state the unit rule you use.</pre>
 <p>Data set: BSEE Data Center raw well data (public), files of {snap}.</p>
-<p>To have a study of your own wells done for you, write to support@aceengineer.com.</p>
+<p>For a study of your own wells, contact the maintainers.</p>
 """)
 
     toc = "".join(

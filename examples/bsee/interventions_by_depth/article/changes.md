@@ -101,9 +101,8 @@ from the sections to Appendix B or the new Appendix C.
   permanent-abandonment approvals from 2005 to 2026. The band is named
   "1,500 m and deeper", and the shelf is defined at first use (under 100 m
   water depth).
-- Sign-off: "Prepared: Petroleum Engineer Deckhand, Data Analyst Deckhand.
-  Checked: Editor Deckhand. Approved: Vamsee Achanta (pending, C6 review copy
-  r4)." A References list follows it: BOEM 2016-018, BSEE TAP-738 (July
+- Article corrections go to the maintainers. The references that follow include
+  BOEM 2016-018, BSEE TAP-738 (July
   2015), the BOEM MAG-PLAN Alaska update (2012), the BSEE Pacific cost update
   (February 2015, the rigless durations behind Figure 6) and the BSEE raw data
   and permit query pages.
