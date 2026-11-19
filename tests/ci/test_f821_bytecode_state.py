@@ -3,6 +3,7 @@
 import json
 import os
 import subprocess
+import sys
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -66,7 +67,7 @@ def report(experiment):
 @pytest.mark.parametrize("policy", [None, "cold-per-run", "warm-shared"])
 @pytest.mark.parametrize("change_after_progress", [False, True])
 def test_final_snapshot_validates_source_after_last_progress(
-    experiment, monkeypatch, policy, change_after_progress
+    experiment, monkeypatch, capsys, policy, change_after_progress
 ):
     """Real flake8 clean scans cannot validate a subsequently changed input."""
     source, output, _ = experiment
@@ -97,6 +98,11 @@ def test_final_snapshot_validates_source_after_last_progress(
 
     monkeypatch.setattr(Path, "write_text", write_then_change)
     assert check_f821.main(args) == (2 if change_after_progress else 0)
+    (summary,) = capsys.readouterr().out.splitlines()
+    assert json.loads(summary) == {
+        "status": "ERROR" if change_after_progress else "STABLE",
+        "counts": [0, 0],
+    }
     assert progress_seen
     evidence = report(experiment)
     assert evidence["files"] == initial
@@ -182,13 +188,16 @@ def test_invalid_roots_fail_before_subprocess(experiment, monkeypatch, capsys, k
     args = arguments(experiment, "--bytecode-policy", "cold-per-run")
     args[args.index("--bytecode-root") + 1] = str(cache)
     calls = fake_process(monkeypatch)
-    with pytest.raises(SystemExit):
+    with pytest.raises(SystemExit) as excinfo:
         check_f821.main(args)
+    assert excinfo.value.code == 2
+    captured = capsys.readouterr()
+    assert captured.out == ""
     assert (
         "bytecode root must be outside scan targets"
         if kind in ("inside", "escaped")
         else "bytecode root already exists"
-    ) in capsys.readouterr().err
+    ) in captured.err
     assert calls == []
     assert not output.exists()
     if kind == "nonempty":
@@ -202,14 +211,29 @@ def test_cache_options_require_each_other(experiment, monkeypatch, capsys, missi
     index = args.index(option)
     del args[index : index + 2]
     calls = fake_process(monkeypatch)
-    with pytest.raises(SystemExit):
+    with pytest.raises(SystemExit) as excinfo:
         check_f821.main(args)
-    assert (
-        "provide --bytecode-root and --bytecode-policy together"
-        in capsys.readouterr().err
-    )
+    assert excinfo.value.code == 2
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    assert "provide --bytecode-root and --bytecode-policy together" in captured.err
     assert calls == []
     assert not experiment[1].exists()
+
+
+def test_output_parent_is_a_file_exits_without_a_summary(experiment):
+    _, output, _ = experiment
+    parent = output.parent / "blocked-parent"
+    parent.touch()
+    args = arguments(experiment, "--bytecode-policy", "cold-per-run")
+    args[args.index("--output") + 1] = str(parent / output.name)
+
+    result = subprocess.run(
+        [sys.executable, check_f821.__file__, *args], capture_output=True, text=True
+    )
+    assert result.returncode == 1
+    assert result.stdout == ""
+    assert parent.name in result.stderr
 
 
 def test_linter_failure_preserves_partial_evidence(experiment, monkeypatch):
@@ -232,13 +256,17 @@ def test_linter_failure_preserves_partial_evidence(experiment, monkeypatch):
     assert (experiment[1] / "run-1.stderr").read_text() == "tool failed"
 
 
-def test_legacy_invocation_inherits_bytecode_environment(experiment, monkeypatch):
+def test_legacy_invocation_inherits_bytecode_environment(
+    experiment, monkeypatch, capsys
+):
     monkeypatch.delenv("PYTHONPYCACHEPREFIX", raising=False)
     monkeypatch.setenv("PYTHONDONTWRITEBYTECODE", "1")
     args = arguments(experiment)
     del args[args.index("--bytecode-root") :]
     calls = fake_process(monkeypatch)
     assert check_f821.main(args) == 1
+    (summary,) = capsys.readouterr().out.splitlines()
+    assert json.loads(summary) == {"status": "STABLE", "counts": [1, 1, 1]}
     assert all(call[2] is None for call in calls)
     assert all(call[1]["env"]["PYTHONDONTWRITEBYTECODE"] == "1" for call in calls)
     assert "bytecode_policy" not in report(experiment)

@@ -19,6 +19,7 @@ It does not establish the cause of the historical variance in #328.
 | Regression evidence | 2026-11-18 | Records the current focused test count separately from the unverified bytecode experiment. |
 | Status interpretation | 2026-11-18 | Clarifies how callers distinguish inconsistent findings, invalid evidence and refused invocations when all exit with code 2. |
 | Missing summary | 2026-11-18 | Requires a summary from the current invocation before interpreting an exit code, because evidence directory creation can fail with exit 1. |
+| Summary format | 2026-11-19 | Shows the JSON summary so callers can distinguish a completed scan from help output. |
 
 ## Why counting output lines is insufficient
 
@@ -139,7 +140,16 @@ to equal the first. There are no fitted coefficients or engineering limits.
 The [F821 rule definition][f821], [flake8 options][flake8] and
 [Ruff configuration reference][ruff-config] define the tool protocol.
 
-The table applies when the current invocation prints a status summary on stdout.
+Read the last line of stdout from the current invocation. A scan summary is a
+JSON object with `status` and `counts`. Here, both scans reported the same
+undefined name.
+
+```json
+{"status": "STABLE", "counts": [1, 1]}
+```
+
+Apply the table only when that line is a scan summary. Other stdout, including
+the usage text printed by `--help` (exit `0`), provides no scan result.
 
 | Status | Exit | Meaning |
 | --- | --- | --- |
