@@ -15,7 +15,6 @@ from worldenergydata.spain.production.cores_live import (
     CoresWorkbookSource,
     refresh_ayoluengo_fixture,
 )
-from worldenergydata.spain.production.cores_loader import TONNES_TO_BBL
 
 AYOLUENGO_OPERATOR_URL = (
     "https://web.archive.org/web/20170202034751id_/"
@@ -93,7 +92,7 @@ def test_download_all_writes_raw_files_atomically_and_records_metadata(tmp_path)
     )
 
 
-def test_refresh_ayoluengo_fixture_without_audit_records_legacy_default(tmp_path):
+def test_fixture_without_audit_preserves_unknown_conversion_and_gas(tmp_path):
     oil = pd.DataFrame(
         [
             {"field_name": "Other", "year": 2026, "month": 1, "oil_bbl": 1.0},
@@ -121,34 +120,29 @@ def test_refresh_ayoluengo_fixture_without_audit_records_legacy_default(tmp_path
     )
 
     sample = pd.read_csv(result.sample_path)
-    assert sample.to_dict("records") == [
+    assert sample.astype(object).where(sample.notna(), None).to_dict("records") == [
         {
             "field_name": "Ayoluengo",
             "year": 2026,
             "month": 1,
             "oil_bbl": 10.0,
-            "gas_mcf": 0.0,
+            "gas_mcf": None,
         },
         {
             "field_name": "Ayoluengo",
             "year": 2026,
             "month": 2,
             "oil_bbl": 20.0,
-            "gas_mcf": 0.0,
+            "gas_mcf": None,
         },
     ]
     written_metadata = json.loads(result.metadata_path.read_text())
     assert written_metadata["source_url"] == DEFAULT_WORKBOOKS["oil"].source_url
     assert written_metadata["statistics_page"] == STATISTICS_PAGE_URL
     assert written_metadata["sample_row_count"] == 2
-    assert "oil_tonnes_to_bbl" not in written_metadata["conversion_factors"]
-    assert written_metadata["conversion_factors"]["oil_tonnes_to_bbl_default"] == (
-        TONNES_TO_BBL
-    )
-    audit = written_metadata["oil_conversion_audit"]
-    assert audit["coverage_status"] == "defaulted"
-    assert audit["defaulted_fields"] == ["Ayoluengo"]
-    assert audit["default_bbl_per_tonne"] == TONNES_TO_BBL
+    assert written_metadata["conversion_factors"] == {}
+    assert written_metadata["oil_conversion_audit"] is None
+    assert "NOT_EVALUATED" in written_metadata["conversion"]
     assert written_metadata["workbooks"]["oil"]["sha256"] == "abc123"
 
 
