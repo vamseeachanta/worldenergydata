@@ -188,6 +188,11 @@ class ArpsDeclineCurve:
         ``months`` must be a positive integer. Booleans and duration scalars
         are invalid for all numeric parameters.
 
+        For hyperbolic EUR, the harmonic branch requires the floating-point
+        exponent to equal 1 exactly. Simulation can evaluate exponents
+        above 1, including values outside the fitting bounds. Their
+        physical applicability to a well requires separate justification.
+
         EUR is in bbl and is zero when the limit is at or above ``qi``.
         If ``qi`` exceeds ``economic_limit`` but both round to the same
         float, simulation raises ``ValueError`` for the two rates.
@@ -200,10 +205,8 @@ class ArpsDeclineCurve:
 
         Returns a :class:`ForecastResult` with ``r_squared=NaN`` and no
         confidence intervals because no fit occurred. Invalid inputs raise
-        ``ValueError``. Fitting bounds on the hyperbolic exponent do not
-        restrict this forward evaluation. Hyperbolic exponents above 1 are
-        evaluated without physical qualification. Nonfinite EUR or profile
-        fields raise ``ValueError`` without numerical overflow warnings.
+        ``ValueError``. Nonfinite EUR or profile fields raise ``ValueError``
+        without numerical overflow warnings.
         Profiles evaluate very small decay factors in log space to preserve
         representable month-end rates. Hyperbolic profiles preserve the
         exponential limit when the exponent-decline product underflows.
