@@ -12,6 +12,7 @@ accounting remains NOT_EVALUATED until comparable bases and asset links are esta
 <tr><th>Revision</th><th>Date</th><th>What changed and why</th></tr>
 <tr><td>1</td><td>2026-10-19</td><td>Documented portfolio event histories, reproducible outputs and accounting limitations.</td></tr>
 <tr><td>2</td><td>2026-10-20</td><td>Restricted award bound qualification, protected existing outputs and made build revision metadata explicit.</td></tr>
+<tr><td>3</td><td>2026-11-16</td><td>Added optional publication assertions bound to a trace snapshot, preserving source timing separately from monetary qualification.</td></tr>
 </table>
 <h2>Build and inspect</h2>
 <pre>PYTHONPATH=src:packages/worldenergydata-cost/src python scripts/cost/build_project_cost_traces.py \
@@ -48,6 +49,48 @@ only that this date is supplied; it does not qualify the amount for model traini
 observed years. This set operation introduces no estimated values. Separate lanes
 are keyed by project, total/component, component class, currency, nominal price
 basis, value basis and scope text. Awards are never accumulated as project spend.</p>
+<h2>Optional publication evidence</h2>
+<p>Add <code>--publication-evidence publication.json</code> to the build command
+to supply a UTF-8 JSON array of annotations. Omitting the option preserves existing
+output bytes and behavior. Each annotation has exactly these fields:</p>
+<pre>[{
+  "event_id": "&lt;event_id from the built snapshot&gt;",
+  "source_table_sha256": "&lt;64 lowercase hex digits from input_sha256&gt;",
+  "source_url": "https://example.org/disclosure",
+  "publication_date": "2021-02",
+  "date_precision": "month",
+  "source_locator": {
+    "url": "https://example.org/disclosure#dateline",
+    "location": "Publication dateline",
+    "quoted_text": "Test-only publication date: February 2021"
+  }
+}]</pre>
+<p>This shape example is synthetic, not source evidence. The original source URL
+must match the event exactly and the digest must match its source table in that
+snapshot. For an in-memory table build, use that build's canonical-table digest;
+for file inputs, use the raw-file digest. Dates use YYYY, YYYY-MM or YYYY-MM-DD
+with matching year, month or day precision. An explicitly unknown date uses JSON
+<code>null</code> and precision <code>unknown</code>; omitted events remain unchanged.
+Neither access dates nor effective dates supply missing publication evidence.</p>
+<p>A locator requires an HTTP(S) URL without credentials, a nonblank location within
+the source and nonblank supporting quoted text. URLs are not fetched. Syntax and
+snapshot binding are validated offline; authenticity, public accessibility and
+whether the cited text supports the asserted date require independent source review.
+These assertions must not be treated as automatically verified publication facts.</p>
+<p>Identical duplicate annotations are idempotent; contradictory annotations,
+unknown event IDs, stale digests, source URL mismatches, malformed locators and
+conflicts with existing publication dates fail before output. Duplicate JSON keys
+and unsupported fields fail. Existing date precision cannot be replaced by a finer
+or coarser assertion. A previously annotated snapshot accepts only the same input
+bytes; a different annotation document requires the original unannotated snapshot.</p>
+<p>The complete annotation is retained as JSON text in
+<code>source_fields.PUBLICATION_EVIDENCE</code> in CSV, JSON and HTML evidence.
+The SHA-256 of the supplied bytes is stored under <code>publication_evidence</code>
+in the manifest's <code>input_sha256</code>. Original source fields are retained.
+No curated table is rewritten. Event identity, effective date, values, currencies,
+confidence, asset links and monetary qualification are unchanged. Availability can
+make the existing historical availability flag true; it does not qualify an amount,
+establish component consistency or demonstrate suitability for model training.</p>
 <h2>Worked example: synthetic inputs, method and answer</h2>
 <p>The following values are illustrative inputs, not public project evidence or
 engineering acceptance limits. The independent hand calculation is also specified
@@ -88,7 +131,7 @@ NOT_EVALUATED with a reason; their disclosed values and bases are retained. Exis
 Trade-press confidence is capped at low without changing the retained raw row.</p>
 <p>Later work requires the portfolio asset-map dependency, structured total bounds,
 explicit native award currency, ownership/scope and change classifications, and
-publication dates. Scope changes or basis changes are retained when explicitly
+independently reviewed publication evidence. Scope changes or basis changes are retained when explicitly
 classified by the input; they are not inferred from prose. The unavailable v2
 asset-map contract is not claimed as verified by this trace manifest. Deflated
 comparisons, reconciliation residuals and historical model-feature qualification
