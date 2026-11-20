@@ -238,10 +238,16 @@ def load_status_values(path: Path | None) -> dict[str, str]:
     if not path or not path.exists():
         return {}
     text = path.read_text(encoding="utf-8", errors="replace")
-    pairs = re.findall(
-        r"<td[^>]*>\s*([A-Z]{2,5})\s*</td>\s*<td[^>]*>\s*([^<]{3,80}?)\s*</td>", text
-    )
-    return {code: html.unescape(desc).strip() for code, desc in pairs}
+    values = {}
+    for row in re.findall(r"<tr[^>]*>(.*?)</tr>", text, re.S | re.I):
+        cells = [
+            html.unescape(re.sub(r"<[^>]+>", "", c)).replace("\xa0", " ").strip()
+            for c in re.findall(r"<td[^>]*>(.*?)</td>", row, re.S | re.I)
+        ]
+        cells = [c for c in cells if c]
+        if len(cells) >= 2 and re.fullmatch(r"[A-Z0-9/]{2,6}", cells[0]):
+            values[cells[0]] = cells[1]
+    return values
 
 
 def depth_band(depth: float | None) -> str:
