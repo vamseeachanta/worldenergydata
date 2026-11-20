@@ -11,8 +11,9 @@ show_help() {
     echo "Usage: $0 <command>"
     echo ""
     echo "Commands:"
-    echo "  build         - Build the package"
-    echo "  test-build    - Build and test the package locally"
+    echo "  build         - Build the root and all workspace member distributions"
+    echo "  test-build    - Build all workspace wheels; installation is unvalidated"
+    echo "                  May install outside the temporary environment"
     echo "  publish-test  - Publish to TestPyPI"
     echo "  publish       - Publish to PyPI (production)"
     echo "  clean         - Clean build artifacts"
@@ -34,11 +35,11 @@ build_package() {
     echo "📦 Building package..."
     cd "$PROJECT_DIR"
     
-    # Ensure dependencies are up to date
-    uv sync --extra build
+    # Reject stale locks and preserve additional installed packages
+    uv sync --locked --inexact
     
     # Build the package
-    uv build
+    uv build --all-packages
     
     echo "✅ Build complete!"
     echo "📄 Build artifacts:"
