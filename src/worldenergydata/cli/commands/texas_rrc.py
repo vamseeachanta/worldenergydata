@@ -28,6 +28,8 @@ from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, TextColumn
 from rich.table import Table
 
+from worldenergydata.texas_rrc.validators import TexasDataValidator
+
 # Initialize console
 console = Console()
 
@@ -59,21 +61,8 @@ class OutputFormat(str, Enum):
     excel = "excel"
 
 
-# Valid RRC districts
-VALID_DISTRICTS = [
-    "01",
-    "02",
-    "03",
-    "04",
-    "05",
-    "06",
-    "7B",
-    "7C",
-    "08",
-    "8A",
-    "09",
-    "10",
-]
+# Use the same qualified district names as production normalization.
+VALID_DISTRICTS = TexasDataValidator.VALID_DISTRICTS.copy()
 
 
 @app.command()
@@ -88,7 +77,7 @@ def collect(
         None,
         "--districts",
         "-d",
-        help="RRC districts: 01-10, 7B, 7C, 8A (omit for all districts)",
+        help=f"RRC district names: {', '.join(VALID_DISTRICTS)} (omit for all districts)",
     ),
     output: Path = typer.Option(
         Path("./data/texas_rrc"),

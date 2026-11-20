@@ -13,6 +13,8 @@ import logging
 from pathlib import Path
 from typing import Any, Dict
 
+from .validators import TexasDataValidator
+
 logger = logging.getLogger(__name__)
 
 
@@ -35,21 +37,8 @@ class TexasRRC:
         "fields",
     ]
 
-    # Valid Texas RRC districts
-    VALID_DISTRICTS = [
-        "01",
-        "02",
-        "03",
-        "04",
-        "05",
-        "06",
-        "7B",
-        "7C",
-        "08",
-        "8A",
-        "09",
-        "10",
-    ]
+    # Keep configuration validation aligned with production normalization.
+    VALID_DISTRICTS = TexasDataValidator.VALID_DISTRICTS.copy()
 
     def __init__(self):
         """Initialize Texas RRC module."""
