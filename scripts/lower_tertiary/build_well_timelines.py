@@ -210,7 +210,15 @@ def facts_to_well(w: dict, field: dict, *, drilling_rows=()) -> dict:
             ]
             or ["none to date"],
         },
-        {"t": "Abandon", "big": "—", "li": ["still producing", "no P&A"]},
+        {
+            "t": "Abandon",
+            "big": "—",
+            "li": [
+                "P&A filing status not established",
+                "Liability not evaluated",
+                '<a href="../norms/abandon.html">P&A engineering context →</a>',
+            ],
+        },
     ]
     # Issue 778: the brief is a GoM overview, not a per-well access assessment.
     # Href follows the published lifecycle/wells/ layout in build_pages.py.
