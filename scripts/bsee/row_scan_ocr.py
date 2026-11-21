@@ -138,7 +138,11 @@ def http_fetch(url: str, dest: Path | None = None, timeout: float = 300) -> Resp
 def run_low(cmd: list[str]) -> tuple[int, str]:
     """Run an OCR tool at low priority with one thread; return (code, stdout)."""
     env = dict(os.environ, OMP_THREAD_LIMIT="1")
-    flags = getattr(subprocess, "BELOW_NORMAL_PRIORITY_CLASS", 0)
+    # Windows: below-normal priority, and no console window when started from a
+    # scheduled task under pythonw.exe.
+    flags = getattr(subprocess, "BELOW_NORMAL_PRIORITY_CLASS", 0) | getattr(
+        subprocess, "CREATE_NO_WINDOW", 0
+    )
     try:
         done = subprocess.run(
             cmd,
@@ -929,7 +933,11 @@ def single_run(path: Path):
 
 
 def build_parser() -> argparse.ArgumentParser:
-    ap = argparse.ArgumentParser(description=__doc__.split("\n\n", 1)[0])
+    # "@file" reads one argument per line, which keeps a scheduled task's
+    # command short.
+    ap = argparse.ArgumentParser(
+        description=__doc__.split("\n\n", 1)[0], fromfile_prefix_chars="@"
+    )
     sub = ap.add_subparsers(dest="cmd", required=True)
     run = sub.add_parser("run", help="one batch: fetch and OCR, then exit")
     run.add_argument("--data-dir", type=Path, required=True)

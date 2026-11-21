@@ -522,3 +522,19 @@ def test_index_fetch_refusal_respects_backoff(env):
     make_job(tmp_path, seg, None, clock, fetcher, max_docs=1).run()
     assert [u for _, u in fetcher.calls].count(rso.INDEX_ZIP_URL) == 2
     assert len(fetcher.doc_urls()) == 1
+
+
+def test_single_run_lock(tmp_path):
+    lock = tmp_path / ".run.lock"
+    with rso.single_run(lock) as first:
+        with rso.single_run(lock) as second:
+            assert first is True and second is False
+    with rso.single_run(lock) as again:
+        assert again is True
+
+
+def test_args_file(tmp_path):
+    args = tmp_path / "job.args"
+    args.write_text(f"run\n--data-dir\n{tmp_path / 'd'}\n--shard\n2/3\n--gap\n180\n")
+    ns = rso.build_parser().parse_args([f"@{args}"])
+    assert (ns.cmd, ns.shard, ns.gap) == ("run", "2/3", 180.0)
