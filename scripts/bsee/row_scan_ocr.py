@@ -37,11 +37,16 @@ depth cutoff only orders work. The initial grade allowlist (X52, X56, X60, X65,
 X70) is a search heuristic assumed, based on previous experience, retained as
 the candidate-search configuration in #2086; it is not a complete grade list.
 OCR matches require source-page and unit verification before any tier change.
-Collector configuration choices: the HTTP timeout is 300 s to bound a stalled
+Collector configuration basis: #2086, "Collector configuration basis" comment.
+The HTTP timeout is 300 s to bound a stalled
 request; each OCR command has 1,800 s to allow a large scan without an unbounded
 tool process. Candidate searches span at most 40 characters after "riser" and
 20 after an angle label to keep matches near their labels. These are conservative
 search and runtime choices for this collector, not source or engineering limits.
+Ungrouped riser lengths use two to five digits to reduce single-digit noise and
+long identifier matches; comma-grouped lengths retain all groups. This is an
+assumed search heuristic, based on previous experience, recorded in the same
+configuration decision, not a physical length limit.
 
 Commands::
 
@@ -95,6 +100,7 @@ USER_AGENT = (
 REFUSALS = {403, 429, 503}
 GONE = {404, 410}
 STOP_FILE = "STOP"
+QUEUE_KEY_VERSION = "v2"
 
 
 def utcnow() -> datetime:
@@ -268,7 +274,11 @@ def segment_passes(path: Path) -> dict[str, int]:
     """Segment number -> pass (1, 2 or 3) from the riser segment table."""
     out: dict[str, int] = {}
     with open(path, newline="", encoding="utf-8-sig") as fh:
-        for row in csv.DictReader(fh):
+        reader = csv.DictReader(fh)
+        required = {"segment_num", "max_water_depth_ft", "static_check_tier"}
+        if not required <= set(reader.fieldnames or []):
+            raise ValueError("segment table missing required headers")
+        for row in reader:
             seg = norm_segment(row.get("segment_num"))
             if seg is None:
                 continue
@@ -304,6 +314,18 @@ def read_index(raw: bytes):
             for k, v in row.items()
             if not isinstance(v, list)
         }
+
+
+def index_records(path: Path):
+    """Validate required ZIP members and headers, then yield (kind, record)."""
+    with zipfile.ZipFile(path) as zf:
+        names = {n.rsplit("/", 1)[-1].lower(): n for n in zf.namelist()}
+        for member in INDEX_MEMBERS.values():
+            if member not in names:
+                raise ValueError(f"index member missing: {member}")
+        for kind, member in INDEX_MEMBERS.items():
+            for rec in read_index(zf.read(names[member])):
+                yield kind, rec
 
 
 @dataclass
@@ -373,6 +395,17 @@ class Job:
                 self.db.execute("DELETE FROM meta WHERE key='queue_key'")
             if "ocr_sha256" not in columns:
                 self.db.execute("ALTER TABLE docs ADD COLUMN ocr_sha256 TEXT")
+            # Both earlier schemas could retain stale membership under the old key.
+            self.db.execute(
+                "DELETE FROM meta WHERE key='queue_key' AND value NOT LIKE ?",
+                (f"{QUEUE_KEY_VERSION}:%",),
+            )
+            # Completed text without a matching binding may mix PDF revisions.
+            # Leave the text in place for ocr_doc to archive before regeneration.
+            self.db.execute(
+                "UPDATE docs SET status='fetched' WHERE status='read' AND "
+                "(ocr_sha256 IS NULL OR sha256 IS NULL OR ocr_sha256 != sha256)"
+            )
         self.started = self.clock.now()
         self.gap_s = cfg.gap_s
         self._robots: RobotFileParser | None = None
@@ -459,7 +492,6 @@ class Job:
             self.log(
                 f"HTTP {response.status} redirect deferred; no destination fetched"
             )
-            return None
         return response
 
     def robots_ok(self, url: str) -> bool | None:
@@ -475,6 +507,8 @@ class Job:
                 if r is None:
                     return None
                 rp_status = r.status
+                if 300 <= rp_status < 400:
+                    return None
                 if rp_status == 200:
                     text = r.body.decode("utf-8", errors="replace")
                 elif rp_status in GONE:
@@ -508,8 +542,8 @@ class Job:
         until = self.meta("backoff_until")
         return not (until and self.clock.now() < datetime.fromisoformat(until))
 
-    def prepare(self) -> int:
-        """Fetch the scan index if needed and build this host's shard queue."""
+    def prepare(self) -> int | None:
+        """Prepare the current queue; None means defer the entire batch."""
         shard = f"{self.cfg.shard_k}/{self.cfg.shard_n}"
         held = self.meta("shard")
         if held and held != shard:
@@ -521,22 +555,25 @@ class Job:
                 self.log(f"index file missing: {zip_path}")
                 return 5
             if self.stop_requested() or not self.may_fetch():
-                return 0
+                return None
             rc = self.fetch_index(zip_path)
             if rc:
                 return rc
             if not zip_path.exists():
-                return 0
+                return None
         if not self.cfg.segments or not Path(self.cfg.segments).exists():
             self.log(f"segment table missing: {self.cfg.segments}")
             return 5
-        key = f"{sha256_of(zip_path)}:{sha256_of(Path(self.cfg.segments))}:{shard}"
+        key = (
+            f"{QUEUE_KEY_VERSION}:{sha256_of(zip_path)}:"
+            f"{sha256_of(Path(self.cfg.segments))}:{shard}"
+        )
         if self.meta("queue_key") == key:
             return 0
         try:
             added = self.build_queue(zip_path, Path(self.cfg.segments))
         except (ValueError, zipfile.BadZipFile) as err:
-            self.log(f"index invalid; previous queue retained: {err}")
+            self.log(f"queue input invalid; previous queue retained: {err}")
             return 5
         self.set_meta("queue_key", key)
         self.set_meta("shard", shard)
@@ -557,7 +594,16 @@ class Job:
         r = self.request(INDEX_ZIP_URL, part)
         if r is None:
             return 0 if self.disk_ok() else 4
-        if r.status == 200 and part.exists() and zipfile.is_zipfile(part):
+        if 300 <= r.status < 400:
+            return 0
+        if r.status == 200 and part.exists():
+            try:
+                for _ in index_records(part):
+                    pass
+            except (ValueError, zipfile.BadZipFile) as err:
+                self.add_error()
+                self.log(f"downloaded index invalid; not installed: {err}")
+                return 5
             size = part.stat().st_size
             digest = sha256_of(part)
             os.replace(part, zip_path)
@@ -574,30 +620,24 @@ class Job:
     def build_queue(self, zip_path: Path, segments_path: Path) -> int:
         passes = segment_passes(segments_path)
         docs: dict[tuple[str, int], dict] = {}
-        with zipfile.ZipFile(zip_path) as zf:
-            names = {n.rsplit("/", 1)[-1].lower(): n for n in zf.namelist()}
-            for kind, member in INDEX_MEMBERS.items():
-                name = names.get(member)
-                if name is None:
-                    raise ValueError(f"index member missing: {member}")
-                for rec in read_index(zf.read(name)):
-                    seg = norm_segment(rec.get("SEGMENT_NUMBER"))
-                    doc_id = to_int(rec.get("DOC_ID"))
-                    if seg not in passes or doc_id is None:
-                        continue
-                    if doc_id % self.cfg.shard_n != self.cfg.shard_k:
-                        continue
-                    d = docs.setdefault(
-                        (kind, doc_id),
-                        {
-                            "segs": set(),
-                            "pass": 9,
-                            "pages": to_int(rec.get("DOC_PAGES")),
-                            "size": to_int(rec.get("DOC_FILESIZE")),
-                        },
-                    )
-                    d["segs"].add(seg)
-                    d["pass"] = min(d["pass"], passes[seg])
+        for kind, rec in index_records(zip_path):
+            seg = norm_segment(rec.get("SEGMENT_NUMBER"))
+            doc_id = to_int(rec.get("DOC_ID"))
+            if seg not in passes or doc_id is None:
+                continue
+            if doc_id % self.cfg.shard_n != self.cfg.shard_k:
+                continue
+            d = docs.setdefault(
+                (kind, doc_id),
+                {
+                    "segs": set(),
+                    "pass": 9,
+                    "pages": to_int(rec.get("DOC_PAGES")),
+                    "size": to_int(rec.get("DOC_FILESIZE")),
+                },
+            )
+            d["segs"].add(seg)
+            d["pass"] = min(d["pass"], passes[seg])
         now = self.clock.now().isoformat()
         # Replace membership atomically; keep downloads, failures and OCR evidence.
         with self.db:
@@ -614,13 +654,20 @@ class Job:
                 )
         return len(docs)
 
-    def next_doc(self):
-        return self.db.execute(
-            "SELECT kind, doc_id, index_size, index_pages, segments FROM docs"
-            " WHERE active=1 AND status='queued' AND pass<=?"
-            " ORDER BY pass, attempts, kind, doc_id LIMIT 1",
-            (self.cfg.max_pass,),
-        ).fetchone()
+    def next_doc(self, excluded=()):
+        return next(
+            (
+                doc
+                for doc in self.db.execute(
+                    "SELECT kind, doc_id, index_size, index_pages, segments FROM docs"
+                    " WHERE active=1 AND status='queued' AND pass<=?"
+                    " ORDER BY pass, attempts, kind, doc_id",
+                    (self.cfg.max_pass,),
+                )
+                if doc[:2] not in excluded
+            ),
+            None,
+        )
 
     def set_doc(self, kind: str, doc_id: int, **fields) -> None:
         fields["updated_utc"] = self.clock.now().isoformat()
@@ -689,6 +736,8 @@ class Job:
         r = self.request(url, part)
         if r is None:
             return "deferred"
+        if 300 <= r.status < 400:
+            return "redirected"
         if r.status == 200:
             problem = ""
             size = part.stat().st_size if part.exists() else 0
@@ -867,20 +916,22 @@ class Job:
             self.log("STOP file present; nothing done")
             return 0
         rc = self.prepare()
+        if rc is None:
+            return 0
         if rc:
             return rc
         self.ocr_backlog()
         if not self.disk_ok():
             return 4
         done = 0
-        errored: set[tuple[str, int]] = set()  # each document once per run
+        excluded: set[tuple[str, int]] = set()  # each document once per run
         while not self.stop_requested():
             if not self.may_fetch() or self.budget_spent():
                 break
             if not self.disk_ok():
                 return 4
-            doc = self.next_doc()
-            if doc is None or (doc[0], doc[1]) in errored:
+            doc = self.next_doc(excluded)
+            if doc is None:
                 break
             result = self.fetch_doc(doc)
             if result == "robots_bar":
@@ -889,8 +940,10 @@ class Job:
                 return 4
             if result in ("robots_unknown", "refused", "deferred"):
                 break
-            if result == "error":
-                errored.add((doc[0], doc[1]))
+            if result in ("error", "redirected"):
+                excluded.add((doc[0], doc[1]))
+            if result == "redirected":
+                continue
             if result == "ok" and self.cfg.ocr:
                 self.ocr_doc(doc[0], doc[1])
             if not self.disk_ok():
@@ -951,8 +1004,8 @@ FINDING_PATTERNS = {
     ],
     "hang_off_angle_deg": [
         re.compile(
-            r"(?:hang[\s-]*off|departure|top)\s+angle[^\d.+\-\n]{0,20}?"
-            r"([+-]?\d+(?:\.\d+)?)\s*(?:°|deg(?:rees?)?\b)",
+            r"(?:hang[\s-]*off|departure|top)\s+angle[^\d.+\-−\n]{0,20}?"
+            r"([+\-−]?\d+(?:\.\d+)?)\s*(?:°|deg(?:rees?)?\b)",
             re.I,
         )
     ],
@@ -981,6 +1034,8 @@ def find_values(text: str):
                         matched_quantity = f"wall_thickness_{suffix}"
                     if quantity == "grade":
                         value = value.replace("-", "")
+                    if quantity == "hang_off_angle_deg":
+                        value = value.replace("−", "-")
                     yield matched_quantity, value, line.strip()[:200]
 
 
@@ -992,6 +1047,7 @@ def write_findings(job: Job, out: Path) -> int:
         w.writerow(["segments", "kind", "doc_id", "page", "quantity", "value", "line"])
         for kind, doc_id, segments in job.db.execute(
             "SELECT kind, doc_id, segments FROM docs WHERE active=1 AND status='read'"
+            " AND sha256 IS NOT NULL AND ocr_sha256=sha256"
             " ORDER BY kind, doc_id"
         ):
             for page_file in sorted(job.text_dir(kind, doc_id).glob("page-*.txt")):

@@ -805,6 +805,7 @@ def test_run_low_forwards_windows_flags(monkeypatch):
     [
         ("wall thickness 1 1/2 in", "wall_thickness_in", "1 1/2"),
         ("departure angle -12.5 degrees", "hang_off_angle_deg", "-12.5"),
+        ("departure angle −12.5 degrees", "hang_off_angle_deg", "-12.5"),
     ],
 )
 def test_findings_csv_preserves_mixed_fraction_and_sign(env, line, quantity, value):
@@ -812,7 +813,13 @@ def test_findings_csv_preserves_mixed_fraction_and_sign(env, line, quantity, val
     clock = FakeClock(DAY)
     job = make_job(tmp_path, seg, zp, clock, FakeFetcher(clock))
     job.prepare()
-    job.set_doc("ROW", 32733, status="read")
+    job.set_doc(
+        "ROW",
+        32733,
+        status="read",
+        sha256="fixture digest",
+        ocr_sha256="fixture digest",
+    )
     tdir = job.text_dir("ROW", 32733)
     tdir.mkdir(parents=True)
     (tdir / "page-0001.txt").write_text(line)
@@ -840,7 +847,8 @@ def test_failed_ocr_retry_keeps_saved_pdf_and_page_digest(env):
     assert job.run() == 0
     page_one = job.text_dir("PIPEMAPS", 19963) / "page-0001.txt"
     first_text = page_one.read_text()
-    original_digest = rso.sha256_of(job.pdf_path("PIPEMAPS", 19963))
+    # SHA-256 pinned independently with sha256sum for the literal PDF fixture.
+    original_digest = "fba53e3eb0e2cec344bfd441e032a5b69eaf589e3150d54b93f4be45c25d3ee2"
     url = rso.doc_url("PIPEMAPS", 19963)
     fetcher.script[url] = [rso.Response(200, {}, PDF + b"replacement")]
     retry = make_job(tmp_path, seg, zp, clock, fetcher, which=all_tools, max_docs=1)
@@ -882,7 +890,8 @@ def test_legacy_unbound_pages_are_archived_before_ocr(env):
     assert (archives[0] / "page-0001.txt").read_text() == "unbound evidence"
 
 
-def test_original_schema_matching_key_is_invalidated(env):
+@pytest.mark.parametrize("has_active", [False, True])
+def test_original_schema_matching_key_is_invalidated(env, has_active):
     tmp_path, seg, zp = env
     data = tmp_path / "data-0-1"
     data.mkdir()
@@ -899,6 +908,8 @@ def test_original_schema_matching_key_is_invalidated(env):
             CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT);
         """
         )
+        if has_active:
+            db.execute("ALTER TABLE docs ADD COLUMN active INTEGER NOT NULL DEFAULT 1")
         db.execute(
             "INSERT INTO docs(kind, doc_id, pass, status, sha256) "
             "VALUES('ROW', 32733, 1, 'queued', 'retained evidence')"
@@ -996,8 +1007,145 @@ def test_redirect_defers_without_charging_error(env):
     fetcher.script[url] = [rso.Response(302, {"location": url})]
     job = make_job(tmp_path, seg, zp, clock, fetcher, max_docs=1)
     assert job.run() == 0
-    assert fetcher.doc_urls() == [url]
+    assert fetcher.doc_urls() == [url, rso.doc_url("ROW", 32733)]
     assert job.errors_today() == 0
     assert job.db.execute(
         "SELECT status, attempts FROM docs WHERE doc_id=19963"
     ).fetchone() == ("queued", 0)
+
+
+@pytest.mark.parametrize("has_binding_column", [False, True])
+def test_completed_unbound_ocr_is_excluded_until_regenerated(env, has_binding_column):
+    job, clock = fetched_backlog(env)
+    pdf = job.pdf_path("PIPEMAPS", 19963)
+    job.set_doc("PIPEMAPS", 19963, status="read", sha256=rso.sha256_of(pdf), pages=2)
+    tdir = job.text_dir("PIPEMAPS", 19963)
+    tdir.mkdir(parents=True)
+    old = tdir / "page-0001.txt"
+    old.write_text("wall thickness 9 mm")
+    if not has_binding_column:
+        job.db.execute("ALTER TABLE docs DROP COLUMN ocr_sha256")
+        job.db.commit()
+    job.db.close()
+    retry = make_job(env[0], env[1], env[2], clock, FakeFetcher(clock), which=all_tools)
+    assert retry.db.execute(
+        "SELECT status FROM docs WHERE doc_id=19963"
+    ).fetchone() == ("fetched",)
+    assert old.read_text() == "wall thickness 9 mm"
+    out = env[0] / "findings.csv"
+    assert rso.write_findings(retry, out) == 0
+    assert retry.run() == 0
+    assert rso.write_findings(retry, out) == 4
+    assert "wall_thickness_mm,9" not in out.read_text()
+    archives = list(tdir.parent.glob("19963-unverified-*"))
+    assert len(archives) == 1
+    assert (archives[0] / old.name).read_text() == "wall thickness 9 mm"
+    assert retry.fetcher.calls == []
+
+
+@pytest.mark.parametrize("bound", [None, "different digest"])
+def test_export_excludes_unbound_completed_rows(env, bound):
+    job, _ = fetched_backlog(env)
+    job.set_doc(
+        "PIPEMAPS", 19963, status="read", sha256="saved digest", ocr_sha256=bound
+    )
+    tdir = job.text_dir("PIPEMAPS", 19963)
+    tdir.mkdir(parents=True)
+    (tdir / "page-0001.txt").write_text("wall thickness 9 mm")
+    assert rso.write_findings(job, env[0] / "findings.csv") == 0
+
+
+@pytest.mark.parametrize("invalid", ["missing_members", "headers", "not_zip"])
+def test_invalid_download_is_not_installed_and_next_batch_retries(env, invalid):
+    tmp_path, seg, zp = env
+    clock = FakeClock(NIGHT)
+    fetcher = FakeFetcher(clock, zip_bytes=zp.read_bytes())
+    bad = io.BytesIO()
+    with zipfile.ZipFile(bad, "w") as zf:
+        zf.writestr("unrelated.txt", "unused")
+        if invalid == "headers":
+            zf.writestr("scan_row.txt", ROW_TXT)
+            zf.writestr("scan_pipeline_maps.txt", "WRONG,HEADER\n")
+    payload = b"not a zip" if invalid == "not_zip" else bad.getvalue()
+    fetcher.script[rso.INDEX_ZIP_URL] = [rso.Response(200, {}, payload)]
+    job = make_job(tmp_path, seg, None, clock, fetcher, max_docs=1)
+    assert job.run() == 5
+    assert not (job.dir / rso.INDEX_ZIP_NAME).exists()
+    assert job.meta("queue_key") is None
+    assert fetcher.doc_urls() == []
+    assert make_job(tmp_path, seg, None, clock, fetcher, max_docs=1).run() == 0
+    assert [u for _, u in fetcher.calls].count(rso.INDEX_ZIP_URL) == 2
+    assert len(fetcher.doc_urls()) == 1
+
+
+@pytest.mark.parametrize("defer", ["redirect", "robots", "network", "gap"])
+def test_missing_index_deferral_does_not_process_stale_queue(env, defer):
+    tmp_path, seg, zp = env
+    clock = FakeClock(NIGHT)
+    fetcher = FakeFetcher(clock, zip_bytes=zp.read_bytes())
+    job = make_job(tmp_path, seg, zp, clock, fetcher, which=all_tools)
+    assert job.prepare() == 0
+    # Include fetched OCR work as well as queued downloads from the old selection.
+    pdf = job.pdf_path("PIPEMAPS", 19963)
+    pdf.parent.mkdir(parents=True)
+    pdf.write_bytes(PDF)
+    job.set_doc("PIPEMAPS", 19963, status="fetched")
+    seg.write_text("segment_num,max_water_depth_ft,static_check_tier\n")
+    job.cfg.index_zip = None
+    if defer == "robots":
+        fetcher.script[rso.ROBOTS_URL] = [rso.Response(0, error="unavailable")]
+    elif defer in ("redirect", "network"):
+        fetcher.script[rso.INDEX_ZIP_URL] = [
+            rso.Response(302 if defer == "redirect" else 0)
+        ]
+    else:
+        clock.t = NIGHT.replace(hour=10, minute=59, second=30)
+        job.set_meta("last_request_utc", clock.now().isoformat())
+    assert job.run() == 0
+    assert fetcher.doc_urls() == []
+    assert job.runner_calls == []
+    assert job.next_doc() is not None  # evidence retained, but not processed
+
+
+@pytest.mark.parametrize(
+    "header", ["wrong,header", "segment_num", "segment_num,max_water_depth_ft", ""]
+)
+def test_invalid_segment_headers_preserve_queue_and_key(env, header):
+    tmp_path, seg, zp = env
+    clock = FakeClock(NIGHT)
+    job = make_job(tmp_path, seg, zp, clock, FakeFetcher(clock))
+    assert job.prepare() == 0
+    before = job.db.execute("SELECT * FROM docs ORDER BY kind, doc_id").fetchall()
+    key = job.meta("queue_key")
+    seg.write_text(header + "\n")
+    assert job.run() == 5
+    assert job.meta("queue_key") == key
+    assert (
+        job.db.execute("SELECT * FROM docs ORDER BY kind, doc_id").fetchall() == before
+    )
+    assert job.fetcher.calls == []
+
+
+def test_permanent_pdf_redirect_does_not_block_other_documents(env):
+    tmp_path, seg, zp = env
+    clock = FakeClock(NIGHT)
+    fetcher = FakeFetcher(clock)
+    url = rso.doc_url("PIPEMAPS", 19963)
+    fetcher.script[url] = [rso.Response(301, {"location": url}) for _ in range(2)]
+    for _ in range(2):
+        job = make_job(tmp_path, seg, zp, clock, fetcher)
+        assert job.run() == 0
+    assert fetcher.doc_urls() == [
+        url,
+        rso.doc_url("ROW", 32733),
+        rso.doc_url("ROW", 32737),
+        url,
+    ]
+    assert job.errors_today() == 0
+    assert job.db.execute(
+        "SELECT status, attempts FROM docs WHERE doc_id=19963"
+    ).fetchone() == ("queued", 0)
+    assert all(
+        (b[0] - a[0]).total_seconds() >= 60
+        for a, b in zip(fetcher.calls, fetcher.calls[1:])
+    )
