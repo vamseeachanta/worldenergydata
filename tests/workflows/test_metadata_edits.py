@@ -27,11 +27,17 @@ CHECKS = {
         "pack-lint": "Lint Changed Knowledge Packs",
     },
 }
+# Subscribed pull-request activity types. Only CI skips drafts, so only CI hears ready_for_review.
+TYPES = {
+    "ci.yml": ["opened", "synchronize", "reopened", "edited", "ready_for_review"],
+    "pr-validation.yml": ["opened", "synchronize", "reopened", "edited"],
+}
 MARKER = {"from": ""}
 CODE_EVENTS = [
     ("opened", {}, "1"),
     ("synchronize", {}, "1"),
     ("reopened", {}, "1"),
+    ("ready_for_review", {}, "1"),
     ("edited", {"base": {"ref": {"from": "main"}}}, "1"),
     ("edited", {"base": MARKER, "title": MARKER, "body": MARKER}, "1"),
     ("edited", {}, "1"),  # Unrecognized edit: run the full gate.
@@ -107,9 +113,7 @@ def test_code_events_keep_checks(filename, action, changes, attempt):
         assert "push" not in triggers
         return
     if action != "push":
-        assert triggers["pull_request"] == {
-            "types": ["opened", "synchronize", "reopened", "edited"]
-        }
+        assert triggers["pull_request"] == {"types": TYPES[filename]}
     else:
         assert triggers["push"] == {"branches": ["main", "develop"]}
     assert job_states(filename, context) == {

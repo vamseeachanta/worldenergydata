@@ -2,6 +2,8 @@ name: Wheel ownership
 
 on:
   pull_request:
+    # A draft skips the wheel build; marking it ready runs it.
+    types: [opened, synchronize, reopened, ready_for_review]
   workflow_dispatch:
 
 permissions:
@@ -13,6 +15,7 @@ env:
 jobs:
   wheel-ownership:
     name: Build and check workspace wheels
+    if: ${{ github.event_name != 'pull_request' || !github.event.pull_request.draft }}
     runs-on: >-
       ${{ (github.event_name != 'pull_request' ||
           github.event.pull_request.head.repo.full_name == github.repository) &&
