@@ -314,28 +314,97 @@ _BADGE = {
 }
 
 _CSS = """
-:root{--navy:#0B3D91;--teal:#0f8a7e;--bg:#eef3fa;--panel:#fff;--ink:#13233f;--muted:#5b6b86;--line:#dbe4f0;--soft:#f4f8fc;--warn:#b7791f}
+:root{
+  color-scheme:light;
+  --navy:#0B3D91;--teal:#0f8a7e;--ink:#13233f;--muted:#5b6b86;
+  --line:#dbe4f0;--soft:#f4f8fc;--bg:#eaeff2;--panel:#fff;
+  --heading:var(--navy);--accent:var(--teal);--warn:#8a5a12;
+  --warn-wash:#fdf3e0;--ok:#127a3e;--ok-wash:#e6f6ec;--seed-row:#fffdf8;
+  --mono:ui-monospace,"SF Mono","Cascadia Code",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#081820;--panel:#0e2732;--soft:#12303c;--ink:#e6eef1;
+    --muted:#9fb4bd;--line:#274653;--heading:#e6eef1;--accent:#3fbfd0;
+    --warn:#e0a94a;--warn-wash:#33280f;--ok:#4fc79f;--ok-wash:#10322a;
+    --seed-row:#17272f;
+  }
+}
+:root[data-theme="light"]{color-scheme:light}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#081820;--panel:#0e2732;--soft:#12303c;--ink:#e6eef1;
+  --muted:#9fb4bd;--line:#274653;--heading:#e6eef1;--accent:#3fbfd0;
+  --warn:#e0a94a;--warn-wash:#33280f;--ok:#4fc79f;--ok-wash:#10322a;
+  --seed-row:#17272f;
+}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;padding:32px 20px 80px}
-main{max-width:1080px;margin:0 auto}
-h1{font-size:28px;font-weight:800;color:var(--navy);letter-spacing:-.4px}
+html{scroll-padding-top:80px}
+body{
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  background:var(--bg);color:var(--ink);line-height:1.6;
+}
+a{color:var(--accent)}
+a:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--accent)}
+.site{
+  position:sticky;top:0;z-index:20;padding:10px 20px;
+  background:var(--panel);border-bottom:1px solid var(--line);
+}
+.capability{
+  display:flex;gap:8px;max-width:1080px;margin:auto;overflow-x:auto;
+  font-family:var(--mono);font-size:13px;
+}
+.capability a{padding:6px 10px;white-space:nowrap;text-decoration:none}
+.capability a:hover{background:var(--soft)}
+main{max-width:1120px;margin:0 auto;padding:28px 20px 80px}
+.breadcrumb{font-size:13px;color:var(--muted);margin-bottom:20px}
+.eyebrow{font:12px var(--mono);text-transform:uppercase;letter-spacing:.12em}
+h1{font-size:28px;color:var(--heading);letter-spacing:-.4px}
+h2{font-size:18px;color:var(--heading);margin-bottom:8px}
 .sub{color:var(--muted);font-size:16px;margin-top:8px;max-width:820px}
-.disclaimer{margin-top:20px;background:#fffaf0;border:1px solid #f0dcae;border-left:4px solid var(--warn);border-radius:10px;padding:14px 16px;color:#7a5a12;font-size:14px}
-table{width:100%;border-collapse:collapse;margin-top:26px;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
-th,td{padding:11px 14px;text-align:left;font-size:14px;border-bottom:1px solid var(--line)}
-th{background:var(--soft);color:var(--navy);font-weight:700;font-size:12.5px;text-transform:uppercase;letter-spacing:.4px}
-td.num{text-align:right;font-variant-numeric:tabular-nums}
-tr[data-provenance="seed"]{background:#fffdf8}
+.path,.legend{
+  margin-top:24px;padding:16px 20px;background:var(--panel);
+  border:1px solid var(--line);border-radius:14px;font-size:14px;
+}
+.path ol,.legend ul{padding-left:22px}
+.legend li+li{margin-top:8px}
+.disclaimer{
+  margin-top:24px;background:var(--warn-wash);color:var(--warn);
+  border-left:4px solid var(--warn);border-radius:10px;
+  padding:14px 16px;font-size:14px;
+}
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+table{width:100%;border-collapse:collapse;background:var(--panel)}
+th,td{
+  padding:11px 14px;text-align:left;font-size:14px;
+  border-bottom:1px solid var(--line);
+}
+th{
+  background:var(--soft);color:var(--heading);font-weight:700;
+  font-size:12.5px;text-transform:uppercase;letter-spacing:.4px;
+}
+td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+tr[data-provenance="seed"]{background:var(--seed-row)}
 tr:last-child td{border-bottom:none}
-.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11.5px;font-weight:700;white-space:nowrap}
-.badge-real{background:#e6f6ec;color:#127a3e;border:1px solid #b7e3c6}
-.badge-seed{background:#fdf3e0;color:#8a5a12;border:1px solid #f0dcae}
-.concept{margin-top:34px}
-.concept h2{font-size:18px;color:var(--navy);border-left:4px solid var(--teal);padding-left:12px}
+.badge{
+  display:inline-block;padding:3px 10px;border-radius:20px;font-size:11.5px;
+  font-weight:700;white-space:nowrap;border:1px solid currentColor;
+}
+.badge-real{background:var(--ok-wash);color:var(--ok)}
+.badge-seed{background:var(--warn-wash);color:var(--warn)}
+.badge-screening{background:var(--soft);color:var(--muted)}
+.concept,#benchmark{margin-top:34px}
+.concept .table-wrap{margin-top:16px}
 .skip{margin-top:24px;color:var(--muted);font-size:13px}
-.prov-summary{margin-top:14px;background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:14px;color:var(--ink)}
-footer{margin-top:40px;color:var(--muted);font-size:12.5px;border-top:1px solid var(--line);padding-top:16px}
-a.back{color:var(--teal);font-weight:700}
+.prov-summary{
+  margin-top:14px;background:var(--soft);border:1px solid var(--line);
+  border-radius:10px;padding:12px 14px;font-size:14px;
+}
+footer{
+  margin-top:40px;color:var(--muted);font-size:12.5px;
+  border-top:1px solid var(--line);padding-top:16px;
+}
 """
 
 
@@ -414,14 +483,17 @@ def render_benchmark_html(benchmark: dict) -> str:
                 )
             )
         concept_html = (
-            '<section class="concept"><h2>Development-concept mix by region</h2>'
+            '<section class="concept" id="concepts">'
+            "<h2>Development-concept mix by region</h2>"
             '<p class="sub">Fields bucketed by water depth via '
             "<code>classify_dev_system_by_depth</code>; fields without a known "
             "depth are counted as <em>unknown</em> (depth is never fabricated).</p>"
+            '<div class="table-wrap" role="region" '
+            'aria-label="Development-concept data" tabindex="0">'
             "<table><thead><tr><th>Region</th><th>Dry tree</th><th>Subsea (&lt;6000 ft)</th>"
             "<th>Subsea (&ge;6000 ft)</th><th>Unknown</th></tr></thead><tbody>"
             + "".join(crows)
-            + "</tbody></table></section>"
+            + "</tbody></table></div></section>"
         )
 
     skipped = benchmark.get("skipped_empty") or []
@@ -467,6 +539,11 @@ def render_benchmark_html(benchmark: dict) -> str:
         )
 
     generated = ", ".join(benchmark.get("generated_regions", [])) or "—"
+    concept_link = (
+        '<li><a href="#concepts">Compare development concepts</a></li>'
+        if concept_mix
+        else ""
+    )
 
     doc = f"""<!DOCTYPE html>
 <html lang="en">
@@ -477,14 +554,34 @@ def render_benchmark_html(benchmark: dict) -> str:
 <style>{_CSS}</style>
 </head>
 <body>
+<header class="site">
+  <nav class="capability" aria-label="Capabilities">
+    <a href="../field-atlas/index.html">Field atlas</a>
+    <a href="../capabilities/insights.html">Insights</a>
+    <a href="#benchmark">Field benchmark</a>
+  </nav>
+</header>
 <main>
-  <p><a class="back" href="../capabilities/">&larr; Capabilities</a></p>
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="../field-atlas/index.html">Field atlas</a> &rsaquo;
+    <span aria-current="page">Field benchmark</span>
+  </nav>
+  <p class="eyebrow">Worldwide field data</p>
   <h1>Cross-country field-development benchmark</h1>
   <p class="sub">Peak production, effective government take and a discounted
      post-tax cash-flow proxy (historical, no capex) across offshore regions,
      each row badged with its data provenance. Fiscal coefficients are
      simplified public approximations — not legal or financial advice.</p>
-  <div class="disclaimer">
+  <section class="path" aria-labelledby="reading-title">
+    <h2 id="reading-title">Guided reading path</h2>
+    <ol>
+      <li><a href="#provenance">Understand the evidence and limitations</a></li>
+      <li><a href="#benchmark">Explore the benchmark data</a></li>
+      {concept_link}
+      <li><a href="#source">Read the source facts and provenance</a></li>
+    </ol>
+  </section>
+  <div class="disclaimer" id="provenance">
     <strong>Provenance notice.</strong> Rows tagged
     <span class="badge badge-seed">Illustrative seed — not yet ingested</span>
     use <strong>synthetic mock data</strong> from the region adapter and must
@@ -496,6 +593,22 @@ def render_benchmark_html(benchmark: dict) -> str:
     cash-flow proxy, not a forward-looking investment NPV.
   </div>
   {summary_html}
+  <aside class="legend" aria-label="Evidence badge legend">
+    <h2>Evidence badge legend</h2>
+    <ul>
+      <li><span class="badge badge-real">Real regulatory data</span>
+        — ingested public regulatory production; fiscal results remain
+        simplified approximations.</li>
+      <li><span class="badge badge-seed">Illustrative seed</span>
+        — synthetic adapter data, not measured regulatory production.</li>
+      <li><span class="badge badge-screening">Screening-only</span>
+        — registered region with no production rows; no economics row is
+        fabricated.</li>
+    </ul>
+  </aside>
+  <section id="benchmark" aria-labelledby="benchmark-title">
+  <h2 id="benchmark-title">Explore the data</h2>
+  <div class="table-wrap" role="region" aria-label="Benchmark data" tabindex="0">
   <table>
     <thead>
       <tr>
@@ -507,14 +620,19 @@ def render_benchmark_html(benchmark: dict) -> str:
       {''.join(body_rows) if body_rows else '<tr><td colspan="6">No data.</td></tr>'}
     </tbody>
   </table>
+  </div>
   {skip_html}
+  </section>
   {concept_html}
-  <footer>
+  <footer id="source">
     Generated {html.escape(str(meta.get('generated_utc', '')))} ·
     oil price ${html.escape(str(meta.get('oil_price_usd', '')))}/bbl ·
     discount {float(meta.get('discount_rate', 0.10)) * 100:.0f}% ·
     regions: {html.escape(generated)} ·
-    Public regulatory data only. Source: worldenergydata unified production adapters.
+    Inputs may include public regulatory records and illustrative synthetic data;
+    row badges retain their evidence status. Source: unified production adapters.
+    <a href="_facts.json">Data &amp; provenance</a> ·
+    <a href="#provenance">Evidence limitations</a>
   </footer>
 </main>
 </body>

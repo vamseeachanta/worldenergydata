@@ -37,6 +37,35 @@ Regenerate into a temp directory and diff against the committed files. They
 should be byte-identical apart from `meta.generated_utc`, which is a wall-clock
 stamp. Any other difference means the committed artifact is stale.
 
+### Rendering a presentation change from retained facts
+
+For a theme or navigation change, render the retained facts without querying
+adapters or recalculating economics. Set `RENDER_OUTPUT` to a file in an existing
+temporary directory outside the repository, then run from the repository root:
+
+```bash
+python - <<'PY'
+import json
+import os
+from pathlib import Path
+
+from worldenergydata.production.unified.benchmark_report import render_benchmark_html
+
+facts = Path("reports/field_benchmark/_facts.json")
+original = facts.read_bytes()
+output = Path(os.environ["RENDER_OUTPUT"])
+output.write_text(render_benchmark_html(json.loads(original)), encoding="utf-8")
+assert facts.read_bytes() == original
+PY
+```
+
+Compare the rendered table cells, row provenance and status summary with the
+committed page before copying the output to `index.html`. Keep `_facts.json`
+byte-identical. This workflow preserves the data vintage and its limitations;
+it does not refresh sources or reconcile the separate economics representations.
+The page links its retained facts locally; external dataset publication remains
+a separate change. Its explicit light/dark themes also follow system preference.
+
 ## Files
 
 | File | What it is |
