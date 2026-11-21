@@ -245,6 +245,15 @@ jobs:
         with:
           persist-credentials: false
 
+      # tests/unit/scheduler/test_bsee_receipt.py hashes blobs at the receipt's
+      # pinned revision; the default checkout is one commit deep, so fetch it
+      # and make its absence fail the test instead of skipping.
+      - name: Fetch BSEE receipt source revision
+        if: ${{ contains(matrix.targets, 'tests/unit/scheduler') }}
+        run: |
+          git fetch --no-tags --depth=1 origin 1e35ee97d665432e35b3c5e7b5bd09788982a185
+          echo "WED_REQUIRE_BSEE_RECEIPT_HISTORY=1" >> "$GITHUB_ENV"
+
       - name: Install uv
         uses: astral-sh/setup-uv@v7
         with:
