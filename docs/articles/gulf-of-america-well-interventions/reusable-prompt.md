@@ -22,15 +22,20 @@ Use the verified archives and the published `manifest.json` together in `data/mo
 From the root of the pinned study checkout, install the dependencies listed in the [study README](https://api.github.com/repositories/574746314/contents/examples/bsee/interventions_by_depth/README.md?ref=24744b528298f26c51bfce4cb3b66fa4f676eb02). Its “Tests and reproduction” section gives these analysis commands:
 
 ```sh
-study=examples/bsee/interventions_by_depth
-data=data/modules/bsee/zip/2026-11-13
-python "$study/count_interventions.py" --data-dir "$data" --out "$study/output"
-python "$study/build_cost_basis.py"
-python "$study/estimate_costs.py" --out "$study/output"
-python "$study/plot_charts.py" --out "$study/output"
-python "$study/well_life_cycle.py" --data-dir "$data"
-python "$study/plot_life_cycle.py"
+(
+  set -e
+  study=examples/bsee/interventions_by_depth
+  data=data/modules/bsee/zip/2026-11-13
+  python "$study/count_interventions.py" --data-dir "$data" --out "$study/output"
+  python "$study/build_cost_basis.py"
+  python "$study/estimate_costs.py" --out "$study/output"
+  python "$study/plot_charts.py" --out "$study/output"
+  python "$study/well_life_cycle.py" --data-dir "$data"
+  python "$study/plot_life_cycle.py"
+)
 ```
+
+The block runs in a subshell with `set -e`, so it stops at the first failing command. The pinned checkout already holds the published tables, so a replay that continued past a failure could still plot them and appear to succeed.
 
 Check that the life-cycle event totals equal the published permit totals for each group and that 2025 has 765 well-work approvals and 2,610 abandonment approvals. This replay covers the analysis. The study's article builder generates revision 4.
 

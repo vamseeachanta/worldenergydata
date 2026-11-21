@@ -2,7 +2,10 @@
 
 import hashlib
 import json
+import os
 import re
+import shutil
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -42,3 +45,30 @@ def test_archived_bytes_match_article_checksum(name):
         for chunk in iter(lambda: archive.read(1024 * 1024), b""):
             digest.update(chunk)
     assert digest.hexdigest() == article_checksums()[name]
+
+
+def analysis_block():
+    prompt = ARTICLE.read_text(encoding="utf-8")
+    blocks = re.findall(r"^```sh\n(.*?)^```$", prompt, re.MULTILINE | re.DOTALL)
+    matches = [block for block in blocks if "count_interventions.py" in block]
+    assert len(matches) == 1
+    return matches[0]
+
+
+@pytest.mark.skipif(shutil.which("bash") is None, reason="needs bash")
+def test_analysis_block_stops_at_first_failure(tmp_path):
+    log = tmp_path / "calls.log"
+    stub = (
+        'python() { echo "$1" >> "$CALL_LOG"; '
+        'case "$1" in *count_interventions.py) return 1;; esac; }\n'
+    )
+    result = subprocess.run(
+        ["bash", "-c", stub + analysis_block()],
+        cwd=tmp_path,
+        env={**os.environ, "CALL_LOG": str(log)},
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode != 0
+    calls = log.read_text(encoding="utf-8").splitlines()
+    assert calls == ["examples/bsee/interventions_by_depth/count_interventions.py"]
