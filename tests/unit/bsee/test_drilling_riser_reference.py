@@ -67,3 +67,50 @@ def test_no_local_paths_or_hosts_in_public_text():
         text = (_DIR / name).read_text(encoding="utf-8")
         assert "/mnt/" not in text
         assert ":\\" not in text
+
+
+def test_vendor_incident_and_paper_tables():
+    vendor = _rows("vendor_riser_joint_data.csv")
+    incidents = _rows("drilling_riser_incidents.csv")
+    papers = _rows("drilling_riser_failure_papers.csv")
+    assert len(vendor) == 26 and len({r["row_id"] for r in vendor}) == 26
+    assert len(incidents) == 22 and len({r["row_id"] for r in incidents}) == 22
+    assert len(papers) == 30 and len({r["row_id"] for r in papers}) == 30
+    for r in vendor + incidents:
+        assert r["source_title"] and r["url"].startswith("http")
+    classes = [r["event_class"] for r in incidents]
+    assert classes.count("riser parting, separation or drop") == 12
+    assert classes.count("unplanned LMRP disconnect or separation") == 5
+    assert classes.count("riser handling") == 5
+
+
+def test_incident_table_states_no_cause():
+    incidents = _rows("drilling_riser_incidents.csv")
+    assert not any("cause" in key.lower() for key in incidents[0])
+    text = (_DIR / "drilling_riser_incidents.csv").read_text(encoding="utf-8").lower()
+    assert "cause" not in text
+
+
+# Hand calculation, Oil States Merlin flysheet (V16, V17): OD = ID + 2 x wall
+#   19.25 + 2 x 1.0 = 21.25 in; 19.25 + 2 x 1.125 = 21.5 in
+@pytest.mark.parametrize(
+    "row_id, wall_in, od_in", [("V16", 1.0, 21.25), ("V17", 1.125, 21.5)]
+)
+def test_vendor_wall_and_od_by_arithmetic(row_id, wall_in, od_in):
+    row = next(r for r in _rows("vendor_riser_joint_data.csv") if r["row_id"] == row_id)
+    assert float(row["wall_thickness_in"].rstrip('"')) == wall_in
+    assert "19.25" in row["product"]
+    assert 19.25 + 2 * wall_in == pytest.approx(od_in)
+    assert f"{od_in}" in row["note"]
+
+
+def test_new_tables_have_no_local_paths():
+    for name in (
+        "vendor_riser_joint_data.csv",
+        "drilling_riser_incidents.csv",
+        "drilling_riser_failure_papers.csv",
+    ):
+        text = (_DIR / name).read_text(encoding="utf-8")
+        assert "/mnt/" not in text
+        assert ":\\" not in text
+        assert "\u2014" not in text
