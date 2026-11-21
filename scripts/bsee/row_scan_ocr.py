@@ -29,6 +29,15 @@ the riser segment table (``--segments``). Each host builds its own shard queue.
 Pass order (``--max-pass``, default 1): 1 = tier B segments in 1,000 ft of water
 or more; 2 = the rest of tier B; 3 = all other riser segments.
 
+Configuration basis: #2086, initial Config and "How it behaves" / "Order",
+records a 1,000 ft queue-priority cutoff, a 60 s gap, a 01:00-11:00 UTC window,
+10 errors per day, three attempts, 15 min to 4 h backoff, 50 GB free, 100 % used,
+load 8 and 300 dpi. These are operating choices, not engineering limits; the
+depth cutoff only orders work. The initial grade allowlist (X52, X56, X60, X65,
+X70) is a search heuristic assumed, based on previous experience, retained as
+the candidate-search configuration in #2086; it is not a complete grade list.
+OCR matches require source-page and unit verification before any tier change.
+
 Commands::
 
     row_scan_ocr.py run --data-dir DIR --shard K/N --segments riser_segments.csv
@@ -45,6 +54,7 @@ import argparse
 import csv
 import hashlib
 import json
+import math
 import os
 import re
 import shutil
@@ -70,7 +80,8 @@ INDEX_ZIP_URL = BASE + "/Other/Files/ScannedDocsRawData.zip"
 INDEX_ZIP_NAME = "ScannedDocsRawData.zip"
 # Links on the Scanned Documents pages look like /PDFDocs/Scan/ROW/32/32733.pdf and
 # /PDFDocs/Scan/PIPEMAPS/19/19963.pdf. The folder is read as DOC_ID // 1000 (both
-# sample links fit). A 404 marks the document failed, with its reason.
+# sample links fit). This URL rule is an assumption. A 404 marks the document
+# failed, with its reason.
 DOC_URL = BASE + "/PDFDocs/Scan/{kind}/{folder}/{doc_id}.pdf"
 INDEX_MEMBERS = {"ROW": "scan_row.txt", "PIPEMAPS": "scan_pipeline_maps.txt"}
 USER_AGENT = (
@@ -343,6 +354,13 @@ class Job:
         self.dir.mkdir(parents=True, exist_ok=True)
         self.db = sqlite3.connect(self.dir / "state.sqlite")
         self.db.executescript(SCHEMA)
+        if "active" not in {
+            row[1] for row in self.db.execute("PRAGMA table_info(docs)")
+        }:
+            self.db.execute(
+                "ALTER TABLE docs ADD COLUMN active INTEGER NOT NULL DEFAULT 1"
+            )
+            self.db.commit()
         self.started = self.clock.now()
         self.gap_s = cfg.gap_s
         self._robots: RobotFileParser | None = None
@@ -412,13 +430,17 @@ class Job:
     def add_error(self) -> None:
         self.set_meta(self._today_key(), self.errors_today() + 1)
 
-    def request(self, url: str, dest: Path | None = None) -> Response:
-        """One request, at least ``gap_s`` after the previous one (any run)."""
+    def request(self, url: str, dest: Path | None = None) -> Response | None:
+        """Spaced request; None defers work without charging an error."""
         last = self.meta("last_request_utc")
         if last:
             elapsed = (self.clock.now() - datetime.fromisoformat(last)).total_seconds()
             if elapsed < self.gap_s:
                 self.clock.sleep(self.gap_s - elapsed)
+        if self.stop_requested() or self.budget_spent() or not self.may_fetch():
+            return None
+        if dest is not None and not self.disk_ok():
+            return None
         self.set_meta("last_request_utc", self.clock.now().isoformat())
         return self.fetcher(url, dest)
 
@@ -432,6 +454,8 @@ class Job:
                 text = self.meta("robots_txt", "")
             else:
                 r = self.request(ROBOTS_URL)
+                if r is None:
+                    return None
                 rp_status = r.status
                 if rp_status == 200:
                     text = r.body.decode("utf-8", errors="replace")
@@ -441,6 +465,8 @@ class Job:
                     text = "User-agent: *\nDisallow: /\n"
                 else:
                     self.add_error()
+                    if rp_status in REFUSALS:
+                        self.refused(r)
                     self.log(f"robots.txt not read (status {rp_status} {r.error})")
                     return None
                 self.set_meta("robots_txt", text)
@@ -496,6 +522,8 @@ class Job:
         return 0
 
     def fetch_index(self, zip_path: Path) -> int:
+        if not self.disk_ok():
+            return 4
         ok = self.robots_ok(INDEX_ZIP_URL)
         if ok is None:
             return 0
@@ -505,6 +533,8 @@ class Job:
             return 3
         part = zip_path.with_name(zip_path.name + ".part")
         r = self.request(INDEX_ZIP_URL, part)
+        if r is None:
+            return 0 if self.disk_ok() else 4
         if r.status == 200 and part.exists() and zipfile.is_zipfile(part):
             size = part.stat().st_size
             digest = sha256_of(part)
@@ -548,23 +578,25 @@ class Job:
                     d["segs"].add(seg)
                     d["pass"] = min(d["pass"], passes[seg])
         now = self.clock.now().isoformat()
-        for (kind, doc_id), d in docs.items():
-            segs = ";".join(sorted(d["segs"], key=int))
-            self.db.execute(
-                "INSERT INTO docs(kind, doc_id, segments, pass, index_pages,"
-                " index_size, updated_utc) VALUES(?,?,?,?,?,?,?)"
-                " ON CONFLICT(kind, doc_id) DO UPDATE SET segments=excluded.segments,"
-                " pass=excluded.pass, index_pages=excluded.index_pages,"
-                " index_size=excluded.index_size",
-                (kind, doc_id, segs, d["pass"], d["pages"], d["size"], now),
-            )
-        self.db.commit()
+        # Replace membership atomically; keep downloads, failures and OCR evidence.
+        with self.db:
+            self.db.execute("UPDATE docs SET active=0")
+            for (kind, doc_id), d in docs.items():
+                segs = ";".join(sorted(d["segs"], key=int))
+                self.db.execute(
+                    "INSERT INTO docs(kind, doc_id, segments, pass, index_pages,"
+                    " index_size, updated_utc) VALUES(?,?,?,?,?,?,?)"
+                    " ON CONFLICT(kind, doc_id) DO UPDATE SET segments=excluded.segments,"
+                    " pass=excluded.pass, index_pages=excluded.index_pages,"
+                    " index_size=excluded.index_size, active=1",
+                    (kind, doc_id, segs, d["pass"], d["pages"], d["size"], now),
+                )
         return len(docs)
 
     def next_doc(self):
         return self.db.execute(
             "SELECT kind, doc_id, index_size, index_pages, segments FROM docs"
-            " WHERE status='queued' AND pass<=?"
+            " WHERE active=1 AND status='queued' AND pass<=?"
             " ORDER BY pass, attempts, kind, doc_id LIMIT 1",
             (self.cfg.max_pass,),
         ).fetchone()
@@ -634,6 +666,8 @@ class Job:
         pdf.parent.mkdir(parents=True, exist_ok=True)
         part = pdf.with_name(pdf.name + ".part")
         r = self.request(url, part)
+        if r is None:
+            return "deferred"
         if r.status == 200:
             problem = ""
             size = part.stat().st_size if part.exists() else 0
@@ -736,7 +770,9 @@ class Job:
             out = tdir / f"page-{page:04d}.txt"
             if out.exists():
                 continue
-            if self.stop_requested() or not self.wait_load():
+            if self.stop_requested() or self.budget_spent() or not self.wait_load():
+                return False
+            if self.stop_requested() or self.budget_spent() or not self.disk_ok():
                 return False
             stem = tdir / f".page-{page:04d}"
             png = tdir / f".page-{page:04d}.png"
@@ -780,7 +816,7 @@ class Job:
         if not self.cfg.ocr:
             return
         for kind, doc_id in self.db.execute(
-            "SELECT kind, doc_id FROM docs WHERE status='fetched'"
+            "SELECT kind, doc_id FROM docs WHERE active=1 AND status='fetched'"
             " ORDER BY pass, kind, doc_id"
         ).fetchall():
             if self.stop_requested() or self.budget_spent() or not self.tools():
@@ -796,6 +832,8 @@ class Job:
         if rc:
             return rc
         self.ocr_backlog()
+        if not self.disk_ok():
+            return 4
         done = 0
         errored: set[tuple[str, int]] = set()  # each document once per run
         while not self.stop_requested():
@@ -809,7 +847,9 @@ class Job:
             result = self.fetch_doc(doc)
             if result == "robots_bar":
                 return 3
-            if result in ("robots_unknown", "refused"):
+            if result == "deferred" and not self.disk_ok():
+                return 4
+            if result in ("robots_unknown", "refused", "deferred"):
                 break
             if result == "error":
                 errored.add((doc[0], doc[1]))
@@ -846,17 +886,13 @@ class Job:
 
 
 # -- findings -------------------------------------------------------------------
-_NUM = r"(\d?\.\d{2,4}|[01]\s*-?\s*\d{1,2}/\d{1,2})"
+_NUM = r"(?<![\w./+-])(\d+(?:\s*-\s*|\s+)\d+/\d+|\d+/\d+|\d*\.\d+|\d+)(?![\d.,/])"
+_UNIT = r"(?:\s*-?\s*(?P<unit>mm\b|millimet(?:er|re)s?\b|\"|''|in(?:ch(?:es)?)?\b\.?))?"
+_WALL = r"(?:w\.\s?t\.?|\bwt\b|wall\s+thickness|wall\b)"
 FINDING_PATTERNS = {
-    "wall_thickness_in": [
-        re.compile(
-            _NUM + r"\s*(?:\"|''|-?\s?in(?:ch(?:es)?)?\.?)?\s*-?\s*"
-            r"(?:w\.\s?t\.?|wt\b|wall\b|wall\s+thickness)",
-            re.I,
-        ),
-        re.compile(
-            r"(?:w\.\s?t\.?|\bwt\b|wall\s+thickness)\s*(?:of|=|:|is)?\s*" + _NUM, re.I
-        ),
+    "wall_thickness": [
+        re.compile(_NUM + _UNIT + r"\s*-?\s*" + _WALL, re.I),
+        re.compile(_WALL + r"\s*(?:of|=|:|is)?\s*" + _NUM + _UNIT, re.I),
     ],
     "grade": [re.compile(r"\b(?:grade\s*)?(X\s?-?(?:52|56|60|65|70))\b", re.I)],
     "riser_length_ft": [
@@ -868,8 +904,8 @@ FINDING_PATTERNS = {
     ],
     "hang_off_angle_deg": [
         re.compile(
-            r"(?:hang[\s-]*off|departure|top)\s+angle[^.\n]{0,20}?"
-            r"(\d{1,2}(?:\.\d+)?)\s*(?:°|deg)",
+            r"(?:hang[\s-]*off|departure|top)\s+angle[^\d.\n]{0,20}?"
+            r"(\d+(?:\.\d+)?)\s*(?:°|deg(?:rees?)?\b)",
             re.I,
         )
     ],
@@ -883,9 +919,18 @@ def find_values(text: str):
             for rx in patterns:
                 for m in rx.finditer(line):
                     value = re.sub(r"\s+", "", m.group(1)).upper()
+                    matched_quantity = quantity
+                    if quantity == "wall_thickness":
+                        unit = (m.group("unit") or "").lower()
+                        suffix = (
+                            "mm"
+                            if unit.startswith(("mm", "milli"))
+                            else ("in" if unit else "unknown_unit")
+                        )
+                        matched_quantity = f"wall_thickness_{suffix}"
                     if quantity == "grade":
                         value = value.replace("-", "")
-                    yield quantity, value, line.strip()[:200]
+                    yield matched_quantity, value, line.strip()[:200]
 
 
 def write_findings(job: Job, out: Path) -> int:
@@ -895,7 +940,7 @@ def write_findings(job: Job, out: Path) -> int:
         w = csv.writer(fh)
         w.writerow(["segments", "kind", "doc_id", "page", "quantity", "value", "line"])
         for kind, doc_id, segments in job.db.execute(
-            "SELECT kind, doc_id, segments FROM docs WHERE status='read'"
+            "SELECT kind, doc_id, segments FROM docs WHERE active=1 AND status='read'"
             " ORDER BY kind, doc_id"
         ):
             for page_file in sorted(job.text_dir(kind, doc_id).glob("page-*.txt")):
@@ -981,8 +1026,8 @@ def main(argv: list[str] | None = None) -> int:
     except ValueError as err:
         print(err, file=sys.stderr)
         return 2
-    if args.gap < 60:
-        print("--gap must be at least 60 seconds", file=sys.stderr)
+    if not math.isfinite(args.gap) or args.gap < 60:
+        print("--gap must be finite and at least 60 seconds", file=sys.stderr)
         return 2
     cfg = Config(
         data_dir=args.data_dir,

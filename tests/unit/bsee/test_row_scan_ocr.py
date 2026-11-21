@@ -538,3 +538,256 @@ def test_args_file(tmp_path):
     args.write_text(f"run\n--data-dir\n{tmp_path / 'd'}\n--shard\n2/3\n--gap\n180\n")
     ns = rso.build_parser().parse_args([f"@{args}"])
     assert (ns.cmd, ns.shard, ns.gap) == ("run", "2/3", 180.0)
+
+
+@pytest.mark.parametrize(
+    "line, expected",
+    [
+        ("wall thickness of 9.50 mm", {("wall_thickness_mm", "9.50")}),
+        ("departure angle 120 deg", {("hang_off_angle_deg", "120")}),
+        ("wall thickness of 12.500 inches", {("wall_thickness_in", "12.500")}),
+        ("9.50 mm wall thickness", {("wall_thickness_mm", "9.50")}),
+        ("wall thickness of 0.500", {("wall_thickness_unknown_unit", "0.500")}),
+        ("departure angle 120.25 deg", {("hang_off_angle_deg", "120.25")}),
+    ],
+)
+def test_find_values_full_number_and_unit(line, expected):
+    assert {(q, v) for q, v, _ in rso.find_values(line)} == expected
+
+
+@pytest.mark.parametrize("target", ["index", "document", "robots"])
+@pytest.mark.parametrize("reason", ["window", "stop", "budget"])
+def test_fetch_defers_after_gap(env, target, reason):
+    tmp_path, seg, zp = env
+    clock = FakeClock(NIGHT.replace(hour=10, minute=59, second=30))
+    fetcher = FakeFetcher(clock, zip_bytes=zp.read_bytes())
+    job = make_job(
+        tmp_path,
+        seg,
+        None if target == "index" else zp,
+        clock,
+        fetcher,
+        max_minutes=0.5 if reason == "budget" else 0,
+    )
+    if target == "document":
+        job.prepare()
+    if target != "robots":
+        job.set_meta("robots_utc", clock.now().isoformat())
+        job.set_meta("robots_txt", "User-agent: *\nAllow: /\n")
+    if reason != "window":
+        job.cfg.window = (0, 1440)
+    job.set_meta("last_request_utc", clock.now().isoformat())
+    sleep = clock.sleep
+
+    def during_gap(seconds):
+        sleep(seconds)
+        if reason == "stop":
+            (job.dir / "STOP").touch()
+
+    clock.sleep = during_gap
+    assert job.run() == 0
+    assert fetcher.calls == []
+    assert job.errors_today() == 0
+    if target == "document":
+        assert job.db.execute("SELECT SUM(attempts) FROM docs").fetchone()[0] == 0
+    assert (
+        job.meta("last_request_utc")
+        == NIGHT.replace(hour=10, minute=59, second=30).isoformat()
+    )
+
+
+@pytest.mark.parametrize("status", [429, 503])
+def test_robots_refusal_persists_retry_after(env, status):
+    tmp_path, seg, zp = env
+    clock = FakeClock(NIGHT)
+    fetcher = FakeFetcher(clock)
+    fetcher.script[rso.ROBOTS_URL] = [rso.Response(status, {"retry-after": "7200"})]
+    job = make_job(tmp_path, seg, zp, clock, fetcher)
+    assert job.run() == 0
+    assert job.meta("backoff_until") == (NIGHT + timedelta(hours=2)).isoformat()
+    assert job.errors_today() == 1
+    clock.t += timedelta(hours=1)
+    assert make_job(tmp_path, seg, zp, clock, fetcher).run() == 0
+    assert len(fetcher.calls) == 1
+    clock.t += timedelta(hours=1)
+    assert make_job(tmp_path, seg, zp, clock, fetcher, max_docs=1).run() == 0
+    assert len(fetcher.doc_urls()) == 1
+
+
+def fetched_backlog(env, **cfg):
+    tmp_path, seg, zp = env
+    clock = FakeClock(DAY)
+    job = make_job(tmp_path, seg, zp, clock, FakeFetcher(clock), which=all_tools, **cfg)
+    job.prepare()
+    pdf = job.pdf_path("PIPEMAPS", 19963)
+    pdf.parent.mkdir(parents=True)
+    pdf.write_bytes(PDF)
+    job.set_doc("PIPEMAPS", 19963, status="fetched")
+    job.db.execute("UPDATE docs SET status='failed' WHERE doc_id != 19963")
+    job.db.commit()
+    assert job.next_doc() is None
+    return job, clock
+
+
+@pytest.mark.parametrize("stage", ["page_count", "first_page", "load_wait"])
+def test_ocr_deadline_leaves_pages_resumable(env, stage):
+    job, clock = fetched_backlog(env, max_minutes=1)
+    runner = job.runner
+
+    def timed_runner(cmd):
+        result = runner(cmd)
+        if (stage == "page_count" and Path(cmd[0]).name == "pdfinfo") or (
+            stage == "first_page" and Path(cmd[0]).name == "tesseract"
+        ):
+            clock.t += timedelta(seconds=60)
+        return result
+
+    job.runner = timed_runner
+    if stage == "load_wait":
+        loads = iter([9, 0])
+        job.loadavg = lambda: next(loads, 0)
+    assert job.run() == 0
+    assert job.db.execute("SELECT status FROM docs WHERE doc_id=19963").fetchone() == (
+        "fetched",
+    )
+    renders = [c for c in job.runner_calls if Path(c[0]).name == "pdftoppm"]
+    assert len(renders) == (1 if stage == "first_page" else 0)
+    job.cfg.max_minutes = 0
+    assert job.run() == 0
+    assert job.db.execute("SELECT status FROM docs WHERE doc_id=19963").fetchone() == (
+        "read",
+    )
+    assert len([c for c in job.runner_calls if Path(c[0]).name == "pdftoppm"]) == 2
+
+
+def test_disk_floor_before_missing_index(env):
+    tmp_path, seg, zp = env
+    seg.write_text("segment_num,max_water_depth_ft,static_check_tier\n")
+    clock = FakeClock(NIGHT)
+    fetcher = FakeFetcher(clock, zip_bytes=zp.read_bytes())
+    job = make_job(tmp_path, seg, None, clock, fetcher)
+    job.disk_usage = lambda p: Usage(100e9, 99e9, 1e9)
+    assert job.run() == 4
+    assert fetcher.calls == []
+    assert job.next_doc() is None
+
+
+@pytest.mark.parametrize("full_after_first", [False, True])
+def test_disk_floor_before_each_backlog_page(env, full_after_first):
+    job, _ = fetched_backlog(env)
+    job.disk_usage = lambda p: (
+        Usage(100e9, 99e9, 1e9)
+        if (
+            not full_after_first
+            or any(Path(c[0]).name == "tesseract" for c in job.runner_calls)
+        )
+        else Usage(1000e9, 500e9, 500e9)
+    )
+    assert job.run() == 4
+    assert len([c for c in job.runner_calls if Path(c[0]).name == "pdftoppm"]) == int(
+        full_after_first
+    )
+    assert job.db.execute("SELECT status FROM docs WHERE doc_id=19963").fetchone() == (
+        "fetched",
+    )
+    assert job.errors_today() == 0
+
+
+def test_rebuild_deactivates_stale_queue_preserving_evidence(env):
+    tmp_path, seg, zp = env
+    clock = FakeClock(NIGHT)
+    job = make_job(tmp_path, seg, zp, clock, FakeFetcher(clock))
+    job.prepare()
+    job.set_doc("ROW", 32733, status="fetched", size=25, sha256="evidence", attempts=1)
+    before = job.db.execute("SELECT * FROM docs WHERE doc_id=32733").fetchone()
+    seg.write_text("segment_num,max_water_depth_ft,static_check_tier\n")
+    assert job.prepare() == 0
+    assert job.next_doc() is None
+    assert job.run() == 0
+    assert job.fetcher.calls == []
+    after = job.db.execute("SELECT * FROM docs WHERE doc_id=32733").fetchone()
+    assert after[:-1] == before[:-1]
+    seg.write_text(SEGMENTS)
+    job.prepare()
+    assert job.db.execute(
+        "SELECT status, size, sha256, attempts FROM docs WHERE doc_id=32733"
+    ).fetchone() == ("fetched", 25, "evidence", 1)
+    assert job.next_doc() is not None
+
+
+@pytest.mark.parametrize("gap", ["nan", "inf", "-inf", "59.9"])
+def test_cli_rejects_invalid_gap(tmp_path, capsys, gap):
+    assert (
+        rso.main(["run", "--data-dir", str(tmp_path / "unused"), f"--gap={gap}"]) == 2
+    )
+    assert "--gap must be finite and at least 60 seconds" in capsys.readouterr().err
+    assert not (tmp_path / "unused").exists()
+
+
+@pytest.mark.parametrize(
+    "line, expected",
+    [
+        ('1-1/2" W.T.', {("wall_thickness_in", "1-1/2")}),
+        ("wall thickness 0.500-in", {("wall_thickness_in", "0.500")}),
+    ],
+)
+def test_wall_fraction_and_hyphenated_unit(line, expected):
+    assert {(q, v) for q, v, _ in rso.find_values(line)} == expected
+
+
+def test_existing_database_gains_active_membership(env):
+    tmp_path, seg, zp = env
+    data = tmp_path / "data-0-1"
+    data.mkdir()
+    with rso.sqlite3.connect(data / "state.sqlite") as db:
+        db.executescript(rso.SCHEMA)
+        db.execute(
+            "INSERT INTO docs(kind, doc_id, status, sha256) "
+            "VALUES('ROW', 32733, 'fetched', 'evidence')"
+        )
+    clock = FakeClock(DAY)
+    job = make_job(tmp_path, seg, zp, clock, FakeFetcher(clock))
+    assert job.db.execute("SELECT status, sha256, active FROM docs").fetchone() == (
+        "fetched",
+        "evidence",
+        1,
+    )
+    job.prepare()
+    assert job.db.execute(
+        "SELECT status, sha256, active FROM docs WHERE doc_id=32733"
+    ).fetchone() == ("fetched", "evidence", 1)
+
+
+def test_queue_membership_rolls_back_on_failure(env):
+    tmp_path, seg, zp = env
+    clock = FakeClock(DAY)
+    job = make_job(tmp_path, seg, zp, clock, FakeFetcher(clock))
+    job.prepare()
+    before = job.db.execute("SELECT * FROM docs ORDER BY kind, doc_id").fetchall()
+    job.db.execute(
+        "CREATE TRIGGER reject_refresh BEFORE UPDATE OF active ON docs "
+        "WHEN NEW.active=1 BEGIN SELECT RAISE(ABORT, 'refresh failed'); END"
+    )
+    job.db.commit()
+    with pytest.raises(rso.sqlite3.IntegrityError, match="refresh failed"):
+        job.build_queue(zp, seg)
+    assert (
+        job.db.execute("SELECT * FROM docs ORDER BY kind, doc_id").fetchall() == before
+    )
+
+
+def test_run_low_forwards_windows_flags(monkeypatch):
+    calls = []
+    monkeypatch.setattr(
+        rso.subprocess, "BELOW_NORMAL_PRIORITY_CLASS", 0x4000, raising=False
+    )
+    monkeypatch.setattr(rso.subprocess, "CREATE_NO_WINDOW", 0x8000000, raising=False)
+
+    def run(cmd, **kwargs):
+        calls.append(kwargs)
+        return rso.subprocess.CompletedProcess(cmd, 0, "ok", "")
+
+    monkeypatch.setattr(rso.subprocess, "run", run)
+    assert rso.run_low(["tesseract", "input", "output"]) == (0, "ok")
+    assert calls[0]["creationflags"] == 0x8004000
+    assert calls[0]["env"]["OMP_THREAD_LIMIT"] == "1"
