@@ -10,7 +10,9 @@ import sys
 import zipfile
 from collections import namedtuple
 from datetime import datetime, timedelta, timezone
+from email.message import Message
 from pathlib import Path
+from urllib.response import addinfourl
 
 import pytest
 
@@ -451,7 +453,8 @@ def test_ocr_resumes_at_missing_page(env):
     pdf = job.pdf_path("PIPEMAPS", 19963)
     pdf.parent.mkdir(parents=True)
     pdf.write_bytes(PDF)
-    job.set_doc("PIPEMAPS", 19963, status="fetched")
+    digest = rso.sha256_of(pdf)
+    job.set_doc("PIPEMAPS", 19963, status="fetched", sha256=digest, ocr_sha256=digest)
     tdir = job.text_dir("PIPEMAPS", 19963)
     tdir.mkdir(parents=True)
     (tdir / "page-0001.txt").write_text("done before")
@@ -699,14 +702,18 @@ def test_rebuild_deactivates_stale_queue_preserving_evidence(env):
     job = make_job(tmp_path, seg, zp, clock, FakeFetcher(clock))
     job.prepare()
     job.set_doc("ROW", 32733, status="fetched", size=25, sha256="evidence", attempts=1)
-    before = job.db.execute("SELECT * FROM docs WHERE doc_id=32733").fetchone()
+    before = job.db.execute(
+        "SELECT status, size, sha256, attempts FROM docs WHERE doc_id=32733"
+    ).fetchone()
     seg.write_text("segment_num,max_water_depth_ft,static_check_tier\n")
     assert job.prepare() == 0
     assert job.next_doc() is None
     assert job.run() == 0
     assert job.fetcher.calls == []
-    after = job.db.execute("SELECT * FROM docs WHERE doc_id=32733").fetchone()
-    assert after[:-1] == before[:-1]
+    after = job.db.execute(
+        "SELECT status, size, sha256, attempts FROM docs WHERE doc_id=32733"
+    ).fetchone()
+    assert after == before
     seg.write_text(SEGMENTS)
     job.prepare()
     assert job.db.execute(
@@ -791,3 +798,206 @@ def test_run_low_forwards_windows_flags(monkeypatch):
     assert rso.run_low(["tesseract", "input", "output"]) == (0, "ok")
     assert calls[0]["creationflags"] == 0x8004000
     assert calls[0]["env"]["OMP_THREAD_LIMIT"] == "1"
+
+
+@pytest.mark.parametrize(
+    "line, quantity, value",
+    [
+        ("wall thickness 1 1/2 in", "wall_thickness_in", "1 1/2"),
+        ("departure angle -12.5 degrees", "hang_off_angle_deg", "-12.5"),
+    ],
+)
+def test_findings_csv_preserves_mixed_fraction_and_sign(env, line, quantity, value):
+    tmp_path, seg, zp = env
+    clock = FakeClock(DAY)
+    job = make_job(tmp_path, seg, zp, clock, FakeFetcher(clock))
+    job.prepare()
+    job.set_doc("ROW", 32733, status="read")
+    tdir = job.text_dir("ROW", 32733)
+    tdir.mkdir(parents=True)
+    (tdir / "page-0001.txt").write_text(line)
+    out = tmp_path / "findings.csv"
+    assert rso.write_findings(job, out) == 1
+    assert list(rso.csv.reader(out.open())) == [
+        ["segments", "kind", "doc_id", "page", "quantity", "value", "line"],
+        ["100", "ROW", "32733", "1", quantity, value, line],
+    ]
+
+
+def test_failed_ocr_retry_keeps_saved_pdf_and_page_digest(env):
+    tmp_path, seg, zp = env
+    clock = FakeClock(NIGHT)
+    fetcher = FakeFetcher(clock)
+    job = make_job(tmp_path, seg, zp, clock, fetcher, which=all_tools, max_docs=1)
+    runner = job.runner
+
+    def fail_second_page(cmd):
+        if Path(cmd[0]).name == "tesseract" and "0002" in cmd[1]:
+            return 1, "page two failed"
+        return runner(cmd)
+
+    job.runner = fail_second_page
+    assert job.run() == 0
+    page_one = job.text_dir("PIPEMAPS", 19963) / "page-0001.txt"
+    first_text = page_one.read_text()
+    original_digest = rso.sha256_of(job.pdf_path("PIPEMAPS", 19963))
+    url = rso.doc_url("PIPEMAPS", 19963)
+    fetcher.script[url] = [rso.Response(200, {}, PDF + b"replacement")]
+    retry = make_job(tmp_path, seg, zp, clock, fetcher, which=all_tools, max_docs=1)
+    assert retry.requeue_failed() == 1
+    # Leave no other document eligible; only the failed OCR must resume.
+    retry.db.execute("UPDATE docs SET active=0 WHERE doc_id != 19963")
+    retry.db.commit()
+    assert retry.run() == 0
+    assert fetcher.doc_urls() == [url]
+    assert page_one.read_text() == first_text
+    assert retry.db.execute(
+        "SELECT status, sha256, ocr_sha256 FROM docs WHERE doc_id=19963"
+    ).fetchone() == ("read", original_digest, original_digest)
+    renders = [c for c in retry.runner_calls if Path(c[0]).name == "pdftoppm"]
+    assert [c[c.index("-f") + 1] for c in renders] == ["2"]
+
+
+def test_ocr_refuses_changed_saved_pdf(env):
+    job, _ = fetched_backlog(env)
+    pdf = job.pdf_path("PIPEMAPS", 19963)
+    job.set_doc("PIPEMAPS", 19963, sha256=rso.sha256_of(pdf))
+    pdf.write_bytes(PDF + b"changed")
+    assert job.ocr_doc("PIPEMAPS", 19963) is False
+    assert job.runner_calls == []
+    assert job.db.execute(
+        "SELECT status, last_error FROM docs WHERE doc_id=19963"
+    ).fetchone() == ("ocr_failed", "saved PDF digest mismatch")
+
+
+def test_legacy_unbound_pages_are_archived_before_ocr(env):
+    job, _ = fetched_backlog(env)
+    tdir = job.text_dir("PIPEMAPS", 19963)
+    tdir.mkdir(parents=True)
+    (tdir / "page-0001.txt").write_text("unbound evidence")
+    assert job.ocr_doc("PIPEMAPS", 19963) is True
+    assert (tdir / "page-0001.txt").read_text() != "unbound evidence"
+    archives = list(tdir.parent.glob("19963-unverified-*"))
+    assert len(archives) == 1
+    assert (archives[0] / "page-0001.txt").read_text() == "unbound evidence"
+
+
+def test_original_schema_matching_key_is_invalidated(env):
+    tmp_path, seg, zp = env
+    data = tmp_path / "data-0-1"
+    data.mkdir()
+    # Original schema, not the current module's schema constant.
+    with rso.sqlite3.connect(data / "state.sqlite") as db:
+        db.executescript(
+            """
+            CREATE TABLE docs (
+              kind TEXT NOT NULL, doc_id INTEGER NOT NULL, segments TEXT, pass INTEGER,
+              index_pages INTEGER, index_size INTEGER,
+              status TEXT NOT NULL DEFAULT 'queued', attempts INTEGER NOT NULL DEFAULT 0,
+              size INTEGER, sha256 TEXT, pages INTEGER, last_error TEXT,
+              updated_utc TEXT, PRIMARY KEY (kind, doc_id));
+            CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT);
+        """
+        )
+        db.execute(
+            "INSERT INTO docs(kind, doc_id, pass, status, sha256) "
+            "VALUES('ROW', 32733, 1, 'queued', 'retained evidence')"
+        )
+        seg.write_text("segment_num,max_water_depth_ft,static_check_tier\n")
+        key = f"{rso.sha256_of(zp)}:{rso.sha256_of(seg)}:0/1"
+        db.execute("INSERT INTO meta VALUES('queue_key', ?)", (key,))
+        db.execute("INSERT INTO meta VALUES('shard', '0/1')")
+    clock = FakeClock(NIGHT)
+    job = make_job(tmp_path, seg, zp, clock, FakeFetcher(clock))
+    assert job.meta("queue_key") is None
+    assert job.run() == 0
+    assert job.fetcher.calls == []
+    assert job.next_doc() is None
+    assert job.db.execute("SELECT sha256, active FROM docs").fetchone() == (
+        "retained evidence",
+        0,
+    )
+    status = job.status()
+    assert status["by_pass_status"] == []
+    assert status["archived_by_pass_status"] == [
+        {"pass": 1, "status": "queued", "docs": 1, "pages": 0, "bytes": 0}
+    ]
+
+
+@pytest.mark.parametrize("invalid", ["missing_both", "missing_one", "headers", "empty"])
+def test_invalid_index_keeps_membership_and_key(env, invalid):
+    tmp_path, seg, zp = env
+    clock = FakeClock(NIGHT)
+    job = make_job(tmp_path, seg, zp, clock, FakeFetcher(clock))
+    assert job.prepare() == 0
+    before = job.db.execute("SELECT * FROM docs ORDER BY kind, doc_id").fetchall()
+    key = job.meta("queue_key")
+    with zipfile.ZipFile(zp, "w") as zf:
+        if invalid == "missing_both":
+            zf.writestr("unrelated.txt", "DOC_ID,SEGMENT_NUMBER\n1,100\n")
+        else:
+            zf.writestr("scan_row.txt", ROW_TXT)
+            if invalid != "missing_one":
+                zf.writestr(
+                    "scan_pipeline_maps.txt",
+                    "WRONG,HEADER\n1,100\n" if invalid == "headers" else "",
+                )
+    assert job.prepare() == 5
+    assert job.meta("queue_key") == key
+    assert (
+        job.db.execute("SELECT * FROM docs ORDER BY kind, doc_id").fetchall() == before
+    )
+    assert job.fetcher.calls == []
+
+
+def test_disk_floor_after_download_with_max_docs_one(env):
+    tmp_path, seg, zp = env
+    clock = FakeClock(NIGHT)
+    fetcher = FakeFetcher(clock)
+    job = make_job(tmp_path, seg, zp, clock, fetcher, which=all_tools, max_docs=1)
+    job.disk_usage = lambda p: (
+        Usage(100e9, 99e9, 1e9) if fetcher.doc_urls() else Usage(1000e9, 500e9, 500e9)
+    )
+    assert job.run() == 4
+    assert len(fetcher.doc_urls()) == 1
+    assert not any(Path(c[0]).name == "pdftoppm" for c in job.runner_calls)
+    assert job.errors_today() == 0
+
+
+@pytest.mark.parametrize("destination", [rso.doc_url("ROW", 32733), rso.ROBOTS_URL])
+def test_http_redirect_never_issues_second_get(monkeypatch, tmp_path, destination):
+    calls = []
+
+    class RedirectTransport(rso.urllib.request.HTTPSHandler):
+        def https_open(self, req):
+            calls.append(req.full_url)
+            headers = Message()
+            headers["Location"] = destination
+            response = addinfourl(io.BytesIO(b""), headers, req.full_url, 302)
+            response.msg = "Found"
+            return response
+
+    monkeypatch.setattr(
+        rso,
+        "_OPENER",
+        rso.urllib.request.build_opener(rso._SameHostRedirect, RedirectTransport),
+    )
+    result = rso.http_fetch(rso.INDEX_ZIP_URL, tmp_path / "unused")
+    assert result.status == 302
+    assert calls == [rso.INDEX_ZIP_URL]
+    assert not (tmp_path / "unused").exists()
+
+
+def test_redirect_defers_without_charging_error(env):
+    tmp_path, seg, zp = env
+    clock = FakeClock(NIGHT)
+    fetcher = FakeFetcher(clock)
+    url = rso.doc_url("PIPEMAPS", 19963)
+    fetcher.script[url] = [rso.Response(302, {"location": url})]
+    job = make_job(tmp_path, seg, zp, clock, fetcher, max_docs=1)
+    assert job.run() == 0
+    assert fetcher.doc_urls() == [url]
+    assert job.errors_today() == 0
+    assert job.db.execute(
+        "SELECT status, attempts FROM docs WHERE doc_id=19963"
+    ).fetchone() == ("queued", 0)

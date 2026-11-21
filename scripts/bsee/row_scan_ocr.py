@@ -37,6 +37,11 @@ depth cutoff only orders work. The initial grade allowlist (X52, X56, X60, X65,
 X70) is a search heuristic assumed, based on previous experience, retained as
 the candidate-search configuration in #2086; it is not a complete grade list.
 OCR matches require source-page and unit verification before any tier change.
+Collector configuration choices: the HTTP timeout is 300 s to bound a stalled
+request; each OCR command has 1,800 s to allow a large scan without an unbounded
+tool process. Candidate searches span at most 40 characters after "riser" and
+20 after an angle label to keep matches near their labels. These are conservative
+search and runtime choices for this collector, not source or engineering limits.
 
 Commands::
 
@@ -45,7 +50,7 @@ Commands::
     row_scan_ocr.py findings --data-dir DIR --out findings.csv
 
 Exit codes: 0 done for now; 2 bad arguments or wrong data directory; 3 robots.txt
-bars the path; 4 disk floor reached; 5 index file missing.
+bars the path; 4 disk floor reached; 5 index or segment input missing or invalid.
 """
 
 from __future__ import annotations
@@ -116,10 +121,8 @@ class Response:
 
 class _SameHostRedirect(urllib.request.HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl):
-        p = urlparse(newurl)
-        if p.scheme != "https" or p.hostname != HOST:
-            raise urllib.error.URLError(f"redirect to another host refused: {newurl}")
-        return super().redirect_request(req, fp, code, msg, headers, newurl)
+        # Defer every redirect: urllib must not issue an unchecked second GET.
+        return None
 
 
 _OPENER = urllib.request.build_opener(_SameHostRedirect)
@@ -289,6 +292,12 @@ def read_index(raw: bytes):
     first = text.split("\n", 1)[0]
     delim = max([",", "|", "\t"], key=first.count)
     reader = csv.DictReader(text.splitlines(), delimiter=delim)
+    required = {"DOC_ID", "SEGMENT_NUMBER", "DOC_PAGES", "DOC_FILESIZE"}
+    headers = {(k or "").strip().strip('"') for k in reader.fieldnames or []}
+    if not required <= headers:
+        raise ValueError(
+            "index missing required headers: " + ", ".join(sorted(required - headers))
+        )
     for row in reader:
         yield {
             (k or "").strip().strip('"'): (v or "").strip()
@@ -354,13 +363,16 @@ class Job:
         self.dir.mkdir(parents=True, exist_ok=True)
         self.db = sqlite3.connect(self.dir / "state.sqlite")
         self.db.executescript(SCHEMA)
-        if "active" not in {
-            row[1] for row in self.db.execute("PRAGMA table_info(docs)")
-        }:
-            self.db.execute(
-                "ALTER TABLE docs ADD COLUMN active INTEGER NOT NULL DEFAULT 1"
-            )
-            self.db.commit()
+        columns = {row[1] for row in self.db.execute("PRAGMA table_info(docs)")}
+        with self.db:
+            if "active" not in columns:
+                self.db.execute(
+                    "ALTER TABLE docs ADD COLUMN active INTEGER NOT NULL DEFAULT 1"
+                )
+                # Previous queue keys predate membership reconciliation.
+                self.db.execute("DELETE FROM meta WHERE key='queue_key'")
+            if "ocr_sha256" not in columns:
+                self.db.execute("ALTER TABLE docs ADD COLUMN ocr_sha256 TEXT")
         self.started = self.clock.now()
         self.gap_s = cfg.gap_s
         self._robots: RobotFileParser | None = None
@@ -442,7 +454,13 @@ class Job:
         if dest is not None and not self.disk_ok():
             return None
         self.set_meta("last_request_utc", self.clock.now().isoformat())
-        return self.fetcher(url, dest)
+        response = self.fetcher(url, dest)
+        if 300 <= response.status < 400:
+            self.log(
+                f"HTTP {response.status} redirect deferred; no destination fetched"
+            )
+            return None
+        return response
 
     def robots_ok(self, url: str) -> bool | None:
         """True or False from robots.txt; None when it could not be read."""
@@ -515,7 +533,11 @@ class Job:
         key = f"{sha256_of(zip_path)}:{sha256_of(Path(self.cfg.segments))}:{shard}"
         if self.meta("queue_key") == key:
             return 0
-        added = self.build_queue(zip_path, Path(self.cfg.segments))
+        try:
+            added = self.build_queue(zip_path, Path(self.cfg.segments))
+        except (ValueError, zipfile.BadZipFile) as err:
+            self.log(f"index invalid; previous queue retained: {err}")
+            return 5
         self.set_meta("queue_key", key)
         self.set_meta("shard", shard)
         self.log(f"queue built for shard {shard}: {added} documents")
@@ -557,8 +579,7 @@ class Job:
             for kind, member in INDEX_MEMBERS.items():
                 name = names.get(member)
                 if name is None:
-                    self.log(f"index member missing: {member}")
-                    continue
+                    raise ValueError(f"index member missing: {member}")
                 for rec in read_index(zf.read(name)):
                     seg = norm_segment(rec.get("SEGMENT_NUMBER"))
                     doc_id = to_int(rec.get("DOC_ID"))
@@ -757,14 +778,31 @@ class Job:
         if not tools:
             return False
         pdf = self.pdf_path(kind, doc_id)
-        fallback = self.db.execute(
-            "SELECT index_pages FROM docs WHERE kind=? AND doc_id=?", (kind, doc_id)
-        ).fetchone()[0]
+        fallback, expected, bound = self.db.execute(
+            "SELECT index_pages, sha256, ocr_sha256 FROM docs WHERE kind=? AND doc_id=?",
+            (kind, doc_id),
+        ).fetchone()
+        try:
+            digest = sha256_of(pdf)
+        except OSError:
+            return self._ocr_failed(kind, doc_id, "saved PDF unavailable")
+        if expected and digest != expected:
+            return self._ocr_failed(kind, doc_id, "saved PDF digest mismatch")
+        tdir = self.text_dir(kind, doc_id)
+        if bound != digest and tdir.exists():
+            # Preserve unbound or differently bound evidence without reusing it.
+            version = 1
+            archive = tdir.with_name(f"{doc_id}-unverified-{version}")
+            while archive.exists():
+                version += 1
+                archive = tdir.with_name(f"{doc_id}-unverified-{version}")
+            tdir.rename(archive)
+            self.manifest("ocr_archived", kind=kind, doc_id=doc_id, sha256=bound)
+        self.set_doc(kind, doc_id, sha256=digest, ocr_sha256=digest)
         pages = self.page_count(pdf, fallback)
         if not pages:
             self.set_doc(kind, doc_id, status="ocr_failed", last_error="page count")
             return False
-        tdir = self.text_dir(kind, doc_id)
         tdir.mkdir(parents=True, exist_ok=True)
         for page in range(1, pages + 1):
             out = tdir / f"page-{page:04d}.txt"
@@ -801,8 +839,8 @@ class Job:
             if rc != 0 or not txt.exists():
                 return self._ocr_failed(kind, doc_id, f"tesseract page {page}")
             os.replace(txt, out)
-        self.set_doc(kind, doc_id, status="read", pages=pages)
-        self.manifest("read", kind=kind, doc_id=doc_id, pages=pages)
+        self.set_doc(kind, doc_id, status="read", pages=pages, last_error="")
+        self.manifest("read", kind=kind, doc_id=doc_id, pages=pages, sha256=digest)
         self.log(f"{kind} {doc_id} read ({pages} pages)")
         return True
 
@@ -855,6 +893,8 @@ class Job:
                 errored.add((doc[0], doc[1]))
             if result == "ok" and self.cfg.ocr:
                 self.ocr_doc(doc[0], doc[1])
+            if not self.disk_ok():
+                return 4
             done += 1
             if self.cfg.max_docs and done >= self.cfg.max_docs:
                 break
@@ -862,8 +902,8 @@ class Job:
 
     def status(self) -> dict:
         rows = self.db.execute(
-            "SELECT pass, status, COUNT(*), COALESCE(SUM(pages), 0),"
-            " COALESCE(SUM(size), 0) FROM docs GROUP BY pass, status"
+            "SELECT active, pass, status, COUNT(*), COALESCE(SUM(pages), 0),"
+            " COALESCE(SUM(size), 0) FROM docs GROUP BY active, pass, status"
         ).fetchall()
         return {
             "shard": self.meta("shard"),
@@ -872,13 +912,20 @@ class Job:
             "robots_blocked": self.meta("robots_blocked"),
             "by_pass_status": [
                 {"pass": p, "status": s, "docs": n, "pages": pg, "bytes": b}
-                for p, s, n, pg, b in rows
+                for active, p, s, n, pg, b in rows
+                if active
+            ],
+            "archived_by_pass_status": [
+                {"pass": p, "status": s, "docs": n, "pages": pg, "bytes": b}
+                for active, p, s, n, pg, b in rows
+                if not active
             ],
         }
 
     def requeue_failed(self) -> int:
         cur = self.db.execute(
-            "UPDATE docs SET status='queued', attempts=0"
+            "UPDATE docs SET status=CASE WHEN status='ocr_failed' THEN 'fetched'"
+            " ELSE 'queued' END, attempts=0"
             " WHERE status IN ('failed', 'ocr_failed')"
         )
         self.db.commit()
@@ -904,8 +951,8 @@ FINDING_PATTERNS = {
     ],
     "hang_off_angle_deg": [
         re.compile(
-            r"(?:hang[\s-]*off|departure|top)\s+angle[^\d.\n]{0,20}?"
-            r"(\d+(?:\.\d+)?)\s*(?:°|deg(?:rees?)?\b)",
+            r"(?:hang[\s-]*off|departure|top)\s+angle[^\d.+\-\n]{0,20}?"
+            r"([+-]?\d+(?:\.\d+)?)\s*(?:°|deg(?:rees?)?\b)",
             re.I,
         )
     ],
@@ -918,7 +965,11 @@ def find_values(text: str):
         for quantity, patterns in FINDING_PATTERNS.items():
             for rx in patterns:
                 for m in rx.finditer(line):
-                    value = re.sub(r"\s+", "", m.group(1)).upper()
+                    value = re.sub(r"\s+", " ", m.group(1)).strip().upper()
+                    if quantity == "wall_thickness":
+                        value = re.sub(r"\s*-\s*", "-", value)
+                    if quantity == "grade":
+                        value = value.replace(" ", "")
                     matched_quantity = quantity
                     if quantity == "wall_thickness":
                         unit = (m.group("unit") or "").lower()
