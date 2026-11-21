@@ -17,13 +17,13 @@ on:
   workflow_dispatch:
 
 concurrency:
-  # Even a full rerun of an older metadata edit must leave current code checks running.
+  # Rerunning an older draft or metadata edit must leave current code checks running.
   group: >-
-    ${{ github.workflow }}-${{ github.event_name == 'pull_request' &&
+    ${{ github.workflow }}-${{ github.event_name == 'pull_request' && !github.event.pull_request.draft &&
     !(github.event.action == 'edited' && github.event.changes.base == null &&
     (github.event.changes.title != null || github.event.changes.body != null)) && github.ref || github.run_id }}
   cancel-in-progress: >-
-    ${{ github.event_name == 'pull_request' &&
+    ${{ github.event_name == 'pull_request' && !github.event.pull_request.draft &&
     !(github.event.action == 'edited' && github.event.changes.base == null &&
     (github.event.changes.title != null || github.event.changes.body != null)) }}
 

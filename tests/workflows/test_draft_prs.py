@@ -2,6 +2,7 @@
 
 import pytest
 
+from tests.workflows.test_ci_triggers import _render
 from tests.workflows.test_metadata_edits import (
     CHECKS,
     MARKER,
@@ -19,9 +20,9 @@ DRAFT_EVENTS = [
 ]
 
 
-def context(filename, action, changes, draft):
+def context(filename, action, changes, draft, **run):
     return {
-        **event_context(filename, action, changes),
+        **event_context(filename, action, changes, **run),
         "github.event.pull_request.draft": draft,
     }
 
@@ -49,6 +50,21 @@ def test_ready_pull_request_runs_the_full_gate(draft):
     for action in ("ready_for_review", "synchronize"):
         states = job_states("ci.yml", context("ci.yml", action, {}, draft))
         assert states == {job: (name, True) for job, name in CHECKS["ci.yml"].items()}
+
+
+def test_draft_rerun_cannot_cancel_active_ready_gate():
+    concurrency = workflow("ci.yml")["concurrency"]
+
+    def policy(ctx):
+        return (
+            _render(concurrency["group"], ctx),
+            evaluate(concurrency["cancel-in-progress"], ctx),
+        )
+
+    ready = context("ci.yml", "ready_for_review", {}, False, run_id=102)
+    rerun = context("ci.yml", "opened", {}, True, run_id=101, attempt="2")
+    assert policy(ready) == ("CI-refs/pull/17/merge", True)
+    assert policy(rerun) == ("CI-101", False)
 
 
 def test_metadata_edit_on_a_draft_keeps_the_metadata_label():
