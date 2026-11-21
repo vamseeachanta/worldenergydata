@@ -17,6 +17,10 @@ from pathlib import Path
 from urllib.parse import urlsplit
 
 
+def _nonblank(value: object) -> bool:
+    return isinstance(value, str) and bool(value.strip())
+
+
 def _number(fact: dict, unit: str) -> Decimal | None:
     if fact.get("unit") != unit:
         raise ValueError(f"Expected unit {unit}")
@@ -27,7 +31,7 @@ def _number(fact: dict, unit: str) -> Decimal | None:
     citation = fact.get("citation", {})
     required = ("basis", "subject", "as_of")
     if not all(fact.get(key) for key in required) or not all(
-        citation.get(key) for key in ("source_id", "locator")
+        _nonblank(citation.get(key)) for key in ("source_id", "locator")
     ):
         raise ValueError("Known values require basis, subject, date and citation")
     try:
@@ -169,10 +173,8 @@ def _verify_sources(sources: dict, root: Path) -> None:
 
 
 def _verify_citation(citation: dict, sources: dict) -> None:
-    locator = citation.get("locator")
     if (
-        not isinstance(locator, str)
-        or not locator.strip()
+        not _nonblank(citation.get("locator"))
         or citation.get("source_id") not in sources
     ):
         raise ValueError("Citation requires a known source and claim locator")
