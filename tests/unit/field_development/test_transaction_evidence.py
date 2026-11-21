@@ -78,7 +78,16 @@ def test_unknown_term_source_is_refused():
         build_package(data, ROOT)
 
 
-@pytest.mark.parametrize("citation", [None, {}, {"source_id": "talos_release"}])
+@pytest.mark.parametrize(
+    "citation",
+    [
+        None,
+        {},
+        {"source_id": "talos_release"},
+        {"source_id": "talos_release", "locator": "   "},
+        {"source_id": "talos_release", "locator": True},
+    ],
+)
 def test_substantive_term_requires_source_and_locator(citation):
     data = snapshot()
     term = data["transaction"]["terms"]["upside"]
@@ -219,10 +228,22 @@ def test_input_digest_matches_binary_snapshot_after_lf_normalization(newline):
 
 
 def test_retained_input_digest_matches_binary_readback():
+    """HEAD input matches HEAD provenance; working input matches working provenance.
+
+    Comparing like with like keeps both checks and lets a matching update to the
+    input and its regenerated provenance pass before it is committed.
+    """
     retained = ROOT / "reports/field_development/transactions/na_kika_coulomb"
+
+    def committed(path):
+        return _git_bytes("show", "HEAD:" + path.relative_to(ROOT).as_posix())
+
+    head_provenance = json.loads(committed(retained / "provenance.json"))
+    assert (
+        hashlib.sha256(committed(INPUT)).hexdigest()
+        == head_provenance["input_sha256"]
+    )
     provenance = json.loads((retained / "provenance.json").read_bytes())
-    committed = _git_bytes("show", ":" + INPUT.relative_to(ROOT).as_posix())
-    assert hashlib.sha256(committed).hexdigest() == provenance["input_sha256"]
     assert (
         provenance["input_sha256"]
         == hashlib.sha256(INPUT.read_bytes().replace(b"\r\n", b"\n")).hexdigest()

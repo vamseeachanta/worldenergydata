@@ -74,6 +74,15 @@ def test_bare_source_identifier_is_insufficient():
         valuation_metrics(amount, observation(8, "boe"), observation(4, "boe/d"))
 
 
+@pytest.mark.parametrize("key", ["source_id", "locator"])
+@pytest.mark.parametrize("unusable", ["   ", True, 1])
+def test_direct_metrics_refuse_unusable_citation_text(key, unusable):
+    amount = observation(120, "USD")
+    amount["citation"] = {**amount["citation"], key: unusable}
+    with pytest.raises(ValueError, match="citation"):
+        valuation_metrics(amount, observation(8, "boe"), observation(4, "boe/d"))
+
+
 @pytest.mark.parametrize(
     "bounds",
     [
