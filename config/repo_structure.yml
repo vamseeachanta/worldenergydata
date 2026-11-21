@@ -419,6 +419,9 @@ temporary_exceptions:
       - reports/modules/marketing/reference_hurricane_mooring_safety_infographic_prior_draft_stats.json
       - reports/rig-selector/index.html
       - reports/subsea/subsea_manifold_market_intelligence.md
+      # NSTA reference-chain reports added in #1979 without classification
+      - reports/ukcs_reference/_facts.json
+      - reports/ukcs_reference/index.html
       # Life-cycle insights front doors + hub (issues #775/#776/#777/#779)
       - reports/capabilities/insights.html
       - reports/decommissioning/pa_liability_wave.csv

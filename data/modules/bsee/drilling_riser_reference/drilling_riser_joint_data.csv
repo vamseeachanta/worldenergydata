@@ -1,0 +1,9 @@
+source_id,case,setting_as_stated,main_tube_od_as_stated,main_tube_id_as_stated,wall_as_stated,od_in,wall_in,wall_basis,joint_length_as_stated,buoyancy_as_stated,weights_as_stated,layout_as_stated,where_in_source
+P01,design study,"drillship, 10,000 ft water depth",21 in,,"0.875 in (design); 0.813 and 0.938 in (sensitivity cases)",21.0,0.875,stated,,,,,"p.238 to 240, Table 4; material API X-80"
+P02,analysis example,"South China Sea well, 1500 m water depth",21 in,,0.875 in,21.0,0.875,stated,75 ft,"buoyancy block outer diameter 54 in; buoyancy force per block 10936 to 12812 kg","joint dry weight 14728 kg; LMRP 129 t",,"p.4, section 3"
+P03,analysis example,"semi-submersible, South China Sea gas well, 3048 m water depth (the paper prints 1000 ft beside it)",,,,,,not given,22.86 m (75 ft),,,"133 riser joints; 7 slick joints at the bottom, then 4 buoyancy joints and 2 slick joints alternately",section IV.A
+P04,analysis example,riser system length 533 m,21 in,,1 in,21.0,1.0,stated,15.24 m,buoyancy riser joint external diameter 1.22 m,"buoyancy joint dry weight 15,334 kg; wet weight 220 kg",,"p.610, Table 1"
+P05,analysis example,riser length 3048 m,0.5334 m,0.489 m,,21.0,0.874,arithmetic from OD and ID,,,,,Table 3
+P06,analysis example,"free-hanging riser, 350 m",0.5588 m,0.5080 m,,22.0,1.0,arithmetic from OD and ID,22.86 m,all joints bare,"LMRP 40 t; BOP 120 t",,Table 1
+P07,analysis example,1500 m water depth,533.4 mm,,15.875 mm,21.0,0.625,stated in mm,,,,,"p.22, section 2.4"
+P08,thesis model,lower flex joint 122.7 m below mean water level,0.533 m,0.492 m,,20.98,0.807,arithmetic from OD and ID,23 m (75 ft) slick and buoyancy joints,buoyancy joint outer diameter 1.235 m,"slick joint 569.3 kg/m dry; buoyancy joint 963.8 kg/m dry",,"p.63, Table 4-2"
