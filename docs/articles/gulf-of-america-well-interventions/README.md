@@ -11,7 +11,7 @@ These pages hold in full what the article's appendices summarise.
 
 ## Study sources
 
-The [study README](https://api.github.com/repositories/574746314/contents/examples/bsee/interventions_by_depth/README.md?ref=24744b528298f26c51bfce4cb3b66fa4f676eb02) at `24744b528298f26c51bfce4cb3b66fa4f676eb02` gives the method and runnable commands. The [published tables](../../../examples/bsee/interventions_by_depth/output) are from `78f1a9183a75e56adb7f31e88b271864f0b69d37`. Both pins use the repository path `examples/bsee/interventions_by_depth/`.
+The [study README](https://api.github.com/repositories/574746314/contents/examples/bsee/interventions_by_depth/README.md?ref=24744b528298f26c51bfce4cb3b66fa4f676eb02) at `24744b528298f26c51bfce4cb3b66fa4f676eb02` gives the method and runnable commands. The [published tables](https://api.github.com/repositories/574746314/contents/examples/bsee/interventions_by_depth/output?ref=78f1a9183a75e56adb7f31e88b271864f0b69d37) are from `78f1a9183a75e56adb7f31e88b271864f0b69d37`. Both pins use the repository path `examples/bsee/interventions_by_depth/`.
 
 The pinned web links on these pages open a GitHub file record. Follow its `html_url` to read the file. From a local checkout with the study revision, this command opens the same README:
 
