@@ -1,0 +1,21 @@
+stage,basis,band,n,median_days
+Drilling,recorded spud to total depth,Under 100 m,1507,21
+Drilling,recorded spud to total depth,100 to 500 m,187,35
+Drilling,recorded spud to total depth,"500 to 1,500 m",560,55.5
+Drilling,recorded spud to total depth,"1,500 m and deeper",601,67
+Completion,operator estimate,Under 100 m,4410,10
+Completion,operator estimate,100 to 500 m,636,20
+Completion,operator estimate,"500 to 1,500 m",1614,30
+Completion,operator estimate,"1,500 m and deeper",1566,40
+Intervention,operator estimate,Under 100 m,14364,7
+Intervention,operator estimate,100 to 500 m,2190,10
+Intervention,operator estimate,"500 to 1,500 m",2547,10
+Intervention,operator estimate,"1,500 m and deeper",1525,22
+Temporary abandonment,operator estimate,Under 100 m,23216,10
+Temporary abandonment,operator estimate,100 to 500 m,3321,14
+Temporary abandonment,operator estimate,"500 to 1,500 m",1258,10
+Temporary abandonment,operator estimate,"1,500 m and deeper",619,5
+Permanent abandonment,operator estimate,Under 100 m,18912,7
+Permanent abandonment,operator estimate,100 to 500 m,1957,12
+Permanent abandonment,operator estimate,"500 to 1,500 m",1544,20
+Permanent abandonment,operator estimate,"1,500 m and deeper",863,14
