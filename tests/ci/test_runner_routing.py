@@ -1,4 +1,8 @@
-"""Keep Linux routing open to both architectures without changing fork routing."""
+"""Keep Linux routing open to both architectures; fork PRs stay on hosted runners.
+
+PR-path workflows add the WED_PR_RUNNER repository-variable switch: same-repo
+pull requests use self-hosted runners only when it is set to ``self-hosted``.
+"""
 
 import json
 from pathlib import Path
@@ -8,14 +12,33 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
 FORK_PREFIX = (
-    "${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('"
+    "${{ (github.event_name != 'pull_request' || "
+    "github.event.pull_request.head.repo.full_name == github.repository) && fromJSON('"
 )
-FORK_ROUTING = FORK_PREFIX + '["self-hosted","Linux"]\') }}'
+# PR-path workflows: hosted by default; vars.WED_PR_RUNNER == 'self-hosted' rolls back.
+SWITCH_PREFIX = (
+    "${{ (github.event_name != 'pull_request' || "
+    "(github.event.pull_request.head.repo.full_name == github.repository && "
+    "vars.WED_PR_RUNNER == 'self-hosted')) && fromJSON('"
+)
+FORK_SUFFIX = "') || 'ubuntu-latest' }}"
+FORK_ROUTING = FORK_PREFIX + '["self-hosted","Linux"]' + FORK_SUFFIX
+SWITCH_ROUTING = SWITCH_PREFIX + '["self-hosted","Linux"]' + FORK_SUFFIX
+PR_SWITCH_WORKFLOWS = {
+    "ci.yml",
+    "brand-guard.yml",
+    "wheel-ownership.yml",
+    "pr-validation.yml",
+    "domain-matrix.yml",
+}
 WORKFLOWS = [
     ("ci.yml", 6),
     ("main-full-run.yml", 10),
     ("docs.yml", 1),
     ("brand-guard.yml", 1),
+    ("wheel-ownership.yml", 1),
+    ("pr-validation.yml", 4),
+    ("domain-matrix.yml", 3),
 ]
 X64_ONLY = {
     "full-suite",
@@ -24,6 +47,14 @@ X64_ONLY = {
     "dependency-audit",
     "performance-benchmark",
 }
+DOMAIN_X64_ONLY = {"test-domain", "aggregate"}
+LIGHTWEIGHT_PR_JOBS = [
+    ("pr-validation.yml", "pr-title"),
+    ("pr-validation.yml", "file-size"),
+    ("pr-validation.yml", "sensitive-files"),
+    ("pr-validation.yml", "pack-lint"),
+    ("domain-matrix.yml", "discover"),
+]
 
 
 def _local_jobs(filename):
@@ -35,27 +66,57 @@ def _local_jobs(filename):
 
 def _required_labels(selector):
     if isinstance(selector, str):
-        assert selector.startswith(FORK_PREFIX)
-        assert selector.endswith("') }}")
-        selector = json.loads(selector.removeprefix(FORK_PREFIX).removesuffix("') }}"))
+        selector = " ".join(selector.split())
+        prefix = next(p for p in (FORK_PREFIX, SWITCH_PREFIX) if selector.startswith(p))
+        assert selector.endswith(FORK_SUFFIX)
+        selector = json.loads(selector.removeprefix(prefix).removesuffix(FORK_SUFFIX))
     return {label.casefold() for label in selector}
 
 
 @pytest.mark.parametrize("filename, job_count", WORKFLOWS)
 def test_linux_runner_routing(filename, job_count):
-    """Hand count: 6 + 10 + 1 + 1 = 18 local jobs; one CI job is reusable.
+    """Hand count: 6 + 10 + 1 + 1 + 1 + 4 + 3 = 26 local jobs.
 
-    Compatible jobs request Linux; frozen all-extras jobs retain x64.
-    The unchanged fork predicate selects ubuntu-latest.
-    Reusable workflows own their runner selection outside this repository.
+    Compatible jobs request Linux; frozen all-extras jobs retain Linux x64.
+    The same-repository predicate sends fork PRs to ubuntu-latest; PR-path
+    workflows also need WED_PR_RUNNER == 'self-hosted' for same-repo PRs.
+    The local reusable domain workflow owns three of these selectors.
     """
     jobs = _local_jobs(filename)
     assert len(jobs) == job_count
+    prefix = SWITCH_PREFIX if filename in PR_SWITCH_WORKFLOWS else FORK_PREFIX
     for name, job in jobs.items():
-        expected = FORK_ROUTING
         if filename == "main-full-run.yml":
-            expected = ["self-hosted", "x64" if name in X64_ONLY else "Linux"]
-        assert job["runs-on"] == expected, name
+            expected = (
+                ["self-hosted", "x64", "Linux"]
+                if name in X64_ONLY
+                else ["self-hosted", "Linux"]
+            )
+            assert job["runs-on"] == expected, name
+        elif filename == "domain-matrix.yml" and name in DOMAIN_X64_ONLY:
+            assert " ".join(job["runs-on"].split()) == (
+                prefix + '["self-hosted","x64","linux"]' + FORK_SUFFIX
+            ), name
+        else:
+            assert " ".join(job["runs-on"].split()) == (
+                prefix + '["self-hosted","Linux"]' + FORK_SUFFIX
+            ), name
+
+
+@pytest.mark.parametrize("filename, job_id", LIGHTWEIGHT_PR_JOBS)
+def test_lightweight_pr_jobs_allow_both_architectures(filename, job_id):
+    """Pin each moved job and preserve the exact fork-isolation expression."""
+    selector = _local_jobs(filename)[job_id]["runs-on"]
+    assert " ".join(selector.split()) == SWITCH_ROUTING
+
+
+@pytest.mark.parametrize("job_id", sorted(DOMAIN_X64_ONLY))
+def test_domain_tests_and_summary_stay_x64(job_id):
+    """CAD-dependent tests and their summary retain the existing x64 policy."""
+    selector = _local_jobs("domain-matrix.yml")[job_id]["runs-on"]
+    assert " ".join(selector.split()) == (
+        SWITCH_PREFIX + '["self-hosted","x64","linux"]' + FORK_SUFFIX
+    )
 
 
 def test_frozen_all_extras_jobs_stay_x64():
@@ -71,7 +132,11 @@ def test_frozen_all_extras_jobs_stay_x64():
     }
     assert frozen_jobs == X64_ONLY
     for name in frozen_jobs:
-        assert _required_labels(jobs[name]["runs-on"]) == {"self-hosted", "x64"}, name
+        assert _required_labels(jobs[name]["runs-on"]) == {
+            "self-hosted",
+            "x64",
+            "linux",
+        }, name
 
 
 @pytest.mark.parametrize("filename, job_count", WORKFLOWS)
@@ -82,6 +147,8 @@ def test_linux_runner_label_matching(filename, job_count, architecture):
     jobs = _local_jobs(filename)
     assert len(jobs) == job_count
     for name, job in jobs.items():
-        x64_only = filename == "main-full-run.yml" and name in X64_ONLY
+        x64_only = (filename == "main-full-run.yml" and name in X64_ONLY) or (
+            filename == "domain-matrix.yml" and name in DOMAIN_X64_ONLY
+        )
         matches = _required_labels(job["runs-on"]) <= runner_labels
         assert matches == (not x64_only or architecture == "X64"), name

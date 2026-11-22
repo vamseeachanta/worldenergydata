@@ -3,8 +3,9 @@
 from collections import Counter
 from dataclasses import dataclass
 from datetime import date
+from typing import get_args
 
-from .capex_estimator_schema import FeatureSnapshot, TrainingRecord
+from .capex_estimator_schema import FeatureName, FeatureSnapshot, TrainingRecord
 
 
 @dataclass(frozen=True)
@@ -24,7 +25,7 @@ def select_cohort(records, target: FeatureSnapshot, cutoff: date) -> Cohort:
     if cutoff > target.as_of:
         raise ValueError("training cutoff follows prediction date")
     names = tuple(sorted(k for k, v in target.features.items() if v is not None))
-    missing = tuple(sorted(k for k, v in target.features.items() if v is None))
+    missing = tuple(sorted(set(get_args(FeatureName)) - set(names)))
     candidates = [r for r in records if not _exclusion(r, target, cutoff, names)]
     groups = Counter(r.snapshot.validation_group_id for r in candidates)
     projects = Counter(r.snapshot.project_id for r in candidates)

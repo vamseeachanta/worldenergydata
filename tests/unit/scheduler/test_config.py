@@ -107,6 +107,7 @@ class TestLoadConfig:
         expected_names = {
             "bsee_refresh",
             "hse_refresh",
+            "hse_sources_refresh",
             "sodir_refresh",
             "eia_us_refresh",
             "metocean_refresh",
@@ -119,6 +120,7 @@ class TestLoadConfig:
         expected_output_dirs = {
             "bsee_refresh": "data/modules/bsee",
             "hse_refresh": "data/modules/hse",
+            "hse_sources_refresh": "data/modules/hse/sources",
             "sodir_refresh": "data/modules/sodir",
             "eia_us_refresh": "data/modules/eia",
             "metocean_refresh": "data/modules/metocean",

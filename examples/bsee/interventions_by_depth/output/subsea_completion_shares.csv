@@ -1,0 +1,21 @@
+period,band,event,approvals,subsea_flag_yes,subsea_flag_no,subsea_flag_unknown,subsea_share_percent
+2025,under 100 m,well work,316,3,304,9,0.949367
+2025,under 100 m,permanent abandonment,1098,0,1042,56,0.000000
+2025,100 to 500 m,well work,99,21,72,6,21.212121
+2025,100 to 500 m,permanent abandonment,94,9,83,2,9.574468
+2025,500 to 1500 m,well work,185,128,43,14,69.189189
+2025,500 to 1500 m,permanent abandonment,157,78,65,14,49.681529
+2025,1500 m and deeper,well work,165,139,18,8,84.242424
+2025,1500 m and deeper,permanent abandonment,38,25,8,5,65.789474
+2025,no depth,well work,0,0,0,0,
+2025,no depth,permanent abandonment,0,0,0,0,
+2021-2025,under 100 m,well work,2025,16,1898,111,0.790123
+2021-2025,under 100 m,permanent abandonment,4029,4,3791,234,0.099280
+2021-2025,100 to 500 m,well work,557,79,457,21,14.183124
+2021-2025,100 to 500 m,permanent abandonment,375,64,281,30,17.066667
+2021-2025,500 to 1500 m,well work,1102,699,336,67,63.430127
+2021-2025,500 to 1500 m,permanent abandonment,651,294,247,110,45.161290
+2021-2025,1500 m and deeper,well work,998,861,94,43,86.272545
+2021-2025,1500 m and deeper,permanent abandonment,231,79,67,85,34.199134
+2021-2025,no depth,well work,0,0,0,0,
+2021-2025,no depth,permanent abandonment,0,0,0,0,
