@@ -24,7 +24,8 @@ remain separate. No regulator observations are bundled; engineering suitability 
 <table>
   <tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr>
   <tr><td>1</td><td>2026-10-20</td><td>Add explicit identities, immutable production snapshots and decline evidence to prevent inferred joins and unlabelled synthetic inputs.</td></tr>
-  <caption>Table 1. Initial database documentation revision.</caption>
+  <tr><td>2</td><td>2026-11-22</td><td>Document source-byte verification so callers can check the declared digest before registering a snapshot.</td></tr>
+  <caption>Table 1. Database documentation revisions.</caption>
 </table>
 
 <h2>Scope and API</h2>
@@ -43,6 +44,22 @@ are caller supplied. Opening a store uses SQLite and performs no network retriev
   volumes for the existing monthly fitter. <code>save_decline</code> retains supplied parameters
   against a recomputed input digest; <code>decline_curve</code> returns provenance and qualification.</li>
 </ol>
+
+<h2>Checking source bytes before insertion</h2>
+<p><code>database.add_snapshot(snapshot)</code> records a caller-attested digest.
+When the original bytes are available, use the package-level helper instead:</p>
+<pre><code>from worldenergydata.production.database import add_verified_snapshot
+
+receipt = add_verified_snapshot(database, snapshot, raw_bytes)</code></pre>
+<p>Supply the complete source as a nonempty <code>bytes</code> object. The helper
+compares its SHA-256 with <code>snapshot.sha256</code> before inserting the metadata.
+A mismatch or empty input leaves a new snapshot ID available for retry. An existing
+ID is rejected. After insertion, the receipt gives <code>snapshot_id</code>,
+<code>sha256</code> and <code>byte_count</code> for the bytes inspected in that call.</p>
+<p>The caller retains the original. No raw bytes, receipt or verification flag are
+stored in SQLite. A later read of the snapshot returns its original metadata,
+including its reported or synthetic classification. Parser correctness, continued
+file integrity, source rights, freshness and field suitability require separate evidence.</p>
 
 <h2>Regulator identities and mapping boundary</h2>
 <table>
