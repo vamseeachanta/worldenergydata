@@ -107,3 +107,168 @@ def test_reference_chain_returns_labeled_finite_pre_tax_metrics_and_zero_royalty
     assert math.isfinite(result["pre_tax_metrics"]["gross_revenue_usd"])
     assert math.isfinite(result["pre_tax_metrics"]["net_cashflow_usd"])
     assert result["ranked_concepts"]
+
+
+@pytest.mark.parametrize(
+    "metadata_name, production_name, request_name",
+    [
+        ("Synthetic Alpha", "SYNTHETIC ALPHA", "Synthetic Alpha"),
+        ("Synthetic Alpha", "SYNTHETIC ALPHA", "synthetic alpha"),
+        ("Synthetic Alpha", "SYNTHETIC ALPHA", "  SYNTHETIC ALPHA \t"),
+        ("Synthetic Gross", "SYNTHETIC GROSS", "Synthetic Gross"),
+        ("Synthetic Gross", "SYNTHETIC GROSS", "Synthetic Gro\u00df"),
+        ("Synthetic Gro\u00df", "SYNTHETIC GRO\u00df", "Synthetic Gross"),
+        ("Synthetic Gro\u00df", "SYNTHETIC GRO\u00df", "  Synthetic Gro\u00df \t"),
+    ],
+)
+def test_enriched_metadata_retains_evidence_without_changing_screen_or_economics(
+    metadata_name,
+    production_name,
+    request_name,
+):
+    import json
+
+    from worldenergydata.ukcs.field_metadata import read_field_metadata
+
+    class SyntheticLoader:
+        def load_all_production(self):
+            normalized = _normalized_nsta_frame().assign(field=production_name)
+            unrelated = normalized.assign(field=production_name + " East")
+            return pd.concat([normalized, unrelated], ignore_index=True)
+
+        def load_field_production(self, field_name):
+            normalized = self.load_all_production()
+            return normalized[
+                normalized["field"].str.strip().str.casefold()
+                == field_name.strip().casefold()
+            ].copy()
+
+    requested_fields = []
+
+    class RecordingAdapter:
+        def fetch(self, query):
+            assert query.regions == ["ukcs"]
+            requested_fields.append(query.fields)
+            return UkcsAdapter(loader=SyntheticLoader()).fetch(query)
+
+    raw = json.dumps(
+        {
+            "features": [
+                {
+                    "attributes": {
+                        "FIELDNAME": metadata_name,
+                        "OBJECTID": 1,
+                        "CURR_OPER": "Synthetic Operator",
+                        "STATUS": "Producing",
+                        "PROD_DATE": "unparsed startup",
+                        "DISC_DATE": "unknown",
+                    }
+                }
+            ]
+        }
+    ).encode()
+    meta = read_field_metadata(
+        raw,
+        request_name,
+        source_url="https://example.invalid/0",
+        retrieved_at="2026-11-16T00:00:00Z",
+    )
+    canonical_name = production_name.strip().title()
+    sparse = {"field_name": canonical_name}
+
+    def run(metadata, name=request_name):
+        return run_ukcs_reference_chain(
+            adapter=RecordingAdapter(),
+            field_meta=metadata,
+            field_name=name,
+        )
+
+    first, second = run(meta), run(meta)
+    original = run(sparse, canonical_name)
+    assert meta["metadata_evidence"]["match_status"] == "matched"
+    assert len(first["unified_production"]) == 2
+    assert first["fdas_production"]["YEAR_MONTH"].tolist() == ["1975-09", "1975-10"]
+    assert first["pre_tax_metrics"]["gross_revenue_usd"] > 0.0
+    pd.testing.assert_frame_equal(
+        first["unified_production"], original["unified_production"]
+    )
+    pd.testing.assert_frame_equal(first["fdas_production"], original["fdas_production"])
+    assert requested_fields == [None, None, [canonical_name]]
+    concept = first["field_concept"]
+    assert concept.operator == "Synthetic Operator"
+    assert concept.region == "uk"
+    assert concept.year_first_oil is None
+    assert (
+        first["metadata_evidence"]
+        == second["metadata_evidence"]
+        == meta["metadata_evidence"]
+    )
+    assert first["metadata_label"] == "metadata_screening_only"
+    assert first["metadata_evidence"]["recommendation_ready"] is False
+    assert first["metadata_evidence"]["fdp_consent"] == "NOT_EVALUATED"
+    assert (
+        first["ranked_concepts"]
+        == second["ranked_concepts"]
+        == original["ranked_concepts"]
+    )
+    assert first["pre_tax_metrics"] == original["pre_tax_metrics"]
+    assert original["metadata_evidence"] is None
+
+
+def test_enriched_chain_selects_equivalent_rows_after_date_filtering():
+    class MixedLoader:
+        def load_all_production(self):
+            matching = _normalized_nsta_frame().assign(
+                field=["  SYNTHETIC GRO\u00df \t", "SYNTHETIC GROSS"]
+            )
+            unrelated = matching.assign(field="SYNTHETIC GROSS EAST")
+            missing = matching.assign(field=None)
+            outside_window = matching.assign(year=1976)
+            return pd.concat(
+                [matching, unrelated, missing, outside_window], ignore_index=True
+            )
+
+        def load_field_production(self, field_name):
+            raise AssertionError("enriched lookup must use unfiltered production")
+
+    result = run_ukcs_reference_chain(
+        adapter=UkcsAdapter(loader=MixedLoader()),
+        field_meta={"field_name": "Synthetic Gross", "metadata_evidence": {}},
+        field_name="  Synthetic Gro\u00df \t",
+        start="1975-09",
+        end="1975-10",
+    )
+
+    assert result["unified_production"]["field_name"].tolist() == [
+        "Synthetic Gro\u00df",
+        "Synthetic Gross",
+    ]
+    assert result["unified_production"]["oil_bbl"].tolist() == [7330.0, 8063.0]
+    assert result["fdas_production"]["YEAR_MONTH"].tolist() == ["1975-09", "1975-10"]
+    assert result["pre_tax_metrics"]["gross_revenue_usd"] == pytest.approx(
+        (7330.0 + 8063.0) * 75.0
+    )
+
+
+@pytest.mark.parametrize("metadata_name", ["Synthetic Beta", "", None, 42])
+def test_enriched_metadata_mismatch_fails_before_production_fetch(metadata_name):
+    from worldenergydata.ukcs.field_metadata import read_field_metadata
+
+    meta = read_field_metadata(
+        b'{"features":[{"attributes":{"FIELDNAME":"Synthetic Beta","OBJECTID":1}}]}',
+        "Synthetic Beta",
+        source_url="https://example.invalid/0",
+        retrieved_at="2026-11-16T00:00:00Z",
+    )
+    meta["field_name"] = metadata_name
+
+    class UnusedAdapter:
+        def fetch(self, query):
+            raise AssertionError("production fetch must not run")
+
+    with pytest.raises(ValueError, match="metadata field.*production request"):
+        run_ukcs_reference_chain(
+            adapter=UnusedAdapter(),
+            field_meta=meta,
+            field_name="Synthetic Alpha",
+        )
