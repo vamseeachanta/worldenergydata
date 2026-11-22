@@ -10,6 +10,7 @@ from worldenergydata.drilling import (
     BatchDrillingEconomics,
     BSEEBatchDetector,
     DrillCampaign,
+    DrillingSite,
 )
 
 
@@ -18,7 +19,16 @@ def test_c0_campaign_schema():
     valid = dict(
         campaign_id="",
         rig_name="",
-        wells=[],
+        wells=[
+            DrillingSite(
+                well_id="W1",
+                field_name="Synthetic field",
+                location_coords=(0, 0),
+                water_depth_ft=0,
+                planned_md_ft=8000,
+                well_type="development",
+            )
+        ],
         rig_day_rate_usd=350_000,
         mobilization_cost_usd=20_000_000,
     )
