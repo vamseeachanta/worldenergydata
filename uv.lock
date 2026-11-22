@@ -8018,7 +8018,7 @@ requires-dist = [
     { name = "selenium", specifier = ">=4.15.0,<5.0" },
     { name = "sentencepiece", marker = "extra == 'llm'", specifier = ">=0.1.99" },
     { name = "sentencepiece", marker = "extra == 'safety-bert'", specifier = ">=0.1.99" },
-    { name = "sphinx", marker = "extra == 'docs'", specifier = ">=6.0" },
+    { name = "sphinx", marker = "extra == 'docs'", specifier = ">=8.1.3" },
     { name = "sphinx-rtd-theme", marker = "extra == 'docs'", specifier = ">=3.1.0" },
     { name = "sqlalchemy", specifier = ">=2.0.49,<3.0" },
     { name = "sqlmodel", specifier = ">=0.0.14,<1.0" },
