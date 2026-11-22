@@ -47,6 +47,12 @@ Ungrouped riser lengths use two to five digits to reduce single-digit noise and
 long identifier matches; comma-grouped lengths retain all groups. This is an
 assumed search heuristic, based on previous experience, recorded in the same
 configuration decision, not a physical length limit.
+Correction configuration basis: #2086, "Collector correction configuration"
+comment. Redirected documents wait for Retry-After or, without it, 24 hours
+before another attempt; this prevents a redirect consuming every short batch.
+Unknown or nonfinite load defers OCR until a measurable load is available.
+CSV excerpts retain at most 200 characters centred on the match to bound row
+size while preserving the candidate and unit; this is a presentation choice.
 
 Commands::
 
@@ -100,7 +106,7 @@ USER_AGENT = (
 REFUSALS = {403, 429, 503}
 GONE = {404, 410}
 STOP_FILE = "STOP"
-QUEUE_KEY_VERSION = "v2"
+QUEUE_KEY_VERSION = "v3"
 
 
 def utcnow() -> datetime:
@@ -205,11 +211,11 @@ def lower_own_priority() -> None:
         )
 
 
-def load5() -> float:
+def load5() -> float | None:
     try:
         return os.getloadavg()[1]
     except (AttributeError, OSError):
-        return 0.0
+        return None
 
 
 def parse_window(text: str) -> tuple[int, int]:
@@ -395,6 +401,8 @@ class Job:
                 self.db.execute("DELETE FROM meta WHERE key='queue_key'")
             if "ocr_sha256" not in columns:
                 self.db.execute("ALTER TABLE docs ADD COLUMN ocr_sha256 TEXT")
+            if "deferred_until" not in columns:
+                self.db.execute("ALTER TABLE docs ADD COLUMN deferred_until TEXT")
             # Both earlier schemas could retain stale membership under the old key.
             self.db.execute(
                 "DELETE FROM meta WHERE key='queue_key' AND value NOT LIKE ?",
@@ -423,13 +431,14 @@ class Job:
         row = self.db.execute("SELECT value FROM meta WHERE key=?", (key,)).fetchone()
         return row[0] if row else default
 
-    def set_meta(self, key: str, value) -> None:
+    def set_meta(self, key: str, value, *, commit: bool = True) -> None:
         self.db.execute(
             "INSERT INTO meta(key, value) VALUES(?, ?) "
             "ON CONFLICT(key) DO UPDATE SET value=excluded.value",
             (key, str(value)),
         )
-        self.db.commit()
+        if commit:
+            self.db.commit()
 
     def manifest(self, event: str, **fields) -> None:
         rec = {"utc": f"{self.clock.now():%Y-%m-%dT%H:%M:%SZ}", "event": event}
@@ -514,6 +523,8 @@ class Job:
                 elif rp_status in GONE:
                     text = ""
                 elif rp_status in (401, 403):
+                    if rp_status in REFUSALS:
+                        self.refused(r)
                     text = "User-agent: *\nDisallow: /\n"
                 else:
                     self.add_error()
@@ -550,6 +561,19 @@ class Job:
             self.log(f"this data directory holds shard {held}, not {shard}")
             return 2
         zip_path = Path(self.cfg.index_zip or self.dir / INDEX_ZIP_NAME)
+        if zip_path.exists() and not self.cfg.index_zip:
+            try:
+                for _ in index_records(zip_path):
+                    pass
+            except (ValueError, zipfile.BadZipFile):
+                version = 1
+                archive = zip_path.with_name(f"{zip_path.name}.invalid-{version}")
+                while archive.exists():
+                    version += 1
+                    archive = zip_path.with_name(f"{zip_path.name}.invalid-{version}")
+                zip_path.rename(archive)
+                self.manifest("index_quarantined", file=archive.name)
+                self.log("invalid managed index quarantined; replacement required")
         if not zip_path.exists():
             if self.cfg.index_zip:
                 self.log(f"index file missing: {zip_path}")
@@ -571,12 +595,10 @@ class Job:
         if self.meta("queue_key") == key:
             return 0
         try:
-            added = self.build_queue(zip_path, Path(self.cfg.segments))
+            added = self.build_queue(zip_path, Path(self.cfg.segments), key)
         except (ValueError, zipfile.BadZipFile) as err:
             self.log(f"queue input invalid; previous queue retained: {err}")
             return 5
-        self.set_meta("queue_key", key)
-        self.set_meta("shard", shard)
         self.log(f"queue built for shard {shard}: {added} documents")
         return 0
 
@@ -617,7 +639,9 @@ class Job:
             self.log(f"scan index not fetched (status {r.status} {r.error})")
         return 0
 
-    def build_queue(self, zip_path: Path, segments_path: Path) -> int:
+    def build_queue(
+        self, zip_path: Path, segments_path: Path, key: str | None = None
+    ) -> int:
         passes = segment_passes(segments_path)
         docs: dict[tuple[str, int], dict] = {}
         for kind, rec in index_records(zip_path):
@@ -639,6 +663,12 @@ class Job:
             d["segs"].add(seg)
             d["pass"] = min(d["pass"], passes[seg])
         now = self.clock.now().isoformat()
+        shard = f"{self.cfg.shard_k}/{self.cfg.shard_n}"
+        if key is None:
+            key = (
+                f"{QUEUE_KEY_VERSION}:{sha256_of(zip_path)}:"
+                f"{sha256_of(segments_path)}:{shard}"
+            )
         # Replace membership atomically; keep downloads, failures and OCR evidence.
         with self.db:
             self.db.execute("UPDATE docs SET active=0")
@@ -652,6 +682,8 @@ class Job:
                     " index_size=excluded.index_size, active=1",
                     (kind, doc_id, segs, d["pass"], d["pages"], d["size"], now),
                 )
+            self.set_meta("queue_key", key, commit=False)
+            self.set_meta("shard", shard, commit=False)
         return len(docs)
 
     def next_doc(self, excluded=()):
@@ -661,8 +693,9 @@ class Job:
                 for doc in self.db.execute(
                     "SELECT kind, doc_id, index_size, index_pages, segments FROM docs"
                     " WHERE active=1 AND status='queued' AND pass<=?"
+                    " AND (deferred_until IS NULL OR deferred_until<=?)"
                     " ORDER BY pass, attempts, kind, doc_id",
-                    (self.cfg.max_pass,),
+                    (self.cfg.max_pass, self.clock.now().isoformat()),
                 )
                 if doc[:2] not in excluded
             ),
@@ -737,6 +770,11 @@ class Job:
         if r is None:
             return "deferred"
         if 300 <= r.status < 400:
+            wait = retry_after_s(r.headers.get("retry-after"), self.clock.now())
+            until = self.clock.now() + timedelta(
+                seconds=24 * 3600 if wait is None else wait
+            )
+            self.set_doc(kind, doc_id, deferred_until=until.isoformat())
             return "redirected"
         if r.status == 200:
             problem = ""
@@ -803,14 +841,19 @@ class Job:
 
     def wait_load(self) -> bool:
         warned = False
-        while self.loadavg() > self.cfg.max_load:
+        while True:
+            load = self.loadavg()
+            if load is None or not math.isfinite(load):
+                self.log("load unavailable; OCR deferred")
+                return False
+            if load <= self.cfg.max_load:
+                return True
             if self.stop_requested() or self.budget_spent():
                 return False
             if not warned:
                 self.log(f"load over {self.cfg.max_load}; OCR paused")
                 warned = True
             self.clock.sleep(60)
-        return True
 
     def page_count(self, pdf: Path, fallback: int | None) -> int | None:
         tools = self.tools() or {}
@@ -904,14 +947,15 @@ class Job:
             return
         for kind, doc_id in self.db.execute(
             "SELECT kind, doc_id FROM docs WHERE active=1 AND status='fetched'"
-            " ORDER BY pass, kind, doc_id"
+            " AND pass<=? ORDER BY pass, kind, doc_id",
+            (self.cfg.max_pass,),
         ).fetchall():
             if self.stop_requested() or self.budget_spent() or not self.tools():
                 return
             self.ocr_doc(kind, doc_id)
 
     # -- main loop -----------------------------------------------------------
-    def run(self) -> int:
+    def run(self, *, requeue_failed: bool = False) -> int:
         if self.stop_requested():
             self.log("STOP file present; nothing done")
             return 0
@@ -920,6 +964,8 @@ class Job:
             return 0
         if rc:
             return rc
+        if requeue_failed:
+            self.log(f"{self.requeue_failed()} failed documents queued again")
         self.ocr_backlog()
         if not self.disk_ok():
             return 4
@@ -997,8 +1043,10 @@ FINDING_PATTERNS = {
     "grade": [re.compile(r"\b(?:grade\s*)?(X\s?-?(?:52|56|60|65|70))\b", re.I)],
     "riser_length_ft": [
         re.compile(
-            r"riser[^.\n]{0,40}?\b(\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d{2,5}(?:\.\d+)?)"
-            r"\s*(?:ft\b|feet|')",
+            r"riser[^.\n]{0,40}?(?<![\w.,/+\-])"
+            r"(\d{1,3}(?:,\d{3})+(?:\.\d+)?|"
+            r"\d{2,5}(?:(?:\s*-\s*|\s+)\d+/\d+|\.\d+)?)"
+            r"(?![\d.,/])\s*(?:ft\b|feet\b|'(?!'))",
             re.I,
         )
     ],
@@ -1013,7 +1061,7 @@ FINDING_PATTERNS = {
 
 
 def find_values(text: str):
-    """(quantity, value, line) for each match, line cut to 200 characters."""
+    """(quantity, value, excerpt), with up to 200 characters around the match."""
     for line in text.splitlines():
         for quantity, patterns in FINDING_PATTERNS.items():
             for rx in patterns:
@@ -1036,7 +1084,9 @@ def find_values(text: str):
                         value = value.replace("-", "")
                     if quantity == "hang_off_angle_deg":
                         value = value.replace("−", "-")
-                    yield matched_quantity, value, line.strip()[:200]
+                    start = max(0, (m.start() + m.end() - 200) // 2)
+                    start = min(start, max(0, len(line) - 200))
+                    yield matched_quantity, value, line[start : start + 200].strip()
 
 
 def write_findings(job: Job, out: Path) -> int:
@@ -1163,9 +1213,7 @@ def main(argv: list[str] | None = None) -> int:
             print("another run holds the lock; nothing done")
             return 0
         job = Job(cfg)
-        if args.requeue_failed:
-            job.log(f"{job.requeue_failed()} failed documents queued again")
-        return job.run()
+        return job.run(requeue_failed=args.requeue_failed)
 
 
 if __name__ == "__main__":

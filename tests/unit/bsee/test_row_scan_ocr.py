@@ -1139,7 +1139,6 @@ def test_permanent_pdf_redirect_does_not_block_other_documents(env):
         url,
         rso.doc_url("ROW", 32733),
         rso.doc_url("ROW", 32737),
-        url,
     ]
     assert job.errors_today() == 0
     assert job.db.execute(
@@ -1149,3 +1148,303 @@ def test_permanent_pdf_redirect_does_not_block_other_documents(env):
         (b[0] - a[0]).total_seconds() >= 60
         for a, b in zip(fetcher.calls, fetcher.calls[1:])
     )
+
+
+@pytest.mark.parametrize(
+    "line, expected",
+    [
+        ("riser length 120''", []),
+        ("riser length 100 15/16 ft", [("riser_length_ft", "100 15/16")]),
+        ("riser length 100-15/16 ft", [("riser_length_ft", "100-15/16")]),
+        ("riser length 100 15/16''", []),
+    ],
+)
+def test_riser_dimension_csv_requires_entire_value_and_feet(env, line, expected):
+    tmp_path, seg, zp = env
+    clock = FakeClock(DAY)
+    job = make_job(tmp_path, seg, zp, clock, FakeFetcher(clock))
+    assert job.prepare() == 0
+    job.set_doc("ROW", 32733, status="read", sha256="bound", ocr_sha256="bound")
+    tdir = job.text_dir("ROW", 32733)
+    tdir.mkdir(parents=True)
+    (tdir / "page-0001.txt").write_text(line)
+    out = tmp_path / "dimensions.csv"
+    assert rso.write_findings(job, out) == len(expected)
+    with out.open() as fh:
+        rows = list(rso.csv.DictReader(fh))
+    assert [(r["quantity"], r["value"]) for r in rows] == expected
+
+
+@pytest.mark.parametrize("interrupted_key", ["queue_key", "shard"])
+def test_queue_key_and_membership_roll_back_together_on_restart(env, interrupted_key):
+    tmp_path, seg, zp = env
+    clock = FakeClock(NIGHT)
+    fetcher = FakeFetcher(clock)
+    original = "segment_num,max_water_depth_ft,static_check_tier\n"
+    seg.write_text(original)
+    job = make_job(tmp_path, seg, zp, clock, fetcher)
+    assert job.prepare() == 0
+    old_key = job.meta("queue_key")
+    job.db.execute(
+        "CREATE TRIGGER interrupt_key BEFORE INSERT ON meta "
+        f"WHEN NEW.key='{interrupted_key}' "
+        "BEGIN SELECT RAISE(ABORT, 'interrupted key write'); END"
+    )
+    job.db.commit()
+    seg.write_text(SEGMENTS)
+    with pytest.raises(rso.sqlite3.IntegrityError, match="interrupted key write"):
+        job.prepare()
+    assert job.meta("queue_key") == old_key
+    assert job.db.execute("SELECT COUNT(*) FROM docs WHERE active=1").fetchone() == (0,)
+    seg.write_text(original)
+    job.db.close()
+    retry = make_job(tmp_path, seg, zp, clock, fetcher)
+    assert retry.run() == 0
+    assert fetcher.calls == []
+
+
+@pytest.mark.parametrize("explicit", [False, True])
+@pytest.mark.parametrize("invalid", ["not_zip", "members", "headers"])
+def test_preexisting_invalid_index_retries_only_managed_copy(env, explicit, invalid):
+    tmp_path, seg, zp = env
+    clock = FakeClock(NIGHT)
+    fetcher = FakeFetcher(clock, zip_bytes=zp.read_bytes())
+    job = make_job(tmp_path, seg, zp, clock, fetcher, max_docs=1)
+    assert job.prepare() == 0
+    before = job.db.execute("SELECT * FROM docs ORDER BY kind, doc_id").fetchall()
+    old_key = job.meta("queue_key")
+    target = zp if explicit else job.dir / rso.INDEX_ZIP_NAME
+    if invalid == "not_zip":
+        target.write_bytes(b"invalid cached archive")
+    else:
+        with zipfile.ZipFile(target, "w") as zf:
+            zf.writestr("scan_row.txt", ROW_TXT)
+            if invalid == "headers":
+                zf.writestr("scan_pipeline_maps.txt", "WRONG,HEADER\n")
+    invalid_bytes = target.read_bytes()
+    job.cfg.index_zip = target if explicit else None
+    assert job.run() == (5 if explicit else 0)
+    if explicit:
+        assert target.read_bytes() == invalid_bytes
+        assert fetcher.calls == []
+        assert job.meta("queue_key") == old_key
+        assert (
+            job.db.execute("SELECT * FROM docs ORDER BY kind, doc_id").fetchall()
+            == before
+        )
+    else:
+        assert target.read_bytes() == fetcher.zip_bytes
+        quarantined = list(job.dir.glob(rso.INDEX_ZIP_NAME + ".invalid-*"))
+        assert len(quarantined) == 1
+        assert quarantined[0].read_bytes() == invalid_bytes
+        assert [u for _, u in fetcher.calls].count(rso.INDEX_ZIP_URL) == 1
+        assert len(fetcher.doc_urls()) == 1
+
+
+def test_redirect_deferral_survives_short_batches_and_expires(env):
+    tmp_path, seg, zp = env
+    clock = FakeClock(NIGHT)
+    fetcher = FakeFetcher(clock)
+    leading = rso.doc_url("PIPEMAPS", 19963)
+    fetcher.script[leading] = [rso.Response(301, {"location": leading})] * 3
+    seed = make_job(tmp_path, seg, zp, clock, fetcher)
+    assert seed.prepare() == 0
+    assert seed.robots_ok(leading)
+    clock.sleep(60)
+    for _ in range(2):
+        job = make_job(tmp_path, seg, zp, clock, fetcher, max_minutes=1)
+        assert job.run() == 0
+    assert fetcher.doc_urls()[:2] == [leading, rso.doc_url("ROW", 32733)]
+    assert fetcher.doc_urls().count(leading) == 1
+    assert job.errors_today() == 0
+    assert job.db.execute(
+        "SELECT status, attempts FROM docs WHERE doc_id=19963"
+    ).fetchone() == ("queued", 0)
+    clock.sleep(24 * 3600)
+    # Refreshing the day-old robots cache needs its own spaced request.
+    retry = make_job(tmp_path, seg, zp, clock, fetcher, max_minutes=2)
+    assert retry.run() == 0
+    assert fetcher.doc_urls().count(leading) == 2
+
+
+def test_wrong_shard_requeue_leaves_failed_attempts_unchanged(env, monkeypatch):
+    tmp_path, seg, zp = env
+    clock = FakeClock(NIGHT)
+    job = make_job(tmp_path, seg, zp, clock, FakeFetcher(clock))
+    assert job.prepare() == 0
+    job.set_doc("ROW", 32733, status="failed", attempts=3)
+    monkeypatch.setattr(rso, "lower_own_priority", lambda: None)
+    assert (
+        rso.main(
+            [
+                "run",
+                "--data-dir",
+                str(job.dir),
+                "--shard",
+                "1/2",
+                "--segments",
+                str(seg),
+                "--index-zip",
+                str(zp),
+                "--requeue-failed",
+            ]
+        )
+        == 2
+    )
+    assert job.db.execute(
+        "SELECT status, attempts FROM docs WHERE doc_id=32733"
+    ).fetchone() == ("failed", 3)
+
+
+def test_ocr_backlog_obeys_selected_pass(env):
+    tmp_path, seg, zp = env
+    clock = FakeClock(DAY)
+    job = make_job(tmp_path, seg, zp, clock, FakeFetcher(clock), which=all_tools)
+    assert job.prepare() == 0
+    for doc_id in (32733, 32735):
+        pdf = job.pdf_path("ROW", doc_id)
+        pdf.parent.mkdir(parents=True, exist_ok=True)
+        pdf.write_bytes(PDF)
+        job.set_doc("ROW", doc_id, status="fetched")
+    assert job.run() == 0
+    assert job.db.execute(
+        "SELECT doc_id, status FROM docs WHERE kind='ROW' AND status!='queued' ORDER BY doc_id"
+    ).fetchall() == [(32733, "read"), (32735, "fetched")]
+    job.cfg.max_pass = 3
+    assert job.run() == 0
+    assert job.db.execute("SELECT status FROM docs WHERE doc_id=32735").fetchone() == (
+        "read",
+    )
+
+
+def test_robots_403_keeps_long_retry_after_across_restart(env):
+    tmp_path, seg, zp = env
+    clock = FakeClock(NIGHT)
+    fetcher = FakeFetcher(clock)
+    fetcher.script[rso.ROBOTS_URL] = [rso.Response(403, {"retry-after": "172800"})]
+    job = make_job(tmp_path, seg, zp, clock, fetcher)
+    assert job.run() == 3
+    assert job.meta("backoff_until") == (NIGHT + timedelta(hours=48)).isoformat()
+    clock.sleep(25 * 3600)
+    assert make_job(tmp_path, seg, zp, clock, fetcher).run() == 0
+    assert len(fetcher.calls) == 1
+    clock.sleep(23 * 3600)
+    assert make_job(tmp_path, seg, zp, clock, fetcher).run() == 0
+    assert len(fetcher.calls) > 1
+
+
+@pytest.mark.parametrize("unknown", [None, float("nan"), float("inf")])
+def test_unknown_load_defers_ocr_without_rendering(env, unknown):
+    tmp_path, seg, zp = env
+    clock = FakeClock(NIGHT)
+    job = make_job(
+        tmp_path,
+        seg,
+        zp,
+        clock,
+        FakeFetcher(clock),
+        which=all_tools,
+        max_docs=1,
+        max_minutes=5,
+    )
+    job.loadavg = lambda: unknown
+    assert job.run() == 0
+    assert not any(Path(c[0]).name == "pdftoppm" for c in job.runner_calls)
+    assert (clock.now() - NIGHT).total_seconds() <= 60
+    assert job.db.execute("SELECT status FROM docs WHERE doc_id=19963").fetchone() == (
+        "fetched",
+    )
+    job.loadavg = lambda: 0.5
+    assert job.run() == 0
+    assert job.db.execute("SELECT status FROM docs WHERE doc_id=19963").fetchone() == (
+        "read",
+    )
+
+
+@pytest.mark.parametrize("error", [AttributeError, OSError])
+def test_unavailable_system_load_is_unknown(monkeypatch, error):
+    def unavailable():
+        raise error("load unavailable")
+
+    monkeypatch.setattr(rso.os, "getloadavg", unavailable)
+    assert rso.load5() is None
+
+
+def test_long_line_csv_excerpt_contains_value_and_unit(env):
+    tmp_path, seg, zp = env
+    clock = FakeClock(DAY)
+    job = make_job(tmp_path, seg, zp, clock, FakeFetcher(clock))
+    assert job.prepare() == 0
+    job.set_doc("ROW", 32733, status="read", sha256="bound", ocr_sha256="bound")
+    tdir = job.text_dir("ROW", 32733)
+    tdir.mkdir(parents=True)
+    (tdir / "page-0001.txt").write_text(
+        "prefix " * 40 + "wall thickness 9.50 mm " + "suffix " * 40
+    )
+    out = tmp_path / "excerpt.csv"
+    assert rso.write_findings(job, out) == 1
+    with out.open() as fh:
+        (row,) = rso.csv.DictReader(fh)
+    assert row["quantity"] == "wall_thickness_mm"
+    assert row["value"] == "9.50"
+    assert "wall thickness 9.50 mm" in row["line"]
+    assert len(row["line"]) == 200
+
+
+def test_previous_version_key_forces_rebuild_after_interrupted_membership(env):
+    tmp_path, seg, zp = env
+    clock = FakeClock(NIGHT)
+    fetcher = FakeFetcher(clock)
+    job = make_job(tmp_path, seg, zp, clock, fetcher)
+    assert job.prepare() == 0
+    seg.write_text("segment_num,max_water_depth_ft,static_check_tier\n")
+    # The earlier version could commit new membership but keep an older key.
+    job.set_meta("queue_key", f"v2:{rso.sha256_of(zp)}:{rso.sha256_of(seg)}:0/1")
+    job.db.close()
+    retry = make_job(tmp_path, seg, zp, clock, fetcher)
+    assert retry.meta("queue_key") is None
+    assert retry.run() == 0
+    assert fetcher.calls == []
+    assert retry.status()["by_pass_status"] == []
+    assert retry.db.execute("SELECT COUNT(*) FROM docs").fetchone() == (6,)
+
+
+@pytest.mark.parametrize("defer", ["outside_window", "index_redirect"])
+def test_invalid_managed_index_replacement_deferral_retains_evidence(env, defer):
+    tmp_path, seg, zp = env
+    clock = FakeClock(NIGHT)
+    fetcher = FakeFetcher(clock, zip_bytes=zp.read_bytes())
+    job = make_job(tmp_path, seg, zp, clock, fetcher, which=all_tools)
+    assert job.prepare() == 0
+    before = job.db.execute("SELECT * FROM docs ORDER BY kind, doc_id").fetchall()
+    key = job.meta("queue_key")
+    job.cfg.index_zip = None
+    (job.dir / rso.INDEX_ZIP_NAME).write_bytes(b"invalid cached archive")
+    seg.write_text("segment_num,max_water_depth_ft,static_check_tier\n")
+    if defer == "outside_window":
+        clock.t = DAY
+    else:
+        fetcher.script[rso.INDEX_ZIP_URL] = [rso.Response(301)]
+    assert job.run() == 0
+    assert fetcher.doc_urls() == []
+    assert job.runner_calls == []
+    assert job.meta("queue_key") == key
+    assert (
+        job.db.execute("SELECT * FROM docs ORDER BY kind, doc_id").fetchall() == before
+    )
+
+
+def test_pdf_redirect_retry_after_sets_document_deadline(env):
+    tmp_path, seg, zp = env
+    clock = FakeClock(NIGHT)
+    fetcher = FakeFetcher(clock)
+    url = rso.doc_url("PIPEMAPS", 19963)
+    fetcher.script[url] = [rso.Response(302, {"retry-after": "172800"})]
+    job = make_job(tmp_path, seg, zp, clock, fetcher)
+    assert job.prepare() == 0
+    assert job.fetch_doc(job.next_doc()) == "redirected"
+    assert job.db.execute(
+        "SELECT deferred_until FROM docs WHERE doc_id=19963"
+    ).fetchone() == ((NIGHT + timedelta(seconds=60, hours=48)).isoformat(),)
+    assert job.next_doc()[1] == 32733
+    assert job.errors_today() == 0
