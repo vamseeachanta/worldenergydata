@@ -36,7 +36,11 @@ def _payload() -> dict:
     return {
         "kind": "files",
         "outputs": [
-            {"basename": "README.md", "relative_path": "README.md", "sha256": _sha(TOP_BYTES)},
+            {
+                "basename": "README.md",
+                "relative_path": "README.md",
+                "sha256": _sha(TOP_BYTES),
+            },
             {
                 "basename": "README.md",
                 "relative_path": "sub/README.md",
@@ -103,7 +107,69 @@ def test_bsee_pilot_captures_bytes_per_relative_path(tmp_path, monkeypatch):
     assert digests["sub/README.md"] == _sha(NESTED_BYTES)
 
 
-@pytest.mark.parametrize("rel", ["../escape.txt", "/abs.txt"])
-def test_output_path_rejects_paths_outside_results(tmp_path, rel):
+@pytest.mark.parametrize(
+    "rel",
+    [
+        "../escape.txt",  # parent segment
+        "sub/../../escape.txt",  # parent segment after a real one
+        "/abs.txt",  # rooted POSIX (not isabs on Windows + Python 3.13)
+        "\\abs.txt",  # rooted Windows
+        "C:evil.txt",  # drive-relative
+        "C:/evil.txt",  # drive-absolute
+        "//server/share/x.txt",  # UNC, POSIX spelling
+        "\\\\server\\share\\x.txt",  # UNC, Windows spelling
+        "sub\\x.txt",  # backslash: keys are POSIX; backslashes are rejected
+        "sub//x.txt",  # empty segment
+        "./x.txt",  # non-canonical segment
+        "",  # empty key
+    ],
+)
+def test_output_path_rejects_non_canonical_or_escaping_keys(tmp_path, rel):
     with pytest.raises(ValueError):
         R._output_path(str(tmp_path), {"basename": "x", "relative_path": rel})
+
+
+def test_output_path_accepts_nested_posix_key(tmp_path):
+    (tmp_path / "a" / "b").mkdir(parents=True)
+    target = tmp_path / "a" / "b" / "c.csv"
+    target.write_bytes(b"x")
+    got = R._output_path(
+        str(tmp_path), {"basename": "c.csv", "relative_path": "a/b/c.csv"}
+    )
+    assert Path(got) == target.resolve()
+
+
+def test_output_path_rejects_symlink_escape(tmp_path):
+    results = tmp_path / "results"
+    results.mkdir()
+    outside = tmp_path / "outside.txt"
+    outside.write_bytes(b"secret")
+    try:
+        (results / "link.txt").symlink_to(outside)
+    except (OSError, NotImplementedError) as exc:  # no symlink privilege (Windows)
+        pytest.skip(f"symlinks unavailable: {exc}")
+    with pytest.raises(ValueError):
+        R._output_path(
+            str(results), {"basename": "link.txt", "relative_path": "link.txt"}
+        )
+
+
+# --- curated labels follow the file NAME, identity stays the relative path ---
+
+
+def test_build_outputs_labels_by_filename_not_relative_path():
+    out_bytes = {
+        "sub/prod_summ_example.csv": b"a,b\n1,2\n",  # nested primary result
+        "prod_summ_archive/other.csv": b"c,d\n3,4\n",  # prefix only in the DIRECTORY
+        "prod_summ_top.csv": b"e,f\n5,6\n",
+    }
+    config = {"algorithm": {"output_schema_version": "1"}}
+
+    _artifacts, records, _objects, _xlsx = bsee_pilot.build_outputs(out_bytes, config)
+
+    labels = {r["role"]: r["curated_label"] for r in records}
+    assert labels == {
+        "sub/prod_summ_example.csv": "primary_result",
+        "prod_summ_archive/other.csv": "validation_evidence",
+        "prod_summ_top.csv": "primary_result",
+    }

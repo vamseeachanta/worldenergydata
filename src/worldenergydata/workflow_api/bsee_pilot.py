@@ -37,7 +37,7 @@ import io
 import os
 import shutil
 import tempfile
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 import yaml
 from assetutilities.workflow_api import artifact, identity, inputs, metrics
@@ -397,6 +397,7 @@ def build_metric_observations(
 
 
 def _curated_label(basename: str) -> str:
+    """Label by the FILE NAME prefix; pass a filename, never a relative path."""
     if any(basename.startswith(p) for p in _PRIMARY_BASENAMES):
         return "primary_result"
     return "validation_evidence"
@@ -413,21 +414,27 @@ def build_outputs(out_bytes: dict, config: dict):
 
     Projects the deterministic text outputs (CSV/JSON) as content-addressed
     objects; the xlsx raw dump is recorded (canonical digest) but not projected.
+
+    ``out_bytes`` is keyed by the output's relative path (``R._output_key``), which
+    stays the record identity (``role``, schema id). Only the curated label is
+    derived from the final filename, so ``sub/prod_summ_x.csv`` is a primary result
+    and ``prod_summ_archive/other.csv`` is not.
     """
     artifacts, records, object_bytes = [], [], {}
     xlsx_digest = None
     schema_version = config["algorithm"]["output_schema_version"]
-    for basename in sorted(out_bytes):
-        blob = out_bytes[basename]
+    for key in sorted(out_bytes):
+        blob = out_bytes[key]
         if blob is None:
             continue
-        if basename.endswith(".xlsx"):
+        name = PurePosixPath(key).name
+        if name.endswith(".xlsx"):
             # canonical (timestamp-independent) digest for provenance only.
             xlsx_digest = hashlib.sha256(blob).hexdigest()
             continue
-        if not basename.endswith(_TEXT_SUFFIXES):
+        if not name.endswith(_TEXT_SUFFIXES):
             continue
-        media_type, native_format = _media_type(basename)
+        media_type, native_format = _media_type(name)
         art = artifact.physical_artifact(
             blob, media_type=media_type, native_format=native_format
         )
@@ -435,10 +442,10 @@ def build_outputs(out_bytes: dict, config: dict):
         object_bytes[art["content_digest"]] = blob
         records.append(
             oc.make_output_record(
-                role=basename,
-                native_schema={"id": f"bsee/{basename}", "version": schema_version},
+                role=key,
+                native_schema={"id": f"bsee/{key}", "version": schema_version},
                 media_type=media_type,
-                curated_label=_curated_label(basename),
+                curated_label=_curated_label(name),
                 artifact_refs=[art["content_digest"]],
             )
         )
