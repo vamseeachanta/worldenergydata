@@ -195,6 +195,18 @@ uv run worldenergydata --help
 > **Note**: BSEE analysis modules require local data that is not stored in git.
 > Run `make data` after cloning to download datasets. See [Local Data Pattern](docs/data/LOCAL_DATA_PATTERN.md).
 
+The registry includes the eWell WAR archive and requires
+`data/modules/bsee/bin/war/mv_war_main.bin` and `mv_war_main_prop.bin`.
+Nested archive members are extracted by filename; WAR `SN_WAR` join keys
+retain their text representation, and `WELL_ACTIVITY_CD` values are retained
+without interpreting activity meanings. A refresh reports failure if a required
+output is missing or remains an LFS pointer, including after a partial write.
+Existing real bins are preserved unless `--force` is used; forced replacements
+retain backups. Presence checks do not establish content integrity or freshness.
+Per #1066, eWell WAR bulk covers only reports submitted since April 2004;
+that coverage floor and the live archive have not been independently verified here.
+A full live refresh from a clean checkout remains unverified.
+
 ### Basic Usage
 
 **Safe first commands — no data or network required:**
