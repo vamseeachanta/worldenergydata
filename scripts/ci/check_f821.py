@@ -43,9 +43,21 @@ def snapshot(paths: list[Path], root: Path) -> dict[str, str]:
     return dict(sorted(inventory.items()))
 
 
-def capture(command: list[str], timeout: float, prefix: Path, root: Path) -> dict:
+def capture(
+    command: list[str],
+    timeout: float,
+    prefix: Path,
+    root: Path,
+    bytecode: Path | None = None,
+) -> dict:
     """Retain both streams even when a command cannot finish or cannot start."""
     result = {"command": command, "returncode": None, "error": None}
+    env = {**os.environ, "RUFF_NUM_THREADS": "1"}
+    if bytecode is not None:
+        env["PYTHONPYCACHEPREFIX"] = str(bytecode)
+        # Enable writes only in the controlled child, even if the caller disables them.
+        env.pop("PYTHONDONTWRITEBYTECODE", None)
+        result["bytecode_directory"] = str(bytecode)
     stdout = stderr = ""
     try:
         process = subprocess.run(
@@ -57,7 +69,8 @@ def capture(command: list[str], timeout: float, prefix: Path, root: Path) -> dic
             errors="replace",
             timeout=timeout,
             check=False,
-            env={**os.environ, "RUFF_NUM_THREADS": "1"},
+            env=env,
+            creationflags=subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0,
         )
         stdout, stderr = process.stdout, process.stderr
         result["returncode"] = process.returncode
@@ -171,6 +184,12 @@ def parser() -> argparse.ArgumentParser:
     result.add_argument(
         "--allow-findings", action="store_true", help="inventory mode only"
     )
+    result.add_argument("--bytecode-root", type=Path, help="new isolated cache root")
+    result.add_argument(
+        "--bytecode-policy",
+        choices=("cold-per-run", "warm-shared"),
+        help="fresh cache per observation, or one shared cache including priming",
+    )
     return result
 
 
@@ -182,6 +201,16 @@ def main(argv: list[str] | None = None) -> int:
     root = Path.cwd().resolve()
     paths = [(root / path).resolve() for path in args.paths]
     output = args.output.resolve()
+    if (args.bytecode_root is None) != (args.bytecode_policy is None):
+        cli.error("provide --bytecode-root and --bytecode-policy together")
+    bytecode_root = args.bytecode_root.resolve() if args.bytecode_root else None
+    if bytecode_root is not None:
+        if any(bytecode_root.is_relative_to(path) for path in paths):
+            cli.error("bytecode root must be outside scan targets")
+        if bytecode_root.exists():
+            cli.error("bytecode root already exists; use a new directory")
+        if output.is_relative_to(bytecode_root) or bytecode_root.is_relative_to(output):
+            cli.error("bytecode root and evidence directory must not overlap")
     if any(path.is_dir() and output.is_relative_to(path) for path in paths):
         cli.error("evidence directory must be outside scan targets")
     if output.exists():
@@ -194,6 +223,9 @@ def main(argv: list[str] | None = None) -> int:
         "runs": [],
     }
     try:
+        if bytecode_root is not None:
+            bytecode_root.mkdir(parents=True, exist_ok=False)
+            report["bytecode_policy"] = args.bytecode_policy
         files = snapshot(paths, root)
         report.update(files=files, source_sha256=digest(files), python=sys.version)
         canary = output / "scan_canary.py"
@@ -212,8 +244,15 @@ def main(argv: list[str] | None = None) -> int:
                 "-m",
                 args.tool,
             ]
+        version_cache = bytecode_root / "version" if bytecode_root else None
+        if version_cache is not None:
+            version_cache.mkdir()
         version = capture(
-            command + ["--version"], args.timeout, output / "version", root
+            command + ["--version"],
+            args.timeout,
+            output / "version",
+            root,
+            version_cache,
         )
         report["version"] = version
         if version["error"] or version["returncode"] != 0:
@@ -240,7 +279,25 @@ def main(argv: list[str] | None = None) -> int:
         for number in range(1, args.runs + 1):
             require_unchanged(paths, root, files)
             prefix = output / f"run-{number}"
-            run = capture(command, args.timeout, prefix, root)
+            bytecode = None
+            if bytecode_root is not None:
+                bytecode = bytecode_root / (
+                    f"run-{number}"
+                    if args.bytecode_policy == "cold-per-run"
+                    else "shared"
+                )
+                if args.bytecode_policy == "cold-per-run" or number == 1:
+                    bytecode.mkdir()
+            run = capture(command, args.timeout, prefix, root, bytecode)
+            if bytecode is not None:
+                run.update(
+                    cache_state=(
+                        "cold"
+                        if args.bytecode_policy == "cold-per-run"
+                        else "priming" if number == 1 else "warm"
+                    ),
+                    source_sha256=report["source_sha256"],
+                )
             report["runs"].append(run)
             if run["error"]:
                 raise ValueError(run["error"])
@@ -262,6 +319,10 @@ def main(argv: list[str] | None = None) -> int:
             # Write progress after each completed observation; never overwrite old evidence.
             (output / "report.json").write_text(json.dumps(report, indent=2) + "\n")
         stable = len({run["findings_sha256"] for run in report["runs"]}) == 1
+        final_files = snapshot(paths, root)
+        report["source_after_sha256"] = digest(final_files)
+        if final_files != files:
+            raise ValueError("source inventory changed")
         report["status"] = "STABLE" if stable else "UNSTABLE"
     except (OSError, ValueError) as exc:
         report.update(status="ERROR", error=str(exc))
