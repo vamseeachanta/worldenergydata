@@ -44,7 +44,9 @@ OVERRIDES = HERE / "_wells_overrides.json"
 OUT = HERE / "_wells.json"
 
 _SLOT_SANE = re.compile(r"[^A-Za-z0-9-]+")
-_INT_HIST = re.compile(r"([A-Za-z][A-Za-z ]*?)\s+(\d{4}-\d{2}-\d{2})")
+_INT_HIST = re.compile(
+    r"(?:^|;)\s*([A-Za-z][A-Za-z &]*?)\s+(\d{4}-\d{2}-\d{2})(?=\s*(?:;|$))"
+)
 
 
 def field_id(bench_label: str) -> str:
@@ -70,7 +72,11 @@ def num(v, *, as_int=False, ndigits=None):
 
 
 def parse_workovers(history: str) -> list[dict]:
-    """'Workover 2020-08-30; Sidetrack 2019-01-02' -> [{date, type}, ...]."""
+    """Parse whole semicolon-delimited display entries, including abandonment.
+
+    Unsupported entries are omitted rather than relabelled from a partial tail.
+    The legacy ``workovers`` key holds these observations, not final status.
+    """
     if not history or not history.strip():
         return []
     return [{"date": d, "type": t.strip()} for t, d in _INT_HIST.findall(history)]
