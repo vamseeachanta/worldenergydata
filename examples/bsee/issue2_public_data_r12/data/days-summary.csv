@@ -1,0 +1,26 @@
+activity,band,records,n,missing_invalid_days,nonpositive_days,excluded_days,q1_days,median_days,q3_days
+Spud to total depth,Under 100 m,1515,1507,1,7,8,13,21,39
+Spud to total depth,100 to 500 m,189,187,0,2,2,21.5,35,68
+Spud to total depth,"500 to 1,500 m",585,560,16,9,25,30,55.5,115.25
+Spud to total depth,"1,500 m and deeper",624,601,17,6,23,36,67,160
+Spud to total depth,Missing depth,0,0,0,0,0,,,
+Completion,Under 100 m,4413,4410,3,0,3,7,10,15
+Completion,100 to 500 m,637,636,1,0,1,10,20,30
+Completion,"500 to 1,500 m",1619,1614,5,0,5,20,30,43
+Completion,"1,500 m and deeper",1574,1566,8,0,8,30,40,60
+Completion,Missing depth,0,0,0,0,0,,,
+Intervention,Under 100 m,14401,14364,37,0,37,5,7,14
+Intervention,100 to 500 m,2198,2190,8,0,8,5,10,15
+Intervention,"500 to 1,500 m",2572,2547,25,0,25,5,10,25
+Intervention,"1,500 m and deeper",1552,1525,27,0,27,6,22,40
+Intervention,Missing depth,0,0,0,0,0,,,
+Temporary abandonment,Under 100 m,23296,23216,80,0,80,7,10,15
+Temporary abandonment,100 to 500 m,3326,3321,5,0,5,7,14,20
+Temporary abandonment,"500 to 1,500 m",1270,1258,12,0,12,5,10,23
+Temporary abandonment,"1,500 m and deeper",624,619,5,0,5,3,5,10
+Temporary abandonment,Missing depth,0,0,0,0,0,,,
+Permanent abandonment,Under 100 m,19001,18912,89,0,89,5,7,15
+Permanent abandonment,100 to 500 m,1964,1957,7,0,7,5,12,15
+Permanent abandonment,"500 to 1,500 m",1607,1544,63,0,63,10,20,30
+Permanent abandonment,"1,500 m and deeper",893,863,30,0,30,7,14,26
+Permanent abandonment,Missing depth,0,0,0,0,0,,,
