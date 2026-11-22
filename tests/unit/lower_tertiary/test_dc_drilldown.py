@@ -8,6 +8,9 @@ and the honesty of its outbound engineering links.
 import importlib.util
 import json
 import re
+import shutil
+import subprocess
+from html import escape, unescape
 from pathlib import Path
 
 import pytest
@@ -65,6 +68,16 @@ def test_absent_engineering_pages_are_honest_gaps(payload):
 def test_committed_page_is_regenerable(mod, payload):
     assert OUT.exists()
     assert mod.build_html(payload) == OUT.read_text(encoding="utf-8")
+
+
+@pytest.mark.parametrize("section", ["hero", "footer"])
+def test_page_preserves_source_provenance(mod, payload, section):
+    page = mod.build_html(payload)
+    if section == "hero":
+        assert "BSEE WAR" in re.search(r'<p class="eyebrow">(.*?)</p>', page)[1]
+    else:
+        footer = re.search(r'<footer class="site">(.*?)</footer>', page, re.S)[1]
+        assert "BSEE WAR vintage 2026-02-19" in footer
 
 
 def test_page_is_self_contained():
@@ -177,3 +190,146 @@ def test_synthetic_inconsistent_vintage_label_refused(basis, before, after):
     )
     with pytest.raises(ValueError, match="provenance"):
         mod.validate_vintage_row(row)
+
+
+@pytest.mark.parametrize("basis", ["calendar rule", "mixed", None, '<rule & "note">'])
+def test_retained_source_labels_at_every_level(mod, basis, tmp_path):
+    """Hand totals: two bores retain 3 + 4 drilling and 5 + 6 completion days.
+
+    Dates deliberately disagree with the frozen counts; no basis is inferred.
+    Execute the actual router templates with a minimal DOM, without a browser.
+    """
+    node = shutil.which("node")
+    if node is None:
+        pytest.fail(
+            "Node.js is required to execute the rendered duration-label regression"
+        )
+    bores = [
+        dict(
+            api=str(i),
+            name="Synthetic bore",
+            field="Synthetic",
+            block="G1",
+            drill=3 + i,
+            compl=5 + i,
+            spud="2020-01-01",
+            td="2020-03-01",
+            wd=100,
+            md=1000,
+            tvd=900,
+            ppg="",
+            prod=False,
+            st=False,
+            vin="unchanged",
+        )
+        for i in range(2)
+    ]
+    if basis is not None:
+        for i, bore in enumerate(bores):
+            bore.update(
+                basis=f"rule {i}" if basis == "mixed" else basis,
+                pnd_days=None,
+                days_status="no_war_activity",
+            )
+    labels = mod.aggregate_provenance(bores)
+    payload = dict(
+        bores=bores,
+        fields=[
+            dict(
+                name="Synthetic",
+                slug="synthetic",
+                blocks=["G1"],
+                bores=2,
+                drill=7,
+                compl=11,
+                wd=100,
+                status="retained",
+                badge="hold",
+                prod=0,
+                **labels,
+            )
+        ],
+        blocks=[
+            dict(
+                id="G1",
+                field="Synthetic",
+                bores=2,
+                drill=7,
+                compl=11,
+                wd=100,
+                prod=0,
+                **labels,
+            )
+        ],
+        links={},
+        vintage_label={},
+    )
+    page = mod.build_html(payload)
+    generated = tmp_path / "drilldown.html"
+    generated.write_text(page, encoding="utf-8")
+    page = generated.read_text(encoding="utf-8")
+    raw_data, script = page.split("<script>const DATA=", 1)[1].split(";\nconst $=", 1)
+    assert json.loads(raw_data.replace("<\\/", "</")) == payload
+    harness = """
+const fs=require('node:fs'), vm=require('node:vm');
+const {payload,script}=JSON.parse(fs.readFileSync(0,'utf8'));
+const nodes=Object.fromEntries(['#crumb','#count','#detail','#index','#q'].map(k=>[k,{
+  innerHTML:'',textContent:'',addEventListener(){}}]));
+const context={DATA:payload,location:{hash:'#/'},window:{addEventListener(){}},
+  document:{querySelector:s=>nodes[s],querySelectorAll:()=>[],addEventListener(){}}};
+vm.createContext(context);
+vm.runInContext('const $='+script,context);
+const views=[nodes['#index'].innerHTML];
+for(const call of ["axis='block';renderIndex()","renderNode('field','Synthetic')",
+                  "renderNode('block','G1')","renderBore('0')"]){
+  vm.runInContext(call,context);
+  views.push(nodes['#index'].innerHTML+nodes['#detail'].innerHTML);
+}
+process.stdout.write(JSON.stringify(views));
+"""
+    rendered = subprocess.run(
+        [node, "-e", harness],
+        input=json.dumps(dict(payload=payload, script=script.split("</script>")[0])),
+        text=True,
+        capture_output=True,
+        check=True,
+    )
+    views = json.loads(rendered.stdout)
+    views += [
+        re.search(r'<section class="hero">(.*?)</section>', page, re.S)[1],
+        re.search(r'<div class="legend".*?</div>', page, re.S)[0],
+    ]
+    for view in views:
+        text = unescape(re.sub(r"<[^>]+>", " ", view))
+        assert "Retained drilling-category source days" in text
+        assert "Retained completion-category source days" in text
+        assert "no calendar-only or active rig-time claim" in text
+        expected = (
+            bores[0].get("basis", "unqualified")
+            if view == views[4]
+            else basis or "unqualified"
+        )
+        assert f"Basis: {expected}" in text
+        assert not re.search(
+            r"Drilling days|Completion days|D&C days|spud → TD|all post-TD rig time|BSEE WAR rig-days",
+            text,
+        )
+    for view in views[2:4]:
+        body = re.search(r"<tbody>(.*?)</tbody>", view, re.S)[1]
+        rows = re.findall(r"<tr[^>]*>(.*?)</tr>", body, re.S)
+        assert len(rows) == len(bores)
+        for row, bore in zip(rows, bores):
+            cells = re.findall(r"<td[^>]*>(.*?)</td>", row, re.S)
+            assert cells[-2] == escape(bore.get("basis") or "unqualified")
+        assert view.count("no calendar-only or active rig-time claim") == 1
+    assert 'href="drilling_insights.html"' in page
+    assert "separate from the benchmark" in page
+    if basis and "<" in basis:
+        assert escape(basis) in page
+        assert "&lt;rule &amp; &quot;note&quot;&gt;" in views[4]
+
+
+def test_rendered_labels_require_node(mod, monkeypatch, tmp_path):
+    monkeypatch.setenv("PATH", str(tmp_path))
+    with pytest.raises(pytest.fail.Exception, match="Node.js is required"):
+        test_retained_source_labels_at_every_level(mod, None, tmp_path)

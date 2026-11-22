@@ -23,7 +23,8 @@ jobs:
     name: Validate PR Title
     runs-on: >-
       ${{ (github.event_name != 'pull_request' ||
-          github.event.pull_request.head.repo.full_name == github.repository) &&
+          (github.event.pull_request.head.repo.full_name == github.repository &&
+          vars.WED_PR_RUNNER == 'self-hosted')) &&
           fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
 
     steps:
@@ -54,7 +55,8 @@ jobs:
     name: Check File Sizes
     runs-on: >-
       ${{ (github.event_name != 'pull_request' ||
-          github.event.pull_request.head.repo.full_name == github.repository) &&
+          (github.event.pull_request.head.repo.full_name == github.repository &&
+          vars.WED_PR_RUNNER == 'self-hosted')) &&
           fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
 
     steps:
@@ -85,7 +87,8 @@ jobs:
     name: Check Sensitive Files
     runs-on: >-
       ${{ (github.event_name != 'pull_request' ||
-          github.event.pull_request.head.repo.full_name == github.repository) &&
+          (github.event.pull_request.head.repo.full_name == github.repository &&
+          vars.WED_PR_RUNNER == 'self-hosted')) &&
           fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
 
     steps:
@@ -148,7 +151,8 @@ jobs:
     name: Lint Changed Knowledge Packs
     runs-on: >-
       ${{ (github.event_name != 'pull_request' ||
-          github.event.pull_request.head.repo.full_name == github.repository) &&
+          (github.event.pull_request.head.repo.full_name == github.repository &&
+          vars.WED_PR_RUNNER == 'self-hosted')) &&
           fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
     permissions:
       contents: read

@@ -1,0 +1,292 @@
+"""Offline checks for isolated bytecode experiments on a fixed interpreter."""
+
+import json
+import os
+import subprocess
+import sys
+from pathlib import Path
+from types import SimpleNamespace
+
+import pytest
+
+from scripts.ci import check_f821
+
+
+@pytest.fixture
+def experiment(tmp_path, monkeypatch):
+    source = tmp_path / "source"
+    source.mkdir()
+    (source / "sample.py").write_text("missing_name\n")
+    monkeypatch.chdir(source)
+    return source, tmp_path / "evidence", tmp_path / "bytecode"
+
+
+def arguments(experiment, *extra):
+    _, output, cache = experiment
+    return [
+        ".",
+        "--runs",
+        "3",
+        "--timeout",
+        "30",
+        "--output",
+        str(output),
+        "--bytecode-root",
+        str(cache),
+        *extra,
+    ]
+
+
+def fake_process(monkeypatch, fail=False):
+    calls = []
+
+    def run(command, **kwargs):
+        env = kwargs["env"]
+        prefix = env.get("PYTHONPYCACHEPREFIX")
+        cache = Path(prefix) if prefix else None
+        empty = cache is not None and cache.is_dir() and not list(cache.iterdir())
+        calls.append((command, kwargs, cache, empty))
+        if cache:
+            (cache / "compiled.pyc").write_bytes(b"fixture bytecode")
+        if "--version" in command:
+            return subprocess.CompletedProcess(command, 0, "fixture-version\n", "")
+        if fail:
+            return subprocess.CompletedProcess(command, 2, "partial", "tool failed")
+        stdout = f"{command[-1]}:1:1:F821:undefined name 'scan_canary_missing'\n"
+        stdout += "sample.py:1:1:F821:undefined name 'missing_name'\n"
+        return subprocess.CompletedProcess(command, 1, stdout, "notice\n")
+
+    monkeypatch.setattr(check_f821.subprocess, "run", run)
+    return calls
+
+
+def report(experiment):
+    return json.loads((experiment[1] / "report.json").read_text())
+
+
+@pytest.mark.parametrize("policy", [None, "cold-per-run", "warm-shared"])
+@pytest.mark.parametrize("change_after_progress", [False, True])
+def test_final_snapshot_validates_source_after_last_progress(
+    experiment, monkeypatch, capsys, policy, change_after_progress
+):
+    """Real flake8 clean scans cannot validate a subsequently changed input."""
+    source, output, _ = experiment
+    sample = source / "sample.py"
+    sample.write_text("defined_name = None\n")
+    initial = check_f821.snapshot([source], source)
+    args = arguments(experiment)
+    args[args.index("--runs") + 1] = "2"
+    if policy is None:
+        del args[args.index("--bytecode-root") :]
+    else:
+        args.extend(["--bytecode-policy", policy])
+    write_text = Path.write_text
+    progress_seen = False
+
+    def write_then_change(path, content, *args, **kwargs):
+        nonlocal progress_seen
+        result = write_text(path, content, *args, **kwargs)
+        if path == output / "report.json" and not progress_seen:
+            progress = json.loads(content)
+            if len(progress["runs"]) == 2:
+                assert progress["status"] == "ERROR"
+                assert "source_after_sha256" not in progress
+                progress_seen = True
+                if change_after_progress:
+                    write_text(sample, "changed_name = None\n")
+        return result
+
+    monkeypatch.setattr(Path, "write_text", write_then_change)
+    assert check_f821.main(args) == (2 if change_after_progress else 0)
+    (summary,) = capsys.readouterr().out.splitlines()
+    assert json.loads(summary) == {
+        "status": "ERROR" if change_after_progress else "STABLE",
+        "counts": [0, 0],
+    }
+    assert progress_seen
+    evidence = report(experiment)
+    assert evidence["files"] == initial
+    assert evidence["source_sha256"] == check_f821.digest(initial)
+    assert evidence["source_after_sha256"] == check_f821.digest(
+        check_f821.snapshot([source], source)
+    )
+    assert [run["count"] for run in evidence["runs"]] == [0, 0]
+    assert all(run["returncode"] == 1 for run in evidence["runs"])
+    if change_after_progress:
+        assert evidence["status"] == "ERROR"
+        assert evidence["error"] == "source inventory changed"
+        assert evidence["source_after_sha256"] != evidence["source_sha256"]
+    else:
+        assert evidence["status"] == "STABLE"
+        assert evidence["source_after_sha256"] == evidence["source_sha256"]
+
+
+@pytest.mark.parametrize("policy", ["cold-per-run", "warm-shared"])
+@pytest.mark.parametrize("launcher", ["direct", "uv"])
+def test_cache_policy_and_version_isolation(experiment, monkeypatch, policy, launcher):
+    monkeypatch.setenv("PYTHONDONTWRITEBYTECODE", "1")
+    monkeypatch.setenv("PYTHONPYCACHEPREFIX", "caller-cache")
+    before = dict(os.environ)
+    calls = fake_process(monkeypatch)
+    assert (
+        check_f821.main(
+            arguments(
+                experiment,
+                "--bytecode-policy",
+                policy,
+                "--launcher",
+                launcher,
+            )
+        )
+        == 1
+    )
+    assert dict(os.environ) == before
+    version, *measurements = calls
+    assert version[2] not in [call[2] for call in measurements]
+    assert version[3]
+    assert all(call[2].is_relative_to(experiment[2]) for call in calls)
+    assert all("PYTHONDONTWRITEBYTECODE" not in call[1]["env"] for call in calls)
+    assert all(call[1]["env"]["RUFF_NUM_THREADS"] == "1" for call in calls)
+    assert [call[3] for call in measurements] == (
+        [True, True, True] if policy == "cold-per-run" else [True, False, False]
+    )
+    assert len({call[2] for call in measurements}) == (
+        3 if policy == "cold-per-run" else 1
+    )
+    evidence = report(experiment)
+    assert evidence["bytecode_policy"] == policy
+    assert [run["cache_state"] for run in evidence["runs"]] == (
+        ["cold"] * 3 if policy == "cold-per-run" else ["priming", "warm", "warm"]
+    )
+    assert evidence["version"]["bytecode_directory"] == str(version[2])
+    assert [run["bytecode_directory"] for run in evidence["runs"]] == [
+        str(call[2]) for call in measurements
+    ]
+    assert all(
+        run["source_sha256"] == evidence["source_sha256"] for run in evidence["runs"]
+    )
+    assert evidence["source_after_sha256"] == evidence["source_sha256"]
+    assert [run["count"] for run in evidence["runs"]] == [1, 1, 1]
+    assert (experiment[1] / "run-1.stderr").read_text() == "notice\n"
+
+
+@pytest.mark.parametrize("kind", ["empty", "nonempty", "inside", "escaped", "file"])
+def test_invalid_roots_fail_before_subprocess(experiment, monkeypatch, capsys, kind):
+    source, output, cache = experiment
+    if kind in ("empty", "nonempty"):
+        cache.mkdir()
+        if kind == "nonempty":
+            (cache / "retained").write_text("original")
+    elif kind == "inside":
+        cache = source / "cache"
+    elif kind == "escaped":
+        link = cache.parent / "link"
+        link.symlink_to(source, target_is_directory=True)
+        cache = link / "cache"
+    else:
+        cache.write_text("original")
+    args = arguments(experiment, "--bytecode-policy", "cold-per-run")
+    args[args.index("--bytecode-root") + 1] = str(cache)
+    calls = fake_process(monkeypatch)
+    with pytest.raises(SystemExit) as excinfo:
+        check_f821.main(args)
+    assert excinfo.value.code == 2
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    assert (
+        "bytecode root must be outside scan targets"
+        if kind in ("inside", "escaped")
+        else "bytecode root already exists"
+    ) in captured.err
+    assert calls == []
+    assert not output.exists()
+    if kind == "nonempty":
+        assert (cache / "retained").read_text() == "original"
+
+
+@pytest.mark.parametrize("missing", ["root", "policy"])
+def test_cache_options_require_each_other(experiment, monkeypatch, capsys, missing):
+    args = arguments(experiment, "--bytecode-policy", "warm-shared")
+    option = "--bytecode-root" if missing == "root" else "--bytecode-policy"
+    index = args.index(option)
+    del args[index : index + 2]
+    calls = fake_process(monkeypatch)
+    with pytest.raises(SystemExit) as excinfo:
+        check_f821.main(args)
+    assert excinfo.value.code == 2
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    assert "provide --bytecode-root and --bytecode-policy together" in captured.err
+    assert calls == []
+    assert not experiment[1].exists()
+
+
+def test_output_parent_is_a_file_exits_without_a_summary(experiment):
+    _, output, _ = experiment
+    parent = output.parent / "blocked-parent"
+    parent.touch()
+    args = arguments(experiment, "--bytecode-policy", "cold-per-run")
+    args[args.index("--output") + 1] = str(parent / output.name)
+
+    result = subprocess.run(
+        [sys.executable, check_f821.__file__, *args], capture_output=True, text=True
+    )
+    assert result.returncode == 1
+    assert result.stdout == ""
+    assert parent.name in result.stderr
+
+
+def test_linter_failure_preserves_partial_evidence(experiment, monkeypatch):
+    fake_process(monkeypatch, fail=True)
+    assert (
+        check_f821.main(
+            arguments(
+                experiment,
+                "--bytecode-policy",
+                "cold-per-run",
+            )
+        )
+        == 2
+    )
+    evidence = report(experiment)
+    assert evidence["status"] == "ERROR"
+    assert evidence["runs"][0]["returncode"] == 2
+    assert evidence["runs"][0]["cache_state"] == "cold"
+    assert (experiment[1] / "run-1.stdout").read_text() == "partial"
+    assert (experiment[1] / "run-1.stderr").read_text() == "tool failed"
+
+
+def test_legacy_invocation_inherits_bytecode_environment(
+    experiment, monkeypatch, capsys
+):
+    monkeypatch.delenv("PYTHONPYCACHEPREFIX", raising=False)
+    monkeypatch.setenv("PYTHONDONTWRITEBYTECODE", "1")
+    args = arguments(experiment)
+    del args[args.index("--bytecode-root") :]
+    calls = fake_process(monkeypatch)
+    assert check_f821.main(args) == 1
+    (summary,) = capsys.readouterr().out.splitlines()
+    assert json.loads(summary) == {"status": "STABLE", "counts": [1, 1, 1]}
+    assert all(call[2] is None for call in calls)
+    assert all(call[1]["env"]["PYTHONDONTWRITEBYTECODE"] == "1" for call in calls)
+    assert "bytecode_policy" not in report(experiment)
+    assert all("cache_state" not in run for run in report(experiment)["runs"])
+
+
+def test_non_windows_launch_needs_no_windows_constant(experiment, monkeypatch):
+    monkeypatch.setattr(
+        check_f821, "os", SimpleNamespace(name="posix", environ=os.environ)
+    )
+    monkeypatch.delattr(subprocess, "CREATE_NO_WINDOW", raising=False)
+    calls = fake_process(monkeypatch)
+    assert (
+        check_f821.main(
+            arguments(
+                experiment,
+                "--bytecode-policy",
+                "cold-per-run",
+            )
+        )
+        == 1
+    )
+    assert all(call[1].get("creationflags", 0) == 0 for call in calls)
