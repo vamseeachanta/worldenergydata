@@ -1,0 +1,1458 @@
+{
+  "group": "bsee_pipeline",
+  "title": "BSEE pipeline, platform and decommissioning public files (road map rows A14, A17 to A22, A26)",
+  "retrieval": "2026-11-20",
+  "fetched_by": "scripts/bsee/fetch_fielddev_public_sources.py",
+  "user_agent": "WorldEnergyData-public-fetcher/1.0 (public research; sequential requests)",
+  "terms": {
+    "terms_url": "https://www.bsee.gov/bsee/privacy-policy#copyright",
+    "statement": "Generally, materials produced by federal agencies belong to the public domain and may be reproduced without permission.",
+    "disclaimer_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=Disclaimer",
+    "limitations": "Working database; errors may exist. Not a legal document; not for navigational use. Third-party materials may carry restrictions.",
+    "access": "Free direct download, no account."
+  },
+  "storage": "Raw files are kept outside git in the external raw store under the path given per file; only this manifest is in git.",
+  "total_bytes": 35773896,
+  "files": [
+    {
+      "roadmap_row": "A17",
+      "title": "Pipeline Masters (delimited)",
+      "file": "pplmastdelimit.zip",
+      "source_url": "https://www.data.bsee.gov/Pipeline/Files/pplmastdelimit.zip",
+      "final_url": "https://www.data.bsee.gov/Pipeline/Files/pplmastdelimit.zip",
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-20T04:48:20Z",
+      "size_bytes": 1018385,
+      "sha256": "604e224de96f3bd8df11d2b4eaa39d0ea8cfd31818a6ff255275146f272a5954",
+      "content_type": "application/x-zip-compressed",
+      "publisher_last_modified": "Sun, 15 Nov 2026 12:20:40 GMT",
+      "notes": "One record per segment: origin and destination, size code, product, status, MAOP, min and max water depth, dates, operator code.",
+      "stored_at": "external raw store: bsee_pipeline/2026-11-20/pplmastdelimit.zip",
+      "schema": {
+        "zip_members": 1,
+        "members": [
+          {
+            "name": "pplmastdelimit.txt",
+            "size_bytes": 5566794,
+            "header_fields": null,
+            "field_count": 42,
+            "note": "no header row; see the record layout page",
+            "line_count": 21315
+          }
+        ]
+      },
+      "verified_at_utc": "2026-11-20T04:54:51Z"
+    },
+    {
+      "roadmap_row": "A17",
+      "title": "Pipeline Masters record layout",
+      "file": "HtmlPage_page-pipelineMasters.html",
+      "source_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=pipelineMasters",
+      "final_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=pipelineMasters",
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-20T04:48:22Z",
+      "size_bytes": 38051,
+      "sha256": "eb64bb8c115a988f5f6c614a51c05fe196fce837c625a58b2b54336184caa3bf",
+      "content_type": "text/html; charset=utf-8",
+      "publisher_last_modified": null,
+      "notes": "Field layout for the masters file.",
+      "stored_at": "external raw store: bsee_pipeline/2026-11-20/HtmlPage_page-pipelineMasters.html",
+      "schema": {},
+      "verified_at_utc": "2026-11-20T04:54:51Z"
+    },
+    {
+      "roadmap_row": "A18",
+      "title": "Pipeline Permits raw data (segments and submittals)",
+      "file": "PipePermRawData.zip",
+      "source_url": "https://www.data.bsee.gov/Pipeline/Files/PipePermRawData.zip",
+      "final_url": "https://www.data.bsee.gov/Pipeline/Files/PipePermRawData.zip",
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-20T04:48:24Z",
+      "size_bytes": 4405922,
+      "sha256": "4e8148b6acf625a150b72014e79c7147fe6e1873aac7142a477e4f7cf845d901",
+      "content_type": "application/x-zip-compressed",
+      "publisher_last_modified": "Thu, 19 Nov 2026 10:44:59 GMT",
+      "notes": "Two CSV files: segments and permit submittals with free-text description. Refreshed here for a 20 Nov 2026 snapshot; a 15 Oct 2026 copy is recorded in data/modules/pipeline/screening/sources.json.",
+      "stored_at": "external raw store: bsee_pipeline/2026-11-20/PipePermRawData.zip",
+      "schema": {
+        "zip_members": 2,
+        "members": [
+          {
+            "name": "PipePermRawData/mv_pipeperm_segments.txt",
+            "size_bytes": 3715404,
+            "header_fields": [
+              "SEGMENT_NUM",
+              "ORIG_ID_NAME",
+              "ORIG_AR_CODE",
+              "ORIG_BLK_NUM",
+              "ORIG_LSE_NUM",
+              "DEST_ID_NAME",
+              "DEST_AR_CODE",
+              "DEST_BLK_NUM",
+              "DEST_LSE_NUM",
+              "APPROVED_DATE",
+              "INIT_HS_DT",
+              "STATUS_CODE",
+              "PPL_SIZE_CODE",
+              "ROW_NUMBER",
+              "PROD_CODE",
+              "FACIL_OPERATOR",
+              "R_REGION_CODE",
+              "FACIL_OPERATOR_NAME",
+              "MAX_WTR_DPTH",
+              "MAOP_PRSS",
+              "CATHODIC_CODE",
+              "ROW_STATUS_CODE",
+              "SEG_LENGTH",
+              "AUTHCODE",
+              "BIDIR_FLAG",
+              "ABAN_APROV_DT",
+              "ABAN_DATE",
+              "OUT_OF_SERVICE_DATE",
+              "TEMP_CESS_DATE",
+              "FLUSH_AND_FILL_DATE",
+              "ROW_HOLDER",
+              "ROW_HOLDER_NAME"
+            ],
+            "field_count": 32,
+            "line_count": 17889
+          },
+          {
+            "name": "PipePermRawData/mv_pipeperm_submittals.txt",
+            "size_bytes": 23712102,
+            "header_fields": [
+              "SUBMITTAL_ID",
+              "CURRENT_STATUS",
+              "STATUS_DATE",
+              "SEGMENT_NUM",
+              "PPL_SUB_RECV_DT",
+              "PPL_PRMT_TYPE_CD",
+              "COORDINATOR",
+              "PPL_DESCRIPTION"
+            ],
+            "field_count": 8,
+            "line_count": 126818
+          }
+        ]
+      },
+      "verified_at_utc": "2026-11-20T04:54:51Z"
+    },
+    {
+      "roadmap_row": "A18",
+      "title": "Pipeline status code values",
+      "file": "FieldValues_domain-STATUS_CODES.html",
+      "source_url": "https://www.data.bsee.gov/Pipeline/PipelinePermits/FieldValues.aspx?domain=STATUS_CODES",
+      "final_url": "https://www.data.bsee.gov/Pipeline/PipelinePermits/FieldValues.aspx?domain=STATUS_CODES",
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-20T04:48:26Z",
+      "size_bytes": 14697,
+      "sha256": "1a32a8559c1827211847fa91f4c7cc181f9cd659f2bb1943b98bb47bcc1d53e2",
+      "content_type": "text/html; charset=utf-8",
+      "publisher_last_modified": null,
+      "notes": "Code list for segment status.",
+      "stored_at": "external raw store: bsee_pipeline/2026-11-20/FieldValues_domain-STATUS_CODES.html",
+      "schema": {},
+      "verified_at_utc": "2026-11-20T04:54:51Z"
+    },
+    {
+      "roadmap_row": "A19",
+      "title": "Pipeline Location with Appurtenance (delimited)",
+      "file": "ppldtappdelimit.zip",
+      "source_url": "https://www.data.bsee.gov/Pipeline/Files/ppldtappdelimit.zip",
+      "final_url": "https://www.data.bsee.gov/Pipeline/Files/ppldtappdelimit.zip",
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-20T04:48:28Z",
+      "size_bytes": 14641,
+      "sha256": "f792c36c3c3ca6ff52d49fad921a78efe75866c02fc6d96e58d694c49ecfdbfc",
+      "content_type": "application/x-zip-compressed",
+      "publisher_last_modified": "Mon, 16 Nov 2026 19:32:21 GMT",
+      "notes": "As-built points with appurtenance type. The all-versions location raw file is already held (15 Oct 2026).",
+      "stored_at": "external raw store: bsee_pipeline/2026-11-20/ppldtappdelimit.zip",
+      "schema": {
+        "zip_members": 1,
+        "members": [
+          {
+            "name": "ppldtappdelimit.txt",
+            "size_bytes": 91091,
+            "header_fields": null,
+            "field_count": 13,
+            "note": "no header row; see the record layout page",
+            "line_count": 969
+          }
+        ]
+      },
+      "verified_at_utc": "2026-11-20T04:54:51Z"
+    },
+    {
+      "roadmap_row": "A19",
+      "title": "Pipeline Location with Appurtenance record layout",
+      "file": "HtmlPage_page-pipelineLocationApp.html",
+      "source_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=pipelineLocationApp",
+      "final_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=pipelineLocationApp",
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-20T04:48:30Z",
+      "size_bytes": 31099,
+      "sha256": "6e63ee877e3a8c3026ecbf92bb49bf059b8efbd1a0d397ea7bfd0f2b4041c5cb",
+      "content_type": "text/html; charset=utf-8",
+      "publisher_last_modified": null,
+      "notes": "Field layout.",
+      "stored_at": "external raw store: bsee_pipeline/2026-11-20/HtmlPage_page-pipelineLocationApp.html",
+      "schema": {},
+      "verified_at_utc": "2026-11-20T04:54:51Z"
+    },
+    {
+      "roadmap_row": "A21",
+      "title": "Pipeline Histories (delimited)",
+      "file": "2100delimit.zip",
+      "source_url": "https://www.data.bsee.gov/Pipeline/Files/2100delimit.zip",
+      "final_url": "https://www.data.bsee.gov/Pipeline/Files/2100delimit.zip",
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-20T04:48:32Z",
+      "size_bytes": 2754172,
+      "sha256": "440fea2a1e95a656e438798e7e55d5cf2430232432faba27babfea8b7e8261af",
+      "content_type": "application/x-zip-compressed",
+      "publisher_last_modified": "Sun, 15 Nov 2026 12:25:28 GMT",
+      "notes": "Dated history lines per segment.",
+      "stored_at": "external raw store: bsee_pipeline/2026-11-20/2100delimit.zip",
+      "schema": {
+        "zip_members": 1,
+        "members": [
+          {
+            "name": "2100delimit.txt",
+            "size_bytes": 11177071,
+            "header_fields": null,
+            "field_count": 6,
+            "note": "no header row; see the record layout page",
+            "line_count": 88264
+          }
+        ]
+      },
+      "verified_at_utc": "2026-11-20T04:54:51Z"
+    },
+    {
+      "roadmap_row": "A21",
+      "title": "Pipeline Histories record layout",
+      "file": "HtmlPage_page-pipelineHistories.html",
+      "source_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=pipelineHistories",
+      "final_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=pipelineHistories",
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-20T04:48:34Z",
+      "size_bytes": 29144,
+      "sha256": "e3b2e3a251a77e3b146279d0efb29c18af9ee79f3bf248e4e2b7c1a59ffda10c",
+      "content_type": "text/html; charset=utf-8",
+      "publisher_last_modified": null,
+      "notes": "Field layout.",
+      "stored_at": "external raw store: bsee_pipeline/2026-11-20/HtmlPage_page-pipelineHistories.html",
+      "schema": {},
+      "verified_at_utc": "2026-11-20T04:54:51Z"
+    },
+    {
+      "roadmap_row": "A21",
+      "title": "ROW Descriptions raw data",
+      "file": "RowDescRawData.zip",
+      "source_url": "https://www.data.bsee.gov/Pipeline/Files/RowDescRawData.zip",
+      "final_url": "https://www.data.bsee.gov/Pipeline/Files/RowDescRawData.zip",
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-20T04:48:36Z",
+      "size_bytes": 328655,
+      "sha256": "beb7d8b850eb886d6e9ddc0604cfb691aa060b9336d2b2435c1c6f6b97575a09",
+      "content_type": "application/x-zip-compressed",
+      "publisher_last_modified": "Thu, 19 Nov 2026 10:45:05 GMT",
+      "notes": "Right-of-way descriptions.",
+      "stored_at": "external raw store: bsee_pipeline/2026-11-20/RowDescRawData.zip",
+      "schema": {
+        "zip_members": 1,
+        "members": [
+          {
+            "name": "RowDescRawData/mv_rowdescriptions.txt",
+            "size_bytes": 1603733,
+            "header_fields": [
+              "ROW_NUMBER",
+              "PPL_ROW_PRMTE",
+              "BUS_ASC_NAME",
+              "ROW_STAT_DATE",
+              "ROW_STATUS_CD",
+              "WCD_VOLUME",
+              "ROW_DESC"
+            ],
+            "field_count": 7,
+            "line_count": 6229
+          }
+        ]
+      },
+      "verified_at_utc": "2026-11-20T04:54:51Z"
+    },
+    {
+      "roadmap_row": "A20",
+      "title": "Mapping: Pipelines file geodatabase",
+      "file": "Pipelines.gdb.zip",
+      "source_url": "https://www.data.bsee.gov/Mapping/Files/Pipelines.gdb.zip",
+      "final_url": "https://www.data.bsee.gov/Mapping/Files/Pipelines.gdb.zip",
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-20T04:48:38Z",
+      "size_bytes": 4604155,
+      "sha256": "b8f0d70a7d499752d487858ee2d080919b038e399c5b6691d9e5875164d2873f",
+      "content_type": "application/x-zip-compressed",
+      "publisher_last_modified": "Tue, 03 Nov 2026 19:45:52 GMT",
+      "notes": "Pipeline arcs, Esri file geodatabase.",
+      "stored_at": "external raw store: bsee_pipeline/2026-11-20/Pipelines.gdb.zip",
+      "schema": {
+        "zip_members": 61,
+        "members": [
+          {
+            "name": "Pipelines.gdb/a00000001.gdbindexes",
+            "size_bytes": 110
+          },
+          {
+            "name": "Pipelines.gdb/a00000001.gdbtable",
+            "size_bytes": 390
+          },
+          {
+            "name": "Pipelines.gdb/a00000001.gdbtablx",
+            "size_bytes": 5152
+          },
+          {
+            "name": "Pipelines.gdb/a00000001.TablesByName.atx",
+            "size_bytes": 4118
+          },
+          {
+            "name": "Pipelines.gdb/a00000002.gdbtable",
+            "size_bytes": 2055
+          },
+          {
+            "name": "Pipelines.gdb/a00000002.gdbtablx",
+            "size_bytes": 5152
+          },
+          {
+            "name": "Pipelines.gdb/a00000003.gdbindexes",
+            "size_bytes": 42
+          },
+          {
+            "name": "Pipelines.gdb/a00000003.gdbtable",
+            "size_bytes": 781
+          },
+          {
+            "name": "Pipelines.gdb/a00000003.gdbtablx",
+            "size_bytes": 5152
+          },
+          {
+            "name": "Pipelines.gdb/a00000004.CatItemsByPhysicalName.atx",
+            "size_bytes": 4118
+          },
+          {
+            "name": "Pipelines.gdb/a00000004.CatItemsByType.atx",
+            "size_bytes": 4118
+          },
+          {
+            "name": "Pipelines.gdb/a00000004.FDO_UUID.atx",
+            "size_bytes": 4118
+          },
+          {
+            "name": "Pipelines.gdb/a00000004.freelist",
+            "size_bytes": 20824
+          },
+          {
+            "name": "Pipelines.gdb/a00000004.gdbindexes",
+            "size_bytes": 310
+          },
+          {
+            "name": "Pipelines.gdb/a00000004.gdbtable",
+            "size_bytes": 173637
+          },
+          {
+            "name": "Pipelines.gdb/a00000004.gdbtablx",
+            "size_bytes": 5152
+          },
+          {
+            "name": "Pipelines.gdb/a00000004.horizon",
+            "size_bytes": 32
+          },
+          {
+            "name": "Pipelines.gdb/a00000004.spx",
+            "size_bytes": 53270
+          },
+          {
+            "name": "Pipelines.gdb/a00000005.CatItemTypesByName.atx",
+            "size_bytes": 12310
+          },
+          {
+            "name": "Pipelines.gdb/a00000005.CatItemTypesByParentTypeID.atx",
+            "size_bytes": 4118
+          },
+          {
+            "name": "Pipelines.gdb/a00000005.CatItemTypesByUUID.atx",
+            "size_bytes": 4118
+          },
+          {
+            "name": "Pipelines.gdb/a00000005.gdbindexes",
+            "size_bytes": 296
+          },
+          {
+            "name": "Pipelines.gdb/a00000005.gdbtable",
+            "size_bytes": 2071
+          },
+          {
+            "name": "Pipelines.gdb/a00000005.gdbtablx",
+            "size_bytes": 5152
+          },
+          {
+            "name": "Pipelines.gdb/a00000006.CatRelsByDestinationID.atx",
+            "size_bytes": 4118
+          },
+          {
+            "name": "Pipelines.gdb/a00000006.CatRelsByOriginID.atx",
+            "size_bytes": 4118
+          },
+          {
+            "name": "Pipelines.gdb/a00000006.CatRelsByType.atx",
+            "size_bytes": 4118
+          },
+          {
+            "name": "Pipelines.gdb/a00000006.FDO_UUID.atx",
+            "size_bytes": 4118
+          },
+          {
+            "name": "Pipelines.gdb/a00000006.gdbindexes",
+            "size_bytes": 318
+          },
+          {
+            "name": "Pipelines.gdb/a00000006.gdbtable",
+            "size_bytes": 263
+          },
+          {
+            "name": "Pipelines.gdb/a00000006.gdbtablx",
+            "size_bytes": 5152
+          },
+          {
+            "name": "Pipelines.gdb/a00000007.CatRelTypesByBackwardLabel.atx",
+            "size_bytes": 12310
+          },
+          {
+            "name": "Pipelines.gdb/a00000007.CatRelTypesByDestItemTypeID.atx",
+            "size_bytes": 4118
+          },
+          {
+            "name": "Pipelines.gdb/a00000007.CatRelTypesByForwardLabel.atx",
+            "size_bytes": 12310
+          },
+          {
+            "name": "Pipelines.gdb/a00000007.CatRelTypesByName.atx",
+            "size_bytes": 12310
+          },
+          {
+            "name": "Pipelines.gdb/a00000007.CatRelTypesByOriginItemTypeID.atx",
+            "size_bytes": 4118
+          },
+          {
+            "name": "Pipelines.gdb/a00000007.CatRelTypesByUUID.atx",
+            "size_bytes": 4118
+          },
+          {
+            "name": "Pipelines.gdb/a00000007.gdbindexes",
+            "size_bytes": 602
+          },
+          {
+            "name": "Pipelines.gdb/a00000007.gdbtable",
+            "size_bytes": 3626
+          },
+          {
+            "name": "Pipelines.gdb/a00000007.gdbtablx",
+            "size_bytes": 5152
+          }
+        ],
+        "file_geodatabases": [
+          "Pipelines.gdb"
+        ]
+      },
+      "verified_at_utc": "2026-11-20T04:54:51Z"
+    },
+    {
+      "roadmap_row": "A20",
+      "title": "Mapping: Pipelines shapefile (ppl_arcs)",
+      "file": "ppl_arcs.zip",
+      "source_url": "https://www.data.bsee.gov/Mapping/Files/ppl_arcs.zip",
+      "final_url": "https://www.data.bsee.gov/Mapping/Files/ppl_arcs.zip",
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-20T04:48:41Z",
+      "size_bytes": 8839143,
+      "sha256": "b361e8eeedea1d6597eb6abf59a1493aa719f32526ab185c0f8bc5daf9f31f97",
+      "content_type": "application/x-zip-compressed",
+      "publisher_last_modified": "Tue, 03 Nov 2026 19:45:48 GMT",
+      "notes": "Pipeline arcs, shapefile.",
+      "stored_at": "external raw store: bsee_pipeline/2026-11-20/ppl_arcs.zip",
+      "schema": {
+        "zip_members": 8,
+        "members": [
+          {
+            "name": "ppl_arcs.cpg",
+            "size_bytes": 5
+          },
+          {
+            "name": "ppl_arcs.dbf",
+            "size_bytes": 1450099
+          },
+          {
+            "name": "ppl_arcs.prj",
+            "size_bytes": 168
+          },
+          {
+            "name": "ppl_arcs.sbn",
+            "size_bytes": 145380
+          },
+          {
+            "name": "ppl_arcs.sbx",
+            "size_bytes": 4564
+          },
+          {
+            "name": "ppl_arcs.shp",
+            "size_bytes": 11602780
+          },
+          {
+            "name": "ppl_arcs.shp.xml",
+            "size_bytes": 46469
+          },
+          {
+            "name": "ppl_arcs.shx",
+            "size_bytes": 124812
+          }
+        ]
+      },
+      "verified_at_utc": "2026-11-20T04:54:52Z"
+    },
+    {
+      "roadmap_row": "A20",
+      "title": "Mapping: Platforms file geodatabase",
+      "file": "Platforms.gdb.zip",
+      "source_url": "https://www.data.bsee.gov/Mapping/Files/Platforms.gdb.zip",
+      "final_url": "https://www.data.bsee.gov/Mapping/Files/Platforms.gdb.zip",
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-20T04:48:42Z",
+      "size_bytes": 213972,
+      "sha256": "6c8b9d36e87200b6ac8eaef7f7cc1162970d5f447c23d19e4950280a1121763f",
+      "content_type": "application/x-zip-compressed",
+      "publisher_last_modified": "Tue, 03 Nov 2026 19:47:04 GMT",
+      "notes": "Platform points, Esri file geodatabase.",
+      "stored_at": "external raw store: bsee_pipeline/2026-11-20/Platforms.gdb.zip",
+      "schema": {
+        "zip_members": 60,
+        "members": [
+          {
+            "name": "Platforms.gdb/a00000001.gdbindexes",
+            "size_bytes": 110
+          },
+          {
+            "name": "Platforms.gdb/a00000001.gdbtable",
+            "size_bytes": 390
+          },
+          {
+            "name": "Platforms.gdb/a00000001.gdbtablx",
+            "size_bytes": 5152
+          },
+          {
+            "name": "Platforms.gdb/a00000001.TablesByName.atx",
+            "size_bytes": 4118
+          },
+          {
+            "name": "Platforms.gdb/a00000002.gdbtable",
+            "size_bytes": 2055
+          },
+          {
+            "name": "Platforms.gdb/a00000002.gdbtablx",
+            "size_bytes": 5152
+          },
+          {
+            "name": "Platforms.gdb/a00000003.gdbindexes",
+            "size_bytes": 42
+          },
+          {
+            "name": "Platforms.gdb/a00000003.gdbtable",
+            "size_bytes": 781
+          },
+          {
+            "name": "Platforms.gdb/a00000003.gdbtablx",
+            "size_bytes": 5152
+          },
+          {
+            "name": "Platforms.gdb/a00000004.CatItemsByPhysicalName.atx",
+            "size_bytes": 4118
+          },
+          {
+            "name": "Platforms.gdb/a00000004.CatItemsByType.atx",
+            "size_bytes": 4118
+          },
+          {
+            "name": "Platforms.gdb/a00000004.FDO_UUID.atx",
+            "size_bytes": 4118
+          },
+          {
+            "name": "Platforms.gdb/a00000004.freelist",
+            "size_bytes": 4440
+          },
+          {
+            "name": "Platforms.gdb/a00000004.gdbindexes",
+            "size_bytes": 310
+          },
+          {
+            "name": "Platforms.gdb/a00000004.gdbtable",
+            "size_bytes": 75864
+          },
+          {
+            "name": "Platforms.gdb/a00000004.gdbtablx",
+            "size_bytes": 5152
+          },
+          {
+            "name": "Platforms.gdb/a00000004.horizon",
+            "size_bytes": 32
+          },
+          {
+            "name": "Platforms.gdb/a00000004.spx",
+            "size_bytes": 4118
+          },
+          {
+            "name": "Platforms.gdb/a00000005.CatItemTypesByName.atx",
+            "size_bytes": 12310
+          },
+          {
+            "name": "Platforms.gdb/a00000005.CatItemTypesByParentTypeID.atx",
+            "size_bytes": 4118
+          },
+          {
+            "name": "Platforms.gdb/a00000005.CatItemTypesByUUID.atx",
+            "size_bytes": 4118
+          },
+          {
+            "name": "Platforms.gdb/a00000005.gdbindexes",
+            "size_bytes": 296
+          },
+          {
+            "name": "Platforms.gdb/a00000005.gdbtable",
+            "size_bytes": 2071
+          },
+          {
+            "name": "Platforms.gdb/a00000005.gdbtablx",
+            "size_bytes": 5152
+          },
+          {
+            "name": "Platforms.gdb/a00000006.CatRelsByDestinationID.atx",
+            "size_bytes": 4118
+          },
+          {
+            "name": "Platforms.gdb/a00000006.CatRelsByOriginID.atx",
+            "size_bytes": 4118
+          },
+          {
+            "name": "Platforms.gdb/a00000006.CatRelsByType.atx",
+            "size_bytes": 4118
+          },
+          {
+            "name": "Platforms.gdb/a00000006.FDO_UUID.atx",
+            "size_bytes": 4118
+          },
+          {
+            "name": "Platforms.gdb/a00000006.gdbindexes",
+            "size_bytes": 318
+          },
+          {
+            "name": "Platforms.gdb/a00000006.gdbtable",
+            "size_bytes": 263
+          },
+          {
+            "name": "Platforms.gdb/a00000006.gdbtablx",
+            "size_bytes": 5152
+          },
+          {
+            "name": "Platforms.gdb/a00000007.CatRelTypesByBackwardLabel.atx",
+            "size_bytes": 12310
+          },
+          {
+            "name": "Platforms.gdb/a00000007.CatRelTypesByDestItemTypeID.atx",
+            "size_bytes": 4118
+          },
+          {
+            "name": "Platforms.gdb/a00000007.CatRelTypesByForwardLabel.atx",
+            "size_bytes": 12310
+          },
+          {
+            "name": "Platforms.gdb/a00000007.CatRelTypesByName.atx",
+            "size_bytes": 12310
+          },
+          {
+            "name": "Platforms.gdb/a00000007.CatRelTypesByOriginItemTypeID.atx",
+            "size_bytes": 4118
+          },
+          {
+            "name": "Platforms.gdb/a00000007.CatRelTypesByUUID.atx",
+            "size_bytes": 4118
+          },
+          {
+            "name": "Platforms.gdb/a00000007.gdbindexes",
+            "size_bytes": 602
+          },
+          {
+            "name": "Platforms.gdb/a00000007.gdbtable",
+            "size_bytes": 3626
+          },
+          {
+            "name": "Platforms.gdb/a00000007.gdbtablx",
+            "size_bytes": 5152
+          }
+        ],
+        "file_geodatabases": [
+          "Platforms.gdb"
+        ]
+      },
+      "verified_at_utc": "2026-11-20T04:54:52Z"
+    },
+    {
+      "roadmap_row": "A20",
+      "title": "Mapping: Platforms shapefile",
+      "file": "platform.zip",
+      "source_url": "https://www.data.bsee.gov/Mapping/Files/platform.zip",
+      "final_url": "https://www.data.bsee.gov/Mapping/Files/platform.zip",
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-20T04:48:44Z",
+      "size_bytes": 254550,
+      "sha256": "91c748d981818e07ab109fbabc08c62e733fbb9634f6e986f2f34b8b1438ad97",
+      "content_type": "application/x-zip-compressed",
+      "publisher_last_modified": "Tue, 03 Nov 2026 19:46:54 GMT",
+      "notes": "Platform points, shapefile.",
+      "stored_at": "external raw store: bsee_pipeline/2026-11-20/platform.zip",
+      "schema": {
+        "zip_members": 8,
+        "members": [
+          {
+            "name": "platform.cpg",
+            "size_bytes": 5
+          },
+          {
+            "name": "platform.dbf",
+            "size_bytes": 344093
+          },
+          {
+            "name": "platform.prj",
+            "size_bytes": 168
+          },
+          {
+            "name": "platform.sbn",
+            "size_bytes": 69668
+          },
+          {
+            "name": "platform.sbx",
+            "size_bytes": 3028
+          },
+          {
+            "name": "platform.shp",
+            "size_bytes": 204976
+          },
+          {
+            "name": "platform.shp.xml",
+            "size_bytes": 23830
+          },
+          {
+            "name": "platform.shx",
+            "size_bytes": 58636
+          }
+        ]
+      },
+      "verified_at_utc": "2026-11-20T04:54:52Z"
+    },
+    {
+      "roadmap_row": "A22",
+      "title": "Scanned Documents index raw data",
+      "file": "ScannedDocsRawData.zip",
+      "source_url": "https://www.data.bsee.gov/Other/Files/ScannedDocsRawData.zip",
+      "final_url": "https://www.data.bsee.gov/Other/Files/ScannedDocsRawData.zip",
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-20T04:48:47Z",
+      "size_bytes": 10568405,
+      "sha256": "6463593653d2a9548e9bbac15cad433a2e399e8eecbfb66ffe615ed5bb7e42b6",
+      "content_type": "application/x-zip-compressed",
+      "publisher_last_modified": "Sun, 15 Nov 2026 13:51:44 GMT",
+      "notes": "Index of scanned pipeline maps, ROW files, plans, well and lease files. The scanned PDFs themselves were not bulk-downloaded.",
+      "stored_at": "external raw store: bsee_pipeline/2026-11-20/ScannedDocsRawData.zip",
+      "schema": {
+        "zip_members": 15,
+        "members": [
+          {
+            "name": "ScannedDocsRawData/scan_active_inactive_leases.txt",
+            "size_bytes": 24162369,
+            "header_fields": [
+              "DOC_ID",
+              "REGION",
+              "DOC_IMPORTED_DATE",
+              "DOC_PAGES",
+              "DOC_FILESIZE",
+              "LEASE_NUMBER",
+              "AREA_CODE",
+              "BLOCK_NUMBER",
+              "DOC_TYPE",
+              "LEASE_EFF_DATE",
+              "LEASE_EXPR_DATE",
+              "ASGN_APRVL_DATE",
+              "MERG_CON_APRVL_DATE",
+              "DOC_BAR_CODE"
+            ],
+            "field_count": 14,
+            "line_count": 188922
+          },
+          {
+            "name": "ScannedDocsRawData/scan_adjudication_files.txt",
+            "size_bytes": 9135205,
+            "header_fields": [
+              "DOC_ID",
+              "REGION",
+              "DOC_IMPORTED_DATE",
+              "DOC_PAGES",
+              "DOC_FILESIZE",
+              "LEASE_NUMBER",
+              "DOC_TYPE",
+              "DATA_SET",
+              "DOC_DATE",
+              "DOC_BAR_CODE"
+            ],
+            "field_count": 10,
+            "line_count": 80185
+          },
+          {
+            "name": "ScannedDocsRawData/scan_collateral_files.txt",
+            "size_bytes": 1782662,
+            "header_fields": [
+              "DOC_ID",
+              "REGION",
+              "DOC_IMPORTED_DATE",
+              "DOC_PAGES",
+              "DOC_FILESIZE",
+              "BOND_NUMBER",
+              "LEASE_NUMBER",
+              "RUE_NUMBER",
+              "ROW_NUMBER",
+              "COMPANY_NUMBER",
+              "COMPANY_NAME",
+              "BOND_EFF_DATE",
+              "COVERAGE_TYPE_CD",
+              "BOND_AMOUNT",
+              "SURETY_COMP_NUM",
+              "SURETY_COMP_NAME",
+              "CANCEL_REPL_CD",
+              "CANCEL_REPL_DATE",
+              "DOC_TYPE",
+              "BOND_FORM",
+              "DOC_DATE",
+              "DOC_BAR_CODE"
+            ],
+            "field_count": 22,
+            "line_count": 7426
+          },
+          {
+            "name": "ScannedDocsRawData/scan_company_files.txt",
+            "size_bytes": 2765799,
+            "header_fields": [
+              "DOC_ID",
+              "REGION",
+              "DOC_IMPORTED_DATE",
+              "DOC_PAGES",
+              "DOC_FILESIZE",
+              "COMPANY_NUMBER",
+              "COMPANY_NAME",
+              "DOC_TYPE",
+              "MODIFIED_DATE",
+              "APPROVED_DATE",
+              "DOC_BAR_CODE"
+            ],
+            "field_count": 11,
+            "line_count": 19026
+          },
+          {
+            "name": "ScannedDocsRawData/scan_dir_surveys.txt",
+            "size_bytes": 9090019,
+            "header_fields": [
+              "DOC_ID",
+              "REGION",
+              "DOC_IMPORTED_DATE",
+              "DOC_PAGES",
+              "DOC_FILESIZE",
+              "API_WELL_NUMBER",
+              "AREA_CODE",
+              "BLOCK_NUMBER",
+              "LEASE_NUMBER",
+              "WELL_NAME",
+              "RECEIPT_DATE"
+            ],
+            "field_count": 11,
+            "line_count": 78096
+          },
+          {
+            "name": "ScannedDocsRawData/scan_expired_leases.txt",
+            "size_bytes": 148196,
+            "header_fields": [
+              "DOC_ID",
+              "REGION",
+              "DOC_IMPORTED_DATE",
+              "DOC_PAGES",
+              "DOC_FILESIZE",
+              "LEASE_NUMBER",
+              "AREA_BLOCK",
+              "DOC_TYPE"
+            ],
+            "field_count": 8,
+            "line_count": 1461
+          },
+          {
+            "name": "ScannedDocsRawData/scan_gg_permits.txt",
+            "size_bytes": 1824316,
+            "header_fields": [
+              "DOC_ID",
+              "REGION",
+              "DOC_IMPORTED_DATE",
+              "DOC_PAGES",
+              "DOC_FILESIZE",
+              "PERMIT_NUMBER",
+              "APPLICANT_NAME",
+              "SAP",
+              "DOC_TYPE",
+              "SURVEY_TYPE",
+              "APPLICATION_TYPE",
+              "PERMIT_ISSUED_DATE",
+              "DOC_DATE",
+              "DOC_NOTES"
+            ],
+            "field_count": 14,
+            "line_count": 12061
+          },
+          {
+            "name": "ScannedDocsRawData/scan_pipeline_maps.txt",
+            "size_bytes": 2431965,
+            "header_fields": [
+              "DOC_ID",
+              "REGION",
+              "DOC_IMPORTED_DATE",
+              "DOC_PAGES",
+              "DOC_FILESIZE",
+              "SEGMENT_NUMBER",
+              "ORIG_AREA_CODE",
+              "ORIG_BLOCK_NUMBER",
+              "ORIG_LEASE_NUMBER",
+              "DEST_AREA_CODE",
+              "DEST_BLOCK_NUMBER",
+              "DEST_LEASE_NUMBER",
+              "PPL_SIZE_CODE",
+              "DOC_TYPE",
+              "DOC_DATE"
+            ],
+            "field_count": 15,
+            "line_count": 19854
+          },
+          {
+            "name": "ScannedDocsRawData/scan_plans.txt",
+            "size_bytes": 3365060,
+            "header_fields": [
+              "DOC_ID",
+              "REGION",
+              "DOC_IMPORTED_DATE",
+              "DOC_PAGES",
+              "DOC_FILESIZE",
+              "LEASE_NUMBER",
+              "AREA_BLOCK",
+              "CONTROL_NUMBER",
+              "DOC_TYPE",
+              "DATE_RECEIVED"
+            ],
+            "field_count": 10,
+            "line_count": 33173
+          },
+          {
+            "name": "ScannedDocsRawData/scan_renleases.txt",
+            "size_bytes": 44699,
+            "header_fields": [
+              "DOC_ID",
+              "REGION",
+              "DOC_IMPORTED_DATE",
+              "DOC_PAGES",
+              "DOC_FILESIZE",
+              "LEASE_NUMBER",
+              "AREA_CODE",
+              "BLOCK_NUMBER",
+              "DOC_TYPE",
+              "LEASE_EFF_DATE",
+              "LEASE_EXPR_DATE",
+              "ASGN_APRVL_DATE",
+              "MERG_CON_APRVL_DATE",
+              "DOC_BAR_CODE"
+            ],
+            "field_count": 14,
+            "line_count": 383
+          },
+          {
+            "name": "ScannedDocsRawData/scan_row.txt",
+            "size_bytes": 2925174,
+            "header_fields": [
+              "DOC_ID",
+              "REGION",
+              "DOC_IMPORTED_DATE",
+              "DOC_PAGES",
+              "DOC_FILESIZE",
+              "ROW_NUMBER",
+              "SEGMENT_NUMBER",
+              "DOC_TYPE",
+              "DOC_NOTES",
+              "DOC_DATE"
+            ],
+            "field_count": 10,
+            "line_count": 29631
+          },
+          {
+            "name": "ScannedDocsRawData/scan_sop_soo.txt",
+            "size_bytes": 447901,
+            "header_fields": [
+              "DOC_ID",
+              "REGION",
+              "DOC_IMPORTED_DATE",
+              "DOC_PAGES",
+              "DOC_FILESIZE",
+              "LEASE_NUMBER",
+              "DOC_DATE"
+            ],
+            "field_count": 7,
+            "line_count": 6185
+          },
+          {
+            "name": "ScannedDocsRawData/scan_units.txt",
+            "size_bytes": 185066,
+            "header_fields": [
+              "DOC_ID",
+              "REGION",
+              "DOC_IMPORTED_DATE",
+              "DOC_PAGES",
+              "DOC_FILESIZE",
+              "UNIT_NUMBER",
+              "UNIT_NAME",
+              "OCS_NUMBER",
+              "RESERVOIR_NAME"
+            ],
+            "field_count": 9,
+            "line_count": 1653
+          },
+          {
+            "name": "ScannedDocsRawData/scan_well_files.txt",
+            "size_bytes": 5310183,
+            "header_fields": [
+              "DOC_ID",
+              "REGION",
+              "DOC_IMPORTED_DATE",
+              "DOC_PAGES",
+              "DOC_FILESIZE",
+              "API_WELL_NUMBER",
+              "LEASE_NUMBER",
+              "WELL_NAME"
+            ],
+            "field_count": 8,
+            "line_count": 58845
+          },
+          {
+            "name": "ScannedDocsRawData/scan_well_potential_tests.txt",
+            "size_bytes": 208118,
+            "header_fields": [
+              "DOC_ID",
+              "REGION",
+              "DOC_IMPORTED_DATE",
+              "DOC_PAGES",
+              "DOC_FILESIZE",
+              "API_WELL_NUMBER",
+              "LEASE_NUMBER",
+              "AREA_CODE",
+              "BLOCK_NUMBER",
+              "WELL_NAME",
+              "FIELD_NAME",
+              "TEST_DATE",
+              "RECEIVED_DATE"
+            ],
+            "field_count": 13,
+            "line_count": 1595
+          }
+        ]
+      },
+      "verified_at_utc": "2026-11-20T04:54:53Z"
+    },
+    {
+      "roadmap_row": "A26",
+      "title": "Decommissioning Cost Estimates raw data",
+      "file": "DecomCostEstRawData.zip",
+      "source_url": "https://www.data.bsee.gov/Leasing/Files/DecomCostEstRawData.zip",
+      "final_url": "https://www.data.bsee.gov/Leasing/Files/DecomCostEstRawData.zip",
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-20T04:48:48Z",
+      "size_bytes": 840745,
+      "sha256": "883c2364aa775a4eda6816375b241413b112cf4615b682ee356eddc5f03d6318",
+      "content_type": "application/x-zip-compressed",
+      "publisher_last_modified": "Thu, 19 Nov 2026 10:45:37 GMT",
+      "notes": "P50, P70 and P90 estimates per well, platform and pipeline segment; totals per lease, ROW and RUE.",
+      "stored_at": "external raw store: bsee_pipeline/2026-11-20/DecomCostEstRawData.zip",
+      "schema": {
+        "zip_members": 8,
+        "members": [
+          {
+            "name": "DecomCostEstRawData/mv_decom_cost_estimates.txt",
+            "size_bytes": 3002726,
+            "header_fields": [
+              "LEASE_NUMBER",
+              "LEASE_STATUS_CD",
+              "BLK_MAX_WTR_DPTH",
+              "PA_ADJUSTMENT_FL",
+              "WELL_INST_DCOM_COUNT",
+              "WELL_PRP_DCOM_COUNT",
+              "PTFRM_INST_DCOM_COUNT",
+              "PTFRM_PRP_SITE_CLRNCE_COUNT",
+              "PTFRM_PRP_DCOM_COUNT",
+              "PTFRM_INST_SITE_CLRNCE_COUNT",
+              "PPL_INST_DCOM_COUNT",
+              "PPL_PRP_DCOM_COUNT",
+              "AREA_CODE",
+              "BLOCK_NUMBER",
+              "UPDATED_DATE",
+              "ROW_NUMBER",
+              "RUE_NUMBER"
+            ],
+            "field_count": 17,
+            "line_count": 36576
+          },
+          {
+            "name": "DecomCostEstRawData/mv_decom_cost_inst_pipe.txt",
+            "size_bytes": 673459,
+            "header_fields": [
+              "AUTH_TYPE_CODE",
+              "AUTH_NUMBER",
+              "SEGMENT_NUM",
+              "ORIG_LSE_NUM",
+              "ORIG_AR_CODE",
+              "ORIG_BLK_NUM",
+              "ORIG_ID_NAME",
+              "SEGMENT_DCOM_P50",
+              "SEGMENT_DCOM_P70",
+              "SEGMENT_DCOM_P90",
+              "SEGMENT_DCOM_INDTR",
+              "STATUS_CODE",
+              "PPL_SIZE_CODE",
+              "PROD_CODE",
+              "DEST_LSE_NUM",
+              "DEST_AR_CODE",
+              "DEST_BLK_NUM",
+              "DEST_ID_NAME",
+              "EFFECTIVE_DATE"
+            ],
+            "field_count": 19,
+            "line_count": 4218
+          },
+          {
+            "name": "DecomCostEstRawData/mv_decom_cost_inst_plat.txt",
+            "size_bytes": 168611,
+            "header_fields": [
+              "AUTH_TYPE_CODE",
+              "AUTH_NUMBER",
+              "COMPLEX_ID_NUM",
+              "STRUCTURE_NUMBER",
+              "AREA_CODE",
+              "BLOCK_NUMBER",
+              "STRUCTURE_NAME",
+              "PLT_REMOVAL_DCOM_P50",
+              "PLT_REMOVAL_DCOM_P70",
+              "PLT_REMOVAL_DCOM_P90",
+              "PLT_REMOVAL_DCOM_INDTR",
+              "PLT_SITE_CLRNC_DCOM_P50",
+              "PLT_SITE_CLRNC_DCOM_P70",
+              "PLT_SITE_CLRNC_DCOM_P90",
+              "PLT_SITE_CLRNC_DCOM_INDTR",
+              "EFFECTIVE_DATE"
+            ],
+            "field_count": 16,
+            "line_count": 1412
+          },
+          {
+            "name": "DecomCostEstRawData/mv_decom_cost_prop_pipe.txt",
+            "size_bytes": 43420,
+            "header_fields": [
+              "AUTH_TYPE_CODE",
+              "AUTH_NUMBER",
+              "SEGMENT_NUM",
+              "ORIG_LSE_NUM",
+              "ORIG_AR_CODE",
+              "ORIG_BLK_NUM",
+              "ORIG_ID_NAME",
+              "SEGMENT_DCOM_P50",
+              "SEGMENT_DCOM_P70",
+              "SEGMENT_DCOM_P90",
+              "SEGMENT_DCOM_INDTR",
+              "STATUS_CODE",
+              "PPL_SIZE_CODE",
+              "PROD_CODE",
+              "DEST_LSE_NUM",
+              "DEST_AR_CODE",
+              "DEST_BLK_NUM",
+              "DEST_ID_NAME",
+              "EFFECTIVE_DATE"
+            ],
+            "field_count": 19,
+            "line_count": 268
+          },
+          {
+            "name": "DecomCostEstRawData/mv_decom_cost_prop_plat.txt",
+            "size_bytes": 853,
+            "header_fields": [
+              "AUTH_TYPE_CODE",
+              "AUTH_NUMBER",
+              "COMPLEX_ID_NUM",
+              "STRUCTURE_NUMBER",
+              "AREA_CODE",
+              "BLOCK_NUMBER",
+              "STRUCTURE_NAME",
+              "PLT_REMOVAL_DCOM_P50",
+              "PLT_REMOVAL_DCOM_P70",
+              "PLT_REMOVAL_DCOM_P90",
+              "PLT_REMOVAL_DCOM_INDTR",
+              "PLT_SITE_CLRNC_DCOM_P50",
+              "PLT_SITE_CLRNC_DCOM_P70",
+              "PLT_SITE_CLRNC_DCOM_P90",
+              "PLT_SITE_CLRNC_DCOM_INDTR",
+              "EFFECTIVE_DATE"
+            ],
+            "field_count": 16,
+            "line_count": 6
+          },
+          {
+            "name": "DecomCostEstRawData/mv_decom_cost_prop_well.txt",
+            "size_bytes": 3499,
+            "header_fields": [
+              "API_WELL_NUMBER",
+              "BOTM_AREA_CODE",
+              "BOTM_BLOCK_NUM",
+              "BOTM_LEASE_NUM",
+              "WELL_NAME",
+              "WELL_INST_DCOM_P50",
+              "WELL_INST_DCOM_P70",
+              "WELL_INST_DCOM_P90",
+              "WELL_INST_DCOM_INDTR",
+              "BOREHOLE_STAT_CD",
+              "SURF_LEASE_NUM",
+              "SURF_AREA_CODE",
+              "SURF_BLOCK_NUM",
+              "EFFECTIVE_DATE",
+              "EXPIRATION_DATE"
+            ],
+            "field_count": 15,
+            "line_count": 27
+          },
+          {
+            "name": "DecomCostEstRawData/mv_decom_cost_spud_well.txt",
+            "size_bytes": 768333,
+            "header_fields": [
+              "API_WELL_NUMBER",
+              "BOTM_AREA_CODE",
+              "BOTM_BLOCK_NUM",
+              "BOTM_LEASE_NUM",
+              "WELL_NAME",
+              "WELL_INST_DCOM_P50",
+              "WELL_INST_DCOM_P70",
+              "WELL_INST_DCOM_P90",
+              "WELL_INST_DCOM_INDTR",
+              "BOREHOLE_STAT_CD",
+              "SURF_LEASE_NUM",
+              "SURF_AREA_CODE",
+              "SURF_BLOCK_NUM",
+              "EFFECTIVE_DATE"
+            ],
+            "field_count": 14,
+            "line_count": 6521
+          },
+          {
+            "name": "DecomCostEstRawData/mv_decom_cost_totals.txt",
+            "size_bytes": 289241,
+            "header_fields": [
+              "AUTH_TYPE_CODE",
+              "AUTH_NUMBER",
+              "TYPE",
+              "CNT",
+              "P50_COST",
+              "P70_COST",
+              "P90_COST",
+              "DTR_COST"
+            ],
+            "field_count": 8,
+            "line_count": 3804
+          }
+        ]
+      },
+      "verified_at_utc": "2026-11-20T04:54:53Z"
+    },
+    {
+      "roadmap_row": "A14",
+      "title": "Platform Structures raw data",
+      "file": "PlatStrucRawData.zip",
+      "source_url": "https://www.data.bsee.gov/Platform/Files/PlatStrucRawData.zip",
+      "final_url": "https://www.data.bsee.gov/Platform/Files/PlatStrucRawData.zip",
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-20T04:48:50Z",
+      "size_bytes": 1789980,
+      "sha256": "98e0e9217ee01c126b7df1a0ce402ceada57690735a5fcdbc16905fcf03995a6",
+      "content_type": "application/x-zip-compressed",
+      "publisher_last_modified": "Thu, 19 Nov 2026 10:45:04 GMT",
+      "notes": "Structure type (for example SEMI, SPAR, TLP, MTLP, FPSO), install and removal dates, water depth.",
+      "stored_at": "external raw store: bsee_pipeline/2026-11-20/PlatStrucRawData.zip",
+      "schema": {
+        "zip_members": 9,
+        "members": [
+          {
+            "name": "PlatStrucRawData/mv_platstruc_authorityhist.txt",
+            "size_bytes": 245749,
+            "header_fields": [
+              "COMPLEX_ID_NUM",
+              "STRUCTURE_NUMBER",
+              "PLTFRM_ATH_TYPE",
+              "SURF_LEASE_NUM",
+              "SN_ROW_FK",
+              "SN_RUE_FK",
+              "STATE_LEASE_NUM"
+            ],
+            "field_count": 7,
+            "line_count": 7128
+          },
+          {
+            "name": "PlatStrucRawData/mv_platstruc_cgrefcodes.txt",
+            "size_bytes": 163,
+            "header_fields": [
+              "RV_LOW_VALUE",
+              "RV_ABBREVIATION"
+            ],
+            "field_count": 2,
+            "line_count": 7
+          },
+          {
+            "name": "PlatStrucRawData/mv_platstruc_inccount.txt",
+            "size_bytes": 94529,
+            "header_fields": [
+              "ID_NUMBER",
+              "STRUCTURE_NUMBER",
+              "INC_COUNT"
+            ],
+            "field_count": 3,
+            "line_count": 5494
+          },
+          {
+            "name": "PlatStrucRawData/mv_platstruc_leases.txt",
+            "size_bytes": 589083,
+            "header_fields": [
+              "LEASE_NUMBER",
+              "LEASE_STATUS_CD"
+            ],
+            "field_count": 2,
+            "line_count": 31726
+          },
+          {
+            "name": "PlatStrucRawData/mv_platstruc_platformincs.txt",
+            "size_bytes": 9478547,
+            "header_fields": [
+              "ID_NUMBER",
+              "INC_NUMBER",
+              "INC_ENFRC_CODE",
+              "STRUCTURE_NUMBER",
+              "STRUCTURE_NAME",
+              "MMS_COMPANY_NUM",
+              "COMPANY_NAME",
+              "INC_ISSUE_DATE",
+              "INSP_DATE"
+            ],
+            "field_count": 9,
+            "line_count": 110516
+          },
+          {
+            "name": "PlatStrucRawData/mv_platstruc_removaldisp.txt",
+            "size_bytes": 124264,
+            "header_fields": [
+              "COMPLEX_ID_NUM",
+              "STRUCTURE_NUMBER",
+              "REMOVAL_DISPOSITION"
+            ],
+            "field_count": 3,
+            "line_count": 5759
+          },
+          {
+            "name": "PlatStrucRawData/mv_platstruc_rightofways.txt",
+            "size_bytes": 280879,
+            "header_fields": [
+              "SN_ROW",
+              "ROW_NUMBER",
+              "ROW_STATUS_CD",
+              "BUS_ASC_NAME"
+            ],
+            "field_count": 4,
+            "line_count": 5252
+          },
+          {
+            "name": "PlatStrucRawData/mv_platstruc_ruers.txt",
+            "size_bytes": 38790,
+            "header_fields": [
+              "SN_RUE",
+              "RUE_NUMBER",
+              "TEMP",
+              "BUS_ASC_NAME"
+            ],
+            "field_count": 4,
+            "line_count": 754
+          },
+          {
+            "name": "PlatStrucRawData/mv_platstruc_structures.txt",
+            "size_bytes": 1517890,
+            "header_fields": [
+              "AREA_CODE",
+              "BLOCK_NUMBER",
+              "FIELD_NAME_CODE",
+              "STRUCTURE_NAME",
+              "STRUCTURE_NUMBER",
+              "STRUC_TYPE_CODE",
+              "BUS_ASC_NAME",
+              "COMPLEX_ID_NUM",
+              "MAJ_STRUC_FLAG",
+              "INSTALL_DATE",
+              "REMOVAL_DATE",
+              "DISTRICT_CODE",
+              "HELIPORT_FLAG",
+              "LEASE_NUMBER",
+              "WATER_DEPTH",
+              "LATITUDE",
+              "LONGITUDE",
+              "NAD_YEAR_CD",
+              "PROJ_CODE",
+              "PTFRM_X_LOCATION",
+              "PTFRM_Y_LOCATION",
+              "SURF_N_S_DIST",
+              "SURF_N_S_CODE",
+              "SURF_E_W_DIST",
+              "SURF_E_W_CODE",
+              "ATTENDED_8_HR_FL",
+              "MANNED_24_HR_FL",
+              "STE_CLRNCE_DATE"
+            ],
+            "field_count": 28,
+            "line_count": 7092
+          }
+        ]
+      },
+      "verified_at_utc": "2026-11-20T04:54:53Z"
+    },
+    {
+      "roadmap_row": "terms",
+      "title": "BSEE Data Center disclaimer",
+      "file": "HtmlPage_page-Disclaimer.html",
+      "source_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=Disclaimer",
+      "final_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=Disclaimer",
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-20T04:48:52Z",
+      "size_bytes": 28180,
+      "sha256": "64153767ca5b252488c65e4ddf6a882319cdf5350b012e3db2b86eb222bba803",
+      "content_type": "text/html; charset=utf-8",
+      "publisher_last_modified": null,
+      "notes": "Terms of use page.",
+      "stored_at": "external raw store: bsee_pipeline/2026-11-20/HtmlPage_page-Disclaimer.html",
+      "schema": {},
+      "verified_at_utc": "2026-11-20T04:54:53Z"
+    }
+  ]
+}

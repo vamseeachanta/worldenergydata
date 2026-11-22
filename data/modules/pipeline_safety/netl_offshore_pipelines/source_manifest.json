@@ -1,0 +1,421 @@
+{
+  "group": "doe_netl_offshore_pipelines",
+  "title": "U.S. Offshore Pipeline and Reported Incident Datasets (NETL, US DOE; road map row A28)",
+  "retrieval": "2026-11-20",
+  "fetched_by": "scripts/bsee/fetch_fielddev_public_sources.py",
+  "user_agent": "WorldEnergyData-public-fetcher/1.0 (public research; sequential requests)",
+  "terms": {
+    "terms_url": "https://edx.netl.doe.gov/dataset/us-offshore-pipeline-and-reported-incident-datasets",
+    "license": "Creative Commons Attribution (cc-by), as stated on the EDX dataset record.",
+    "attribution": "Romeo, L., Pfander, I., Duran, R., Sabbatino, M., Schooley, C., Wenzlick, M., Wingo, P., Zaengle, D., Bauer, J. U.S. Offshore Pipeline and Reported Incident Datasets. National Energy Technology Laboratory (NETL), US Department of Energy. DOI 10.18141/2280823.",
+    "access": "Free direct download from EDX storage, no account.",
+    "robots": "EDX robots.txt sets Crawl-Delay 15; /api/ and resource_download paths are not used."
+  },
+  "storage": "Raw files are kept outside git in the external raw store under the path given per file; only this manifest is in git.",
+  "total_bytes": 557555299,
+  "files": [
+    {
+      "roadmap_row": "A28",
+      "title": "OSTI dataset record 2280823",
+      "file": "2280823.html",
+      "source_url": "https://www.osti.gov/dataexplorer/biblio/dataset/2280823",
+      "final_url": "https://www.osti.gov/dataexplorer/biblio/dataset/2280823",
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-20T04:48:59Z",
+      "size_bytes": 169928,
+      "sha256": "7c3f4e264ac94264f2c79fe808b5fca2f3b195e6289814882e86d7458bce71cd",
+      "content_type": "text/html;charset=UTF-8",
+      "publisher_last_modified": null,
+      "notes": "Landing page; DOI 10.18141/2280823 resolves to the EDX record.",
+      "stored_at": "external raw store: doe_netl_offshore_pipelines/2026-11-20/2280823.html",
+      "schema": {},
+      "verified_at_utc": "2026-11-20T04:54:53Z"
+    },
+    {
+      "roadmap_row": "A28",
+      "title": "EDX dataset record",
+      "file": "us-offshore-pipeline-and-reported-incident-datasets.html",
+      "source_url": "https://edx.netl.doe.gov/dataset/us-offshore-pipeline-and-reported-incident-datasets",
+      "final_url": "https://edx.netl.doe.gov/dataset/us-offshore-pipeline-and-reported-incident-datasets",
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-20T04:48:59Z",
+      "size_bytes": 43909,
+      "sha256": "890d530247a63e7a71cf78ed8d18b4e1019b36a741b4a15fef2f301d5f41357b",
+      "content_type": "text/html; charset=utf-8",
+      "publisher_last_modified": null,
+      "notes": "Dataset page with licence.",
+      "stored_at": "external raw store: doe_netl_offshore_pipelines/2026-11-20/us-offshore-pipeline-and-reported-incident-datasets.html",
+      "schema": {},
+      "verified_at_utc": "2026-11-20T04:54:53Z"
+    },
+    {
+      "roadmap_row": "A28",
+      "title": "ReadMe (PDF)",
+      "file": "U.S.OffshorePipelineandReportedIncidentDatasetsReadMe.pdf",
+      "source_url": "https://edx.netl.doe.gov/storage/f/edx/2026/04/2026-04-09T16:24:06.290674/420a8d05-bace-4609-90f1-865db5d8df8d/U.S.OffshorePipelineandReportedIncidentDatasetsReadMe.pdf",
+      "final_url": "https://edx.netl.doe.gov/storage/f/edx/2026/04/2026-04-09T16:24:06.290674/420a8d05-bace-4609-90f1-865db5d8df8d/U.S.OffshorePipelineandReportedIncidentDatasetsReadMe.pdf",
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-20T04:49:15Z",
+      "size_bytes": 301130,
+      "sha256": "77737c8d768fec63710544764cbf81174bed3e2ecdfade0d2191ac7154ee1c64",
+      "content_type": "application/pdf",
+      "publisher_last_modified": null,
+      "notes": "Dataset ReadMe.",
+      "stored_at": "external raw store: doe_netl_offshore_pipelines/2026-11-20/U.S.OffshorePipelineandReportedIncidentDatasetsReadMe.pdf",
+      "schema": {},
+      "verified_at_utc": "2026-11-20T04:54:53Z"
+    },
+    {
+      "roadmap_row": "A28",
+      "title": "Pipeline locations data dictionary (CSV)",
+      "file": "pipeline_location_data_dictionary.csv",
+      "source_url": "https://edx.netl.doe.gov/storage/f/edx/2024/01/2024-01-17T19:16:55.580Z/18edf57c-0cb5-4f17-8bab-60551d26ed41/pipeline_location_data_dictionary.csv",
+      "final_url": "https://edx.netl.doe.gov/storage/f/edx/2024/01/2024-01-17T19:16:55.580Z/18edf57c-0cb5-4f17-8bab-60551d26ed41/pipeline_location_data_dictionary.csv",
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-20T04:49:29Z",
+      "size_bytes": 362655,
+      "sha256": "ad6d47cb4d8305403c0248f561c4adea131111ae2ef8e97a61850769aabf8d7b",
+      "content_type": "text/csv",
+      "publisher_last_modified": null,
+      "notes": "Field definitions with original source references.",
+      "stored_at": "external raw store: doe_netl_offshore_pipelines/2026-11-20/pipeline_location_data_dictionary.csv",
+      "schema": {
+        "header_fields": null,
+        "field_count": 7,
+        "note": "no header row; see the record layout page",
+        "line_count": 2074
+      },
+      "verified_at_utc": "2026-11-20T04:54:53Z"
+    },
+    {
+      "roadmap_row": "A28",
+      "title": "Pipeline incidents data dictionary (CSV)",
+      "file": "pipeline_incidents_data_dictionary.csv",
+      "source_url": "https://edx.netl.doe.gov/storage/f/edx/2024/01/2024-01-22T19:47:25.510Z/466b42b7-eac9-42a6-8c51-e07e944b5ef0/pipeline_incidents_data_dictionary.csv",
+      "final_url": "https://edx.netl.doe.gov/storage/f/edx/2024/01/2024-01-22T19:47:25.510Z/466b42b7-eac9-42a6-8c51-e07e944b5ef0/pipeline_incidents_data_dictionary.csv",
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-20T04:49:44Z",
+      "size_bytes": 17523,
+      "sha256": "9a8f4b2ccba1cdd930a2a7c687b224ae2ce7399c36cdb685f84a393e0a0f1351",
+      "content_type": "text/csv",
+      "publisher_last_modified": null,
+      "notes": "Field definitions.",
+      "stored_at": "external raw store: doe_netl_offshore_pipelines/2026-11-20/pipeline_incidents_data_dictionary.csv",
+      "schema": {
+        "header_fields": null,
+        "field_count": 4,
+        "note": "no header row; see the record layout page",
+        "line_count": 86
+      },
+      "verified_at_utc": "2026-11-20T04:54:53Z"
+    },
+    {
+      "roadmap_row": "A28",
+      "title": "Pipeline incidents (CSV)",
+      "file": "pipeline_incidents.csv",
+      "source_url": "https://edx.netl.doe.gov/storage/f/edx/2024/01/2024-01-11T16:43:09.673Z/f4591f7b-dd94-4029-8518-1a7ad2edf7e7/pipeline_incidents.csv",
+      "final_url": "https://edx.netl.doe.gov/storage/f/edx/2024/01/2024-01-11T16:43:09.673Z/f4591f7b-dd94-4029-8518-1a7ad2edf7e7/pipeline_incidents.csv",
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-20T04:49:59Z",
+      "size_bytes": 373884,
+      "sha256": "66d3f0f0681dc7a0529c09115cc0404a5d5cbd3e0912e4961665032aa79b35ea",
+      "content_type": "text/plain",
+      "publisher_last_modified": null,
+      "notes": "More than 900 reported incidents, 1986 to 2021.",
+      "stored_at": "external raw store: doe_netl_offshore_pipelines/2026-11-20/pipeline_incidents.csv",
+      "schema": {
+        "header_fields": [
+          "Incident_ID",
+          "Original_Source",
+          "PHMSA_Significant_Flag",
+          "Local_Date_Time",
+          "Commodity_Released_Type",
+          "Fatality_Count",
+          "Injury_Count",
+          "Fire_Flag",
+          "Explosion_Flag",
+          "Release_Type",
+          "Leak_Type",
+          "Total_Cost_2021_USD",
+          "Wildlife_Impact_Flag",
+          "Exceed_Pressure_Restriction_Flag",
+          "Investigation_Status",
+          "Internal_Corrosion_Flag",
+          "External_Corrosion_Flag",
+          "Extreme_Weather_Flag",
+          "Hurricane_Flag",
+          "Spill_Flag",
+          "Extreme_Weather_Type",
+          "Geohazard_Type",
+          "Geohazard_Flag",
+          "Material_Failure_Flag",
+          "Equipment_Cause_Flag",
+          "Control_Relief_Failure_Equipment",
+          "Water_Contamination_Flag",
+          "Remediation_Flag",
+          "Structural_Damage_Flag",
+          "Total_Release_Amount",
+          "Inspection_Flag",
+          "Maintenance_Flag",
+          "Cathodic_Protection_Flag",
+          "Corrective_Action_Flag",
+          "Abandonment_Flag",
+          "Platform_Related_Flag",
+          "Platform_Damaged_Flag",
+          "Platform_Destroyed_Flag",
+          "Pipeline_Replaced_Flag",
+          "Pipeline_Destroyed_Flag",
+          "Latitude_WGS84",
+          "Longitude_WGS84",
+          "OCS_Lease_Block",
+          "Material_Failure_Type",
+          "Equipment_Cause_Type",
+          "Incorrect_Operation_Flag",
+          "Incorrect_Operation_Type",
+          "Outside_Force_Damage_Flag",
+          "Severity_Cause_Effect",
+          "Severity_Effect",
+          "Severity_Damage_Costs",
+          "Severity_Release_Amount",
+          "Report_Number",
+          "Supplemental_Number",
+          "Operator_ID",
+          "Operator_Name",
+          "Report_Date",
+          "System_Type",
+          "Shutdown_Flag",
+          "Shutdown_Date_Time",
+          "Shutdown_Restart_Date_Time",
+          "Item_Involved",
+          "Pipe_Type",
+          "Pipe_Diameter",
+          "Pipe_Wall_Thickness",
+          "Pipe_SMYS",
+          "Pipe_Specification",
+          "Pipe_Seam_Type",
+          "Pipe_Manufacturer",
+          "Pipe_Coating_Type",
+          "Pipe_Coating_Details",
+          "Installation_Year",
+          "Manufactured_Year",
+          "Material_Involved",
+          "Potential_Impact_Radius",
+          "Total_Cost",
+          "Accident_PSIG",
+          "MAOP_PSIG",
+          "Length_Segment_Isolated",
+          "Internal_Inspection_Flag"
+        ],
+        "field_count": 85,
+        "line_count": 944
+      },
+      "verified_at_utc": "2026-11-20T04:54:54Z"
+    },
+    {
+      "roadmap_row": "A28",
+      "title": "Pipeline locations (CSV)",
+      "file": "pipeline_locations.csv",
+      "source_url": "https://edx.netl.doe.gov/storage/f/edx/2024/01/2024-01-17T17:42:00.024Z/6552781b-fa36-44a5-8fa5-9896edd09495/pipeline_locations.csv",
+      "final_url": "https://edx.netl.doe.gov/storage/f/edx/2024/01/2024-01-17T17:42:00.024Z/6552781b-fa36-44a5-8fa5-9896edd09495/pipeline_locations.csv",
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-20T04:50:52Z",
+      "size_bytes": 493479312,
+      "sha256": "1f7b730651f0960727889321c16cb8337707f79bfe1c956e0a3f559e57851c59",
+      "content_type": "text/plain",
+      "publisher_last_modified": null,
+      "notes": "More than 80,000 points with matched attributes.",
+      "stored_at": "external raw store: doe_netl_offshore_pipelines/2026-11-20/pipeline_locations.csv",
+      "schema": {
+        "header_fields": null,
+        "field_count": 495,
+        "note": "no header row; see the record layout page",
+        "line_count": 89987
+      },
+      "verified_at_utc": "2026-11-20T04:55:02Z"
+    },
+    {
+      "roadmap_row": "A28",
+      "title": "Pipeline locations file geodatabase (ZIP)",
+      "file": "pipelines_us_offshore.gdb.zip",
+      "source_url": "https://edx.netl.doe.gov/storage/f/edx/2025/03/2025-03-11T16:00:30.008896/83a86c80-c3da-4b1b-9bf5-1f46ad285188/pipelines_us_offshore.gdb.zip",
+      "final_url": "https://edx.netl.doe.gov/storage/f/edx/2025/03/2025-03-11T16:00:30.008896/83a86c80-c3da-4b1b-9bf5-1f46ad285188/pipelines_us_offshore.gdb.zip",
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-20T04:50:57Z",
+      "size_bytes": 62806958,
+      "sha256": "1ae0747f97351d5820cf74eb07f88005d0f383c56e23606bff71110c61bfd0ba",
+      "content_type": "application/octet-stream",
+      "publisher_last_modified": null,
+      "notes": "Same points as a feature class.",
+      "stored_at": "external raw store: doe_netl_offshore_pipelines/2026-11-20/pipelines_us_offshore.gdb.zip",
+      "schema": {
+        "zip_members": 50,
+        "members": [
+          {
+            "name": "pipelines_us_offshore.gdb/a00000001.freelist",
+            "size_bytes": 4440
+          },
+          {
+            "name": "pipelines_us_offshore.gdb/a00000001.gdbindexes",
+            "size_bytes": 110
+          },
+          {
+            "name": "pipelines_us_offshore.gdb/a00000001.gdbtable",
+            "size_bytes": 329
+          },
+          {
+            "name": "pipelines_us_offshore.gdb/a00000001.gdbtablx",
+            "size_bytes": 5152
+          },
+          {
+            "name": "pipelines_us_offshore.gdb/a00000001.TablesByName.atx",
+            "size_bytes": 4118
+          },
+          {
+            "name": "pipelines_us_offshore.gdb/a00000002.gdbtable",
+            "size_bytes": 2055
+          },
+          {
+            "name": "pipelines_us_offshore.gdb/a00000002.gdbtablx",
+            "size_bytes": 5152
+          },
+          {
+            "name": "pipelines_us_offshore.gdb/a00000003.gdbindexes",
+            "size_bytes": 42
+          },
+          {
+            "name": "pipelines_us_offshore.gdb/a00000003.gdbtable",
+            "size_bytes": 758
+          },
+          {
+            "name": "pipelines_us_offshore.gdb/a00000003.gdbtablx",
+            "size_bytes": 5152
+          },
+          {
+            "name": "pipelines_us_offshore.gdb/a00000004.CatItemsByPhysicalName.atx",
+            "size_bytes": 4118
+          },
+          {
+            "name": "pipelines_us_offshore.gdb/a00000004.CatItemsByType.atx",
+            "size_bytes": 4118
+          },
+          {
+            "name": "pipelines_us_offshore.gdb/a00000004.FDO_UUID.atx",
+            "size_bytes": 4118
+          },
+          {
+            "name": "pipelines_us_offshore.gdb/a00000004.freelist",
+            "size_bytes": 20824
+          },
+          {
+            "name": "pipelines_us_offshore.gdb/a00000004.gdbindexes",
+            "size_bytes": 310
+          },
+          {
+            "name": "pipelines_us_offshore.gdb/a00000004.gdbtable",
+            "size_bytes": 1310847
+          },
+          {
+            "name": "pipelines_us_offshore.gdb/a00000004.gdbtablx",
+            "size_bytes": 5152
+          },
+          {
+            "name": "pipelines_us_offshore.gdb/a00000004.horizon",
+            "size_bytes": 32
+          },
+          {
+            "name": "pipelines_us_offshore.gdb/a00000004.spx",
+            "size_bytes": 12310
+          },
+          {
+            "name": "pipelines_us_offshore.gdb/a00000005.CatItemTypesByName.atx",
+            "size_bytes": 12310
+          },
+          {
+            "name": "pipelines_us_offshore.gdb/a00000005.CatItemTypesByParentTypeID.atx",
+            "size_bytes": 4118
+          },
+          {
+            "name": "pipelines_us_offshore.gdb/a00000005.CatItemTypesByUUID.atx",
+            "size_bytes": 4118
+          },
+          {
+            "name": "pipelines_us_offshore.gdb/a00000005.gdbindexes",
+            "size_bytes": 296
+          },
+          {
+            "name": "pipelines_us_offshore.gdb/a00000005.gdbtable",
+            "size_bytes": 2071
+          },
+          {
+            "name": "pipelines_us_offshore.gdb/a00000005.gdbtablx",
+            "size_bytes": 5152
+          },
+          {
+            "name": "pipelines_us_offshore.gdb/a00000006.CatRelsByDestinationID.atx",
+            "size_bytes": 4118
+          },
+          {
+            "name": "pipelines_us_offshore.gdb/a00000006.CatRelsByOriginID.atx",
+            "size_bytes": 4118
+          },
+          {
+            "name": "pipelines_us_offshore.gdb/a00000006.CatRelsByType.atx",
+            "size_bytes": 4118
+          },
+          {
+            "name": "pipelines_us_offshore.gdb/a00000006.FDO_UUID.atx",
+            "size_bytes": 4118
+          },
+          {
+            "name": "pipelines_us_offshore.gdb/a00000006.freelist",
+            "size_bytes": 4440
+          },
+          {
+            "name": "pipelines_us_offshore.gdb/a00000006.gdbindexes",
+            "size_bytes": 318
+          },
+          {
+            "name": "pipelines_us_offshore.gdb/a00000006.gdbtable",
+            "size_bytes": 263
+          },
+          {
+            "name": "pipelines_us_offshore.gdb/a00000006.gdbtablx",
+            "size_bytes": 5152
+          },
+          {
+            "name": "pipelines_us_offshore.gdb/a00000007.CatRelTypesByBackwardLabel.atx",
+            "size_bytes": 12310
+          },
+          {
+            "name": "pipelines_us_offshore.gdb/a00000007.CatRelTypesByDestItemTypeID.atx",
+            "size_bytes": 4118
+          },
+          {
+            "name": "pipelines_us_offshore.gdb/a00000007.CatRelTypesByForwardLabel.atx",
+            "size_bytes": 12310
+          },
+          {
+            "name": "pipelines_us_offshore.gdb/a00000007.CatRelTypesByName.atx",
+            "size_bytes": 12310
+          },
+          {
+            "name": "pipelines_us_offshore.gdb/a00000007.CatRelTypesByOriginItemTypeID.atx",
+            "size_bytes": 4118
+          },
+          {
+            "name": "pipelines_us_offshore.gdb/a00000007.CatRelTypesByUUID.atx",
+            "size_bytes": 4118
+          },
+          {
+            "name": "pipelines_us_offshore.gdb/a00000007.gdbindexes",
+            "size_bytes": 602
+          }
+        ],
+        "file_geodatabases": [
+          "pipelines_us_offshore.gdb"
+        ]
+      },
+      "verified_at_utc": "2026-11-20T04:55:04Z"
+    }
+  ]
+}

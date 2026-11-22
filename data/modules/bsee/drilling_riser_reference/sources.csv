@@ -1,0 +1,23 @@
+source_id,kind,citation,identifier,terms,opened
+S01,investigation report,"US Coast Guard, Joint Investigation Team report, Volume I, Appendix E",,US federal publication,2026-11-20
+S02,investigation report,"Drilling contractor's investigation report, Volume I (2011), section 3.4",,Published by the company,2026-11-20
+S03,investigation report,"National Commission on the BP Deepwater Horizon Oil Spill and Offshore Drilling, Chief Counsel's report (2011)",,US federal publication,2026-11-20
+S04,investigation report,"DNV forensic examination of the blowout preventer, Volume I (2011)",,Published for the US Department of the Interior,2026-11-20
+S05,investigation report,"US Chemical Safety Board, Macondo investigation report, Volume 1 (2014)",,US federal publication,2026-11-20
+S06,investigation report,"Joint Investigation Team report, Volume II (2011)",,US federal publication,2026-11-20
+S07,investigation report,"US Chemical Safety Board, Macondo investigation report, Appendix 2-A (2014)",,US federal publication,2026-11-20
+S08,investigation report,"BSEE panel report 2022-002 (February 2023)",,US federal publication,2026-11-20
+S09,investigation report,"OCS Report MMS 2006-058",,US federal publication,2026-11-20
+S10,investigation report,"BSEE investigation report, Mississippi Canyon block 809 (2021)",,US federal publication,2026-11-20
+S11,safety alert,"MMS Safety Alert 213 (2003)",,US federal publication,2026-11-20
+S12,investigation report,"Havtil investigation report 2020/1947",,Published by the Norwegian regulator,2026-11-20
+S13,investigation report,"Havtil investigation report 2020/754",,Published by the Norwegian regulator,2026-11-20
+S14,investigation report,"Havtil investigation report 2019/122",,Published by the Norwegian regulator,2026-11-20
+P01,conference paper,"Woo N.S., Han S.M., Kim Y.J. (2016). Design of a marine drilling riser for the deepwater environment. WIT Transactions on Engineering Sciences, Vol 105 (Advances in Fluid Mechanics XI), p.233 to 242",doi:10.2495/AFM160201,Open access on the publisher's site,2026-11-21
+P02,conference paper,"Liu K. et al. (2019). Hang-off analysis on deepwater DST string evacuation in typhoon condition. IOP Conference Series: Earth and Environmental Science 332, 032029",doi:10.1088/1755-1315/332/3/032029,CC BY,2026-11-21
+P03,journal paper,"Liu K., Chen G., Shao W. (2020). An efficient modeling and optimization approach for pressure testing during reentry operation of deepwater drilling riser system. IEEE Access, Vol 8",doi:10.1109/ACCESS.2020.2988290,CC BY 4.0,2026-11-21
+P04,journal paper,"Liu X. et al. (2021). Mechanical analysis of deepwater drilling riser system based on multibody system dynamics. Petroleum Science 18, p.603 to 617",doi:10.1007/s12182-020-00506-1,CC BY,2026-11-21
+P05,journal paper,"Zhou X. et al. (2022). Numerical investigations on the effects of seabed shallow soils on a typical deepwater subsea wellhead system. Brodogradnja 73(3)",doi:10.21278/brod73301,CC BY,2026-11-21
+P06,journal paper,"Zhou X. et al. (2023). Modal state vectors of a free-hanging drilling riser during deployment and retrieval. Journal of Petroleum Exploration and Production Technology 13, p.259 to 273",doi:10.1007/s13202-022-01549-3,CC BY,2026-11-21
+P07,book chapter,"Wang Y., Gao D., Fang J. (2016). Mechanical behavior analysis and testing of marine riser in deepwater drilling. Chapter 2 in Non-Destructive Testing, InTech",doi:10.5772/62315,CC BY,2026-11-21
+P08,thesis,"Akpan E.G. (2018). Wellhead fatigue response affected by seabed interaction. Master's thesis, Memorial University of Newfoundland",,Open in the university's research repository,2026-11-21

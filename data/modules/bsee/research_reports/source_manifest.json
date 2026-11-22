@@ -1,0 +1,69 @@
+{
+  "group": "bsee_research",
+  "title": "BSEE Technical Assessment Program riser reports named in the road map (row A27)",
+  "retrieval": "2026-11-20",
+  "fetched_by": "scripts/bsee/fetch_fielddev_public_sources.py",
+  "user_agent": "WorldEnergyData-public-fetcher/1.0 (public research; sequential requests)",
+  "terms": {
+    "terms_url": "https://www.bsee.gov/bsee/privacy-policy#copyright",
+    "statement": "Generally, materials produced by federal agencies belong to the public domain and may be reproduced without permission.",
+    "disclaimer_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=Disclaimer",
+    "limitations": "Working database; errors may exist. Not a legal document; not for navigational use. Third-party materials may carry restrictions.",
+    "access": "Free direct download, no account."
+  },
+  "storage": "Raw files are kept outside git in the external raw store under the path given per file; only this manifest is in git.",
+  "total_bytes": 4304149,
+  "files": [
+    {
+      "roadmap_row": "A27",
+      "title": "TAP 572 Deepwater Riser Design, Fatigue Life and Standards Study",
+      "file": "572aa.pdf",
+      "source_url": "https://www.bsee.gov/sites/bsee.gov/files/research-reports/572aa.pdf",
+      "final_url": "https://www.bsee.gov/sites/bsee.gov/files/research-reports/572aa.pdf",
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-20T04:48:52Z",
+      "size_bytes": 2819246,
+      "sha256": "b2ddf85a65fde25f369a0a928d9acd313ff4a0420e91462ecc841a9dbc99fc7a",
+      "content_type": "application/pdf",
+      "publisher_last_modified": "Wed, 24 Jan 2018 15:58:26 GMT",
+      "notes": "Final report PDF; research record https://www.bsee.gov/research-record/tap-572-deepwater-riser-fatigue-life-modeling-standard-study",
+      "stored_at": "external raw store: bsee_research/2026-11-20/572aa.pdf",
+      "schema": {},
+      "verified_at_utc": "2026-11-20T04:54:53Z"
+    },
+    {
+      "roadmap_row": "A27",
+      "title": "TAP 531 SCR Integrity Management",
+      "file": "531aa.pdf",
+      "source_url": "https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/531aa.pdf",
+      "final_url": "https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/531aa.pdf",
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-20T04:48:55Z",
+      "size_bytes": 375918,
+      "sha256": "11ab62ad9976bc16f4c865e69953448e077cacfff8b8d016d709527c89c29f95",
+      "content_type": "application/pdf",
+      "publisher_last_modified": "Sat, 21 Oct 2017 21:22:52 GMT",
+      "notes": "Report PDF; research record https://www.bsee.gov/research-record/tap-531-scr-integrity-management",
+      "stored_at": "external raw store: bsee_research/2026-11-20/531aa.pdf",
+      "schema": {},
+      "verified_at_utc": "2026-11-20T04:54:53Z"
+    },
+    {
+      "roadmap_row": "A27",
+      "title": "TAP 622 Marine growth on risers",
+      "file": "622aa.pdf",
+      "source_url": "https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/622aa.pdf",
+      "final_url": "https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/622aa.pdf",
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-20T04:48:58Z",
+      "size_bytes": 1108985,
+      "sha256": "4e5318c3364424d5de05659685ccc67934348cafee0e3389e60308d5345b9eb6",
+      "content_type": "application/pdf",
+      "publisher_last_modified": "Fri, 27 May 2016 12:41:31 GMT",
+      "notes": "Report PDF.",
+      "stored_at": "external raw store: bsee_research/2026-11-20/622aa.pdf",
+      "schema": {},
+      "verified_at_utc": "2026-11-20T04:54:53Z"
+    }
+  ]
+}
