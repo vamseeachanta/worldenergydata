@@ -29,7 +29,9 @@ those inputs:
 they are currently ``None``; it never sets ``concept_type``. The distance for a
 tieback is an approximation, disclosed here, not the true measured offset.
 
-The runtime reads only the committed CSV — it never depends on ``llm-wiki``.
+The bundled registry is held privately pending redistribution-terms review.
+Default reads raise a clear availability error; explicit independent input
+files remain supported without establishing redistribution permission.
 """
 
 from __future__ import annotations
@@ -40,6 +42,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional
 
+from worldenergydata.field_development.data_availability import require_available_source
 from worldenergydata.field_development.enums import ConceptType
 from worldenergydata.field_development.models import FieldConcept
 
@@ -134,6 +137,7 @@ def _parse_satellite(entry: str) -> tuple[str, Optional[int]]:
 def load_host_registry(csv_path: Optional[Path] = None) -> list[HostRecord]:
     """Load the curated host registry as :class:`HostRecord` objects."""
     path = csv_path or _curated_path()
+    require_available_source(path)
     out: list[HostRecord] = []
     with open(path, newline="", encoding="utf-8") as fh:
         for row in csv.DictReader(fh):

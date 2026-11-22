@@ -1,6 +1,6 @@
 import pytest
-from fixture_paths import FIXTURE
 
+from tests.unit.federal_acreage.fixture_paths import FIXTURE
 from worldenergydata.federal_acreage.evidence import evaluate
 from worldenergydata.federal_acreage.models import FederalLandRecord
 from worldenergydata.federal_acreage.provider import FixtureRecordProvider

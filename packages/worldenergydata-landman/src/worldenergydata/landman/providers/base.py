@@ -338,29 +338,73 @@ class BaseProvider(ABC):
         url: str,
         params: Optional[Dict[str, Any]] = None,
         use_cache: bool = True,
+        record_keys: tuple[str, ...] = (),
     ) -> Dict[str, Any]:
         """
-        Make GET request and parse JSON response.
+        Make a GET request, validating JSON before it enters the cache.
 
         Args:
             url: URL to request
             params: Query parameters
             use_cache: Whether to use caching
+            record_keys: Required record-list aliases, in precedence order
 
         Returns:
             Parsed JSON response
 
         Raises:
-            ParsingError: If response is not valid JSON
+            ParsingError: If JSON, the envelope or a required record list is invalid
         """
-        response = self._make_request(url, params=params, use_cache=use_cache)
+        # Keep validated JSON separate from the raw HTTP response cache. The
+        # contract is part of the key so a weaker validation cannot seed it.
+        cache_key = (
+            f"JSON:{url}:{json.dumps(params or {}, sort_keys=True)}:{record_keys}"
+        )
+        response = self._cache.get(cache_key) if use_cache else None
+        cache_miss = response is None
+        if cache_miss:
+            response = self._make_request(url, params=params, use_cache=False)
         try:
-            return response.json()
+            data = response.json()
         except json.JSONDecodeError as e:
             raise ParsingError(
                 source=url,
-                reason=f"Invalid JSON response: {str(e)}",
+                reason="Invalid JSON response",
+            ) from e
+
+        self._validate_envelope(data)
+        if record_keys:
+            self._record_list(data, record_keys)
+        if use_cache and cache_miss:
+            self._cache.set(cache_key, response)
+        return data
+
+    def _validate_envelope(self, data: Any) -> None:
+        """An error member is a failure even when empty or accompanied by rows."""
+        if not isinstance(data, dict) or "error" in data:
+            raise ParsingError(
+                source=self.PROVIDER_NAME,
+                reason="Expected a JSON object without an error member",
             )
+
+    def _record_list(self, data: Any, keys: tuple[str, ...]) -> list[dict[str, Any]]:
+        """Require an explicit list of objects; preserve first-present alias priority."""
+        self._validate_envelope(data)
+        for key in keys:
+            if key in data:
+                records = data[key]
+                if isinstance(records, list) and all(
+                    isinstance(record, dict) for record in records
+                ):
+                    return records
+                raise ParsingError(
+                    source=self.PROVIDER_NAME,
+                    reason=f"Expected a list of record objects in {key}",
+                )
+        raise ParsingError(
+            source=self.PROVIDER_NAME,
+            reason=f"Missing record list: expected one of {', '.join(keys)}",
+        )
 
     def clear_cache(self) -> None:
         """Clear the provider cache."""

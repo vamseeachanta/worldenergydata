@@ -11,6 +11,7 @@ learning fit, fallback and bounds is **NOT_EVALUATED**.
 | --- | --- | --- |
 | 0 | 2026-10-19 | Define row reconciliation, date and numeric parsing, and learning-fit dispositions to expose omitted data and substituted factors. |
 | 1 | 2026-10-20 | Restore numeric well-ID ingestion, distinguish missing numeric values and document the empty-frame exception. |
+| 2 | 2026-10-22 | Add complete synthetic disposition tables and boundary evidence; align the refreshed knowledge pack with the reviewed detector. |
 
 ## Record accounting
 
@@ -106,9 +107,9 @@ are retained as observations, not deduplicated. No learning rows are excluded.
 The fitted model is `log(T) = a + b log(N)`. Centered least squares gives
 `b = sum((x-x_mean)*(y-y_mean)) / sum((x-x_mean)**2)` and the doubling ratio is
 `LC = T(2N)/T(N) = 2**b`. This follows directly by substitution in `T=exp(a)*N**b`;
-2 denotes doubling, not an empirical coefficient. The least-squares criterion
-and linear model are described in the [NumPy `lstsq` reference, Examples
-(2026)](https://numpy.org/doc/stable/reference/generated/numpy.linalg.lstsq.html).
+2 denotes doubling, not an empirical coefficient. The slope and intercept equations are given in the [NIST/SEMATECH
+e-Handbook of Statistical Methods, section 4.4.3.1, Least Squares
+(online edition accessed 2026)](https://www.itl.nist.gov/div898/handbook/pmd/section4/pmd431.htm).
 This establishes a numerical method, not the physical interpretation or
 calibration of individual versus cumulative-average drilling durations.
 
@@ -134,60 +135,67 @@ columns; the previous entry point returned 0.85. An empty frame declaring both
 or clipping occurs. Consumers needing disposition evidence should retain the
 diagnostic result. Engineering acceptance remains conditional on a qualified
 duration interpretation, calibration dataset, fallback and bounds; that evidence
-is not established here. [Duration-law qualification remains tracked separately](https://github.com/vamseeachanta/worldenergydata/issues/1342).
+is not established here. Duration-law qualification remains tracked separately in #1342.
 
 ## Worked example
 
-The following inputs are synthetic and are not field measurements. The example
-also appears as executable arithmetic assertions in
+All records below are synthetic; no field measurements are represented.
+The regression node is
+`tests/unit/drilling/test_detector_regression.py::test_worked_example_dispositions_and_learning_line`.
+The table is in input order; row positions identify records even with repeated
+index labels. Rig and field are `R` and `F` unless shown as missing.
+
+| Row | Well ID input | Rig | Spud date (UTC) | Disposition | Reason |
+| --- | --- | --- | --- | --- | --- |
+| 0 | numeric `101` | R | 2024-01-31 12:00:00 | accepted | accepted |
+| 1 | text `"101"` | R | 2024-01-31 12:00:00 | excluded | duplicate_record |
+| 2 | numeric `102` | R | 2024-02-29 12:00:00 | accepted | accepted |
+| 3 | numeric `103` | R | 2024-02-29 12:00:01 | accepted | accepted |
+| 4 | numeric `104` | R | 2024-02-29 18:00:01 | accepted | accepted |
+| 5 | numeric `105` | missing | 2024-02-29 00:00:00 | rejected | missing_rig_name |
+| 6 | numeric `106` | R | `bad` | rejected | invalid_spud_date |
+
+Hand accounting: **7 inputs = 4 accepted + 2 rejected + 1 excluded**.
+Normalization makes rows 0 and 1 the same required-field record. With a
+one-calendar-month window, January 31 noon ends at leap-year February 29 noon.
+The endpoint is included; the next second starts a second batch. The two batches
+contain rows (0, 2) and (3, 4), with sizes (2, 2) and elapsed spans 29 days and
+six hours (one quarter day). These are calendar arithmetic answers, following
+the pandas references above; no 30.44-day month approximation is used.
+
+| Row | Position text | Duration text (days) | Disposition | Reason |
+| --- | --- | --- | --- | --- |
+| 0 | `"1"` | `"8"` | accepted | accepted |
+| 1 | `"2"` | `"2"` | accepted | accepted |
+| 2 | `"3"` | `"bad"` | rejected | invalid_days_to_drill |
+| 3 | `"0"` | `"4"` | rejected | nonpositive_well_position |
+
+Hand accounting: **4 training inputs = 2 accepted + 2 rejected + 0 excluded**.
+For the retained two-point line, `b=log(2/8)/log(2/1)=-2`, `a=log(8)`;
+therefore `log(T)=log(8)-2*log(N)`. At N=2 this gives T=8/4=2 days,
+and the doubling ratio is `2**(-2)=1/4`. The compatibility lower bound gives
+`factor=1/2`, `raw_factor` approximately one quarter, `status=clipped_lower`
+and `qualification=NOT_EVALUATED`. The equations and hand substitution determine
+the expected answers independently of the implementation.
+
+## Boundary evidence
+
+`tests/unit/drilling/test_detector_regression.py` checks conservation for empty,
+all-rejected and mixed inputs; duplicate-column errors; nonleap, leap and
+year-crossing calendar endpoints one second either side; anchoring instead of
+chaining; missing and malformed durations; zero, one, two and three usable
+learning rows; and repeated positions with an identifiable slope. Clipping is
+checked at duration ratios 3/8, 4/8, 5/8 and 7/8, 8/8, 9/8: one synthetic day
+either side of each compatibility boundary when the first duration is eight days.
+The original numeric-ID and fractional-span cases remain in
 `tests/unit/drilling/test_detector_contracts.py`.
-
-```python
-import pandas as pd
-from worldenergydata.drilling import BSEEBatchDetector
-
-detector = BSEEBatchDetector()
-events = pd.DataFrame({
-    "well_id": ["A", "B", "C", "D"],
-    "rig_name": ["R"] * 4,
-    "field_name": ["F"] * 4,
-    "spud_date": [
-        "2024-01-31T12:00:00Z", "2024-02-29T12:00:00Z",
-        "2024-02-29T12:00:01Z", "2024-02-29T18:00:01Z",
-    ],
-})
-batches = detector.detect_batches_with_diagnostics(events, time_window_months=1)
-assert batches.counts == {"accepted": 4, "rejected": 0, "excluded": 0}
-assert batches.batches.batch_size.tolist() == [2, 2]
-assert batches.batches.span_days.tolist() == [29.0, 0.25]
-
-fit = detector.fit_learning_curve_with_diagnostics(pd.DataFrame({
-    "well_position": ["1", "2", "3"],
-    "days_to_drill": ["8", "2", "bad"],
-}))
-assert fit.counts == {"accepted": 2, "rejected": 1, "excluded": 0}
-assert abs(fit.raw_factor - 0.25) < 1e-12  # Numerical roundoff assertion only.
-assert fit.factor == 0.5
-assert fit.status == "clipped_lower"
-assert fit.qualification == "NOT_EVALUATED"
-```
-
-Calendar method and answer: January 31 noon plus one calendar month is February
-29 noon in the selected leap year. That endpoint is included; the next second
-starts another batch. The spans are 29 days and six hours (one quarter day).
-
-Learning method and answer: the valid two-point observations give
-`b = log(2/8)/log(2/1) = -2`, hence `LC = 2**(-2) = 0.25`. The third duration is
-rejected. The legacy lower bound changes the reported factor to 0.5; both the
-raw factor and clipping disposition remain visible. This result is a hand
-calculation of a synthetic numerical case, not engineering validation.
-
 
 ## Limits
 
-Knowledge pack revision 2 describes the earlier detector. Its approximate month,
-integer-span and missing-check descriptions do not govern this contract; only
-its legacy policy values are retained here. The pack revision, code pin, digests
-and resolved failure rows will be refreshed in the
-[knowledge-pack follow-up](https://github.com/vamseeachanta/worldenergydata/issues/1549).
-Physical duration-law qualification remains separate from this parser fix.
+Knowledge pack revision 3 now reflects the reviewed detector and pins its source
+digests. The fallback and clipping values still have only their historical
+application-policy basis in revision 2; engineering qualification is
+**NOT_EVALUATED**. No physical campaign-separation criterion, source-timezone
+provenance or independent physical duration-law qualification is established.
+The latter remains separate in #1342. The map families are proposals with
+`counted: false` pending review; enrollment is not engineering clearance.

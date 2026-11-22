@@ -26,6 +26,24 @@ its returned row count is checked. `matched_count` is the earlier count, not a
 completeness certificate. A zero count skips the download; `raw=None` represents
 no downloaded payload. An HTTP 204 response also has `raw=None`.
 
+`QueryResult.requested_limit` retains the caller's cap. `count_mismatch` is
+`len(events) != matched_count`; it exposes a difference between the earlier
+count and the returned rows, including a no-content response after a positive
+count. `limit_reached` is `len(events) >= requested_limit` and flags possible
+truncation. When a result is constructed without a requested limit, this property
+is `None`. Neither property establishes catalogue completeness: equal counts
+can conceal changed event identities, and a reached cap can be an exact match.
+No additional requests are made to evaluate these properties.
+
+The parser refuses duplicate JSON members, non-finite numbers (including float
+overflow), blank event IDs, repeated event IDs, and non-integer event times.
+Optional `metadata.count`, when present, must be an integer equal to the number
+of returned features. This count belongs to the downloaded collection; it is
+not compared with the earlier count request during parsing. Omitted metadata
+or count remains supported for existing recorded responses. A malformed row
+or contradictory count raises `ServiceError` for the whole response; partial
+rows are not returned. Unknown magnitude and depth remain `None`.
+
 The synchronous client uses GET, an explicit timeout (default 30 seconds, maximum
 60), a response cap (default and maximum 5,000,000 bytes), and a pause of at least
 two seconds after each attempt. Calls must be sequential. There are no retries,
@@ -41,6 +59,19 @@ Protocol parameters, formats, and the 20,000-event limit were inspected in the
 on 2026-10-11 UTC. Field order and GeoJSON structure were inspected in the
 [USGS summary specification](https://earthquake.usgs.gov/earthquakes/feed/v1.0/geojson.php).
 These are the source of URL patterns; no filename listing is used by this API.
+
+Both documentation pages were read again on 2026-10-19 UTC for the integrity
+checks and result diagnostics. The GeoJSON Summary v1.0 Output declares string
+IDs, integer event times, coordinate order and integer collection counts. The
+event-service `limit` parameter caps returned events. Duplicate JSON member
+rejection is a client integrity policy informed by
+[RFC 8259 (2017), section 4](https://www.rfc-editor.org/rfc/rfc8259#section-4),
+which describes ambiguity when names repeat; it is not an RFC requirement to
+reject them. Non-finite number rejection follows
+[section 6](https://www.rfc-editor.org/rfc/rfc8259#section-6), with float overflow
+also refused. Duplicate event rejection and collection-count agreement are
+client integrity policies. Focused offline tests use synthetic inputs and
+independent row counts and Boolean truth tables rather than hazard thresholds.
 
 The [USGS copyright policy](https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits)
 states: “USGS-authored or produced data and information are considered to be in

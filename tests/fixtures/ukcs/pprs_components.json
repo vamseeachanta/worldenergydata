@@ -1,0 +1,54 @@
+{
+  "description": "Synthetic inputs using NSTA PPRS field names; not measured production.",
+  "schema_source": "NSTA UKCS hydrocarbon field production reports PPRS points, layer 0 fields, retrieved 2026-10-20",
+  "records": [
+    {
+      "FIELDNAME": "EXAMPLE",
+      "PERIODYR": 2024,
+      "PERIODMNTH": 1,
+      "OILPRODMAS": 0,
+      "AGASPROKSM": 2,
+      "DGASPROKSM": 3,
+      "WATPRODVOL": 10,
+      "GCONDVOL": 10,
+      "GCONDMASS": 900,
+      "GCONDMBD": 800,
+      "GASINJVOL": 4,
+      "INJWATVOL": 20,
+      "REINJWATVO": 5,
+      "GASFLARVOL": 1,
+      "GASVENTVOL": 0
+    },
+    {
+      "FIELDNAME": "EXAMPLE",
+      "PERIODYR": 2024,
+      "PERIODMNTH": 2,
+      "OILPRODMAS": null,
+      "AGASPROKSM": 2,
+      "DGASPROKSM": null,
+      "WATPRODVOL": null,
+      "GCONDVOL": null,
+      "GCONDMASS": 900,
+      "GASINJVOL": null,
+      "INJWATVOL": null,
+      "REINJWATVO": null,
+      "GASFLARVOL": null,
+      "GASVENTVOL": null
+    },
+    {
+      "FIELDNAME": "EXAMPLE",
+      "PERIODYR": 2024,
+      "PERIODMNTH": 3,
+      "OILPRODMAS": 0,
+      "AGASPROKSM": 0,
+      "DGASPROKSM": 0,
+      "WATPRODVOL": 0,
+      "GCONDVOL": 0,
+      "GASINJVOL": 0,
+      "INJWATVOL": 0,
+      "REINJWATVO": 0,
+      "GASFLARVOL": 0,
+      "GASVENTVOL": 0
+    }
+  ]
+}

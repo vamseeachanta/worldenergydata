@@ -4,8 +4,8 @@
 selenium>=4.15.0
 
 # Chrome webdriver manager (optional, for automatic driver management)
-webdriver-manager>=4.0.1
+webdriver-manager>=4.1.2
 
 # Additional utilities
-python-dateutil>=2.9.0.post0
+python-dateutil>=3.0.0
 requests>=2.31.0

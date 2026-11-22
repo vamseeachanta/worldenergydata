@@ -378,7 +378,8 @@ class SodirVisualizer:
 
             # Create box plot
             data = [sodir_values.dropna(), bsee_values.dropna()]
-            ax.boxplot(data, labels=["Norway (SODIR)", "US Gulf (BSEE)"])
+            ax.boxplot(data)
+            ax.set_xticks([1, 2], ["Norway (SODIR)", "US Gulf (BSEE)"])
             ax.set_ylabel("Recovery Factor")
             ax.set_title("Recovery Factor Comparison")
 

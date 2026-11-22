@@ -1,6 +1,7 @@
 # ABOUTME: Concrete importer for BSEE safety statistics database CSV data
 # ABOUTME: Implements CSV parsing and field normalization for aggregated HSE statistics records
 
+import re
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List
@@ -11,6 +12,14 @@ from worldenergydata.common.logging import get_logger
 from worldenergydata.modules.hse.importers.base_importer import BaseImporter
 
 logger = get_logger(__name__)
+
+
+def _parse_integer_count(value: str) -> int:
+    """Accept signed digits and zero-only fractions; reject exponent expansion."""
+    text = value.strip()
+    if re.fullmatch(r"[+-]?\d+(?:\.0+)?", text) is None:
+        raise ValueError("Count must be digits with an optional zero-only fraction")
+    return int(text.partition(".")[0])
 
 
 class BSEEStatisticsImporter(BaseImporter):
@@ -74,8 +83,13 @@ class BSEEStatisticsImporter(BaseImporter):
             raise FileNotFoundError(f"CSV file not found: {self.csv_file_path}")
 
         try:
-            # Read CSV file with pandas
-            df = pd.read_csv(csv_path)
+            # Issue #1308 defines NA and empty cells as missing. Keep other
+            # tokens literal and counts as text until integer normalization.
+            # pandas 2.3 read_csv: dtype, na_values and keep_default_na:
+            # https://pandas.pydata.org/pandas-docs/version/2.3/reference/api/pandas.read_csv.html
+            df = pd.read_csv(
+                csv_path, dtype=str, na_values=["NA", ""], keep_default_na=False
+            )
 
             # Convert DataFrame to list of dictionaries
             records = df.to_dict("records")
@@ -117,6 +131,14 @@ class BSEEStatisticsImporter(BaseImporter):
         Returns:
             Normalized dictionary matching HSEIncident schema
         """
+        # Normalize scalar missingness before the is-not-None field guards;
+        # copying also leaves the caller's record unchanged.
+        # pandas 2.3 isna (None, NaN, NA and NaT):
+        # https://pandas.pydata.org/pandas-docs/version/2.3/reference/api/pandas.isna.html
+        raw_data = {
+            key: None if pd.api.types.is_scalar(value) and pd.isna(value) else value
+            for key, value in raw_data.items()
+        }
         normalized = {}
 
         # Required field: bsee_incident_id
@@ -175,7 +197,7 @@ class BSEEStatisticsImporter(BaseImporter):
         ):
             try:
                 if isinstance(raw_data["operational_period"], str):
-                    normalized["operational_period"] = int(
+                    normalized["operational_period"] = _parse_integer_count(
                         raw_data["operational_period"]
                     )
                 else:
@@ -189,7 +211,9 @@ class BSEEStatisticsImporter(BaseImporter):
         if "total_incidents" in raw_data and raw_data["total_incidents"] is not None:
             try:
                 if isinstance(raw_data["total_incidents"], str):
-                    normalized["total_incidents"] = int(raw_data["total_incidents"])
+                    normalized["total_incidents"] = _parse_integer_count(
+                        raw_data["total_incidents"]
+                    )
                 else:
                     normalized["total_incidents"] = raw_data["total_incidents"]
             except (ValueError, TypeError):
@@ -201,7 +225,9 @@ class BSEEStatisticsImporter(BaseImporter):
         if "fatality_count" in raw_data and raw_data["fatality_count"] is not None:
             try:
                 if isinstance(raw_data["fatality_count"], str):
-                    normalized["fatality_count"] = int(raw_data["fatality_count"])
+                    normalized["fatality_count"] = _parse_integer_count(
+                        raw_data["fatality_count"]
+                    )
                 else:
                     normalized["fatality_count"] = raw_data["fatality_count"]
             except (ValueError, TypeError):
@@ -213,7 +239,9 @@ class BSEEStatisticsImporter(BaseImporter):
         if "lost_time_count" in raw_data and raw_data["lost_time_count"] is not None:
             try:
                 if isinstance(raw_data["lost_time_count"], str):
-                    normalized["lost_time_count"] = int(raw_data["lost_time_count"])
+                    normalized["lost_time_count"] = _parse_integer_count(
+                        raw_data["lost_time_count"]
+                    )
                 else:
                     normalized["lost_time_count"] = raw_data["lost_time_count"]
             except (ValueError, TypeError):
@@ -225,7 +253,9 @@ class BSEEStatisticsImporter(BaseImporter):
         if "recordable_count" in raw_data and raw_data["recordable_count"] is not None:
             try:
                 if isinstance(raw_data["recordable_count"], str):
-                    normalized["recordable_count"] = int(raw_data["recordable_count"])
+                    normalized["recordable_count"] = _parse_integer_count(
+                        raw_data["recordable_count"]
+                    )
                 else:
                     normalized["recordable_count"] = raw_data["recordable_count"]
             except (ValueError, TypeError):
@@ -237,7 +267,9 @@ class BSEEStatisticsImporter(BaseImporter):
         if "near_miss_count" in raw_data and raw_data["near_miss_count"] is not None:
             try:
                 if isinstance(raw_data["near_miss_count"], str):
-                    normalized["near_miss_count"] = int(raw_data["near_miss_count"])
+                    normalized["near_miss_count"] = _parse_integer_count(
+                        raw_data["near_miss_count"]
+                    )
                 else:
                     normalized["near_miss_count"] = raw_data["near_miss_count"]
             except (ValueError, TypeError):
@@ -249,7 +281,9 @@ class BSEEStatisticsImporter(BaseImporter):
         if "minor_count" in raw_data and raw_data["minor_count"] is not None:
             try:
                 if isinstance(raw_data["minor_count"], str):
-                    normalized["minor_count"] = int(raw_data["minor_count"])
+                    normalized["minor_count"] = _parse_integer_count(
+                        raw_data["minor_count"]
+                    )
                 else:
                     normalized["minor_count"] = raw_data["minor_count"]
             except (ValueError, TypeError):

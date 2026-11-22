@@ -156,3 +156,32 @@ def test_edited_make_data_chain_uses_shared_bootstrap():
             ast.unparse(node.func) in ("sys.path.insert", "sys.path.append")
             for node in calls
         ), script.name
+
+
+def test_make_data_dry_run_environment_supports_namespace_import():
+    """Issue #1066: use the actual recipe environment without invoking downloads."""
+    import os
+    import shlex
+    import subprocess
+
+    for target in ("data", "data-dry"):
+        dry = subprocess.run(
+            ["make", "-n", target],
+            cwd=REPO_ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        tokens = shlex.split(dry.stdout.strip())
+        assignment = next(token for token in tokens if token.startswith("PYTHONPATH="))
+        env = os.environ.copy()
+        env["PYTHONPATH"] = assignment.partition("=")[2]
+        result = subprocess.run(
+            [sys.executable, "-S", "-c", "import worldenergydata.bsee"],
+            check=False,
+            cwd=REPO_ROOT,
+            env=env,
+            capture_output=True,
+            text=True,
+        )
+        assert result.returncode == 0, result.stderr

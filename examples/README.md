@@ -4,6 +4,7 @@
 
 | File | Safety Class | Notes |
 |------|-------------|-------|
+| `decline_npv.py` | `bounded-safe` | Synthetic decline and NPV calculations; no data, network, or credentials required |
 | `fdas_complete_workflow.py` | `fixture-only` | Pure financial calculations, no data or network |
 | `validation_examples.py` | `fixture-only` | Validation logic only, no external I/O |
 | `metocean/endpoint_station_day.py` | `fixture-only` | Replays bundled station-day responses offline; `--live` makes outbound requests and requires `--user-agent` and `--timeout` |

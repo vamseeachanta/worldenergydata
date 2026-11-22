@@ -126,11 +126,11 @@ class TestListReportUrls:
         assert isinstance(urls, list)
 
     @patch("worldenergydata.west_africa.nigeria.nuprc_client.requests")
-    def test_returns_empty_on_network_error(self, mock_requests):
+    def test_raises_on_network_error(self, mock_requests):
         mock_requests.get.side_effect = Exception("timeout")
         mock_requests.exceptions.RequestException = Exception
-        urls = list_report_urls(NUPRC_PORTAL)
-        assert urls == []
+        with pytest.raises(NuprcAPIError):
+            list_report_urls(NUPRC_PORTAL)
 
     @patch("worldenergydata.west_africa.nigeria.nuprc_client.requests")
     def test_filters_non_pdf_links(self, mock_requests):

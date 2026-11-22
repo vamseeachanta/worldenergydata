@@ -13,11 +13,11 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
 HELPER = "scripts/ci/replay_gate.py"
+# PR fast gate (28 Oct 2026): Type Check and Documentation moved to the daily
+# Main full run, so these three are the replayable required wrappers.
 REQUIRED = {
     "lint-gate": "Lint",
-    "type-check-gate": "Type Check",
     "security-gate": "Security Scan",
-    "docs-gate": "Documentation",
     "pr-gate": "Test (PR gate)",
 }
 
@@ -98,34 +98,67 @@ def history(tmp_path_factory):
     """Create a live base and older event/head snapshots around helper adoption."""
     source = tmp_path_factory.mktemp("replay-history")
     _git(source, "init", "-q")
-    (source / "README.md").write_text("fixture\n", encoding="utf-8")
+    (source / "README.md").write_text("fixture\n", encoding="utf-8", newline="\n")
     without_helper = _snapshot(source)
     helper = source / HELPER
     helper.parent.mkdir(parents=True)
     helper.write_text(
-        "raise RuntimeError('PR helper must not execute')\n", encoding="utf-8"
+        "raise RuntimeError('PR helper must not execute')\n",
+        encoding="utf-8",
+        newline="\n",
     )
     with_helper = _snapshot(source)
-    # The helper is unchanged by this PR; use its bytes as the base fixture.
+    # Use the maintained helper bytes as the live-base fixture.
     helper.write_bytes((ROOT / HELPER).read_bytes())
     base = _snapshot(source)
     _git(source, "update-ref", "refs/heads/main", base)
     return source, base, {False: without_helper, True: with_helper}
 
 
+def _workflow():
+    return yaml.safe_load(
+        (ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
+    )
+
+
+def test_mode_provisions_python_before_replay():
+    """Replay must have its configured interpreter on every eligible runner."""
+    steps = _workflow()["jobs"]["mode"]["steps"]
+    setup = [
+        (index, step)
+        for index, step in enumerate(steps)
+        if step.get("uses", "").startswith("actions/setup-python@")
+    ]
+    assert len(setup) == 1
+    setup_index, setup_step = setup[0]
+    assert setup_step["with"]["python-version"] == "${{ env.PYTHON_VERSION_DEFAULT }}"
+    consumers = [
+        (index, step)
+        for index, step in enumerate(steps)
+        if any(line.startswith("python ") for line in step.get("run", "").splitlines())
+    ]
+    assert consumers
+    for index, step in consumers:
+        assert setup_index < index
+        assert setup_step["if"] == step["if"]
+
+
 def _wrapper(job_id):
     """Read the actual checkout and command for each required wrapper."""
-    workflow = yaml.safe_load((ROOT / ".github/workflows/ci.yml").read_text())
+    workflow = _workflow()
     job = workflow["jobs"][job_id]
     assert job["name"] == REQUIRED[job_id]
     assert job["permissions"] == {"contents": "read", "actions": "read"}
-    checkout, replay, _ = job["steps"]
+    mode = workflow["jobs"]["mode"]
+    checkout = next(
+        step for step in mode["steps"] if "checkout" in step.get("uses", "")
+    )
+    replay = next(step for step in mode["steps"] if step.get("id") == "lookup")
     assert checkout["uses"].startswith("actions/checkout@")
     assert checkout["if"] == replay["if"]
-    assert replay["env"]["CHECK_NAME"] == job["name"]
     assert replay["run"].splitlines() == [
         'echo "Replay helper revision: $(git rev-parse HEAD)"',
-        'python scripts/ci/replay_gate.py "$CHECK_NAME"',
+        "python scripts/ci/replay_gate.py --mode",
     ]
     assert not replay.get("continue-on-error", False)
     return checkout["with"], job["name"]
@@ -133,16 +166,20 @@ def _wrapper(job_id):
 
 @pytest.mark.parametrize("job_id", REQUIRED)
 @pytest.mark.skipif(os.name == "nt", reason="Workflow shell runs on Linux")
-def test_replay_command_logs_revision_and_preserves_failure(tmp_path, history, job_id):
-    """Run each wrapper command; log the helper SHA and retain the CLI exit code."""
-    config, name = _wrapper(job_id)
+def test_mode_command_logs_revision_and_selects_fallback(tmp_path, history, job_id):
+    """Missing context selects full CI without turning the mode job red."""
+    config, _name = _wrapper(job_id)
     runner = _checkout(tmp_path, history, False, False, config)
-    workflow = yaml.safe_load((ROOT / ".github/workflows/ci.yml").read_text())
-    command = workflow["jobs"][job_id]["steps"][1]["run"]
+    workflow = _workflow()
+    command = next(
+        step["run"]
+        for step in workflow["jobs"]["mode"]["steps"]
+        if step.get("id") == "lookup"
+    )
     env = os.environ.copy()
     # Invalid context exercises the real CLI's failure without any API request.
     env["GITHUB_EVENT_PATH"] = str(tmp_path / "absent-event.json")
-    env["CHECK_NAME"] = name
+    env["GITHUB_OUTPUT"] = str(tmp_path / "output")
     result = subprocess.run(
         [
             "bash",
@@ -156,10 +193,18 @@ def test_replay_command_logs_revision_and_preserves_failure(tmp_path, history, j
         text=True,
         timeout=30,
     )
-    assert result.returncode == 1, result.stderr
+    assert result.returncode == 0, result.stderr
     revision, audit = result.stdout.splitlines()
     assert revision == f"Replay helper revision: {history[1]}"
-    assert json.loads(audit) == {"decision": "FAIL", "reason": "invalid replay context"}
+    assert json.loads(audit) == {
+        "replay": False,
+        "evidence": {},
+        "reason": "invalid replay context",
+    }
+    assert (tmp_path / "output").read_text(encoding="utf-8").splitlines() == [
+        "replay=false",
+        "evidence={}",
+    ]
 
 
 def _checkout(tmp_path, history, has_helper, event_base_has_helper, config):
@@ -273,6 +318,7 @@ def test_metadata_replay_checkout(
             }
         ),
         encoding="utf-8",
+        newline="\n",
     )
     monkeypatch.setenv("GITHUB_EVENT_PATH", str(event_path))
     monkeypatch.setenv("GITHUB_REPOSITORY", "example/base")

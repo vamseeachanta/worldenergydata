@@ -5,6 +5,10 @@
 Tests for worldenergydata.metocean.extrapolation (public API)
 """
 
+import json
+from dataclasses import asdict, replace
+from unittest.mock import Mock
+
 import pytest
 
 from worldenergydata.metocean.extrapolation import (
@@ -245,18 +249,101 @@ def test_extrapolation_result_source_auto_populated():
         corrections_applied=[],
     )
     assert result.source == "ndbc_42001"
+    assert result.data_basis == "unknown"
 
 
 @pytest.mark.parametrize("method", ["nearest", "weighted_average"])
-@pytest.mark.parametrize("source_type", ["model", "reanalysis"])
-def test_spatial_transfer_does_not_claim_buoy_calibration(
-    monkeypatch, method, source_type
+@pytest.mark.parametrize("source_type", ["buoy", "tide_gauge", "model", "reanalysis"])
+@pytest.mark.parametrize("correction_needed", [False, True])
+def test_extrapolation_reports_synthetic_basis_and_actual_transfer(
+    monkeypatch, method, source_type, correction_needed
 ):
+    """Metadata oracle: no observations enter either facade method.
+
+    Source: calibration/README.md, Methods and API, synthetic-baseline paragraph.
+    Therefore the data basis is synthetic even for a buoy catalogue entry.
+    A forced assessment selects each branch: transfer labels must appear iff
+    the wave and current transfer functions run. No numerical accuracy or
+    engineering acceptance limit is asserted by this metadata test.
+    """
     import worldenergydata.metocean.extrapolation as api
 
     source = MetoceanSource("synthetic_grid", source_type, 0.0, 0.0, 500)
     monkeypatch.setattr(api._finder, "find_nearest", lambda *args, **kwargs: [source])
+    context = replace(
+        api._assessor.assess(28.5, -88.5, source),
+        correction_needed=correction_needed,
+    )
+    monkeypatch.setattr(api._assessor, "assess", lambda *args: context)
+    wave_transfer = Mock(wraps=api._wave_model.transfer)
+    current_transfer = Mock(wraps=api._current_model.transfer)
+    monkeypatch.setattr(api._wave_model, "transfer", wave_transfer)
+    monkeypatch.setattr(api._current_model, "transfer", current_transfer)
+
     result = extrapolate(28.5, -88.5, method=method)
-    assert api._assessor.assess(28.5, -88.5, source).correction_needed
+
+    assert result.source_used is source
+    assert result.source == source.name
+    assert result.data_basis == "synthetic_baseline"
+    assert asdict(result)["data_basis"] == "synthetic_baseline"
     assert not any("bias_correction" in c for c in result.corrections_applied)
-    assert "spatial_transfer" in result.corrections_applied
+    assert ("spatial_transfer" in result.corrections_applied) == correction_needed
+    assert wave_transfer.called == correction_needed
+    assert current_transfer.called == correction_needed
+
+
+@pytest.mark.parametrize("data_basis", ["synthetic_basline", "observed", "", None, []])
+def test_extrapolation_result_rejects_invalid_data_basis(data_basis):
+    with pytest.raises(ValueError, match="data_basis"):
+        replace(extrapolate(28.5, -88.5), data_basis=data_basis)
+
+
+@pytest.mark.parametrize("data_basis", ["synthetic_baseline", "unknown"])
+def test_extrapolation_result_accepts_supported_data_basis(data_basis):
+    result = replace(extrapolate(28.5, -88.5), data_basis=data_basis)
+    assert result.data_basis == data_basis
+
+
+@pytest.mark.parametrize("data_basis", ["synthetic_baseline", "unknown"])
+def test_correction_breakdown_preserves_data_basis_in_export(data_basis):
+    from worldenergydata.metocean.extrapolation.visualization import (
+        plot_correction_breakdown,
+    )
+
+    result = replace(extrapolate(28.5, -88.5), data_basis=data_basis)
+    exported = json.loads(plot_correction_breakdown(result).to_json())
+
+    assert f"Basis: {data_basis}" in exported["layout"]["title"]["text"]
+    expected_target = (
+        "Target (synthetic baseline)"
+        if data_basis == "synthetic_baseline"
+        else "Target"
+    )
+    assert [trace["name"] for trace in exported["data"]] == [
+        "Synthetic baseline",
+        expected_target,
+    ]
+
+
+def test_correction_breakdown_uses_shared_baseline(monkeypatch):
+    import worldenergydata.metocean.extrapolation as api
+    from worldenergydata.metocean.extrapolation.visualization import (
+        plot_correction_breakdown,
+    )
+
+    # Controlled demonstration inputs test the consumer, not engineering accuracy.
+    for key, value in zip(
+        ["Hs", "Tp", "wind_speed", "current_speed"], [4.0, 7.0, 12.0, 0.5]
+    ):
+        monkeypatch.setitem(api._BASELINE, key, value)
+    result = extrapolate(28.5, -88.5)
+    figure = plot_correction_breakdown(result)
+
+    assert list(figure.data[0].x) == ["Hs (m)", "Tp (s)", "Wind (m/s)", "Current (m/s)"]
+    assert list(figure.data[0].y) == [4.0, 7.0, 12.0, 0.5]
+    assert list(figure.data[1].y) == [
+        result.Hs_m,
+        result.Tp_s,
+        result.wind_speed_ms,
+        result.current_speed_ms,
+    ]
