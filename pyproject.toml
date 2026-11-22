@@ -489,10 +489,8 @@ members = ["packages/*"]
 # ResultEnvelope, run_workflow) on `main`, but the published PyPI 0.1.x does not.
 # Source it from git (workspace-hub#3286), pinned to a release tag rather than a
 # branch so assetutilities main cannot change this environment (fleet-ops#577).
-# Stand-in until tag v0.2.0 is pushed: assetutilities main ae61e91. Switch to
-#   assetutilities = { git = "https://github.com/vamseeachanta/assetutilities.git", tag = "v0.2.0" }
-# and run `uv lock --upgrade-package assetutilities` once the tag exists.
-assetutilities = { git = "https://github.com/vamseeachanta/assetutilities.git", rev = "ae61e9157ee54be2d28dbdee718eb7ae88201de2" }
+# Tag v0.2.0 resolves to assetutilities commit 49072a4.
+assetutilities = { git = "https://github.com/vamseeachanta/assetutilities.git", tag = "v0.2.0" }
 worldenergydata-core = { workspace = true }
 # Phase 2 batch 1 (#529): isolated/leaf domain members, resolved from the
 # in-repo workspace (the members glob `packages/*` already discovers them).
