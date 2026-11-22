@@ -34,6 +34,7 @@ from pathlib import Path
 import pandas as pd
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(PROJECT_ROOT / "src"))
 sys.path.insert(
     0, str(PROJECT_ROOT / "packages" / "worldenergydata-decommissioning" / "src")
 )
@@ -47,6 +48,9 @@ from worldenergydata.decommissioning.cost_model import (  # noqa: E402
 )
 from worldenergydata.decommissioning.facility_liability import (  # noqa: E402
     price_portfolio,
+)
+from worldenergydata.field_development.data_availability import (  # noqa: E402
+    require_available_source,
 )
 
 SRC = (
@@ -90,6 +94,7 @@ def _b(musd: float) -> str:
 
 
 def main() -> None:
+    require_available_source(SRC)
     df = pd.read_csv(SRC)
     n_total = len(df)
     res = price_portfolio(df)

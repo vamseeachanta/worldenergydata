@@ -10,6 +10,7 @@ uncertainty alone does not establish a PRMS Reserves category.
 | Revision | Date | Change and reason |
 | --- | --- | --- |
 | 1 | 2026-10-19 | Define validated inputs, percentile interpolation and reproducible examples. |
+| 2 | 2026-10-25 | Add the exact-arithmetic example regression command to keep the published calculation under test. |
 
 ## Method and sources
 
@@ -96,6 +97,12 @@ result = run_resource_estimation(
 assert result["ooip_distribution"] == [1939.5] * 4
 assert result["eur_distribution"] == [969.75] * 4
 assert result["p90"] == result["p50"] == result["p10"] == 969.75
+```
+
+Run this example's regression from the repository root:
+
+```bash
+uv run python -m pytest tests/reservoir/test_resource_estimation_example.py -q
 ```
 
 For uncertain inputs, replace `area` with

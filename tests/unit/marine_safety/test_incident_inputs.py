@@ -4,6 +4,7 @@ import copy
 import hashlib
 import importlib.util
 import json
+import os
 from pathlib import Path
 
 import pytest
@@ -14,6 +15,7 @@ ROOT = Path(__file__).resolve().parents[3]
 @pytest.fixture
 def legacy_text_defaults(monkeypatch):
     original_open = Path.open
+    original_read_text = Path.read_text
 
     def legacy_open(
         path, mode="r", buffering=-1, encoding=None, errors=None, newline=None
@@ -33,6 +35,11 @@ def legacy_text_defaults(monkeypatch):
         )
 
     monkeypatch.setattr(Path, "open", legacy_open)
+
+    def legacy_read_text(path, encoding=None, errors=None):
+        return original_read_text(path, encoding=encoding or "cp1252", errors=errors)
+
+    monkeypatch.setattr(Path, "read_text", legacy_read_text)
 
 
 @pytest.mark.parametrize("report", ["executive", "detail"])
@@ -116,6 +123,7 @@ def inputs(tmp_path):
         )
     manifest = {
         "schema_version": 1,
+        "units": "records",
         "sources": sources,
         "counts": {
             "input_rows": 5,
@@ -142,10 +150,100 @@ def test_fixture_agrees_with_manifest(inputs, monkeypatch):
     root, manifest_path, manifest = inputs
     generator = module("generate_incident_report")
     result = generator.load_incident_data(root, manifest_path)
+    # Hand count: 2 + 3 = 5 records; B is empty and E is whitespace.
+    # A, C, D remain (3); A and D founder (2) and have deaths > 0 (2).
     assert result["counts"] == manifest["counts"]
     assert len(result["all_incidents"]) == 3
     assert len(result["foundering"]) == 2
     assert len(result["fatality"]) == 2
+    # The count unit is incident records: 1 + 2 = 3 deaths in 2 records.
+    assert result["manifest"]["units"] == "records"
+    assert result["fatality"]["fatalities"].sum() == 3
+
+
+@pytest.mark.parametrize("source_index", [0, 1])
+def test_each_required_input_is_mandatory(inputs, source_index):
+    root, manifest_path, manifest = inputs
+    missing = manifest["sources"][source_index]["path"]
+    (root / missing).unlink()
+    with pytest.raises(
+        FileNotFoundError, match="Required incident input missing"
+    ) as error:
+        module("generate_incident_report").load_incident_data(root, manifest_path)
+    assert missing in str(error.value)
+
+
+def test_retained_input_count_agreement():
+    """Verify real retained inputs when the external archive is available."""
+    assert_retained_input_count_agreement()
+
+
+def assert_retained_input_count_agreement():
+    """Require source and analysis counts to agree with the retained manifest."""
+    raw_dir = os.environ.get("MARINE_SAFETY_RAW_DIR")
+    if not raw_dir:
+        pytest.skip(
+            "Retained inputs absent: set MARINE_SAFETY_RAW_DIR to the external archive"
+        )
+    fetcher = module("incident_inputs")
+    manifest_path = Path(
+        os.environ.get("MARINE_SAFETY_MANIFEST", fetcher.DEFAULT_MANIFEST)
+    )
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    root = Path(raw_dir).resolve()
+    missing = [
+        source["path"]
+        for source in manifest["sources"]
+        if not (root / source["path"]).is_file()
+    ]
+    if missing:
+        pytest.skip(
+            "Retained inputs absent from external archive: " + ", ".join(missing)
+        )
+    # Invalid digests, schemas, source counts and analysis counts must fail,
+    # rather than being converted into a skip once the files are present.
+    result = module("generate_incident_report").load_incident_data(root, manifest_path)
+    counts = manifest["counts"]
+    assert (
+        sum(source["row_count"] for source in manifest["sources"])
+        == counts["input_rows"]
+    )
+    assert len(result["all_incidents"]) == counts["analysed_rows"]
+    assert len(result["hatch"]) == counts["analysed_rows"]
+    assert len(result["foundering"]) == counts["foundering_rows"]
+    assert len(result["fatality"]) == counts["fatal_incident_rows"]
+    assert (
+        counts["input_rows"] - counts["analysed_rows"]
+        == counts["excluded_empty_description_rows"]
+    )
+    assert result["counts"] == counts
+
+
+def test_retained_agreement_runs_against_configured_archive(inputs, monkeypatch):
+    root, manifest_path, _ = inputs
+    monkeypatch.setenv("MARINE_SAFETY_RAW_DIR", str(root))
+    monkeypatch.setenv("MARINE_SAFETY_MANIFEST", str(manifest_path))
+    assert_retained_input_count_agreement()
+
+
+def test_retained_agreement_does_not_skip_count_drift(inputs, monkeypatch):
+    root, manifest_path, manifest = inputs
+    manifest["counts"]["foundering_rows"] += 1
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8", newline="\n")
+    monkeypatch.setenv("MARINE_SAFETY_RAW_DIR", str(root))
+    monkeypatch.setenv("MARINE_SAFETY_MANIFEST", str(manifest_path))
+    with pytest.raises(ValueError, match="Count agreement failed"):
+        assert_retained_input_count_agreement()
+
+
+def test_loader_reads_utf8_manifest_with_legacy_defaults(inputs, legacy_text_defaults):
+    root, manifest_path, manifest = inputs
+    manifest["note"] = "Synthetic → criterion"
+    manifest_path.write_text(
+        json.dumps(manifest, ensure_ascii=False), encoding="utf-8", newline="\n"
+    )
+    result = module("generate_incident_report").load_incident_data(root, manifest_path)
+    assert result["manifest"]["note"] == manifest["note"]
 
 
 def test_negative_control_changed_count(inputs, monkeypatch):
@@ -265,6 +363,58 @@ def test_successful_fetch_counts_and_readback(inputs, tmp_path, monkeypatch):
         )
 
 
+def test_fetch_keeps_temporary_payloads_in_external_root(tmp_path, monkeypatch):
+    from requests import RequestException
+
+    fetcher = module("incident_inputs")
+    root = tmp_path / "archive"
+    locations = []
+
+    def unavailable(source, temporary):
+        locations.append(temporary.resolve())
+        raise RequestException("Synthetic offline response")
+
+    monkeypatch.setattr(fetcher, "download_input", unavailable)
+    fetcher.fetch_inputs(root, tmp_path / "manifest.json")
+    assert len(locations) == 2
+    assert all(path.is_relative_to(root) for path in locations)
+    assert not list(root.glob("marine-input-*"))
+
+
+@pytest.mark.parametrize("child", ["", "raw"])
+def test_fetch_rejects_repository_data_root_before_network(
+    tmp_path, monkeypatch, child
+):
+    fetcher = module("incident_inputs")
+    monkeypatch.setattr(fetcher, "REPO_ROOT", tmp_path)
+    monkeypatch.setattr(
+        fetcher, "download_input", lambda *_: pytest.fail("Network reached")
+    )
+    with pytest.raises(ValueError, match="outside the repository"):
+        fetcher.fetch_inputs(tmp_path / child, tmp_path / "manifest.json")
+    assert not (tmp_path / "manifest.json").exists()
+
+
+def test_fetch_manifest_uses_utf8_and_lf(inputs, monkeypatch, legacy_text_defaults):
+    from requests import RequestException
+
+    root, manifest_path, manifest = inputs
+    manifest["revisions"] = [{"changes": "Synthetic → criterion"}]
+    manifest_path.write_text(
+        json.dumps(manifest, ensure_ascii=False), encoding="utf-8", newline="\n"
+    )
+    fetcher = module("incident_inputs")
+
+    def unavailable(*_):
+        raise RequestException("Synthetic offline response")
+
+    monkeypatch.setattr(fetcher, "download_input", unavailable)
+    result = fetcher.fetch_inputs(root, manifest_path)
+    assert result["revisions"] == manifest["revisions"]
+    assert json.loads(manifest_path.read_bytes().decode("utf-8")) == result
+    assert b"\r\n" not in manifest_path.read_bytes()
+
+
 def test_cli_missing_input_nonzero(tmp_path):
     import os
     import subprocess
@@ -284,6 +434,7 @@ def test_cli_missing_input_nonzero(tmp_path):
         capture_output=True,
         text=True,
         check=False,
+        creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
     )
     assert result.returncode == 1
     assert "Required incident input missing" in result.stderr

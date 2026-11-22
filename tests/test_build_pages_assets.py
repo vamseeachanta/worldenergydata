@@ -7,6 +7,7 @@ the publisher. No generated reports or named real facilities are needed.
 from __future__ import annotations
 
 import importlib.util
+import json
 import re
 from pathlib import Path
 from urllib.parse import urlsplit
@@ -72,6 +73,10 @@ def test_lifecycle_asset_pages_publish_without_link_rewrite(lifecycle_builder):
     assert b'href="#asset"' in page
     assert b'href="#component"' in page
     assert b'href="../../index.html#engineering"' in page
+    metadata = json.loads(
+        (builder.PUBLIC / "war-methodology.json").read_text(encoding="utf-8")
+    )
+    assert metadata == builder.methodology_metadata()
 
 
 def test_missing_asset_directory_is_optional(lifecycle_builder):
@@ -83,6 +88,10 @@ def test_missing_asset_directory_is_optional(lifecycle_builder):
     published = builder.PUBLIC / "lifecycle"
     assert (published / "index.html").read_bytes() == INDEX_HTML
     assert not (published / "assets").exists()
+    metadata = json.loads(
+        (builder.PUBLIC / "war-methodology.json").read_text(encoding="utf-8")
+    )
+    assert metadata == builder.methodology_metadata()
 
 
 def test_asset_templates_are_not_published(lifecycle_builder):

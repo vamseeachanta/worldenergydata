@@ -1,0 +1,22 @@
+{
+  "provenance": {
+    "openlane_version": null,
+    "container_image_digest": null,
+    "pdk_revision": null,
+    "standard_cell_library": null
+  },
+  "artifacts": {},
+  "observations": {},
+  "revisions": [
+    {
+      "revision": "Initial",
+      "date": "2026-10-19",
+      "description": "Add evidence replay before collecting run evidence."
+    },
+    {
+      "revision": "Second",
+      "date": "2026-11-14",
+      "description": "Record report revisions in the manifest to avoid a fixed history."
+    }
+  ]
+}

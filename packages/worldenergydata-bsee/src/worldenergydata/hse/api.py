@@ -317,6 +317,21 @@ class IncidentsQuery(_HSEQuery):
     _year_column = HSEIncident.incident_date
 
 
+class HSEIncidentsQuery(IncidentsQuery):
+    """Incident entry point with the approved BSEE source and 100-row defaults.
+
+    Explicit filters, injected sessions and configured backends use the same
+    validated SQL selections as ``IncidentsQuery``. Pass ``source=None`` to
+    include all supported sources or ``limit=None`` to remove the row limit.
+    """
+
+    def _normalize(
+        self, *, source: str | None = "bsee_inc", limit: int | None = 100, **kwargs
+    ):
+        # Normalize once for query, aquery and query_envelope alike.
+        return super()._normalize(source=source, limit=limit, **kwargs)
+
+
 class PenaltiesQuery(_HSEQuery):
     """Select penalties joined to parent incidents; year means incident year."""
 

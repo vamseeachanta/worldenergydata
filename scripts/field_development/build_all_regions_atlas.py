@@ -36,6 +36,9 @@ import sys
 from datetime import date
 from pathlib import Path
 
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(PROJECT_ROOT / "src"))
+
 _SCRIPTS = Path(__file__).resolve().parents[1]
 if str(_SCRIPTS) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS))
@@ -44,7 +47,10 @@ import site_nav  # noqa: E402  (nav-spine helper, issue #850)
 # Country badge rule shared with the field-atlas Explorer feed (#947).
 from catalog_badges import badge_for, load_scorecard  # noqa: E402
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
+from worldenergydata.field_development.data_availability import (  # noqa: E402
+    require_available_source,
+)
+
 CURATED = PROJECT_ROOT / "data" / "modules" / "offshore_assets" / "curated"
 COVERAGE_CSV = CURATED / "coverage_summary.csv"
 FIELDS_CSV = CURATED / "fields.csv"
@@ -69,6 +75,7 @@ OUT_HTML = PROJECT_ROOT / "reports" / "field_development" / "all_regions_atlas.h
 
 def read_coverage():
     """Return (by_country list of dicts, by_region dict, totals dict)."""
+    require_available_source(COVERAGE_CSV)
     by_country = []
     by_region = {}
     totals = {}
@@ -450,8 +457,8 @@ def main():
 
     # --- CSV ---
     OUT_CSV.parent.mkdir(parents=True, exist_ok=True)
-    with OUT_CSV.open("w", newline="", encoding="utf-8") as f:
-        w = csv.writer(f)
+    with OUT_CSV.open("w", newline="\n", encoding="utf-8") as f:
+        w = csv.writer(f, lineterminator="\n")
         w.writerow(
             [
                 "country",
@@ -492,6 +499,7 @@ def main():
             "all_regions",
         ),
         encoding="utf-8",
+        newline="\n",
     )
 
     b = {"RICH": 0, "SAMPLE": 0, "ROADMAP": 0}
@@ -503,8 +511,8 @@ def main():
     )
     print(f"totals={totals}  gom={by_region.get('US Gulf of Mexico (flagged)')}")
     print(f"badges={b}  gom_proof={gom_proof}")
-    print(f"wrote {OUT_CSV}")
-    print(f"wrote {OUT_HTML}")
+    print(f"wrote {OUT_CSV.as_posix()}")
+    print(f"wrote {OUT_HTML.as_posix()}")
 
 
 if __name__ == "__main__":

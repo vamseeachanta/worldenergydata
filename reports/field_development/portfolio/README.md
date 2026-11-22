@@ -1,9 +1,8 @@
 # Deepwater GoM — Field Development Plan Portfolio
 
-Standalone field development pages and an `index.html` comparison table cover
-the ten Lower Tertiary lifecycle fields, alongside the original deepwater examples.
-The portfolio now contains 17 profiles: the original 10 and the seven additions
-listed in issue #962. Open `index.html` to select a field.
+Seven independently cited profiles remain in `_research.json` and the
+portfolio index. The legacy profile data set is held privately pending
+redistribution-terms review; withdrawn report URLs carry availability notices.
 
 ## Revision history
 
@@ -11,6 +10,7 @@ listed in issue #962. Open `index.html` to select a field.
 | --- | --- | --- |
 | Initial documented expansion | 2026-10-19 | Added the remaining Lower Tertiary concept pages, input citations and explicit evidence gaps so every registry field has a portfolio reference. |
 | Evidence and portability correction | 2026-10-20 | Kept conflicting depths unknown, distinguished design capacity and source timing, limited coverage to the lifecycle roster, and clarified portable generation and legacy drift. |
+| Data availability | 2026-10-29 | Withdrew legacy profiles pending redistribution-terms review; retained independently cited profiles. |
 
 The initial revision's registry-wide coverage claim is superseded: coverage is
 limited to the ten lifecycle fields, rather than every registry entry.
@@ -84,12 +84,8 @@ uv run python scripts/field_development/build_fdp_portfolio.py \
     reports/field_development/portfolio/_research.json --documented-only
 ```
 
-**Legacy regeneration warning:** omitting `--documented-only` rewrites all ten
-original model-based examples. Their committed shortlist, economics and layout
-already differ from current renderer output. Removing the unsupported well-count
-default also changes two legacy well cards from four wells to unknown. Use
-`--documented-only` for the documented pages; review the full output in a separate
-directory before deliberately re-issuing legacy examples.
+The historical model-based examples are held privately pending
+redistribution-terms review. They are excluded from the current input JSON.
 `--output-dir <directory>` directs generated pages and the index to a review
 folder. Generation does not fetch sources or update the registry.
 

@@ -160,7 +160,7 @@ def load_inputs(raw_dir, manifest_path=DEFAULT_MANIFEST):
     if raw_dir is None:
         raise FileNotFoundError("Required incident input directory: supply --input-dir")
     root = Path(raw_dir).resolve()
-    manifest = json.loads(Path(manifest_path).read_text())
+    manifest = json.loads(Path(manifest_path).read_text(encoding="utf-8"))
     sources = manifest["sources"]
     if sorted(source["id"] for source in sources) != sorted(REQUIRED_COLUMNS):
         raise ValueError("Manifest must contain exactly the two public sources")
@@ -248,7 +248,7 @@ def fetch_inputs(raw_dir, manifest_path=DEFAULT_MANIFEST):
     if root == REPO_ROOT or REPO_ROOT in root.parents:
         raise ValueError("Raw input directory must be outside the repository")
     output = Path(manifest_path)
-    previous = json.loads(output.read_text()) if output.exists() else {}
+    previous = json.loads(output.read_text(encoding="utf-8")) if output.exists() else {}
     prior_sources = {source["id"]: source for source in previous.get("sources", [])}
     manifest = {
         "schema_version": 1,
@@ -265,10 +265,14 @@ def fetch_inputs(raw_dir, manifest_path=DEFAULT_MANIFEST):
         ],
         "counts": UNKNOWN,
         "revisions": previous.get(
-            "revisions", json.loads(DEFAULT_MANIFEST.read_text()).get("revisions", [])
+            "revisions",
+            json.loads(DEFAULT_MANIFEST.read_text(encoding="utf-8")).get(
+                "revisions", []
+            ),
         ),
     }
     frames = {}
+    root.mkdir(parents=True, exist_ok=True)
     for definition in SOURCES:
         source = dict(definition)
         source.update(
@@ -279,7 +283,11 @@ def fetch_inputs(raw_dir, manifest_path=DEFAULT_MANIFEST):
             datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
         )
         try:
-            with tempfile.TemporaryDirectory(prefix="marine-input-") as scratch:
+            # Keep even partial payloads in the approved external archive,
+            # independently of TMPDIR/TEMP or the caller's working directory.
+            with tempfile.TemporaryDirectory(
+                prefix="marine-input-", dir=root
+            ) as scratch:
                 temporary = Path(scratch) / "input.csv"
                 download_input(source, temporary)
                 frame = read_source(temporary, source["id"])
@@ -325,8 +333,10 @@ def fetch_inputs(raw_dir, manifest_path=DEFAULT_MANIFEST):
         manifest["counts"] = analyse_frames(frames)["counts"]
         manifest["readiness"] = "count-agreement-only"
     output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(json.dumps(manifest, indent=2) + "\n")
-    if json.loads(output.read_text()) != manifest:
+    output.write_text(
+        json.dumps(manifest, indent=2) + "\n", encoding="utf-8", newline="\n"
+    )
+    if json.loads(output.read_text(encoding="utf-8")) != manifest:
         raise ValueError("Saved manifest readback failed")
     return manifest
 
