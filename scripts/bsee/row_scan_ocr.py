@@ -48,9 +48,11 @@ long identifier matches; comma-grouped lengths retain all groups. This is an
 assumed search heuristic, based on previous experience, recorded in the same
 configuration decision, not a physical length limit.
 Correction configuration basis: #2086, "Collector correction configuration"
-comment. Redirected documents wait for Retry-After or, without it, 24 hours
-before another attempt; this prevents a redirect consuming every short batch.
-Unknown or nonfinite load defers OCR until a measurable load is available.
+comment. Document redirects count toward the attempt limit. Before that limit,
+the next attempt waits for Retry-After or, without it, 24 hours.
+OCR defers on missing load by default. On systems without a load reading,
+including Windows, use ``--allow-missing-load`` to opt in to OCR. A measured
+load above the limit still pauses OCR. A nonfinite reading always defers it.
 CSV excerpts retain at most 200 characters centred on the match to bound row
 size while preserving the candidate and unit; this is a presentation choice.
 
@@ -357,6 +359,7 @@ class Config:
     ocr: bool = True
     tool_path: str | None = None
     log_file: Path | None = None
+    allow_missing_load: bool = False
 
 
 SCHEMA = """
@@ -730,12 +733,22 @@ class Job:
         self.set_meta("backoff_until", until.isoformat())
         self.log(f"refused (HTTP {r.status}); waiting until {until:%H:%M:%SZ}")
 
-    def doc_failure(self, kind: str, doc_id: int, reason: str, final=False) -> None:
+    def doc_failure(
+        self,
+        kind: str,
+        doc_id: int,
+        reason: str,
+        final=False,
+        *,
+        deferred_until: datetime | None = None,
+    ) -> None:
+        """Count a document attempt. Only errors consume the daily error budget."""
         attempts = self.db.execute(
             "SELECT attempts FROM docs WHERE kind=? AND doc_id=?", (kind, doc_id)
         ).fetchone()[0]
         attempts += 1
-        self.add_error()
+        if deferred_until is None:
+            self.add_error()
         if final or attempts >= self.cfg.max_attempts:
             self.set_doc(
                 kind, doc_id, attempts=attempts, status="failed", last_error=reason
@@ -750,7 +763,13 @@ class Job:
             )
             self.log(f"{kind} {doc_id} failed: {reason}")
         else:
-            self.set_doc(kind, doc_id, attempts=attempts, last_error=reason)
+            self.set_doc(
+                kind,
+                doc_id,
+                attempts=attempts,
+                last_error=reason,
+                deferred_until=deferred_until.isoformat() if deferred_until else None,
+            )
             self.log(f"{kind} {doc_id} attempt {attempts} failed: {reason}")
 
     def fetch_doc(self, doc) -> str:
@@ -774,7 +793,9 @@ class Job:
             until = self.clock.now() + timedelta(
                 seconds=24 * 3600 if wait is None else wait
             )
-            self.set_doc(kind, doc_id, deferred_until=until.isoformat())
+            self.doc_failure(
+                kind, doc_id, f"HTTP {r.status} redirect", deferred_until=until
+            )
             return "redirected"
         if r.status == 200:
             problem = ""
@@ -841,19 +862,20 @@ class Job:
 
     def wait_load(self) -> bool:
         warned = False
-        while True:
+        while not self.stop_requested() and not self.budget_spent():
             load = self.loadavg()
+            if load is None and self.cfg.allow_missing_load:
+                return True
             if load is None or not math.isfinite(load):
                 self.log("load unavailable; OCR deferred")
                 return False
             if load <= self.cfg.max_load:
                 return True
-            if self.stop_requested() or self.budget_spent():
-                return False
             if not warned:
                 self.log(f"load over {self.cfg.max_load}; OCR paused")
                 warned = True
             self.clock.sleep(60)
+        return False
 
     def page_count(self, pdf: Path, fallback: int | None) -> int | None:
         tools = self.tools() or {}
@@ -900,7 +922,7 @@ class Job:
             out = tdir / f"page-{page:04d}.txt"
             if out.exists():
                 continue
-            if self.stop_requested() or self.budget_spent() or not self.wait_load():
+            if not self.wait_load():
                 return False
             if self.stop_requested() or self.budget_spent() or not self.disk_ok():
                 return False
@@ -950,7 +972,7 @@ class Job:
             " AND pass<=? ORDER BY pass, kind, doc_id",
             (self.cfg.max_pass,),
         ).fetchall():
-            if self.stop_requested() or self.budget_spent() or not self.tools():
+            if not self.tools() or not self.wait_load():
                 return
             self.ocr_doc(kind, doc_id)
 
@@ -1046,7 +1068,10 @@ FINDING_PATTERNS = {
             r"riser[^.\n]{0,40}?(?<![\w.,/+\-])"
             r"(\d{1,3}(?:,\d{3})+(?:\.\d+)?|"
             r"\d{2,5}(?:(?:\s*-\s*|\s+)\d+/\d+|\.\d+)?)"
-            r"(?![\d.,/])\s*(?:ft\b|feet\b|'(?!'))",
+            r"(?![\d.,/])\s*(?:ft\b|feet\b|'(?!'))"
+            # A numeric feet column cannot represent a trailing inches term.
+            r"(?!\.?\s*-?\s*(?:\d+(?:[\s-]+\d+/\d+|/\d+)?|\d*\.\d+)"
+            r"\s*(?:\"|''|″|in(?:ch(?:es)?)?\b))",
             re.I,
         )
     ],
@@ -1155,6 +1180,11 @@ def build_parser() -> argparse.ArgumentParser:
     run.add_argument("--min-free-gb", type=float, default=50.0)
     run.add_argument("--max-used-pct", type=float, default=100.0)
     run.add_argument("--max-load", type=float, default=8.0)
+    run.add_argument(
+        "--allow-missing-load",
+        action="store_true",
+        help="allow OCR when the system load reading is unavailable (e.g. on Windows)",
+    )
     run.add_argument("--dpi", type=int, default=300)
     run.add_argument("--no-ocr", action="store_true")
     run.add_argument("--tool-path", help="search path for pdftoppm and tesseract")
@@ -1201,6 +1231,7 @@ def main(argv: list[str] | None = None) -> int:
         min_free_gb=args.min_free_gb,
         max_used_pct=args.max_used_pct,
         max_load=args.max_load,
+        allow_missing_load=args.allow_missing_load,
         dpi=args.dpi,
         ocr=not args.no_ocr,
         tool_path=args.tool_path,

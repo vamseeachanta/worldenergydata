@@ -822,10 +822,12 @@ def test_findings_csv_preserves_mixed_fraction_and_sign(env, line, quantity, val
     )
     tdir = job.text_dir("ROW", 32733)
     tdir.mkdir(parents=True)
-    (tdir / "page-0001.txt").write_text(line)
+    (tdir / "page-0001.txt").write_text(line, encoding="utf-8")
     out = tmp_path / "findings.csv"
     assert rso.write_findings(job, out) == 1
-    assert list(rso.csv.reader(out.open())) == [
+    with out.open(encoding="utf-8", newline="") as fh:
+        rows = list(rso.csv.reader(fh))
+    assert rows == [
         ["segments", "kind", "doc_id", "page", "quantity", "value", "line"],
         ["100", "ROW", "32733", "1", quantity, value, line],
     ]
@@ -1011,7 +1013,7 @@ def test_redirect_defers_without_charging_error(env):
     assert job.errors_today() == 0
     assert job.db.execute(
         "SELECT status, attempts FROM docs WHERE doc_id=19963"
-    ).fetchone() == ("queued", 0)
+    ).fetchone() == ("queued", 1)
 
 
 @pytest.mark.parametrize("has_binding_column", [False, True])
@@ -1143,7 +1145,7 @@ def test_permanent_pdf_redirect_does_not_block_other_documents(env):
     assert job.errors_today() == 0
     assert job.db.execute(
         "SELECT status, attempts FROM docs WHERE doc_id=19963"
-    ).fetchone() == ("queued", 0)
+    ).fetchone() == ("queued", 1)
     assert all(
         (b[0] - a[0]).total_seconds() >= 60
         for a, b in zip(fetcher.calls, fetcher.calls[1:])
@@ -1157,6 +1159,16 @@ def test_permanent_pdf_redirect_does_not_block_other_documents(env):
         ("riser length 100 15/16 ft", [("riser_length_ft", "100 15/16")]),
         ("riser length 100-15/16 ft", [("riser_length_ft", "100-15/16")]),
         ("riser length 100 15/16''", []),
+        ("riser length 100' 6\"", []),
+        ("riser length 100'-6\"", []),
+        ("riser length 100'6\"", []),
+        ("riser length 100 ft 6 in", []),
+        ("riser length 100 ft. 6 in.", []),
+        ("riser length 100 feet 6 inches", []),
+        ("riser length 100 ft 6-1/2 inches", []),
+        ('riser length 100 ft 1/2"', []),
+        ("riser length 100 ft 6.5''", []),
+        ("riser length 100 ft of 6 in pipe", [("riser_length_ft", "100")]),
     ],
 )
 def test_riser_dimension_csv_requires_entire_value_and_feet(env, line, expected):
@@ -1167,10 +1179,10 @@ def test_riser_dimension_csv_requires_entire_value_and_feet(env, line, expected)
     job.set_doc("ROW", 32733, status="read", sha256="bound", ocr_sha256="bound")
     tdir = job.text_dir("ROW", 32733)
     tdir.mkdir(parents=True)
-    (tdir / "page-0001.txt").write_text(line)
+    (tdir / "page-0001.txt").write_text(line, encoding="utf-8")
     out = tmp_path / "dimensions.csv"
     assert rso.write_findings(job, out) == len(expected)
-    with out.open() as fh:
+    with out.open(encoding="utf-8", newline="") as fh:
         rows = list(rso.csv.DictReader(fh))
     assert [(r["quantity"], r["value"]) for r in rows] == expected
 
@@ -1259,12 +1271,29 @@ def test_redirect_deferral_survives_short_batches_and_expires(env):
     assert job.errors_today() == 0
     assert job.db.execute(
         "SELECT status, attempts FROM docs WHERE doc_id=19963"
-    ).fetchone() == ("queued", 0)
+    ).fetchone() == ("queued", 1)
     clock.sleep(24 * 3600)
     # Refreshing the day-old robots cache needs its own spaced request.
     retry = make_job(tmp_path, seg, zp, clock, fetcher, max_minutes=2)
     assert retry.run() == 0
+    # The untried document precedes the redirect within the same pass.
+    assert fetcher.doc_urls() == [
+        leading,
+        rso.doc_url("ROW", 32733),
+        rso.doc_url("ROW", 32737),
+    ]
+    retry = make_job(tmp_path, seg, zp, clock, fetcher, max_minutes=1)
+    assert retry.run() == 0
     assert fetcher.doc_urls().count(leading) == 2
+    for _ in range(2):
+        clock.sleep(24 * 3600)
+        job = make_job(tmp_path, seg, zp, clock, fetcher)
+        assert job.run() == 0
+        assert fetcher.doc_urls().count(leading) == 3
+        assert job.db.execute(
+            "SELECT status, attempts, last_error FROM docs WHERE doc_id=19963"
+        ).fetchone() == ("failed", 3, "HTTP 301 redirect")
+        assert job.errors_today() == 0
 
 
 def test_wrong_shard_requeue_leaves_failed_attempts_unchanged(env, monkeypatch):
@@ -1366,8 +1395,67 @@ def test_unavailable_system_load_is_unknown(monkeypatch, error):
     def unavailable():
         raise error("load unavailable")
 
-    monkeypatch.setattr(rso.os, "getloadavg", unavailable)
+    monkeypatch.setattr(rso.os, "getloadavg", unavailable, raising=False)
     assert rso.load5() is None
+
+
+@pytest.mark.parametrize("opt_in, expected", [(False, "fetched"), (True, "read")])
+def test_cli_ocr_without_system_load(env, monkeypatch, opt_in, expected):
+    job, _ = fetched_backlog(env)
+    monkeypatch.delattr(rso.os, "getloadavg", raising=False)
+    job.loadavg = rso.load5
+
+    def offline_job(cfg):
+        job.cfg = cfg
+        return job
+
+    monkeypatch.setattr(rso, "Job", offline_job)
+    monkeypatch.setattr(rso, "lower_own_priority", lambda: None)
+    args = [
+        "run",
+        "--data-dir",
+        str(job.dir),
+        "--segments",
+        str(job.cfg.segments),
+        "--index-zip",
+        str(job.cfg.index_zip),
+    ]
+    if opt_in:
+        args.append("--allow-missing-load")
+    assert rso.main(args) == 0
+    assert job.db.execute("SELECT status FROM docs WHERE doc_id=19963").fetchone() == (
+        expected,
+    )
+
+
+@pytest.mark.parametrize("load", [9.0, float("inf"), float("nan")])
+def test_missing_load_opt_in_keeps_measured_load_guard(env, load):
+    job, _ = fetched_backlog(env, allow_missing_load=True, max_minutes=1)
+    job.loadavg = lambda: load
+    assert job.run() == 0
+    assert job.runner_calls == []
+    assert job.db.execute("SELECT status FROM docs WHERE doc_id=19963").fetchone() == (
+        "fetched",
+    )
+
+
+def test_unknown_load_defers_entire_backlog_before_hashing(env, monkeypatch):
+    job, _ = fetched_backlog(env)
+    job.set_doc("ROW", 32733, status="fetched")
+    readings = []
+
+    def unknown_load():
+        readings.append(None)
+        return None
+
+    job.loadavg = unknown_load
+    monkeypatch.setattr(rso, "sha256_of", lambda pdf: pytest.fail("PDF was hashed"))
+    job.ocr_backlog()
+    assert readings == [None]
+    assert job.runner_calls == []
+    assert job.db.execute(
+        "SELECT count(*) FROM docs WHERE status='fetched'"
+    ).fetchone() == (2,)
 
 
 def test_long_line_csv_excerpt_contains_value_and_unit(env):
