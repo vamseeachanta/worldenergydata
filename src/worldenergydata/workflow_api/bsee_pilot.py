@@ -260,7 +260,9 @@ def derive_identity(config: dict, input_record: dict) -> dict:
 def execute_variant(
     workflow_id: str, api12: list, group_label: str, snapshot_key: str, config: dict
 ):
-    """Run the UNCHANGED wed workflow and return ``(payload, {basename: bytes})``.
+    """Run the UNCHANGED wed workflow and return ``(payload, {relative_path: bytes})``.
+
+    Top-level outputs keep their basename as key (``relative_path == basename``).
 
     Reuses the shared runner's cfg builders + container-hash normalization; the
     only divergence is that this adapter runs the engine under a root IT controls
@@ -302,11 +304,13 @@ def execute_variant(
         R._normalize_container_hashes(payload, cfg_base, root)  # canonical xlsx digest
         analysis = cfg_base.get("Analysis", {}) or {}
         results_dir = analysis.get("result_folder") or os.path.join(root, "results")
+        # Key by relative_path (basename only for older extractor output) so a
+        # nested file never takes the bytes of a same-named top-level file.
         out_bytes = {}
         for o in payload["outputs"]:
-            p = os.path.join(results_dir, o["basename"])
-            out_bytes[o["basename"]] = (
-                open(p, "rb").read() if os.path.isfile(p) else None
+            p = R._output_path(results_dir, o)
+            out_bytes[R._output_key(o)] = (
+                Path(p).read_bytes() if os.path.isfile(p) else None
             )
         return payload, out_bytes
     finally:

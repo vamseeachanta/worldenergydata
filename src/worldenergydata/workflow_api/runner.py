@@ -65,20 +65,44 @@ def _canonical_content_digest(path: str) -> str:
         return hashlib.sha256(fh.read()).hexdigest()
 
 
+def _output_key(out: dict) -> str:
+    """Identity of one extracted output: its ``relative_path`` from ``result_folder``.
+
+    assetutilities' ``extract_result`` discovers outputs recursively and records a
+    POSIX ``relative_path``, so ``sub/README.md`` and ``README.md`` stay distinct.
+    Older extractor output has only ``basename`` (top-level files); fall back to it.
+    """
+    return out.get("relative_path") or out.get("basename", "")
+
+
+def _output_path(results_dir: str, out: dict) -> str:
+    """Absolute path of one extracted output under ``results_dir``.
+
+    Raises ``ValueError`` if the recorded path would leave ``results_dir``.
+    """
+    key = _output_key(out)
+    base = os.path.abspath(results_dir)
+    path = os.path.abspath(os.path.join(base, *key.split("/")))
+    if not key or os.path.isabs(key) or os.path.commonpath([base, path]) != base:
+        raise ValueError(f"output path {key!r} is outside the result folder")
+    return path
+
+
 def _normalize_container_hashes(payload: dict, cfg_base: dict, root: str) -> None:
     """Rewrite ``outputs[].sha256`` to the timestamp-independent digest in place.
 
     ``extract_result`` hashes raw bytes, which makes ZIP-container outputs (e.g.
     the bsee ``prod_raw_*.xlsx``) flip the determinism hash every run. We recompute
     each file's digest canonically; for non-container files this reproduces the
-    exact raw-bytes digest, so it is a no-op there.
+    exact raw-bytes digest, so it is a no-op there. Each output is re-opened by its
+    ``relative_path`` (see ``_output_key``), never by basename alone.
     """
     if payload.get("kind") != "files":
         return
     analysis = cfg_base.get("Analysis", {}) or {}
     results_dir = analysis.get("result_folder") or os.path.join(root, "results")
     for out in payload.get("outputs", []):
-        path = os.path.join(results_dir, out.get("basename", ""))
+        path = _output_path(results_dir, out)
         if os.path.isfile(path):
             out["sha256"] = _canonical_content_digest(path)
 
