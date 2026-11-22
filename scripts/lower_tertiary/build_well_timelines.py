@@ -44,6 +44,8 @@ DRILLING_CSV = REPO / "reports/lower_tertiary/lt_drilling_insights.csv"
 # hardcoded date would go stale across the fleet (#948 review f9b).
 GENERATED = "BSEE benchmark (production) + V30 workbook (native rig-days)"
 TODAY_YEAR = 2026.5
+# Exact normalized display labels; substrings do not establish abandonment.
+ABANDONMENT_LABELS = frozenset({"Temporary abandonment", "Plug & abandon"})
 
 MONTHS = [
     "Jan",
@@ -78,6 +80,23 @@ def _pretty(v):
     if len(p) >= 2:
         return f"{MONTHS[int(p[1]) - 1]} {p[0]}"
     return p[0]
+
+
+def _abandonment_card(events: list[dict]) -> dict:
+    """Describe supplied observations without asserting authoritative status."""
+    if not events:
+        return {
+            "t": "Abandon",
+            "big": "—",
+            "li": ["No abandonment milestone in the supplied history."],
+        }
+    count = len(events)
+    return {
+        "t": "Abandon",
+        "big": f"{count} observed milestone" + ("s" if count != 1 else ""),
+        "li": [f"{event['date']} · {event['type']}" for event in events]
+        + ["Final well status is not established by these milestones."],
+    }
 
 
 def facts_to_well(w: dict, field: dict, *, drilling_rows=()) -> dict:
@@ -159,7 +178,14 @@ def facts_to_well(w: dict, field: dict, *, drilling_rows=()) -> dict:
     if up is not None:
         metrics.append({"k": "Uptime", "v": f"{up:g}", "u": "%"})
 
-    wo_n = len(w.get("workovers", []))
+    workovers = []
+    abandonments = []
+    for event in w.get("workovers", []):
+        if event["type"] in ABANDONMENT_LABELS:
+            abandonments.append(event)
+        else:
+            workovers.append(event)
+    wo_n = len(workovers)
     # Drill-card facts: omit TD / mud when the source has no value (the V30
     # extract carries NaNs, sanitised to None upstream; ``.get(k, default)``
     # would print "None" for a present-but-null key — #948 review f9).
@@ -205,12 +231,10 @@ def facts_to_well(w: dict, field: dict, *, drilling_rows=()) -> dict:
         {
             "t": "Workover",
             "big": (f"{wo_n} event" + ("s" if wo_n != 1 else "")),
-            "li": [
-                f"{_pretty(wo['date'])} · {wo['type']}" for wo in w.get("workovers", [])
-            ]
+            "li": [f"{_pretty(wo['date'])} · {wo['type']}" for wo in workovers]
             or ["none to date"],
         },
-        {"t": "Abandon", "big": "—", "li": ["still producing", "no P&A"]},
+        _abandonment_card(abandonments),
     ]
     # Issue 778: the brief is a GoM overview, not a per-well access assessment.
     # Href follows the published lifecycle/wells/ layout in build_pages.py.
