@@ -70,6 +70,7 @@
   .card h4{margin:0 0 6px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--done)}
   .card.cur h4{color:var(--accent-ink)} :root[data-theme="dark"] .card.cur h4,@media(prefers-color-scheme:dark){.card.cur h4{color:var(--accent)}}
   .card .big{font-family:var(--mono);font-size:19px;font-weight:700;font-variant-numeric:tabular-nums}
+  .benchmark-badge{display:inline-block;margin-top:8px;padding:3px 7px;border:1px solid var(--line);border-radius:5px;font-family:var(--mono);font-size:11px}
   .card ul{margin:6px 0 0;padding-left:15px} .card li{font-size:12.5px;color:var(--muted);margin-bottom:2px}
   .foot{border-top:1px solid var(--line);padding:16px clamp(18px,2.4vw,30px);display:flex;flex-wrap:wrap;gap:6px 18px;justify-content:space-between;font-size:11px;color:var(--muted);font-family:var(--mono)}
   .econ-note{font-size:11px;line-height:1.5;color:#5a6b7b;margin:10px 2px 0;max-width:900px}
@@ -134,7 +135,7 @@ function renderTL(el,axis,gates,spans){
 }
 renderTL($("tlc"),WELL.cAxis,WELL.cGates,WELL.cSpans);
 renderTL($("tlp"),WELL.pAxis,WELL.pGates,WELL.pSpans);
-$("cards").innerHTML=WELL.cards.map(c=>`<div class="card${c.cur?' cur':''}"><h4>${c.t}</h4><div class="big">${c.big}</div><ul>${c.li.map(x=>`<li>${x}</li>`).join("")}</ul></div>`).join("");
+$("cards").innerHTML=WELL.cards.map(c=>`<div class="card${c.cur?' cur':''}"><h4>${c.t}</h4><div class="big">${c.big}</div>${c.badge?`<span class="benchmark-badge">${c.badge}</span>`:""}<ul>${c.li.map(x=>`<li>${x}</li>`).join("")}</ul></div>`).join("");
 
 /* economics card (issue #849) — proxy cost, benchmark revenue verbatim,
    coverage per the honest-state matrix; degraded states shown, never filled */

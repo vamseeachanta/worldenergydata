@@ -1,0 +1,6 @@
+"LEASE_NUMBER","RMK_ORDR","REMARK_DATE","REMARK"
+"G25605","3",7/6/2026,"Per the BSEE: Pursuant to BSEE decommissioning order dated February 12, 2024, issued to, amongst others, Apache Deepwater LLC (Apache), BSEE ordered the recipients to decommission the HI A341 OCS-G25605 Lease.  By notification dated July 2, 2026, Apache has notified BSEE that, due to the default of the current lease owners and operator on their lease obligations,  Apache will (1) be performing the decommissioning work related to their accrued liability set forth in the Orders issued by BSEE, and (2) coordinate with BSEE going forward for the decommissioning of their accrued liability."
+"G28148","3",5/20/2016 9:48:22 AM,"Held by unit operations."
+"G37022","3",10/24/2019,"Houston Energy, L.P. designates Murphy Exploration & Production Company - USA as operator. 
+"
+"G37022","3",9/22/2021,"The approval of this assignment results in a segregated lease. This lease presently covers the E1/2E1/2; E1/2W1/2E1/2 of Block 433, Green Canyon."

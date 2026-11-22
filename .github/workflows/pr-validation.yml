@@ -23,8 +23,9 @@ jobs:
     name: Validate PR Title
     runs-on: >-
       ${{ (github.event_name != 'pull_request' ||
-          github.event.pull_request.head.repo.full_name == github.repository) &&
-          fromJSON('["self-hosted","x64","linux"]') || 'ubuntu-latest' }}
+          (github.event.pull_request.head.repo.full_name == github.repository &&
+          vars.WED_PR_RUNNER == 'self-hosted')) &&
+          fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
 
     steps:
       - name: Check PR title format
@@ -54,8 +55,9 @@ jobs:
     name: Check File Sizes
     runs-on: >-
       ${{ (github.event_name != 'pull_request' ||
-          github.event.pull_request.head.repo.full_name == github.repository) &&
-          fromJSON('["self-hosted","x64","linux"]') || 'ubuntu-latest' }}
+          (github.event.pull_request.head.repo.full_name == github.repository &&
+          vars.WED_PR_RUNNER == 'self-hosted')) &&
+          fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
 
     steps:
       - name: Checkout repository
@@ -85,8 +87,9 @@ jobs:
     name: Check Sensitive Files
     runs-on: >-
       ${{ (github.event_name != 'pull_request' ||
-          github.event.pull_request.head.repo.full_name == github.repository) &&
-          fromJSON('["self-hosted","x64","linux"]') || 'ubuntu-latest' }}
+          (github.event.pull_request.head.repo.full_name == github.repository &&
+          vars.WED_PR_RUNNER == 'self-hosted')) &&
+          fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
 
     steps:
       - name: Checkout repository
@@ -148,8 +151,9 @@ jobs:
     name: Lint Changed Knowledge Packs
     runs-on: >-
       ${{ (github.event_name != 'pull_request' ||
-          github.event.pull_request.head.repo.full_name == github.repository) &&
-          fromJSON('["self-hosted","x64","linux"]') || 'ubuntu-latest' }}
+          (github.event.pull_request.head.repo.full_name == github.repository &&
+          vars.WED_PR_RUNNER == 'self-hosted')) &&
+          fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
     permissions:
       contents: read
 
