@@ -334,3 +334,36 @@ def test_sidetrack_ages_use_the_permit_window():
     summary = lc.age_summary(ages, WINDOW).set_index(["well_type", "stage"])
     assert summary.loc[("all wells", "sidetrack or bypass"), "events"] == 1
     assert summary.event_window.eq("2005-2026").all()
+
+
+def test_age_at_permanent_abandonment_counts_approvals_not_wells():
+    """A repeated approval on an abandoned well and an approval on a well that
+    still stands both enter the age at permanent-abandonment approval."""
+    bore = _bore()
+    permits = _permits()
+    extra = permits.iloc[[4, 4]].copy()  # PERMABAN on W1
+    extra["SN_APM"] = ["14", "15"]
+    extra["API_WELL_NUMBER"] = ["608174000101", "608174000300"]
+    extra["ACC_STATUS_DATE"] = ["05/01/2021", "05/01/2024"]  # repeat on W1; W3 stands
+    extra["year"] = [2021, 2024]
+    permits = pd.concat([permits, extra], ignore_index=True)
+    bores = lc.gulf_bores(bore)
+    events = lc.permit_events(permits, RIGS, WINDOW)
+    wells = lc.well_table(
+        well_inventory(bore), bores, events, lc.well_types(bore), FILE_DATE
+    )
+    dev = wells[wells.well_type.eq("development")].set_index("api10")
+    assert dev.status.to_dict() == {
+        "6081740001": "permanently abandoned",
+        "6081740003": "standing",
+    }
+    ages = lc.event_ages(bores, events, wells, WINDOW)
+    pa = ages[ages.well_type.eq("development") & ages.stage.eq("permanent abandonment")]
+    assert pa.api10.tolist().count("6081740001") == 2
+    assert "6081740003" in pa.api10.tolist()
+    summary = lc.age_summary(ages, WINDOW).set_index(["well_type", "stage"])
+    row = summary.loc[("development", "permanent abandonment")]
+    assert row.events == 3  # three approvals on two wells, one of them standing
+    # W1 at 1 May 2020 and 2021 (14.2, 15.2 years); W3 at 1 May 2024 (34.0).
+    assert row.median_years == pytest.approx(pa.age_years.median())
+    assert 15 < row.median_years < 15.3
