@@ -112,13 +112,18 @@ def collect(
     try:
         # Validate districts
         if districts:
+            validator = TexasDataValidator()
+            normalized_districts = []
             for d in districts:
-                if d.upper() not in [x.upper() for x in VALID_DISTRICTS]:
+                normalized = validator.normalize_district(d)
+                if normalized is None:
                     console.print(f"[red]Error:[/red] Invalid district '{d}'")
                     console.print(
                         f"[dim]Valid districts: {', '.join(VALID_DISTRICTS)}[/dim]"
                     )
                     raise typer.Exit(1)
+                normalized_districts.append(normalized)
+            districts = normalized_districts
 
         # Convert 'all' to all data types
         types_to_collect = []
@@ -177,7 +182,7 @@ def collect(
                     "basename": "texas_rrc",
                     "module": "texas_rrc",
                     "data_types": types_to_collect,
-                    "districts": districts or VALID_DISTRICTS,
+                    "districts": districts or [],
                     "output": {
                         "directory": str(output),
                         "format": format.value,

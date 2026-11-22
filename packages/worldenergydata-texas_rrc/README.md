@@ -31,10 +31,33 @@ the `6E` lookup supplies its name only.
 
 The manual distinguishes names from internal numeric `DISTRICT_NO` values:
 internal `07` means `6E`, `08` means `7B`, and `10` means district `08`.
-Numeric-ID conversion is not established by this change. CSV callers must
-supply district **names**, including when a legacy column alias such as
-`DISTRICT_NO` is used. Raw PDQ numeric-ID ingestion, historical district changes
-and broader production-data accuracy remain outside this qualification. The
-reference qualifies identifiers only, not volume units, commodity-specific
+Numeric-ID conversion is not established by this change. Production processing
+and atlas normalization reject inputs containing `DISTRICT_NO`, `OG_DIST_NO`,
+`DIST_NO` or their lowercase forms when no explicit `district` or
+`DISTRICT_NAME` column is present. Mixed input uses the name column and retains
+numeric IDs separately as `district_no`; IDs never supply missing or invalid
+names. Official PDQ members carrying both fields can therefore be processed
+without converting IDs. ID-only input requires a qualified upstream conversion.
+Simply renaming an ID column does not qualify a conversion. Bulk and chunked
+delimited readers validate parsed headers and retain all columns, including
+canonical production dates and volumes.
+
+The local CSV route lowercases headers and reads district **names** from
+`district`; it does not apply PDQ aliases. DataFrame production processing and
+atlas normalization accept names in `district` or `DISTRICT_NAME`. Synthetic
+name-based fixtures exercise these paths separately from numeric-ID rejection.
+Historical district changes and broader production-data accuracy remain outside
+this qualification. The reference qualifies identifiers only, not volume units, commodity-specific
 record validation or engineering inputs. Aggregate rows must not be mixed with
 individual production records; detecting such mixtures is not established.
+
+## Well collection district parameters
+
+Omitting `--districts` uses the existing bulk well dataset download. Filtered
+well collection uses an explicit mapping: `01` through `06` map to integers
+1 through 6, and `08`, `09`, `10` map to 8, 9, 10. This preserves the well
+client's integer parameter contract; live endpoint behavior is not qualified
+by the production-name reference. No well-download mapping is qualified for
+`6E`, `7B`, `7C` or `8A`; these names produce a validation error before any
+filtered request. They remain valid production names. CLI district input and
+endpoint lookup share the validator's case and whitespace normalization.

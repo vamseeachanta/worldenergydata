@@ -31,8 +31,9 @@ def test_nonproduction_district_names_remain_unassigned(district):
     assert validator.normalize_district(district) is None
 
 
-def test_east_texas_district_lookup():
-    assert get_district_info("6e") == {"name": "District 6E"}
+@pytest.mark.parametrize("district", ["6E", "6e", " 6e "])
+def test_east_texas_district_lookup(district):
+    assert get_district_info(district) == {"name": "District 6E"}
 
 
 @pytest.mark.parametrize("unknown", ["", "invalid", "8B", "07", "12", "20"])
@@ -125,8 +126,10 @@ def test_router_accepts_all_qualified_production_district_names():
     )
 
 
-def test_cli_accepts_east_texas_production_district(tmp_path, monkeypatch):
+@pytest.mark.parametrize("district", ["6E", "6e", " 6e "])
+def test_cli_accepts_east_texas_production_district(monkeypatch, district):
     received = []
+    monkeypatch.setattr(Path, "mkdir", lambda *args, **kwargs: None)
 
     # Collection is replaced at the network boundary; CLI validation stays real.
     def collect_locally(self, cfg):
@@ -137,7 +140,7 @@ def test_cli_accepts_east_texas_production_district(tmp_path, monkeypatch):
     monkeypatch.setattr(TexasRRC, "router", collect_locally)
     result = CliRunner().invoke(
         app,
-        ["collect", "--districts", "6E", "--output", str(tmp_path)],
+        ["collect", "--districts", district, "--output", "unused"],
     )
     assert result.exit_code == 0, result.output
     assert "Collected" in result.output
