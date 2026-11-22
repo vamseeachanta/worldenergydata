@@ -2858,6 +2858,7 @@
       "unmapped_lease": 0
     },
     "join_coverage": 0.9821,
+    "revision_note": "2026-10-20: Refresh benchmark source digest after calendar-column header rename; source data cells and norm values are unchanged.",
     "sources": [
       {
         "path": "docs/modules/bsee/analysis/production/FDAS_V30/drilling_and_completion_days.xlsx",
@@ -2867,7 +2868,7 @@
       {
         "path": "reports/lower_tertiary/lt_well_benchmark_lower_tertiary_2010_latest.csv",
         "rows_used": 56,
-        "sha256": "48cbed34d2a491d8b515f04ac81438cfe4488f0b033d74679922dcdf16006928"
+        "sha256": "e6601f4c81c571360d94764cc708d4cd31cf8af0e448d0e9be149c6a854eefb8"
       }
     ]
   },

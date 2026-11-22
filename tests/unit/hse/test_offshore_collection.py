@@ -1127,3 +1127,68 @@ def test_existing_event_id_cannot_gain_second_intake_link(tmp_path, module, chan
         )
     with importer.connect() as db:
         assert list(db.iterdump()) == before
+
+
+@pytest.mark.parametrize(
+    "doc_type", ["improvement notice", "prohibition notice", "direction"]
+)
+def test_notice_compliance_cannot_precede_issue(doc_type):
+    """Synthetic dates: March 20 precedes March 21, so intake must refuse.
+
+    HSE notice date fields are specified in issue 1325 (2026-10-17).
+    This is a chronology check, not a statutory compliance-period calculation.
+    """
+    with pytest.raises(ValidationError, match="compliance precedes issue"):
+        SourceDocument.model_validate(
+            source(doc_type=doc_type, compliance_date="2024-03-20")
+        )
+
+
+@pytest.mark.parametrize("compliance_date", ["2024-03-21", "2024-03-22", None])
+def test_notice_compliance_on_or_after_issue_or_unknown(compliance_date):
+    """March 21 equals issue; March 22 follows it; unknown remains unknown."""
+    row = SourceDocument.model_validate(source(compliance_date=compliance_date))
+    assert row.model_dump(mode="json")["compliance_date"] == compliance_date
+
+
+def test_notice_compliance_without_issue_preserves_unknown():
+    """No issue date means chronology cannot be evaluated or reconstructed."""
+    row = SourceDocument.model_validate(
+        source(issue_date=None, compliance_date="2024-03-21")
+    )
+    assert row.issue_date is None
+    assert row.compliance_date.isoformat() == "2024-03-21"
+
+
+def test_invalid_notice_chronology_preserves_stored_evidence(tmp_path):
+    """March 20 < March 21: rejected evidence must leave every table unchanged."""
+    importer = OffshoreImporter(tmp_path / "offshore.db")
+    approve_test_pilot(importer)
+    with importer.connect() as db:
+        before = list(db.iterdump())
+    with pytest.raises(ValidationError, match="compliance precedes issue"):
+        importer.ingest(
+            packet(sources=[source(source_ref="new", compliance_date="2024-03-20")])
+        )
+    with importer.connect() as db:
+        assert list(db.iterdump()) == before
+
+
+def test_register_access_after_compliance_is_valid():
+    """March 21 issue <= March 22 deadline < October 17 access is valid.
+
+    Access is retrieval, not service or publication of the issued notice.
+    """
+    row = SourceDocument.model_validate(source(compliance_date="2024-03-22"))
+    assert row.issue_date <= row.compliance_date < row.access_date
+
+
+def test_investigation_can_describe_an_earlier_compliance_date():
+    """A report issued March 21 may describe a March 20 compliance deadline.
+
+    The notice chronology rule must not treat a later report as the notice.
+    """
+    row = SourceDocument.model_validate(
+        source(doc_type="investigation report", compliance_date="2024-03-20")
+    )
+    assert row.compliance_date < row.issue_date

@@ -1,4 +1,15 @@
 {
+  "appendix": {
+    "AREA_BLOCK": "string",
+    "AREA_CODE": "string",
+    "BLOCK_NUMBER": "string",
+    "FIELD_NAME_CODE": "string",
+    "LEASE_NUMBER": "string",
+    "RETRIEVED_UTC": "string",
+    "SOURCE_MEMBER": "string",
+    "SOURCE_SHA256": "string",
+    "SOURCE_URL": "string"
+  },
   "history": {
     "CUMULATIVE_BOE": "Float64",
     "CUMULATIVE_GAS": "Float64",
@@ -40,6 +51,7 @@
     "WATER_SOURCE_UNITS": "Float64"
   },
   "units": {
+    "appendix": "Identifiers only; no physical quantities",
     "history": "Oil/gas units not stated in workbook headers; source values retained without conversion",
     "production_master": "Oil/condensate: STB; gas: MCF; water unit not stated by source"
   }

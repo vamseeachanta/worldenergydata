@@ -121,8 +121,15 @@ def merge_identity(canonical, *identities):
 
 
 class OffshoreImporter:
-    def __init__(self, database: Path):
+    def __init__(self, database: Path, *, read_only=False):
         self.database = Path(database)
+        self.read_only = read_only
+        if read_only:
+            if not self.database.is_file():
+                raise FileNotFoundError(
+                    "read-only access requires an existing collection"
+                )
+            return
         self.database.parent.mkdir(parents=True, exist_ok=True)
         with self.connect() as db:
             db.executescript(
@@ -151,6 +158,10 @@ class OffshoreImporter:
                 )
 
     def connect(self):
+        if self.read_only:
+            return sqlite3.connect(
+                self.database.resolve().as_uri() + "?mode=ro", uri=True
+            )
         return sqlite3.connect(self.database)
 
     def ingest(self, packet, *, existing=(), stage="pilot"):
@@ -176,7 +187,7 @@ class OffshoreImporter:
             raise ValueError(
                 "event IDs must be unique and every event must have source evidence"
             )
-        stats = dict(events_added=0, sources_added=0, linked_existing=0)
+        stats = {"events_added": 0, "sources_added": 0, "linked_existing": 0}
         with self.connect() as db:
             before_digest = self.content_digest(db)
             if (
@@ -654,13 +665,13 @@ class OffshoreImporter:
                     )
                 ],
                 "external_links": [
-                    dict(
-                        event_id=r[0],
-                        module=r[1],
-                        record_id=r[2],
-                        identity=json.loads(r[3]),
-                        annotations=json.loads(r[4]),
-                    )
+                    {
+                        "event_id": r[0],
+                        "module": r[1],
+                        "record_id": r[2],
+                        "identity": json.loads(r[3]),
+                        "annotations": json.loads(r[4]),
+                    }
                     for r in db.execute(
                         "SELECT * FROM external_links ORDER BY event_id,module,record_id"
                     )

@@ -485,7 +485,9 @@ class ProductionProcessor:
             data: Production data
 
         Returns:
-            DataFrame with district-level aggregates
+            DataFrame with district-level aggregates, including a missing-key
+            group for unclassified records. Local CSV workflow summaries count
+            classified districts and report unclassified production separately.
         """
         if isinstance(data, list):
             df = pd.DataFrame(data)
@@ -506,13 +508,15 @@ class ProductionProcessor:
         # Filter to columns that exist
         agg_cols = {k: v for k, v in agg_cols.items() if k in df.columns}
 
-        result = df.groupby("district").agg(agg_cols).reset_index()
+        # Retain unclassified production rather than silently reducing totals.
+        # pandas 2.3.3 (2025), DataFrame.groupby, dropna parameter:
+        # https://pandas.pydata.org/pandas-docs/version/2.3.3/reference/api/pandas.DataFrame.groupby.html
+        districts = df.groupby("district", dropna=False)
+        result = districts.agg(agg_cols).reset_index()
 
         # Add lease count if available
         if "lease_number" in df.columns:
-            lease_counts = (
-                df.groupby("district")["lease_number"].nunique().reset_index()
-            )
+            lease_counts = districts["lease_number"].nunique().reset_index()
             lease_counts.columns = ["district", "lease_count"]
             result = result.merge(lease_counts, on="district", how="left")
 
@@ -523,7 +527,13 @@ class ProductionProcessor:
         data: Union[pd.DataFrame, List[Dict[str, Any]]],
     ) -> pd.DataFrame:
         """
-        Aggregate production by lease number.
+        Aggregate production by the composite lease keys present in the input.
+
+        Keys are lease_number plus lease_name, operator_name and district when
+        present. Missing values form retained groups: rows with the same known
+        keys and missing-key positions are summed together. Incomplete keys are
+        not filled from complete rows, and empty strings remain literal values.
+        This also retains production whose lease_number itself is missing.
 
         Args:
             data: Production data
@@ -559,7 +569,10 @@ class ProductionProcessor:
         # Filter to columns that exist
         agg_cols = {k: v for k, v in agg_cols.items() if k in df.columns}
 
-        return df.groupby(group_cols, as_index=False).agg(agg_cols)
+        # pandas 2.3 DataFrame.groupby, dropna and Examples (retrieved 2026-10-21):
+        # dropna=False retains NA keys rather than discarding their production.
+        # https://pandas.pydata.org/pandas-docs/version/2.3/reference/api/pandas.DataFrame.groupby.html
+        return df.groupby(group_cols, as_index=False, dropna=False).agg(agg_cols)
 
     def filter_by_date_range(
         self,

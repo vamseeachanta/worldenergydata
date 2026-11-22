@@ -45,6 +45,17 @@ class SodirAPIClient(SodirTransport):
         records: List[Dict[str, Any]] = query_entity(self, entity, **kwargs)
         return records
 
+    def get_entity_metadata(self, entity: str, *, max_bytes: int) -> dict[str, str]:
+        """Read bounded field, wellbore or production metadata.
+
+        Return property names and ArcGIS types after checking the committed
+        schema and object ID field. The caller supplies the response byte cap.
+        Queries remain separate; this method does not qualify engineering use.
+        """
+        from .feature_service import get_entity_metadata
+
+        return get_entity_metadata(self, entity, max_bytes=max_bytes)
+
     # SODIR-specific endpoint methods
 
     def get_blocks(self, **kwargs: Any) -> List[Dict[str, Any]]:

@@ -14,6 +14,7 @@ from worldenergydata.spain.production.cores_loader import (
     CoresFixtureProductionLoader,
     CoresParseError,
     CoresProductionLoader,
+    extract_cores_field_names,
     parse_cores_frame,
 )
 
@@ -56,6 +57,79 @@ def _audit_for_fields(*field_names):
             factor=TONNES_TO_BBL,
         )
     return build_oil_conversion_audit(field_names, factors)
+
+
+@pytest.mark.parametrize("total_column", ["Total", "TOTAL", " total ", "ToTaL"])
+@pytest.mark.parametrize("product", ["oil", "gas"])
+def test_plain_total_column_is_excluded_from_production(total_column, product):
+    """Issue 1293, SF2 in the Spain agent pack (2026), defines Total as summary.
+
+    Synthetic input: Field A = 3 and Field B = 5, hence Total = 3 + 5 = 8.
+    The independent expected field list is [Field A, Field B]; the summary
+    contributes no field. Oil uses an explicit synthetic factor, 7 bbl/tonne,
+    so the hand-calculated outputs are 3 * 7 = 21 and 5 * 7 = 35 bbl.
+    These inputs test column selection, not physical density qualification.
+    """
+    raw = pd.DataFrame(
+        [
+            {
+                "Year": 2024,
+                "Month": "January",
+                "Field A": 3,
+                "Field B": 5,
+                total_column: 8,
+            }
+        ]
+    )
+    factors = {
+        name: _density_factor(field_name=name, aliases=(name,), factor=7.0)
+        for name in ("Field A", "Field B")
+    }
+    audit = build_oil_conversion_audit(list(factors), factors)
+
+    out = parse_cores_frame(raw, product=product, oil_conversion_audit=audit)
+
+    assert out["field_name"].tolist() == ["Field A", "Field B"]
+    assert extract_cores_field_names(raw) == ["Field A", "Field B"]
+    if product == "oil":
+        assert out["oil_bbl"].tolist() == [21.0, 35.0]
+
+
+@pytest.mark.parametrize("operation", [extract_cores_field_names, parse_cores_frame])
+def test_only_total_columns_cannot_supply_a_field(operation):
+    """Issue 1293 SF2: a summary-only table has no field; 3 + 5 = 8 is synthetic."""
+    raw = pd.DataFrame(
+        [
+            {
+                "Year": 2024,
+                "Month": "January",
+                "Total": 8,
+                "Grand total": 8,
+                "Total general": 8,
+            }
+        ]
+    )
+    kwargs = {"product": "gas"} if operation is parse_cores_frame else {}
+
+    with pytest.raises(CoresParseError, match="no field columns found"):
+        operation(raw, **kwargs)
+
+
+def test_total_word_within_field_name_is_preserved():
+    """Issue 1293 SF2 excludes whole summary headers; a longer name is a field.
+
+    The synthetic zero input is a true zero, not a missing observation.
+    The hand calculation is 0 times any existing conversion factor = 0.
+    """
+    raw = pd.DataFrame(
+        [{"Year": 2024, "Month": "January", "Total Basin": 0, "Total": 0}]
+    )
+
+    out = parse_cores_frame(raw, product="gas")
+
+    assert out["field_name"].tolist() == ["Total Basin"]
+    assert out["gas_mcf"].tolist() == [0.0]
+    assert extract_cores_field_names(raw) == ["Total Basin"]
 
 
 def test_parse_oil_frame_drops_total_rows_and_converts_tonnes_to_bbl():

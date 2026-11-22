@@ -16,6 +16,12 @@ import pandas as pd
 import plotly.graph_objects as go
 from scipy.optimize import curve_fit
 
+from worldenergydata.common.decline import (
+    exponential_rate,
+    harmonic_rate,
+    hyperbolic_rate,
+)
+
 _VALID_MODELS = frozenset({"exponential", "hyperbolic", "harmonic"})
 
 
@@ -215,11 +221,8 @@ class ArpsDeclineCurve:
 
         if model == "exponential":
 
-            def _exp_fn(t, qi, Di):
-                return qi * np.exp(-Di * t)
-
             popt, _ = curve_fit(
-                _exp_fn,
+                exponential_rate,
                 t,
                 q,
                 p0=[qi_guess, Di_guess],
@@ -230,11 +233,8 @@ class ArpsDeclineCurve:
 
         if model == "harmonic":
 
-            def _harm_fn(t, qi, Di):
-                return qi / (1.0 + Di * t)
-
             popt, _ = curve_fit(
-                _harm_fn,
+                harmonic_rate,
                 t,
                 q,
                 p0=[qi_guess, Di_guess],
@@ -244,11 +244,8 @@ class ArpsDeclineCurve:
             return float(popt[0]), float(popt[1]), 1.0
 
         # hyperbolic
-        def _hyp_fn(t, qi, Di, b):
-            return qi * (1.0 + b * Di * t) ** (-1.0 / b)
-
         popt, _ = curve_fit(
-            _hyp_fn,
+            hyperbolic_rate,
             t,
             q,
             p0=[qi_guess, Di_guess, 1.0],
@@ -262,17 +259,17 @@ class ArpsDeclineCurve:
         if model == "exponential":
 
             def fn(t, qi, Di, b):  # b unused
-                return qi * np.exp(-Di * t)
+                return exponential_rate(t, qi, Di)
 
         elif model == "harmonic":
 
             def fn(t, qi, Di, b):  # b=1 enforced by math
-                return qi / (1.0 + Di * t)
+                return harmonic_rate(t, qi, Di)
 
         else:  # hyperbolic
 
             def fn(t, qi, Di, b):
-                return qi * (1.0 + b * Di * t) ** (-1.0 / b)
+                return hyperbolic_rate(t, qi, Di, b)
 
         return fn
 

@@ -82,6 +82,13 @@ def main() -> None:
     )
     L.append("")
     L.append(
+        "> **Assumptions gate:** Read the [V50 assumptions change log]"
+        "(../../config/analysis/lower_tertiary/v50_assumptions_change_log.html) "
+        "before adopting V50. This window-only comparison does not approve the "
+        "cost/after-tax V50 basis."
+    )
+    L.append("")
+    L.append(
         "> **Reproduction gate (before update):** V30 reproduces from raw OGOR within"
     )
     L.append(
@@ -180,7 +187,6 @@ def main() -> None:
     L.append(
         "- Frozen V30 (`golden_baseline_v30.yml`) is unchanged. V50 lives alongside it."
     )
-    L.append("")
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text("\n".join(L) + "\n", encoding="utf-8")

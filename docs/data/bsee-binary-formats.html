@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BSEE binary ingestion: formats and validation</title>
+<style>
+body{font:16px/1.55 system-ui,sans-serif;color:#172b3a;max-width:1040px;margin:36px auto;padding:0 20px;background:#fafcfd}
+h1,h2{line-height:1.2}h1{border-bottom:4px solid #176675;padding-bottom:16px}
+table{border-collapse:collapse;width:100%;background:white}th,td{border:1px solid #ccd7de;padding:10px;text-align:left;vertical-align:top}
+caption{caption-side:bottom;text-align:left;font-size:.9rem;padding:8px 0}code,pre{background:#eaf0f3}pre{padding:16px;overflow:auto}.limit{border-left:4px solid #b97d11;padding:8px 16px;background:#fff8e8}
+</style></head><body>
+<h1>BSEE binary ingestion</h1>
+<p>The local ingest command converts the approved borehole, WAR, rig-fleet and
+ directional-survey tiers to timestamped CSV or Parquet tables. The existing
+ catalog remains the dataset registry. No network request or licensed solver
+ is used by the command. Scope: <a href="https://github.com/vamseeachanta/worldenergydata/issues/365">issue 365</a>,
+ including the 10 June 2026 plan-review comment.</p>
+<h2>Inspected formats</h2>
+<table><thead><tr><th>Class</th><th>Observed representation</th><th>Reading contract</th></tr></thead><tbody>
+<tr><td>Binary tier</td><td>The first 512 bytes of each of 157 available .bin files
+ were inspected: 147 carried pickle protocol 4; 10 carried protocol 5.</td>
+<td>Only the four approved dataset groups are selected. Existing loaders already
+ read pickled pandas DataFrames. Content signatures select the reader;
+ suffixes do not determine serialization. A pickle requires the explicit
+ <code>--trust-pickles</code> option and must contain a DataFrame.</td></tr>
+<tr><td>BoreholeRawData.zip</td><td>ZIP; a directory member and a headered,
+ comma-delimited mv_boreholes_all.txt table.</td><td>The actual source is CSV,
+ rather than the tab-separated example in the original plan. Comma, tab and pipe
+ separators are detected. All columns are retained.</td></tr>
+<tr><td>eWell WAR</td><td>ZIP input is supported; the eight recorded WAR
+ exports were read from parsed local DataFrame pickles.</td><td>Every data member
+ is read. An original ZIP takes precedence over an already parsed table of the
+ same name. Different table names remain separate datasets. Colliding archive table names
+ fail the run instead of silently dropping a member. ZIP precedence is covered
+ by synthetic tests; it was not exercised in the recorded live run.</td></tr>
+<tr><td>Rig fleet</td><td>Protocol-4 DataFrame sample and full-fleet sources are available.</td>
+<td>The mounted binary tier contains the sample; the full-fleet file named in the
+ issue is retained in the existing cache. They remain distinct tables. A compatible
+ pandas 3 runtime is required for the stored sample: pandas 2.3.3 cannot deserialize
+ its string-array representation. The project dependency bounds are unchanged;
+ select the compatible interpreter with BSEE_INGEST_PYTHON for such inputs.</td></tr>
+<tr><td>dsptsdelimit.zip</td><td>Headerless, quoted CSV; 13 fields per record.</td>
+<td>The established repository layout is used: API_WELL_NUMBER,
+ INCL_ANG_DEG_VAL, INCL_ANG_MIN_VAL, SURVEY_POINT_MD, WELL_N_S_CODE,
+ DIR_DEG_VAL, DIR_MINS_VAL, WELL_E_W_CODE, SURVEY_POINT_TVD, DELTA_X,
+ DELTA_Y, SURF_LONGITUDE and SURF_LATITUDE. The first record is retained.</td></tr>
+<tr><td>directdelimit.zip</td><td>Headerless, quoted CSV; 11 fields per record.</td>
+<td>The identifier is API_WELL_NUMBER. The other ten fields use positional names
+ SOURCE_COLUMN_02 through SOURCE_COLUMN_11. Their meanings and units have not
+ been verified; the schema is marked positional_unverified. The first record
+ is retained.</td></tr>
+</tbody><caption>Table 1. Format observations at implementation; the available source set differs from the May issue inventory.</caption></table>
+<h2>Execution and retention</h2>
+<pre>make unpack-bsee BSEE_SOURCE_ROOT="$BSEE_SOURCE_ROOT" \
+  BSEE_INGEST_ARGS="--current-root $BSEE_CURRENT_ROOT --trust-pickles"
+
+# Optional: --dataset borehole (repeatable), --date 2026-11-13,
+# --format parquet, --chunk-size 10000, --encoding utf-8
+# Override BSEE_INGEST_PYTHON when using a virtual environment.</pre>
+<p>The source root must hold the existing binary and ZIP tiers; cached raw
+ archives are also supported. No source is downloaded or modified. Sources must
+ already be mounted or cached. The project-root override supports isolated runs.
+ The current-root option selects the existing CSV tier independently of the
+ source root. Every requested dataset group must be available.</p>
+<p>Outputs use the run date and table name; the borehole main table uses only the
+ date. A rerun with the same date and format overwrites the corresponding output
+ and upserts its catalog entry. Different dates remain separate snapshots.
+ Generated tables remain local and are ignored by Git. A tracked
+ <code>ingest_manifest.json</code> in each output group retains the measured
+ records across standard catalog regeneration. Catalog records retain
+ source/member identifiers, SHA-256 digests, row counts, byte sizes, source file
+ modification time, ingestion timestamp and comparison evidence. Original inputs
+ remain with their existing owner; a local export does not establish backup or
+ publication. Records are marked <code>local_only: true</code>. Regeneration
+ verifies present outputs against their recorded digest and byte size, and
+ reports <code>availability: missing</code> when an export is absent. Missing
+ exports contribute zero to <code>size_bytes</code> and the available-byte total;
+ <code>measured_size_bytes</code> retains the original run measurement.
+ The manifest itself is metadata and is not scanned as a dataset. Retain or
+ commit the manifests alongside catalog updates when retaining a new run.</p>
+<h2>Validation and limits</h2>
+<p>Text fields remain strings: identifiers retain leading zeros, literal NA
+ remains text, and quoted delimiters, escaped quotes and embedded newlines are
+ preserved. Latin-1 is the default encoding, consistent with local BSEE loaders;
+ a UTF-8 byte-order mark selects UTF-8. Other encodings can be selected explicitly.
+ Pickles require memory for their complete DataFrame; text and Parquet outputs
+ are processed in bounded chunks. The current-tier row index is held in memory.</p>
+<p>Deduplication removes only exact full-row matches against current-tier files
+ with the same column set, independent of column order. Original field text is
+ compared without trimming, numeric coercion or date normalization. A comparable
+ schema is reported as <code>exact_text_only</code>, because pandas-rewritten
+ numbers such as <code>0.0</code> and <code>0</code> will not match. A zero exact
+ duplicate count does not establish absence of numeric or key overlap. An equal
+ well identifier alone does not justify deleting different measurements or
+ additional columns. A different schema is recorded as no_comparable_schema;
+ that status does not establish absence of overlap. Duplicate counts include
+ each source occurrence removed. Source counts equal output counts plus removed
+ counts. Existing current-tier files are never overwritten.</p>
+<p>Missing inputs, missing current-tier directories, LFS pointers, malformed
+ records, inconsistent widths, duplicate columns, unsafe member names and
+ non-DataFrame pickles and colliding archive table names fail the run. ZIP members are streamed without filesystem
+ extraction. Outputs and catalog are staged until all tables parse successfully;
+ a parse failure leaves existing outputs and catalog intact. Final replacement
+ uses per-file atomic renames; the group of renames is not a filesystem-wide
+ transaction in the event of a disk failure.</p>
+<div class="limit"><p>File modification time does not establish source vintage or
+ freshness. The recorded WAR exports use older parsed snapshots with unknown
+ vintage, rather than a newly downloaded archive. They do not establish current
+ coverage; a later public archive may contain more rows. No source refresh was
+ performed by this review fix. Exported data remains marked partial for engineering readiness.
+ The positional directdelimit fields need an authoritative schema before
+ physical interpretation. Broader overlap between different schemas and
+ qualification of units are not established by this extraction.</p></div>
+<p>New tests exercise actual script execution, both serialization formats,
+ current-tier overlap, rerun idempotence, all archive members, source precedence,
+ headerless records, malformed-input preservation and the Makefile interface.
+ No test requires a solver.</p>
+</body></html>

@@ -1,9 +1,91 @@
 """Tests for AER API client init, headers, cache key, UWI validation."""
 
+import pandas as pd
 import pytest
 
 from worldenergydata.canada.aer.api_client import AERClient
+from worldenergydata.canada.cache import FileDownloadCache
 from worldenergydata.canada.errors import CanadaValidationError
+
+
+@pytest.fixture(autouse=True)
+def isolated_download_cache(monkeypatch, tmp_path):
+    """Keep constructor tests' default cache within the test scratch directory."""
+    monkeypatch.setattr(FileDownloadCache, "DEFAULT_CACHE_DIR", tmp_path)
+
+
+class TestSearchWellFailures:
+    """Issue 1270: distinguish no matches from failed or unapplied searches."""
+
+    @pytest.fixture
+    def client(self, tmp_path):
+        with AERClient(cache_dir=tmp_path) as client:
+            yield client
+
+    @pytest.mark.parametrize("filter_name", ["field_name", "operator", "well_status"])
+    def test_missing_filter_column_raises(self, client, monkeypatch, filter_name):
+        """No column can satisfy the requested predicate; returning a row is invalid."""
+        monkeypatch.setattr(
+            client,
+            "download_well_infrastructure",
+            lambda **kw: pd.DataFrame([{"id": "a"}]),
+        )
+        with pytest.raises(CanadaValidationError, match=filter_name):
+            client.search_wells(**{filter_name: "requested"})
+
+    @pytest.mark.parametrize("error_type", [RuntimeError, pd.errors.EmptyDataError])
+    def test_download_failure_propagates(self, client, monkeypatch, error_type):
+        """Download/CSV parse failures are not empty results (issue 1270)."""
+
+        def fail(**kw):
+            raise error_type("download failed")
+
+        monkeypatch.setattr(client, "download_well_infrastructure", fail)
+        with pytest.raises(error_type, match="download failed"):
+            client.search_wells()
+
+    def test_filters_combine_on_source_index(self, client, monkeypatch):
+        """Hand evaluation: only row a matches field AND licensee AND status.
+
+        Rows b, c and d each fail one predicate. Index labels are synthetic.
+        """
+        frame = pd.DataFrame(
+            [
+                {
+                    "id": "a",
+                    "Field": "North",
+                    "Licensee": "Example",
+                    "Status": "ACTIVE",
+                },
+                {
+                    "id": "b",
+                    "Field": "South",
+                    "Licensee": "Example",
+                    "Status": "ACTIVE",
+                },
+                {"id": "c", "Field": "North", "Licensee": "Other", "Status": "ACTIVE"},
+                {
+                    "id": "d",
+                    "Field": "North",
+                    "Licensee": "Example",
+                    "Status": "CLOSED",
+                },
+            ],
+            index=["a", "b", "c", "d"],
+        )
+        monkeypatch.setattr(client, "download_well_infrastructure", lambda **kw: frame)
+        result = client.search_wells(
+            field_name="north", operator="example", well_status="active"
+        )
+        assert [row["id"] for row in result] == ["a"]
+
+    @pytest.mark.parametrize("empty_source", [False, True])
+    def test_empty_results_are_successful(self, client, monkeypatch, empty_source):
+        """Hand evaluation: zero rows match North in an empty or South-only table."""
+        frame = pd.DataFrame({"Field": [] if empty_source else ["South"]})
+        monkeypatch.setattr(client, "download_well_infrastructure", lambda **kw: frame)
+        assert client.search_wells(field_name="North") == []
+
 
 # ---------------------------------------------------------------------------
 # Init and defaults

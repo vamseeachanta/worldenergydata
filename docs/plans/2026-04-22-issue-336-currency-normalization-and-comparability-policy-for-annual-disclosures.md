@@ -8,6 +8,18 @@
 
 ---
 
+## Policy revision — 2026-11-06
+
+The annual-disclosure policy will require a caller-supplied escalation rate and
+its evidence, rather than adopt the original fixed 3.0% rate as a default. No
+qualified empirical escalation series is supplied with this module. A missing
+rate or source will therefore produce an explicit non-comparable result, even
+for same-year amounts. The 3.0% scenario will remain an explicitly labelled
+assumption in examples and tests. USD outputs, the default 2020 base year and
+static versioned FX inputs will remain in scope; the existing predictor's fixed
+rate will remain unchanged. This revision will supersede the original fixed-rate
+requirement in the scope, pseudocode, acceptance criteria and risks below.
+
 ## Resource Intelligence Summary
 
 ### Existing repo code
@@ -53,7 +65,7 @@ An additive annual-disclosure normalization/comparability contract that preserve
 
 ### In scope now
 - Define normalization policy for annual disclosure monetary rows
-- Freeze a deterministic v1 policy now: normalized currency = USD, normalized base year = 2020, fixed annual escalation/de-escalation rate = 3%, FX source = static versioned local table committed in-repo
+- The deterministic v1 policy will use USD outputs, a default 2020 base year, a required caller-supplied annual escalation/de-escalation rate and evidence with no default, and a static versioned local FX table committed in-repo
 - Preserve original as-reported values alongside normalized comparable values
 - Define minimum metadata for comparability: currency, amount, magnitude scale, fiscal year, normalization method/version
 - Add deterministic utility behavior for normalization and comparability; do not add consumer-facing analytics views here
@@ -71,18 +83,20 @@ An additive annual-disclosure normalization/comparability contract that preserve
 ## Pseudocode
 
 ```text
-function normalize_disclosure_money(record, fx_table, base_year=2020, escalation_rate=0.03):
+function normalize_disclosure_money(record, fx_table, escalation_rate, escalation_source, base_year=2020):
     preserve raw amount/currency/unit/magnitude_scale/as_reported_metric_name unchanged
     if missing amount or currency or magnitude_scale or fiscal_year:
+        return explicit not_comparable result with normalized fields None
+    if escalation_rate is None or escalation_source is absent or blank:
         return explicit not_comparable result with normalized fields None
     if currency not in fx_table or fiscal_year not in fx_table[currency]:
         return explicit not_comparable result with normalized fields None
     usd_nominal = convert reported amount using static in-repo FX table for fiscal year
-    usd_base_year = adjust to base year using fixed 3% annual escalation/de-escalation
-    return record + normalized_amount, normalized_currency='USD', normalized_base_year=2020, normalization_method='fx_then_base_year_adjustment_v1', comparability_status='comparable'
+    usd_base_year = adjust to base year using the supplied annual escalation/de-escalation rate
+    return record + normalized_amount, normalized_currency='USD', normalized_base_year=base_year, normalization_method='fx_then_base_year_adjustment_v1', comparability_status='comparable'
 
-function load_normalized_annual_disclosures(raw_records, fx_table):
-    return [normalize_disclosure_money(r, fx_table) for r in raw_records]
+function load_normalized_annual_disclosures(raw_records, fx_table, escalation_rate, escalation_source, base_year=2020):
+    return [normalize_disclosure_money(r, fx_table, escalation_rate, escalation_source, base_year) for r in raw_records]
 ```
 
 ---
@@ -130,7 +144,7 @@ function load_normalized_annual_disclosures(raw_records, fx_table):
 - [ ] Normalization is additive, not destructive of as-reported values
 - [ ] Every normalized record preserves original amount/currency/unit/magnitude-scale and `as_reported_metric_name` fields
 - [ ] Comparable outputs use separate named normalized fields and include method/version metadata
-- [ ] Deterministic v1 policy is fixed in the plan: static in-repo FX table, USD normalized currency, 2020 base year, 3% annual escalation/de-escalation
+- [ ] Deterministic v1 policy will use a static in-repo FX table, USD normalized currency, a default 2020 base year and a required evidenced annual escalation/de-escalation rate with no default
 - [ ] Missing or unsupported policy inputs produce explicit non-comparable rows rather than silent coercion
 - [ ] Existing sanctioned dataset tests still pass without weakened assertions
 - [ ] Existing predictor and proxy-comparison behavior remain unchanged
@@ -140,8 +154,8 @@ function load_normalized_annual_disclosures(raw_records, fx_table):
 ## Risks and Open Questions
 
 - #336 depends on #334 disclosure schema/loader being present first.
-- The v1 normalization policy is fixed for planning purposes to avoid TDD ambiguity: static in-repo FX table, normalized USD outputs, 2020 base year, 3% annual escalation/de-escalation.
-- Future work may replace this with a stronger versioned policy, but this issue should not reopen that decision.
+- The v1 normalization policy will use a static in-repo FX table, normalized USD outputs and a default 2020 base year; the annual rate and source will be explicit required inputs so that an unsupported empirical assumption will not become a default.
+- Future work may supply a qualified escalation series; until then, examples and tests will label the supplied 3.0% rate as an assumption rather than measured inflation.
 - Must avoid drifting into linkage semantics (#335) or consumer-facing analytics/views (#338).
 
 ---

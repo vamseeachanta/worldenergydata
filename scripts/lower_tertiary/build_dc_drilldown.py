@@ -12,7 +12,7 @@ embedded JSON payload, and a hash router (#/field/<id>, #/block/<id>,
 network, no timestamps (deterministic output).
 
 Source of truth: the same committed extractor output the listing and the HF
-tables use -- this script re-projects, it never recomputes.
+tables use. Day counts are retained; normalized ratios are optional previews.
 """
 
 from __future__ import annotations
@@ -20,7 +20,9 @@ from __future__ import annotations
 import csv
 import json
 import sys
+from html import escape
 from pathlib import Path
+from typing import Literal
 
 if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -111,7 +113,61 @@ def _iso(raw: str) -> str:
     return f"{y}-{m}-{d}"
 
 
-def load_payload() -> dict:
+def _intensity_number(raw: str) -> float | None:
+    """Read nullable source cells before the legacy display parser fills gaps."""
+    return float(raw) if raw.strip() else None
+
+
+def _add_drilling_intensity(
+    payload: dict, rows: list[dict], denominator: Literal["md", "tvd"]
+) -> None:
+    # Lazy import keeps the default standalone builder independent of packages.
+    from worldenergydata.bsee.analysis.drilling_intensity import (
+        COLUMN_SCHEMA,
+        REFERENCE_BAND,
+        bore_intensity,
+        intensity_rollups,
+    )
+
+    for bore, row in zip(payload["bores"], rows):
+        bore.update(bore_intensity(row, denominator=denominator))
+    for surface, key, identifier in (
+        ("fields", "field", "name"),
+        ("blocks", "block", "id"),
+    ):
+        rollups = {
+            row[key]: row
+            for row in intensity_rollups(rows, group_by=key, denominator=denominator)
+        }
+        for node in payload[surface]:
+            node.update(rollups[node[identifier]])
+    payload["drilling_intensity"] = {
+        "denominator": denominator,
+        "schema": dict(COLUMN_SCHEMA),
+        # SPE-87117-MS (2004), publisher-deposited abstract, paragraph 4.
+        # The public abstract supports the band, but does not establish MD/TVD.
+        "reference_band": {
+            "lower": REFERENCE_BAND["lower"],
+            "upper": REFERENCE_BAND["upper"],
+            "units": REFERENCE_BAND["units"],
+            "citation": "SPE-87117-MS (2004), abstract paragraph 4",
+            "source_url": "https://api.crossref.org/works/10.2118/87117-MS",
+            "qualification": "Reference only; denominator and comparability not established",
+        },
+    }
+
+
+def load_payload(*, intensity_denominator: Literal["md", "tvd"] | None = None) -> dict:
+    """Optionally normalize basis-labelled drilling days, using raw nullable cells.
+
+    Ratios follow issue #1080: drilling days / depth in feet * 10000.
+    Normalization units: SPE-87117-MS (2004), abstract paragraph 4.
+    The shared computation module owns the equation and matched-pair rollups.
+    No basis is inferred or ratified here. Unlabelled sources yield null ratios.
+    Leaving the denominator unset retains the legacy payload and page.
+    """
+    if intensity_denominator not in (None, "md", "tvd"):
+        raise ValueError("intensity_denominator shall be 'md' or 'tvd'")
     producers = {
         row["api12"].strip()
         for row in csv.DictReader(BENCHMARK_CSV.open(encoding="utf-8"))
@@ -124,6 +180,7 @@ def load_payload() -> dict:
         validate_vintage_row(row)
 
     bores: list[dict] = []
+    intensity_rows: dict[str, dict] = {}
     for row in csv.DictReader(SOURCE_CSV.open(encoding="utf-8")):
         api12 = row["API_WELL_NUMBER"].strip()
         field = DEV_OF_LEASE.get(row["LEASE_NAME"].strip(), row["LEASE_NAME"].strip())
@@ -151,6 +208,17 @@ def load_payload() -> dict:
         )
         if carries_basis(row):
             validate_day_schema(bores[-1])
+        if intensity_denominator is not None:
+            if api12 in intensity_rows:
+                raise ValueError("drilling intensity requires unique bore identifiers")
+            intensity_rows[api12] = {
+                "basis": bores[-1].get("basis"),
+                "field": field,
+                "block": bores[-1]["block"],
+                "drilling_days": _intensity_number(row["DRILLING_DAYS"]),
+                "MAX_BH_TOTAL_MD": _intensity_number(row["MAX_BH_TOTAL_MD"]),
+                "MAX_WELL_BORE_TVD": _intensity_number(row["MAX_WELL_BORE_TVD"]),
+            }
     bores.sort(key=lambda b: (b["field"], b["block"], b["spud"] or "9999", b["api"]))
 
     fields: dict[str, dict] = {}
@@ -199,7 +267,7 @@ def load_payload() -> dict:
         for name, group in groups.items():
             group.update(aggregate_provenance(b for b in bores if b[key] == name))
 
-    return {
+    payload = {
         "bores": bores,
         "fields": sorted(fields.values(), key=lambda f: -f["bores"]),
         "blocks": sorted(blocks.values(), key=lambda k: -k["bores"]),
@@ -219,6 +287,11 @@ def load_payload() -> dict:
         },
         "vintage_label": VINTAGE_LABEL,
     }
+    if intensity_denominator is not None:
+        _add_drilling_intensity(
+            payload, [intensity_rows[b["api"]] for b in bores], intensity_denominator
+        )
+    return payload
 
 
 CSS = """
@@ -375,6 +448,10 @@ function bar(d,c){
   return `<span class="bar"><i class="d" style="width:${(d/t*100).toFixed(1)}%"></i><i class="c" style="width:${(c/t*100).toFixed(1)}%"></i></span>`;
 }
 
+function basisNote(record){
+  return `<span class="note" style="display:block">Basis: ${esc(record.basis||'unqualified')}; no calendar-only or active rig-time claim.</span>`;
+}
+
 function renderIndex(){
   const isField=axis==='field';
   const items=(isField?DATA.fields:DATA.blocks).filter(n=>
@@ -391,8 +468,9 @@ function renderIndex(){
     return `<button class="node" data-kind="${isField?'field':'block'}" data-id="${esc(id)}">
       <span class="top"><h3>${esc(title)}</h3>${badge}</span>
       <span class="meta">${esc(meta)}</span>
-      <span class="nums"><div>bores<b>${n.bores}</b></div><div>drilling<b>${fmt(n.drill)}</b></div>
-      <div>completion<b>${fmt(n.compl)}</b></div></span>
+      <span class="nums"><div>bores<b>${n.bores}</b></div><div>Retained drilling-category source days<b>${fmt(n.drill)}</b></div>
+      <div>Retained completion-category source days<b>${fmt(n.compl)}</b></div></span>
+      ${basisNote(n)}
       ${bar(n.drill,n.compl)}</button>`;
   }).join(''):'<div class="empty">No match. Clear the search to see all.</div>';
 }
@@ -404,6 +482,7 @@ function renderNode(kind,id){
   const drill=all.reduce((s,b)=>s+b.drill,0), compl=all.reduce((s,b)=>s+b.compl,0);
   const prod=all.filter(b=>b.prod).length, st=all.filter(b=>b.st).length;
   const field=kind==='field'?DATA.fields.find(f=>f.name===id):DATA.fields.find(f=>f.name===all[0].field);
+  const node=kind==='field'?field:DATA.blocks.find(k=>k.id===id);
   crumb([{label:kind==='field'?'Fields':'Blocks',href:'#/'},{label:id}]);
   $('#count').textContent=`${list.length} of ${all.length} bores`;
   $('#index').innerHTML='';
@@ -414,12 +493,13 @@ function renderNode(kind,id){
     <p class="sub">${kind==='field'?esc(field.status):'Block of '+esc(all[0].field)} · ${fmt(all[0].wd)} ft water depth</p>
     <div class="dl">
       <div><dt>Bores</dt><dd>${all.length}</dd></div>
-      <div><dt>Drilling days</dt><dd>${fmt(drill)}</dd></div>
-      <div><dt>Completion days</dt><dd>${fmt(compl)}</dd></div>
-      <div><dt>D&amp;C days</dt><dd>${fmt(drill+compl)}</dd></div>
+      <div><dt>Retained drilling-category source days</dt><dd>${fmt(drill)}</dd></div>
+      <div><dt>Retained completion-category source days</dt><dd>${fmt(compl)}</dd></div>
+      <div><dt>Retained D&amp;C source days</dt><dd>${fmt(drill+compl)}</dd></div>
       <div><dt>Producers</dt><dd>${prod||'—'}<small>${prod?' of '+all.length:''}</small></dd></div>
       <div><dt>Sidetracks</dt><dd>${st}</dd></div>
     </div>
+    ${basisNote(node)}
     ${kind==='field'?`<div class="links"><span>Blocks:</span>${blocks}</div>`:''}
     ${links(field.slug)}
     <div class="table-wrap" style="margin-top:18px">${boreTable(list,kind==='field')}</div>
@@ -429,12 +509,13 @@ function renderNode(kind,id){
 function boreTable(list,showBlock){
   if(!list.length)return '<div class="empty">No bores match the search.</div>';
   return `<table><thead><tr><th>API12</th><th>Bore</th>${showBlock?'<th>Block</th>':''}
-    <th>Spud</th><th>TD</th><th class="num">Drill</th><th class="num">Compl</th>
-    <th class="num">D&amp;C</th><th>Flags</th></tr></thead><tbody>
+    <th>Spud</th><th>TD</th><th class="num">Retained drilling-category source days</th><th class="num">Retained completion-category source days</th>
+    <th class="num">Retained D&amp;C source days</th><th>Source basis</th><th>Flags</th></tr></thead><tbody>
     ${list.map(b=>`<tr tabindex="0" data-api="${b.api}">
       <td class="mono">${b.api}</td><td>${esc(b.name)}</td>${showBlock?`<td class="mono">${esc(b.block)}</td>`:''}
       <td class="mono">${b.spud||'—'}</td><td class="mono">${b.td||'—'}</td>
       <td class="num">${b.drill}</td><td class="num">${b.compl}</td><td class="num">${b.drill+b.compl}</td>
+      <td>${esc(b.basis||'unqualified')}</td>
       <td>${b.prod?'<span class="badge ok">producer</span> ':''}${b.st?'<span class="badge hold">ST</span>':''}</td>
     </tr>`).join('')}</tbody></table>`;
 }
@@ -467,15 +548,16 @@ function renderBore(api){
     <div class="dl">
       <div><dt>Spud</dt><dd>${b.spud||'—'}</dd></div>
       <div><dt>Total depth</dt><dd>${b.td||'—'}</dd></div>
-      <div><dt>Drilling days</dt><dd>${b.drill}</dd></div>
-      <div><dt>Completion days</dt><dd>${b.compl}</dd></div>
-      <div><dt>D&amp;C days</dt><dd>${b.drill+b.compl}</dd></div>
+      <div><dt>Retained drilling-category source days</dt><dd>${b.drill}</dd></div>
+      <div><dt>Retained completion-category source days</dt><dd>${b.compl}</dd></div>
+      <div><dt>Retained D&amp;C source days</dt><dd>${b.drill+b.compl}</dd></div>
       <div><dt>Measured depth</dt><dd>${b.md?fmt(b.md):'—'}<small> ft</small></dd></div>
       <div><dt>True vertical</dt><dd>${b.tvd?fmt(b.tvd):'—'}<small> ft</small></dd></div>
       <div><dt>Max mud weight</dt><dd>${b.ppg||'—'}<small> ppg</small></dd></div>
     </div>
+    ${basisNote(b)}
     <p class="sub"><span class="badge ${vinBadge}">vintage</span> ${esc(vin)}.
-      Completion days count all post-TD rig time, including later servicing
+      Retained completion-category values may include later servicing
       (<a href="https://github.com/vamseeachanta/worldenergydata/issues/846">#846</a>).</p>
     ${links(field.slug)}</div>`;
 }
@@ -510,10 +592,65 @@ route();
 """
 
 
+def intensity_html(payload: dict) -> str:
+    """Render the opt-in ratios with basis, independent coverage and status."""
+    if "drilling_intensity" not in payload:
+        return ""
+
+    def cell(value: object) -> str:
+        if isinstance(value, float):
+            # Presentation precision only; calculations retain unrounded values.
+            return f"{value:.1f}"
+        return escape("—" if value is None else str(value))
+
+    columns = (
+        "days_per_10k_ft",
+        "days_per_10k_md",
+        "days_per_10k_tvd",
+        "basis",
+        "intensity_status_md",
+        "intensity_status_tvd",
+    )
+    rows = []
+    for surface, identifier in (("fields", "name"), ("blocks", "id"), ("bores", "api")):
+        for row in payload[surface]:
+            values = [f"{surface}: {row[identifier]}"] + [row[c] for c in columns]
+            for suffix in ("md", "tvd"):
+                values.append(
+                    f"{row[f'included_bores_{suffix}']} / {row[f'excluded_bores_{suffix}']}"
+                )
+            rows.append(
+                "<tr>" + "".join(f"<td>{cell(v)}</td>" for v in values) + "</tr>"
+            )
+    metadata = payload["drilling_intensity"]
+    denominator = escape(metadata["denominator"].upper())
+    reference = metadata["reference_band"]
+    return (
+        '<section class="panel"><h2>Normalized drilling intensity</h2>'
+        f"<p>Days/10K uses {denominator}; drilling only, completion excluded. "
+        "MD is MAX_BH_TOTAL_MD; TVD is MAX_WELL_BORE_TVD, both in feet. "
+        "Rollups use matched drilling-day/depth totals. Gaps remain null; "
+        "basis labels describe the supplied data and do not certify publication readiness.</p>"
+        "<p>The legacy methodology note describes the default counts; "
+        "this optional preview table derives ratios from raw source cells.</p>"
+        f"<p>Reference: {cell(reference['lower'])}–{cell(reference['upper'])} Days/10K; "
+        f"{escape(reference['citation'])}. {escape(reference['qualification'])}. "
+        f"<a href=\"{escape(reference['source_url'], quote=True)}\">Source</a>.</p>"
+        '<div class="table-wrap"><table><thead><tr><th>Record</th>'
+        f"<th>Days/10K ({denominator} alias)</th>"
+        "<th>Days/10K (MD)</th><th>Days/10K (TVD)</th><th>Basis</th>"
+        "<th>Status (MD)</th><th>Status (TVD)</th>"
+        "<th>Included / excluded (MD)</th><th>Included / excluded (TVD)</th>"
+        "</tr></thead><tbody>" + "".join(rows) + "</tbody></table></div></section>"
+    )
+
+
 def build_html(payload: dict) -> str:
     b = payload["bores"]
     drill = sum(x["drill"] for x in b)
     compl = sum(x["compl"] for x in b)
+    basis = aggregate_provenance(b).get("basis") or "unqualified"
+    basis_note = f"Basis: {escape(basis)}; no calendar-only or active rig-time claim."
     data_json = json.dumps(payload, separators=(",", ":"), sort_keys=True)
     # Guard: the payload is inlined in a <script>, so it must not carry a
     # closing-tag sequence. json.dumps escapes newlines; escape the slash too.
@@ -554,7 +691,7 @@ def build_html(payload: dict) -> str:
   <div class="crumb" id="crumb"></div>
 
   <section class="hero">
-    <p class="eyebrow">BSEE WAR rig-days · Lower Tertiary · Gulf of Mexico</p>
+    <p class="eyebrow">BSEE WAR · Retained source days · Lower Tertiary · Gulf of Mexico</p>
     <h1>D&amp;C Drill-Down</h1>
     <p class="lede">Start from a field or a block, drill to its bores, then to a single
       wellbore's full record — and on to that field's life-cycle, economics, and
@@ -568,9 +705,23 @@ def build_html(payload: dict) -> str:
         <div class="sub">OCS leases</div></div>
       <div class="tile"><div class="k">Bores</div><div class="v">{len(b)}</div>
         <div class="sub">incl. sidetracks</div></div>
-      <div class="tile"><div class="k">D&amp;C days</div><div class="v">{drill + compl:,}</div>
-        <div class="sub">{drill:,} drilling · {compl:,} completion</div></div>
+      <div class="tile"><div class="k">Retained D&amp;C source days</div><div class="v">{drill + compl:,}</div>
+        <div class="sub">Retained drilling-category source days: {drill:,} · Retained completion-category source days: {compl:,}</div>
+        <div class="sub">{basis_note}</div></div>
     </div>
+    <p class="note">This frozen-source drill-down is separate from the benchmark's
+      spud-to-completion calendar intervals. Source categories retain mixed calendar/WAR
+      definitions; supplied basis labels are displayed as recorded, without qualification.
+      See <a href="drilling_insights.html">calendar cycle time and population definitions</a>.
+      Dates and category names do not establish active rig time.</p>
+  </section>
+
+  <section class="note"><h2>Revision history</h2>
+    <table><thead><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr></thead>
+    <tbody><tr><td>1</td><td>2026-11-16</td><td>Qualify retained source duration labels
+      and display basis limits beside values to prevent unsupported timing claims.</td></tr>
+    <tr><td>2</td><td>2026-11-17</td><td>Restore source provenance and shorten table
+      basis cells while retaining duration qualifications in summaries.</td></tr></tbody></table>
   </section>
 
   <div class="controls">
@@ -593,8 +744,9 @@ def build_html(payload: dict) -> str:
 
   <div class="legend" aria-label="Legend">
     <span class="eyebrow" style="align-self:center">Reading the data</span>
-    <span class="item"><span class="sw" style="background:var(--accent)"></span>Drilling days (spud → TD)</span>
-    <span class="item"><span class="sw" style="background:color-mix(in srgb,var(--accent) 38%,transparent)"></span>Completion days (all post-TD rig time)</span>
+    <span class="item"><span class="sw" style="background:var(--accent)"></span>Retained drilling-category source days</span>
+    <span class="item"><span class="sw" style="background:color-mix(in srgb,var(--accent) 38%,transparent)"></span>Retained completion-category source days</span>
+    <span class="item">{basis_note}</span>
     <span class="item"><span class="sw" style="background:var(--ok)"></span>Reconciled / producer</span>
     <span class="item"><span class="sw" style="background:var(--warn)"></span>Open accounting question</span>
   </div>
@@ -604,10 +756,10 @@ def build_html(payload: dict) -> str:
       <span>D&amp;C drill-down — World Oil April 2026 QA/QC · Field ▸ Block ▸ Bore</span>
       <a href="https://huggingface.co/datasets/aceengineer/worldenergydata-explorer">Data &amp; provenance ↗</a>
     </div>
-    <p class="note">// self-contained: no external assets. Rows come verbatim from the
-      canonical extractor output (BSEE WAR vintage 2026-02-19). Drilling days mix calendar
-      spans (≤250 d) with WAR-union rig-days beyond, so batch-drilled wells undercount —
-      disclosed, not corrected.</p>
+    <p class="note">// self-contained: no external assets. Frozen extractor counts (BSEE WAR vintage 2026-02-19) are
+      retained without changing their mixed calendar/WAR definitions. No basis is
+      inferred from dates, day-count thresholds or category names. Basis qualification
+      and wider publication corrections remain unresolved.</p>
   </footer>
 {methodology_html()}</div>
 
@@ -616,15 +768,26 @@ def build_html(payload: dict) -> str:
 </html>
 """
 
-    labels = html_labels(payload)
+    labels = html_labels(payload) + intensity_html(payload)
     return html.replace("</body>", labels + "\n</body>")
 
 
-def main() -> None:
-    payload = load_payload()
-    OUT_HTML.write_text(build_html(payload), encoding="utf-8")
+def main(argv: list[str] | None = None) -> None:
+    import argparse
+
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--intensity-denominator", choices=("md", "tvd"))
+    parser.add_argument("--output", type=Path)
+    args = parser.parse_args(argv)
+    if args.intensity_denominator and args.output is None:
+        parser.error("--intensity-denominator requires --output for a separate preview")
+    if args.intensity_denominator and args.output.resolve() == OUT_HTML.resolve():
+        parser.error("intensity previews require an output other than the default page")
+    payload = load_payload(intensity_denominator=args.intensity_denominator)
+    output = args.output if args.output is not None else OUT_HTML
+    output.write_text(build_html(payload), encoding="utf-8")
     print(
-        f"wrote {OUT_HTML} — {len(payload['fields'])} fields / "
+        f"wrote {output} — {len(payload['fields'])} fields / "
         f"{len(payload['blocks'])} blocks / {len(payload['bores'])} bores"
     )
 

@@ -201,7 +201,12 @@ def _rough_npv(concept, capex_mm, discount_rate, mgr, sysname) -> float:
 def vessel_feasibility(
     concept: FieldConcept, scored: ScoredConcept
 ) -> VesselFeasibility:
-    """Which construction vessels can install this concept at this water depth."""
+    """Screen catalog depth/pipelay ratings; not installation qualification.
+
+    Issue 1323 completeness basis: an empty catalog or missing required values
+    cannot establish a capable count. Return an unevaluated result with the
+    missing basis named, rather than substituting zero or skipping a predicate.
+    """
     vf = VesselFeasibility(needs_pipelay=scored.tree_type == TreeType.WET)
     if concept.water_depth_m is None:
         vf.note = "water depth unknown"
@@ -215,9 +220,25 @@ def vessel_feasibility(
         return vf
     try:
         df = ConstructionVesselLoader().load()
+        if df.empty:
+            vf.note = "Not evaluated: construction vessel catalog empty"
+            return vf
+        required = ["WATER_DEPTH_RATING_M", "VESSEL_NAME"]
+        if vf.needs_pipelay:
+            required.append("PIPELAY_TENSION_T")
+        missing = [name for name in required if name not in df.columns]
+        if missing:
+            vf.note = "Not evaluated: catalog columns missing: " + ", ".join(missing)
+            return vf
+        sparse = [name for name in required if df[name].isna().any()]
+        if sparse:
+            vf.note = "Not evaluated: catalog values missing: " + ", ".join(sparse)
+            return vf
         capable = df[df["WATER_DEPTH_RATING_M"] >= concept.water_depth_m]
-        if vf.needs_pipelay and "PIPELAY_TENSION_T" in capable.columns:
-            capable = capable[capable["PIPELAY_TENSION_T"].fillna(0) > 0]
+        if vf.needs_pipelay:
+            # Existing positive-tension predicate denotes catalog capability;
+            # zero is absence of pipelay capability, not a design tension limit.
+            capable = capable[capable["PIPELAY_TENSION_T"] > 0]
         vf.water_depth_reachable = len(capable) > 0
         vf.capable_vessel_count = int(len(capable))
         vf.example_vessels = capable["VESSEL_NAME"].head(3).tolist()

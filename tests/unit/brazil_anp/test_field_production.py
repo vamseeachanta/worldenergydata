@@ -95,9 +95,64 @@ class TestFieldProductionAggregator:
         assert "avg_daily_rate" in summary
 
     def test_get_field_summary_unknown_field(self, aggregator):
+        """An absent label has no observations; it is not measured zero oil."""
         agg = aggregator.aggregate(MOCK_WELL_RECORDS.copy())
-        summary = aggregator.get_field_summary(agg, "NONEXISTENT")
-        assert summary["total_oil_bbl"] == 0.0
+        with pytest.raises(ValueError, match="No production records for field"):
+            aggregator.get_field_summary(agg, "NONEXISTENT")
+
+    def test_get_field_summary_empty_aggregate(self, aggregator):
+        """No input rows means no field observations, so no summary exists."""
+        agg = aggregator.aggregate(pd.DataFrame())
+        with pytest.raises(ValueError, match="No production records for field"):
+            aggregator.get_field_summary(agg, "FIELD_A")
+
+    def test_get_field_summary_recorded_zero(self, aggregator):
+        """Hand calculation: one observed month, all measured quantities zero.
+
+        Sum, mean, maximum and peak of the single zero observation are zero;
+        the observed month count is one. These are synthetic inputs, not limits.
+        """
+        agg = pd.DataFrame(
+            {
+                "field": ["FIELD_A"],
+                "oil_bbl": [0.0],
+                "oil_bbl_per_day": [0.0],
+                "water_cut": [0.0],
+            }
+        )
+
+        assert aggregator.get_field_summary(agg, "FIELD_A") == {
+            "total_oil_bbl": 0.0,
+            "avg_daily_rate": 0.0,
+            "max_water_cut": 0.0,
+            "total_months": 1,
+            "peak_oil_bbl": 0.0,
+        }
+
+    def test_get_field_summary_hand_calculated(self, aggregator):
+        """Independent arithmetic for synthetic, already aggregated months.
+
+        FIELD_A: total = 4 + 8 = 12 bbl; mean daily rate = (2 + 4) / 2
+        = 3 bbl/day; max water cut = max(0.25, 0.5) = 0.5; month count = 2;
+        peak = max(4, 8) = 8 bbl. FIELD_B's 16 bbl, 8 bbl/day and 0.75 water
+        cut are excluded. No conversion coefficients or tolerance are used.
+        """
+        agg = pd.DataFrame(
+            {
+                "field": ["FIELD_A", "FIELD_B", "FIELD_A"],
+                "oil_bbl": [4.0, 16.0, 8.0],
+                "oil_bbl_per_day": [2.0, 8.0, 4.0],
+                "water_cut": [0.25, 0.75, 0.5],
+            }
+        )
+
+        assert aggregator.get_field_summary(agg, "FIELD_A") == {
+            "total_oil_bbl": 12.0,
+            "avg_daily_rate": 3.0,
+            "max_water_cut": 0.5,
+            "total_months": 2,
+            "peak_oil_bbl": 8.0,
+        }
 
     def test_empty_input(self, aggregator):
         empty = pd.DataFrame(

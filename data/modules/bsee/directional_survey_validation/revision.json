@@ -1,10 +1,15 @@
 {
-  "revision": "1",
+  "revision": "2",
   "history": [
     {
       "revision": "1",
       "date": "2026-10-14",
       "change": "Initial comparison of one public survey to expose date-schema and geometry limitations"
+    },
+    {
+      "revision": "2",
+      "date": "2026-10-18",
+      "change": "Refresh the method digest after optional borehole-date handling; station results are unchanged"
     }
   ]
 }

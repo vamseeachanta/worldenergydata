@@ -222,6 +222,87 @@ def test_fixture_readiness_requires_nonempty_path(
     assert entry["fixture_readiness"] == ("packaged" if nonempty else "none")
 
 
+def _write_synthetic_landman_project(root: Path, declaration: dict) -> None:
+    (root / "data").mkdir(parents=True)
+    (root / "module-manifest.yaml").write_text(
+        yaml.safe_dump(
+            {
+                "modules": [
+                    {"id": "landman", "catalog_status": "not_applicable", **declaration}
+                ]
+            }
+        )
+    )
+    (root / "data" / "catalog.yaml").write_text(
+        yaml.safe_dump({"modules": {"landman": {"datasets": []}}})
+    )
+    fixture = root / "fixtures" / "synthetic.json"
+    fixture.parent.mkdir()
+    fixture.write_text('{"synthetic": true}\n')
+
+
+@pytest.mark.parametrize(
+    ("kind", "expected_readiness"),
+    [
+        ("absent", "none"),
+        ("empty", "none"),
+        ("null", "none"),
+        ("boolean", "none"),
+        ("list", "none"),
+        ("mapping", "none"),
+        ("missing", "none"),
+        ("absolute-file", "none"),
+        ("absolute-directory", "none"),
+        ("parent-traversal", "none"),
+        ("embedded-parent-traversal", "none"),
+        ("relative", "packaged"),
+    ],
+)
+def test_landman_fixture_declarations_keep_live_freshness_missing(
+    tmp_path: Path, kind: str, expected_readiness: str
+) -> None:
+    """Use the date from test_packaged_synthetic_fixture_keeps_live_freshness_missing."""
+    root = tmp_path / "repository"
+    sentinel = tmp_path / "sibling" / "synthetic.json"
+    sentinel.parent.mkdir()
+    sentinel.write_text('{"synthetic": true}\n')
+    relative = Path("fixtures") / "synthetic.json"
+    traversal = Path("..") / sentinel.relative_to(tmp_path)
+    declarations = {
+        "empty": "",
+        "null": None,
+        "boolean": True,
+        "list": [str(relative)],
+        "mapping": {"path": str(relative)},
+        "missing": str(relative.with_name("missing.json")),
+        "absolute-file": str(sentinel),
+        "absolute-directory": str(sentinel.parent),
+        "parent-traversal": str(traversal),
+        "embedded-parent-traversal": str(Path("fixtures") / ".." / traversal),
+        "relative": str(relative),
+    }
+    declaration = {} if kind == "absent" else {"fixture_catalog": declarations[kind]}
+    _write_synthetic_landman_project(root, declaration)
+    if kind in {
+        "absolute-file",
+        "absolute-directory",
+        "parent-traversal",
+        "embedded-parent-traversal",
+        "relative",
+    }:
+        target = root / declaration["fixture_catalog"]
+        assert target.exists()
+        assert target.read_bytes() if target.is_file() else list(target.iterdir())
+
+    entry = build_scorecard(root, report_date="2026-06-08")["modules"]["landman"]
+
+    assert entry["fixture_readiness"] == expected_readiness
+    assert entry["catalog_status"] == "not_applicable"
+    assert entry["freshness_status"] == "missing"
+    # Hand calculation: no datasets and the sum of no row counts both yield zero.
+    assert entry["dataset_count"] == entry["record_count"] == 0
+
+
 def test_generated_scorecard_fixture_consistency(tmp_path: Path):
     """Repository inputs are read; generated output stays in the temporary tree."""
     root = Path(__file__).resolve().parents[3]

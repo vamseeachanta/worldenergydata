@@ -44,9 +44,7 @@ from .fetch_cases import (
 )
 from .fetch_cases import case_response_cap as test_response_cap
 from .fetch_cases import case_wait_below_cap_proceeds as test_wait_below_cap_proceeds
-from .fetch_cases import (
-    make_fetcher,
-)
+from .fetch_cases import make_fetcher
 
 __all__ = [
     "test_cached_permission_survives_withdrawal",
@@ -171,7 +169,9 @@ def test_resume_after_interrupt_uses_retained_objects(
     resumed.run(urls)
     assert state["requests"] == ["/a", "/b"]
     assert set(
-        json.loads((tmp_path / "progress.json").read_text())["completed"]
+        json.loads((tmp_path / "progress.json").read_text(encoding="utf-8"))[
+            "completed"
+        ]
     ) == set(urls)
 
 

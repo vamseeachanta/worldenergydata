@@ -8,6 +8,7 @@ Author: WorldEnergyData Team
 Date: 2025-10-03
 """
 
+import warnings
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, List, Optional
@@ -261,7 +262,16 @@ class ProductionAdapter:
             by: Grouping level ('DEV_NAME', 'LEASE_NUMBER', or 'API_WELL_NUMBER')
 
         Returns:
-            Monthly aggregated DataFrame
+            Monthly totals grouped by ``by`` and ``YEAR_MONTH`` (monthly Period).
+            ``MONTHLY_OIL_BBL`` and ``MONTHLY_WATER_BBL`` are in barrels;
+            ``MONTHLY_GAS_MCF`` is in Mcf and exists only when gas is supplied.
+            Input volumes must already use these units; no conversion is applied.
+            ``MONTHLY_*_VOLUME`` columns remain equal-valued deprecated aliases
+            for a deprecation cycle; migrate to the explicit-unit names.
+
+        Warns:
+            DeprecationWarning: Once per successful call, announcing the legacy
+                aliases' future removal, including when the result is empty.
 
         Raises:
             AdapterError: If production data not loaded or missing columns
@@ -281,30 +291,31 @@ class ProductionAdapter:
             self.production_data["PROD_DATE"]
         ).dt.to_period("M")
 
-        # Aggregate
+        # Sum source volumes without conversion, matching
+        # data/production.py:ProductionProcessor.aggregate_monthly (F2 units).
+        agg_dict = {"OIL_VOLUME": "sum", "WATER_VOLUME": "sum"}
+        if "GAS_VOLUME" in self.production_data.columns:
+            agg_dict["GAS_VOLUME"] = "sum"
         aggregated = (
-            self.production_data.groupby([by, "YEAR_MONTH"])
-            .agg(
-                {
-                    "OIL_VOLUME": "sum",
-                    "WATER_VOLUME": "sum",
-                    "GAS_VOLUME": (
-                        "sum"
-                        if "GAS_VOLUME" in self.production_data.columns
-                        else lambda x: 0
-                    ),
-                }
-            )
-            .reset_index()
+            self.production_data.groupby([by, "YEAR_MONTH"]).agg(agg_dict).reset_index()
         )
 
-        # Rename to FDAS convention
-        aggregated = aggregated.rename(
-            columns={
-                "OIL_VOLUME": "MONTHLY_OIL_VOLUME",
-                "WATER_VOLUME": "MONTHLY_WATER_VOLUME",
-                "GAS_VOLUME": "MONTHLY_GAS_VOLUME",
-            }
+        # Canonical schema: adapters/contract.py:FDAS_PRODUCTION_COLUMNS.
+        rename_map = {
+            "OIL_VOLUME": "MONTHLY_OIL_BBL",
+            "WATER_VOLUME": "MONTHLY_WATER_BBL",
+            "GAS_VOLUME": "MONTHLY_GAS_MCF",
+        }
+        aggregated = aggregated.rename(columns=rename_map)
+        for source, canonical in rename_map.items():
+            if canonical in aggregated.columns:
+                aggregated[f"MONTHLY_{source}"] = aggregated[canonical]
+        warnings.warn(
+            "MONTHLY_*_VOLUME columns are deprecated aliases of "
+            "MONTHLY_OIL_BBL/MONTHLY_WATER_BBL/MONTHLY_GAS_MCF and will be "
+            "removed after a deprecation cycle; migrate to the _BBL/_MCF names.",
+            DeprecationWarning,
+            stacklevel=2,
         )
 
         return aggregated
