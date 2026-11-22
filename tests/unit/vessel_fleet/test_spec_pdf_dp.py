@@ -211,3 +211,56 @@ def test_class_survives_isolated_stores_and_csv(ingest, tmp_path, specs, expecte
     with (tmp_path / "curated/drilling_rigs.csv").open(newline="") as stream:
         [exported] = csv.DictReader(stream)
     assert int(exported["DP_CLASS"]) == expected
+
+
+def test_mixed_pdf_classes_survive_storage_and_fusion(tmp_path):
+    import pyarrow as pa
+    import pyarrow.parquet as pq
+
+    from worldenergydata.vessel_fleet.dedup.deduplicator import deduplicate_fleet
+    from worldenergydata.vessel_fleet.storage.parquet import ParquetStore
+
+    store = ParquetStore(tmp_path)
+    pdf = {"DATA_SOURCE": "contractor_spec_pdf"}
+    pdf_rows = [
+        {**pdf, "VESSEL_NAME": "A", "DP_CLASS": None},
+        {**pdf, "VESSEL_NAME": "B", "DP_CLASS": 3},
+        {**pdf, "VESSEL_NAME": "C"},
+        {**pdf, "VESSEL_NAME": "D"},
+    ]
+    path = store.save(pdf_rows, "pdf.parquet")
+    raw = store.load("pdf.parquet")
+    fleet = [
+        {"DATA_SOURCE": "contractor_fleet_page", "VESSEL_NAME": name, "DP_CLASS": 2}
+        for name in ("A", "B", "C")
+    ]
+    merged = deduplicate_fleet(fleet + raw)
+    classes = {row["VESSEL_NAME"]: row.get("DP_CLASS") for row in merged}
+    assert classes == {"A": 2, "B": 3, "C": 2, "D": None}
+    assert all(type(classes[name]) is int for name in ("A", "B", "C"))
+    assert [row["DP_CLASS"] for row in raw] == [None, 3, None, None]
+    assert pa.types.is_integer(pq.read_schema(path).field("DP_CLASS").type)
+
+    store.save(merged, "merged.parquet")
+    with store.export_csv("merged.parquet", "merged.csv").open(newline="") as stream:
+        exported = {
+            row["VESSEL_NAME"]: row["DP_CLASS"] for row in csv.DictReader(stream)
+        }
+    assert exported == {"A": "2", "B": "3", "C": "2", "D": ""}
+
+
+def test_legacy_float_classes_load_and_export_as_nullable_integers(tmp_path):
+    import pandas as pd
+
+    from worldenergydata.vessel_fleet.storage.parquet import ParquetStore
+
+    store = ParquetStore(tmp_path)
+    pd.DataFrame({"DP_CLASS": [None, 3.0]}).to_parquet(
+        tmp_path / "legacy.parquet", engine="pyarrow", index=False
+    )
+    missing, known = store.load("legacy.parquet")
+    assert missing["DP_CLASS"] is None
+    assert known["DP_CLASS"] == 3
+    assert type(known["DP_CLASS"]) is int
+    with store.export_csv("legacy.parquet", "legacy.csv").open(newline="") as stream:
+        assert [row["DP_CLASS"] for row in csv.DictReader(stream)] == ["", "3"]
