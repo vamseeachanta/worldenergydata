@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
-import csv
-import io
 import json
 from hashlib import sha256
 from itertools import combinations
 from math import isfinite
 from pathlib import Path
+
+from .scope_check_csv import benchmark_rows
 
 DEFAULT_BENCHMARKS = Path("reports/cost/unit_cost_benchmarks.csv")
 GROUP_KEYS = ("water_depth_band", "region", "development_type", "host_type")
@@ -132,7 +132,6 @@ def _load_table(path):
         raise FileNotFoundError(
             "benchmark table is absent; supply the benchmark table path"
         ) from None
-    reader = csv.DictReader(io.StringIO(content.decode("utf-8-sig")))
     required = set(GROUP_KEYS) | {
         "metric",
         "unit",
@@ -144,26 +143,16 @@ def _load_table(path):
         "comparables",
         "cost_basis",
     }
-    if not required <= set(reader.fieldnames or ()):
-        raise ValueError("benchmark table is missing required columns")
     rows, seen = [], set()
-    excluded_unknown = 0
-    for raw in reader:
-        if any(value is None for value in raw.values()) or None in raw:
-            raise ValueError("benchmark row has an invalid column count")
-        row = {key: value.strip() for key, value in raw.items()}
+    excluded_unknown = []
+    for row in benchmark_rows(content, required):
         if row["metric"] not in METRICS:
             raise ValueError("benchmark row has an unsupported metric")
         if any(not row[key] for key in GROUP_KEYS):
             raise ValueError("benchmark grouping keys must be nonempty")
-        try:
-            count = int(row["n"])
-        except ValueError:
-            raise ValueError("benchmark n must be an integer") from None
-        if count < 0:
-            raise ValueError("benchmark n must be nonnegative")
-        if count == 0:
-            continue
+        if not row["n"].isascii() or not row["n"].isdecimal():
+            raise ValueError("benchmark n must be a nonnegative decimal integer")
+        count = int(row["n"])
         if (
             row["water_depth_band"] not in DEPTH_BANDS
             and row["water_depth_band"].casefold() != "unknown"
@@ -182,15 +171,18 @@ def _load_table(path):
         }:
             raise ValueError("benchmark unit disagrees with metric or cost basis")
         row["usd_multiplier"] = 1_000_000 if row["unit"].startswith("USD_MM") else 1
-        try:
-            for key in ("p10", "p50", "p90"):
-                row[key] = _number(float(row[key]), f"benchmark {key}")
-        except (ValueError, OverflowError):
-            raise ValueError(
-                "benchmark percentiles must be finite and nonnegative"
-            ) from None
-        if not row["p10"] <= row["p50"] <= row["p90"]:
-            raise ValueError("benchmark percentiles must be ordered p10 <= p50 <= p90")
+        if count or any(row[key] for key in ("p10", "p50", "p90")):
+            try:
+                for key in ("p10", "p50", "p90"):
+                    row[key] = _number(float(row[key]), f"benchmark {key}")
+            except (ValueError, OverflowError):
+                raise ValueError(
+                    "benchmark percentiles must be finite and nonnegative"
+                ) from None
+            if not row["p10"] <= row["p50"] <= row["p90"]:
+                raise ValueError(
+                    "benchmark percentiles must be ordered p10 <= p50 <= p90"
+                )
         if row["indicative_only"].lower() not in {"true", "false"}:
             raise ValueError("benchmark indicative_only must be true or false")
         row["indicative_only"] = row["indicative_only"].lower() == "true" or count < 5
@@ -204,8 +196,10 @@ def _load_table(path):
         if identity in seen:
             raise ValueError("duplicate benchmark group")
         seen.add(identity)
+        if count == 0:
+            continue
         if any(row[key].casefold() == "unknown" for key in GROUP_KEYS):
-            excluded_unknown += 1
+            excluded_unknown.append(row)
             continue
         rows.append(row)
     if not rows:
@@ -213,10 +207,10 @@ def _load_table(path):
     return rows, sha256(content).hexdigest(), excluded_unknown
 
 
-def _select(rows, metric, group):
+def _select(rows, metric, group, excluded):
     candidates = [
         row
-        for row in rows
+        for row in rows + excluded
         if row["metric"] == metric
         and all(row[key] == group[key] for key in ("water_depth_band", "host_type"))
     ]
@@ -233,6 +227,8 @@ def _select(rows, metric, group):
                     stage[identity] = (row, sorted(dropped))
         if len(stage) == 1:
             row, dropped = next(iter(stage.values()))
+            if row in excluded:
+                return None, [], None
             return row, dropped, None
         if len(stage) > 1:
             return (
@@ -291,18 +287,19 @@ def check_scope(scope: dict, benchmark_path=DEFAULT_BENCHMARKS) -> dict:
     if excluded_unknown:
         result["limitations"].append(
             "Excluded benchmark rows with unknown grouping labels: "
-            f"{excluded_unknown}; these rows cannot qualify as comparables."
+            f"{len(excluded_unknown)}; these rows cannot qualify as comparables."
         )
     intervals, bases, ids = {}, set(), set()
-    indicative = bool(excluded_unknown)
+    indicative = ambiguous_found = False
     for metric, (quantity_key, _unit) in METRICS.items():
         quantity = scope.get(quantity_key, 0)
         if not quantity:
             continue
-        row, dropped, ambiguous = _select(rows, metric, group)
+        row, dropped, ambiguous = _select(rows, metric, group, excluded_unknown)
         if row is None:
             result["unbenchmarked_elements"].append(quantity_key)
             if ambiguous:
+                ambiguous_found = True
                 result["limitations"].append(
                     f"{metric}: ambiguous comparable groups; {ambiguous}; "
                     "summary percentiles cannot be pooled."
@@ -344,7 +341,9 @@ def check_scope(scope: dict, benchmark_path=DEFAULT_BENCHMARKS) -> dict:
             indicative_only=indicative or bool(result["unbenchmarked_elements"]),
         )
     else:
-        result["reason"] = "no close comparables"
+        result["reason"] = (
+            "ambiguous comparable groups" if ambiguous_found else "no close comparables"
+        )
     if result["cost_basis"] == "nominal":
         result["escalation_basis"][
             "limitation"

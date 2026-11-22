@@ -12,6 +12,7 @@ are not established by matching these groups.
 | --- | --- | --- |
 | 0 | 2026-11-12 | Introduce explicit per-metric screening ranges and JSON interfaces without adding overlapping CAPEX estimates. |
 | 1 | 2026-11-12 | Compare equally close groups together and reject unusable tables, missing quantities and unrecognised labels so input defects cannot appear as missing comparables. |
+| 2 | 2026-11-16 | Reject duplicate CSV headings and malformed rows, retain excluded sampled groups in ambiguity checks, and distinguish ambiguous groups from absent comparables. |
 
 ## Python and command line
 
@@ -36,6 +37,8 @@ A scope requires at least one positive `wells`, `trees`, `surf_km`,
 and all-zero quantities are rejected. A valid scope without close comparables
 produces `range: null` and
 `reason: "no close comparables"` with a successful exit.
+If no metric yields a range and at least one metric has equally close competing
+groups, the reason is instead `"ambiguous comparable groups"`.
 
 `examples/cost_check_invented_scope.json` contains an **invented** scope and quote,
 not a bid or an engineering reference. All test benchmark prices and identifiers
@@ -60,11 +63,13 @@ whitespace is removed. The supplied table defines the case-sensitive region,
 development-type and host labels. A host label must occur in a usable table row;
 an unrecognised spelling is an input error. The producer's `unknown` placeholder
 is rejected, case-insensitively, in scope grouping keys. Omit an unknown optional
-scope key instead. Table rows carrying that placeholder in any grouping key are
-excluded from matching and the host vocabulary. A sampled excluded row is counted
-in the output limitations and makes the result indicative; a table without any
-remaining usable row is rejected. Usable table depth bands must use the four
-labels above.
+scope key instead. Table rows carrying that placeholder in any grouping key cannot
+provide a range or establish the host vocabulary. Sampled excluded rows are counted
+in the output limitations. When their mandatory keys and retained optional keys
+match a metric's fallback stage, they still count as competing groups: excluding
+their prices cannot turn an ambiguous stage into a unique match. An unrelated
+excluded row does not make an exact match indicative. A table without any usable
+row is rejected. Usable table depth bands must use the four labels above.
 Static schema validation does not establish membership in a supplied table's
 host vocabulary; runtime validation performs that check after loading the table.
 
@@ -76,7 +81,11 @@ nearest nonempty stage is used only if it contains exactly one row with
 `n >= 1`. Multiple rows are ambiguous even when one relaxation has a singleton
 and another has several matches. A wider stage cannot resolve that tie. The
 limitation names the group count and the total omitted plus relaxed key count;
-`range: null` retains `reason: "no close comparables"` when no metric is usable.
+`range: null` carries `reason: "ambiguous comparable groups"` when at least one
+metric is ambiguous. `reason: "no close comparables"` means no group was selected
+and no ambiguous stage was found. If a different metric supplies a unique range,
+that range is retained and the ambiguous metric is named in `limitations` and
+`unbenchmarked_elements`.
 The result will not pick an arbitrary row or pool their summary percentiles.
 Each selected row's actual keys and `dropped_keys` are returned under
 `matched_group[metric]`.
@@ -84,10 +93,14 @@ A different region's row can therefore serve only as an explicitly flagged
 proxy. Dropped keys make the output indicative, regardless of sample size.
 
 Every range includes its own comparables; the top-level `comparables` is their
-sorted union. A row must name exactly `n` unique project identifiers. Duplicate
-metric/group rows, unsupported units, invalid sample counts and non-finite or
-unordered percentiles are rejected for rows with samples. Zero-sample rows do
-not qualify for matching or establish the host vocabulary. Fewer than five
+sorted union. A row must name exactly `n` unique project identifiers. CSV headings
+are stripped and duplicates are rejected before reading data rows. CSV parsing
+errors are reported as validation errors. Sample counts must contain only ASCII
+decimal digits. Duplicate metric/group rows, unsupported units, invalid sample
+counts and non-finite or unordered percentiles are rejected, including in
+zero-sample rows. Zero-sample rows may leave all three percentiles blank; a partial
+triplet is invalid. They must have empty comparable identifiers; they
+do not qualify for matching or establish the host vocabulary. Fewer than five
 comparables makes a result indicative even if the input flag disagrees.
 Unsupported or unmatched positive
 scope quantities are listed in `unbenchmarked_elements` and also make a result
@@ -178,5 +191,5 @@ accepts the scope object directly and returns the same result as Python. Invalid
 JSON or scope/table data returns 400; a non-JSON content type returns 415; a
 request larger than 65,536 bytes returns 413. An absent or unreadable table
 returns 503. Errors contain JSON without local filesystem paths. Applications
-can create the Flask app with `create_app(benchmark_path)`; tests use a real HTTP
-round trip on an ephemeral loopback port.
+can create the Flask app with `create_app(benchmark_path)`; tests use Flask's
+in-process client without opening a network connection.
