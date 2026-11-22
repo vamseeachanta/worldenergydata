@@ -155,7 +155,15 @@ def load_fields(path: Optional[Path] = None) -> FieldsRegistry:
     Raises ``ValueError`` on duplicate ids / alias collisions / lease collisions.
     """
     path = Path(path) if path is not None else _default_path()
-    data = yaml.safe_load(path.read_text()) or {}
+    return load_fields_text(path.read_text())
+
+
+def load_fields_text(text: str) -> FieldsRegistry:
+    """Parse a captured YAML string with the same indexing and collision guards.
+
+    Input decoding and byte-level provenance remain the caller's responsibility.
+    """
+    data = yaml.safe_load(text) or {}
     fields: list[Field] = []
     for raw in data.get("fields", []):
         bsee = raw.get("bsee") or {}
