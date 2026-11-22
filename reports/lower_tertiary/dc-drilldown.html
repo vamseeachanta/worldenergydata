@@ -163,7 +163,7 @@ footer.site a{color:var(--accent);text-decoration:none}
   <div class="crumb" id="crumb"></div>
 
   <section class="hero">
-    <p class="eyebrow">BSEE WAR rig-days · Lower Tertiary · Gulf of Mexico</p>
+    <p class="eyebrow">BSEE WAR · Retained source days · Lower Tertiary · Gulf of Mexico</p>
     <h1>D&amp;C Drill-Down</h1>
     <p class="lede">Start from a field or a block, drill to its bores, then to a single
       wellbore's full record — and on to that field's life-cycle, economics, and
@@ -177,9 +177,23 @@ footer.site a{color:var(--accent);text-decoration:none}
         <div class="sub">OCS leases</div></div>
       <div class="tile"><div class="k">Bores</div><div class="v">253</div>
         <div class="sub">incl. sidetracks</div></div>
-      <div class="tile"><div class="k">D&amp;C days</div><div class="v">25,404</div>
-        <div class="sub">12,436 drilling · 12,968 completion</div></div>
+      <div class="tile"><div class="k">Retained D&amp;C source days</div><div class="v">25,404</div>
+        <div class="sub">Retained drilling-category source days: 12,436 · Retained completion-category source days: 12,968</div>
+        <div class="sub">Basis: unqualified; no calendar-only or active rig-time claim.</div></div>
     </div>
+    <p class="note">This frozen-source drill-down is separate from the benchmark's
+      spud-to-completion calendar intervals. Source categories retain mixed calendar/WAR
+      definitions; supplied basis labels are displayed as recorded, without qualification.
+      See <a href="drilling_insights.html">calendar cycle time and population definitions</a>.
+      Dates and category names do not establish active rig time.</p>
+  </section>
+
+  <section class="note"><h2>Revision history</h2>
+    <table><thead><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr></thead>
+    <tbody><tr><td>1</td><td>2026-11-16</td><td>Qualify retained source duration labels
+      and display basis limits beside values to prevent unsupported timing claims.</td></tr>
+    <tr><td>2</td><td>2026-11-17</td><td>Restore source provenance and shorten table
+      basis cells while retaining duration qualifications in summaries.</td></tr></tbody></table>
   </section>
 
   <div class="controls">
@@ -202,8 +216,9 @@ footer.site a{color:var(--accent);text-decoration:none}
 
   <div class="legend" aria-label="Legend">
     <span class="eyebrow" style="align-self:center">Reading the data</span>
-    <span class="item"><span class="sw" style="background:var(--accent)"></span>Drilling days (spud → TD)</span>
-    <span class="item"><span class="sw" style="background:color-mix(in srgb,var(--accent) 38%,transparent)"></span>Completion days (all post-TD rig time)</span>
+    <span class="item"><span class="sw" style="background:var(--accent)"></span>Retained drilling-category source days</span>
+    <span class="item"><span class="sw" style="background:color-mix(in srgb,var(--accent) 38%,transparent)"></span>Retained completion-category source days</span>
+    <span class="item">Basis: unqualified; no calendar-only or active rig-time claim.</span>
     <span class="item"><span class="sw" style="background:var(--ok)"></span>Reconciled / producer</span>
     <span class="item"><span class="sw" style="background:var(--warn)"></span>Open accounting question</span>
   </div>
@@ -213,10 +228,10 @@ footer.site a{color:var(--accent);text-decoration:none}
       <span>D&amp;C drill-down — World Oil April 2026 QA/QC · Field ▸ Block ▸ Bore</span>
       <a href="https://huggingface.co/datasets/aceengineer/worldenergydata-explorer">Data &amp; provenance ↗</a>
     </div>
-    <p class="note">// self-contained: no external assets. Rows come verbatim from the
-      canonical extractor output (BSEE WAR vintage 2026-02-19). Drilling days mix calendar
-      spans (≤250 d) with WAR-union rig-days beyond, so batch-drilled wells undercount —
-      disclosed, not corrected.</p>
+    <p class="note">// self-contained: no external assets. Frozen extractor counts (BSEE WAR vintage 2026-02-19) are
+      retained without changing their mixed calendar/WAR definitions. No basis is
+      inferred from dates, day-count thresholds or category names. Basis qualification
+      and wider publication corrections remain unresolved.</p>
   </footer>
 <section class="panel war-methodology"><h2>WAR methodology limits</h2><p>Weekly boundary quantization: 30 CFR 250.743(a) requires weekly WARs for the
 region covered by that paragraph, Sunday (12 a.m.) through Saturday (11:59 p.m.).
@@ -279,6 +294,10 @@ function bar(d,c){
   return `<span class="bar"><i class="d" style="width:${(d/t*100).toFixed(1)}%"></i><i class="c" style="width:${(c/t*100).toFixed(1)}%"></i></span>`;
 }
 
+function basisNote(record){
+  return `<span class="note" style="display:block">Basis: ${esc(record.basis||'unqualified')}; no calendar-only or active rig-time claim.</span>`;
+}
+
 function renderIndex(){
   const isField=axis==='field';
   const items=(isField?DATA.fields:DATA.blocks).filter(n=>
@@ -295,8 +314,9 @@ function renderIndex(){
     return `<button class="node" data-kind="${isField?'field':'block'}" data-id="${esc(id)}">
       <span class="top"><h3>${esc(title)}</h3>${badge}</span>
       <span class="meta">${esc(meta)}</span>
-      <span class="nums"><div>bores<b>${n.bores}</b></div><div>drilling<b>${fmt(n.drill)}</b></div>
-      <div>completion<b>${fmt(n.compl)}</b></div></span>
+      <span class="nums"><div>bores<b>${n.bores}</b></div><div>Retained drilling-category source days<b>${fmt(n.drill)}</b></div>
+      <div>Retained completion-category source days<b>${fmt(n.compl)}</b></div></span>
+      ${basisNote(n)}
       ${bar(n.drill,n.compl)}</button>`;
   }).join(''):'<div class="empty">No match. Clear the search to see all.</div>';
 }
@@ -308,6 +328,7 @@ function renderNode(kind,id){
   const drill=all.reduce((s,b)=>s+b.drill,0), compl=all.reduce((s,b)=>s+b.compl,0);
   const prod=all.filter(b=>b.prod).length, st=all.filter(b=>b.st).length;
   const field=kind==='field'?DATA.fields.find(f=>f.name===id):DATA.fields.find(f=>f.name===all[0].field);
+  const node=kind==='field'?field:DATA.blocks.find(k=>k.id===id);
   crumb([{label:kind==='field'?'Fields':'Blocks',href:'#/'},{label:id}]);
   $('#count').textContent=`${list.length} of ${all.length} bores`;
   $('#index').innerHTML='';
@@ -318,12 +339,13 @@ function renderNode(kind,id){
     <p class="sub">${kind==='field'?esc(field.status):'Block of '+esc(all[0].field)} · ${fmt(all[0].wd)} ft water depth</p>
     <div class="dl">
       <div><dt>Bores</dt><dd>${all.length}</dd></div>
-      <div><dt>Drilling days</dt><dd>${fmt(drill)}</dd></div>
-      <div><dt>Completion days</dt><dd>${fmt(compl)}</dd></div>
-      <div><dt>D&amp;C days</dt><dd>${fmt(drill+compl)}</dd></div>
+      <div><dt>Retained drilling-category source days</dt><dd>${fmt(drill)}</dd></div>
+      <div><dt>Retained completion-category source days</dt><dd>${fmt(compl)}</dd></div>
+      <div><dt>Retained D&amp;C source days</dt><dd>${fmt(drill+compl)}</dd></div>
       <div><dt>Producers</dt><dd>${prod||'—'}<small>${prod?' of '+all.length:''}</small></dd></div>
       <div><dt>Sidetracks</dt><dd>${st}</dd></div>
     </div>
+    ${basisNote(node)}
     ${kind==='field'?`<div class="links"><span>Blocks:</span>${blocks}</div>`:''}
     ${links(field.slug)}
     <div class="table-wrap" style="margin-top:18px">${boreTable(list,kind==='field')}</div>
@@ -333,12 +355,13 @@ function renderNode(kind,id){
 function boreTable(list,showBlock){
   if(!list.length)return '<div class="empty">No bores match the search.</div>';
   return `<table><thead><tr><th>API12</th><th>Bore</th>${showBlock?'<th>Block</th>':''}
-    <th>Spud</th><th>TD</th><th class="num">Drill</th><th class="num">Compl</th>
-    <th class="num">D&amp;C</th><th>Flags</th></tr></thead><tbody>
+    <th>Spud</th><th>TD</th><th class="num">Retained drilling-category source days</th><th class="num">Retained completion-category source days</th>
+    <th class="num">Retained D&amp;C source days</th><th>Source basis</th><th>Flags</th></tr></thead><tbody>
     ${list.map(b=>`<tr tabindex="0" data-api="${b.api}">
       <td class="mono">${b.api}</td><td>${esc(b.name)}</td>${showBlock?`<td class="mono">${esc(b.block)}</td>`:''}
       <td class="mono">${b.spud||'—'}</td><td class="mono">${b.td||'—'}</td>
       <td class="num">${b.drill}</td><td class="num">${b.compl}</td><td class="num">${b.drill+b.compl}</td>
+      <td>${esc(b.basis||'unqualified')}</td>
       <td>${b.prod?'<span class="badge ok">producer</span> ':''}${b.st?'<span class="badge hold">ST</span>':''}</td>
     </tr>`).join('')}</tbody></table>`;
 }
@@ -371,15 +394,16 @@ function renderBore(api){
     <div class="dl">
       <div><dt>Spud</dt><dd>${b.spud||'—'}</dd></div>
       <div><dt>Total depth</dt><dd>${b.td||'—'}</dd></div>
-      <div><dt>Drilling days</dt><dd>${b.drill}</dd></div>
-      <div><dt>Completion days</dt><dd>${b.compl}</dd></div>
-      <div><dt>D&amp;C days</dt><dd>${b.drill+b.compl}</dd></div>
+      <div><dt>Retained drilling-category source days</dt><dd>${b.drill}</dd></div>
+      <div><dt>Retained completion-category source days</dt><dd>${b.compl}</dd></div>
+      <div><dt>Retained D&amp;C source days</dt><dd>${b.drill+b.compl}</dd></div>
       <div><dt>Measured depth</dt><dd>${b.md?fmt(b.md):'—'}<small> ft</small></dd></div>
       <div><dt>True vertical</dt><dd>${b.tvd?fmt(b.tvd):'—'}<small> ft</small></dd></div>
       <div><dt>Max mud weight</dt><dd>${b.ppg||'—'}<small> ppg</small></dd></div>
     </div>
+    ${basisNote(b)}
     <p class="sub"><span class="badge ${vinBadge}">vintage</span> ${esc(vin)}.
-      Completion days count all post-TD rig time, including later servicing
+      Retained completion-category values may include later servicing
       (<a href="https://github.com/vamseeachanta/worldenergydata/issues/846">#846</a>).</p>
     ${links(field.slug)}</div>`;
 }
