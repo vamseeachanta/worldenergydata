@@ -11,6 +11,7 @@ unpickling. The selected digest identifies the approved archive version.
 | --- | --- | --- |
 | Initial | 2026-10-22 | Document verified text loading and an offline example to replace unpickling. |
 | 1 | 2026-10-24 | Validate every CSV record width before table construction to reject absent fields. |
+| 2 | 2026-11-22 | Add a raw-station envelope that retains provenance and unresolved depth units for database inputs. |
 
 ## Inputs and method
 
@@ -87,6 +88,55 @@ depth list is `[100, 100]`. These expectations follow by direct transcription:
 two input rows give two records; the first field retains its leading zeros, and
 the fourth field in each row is the numeric value `100`. No trajectory equation
 or engineering acceptance limit is added by this loader.
+
+## Raw-station envelope
+
+`worldenergydata.bsee.data.survey_envelope.build_survey_envelope` accepts exact
+retained UTF-8, headerless CSV bytes and explicit metadata. It verifies SHA-256
+before decoding those same immutable bytes and returns JSON-compatible schema
+version 1 (`bsee.dsptsdelimit.v1`). The following separate synthetic example
+performs no archive download or geometry calculation:
+
+```python
+import hashlib
+
+from worldenergydata.bsee.data.survey_envelope import build_survey_envelope
+
+raw = (b"000000000001,10,0,200,N,20,0,E,199,1,2,-90,28\n"
+       b"000000000001,11,0,100,S,21,0,W,99,,,,\n")
+envelope = build_survey_envelope(
+    raw,
+    api12="000000000001",
+    source_url="https://example.org/synthetic.csv",
+    retrieved_at="2026-10-01T12:00:00Z",
+    declared_sha256=hashlib.sha256(raw).hexdigest(),
+    data_kind="synthetic",
+)
+assert envelope["readiness"] == "not_qualified"
+assert envelope["stations"][1]["values"]["DELTA_X"] is None
+```
+
+The interface requires `data_kind="source"` or `"synthetic"`; synthetic input
+must remain labelled synthetic. Every record must have all 13 fields and the
+same declared 12-digit identifier. `source_row` counts logical CSV records from
+one, including quoted multiline records. Source order, leading zeros, padding
+and nonempty decoded cell strings are retained. CSV quoting is decoded; the
+original bytes must be retained separately to reproduce their exact spelling.
+Only explicitly blank optional numeric cells (`DELTA_X`, `DELTA_Y`,
+`SURF_LONGITUDE`, `SURF_LATITUDE`) become null. Critical numbers must be present;
+all supplied numbers must parse as finite Python floats. There is no locale or
+thousands-separator conversion. Direction codes must decode to N/S and E/W.
+
+Depth units remain `unresolved`. Angular fields and geographic positions and
+differences follow the source schema's degree/arcminute meanings; `DELTA_X` and
+`DELTA_Y` remain longitude/latitude differences, never linear offsets. No datum,
+coordinate, trajectory, physical-range check or engineering suitability is
+inferred. The builder performs no file writes or network calls. The URL and
+explicit offset-aware retrieval timestamp are caller declarations; syntax
+checks do not establish acquisition chronology, source rights or freshness.
+A URL and matching digest alone cannot establish engineering suitability.
+The full multi-regulator database, casing/tubing integration, rig registry and
+site publication remain subsequent work under #681.
 
 ## Sources and limits
 
