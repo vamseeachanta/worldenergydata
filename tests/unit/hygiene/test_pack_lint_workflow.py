@@ -10,6 +10,8 @@ from pathlib import Path
 import pytest
 import yaml
 
+from tests.workflows.test_metadata_edits import code_job_runs
+
 ROOT = Path(__file__).resolve().parents[3]
 PASS = Path(__file__).with_name("pack_lint_fixtures") / "pass.md"
 WORKFLOW = ROOT / ".github/workflows/pr-validation.yml"
@@ -79,7 +81,7 @@ def lint_merge(repo, env):
 def lint_step(repo, env):
     # Execute the actual workflow shell, not a test copy of its selection logic.
     job = yaml.safe_load(WORKFLOW.read_text())["jobs"]["pack-lint"]
-    assert "if" not in job and not job.get("continue-on-error", False)
+    assert code_job_runs(job) and not job.get("continue-on-error", False)
     steps = job["steps"]
     matches = [step for step in steps if step.get("name") == "Lint changed agent packs"]
     assert len(matches) == 1

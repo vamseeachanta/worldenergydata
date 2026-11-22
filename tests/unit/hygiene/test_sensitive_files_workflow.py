@@ -17,6 +17,9 @@ from pathlib import Path
 import pytest
 import yaml
 
+from tests.workflows.test_ci_triggers import _render
+from tests.workflows.test_metadata_edits import code_job_runs
+
 WORKFLOW = Path(__file__).resolve().parents[3] / ".github/workflows/pr-validation.yml"
 
 
@@ -133,10 +136,10 @@ def check_step(repo, env):
 
 
 def test_sensitive_job_is_unconditional_and_fetches_parents():
-    """Checkout's documented parent-access depth is 2; no skip is allowed."""
+    """Every code update checks filenames against the first merge parent."""
     job = workflow_job()
-    assert job["name"] == "Check Sensitive Files"
-    assert "if" not in job and not job.get("continue-on-error", False)
+    assert _render(job["name"], {}) == "Check Sensitive Files"
+    assert code_job_runs(job) and not job.get("continue-on-error", False)
     checkout = next(s for s in job["steps"] if "checkout@" in s.get("uses", ""))
     assert checkout["with"]["fetch-depth"] == 2
     assert "ref" not in checkout["with"]
