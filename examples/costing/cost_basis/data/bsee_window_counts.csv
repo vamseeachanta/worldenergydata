@@ -1,0 +1,2 @@
+WINDOW_START,WINDOW_END,WELLBORES_SPUDDED,WELLS_API10,SOURCE_FILE
+2006-10-01,2023-12-31,4748,3134,bsee_wellbores_spudded_by_year.csv (same input and pass; month-level count)
