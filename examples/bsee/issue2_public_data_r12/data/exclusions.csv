@@ -1,0 +1,30 @@
+source,rule,records
+APM,raw_records,102040
+APM,duplicate_rows,207
+APM,unmatched_or_ambiguous_region,0
+APM,non_gulf,0
+APM,missing_status_date,0
+APM,invalid_nonblank_status_date,0
+APM,outside_years,3901
+APM,repeat_api_operation_year_extra_submissions,42699
+APM,Temporary abandonment,28516
+APM,Permanent abandonment,23465
+APM,Intervention,20723
+APM,Excluded: other or administrative scope,10575
+APM,Completion,8243
+APM,Excluded: new hole,4804
+APM,Excluded: unspecified abandonment,1606
+APM,zero_depth_included,0
+Borehole,raw_records,57515
+Borehole,duplicate_rows,0
+Borehole,non_gulf,1933
+Borehole,non_original,17533
+Borehole,cancelled,762
+Borehole,missing_spud_date,17
+Borehole,invalid_nonblank_spud_date,0
+Borehole,outside_years,34357
+Borehole,zero_depth_selected,0
+Borehole,blank_td_selected,34
+Borehole,invalid_nonblank_td_selected,0
+Borehole,zero_interval_selected,24
+Borehole,negative_interval_selected,0
