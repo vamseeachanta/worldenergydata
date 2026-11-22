@@ -4,7 +4,7 @@ Maps each bin subdirectory to its ZIP download URL and the .bin files
 that should exist after extraction.  OGOR-A yearly files (1996-2024 +
 current) are generated programmatically.
 
-Total expected bins across all specs: 136.
+Total expected bins across all specs: 138.
 """
 
 from __future__ import annotations
@@ -34,6 +34,11 @@ def _url(path: str) -> str:
 # ── Regular (non-OGOR-A) specs ─────────────────────────────────────
 
 _REGULAR_SPECS: tuple[DatasetSpec, ...] = (
+    DatasetSpec(
+        "war",
+        _url("Well/Files/eWellWARRawData.zip"),
+        ["mv_war_main.bin", "mv_war_main_prop.bin"],
+    ),
     DatasetSpec(
         "apichanges",
         _url("Well/Files/APIChangesRawData.zip"),

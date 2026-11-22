@@ -52,6 +52,7 @@ if str(_SCRIPTS) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS))
 
 import site_nav  # noqa: E402  (nav-spine helper, issue #850)
+from lower_tertiary.lifecycle_reference_date import reference_marker  # noqa: E402
 
 from worldenergydata.common.fields_registry import load_fields  # noqa: E402
 
@@ -73,7 +74,7 @@ def _load_decom_rows() -> list[dict]:
 
 
 _DECOM_ROWS = _load_decom_rows()
-TODAY_YEAR = 2026.5  # generated 2026-07-03; a fixed "you are here" marker on the axis
+REFERENCE_YEAR = 2026.5  # Legacy decimal-year fallback, independent of the clock.
 FIELDS_REGISTRY = load_fields()
 
 # BSEE lease attributes for the landman panel (#951). Committed source is the
@@ -216,8 +217,9 @@ def _span_txt(a, b, label, extra=""):
     return f"{label} ~{yrs} yr{extra}"
 
 
-def facts_to_field(f: dict) -> dict:
+def facts_to_field(f: dict, *, reference_date: str | None = None) -> dict:
     """Transform an author-authored facts record into the render-shaped FIELD object."""
+    reference = reference_marker(reference_date, fallback_year=REFERENCE_YEAR)
     # Issue 747: the field YAMLs flag combined allocations as unresolved;
     # entity ownership and partial per-field references are not a field split.
     unresolved_wi = f.get("working_interest_status") in ("contradicted", "unverified")
@@ -232,7 +234,7 @@ def facts_to_field(f: dict) -> dict:
     incident = g.get("incident")  # {"year":..,"label":..} or None
 
     known = [y for y in (lease, disc, fid, first) if y is not None]
-    start = int((min(known) if known else TODAY_YEAR) - 2)
+    start = int((min(known) if known else REFERENCE_YEAR) - 2)
     if cop is not None:
         end = int(cop)
     elif first is not None:
@@ -296,14 +298,12 @@ def facts_to_field(f: dict) -> dict:
     if (
         f.get("status") == "producing"
         and first is not None
-        and start < TODAY_YEAR < end
+        and start < reference["year"] < end
     ):
         gates.append(
             {
-                "year": TODAY_YEAR,
+                **reference,
                 "phase": "operate",
-                "lab": "Today",
-                "dt": "2026",
                 "kind": "nowmark",
             }
         )
@@ -550,7 +550,15 @@ BIG_FOOT_FACTS = {
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--self-test", action="store_true")
+    ap.add_argument(
+        "--reference-date",
+        help="Explicit YYYY-MM-DD marker date; otherwise use the legacy reference year",
+    )
     args = ap.parse_args()
+    try:
+        reference_marker(args.reference_date, fallback_year=REFERENCE_YEAR)
+    except ValueError as error:
+        ap.error(str(error))
 
     facts = (
         [BIG_FOOT_FACTS]
@@ -575,7 +583,7 @@ def main():
 
     fields = []
     for f in facts:
-        field = facts_to_field(f)
+        field = facts_to_field(f, reference_date=args.reference_date)
         field["norms"] = norms_chips.get(f["id"], [])
         field["performance"] = perf_fields.get(f["id"])
         out = HERE / f"{f['id']}_lifecycle.html"
