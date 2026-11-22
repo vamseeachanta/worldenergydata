@@ -33,6 +33,8 @@ from pathlib import Path
 import pytest
 import yaml
 
+from tests.workflows.test_ci_triggers import _evaluate_expression, _render
+
 WORKFLOWS = Path(__file__).resolve().parents[2] / ".github/workflows"
 # Trusted jobs request either Linux architecture, or Linux x64 where needed.
 SELF_HOSTED_LINUX = "self-hosted Linux"
@@ -251,14 +253,21 @@ def test_pr_title_has_only_read_access_to_pull_requests():
 @pytest.mark.parametrize("name", ["pr-validation.yml", "brand-guard.yml", "docs.yml"])
 def test_superseded_pr_runs_cancel_within_the_same_workflow_and_ref(name):
     concurrency = load_workflow(name)["concurrency"]
-    assert concurrency["group"] == (
-        "${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}"
-    )
-    cancel = concurrency["cancel-in-progress"]
     for event in ("pull_request", "push", "workflow_dispatch"):
-        assert runner_labels(cancel, {"github.event_name": event}) is (
-            event == "pull_request"
+        context = {
+            "github.workflow": "Check",
+            "github.event_name": event,
+            "github.ref": "refs/heads/main",
+            "github.event.pull_request.number": 17 if event == "pull_request" else None,
+            "github.event.action": "synchronize" if event == "pull_request" else None,
+            "github.run_attempt": "1",
+        }
+        key = 17 if event == "pull_request" else "refs/heads/main"
+        assert _render(concurrency["group"], context) == f"Check-{key}"
+        cancel = (
+            concurrency["cancel-in-progress"].removeprefix("${{").removesuffix("}}")
         )
+        assert _evaluate_expression(cancel, context) is (event == "pull_request")
 
 
 def test_release_preserves_independent_runs():

@@ -11,6 +11,8 @@ from pathlib import Path
 import pytest
 import yaml
 
+from tests.workflows.test_ci_triggers import _render
+
 ROOT = Path(__file__).resolve().parents[2]
 HELPER = "scripts/ci/replay_gate.py"
 # PR fast gate (28 Oct 2026): Type Check and Documentation moved to the daily
@@ -147,7 +149,8 @@ def _wrapper(job_id):
     """Read the actual checkout and command for each required wrapper."""
     workflow = _workflow()
     job = workflow["jobs"][job_id]
-    assert job["name"] == REQUIRED[job_id]
+    name = _render(job["name"], {"github.event.action": "synchronize"})
+    assert name == REQUIRED[job_id]
     assert job["permissions"] == {"contents": "read", "actions": "read"}
     mode = workflow["jobs"]["mode"]
     checkout = next(
@@ -161,7 +164,7 @@ def _wrapper(job_id):
         "python scripts/ci/replay_gate.py --mode",
     ]
     assert not replay.get("continue-on-error", False)
-    return checkout["with"], job["name"]
+    return checkout["with"], name
 
 
 @pytest.mark.parametrize("job_id", REQUIRED)

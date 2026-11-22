@@ -11,17 +11,20 @@ on:
   push:
     branches: [main, develop]
   pull_request:
-    # Metadata edits reuse validated evidence or run the full gate.
+    # Retargets arrive as edits. Only a first-attempt title/body edit skips CI.
     types: [opened, synchronize, reopened, edited]
   workflow_dispatch:
 
 concurrency:
+  # Even a full rerun of an older metadata edit must leave current code checks running.
   group: >-
     ${{ github.workflow }}-${{ github.event_name == 'pull_request' &&
-    (github.event.action != 'edited' || github.event.changes.base != null) && github.ref || github.run_id }}
+    !(github.event.action == 'edited' && github.event.changes.base == null &&
+    (github.event.changes.title != null || github.event.changes.body != null)) && github.ref || github.run_id }}
   cancel-in-progress: >-
     ${{ github.event_name == 'pull_request' &&
-    (github.event.action != 'edited' || github.event.changes.base != null) }}
+    !(github.event.action == 'edited' && github.event.changes.base == null &&
+    (github.event.changes.title != null || github.event.changes.body != null)) }}
 
 permissions:
   contents: read
@@ -31,7 +34,14 @@ env:
 
 jobs:
   mode:
-    name: Gate mode
+    name: >-
+      ${{ (github.event_name == 'pull_request' && github.event.action == 'edited' &&
+      github.run_attempt == '1' && github.event.changes.base == null &&
+      (github.event.changes.title != null || github.event.changes.body != null)) && 'Not run for a metadata edit - ' || '' }}Gate mode
+    if: >-
+      ${{ !(github.event_name == 'pull_request' && github.event.action == 'edited' &&
+      github.run_attempt == '1' && github.event.changes.base == null &&
+      (github.event.changes.title != null || github.event.changes.body != null)) }}
     runs-on: >-
       ${{ (github.event_name != 'pull_request' ||
           github.event.pull_request.head.repo.full_name == github.repository) &&
@@ -43,11 +53,14 @@ jobs:
       replay: ${{ steps.mode.outputs.replay }}
       evidence: ${{ steps.lookup.outputs.evidence }}
     steps:
+      # The first-attempt guard keeps the legacy replay path dormant.
       - name: Check replay eligibility
         id: candidate
         env:
           REPLAY: >-
-            ${{ github.event_name == 'pull_request' && github.event.action == 'edited' && !github.event.changes.base }}
+            ${{ github.event_name == 'pull_request' && github.event.action == 'edited' &&
+            github.run_attempt == '1' && github.event.changes.base == null &&
+            (github.event.changes.title != null || github.event.changes.body != null) }}
         run: echo "replay=$REPLAY" >> "$GITHUB_OUTPUT"
       - name: Checkout replay lookup
         if: steps.candidate.outputs.replay == 'true'
@@ -125,25 +138,33 @@ jobs:
   # runner's shared uv cache (builds-v0/.tmp*), where other jobs can remove it
   # mid-run; tests that re-launch sys.executable then find no interpreter.
   domain-tests:
+    name: >-
+      ${{ (github.event_name == 'pull_request' && github.event.action == 'edited' &&
+      github.run_attempt == '1' && github.event.changes.base == null &&
+      (github.event.changes.title != null || github.event.changes.body != null)) && 'Not run for a metadata edit - ' || '' }}domain-tests
     needs: [mode]
     if: >-
-      !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && github.event_name
-      == 'pull_request'
+      !cancelled() && needs.mode.result != 'skipped' && github.event_name == 'pull_request' &&
+      (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true')
     uses: ./.github/workflows/domain-matrix.yml
     with:
       install-cmd: uv sync --frozen --all-extras && uv pip install pytest-xdist==3.8.0
       test-runner: env WED_FAST_GATE=1 uv run --no-sync pytest
 
   lint:
-    name: Lint (full)
+    name: >-
+      ${{ (github.event_name == 'pull_request' && github.event.action == 'edited' &&
+      github.run_attempt == '1' && github.event.changes.base == null &&
+      (github.event.changes.title != null || github.event.changes.body != null)) && 'Not run for a metadata edit - ' || '' }}Lint (full)
     runs-on: >-
       ${{ (github.event_name != 'pull_request' ||
           github.event.pull_request.head.repo.full_name == github.repository) &&
           fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
     timeout-minutes: 30
     needs: [mode]
-    if: >-
-      !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true')
+    if: &full-check >-
+      !cancelled() && needs.mode.result != 'skipped' &&
+      (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true')
 
     steps:
       - name: Checkout repository
@@ -252,7 +273,10 @@ jobs:
             --exclude=__pycache__,*.egg-info,.git,.venv
 
   security:
-    name: Security Scan (full)
+    name: >-
+      ${{ (github.event_name == 'pull_request' && github.event.action == 'edited' &&
+      github.run_attempt == '1' && github.event.changes.base == null &&
+      (github.event.changes.title != null || github.event.changes.body != null)) && 'Not run for a metadata edit - ' || '' }}Security Scan (full)
     # PR/push: secret scan only. Bandit runs in the daily Main full run.
     runs-on: >-
       ${{ (github.event_name != 'pull_request' ||
@@ -260,8 +284,7 @@ jobs:
           fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
     timeout-minutes: 30
     needs: [mode]
-    if: >-
-      !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true')
+    if: *full-check
 
     steps:
       - name: Checkout repository
@@ -333,12 +356,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         continue-on-error: true
 
-  # Gate mode validates evidence once using the maintained live-base helper.
-  # Result jobs consume that snapshot, avoiding races between repeated lookups.
+  # Skipping mode also skips every result job, including the required checks.
   lint-gate:
-    name: Lint
+    name: >-
+      ${{ (github.event_name == 'pull_request' && github.event.action == 'edited' &&
+      github.run_attempt == '1' && github.event.changes.base == null &&
+      (github.event.changes.title != null || github.event.changes.body != null)) && 'Not run for a metadata edit - ' || '' }}Lint
     needs: [mode, lint]
-    if: ${{ !cancelled() }}
+    if: &result-check ${{ !cancelled() && needs.mode.result != 'skipped' }}
     runs-on: >-
       ${{ (github.event_name != 'pull_request' ||
           github.event.pull_request.head.repo.full_name == github.repository) &&
@@ -365,9 +390,12 @@ jobs:
           fi
 
   security-gate:
-    name: Security Scan
+    name: >-
+      ${{ (github.event_name == 'pull_request' && github.event.action == 'edited' &&
+      github.run_attempt == '1' && github.event.changes.base == null &&
+      (github.event.changes.title != null || github.event.changes.body != null)) && 'Not run for a metadata edit - ' || '' }}Security Scan
     needs: [mode, security]
-    if: ${{ !cancelled() }}
+    if: *result-check
     runs-on: >-
       ${{ (github.event_name != 'pull_request' ||
           github.event.pull_request.head.repo.full_name == github.repository) &&
@@ -394,9 +422,12 @@ jobs:
           fi
 
   pr-gate:
-    name: Test (PR gate)
+    name: >-
+      ${{ (github.event_name == 'pull_request' && github.event.action == 'edited' &&
+      github.run_attempt == '1' && github.event.changes.base == null &&
+      (github.event.changes.title != null || github.event.changes.body != null)) && 'Not run for a metadata edit - ' || '' }}Test (PR gate)
     needs: [mode, domain-tests]
-    if: ${{ !cancelled() && github.event_name == 'pull_request' }}
+    if: ${{ !cancelled() && needs.mode.result != 'skipped' && github.event_name == 'pull_request' }}
     runs-on: >-
       ${{ (github.event_name != 'pull_request' ||
           github.event.pull_request.head.repo.full_name == github.repository) &&
