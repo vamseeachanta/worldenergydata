@@ -94,7 +94,7 @@ dependencies = [
     "fastapi>=0.162.0,<2.0",
     "pydantic>=2.14.3,<3.0",
     "pydantic-settings>=2.14.2,<3.0",
-    "tenacity>=9.1.4,<10.0",
+    "tenacity>=9.2.1,<10.0",
     # Data processing and analysis
     "numpy>=2.2.6,<3.0",
     "pandas>=2.3.3,<3.0",
