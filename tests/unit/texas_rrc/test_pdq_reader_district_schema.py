@@ -19,6 +19,8 @@ from worldenergydata.texas_rrc.production_atlas.sources import (
     _read_pdq_member,
     _read_pdq_member_chunks,
     _read_pdq_text,
+    iter_production_input_chunks,
+    load_production_inputs,
 )
 
 
@@ -165,6 +167,42 @@ def test_atlas_preserves_condensate_without_field_name(chunked, normalized):
     assert pd.isna(statewide["cumulative_water_bbl"])
 
 
+@pytest.mark.parametrize("chunked", [False, True])
+@pytest.mark.parametrize(
+    "district,month,boe,report_filed",
+    [("7b", "202301", 10, "Y"), ("7b", 202301, 10, "Y"), ("7B", "2023-01", 90, "N")],
+)
+def test_atlas_normalizes_raw_numeric_metrics(
+    chunked, district, month, boe, report_filed
+):
+    frame = pd.DataFrame(
+        [
+            {
+                "district": district,
+                "production_month": month,
+                "oil_bbl": 0,
+                "gas_mcf": 0,
+                "condensate_bbl": 10,
+                "water_bbl": 0,
+                "well_count": 0,
+                "boe": boe,
+                "report_filed": report_filed,
+            }
+        ]
+    )
+    atlas = (
+        build_production_atlas_from_chunks([frame])
+        if chunked
+        else build_production_atlas(frame)
+    )
+    row = atlas.loc[atlas["aggregation_level"] == "district"].iloc[0]
+    assert row["district"] == "7B"
+    assert row["first_production_month"] == "2023-01"
+    assert row["cumulative_condensate_bbl"] == 10
+    assert row["cumulative_boe"] == 10
+    assert bool(row["still_producing"]) == (report_filed == "Y")
+
+
 @pytest.mark.parametrize("reader", ["text", "bulk", "chunked"])
 def test_single_column_header_preserves_district(reader):
     frames = read_frames("district\n7B\n", reader)
@@ -187,3 +225,47 @@ def test_condensate_aliases_across_snapshots_preserve_each_row():
     )
     result = normalize_production_frame(frame, sort_rows=False)
     assert result["condensate_bbl"].tolist() == [10, 4, 0]
+
+
+def test_normalized_production_retains_filing_and_availability_on_second_pass():
+    raw = pd.DataFrame(
+        {
+            "production_month": ["202301", "202302"],
+            "condensate": [10, 0],
+            "report_filed": ["Y", "N"],
+            "water_bbl": ["", "0"],
+        }
+    )
+    normalized = normalize_production_frame(raw)
+    pd.testing.assert_frame_equal(normalize_production_frame(normalized), normalized)
+
+
+def test_condensate_totals_match_across_separate_snapshots(monkeypatch):
+    snapshots = [
+        ("OG_COND_PROD", "4"),
+        ("LEASE_COND_PROD_VOL", "7"),
+        ("condensate_bbl", "10"),
+        ("LEASE_COND_PROD_VOL,condensate_bbl", "0,8"),
+    ]
+    archives = []
+    for month, (header, values) in enumerate(snapshots, start=1):
+        buffer = BytesIO()
+        with ZipFile(buffer, "w") as archive:
+            archive.writestr(
+                "production.csv",
+                f"district,production_month,{header}\n7B,2023{month:02},{values}\n",
+            )
+        archives.append(buffer)
+    monkeypatch.setattr(
+        "worldenergydata.texas_rrc.production_atlas.sources._pdq_zip_paths",
+        lambda root: archives,
+    )
+    production = load_production_inputs(".").production
+    assert production["condensate_bbl"].tolist() == [4, 7, 10, 0]
+    bulk = build_production_atlas(production)
+    chunks = iter_production_input_chunks(".", chunksize=1).chunks
+    chunked = build_production_atlas_from_chunks(chunks)
+    for atlas in (bulk, chunked):
+        row = atlas.loc[atlas["aggregation_level"] == "statewide"].iloc[0]
+        assert row["cumulative_condensate_bbl"] == 21
+        assert row["cumulative_boe"] == 21
