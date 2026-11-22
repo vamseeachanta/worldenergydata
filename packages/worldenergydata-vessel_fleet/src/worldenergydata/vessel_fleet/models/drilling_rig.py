@@ -83,6 +83,11 @@ class DrillingRigEntry(BaseVesselEntry):
     last_block_number: Optional[str] = None
     is_offshore: Optional[bool] = None
 
+    # Issue #742 (2026): public-spec ratings; None means evidence unavailable.
+    # These are hardware ratings, not operating criteria or inferred capacities.
+    conductor_moment_capacity_kn_m: float | None = None
+    flexjoint_angle_rating_deg: float | None = None
+
     @property
     def is_deepwater_capable(self) -> bool:
         """Rig is deepwater capable when rated >= 4000 ft."""

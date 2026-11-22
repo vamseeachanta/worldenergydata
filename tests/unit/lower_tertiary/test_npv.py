@@ -37,8 +37,8 @@ class TestNormalizeLease:
 
 class TestResolveFirstOil:
     def test_none(self):
-        result = _resolve_first_oil(None)
-        assert result == pd.Timestamp("1970-01-01")
+        with pytest.raises(ValueError, match="first_oil"):
+            _resolve_first_oil(None)
 
     def test_string(self):
         result = _resolve_first_oil("2020-06-01")
@@ -312,11 +312,103 @@ class TestSummarizeFieldFinancials:
                 pd.DataFrame(), self._make_profile(), self._make_econ_config()
             )
 
-    def test_zero_capex(self):
+    def test_missing_capex_total_raises(self):
         profile = self._make_profile()
         profile["capex"] = {}
-        result = summarize_field_financials(
-            self._make_monthly(), profile, self._make_econ_config()
+        with pytest.raises(ValueError, match="capex.total_mm_usd"):
+            summarize_field_financials(
+                self._make_monthly(), profile, self._make_econ_config()
+            )
+
+    # Input contract: issue 1269; no field date or investment is assumed.
+    # Synthetic values below are test inputs, not engineering defaults.
+    # OpenStax, Principles of Finance (2022), sections 7.2 and 16.2:
+    # PV = CF / (1 + r)**t; NPV = PV(inflows) - PV(outflows).
+    # https://openstax.org/books/principles-finance/pages/16-2-net-present-value-npv-method
+
+    @pytest.mark.parametrize(
+        "first_oil", [None, "", "NaT", pd.NaT, float("nan"), 0, False]
+    )
+    def test_summary_rejects_unknown_first_oil(self, first_oil):
+        profile = self._make_profile()
+        profile["first_oil"] = first_oil
+        with pytest.raises((TypeError, ValueError), match="first_oil"):
+            summarize_field_financials(
+                self._make_monthly(), profile, self._make_econ_config()
+            )
+
+    def test_summary_rejects_absent_first_oil(self):
+        profile = self._make_profile()
+        del profile["first_oil"]
+        with pytest.raises(ValueError, match="first_oil"):
+            summarize_field_financials(
+                self._make_monthly(), profile, self._make_econ_config()
+            )
+
+    @pytest.mark.parametrize(
+        "capex",
+        [
+            None,
+            {},
+            {"total_mm_usd": None},
+            {"total_mm_usd": ""},
+            {"total_mm_usd": "unknown"},
+            {"total_mm_usd": float("nan")},
+            {"total_mm_usd": float("inf")},
+            {"total_mm_usd": 0},
+            {"total_mm_usd": -1},
+            {"total_mm_usd": True},
+        ],
+    )
+    def test_summary_requires_positive_finite_capex(self, capex):
+        """Zero investment leaves the retained NPV/CAPEX ratio undefined.
+
+        Positive investment is the outflow convention in OpenStax (2022),
+        section 16.2, equation 16.1; zero/negative/nonfinite inputs are invalid.
+        """
+        profile = self._make_profile()
+        profile["capex"] = capex
+        with pytest.raises(ValueError, match="capex.total_mm_usd"):
+            summarize_field_financials(
+                self._make_monthly(), profile, self._make_econ_config()
+            )
+
+    def test_summary_rejects_absent_capex(self):
+        profile = self._make_profile()
+        del profile["capex"]
+        with pytest.raises(ValueError, match="capex.total_mm_usd"):
+            summarize_field_financials(
+                self._make_monthly(), profile, self._make_econ_config()
+            )
+
+    def test_valid_inputs_retain_discounting_and_project_ratio(self):
+        """Independent hand calculation using the cited PV and NPV equations.
+
+        Synthetic scenario: first oil Jan 2024, cash flow USD 2.2 million in
+        Jan 2025, annual effective rate 10 percent, CAPEX USD 1 million.
+        A calendar year is 12 months: PV = 2.2 / 1.1 = 2 million USD;
+        project NPV = 2 - 1 = 1 million USD; existing PI = 1 / 1 = 1.
+        The existing PI is NPV/CAPEX, not the textbook PV/CAPEX convention
+        (OpenStax, 2022, section 16.4); its definition is outside this fix.
+        """
+        monthly = pd.DataFrame(
+            {
+                "date": pd.to_datetime(["2025-01-01"]),
+                "operating_cash_flow": [2_200_000.0],
+            }
         )
-        assert result["CAPEX ($MM)"] == 0.0
-        assert result["PI"] == 0.0
+        profile = {"first_oil": "2024-01-01", "capex": {"total_mm_usd": 1.0}}
+        result = summarize_field_financials(monthly, profile, self._make_econ_config())
+        assert result["First Oil"] == "2024-01"
+        assert result["NPV Operations ($MM)"] == pytest.approx(2.0)
+        assert result["NPV Project ($MM)"] == pytest.approx(1.0)
+        assert result["PI"] == pytest.approx(1.0)
+
+    def test_loader_preserves_unknown_first_oil_until_summary(self, tmp_path):
+        (tmp_path / "sample.yml").write_text("field: {field_id: sample}\n")
+        profile = load_field_inputs(tmp_path, {"fields": {}})["sample"]
+        assert profile["first_oil"] is None
+        with pytest.raises(ValueError, match="first_oil"):
+            summarize_field_financials(
+                self._make_monthly(), profile, self._make_econ_config()
+            )

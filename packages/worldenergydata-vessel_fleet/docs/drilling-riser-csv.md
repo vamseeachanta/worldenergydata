@@ -45,8 +45,10 @@ reads a single UTF-8 snapshot (a byte-order mark is accepted), then:
 5. Caches the frame only after all checks pass. A failed load can be retried after
    the input is corrected.
 
-Column names and unpadded IDs are compared exactly; validation does not trim,
-rename or otherwise normalize them. Optional engineering cells may remain empty.
+IDs with leading or trailing whitespace are rejected, even without another ID
+that would collide after trimming. Column names and valid IDs are compared
+exactly; validation does not trim, rename or otherwise normalize them.
+Optional engineering cells may remain empty.
 IDs `1` and `01` remain distinct strings; `NA` is a populated ID. Other columns
 retain pandas' default numeric and missing-value parsing.
 Pandas missing-value tokens such as `NA` in `DATA_SOURCE` or `NOTES` are

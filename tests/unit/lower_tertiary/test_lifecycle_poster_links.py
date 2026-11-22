@@ -12,6 +12,9 @@ import json
 import re
 from pathlib import Path
 
+import pytest
+import yaml
+
 from tests.test_markers import unit
 from worldenergydata.common.fields_registry import load_fields
 
@@ -96,3 +99,73 @@ def test_rendered_poster_has_hidden_economics_card_and_secondary_benchmark_chip(
     assert "Well benchmarking" in html
     assert "FIELD.economics_href" in html
     assert "FIELD.benchmark_href" in html
+
+
+@pytest.mark.parametrize("field_id", ["cascade_chinook", "jack_st_malo"])
+def test_unresolved_working_interests_match_canonical_status(field_id):
+    """Issue 747: field YAML status governs eligibility, not entity ownership.
+
+    Expected statuses come from field.working_interest_status in the committed
+    YAML, whose P4/P7 references distinguish field interests from entity shares.
+    No combined-field allocation is established by those references.
+    """
+    config_path = (
+        PROJECT_ROOT / "config/analysis/lower_tertiary/fields" / f"{field_id}.yml"
+    )
+    config = yaml.safe_load(config_path.read_text())["field"]
+    facts = _fact_by_id(field_id)
+    assert facts["working_interest_status"] == config["working_interest_status"]
+    assert facts["working_interest"] == []
+    assert "NOT_EVALUATED" in facts["provenance"]
+
+
+@pytest.mark.parametrize("status", ["contradicted", "unverified"])
+def test_unresolved_shares_are_withheld_from_every_poster_payload(status):
+    """A known Julia split is ineligible when flagged unresolved (issue 747).
+
+    Julia's source P6 (operator release, 2016-04-19) supplies the fixture split.
+    The expected empty arrays follow the eligibility rule, with no allocation
+    calculation: unresolved shares cannot become a displayed field interest.
+    """
+    builder = _load_builder()
+    facts = _fact_by_id("julia")
+    facts["working_interest_status"] = status
+    original_shares = list(facts["working_interest"])
+
+    field = builder.facts_to_field(facts)
+
+    assert field["workingInterest"] == []
+    assert field["landman"]["working_interest"] == []
+    assert not any(metric["k"] == "Operator WI" for metric in field["metrics"])
+    assert ["Working interests", "NOT_EVALUATED — field allocation not verified"] in (
+        field["hostFacts"]
+    )
+    assert facts["working_interest"] == original_shares
+
+
+def test_established_shares_remain_visible():
+    """Julia P6 (2016-04-19) supports its unchanged partner shares and operator."""
+    builder = _load_builder()
+    facts = _fact_by_id("julia")
+    field = builder.facts_to_field(facts)
+    assert field["workingInterest"]
+    assert field["landman"]["working_interest"] == facts["working_interest"]
+    assert any(metric["k"] == "Operator WI" for metric in field["metrics"])
+
+
+@pytest.mark.parametrize("field_id", ["cascade_chinook", "jack_st_malo"])
+def test_generated_posters_and_explorer_withhold_unresolved_shares(field_id):
+    """Published payloads must obey the same issue 747 eligibility rule."""
+    directory = FACTS_PATH.parent
+    html = (directory / f"{field_id}_lifecycle.html").read_text()
+    embedded = re.search(r"const FIELD = (\{.*?\n\});", html, re.DOTALL)
+    assert embedded is not None
+    poster = json.loads(embedded.group(1))
+    explorer = json.loads((directory / "_explorer.json").read_text())
+
+    assert poster == explorer["fields"][field_id]
+    assert poster["workingInterest"] == []
+    assert poster["landman"]["working_interest"] == []
+    assert "NOT_EVALUATED" in poster["provenance"]
+    assert any("NOT_EVALUATED" in value for _, value in poster["hostFacts"])
+    assert not any(metric["k"] == "Operator WI" for metric in poster["metrics"])

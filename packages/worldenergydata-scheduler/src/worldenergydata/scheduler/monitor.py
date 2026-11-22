@@ -41,6 +41,7 @@ class JobLogger:
             "status": result.status,
             "records_updated": result.records_updated,
             "error_msg": result.error_msg,
+            "retryable": result.retryable,
         }
         with log_path.open("w", encoding="utf-8") as f:
             json.dump(payload, f, indent=2)
@@ -78,7 +79,7 @@ class RetryManager:
         """Call job_fn up to max_retries times; return last result.
 
         If job_fn raises an exception it is caught and treated as a failure.
-        Retries stop early on success, and stop immediately (no backoff
+        Retries stop early on success or a skipped run, and stop immediately (no backoff
         sleep) when the result is marked non-retryable -- deterministic
         failures such as a stale upstream URL cannot succeed on retry
         (issue #460).
@@ -87,7 +88,7 @@ class RetryManager:
         for attempt in range(self.max_retries):
             try:
                 result = job_fn()
-                if result.status == "success":
+                if result.status in ("success", "skipped"):
                     return result
                 if not getattr(result, "retryable", True):
                     logger.warning(
@@ -158,6 +159,7 @@ class StatusReporter:
                 "start_time": r.start_time.isoformat(),
                 "end_time": r.end_time.isoformat(),
                 "error_msg": r.error_msg,
+                "retryable": r.retryable,
             }
 
         return {

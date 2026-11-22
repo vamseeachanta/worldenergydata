@@ -269,12 +269,22 @@ class BSEERefreshOrchestrator:
                 duration_s=time.monotonic() - t0,
             )
 
+        missing_bins = [
+            name
+            for name in spec.expected_bins
+            if not (bin_dir_path / name).is_file() or is_lfs_stub(bin_dir_path / name)
+        ]
         return RefreshResult(
             bin_dir=spec.bin_dir,
-            status="success",
+            status="failed" if missing_bins else "success",
             bins_written=bins_written,
             rows_total=rows_total,
             bytes_downloaded=len(zip_bytes),
+            error=(
+                "Missing or LFS stub required outputs: " + ", ".join(missing_bins)
+                if missing_bins
+                else ""
+            ),
             duration_s=time.monotonic() - t0,
         )
 
@@ -321,14 +331,18 @@ class BSEERefreshOrchestrator:
             text = raw.decode("utf-8", errors="replace")
 
         # Detect delimiter: comma vs pipe
-        df = self._read_csv_text(text)
+        df = self._read_csv_text(
+            text, preserve_war_key=stem in ("mv_war_main", "mv_war_main_prop")
+        )
         if df is None:
             log.warning("    could not parse %s — skipping", filename)
             return
         yield bin_name, df
 
     @staticmethod
-    def _read_csv_text(text: str) -> "pd.DataFrame | None":
+    def _read_csv_text(
+        text: str, *, preserve_war_key: bool = False
+    ) -> "pd.DataFrame | None":
         """Parse CSV text, trying comma then pipe delimiter."""
         import pandas as pd
 
@@ -339,6 +353,8 @@ class BSEERefreshOrchestrator:
                     sep=sep,
                     low_memory=False,
                     encoding_errors="replace",
+                    # WAR join identifiers are text, including leading zeroes.
+                    dtype={"SN_WAR": str} if preserve_war_key else None,
                 )
                 # Heuristic: a valid parse should produce >1 column for most
                 # BSEE datasets (unless it is genuinely single-column).

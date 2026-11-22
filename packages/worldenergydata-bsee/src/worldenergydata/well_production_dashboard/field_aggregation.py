@@ -29,6 +29,7 @@ from worldenergydata.bsee.reports.comprehensive.aggregators.field_aggregator_enh
     FieldAggregator as BSEEAggregator,
 )
 from worldenergydata.bsee.reports.comprehensive.models import Field, Lease, Well
+from worldenergydata.common.finance import net_present_value
 
 # Import visualization components
 try:
@@ -777,12 +778,7 @@ class FieldEconomicSummary:
         if len(cash_flows) > 0:
             cash_flows.iloc[0] -= capex
 
-        # Calculate NPV
-        npv = 0
-        for i, cf in enumerate(cash_flows):
-            npv += cf / ((1 + discount_rate) ** i)
-
-        return npv
+        return net_present_value(cash_flows, discount_rate)
 
     def calculate_irr(self, cash_flows: pd.Series) -> float:
         """
@@ -802,7 +798,7 @@ class FieldEconomicSummary:
             # Use Newton's method to find IRR
             irr = 0.1  # Initial guess
             for _ in range(100):  # Max iterations
-                npv = sum(cf / (1 + irr) ** i for i, cf in enumerate(cf_array))
+                npv = net_present_value(cf_array, irr)
                 npv_prime = sum(
                     -i * cf / (1 + irr) ** (i + 1) for i, cf in enumerate(cf_array)
                 )

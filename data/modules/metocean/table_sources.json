@@ -1,0 +1,150 @@
+{
+  "description": "Source audit for the curated-table names listed in issue #1262; no tabulated values.",
+  "scope": "Records repository attribution, not a verified publication citation or permission to redistribute.",
+  "tables": {
+    "api_rp2met_gom_extremes_by_region.csv": {
+      "repository_section": "GoM hurricane extremes by sub-region and return period",
+      "source_document": "API RP 2MET, Derivation of Metocean Design and Operating Conditions",
+      "attribution_status": "repository_attribution_only",
+      "edition": null,
+      "table_or_clause": null,
+      "verification_status": "NOT_EVALUATED",
+      "reason": "The repository attributes the extraction to API RP 2MET-derived workbooks but records no source edition or publication table or clause. A repository section title is not a publication locator.",
+      "required_evidence": "Identify the source edition and exact publication table or clause for this extraction, and confirm its correspondence to the attributed workbook.",
+      "decision_status": "maintainer_decision_required",
+      "evidence": [
+        {
+          "path": "data/modules/metocean/README.md",
+          "revision": "6737bc76d365a4945993bfae96649676b29e855f",
+          "scope": "Workbook-derived attribution only; no edition or locator."
+        }
+      ]
+    },
+    "api_rp2met_hurricane_gom_extremes.csv": {
+      "repository_section": "Hurricane extremes by return period",
+      "source_document": "API RP 2MET, Derivation of Metocean Design and Operating Conditions",
+      "attribution_status": "repository_attribution_only",
+      "edition": null,
+      "table_or_clause": null,
+      "verification_status": "NOT_EVALUATED",
+      "reason": "The repository attributes the extraction to API RP 2MET-derived workbooks but records no source edition or publication table or clause. A repository section title is not a publication locator.",
+      "required_evidence": "Identify the source edition and exact publication table or clause for this extraction, and confirm its correspondence to the attributed workbook.",
+      "decision_status": "maintainer_decision_required",
+      "evidence": [
+        {
+          "path": "data/modules/metocean/README.md",
+          "revision": "6737bc76d365a4945993bfae96649676b29e855f",
+          "scope": "Workbook-derived attribution only; no edition or locator."
+        }
+      ]
+    },
+    "api_rp2met_us_zone_100yr_waves.csv": {
+      "repository_section": "Extreme waves, currents and storm tide by offshore zone",
+      "source_document": "API RP 2MET, Derivation of Metocean Design and Operating Conditions",
+      "attribution_status": "repository_attribution_only",
+      "edition": null,
+      "table_or_clause": null,
+      "verification_status": "NOT_EVALUATED",
+      "reason": "The repository attributes the extraction to API RP 2MET-derived workbooks but records no source edition or publication table or clause. A repository section title is not a publication locator.",
+      "required_evidence": "Identify the source edition and exact publication table or clause for this extraction, and confirm its correspondence to the attributed workbook.",
+      "decision_status": "maintainer_decision_required",
+      "evidence": [
+        {
+          "path": "data/modules/metocean/README.md",
+          "revision": "6737bc76d365a4945993bfae96649676b29e855f",
+          "scope": "Workbook-derived attribution only; no edition or locator."
+        }
+      ]
+    },
+    "api_rp2met_us_zone_100yr_winds.csv": {
+      "repository_section": "Extreme winds by offshore zone",
+      "source_document": "API RP 2MET, Derivation of Metocean Design and Operating Conditions",
+      "attribution_status": "repository_attribution_only",
+      "edition": null,
+      "table_or_clause": null,
+      "verification_status": "NOT_EVALUATED",
+      "reason": "The repository attributes the extraction to API RP 2MET-derived workbooks but records no source edition or publication table or clause. A repository section title is not a publication locator.",
+      "required_evidence": "Identify the source edition and exact publication table or clause for this extraction, and confirm its correspondence to the attributed workbook.",
+      "decision_status": "maintainer_decision_required",
+      "evidence": [
+        {
+          "path": "data/modules/metocean/README.md",
+          "revision": "6737bc76d365a4945993bfae96649676b29e855f",
+          "scope": "Workbook-derived attribution only; no edition or locator."
+        }
+      ]
+    },
+    "marine_growth_terminal_thickness.csv": {
+      "repository_section": "Terminal marine-growth thickness by depth band",
+      "source_document": "API RP 2MET, Derivation of Metocean Design and Operating Conditions",
+      "attribution_status": "repository_attribution_only",
+      "edition": null,
+      "table_or_clause": null,
+      "verification_status": "NOT_EVALUATED",
+      "reason": "The repository attributes the extraction to API RP 2MET-derived workbooks but records no source edition or publication table or clause. A repository section title is not a publication locator.",
+      "required_evidence": "Identify the source edition and exact publication table or clause for this extraction, and confirm its correspondence to the attributed workbook.",
+      "decision_status": "maintainer_decision_required",
+      "evidence": [
+        {
+          "path": "data/modules/metocean/README.md",
+          "revision": "6737bc76d365a4945993bfae96649676b29e855f",
+          "scope": "Workbook-derived attribution only; no edition or locator."
+        }
+      ]
+    },
+    "metocean_hs_tp_occurrence.csv": {
+      "repository_section": "Joint wave-height and peak-period occurrence",
+      "source_document": "API RP 2MET, Derivation of Metocean Design and Operating Conditions",
+      "attribution_status": "repository_attribution_only",
+      "edition": null,
+      "table_or_clause": null,
+      "verification_status": "NOT_EVALUATED",
+      "reason": "The repository attributes the extraction to API RP 2MET-derived workbooks but records no source edition or publication table or clause. A repository section title is not a publication locator.",
+      "required_evidence": "Identify the source edition and exact publication table or clause for this extraction, and confirm its correspondence to the attributed workbook.",
+      "decision_status": "maintainer_decision_required",
+      "evidence": [
+        {
+          "path": "data/modules/metocean/README.md",
+          "revision": "6737bc76d365a4945993bfae96649676b29e855f",
+          "scope": "Workbook-derived attribution only; no edition or locator."
+        }
+      ]
+    },
+    "metocean_regional_extremes.csv": {
+      "repository_section": "Regional metocean extremes by parameter and return period",
+      "source_document": "API RP 2MET, Derivation of Metocean Design and Operating Conditions",
+      "attribution_status": "repository_attribution_only",
+      "edition": null,
+      "table_or_clause": null,
+      "verification_status": "NOT_EVALUATED",
+      "reason": "The repository attributes the extraction to API RP 2MET-derived workbooks but records no source edition or publication table or clause. A repository section title is not a publication locator.",
+      "required_evidence": "Identify the source edition and exact publication table or clause for this extraction, and confirm its correspondence to the attributed workbook.",
+      "decision_status": "maintainer_decision_required",
+      "evidence": [
+        {
+          "path": "data/modules/metocean/README.md",
+          "revision": "6737bc76d365a4945993bfae96649676b29e855f",
+          "scope": "Workbook-derived attribution only; no edition or locator."
+        }
+      ]
+    },
+    "metocean_temperature_ranges.csv": {
+      "repository_section": "Air and sea temperature ranges by area",
+      "source_document": "API RP 2MET, Derivation of Metocean Design and Operating Conditions",
+      "attribution_status": "repository_attribution_only",
+      "edition": null,
+      "table_or_clause": null,
+      "verification_status": "NOT_EVALUATED",
+      "reason": "The repository attributes the extraction to API RP 2MET-derived workbooks but records no source edition or publication table or clause. A repository section title is not a publication locator.",
+      "required_evidence": "Identify the source edition and exact publication table or clause for this extraction, and confirm its correspondence to the attributed workbook.",
+      "decision_status": "maintainer_decision_required",
+      "evidence": [
+        {
+          "path": "data/modules/metocean/README.md",
+          "revision": "6737bc76d365a4945993bfae96649676b29e855f",
+          "scope": "Workbook-derived attribution only; no edition or locator."
+        }
+      ]
+    }
+  }
+}

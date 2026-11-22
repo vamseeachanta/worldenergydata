@@ -5,38 +5,24 @@ Integrates with verification system for data quality and provides well-specific 
 """
 
 import time
+from copy import deepcopy
 from dataclasses import dataclass, field
 from datetime import datetime
+from pathlib import Path
+from threading import RLock
 from typing import Any, Dict, List, Optional
 
 import numpy as np
 import pandas as pd
 import yaml
 
-from worldenergydata.bsee.analysis.well_data_verification import (
-    VerificationConfig,
-    VerificationResult,
-    VerificationWorkflow,
-)
-from worldenergydata.bsee.analysis.well_data_verification.audit import (
-    AuditLogger,
-)
-from worldenergydata.bsee.analysis.well_data_verification.quality import (
-    CompletenessChecker,
-    DataQualityFramework,
-)
-from worldenergydata.bsee.reports.comprehensive.exporters.excel_exporter import (
-    ExcelExporter,
-)
-from worldenergydata.bsee.reports.comprehensive.exporters.pdf_exporter import (
-    PDFExporter,
-)
 from worldenergydata.bsee.reports.comprehensive.visualizations.dashboard_builder import (
     ChartConfig,
     DashboardBuilder,
     DashboardConfig,
 )
 from worldenergydata.common import get_logger
+from worldenergydata.common.finance import net_present_value
 from worldenergydata.well_production_dashboard.cache_config import (
     DashboardCacheManager,
 )
@@ -48,6 +34,10 @@ from worldenergydata.well_production_dashboard.export_manager import (
 )
 from worldenergydata.well_production_dashboard.query_optimizer import (
     QueryOptimizer,
+)
+from worldenergydata.well_production_dashboard.verification_adapter import (
+    DashboardVerification,
+    valid_score,
 )
 
 logger = get_logger(__name__)
@@ -73,6 +63,7 @@ class WellDashboardConfig(DashboardConfig):
     """Extended configuration for well production dashboard."""
 
     enable_verification: bool = True
+    audit_db_path: Optional[str] = None
     enable_real_time: bool = False
     cache_ttl: int = 300  # seconds
     quality_threshold: float = 0.8
@@ -97,10 +88,7 @@ class WellMetrics:
         Returns:
             NPV value
         """
-        npv = 0
-        for i, cf in enumerate(cash_flows):
-            npv += cf / ((1 + discount_rate) ** i)
-        return npv
+        return net_present_value(cash_flows, discount_rate)
 
     @staticmethod
     def calculate_decline_rate(production: List[float]) -> float:
@@ -371,6 +359,14 @@ class WellProductionDashboard(DashboardBuilder):
         self.well_data = None
         self.field_data = {}
         self.verification_results = {}
+        self._verification_records = {}
+        self._loaded_well_ids = ()
+        self._verification_lock = RLock()
+        self.verification_workflow = None
+        self.quality_framework = None
+        self.audit_logger = None
+        self._verification = None
+        self.verification_reason = "Verification is disabled"
 
         # Performance tracking
         self.cache_hits = 0
@@ -401,29 +397,43 @@ class WellProductionDashboard(DashboardBuilder):
         )
 
     def _init_verification(self):
-        """Initialize verification system integration."""
-        try:
-            self.verification_config = VerificationConfig()
-            self.verification_workflow = VerificationWorkflow(self.verification_config)
-            self.quality_framework = DataQualityFramework()
-            self.completeness_checker = CompletenessChecker()
-            self.audit_logger = AuditLogger()
-            logger.info("Verification system initialized")
-        except Exception as e:
-            logger.error(f"Failed to initialize verification: {e}")
+        """Require explicit audit persistence and the actual validation APIs."""
+        if not self.config.audit_db_path:
             self.verification_enabled = False
+            self.verification_reason = "An explicit audit database path is required"
+            return
+        try:
+            self._verification = DashboardVerification(
+                self.config.audit_db_path, self.quality_threshold
+            )
+            self._verification_lock = self._verification.lock
+            self.verification_workflow = self._verification.workflow
+            self.quality_framework = self._verification.quality
+            self.audit_logger = self._verification.audit
+        except Exception as error:
+            self.verification_enabled = False
+            self.verification_reason = (
+                f"Audit verification initialization failed ({type(error).__name__})"
+            )
+            logger.error(self.verification_reason)
 
     @staticmethod
     def _load_dashboard_config(config_path: str) -> WellDashboardConfig:
         """Load dashboard configuration from a YAML file."""
-        with open(config_path, "r") as f:
+        with open(config_path, "r", encoding="utf-8") as f:
             config_dict = yaml.safe_load(f) or {}
 
         dashboard_config = config_dict.get("dashboard", {}) or {}
         verification_config = config_dict.get("verification", {}) or {}
+        audit_path = verification_config.get("audit", {}).get(
+            "database", dashboard_config.get("audit_db_path")
+        )
+        if audit_path and not Path(audit_path).is_absolute():
+            audit_path = (Path(config_path).parent / audit_path).as_posix()
 
         return WellDashboardConfig(
             title=dashboard_config.get("title", "Well Production Dashboard"),
+            audit_db_path=audit_path,
             enable_verification=verification_config.get(
                 "enabled", dashboard_config.get("enable_verification", True)
             ),
@@ -444,16 +454,10 @@ class WellProductionDashboard(DashboardBuilder):
         Returns:
             Configured dashboard instance
         """
-        with open(config_path, "r") as f:
+        with open(config_path, "r", encoding="utf-8") as f:
             config_dict = yaml.safe_load(f)
 
-        dashboard_config = config_dict.get("dashboard", {})
-        config = WellDashboardConfig(
-            title=dashboard_config.get("title", "Well Production Dashboard"),
-            enable_verification=dashboard_config.get("enable_verification", True),
-            cache_ttl=dashboard_config.get("cache_ttl", 300),
-            quality_threshold=dashboard_config.get("quality_threshold", 0.8),
-        )
+        config = cls._load_dashboard_config(config_path)
 
         dashboard = cls(config)
 
@@ -469,6 +473,46 @@ class WellProductionDashboard(DashboardBuilder):
 
         return dashboard
 
+    @staticmethod
+    def _copy_observations(data):
+        snapshot = data.copy(deep=True)
+        for column in data.select_dtypes(include=["object"]).columns:
+            snapshot[column] = data[column].map(deepcopy).astype(data[column].dtype)
+        return snapshot
+
+    @staticmethod
+    def _requested_ids(well_ids):
+        if (
+            not isinstance(well_ids, (list, tuple))
+            or not well_ids
+            or any(
+                not isinstance(value, str)
+                or not value.strip()
+                or value != value.strip()
+                for value in well_ids
+            )
+        ):
+            raise ValueError("Requested well identifiers must be nonblank strings")
+        return tuple(dict.fromkeys(well_ids))
+
+    @staticmethod
+    def _well_identifiers(data):
+        if not isinstance(data, pd.DataFrame) or data.empty:
+            raise ValueError("Nonempty well observations are required")
+        if not data.columns.is_unique or "well_id" not in data:
+            raise ValueError("A unique well identifier column is required")
+        if (
+            not data["well_id"]
+            .map(
+                lambda value: isinstance(value, str)
+                and bool(value.strip())
+                and value == value.strip()
+            )
+            .all()
+        ):
+            raise ValueError("Nonblank string well identifiers are required")
+        return tuple(data["well_id"].unique())
+
     def load_well_data(
         self,
         data: pd.DataFrame = None,
@@ -476,67 +520,45 @@ class WellProductionDashboard(DashboardBuilder):
         start_date: datetime = None,
         end_date: datetime = None,
     ):
-        """
-        Load well production data using optimized BSEE data loaders.
-
-        Args:
-            data: DataFrame with well production data (optional, for backward compatibility)
-            well_ids: List of well IDs to load (uses query optimizer)
-            start_date: Start date for data
-            end_date: End date for data
-
-        Raises:
-            ValueError: If required columns are missing
-        """
-        # If well_ids provided, use query optimizer with caching
-        if well_ids:
-            # Check cache first
+        """Install complete requested observations and invalidate prior verification."""
+        requested = self._requested_ids(well_ids) if well_ids is not None else None
+        cache_write = False
+        if requested:
             cache_params = {"start_date": str(start_date), "end_date": str(end_date)}
-            cache_key = f"wells:{','.join(well_ids)}"
-            cached_data = self.cache_manager.get_well_data(cache_key, cache_params)
-
-            if cached_data is not None:
-                logger.info(f"Using cached data for {len(well_ids)} wells")
-                data = cached_data
-                self.cache_hits += 1
-            else:
-                logger.info(f"Loading {len(well_ids)} wells using query optimizer")
-                optimized_data = self.query_optimizer.get_dashboard_data_optimized(
-                    well_ids=well_ids, start_date=start_date, end_date=end_date
+            cache_key = f"wells:{','.join(requested)}"
+            data = self.cache_manager.get_well_data(cache_key, cache_params)
+            if data is None:
+                response = self.query_optimizer.get_dashboard_data_optimized(
+                    well_ids=list(requested), start_date=start_date, end_date=end_date
                 )
-
-                # Extract well data from optimized result
-                if optimized_data and "wells" in optimized_data:
-                    combined_data = []
-                    for well_id, well_df in optimized_data["wells"].items():
-                        if isinstance(well_df, pd.DataFrame):
-                            combined_data.append(well_df)
-
-                    if combined_data:
-                        data = pd.concat(combined_data, ignore_index=True)
-                        logger.info(
-                            f"Loaded {len(data)} records for {len(well_ids)} wells"
-                        )
-
-                        # Cache the result
-                        self.cache_manager.cache_well_data(
-                            cache_key, data, cache_params
-                        )
-
-        # Validate data if provided
-        if data is not None:
-            required_columns = ["well_id", "date", "oil_production"]
-            missing = [col for col in required_columns if col not in data.columns]
-
-            if missing:
-                raise ValueError(f"Missing required columns: {missing}")
-
-        self.well_data = data
-        self.total_requests += 1
-
-        # Clear cache when new data is loaded
-        self._clear_cache()
-
+                wells = response.get("wells") if isinstance(response, dict) else None
+                if not isinstance(wells, dict) or not wells:
+                    raise ValueError("Requested well observations are incomplete")
+                if any(not isinstance(frame, pd.DataFrame) for frame in wells.values()):
+                    raise ValueError("Requested well observations must be tables")
+                data = pd.concat(list(wells.values()), ignore_index=True)
+                cache_write = True
+            else:
+                self.cache_hits += 1
+        if not isinstance(data, pd.DataFrame):
+            raise ValueError("No well observations were supplied or loaded")
+        data = self._copy_observations(data)
+        required = ["well_id", "date", "oil_production"]
+        missing = [column for column in required if column not in data.columns]
+        if missing:
+            raise ValueError(f"Missing required columns: {missing}")
+        identifiers = self._well_identifiers(data)
+        if requested and set(identifiers) != set(requested):
+            raise ValueError("Requested well observations are incomplete")
+        if cache_write:
+            self.cache_manager.cache_well_data(cache_key, data, cache_params)
+        with self._verification_lock:
+            self.well_data = data
+            self._loaded_well_ids = requested or identifiers
+            self.verification_results.clear()
+            self._verification_records.clear()
+            self.total_requests += 1
+            self._clear_cache()
         logger.info(f"Loaded {len(data)} rows of well data")
 
     def get_well_data(self, well_id: str) -> pd.DataFrame:
@@ -550,79 +572,100 @@ class WellProductionDashboard(DashboardBuilder):
     def verify_data_quality(
         self, well_ids: Optional[List[str]] = None
     ) -> Dict[str, Any]:
-        """Backward-compatible quality verification entrypoint."""
-        if self.well_data is None:
-            return {"status": "no_data", "quality_score": 0, "results": {}}
-
-        target_ids = well_ids or sorted(
-            self.well_data.get("well_id", pd.Series()).dropna().unique()
-        )
-        results: Dict[str, Any] = {}
-        for well_id in target_ids:
-            data = self.get_well_data(well_id)
-            if data.empty:
-                results[well_id] = {"status": "missing", "quality_score": 0}
-                continue
-            results[well_id] = self.verify_well_data(data)
-
-        quality_scores = [
-            result.get("quality_score", 0)
-            for result in results.values()
-            if isinstance(result, dict)
-        ]
-        average_quality = (
-            sum(quality_scores) / len(quality_scores) if quality_scores else 0
-        )
-        return {
-            "status": "verified" if results else "no_data",
-            "quality_score": average_quality,
-            "results": results,
-        }
-
-    def verify_well_data(self, data: pd.DataFrame) -> Dict[str, Any]:
-        """
-        Verify well data using verification system.
-
-        Args:
-            data: Well data to verify
-
-        Returns:
-            Verification results
-        """
-        if not self.verification_enabled or self.verification_workflow is None:
-            return {"status": "unverified", "quality_score": 0}
-
-        try:
-            # Run verification workflow
-            result = self.verification_workflow.verify(data)
-
-            # Calculate quality score
-            quality_score = self.quality_framework.calculate_quality_score(data)
-
-            verification_results = {
-                "status": "verified" if result.is_valid else "failed",
-                "quality_score": quality_score,
-                "anomalies": result.issues if hasattr(result, "issues") else [],
-                "audit_trail": [],
+        """Every requested well must satisfy the configured quality criterion."""
+        with self._verification_lock:
+            if not valid_score(self.quality_threshold):
+                return {
+                    "status": "unverified",
+                    "quality_score": None,
+                    "results": {},
+                    "reason": "A finite quality threshold from zero to one is required",
+                }
+            if self.well_data is None or self.well_data.empty:
+                return {
+                    "status": "no_data",
+                    "quality_score": None,
+                    "results": {},
+                    "reason": "No observations are loaded",
+                }
+            identifiers = self._well_identifiers(self.well_data)
+            targets = (
+                self._requested_ids(well_ids)
+                if well_ids is not None
+                else self._loaded_well_ids or identifiers
+            )
+            results = {}
+            for well_id in targets:
+                data = self.get_well_data(well_id)
+                if data.empty:
+                    self.verification_results.pop(well_id, None)
+                    self._verification_records.pop(well_id, None)
+                    results[well_id] = {"status": "missing", "quality_score": None}
+                else:
+                    results[well_id] = self.verify_well_data(data)
+            verified = bool(results) and all(
+                result["status"] == "verified" and valid_score(result["quality_score"])
+                for result in results.values()
+            )
+            return {
+                "status": "verified" if verified else "failed",
+                "quality_score": (
+                    sum(result["quality_score"] for result in results.values())
+                    / len(results)
+                    if verified
+                    else None
+                ),
+                "quality_threshold": self.quality_threshold,
+                "results": results,
             }
 
-            self.verification_results[data["well_id"].iloc[0]] = verification_results
-
-            # Log to audit trail
-            if self.audit_logger:
-                self.audit_logger.log_action(
-                    action="verification",
-                    details={
-                        "well_id": data["well_id"].iloc[0],
-                        "status": verification_results["status"],
-                        "quality_score": quality_score,
-                    },
-                )
-
-            return verification_results
-        except Exception as e:
-            logger.error(f"Verification failed: {e}")
-            return {"status": "error", "quality_score": 0, "error": str(e)}
+    def verify_well_data(self, data: pd.DataFrame) -> Dict[str, Any]:
+        """Keep an authoritative copy of assessed observations and persisted results."""
+        with self._verification_lock:
+            snapshot = (
+                self._copy_observations(data)
+                if isinstance(data, pd.DataFrame)
+                else data
+            )
+            try:
+                identifiers = self._well_identifiers(snapshot)
+            except ValueError:
+                self.verification_results.clear()
+                self._verification_records.clear()
+                return {
+                    "status": "error",
+                    "quality_score": None,
+                    "reason": "Nonempty observations with valid well identifiers are required",
+                }
+            for identifier in identifiers:
+                self.verification_results.pop(identifier, None)
+                self._verification_records.pop(identifier, None)
+            if not self.verification_enabled or self._verification is None:
+                return {
+                    "status": "unverified",
+                    "quality_score": None,
+                    "reason": self.verification_reason,
+                }
+            try:
+                if not valid_score(self.quality_threshold):
+                    raise ValueError("A finite quality threshold is required")
+                self._verification.threshold = self.quality_threshold
+                result = self._verification.assess(snapshot)
+            except Exception as error:
+                result = {
+                    "status": "error",
+                    "quality_score": None,
+                    "quality_threshold": self.quality_threshold,
+                    "reason": f"Verification failed ({type(error).__name__})",
+                }
+            if len(identifiers) == 1:
+                well_id = identifiers[0]
+                self._verification_records[well_id] = {
+                    "observations": snapshot,
+                    "result": deepcopy(result),
+                }
+                self.verification_results[well_id] = deepcopy(result)
+            return deepcopy(result)
 
     def create_production_chart(
         self, well_id: str, use_cache: bool = True
@@ -733,39 +776,53 @@ class WellProductionDashboard(DashboardBuilder):
         }
 
     def get_quality_indicators(self, well_id: str) -> Dict[str, Any]:
-        """
-        Get quality indicators for a well.
-
-        Args:
-            well_id: Well identifier
-
-        Returns:
-            Quality indicators
-        """
-        if well_id not in self.verification_results:
+        """Display only a current assessment against its stated finite criterion."""
+        with self._verification_lock:
+            result = self._current_verification_result(well_id)
+            if result is None:
+                return {
+                    "status": "unverified",
+                    "quality_score": None,
+                    "indicator_color": "gray",
+                    "quality_threshold": (
+                        self.quality_threshold
+                        if valid_score(self.quality_threshold)
+                        else None
+                    ),
+                    "reason": "Current observations and quality criterion require verification",
+                }
+            score = result.get("quality_score")
+            if not valid_score(score):
+                score, color = None, "gray"
+            elif result.get("status") != "verified" or score < self.quality_threshold:
+                color = "red"
+            else:
+                color = "green" if score >= 0.9 else "yellow"
             return {
-                "status": "unverified",
-                "quality_score": 0,
-                "indicator_color": "gray",
+                "status": result.get("status", "unverified"),
+                "quality_score": score,
+                "quality_threshold": self.quality_threshold,
+                "indicator_color": color,
+                "anomalies": result.get("anomalies", []),
             }
 
-        results = self.verification_results[well_id]
-        quality_score = results.get("quality_score", 0)
-
-        # Determine indicator color
-        if quality_score >= 0.9:
-            color = "green"
-        elif quality_score >= 0.7:
-            color = "yellow"
-        else:
-            color = "red"
-
-        return {
-            "status": results.get("status", "unknown"),
-            "quality_score": quality_score,
-            "indicator_color": color,
-            "anomalies": results.get("anomalies", []),
-        }
+    def _current_verification_result(self, well_id, observations=None):
+        record = self._verification_records.get(well_id)
+        if record is None or not valid_score(self.quality_threshold):
+            return None
+        result = record["result"]
+        if result.get("quality_threshold") != self.quality_threshold:
+            return None
+        current = self.get_well_data(well_id) if observations is None else observations
+        assessed = record["observations"]
+        try:
+            matches = assessed.reset_index(drop=True).equals(
+                current.reset_index(drop=True)
+            )
+            matches = matches and assessed.attrs == current.attrs
+        except (TypeError, ValueError):
+            return None
+        return deepcopy(result) if matches else None
 
     def setup_authentication(self):
         """Set up authentication using BSEE patterns."""
@@ -789,66 +846,19 @@ class WellProductionDashboard(DashboardBuilder):
         return True  # Default to authenticated if no authenticator
 
     def enable_real_time_updates(self, interval: int = 60000):
-        """
-        Enable real-time updates.
-
-        Args:
-            interval: Update interval in milliseconds
-        """
-        self.real_time_enabled = True
-        self.update_interval = interval
-
-        # Initialize WebSocket handler for real-time updates
+        """Activate updates only when the optional WebSocket handler is available."""
+        if isinstance(interval, bool) or not isinstance(interval, int) or interval <= 0:
+            raise ValueError("Update interval must be a positive integer")
+        self.real_time_enabled = False
+        self.websocket_handler = None
         try:
             from .websocket import WebSocketHandler
-
-            self.websocket_handler = WebSocketHandler(port=self.config.websocket_port)
-            logger.info(f"Real-time updates enabled with {interval}ms interval")
-        except ImportError:
-            logger.warning("WebSocket support not available")
-            self.websocket_handler = None
-
-    def export_dashboard(self, format: str = "pdf") -> bytes:
-        """
-        Export dashboard to specified format.
-
-        Args:
-            format: Export format ('pdf' or 'excel')
-
-        Returns:
-            Exported content as bytes
-        """
-        if format not in self.config.export_formats:
-            raise ValueError(f"Unsupported export format: {format}")
-
-        try:
-            if format == "pdf":
-                exporter = PDFExporter()
-                return exporter.export_to_pdf(self.get_dashboard_data())
-            elif format == "excel":
-                exporter = ExcelExporter()
-                return exporter.export_to_excel(self.get_dashboard_data())
-        except ImportError:
-            logger.error(f"Export module for {format} not available")
-            return b""
-
-    def get_dashboard_data(self) -> Dict[str, Any]:
-        """
-        Get complete dashboard data for export.
-
-        Returns:
-            Dashboard data dictionary
-        """
-        return {
-            "title": self.config.title,
-            "well_data": (
-                self.well_data.to_dict("records") if self.well_data is not None else []
-            ),
-            "charts": [chart.__dict__ for chart in self.charts],
-            "filters": self.filters,
-            "verification_results": self.verification_results,
-            "timestamp": datetime.now().isoformat(),
-        }
+        except ImportError as error:
+            raise ImportError("WebSocket support is unavailable") from error
+        handler = WebSocketHandler(port=self.config.websocket_port)
+        self.websocket_handler = handler
+        self.update_interval = interval
+        self.real_time_enabled = True
 
     def apply_filters(self) -> pd.DataFrame:
         """
@@ -925,27 +935,10 @@ class WellProductionDashboard(DashboardBuilder):
         }
 
     def get_audit_trail(self, well_id: str) -> pd.DataFrame:
-        """
-        Get audit trail for a well.
-
-        Args:
-            well_id: Well identifier
-
-        Returns:
-            Audit trail DataFrame
-        """
-        if not self.audit_logger:
-            return pd.DataFrame()
-
-        try:
-            # Get audit logs for this well
-            logs = self.audit_logger.get_logs(filter_by={"well_id": well_id})
-            if logs:
-                return pd.DataFrame(logs)
-            return pd.DataFrame()
-        except Exception as e:
-            logger.error(f"Failed to get audit trail: {e}")
-            return pd.DataFrame()
+        """Read persisted records; database errors remain visible to the caller."""
+        if self._verification is None:
+            raise RuntimeError(self.verification_reason)
+        return self._verification.history(well_id)
 
     def add_well(self, well_id: str):
         """Add a well to the dashboard."""
@@ -988,139 +981,94 @@ class WellProductionDashboard(DashboardBuilder):
         self.cache_hits = 0
 
     # Export functionality methods
-    def export_dashboard(  # noqa: F811
+    def export_dashboard(
         self, output_path: str, export_config: Optional[ExportConfiguration] = None
     ) -> List[ExportResult]:
-        """
-        Export dashboard data to multiple formats.
-
-        Args:
-            output_path: Base path for export files
-            export_config: Export configuration
-
-        Returns:
-            List of export results
-        """
+        """Export one observation snapshot with matching persisted verification."""
         if export_config is None:
             export_config = ExportConfiguration(
-                formats=self.export_formats,
-                include_verification=self.enable_verification,
+                formats=self.config.export_formats,
+                include_verification=self.config.enable_verification,
                 include_charts=True,
                 include_raw_data=True,
             )
-
-        # Initialize export manager if not already done
+        with self._verification_lock:
+            dashboard_data = self.get_dashboard_data()
+            if export_config.include_verification:
+                dashboard_data["verification_metadata"] = (
+                    self._get_verification_metadata(dashboard_data["well_data"])
+                )
         if not hasattr(self, "export_manager"):
             self.export_manager = WellDashboardExportManager()
-
-        # Prepare dashboard data
-        dashboard_data = self.get_dashboard_data()
-
-        # Add verification metadata if enabled
-        if self.enable_verification and self.verification_workflow:
-            dashboard_data["verification_metadata"] = self._get_verification_metadata()
-
-        # Export using the export manager
         results = self.export_manager.export_batch(
             dashboard_data, output_path, export_config
         )
-
-        # Log export results
         for result in results:
             if result.success:
-                logger.info(
-                    f"Successfully exported to {result.format}: {result.file_path}"
-                )
+                logger.info(f"Successfully exported to {result.format}")
             else:
-                logger.error(
-                    f"Failed to export to {result.format}: {result.error_message}"
-                )
-
+                logger.error(f"Failed to export to {result.format}")
         return results
 
-    def get_dashboard_data(self) -> Dict[str, Any]:  # noqa: F811
-        """
-        Get all dashboard data for export.
+    def get_dashboard_data(self) -> Dict[str, Any]:
+        """Export loaded observations with authoritative, current assessment records."""
+        with self._verification_lock:
+            results = {
+                well_id: self._current_verification_result(well_id)
+                or self.get_quality_indicators(well_id)
+                for well_id in self._loaded_well_ids
+            }
+            return {
+                "title": self.config.title,
+                "well_data": (
+                    self._copy_observations(self.well_data)
+                    if self.well_data is not None
+                    else pd.DataFrame()
+                ),
+                "well_ids": list(self._loaded_well_ids),
+                "charts": {
+                    chart.chart_id: chart.__dict__.copy() for chart in self.charts
+                },
+                "filters": deepcopy(self.filters),
+                "verification_results": results,
+                "timestamp": datetime.now().isoformat(),
+            }
 
-        Returns:
-            Dictionary containing all dashboard data
-        """
-        dashboard_data = {
-            "export_timestamp": datetime.now(),
-            "dashboard_config": self.to_dict(),
-        }
-
-        # Get well production data
-        try:
-            well_data = self.get_well_data()
-            dashboard_data["well_data"] = well_data
-        except Exception as e:
-            logger.error(f"Failed to get well data: {e}")
-            dashboard_data["well_data"] = pd.DataFrame()
-
-        # Get economic metrics
-        try:
-            metrics = self.get_metrics()
-            dashboard_data["economic_metrics"] = metrics
-        except Exception as e:
-            logger.error(f"Failed to get metrics: {e}")
-            dashboard_data["economic_metrics"] = {}
-
-        # Get charts if available
-        try:
-            charts = self.get_charts()
-            dashboard_data["charts"] = charts
-        except Exception as e:
-            logger.error(f"Failed to get charts: {e}")
-            dashboard_data["charts"] = {}
-
-        # Get field aggregation data if available
-        if hasattr(self, "field_aggregator"):
-            try:
-                field_data = self.field_aggregator.get_field_summary()
-                dashboard_data["field_data"] = field_data
-            except Exception as e:
-                logger.error(f"Failed to get field data: {e}")
-
-        return dashboard_data
-
-    def _get_verification_metadata(self) -> VerificationMetadata:
-        """
-        Get verification metadata for export.
-
-        Returns:
-            Verification metadata
-        """
-        # Get latest verification result
-        quality_score = 0.0
-        anomalies = 0
-        completeness = 1.0
-
-        if self.verification_results:
-            latest_result = list(self.verification_results.values())[0]
-            if isinstance(latest_result, VerificationResult):
-                quality_score = latest_result.quality_score
-                anomalies = (
-                    len(latest_result.anomalies)
-                    if hasattr(latest_result, "anomalies")
-                    else 0
-                )
-                completeness = (
-                    latest_result.completeness
-                    if hasattr(latest_result, "completeness")
-                    else 1.0
-                )
-
+    def _get_verification_metadata(self, observations=None) -> VerificationMetadata:
+        """Bind exported status to complete scope and exact assessed observations."""
+        if not valid_score(self.quality_threshold):
+            raise ValueError("A finite quality threshold is required")
+        data = self.well_data if observations is None else observations
+        if data is None or data.empty:
+            raise ValueError("Loaded and verified observations are required")
+        identifiers = self._well_identifiers(data)
+        if set(identifiers) != set(self._loaded_well_ids):
+            raise ValueError("All requested observations must be present and verified")
+        results = [
+            self._current_verification_result(well_id, data[data["well_id"] == well_id])
+            or {}
+            for well_id in identifiers
+        ]
+        if any(
+            result.get("status") != "verified"
+            or not valid_score(result.get("quality_score"))
+            or result["quality_score"] < self.quality_threshold
+            or not result.get("audit_trail_id")
+            or not isinstance(result.get("verification_date"), datetime)
+            for result in results
+        ):
+            raise ValueError("All loaded observations must be verified before export")
         return VerificationMetadata(
-            quality_score=quality_score,
-            verification_date=datetime.now(),
-            audit_trail_id=f"AUDIT-{datetime.now().strftime('%Y%m%d-%H%M%S')}",
-            anomalies_detected=anomalies,
-            data_completeness=completeness,
+            quality_score=min(result["quality_score"] for result in results),
+            verification_date=max(result["verification_date"] for result in results),
+            audit_trail_id=",".join(result["audit_trail_id"] for result in results),
+            anomalies_detected=sum(len(result["anomalies"]) for result in results),
+            data_completeness=min(result["data_completeness"] for result in results),
             verification_status=(
-                "Verified" if quality_score >= self.quality_threshold else "Failed"
+                f"Verified supplied observation data quality; "
+                f"score >= {self.quality_threshold:.3f}"
             ),
-            data_sources=["BSEE", "Internal"],
+            data_sources=list(data.attrs.get("sources", [])),
         )
 
     def export_to_pdf(self, output_path: str) -> ExportResult:

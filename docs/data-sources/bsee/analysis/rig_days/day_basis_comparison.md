@@ -19,7 +19,7 @@ The inventory is repository-only. API12 wellbores are the comparison grain; API1
 | docs/modules/bsee/analysis/production/FDAS_V30/drilling_and_completion_days.xlsx | published workbook | 217 API12 | Sheet1 D=API,F=spud,G=TD,H=drilling,I=completion | 36744 |
 | docs/modules/bsee/analysis/production/FDAS_V30/drilling_and_completion_days_v21_kc.csv | published export | 253 API12 | API_WELL_NUMBER,DRILLING_DAYS,COMPLETION_DAYS,WELL_SPUD_DATE,TOTAL_DEPTH_DATE | 20834 |
 | reports/lower_tertiary/data/roy_rig_days_qa.csv | previous computed QA | 22 API12 bore rows; API10 rollups excluded | grain,api12,drilling_days,completion_days,pnd_days,ta_days | 3596 |
-| reports/lower_tertiary/lt_well_benchmark_lower_tertiary_2010_latest.csv | calendar benchmark | 56 API12 | api12,spud,drilling_days,completion_days | 7501 |
+| reports/lower_tertiary/lt_well_benchmark_lower_tertiary_2010_latest.csv | calendar benchmark | 56 API12 | api12,spud,spud_to_completion_calendar_days,completion_days | 7520 |
 | docs/modules/bsee/analysis/rig_days/war_data_608124003301.csv | weekly history | 608124003301;32 records | API_WELL_NUMBER,WAR_START_DT,WAR_END_DT,WELL_ACTIVITY_CD | 9072 |
 | docs/modules/bsee/analysis/rig_days/war_data_608124009500.csv | weekly history | 608124009500;45 records | same weekly columns | 12281 |
 | data/modules/bsee/current/operations/well_activity_summary.csv | sparse operational sample | 69 API12;100 records;2 matching IDs | same weekly columns | 9431 |

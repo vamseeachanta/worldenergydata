@@ -59,3 +59,14 @@ def test_no_version_labels(path: Path):
         assert (
             token.lower() not in lower
         ), f"{path.name}: banned label {token!r} present"
+
+
+@pytest.mark.parametrize("path", REPORTS, ids=lambda p: p.name)
+def test_header_line_five_matches_financial_summary(path: Path):
+    md = path.read_text(encoding="utf-8")
+    body = _SINGLE_NPV_ROW.search(md)
+    assert body, f"{path.name}: missing financial NPV row"
+    npv = re.search(r"\*\*\$[-0-9,]+\.[0-9] M\*\*", body.group()).group()
+    header = md.splitlines()[4]
+    assert header.startswith("**Data window:** ")
+    assert npv in header, f"{path.name}: header NPV differs from financial summary"

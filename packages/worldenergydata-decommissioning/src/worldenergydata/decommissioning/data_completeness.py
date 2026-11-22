@@ -64,11 +64,13 @@ def _normalise_score(value: Union[bool, float, None]) -> float:
     """Convert a boolean or float into a [0.0, 1.0] score.
 
     True  → 1.0
-    False or None → 0.0
+    False, None or a missing scalar (NaN / pandas.NA) → 0.0
     float → clamped to [0.0, 1.0]
     """
-    if value is None:
-        return 0.0
+    # pandas 2.2.3 (2024), pandas.isna, Examples: NaN / NA are missing scalars.
+    # https://pandas.pydata.org/pandas-docs/version/2.2/reference/api/pandas.isna.html
+    if pd.isna(value):
+        return 0.0  # Issue #1281: missing documentation scores as absent.
     if isinstance(value, bool):
         return 1.0 if value else 0.0
     return float(max(0.0, min(1.0, value)))
@@ -133,7 +135,8 @@ class DataCompletenessScorer:
                 - mooring_documents
                 - environmental_surveys
                 Values are bool (present/absent) or float in [0.0, 1.0].
-                Missing keys default to 0.0 (absent).
+                Missing keys and missing scalar values (NaN, None, pandas.NA)
+                default to 0.0 (absent).
             asset_type: Asset type string (e.g. 'jacket', 'fpso').
                 Used to adjust mooring weight.
 

@@ -9,6 +9,32 @@ SPEC = importlib.util.spec_from_file_location(
 )
 
 
+import pytest
+
+
+@pytest.fixture(autouse=True)
+def independent_atlas_inputs(monkeypatch, tmp_path):
+    import json
+    import sys
+
+    sys.path.insert(0, str(ROOT / "scripts/field_atlas"))
+    import build_atlas_feed as atlas
+
+    fields = tmp_path / "fields.csv"
+    fields.write_text(
+        "FIELD_ID,FIELD_NAME,COUNTRY,BLOCK,CURRENT_STATUS,RESERVE_TYPE,WATER_DEPTH_FT,US_GOM_FLAG\n"
+        "1,Synthetic Angola,Angola,Block 1,Discovery,Oil,100,\n"
+        "2,Synthetic Brazil,Brazil,Block 2,Discovery,Oil,200,\n"
+    )
+    coverage = tmp_path / "coverage.csv"
+    coverage.write_text("by_country,Angola,1,0\nby_country,Brazil,1,0\n")
+    roster = tmp_path / "roster.json"
+    roster.write_text(json.dumps([]))
+    monkeypatch.setattr(atlas, "FIELDS_CSV", fields)
+    monkeypatch.setattr(atlas, "COVERAGE_CSV", coverage)
+    monkeypatch.setattr(atlas, "ROSTER", roster)
+
+
 def load_api():
     module = importlib.util.module_from_spec(SPEC)
     SPEC.loader.exec_module(module)
@@ -120,7 +146,7 @@ def test_composite_relationship_never_suppresses_constituent_field():
     )
 
 
-def test_real_atlas_extension_preserves_non_angola_entries():
+def test_synthetic_atlas_extension_preserves_non_angola_entries():
     import hashlib
     import sys
 
@@ -175,10 +201,7 @@ def test_research_preview_cannot_replace_default_public_feed(tmp_path):
     paths = [
         "scripts/field_atlas/build_atlas_feed.py",
         "scripts/catalog_badges.py",
-        "data/modules/offshore_assets/curated/fields.csv",
-        "data/modules/offshore_assets/curated/coverage_summary.csv",
         "data/freshness-scorecard.json",
-        "reports/field-atlas/_roster.json",
     ]
     for path in paths:
         target = tmp_path / path

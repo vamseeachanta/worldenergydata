@@ -110,8 +110,24 @@ class MexicoCNHData:
     def _collect_production(self, cfg: Dict[str, Any]) -> Optional[Any]:
         """Collect production data from SIH dashboard."""
         logger.debug("Collecting production data")
-        # Placeholder - will be implemented with Selenium scraper
-        return []
+        bulk = cfg.get("production_bulk")
+        if bulk is None:
+            return []  # Preserve the legacy unconfigured collector contract.
+        from ..bulk import load_production_workbook
+        from ..bulk_client import BulkProductionClient
+
+        if "workbook" in bulk:
+            observed = load_production_workbook(bulk["workbook"])
+        else:
+            client = BulkProductionClient(
+                timeout=bulk["timeout"], max_bytes=bulk["max_bytes"]
+            )
+            observed = client.download(bulk["directory"], url=bulk.get("url")).workbook
+        records = observed.production.to_dict("records")
+        for record in records:
+            record["source_sha256"] = observed.sha256
+            record["source_vintage"] = observed.vintage
+        return records
 
     def _collect_wells(self, cfg: Dict[str, Any]) -> Optional[Any]:
         """Collect well data from SIH dashboard."""

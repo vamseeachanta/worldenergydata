@@ -6,6 +6,10 @@
 - **Scope:** repo-grounded capability vs. claims audit
 - **Companion artifact:** `docs/reports/2026-04-26-worldenergydata-capability-readiness-matrix.yaml`
 
+This is a historical audit. The drilling entries below and in the companion
+artifact describe the April snapshot; the dated update after the summary
+supersedes those entries for present drilling capability only.
+
 ## 1. Executive summary
 
 The repo's documented capability surface is materially smaller than what is actually shipped, and what is shipped is materially less complete than the manifest implies. Three simultaneous drifts are at work:
@@ -20,6 +24,43 @@ The repo's documented capability surface is materially smaller than what is actu
 Net effect: an agent using `MODULE_INDEX.md` as a contract will silently miss live capability (off-manifest packages), recommend untrustworthy data (sample-row catalog entries flagged `stable`), or attempt unscheduled modules as if scheduled. Each of these drifts is independently fixable but should be treated as a single index reconciliation lane before downstream automation lanes proceed.
 
 The four highest-leverage capability gaps are: (a) `MODULE_INDEX.md` reconciliation (27 vs 40+ vs 12), (b) catalog-empty modules tagged `stable` (`hse`, `pipeline_safety`), (c) CLI sub-app coverage gaps for nine `stable` manifest modules, (d) scheduler-flag drift on three modules. Top execution-ready modules are `bsee`, `metocean`, `marine_safety`, `safety_analysis`, `lng_terminals`, `fdas`, and `well_production_dashboard` (each has substantial source + tests + at least one usable surface).
+
+## Revision history
+
+| Revision | Date | What changed and why |
+| --- | --- | --- |
+| Original | 2026-04-26 | Capability audit recorded the source tree and documentation at that date. |
+| Drilling update | 2026-10-19 | Qualify the historical empty-domain claim against the present implementation and wheel boundary. |
+| Drilling distribution update | 2026-10-24 | Describe all distributed Markdown, preserve document-specific qualification and check non-Python wheel membership explicitly. |
+
+### Current drilling qualification (2026-10-19)
+
+The April statements that drilling was an empty placeholder, and the related
+deletion candidate, are historical observations rather than present readiness
+guidance. The current implementation is in
+`packages/worldenergydata-drilling/src/worldenergydata/drilling/`.
+Its `__init__.py` exports `BatchDrillingEconomics`, `BSEEBatchDetector`,
+`DrillCampaign` and `DrillingSite`; `batch_economics/` implements campaign
+cost calculations, data models and historical grouping. Runtime regression
+tests are in `tests/drilling/` and `tests/unit/drilling/`.
+
+The member distributes all Markdown under `worldenergydata/drilling/docs/`;
+see the [distribution boundary](../../packages/worldenergydata-drilling/README.md#knowledge-pack-distribution-boundary).
+The documented set comprises the DRAFT `agent-pack.md` and
+`detector-contracts.md`, whose engineering applicability is **NOT_EVALUATED**.
+The detector contract is supplied by `main` and is included when present in the
+source tree. Each document retains its own status and qualification limits.
+`tests/unit/drilling/test_packaging.py` builds a wheel and checks exact pack
+and detector-contract bytes when present, an explicit inventory of every
+non-Python drilling member, and drilling-only Python ownership. An explicit
+`docs/*.md` package-data pattern supports the declared setuptools 61.0 minimum.
+These packaging checks do not independently validate engineering methods or
+clear either document for engineering use. The documents' open qualification
+limits remain authoritative. Source-distribution
+inspection and release evidence are later work under #1347.
+
+The original tables, recommendations, counts and companion artifact are retained
+as the April snapshot; this update does not re-audit other domains.
 
 ## 2. Methodology and commands used
 

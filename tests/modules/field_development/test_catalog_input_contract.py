@@ -5,9 +5,12 @@ import json
 from pathlib import Path
 
 import pytest
-from test_catalog_integration import api as fixture_api
-from test_catalog_integration import inputs as fixture_inputs
-from test_catalog_integration import write_json
+
+from tests.modules.field_development.test_catalog_integration import api as fixture_api
+from tests.modules.field_development.test_catalog_integration import (
+    inputs as fixture_inputs,
+)
+from tests.modules.field_development.test_catalog_integration import write_json
 
 api = fixture_api
 inputs = fixture_inputs
@@ -17,7 +20,7 @@ def replace_table(inputs, table, rows):
     snapshot = inputs[0]
     path = snapshot / (table + ".json")
     write_json(path, rows)
-    manifest = json.loads((snapshot / "manifest.json").read_text())
+    manifest = json.loads((snapshot / "manifest.json").read_text(encoding="utf-8"))
     pin = next(p for p in manifest["files"] if p["path"] == table + ".json")
     pin.update(
         record_count=len(rows), sha256=hashlib.sha256(path.read_bytes()).hexdigest()
@@ -95,7 +98,7 @@ def test_same_name_phases_under_different_parents_not_merged(api, inputs):
 )
 @pytest.mark.parametrize("value", [None, ""])
 def test_non_source_evidence_requires_source(api, inputs, table, value):
-    rows = json.loads((inputs[0] / (table + ".json")).read_text())
+    rows = json.loads((inputs[0] / (table + ".json")).read_text(encoding="utf-8"))
     rows[0]["source_ref"] = value
     replace_table(inputs, table, rows)
     with pytest.raises(ValueError, match="source"):
@@ -110,8 +113,8 @@ def test_non_source_evidence_requires_source(api, inputs, table, value):
     ],
 )
 def test_inherited_requires_one_exact_parent(api, inputs, rows):
-    inputs[2].write_text(rows, encoding="utf-8")
-    manifest = json.loads((inputs[0] / "manifest.json").read_text())
+    inputs[2].write_text(rows, encoding="utf-8", newline="\n")
+    manifest = json.loads((inputs[0] / "manifest.json").read_text(encoding="utf-8"))
     manifest["inherited_cost_input"]["sha256"] = hashlib.sha256(
         inputs[2].read_bytes()
     ).hexdigest()
@@ -135,7 +138,7 @@ def test_reader_rejects_inherited_link_without_parent(api, inputs):
 
 
 def test_duplicate_snapshot_pin_rejected(api, inputs):
-    manifest = json.loads((inputs[0] / "manifest.json").read_text())
+    manifest = json.loads((inputs[0] / "manifest.json").read_text(encoding="utf-8"))
     manifest["files"].append(manifest["files"][0])
     write_json(inputs[0] / "manifest.json", manifest)
     with pytest.raises(ValueError, match="duplicate"):
@@ -163,7 +166,9 @@ def test_each_legacy_parent_manifest_read_is_single_pinned_buffer(
 
 
 def test_raw_phase_relationship_type(api, inputs):
-    rows = json.loads((inputs[0] / "field_observations.json").read_text())
+    rows = json.loads(
+        (inputs[0] / "field_observations.json").read_text(encoding="utf-8")
+    )
     rows[3].update(entity_type="phase", development="Phase parent")
     replace_table(inputs, "field_observations", rows)
     bundle = api.build_integration(*inputs)
@@ -187,7 +192,7 @@ def test_raw_phase_relationship_type(api, inputs):
     ],
 )
 def test_invalid_required_input_semantics(api, inputs, table, key, value):
-    rows = json.loads((inputs[0] / (table + ".json")).read_text())
+    rows = json.loads((inputs[0] / (table + ".json")).read_text(encoding="utf-8"))
     rows[0][key] = value
     replace_table(inputs, table, rows)
     with pytest.raises(ValueError):

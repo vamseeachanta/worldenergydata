@@ -22,6 +22,7 @@ from worldenergydata.common.fields_registry import (
     AREA_BLOCK_RE,
     LEASE_RE,
     load_fields,
+    load_fields_text,
     normalize_name,
 )
 
@@ -268,7 +269,199 @@ class TestFailClosed:
         assert reg.resolve("Cascade Chinook") == "cascade_chinook"
 
 
+@pytest.fixture
+def global_registry_fields():
+    """Synthetic regions with benign repetitions within a canonical identity.
+
+    Lease tokens follow TestFailClosed._base_field's G00001 example; G00002
+    is hand-selected to differ in the last digit, not an engineering value.
+    """
+    return [
+        {
+            "canonical_id": "alpha",
+            "display_name": "Alpha",
+            "aliases": [
+                "AL.PHA",
+                "Shared Field",
+                "SHARED-FIELD",
+                "shared_field",
+                "Shared Field",
+            ],
+            "region": "region_east",
+            "bsee": {
+                "leases": [
+                    "G00001",
+                    "g00001",
+                    "OCS-G00001",
+                    "OCS-G 00001",
+                    "G 00001",
+                    "G00001",
+                ]
+            },
+        },
+        {
+            "canonical_id": "beta",
+            "display_name": "Beta",
+            "aliases": ["Other Field"],
+            "region": "region_west",
+            "bsee": {"leases": ["G00002"]},
+        },
+    ]
+
+
+@unit
+@pytest.mark.parametrize("reverse_fields", [False, True], ids=["forward", "reverse"])
+@pytest.mark.parametrize("swap_regions", [False, True], ids=["east-west", "west-east"])
+@pytest.mark.parametrize(
+    "identity, variants, message",
+    [
+        pytest.param(
+            "aliases",
+            ("Shared Field", "sHaReD / fIeLd"),
+            "Alias collision",
+            id="alias-case-punctuation",
+        ),
+        pytest.param(
+            "leases",
+            ("G00001", "OCS-G 00001"),
+            "Lease collision",
+            id="lease-ocs-spaced",
+        ),
+        pytest.param(
+            "leases",
+            ("G00001", "G 00001"),
+            "Lease collision",
+            id="lease-spaced",
+        ),
+    ],
+)
+def test_global_normalized_collisions_are_order_independent(
+    tmp_path,
+    global_registry_fields,
+    reverse_fields,
+    swap_regions,
+    identity,
+    variants,
+    message,
+):
+    """MUTATION: normalized aliases/leases cannot identify distinct regional ids.
+
+    Names ignore case and punctuation; leases ignore case, OCS- and spaces.
+    Only the selected identity collides, so the other guard cannot mask it.
+    """
+    alpha, beta = global_registry_fields
+    if swap_regions:
+        alpha["region"], beta["region"] = beta["region"], alpha["region"]
+    for field, variant in zip(global_registry_fields, variants):
+        if identity == "aliases":
+            field["aliases"] = [variant]
+        else:
+            field["bsee"]["leases"] = [variant]
+    if reverse_fields:
+        global_registry_fields.reverse()
+    path = tmp_path / "global-fields.yml"
+    path.write_text(yaml.safe_dump({"fields": global_registry_fields}))
+    with pytest.raises(ValueError, match=message):
+        load_fields(path)
+
+
+@unit
+def test_global_registry_same_field_variants_roundtrip(
+    tmp_path, global_registry_fields
+):
+    """Hand-enumerated identities document the existing normalization contract.
+
+    Name keys ignore case/non-alphanumerics; lease keys ignore case, OCS-
+    and spaces. Expected identities are read from the synthetic fixture,
+    without calling normalization helpers. G99999 follows TestResolution's
+    unknown-lease example and is absent from this fixture.
+    """
+    path = tmp_path / "global-fields.yml"
+    path.write_text(yaml.safe_dump({"fields": global_registry_fields}))
+    reg = load_fields(path)
+    assert reg.all_ids() == ["alpha", "beta"]
+    expected_aliases = {
+        "alpha": "alpha",
+        "Alpha": "alpha",
+        "AL.PHA": "alpha",
+        "a l p h a": "alpha",
+        "Shared Field": "alpha",
+        "SHARED-FIELD": "alpha",
+        "shared_field": "alpha",
+        "shared / field": "alpha",
+        "beta": "beta",
+        "Beta": "beta",
+        "Other Field": "beta",
+        "OTHER-FIELD": "beta",
+        "Unregistered Field": None,
+        "": None,
+        None: None,
+    }
+    for alias, expected in expected_aliases.items():
+        assert reg.resolve(alias) == expected, alias
+    expected_leases = {
+        "G00001": "alpha",
+        "g00001": "alpha",
+        "OCS-G00001": "alpha",
+        "OCS-G 00001": "alpha",
+        "G 00001": "alpha",
+        "ocs-g 00001": "alpha",
+        "G00002": "beta",
+        "ocs-g 00002": "beta",
+        "G99999": None,
+        "OCS-G 99999": None,
+        "": None,
+        None: None,
+    }
+    for lease, expected in expected_leases.items():
+        assert reg.by_lease(lease) == expected, lease
+
+
 @unit
 def test_normalize_name_collapses_punctuation():
     assert normalize_name("Cascade/Chinook") == normalize_name("Cascade Chinook")
     assert normalize_name("Jack/St. Malo") == "jackstmalo"
+
+
+@unit
+def test_text_loader_preserves_path_and_default_loader_contract(
+    tmp_path, global_registry_fields, monkeypatch
+):
+    text = yaml.safe_dump({"fields": global_registry_fields})
+    path = tmp_path / "registry.yml"
+    path.write_text(text, encoding="utf-8")
+    monkeypatch.setattr(
+        "worldenergydata.common.fields_registry._default_path", lambda: path
+    )
+    registry = load_fields_text(text)
+    assert registry == load_fields(path) == load_fields()
+    assert registry.all_ids() == ["alpha", "beta"]
+    assert registry.resolve("SHARED / FIELD") == "alpha"
+    assert registry.by_lease("ocs-g 00001") == "alpha"
+    assert registry.by_lease("G99999") is None
+
+
+@unit
+@pytest.mark.parametrize("text", ["", "# empty registry\n", "fields: []\n"])
+def test_text_loader_preserves_empty_registry(text):
+    assert load_fields_text(text).all_ids() == []
+
+
+@unit
+@pytest.mark.parametrize("collision", ["id", "alias", "lease"])
+def test_text_loader_rejects_collisions(global_registry_fields, collision):
+    alpha, beta = global_registry_fields
+    if collision == "id":
+        beta["canonical_id"] = alpha["canonical_id"]
+    elif collision == "alias":
+        beta["aliases"] = ["shared / field"]
+    else:
+        beta["bsee"]["leases"] = ["ocs-g 00001"]
+    with pytest.raises(ValueError, match="Duplicate canonical_id|collision"):
+        load_fields_text(yaml.safe_dump({"fields": global_registry_fields}))
+
+
+@unit
+def test_text_loader_rejects_invalid_yaml():
+    with pytest.raises(yaml.YAMLError):
+        load_fields_text("fields: [")

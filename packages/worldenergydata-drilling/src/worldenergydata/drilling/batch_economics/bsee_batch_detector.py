@@ -1,18 +1,20 @@
-# ABOUTME: BSEE historical batch campaign detector for WRK-219.
-# ABOUTME: Heuristic: same rig + same field/block within time window = batch.
+# ABOUTME: Historical batch detection with explicit per-row reconciliation.
+# ABOUTME: Calendar-window grouping and auditable log-space learning fits.
 
-"""BSEE historical batch campaign detector.
+"""Heuristic activity grouping and learning fits, with auditable dispositions.
 
-Identifies batch drilling campaigns from BSEE activity data using a heuristic
-grouping rule: same rig, same field/block, wells spud within a rolling time
-window.
-
-Also provides a learning curve fitting utility for historical batch sequences.
+See ``docs/detector-contracts.md`` beside the package documentation for the
+parsing policy, equations, legacy policy limits and a worked example.
 """
 
 from __future__ import annotations
 
 import logging
+import math
+import re
+from dataclasses import dataclass
+from datetime import date, datetime
+from numbers import Integral
 
 import numpy as np
 import pandas as pd
@@ -20,159 +22,311 @@ import pandas as pd
 logger = logging.getLogger(__name__)
 
 _REQUIRED_COLUMNS = {"well_id", "rig_name", "field_name", "spud_date"}
+_RECORD_COLUMNS = ["row_position", "source_index", "disposition", "reason"]
+# Decimal/scientific notation only; no thousands separators, units or Booleans.
+_NUMERIC_TEXT = re.compile(
+    r"[+-]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?\Z"
+)
+# Legacy application policy, NOT engineering limits: agent-pack.md revision 2,
+# section 2, 'Learning DataFrame' and 'Fitted factor'. Calibration is unqualified.
+_DEFAULT_FACTOR = 0.85
+_FACTOR_BOUNDS = (0.5, 1.0)
+
+
+@dataclass
+class DetectionResult:
+    """Batch table plus exactly one disposition per input row."""
+
+    batches: pd.DataFrame
+    records: pd.DataFrame
+
+    @property
+    def counts(self) -> dict[str, int]:
+        return _counts(self.records)
+
+
+@dataclass
+class LearningFitResult:
+    """A fit/default, its unclipped factor, and the retained row evidence.
+
+    ``qualification`` concerns engineering applicability; a successful numerical
+    fit alone cannot establish that applicability or qualify the legacy bounds.
+    """
+
+    factor: float
+    raw_factor: float | None
+    status: str
+    reason: str
+    records: pd.DataFrame
+    qualification: str = "NOT_EVALUATED"
+
+    @property
+    def counts(self) -> dict[str, int]:
+        return _counts(self.records)
+
+
+def _counts(records: pd.DataFrame) -> dict[str, int]:
+    counts = records["disposition"].value_counts()
+    return {
+        name: int(counts.get(name, 0)) for name in ("accepted", "rejected", "excluded")
+    }
+
+
+def _require_columns(df: pd.DataFrame, required: set[str]) -> None:
+    if not df.columns.is_unique:
+        raise ValueError("input columns must be unique")
+    missing = required - set(df.columns)
+    if missing:
+        raise ValueError(f"input missing required columns: {sorted(missing)}")
+
+
+def _record(position: int, index: object, disposition: str, reason: str) -> dict:
+    return dict(
+        row_position=position,
+        source_index=index,
+        disposition=disposition,
+        reason=reason,
+    )
+
+
+def _parse_date(value: object) -> pd.Timestamp:
+    # pandas to_datetime reference (2026), format and utc sections:
+    # https://pandas.pydata.org/docs/reference/api/pandas.to_datetime.html
+    # Naive dates are explicitly UTC; numeric epochs have no declared units.
+    if isinstance(value, str):
+        if not re.match(r"^[0-9]{4}-[0-9]{2}-[0-9]{2}(?:[Tt ]|$)", value.strip()):
+            return pd.NaT
+        return pd.to_datetime(
+            value.strip(), format="ISO8601", utc=True, errors="coerce"
+        )
+    if isinstance(value, (date, datetime, pd.Timestamp, np.datetime64)):
+        return pd.to_datetime(value, utc=True, errors="coerce")
+    return pd.NaT
+
+
+def _parse_number(value: object, column: str) -> tuple[float | None, str | None]:
+    if value is None or value is pd.NA or value is pd.NaT:
+        return None, f"missing_{column}"
+    if isinstance(value, (bool, np.bool_)):
+        return None, f"invalid_{column}"
+    if isinstance(value, str):
+        value = value.strip()
+        if not value:
+            return None, f"missing_{column}"
+        if not _NUMERIC_TEXT.fullmatch(value):
+            return None, f"invalid_{column}"
+    elif not isinstance(value, (int, float, np.integer, np.floating)):
+        return None, f"invalid_{column}"
+    try:
+        number = float(value)
+    except (ValueError, TypeError, OverflowError):
+        return None, f"invalid_{column}"
+    if math.isnan(number):
+        return None, f"missing_{column}"
+    if not math.isfinite(number):
+        return None, f"nonfinite_{column}"
+    if number <= 0:
+        return None, f"nonpositive_{column}"
+    if column == "well_position" and not number.is_integer():
+        return None, "noninteger_well_position"
+    return number, None
 
 
 class BSEEBatchDetector:
-    """Detect historical batch drilling campaigns from BSEE activity data.
+    """Group accepted event rows by rig, field and an anchored calendar window.
 
-    The core heuristic:
-        A batch is a group of wells drilled by the same rig in the same
-        field/block where all spud dates fall within a rolling
-        ``time_window_months`` window.
+    Existing DataFrame/scalar entry points remain available. The diagnostic
+    entry points expose dispositions without storing mutable state on this class.
     """
 
-    # ------------------------------------------------------------------
-    # Public API
-    # ------------------------------------------------------------------
-
     def detect_batches(
-        self,
-        bsee_df: pd.DataFrame,
-        time_window_months: int = 12,
+        self, bsee_df: pd.DataFrame, time_window_months: int = 12
     ) -> pd.DataFrame:
-        """Detect batch campaigns from BSEE-style drilling activity data.
+        """Return batches; warn when any input row is rejected or excluded.
 
-        Groups wells by (rig_name, field_name) and assigns them to rolling
-        time windows.  Any group of >=1 well(s) sharing the same rig and
-        field within the window becomes a batch record.
-
-        Args:
-            bsee_df: DataFrame with at minimum columns:
-                well_id, rig_name, field_name, spud_date.
-            time_window_months: Maximum span (in months) between first and
-                last spud date within a single batch.
-
-        Returns:
-            DataFrame of detected batches with columns:
-                batch_id, rig_name, field_name, well_ids (list), batch_size,
-                start_date, end_date, span_days.
-            Returns empty DataFrame if no valid data is found.
+        The default window is legacy application policy (agent-pack revision 2,
+        section 2), not a physically qualified campaign-separation criterion.
         """
-        self._validate_columns(bsee_df)
+        result = self.detect_batches_with_diagnostics(bsee_df, time_window_months)
+        if result.counts["rejected"] or result.counts["excluded"]:
+            logger.warning("Batch detection dispositions: %s", result.counts)
+        return result.batches
 
-        if bsee_df.empty:
-            return self._empty_result()
+    def detect_batches_with_diagnostics(
+        self, bsee_df: pd.DataFrame, time_window_months: int = 12
+    ) -> DetectionResult:
+        """Reconcile all rows, then group inclusive windows from the first row.
 
-        df = bsee_df.copy()
-        df["spud_date"] = pd.to_datetime(df["spud_date"])
-        df = df.sort_values("spud_date").reset_index(drop=True)
-
-        window_days = time_window_months * 30.44  # approximate
-
-        batches: list[dict] = []
-        batch_counter = 0
-
-        for (rig, field), group in df.groupby(["rig_name", "field_name"]):
-            group = group.sort_values("spud_date").reset_index(drop=True)
-            assigned = [False] * len(group)
-
-            i = 0
-            while i < len(group):
-                if assigned[i]:
-                    i += 1
-                    continue
-
-                window_start = group.loc[i, "spud_date"]
-                window_end = window_start + pd.Timedelta(days=window_days)
-
-                # Collect all wells within the rolling window
-                members = []
-                for j in range(i, len(group)):
-                    if group.loc[j, "spud_date"] <= window_end:
-                        members.append(j)
-                        assigned[j] = True
-                    else:
-                        break  # sorted, so no further wells fit this window
-
-                if members:
-                    batch_counter += 1
-                    member_rows = group.loc[members]
-                    start_dt = member_rows["spud_date"].min()
-                    end_dt = member_rows["spud_date"].max()
-                    batches.append(
-                        {
-                            "batch_id": f"BATCH-{batch_counter:04d}",
-                            "rig_name": rig,
-                            "field_name": field,
-                            "well_ids": member_rows["well_id"].tolist(),
-                            "batch_size": len(members),
-                            "start_date": start_dt,
-                            "end_date": end_dt,
-                            "span_days": (end_dt - start_dt).days,
-                        }
+        Keys must be nonblank strings; integral numeric well IDs become text.
+        Exact normalized required-column
+        duplicates are excluded after their first valid occurrence. Distinct
+        events for a repeated well remain accepted; batch_size counts events.
+        """
+        _require_columns(bsee_df, _REQUIRED_COLUMNS)
+        if (
+            isinstance(time_window_months, (bool, np.bool_))
+            or not isinstance(time_window_months, Integral)
+            or time_window_months <= 0
+        ):
+            raise ValueError("time_window_months must be a positive integer")
+        accepted, records, seen = [], [], set()
+        for position, (index, row) in enumerate(bsee_df.iterrows()):
+            normalized, reasons = {}, []
+            for key in ("well_id", "rig_name", "field_name"):
+                # iterrows can widen float32 to float; retain source precision.
+                value = bsee_df[key].iat[position]
+                if key == "well_id" and not isinstance(value, (bool, np.bool_)):
+                    if isinstance(value, Integral):
+                        value = str(int(value))
+                    elif (
+                        isinstance(value, (float, np.float64))
+                        and np.isfinite(value)
+                        and abs(value) < 2**53
+                        and value == np.floor(value)
+                    ):
+                        value = str(int(value))
+                if isinstance(value, str) and value.strip():
+                    normalized[key] = value.strip()
+                else:
+                    missing = (
+                        value is None
+                        or value is pd.NA
+                        or (isinstance(value, str) and not value.strip())
+                        or (isinstance(value, (float, np.floating)) and np.isnan(value))
                     )
+                    reasons.append(f"{'missing' if missing else 'invalid'}_{key}")
+            parsed = _parse_date(row["spud_date"])
+            if pd.isna(parsed):
+                reasons.append("invalid_spud_date")
+            if reasons:
+                records.append(_record(position, index, "rejected", ";".join(reasons)))
+                continue
+            normalized["spud_date"] = parsed
+            identity = tuple(normalized[key] for key in sorted(_REQUIRED_COLUMNS))
+            if identity in seen:
+                records.append(_record(position, index, "excluded", "duplicate_record"))
+                continue
+            seen.add(identity)
+            accepted.append(normalized)
+            records.append(_record(position, index, "accepted", "accepted"))
+        batches = self._group(accepted, int(time_window_months))
+        return DetectionResult(batches, pd.DataFrame(records, columns=_RECORD_COLUMNS))
 
-                i = max(i + 1, (members[-1] + 1) if members else i + 1)
-
-        if not batches:
-            return self._empty_result()
-
+    @staticmethod
+    def _group(accepted: list[dict], months: int) -> pd.DataFrame:
+        batches = []
+        if not accepted:
+            return BSEEBatchDetector._empty_result()
+        df = pd.DataFrame(accepted)
+        for (rig, field), group in df.groupby(["rig_name", "field_name"], sort=True):
+            group = group.sort_values("spud_date", kind="stable").reset_index(drop=True)
+            start = 0
+            while start < len(group):
+                first = group.iloc[start].spud_date
+                # Calendar offset (inclusive), not an approximate days/month:
+                # pandas DateOffset reference (2026), months keyword.
+                end = first + pd.DateOffset(months=months)
+                stop = start + 1
+                while stop < len(group) and group.iloc[stop].spud_date <= end:
+                    stop += 1
+                rows = group.iloc[start:stop]
+                last = rows.iloc[-1].spud_date
+                batches.append(
+                    dict(
+                        batch_id=f"BATCH-{len(batches) + 1:04d}",
+                        rig_name=rig,
+                        field_name=field,
+                        well_ids=rows.well_id.tolist(),
+                        batch_size=len(rows),
+                        start_date=first,
+                        end_date=last,
+                        # A day is a Timedelta unit; retain sub-day elapsed time.
+                        span_days=float((last - first) / pd.Timedelta(days=1)),
+                    )
+                )
+                start = stop
         return pd.DataFrame(batches)
 
     def fit_learning_curve(self, campaign_df: pd.DataFrame) -> float:
-        """Fit a Wright learning curve factor to historical batch well data.
+        """Return legacy bounded factor; warn about filtering/default/clipping."""
+        result = self.fit_learning_curve_with_diagnostics(campaign_df)
+        if result.status != "fitted" or result.counts["rejected"]:
+            logger.warning(
+                "Learning fit %s (%s): %s", result.status, result.reason, result.counts
+            )
+        return result.factor
 
-        Expects a DataFrame with columns:
-            well_position (int, 1-based), days_to_drill (float).
+    def fit_learning_curve_with_diagnostics(
+        self, campaign_df: pd.DataFrame
+    ) -> LearningFitResult:
+        """Fit log(T)=a+b*log(N); factor=T(2N)/T(N)=2**b.
 
-        Fits: log(T) = log(T1) + b * log(N)
-        where b = log(LC) / log(2), so LC = 2^b.
-
-        Args:
-            campaign_df: DataFrame with well_position and days_to_drill.
-
-        Returns:
-            Fitted learning curve factor LC in (0.5, 1.0].
-            Falls back to 0.85 on insufficient data.
+        N is a positive integer position; T is a positive finite duration in
+        elapsed days. Numeric text accepts decimal/scientific notation only.
+        Replicated positions remain observations; at least two distinct usable
+        positions are needed to identify the intercept and slope.
         """
-        if campaign_df.empty or len(campaign_df) < 2:
-            logger.warning("Insufficient data for LC fit; returning default 0.85")
-            return 0.85
-
-        positions = campaign_df["well_position"].astype(float).values
-        times = campaign_df["days_to_drill"].astype(float).values
-
-        # Filter out non-positive values
-        mask = (positions > 0) & (times > 0)
-        if mask.sum() < 2:
-            return 0.85
-
-        log_n = np.log(positions[mask])
-        log_t = np.log(times[mask])
-
-        # Least-squares fit: log_t = intercept + slope * log_n
-        slope, _ = np.polyfit(log_n, log_t, 1)
-
-        # Convert slope b back to LC factor: LC = 2^b
-        lc = float(2.0**slope)
-
-        # Clip to a sensible range for drilling learning curves
-        lc = max(0.5, min(lc, 1.0))
-        return lc
-
-    # ------------------------------------------------------------------
-    # Internal helpers
-    # ------------------------------------------------------------------
-
-    def _validate_columns(self, df: pd.DataFrame) -> None:
-        """Raise ValueError if required columns are missing."""
-        missing = _REQUIRED_COLUMNS - set(df.columns)
-        if missing:
-            raise ValueError(f"bsee_df missing required columns: {sorted(missing)}")
+        _require_columns(campaign_df, {"well_position", "days_to_drill"})
+        positions, times, records = [], [], []
+        for position, (index, row) in enumerate(campaign_df.iterrows()):
+            number, n_reason = _parse_number(row["well_position"], "well_position")
+            duration, t_reason = _parse_number(row["days_to_drill"], "days_to_drill")
+            reasons = [reason for reason in (n_reason, t_reason) if reason]
+            if reasons:
+                records.append(_record(position, index, "rejected", ";".join(reasons)))
+            else:
+                positions.append(number)
+                times.append(duration)
+                records.append(_record(position, index, "accepted", "accepted"))
+        evidence = pd.DataFrame(records, columns=_RECORD_COLUMNS)
+        if len(positions) < 2:
+            return LearningFitResult(
+                _DEFAULT_FACTOR, None, "defaulted", "insufficient_data", evidence
+            )
+        if len(set(positions)) < 2:
+            return LearningFitResult(
+                _DEFAULT_FACTOR, None, "defaulted", "constant_position", evidence
+            )
+        # Centered scalar least squares, equivalent to the linear system in
+        # NumPy lstsq reference (2026), Notes/Examples. Two distinct x values
+        # identify two coefficients; no empirical acceptance tolerance is used.
+        x, y = np.log(positions), np.log(times)
+        centered_x, centered_y = x - x.mean(), y - y.mean()
+        denominator = float(centered_x @ centered_x)
+        if denominator == 0:
+            return LearningFitResult(
+                _DEFAULT_FACTOR, None, "defaulted", "constant_position", evidence
+            )
+        slope = float(centered_x @ centered_y) / denominator
+        # Algebraic doubling ratio of the stated power law, not a coefficient
+        # imported from a drilling calibration. exp2 may overflow; expose that.
+        with np.errstate(over="ignore", under="ignore"):
+            raw = float(np.exp2(slope))
+        lower, upper = _FACTOR_BOUNDS
+        # Numerical endpoint guard only, scaled by log magnitude and row count.
+        # NumPy finfo.eps defines float spacing at unity, not an engineering
+        # acceptance limit. Preserve the unrounded raw factor in the result.
+        roundoff = np.finfo(float).eps * len(x) * max(1, abs(x).max(), abs(y).max())
+        at_boundary = any(
+            math.isclose(raw, bound, rel_tol=roundoff, abs_tol=0)
+            for bound in (lower, upper)
+        )
+        status = (
+            "fitted"
+            if at_boundary
+            else (
+                "clipped_lower"
+                if raw < lower
+                else "clipped_upper" if raw > upper else "fitted"
+            )
+        )
+        factor = max(lower, min(raw, upper))
+        return LearningFitResult(
+            factor, raw, status, "log_space_least_squares", evidence
+        )
 
     @staticmethod
     def _empty_result() -> pd.DataFrame:
-        """Return an empty DataFrame with the standard batch schema."""
         return pd.DataFrame(
             columns=[
                 "batch_id",

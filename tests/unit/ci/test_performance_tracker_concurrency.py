@@ -150,3 +150,15 @@ def test_two_process_trackers_preserve_every_record(tmp_path):
     for result in results:
         assert result.returncode == 0, result.stdout + result.stderr
     assert _record_count(tmp_path / "shared.db") == 24
+
+    # Issue 1198: two writers times twelve records = twenty-four distinct names,
+    # each appearing once (independent hand count).
+    expected_names = {
+        f"test_{worker}_{number}" for worker in ("a", "b") for number in range(12)
+    }
+    with sqlite3.connect(tmp_path / "shared.db") as conn:
+        name_counts = conn.execute(
+            "SELECT test_name, COUNT(*) FROM test_executions GROUP BY test_name"
+        ).fetchall()
+    assert {name for name, _ in name_counts} == expected_names
+    assert all(count == 1 for _, count in name_counts)

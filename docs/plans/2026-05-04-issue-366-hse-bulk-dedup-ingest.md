@@ -23,7 +23,13 @@ Identify duplicate rows, overlapping date ranges, and column schemas.
 ### Task 2 — Write `scripts/ingest/hse_bulk_ingest.py`
 Steps:
 1. Read all 11 fragmented CSVs into a single DataFrame (streaming to avoid OOM)
-2. Deduplicate on `(violation_id, establishment_id, citation_date)`
+2. Deduplicate on `(activity_nr, citation_id)`, with `issuance_date` as the date column.
+   No catalogued fragment has `violation_id`, `establishment_id` or `citation_date`.
+   The catalogued violation schema (`data/catalog/data-catalog.yml`, entries
+   `osha_violation0` to `osha_violation13`) carries `activity_nr` (inspection) and
+   `citation_id` (citation within the inspection). The `osha_violation_event<N>` and
+   `osha_violation_gen_duty_std<N>` fragments are separate tables and are not mixed
+   into the violation totals.
 3. Filter to NAICS codes: `213112`, `213111`, `211111` (oil & gas)
 4. Write chunked Parquet to `data/modules/hse/osha_violations_YYYYMMDD.parquet`
 

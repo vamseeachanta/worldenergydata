@@ -108,6 +108,69 @@ class TestCalibrate:
 
 
 # ---------------------------------------------------------------------------
+# Calendar-year exposure regression tests
+# ---------------------------------------------------------------------------
+
+
+class TestCalendarYearExposure:
+    @pytest.mark.parametrize(
+        ("years", "expected"),
+        [
+            ([2020, 2021], 2.0),
+            ([2014, 2023], 10.0),
+            ([2020, 2020], 1.0),
+            ([2022, 2020, 2022], 3.0),
+            (["2020", "2021"], 2.0),
+            ([2020, None, 2021], 2.0),
+        ],
+    )
+    def test_inclusive_calendar_span(self, years, expected) -> None:
+        """Count the full calendar span, including years without incident rows.
+
+        Source: OpenStax, College Algebra 2e (2021), section 9.2,
+        "Explicit Formula for an Arithmetic Sequence": an = a1 + d(n - 1).
+        Consecutive calendar years have d = 1, so n = last - first + 1.
+        Independent hand counts for the synthetic inputs above:
+        2020, 2021 -> two years; 2014 through 2023 -> ten years;
+        2020 alone -> one year; 2020, 2021, 2022 -> three years.
+        Duplicate rows, ordering, numeric strings and missing rows do not
+        change the endpoints of these spans. No approximate tolerance is needed.
+        """
+        df = pd.DataFrame(
+            {
+                "year": years,
+                "incident_type": "kick",
+                "sub_type": "pressure_control",
+            }
+        )
+        report = RiskCalibrator().calibrate(df).calibration_report()
+        assert report.years_covered == expected
+
+    def test_inclusive_span_sets_annual_incident_rate(self) -> None:
+        """Four unit-weight incidents over two calendar years give two per year.
+
+        Hand calculation: 2020 and 2021 are two calendar years (OpenStax,
+        College Algebra 2e, 2021, section 9.2; endpoint counting as above).
+        Four synthetic recordable rows each have unit weight under the local
+        assumption documented in well_planning/docs/agent-pack.md, revision 1
+        (2026), section 3 (not an empirically validated calibration value).
+        Thus weighted count = 1 + 1 + 1 + 1 = 4; rate = 4 / 2 = 2.
+        This tests the denominator, without validating probability coefficients.
+        """
+        df = pd.DataFrame(
+            {
+                "year": [2020, 2021, 2020, 2021],
+                "incident_type": "kick",
+                "sub_type": "pressure_control",
+                "severity": "recordable",
+            }
+        )
+        report = RiskCalibrator().calibrate(df).calibration_report()
+        record = next(r for r in report.records if r.risk_id == "OP-002")
+        assert record.events_per_year == 2.0
+
+
+# ---------------------------------------------------------------------------
 # TestCalibrationReport — 6 tests
 # ---------------------------------------------------------------------------
 

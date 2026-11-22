@@ -54,4 +54,4 @@ include = ["worldenergydata.drilling*"]
 namespaces = true
 
 [tool.setuptools.package-data]
-"worldenergydata.drilling" = ["*.md", "*.sql", "*.json", "**/*.yml", "**/*.yaml", "**/*.sql", "**/*.md", "**/*.json", "**/*.csv", "**/*.html"]
+"worldenergydata.drilling" = ["*.md", "*.sql", "*.json", "docs/*.md", "**/*.yml", "**/*.yaml", "**/*.sql", "**/*.md", "**/*.json", "**/*.csv", "**/*.html"]

@@ -33,6 +33,10 @@
   .tierbtn{font-family:ui-monospace,monospace;font-size:12px;font-weight:700;padding:6px 12px;border-radius:20px;border:1px solid var(--line);background:#fff;color:var(--muted);cursor:pointer}
   .tierbtn.on{background:var(--navy);color:#fff;border-color:var(--navy)}
   .count{font-family:ui-monospace,monospace;font-size:13px;color:var(--muted);margin:10px 2px}
+  .pager{display:flex;gap:8px;margin:10px 0}
+  .pager button{font:inherit;font-size:13px;padding:6px 12px;border:1px solid var(--line);border-radius:9px;background:var(--panel);color:var(--ink);cursor:pointer}
+  .pager button:disabled{opacity:.5;cursor:default}
+  .pager button:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
   .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:15px 17px;display:flex;flex-direction:column;
         box-shadow:0 1px 2px rgba(16,40,80,.04);transition:transform .12s,border-color .12s,box-shadow .12s}
@@ -108,6 +112,8 @@
     .xact{color:#08131f}.xerr{background:#2a1518;border-color:#5c2a30;color:#f0a9a9}
   }
 </style>
+<!-- Maintainer-approved public release only; see the visualization API guide. -->
+<script id="hf-viz-config" type="application/json">{}</script>
 </head>
 <body>
 <div class="wrap">
@@ -116,6 +122,15 @@
   <p class="lede">Browse deepwater fields top-down — Country → onshore/offshore → Region → geological play → field.
      Fields with a full life-cycle analysis open right here — and link through to their stage-gate hub.</p>
   <div class="story">The <b>Lower Tertiary (Wilcox)</b> play is ~8% of GoM fields but holds <b>~36% of the oil</b> — start there.</div>
+
+  <details id="economics-gate" class="xnote">
+    <summary>Economics release gate</summary>
+    <!-- Basis and withholding policy: reviewed release contract #976 (2026). -->
+    <p>Economics are life-to-date, pre-tax and discounted at 10%: sunk capital is
+       charged against production to date. Negative NPV can be valid on this basis.
+       Only explicitly surfaced values with a known basis are shown. Early-life,
+       withheld or unvalidated economics display n/a; full-cycle economics remain pending.</p>
+  </details>
 
   <section class="guide">
     <h3>Guided demo — a 4-click walkthrough</h3>
@@ -140,7 +155,11 @@
   </div>
   <div class="tiers" id="f-tiers"></div>
   <div class="count" id="f-cbadge"></div>
-  <div class="count" id="f-count"></div>
+  <div class="count" id="f-count" role="status" aria-live="polite" aria-atomic="true"></div>
+  <nav class="pager" aria-label="Field result pages">
+    <button id="f-prev" type="button" aria-controls="f-grid" disabled>Previous page</button>
+    <button id="f-next" type="button" aria-controls="f-grid" disabled>Next page</button>
+  </nav>
   <div class="grid" id="f-grid"></div>
 
   <section id="x-panel" hidden>
@@ -182,6 +201,8 @@ const CBADGE = Object.fromEntries(COUNTRIES.map(c=>[c.country, c]));
 const TIER_ORDER = {rich:0, sample:1, roadmap:2};
 const $ = id => document.getElementById(id);
 let tierFilter = "all";
+const PAGE_SIZE = 60;
+let currentPage = 1;
 
 /* Working set (#947): the embedded GoM roster, augmented by the global
    catalog feed once it has been lazily fetched. The initial paint (no
@@ -248,10 +269,21 @@ $("f-tiers").innerHTML = tiers.map(t=>`<button class="tierbtn${t==="all"?" on":"
 $("f-tiers").onclick = e => { if(!e.target.dataset.t) return;
   tierFilter = e.target.dataset.t;
   [...$("f-tiers").children].forEach(b=>b.classList.toggle("on", b.dataset.t===tierFilter));
-  render(); };
+  resetPage(); };
 
-$("f-country").addEventListener("input", () => { ensureFeed(); refreshSelects(); render(); });
-["f-domain","f-region","f-play","f-search"].forEach(id=>$(id).addEventListener("input", render));
+$("f-country").addEventListener("input", () => { ensureFeed(); refreshSelects(); resetPage(); });
+["f-domain","f-region","f-play","f-search"].forEach(id=>$(id).addEventListener("input", resetPage));
+$("f-prev").addEventListener("click", () => changePage(-1));
+$("f-next").addEventListener("click", () => changePage(1));
+
+function changePage(step){
+  const button = $(step < 0 ? "f-prev" : "f-next");
+  const hadFocus = document.activeElement === button;
+  currentPage += step; render();
+  if (hadFocus && button.disabled) $(step < 0 ? "f-next" : "f-prev").focus();
+}
+
+function resetPage(){ currentPage = 1; render(); }
 
 function render(){
   const c=$("f-country").value, d=$("f-domain").value, r=$("f-region").value, p=$("f-play").value,
@@ -262,8 +294,13 @@ function render(){
     (tierFilter==="all"||f.density_tier===tierFilter) &&
     (!q || (f.name+" "+(f.block||"")+" "+(f.operator||"")).toLowerCase().includes(q)));
   rows.sort((a,b)=> (TIER_ORDER[a.density_tier]-TIER_ORDER[b.density_tier]) || a.name.localeCompare(b.name));
-  $("f-count").textContent = `${rows.length} field${rows.length===1?"":"s"}`;
-  $("f-grid").innerHTML = rows.map(f=>{
+  const pageCount = Math.ceil(rows.length / PAGE_SIZE);
+  currentPage = Math.max(1, Math.min(currentPage, pageCount));
+  $("f-count").textContent = `${rows.length} field${rows.length===1?"":"s"} · page ${pageCount?currentPage:0} of ${pageCount}`;
+  $("f-prev").disabled = currentPage <= 1;
+  $("f-next").disabled = currentPage >= pageCount;
+  const pageRows = rows.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+  $("f-grid").innerHTML = pageRows.map(f=>{
     const go = f.lifecycle_id
       ? `<div class="go"><a href="../lifecycle/${f.lifecycle_id}_lifecycle.html">Life-cycle →</a></div>`
       : (f.concept ? `<div class="go"><span>concept: ${f.concept}</span></div>` : "");
@@ -313,6 +350,57 @@ function crumb(items){
 }
 function show(html){ $("x-body").innerHTML = html; }
 
+// HF visualization API (#966).
+function hfVizPlaceholder(target, message){
+  const note = document.createElement("span");
+  note.textContent = message + " ";
+  const link = document.createElement("a");
+  link.href = "https://github.com/vamseeachanta/worldenergydata/issues/966";
+  link.textContent = "Visualization availability (#966)";
+  target.replaceChildren(note, link);
+}
+async function loadHfVisualization(target, fieldId){
+  if (!target) return;
+  hfVizPlaceholder(target, "Saved visualization unavailable while the public service is checked.");
+  try {
+    const config = JSON.parse(document.getElementById("hf-viz-config").textContent);
+    // Full hashes follow the HF download guide; timeout is a deployment input.
+    const commit = /^[0-9a-f]{40}$/;
+    if (![config.dataset_revision, config.source_revision, config.renderer_revision].every(v => typeof v === "string" && commit.test(v)) ||
+        !/^[0-9a-f]{64}$/.test(config.bundle_sha256) || typeof config.dataset_id !== "string" ||
+        !Number.isSafeInteger(config.request_timeout_ms) || config.request_timeout_ms <= 0) throw new Error("Unconfigured");
+    const endpoint = new URL(config.endpoint);
+    if (endpoint.protocol !== "https:" || endpoint.username || endpoint.password || endpoint.search || endpoint.hash) throw new Error("Invalid endpoint");
+    const response = await fetch(endpoint.href, {
+      method: "POST", credentials: "omit", headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({dataset_revision: config.dataset_revision, field_id: fieldId}),
+      signal: AbortSignal.timeout(config.request_timeout_ms)
+    });
+    if (!response.ok) throw new Error("Service unavailable");
+    const result = await response.json();
+    for (const key of ["dataset_id", "dataset_revision", "source_revision", "renderer_revision", "bundle_sha256"]){
+      if (result[key] !== config[key]) throw new Error("Revision mismatch");
+    }
+    if (result.field_id !== fieldId || result.media_type !== "image/svg+xml" ||
+        result.metric !== "cum_oil_mmbbl" || result.units !== "MMbbl" || typeof result.svg !== "string") throw new Error("Invalid visualization");
+    // A route change detaches the old figure; its response must not replace the new one.
+    if (!target.isConnected) return;
+    const image = document.createElement("img");
+    image.alt = "Saved cumulative oil comparison (MMbbl); field histories cover different periods";
+    // SVG stays in an image context. Never insert remote markup as HTML.
+    image.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(result.svg);
+    image.style = "width:100%;height:auto";
+    image.onerror = () => hfVizPlaceholder(target, "Saved visualization unavailable: the returned image could not be displayed.");
+    const caption = document.createElement("figcaption");
+    caption.style = "overflow-wrap:anywhere";
+    caption.textContent = `Saved dataset ${result.dataset_id} at ${result.dataset_revision}; analysis code ${result.source_revision}; renderer code ${result.renderer_revision}; bundle SHA-256 ${result.bundle_sha256}. This saved snapshot can differ from the live field panel.`;
+    target.replaceChildren(image, caption);
+  } catch (error){
+    if (target.isConnected) hfVizPlaceholder(target, "Saved visualization unavailable: an approved release, public endpoint or access is unavailable.");
+  }
+}
+// End HF visualization API.
+
 function renderField(x, f){
   crumb([["Atlas", "#"], [f.name, `#/field/${f.id}`]]);
   const strip = PHASES.map(p=>`<span class="xph${p===f.currentPhase?" on":""}">${esc(p)}</span>`).join("");
@@ -324,13 +412,20 @@ function renderField(x, f){
   let perf = "";
   if (f.performance){
     const P = f.performance, row = (k,v)=> v==null?"":`<tr><td>${esc(k)}</td><td>${esc(v)}</td></tr>`;
+    // Release contract #976 (2026): never trust populated withheld values.
+    const released = P.economics_status === "surfaced" &&
+      P.economics_basis === "life_to_date_pretax_npv_at_10pct" &&
+      [P.npv_mm, P.breakeven_wti, P.sens_mm_per_dollar].every(Number.isFinite);
+    const economics = released
+      ? row("LTD breakeven WTI @10%", "$"+P.breakeven_wti+"/bbl") +
+        row("NPV, life-to-date @10%", "$"+P.npv_mm+"MM")
+      : `<tr><td>Economics</td><td><a href="#economics-gate">n/a — economics withheld</a></td></tr>`;
     perf = `<div class="xcardlet"><div class="xh">Field performance · BSEE life-to-date</div><table>` +
       row("Wells", P.wells) + row("Cum oil", P.cum_oil_mmbbl==null?null:P.cum_oil_mmbbl+" MMbbl") +
       row("EUR", P.eur_mmbbl==null?null:P.eur_mmbbl+" MMbbl") +
       row("Avg uptime", P.avg_uptime_pct==null?null:P.avg_uptime_pct+"%") +
       row("Avg decline", P.avg_decline_pct_yr==null?null:P.avg_decline_pct_yr+"%/yr") +
-      row("Breakeven WTI", P.breakeven_wti==null?null:"$"+P.breakeven_wti+"/bbl") +
-      row("NPV", P.npv_mm==null?null:"$"+P.npv_mm+"MM") +
+      economics +
       row("Interventions", P.interventions) + `</table></div>`;
   }
   let resv = "";
@@ -430,8 +525,12 @@ function renderField(x, f){
       ${concept}${arch}${perf}${resv}${uw}${landman}
     </div>
     <div class="xacts">${acts.join("")}</div>
+    <figure id="x-hf-viz" class="xnote" aria-live="polite">
+      Saved visualization unavailable. <a href="https://github.com/vamseeachanta/worldenergydata/issues/966">Visualization availability (#966)</a>
+    </figure>
     ${wellsNote}
     <p class="xprov">${esc(f.provenance||"")}</p>`);
+  loadHfVisualization($("x-hf-viz"), f.id);
 }
 
 function renderWells(x, f){
