@@ -10,6 +10,9 @@ engineering calculations or their acceptance limits.
 | Revision | Date | Change and reason |
 | --- | --- | --- |
 | Initial | 2026-10-20 | Document collection rules and a reproducible duplicate-name example. |
+| 1 | 2026-11-16 | Separate matrix collection evidence from runtime outcomes. |
+| 2 | 2026-11-18 | Keep parallel runtime tests running after collection fails. |
+| 3 | 2026-11-18 | Clarify the interpreter and success conditions for Codecov uploads. |
 
 ## Package imports
 
@@ -69,3 +72,44 @@ Successful collection establishes importability, not correctness of every
 legacy assertion. Runtime failures in older SODIR and dashboard tests require
 separate API and fixture reconciliation. A local check does not establish a
 passing hosted Python matrix.
+
+## Daily matrix collection evidence
+
+The existing `full-suite` job in `main-full-run.yml` collects tests separately
+on Python 3.10, 3.11 and 3.12 after dependency installation and before execution.
+The parallel target expression is evaluated once and shared by collection and
+execution. Collection adds the sequential `tests/integration tests/performance`
+targets, retains the root pytest configuration and disables the pytest cache.
+It uses no parallel workers and adds no exclusions or skips.
+
+Each interpreter uploads `collection-evidence-<version>` containing
+`collection.log` and `summary.txt`. Both files are written under `runner.temp`,
+outside the checkout, to respect the test tree-preservation guard.
+The summary records the source revision, actual interpreter version, selected
+test count, pytest return status and step status. A missing count is recorded
+as `unknown`; an unknown or zero count cannot turn a successful command into
+accepted collection. Nonzero pytest status is preserved. The upload runs even
+on failure, and the original failure still fails the job. Dependency setup
+failure skips collection, so missing evidence does not claim a collection result.
+
+The existing `tests/ci/test_collection_contract.py` also runs independently of
+the target expression, including after a collection failure. It guards the
+repaired imports, runtime dependency chain and duplicate test basenames.
+The runtime test selections and arguments remain the same.
+When target selection succeeds and the job is not cancelled, parallel runtime
+tests run even if collection or the collection contract fails. The collection
+failure still fails the job.
+Coverage is uploaded to Codecov only from the Python 3.11 leg, and only when
+every earlier step in that leg succeeds.
+
+`tests/workflows/test_collection_evidence.py` checks the matrix, target sharing,
+step order and artifact location. Synthetic suites exercise successful, broken
+and empty collection with real pytest; altered workflows demonstrate detection
+of omitted interpreters, hidden targets, failure masking and a missing runtime
+condition.
+
+Local regressions establish the workflow contract, not a passing hosted matrix.
+The final matrix criterion requires all three hosted collection steps to finish
+with status zero and positive selected counts. Runtime correctness remains a
+separate result. Existing optional-dependency and legacy collection problems
+remain visible for follow-up rather than being excluded to obtain success.
