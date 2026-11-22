@@ -85,6 +85,21 @@ CATALOG_CONTRACTS = (
 
 # Exact paths may select one contract suite or several related test files.
 CONTRACT_ROUTES = {
+    "scripts/career/build_semiconductor_packet.py": "tests/career/test_semiconductor_packet.py",
+    "docs/career/semiconductor-packet.json": "tests/career/test_semiconductor_packet.py",
+    "docs/reports/semiconductor-career-packet.html": "tests/career/test_semiconductor_packet.py",
+    "tests/career/test_semiconductor_packet.py": "tests/career/test_semiconductor_packet.py",
+    "tests/ci/test_career_routes.py": (
+        "tests/career/test_semiconductor_packet.py",
+        "tests/ci/test_career_routes.py",
+    ),
+    "config/fields.yml": "tests/unit/cost/test_project_field_crosswalk.py",
+    "src/worldenergydata/field_development/past_projects.yml": (
+        "tests/unit/cost/test_project_field_crosswalk.py",
+        "tests/unit/field_development",
+        "tests/modules/field_development/test_past_projects.py",
+    ),
+    "scripts/cost/validate_project_field_crosswalk.py": "tests/unit/cost/test_project_field_crosswalk.py",
     "scripts/build_pages.py": PAGES_CONTRACTS,
     "scripts/pages_scope.py": "tests/test_pages_scope.py",
     ".github/workflows/pages.yml": PAGES_CONTRACTS,
@@ -103,6 +118,10 @@ CONTRACT_ROUTES = {
     "reports/lower_tertiary/lifecycle/_performance.json": "tests/unit/site",
     "reports/lower_tertiary/parametric/lt_economics_parametric.json": "tests/unit/site",
     "reports/field-atlas/results/explorer_results_bundle.json": "tests/unit/site",
+    "scripts/eda/report.py": "tests/unit/eda",
+    "docs/examples/eda/README.md": "tests/unit/eda",
+    "docs/examples/eda/manifest.json": "tests/unit/eda",
+    "docs/examples/eda/report.md": "tests/unit/eda",
     "config/repo_structure.yml": "tests/repo_structure",
     ".gitattributes": "tests/repo_structure",
     "scripts/maintenance/classify_report_inventory.py": "tests/repo_structure",
@@ -136,6 +155,29 @@ CONTRACT_ROUTES = {
     "reports/capabilities/pdf/sec-wells.html": "tests/test_capability_onepagers.py",
     "reports/capabilities/pdf/well-path.html": "tests/test_capability_onepagers.py",
 }
+
+# Prefix routes: any change under the prefix selects the suite. Report evals
+# (results.json, eval.py, PROMPT.md, run records and the shared evalkit) are
+# checked by tests/report_evals.
+CONTRACT_PREFIX_ROUTES = (
+    ("data/modules/cost/", "tests/unit/cost"),
+    (
+        "data/modules/facility_specs/",
+        "tests/modules/field_development/test_withheld_data.py",
+    ),
+    ("data/modules/frontier_basins/", "tests/unit/canada"),
+    ("data/modules/offshore_assets/", "tests/unit/field_development"),
+    (
+        "data/modules/offshore_assets/",
+        "tests/modules/field_development/test_withheld_data.py",
+    ),
+    ("data/modules/subsea/", "tests/unit/subsea"),
+    ("data/modules/subsea/", "tests/unit/curated"),
+    ("data/modules/bsee/boem_lease_history_layout.json", "tests/unit/bsee"),
+    ("tests/fixtures/bsee/boem_raw/", "tests/unit/bsee"),
+    ("examples/report-evals/", "tests/report_evals"),
+    ("tests/report_evals/", "tests/report_evals"),
+)
 
 # Paths that exercise the durable-workflow registry (covered by tests/workflows,
 # already in ALWAYS_XDIST) but should still count as "test-relevant".
@@ -219,6 +261,13 @@ def select(changed: list[str], root: Path) -> dict:
             contracts.add("tests/repo_structure")
             relevant = True
             continue
+        prefix_targets = [
+            t for prefix, t in CONTRACT_PREFIX_ROUTES if p.startswith(prefix)
+        ]
+        if prefix_targets:
+            contracts.update(prefix_targets)
+            relevant = True
+            continue
         if p in CONTRACT_ROUTES:
             targets = CONTRACT_ROUTES[p]
             contracts.update((targets,) if isinstance(targets, str) else targets)
@@ -255,7 +304,8 @@ def select(changed: list[str], root: Path) -> dict:
             seq_modules.add(mi.group(1))
             relevant = True
         # anything else (reports/, notebooks/, *.md, docs/ non-registry,
-        # scripts/ non-ci, examples/ non-workflow) is not test-relevant.
+        # scripts/ non-ci, examples/ other than workflows and report evals)
+        # is not test-relevant.
 
     xdist = list(ALWAYS_XDIST)
     for mod in sorted(modules):

@@ -1,7 +1,8 @@
 """Prepare an offline field-development dataset candidate; never upload data.
 
-The matched_concepts config projects the committed summary used by the matched
-portfolio report. No economics, engineering coefficients or free-text notes
+The bundled matched-portfolio summary is withheld.
+The matched_concepts config projects a summary in the matched-portfolio report's
+schema. No economics, engineering coefficients or free-text notes
 are exported. Hugging Face supports row-oriented JSON and named configs:
 https://huggingface.co/docs/datasets/loading#json
 https://huggingface.co/docs/hub/datasets-data-files-configuration
@@ -16,7 +17,11 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
+from worldenergydata.field_development.data_availability import require_available_source
 
 SOURCE = Path("reports/field_development/bsee_matched/_summary.json")
 
@@ -140,7 +145,8 @@ def validate_summary(source: dict) -> None:
 
 def build_dataset(repo: Path) -> dict[str, bytes]:
     """Return the deterministic candidate files without writing anything."""
-    raw = (repo / SOURCE).read_bytes()
+    source_path = require_available_source(repo / SOURCE)
+    raw = source_path.read_bytes()
     source = json.loads(
         raw, object_pairs_hook=unique_object, parse_constant=reject_constant
     )

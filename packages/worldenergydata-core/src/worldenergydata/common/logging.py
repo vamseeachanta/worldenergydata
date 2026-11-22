@@ -18,8 +18,9 @@ import json
 import logging
 import os
 import sys
+from collections.abc import MutableMapping
 from datetime import datetime, timezone
-from typing import Any, Dict, Optional
+from typing import Any
 
 
 class StructuredFormatter(logging.Formatter):
@@ -31,10 +32,10 @@ class StructuredFormatter(logging.Formatter):
 
     def __init__(
         self,
-        fmt: Optional[str] = None,
-        datefmt: Optional[str] = None,
+        fmt: str | None = None,
+        datefmt: str | None = None,
         json_output: bool = False,
-    ):
+    ) -> None:
         """
         Initialize the structured formatter.
 
@@ -81,7 +82,7 @@ class StructuredFormatter(logging.Formatter):
 
     def _format_json(self, record: logging.LogRecord) -> str:
         """Format record as JSON."""
-        log_data: Dict[str, Any] = {
+        log_data: dict[str, Any] = {
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "level": record.levelname,
             "logger": record.name,
@@ -126,7 +127,7 @@ class StructuredFormatter(logging.Formatter):
 
         return base
 
-    def _get_extras(self, record: logging.LogRecord) -> Dict[str, Any]:
+    def _get_extras(self, record: logging.LogRecord) -> dict[str, Any]:
         """Extract extra fields from the log record."""
         return {
             key: value
@@ -142,8 +143,14 @@ class LoggerAdapter(logging.LoggerAdapter):
     Allows setting context that will be included in all log messages.
     """
 
-    def process(self, msg: str, kwargs: Dict[str, Any]) -> tuple[str, Dict[str, Any]]:
-        """Process the logging call to add context."""
+    def process(
+        self, msg: Any, kwargs: MutableMapping[str, Any]
+    ) -> tuple[Any, MutableMapping[str, Any]]:
+        """Add context while preserving the logging.LoggerAdapter.process contract.
+
+        Python 3.10 logging reference, LoggerAdapter: messages can be arbitrary
+        objects and keyword arguments can be mutable mappings other than dict.
+        """
         # Merge adapter's extra with call-specific extra
         extra = kwargs.get("extra", {})
         if self.extra:
@@ -153,7 +160,7 @@ class LoggerAdapter(logging.LoggerAdapter):
 
 
 # Global configuration state
-_log_config: Dict[str, Any] = {
+_log_config: dict[str, Any] = {
     "level": None,
     "json_output": False,
     "configured": False,
@@ -161,9 +168,9 @@ _log_config: Dict[str, Any] = {
 
 
 def configure_logging(
-    level: Optional[str] = None,
-    json_output: Optional[bool] = None,
-    handlers: Optional[list[logging.Handler]] = None,
+    level: str | None = None,
+    json_output: bool | None = None,
+    handlers: list[logging.Handler] | None = None,
 ) -> None:
     """
     Configure the global logging settings.
@@ -212,7 +219,7 @@ def configure_logging(
 
 def get_logger(
     name: str,
-    context: Optional[Dict[str, Any]] = None,
+    context: dict[str, Any] | None = None,
 ) -> LoggerAdapter:
     """
     Get a logger instance with optional persistent context.
@@ -241,7 +248,7 @@ def get_logger(
 
 def get_module_logger(
     module_name: str,
-    component: Optional[str] = None,
+    component: str | None = None,
 ) -> LoggerAdapter:
     """
     Get a logger for a specific module with standard naming.

@@ -21,6 +21,10 @@ import re
 from pathlib import Path
 
 from worldenergydata.field_development import build_fdp_html
+from worldenergydata.field_development.data_availability import (
+    WITHHELD_REASON,
+    DatasetUnavailableError,
+)
 from worldenergydata.field_development.enums import (
     ConceptType,
     FluidType,
@@ -274,6 +278,15 @@ def main() -> None:
     args = parser.parse_args()
     src = args.source
     profiles = json.loads(Path(src).read_text(encoding="utf-8"))
+    # Default research must not restore withdrawn profiles from stale bytes.
+    # Validate the whole input before rendering or changing any saved output.
+    if src.resolve() == (OUT_DIR / "_research.json").resolve() and any(
+        not profile.get("evidence") for profile in profiles
+    ):
+        raise DatasetUnavailableError(
+            f"Default portfolio profiles without independent citations are {WITHHELD_REASON}. "
+            "Use independently sourced inputs with their own redistribution clearance."
+        )
     args.output_dir.mkdir(parents=True, exist_ok=True)
     count = 0
     for d in profiles:

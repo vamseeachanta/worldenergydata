@@ -1,5 +1,5 @@
 {
-  "cohort_basis": "Nominal as-reported USD million; no inflation or currency qualification",
+  "cohort_basis": "Nominal curated source costs in USD million; supplemental derived calibration rows excluded; no inflation or currency qualification",
   "cohort_source": "cost/data_collection/public_dataset.py; curated inputs, not reverified filings",
   "cohorts": [
     {
@@ -16,28 +16,6 @@
       "water_depth_band": "mid",
       "year_max": 2021,
       "year_min": 2012
-    },
-    {
-      "activity_type": "completion",
-      "cost_type": "well_cost",
-      "count": 1,
-      "median_usd_mm": 7480.0,
-      "outlier_status": "NOT_EVALUATED",
-      "region": "Asia-Pacific",
-      "water_depth_band": "mid",
-      "year_max": 2012,
-      "year_min": 2012
-    },
-    {
-      "activity_type": "drilling",
-      "cost_type": "well_cost",
-      "count": 1,
-      "median_usd_mm": 3120.0,
-      "outlier_status": "NOT_EVALUATED",
-      "region": "Asia-Pacific",
-      "water_depth_band": "mid",
-      "year_max": 2021,
-      "year_min": 2021
     },
     {
       "activity_type": "drilling",
@@ -90,24 +68,13 @@
     {
       "activity_type": "completion",
       "cost_type": "well_cost",
-      "count": 2,
-      "median_usd_mm": 2980.0,
+      "count": 1,
+      "median_usd_mm": 4200.0,
       "outlier_status": "NOT_EVALUATED",
       "region": "Brazil",
       "water_depth_band": "ultra_deep",
       "year_max": 2019,
-      "year_min": 2018
-    },
-    {
-      "activity_type": "drilling",
-      "cost_type": "well_cost",
-      "count": 2,
-      "median_usd_mm": 1310.0,
-      "outlier_status": "NOT_EVALUATED",
-      "region": "Brazil",
-      "water_depth_band": "ultra_deep",
-      "year_max": 2023,
-      "year_min": 2017
+      "year_min": 2019
     },
     {
       "activity_type": "drilling",
@@ -123,28 +90,6 @@
       "water_depth_band": "deep",
       "year_max": 2019,
       "year_min": 2014
-    },
-    {
-      "activity_type": "completion",
-      "cost_type": "well_cost",
-      "count": 2,
-      "median_usd_mm": 342.0,
-      "outlier_status": "NOT_EVALUATED",
-      "region": "GOM",
-      "water_depth_band": "deep",
-      "year_max": 2019,
-      "year_min": 2014
-    },
-    {
-      "activity_type": "drilling",
-      "cost_type": "well_cost",
-      "count": 3,
-      "median_usd_mm": 378.0,
-      "outlier_status": "NOT_EVALUATED",
-      "region": "GOM",
-      "water_depth_band": "deep",
-      "year_max": 2019,
-      "year_min": 2008
     },
     {
       "activity_type": "completion",
@@ -175,28 +120,13 @@
     {
       "activity_type": "completion",
       "cost_type": "well_cost",
-      "count": 5,
-      "lower_fence_usd_mm": -619.0,
-      "median_usd_mm": 676.0,
-      "outlier_status": "descriptive_only",
-      "q1_usd_mm": 320.0,
-      "q3_usd_mm": 946.0,
-      "region": "GOM",
-      "upper_fence_usd_mm": 1885.0,
-      "water_depth_band": "ultra_deep",
-      "year_max": 2021,
-      "year_min": 2010
-    },
-    {
-      "activity_type": "drilling",
-      "cost_type": "well_cost",
-      "count": 3,
-      "median_usd_mm": 468.0,
+      "count": 1,
+      "median_usd_mm": 320.0,
       "outlier_status": "NOT_EVALUATED",
       "region": "GOM",
       "water_depth_band": "ultra_deep",
-      "year_max": 2019,
-      "year_min": 2011
+      "year_max": 2014,
+      "year_min": 2014
     },
     {
       "activity_type": "intervention",
@@ -270,28 +200,6 @@
     },
     {
       "activity_type": "completion",
-      "cost_type": "well_cost",
-      "count": 1,
-      "median_usd_mm": 504.0,
-      "outlier_status": "NOT_EVALUATED",
-      "region": "NCS",
-      "water_depth_band": "mid",
-      "year_max": 2013,
-      "year_min": 2013
-    },
-    {
-      "activity_type": "drilling",
-      "cost_type": "well_cost",
-      "count": 1,
-      "median_usd_mm": 38.5,
-      "outlier_status": "NOT_EVALUATED",
-      "region": "NCS",
-      "water_depth_band": "mid",
-      "year_max": 2021,
-      "year_min": 2021
-    },
-    {
-      "activity_type": "completion",
       "cost_type": "total_capex",
       "count": 1,
       "median_usd_mm": 5500.0,
@@ -319,24 +227,13 @@
     {
       "activity_type": "completion",
       "cost_type": "well_cost",
-      "count": 3,
+      "count": 1,
       "median_usd_mm": 150.0,
       "outlier_status": "NOT_EVALUATED",
       "region": "NCS",
       "water_depth_band": "shallow",
-      "year_max": 2022,
+      "year_max": 2018,
       "year_min": 2018
-    },
-    {
-      "activity_type": "drilling",
-      "cost_type": "well_cost",
-      "count": 2,
-      "median_usd_mm": 1312.0,
-      "outlier_status": "NOT_EVALUATED",
-      "region": "NCS",
-      "water_depth_band": "shallow",
-      "year_max": 2019,
-      "year_min": 2015
     },
     {
       "activity_type": "drilling",
@@ -365,26 +262,15 @@
       "year_min": 2012
     },
     {
-      "activity_type": "completion",
-      "cost_type": "well_cost",
-      "count": 1,
-      "median_usd_mm": 1092.0,
-      "outlier_status": "NOT_EVALUATED",
-      "region": "UKCS",
-      "water_depth_band": "shallow",
-      "year_max": 2015,
-      "year_min": 2015
-    },
-    {
       "activity_type": "drilling",
       "cost_type": "well_cost",
-      "count": 3,
-      "median_usd_mm": 800.0,
+      "count": 2,
+      "median_usd_mm": 725.0,
       "outlier_status": "NOT_EVALUATED",
       "region": "UKCS",
       "water_depth_band": "shallow",
       "year_max": 2018,
-      "year_min": 2012
+      "year_min": 2016
     },
     {
       "activity_type": "drilling",
@@ -409,17 +295,6 @@
       "year_min": 2020
     },
     {
-      "activity_type": "completion",
-      "cost_type": "well_cost",
-      "count": 1,
-      "median_usd_mm": 756.0,
-      "outlier_status": "NOT_EVALUATED",
-      "region": "West Africa",
-      "water_depth_band": "mid",
-      "year_max": 2020,
-      "year_min": 2020
-    },
-    {
       "activity_type": "drilling",
       "cost_type": "total_capex",
       "count": 7,
@@ -432,28 +307,6 @@
       "upper_fence_usd_mm": 16575.0,
       "water_depth_band": "ultra_deep",
       "year_max": 2023,
-      "year_min": 2017
-    },
-    {
-      "activity_type": "completion",
-      "cost_type": "well_cost",
-      "count": 1,
-      "median_usd_mm": 988.0,
-      "outlier_status": "NOT_EVALUATED",
-      "region": "West Africa",
-      "water_depth_band": "ultra_deep",
-      "year_max": 2019,
-      "year_min": 2019
-    },
-    {
-      "activity_type": "drilling",
-      "cost_type": "well_cost",
-      "count": 2,
-      "median_usd_mm": 1252.0,
-      "outlier_status": "NOT_EVALUATED",
-      "region": "West Africa",
-      "water_depth_band": "ultra_deep",
-      "year_max": 2022,
       "year_min": 2017
     }
   ],
@@ -806,17 +659,6 @@
       "region": "GOM",
       "source_record_index": 24,
       "source_record_sha256": "107e82b84b86247bb11caf07497016f8c1579dad77a7096609eb2a5e09d10fb6",
-      "water_depth_band": "ultra_deep",
-      "year_sanction": 2010
-    },
-    {
-      "activity_type": "completion",
-      "cost_type": "well_cost",
-      "cost_usd_mm": 1950.0,
-      "operator": "Chevron",
-      "region": "GOM",
-      "source_record_index": 95,
-      "source_record_sha256": "b65200c630248bb3bf7068574d69f1726dcf01ddf55c7479855af92d94c28dab",
       "water_depth_band": "ultra_deep",
       "year_sanction": 2010
     },

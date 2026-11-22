@@ -31,8 +31,13 @@
 # - Both sentinel and marker reads come from the SAME staged blob via
 #   `git show ":$file"` — eliminates the working-tree-vs-staged-blob TOCTOU
 #   bypass surfaced by Codex r2 #2 + Claude r1 #4.
+# - Binary policy: scan raw staged bytes as text, including NUL-containing
+#   blobs; do not decompress archives. Keep bytes in a temporary file, never
+#   a Bash variable. Escape control bytes only when rendering violations.
 
 set -uo pipefail
+# Marker delimiters and diagnostics use byte semantics in every caller locale.
+export LC_ALL=C
 # Note: not using `set -e` because we deliberately tolerate non-zero exit
 # codes from grep (no-match) and similar; explicit branching is used instead.
 
@@ -55,30 +60,30 @@ is_path_restricted() {
   return 1
 }
 
-has_eol_sentinel() {
-  # Returns 0 if the line ends with one of the recognized per-line sentinels.
-  local line="$1"
-  case "$line" in
-    *"# CONFLICT_MARKER_FORENSIC_OK") return 0 ;;
-    *"// CONFLICT_MARKER_FORENSIC_OK") return 0 ;;
-    *"<!-- CONFLICT_MARKER_FORENSIC_OK -->") return 0 ;;
-  esac
-  return 1
+staged_blob=""
+trap 'if [[ -n "$staged_blob" ]]; then rm -f -- "$staged_blob"; fi' EXIT
+trap 'exit 129' HUP
+trap 'exit 130' INT
+trap 'exit 143' TERM
+if ! staged_blob="$(mktemp)"; then
+  printf 'ERROR: Cannot create staged-content snapshot.\n' >&2
+  exit 1
+fi
+
+snapshot_read_error() {
+  printf 'ERROR: Cannot read staged content: %s\n' "$display_file" >&2
+  exit 1
 }
 
-is_marker_line() {
-  # Returns 0 if the line is a conflict-marker anchor at column 0:
-  #   `<<<<<<<` followed by whitespace or end-of-line, or
-  #   `>>>>>>>` followed by whitespace or end-of-line.
-  # Trailing-space requirement weakened to `(\s|$)` per Claude r1 #8.
-  local line="$1"
-  if [[ "$line" =~ ^"<<<<<<<"([[:space:]]|$) ]]; then
-    return 0
-  fi
-  if [[ "$line" =~ ^">>>>>>>"([[:space:]]|$) ]]; then
-    return 0
-  fi
-  return 1
+snapshot_contains() {
+  local status
+  # Read the whole snapshot: grep -q can hide a read error after a match.
+  grep -a "$@" "$staged_blob" > /dev/null
+  status=$?
+  case "$status" in
+    0|1) return "$status" ;;
+    *) snapshot_read_error ;;
+  esac
 }
 
 violations=()
@@ -90,39 +95,54 @@ while IFS= read -r -d '' file; do
     continue
   fi
 
+  # Keep each diagnostic on one line, including paths ending in a newline.
+  if ! display_file="$(printf '%s' "${file//$'\n'/^J}" | cat -vT)"; then
+    printf 'ERROR: Cannot render staged path.\n' >&2
+    exit 1
+  fi
+
   # Read the staged blob ONCE. This is the single source of truth used by
   # both the per-file sentinel check AND the per-line marker scan.
-  if ! staged_content="$(git show ":$file" 2>/dev/null)"; then
-    continue
+  if ! git show ":$file" > "$staged_blob" 2>/dev/null; then
+    printf 'ERROR: Cannot snapshot staged content: %s\n' "$display_file" >&2
+    exit 1
   fi
 
   # Path-restricted per-file sentinel.
   if is_path_restricted "$file"; then
-    if printf '%s\n' "$staged_content" | grep -qF "<!-- CONFLICT_MARKER_FORENSIC_FILE_OK -->"; then
+    if snapshot_contains -F "<!-- CONFLICT_MARKER_FORENSIC_FILE_OK -->"; then
       continue
     fi
   fi
 
   # Co-occurrence pre-check: skip files that don't contain BOTH anchors.
   # Avoids markdown 7-level blockquote false-positive (`>>>>>>> ` alone).
-  if ! printf '%s\n' "$staged_content" | grep -qE '^<<<<<<<([[:space:]]|$)'; then
+  if ! snapshot_contains -E '^<<<<<<<([[:space:]]|$)'; then
     continue
   fi
-  if ! printf '%s\n' "$staged_content" | grep -qE '^>>>>>>>([[:space:]]|$)'; then
+  if ! snapshot_contains -E '^>>>>>>>([[:space:]]|$)'; then
     continue
   fi
 
-  # Per-line scan with per-line sentinel exemption.
-  lineno=0
-  while IFS= read -r line; do
-    lineno=$((lineno + 1))
-    if is_marker_line "$line"; then
-      if has_eol_sentinel "$line"; then
-        continue
-      fi
-      violations+=("${file}:${lineno}:${line}")
-    fi
-  done <<< "$staged_content"
+  # Match and exempt raw bytes before escaping diagnostic text for Bash.
+  # grep -n retains the original line numbers, including a final partial line.
+  # Capture every pipeline status in the subshell; a no-match from either
+  # grep is valid, but read/filter/render errors must reach the parent.
+  if ! matches="$(
+    grep -anE '^(<<<<<<<|>>>>>>>)([[:space:]]|$)' "$staged_blob" |
+      grep -avE '(# CONFLICT_MARKER_FORENSIC_OK|// CONFLICT_MARKER_FORENSIC_OK|<!-- CONFLICT_MARKER_FORENSIC_OK -->)$' |
+      LC_ALL=C cat -v
+    pipeline_status=("${PIPESTATUS[@]}")
+    [[ ${pipeline_status[0]} -le 1 && ${pipeline_status[1]} -le 1 &&
+       ${pipeline_status[2]} -eq 0 ]]
+  )"; then
+    snapshot_read_error
+  fi
+  if [[ -n "$matches" ]]; then
+    while IFS= read -r line; do
+      violations+=("${display_file}:${line}")
+    done <<< "$matches"
+  fi
 
 done < <(git diff --cached --name-only --diff-filter=ACMR -z 2>/dev/null)
 

@@ -41,11 +41,14 @@ class DrillingProductivityReport:
             df: Normalised DPR DataFrame from load_all_basins().
 
         Returns:
-            DataFrame with columns: basin, period, rig_count.
+            DataFrame with columns: basin, period, rig_count and a fresh index.
+            Input index labels need not be unique. Equal latest periods retain
+            the first input observation for that basin.
         """
         if df.empty:
             return pd.DataFrame(columns=["basin", "period", "rig_count"])
 
+        df = df.reset_index(drop=True)
         idx = df.groupby("basin")["period"].idxmax()
         latest = df.loc[idx, ["basin", "period", "rig_count"]].copy()
         return latest.sort_values("rig_count", ascending=False).reset_index(drop=True)

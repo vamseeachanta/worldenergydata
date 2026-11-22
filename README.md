@@ -184,7 +184,9 @@ uv run pre-commit install
 
 # Populate BSEE data (not stored in git, ~300 MB download)
 make data
-# or: python3 scripts/refresh_bsee_all.py
+# or: uv run worldenergydata bsee refresh
+# Preview the registry download plan without writing data:
+uv run worldenergydata bsee refresh --dry-run
 
 # Verify installation
 uv run worldenergydata --help
@@ -192,6 +194,18 @@ uv run worldenergydata --help
 
 > **Note**: BSEE analysis modules require local data that is not stored in git.
 > Run `make data` after cloning to download datasets. See [Local Data Pattern](docs/data/LOCAL_DATA_PATTERN.md).
+
+The registry includes the eWell WAR archive and requires
+`data/modules/bsee/bin/war/mv_war_main.bin` and `mv_war_main_prop.bin`.
+Nested archive members are extracted by filename; WAR `SN_WAR` join keys
+retain their text representation, and `WELL_ACTIVITY_CD` values are retained
+without interpreting activity meanings. A refresh reports failure if a required
+output is missing or remains an LFS pointer, including after a partial write.
+Existing real bins are preserved unless `--force` is used; forced replacements
+retain backups. Presence checks do not establish content integrity or freshness.
+Per #1066, eWell WAR bulk covers only reports submitted since April 2004;
+that coverage floor and the live archive have not been independently verified here.
+A full live refresh from a clean checkout remains unverified.
 
 ### Basic Usage
 
@@ -212,6 +226,9 @@ uv run worldenergydata forecast --help
 **Data-required commands** (run `make data` first):
 
 ```bash
+# Populate the registry-backed binary cache from a repository checkout:
+make data # or: uv run worldenergydata bsee refresh
+
 # BSEE data analysis — requires local BSEE dataset (~300 MB)
 uv run worldenergydata bsee analyze --field "Jack"
 uv run worldenergydata bsee report --type block --id 759 --format excel
@@ -229,6 +246,11 @@ uv run worldenergydata eia fetch  # ⚠ credential-required
 ```
 
 > **Note:** `bsee refresh`, `marine-safety scrape`, and scheduler commands download large datasets.
+> The default `bsee refresh` uses `scripts/refresh_bsee_all.py` and writes to
+> `data/modules/bsee/bin/`. Existing non-pointer binaries are skipped; `--force`
+> backs them up before replacement. This checks cache presence, not content integrity.
+> For recent production, use `scripts/refresh_bsee_ogor_recent.py`; the full
+> refresh script's OGOR-A year mapping is stale.
 > See [MODULE_INDEX.md](MODULE_INDEX.md) for the full module list and data prerequisites.
 > See [docs/CLI.md](docs/CLI.md) for complete CLI reference with safety classifications.
 

@@ -1,0 +1,6 @@
+# Only small derived aggregates and figures are public deliverables.
+!output/
+!output/*.csv
+!output/*.json
+!output/*.png
+!output/*.svg

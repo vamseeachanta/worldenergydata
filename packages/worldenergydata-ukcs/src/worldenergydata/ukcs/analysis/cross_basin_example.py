@@ -137,6 +137,9 @@ class CrossBasinComparator:
         -------
         ComparisonResult
         """
+        for profile in profiles:
+            self._validate_fiscal_regime(profile)
+
         npv_by_basin: Dict[str, float] = {}
         gov_take_by_basin: Dict[str, float] = {}
         sensitivity: Dict[str, Dict[str, float]] = {}
@@ -155,6 +158,7 @@ class CrossBasinComparator:
 
     def _compute(self, profile: BasinProfile):
         """Return (post-tax NPV, effective government-take rate)."""
+        self._validate_fiscal_regime(profile)
         monthly_rate = self.discount_rate / 12.0
         capex_usd = profile.capex_mm_usd * 1_000_000.0
 
@@ -169,7 +173,7 @@ class CrossBasinComparator:
 
             tax = self._apply_fiscal(profile, revenue, opex, capex_usd, t)
 
-            net_cf = max(pre_tax_profit - tax, 0.0) if pre_tax_profit > 0 else 0.0
+            net_cf = pre_tax_profit - tax
             discount_factor = 1.0 / ((1 + monthly_rate) ** t)
             post_tax_cashflows.append(net_cf * discount_factor)
 
@@ -197,6 +201,7 @@ class CrossBasinComparator:
         month: int,
     ) -> float:
         """Return monthly tax burden based on fiscal regime."""
+        self._validate_fiscal_regime(profile)
         if profile.fiscal_regime == "ukcs":
             # Amortise capex over first 36 months for ring-fenced profit calc
             monthly_capex = capex_usd / 36.0 if month <= 36 else 0.0
@@ -218,14 +223,11 @@ class CrossBasinComparator:
             special_tax = special_tax_base * NCS_SPECIAL_TAX_RATE
             return corp_tax + special_tax
 
-        elif profile.fiscal_regime == "gom":
+        else:  # gom; the selector has already been validated
             royalty = revenue * GOM_ROYALTY_RATE
             taxable = max(0.0, revenue - royalty - opex)
             fed_tax = taxable * GOM_FEDERAL_TAX_RATE
             return royalty + fed_tax
-
-        else:
-            return 0.0
 
     def _npv_sensitivity(
         self, profile: BasinProfile, oil_price_delta_pct: float = 0.10
@@ -260,3 +262,11 @@ class CrossBasinComparator:
             "high_price": high_npv,
             "low_price": low_npv,
         }
+
+    @staticmethod
+    def _validate_fiscal_regime(profile: BasinProfile) -> None:
+        if profile.fiscal_regime not in ("ukcs", "ncs", "gom"):
+            raise ValueError(
+                f"Unsupported fiscal regime: {profile.fiscal_regime!r}; "
+                "expected 'ukcs', 'ncs' or 'gom'"
+            )
