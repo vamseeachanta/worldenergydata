@@ -7,6 +7,8 @@ name: CI
 # "Main full run" (.github/workflows/main-full-run.yml), dispatched once a day
 # by the ace-linux-1 cron with `gh workflow run`; GitHub's schedule trigger is
 # not used. Required checks: Lint, Security Scan, Test (PR gate).
+# Runners: pull request jobs use ubuntu-latest unless the repository variable
+# WED_PR_RUNNER is "self-hosted" (docs/ci/linux-runners.md); push stays self-hosted.
 on:
   push:
     branches: [main, develop]
@@ -34,7 +36,8 @@ jobs:
     name: Gate mode
     runs-on: >-
       ${{ (github.event_name != 'pull_request' ||
-          github.event.pull_request.head.repo.full_name == github.repository) &&
+          (github.event.pull_request.head.repo.full_name == github.repository &&
+          vars.WED_PR_RUNNER == 'self-hosted')) &&
           fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
     permissions:
       contents: read
@@ -138,7 +141,8 @@ jobs:
     name: Lint (full)
     runs-on: >-
       ${{ (github.event_name != 'pull_request' ||
-          github.event.pull_request.head.repo.full_name == github.repository) &&
+          (github.event.pull_request.head.repo.full_name == github.repository &&
+          vars.WED_PR_RUNNER == 'self-hosted')) &&
           fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
     timeout-minutes: 30
     needs: [mode]
@@ -256,7 +260,8 @@ jobs:
     # PR/push: secret scan only. Bandit runs in the daily Main full run.
     runs-on: >-
       ${{ (github.event_name != 'pull_request' ||
-          github.event.pull_request.head.repo.full_name == github.repository) &&
+          (github.event.pull_request.head.repo.full_name == github.repository &&
+          vars.WED_PR_RUNNER == 'self-hosted')) &&
           fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
     timeout-minutes: 30
     needs: [mode]
@@ -341,7 +346,8 @@ jobs:
     if: ${{ !cancelled() }}
     runs-on: >-
       ${{ (github.event_name != 'pull_request' ||
-          github.event.pull_request.head.repo.full_name == github.repository) &&
+          (github.event.pull_request.head.repo.full_name == github.repository &&
+          vars.WED_PR_RUNNER == 'self-hosted')) &&
           fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
     permissions:
       contents: read
@@ -370,7 +376,8 @@ jobs:
     if: ${{ !cancelled() }}
     runs-on: >-
       ${{ (github.event_name != 'pull_request' ||
-          github.event.pull_request.head.repo.full_name == github.repository) &&
+          (github.event.pull_request.head.repo.full_name == github.repository &&
+          vars.WED_PR_RUNNER == 'self-hosted')) &&
           fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
     permissions:
       contents: read
@@ -399,7 +406,8 @@ jobs:
     if: ${{ !cancelled() && github.event_name == 'pull_request' }}
     runs-on: >-
       ${{ (github.event_name != 'pull_request' ||
-          github.event.pull_request.head.repo.full_name == github.repository) &&
+          (github.event.pull_request.head.repo.full_name == github.repository &&
+          vars.WED_PR_RUNNER == 'self-hosted')) &&
           fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
     permissions:
       contents: read

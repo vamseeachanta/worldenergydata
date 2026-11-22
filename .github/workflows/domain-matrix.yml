@@ -59,7 +59,8 @@ jobs:
     name: Discover domains
     runs-on: >-
       ${{ (github.event_name != 'pull_request' ||
-          github.event.pull_request.head.repo.full_name == github.repository) &&
+          (github.event.pull_request.head.repo.full_name == github.repository &&
+          vars.WED_PR_RUNNER == 'self-hosted')) &&
           fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
     timeout-minutes: 10
     outputs:
@@ -232,7 +233,8 @@ jobs:
     needs: discover
     runs-on: >-
       ${{ (github.event_name != 'pull_request' ||
-          github.event.pull_request.head.repo.full_name == github.repository) &&
+          (github.event.pull_request.head.repo.full_name == github.repository &&
+          vars.WED_PR_RUNNER == 'self-hosted')) &&
           fromJSON('["self-hosted","x64","linux"]') || 'ubuntu-latest' }}
     timeout-minutes: 60
     strategy:
@@ -374,7 +376,8 @@ jobs:
     if: always()
     runs-on: >-
       ${{ (github.event_name != 'pull_request' ||
-          github.event.pull_request.head.repo.full_name == github.repository) &&
+          (github.event.pull_request.head.repo.full_name == github.repository &&
+          vars.WED_PR_RUNNER == 'self-hosted')) &&
           fromJSON('["self-hosted","x64","linux"]') || 'ubuntu-latest' }}
     timeout-minutes: 10
     steps:
