@@ -1,185 +1,54 @@
-# System Overview
+# System overview
 
-## Purpose
-This directory provides comprehensive system mapping and tool documentation for the digitalmodel project, giving AI assistants complete context about the technical ecosystem.
+This repository aggregates and analyses energy market data, including BSEE
+(offshore production and drilling) and EIA (energy statistics). This page is a
+navigation index; the [repository contract](../../AGENTS.md) governs task
+execution.
 
-## Directory Contents
+## Repository map
 
-### `devops-tools.md`
-Complete mapping of DevOps toolchain including:
-- Build systems and automation
-- Deployment pipelines and strategies
-- Monitoring and observability tools
-- Infrastructure management and provisioning
+- [Root source tree](../../src/worldenergydata/): shared orchestration, analysis
+  and application entry points.
+- [Workspace packages](../../packages/): domain distributions contributing to the
+  `worldenergydata` namespace.
+- [BSEE source](../../packages/worldenergydata-bsee/src/worldenergydata/bsee/):
+  offshore data collection, processing and analysis.
+- [EIA source](../../packages/worldenergydata-eia/src/worldenergydata/eia/):
+  energy-statistics data access.
+- [CLI entry point](../../src/worldenergydata/cli/main.py): the application behind
+  the `worldenergydata` command declared in the package configuration.
 
-### `build-pipeline.md`
-Detailed build system documentation covering:
-- Build process stages and dependencies
-- Quality gates and validation steps
-- Artifact generation and management
-- Performance optimization and caching
+## Development and checks
 
-### `deployment-strategy.md`
-Deployment processes and environments:
-- Environment topology and configuration
-- Release management and rollback procedures
-- Configuration management and secrets
-- Zero-downtime deployment strategies
+Python `>=3.10` is required by the [package configuration](../../pyproject.toml).
+That file also declares dependencies, workspace members, the CLI binding and
+pytest settings. Workspace packages need to be installed for domain imports;
+adding only the root source directory does not expose all domains.
 
-### `testing-framework.md`
-Testing infrastructure and methodologies:
-- Test frameworks and tools used
-- Testing levels (unit, integration, e2e)
-- Test data management and mocking strategies
-- Coverage requirements and reporting
+1. Read the repository contract and the task's acceptance criteria, inspect the
+   affected code and data, and plan a bounded change before implementation.
+2. Write a failing test for the intended behaviour, then make the change and run
+   the affected tests. The [test collection guide](../../docs/development/test-collection.md)
+   explains package imports, collection rules and remaining limitations.
+3. Use the formatters, lint checks and file checks declared in the
+   [hook configuration](../../.pre-commit-config.yaml). Consult the package
+   configuration for tool settings rather than assuming versions or thresholds.
+4. Preserve source inputs and existing behaviour outside the task's scope.
+   Separate data access from calculations and make required inputs explicit;
+   the [refactoring guide](../../docs/development/refactoring_guide.md) provides
+   testability patterns. Its examples and target lists are historical guidance,
+   not evidence of current APIs or coverage.
+5. Review the diff against the acceptance criteria and record the checks run,
+   their results and any unresolved limitations.
 
-### `architecture-diagram.md`
-System architecture visualization and documentation:
-- Component architecture and interactions
-- Data flow and integration patterns
-- Technology stack and dependencies
-- Security and compliance considerations
+The [development index](../../docs/development/index.md) provides additional
+background. Setup commands and tool claims in older prose need to be checked
+against the package and hook configurations before use.
 
-## System Context
+## Remaining documentation drift
 
-### Engineering Domain Focus
-The digitalmodel system is specifically designed for offshore and marine engineering:
-- **Analytical Models**: Complex engineering calculations and simulations
-- **Configuration-Driven**: YAML-based configuration for analysis parameters
-- **Integration-Heavy**: Multiple external engineering software integrations
-- **Compliance-Critical**: Regulatory compliance and audit trail requirements
-
-### Technical Architecture Principles
-- **Single Source of Truth**: ASCII configuration drives all analysis
-- **Modularity**: Domain-specific modules with clear interfaces
-- **Extensibility**: Plugin architecture for new analysis types
-- **Reliability**: High reliability for critical engineering calculations
-
-### Integration Ecosystem
-```mermaid
-graph TB
-    subgraph "External Engineering Software"
-        A[ANSYS AQWA]
-        B[OrcaFlex]
-        C[DNV Sesam]
-        D[Custom Tools]
-    end
-
-    subgraph "DigitalModel Core"
-        E[Configuration Engine]
-        F[Analysis Modules]
-        G[Result Processing]
-        H[Export Engine]
-    end
-
-    subgraph "Output Systems"
-        I[Technical Reports]
-        J[3D Visualizations]
-        K[CAD Models]
-        L[Compliance Documents]
-    end
-
-    A --> F
-    B --> F
-    C --> F
-    D --> F
-
-    E --> F
-    F --> G
-    G --> H
-
-    H --> I
-    H --> J
-    H --> K
-    H --> L
-```
-
-## Technology Stack Overview
-
-### Core Technologies
-- **Python 3.8+**: Primary development language
-- **YAML**: Configuration and data definition
-- **Pandas/NumPy**: Data processing and numerical computation
-- **Matplotlib/Plotly**: Visualization and reporting
-- **Pytest**: Testing framework
-
-### Engineering Software Integration
-- **OrcaFlex API**: Marine analysis software integration
-- **ANSYS Workbench**: Finite element analysis integration
-- **Custom APIs**: Integration with specialized engineering tools
-- **Mock Systems**: Testing infrastructure for licensed software
-
-### Development Tools
-- **uv**: Package management and dependency resolution
-- **Black/isort/ruff**: Code formatting and linting
-- **mypy**: Static type checking
-- **Git**: Version control with conventional commits
-
-### Infrastructure and Deployment
-- **GitHub Actions**: CI/CD pipeline automation
-- **Docker**: Containerization for consistent environments
-- **Documentation**: Sphinx for API docs, Markdown for guides
-- **Monitoring**: Logging and error tracking for production systems
-
-## Quality Standards
-
-### Code Quality
-- **Type Safety**: Full type hints for public APIs
-- **Test Coverage**: Minimum 80% coverage for new code
-- **Documentation**: Comprehensive docstrings and user guides
-- **Performance**: Benchmarking for engineering calculations
-
-### Engineering Standards
-- **Accuracy**: Validation against verified benchmarks
-- **Traceability**: Clear audit trail for all calculations
-- **Compliance**: Adherence to industry codes and standards
-- **Reliability**: Robust error handling and recovery
-
-### Integration Standards
-- **API Contracts**: Well-defined interfaces between components
-- **Configuration Validation**: Schema validation for all YAML configs
-- **Error Handling**: Graceful degradation when external systems unavailable
-- **Testing**: Comprehensive mocking for external dependencies
-
-## AI Assistant Context
-
-### System Understanding
-AI assistants working with this system should understand:
-- **Domain Complexity**: Offshore engineering requires deep technical knowledge
-- **Integration Challenges**: External software licensing and availability
-- **Quality Requirements**: High reliability and accuracy standards
-- **Regulatory Context**: Compliance and audit trail requirements
-
-### Development Considerations
-When working with this system, consider:
-- **Configuration First**: Changes often start with YAML configuration
-- **Mock-First Testing**: External dependencies require comprehensive mocking
-- **Documentation Critical**: Complex domain requires excellent documentation
-- **Validation Essential**: Engineering calculations must be thoroughly validated
-
-### Tool Awareness
-Key tools and their purposes:
-- **OrcaFlex**: Marine analysis (may require license)
-- **ANSYS**: Finite element analysis (may require license)
-- **Python Ecosystem**: Core development environment
-- **YAML Configuration**: Primary interface for analysis setup
-
-## Operational Context
-
-### Deployment Environments
-- **Development**: Local development with mocked external systems
-- **Testing**: Automated testing environment with full mock suite
-- **Staging**: Production-like environment for integration testing
-- **Production**: Customer-facing environment with licensed software
-
-### Monitoring and Observability
-- **Application Monitoring**: Performance and error tracking
-- **Business Metrics**: Analysis success rates and user engagement
-- **Infrastructure Monitoring**: System health and resource utilization
-- **Compliance Monitoring**: Audit trail and regulatory compliance tracking
-
-### Support and Maintenance
-- **User Support**: Technical support for engineering users
-- **System Maintenance**: Regular updates and security patches
-- **License Management**: Coordination of external software licenses
-- **Knowledge Transfer**: Documentation and training for team members
+The broader [AI guidelines](../AI_GUIDELINES.md) and
+[development workflow](../workflows/development-process.md) remain follow-up work
+under issue #48. Their older tool and instruction-file references are not
+endorsed by this index. This update covers the system overview only; it does not
+establish that all repository guidance is current.
