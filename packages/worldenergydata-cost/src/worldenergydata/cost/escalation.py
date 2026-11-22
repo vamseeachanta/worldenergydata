@@ -74,6 +74,11 @@ def _year(value: object) -> int:
     return year
 
 
+def validate_year(value: object) -> int:
+    """Return ``value`` as an integer year in 1970-2040; reject booleans."""
+    return _year(value)
+
+
 @dataclass(frozen=True)
 class EscalationFactor:
     """Derived ratio and the actual index path, with source-resolvable anchors."""
