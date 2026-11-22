@@ -12,16 +12,23 @@ except ImportError:
     pdfplumber = None  # type: ignore[assignment]
 
 
-def extract_text_from_pdf(pdf_path: str) -> str:
-    """Extract all text from a PDF file."""
+def extract_text_from_pdf(pdf_path: str, *, layout: bool = False) -> str:
+    """Extract text, optionally preserving spatial gaps for table-like layouts."""
     if pdfplumber is None:
         raise ImportError("pdfplumber is required: pip install pdfplumber")
 
     text_parts: list[str] = []
     with pdfplumber.open(pdf_path) as pdf:
         for page in pdf.pages:
-            page_text = page.extract_text()
+            page_text = (
+                page.extract_text(layout=True) if layout else page.extract_text()
+            )
             if page_text:
+                if layout:
+                    # Keep horizontal column gaps, not whitespace-only page rows.
+                    page_text = "\n".join(
+                        line.strip() for line in page_text.splitlines() if line.strip()
+                    )
                 text_parts.append(page_text)
     return "\n".join(text_parts)
 

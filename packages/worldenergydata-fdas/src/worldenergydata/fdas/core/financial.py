@@ -15,6 +15,8 @@ from typing import Optional, Tuple
 import numpy as np
 import numpy_financial as npf
 
+from worldenergydata.common.finance import net_present_value
+
 
 class FinancialCalculationError(Exception):
     """Raised when financial calculations cannot be completed"""
@@ -156,14 +158,7 @@ def calculate_npv(
             f"Invalid period: {period}. Must be 'monthly' or 'annual'"
         )
 
-    # Calculate discount factors for each period
-    periods = np.arange(len(cashflows))
-    discount_factors = (1.0 + period_rate) ** periods
-
-    # Calculate NPV
-    npv = np.sum(cashflows / discount_factors)
-
-    return float(npv)
+    return net_present_value(cashflows, period_rate)
 
 
 def calculate_trimmed_npv(

@@ -1,6 +1,6 @@
 """Load drilling riser component data from curated dataset.
 
-Validates CSV widths, required query/provenance columns and populated provenance.
+Validates CSV widths, unambiguous headers, identities and populated provenance.
 Empty physical lines are skipped; whitespace and delimiter-only records are checked.
 Queries cover component type, size and pressure rating.
 """
@@ -14,6 +14,12 @@ from pathlib import Path
 from typing import Optional
 
 import pandas as pd
+
+from worldenergydata.vessel_fleet.models.drilling_riser import (
+    RiserJointEntry,
+    RiserLineEntry,
+)
+from worldenergydata.vessel_fleet.schemas.drilling_riser import RiserJointSchema
 
 logger = logging.getLogger(__name__)
 
@@ -43,14 +49,24 @@ VALID_COMPONENT_TYPES = (
 )
 
 
-def _validate_row_widths(content: str) -> None:
-    """Check widths except empty physical lines; retain physical start numbers."""
+def _validate_row_widths(content: str) -> list[int]:
+    """Check header mapping and widths; return physical record start numbers."""
     reader = csv.reader(StringIO(content), strict=True)
     try:
         header = next(reader, [])
     except csv.Error as exc:
         raise ValueError(f"Malformed CSV at line 1: {exc}") from exc
+    # Issue #1046 requires aligned columns: pandas would silently rename
+    # duplicate or unnamed labels, hiding an ambiguous field mapping.
+    seen_columns: set[str] = set()
+    for field in header:
+        if not field.strip():
+            raise ValueError("CSV header at line 1: blank column name")
+        if field in seen_columns:
+            raise ValueError(f"CSV header at line 1: duplicate column {field}")
+        seen_columns.add(field)
     expected = len(header)
+    line_numbers: list[int] = []
     while True:
         line_number = reader.line_num + 1
         try:
@@ -66,6 +82,8 @@ def _validate_row_widths(content: str) -> None:
                 f"CSV line {line_number}: expected {expected} fields, "
                 f"actual {len(row)}"
             )
+        line_numbers.append(line_number)
+    return line_numbers
 
 
 class DrillingRiserLoader:
@@ -80,7 +98,7 @@ class DrillingRiserLoader:
         self._df: Optional[pd.DataFrame] = None
 
     def load(self) -> pd.DataFrame:
-        """Validate widths, required columns and provenance before caching.
+        """Validate widths, headers, provenance and unique IDs before caching.
 
         Only empty physical lines are exempt from record-width validation.
         """
@@ -96,16 +114,34 @@ class DrillingRiserLoader:
         # Parse the same snapshot that was checked, so a file replacement
         # cannot introduce unchecked rows between preflight and pandas.
         content = csv_path.read_text(encoding="utf-8-sig")
-        _validate_row_widths(content)
-        df = pd.read_csv(StringIO(content))
+        line_numbers = _validate_row_widths(content)
+        # Preserve literal IDs, including leading zeros and pandas NA tokens;
+        # missing-value and numeric parsing for other columns stay unchanged.
+        df = pd.read_csv(StringIO(content), converters={"COMPONENT_ID": str})
         missing_columns = [field for field in _REQUIRED_COLUMNS if field not in df]
         if missing_columns:
             raise ValueError("Missing required column " + ", ".join(missing_columns))
-        for field in ("DATA_SOURCE", "NOTES"):
+        for field in ("DATA_SOURCE", "NOTES", "COMPONENT_ID"):
             missing = df[field].isna() | df[field].astype(str).str.strip().eq("")
             if missing.any():
-                ids = df.loc[missing, "COMPONENT_ID"].tolist()
-                raise ValueError(f"{field} must be populated for components {ids}")
+                lines = ", ".join(
+                    str(line_numbers[index]) for index in df.index[missing]
+                )
+                raise ValueError(f"{field} must be populated at CSV line {lines}")
+        padded = df["COMPONENT_ID"].ne(df["COMPONENT_ID"].str.strip())
+        if padded.any():
+            lines = ", ".join(str(line_numbers[index]) for index in df.index[padded])
+            raise ValueError(
+                "COMPONENT_ID must not contain leading or trailing whitespace "
+                f"at CSV line {lines}"
+            )
+        # Issue #1046 requires unique component IDs; get_by_id must not select
+        # an arbitrary first record when more than one component has that ID.
+        duplicate_ids = df.loc[
+            df["COMPONENT_ID"].duplicated(keep=False), "COMPONENT_ID"
+        ].unique()
+        if len(duplicate_ids):
+            raise ValueError(f"Duplicate COMPONENT_ID values: {duplicate_ids.tolist()}")
         self._df = df
         logger.info("Loaded %d drilling riser components", len(df))
         return self._df
@@ -137,6 +173,39 @@ class DrillingRiserLoader:
     def get_riser_joints(self) -> pd.DataFrame:
         """Get all riser joints."""
         return self.get_by_type("riser_joint")
+
+    def get_riser_joint_entries(
+        self,
+        riser_class: Optional[str] = None,
+    ) -> list[RiserJointEntry]:
+        """Validate joint records and expose classes, bundle lines and OD ratios.
+
+        Missing optional CSV cells become None before schema validation. Legacy
+        records without RISER_CLASS default to drilling. Tabular methods retain
+        their original columns; no derived value is written into the source CSV.
+        """
+        if riser_class is not None and riser_class not in (
+            "drilling",
+            "lift",
+            "production",
+        ):
+            raise ValueError("Unknown riser_class")
+        entries = []
+        for row in self.get_riser_joints().to_dict(orient="records"):
+            fields = {
+                key: None if pd.api.types.is_scalar(value) and pd.isna(value) else value
+                for key, value in row.items()
+                if key in RiserJointSchema.model_fields
+            }
+            schema = RiserJointSchema(**fields)
+            values = {key.lower(): value for key, value in schema.model_dump().items()}
+            values["auxiliary_lines"] = [
+                RiserLineEntry(**line) for line in values["auxiliary_lines"]
+            ]
+            entry = RiserJointEntry(**values)
+            if riser_class is None or entry.riser_class == riser_class:
+                entries.append(entry)
+        return entries
 
     def get_bops(self) -> pd.DataFrame:
         """Get all BOPs."""

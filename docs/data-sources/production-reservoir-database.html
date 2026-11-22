@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Production-reservoir database</title>
+  <style>
+    body { font: 1rem/1.6 system-ui, sans-serif; margin: 2rem auto; max-width: 70rem; padding: 0 1rem; color: #172c3d; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #bac7ce; padding: .5rem; text-align: left; }
+    caption { caption-side: bottom; text-align: left; padding: .5rem 0; }
+    pre { background: #eef3f6; padding: 1rem; overflow: auto; }
+    code { font-size: .92em; }
+  </style>
+</head>
+<body>
+<h1>Production-reservoir database</h1>
+<p>The offline SQLite store connects explicit regulator identities, field/facility/reservoir
+catalog entries, monthly production snapshots and retained decline parameters. Source vintages
+remain separate. No regulator observations are bundled; engineering suitability is
+<strong>NOT_EVALUATED</strong>. Scope: issue 680.</p>
+
+<h2>Revision history</h2>
+<table>
+  <tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr>
+  <tr><td>1</td><td>2026-10-20</td><td>Add explicit identities, immutable production snapshots and decline evidence to prevent inferred joins and unlabelled synthetic inputs.</td></tr>
+  <caption>Table 1. Initial database documentation revision.</caption>
+</table>
+
+<h2>Scope and API</h2>
+<p>The implementation is <code>worldenergydata.production.database</code> in the production
+distribution. The reservoir estimation distribution remains independent. All database paths
+are caller supplied. Opening a store uses SQLite and performs no network retrieval.</p>
+<ol>
+  <li><strong>Catalog:</strong> <code>add_asset</code> stores fields, facilities, reservoirs
+  and aggregates; <code>link_asset</code> supports shared facilities and reservoirs;
+  <code>map_field</code> records exact, source-scoped external identifiers.</li>
+  <li><strong>Production:</strong> <code>add_snapshot</code> records a source version, original
+  SHA-256, locator, timezone-qualified retrieval time and reported/synthetic classification.
+  <code>ingest</code> atomically seals a complete normalized batch.
+  <code>source_snapshot</code>, <code>production</code> and <code>linked_assets</code> provide readback.</li>
+  <li><strong>Decline:</strong> <code>decline_history</code> returns contiguous, positive oil
+  volumes for the existing monthly fitter. <code>save_decline</code> retains supplied parameters
+  against a recomputed input digest; <code>decline_curve</code> returns provenance and qualification.</li>
+</ol>
+
+<h2>Regulator identities and mapping boundary</h2>
+<table>
+  <tr><th>Regulator</th><th>Existing source ID</th><th>Database boundary</th></tr>
+  <tr><td>BSEE</td><td>bsee-data-center</td><td>Explicit field/lease interpretation</td></tr>
+  <tr><td>EIA</td><td>eia-api-v2</td><td>Basin/state aggregates retain aggregate kind</td></tr>
+  <tr><td>SODIR</td><td>sodir-factpages</td><td>Explicit field identifier or adapter name</td></tr>
+  <tr><td>NSTA</td><td>uk-nsta-opendata</td><td>Explicit field identifier or adapter name</td></tr>
+  <tr><td>ANP</td><td>brazil-anp-bdep</td><td>Public production only; licensed source rights remain separate</td></tr>
+  <tr><td>CNH</td><td>mexico-cnh-sih</td><td>Explicit field/contract interpretation</td></tr>
+  <tr><td>RRC</td><td>texas-rrc</td><td>Explicit field/lease/play interpretation</td></tr>
+  <caption>Table 2. Source IDs reused from the existing source catalog, inspected 2026-10-20; this list establishes no current access or licensing permission.</caption>
+</table>
+<p>The adapter's <code>field_name</code> token is mapped exactly. Names are not globally unique
+identifiers. The caller must distinguish ambiguous names before ingest and justify any
+cross-regulator equivalence. No fuzzy matching or automatic cross-regulator aggregation occurs.
+Aggregate series cannot supply field decline histories.</p>
+
+<h2>Inputs, units and unknowns</h2>
+<p>Ingest accepts mappings with the existing <code>unified.query.STANDARD_COLUMNS</code> keys:
+<code>region, field_name, year, month, oil_bbl, gas_mcf, water_bbl, condensate_bbl, source</code>.
+Rows may come from <code>adapter.fetch(query).to_dict(orient="records")</code> after explicit
+upstream unit normalization. For a frame containing missing values, use
+<code>frame.astype(object).where(frame.notna(), None)</code> before conversion to records.</p>
+<table>
+  <tr><th>Column</th><th>Unit</th><th>Missing representation</th></tr>
+  <tr><td>oil_bbl, water_bbl, condensate_bbl</td><td>bbl per calendar-month record</td><td>None / SQL NULL</td></tr>
+  <tr><td>gas_mcf</td><td>Mcf per calendar-month record</td><td>None / SQL NULL</td></tr>
+  <caption>Table 3. Canonical units inherited from the unified production contract; gas reference conditions require upstream qualification.</caption>
+</table>
+<p>The complete <code>CANONICAL_UNITS</code> mapping is required at ingest. Negative values,
+booleans, NaN, infinity, invalid calendar periods, absent mappings and duplicate asset-month
+records reject the entire batch. A genuine zero is retained. A failed batch remains retryable;
+a successfully loaded snapshot is immutable. Empty snapshots are rejected. New source releases
+require new snapshot IDs. Multiple source reports are queried separately and are never added
+together implicitly. Corrections with negative signed volumes require explicit upstream treatment.</p>
+
+<h2>Decline method and evidence</h2>
+<p>The existing fitter uses <code>month=1,2,...</code> and <code>rate_bbl</code> in bbl/month.
+The bridge preserves that convention; it performs no daily-rate conversion. Missing calendar
+months, absent oil values, zero oil values and aggregate assets reject decline preparation.
+The stored <code>origin_period</code> is the first observed period, corresponding to index 1;
+the initial parameter <code>qi</code> is the model's extrapolated value at index 0.
+Synthetic snapshots require <code>allow_synthetic=True</code> and retain their classification
+in stored curves. Recognizable mock or synthetic adapter labels cannot enter a reported snapshot.</p>
+<p><a href="https://www.eia.gov/analysis/drilling/curve_analysis/">EIA, Production Decline Curve
+Analysis in the Annual Energy Outlook, released 2023-03-16</a>, gives the hyperbolic equation
+<code>q(t)=qi/(1+b Di t)^(1/b)</code>. The exponential limit is
+<code>q(t)=qi exp(-Di t)</code>, and substitution of <code>b=1</code> gives the harmonic form.
+The source page and its equation image were retrieved successfully on 2026-10-20. These equations
+describe the existing fitter's parameter convention; the database implements storage and input
+preparation, not another optimizer.</p>
+<p>The cited EIA study also describes first-month exclusion, normalization and a terminal decline
+switch. None of those EIA workflow choices is imposed by this database. Economic limits, fit
+quality criteria, producing-time corrections and reservoir applicability require separate
+evidence. Stored parameters are always <strong>NOT_EVALUATED</strong> for engineering use.
+EUR and reserves classification are not stored or qualified.</p>
+
+<h2>Worked example</h2>
+<p><code>examples/production_database.py</code> retains an invented raw JSON sequence, its
+digest, a SQLite store and a read-back manifest. The source uses reserved example metadata and
+is explicitly synthetic. Run from an environment containing the production package:</p>
+<pre><code>python examples/production_database.py --output-dir &lt;new-output-directory&gt;</code></pre>
+<p>Inputs are 100, 80 and 64 bbl in consecutive months, with unknown gas and measured zero water.
+Hand addition gives 244.0 bbl. Consecutive ratios are 0.8; with the fitter's one-based index,
+<code>qi=125</code> and <code>Di=ln(1.25)</code> give
+<code>125(0.8)^1=100</code>, <code>125(0.8)^2=80</code> and
+<code>125(0.8)^3=64</code>. These values are invented arithmetic inputs, not sourced production
+measurements. The example passes an explicit demonstration economic cutoff and output horizon
+to the existing fitter; it does not use its EUR. Readback yields 244.0 bbl total,
+125.0 bbl/month fitted initial parameter, synthetic classification and NOT_EVALUATED status.</p>
+
+<h2>Verification and remaining scope</h2>
+<p>The new tests cover all seven source IDs, persisted readback, shared facility/reservoir links,
+calendar rollover, explicit units, atomic rollback, duplicate rejection, SQL parameter binding,
+separate vintages, mock classification, history digests and the independent arithmetic above.
+The worked-example test exercises the existing fitter and checks retained raw-source bytes.</p>
+<p>Live collections, raw regulator schema parsing, unit conversions, verified source rights and
+freshness, independently reviewed identity crosswalks, reservoir property measurements, migrations
+from existing databases and engineering qualification remain outside this initial database.
+The existing adapters and upstream source maintainers retain those responsibilities.
+Continued work remains tracked by issue 680.</p>
+</body>
+</html>

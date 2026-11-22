@@ -4,6 +4,7 @@ Performance database for storing test execution metrics.
 
 import json
 import sqlite3
+import time
 from contextlib import contextmanager
 from dataclasses import asdict, dataclass
 from datetime import datetime
@@ -12,6 +13,30 @@ from typing import Any, Dict, List, Optional
 
 import numpy as np
 import pandas as pd
+
+# Preserve the existing connection budget, also asserted by
+# tests/unit/ci/test_performance_tracker_concurrency.py::test_explicit_database_has_busy_timeout.
+_CONNECTION_TIMEOUT = 30.0
+# Reuse the contention polling interval from that file's WRITER rendezvous.
+# This is a scheduling policy, not a SQLite correctness threshold.
+_CONNECTION_RETRY_INTERVAL = 0.01
+
+
+def _is_setup_contention(error: sqlite3.OperationalError) -> bool:
+    """Recognize SQLite contention without hiding other operational failures."""
+    code = getattr(error, "sqlite_errorcode", None)
+    if code is not None:
+        # SQLite Result and Error Codes (2026), sections 2 and 5:
+        # https://www.sqlite.org/rescode.html
+        # Primary codes occupy eight bits; BUSY=5 and LOCKED=6.
+        return (code & 0xFF) in (5, 6)
+    # Python sqlite3 docs (3.11), Error.sqlite_errorcode: added in 3.11.
+    # On older Python versions accept only SQLite's specific lock messages.
+    return str(error) in (
+        "database is locked",
+        "database table is locked",
+        "database schema is locked",
+    )
 
 
 @dataclass
@@ -142,13 +167,43 @@ class PerformanceDatabase:
 
     @contextmanager
     def _get_connection(self):
-        """Get database connection context manager."""
-        # Allow bursts of concurrent diagnostic writes up to 30 seconds.
-        conn = sqlite3.connect(str(self.db_path), timeout=30.0)
-        conn.row_factory = sqlite3.Row
+        """Retry connection/WAL setup within one budget, never replaying a body.
+
+        SQLite may return BUSY without invoking its busy handler:
+        https://www.sqlite.org/c3ref/busy_handler.html (2026).
+        Failed connections are closed before waiting so they retain no locks.
+        """
+        deadline = time.monotonic() + _CONNECTION_TIMEOUT
+        timeout = _CONNECTION_TIMEOUT
+        while True:
+            conn = None
+            try:
+                conn = sqlite3.connect(str(self.db_path), timeout=timeout)
+                conn.row_factory = sqlite3.Row
+                # SQLite returns the effective mode if WAL is unsupported.
+                conn.execute("PRAGMA journal_mode = WAL").fetchone()
+                # Keep the original write budget after a shortened setup wait.
+                # SQLite PRAGMA busy_timeout (2026) uses milliseconds, whereas
+                # Python sqlite3.connect (3.11) uses seconds: 1000 ms per s.
+                # https://www.sqlite.org/pragma.html#pragma_busy_timeout
+                conn.execute(f"PRAGMA busy_timeout = {int(_CONNECTION_TIMEOUT * 1000)}")
+            except BaseException as error:
+                if conn is not None:
+                    conn.close()
+                if not isinstance(error, sqlite3.OperationalError):
+                    raise
+                if not _is_setup_contention(error):
+                    raise
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
+                    raise
+                time.sleep(min(_CONNECTION_RETRY_INTERVAL, remaining))
+                timeout = deadline - time.monotonic()
+                if timeout <= 0:
+                    raise
+            else:
+                break
         try:
-            # SQLite returns the effective mode if WAL is unsupported.
-            conn.execute("PRAGMA journal_mode = WAL").fetchone()
             yield conn
         finally:
             conn.close()

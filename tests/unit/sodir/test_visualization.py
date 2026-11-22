@@ -244,6 +244,12 @@ class TestCreateComparisonDashboard:
         dashboard = viz.create_comparison_dashboard(sodir, bsee)
         assert isinstance(dashboard, DashboardGenerator)
         assert len(dashboard.charts) == 4
+        comparison_axis = dashboard.charts[0]["figure"].axes[0]
+        assert comparison_axis.get_xticks().tolist() == [1, 2]
+        assert [tick.get_text() for tick in comparison_axis.get_xticklabels()] == [
+            "Norway (SODIR)",
+            "US Gulf (BSEE)",
+        ]
         plt.close("all")
 
     def test_custom_metrics(self):

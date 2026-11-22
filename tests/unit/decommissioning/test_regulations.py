@@ -93,9 +93,10 @@ def test_get_regulations_returns_only_requested_region():
     assert all(r.region == "gom" for r in regs)
 
 
-def test_get_regulations_unknown_region_returns_empty():
-    regs = get_regulations("mars")
-    assert regs == []
+def test_get_regulations_unknown_region_raises():
+    """Issue #1281: an absent region is unknown, not an empty obligation set."""
+    with pytest.raises(ValueError, match="Unknown regulatory region"):
+        get_regulations("mars")
 
 
 def test_get_regulations_case_insensitive():
@@ -120,9 +121,10 @@ def test_get_lead_time_gom_well_plugging():
     assert lt > 0
 
 
-def test_get_lead_time_unknown_returns_zero():
-    lt = get_lead_time("ukcs", "nonexistent_requirement")
-    assert lt == 0
+def test_get_lead_time_unknown_raises():
+    """Issue #1281: a missing requirement has no known numerical lead time."""
+    with pytest.raises(ValueError, match="Unknown requirement"):
+        get_lead_time("ukcs", "nonexistent_requirement")
 
 
 def test_get_lead_time_case_insensitive():
@@ -205,3 +207,27 @@ def test_brazil_has_anp_body():
     regs = get_regulations("brazil")
     bodies = {r.regulatory_body for r in regs}
     assert "ANP" in bodies
+
+
+@pytest.mark.parametrize("region", ["", "west_africa", "mars"])
+def test_lead_time_unknown_region_raises(region):
+    """No regulatory rows exist for these keys in the stored database."""
+    with pytest.raises(ValueError, match="Unknown regulatory region"):
+        get_lead_time(region, "well_plugging")
+
+
+def test_requirement_names_are_region_specific():
+    """Stored UKCS records use programme, not plan; do not infer equivalence."""
+    with pytest.raises(ValueError, match="Unknown requirement"):
+        get_lead_time("ukcs", "decommissioning_plan")
+
+
+@pytest.mark.parametrize("record", DECOMMISSIONING_REGULATIONS)
+def test_all_stored_lead_times_round_trip(record):
+    """Expected months come directly from each stored regulatory record.
+
+    This checks lookup integrity, not the legal currency of the database.
+    """
+    assert get_lead_time(record.region.upper(), record.requirement_type.upper()) == (
+        record.lead_time_months
+    )

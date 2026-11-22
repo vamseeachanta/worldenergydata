@@ -2,11 +2,12 @@
 
 import io
 import logging
-from pathlib import Path
-from typing import Optional
 import zipfile
+from pathlib import Path
 
 import pandas as pd
+
+from worldenergydata.brazil_anp.production.well_production import WellProductionLoader
 
 try:
     import requests
@@ -21,12 +22,16 @@ DEFAULT_BASE_URL = (
 )
 
 
+class ANPIngestionError(ValueError):
+    """The archive cannot establish complete production observations."""
+
+
 class ANPClient:
     """Download and cache ANP well-production ZIPs by year/month."""
 
     def __init__(
         self,
-        cache_dir: Optional[str] = None,
+        cache_dir: str | None = None,
         base_url: str = DEFAULT_BASE_URL,
     ):
         if cache_dir is None:
@@ -72,8 +77,9 @@ class ANPClient:
         response.raise_for_status()
 
         cache_path = self.cache_dir / self._cache_key(year, month)
+        frame = self._read_zip(response.content, encoding=encoding)
         cache_path.write_bytes(response.content)
-        return self._read_zip(response.content, encoding=encoding)
+        return frame
 
     def download(
         self,
@@ -119,10 +125,13 @@ class ANPClient:
                 frames.append(frame)
 
         if not frames:
-            return pd.DataFrame()
+            raise ANPIngestionError("ANP archive contains no CSV partitions")
 
         df = pd.concat(frames, ignore_index=True)
-        return _deduplicate_expected_overlaps(df)
+        result = _deduplicate_expected_overlaps(df)
+        if result.empty:
+            raise ANPIngestionError("ANP archive contains no production records")
+        return result
 
     @staticmethod
     def _read_partition_csv(handle, encoding: str = "utf-8-sig") -> pd.DataFrame:
@@ -136,9 +145,21 @@ class ANPClient:
         )
         df.columns = _flatten_anp_columns(df.columns)
         df = df.dropna(how="all")
-        if "Período" in df.columns:
-            periods = df["Período"].astype(str)
-            df = df[periods.str.contains(r"\d{4}[/\-]\d{2}", na=False)]
+        if "Período" not in df.columns:
+            raise ANPIngestionError("ANP partition is missing the production period")
+        periods = df["Período"].astype("string")
+        valid = periods.str.fullmatch(r"\d{4}[/\-]\d{2}").fillna(False)
+        dates = pd.to_datetime(
+            periods.str.replace("/", "-", regex=False) + "-01", errors="coerce"
+        )
+        if not valid.all() or dates.isna().any():
+            raise ANPIngestionError("Invalid ANP production period; no rows accepted")
+        try:
+            WellProductionLoader().load(df)
+        except (KeyError, ValueError) as exc:
+            raise ANPIngestionError(
+                "Invalid or incomplete ANP production observations"
+            ) from exc
         return df.reset_index(drop=True)
 
 

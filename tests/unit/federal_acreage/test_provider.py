@@ -1,8 +1,8 @@
 import json
 
 import pytest
-from fixture_paths import EXAMPLE_DIR, FIXTURE
 
+from tests.unit.federal_acreage.fixture_paths import EXAMPLE_DIR, FIXTURE
 from worldenergydata.federal_acreage.evidence import evaluate
 from worldenergydata.federal_acreage.federal_acreage import FederalAcreage
 from worldenergydata.federal_acreage.provider import FixtureRecordProvider

@@ -57,13 +57,11 @@ def test_lower_tertiary_publishes_explorer_sidecar(bp):
     assert "wells" in data
 
 
-def test_field_atlas_publishes_global_feed(bp):
-    # Global catalog feed lazily fetched by the Explorer funnel (#947).
+def test_field_atlas_withholds_global_feed(bp):
     bp.build(domains=["field-atlas"])
-    feed = bp.PUBLIC / "field-atlas" / "_atlas_feed.json"
-    assert feed.exists()
-    data = json.loads(feed.read_text())
-    assert data["countries"] and data["fields"]
+    assert not (bp.PUBLIC / "field-atlas/_atlas_feed.json").exists()
+    page = (bp.PUBLIC / "field-atlas/index.html").read_text()
+    assert "held privately pending redistribution-terms review" in page
 
 
 def test_partial_build_only_touches_its_domain(bp):
@@ -118,8 +116,8 @@ def test_field_development_domain_publishes_self_contained_surfaces(bp):
     assert (fd / "portfolio" / "index.html").exists()
     assert (fd / "bsee-matched" / "index.html").exists()
     assert len(list((fd / "bsee-matched").glob("*.html"))) > 50
-    # The showcase carries real generated schematics (inline SVG).
-    assert (fd / "showcase.html").read_text(encoding="utf-8").count("<svg") >= 2
+    # The withdrawn showcase carries an explicit availability notice.
+    assert "redistribution-terms review" in (fd / "showcase.html").read_text()
     # JSON sidecars are not published.
     assert not list(fd.rglob("*.json"))
 
@@ -201,3 +199,35 @@ def test_capabilities_overview_is_a_redirect_stub_to_the_hub(bp):
     assert 'content="noindex, follow"' in html
     # the old hand-authored overview copy must not return to this page
     assert "Capability Showcase" not in html
+
+
+def test_calendar_insight_download_and_labels(bp):
+    """Published report downloads must resolve beside their HTML page."""
+    bp.build(domains=["lower_tertiary", "capabilities"])
+    hub = (bp.PUBLIC / "capabilities" / "insights.html").read_text().lower()
+    assert "rig-days" not in hub
+    assert "learning curve" not in hub
+    spec = importlib.util.spec_from_file_location(
+        "calendar_insights", SCRIPT.parent / "lower_tertiary/build_drilling_insights.py"
+    )
+    insights = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(insights)
+    stats = insights.compute_stats(insights.load_wells(insights.DEFAULT_SOURCE))
+    assert f"{stats['n_calendar']} of {stats['n_wellbores']}" in hub
+    assert (
+        f'<div class="v">{stats["median_days"]:.1f} <small>median calendar days</small>'
+        in hub
+    )
+    page = (bp.PUBLIC / "drilling-insights.html").read_text()
+    assert (bp.PUBLIC / "lt_drilling_insights.csv").is_file()
+    assert "Calendar cycle time" in page
+    assert "Calendar cycle time" in (bp.PUBLIC / "index.html").read_text()
+    assert "burned 11,124 rig-days" not in (bp.PUBLIC / "index.html").read_text()
+
+
+def test_partial_build_removes_stale_restricted_feed(bp):
+    target = bp.PUBLIC / "field-atlas/_atlas_feed.json"
+    target.parent.mkdir(parents=True)
+    target.write_text('{"synthetic_stale_payload": true}')
+    bp.build(domains=["field-atlas"])
+    assert not target.exists()

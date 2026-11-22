@@ -96,6 +96,12 @@ class TestValidateConfig:
 
 
 class TestSummarizeData:
+    def test_error_payload_is_not_a_record(self):
+        """Issue 1270: an error mapping contains no acquired records, hence 0."""
+        assert Canada()._summarize_data(
+            {"aer": {"wells": {"error": "collection failed"}}}
+        ) == {"aer_wells": 0}
+
     def test_empty(self):
         c = Canada()
         assert c._summarize_data({}) == {}
@@ -144,3 +150,46 @@ class TestSummarizeData:
         # If province data is not a dict, skip it
         result = c._summarize_data({"aer": "just a string"})
         assert result == {}
+
+
+@pytest.mark.parametrize("province", ["ab", "bc"])
+@pytest.mark.parametrize("mixed", [False, True])
+def test_router_reports_collection_errors(monkeypatch, province, mixed):
+    """Issue 1270: failed wells contribute 0; one synthetic facility gives 1.
+
+    The counts are hand enumerations of the returned lists, not field data.
+    """
+    from worldenergydata.canada.aer.aer import AER
+    from worldenergydata.canada.bcer.bcer import BCER
+
+    collector = AER if province == "ab" else BCER
+
+    def collect(self, data_type, cfg):
+        if data_type == "wells":
+            raise RuntimeError("collection failed")
+        return [{"id": "synthetic-facility"}]
+
+    monkeypatch.setattr(collector, "_collect_data_type", collect)
+    result = Canada().router(
+        {
+            "provinces": [province],
+            "data_types": ["wells", "facilities"] if mixed else ["wells"],
+        }
+    )["canada"]
+    prefix = "aer" if province == "ab" else "bcer"
+    assert result["status"] == "error"
+    assert result["data_collected"][f"{prefix}_wells"] == 0
+    assert result["errors"] == {f"{prefix}_wells": "collection failed"}
+    if mixed:
+        assert result["data_collected"][f"{prefix}_facilities"] == 1
+
+
+def test_router_success_remains_completed(monkeypatch):
+    """Hand count: the successful synthetic list has one record; no errors."""
+    monkeypatch.setattr(
+        Canada, "_collect_aer_data", lambda self, cfg: {"wells": [{"id": "well"}]}
+    )
+    result = Canada().router({"provinces": ["ab"]})["canada"]
+    assert result["status"] == "completed"
+    assert result["data_collected"] == {"aer_wells": 1}
+    assert result["errors"] == {}

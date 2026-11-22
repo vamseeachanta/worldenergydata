@@ -164,15 +164,20 @@ def _counts(frame, dimensions):
     )
 
 
-def _annual(frame, code):
+def _annual(frame, code, dimensions=("year",)):
+    """Count disjoint groups; well counts are distinct only within each group.
+
+    Count definition: NIST/SEMATECH e-Handbook (2012), section 1.3.3.14,
+    Histogram, frequency = count in each bin. No engineering limit is used.
+    """
     result = frame.copy()
     result["code"] = result[code].replace("", UNKNOWN)
     result["valid_api"] = result["API_WELL_NUMBER"].replace("", pd.NA)
     return (
-        result.groupby(["year", "code"])
+        result.groupby([*dimensions, "code"])
         .agg(records=("code", "size"), wells=("valid_api", "nunique"))
         .reset_index()
-        .sort_values(["year", "code"])
+        .sort_values([*dimensions, "code"])
         .to_dict("records")
     )
 
@@ -280,7 +285,14 @@ def _validate_tables(tables):
 
 
 def _war_frame(tables, fields, depths, parameters, quality):
-    columns = ["SN_WAR", "API_WELL_NUMBER", "WAR_START_DT", "WAR_END_DT"]
+    # Source: retained mv_war_main projection and its fixture manifest.
+    columns = [
+        "SN_WAR",
+        "API_WELL_NUMBER",
+        "WAR_START_DT",
+        "WAR_END_DT",
+        "BOTM_AREA_CODE",
+    ]
     main = _unique(_columns(tables["mv_war_main"], columns), ["SN_WAR"], "war", quality)
     prop = _unique(
         _columns(tables["mv_war_main_prop"], ["SN_WAR", "WELL_ACTIVITY_CD"]),
@@ -294,6 +306,7 @@ def _war_frame(tables, fields, depths, parameters, quality):
     quality["war_missing_property"] = int((~main["SN_WAR"].isin(prop["SN_WAR"])).sum())
     war = main.merge(prop, on="SN_WAR", how="left", validate="one_to_one")
     war["WELL_ACTIVITY_CD"] = war["WELL_ACTIVITY_CD"].fillna("")
+    war["area"] = war["BOTM_AREA_CODE"].replace("", UNKNOWN)
     return _enrich(war, fields, depths, "WAR_START_DT", parameters)
 
 
@@ -304,11 +317,13 @@ def _eor_frames(tables, fields, depths, parameters, quality):
         "EOR_OPERATION_CD",
         "BOREHOLE_STAT_DT",
         "SUBSEA_COMPLETION_FLAG",
+        "BOTM_AREA_CODE",
     ]
     eor = _unique(
         _columns(tables["mv_eor_mainquery"], columns), ["SN_EOR"], "eor", quality
     )
     eor = _enrich(eor, fields, depths, "BOREHOLE_STAT_DT", parameters)
+    eor["area"] = eor["BOTM_AREA_CODE"].replace("", UNKNOWN)
     comp = _unique(
         _columns(
             tables["mv_eor_completions"],
@@ -339,11 +354,17 @@ def analyse(tables, parameters=None):
     _validate_tables(tables)
     quality = {}
     api = _columns(tables["mv_api_list_all"], ["API_WELL_NUMBER", "BOTM_FLD_NAME_CD"])
-    bore = _columns(tables["mv_boreholes_all"], ["API_WELL_NUMBER", "WATER_DEPTH"])
+    bore = _columns(
+        tables["mv_boreholes_all"],
+        ["API_WELL_NUMBER", "WATER_DEPTH", "BOTM_AREA_CODE"],
+    )
     fields = _mapping(api, "BOTM_FLD_NAME_CD", quality, "conflicting_field_apis")
     depths = _mapping(
         bore, "WATER_DEPTH", quality, "conflicting_borehole_depth_apis", numeric=True
     )
+    # Completion table has no area in the retained source projection. Use only
+    # unambiguous snapshot attribution; never choose the first conflicting area.
+    areas = _mapping(bore, "BOTM_AREA_CODE", quality, "conflicting_borehole_area_apis")
     war = _war_frame(tables, fields, depths, p, quality)
     eor, eor_comp = _eor_frames(tables, fields, depths, p, quality)
     comp = _columns(
@@ -358,10 +379,11 @@ def analyse(tables, parameters=None):
         ],
     )
     comp = _enrich(comp, fields, depths, "COMPLETION_DATE", p)
+    comp["area"] = comp["API_WELL_NUMBER"].map(areas).fillna(UNKNOWN)
     comp["status"] = comp["COMP_STATUS_CD"].replace("", UNKNOWN)
     for name, frame in [("war", war), ("eor", eor), ("completion", comp)]:
         quality[name + "_missing_api"] = int(frame["API_WELL_NUMBER"].eq("").sum())
-        for dimension in ["year", "field", "water_depth_band"]:
+        for dimension in ["year", "field", "water_depth_band", "area"]:
             quality[name + "_unknown_" + dimension] = int(
                 frame[dimension].eq(UNKNOWN).sum()
             )
@@ -411,6 +433,8 @@ def _method():
         "war_year_basis": "WAR_START_DT; not an intervention start",
         "depth_basis": "unique nonnegative borehole WATER_DEPTH, in feet",
         "field_basis": "unique API Lookup BOTM_FLD_NAME_CD; ambiguous and unmatched are unknown",
+        "area_basis": "WAR and EOR use each report's BOTM_AREA_CODE; completions use unique borehole snapshot BOTM_AREA_CODE; no fallback between these bases",
+        "area_count_basis": "records in disjoint year/area/raw-code bins; distinct API12 counts are local to each bin and cannot be summed across bins",
         "bin_basis": "descriptive water-depth boundaries and calendar cohorts; no design criterion",
         "candidate_basis": "legacy intervention selection in lower_tertiary.ops_timeline; raw codes only",
         "outlier_basis": "strict below lower or above upper linear empirical quantile; ties excluded; flags use unrounded values; observed records only",
@@ -429,6 +453,8 @@ def _limits():
         "Field and depth attribution use a current snapshot; ambiguous metadata stays unknown. Historical reassignment is not reconstructed.",
         "Rates, durations, production correlations and exposure-normalised outliers wait for issue #1063. Completion-type, well-age and field correlations are not computed here.",
         "Coverage is the supplied snapshot, not a census of all operations. Calendar changes can reflect reporting coverage and cannot establish changes in engineering practice.",
+        "Reported WAR and EOR areas are preserved independently of borehole snapshot areas. Missing areas remain unknown; completion area attribution is not a historical reconstruction.",
+        "Operator-class counts are NOT_EVALUATED: the selected inputs contain no sourced operator-class mapping or dated operator attribution. Names and activity codes cannot establish classes.",
     ]
 
 
@@ -455,16 +481,24 @@ def _results(
         "parameters": asdict(parameters),
         "method": _method(),
         "completion_design_types": None,
+        "operator_class_analysis": {
+            "status": "NOT_EVALUATED",
+            "counts": None,
+            "reason": "A sourced operator-class mapping and dated operator attribution are required; neither is supplied by the selected inputs.",
+        },
         "quality": quality,
         "completion_strata": _counts(
             comp, ["field", "water_depth_band", "era", "status"]
         ),
         "completions_by_year": _counts(comp, ["year", "status"]),
+        "completion_by_year_area_status": _counts(comp, ["year", "area", "status"]),
         "eor_completion_strata": _counts(
             eor_comp, ["field", "water_depth_band", "era", "subsea_flag"]
         ),
         "eor_by_year_type": _annual(eor, "EOR_OPERATION_CD"),
         "war_by_year_type": _annual(war, "WELL_ACTIVITY_CD"),
+        "eor_by_year_area_type": _annual(eor, "EOR_OPERATION_CD", ("year", "area")),
+        "war_by_year_area_type": _annual(war, "WELL_ACTIVITY_CD", ("year", "area")),
         "war_vocabulary": [
             {
                 "code": c,

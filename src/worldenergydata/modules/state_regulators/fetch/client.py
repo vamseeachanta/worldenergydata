@@ -19,7 +19,15 @@ from .policy import (
     header_delay,
     origin_of,
 )
-from .storage import CacheStore, FetchResult, atomic_json
+from .storage import CacheStore, FetchResult, atomic_json, validate_response
+
+
+class _RejectedResponse(ValueError):
+    """Carry pacing headers when successful transport yields invalid evidence."""
+
+    def __init__(self, message: str, headers: dict[str, str]) -> None:
+        super().__init__(message)
+        self.headers = headers
 
 
 class _NoRedirect(HTTPRedirectHandler):
@@ -102,8 +110,8 @@ class Fetcher:
             self._reserve(url)
             try:
                 payload, headers = self._request(url)
-            except ResponseTooLarge as oversized:
-                self._cooldown(url, oversized.headers)
+            except (ResponseTooLarge, _RejectedResponse) as rejected:
+                self._cooldown(url, rejected.headers)
                 raise
             except HTTPError as error:
                 self._cooldown(url, error.headers)
@@ -112,7 +120,9 @@ class Fetcher:
                     raise
             else:
                 self._cooldown(url, headers)
-                return self.store.put(url, payload, headers, asdict(permission))
+                return self.store.put(
+                    url, payload, headers, asdict(permission), retry_count=attempt
+                )
         raise AssertionError("Retry loop exhausted without a result")
 
     def _request(self, url: str) -> tuple[bytes, dict[str, str]]:
@@ -131,7 +141,12 @@ class Fetcher:
                 payload = response.read(cap + 1)
                 if len(payload) > cap:
                     raise ResponseTooLarge(message, dict(response.headers))
-                return payload, dict(response.headers)
+                headers = dict(response.headers)
+                try:
+                    validate_response(url, payload, headers, response.getcode())
+                except ValueError as error:
+                    raise _RejectedResponse(str(error), headers) from error
+                return payload, headers
         except HTTPError:
             raise
         except (URLError, OSError) as error:

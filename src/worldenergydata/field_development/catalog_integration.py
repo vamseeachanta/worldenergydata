@@ -49,6 +49,7 @@ storage = common.load_peer("catalog_storage")
 csv_bytes = storage.csv_bytes
 write_bundle = storage.write_bundle
 read_bundle = storage.read_bundle
+CatalogEvidence = common.load_peer("catalog_evidence").CatalogEvidence
 
 
 def build_integration(

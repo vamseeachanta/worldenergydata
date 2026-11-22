@@ -28,6 +28,10 @@ DEFAULT_CONFIG = "config/scheduler/scheduler_config.yml"
 _JOB_SPECS: tuple[tuple[str, str], ...] = (
     ("bsee_refresh", "worldenergydata.scheduler.jobs.bsee_refresh.BseeRefreshJob"),
     ("hse_refresh", "worldenergydata.scheduler.jobs.hse_refresh.HseRefreshJob"),
+    (
+        "hse_sources_refresh",
+        "worldenergydata.scheduler.jobs.hse_sources_refresh.HseSourcesRefreshJob",
+    ),
     ("sodir_refresh", "worldenergydata.scheduler.jobs.sodir_refresh.SodirRefreshJob"),
     ("eia_us_refresh", "worldenergydata.scheduler.jobs.eia_us_refresh.EiaUsRefreshJob"),
     (

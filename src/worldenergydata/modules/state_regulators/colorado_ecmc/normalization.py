@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import re
+
 import pandas as pd
 
 
@@ -20,10 +22,10 @@ def clean_int(value: object, width: int) -> str | None:
         text = text[:-2]
     if not text:
         return None
-    try:
-        return str(int(text)).zfill(width)
-    except ValueError:
+    # Widths come from normalize_api_parts; reject overflow and signed parts.
+    if not re.fullmatch(rf"[0-9]{{1,{width}}}", text):
         return None
+    return text.zfill(width)
 
 
 def clean_identifier(value: object) -> str | None:

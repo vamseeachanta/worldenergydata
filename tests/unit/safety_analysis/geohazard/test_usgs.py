@@ -4,9 +4,11 @@ from __future__ import annotations
 
 import importlib
 import json
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 from types import ModuleType as Module
+from types import SimpleNamespace
 from typing import NoReturn
 from urllib.error import HTTPError
 from urllib.parse import parse_qs, urlparse
@@ -153,10 +155,15 @@ def test_transport_caps_timeout_pause_and_headers(
     api: Module, monkeypatch: Patch
 ) -> None:
     client = api.USGSClient(max_bytes=8, timeout=7)
+    real_sleep, real_monotonic = time.sleep, time.monotonic
     pauses: list[float] = []
-    monkeypatch.setattr(api.time, "sleep", pauses.append)
     ticks = iter([10.0, 10.5, 12.0])
-    monkeypatch.setattr(api.time, "monotonic", lambda: next(ticks))
+    monkeypatch.setattr(
+        api, "time", SimpleNamespace(sleep=pauses.append, monotonic=lambda: next(ticks))
+    )
+    # Transport clock doubles must not replace the worker's process-wide clock.
+    assert time.sleep is real_sleep
+    assert time.monotonic is real_monotonic
 
     class Response:
         status = 200
@@ -245,6 +252,8 @@ def test_count_query_drift_is_bounded(api: Module, monkeypatch: Patch) -> None:
     client = api.USGSClient()
     payload = json.loads(synthetic_payload())
     payload["features"] *= 2
+    # Distinct synthetic IDs isolate overflow from duplicate-identity rejection.
+    payload["features"][1] = {**payload["features"][1], "id": "synthetic-other"}
     monkeypatch.setattr(
         client,
         "_get",
@@ -304,8 +313,11 @@ def test_pause_only_remaining_interval(
     client = api.USGSClient()
     client._last_finished = 10.0
     pauses: list[float] = []
-    monkeypatch.setattr(api.time, "monotonic", lambda: 10.0 + elapsed)
-    monkeypatch.setattr(api.time, "sleep", pauses.append)
+    monkeypatch.setattr(
+        api,
+        "time",
+        SimpleNamespace(sleep=pauses.append, monotonic=lambda: 10.0 + elapsed),
+    )
     client._pause()
     assert pauses == expected
 
@@ -372,8 +384,9 @@ def test_retrieval_stamp_precedes_parsing(
 
     monkeypatch.setattr(api, "datetime", Clock)
     monkeypatch.setattr(api, "parse_geojson", parse)
-    monkeypatch.setattr(api.time, "sleep", pauses.append)
-    monkeypatch.setattr(api.time, "monotonic", lambda: 10.0)
+    monkeypatch.setattr(
+        api, "time", SimpleNamespace(sleep=pauses.append, monotonic=lambda: 10.0)
+    )
     client = api.USGSClient()
     monkeypatch.setattr(client._opener, "open", opened)
     result = client.query_box(

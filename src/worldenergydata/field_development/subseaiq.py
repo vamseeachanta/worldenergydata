@@ -16,8 +16,9 @@ connects them. Empirically ~22%+ of SubseaIQ GoM fields match the OGOR field-cod
 set (rises with more OGOR years / a fuller area map; undeveloped discoveries
 never appear in production data).
 
-The SubseaIQ data is stale (~2014) and freely usable, so this loader reads it
-directly and may surface derived data publicly — no off-repo restriction.
+The bundled data set is held privately pending redistribution-terms review.
+Default reads raise DatasetUnavailableError; explicit independent inputs retain
+the parser and crosswalk interface without establishing redistribution rights.
 """
 
 from __future__ import annotations
@@ -28,6 +29,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable, Optional
 
+from worldenergydata.field_development.data_availability import require_available_source
 from worldenergydata.field_development.enums import ConceptType, FluidType
 from worldenergydata.field_development.models import FieldConcept
 
@@ -187,6 +189,7 @@ def _load_facility_picks(
     Returns ``{field_id: (ConceptType|None, operator|None)}``.
     """
     path = facilities_csv or (_curated_dir() / "production_facilities.csv")
+    require_available_source(path)
     picks: dict[str, tuple[Optional[ConceptType], Optional[str]]] = {}
     by_field: dict[str, list[tuple[int, ConceptType, Optional[str]]]] = {}
     with open(path, newline="", encoding="utf-8") as fh:
@@ -221,6 +224,7 @@ def load_subseaiq_fields(
         One :class:`FieldConcept` per field (rows with an empty name are skipped).
     """
     path = csv_path or _curated_fields_path()
+    require_available_source(path)
     picks = _load_facility_picks(facilities_csv) if enrich_facilities else {}
     out: list[FieldConcept] = []
     with open(path, newline="", encoding="utf-8") as fh:
@@ -262,6 +266,7 @@ def build_bsee_crosswalk(
         One :class:`CrosswalkRow` per (GoM) SubseaIQ field.
     """
     path = csv_path or _curated_fields_path()
+    require_available_source(path)
     bsee_keys = {bsee_block_key(c) for c in bsee_field_codes}
     bsee_keys.discard(None)
 

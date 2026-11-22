@@ -126,3 +126,72 @@ def test_default_synthetic_surface_still_lists_benchmark_fields():
 
     assert len(out) > 0
     assert set(out["source"]) == {"ukcs_mock"}
+
+
+@pytest.mark.parametrize("condensate", [62.898, 0.0, None])
+def test_loader_condensate_reaches_standard_columns_and_fdas(condensate):
+    """Hand calculation: synthetic 10 m3 * 6.2898 = 62.898 bbl.
+
+    NIST SP 811 Appendix B.8 petroleum-barrel entry supports the shared
+    rounded volume factor. Explicit zero and unknown remain distinct.
+    FDAS has no condensate column; oil remains unmodified by condensate.
+    """
+
+    class ComponentLoader:
+        def load_all_production(self):
+            return pd.DataFrame(
+                {
+                    "field": ["EXAMPLE"],
+                    "year": [2024],
+                    "month": [1],
+                    "oil_bbl": [0.0],
+                    "gas_mcf": [float("nan")],
+                    "water_bbl": [float("nan")],
+                    "condensate_bbl": [condensate],
+                    "ngl_bbl": [float("nan")],
+                }
+            )
+
+    out = UkcsAdapter(loader=ComponentLoader()).fetch(ProductionQuery(regions=["ukcs"]))
+    assert list(out) == list(STANDARD_COLUMNS)
+    if condensate is None:
+        assert pd.isna(out.loc[0, "condensate_bbl"])
+    else:
+        assert out.loc[0, "condensate_bbl"] == condensate
+    fdas = to_fdas_production(out)
+    assert fdas.loc[0, "MONTHLY_OIL_BBL"] == 0
+    assert pd.isna(fdas.loc[0, "MONTHLY_GAS_MCF"])
+    assert pd.isna(fdas.loc[0, "MONTHLY_WATER_BBL"])
+
+
+def test_raw_condensate_survives_loader_to_fdas_bridge():
+    """Hand calculation: 10 m3 * 6.2898 = 62.898 bbl (NIST SP 811 B.8).
+
+    Only the source volume supports condensate; absent oil/gas/water stay
+    unknown in both unified and FDAS frames. A non-default index is retained
+    correctly through normalization.
+    """
+
+    class RawLoader:
+        def load_all_production(self):
+            raw = pd.DataFrame(
+                {
+                    "FIELDNAME": ["EXAMPLE"],
+                    "PERIODYR": [2024],
+                    "PERIODMNTH": [1],
+                    "GCONDVOL": [10],
+                },
+                index=[7],
+            )
+            return UKCSFieldProductionLoader().load(raw)
+
+    out = UkcsAdapter(loader=RawLoader()).fetch(ProductionQuery(regions=["ukcs"]))
+    assert out.loc[0, "condensate_bbl"] == pytest.approx(62.898)
+    assert list(out) == list(STANDARD_COLUMNS)
+    fdas = to_fdas_production(out)
+    assert (
+        fdas[["MONTHLY_OIL_BBL", "MONTHLY_GAS_MCF", "MONTHLY_WATER_BBL"]]
+        .isna()
+        .all()
+        .all()
+    )

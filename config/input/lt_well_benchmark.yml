@@ -22,7 +22,7 @@ benchmark:
   fields: null               # null -> all producing LT fields; else ["Anchor", "Stones"]
   end_date: null             # null -> auto-latest OGOR-A month
   metrics:
-    - drilling_days
+    - spud_to_completion_calendar_days
     - completion_days
     - first_oil
     - cumulative_oil

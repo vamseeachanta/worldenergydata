@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Copernicus metocean API migration</title>
+<style>
+body { max-width: 65rem; margin: 2rem auto; padding: 0 1rem;
+       font: 1rem/1.6 system-ui, sans-serif; color: #172b3a; }
+pre { overflow: auto; background: #f1f5f8; padding: 1rem; }
+table { border-collapse: collapse; } th, td { border: 1px solid #bccbd5; padding: .6rem; }
+</style>
+<h1>Copernicus metocean API migration</h1>
+<h2>Summary</h2>
+<p>ERA5 requests use the supported CDS SDK at <code>https://cds.climate.copernicus.eu/api</code>.
+Marine subsets use the Copernicus Marine Toolbox. MOTU services have been removed.
+Public metadata smoke tests establish catalogue availability and identity only.
+Authenticated retrieval and engineering suitability are <strong>NOT_EVALUATED</strong>
+until credentials, dataset terms, selection and downloaded output are checked.</p>
+<h2>Revision history</h2>
+<table><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr>
+<tr><td>Initial</td><td>2026-10-19</td><td>Current SDK adapters and catalogue checks replace the stale MOTU reference.</td></tr></table>
+<h2>Sources and migration</h2>
+<ul>
+<li><a href="https://cds.climate.copernicus.eu/en/how-to-api">CDSAPI setup</a>,
+sections 1–3, accessed 2026-10-19: current API URL, token configuration,
+SDK installation and retrieval example. The published minimum is <code>cdsapi&gt;=0.7.7</code>.
+The existing <code>cdsapi</code> SDK remains supported; switching to the advanced SDK is optional.</li>
+<li><a href="https://help.marine.copernicus.eu/en/articles/8612591-switching-from-old-to-new-services">Marine service migration</a>,
+accessed 2026-10-19: removed legacy services and Toolbox replacements.</li>
+<li><a href="https://help.marine.copernicus.eu/en/articles/8283072-copernicus-marine-toolbox-api-subset">Marine Toolbox subset tutorial</a>,
+accessed 2026-10-19: dataset selection and Python argument names.</li>
+<li><a href="https://www.rfc-editor.org/rfc/rfc9110.html">RFC 9110 (2022)</a>, sections 15.3–15.6,
+and <a href="https://www.rfc-editor.org/rfc/rfc6585.html#section-4">RFC 6585 (2012), section 4</a>:
+HTTP success, redirects, access failures, missing resources, service errors and rate limiting.</li>
+</ul>
+<p>The current checkout had a MOTU constant but no ERA5 or CMEMS download adapter.
+The new adapters are available from <code>worldenergydata.metocean.clients.copernicus_clients</code>.
+They import optional SDKs only on construction. Install the desired SDK into the
+application environment; importing the module and running offline probes require neither SDK.
+The retained <code>CMEMS_BASE_URL</code> name now denotes the public metadata catalogue,
+<strong>not a substitute download endpoint</strong>. Downloads use <code>CMEMSClient.subset</code>.</p>
+<h2>Worked example: public metadata input, method and answer</h2>
+<p>No engineering equation or coefficient is involved. Input is a source identifier;
+the method reads JSON and compares its identity to the publisher catalogue.
+The example below runs offline and writes no files. Its response is explicitly
+synthetic, based on the public catalogue schema; it is not observed metocean data.</p>
+<pre><code>import httpx
+from worldenergydata.metocean.clients.copernicus_clients import probe_catalogue
+
+# Source: https://stac.marine.copernicus.eu/metadata/catalog.stac.json
+transport = httpx.MockTransport(lambda request: httpx.Response(
+    httpx.codes.OK, json={"id": "MDS", "type": "Catalog", "links": []}
+))
+with httpx.Client(transport=transport) as http:
+    answer = probe_catalogue("cmems", http=http)
+assert answer["id"] == "MDS"
+print(answer["id"])  # MDS: the expected catalogue identity; no download verdict.
+</code></pre>
+<h2>Download usage</h2>
+<p>Configure credentials through the SDK's documented local configuration or environment.
+Never place tokens or passwords in source, examples or reports. Accept CDS dataset terms
+through its download form first. Copy the current dataset request from that form,
+then pass it as <code>ERA5Client().retrieve(dataset, request, target)</code>.
+For Marine, pass the current dataset ID and the tutorial's selection arguments as
+<code>CMEMSClient().subset(dataset_id, **selection)</code>. The SDK manages transport,
+authentication, discovery and file output. Return values are the SDK's own values.
+These wrappers do not normalize observations, convert units or qualify engineering inputs.</p>
+<h2>Checks</h2>
+<pre><code># Offline: live checks are skipped by default.
+uv run python -m pytest --noconftest -o addopts='' \
+  tests/unit/metocean/test_copernicus_clients.py \
+  tests/unit/metocean/test_copernicus_live.py
+
+# Explicit live opt-in. Timeout (seconds) is supplied by the operator.
+METOCEAN_LIVE_TESTS=1 METOCEAN_ENDPOINT_TIMEOUT="$REQUEST_TIMEOUT_SECONDS" \
+  uv run python -m pytest --noconftest -o addopts='' \
+  tests/unit/metocean/test_copernicus_live.py -m network
+</code></pre>
+<p>The live checks send no credentials, follow no redirects and download no observations.
+Missing or gone endpoints fail as “retired or moved”; this is a diagnostic, not proof
+of retirement. Authentication, transport, rate-limit and server errors are reported
+separately. HTML, wrong identities and malformed catalogue schemas also fail.
+Response bodies and underlying transport exception text are excluded from diagnostics.</p>
+</html>

@@ -20,6 +20,9 @@ lower_snake_case string `value`s shown below.
 ## Reservoir / fluid
 | Field | Type | Units | Notes |
 |---|---|---|---|
+| `reservoir_depth_tvd_m` | float | m TVDSS | Supplied reservoir true vertical depth below mean sea level, positive downward, not water depth; finite and nonnegative. Omitted, unavailable or unknown-datum measurements are `None`. |
+| `reservoir_pressure_psi` | float | psi absolute (psia) | Supplied reservoir absolute pressure, not gauge pressure or a pressure gradient; finite and nonnegative. Omitted, unavailable or unknown-reference measurements are `None`. |
+| `reservoir_temperature_f` | float | °F | Supplied reservoir temperature; finite subzero values are allowed. Omitted or unavailable measurements are `None`. |
 | `recoverable_reserves_mmboe` | float | MMboe | Recoverable reserves. |
 | `fluid_type` | enum | — | `oil`, `gas`, `condensate`, `gas_condensate`. |
 | `api_gravity` | float | °API | 0–100. |
@@ -29,6 +32,29 @@ lower_snake_case string `value`s shown below.
 | `sour` | bool | — | H2S/CO2 present. |
 | `hpht` | bool | — | High pressure / high temperature. |
 | `reservoir_distribution` | enum | — | `compact_stacked`, `distributed` — drives dry-vs-wet tree. |
+
+### Proposed reservoir input conventions
+
+Issue #761 requests structured measurements but does not specify a depth unit,
+datum, pressure reference or numeric validation bounds. The conventions here
+are proposals for maintainer agreement, not requirements established by that
+issue; no supporting maintainer decision was found in its body or comments.
+
+Metres below mean sea level (TVDSS), positive downward, provide a common depth
+reference independent of rig elevation. Absolute pressure in psi (psia) avoids
+an unstated atmospheric offset. Fahrenheit follows the requested temperature
+unit. Suppliers must normalize other units, depth datums and gauge pressures
+using known source references before supplying values; the model neither
+converts values nor verifies those references. Leave a measurement `None` when
+its required reference is unknown, and retain source details in `data_source`.
+
+Finite-only inputs prevent NaN and infinity from representing measurements.
+The nonnegative depth and absolute-pressure bounds constrain this proposed
+offshore input convention; zero is accepted as its boundary, not as a missing
+value or an engineering screening threshold. Subzero Fahrenheit temperatures
+remain valid because that scale's zero is not a physical lower bound.
+These measurements are not inferred from `hpht` and do not set or change that
+flag. No pressure or temperature screening threshold is applied.
 
 ## Production
 | Field | Type | Units | Notes |

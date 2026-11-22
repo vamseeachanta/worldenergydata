@@ -6,6 +6,7 @@ into memory, avoiding the need to store large zip files in the repository.
 """
 
 import time
+from http import HTTPStatus
 from typing import ByteString, Optional
 
 import requests
@@ -72,7 +73,12 @@ class BSEEWebScraper:
         )
 
     def download_zip_to_memory(
-        self, url: str, max_retries: int = None, data_type: str = "default"
+        self,
+        url: str,
+        max_retries: int | None = None,
+        data_type: str = "default",
+        *,
+        raise_on_not_found: bool = False,
     ) -> Optional[ByteString]:
         """
         Download a zip file directly into memory with dynamic timeout handling.
@@ -81,9 +87,15 @@ class BSEEWebScraper:
             url: URL of the zip file to download
             max_retries: Maximum number of retry attempts
             data_type: Type of data being downloaded (well, production, war) for timeout selection
+            raise_on_not_found: Raise a typed HTTPError immediately for a missing
+                configured endpoint, allowing scheduler failure classification.
+                Other failures retain the existing bounded retry behavior.
 
         Returns:
             Bytes of the zip file content or None if failed
+
+        Raises:
+            requests.HTTPError: On Not Found when raise_on_not_found is enabled.
         """
         max_retries = max_retries or self.MAX_RETRIES
         timeout = self.TIMEOUTS.get(data_type, self.TIMEOUTS["default"])
@@ -161,6 +173,16 @@ class BSEEWebScraper:
                     time.sleep(self.RETRY_DELAY)
 
             except requests.exceptions.RequestException as e:
+                # RFC 9110 (2022), section 15.5.5: Not Found does not prove
+                # permanence. Opted-in callers stop this run to repair the
+                # configured endpoint rather than repeat it during backoff.
+                if (
+                    raise_on_not_found
+                    and isinstance(e, requests.HTTPError)
+                    and e.response is not None
+                    and e.response.status_code == HTTPStatus.NOT_FOUND
+                ):
+                    raise
                 logger.error(f"Error downloading from {url}: {str(e)}")
                 if attempt < max_retries - 1:
                     logger.info(f"Retrying in {self.RETRY_DELAY} seconds...")

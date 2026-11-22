@@ -2,8 +2,8 @@ import json
 from html.parser import HTMLParser
 
 import pytest
-from fixture_paths import EXAMPLE_DIR, FIXTURE
 
+from tests.unit.federal_acreage.fixture_paths import EXAMPLE_DIR, FIXTURE
 from worldenergydata.federal_acreage.evidence import evaluate
 from worldenergydata.federal_acreage.provider import FixtureRecordProvider
 from worldenergydata.federal_acreage.report import render_html, write_outputs

@@ -1,0 +1,59 @@
+{
+  "document": "infrastructure-loader-tests.html",
+  "changes": [
+    {
+      "revision": 1,
+      "date": "2026-10-19",
+      "section": "summary",
+      "description": "Added synthetic loader characterization and explicit execution limitations."
+    },
+    {
+      "revision": 1,
+      "date": "2026-10-19",
+      "section": "example",
+      "description": "Added hand-repeatable exact-match selections with a synthetic input register."
+    },
+    {
+      "revision": 1,
+      "date": "2026-10-19",
+      "section": "validation",
+      "description": "Added verification checklist and comment export controls."
+    },
+    {
+      "revision": 2,
+      "date": "2026-10-20",
+      "section": "summary",
+      "description": "Corrected maintainer review wording and recorded 58 passed on Linux with Python 3.11.14, pandas 2.3.3 and NumPy 2.3.3."
+    },
+    {
+      "revision": 2,
+      "date": "2026-10-20",
+      "section": "validation",
+      "description": "Recorded 100 % line and branch coverage for platform_loader.py and pipeline_loader.py and replaced stale execution limitations in validation and disposition."
+    },
+    {
+      "revision": 2,
+      "date": "2026-10-20",
+      "section": "appendix",
+      "description": "Removed repository-access wording and supplied the path-based coverage command to avoid the dotted-module NumPy reload error."
+    },
+    {
+      "revision": 3,
+      "date": "2026-10-20",
+      "section": "revision-history",
+      "description": "Recorded the initial commit date and completed revision metadata for the three original change entries."
+    },
+    {
+      "revision": 4,
+      "date": "2026-10-22",
+      "section": "revision-history",
+      "description": "Numbered the initial HTML revision label to match the structured change record."
+    },
+    {
+      "revision": 5,
+      "date": "2026-10-22",
+      "section": "comments",
+      "description": "Linked the Changes panel to the complete revision history so later revisions remain visible."
+    }
+  ]
+}

@@ -95,6 +95,8 @@ class CostComponent(str, Enum):
     INDEX_PPI_DRILLING = "index_ppi_drilling"
     INDEX_PPI_SUPPORT = "index_ppi_support"
     INDEX_PPI_MACHINERY = "index_ppi_machinery"
+    INDEX_PPI_STEEL_MILL = "index_ppi_steel_mill"
+    INDEX_PPI_STEEL_PIPE = "index_ppi_steel_pipe"
     OIL_PRICE_BRENT = "oil_price_brent"
     OIL_PRICE_WTI = "oil_price_wti"
 

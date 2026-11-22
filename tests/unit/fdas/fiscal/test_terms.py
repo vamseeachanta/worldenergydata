@@ -57,18 +57,19 @@ def test_all_shipped_decks_validate():
         assert terms.source_url and terms.revision and terms.effective_date
 
 
-def test_us_gom_royalty_matches_legacy_config():
-    """us_gom deck must reproduce fdas.core.config ROYALTY_RATE exactly."""
-    from worldenergydata.fdas.core.config import DEFAULT_ASSUMPTIONS
+def test_us_gom_royalty_corrects_legacy_rounding():
+    """Original us_gom.yml revision 1 source_ref: 12.5% and 18.75%.
 
-    dev = DEFAULT_ASSUMPTIONS["DEV_SYSTEM"]
-    rates = DEFAULT_ASSUMPTIONS["ROYALTY_RATE"]
-    legacy = dict(zip(dev, rates))
-
+    Hand calculation: 12.5 / 100 = 0.125; 18.75 / 100 = 0.1875.
+    Legacy default-rate correction or explicit versioning is tracked in #1625.
+    """
     terms = get_fiscal_terms("us_gom")
     assert terms.royalty.model == "flat"
     for ds in DEV_SYSTEMS:
-        assert terms.royalty.rate_for(ds) == legacy[ds], ds
+        if ds == "dry":
+            assert terms.royalty.rate_for(ds) == 0.125
+        else:
+            assert terms.royalty.rate_for(ds) == 0.1875
 
 
 def test_norway_is_none_model():
