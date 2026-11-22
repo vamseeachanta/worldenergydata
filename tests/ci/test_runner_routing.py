@@ -1,4 +1,8 @@
-"""Keep Linux routing open to both architectures; fork PRs stay on hosted runners."""
+"""Keep Linux routing open to both architectures; fork PRs stay on hosted runners.
+
+PR-path workflows add the WED_PR_RUNNER repository-variable switch: same-repo
+pull requests use self-hosted runners only when it is set to ``self-hosted``.
+"""
 
 import json
 from pathlib import Path
@@ -11,8 +15,22 @@ FORK_PREFIX = (
     "${{ (github.event_name != 'pull_request' || "
     "github.event.pull_request.head.repo.full_name == github.repository) && fromJSON('"
 )
+# PR-path workflows: hosted by default; vars.WED_PR_RUNNER == 'self-hosted' rolls back.
+SWITCH_PREFIX = (
+    "${{ (github.event_name != 'pull_request' || "
+    "(github.event.pull_request.head.repo.full_name == github.repository && "
+    "vars.WED_PR_RUNNER == 'self-hosted')) && fromJSON('"
+)
 FORK_SUFFIX = "') || 'ubuntu-latest' }}"
 FORK_ROUTING = FORK_PREFIX + '["self-hosted","Linux"]' + FORK_SUFFIX
+SWITCH_ROUTING = SWITCH_PREFIX + '["self-hosted","Linux"]' + FORK_SUFFIX
+PR_SWITCH_WORKFLOWS = {
+    "ci.yml",
+    "brand-guard.yml",
+    "wheel-ownership.yml",
+    "pr-validation.yml",
+    "domain-matrix.yml",
+}
 WORKFLOWS = [
     ("ci.yml", 6),
     ("main-full-run.yml", 10),
@@ -49,11 +67,9 @@ def _local_jobs(filename):
 def _required_labels(selector):
     if isinstance(selector, str):
         selector = " ".join(selector.split())
-        assert selector.startswith(FORK_PREFIX)
+        prefix = next(p for p in (FORK_PREFIX, SWITCH_PREFIX) if selector.startswith(p))
         assert selector.endswith(FORK_SUFFIX)
-        selector = json.loads(
-            selector.removeprefix(FORK_PREFIX).removesuffix(FORK_SUFFIX)
-        )
+        selector = json.loads(selector.removeprefix(prefix).removesuffix(FORK_SUFFIX))
     return {label.casefold() for label in selector}
 
 
@@ -62,11 +78,13 @@ def test_linux_runner_routing(filename, job_count):
     """Hand count: 6 + 10 + 1 + 1 + 1 + 4 + 3 = 26 local jobs.
 
     Compatible jobs request Linux; frozen all-extras jobs retain Linux x64.
-    The same-repository predicate sends fork PRs to ubuntu-latest.
+    The same-repository predicate sends fork PRs to ubuntu-latest; PR-path
+    workflows also need WED_PR_RUNNER == 'self-hosted' for same-repo PRs.
     The local reusable domain workflow owns three of these selectors.
     """
     jobs = _local_jobs(filename)
     assert len(jobs) == job_count
+    prefix = SWITCH_PREFIX if filename in PR_SWITCH_WORKFLOWS else FORK_PREFIX
     for name, job in jobs.items():
         if filename == "main-full-run.yml":
             expected = (
@@ -77,17 +95,19 @@ def test_linux_runner_routing(filename, job_count):
             assert job["runs-on"] == expected, name
         elif filename == "domain-matrix.yml" and name in DOMAIN_X64_ONLY:
             assert " ".join(job["runs-on"].split()) == (
-                FORK_PREFIX + '["self-hosted","x64","linux"]' + FORK_SUFFIX
+                prefix + '["self-hosted","x64","linux"]' + FORK_SUFFIX
             ), name
         else:
-            assert " ".join(job["runs-on"].split()) == FORK_ROUTING, name
+            assert " ".join(job["runs-on"].split()) == (
+                prefix + '["self-hosted","Linux"]' + FORK_SUFFIX
+            ), name
 
 
 @pytest.mark.parametrize("filename, job_id", LIGHTWEIGHT_PR_JOBS)
 def test_lightweight_pr_jobs_allow_both_architectures(filename, job_id):
     """Pin each moved job and preserve the exact fork-isolation expression."""
     selector = _local_jobs(filename)[job_id]["runs-on"]
-    assert " ".join(selector.split()) == FORK_ROUTING
+    assert " ".join(selector.split()) == SWITCH_ROUTING
 
 
 @pytest.mark.parametrize("job_id", sorted(DOMAIN_X64_ONLY))
@@ -95,7 +115,7 @@ def test_domain_tests_and_summary_stay_x64(job_id):
     """CAD-dependent tests and their summary retain the existing x64 policy."""
     selector = _local_jobs("domain-matrix.yml")[job_id]["runs-on"]
     assert " ".join(selector.split()) == (
-        FORK_PREFIX + '["self-hosted","x64","linux"]' + FORK_SUFFIX
+        SWITCH_PREFIX + '["self-hosted","x64","linux"]' + FORK_SUFFIX
     )
 
 
