@@ -283,7 +283,7 @@ wheels = [
 [[package]]
 name = "assetutilities"
 version = "0.1.1"
-source = { git = "https://github.com/vamseeachanta/assetutilities.git?branch=main#4d8f24b0b9fde6e5cf5aaa5c4d75fc2e554f9f24" }
+source = { git = "https://github.com/vamseeachanta/assetutilities.git?rev=ae61e9157ee54be2d28dbdee718eb7ae88201de2#ae61e9157ee54be2d28dbdee718eb7ae88201de2" }
 dependencies = [
     { name = "beautifulsoup4" },
     { name = "build" },
@@ -7955,7 +7955,7 @@ docs = [
 [package.metadata]
 requires-dist = [
     { name = "accelerate", marker = "extra == 'llm'", specifier = ">=1.15.0" },
-    { name = "assetutilities", git = "https://github.com/vamseeachanta/assetutilities.git?branch=main" },
+    { name = "assetutilities", git = "https://github.com/vamseeachanta/assetutilities.git?rev=ae61e9157ee54be2d28dbdee718eb7ae88201de2" },
     { name = "beautifulsoup4", specifier = ">=4.15.0,<5.0" },
     { name = "black", marker = "extra == 'dev'", specifier = ">=23.0" },
     { name = "cadquery", marker = "python_full_version >= '3.11' and extra == 'cad'", specifier = ">=2.8" },
@@ -8178,7 +8178,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "aiosqlite" },
-    { name = "assetutilities", git = "https://github.com/vamseeachanta/assetutilities.git?branch=main" },
+    { name = "assetutilities", git = "https://github.com/vamseeachanta/assetutilities.git?rev=ae61e9157ee54be2d28dbdee718eb7ae88201de2" },
     { name = "click", specifier = ">=8.0,<9.0" },
     { name = "dash", specifier = ">=2.14.0,<3.0" },
     { name = "httpx", specifier = ">=0.25.0,<1.0" },
@@ -8238,7 +8238,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "assetutilities", git = "https://github.com/vamseeachanta/assetutilities.git?branch=main" },
+    { name = "assetutilities", git = "https://github.com/vamseeachanta/assetutilities.git?rev=ae61e9157ee54be2d28dbdee718eb7ae88201de2" },
     { name = "loguru", specifier = ">=0.7.0,<1.0" },
     { name = "numpy", specifier = ">=2.2.6,<3.0" },
     { name = "pandas", specifier = ">=2.3.3,<3.0" },
