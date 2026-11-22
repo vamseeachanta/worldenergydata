@@ -24,6 +24,7 @@ from __future__ import annotations
 import copy
 import hashlib
 import os
+import re
 import tempfile
 import zipfile
 from pathlib import Path
@@ -65,20 +66,78 @@ def _canonical_content_digest(path: str) -> str:
         return hashlib.sha256(fh.read()).hexdigest()
 
 
+def _output_key(out: dict) -> str:
+    """Identity of one extracted output: its ``relative_path`` from ``result_folder``.
+
+    assetutilities' ``extract_result`` discovers outputs recursively and records a
+    POSIX ``relative_path``, so ``sub/README.md`` and ``README.md`` stay distinct.
+    Older extractor output has no ``relative_path`` (top-level files only); then the
+    ``basename`` is the key. An explicit empty ``relative_path`` is NOT a fallback;
+    ``_output_parts`` rejects it.
+    """
+    rel = out.get("relative_path")
+    return rel if rel is not None else out.get("basename", "")
+
+
+_DRIVE_PREFIX = re.compile(r"^[A-Za-z]:")
+
+
+def _output_parts(key: str) -> list[str]:
+    """Validate an output key as a canonical relative POSIX path; return its segments.
+
+    Keys are POSIX (assetutilities writes ``Path.as_posix()``). Backslashes are
+    REJECTED, not normalized: on POSIX ``\\`` is an ordinary filename character, so
+    rewriting it would change the file's identity, and on Windows it is a separator
+    that could smuggle in a root or ``..``. Checked BEFORE splitting, so a rooted
+    key cannot lose its root: leading ``/`` (incl. UNC ``//host``), drive letters
+    (``C:``, ``C:/``), and empty, ``.`` or ``..`` segments all raise ``ValueError``.
+    """
+    if not isinstance(key, str) or not key:
+        raise ValueError("output key is empty")
+    if "\\" in key:
+        raise ValueError(f"output key {key!r} contains a backslash; keys are POSIX")
+    if key.startswith("/"):
+        raise ValueError(f"output key {key!r} is rooted")
+    if _DRIVE_PREFIX.match(key) or (os.name == "nt" and ":" in key):
+        raise ValueError(f"output key {key!r} has a drive or stream qualifier")
+    parts = key.split("/")
+    if any(part in ("", ".", "..") for part in parts):
+        raise ValueError(f"output key {key!r} is not a canonical relative path")
+    return parts
+
+
+def _output_path(results_dir: str, out: dict) -> str:
+    """Resolved path of one extracted output under ``results_dir``.
+
+    The key is validated lexically (``_output_parts``), then the joined path is
+    RESOLVED (following symlinks/junctions) and must stay inside the resolved
+    ``results_dir``; otherwise ``ValueError``.
+    """
+    parts = _output_parts(_output_key(out))
+    base = Path(results_dir).resolve()
+    resolved = base.joinpath(*parts).resolve()
+    if not resolved.is_relative_to(base):
+        raise ValueError(
+            f"output path {'/'.join(parts)!r} resolves outside the result folder"
+        )
+    return str(resolved)
+
+
 def _normalize_container_hashes(payload: dict, cfg_base: dict, root: str) -> None:
     """Rewrite ``outputs[].sha256`` to the timestamp-independent digest in place.
 
     ``extract_result`` hashes raw bytes, which makes ZIP-container outputs (e.g.
     the bsee ``prod_raw_*.xlsx``) flip the determinism hash every run. We recompute
     each file's digest canonically; for non-container files this reproduces the
-    exact raw-bytes digest, so it is a no-op there.
+    exact raw-bytes digest, so it is a no-op there. Each output is re-opened by its
+    ``relative_path`` (see ``_output_key``), never by basename alone.
     """
     if payload.get("kind") != "files":
         return
     analysis = cfg_base.get("Analysis", {}) or {}
     results_dir = analysis.get("result_folder") or os.path.join(root, "results")
     for out in payload.get("outputs", []):
-        path = os.path.join(results_dir, out.get("basename", ""))
+        path = _output_path(results_dir, out)
         if os.path.isfile(path):
             out["sha256"] = _canonical_content_digest(path)
 
