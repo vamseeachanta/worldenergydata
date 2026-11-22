@@ -161,8 +161,8 @@ class CashflowEngine:
             dev_system: Development system (dry, subsea15, subsea20)
             fiscal_terms: Optional country fiscal deck selecting royalty,
                 oil price marker and NPV discount rate. Income tax remains
-                declarative; all cashflows are pre-tax. ``None`` preserves the
-                legacy US-GoM assumptions path.
+                declarative; all cashflows are pre-tax. ``None`` uses the
+                selected assumptions version (implicit default: ``legacy-v1``).
         """
         self.assumptions = assumptions_mgr
         self.dev_system = dev_system
@@ -458,8 +458,8 @@ class CashflowEngine:
             1. explicit ``royalty_rate`` argument;
             2. ``self.fiscal_terms`` deck, if set — ``flat`` model resolves the
                per-dev-system rate, ``none`` resolves to 0.0;
-            3. the legacy ``AssumptionsManager`` ROYALTY_RATE path (deckless =
-               byte-identical to the pre-carve behavior).
+            3. the selected ``AssumptionsManager`` version's ROYALTY_RATE
+               (deckless; implicit default ``legacy-v1`` retains rounded rates).
 
         Args:
             revenue_monthly: Dict mapping year-month to revenue

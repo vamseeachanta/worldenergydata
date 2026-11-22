@@ -10,17 +10,15 @@ well counts, and the names of the *subsea-tieback satellite fields* the host
 produces). The 147 FPSO records are vessel-spec-only (no block/field link) and
 are already represented by ``host_facilities.csv``, so they are skipped here.
 
-This script is a **one-off**: it reads the source table from ``llm-wiki`` (the
-SubseaIQ data is stale ~2014 and freely usable — see ``og-website-db/README.md``)
-and writes a small committed CSV. The runtime enrichment module
-(:mod:`worldenergydata.field_development.host_enrichment`) reads only the
-committed CSV — it never depends on ``llm-wiki`` being present.
+The data set is held privately pending redistribution-terms review.
+Only explicit, independently sourced inputs and an external output are supported.
+No private archive is discovered automatically.
 
 Run::
 
     python scripts/field_development/ingest_subseaiq_hosts.py \
-        --src /mnt/local-analysis/llm-wiki/data/og-website-db/og_host.csv \
-        --out data/modules/offshore_assets/curated/subseaiq_hosts.csv
+        --src <independent-host-records.csv> --out <private-output.csv>
+
 """
 
 from __future__ import annotations
@@ -37,6 +35,7 @@ from typing import Optional
 _REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(_REPO / "src"))
 
+from worldenergydata.field_development.data_availability import require_available_source
 from worldenergydata.field_development.enums import ConceptType  # noqa: E402
 from worldenergydata.field_development.subseaiq import (  # noqa: E402
     bsee_block_key,
@@ -180,6 +179,7 @@ def ingest(src: Path) -> list[dict]:
 
 
 def write_csv(rows: list[dict], out: Path) -> None:
+    require_available_source(out)
     out.parent.mkdir(parents=True, exist_ok=True)
     with open(out, "w", newline="", encoding="utf-8") as fh:
         w = csv.DictWriter(fh, fieldnames=OUT_COLUMNS)
@@ -193,7 +193,7 @@ def main(argv: Optional[list[str]] = None) -> int:
     ap.add_argument(
         "--src",
         type=Path,
-        default=Path("/mnt/local-analysis/llm-wiki/data/og-website-db/og_host.csv"),
+        required=True,
     )
     ap.add_argument(
         "--out",

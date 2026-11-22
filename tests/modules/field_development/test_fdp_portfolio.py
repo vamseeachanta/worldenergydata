@@ -8,6 +8,9 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import os
+import subprocess
+import sys
 from pathlib import Path
 
 import pytest
@@ -296,3 +299,102 @@ def test_index_scopes_models_and_unknown_depth_units():
     assert "Each plan is generated" not in page
     assert "Legacy examples" in page
     assert "Documented profiles" in page
+
+
+def _run_portfolio_cli(tmp_path, source_args=(), options=(), stale=None):
+    """Exercise argument parsing and saved outputs without changing repo inputs."""
+    script = ROOT / "scripts/field_development/build_fdp_portfolio.py"
+    env = dict(os.environ)
+    env["PYTHONPATH"] = os.pathsep.join([str(ROOT / "src"), env.get("PYTHONPATH", "")])
+    command = [sys.executable, str(script)]
+    if stale is not None:
+        fixture = tmp_path / "stale.json"
+        fixture.write_text(json.dumps(stale), encoding="utf-8")
+        command = [
+            sys.executable,
+            "-c",
+            "\n".join(
+                [
+                    "import runpy, sys",
+                    "from pathlib import Path",
+                    "from unittest.mock import patch",
+                    "script, research, fixture = map(Path, sys.argv[1:4])",
+                    "original = Path.read_text",
+                    "stale = fixture.read_text(encoding='utf-8')",
+                    "def read_text(path, *args, **kwargs):",
+                    "    if path.resolve() == research.resolve():",
+                    "        return stale",
+                    "    return original(path, *args, **kwargs)",
+                    "sys.argv = [str(script), *sys.argv[4:]]",
+                    "with patch.object(Path, 'read_text', read_text):",
+                    "    runpy.run_path(str(script), run_name='__main__')",
+                ]
+            ),
+            str(script),
+            str(PORTFOLIO / "_research.json"),
+            str(fixture),
+        ]
+    return subprocess.run(
+        [*command, *source_args, "--output-dir", str(tmp_path / "output"), *options],
+        cwd=tmp_path,
+        env=env,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=60,
+    )
+
+
+@pytest.mark.parametrize("explicit_default", [False, True])
+@pytest.mark.parametrize("options", [(), ("--documented-only",)])
+def test_default_cli_rejects_stale_research_before_writing(
+    tmp_path, explicit_default, options
+):
+    protected = {
+        path: path.read_bytes() for path in PORTFOLIO.iterdir() if path.is_file()
+    }
+    out = tmp_path / "output"
+    out.mkdir()
+    saved = {"index.html": b"Saved index", "synthetic-withdrawn.html": b"Saved notice"}
+    for name, content in saved.items():
+        (out / name).write_bytes(content)
+    # A valid profile first proves that rejection precedes every render/write.
+    stale = [profiles()[0], {"name": "Synthetic withdrawn", "water_depth_m": 1000}]
+    source = (str(PORTFOLIO / "." / "_research.json"),) if explicit_default else ()
+    result = _run_portfolio_cli(tmp_path, source, options, stale=stale)
+    assert {path.name: path.read_bytes() for path in out.iterdir()} == saved
+    assert {path: path.read_bytes() for path in protected} == protected
+    assert result.returncode != 0
+    assert "DatasetUnavailableError" in result.stderr
+    assert "held privately pending redistribution-terms review" in result.stderr
+
+
+def test_default_cli_preserves_independently_cited_profiles(tmp_path):
+    result = _run_portfolio_cli(tmp_path)
+    assert result.returncode == 0, result.stderr
+    expected = {f'{builder._slug(d["name"])}.html' for d in profiles()} | {"index.html"}
+    out = tmp_path / "output"
+    assert {path.name for path in out.iterdir()} == expected
+    for name in expected:
+        assert (out / name).read_bytes() == (PORTFOLIO / name).read_bytes()
+
+
+def test_explicit_independent_research_remains_supported(tmp_path):
+    source = tmp_path / "independent.json"
+    research = [{"name": "Synthetic independent", "water_depth_m": 1000}]
+    source.write_text(json.dumps(research), encoding="utf-8")
+    before = source.read_bytes()
+    result = _run_portfolio_cli(tmp_path, (str(source),))
+    assert result.returncode == 0, result.stderr
+    assert source.read_bytes() == before
+    out = tmp_path / "output"
+    assert {path.name for path in out.iterdir()} == {
+        "synthetic-independent.html",
+        "index.html",
+    }
+    assert (out / "synthetic-independent.html").read_text(
+        encoding="utf-8"
+    ) == builder.build_profile_page(research[0])
+    assert (out / "index.html").read_text(encoding="utf-8") == builder.build_index(
+        research
+    )

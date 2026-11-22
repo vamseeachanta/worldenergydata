@@ -7,8 +7,11 @@ from pathlib import Path
 
 import pytest
 
+from tests.unit.site import test_explorer_economics_render as renderer
+
 ROOT = Path(__file__).resolve().parents[3]
 TEMPLATE = ROOT / "reports/field-atlas/atlas_template.html"
+page = renderer.page
 
 # Synthetic revision and hash formats: full HF Git commit hashes and the existing
 # bundle exporter's SHA-256 representation; no published results are fabricated.
@@ -149,10 +152,10 @@ def test_browser_render_contract(mode):
     assert result.returncode == 0, result.stderr
 
 
-def test_template_and_generated_page_have_integration():
-    for path in (TEMPLATE, ROOT / "reports/field-atlas/index.html"):
-        text = path.read_text(encoding="utf-8")
-        assert 'id="hf-viz-config"' in text
-        assert 'id="x-hf-viz"' in text
-        assert 'loadHfVisualization($("x-hf-viz"), f.id)' in text
-        assert "issues/966" in text
+@pytest.mark.parametrize("page", renderer.PAGES, ids=renderer.PAGE_IDS, indirect=True)
+def test_template_and_generated_page_have_integration(page):
+    text = page.read_text(encoding="utf-8")
+    assert 'id="hf-viz-config"' in text
+    assert 'id="x-hf-viz"' in text
+    assert 'loadHfVisualization($("x-hf-viz"), f.id)' in text
+    assert "issues/966" in text

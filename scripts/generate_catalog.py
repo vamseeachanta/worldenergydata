@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import importlib.util
 import json
 import os
 import re
@@ -30,6 +31,19 @@ from pathlib import Path
 from typing import Any
 
 import yaml
+
+if __package__:
+    from .ingest.bsee_ingest_manifest import preserve_ingest_entries
+else:  # Direct execution and importlib file-location loading.
+    _manifest_spec = importlib.util.spec_from_file_location(
+        "bsee_ingest_manifest",
+        Path(__file__).resolve().parent / "ingest" / "bsee_ingest_manifest.py",
+    )
+    if _manifest_spec is None or _manifest_spec.loader is None:
+        raise ImportError("Cannot load the BSEE ingest manifest helper")
+    _manifest_module = importlib.util.module_from_spec(_manifest_spec)
+    _manifest_spec.loader.exec_module(_manifest_module)
+    preserve_ingest_entries = _manifest_module.preserve_ingest_entries
 
 CONTRACT_ONLY_STATUS = "local_draft_public_export_requires_maintainer_eligibility"
 
@@ -113,7 +127,7 @@ _SKIP_DIRS = {
     "cache",
     ".temp_downloads",
 }
-_SKIP_FILES = {"_metadata.json"}
+_SKIP_FILES = {"_metadata.json", "ingest_manifest.json"}
 
 
 def _humanize_bytes(n: int) -> str:
@@ -130,7 +144,7 @@ def _load_osha_data_dictionary(dict_path: Path) -> dict[str, dict[str, dict[str,
     if not dict_path.exists():
         return result
     try:
-        with open(dict_path, "r", newline="", errors="replace") as f:
+        with open(dict_path, "r", encoding="utf-8", newline="", errors="replace") as f:
             reader = csv.DictReader(f)
             for row in reader:
                 table = row.get("table_name", "").strip().strip('"')
@@ -168,9 +182,9 @@ def scan_binary_directory(dir_path: Path, root: Path) -> dict[str, Any]:
         for ext, c in sorted(ext_counts.items(), key=lambda x: -x[1])
     )
     try:
-        rel = str(dir_path.relative_to(root))
+        rel = dir_path.relative_to(root).as_posix()
     except ValueError:
-        rel = str(dir_path)
+        rel = dir_path.as_posix()
     return {
         "name": dir_path.name,
         "path": rel,
@@ -193,9 +207,9 @@ def scan_zip(path: Path, root: Path) -> dict[str, Any]:
     except Exception:
         pass
     try:
-        rel = str(path.relative_to(root))
+        rel = path.relative_to(root).as_posix()
     except ValueError:
-        rel = str(path)
+        rel = path.as_posix()
     return {
         "name": path.name,
         "path": rel,
@@ -273,7 +287,7 @@ def _write_yaml_atomic(path: Path, data: Any) -> None:
     )
     tmp_path = Path(tmp_name)
     try:
-        with os.fdopen(fd, "w", encoding="utf-8") as f:
+        with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as f:
             yaml.dump(data, f, default_flow_style=False, sort_keys=False)
             f.flush()
             os.fsync(f.fileno())
@@ -286,7 +300,7 @@ def _write_yaml_atomic(path: Path, data: Any) -> None:
 def _sample_csv(path: Path, n: int = 20) -> tuple[list[str], list[list[str]]]:
     hdr, rows = [], []
     try:
-        with open(path, "r", newline="", errors="replace") as f:
+        with open(path, "r", encoding="utf-8", newline="", errors="replace") as f:
             r = csv.reader(f)
             raw = next(r, None)
             if raw:
@@ -302,7 +316,7 @@ def _sample_csv(path: Path, n: int = 20) -> tuple[list[str], list[list[str]]]:
 
 def _count_rows(path: Path) -> int | None:
     try:
-        with open(path, "r", newline="", errors="replace") as f:
+        with open(path, "r", encoding="utf-8", newline="", errors="replace") as f:
             r = csv.reader(f)
             next(r, None)
             return sum(1 for _ in r)
@@ -314,10 +328,10 @@ def _rel_path(path: Path, root: Path) -> str:
     """Return relative path if inside root, else absolute."""
     try:
         if path.is_relative_to(root):
-            return str(path.relative_to(root))
+            return path.relative_to(root).as_posix()
     except (ValueError, TypeError):
         pass
-    return str(path)
+    return path.as_posix()
 
 
 def scan_csv(path: Path, root: Path) -> dict[str, Any]:
@@ -376,7 +390,7 @@ def scan_parquet(path: Path, root: Path) -> dict[str, Any]:
 def scan_json(path: Path, root: Path) -> dict[str, Any]:
     cols = []
     try:
-        with open(path, "r", errors="replace") as f:
+        with open(path, "r", encoding="utf-8", errors="replace") as f:
             data = json.load(f)
         items = (
             data.items()
@@ -420,9 +434,9 @@ def _scan_tree(
         for fp in sorted(bin_dir.iterdir()):
             if fp.is_file() and fp.suffix.lower() == ".bin":
                 try:
-                    rel = str(fp.relative_to(root))
+                    rel = fp.relative_to(root).as_posix()
                 except ValueError:
-                    rel = str(fp)
+                    rel = fp.as_posix()
                 binary_stores.append(
                     {
                         "name": fp.name,
@@ -659,11 +673,12 @@ def generate_catalog(
         use_osha = osha_dict if name == "hse" else None
         schema = scan_module(mp, root, external_mod_path=ext_mp, osha_dict=use_osha)
         _preserve_contract_entries(schema, mp / "schema.yaml")
+        preserve_ingest_entries(schema, mp, root)
         mods[name] = schema
         if not dry_run and mp.is_relative_to(root):
             sp = destination_root / mp.relative_to(root) / "schema.yaml"
             _write_yaml_atomic(sp, schema)
-            written.append(str(sp.relative_to(destination_root)))
+            written.append(sp.relative_to(destination_root).as_posix())
 
     tot_ds = sum(len(m.get("datasets", [])) for m in mods.values())
     tot_bs = sum(len(m.get("binary_stores", [])) for m in mods.values())
@@ -684,7 +699,7 @@ def generate_catalog(
     if not dry_run:
         cp = destination_root / "data" / "catalog.yaml"
         _write_yaml_atomic(cp, catalog)
-        written.append(str(cp.relative_to(destination_root)))
+        written.append(cp.relative_to(destination_root).as_posix())
     print(f"Scanned {len(mods)} modules, {tot_ds} datasets, {tot_bs} binary stores")
     print(f"Total size: {_humanize_bytes(tot_sz)}")
     if written:

@@ -7,6 +7,8 @@ name: CI
 # "Main full run" (.github/workflows/main-full-run.yml), dispatched once a day
 # by the ace-linux-1 cron with `gh workflow run`; GitHub's schedule trigger is
 # not used. Required checks: Lint, Security Scan, Test (PR gate).
+# Runners: pull request jobs use ubuntu-latest unless the repository variable
+# WED_PR_RUNNER is "self-hosted" (docs/ci/linux-runners.md); push stays self-hosted.
 on:
   push:
     branches: [main, develop]
@@ -34,7 +36,8 @@ jobs:
     name: Gate mode
     runs-on: >-
       ${{ (github.event_name != 'pull_request' ||
-          github.event.pull_request.head.repo.full_name == github.repository) &&
+          (github.event.pull_request.head.repo.full_name == github.repository &&
+          vars.WED_PR_RUNNER == 'self-hosted')) &&
           fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
     permissions:
       contents: read
@@ -117,9 +120,13 @@ jobs:
   # the local reusable workflow. Its conventions match the shared defaults
   # while preserving the x64 and fork-isolation policy. The defaults are
   # (selector scripts/ci/select_test_targets.py, uv sync --all-extras, quarantine
-  # scripts/ci/quarantine.txt, python-setup uv, max-parallel 10). The only
-  # override sets WED_FAST_GATE=1 so tests/conftest.py skips repo-wide
+  # scripts/ci/quarantine.txt, python-setup uv, max-parallel 10). The test
+  # runner sets WED_FAST_GATE=1 so tests/conftest.py skips repo-wide
   # artifact-currency tests (they run in the daily Main full run).
+  # pytest-xdist is installed, pinned, into the job's own .venv and pytest runs
+  # from it with --no-sync. A `uv run --with` overlay would live in the
+  # runner's shared uv cache (builds-v0/.tmp*), where other jobs can remove it
+  # mid-run; tests that re-launch sys.executable then find no interpreter.
   domain-tests:
     needs: [mode]
     if: >-
@@ -127,13 +134,15 @@ jobs:
       == 'pull_request'
     uses: ./.github/workflows/domain-matrix.yml
     with:
-      test-runner: env WED_FAST_GATE=1 uv run --with pytest-xdist pytest
+      install-cmd: uv sync --frozen --all-extras && uv pip install pytest-xdist==3.8.0
+      test-runner: env WED_FAST_GATE=1 uv run --no-sync pytest
 
   lint:
     name: Lint (full)
     runs-on: >-
       ${{ (github.event_name != 'pull_request' ||
-          github.event.pull_request.head.repo.full_name == github.repository) &&
+          (github.event.pull_request.head.repo.full_name == github.repository &&
+          vars.WED_PR_RUNNER == 'self-hosted')) &&
           fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
     timeout-minutes: 30
     needs: [mode]
@@ -251,7 +260,8 @@ jobs:
     # PR/push: secret scan only. Bandit runs in the daily Main full run.
     runs-on: >-
       ${{ (github.event_name != 'pull_request' ||
-          github.event.pull_request.head.repo.full_name == github.repository) &&
+          (github.event.pull_request.head.repo.full_name == github.repository &&
+          vars.WED_PR_RUNNER == 'self-hosted')) &&
           fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
     timeout-minutes: 30
     needs: [mode]
@@ -336,7 +346,8 @@ jobs:
     if: ${{ !cancelled() }}
     runs-on: >-
       ${{ (github.event_name != 'pull_request' ||
-          github.event.pull_request.head.repo.full_name == github.repository) &&
+          (github.event.pull_request.head.repo.full_name == github.repository &&
+          vars.WED_PR_RUNNER == 'self-hosted')) &&
           fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
     permissions:
       contents: read
@@ -365,7 +376,8 @@ jobs:
     if: ${{ !cancelled() }}
     runs-on: >-
       ${{ (github.event_name != 'pull_request' ||
-          github.event.pull_request.head.repo.full_name == github.repository) &&
+          (github.event.pull_request.head.repo.full_name == github.repository &&
+          vars.WED_PR_RUNNER == 'self-hosted')) &&
           fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
     permissions:
       contents: read
@@ -394,7 +406,8 @@ jobs:
     if: ${{ !cancelled() && github.event_name == 'pull_request' }}
     runs-on: >-
       ${{ (github.event_name != 'pull_request' ||
-          github.event.pull_request.head.repo.full_name == github.repository) &&
+          (github.event.pull_request.head.repo.full_name == github.repository &&
+          vars.WED_PR_RUNNER == 'self-hosted')) &&
           fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
     permissions:
       contents: read

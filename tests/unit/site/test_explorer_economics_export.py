@@ -179,23 +179,28 @@ def test_card_explains_release_policy_without_promising_full_cycle():
     assert "each row's `discount_rate`" in card
 
 
-def test_committed_economics_propagate_without_reinterpreting_npv(tmp_path):
+def test_retained_economics_propagate_without_reinterpreting_npv(tmp_path):
     """Expected values are the reviewed, committed source snapshots (#976).
 
     This is a propagation check, not an independent financial-model validation.
-    It compares every economics level and the sensitivity-grid baseline with
-    the performance contract, and the contract with the Explorer bundle.
+    It compares every retained economics level and sensitivity-grid baseline
+    with the independent performance contract. The Explorer bundle is withheld.
     """
     perf = json.loads(export.PERFORMANCE.read_text(encoding="utf-8"))["fields"]
-    bundle = json.loads(export.BUNDLE.read_text(encoding="utf-8"))["fields"]
+    bundle = json.loads(export.BUNDLE.read_text(encoding="utf-8"))
+    assert bundle == {
+        "status": "withheld",
+        "note": "The data set is held privately pending redistribution-terms review.",
+    }
+    assert len(perf) == 7
     live = tmp_path / "fields.parquet"
-    pd.DataFrame({"id": list(bundle)}).to_parquet(live, index=False)
+    pd.DataFrame({"id": list(perf)}).to_parquet(live, index=False)
     actual = export.build_fields(live).set_index("id")
+    assert set(actual.index) == set(perf)
     for field, row in actual.iterrows():
-        source = perf.get(field, {})
-        expected = bundle[field].get("performance") or {}
-        for key in (*LEVELS, "economics_status", "economics_basis"):
-            assert source.get(key) == expected.get(key)
+        source = perf[field]
+        assert row["economics_status"] == source["economics_status"]
+        assert row["economics_basis"] == source["economics_basis"]
         for key in LEVELS:
             value = source.get(key)
             if source.get("economics_status") == "surfaced":
@@ -206,6 +211,8 @@ def test_committed_economics_propagate_without_reinterpreting_npv(tmp_path):
     grid = json.loads(export.PARAMETRIC_JSON.read_text(encoding="utf-8"))
     published = export.build_parametric()
     surfaced = {k for k, v in perf.items() if v["economics_status"] == "surfaced"}
+    assert len(surfaced) == 2
+    assert len(grid["baseline_match"]) == 8
     assert set(published["field"]) == surfaced
     for match in grid["baseline_match"]:
         if match["field"] in surfaced:

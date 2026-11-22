@@ -76,14 +76,23 @@ is JSON with the following keys:
 
 Table 1. Evidence fields are revalidated against the inventory and linked ID.
 
-The held snapshot contains 85 projects, with 8 mapped and 77 explained
-(85/85 accounted for, exceeding the issue's 90% mapped-or-explained criterion).
+The held snapshot contains 227 projects, with 9 mapped and 218 explained
+(227/227 accounted for, exceeding the issue's 90% mapped-or-explained criterion).
+The 43 Asia-Pacific and Caspian staging projects and the 66 Europe staging
+projects are all explained with the reason class "Outside catalog scope
+(non-GoM)"; none receives a catalog ID. Of the 33 Americas staging projects,
+14 outside the Gulf of Mexico carry the same reason class. The 16 Mexico
+projects carry "Outside catalog scope (Mexican Gulf of Mexico; catalog holds US
+Gulf only)". Shenandoah South and Monument carry "GoM field not yet in
+catalog": both are US Gulf fields with no catalog entry or held alias, so
+neither receives an invented ID. Buckskin Phase 1A is a manual link to
+`buckskin`.
 The field catalog contains 11 Gulf of Mexico entries and an empty worldwide
-slice. The mapped count is separate from explained coverage. Three manual links
-retain initial-phase or rename wording already present in the cost register.
+slice. The mapped count is separate from explained coverage. Four manual links
+retain phase, initial-phase or rename wording already present in the cost register.
 Tiber–Guadalupe links to `tiber` with an explicit partial-coverage limitation:
 Guadalupe has no catalog ID and receives no invented ID or allocation.
-The CLI reports this separately as one `partial` project within the eight mapped.
+The CLI reports this separately as one `partial` project within the nine mapped.
 
 ## Validation and refresh
 
@@ -105,8 +114,18 @@ Inventory includes all PROJECT- or PROJECT_ID-bearing CSVs recursively under
 `data/modules/cost/curated/` and `staging/`, excluding exactly the crosswalk
 itself. Other CSVs do not add projects. The four current register tables
 (sanctions, awards, statements, revisions) are required. Malformed CSVs fail
-loudly. Staging is absent from this snapshot; adding or removing a staging
-project intentionally requires reconciliation and manifest refresh.
+loudly. Staging currently holds the Asia-Pacific and Caspian, Europe and
+Americas tranches; adding or removing a staging project intentionally requires
+reconciliation and manifest refresh in the same change.
+
+This inventory rule includes `sanctioned_projects_2026.csv` (a derived
+restatement) and `sanctioned_project_cost_years.csv` (statement-year metadata).
+Their labels refer to projects already held in `sanctioned_projects.csv`:
+they add source locators and manifest inputs, not independent observations or
+additional projects. Derived and sidecar filenames receive no implicit exclusion;
+new project-bearing source tables continue to be discovered recursively.
+Regenerating either table requires crosswalk evidence reconciliation and
+manifest refresh under the procedure below, even if project labels are unchanged.
 
 For a refresh:
 

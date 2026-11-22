@@ -16,6 +16,11 @@ import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
+from worldenergydata.metocean.statistics._joint_backend import (
+    fit_joint_distribution,
+    validate_joint_result,
+)
+
 
 @dataclass
 class JointModel:
@@ -32,7 +37,7 @@ class JointModel:
     tp_samples: np.ndarray | None = None
     """Observed Tp values supplied to the fit (before backend correction)."""
     fitted_periods: tuple[float, ...] = ()
-    """Return periods actually computed by the backend, in years."""
+    """Backend year labels; label 1 uses its inherited 1.5873-year level."""
     state_duration_hours: float | None = None
     """Effective duration inferred by the backend from the time index."""
     _raw_result: tuple | None = field(default=None, repr=False)
@@ -91,16 +96,27 @@ class JointProbabilityModel:
         """
         if periods is None:
             periods = [50, 100]
+        if not periods or any(not np.isfinite(p) or p <= 0 for p in periods):
+            raise ValueError("Return periods must be finite and positive")
+        if len(set(periods)) != len(periods):
+            raise ValueError("Return periods must be unique")
+        if not isinstance(hs.index, pd.DatetimeIndex) or not hs.index.equals(tp.index):
+            raise ValueError("Paired observations require the same DatetimeIndex")
+        if not hs.index.is_monotonic_increasing or not hs.index.is_unique:
+            raise ValueError("Observation index must be increasing and unique")
+        if len(hs) < 2 or not (
+            not hs.isna().any()
+            and not tp.isna().any()
+            and np.isfinite(hs).all()
+            and np.isfinite(tp).all()
+            and (hs > 0).all()
+            and (tp > 0).all()
+        ):
+            raise ValueError("Paired observations must be finite and positive")
 
         df = pd.DataFrame({"hs": hs.values, "tp": tp.values}, index=hs.index)
-
-        # v.1.2.0 extreme.py L766; aux_funcs.py L121-L175 returns Tp first.
-        # Its reciprocal-distance peak search deliberately produces infinity
-        # at exact matches (aux_funcs.py L134-L155); leave other errors visible.
-        with np.errstate(divide="ignore"):
-            raw = ms.joint_distribution_Hs_Tp(
-                df, var_hs="hs", var_tp="tp", periods=periods,
-            )
+        raw = fit_joint_distribution(df, periods)
+        validate_joint_result(raw, periods)
         a1, a2, a3, b1, b2, b3, pdf_hs, h, _t3, _h3, fitted, _df = raw
         marginal_hs = {
             "distribution": "LoNoWe",

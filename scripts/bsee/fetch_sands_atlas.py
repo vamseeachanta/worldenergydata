@@ -15,6 +15,9 @@ from worldenergydata.bsee.atlas import (
 )
 from worldenergydata.bsee.atlas_fetch import fetch_atlas
 from worldenergydata.common.fields_registry import load_fields
+from worldenergydata.field_development.data_availability import require_available_source
+
+ROSTER_PATH = Path(__file__).resolve().parents[2] / "reports/field-atlas/_roster.json"
 
 
 def verify_retained_files(directory: Path, manifest: dict) -> None:
@@ -71,12 +74,16 @@ def check_or_update_manifest(path: Path, manifest: dict, update: bool) -> None:
     """Only an explicit update will replace the committed provenance."""
     if update:
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(json.dumps(manifest, indent=2) + "\n")
+        path.write_text(
+            json.dumps(manifest, indent=2) + "\n", encoding="utf-8", newline="\n"
+        )
         return
     if not path.exists():
         print("manifest difference: committed manifest is missing")
         raise SystemExit(1)
-    differences = manifest_differences(json.loads(path.read_text()), manifest)
+    differences = manifest_differences(
+        json.loads(path.read_text(encoding="utf-8")), manifest
+    )
     for difference in differences:
         print(f"manifest difference: {difference}")
     if differences:
@@ -91,6 +98,17 @@ def parse_args(root: Path) -> argparse.Namespace:
         "--reuse", action="store_true", help="offline: use retained CSV exports"
     )
     parser.add_argument("--mdb-export", default="mdb-export")
+    parser.add_argument(
+        "--roster",
+        type=Path,
+        default=ROSTER_PATH,
+        help="independently sourced roster; the bundled roster is withheld",
+    )
+    parser.add_argument(
+        "--manifest-only",
+        action="store_true",
+        help="fetch or verify the public Atlas manifest without attribution",
+    )
     parser.add_argument(
         "--update-manifest",
         action="store_true",
@@ -113,10 +131,11 @@ def parse_args(root: Path) -> argparse.Namespace:
 def main() -> None:
     root = Path(__file__).resolve().parents[2]
     args = parse_args(root)
+    roster_path = None if args.manifest_only else require_available_source(args.roster)
     directory = Path(args.data_dir).resolve()
     schema = root / "data/modules/bsee/atlas/2023/schema.json"
     manifest = (
-        json.loads((directory / "manifest.json").read_text())
+        json.loads((directory / "manifest.json").read_text(encoding="utf-8"))
         if args.reuse
         else fetch_atlas(directory, schema, args.mdb_export)
     )
@@ -124,7 +143,8 @@ def main() -> None:
     check_or_update_manifest(
         args.output / "manifest.json", manifest, args.update_manifest
     )
-    roster_path = root / "reports/field-atlas/_roster.json"
+    if args.manifest_only:
+        return
     registry_path = root / "config/fields.yml"
     registry = load_fields(registry_path)
     xref_path = directory / "2023xref_oper-comp.csv"
@@ -138,7 +158,7 @@ def main() -> None:
             )
     results = attribute_fields(
         load_atlas(directory, schema),
-        json.loads(roster_path.read_text()),
+        json.loads(roster_path.read_text(encoding="utf-8")),
         registry,
         codes,
         public_rows,
@@ -146,7 +166,7 @@ def main() -> None:
     output = attribution_output(root, roster_path, registry_path, schema, results)
     args.output.mkdir(parents=True, exist_ok=True)
     (args.output / "field_attribution.json").write_text(
-        json.dumps(output, indent=2) + "\n"
+        json.dumps(output, indent=2) + "\n", encoding="utf-8", newline="\n"
     )
     print(json.dumps({"null_play_fields": len(results), "counts": output["counts"]}))
 
@@ -158,14 +178,21 @@ def attribution_output(
     schema: Path,
     results: list[dict],
 ) -> dict:
+    input_sha256 = {}
+    for role, path in (
+        ("roster", roster_path),
+        ("registry", registry_path),
+        ("schema", schema),
+    ):
+        key = path.relative_to(root).as_posix() if path.is_relative_to(root) else role
+        if key in input_sha256:
+            raise ValueError("duplicate provenance key")
+        input_sha256[key] = hashlib.sha256(path.read_bytes()).hexdigest()
     output = {
         "edition": 2023,
         "manifest": "manifest.json",
         "criteria_version": 2,
-        "input_sha256": {
-            p.relative_to(root).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
-            for p in (roster_path, registry_path, schema)
-        },
+        "input_sha256": input_sha256,
         "counts": {
             status: sum(r["status"] == status for r in results)
             for status in ("attributed", "ambiguous", "unmatched")

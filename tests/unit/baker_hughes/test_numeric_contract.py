@@ -6,6 +6,9 @@ have no declared locale. The exact integer 9007199254740993 must retain its
 last digit; these are chosen test inputs, not engineering acceptance limits.
 """
 
+from concurrent.futures import ThreadPoolExecutor
+from decimal import ROUND_UP, DefaultContext, Inexact, Rounded, localcontext
+
 import pandas as pd
 import pytest
 
@@ -182,3 +185,194 @@ def test_unrepresentable_or_grouped_depth_rejected(tmp_path, unit, bad):
     frame.to_excel(path, sheet_name="Pivot Table", index=False)
     with pytest.raises(ValueError, match="well_depth_ft.*row"):
         load_pivot_table(path, depth_unit=unit)
+
+
+@pytest.mark.parametrize("column", ["WellDepth", "WaterDepth"])
+@pytest.mark.parametrize("suffixed", [False, True], ids=["declared", "header"])
+@pytest.mark.parametrize("unit", ["ft", "m"])
+@pytest.mark.parametrize(
+    "context_setting",
+    ["low_precision", "trapped_rounding", "restricted_exponents", "round_up"],
+)
+def test_depth_conversion_is_independent_of_decimal_context(
+    tmp_path, column, suffixed, unit, context_setting
+):
+    """30.49 m = 304900/3048 ft, regardless of caller Decimal settings.
+
+    The rational hand check uses the existing international-foot definition;
+    float division supplies an independent expected value. Both depth fields
+    and both unit declaration routes must preserve it. The enclosing context
+    must also retain its settings and flags.
+    """
+    path = write_workbook(tmp_path, "pivot", [1])
+    frame = pd.read_excel(path, keep_default_na=False, dtype=object)
+    frame[column] = "30.49"
+    if suffixed:
+        frame = frame.rename(
+            columns={
+                "WellDepth": f"WellDepth_{unit}",
+                "WaterDepth": f"WaterDepth_{unit}",
+            }
+        )
+    frame.to_excel(path, sheet_name="Pivot Table", index=False)
+
+    with localcontext() as context:
+        if context_setting == "low_precision":
+            context.prec = 2
+        elif context_setting == "trapped_rounding":
+            context.traps[Inexact] = context.traps[Rounded] = True
+        elif context_setting == "restricted_exponents":
+            context.Emax = 0
+        else:
+            context.prec = 2
+            context.rounding = ROUND_UP
+        original = context.copy()
+        result = load_pivot_table(path, depth_unit=None if suffixed else unit)
+        assert context.prec == original.prec
+        assert context.rounding == original.rounding
+        assert context.Emax == original.Emax
+        assert context.traps == original.traps
+        assert context.flags == original.flags
+
+    output = "well_depth_ft" if column == "WellDepth" else "water_depth_ft"
+    expected = 304900 / 3048 if unit == "m" else 30.49
+    assert result[output].tolist() == [expected]
+    assert result.attrs["numeric_validation"]["source_depth_units"][output] == unit
+
+
+def test_depth_conversion_rounds_exact_ratio_once(tmp_path):
+    """The exact feet value is just above a binary64 rounding midpoint.
+
+    5490788665690109.3328000000003048 m corresponds exactly to
+    18014398509481986.000000000001 ft. Adjacent floats are 18014398509481984
+    and 18014398509481988; the latter is nearer. Rounding the quotient to
+    28 decimal digits first erases the difference above the midpoint.
+    """
+    path = write_workbook(tmp_path, "pivot", [1])
+    frame = pd.read_excel(path, keep_default_na=False, dtype=object)
+    frame["WellDepth"] = "5490788665690109.3328000000003048"
+    frame.to_excel(path, sheet_name="Pivot Table", index=False)
+    assert load_pivot_table(path, depth_unit="m").well_depth_ft.tolist() == [
+        18014398509481988.0
+    ]
+
+
+@pytest.mark.parametrize("worker", [False, True], ids=["current_thread", "new_thread"])
+def test_depth_conversion_does_not_inherit_default_context(
+    tmp_path, monkeypatch, worker
+):
+    """A modified Decimal default must not contaminate conversion contexts."""
+    path = write_workbook(tmp_path, "pivot", [1])
+    frame = pd.read_excel(path, keep_default_na=False, dtype=object)
+    frame["WellDepth"] = "30.49"
+    frame.to_excel(path, sheet_name="Pivot Table", index=False)
+    monkeypatch.setattr(DefaultContext, "prec", 2)
+    monkeypatch.setattr(DefaultContext, "rounding", ROUND_UP)
+    monkeypatch.setattr(DefaultContext, "Emax", 0)
+    monkeypatch.setitem(DefaultContext.traps, Inexact, True)
+    monkeypatch.setitem(DefaultContext.traps, Rounded, True)
+    if worker:
+        with ThreadPoolExecutor(max_workers=1) as pool:
+            result = pool.submit(load_pivot_table, path, depth_unit="m").result()
+    else:
+        result = load_pivot_table(path, depth_unit="m")
+    assert result.well_depth_ft.tolist() == [304900 / 3048]
+
+
+@pytest.mark.parametrize(
+    "depth,expected",
+    [
+        ("8e-325", 5e-324),
+        ("5e307", (5 * 10**311) / 3048),
+        ("100000000000000000000e-330", 10**20 / (3048 * 10**326)),
+    ],
+)
+def test_metres_at_float_range_boundaries(tmp_path, depth, expected):
+    """Loose exponent guards must retain subnormal and large finite outputs.
+
+    8e-325 / 0.3048 is above half the least binary64 subnormal, so rounds
+    to 5e-324 ft. 5e307 / 0.3048 remains below the greatest finite float.
+    These are representation stress inputs, not physical depth limits.
+    """
+    path = write_workbook(tmp_path, "pivot", [1])
+    frame = pd.read_excel(path, keep_default_na=False, dtype=object)
+    frame["WellDepth"] = depth
+    frame.to_excel(path, sheet_name="Pivot Table", index=False)
+    assert load_pivot_table(path, depth_unit="m").well_depth_ft.tolist() == [expected]
+
+
+@pytest.mark.parametrize("depth", ["7e-325", "1e-326", "1e308", "6e307"])
+def test_metres_outside_float_range_rejected(tmp_path, depth):
+    """Exact conversions must still reject float overflow and rounding to zero."""
+    path = write_workbook(tmp_path, "pivot", [1])
+    frame = pd.read_excel(path, keep_default_na=False, dtype=object)
+    frame["WellDepth"] = depth
+    frame.to_excel(path, sheet_name="Pivot Table", index=False)
+    with pytest.raises(ValueError, match="well_depth_ft.*row"):
+        load_pivot_table(path, depth_unit="m")
+
+
+@pytest.mark.parametrize("unit", ["ft", "m"])
+def test_zero_depth_sign_is_preserved(tmp_path, unit):
+    """Both declared units retain the sign of a textual negative zero."""
+    path = write_workbook(tmp_path, "pivot", [1])
+    frame = pd.read_excel(path, keep_default_na=False, dtype=object)
+    frame["WellDepth"] = "-0"
+    frame.to_excel(path, sheet_name="Pivot Table", index=False)
+    result = load_pivot_table(path, depth_unit=unit)
+    assert result.well_depth_ft.iloc[0].hex() == "-0x0.0p+0"
+
+
+@pytest.mark.parametrize("kind", ["pivot", "summary"])
+@pytest.mark.parametrize("count", ["9007199254740993", "1.5"])
+def test_count_contract_with_restrictive_decimal_context(tmp_path, kind, count):
+    """A whole count stays exact and a fraction remains rejected under traps."""
+    path = write_workbook(tmp_path, kind, [count])
+    with localcontext() as context:
+        context.prec = 2
+        context.rounding = ROUND_UP
+        context.traps[Inexact] = context.traps[Rounded] = True
+        if count == "1.5":
+            with pytest.raises(ValueError, match="rig_count"):
+                load_counts(path, kind)
+        else:
+            assert load_counts(path, kind).rig_count.tolist() == [9007199254740993]
+
+
+@pytest.mark.parametrize("depth", ["1e-999999999999", "1e999999999999"])
+def test_compact_extreme_exponents_rejected_before_ratio_allocation(
+    tmp_path, monkeypatch, depth
+):
+    """Extreme exponent tokens must be rejected before expensive allocation.
+
+    The sentinel makes a removed preflight fail without allocating an enormous
+    integer in the test process. The workbook loader and rejection are real.
+    """
+    path = write_workbook(tmp_path, "pivot", [1])
+    frame = pd.read_excel(path, keep_default_na=False, dtype=object)
+    frame["WellDepth"] = depth
+    frame.to_excel(path, sheet_name="Pivot Table", index=False)
+
+    def unexpected_ratio(*args):
+        raise AssertionError("Extreme depth reached rational allocation")
+
+    monkeypatch.setattr(
+        "worldenergydata.baker_hughes.loader.Fraction", unexpected_ratio
+    )
+    with pytest.raises(ValueError, match="well_depth_ft.*row"):
+        load_pivot_table(path, depth_unit="m")
+
+
+def test_numeric_metres_use_read_back_decimal_value(tmp_path):
+    """A numeric Excel 30.49 cell is parsed as decimal 30.49, then converted.
+
+    The parser preserves str(read_back_value), not any earlier binary input
+    precision or source measurement precision. 30.49 m = 304900/3048 ft.
+    """
+    path = write_workbook(tmp_path, "pivot", [1])
+    frame = pd.read_excel(path, keep_default_na=False, dtype=object)
+    frame["WellDepth"] = 30.49
+    frame.to_excel(path, sheet_name="Pivot Table", index=False)
+    assert load_pivot_table(path, depth_unit="m").well_depth_ft.tolist() == [
+        304900 / 3048
+    ]
