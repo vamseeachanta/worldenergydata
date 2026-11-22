@@ -1,0 +1,82 @@
+[
+  {
+    "path": "inputs/page-template.html",
+    "sha256": "276fd51f9e2d7c39969511523aa857a4450444ea2c465b7aae25b23b7572b814",
+    "basis": "r10 page template: the r9 template with the objective infographic, the three-part introduction, one water-depth palette, Figure 6 (median days of each stage by water depth), median and N labels on Figure 7, and notes before titles"
+  },
+  {
+    "path": "inputs/source-pins.json",
+    "sha256": "d3175afd79873f6ab6a6cc34503f6e3002772a159f11fcc42418af7f9f9ae86b",
+    "basis": "Issued hashes of the two files r10 downloads: Plotly 2.35.2 and the Natural Earth land outline, as pinned for r9"
+  },
+  {
+    "path": "../issue2_public_data_r9/data/days-summary.csv",
+    "sha256": "400c54a31046d3d59681d022322f6520457a40b8b0fc069e0453fbb5150615ba",
+    "basis": "r9 data file, reused unchanged: counts and day statistics stay those of r9"
+  },
+  {
+    "path": "../issue2_public_data_r9/data/map-wells.csv",
+    "sha256": "c764a762e9f7517f4fbfcfa1779f0b8dae8a7a56728deef58a526143ad42bd83",
+    "basis": "r9 data file, reused unchanged: counts and day statistics stay those of r9"
+  },
+  {
+    "path": "../issue2_public_data_r9/data/map-summary.csv",
+    "sha256": "d026d314208bafe031ce52a932c1e7cdf593b535e116ab5b6ba07f8135a7eb0a",
+    "basis": "r9 data file, reused unchanged: counts and day statistics stay those of r9"
+  },
+  {
+    "path": "../issue2_public_data_r9/data/map-selection.csv",
+    "sha256": "143c2542299bb415abaef0574f90ae07c8efe9739bc9d69d0b7c5839e7d7e00e",
+    "basis": "r9 data file, reused unchanged: counts and day statistics stay those of r9"
+  },
+  {
+    "path": "../issue2_public_data_r9/data/sources.csv",
+    "sha256": "f4a863d9de7aca57707b3c48f77ea216c6e6e75b74d8bca4218df095084d7a20",
+    "basis": "r9 data file, reused unchanged: counts and day statistics stay those of r9"
+  },
+  {
+    "path": "../issue2_public_data_r9/data/exclusions.csv",
+    "sha256": "04eea8590578c71e9257ee9aa26f92f95b61925470e3068f6b5272e5569d8a7b",
+    "basis": "r9 data file, reused unchanged: counts and day statistics stay those of r9"
+  },
+  {
+    "path": "../issue2_public_data_r9/data/repeat-key-sensitivity.csv",
+    "sha256": "6bd3e7913790a851172bac7257971c2ac8abaf0a354432656ece555afc51ce77",
+    "basis": "r9 data file, reused unchanged: counts and day statistics stay those of r9"
+  },
+  {
+    "path": "../issue2_public_data_r9/data/code_mapping.csv",
+    "sha256": "6aa33f6a81d8a52f78d8454212c42d48833beb0db966f650c78c3c598410e9b9",
+    "basis": "r9 data file, reused unchanged: counts and day statistics stay those of r9"
+  },
+  {
+    "path": "../issue2_public_data_r9/data/subtype-activity.csv",
+    "sha256": "2c48d143b8b609a22a7bcdbaefab9b42c128ae1b70b851d211bc9ecd9763d3c3",
+    "basis": "r9 data file, reused unchanged: counts and day statistics stay those of r9"
+  },
+  {
+    "path": "../issue2_public_data_r9/data/source-members.csv",
+    "sha256": "ca3b695d0139355ae2360af4287c61f50ede3cce086bd093f736513ed1a5230a",
+    "basis": "r9 data file, reused unchanged: counts and day statistics stay those of r9"
+  },
+  {
+    "path": "../issue2_public_data_r9/data/source_columns.csv",
+    "sha256": "4cee1fc377841b073d710abe1264bf11d0e30ed9e3531efdd43000fecf35e3ad",
+    "basis": "r9 data file, reused unchanged: counts and day statistics stay those of r9"
+  },
+  {
+    "path": "../issue2_public_data_r9/data/fig-p1-new-well-permits-by-rig-type.csv",
+    "sha256": "a53aee488587f01551aed29223fafc35d1a3dd0853b9d139c1ced3109b7db1b8",
+    "basis": "r9 data file, reused unchanged: counts and day statistics stay those of r9"
+  },
+  {
+    "path": "../issue2_public_data_r9/data/new-well-permits-by-water-depth.csv",
+    "sha256": "3034eb409e405d18d843f90458a69e4df5c5d1fc80fc1c33a027d9f6022c1d2c",
+    "basis": "r9 data file, reused unchanged: counts and day statistics stay those of r9"
+  },
+  {
+    "path": "../issue2_public_data_r9/data/table1.csv",
+    "sha256": "676b0198148b5283bf0f5852bb6b50ab961b86427cd281b76f906f791c14e924",
+    "basis": "r9 data file, reused unchanged: counts and day statistics stay those of r9"
+  }
+]
