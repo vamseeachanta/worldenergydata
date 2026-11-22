@@ -79,6 +79,7 @@ def t(
     url,
     quote,
     notes="",
+    accessed=None,
 ):
     return {
         "PROJECT": project,
@@ -93,7 +94,7 @@ def t(
         "SOURCE_TITLE": title,
         "SOURCE_URL": url,
         "QUOTED_TEXT": quote,
-        "ACCESSED_DATE": D,
+        "ACCESSED_DATE": accessed or D,
         "NOTES": notes,
     }
 
@@ -341,17 +342,18 @@ ROWS = [
     t(
         "Mariner",
         True,
-        "2019",
+        "2019-08",
         "7700",
         "USD",
         "final_outturn",
-        "~$7.7bn reported at startup (first oil slipped 2017->Aug 2019)",
-        "trade_press",
-        "low",
-        "Trade-press startup coverage (outturn ~$7.7bn)",
-        "https://www.offshore-energy.biz/statoil-makes-fid-for-7-bln-mariner-development-uk/",
-        "reported ~$7.7bn at startup",
-        "Outturn trade-tier; an Equinor-attributed startup figure would upgrade this point.",
+        "gross investment stated by the operator at first oil (15 Aug 2019); a LOWER BOUND ('more than')",
+        "operator",
+        "high",
+        "Equinor: First oil from Mariner (15 Aug 2019)",
+        "https://www.equinor.com/news/archive/2019-08-mariner",
+        "'A gross investment of more than $7.7 billion'",
+        "Lower bound, as is the sanction statement ('more than USD 7 billion'); the change between them is not computable. Source corrected 2026-11-12: the earlier citation pointed at the 2012 sanction article.",
+        accessed="2026-11-12",
     ),
     # ---- Martin Linge (Total->Equinor) — dual-currency sanction, NOK outturn ----
     t(
@@ -441,13 +443,14 @@ ROWS = [
         "3000",
         "USD",
         "final_outturn",
-        "delivered within ~$3bn after a 2016 re-scope cut ~$500MM (downward outturn, rare)",
-        "trade_press",
-        "low",
-        "NS Energy / startup coverage (delivered within $3bn estimate)",
-        "https://www.marinetechnologynews.com/news/statoil-submits-peregrino-509758",
-        "delivered within the $3 billion cost estimate",
-        "Onstream 13 Oct 2022 (COVID delay from 2020). One of the few projects that came in BELOW sanction.",
+        "delivered within the USD 3 billion estimate, per the operator at start-up; an UPPER BOUND ('within')",
+        "operator",
+        "high",
+        "Equinor: Peregrino phase 2 on stream (13 Oct 2022)",
+        "https://www.equinor.com/news/20221013-peregrino-phase-2-on-stream",
+        "'Still, Peregrino phase 2 is delivered within the original USD 3 billion cost estimate.'",
+        "Upper bound, not an exact outturn. Onstream 13 Oct 2022. Source corrected 2026-11-12: the earlier citation pointed at a development-plan article.",
+        accessed="2026-11-12",
     ),
     # ---- Frade (Chevron/Sojitz) ----
     t(

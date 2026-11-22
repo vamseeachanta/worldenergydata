@@ -233,7 +233,8 @@ class CapexEstimator:
             tuple(r.snapshot.project_id for r in cohort.records),
             cohort.feature_names,
             cohort.missing_features,
-            len(cohort.feature_names) / len(target.features) if target.features else 0,
+            len(cohort.feature_names)
+            / (len(cohort.feature_names) + len(cohort.missing_features)),
             cohort.exclusions,
             self.policy.model_dump(),
         )

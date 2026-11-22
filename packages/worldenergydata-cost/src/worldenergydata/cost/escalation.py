@@ -261,22 +261,29 @@ class CostEscalator:
         )
 
     def factor(
-        self, base_year: int, target_year: int = TARGET_YEAR
+        self,
+        base_year: int,
+        target_year: int = TARGET_YEAR,
+        *,
+        public_only: bool = False,
     ) -> EscalationFactor:
         """Select one contiguous UCCI block then PPI, or PPI then last-resort CPI.
 
         Covered CPI precedes extrapolated PPI. UCCI is never extrapolated;
         other components may extrapolate one year only, with an explicit flag.
+        ``public_only`` skips UCCI, so the factor rests on the published BLS
+        series alone and any pair of covered years takes the same index path.
         """
         base, target = _year(base_year), _year(target_year)
-        try:
-            return self._result(
-                *self._segment(_UCCI, base, target),
-                "UCCI contiguous coverage; held period prints averaged within year.",
-            )
-        except LookupError:
-            pass
-        if base < target:
+        if not public_only:
+            try:
+                return self._result(
+                    *self._segment(_UCCI, base, target),
+                    "UCCI contiguous coverage; held period prints averaged within year.",
+                )
+            except LookupError:
+                pass
+        if base < target and not public_only:
             try:
                 self._point(_UCCI, base)
                 join = base
@@ -304,7 +311,11 @@ class CostEscalator:
                 return self._result(
                     *self._ppi(base, target, extrapolate),
                     "Assumed 50:50 machinery/drilling endpoint-ratio PPI blend; "
-                    "no eligible UCCI segment.",
+                    + (
+                        "public series only by request."
+                        if public_only
+                        else "no eligible UCCI segment."
+                    ),
                 )
             except LookupError:
                 pass

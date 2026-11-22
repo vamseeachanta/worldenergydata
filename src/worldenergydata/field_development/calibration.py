@@ -11,7 +11,10 @@ inputs, and compare its ranked picks to what was actually built.
 
 This is a *calibration* tool, not a unit of business logic: it measures how often
 the heuristics' top pick (and top-k) match reality, and exposes the confusion
-pattern so the priors can be tuned. A regression test pins the achieved accuracy.
+pattern so the priors can be tuned. The bundled benchmark is held privately
+pending redistribution-terms review.
+Mechanics are tested with synthetic inputs; historical accuracy is not
+established by those tests.
 
 **Honest scope:** the enriched fields carry only water depth + fluid as inputs,
 so this measures depth/fluid-driven discrimination. ``subsea_tieback`` (a large

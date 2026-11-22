@@ -50,26 +50,8 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 
-from worldenergydata.cli.commands import (
-    bsee,
-    canada,
-    dashboard,
-    eia,
-    fdas,
-    hse,
-    kansas_kgs,
-    landman,
-    lng_terminals,
-    lower_tertiary,
-    marine_safety,
-    metocean,
-    mexico_cnh,
-    ndbc,
-    production_forecast,
-    sodir,
-    texas_rrc,
-)
-from worldenergydata.safety_analysis import cli as safety_analysis_cli
+from worldenergydata.cli.lazy_group import LazyDispatchGroup
+from worldenergydata.cli.registry import COMMAND_FAMILIES, INFO_ROW_ORDER
 
 # Initialize console for rich output
 console = Console()
@@ -77,82 +59,11 @@ console = Console()
 # Create main Typer app
 app = typer.Typer(
     name="worldenergydata",
+    cls=LazyDispatchGroup,
     help="World Energy Data - Global energy market data platform",
     add_completion=True,
     no_args_is_help=True,
     rich_markup_mode="rich",
-)
-
-# Add module subcommands
-app.add_typer(bsee.app, name="bsee", help="BSEE data operations and analysis")
-app.add_typer(
-    dashboard.app,
-    name="dashboard",
-    help="Launch the Plotly Dash BSEE/FDAS web dashboard",
-)
-app.add_typer(
-    eia.app,
-    name="eia",
-    help="EIA API v2 weekly petroleum and gas feed ingestion",
-)
-app.add_typer(
-    marine_safety.app,
-    name="marine-safety",
-    help="Marine safety incident data management",
-)
-app.add_typer(fdas.app, name="fdas", help="Field Development Analysis System")
-app.add_typer(hse.app, name="hse", help="HSE incident queries")
-app.add_typer(
-    lower_tertiary.app,
-    name="lower-tertiary",
-    help="Lower Tertiary portfolio analyses (10 GoM fields)",
-)
-app.add_typer(
-    sodir.app,
-    name="sodir",
-    help="SODIR (Norwegian Offshore Directorate) data operations",
-)
-app.add_typer(
-    metocean.app, name="metocean", help="Metocean data - buoys, tides, marine weather"
-)
-app.add_typer(
-    ndbc.app,
-    name="ndbc",
-    help="NDBC buoy data: scatter matrices, Weibull fits, wave roses",
-)
-app.add_typer(
-    texas_rrc.app, name="texas-rrc", help="Texas Railroad Commission oil & gas data"
-)
-app.add_typer(
-    kansas_kgs.app,
-    name="kansas-kgs",
-    help="Kansas Geological Survey well and pressure data",
-)
-app.add_typer(canada.app, name="canada", help="Canadian oil & gas data (AER/BCER)")
-app.add_typer(
-    mexico_cnh.app,
-    name="mexico-cnh",
-    help="Mexico CNH oil & gas data (SIH dashboard)",
-)
-app.add_typer(
-    landman.app,
-    name="landman",
-    help="Mineral ownership and lease data operations",
-)
-app.add_typer(
-    lng_terminals.app,
-    name="lng-terminals",
-    help="Global LNG terminal dataset with engineering design data",
-)
-app.add_typer(
-    safety_analysis_cli.app,
-    name="safety-analysis",
-    help="Safety analysis and HSE data processing",
-)
-app.add_typer(
-    production_forecast.app,
-    name="forecast",
-    help="Arps decline curve analysis — fit, EUR, and production forecast",
 )
 
 
@@ -186,86 +97,9 @@ def info() -> None:
     table.add_column("Description")
     table.add_column("Key Commands", style="dim")
 
-    table.add_row(
-        "bsee", "BSEE data operations and analysis", "analyze, report, data, refresh"
-    )
-    table.add_row(
-        "dashboard",
-        "Plotly Dash BSEE/FDAS web dashboard (server)",
-        "launch",
-    )
-    table.add_row(
-        "eia",
-        "EIA API v2 weekly petroleum and gas feed ingestion",
-        "fetch, status",
-    )
-    table.add_row(
-        "marine-safety", "Marine safety incident data", "scrape, stats, export, db"
-    )
-    table.add_row(
-        "fdas",
-        "Field Development Analysis System",
-        "calculate-npv, calculate-mirr, analyze",
-    )
-    table.add_row("hse", "HSE incident queries", "incidents query")
-    table.add_row(
-        "lower-tertiary",
-        "Lower Tertiary portfolio analyses (10 GoM fields)",
-        "analyze, report, economics",
-    )
-    table.add_row(
-        "forecast",
-        "Arps decline curve — fit, EUR, production forecast",
-        "fit, forecast, report",
-    )
-    table.add_row(
-        "sodir", "SODIR (Norwegian Offshore Directorate)", "collect, analyze, status"
-    )
-    table.add_row(
-        "metocean",
-        "Metocean data (buoys, tides, weather)",
-        "stations, fetch, forecast, cache, db",
-    )
-    table.add_row(
-        "ndbc",
-        "NDBC buoy data: scatter matrices, Weibull fits, wave roses",
-        "fetch, scatter, weibull, wave-rose",
-    )
-    table.add_row(
-        "texas-rrc",
-        "Texas Railroad Commission oil & gas",
-        "collect, analyze, status, validate-api",
-    )
-    table.add_row(
-        "kansas-kgs",
-        "Kansas Geological Survey oil & gas",
-        "build-pressure-observations",
-    )
-    table.add_row(
-        "canada",
-        "Canadian oil & gas (AER/BCER)",
-        "collect, analyze, status, validate-uwi",
-    )
-    table.add_row(
-        "mexico-cnh",
-        "Mexico CNH oil & gas (SIH dashboard)",
-        "scrape, download-open-data, status, validate-clave",
-    )
-    table.add_row(
-        "landman",
-        "Mineral ownership and lease data",
-        "search, lookup, county-info, providers, status",
-    )
-    table.add_row(
-        "lng-terminals",
-        "Global LNG terminal dataset",
-        "collect, process, export, report, pipeline",
-    )
-    table.add_row(
-        "safety-analysis",
-        "Safety analysis and HSE data processing",
-        "load, classify, correlate, report, status",
-    )
+    for name in INFO_ROW_ORDER:
+        family = COMMAND_FAMILIES[name]
+        table.add_row(name, family.info_desc, family.key_commands)
 
     console.print(table)
 

@@ -1,0 +1,38 @@
+[
+  {
+    "source": "bsee738",
+    "url": "https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf",
+    "checked_utc": "2026-11-12T22:15:22.672877+00:00",
+    "http_status": 200,
+    "resolved_url": "https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf",
+    "bytes": 5441989,
+    "sha256": "1d0504aedb7867f4c9ee0f1554b712009f440e161168d10ddb32447d84ca16e1"
+  },
+  {
+    "source": "bsee735",
+    "url": "https://www.bsee.gov/sites/bsee.gov/files/technology-assessment-program-tap/735ab.pdf",
+    "checked_utc": "2026-11-12T22:15:23.445448+00:00",
+    "http_status": 200,
+    "resolved_url": "https://www.bsee.gov/sites/bsee.gov/files/technology-assessment-program-tap/735ab.pdf",
+    "bytes": 4801151,
+    "sha256": "750748bfc1543703dae70a34c8f573e031f31c521b260330bf860c9fd172cdd0"
+  },
+  {
+    "source": "boem2016",
+    "url": "https://www.boem.gov/sites/default/files/environmental-stewardship/Environmental-Assessment/NEPA/BOEM-EIS-2016-018-v1.pdf",
+    "checked_utc": "2026-11-12T22:15:23.852669+00:00",
+    "http_status": 200,
+    "resolved_url": "https://www.boem.gov/sites/default/files/environmental-stewardship/Environmental-Assessment/NEPA/BOEM-EIS-2016-018-v1.pdf",
+    "bytes": 14934830,
+    "sha256": "56389f355204ce610a85911fc0b01f5caaa2d63019f36527b3083b3723c39dcf"
+  },
+  {
+    "source": "boem2012",
+    "url": "https://espis.boem.gov/final%20reports/5179.pdf",
+    "checked_utc": "2026-11-12T22:15:24.971756+00:00",
+    "http_status": 200,
+    "resolved_url": "https://espis.boem.gov/final%20reports/5179.pdf",
+    "bytes": 6657760,
+    "sha256": "0c6494eefe4301535080037a28a62fea2434be5e1a14f996e58bc2e6b1a72b51"
+  }
+]

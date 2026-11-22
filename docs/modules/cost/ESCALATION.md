@@ -133,7 +133,7 @@ source identities **as held**, not a claim of fresh external verification.
 
 | Component | Held coverage and source identity |
 |---|---|
-| `index_ppi_machinery` | 1998–2026; BLS via FRED, “PPI by Industry: Oil and Gas Field Machinery and Equipment (NAICS 333132) (PCU333132333132)”; 1965=100 |
+| `index_ppi_machinery` | 1998–2026; BLS via FRED, “PPI by Industry: Oil and Gas Field Machinery and Equipment (NAICS 333132) (PCU333132333132)”; December 1980=100 |
 | `index_ppi_drilling` | 1998–2026; BLS via FRED, “PPI by Industry: Drilling Oil and Gas Wells (NAICS 213111) (PCU213111213111)”; December 1985=100 |
 | `index_cpi` | 1998–2026; BLS via FRED, “CPI for All Urban Consumers: All Items in U.S. City Average (CPIAUCSL)”; 1982–84=100 |
 | `index_ucci` | IHS/CERA, now S&P, Upstream Capital Costs Index, 2000=100; 13 period prints, nine held years, 2006–2020 |
@@ -163,9 +163,12 @@ The 2006 observation covers six months ending October; 2008 is a Q3 peak print;
 measure different baskets and geographies. Different selected paths across rows
 limit comparability. There is no qualified uncertainty interval for these proxies.
 
-All three FRED 2026 means contain **five monthly observations**, not twelve.
-CPI 2025 contains eleven. Results therefore represent provisional Jan–May 2026
-price levels, not established full-calendar-2026 USD. Partial-year source notes
+As retrieved on 2026-11-12, the two PPI 2026 means contain **nine monthly
+observations** (January to September) and the CPI 2026 mean contains ten
+(January to October), not twelve. CPI 2025 contains eleven. The month counts
+change with each monthly refresh; the `NOTES` of each held row and
+`reference_series.manifest.json` state the current ones. Results therefore
+represent provisional part-year 2026 price levels, not established full-calendar-2026 USD. Partial-year source notes
 are propagated to every affected result. Seasonal and timing bias against
 complete annual means is not quantified. A refreshed full-year dataset is needed
 before interpreting these as final 2026 comparisons.

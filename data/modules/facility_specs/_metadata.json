@@ -1,76 +1,114 @@
 {
   "module": "facility_specs",
-  "generated_at": "2026-06-22T17:06:49.955460+00:00",
-  "last_refresh": "2026-06-22",
-  "record_count": 486,
-  "file_count": 11,
-  "total_size_bytes": 38270,
+  "generated_at": "2026-11-04T05:50:34.341119+00:00",
+  "last_refresh": null,
+  "record_count": null,
+  "file_count": 10,
+  "total_size_bytes": 7639,
   "source_url": null,
   "format": ".csv,.md,.yaml",
   "has_external_data": false,
   "external_data_root": null,
-  "provenance": "Corpus epic llm-wiki#767; worldenergydata issue #543. Facts-only normalization of legacy reference extraction; URLs, source-site names and client-confidential annotations excluded.",
+  "provenance": "Legacy asset-specific workbook tables withheld pending redistribution review. The generic mooring feasibility matrix remains unchanged.",
   "files": [
     {
-      "name": "fpso_basic_info.csv",
-      "path": "curated/fpso_basic_info.csv",
-      "size_bytes": 11161,
-      "modified": "2026-06-22"
+      "name": "README.md",
+      "path": "README.md",
+      "size_bytes": 2271,
+      "modified": "2026-11-04"
     },
     {
-      "name": "fpso_riser_info.csv",
-      "path": "curated/fpso_riser_info.csv",
-      "size_bytes": 3995,
-      "modified": "2026-06-22"
+      "name": "fpso_basic_info.csv.md",
+      "path": "curated/fpso_basic_info.csv.md",
+      "size_bytes": 446,
+      "modified": "2026-11-04"
+    },
+    {
+      "name": "fpso_riser_info.csv.md",
+      "path": "curated/fpso_riser_info.csv.md",
+      "size_bytes": 446,
+      "modified": "2026-11-04"
     },
     {
       "name": "mooring_facility_matrix.csv",
       "path": "curated/mooring_facility_matrix.csv",
       "size_bytes": 1370,
-      "modified": "2026-06-22"
+      "modified": "2026-06-23"
     },
     {
-      "name": "semisub_basic_info.csv",
-      "path": "curated/semisub_basic_info.csv",
-      "size_bytes": 3518,
-      "modified": "2026-06-22"
+      "name": "semisub_basic_info.csv.md",
+      "path": "curated/semisub_basic_info.csv.md",
+      "size_bytes": 446,
+      "modified": "2026-11-04"
     },
     {
-      "name": "semisub_riser_info.csv",
-      "path": "curated/semisub_riser_info.csv",
-      "size_bytes": 2605,
-      "modified": "2026-06-22"
+      "name": "semisub_riser_info.csv.md",
+      "path": "curated/semisub_riser_info.csv.md",
+      "size_bytes": 446,
+      "modified": "2026-11-04"
     },
     {
-      "name": "spar_basic_info.csv",
-      "path": "curated/spar_basic_info.csv",
-      "size_bytes": 1466,
-      "modified": "2026-06-22"
+      "name": "spar_basic_info.csv.md",
+      "path": "curated/spar_basic_info.csv.md",
+      "size_bytes": 446,
+      "modified": "2026-11-04"
     },
     {
-      "name": "spar_riser_info.csv",
-      "path": "curated/spar_riser_info.csv",
-      "size_bytes": 1355,
-      "modified": "2026-06-22"
+      "name": "spar_riser_info.csv.md",
+      "path": "curated/spar_riser_info.csv.md",
+      "size_bytes": 446,
+      "modified": "2026-11-04"
     },
     {
-      "name": "tlp_basic_info.csv",
-      "path": "curated/tlp_basic_info.csv",
-      "size_bytes": 2630,
-      "modified": "2026-06-22"
-    },
-    {
-      "name": "README.md",
-      "path": "README.md",
-      "size_bytes": 3160,
-      "modified": "2026-06-22"
+      "name": "tlp_basic_info.csv.md",
+      "path": "curated/tlp_basic_info.csv.md",
+      "size_bytes": 446,
+      "modified": "2026-11-04"
     },
     {
       "name": "schema.yaml",
       "path": "schema.yaml",
-      "size_bytes": 7010,
-      "modified": "2026-06-22"
+      "size_bytes": 876,
+      "modified": "2026-11-04"
     }
   ],
-  "files_truncated": false
+  "files_truncated": false,
+  "summary_scope": "All retained public files except this inventory; withheld rows are unavailable, not zero.",
+  "withheld_datasets": [
+    {
+      "name": "fpso_basic_info.csv",
+      "status": "withheld",
+      "notice": "curated/fpso_basic_info.csv.md"
+    },
+    {
+      "name": "fpso_riser_info.csv",
+      "status": "withheld",
+      "notice": "curated/fpso_riser_info.csv.md"
+    },
+    {
+      "name": "semisub_basic_info.csv",
+      "status": "withheld",
+      "notice": "curated/semisub_basic_info.csv.md"
+    },
+    {
+      "name": "semisub_riser_info.csv",
+      "status": "withheld",
+      "notice": "curated/semisub_riser_info.csv.md"
+    },
+    {
+      "name": "spar_basic_info.csv",
+      "status": "withheld",
+      "notice": "curated/spar_basic_info.csv.md"
+    },
+    {
+      "name": "spar_riser_info.csv",
+      "status": "withheld",
+      "notice": "curated/spar_riser_info.csv.md"
+    },
+    {
+      "name": "tlp_basic_info.csv",
+      "status": "withheld",
+      "notice": "curated/tlp_basic_info.csv.md"
+    }
+  ]
 }

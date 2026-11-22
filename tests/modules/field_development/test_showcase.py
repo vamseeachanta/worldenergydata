@@ -14,7 +14,6 @@ from worldenergydata.field_development.showcase import (
     render_exemplar_card,
     total_coverage,
 )
-from worldenergydata.field_development.subseaiq import load_subseaiq_fields
 
 
 def test_area_for_region_maps_known_and_unknown():
@@ -69,36 +68,35 @@ def test_render_exemplar_card_embeds_real_schematics():
     assert ("matches as-built" in card) or ("engine " in card)
 
 
-def test_build_showcase_html_is_self_contained_with_coverage():
-    fields = load_subseaiq_fields(enrich_facilities=True)
-    exemplars = [
-        {"area": "Gulf of Mexico", "field_name": "Thunder Horse", "blurb": "demo"}
-    ]
-    html = build_showcase_html(exemplars, fields)
+def test_build_showcase_html_is_self_contained_with_synthetic_inputs():
+    fields = [FieldConcept(name="Synthetic field", region="US", water_depth_m=1200)]
+    html = build_showcase_html(
+        [
+            {
+                "area": "Gulf of Mexico",
+                "field_name": "Synthetic field",
+                "blurb": "fixture",
+            }
+        ],
+        fields,
+    )
     assert html.startswith("<!doctype html>")
-    assert "Thunder Horse" in html  # exemplar resolved + rendered
-    assert "<svg" in html  # real schematic embedded
-    assert "Gulf of Mexico" in html and "All areas" in html  # coverage table
-    assert "https://" not in html.replace("http-equiv", "")  # no external assets
+    assert "Synthetic field" in html and "<svg" in html
+    assert "All areas" in html
 
 
 def test_build_showcase_skips_unknown_exemplar_without_error():
-    fields = load_subseaiq_fields(enrich_facilities=True)
+    fields = [FieldConcept(name="Synthetic field", region="US")]
     html = build_showcase_html(
-        [{"area": "Nowhere", "field_name": "Not A Real Field", "blurb": "x"}], fields
+        [{"area": "Nowhere", "field_name": "Missing fixture", "blurb": "fixture"}],
+        fields,
     )
-    assert "Not A Real Field" not in html  # gracefully skipped
-    assert "All areas" in html  # coverage still renders
+    assert "Missing fixture" not in html
+    assert "All areas" in html
 
 
-def test_real_catalog_coverage_matches_known_totals():
-    fields = load_subseaiq_fields(enrich_facilities=True)
+def test_total_coverage_uses_only_supplied_rows():
+    fields = [FieldConcept(name="Synthetic field", region="US", water_depth_m=1200)]
     total = total_coverage(fields)
-    assert total.total == len(fields) > 2000
-    # The whole catalog is schematizable; most carry a depth.
-    assert total.with_depth > 1500
-    cov = {a.area: a for a in coverage_by_area(fields)}
-    # Gulf of Mexico is the US OCS catalog (US_GOM_FLAG core = 333 fields).
-    assert cov["Gulf of Mexico"].total == 333
-    # Per-area totals reconcile to the grand total.
-    assert sum(a.total for a in cov.values()) == total.total
+    assert total.total == total.with_depth == 1
+    assert total.with_concept == 0

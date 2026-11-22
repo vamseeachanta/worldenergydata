@@ -31,17 +31,17 @@ _SRC = Path(__file__).resolve().parents[2] / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
-from worldenergydata.field_development.host_text_classifier import (  # noqa: E402
-    classify_tree_type,
-)
+from worldenergydata.field_development.concept import build_concept  # noqa: E402
 from worldenergydata.field_development.decommission_risk import (  # noqa: E402
     classify_decommissioning,
+)
+from worldenergydata.field_development.host_text_classifier import (  # noqa: E402
+    classify_tree_type,
 )
 from worldenergydata.field_development.hpht_risk import classify_hpht  # noqa: E402
 from worldenergydata.field_development.landman import (  # noqa: E402
     build_landman,
 )
-from worldenergydata.field_development.concept import build_concept  # noqa: E402
 from worldenergydata.field_development.layout import render_layout  # noqa: E402
 from worldenergydata.field_development.portfolio_concepts import (  # noqa: E402
     concept_for,
@@ -52,6 +52,7 @@ if str(_SCRIPTS) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS))
 
 import site_nav  # noqa: E402  (nav-spine helper, issue #850)
+from lower_tertiary.lifecycle_reference_date import reference_marker  # noqa: E402
 
 from worldenergydata.common.fields_registry import load_fields  # noqa: E402
 
@@ -67,18 +68,13 @@ _DECOM_CSV = (
 
 
 def _load_decom_rows() -> list[dict]:
-    if not _DECOM_CSV.exists():
-        return []
-    lines = [
-        ln
-        for ln in _DECOM_CSV.read_text(encoding="utf-8").splitlines()
-        if not ln.startswith("#")
-    ]
-    return list(csv.DictReader(lines))
+    # The withdrawn inventory remains unavailable; it is not a zero-liability
+    # input. Retained lifecycle inputs use the upstream UTF-8 readers below.
+    return []
 
 
 _DECOM_ROWS = _load_decom_rows()
-TODAY_YEAR = 2026.5  # generated 2026-07-03; a fixed "you are here" marker on the axis
+REFERENCE_YEAR = 2026.5  # Legacy decimal-year fallback, independent of the clock.
 FIELDS_REGISTRY = load_fields()
 
 # BSEE lease attributes for the landman panel (#951). Committed source is the
@@ -102,9 +98,9 @@ _ARCH_CAPTION = {
 def _architecture_for(field_id: str) -> dict:
     """Architecture-drawing payload for one field (#969, epic #942).
 
-    Authored fields (cascade_chinook/julia/stones) carry an inline plan-view SVG
-    string rendered from their FieldConcept; the other 7 carry a visible
-    placeholder linking the FDP-authoring issue. Injected ONCE here so the poster
+    Independently sourced concepts carry an inline plan-view SVG rendered from
+    their FieldConcept. Missing or withheld inputs carry a visible placeholder
+    linking the FDP-authoring issue. Injected ONCE here so the poster
     embed and the _explorer.json sidecar serialize the SAME object (identity gate).
     """
     concept = concept_for(field_id)
@@ -221,8 +217,9 @@ def _span_txt(a, b, label, extra=""):
     return f"{label} ~{yrs} yr{extra}"
 
 
-def facts_to_field(f: dict) -> dict:
+def facts_to_field(f: dict, *, reference_date: str | None = None) -> dict:
     """Transform an author-authored facts record into the render-shaped FIELD object."""
+    reference = reference_marker(reference_date, fallback_year=REFERENCE_YEAR)
     # Issue 747: the field YAMLs flag combined allocations as unresolved;
     # entity ownership and partial per-field references are not a field split.
     unresolved_wi = f.get("working_interest_status") in ("contradicted", "unverified")
@@ -237,7 +234,7 @@ def facts_to_field(f: dict) -> dict:
     incident = g.get("incident")  # {"year":..,"label":..} or None
 
     known = [y for y in (lease, disc, fid, first) if y is not None]
-    start = int((min(known) if known else TODAY_YEAR) - 2)
+    start = int((min(known) if known else REFERENCE_YEAR) - 2)
     if cop is not None:
         end = int(cop)
     elif first is not None:
@@ -301,14 +298,12 @@ def facts_to_field(f: dict) -> dict:
     if (
         f.get("status") == "producing"
         and first is not None
-        and start < TODAY_YEAR < end
+        and start < reference["year"] < end
     ):
         gates.append(
             {
-                "year": TODAY_YEAR,
+                **reference,
                 "phase": "operate",
-                "lab": "Today",
-                "dt": "2026",
                 "kind": "nowmark",
             }
         )
@@ -434,6 +429,7 @@ def facts_to_field(f: dict) -> dict:
         "reservoir": f.get("reservoir"),
         "risk": {
             "hpht": classify_hpht(f.get("reservoir")),
+            "decommissioning_status": "withheld_pending_redistribution_review",
             "decommissioning": classify_decommissioning(
                 f.get("decommissioning_facility"), _DECOM_ROWS
             ),
@@ -554,7 +550,15 @@ BIG_FOOT_FACTS = {
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--self-test", action="store_true")
+    ap.add_argument(
+        "--reference-date",
+        help="Explicit YYYY-MM-DD marker date; otherwise use the legacy reference year",
+    )
     args = ap.parse_args()
+    try:
+        reference_marker(args.reference_date, fallback_year=REFERENCE_YEAR)
+    except ValueError as error:
+        ap.error(str(error))
 
     facts = (
         [BIG_FOOT_FACTS]
@@ -579,7 +583,7 @@ def main():
 
     fields = []
     for f in facts:
-        field = facts_to_field(f)
+        field = facts_to_field(f, reference_date=args.reference_date)
         field["norms"] = norms_chips.get(f["id"], [])
         field["performance"] = perf_fields.get(f["id"])
         out = HERE / f"{f['id']}_lifecycle.html"
