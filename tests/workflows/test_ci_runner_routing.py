@@ -620,3 +620,19 @@ def test_pr_validation_keeps_main_advisory_job_removals() -> None:
     workflow = yaml.safe_load((WORKFLOWS / "pr-validation.yml").read_text())
     assert "changelog-check" not in workflow["jobs"]
     assert "code-owners" not in workflow["jobs"]
+
+
+def test_scheduler_shard_fetches_bsee_receipt_revision() -> None:
+    """The receipt digest test must run, not skip, in the scheduler shard."""
+    steps = load_workflow("domain-matrix.yml")["jobs"]["test-domain"]["steps"]
+    names = [step.get("name") for step in steps]
+    fetch = steps[names.index("Fetch BSEE receipt source revision")]
+    assert names.index("Fetch BSEE receipt source revision") < names.index(
+        "Run domain tests (${{ matrix.name }})"
+    )
+    assert "tests/unit/scheduler" in fetch["if"]
+    assert (
+        "git fetch --no-tags --depth=1 origin "
+        "1e35ee97d665432e35b3c5e7b5bd09788982a185" in fetch["run"]
+    )
+    assert 'WED_REQUIRE_BSEE_RECEIPT_HISTORY=1" >> "$GITHUB_ENV"' in fetch["run"]
