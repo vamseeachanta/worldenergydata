@@ -1,0 +1,11 @@
+kind,project,year,contractor,count,value_usd_mm,basis,rate_usd_mm,source_url
+sps_per_tree,Jack/St. Malo (initial phase),2010,Cameron (OneSubsea),12,230,point,19.17,https://www.offshore-technology.com/projects/jackstmalodeepwaterp/
+sps_per_tree,Payara,2020,TechnipFMC,41,750,band,18.29,https://www.oedigital.com/news/482115-technipfmc-nets-large-subsea-order-from-exxon-for-payara-development-in-guyana
+sps_per_tree,Yellowtail,2021,TechnipFMC,51,750,band,14.71,https://www.upstreamonline.com/field-development/exxonmobil-hands-out-big-subsea-hardware-contract-for-guyanas-yellowtail-project/2-1-1098871
+sps_per_tree,Uaru,2023,TechnipFMC,44,750,band,17.05,https://oceannews.com/news/subsea-and-survey/technipfmc-awarded-major-subsea-contract-for-exxonmobil-s-guyana-uaru-project/
+sps_per_tree,Whiptail,2024,TechnipFMC,48,750,band,15.62,https://www.businesswire.com/news/home/20240415018073/en/TechnipFMC-Awarded-Large-Subsea-Contract-for-ExxonMobil-Guyanas-Whiptail-Project
+surf_per_km,Kaombo,2014,Technip / Heerema alliance,300,3500,point,11.67,https://www.offshore-mag.com/subsea/article/16783185/technip-heerema-land-giant-kaombo-surf-contract
+surf_per_km,Barossa,2020,Subsea 7,36,400,band,11.11,https://www.globenewswire.com/news-release/2020/03/03/1993972/0/en/Subsea-7-awarded-contract-offshore-Australia.html
+surf_per_km,Zinia Phase 2,2018,Subsea 7,36,225,range,6.25,https://www.nsenergybusiness.com/news/contracts/subsea-7-awarded-contract-for-1-2bn-zinia-2-field-development-offshore-angola/
+surf_per_km,Culzean,2015,Subsea 7,52,150,point,2.88,https://subseaworldnews.com/2015/09/01/subsea-7-wins-culzean-surf-prize/
+surf_per_km,GranMorgu (Block 58),2024,Saipem,190,1900,point,10.00,https://www.saipem.com/en/media/press-releases/2024-11-14/saipem-new-offshore-contract-totalenergies-suriname-19-billion-usd
