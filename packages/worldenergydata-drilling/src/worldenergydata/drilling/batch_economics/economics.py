@@ -16,7 +16,17 @@ from __future__ import annotations
 import logging
 import math
 
-from worldenergydata.drilling.batch_economics.models import DrillCampaign
+from pydantic import validate_call
+
+from worldenergydata.drilling.batch_economics.models import (
+    CampaignInput,
+    DrillCampaign,
+    FiniteReal,
+    LearningFactor,
+    NonnegativeReal,
+    PositiveInteger,
+    PositiveReal,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -29,18 +39,25 @@ class BatchDrillingEconomics:
 
     All methods are stateless and accept parameters directly so the class can
     be instantiated without configuration and used as a calculator.
+
+    Inputs and results are validated at each public call, including current
+    campaign state. Durations are positive finite days, rates positive finite
+    USD/day, mobilization nonnegative finite USD, factors in (0, 1], and counts
+    positive integers. No units are inferred or converted. See
+    drilling/docs/input-contracts.md for numeric types and compatibility limits.
     """
 
     # ------------------------------------------------------------------
     # Learning curve
     # ------------------------------------------------------------------
 
+    @validate_call(validate_return=True)
     def learning_curve_time(
         self,
-        base_time_days: float,
-        well_position: int,
-        lc_factor: float = 0.85,
-    ) -> float:
+        base_time_days: PositiveReal,
+        well_position: PositiveInteger,
+        lc_factor: LearningFactor = 0.85,
+    ) -> PositiveReal:
         """Learning-adjusted drilling duration used for the well at position N.
 
         Applies the existing power law:
@@ -71,12 +88,13 @@ class BatchDrillingEconomics:
     # Mobilization savings
     # ------------------------------------------------------------------
 
+    @validate_call(validate_return=True)
     def mobilization_savings(
         self,
-        mob_cost: float,
-        n_wells_batch: int,
-        n_wells_standalone: int = 1,
-    ) -> float:
+        mob_cost: NonnegativeReal,
+        n_wells_batch: PositiveInteger,
+        n_wells_standalone: PositiveInteger = 1,
+    ) -> NonnegativeReal:
         """Per-well mobilization cost in a batch vs standalone scenario.
 
         Returns an allocated cost, not a savings difference: the cost is
@@ -86,25 +104,24 @@ class BatchDrillingEconomics:
         Args:
             mob_cost: One-time mobilization cost in USD.
             n_wells_batch: Number of wells in the batch sharing this cost.
-            n_wells_standalone: Ignored; retained for call compatibility.
+            n_wells_standalone: Validated positive integer; otherwise ignored.
 
         Returns:
             Per-well mobilization cost in USD for the batch scenario.
         """
-        if n_wells_batch <= 0:
-            raise ValueError(f"n_wells_batch must be > 0, got {n_wells_batch}")
         return mob_cost / n_wells_batch
 
     # ------------------------------------------------------------------
     # Break-even analysis
     # ------------------------------------------------------------------
 
+    @validate_call(validate_return=True)
     def break_even_n_wells(
         self,
-        mob_cost: float,
-        day_rate: float,
-        base_well_days: float,
-        lc_factor: float = 0.85,
+        mob_cost: NonnegativeReal,
+        day_rate: PositiveReal,
+        base_well_days: PositiveReal,
+        lc_factor: LearningFactor = 0.85,
     ) -> int:
         """First strictly cheaper batch size, or a legacy no-savings sentinel.
 
@@ -135,21 +152,27 @@ class BatchDrillingEconomics:
             with no learning. This sentinel does not establish break-even.
             The search bound is a legacy implementation choice, not a sourced
             engineering acceptance limit. Floating-point comparisons are strict;
-            no monetary tolerance or direct-call validation is applied.
+            no monetary tolerance is applied. Duration prefixes use built-in
+            sum, whose floating-point rounding can depend on the Python version.
+            Inputs and intermediate costs must be finite; overflow raises
+            ValueError before comparison.
         """
         # Accounting basis: OpenStax, Principles of Accounting, Volume 2:
         # Managerial Accounting (2019), section 3.2: fixed plus variable cost.
         # Here mobilization is fixed per batch and drilling cost is rate*time;
         # the strict cost comparison is not the source's revenue break-even.
         standalone_per_well = mob_cost + day_rate * base_well_days
+        if not math.isfinite(standalone_per_well):
+            raise ValueError("computed standalone cost must be finite")
 
+        drilling_days = []
         for n in range(1, 201):
-            batch_drilling_cost = day_rate * sum(
-                self.learning_curve_time(base_well_days, pos, lc_factor)
-                for pos in range(1, n + 1)
-            )
+            drilling_days.append(self.learning_curve_time(base_well_days, n, lc_factor))
+            batch_drilling_cost = day_rate * sum(drilling_days)
             batch_total = mob_cost + batch_drilling_cost
             standalone_total = n * standalone_per_well
+            if not all(map(math.isfinite, (batch_total, standalone_total))):
+                raise ValueError("computed campaign costs must be finite")
 
             if batch_total < standalone_total:
                 return n
@@ -161,11 +184,12 @@ class BatchDrillingEconomics:
     # Undiscounted cost comparison (legacy NPV API)
     # ------------------------------------------------------------------
 
+    @validate_call(validate_return=True)
     def batch_vs_standalone_npv(
         self,
-        campaign: DrillCampaign,
-        discount_rate: float = _DEFAULT_DISCOUNT_RATE,
-    ) -> dict[str, float]:
+        campaign: CampaignInput,
+        discount_rate: FiniteReal = _DEFAULT_DISCOUNT_RATE,
+    ) -> dict[str, FiniteReal]:
         """Compare positive, undiscounted batch and standalone costs in USD.
 
         The method name and result keys retain the legacy NPV spelling for
@@ -191,7 +215,8 @@ class BatchDrillingEconomics:
 
         Args:
             campaign: DrillCampaign instance with rig/well parameters.
-            discount_rate: Ignored; signature default retained for compatibility.
+            discount_rate: Finite dimensionless real of either sign; ignored.
+                No discounting interpretation is assigned to it.
 
         Returns:
             Dict with legacy keys, all in USD:
@@ -231,11 +256,12 @@ class BatchDrillingEconomics:
     # Campaign total cost
     # ------------------------------------------------------------------
 
+    @validate_call(validate_return=True)
     def campaign_total_cost(
         self,
-        campaign: DrillCampaign,
-        base_days_per_well: float,
-    ) -> float:
+        campaign: CampaignInput,
+        base_days_per_well: PositiveReal,
+    ) -> PositiveReal:
         """Undiscounted campaign cost applying learning curve to all wells.
 
         Includes one-time mobilization + day-rate cost for each well,
@@ -266,9 +292,9 @@ class BatchDrillingEconomics:
     def _estimate_base_well_days(self, campaign: DrillCampaign) -> float:
         """Derive a base well duration from campaign depth parameters.
 
-        Uses a simple heuristic based on planned measured depth.  When depth
-        data is available, applies a benchmark of ~1 day per 400 ft MD plus
-        20 days fixed for water depth mobilization.  Falls back to 60 days.
+        Retains the unqualified heuristic: mean MD / 400 + mean water depth /
+        2000 + 10, with a 30-day floor. Campaign validation requires wells;
+        no empty-campaign duration is assumed.
 
         Args:
             campaign: DrillCampaign instance.
@@ -276,9 +302,6 @@ class BatchDrillingEconomics:
         Returns:
             Estimated base well duration in days.
         """
-        if not campaign.wells:
-            return 60.0
-
         avg_md_ft = sum(w.planned_md_ft for w in campaign.wells) / len(campaign.wells)
         avg_wd_ft = sum(w.water_depth_ft for w in campaign.wells) / len(campaign.wells)
 
