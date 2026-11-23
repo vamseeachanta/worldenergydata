@@ -560,15 +560,25 @@ def test_pr_validation_keeps_main_advisory_job_removals() -> None:
     assert "code-owners" not in workflow["jobs"]
 
 
-def test_scheduler_shard_fetches_bsee_receipt_revision() -> None:
-    """The receipt digest test must run, not skip, in the scheduler shard."""
-    steps = load_workflow("domain-matrix.yml")["jobs"]["test-domain"]["steps"]
+@pytest.mark.parametrize(
+    "workflow, job, test_step",
+    [
+        ("domain-matrix.yml", "test-domain", "Run domain tests (${{ matrix.name }})"),
+        ("main-full-run.yml", "full-suite", "Run tests with coverage"),
+    ],
+)
+def test_scheduler_shard_fetches_bsee_receipt_revision(
+    workflow, job, test_step
+) -> None:
+    """Both CI entry points require the pinned blobs before receipt validation."""
+    steps = load_workflow(workflow)["jobs"][job]["steps"]
     names = [step.get("name") for step in steps]
     fetch = steps[names.index("Fetch BSEE receipt source revision")]
-    assert names.index("Fetch BSEE receipt source revision") < names.index(
-        "Run domain tests (${{ matrix.name }})"
-    )
-    assert "tests/unit/scheduler" in fetch["if"]
+    assert names.index("Fetch BSEE receipt source revision") < names.index(test_step)
+    if job == "test-domain":
+        assert "tests/unit/scheduler" in fetch["if"]
+    else:
+        assert "if" not in fetch
     assert (
         "git fetch --no-tags --depth=1 origin "
         "1e35ee97d665432e35b3c5e7b5bd09788982a185" in fetch["run"]

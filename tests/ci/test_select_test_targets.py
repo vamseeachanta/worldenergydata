@@ -130,6 +130,26 @@ def test_noncode_only_change_skips_full_tree():
         assert r["xdist"] == [t for t in ALWAYS_XDIST if (REPO_ROOT / t).is_dir()]
 
 
+@pytest.mark.parametrize("fast", [False, True])
+def test_receipt_only_change_selects_scheduler_shard(fast):
+    matrix = to_matrix(["docs/reports/issue-267-live-write.json"], REPO_ROOT, fast=fast)
+    assert matrix["scope"] == "modules"
+    scheduler = [
+        shard
+        for shard in matrix["include"]
+        if shard["targets"] == "tests/unit/scheduler"
+    ]
+    assert len(scheduler) == 1
+    assert scheduler[0]["mode"] == "xdist"
+
+
+@pytest.mark.parametrize("fast", [False, True])
+def test_other_receipt_documents_keep_default_selection(fast):
+    matrix = to_matrix(["docs/reports/issue-267-live-write.html"], REPO_ROOT, fast=fast)
+    assert matrix["scope"] == "skip"
+    assert all(shard["name"] == "_always" for shard in matrix["include"])
+
+
 def test_config_repo_structure_routes_to_its_contract():
     r = select(["config/repo_structure.yml"], REPO_ROOT)
     assert r["scope"] == "modules"

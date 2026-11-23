@@ -85,6 +85,7 @@ CATALOG_CONTRACTS = (
 
 # Exact paths may select one contract suite or several related test files.
 CONTRACT_ROUTES = {
+    "docs/reports/issue-267-live-write.json": "tests/unit/scheduler",
     "config/fields.yml": "tests/unit/cost/test_project_field_crosswalk.py",
     "src/worldenergydata/field_development/past_projects.yml": (
         "tests/unit/cost/test_project_field_crosswalk.py",
