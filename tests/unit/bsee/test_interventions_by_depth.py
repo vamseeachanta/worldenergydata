@@ -437,7 +437,7 @@ def test_verifier_passes_on_the_delivered_outputs(output_copy):
     (output_copy / "verification.json").unlink()
     verify_outputs.verify(output_copy)
     receipt = json.loads((output_copy / "verification.json").read_text())
-    assert len(receipt["checks"]) == 13
+    assert len(receipt["checks"]) == 16
 
 
 def test_full_year_bounds_follow_feed_start_and_file_date():
@@ -489,8 +489,10 @@ def test_verified_eor_archive_supplies_the_subsea_flag(tmp_path):
 
 
 def publish(data, out):
-    """Run every C6a data step on one snapshot, then the delivered verifier."""
+    """Run every data and chart step on one snapshot, then the verifier."""
     import count_interventions
+    import plot_charts
+    import plot_life_cycle
     import verify_outputs
     import well_life_cycle
 
@@ -498,6 +500,8 @@ def publish(data, out):
     well_life_cycle.run(data, out)
     basis = yaml.safe_load((EXAMPLE / "cost_basis.yml").read_text(encoding="utf-8"))
     estimate(basis).to_csv(out / "cost_table.csv", index=False, lineterminator="\n")
+    plot_charts.plot(out)
+    plot_life_cycle.plot(out)
     verify_outputs.verify(out)
     return json.loads((out / "verification.json").read_text(encoding="utf-8"))
 
@@ -546,5 +550,5 @@ def test_year_end_snapshot_adds_no_unobserved_year(tmp_path):
         assert table.year.max() == 2026, name
     assert not pd.read_csv(out / "rates.csv").partial_year.any()
     life = json.loads((out / "life_cycle_summary.json").read_text(encoding="utf-8"))
-    assert life["window"] == "2024-2026"
-    assert len(receipt["checks"]) == 13
+    assert life["window"] == "2020-2026"
+    assert len(receipt["checks"]) == 16
