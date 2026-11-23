@@ -11,6 +11,8 @@ Defines all available Texas Railroad Commission data endpoints including:
 - Completion reports
 """
 
+from .validators import TexasDataValidator
+
 # Texas RRC base URLs
 RRC_BASE_URLS = {
     "main": "https://www.rrc.texas.gov",
@@ -161,7 +163,8 @@ GIS_ENDPOINTS = {
     },
 }
 
-# Texas RRC districts
+# District names qualified against the RRC PDQ manual, printed p. 26.
+# Administrative metadata is not qualified by that reference.
 TEXAS_DISTRICTS = {
     "01": {"name": "District 1", "headquarters": "San Antonio", "counties": 27},
     "02": {"name": "District 2", "headquarters": "Refugio", "counties": 21},
@@ -169,6 +172,7 @@ TEXAS_DISTRICTS = {
     "04": {"name": "District 4", "headquarters": "Corpus Christi", "counties": 22},
     "05": {"name": "District 5", "headquarters": "Kilgore", "counties": 15},
     "06": {"name": "District 6", "headquarters": "Kilgore", "counties": 16},
+    "6E": {"name": "District 6E"},
     "7B": {"name": "District 7B", "headquarters": "San Angelo", "counties": 19},
     "7C": {"name": "District 7C", "headquarters": "San Angelo", "counties": 13},
     "08": {"name": "District 8", "headquarters": "Midland", "counties": 30},
@@ -270,20 +274,16 @@ def get_district_info(district_code: str) -> dict:
     Get information about a Texas RRC district.
 
     Args:
-        district_code: District code (01-10, 7B, 7C, 8A)
+        district_code: Production district name (01-06, 6E, 7B, 7C, 08, 8A, 09, 10)
 
     Returns:
-        District information dictionary
+        District information dictionary. Administrative fields may be absent.
 
     Raises:
         ValueError: If district code is not valid
     """
     # Normalize district code
-    normalized = (
-        district_code.upper().zfill(2)
-        if district_code.isdigit()
-        else district_code.upper()
-    )
+    normalized = TexasDataValidator().normalize_district(district_code)
     if normalized not in TEXAS_DISTRICTS:
         raise ValueError(
             f"Invalid district code: {district_code}. "
