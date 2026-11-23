@@ -21,6 +21,7 @@ plain listing, before any counting code existed (README, "Hand counts").
 
 import csv
 import datetime as dt
+import importlib.util
 import json
 import os
 import sys
@@ -454,10 +455,16 @@ def test_suboperations_are_counted_by_kind(approvals):
 def test_chart_share_is_rounded_from_the_counts(tmp_path):
     # 353 of 686 is 51.46 %. The table holds it to one decimal (51.5); a label
     # rounded again from that would read 52 %, which the counts do not give.
-    import plot_charts as pc
+    # Loaded by path: the interventions folder holds a file of the same name.
+    spec = importlib.util.spec_from_file_location(
+        "completions_plot_charts", EXAMPLE / "plot_charts.py"
+    )
+    pc = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(pc)
 
     assert pc.whole_percent(353, 686) == 51
-    assert pc.whole_percent(1, 2) == 1  # a true half goes up
+    assert pc.whole_percent(1, 200) == 1  # a true half goes up
+    assert pc.whole_percent(1, 2) == 50
     assert pc.whole_percent(0, 5) == 0
     groups = pc.BANDS + ["all water depths"]
     with open(tmp_path / "drilled_to_completed.csv", "w", encoding="utf-8") as f:

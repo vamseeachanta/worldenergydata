@@ -472,6 +472,34 @@ def percent(part, whole):
     return round(100 * part / whole, 1) if whole else ""
 
 
+def suboperation_table(approvals, subcodes, names):
+    """Approvals carrying each sub-operation, split by kind of approval.
+
+    One approval can carry several sub-operations, so the rows do not sum to
+    the number of approvals. Each row does split exactly between the two
+    kinds, and the last share is of the other completion work only.
+    """
+    carried = {}
+    for a in approvals:
+        for code in subcodes.get(a["sn"], set()) or {"(none)"}:
+            row = carried.setdefault(code, {k: 0 for k in KINDS})
+            row[a["kind"]] += 1
+    others = sum(1 for a in approvals if a["kind"] == KINDS[1])
+    rows = [
+        dict(
+            suboperation=code,
+            description=names.get(code, "no sub-operation row"),
+            approvals=sum(by_kind.values()),
+            share_percent=percent(sum(by_kind.values()), len(approvals)),
+            on_initial_completion=by_kind[KINDS[0]],
+            on_other_completion_work=by_kind[KINDS[1]],
+            share_of_other_percent=percent(by_kind[KINDS[1]], others),
+        )
+        for code, by_kind in carried.items()
+    ]
+    return sorted(rows, key=lambda r: (-r["approvals"], r["suboperation"]))
+
+
 def c6_cross_check(data_dir, years, mine_approvals, mine_reports):
     """Compare the tallies with C6's own code on the same archives."""
     bore = ci.read_table(data_dir, BOREHOLE, "mv_boreholes_all")
@@ -644,23 +672,19 @@ def run(data_dir, out):
         ["year", "band", "kind", "approvals", "partial_year"],
     )
     in_window = [a for a in approvals if a["year"] in in_years]
-    carried = {}
-    for a in in_window:
-        for code in subcodes.get(a["sn"], set()) or {"(none)"}:
-            carried[code] = carried.get(code, 0) + 1
     write_csv(
-        [
-            dict(
-                suboperation=code,
-                description=subop_names.get(code, "no sub-operation row"),
-                approvals=n,
-                share_percent=percent(n, len(in_window)),
-            )
-            for code, n in sorted(carried.items(), key=lambda kv: (-kv[1], kv[0]))
-        ],
+        suboperation_table(in_window, subcodes, subop_names),
         out,
         "completion_approval_suboperations",
-        ["suboperation", "description", "approvals", "share_percent"],
+        [
+            "suboperation",
+            "description",
+            "approvals",
+            "share_percent",
+            "on_initial_completion",
+            "on_other_completion_work",
+            "share_of_other_percent",
+        ],
     )
 
     # 2. Completion reports, counted as C6 counts them.

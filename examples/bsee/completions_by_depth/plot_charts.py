@@ -85,6 +85,16 @@ def legend(labels, colours, x, y, size=16, gap=26):
     return parts
 
 
+def whole_percent(part, whole):
+    """Whole percent from the two counts, a true half going up.
+
+    The tables hold shares to one decimal. Rounding that figure again can
+    differ from the counts (353 of 686 is 51.46 %, held as 51.5), so labels
+    are worked from the counts.
+    """
+    return (200 * part + whole) // (2 * whole)
+
+
 def nice_step(top):
     for step in (10, 20, 25, 50, 100, 200, 250, 500):
         if top / step <= 7:
@@ -277,13 +287,12 @@ def chart_drilled(out):
         parts.append(text(left - 12, y0 + row_h / 2 + 6, label, 16, "end", weight))
         for k, (kind, _, colour) in enumerate(kinds):
             r = next(x for x in rows if x["well_type"] == kind and x["band"] == band)
-            share = float(r["share_percent"])
+            done = int(r["with_initial_completion_approval"])
+            wells = int(r["wells_first_drilled"])
+            share = 100 * done / wells
             y = y0 + 12 + k * 28
             parts.append(rect(left, y, plot_w * share / 100, 24, colour))
-            note = (
-                f"{share:.0f} %  ({int(r['with_initial_completion_approval']):,} "
-                f"of {int(r['wells_first_drilled']):,})"
-            )
+            note = f"{whole_percent(done, wells)} %  ({done:,} of {wells:,})"
             x = left + plot_w * share / 100 + 8
             parts.append(rect(x - 4, y, len(note) * 8.4 + 8, 24, "#ffffff"))
             parts.append(text(x, y + 18, note, 15))
