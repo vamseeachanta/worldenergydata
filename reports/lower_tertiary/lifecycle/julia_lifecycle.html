@@ -1,0 +1,981 @@
+<meta charset="utf-8">
+<title>Field Development Life-Cycle</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --bg: #eef2f6; --panel: #ffffff; --panel-2: #f6f9fc;
+    --ink: #0c1a28; --muted: #5a6b7b; --line: #d6e0ea;
+    --accent: #d9822b; --accent-ink: #7a4410;
+    --done: #1d5fa8; --done-deep: #10365e; --future: #a9bccd;
+    --good: #2e9e6b; --alert: #c0453b; --primary-gate: #1d5fa8;
+    --shadow: 0 1px 2px rgba(12,26,40,.06), 0 8px 24px rgba(12,26,40,.06);
+    --mono: ui-monospace, "SF Mono", "Cascadia Code", "JetBrains Mono", Consolas, monospace;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0a141f; --panel: #10202f; --panel-2: #0d1b28;
+      --ink: #e8eef4; --muted: #8ca0b3; --line: #24384b;
+      --accent: #f0a24a; --accent-ink: #f7c489;
+      --done: #4d91d6; --done-deep: #2f6ba8; --future: #3a5064;
+      --good: #43b982; --alert: #e0685e; --primary-gate: #5b9de0;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 10px 30px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #eef2f6; --panel: #ffffff; --panel-2: #f6f9fc;
+    --ink: #0c1a28; --muted: #5a6b7b; --line: #d6e0ea;
+    --accent: #d9822b; --accent-ink: #7a4410;
+    --done: #1d5fa8; --done-deep: #10365e; --future: #a9bccd;
+    --good: #2e9e6b; --alert: #c0453b; --primary-gate: #1d5fa8;
+  }
+  :root[data-theme="dark"] {
+    --bg: #0a141f; --panel: #10202f; --panel-2: #0d1b28;
+    --ink: #e8eef4; --muted: #8ca0b3; --line: #24384b;
+    --accent: #f0a24a; --accent-ink: #f7c489;
+    --done: #4d91d6; --done-deep: #2f6ba8; --future: #3a5064;
+    --good: #43b982; --alert: #e0685e; --primary-gate: #5b9de0;
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  .wrap {
+    background: var(--bg); color: var(--ink); font-family: var(--sans);
+    padding: clamp(16px, 3vw, 40px); min-height: 100%;
+    -webkit-font-smoothing: antialiased;
+  }
+  .sheet {
+    max-width: 1260px; margin: 0 auto; background: var(--panel);
+    border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  /* ---- Header band ---- */
+  .head { padding: clamp(18px,2.4vw,30px); border-bottom: 1px solid var(--line);
+    display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: start; }
+  .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: .18em;
+    text-transform: uppercase; color: var(--muted); margin: 0 0 6px; }
+  .title { font-size: clamp(28px, 4vw, 44px); font-weight: 800; letter-spacing: -.02em;
+    margin: 0; text-wrap: balance; line-height: 1.02; }
+  .sub { color: var(--muted); margin: 8px 0 0; font-size: 15px; max-width: 60ch; }
+  .status { display: inline-flex; align-items: center; gap: 7px; font-family: var(--mono);
+    font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase;
+    color: var(--sc, var(--good)); background: color-mix(in srgb, var(--sc, var(--good)) 14%, transparent);
+    border: 1px solid color-mix(in srgb, var(--sc, var(--good)) 40%, transparent);
+    padding: 6px 12px; border-radius: 999px; white-space: nowrap; }
+  .status .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--sc, var(--good));
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--sc, var(--good)) 22%, transparent); }
+  /* Development-type (dry vs wet tree) badge — links to the region×dev-type page. */
+  .devtype { display: inline-flex; align-items: center; gap: 7px; font-family: var(--mono);
+    font-size: 11.5px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase;
+    text-decoration: none; white-space: nowrap; padding: 5px 11px; border-radius: 999px;
+    color: var(--dc, var(--muted)); background: color-mix(in srgb, var(--dc, var(--muted)) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--dc, var(--muted)) 38%, transparent); }
+  .devtype::before { content: ""; width: 8px; height: 8px; border-radius: 2px;
+    background: var(--dc, var(--muted)); }
+  .devtype[data-tree="dry"] { --dc: var(--done); }        /* dry = cool blue */
+  .devtype[data-tree="wet"] { --dc: var(--good); }        /* wet = teal/green */
+  .devtype[data-tree="wet"]::before { border-radius: 50%; }
+  .devtype:hover { background: color-mix(in srgb, var(--dc, var(--muted)) 20%, transparent); }
+  /* Underwriting risk chips (#949): HPHT + facility decommissioning. */
+  .riskchip { display: inline-flex; align-items: center; gap: 7px; font: 600 12px/1 var(--mono, ui-monospace,monospace);
+    text-transform: uppercase; letter-spacing: .04em; text-decoration: none; padding: 6px 11px; border-radius: 999px;
+    color: var(--rc, var(--muted)); background: color-mix(in srgb, var(--rc, var(--muted)) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--rc, var(--muted)) 40%, transparent); }
+  .riskchip::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--rc, var(--muted)); }
+  .riskchip[data-sev="over-rating"] { --rc: #e5484d; }
+  .riskchip[data-sev="at-rating"] { --rc: #f5a524; }
+  .riskchip[data-conf="low"] { border-style: dashed; }
+
+  .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px,1fr));
+    gap: 1px; background: var(--line); border-top: 1px solid var(--line); }
+  .metric { background: var(--panel-2); padding: 14px 18px; }
+  .metric .k { font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--muted); }
+  .metric .v { font-family: var(--mono); font-size: 21px; font-weight: 700;
+    font-variant-numeric: tabular-nums; margin-top: 4px; letter-spacing: -.01em; }
+  .metric .v small { font-size: 12px; color: var(--muted); font-weight: 500; }
+
+  /* ---- Section scaffolding ---- */
+  .body { padding: clamp(18px,2.4vw,30px); display: grid; gap: 30px; }
+  .lane-label { font-family: var(--mono); font-size: 11px; letter-spacing: .16em;
+    text-transform: uppercase; color: var(--muted); margin: 0 0 12px; font-weight: 600; }
+  .scrollx { overflow-x: auto; padding-bottom: 4px; }
+
+  /* ---- Calendar timeline ---- */
+  .tl { position: relative; min-width: 760px; height: 132px; margin-top: 6px; }
+  .tl-axis { position: absolute; left: 0; right: 0; top: 92px; height: 2px;
+    background: linear-gradient(90deg, var(--future), var(--done) 55%, var(--accent)); }
+  .tl-year { position: absolute; top: 100px; transform: translateX(-50%);
+    font-family: var(--mono); font-size: 10.5px; color: var(--muted);
+    font-variant-numeric: tabular-nums; }
+  .tl-year::before { content:""; position:absolute; top:-10px; left:50%; width:1px;
+    height:7px; background: var(--line); }
+  .tl-gate { position: absolute; top: 92px; transform: translate(-50%,-50%);
+    width: 13px; height: 13px; border-radius: 50%; background: var(--primary-gate);
+    border: 2.5px solid var(--panel); box-shadow: 0 0 0 1px var(--primary-gate); z-index: 2; }
+  .tl-gate.sec { background: var(--alert); box-shadow: 0 0 0 1px var(--alert); }
+  .tl-gate.now { background: var(--accent); box-shadow: 0 0 0 1px var(--accent),
+    0 0 0 6px color-mix(in srgb, var(--accent) 22%, transparent); }
+  .tl-flag { position: absolute; bottom: 44px; transform: translateX(-50%);
+    text-align: center; width: 128px; }
+  .tl-flag .lab { font-size: 12px; font-weight: 700; line-height: 1.15; }
+  .tl-flag .dt { font-family: var(--mono); font-size: 11px; color: var(--accent-ink);
+    font-variant-numeric: tabular-nums; }
+  :root[data-theme="dark"] .tl-flag .dt, @media (prefers-color-scheme: dark){ .tl-flag .dt{ color: var(--accent);} }
+  .tl-flag .stem { position:absolute; left:50%; bottom:-14px; width:1.5px; height:14px;
+    background: var(--line); }
+  .tl-span { position: absolute; top: 78px; height: 22px; display:flex; align-items:center;
+    justify-content:center; }
+  .tl-span .bar { position:absolute; left:0; right:0; top:9px; height:3px; border-radius:2px;
+    background: color-mix(in srgb, var(--done) 40%, transparent); }
+  .tl-span .txt { position: relative; font-family: var(--mono); font-size: 10px;
+    color: var(--muted); background: var(--panel); padding: 0 6px; white-space: nowrap; }
+
+  /* ---- Stage-gate spine ---- */
+  .spine { display: flex; min-width: 900px; gap: 4px; }
+  .phase { position: relative; flex: 1 1 0; min-width: 96px; padding: 14px 14px 14px 26px;
+    color: #fff; clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 0 100%, 16px 50%);
+    background: var(--future); }
+  .phase:first-child { padding-left: 16px; clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 0 100%); }
+  .phase.done { background: var(--done); }
+  .phase.done.deep { background: var(--done-deep); }
+  .phase.current { background: var(--accent); color: #1c1206;
+    box-shadow: 0 6px 20px color-mix(in srgb, var(--accent) 45%, transparent); z-index: 3; }
+  .phase.future { background: color-mix(in srgb, var(--future) 55%, var(--panel));
+    color: var(--muted); }
+  .phase .pn { font-weight: 800; font-size: 15px; letter-spacing: -.01em; }
+  .phase .pk { font-family: var(--mono); font-size: 9.5px; letter-spacing: .12em;
+    text-transform: uppercase; opacity: .8; margin-bottom: 2px; }
+  .youhere { position:absolute; top:-30px; left:50%; transform:translateX(-50%);
+    font-family: var(--mono); font-size: 10px; font-weight:700; letter-spacing:.1em;
+    text-transform:uppercase; color: var(--accent-ink); white-space:nowrap; }
+  :root[data-theme="dark"] .youhere{ color: var(--accent); }
+  @media (prefers-color-scheme: dark){ .youhere{ color: var(--accent);} }
+  .youhere::after{ content:"▼"; display:block; text-align:center; margin-top:2px; color:var(--accent);}
+
+  /* ---- Sub-phase engineering track ---- */
+  .subtrack { display:flex; min-width: 900px; gap:4px; margin-top:10px; }
+  .subcell { flex:1 1 0; min-width:96px; }
+  .subchip { font-family: var(--mono); font-size:10px; text-transform:uppercase;
+    letter-spacing:.06em; padding:6px 8px; border-radius:5px; text-align:center; line-height:1.25;
+    border:1px solid transparent; }
+  .subchip.eng { background: color-mix(in srgb, var(--good) 14%, transparent);
+    color: var(--good); border-color: color-mix(in srgb, var(--good) 35%, transparent); }
+  .subchip.sub { background: color-mix(in srgb, var(--alert) 12%, transparent);
+    color: var(--alert); border-color: color-mix(in srgb, var(--alert) 32%, transparent); }
+  .subchip.op  { background: color-mix(in srgb, var(--done) 12%, transparent);
+    color: var(--done); border-color: color-mix(in srgb, var(--done) 32%, transparent); }
+  .subchip.empty { visibility:hidden; }
+  /* engineering-by-stage overlay */
+  .engtrack { display:flex; min-width:900px; gap:4px; margin-top:8px; }
+  .engcell { flex:1 1 0; min-width:96px; display:flex; flex-direction:column; gap:4px; }
+  .engchip { font-family:var(--mono); font-size:9.5px; line-height:1.2; padding:4px 6px; border-radius:5px; text-align:center;
+    background:color-mix(in srgb, var(--done) 9%, transparent); color:var(--done);
+    border:1px solid color-mix(in srgb, var(--done) 25%, transparent); }
+  a.engchip.link { background:color-mix(in srgb, var(--accent) 12%, transparent); color:var(--accent-ink);
+    border-color:color-mix(in srgb, var(--accent) 38%, transparent); font-weight:700; text-decoration:none; }
+  :root[data-theme="dark"] a.engchip.link { color:var(--accent); }
+  @media (prefers-color-scheme:dark){ a.engchip.link { color:var(--accent); } }
+  .fel { min-width:900px; margin-top:6px; font-family:var(--mono); font-size:10px;
+    color:var(--muted); text-align:center; border-top:1px dashed var(--line); padding-top:4px; }
+  /* performance-vs-norm strip (issue #848) */
+  .normstrip { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+  a.normchip { flex:1 1 170px; min-width:150px; display:block; text-decoration:none;
+    border:1px solid var(--line); border-radius:8px; padding:7px 10px;
+    background:color-mix(in srgb, var(--accent) 5%, transparent); }
+  a.normchip:hover { border-color: var(--accent); }
+  .normchip .ns { font-family:var(--mono); font-size:9.5px; letter-spacing:.06em;
+    text-transform:uppercase; color:var(--muted); }
+  .normchip .nv { font-size:13px; font-weight:700; color:var(--ink); margin-top:2px; }
+  .normchip .nd { font-family:var(--mono); font-size:10.5px; margin-top:2px; }
+  .normchip .nd.neg { color:var(--good); }
+  .normchip .nd.pos { color:var(--alert); }
+  .normchip .nd.mut, .normchip .nv.mut { color:var(--muted); font-weight:500; }
+
+  /* ---- Lower grid: activities + host ---- */
+  .grid2 { display:grid; grid-template-columns: 1.5fr 1fr; gap: 22px; }
+  @media (max-width: 820px){ .grid2 { grid-template-columns: 1fr; } }
+  .card { background: var(--panel-2); border:1px solid var(--line); border-radius:10px;
+    padding: 18px 20px; }
+  .card h3 { margin:0 0 12px; font-size: 15px; letter-spacing:-.01em; }
+  .econ-card { border-left: 3px solid var(--good); }
+  .econ-card p { margin:0 0 14px; color:var(--muted); font-size:12.5px; line-height:1.45; }
+  .econ-open { display:inline-flex; align-items:center; justify-content:center; width:100%;
+    min-height:36px; padding:8px 12px; border-radius:8px; text-decoration:none; font-weight:800;
+    font-size:13px; color:#fff; background:var(--done); border:1px solid var(--done-deep); }
+  .econ-open:hover { background:var(--done-deep); }
+  .econ-foot { margin-top:12px; padding-top:10px; border-top:1px solid var(--line); }
+  .econ-chip { display:inline-flex; align-items:center; gap:5px; font-family:var(--mono);
+    font-size:10.5px; line-height:1; color:var(--muted); text-decoration:none; padding:5px 8px;
+    border:1px solid var(--line); border-radius:999px; background:color-mix(in srgb, var(--line) 18%, transparent); }
+  .econ-chip:hover { color:var(--ink); border-color:var(--muted); }
+  .act { display:grid; grid-template-columns: repeat(2,1fr); gap: 14px 22px; }
+  @media (max-width:560px){ .act { grid-template-columns:1fr; } }
+  .act h4 { margin:0 0 5px; font-family:var(--mono); font-size:11px; letter-spacing:.08em;
+    text-transform:uppercase; color: var(--done); }
+  .act.cur h4 { color: var(--accent-ink); }
+  :root[data-theme="dark"] .act.cur h4 { color: var(--accent); }
+  @media (prefers-color-scheme: dark){ .act.cur h4 { color: var(--accent);} }
+  .act ul { margin:0; padding-left: 16px; }
+  .act li { font-size: 12.5px; color: var(--ink); margin-bottom: 3px; line-height:1.35; }
+  .kv { display:grid; grid-template-columns: auto 1fr; gap: 8px 14px; font-size:13px; }
+  .kv dt { font-family:var(--mono); font-size:11px; letter-spacing:.05em; text-transform:uppercase;
+    color: var(--muted); }
+  .kv dd { margin:0; font-weight:600; }
+  .wi { display:flex; flex-direction:column; gap:7px; margin-top:4px; }
+  .wi-row { display:grid; grid-template-columns: 1fr auto; gap:8px; align-items:center; font-size:12.5px; }
+  .wi-bar { grid-column:1/-1; height:6px; border-radius:3px; background: var(--line); overflow:hidden; }
+  .wi-bar span { display:block; height:100%; background: var(--done); }
+  .wi-row .op { font-weight:700; }
+  .wi-row .op.lead::after { content:" ◆ operator"; font-family:var(--mono); font-size:10px;
+    color: var(--accent-ink); letter-spacing:.02em; }
+  :root[data-theme="dark"] .wi-row .op.lead::after { color: var(--accent); }
+
+  /* ---- Reservoir & HPHT card ---- */
+  .rcol { display:flex; flex-direction:column; gap:22px; }
+  .mut { color: var(--muted); font-weight: 400; }
+  .hpht { display:inline-flex; align-items:center; font-family:var(--mono); font-size:11px;
+    font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:2px 9px;
+    border-radius:999px; }
+  .hpht.ultra { color: var(--alert);
+    background: color-mix(in srgb, var(--alert) 14%, transparent);
+    border:1px solid color-mix(in srgb, var(--alert) 42%, transparent); }
+  .hpht.hot { color: var(--accent-ink);
+    background: color-mix(in srgb, var(--accent) 16%, transparent);
+    border:1px solid color-mix(in srgb, var(--accent) 44%, transparent); }
+  :root[data-theme="dark"] .hpht.hot { color: var(--accent); }
+  @media (prefers-color-scheme: dark){ .hpht.hot { color: var(--accent); } }
+
+  /* ---- Legend + footer ---- */
+  .legend { display:flex; flex-wrap:wrap; gap: 8px 18px; font-size:11.5px; color:var(--muted);
+    font-family:var(--mono); }
+  .legend span { display:inline-flex; align-items:center; gap:6px; }
+  .sw { width:11px; height:11px; border-radius:3px; display:inline-block; }
+  .foot { border-top:1px solid var(--line); padding: 16px clamp(18px,2.4vw,30px);
+    display:flex; flex-wrap:wrap; gap: 6px 18px; justify-content:space-between;
+    font-size:11px; color: var(--muted); font-family: var(--mono); }
+  .foot a { color: inherit; }
+  .draft { display:inline-block; font-family:var(--mono); font-size:10px; font-weight:700;
+    letter-spacing:.12em; text-transform:uppercase; color: var(--alert);
+    border:1px solid color-mix(in srgb, var(--alert) 45%, transparent);
+    padding:3px 8px; border-radius:5px; }
+</style>
+
+<div class="wrap">
+  <div class="sheet">
+    <header class="head">
+      <div>
+        <p class="eyebrow">Deepwater field development · life-cycle summary</p>
+        <h1 class="title" id="f-title">—</h1>
+        <p class="sub" id="f-sub">—</p>
+      </div>
+      <div style="display:flex; flex-direction:column; align-items:flex-end; gap:10px;">
+        <span class="status"><span class="dot"></span><span id="f-status">—</span></span>
+        <a class="devtype" id="f-devtype" data-tree="" href="../region-devtype-comparison.html" hidden></a>
+        <a class="riskchip" id="f-risk-hpht" href="../pressure-atlas/" hidden></a>
+        <a class="riskchip" id="f-risk-decom" href="../decommissioning/pa-liability-wave.html" hidden></a>
+        <span class="draft">Draft tracer · #738</span>
+      </div>
+    </header>
+
+    <!-- nav-spine --><div class="nav-spine" style="font:12px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;margin:0 0 10px;opacity:.75"><a href="../index.html">worldenergydata</a> ▸ <a href="../capabilities/index.html">Capabilities</a> ▸ <a href="index.html">Life-cycle gallery</a> ▸ <span>Julia</span></div>
+<div class="metrics" id="f-metrics"></div>
+    <div id="f-wells"></div>
+    <div id="f-assets"></div>
+    <div id="f-concept"></div>
+    <div id="f-arch"></div>
+    <div id="f-landman"></div>
+
+    <div class="body">
+      <section>
+        <p class="lane-label">Life-of-field timeline · real gate dates</p>
+        <div class="scrollx"><div class="tl" id="f-timeline"></div></div>
+      </section>
+
+      <section>
+        <p class="lane-label">Stage-gate phases · you are here</p>
+        <div class="scrollx">
+          <div class="spine" id="f-spine"></div>
+          <div class="subtrack" id="f-subtrack"></div>
+          <div class="fel">◄ FEL — Front-End Loading (engineering phases for concept selection → detail → follow-on) ►</div>
+        </div>
+      </section>
+
+      <section>
+        <p class="lane-label">Engineering by stage · <a href="https://vamseeachanta.github.io/digitalmodel/capabilities/" style="color:inherit;text-decoration:underline">→ digitalmodel</a></p>
+        <div class="scrollx"><div class="engtrack" id="f-eng"></div></div>
+      </section>
+
+      <section id="f-norms-section" hidden>
+        <p class="lane-label">Performance vs norm · field vs Lower Tertiary play (leave-one-field-out) · country <span style="opacity:.7">roadmap #681</span></p>
+        <div class="normstrip" id="f-norms"></div>
+      </section>
+
+      <section class="grid2">
+        <div class="card">
+          <h3>Key phase activities</h3>
+          <div class="act" id="f-activities"></div>
+        </div>
+        <div class="rcol">
+          <div class="card">
+            <h3>Host concept &amp; ownership</h3>
+            <dl class="kv" id="f-host"></dl>
+            <div class="wi" id="f-wi"></div>
+          </div>
+          <div class="card" id="f-reservoir-card" hidden>
+            <h3>Reservoir &amp; HPHT</h3>
+            <dl class="kv" id="f-reservoir"></dl>
+          </div>
+          <div class="card" id="f-performance-card" hidden>
+            <h3>Field performance · BSEE life-to-date</h3>
+            <dl class="kv" id="f-performance"></dl>
+          </div>
+          <div class="card econ-card" id="f-economics-card" hidden>
+            <h3>Field economics · monthly cash-flow model</h3>
+            <p>Monthly cash-flow detail, NPV narrative, and price-sensitivity context. Headline figures remain in the performance card above.</p>
+            <a class="econ-open" id="f-economics-link" href="#">Open full economics →</a>
+            <div class="econ-foot" id="f-economics-foot" hidden>
+              <a class="econ-chip" id="f-benchmark-link" href="#">Well benchmarking ↗</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="legend">
+          <span><i class="sw" style="background:var(--done)"></i>Completed phase</span>
+          <span><i class="sw" style="background:var(--accent)"></i>Current phase / first oil</span>
+          <span><i class="sw" style="background:var(--future)"></i>Future phase</span>
+          <span><i class="sw" style="background:var(--primary-gate);border-radius:50%"></i>Primary gate</span>
+          <span><i class="sw" style="background:var(--alert);border-radius:50%"></i>Secondary milestone</span>
+        </div>
+      </section>
+    </div>
+
+    <footer class="foot">
+      <span id="f-prov">—</span>
+      <span>Generated 2026-07-03 · original artwork · worldenergydata/reports/lower_tertiary/lifecycle</span>
+    </footer>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   FIXED MODEL — identical for every offshore field (from the
+   Offshore Magazine "Field Development Life-Cycle" taxonomy).
+   Swap FIELD below to render any other field with this template.
+   ============================================================ */
+const MODEL = {
+  phases: [
+    { key:"acquire",  name:"Acquire",  activities:["Assess lease opportunity","Evaluate fiscal terms","Acquire lease","Shoot / acquire seismic"] },
+    { key:"explore",  name:"Explore",  activities:["Geological study","Evaluate leads","Plan &amp; drill exploration well","Reservoir study"] },
+    { key:"appraise", name:"Appraise", activities:["Drill appraisal wells","Determine reserves","Construct reservoir model","Geohazard evaluation"] },
+    { key:"select",   name:"Select",   activities:["Screen development options","Select development concept","Conduct risk assessment","Prepare CAPEX / OPEX / ABEX"] },
+    { key:"define",   name:"Define",   activities:["Finalize development plan","Basis of Design (BOD)","Perform FEED","Order long-lead equipment"] },
+    { key:"execute",  name:"Execute",  activities:["Detail engineering &amp; procurement","Construction / fabrication","Topsides + hull integration","Hookup &amp; commissioning"] },
+    { key:"operate",  name:"Operate",  activities:["Drill / complete dev. wells","Operate safely, maximise uptime","Inspection, maint. &amp; repair (IMR)","Brownfield: debottleneck / tiebacks"] },
+    { key:"abandon",  name:"Abandon",  activities:["Evaluate abandonment options","Prepare ABEX &amp; budget","P&amp;A wells","Decommission facilities &amp; subsea"] },
+  ],
+  // sub-phase engineering / subsurface track (aligned under phases)
+  subtrack: [
+    { under:"acquire",  type:"sub", label:"Lead" },
+    { under:"explore",  type:"sub", label:"Advance · mature prospect" },
+    { under:"appraise", type:"sub", label:"Drill expl. well" },
+    { under:"select",   type:"eng", label:"Pre-FEED / concept screen" },
+    { under:"define",   type:"eng", label:"FEED" },
+    { under:"execute",  type:"eng", label:"Detail eng." },
+    { under:"operate",  type:"op",  label:"Follow-on / brownfield eng." },
+    { under:"abandon",  type:"op",  label:"Decommission eng." },
+  ],
+};
+
+/* ============================================================
+   PER-FIELD DATA — Big Foot (Lower Tertiary, US GoM).
+   Sourced from config/analysis/lower_tertiary/fields/big_foot.yml
+   + public Chevron disclosures / BSEE records.
+   ============================================================ */
+const FIELD = {
+  "id": "julia",
+  "wellsHref": "wells/",
+  "wellsCount": 4,
+  "assetsHref": null,
+  "economics_href": "../economics-julia.html",
+  "benchmark_href": "../benchmark.html",
+  "name": "Julia",
+  "operator": "ExxonMobil",
+  "region": "Walker Ridge 627 (WR 540/583/584/627/628) · US Gulf of Mexico",
+  "host": "Subsea tieback to Jack/St. Malo semisubmersible FPU (Chevron)",
+  "statusLabel": "Producing",
+  "statusHue": "var(--good)",
+  "treeType": "wet",
+  "treeLabel": "Wet tree · Subsea tieback",
+  "currentPhase": "operate",
+  "metrics": [
+    {
+      "k": "Water depth",
+      "v": "7,000",
+      "u": "ft"
+    },
+    {
+      "k": "Gross CAPEX",
+      "v": "$4.7",
+      "u": "B"
+    },
+    {
+      "k": "Plateau rate",
+      "v": "34",
+      "u": "mbopd"
+    },
+    {
+      "k": "GOR",
+      "v": "1,000",
+      "u": "scf/bbl"
+    },
+    {
+      "k": "OPEX",
+      "v": "$18",
+      "u": "/boe"
+    },
+    {
+      "k": "Operator WI",
+      "v": "50",
+      "u": "%"
+    }
+  ],
+  "axis": {
+    "start": 2005,
+    "end": 2040,
+    "ticks": [
+      2005,
+      2010,
+      2015,
+      2020,
+      2025,
+      2030,
+      2035,
+      2040
+    ]
+  },
+  "gates": [
+    {
+      "year": 2007.0,
+      "phase": "explore",
+      "lab": "Discovery",
+      "dt": "2007",
+      "kind": "primary"
+    },
+    {
+      "year": 2013.0,
+      "phase": "define",
+      "lab": "FID / Sanction",
+      "dt": "2013",
+      "kind": "primary"
+    },
+    {
+      "year": 2008.0,
+      "phase": "execute",
+      "lab": "Lease-extension dispute",
+      "dt": "2008",
+      "kind": "sec"
+    },
+    {
+      "year": 2016.2083333333333,
+      "phase": "operate",
+      "lab": "First oil",
+      "dt": "Mar 2016",
+      "kind": "now"
+    },
+    {
+      "year": 2026.5,
+      "phase": "operate",
+      "lab": "Today",
+      "dt": "2026",
+      "kind": "nowmark"
+    }
+  ],
+  "spans": [
+    {
+      "from": 2007.0,
+      "to": 2013.0,
+      "txt": "Discovery→FID ~6 yr"
+    },
+    {
+      "from": 2013.0,
+      "to": 2016.2083333333333,
+      "txt": "FID→first oil ~3 yr (incl. delay)"
+    }
+  ],
+  "workingInterest": [
+    {
+      "name": "ExxonMobil",
+      "wi": 50,
+      "lead": true
+    },
+    {
+      "name": "Equinor",
+      "wi": 50
+    }
+  ],
+  "hostFacts": [
+    [
+      "Host type",
+      "Subsea tieback to Jack/St. Malo semisubmersible FPU (Chevron)"
+    ],
+    [
+      "Water depth",
+      "7,000 ft (2,134 m)"
+    ],
+    [
+      "Play",
+      "Lower Tertiary Wilcox"
+    ],
+    [
+      "First oil",
+      "Mar 2016"
+    ],
+    [
+      "Data through",
+      "Dec 2024"
+    ]
+  ],
+  "reservoir": {
+    "formation": "Wilcox (Lower Tertiary)",
+    "hpht_class": "HPHT",
+    "pressure_psi": 13500,
+    "pressure_qual": "~",
+    "pressure_basis": "subsea_system",
+    "equip_rating_psi": 15000,
+    "temp_f": null,
+    "tvd_ft": 30000,
+    "fluid": "black oil",
+    "api": 24.7,
+    "source_note": "Offshore Mag: subsea pressures ~13,500 psi (15,000-psi-rated trees + first permanent HIPPS); Hart Energy production test: 24.7°API oil."
+  },
+  "risk": {
+    "hpht": {
+      "class": "HPHT",
+      "pressure_psi": 13500,
+      "equip_rating_psi": 15000,
+      "exceedance_pct": null,
+      "severity": "class-only",
+      "basis": "subsea_system",
+      "label": "HPHT · subsea system 13.5k / 15k-psi trees"
+    },
+    "decommissioning_status": "withheld_pending_redistribution_review",
+    "decommissioning": null
+  },
+  "landman": {
+    "leases": [
+      {
+        "lease_num": "G20351",
+        "lease_name": "Julia",
+        "water_depth_ft": 7335,
+        "dev_system": "tieback15"
+      }
+    ],
+    "n_leases": 1,
+    "blocks": [
+      "WR627"
+    ],
+    "block_note": "Walker Ridge 627 (WR 540/583/584/627/628)",
+    "operator": "ExxonMobil",
+    "working_interest": [
+      {
+        "name": "ExxonMobil",
+        "wi": 50,
+        "operator": true
+      },
+      {
+        "name": "Equinor",
+        "wi": 50,
+        "operator": false
+      }
+    ],
+    "pending": [
+      "status",
+      "effective_date",
+      "expiration_date",
+      "lease_type",
+      "per_lease_block",
+      "per_lease_working_interest",
+      "operator_of_record_history"
+    ],
+    "ingest_issue": 959
+  },
+  "concept": {
+    "type": "Subsea tieback",
+    "host": "Subsea tieback to Jack/St. Malo semisubmersible FPU (Chevron)",
+    "play": "Lower Tertiary Wilcox",
+    "milestone": {
+      "label": "First oil",
+      "value": "Mar 2016"
+    },
+    "fdp_href": "../field-development/portfolio/julia.html",
+    "fdp_issue": 962
+  },
+  "architecture": {
+    "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"480\" height=\"1380\" viewBox=\"0 0 480 1380\">\n<rect width=\"100%\" height=\"100%\" fill=\"white\"/>\n<title>Field layout — Julia (Lower Tertiary)</title>\n<line x1=\"77.3\" y1=\"1300.0\" x2=\"101.3\" y2=\"100.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n<line x1=\"101.3\" y1=\"100.0\" x2=\"77.3\" y2=\"1300.0\" stroke=\"#5a7\" stroke-width=\"1.5\" stroke-dasharray=\"4 3\"/>\n<line x1=\"125.3\" y1=\"1300.0\" x2=\"101.3\" y2=\"100.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n<line x1=\"101.3\" y1=\"100.0\" x2=\"125.3\" y2=\"1300.0\" stroke=\"#5a7\" stroke-width=\"1.5\" stroke-dasharray=\"4 3\"/>\n<line x1=\"77.3\" y1=\"1280.0\" x2=\"77.3\" y2=\"1300.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n<line x1=\"77.3\" y1=\"1300.0\" x2=\"77.3\" y2=\"1280.0\" stroke=\"#5a7\" stroke-width=\"1.5\" stroke-dasharray=\"4 3\"/>\n<line x1=\"125.3\" y1=\"1280.0\" x2=\"125.3\" y2=\"1300.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n<line x1=\"125.3\" y1=\"1300.0\" x2=\"125.3\" y2=\"1280.0\" stroke=\"#5a7\" stroke-width=\"1.5\" stroke-dasharray=\"4 3\"/>\n<line x1=\"60.0\" y1=\"1310.0\" x2=\"77.3\" y2=\"1300.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n<line x1=\"77.3\" y1=\"1300.0\" x2=\"60.0\" y2=\"1310.0\" stroke=\"#5a7\" stroke-width=\"1.5\" stroke-dasharray=\"4 3\"/>\n<line x1=\"125.3\" y1=\"1320.0\" x2=\"125.3\" y2=\"1300.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n<line x1=\"125.3\" y1=\"1300.0\" x2=\"125.3\" y2=\"1320.0\" stroke=\"#5a7\" stroke-width=\"1.5\" stroke-dasharray=\"4 3\"/>\n<line x1=\"94.6\" y1=\"1310.0\" x2=\"77.3\" y2=\"1300.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n<line x1=\"77.3\" y1=\"1300.0\" x2=\"94.6\" y2=\"1310.0\" stroke=\"#5a7\" stroke-width=\"1.5\" stroke-dasharray=\"4 3\"/>\n<line x1=\"101.3\" y1=\"100.0\" x2=\"101.3\" y2=\"60.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n<g class=\"sym\"><title>Subsea manifold</title><rect x=\"65.3\" y=\"1292.8\" width=\"24.0\" height=\"14.4\" rx=\"3\" fill=\"#ffe9c7\" stroke=\"#a8620a\" stroke-width=\"1.5\"/><line x1=\"70.1\" y1=\"1307.2\" x2=\"70.1\" y2=\"1312.0\" stroke=\"#a8620a\" stroke-width=\"1.5\"/><line x1=\"74.9\" y1=\"1307.2\" x2=\"74.9\" y2=\"1312.0\" stroke=\"#a8620a\" stroke-width=\"1.5\"/><line x1=\"79.7\" y1=\"1307.2\" x2=\"79.7\" y2=\"1312.0\" stroke=\"#a8620a\" stroke-width=\"1.5\"/><line x1=\"84.5\" y1=\"1307.2\" x2=\"84.5\" y2=\"1312.0\" stroke=\"#a8620a\" stroke-width=\"1.5\"/></g>\n<text x=\"92.3\" y=\"1303.0\" font-family=\"sans-serif\" font-size=\"9\">Manifold 1</text>\n<g class=\"sym\"><title>Subsea manifold</title><rect x=\"113.3\" y=\"1292.8\" width=\"24.0\" height=\"14.4\" rx=\"3\" fill=\"#ffe9c7\" stroke=\"#a8620a\" stroke-width=\"1.5\"/><line x1=\"118.1\" y1=\"1307.2\" x2=\"118.1\" y2=\"1312.0\" stroke=\"#a8620a\" stroke-width=\"1.5\"/><line x1=\"122.9\" y1=\"1307.2\" x2=\"122.9\" y2=\"1312.0\" stroke=\"#a8620a\" stroke-width=\"1.5\"/><line x1=\"127.7\" y1=\"1307.2\" x2=\"127.7\" y2=\"1312.0\" stroke=\"#a8620a\" stroke-width=\"1.5\"/><line x1=\"132.5\" y1=\"1307.2\" x2=\"132.5\" y2=\"1312.0\" stroke=\"#a8620a\" stroke-width=\"1.5\"/></g>\n<text x=\"140.3\" y=\"1303.0\" font-family=\"sans-serif\" font-size=\"9\">Manifold 2</text>\n<g class=\"sym\"><title>Subsea tree (wet XT)</title><line x1=\"77.3\" y1=\"1288.0\" x2=\"77.3\" y2=\"1272.0\" stroke=\"#234e78\" stroke-width=\"2\"/><rect x=\"71.7\" y=\"1284.0\" width=\"11.2\" height=\"4.0\" fill=\"#234e78\"/><polygon points=\"73.3,1274.8 81.3,1279.6 81.3,1274.8 73.3,1279.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/><polygon points=\"73.3,1278.8 81.3,1283.6 81.3,1278.8 73.3,1283.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/></g>\n<text x=\"88.3\" y=\"1283.0\" font-family=\"sans-serif\" font-size=\"9\">XT 1</text>\n<g class=\"sym\"><title>Subsea tree (wet XT)</title><line x1=\"60.0\" y1=\"1318.0\" x2=\"60.0\" y2=\"1302.0\" stroke=\"#234e78\" stroke-width=\"2\"/><rect x=\"54.4\" y=\"1314.0\" width=\"11.2\" height=\"4.0\" fill=\"#234e78\"/><polygon points=\"56.0,1304.8 64.0,1309.6 64.0,1304.8 56.0,1309.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/><polygon points=\"56.0,1308.8 64.0,1313.6 64.0,1308.8 56.0,1313.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/></g>\n<text x=\"71.0\" y=\"1313.0\" font-family=\"sans-serif\" font-size=\"9\">XT 3</text>\n<g class=\"sym\"><title>Subsea tree (wet XT)</title><line x1=\"94.6\" y1=\"1318.0\" x2=\"94.6\" y2=\"1302.0\" stroke=\"#234e78\" stroke-width=\"2\"/><rect x=\"89.0\" y=\"1314.0\" width=\"11.2\" height=\"4.0\" fill=\"#234e78\"/><polygon points=\"90.6,1304.8 98.6,1309.6 98.6,1304.8 90.6,1309.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/><polygon points=\"90.6,1308.8 98.6,1313.6 98.6,1308.8 90.6,1313.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/></g>\n<text x=\"105.6\" y=\"1313.0\" font-family=\"sans-serif\" font-size=\"9\">XT 5</text>\n<g class=\"sym\"><title>Subsea tree (wet XT)</title><line x1=\"125.3\" y1=\"1288.0\" x2=\"125.3\" y2=\"1272.0\" stroke=\"#234e78\" stroke-width=\"2\"/><rect x=\"119.7\" y=\"1284.0\" width=\"11.2\" height=\"4.0\" fill=\"#234e78\"/><polygon points=\"121.3,1274.8 129.3,1279.6 129.3,1274.8 121.3,1279.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/><polygon points=\"121.3,1278.8 129.3,1283.6 129.3,1278.8 121.3,1283.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/></g>\n<text x=\"136.3\" y=\"1283.0\" font-family=\"sans-serif\" font-size=\"9\">XT 2</text>\n<g class=\"sym\"><title>Subsea tree (wet XT)</title><line x1=\"125.3\" y1=\"1328.0\" x2=\"125.3\" y2=\"1312.0\" stroke=\"#234e78\" stroke-width=\"2\"/><rect x=\"119.7\" y=\"1324.0\" width=\"11.2\" height=\"4.0\" fill=\"#234e78\"/><polygon points=\"121.3,1314.8 129.3,1319.6 129.3,1314.8 121.3,1319.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/><polygon points=\"121.3,1318.8 129.3,1323.6 129.3,1318.8 121.3,1323.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/></g>\n<text x=\"136.3\" y=\"1323.0\" font-family=\"sans-serif\" font-size=\"9\">XT 4</text>\n<g class=\"sym\"><title>Existing host (tieback)</title><rect x=\"85.3\" y=\"88.8\" width=\"32.0\" height=\"22.4\" fill=\"#cde2f7\" stroke=\"#234e78\" stroke-width=\"1.5\" stroke-dasharray=\"5 3\"/><line x1=\"93.3\" y1=\"88.8\" x2=\"93.3\" y2=\"82.4\" stroke=\"#234e78\" stroke-width=\"2\"/><line x1=\"109.3\" y1=\"88.8\" x2=\"109.3\" y2=\"82.4\" stroke=\"#234e78\" stroke-width=\"2\"/></g>\n<text x=\"120.3\" y=\"103.0\" font-family=\"sans-serif\" font-size=\"9\">Existing Host (tieback)</text>\n<g class=\"sym\"><title>Export</title><polygon points=\"91.3,55.0 104.3,55.0 104.3,50.0 111.3,60.0 104.3,70.0 104.3,65.0 91.3,65.0\" fill=\"#dddddd\" stroke=\"#555\" stroke-width=\"1.2\"/></g>\n<text x=\"114.3\" y=\"63.0\" font-family=\"sans-serif\" font-size=\"9\">Export</text>\n<g stroke=\"#222\" fill=\"#222\"><line x1=\"452\" y1=\"46\" x2=\"452\" y2=\"20\" stroke-width=\"2\"/><polygon points=\"452,14 447,24 457,24\"/><text x=\"448\" y=\"60\" font-family=\"sans-serif\" font-size=\"11\" stroke=\"none\">N</text></g>\n<g stroke=\"#222\" fill=\"#222\"><line x1=\"20\" y1=\"1356\" x2=\"60\" y2=\"1356\" stroke-width=\"2\"/><line x1=\"20\" y1=\"1352\" x2=\"20\" y2=\"1360\" stroke-width=\"2\"/><line x1=\"60\" y1=\"1352\" x2=\"60\" y2=\"1360\" stroke-width=\"2\"/><text x=\"20\" y=\"1348\" font-family=\"sans-serif\" font-size=\"10\" stroke=\"none\">1 km</text></g>\n<text x=\"10\" y=\"1374\" font-family=\"sans-serif\" font-size=\"9\">Plan-view field layout (host offset to scale; schematic well positions)</text>\n</svg>",
+    "source": "render_layout",
+    "caption": "Julia subsea tieback"
+  },
+  "provenance": "Primary facts (capex $4.7B, plateau 34 mbopd, GOR 1000, opex $18/boe, first oil, WI 50/50) from in-repo julia.yml; first oil = BSEE OGOR-A first production (2016-03) per YAML — note ExxonMobil press release states production start April 2016. Operator corrected to ExxonMobil (YAML flagged its \"Equinor\" operator field as disputed; public record = ExxonMobil-operated, Equinor/Statoil 50% partner). Discovery 2007, FID May 2013, water depth 7000+ ft, Walker Ridge blocks, and Jack/St. Malo tieback from Offshore Technology and operator/trade press. lease year and projected end-of-production not confidently sourced.",
+  "norms": [
+    {
+      "delta_play_pct": 108.7,
+      "href": "norms/drill.html#julia",
+      "n": 9,
+      "play_n": 175,
+      "stage": "drill",
+      "state": "ok",
+      "unit": "days",
+      "value": 96.0
+    },
+    {
+      "delta_play_pct": 220.0,
+      "href": "norms/complete.html#julia",
+      "n": 9,
+      "play_n": 177,
+      "stage": "complete",
+      "state": "ok",
+      "unit": "days",
+      "value": 96.0
+    },
+    {
+      "delta_play_pct": 2.0,
+      "href": "norms/produce.html#julia",
+      "n": 4,
+      "play_n": 52,
+      "stage": "produce",
+      "state": "low_n",
+      "unit": "%",
+      "value": 96.15
+    },
+    {
+      "delta_play_pct": -100.0,
+      "href": "norms/workover.html#julia",
+      "n": 4,
+      "play_n": 52,
+      "stage": "workover",
+      "state": "low_n",
+      "unit": "per well",
+      "value": 0.0
+    },
+    {
+      "href": "norms/abandon.html#julia",
+      "stage": "abandon",
+      "state": "unavailable"
+    }
+  ],
+  "performance": {
+    "avg_decline_pct_yr": 12.2,
+    "avg_uptime_pct": 96.3,
+    "breakeven_wti": 95.0,
+    "cum_oil_mmbbl": 77.5,
+    "display": "Julia",
+    "economics_basis": "life_to_date_pretax_npv_at_10pct",
+    "economics_status": "surfaced",
+    "eur_confidence": "none",
+    "eur_mmbbl": null,
+    "eur_source": "no published recoverable EUR (only ~6 Bbbl resource IN-PLACE, != EUR)",
+    "interventions": 0,
+    "npv_mm": -482.8,
+    "sens_mm_per_dollar": 17.2,
+    "wells": 4
+  }
+};
+
+/* ---------------- render ---------------- */
+const $ = (id) => document.getElementById(id);
+// inset to 3–97% so the first/last gate flags aren't clipped at the container edges
+const pos = (yr) => 3 + ((yr - FIELD.axis.start) / (FIELD.axis.end - FIELD.axis.start)) * 94;
+const curIdx = MODEL.phases.findIndex(p => p.key === FIELD.currentPhase);
+
+document.title = FIELD.name + " — Field Development Life-Cycle";
+$("f-title").textContent = FIELD.name;
+$("f-sub").innerHTML = `${FIELD.operator} · ${FIELD.region} — ${FIELD.host}`;
+$("f-status").textContent = FIELD.statusLabel;
+if (FIELD.treeLabel) {
+  const dt = $("f-devtype");
+  dt.textContent = FIELD.treeLabel;
+  dt.setAttribute("data-tree", FIELD.treeType || "");
+  dt.hidden = false;
+}
+const RISK = FIELD.risk || {};
+if (RISK.hpht) {
+  const c = $("f-risk-hpht");
+  c.textContent = RISK.hpht.label;
+  c.setAttribute("data-sev", RISK.hpht.severity);
+  c.hidden = false;
+}
+if (RISK.decommissioning) {
+  const c = $("f-risk-decom");
+  c.textContent = RISK.decommissioning.label;
+  c.setAttribute("data-conf", RISK.decommissioning.confidence);
+  c.hidden = false;
+}
+if (FIELD.wellsHref) $("f-wells").innerHTML =
+  `<a href="${FIELD.wellsHref}" style="display:flex;align-items:center;justify-content:space-between;gap:12px;`
+  + `padding:12px clamp(18px,2.4vw,30px);background:color-mix(in srgb,var(--accent) 10%,var(--panel-2));`
+  + `border-bottom:1px solid var(--line);color:var(--accent-ink);font-weight:700;font-size:13.5px;text-decoration:none">`
+  + `<span>▾ Deep-dive · well-level life-cycle timelines (${FIELD.wellsCount} wells)</span><span>Open →</span></a>`;
+if (FIELD.assetsHref) $("f-assets").innerHTML =
+  `<a href="${FIELD.assetsHref}" style="display:flex;align-items:center;justify-content:space-between;gap:12px;`
+  + `padding:12px clamp(18px,2.4vw,30px);background:color-mix(in srgb,var(--done) 8%,var(--panel-2));`
+  + `border-bottom:1px solid var(--line);color:var(--done);font-weight:700;font-size:13.5px;text-decoration:none">`
+  + `<span>▾ Asset drill-down · facility → asset → component → engineering</span><span>Open →</span></a>`;
+if (FIELD.statusHue) document.querySelector(".status").style.setProperty("--sc", FIELD.statusHue);
+$("f-prov").textContent = FIELD.provenance;
+
+// Concept & development panel (#759). Real concept/play/milestone for every
+// field + FDP link when a portfolio page exists, else a placeholder linking the
+// FDP-authoring issue.
+if (FIELD.concept) {
+  const C = FIELD.concept;
+  const iss = `https://github.com/vamseeachanta/worldenergydata/issues/${C.fdp_issue}`;
+  const fdp = C.fdp_href
+    ? `<a href="${C.fdp_href}">FDP portfolio →</a>`
+    : `<a href="${iss}" style="color:var(--muted)">— concept detail pending</a>`;
+  const bits = [C.type, C.play].filter(Boolean).map(x => `<b>${x}</b>`).join(" · ");
+  const ms = C.milestone ? ` · ${C.milestone.label} ${C.milestone.value}` : "";
+  $("f-concept").innerHTML =
+    `<section style="padding:18px clamp(18px,2.4vw,30px);border-top:1px solid var(--line)">`
+    + `<h3 style="margin:0 0 6px;font-size:15px">Concept &amp; development</h3>`
+    + `<p style="margin:0;font-size:13px;color:var(--muted)">${bits}${ms} · ${fdp}</p></section>`;
+}
+
+// Architecture drawing panel (#969). Inline plan-view SVG for the 3 authored
+// concepts (cascade_chinook/julia/stones), else a placeholder linking the
+// FDP-authoring issue. The SVG is injected verbatim (same string the sidecar
+// carries — identity gate).
+if (FIELD.architecture) {
+  const A = FIELD.architecture;
+  let body;
+  if (A.svg) {
+    body = `<h3 style="margin:0 0 6px;font-size:15px">Architecture &mdash; ${A.caption || ""}</h3>`
+      + `<div style="overflow:auto;max-width:100%">${A.svg}</div>`;
+  } else {
+    const iss = `https://github.com/vamseeachanta/worldenergydata/issues/${A.pending_issue}`;
+    body = `<h3 style="margin:0 0 6px;font-size:15px">Architecture</h3>`
+      + `<p style="margin:0;font-size:13px;color:var(--muted)"><a href="${iss}" style="color:var(--muted)">&mdash; field architecture pending</a></p>`;
+  }
+  $("f-arch").innerHTML =
+    `<section style="padding:18px clamp(18px,2.4vw,30px);border-top:1px solid var(--line)">${body}</section>`;
+}
+
+// Lease & landman panel (#951). Real: lease id, water depth, dev system, blocks,
+// operator, partner WI. Placeholders (status/dates/per-lease block/WI) LINK the
+// BSEE lease ingest issue — grabbable work, never a blank cell.
+if (FIELD.landman) {
+  const L = FIELD.landman;
+  const iss = `https://github.com/vamseeachanta/worldenergydata/issues/${L.ingest_issue}`;
+  const ph = `<a href="${iss}" style="color:var(--muted)">— pending</a>`;
+  const rows = L.leases.map(r =>
+    `<tr><td>${r.lease_num}</td><td>${r.water_depth_ft ? r.water_depth_ft.toLocaleString()+" ft" : ph}</td>`
+    + `<td>${r.dev_system || ph}</td><td>${ph}</td><td>${ph}</td><td>${ph}</td><td>${ph}</td></tr>`).join("");
+  const wi = (L.working_interest || []).map(w =>
+    `${w.name} ${w.wi}%${w.operator ? " (op)" : ""}`).join(" · ");
+  $("f-landman").innerHTML =
+    `<section style="padding:18px clamp(18px,2.4vw,30px);border-top:1px solid var(--line)">`
+    + `<h3 style="margin:0 0 6px;font-size:15px">Lease &amp; landman</h3>`
+    + `<p style="margin:0 0 4px;font-size:13px;color:var(--muted)">Operator <b>${L.operator||"—"}</b>`
+    + `${wi ? " · WI " + wi : ""} · Blocks ${L.blocks.join(", ")}${L.block_note ? " ("+L.block_note+")" : ""}</p>`
+    + `<p style="margin:0 0 10px;font-size:12px;color:var(--muted)">Lease status, dates, per-lease block &amp; working interest pending the `
+    + `<a href="${iss}">BSEE lease-data ingest (#${L.ingest_issue})</a> — contributions welcome.</p>`
+    + `<div class="scrollx"><table style="width:100%;border-collapse:collapse;font-size:12.5px">`
+    + `<thead><tr style="text-align:left;color:var(--muted)"><th>Lease</th><th>Water depth</th><th>Dev system</th>`
+    + `<th>Status</th><th>Effective</th><th>Expiration</th><th>WI</th></tr></thead><tbody>${rows}</tbody></table></div></section>`;
+}
+
+$("f-metrics").innerHTML = FIELD.metrics.map(m =>
+  `<div class="metric"><div class="k">${m.k}</div><div class="v">${m.v} <small>${m.u}</small></div></div>`
+).join("");
+
+/* timeline */
+$("f-timeline").innerHTML =
+  `<div class="tl-axis"></div>` +
+  FIELD.axis.ticks.map(y => `<div class="tl-year" style="left:${pos(y)}%">${y}</div>`).join("") +
+  FIELD.spans.map(s => {
+    const l = pos(s.from), w = pos(s.to) - pos(s.from);
+    return `<div class="tl-span" style="left:${l}%; width:${w}%"><div class="bar"></div><span class="txt">${s.txt}</span></div>`;
+  }).join("") +
+  FIELD.gates.map(g => {
+    if (g.kind === "nowmark") {
+      return `<div class="tl-gate now" style="left:${pos(g.year)}%"></div>
+        <div class="tl-flag" style="left:${pos(g.year)}%"><div class="lab">${g.lab}</div><div class="dt">${g.dt}</div><div class="stem"></div></div>`;
+    }
+    const cls = g.kind === "sec" ? "sec" : (g.kind === "now" ? "now" : "");
+    return `<div class="tl-gate ${cls}" style="left:${pos(g.year)}%"></div>
+      <div class="tl-flag" style="left:${pos(g.year)}%"><div class="lab">${g.lab}</div><div class="dt">${g.dt}</div><div class="stem"></div></div>`;
+  }).join("");
+
+/* spine */
+$("f-spine").innerHTML = MODEL.phases.map((p, i) => {
+  let cls = "future", deep = "";
+  if (i < curIdx) { cls = "done"; if (i >= 4) deep = " deep"; }
+  else if (i === curIdx) cls = "current";
+  const here = i === curIdx ? `<div class="youhere">You are here</div>` : "";
+  return `<div class="phase ${cls}${deep}">${here}<div class="pk">Phase ${i+1}</div><div class="pn">${p.name}</div></div>`;
+}).join("");
+
+/* sub-phase track */
+$("f-subtrack").innerHTML = MODEL.subtrack.map(s =>
+  `<div class="subcell"><div class="subchip ${s.type}">${s.label}</div></div>`
+).join("");
+
+/* engineering-by-stage overlay — each stage's disciplines, linking to digitalmodel */
+const ENG = {
+  acquire: [], explore: ["Geoscience", "Reservoir"], appraise: ["Reservoir model", "Geohazard"],
+  select: ["Concept select", "Naval architecture"],
+  define: ["FEED", "Riser / mooring design", "Hydrodynamics (RAOs)", "Structural"],
+  execute: ["Fabrication", "Installation / pipelay", "CFD"],
+  operate: ["FFS", "Fatigue / VIV", "Mooring fatigue", "IMR", "Flow assurance"],
+  abandon: ["P&amp;A tubulars", "Removal lift", "Pipeline abandon"],
+};
+const ENG_LINK = {
+  "Mooring fatigue": "../hse/mooring-fatigue-grounded-card.html",
+  "Fatigue / VIV": "../hse/riser-fatigue-grounded-card.html",
+};
+$("f-eng").innerHTML = MODEL.phases.map(p => {
+  const chips = (ENG[p.key] || []).map(d => {
+    const href = ENG_LINK[d];
+    return href
+      ? `<a class="engchip link" href="${href}">${d} →</a>`
+      : `<div class="engchip">${d}</div>`;
+  }).join("");
+  return `<div class="engcell">${chips}</div>`;
+}).join("");
+
+/* performance vs norm strip (issue #848) — rendered when the norms contract
+   exists; degraded states are shown honestly, never filled with numbers */
+if (Array.isArray(FIELD.norms) && FIELD.norms.length) {
+  const STAGE_LABEL = { drill:"Drill", complete:"Complete", produce:"Produce",
+                        workover:"Workover", abandon:"Abandon" };
+  const STATE_TEXT = {
+    no_data: "no well-level data",
+    insufficient: "insufficient wells",
+    unavailable: "no per-field data (v1)",
+  };
+  $("f-norms").innerHTML = FIELD.norms.map(c => {
+    const lab = STAGE_LABEL[c.stage] || c.stage;
+    if (c.value === undefined) {
+      const txt = STATE_TEXT[c.state] || c.state;
+      return `<a class="normchip" href="${c.href}"><div class="ns">${lab}</div>`
+        + `<div class="nv mut">${txt}</div><div class="nd mut">stage page →</div></a>`;
+    }
+    const low = c.state === "low_n" ? " · low n" : "";
+    let delta = `<div class="nd mut">vs play: n/a</div>`;
+    if (c.delta_play_pct !== undefined) {
+      const cls = c.delta_play_pct < 0 ? "neg" : "pos";
+      const sign = c.delta_play_pct > 0 ? "+" : "−";
+      delta = `<div class="nd ${cls}">${sign}${Math.abs(c.delta_play_pct)}% vs LT (n=${c.play_n})</div>`;
+    }
+    return `<a class="normchip" href="${c.href}"><div class="ns">${lab}</div>`
+      + `<div class="nv">${c.value} ${c.unit} <span style="opacity:.6;font-weight:500">n=${c.n}${low}</span></div>`
+      + `${delta}</a>`;
+  }).join("");
+  document.getElementById("f-norms-section").hidden = false;
+}
+
+/* activities — current phase + its two neighbours */
+const showIdx = [curIdx-1, curIdx, curIdx+1].filter(i => i >= 0 && i < MODEL.phases.length);
+$("f-activities").innerHTML = showIdx.map(i => {
+  const p = MODEL.phases[i];
+  const cur = i === curIdx ? " cur" : "";
+  const tag = i === curIdx ? " · now" : (i < curIdx ? " · done" : " · next");
+  return `<div class="act${cur}"><h4>${p.name}${tag}</h4><ul>${p.activities.map(a=>`<li>${a}</li>`).join("")}</ul></div>`;
+}).join("");
+
+/* reservoir & HPHT — honesty-gated; nulls render as an em dash */
+if (FIELD.reservoir) {
+  const r = FIELD.reservoir;
+  const DASH = "—";
+  const nfmt = (v) => v.toLocaleString("en-US");
+  const rows = [];
+  rows.push(["Formation", r.formation || DASH]);
+
+  let pill;
+  if (r.hpht_class === "ultra-HPHT") pill = `<span class="hpht ultra">ultra-HPHT</span>`;
+  else if (r.hpht_class === "HPHT") pill = `<span class="hpht hot">HPHT</span>`;
+  else pill = `<span class="mut">${DASH}</span>`;
+  rows.push(["HPHT class", pill]);
+
+  let pressure;
+  if (r.pressure_psi == null) {
+    pressure = `<span class="mut">${DASH}</span>`;
+  } else {
+    const q = r.pressure_qual || "";
+    const sep = /[a-z]$/i.test(q) ? " " : "";
+    pressure = `${q}${sep}${nfmt(r.pressure_psi)} psi`;
+  }
+  if (r.equip_rating_psi != null &&
+      (r.pressure_psi == null || r.pressure_psi !== r.equip_rating_psi)) {
+    pressure += ` <span class="mut">· vs ${nfmt(r.equip_rating_psi)}-psi equipment</span>`;
+  }
+  rows.push(["Reservoir pressure", pressure]);
+
+  rows.push(["Reservoir temp",
+    r.temp_f == null ? `<span class="mut">${DASH}</span>` : `${nfmt(r.temp_f)}°F`]);
+  rows.push(["Reservoir depth",
+    r.tvd_ft == null ? `<span class="mut">${DASH}</span>` : `${nfmt(r.tvd_ft)} ft TVD`]);
+
+  let fluid = r.fluid || DASH;
+  if (r.api != null) fluid += ` <span class="mut">· ${r.api}°API</span>`;
+  rows.push(["Fluid", fluid]);
+
+  $("f-reservoir").innerHTML = rows.map(([k,v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("");
+  $("f-reservoir-card").hidden = false;
+  if (r.source_note) $("f-prov").textContent = FIELD.provenance + " · Reservoir: " + r.source_note;
+}
+
+/* field performance — BSEE life-to-date; honesty-gated, nulls render as em dash */
+if (FIELD.performance) {
+  const p = FIELD.performance;
+  const DASH = "—";
+  const unit = (v, d, u) => v == null
+    ? `<span class="mut">${DASH}</span>`
+    : `${Number(v).toLocaleString("en-US", {minimumFractionDigits:d, maximumFractionDigits:d})}${u}`;
+  // Economics are life-to-date (#971): early-life fields are withheld as a
+  // labeled "n/a", and the credible LTD breakeven leads with the NPV shown as a
+  // captioned detail (not a bare headline number).
+  const early = p.economics_status === "early_life";
+  const econ = (v, d, u) => early
+    ? `<span class="mut">n/a — early life</span>`
+    : unit(v, d, u);
+  // EUR is curated published/booked recoverable reserves (#973), not the
+  // decline-fit extrapolation. null = no credible public figure -> pending.
+  const eurCell = p.eur_mmbbl == null
+    ? `<span class="mut">reserves pending (<a href="https://github.com/vamseeachanta/worldenergydata/issues/973">#973</a>)</span>`
+    : unit(p.eur_mmbbl, 0, " MMbbl") + (p.eur_confidence ? ` <span class="mut">(${p.eur_confidence})</span>` : "");
+  const rows = [
+    ["Benchmark wells", unit(p.wells, 0, "")],
+    ["Cum oil", unit(p.cum_oil_mmbbl, 1, " MMbbl")],
+    ["EUR · recoverable reserves", eurCell],
+    ["Avg uptime", unit(p.avg_uptime_pct, 1, "%")],
+    ["Avg decline", unit(p.avg_decline_pct_yr, 1, "%/yr")],
+    ["Interventions", unit(p.interventions, 0, "")],
+    ["LTD breakeven WTI @10%", econ(p.breakeven_wti, 0, " $/bbl")],
+    ["NPV · life-to-date @10%", econ(p.npv_mm, 1, " $MM")],
+    ["NPV per +$1/bbl", econ(p.sens_mm_per_dollar, 1, " $MM")],
+  ];
+  $("f-performance").innerHTML = rows.map(([k,v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("");
+  $("f-performance-card").hidden = false;
+  $("f-prov").textContent += " · Performance: BSEE OGOR-A per-well benchmark + economics (life-to-date, not full-cycle); EUR = curated recoverable reserves (#973)";
+}
+
+if (FIELD.economics_href) {
+  $("f-economics-link").href = FIELD.economics_href;
+  $("f-economics-card").hidden = false;
+  if (FIELD.benchmark_href) {
+    $("f-benchmark-link").href = FIELD.benchmark_href;
+    $("f-economics-foot").hidden = false;
+  }
+}
+
+/* host facts + working interest */
+$("f-host").innerHTML = FIELD.hostFacts.map(([k,v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("");
+$("f-wi").innerHTML = FIELD.workingInterest.map(w =>
+  `<div class="wi-row"><span class="op${w.lead?" lead":""}">${w.name}</span><span style="font-family:var(--mono)">${w.wi}%</span>
+   <span class="wi-bar"><span style="width:${w.wi}%"></span></span></div>`
+).join("");
+</script>

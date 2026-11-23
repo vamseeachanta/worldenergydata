@@ -1,0 +1,70 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "worldenergydata-marine_safety"
+version = "0.1.0"
+description = "Marine safety incident tracking and analysis (USCG/NTSB/MAIB/TSB/IMO/ATSB) for the worldenergydata namespace."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "Development Team", email = "dev@example.com" },
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+# Per-domain dependency set (ADR 0001 Phase 2 — domain split, batch 4, #529).
+# A deliberate SUBSET of the root package's flat dependency list, measured from
+# this domain's live import footprint, plus ``rapidfuzz`` — used by the
+# correlation matcher (analysis/correlation/matcher.py) for fuzzy incident
+# de-duplication. rapidfuzz was NOT in the root distribution's flat dependency
+# list (the correlation subpackage guarded it behind try/except), so declare it
+# here as a real dependency now that this domain ships independently.
+dependencies = [
+    "worldenergydata-core",
+    "numpy>=2.2.6,<3.0",
+    "pandas>=2.3.3,<3.0",
+    "scipy>=1.11.0,<2.0",
+    "plotly>=5.18.0,<6.0",
+    "pydantic>=2.13.4,<3.0",
+    "pydantic-settings>=2.1.0,<3.0",
+    "sqlalchemy>=2.0.49,<3.0",
+    "httpx>=0.25.0,<1.0",
+    "beautifulsoup4>=4.12.0,<5.0",
+    "pdfplumber>=0.11.9,<1.0",
+    "rapidfuzz>=3.0,<4.0",
+    "tenacity>=9.1.4,<10.0",
+    "click>=8.0,<9.0",
+    "rich>=15.0.0,<16.0",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/vamseeachanta/worldenergydata"
+"Bug Tracker" = "https://github.com/vamseeachanta/worldenergydata/issues"
+
+# ---------------------------------------------------------------------------
+# PEP 420 namespace packaging (ADR 0001 — domain-package split)
+# ---------------------------------------------------------------------------
+# This member ships ONLY ``worldenergydata/marine_safety/`` (+ its package
+# data). It does NOT ship ``worldenergydata/__init__.py`` — the root
+# ``worldenergydata`` distribution remains the SOLE owner of the namespace root
+# ``__init__.py``. Curated/runtime datasets live at the workspace-root
+# ``data/modules/marine_safety/`` and are resolved at runtime via
+# ``worldenergydata.common.data_resolver`` (WED_DATA_ROOT / workspace-root
+# ``data/``), NOT shipped in this wheel.
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["worldenergydata.marine_safety*"]
+namespaces = true
+
+[tool.setuptools.package-data]
+"worldenergydata.marine_safety" = ["*.md", "*.json", "**/*.yml", "**/*.yaml", "**/*.json", "**/*.csv", "**/*.md", "**/*.sql", "**/*.html"]

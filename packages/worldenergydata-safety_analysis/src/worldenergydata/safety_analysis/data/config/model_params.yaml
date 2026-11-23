@@ -1,0 +1,54 @@
+# Hyperparameter search spaces for classification models
+random_forest:
+  n_estimators:
+    type: choice
+    options: [50, 100, 200, 300, 500]
+  max_depth:
+    type: choice
+    options: [5, 10, 20, 30, null]
+  min_samples_split:
+    type: uniform
+    low: 2
+    high: 20
+  min_samples_leaf:
+    type: uniform
+    low: 1
+    high: 10
+  max_features:
+    type: choice
+    options: ["sqrt", "log2", null]
+
+xgboost:
+  n_estimators:
+    type: choice
+    options: [50, 100, 200, 300]
+  max_depth:
+    type: choice
+    options: [3, 5, 7, 10]
+  learning_rate:
+    type: loguniform
+    low: 0.01
+    high: 0.3
+  subsample:
+    type: uniform
+    low: 0.6
+    high: 1.0
+  colsample_bytree:
+    type: uniform
+    low: 0.6
+    high: 1.0
+
+logistic_regression:
+  C:
+    type: loguniform
+    low: 0.001
+    high: 100.0
+  penalty:
+    type: choice
+    options: ["l1", "l2"]
+  solver:
+    type: choice
+    options: ["liblinear", "saga"]
+  max_iter:
+    type: choice
+    options: [100, 200, 500, 1000]

@@ -1,0 +1,101 @@
+{
+  "operators": [
+    {
+      "coverage_by_year": {
+        "2020": {
+          "documents": [],
+          "finding_quote": null,
+          "note": "Not attempted",
+          "refusal_scope": null,
+          "refusal_url": null,
+          "status": "missing"
+        },
+        "2021": {
+          "documents": [],
+          "finding_quote": null,
+          "note": "Not attempted",
+          "refusal_scope": null,
+          "refusal_url": null,
+          "status": "missing"
+        },
+        "2022": {
+          "documents": [
+            {
+              "channel": "annual_report",
+              "content_type": "application/pdf",
+              "fiscal_year": 2022,
+              "http_status": 200,
+              "identity_locator": "Synthetic PDF title page",
+              "identity_quote": "Synthetic Operator Annual Report 2022",
+              "listing_url": "https://example.org/reports",
+              "operator_name": "Synthetic Operator",
+              "retrieved_at_utc": "2026-10-11T12:00:00Z",
+              "sha256": "aa1193a0568d76c4f486f872fc1e239c65e378e416967818ecb8404764259463",
+              "size_bytes": 22,
+              "terms_retrieved_at_utc": "2026-10-11T11:59:00Z",
+              "terms_url": "https://example.org/terms",
+              "terms_wording": "Synthetic permission for tests only",
+              "url": "https://example.org/report-2022.pdf"
+            }
+          ],
+          "finding_quote": null,
+          "note": "Synthetic fixture only",
+          "refusal_scope": null,
+          "refusal_url": null,
+          "status": "verified"
+        },
+        "2023": {
+          "documents": [],
+          "finding_quote": null,
+          "note": "Not attempted",
+          "refusal_scope": null,
+          "refusal_url": null,
+          "status": "missing"
+        },
+        "2024": {
+          "documents": [],
+          "finding_quote": null,
+          "note": "Not attempted",
+          "refusal_scope": null,
+          "refusal_url": null,
+          "status": "missing"
+        }
+      },
+      "discovery_notes": "Synthetic listing, no inferred pattern",
+      "discovery_url": "https://example.org/reports",
+      "filing_channels": [
+        "annual_report"
+      ],
+      "market_context": "Synthetic test market; no real disclosure",
+      "name": "Synthetic Operator",
+      "observations": [
+        {
+          "content_type": "text/html",
+          "http_status": 200,
+          "retrieved_at_utc": "2026-10-11T11:59:00Z",
+          "sha256": "b4cb00492e4079cc43162cc2a710a9131671d1669e3f179de7218fd67d23462c",
+          "size_bytes": 27,
+          "terms_retrieved_at_utc": "2026-10-11T11:59:00Z",
+          "terms_url": "https://example.org/terms",
+          "terms_wording": "Synthetic permission for tests only",
+          "url": "https://example.org/reports"
+        },
+        {
+          "content_type": "text/html",
+          "http_status": 200,
+          "retrieved_at_utc": "2026-10-11T11:59:00Z",
+          "sha256": "b4cb00492e4079cc43162cc2a710a9131671d1669e3f179de7218fd67d23462c",
+          "size_bytes": 27,
+          "terms_retrieved_at_utc": "2026-10-11T11:59:00Z",
+          "terms_url": "https://example.org/terms",
+          "terms_wording": "Synthetic permission for tests only",
+          "url": "https://example.org/terms"
+        }
+      ],
+      "primary_domains": [
+        "example.org"
+      ]
+    }
+  ],
+  "schema_version": 1
+}

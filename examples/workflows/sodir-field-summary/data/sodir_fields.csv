@@ -1,0 +1,3 @@
+field_name,recoverable_oil_mmbbl,recoverable_gas_bcf,recovery_factor,water_depth_m,status,discovery_year,production_start
+Solveig Synthetic,100,300,0.45,110,PRODUCING,2013,2021
+Frigg West Synthetic,50,120,0.35,95,IDLE,1971,1977

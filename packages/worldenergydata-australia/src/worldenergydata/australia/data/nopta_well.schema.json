@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Normalized NOPTA well with explicit unknown depth and field linkage",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["object_id", "well_identifier", "well_name", "title_number", "field_name", "water_depth", "water_depth_unit", "water_depth_datum", "latitude", "longitude", "spatial_reference", "source_columns"],
+  "properties": {
+    "object_id": {"type": "integer"},
+    "well_identifier": {"type": ["string", "null"]},
+    "well_name": {"type": ["string", "null"]},
+    "title_number": {"type": ["string", "null"]},
+    "field_name": {"type": ["string", "null"]},
+    "water_depth": {"type": ["number", "null"], "minimum": 0},
+    "water_depth_unit": {"enum": ["m", "ft", null]},
+    "water_depth_datum": {"type": ["string", "null"]},
+    "latitude": {"type": ["number", "null"], "minimum": -90, "maximum": 90},
+    "longitude": {"type": ["number", "null"], "minimum": -180, "maximum": 180},
+    "spatial_reference": {"type": "object", "required": ["wkid"], "properties": {"wkid": {"const": 4283}}},
+    "source_columns": {"type": "object"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"water_depth": {"type": "number"}}},
+      "then": {"properties": {"water_depth_unit": {"enum": ["m", "ft"]}, "water_depth_datum": {"type": "string", "minLength": 1}}}
+    }
+  ]
+}

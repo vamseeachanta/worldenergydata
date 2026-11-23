@@ -1,0 +1,372 @@
+# ABOUTME: Economic assumptions for Lower Tertiary field analysis (Gulf of Mexico)
+# ABOUTME: Base parameters for NPV, revenue, and cash flow calculations through Dec 2024
+
+metadata:
+  version: "1.0.0"
+  created_date: "2024-12-20"
+  last_updated: "2024-12-20"
+  based_on: "Industry Performance in Lower Tertiary 251020"
+  analysis_period:
+    start_date: "2008-01-01"  # Discovery era
+    end_date: "2024-12-31"
+    forecast_end: "2050-12-31"
+  description: |
+    Economic parameters for Lower Tertiary subsea field developments in
+    Gulf of Mexico. Based on industry paper and public disclosures through
+    December 2024.
+
+# Commodity Price Assumptions
+commodity_prices:
+  # Oil pricing
+  oil:
+    base_case:
+      # Historical averages (2020-2024)
+      wti_usd_per_bbl: 75.00
+      brent_usd_per_bbl: 78.00
+      # Lower Tertiary quality premium/discount
+      quality_adjustment: 0.00  # Assume WTI equivalent
+    
+    scenarios:
+      low:
+        wti_usd_per_bbl: 50.00
+        description: "Conservative price scenario"
+      mid:
+        wti_usd_per_bbl: 75.00
+        description: "Base case scenario"
+      high:
+        wti_usd_per_bbl: 100.00
+        description: "Optimistic price scenario"
+    
+    # Historical price deck (monthly)
+    use_historical_prices: true
+    historical_source: "EIA WTI Cushing monthly"
+    escalation_rate_annual: 0.02  # 2% per year post-2024
+  
+  # Natural gas pricing
+  gas:
+    base_case:
+      henry_hub_usd_per_mcf: 3.50
+      # Gulf of Mexico basis differential
+      basis_differential: -0.20
+    
+    scenarios:
+      low:
+        henry_hub_usd_per_mcf: 2.50
+      mid:
+        henry_hub_usd_per_mcf: 3.50
+      high:
+        henry_hub_usd_per_mcf: 5.00
+    
+    escalation_rate_annual: 0.025  # 2.5% per year
+  
+  # Natural gas liquids
+  ngl:
+    base_usd_per_bbl: 30.00
+    scenarios:
+      low: 20.00
+      mid: 30.00
+      high: 40.00
+    escalation_rate_annual: 0.02
+
+# Government Take (Federal Waters)
+fiscal_terms:
+  # Royalties
+  royalty:
+    rate: 0.1875  # 18.75% standard GOM federal lease
+    description: "Federal offshore lease royalty"
+    payable_on: "gross_revenue"
+  
+  # Taxes
+  taxes:
+    federal_income_tax:
+      rate: 0.21  # 21% corporate rate
+      description: "Federal corporate income tax"
+    
+    state_income_tax:
+      rate: 0.00  # No state tax for federal waters
+      description: "Not applicable for OCS"
+    
+    severance_tax:
+      rate: 0.00  # No severance tax in federal waters
+      description: "Not applicable for OCS"
+    
+    # Effective combined rate
+    combined_rate: 0.21
+  
+  # Working interest and net revenue interest
+  ownership:
+    typical_working_interest: 1.00
+    typical_net_revenue_interest: 0.8125  # 1 - royalty
+    operator_share_typical: 0.33  # Varies by field
+
+# Capital Expenditure Assumptions
+capex:
+  # Subsea development (typical Lower Tertiary)
+  subsea_development:
+    host_facility:
+      # Floating production system (SPAR, TLP, FPSO)
+      cost_range_mm_usd:
+        low: 1500
+        mid: 2000
+        high: 2500
+      description: "Floating production host facility"
+      capacity_mbopd: 80
+    
+    subsea_systems:
+      # Wells and subsea equipment
+      wells:
+        drilling_cost_per_well_mm_usd:
+          low: 150
+          mid: 200
+          high: 250
+        completion_cost_per_well_mm_usd:
+          low: 50
+          mid: 75
+          high: 100
+        typical_well_count: 8
+        description: "20,000+ ft TVD, HPHT conditions"
+      
+      subsea_equipment:
+        surf_per_well_mm_usd: 25  # Subsea umbilicals, risers, flowlines
+        manifolds_mm_usd: 100
+        subsea_production_system_mm_usd: 150
+    
+    # Total typical subsea development
+    typical_total_capex_mm_usd:
+      low: 1800
+      mid: 2500
+      high: 3200
+    
+    # Timing
+    development_phases:
+      engineering_design:
+        duration_months: 24
+        cost_pct_of_total: 0.10
+      construction:
+        duration_months: 36
+        cost_pct_of_total: 0.60
+      installation_commissioning:
+        duration_months: 12
+        cost_pct_of_total: 0.30
+      
+      total_development_time_months: 60  # 5 years FID to first oil
+  
+  # Exploration and appraisal (sunk costs)
+  pre_development:
+    exploration:
+      typical_wells: 2
+      cost_per_well_mm_usd: 200
+      description: "Discovery and appraisal wells"
+    
+    # Often written off before FID
+    carried_forward_to_fid: false
+  
+  # Decommissioning
+  abandonment:
+    cost_as_pct_of_capex: 0.10
+    timing_years_after_cessation: 2
+    description: "P&A wells, remove subsea, decommission host"
+
+# Operating Expenditure Assumptions  
+opex:
+  # Fixed operating costs
+  fixed:
+    annual_fixed_cost_mm_usd: 120
+    description: "Platform operations, manning, insurance"
+    escalation_rate_annual: 0.03
+  
+  # Variable operating costs
+  variable:
+    oil_opex_usd_per_bbl:
+      subsea_tiebacks: 18.00
+      standalone_host: 15.00
+    gas_opex_usd_per_mcf: 0.50
+    water_handling_usd_per_bbl: 2.50
+    
+    description: "Variable with production rates"
+    escalation_rate_annual: 0.03
+  
+  # Workovers and interventions
+  maintenance:
+    annual_workover_budget_mm_usd: 20
+    major_intervention_every_n_years: 5
+    major_intervention_cost_mm_usd: 50
+
+# Production Assumptions
+production:
+  # Typical type curve for Lower Tertiary subsea well
+  type_curve:
+    initial_rate_bopd: 10000  # First production month
+    decline_curve:
+      type: "hyperbolic"
+      initial_decline_rate_annual: 0.45  # 45% first year
+      b_factor: 0.30  # Hyperbolic exponent
+      terminal_decline_rate_annual: 0.08  # 8% after transition
+      transition_to_terminal_years: 5
+    
+    eur_per_well_mmbo:
+      p10: 8
+      p50: 12
+      p90: 18
+  
+  # Field-level assumptions
+  field:
+    plateau_rate_mbopd:
+      typical: 60
+      range_low: 40
+      range_high: 80
+    plateau_duration_years: 3
+    
+    # Gas-oil ratio
+    gor_scf_per_bbl:
+      initial: 800
+      trend: "increasing"  # Increases as pressure depletes
+      terminal: 1500
+    
+    water_cut:
+      initial: 0.05  # 5%
+      trend: "increasing"
+      terminal: 0.80  # 80%
+      breakthrough_years: 8
+
+# Financial Metrics
+financial_metrics:
+  # Discount rates
+  discount_rates:
+    corporate_wacc: 0.10  # 10%
+    project_hurdle_rate: 0.15  # 15% for high-risk deepwater
+    risk_free_rate: 0.04  # 4%
+    
+    # Use for NPV calculations
+    primary_discount_rate: 0.10
+    
+  # IRR thresholds
+  irr_targets:
+    minimum_acceptable: 0.15
+    target: 0.20
+    excellent: 0.30
+  
+  # Payback
+  payback:
+    target_years: 7
+    maximum_acceptable_years: 10
+  
+  # Other metrics
+  metrics:
+    calculate_npv: true
+    calculate_irr: true
+    calculate_payback: true
+    calculate_pi: true  # Profitability index
+    calculate_mirr: true  # Modified IRR
+
+# Reporting and Analysis Options
+reporting:
+  # Time aggregation
+  time_periods:
+    monthly: true
+    quarterly: true
+    annual: true
+    cumulative: true
+  
+  # Metrics to calculate
+  calculated_values:
+    - gross_revenue
+    - net_revenue
+    - operating_cash_flow
+    - free_cash_flow
+    - cumulative_cash_flow
+    - npv_10
+    - npv_15
+    - irr
+    - payback_period
+    - profitability_index
+  
+  # Breakdown categories
+  breakdowns:
+    - by_commodity  # Oil, gas, NGL
+    - by_cost_category  # Capex, opex, taxes, royalties
+    - by_phase  # Exploration, development, production, abandonment
+    - by_well  # Individual well economics
+    - by_year  # Annual summaries
+  
+  # Sensitivity analysis
+  sensitivity:
+    enabled: true
+    parameters:
+      - oil_price: [-30, -20, -10, 0, 10, 20, 30]  # % change
+      - gas_price: [-30, -20, -10, 0, 10, 20, 30]
+      - capex: [-20, -10, 0, 10, 20]
+      - opex: [-20, -10, 0, 10, 20]
+      - production: [-20, -10, 0, 10, 20]
+    
+    outputs:
+      - npv_10
+      - irr
+      - payback_period
+
+# Data Sources and Validation
+data_sources:
+  production_data:
+    source: "BSEE historical production data"
+    path: "data/modules/bsee/zip/historical_production_yearly/"
+    format: "zip_delimited"
+    vintage: "2024-12-31"
+  
+  price_data:
+    source: "EIA WTI Cushing monthly"
+    path: "data/prices/wti_full_monthly.xlsx"
+    vintage: "2024-12-31"
+  
+  well_data:
+    source: "BSEE well data (ePlan, directional surveys)"
+    paths:
+      - "data/modules/bsee/bin/war/"
+      - "data/modules/bsee/bin/directional_surveys/"
+  
+  validation:
+    check_data_completeness: true
+    require_minimum_months: 12
+    flag_anomalies: true
+    log_warnings: true
+
+# Assumptions and Limitations
+assumptions:
+  - assumption: "WTI prices used as proxy for realized prices"
+    impact: "May overstate revenue if differentials widen"
+  
+  - assumption: "No transportation costs modeled separately"
+    impact: "Implicit in opex per barrel assumptions"
+  
+  - assumption: "100% working interest perspective"
+    impact: "Results show field-level economics before partner splits"
+  
+  - assumption: "No hedging or derivative positions"
+    impact: "Full commodity price exposure"
+  
+  - assumption: "Straight-line depreciation for tax purposes"
+    impact: "Simplified tax calculation"
+  
+  - assumption: "Production decline curves are hypothetical"
+    impact: "Actual performance varies by reservoir and completion"
+  
+  - assumption: "No shut-in periods or force majeure"
+    impact: "Represents continuous operations"
+
+# Notes
+notes: |
+  This configuration reflects typical Lower Tertiary subsea developments
+  in the Gulf of Mexico. Individual fields may vary significantly based on:
+  - Reservoir characteristics (pressure, temperature, fluid properties)
+  - Water depth and infrastructure distance
+  - Development concept (standalone vs. tieback)
+  - Operator capabilities and contracting strategies
+  - Market timing for equipment and services
+  
+  Key characteristics of Lower Tertiary:
+  - Ultra-deep water (>7,000 ft)
+  - High-pressure, high-temperature (HPHT) conditions
+  - Total vertical depth >20,000 ft
+  - Significant exploration risk
+  - Large potential reserves (>200 MMBOE per field)
+  - High capital intensity ($2-5 billion developments)
+  - Long lead times (5-7 years FID to first oil)

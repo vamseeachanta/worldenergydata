@@ -1,0 +1,407 @@
+# Mexico CNH Oil & Gas Configuration
+# Comision Nacional de Hidrocarburos (CNH) Data Integration
+
+module: mexico_cnh
+version: 1.0.0
+description: Configuration for Mexican oil & gas data collection from CNH
+
+# SIH Dashboard Configuration (Selenium-based scraping)
+sih:
+  base_url: https://sih.hidrocarburos.gob.mx
+  dashboard_url: https://sih.hidrocarburos.gob.mx/dashboardProduccion.html
+  requires_selenium: true
+  rate_limit: 1  # requests per second (respectful scraping)
+  cache_ttl: 3600  # 1 hour in seconds
+  timeout: 60  # page load timeout in seconds
+  max_retries: 3
+  retry_delay: 5  # seconds between retries
+
+  # Selenium WebDriver Configuration
+  selenium:
+    browser: chrome
+    headless: true
+    window_size:
+      width: 1920
+      height: 1080
+    page_load_timeout: 60
+    implicit_wait: 10
+    explicit_wait: 30
+
+    # Chrome options
+    chrome_options:
+      - "--no-sandbox"
+      - "--disable-dev-shm-usage"
+      - "--disable-gpu"
+      - "--disable-extensions"
+      - "--disable-infobars"
+      - "--disable-notifications"
+      - "--disable-popup-blocking"
+      - "--start-maximized"
+
+    # User agent
+    user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+
+    # WebDriver manager settings
+    webdriver_manager:
+      cache_valid_range: 7  # days to cache driver
+      log_level: 0  # 0=silent, 1=info, 2=debug
+
+  # SIH Dashboard sections
+  sections:
+    production:
+      url: /dashboardProduccion.html
+      description: "Oil and gas production data"
+      selectors:
+        table: "table.data-table"
+        download_button: "button.export-btn"
+        date_filter: "input.date-filter"
+
+    wells:
+      url: /dashboardPozos.html
+      description: "Well information and status"
+      selectors:
+        table: "table.wells-table"
+        download_button: "button.export-btn"
+
+    fields:
+      url: /dashboardCampos.html
+      description: "Field information"
+      selectors:
+        table: "table.fields-table"
+        download_button: "button.export-btn"
+
+    contracts:
+      url: /dashboardContratos.html
+      description: "Contract information"
+      selectors:
+        table: "table.contracts-table"
+        download_button: "button.export-btn"
+
+    reserves:
+      url: /dashboardReservas.html
+      description: "Reserves estimates"
+      selectors:
+        table: "table.reserves-table"
+        download_button: "button.export-btn"
+
+# CNH Open Data Portal Configuration (Direct HTTP download)
+open_data:
+  base_url: https://datos.gob.mx
+  organization_url: https://datos.gob.mx/busca/organization/cnh
+  api_url: https://datos.gob.mx/busca/api/3
+  requires_selenium: false
+  rate_limit: 2  # requests per second
+  cache_ttl: 86400  # 24 hours in seconds
+  timeout: 120  # request timeout in seconds
+  max_retries: 3
+  retry_delay: 2  # seconds between retries
+
+  # Headers for API requests
+  headers:
+    User-Agent: "WorldEnergyData Mexico CNH Client/1.0"
+    Accept: "application/json,text/csv,application/vnd.ms-excel;q=0.9,*/*;q=0.8"
+    Accept-Encoding: "gzip, deflate"
+    Accept-Language: "es-MX,es;q=0.9,en;q=0.8"
+
+  # Dataset identifiers
+  datasets:
+    production:
+      id: "produccion-de-hidrocarburos"
+      format: csv
+      description: "Monthly oil and gas production"
+      update_frequency: monthly
+
+    wells:
+      id: "pozos-perforados"
+      format: csv
+      description: "Drilled wells information"
+      update_frequency: monthly
+
+    fields:
+      id: "campos-petroleros"
+      format: csv
+      description: "Oil and gas fields"
+      update_frequency: quarterly
+
+    contracts:
+      id: "contratos-exploracion-extraccion"
+      format: csv
+      description: "Exploration and extraction contracts"
+      update_frequency: quarterly
+
+    reserves:
+      id: "reservas-hidrocarburos"
+      format: csv
+      description: "Hydrocarbon reserves"
+      update_frequency: annual
+
+# Data Types Configuration
+data_types:
+  production:
+    enabled: true
+    description: "Monthly oil and gas production data"
+    format: csv
+    update_frequency: monthly
+    parameters:
+      include_historical: true
+      include_forecasts: false
+
+  wells:
+    enabled: true
+    description: "Well locations, status, and attributes"
+    format: csv
+    update_frequency: monthly
+    parameters:
+      include_inactive: true
+      include_coordinates: true
+
+  fields:
+    enabled: true
+    description: "Oil and gas field information"
+    format: csv
+    update_frequency: quarterly
+    parameters:
+      include_offshore: true
+      include_onshore: true
+
+  contracts:
+    enabled: true
+    description: "Exploration and extraction contracts"
+    format: csv
+    update_frequency: quarterly
+    parameters:
+      include_pemex: true
+      include_private: true
+
+  reserves:
+    enabled: true
+    description: "Proved, probable, possible reserves"
+    format: csv
+    update_frequency: annual
+    parameters:
+      reserve_categories: ["1P", "2P", "3P"]
+
+# Clave del Pozo (Well Key) Validation Configuration
+validation:
+  clave_pozo:
+    format: "RR-CC-AA-NNNNN"
+    description: "Region-Basin-Area-WellNumber format"
+    regex: "^[0-9]{2}-[0-9]{2}-[0-9]{2}-[0-9]{5,}$"
+    compact_regex: "^[0-9]{11,14}$"
+
+  # Region codes
+  regions:
+    "01": "Noroeste"
+    "02": "Norte"
+    "03": "Sur"
+    "04": "Golfo de Mexico Norte"
+    "05": "Golfo de Mexico Sur"
+    "06": "Sureste Terrestre"
+    "07": "Aguas Profundas"
+
+  # Mexico coordinate bounds
+  mexico_bounds:
+    lat_min: 14.5
+    lat_max: 32.7
+    lon_min: -118.4
+    lon_max: -86.7
+    crs: "EPSG:4326"
+
+  # Gulf of Mexico offshore bounds
+  gom_offshore_bounds:
+    lat_min: 18.0
+    lat_max: 27.0
+    lon_min: -98.0
+    lon_max: -86.0
+    crs: "EPSG:4326"
+
+  # Data quality checks
+  quality:
+    enabled: true
+    strict_mode: false
+    log_warnings: true
+    rules:
+      - check_clave_format
+      - check_coordinate_bounds
+      - check_production_values
+      - check_date_ranges
+
+# Data Processing Configuration
+processing:
+  chunk_size: 50000
+  parallel_workers: 4
+  normalize_clave: true
+  validate_coordinates: true
+
+  # Coordinate system transformation
+  coordinates:
+    source_crs: "EPSG:4326"  # WGS84
+    target_crs: "EPSG:4326"  # WGS84
+
+  # Unit conversions
+  units:
+    depth: meters
+    oil: barrels  # bbl
+    gas: mmcf  # million cubic feet
+    water: barrels
+    pressure: psi
+
+  # Data normalization
+  normalization:
+    dates_format: "ISO8601"  # YYYY-MM-DD
+    missing_values: null
+    boolean_true: ["SI", "S", "YES", "TRUE", "1", "ACTIVO"]
+    boolean_false: ["NO", "N", "FALSE", "0", "INACTIVO"]
+
+  # Spanish to English field mapping
+  field_mapping:
+    fecha: date
+    produccion_aceite: oil_production
+    produccion_gas: gas_production
+    produccion_agua: water_production
+    nombre_campo: field_name
+    nombre_pozo: well_name
+    estado: status
+    operador: operator
+    contrato: contract
+    region: region
+    cuenca: basin
+    activo: asset
+
+# Output Configuration
+output:
+  directory: ./data/mexico_cnh
+  formats: [csv, parquet]
+  organize_by: [source, date, type]
+
+  # File naming pattern
+  naming:
+    pattern: "{source}_{data_type}_{date}.{format}"
+    date_format: "%Y%m%d"
+    time_format: "%H%M%S"
+
+  # Compression
+  compression:
+    enabled: true
+    format: gzip
+
+  # Storage organization
+  organization:
+    by_date: true
+    by_type: true
+    by_source: true
+    structure: "{source}/{year}/{month}/{data_type}/"
+
+# Analysis Configuration
+analysis:
+  enabled: false
+
+  # Production trend analysis
+  production_trends:
+    enabled: false
+    metrics:
+      - monthly_oil_production
+      - monthly_gas_production
+      - well_count_active
+      - average_production_per_well
+    aggregation_levels:
+      - region
+      - basin
+      - field
+      - operator
+      - contract
+
+  # Decline curve analysis
+  decline_curves:
+    enabled: false
+    methods:
+      - exponential
+      - hyperbolic
+      - harmonic
+    min_months: 12
+    forecast_months: 60
+
+  # Visualization
+  visualization:
+    enabled: false
+    output_format: html
+    charts:
+      - region_production_map
+      - production_trends
+      - well_activity
+      - contract_comparison
+
+# Performance Configuration
+performance:
+  parallel:
+    enabled: true
+    max_workers: 4
+    chunk_size: 50000
+
+  memory:
+    max_cache_size_mb: 1000
+    batch_size: 50000
+
+  progress:
+    enabled: true
+    update_interval: 10  # seconds
+
+# Logging Configuration
+logging:
+  level: INFO
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file:
+    enabled: true
+    path: "./logs/mexico_cnh.log"
+    max_size_mb: 10
+    backup_count: 5
+  console:
+    enabled: true
+    colored: true
+
+# Error Handling
+error_handling:
+  retry:
+    max_attempts: 3
+    backoff_factor: 2
+    max_delay: 60
+
+  reporting:
+    save_errors: true
+    error_file: "./logs/mexico_cnh_errors.json"
+    include_traceback: true
+
+  recovery:
+    checkpoint_enabled: true
+    checkpoint_interval: 1000
+    resume_on_failure: true
+
+# Integration Configuration
+integration:
+  # BSEE integration for GOM comparison
+  bsee:
+    enabled: false
+    data_path: "./data/bsee"
+    comparison_fields:
+      - production
+      - well_counts
+      - deepwater_activity
+
+  # Database integration
+  database:
+    enabled: false
+    type: postgresql
+    connection:
+      host: localhost
+      port: 5432
+      database: worldenergydata
+      user: null
+      password: null
+
+  # Export formats
+  export:
+    enabled: false
+    formats:
+      - excel
+      - shapefile
+      - geojson

@@ -1,0 +1,65 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "worldenergydata-lng_terminals"
+version = "0.1.0"
+description = "Global LNG terminal dataset with engineering design data for the worldenergydata namespace."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "Development Team", email = "dev@example.com" },
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+# Per-domain dependency set (ADR 0001 Phase 2 — domain split, batch 4, #529).
+# A deliberate SUBSET of the root package's flat dependency list, measured from
+# this domain's live import footprint. pyarrow backs the Parquet export path;
+# pyyaml loads the optional config override; httpx/beautifulsoup4 drive the
+# web/FERC/GIE collectors.
+dependencies = [
+    "worldenergydata-core",
+    "pandas>=2.3.3,<3.0",
+    "pydantic>=2.13.4,<3.0",
+    "pyarrow>=14.0.0,<20.0",
+    "pyyaml>=6.0,<7.0",
+    "httpx>=0.25.0,<1.0",
+    "beautifulsoup4>=4.12.0,<5.0",
+    "typer>=0.9.0,<1.0",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/vamseeachanta/worldenergydata"
+"Bug Tracker" = "https://github.com/vamseeachanta/worldenergydata/issues"
+
+# ---------------------------------------------------------------------------
+# PEP 420 namespace packaging (ADR 0001 — domain-package split)
+# ---------------------------------------------------------------------------
+# This member ships ONLY ``worldenergydata/lng_terminals/`` — INCLUDING its
+# curated seed dataset, collector caches, and the optional config override,
+# which travel with the package under ``lng_terminals/_data/`` (ADR 0001 Phase 2
+# batch 4, #529 — option (i): data ships in the wheel). The dataset is small
+# (~0.2 MB). It does NOT ship ``worldenergydata/__init__.py`` — the root
+# ``worldenergydata`` distribution remains the SOLE owner of the namespace root.
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["worldenergydata.lng_terminals*"]
+namespaces = true
+
+# Ship the curated dataset + config override under ``_data/`` so config.py
+# resolves them package-relative from the installed wheel.
+[tool.setuptools.package-data]
+"worldenergydata.lng_terminals" = [
+    "*.md", "*.json", "**/*.yml", "**/*.yaml", "**/*.json", "**/*.csv", "**/*.md", "**/*.html",
+    "_data/**/*.csv", "_data/**/*.json", "_data/**/*.yaml", "_data/**/*.yml", "_data/**/*.html",
+]

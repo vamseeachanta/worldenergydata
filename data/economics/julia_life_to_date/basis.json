@@ -1,0 +1,98 @@
+{
+  "assumptions": {
+    "capex_usd_mm": {
+      "basis": "config/analysis/lower_tertiary/fields/julia.yml",
+      "reason": "assumed, based on previous experience; Recorded capital assumption is charged at first observed production; actual expenditure and timing are unavailable.",
+      "status": "ASSUMED",
+      "unit": "USD million",
+      "value": 4700
+    },
+    "discount_rate": {
+      "basis": "config/analysis/lower_tertiary/economic_assumptions.yml",
+      "reason": "assumed, based on previous experience; Scenario discount rate; financing terms are unavailable.",
+      "status": "ASSUMED",
+      "unit": "1",
+      "value": 0.1
+    },
+    "gas_boe_conversion": {
+      "basis": "packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/npv.py",
+      "reason": "The existing module's energy-equivalence convention is retained; sales energy content is unavailable.",
+      "status": "ASSUMED",
+      "unit": "Mcf/boe",
+      "value": 6
+    },
+    "gas_price": {
+      "basis": "config/analysis/lower_tertiary/economic_assumptions.yml",
+      "reason": "assumed, based on previous experience; Constant scenario price; realized sales prices are not established.",
+      "status": "ASSUMED",
+      "unit": "USD/Mcf",
+      "value": 3.5
+    },
+    "income_tax_rate": {
+      "basis": "Pre-tax analysis scope",
+      "reason": "Tax is excluded; zero is a model exclusion, not an actual tax rate.",
+      "status": "ASSUMED",
+      "unit": "1",
+      "value": 0
+    },
+    "oil_price": {
+      "basis": "config/analysis/lower_tertiary/economic_assumptions.yml",
+      "reason": "assumed, based on previous experience; Constant scenario price; realized sales prices are not established.",
+      "status": "ASSUMED",
+      "unit": "USD/bbl",
+      "value": 75.0
+    },
+    "opex_per_boe": {
+      "basis": "config/analysis/lower_tertiary/fields/julia.yml",
+      "reason": "assumed, based on previous experience; Observed field operating expenditure is unavailable.",
+      "status": "ASSUMED",
+      "unit": "USD/boe",
+      "value": 18.0
+    },
+    "royalty_rate": {
+      "basis": "config/analysis/lower_tertiary/economic_assumptions.yml",
+      "reason": "assumed, based on previous experience; Lease-specific royalty payments and relief are not established; the recorded publisher reference returned HTTP 404.",
+      "status": "ASSUMED",
+      "unit": "1",
+      "value": 0.1875
+    }
+  },
+  "block": "WR 584",
+  "excluded_completions": [],
+  "field": "Julia",
+  "field_code": "WR627",
+  "field_lease_leases": [
+    "G20351",
+    "G20361",
+    "G25251"
+  ],
+  "field_selection_matches_previous_lease_extract": false,
+  "lease": "G20351",
+  "leases": [
+    "G20351",
+    "G20361",
+    "G25251"
+  ],
+  "production_leases": [
+    "G20351",
+    "G20361",
+    "G25251"
+  ],
+  "production_selection": "BOEM_FIELD = WR627; field-lease selection: FIELD_NAME_CODE = WR627; wells: BOTM_FLD_NAME_CD = WR627; completions: API join to selected field wells.",
+  "production_years": [
+    2015,
+    2016,
+    2017,
+    2018,
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025,
+    2026
+  ],
+  "selection_basis": "reports/lower_tertiary/2026-06-17-julia-granular-economics-summary.md",
+  "source_revision": "c9f0e83c3d9c3d581546c1c42c8e687f0db20338"
+}

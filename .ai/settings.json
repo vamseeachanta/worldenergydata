@@ -1,0 +1,34 @@
+{
+  "ai_assistant": {
+    "permissions": {
+      "read_files": true,
+      "write_files": true,
+      "run_commands": true,
+      "web_access": false
+    },
+    "preferences": {
+      "show_tips": false,
+      "show_getting_started": false,
+      "suppress_welcome_messages": true,
+      "direct_mode": true,
+      "minimal_output": true
+    },
+    "context": {
+      "project_type": "energy_data_analysis",
+      "focus_areas": ["bsee", "offshore_engineering", "production_data"],
+      "documentation_style": "spartan_informative"
+    },
+    "behavior": {
+      "start_directly": true,
+      "skip_introductions": true,
+      "suppress_tips": true,
+      "no_welcome_text": true
+    }
+  },
+  "repository": {
+    "name": "worldenergydata",
+    "type": "data_analysis",
+    "primary_language": "python",
+    "ai_ready": true
+  }
+}

@@ -1,0 +1,587 @@
+matrix:
+  shelf_lt_500:
+    light_live_well:
+      band: shelf_lt_500
+      band_label: < 500 ft (shelf)
+      scope: light_live_well
+      scope_label: Light live-well (riserless wireline)
+      scope_description: 'Riserless light well intervention: wireline/slickline through
+        a subsea lubricator from an RLWI monohull or MPSV. Live well, no riser.'
+      eligible_asset_classes:
+      - rlwi_monohull
+      - mpsv
+      riser_required: false
+      riser_rule: Depth does not pick the asset; riser-need picks the asset.
+      modu_servicing_band: false
+      availability_constrained: false
+      horizontal_tree: false
+      hxt_modifier_applied: false
+      notes:
+      - "Shelf band (< 500 ft): jack-up / platform serviceable \u2014 not a MODU-required\
+        \ water depth."
+    through_tubing_ct:
+      band: shelf_lt_500
+      band_label: < 500 ft (shelf)
+      scope: through_tubing_ct
+      scope_label: Through-tubing coiled tubing
+      scope_description: "Through-tubing coiled-tubing work (stimulation, scale, perforating).\
+        \ Needs an intervention riser \u2014 heavy-intervention semi or MODU."
+      eligible_asset_classes:
+      - heavy_intervention_semi
+      - modu
+      riser_required: true
+      riser_rule: Depth does not pick the asset; riser-need picks the asset.
+      modu_servicing_band: false
+      availability_constrained: false
+      horizontal_tree: false
+      hxt_modifier_applied: false
+      notes:
+      - "Shelf band (< 500 ft): jack-up / platform serviceable \u2014 not a MODU-required\
+        \ water depth."
+    heavy_dead_well:
+      band: shelf_lt_500
+      band_label: < 500 ft (shelf)
+      scope: heavy_dead_well
+      scope_label: Heavy dead-well (tubing pull / recompletion / P&A)
+      scope_description: "Tubing pull / recompletion / ESP change-out / P&A. Full\
+        \ workover riser + subsea BOP \u2014 a MODU or a Helix Q-class heavy-intervention\
+        \ semi."
+      eligible_asset_classes:
+      - modu
+      - heavy_intervention_semi
+      riser_required: true
+      riser_rule: Depth does not pick the asset; riser-need picks the asset.
+      modu_servicing_band: false
+      availability_constrained: false
+      horizontal_tree: false
+      hxt_modifier_applied: false
+      notes:
+      - "Shelf band (< 500 ft): jack-up / platform serviceable \u2014 not a MODU-required\
+        \ water depth."
+  band_500_3000:
+    light_live_well:
+      band: band_500_3000
+      band_label: 500-3,000 ft
+      scope: light_live_well
+      scope_label: Light live-well (riserless wireline)
+      scope_description: 'Riserless light well intervention: wireline/slickline through
+        a subsea lubricator from an RLWI monohull or MPSV. Live well, no riser.'
+      eligible_asset_classes:
+      - rlwi_monohull
+      - mpsv
+      riser_required: false
+      riser_rule: Depth does not pick the asset; riser-need picks the asset.
+      modu_servicing_band: true
+      availability_constrained: false
+      horizontal_tree: false
+      hxt_modifier_applied: false
+      notes: []
+    through_tubing_ct:
+      band: band_500_3000
+      band_label: 500-3,000 ft
+      scope: through_tubing_ct
+      scope_label: Through-tubing coiled tubing
+      scope_description: "Through-tubing coiled-tubing work (stimulation, scale, perforating).\
+        \ Needs an intervention riser \u2014 heavy-intervention semi or MODU."
+      eligible_asset_classes:
+      - heavy_intervention_semi
+      - modu
+      riser_required: true
+      riser_rule: Depth does not pick the asset; riser-need picks the asset.
+      modu_servicing_band: true
+      availability_constrained: false
+      horizontal_tree: false
+      hxt_modifier_applied: false
+      notes: []
+    heavy_dead_well:
+      band: band_500_3000
+      band_label: 500-3,000 ft
+      scope: heavy_dead_well
+      scope_label: Heavy dead-well (tubing pull / recompletion / P&A)
+      scope_description: "Tubing pull / recompletion / ESP change-out / P&A. Full\
+        \ workover riser + subsea BOP \u2014 a MODU or a Helix Q-class heavy-intervention\
+        \ semi."
+      eligible_asset_classes:
+      - modu
+      - heavy_intervention_semi
+      riser_required: true
+      riser_rule: Depth does not pick the asset; riser-need picks the asset.
+      modu_servicing_band: true
+      availability_constrained: false
+      horizontal_tree: false
+      hxt_modifier_applied: false
+      notes: []
+  band_3000_5000:
+    light_live_well:
+      band: band_3000_5000
+      band_label: 3,000-5,000 ft
+      scope: light_live_well
+      scope_label: Light live-well (riserless wireline)
+      scope_description: 'Riserless light well intervention: wireline/slickline through
+        a subsea lubricator from an RLWI monohull or MPSV. Live well, no riser.'
+      eligible_asset_classes:
+      - rlwi_monohull
+      - mpsv
+      riser_required: false
+      riser_rule: Depth does not pick the asset; riser-need picks the asset.
+      modu_servicing_band: true
+      availability_constrained: false
+      horizontal_tree: false
+      hxt_modifier_applied: false
+      notes: []
+    through_tubing_ct:
+      band: band_3000_5000
+      band_label: 3,000-5,000 ft
+      scope: through_tubing_ct
+      scope_label: Through-tubing coiled tubing
+      scope_description: "Through-tubing coiled-tubing work (stimulation, scale, perforating).\
+        \ Needs an intervention riser \u2014 heavy-intervention semi or MODU."
+      eligible_asset_classes:
+      - heavy_intervention_semi
+      - modu
+      riser_required: true
+      riser_rule: Depth does not pick the asset; riser-need picks the asset.
+      modu_servicing_band: true
+      availability_constrained: false
+      horizontal_tree: false
+      hxt_modifier_applied: false
+      notes: []
+    heavy_dead_well:
+      band: band_3000_5000
+      band_label: 3,000-5,000 ft
+      scope: heavy_dead_well
+      scope_label: Heavy dead-well (tubing pull / recompletion / P&A)
+      scope_description: "Tubing pull / recompletion / ESP change-out / P&A. Full\
+        \ workover riser + subsea BOP \u2014 a MODU or a Helix Q-class heavy-intervention\
+        \ semi."
+      eligible_asset_classes:
+      - modu
+      - heavy_intervention_semi
+      riser_required: true
+      riser_rule: Depth does not pick the asset; riser-need picks the asset.
+      modu_servicing_band: true
+      availability_constrained: false
+      horizontal_tree: false
+      hxt_modifier_applied: false
+      notes: []
+  band_5000_10000:
+    light_live_well:
+      band: band_5000_10000
+      band_label: 5,000-10,000 ft
+      scope: light_live_well
+      scope_label: Light live-well (riserless wireline)
+      scope_description: 'Riserless light well intervention: wireline/slickline through
+        a subsea lubricator from an RLWI monohull or MPSV. Live well, no riser.'
+      eligible_asset_classes:
+      - rlwi_monohull
+      - mpsv
+      riser_required: false
+      riser_rule: Depth does not pick the asset; riser-need picks the asset.
+      modu_servicing_band: true
+      availability_constrained: true
+      horizontal_tree: false
+      hxt_modifier_applied: false
+      notes:
+      - "Light riserless work is fully capable here, but the pool of RLWI/MPSV units\
+        \ rated for 5,000-10,000 ft is thin \u2014 an availability limit, not a capability\
+        \ limit."
+    through_tubing_ct:
+      band: band_5000_10000
+      band_label: 5,000-10,000 ft
+      scope: through_tubing_ct
+      scope_label: Through-tubing coiled tubing
+      scope_description: "Through-tubing coiled-tubing work (stimulation, scale, perforating).\
+        \ Needs an intervention riser \u2014 heavy-intervention semi or MODU."
+      eligible_asset_classes:
+      - heavy_intervention_semi
+      - modu
+      riser_required: true
+      riser_rule: Depth does not pick the asset; riser-need picks the asset.
+      modu_servicing_band: true
+      availability_constrained: false
+      horizontal_tree: false
+      hxt_modifier_applied: false
+      notes: []
+    heavy_dead_well:
+      band: band_5000_10000
+      band_label: 5,000-10,000 ft
+      scope: heavy_dead_well
+      scope_label: Heavy dead-well (tubing pull / recompletion / P&A)
+      scope_description: "Tubing pull / recompletion / ESP change-out / P&A. Full\
+        \ workover riser + subsea BOP \u2014 a MODU or a Helix Q-class heavy-intervention\
+        \ semi."
+      eligible_asset_classes:
+      - modu
+      - heavy_intervention_semi
+      riser_required: true
+      riser_rule: Depth does not pick the asset; riser-need picks the asset.
+      modu_servicing_band: true
+      availability_constrained: false
+      horizontal_tree: false
+      hxt_modifier_applied: false
+      notes: []
+  band_gt_10000:
+    light_live_well:
+      band: band_gt_10000
+      band_label: '> 10,000 ft'
+      scope: light_live_well
+      scope_label: Light live-well (riserless wireline)
+      scope_description: 'Riserless light well intervention: wireline/slickline through
+        a subsea lubricator from an RLWI monohull or MPSV. Live well, no riser.'
+      eligible_asset_classes:
+      - rlwi_monohull
+      - mpsv
+      riser_required: false
+      riser_rule: Depth does not pick the asset; riser-need picks the asset.
+      modu_servicing_band: true
+      availability_constrained: false
+      horizontal_tree: false
+      hxt_modifier_applied: false
+      notes: []
+    through_tubing_ct:
+      band: band_gt_10000
+      band_label: '> 10,000 ft'
+      scope: through_tubing_ct
+      scope_label: Through-tubing coiled tubing
+      scope_description: "Through-tubing coiled-tubing work (stimulation, scale, perforating).\
+        \ Needs an intervention riser \u2014 heavy-intervention semi or MODU."
+      eligible_asset_classes:
+      - heavy_intervention_semi
+      - modu
+      riser_required: true
+      riser_rule: Depth does not pick the asset; riser-need picks the asset.
+      modu_servicing_band: true
+      availability_constrained: false
+      horizontal_tree: false
+      hxt_modifier_applied: false
+      notes: []
+    heavy_dead_well:
+      band: band_gt_10000
+      band_label: '> 10,000 ft'
+      scope: heavy_dead_well
+      scope_label: Heavy dead-well (tubing pull / recompletion / P&A)
+      scope_description: "Tubing pull / recompletion / ESP change-out / P&A. Full\
+        \ workover riser + subsea BOP \u2014 a MODU or a Helix Q-class heavy-intervention\
+        \ semi."
+      eligible_asset_classes:
+      - modu
+      - heavy_intervention_semi
+      riser_required: true
+      riser_rule: Depth does not pick the asset; riser-need picks the asset.
+      modu_servicing_band: true
+      availability_constrained: false
+      horizontal_tree: false
+      hxt_modifier_applied: false
+      notes: []
+horizontal_tree_variant:
+  shelf_lt_500:
+    light_live_well:
+      band: shelf_lt_500
+      band_label: < 500 ft (shelf)
+      scope: light_live_well
+      scope_label: Light live-well (riserless wireline)
+      scope_description: 'Riserless light well intervention: wireline/slickline through
+        a subsea lubricator from an RLWI monohull or MPSV. Live well, no riser.'
+      eligible_asset_classes:
+      - modu
+      - heavy_intervention_semi
+      riser_required: true
+      riser_rule: Depth does not pick the asset; riser-need picks the asset.
+      modu_servicing_band: false
+      availability_constrained: false
+      horizontal_tree: true
+      hxt_modifier_applied: true
+      notes:
+      - "HXT tubing pull forces riser-based access \u2014 riserless light units cannot\
+        \ pull tubing through a horizontal tree."
+      - "Shelf band (< 500 ft): jack-up / platform serviceable \u2014 not a MODU-required\
+        \ water depth."
+    through_tubing_ct:
+      band: shelf_lt_500
+      band_label: < 500 ft (shelf)
+      scope: through_tubing_ct
+      scope_label: Through-tubing coiled tubing
+      scope_description: "Through-tubing coiled-tubing work (stimulation, scale, perforating).\
+        \ Needs an intervention riser \u2014 heavy-intervention semi or MODU."
+      eligible_asset_classes:
+      - heavy_intervention_semi
+      - modu
+      riser_required: true
+      riser_rule: Depth does not pick the asset; riser-need picks the asset.
+      modu_servicing_band: false
+      availability_constrained: false
+      horizontal_tree: true
+      hxt_modifier_applied: false
+      notes:
+      - "Shelf band (< 500 ft): jack-up / platform serviceable \u2014 not a MODU-required\
+        \ water depth."
+    heavy_dead_well:
+      band: shelf_lt_500
+      band_label: < 500 ft (shelf)
+      scope: heavy_dead_well
+      scope_label: Heavy dead-well (tubing pull / recompletion / P&A)
+      scope_description: "Tubing pull / recompletion / ESP change-out / P&A. Full\
+        \ workover riser + subsea BOP \u2014 a MODU or a Helix Q-class heavy-intervention\
+        \ semi."
+      eligible_asset_classes:
+      - modu
+      - heavy_intervention_semi
+      riser_required: true
+      riser_rule: Depth does not pick the asset; riser-need picks the asset.
+      modu_servicing_band: false
+      availability_constrained: false
+      horizontal_tree: true
+      hxt_modifier_applied: false
+      notes:
+      - "Shelf band (< 500 ft): jack-up / platform serviceable \u2014 not a MODU-required\
+        \ water depth."
+  band_500_3000:
+    light_live_well:
+      band: band_500_3000
+      band_label: 500-3,000 ft
+      scope: light_live_well
+      scope_label: Light live-well (riserless wireline)
+      scope_description: 'Riserless light well intervention: wireline/slickline through
+        a subsea lubricator from an RLWI monohull or MPSV. Live well, no riser.'
+      eligible_asset_classes:
+      - modu
+      - heavy_intervention_semi
+      riser_required: true
+      riser_rule: Depth does not pick the asset; riser-need picks the asset.
+      modu_servicing_band: true
+      availability_constrained: false
+      horizontal_tree: true
+      hxt_modifier_applied: true
+      notes:
+      - "HXT tubing pull forces riser-based access \u2014 riserless light units cannot\
+        \ pull tubing through a horizontal tree."
+    through_tubing_ct:
+      band: band_500_3000
+      band_label: 500-3,000 ft
+      scope: through_tubing_ct
+      scope_label: Through-tubing coiled tubing
+      scope_description: "Through-tubing coiled-tubing work (stimulation, scale, perforating).\
+        \ Needs an intervention riser \u2014 heavy-intervention semi or MODU."
+      eligible_asset_classes:
+      - heavy_intervention_semi
+      - modu
+      riser_required: true
+      riser_rule: Depth does not pick the asset; riser-need picks the asset.
+      modu_servicing_band: true
+      availability_constrained: false
+      horizontal_tree: true
+      hxt_modifier_applied: false
+      notes: []
+    heavy_dead_well:
+      band: band_500_3000
+      band_label: 500-3,000 ft
+      scope: heavy_dead_well
+      scope_label: Heavy dead-well (tubing pull / recompletion / P&A)
+      scope_description: "Tubing pull / recompletion / ESP change-out / P&A. Full\
+        \ workover riser + subsea BOP \u2014 a MODU or a Helix Q-class heavy-intervention\
+        \ semi."
+      eligible_asset_classes:
+      - modu
+      - heavy_intervention_semi
+      riser_required: true
+      riser_rule: Depth does not pick the asset; riser-need picks the asset.
+      modu_servicing_band: true
+      availability_constrained: false
+      horizontal_tree: true
+      hxt_modifier_applied: false
+      notes: []
+  band_3000_5000:
+    light_live_well:
+      band: band_3000_5000
+      band_label: 3,000-5,000 ft
+      scope: light_live_well
+      scope_label: Light live-well (riserless wireline)
+      scope_description: 'Riserless light well intervention: wireline/slickline through
+        a subsea lubricator from an RLWI monohull or MPSV. Live well, no riser.'
+      eligible_asset_classes:
+      - modu
+      - heavy_intervention_semi
+      riser_required: true
+      riser_rule: Depth does not pick the asset; riser-need picks the asset.
+      modu_servicing_band: true
+      availability_constrained: false
+      horizontal_tree: true
+      hxt_modifier_applied: true
+      notes:
+      - "HXT tubing pull forces riser-based access \u2014 riserless light units cannot\
+        \ pull tubing through a horizontal tree."
+    through_tubing_ct:
+      band: band_3000_5000
+      band_label: 3,000-5,000 ft
+      scope: through_tubing_ct
+      scope_label: Through-tubing coiled tubing
+      scope_description: "Through-tubing coiled-tubing work (stimulation, scale, perforating).\
+        \ Needs an intervention riser \u2014 heavy-intervention semi or MODU."
+      eligible_asset_classes:
+      - heavy_intervention_semi
+      - modu
+      riser_required: true
+      riser_rule: Depth does not pick the asset; riser-need picks the asset.
+      modu_servicing_band: true
+      availability_constrained: false
+      horizontal_tree: true
+      hxt_modifier_applied: false
+      notes: []
+    heavy_dead_well:
+      band: band_3000_5000
+      band_label: 3,000-5,000 ft
+      scope: heavy_dead_well
+      scope_label: Heavy dead-well (tubing pull / recompletion / P&A)
+      scope_description: "Tubing pull / recompletion / ESP change-out / P&A. Full\
+        \ workover riser + subsea BOP \u2014 a MODU or a Helix Q-class heavy-intervention\
+        \ semi."
+      eligible_asset_classes:
+      - modu
+      - heavy_intervention_semi
+      riser_required: true
+      riser_rule: Depth does not pick the asset; riser-need picks the asset.
+      modu_servicing_band: true
+      availability_constrained: false
+      horizontal_tree: true
+      hxt_modifier_applied: false
+      notes: []
+  band_5000_10000:
+    light_live_well:
+      band: band_5000_10000
+      band_label: 5,000-10,000 ft
+      scope: light_live_well
+      scope_label: Light live-well (riserless wireline)
+      scope_description: 'Riserless light well intervention: wireline/slickline through
+        a subsea lubricator from an RLWI monohull or MPSV. Live well, no riser.'
+      eligible_asset_classes:
+      - modu
+      - heavy_intervention_semi
+      riser_required: true
+      riser_rule: Depth does not pick the asset; riser-need picks the asset.
+      modu_servicing_band: true
+      availability_constrained: false
+      horizontal_tree: true
+      hxt_modifier_applied: true
+      notes:
+      - "HXT tubing pull forces riser-based access \u2014 riserless light units cannot\
+        \ pull tubing through a horizontal tree."
+    through_tubing_ct:
+      band: band_5000_10000
+      band_label: 5,000-10,000 ft
+      scope: through_tubing_ct
+      scope_label: Through-tubing coiled tubing
+      scope_description: "Through-tubing coiled-tubing work (stimulation, scale, perforating).\
+        \ Needs an intervention riser \u2014 heavy-intervention semi or MODU."
+      eligible_asset_classes:
+      - heavy_intervention_semi
+      - modu
+      riser_required: true
+      riser_rule: Depth does not pick the asset; riser-need picks the asset.
+      modu_servicing_band: true
+      availability_constrained: false
+      horizontal_tree: true
+      hxt_modifier_applied: false
+      notes: []
+    heavy_dead_well:
+      band: band_5000_10000
+      band_label: 5,000-10,000 ft
+      scope: heavy_dead_well
+      scope_label: Heavy dead-well (tubing pull / recompletion / P&A)
+      scope_description: "Tubing pull / recompletion / ESP change-out / P&A. Full\
+        \ workover riser + subsea BOP \u2014 a MODU or a Helix Q-class heavy-intervention\
+        \ semi."
+      eligible_asset_classes:
+      - modu
+      - heavy_intervention_semi
+      riser_required: true
+      riser_rule: Depth does not pick the asset; riser-need picks the asset.
+      modu_servicing_band: true
+      availability_constrained: false
+      horizontal_tree: true
+      hxt_modifier_applied: false
+      notes: []
+  band_gt_10000:
+    light_live_well:
+      band: band_gt_10000
+      band_label: '> 10,000 ft'
+      scope: light_live_well
+      scope_label: Light live-well (riserless wireline)
+      scope_description: 'Riserless light well intervention: wireline/slickline through
+        a subsea lubricator from an RLWI monohull or MPSV. Live well, no riser.'
+      eligible_asset_classes:
+      - modu
+      - heavy_intervention_semi
+      riser_required: true
+      riser_rule: Depth does not pick the asset; riser-need picks the asset.
+      modu_servicing_band: true
+      availability_constrained: false
+      horizontal_tree: true
+      hxt_modifier_applied: true
+      notes:
+      - "HXT tubing pull forces riser-based access \u2014 riserless light units cannot\
+        \ pull tubing through a horizontal tree."
+    through_tubing_ct:
+      band: band_gt_10000
+      band_label: '> 10,000 ft'
+      scope: through_tubing_ct
+      scope_label: Through-tubing coiled tubing
+      scope_description: "Through-tubing coiled-tubing work (stimulation, scale, perforating).\
+        \ Needs an intervention riser \u2014 heavy-intervention semi or MODU."
+      eligible_asset_classes:
+      - heavy_intervention_semi
+      - modu
+      riser_required: true
+      riser_rule: Depth does not pick the asset; riser-need picks the asset.
+      modu_servicing_band: true
+      availability_constrained: false
+      horizontal_tree: true
+      hxt_modifier_applied: false
+      notes: []
+    heavy_dead_well:
+      band: band_gt_10000
+      band_label: '> 10,000 ft'
+      scope: heavy_dead_well
+      scope_label: Heavy dead-well (tubing pull / recompletion / P&A)
+      scope_description: "Tubing pull / recompletion / ESP change-out / P&A. Full\
+        \ workover riser + subsea BOP \u2014 a MODU or a Helix Q-class heavy-intervention\
+        \ semi."
+      eligible_asset_classes:
+      - modu
+      - heavy_intervention_semi
+      riser_required: true
+      riser_rule: Depth does not pick the asset; riser-need picks the asset.
+      modu_servicing_band: true
+      availability_constrained: false
+      horizontal_tree: true
+      hxt_modifier_applied: false
+      notes: []
+scopes:
+  light_live_well: Light live-well (riserless wireline)
+  through_tubing_ct: Through-tubing coiled tubing
+  heavy_dead_well: Heavy dead-well (tubing pull / recompletion / P&A)
+bands:
+  shelf_lt_500: < 500 ft (shelf)
+  band_500_3000: 500-3,000 ft
+  band_3000_5000: 3,000-5,000 ft
+  band_5000_10000: 5,000-10,000 ft
+  band_gt_10000: '> 10,000 ft'
+asset_classes:
+  rlwi_monohull: 'Riserless light well intervention monohull (vessel_fleet #592)'
+  mpsv: 'Multipurpose support vessel (vessel_fleet #592)'
+  heavy_intervention_semi: 'Heavy-intervention semi, e.g. Helix Q-class (vessel_fleet
+    #592)'
+  modu: Mobile offshore drilling unit (drillship / drilling semi)
+rules:
+  riser_rule: Depth does not pick the asset; riser-need picks the asset.
+  hxt_modifier: A horizontal subsea tree (HXT) tubing pull forces a riser-based asset
+    even for otherwise-light scope.
+  availability_constraint: Light riserless work in 5,000-10,000 ft is availability_constrained
+    (thin supply of rated units), not capability-limited.
+provenance:
+  band_scheme: worldenergydata#583 (well_inventory_by_band)
+  asset_taxonomy: worldenergydata#592 (vessel_fleet.constants.VesselType)
+  issue: 'worldenergydata#586 (epic #582)'
+confidence: Capability/riser-need rules are [engineering judgement] from standard
+  subsea-intervention practice (RLWI vs CT vs full workover), not a measured BSEE
+  dataset. Band-level *availability* (unit supply) is indicative and should be calibrated
+  against the vessel fleet (#592).

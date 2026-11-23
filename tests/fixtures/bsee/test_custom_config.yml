@@ -1,0 +1,14 @@
+Analysis:
+  analysis_root_folder: tests\test_data\bsee\results
+basename: bsee_custom
+custom_analysis:
+  flag: false
+drilling_n_completion_days:
+  flag: true
+filepath:
+  leases: tests\test_data\bsee\lease_data.csv
+  production: tests\test_data\bsee\production_data.csv
+meta:
+  basename: bsee_custom
+  label: test_custom
+  library: worldenergydata

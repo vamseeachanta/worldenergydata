@@ -1,0 +1,179 @@
+# Golden Baseline: FDAS V30 Financial Project Summary
+# Source: docs/modules/bsee/analysis/production/FDAS_V30/financial_project_summary.xlsx
+# Extracted: 2026-01-30
+# Purpose: Repeatability verification target for WRK-009
+
+metadata:
+  source_file: docs/modules/bsee/analysis/production/FDAS_V30/financial_project_summary.xlsx
+  extraction_date: "2026-01-30"
+  time_period: "2000-09 through 2025-05"
+  note: "V30 uses historical WTI prices, pre-tax cashflow, trimmed NPV at 10% annual discount"
+
+tolerances:
+  npv_relative: 0.01        # ±1%
+  mirr_absolute: 0.001      # ±0.1%
+  revenue_relative: 0.001   # ±0.1%
+  cashflow_relative: 0.005  # ±0.5%
+  production_relative: 0.001 # ±0.1%
+
+projects:
+  jack_st_malo:
+    display_name: "Jack St Malo"
+    dev_system: subsea15
+    first_oil: "2014-12-01"
+    total_oil_bbl: 406571771
+    facilities_cost_usd: 7400000000
+    dnc_total_usd: 5450400000
+    revenue_usd: 25648472771.59
+    royalty_usd: 4809088644.67
+    variable_opex_usd: 1626287084
+    fixed_opex_usd: 1575000000
+    net_cashflow_usd: 4787697042.92
+    npv_usd: -881064818.72
+    mirr_monthly: 0.006833
+    mirr_annual: 0.08515
+    producers: 22
+    injectors: 4
+    wellbores: 73
+
+  stones:
+    display_name: "Stones"
+    dev_system: subsea15
+    first_oil: "2016-09-01"
+    total_oil_bbl: 83657789
+    facilities_cost_usd: 4150000000
+    dnc_total_usd: 2081600000
+    revenue_usd: 5582443248.58
+    royalty_usd: 1046708109.11
+    variable_opex_usd: 334631156
+    fixed_opex_usd: 1275000000
+    net_cashflow_usd: -3305496016.53
+    npv_usd: -1479469165.42
+    mirr_monthly: 0.002222
+    mirr_annual: 0.02700
+    producers: 10
+    injectors: 2
+    wellbores: 22
+
+  julia:
+    display_name: "Julia"
+    dev_system: tieback15
+    first_oil: "2016-03-01"
+    total_oil_bbl: 70936158
+    facilities_cost_usd: 1375000000
+    dnc_total_usd: 1349600000
+    revenue_usd: 4715155663.31
+    royalty_usd: 884091686.87
+    variable_opex_usd: 425616948
+    fixed_opex_usd: 693750000
+    net_cashflow_usd: -12902971.56
+    npv_usd: -530637776.31
+    mirr_monthly: 0.005115
+    mirr_annual: 0.06313
+    producers: 4
+    injectors: 0
+    wellbores: 9
+
+  big_foot:
+    display_name: "Big Foot"
+    dev_system: dry
+    first_oil: "2018-11-01"
+    total_oil_bbl: 66870656
+    facilities_cost_usd: 2730000000
+    dnc_total_usd: 1787300000
+    revenue_usd: 4737808705.76
+    royalty_usd: 888339132.33
+    variable_opex_usd: 267482624
+    fixed_opex_usd: 790000000
+    net_cashflow_usd: -1725313050.57
+    npv_usd: -1063363725.61
+    mirr_monthly: 0.002855
+    mirr_annual: 0.03480
+    producers: 7
+    injectors: 1
+    wellbores: 38
+
+  cascade_chinook:
+    display_name: "Cascade Chinook"
+    dev_system: subsea15
+    first_oil: "2014-01-01"
+    total_oil_bbl: 34322807
+    facilities_cost_usd: 1900000000
+    dnc_total_usd: 1973600000
+    revenue_usd: 2326873535.60
+    royalty_usd: 436288787.93
+    variable_opex_usd: 137291228
+    fixed_opex_usd: 1700000000
+    net_cashflow_usd: -3820306480.33
+    npv_usd: -1474083632.85
+    mirr_monthly: -0.001479
+    mirr_annual: -0.01760
+    producers: 3
+    injectors: 0
+    wellbores: 14
+
+  anchor:
+    display_name: "Anchor"
+    dev_system: subsea20
+    first_oil: "2024-08-01"
+    total_oil_bbl: 6912846
+    facilities_cost_usd: 2400000000
+    dnc_total_usd: 1761200000
+    revenue_usd: 476309533.77
+    royalty_usd: 89308037.58
+    variable_opex_usd: 41477076
+    fixed_opex_usd: 125000000
+    net_cashflow_usd: -3940675579.81
+    npv_usd: -1732808337.14
+    mirr_monthly: -0.016087
+    mirr_annual: -0.17684
+    producers: 2
+    injectors: 0
+    wellbores: 15
+
+  shenandoah:
+    display_name: "Shenandoah"
+    dev_system: subsea20
+    first_oil: "2025-02-01"
+    total_oil_bbl: 3784
+    facilities_cost_usd: 2050000000
+    dnc_total_usd: 1816500000
+    revenue_usd: 270669.52
+    royalty_usd: 50750.54
+    variable_opex_usd: 22704
+    fixed_opex_usd: 12500000
+    net_cashflow_usd: -3878802785.02
+    npv_usd: -1166364362.66
+    mirr_monthly: null  # Insufficient data
+    mirr_annual: null
+    producers: 1
+    injectors: 0
+    wellbores: 23
+
+  # Exploration-only projects (no first oil, D&C costs only)
+  north_platte:
+    display_name: "North Platte"
+    dev_system: subsea20
+    first_oil: null
+    total_oil_bbl: 0
+    dnc_total_usd: 1068100000
+    npv_usd: -783522050.82
+    wellbores: 14
+
+  kaskida:
+    display_name: "Kaskida"
+    dev_system: subsea20
+    first_oil: null
+    total_oil_bbl: 0
+    dnc_total_usd: 925100000
+    npv_usd: -625020726.74
+    wellbores: 7
+
+  tiber:
+    display_name: "Tiber"
+    dev_system: subsea20
+    first_oil: null
+    total_oil_bbl: 0
+    dnc_total_usd: 275000000
+    npv_usd: -227969015.46
+    wellbores: 2

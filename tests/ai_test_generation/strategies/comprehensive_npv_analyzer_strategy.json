@@ -1,0 +1,132 @@
+{
+  "module": "comprehensive_npv_analyzer",
+  "test_file": "test_comprehensive_npv_analyzer.py",
+  "test_classes": [
+    {
+      "name": "TestJStMNPVAnalyzer",
+      "target_class": "JStMNPVAnalyzer",
+      "test_methods": [
+        {
+          "name": "test___init___basic",
+          "type": "basic",
+          "description": "Test basic functionality of __init__"
+        },
+        {
+          "name": "test_load_excel_data_basic",
+          "type": "basic",
+          "description": "Test basic functionality of load_excel_data"
+        },
+        {
+          "name": "test_load_excel_data_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for load_excel_data"
+        },
+        {
+          "name": "test_load_excel_data_return_value",
+          "type": "return_value",
+          "description": "Test return value of load_excel_data"
+        },
+        {
+          "name": "test_extract_financial_metrics_basic",
+          "type": "basic",
+          "description": "Test basic functionality of extract_financial_metrics"
+        },
+        {
+          "name": "test_extract_financial_metrics_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for extract_financial_metrics"
+        },
+        {
+          "name": "test_extract_financial_metrics_return_value",
+          "type": "return_value",
+          "description": "Test return value of extract_financial_metrics"
+        },
+        {
+          "name": "test_create_cash_flow_scenarios_basic",
+          "type": "basic",
+          "description": "Test basic functionality of create_cash_flow_scenarios"
+        },
+        {
+          "name": "test_create_cash_flow_scenarios_return_value",
+          "type": "return_value",
+          "description": "Test return value of create_cash_flow_scenarios"
+        },
+        {
+          "name": "test_calculate_scenario_npvs_basic",
+          "type": "basic",
+          "description": "Test basic functionality of calculate_scenario_npvs"
+        },
+        {
+          "name": "test_calculate_scenario_npvs_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for calculate_scenario_npvs"
+        },
+        {
+          "name": "test_calculate_scenario_npvs_return_value",
+          "type": "return_value",
+          "description": "Test return value of calculate_scenario_npvs"
+        },
+        {
+          "name": "test_calculate_scenario_npvs_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for calculate_scenario_npvs"
+        },
+        {
+          "name": "test_perform_sensitivity_analysis_basic",
+          "type": "basic",
+          "description": "Test basic functionality of perform_sensitivity_analysis"
+        },
+        {
+          "name": "test_perform_sensitivity_analysis_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for perform_sensitivity_analysis"
+        },
+        {
+          "name": "test_perform_sensitivity_analysis_return_value",
+          "type": "return_value",
+          "description": "Test return value of perform_sensitivity_analysis"
+        },
+        {
+          "name": "test_perform_sensitivity_analysis_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for perform_sensitivity_analysis"
+        },
+        {
+          "name": "test_generate_comprehensive_report_basic",
+          "type": "basic",
+          "description": "Test basic functionality of generate_comprehensive_report"
+        },
+        {
+          "name": "test_generate_comprehensive_report_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for generate_comprehensive_report"
+        },
+        {
+          "name": "test_save_comprehensive_results_basic",
+          "type": "basic",
+          "description": "Test basic functionality of save_comprehensive_results"
+        },
+        {
+          "name": "test_save_comprehensive_results_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for save_comprehensive_results"
+        },
+        {
+          "name": "test_save_comprehensive_results_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for save_comprehensive_results"
+        }
+      ]
+    }
+  ],
+  "test_functions": [
+    {
+      "name": "test_main_basic",
+      "type": "basic",
+      "description": "Test basic functionality of main"
+    }
+  ],
+  "test_count": 23,
+  "coverage_approach": "balanced",
+  "priority": "medium"
+}

@@ -1,0 +1,78 @@
+# ABOUTME: Phase-norm layer configuration (issue #848) — stage metrics, censoring,
+# ABOUTME: baseline thresholds, and field-name crosswalks. Externalized per repo config rule.
+#
+# Scope (owner-approved 2026-07-06, play-norms-only v1):
+#   - play baselines: leave-one-field-out over the Lower Tertiary populations below
+#   - country baselines: ROADMAP — pending the drilling-well database (#681);
+#     chips render the roadmap badge, never a number.
+
+min_n: 8              # baseline population minimum (below -> insufficient)
+field_min_n: 3        # field-side metric minimum wells (below -> insufficient)
+low_n_threshold: 8    # field-side low-n display flag (below -> low_n)
+max_days: 1000        # duration censor ceiling (calendar days)
+join_coverage_min: 0.9
+
+sources:
+  lt_dc_xlsx: docs/modules/bsee/analysis/production/FDAS_V30/drilling_and_completion_days.xlsx
+  benchmark_csv: reports/lower_tertiary/lt_well_benchmark_lower_tertiary_2010_latest.csv
+  well_data_csv: data/modules/bsee/current/wells/well_data.csv
+  facts_json: reports/lower_tertiary/lifecycle/_facts.json
+
+# Golden reconciliation contract: the recomputed play-wide drill population and
+# median MUST match the published drilling-insights figures (build fails on drift).
+golden:
+  drill_population_n: 184
+  drill_play_median_days: 46.5
+
+field_ids:
+  - big_foot
+  - anchor
+  - cascade_chinook
+  - jack_st_malo
+  - julia
+  - kaskida
+  - north_platte
+  - shenandoah
+  - stones
+  - tiber
+
+# FDAS V30 xlsx LEASE_NAME -> canonical field id (name-split fields enumerated;
+# census 2026-07-06: 12 lease names, 217 data rows, all 10 fields covered).
+lease_name_to_field:
+  "Anchor": anchor
+  "Big Foot": big_foot
+  "Cascade": cascade_chinook
+  "Chinook": cascade_chinook
+  "Jack": jack_st_malo
+  "St Malo": jack_st_malo
+  "Julia": julia
+  "Kaskida": kaskida
+  "North Platte": north_platte
+  "Shenandoah": shenandoah
+  "Stones": stones
+  "Tiber": tiber
+
+# Benchmark CSV `field` -> canonical field id (7 producing fields).
+benchmark_field_to_field:
+  "Anchor": anchor
+  "Big Foot": big_foot
+  "Cascade Chinook": cascade_chinook
+  "Jack St Malo": jack_st_malo
+  "Julia": julia
+  "Shenandoah": shenandoah
+  "Stones": stones
+
+abandon:
+  pa_codes: [PA, TA]
+
+country:
+  status: roadmap
+  reason: "GoM-wide population pending the drilling-well database (#681)"
+
+# Primary chip metric per stage (other metrics appear on the stage pages).
+chip_metrics:
+  drill: drill_days_median
+  complete: completion_days_median
+  produce: uptime_median
+  workover: interventions_per_well
+  abandon: pa_share

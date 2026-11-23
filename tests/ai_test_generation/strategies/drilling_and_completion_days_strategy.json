@@ -1,0 +1,82 @@
+{
+  "module": "drilling_and_completion_days",
+  "test_file": "test_drilling_and_completion_days.py",
+  "test_classes": [
+    {
+      "name": "TestDrillingCompletionDays",
+      "target_class": "DrillingCompletionDays",
+      "test_methods": [
+        {
+          "name": "test___init___basic",
+          "type": "basic",
+          "description": "Test basic functionality of __init__"
+        },
+        {
+          "name": "test_router_basic",
+          "type": "basic",
+          "description": "Test basic functionality of router"
+        },
+        {
+          "name": "test__resolve_path_basic",
+          "type": "basic",
+          "description": "Test basic functionality of _resolve_path"
+        },
+        {
+          "name": "test__resolve_path_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for _resolve_path"
+        },
+        {
+          "name": "test__resolve_path_return_value",
+          "type": "return_value",
+          "description": "Test return value of _resolve_path"
+        },
+        {
+          "name": "test__load_lease_data_basic",
+          "type": "basic",
+          "description": "Test basic functionality of _load_lease_data"
+        },
+        {
+          "name": "test__load_war_data_basic",
+          "type": "basic",
+          "description": "Test basic functionality of _load_war_data"
+        },
+        {
+          "name": "test__process_analysis_basic",
+          "type": "basic",
+          "description": "Test basic functionality of _process_analysis"
+        },
+        {
+          "name": "test__process_analysis_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for _process_analysis"
+        },
+        {
+          "name": "test__process_analysis_return_value",
+          "type": "return_value",
+          "description": "Test return value of _process_analysis"
+        }
+      ]
+    }
+  ],
+  "test_functions": [
+    {
+      "name": "test_adjust_spud_basic",
+      "type": "basic",
+      "description": "Test basic functionality of adjust_spud"
+    },
+    {
+      "name": "test_adjust_spud_edge_cases",
+      "type": "edge_case",
+      "description": "Test edge cases for adjust_spud"
+    },
+    {
+      "name": "test_adjust_spud_return_value",
+      "type": "return_value",
+      "description": "Test return value of adjust_spud"
+    }
+  ],
+  "test_count": 13,
+  "coverage_approach": "balanced",
+  "priority": "medium"
+}

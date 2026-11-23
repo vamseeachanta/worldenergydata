@@ -1,0 +1,53 @@
+@startwbs bsee_architecture
+
+scale 2
+skinparam titleBorderRoundCorner 15
+skinparam titleBorderThickness 2
+skinparam titleBorderColor red
+skinparam titleBackgroundColor Tomato
+
+title BSEE Architecture
+
+
+* BSEE Architecture
+
+** data_refresh
+*** production
+*** drilling (#TODO)
+*** maintenance
+**** zip raw links
+***** dwnld_from_zipurl
+
+
+** Analysis:
+***  field
+**** analysis
+***** True
+****** run_analysis_for_all_wells
+******* Well data groups
+******* Production data groups
+
+** Data:
+*** Get data
+**** block
+**** Well
+**** Production
+
+** Data Process
+*** online query
+**** scrapy
+***** well
+***** production
+***** block
+
+*** Through zip
+*** utilize zip data instead of csv files
+**** well data
+**** production data
+
+footer
+%date("yyyy.MM.dd' at 'HH:mm")
+%filename()
+end footer
+
+@endwbs

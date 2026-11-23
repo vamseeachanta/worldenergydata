@@ -1,0 +1,40 @@
+meta:
+  library: worldenergydata
+  basename: bsee
+  label: goa_stmalo
+
+basename: bsee
+
+data:
+  apm: True
+  production_data: True
+  groups:
+    # -
+    #   block:
+    #     area: WR
+    #     block: 633
+    #   bottom_block: [633]
+    #   api12: NULL
+    # -
+    #   block:
+    #     area: WR
+    #     block: 634
+    #   bottom_block: [634]
+    #   api12: NULL
+    -
+      bottom_block:
+        area: WR
+        number: 677
+      api12: NULL
+
+analysis:
+  flag: True
+  api12: True
+
+
+default:
+  log_level: INFO
+  config:
+    overwrite:
+      output: True
+    cfg_sensitivities: False

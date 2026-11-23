@@ -1,0 +1,462 @@
+name: CI
+
+# PR fast gate (owner ruling 28 Oct 2026): a pull request runs lint, the secret
+# scan and the touched-module tests only, finishing in minutes. Push to main
+# stays light (lint + secret scan). The full suite, type check, docs, package
+# build, lockfile and other generated-artifact currency checks moved to
+# "Main full run" (.github/workflows/main-full-run.yml), dispatched once a day
+# by the ace-linux-1 cron with `gh workflow run`; GitHub's schedule trigger is
+# not used. Required checks: Lint, Security Scan, Test (PR gate).
+# Runners: pull request jobs use ubuntu-latest unless the repository variable
+# WED_PR_RUNNER is "self-hosted" (docs/ci/linux-runners.md); push stays self-hosted.
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    # Retargets arrive as edits. Only a first-attempt title/body edit skips CI.
+    types: [opened, synchronize, reopened, edited]
+  workflow_dispatch:
+
+concurrency:
+  # Even a full rerun of an older metadata edit must leave current code checks running.
+  group: >-
+    ${{ github.workflow }}-${{ github.event_name == 'pull_request' &&
+    !(github.event.action == 'edited' && github.event.changes.base == null &&
+    (github.event.changes.title != null || github.event.changes.body != null)) && github.ref || github.run_id }}
+  cancel-in-progress: >-
+    ${{ github.event_name == 'pull_request' &&
+    !(github.event.action == 'edited' && github.event.changes.base == null &&
+    (github.event.changes.title != null || github.event.changes.body != null)) }}
+
+permissions:
+  contents: read
+
+env:
+  PYTHON_VERSION_DEFAULT: "3.11"
+
+jobs:
+  mode:
+    name: >-
+      ${{ (github.event_name == 'pull_request' && github.event.action == 'edited' &&
+      github.run_attempt == '1' && github.event.changes.base == null &&
+      (github.event.changes.title != null || github.event.changes.body != null)) && 'Not run for a metadata edit - ' || '' }}Gate mode
+    if: >-
+      ${{ !(github.event_name == 'pull_request' && github.event.action == 'edited' &&
+      github.run_attempt == '1' && github.event.changes.base == null &&
+      (github.event.changes.title != null || github.event.changes.body != null)) }}
+    runs-on: >-
+      ${{ (github.event_name != 'pull_request' ||
+          (github.event.pull_request.head.repo.full_name == github.repository &&
+          vars.WED_PR_RUNNER == 'self-hosted')) &&
+          fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
+    permissions:
+      contents: read
+      actions: read
+    outputs:
+      replay: ${{ steps.mode.outputs.replay }}
+      evidence: ${{ steps.lookup.outputs.evidence }}
+    steps:
+      # The first-attempt guard keeps the legacy replay path dormant.
+      - name: Check replay eligibility
+        id: candidate
+        env:
+          REPLAY: >-
+            ${{ github.event_name == 'pull_request' && github.event.action == 'edited' &&
+            github.run_attempt == '1' && github.event.changes.base == null &&
+            (github.event.changes.title != null || github.event.changes.body != null) }}
+        run: echo "replay=$REPLAY" >> "$GITHUB_OUTPUT"
+      - name: Checkout replay lookup
+        if: steps.candidate.outputs.replay == 'true'
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
+          repository: ${{ github.event.pull_request.base.repo.full_name }}
+          persist-credentials: false
+          sparse-checkout: scripts/ci/replay_gate.py
+          sparse-checkout-cone-mode: false
+      - name: Set up replay interpreter
+        if: steps.candidate.outputs.replay == 'true'
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION_DEFAULT }}
+      - name: Evaluate replay evidence
+        id: lookup
+        if: steps.candidate.outputs.replay == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "Replay helper revision: $(git rev-parse HEAD)"
+          python scripts/ci/replay_gate.py --mode
+      - name: Select gate mode
+        id: mode
+        env:
+          REPLAY: ${{ steps.lookup.outputs.replay || 'false' }}
+          IS_PR: ${{ github.event_name == 'pull_request' }}
+          BASE_URL: ${{ github.event.pull_request.base.repo.clone_url }}
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+        run: |
+          set -euo pipefail
+          echo "replay=$REPLAY" >> "$GITHUB_OUTPUT"
+          echo "replay=$REPLAY"
+          if [ "$IS_PR" = true ] && [ "$REPLAY" != true ]; then
+            tip=$(git ls-remote --exit-code "$BASE_URL" "refs/heads/$BASE_REF" | cut -f1)
+            if [[ ! "$tip" =~ ^[0-9a-f]{40}$ ]]; then
+              echo "::error::Cannot record a unique base tip"
+              exit 1
+            fi
+            printf . > "$RUNNER_TEMP/gate-tip"
+            echo "tip=$tip" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Record full-run base tip
+        if: github.event_name == 'pull_request' && steps.mode.outputs.replay != 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: gate-tip-${{ steps.mode.outputs.tip }}-attempt-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/gate-tip
+          retention-days: 14
+          if-no-files-found: error
+
+  # --------------------------------------------------------- PR domain gate --
+  # Modular per-domain PR gate (#474, #496, domain-matrix): a PR fans out into
+  # one CI job per touched domain (+ the always-on cross-cutting core), so each
+  # domain passes/fails in isolation (a red domain no longer blocks green
+  # siblings) and they run in parallel. Targets come from
+  # scripts/ci/select_test_targets.py --emit-matrix — the single source of truth
+  # (a module is mapped iff tests/unit/<module>/ exists; new modules auto-map,
+  # guarded by tests/ci/test_select_test_targets.py). On core-path changes the
+  # matrix fans out to EVERY domain on push/dispatch; on a pull request the
+  # selector's fast-gate mode runs the always-on shard + touched modules only
+  # (core changes no longer fan out; the daily Main full run covers the tree).
+  # The aggregate `pr-gate` job is the single required test check.
+
+  # The discover -> test-domain (matrix) -> aggregate scaffolding now lives in
+  # the local reusable workflow. Its conventions match the shared defaults
+  # while preserving the x64 and fork-isolation policy. The defaults are
+  # (selector scripts/ci/select_test_targets.py, uv sync --all-extras, quarantine
+  # scripts/ci/quarantine.txt, python-setup uv, max-parallel 10). The test
+  # runner sets WED_FAST_GATE=1 so tests/conftest.py skips repo-wide
+  # artifact-currency tests (they run in the daily Main full run).
+  # pytest-xdist is installed, pinned, into the job's own .venv and pytest runs
+  # from it with --no-sync. A `uv run --with` overlay would live in the
+  # runner's shared uv cache (builds-v0/.tmp*), where other jobs can remove it
+  # mid-run; tests that re-launch sys.executable then find no interpreter.
+  domain-tests:
+    name: >-
+      ${{ (github.event_name == 'pull_request' && github.event.action == 'edited' &&
+      github.run_attempt == '1' && github.event.changes.base == null &&
+      (github.event.changes.title != null || github.event.changes.body != null)) && 'Not run for a metadata edit - ' || '' }}domain-tests
+    needs: [mode]
+    if: >-
+      !cancelled() && needs.mode.result != 'skipped' && github.event_name == 'pull_request' &&
+      (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true')
+    uses: ./.github/workflows/domain-matrix.yml
+    with:
+      install-cmd: uv sync --frozen --all-extras && uv pip install pytest-xdist==3.8.0
+      test-runner: env WED_FAST_GATE=1 uv run --no-sync pytest
+
+  lint:
+    name: >-
+      ${{ (github.event_name == 'pull_request' && github.event.action == 'edited' &&
+      github.run_attempt == '1' && github.event.changes.base == null &&
+      (github.event.changes.title != null || github.event.changes.body != null)) && 'Not run for a metadata edit - ' || '' }}Lint (full)
+    runs-on: >-
+      ${{ (github.event_name != 'pull_request' ||
+          (github.event.pull_request.head.repo.full_name == github.repository &&
+          vars.WED_PR_RUNNER == 'self-hosted')) &&
+          fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
+    timeout-minutes: 30
+    needs: [mode]
+    if: &full-check >-
+      !cancelled() && needs.mode.result != 'skipped' &&
+      (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true')
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+          fetch-depth: 1
+
+      - name: Build local pull request merge
+        id: local_merge
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          BASE_URL: ${{ github.event.pull_request.base.repo.clone_url }}
+          HEAD_URL: ${{ github.event.pull_request.head.repo.clone_url }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          EVENT_BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+          base_ref="refs/remotes/base/$BASE_REF"
+          git fetch --no-tags "$BASE_URL" "+refs/heads/$BASE_REF:$base_ref"
+          tip=$(git rev-parse "$base_ref")
+          for deepen in 50 100 200; do
+            if git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
+              break
+            fi
+            if [ "$(git rev-parse --is-shallow-repository)" != true ]; then
+              break
+            fi
+            git fetch --no-tags --deepen="$deepen" "$HEAD_URL" "$PR_HEAD_SHA"
+            git fetch --no-tags --deepen="$deepen" "$BASE_URL" "$tip"
+          done
+          if ! git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
+            if [ "$(git rev-parse --is-shallow-repository)" = true ]; then
+              git fetch --no-tags --unshallow "$HEAD_URL" "$PR_HEAD_SHA"
+              git fetch --no-tags "$BASE_URL" "$tip"
+            fi
+          fi
+          if ! git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
+            echo "::error::No merge base for current base tip and pull request head"
+            exit 1
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git checkout --detach "$tip"
+          if ! git merge --no-ff --no-edit "$PR_HEAD_SHA"; then
+            echo "::error::Cannot merge pull request head into current base tip"
+            git merge --abort
+            exit 1
+          fi
+          mapfile -t parents < <(git cat-file -p HEAD | sed -n 's/^parent //p')
+          first_parent=${parents[0]:-}
+          second_parent=${parents[1]:-}
+          if [ "${#parents[@]}" -ne 2 ] || [ "$first_parent" != "$tip" ] || \
+             [ "$second_parent" != "$PR_HEAD_SHA" ]; then
+            echo "::error::Local merge does not have exactly the expected two parents"
+            exit 1
+          fi
+          tested=$(git rev-parse HEAD)
+          tree=$(git rev-parse 'HEAD^{tree}')
+          echo "tested=$tested first_parent=$first_parent second_parent=$second_parent" \
+            "tip=$tip event_base=$EVENT_BASE tree=$tree"
+          echo "tip=$tip" >> "$GITHUB_OUTPUT"
+
+      - name: Install uv for scoped typing
+        uses: astral-sh/setup-uv@v7
+
+      - name: Check typed common modules
+        env:
+          MYPYPATH: src:packages/worldenergydata-core/src
+        run: |
+          uv run --no-project --python "${{ env.PYTHON_VERSION_DEFAULT }}" --with mypy \
+            mypy --explicit-package-bases --follow-imports=silent \
+            --ignore-missing-imports \
+            packages/worldenergydata-core/src/worldenergydata/common/exceptions.py \
+            packages/worldenergydata-core/src/worldenergydata/common/logging.py \
+            packages/worldenergydata-core/src/worldenergydata/common/types.py \
+            examples/typed_common.py
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
+      - name: Run Black, isort and flake8 (versions pinned by uv.lock)
+        # No project install: the formatters run from uv's tool cache at the
+        # exact versions recorded in uv.lock. The lockfile currency check
+        # (`uv lock --check`) runs in the daily Main full run, not on PRs.
+        run: |
+          set -euo pipefail
+          pinned='import tomllib
+          lock = tomllib.load(open("uv.lock", "rb"))["package"]
+          v = {p["name"]: p["version"] for p in lock}
+          print(v["black"], v["isort"], v["flake8"])'
+          versions=$(uv run --no-project --python "$PYTHON_VERSION_DEFAULT" python -c "$pinned")
+          read -r black isort flake8 <<< "$versions"
+          echo "black $black, isort $isort, flake8 $flake8"
+          py=(--python "$PYTHON_VERSION_DEFAULT")
+          uvx "${py[@]}" "black==$black" --check --diff src/ tests/
+          uvx "${py[@]}" "isort==$isort" --check-only --diff src/ tests/
+          uvx "${py[@]}" "flake8==$flake8" src/ \
+            --max-line-length=100 \
+            --extend-ignore=E203,W503 \
+            --exclude=__pycache__,*.egg-info,.git,.venv
+
+  security:
+    name: >-
+      ${{ (github.event_name == 'pull_request' && github.event.action == 'edited' &&
+      github.run_attempt == '1' && github.event.changes.base == null &&
+      (github.event.changes.title != null || github.event.changes.body != null)) && 'Not run for a metadata edit - ' || '' }}Security Scan (full)
+    # PR/push: secret scan only. Bandit runs in the daily Main full run.
+    runs-on: >-
+      ${{ (github.event_name != 'pull_request' ||
+          (github.event.pull_request.head.repo.full_name == github.repository &&
+          vars.WED_PR_RUNNER == 'self-hosted')) &&
+          fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
+    timeout-minutes: 30
+    needs: [mode]
+    if: *full-check
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+          fetch-depth: 0
+
+      - name: Build local pull request merge
+        id: local_merge
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          BASE_URL: ${{ github.event.pull_request.base.repo.clone_url }}
+          HEAD_URL: ${{ github.event.pull_request.head.repo.clone_url }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          EVENT_BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+          base_ref="refs/remotes/base/$BASE_REF"
+          git fetch --no-tags "$BASE_URL" "+refs/heads/$BASE_REF:$base_ref"
+          tip=$(git rev-parse "$base_ref")
+          for deepen in 50 100 200; do
+            if git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
+              break
+            fi
+            if [ "$(git rev-parse --is-shallow-repository)" != true ]; then
+              break
+            fi
+            git fetch --no-tags --deepen="$deepen" "$HEAD_URL" "$PR_HEAD_SHA"
+            git fetch --no-tags --deepen="$deepen" "$BASE_URL" "$tip"
+          done
+          if ! git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
+            if [ "$(git rev-parse --is-shallow-repository)" = true ]; then
+              git fetch --no-tags --unshallow "$HEAD_URL" "$PR_HEAD_SHA"
+              git fetch --no-tags "$BASE_URL" "$tip"
+            fi
+          fi
+          if ! git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
+            echo "::error::No merge base for current base tip and pull request head"
+            exit 1
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git checkout --detach "$tip"
+          if ! git merge --no-ff --no-edit "$PR_HEAD_SHA"; then
+            echo "::error::Cannot merge pull request head into current base tip"
+            git merge --abort
+            exit 1
+          fi
+          mapfile -t parents < <(git cat-file -p HEAD | sed -n 's/^parent //p')
+          first_parent=${parents[0]:-}
+          second_parent=${parents[1]:-}
+          if [ "${#parents[@]}" -ne 2 ] || [ "$first_parent" != "$tip" ] || \
+             [ "$second_parent" != "$PR_HEAD_SHA" ]; then
+            echo "::error::Local merge does not have exactly the expected two parents"
+            exit 1
+          fi
+          tested=$(git rev-parse HEAD)
+          tree=$(git rev-parse 'HEAD^{tree}')
+          echo "tested=$tested first_parent=$first_parent second_parent=$second_parent" \
+            "tip=$tip event_base=$EVENT_BASE tree=$tree"
+          echo "tip=$tip" >> "$GITHUB_OUTPUT"
+
+      - name: Check for secrets with gitleaks
+        uses: gitleaks/gitleaks-action@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+
+  # Skipping mode also skips every result job, including the required checks.
+  lint-gate:
+    name: >-
+      ${{ (github.event_name == 'pull_request' && github.event.action == 'edited' &&
+      github.run_attempt == '1' && github.event.changes.base == null &&
+      (github.event.changes.title != null || github.event.changes.body != null)) && 'Not run for a metadata edit - ' || '' }}Lint
+    needs: [mode, lint]
+    if: &result-check ${{ !cancelled() && needs.mode.result != 'skipped' }}
+    runs-on: >-
+      ${{ (github.event_name != 'pull_request' ||
+          (github.event.pull_request.head.repo.full_name == github.repository &&
+          vars.WED_PR_RUNNER == 'self-hosted')) &&
+          fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - name: Copy selected check conclusion
+        if: needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'
+        env:
+          REPLAY_RESULT: ${{ fromJSON(needs.mode.outputs.evidence || '{}')['Lint'].decision }}
+        run: |
+          echo "Selected replay result: $REPLAY_RESULT"
+          test "$REPLAY_RESULT" = PASS
+      - name: Gate on full result
+        if: needs.mode.result != 'success' || needs.mode.outputs.replay != 'true'
+        env:
+          FULL_RESULT: ${{ needs.lint.result }}
+        run: |
+          if [ "$FULL_RESULT" != success ]; then
+            echo "::error::Full gate did not succeed: $FULL_RESULT"
+            exit 1
+          fi
+
+  security-gate:
+    name: >-
+      ${{ (github.event_name == 'pull_request' && github.event.action == 'edited' &&
+      github.run_attempt == '1' && github.event.changes.base == null &&
+      (github.event.changes.title != null || github.event.changes.body != null)) && 'Not run for a metadata edit - ' || '' }}Security Scan
+    needs: [mode, security]
+    if: *result-check
+    runs-on: >-
+      ${{ (github.event_name != 'pull_request' ||
+          (github.event.pull_request.head.repo.full_name == github.repository &&
+          vars.WED_PR_RUNNER == 'self-hosted')) &&
+          fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - name: Copy selected check conclusion
+        if: needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'
+        env:
+          REPLAY_RESULT: ${{ fromJSON(needs.mode.outputs.evidence || '{}')['Security Scan'].decision }}
+        run: |
+          echo "Selected replay result: $REPLAY_RESULT"
+          test "$REPLAY_RESULT" = PASS
+      - name: Gate on full result
+        if: needs.mode.result != 'success' || needs.mode.outputs.replay != 'true'
+        env:
+          FULL_RESULT: ${{ needs.security.result }}
+        run: |
+          if [ "$FULL_RESULT" != success ]; then
+            echo "::error::Full gate did not succeed: $FULL_RESULT"
+            exit 1
+          fi
+
+  pr-gate:
+    name: >-
+      ${{ (github.event_name == 'pull_request' && github.event.action == 'edited' &&
+      github.run_attempt == '1' && github.event.changes.base == null &&
+      (github.event.changes.title != null || github.event.changes.body != null)) && 'Not run for a metadata edit - ' || '' }}Test (PR gate)
+    needs: [mode, domain-tests]
+    if: ${{ !cancelled() && needs.mode.result != 'skipped' && github.event_name == 'pull_request' }}
+    runs-on: >-
+      ${{ (github.event_name != 'pull_request' ||
+          (github.event.pull_request.head.repo.full_name == github.repository &&
+          vars.WED_PR_RUNNER == 'self-hosted')) &&
+          fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - name: Copy selected check conclusion
+        if: needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'
+        env:
+          REPLAY_RESULT: ${{ fromJSON(needs.mode.outputs.evidence || '{}')['Test (PR gate)'].decision }}
+        run: |
+          echo "Selected replay result: $REPLAY_RESULT"
+          test "$REPLAY_RESULT" = PASS
+      - name: Gate on full result
+        if: needs.mode.result != 'success' || needs.mode.outputs.replay != 'true'
+        env:
+          FULL_RESULT: ${{ needs.domain-tests.result }}
+        run: |
+          if [ "$FULL_RESULT" != success ]; then
+            echo "::error::Full gate did not succeed: $FULL_RESULT"
+            exit 1
+          fi

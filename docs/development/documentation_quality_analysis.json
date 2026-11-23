@@ -1,0 +1,4098 @@
+{
+  "timestamp": "2025-07-24T16:50:47.237734",
+  "analysis_complete": true,
+  "total_files_analyzed": 61,
+  "quality_issues_found": 505,
+  "formatting_fixes_needed": 53,
+  "content_improvements_needed": 34,
+  "outdated_content_found": 10,
+  "metadata_updates_needed": 48,
+  "detailed_results": {
+    "quality_analysis": {
+      "timestamp": "2025-07-24T16:50:48.090272",
+      "total_issues": 505,
+      "issues_by_severity": {
+        "error": 0,
+        "warning": 53,
+        "info": 452
+      },
+      "issues_by_type": {
+        "content_length": 4,
+        "missing_title": 39,
+        "line_length": 285,
+        "empty_section": 133,
+        "multiple_titles": 10,
+        "header_hierarchy": 22,
+        "header_style": 7,
+        "terminology": 4,
+        "list_consistency": 1
+      },
+      "files_with_issues": 61,
+      "issues_by_file": {
+        "docs\\petrophysics.md": [
+          {
+            "type": "content_length",
+            "description": "Document appears to have minimal content (48 chars)",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Add more substantial content or consider if file is needed"
+          },
+          {
+            "type": "missing_title",
+            "description": "Document missing H1 title",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Add main title using # Title format"
+          }
+        ],
+        "docs\\README.md": [
+          {
+            "type": "line_length",
+            "description": "Line too long (189 chars, max 120)",
+            "line_number": 3,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (182 chars, max 120)",
+            "line_number": 131,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Quick Navigation by User Type",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Documentation Sections",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Features & Capabilities",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Getting Started",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: 1. Quick Installation",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Support & Contributing",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "multiple_titles",
+            "description": "Document has multiple H1 titles (6)",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Use only one H1 title per document"
+          },
+          {
+            "type": "header_hierarchy",
+            "description": "Header level skipped (H1 to H3)",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Maintain sequential header hierarchy (H1 → H2 → H3)"
+          },
+          {
+            "type": "header_hierarchy",
+            "description": "Header level skipped (H1 to H3)",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Maintain sequential header hierarchy (H1 → H2 → H3)"
+          }
+        ],
+        "docs\\analysis-guides\\index.md": [
+          {
+            "type": "line_length",
+            "description": "Line too long (336 chars, max 120)",
+            "line_number": 8,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Available Analysis Methods",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Analysis Workflow Integration",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Methodology Standards",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Specialized Analysis Areas",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Analysis Results and Reporting",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "multiple_titles",
+            "description": "Document has multiple H1 titles (5)",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Use only one H1 title per document"
+          },
+          {
+            "type": "header_hierarchy",
+            "description": "Header level skipped (H1 to H3)",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Maintain sequential header hierarchy (H1 → H2 → H3)"
+          }
+        ],
+        "docs\\analysis-guides\\README.md": [
+          {
+            "type": "header_style",
+            "description": "Use ATX-style headers (# Header) instead of Setext-style (Header\n======)",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Convert Setext headers to ATX format"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Contents",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          }
+        ],
+        "docs\\data-sources\\index.md": [
+          {
+            "type": "line_length",
+            "description": "Line too long (236 chars, max 120)",
+            "line_number": 8,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Available Data Sources",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Data Integration Architecture",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Getting Started with Data Sources",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Data Access and Usage",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "multiple_titles",
+            "description": "Document has multiple H1 titles (3)",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Use only one H1 title per document"
+          },
+          {
+            "type": "header_hierarchy",
+            "description": "Header level skipped (H1 to H3)",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Maintain sequential header hierarchy (H1 → H2 → H3)"
+          }
+        ],
+        "docs\\data-sources\\README.md": [
+          {
+            "type": "header_style",
+            "description": "Use ATX-style headers (# Header) instead of Setext-style (Header\n======)",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Convert Setext headers to ATX format"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Contents",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: SODIR Data",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: General Documentation",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          }
+        ],
+        "docs\\data-sources\\bsee\\analysis\\julia_api12_resolution.md": [
+          {
+            "type": "line_length",
+            "description": "Line too long (166 chars, max 120)",
+            "line_number": 8,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (227 chars, max 120)",
+            "line_number": 17,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (146 chars, max 120)",
+            "line_number": 32,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (127 chars, max 120)",
+            "line_number": 33,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (154 chars, max 120)",
+            "line_number": 37,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (172 chars, max 120)",
+            "line_number": 39,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (130 chars, max 120)",
+            "line_number": 53,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "header_style",
+            "description": "Use ATX-style headers (# Header) instead of Setext-style (Header\n======)",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Convert Setext headers to ATX format"
+          },
+          {
+            "type": "missing_title",
+            "description": "Document missing H1 title",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Add main title using # Title format"
+          }
+        ],
+        "docs\\data-sources\\bsee\\analysis\\economics\\intro.md": [
+          {
+            "type": "line_length",
+            "description": "Line too long (428 chars, max 120)",
+            "line_number": 15,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "missing_title",
+            "description": "Document missing H1 title",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Add main title using # Title format"
+          }
+        ],
+        "docs\\data-sources\\bsee\\analysis\\economics\\JStM_production.md": [
+          {
+            "type": "missing_title",
+            "description": "Document missing H1 title",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Add main title using # Title format"
+          }
+        ],
+        "docs\\data-sources\\bsee\\analysis\\economics\\lng.md": [
+          {
+            "type": "line_length",
+            "description": "Line too long (318 chars, max 120)",
+            "line_number": 2,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (122 chars, max 120)",
+            "line_number": 8,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (423 chars, max 120)",
+            "line_number": 10,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (215 chars, max 120)",
+            "line_number": 14,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (240 chars, max 120)",
+            "line_number": 17,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (122 chars, max 120)",
+            "line_number": 19,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (122 chars, max 120)",
+            "line_number": 24,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "missing_title",
+            "description": "Document missing H1 title",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Add main title using # Title format"
+          }
+        ],
+        "docs\\data-sources\\bsee\\analysis\\economics\\power_markets.md": [
+          {
+            "type": "missing_title",
+            "description": "Document missing H1 title",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Add main title using # Title format"
+          }
+        ],
+        "docs\\data-sources\\bsee\\analysis\\economics\\revenues.md": [
+          {
+            "type": "content_length",
+            "description": "Document appears to have minimal content (40 chars)",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Add more substantial content or consider if file is needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Revenue",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "missing_title",
+            "description": "Document missing H1 title",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Add main title using # Title format"
+          }
+        ],
+        "docs\\data-sources\\bsee\\analysis\\economics\\NPV\\Methodology_Comparison.md": [
+          {
+            "type": "line_length",
+            "description": "Line too long (175 chars, max 120)",
+            "line_number": 4,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (162 chars, max 120)",
+            "line_number": 253,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: NPV Calculation Methodology Comparison",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: 🔍 **Approach 1: Direct Excel Data Extraction (Copilot's Method)**",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: 💰 **Sample Cash Flows Used**",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: 🔧 **Approach 2: Systematic Cash Flow Construction (Your Method)**",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: 💰 **Cash Flow Components**",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: 🏗️ **CAPEX Breakdown**",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: 🔍 **Key Differences Analysis**",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: 📈 **Mathematical Differences**",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Interest Rate Conversion",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Cash Flow Timing",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: 🎯 **Advantages and Disadvantages**",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: 🏆 **Recommendation**",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "multiple_titles",
+            "description": "Document has multiple H1 titles (18)",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Use only one H1 title per document"
+          },
+          {
+            "type": "header_hierarchy",
+            "description": "Header level skipped (H1 to H3)",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Maintain sequential header hierarchy (H1 → H2 → H3)"
+          },
+          {
+            "type": "header_hierarchy",
+            "description": "Header level skipped (H1 to H3)",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Maintain sequential header hierarchy (H1 → H2 → H3)"
+          },
+          {
+            "type": "header_hierarchy",
+            "description": "Header level skipped (H1 to H3)",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Maintain sequential header hierarchy (H1 → H2 → H3)"
+          },
+          {
+            "type": "header_hierarchy",
+            "description": "Header level skipped (H1 to H3)",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Maintain sequential header hierarchy (H1 → H2 → H3)"
+          },
+          {
+            "type": "header_hierarchy",
+            "description": "Header level skipped (H1 to H3)",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Maintain sequential header hierarchy (H1 → H2 → H3)"
+          }
+        ],
+        "docs\\data-sources\\bsee\\analysis\\economics\\NPV\\npv.md": [
+          {
+            "type": "content_length",
+            "description": "Document appears to have minimal content (38 chars)",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Add more substantial content or consider if file is needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: NPV Calculation",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "missing_title",
+            "description": "Document missing H1 title",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Add main title using # Title format"
+          }
+        ],
+        "docs\\data-sources\\bsee\\analysis\\economics\\NPV\\NPV_REFACTORING_SUMMARY.md": [
+          {
+            "type": "line_length",
+            "description": "Line too long (132 chars, max 120)",
+            "line_number": 5,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (163 chars, max 120)",
+            "line_number": 67,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (159 chars, max 120)",
+            "line_number": 75,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (248 chars, max 120)",
+            "line_number": 87,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: NPV Analysis Refactoring Summary",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Key Changes Made",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          }
+        ],
+        "docs\\data-sources\\bsee\\analysis\\field\\field_layout.md": [
+          {
+            "type": "line_length",
+            "description": "Line too long (125 chars, max 120)",
+            "line_number": 8,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (233 chars, max 120)",
+            "line_number": 36,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "missing_title",
+            "description": "Document missing H1 title",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Add main title using # Title format"
+          }
+        ],
+        "docs\\data-sources\\bsee\\analysis\\production\\cummulative_production.md": [
+          {
+            "type": "missing_title",
+            "description": "Document missing H1 title",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Add main title using # Title format"
+          }
+        ],
+        "docs\\data-sources\\bsee\\analysis\\production\\normalization_for_laterals.md": [
+          {
+            "type": "line_length",
+            "description": "Line too long (141 chars, max 120)",
+            "line_number": 3,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "missing_title",
+            "description": "Document missing H1 title",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Add main title using # Title format"
+          }
+        ],
+        "docs\\data-sources\\bsee\\analysis\\rig_days\\rig_days_by_milestone.md": [
+          {
+            "type": "line_length",
+            "description": "Line too long (624 chars, max 120)",
+            "line_number": 10,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (143 chars, max 120)",
+            "line_number": 16,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (149 chars, max 120)",
+            "line_number": 17,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (149 chars, max 120)",
+            "line_number": 18,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (399 chars, max 120)",
+            "line_number": 24,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (400 chars, max 120)",
+            "line_number": 25,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (407 chars, max 120)",
+            "line_number": 26,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (400 chars, max 120)",
+            "line_number": 27,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (399 chars, max 120)",
+            "line_number": 28,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (398 chars, max 120)",
+            "line_number": 29,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (400 chars, max 120)",
+            "line_number": 30,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (400 chars, max 120)",
+            "line_number": 31,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (400 chars, max 120)",
+            "line_number": 32,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (400 chars, max 120)",
+            "line_number": 33,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (454 chars, max 120)",
+            "line_number": 34,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (536 chars, max 120)",
+            "line_number": 35,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (401 chars, max 120)",
+            "line_number": 36,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (403 chars, max 120)",
+            "line_number": 37,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (400 chars, max 120)",
+            "line_number": 38,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (401 chars, max 120)",
+            "line_number": 39,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (401 chars, max 120)",
+            "line_number": 40,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (401 chars, max 120)",
+            "line_number": 41,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (131 chars, max 120)",
+            "line_number": 46,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Rig Days",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "missing_title",
+            "description": "Document missing H1 title",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Add main title using # Title format"
+          }
+        ],
+        "docs\\data-sources\\bsee\\analysis\\rig_days\\rig_days_by_WAR.md": [
+          {
+            "type": "missing_title",
+            "description": "Document missing H1 title",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Add main title using # Title format"
+          }
+        ],
+        "docs\\data-sources\\bsee\\analysis\\rig_days\\rig_days_summary.md": [
+          {
+            "type": "line_length",
+            "description": "Line too long (432 chars, max 120)",
+            "line_number": 5,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (597 chars, max 120)",
+            "line_number": 7,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (151 chars, max 120)",
+            "line_number": 9,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Communications",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "missing_title",
+            "description": "Document missing H1 title",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Add main title using # Title format"
+          }
+        ],
+        "docs\\data-sources\\bsee\\analysis\\survey\\survey.md": [
+          {
+            "type": "line_length",
+            "description": "Line too long (149 chars, max 120)",
+            "line_number": 12,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "missing_title",
+            "description": "Document missing H1 title",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Add main title using # Title format"
+          }
+        ],
+        "docs\\data-sources\\bsee\\data\\analysis_data.md": [
+          {
+            "type": "line_length",
+            "description": "Line too long (134 chars, max 120)",
+            "line_number": 15,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (125 chars, max 120)",
+            "line_number": 67,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (125 chars, max 120)",
+            "line_number": 69,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (124 chars, max 120)",
+            "line_number": 81,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (149 chars, max 120)",
+            "line_number": 83,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (124 chars, max 120)",
+            "line_number": 90,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (124 chars, max 120)",
+            "line_number": 111,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (207 chars, max 120)",
+            "line_number": 198,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (187 chars, max 120)",
+            "line_number": 209,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (446 chars, max 120)",
+            "line_number": 221,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Filenames and columns ",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Columns required for preparing dataframes",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          }
+        ],
+        "docs\\data-sources\\bsee\\data\\apm_data_rev1.md": [
+          {
+            "type": "line_length",
+            "description": "Line too long (131 chars, max 120)",
+            "line_number": 12,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (219 chars, max 120)",
+            "line_number": 31,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (206 chars, max 120)",
+            "line_number": 39,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (148 chars, max 120)",
+            "line_number": 43,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (207 chars, max 120)",
+            "line_number": 61,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (283 chars, max 120)",
+            "line_number": 63,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Objective",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Communications",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "missing_title",
+            "description": "Document missing H1 title",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Add main title using # Title format"
+          }
+        ],
+        "docs\\data-sources\\bsee\\data\\data_rev1.md": [
+          {
+            "type": "line_length",
+            "description": "Line too long (126 chars, max 120)",
+            "line_number": 10,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (172 chars, max 120)",
+            "line_number": 36,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (193 chars, max 120)",
+            "line_number": 37,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (187 chars, max 120)",
+            "line_number": 38,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (164 chars, max 120)",
+            "line_number": 40,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Objective",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "missing_title",
+            "description": "Document missing H1 title",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Add main title using # Title format"
+          },
+          {
+            "type": "terminology",
+            "description": "Use 'wellbore' instead of 'well bore'",
+            "line_number": 25,
+            "severity": "info",
+            "suggestion": "Replace with industry-standard term: wellbore"
+          }
+        ],
+        "docs\\data-sources\\bsee\\data\\drilling_data_rev1.md": [
+          {
+            "type": "line_length",
+            "description": "Line too long (131 chars, max 120)",
+            "line_number": 10,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (124 chars, max 120)",
+            "line_number": 30,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (177 chars, max 120)",
+            "line_number": 37,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (198 chars, max 120)",
+            "line_number": 39,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (192 chars, max 120)",
+            "line_number": 41,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (169 chars, max 120)",
+            "line_number": 43,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (133 chars, max 120)",
+            "line_number": 54,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (252 chars, max 120)",
+            "line_number": 56,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (246 chars, max 120)",
+            "line_number": 58,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (309 chars, max 120)",
+            "line_number": 67,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (195 chars, max 120)",
+            "line_number": 69,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (127 chars, max 120)",
+            "line_number": 75,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (141 chars, max 120)",
+            "line_number": 77,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (146 chars, max 120)",
+            "line_number": 78,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (144 chars, max 120)",
+            "line_number": 79,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (144 chars, max 120)",
+            "line_number": 80,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (144 chars, max 120)",
+            "line_number": 81,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (144 chars, max 120)",
+            "line_number": 82,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (144 chars, max 120)",
+            "line_number": 83,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (144 chars, max 120)",
+            "line_number": 84,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (144 chars, max 120)",
+            "line_number": 85,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (144 chars, max 120)",
+            "line_number": 86,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (144 chars, max 120)",
+            "line_number": 87,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (144 chars, max 120)",
+            "line_number": 88,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (144 chars, max 120)",
+            "line_number": 89,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (144 chars, max 120)",
+            "line_number": 90,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (144 chars, max 120)",
+            "line_number": 91,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (144 chars, max 120)",
+            "line_number": 92,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (144 chars, max 120)",
+            "line_number": 93,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (144 chars, max 120)",
+            "line_number": 94,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (144 chars, max 120)",
+            "line_number": 95,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (144 chars, max 120)",
+            "line_number": 96,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (144 chars, max 120)",
+            "line_number": 97,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (144 chars, max 120)",
+            "line_number": 98,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (144 chars, max 120)",
+            "line_number": 99,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (144 chars, max 120)",
+            "line_number": 100,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (144 chars, max 120)",
+            "line_number": 101,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (144 chars, max 120)",
+            "line_number": 102,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (147 chars, max 120)",
+            "line_number": 115,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (162 chars, max 120)",
+            "line_number": 118,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (324 chars, max 120)",
+            "line_number": 161,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (261 chars, max 120)",
+            "line_number": 163,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (158 chars, max 120)",
+            "line_number": 169,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (133 chars, max 120)",
+            "line_number": 173,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (142 chars, max 120)",
+            "line_number": 174,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (133 chars, max 120)",
+            "line_number": 175,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (177 chars, max 120)",
+            "line_number": 176,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (271 chars, max 120)",
+            "line_number": 177,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (124 chars, max 120)",
+            "line_number": 180,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (132 chars, max 120)",
+            "line_number": 189,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (222 chars, max 120)",
+            "line_number": 197,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (132 chars, max 120)",
+            "line_number": 206,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Objective",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Communications",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "missing_title",
+            "description": "Document missing H1 title",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Add main title using # Title format"
+          },
+          {
+            "type": "terminology",
+            "description": "Use 'wellbore' instead of 'well bore'",
+            "line_number": 25,
+            "severity": "info",
+            "suggestion": "Replace with industry-standard term: wellbore"
+          }
+        ],
+        "docs\\data-sources\\bsee\\data\\well_api_number.md": [
+          {
+            "type": "missing_title",
+            "description": "Document missing H1 title",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Add main title using # Title format"
+          }
+        ],
+        "docs\\data-sources\\bsee\\data\\clean_up\\data_explaination.md": [
+          {
+            "type": "line_length",
+            "description": "Line too long (142 chars, max 120)",
+            "line_number": 23,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "list_consistency",
+            "description": "Mixed bullet list styles detected",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Use consistent bullet style (prefer dashes: -)"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Sources",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Borehole data",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: References",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: URLS to download data",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "multiple_titles",
+            "description": "Document has multiple H1 titles (3)",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Use only one H1 title per document"
+          }
+        ],
+        "docs\\data-sources\\bsee\\data\\clean_up\\data_for_analysis.md": [
+          {
+            "type": "line_length",
+            "description": "Line too long (134 chars, max 120)",
+            "line_number": 26,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (174 chars, max 120)",
+            "line_number": 74,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Data Definitions",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "missing_title",
+            "description": "Document missing H1 title",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Add main title using # Title format"
+          }
+        ],
+        "docs\\data-sources\\bsee\\data\\field_anchor\\ANCHOR_Field_Data_Filtering.md": [
+          {
+            "type": "line_length",
+            "description": "Line too long (165 chars, max 120)",
+            "line_number": 4,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (268 chars, max 120)",
+            "line_number": 131,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: ANCHOR Field Data Filtering Solution",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Problem Statement",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Data Analysis",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Solution Implementation",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Filtered Dataset Results",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Key Production Insights",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Benefits of Filtered Dataset",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Implementation Notes",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Recommendations",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          }
+        ],
+        "docs\\data-sources\\bsee\\data\\field_jsm\\no_of_wells.md": [
+          {
+            "type": "line_length",
+            "description": "Line too long (250 chars, max 120)",
+            "line_number": 4,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (780 chars, max 120)",
+            "line_number": 6,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (225 chars, max 120)",
+            "line_number": 15,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (168 chars, max 120)",
+            "line_number": 33,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (138 chars, max 120)",
+            "line_number": 48,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (281 chars, max 120)",
+            "line_number": 52,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (201 chars, max 120)",
+            "line_number": 53,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (429 chars, max 120)",
+            "line_number": 55,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (146 chars, max 120)",
+            "line_number": 56,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (350 chars, max 120)",
+            "line_number": 73,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (342 chars, max 120)",
+            "line_number": 74,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (314 chars, max 120)",
+            "line_number": 75,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (182 chars, max 120)",
+            "line_number": 100,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (231 chars, max 120)",
+            "line_number": 101,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (255 chars, max 120)",
+            "line_number": 103,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (441 chars, max 120)",
+            "line_number": 133,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (403 chars, max 120)",
+            "line_number": 135,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (405 chars, max 120)",
+            "line_number": 139,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (125 chars, max 120)",
+            "line_number": 141,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "missing_title",
+            "description": "Document missing H1 title",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Add main title using # Title format"
+          },
+          {
+            "type": "header_hierarchy",
+            "description": "Header level skipped (H2 to H4)",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Maintain sequential header hierarchy (H1 → H2 → H3)"
+          },
+          {
+            "type": "terminology",
+            "description": "Use 'wellbore' instead of 'well bore'",
+            "line_number": 19,
+            "severity": "info",
+            "suggestion": "Replace with industry-standard term: wellbore"
+          },
+          {
+            "type": "terminology",
+            "description": "Use 'wellbore' instead of 'well bore'",
+            "line_number": 20,
+            "severity": "info",
+            "suggestion": "Replace with industry-standard term: wellbore"
+          }
+        ],
+        "docs\\data-sources\\bsee\\data\\production\\notes.md": [
+          {
+            "type": "line_length",
+            "description": "Line too long (129 chars, max 120)",
+            "line_number": 5,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "missing_title",
+            "description": "Document missing H1 title",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Add main title using # Title format"
+          }
+        ],
+        "docs\\data-sources\\bsee\\data\\survey\\horizontal_reach.md": [
+          {
+            "type": "missing_title",
+            "description": "Document missing H1 title",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Add main title using # Title format"
+          }
+        ],
+        "docs\\data-sources\\bsee\\data\\well\\well_count.md": [
+          {
+            "type": "line_length",
+            "description": "Line too long (441 chars, max 120)",
+            "line_number": 4,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (403 chars, max 120)",
+            "line_number": 6,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (405 chars, max 120)",
+            "line_number": 10,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (182 chars, max 120)",
+            "line_number": 25,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (231 chars, max 120)",
+            "line_number": 26,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (255 chars, max 120)",
+            "line_number": 28,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (132 chars, max 120)",
+            "line_number": 59,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (222 chars, max 120)",
+            "line_number": 67,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (132 chars, max 120)",
+            "line_number": 76,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Communications (Roy, Vamsee, Chuck, Samdan)",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "missing_title",
+            "description": "Document missing H1 title",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Add main title using # Title format"
+          }
+        ],
+        "docs\\data-sources\\bsee\\data\\WELL_ACTIVITY_CD\\well_activity_cd_description.md": [
+          {
+            "type": "line_length",
+            "description": "Line too long (187 chars, max 120)",
+            "line_number": 6,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "missing_title",
+            "description": "Document missing H1 title",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Add main title using # Title format"
+          }
+        ],
+        "docs\\data-sources\\bsee\\_legacy\\data_for_analysis_legacy.md": [
+          {
+            "type": "line_length",
+            "description": "Line too long (134 chars, max 120)",
+            "line_number": 7,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (162 chars, max 120)",
+            "line_number": 11,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (154 chars, max 120)",
+            "line_number": 37,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (155 chars, max 120)",
+            "line_number": 38,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (155 chars, max 120)",
+            "line_number": 39,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (157 chars, max 120)",
+            "line_number": 40,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (155 chars, max 120)",
+            "line_number": 41,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (155 chars, max 120)",
+            "line_number": 42,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (155 chars, max 120)",
+            "line_number": 43,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (155 chars, max 120)",
+            "line_number": 44,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (155 chars, max 120)",
+            "line_number": 45,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (154 chars, max 120)",
+            "line_number": 46,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (155 chars, max 120)",
+            "line_number": 47,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (155 chars, max 120)",
+            "line_number": 48,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (155 chars, max 120)",
+            "line_number": 49,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (155 chars, max 120)",
+            "line_number": 50,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (155 chars, max 120)",
+            "line_number": 51,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (154 chars, max 120)",
+            "line_number": 52,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (154 chars, max 120)",
+            "line_number": 53,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (155 chars, max 120)",
+            "line_number": 54,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (155 chars, max 120)",
+            "line_number": 55,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (154 chars, max 120)",
+            "line_number": 56,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (154 chars, max 120)",
+            "line_number": 57,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (154 chars, max 120)",
+            "line_number": 58,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (154 chars, max 120)",
+            "line_number": 59,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (154 chars, max 120)",
+            "line_number": 60,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (154 chars, max 120)",
+            "line_number": 61,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (154 chars, max 120)",
+            "line_number": 62,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (154 chars, max 120)",
+            "line_number": 63,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (154 chars, max 120)",
+            "line_number": 64,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (155 chars, max 120)",
+            "line_number": 65,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (155 chars, max 120)",
+            "line_number": 66,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (155 chars, max 120)",
+            "line_number": 67,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (153 chars, max 120)",
+            "line_number": 68,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (154 chars, max 120)",
+            "line_number": 69,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (165 chars, max 120)",
+            "line_number": 70,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Data Definitions",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Downloaded files (Before 2021)",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Required for Analysis",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "missing_title",
+            "description": "Document missing H1 title",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Add main title using # Title format"
+          }
+        ],
+        "docs\\data-sources\\equipment\\anchor\\calculation.md": [
+          {
+            "type": "line_length",
+            "description": "Line too long (186 chars, max 120)",
+            "line_number": 2,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (138 chars, max 120)",
+            "line_number": 4,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (121 chars, max 120)",
+            "line_number": 6,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "missing_title",
+            "description": "Document missing H1 title",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Add main title using # Title format"
+          }
+        ],
+        "docs\\data-sources\\equipment\\x_tree\\x_tree.md": [
+          {
+            "type": "line_length",
+            "description": "Line too long (334 chars, max 120)",
+            "line_number": 3,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (365 chars, max 120)",
+            "line_number": 5,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (534 chars, max 120)",
+            "line_number": 7,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "missing_title",
+            "description": "Document missing H1 title",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Add main title using # Title format"
+          }
+        ],
+        "docs\\data-sources\\onshore\\wyoming\\data.md": [
+          {
+            "type": "missing_title",
+            "description": "Document missing H1 title",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Add main title using # Title format"
+          }
+        ],
+        "docs\\data-sources\\sodir\\sodir.md": [
+          {
+            "type": "missing_title",
+            "description": "Document missing H1 title",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Add main title using # Title format"
+          }
+        ],
+        "docs\\development\\development_history.md": [
+          {
+            "type": "line_length",
+            "description": "Line too long (127 chars, max 120)",
+            "line_number": 10,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (237 chars, max 120)",
+            "line_number": 12,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (121 chars, max 120)",
+            "line_number": 37,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (136 chars, max 120)",
+            "line_number": 48,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (151 chars, max 120)",
+            "line_number": 50,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (153 chars, max 120)",
+            "line_number": 78,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (151 chars, max 120)",
+            "line_number": 91,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (331 chars, max 120)",
+            "line_number": 100,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (152 chars, max 120)",
+            "line_number": 108,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (181 chars, max 120)",
+            "line_number": 119,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (229 chars, max 120)",
+            "line_number": 121,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (142 chars, max 120)",
+            "line_number": 141,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (156 chars, max 120)",
+            "line_number": 152,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (230 chars, max 120)",
+            "line_number": 154,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (148 chars, max 120)",
+            "line_number": 174,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (243 chars, max 120)",
+            "line_number": 191,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (286 chars, max 120)",
+            "line_number": 220,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (128 chars, max 120)",
+            "line_number": 225,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (140 chars, max 120)",
+            "line_number": 237,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (311 chars, max 120)",
+            "line_number": 241,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (140 chars, max 120)",
+            "line_number": 246,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (361 chars, max 120)",
+            "line_number": 274,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (138 chars, max 120)",
+            "line_number": 277,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (366 chars, max 120)",
+            "line_number": 284,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (226 chars, max 120)",
+            "line_number": 328,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (280 chars, max 120)",
+            "line_number": 330,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (137 chars, max 120)",
+            "line_number": 339,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (133 chars, max 120)",
+            "line_number": 350,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (229 chars, max 120)",
+            "line_number": 352,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (123 chars, max 120)",
+            "line_number": 362,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (127 chars, max 120)",
+            "line_number": 377,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (281 chars, max 120)",
+            "line_number": 379,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (142 chars, max 120)",
+            "line_number": 415,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (250 chars, max 120)",
+            "line_number": 436,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (126 chars, max 120)",
+            "line_number": 446,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (185 chars, max 120)",
+            "line_number": 464,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (133 chars, max 120)",
+            "line_number": 469,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (176 chars, max 120)",
+            "line_number": 481,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (305 chars, max 120)",
+            "line_number": 483,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (263 chars, max 120)",
+            "line_number": 515,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (219 chars, max 120)",
+            "line_number": 559,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (197 chars, max 120)",
+            "line_number": 562,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (252 chars, max 120)",
+            "line_number": 565,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (141 chars, max 120)",
+            "line_number": 575,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (254 chars, max 120)",
+            "line_number": 578,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (142 chars, max 120)",
+            "line_number": 620,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (124 chars, max 120)",
+            "line_number": 624,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Session: July 9, 2025",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Session: July 11, 2025",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Session: July 18, 2025",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          }
+        ],
+        "docs\\development\\index.md": [
+          {
+            "type": "line_length",
+            "description": "Line too long (221 chars, max 120)",
+            "line_number": 8,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Development Environment",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Development Workflow",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Run tests",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Project Structure",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Contributing Guidelines",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Testing Framework",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Running Tests",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Run all tests",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: AI-Assisted Development",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Documentation Standards",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Release Management",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Performance and Optimization",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Community and Support",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "multiple_titles",
+            "description": "Document has multiple H1 titles (8)",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Use only one H1 title per document"
+          }
+        ],
+        "docs\\development\\README.md": [
+          {
+            "type": "header_style",
+            "description": "Use ATX-style headers (# Header) instead of Setext-style (Header\n======)",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Convert Setext headers to ATX format"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Contents",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          }
+        ],
+        "docs\\development\\uv_usage.md": [
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Quick Start",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Install dependencies",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Run tests",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Add a new dependency",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Installation",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Linux/Mac",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Initialize UV project (if not done)",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Install with development dependencies",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Development Workflow",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Common Commands",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Sync dependencies (like pip install -r requirements.txt)",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Add new dependency",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Add development dependency",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Remove dependency",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Update all dependencies",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: UV creates and manages .venv automatically",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Activate shell (optional, uv run handles this automatically)",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Show environment info",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Testing",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Running Tests",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Run all tests",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Run with verbose output",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Building and Deployment",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Local Building",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Build package",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Publishing",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: CI/CD Integration",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Troubleshooting",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Clear UV cache",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Ensure package is installed in development mode",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Migration from pip/conda",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Advanced Usage",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Working with Multiple Python Versions",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Custom Package Sources",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Integration with IDEs",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Best Practices",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "multiple_titles",
+            "description": "Document has multiple H1 titles (48)",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Use only one H1 title per document"
+          },
+          {
+            "type": "header_hierarchy",
+            "description": "Header level skipped (H1 to H3)",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Maintain sequential header hierarchy (H1 → H2 → H3)"
+          },
+          {
+            "type": "header_hierarchy",
+            "description": "Header level skipped (H1 to H3)",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Maintain sequential header hierarchy (H1 → H2 → H3)"
+          },
+          {
+            "type": "header_hierarchy",
+            "description": "Header level skipped (H1 to H3)",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Maintain sequential header hierarchy (H1 → H2 → H3)"
+          },
+          {
+            "type": "header_hierarchy",
+            "description": "Header level skipped (H1 to H3)",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Maintain sequential header hierarchy (H1 → H2 → H3)"
+          },
+          {
+            "type": "header_hierarchy",
+            "description": "Header level skipped (H1 to H3)",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Maintain sequential header hierarchy (H1 → H2 → H3)"
+          },
+          {
+            "type": "header_hierarchy",
+            "description": "Header level skipped (H1 to H3)",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Maintain sequential header hierarchy (H1 → H2 → H3)"
+          },
+          {
+            "type": "header_hierarchy",
+            "description": "Header level skipped (H1 to H3)",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Maintain sequential header hierarchy (H1 → H2 → H3)"
+          },
+          {
+            "type": "header_hierarchy",
+            "description": "Header level skipped (H1 to H3)",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Maintain sequential header hierarchy (H1 → H2 → H3)"
+          }
+        ],
+        "docs\\examples\\index.md": [
+          {
+            "type": "line_length",
+            "description": "Line too long (273 chars, max 120)",
+            "line_number": 8,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (121 chars, max 120)",
+            "line_number": 227,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Example Categories",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Example Usage Patterns",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Interactive Examples",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Code Quality and Standards",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "multiple_titles",
+            "description": "Document has multiple H1 titles (7)",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Use only one H1 title per document"
+          },
+          {
+            "type": "header_hierarchy",
+            "description": "Header level skipped (H1 to H3)",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Maintain sequential header hierarchy (H1 → H2 → H3)"
+          },
+          {
+            "type": "header_hierarchy",
+            "description": "Header level skipped (H1 to H3)",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Maintain sequential header hierarchy (H1 → H2 → H3)"
+          }
+        ],
+        "docs\\examples\\README.md": [
+          {
+            "type": "header_style",
+            "description": "Use ATX-style headers (# Header) instead of Setext-style (Header\n======)",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Convert Setext headers to ATX format"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Contents",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Documentation Files",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          }
+        ],
+        "docs\\modules\\fracfocus\\data.md": [
+          {
+            "type": "missing_title",
+            "description": "Document missing H1 title",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Add main title using # Title format"
+          }
+        ],
+        "docs\\modules\\marketing\\marketing.md": [
+          {
+            "type": "missing_title",
+            "description": "Document missing H1 title",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Add main title using # Title format"
+          }
+        ],
+        "docs\\modules\\materials\\resources.md": [
+          {
+            "type": "missing_title",
+            "description": "Document missing H1 title",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Add main title using # Title format"
+          }
+        ],
+        "docs\\raw_data\\bsee\\data_exploration.md": [
+          {
+            "type": "line_length",
+            "description": "Line too long (250 chars, max 120)",
+            "line_number": 4,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (128 chars, max 120)",
+            "line_number": 18,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "missing_title",
+            "description": "Document missing H1 title",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Add main title using # Title format"
+          }
+        ],
+        "docs\\raw_data\\drilling\\fleets.md": [
+          {
+            "type": "missing_title",
+            "description": "Document missing H1 title",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Add main title using # Title format"
+          }
+        ],
+        "docs\\raw_data\\sodir\\sodir.md": [
+          {
+            "type": "missing_title",
+            "description": "Document missing H1 title",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Add main title using # Title format"
+          }
+        ],
+        "docs\\raw_data\\wa\\intro.md": [
+          {
+            "type": "line_length",
+            "description": "Line too long (682 chars, max 120)",
+            "line_number": 9,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (647 chars, max 120)",
+            "line_number": 17,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "missing_title",
+            "description": "Document missing H1 title",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Add main title using # Title format"
+          }
+        ],
+        "docs\\reference\\index.md": [
+          {
+            "type": "line_length",
+            "description": "Line too long (308 chars, max 120)",
+            "line_number": 8,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (133 chars, max 120)",
+            "line_number": 13,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (133 chars, max 120)",
+            "line_number": 162,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Reference Categories",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Integration with WorldEnergyData",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Research and Academic Support",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Quality and Access",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "multiple_titles",
+            "description": "Document has multiple H1 titles (3)",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Use only one H1 title per document"
+          },
+          {
+            "type": "header_hierarchy",
+            "description": "Header level skipped (H1 to H3)",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Maintain sequential header hierarchy (H1 → H2 → H3)"
+          }
+        ],
+        "docs\\reference\\README.md": [
+          {
+            "type": "header_style",
+            "description": "Use ATX-style headers (# Header) instead of Setext-style (Header\n======)",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Convert Setext headers to ATX format"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Contents",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Documentation Files",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          }
+        ],
+        "docs\\sub_ai\\_agents\\alt-rules.md": [
+          {
+            "type": "line_length",
+            "description": "Line too long (122 chars, max 120)",
+            "line_number": 17,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (230 chars, max 120)",
+            "line_number": 26,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (162 chars, max 120)",
+            "line_number": 27,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (137 chars, max 120)",
+            "line_number": 28,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (130 chars, max 120)",
+            "line_number": 39,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (188 chars, max 120)",
+            "line_number": 41,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (125 chars, max 120)",
+            "line_number": 42,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (127 chars, max 120)",
+            "line_number": 43,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (260 chars, max 120)",
+            "line_number": 45,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (285 chars, max 120)",
+            "line_number": 49,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (179 chars, max 120)",
+            "line_number": 52,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (134 chars, max 120)",
+            "line_number": 55,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (174 chars, max 120)",
+            "line_number": 56,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (242 chars, max 120)",
+            "line_number": 57,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (253 chars, max 120)",
+            "line_number": 62,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (128 chars, max 120)",
+            "line_number": 65,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (149 chars, max 120)",
+            "line_number": 66,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (131 chars, max 120)",
+            "line_number": 67,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (171 chars, max 120)",
+            "line_number": 69,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (134 chars, max 120)",
+            "line_number": 70,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "line_length",
+            "description": "Line too long (140 chars, max 120)",
+            "line_number": 71,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "multiple_titles",
+            "description": "Document has multiple H1 titles (5)",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Use only one H1 title per document"
+          }
+        ],
+        "docs\\sub_ai\\_agents\\prompts.md": [
+          {
+            "type": "line_length",
+            "description": "Line too long (158 chars, max 120)",
+            "line_number": 12,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "header_hierarchy",
+            "description": "Header level skipped (H1 to H3)",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Maintain sequential header hierarchy (H1 → H2 → H3)"
+          }
+        ],
+        "docs\\sub_ai\\_agents\\requirements.md": [
+          {
+            "type": "content_length",
+            "description": "Document appears to have minimal content (0 chars)",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Add more substantial content or consider if file is needed"
+          },
+          {
+            "type": "missing_title",
+            "description": "Document missing H1 title",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Add main title using # Title format"
+          }
+        ],
+        "docs\\sub_ai\\_agents\\rules.md": [
+          {
+            "type": "missing_title",
+            "description": "Document missing H1 title",
+            "line_number": 0,
+            "severity": "warning",
+            "suggestion": "Add main title using # Title format"
+          }
+        ],
+        "docs\\user-guide\\index.md": [
+          {
+            "type": "line_length",
+            "description": "Line too long (156 chars, max 120)",
+            "line_number": 8,
+            "severity": "info",
+            "suggestion": "Break long lines for better readability"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Getting Started",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Key Concepts",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: User Types and Workflows",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Support and Resources",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          }
+        ],
+        "docs\\user-guide\\README.md": [
+          {
+            "type": "header_style",
+            "description": "Use ATX-style headers (# Header) instead of Setext-style (Header\n======)",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Convert Setext headers to ATX format"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Contents",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          },
+          {
+            "type": "empty_section",
+            "description": "Section appears empty or too brief: Documentation Files",
+            "line_number": 0,
+            "severity": "info",
+            "suggestion": "Add content to section or remove if not needed"
+          }
+        ]
+      }
+    },
+    "formatting_analysis": {
+      "files_processed": 61,
+      "files_needing_formatting": 53,
+      "potential_fixes": 53
+    },
+    "clarity_analysis": {
+      "files_needing_improvement": 34,
+      "clarity_issues": [
+        {
+          "file": "docs\\README.md",
+          "issues": [
+            {
+              "term": "api",
+              "suggestion": "Consider explaining: API (Application Programming Interface)"
+            },
+            {
+              "term": "npv",
+              "suggestion": "Consider explaining: NPV (Net Present Value)"
+            },
+            {
+              "term": "bsee",
+              "suggestion": "Consider explaining: BSEE (Bureau of Safety and Environmental Enforcement)"
+            },
+            {
+              "term": "sodir",
+              "suggestion": "Consider explaining: SODIR (Norwegian Offshore Directorate)"
+            },
+            {
+              "term": "christmas tree",
+              "suggestion": "Consider explaining: Christmas tree (wellhead control equipment)"
+            }
+          ]
+        },
+        {
+          "file": "docs\\analysis-guides\\index.md",
+          "issues": [
+            {
+              "term": "api",
+              "suggestion": "Consider explaining: API (Application Programming Interface)"
+            },
+            {
+              "term": "npv",
+              "suggestion": "Consider explaining: NPV (Net Present Value)"
+            },
+            {
+              "term": "bsee",
+              "suggestion": "Consider explaining: BSEE (Bureau of Safety and Environmental Enforcement)"
+            }
+          ]
+        },
+        {
+          "file": "docs\\data-sources\\index.md",
+          "issues": [
+            {
+              "term": "bsee",
+              "suggestion": "Consider explaining: BSEE (Bureau of Safety and Environmental Enforcement)"
+            },
+            {
+              "term": "sodir",
+              "suggestion": "Consider explaining: SODIR (Norwegian Offshore Directorate)"
+            }
+          ]
+        },
+        {
+          "file": "docs\\data-sources\\README.md",
+          "issues": [
+            {
+              "term": "api",
+              "suggestion": "Consider explaining: API (Application Programming Interface)"
+            },
+            {
+              "term": "npv",
+              "suggestion": "Consider explaining: NPV (Net Present Value)"
+            },
+            {
+              "term": "bsee",
+              "suggestion": "Consider explaining: BSEE (Bureau of Safety and Environmental Enforcement)"
+            },
+            {
+              "term": "sodir",
+              "suggestion": "Consider explaining: SODIR (Norwegian Offshore Directorate)"
+            }
+          ]
+        },
+        {
+          "file": "docs\\data-sources\\bsee\\analysis\\julia_api12_resolution.md",
+          "issues": [
+            {
+              "term": "api",
+              "suggestion": "Consider explaining: API (Application Programming Interface)"
+            }
+          ]
+        },
+        {
+          "file": "docs\\data-sources\\bsee\\analysis\\economics\\JStM_production.md",
+          "issues": [
+            {
+              "term": "npv",
+              "suggestion": "Consider explaining: NPV (Net Present Value)"
+            }
+          ]
+        },
+        {
+          "file": "docs\\data-sources\\bsee\\analysis\\economics\\NPV\\npv.md",
+          "issues": [
+            {
+              "term": "npv",
+              "suggestion": "Consider explaining: NPV (Net Present Value)"
+            }
+          ]
+        },
+        {
+          "file": "docs\\data-sources\\bsee\\analysis\\economics\\NPV\\NPV_REFACTORING_SUMMARY.md",
+          "issues": [
+            {
+              "term": "api",
+              "suggestion": "Consider explaining: API (Application Programming Interface)"
+            },
+            {
+              "term": "npv",
+              "suggestion": "Consider explaining: NPV (Net Present Value)"
+            },
+            {
+              "term": "bsee",
+              "suggestion": "Consider explaining: BSEE (Bureau of Safety and Environmental Enforcement)"
+            }
+          ]
+        },
+        {
+          "file": "docs\\data-sources\\bsee\\analysis\\rig_days\\rig_days_by_milestone.md",
+          "issues": [
+            {
+              "term": "api",
+              "suggestion": "Consider explaining: API (Application Programming Interface)"
+            }
+          ]
+        },
+        {
+          "file": "docs\\data-sources\\bsee\\analysis\\survey\\survey.md",
+          "issues": [
+            {
+              "term": "api",
+              "suggestion": "Consider explaining: API (Application Programming Interface)"
+            }
+          ]
+        }
+      ]
+    },
+    "outdated_analysis": {
+      "files_with_outdated_content": 10,
+      "outdated_issues": [
+        {
+          "file": "docs\\data-sources\\index.md",
+          "issues": [
+            {
+              "pattern": "2020|2021|2022",
+              "match": "2020",
+              "line": 120,
+              "description": "Check if date references need updating"
+            }
+          ]
+        },
+        {
+          "file": "docs\\data-sources\\bsee\\data\\drilling_data_rev1.md",
+          "issues": [
+            {
+              "pattern": "2020|2021|2022",
+              "match": "2020",
+              "line": 110,
+              "description": "Check if date references need updating"
+            },
+            {
+              "pattern": "2020|2021|2022",
+              "match": "2020",
+              "line": 128,
+              "description": "Check if date references need updating"
+            },
+            {
+              "pattern": "2020|2021|2022",
+              "match": "2021",
+              "line": 129,
+              "description": "Check if date references need updating"
+            },
+            {
+              "pattern": "2020|2021|2022",
+              "match": "2022",
+              "line": 130,
+              "description": "Check if date references need updating"
+            },
+            {
+              "pattern": "2020|2021|2022",
+              "match": "2020",
+              "line": 149,
+              "description": "Check if date references need updating"
+            },
+            {
+              "pattern": "2020|2021|2022",
+              "match": "2021",
+              "line": 150,
+              "description": "Check if date references need updating"
+            },
+            {
+              "pattern": "2020|2021|2022",
+              "match": "2022",
+              "line": 151,
+              "description": "Check if date references need updating"
+            },
+            {
+              "pattern": "2020|2021|2022",
+              "match": "2020",
+              "line": 160,
+              "description": "Check if date references need updating"
+            }
+          ]
+        },
+        {
+          "file": "docs\\data-sources\\bsee\\data\\clean_up\\data_explaination.md",
+          "issues": [
+            {
+              "pattern": "2020|2021|2022",
+              "match": "2022",
+              "line": 3,
+              "description": "Check if date references need updating"
+            }
+          ]
+        },
+        {
+          "file": "docs\\data-sources\\bsee\\data\\field_jsm\\no_of_wells.md",
+          "issues": [
+            {
+              "pattern": "2020|2021|2022",
+              "match": "2020",
+              "line": 6,
+              "description": "Check if date references need updating"
+            },
+            {
+              "pattern": "coming soon|under development|planned",
+              "match": "planned",
+              "line": 34,
+              "description": "Check if feature is now available"
+            }
+          ]
+        },
+        {
+          "file": "docs\\data-sources\\bsee\\data\\production\\notes.md",
+          "issues": [
+            {
+              "pattern": "2020|2021|2022",
+              "match": "2022",
+              "line": 9,
+              "description": "Check if date references need updating"
+            },
+            {
+              "pattern": "2020|2021|2022",
+              "match": "2021",
+              "line": 10,
+              "description": "Check if date references need updating"
+            }
+          ]
+        },
+        {
+          "file": "docs\\data-sources\\bsee\\_legacy\\data_for_analysis_legacy.md",
+          "issues": [
+            {
+              "pattern": "2020|2021|2022",
+              "match": "2021",
+              "line": 3,
+              "description": "Check if date references need updating"
+            }
+          ]
+        },
+        {
+          "file": "docs\\data-sources\\sodir\\sodir.md",
+          "issues": [
+            {
+              "pattern": "TODO|FIXME|XXX",
+              "match": "TODO",
+              "line": 6,
+              "description": "Resolve temporary markers"
+            }
+          ]
+        },
+        {
+          "file": "docs\\development\\index.md",
+          "issues": [
+            {
+              "pattern": "coming soon|under development|planned",
+              "match": "planned",
+              "line": 157,
+              "description": "Check if feature is now available"
+            }
+          ]
+        },
+        {
+          "file": "docs\\raw_data\\sodir\\sodir.md",
+          "issues": [
+            {
+              "pattern": "TODO|FIXME|XXX",
+              "match": "TODO",
+              "line": 6,
+              "description": "Resolve temporary markers"
+            }
+          ]
+        },
+        {
+          "file": "docs\\sub_ai\\_agents\\alt-rules.md",
+          "issues": [
+            {
+              "pattern": "TODO|FIXME|XXX",
+              "match": "todo",
+              "line": 102,
+              "description": "Resolve temporary markers"
+            },
+            {
+              "pattern": "TODO|FIXME|XXX",
+              "match": "todo",
+              "line": 104,
+              "description": "Resolve temporary markers"
+            },
+            {
+              "pattern": "TODO|FIXME|XXX",
+              "match": "todo",
+              "line": 107,
+              "description": "Resolve temporary markers"
+            }
+          ]
+        }
+      ]
+    },
+    "metadata_analysis": {
+      "files_missing_metadata": 48,
+      "metadata_issues": [
+        {
+          "file": "docs\\petrophysics.md",
+          "missing": [
+            "title",
+            "last_updated",
+            "description"
+          ]
+        },
+        {
+          "file": "docs\\data-sources\\bsee\\analysis\\julia_api12_resolution.md",
+          "missing": [
+            "title",
+            "last_updated"
+          ]
+        },
+        {
+          "file": "docs\\data-sources\\bsee\\analysis\\economics\\intro.md",
+          "missing": [
+            "title",
+            "last_updated"
+          ]
+        },
+        {
+          "file": "docs\\data-sources\\bsee\\analysis\\economics\\JStM_production.md",
+          "missing": [
+            "title",
+            "last_updated",
+            "description"
+          ]
+        },
+        {
+          "file": "docs\\data-sources\\bsee\\analysis\\economics\\lng.md",
+          "missing": [
+            "title",
+            "last_updated"
+          ]
+        },
+        {
+          "file": "docs\\data-sources\\bsee\\analysis\\economics\\power_markets.md",
+          "missing": [
+            "title",
+            "last_updated"
+          ]
+        },
+        {
+          "file": "docs\\data-sources\\bsee\\analysis\\economics\\revenues.md",
+          "missing": [
+            "title",
+            "last_updated",
+            "description"
+          ]
+        },
+        {
+          "file": "docs\\data-sources\\bsee\\analysis\\economics\\NPV\\Methodology_Comparison.md",
+          "missing": [
+            "last_updated"
+          ]
+        },
+        {
+          "file": "docs\\data-sources\\bsee\\analysis\\economics\\NPV\\npv.md",
+          "missing": [
+            "title",
+            "last_updated",
+            "description"
+          ]
+        },
+        {
+          "file": "docs\\data-sources\\bsee\\analysis\\economics\\NPV\\NPV_REFACTORING_SUMMARY.md",
+          "missing": [
+            "last_updated"
+          ]
+        }
+      ]
+    }
+  }
+}

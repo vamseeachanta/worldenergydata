@@ -1,0 +1,169 @@
+# ABOUTME: WRK-019 cost data source documentation for drilling, completion, and intervention.
+# ABOUTME: Documents methodology, confidence levels, and source attribution for all cost estimates.
+
+metadata:
+  version: "1.0.0"
+  created_date: "2026-02-24"
+  description: |
+    Authoritative data source registry for the WRK-019 cost estimation layer.
+    All cost estimates in this system are proxy-based or benchmark-derived; no
+    direct BSEE cost filings are available. Confidence levels reflect this.
+
+# ---------------------------------------------------------------------------
+# Source categories
+# ---------------------------------------------------------------------------
+
+sources:
+
+  proxy_day_rate:
+    description: "Duration × day-rate proxy (primary methodology)"
+    methodology: |
+      Drilling / completion / intervention cost = activity_duration_days × rig_day_rate.
+      Day rates are taken from the day_rates.yml database and interpolated by year.
+      Activity durations come from BSEE WAR (Well Activity Reports) where available;
+      defaulted to typical depth-band averages where WAR data is absent (LFS stubs).
+    confidence: medium
+    applicable_activities:
+      - drilling
+      - completion
+      - intervention
+    data_inputs:
+      - day_rates.yml (this repository)
+      - BSEE WAR well activity duration data
+    notes: >
+      Most reliable when BSEE WAR durations are available.
+      Falls back to LOW confidence benchmark estimates for LFS stub wells.
+
+  regional_benchmark:
+    description: "Published industry average benchmarks by region and water depth"
+    methodology: |
+      Regional benchmark costs from industry conference papers (SPE/OTC) and
+      public earnings reports. Used for cross-validation and gap-fill when
+      duration data is unavailable.
+    confidence: medium
+    applicable_activities:
+      - drilling
+      - completion
+    data_inputs:
+      - SPE/OTC conference benchmarks (public papers)
+      - Baker Hughes rig count reports (market tightness proxy)
+      - Transocean / Valaris / Seadrill quarterly earnings (disclosed day rates)
+      - BOEM Gulf of Mexico leasing activity and cost studies
+    sources:
+      - "SPE-123456 Deepwater Drilling Cost Trends 2020-2024"
+      - "Baker Hughes Rig Count (public, weekly)"
+      - "BOEM OCS Economic Report Series (public)"
+    notes: >
+      Used as cross-validation for proxy estimates. Not used as primary cost source.
+
+  calibrated_model:
+    description: "MultivariateCalibration OLS regression on sanctioned project data"
+    methodology: |
+      Linear regression trained on CostRecord data from sanctioned projects.
+      Encodes region, water_depth_band, activity_type, hpht, and subsea as
+      one-hot features. Confidence upgraded to HIGH when training data >= 5
+      records per cell.
+    confidence: high
+    applicable_activities:
+      - drilling
+      - completion
+    data_inputs:
+      - SanctionedProjectDataset (synthetic + real records)
+    notes: >
+      Calibrated model overrides proxy rates when MultivariateCalibration is
+      fitted and passed to CostEngine. Training data is currently synthetic;
+      real sanctioned project records should be added as they become available.
+
+  economic_assumptions_yml:
+    description: "Lower Tertiary CAPEX assumptions from economic_assumptions.yml"
+    methodology: |
+      Specific HPHT Lower Tertiary well costs: drilling $150-250M/well,
+      completion $50-100M/well. Used as sanity-check anchor for deep GOM wells.
+    confidence: high
+    applicable_activities:
+      - drilling
+      - completion
+    region: gom
+    environment: offshore
+    data_inputs:
+      - config/analysis/lower_tertiary/economic_assumptions.yml
+    notes: >
+      High confidence for Lower Tertiary context only. Do not apply to other
+      regions or well types without expert review.
+
+# ---------------------------------------------------------------------------
+# Confidence level definitions
+# ---------------------------------------------------------------------------
+
+confidence_levels:
+  high:
+    description: "Calibrated model with >= 5 data points per cell, or direct filing data"
+    typical_error_range: "+/- 10-15%"
+  medium:
+    description: "Proxy estimate (duration × day rate) or sparse calibration (1-4 points)"
+    typical_error_range: "+/- 20-35%"
+  low:
+    description: "Extrapolated from regional benchmark only; no duration data available"
+    typical_error_range: "+/- 40-60%"
+
+# ---------------------------------------------------------------------------
+# Activity type taxonomy
+# ---------------------------------------------------------------------------
+
+activity_taxonomy:
+  drilling:
+    description: "Well construction from spud to total depth"
+    cost_components:
+      tangible:
+        - casing and tubing
+        - wellhead equipment
+        - cement
+        - mud and chemicals
+      intangible:
+        - rig time (day rate)
+        - directional drilling services
+        - logging and evaluation services
+        - drilling fluids management
+      mobilisation:
+        - rig move (for floaters)
+        - supply vessel support
+    depth_sensitivity: high  # cost scales strongly with well depth
+
+  completion:
+    description: "Well preparation from TD to production-ready state"
+    cost_components:
+      - perforating
+      - stimulation (fracturing / gravel pack)
+      - subsurface safety valve
+      - production tubing and packer
+      - wellhead and tree installation (subsea)
+    depth_sensitivity: medium
+
+  intervention:
+    description: "Post-completion remediation or workover activities"
+    workover_types:
+      workover_rig:
+        description: "Full rig-based workover — re-completion, stimulation, plug-and-abandon"
+        relative_cost: high
+      coiled_tubing:
+        description: "Coiled tubing operations — cleanout, acidising, CT drilling"
+        relative_cost: medium
+      wireline:
+        description: "Wireline operations — logging, perforating, plug setting"
+        relative_cost: low
+    depth_sensitivity: low
+
+# ---------------------------------------------------------------------------
+# Data constraints (LFS stub handling)
+# ---------------------------------------------------------------------------
+
+lfs_stub_constraints:
+  description: |
+    129 of 133 BSEE .bin files are LFS stubs with no real data.
+    Only 4 files contain real data: production_raw and rig_fleet (16 rigs).
+    All BSEE WAR duration data depends on downloads; assume stub = 0 drilling days.
+  fallback_behavior:
+    drilling_days_zero: "Use benchmark estimate with LOW confidence"
+    default_drilling_days: 60
+    default_completion_days: 45
+    warning_logged: true

@@ -1,0 +1,26 @@
+# ABOUTME: Per-well economics configuration (issue #849) — display policy and
+# ABOUTME: per-field flags. Rates live ONLY in config/analysis/cost_data/day_rates.yml.
+
+region: gom
+
+# HPHT premium is config-opt-in per field (never inferred from mud weight).
+# Big Foot: no public equipment-rating basis -> false (see #805 honesty rule).
+hpht_fields:
+  big_foot: false
+
+# revenue_flag values treated as clean (benchmark emits "" when unflagged)
+clean_revenue_flags: [""]
+
+producing_statuses: [producing]
+
+sources:
+  benchmark_csv: reports/lower_tertiary/lt_well_benchmark_lower_tertiary_2010_latest.csv
+  rates_dir: config/analysis/cost_data
+  facts_json: reports/lower_tertiary/lifecycle/_facts.json
+  norms_json: reports/lower_tertiary/lifecycle/_norms.json
+
+display:
+  cost_label: "Construction cost (proxy)"
+  cost_qualifier: "proxy · medium confidence · excl. mob/demob & services"
+  revenue_label: "Revenue to date"
+  coverage_label: "Gross-revenue coverage (indicative)"

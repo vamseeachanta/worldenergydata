@@ -1,0 +1,142 @@
+# High-Performance Configuration
+# Optimized for processing large datasets and multiple reports quickly
+
+report:
+  level: block
+  units: ALL  # Process all blocks
+  template: economic
+  
+  date_range:
+    start: 2020-01-01
+    end: 2023-12-31  # 4 years of data
+    
+output:
+  formats:  # Generate multiple formats
+    - excel
+    - pdf
+    - json
+  directory: reports/high_volume/
+  compress: true  # Compress output files
+  
+# Advanced performance optimization
+performance:
+  # Redis-like caching for maximum performance
+  cache:
+    enabled: true
+    backend: redis  # Use Redis for distributed caching
+    redis_config:
+      host: localhost
+      port: 6379
+      db: 0
+      password: null
+    ttl: 7200  # 2 hours
+    max_size: 10000  # Large cache
+    warm_on_startup: true
+    cache_levels:
+      raw_data: true
+      aggregated_data: true
+      calculated_metrics: true
+      rendered_sections: true
+      
+  # Maximum parallelization
+  parallel:
+    enabled: true
+    max_workers: 8  # Use 8 CPU cores
+    chunk_size: 20  # Process 20 units per worker
+    use_process_pool: true  # Better for CPU-intensive tasks
+    adaptive: true  # Adjust workers based on system load
+    
+  # Memory optimization
+  memory:
+    max_usage: 4096  # 4GB maximum
+    streaming_threshold: 50  # Stream datasets >50MB
+    chunk_size: 100000  # Process 100k rows at a time
+    garbage_collection_interval: 10  # GC every 10 operations
+    use_numpy: true  # Use numpy for numerical operations
+    
+  # Database optimization
+  database:
+    connection_pool_size: 20
+    max_overflow: 10
+    query_timeout: 60  # 60 seconds
+    use_materialized_views: true
+    batch_size: 1000
+    use_read_replica: true
+    replica_host: db-replica.example.com
+    
+  # Report generation optimization
+  reports:
+    lazy_loading: true  # Load sections on demand
+    template_caching: true  # Cache compiled templates
+    compress_intermediate: true  # Compress intermediate results
+    async_export: true  # Export formats asynchronously
+    use_multiprocessing: true  # Use multiple processes
+    
+  # Monitoring and profiling
+  monitoring:
+    enabled: true
+    metrics_port: 9090  # Prometheus metrics
+    profile_enabled: false  # Enable for debugging only
+    alert_thresholds:
+      memory_percent: 80
+      cpu_percent: 90
+      response_time_seconds: 120
+      
+# Advanced template settings
+templates:
+  precompile: true  # Pre-compile all templates
+  minify_output: true  # Minify HTML/JSON output
+  
+  # Custom filters for performance
+  custom_filters:
+    - name: fast_format_currency
+      function: optimized_currency_formatter
+    - name: fast_aggregate
+      function: numpy_aggregator
+      
+# Visualization settings
+visualizations:
+  engine: plotly  # Use Plotly for charts
+  render_mode: webgl  # Use WebGL for better performance
+  max_data_points: 10000  # Limit data points per chart
+  use_datashader: true  # Use datashader for large datasets
+  cache_rendered: true  # Cache rendered visualizations
+  
+# Export optimization
+export:
+  excel:
+    use_xlsxwriter: true  # Faster than openpyxl for large files
+    constant_memory: true  # Write in constant memory mode
+    
+  pdf:
+    use_weasyprint: true
+    optimize_images: true
+    compress: true
+    
+  json:
+    use_ujson: true  # Ultra-fast JSON encoder
+    compress: true  # GZIP compression
+    
+# Error handling
+error_handling:
+  max_retries: 3
+  retry_delay: 5  # seconds
+  continue_on_error: true  # Continue processing other units
+  quarantine_failed: true  # Move failed units to quarantine
+  
+# Scheduling
+scheduling:
+  use_scheduler: true
+  scheduler: celery  # Use Celery for distributed processing
+  broker_url: redis://localhost:6379/1
+  result_backend: redis://localhost:6379/2
+  
+# Logging
+logging:
+  level: WARNING  # Reduce logging overhead
+  async: true  # Asynchronous logging
+  structured: true  # JSON structured logs
+  destinations:
+    - file: logs/high_performance.log
+    - syslog: localhost:514
+    - elasticsearch: http://localhost:9200

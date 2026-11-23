@@ -1,0 +1,247 @@
+{
+  "module": "visualization",
+  "test_file": "test_visualization.py",
+  "test_classes": [
+    {
+      "name": "TestVisualization",
+      "target_class": "Visualization",
+      "test_methods": [
+        {
+          "name": "test___init___basic",
+          "type": "basic",
+          "description": "Test basic functionality of __init__"
+        },
+        {
+          "name": "test_get_plotly_data_basic",
+          "type": "basic",
+          "description": "Test basic functionality of get_plotly_data"
+        },
+        {
+          "name": "test_get_plotly_data_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for get_plotly_data"
+        },
+        {
+          "name": "test_get_plotly_data_return_value",
+          "type": "return_value",
+          "description": "Test return value of get_plotly_data"
+        },
+        {
+          "name": "test_assign_simple_data_by_array_source_basic",
+          "type": "basic",
+          "description": "Test basic functionality of assign_simple_data_by_array_source"
+        },
+        {
+          "name": "test_assign_simple_data_by_DataFrame_source_basic",
+          "type": "basic",
+          "description": "Test basic functionality of assign_simple_data_by_DataFrame_source"
+        },
+        {
+          "name": "test_assign_simple_data_by_DataFrame_source_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for assign_simple_data_by_DataFrame_source"
+        },
+        {
+          "name": "test_assign_simple_data_by_DataFrame_source_return_value",
+          "type": "return_value",
+          "description": "Test return value of assign_simple_data_by_DataFrame_source"
+        },
+        {
+          "name": "test_assign_grouped_data_basic",
+          "type": "basic",
+          "description": "Test basic functionality of assign_grouped_data"
+        },
+        {
+          "name": "test_assign_grouped_data_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for assign_grouped_data"
+        },
+        {
+          "name": "test_assign_custom_properties_basic",
+          "type": "basic",
+          "description": "Test basic functionality of assign_custom_properties"
+        },
+        {
+          "name": "test_assign_custom_properties_return_value",
+          "type": "return_value",
+          "description": "Test return value of assign_custom_properties"
+        },
+        {
+          "name": "test_assign_custom_properties_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for assign_custom_properties"
+        },
+        {
+          "name": "test_get_cfg_with_custom_marker_basic",
+          "type": "basic",
+          "description": "Test basic functionality of get_cfg_with_custom_marker"
+        },
+        {
+          "name": "test_get_cfg_with_custom_marker_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for get_cfg_with_custom_marker"
+        },
+        {
+          "name": "test_get_cfg_with_custom_marker_return_value",
+          "type": "return_value",
+          "description": "Test return value of get_cfg_with_custom_marker"
+        },
+        {
+          "name": "test_get_cfg_with_custom_marker_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for get_cfg_with_custom_marker"
+        },
+        {
+          "name": "test_get_cfg_with_custom_color_basic",
+          "type": "basic",
+          "description": "Test basic functionality of get_cfg_with_custom_color"
+        },
+        {
+          "name": "test_get_cfg_with_custom_color_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for get_cfg_with_custom_color"
+        },
+        {
+          "name": "test_get_cfg_with_custom_color_return_value",
+          "type": "return_value",
+          "description": "Test return value of get_cfg_with_custom_color"
+        },
+        {
+          "name": "test_get_cfg_with_custom_color_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for get_cfg_with_custom_color"
+        },
+        {
+          "name": "test_assign_layout_basic",
+          "type": "basic",
+          "description": "Test basic functionality of assign_layout"
+        },
+        {
+          "name": "test_get_colors_basic",
+          "type": "basic",
+          "description": "Test basic functionality of get_colors"
+        },
+        {
+          "name": "test_get_colors_return_value",
+          "type": "return_value",
+          "description": "Test return value of get_colors"
+        },
+        {
+          "name": "test_get_custom_size_ref_basic",
+          "type": "basic",
+          "description": "Test basic functionality of get_custom_size_ref"
+        },
+        {
+          "name": "test_get_custom_size_ref_return_value",
+          "type": "return_value",
+          "description": "Test return value of get_custom_size_ref"
+        },
+        {
+          "name": "test_get_custom_size_ref_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for get_custom_size_ref"
+        }
+      ]
+    }
+  ],
+  "test_functions": [
+    {
+      "name": "test_get_x_data_basic",
+      "type": "basic",
+      "description": "Test basic functionality of get_x_data"
+    },
+    {
+      "name": "test_get_x_data_edge_cases",
+      "type": "edge_case",
+      "description": "Test edge cases for get_x_data"
+    },
+    {
+      "name": "test_get_x_data_return_value",
+      "type": "return_value",
+      "description": "Test return value of get_x_data"
+    },
+    {
+      "name": "test_get_y_data_basic",
+      "type": "basic",
+      "description": "Test basic functionality of get_y_data"
+    },
+    {
+      "name": "test_get_y_data_edge_cases",
+      "type": "edge_case",
+      "description": "Test edge cases for get_y_data"
+    },
+    {
+      "name": "test_get_y_data_return_value",
+      "type": "return_value",
+      "description": "Test return value of get_y_data"
+    },
+    {
+      "name": "test_get_z_data_basic",
+      "type": "basic",
+      "description": "Test basic functionality of get_z_data"
+    },
+    {
+      "name": "test_get_z_data_edge_cases",
+      "type": "edge_case",
+      "description": "Test edge cases for get_z_data"
+    },
+    {
+      "name": "test_get_z_data_return_value",
+      "type": "return_value",
+      "description": "Test return value of get_z_data"
+    },
+    {
+      "name": "test_get_text_data_basic",
+      "type": "basic",
+      "description": "Test basic functionality of get_text_data"
+    },
+    {
+      "name": "test_get_text_data_edge_cases",
+      "type": "edge_case",
+      "description": "Test edge cases for get_text_data"
+    },
+    {
+      "name": "test_get_text_data_return_value",
+      "type": "return_value",
+      "description": "Test return value of get_text_data"
+    },
+    {
+      "name": "test_get_data_name_basic",
+      "type": "basic",
+      "description": "Test basic functionality of get_data_name"
+    },
+    {
+      "name": "test_get_data_item_basic",
+      "type": "basic",
+      "description": "Test basic functionality of get_data_item"
+    },
+    {
+      "name": "test_get_data_item_return_value",
+      "type": "return_value",
+      "description": "Test return value of get_data_item"
+    },
+    {
+      "name": "test_get_data_item_parameterized",
+      "type": "parameterized",
+      "description": "Parameterized tests for get_data_item"
+    },
+    {
+      "name": "test_get_data_cfg_basic",
+      "type": "basic",
+      "description": "Test basic functionality of get_data_cfg"
+    },
+    {
+      "name": "test_get_data_cfg_edge_cases",
+      "type": "edge_case",
+      "description": "Test edge cases for get_data_cfg"
+    },
+    {
+      "name": "test_get_data_cfg_return_value",
+      "type": "return_value",
+      "description": "Test return value of get_data_cfg"
+    }
+  ],
+  "test_count": 46,
+  "coverage_approach": "focused",
+  "priority": "high"
+}

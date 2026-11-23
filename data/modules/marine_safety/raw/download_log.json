@@ -1,0 +1,110 @@
+[
+  {
+    "timestamp": "2025-10-06T23:35:13.021248",
+    "source": "OSHA Maritime",
+    "status": "FAILED",
+    "details": "OSHA_Fatality_Inspection_Data.json: 404 Client Error: Not Found for url: https://www.osha.gov/fatalities/export"
+  },
+  {
+    "timestamp": "2025-10-06T23:36:15.410410",
+    "source": "OSHA Maritime",
+    "status": "SUCCESS",
+    "details": "OSHA_Maritime_Inspections.json: Downloaded 4,288 bytes"
+  },
+  {
+    "timestamp": "2025-10-06T23:36:18.279188",
+    "source": "PHMSA Pipelines",
+    "status": "FAILED",
+    "details": "offshore_pipeline_incidents.zip: 404 Client Error: Not Found for url: https://www.phmsa.dot.gov/sites/phmsa.dot.gov/files/2024-01/offshore_incident_data.zip"
+  },
+  {
+    "timestamp": "2025-10-06T23:36:21.085535",
+    "source": "PHMSA Pipelines",
+    "status": "FAILED",
+    "details": "distribution_transmission_gathering.zip: 404 Client Error: Not Found for url: https://www.phmsa.dot.gov/sites/phmsa.dot.gov/files/2024-01/distribution_transmission_gathering.zip"
+  },
+  {
+    "timestamp": "2025-10-06T23:36:23.594787",
+    "source": "PHMSA Hazmat",
+    "status": "SUCCESS",
+    "details": "hazmat_incidents_10_years.csv: Downloaded 1,242 bytes"
+  },
+  {
+    "timestamp": "2025-10-06T23:36:23.594871",
+    "source": "EPA NRC",
+    "status": "INFO",
+    "details": "NRC data requires FOIA request or web scraping. Already have NOAA INC data."
+  },
+  {
+    "timestamp": "2025-10-06T23:36:24.521379",
+    "source": "IMCA DP",
+    "status": "FAILED",
+    "details": "IMCA_DP_Annual_Summary_2020.pdf: 404 Client Error: Not Found for url: https://www.imca-int.com/wp-content/uploads/2024/01/imca_dp_annual_summary_2020.pdf"
+  },
+  {
+    "timestamp": "2025-10-06T23:36:26.297171",
+    "source": "IMCA DP",
+    "status": "FAILED",
+    "details": "IMCA_DP_Annual_Summary_2021.pdf: 404 Client Error: Not Found for url: https://www.imca-int.com/wp-content/uploads/2024/01/imca_dp_annual_summary_2021.pdf"
+  },
+  {
+    "timestamp": "2025-10-06T23:36:28.069265",
+    "source": "IMCA DP",
+    "status": "FAILED",
+    "details": "IMCA_DP_Annual_Summary_2022.pdf: 404 Client Error: Not Found for url: https://www.imca-int.com/wp-content/uploads/2024/01/imca_dp_annual_summary_2022.pdf"
+  },
+  {
+    "timestamp": "2025-10-06T23:36:29.883803",
+    "source": "IMCA DP",
+    "status": "FAILED",
+    "details": "IMCA_DP_Annual_Summary_2023.pdf: 404 Client Error: Not Found for url: https://www.imca-int.com/wp-content/uploads/2024/01/imca_dp_annual_summary_2023.pdf"
+  },
+  {
+    "timestamp": "2025-10-06T23:36:31.653003",
+    "source": "IMCA DP",
+    "status": "FAILED",
+    "details": "IMCA_DP_Annual_Summary_2024.pdf: 404 Client Error: Not Found for url: https://www.imca-int.com/wp-content/uploads/2024/01/imca_dp_annual_summary_2024.pdf"
+  },
+  {
+    "timestamp": "2025-10-06T23:36:32.653250",
+    "source": "ILO Seafarer Deaths",
+    "status": "INFO",
+    "details": "ILO data requires database query at https://ilostat.ilo.org/. Manual access needed."
+  },
+  {
+    "timestamp": "2025-10-06T23:36:32.653311",
+    "source": "EMSA Reports",
+    "status": "INFO",
+    "details": "EMSA_Annual_Overview_2020.pdf: Manual download required from EMSA website"
+  },
+  {
+    "timestamp": "2025-10-06T23:36:32.653328",
+    "source": "EMSA Reports",
+    "status": "INFO",
+    "details": "EMSA_Annual_Overview_2021.pdf: Manual download required from EMSA website"
+  },
+  {
+    "timestamp": "2025-10-06T23:36:32.653342",
+    "source": "EMSA Reports",
+    "status": "INFO",
+    "details": "EMSA_Annual_Overview_2022.pdf: Manual download required from EMSA website"
+  },
+  {
+    "timestamp": "2025-10-06T23:36:32.653354",
+    "source": "EMSA Reports",
+    "status": "INFO",
+    "details": "EMSA_Annual_Overview_2023.pdf: Manual download required from EMSA website"
+  },
+  {
+    "timestamp": "2025-10-06T23:36:32.653371",
+    "source": "Paris MOU",
+    "status": "INFO",
+    "details": "Paris MOU inspection database requires registration at https://www.parismou.org/"
+  },
+  {
+    "timestamp": "2025-10-06T23:36:32.653416",
+    "source": "IMO GISIS",
+    "status": "INFO",
+    "details": "IMO GISIS requires registration at https://gisis.imo.org/"
+  }
+]

@@ -1,0 +1,314 @@
+# schema_version 2 (versioned workflows): a workflow row MAY carry an
+# algorithm-version triple — all optional; absence means v1 / stable / latest:
+#   version: <int >= 1>   algorithm revision; bump when the method or curve changes
+#   status:  stable | deprecated | experimental | retired   (default: stable)
+#   latest:  true         the latest-stable resolution target for this id
+# Multiple rows may share one `id`, differing by `version` (each with its own
+# input/outputs/test). A caller resolving an unpinned `<repo>:<id>` gets the latest
+# stable version; a pinned `<repo>:<id>@N` resolves that exact version.
+schema_version: 2
+invocation: "uv run python -m worldenergydata {input}"
+workflows:
+  - id: cost-disclosure-benchmark
+    basename: cost
+    title: Operator cost benchmarking report from annual-disclosure seed data
+    input: examples/workflows/cost-disclosure-benchmark/input.yml
+    result:
+      kind: files
+    outputs:
+      - examples/workflows/cost-disclosure-benchmark/outputs/operator_cost_benchmarking.html
+      - examples/workflows/cost-disclosure-benchmark/outputs/operator_cost_benchmarking_facts.json
+    assertions:
+      json:
+        - path: examples/workflows/cost-disclosure-benchmark/outputs/operator_cost_benchmarking_facts.json
+          equals:
+            operators_covered: 3
+    test: tests/workflows/test_durable_workflows.py::test_registry_workflow_outputs[cost-disclosure-benchmark]
+    runtime: offline
+    data_source:
+      type: bundled-fixture
+      network_required: false
+      fixtures: []  # Inputs are bundled in the cost package.
+  - id: bsee-production-summary
+    basename: bsee
+    title: BSEE production summary from bundled CSV data
+    input: examples/workflows/bsee-production-summary/input.yml
+    # Result location for the deterministic workflow API (workspace-hub#3286):
+    # outputs are files; run_workflow globs the injected embed root and
+    # content-hashes them (the save_cfg dump is excluded by extract_result).
+    result:
+      kind: files
+    outputs:
+      - examples/workflows/bsee-production-summary/outputs/prod_summ_bsee_production_summary.csv
+      - examples/workflows/bsee-production-summary/outputs/prod_summ_bsee_production_summary.json
+      - examples/workflows/bsee-production-summary/outputs/prod_rate_bopd_bsee_production_summary.csv
+      - examples/workflows/bsee-production-summary/outputs/prod_cumulative_mmbbl_bsee_production_summary.csv
+      - examples/workflows/bsee-production-summary/outputs/prod_all_block_WR_718.csv
+      - examples/workflows/bsee-production-summary/outputs/prod_raw_bsee_production_summary.xlsx
+    test: tests/workflows/test_durable_workflows.py::test_registry_workflow_outputs[bsee-production-summary]
+    runtime: offline
+    data_source:
+      # BSEE is a data-loader basename, but this example reads a committed
+      # fixture (input.yml has source: csv, refresh: false) so it needs no
+      # network. Verified offline 2026-06-13 (workspace-hub#3064) with HTTP
+      # fully blocked.
+      type: bundled-fixture
+      network_required: false
+      fixtures:
+        - examples/workflows/bsee-production-summary/sample_production.csv
+  - id: bsee-well-comparison
+    basename: bsee
+    title: BSEE well comparison from bundled CSV data
+    input: examples/workflows/bsee-well-comparison/input.yml
+    outputs:
+      - examples/workflows/bsee-well-comparison/outputs/prod_summ_bsee_well_comparison.csv
+      - examples/workflows/bsee-well-comparison/outputs/prod_summ_bsee_well_comparison.json
+      - examples/workflows/bsee-well-comparison/outputs/prod_rate_bopd_bsee_well_comparison.csv
+      - examples/workflows/bsee-well-comparison/outputs/prod_cumulative_mmbbl_bsee_well_comparison.csv
+      - examples/workflows/bsee-well-comparison/outputs/prod_all_block_MC_778.csv
+      - examples/workflows/bsee-well-comparison/outputs/prod_raw_bsee_well_comparison.xlsx
+    test: tests/workflows/test_durable_workflows.py::test_registry_workflow_outputs[bsee-well-comparison]
+    runtime: offline
+    data_source:
+      # See bsee-production-summary note. Committed fixture, no network.
+      # Verified offline 2026-06-13 (workspace-hub#3064).
+      type: bundled-fixture
+      network_required: false
+      fixtures:
+        - examples/workflows/bsee-well-comparison/sample_production.csv
+  - id: fdas-field-npv
+    basename: fdas
+    title: FDAS field economics NPV from bundled cashflow CSV
+    input: examples/workflows/fdas-field-npv/input.yml
+    outputs:
+      - examples/workflows/fdas-field-npv/outputs/fdas_field_npv_metrics.csv
+      - examples/workflows/fdas-field-npv/outputs/fdas_field_npv_summary.json
+    assertions:
+      json:
+        - path: examples/workflows/fdas-field-npv/outputs/fdas_field_npv_summary.json
+          equals:
+            field.name: Synthetic Anchor
+            metrics.payback_years: 2.0
+          approx:
+            metrics.npv: 243.42599549211099
+            metrics.irr_annual: 0.23375192852825855
+      csv:
+        - path: examples/workflows/fdas-field-npv/outputs/fdas_field_npv_metrics.csv
+          row_count: 1
+    test: tests/workflows/test_durable_workflows.py::test_registry_workflow_outputs[fdas-field-npv]
+    runtime: offline
+  - id: fdas-npv-sensitivity
+    basename: fdas
+    title: FDAS NPV sensitivity matrix for price and production rate
+    input: examples/workflows/fdas-npv-sensitivity/input.yml
+    outputs:
+      - examples/workflows/fdas-npv-sensitivity/outputs/fdas_npv_sensitivity_matrix.csv
+      - examples/workflows/fdas-npv-sensitivity/outputs/fdas_npv_sensitivity_summary.json
+    assertions:
+      json:
+        - path: examples/workflows/fdas-npv-sensitivity/outputs/fdas_npv_sensitivity_summary.json
+          equals:
+            best_case.price_multiplier: 1.2
+            best_case.rate_multiplier: 1.2
+          approx:
+            best_case.npv: 541.8482344102176
+            worst_case.npv: -452.8925619834712
+      csv:
+        - path: examples/workflows/fdas-npv-sensitivity/outputs/fdas_npv_sensitivity_matrix.csv
+          row_count: 4
+          column_sums:
+            npv: -21.036814425244776
+    test: tests/workflows/test_durable_workflows.py::test_registry_workflow_outputs[fdas-npv-sensitivity]
+    runtime: offline
+  - id: pipeline-safety-ffs
+    basename: pipeline_safety
+    title: Pipeline safety FFS verdicts from bundled defect CSV
+    input: examples/workflows/pipeline-safety-ffs/input.yml
+    outputs:
+      - examples/workflows/pipeline-safety-ffs/outputs/pipeline_safety_ffs_report.csv
+      - examples/workflows/pipeline-safety-ffs/outputs/pipeline_safety_ffs_summary.json
+      - examples/workflows/pipeline-safety-ffs/outputs/pipeline_safety_ffs_narrative.txt
+    assertions:
+      json:
+        - path: examples/workflows/pipeline-safety-ffs/outputs/pipeline_safety_ffs_summary.json
+          equals:
+            verdict_summary.accept: 2
+            verdict_summary.monitor: 0
+            verdict_summary.replace: 1
+          approx:
+            # Synthetic CSV hand check: ORNL/TM-2019/1192 (2019),
+            # eqs. 2, 10; legacy flow=0.9*358.53 MPa, area=0.85*0.8.
+            # z=200^2/(323.85*9.53), M=sqrt(1+0.6275*z-0.003375*z^2).
+            # Pf=(2*9.53/323.85)*flow*(1-area)/(1-area/M); safe=Pf/1.39.
+            minimum_safe_pressure_mpa: 5.6953
+      csv:
+        - path: examples/workflows/pipeline-safety-ffs/outputs/pipeline_safety_ffs_report.csv
+          row_count: 3
+          column_counts:
+            verdict:
+              accept: 2
+              replace: 1
+    test: tests/workflows/test_durable_workflows.py::test_registry_workflow_outputs[pipeline-safety-ffs]
+    runtime: offline
+  - id: production-forecast-arps
+    basename: production_forecast
+    title: Production forecast Arps decline from bundled synthetic histories
+    input: examples/workflows/production-forecast-arps/input.yml
+    outputs:
+      - examples/workflows/production-forecast-arps/outputs/production_forecast_arps_cases.csv
+      - examples/workflows/production-forecast-arps/outputs/production_forecast_arps_summary.json
+    assertions:
+      json:
+        - path: examples/workflows/production-forecast-arps/outputs/production_forecast_arps_summary.json
+          approx:
+            cases.exponential.eur_bbl: 9000.0
+            cases.exponential.r_squared: 1.0
+            cases.hyperbolic.eur_bbl: 13675.444679663216
+            cases.hyperbolic.r_squared: 1.0
+      csv:
+        - path: examples/workflows/production-forecast-arps/outputs/production_forecast_arps_cases.csv
+          row_count: 2
+          column_sums:
+            eur_bbl: 22675.444679663216
+    test: tests/workflows/test_durable_workflows.py::test_registry_workflow_outputs[production-forecast-arps]
+    runtime: offline
+  - id: marine-safety-stats
+    basename: marine_safety
+    title: Marine safety incident statistics from bundled CSV data
+    input: examples/workflows/marine-safety-stats/input.yml
+    outputs:
+      - examples/workflows/marine-safety-stats/outputs/marine_safety_stats_incident_type_counts.csv
+      - examples/workflows/marine-safety-stats/outputs/marine_safety_stats_trends.csv
+      - examples/workflows/marine-safety-stats/outputs/marine_safety_stats_summary.json
+    assertions:
+      json:
+        - path: examples/workflows/marine-safety-stats/outputs/marine_safety_stats_summary.json
+          equals:
+            total_incidents: 5
+            by_source.maib: 2
+            by_source.tsb: 3
+            incident_type_counts.fire: 2
+      csv:
+        - path: examples/workflows/marine-safety-stats/outputs/marine_safety_stats_incident_type_counts.csv
+          row_count: 4
+          column_sums:
+            count: 5
+    test: tests/workflows/test_durable_workflows.py::test_registry_workflow_outputs[marine-safety-stats]
+    runtime: offline
+  - id: sodir-field-summary
+    basename: sodir
+    title: SODIR field portfolio summary from bundled CSV data
+    input: examples/workflows/sodir-field-summary/input.yml
+    outputs:
+      - examples/workflows/sodir-field-summary/outputs/sodir_field_summary_portfolio.json
+      - examples/workflows/sodir-field-summary/outputs/sodir_field_summary_fields.csv
+      - examples/workflows/sodir-field-summary/outputs/sodir_field_summary_production.csv
+    assertions:
+      json:
+        - path: examples/workflows/sodir-field-summary/outputs/sodir_field_summary_portfolio.json
+          equals:
+            total_fields: 2
+            fields_by_status.PRODUCING: 1
+            fields_by_status.IDLE: 1
+          approx:
+            total_recoverable_oil: 150.0
+            average_recovery_factor: 0.4
+      csv:
+        - path: examples/workflows/sodir-field-summary/outputs/sodir_field_summary_fields.csv
+          row_count: 2
+          column_sums:
+            recoverable_oil_mmbbl: 150.0
+    test: tests/workflows/test_durable_workflows.py::test_registry_workflow_outputs[sodir-field-summary]
+    runtime: offline
+    data_source:
+      # SODIR is a data-loader basename; this example reads committed CSV
+      # fixtures (input.yml has source: csv, input_path: data) so it needs no
+      # network. Verified offline 2026-06-13 (workspace-hub#3064) with HTTP
+      # fully blocked.
+      type: bundled-fixture
+      network_required: false
+      fixtures:
+        - examples/workflows/sodir-field-summary/data/sodir_fields.csv
+        - examples/workflows/sodir-field-summary/data/sodir_production.csv
+  - id: texas-rrc-production-summary
+    basename: texas_rrc
+    title: Texas RRC production summary from bundled CSV data
+    input: examples/workflows/texas-rrc-production-summary/input.yml
+    outputs:
+      - examples/workflows/texas-rrc-production-summary/outputs/texas_rrc_production_summary_districts.csv
+      - examples/workflows/texas-rrc-production-summary/outputs/texas_rrc_production_summary_summary.json
+    assertions:
+      json:
+        - path: examples/workflows/texas-rrc-production-summary/outputs/texas_rrc_production_summary_summary.json
+          equals:
+            total_records: 3
+            district_count: 2
+          approx:
+            oil_production_total: 600.0
+            gas_production_total: 1700.0
+      csv:
+        - path: examples/workflows/texas-rrc-production-summary/outputs/texas_rrc_production_summary_districts.csv
+          row_count: 2
+          column_sums:
+            oil_production: 600.0
+            gas_production: 1700.0
+    test: tests/workflows/test_durable_workflows.py::test_registry_workflow_outputs[texas-rrc-production-summary]
+    runtime: offline
+    data_source:
+      # Texas RRC is a data-loader basename; this example reads a committed CSV
+      # fixture (input.yml has source: csv, files.production: production.csv) so
+      # it needs no network. Verified offline 2026-06-13 (workspace-hub#3064)
+      # with HTTP fully blocked.
+      type: bundled-fixture
+      network_required: false
+      fixtures:
+        - examples/workflows/texas-rrc-production-summary/production.csv
+  - id: federal-acreage-evidence
+    basename: federal_acreage
+    title: Synthetic federal lease-position and acreage evidence
+    input: examples/workflows/federal-acreage-evidence/input.yml
+    outputs:
+      - examples/workflows/federal-acreage-evidence/outputs/federal_acreage_evidence_result.json
+      - examples/workflows/federal-acreage-evidence/outputs/federal_acreage_evidence_report.html
+    assertions:
+      json:
+        - path: examples/workflows/federal-acreage-evidence/outputs/federal_acreage_evidence_result.json
+          equals:
+            screening_status: evidence_partial
+            title_chain_gap.status: not_evaluated
+            acreage.gross_area_acres.status: available
+          approx:
+            acreage.gross_area_acres.value: 320.0
+            acreage.federal_record_coverage_acres.value: 280.0
+            acreage.leased_acres.value: 200.0
+            acreage.expired_or_nonleased_acres.value: 80.0
+            acreage.no_record_acres.value: 40.0
+    test: tests/workflows/test_durable_workflows.py::test_registry_workflow_outputs[federal-acreage-evidence]
+    runtime: offline
+    data_source:
+      type: bundled-fixture
+      network_required: false
+      fixtures:
+        - examples/workflows/federal-acreage-evidence/fixture_records.json
+  - id: ukcs-reference-report
+    basename: ukcs
+    title: UKCS NSTA reference-chain report (fixture, pre-tax plumbing)
+    input: examples/workflows/ukcs-reference-report/input.yml
+    result:
+      kind: files
+    outputs:
+      - examples/workflows/ukcs-reference-report/outputs/ukcs_reference_report_report.html
+      - examples/workflows/ukcs-reference-report/outputs/ukcs_reference_report_facts.json
+    assertions:
+      json:
+        - path: examples/workflows/ukcs-reference-report/outputs/ukcs_reference_report_facts.json
+          equals:
+            economics_label: chain_plumbing_pre_tax
+            provenance: fixture
+    test: tests/workflows/test_durable_workflows.py::test_registry_workflow_outputs[ukcs-reference-report]
+    runtime: offline
+    data_source:
+      type: bundled-fixture
+      network_required: false
+      fixtures:
+        - examples/workflows/ukcs-reference-report/sample_nsta_production.csv

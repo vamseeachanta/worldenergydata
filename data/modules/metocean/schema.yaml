@@ -1,0 +1,236 @@
+module: metocean
+description: Metocean reference structures and user-supplied licensed tables.
+datasets:
+- name: api_rp2met_hurricane_gom_extremes.csv
+  source_record: table_sources.json#/tables/api_rp2met_hurricane_gom_extremes.csv
+  format: csv
+  distributed: false
+  availability: Not distributed; a user-supplied licensed copy is required.
+  citation: >-
+    API RP 2MET, Derivation of Metocean Design and Operating Conditions;
+    edition and table titles: to be completed from the licensed copy
+  supply:
+    loader: worldenergydata.metocean.licensed_tables.load_licensed_table
+    argument: copy_path
+    environment_variable: METOCEAN_LICENSED_DATA_DIR
+  columns:
+  - name: PARAMETER
+    type: string
+    description: ''
+    unit: ''
+  - name: RP_10YR
+    type: float
+    description: ''
+    unit: ''
+  - name: RP_25YR
+    type: float
+    description: ''
+    unit: ''
+  - name: RP_50YR
+    type: float
+    description: ''
+    unit: ''
+  - name: RP_100YR
+    type: float
+    description: ''
+    unit: ''
+  - name: RP_200YR
+    type: float
+    description: ''
+    unit: ''
+  - name: RP_1000YR
+    type: float
+    description: ''
+    unit: ''
+  - name: RP_2000YR
+    type: float
+    description: ''
+    unit: ''
+- name: api_rp2met_us_zone_100yr_waves.csv
+  source_record: table_sources.json#/tables/api_rp2met_us_zone_100yr_waves.csv
+  format: csv
+  distributed: false
+  availability: Not distributed; a user-supplied licensed copy is required.
+  citation: >-
+    API RP 2MET, Derivation of Metocean Design and Operating Conditions;
+    edition and table titles: to be completed from the licensed copy
+  supply:
+    loader: worldenergydata.metocean.licensed_tables.load_licensed_table
+    argument: copy_path
+    environment_variable: METOCEAN_LICENSED_DATA_DIR
+  columns:
+  - name: ZONE
+    type: integer
+    description: ''
+    unit: ''
+  - name: LOCATION
+    type: string
+    description: ''
+    unit: ''
+  - name: HMAX_100YR_MEAN_M
+    type: string
+    description: ''
+    unit: ''
+  - name: HMAX_100YR_RANGE_M
+    type: string
+    description: ''
+    unit: ''
+  - name: WAVE_STEEPNESS_RANGE
+    type: string
+    description: ''
+    unit: ''
+  - name: CURRENT_MEAN_MS
+    type: float
+    description: ''
+    unit: ''
+  - name: CURRENT_RANGE_MS
+    type: string
+    description: ''
+    unit: ''
+  - name: STORM_TIDE_MEAN_M
+    type: float
+    description: ''
+    unit: ''
+  - name: STORM_TIDE_RANGE_M
+    type: string
+    description: ''
+    unit: ''
+  - name: BASIS
+    type: integer
+    description: ''
+    unit: ''
+- name: marine_growth_terminal_thickness.csv
+  source_record: table_sources.json#/tables/marine_growth_terminal_thickness.csv
+  format: csv
+  distributed: false
+  availability: Not distributed; a user-supplied licensed copy is required.
+  citation: >-
+    API RP 2MET, Derivation of Metocean Design and Operating Conditions;
+    edition and table titles: to be completed from the licensed copy
+  supply:
+    loader: worldenergydata.metocean.licensed_tables.load_licensed_table
+    argument: copy_path
+    environment_variable: METOCEAN_LICENSED_DATA_DIR
+  columns:
+  - name: DEPTH_BAND
+    type: string
+    description: ''
+    unit: ''
+  - name: HARD_GROWTH
+    type: string
+    description: ''
+    unit: ''
+  - name: SOFT_GROWTH
+    type: string
+    description: ''
+    unit: ''
+  - name: ALGAE_KELP
+    type: string
+    description: ''
+    unit: ''
+- name: api_rp2met_gom_extremes_by_region.csv
+  source_record: table_sources.json#/tables/api_rp2met_gom_extremes_by_region.csv
+  format: csv
+  distributed: false
+  availability: Not distributed; a user-supplied licensed copy is required.
+  citation: >-
+    API RP 2MET, Derivation of Metocean Design and Operating Conditions;
+    edition and table titles: to be completed from the licensed copy
+  supply:
+    loader: worldenergydata.metocean.licensed_tables.load_licensed_table
+    argument: copy_path
+    environment_variable: METOCEAN_LICENSED_DATA_DIR
+  description: GoM hurricane extremes by sub-region and return period (long-form).
+  columns:
+  - {name: PARAMETER, type: string, description: '', unit: ''}
+  - {name: UNIT, type: string, description: '', unit: ''}
+  - {name: REGION, type: string, description: '', unit: ''}
+  - {name: RP_10YR, type: float, description: '', unit: ''}
+  - {name: RP_25YR, type: float, description: '', unit: ''}
+  - {name: RP_50YR, type: float, description: '', unit: ''}
+  - {name: RP_100YR, type: float, description: '', unit: ''}
+  - {name: RP_200YR, type: float, description: '', unit: ''}
+  - {name: RP_1000YR, type: float, description: '', unit: ''}
+  - {name: RP_2000YR, type: float, description: '', unit: ''}
+- name: metocean_regional_extremes.csv
+  source_record: table_sources.json#/tables/metocean_regional_extremes.csv
+  format: csv
+  distributed: false
+  availability: Not distributed; a user-supplied licensed copy is required.
+  citation: >-
+    API RP 2MET, Derivation of Metocean Design and Operating Conditions;
+    edition and table titles: to be completed from the licensed copy
+  supply:
+    loader: worldenergydata.metocean.licensed_tables.load_licensed_table
+    argument: copy_path
+    environment_variable: METOCEAN_LICENSED_DATA_DIR
+  description: Indicative extreme metocean parameters by region & return period (West
+    Africa, North Sea/NE Atlantic, NW Atlantic). Long-form.
+  columns:
+  - {name: REGION, type: string, description: '', unit: ''}
+  - {name: NOMINAL_WATER_DEPTH, type: string, description: '', unit: ''}
+  - {name: PARAMETER, type: string, description: '', unit: ''}
+  - {name: UNIT, type: string, description: '', unit: ''}
+  - {name: RP_1YR, type: string, description: '', unit: ''}
+  - {name: RP_5YR, type: string, description: '', unit: ''}
+  - {name: RP_10YR, type: string, description: '', unit: ''}
+  - {name: RP_50YR, type: string, description: '', unit: ''}
+  - {name: RP_100YR, type: string, description: '', unit: ''}
+- name: metocean_hs_tp_occurrence.csv
+  source_record: table_sources.json#/tables/metocean_hs_tp_occurrence.csv
+  format: csv
+  distributed: false
+  availability: Not distributed; a user-supplied licensed copy is required.
+  citation: >-
+    API RP 2MET, Derivation of Metocean Design and Operating Conditions;
+    edition and table titles: to be completed from the licensed copy
+  supply:
+    loader: worldenergydata.metocean.licensed_tables.load_licensed_table
+    argument: copy_path
+    environment_variable: METOCEAN_LICENSED_DATA_DIR
+  description: Joint Hs vs Tp percentage-occurrence scatter by deep-water location.
+    Long-form (zero cells dropped).
+  columns:
+  - {name: LOCATION, type: string, description: '', unit: ''}
+  - {name: HS_BAND_M, type: string, description: significant wave height band, unit: m}
+  - {name: TP_BAND_S, type: string, description: spectral peak period band, unit: s}
+  - {name: OCCURRENCE_PCT, type: float, description: percentage occurrence, unit: '%'}
+- name: metocean_temperature_ranges.csv
+  source_record: table_sources.json#/tables/metocean_temperature_ranges.csv
+  format: csv
+  distributed: false
+  availability: Not distributed; a user-supplied licensed copy is required.
+  citation: >-
+    API RP 2MET, Derivation of Metocean Design and Operating Conditions;
+    edition and table titles: to be completed from the licensed copy
+  supply:
+    loader: worldenergydata.metocean.licensed_tables.load_licensed_table
+    argument: copy_path
+    environment_variable: METOCEAN_LICENSED_DATA_DIR
+  description: Air/sea-surface/sea-floor temperature ranges by North Sea / NE Atlantic
+    / Norwegian Sea area.
+  columns:
+  - {name: AREA, type: string, description: '', unit: ''}
+  - {name: AIR_TEMP_C, type: string, description: air temperature range, unit: degC}
+  - {name: SEA_TEMP_C, type: string, description: sea-surface temperature range, unit: degC}
+  - {name: SEAFLOOR_TEMP_C, type: string, description: sea-floor temperature range, unit: degC}
+- name: api_rp2met_us_zone_100yr_winds.csv
+  source_record: table_sources.json#/tables/api_rp2met_us_zone_100yr_winds.csv
+  format: csv
+  distributed: false
+  availability: Not distributed; a user-supplied licensed copy is required.
+  citation: >-
+    API RP 2MET, Derivation of Metocean Design and Operating Conditions;
+    edition and table titles: to be completed from the licensed copy
+  supply:
+    loader: worldenergydata.metocean.licensed_tables.load_licensed_table
+    argument: copy_path
+    environment_variable: METOCEAN_LICENSED_DATA_DIR
+  description: 100-year extreme 10m/60-min wind speeds by US offshore zone (wind
+    companion to the US-zone waves table).
+  columns:
+  - {name: ZONE, type: integer, description: '', unit: ''}
+  - {name: LOCATION, type: string, description: '', unit: ''}
+  - {name: WIND_10M_60MIN_WITH_WAVE_MS, type: float, description: '', unit: m/s}
+  - {name: WIND_10M_60MIN_MAX_MS, type: float, description: '', unit: m/s}
+binary_stores: []

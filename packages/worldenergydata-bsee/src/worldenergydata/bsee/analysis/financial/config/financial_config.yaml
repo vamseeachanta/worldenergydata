@@ -1,0 +1,152 @@
+# SME Financial Analysis Configuration
+# Based on SME Roy's V20 Analysis Parameters
+
+financial:
+  # Lease grouping based on V20 group_as_map
+  lease_groups:
+    STONES:
+      - G03608
+      - G04003
+    CASCADE_CHINOOK:
+      - G25488
+      - G25492
+    JULIA:
+      - G24030
+      - G24041
+    ANCHOR:
+      - G34628
+      - G34631
+    # Additional groups can be added here
+    # Format: GROUP_NAME: [list of lease numbers]
+  
+  # Economic parameters for financial calculations
+  economic_parameters:
+    # Commodity prices
+    oil_price_usd: 50.00              # USD per barrel
+    gas_price_usd_mcf: 3.00           # USD per thousand cubic feet
+    ngl_price_usd: 30.00              # USD per barrel (NGL)
+    
+    # Financial rates
+    discount_rate: 0.10               # 10% annual discount rate for NPV
+    tax_rate: 0.35                    # 35% corporate tax rate
+    royalty_rate: 0.1875              # 18.75% royalty rate
+    severance_tax_rate: 0.05          # 5% severance tax
+    
+    # Operating costs
+    operating_cost_per_bbl: 12.50     # USD per BOE
+    water_disposal_cost: 2.50         # USD per barrel of water
+    
+  # Drilling and completion costs
+  drilling_costs:
+    # Daily rates
+    rig_rate_usd_per_day: 300000      # Drilling rig rate
+    completion_rate_usd_per_day: 400000  # Completion rate
+    
+    # Fixed costs
+    mobilization_cost_usd: 5000000    # Rig mobilization
+    demobilization_cost_usd: 3000000  # Rig demobilization
+    
+    # Additional costs
+    tangible_drilling_pct: 0.30       # 30% of drilling costs are tangible
+    completion_materials_pct: 0.25     # 25% of completion costs are materials
+  
+  # Data source paths (relative to data directory)
+  data_paths:
+    # Production data
+    production_data: "multi_year_lease_matrix_with_charts.xlsx"
+    production_binary: "data/modules/bsee/bin/production/"
+    production_zip: "data/modules/bsee/zip/historical_production_yearly/"
+    
+    # Drilling and completion data
+    drilling_completion: "drilling_and_completion_days_by_api.xlsx"
+    war_binary: "data/modules/bsee/bin/war/"
+    
+    # Supporting data
+    lease_assumptions: "leases_assumptions.xlsx"
+    wti_prices: "wti_full_monthly.xlsx"
+    
+    # Output directory
+    output_directory: "reports/financial/"
+  
+  # Report generation options
+  output_options:
+    # Excel formatting
+    include_readme: true              # Add README sheet with version info
+    include_charts: true              # Generate charts in Excel
+    format_numbers: true              # Apply number formatting
+    decimal_places: 2                 # Decimal places for financial values
+    
+    # Sheet organization
+    readme_first: true                # Place README as first sheet
+    group_by_lease: true              # Group sheets by lease
+    include_monthly_sheets: true      # Include monthly breakdown sheets
+    include_summary_sheet: true       # Include executive summary
+    
+    # Chart options
+    chart_types:
+      - production_timeline
+      - revenue_breakdown
+      - cash_flow_waterfall
+      - npv_sensitivity
+    
+    # Column widths (Excel units)
+    column_widths:
+      date: 12
+      lease: 15
+      well: 20
+      production: 12
+      revenue: 15
+      costs: 15
+      cash_flow: 15
+  
+  # Processing options
+  processing:
+    # Performance
+    batch_size: 100                   # Process leases in batches
+    parallel_workers: 4                # Number of parallel workers
+    cache_enabled: true               # Enable caching of intermediate results
+    
+    # Data handling
+    fill_missing_months: true         # Fill gaps in production data
+    interpolate_prices: true          # Interpolate missing price data
+    aggregate_by_month: true          # Monthly aggregation
+    
+    # Quality checks
+    validate_inputs: true             # Validate input data
+    check_data_quality: true          # Check for data anomalies
+    log_warnings: true                # Log data quality warnings
+  
+  # Analysis options
+  analysis:
+    # Time periods
+    lookback_months: 12               # Months of historical data to analyze
+    forecast_months: 240              # Months to forecast (20 years)
+    
+    # NPV calculation
+    npv_start_date: "2020-01-01"     # Start date for NPV calculation
+    monthly_compounding: true         # Use monthly compounding
+    
+    # Sensitivity analysis
+    run_sensitivity: true             # Run sensitivity analysis
+    sensitivity_ranges:
+      oil_price: [-20, -10, 0, 10, 20]  # Percentage changes
+      gas_price: [-20, -10, 0, 10, 20]
+      costs: [-10, -5, 0, 5, 10]
+    
+    # Decline curves
+    apply_decline: true              # Apply production decline
+    decline_type: "hyperbolic"       # exponential, hyperbolic, harmonic
+    initial_decline_rate: 0.65       # Annual decline rate
+    b_factor: 0.5                    # Hyperbolic b factor
+    minimum_decline_rate: 0.05       # Terminal decline rate
+
+# Logging configuration
+logging:
+  level: INFO                        # DEBUG, INFO, WARNING, ERROR
+  file: "logs/financial.log"     # Log file path
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  
+# Version information
+version: "1.0.0"
+last_updated: "2024-12-19"
+based_on: "SME Roy V20 Analysis"

@@ -1,0 +1,130 @@
+# Odfjell Drilling fleet specs — wed issue #996 (epic #991).
+# 8 harsh-environment semisubmersibles (GVA7500/Enhanced, Moss CS60E, GM4D).
+#
+# extraction: web_transcription — Odfjell publishes no spec PDFs; values are
+# transcribed from the per-rig pages at odfjelldrilling.com/rig/<name>/ (cited
+# per entry, retrieved 2026-07-13). Deepsea Bergen's page 404s (unit likely
+# disposed) — excluded. Metric page values converted: water/drilling depth
+# m -> ft; VDL mt -> short tons. MPD not stated on any page -> omitted.
+retrieved: '2026-07-13'
+source_family: contractor_rig_summary_pdf
+owner: Odfjell Drilling Ltd
+issue: 996
+vessels:
+  Deepsea Atlantic:
+    url: https://www.odfjelldrilling.com/rig/deepsea-atlantic/
+    rig_type: semi_submersible
+    rig_design: GVA7500 Enhanced
+    extraction: web_transcription
+    specs:
+      YEAR_BUILT: 2009
+      FLAG_STATE: Bermuda
+      WATER_DEPTH_RATING_FT: 9843.0  # 3,000 m
+      DRILLING_DEPTH_RATING_FT: 35006.0  # 10,670 m
+      DISPLACEMENT_TONNES: 57200
+      VARIABLE_DECK_LOAD_ST: 8267  # 7,500 mt
+      QUARTERS_CAPACITY: 128
+      DUAL_ACTIVITY: true  # dual derrick, main + auxiliary work centre
+      CRANE_MAIN_CAPACITY_T: 100  # NOV KBC 100t + 85t
+  Deepsea Stavanger:
+    url: https://www.odfjelldrilling.com/rig/deepsea-stavanger/
+    rig_type: semi_submersible
+    rig_design: GVA7500 Enhanced
+    extraction: web_transcription
+    specs:
+      YEAR_BUILT: 2010
+      FLAG_STATE: Bermuda
+      WATER_DEPTH_RATING_FT: 9843.0
+      DRILLING_DEPTH_RATING_FT: 35006.0
+      DISPLACEMENT_TONNES: 57200
+      VARIABLE_DECK_LOAD_ST: 8267
+      QUARTERS_CAPACITY: 157
+      DUAL_ACTIVITY: true
+      CRANE_MAIN_CAPACITY_T: 100
+  Deepsea Aberdeen:
+    url: https://www.odfjelldrilling.com/rig/deepsea-aberdeen/
+    rig_type: semi_submersible
+    rig_design: GVA7500 Enhanced
+    extraction: web_transcription
+    specs:
+      YEAR_BUILT: 2014
+      FLAG_STATE: Bermuda
+      WATER_DEPTH_RATING_FT: 9843.0
+      DRILLING_DEPTH_RATING_FT: 35006.0
+      DISPLACEMENT_TONNES: 58300
+      VARIABLE_DECK_LOAD_ST: 8267
+      QUARTERS_CAPACITY: 157
+      DUAL_ACTIVITY: true
+      CRANE_MAIN_CAPACITY_T: 100
+  Deepsea Nordkapp:
+    url: https://www.odfjelldrilling.com/rig/deepsea-nordkapp/
+    rig_type: semi_submersible
+    rig_design: Moss CS60E
+    extraction: web_transcription
+    specs:
+      YEAR_BUILT: 2019
+      FLAG_STATE: Bermuda
+      WATER_DEPTH_RATING_FT: 6562.0  # 2,000 m
+      DRILLING_DEPTH_RATING_FT: 35006.0
+      DISPLACEMENT_TONNES: 69300
+      VARIABLE_DECK_LOAD_ST: 7716  # 7,000 mt
+      QUARTERS_CAPACITY: 150
+      CRANE_MAIN_CAPACITY_T: 100
+  Deepsea Yantai:
+    url: https://www.odfjelldrilling.com/rig/deepsea-yantai/
+    rig_type: semi_submersible
+    rig_design: GM4D
+    extraction: web_transcription
+    specs:
+      YEAR_BUILT: 2019
+      FLAG_STATE: Bahamas
+      WATER_DEPTH_RATING_FT: 3937.0  # 1,200 m
+      DRILLING_DEPTH_RATING_FT: 27887.0  # 8,500 m
+      DISPLACEMENT_TONNES: 45700
+      VARIABLE_DECK_LOAD_ST: 4409  # 4,000 mt
+      QUARTERS_CAPACITY: 130
+      CRANE_MAIN_CAPACITY_T: 80
+  Deepsea Mira:
+    url: https://www.odfjelldrilling.com/rig/deepsea-mira/
+    rig_type: semi_submersible
+    rig_design: Moss CS60E
+    extraction: web_transcription
+    specs:
+      YEAR_BUILT: 2018
+      FLAG_STATE: Norway
+      WATER_DEPTH_RATING_FT: 10663.0  # 3,250 m
+      DRILLING_DEPTH_RATING_FT: 39370.0  # 12,000 m
+      DISPLACEMENT_TONNES: 77000
+      VARIABLE_DECK_LOAD_ST: 7716
+      QUARTERS_CAPACITY: 180
+      CRANE_MAIN_CAPACITY_T: 100
+  Deepsea Bollsta:
+    url: https://www.odfjelldrilling.com/rig/deepsea-bollsta/
+    rig_type: semi_submersible
+    rig_design: Moss CS60E
+    extraction: web_transcription
+    aliases: [BOLLSTA DOLPHIN]  # ex Fred. Olsen newbuild, well documented
+    specs:
+      YEAR_BUILT: 2019
+      FLAG_STATE: Norway
+      WATER_DEPTH_RATING_FT: 9843.0
+      DRILLING_DEPTH_RATING_FT: 39370.0
+      DISPLACEMENT_TONNES: 71000
+      VARIABLE_DECK_LOAD_ST: 7716
+      QUARTERS_CAPACITY: 180
+      CRANE_MAIN_CAPACITY_T: 100
+  Hercules:
+    url: https://www.odfjelldrilling.com/rig/hercules/
+    rig_type: semi_submersible
+    rig_design: GVA 7500
+    extraction: web_transcription
+    aliases: [WEST HERCULES]  # ex Seadrill, well documented
+    specs:
+      YEAR_BUILT: 2008
+      FLAG_STATE: Cyprus
+      WATER_DEPTH_RATING_FT: 9843.0
+      DRILLING_DEPTH_RATING_FT: 35006.0
+      DISPLACEMENT_TONNES: 55133
+      VARIABLE_DECK_LOAD_ST: 5732  # 5,200 mt
+      QUARTERS_CAPACITY: 180
+      CRANE_MAIN_CAPACITY_T: 80

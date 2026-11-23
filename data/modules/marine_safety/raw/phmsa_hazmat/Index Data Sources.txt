@@ -1,0 +1,32 @@
+U.S. Natural Gas City Gate Price (Dollars per Thousand Cubic Feet)				
+
+Release Date:			08/29/2025		
+Next Release Date:		09/30/2025 (Indexes verified on 09/30/2025) 	
+		
+Source:				Energy Information Administration 
+Available from Web Page:	https://www.eia.gov/dnav/ng/ng_pri_sum_a_EPG0_PG1_DMcf_m.htm
+
+Excel File Name:		NG_PRI_SUM_A_EPG0_PG1_DMCF_A.xls
+(Note that the web address, file name, and file structure of Gas City Gate Price was changed in January 2020)
+
+
+Gross Domestic Product (Chained) Price Index
+
+Release Date:			N/A (Indexes verified 09/30/2025) 		
+Next Release Date:		N/A 
+
+Source:				Fiscal Year 2023 - Table 10.1 — Gross Domestic Product and Deflators Used in the Historical Tables: 1940–2027
+
+				https://www.govinfo.gov/app/collection/budget/2023/BUDGET-2023-TAB
+				; "Fiscal Year 2023"
+				; "Historical Tables"
+				; "Section 10 - Gross Domestic Product and Implicit Outlay Deflators" "Table 10.1 - Gross Domestic Product and Deflators Used in the Historical Tables: 1940-2027"
+Excel File Name: 		; "BUDGET-2023-TAB-11-1"  
+
+
+
+
+
+
+
+

@@ -1,0 +1,208 @@
+{
+  "basis": "API12 boreholes on registered Lower Tertiary field bottom leases; not geological targeting, current ownership or outstanding liability",
+  "fields": [
+    {
+      "availability": "boreholes_present",
+      "borehole_count": 37,
+      "field_id": "big_foot",
+      "registered_leases": [
+        "G16942"
+      ],
+      "status_counts": {
+        "COM": 9,
+        "DSI": 5,
+        "PA": 3,
+        "ST": 20
+      }
+    },
+    {
+      "availability": "boreholes_present",
+      "borehole_count": 18,
+      "field_id": "anchor",
+      "registered_leases": [
+        "G31751",
+        "G31752"
+      ],
+      "status_counts": {
+        "AST": 1,
+        "COM": 5,
+        "DSI": 1,
+        "PA": 4,
+        "ST": 7
+      }
+    },
+    {
+      "availability": "boreholes_present",
+      "borehole_count": 11,
+      "field_id": "cascade_chinook",
+      "registered_leases": [
+        "G16965",
+        "G16997"
+      ],
+      "status_counts": {
+        "COM": 3,
+        "PA": 3,
+        "ST": 5
+      }
+    },
+    {
+      "availability": "boreholes_present",
+      "borehole_count": 76,
+      "field_id": "jack_st_malo",
+      "registered_leases": [
+        "G17015",
+        "G17016",
+        "G18745",
+        "G18753",
+        "G20394",
+        "G21245"
+      ],
+      "status_counts": {
+        "CNL": 1,
+        "COM": 23,
+        "PA": 9,
+        "ST": 39,
+        "TA": 4
+      }
+    },
+    {
+      "availability": "boreholes_present",
+      "borehole_count": 8,
+      "field_id": "julia",
+      "registered_leases": [
+        "G20351"
+      ],
+      "status_counts": {
+        "COM": 4,
+        "PA": 1,
+        "ST": 3
+      }
+    },
+    {
+      "availability": "boreholes_present",
+      "borehole_count": 13,
+      "field_id": "kaskida",
+      "registered_leases": [
+        "G19555",
+        "G25792"
+      ],
+      "status_counts": {
+        "APD": 6,
+        "PA": 1,
+        "ST": 5,
+        "TA": 1
+      }
+    },
+    {
+      "availability": "boreholes_present",
+      "borehole_count": 28,
+      "field_id": "north_platte",
+      "registered_leases": [
+        "G30876",
+        "G32460"
+      ],
+      "status_counts": {
+        "APD": 1,
+        "CNL": 3,
+        "DRL": 1,
+        "DSI": 7,
+        "PA": 7,
+        "ST": 8,
+        "TA": 1
+      }
+    },
+    {
+      "availability": "boreholes_present",
+      "borehole_count": 23,
+      "field_id": "shenandoah",
+      "registered_leases": [
+        "G25232",
+        "G31938"
+      ],
+      "status_counts": {
+        "COM": 4,
+        "DSI": 1,
+        "PA": 6,
+        "ST": 11,
+        "TA": 1
+      }
+    },
+    {
+      "availability": "boreholes_present",
+      "borehole_count": 24,
+      "field_id": "stones",
+      "registered_leases": [
+        "G17001"
+      ],
+      "status_counts": {
+        "COM": 8,
+        "DSI": 1,
+        "PA": 9,
+        "ST": 6
+      }
+    },
+    {
+      "availability": "boreholes_present",
+      "borehole_count": 2,
+      "field_id": "tiber",
+      "registered_leases": [
+        "G25782"
+      ],
+      "status_counts": {
+        "PA": 2
+      }
+    },
+    {
+      "availability": "boreholes_present",
+      "borehole_count": 26,
+      "field_id": "buckskin",
+      "registered_leases": [
+        "G19645",
+        "G20979",
+        "G25806",
+        "G25813",
+        "G25814",
+        "G25815",
+        "G25823",
+        "G32650"
+      ],
+      "status_counts": {
+        "APD": 1,
+        "COM": 5,
+        "PA": 5,
+        "ST": 14,
+        "TA": 1
+      }
+    }
+  ],
+  "joined_boreholes": 266,
+  "masked_numeric_cells": {
+    "BH Total MD": 402,
+    "Bottom Latitude": 402,
+    "Bottom Longitude": 402,
+    "True Vertical Depth": 402
+  },
+  "play_filter": "lower tertiary",
+  "registry_sha256": "5c350649a9cc11b772c37bef8dc5bcfd57a25e5b4660b3176b4da37839f5b265",
+  "source_boreholes": 55570,
+  "source_retrieved_at_utc": "2026-10-11T19:11:56.141905+00:00",
+  "source_sha256": "a5324d1508916bd2a19925522f8afa9b332063ff8e18b614d5d3430ef57ff929",
+  "status_definitions_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=boreholeFields",
+  "status_meanings": {
+    "APD": "Application for permit to drill",
+    "AST": "Approved sidetrack",
+    "BP": "Bypass",
+    "CNL": "Borehole cancelled after approval",
+    "COM": "Borehole completed",
+    "CT": "Core test well",
+    "DRL": "Drilling active",
+    "DSI": "Drilling suspended",
+    "PA": "Permanently abandoned",
+    "ST": "Borehole side tracked",
+    "TA": "Temporarily abandoned",
+    "VCW": "Volume chamber well"
+  },
+  "unmatched_counts": {
+    "lease_not_in_registry": 55304
+  }
+}

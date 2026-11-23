@@ -1,0 +1,28 @@
+meta:
+  library: worldenergydata
+  basename: bsee
+  label: goa_anchor
+
+basename: bsee
+
+data:
+  apm: False
+  production_data: True
+  groups: 
+    -
+      bottom_block:
+        area: GC
+        number: 807
+      api12: NULL
+      bottom_lease: NULL
+
+analysis:
+  flag: True
+  production_data: True
+
+default:
+  log_level: INFO
+  config:
+    overwrite:
+      output: True
+    cfg_sensitivities: False

@@ -1,0 +1,144 @@
+# 'Ratings & Dimensions' extracted from Stena Drilling technical specification sheets — wed issue #996 (epic #991).
+# Fleet: 5 drillships (Samsung 96K-type DP3 harsh-environment, incl. Polar-class IceMAX
+# + 7th-gen Evolution) and 1 semi (Stena Don, GVA CS30 moored).
+#
+# extraction: text_parse -> parsers/rig_summary.py (Stena dotted-leader profile, metric-first).
+# extraction: manual_transcription -> Stena Evolution's sheet is a same-line metric table
+#   (one-off layout; profile would be overfit) — transcribed 2026-07-13. Year not stated on sheet.
+# Vendor ranges at LOWER bound (Carron quarters: '180, upgradeable to 220' -> 180).
+retrieved: '2026-07-13'
+source_family: contractor_rig_summary_pdf
+owner: Stena Drilling Ltd
+issue: 996
+vessels:
+  Stena Carron:
+    pdf: stena-carron.pdf
+    rig_type: drillship
+    rig_design: Samsung 96K, Harsh Environment DP3 Drillship
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2008
+      FLAG_STATE: United Kingdom (UK)
+      WATER_DEPTH_RATING_FT: 10000.0
+      DRILLING_DEPTH_RATING_FT: 35104.0
+      LOA_M: 228.0
+      BEAM_M: 42.0
+      DEPTH_M: 19.0
+      DRAFT_M: 12.0
+      MOONPOOL_LENGTH_M: 25.6
+      MOONPOOL_WIDTH_M: 12.5
+      VARIABLE_DECK_LOAD_ST: 22046
+      HOOKLOAD_RATING_KIPS: 2000
+      MPD_CAPABLE: true
+      DUAL_ACTIVITY: true
+      RAW_DRAFT_OPERATING_FT: 39.4
+      RAW_DRAFT_TRANSIT_FT: 27.9
+      RAW_MOONPOOL_FT: 84 x 41
+  Stena DrillMAX:
+    pdf: stena-drillmax.pdf
+    rig_type: drillship
+    rig_design: Samsung 96K, Harsh Environment DP3 Drillship
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2007
+      FLAG_STATE: United Kingdom (UK)
+      WATER_DEPTH_RATING_FT: 10000.0
+      DRILLING_DEPTH_RATING_FT: 35104.0
+      LOA_M: 228.0
+      BEAM_M: 42.0
+      DEPTH_M: 19.0
+      DRAFT_M: 12.0
+      MOONPOOL_LENGTH_M: 25.6
+      MOONPOOL_WIDTH_M: 12.5
+      VARIABLE_DECK_LOAD_ST: 21495
+      HOOKLOAD_RATING_KIPS: 2000
+      MPD_CAPABLE: true
+      DUAL_ACTIVITY: true
+      RAW_DRAFT_OPERATING_FT: 39.4
+      RAW_DRAFT_TRANSIT_FT: 27.9
+      RAW_MOONPOOL_FT: 84 x 41
+  Stena Forth:
+    pdf: stena-forth.pdf
+    rig_type: drillship
+    rig_design: Samsung 96K, Harsh Environment DP3 Drillship
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2009
+      FLAG_STATE: United Kingdom (UK)
+      WATER_DEPTH_RATING_FT: 10000.0
+      DRILLING_DEPTH_RATING_FT: 35104.0
+      LOA_M: 228.0
+      BEAM_M: 42.0
+      DEPTH_M: 19.0
+      DRAFT_M: 12.0
+      MOONPOOL_LENGTH_M: 25.6
+      MOONPOOL_WIDTH_M: 12.5
+      VARIABLE_DECK_LOAD_ST: 21495
+      HOOKLOAD_RATING_KIPS: 2000
+      MPD_CAPABLE: true
+      DUAL_ACTIVITY: true
+      RAW_DRAFT_OPERATING_FT: 39.4
+      RAW_DRAFT_TRANSIT_FT: 27.9
+      RAW_MOONPOOL_FT: 84 x 41
+  Stena IceMAX:
+    pdf: stena-icemax.pdf
+    rig_type: drillship
+    rig_design: Samsung 96K Polar Class, Harsh Environment DP3 Drillship
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2012
+      FLAG_STATE: United Kingdom (UK)
+      WATER_DEPTH_RATING_FT: 10000.0
+      DRILLING_DEPTH_RATING_FT: 35104.0
+      LOA_M: 228.0
+      BEAM_M: 42.0
+      DEPTH_M: 19.0
+      DRAFT_M: 12.0
+      MOONPOOL_LENGTH_M: 25.6
+      MOONPOOL_WIDTH_M: 12.5
+      VARIABLE_DECK_LOAD_ST: 19290
+      HOOKLOAD_RATING_KIPS: 2000
+      MPD_CAPABLE: true
+      DUAL_ACTIVITY: true
+      RAW_DRAFT_OPERATING_FT: 39.4
+      RAW_DRAFT_TRANSIT_FT: 27.9
+      RAW_MOONPOOL_FT: 84 x 41
+  Stena Don:
+    pdf: stena-don.pdf
+    rig_type: semi_submersible
+    rig_design: GVA CS30, POSMOOR ATAR Twin Pontoon 6-column semi
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2001
+      FLAG_STATE: United Kingdom (UK)
+      WATER_DEPTH_RATING_FT: 2132.0
+      DRILLING_DEPTH_RATING_FT: 27900.0
+      LOA_M: 95.5
+      BEAM_M: 81.0
+      DRAFT_M: 21.5
+      MOONPOOL_LENGTH_M: 21.5
+      MOONPOOL_WIDTH_M: 7.0
+      HOOKLOAD_RATING_KIPS: 1500
+      RAW_MOONPOOL_FT: 70 x 23
+  Stena Evolution:
+    pdf: stena-evolution.pdf
+    rig_type: drillship
+    rig_design: Samsung 7th Generation Enhanced Ultra Deep Water DP3 Drillship
+    extraction: manual_transcription
+    specs:
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 233.0
+      BEAM_M: 42.0
+      DEPTH_M: 19.0
+      DRAFT_M: 11.0
+      DISPLACEMENT_TONNES: 89792
+      MOONPOOL_LENGTH_M: 25.6
+      MOONPOOL_WIDTH_M: 12.5
+      VARIABLE_DECK_LOAD_ST: 26455  # 24,000 mT
+      HOOKLOAD_RATING_KIPS: 2800  # Derrick (Dual) Main 1,400 ST
+      SETBACK_CAPACITY_KIPS: 4000  # 2,000 ST
+      QUARTERS_CAPACITY: 240  # POB
+      DUAL_ACTIVITY: true
+      CRANE_MAIN_CAPACITY_T: 150  # deck cranes 3 x 100 mT + 1 x 150 mT
+      RAW_DRAFT_TRANSIT_FT: 31.2  # 9.5 m

@@ -1,0 +1,78 @@
+# Batch Processing Configuration
+# Generate multiple reports for different organizational units
+
+# Multiple reports configuration
+reports:
+  # Block-level executive summary
+  - level: block
+    unit: Walker Ridge
+    template: executive
+    format: pdf
+    output: reports/executive/walker_ridge_executive.pdf
+    
+  # Field-level economic reports
+  - level: field
+    units:  # Multiple units
+      - Jack
+      - Julia
+      - St Malo
+      - Stones
+    template: economic
+    format: excel
+    output_dir: reports/economic/
+    
+  # Lease-level operational reports
+  - level: lease
+    units:
+      - WC544-001
+      - WC544-002
+      - WC544-003
+    template: operational
+    format: html
+    output_dir: reports/operational/
+    
+  # Compliance reports for all fields
+  - level: field
+    units: ALL  # Special keyword to process all units at this level
+    template: compliance
+    format: pdf
+    output_dir: reports/compliance/
+
+# Common settings for all reports
+common:
+  date_range:
+    start: 2023-01-01
+    end: 2023-12-31
+    
+  settings:
+    currency: USD
+    include_visualizations: true
+    include_summaries: true
+    
+# Performance optimization for batch processing
+performance:
+  cache:
+    enabled: true
+    ttl: 3600  # 1 hour
+    warm_on_startup: true  # Pre-load common data
+    
+  parallel:
+    enabled: true
+    max_workers: 4  # Process 4 reports simultaneously
+    
+  memory:
+    max_usage: 2048  # 2GB limit
+    streaming_threshold: 100  # Use streaming for datasets >100MB
+    
+# Notification settings
+notifications:
+  on_complete: true
+  on_error: true
+  email: analytics-team@example.com
+  
+# Logging configuration
+logging:
+  level: INFO
+  file: logs/batch_processing.log
+  rotate: daily
+  retain_days: 30

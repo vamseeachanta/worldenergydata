@@ -1,0 +1,58 @@
+# ABOUTME: YAML input for the LT economics parametric batch runner
+# ABOUTME: (scripts/lower_tertiary/run_parametric_economics.py). Declares the
+# ABOUTME: field set, WTI price-multiplier sweep, and discount-rate sweep.
+#
+# Run:
+#   PYTHONPATH="src:packages/worldenergydata-core/src:packages/worldenergydata-bsee/src" \
+#   uv run --no-sync python scripts/lower_tertiary/run_parametric_economics.py \
+#       config/parametric/lt_economics_sweep.yml
+
+sweep_name: lt_economics_sweep_v1
+
+# Developments to run (golden-baseline display names). input_set follows
+# regenerate_field_economics_v50.py: Buckskin uses the v50_kc lease set.
+fields:
+  - name: Jack St Malo
+  - name: Stones
+  - name: Julia
+  - name: Big Foot
+  - name: Cascade Chinook
+  - name: Anchor
+  - name: Shenandoah
+  - name: Buckskin
+    input_set: v50_kc
+
+# Uniform multiplier applied to the historical monthly WTI deck. NPV is exact
+# (affine) in this multiplier, so the runner takes two anchor model runs per
+# field and evaluates every multiplier below exactly.
+wti_price_multipliers: [0.8, 0.9, 1.0, 1.1, 1.2]
+
+# Anchor multipliers for the two sanctioned model runs per field.
+anchor_multipliers: [1.0, 1.2]
+
+# Annual discount rates. The base rate (0.10) comes out of the sanctioned run
+# directly; other rates are re-derived from the undiscounted monthly cashflow
+# using the model's own per-month discount convention.
+discount_rates: [0.08, 0.10, 0.125]
+
+# end_date: "latest" -> month_end of detect_latest_ogor_month() (same as the
+# V50 reports); or an explicit YYYY-MM-DD to pin a window.
+end_date: latest
+
+# Affinity verification: one extra direct model run compared against the
+# affine prediction. Tolerance in $ (absolute terminal-NPV delta).
+verify:
+  field: Julia
+  wti_price_multiplier: 0.9
+  tolerance_usd: 1000.0
+
+# Publication gating: follow the committed baseline
+# (reports/lower_tertiary/lifecycle/_performance.json). Fields whose
+# economics_status != "surfaced" get economics withheld (null) in the
+# publication CSV, per the #971/#976 life-to-date decision. The full grid is
+# retained in the JSON with an explicit economics_status flag on every row.
+baseline_performance: reports/lower_tertiary/lifecycle/_performance.json
+
+outputs:
+  json: reports/lower_tertiary/parametric/lt_economics_parametric.json
+  csv: reports/lower_tertiary/parametric/lt_economics_parametric.csv

@@ -1,0 +1,38 @@
+{
+  "V1": {
+    "outputs": {
+      "prod_all_block_WR_718.csv": "cf90584d74e56cb6f244484d4ad76af6f8edf1a4a46a0b5f5e1be75ef7966776",
+      "prod_cumulative_mmbbl_bsee_production_summary.csv": "bdd556fb512e833532046eedaf8c2b02d3b21880e13f387760215cc7097aa1ca",
+      "prod_rate_bopd_bsee_production_summary.csv": "cf90584d74e56cb6f244484d4ad76af6f8edf1a4a46a0b5f5e1be75ef7966776",
+      "prod_raw_bsee_production_summary.xlsx": "75d806160c57768e9ffc925141983e11946c7be0a74f880c77e37c3923e08948",
+      "prod_summ_bsee_production_summary.csv": "81077c02439695cafe5acb25cf6230c5eb570cf928461010612120b52ef78a56",
+      "prod_summ_bsee_production_summary.json": "3bd32b6a05638a0b2a1c38ee62ce6e993e1831c755b1c4ae7cc69c15dfd4da43"
+    },
+    "result_hash": "537e98f27f8df74bdb70d7d9a2b5e99ec5e67c6cc21097c5881039e9c3861f7d",
+    "workflow": "bsee-production-summary"
+  },
+  "V2": {
+    "outputs": {
+      "prod_all_block_WR_718.csv": "9b41ca88bcd63b088d2a96706e68e1d17e677dbbfad77043bad3b6e160af873d",
+      "prod_cumulative_mmbbl_bsee_production_summary.csv": "5e5f6d6c86cbc3eef1c9a62efd8d4fc7bdcc9726ef2a9e82e58cb9b83192ae25",
+      "prod_rate_bopd_bsee_production_summary.csv": "9b41ca88bcd63b088d2a96706e68e1d17e677dbbfad77043bad3b6e160af873d",
+      "prod_raw_bsee_production_summary.xlsx": "7ebd1fc36ccf81bdadc08b5de86ecd493ea7bf609c2ed533f382cef936b5b92e",
+      "prod_summ_bsee_production_summary.csv": "dd1fed66f4cc2dcd47eac5218225e6ac855ed5d39b47c285380c7592685d43b1",
+      "prod_summ_bsee_production_summary.json": "78d59a95b56deabfadbdc822cd7e6533089f59e76f895e7eb520af50fecbf133"
+    },
+    "result_hash": "b6c84eb1e496c8e79a6633b8a011364bb030aeb4718469c823b95d1c15b50b1d",
+    "workflow": "bsee-production-summary"
+  },
+  "V3": {
+    "outputs": {
+      "prod_all_block_MC_778.csv": "1e479fd577b247a950bdedbbc1e23be51d893493b8f091ab34e920cc283b4c3e",
+      "prod_cumulative_mmbbl_bsee_well_comparison.csv": "4fd39d139f1f3b91a572a316e939901b31179583442d5768d63bbcfd08ce8154",
+      "prod_rate_bopd_bsee_well_comparison.csv": "1e479fd577b247a950bdedbbc1e23be51d893493b8f091ab34e920cc283b4c3e",
+      "prod_raw_bsee_well_comparison.xlsx": "0644ffa66a1ef255e51400d08d87f6c70d0d3ab2265b104d81bfc89668b62465",
+      "prod_summ_bsee_well_comparison.csv": "c60643ffaaaed624c2e1dc7d4e14fb9c8baf32de2ba9506dad19d06693a1fd8e",
+      "prod_summ_bsee_well_comparison.json": "ee74db3e24111181597091ceb52e82b825f42a5d7405f3006b8062b62c1ba034"
+    },
+    "result_hash": "bcb4215610806ae6a585e97200881bfea31ca71d0dcfedca7c69f88a46c0a4bb",
+    "workflow": "bsee-well-comparison"
+  }
+}

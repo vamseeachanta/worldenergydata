@@ -1,0 +1,161 @@
+# Dedicated well-intervention fleet -- named seed roster (#598).
+#
+# The small population of *purpose-built* / dedicated well-intervention units
+# that anchor the supply side of Chuck's brief (#588). These are NOT captured
+# (or are mis-classified) in the broad curated drilling_rigs / construction
+# vessel CSVs, so they are seeded by name here from public vendor research.
+#
+# confidence: every spec is `vendor_spec` (operator brochure / public spec
+#   sheet) -- treat water-depth ratings as approximate nameplate figures.
+# vessel_type values map 1:1 onto the asset-class enum used by fleet_catalog:
+#   rlwi_monohull         -> rlwi_monohull (light, riser-capable RLWI)
+#   heavy_intervention_semi -> heavy_intervention_semi (riser-capable heavy)
+#
+# Exclusions (deliberate):
+#   - Island Innovator: converted to a drilling rig -- no longer an RLWI unit.
+
+provenance:
+  source: "public vendor specifications + operator fleet pages (research)"
+  confidence: vendor_spec
+  compiled_for: "worldenergydata #598 (child of epic #591)"
+  notes: >-
+    Water-depth ratings are nameplate vendor figures and approximate.
+    De-duplication against IMO-keyed curated rows is deferred to #599.
+
+vessels:
+  # --- HEAVY intervention (riser-capable) -------------------------------
+  - name: Helix Q4000
+    imo: 8767123
+    mmsi: 369550000
+    aka: []
+    identity_source: https://en.wikipedia.org/wiki/Q4000
+    identity_confidence: high
+    operator: Helix Energy Solutions
+    intervention_class: heavy
+    vessel_type: heavy_intervention_semi
+    riser_capable: true
+    water_depth_rating_m: 3048
+    gom_resident: true
+    confidence: vendor_spec
+    source: "Helix Q4000 vessel specification (helixesg.com)"
+
+  - name: Helix Q5000
+    imo: 8772104
+    mmsi: 311000240
+    aka: []
+    identity_source: https://www.vesselfinder.com/vessels/details/8772104
+    identity_confidence: high
+    operator: Helix Energy Solutions
+    intervention_class: heavy
+    vessel_type: heavy_intervention_semi
+    riser_capable: true
+    water_depth_rating_m: 3048
+    gom_resident: true
+    confidence: vendor_spec
+    source: "Helix Q5000 vessel specification (helixesg.com)"
+
+  - name: Helix Q7000
+    imo: 9710359
+    mmsi: 311000594
+    aka: []
+    identity_source: https://www.vesselfinder.com/vessels/details/9710359
+    identity_confidence: high
+    operator: Helix Energy Solutions
+    intervention_class: heavy
+    vessel_type: heavy_intervention_semi
+    riser_capable: true
+    water_depth_rating_m: 3000
+    gom_resident: false  # global / North Sea + Brazil deployments
+    confidence: vendor_spec
+    source: "Helix Q7000 vessel specification (helixesg.com)"
+
+  - name: Seawell
+    imo: 8324567
+    mmsi: 232159000
+    aka: [Stena Seawell, CSO Seawell]
+    identity_source: https://www.vesselfinder.com/vessels/details/8324567
+    identity_confidence: high
+    operator: Helix Well Ops (North Sea)
+    intervention_class: heavy
+    vessel_type: heavy_intervention_semi
+    riser_capable: true
+    water_depth_rating_m: 365
+    gom_resident: false
+    confidence: vendor_spec
+    source: "Helix Seawell monohull well-intervention spec"
+
+  - name: Well Enhancer
+    imo: 9421996
+    mmsi: 235062421
+    aka: []
+    identity_source: https://www.vesselfinder.com/vessels/details/9421996
+    identity_confidence: high
+    operator: Helix Well Ops (North Sea)
+    intervention_class: heavy
+    vessel_type: heavy_intervention_semi
+    riser_capable: true
+    water_depth_rating_m: 600
+    gom_resident: false
+    confidence: vendor_spec
+    source: "Helix Well Enhancer monohull well-intervention spec"
+
+  # --- LIGHT intervention (RLWI monohull) -------------------------------
+  - name: Island Performer
+    imo: 9682045
+    mmsi: 577305000
+    aka: []
+    identity_source: https://www.vesselfinder.com/vessels/details/9682045
+    identity_confidence: high
+    operator: Island Offshore
+    intervention_class: light
+    vessel_type: rlwi_monohull
+    riser_capable: true
+    water_depth_rating_m: 2000
+    gom_resident: true  # first US-GoM RLWI campaign, 2015
+    confidence: vendor_spec
+    source: "Island Offshore Island Performer RLWI spec (first US-GoM RLWI 2015)"
+
+  - name: Island Wellserver
+    imo: 9372755
+    mmsi: 257202000
+    aka: []
+    identity_source: https://www.vesselfinder.com/vessels/details/9372755
+    identity_confidence: high
+    operator: Island Offshore
+    intervention_class: light
+    vessel_type: rlwi_monohull
+    riser_capable: true
+    water_depth_rating_m: 2000
+    gom_resident: false
+    confidence: vendor_spec
+    source: "Island Offshore Island Wellserver RLWI spec"
+
+  - name: Island Constructor
+    imo: 9390678
+    mmsi: 259749000
+    aka: []
+    identity_source: https://www.vesselfinder.com/vessels/details/9390678
+    identity_confidence: high
+    operator: Island Offshore
+    intervention_class: light
+    vessel_type: rlwi_monohull
+    riser_capable: true
+    water_depth_rating_m: 2000
+    gom_resident: false
+    confidence: vendor_spec
+    source: "Island Offshore Island Constructor RLWI spec"
+
+  - name: Skandi Constructor
+    imo: 9431642
+    mmsi: 257220000
+    aka: [Sarah]
+    identity_source: https://www.vesselfinder.com/vessels/details/9431642
+    identity_confidence: high
+    operator: DOF Subsea / Island Offshore
+    intervention_class: light
+    vessel_type: rlwi_monohull
+    riser_capable: true
+    water_depth_rating_m: 2000
+    gom_resident: false
+    confidence: vendor_spec
+    source: "Skandi Constructor RLWI monohull spec"

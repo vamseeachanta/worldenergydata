@@ -1,0 +1,22 @@
+{
+  "verification": {
+    "total_migrated": 46,
+    "remaining_in_old_locations": 10,
+    "structure_complete": true,
+    "file_counts_by_category": {
+      "analysis-guides": 1,
+      "data-sources": 35,
+      "development": 3,
+      "examples": 1,
+      "reference": 1,
+      "sub_ai": 4,
+      "user-guide": 1
+    }
+  },
+  "integrity": {
+    "files_checked": 4,
+    "files_verified": 4,
+    "missing_files": [],
+    "issues": []
+  }
+}

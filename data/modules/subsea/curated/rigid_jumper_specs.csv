@@ -1,0 +1,15 @@
+COMPONENT_ID,MANUFACTURER,OD_IN,WALL_THICKNESS_IN,LENGTH_FT,MATERIAL_GRADE,PRESSURE_RATING_PSI,WEIGHT_AIR_KIPS,CONNECTION_TYPE,DATA_SOURCE,NOTES
+RJ-06-CAM-5K,Cameron,6.625,0.432,20.0,X-52,5000,2.1,flanged,Cameron catalog,6in rigid jumper for low-pressure service
+RJ-06-CAM-10K,Cameron,6.625,0.562,25.0,X-60,10000,2.8,hub,Cameron catalog,6in rigid jumper for HP service
+RJ-08-CAM-5K,Cameron,8.625,0.500,20.0,X-52,5000,3.5,flanged,Cameron catalog,8in rigid jumper standard
+RJ-08-NOV-10K,NOV,8.625,0.625,30.0,X-60,10000,5.2,clamp,NOV Product Guide,8in rigid jumper high-pressure
+RJ-08-HYD-15K,Hydril,8.625,0.750,25.0,X-65,15000,5.8,hub,API 17J reference,8in rigid jumper HPHT service
+RJ-10-CAM-5K,Cameron,10.75,0.500,25.0,X-52,5000,5.0,flanged,Cameron catalog,10in rigid jumper standard
+RJ-10-NOV-10K,NOV,10.75,0.625,30.0,X-60,10000,6.8,clamp,NOV Product Guide,10in rigid jumper high-pressure
+RJ-10-HYD-15K,Hydril,10.75,0.875,20.0,X-65,15000,7.2,hub,API 17J reference,10in rigid jumper HPHT
+RJ-12-CAM-5K,Cameron,12.75,0.562,30.0,X-52,5000,7.5,flanged,Cameron catalog,12in rigid jumper standard
+RJ-12-NOV-10K,NOV,12.75,0.688,35.0,X-60,10000,9.8,clamp,NOV Product Guide,12in rigid jumper high-pressure
+RJ-12-HYD-15K,Hydril,12.75,1.000,25.0,X-65,15000,11.2,hub,API 17J reference,12in rigid jumper HPHT
+RJ-06-NOV-5K,NOV,6.625,0.432,15.0,X-52,5000,1.8,clamp,NOV Product Guide,6in rigid jumper short spool
+RJ-08-CAM-10K,Cameron,8.625,0.625,35.0,X-60,10000,5.5,hub,Cameron catalog,8in rigid jumper extended length
+RJ-10-CAM-10K,Cameron,10.75,0.625,35.0,X-60,10000,7.5,hub,Cameron catalog,10in rigid jumper extended length

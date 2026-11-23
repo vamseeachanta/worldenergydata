@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>Monthly data value checks</title>
+<body>
+<h1>Monthly data value checks</h1>
+<p>The checks below compare computed outputs with independent hand calculations.
+All input amounts are authored synthetic values. These checks establish arithmetic
+and unit handling for the stated cases; they do not qualify source observations,
+data completeness, reservoir pressure or production economics.</p>
+
+<h2>Revision history</h2>
+<table>
+<tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr>
+<tr><td>1</td><td>2026-11-04</td><td>Added the bounded plan and current validation
+figures so the scope and acceptance criteria accompany the worked cases.</td></tr>
+</table>
+
+<h2>Plan-lite</h2>
+<ul>
+<li>Bounded scope: synthetic monthly production and energy value checks for the
+five catalogue items below; two caller-normalized aggregation helpers, a two-month
+workbook regression, existing pressure and generation assertions, and this page.</li>
+<li>Intended steps: assert independent expected values; enforce period, series,
+unit and numeric validation; preserve input signs and distinguish exact zero from
+float underflow; document arithmetic and integration limits.</li>
+<li>Validation criteria: the six focused targets below and both helper doctests
+pass; formatting, security, repository-structure and whitespace checks pass.</li>
+</ul>
+<p>Local validation on 2026-11-04: 291 focused tests passed and two doctest examples
+passed. Commands from the repository root, with runtime and test dependencies
+available:</p>
+<pre><code>python -m pytest --noconftest --no-cov \
+    tests/unit/australia/test_monthly_production.py \
+    tests/unit/eia/test_monthly_energy.py \
+    tests/unit/mexico_cnh/test_production_chain.py \
+    tests/unit/kansas_kgs/test_observations.py \
+    tests/unit/energy_mix tests/unit/common/test_units.py \
+    -q -rA -p no:cacheprovider
+python -m pytest --noconftest --no-cov --doctest-modules \
+    packages/worldenergydata-australia/src/worldenergydata/australia/monthly_production.py \
+    packages/worldenergydata-eia/src/worldenergydata/eia/monthly_energy.py \
+    -q -rA -p no:cacheprovider</code></pre>
+<p>Synthetic cases establish arithmetic and unit handling only; source freshness,
+completeness, field allocation and live-feed integration are not established.</p>
+
+<h2>Worked cases</h2>
+<table>
+<tr><th>Module</th><th>Inputs and calculation</th><th>Expected result</th><th>Check</th></tr>
+<tr><td>Australia</td><td>January 1.25 and February 2.50 MMscf;
+(1.25 + 2.50) × 1000</td><td>3750 Mcf</td>
+<td><a href="../../tests/unit/australia/test_monthly_production.py">Monthly gas tests</a></td></tr>
+<tr><td>EIA</td><td>January 125.5 and February 74.25 MWh;
+125.5 + 74.25</td><td>199.75 MWh</td>
+<td><a href="../../tests/unit/eia/test_monthly_energy.py">Monthly energy tests</a></td></tr>
+<tr><td>Mexico</td><td>February oil rates 2 + 1 thousand bbl/day across two operators,
+March oil rate 4 thousand bbl/day; (2 + 1) × 1000 × 29 + 4 × 1000 × 31.
+Gas rates 3 + 1 and 5 million ft³/day; (3 + 1) × 1000 × 29 + 5 × 1000 × 31.</td>
+<td>Oil 211000 bbl; gas 271000 Mcf; separate condensate 91000 bbl</td>
+<td><a href="../../tests/unit/mexico_cnh/test_production_chain.py">Two-month production-chain test</a></td></tr>
+<tr><td>Kansas</td><td>Existing synthetic case: normalized pressure 62.0 psia,
+reference depth 4470 ft; 62.0 / 4470, rounded to six decimal places</td>
+<td>0.013870 psi/ft</td>
+<td><a href="../../tests/unit/kansas_kgs/test_observations.py">Existing pressure observations tests</a></td></tr>
+<tr><td>Energy mix</td><td>Existing synthetic generation record: 20.25 GWh × 1000</td>
+<td>20250 MWh</td>
+<td><a href="../../tests/unit/energy_mix/test_irena.py">Existing loaded-generation test</a></td></tr>
+</table>
+<p>Table 1. Synthetic cases and expected computed values. The Kansas and energy-mix
+checks already exist and are retained without duplicating their implementations.</p>
+
+<h2>Using the monthly helpers</h2>
+<pre><code>from worldenergydata.australia.monthly_production import total_monthly_gas_mcf
+from worldenergydata.eia.monthly_energy import total_monthly_energy_mwh
+
+gas_mcf = total_monthly_gas_mcf([
+    {"period": "2024-01", "gas_mmscf": 1.25},
+    {"period": "2024-02", "gas_mmscf": 2.50},
+])  # 3750.0 Mcf
+
+energy_mwh = total_monthly_energy_mwh([
+    {"period": "2024-01", "series": "example", "value": "125.5", "units": "MWh"},
+    {"period": "2024-02", "series": "example", "value": "74.25", "units": "MWh"},
+])  # 199.75 MWh
+</code></pre>
+<p>The Australia contract requires a single caller-selected gas series with
+monthly volume in <code>gas_mmscf</code> at common reference conditions.
+The existing <code>common.units.convert</code> helper supplies the conversion.
+GBB flow values have unqualified units and cannot be passed through by relabeling
+them. No public Australian production feed is connected by this helper.</p>
+<p>The EIA contract requires one explicit series, unique monthly periods and
+<code>units="MWh"</code> on every record. API decimal strings and numeric values
+are supported. API routes with other schemas or unit labels require caller
+normalization. Power, stock levels and average daily rates are not monthly energy.</p>
+<p>Both helpers return the total for the supplied months only. They reject empty
+input, duplicate or invalid months, missing values, negative values, booleans and
+nonfinite values, including overflow. A reported zero is retained. Missing months
+are not filled; a partial series is not established as a complete annual total.</p>
+
+<h2>Method and public sources</h2>
+<ul>
+<li><a href="https://www.eia.gov/tools/glossary/index.php?id=M">EIA Glossary,
+Mcf and MMcf entries</a>: thousand and million cubic feet give the scale ratio
+10⁶ / 10³ = 1000. Reference temperature and pressure are unchanged.</li>
+<li><a href="https://www.eia.gov/opendata/documentation.php">EIA API Technical
+Documentation</a>, response data and January 2024 v2.1.6 notes: observations can
+be returned as decimal strings. The monthly helper performs arithmetic addition
+in one declared energy unit; no energy-equivalence coefficient is used.</li>
+<li><a href="https://hidrocarburos.energia.gob.mx/media/6810/producci%C3%B3n-nacional-de-petr%C3%B3leo-y-gas-natural-enero-2025.xlsx">SENER January 2025 production workbook</a>,
+<em>Aceite y condensado</em> and <em>Gas Natural</em> units/header rows:
+Mbd denotes thousand barrels/day; MMpcd denotes million cubic feet/day.
+The existing loader multiplies average daily rate by 1000 and Gregorian month
+length. February 2024 has 29 days and March has 31 days.</li>
+<li><a href="https://www.nist.gov/pml/special-publication-330/sp-330-section-3">NIST
+SP 330 (2019), section 3, table 7</a>: giga = 10⁹ and mega = 10⁶, giving
+1000 MWh/GWh for the existing generation conversion.</li>
+</ul>
+<p>The Kansas check uses the existing module's pressure/depth screening contract.
+Its pressure includes the module's assumed atmospheric correction; no local
+atmospheric measurement is established. Wellhead pressure over total depth is
+not a reservoir pore-pressure gradient. See
+<a href="../data-sources/onshore/kansas-kgs/pressure-observations.md">the pressure-observation method</a>.</p>
+<p>Only synthetic rows are added to tests. No source workbook, paid standard,
+vendor method or large dataset is redistributed. Live data validation and
+website or explorer pages remain separate work.</p>
+</body>
+</html>

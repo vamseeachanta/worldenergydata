@@ -1,0 +1,9 @@
+OPAQUE_ID,ENTITY_KIND,DISPLAY_LABEL,STATE,ACTIVE,ALIASES,VALIDATION_GROUP_ID,SOURCE_TABLE,SOURCE_RECORD_LOCATOR,TOMBSTONED_BY_ID,MIGRATION_NOTE
+req-000001,requirement,Big Foot host/TLP,active,true,,vg-cost-map-pilot-000001,project_asset_requirements.csv,REQUIREMENT_ID=req-000001,,
+req-000002,requirement,Big Foot dry trees,active,true,,vg-cost-map-pilot-000001,project_asset_requirements.csv,REQUIREMENT_ID=req-000002,,
+req-000003,requirement,Big Foot wells,active,true,,vg-cost-map-pilot-000001,project_asset_requirements.csv,REQUIREMENT_ID=req-000003,,
+req-000004,requirement,Big Foot drilling/completion,active,true,,vg-cost-map-pilot-000001,project_asset_requirements.csv,REQUIREMENT_ID=req-000004,,
+req-000005,requirement,Big Foot marine riser/tensioner,active,true,,vg-cost-map-pilot-000001,project_asset_requirements.csv,REQUIREMENT_ID=req-000005,,
+req-000006,requirement,Big Foot export,active,true,,vg-cost-map-pilot-000001,project_asset_requirements.csv,REQUIREMENT_ID=req-000006,,
+req-000007,requirement,Big Foot installation/hookup,active,true,,vg-cost-map-pilot-000001,project_asset_requirements.csv,REQUIREMENT_ID=req-000007,,
+req-000008,requirement,Big Foot controls,active,true,,vg-cost-map-pilot-000001,project_asset_requirements.csv,REQUIREMENT_ID=req-000008,,

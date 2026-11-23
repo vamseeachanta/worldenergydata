@@ -1,0 +1,30 @@
+data:
+  apm: false
+  enhanced: true
+  fresh_data: true
+  production: true
+  refresh: true
+  war: false
+  well: false
+default:
+  log_level: INFO
+enhanced_mode: true
+meta:
+  basename: bsee
+  library: worldenergydata
+  mode: enhanced
+parameters:
+  filepath:
+    apm:
+      bin: data/modules/bsee/bin/apd
+    bin_dir: data/modules/bsee/bin
+    production:
+      bin: data/modules/bsee/bin/production_raw
+    war:
+      bin: data/modules/bsee/bin/war
+    well:
+      bin: data/modules/bsee/bin/apd
+processing:
+  in_memory: true
+  save_zip: false
+  timeout: 300

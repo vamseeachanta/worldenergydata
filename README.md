@@ -1,0 +1,447 @@
+# WorldEnergyData
+
+> *Everyday complex engineering — made deterministically simple.*
+
+> **Capabilities** → https://vamseeachanta.github.io/worldenergydata/capabilities/ — every published analysis surface with a 1-page PDF summary.
+
+A comprehensive Python data library and analysis platform for the energy industry, providing integrated access to public energy data sources with built-in economic evaluation, safety analysis, and production forecasting tools.
+
+## Why this exists — the engineering ↔ asset circle
+
+`worldenergydata` is the asset ledger in a shared engineering ↔ asset loop with
+`digitalmodel`: public-source observations give engineering analysis its asset context.
+
+- **digitalmodel** is the engineering brain — deterministic, code-based analysis (mooring, riser, fitness-for-service, hydrodynamics, structural, tubulars, installation): *how a design performs against its declared engineering criteria*.
+- **worldenergydata** is the real-world asset ledger — public-source, reproducible field / well / facility data across the whole life cycle: *what was actually built, and how it performs*.
+
+Together they close a circle. Engineering designs an asset; it gets built and operated; operations feed back into engineering (inspection, fitness-for-service, fatigue re-assessment); at end of life it is decommissioned — itself an engineering problem — and the outcomes loop back as empirical priors for the next design. The **life-cycle timeline** is the shared spine: `worldenergydata` supplies each stage's real dates and assets, `digitalmodel` supplies each stage's engineering.
+
+```mermaid
+flowchart LR
+  E["Engineering<br/><i>digitalmodel</i><br/>design &amp; analysis"] -->|design &amp; size| A["Asset built<br/><i>worldenergydata</i><br/>field · well · facility"]
+  A -->|operate| O["Operations<br/>production · metocean · IMR"]
+  O -->|inspection · FFS · fatigue| E
+  O -->|end of life| D["Decommissioning<br/>late-life · P&amp;A · cost &amp; regs"]
+  D -->|lessons ground the next design| E
+```
+
+The same stage-gate timeline is **fractal** — one grammar that reads coherently from a whole region down to a single wellbore stage:
+
+```mermaid
+flowchart LR
+  R[Region] --> P[Play] --> F["Field<br/>Acquire→Abandon"] --> W["Well<br/>Spud→P&amp;A"] --> S["Stage<br/>drill · complete · workover"]
+```
+
+And the two repos meet at that timeline — each asset on a field page can show *what is possible via engineering*:
+
+```mermaid
+flowchart LR
+  subgraph DM["digitalmodel — engineering"]
+    direction TB
+    M1["mooring · riser · FFS"]
+    M2["hydrodynamics · structural"]
+    M3["tubulars · installation"]
+  end
+  subgraph WED["worldenergydata — assets &amp; data"]
+    direction TB
+    A1["field &amp; well registers"]
+    A2["facilities · components"]
+    A3["production · decommissioning"]
+  end
+  DM <-->|"life-cycle timeline"| WED
+```
+
+Live: [worldenergydata field life-cycle](https://vamseeachanta.github.io/worldenergydata/lifecycle/) · [digitalmodel engineering capabilities](https://vamseeachanta.github.io/digitalmodel/capabilities/)
+
+This repo is the **asset & data** half of that loop — the public-source field/well/facility ledger the engineering runs against.
+
+The diagrams describe the shared integration model. They do not establish data
+coverage or a verified engineering result for every asset or life-cycle stage.
+The same Mermaid blocks are shared with the companion README; the introductions
+explain each repository's role.
+
+### Worked reading example: mooring fatigue during Operate
+
+**Question and inputs.** Consider a mooring-fatigue question at the Operate stage
+of a field's life cycle. The existing bridge reads component geometry and minimum
+breaking load from the component catalog and pairs an engineering summary with
+public BSEE incident context. This is a reading example, without a solver run or
+an asset-specific numerical result.
+
+**Method.** Read the hierarchy as Region → Play → Field, with Operate locating
+the field on its timeline and the mooring as an associated asset. The
+[bridge adapter](scripts/demo/_mooring_live.py) passes engineering inputs to
+`digitalmodel` separately and reads its summary CSV back as data. The
+[card generator](scripts/demo/generate_mooring_grounded_card.py) combines that
+summary with incident context and uses an explicitly illustrative engineering
+panel when the engineering run is unavailable. The
+[card renderer](packages/worldenergydata-bsee/src/worldenergydata/hse/grounding_card.py)
+keeps the engineering basis and incident evidence visible together.
+
+**Answer and limits.** The result is a grounded card: an engineering summary
+beside incident context, with their respective bases. Incident records do not
+validate a fatigue-life prediction. The adapter's loading spectrum is
+illustrative because the component catalog has no cyclic tension history, even
+when the engineering computation runs. Asset-specific fatigue acceptance remains
+`NOT_EVALUATED` in this reading example until an applicable loading history,
+design criteria and a traceable engineering result are supplied.
+
+## Repository architecture
+
+[Architecture drawing and report inventory](docs/modules/repository-architecture.md)
+covers ingestion, processing, capability provenance, publication and the bulk-data boundary.
+
+```mermaid
+flowchart TB
+  public_sources["BSEE; IMO GISIS; Texas RRC; other public sources"]
+  scheduler["Configured scheduler: eight implemented adapters; LNG stub"]
+  manual["Manual and on-demand acquisition; other automation not established"]
+  bulk["Bulk data outside git: WED_DATA_ROOT override; no bulk LFS"]
+  bsee["BSEE and HSE: ingestion, validation, analysis"]
+  marine["Marine safety: importers, normalization, analysis"]
+  regional["Regional and environmental packages: acquisition and processing"]
+  field_dev["Field development: catalogs, concepts, schematics"]
+  reports["Frozen reports and analysis tables"]
+  pages["Pages builder and deployment workflow"]
+  hub["Canonical capabilities website: redirect target"]
+  hf["Hugging Face: explicitly invoked export scripts and pilot configuration"]
+  subgraph capabilities["Surviving capability work specifications; provenance below"]
+    economics["Economics: field dimension, seven builder fields"]
+    portfolio["Economics portfolio"]
+    benchmark["Well benchmark"]
+    completion["Drilling and completion"]
+    well_path["Well paths"]
+    fd_showcase["Field-development showcase"]
+    fd_playbook["Interactive playbook"]
+    fd_portfolio["Development portfolio"]
+    fd_bsee_matched["BSEE-matched development"]
+    ms_exec["Marine safety executive summary"]
+    ms_fatality["Fatality analysis"]
+    ms_foundering["Foundering analysis"]
+    ms_hatch["Hatch analysis"]
+    imo["IMO GISIS analysis"]
+    mooring["Mooring incident-grounded screen"]
+  end
+  public_sources -.-> scheduler
+  public_sources -.-> manual
+  scheduler -.-> bulk
+  manual -.-> bulk
+  bulk -.-> bsee
+  bulk -.-> marine
+  bulk -.-> regional
+  bsee --> reports
+  marine --> reports
+  field_dev --> reports
+  bsee -.-> economics
+  economics -.-> portfolio
+  bsee -.-> benchmark
+  bsee -.-> completion
+  bsee -.-> well_path
+  bsee -.-> mooring
+  marine -.-> ms_exec
+  marine -.-> ms_fatality
+  marine -.-> ms_foundering
+  marine -.-> ms_hatch
+  manual -.-> imo
+  manual -.-> field_dev
+  field_dev -.-> fd_showcase
+  field_dev -.-> fd_playbook
+  field_dev -.-> fd_portfolio
+  field_dev -.-> fd_bsee_matched
+  reports --> pages
+  reports -.-> hf
+  pages --> hub
+```
+
+Figure 1. Repository architecture. Solid arrows show implemented relationships; dashed
+arrows show documented inputs or configured intent. Refresh execution, data freshness
+and completed publication require separate evidence; the linked page records provenance.
+
+## Overview
+
+WorldEnergyData helps energy industry professionals, data analysts, researchers, and consultants make data-driven decisions by providing:
+
+- **Unified CLI**: Single command-line interface for all modules (`worldenergydata <module> <command>`)
+- **Data Access**: Automated collection from multiple public sources (BSEE, USCG, NTSB, MAIB)
+- **Economic Analysis**: NPV, MIRR, IRR calculations with industry-standard methodology
+- **Safety Tracking**: Marine safety incident data from global maritime authorities
+
+## Quick Start
+
+### Installation
+
+```bash
+# Install UV package manager (recommended)
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Clone and setup
+git clone https://github.com/username/worldenergydata.git
+cd worldenergydata
+uv sync
+
+# Install git hooks (black/isort/flake8 run at commit, matching CI)
+uv run pre-commit install
+
+# Populate BSEE data (not stored in git, ~300 MB download)
+make data
+# or: uv run worldenergydata bsee refresh
+# Preview the registry download plan without writing data:
+uv run worldenergydata bsee refresh --dry-run
+
+# Verify installation
+uv run worldenergydata --help
+```
+
+> **Note**: BSEE analysis modules require local data that is not stored in git.
+> Run `make data` after cloning to download datasets. See [Local Data Pattern](docs/data/LOCAL_DATA_PATTERN.md).
+
+The registry includes the eWell WAR archive and requires
+`data/modules/bsee/bin/war/mv_war_main.bin` and `mv_war_main_prop.bin`.
+Nested archive members are extracted by filename; WAR `SN_WAR` join keys
+retain their text representation, and `WELL_ACTIVITY_CD` values are retained
+without interpreting activity meanings. A refresh reports failure if a required
+output is missing or remains an LFS pointer, including after a partial write.
+Existing real bins are preserved unless `--force` is used; forced replacements
+retain backups. Presence checks do not establish content integrity or freshness.
+Per #1066, eWell WAR bulk covers only reports submitted since April 2004;
+that coverage floor and the live archive have not been independently verified here.
+A full live refresh from a clean checkout remains unverified.
+
+### Basic Usage
+
+**Safe first commands — no data or network required:**
+
+```bash
+# Discover all modules and commands
+uv run worldenergydata --help
+uv run worldenergydata info
+uv run worldenergydata version
+
+# Financial calculations (no data required)
+uv run worldenergydata fdas calculate-npv --cashflows "[-1000,100,200,300]" --discount-rate 0.10
+uv run worldenergydata fdas calculate-all --cashflows "[-5000,1000,1500,2000]"
+uv run worldenergydata forecast --help
+```
+
+**Data-required commands** (run `make data` first):
+
+```bash
+# Populate the registry-backed binary cache from a repository checkout:
+make data # or: uv run worldenergydata bsee refresh
+
+# BSEE data analysis — requires local BSEE dataset (~300 MB)
+uv run worldenergydata bsee analyze --field "Jack"
+uv run worldenergydata bsee report --type block --id 759 --format excel
+```
+
+**Network/credential-required commands:**
+
+```bash
+# Marine safety — requires network access
+uv run worldenergydata marine-safety scrape uscg --start-year 2020  # ⚠ network
+uv run worldenergydata marine-safety stats --source all
+
+# EIA data feed — requires EIA API key
+uv run worldenergydata eia fetch  # ⚠ credential-required
+```
+
+> **Note:** `bsee refresh`, `marine-safety scrape`, and scheduler commands download large datasets.
+> The default `bsee refresh` uses `scripts/refresh_bsee_all.py` and writes to
+> `data/modules/bsee/bin/`. Existing non-pointer binaries are skipped; `--force`
+> backs them up before replacement. This checks cache presence, not content integrity.
+> For recent production, use `scripts/refresh_bsee_ogor_recent.py`; the full
+> refresh script's OGOR-A year mapping is stale.
+> See [MODULE_INDEX.md](MODULE_INDEX.md) for the full module list and data prerequisites.
+> See [docs/CLI.md](docs/CLI.md) for complete CLI reference with safety classifications.
+
+For full module discovery: **[MODULE_INDEX.md](MODULE_INDEX.md)** covers all 16 CLI sub-apps and data readiness status.
+
+## Modules
+
+### BSEE Module (`worldenergydata bsee`)
+Gulf of Mexico offshore oil & gas data from the Bureau of Safety and Environmental Enforcement:
+- Well and production data (API10/API12 formats)
+- Production analysis and reporting
+- Financial analysis (NPV, cash flow)
+- Comprehensive multi-format exports (Excel, JSON, HTML, PDF)
+
+```bash
+worldenergydata bsee analyze --block 759
+worldenergydata bsee report --type field --id "Thunder Horse" --oil-price 80
+worldenergydata bsee data --api 608114001200
+worldenergydata bsee refresh --type production
+```
+
+### Marine Safety Module (`worldenergydata marine-safety`)
+Marine safety incident tracking from global maritime authorities:
+- USCG MISLE database
+- NTSB marine accident investigations
+- UK MAIB reports
+- TSB Canada data
+
+```bash
+worldenergydata marine-safety scrape uscg --start-year 2020 --end-year 2023
+worldenergydata marine-safety db init --dev-mode
+worldenergydata marine-safety export csv --output incidents.csv
+worldenergydata marine-safety stats --verbose
+```
+
+### FDAS Module (`worldenergydata fdas`)
+Field Development Analysis System for deepwater project economics:
+- Excel-compatible MIRR calculations
+- NPV with customizable discount rates
+- IRR calculations (monthly/annual)
+- Water depth classification
+
+```bash
+worldenergydata fdas calculate-npv --cashflows "[-1000,100,200,300,400,500]"
+worldenergydata fdas calculate-mirr --cashflows "[-5000,1000,1500,2000]" --discount-rate 0.12
+worldenergydata fdas analyze --field "Thunder Horse" --discount-rate 0.10
+worldenergydata fdas classify 5000
+```
+
+## Project Structure
+
+```
+worldenergydata/
+├── src/worldenergydata/
+│   ├── cli/                    # Unified CLI (Typer-based)
+│   │   ├── main.py             # Main entry point
+│   │   └── commands/           # Module-specific commands
+│   ├── common/                 # Shared utilities
+│   │   ├── logging.py          # Centralized logging
+│   │   ├── config.py           # Configuration management
+│   │   ├── exceptions.py       # Custom exceptions
+│   │   └── types.py            # Type definitions
+│   └── modules/
+│       ├── bsee/               # BSEE data module
+│       │   ├── data/           # Data loaders and sources
+│       │   ├── analysis/       # Analysis tools
+│       │   └── reports/        # Report generation
+│       ├── marine_safety/      # Marine safety module
+│       │   ├── scrapers/       # Data scrapers
+│       │   ├── database/       # Database operations
+│       │   └── analysis/       # Incident analysis
+│       └── fdas/               # Field Development Analysis
+│           ├── core/           # Financial calculations
+│           ├── adapters/       # BSEE integration
+│           └── analysis/       # Cashflow modeling
+├── data/                       # Data storage (raw/processed)
+├── tests/                      # Test suite
+├── docs/                       # Documentation
+│   ├── CLI.md                  # CLI reference
+│   └── MIGRATION_GUIDE.md      # Migration from old structure
+└── pyproject.toml              # Project configuration
+```
+
+## Installation Options
+
+### Using UV (Recommended)
+
+```bash
+# Install UV
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Clone and install
+git clone https://github.com/username/worldenergydata.git
+cd worldenergydata
+uv sync
+
+# Run
+uv run worldenergydata --help
+```
+
+### Using pip
+
+```bash
+# Install from source
+pip install -e .
+
+# With development dependencies
+pip install -e ".[dev]"
+```
+
+## Development
+
+### Testing
+
+```bash
+# Run all tests
+uv run pytest
+
+# With coverage
+uv run pytest --cov=src --cov-report=html
+
+# Specific module
+uv run pytest tests/modules/test_bsee.py
+```
+
+### Code Quality
+
+```bash
+# Format
+uv run black .
+uv run isort .
+
+# Lint
+uv run ruff check .
+
+# Type check
+uv run mypy src/
+```
+
+### Adding Dependencies
+
+```bash
+uv add requests           # Runtime dependency
+uv add --dev pytest-cov   # Development dependency
+```
+
+## Documentation
+
+- **[CLI Reference](docs/CLI.md)**: Complete CLI command documentation
+- **[Migration Guide](docs/MIGRATION_GUIDE.md)**: Migrating from old import paths
+- **[API Documentation](docs/api/)**: Module API reference
+
+## Technology Stack
+
+| Category | Tools |
+|----------|-------|
+| Language | Python 3.9+ |
+| Package Manager | UV |
+| CLI Framework | Typer + Rich |
+| Data Processing | pandas, numpy, numpy-financial |
+| Web Scraping | Scrapy, Selenium, BeautifulSoup4 |
+| Database | SQLAlchemy, PostgreSQL/SQLite |
+| Testing | pytest |
+| Code Quality | black, isort, ruff, mypy |
+
+## Contributing
+
+1. Fork the repository
+2. Sync the development tools (`uv sync --extra dev`), then install hooks (`uv run pre-commit install`) so black/isort/flake8 match CI at commit time
+3. Create a feature branch (`git checkout -b feature/new-feature`)
+4. Write tests first (TDD)
+5. Implement your changes
+6. Run quality checks (`uv run pytest && uv run ruff check .`)
+7. Submit a pull request
+
+`core.hooksPath` must not be set: it silently diverts Git away from the installed hooks.
+`PRE_COMMIT_HOME` may point to a shared cache directory.
+The secret scanner reads the repo-local `.gitleaks.toml`, derived from, and deliberately stricter than, the shared workspace-hub configuration: default rules are loaded and path entries narrowed.
+The shared file should gain the default-rule extension; this file should retain it.
+
+## License
+
+MIT License - see [LICENSE](LICENSE) for details.
+
+## Acknowledgments
+
+- Bureau of Safety and Environmental Enforcement (BSEE)
+- US Coast Guard (USCG)
+- National Transportation Safety Board (NTSB)
+- UK Marine Accident Investigation Branch (MAIB)
+
+---
+
+**Note**: This project is for analysis of public energy data sources. Verify data accuracy and comply with source provider terms.

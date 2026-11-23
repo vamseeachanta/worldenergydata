@@ -1,0 +1,457 @@
+snapshot: public_dayrate_snapshot
+issue: 596
+epic: 591
+feeds: 'intervention/maintenance supply model (#591); digitalmodel #892/#899'
+as_of: '2026-02-19'
+description: >-
+  Public-data day-rate snapshot for the offshore intervention/maintenance supply
+  model. Figures are extracted from primary published Fleet Status Reports
+  (Transocean, Valaris, Noble), SEC filings, company earnings commentary, and
+  dated trade-press market reports. Confidence labels: on_record (figure stated
+  in an issuer's published FSR/filing), reported (press-announced or implied from
+  contract value / duration), analyst (market-research / forecast band).
+caveat: >-
+  PUBLIC SNAPSHOT, NOT A SUBSCRIPTION FEED. These rates are a point-in-time
+  read from free public sources (issuer FSRs, filings, trade press) and are
+  time-varying; they are NOT a live 4C Offshore / Bassoe RigLogix / IHS
+  Petrodata index (those remain a paywalled USER GATE per #596). Many FSR
+  figures are firm operating dayrates that EXCLUDE managed-pressure drilling,
+  mobilization, performance bonuses, and capital reimbursements per each
+  issuer's disclaimer, so realized economics run higher. Intervention-semi
+  (Helix Q-class) and RLWI monohull spread rates are NOT publicly disclosed;
+  only utilization and qualitative rate direction are public. OSV/PSV/AHTS and
+  MPSV figures are mostly North-Sea-benchmarked ranges with thin US-GoM-specific
+  hard numbers. Treat every figure as a range at the labeled confidence, not a
+  precise fixture.
+asset_class_taxonomy:
+- modu_drillship
+- modu_semisub
+- heavy_intervention_semi
+- rlwi_monohull
+- mpsv_osv
+
+records:
+
+# --- UDW drillships: on_record per-rig FSR dayrates (Transocean Feb-2026 FSR) ---
+- asset_class: modu_drillship
+  name: Deepwater Titan
+  rate_usd_per_day: 462000
+  region: US GoM
+  customer: Chevron
+  term: Apr-23 to Apr-28 (firm)
+  as_of_date: '2026-02-19'
+  source_url: https://www.deepwater.com/documents/FleetStatusReport/2026/February%202026%20Fleet%20Status%20Report.pdf
+  confidence: on_record
+- asset_class: modu_drillship
+  name: Deepwater Atlas
+  rate_usd_per_day: 505000
+  region: US GoM
+  customer: Beacon (Offshore Energy)
+  term: Aug-25 to Mar-26 (firm); 365-day option at $635k and a 2-well award at $580k reported
+  as_of_date: '2026-02-19'
+  source_url: https://www.deepwater.com/documents/FleetStatusReport/2026/February%202026%20Fleet%20Status%20Report.pdf
+  confidence: on_record
+- asset_class: modu_drillship
+  name: Deepwater Poseidon
+  rate_usd_per_day: 499000
+  region: US GoM
+  customer: Shell
+  term: Sep-18 to Feb-28 (firm)
+  as_of_date: '2026-02-19'
+  source_url: https://www.deepwater.com/documents/FleetStatusReport/2026/February%202026%20Fleet%20Status%20Report.pdf
+  confidence: on_record
+- asset_class: modu_drillship
+  name: Deepwater Pontus
+  rate_usd_per_day: 496000
+  region: US GoM
+  customer: Shell
+  term: Oct-17 to Oct-27 (firm)
+  as_of_date: '2026-02-19'
+  source_url: https://www.deepwater.com/documents/FleetStatusReport/2026/February%202026%20Fleet%20Status%20Report.pdf
+  confidence: on_record
+- asset_class: modu_drillship
+  name: Deepwater Conqueror
+  rate_usd_per_day: 530000
+  region: US GoM
+  customer: Not Disclosed
+  term: Oct-25 to Sep-26 (firm), 365-day
+  as_of_date: '2026-02-19'
+  source_url: https://www.deepwater.com/documents/FleetStatusReport/2026/February%202026%20Fleet%20Status%20Report.pdf
+  confidence: on_record
+- asset_class: modu_drillship
+  name: Deepwater Proteus
+  rate_usd_per_day: 498000
+  region: US GoM
+  customer: Shell
+  term: Aug-16 to May-26 (firm)
+  as_of_date: '2026-02-19'
+  source_url: https://www.deepwater.com/documents/FleetStatusReport/2026/February%202026%20Fleet%20Status%20Report.pdf
+  confidence: on_record
+- asset_class: modu_drillship
+  name: Deepwater Asgard
+  rate_usd_per_day: 515000
+  region: US GoM
+  customer: Not Disclosed
+  term: Jun-25 to Jun-26 (firm)
+  as_of_date: '2026-02-19'
+  source_url: https://www.deepwater.com/documents/FleetStatusReport/2026/February%202026%20Fleet%20Status%20Report.pdf
+  confidence: on_record
+- asset_class: modu_drillship
+  name: Deepwater Invictus
+  rate_usd_per_day: 485000
+  region: US GoM
+  customer: bp
+  term: Apr-25 to Apr-28 (firm), 1095-day
+  as_of_date: '2026-02-19'
+  source_url: https://www.deepwater.com/documents/FleetStatusReport/2026/February%202026%20Fleet%20Status%20Report.pdf
+  confidence: on_record
+- asset_class: modu_drillship
+  name: Deepwater Aquila
+  rate_usd_per_day: 457000
+  region: Brazil (UDW 7G+ comparable)
+  customer: Petrobras
+  term: Jun-24 to Jun-27 (firm)
+  as_of_date: '2026-02-19'
+  source_url: https://www.deepwater.com/documents/FleetStatusReport/2026/February%202026%20Fleet%20Status%20Report.pdf
+  confidence: on_record
+- asset_class: modu_drillship
+  name: Deepwater Orion
+  rate_usd_per_day: 428000
+  region: Brazil (UDW)
+  customer: Petrobras
+  term: Mar-24 to Mar-27 (firm)
+  as_of_date: '2026-02-19'
+  source_url: https://www.deepwater.com/documents/FleetStatusReport/2026/February%202026%20Fleet%20Status%20Report.pdf
+  confidence: on_record
+- asset_class: modu_drillship
+  name: Valaris DS-17
+  rate_usd_per_day: 497000
+  region: Brazil (UDW)
+  customer: Equinor
+  term: May-25 to Dec-25 ($497k); 852-day program Jan-26 onward (TCV ~$498M)
+  as_of_date: '2025-10-23'
+  source_url: https://s23.q4cdn.com/956522167/files/doc_downloads/2025/10/10232025-Fleet-Status-Report_FINAL.pdf
+  confidence: on_record
+- asset_class: modu_drillship
+  name: Valaris DS-8
+  rate_usd_per_day: 428000
+  region: Brazil (UDW)
+  customer: Petrobras
+  term: Dec-23 to Dec-26 (firm) + ~$30M mob
+  as_of_date: '2025-10-23'
+  source_url: https://s23.q4cdn.com/956522167/files/doc_downloads/2025/10/10232025-Fleet-Status-Report_FINAL.pdf
+  confidence: on_record
+- asset_class: modu_drillship
+  name: Valaris DS-4
+  rate_usd_per_day: 450000
+  region: Brazil (UDW)
+  customer: Petrobras
+  term: Dec-24 to Nov-27 (firm) + ~$41M mob
+  as_of_date: '2025-10-23'
+  source_url: https://s23.q4cdn.com/956522167/files/doc_downloads/2025/10/10232025-Fleet-Status-Report_FINAL.pdf
+  confidence: on_record
+- asset_class: modu_drillship
+  name: Valaris DS-15
+  rate_usd_per_day: 400000
+  region: Brazil/W Africa (UDW)
+  customer: TotalEnergies (then Undisclosed W Africa Sep-26)
+  term: Dec-24 to Aug-25 ($400k); then warm-stacked, new W Africa award Sep-26
+  as_of_date: '2025-10-23'
+  source_url: https://s23.q4cdn.com/956522167/files/doc_downloads/2025/10/10232025-Fleet-Status-Report_FINAL.pdf
+  confidence: on_record
+- asset_class: modu_drillship
+  name: Noble Valiant
+  rate_usd_per_day: 499000
+  region: Philippines (UDW)
+  customer: Prime Energy
+  term: Jun-25 to Mar-26 (excl. MPD/mob fees)
+  as_of_date: '2026-01-26'
+  source_url: https://s201.q4cdn.com/439848451/files/doc_presentations/2026/Jan/26/FSR-01-26-26.pdf
+  confidence: on_record
+- asset_class: modu_drillship
+  name: Noble Globetrotter I
+  rate_usd_per_day: 450000
+  region: Bulgaria/Black Sea (6G)
+  customer: OMV Petrom
+  term: Dec-25 to Apr-26 (firm ~4 months)
+  as_of_date: '2026-01-26'
+  source_url: https://s201.q4cdn.com/439848451/files/doc_presentations/2026/Jan/26/FSR-01-26-26.pdf
+  confidence: on_record
+- asset_class: modu_drillship
+  name: Noble Developer
+  rate_usd_per_day: 375000
+  region: Trinidad (UDW)
+  customer: bp
+  term: 3-well ~240 days, commencing Q1-2027
+  as_of_date: '2026-01-26'
+  source_url: https://s201.q4cdn.com/439848451/files/doc_presentations/2026/Jan/26/FSR-01-26-26.pdf
+  confidence: on_record
+- asset_class: modu_drillship
+  name: Noble BlackRhino (ex-Diamond Ocean BlackRhino)
+  rate_usd_per_day: 300000
+  region: US GoM
+  customer: Beacon/BOE Offshore Energy
+  term: one workover well, commencing Mar-26 (+mob/demob)
+  as_of_date: '2026-01-26'
+  source_url: https://s201.q4cdn.com/439848451/files/doc_presentations/2026/Jan/26/FSR-01-26-26.pdf
+  confidence: on_record
+- asset_class: modu_drillship
+  name: Seadrill fleet average (contractual, ~10 rigs)
+  rate_usd_per_day: 330000
+  region: global (Seadrill avg)
+  customer: null
+  term: Q3 2025 average contractual dayrate across fleet
+  as_of_date: '2025-09-30'
+  source_url: https://www.sec.gov/Archives/edgar/data/0001737706/000173770625000015/seadrillpressreleaseq32025.htm
+  confidence: on_record
+
+# --- UDW drillships: reported / implied fixtures ---
+- asset_class: modu_drillship
+  name: Ocean BlackHornet (Diamond, now Noble)
+  rate_usd_per_day: 479000
+  region: US GoM
+  customer: BP
+  term: 2-yr extension from Feb-2025, ~$350M backlog (implied ~$479k/day over ~730 days)
+  as_of_date: '2024-03-05'
+  source_url: https://worldoil.com/news/2024/3/5/diamond-offshore-extends-drillship-contract-with-bp-in-gulf-of-mexico-for-350-million/
+  confidence: reported
+- asset_class: modu_drillship
+  name: Ocean BlackRhino (Diamond, now Noble)
+  rate_usd_per_day: 494000
+  region: US GoM
+  customer: BOE Exploration & Production
+  term: min 180 days, ~$89M total (implied ~$494k/day), commencing ~1H 2025
+  as_of_date: '2024-07-21'
+  source_url: https://worldoil.com/news/2024/7/21/diamond-offshore-drilling-secures-89-million-drillship-contract-for-work-in-u-s-gulf-of-mexico/
+  confidence: reported
+- asset_class: modu_drillship
+  name: West Neptune + West Vela (Seadrill combined US Gulf award)
+  rate_low_usd_per_day: 350000
+  rate_high_usd_per_day: 450000
+  region: US GoM
+  customer: LLOG Exploration (Harbour Energy)
+  term: combined ~$260M backlog; per-day not disclosed (implied ~$410k blended)
+  as_of_date: '2025-12-15'
+  source_url: https://www.oedigital.com/amp/news/538340-seadrill-lands-260m-us-gulf-contracts-for-drillships
+  confidence: reported
+- asset_class: modu_drillship
+  name: Noble Tier-1 drillship (recent fixtures, mgmt commentary)
+  rate_low_usd_per_day: 400000
+  rate_high_usd_per_day: 450000
+  region: global UDW
+  customer: null
+  term: 'mgmt commentary: recent Tier-1 drillship fixtures in low-to-mid $400,000s'
+  as_of_date: '2026-04-27'
+  source_url: https://www.prnewswire.com/news-releases/noble-corporation-plc-announces-first-quarter-2026-results-302753766.html
+  confidence: reported
+
+# --- UDW drillships: analyst / company fleet-average bands ---
+- asset_class: modu_drillship
+  name: Valaris fleet average (drillships, by year)
+  rate_low_usd_per_day: 389000
+  rate_high_usd_per_day: 454000
+  region: global (Valaris drillship fleet avg)
+  customer: null
+  term: company-reported avg day rates ($389k 2025 / $415k 2026 / $454k 2027+)
+  as_of_date: '2025-10-23'
+  source_url: https://s23.q4cdn.com/956522167/files/doc_downloads/2025/10/10232025-Fleet-Status-Report_FINAL.pdf
+  confidence: analyst
+- asset_class: modu_drillship
+  name: UDW drillship market band (benign, analyst)
+  rate_low_usd_per_day: 415000
+  rate_high_usd_per_day: 425000
+  region: global UDW / benign
+  customer: null
+  term: 'Wood Mackenzie/industry: ~$425k (2025) easing to ~$415k (2026), softening from peak'
+  as_of_date: '2026-01-01'
+  source_url: https://jpt.spe.org/2026-offshore-challenge-softening-demand-puts-the-brakes-on-day-rates
+  confidence: analyst
+
+# --- Harsh-env semisubmersibles: on_record per-rig FSR dayrates (Transocean) ---
+- asset_class: modu_semisub
+  name: Transocean Encourage
+  rate_usd_per_day: 490000
+  region: Norway (harsh-env semi)
+  customer: Not Disclosed
+  term: Jan-26 to Mar-27 (firm), then $416k Mar-27 to Mar-28
+  as_of_date: '2026-02-19'
+  source_url: https://www.deepwater.com/documents/FleetStatusReport/2026/February%202026%20Fleet%20Status%20Report.pdf
+  confidence: on_record
+- asset_class: modu_semisub
+  name: Transocean Barents
+  rate_usd_per_day: 465000
+  region: Romania/Black Sea (harsh-env semi)
+  customer: OMV Petrom
+  term: Mar-25 to Sep-26 ($465k), rising to $480k Sep-26 to Feb-27
+  as_of_date: '2026-02-19'
+  source_url: https://www.deepwater.com/documents/FleetStatusReport/2026/February%202026%20Fleet%20Status%20Report.pdf
+  confidence: on_record
+- asset_class: modu_semisub
+  name: Transocean Norge
+  rate_usd_per_day: 452000
+  region: Norway (harsh-env semi)
+  customer: Harbour Energy / OMV
+  term: Jan-26 to Dec-27 (firm rollups)
+  as_of_date: '2026-02-19'
+  source_url: https://www.deepwater.com/documents/FleetStatusReport/2026/February%202026%20Fleet%20Status%20Report.pdf
+  confidence: on_record
+
+# --- Heavy intervention semis (Helix Q-class): dayrate NOT public ---
+- asset_class: heavy_intervention_semi
+  name: Helix Q7000 (intervention semi)
+  rate_usd_per_day: null
+  rate_disclosed: false
+  region: Brazil (operator GoM-relevant fleet)
+  customer: Shell
+  term: 400-day decommissioning contract; contracted through Apr/May-2026; 100% utilization Q4-2025
+  as_of_date: '2025-12-31'
+  source_url: https://www.fool.com/earnings/call-transcripts/2026/02/24/helix-energy-hlx-q4-2025-earnings-transcript/
+  confidence: not_public
+- asset_class: heavy_intervention_semi
+  name: Helix Q5000 (intervention semi)
+  rate_usd_per_day: null
+  rate_disclosed: false
+  region: US Gulf of Mexico
+  customer: Shell / BP
+  term: multi-well campaigns; first-half 2026 well-booked; dayrate not disclosed
+  as_of_date: '2025-12-31'
+  source_url: https://www.fool.com/earnings/call-transcripts/2026/02/24/helix-energy-hlx-q4-2025-earnings-transcript/
+  confidence: not_public
+- asset_class: heavy_intervention_semi
+  name: Helix Well Intervention segment (fleet-wide)
+  rate_usd_per_day: null
+  rate_disclosed: false
+  region: Global (GoM, Brazil, West Africa, North Sea)
+  customer: null
+  term: 'utilization only: WI fleet 72% FY2025 vs 90% FY2024; Helix never reports per-day rates'
+  as_of_date: '2025-12-31'
+  source_url: https://investors.helixesg.com/news-releases/news-release-details/helix-reports-fourth-quarter-and-full-year-2025-results
+  confidence: not_public
+
+# --- RLWI monohulls: dayrate NOT public (qualitative only) ---
+- asset_class: rlwi_monohull
+  name: Riserless light well intervention (RLWI) monohull DP vessels
+  rate_usd_per_day: null
+  rate_disclosed: false
+  region: North Sea (method also used GoM/Brazil/West Africa)
+  customer: null
+  term: vendor RLWI spread rates not published; commercially confidential; qualitatively
+    much lower cost per intervention than a semi
+  as_of_date: '2025-01-01'
+  source_url: https://en.wikipedia.org/wiki/Riserless_Light_Well_Intervention
+  confidence: not_public
+
+# --- MPSV / OSV / PSV / AHTS: public ranges (trade press + market research) ---
+- asset_class: mpsv_osv
+  name: MPSV (multi-purpose support vessel)
+  rate_low_usd_per_day: 25000
+  rate_high_usd_per_day: 80000
+  region: North Sea / US Gulf of Mexico / West Africa
+  customer: null
+  term: wide regional + spec-driven variation; Westwood/Rystad/Spinergie via aggregator (indicative)
+  as_of_date: '2025-01-01'
+  source_url: https://offshoreacronymse.com/acronym/mpsv/
+  confidence: analyst
+- asset_class: mpsv_osv
+  name: US GoM OSV/PSV (Jones Act, large DP) - term/spot
+  rate_low_usd_per_day: 30000
+  rate_high_usd_per_day: 30000
+  region: US Gulf of Mexico
+  customer: null
+  term: US-flag Jones Act owners report rates 'north of $30,000/day'; ~2014-equivalent levels
+  as_of_date: '2025-01-01'
+  source_url: https://www.rivieramm.com/news-content-hub/news-content-hub/back-in-black-american-osv-owners-bullish-on-us-gulf-and-beyond-83522
+  confidence: reported
+- asset_class: mpsv_osv
+  name: North Sea large PSV (4,000+ DWT, DP2, winterised) - spot
+  rate_low_usd_per_day: 22000
+  rate_high_usd_per_day: 32000
+  region: North Sea (benchmark; GoM read-across)
+  customer: null
+  term: spot range; North Sea PSV utilization above 85% through 2024 into 2025
+  as_of_date: '2026-05-06'
+  source_url: https://offshoreindustry.co.uk/north-sea-osv-market-2026-ahts-and-psv-rates-hold-firm-as-fleet-attrition-bites/
+  confidence: reported
+- asset_class: mpsv_osv
+  name: North Sea large AHTS (18,000-25,000 BHP) - spot
+  rate_low_usd_per_day: 35000
+  rate_high_usd_per_day: 55000
+  region: North Sea (benchmark; limited GoM applicability)
+  customer: null
+  term: short-term fixtures 2025-2026; global AHTS utilization ~80% in 2025
+  as_of_date: '2026-05-06'
+  source_url: https://offshoreindustry.co.uk/north-sea-osv-market-2026-ahts-and-psv-rates-hold-firm-as-fleet-attrition-bites/
+  confidence: reported
+
+by_asset_class:
+  modu_drillship:
+    rate_count: 25
+    median_usd_per_day: 462000
+    band_low_usd_per_day: 300000
+    band_high_usd_per_day: 530000
+    headline: >-
+      High-spec 7G/7G+ UDW drillships on US GoM term work book ~$460k-$530k
+      (Transocean Feb-2026 FSR); spot/option fixtures spike to $580k-$635k.
+      Broader Tier-1 / market average is low-to-mid $400,000s (Noble mgmt,
+      Wood Mackenzie ~$415k 2026); Seadrill blended fleet avg $330k (lower-spec
+      mix). $300k point is a single-well workover fixture (Noble BlackRhino).
+    confidence: on_record (per-rig FSR) + analyst (market average)
+  modu_semisub:
+    rate_count: 3
+    median_usd_per_day: 465000
+    band_low_usd_per_day: 452000
+    band_high_usd_per_day: 490000
+    headline: >-
+      Harsh-environment semis (Norway/Black Sea) book ~$450k-$490k on firm term
+      (Transocean Feb-2026 FSR). Few benign-water deepwater semis remain; these
+      are the harsh-env comparables.
+    confidence: on_record
+  heavy_intervention_semi:
+    rate_count: 0
+    median_usd_per_day: null
+    band_low_usd_per_day: null
+    band_high_usd_per_day: null
+    headline: >-
+      Dayrates NOT public. Helix discloses utilization and segment
+      revenue/EBITDA only, never per-vessel dayrates (Q4000/Q5000/Q7000). WI
+      fleet utilization 72% FY2025 vs 90% FY2024. Treat any per-day figure as
+      non-public.
+    confidence: not_public
+  rlwi_monohull:
+    rate_count: 0
+    median_usd_per_day: null
+    band_low_usd_per_day: null
+    band_high_usd_per_day: null
+    headline: >-
+      Dayrates NOT public. RLWI monohull spread rates are commercially
+      confidential (Island Offshore, Akofs, Oceaneering, TechnipFMC). Only
+      qualitative 'much lower cost per intervention than a semi' statements
+      exist; no hard public figure asserted.
+    confidence: not_public
+  mpsv_osv:
+    rate_count: 4
+    median_usd_per_day: 33500
+    band_low_usd_per_day: 22000
+    band_high_usd_per_day: 80000
+    headline: >-
+      Support-vessel rates are partly public as ranges, mostly North-Sea
+      benchmarked. North Sea large PSV spot $22k-$32k/day; large AHTS spot
+      $35k-$55k/day; US GoM Jones Act OSV/PSV 'north of $30k/day'; MPSV
+      $25k-$80k/day (wide, spec-driven). US-GoM-specific hard fixtures are thin;
+      under-counted pending the OSV/MPSV vendor-scrape ingest (#593).
+    confidence: reported (trade press) + analyst (market research)
+
+sources:
+- https://www.deepwater.com/documents/FleetStatusReport/2026/February%202026%20Fleet%20Status%20Report.pdf
+- https://s23.q4cdn.com/956522167/files/doc_downloads/2025/10/10232025-Fleet-Status-Report_FINAL.pdf
+- https://s201.q4cdn.com/439848451/files/doc_presentations/2026/Jan/26/FSR-01-26-26.pdf
+- https://www.prnewswire.com/news-releases/noble-corporation-plc-announces-first-quarter-2026-results-302753766.html
+- https://www.sec.gov/Archives/edgar/data/0001737706/000173770625000015/seadrillpressreleaseq32025.htm
+- https://www.oedigital.com/amp/news/538340-seadrill-lands-260m-us-gulf-contracts-for-drillships
+- https://worldoil.com/news/2024/3/5/diamond-offshore-extends-drillship-contract-with-bp-in-gulf-of-mexico-for-350-million/
+- https://worldoil.com/news/2024/7/21/diamond-offshore-drilling-secures-89-million-drillship-contract-for-work-in-u-s-gulf-of-mexico/
+- https://jpt.spe.org/2026-offshore-challenge-softening-demand-puts-the-brakes-on-day-rates
+- https://investors.helixesg.com/news-releases/news-release-details/helix-reports-fourth-quarter-and-full-year-2025-results
+- https://www.fool.com/earnings/call-transcripts/2026/02/24/helix-energy-hlx-q4-2025-earnings-transcript/
+- https://offshoreindustry.co.uk/north-sea-osv-market-2026-ahts-and-psv-rates-hold-firm-as-fleet-attrition-bites/
+- https://www.rivieramm.com/news-content-hub/news-content-hub/back-in-black-american-osv-owners-bullish-on-us-gulf-and-beyond-83522

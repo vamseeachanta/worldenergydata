@@ -1,0 +1,296 @@
+{
+  "module": "well_api12",
+  "test_file": "test_well_api12.py",
+  "test_classes": [
+    {
+      "name": "TestWellAPI12",
+      "target_class": "WellAPI12",
+      "test_methods": [
+        {
+          "name": "test___init___basic",
+          "type": "basic",
+          "description": "Test basic functionality of __init__"
+        },
+        {
+          "name": "test_run_well_analysis_basic",
+          "type": "basic",
+          "description": "Test basic functionality of run_well_analysis"
+        },
+        {
+          "name": "test_run_well_analysis_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for run_well_analysis"
+        },
+        {
+          "name": "test_run_well_analysis_raises_valueerror",
+          "type": "exception",
+          "description": "Test that run_well_analysis raises ValueError"
+        },
+        {
+          "name": "test_run_well_analysis_return_value",
+          "type": "return_value",
+          "description": "Test return value of run_well_analysis"
+        },
+        {
+          "name": "test_run_well_analysis_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for run_well_analysis"
+        },
+        {
+          "name": "test_well_timeline_analysis_basic",
+          "type": "basic",
+          "description": "Test basic functionality of well_timeline_analysis"
+        },
+        {
+          "name": "test_well_timeline_analysis_return_value",
+          "type": "return_value",
+          "description": "Test return value of well_timeline_analysis"
+        },
+        {
+          "name": "test_well_timeline_analysis_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for well_timeline_analysis"
+        },
+        {
+          "name": "test_get_well_count_by_custom_cfg_basic",
+          "type": "basic",
+          "description": "Test basic functionality of get_well_count_by_custom_cfg"
+        },
+        {
+          "name": "test_get_well_count_by_custom_cfg_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for get_well_count_by_custom_cfg"
+        },
+        {
+          "name": "test_get_well_count_by_custom_cfg_return_value",
+          "type": "return_value",
+          "description": "Test return value of get_well_count_by_custom_cfg"
+        },
+        {
+          "name": "test_get_well_count_by_custom_cfg_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for get_well_count_by_custom_cfg"
+        },
+        {
+          "name": "test_save_result_groups_basic",
+          "type": "basic",
+          "description": "Test basic functionality of save_result_groups"
+        },
+        {
+          "name": "test_save_result_groups_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for save_result_groups"
+        },
+        {
+          "name": "test_get_api12_analysis_basic",
+          "type": "basic",
+          "description": "Test basic functionality of get_api12_analysis"
+        },
+        {
+          "name": "test_get_api12_analysis_return_value",
+          "type": "return_value",
+          "description": "Test return value of get_api12_analysis"
+        },
+        {
+          "name": "test_get_api12_analysis_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for get_api12_analysis"
+        },
+        {
+          "name": "test_get_directional_surveys_by_api10_basic",
+          "type": "basic",
+          "description": "Test basic functionality of get_directional_surveys_by_api10"
+        },
+        {
+          "name": "test_get_directional_surveys_by_api10_return_value",
+          "type": "return_value",
+          "description": "Test return value of get_directional_surveys_by_api10"
+        },
+        {
+          "name": "test_get_well_borehole_data_basic",
+          "type": "basic",
+          "description": "Test basic functionality of get_well_borehole_data"
+        },
+        {
+          "name": "test_get_well_borehole_data_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for get_well_borehole_data"
+        },
+        {
+          "name": "test_get_well_borehole_data_return_value",
+          "type": "return_value",
+          "description": "Test return value of get_well_borehole_data"
+        },
+        {
+          "name": "test_get_well_borehole_data_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for get_well_borehole_data"
+        },
+        {
+          "name": "test_get_sidetracklabel_and_rig_rigdays_basic",
+          "type": "basic",
+          "description": "Test basic functionality of get_sidetracklabel_and_rig_rigdays"
+        },
+        {
+          "name": "test_get_sidetracklabel_and_rig_rigdays_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for get_sidetracklabel_and_rig_rigdays"
+        },
+        {
+          "name": "test_get_sidetracklabel_and_rig_rigdays_return_value",
+          "type": "return_value",
+          "description": "Test return value of get_sidetracklabel_and_rig_rigdays"
+        },
+        {
+          "name": "test_get_sidetracklabel_and_rig_rigdays_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for get_sidetracklabel_and_rig_rigdays"
+        },
+        {
+          "name": "test_get_st_bp_tree_info_basic",
+          "type": "basic",
+          "description": "Test basic functionality of get_st_bp_tree_info"
+        },
+        {
+          "name": "test_get_st_bp_tree_info_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for get_st_bp_tree_info"
+        },
+        {
+          "name": "test_get_st_bp_tree_info_return_value",
+          "type": "return_value",
+          "description": "Test return value of get_st_bp_tree_info"
+        },
+        {
+          "name": "test_prepare_casing_data_basic",
+          "type": "basic",
+          "description": "Test basic functionality of prepare_casing_data"
+        },
+        {
+          "name": "test_prepare_casing_data_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for prepare_casing_data"
+        },
+        {
+          "name": "test_prepare_casing_data_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for prepare_casing_data"
+        },
+        {
+          "name": "test_prepare_completion_data_basic",
+          "type": "basic",
+          "description": "Test basic functionality of prepare_completion_data"
+        },
+        {
+          "name": "test_get_API10_from_well_API_basic",
+          "type": "basic",
+          "description": "Test basic functionality of get_API10_from_well_API"
+        },
+        {
+          "name": "test_get_API10_from_well_API_return_value",
+          "type": "return_value",
+          "description": "Test return value of get_API10_from_well_API"
+        },
+        {
+          "name": "test_prepare_well_paths_basic",
+          "type": "basic",
+          "description": "Test basic functionality of prepare_well_paths"
+        },
+        {
+          "name": "test_prepare_well_paths_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for prepare_well_paths"
+        },
+        {
+          "name": "test_prepare_well_paths_return_value",
+          "type": "return_value",
+          "description": "Test return value of prepare_well_paths"
+        },
+        {
+          "name": "test_prepare_well_paths_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for prepare_well_paths"
+        },
+        {
+          "name": "test_prepare_formation_data_basic",
+          "type": "basic",
+          "description": "Test basic functionality of prepare_formation_data"
+        },
+        {
+          "name": "test_plot_well_timeline_df_basic",
+          "type": "basic",
+          "description": "Test basic functionality of plot_well_timeline_df"
+        },
+        {
+          "name": "test_plot_well_timeline_df_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for plot_well_timeline_df"
+        },
+        {
+          "name": "test_process_survey_xyz_basic",
+          "type": "basic",
+          "description": "Test basic functionality of process_survey_xyz"
+        },
+        {
+          "name": "test_process_survey_xyz_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for process_survey_xyz"
+        },
+        {
+          "name": "test_process_survey_xyz_return_value",
+          "type": "return_value",
+          "description": "Test return value of process_survey_xyz"
+        },
+        {
+          "name": "test_add_relative_WH_positions_basic",
+          "type": "basic",
+          "description": "Test basic functionality of add_relative_WH_positions"
+        },
+        {
+          "name": "test_add_relative_WH_positions_return_value",
+          "type": "return_value",
+          "description": "Test return value of add_relative_WH_positions"
+        },
+        {
+          "name": "test_add_relative_WH_positions_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for add_relative_WH_positions"
+        },
+        {
+          "name": "test_plot_field_wells_basic",
+          "type": "basic",
+          "description": "Test basic functionality of plot_field_wells"
+        },
+        {
+          "name": "test_plot_field_wells_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for plot_field_wells"
+        },
+        {
+          "name": "test_add_currently_producing_count_basic",
+          "type": "basic",
+          "description": "Test basic functionality of add_currently_producing_count"
+        },
+        {
+          "name": "test_add_currently_producing_count_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for add_currently_producing_count"
+        },
+        {
+          "name": "test_add_currently_producing_count_return_value",
+          "type": "return_value",
+          "description": "Test return value of add_currently_producing_count"
+        },
+        {
+          "name": "test_add_currently_producing_count_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for add_currently_producing_count"
+        }
+      ]
+    }
+  ],
+  "test_functions": [],
+  "test_count": 56,
+  "coverage_approach": "focused",
+  "priority": "high"
+}

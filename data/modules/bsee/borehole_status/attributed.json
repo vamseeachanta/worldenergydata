@@ -1,0 +1,2662 @@
+[
+  {
+    "api12": "608074030500",
+    "bottom_lease": "G30876",
+    "field_id": "north_platte",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20120920",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G30876"
+  },
+  {
+    "api12": "608074030501",
+    "bottom_lease": "G30876",
+    "field_id": "north_platte",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20121221",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G30876"
+  },
+  {
+    "api12": "608074030502",
+    "bottom_lease": "G30876",
+    "field_id": "north_platte",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20160509",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G30876"
+  },
+  {
+    "api12": "608074031400",
+    "bottom_lease": "G32460",
+    "field_id": "north_platte",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20150405",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G32460"
+  },
+  {
+    "api12": "608074031500",
+    "bottom_lease": "G30876",
+    "field_id": "north_platte",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20151113",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G32460"
+  },
+  {
+    "api12": "608074031501",
+    "bottom_lease": "G30876",
+    "field_id": "north_platte",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20151225",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G32460"
+  },
+  {
+    "api12": "608074031502",
+    "bottom_lease": "G30876",
+    "field_id": "north_platte",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20160310",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G32460"
+  },
+  {
+    "api12": "608074032000",
+    "bottom_lease": "G30876",
+    "field_id": "north_platte",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20170114",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G30876"
+  },
+  {
+    "api12": "608074032001",
+    "bottom_lease": "G30876",
+    "field_id": "north_platte",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20170410",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G30876"
+  },
+  {
+    "api12": "608074032002",
+    "bottom_lease": "G30876",
+    "field_id": "north_platte",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20170506",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G30876"
+  },
+  {
+    "api12": "608074032003",
+    "bottom_lease": "G30876",
+    "field_id": "north_platte",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20170617",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G30876"
+  },
+  {
+    "api12": "608074032800",
+    "bottom_lease": "G32460",
+    "field_id": "north_platte",
+    "reason": null,
+    "status_code": "TA",
+    "status_date": "20230428",
+    "status_meaning": "Temporarily abandoned",
+    "surface_lease": "G30876"
+  },
+  {
+    "api12": "608074033000",
+    "bottom_lease": "G30876",
+    "field_id": "north_platte",
+    "reason": null,
+    "status_code": "DSI",
+    "status_date": "20250728",
+    "status_meaning": "Drilling suspended",
+    "surface_lease": "G30876"
+  },
+  {
+    "api12": "608074033100",
+    "bottom_lease": "G30876",
+    "field_id": "north_platte",
+    "reason": null,
+    "status_code": "DSI",
+    "status_date": "20250726",
+    "status_meaning": "Drilling suspended",
+    "surface_lease": "G30876"
+  },
+  {
+    "api12": "608074033200",
+    "bottom_lease": "G30876",
+    "field_id": "north_platte",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20260902",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G30876"
+  },
+  {
+    "api12": "608074033201",
+    "bottom_lease": "G30876",
+    "field_id": "north_platte",
+    "reason": null,
+    "status_code": "DRL",
+    "status_date": "20260801",
+    "status_meaning": "Drilling active",
+    "surface_lease": "G30876"
+  },
+  {
+    "api12": "608074033300",
+    "bottom_lease": "G30876",
+    "field_id": "north_platte",
+    "reason": null,
+    "status_code": "DSI",
+    "status_date": "20250907",
+    "status_meaning": "Drilling suspended",
+    "surface_lease": "G30876"
+  },
+  {
+    "api12": "608074033400",
+    "bottom_lease": "G30876",
+    "field_id": "north_platte",
+    "reason": null,
+    "status_code": "DSI",
+    "status_date": "20250818",
+    "status_meaning": "Drilling suspended",
+    "surface_lease": "G30876"
+  },
+  {
+    "api12": "608074033500",
+    "bottom_lease": "G30876",
+    "field_id": "north_platte",
+    "reason": null,
+    "status_code": "DSI",
+    "status_date": "20250922",
+    "status_meaning": "Drilling suspended",
+    "surface_lease": "G30876"
+  },
+  {
+    "api12": "608074033600",
+    "bottom_lease": "G30876",
+    "field_id": "north_platte",
+    "reason": null,
+    "status_code": "DSI",
+    "status_date": "20250821",
+    "status_meaning": "Drilling suspended",
+    "surface_lease": "G30876"
+  },
+  {
+    "api12": "608074033700",
+    "bottom_lease": "G30876",
+    "field_id": "north_platte",
+    "reason": null,
+    "status_code": "DSI",
+    "status_date": "20250919",
+    "status_meaning": "Drilling suspended",
+    "surface_lease": "G30876"
+  },
+  {
+    "api12": "608074033900",
+    "bottom_lease": "G30876",
+    "field_id": "north_platte",
+    "reason": null,
+    "status_code": "CNL",
+    "status_date": "20260804",
+    "status_meaning": "Borehole cancelled after approval",
+    "surface_lease": "G30876"
+  },
+  {
+    "api12": "608074034000",
+    "bottom_lease": "G30876",
+    "field_id": "north_platte",
+    "reason": null,
+    "status_code": "CNL",
+    "status_date": "20260126",
+    "status_meaning": "Borehole cancelled after approval",
+    "surface_lease": "G30876"
+  },
+  {
+    "api12": "608074034100",
+    "bottom_lease": "G30876",
+    "field_id": "north_platte",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20260205",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G30876"
+  },
+  {
+    "api12": "608074034200",
+    "bottom_lease": "G30876",
+    "field_id": "north_platte",
+    "reason": null,
+    "status_code": "CNL",
+    "status_date": "20260126",
+    "status_meaning": "Borehole cancelled after approval",
+    "surface_lease": "G30876"
+  },
+  {
+    "api12": "608074034300",
+    "bottom_lease": "G30876",
+    "field_id": "north_platte",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20260213",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G30876"
+  },
+  {
+    "api12": "608074034400",
+    "bottom_lease": "G30876",
+    "field_id": "north_platte",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20260209",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G30876"
+  },
+  {
+    "api12": "608074034500",
+    "bottom_lease": "G30876",
+    "field_id": "north_platte",
+    "reason": null,
+    "status_code": "APD",
+    "status_date": "20260128",
+    "status_meaning": "Application for permit to drill",
+    "surface_lease": "G30876"
+  },
+  {
+    "api12": "608084001100",
+    "bottom_lease": "G25792",
+    "field_id": "kaskida",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20060222",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G25792"
+  },
+  {
+    "api12": "608084001101",
+    "bottom_lease": "G25792",
+    "field_id": "kaskida",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20060414",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G25792"
+  },
+  {
+    "api12": "608084001102",
+    "bottom_lease": "G25792",
+    "field_id": "kaskida",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20061210",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G25792"
+  },
+  {
+    "api12": "608084001103",
+    "bottom_lease": "G25792",
+    "field_id": "kaskida",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20080415",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G25792"
+  },
+  {
+    "api12": "608084001104",
+    "bottom_lease": "G25792",
+    "field_id": "kaskida",
+    "reason": null,
+    "status_code": "TA",
+    "status_date": "20080623",
+    "status_meaning": "Temporarily abandoned",
+    "surface_lease": "G25792"
+  },
+  {
+    "api12": "608084001500",
+    "bottom_lease": "G25782",
+    "field_id": "tiber",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20090827",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G25782"
+  },
+  {
+    "api12": "608084001600",
+    "bottom_lease": "G25823",
+    "field_id": "buckskin",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20081122",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G25823"
+  },
+  {
+    "api12": "608084001601",
+    "bottom_lease": "G25823",
+    "field_id": "buckskin",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20090204",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G25823"
+  },
+  {
+    "api12": "608084002100",
+    "bottom_lease": "G25806",
+    "field_id": "buckskin",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20170715",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G25806"
+  },
+  {
+    "api12": "608084002700",
+    "bottom_lease": "G25792",
+    "field_id": "kaskida",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20130228",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G25792"
+  },
+  {
+    "api12": "608084002701",
+    "bottom_lease": "G25792",
+    "field_id": "kaskida",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20130622",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G25792"
+  },
+  {
+    "api12": "608084003100",
+    "bottom_lease": "G25814",
+    "field_id": "buckskin",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20130910",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G25814"
+  },
+  {
+    "api12": "608084003101",
+    "bottom_lease": "G25814",
+    "field_id": "buckskin",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20131106",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G25814"
+  },
+  {
+    "api12": "608084003102",
+    "bottom_lease": "G25814",
+    "field_id": "buckskin",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20131231",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G25814"
+  },
+  {
+    "api12": "608084003103",
+    "bottom_lease": "G25814",
+    "field_id": "buckskin",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20140130",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G25814"
+  },
+  {
+    "api12": "608084003104",
+    "bottom_lease": "G25814",
+    "field_id": "buckskin",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20140321",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G25814"
+  },
+  {
+    "api12": "608084003105",
+    "bottom_lease": "G25814",
+    "field_id": "buckskin",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20140702",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G25814"
+  },
+  {
+    "api12": "608084003106",
+    "bottom_lease": "G25814",
+    "field_id": "buckskin",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20141014",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G25814"
+  },
+  {
+    "api12": "608084004700",
+    "bottom_lease": "G25806",
+    "field_id": "buckskin",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20141027",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G25806"
+  },
+  {
+    "api12": "608084004701",
+    "bottom_lease": "G25806",
+    "field_id": "buckskin",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20141219",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G25806"
+  },
+  {
+    "api12": "608084005500",
+    "bottom_lease": "G25782",
+    "field_id": "tiber",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20160413",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G25782"
+  },
+  {
+    "api12": "608084006000",
+    "bottom_lease": "G25814",
+    "field_id": "buckskin",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20180322",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G25814"
+  },
+  {
+    "api12": "608084006001",
+    "bottom_lease": "G25814",
+    "field_id": "buckskin",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20180320",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G25814"
+  },
+  {
+    "api12": "608084006100",
+    "bottom_lease": "G25814",
+    "field_id": "buckskin",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20180531",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G25814"
+  },
+  {
+    "api12": "608084006101",
+    "bottom_lease": "G25814",
+    "field_id": "buckskin",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20181018",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G25814"
+  },
+  {
+    "api12": "608084006700",
+    "bottom_lease": "G25814",
+    "field_id": "buckskin",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20211001",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G25814"
+  },
+  {
+    "api12": "608084006701",
+    "bottom_lease": "G25814",
+    "field_id": "buckskin",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20211222",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G25814"
+  },
+  {
+    "api12": "608084006702",
+    "bottom_lease": "G25815",
+    "field_id": "buckskin",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20220826",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G25814"
+  },
+  {
+    "api12": "608084007000",
+    "bottom_lease": "G25823",
+    "field_id": "buckskin",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20221208",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G32650"
+  },
+  {
+    "api12": "608084007200",
+    "bottom_lease": "G25814",
+    "field_id": "buckskin",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20260117",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G25806"
+  },
+  {
+    "api12": "608084007300",
+    "bottom_lease": "G25806",
+    "field_id": "buckskin",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20230903",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G25806"
+  },
+  {
+    "api12": "608084007301",
+    "bottom_lease": "G25814",
+    "field_id": "buckskin",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20240521",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G25806"
+  },
+  {
+    "api12": "608084007700",
+    "bottom_lease": "G25813",
+    "field_id": "buckskin",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20240801",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G25823"
+  },
+  {
+    "api12": "608084007701",
+    "bottom_lease": "G25823",
+    "field_id": "buckskin",
+    "reason": null,
+    "status_code": "TA",
+    "status_date": "20240903",
+    "status_meaning": "Temporarily abandoned",
+    "surface_lease": "G25823"
+  },
+  {
+    "api12": "608084008200",
+    "bottom_lease": "G25792",
+    "field_id": "kaskida",
+    "reason": null,
+    "status_code": "APD",
+    "status_date": "20260730",
+    "status_meaning": "Application for permit to drill",
+    "surface_lease": "G25792"
+  },
+  {
+    "api12": "608084008300",
+    "bottom_lease": "G25792",
+    "field_id": "kaskida",
+    "reason": null,
+    "status_code": "APD",
+    "status_date": "20260731",
+    "status_meaning": "Application for permit to drill",
+    "surface_lease": "G25792"
+  },
+  {
+    "api12": "608084008400",
+    "bottom_lease": "G25792",
+    "field_id": "kaskida",
+    "reason": null,
+    "status_code": "APD",
+    "status_date": "20260803",
+    "status_meaning": "Application for permit to drill",
+    "surface_lease": "G25792"
+  },
+  {
+    "api12": "608084008500",
+    "bottom_lease": "G25792",
+    "field_id": "kaskida",
+    "reason": null,
+    "status_code": "APD",
+    "status_date": "20260803",
+    "status_meaning": "Application for permit to drill",
+    "surface_lease": "G25792"
+  },
+  {
+    "api12": "608084008600",
+    "bottom_lease": "G25792",
+    "field_id": "kaskida",
+    "reason": null,
+    "status_code": "APD",
+    "status_date": "20260803",
+    "status_meaning": "Application for permit to drill",
+    "surface_lease": "G25792"
+  },
+  {
+    "api12": "608084008700",
+    "bottom_lease": "G25792",
+    "field_id": "kaskida",
+    "reason": null,
+    "status_code": "APD",
+    "status_date": "20260803",
+    "status_meaning": "Application for permit to drill",
+    "surface_lease": "G25792"
+  },
+  {
+    "api12": "608084008800",
+    "bottom_lease": "G25806",
+    "field_id": "buckskin",
+    "reason": null,
+    "status_code": "APD",
+    "status_date": "20260910",
+    "status_meaning": "Application for permit to drill",
+    "surface_lease": "G25806"
+  },
+  {
+    "api12": "608114062100",
+    "bottom_lease": "G31752",
+    "field_id": "anchor",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20140528",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G31752"
+  },
+  {
+    "api12": "608114062101",
+    "bottom_lease": "G31752",
+    "field_id": "anchor",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20140806",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G31752"
+  },
+  {
+    "api12": "608114063500",
+    "bottom_lease": "G31752",
+    "field_id": "anchor",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20150709",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G31752"
+  },
+  {
+    "api12": "608114063501",
+    "bottom_lease": "G31752",
+    "field_id": "anchor",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20150814",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G31752"
+  },
+  {
+    "api12": "608114063502",
+    "bottom_lease": "G31751",
+    "field_id": "anchor",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20151012",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G31752"
+  },
+  {
+    "api12": "608114066100",
+    "bottom_lease": "G31751",
+    "field_id": "anchor",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20160226",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G31751"
+  },
+  {
+    "api12": "608114067300",
+    "bottom_lease": "G31752",
+    "field_id": "anchor",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20161204",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G31752"
+  },
+  {
+    "api12": "608114067301",
+    "bottom_lease": "G31752",
+    "field_id": "anchor",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20170225",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G31752"
+  },
+  {
+    "api12": "608114072800",
+    "bottom_lease": "G31752",
+    "field_id": "anchor",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20191127",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G31752"
+  },
+  {
+    "api12": "608114075000",
+    "bottom_lease": "G31752",
+    "field_id": "anchor",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20240720",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G31752"
+  },
+  {
+    "api12": "608114075100",
+    "bottom_lease": "G31752",
+    "field_id": "anchor",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20241017",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G31752"
+  },
+  {
+    "api12": "608114076100",
+    "bottom_lease": "G31752",
+    "field_id": "anchor",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20250829",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G31752"
+  },
+  {
+    "api12": "608114076101",
+    "bottom_lease": "G31752",
+    "field_id": "anchor",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20260304",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G31752"
+  },
+  {
+    "api12": "608114076900",
+    "bottom_lease": "G31752",
+    "field_id": "anchor",
+    "reason": null,
+    "status_code": "DSI",
+    "status_date": "20230710",
+    "status_meaning": "Drilling suspended",
+    "surface_lease": "G31752"
+  },
+  {
+    "api12": "608114077400",
+    "bottom_lease": "G31751",
+    "field_id": "anchor",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20250602",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G31751"
+  },
+  {
+    "api12": "608114079600",
+    "bottom_lease": "G31752",
+    "field_id": "anchor",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20260418",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G31751"
+  },
+  {
+    "api12": "608114080200",
+    "bottom_lease": "G31752",
+    "field_id": "anchor",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20260630",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G31752"
+  },
+  {
+    "api12": "608114080201",
+    "bottom_lease": "G31752",
+    "field_id": "anchor",
+    "reason": null,
+    "status_code": "AST",
+    "status_date": "20260629",
+    "status_meaning": "Approved sidetrack",
+    "surface_lease": "G31752"
+  },
+  {
+    "api12": "608124000400",
+    "bottom_lease": "G21245",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20001127",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G21245"
+  },
+  {
+    "api12": "608124000401",
+    "bottom_lease": "G21245",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20040521",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G21245"
+  },
+  {
+    "api12": "608124000402",
+    "bottom_lease": "G21245",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20040630",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G21245"
+  },
+  {
+    "api12": "608124000800",
+    "bottom_lease": "G16965",
+    "field_id": "cascade_chinook",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20020423",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G16965"
+  },
+  {
+    "api12": "608124000801",
+    "bottom_lease": "G16965",
+    "field_id": "cascade_chinook",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20020604",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G16965"
+  },
+  {
+    "api12": "608124001000",
+    "bottom_lease": "G16997",
+    "field_id": "cascade_chinook",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20140105",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G16997"
+  },
+  {
+    "api12": "608124001100",
+    "bottom_lease": "G21245",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20210328",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G21245"
+  },
+  {
+    "api12": "608124001300",
+    "bottom_lease": "G17016",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20040518",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G17016"
+  },
+  {
+    "api12": "608124001301",
+    "bottom_lease": "G17016",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20200729",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G17016"
+  },
+  {
+    "api12": "608124001500",
+    "bottom_lease": "G17001",
+    "field_id": "stones",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20171023",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G17001"
+  },
+  {
+    "api12": "608124001600",
+    "bottom_lease": "G16965",
+    "field_id": "cascade_chinook",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20051009",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G16965"
+  },
+  {
+    "api12": "608124001700",
+    "bottom_lease": "G17015",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20121005",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G17015"
+  },
+  {
+    "api12": "608124001701",
+    "bottom_lease": "G17015",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "TA",
+    "status_date": "20260901",
+    "status_meaning": "Temporarily abandoned",
+    "surface_lease": "G17015"
+  },
+  {
+    "api12": "608124001800",
+    "bottom_lease": "G18753",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "CNL",
+    "status_date": "20070417",
+    "status_meaning": "Borehole cancelled after approval",
+    "surface_lease": "G18753"
+  },
+  {
+    "api12": "608124001900",
+    "bottom_lease": "G16942",
+    "field_id": "big_foot",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20050805",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G16942"
+  },
+  {
+    "api12": "608124002000",
+    "bottom_lease": "G16942",
+    "field_id": "big_foot",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20060101",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G16942"
+  },
+  {
+    "api12": "608124002001",
+    "bottom_lease": "G16942",
+    "field_id": "big_foot",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20060115",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G16942"
+  },
+  {
+    "api12": "608124002002",
+    "bottom_lease": "G16942",
+    "field_id": "big_foot",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20060323",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G16942"
+  },
+  {
+    "api12": "608124002003",
+    "bottom_lease": "G16942",
+    "field_id": "big_foot",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20060603",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G16942"
+  },
+  {
+    "api12": "608124002004",
+    "bottom_lease": "G16942",
+    "field_id": "big_foot",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20081125",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G16942"
+  },
+  {
+    "api12": "608124002005",
+    "bottom_lease": "G16942",
+    "field_id": "big_foot",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20210417",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G16942"
+  },
+  {
+    "api12": "608124002200",
+    "bottom_lease": "G17001",
+    "field_id": "stones",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20171023",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G17001"
+  },
+  {
+    "api12": "608124002300",
+    "bottom_lease": "G16942",
+    "field_id": "big_foot",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20071015",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G16942"
+  },
+  {
+    "api12": "608124002301",
+    "bottom_lease": "G16942",
+    "field_id": "big_foot",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20071203",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G16942"
+  },
+  {
+    "api12": "608124002302",
+    "bottom_lease": "G16942",
+    "field_id": "big_foot",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20210330",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G16942"
+  },
+  {
+    "api12": "608124002700",
+    "bottom_lease": "G17015",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20080430",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G17015"
+  },
+  {
+    "api12": "608124002701",
+    "bottom_lease": "G17015",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20080601",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G17015"
+  },
+  {
+    "api12": "608124002702",
+    "bottom_lease": "G17015",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20080612",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G17015"
+  },
+  {
+    "api12": "608124002703",
+    "bottom_lease": "G17015",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "TA",
+    "status_date": "20081113",
+    "status_meaning": "Temporarily abandoned",
+    "surface_lease": "G17015"
+  },
+  {
+    "api12": "608124002900",
+    "bottom_lease": "G18753",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20210329",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G18753"
+  },
+  {
+    "api12": "608124003100",
+    "bottom_lease": "G21245",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20080821",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G21245"
+  },
+  {
+    "api12": "608124003101",
+    "bottom_lease": "G21245",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20081118",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G21245"
+  },
+  {
+    "api12": "608124003200",
+    "bottom_lease": "G17001",
+    "field_id": "stones",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20080112",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G18724"
+  },
+  {
+    "api12": "608124003201",
+    "bottom_lease": "G17001",
+    "field_id": "stones",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20081006",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G18724"
+  },
+  {
+    "api12": "608124003202",
+    "bottom_lease": "G17001",
+    "field_id": "stones",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20161201",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G18724"
+  },
+  {
+    "api12": "608124003300",
+    "bottom_lease": "G20351",
+    "field_id": "julia",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20150120",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G20351"
+  },
+  {
+    "api12": "608124003301",
+    "bottom_lease": "G20351",
+    "field_id": "julia",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20150712",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G20351"
+  },
+  {
+    "api12": "608124003400",
+    "bottom_lease": "G25232",
+    "field_id": "shenandoah",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20080703",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G25232"
+  },
+  {
+    "api12": "608124003401",
+    "bottom_lease": "G25232",
+    "field_id": "shenandoah",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20081110",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G25232"
+  },
+  {
+    "api12": "608124003402",
+    "bottom_lease": "G25232",
+    "field_id": "shenandoah",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20120107",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G25232"
+  },
+  {
+    "api12": "608124004400",
+    "bottom_lease": "G18745",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20090722",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G18745"
+  },
+  {
+    "api12": "608124004600",
+    "bottom_lease": "G16997",
+    "field_id": "cascade_chinook",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20100108",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G16997"
+  },
+  {
+    "api12": "608124004601",
+    "bottom_lease": "G16997",
+    "field_id": "cascade_chinook",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20100210",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G16997"
+  },
+  {
+    "api12": "608124004602",
+    "bottom_lease": "G16997",
+    "field_id": "cascade_chinook",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20100521",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G16997"
+  },
+  {
+    "api12": "608124004700",
+    "bottom_lease": "G16965",
+    "field_id": "cascade_chinook",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20120413",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G16965"
+  },
+  {
+    "api12": "608124005000",
+    "bottom_lease": "G17015",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20130702",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G17015"
+  },
+  {
+    "api12": "608124005100",
+    "bottom_lease": "G17015",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20120517",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G17015"
+  },
+  {
+    "api12": "608124005101",
+    "bottom_lease": "G17015",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20120524",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G17015"
+  },
+  {
+    "api12": "608124005102",
+    "bottom_lease": "G17015",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20120602",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G17015"
+  },
+  {
+    "api12": "608124005103",
+    "bottom_lease": "G17015",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20150625",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G17015"
+  },
+  {
+    "api12": "608124005200",
+    "bottom_lease": "G17015",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20150810",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G17015"
+  },
+  {
+    "api12": "608124005201",
+    "bottom_lease": "G17015",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20160912",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G17015"
+  },
+  {
+    "api12": "608124005202",
+    "bottom_lease": "G17015",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20161030",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G17015"
+  },
+  {
+    "api12": "608124005203",
+    "bottom_lease": "G17015",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20230414",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G17015"
+  },
+  {
+    "api12": "608124005300",
+    "bottom_lease": "G18753",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20121223",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G18745"
+  },
+  {
+    "api12": "608124005400",
+    "bottom_lease": "G21245",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20150607",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G18745"
+  },
+  {
+    "api12": "608124005600",
+    "bottom_lease": "G21245",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20120905",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G18753"
+  },
+  {
+    "api12": "608124005700",
+    "bottom_lease": "G21245",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20150207",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G18753"
+  },
+  {
+    "api12": "608124005800",
+    "bottom_lease": "G21245",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20160406",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G18753"
+  },
+  {
+    "api12": "608124005900",
+    "bottom_lease": "G16942",
+    "field_id": "big_foot",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20260515",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G16942"
+  },
+  {
+    "api12": "608124006000",
+    "bottom_lease": "G16942",
+    "field_id": "big_foot",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20190310",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G16942"
+  },
+  {
+    "api12": "608124006001",
+    "bottom_lease": "G16942",
+    "field_id": "big_foot",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20190608",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G16942"
+  },
+  {
+    "api12": "608124006200",
+    "bottom_lease": "G16942",
+    "field_id": "big_foot",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20181116",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G16942"
+  },
+  {
+    "api12": "608124006300",
+    "bottom_lease": "G16942",
+    "field_id": "big_foot",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20240601",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G16942"
+  },
+  {
+    "api12": "608124006301",
+    "bottom_lease": "G16942",
+    "field_id": "big_foot",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20240711",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G16942"
+  },
+  {
+    "api12": "608124006302",
+    "bottom_lease": "G16942",
+    "field_id": "big_foot",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20250107",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G16942"
+  },
+  {
+    "api12": "608124006400",
+    "bottom_lease": "G16942",
+    "field_id": "big_foot",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20250214",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G16942"
+  },
+  {
+    "api12": "608124006401",
+    "bottom_lease": "G16942",
+    "field_id": "big_foot",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20250323",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G16942"
+  },
+  {
+    "api12": "608124006402",
+    "bottom_lease": "G16942",
+    "field_id": "big_foot",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20250406",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G16942"
+  },
+  {
+    "api12": "608124006403",
+    "bottom_lease": "G16942",
+    "field_id": "big_foot",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20250506",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G16942"
+  },
+  {
+    "api12": "608124006404",
+    "bottom_lease": "G16942",
+    "field_id": "big_foot",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20251003",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G16942"
+  },
+  {
+    "api12": "608124006500",
+    "bottom_lease": "G16942",
+    "field_id": "big_foot",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20230710",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G16942"
+  },
+  {
+    "api12": "608124006600",
+    "bottom_lease": "G16942",
+    "field_id": "big_foot",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20200104",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G16942"
+  },
+  {
+    "api12": "608124006601",
+    "bottom_lease": "G16942",
+    "field_id": "big_foot",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20200119",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G16942"
+  },
+  {
+    "api12": "608124006602",
+    "bottom_lease": "G16942",
+    "field_id": "big_foot",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20200212",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G16942"
+  },
+  {
+    "api12": "608124006603",
+    "bottom_lease": "G16942",
+    "field_id": "big_foot",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20200818",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G16942"
+  },
+  {
+    "api12": "608124006800",
+    "bottom_lease": "G16942",
+    "field_id": "big_foot",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20220706",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G16942"
+  },
+  {
+    "api12": "608124006900",
+    "bottom_lease": "G16942",
+    "field_id": "big_foot",
+    "reason": null,
+    "status_code": "DSI",
+    "status_date": "20120425",
+    "status_meaning": "Drilling suspended",
+    "surface_lease": "G16942"
+  },
+  {
+    "api12": "608124007000",
+    "bottom_lease": "G16942",
+    "field_id": "big_foot",
+    "reason": null,
+    "status_code": "DSI",
+    "status_date": "20120502",
+    "status_meaning": "Drilling suspended",
+    "surface_lease": "G16942"
+  },
+  {
+    "api12": "608124007100",
+    "bottom_lease": "G16942",
+    "field_id": "big_foot",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20210205",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G16942"
+  },
+  {
+    "api12": "608124007101",
+    "bottom_lease": "G16942",
+    "field_id": "big_foot",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20210221",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G16942"
+  },
+  {
+    "api12": "608124007102",
+    "bottom_lease": "G16942",
+    "field_id": "big_foot",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20230908",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G16942"
+  },
+  {
+    "api12": "608124007103",
+    "bottom_lease": "G16942",
+    "field_id": "big_foot",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20231209",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G16942"
+  },
+  {
+    "api12": "608124007200",
+    "bottom_lease": "G16942",
+    "field_id": "big_foot",
+    "reason": null,
+    "status_code": "DSI",
+    "status_date": "20130323",
+    "status_meaning": "Drilling suspended",
+    "surface_lease": "G16942"
+  },
+  {
+    "api12": "608124007300",
+    "bottom_lease": "G16942",
+    "field_id": "big_foot",
+    "reason": null,
+    "status_code": "DSI",
+    "status_date": "20130218",
+    "status_meaning": "Drilling suspended",
+    "surface_lease": "G16942"
+  },
+  {
+    "api12": "608124007400",
+    "bottom_lease": "G16942",
+    "field_id": "big_foot",
+    "reason": null,
+    "status_code": "DSI",
+    "status_date": "20130323",
+    "status_meaning": "Drilling suspended",
+    "surface_lease": "G16942"
+  },
+  {
+    "api12": "608124007500",
+    "bottom_lease": "G31938",
+    "field_id": "shenandoah",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20120913",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G31938"
+  },
+  {
+    "api12": "608124007900",
+    "bottom_lease": "G31938",
+    "field_id": "shenandoah",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20250802",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G31938"
+  },
+  {
+    "api12": "608124008200",
+    "bottom_lease": "G16965",
+    "field_id": "cascade_chinook",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20121227",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G16965"
+  },
+  {
+    "api12": "608124008300",
+    "bottom_lease": "G16965",
+    "field_id": "cascade_chinook",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20131216",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G16965"
+  },
+  {
+    "api12": "608124008700",
+    "bottom_lease": "G17001",
+    "field_id": "stones",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20140127",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G17001"
+  },
+  {
+    "api12": "608124009200",
+    "bottom_lease": "G17001",
+    "field_id": "stones",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20140401",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G17001"
+  },
+  {
+    "api12": "608124009201",
+    "bottom_lease": "G17001",
+    "field_id": "stones",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20140702",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G17001"
+  },
+  {
+    "api12": "608124009300",
+    "bottom_lease": "G25232",
+    "field_id": "shenandoah",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20141207",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G25232"
+  },
+  {
+    "api12": "608124009301",
+    "bottom_lease": "G25232",
+    "field_id": "shenandoah",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20141231",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G25232"
+  },
+  {
+    "api12": "608124009400",
+    "bottom_lease": "G20351",
+    "field_id": "julia",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20151007",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G20351"
+  },
+  {
+    "api12": "608124009500",
+    "bottom_lease": "G17001",
+    "field_id": "stones",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20160112",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G17001"
+  },
+  {
+    "api12": "608124009700",
+    "bottom_lease": "G16997",
+    "field_id": "cascade_chinook",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20180715",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G16997"
+  },
+  {
+    "api12": "608124009900",
+    "bottom_lease": "G17001",
+    "field_id": "stones",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20151012",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G17001"
+  },
+  {
+    "api12": "608124010100",
+    "bottom_lease": "G31938",
+    "field_id": "shenandoah",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20150908",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G31938"
+  },
+  {
+    "api12": "608124010101",
+    "bottom_lease": "G31938",
+    "field_id": "shenandoah",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20151026",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G31938"
+  },
+  {
+    "api12": "608124010102",
+    "bottom_lease": "G31938",
+    "field_id": "shenandoah",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20151221",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G31938"
+  },
+  {
+    "api12": "608124010103",
+    "bottom_lease": "G31938",
+    "field_id": "shenandoah",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20160115",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G31938"
+  },
+  {
+    "api12": "608124010200",
+    "bottom_lease": "G20351",
+    "field_id": "julia",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20190828",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G20351"
+  },
+  {
+    "api12": "608124010300",
+    "bottom_lease": "G17001",
+    "field_id": "stones",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20161216",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G17001"
+  },
+  {
+    "api12": "608124010400",
+    "bottom_lease": "G17001",
+    "field_id": "stones",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20210508",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G17001"
+  },
+  {
+    "api12": "608124010500",
+    "bottom_lease": "G17001",
+    "field_id": "stones",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20160213",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G17001"
+  },
+  {
+    "api12": "608124010700",
+    "bottom_lease": "G18745",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20151127",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G18745"
+  },
+  {
+    "api12": "608124010701",
+    "bottom_lease": "G18745",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20160814",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G18745"
+  },
+  {
+    "api12": "608124010800",
+    "bottom_lease": "G20351",
+    "field_id": "julia",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20171126",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G20351"
+  },
+  {
+    "api12": "608124010900",
+    "bottom_lease": "G31938",
+    "field_id": "shenandoah",
+    "reason": null,
+    "status_code": "TA",
+    "status_date": "20160814",
+    "status_meaning": "Temporarily abandoned",
+    "surface_lease": "G31938"
+  },
+  {
+    "api12": "608124011000",
+    "bottom_lease": "G17001",
+    "field_id": "stones",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20160816",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G17001"
+  },
+  {
+    "api12": "608124011001",
+    "bottom_lease": "G17001",
+    "field_id": "stones",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20210602",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G17001"
+  },
+  {
+    "api12": "608124011100",
+    "bottom_lease": "G20351",
+    "field_id": "julia",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20170124",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G20351"
+  },
+  {
+    "api12": "608124011300",
+    "bottom_lease": "G25232",
+    "field_id": "shenandoah",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20170219",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G25232"
+  },
+  {
+    "api12": "608124011301",
+    "bottom_lease": "G25232",
+    "field_id": "shenandoah",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20170308",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G25232"
+  },
+  {
+    "api12": "608124011302",
+    "bottom_lease": "G25232",
+    "field_id": "shenandoah",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20250801",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G25232"
+  },
+  {
+    "api12": "608124011400",
+    "bottom_lease": "G21245",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20170508",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G18753"
+  },
+  {
+    "api12": "608124011500",
+    "bottom_lease": "G17015",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20170327",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G17015"
+  },
+  {
+    "api12": "608124011501",
+    "bottom_lease": "G17015",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20170405",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G17015"
+  },
+  {
+    "api12": "608124011502",
+    "bottom_lease": "G17015",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20170417",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G17015"
+  },
+  {
+    "api12": "608124011503",
+    "bottom_lease": "G17015",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20170423",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G17015"
+  },
+  {
+    "api12": "608124011504",
+    "bottom_lease": "G17015",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20171020",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G17015"
+  },
+  {
+    "api12": "608124011600",
+    "bottom_lease": "G17015",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20180421",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G17015"
+  },
+  {
+    "api12": "608124011601",
+    "bottom_lease": "G17015",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20180427",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G17015"
+  },
+  {
+    "api12": "608124011602",
+    "bottom_lease": "G17015",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20180507",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G17015"
+  },
+  {
+    "api12": "608124011603",
+    "bottom_lease": "G17015",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20180521",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G17015"
+  },
+  {
+    "api12": "608124011604",
+    "bottom_lease": "G17015",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20180530",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G17015"
+  },
+  {
+    "api12": "608124011605",
+    "bottom_lease": "G17015",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20180831",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G17015"
+  },
+  {
+    "api12": "608124011606",
+    "bottom_lease": "G17015",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20181211",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G17015"
+  },
+  {
+    "api12": "608124011700",
+    "bottom_lease": "G17001",
+    "field_id": "stones",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20170712",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G17001"
+  },
+  {
+    "api12": "608124011800",
+    "bottom_lease": "G18753",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20170615",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G18753"
+  },
+  {
+    "api12": "608124011801",
+    "bottom_lease": "G21245",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20171224",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G18753"
+  },
+  {
+    "api12": "608124012200",
+    "bottom_lease": "G21245",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20180605",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G18753"
+  },
+  {
+    "api12": "608124012300",
+    "bottom_lease": "G17001",
+    "field_id": "stones",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20180727",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G17001"
+  },
+  {
+    "api12": "608124012500",
+    "bottom_lease": "G17016",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20200502",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G17015"
+  },
+  {
+    "api12": "608124012600",
+    "bottom_lease": "G17015",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20190419",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G17015"
+  },
+  {
+    "api12": "608124012601",
+    "bottom_lease": "G17015",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20240806",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G17015"
+  },
+  {
+    "api12": "608124012602",
+    "bottom_lease": "G17015",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20260922",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G17015"
+  },
+  {
+    "api12": "608124012700",
+    "bottom_lease": "G20351",
+    "field_id": "julia",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20191029",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G20351"
+  },
+  {
+    "api12": "608124012701",
+    "bottom_lease": "G20351",
+    "field_id": "julia",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20200220",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G20351"
+  },
+  {
+    "api12": "608124012800",
+    "bottom_lease": "G20394",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20190909",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G20394"
+  },
+  {
+    "api12": "608124012801",
+    "bottom_lease": "G20394",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20190929",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G20394"
+  },
+  {
+    "api12": "608124012802",
+    "bottom_lease": "G20394",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20191116",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G20394"
+  },
+  {
+    "api12": "608124012803",
+    "bottom_lease": "G20394",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20191128",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G20394"
+  },
+  {
+    "api12": "608124012804",
+    "bottom_lease": "G20394",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20211129",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G20394"
+  },
+  {
+    "api12": "608124012900",
+    "bottom_lease": "G17001",
+    "field_id": "stones",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20200612",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G17001"
+  },
+  {
+    "api12": "608124013200",
+    "bottom_lease": "G18745",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20200619",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G18745"
+  },
+  {
+    "api12": "608124013201",
+    "bottom_lease": "G18745",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20200702",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G18745"
+  },
+  {
+    "api12": "608124013202",
+    "bottom_lease": "G21245",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20210201",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G18745"
+  },
+  {
+    "api12": "608124013300",
+    "bottom_lease": "G21245",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20230917",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G21245"
+  },
+  {
+    "api12": "608124013400",
+    "bottom_lease": "G17001",
+    "field_id": "stones",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20210411",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G17001"
+  },
+  {
+    "api12": "608124013500",
+    "bottom_lease": "G21245",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20231112",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G21245"
+  },
+  {
+    "api12": "608124013600",
+    "bottom_lease": "G21245",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20210805",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G18753"
+  },
+  {
+    "api12": "608124013700",
+    "bottom_lease": "G17001",
+    "field_id": "stones",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20220204",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G17001"
+  },
+  {
+    "api12": "608124013701",
+    "bottom_lease": "G17001",
+    "field_id": "stones",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20220419",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G17001"
+  },
+  {
+    "api12": "608124013900",
+    "bottom_lease": "G31938",
+    "field_id": "shenandoah",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20250727",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G31938"
+  },
+  {
+    "api12": "608124014000",
+    "bottom_lease": "G31938",
+    "field_id": "shenandoah",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20231130",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G31938"
+  },
+  {
+    "api12": "608124014001",
+    "bottom_lease": "G31938",
+    "field_id": "shenandoah",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20231220",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G31938"
+  },
+  {
+    "api12": "608124014002",
+    "bottom_lease": "G31938",
+    "field_id": "shenandoah",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20240524",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G31938"
+  },
+  {
+    "api12": "608124014003",
+    "bottom_lease": "G31938",
+    "field_id": "shenandoah",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20250520",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G31938"
+  },
+  {
+    "api12": "608124014100",
+    "bottom_lease": "G31938",
+    "field_id": "shenandoah",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20241101",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G31938"
+  },
+  {
+    "api12": "608124014300",
+    "bottom_lease": "G17001",
+    "field_id": "stones",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20230213",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G17001"
+  },
+  {
+    "api12": "608124014301",
+    "bottom_lease": "G17001",
+    "field_id": "stones",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20230316",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G17001"
+  },
+  {
+    "api12": "608124014400",
+    "bottom_lease": "G31938",
+    "field_id": "shenandoah",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20250211",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G31938"
+  },
+  {
+    "api12": "608124014600",
+    "bottom_lease": "G17015",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20230823",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G17015"
+  },
+  {
+    "api12": "608124015100",
+    "bottom_lease": "G18753",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20240115",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G18753"
+  },
+  {
+    "api12": "608124015200",
+    "bottom_lease": "G31938",
+    "field_id": "shenandoah",
+    "reason": null,
+    "status_code": "DSI",
+    "status_date": "20240117",
+    "status_meaning": "Drilling suspended",
+    "surface_lease": "G31938"
+  },
+  {
+    "api12": "608124015300",
+    "bottom_lease": "G17016",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "PA",
+    "status_date": "20240907",
+    "status_meaning": "Permanently abandoned",
+    "surface_lease": "G17016"
+  },
+  {
+    "api12": "608124015400",
+    "bottom_lease": "G17016",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20250109",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G17016"
+  },
+  {
+    "api12": "608124015500",
+    "bottom_lease": "G17015",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20241126",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G17015"
+  },
+  {
+    "api12": "608124015501",
+    "bottom_lease": "G17015",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20241214",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G17015"
+  },
+  {
+    "api12": "608124015502",
+    "bottom_lease": "G17015",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20241229",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G17015"
+  },
+  {
+    "api12": "608124015503",
+    "bottom_lease": "G17015",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20250110",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G17015"
+  },
+  {
+    "api12": "608124015504",
+    "bottom_lease": "G17015",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "COM",
+    "status_date": "20250504",
+    "status_meaning": "Borehole completed",
+    "surface_lease": "G17015"
+  },
+  {
+    "api12": "608124016000",
+    "bottom_lease": "G17001",
+    "field_id": "stones",
+    "reason": null,
+    "status_code": "DSI",
+    "status_date": "20260319",
+    "status_meaning": "Drilling suspended",
+    "surface_lease": "G17001"
+  },
+  {
+    "api12": "608124016100",
+    "bottom_lease": "G21245",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "ST",
+    "status_date": "20260624",
+    "status_meaning": "Borehole side tracked",
+    "surface_lease": "G18753"
+  },
+  {
+    "api12": "608124016101",
+    "bottom_lease": "G21245",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "TA",
+    "status_date": "20260724",
+    "status_meaning": "Temporarily abandoned",
+    "surface_lease": "G18753"
+  },
+  {
+    "api12": "608124016200",
+    "bottom_lease": "G18753",
+    "field_id": "jack_st_malo",
+    "reason": null,
+    "status_code": "TA",
+    "status_date": "20260524",
+    "status_meaning": "Temporarily abandoned",
+    "surface_lease": "G21245"
+  }
+]

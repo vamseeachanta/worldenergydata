@@ -1,0 +1,945 @@
+{
+  "metadata": {
+    "created_at": "2025-07-24T11:46:32.548767",
+    "total_files": 112,
+    "categorized_files": 112
+  },
+  "categories": {
+    "development": 15,
+    "user-guide": 17,
+    "data-sources/bsee": 49,
+    "data-sources/sodir": 6,
+    "reference/literature": 3,
+    "reference/equipment-specs": 2,
+    "analysis-guides/economic-evaluation": 8,
+    "data-sources/lng": 2,
+    "analysis-guides/production-analysis": 3,
+    "data-sources/equipment": 4,
+    "data-sources/onshore": 2,
+    "analysis-guides/field-development": 1
+  },
+  "file_categories": {
+    "development": [
+      "CLAUDE.md",
+      ".agent-os\\product\\decisions.md",
+      ".agent-os\\product\\tech-stack.md",
+      ".ai\\specs\\modules\\package_management\\user_story_uv_implementation.md",
+      ".ai\\system-overview\\README.md",
+      ".ai\\workflows\\ai-journey-documentation.md",
+      ".ai\\workflows\\development-process.md",
+      ".ai\\workflows\\implementation\\implementation-summary.md",
+      ".ai\\workflows\\implementation\\implementation-tracking.md",
+      ".ai\\workflows\\implementation\\issue-planning.md",
+      ".ai\\workflows\\implementation\\templates\\implementation-log-template.md",
+      ".ai\\workflows\\implementation\\templates\\issue-planning-template.md",
+      "docs\\development\\index.md",
+      "docs\\development\\uv_usage.md",
+      "scripts\\requirements.txt"
+    ],
+    "user-guide": [
+      "README.md",
+      ".agent-os\\specs\\2025-07-24-docs-organization\\spec.md",
+      ".ai\\AI_GUIDELINES.md",
+      ".ai\\workflows\\implementation\\change-documentation.md",
+      "data\\modules\\drilling_rigs\\offshore\\drillship.md",
+      "data\\modules\\drilling_rigs\\offshore\\moonpool.md",
+      "docs\\petrophysics.md",
+      "docs\\README.md",
+      "docs\\modules\\fracfocus\\data.md",
+      "docs\\modules\\materials\\resources.md",
+      "docs\\sub_ai\\_agents\\prompts.md",
+      "docs\\sub_ai\\_agents\\requirements.md",
+      "docs\\sub_ai\\_agents\\rules.md",
+      "docs\\user-guide\\index.md",
+      "src\\worldenergydata.egg-info\\dependency_links.txt",
+      "src\\worldenergydata.egg-info\\entry_points.txt",
+      "src\\worldenergydata.egg-info\\top_level.txt"
+    ],
+    "data-sources/bsee": [
+      ".agent-os\\product\\mission.md",
+      ".agent-os\\product\\roadmap.md",
+      ".agent-os\\specs\\2025-07-23-sodir-integration\\spec.md",
+      "docs\\development_history.md",
+      "docs\\data-sources\\index.md",
+      "docs\\modules\\bsee\\analysis\\julia_api12_resolution.md",
+      "docs\\modules\\bsee\\analysis\\economics\\intro.md",
+      "docs\\modules\\bsee\\analysis\\economics\\power_markets.md",
+      "docs\\modules\\bsee\\analysis\\field\\field_layout.md",
+      "docs\\modules\\bsee\\analysis\\rig_days\\rig_days_by_milestone.md",
+      "docs\\modules\\bsee\\analysis\\rig_days\\rig_days_by_WAR.md",
+      "docs\\modules\\bsee\\analysis\\rig_days\\rig_days_summary.md",
+      "docs\\modules\\bsee\\analysis\\survey\\survey.md",
+      "docs\\modules\\bsee\\data\\analysis_data.md",
+      "docs\\modules\\bsee\\data\\apm_data_rev1.md",
+      "docs\\modules\\bsee\\data\\data_rev1.md",
+      "docs\\modules\\bsee\\data\\drilling_data_rev1.md",
+      "docs\\modules\\bsee\\data\\well_api_number.md",
+      "docs\\modules\\bsee\\data\\clean_up\\data_explaination.md",
+      "docs\\modules\\bsee\\data\\clean_up\\data_for_analysis.md",
+      "docs\\modules\\bsee\\data\\field_anchor\\ANCHOR_Field_Data_Filtering.md",
+      "docs\\modules\\bsee\\data\\field_jsm\\no_of_wells.md",
+      "docs\\modules\\bsee\\data\\production\\notes.md",
+      "docs\\modules\\bsee\\data\\survey\\horizontal_reach.md",
+      "docs\\modules\\bsee\\data\\well\\well_count.md",
+      "docs\\modules\\bsee\\data\\WELL_ACTIVITY_CD\\well_activity_cd_description.md",
+      "docs\\modules\\bsee\\_legacy\\data_for_analysis_legacy.md",
+      "docs\\raw_data\\bsee\\data_exploration.md",
+      "docs\\raw_data\\wa\\intro.md",
+      "tests\\modules\\bsee\\analysis\\README_GitHub_Issue_39.md",
+      "docs\\modules\\bsee\\data\\SME_Roy_attachments\\2025-09-07\\mv_war_boreholes_view.lease.txt",
+      "docs\\modules\\bsee\\data\\SME_Roy_attachments\\2025-09-07\\mv_war_main.txt",
+      "docs\\modules\\bsee\\_legacy\\code\\mitra\\calculations\\Datatypes file.txt",
+      "docs\\modules\\bsee\\_legacy\\code\\mitra\\calculations\\PaleogeneEpochs.txt",
+      "docs\\modules\\bsee\\_legacy\\code\\mitra\\data\\BoreholeRawData\\mv_boreholes.txt",
+      "docs\\modules\\bsee\\_legacy\\code\\mitra\\data\\gepaldmp_all\\gepaldmp_Header.txt",
+      "docs\\modules\\bsee\\_legacy\\code\\mitra\\data\\gepaldmp_all\\gepaldmp_Paleo.txt",
+      "docs\\modules\\bsee\\_legacy\\ref\\O&G\\Roy_References.txt",
+      "docs\\modules\\bsee\\_legacy\\superseded\\calculations\\Datatypes file.txt",
+      "docs\\modules\\bsee\\_legacy\\superseded\\calculations\\PaleogeneEpochs.txt",
+      "docs\\modules\\bsee\\_legacy\\superseded\\data\\BoreholeRawData\\mv_boreholes.txt",
+      "docs\\modules\\bsee\\_legacy\\superseded\\data\\gepaldmp_all\\gepaldmp_Header.txt",
+      "docs\\modules\\bsee\\_legacy\\superseded\\data\\gepaldmp_all\\gepaldmp_Paleo.txt",
+      "docs\\raw_data\\bsee\\other\\mastdatadelimit.txt",
+      "docs\\raw_data\\bsee\\other\\mastproddelimit.txt",
+      "docs\\raw_data\\bsee\\paleo\\gepaldmp_Header.txt",
+      "docs\\raw_data\\bsee\\paleo\\gepaldmp_Paleo.txt",
+      "src\\worldenergydata.egg-info\\SOURCES.txt",
+      "tests\\modules\\all_yml\\yml_summary_pytest.txt"
+    ],
+    "data-sources/sodir": [
+      ".agent-os\\specs\\2025-07-23-sodir-integration\\tasks.md",
+      ".agent-os\\specs\\2025-07-23-sodir-integration\\sub-specs\\api-spec.md",
+      ".agent-os\\specs\\2025-07-23-sodir-integration\\sub-specs\\database-schema.md",
+      ".agent-os\\specs\\2025-07-23-sodir-integration\\sub-specs\\technical-spec.md",
+      ".agent-os\\specs\\2025-07-23-sodir-integration\\sub-specs\\tests.md",
+      "docs\\raw_data\\sodir\\sodir.md"
+    ],
+    "reference/literature": [
+      ".agent-os\\specs\\2025-07-24-docs-organization\\tasks.md",
+      ".ai\\workflows\\implementation\\README.md",
+      "docs\\sub_ai\\_agents\\alt-rules.md"
+    ],
+    "reference/equipment-specs": [
+      ".agent-os\\specs\\2025-07-24-docs-organization\\sub-specs\\technical-spec.md",
+      ".agent-os\\specs\\2025-07-24-docs-organization\\sub-specs\\tests.md"
+    ],
+    "analysis-guides/economic-evaluation": [
+      ".ai\\specs\\modules\\bsee\\user_story_npv_analysis_bsee_fields.md",
+      "docs\\analysis-guides\\index.md",
+      "docs\\examples\\index.md",
+      "docs\\modules\\bsee\\analysis\\economics\\revenues.md",
+      "docs\\modules\\bsee\\analysis\\economics\\NPV\\Methodology_Comparison.md",
+      "docs\\modules\\bsee\\analysis\\economics\\NPV\\npv.md",
+      "docs\\modules\\bsee\\analysis\\economics\\NPV\\NPV_REFACTORING_SUMMARY.md",
+      "src\\worldenergydata.egg-info\\requires.txt"
+    ],
+    "data-sources/lng": [
+      "data\\modules\\lngc\\lngc.md",
+      "docs\\modules\\bsee\\analysis\\economics\\lng.md"
+    ],
+    "analysis-guides/production-analysis": [
+      "docs\\modules\\bsee\\analysis\\economics\\JStM_production.md",
+      "docs\\modules\\bsee\\analysis\\production\\cummulative_production.md",
+      "docs\\modules\\bsee\\analysis\\production\\normalization_for_laterals.md"
+    ],
+    "data-sources/equipment": [
+      "docs\\modules\\equipment\\anchor\\calculation.md",
+      "docs\\modules\\equipment\\x_tree\\x_tree.md",
+      "docs\\reference\\index.md",
+      "docs\\modules\\bsee\\data\\SME_Roy_attachments\\2025-09-07\\mv_war_main_prop_remark.lease.txt"
+    ],
+    "data-sources/onshore": [
+      "docs\\modules\\marketing\\marketing.md",
+      "docs\\modules\\onshore\\wyoming\\data.md"
+    ],
+    "analysis-guides/field-development": [
+      "docs\\raw_data\\drilling\\fleets.md"
+    ]
+  },
+  "migration_mapping": {
+    "CLAUDE.md": {
+      "old_path": "CLAUDE.md",
+      "new_path": "docs/development/CLAUDE.md",
+      "category": "development",
+      "confidence": 4.0,
+      "action": "migrate"
+    },
+    "README.md": {
+      "old_path": "README.md",
+      "new_path": "docs/user-guide/README.md",
+      "category": "user-guide",
+      "confidence": 5.0,
+      "action": "migrate"
+    },
+    ".agent-os\\product\\decisions.md": {
+      "old_path": ".agent-os\\product\\decisions.md",
+      "new_path": "docs/development/decisions.md",
+      "category": "development",
+      "confidence": 5.0,
+      "action": "migrate"
+    },
+    ".agent-os\\product\\mission.md": {
+      "old_path": ".agent-os\\product\\mission.md",
+      "new_path": "docs/data-sources/bsee/mission.md",
+      "category": "data-sources/bsee",
+      "confidence": 7.5,
+      "action": "migrate"
+    },
+    ".agent-os\\product\\roadmap.md": {
+      "old_path": ".agent-os\\product\\roadmap.md",
+      "new_path": "docs/data-sources/bsee/roadmap.md",
+      "category": "data-sources/bsee",
+      "confidence": 7.5,
+      "action": "migrate"
+    },
+    ".agent-os\\product\\tech-stack.md": {
+      "old_path": ".agent-os\\product\\tech-stack.md",
+      "new_path": "docs/development/tech-stack.md",
+      "category": "development",
+      "confidence": 6.0,
+      "action": "migrate"
+    },
+    ".agent-os\\specs\\2025-07-23-sodir-integration\\spec.md": {
+      "old_path": ".agent-os\\specs\\2025-07-23-sodir-integration\\spec.md",
+      "new_path": "docs/data-sources/bsee/spec.md",
+      "category": "data-sources/bsee",
+      "confidence": 7.5,
+      "action": "migrate"
+    },
+    ".agent-os\\specs\\2025-07-23-sodir-integration\\tasks.md": {
+      "old_path": ".agent-os\\specs\\2025-07-23-sodir-integration\\tasks.md",
+      "new_path": "docs/data-sources/sodir/tasks.md",
+      "category": "data-sources/sodir",
+      "confidence": 6.75,
+      "action": "migrate"
+    },
+    ".agent-os\\specs\\2025-07-23-sodir-integration\\sub-specs\\api-spec.md": {
+      "old_path": ".agent-os\\specs\\2025-07-23-sodir-integration\\sub-specs\\api-spec.md",
+      "new_path": "docs/data-sources/sodir/api-spec.md",
+      "category": "data-sources/sodir",
+      "confidence": 6.75,
+      "action": "migrate"
+    },
+    ".agent-os\\specs\\2025-07-23-sodir-integration\\sub-specs\\database-schema.md": {
+      "old_path": ".agent-os\\specs\\2025-07-23-sodir-integration\\sub-specs\\database-schema.md",
+      "new_path": "docs/data-sources/sodir/database-schema.md",
+      "category": "data-sources/sodir",
+      "confidence": 6.75,
+      "action": "migrate"
+    },
+    ".agent-os\\specs\\2025-07-23-sodir-integration\\sub-specs\\technical-spec.md": {
+      "old_path": ".agent-os\\specs\\2025-07-23-sodir-integration\\sub-specs\\technical-spec.md",
+      "new_path": "docs/data-sources/sodir/technical-spec.md",
+      "category": "data-sources/sodir",
+      "confidence": 5.25,
+      "action": "migrate"
+    },
+    ".agent-os\\specs\\2025-07-23-sodir-integration\\sub-specs\\tests.md": {
+      "old_path": ".agent-os\\specs\\2025-07-23-sodir-integration\\sub-specs\\tests.md",
+      "new_path": "docs/data-sources/sodir/tests.md",
+      "category": "data-sources/sodir",
+      "confidence": 6.75,
+      "action": "migrate"
+    },
+    ".agent-os\\specs\\2025-07-24-docs-organization\\spec.md": {
+      "old_path": ".agent-os\\specs\\2025-07-24-docs-organization\\spec.md",
+      "new_path": "docs/user-guide/spec.md",
+      "category": "user-guide",
+      "confidence": 3.0,
+      "action": "migrate"
+    },
+    ".agent-os\\specs\\2025-07-24-docs-organization\\tasks.md": {
+      "old_path": ".agent-os\\specs\\2025-07-24-docs-organization\\tasks.md",
+      "new_path": "docs/reference/literature/tasks.md",
+      "category": "reference/literature",
+      "confidence": 1.6,
+      "action": "migrate"
+    },
+    ".agent-os\\specs\\2025-07-24-docs-organization\\sub-specs\\technical-spec.md": {
+      "old_path": ".agent-os\\specs\\2025-07-24-docs-organization\\sub-specs\\technical-spec.md",
+      "new_path": "docs/reference/equipment-specs/technical-spec.md",
+      "category": "reference/equipment-specs",
+      "confidence": 2.8000000000000003,
+      "action": "migrate"
+    },
+    ".agent-os\\specs\\2025-07-24-docs-organization\\sub-specs\\tests.md": {
+      "old_path": ".agent-os\\specs\\2025-07-24-docs-organization\\sub-specs\\tests.md",
+      "new_path": "docs/reference/equipment-specs/tests.md",
+      "category": "reference/equipment-specs",
+      "confidence": 2.0,
+      "action": "migrate"
+    },
+    ".ai\\AI_GUIDELINES.md": {
+      "old_path": ".ai\\AI_GUIDELINES.md",
+      "new_path": "docs/user-guide/AI_GUIDELINES.md",
+      "category": "user-guide",
+      "confidence": 2.5,
+      "action": "migrate"
+    },
+    ".ai\\specs\\modules\\bsee\\user_story_npv_analysis_bsee_fields.md": {
+      "old_path": ".ai\\specs\\modules\\bsee\\user_story_npv_analysis_bsee_fields.md",
+      "new_path": "docs/analysis-guides/economic-evaluation/user_story_npv_analysis_bsee_fields.md",
+      "category": "analysis-guides/economic-evaluation",
+      "confidence": 7.8,
+      "action": "migrate"
+    },
+    ".ai\\specs\\modules\\package_management\\user_story_uv_implementation.md": {
+      "old_path": ".ai\\specs\\modules\\package_management\\user_story_uv_implementation.md",
+      "new_path": "docs/development/user_story_uv_implementation.md",
+      "category": "development",
+      "confidence": 4.0,
+      "action": "migrate"
+    },
+    ".ai\\system-overview\\README.md": {
+      "old_path": ".ai\\system-overview\\README.md",
+      "new_path": "docs/development/README.md",
+      "category": "development",
+      "confidence": 5.0,
+      "action": "migrate"
+    },
+    ".ai\\workflows\\ai-journey-documentation.md": {
+      "old_path": ".ai\\workflows\\ai-journey-documentation.md",
+      "new_path": "docs/development/ai-journey-documentation.md",
+      "category": "development",
+      "confidence": 2.0,
+      "action": "migrate"
+    },
+    ".ai\\workflows\\development-process.md": {
+      "old_path": ".ai\\workflows\\development-process.md",
+      "new_path": "docs/development/development-process.md",
+      "category": "development",
+      "confidence": 7.0,
+      "action": "migrate"
+    },
+    ".ai\\workflows\\implementation\\change-documentation.md": {
+      "old_path": ".ai\\workflows\\implementation\\change-documentation.md",
+      "new_path": "docs/user-guide/change-documentation.md",
+      "category": "user-guide",
+      "confidence": 2.0,
+      "action": "migrate"
+    },
+    ".ai\\workflows\\implementation\\implementation-summary.md": {
+      "old_path": ".ai\\workflows\\implementation\\implementation-summary.md",
+      "new_path": "docs/development/implementation-summary.md",
+      "category": "development",
+      "confidence": 3.0,
+      "action": "migrate"
+    },
+    ".ai\\workflows\\implementation\\implementation-tracking.md": {
+      "old_path": ".ai\\workflows\\implementation\\implementation-tracking.md",
+      "new_path": "docs/development/implementation-tracking.md",
+      "category": "development",
+      "confidence": 2.0,
+      "action": "migrate"
+    },
+    ".ai\\workflows\\implementation\\issue-planning.md": {
+      "old_path": ".ai\\workflows\\implementation\\issue-planning.md",
+      "new_path": "docs/development/issue-planning.md",
+      "category": "development",
+      "confidence": 2.0,
+      "action": "migrate"
+    },
+    ".ai\\workflows\\implementation\\README.md": {
+      "old_path": ".ai\\workflows\\implementation\\README.md",
+      "new_path": "docs/reference/literature/README.md",
+      "category": "reference/literature",
+      "confidence": 1.6,
+      "action": "migrate"
+    },
+    ".ai\\workflows\\implementation\\templates\\implementation-log-template.md": {
+      "old_path": ".ai\\workflows\\implementation\\templates\\implementation-log-template.md",
+      "new_path": "docs/development/implementation-log-template.md",
+      "category": "development",
+      "confidence": 2.0,
+      "action": "migrate"
+    },
+    ".ai\\workflows\\implementation\\templates\\issue-planning-template.md": {
+      "old_path": ".ai\\workflows\\implementation\\templates\\issue-planning-template.md",
+      "new_path": "docs/development/issue-planning-template.md",
+      "category": "development",
+      "confidence": 2.0,
+      "action": "migrate"
+    },
+    "data\\modules\\drilling_rigs\\offshore\\drillship.md": {
+      "old_path": "data\\modules\\drilling_rigs\\offshore\\drillship.md",
+      "new_path": "docs/user-guide/drillship.md",
+      "category": "user-guide",
+      "confidence": 0.0,
+      "action": "review"
+    },
+    "data\\modules\\drilling_rigs\\offshore\\moonpool.md": {
+      "old_path": "data\\modules\\drilling_rigs\\offshore\\moonpool.md",
+      "new_path": "docs/user-guide/moonpool.md",
+      "category": "user-guide",
+      "confidence": 0.0,
+      "action": "review"
+    },
+    "data\\modules\\lngc\\lngc.md": {
+      "old_path": "data\\modules\\lngc\\lngc.md",
+      "new_path": "docs/data-sources/lng/lngc.md",
+      "category": "data-sources/lng",
+      "confidence": 3.75,
+      "action": "migrate"
+    },
+    "docs\\development_history.md": {
+      "old_path": "docs\\development_history.md",
+      "new_path": "docs/data-sources/bsee/development_history.md",
+      "category": "data-sources/bsee",
+      "confidence": 7.5,
+      "action": "migrate"
+    },
+    "docs\\petrophysics.md": {
+      "old_path": "docs\\petrophysics.md",
+      "new_path": "docs/user-guide/petrophysics.md",
+      "category": "user-guide",
+      "confidence": 0.0,
+      "action": "review"
+    },
+    "docs\\README.md": {
+      "old_path": "docs\\README.md",
+      "new_path": "docs/user-guide/README.md",
+      "category": "user-guide",
+      "confidence": 8.0,
+      "action": "migrate"
+    },
+    "docs\\analysis-guides\\index.md": {
+      "old_path": "docs\\analysis-guides\\index.md",
+      "new_path": "docs/analysis-guides/economic-evaluation/index.md",
+      "category": "analysis-guides/economic-evaluation",
+      "confidence": 8.4,
+      "action": "migrate"
+    },
+    "docs\\data-sources\\index.md": {
+      "old_path": "docs\\data-sources\\index.md",
+      "new_path": "docs/data-sources/bsee/index.md",
+      "category": "data-sources/bsee",
+      "confidence": 12.0,
+      "action": "migrate"
+    },
+    "docs\\development\\index.md": {
+      "old_path": "docs\\development\\index.md",
+      "new_path": "docs/development/index.md",
+      "category": "development",
+      "confidence": 10.0,
+      "action": "migrate"
+    },
+    "docs\\development\\uv_usage.md": {
+      "old_path": "docs\\development\\uv_usage.md",
+      "new_path": "docs/development/uv_usage.md",
+      "category": "development",
+      "confidence": 8.0,
+      "action": "migrate"
+    },
+    "docs\\examples\\index.md": {
+      "old_path": "docs\\examples\\index.md",
+      "new_path": "docs/analysis-guides/economic-evaluation/index.md",
+      "category": "analysis-guides/economic-evaluation",
+      "confidence": 8.4,
+      "action": "migrate"
+    },
+    "docs\\modules\\bsee\\analysis\\julia_api12_resolution.md": {
+      "old_path": "docs\\modules\\bsee\\analysis\\julia_api12_resolution.md",
+      "new_path": "docs/data-sources/bsee/julia_api12_resolution.md",
+      "category": "data-sources/bsee",
+      "confidence": 2.25,
+      "action": "migrate"
+    },
+    "docs\\modules\\bsee\\analysis\\economics\\intro.md": {
+      "old_path": "docs\\modules\\bsee\\analysis\\economics\\intro.md",
+      "new_path": "docs/data-sources/bsee/intro.md",
+      "category": "data-sources/bsee",
+      "confidence": 2.25,
+      "action": "migrate"
+    },
+    "docs\\modules\\bsee\\analysis\\economics\\JStM_production.md": {
+      "old_path": "docs\\modules\\bsee\\analysis\\economics\\JStM_production.md",
+      "new_path": "docs/analysis-guides/production-analysis/JStM_production.md",
+      "category": "analysis-guides/production-analysis",
+      "confidence": 4.8,
+      "action": "migrate"
+    },
+    "docs\\modules\\bsee\\analysis\\economics\\lng.md": {
+      "old_path": "docs\\modules\\bsee\\analysis\\economics\\lng.md",
+      "new_path": "docs/data-sources/lng/lng.md",
+      "category": "data-sources/lng",
+      "confidence": 5.25,
+      "action": "migrate"
+    },
+    "docs\\modules\\bsee\\analysis\\economics\\power_markets.md": {
+      "old_path": "docs\\modules\\bsee\\analysis\\economics\\power_markets.md",
+      "new_path": "docs/data-sources/bsee/power_markets.md",
+      "category": "data-sources/bsee",
+      "confidence": 2.25,
+      "action": "migrate"
+    },
+    "docs\\modules\\bsee\\analysis\\economics\\revenues.md": {
+      "old_path": "docs\\modules\\bsee\\analysis\\economics\\revenues.md",
+      "new_path": "docs/analysis-guides/economic-evaluation/revenues.md",
+      "category": "analysis-guides/economic-evaluation",
+      "confidence": 4.8,
+      "action": "migrate"
+    },
+    "docs\\modules\\bsee\\analysis\\economics\\NPV\\Methodology_Comparison.md": {
+      "old_path": "docs\\modules\\bsee\\analysis\\economics\\NPV\\Methodology_Comparison.md",
+      "new_path": "docs/analysis-guides/economic-evaluation/Methodology_Comparison.md",
+      "category": "analysis-guides/economic-evaluation",
+      "confidence": 10.8,
+      "action": "migrate"
+    },
+    "docs\\modules\\bsee\\analysis\\economics\\NPV\\npv.md": {
+      "old_path": "docs\\modules\\bsee\\analysis\\economics\\NPV\\npv.md",
+      "new_path": "docs/analysis-guides/economic-evaluation/npv.md",
+      "category": "analysis-guides/economic-evaluation",
+      "confidence": 4.8,
+      "action": "migrate"
+    },
+    "docs\\modules\\bsee\\analysis\\economics\\NPV\\NPV_REFACTORING_SUMMARY.md": {
+      "old_path": "docs\\modules\\bsee\\analysis\\economics\\NPV\\NPV_REFACTORING_SUMMARY.md",
+      "new_path": "docs/analysis-guides/economic-evaluation/NPV_REFACTORING_SUMMARY.md",
+      "category": "analysis-guides/economic-evaluation",
+      "confidence": 8.399999999999999,
+      "action": "migrate"
+    },
+    "docs\\modules\\bsee\\analysis\\field\\field_layout.md": {
+      "old_path": "docs\\modules\\bsee\\analysis\\field\\field_layout.md",
+      "new_path": "docs/data-sources/bsee/field_layout.md",
+      "category": "data-sources/bsee",
+      "confidence": 2.25,
+      "action": "migrate"
+    },
+    "docs\\modules\\bsee\\analysis\\production\\cummulative_production.md": {
+      "old_path": "docs\\modules\\bsee\\analysis\\production\\cummulative_production.md",
+      "new_path": "docs/analysis-guides/production-analysis/cummulative_production.md",
+      "category": "analysis-guides/production-analysis",
+      "confidence": 5.999999999999999,
+      "action": "migrate"
+    },
+    "docs\\modules\\bsee\\analysis\\production\\normalization_for_laterals.md": {
+      "old_path": "docs\\modules\\bsee\\analysis\\production\\normalization_for_laterals.md",
+      "new_path": "docs/analysis-guides/production-analysis/normalization_for_laterals.md",
+      "category": "analysis-guides/production-analysis",
+      "confidence": 4.8,
+      "action": "migrate"
+    },
+    "docs\\modules\\bsee\\analysis\\rig_days\\rig_days_by_milestone.md": {
+      "old_path": "docs\\modules\\bsee\\analysis\\rig_days\\rig_days_by_milestone.md",
+      "new_path": "docs/data-sources/bsee/rig_days_by_milestone.md",
+      "category": "data-sources/bsee",
+      "confidence": 3.75,
+      "action": "migrate"
+    },
+    "docs\\modules\\bsee\\analysis\\rig_days\\rig_days_by_WAR.md": {
+      "old_path": "docs\\modules\\bsee\\analysis\\rig_days\\rig_days_by_WAR.md",
+      "new_path": "docs/data-sources/bsee/rig_days_by_WAR.md",
+      "category": "data-sources/bsee",
+      "confidence": 2.25,
+      "action": "migrate"
+    },
+    "docs\\modules\\bsee\\analysis\\rig_days\\rig_days_summary.md": {
+      "old_path": "docs\\modules\\bsee\\analysis\\rig_days\\rig_days_summary.md",
+      "new_path": "docs/data-sources/bsee/rig_days_summary.md",
+      "category": "data-sources/bsee",
+      "confidence": 3.75,
+      "action": "migrate"
+    },
+    "docs\\modules\\bsee\\analysis\\survey\\survey.md": {
+      "old_path": "docs\\modules\\bsee\\analysis\\survey\\survey.md",
+      "new_path": "docs/data-sources/bsee/survey.md",
+      "category": "data-sources/bsee",
+      "confidence": 3.75,
+      "action": "migrate"
+    },
+    "docs\\modules\\bsee\\data\\analysis_data.md": {
+      "old_path": "docs\\modules\\bsee\\data\\analysis_data.md",
+      "new_path": "docs/data-sources/bsee/analysis_data.md",
+      "category": "data-sources/bsee",
+      "confidence": 6.75,
+      "action": "migrate"
+    },
+    "docs\\modules\\bsee\\data\\apm_data_rev1.md": {
+      "old_path": "docs\\modules\\bsee\\data\\apm_data_rev1.md",
+      "new_path": "docs/data-sources/bsee/apm_data_rev1.md",
+      "category": "data-sources/bsee",
+      "confidence": 8.25,
+      "action": "migrate"
+    },
+    "docs\\modules\\bsee\\data\\data_rev1.md": {
+      "old_path": "docs\\modules\\bsee\\data\\data_rev1.md",
+      "new_path": "docs/data-sources/bsee/data_rev1.md",
+      "category": "data-sources/bsee",
+      "confidence": 8.25,
+      "action": "migrate"
+    },
+    "docs\\modules\\bsee\\data\\drilling_data_rev1.md": {
+      "old_path": "docs\\modules\\bsee\\data\\drilling_data_rev1.md",
+      "new_path": "docs/data-sources/bsee/drilling_data_rev1.md",
+      "category": "data-sources/bsee",
+      "confidence": 9.75,
+      "action": "migrate"
+    },
+    "docs\\modules\\bsee\\data\\well_api_number.md": {
+      "old_path": "docs\\modules\\bsee\\data\\well_api_number.md",
+      "new_path": "docs/data-sources/bsee/well_api_number.md",
+      "category": "data-sources/bsee",
+      "confidence": 2.25,
+      "action": "migrate"
+    },
+    "docs\\modules\\bsee\\data\\clean_up\\data_explaination.md": {
+      "old_path": "docs\\modules\\bsee\\data\\clean_up\\data_explaination.md",
+      "new_path": "docs/data-sources/bsee/data_explaination.md",
+      "category": "data-sources/bsee",
+      "confidence": 5.25,
+      "action": "migrate"
+    },
+    "docs\\modules\\bsee\\data\\clean_up\\data_for_analysis.md": {
+      "old_path": "docs\\modules\\bsee\\data\\clean_up\\data_for_analysis.md",
+      "new_path": "docs/data-sources/bsee/data_for_analysis.md",
+      "category": "data-sources/bsee",
+      "confidence": 6.75,
+      "action": "migrate"
+    },
+    "docs\\modules\\bsee\\data\\field_anchor\\ANCHOR_Field_Data_Filtering.md": {
+      "old_path": "docs\\modules\\bsee\\data\\field_anchor\\ANCHOR_Field_Data_Filtering.md",
+      "new_path": "docs/data-sources/bsee/ANCHOR_Field_Data_Filtering.md",
+      "category": "data-sources/bsee",
+      "confidence": 3.75,
+      "action": "migrate"
+    },
+    "docs\\modules\\bsee\\data\\field_jsm\\no_of_wells.md": {
+      "old_path": "docs\\modules\\bsee\\data\\field_jsm\\no_of_wells.md",
+      "new_path": "docs/data-sources/bsee/no_of_wells.md",
+      "category": "data-sources/bsee",
+      "confidence": 11.25,
+      "action": "migrate"
+    },
+    "docs\\modules\\bsee\\data\\production\\notes.md": {
+      "old_path": "docs\\modules\\bsee\\data\\production\\notes.md",
+      "new_path": "docs/data-sources/bsee/notes.md",
+      "category": "data-sources/bsee",
+      "confidence": 5.25,
+      "action": "migrate"
+    },
+    "docs\\modules\\bsee\\data\\survey\\horizontal_reach.md": {
+      "old_path": "docs\\modules\\bsee\\data\\survey\\horizontal_reach.md",
+      "new_path": "docs/data-sources/bsee/horizontal_reach.md",
+      "category": "data-sources/bsee",
+      "confidence": 2.25,
+      "action": "migrate"
+    },
+    "docs\\modules\\bsee\\data\\well\\well_count.md": {
+      "old_path": "docs\\modules\\bsee\\data\\well\\well_count.md",
+      "new_path": "docs/data-sources/bsee/well_count.md",
+      "category": "data-sources/bsee",
+      "confidence": 8.25,
+      "action": "migrate"
+    },
+    "docs\\modules\\bsee\\data\\WELL_ACTIVITY_CD\\well_activity_cd_description.md": {
+      "old_path": "docs\\modules\\bsee\\data\\WELL_ACTIVITY_CD\\well_activity_cd_description.md",
+      "new_path": "docs/data-sources/bsee/well_activity_cd_description.md",
+      "category": "data-sources/bsee",
+      "confidence": 2.25,
+      "action": "migrate"
+    },
+    "docs\\modules\\bsee\\_legacy\\data_for_analysis_legacy.md": {
+      "old_path": "docs\\modules\\bsee\\_legacy\\data_for_analysis_legacy.md",
+      "new_path": "docs/data-sources/bsee/data_for_analysis_legacy.md",
+      "category": "data-sources/bsee",
+      "confidence": 5.25,
+      "action": "migrate"
+    },
+    "docs\\modules\\equipment\\anchor\\calculation.md": {
+      "old_path": "docs\\modules\\equipment\\anchor\\calculation.md",
+      "new_path": "docs/data-sources/equipment/calculation.md",
+      "category": "data-sources/equipment",
+      "confidence": 2.25,
+      "action": "migrate"
+    },
+    "docs\\modules\\equipment\\x_tree\\x_tree.md": {
+      "old_path": "docs\\modules\\equipment\\x_tree\\x_tree.md",
+      "new_path": "docs/data-sources/equipment/x_tree.md",
+      "category": "data-sources/equipment",
+      "confidence": 6.75,
+      "action": "migrate"
+    },
+    "docs\\modules\\fracfocus\\data.md": {
+      "old_path": "docs\\modules\\fracfocus\\data.md",
+      "new_path": "docs/user-guide/data.md",
+      "category": "user-guide",
+      "confidence": 0.0,
+      "action": "review"
+    },
+    "docs\\modules\\marketing\\marketing.md": {
+      "old_path": "docs\\modules\\marketing\\marketing.md",
+      "new_path": "docs/data-sources/onshore/marketing.md",
+      "category": "data-sources/onshore",
+      "confidence": 1.5,
+      "action": "migrate"
+    },
+    "docs\\modules\\materials\\resources.md": {
+      "old_path": "docs\\modules\\materials\\resources.md",
+      "new_path": "docs/user-guide/resources.md",
+      "category": "user-guide",
+      "confidence": 0.0,
+      "action": "review"
+    },
+    "docs\\modules\\onshore\\wyoming\\data.md": {
+      "old_path": "docs\\modules\\onshore\\wyoming\\data.md",
+      "new_path": "docs/data-sources/onshore/data.md",
+      "category": "data-sources/onshore",
+      "confidence": 3.75,
+      "action": "migrate"
+    },
+    "docs\\raw_data\\bsee\\data_exploration.md": {
+      "old_path": "docs\\raw_data\\bsee\\data_exploration.md",
+      "new_path": "docs/data-sources/bsee/data_exploration.md",
+      "category": "data-sources/bsee",
+      "confidence": 2.25,
+      "action": "migrate"
+    },
+    "docs\\raw_data\\drilling\\fleets.md": {
+      "old_path": "docs\\raw_data\\drilling\\fleets.md",
+      "new_path": "docs/analysis-guides/field-development/fleets.md",
+      "category": "analysis-guides/field-development",
+      "confidence": 1.2,
+      "action": "migrate"
+    },
+    "docs\\raw_data\\sodir\\sodir.md": {
+      "old_path": "docs\\raw_data\\sodir\\sodir.md",
+      "new_path": "docs/data-sources/sodir/sodir.md",
+      "category": "data-sources/sodir",
+      "confidence": 3.75,
+      "action": "migrate"
+    },
+    "docs\\raw_data\\wa\\intro.md": {
+      "old_path": "docs\\raw_data\\wa\\intro.md",
+      "new_path": "docs/data-sources/bsee/intro.md",
+      "category": "data-sources/bsee",
+      "confidence": 1.5,
+      "action": "migrate"
+    },
+    "docs\\reference\\index.md": {
+      "old_path": "docs\\reference\\index.md",
+      "new_path": "docs/data-sources/equipment/index.md",
+      "category": "data-sources/equipment",
+      "confidence": 10.5,
+      "action": "migrate"
+    },
+    "docs\\sub_ai\\_agents\\alt-rules.md": {
+      "old_path": "docs\\sub_ai\\_agents\\alt-rules.md",
+      "new_path": "docs/reference/literature/alt-rules.md",
+      "category": "reference/literature",
+      "confidence": 2.4000000000000004,
+      "action": "migrate"
+    },
+    "docs\\sub_ai\\_agents\\prompts.md": {
+      "old_path": "docs\\sub_ai\\_agents\\prompts.md",
+      "new_path": "docs/user-guide/prompts.md",
+      "category": "user-guide",
+      "confidence": 1.0,
+      "action": "review"
+    },
+    "docs\\sub_ai\\_agents\\requirements.md": {
+      "old_path": "docs\\sub_ai\\_agents\\requirements.md",
+      "new_path": "docs/user-guide/requirements.md",
+      "category": "user-guide",
+      "confidence": 0.0,
+      "action": "review"
+    },
+    "docs\\sub_ai\\_agents\\rules.md": {
+      "old_path": "docs\\sub_ai\\_agents\\rules.md",
+      "new_path": "docs/user-guide/rules.md",
+      "category": "user-guide",
+      "confidence": 0.0,
+      "action": "review"
+    },
+    "docs\\user-guide\\index.md": {
+      "old_path": "docs\\user-guide\\index.md",
+      "new_path": "docs/user-guide/index.md",
+      "category": "user-guide",
+      "confidence": 9.0,
+      "action": "migrate"
+    },
+    "tests\\modules\\bsee\\analysis\\README_GitHub_Issue_39.md": {
+      "old_path": "tests\\modules\\bsee\\analysis\\README_GitHub_Issue_39.md",
+      "new_path": "docs/data-sources/bsee/README_GitHub_Issue_39.md",
+      "category": "data-sources/bsee",
+      "confidence": 6.75,
+      "action": "migrate"
+    },
+    "docs\\modules\\bsee\\data\\SME_Roy_attachments\\2025-09-07\\mv_war_boreholes_view.lease.txt": {
+      "old_path": "docs\\modules\\bsee\\data\\SME_Roy_attachments\\2025-09-07\\mv_war_boreholes_view.lease.txt",
+      "new_path": "docs/data-sources/bsee/mv_war_boreholes_view.lease.txt",
+      "category": "data-sources/bsee",
+      "confidence": 2.25,
+      "action": "migrate"
+    },
+    "docs\\modules\\bsee\\data\\SME_Roy_attachments\\2025-09-07\\mv_war_main.txt": {
+      "old_path": "docs\\modules\\bsee\\data\\SME_Roy_attachments\\2025-09-07\\mv_war_main.txt",
+      "new_path": "docs/data-sources/bsee/mv_war_main.txt",
+      "category": "data-sources/bsee",
+      "confidence": 3.75,
+      "action": "migrate"
+    },
+    "docs\\modules\\bsee\\data\\SME_Roy_attachments\\2025-09-07\\mv_war_main_prop_remark.lease.txt": {
+      "old_path": "docs\\modules\\bsee\\data\\SME_Roy_attachments\\2025-09-07\\mv_war_main_prop_remark.lease.txt",
+      "new_path": "docs/data-sources/equipment/mv_war_main_prop_remark.lease.txt",
+      "category": "data-sources/equipment",
+      "confidence": 10.5,
+      "action": "migrate"
+    },
+    "docs\\modules\\bsee\\_legacy\\code\\mitra\\calculations\\Datatypes file.txt": {
+      "old_path": "docs\\modules\\bsee\\_legacy\\code\\mitra\\calculations\\Datatypes file.txt",
+      "new_path": "docs/data-sources/bsee/Datatypes file.txt",
+      "category": "data-sources/bsee",
+      "confidence": 2.25,
+      "action": "migrate"
+    },
+    "docs\\modules\\bsee\\_legacy\\code\\mitra\\calculations\\PaleogeneEpochs.txt": {
+      "old_path": "docs\\modules\\bsee\\_legacy\\code\\mitra\\calculations\\PaleogeneEpochs.txt",
+      "new_path": "docs/data-sources/bsee/PaleogeneEpochs.txt",
+      "category": "data-sources/bsee",
+      "confidence": 2.25,
+      "action": "migrate"
+    },
+    "docs\\modules\\bsee\\_legacy\\code\\mitra\\data\\BoreholeRawData\\mv_boreholes.txt": {
+      "old_path": "docs\\modules\\bsee\\_legacy\\code\\mitra\\data\\BoreholeRawData\\mv_boreholes.txt",
+      "new_path": "docs/data-sources/bsee/mv_boreholes.txt",
+      "category": "data-sources/bsee",
+      "confidence": 5.25,
+      "action": "migrate"
+    },
+    "docs\\modules\\bsee\\_legacy\\code\\mitra\\data\\gepaldmp_all\\gepaldmp_Header.txt": {
+      "old_path": "docs\\modules\\bsee\\_legacy\\code\\mitra\\data\\gepaldmp_all\\gepaldmp_Header.txt",
+      "new_path": "docs/data-sources/bsee/gepaldmp_Header.txt",
+      "category": "data-sources/bsee",
+      "confidence": 6.75,
+      "action": "migrate"
+    },
+    "docs\\modules\\bsee\\_legacy\\code\\mitra\\data\\gepaldmp_all\\gepaldmp_Paleo.txt": {
+      "old_path": "docs\\modules\\bsee\\_legacy\\code\\mitra\\data\\gepaldmp_all\\gepaldmp_Paleo.txt",
+      "new_path": "docs/data-sources/bsee/gepaldmp_Paleo.txt",
+      "category": "data-sources/bsee",
+      "confidence": 2.25,
+      "action": "migrate"
+    },
+    "docs\\modules\\bsee\\_legacy\\ref\\O&G\\Roy_References.txt": {
+      "old_path": "docs\\modules\\bsee\\_legacy\\ref\\O&G\\Roy_References.txt",
+      "new_path": "docs/data-sources/bsee/Roy_References.txt",
+      "category": "data-sources/bsee",
+      "confidence": 3.75,
+      "action": "migrate"
+    },
+    "docs\\modules\\bsee\\_legacy\\superseded\\calculations\\Datatypes file.txt": {
+      "old_path": "docs\\modules\\bsee\\_legacy\\superseded\\calculations\\Datatypes file.txt",
+      "new_path": "docs/data-sources/bsee/Datatypes file.txt",
+      "category": "data-sources/bsee",
+      "confidence": 2.25,
+      "action": "migrate"
+    },
+    "docs\\modules\\bsee\\_legacy\\superseded\\calculations\\PaleogeneEpochs.txt": {
+      "old_path": "docs\\modules\\bsee\\_legacy\\superseded\\calculations\\PaleogeneEpochs.txt",
+      "new_path": "docs/data-sources/bsee/PaleogeneEpochs.txt",
+      "category": "data-sources/bsee",
+      "confidence": 2.25,
+      "action": "migrate"
+    },
+    "docs\\modules\\bsee\\_legacy\\superseded\\data\\BoreholeRawData\\mv_boreholes.txt": {
+      "old_path": "docs\\modules\\bsee\\_legacy\\superseded\\data\\BoreholeRawData\\mv_boreholes.txt",
+      "new_path": "docs/data-sources/bsee/mv_boreholes.txt",
+      "category": "data-sources/bsee",
+      "confidence": 5.25,
+      "action": "migrate"
+    },
+    "docs\\modules\\bsee\\_legacy\\superseded\\data\\gepaldmp_all\\gepaldmp_Header.txt": {
+      "old_path": "docs\\modules\\bsee\\_legacy\\superseded\\data\\gepaldmp_all\\gepaldmp_Header.txt",
+      "new_path": "docs/data-sources/bsee/gepaldmp_Header.txt",
+      "category": "data-sources/bsee",
+      "confidence": 6.75,
+      "action": "migrate"
+    },
+    "docs\\modules\\bsee\\_legacy\\superseded\\data\\gepaldmp_all\\gepaldmp_Paleo.txt": {
+      "old_path": "docs\\modules\\bsee\\_legacy\\superseded\\data\\gepaldmp_all\\gepaldmp_Paleo.txt",
+      "new_path": "docs/data-sources/bsee/gepaldmp_Paleo.txt",
+      "category": "data-sources/bsee",
+      "confidence": 2.25,
+      "action": "migrate"
+    },
+    "docs\\raw_data\\bsee\\other\\mastdatadelimit.txt": {
+      "old_path": "docs\\raw_data\\bsee\\other\\mastdatadelimit.txt",
+      "new_path": "docs/data-sources/bsee/mastdatadelimit.txt",
+      "category": "data-sources/bsee",
+      "confidence": 5.25,
+      "action": "migrate"
+    },
+    "docs\\raw_data\\bsee\\other\\mastproddelimit.txt": {
+      "old_path": "docs\\raw_data\\bsee\\other\\mastproddelimit.txt",
+      "new_path": "docs/data-sources/bsee/mastproddelimit.txt",
+      "category": "data-sources/bsee",
+      "confidence": 2.25,
+      "action": "migrate"
+    },
+    "docs\\raw_data\\bsee\\paleo\\gepaldmp_Header.txt": {
+      "old_path": "docs\\raw_data\\bsee\\paleo\\gepaldmp_Header.txt",
+      "new_path": "docs/data-sources/bsee/gepaldmp_Header.txt",
+      "category": "data-sources/bsee",
+      "confidence": 6.75,
+      "action": "migrate"
+    },
+    "docs\\raw_data\\bsee\\paleo\\gepaldmp_Paleo.txt": {
+      "old_path": "docs\\raw_data\\bsee\\paleo\\gepaldmp_Paleo.txt",
+      "new_path": "docs/data-sources/bsee/gepaldmp_Paleo.txt",
+      "category": "data-sources/bsee",
+      "confidence": 2.25,
+      "action": "migrate"
+    },
+    "scripts\\requirements.txt": {
+      "old_path": "scripts\\requirements.txt",
+      "new_path": "docs/development/requirements.txt",
+      "category": "development",
+      "confidence": 3.0,
+      "action": "migrate"
+    },
+    "src\\worldenergydata.egg-info\\dependency_links.txt": {
+      "old_path": "src\\worldenergydata.egg-info\\dependency_links.txt",
+      "new_path": "docs/user-guide/dependency_links.txt",
+      "category": "user-guide",
+      "confidence": 0.0,
+      "action": "review"
+    },
+    "src\\worldenergydata.egg-info\\entry_points.txt": {
+      "old_path": "src\\worldenergydata.egg-info\\entry_points.txt",
+      "new_path": "docs/user-guide/entry_points.txt",
+      "category": "user-guide",
+      "confidence": 0.0,
+      "action": "review"
+    },
+    "src\\worldenergydata.egg-info\\requires.txt": {
+      "old_path": "src\\worldenergydata.egg-info\\requires.txt",
+      "new_path": "docs/analysis-guides/economic-evaluation/requires.txt",
+      "category": "analysis-guides/economic-evaluation",
+      "confidence": 1.2,
+      "action": "migrate"
+    },
+    "src\\worldenergydata.egg-info\\SOURCES.txt": {
+      "old_path": "src\\worldenergydata.egg-info\\SOURCES.txt",
+      "new_path": "docs/data-sources/bsee/SOURCES.txt",
+      "category": "data-sources/bsee",
+      "confidence": 1.5,
+      "action": "migrate"
+    },
+    "src\\worldenergydata.egg-info\\top_level.txt": {
+      "old_path": "src\\worldenergydata.egg-info\\top_level.txt",
+      "new_path": "docs/user-guide/top_level.txt",
+      "category": "user-guide",
+      "confidence": 0.0,
+      "action": "review"
+    },
+    "tests\\modules\\all_yml\\yml_summary_pytest.txt": {
+      "old_path": "tests\\modules\\all_yml\\yml_summary_pytest.txt",
+      "new_path": "docs/data-sources/bsee/yml_summary_pytest.txt",
+      "category": "data-sources/bsee",
+      "confidence": 1.5,
+      "action": "migrate"
+    }
+  }
+}

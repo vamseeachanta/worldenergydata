@@ -1,0 +1,171 @@
+# worldenergydata-fdas
+
+Source-agnostic **Field Development Analysis System (FDAS)** economics engine
+for the `worldenergydata` namespace — NPV / MIRR / IRR, monthly cashflow
+modelling, and a **country fiscal-terms deck layer**.
+
+Carved out of the `worldenergydata-bsee` cluster in #714 so that non-US data
+sources can run field economics without importing the US-Gulf-of-Mexico `bsee`
+cluster. The import path is unchanged: `import worldenergydata.fdas`.
+
+```python
+from worldenergydata.fdas import (
+    calculate_npv, calculate_all_metrics, AssumptionsManager,
+    get_fiscal_terms, FiscalTerms,
+)
+from worldenergydata.fdas.analysis.cashflow import CashflowEngine
+
+# Deckless (legacy US-GoM assumptions path — unchanged behavior):
+engine = CashflowEngine(AssumptionsManager(), dev_system="subsea15")
+
+# Deck-driven (country fiscal terms):
+terms = get_fiscal_terms("norway")            # royalty regime for the NCS
+engine = CashflowEngine(AssumptionsManager(), dev_system="subsea15",
+                        fiscal_terms=terms)
+```
+
+## Fiscal-terms decks
+
+Decks ship as package data under `worldenergydata/fdas/fiscal/decks/*.yml` and
+are loaded fail-closed via `get_fiscal_terms(country)`. v1 ships three:
+`us_gom`, `norway`, `uk`. **Brazil is deferred to #718** (its sliding-scale
+royalty needs a production-rate seam `calculate_royalty` does not yet expose;
+the loader rejects `model: sliding_scale` with a pointer to #718).
+
+### Consumed vs. declarative (v1)
+
+Only the **royalty** layer is consumed by the cashflow engine in v1. Every other
+field is declarative provenance/metadata — readable, validated, but **not** yet
+wired into revenue/NPV (that seam is #716). The `us_gom` deck overrides royalty
+only. Revision 2 corrects the deep-water fraction to the original source note;
+decked and legacy deep-water runs therefore differ in royalty and net cashflow,
+with the corresponding NPV change. Other component vectors remain identical.
+Dry-tree royalty remains identical. Legacy-rate correction or explicit versioning
+is tracked in #1625.
+
+| Field | Status | Notes |
+|---|---|---|
+| `royalty.model` (`flat` \| `none`) | **Consumed** | `flat` → per-dev-system rate; `none` → 0.0 |
+| `royalty.rate_by_dev_system` | **Consumed** | exact keys `{dry, subsea15, subsea20, default}`, each in `[0,1]` |
+| `country` | **Consumed** | deck identity / lookup key |
+| `price_marker` (`wti`/`brent`/`gas_hh`/`gas_ttf`) | Declarative | revenue seam → #716 |
+| `currency` | Declarative | engine is USD-denominated in v1 |
+| `discount_rate` | Declarative | NPV discount seam → #716 |
+| `income_tax` (CIT/SPT/EPL/…) | Declarative | after-tax seam → #716 (e.g. Norway 78%) |
+| `source_url`, `source_ref`, `revision`, `effective_date`, `schema_version` | Provenance | required, machine-verifiable, non-empty |
+
+### Royalty-rate resolution precedence
+
+`CashflowEngine.calculate_royalty` resolves the rate as: explicit `royalty_rate`
+argument → `fiscal_terms` deck → legacy `AssumptionsManager` ROYALTY_RATE. With
+no deck (`fiscal_terms=None`) the behavior is **byte-identical** to the
+pre-carve engine.
+
+## F2 country adapter contract (#715)
+
+The source-adapter interface that feeds these decks. It bridges the repo's
+existing per-country production adapters
+(`worldenergydata.production.unified` — `AbstractProductionAdapter`, 8 country
+implementations) into FDAS, with two entry points:
+
+```python
+from worldenergydata.fdas.adapters.contract import to_fdas_production
+from worldenergydata.fdas.adapters.field_concept_normalizer import (
+    FieldMapEntry, FieldMetaMapping, to_field_concept, number_from, year_from,
+)
+```
+
+- **`to_fdas_production(unified_df)`** — normalizes a unified `STANDARD_COLUMNS`
+  frame (`region, field_name, year, month, oil_bbl, gas_mcf, water_bbl, …`) to
+  the canonical FDAS monthly-production schema the cashflow engine reads:
+  `YEAR_MONTH, DEV_NAME, MONTHLY_OIL_BBL, MONTHLY_WATER_BBL, MONTHLY_GAS_MCF`
+  (the `_BBL`/`_MCF` columns, **not** the legacy `bsee_adapter`
+  `MONTHLY_*_VOLUME`). A pure pandas leaf — no `field_development` import.
+- **`to_field_concept(meta, mapping)` / `FieldMetaMapping`** — maps a country
+  regulator's field-metadata dict → a validated
+  `field_development.models.FieldConcept` for concept screening. A
+  `FieldMetaMapping` is `{fieldconcept_field: FieldMapEntry(source_key,
+  transform)}` carrying per-field callables (`number_from`, `year_from`,
+  `fluid_from_reserve_type`, `reduce_concept_type`) so no `subseaiq` logic is
+  lost; targets are validated against `FieldConcept` at construction.
+
+### Consumed vs. deferred
+
+Production is consumed through `to_fdas_production`. Country well metadata is
+available through `adapters.wells.WellRecord`, with a local DataVic WFS export
+reader in `adapters.datavic_wells`. Explicit active drilling intervals are
+allocated by `data.country_drilling.build_drilling_timeline`; its evaluated
+output feeds the cashflow engine's `drilling_monthly` input.
+
+Spud dates alone do not establish active drilling days. Missing activity for a
+supplied well yields `NOT_EVALUATED`, and cashflow export is refused. Direct
+cashflow calls without a timeline retain the existing zero-CAPEX warning.
+See the [input contract, sources and worked example](../../docs/modules/fdas/country-wells.html).
+
+Onboarding a new country: see
+[`docs/modules/fdas/country-adapter-checklist.md`](../../docs/modules/fdas/country-adapter-checklist.md).
+
+## BSEE monthly-column migration
+
+`ProductionAdapter.aggregate_monthly` and the public
+`BseeAdapter.get_development_production` now return `MONTHLY_OIL_BBL`,
+`MONTHLY_WATER_BBL`, and, when `GAS_VOLUME` is supplied, `MONTHLY_GAS_MCF`.
+Existing `MONTHLY_OIL_VOLUME`, `MONTHLY_WATER_VOLUME`, and
+`MONTHLY_GAS_VOLUME` columns remain equal-valued deprecated aliases for a
+deprecation cycle. Migrate column lookups to the explicit-unit names before
+alias removal in a future release. Each successful aggregation emits one
+`DeprecationWarning`; Python normally hides this category, so enable it with
+`-W default::DeprecationWarning` when checking migration readiness.
+
+Inputs must already contain oil/water in barrels and gas in Mcf. No unit
+conversion, gas-energy factor, or financial assumption is introduced. Gas
+columns are omitted when source gas is absent; absence does not establish zero
+gas production. `YEAR_MONTH` remains a pandas monthly Period. Consumers requiring
+string dates can use `monthly["YEAR_MONTH"].astype(str)`.
+
+### Worked example: two observations in one month
+
+The following inputs are synthetic demonstration data. The method is the
+per-development, per-month sum already defined by
+[`ProductionProcessor.aggregate_monthly`](src/worldenergydata/fdas/data/production.py);
+column units follow
+[`FDAS_PRODUCTION_COLUMNS`](src/worldenergydata/fdas/adapters/contract.py).
+The independent hand calculation is oil = 10 + 20 = 30 bbl,
+water = 2 + 3 = 5 bbl, and gas = 100 + 200 = 300 Mcf.
+No empirical coefficients or acceptance limits are required.
+
+```python
+from pathlib import Path
+from tempfile import TemporaryDirectory
+
+from worldenergydata.fdas import BseeAdapter
+from worldenergydata.fdas.adapters.bsee_adapter import ProductionAdapter
+
+with TemporaryDirectory() as directory:
+    path = Path(directory) / "production.csv"
+    path.write_text(
+        "DEV_NAME,PROD_DATE,OIL_VOLUME,WATER_VOLUME,GAS_VOLUME\n"
+        "Dev-A,2024-01-01,10,2,100\n"
+        "Dev-A,2024-01-15,20,3,200\n"
+    )
+    adapter = BseeAdapter(directory)
+    adapter.production_adapter = ProductionAdapter(str(path))
+    adapter.production_adapter.load()
+    monthly = adapter.get_development_production("Dev-A")
+    columns = ["MONTHLY_OIL_BBL", "MONTHLY_WATER_BBL", "MONTHLY_GAS_MCF"]
+    assert monthly[columns].iloc[0].tolist() == [30, 5, 300]
+    # The unchanged cashflow engine uses this canonical oil-column lookup.
+    oil = monthly.set_index("YEAR_MONTH")["MONTHLY_OIL_BBL"]
+    assert {str(month): value for month, value in oil.items()} == {"2024-01": 30}
+```
+
+This example establishes schema compatibility and aggregation only. A financial
+projection also requires the engine's drilling timeline, price deck, dates, and
+cost/fiscal assumptions; none is inferred from these demonstration volumes.
+
+## Handoff
+
+Country fiscal-terms coverage expands per the international field-development
+epic (#713): per-country chains build on this deck layer. The after-tax /
+price-marker seams (#716) and Brazil sliding-scale royalty (#718) are the next
+consumers. See #715 for the source-adapter interface that feeds these decks.

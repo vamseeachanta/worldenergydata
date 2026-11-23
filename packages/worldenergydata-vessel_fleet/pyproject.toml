@@ -1,0 +1,64 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "worldenergydata-vessel_fleet"
+version = "0.1.0"
+description = "Global vessel fleet data (construction vessels, drilling rigs, riser components) for the worldenergydata namespace."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "Development Team", email = "dev@example.com" },
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+# Per-domain dependency set (ADR 0001 Phase 2 — domain split, batch 4, #529).
+# A deliberate SUBSET of the root package's flat dependency list, measured from
+# this domain's live import footprint. pyarrow is required for the curated
+# Parquet store; openpyxl for the historical .xls parser; requests for the
+# contractor-scrape collector.
+dependencies = [
+    "worldenergydata-core",
+    "pandas>=2.3.3,<3.0",
+    "pydantic>=2.13.4,<3.0",
+    "pyarrow>=14.0.0,<20.0",
+    "openpyxl>=3.1.0,<4.0",
+    "requests>=2.31.0,<3.0",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/vamseeachanta/worldenergydata"
+"Bug Tracker" = "https://github.com/vamseeachanta/worldenergydata/issues"
+
+# ---------------------------------------------------------------------------
+# PEP 420 namespace packaging (ADR 0001 — domain-package split)
+# ---------------------------------------------------------------------------
+# This member ships ONLY ``worldenergydata/vessel_fleet/`` — INCLUDING its
+# curated dataset, which travels with the package under ``vessel_fleet/_data/``
+# (ADR 0001 Phase 2 batch 4, #529 — option (i): data ships in the wheel).
+# The dataset is small (~0.7 MB) so shipping it as package data is reasonable
+# and makes the loaders/router self-contained (no repo-root / external data
+# mount required). It does NOT ship ``worldenergydata/__init__.py`` — the root
+# ``worldenergydata`` distribution remains the SOLE owner of the namespace root.
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["worldenergydata.vessel_fleet*"]
+namespaces = true
+
+# Ship the curated dataset (parquet/csv/json/yaml) under ``_data/`` so the
+# loaders/router resolve it package-relative from the installed wheel.
+[tool.setuptools.package-data]
+"worldenergydata.vessel_fleet" = [
+    "*.md", "*.json", "**/*.yml", "**/*.yaml", "**/*.json", "**/*.csv", "**/*.md",
+    "_data/**/*.parquet", "_data/**/*.csv", "_data/**/*.json", "_data/**/*.yaml", "_data/**/*.yml",
+]

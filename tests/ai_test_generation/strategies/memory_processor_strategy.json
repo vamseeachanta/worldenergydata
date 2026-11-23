@@ -1,0 +1,266 @@
+{
+  "module": "memory_processor",
+  "test_file": "test_memory_processor.py",
+  "test_classes": [
+    {
+      "name": "TestMemoryProcessor",
+      "target_class": "MemoryProcessor",
+      "test_methods": [
+        {
+          "name": "test___init___basic",
+          "type": "basic",
+          "description": "Test basic functionality of __init__"
+        },
+        {
+          "name": "test_process_zip_in_memory_basic",
+          "type": "basic",
+          "description": "Test basic functionality of process_zip_in_memory"
+        },
+        {
+          "name": "test_process_zip_in_memory_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for process_zip_in_memory"
+        },
+        {
+          "name": "test_process_zip_in_memory_return_value",
+          "type": "return_value",
+          "description": "Test return value of process_zip_in_memory"
+        },
+        {
+          "name": "test_process_well_data_optimized_basic",
+          "type": "basic",
+          "description": "Test basic functionality of process_well_data_optimized"
+        },
+        {
+          "name": "test_process_well_data_optimized_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for process_well_data_optimized"
+        },
+        {
+          "name": "test_process_well_data_optimized_return_value",
+          "type": "return_value",
+          "description": "Test return value of process_well_data_optimized"
+        },
+        {
+          "name": "test_process_well_data_optimized_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for process_well_data_optimized"
+        },
+        {
+          "name": "test_process_well_data_basic",
+          "type": "basic",
+          "description": "Test basic functionality of process_well_data"
+        },
+        {
+          "name": "test_process_well_data_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for process_well_data"
+        },
+        {
+          "name": "test_process_well_data_return_value",
+          "type": "return_value",
+          "description": "Test return value of process_well_data"
+        },
+        {
+          "name": "test_process_well_data_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for process_well_data"
+        },
+        {
+          "name": "test_process_war_data_basic",
+          "type": "basic",
+          "description": "Test basic functionality of process_war_data"
+        },
+        {
+          "name": "test_process_war_data_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for process_war_data"
+        },
+        {
+          "name": "test_process_war_data_return_value",
+          "type": "return_value",
+          "description": "Test return value of process_war_data"
+        },
+        {
+          "name": "test_process_war_data_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for process_war_data"
+        },
+        {
+          "name": "test_process_production_data_optimized_basic",
+          "type": "basic",
+          "description": "Test basic functionality of process_production_data_optimized"
+        },
+        {
+          "name": "test_process_production_data_optimized_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for process_production_data_optimized"
+        },
+        {
+          "name": "test_process_production_data_optimized_return_value",
+          "type": "return_value",
+          "description": "Test return value of process_production_data_optimized"
+        },
+        {
+          "name": "test_process_production_data_optimized_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for process_production_data_optimized"
+        },
+        {
+          "name": "test_process_production_data_basic",
+          "type": "basic",
+          "description": "Test basic functionality of process_production_data"
+        },
+        {
+          "name": "test_process_production_data_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for process_production_data"
+        },
+        {
+          "name": "test_process_production_data_return_value",
+          "type": "return_value",
+          "description": "Test return value of process_production_data"
+        },
+        {
+          "name": "test_process_production_data_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for process_production_data"
+        },
+        {
+          "name": "test_process_war_data_optimized_basic",
+          "type": "basic",
+          "description": "Test basic functionality of process_war_data_optimized"
+        },
+        {
+          "name": "test_process_war_data_optimized_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for process_war_data_optimized"
+        },
+        {
+          "name": "test_process_war_data_optimized_return_value",
+          "type": "return_value",
+          "description": "Test return value of process_war_data_optimized"
+        },
+        {
+          "name": "test_process_war_data_optimized_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for process_war_data_optimized"
+        },
+        {
+          "name": "test_process_war_data_basic",
+          "type": "basic",
+          "description": "Test basic functionality of process_war_data"
+        },
+        {
+          "name": "test_process_war_data_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for process_war_data"
+        },
+        {
+          "name": "test_process_war_data_return_value",
+          "type": "return_value",
+          "description": "Test return value of process_war_data"
+        },
+        {
+          "name": "test_process_war_data_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for process_war_data"
+        },
+        {
+          "name": "test_save_dataframe_to_binary_basic",
+          "type": "basic",
+          "description": "Test basic functionality of save_dataframe_to_binary"
+        },
+        {
+          "name": "test_save_dataframe_to_binary_return_value",
+          "type": "return_value",
+          "description": "Test return value of save_dataframe_to_binary"
+        },
+        {
+          "name": "test_save_dataframe_to_binary_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for save_dataframe_to_binary"
+        },
+        {
+          "name": "test_save_to_binary_basic",
+          "type": "basic",
+          "description": "Test basic functionality of save_to_binary"
+        },
+        {
+          "name": "test_save_to_binary_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for save_to_binary"
+        },
+        {
+          "name": "test_save_to_binary_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for save_to_binary"
+        },
+        {
+          "name": "test_get_memory_usage_basic",
+          "type": "basic",
+          "description": "Test basic functionality of get_memory_usage"
+        },
+        {
+          "name": "test_get_memory_usage_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for get_memory_usage"
+        },
+        {
+          "name": "test_get_memory_usage_return_value",
+          "type": "return_value",
+          "description": "Test return value of get_memory_usage"
+        },
+        {
+          "name": "test_check_memory_availability_basic",
+          "type": "basic",
+          "description": "Test basic functionality of check_memory_availability"
+        },
+        {
+          "name": "test_check_memory_availability_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for check_memory_availability"
+        },
+        {
+          "name": "test_check_memory_availability_return_value",
+          "type": "return_value",
+          "description": "Test return value of check_memory_availability"
+        },
+        {
+          "name": "test_cleanup_memory_basic",
+          "type": "basic",
+          "description": "Test basic functionality of cleanup_memory"
+        },
+        {
+          "name": "test_estimate_memory_usage_basic",
+          "type": "basic",
+          "description": "Test basic functionality of estimate_memory_usage"
+        },
+        {
+          "name": "test_estimate_memory_usage_return_value",
+          "type": "return_value",
+          "description": "Test return value of estimate_memory_usage"
+        },
+        {
+          "name": "test_validate_data_integrity_basic",
+          "type": "basic",
+          "description": "Test basic functionality of validate_data_integrity"
+        },
+        {
+          "name": "test_validate_data_integrity_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for validate_data_integrity"
+        },
+        {
+          "name": "test_validate_data_integrity_return_value",
+          "type": "return_value",
+          "description": "Test return value of validate_data_integrity"
+        }
+      ]
+    }
+  ],
+  "test_functions": [],
+  "test_count": 50,
+  "coverage_approach": "focused",
+  "priority": "high"
+}

@@ -1,0 +1,12 @@
+{
+  "source_url": "https://www.data.bsee.gov/Well/Files/5010delimit.zip",
+  "retrieved_at_utc": "2026-10-11T19:11:56.141905+00:00",
+  "source_sha256": "a5324d1508916bd2a19925522f8afa9b332063ff8e18b614d5d3430ef57ff929",
+  "source_member": "5010.txt",
+  "source_lines": [
+    5318
+  ],
+  "transformation": "Selected complete source rows; CRLF normalized to LF. No values modified.",
+  "fixture_sha256": "2ba9f4054ff8517cc9d76cd6a7e3c719523985a698122b27292b3a7df181cb52",
+  "size_bytes": 320
+}

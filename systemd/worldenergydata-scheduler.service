@@ -1,0 +1,57 @@
+# Systemd service unit for the worldenergydata data collection scheduler.
+#
+# Installation:
+#   sudo cp worldenergydata-scheduler.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable worldenergydata-scheduler
+#   sudo systemctl start worldenergydata-scheduler
+#
+# Logs:
+#   journalctl -u worldenergydata-scheduler -f
+
+[Unit]
+Description=Worldenergydata Data Collection Scheduler
+Documentation=https://github.com/username/worldenergydata
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+# --- Identity ---
+# Replace 'youruser' with the system user that owns the project directory.
+User=youruser
+Group=youruser
+
+# --- Paths ---
+# Adjust WorkingDirectory to the absolute path of your worldenergydata clone.
+WorkingDirectory=/opt/worldenergydata
+
+# --- Python environment ---
+# If using uv-managed virtualenv, activate it via ExecStart.
+# Replace /opt/worldenergydata/.venv with your actual venv path.
+ExecStart=/opt/worldenergydata/.venv/bin/python -m worldenergydata.scheduler start \
+    --config /opt/worldenergydata/config/scheduler/scheduler_config.yml
+
+# --- Restart policy ---
+# Restart on failure; wait 10 seconds between restart attempts.
+Restart=on-failure
+RestartSec=10s
+
+# --- Logging ---
+# stdout/stderr go to journald. JSON logs written to logs/scheduler/.
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=worldenergydata-scheduler
+
+# --- Resource limits ---
+# Prevent runaway processes from consuming excessive memory.
+MemoryMax=512M
+CPUQuota=50%
+
+# --- Security hardening ---
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadWritePaths=/opt/worldenergydata/logs /opt/worldenergydata/data
+
+[Install]
+WantedBy=multi-user.target

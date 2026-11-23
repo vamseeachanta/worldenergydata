@@ -1,0 +1,167 @@
+# YAML Configuration: Lower Tertiary Field Analysis
+# Generated from: user_prompt.md
+# Purpose: NPV analysis and field-specific reports for Lower Tertiary deepwater fields
+
+metadata:
+  feature_name: "lower-tertiary-field-analysis"
+  created: "2025-10-22"
+  updated: "2025-10-22"
+  status: "production"
+  version: "1.0.0"
+  author: "worldenergydata"
+  description: "Economic and production analysis for Anchor, Julia, Jack, and St. Malo fields"
+
+# Requirements
+requirements:
+  functional:
+    - requirement: "Analyze Lower Tertiary field production (Anchor, Julia, Jack, St. Malo)"
+      priority: "high"
+      implemented: true
+
+    - requirement: "Calculate NPV with configurable discount rates"
+      priority: "high"
+      implemented: true
+
+    - requirement: "Generate field-specific performance reports"
+      priority: "high"
+      implemented: true
+
+  non_functional:
+    performance:
+      max_response_time_sec: 600  # 10 minutes
+      max_memory_mb: 2048
+
+# Input specifications
+input:
+  format: "csv"
+  source:
+    type: "file"
+    path: "data/modules/bsee/lower_tertiary/"
+    pattern: "*.csv"
+
+  validation:
+    required_columns:
+      - "FIELD_NAME"
+      - "PROD_DATE"
+      - "OIL_PRODUCTION"
+      - "GAS_PRODUCTION"
+      - "OPERATOR"
+    fields:
+      - "Anchor"
+      - "Julia"
+      - "Jack"
+      - "St. Malo"
+
+# Processing specifications
+processing:
+  steps:
+    - name: "load_field_data"
+      module: "bsee.lower_tertiary"
+      function: "load_field_production"
+      params:
+        fields: ["Anchor", "Julia", "Jack", "St. Malo"]
+        validate: true
+
+    - name: "calculate_npv"
+      module: "analysis.economics"
+      function: "calculate_npv"
+      params:
+        discount_rate: 0.10  # 10%
+        oil_price: 75.0      # $/barrel
+        gas_price: 3.50      # $/mcf
+        opex_per_barrel: 15.0
+        capex_profile: "historical"
+
+    - name: "production_forecasting"
+      module: "analysis.forecasting"
+      function: "decline_curve_analysis"
+      params:
+        method: "arps"
+        decline_type: "hyperbolic"
+        forecast_years: 10
+
+    - name: "sensitivity_analysis"
+      module: "analysis.economics"
+      function: "sensitivity_analysis"
+      params:
+        variables:
+          - oil_price: [50, 75, 100, 125]
+          - discount_rate: [0.08, 0.10, 0.12, 0.15]
+          - opex_per_barrel: [12, 15, 18, 20]
+
+# Output specifications
+output:
+  format: "html"
+  destination:
+    type: "file"
+    path: "reports/bsee/lower_tertiary/"
+
+  content:
+    include_npv_summary: true
+    include_sensitivity_charts: true
+    include_forecast_curves: true
+    include_economics_metrics: true
+
+  visualization:
+    library: "plotly"
+    interactive: true
+    theme: "plotly_white"
+    charts:
+      - "npv_waterfall"
+      - "production_forecast"
+      - "sensitivity_tornado"
+      - "cashflow_timeline"
+
+  export_formats:
+    - format: "csv"
+      path: "reports/bsee/lower_tertiary/data/"
+      filename_pattern: "{field}_economics_{timestamp}.csv"
+
+    - format: "json"
+      path: "reports/bsee/lower_tertiary/data/"
+      filename_pattern: "{field}_npv_{timestamp}.json"
+
+# Field-specific configurations
+fields:
+  Anchor:
+    capex_million: 5500
+    first_production: "2024-08-01"
+    expected_life_years: 30
+    peak_rate_bopd: 75000
+
+  Julia:
+    capex_million: 3500
+    first_production: "2016-05-01"
+    expected_life_years: 25
+    peak_rate_bopd: 34000
+
+  Jack:
+    capex_million: 7500
+    first_production: "2010-09-01"
+    expected_life_years: 30
+    peak_rate_bopd: 170000
+
+  "St. Malo":
+    capex_million: 4900
+    first_production: "2014-01-01"
+    expected_life_years: 25
+    peak_rate_bopd: 50000
+
+# Execution configuration
+execution:
+  entry_point: "scripts/analyze_lower_tertiary_npv.py"
+
+  bash_command: |
+    python scripts/analyze_lower_tertiary_npv.py \
+      --output reports/bsee/lower_tertiary/npv_analysis \
+      --format html \
+      --interactive \
+      --discount-rate 0.10 \
+      --oil-price 75.0
+
+  environment:
+    required_packages:
+      - pandas>=2.0.0
+      - numpy>=1.24.0
+      - numpy-financial>=1.0.0
+      - plotly>=5.14.0

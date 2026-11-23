@@ -1,0 +1,624 @@
+<!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml"><head id="ctl00_MasterHead"><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><title>
+	IMO Web Accounts
+</title>
+
+	<script type="text/javascript" src="/Includes/jquery-1.11.1.min.js"></script>
+
+    <!-- Legacy styles -->	 
+	<link href="../Includes/StyleSheet.css?3" rel="stylesheet" type="text/css"><link href="../Includes/GridViewer.css?3" rel="stylesheet" type="text/css">
+
+	<!-- Site-wide Theme takes precedence over legacy styling -->
+    <link href="../Includes/Theme.css" rel="stylesheet" type="text/css">
+	
+    <!-- Tooltipster resources -->
+    <link href="../Includes/tooltipster/tooltipster.css" rel="stylesheet" type="text/css">
+	<script type="text/javascript" src="/Includes/jquery.tooltipster.min.js"></script>
+	
+    <!-- JQueryDropdown resources -->
+	<link href="../Includes/jquery-dropdown/jquery.dropdown.min.css" rel="stylesheet" type="text/css">
+	<script type="text/javascript" src="/Includes/jquery-dropdown/jquery.dropdown.min.js"></script>
+</head>
+<body id="ctl00_MasterPageBodyTag" dir="ltr">
+    <form method="post" action="./WebLogin.aspx?App=GISISPublic&amp;ReturnUrl=https%3a%2f%2fgisis.imo.org%2fPublic%2fMCIR%2fSearch.aspx&amp;error_message=interaction_required" onsubmit="javascript:return WebForm_OnSubmit();" id="aspnetForm">
+<div class="aspNetHidden">
+<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="">
+<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="">
+<input type="hidden" name="__LASTFOCUS" id="__LASTFOCUS" value="">
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="dFpLPNNsmD3UW+JFs1hgyzJb8nvYmQkb8If9EHuC6yx1+OoNfLt//WRGHlXZ9MNphjTn0kfm3Q5XWtMlouO/MsKHQzofqne+5YvGOAryDOmtbqXS1hEVRp1rMcQ6ehkaHOCvUILiES1YfnbLK6ak5rJU8qVUBLMulAMNQZOWAvDGCwutcw7cl4bqv8UV7ZDqX3CVxvCuEPLidhjgpy16B7dEeF3AffT7B8d3LJVA0nYaFdwep4fxXiWvGKF34MqPaltNL9IYshgkYKSCH5sA91F9iDsbcOc2cRUbTbjuZDqodWOHkJfRmRSJ8G1y3OYZw7WxR/lzqOwyEiSl0OmnwiDTjE527H3QrILMYSrq7SEZioZC0spLcG3dIqbAn6/Lq57taD+Jmyu+0GlmWbPWn2ARBytO+4xREFL0izqGW19KnBBMSxXSJxWVdsc2dNi3H0Oqk8boEQOlfbIRhs6Lz7/RzxkEqAoWfzOK4MUEb/A21rXiBA0pSWSUqsZK1i/vuvTIZ8F22gbz0uYw9uKXz2bFl4misMDLvxZu4lD0nZu57cxDtym4GzeiNk2KtC9OqQCvZRZ4tyuy6i8Fl3gryarcICnysGuqdhhhG2eMQmz65RYRvwN31TPiiVKyWDBshCRATeUxg6/pwyQQ+kEHP9DuKuHRc9i9igRDFIUqAljkBnD69ORCl4wuJK4Y44fNeGHWstaGKjKy449Df4UEmbEnDEfVCt+ElohEk/7NEP9Lgb715gf2jkLY+JwvioffRyawxHzTlLWhTYl+2vbpRHFLLnw=">
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+var theForm = document.forms['aspnetForm'];
+if (!theForm) {
+    theForm = document.aspnetForm;
+}
+function __doPostBack(eventTarget, eventArgument) {
+    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+        theForm.__EVENTTARGET.value = eventTarget;
+        theForm.__EVENTARGUMENT.value = eventArgument;
+        theForm.submit();
+    }
+}
+//]]>
+</script>
+
+
+<script src="/WebResource.axd?d=pynGkmcFUV13He1Qd6_TZItUc7uOXVQ_JJSF3nqWHTssVf86I8T6DdUK_rt6gpBWQGLL6g2&amp;t=638901572248157332" type="text/javascript"></script>
+
+
+<script src="/ScriptResource.axd?d=nv7asgRUU0tRmHNR2D6t1P-sLHL4xpNrm5o1Biplx19y-1enjGnCBR2IxOWgfCCEAtSuaM9ZBGincPYL8xJnfiu6thMwnrTZPioqH6mjENxr6FzpHBVeWczie92eWdyfjzbT8g2&amp;t=ffffffff93d1c106" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=D9drwtSJ4hBA6O8UhT6CQgGORDzTsvEXH86RtAKYvBRhiM-KfqCa3ebr4glmuyrAkBDSOuVcY8lizWqe4ZVgf1_V5Z4P39hGLA_CE2du_uIJBFxkMlqQK3HNfTNKNUXDe7ktrINKLMbiSYWAZqFif9G6wz41&amp;t=5c0e0825" type="text/javascript"></script>
+<script type="text/javascript">
+//<![CDATA[
+if (typeof(Sys) === 'undefined') throw new Error('ASP.NET Ajax client-side framework failed to load.');
+//]]>
+</script>
+
+<script src="/ScriptResource.axd?d=JnUc-DEDOM5KzzVKtsL1tS_QAGAzK49aMUDmbE6yIv-IAvJhKqsgtYFm7NvGkfLpy7RSNgVokWjhjesy36QLyWtrIPmaFpV3OqUbmFRB5mYnmCFN81JedEau82zqYVojLcyoxK-Ggrg918YJvTLWgTSqkkGsh53-jzYcKhUUu7cSyfmL0&amp;t=5c0e0825" type="text/javascript"></script>
+<script src="../Includes/Script.js?13" type="text/javascript"></script>
+<script type="text/javascript">
+//<![CDATA[
+function WebForm_OnSubmit() {
+if (typeof(ValidatorOnSubmit) == "function" && ValidatorOnSubmit() == false) return false;
+return true;
+}
+//]]>
+</script>
+
+<div class="aspNetHidden">
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="D69AF610">
+</div>
+        <script type="text/javascript">
+//<![CDATA[
+Sys.WebForms.PageRequestManager._initialize('ctl00$ctl09', 'aspnetForm', ['tctl00$cpAboveMain$ctl00','','tctl00$cpMain$ctl00',''], [], [], 90, 'ctl00');
+//]]>
+</script>
+
+
+        <div id="app-container">
+            <header class="app-header fixed-top">
+                <nav class="navbar navbar-expand navbar-dark">
+
+                    <div class="logo-container">
+                        <button class="navbar-toggler" type="button" aria-expanded="false">
+                            <span class="navbar-toggler-icon">
+                                <span class="lines"></span>
+                            </span>
+                        </button>
+                        <a href="../"><img id="ctl00_imgLogo" class="logo" src="../Images/ThemeLogo-EN.png" alt="IMO logo"></a>
+                    </div>
+
+                    <div class="navbar-collapse header-right">
+
+                        <div class="header-title nav-item d-lg-block" style="font-size:1.5em">
+                            Web Accounts
+                        </div>
+
+                        <ul class="navbar-nav ml-auto align-items-center">
+                            <li class="nav-item d-none d-md-inline-block mx-3">
+                                <div class="language-selector">
+                                    <button type="button" id="btnlanguage" class="btn btn-transparent dropdown-toggle" data-uk-toggle="target:.language-list;animation:uk-animation-slide-top-small">
+                                        English
+                                    </button>
+                                    <ul class="shadow list-underlined list-checkbox-items language-list" hidden="hidden" aria-hidden="true">
+                                        <li><a id="ctl00_lnkEN" href="javascript:__doPostBack('ctl00$lnkEN','')">English</a></li>
+                                        <li><a id="ctl00_lnkFR" href="javascript:__doPostBack('ctl00$lnkFR','')">Français</a></li>
+                                        <li><a id="ctl00_lnkES" href="javascript:__doPostBack('ctl00$lnkES','')">Español</a></li>
+                                        <li><a id="ctl00_lnkAR" href="javascript:__doPostBack('ctl00$lnkAR','')">العربية</a></li>
+                                        <li><a id="ctl00_lnkZH" href="javascript:__doPostBack('ctl00$lnkZH','')">汉语</a></li>
+                                        <li><a id="ctl00_lnkRU" href="javascript:__doPostBack('ctl00$lnkRU','')">Русский</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+
+							
+		
+                            <li class="nav-item">
+						        <div class="account">
+							        <a href="#" id="user-profile-toggler" aria-expanded="false">
+                                        <strong class="name h5-r">
+                                            
+                                        </strong>
+								        <img id="ctl00_imgProfileImage" class="avatar rounded-circle" src="">
+							        </a>
+						        </div>
+					        </li>
+                        </ul>
+                    </div>
+                </nav>
+            </header>
+
+            
+            <div class="app-main">
+                
+    <div id="ctl00_cpAboveMain_ctl00">
+	
+            <div id="ctl00_cpAboveMain_divWarning" class="notificationboxwarning animate-top">
+                <img src="../Images/AlertIcon.gif" align="absmiddle">&nbsp;&nbsp;
+		Check that this page is located at https://<b>webaccounts.imo.org</b>.
+                
+            </div>
+		
+		
+        
+</div>
+
+                
+    <style>
+        /* Add animation to "page content" */
+        .animate-top {
+            position: relative;
+            -webkit-animation-name: animatetop;
+            -webkit-animation-duration: 1s;
+            animation-name: animatetop;
+            animation-duration: 1s
+        }
+
+        @-webkit-keyframes animatetop {
+            from {
+                top: -100px;
+                opacity: 0
+            }
+
+            to {
+                top: 0px;
+                opacity: 1
+            }
+        }
+
+        @keyframes animatetop {
+            from {
+                top: -100px;
+                opacity: 0
+            }
+
+            to {
+                top: 0;
+                opacity: 1
+            }
+        }
+
+        .animate-bottom {
+            position: relative;
+            -webkit-animation-name: animatebottom;
+            -webkit-animation-duration: 1s;
+            animation-name: animatebottom;
+            animation-duration: 1s
+        }
+
+        @-webkit-keyframes animatebottom {
+            from {
+                bottom: -100px;
+                opacity: 0
+            }
+
+            to {
+                bottom: 0px;
+                opacity: 1
+            }
+        }
+
+        @keyframes animatebottom {
+            from {
+                bottom: -100px;
+                opacity: 0
+            }
+
+            to {
+                bottom: 0;
+                opacity: 1
+            }
+        }
+
+        .animate-left {
+            position: relative;
+            -webkit-animation-name: animateleft;
+            -webkit-animation-duration: 1s;
+            animation-name: animateleft;
+            animation-duration: 1s
+        }
+
+        @-webkit-keyframes animateleft {
+            from {
+                left: -100px;
+                opacity: 0
+            }
+
+            to {
+                left: 0px;
+                opacity: 1
+            }
+        }
+
+        @keyframes animateleft {
+            from {
+                left: -100px;
+                opacity: 0
+            }
+
+            to {
+                left: 0;
+                opacity: 1
+            }
+        }
+
+        .animate-right {
+            position: relative;
+            -webkit-animation-name: animateright;
+            -webkit-animation-duration: 1s;
+            animation-name: animateright;
+            animation-duration: 1s
+        }
+
+        @-webkit-keyframes animateright {
+            from {
+                right: 0px;
+                opacity: 1
+            }
+
+            to {
+                right: -100px;
+                opacity: 0
+            }
+        }
+
+        @keyframes animateright {
+            from {
+                right: -100px;
+                opacity: 0
+            }
+
+            to {
+                right: 0;
+                opacity: 1
+            }
+        }
+        /* Center the loader */
+        .loader {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            z-index: 1;
+            width: 150px;
+            height: 150px;
+            margin: -75px 0 0 -75px;
+            border: 16px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 16px solid #3498db;
+            width: 120px;
+            height: 120px;
+            -webkit-animation: spin 2s linear infinite;
+            animation: spin 2s linear infinite;
+        }
+
+        .overlay {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 2;
+        }
+
+        @-webkit-keyframes spin {
+            0% {
+                -webkit-transform: rotate(0deg);
+            }
+
+            100% {
+                -webkit-transform: rotate(360deg);
+            }
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+
+    
+
+    
+        <fieldset class="intro-border midwide-max">
+            <legend>
+                Global Integrated Shipping Information System (GISIS)</legend>
+            <p>
+                Please log in to access GISIS, or <b><a href="PublicRegistration.aspx">register</a></b> for a free public account.</p>
+            <p></p>
+        </fieldset>
+    
+
+    
+
+    
+
+    <main>
+        <div class="container">
+
+
+            <div class="h3 text-primary mb-4 d-md-none">IMO Web Accounts</div>
+
+            <!-- Secondary grid layout -->
+
+            <ul class="masonry-like-grid">
+                <li>
+                    <div id="ctl00_cpMain_PageUpdateProgress" class="overlay animate-right" style="display:none;" role="status" aria-hidden="true">
+	
+                            <div class="loader"></div>
+                        
+</div>
+                    <div id="ctl00_cpMain_ctl00">
+	
+
+                            <h2>
+                                </h2>
+
+                            <div id="ctl00_cpMain_valSummary" class="validationsummary" style="display:none;">
+
+	</div>
+                            <span id="ctl00_cpMain_cvInvalidLogin" style="display:none;"></span>
+                            <div class="widget widget-login widget-large">
+                                <div class="widget-header">
+                                    <h2 class="widget-title">Log In</h2>
+                                </div>
+                                
+                                    <div class="widget-body">
+                                        <div class="widget-content">
+                                            
+
+                                            <label for="ctl00_cpMain_ddlAuthorityType" id="ctl00_cpMain_lblAuthorityType" class="col-sm-2 control-label">Authority:</label><select name="ctl00$cpMain$ddlAuthorityType" onchange="javascript:setTimeout('__doPostBack(\'ctl00$cpMain$ddlAuthorityType\',\'\')', 0)" id="ctl00_cpMain_ddlAuthorityType" class="form-control form-control-lg" style="direction: ltr; max-width: 400px">
+		<option selected="selected" value="">-- Please select --</option>
+		<option value="PUBLIC">Public Users</option>
+		<option value="MemberState">Member State/Authorized Administration</option>
+		<option value="UNIGONGO">UN/IGO/NGO</option>
+		<option value="IMO">International Maritime Organization</option>
+
+	</select><span id="ctl00_cpMain_rfvAuthorityType" style="display:none;"></span>
+
+                                            <div class="form-group">
+                                                <label for="ctl00_cpMain_txtUsername" id="ctl00_cpMain_lblUsername" class="col-sm-2 control-label">Username:</label><input name="ctl00$cpMain$txtUsername" type="text" maxlength="20" id="ctl00_cpMain_txtUsername" class="form-control" style="max-width: 200px"><span id="ctl00_cpMain_rfvUsername" style="display:none;"></span><span id="ctl00_cpMain_cvUsername" style="display:none;"></span>
+                                            </div>
+
+                                            <div class="form-group mb-0">
+                                                
+                                                <input type="submit" name="ctl00$cpMain$btnNext" value="Next" onclick="javascript:WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions(&quot;ctl00$cpMain$btnNext&quot;, &quot;&quot;, true, &quot;&quot;, &quot;&quot;, false, false))" id="ctl00_cpMain_btnNext" class="btn btn-b-light btn-lg">
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                    <!-- .widget-body -->
+                                
+
+                                
+
+                                <div class="widget-footer">
+                                    <div class="content">
+                                        <h4 class="h4-r text-secondary">
+                                            Forgotten your details?</h4>
+                                        
+                                        <p>
+                                            If you do not know your log in details, please click here to <a href="RecoverAccount.aspx" class="mainLink">recover&nbsp;your&nbsp;account</a> and set a new password.
+                                        </p>
+                                    </div>
+                                </div>
+
+                            </div>
+                        
+</div>
+                </li>
+                <li>
+                    
+                        <div class="widget widget-large">
+                            <div class="widget-header">
+                                <h2 class="widget-title">
+                                    Public Account</h2>
+                            </div>
+                            <div class="widget-body">
+                                <div class="widget-content">
+                                    <div class="content">
+                                        <p>
+                                            Register for free access to resources made available to the public by IMO. It's quick and easy.
+                                        </p>
+                                    </div>
+                                    <div class="mt-3">
+                                        
+                                        <input type="submit" name="ctl00$cpMain$btnRegister" value="Register" id="ctl00_cpMain_btnRegister" class="btn btn-primary" style="width:120px;">
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- .widget-body -->
+                        </div>
+                    
+                </li>
+                <li>
+                    <div class="widget  widget-large">
+                        <div class="widget-header">
+                            <h2 class="widget-title">
+                                IMO Member Account</h2>
+                        </div>
+                        <div class="widget-body">
+                            <div class="widget-content">
+                                <div class="content">
+                                    <p>
+                                        Please <a href="ContactUs.aspx" class="mainLink">contact your IMO Web Accounts Administrator</a> for greater access as an authorized user of an IMO member administration or organization.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- .widget-body -->
+                    </div>
+                </li>
+            </ul>
+        </div>        
+        <!-- drawer left   -->       
+    </main>   
+
+    <!-- Trace:  -->
+    
+
+            </div>
+            <hr>
+            <footer class="app-footer">
+                <div class="row row-cols-md-2 row-cols-lg-3 flex-row align-items-center">
+                    <div class="col-12 col-md-12 footer-logo">
+                        <img id="ctl00_imgLogoFooter" src="../Images/ThemeLogoFooter-EN.svg" alt="IMO logo">
+                    </div>
+                    <div class="col-12 text-lg-center mt-2 mt-lg-0">
+                        <a id="ctl00_lnkPrivacyPolicy" href="PrivacyPolicy.aspx">Privacy Policy</a>
+                        |
+                        
+                        <a id="ctl00_lnkContactUs" href="ContactUs.aspx">Contact Us</a>
+                        <span style="white-space:nowrap">©2025 International Maritime Organization</span>
+                    </div>
+                    <div class="col-12 text-md-right mt-2 mt-lg-0">
+                        
+                    </div>
+                </div>
+            </footer>
+            
+        </div>
+
+        <div class="drawer app-list-drawer shadow uk-dropdown" data-uk-dropdown="mode:click;offset:10;animation:uk-animation-fade; delay-hide: 50; toggle:.navbar-toggler">
+            <div class="scroller">
+                <div class="dropdown">
+                    <div class="menu-header">
+                        <h3 class="h3-r mb-0">IMO Apps</h3>
+                    </div>
+                    <ul class="list-underlined list-checkbox-items">
+                        <li><a href="https://webaccounts.imo.org/"><i class="icon-computer-2 main-icon bg-indigo-opa"></i>IMO Portal</a></li>
+                        <li><a href="https://docs.imo.org/"><i class="icon-insert-drive-file main-icon bg-green-opa"></i>IMODOCS</a></li>
+                        <li><a href="https://gisis.imo.org/"><i class="icon-directions-boat main-icon bg-indigo-opa"></i>GISIS</a></li>
+                        <li><a href="https://streaming.imo.org/meetings"><i class="icon-settings-input-antenna main-icon bg-pink-opa"></i>Streaming</a></li>
+                        <li><a href="https://lms.imo.org/moodle310"><i class="icon-explicit main-icon bg-red-opa"></i>IMO e-Learning</a></li>
+                        <li><a href="https://roster.imo.org/"><i class="icon-explicit main-icon bg-red-opa"></i>eRoster of Consultants</a></li>
+                        <li><a href="https://imospace.imo.org/"><i class="icon-group main-icon bg-pink-opa"></i>IMO Space</a></li>
+                        <li><a href="https://vp.imo.org/"><i class="icon-e-learning main-icon bg-brand-blue-opa"></i>Virtual Publications</a></li>
+                        <li><a href="https://archives.imo.org/"><i class="icon-archives main-icon bg-indigo-opa"></i>IMO Archives</a></li>
+                        <li><a href="https://www.imo.org/"><i class="icon-language main-icon bg-indigo-opa"></i>IMO Website</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="drawer account-drawer shadow uk-dropdown uk-dropdown-right" data-uk-dropdown="offset:10;animation:uk-animation-fade; delay-hide: 50; toggle:#user-profile-toggler">
+            <div class="user-profile">
+                <div class="p-3 profile-bg invert">
+    		        <img id="ctl00_imgProfileImage2" class="avatar rounded-circle" src="">
+                    <h2 class="h2-r"></h2>
+                    <h5 class="h5-r"> / </h5>
+
+                    <div class="dropdown mt-4">
+                        <button class="btn btn-block btn-transparent" type="button" id="profileDropdownMenuButton">
+                            
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <ul class="">
+                <li><a class="profile-link" href="ManageAccount.aspx">Manage your account</a></li>
+                <li><a class="profile-link" href="../Logout.aspx"><i class="icon-exit-to-app"></i>Log out</a></li>
+            </ul>
+        </div>        
+
+    
+    
+<script type="text/javascript">
+//<![CDATA[
+var Page_ValidationSummaries =  new Array(document.getElementById("ctl00_cpMain_valSummary"));
+var Page_Validators =  new Array(document.getElementById("ctl00_cpMain_cvInvalidLogin"), document.getElementById("ctl00_cpMain_rfvAuthorityType"), document.getElementById("ctl00_cpMain_rfvUsername"), document.getElementById("ctl00_cpMain_cvUsername"));
+//]]>
+</script>
+
+<script type="text/javascript">
+//<![CDATA[
+var ctl00_cpMain_cvInvalidLogin = document.all ? document.all["ctl00_cpMain_cvInvalidLogin"] : document.getElementById("ctl00_cpMain_cvInvalidLogin");
+ctl00_cpMain_cvInvalidLogin.display = "None";
+ctl00_cpMain_cvInvalidLogin.evaluationfunction = "CustomValidatorEvaluateIsValid";
+var ctl00_cpMain_rfvAuthorityType = document.all ? document.all["ctl00_cpMain_rfvAuthorityType"] : document.getElementById("ctl00_cpMain_rfvAuthorityType");
+ctl00_cpMain_rfvAuthorityType.controltovalidate = "ctl00_cpMain_ddlAuthorityType";
+ctl00_cpMain_rfvAuthorityType.focusOnError = "t";
+ctl00_cpMain_rfvAuthorityType.errormessage = "Please select your authority.";
+ctl00_cpMain_rfvAuthorityType.display = "None";
+ctl00_cpMain_rfvAuthorityType.evaluationfunction = "RequiredFieldValidatorEvaluateIsValid";
+ctl00_cpMain_rfvAuthorityType.initialvalue = "";
+var ctl00_cpMain_rfvUsername = document.all ? document.all["ctl00_cpMain_rfvUsername"] : document.getElementById("ctl00_cpMain_rfvUsername");
+ctl00_cpMain_rfvUsername.controltovalidate = "ctl00_cpMain_txtUsername";
+ctl00_cpMain_rfvUsername.focusOnError = "t";
+ctl00_cpMain_rfvUsername.errormessage = "Please enter your username.";
+ctl00_cpMain_rfvUsername.display = "None";
+ctl00_cpMain_rfvUsername.evaluationfunction = "RequiredFieldValidatorEvaluateIsValid";
+ctl00_cpMain_rfvUsername.initialvalue = "";
+var ctl00_cpMain_cvUsername = document.all ? document.all["ctl00_cpMain_cvUsername"] : document.getElementById("ctl00_cpMain_cvUsername");
+ctl00_cpMain_cvUsername.controltovalidate = "ctl00_cpMain_txtUsername";
+ctl00_cpMain_cvUsername.focusOnError = "t";
+ctl00_cpMain_cvUsername.display = "None";
+ctl00_cpMain_cvUsername.evaluationfunction = "CustomValidatorEvaluateIsValid";
+//]]>
+</script>
+
+
+<script type="text/javascript">
+//<![CDATA[
+
+(function(id) {
+    var e = document.getElementById(id);
+    if (e) {
+        e.dispose = function() {
+            Array.remove(Page_ValidationSummaries, document.getElementById(id));
+        }
+        e = null;
+    }
+})('ctl00_cpMain_valSummary');
+
+var Page_ValidationActive = false;
+if (typeof(ValidatorOnLoad) == "function") {
+    ValidatorOnLoad();
+}
+
+function ValidatorOnSubmit() {
+    if (Page_ValidationActive) {
+        return ValidatorCommonOnSubmit();
+    }
+    else {
+        return true;
+    }
+}
+        Sys.Application.add_init(function() {
+    $create(Sys.UI._UpdateProgress, {"associatedUpdatePanelId":null,"displayAfter":500,"dynamicLayout":true}, null, null, $get("ctl00_cpMain_PageUpdateProgress"));
+});
+
+document.getElementById('ctl00_cpMain_cvInvalidLogin').dispose = function() {
+    Array.remove(Page_Validators, document.getElementById('ctl00_cpMain_cvInvalidLogin'));
+}
+
+document.getElementById('ctl00_cpMain_rfvAuthorityType').dispose = function() {
+    Array.remove(Page_Validators, document.getElementById('ctl00_cpMain_rfvAuthorityType'));
+}
+
+document.getElementById('ctl00_cpMain_rfvUsername').dispose = function() {
+    Array.remove(Page_Validators, document.getElementById('ctl00_cpMain_rfvUsername'));
+}
+
+document.getElementById('ctl00_cpMain_cvUsername').dispose = function() {
+    Array.remove(Page_Validators, document.getElementById('ctl00_cpMain_cvUsername'));
+}
+//]]>
+</script>
+</form>
+    <script src="/Scripts/js/vendors.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/6.2.0/d3.min.js" integrity="sha512-C2RveGuPIWqkaLAluvoxyiaN1XYNe5ss11urhZWZYBUA9Ydgj+hfGKPcxCzTwut1/fmjEZR7Ac35f2aycT8Ogw==" crossorigin="anonymous"></script>
+    <script src="/Scripts/js/app.js"></script>
+
+
+<div id="draggable-live-region" aria-relevant="additions" aria-atomic="true" aria-live="assertive" role="log" style="position: fixed; width: 1px; height: 1px; top: -1px; overflow: hidden;"></div></body></html>

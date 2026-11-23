@@ -1,0 +1,33 @@
+basename: bsee
+
+meta:
+  label: bsee_well_comparison
+
+file_management:
+  flag: false
+  output_directory: outputs
+
+data:
+  refresh: false
+  source: csv
+  well_data: false
+  block_data: false
+  lease_data: false
+  production_data: true
+  groups:
+    - label: mc778_comparison
+      api12:
+        - "608124010100"
+        - "608124010200"
+        - "608124010300"
+      bottom_block:
+        area: MC
+        number: 778
+      bottom_lease: null
+      production:
+        files:
+          - sample_production.csv
+
+analysis:
+  flag: true
+  type: production

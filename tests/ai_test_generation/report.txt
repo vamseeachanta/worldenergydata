@@ -1,0 +1,55 @@
+================================================================================
+AI TEST GENERATION REPORT
+================================================================================
+
+Project Root: C:\Users\Sk Samdan\Desktop\github\worldenergydata
+Modules Discovered: 67
+Tests Generated: 10
+
+DISCOVERED MODULES:
+----------------------------------------
+  • src\worldenergydata\engine.py
+  • src\worldenergydata\__main__.py
+  • src\worldenergydata\common\legacy\bsee_data_manager.py
+  • src\worldenergydata\common\legacy\bsee_data_refresh.py
+  • src\worldenergydata\common\legacy\data.py
+  • src\worldenergydata\common\legacy\data_models_components.py
+  • src\worldenergydata\common\legacy\ong_fd_components.py
+  • src\worldenergydata\common\legacy\visualization.py
+  • src\worldenergydata\common\legacy\wellpath3D.py
+  • src\worldenergydata\common\legacy\bsee\retrieve_data_templates.py
+  ... and 57 more
+
+GENERATED TESTS:
+----------------------------------------
+  [OK] well_api12 -> test_well_api12.py
+  [OK] visualization -> test_visualization.py
+  [OK] memory_processor -> test_memory_processor.py
+  [OK] data_refresh_chunked -> test_data_refresh_chunked.py
+  [OK] excel_npv_analysis -> test_excel_npv_analysis.py
+  [OK] data_refresh_enhanced -> test_data_refresh_enhanced.py
+  [OK] optimized_processor -> test_optimized_processor.py
+  [OK] comprehensive_npv_analyzer -> test_comprehensive_npv_analyzer.py
+  [OK] drilling_and_completion_days -> test_drilling_and_completion_days.py
+  [OK] data_models_components -> test_data_models_components.py
+
+VALIDATION RESULTS:
+----------------------------------------
+  Valid Files: 0/10
+  Total Tests: 620
+  Estimated Coverage: 100.0%
+
+  Issues:
+    - Method 'setup' doesn't follow test naming convention
+    - Method 'setup' doesn't follow test naming convention
+    - Method 'setup' doesn't follow test naming convention
+    - Method 'setup' doesn't follow test naming convention
+    - Method 'setup' doesn't follow test naming convention
+    ... and 5 more
+
+SUMMARY:
+----------------------------------------
+  Test Generation: SUCCESS
+  Validation: FAILED
+
+================================================================================

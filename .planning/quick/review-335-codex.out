@@ -1,0 +1,364 @@
+OpenAI Codex v0.122.0 (research preview)
+--------
+workdir: /mnt/local-analysis/workspace-hub/worldenergydata
+model: gpt-5.4
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR, /home/vamsee/.codex/memories]
+reasoning effort: medium
+reasoning summaries: none
+session id: 019db57a-4bcc-75c3-9bc1-df4de1a3a787
+--------
+user
+# Adversarial Plan Review Request: Issue #335
+
+You are an independent adversarial reviewer. Findings only. Do not praise or restate.
+
+Target
+- Repo: vamseeachanta/worldenergydata
+- Issue #335: disclosure-to-CostDataPoint linkage model
+- Stage: draft canonical plan review before any approval-stage move
+
+Review questions
+1. Is the plan correctly grounded in the current repo surfaces named in the plan?
+2. Is scope properly bounded for this child issue, without stealing work from sibling issues?
+3. Are the files-to-change, tests, and acceptance criteria internally consistent?
+4. Are there any hidden blockers, missing tests, or likely failure modes that should block plan-review?
+
+Required output
+- Verdict: APPROVE | MINOR | MAJOR
+- Retrieval adequacy: adequate | insufficient
+- Strengths
+- Findings by severity: critical, high, medium, low
+- Missing tests
+- Scope creep concerns
+- Weakest assumption
+- Most likely implementation failure mode
+- Most likely test gap
+- Future issues suggested
+- Review confidence
+
+## Exact plan sections under review
+
+## Deliverable
+
+A derived-only linkage contract in `worldenergydata.cost.data_collection` that formalizes exact `(operator, project_name)` resolution of disclosure project rows against existing `CostDataPoint` sanction records and returns explicit `linked`, `unlinked`, or `ambiguous` outcomes without changing sanction data content or downstream economics consumers.
+
+---
+
+## Scope Boundaries
+
+### In scope now
+- Define linkage status/result shape
+- Preserve exact `(operator, project_name)` as the only deterministic rule
+- Define explicit semantics for exact single match, no match, and multiple exact matches
+- Add focused tests around exact, unmatched, and ambiguous outcomes
+- Export linkage contract/helper from `worldenergydata.cost.data_collection`
+
+### Explicitly out of scope for this issue
+- Fuzzy matching, alias tables, or canonical-name normalization
+- Currency normalization or comparability policy
+- Any changes to FDAS / lower_tertiary / analytics consumers
+- Any stored foreign-key-style `CostDataPoint` reference field
+- Restatement/versioning behavior
+
+---
+
+## Pseudocode
+
+```text
+class LinkageStatus(Enum):
+    LINKED = "linked"
+    UNLINKED = "unlinked"
+    AMBIGUOUS = "ambiguous"
+
+class CostDataPointLinkResult(BaseModel):
+    status
+    match_key_operator
+    match_key_project_name
+    matched_record
+    matched_count
+    candidates
+
+function resolve_cost_datapoint_link(operator, project_name, sanctioned_records=None):
+    records = sanctioned_records or load_public_dataset()
+    exact_candidates = records where rec.operator == operator and rec.project_name == project_name
+    if len(exact_candidates) == 0: return UNLINKED result
+    if len(exact_candidates) == 1: return LINKED result with matched record
+    return AMBIGUOUS result with candidates only
+```
+
+---
+
+## Files to Change
+
+| Action | Path | Reason |
+|---|---|---|
+| Modify | `src/worldenergydata/cost/data_collection/calibration_schema.py` | add linkage enum/result model |
+| Modify | `src/worldenergydata/cost/data_collection/public_dataset.py` | add deterministic linkage helper against sanction dataset |
+| Modify | `src/worldenergydata/cost/data_collection/__init__.py` | export linkage primitives/helpers |
+| Modify | `tests/unit/cost/test_calibration_schema.py` | TDD coverage for exact/no-match/ambiguous behavior |
+| Verify only | `tests/unit/cost/test_field_integration.py` | regression boundary |
+| Verify only | `tests/unit/cost/test_proxy_comparison.py` | regression boundary |
+
+---
+
+## TDD Test List
+
+| Test name | What it verifies | Expected input | Expected output |
+|---|---|---|---|
+| `test_linkage_status_enum_exposes_linked_unlinked_ambiguous` | contract has three canonical states | enum import | expected values |
+| `test_resolve_link_returns_linked_for_exact_single_match` | exact match resolves deterministically | matching operator/project | linked result |
+| `test_resolve_link_returns_unlinked_for_no_exact_match` | unmatched rows remain unresolved | non-matching operator/project | unlinked result |
+| `test_resolve_link_returns_ambiguous_for_multiple_exact_matches` | helper never silently guesses | duplicated exact key set | ambiguous result |
+| `test_ambiguous_result_has_no_single_matched_record` | ambiguous outcomes stay unresolved | ambiguous case | no matched record |
+| `test_link_result_preserves_match_key_and_match_count` | result is debuggable/consumable | any result | keys + counts present |
+| `test_helper_uses_load_public_dataset_by_default` | default sanctioned source works | no explicit records arg | valid result |
+| `test_helper_accepts_injected_records_for_testing` | deterministic injectable behavior | custom sanctioned list | valid result |
+| `test_data_collection_exports_linkage_contract` | public API exists | import check | names resolve |
+
+---
+
+## Acceptance Criteria
+
+- [ ] Explicit `linked`, `unlinked`, and `ambiguous` outcomes exist
+- [ ] Exact `(operator, project_name)` remains the only deterministic rule
+- [ ] Ambiguous exact-key collisions are surfaced, never auto-resolved
+- [ ] Unmatched rows are represented explicitly rather than via exceptions or silent null behavior
+- [ ] Linkage remains derived-only; no stored `CostDataPoint` reference field is added
+- [ ] `worldenergydata.cost.data_collection` exports the linkage contract/helper
+- [ ] Existing sanction dataset loading behavior remains unchanged
+- [ ] Existing field integration and proxy comparison tests still pass unchanged
+
+---
+
+## Risks and Open Questions
+
+- `CostDataPoint` has no stronger stable identifier than domain fields, so ambiguous exact-key collisions cannot be disambiguated here.
+- Future disclosure naming variants/phases may require a separate alias-governance follow-up rather than expanding this issue.
+- The helper/result contract should stay narrow enough that later hardening can extend it without breaking consumers.
+
+---
+
+## Complexity: T2
+
+**T2** — small code surface, but semantically important because it defines the safe future join boundary for disclosure-to-sanction matching.
+warning: Codex's Linux sandbox uses bubblewrap and needs access to create user namespaces.
+codex
+Reviewing the cited plan against the current repo surfaces first. I’m loading the relevant skill instructions and the cost/data_collection files and tests named in the plan to check whether the proposed contract matches what actually exists.
+exec
+/bin/bash -lc "sed -n '1,220p' /mnt/local-analysis/workspace-hub/.claude/skills/software-development/approval-stage-plan-review-sweep/SKILL.md" in /mnt/local-analysis/workspace-hub/worldenergydata
+exec
+/bin/bash -lc 'git status --short' in /mnt/local-analysis/workspace-hub/worldenergydata
+exec
+/bin/bash -lc 'pwd && rg --files src/worldenergydata/cost tests/unit/cost' in /mnt/local-analysis/workspace-hub/worldenergydata
+ exited 1 in 2151ms:
+bwrap: loopback: Failed RTM_NEWADDR: Operation not permitted
+
+ exited 1 in 2149ms:
+bwrap: loopback: Failed RTM_NEWADDR: Operation not permitted
+
+ exited 1 in 2156ms:
+bwrap: loopback: Failed RTM_NEWADDR: Operation not permitted
+
+codex
+The shell wrapper is failing before command execution because of the sandbox login profile path. I’m retrying with a non-login shell and then I’ll inspect the exact modules and tests named in the plan.
+exec
+/bin/bash -c 'rg --files src/worldenergydata/cost tests/unit/cost' in /mnt/local-analysis/workspace-hub/worldenergydata
+exec
+/bin/bash -c 'git status --short' in /mnt/local-analysis/workspace-hub/worldenergydata
+exec
+/bin/bash -c "sed -n '1,220p' /mnt/local-analysis/workspace-hub/.claude/skills/software-development/approval-stage-plan-review-sweep/SKILL.md" in /mnt/local-analysis/workspace-hub/worldenergydata
+ exited 1 in 4167ms:
+bwrap: loopback: Failed RTM_NEWADDR: Operation not permitted
+
+ exited 1 in 4022ms:
+bwrap: loopback: Failed RTM_NEWADDR: Operation not permitted
+
+ exited 1 in 3862ms:
+bwrap: loopback: Failed RTM_NEWADDR: Operation not permitted
+
+codex
+I’m switching to the Node REPL to read the local files directly since shell execution is blocked in this environment. Next step is checking whether `calibration_schema.py`, `public_dataset.py`, the package exports, and the cited tests already expose or constrain the proposed linkage contract.
+exec
+js_repl in /mnt/local-analysis/workspace-hub/worldenergydata
+2026-04-22T13:57:04.519576Z ERROR codex_core::tools::router: error=js_repl kernel exited unexpectedly
+
+js_repl diagnostics: {"reason":"stdout_eof","stream_error":null,"kernel_pid":861686,"kernel_status":"exited(code=1)","kernel_stderr_tail":"bwrap: loopback: Failed RTM_NEWADDR: Operation not permitted"}
+ exited 1 in 3865ms:
+js_repl kernel exited unexpectedly
+
+js_repl diagnostics: {"reason":"stdout_eof","stream_error":null,"kernel_pid":861686,"kernel_status":"exited(code=1)","kernel_stderr_tail":"bwrap: loopback: Failed RTM_NEWADDR: Operation not permitted"}
+codex
+The local execution sandbox is unavailable altogether, so I’m checking whether workspace files are exposed through MCP resources instead. If they are, I can still verify the plan against the repo without relying on the shell.
+mcp: codex/list_mcp_resources started
+mcp: codex/list_mcp_resources (completed)
+mcp: codex_apps/github_search started
+mcp: codex_apps/github_search (completed)
+mcp: codex_apps/github_fetch_file started
+mcp: codex_apps/github_fetch_file (completed)
+mcp: codex_apps/github_fetch_file started
+mcp: codex_apps/github_fetch_file (completed)
+mcp: codex_apps/github_fetch_file started
+mcp: codex_apps/github_fetch_file (completed)
+codex
+The core surfaces are present, and `load_public_dataset()` currently just validates `_RAW_RECORDS` into `CostDataPoint` objects. I’m checking the existing unit tests and the repo’s current planning artifacts for issue 335’s sibling work so I can separate real scope from accidental spillover.
+mcp: codex_apps/github_fetch_file started
+mcp: codex_apps/github_fetch_file (completed)
+mcp: codex_apps/github_fetch_file started
+mcp: codex_apps/github_fetch_file (completed)
+mcp: codex_apps/github_fetch_file started
+mcp: codex_apps/github_fetch_file (completed)
+mcp: codex_apps/github_search started
+mcp: codex_apps/github_search (completed)
+codex
+The current tests don’t exercise any linkage behavior, and the integration/proxy tests only depend on `load_public_dataset()` returning `CostDataPoint` records. I’m checking whether `calibration_schema.py` is the right place for a linkage result model or whether that file is currently treated as the pure sanction-record schema boundary.
+mcp: codex_apps/github_search started
+mcp: codex_apps/github_search (completed)
+mcp: codex_apps/github_search started
+mcp: codex_apps/github_search (completed)
+mcp: codex_apps/github_fetch_file started
+mcp: codex_apps/github_fetch_file (completed)
+codex
+I found the sibling plan for issue `#334`, and it explicitly defers this issue to “linkage model hardening” while keeping operator-scope disclosure logic separate. One more pass: I’m checking whether the proposed `public_dataset.py` helper placement and the planned regression boundaries are coherent with the rest of the cost package and current tests.
+mcp: codex_apps/github_fetch_file started
+mcp: codex_apps/github_fetch_file (completed)
+mcp: codex_apps/github_fetch_file started
+mcp: codex_apps/github_fetch_file (completed)
+mcp: codex_apps/github_fetch_file started
+mcp: codex_apps/github_fetch_file (completed)
+mcp: codex_apps/github_search started
+mcp: codex_apps/github_search (completed)
+mcp: codex_apps/github_fetch_issue started
+mcp: codex_apps/github_fetch_issue (completed)
+mcp: codex_apps/github_fetch_issue started
+mcp: codex_apps/github_fetch_issue (completed)
+mcp: codex_apps/github_fetch_issue started
+mcp: codex_apps/github_fetch_issue (completed)
+codex
+I’ve confirmed the parent/child boundaries from the live issues. Final check is whether issue `#335` already carries scope that the draft plan under review quietly narrows or expands, especially around documentation and consumer guidance.
+mcp: codex_apps/github_fetch_issue_comments started
+mcp: codex_apps/github_fetch_issue_comments (completed)
+mcp: codex_apps/github_fetch_issue_comments started
+mcp: codex_apps/github_fetch_issue_comments (completed)
+mcp: codex_apps/github_search started
+mcp: codex_apps/github_search (completed)
+codex
+There is a saved plan artifact for `#335`; I’m fetching it to see whether the exact draft text under review matches the committed planning artifact or whether there are already plan-level deltas that matter to the verdict.
+mcp: codex_apps/github_fetch_file started
+mcp: codex_apps/github_fetch_file (failed)
+mcp: codex_apps/github_search started
+mcp: codex_apps/github_search (completed)
+codex
+Verdict: MAJOR
+
+Retrieval adequacy: adequate
+
+**Strengths**
+- The draft stays derived-only and does not mutate `CostDataPoint` content or downstream consumers.
+- The deterministic rule is narrowly bounded to exact `(operator, project_name)`.
+- The plan tries to keep the public API contained inside `worldenergydata.cost.data_collection`.
+
+**Findings by Severity**
+
+critical
+- None.
+
+high
+- The plan is not fully grounded in current `main` repo surfaces. As of April 22, 2026, `main` has only the sanction-side files in `src/worldenergydata/cost/data_collection/`; the disclosure-layer artifacts from `#334` are not present. The draft claims to resolve “disclosure project rows” but only changes sanction-side files/tests and never states a hard dependency on `#334` landing first.
+- The approved `#334` contract says only project-scope disclosure rows participate in linkage and operator-scope rows are never linkable. This draft does not carry that invariant into its tests or acceptance criteria, so `#335` can accidentally widen or redefine sibling scope instead of hardening it.
+- The pseudocode uses `sanctioned_records or load_public_dataset()`. That breaks deterministic injection for `[]` and will silently hit the real dataset. The TDD list does not catch this.
+
+medium
+- `src/worldenergydata/cost/data_collection/calibration_schema.py` is currently a pure sanction-record schema file. Adding disclosure-linkage result types there mixes responsibilities and is a poor fit with the repo’s current module boundaries. A dedicated linkage module would be cleaner.
+- The live `#335` issue scope includes documenting how downstream consumers should use linked vs unlinked rows, but the draft has no docs target, no module docstring target, and no acceptance criterion for that guidance.
+- “Exact match” is underspecified in tests. Without explicit negative tests for case differences, whitespace differences, and project-name variants, an implementation can normalize strings and quietly steal alias/fuzzy work from later issues.
+- The acceptance criterion “Existing sanction dataset loading behavior remains unchanged” is not matched by the planned regression set. The direct regression surfaces are `tests/unit/cost/test_dataset_size.py`, `tests/unit/cost/test_cost_predictor.py`, and existing `load_public_dataset()` smoke tests, not just `test_field_integration.py` and `test_proxy_comparison.py`.
+
+low
+- The unlinked/ambiguous payload contract is still loose. The draft should explicitly require `matched_record=None` when not linked and define whether `candidates=[]` is required for unlinked.
+- `matched_count` is present, but there is no invariant stating it must align with `candidates` and `matched_record`.
+
+**Missing Tests**
+- `sanctioned_records=[]` must remain unlinked and must not fall back to `load_public_dataset()`.
+- Negative exactness cases: case-changed operator, padded/trimmed whitespace, and project-name variants remain `unlinked`.
+- Project-only boundary test: operator-scope disclosure rows are rejected or never linkable.
+- Direct regression that `load_public_dataset()` count/type/content behavior is unchanged.
+- Cross-status invariant tests for `matched_count`, `matched_record`, and `candidates`.
+
+**Scope Creep Concerns**
+- Any trimming, normalization, aliasing, or heuristic disambiguation in this helper would steal work from follow-up normalization/linkage-hardening issues.
+- Any stored reference field or disclosure-schema mutation would reopen `#334` scope.
+
+**Weakest Assumption**
+- That this child issue can be approved as self-contained before `#334` lands on `main`, despite the repo not yet containing the disclosure-layer artifacts it is supposed to link from.
+
+**Most Likely Implementation Failure Mode**
+- The helper copies the pseudocode literally and treats an injected empty list as falsy, silently loading the real dataset instead.
+
+**Most Likely Test Gap**
+- Exact-match semantics remain loose enough that accidental case/whitespace normalization passes.
+
+**Future Issues Suggested**
+- A dedicated linkage module/API location if the team wants to avoid embedding disclosure-linkage contracts in `calibration_schema.py`.
+- A future uniqueness/identifier policy for sanction records if downstream consumers need something stronger than `(operator, project_name)` plus returned object payload.
+
+**Review Confidence**
+- Medium-high. Repo grounding is solid on current `main` surfaces and live issue boundaries, but the saved `#335` plan artifact itself is not present on `main`, so this review is against the provided draft text plus current repository state.
+tokens used
+86,539
+Verdict: MAJOR
+
+Retrieval adequacy: adequate
+
+**Strengths**
+- The draft stays derived-only and does not mutate `CostDataPoint` content or downstream consumers.
+- The deterministic rule is narrowly bounded to exact `(operator, project_name)`.
+- The plan tries to keep the public API contained inside `worldenergydata.cost.data_collection`.
+
+**Findings by Severity**
+
+critical
+- None.
+
+high
+- The plan is not fully grounded in current `main` repo surfaces. As of April 22, 2026, `main` has only the sanction-side files in `src/worldenergydata/cost/data_collection/`; the disclosure-layer artifacts from `#334` are not present. The draft claims to resolve “disclosure project rows” but only changes sanction-side files/tests and never states a hard dependency on `#334` landing first.
+- The approved `#334` contract says only project-scope disclosure rows participate in linkage and operator-scope rows are never linkable. This draft does not carry that invariant into its tests or acceptance criteria, so `#335` can accidentally widen or redefine sibling scope instead of hardening it.
+- The pseudocode uses `sanctioned_records or load_public_dataset()`. That breaks deterministic injection for `[]` and will silently hit the real dataset. The TDD list does not catch this.
+
+medium
+- `src/worldenergydata/cost/data_collection/calibration_schema.py` is currently a pure sanction-record schema file. Adding disclosure-linkage result types there mixes responsibilities and is a poor fit with the repo’s current module boundaries. A dedicated linkage module would be cleaner.
+- The live `#335` issue scope includes documenting how downstream consumers should use linked vs unlinked rows, but the draft has no docs target, no module docstring target, and no acceptance criterion for that guidance.
+- “Exact match” is underspecified in tests. Without explicit negative tests for case differences, whitespace differences, and project-name variants, an implementation can normalize strings and quietly steal alias/fuzzy work from later issues.
+- The acceptance criterion “Existing sanction dataset loading behavior remains unchanged” is not matched by the planned regression set. The direct regression surfaces are `tests/unit/cost/test_dataset_size.py`, `tests/unit/cost/test_cost_predictor.py`, and existing `load_public_dataset()` smoke tests, not just `test_field_integration.py` and `test_proxy_comparison.py`.
+
+low
+- The unlinked/ambiguous payload contract is still loose. The draft should explicitly require `matched_record=None` when not linked and define whether `candidates=[]` is required for unlinked.
+- `matched_count` is present, but there is no invariant stating it must align with `candidates` and `matched_record`.
+
+**Missing Tests**
+- `sanctioned_records=[]` must remain unlinked and must not fall back to `load_public_dataset()`.
+- Negative exactness cases: case-changed operator, padded/trimmed whitespace, and project-name variants remain `unlinked`.
+- Project-only boundary test: operator-scope disclosure rows are rejected or never linkable.
+- Direct regression that `load_public_dataset()` count/type/content behavior is unchanged.
+- Cross-status invariant tests for `matched_count`, `matched_record`, and `candidates`.
+
+**Scope Creep Concerns**
+- Any trimming, normalization, aliasing, or heuristic disambiguation in this helper would steal work from follow-up normalization/linkage-hardening issues.
+- Any stored reference field or disclosure-schema mutation would reopen `#334` scope.
+
+**Weakest Assumption**
+- That this child issue can be approved as self-contained before `#334` lands on `main`, despite the repo not yet containing the disclosure-layer artifacts it is supposed to link from.
+
+**Most Likely Implementation Failure Mode**
+- The helper copies the pseudocode literally and treats an injected empty list as falsy, silently loading the real dataset instead.
+
+**Most Likely Test Gap**
+- Exact-match semantics remain loose enough that accidental case/whitespace normalization passes.
+
+**Future Issues Suggested**
+- A dedicated linkage module/API location if the team wants to avoid embedding disclosure-linkage contracts in `calibration_schema.py`.
+- A future uniqueness/identifier policy for sanction records if downstream consumers need something stronger than `(operator, project_name)` plus returned object payload.
+
+**Review Confidence**
+- Medium-high. Repo grounding is solid on current `main` surfaces and live issue boundaries, but the saved `#335` plan artifact itself is not present on `main`, so this review is against the provided draft text plus current repository state.

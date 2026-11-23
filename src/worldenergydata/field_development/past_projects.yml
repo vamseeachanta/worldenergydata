@@ -1,0 +1,220 @@
+# ABOUTME: Past-projects registry — historical field developments as selectable lists.
+# ABOUTME: Issue #931 (epic #929, workstream A2) — Gulf of Mexico first, worldwide later.
+#
+# PROVENANCE DISCIPLINE — every entry, and every attribute on it, traces to a
+# data source ALREADY IN THIS REPO (listed per-entry under `sources`, paths
+# relative to the repo root). Nothing here is fabricated: where a repo source
+# does not state an attribute (operator, status, ...) it is `null`, with the
+# gap called out in `notes`. Do not fill a null from memory or the open web —
+# extend the upstream source first, then mirror it here.
+#
+# Identity: `project_id` == `canonical_id` in config/fields.yml (the canonical
+# field-identity registry, epic #754 / issue #755). This catalog adds NO new
+# identity mappings; display names and BSEE area/blocks are mirrored from
+# fields.yml and contract-tested against it (test_past_projects.py).
+#
+# Attribute sources (Gulf of Mexico slice):
+#   config/fields.yml                                  identity, play, BSEE area/blocks
+#   config/ong_field_development/fields_registry.yml   operator, water_depth_ft, status,
+#                                                      first oil, dev system, facility
+#                                                      (auto-generated from BOEM fields +
+#                                                      BSEE lease mapping + validated
+#                                                      golden_baseline_v30 economics)
+#   packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/buckskin/buckskin_config.py
+#                                                      Buckskin attributes (BSEE WAR/LAB-
+#                                                      derived field config)
+#
+# `worldwide` is deliberately EMPTY: the structure for later slices of epic
+# #929 is in place, but entries are only added when a repo data source exists
+# to derive them from.
+#
+# Consumers: digitalmodel#1507 (field-development layout epic).
+
+regions:
+  gulf_of_mexico:
+    display_name: "US Gulf of Mexico"
+    projects:
+      - project_id: stones
+        display_name: "Stones"
+        operator: "Shell"
+        water_depth_ft: 9525
+        development_system: subsea15
+        facility: "FPSO Turritella (disconnectable turret-moored)"
+        status: producing
+        first_oil_year: 2016
+        play: "Lower Tertiary Wilcox"
+        bsee_area_blocks: [WR508]
+        sources:
+          - config/fields.yml
+          - config/ong_field_development/fields_registry.yml
+        notes: null
+
+      - project_id: cascade_chinook
+        display_name: "Cascade/Chinook"
+        operator: "Petrobras America"
+        water_depth_ft: 8200
+        development_system: subsea15
+        facility: "FPSO BW Pioneer (first US-GoM FPSO)"
+        status: producing
+        first_oil_year: 2014
+        play: "Lower Tertiary (Wilcox)"
+        bsee_area_blocks: [WR205, WR206, WR469, WR470]
+        sources:
+          - config/fields.yml
+          - config/ong_field_development/fields_registry.yml
+        notes: null
+
+      - project_id: jack_st_malo
+        display_name: "Jack/St. Malo"
+        operator: "Chevron"
+        water_depth_ft: 7240
+        development_system: subsea15
+        facility: "deep-draft semisubmersible FPU + subsea tiebacks (up to ~15 mi)"
+        status: producing
+        first_oil_year: 2014
+        play: "Lower Tertiary (Wilcox)"
+        bsee_area_blocks: [WR678, WR758, WR759]
+        sources:
+          - config/fields.yml
+          - config/ong_field_development/fields_registry.yml
+        notes: null
+
+      - project_id: julia
+        display_name: "Julia"
+        operator: "ExxonMobil"
+        water_depth_ft: 7335
+        development_system: tieback15
+        facility: "subsea tieback to Chevron Jack/St. Malo semi host (~15 mi)"
+        status: producing
+        first_oil_year: 2016
+        play: "Lower Tertiary Wilcox"
+        bsee_area_blocks: [WR627]
+        sources:
+          - config/fields.yml
+          - config/ong_field_development/fields_registry.yml
+        notes: null
+
+      - project_id: big_foot
+        display_name: "Big Foot"
+        operator: "Chevron"
+        water_depth_ft: 5190
+        development_system: dry
+        facility: "extended tension-leg platform (ETLP), 15-slot"
+        status: producing
+        first_oil_year: 2018
+        play: "Wilcox / Lower Tertiary"
+        bsee_area_blocks: [WR029]
+        sources:
+          - config/fields.yml
+          - config/ong_field_development/fields_registry.yml
+        notes: null
+
+      - project_id: anchor
+        display_name: "Anchor"
+        operator: "Chevron"
+        water_depth_ft: 5080
+        development_system: subsea20
+        facility: "semisubmersible FPU, 7-well subsea — industry-first 20,000 psi (20K)"
+        status: producing
+        first_oil_year: 2024
+        play: "Lower Tertiary Wilcox"
+        bsee_area_blocks: [GC807]
+        sources:
+          - config/fields.yml
+          - config/ong_field_development/fields_registry.yml
+        notes: null
+
+      - project_id: shenandoah
+        display_name: "Shenandoah"
+        operator: null
+        water_depth_ft: 5800
+        development_system: subsea20
+        facility: null
+        status: producing
+        first_oil_year: 2025
+        play: "Wilcox (Lower Tertiary)"
+        bsee_area_blocks: [WR051]
+        sources:
+          - config/fields.yml
+          - config/ong_field_development/fields_registry.yml
+        notes: >-
+          Operator/facility not recorded in the repo attribute source
+          (fields_registry.yml public_metadata absent) — left null.
+
+      - project_id: buckskin
+        display_name: "Buckskin"
+        operator: "LLOG Exploration"
+        water_depth_ft: 6800
+        development_system: null
+        facility: "Lucius Spar (subsea tieback host)"
+        status: null
+        first_oil_year: 2019
+        play: "Lower Tertiary / Wilcox"
+        bsee_area_blocks: [KC785, KC828, KC829, KC830, KC871, KC872]
+        sources:
+          - config/fields.yml
+          - packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/buckskin/buckskin_config.py
+        notes: >-
+          Attributes from buckskin_config.py (BSEE WAR/LAB-derived): operator =
+          development operator at sanction/first oil per operator_history (LLOG
+          2018 sanction, 2019 first oil; Harbour Energy acquisition 2026);
+          host_facility = Lucius Spar. Not in fields_registry.yml, so
+          development_system (dev-system taxonomy) and current status are not
+          stated by any repo source — left null.
+
+      - project_id: kaskida
+        display_name: "Kaskida"
+        operator: null
+        water_depth_ft: 5860
+        development_system: subsea20
+        facility: null
+        status: pre-FID
+        first_oil_year: null
+        play: "Lower Tertiary (Wilcox)"
+        bsee_area_blocks: [KC291, KC292]
+        sources:
+          - config/fields.yml
+          - config/ong_field_development/fields_registry.yml
+        notes: >-
+          pre-FID in the repo attribute source: no operator/facility/first-oil
+          recorded — left null.
+
+      - project_id: tiber
+        display_name: "Tiber"
+        operator: null
+        water_depth_ft: 4130
+        development_system: subsea20
+        facility: null
+        status: pre-FID
+        first_oil_year: null
+        play: "Wilcox (Lower Tertiary / Paleogene)"
+        bsee_area_blocks: [KC102]
+        sources:
+          - config/fields.yml
+          - config/ong_field_development/fields_registry.yml
+        notes: >-
+          pre-FID in the repo attribute source: no operator/facility/first-oil
+          recorded — left null.
+
+      - project_id: north_platte
+        display_name: "North Platte (renamed Sparta)"
+        operator: null
+        water_depth_ft: 5840
+        development_system: subsea20
+        facility: null
+        status: non_producing
+        first_oil_year: null
+        play: "Wilcox (Lower Tertiary / Paleogene)"
+        bsee_area_blocks: [GB915, GB916, GB958, GB959]
+        sources:
+          - config/fields.yml
+          - config/ong_field_development/fields_registry.yml
+        notes: >-
+          non_producing in the repo attribute source: no operator/facility/
+          first-oil recorded — left null.
+
+  # Later slice of epic #929 — structure only. Populate ONLY from repo data
+  # sources (e.g. sodir/ANP/UKCS pipeline outputs), never from memory.
+  worldwide:
+    display_name: "Worldwide (structure only — later slice of epic #929)"
+    projects: []

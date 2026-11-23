@@ -1,0 +1,10 @@
+{
+  "timestamp": "2025-07-24T12:21:11.431662",
+  "dry_run": false,
+  "total_plans": 5,
+  "executed_plans": 5,
+  "failed_plans": 0,
+  "files_merged": 5,
+  "files_removed": 3,
+  "errors": []
+}

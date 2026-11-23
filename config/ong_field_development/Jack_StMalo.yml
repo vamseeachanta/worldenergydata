@@ -1,0 +1,55 @@
+# Auto-generated field input — scripts/gen_field_inputs.py
+# BOEM blocks mirror aceengineercode config/ong_field_development; enriched with BSEE leases + validated economics.
+field:
+  nickname: Jack/St. Malo
+  id: jack_st_malo
+  status: producing
+  dev_system: subsea15
+  water_depth_ft: 7240
+  first_oil: '2014-12-01'
+location:
+  boem_fields:
+  - WR758
+  - WR759
+  - WR678
+  leases:
+  - G21245
+  - G18753
+  - G18745
+  - G17015
+  - G17016
+  - G20394
+  well_type:
+  - E
+  - D
+analysis:
+  economics: true
+  discount_rate_annual: 0.1
+  by:
+  - field
+  - block
+  - well
+  vintages:
+  - v30
+  - latest
+validated_economics:
+  total_oil_bbl: 406571771
+  revenue_usd: 25648472771.59
+  capex_usd: 12850400000
+  npv10_usd: -881064818.72
+  mirr_annual: 0.08515
+  producers: 22
+  wellbores: 73
+public_metadata:
+  operator: Chevron
+  partners: 'Jack: Chevron 50/Maersk 25/Statoil 25; St Malo: Chevron 51/Petrobras 25/Statoil 21.5/ExxonMobil
+    1.25/ENI 1.25'
+  facility: deep-draft semisubmersible FPU + subsea tiebacks (up to ~15 mi)
+  play: Lower Tertiary Wilcox
+  reported_first_oil: 2014-12
+  reported_capex_usd: 7500000000.0
+  plateau_bopd: 170000
+provenance:
+  boem_source: aceengineercode/config/ong_field_development/Jack.yml + StMalo.yml
+  lease_source: config/analysis/lower_tertiary/lease_mapping_fdas.yml
+  economics_source: config/analysis/lower_tertiary/golden_baseline_v30.yml

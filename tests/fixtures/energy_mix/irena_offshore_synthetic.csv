@@ -1,0 +1,4 @@
+country,iso_code,year,technology,capacity_mw,generation_gwh,source_url,citation
+Synthetic Alpha,,2023,offshore wind,10.5,20.25,https://example.invalid/synthetic,Synthetic test data; not IRENA observations
+Synthetic Alpha,,2024,offshore wind,0,,https://example.invalid/synthetic,Synthetic test data; not IRENA observations
+Synthetic Beta,,2024,offshore wind,,1,https://example.invalid/synthetic,Synthetic test data; not IRENA observations

@@ -1,0 +1,36 @@
+module: facility_specs
+description: Generic mooring-system x facility-type feasibility matrix.
+  Asset-specific reference tables are withheld pending redistribution-terms review.
+datasets:
+- name: mooring_facility_matrix.csv
+  path: data/modules/facility_specs/curated/mooring_facility_matrix.csv
+  format: csv
+  columns:
+  - name: MOORING_SYSTEM
+    type: string
+    description: ''
+    unit: ''
+  - name: MOORING_SUBTYPE
+    type: string
+    description: ''
+    unit: ''
+  - name: MOORING_VARIANT
+    type: string
+    description: ''
+    unit: ''
+  - name: CONNECTION_MODE
+    type: string
+    description: ''
+    unit: ''
+  - name: FACILITY_TYPE
+    type: string
+    description: ''
+    unit: ''
+  - name: FEASIBILITY
+    type: string
+    description: ''
+    unit: ''
+  row_count: 21
+  size_bytes: 1370
+  last_modified: '2026-06-22T17:06:49.955460+00:00'
+binary_stores: []

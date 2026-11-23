@@ -1,0 +1,27 @@
+# World Energy Data - Code Owners
+# These owners will be requested for review when someone opens a pull request
+
+# Default owners for everything in the repository
+* @vamseeachanta
+
+# Source code
+/src/worldenergydata/ @vamseeachanta
+
+# Module-specific owners
+/src/worldenergydata/modules/bsee/ @vamseeachanta
+/src/worldenergydata/common/ @vamseeachanta
+
+# Tests
+/tests/ @vamseeachanta
+
+# Documentation
+/docs/ @vamseeachanta
+*.md @vamseeachanta
+
+# CI/CD and build configuration
+/.github/ @vamseeachanta
+pyproject.toml @vamseeachanta
+.pre-commit-config.yaml @vamseeachanta
+
+# Data files (may need domain expert review)
+/data/ @vamseeachanta

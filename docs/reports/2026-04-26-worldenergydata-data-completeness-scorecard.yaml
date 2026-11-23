@@ -1,0 +1,522 @@
+version: 1.0.0
+issue: 350
+issue_url: https://github.com/vamseeachanta/worldenergydata/issues/350
+generated_at: '2026-04-26'
+mode: audit-only
+working_tree: /mnt/local-analysis/workspace-hub/worldenergydata
+branch: main
+catalog_source: data/catalog.yaml
+catalog_generated_at: '2026-04-16T15:21:25.490431+00:00'
+totals:
+  catalog_modules: 12
+  catalog_datasets: 44
+  catalog_size_bytes: 10505037
+  data_modules_dir_total_bytes: 408070000  # ~389 MiB
+  declared_modules_in_module_index: 27
+  src_packages_in_worldenergydata: 47
+  scheduler_jobs_defined: 7
+
+records:
+  - module: bsee
+    source_authority: Bureau of Safety and Environmental Enforcement (BSEE) — data.bsee.gov
+    local_paths:
+      - data/modules/bsee/current/
+      - data/modules/bsee/.local/war/
+      - data/modules/bsee/.local/borehole/
+      - data/modules/bsee/.local/rig_fleet/
+      - data/modules/bsee/paleowells/
+    catalog_datasets: 28
+    row_count_total_records: 65045
+    size_bytes: 157257578
+    timestamps:
+      newest_file: '2026-03-15'
+      oldest_current_csv: '2025-07-31'
+      eWellWARRawData_zip: '2026-02-09'
+      catalog_last_modified: '2026-03-15T...'
+    completeness_lane: mixed-sample-and-production
+    scheduler_status: enabled-weekly-02:00 (jobs/bsee_refresh.py)
+    credentials_needed: false
+    related_issues:
+      - 334
+      - 336
+    safe_next_action: regenerate current/*.csv from .local/war/eWellWARRawData.zip; do not re-download archive
+    evidence_notes: 12 of 16 current/*.csv files are 100-row stubs from 2025-07-31; well_data.csv has 57281 rows; Paleowells.csv has 6362 rows; eWellWARRawData.zip is 128 MB
+
+  - module: sodir
+    source_authority: Sokkeldirektoratet (Norway) — factmaps.sodir.no/api/rest
+    local_paths: []
+    catalog_datasets: 0
+    row_count: 0
+    size_bytes: 0
+    timestamps:
+      data_dir_exists: false
+    completeness_lane: missing
+    scheduler_status: enabled-daily-03:00 (jobs/sodir_refresh.py) but output_dir does not exist
+    credentials_needed: false
+    related_issues:
+      - 266
+      - 273
+    safe_next_action: endpoint probe https://factmaps.sodir.no/api/rest/5000 then bounded sample (--max-records 100) if implementation supports
+    evidence_notes: source-registry entry under name "sodir_zip_data"; module name in src/ is "sodir"
+
+  - module: ukcs
+    source_authority: NSTA (UK North Sea Transition Authority) — Energy Pathfinder
+    local_paths: []
+    catalog_datasets: 0
+    row_count: 0
+    size_bytes: 0
+    completeness_lane: missing
+    scheduler_status: enabled-monthly-day-7 (jobs/ukcs_refresh.py) but output_dir does not exist
+    credentials_needed: true
+    blockers: NSTA portal often requires session cookie auth on bulk endpoints
+    related_issues:
+      - 266
+      - 273
+    safe_next_action: endpoint probe NSTA bulk URL; defer download until session-auth flow validated
+
+  - module: brazil_anp
+    source_authority: ANP (Agência Nacional do Petróleo) — Brazil
+    local_paths: []
+    catalog_datasets: 0
+    row_count: 0
+    size_bytes: 0
+    completeness_lane: missing
+    scheduler_status: enabled-monthly-day-10 (jobs/brazil_anp_refresh.py) but output_dir does not exist
+    credentials_needed: false
+    related_issues:
+      - 266
+      - 273
+    safe_next_action: endpoint probe ANP bulk endpoint; bounded sample fields-only first
+
+  - module: mexico_cnh
+    source_authority: CNH SIH — sih.hidrocarburos.gob.mx
+    local_paths: []
+    catalog_datasets: 0
+    row_count: 0
+    size_bytes: 0
+    completeness_lane: missing
+    scheduler_status: no scheduler job defined
+    credentials_needed: true
+    blockers: SIH dashboard JS-rendered; bulk export gated behind login
+    related_issues:
+      - 124
+    safe_next_action: blocked - implementation needed (headless-browser scraper or alternative datos.gob.mx feed)
+
+  - module: canada
+    source_authority: Alberta AER, BC OGC/BCER, Petrinex
+    local_paths: []
+    catalog_datasets: 0
+    row_count: 0
+    size_bytes: 0
+    completeness_lane: missing
+    scheduler_status: no scheduler job defined
+    credentials_needed: true
+    blockers: Petrinex requires registered account for bulk download
+    related_issues:
+      - 124
+    safe_next_action: blocked - credentials/API required (Petrinex registration); endpoint probe AER ST37/ST102 first
+
+  - module: texas_rrc
+    source_authority: Texas Railroad Commission — mft.rrc.texas.gov, EWA PDQ
+    local_paths: []
+    catalog_datasets: 0
+    row_count: 0
+    size_bytes: 0
+    completeness_lane: missing
+    scheduler_status: no scheduler job defined
+    credentials_needed: false
+    blockers: aggressive rate limiting on PDQ; user-agent + throttle required
+    related_issues:
+      - 124
+    safe_next_action: blocked - implementation needed (rate-limit-safe path)
+
+  - module: eia_us
+    source_authority: US EIA — api.eia.gov
+    local_paths: []
+    catalog_datasets: 0
+    row_count: 0
+    size_bytes: 0
+    completeness_lane: credential-blocked
+    scheduler_status: enabled-monthly-day-5 (jobs/eia_us_refresh.py); api_key=null in scheduler_config
+    credentials_needed: true
+    blockers: EIA_API_KEY env var unset
+    related_issues:
+      - 128
+      - 151
+    safe_next_action: blocked - credentials/API required (provision EIA_API_KEY in .env); endpoint probe https://api.eia.gov/v2/route?api_key=... after key is set
+    evidence_notes: scheduler_config output_dir is data/modules/eia (not data/modules/eia_us); src has both eia/ and eia_us/ packages
+
+  - module: lower_tertiary
+    source_authority: derived from BSEE + WTI prices
+    local_paths:
+      - reports/lower_tertiary/
+      - results/Data/
+    catalog_datasets: 0
+    row_count: derived
+    size_bytes: 0
+    completeness_lane: missing-as-data-module / present-as-analysis-output
+    scheduler_status: no refresh job (analysis only)
+    credentials_needed: false
+    related_issues: []
+    safe_next_action: no-op audit; analysis module, not a primary data source
+
+  - module: hse
+    source_authority: OSHA enforcement + EPA TRI + BSEE incidents
+    local_paths:
+      - data/modules/hse/hse_incidents.db
+    catalog_datasets: 1
+    row_count: opaque (SQLite, not enumerated by catalog)
+    size_bytes: 60817408
+    timestamps:
+      hse_incidents_db: '2026-03-15'
+    completeness_lane: complete-enough-binary / catalog-thin
+    scheduler_status: no scheduler job defined
+    credentials_needed: false
+    related_issues:
+      - 153
+    safe_next_action: bounded sample - sqlite3 hse_incidents.db ".tables" then ".schema" for row counts to enrich catalog
+
+  - module: pipeline_safety
+    source_authority: PHMSA (US DOT)
+    local_paths:
+      - data/modules/pipeline_safety/raw/
+    catalog_datasets: present
+    row_count: opaque
+    size_bytes: 26214400  # ~25 MiB
+    completeness_lane: stale / partially-scraped
+    scheduler_status: no scheduler job defined
+    credentials_needed: false
+    related_issues:
+      - 153
+    safe_next_action: endpoint probe PHMSA bulk download endpoints; reconcile with catalog dataset list
+
+  - module: marine_safety
+    source_authority: USCG MISLE, NTSB CAROL, MAIB (UK), TSB (Canada), IMCA-DP, IMO GISIS
+    local_paths:
+      - data/modules/marine_safety/database/marine_safety.db
+      - data/modules/marine_safety/marine_safety.db
+      - data/modules/marine_safety/raw/
+      - data/modules/marine_safety/input/
+    catalog_datasets: 1 (catalog block present, datasets enumerated under raw/*)
+    row_count_inputs:
+      fatality_incidents: 20
+      foundering_incidents: 15
+      hatch_incidents: 30
+    size_bytes: 113246208  # ~108 MiB
+    timestamps:
+      marine_safety_db: '2025-10-08'
+      database_marine_safety_db: '2025-10-06'
+      input_csvs: '2025-10-23'
+      raw_html_pages: '2026-03-15'
+    completeness_lane: stale (DBs >180 days old) + scrape-failed (4 zero-byte HTML, 22 IMO GISIS no-results)
+    scheduler_status: no scheduler job defined
+    credentials_needed: true
+    blockers:
+      - USCG MISLE bulk URL returns 0 bytes (portal redesign)
+      - PHMSA pages 0 bytes (renderer redirect chain)
+      - OSHA fatalities 0 bytes
+      - IMO GISIS login required (no_results pages confirm gate)
+    related_issues:
+      - 343
+      - 153
+    safe_next_action: blocked - implementation needed (separate scraper-repair tickets per failing subdomain); no overnight refresh of these endpoints
+
+  - module: safety_analysis
+    source_authority: derived (consumes hse + marine_safety + pipeline_safety)
+    local_paths: []
+    catalog_datasets: 0
+    row_count: 0
+    size_bytes: 0
+    completeness_lane: missing
+    scheduler_status: no refresh job (analysis only)
+    credentials_needed: false
+    related_issues: []
+    safe_next_action: no-op audit; no own data dir expected
+
+  - module: fdas
+    source_authority: derived from BSEE + analysis configs
+    local_paths:
+      - data/modules/fdas/enhanced/wells/well_data_enhanced.csv
+    catalog_datasets: present
+    row_count: ~unknown (4.6 MB CSV)
+    size_bytes: 4593879
+    completeness_lane: complete-enough
+    scheduler_status: no scheduler job defined (downstream of bsee)
+    credentials_needed: false
+    related_issues: []
+    safe_next_action: no-op audit; regenerate after bsee refresh
+
+  - module: metocean
+    source_authority: NDBC, NOAA CO-OPS, Open-Meteo, ERDDAP IOOS, CMEMS, MET Norway, HYCOM
+    local_paths: []
+    catalog_datasets: 0
+    row_count: 0
+    size_bytes: 0
+    completeness_lane: missing
+    scheduler_status: enabled-daily-01:00 (jobs/metocean_refresh.py) - 2 locations (GOM, NCS) - but output_dir does not exist
+    credentials_needed: partial (CMEMS Copernicus Marine credentials needed for one source)
+    related_issues:
+      - 266
+      - 273
+    safe_next_action: bounded sample (single NDBC station, last 24h) to validate scheduler path end-to-end
+
+  - module: lng_terminals
+    source_authority: FERC, GIE ALSI, GIIGNL, web aggregation
+    local_paths:
+      - data/modules/lng_terminals/curated/terminals_seed.csv
+      - data/modules/lng_terminals/cache/{ferc,gie,giignl,seed_dataset,web}_cache.json
+      - data/modules/lng_terminals/reports/lng_terminals_list.html
+    catalog_datasets: present
+    row_count_terminals_seed: small (32 KB)
+    size_bytes: 234496
+    completeness_lane: sample-only
+    scheduler_status: enabled-weekly-07:00 (jobs/lng_terminals_refresh.py)
+    credentials_needed: false
+    related_issues: []
+    safe_next_action: bounded sample - refresh GIIGNL annual index; FERC/GIE caches small enough to fully refresh
+
+  - module: vessel_fleet
+    source_authority: BSEE rig WAR data + curated industry sources
+    local_paths:
+      - data/modules/vessel_fleet/curated/drilling_rigs.csv
+      - data/modules/vessel_fleet/raw/
+    catalog_datasets: present
+    row_count_drilling_rigs: ~unknown (200 KB CSV)
+    size_bytes: 323584
+    completeness_lane: complete-enough (curated subset)
+    scheduler_status: no scheduler job defined
+    credentials_needed: false
+    related_issues: []
+    safe_next_action: no-op audit; regenerate after bsee refresh
+
+  - module: vessel_hull_models
+    source_authority: public industry data (OBJ files)
+    local_paths:
+      - data/modules/vessel_hull_models/hulls/
+      - data/modules/vessel_hull_models/csv/
+      - data/modules/vessel_hull_models/marine_components/
+    catalog_datasets: present
+    size_bytes: 39845888  # ~38 MiB
+    completeness_lane: complete-enough (static reference)
+    scheduler_status: no scheduler job defined (static)
+    credentials_needed: false
+    related_issues: []
+    safe_next_action: no-op audit
+
+  - module: well_production_dashboard
+    source_authority: derived (UI/dashboard module)
+    local_paths: []
+    catalog_datasets: 0
+    row_count: 0
+    size_bytes: 0
+    completeness_lane: missing
+    scheduler_status: no refresh job (UI module)
+    credentials_needed: false
+    related_issues: []
+    safe_next_action: no-op audit; consumes bsee + sodir downstream
+
+  - module: landman
+    source_authority: BLM (US Bureau of Land Management) + state mineral records
+    local_paths: []
+    catalog_datasets: 0
+    row_count: 0
+    size_bytes: 0
+    completeness_lane: missing
+    scheduler_status: no scheduler job defined
+    credentials_needed: false
+    related_issues:
+      - 124
+    safe_next_action: blocked - implementation needed (no scheduler job)
+
+  - module: oil_price
+    source_authority: EIA static xls dumps (F000000__3a.xls weekly, F000000__3m.xls monthly)
+    local_paths:
+      - data/modules/oil_price/F000000__3a.xls
+      - data/modules/oil_price/F000000__3m.xls
+    catalog_datasets: present
+    size_bytes: 91136
+    timestamps:
+      newest: '2025-07-31'
+    completeness_lane: stale (~270 days)
+    scheduler_status: no scheduler job defined; registry says "daily" cadence
+    credentials_needed: false
+    related_issues: []
+    safe_next_action: bounded sample - re-download both xls (small)
+
+  - module: pipeline
+    source_authority: unspecified (placeholder)
+    local_paths:
+      - data/modules/pipeline/
+    catalog_datasets: present
+    size_bytes: 8704
+    completeness_lane: sample-only
+    scheduler_status: no scheduler job defined
+    credentials_needed: false
+    related_issues: []
+    safe_next_action: no-op audit; reconcile with pipeline_safety module
+
+  - module: subsea
+    source_authority: industry curated
+    local_paths:
+      - data/modules/subsea/curated/
+    catalog_datasets: present
+    size_bytes: 13312
+    completeness_lane: sample-only
+    scheduler_status: no scheduler job defined
+    credentials_needed: false
+    related_issues: []
+    safe_next_action: no-op audit
+
+  - module: wind
+    source_authority: USGS USWTDB (United States Wind Turbine Database)
+    local_paths:
+      - data/modules/wind/uswtdbCSV.zip
+      - data/modules/wind/uswtdbGeoJSON.zip
+      - data/modules/wind/uswtdbSHP.zip
+    catalog_datasets: present
+    size_bytes: 7340032
+    timestamps:
+      newest: '2025-07-31'
+    completeness_lane: stale (~270 days)
+    scheduler_status: no scheduler job defined
+    credentials_needed: false
+    related_issues: []
+    safe_next_action: bounded sample - re-download 3 zips (~7 MB total)
+
+scheduler_summary:
+  config_path: config/scheduler/scheduler_config.yml
+  jobs_module: src/worldenergydata/scheduler/jobs/
+  defined_jobs:
+    - bsee_refresh
+    - sodir_refresh
+    - eia_us_refresh
+    - metocean_refresh
+    - brazil_anp_refresh
+    - ukcs_refresh
+    - lng_terminals_refresh
+  jobs_with_data_dir_landed:
+    - bsee_refresh
+    - lng_terminals_refresh
+  jobs_with_no_landing_dir:
+    - sodir_refresh (output_dir data/modules/sodir not present)
+    - eia_us_refresh (output_dir data/modules/eia not present)
+    - metocean_refresh (output_dir data/modules/metocean not present)
+    - brazil_anp_refresh (output_dir data/modules/brazil_anp not present)
+    - ukcs_refresh (output_dir data/modules/ukcs not present)
+  monitoring:
+    log_dir: logs/scheduler/
+    log_retention_days: 30
+    retry_max: 3
+    webhook_url: null
+    smtp: not-configured
+  modules_with_no_scheduler_job:
+    - hse
+    - pipeline_safety
+    - marine_safety
+    - safety_analysis
+    - fdas
+    - vessel_fleet
+    - vessel_hull_models
+    - well_production_dashboard
+    - landman
+    - mexico_cnh
+    - canada
+    - texas_rrc
+    - oil_price
+    - pipeline
+    - subsea
+    - wind
+
+scrape_failures:
+  module: marine_safety
+  zero_byte_html:
+    - data/modules/marine_safety/raw/osha_maritime/osha_fatalities.html
+    - data/modules/marine_safety/raw/phmsa_hazmat/phmsa_hazmat_main.html
+    - data/modules/marine_safety/raw/doe_pipelines/phmsa_pipeline_data.html
+    - data/modules/marine_safety/raw/uscg_misle/misle_data_page.html
+  imo_gisis_placeholders:
+    - 11 no_results_<year>.html (2010-2019)
+    - 11 page_structure_<year>.html (2010-2020)
+  test_stub:
+    - data/modules/marine_safety/raw/uscg/test_scrape_2024.json (2 bytes "{}")
+
+empty_top_level_dirs:
+  - data/bsee/
+  - data/marine_safety/
+  - data/processed/
+  - data/results/
+  note: likely governance stubs per docs/DATA_RESIDENCE_POLICY.md (referenced in CLAUDE.md)
+
+safe_refresh_commands:
+  no_op_audit:
+    - uv run python scripts/generate_data_catalog.py
+    - uv run python scripts/generate_data_catalog.py --report
+    - uv run python -m worldenergydata.scheduler.cli status
+    - uv run python -m worldenergydata.scheduler.staleness
+    - uv run python -m worldenergydata.scheduler.monitor
+  endpoint_probe:
+    - curl -sI https://www.data.bsee.gov/Well/Files/eWellWARRawData.zip
+    - curl -sI https://www.data.bsee.gov/Well/Files/APDRawData.zip
+    - curl -sI https://www.data.bsee.gov/Production/Files/ProductionRawData.zip
+    - curl -sI https://www.data.bsee.gov/Other/Files/IncInvRawData.zip
+    - curl -sI https://factmaps.sodir.no/api/rest/5000
+    - curl -sI https://api.tidesandcurrents.noaa.gov/api/prod/datums?station=8771013&format=json
+    - curl -sI https://www.ndbc.noaa.gov/data/realtime2/42040.txt
+    - curl -sI https://giignl.org/wp-content/uploads/...
+  bounded_sample:
+    - uv run python -m worldenergydata.metocean ndbc --station 42040 --hours 24
+    - uv run python -m worldenergydata.lng_terminals refresh --source giignl
+    - uv run python -m worldenergydata.scheduler.jobs.sodir_refresh --max-records 100
+    - uv run python -m worldenergydata.oil_price refresh
+    - uv run python -m worldenergydata.wind refresh
+  full_refresh_candidate_not_run:
+    - uv run python -m worldenergydata.scheduler.jobs.bsee_refresh --binary
+    - uv run python -m worldenergydata.scheduler.jobs.brazil_anp_refresh
+    - uv run python -m worldenergydata.scheduler.jobs.lng_terminals_refresh
+  blocked_credentials_or_api_required:
+    - uv run python -m worldenergydata.scheduler.jobs.eia_us_refresh
+    - uv run python -m worldenergydata.scheduler.jobs.ukcs_refresh
+    - uv run python -m worldenergydata.canada.refresh  # Petrinex registration
+    - uv run python -m worldenergydata.marine_safety.scrapers.imo_gisis  # IMO GISIS login
+    - uv run python -m worldenergydata.metocean cmems  # Copernicus credentials
+  blocked_implementation_needed:
+    - uv run python -m worldenergydata.mexico_cnh.refresh  # JS-rendered SIH
+    - uv run python -m worldenergydata.texas_rrc.refresh  # rate-limit-safe path
+    - uv run python -m worldenergydata.marine_safety.importers.misle_importer  # MISLE portal redesign
+    - uv run python -m worldenergydata.landman.refresh  # no scheduler job
+
+follow_up_issue_candidates:
+  - id: catalog-drift
+    summary: data/catalog.yaml missing 15 of 27 declared modules; generator does not enumerate all data/modules/*
+    related_issues: [336, 344]
+  - id: scheduler-output-dir-mismatch
+    summary: 5 scheduler jobs declare output_dir paths that do not exist on disk; eia_us output_dir name mismatch (data/modules/eia vs eia_us)
+    related_issues: [266, 273]
+  - id: bsee-current-stub-rot
+    summary: 12 bsee/current/*.csv files are 100-row 2025-07-31 stubs; downstream fdas + dashboards consume stub data silently
+    related_issues: [334]
+  - id: marine-safety-scrape-failure-backlog
+    summary: 4 zero-byte HTML files + 22 IMO GISIS placeholder pages; USCG MISLE / PHMSA / OSHA fatalities / IMO GISIS all blocked
+    related_issues: [343]
+  - id: eia-api-key-not-provisioned
+    summary: scheduler_config eia_us_refresh has api_key=null; no .env reference loaded
+    related_issues: [128, 151]
+  - id: marine-safety-db-stale
+    summary: both marine_safety SQLite DBs >180 days old; no automated refresh
+    related_issues: [153]
+  - id: source-registry-coverage-gap
+    summary: landman, mexico_cnh, canada, texas_rrc declared in registry but no scheduler job
+    related_issues: [124]
+  - id: module-index-drift
+    summary: MODULE_INDEX.md (2026-02-20) omits 15 src packages; includes modules without data dirs; needs regeneration from module-manifest.yaml
+    related_issues: [344]
+  - id: empty-placeholder-dirs
+    summary: data/bsee/, data/marine_safety/, data/processed/, data/results/ all 0 bytes; document or remove
+    related_issues: [344]
+  - id: scheduler-alerting-not-configured
+    summary: webhook_url + SMTP all null in scheduler_config; failures only land in logs/scheduler/status.json
+    related_issues: [266, 273]
+
+artifacts:
+  markdown_report: docs/reports/2026-04-26-worldenergydata-data-completeness-scorecard.md
+  yaml_scorecard: docs/reports/2026-04-26-worldenergydata-data-completeness-scorecard.yaml

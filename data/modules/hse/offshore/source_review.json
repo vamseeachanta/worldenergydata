@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "reviewer_role": "independent_agent",
+  "verdict": "partial_pass_pilot_not_confirmed",
+  "access_date": "2026-10-17",
+  "method": "Read current candidate and sample records, then personally compared selected facts with permitted official public pages retrieved sequentially by curl after robots checks. No historical receipt was treated as proof of independent review.",
+  "candidate_file_sha256": "771dd845729cbb7f21f29ddf748b9dcbc3a412cfc4aff90fff959c794532a8ad",
+  "reviewed_event_ids": [
+    "havtil-20250923-001",
+    "havtil-20251008-002",
+    "havtil-20240705-003",
+    "bsee-20140814-001",
+    "bsee-20211120-007"
+  ],
+  "records": [
+    {
+      "event_id": "havtil-20250923-001",
+      "verdict": "pass_with_documented_derivations",
+      "record_sha256": "bc3de2c5d6dabd10402712bd3c422c7cf304d9094470955ca2376480de181644",
+      "findings": "Published event and publication dates, location, classification, injury count and outcome were checked in the earlier source review; the published field is now populated in the sample.",
+      "privacy": "Read all event and source strings; no personal names or contact data found."
+    },
+    {
+      "event_id": "havtil-20251008-002",
+      "verdict": "pass_with_documented_derivations",
+      "record_sha256": "f99dfc475898dc23e7dc564087811ec092fbaf67ae0b1ae381074fa39d0c6ea8",
+      "findings": "Published event and publication dates, location, classification, injury count and outcome were checked in the earlier source review; the published field is now populated in the sample.",
+      "privacy": "Read all event and source strings; no personal names or contact data found."
+    },
+    {
+      "event_id": "havtil-20240705-003",
+      "verdict": "pass_with_documented_derivations",
+      "record_sha256": "e998f68f0a6b760d730a4a81c80ddcd4b30ba8e8bc147519d885f3e8ce60dc1f",
+      "findings": "Date 2024-07-05, publication 2025-02-05, installation, Saipem/Aker BP, riser spider/catwalk entrapment, one injury and procedural/control deficiencies confirmed.",
+      "privacy": "Read all event and source strings; no personal names or contact data found."
+    },
+    {
+      "event_id": "bsee-20140814-001",
+      "verdict": "pass_with_documented_derivations",
+      "record_sha256": "d2f74ae21ae9e39a1f0086bac34f9d1fdea5a9c0d1910087db85ea6e7ca0e116",
+      "findings": "Date 2014-08-14, report stamp 2015-03-24, installation, organisations, lease G25854/block DC 398, locking-dog and secondary-lock failures, inadequate verification procedures, equipment damage and written G-110 outcome confirmed.",
+      "privacy": "Read all event and source strings; no personal names or contact data found."
+    },
+    {
+      "event_id": "bsee-20211120-007",
+      "verdict": "pass_with_documented_derivations",
+      "record_sha256": "09ff4be0a82e151728f20cd85b885ac9ac233dc869a6ef9a7145e3b47be1b513",
+      "findings": "Date 2021-11-20, report stamp 2022-04-05, installation, organisations, lease G08852/block MC 764, King Embayment, BOP drop, BLAT engagement and procedural deficiencies, zero injuries, recovery 2021-12-18 and damage estimate confirmed.",
+      "privacy": "Read all event and source strings; no personal names or contact data found."
+    }
+  ],
+  "pilot": {
+    "event_id": "uk-20240201-riser-001",
+    "verdict": "partial_not_pass",
+    "verified_sources": [
+      "opred-record",
+      "iadc-alert"
+    ],
+    "findings": [
+      "OPRED confirms date, installation, organisations, field, block, coordinates, product ERIFON HD 603 HP, quantity 93.87 kg, completed status, no formal investigation and no ongoing release. Published observed time lacks timezone; date-only precision is appropriate.",
+      "IADC confirms alert 24-6 dated 2024-07-24, separation, five hoses retaining the riser until failure, no injuries and no damage to subsea assets. It publishes no installation or incident date; event association depends on curated seed mapping.",
+      "No personal names found in pilot event/source rows and reviewed_text inventory.",
+      "Notice 314115322 is neither confirmed nor refuted by this current retrieval. Its dates, status and summary were not independently reverified. Cached evidence must not count toward the three-source pilot gate."
+    ]
+  },
+  "access_failures": [
+    {
+      "source": "uk_hse_legacy",
+      "status": "transport_error",
+      "curl_exit": 7,
+      "action": "Stopped domain; did not request notice."
+    },
+    {
+      "source": "uk_hse_current",
+      "http_status": 403,
+      "action": "Stopped domain; no bypass."
+    },
+    {
+      "source": "uk_hse_temporary",
+      "http_status": 200,
+      "action": "Landing page reached. Spreadsheet not fetched because robots disallows /*.xls, which prefixes the linked .xlsx path too."
+    },
+    {
+      "source": "sec",
+      "http_status": 403,
+      "action": "Stopped domain; did not request filing."
+    }
+  ],
+  "licence_checks": {
+    "opred": "Official record footer states OGL v3.0.",
+    "iadc": "Official alert footer states All Rights Reserved; only metadata and original paraphrases may be admitted.",
+    "havtil": "Copyright page explicitly permits reuse with Havtil credited, except third-party images, illustrations and multimedia.",
+    "bsee": "Reports are official BSEE agency publications; no separate blanket third-party clearance established. Metadata and paraphrases only."
+  },
+  "historical_receipts": "Earlier files assert independent review but the role string and matching content hashes do not authenticate who reviewed or establish current reachability. They were not reused as current attestations.",
+  "limitations": [
+    "Existing HSE and marine-safety canonical indexes are absent; no external deduplication or bulk acceptance is certified.",
+    "Norwegian continental shelf and US area labels are geographic derivations; note derivations separately where not literal source text.",
+    "BSEE source_ref values are collector-derived date/area keys, not agency-assigned report numbers.",
+    "Five reviewed records meet 10 percent of 50 candidates only; this does not approve the pilot or bulk gate."
+  ],
+  "plan_review": {
+    "verdict": "proceed_with_blocked_acceptance_recorded",
+    "required_fixes": [
+      "Add a regression test then prevent cached/unverified sources satisfying the pilot gate.",
+      "Keep missing external deduplication and unavailable pilot evidence as explicit acceptance failures.",
+      "Keep preserved 50 rows as candidates; do not fabricate complete indexes or accepted bulk data.",
+      "Refresh review binding after any change to the reviewed records."
+    ]
+  },
+  "record_digest_format": "SHA-256 of UTF-8 bytes from json.dumps({\"event\": event_row, \"sources\": source_rows}, sort_keys=True, separators=(\",\", \":\")); standard ensure_ascii=True default; no final newline; source_rows retain packet order; rows use unnormalised committed sample JSON values including omitted fields remaining omitted.",
+  "review_scope_clarification": "For all five fully reviewed records, every event/source string was read for privacy, and source summaries, publication dates, source references, status/outcome statements and association_basis were compared to the linked official source. The association_basis says published installation, country and event date; Norwegian/US country labels and some basin labels are geographic derivations from the official source location, not always literal country strings in source prose. BSEE references are explicitly collector-derived date/area identifiers. The pilot was reviewed separately and is only partial: IADC has no installation/date and relies on the issue seed association; HSE notice claims were not independently verified.",
+  "review_binding": "The collector re-bound the record hashes after correcting titles and field values in the committed sample; independent review of the changed fields is pending. The historical candidate-file digest identifies the historical external packet only."
+}

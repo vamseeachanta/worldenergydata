@@ -1,0 +1,16 @@
+# ABOUTME: Field-level configuration for the Tiber discovery economic cases
+# ABOUTME: Maintains modular inputs for pre-FID Tiber assessments
+
+field:
+  field_id: tiber
+  display_name: "Tiber"
+  status: pre_fid
+  leases_key: tiber
+  first_oil: "2030-01-01"
+  data_through: "2024-12-31"
+  operator: "BP"
+  capex:
+    total_mm_usd: 8000
+  production_profile:
+    plateau_rate_mbopd: 80
+    gor_scf_per_bbl: 900

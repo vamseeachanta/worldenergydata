@@ -1,0 +1,145 @@
+# ABOUTME: Verified lease mappings for Lower Tertiary fields from FDAS V30
+# ABOUTME: Source: docs/modules/bsee/analysis/production/FDAS_V30/leases.xlsx
+
+fields:
+  stones:
+    field_name: "Stones"
+    leases:
+      - G17001
+    dev_system: "subsea15"
+    water_depth_ft: 9525
+  
+  cascade_chinook:
+    field_name: "Cascade/Chinook"
+    leases:
+      - G16965  # Cascade
+      - G16997  # Chinook
+    dev_system: "subsea15"
+    water_depth_ft: 8200  # Cascade
+  
+  julia:
+    field_name: "Julia"
+    leases:
+      - G20351
+    dev_system: "tieback15"
+    water_depth_ft: 7335
+  
+  anchor:
+    field_name: "Anchor"
+    leases:
+      - G31752
+      - G31751
+    dev_system: "subsea20"
+    water_depth_ft: 5080
+  
+  jack_st_malo:
+    field_name: "Jack/St. Malo"
+    leases:
+      - G21245  # Jack
+      - G18753  # St Malo
+      - G18745  # St Malo
+      - G17015  # St Malo
+      - G17016  # St Malo
+      - G20394  # St Malo
+    dev_system: "subsea15"
+    water_depth_ft: 7240  # Jack
+  
+  kaskida:
+    field_name: "Kaskida"
+    leases:
+      - g25792
+      - g19555
+    dev_system: "subsea20"
+    water_depth_ft: 5860
+    status: "pre-FID"
+  
+  tiber:
+    field_name: "Tiber"
+    leases:
+      - G25782
+    dev_system: "subsea20"
+    water_depth_ft: 4130
+    status: "pre-FID"
+  
+  shenandoah:
+    field_name: "Shenandoah"
+    leases:
+      - G31938
+      - G25232
+    dev_system: "subsea20"
+    water_depth_ft: 5800
+    status: "under_development"
+  
+  north_platte:
+    field_name: "North Platte"
+    leases:
+      - G30876
+      - G32460
+    dev_system: "subsea20"
+    water_depth_ft: 5840
+  
+  big_foot:
+    field_name: "Big Foot"
+    leases:
+      - G16942
+    dev_system: "dry"
+    water_depth_ft: 5190
+
+# Lease to field mapping (reverse lookup)
+lease_to_field:
+  G17001: "Stones"
+  G16965: "Cascade/Chinook"
+  G16997: "Cascade/Chinook"
+  G20351: "Julia"
+  G31752: "Anchor"
+  G31751: "Anchor"
+  G21245: "Jack/St. Malo"
+  G18753: "Jack/St. Malo"
+  G18745: "Jack/St. Malo"
+  G17015: "Jack/St. Malo"
+  G17016: "Jack/St. Malo"
+  G20394: "Jack/St. Malo"
+  g25792: "Kaskida"
+  g19555: "Kaskida"
+  G25782: "Tiber"
+  G31938: "Shenandoah"
+  G25232: "Shenandoah"
+  G30876: "North Platte"
+  G32460: "North Platte"
+  G16942: "Big Foot"
+
+# Production status
+producing_fields:
+  - "Stones"
+  - "Cascade/Chinook"
+  - "Julia"
+  - "Anchor"
+  - "Jack/St. Malo"
+
+pre_fid_fields:
+  - "Kaskida"
+  - "Tiber"
+
+under_development:
+  - "Shenandoah"
+
+# Notes from FDAS V30 documentation
+notes: |
+  Lease mappings verified from FDAS V30 leases.xlsx
+  
+  Key observations:
+  - Jack/St. Malo spans 6 leases (1 Jack, 5 St. Malo)
+  - Anchor has 2 leases (G31751, G31752)
+  - Cascade/Chinook combines 2 separate fields
+  - Kaskida uses lowercase 'g' prefix
+  - Shenandoah has 2 leases
+  
+  Water depths:
+  - Deepest: Stones (9,525 ft)
+  - Shallowest producing: Tiber (4,130 ft)
+  
+  Development systems:
+  - subsea15: Older HPHT (15K psi) - Jack/St. Malo, Stones, Cascade/Chinook
+  - tieback15: Tieback to existing host - Julia
+  - subsea20: Next-gen HPHT (20K psi) - Anchor, Tiber, Kaskida, Shenandoah
+  - dry: Dry tree system - Big Foot

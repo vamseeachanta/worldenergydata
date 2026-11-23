@@ -1,0 +1,21 @@
+{
+  "count": 15,
+  "symbols": [
+    "compliant_tower",
+    "dry_tree",
+    "existing_host",
+    "export",
+    "fixed_jacket",
+    "flng",
+    "fpso",
+    "manifold",
+    "nui",
+    "onshore_terminal",
+    "plet",
+    "semisub_fps",
+    "spar",
+    "subsea_tree",
+    "tlp"
+  ],
+  "note": "Original schematic artwork \u2014 generated from symbols.py."
+}

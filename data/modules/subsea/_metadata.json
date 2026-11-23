@@ -1,0 +1,54 @@
+{
+  "module": "subsea",
+  "generated_at": "2026-05-15T03:45:14.646790+00:00",
+  "last_refresh": "2026-05-15",
+  "record_count": 0,
+  "file_count": 4,
+  "total_size_bytes": 6306,
+  "total_size_human": "6.2 KB",
+  "source_url": null,
+  "format": ".csv,.json,.yaml",
+  "format_breakdown": {
+    ".csv": {
+      "count": 2,
+      "size_bytes": 3116
+    },
+    ".json": {
+      "count": 1,
+      "size_bytes": 1169
+    },
+    ".yaml": {
+      "count": 1,
+      "size_bytes": 2021
+    }
+  },
+  "has_external_data": false,
+  "external_data_root": null,
+  "files": [
+    {
+      "name": "_metadata.json",
+      "path": "_metadata.json",
+      "size_bytes": 1169,
+      "modified": "2026-05-15"
+    },
+    {
+      "name": "mooring_components.csv",
+      "path": "curated/mooring_components.csv",
+      "size_bytes": 1504,
+      "modified": "2026-03-26"
+    },
+    {
+      "name": "rigid_jumper_specs.csv",
+      "path": "curated/rigid_jumper_specs.csv",
+      "size_bytes": 1612,
+      "modified": "2026-03-26"
+    },
+    {
+      "name": "schema.yaml",
+      "path": "schema.yaml",
+      "size_bytes": 2021,
+      "modified": "2026-05-15"
+    }
+  ],
+  "files_truncated": false
+}

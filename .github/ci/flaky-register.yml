@@ -1,0 +1,18 @@
+---
+- id: tests/unit/ci/test_performance_tracker_concurrency.py::test_two_process_trackers_preserve_every_record
+  kind: same-tree-mismatch
+  first_seen: '2026-10-15'
+  last_seen: '2026-10-15'
+  evidence:
+    - https://github.com/vamseeachanta/worldenergydata/actions/runs/38726236486/job/116392677940
+    - https://github.com/vamseeachanta/worldenergydata/actions/runs/38726236486/job/116392677952
+  seen_on: main
+  main_run: 38726236486
+  main_job: 116392677940
+  unrelated_because: null
+  cause: >-
+    Concurrent database initialization raised database is locked while switching
+    the journal mode to WAL; the same commit passed in a sibling Python job,
+    and no retry has been observed.
+  fix_issue: pending
+  status: open

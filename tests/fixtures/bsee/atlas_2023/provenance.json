@@ -1,0 +1,39 @@
+{
+  "source_url": "https://www.data.bsee.gov/GGStudies/Files/2023%20Atlas%20Update.zip",
+  "archive_sha256": "3ff97c222f277c7b1939c2767e3c810b7b1661d63b10b7a9afefbc91d5a72108",
+  "selection": "One unmodified sand row per play for BOEM_FIELD MC026 and GC254, plus SN_FORMSAND 4921 (1968 discovery) and referenced lookup rows.",
+  "sand_source_csv_rows": [
+    50,
+    3430,
+    3432,
+    3437,
+    5104
+  ],
+  "fixture_files": [
+    {
+      "file": "2023chronozones.csv",
+      "sha256": "7e89d5012b59e7f9ac97a1de577bcd53dc6f0b18b22dd0b7e0cf057515c9ae9d",
+      "size_bytes": 148
+    },
+    {
+      "file": "2023plays.csv",
+      "sha256": "aca81924b54486688d63906ef010ef54a1a47b2607d076a575338c7f59e3a9b4",
+      "size_bytes": 306
+    },
+    {
+      "file": "2023sands.csv",
+      "sha256": "8dfbfbfaddb0e96dd59b48e63c628295d6cc8f7ff1cab9a6ba9035c35ba4604e",
+      "size_bytes": 2746
+    }
+  ],
+  "serialization": "MDB Tools CSV with explicit four-digit years and LF line endings; source values unchanged.",
+  "synthetic_fixtures": [
+    {
+      "file": "2023xref_oper-comp.csv",
+      "synthetic": true,
+      "purpose": "Public lease/block evidence API and export transport tests; no production crosswalk asserted.",
+      "sha256": "d4e5ee8f52f010ac1d3d2f524da2467693bb7e07a9b58d8a3064e8c8612eb9b5",
+      "size_bytes": 157
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+analysis:
+  type: production
+  fields:
+    - JULIA
+    - JACK
+    - ST_MALO
+  date_range:
+    start: "2020-01-01"
+    end: "2023-12-31"
+  api_numbers:
+    - "608124003301"
+    - "608124003302"
+    - "608124003303"
+
+output:
+  format: csv
+  directory: results
+  include_plots: true
+  file_prefix: test_output
+
+processing:
+  remove_nulls: true
+  interpolate_missing: false
+  aggregation: monthly
+
+economic:
+  oil_price_bbl: 75.0
+  gas_price_mcf: 3.5
+  discount_rate: 0.10
+  tax_rate: 0.35

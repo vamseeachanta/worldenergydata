@@ -1,0 +1,76 @@
+# COSL Drilling Europe fleet specs — wed issue #996 (epic #991).
+# 4 harsh-environment semisubmersibles (GM 4000 / GG 5000, CIMC Yantai).
+#
+# extraction: manual_transcription — cosl.no technical briefs use a same-line
+# metric table with decimal commas ('OA length 104,5 m'); 4 rigs -> manual,
+# transcribed 2026-07-13. Water depth rating is NOT stated on the briefs ->
+# omitted. Drilling depth 7,500 m -> 24,606 ft; VDL mt -> short tons.
+#
+# BLOCKED (documented on #996): COSL's ~40-unit Chinese fleet (Nanhai/HYSY
+# semis + jackups) — cosl.com.cn / coslintl.com unreachable from this network;
+# no alternate spec source found.
+retrieved: '2026-07-13'
+source_family: contractor_rig_summary_pdf
+owner: COSL (China Oilfield Services Limited)
+issue: 996
+vessels:
+  COSLPioneer:
+    pdf: cosl-pioneer.pdf
+    rig_type: semi_submersible
+    rig_design: GM 4000, harsh environment DP3/moored
+    extraction: manual_transcription
+    specs:
+      YEAR_BUILT: 2012
+      DRILLING_DEPTH_RATING_FT: 24606.0  # 7,500 m
+      LOA_M: 104.5
+      BEAM_M: 65.0
+      DRAFT_M: 17.8  # operating 17,75 m
+      DISPLACEMENT_TONNES: 36400  # drilling condition (26,700 transit)
+      VARIABLE_DECK_LOAD_ST: 4189  # 3,800 mT
+      QUARTERS_CAPACITY: 120
+      CRANE_MAIN_CAPACITY_T: 80  # 2 x NOV Molde pedestal, 80 mT @ 20 m
+  COSLPromoter:
+    pdf: cosl-promoter.pdf
+    rig_type: semi_submersible
+    rig_design: GM 4000, harsh environment DP3/moored
+    extraction: manual_transcription
+    specs:
+      YEAR_BUILT: 2012
+      DRILLING_DEPTH_RATING_FT: 24606.0
+      LOA_M: 104.5
+      BEAM_M: 65.0
+      DRAFT_M: 17.8
+      DISPLACEMENT_TONNES: 36400
+      VARIABLE_DECK_LOAD_ST: 4189
+      QUARTERS_CAPACITY: 120
+      CRANE_MAIN_CAPACITY_T: 80
+  COSLInnovator:
+    pdf: cosl-innovator.pdf
+    rig_type: semi_submersible
+    rig_design: GM 4000, harsh environment DP3/moored
+    extraction: manual_transcription
+    specs:
+      YEAR_BUILT: 2012
+      DRILLING_DEPTH_RATING_FT: 24606.0
+      LOA_M: 104.5
+      BEAM_M: 65.0
+      DRAFT_M: 17.8
+      DISPLACEMENT_TONNES: 36400
+      VARIABLE_DECK_LOAD_ST: 4189
+      QUARTERS_CAPACITY: 120
+      CRANE_MAIN_CAPACITY_T: 80
+  COSLProspector:
+    pdf: cosl-prospector.pdf
+    rig_type: semi_submersible
+    rig_design: GG 5000, harsh environment DP3/moored, winterized
+    extraction: manual_transcription
+    specs:
+      YEAR_BUILT: 2014
+      DRILLING_DEPTH_RATING_FT: 24606.0
+      LOA_M: 104.5
+      BEAM_M: 70.5
+      DRAFT_M: 17.5
+      DISPLACEMENT_TONNES: 40710  # drilling condition (30,830 transit)
+      VARIABLE_DECK_LOAD_ST: 5512  # 5,000 mT
+      QUARTERS_CAPACITY: 130
+      CRANE_MAIN_CAPACITY_T: 80  # 2 x Liebherr pedestal, 80 mT @ 28 m

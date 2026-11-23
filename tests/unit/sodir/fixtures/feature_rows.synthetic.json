@@ -1,0 +1,19 @@
+{
+  "fields": {
+    "OBJECTID": 1,
+    "fldName": "SYNTHETIC",
+    "fldNpdidField": 1
+  },
+  "production": {
+    "OBJECTID": 1,
+    "prfInformationCarrier": "SYNTHETIC",
+    "prfMonth": 1,
+    "prfPrdOilNetMillSm3": 0.125,
+    "prfYear": 2000
+  },
+  "wellbores": {
+    "OBJECTID": 1,
+    "wlbNpdidWellbore": 2,
+    "wlbWellboreName": "SYNTHETIC"
+  }
+}

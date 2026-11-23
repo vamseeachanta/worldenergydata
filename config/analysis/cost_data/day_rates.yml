@@ -1,0 +1,700 @@
+# ABOUTME: WRK-171 day-rate database for drilling, completion, and intervention.
+# ABOUTME: Proxy rates derived from public industry benchmarks; updated annually.
+# Units: USD per day
+# Confidence: medium (proxy) unless noted
+# Base: market-cycle averaged rates; use RegionalCostLoader for year interpolation.
+
+metadata:
+  version: "1.0.0"
+  created_date: "2026-02-24"
+  base_year: 2022
+  description: |
+    Proxy day rates for cost estimation by region, water depth band, and activity type.
+    Sources: Baker Hughes rig activity reports, Transocean/Valaris/Seadrill earnings,
+    BOEM GOM cost studies, SPE/OTC conference benchmarks.
+  hpht_premium_factor: 1.30   # 30% premium applied when hpht=true
+  notes: |
+    - Rates exclude mobilisation / demobilisation
+    - Year-indexed from 2020 to 2025 to capture market cycles
+    - Region "permian" and "eagle_ford" represent onshore basins
+
+# ---------------------------------------------------------------------------
+# Gulf of Mexico (offshore federal waters)
+# ---------------------------------------------------------------------------
+regions:
+  gom:
+    description: "US Gulf of Mexico offshore"
+    drilling:
+      shallow:
+        # Jack-up rig, <300 m (~1000 ft)
+        2020: 85000
+        2021: 90000
+        2022: 110000
+        2023: 130000
+        2024: 145000
+        2025: 150000
+        confidence: medium
+      mid:
+        # Semi-submersible, 300–1524 m
+        2020: 210000
+        2021: 215000
+        2022: 270000
+        2023: 320000
+        2024: 360000
+        2025: 380000
+        confidence: medium
+      deep:
+        # Drillship, 1524–3048 m
+        2020: 380000
+        2021: 390000
+        2022: 440000
+        2023: 490000
+        2024: 540000
+        2025: 560000
+        confidence: medium
+      ultra_deep:
+        # High-spec drillship, >3048 m
+        2020: 450000
+        2021: 460000
+        2022: 520000
+        2023: 580000
+        2024: 640000
+        2025: 670000
+        confidence: medium
+    completion:
+      shallow:
+        2020: 60000
+        2021: 62000
+        2022: 75000
+        2023: 88000
+        2024: 100000
+        2025: 105000
+        confidence: medium
+      mid:
+        2020: 90000
+        2021: 93000
+        2022: 115000
+        2023: 135000
+        2024: 155000
+        2025: 163000
+        confidence: medium
+      deep:
+        2020: 140000
+        2021: 145000
+        2022: 175000
+        2023: 200000
+        2024: 225000
+        2025: 240000
+        confidence: medium
+      ultra_deep:
+        2020: 170000
+        2021: 175000
+        2022: 210000
+        2023: 240000
+        2024: 270000
+        2025: 285000
+        confidence: medium
+    intervention:
+      workover_rig:
+        2020: 45000
+        2021: 47000
+        2022: 55000
+        2023: 65000
+        2024: 72000
+        2025: 76000
+        confidence: medium
+      coiled_tubing:
+        2020: 32000
+        2021: 33000
+        2022: 40000
+        2023: 47000
+        2024: 53000
+        2025: 56000
+        confidence: medium
+      wireline:
+        2020: 12000
+        2021: 12500
+        2022: 15000
+        2023: 17000
+        2024: 19000
+        2025: 20000
+        confidence: medium
+
+  # ---------------------------------------------------------------------------
+  # North Sea / Norwegian Continental Shelf
+  # ---------------------------------------------------------------------------
+  north_sea:
+    description: "North Sea (NCS + UKCS combined proxy)"
+    drilling:
+      shallow:
+        2020: 100000
+        2021: 105000
+        2022: 130000
+        2023: 155000
+        2024: 170000
+        2025: 178000
+        confidence: medium
+      mid:
+        2020: 260000
+        2021: 268000
+        2022: 330000
+        2023: 390000
+        2024: 440000
+        2025: 462000
+        confidence: medium
+      deep:
+        2020: 420000
+        2021: 430000
+        2022: 490000
+        2023: 550000
+        2024: 610000
+        2025: 640000
+        confidence: medium
+      ultra_deep:
+        2020: 490000
+        2021: 500000
+        2022: 575000
+        2023: 650000
+        2024: 720000
+        2025: 755000
+        confidence: medium
+    completion:
+      shallow:
+        2020: 72000
+        2021: 74000
+        2022: 92000
+        2023: 108000
+        2024: 122000
+        2025: 128000
+        confidence: medium
+      mid:
+        2020: 110000
+        2021: 114000
+        2022: 140000
+        2023: 165000
+        2024: 187000
+        2025: 196000
+        confidence: medium
+      deep:
+        2020: 165000
+        2021: 170000
+        2022: 205000
+        2023: 238000
+        2024: 268000
+        2025: 282000
+        confidence: medium
+      ultra_deep:
+        2020: 200000
+        2021: 206000
+        2022: 248000
+        2023: 289000
+        2024: 325000
+        2025: 342000
+        confidence: medium
+    intervention:
+      workover_rig:
+        2020: 55000
+        2021: 57000
+        2022: 68000
+        2023: 80000
+        2024: 90000
+        2025: 94000
+        confidence: medium
+      coiled_tubing:
+        2020: 40000
+        2021: 41000
+        2022: 49000
+        2023: 58000
+        2024: 65000
+        2025: 68000
+        confidence: medium
+      wireline:
+        2020: 14000
+        2021: 14500
+        2022: 17000
+        2023: 20000
+        2024: 22000
+        2025: 23000
+        confidence: medium
+
+  # ---------------------------------------------------------------------------
+  # Brazil (pre-salt / Santos / Campos basins)
+  # ---------------------------------------------------------------------------
+  brazil:
+    description: "Brazil — Petrobras pre-salt and post-salt proxy"
+    drilling:
+      shallow:
+        2020: 78000
+        2021: 82000
+        2022: 100000
+        2023: 118000
+        2024: 132000
+        2025: 139000
+        confidence: medium
+      mid:
+        2020: 195000
+        2021: 200000
+        2022: 248000
+        2023: 294000
+        2024: 332000
+        2025: 349000
+        confidence: medium
+      deep:
+        2020: 355000
+        2021: 365000
+        2022: 415000
+        2023: 464000
+        2024: 512000
+        2025: 538000
+        confidence: medium
+      ultra_deep:
+        2020: 420000
+        2021: 432000
+        2022: 492000
+        2023: 552000
+        2024: 610000
+        2025: 640000
+        confidence: medium
+    completion:
+      shallow:
+        2020: 55000
+        2021: 57000
+        2022: 70000
+        2023: 83000
+        2024: 93000
+        2025: 98000
+        confidence: medium
+      mid:
+        2020: 82000
+        2021: 85000
+        2022: 105000
+        2023: 124000
+        2024: 140000
+        2025: 147000
+        confidence: medium
+      deep:
+        2020: 128000
+        2021: 132000
+        2022: 160000
+        2023: 185000
+        2024: 208000
+        2025: 219000
+        confidence: medium
+      ultra_deep:
+        2020: 155000
+        2021: 160000
+        2022: 193000
+        2023: 224000
+        2024: 252000
+        2025: 265000
+        confidence: medium
+    intervention:
+      workover_rig:
+        2020: 38000
+        2021: 39000
+        2022: 48000
+        2023: 56000
+        2024: 63000
+        2025: 66000
+        confidence: medium
+      coiled_tubing:
+        2020: 27000
+        2021: 28000
+        2022: 34000
+        2023: 40000
+        2024: 45000
+        2025: 47000
+        confidence: medium
+      wireline:
+        2020: 10000
+        2021: 10500
+        2022: 13000
+        2023: 15000
+        2024: 17000
+        2025: 18000
+        confidence: medium
+
+  # ---------------------------------------------------------------------------
+  # West Africa
+  # ---------------------------------------------------------------------------
+  west_africa:
+    description: "West Africa — Nigeria, Angola, Equatorial Guinea proxy"
+    drilling:
+      shallow:
+        2020: 70000
+        2021: 73000
+        2022: 90000
+        2023: 106000
+        2024: 118000
+        2025: 124000
+        confidence: medium
+      mid:
+        2020: 175000
+        2021: 180000
+        2022: 224000
+        2023: 265000
+        2024: 299000
+        2025: 314000
+        confidence: medium
+      deep:
+        2020: 320000
+        2021: 330000
+        2022: 374000
+        2023: 418000
+        2024: 462000
+        2025: 485000
+        confidence: medium
+      ultra_deep:
+        2020: 380000
+        2021: 390000
+        2022: 445000
+        2023: 498000
+        2024: 550000
+        2025: 578000
+        confidence: medium
+    completion:
+      shallow:
+        2020: 50000
+        2021: 52000
+        2022: 63000
+        2023: 74000
+        2024: 83000
+        2025: 88000
+        confidence: medium
+      mid:
+        2020: 74000
+        2021: 76000
+        2022: 94000
+        2023: 111000
+        2024: 125000
+        2025: 132000
+        confidence: medium
+      deep:
+        2020: 115000
+        2021: 118000
+        2022: 143000
+        2023: 165000
+        2024: 186000
+        2025: 196000
+        confidence: medium
+      ultra_deep:
+        2020: 140000
+        2021: 144000
+        2022: 174000
+        2023: 200000
+        2024: 226000
+        2025: 237000
+        confidence: medium
+    intervention:
+      workover_rig:
+        2020: 34000
+        2021: 35000
+        2022: 43000
+        2023: 51000
+        2024: 57000
+        2025: 60000
+        confidence: medium
+      coiled_tubing:
+        2020: 25000
+        2021: 26000
+        2022: 31000
+        2023: 37000
+        2024: 41000
+        2025: 43000
+        confidence: medium
+      wireline:
+        2020: 9000
+        2021: 9500
+        2022: 11500
+        2023: 13500
+        2024: 15000
+        2025: 16000
+        confidence: medium
+
+  # ---------------------------------------------------------------------------
+  # Asia-Pacific
+  # ---------------------------------------------------------------------------
+  asia_pacific:
+    description: "Asia-Pacific — SE Asia, Australia proxy"
+    drilling:
+      shallow:
+        2020: 65000
+        2021: 67000
+        2022: 83000
+        2023: 98000
+        2024: 109000
+        2025: 115000
+        confidence: medium
+      mid:
+        2020: 160000
+        2021: 165000
+        2022: 204000
+        2023: 242000
+        2024: 273000
+        2025: 287000
+        confidence: medium
+      deep:
+        2020: 295000
+        2021: 303000
+        2022: 345000
+        2023: 386000
+        2024: 426000
+        2025: 447000
+        confidence: medium
+      ultra_deep:
+        2020: 350000
+        2021: 360000
+        2022: 410000
+        2023: 459000
+        2024: 507000
+        2025: 532000
+        confidence: medium
+    completion:
+      shallow:
+        2020: 46000
+        2021: 48000
+        2022: 58000
+        2023: 68000
+        2024: 77000
+        2025: 81000
+        confidence: medium
+      mid:
+        2020: 68000
+        2021: 70000
+        2022: 87000
+        2023: 103000
+        2024: 116000
+        2025: 122000
+        confidence: medium
+      deep:
+        2020: 106000
+        2021: 109000
+        2022: 132000
+        2023: 153000
+        2024: 172000
+        2025: 181000
+        confidence: medium
+      ultra_deep:
+        2020: 128000
+        2021: 132000
+        2022: 160000
+        2023: 185000
+        2024: 208000
+        2025: 219000
+        confidence: medium
+    intervention:
+      workover_rig:
+        2020: 31000
+        2021: 32000
+        2022: 39000
+        2023: 46000
+        2024: 52000
+        2025: 55000
+        confidence: medium
+      coiled_tubing:
+        2020: 23000
+        2021: 24000
+        2022: 29000
+        2023: 34000
+        2024: 38000
+        2025: 40000
+        confidence: medium
+      wireline:
+        2020: 8500
+        2021: 8800
+        2022: 10600
+        2023: 12500
+        2024: 14000
+        2025: 14700
+        confidence: medium
+
+  # ---------------------------------------------------------------------------
+  # Onshore basins
+  # ---------------------------------------------------------------------------
+  permian:
+    description: "Permian Basin — onshore Texas/New Mexico"
+    drilling:
+      shallow:
+        2020: 16000
+        2021: 17000
+        2022: 22000
+        2023: 26000
+        2024: 24000
+        2025: 23000
+        confidence: medium
+      mid:
+        2020: 20000
+        2021: 21000
+        2022: 27000
+        2023: 32000
+        2024: 30000
+        2025: 29000
+        confidence: medium
+      deep:
+        2020: 24000
+        2021: 25000
+        2022: 32000
+        2023: 38000
+        2024: 36000
+        2025: 35000
+        confidence: medium
+      ultra_deep:
+        2020: 28000
+        2021: 29000
+        2022: 37000
+        2023: 44000
+        2024: 42000
+        2025: 40000
+        confidence: low
+    completion:
+      shallow:
+        2020: 45000
+        2021: 48000
+        2022: 60000
+        2023: 72000
+        2024: 68000
+        2025: 65000
+        confidence: medium
+      mid:
+        2020: 55000
+        2021: 58000
+        2022: 73000
+        2023: 87000
+        2024: 82000
+        2025: 79000
+        confidence: medium
+      deep:
+        2020: 68000
+        2021: 71000
+        2022: 89000
+        2023: 106000
+        2024: 100000
+        2025: 96000
+        confidence: medium
+      ultra_deep:
+        2020: 80000
+        2021: 83000
+        2022: 104000
+        2023: 124000
+        2024: 117000
+        2025: 112000
+        confidence: low
+    intervention:
+      workover_rig:
+        2020: 22000
+        2021: 23000
+        2022: 29000
+        2023: 34000
+        2024: 32000
+        2025: 31000
+        confidence: medium
+      coiled_tubing:
+        2020: 18000
+        2021: 19000
+        2022: 24000
+        2023: 28000
+        2024: 27000
+        2025: 26000
+        confidence: medium
+      wireline:
+        2020: 7000
+        2021: 7200
+        2022: 9000
+        2023: 10500
+        2024: 10000
+        2025: 9700
+        confidence: medium
+
+  eagle_ford:
+    description: "Eagle Ford Shale — onshore South Texas"
+    drilling:
+      shallow:
+        2020: 17000
+        2021: 18000
+        2022: 23000
+        2023: 27000
+        2024: 26000
+        2025: 25000
+        confidence: medium
+      mid:
+        2020: 21000
+        2021: 22000
+        2022: 28000
+        2023: 33000
+        2024: 32000
+        2025: 31000
+        confidence: medium
+      deep:
+        2020: 25000
+        2021: 26000
+        2022: 33000
+        2023: 39000
+        2024: 38000
+        2025: 37000
+        confidence: medium
+      ultra_deep:
+        2020: 29000
+        2021: 30000
+        2022: 38000
+        2023: 45000
+        2024: 44000
+        2025: 43000
+        confidence: low
+    completion:
+      shallow:
+        2020: 48000
+        2021: 50000
+        2022: 63000
+        2023: 75000
+        2024: 71000
+        2025: 68000
+        confidence: medium
+      mid:
+        2020: 58000
+        2021: 61000
+        2022: 77000
+        2023: 91000
+        2024: 86000
+        2025: 83000
+        confidence: medium
+      deep:
+        2020: 72000
+        2021: 75000
+        2022: 94000
+        2023: 112000
+        2024: 106000
+        2025: 102000
+        confidence: medium
+      ultra_deep:
+        2020: 84000
+        2021: 87000
+        2022: 110000
+        2023: 130000
+        2024: 123000
+        2025: 118000
+        confidence: low
+    intervention:
+      workover_rig:
+        2020: 23000
+        2021: 24000
+        2022: 30000
+        2023: 36000
+        2024: 34000
+        2025: 33000
+        confidence: medium
+      coiled_tubing:
+        2020: 19000
+        2021: 20000
+        2022: 25000
+        2023: 30000
+        2024: 28000
+        2025: 27000
+        confidence: medium
+      wireline:
+        2020: 7500
+        2021: 7700
+        2022: 9500
+        2023: 11200
+        2024: 10600
+        2025: 10200
+        confidence: medium

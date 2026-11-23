@@ -1,0 +1,3714 @@
+{
+  "meta": {
+    "generated_by": "scripts/lower_tertiary/build_lifecycle_posters.py",
+    "issue": 946
+  },
+  "fields": {
+    "big_foot": {
+      "id": "big_foot",
+      "wellsHref": "wells/",
+      "wellsCount": 8,
+      "assetsHref": null,
+      "economics_href": "../economics-big_foot.html",
+      "benchmark_href": "../benchmark.html",
+      "name": "Big Foot",
+      "operator": "Chevron",
+      "region": "Walker Ridge 29 (G16942) · US Gulf of Mexico",
+      "host": "Extended Tension-Leg Platform (eTLP)",
+      "statusLabel": "Producing",
+      "statusHue": "var(--good)",
+      "treeType": "dry",
+      "treeLabel": "Dry tree · eTLP",
+      "currentPhase": "operate",
+      "metrics": [
+        {
+          "k": "Water depth",
+          "v": "5,200",
+          "u": "ft"
+        },
+        {
+          "k": "Gross CAPEX",
+          "v": "$5.2",
+          "u": "B"
+        },
+        {
+          "k": "Plateau rate",
+          "v": "75",
+          "u": "mbopd"
+        },
+        {
+          "k": "GOR",
+          "v": "1,100",
+          "u": "scf/bbl"
+        },
+        {
+          "k": "OPEX",
+          "v": "$15",
+          "u": "/boe"
+        },
+        {
+          "k": "Operator WI",
+          "v": "60",
+          "u": "%"
+        }
+      ],
+      "axis": {
+        "start": 2000,
+        "end": 2040,
+        "ticks": [
+          2000,
+          2005,
+          2010,
+          2015,
+          2020,
+          2025,
+          2030,
+          2035,
+          2040
+        ]
+      },
+      "gates": [
+        {
+          "year": 2006.0,
+          "phase": "explore",
+          "lab": "Discovery",
+          "dt": "2006",
+          "kind": "primary"
+        },
+        {
+          "year": 2010.0,
+          "phase": "define",
+          "lab": "FID / Sanction",
+          "dt": "2010",
+          "kind": "primary"
+        },
+        {
+          "year": 2015.0,
+          "phase": "execute",
+          "lab": "Tendon incident",
+          "dt": "2015",
+          "kind": "sec"
+        },
+        {
+          "year": 2018.875,
+          "phase": "operate",
+          "lab": "First oil",
+          "dt": "Nov 2018",
+          "kind": "now"
+        },
+        {
+          "year": 2026.5,
+          "phase": "operate",
+          "lab": "Today",
+          "dt": "2026",
+          "kind": "nowmark"
+        }
+      ],
+      "spans": [
+        {
+          "from": 2006.0,
+          "to": 2010.0,
+          "txt": "Discovery→FID ~4 yr"
+        },
+        {
+          "from": 2010.0,
+          "to": 2018.875,
+          "txt": "FID→first oil ~9 yr (incl. delay)"
+        },
+        {
+          "from": 2018.875,
+          "to": 2038.0,
+          "txt": "Operating life ~19 yr proj."
+        }
+      ],
+      "workingInterest": [
+        {
+          "name": "Chevron",
+          "wi": 60,
+          "lead": true
+        },
+        {
+          "name": "Equinor",
+          "wi": 27.5
+        },
+        {
+          "name": "Marubeni Oil & Gas",
+          "wi": 12.5
+        }
+      ],
+      "hostFacts": [
+        [
+          "Host type",
+          "Extended Tension-Leg Platform (eTLP)"
+        ],
+        [
+          "Water depth",
+          "5,200 ft (1,585 m)"
+        ],
+        [
+          "Play",
+          "Wilcox / Lower Tertiary"
+        ],
+        [
+          "First oil",
+          "Nov 2018"
+        ],
+        [
+          "Data through",
+          "Dec 2024"
+        ]
+      ],
+      "reservoir": {
+        "formation": "Wilcox / Paleogene (Lower Tertiary)",
+        "hpht_class": null,
+        "pressure_psi": null,
+        "pressure_qual": "",
+        "equip_rating_psi": null,
+        "temp_f": null,
+        "tvd_ft": null,
+        "fluid": "black oil",
+        "api": null,
+        "source_note": "Wilcox oil field (Offshore Technology; Chevron). Field-specific reservoir pressure/temperature not publicly disclosed — shown as — rather than borrowed from neighbouring fields."
+      },
+      "risk": {
+        "hpht": null,
+        "decommissioning_status": "withheld_pending_redistribution_review",
+        "decommissioning": null
+      },
+      "landman": {
+        "leases": [
+          {
+            "lease_num": "G16942",
+            "lease_name": "Big Foot",
+            "water_depth_ft": 5190,
+            "dev_system": "dry"
+          }
+        ],
+        "n_leases": 1,
+        "blocks": [
+          "WR029"
+        ],
+        "block_note": "Walker Ridge 29",
+        "operator": "Chevron",
+        "working_interest": [
+          {
+            "name": "Chevron",
+            "wi": 60,
+            "operator": true
+          },
+          {
+            "name": "Equinor",
+            "wi": 27.5,
+            "operator": false
+          },
+          {
+            "name": "Marubeni Oil & Gas",
+            "wi": 12.5,
+            "operator": false
+          }
+        ],
+        "pending": [
+          "status",
+          "effective_date",
+          "expiration_date",
+          "lease_type",
+          "per_lease_block",
+          "per_lease_working_interest",
+          "operator_of_record_history"
+        ],
+        "ingest_issue": 959
+      },
+      "concept": {
+        "type": "eTLP",
+        "host": "Extended Tension-Leg Platform (eTLP)",
+        "play": "Wilcox / Lower Tertiary",
+        "milestone": {
+          "label": "First oil",
+          "value": "Nov 2018"
+        },
+        "fdp_href": "../field-development/portfolio/big-foot.html",
+        "fdp_issue": 962
+      },
+      "architecture": {
+        "svg": null,
+        "pending_issue": 962
+      },
+      "provenance": "Data: big_foot.yml + Chevron public disclosures + BSEE (dates to be reconciled in #375)",
+      "norms": [
+        {
+          "delta_play_pct": -22.3,
+          "href": "norms/drill.html#big_foot",
+          "n": 24,
+          "play_n": 160,
+          "stage": "drill",
+          "state": "ok",
+          "unit": "days",
+          "value": 36.5
+        },
+        {
+          "delta_play_pct": 12.1,
+          "href": "norms/complete.html#big_foot",
+          "n": 25,
+          "play_n": 161,
+          "stage": "complete",
+          "state": "ok",
+          "unit": "days",
+          "value": 37.0
+        },
+        {
+          "delta_play_pct": -1.8,
+          "href": "norms/produce.html#big_foot",
+          "n": 8,
+          "play_n": 48,
+          "stage": "produce",
+          "state": "ok",
+          "unit": "%",
+          "value": 93.05
+        },
+        {
+          "delta_play_pct": 257.1,
+          "href": "norms/workover.html#big_foot",
+          "n": 8,
+          "play_n": 48,
+          "stage": "workover",
+          "state": "ok",
+          "unit": "per well",
+          "value": 0.75
+        },
+        {
+          "href": "norms/abandon.html#big_foot",
+          "stage": "abandon",
+          "state": "unavailable"
+        }
+      ],
+      "performance": {
+        "avg_decline_pct_yr": 17.2,
+        "avg_uptime_pct": 88.2,
+        "breakeven_wti": null,
+        "cum_oil_mmbbl": 78.7,
+        "display": "Big Foot",
+        "economics_basis": "life_to_date_pretax_npv_at_10pct",
+        "economics_status": "early_life",
+        "eur_confidence": "high",
+        "eur_mmbbl": 200,
+        "eur_source": "200+ MMboe recoverable (Chevron factsheet)",
+        "interventions": 6,
+        "npv_mm": null,
+        "sens_mm_per_dollar": null,
+        "wells": 8
+      }
+    },
+    "anchor": {
+      "id": "anchor",
+      "wellsHref": "wells/",
+      "wellsCount": 3,
+      "assetsHref": null,
+      "economics_href": "../economics-anchor.html",
+      "benchmark_href": "../benchmark.html",
+      "name": "Anchor",
+      "operator": "Chevron",
+      "region": "Green Canyon 807 · US Gulf of Mexico",
+      "host": "Semisubmersible FPU",
+      "statusLabel": "Producing",
+      "statusHue": "var(--good)",
+      "treeType": "wet",
+      "treeLabel": "Wet tree · Semisub FPU",
+      "currentPhase": "operate",
+      "metrics": [
+        {
+          "k": "Water depth",
+          "v": "5,180",
+          "u": "ft"
+        },
+        {
+          "k": "Gross CAPEX",
+          "v": "$5.6",
+          "u": "B"
+        },
+        {
+          "k": "Plateau rate",
+          "v": "75",
+          "u": "mbopd"
+        },
+        {
+          "k": "GOR",
+          "v": "1,100",
+          "u": "scf/bbl"
+        },
+        {
+          "k": "OPEX",
+          "v": "$15",
+          "u": "/boe"
+        },
+        {
+          "k": "Operator WI",
+          "v": "62.5",
+          "u": "%"
+        }
+      ],
+      "axis": {
+        "start": 2010,
+        "end": 2045,
+        "ticks": [
+          2010,
+          2015,
+          2020,
+          2025,
+          2030,
+          2035,
+          2040,
+          2045
+        ]
+      },
+      "gates": [
+        {
+          "year": 2014.0,
+          "phase": "explore",
+          "lab": "Discovery",
+          "dt": "2014",
+          "kind": "primary"
+        },
+        {
+          "year": 2019.0,
+          "phase": "define",
+          "lab": "FID / Sanction",
+          "dt": "2019",
+          "kind": "primary"
+        },
+        {
+          "year": 2024.625,
+          "phase": "operate",
+          "lab": "First oil",
+          "dt": "Aug 2024",
+          "kind": "now"
+        },
+        {
+          "year": 2026.5,
+          "phase": "operate",
+          "lab": "Today",
+          "dt": "2026",
+          "kind": "nowmark"
+        }
+      ],
+      "spans": [
+        {
+          "from": 2014.0,
+          "to": 2019.0,
+          "txt": "Discovery→FID ~5 yr"
+        },
+        {
+          "from": 2019.0,
+          "to": 2024.625,
+          "txt": "FID→first oil ~6 yr"
+        }
+      ],
+      "workingInterest": [
+        {
+          "name": "Chevron",
+          "wi": 62.5,
+          "lead": true
+        },
+        {
+          "name": "Equinor",
+          "wi": 25
+        },
+        {
+          "name": "TotalEnergies",
+          "wi": 12.5
+        }
+      ],
+      "hostFacts": [
+        [
+          "Host type",
+          "Semisubmersible FPU"
+        ],
+        [
+          "Water depth",
+          "5,180 ft (1,579 m)"
+        ],
+        [
+          "Play",
+          "Lower Tertiary Wilcox"
+        ],
+        [
+          "First oil",
+          "Aug 2024"
+        ],
+        [
+          "Data through",
+          "Dec 2024"
+        ]
+      ],
+      "reservoir": {
+        "formation": "Paleocene Wilcox (Wilcox 1–4)",
+        "hpht_class": "ultra-HPHT",
+        "pressure_psi": 25000,
+        "pressure_qual": "",
+        "equip_rating_psi": 20000,
+        "temp_f": 275,
+        "tvd_ft": 30000,
+        "fluid": "black oil",
+        "api": null,
+        "source_note": "OGJ 2024: initial reservoir (BHP) 23,000–27,000 psi — higher than the 20,000-psi equipment rating; 275F max flowing temp; pay 30,000–34,000 ft TVD (Wilcox 1–4)."
+      },
+      "risk": {
+        "hpht": {
+          "class": "ultra-HPHT",
+          "pressure_psi": 25000,
+          "equip_rating_psi": 20000,
+          "exceedance_pct": 25,
+          "severity": "over-rating",
+          "basis": "reservoir",
+          "label": "ultra-HPHT · 25k vs 20k psi (+25%)"
+        },
+        "decommissioning_status": "withheld_pending_redistribution_review",
+        "decommissioning": null
+      },
+      "landman": {
+        "leases": [
+          {
+            "lease_num": "G31751",
+            "lease_name": "Anchor",
+            "water_depth_ft": 5080,
+            "dev_system": "subsea20"
+          },
+          {
+            "lease_num": "G31752",
+            "lease_name": "Anchor",
+            "water_depth_ft": 5080,
+            "dev_system": "subsea20"
+          }
+        ],
+        "n_leases": 2,
+        "blocks": [
+          "GC807"
+        ],
+        "block_note": "Green Canyon 807",
+        "operator": "Chevron",
+        "working_interest": [
+          {
+            "name": "Chevron",
+            "wi": 62.5,
+            "operator": true
+          },
+          {
+            "name": "Equinor",
+            "wi": 25,
+            "operator": false
+          },
+          {
+            "name": "TotalEnergies",
+            "wi": 12.5,
+            "operator": false
+          }
+        ],
+        "pending": [
+          "status",
+          "effective_date",
+          "expiration_date",
+          "lease_type",
+          "per_lease_block",
+          "per_lease_working_interest",
+          "operator_of_record_history"
+        ],
+        "ingest_issue": 959
+      },
+      "concept": {
+        "type": "Semisub FPU",
+        "host": "Semisubmersible FPU",
+        "play": "Lower Tertiary Wilcox",
+        "milestone": {
+          "label": "First oil",
+          "value": "Aug 2024"
+        },
+        "fdp_href": "../field-development/portfolio/anchor.html",
+        "fdp_issue": 962
+      },
+      "architecture": {
+        "svg": null,
+        "pending_issue": 962
+      },
+      "provenance": "Primary facts (operator, working interests, capex $5.6B, plateau 75 mbopd, GOR 1100 scf/bbl, opex $15/boe, first oil 2024-08, data through 2024-12-31) from in-repo anchor.yml. Life-cycle dates corroborated by public sources: discovery well Anchor-2 drilled 2014 (Green Canyon 807, ~5,180 ft), FID December 2019 (~$5.7B sanction), first oil August 2024 — world's first 20,000-psi HPHT deepwater development on a semisubmersible FPU, Lower Tertiary Wilcox play. Working interests (Chevron 62.5% / Equinor 25% / TotalEnergies 12.5%) per YAML; note older Offshore Technology page still lists pre-Equinor split (Chevron 62.86% / Total 37.14%). water depth ~5,180 (block-level estimate). projected end-of-production and lease year not confidently sourced; no notable incident.",
+      "norms": [
+        {
+          "delta_play_pct": 10.9,
+          "href": "norms/drill.html#anchor",
+          "n": 13,
+          "play_n": 171,
+          "stage": "drill",
+          "state": "ok",
+          "unit": "days",
+          "value": 51.0
+        },
+        {
+          "delta_play_pct": 16.1,
+          "href": "norms/complete.html#anchor",
+          "n": 13,
+          "play_n": 173,
+          "stage": "complete",
+          "state": "ok",
+          "unit": "days",
+          "value": 36.0
+        },
+        {
+          "delta_play_pct": -1.4,
+          "href": "norms/produce.html#anchor",
+          "n": 3,
+          "play_n": 53,
+          "stage": "produce",
+          "state": "low_n",
+          "unit": "%",
+          "value": 93.3
+        },
+        {
+          "delta_play_pct": -100.0,
+          "href": "norms/workover.html#anchor",
+          "n": 3,
+          "play_n": 53,
+          "stage": "workover",
+          "state": "low_n",
+          "unit": "per well",
+          "value": 0.0
+        },
+        {
+          "href": "norms/abandon.html#anchor",
+          "stage": "abandon",
+          "state": "unavailable"
+        }
+      ],
+      "performance": {
+        "avg_decline_pct_yr": 0.0,
+        "avg_uptime_pct": 88.1,
+        "breakeven_wti": null,
+        "cum_oil_mmbbl": 18.6,
+        "display": "Anchor",
+        "economics_basis": "life_to_date_pretax_npv_at_10pct",
+        "economics_status": "early_life",
+        "eur_confidence": "high",
+        "eur_mmbbl": 440,
+        "eur_source": "440+ MMboe recoverable (Chevron sanction press release, 2019)",
+        "interventions": 0,
+        "npv_mm": null,
+        "sens_mm_per_dollar": null,
+        "wells": 3
+      }
+    },
+    "cascade_chinook": {
+      "id": "cascade_chinook",
+      "wellsHref": "wells/",
+      "wellsCount": 3,
+      "assetsHref": null,
+      "economics_href": "../economics-cascade_chinook.html",
+      "benchmark_href": "../benchmark.html",
+      "name": "Cascade/Chinook",
+      "operator": "MP Gulf of Mexico LLC (Murphy EXPRO)",
+      "region": "Walker Ridge 206/250 (Cascade), 425/469 (Chinook) · US Gulf of Mexico",
+      "host": "FPSO (BW Pioneer) with subsea tieback",
+      "statusLabel": "Producing",
+      "statusHue": "var(--good)",
+      "treeType": "wet",
+      "treeLabel": "Wet tree · FPSO",
+      "currentPhase": "operate",
+      "metrics": [
+        {
+          "k": "Water depth",
+          "v": "8,200",
+          "u": "ft"
+        },
+        {
+          "k": "Gross CAPEX",
+          "v": "$2.9",
+          "u": "B"
+        },
+        {
+          "k": "Plateau rate",
+          "v": "75",
+          "u": "mbopd"
+        },
+        {
+          "k": "GOR",
+          "v": "1,400",
+          "u": "scf/bbl"
+        },
+        {
+          "k": "OPEX",
+          "v": "$18",
+          "u": "/boe"
+        }
+      ],
+      "axis": {
+        "start": 2000,
+        "end": 2035,
+        "ticks": [
+          2000,
+          2005,
+          2010,
+          2015,
+          2020,
+          2025,
+          2030,
+          2035
+        ]
+      },
+      "gates": [
+        {
+          "year": 2002.0,
+          "phase": "explore",
+          "lab": "Discovery",
+          "dt": "2002",
+          "kind": "primary"
+        },
+        {
+          "year": 2012.125,
+          "phase": "operate",
+          "lab": "First oil",
+          "dt": "Feb 2012",
+          "kind": "now"
+        },
+        {
+          "year": 2026.5,
+          "phase": "operate",
+          "lab": "Today",
+          "dt": "2026",
+          "kind": "nowmark"
+        }
+      ],
+      "spans": [],
+      "workingInterest": [],
+      "hostFacts": [
+        [
+          "Working interests",
+          "NOT_EVALUATED — field allocation not verified"
+        ],
+        [
+          "Host type",
+          "FPSO (BW Pioneer) with subsea tieback"
+        ],
+        [
+          "Water depth",
+          "8,200 ft (2,499 m)"
+        ],
+        [
+          "Play",
+          "Lower Tertiary (Wilcox)"
+        ],
+        [
+          "First oil",
+          "Feb 2012"
+        ],
+        [
+          "Data through",
+          "Dec 2024"
+        ]
+      ],
+      "reservoir": {
+        "formation": "Wilcox 1 (Eocene) / Wilcox 2 (Paleocene)",
+        "hpht_class": "HPHT",
+        "pressure_psi": 19500,
+        "pressure_qual": "~",
+        "equip_rating_psi": null,
+        "temp_f": 260,
+        "tvd_ft": 25600,
+        "fluid": "black oil (low GOR; CO₂ <1.5%, no H₂S)",
+        "api": null,
+        "source_note": "OTC-24162/24163 + JPT: initial reservoir pressure ~19,500 psi, BHT ~256–260F, reservoir mid-point ~25,600 ft TVD."
+      },
+      "risk": {
+        "hpht": {
+          "class": "HPHT",
+          "pressure_psi": 19500,
+          "equip_rating_psi": null,
+          "exceedance_pct": null,
+          "severity": "class-only",
+          "basis": "reservoir",
+          "label": "HPHT · 19.5k psi"
+        },
+        "decommissioning_status": "withheld_pending_redistribution_review",
+        "decommissioning": null
+      },
+      "landman": {
+        "leases": [
+          {
+            "lease_num": "G16965",
+            "lease_name": "Cascade",
+            "water_depth_ft": 8200,
+            "dev_system": "subsea15"
+          },
+          {
+            "lease_num": "G16997",
+            "lease_name": "Chinook",
+            "water_depth_ft": 8900,
+            "dev_system": "subsea15"
+          }
+        ],
+        "n_leases": 2,
+        "blocks": [
+          "WR205",
+          "WR206",
+          "WR469",
+          "WR470"
+        ],
+        "block_note": "Walker Ridge 206/250 (Cascade), 425/469 (Chinook)",
+        "operator": "MP Gulf of Mexico LLC (Murphy EXPRO)",
+        "working_interest": [],
+        "pending": [
+          "status",
+          "effective_date",
+          "expiration_date",
+          "lease_type",
+          "per_lease_block",
+          "per_lease_working_interest",
+          "operator_of_record_history"
+        ],
+        "ingest_issue": 959
+      },
+      "concept": {
+        "type": "FPSO",
+        "host": "FPSO (BW Pioneer) with subsea tieback",
+        "play": "Lower Tertiary (Wilcox)",
+        "milestone": {
+          "label": "First oil",
+          "value": "Feb 2012"
+        },
+        "fdp_href": "../field-development/portfolio/chinook.html",
+        "fdp_issue": 962
+      },
+      "architecture": {
+        "svg": null,
+        "pending_issue": 962
+      },
+      "provenance": "Life-cycle dates from public sources (Offshore Technology, Offshore Magazine, OGJ, Heerema, Rigzone); economics (capex $2.9B, plateau 75 mbopd, GOR 1400 scf/bbl, opex $18/boe) and data through from in-repo YAML. First oil and operator match the reconciled field YAML (issue 747). Working interests NOT_EVALUATED: MP Gulf of Mexico entity ownership is not field working interest. The YAML partners_by_field references P4 (annual report, FY2018) describe separate field interests; a combined-field allocation is not established. LOW CONFIDENCE: FID year (sanction ~mid-2000s, no firm public citation — not available), lease year and projected end-of-production (not available); water depth 8,200 ft is the Cascade value (Chinook ~8,600 ft); capex is a YAML assumption not independently verified.",
+      "norms": [
+        {
+          "delta_play_pct": 47.8,
+          "href": "norms/drill.html#cascade_chinook",
+          "n": 14,
+          "play_n": 170,
+          "stage": "drill",
+          "state": "ok",
+          "unit": "days",
+          "value": 68.0
+        },
+        {
+          "delta_play_pct": 31.8,
+          "href": "norms/complete.html#cascade_chinook",
+          "n": 14,
+          "play_n": 172,
+          "stage": "complete",
+          "state": "ok",
+          "unit": "days",
+          "value": 43.5
+        },
+        {
+          "delta_play_pct": 0.4,
+          "href": "norms/produce.html#cascade_chinook",
+          "n": 3,
+          "play_n": 53,
+          "stage": "produce",
+          "state": "low_n",
+          "unit": "%",
+          "value": 94.7
+        },
+        {
+          "delta_play_pct": -100.0,
+          "href": "norms/workover.html#cascade_chinook",
+          "n": 3,
+          "play_n": 53,
+          "stage": "workover",
+          "state": "low_n",
+          "unit": "per well",
+          "value": 0.0
+        },
+        {
+          "href": "norms/abandon.html#cascade_chinook",
+          "stage": "abandon",
+          "state": "unavailable"
+        }
+      ],
+      "performance": {
+        "avg_decline_pct_yr": 35.9,
+        "avg_uptime_pct": 94.6,
+        "breakeven_wti": null,
+        "cum_oil_mmbbl": 39.7,
+        "display": "Cascade Chinook",
+        "economics_basis": "life_to_date_pretax_npv_at_10pct",
+        "economics_status": "early_life",
+        "eur_confidence": "none",
+        "eur_mmbbl": null,
+        "eur_source": "no field-specific published recoverable EUR; only play-wide figures",
+        "interventions": 0,
+        "npv_mm": null,
+        "sens_mm_per_dollar": null,
+        "wells": 3
+      }
+    },
+    "jack_st_malo": {
+      "id": "jack_st_malo",
+      "wellsHref": "wells/",
+      "wellsCount": 24,
+      "assetsHref": null,
+      "economics_href": "../economics-jack_st_malo.html",
+      "benchmark_href": "../benchmark.html",
+      "name": "Jack/St. Malo",
+      "operator": "Chevron",
+      "region": "Walker Ridge 678 (St. Malo) / 758-759 (Jack) · US Gulf of Mexico",
+      "host": "Semisubmersible FPU",
+      "statusLabel": "Producing",
+      "statusHue": "var(--good)",
+      "treeType": "wet",
+      "treeLabel": "Wet tree · Semisub FPU",
+      "currentPhase": "operate",
+      "metrics": [
+        {
+          "k": "Water depth",
+          "v": "7,000",
+          "u": "ft"
+        },
+        {
+          "k": "Gross CAPEX",
+          "v": "$7.5",
+          "u": "B"
+        },
+        {
+          "k": "Plateau rate",
+          "v": "94",
+          "u": "mbopd"
+        },
+        {
+          "k": "GOR",
+          "v": "1,200",
+          "u": "scf/bbl"
+        },
+        {
+          "k": "OPEX",
+          "v": "$15",
+          "u": "/boe"
+        }
+      ],
+      "axis": {
+        "start": 2000,
+        "end": 2035,
+        "ticks": [
+          2000,
+          2005,
+          2010,
+          2015,
+          2020,
+          2025,
+          2030,
+          2035
+        ]
+      },
+      "gates": [
+        {
+          "year": 2003.0,
+          "phase": "explore",
+          "lab": "Discovery",
+          "dt": "2003",
+          "kind": "primary"
+        },
+        {
+          "year": 2010.0,
+          "phase": "define",
+          "lab": "FID / Sanction",
+          "dt": "2010",
+          "kind": "primary"
+        },
+        {
+          "year": 2014.9583333333333,
+          "phase": "operate",
+          "lab": "First oil",
+          "dt": "Dec 2014",
+          "kind": "now"
+        },
+        {
+          "year": 2026.5,
+          "phase": "operate",
+          "lab": "Today",
+          "dt": "2026",
+          "kind": "nowmark"
+        }
+      ],
+      "spans": [
+        {
+          "from": 2003.0,
+          "to": 2010.0,
+          "txt": "Discovery→FID ~7 yr"
+        },
+        {
+          "from": 2010.0,
+          "to": 2014.9583333333333,
+          "txt": "FID→first oil ~5 yr"
+        }
+      ],
+      "workingInterest": [],
+      "hostFacts": [
+        [
+          "Working interests",
+          "NOT_EVALUATED — field allocation not verified"
+        ],
+        [
+          "Host type",
+          "Semisubmersible FPU"
+        ],
+        [
+          "Water depth",
+          "7,000 ft (2,134 m)"
+        ],
+        [
+          "Play",
+          "Lower Tertiary (Wilcox)"
+        ],
+        [
+          "First oil",
+          "Dec 2014"
+        ],
+        [
+          "Data through",
+          "Dec 2024"
+        ]
+      ],
+      "reservoir": {
+        "formation": "Wilcox (Lower Tertiary)",
+        "hpht_class": "HPHT",
+        "pressure_psi": 19374,
+        "pressure_qual": "",
+        "equip_rating_psi": null,
+        "temp_f": 224,
+        "tvd_ft": 26500,
+        "fluid": "black oil",
+        "api": null,
+        "source_note": "Dice regional Wilcox reservoir study: Jack initial pressure 19,374 psi @ 224F, St. Malo 19,023 psi @ 225F; reservoir ~26,500 ft TVD."
+      },
+      "risk": {
+        "hpht": {
+          "class": "HPHT",
+          "pressure_psi": 19374,
+          "equip_rating_psi": null,
+          "exceedance_pct": null,
+          "severity": "class-only",
+          "basis": "reservoir",
+          "label": "HPHT · 19.4k psi"
+        },
+        "decommissioning_status": "withheld_pending_redistribution_review",
+        "decommissioning": null
+      },
+      "landman": {
+        "leases": [
+          {
+            "lease_num": "G17015",
+            "lease_name": "St Malo",
+            "water_depth_ft": 6820,
+            "dev_system": "subsea15"
+          },
+          {
+            "lease_num": "G17016",
+            "lease_name": "St Malo",
+            "water_depth_ft": 6820,
+            "dev_system": "subsea15"
+          },
+          {
+            "lease_num": "G18745",
+            "lease_name": "St Malo",
+            "water_depth_ft": 6820,
+            "dev_system": "subsea15"
+          },
+          {
+            "lease_num": "G18753",
+            "lease_name": "St Malo",
+            "water_depth_ft": 6820,
+            "dev_system": "subsea15"
+          },
+          {
+            "lease_num": "G20394",
+            "lease_name": "St Malo",
+            "water_depth_ft": 6820,
+            "dev_system": "subsea15"
+          },
+          {
+            "lease_num": "G21245",
+            "lease_name": "Jack",
+            "water_depth_ft": 7240,
+            "dev_system": "subsea15"
+          }
+        ],
+        "n_leases": 6,
+        "blocks": [
+          "WR678",
+          "WR758",
+          "WR759"
+        ],
+        "block_note": "Walker Ridge 678 (St. Malo) / 758-759 (Jack)",
+        "operator": "Chevron",
+        "working_interest": [],
+        "pending": [
+          "status",
+          "effective_date",
+          "expiration_date",
+          "lease_type",
+          "per_lease_block",
+          "per_lease_working_interest",
+          "operator_of_record_history"
+        ],
+        "ingest_issue": 959
+      },
+      "concept": {
+        "type": "Semisub FPU",
+        "host": "Semisubmersible FPU",
+        "play": "Lower Tertiary (Wilcox)",
+        "milestone": {
+          "label": "First oil",
+          "value": "Dec 2014"
+        },
+        "fdp_href": "../field-development/portfolio/jack-st-malo.html",
+        "fdp_issue": 962
+      },
+      "architecture": {
+        "svg": null,
+        "pending_issue": 962
+      },
+      "provenance": "Facts from in-repo YAML (operator, capex $7.5B, opex $15/boe, plateau 94 mbopd, GOR 1200, status producing, data through 2024-12-31). Life-cycle dates from public sources: St. Malo discovered Oct 2003 and Jack Jul 2004 (discovery year=2003, earliest of pair); FID/sanction Oct 2010; first oil per Chevron press release Dec 2014 (\"2014-12\") — this matches the reconciled field YAML (issue 747). Water depth ~7000 ft at the FPU (Jack WR758/759 ~7000 ft, St. Malo WR678). host = Semisubmersible FPU. projected end-of-production not confidently estimable. lease year not available; no schedule-driving incident. Working interests NOT_EVALUATED: the combined co-owner split is unverified in the field YAML. Its partners_by_field references P7 (annual report, FY2014) establish separate operator interests, not a combined-field allocation or a current complete co-owner list.",
+      "norms": [
+        {
+          "delta_play_pct": -28.3,
+          "href": "norms/drill.html#jack_st_malo",
+          "n": 65,
+          "play_n": 119,
+          "stage": "drill",
+          "state": "ok",
+          "unit": "days",
+          "value": 38.0
+        },
+        {
+          "delta_play_pct": -21.2,
+          "href": "norms/complete.html#jack_st_malo",
+          "n": 65,
+          "play_n": 121,
+          "stage": "complete",
+          "state": "ok",
+          "unit": "days",
+          "value": 26.0
+        },
+        {
+          "delta_play_pct": 2.6,
+          "href": "norms/produce.html#jack_st_malo",
+          "n": 24,
+          "play_n": 32,
+          "stage": "produce",
+          "state": "ok",
+          "unit": "%",
+          "value": 95.9
+        },
+        {
+          "delta_play_pct": -19.4,
+          "href": "norms/workover.html#jack_st_malo",
+          "n": 24,
+          "play_n": 32,
+          "stage": "workover",
+          "state": "ok",
+          "unit": "per well",
+          "value": 0.25
+        },
+        {
+          "href": "norms/abandon.html#jack_st_malo",
+          "stage": "abandon",
+          "state": "unavailable"
+        }
+      ],
+      "performance": {
+        "avg_decline_pct_yr": 18.4,
+        "avg_uptime_pct": 89.7,
+        "breakeven_wti": 79.0,
+        "cum_oil_mmbbl": 438.8,
+        "display": "Jack St Malo",
+        "economics_basis": "life_to_date_pretax_npv_at_10pct",
+        "economics_status": "surfaced",
+        "eur_confidence": "high",
+        "eur_mmbbl": 500,
+        "eur_source": "500+ MMboe recoverable, combined development (original)",
+        "interventions": 6,
+        "npv_mm": -804.5,
+        "sens_mm_per_dollar": 52.3,
+        "wells": 24
+      }
+    },
+    "julia": {
+      "id": "julia",
+      "wellsHref": "wells/",
+      "wellsCount": 4,
+      "assetsHref": null,
+      "economics_href": "../economics-julia.html",
+      "benchmark_href": "../benchmark.html",
+      "name": "Julia",
+      "operator": "ExxonMobil",
+      "region": "Walker Ridge 627 (WR 540/583/584/627/628) · US Gulf of Mexico",
+      "host": "Subsea tieback to Jack/St. Malo semisubmersible FPU (Chevron)",
+      "statusLabel": "Producing",
+      "statusHue": "var(--good)",
+      "treeType": "wet",
+      "treeLabel": "Wet tree · Subsea tieback",
+      "currentPhase": "operate",
+      "metrics": [
+        {
+          "k": "Water depth",
+          "v": "7,000",
+          "u": "ft"
+        },
+        {
+          "k": "Gross CAPEX",
+          "v": "$4.7",
+          "u": "B"
+        },
+        {
+          "k": "Plateau rate",
+          "v": "34",
+          "u": "mbopd"
+        },
+        {
+          "k": "GOR",
+          "v": "1,000",
+          "u": "scf/bbl"
+        },
+        {
+          "k": "OPEX",
+          "v": "$18",
+          "u": "/boe"
+        },
+        {
+          "k": "Operator WI",
+          "v": "50",
+          "u": "%"
+        }
+      ],
+      "axis": {
+        "start": 2005,
+        "end": 2040,
+        "ticks": [
+          2005,
+          2010,
+          2015,
+          2020,
+          2025,
+          2030,
+          2035,
+          2040
+        ]
+      },
+      "gates": [
+        {
+          "year": 2007.0,
+          "phase": "explore",
+          "lab": "Discovery",
+          "dt": "2007",
+          "kind": "primary"
+        },
+        {
+          "year": 2013.0,
+          "phase": "define",
+          "lab": "FID / Sanction",
+          "dt": "2013",
+          "kind": "primary"
+        },
+        {
+          "year": 2008.0,
+          "phase": "execute",
+          "lab": "Lease-extension dispute",
+          "dt": "2008",
+          "kind": "sec"
+        },
+        {
+          "year": 2016.2083333333333,
+          "phase": "operate",
+          "lab": "First oil",
+          "dt": "Mar 2016",
+          "kind": "now"
+        },
+        {
+          "year": 2026.5,
+          "phase": "operate",
+          "lab": "Today",
+          "dt": "2026",
+          "kind": "nowmark"
+        }
+      ],
+      "spans": [
+        {
+          "from": 2007.0,
+          "to": 2013.0,
+          "txt": "Discovery→FID ~6 yr"
+        },
+        {
+          "from": 2013.0,
+          "to": 2016.2083333333333,
+          "txt": "FID→first oil ~3 yr (incl. delay)"
+        }
+      ],
+      "workingInterest": [
+        {
+          "name": "ExxonMobil",
+          "wi": 50,
+          "lead": true
+        },
+        {
+          "name": "Equinor",
+          "wi": 50
+        }
+      ],
+      "hostFacts": [
+        [
+          "Host type",
+          "Subsea tieback to Jack/St. Malo semisubmersible FPU (Chevron)"
+        ],
+        [
+          "Water depth",
+          "7,000 ft (2,134 m)"
+        ],
+        [
+          "Play",
+          "Lower Tertiary Wilcox"
+        ],
+        [
+          "First oil",
+          "Mar 2016"
+        ],
+        [
+          "Data through",
+          "Dec 2024"
+        ]
+      ],
+      "reservoir": {
+        "formation": "Wilcox (Lower Tertiary)",
+        "hpht_class": "HPHT",
+        "pressure_psi": 13500,
+        "pressure_qual": "~",
+        "pressure_basis": "subsea_system",
+        "equip_rating_psi": 15000,
+        "temp_f": null,
+        "tvd_ft": 30000,
+        "fluid": "black oil",
+        "api": 24.7,
+        "source_note": "Offshore Mag: subsea pressures ~13,500 psi (15,000-psi-rated trees + first permanent HIPPS); Hart Energy production test: 24.7°API oil."
+      },
+      "risk": {
+        "hpht": {
+          "class": "HPHT",
+          "pressure_psi": 13500,
+          "equip_rating_psi": 15000,
+          "exceedance_pct": null,
+          "severity": "class-only",
+          "basis": "subsea_system",
+          "label": "HPHT · subsea system 13.5k / 15k-psi trees"
+        },
+        "decommissioning_status": "withheld_pending_redistribution_review",
+        "decommissioning": null
+      },
+      "landman": {
+        "leases": [
+          {
+            "lease_num": "G20351",
+            "lease_name": "Julia",
+            "water_depth_ft": 7335,
+            "dev_system": "tieback15"
+          }
+        ],
+        "n_leases": 1,
+        "blocks": [
+          "WR627"
+        ],
+        "block_note": "Walker Ridge 627 (WR 540/583/584/627/628)",
+        "operator": "ExxonMobil",
+        "working_interest": [
+          {
+            "name": "ExxonMobil",
+            "wi": 50,
+            "operator": true
+          },
+          {
+            "name": "Equinor",
+            "wi": 50,
+            "operator": false
+          }
+        ],
+        "pending": [
+          "status",
+          "effective_date",
+          "expiration_date",
+          "lease_type",
+          "per_lease_block",
+          "per_lease_working_interest",
+          "operator_of_record_history"
+        ],
+        "ingest_issue": 959
+      },
+      "concept": {
+        "type": "Subsea tieback",
+        "host": "Subsea tieback to Jack/St. Malo semisubmersible FPU (Chevron)",
+        "play": "Lower Tertiary Wilcox",
+        "milestone": {
+          "label": "First oil",
+          "value": "Mar 2016"
+        },
+        "fdp_href": "../field-development/portfolio/julia.html",
+        "fdp_issue": 962
+      },
+      "architecture": {
+        "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"480\" height=\"1380\" viewBox=\"0 0 480 1380\">\n<rect width=\"100%\" height=\"100%\" fill=\"white\"/>\n<title>Field layout — Julia (Lower Tertiary)</title>\n<line x1=\"77.3\" y1=\"1300.0\" x2=\"101.3\" y2=\"100.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n<line x1=\"101.3\" y1=\"100.0\" x2=\"77.3\" y2=\"1300.0\" stroke=\"#5a7\" stroke-width=\"1.5\" stroke-dasharray=\"4 3\"/>\n<line x1=\"125.3\" y1=\"1300.0\" x2=\"101.3\" y2=\"100.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n<line x1=\"101.3\" y1=\"100.0\" x2=\"125.3\" y2=\"1300.0\" stroke=\"#5a7\" stroke-width=\"1.5\" stroke-dasharray=\"4 3\"/>\n<line x1=\"77.3\" y1=\"1280.0\" x2=\"77.3\" y2=\"1300.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n<line x1=\"77.3\" y1=\"1300.0\" x2=\"77.3\" y2=\"1280.0\" stroke=\"#5a7\" stroke-width=\"1.5\" stroke-dasharray=\"4 3\"/>\n<line x1=\"125.3\" y1=\"1280.0\" x2=\"125.3\" y2=\"1300.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n<line x1=\"125.3\" y1=\"1300.0\" x2=\"125.3\" y2=\"1280.0\" stroke=\"#5a7\" stroke-width=\"1.5\" stroke-dasharray=\"4 3\"/>\n<line x1=\"60.0\" y1=\"1310.0\" x2=\"77.3\" y2=\"1300.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n<line x1=\"77.3\" y1=\"1300.0\" x2=\"60.0\" y2=\"1310.0\" stroke=\"#5a7\" stroke-width=\"1.5\" stroke-dasharray=\"4 3\"/>\n<line x1=\"125.3\" y1=\"1320.0\" x2=\"125.3\" y2=\"1300.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n<line x1=\"125.3\" y1=\"1300.0\" x2=\"125.3\" y2=\"1320.0\" stroke=\"#5a7\" stroke-width=\"1.5\" stroke-dasharray=\"4 3\"/>\n<line x1=\"94.6\" y1=\"1310.0\" x2=\"77.3\" y2=\"1300.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n<line x1=\"77.3\" y1=\"1300.0\" x2=\"94.6\" y2=\"1310.0\" stroke=\"#5a7\" stroke-width=\"1.5\" stroke-dasharray=\"4 3\"/>\n<line x1=\"101.3\" y1=\"100.0\" x2=\"101.3\" y2=\"60.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n<g class=\"sym\"><title>Subsea manifold</title><rect x=\"65.3\" y=\"1292.8\" width=\"24.0\" height=\"14.4\" rx=\"3\" fill=\"#ffe9c7\" stroke=\"#a8620a\" stroke-width=\"1.5\"/><line x1=\"70.1\" y1=\"1307.2\" x2=\"70.1\" y2=\"1312.0\" stroke=\"#a8620a\" stroke-width=\"1.5\"/><line x1=\"74.9\" y1=\"1307.2\" x2=\"74.9\" y2=\"1312.0\" stroke=\"#a8620a\" stroke-width=\"1.5\"/><line x1=\"79.7\" y1=\"1307.2\" x2=\"79.7\" y2=\"1312.0\" stroke=\"#a8620a\" stroke-width=\"1.5\"/><line x1=\"84.5\" y1=\"1307.2\" x2=\"84.5\" y2=\"1312.0\" stroke=\"#a8620a\" stroke-width=\"1.5\"/></g>\n<text x=\"92.3\" y=\"1303.0\" font-family=\"sans-serif\" font-size=\"9\">Manifold 1</text>\n<g class=\"sym\"><title>Subsea manifold</title><rect x=\"113.3\" y=\"1292.8\" width=\"24.0\" height=\"14.4\" rx=\"3\" fill=\"#ffe9c7\" stroke=\"#a8620a\" stroke-width=\"1.5\"/><line x1=\"118.1\" y1=\"1307.2\" x2=\"118.1\" y2=\"1312.0\" stroke=\"#a8620a\" stroke-width=\"1.5\"/><line x1=\"122.9\" y1=\"1307.2\" x2=\"122.9\" y2=\"1312.0\" stroke=\"#a8620a\" stroke-width=\"1.5\"/><line x1=\"127.7\" y1=\"1307.2\" x2=\"127.7\" y2=\"1312.0\" stroke=\"#a8620a\" stroke-width=\"1.5\"/><line x1=\"132.5\" y1=\"1307.2\" x2=\"132.5\" y2=\"1312.0\" stroke=\"#a8620a\" stroke-width=\"1.5\"/></g>\n<text x=\"140.3\" y=\"1303.0\" font-family=\"sans-serif\" font-size=\"9\">Manifold 2</text>\n<g class=\"sym\"><title>Subsea tree (wet XT)</title><line x1=\"77.3\" y1=\"1288.0\" x2=\"77.3\" y2=\"1272.0\" stroke=\"#234e78\" stroke-width=\"2\"/><rect x=\"71.7\" y=\"1284.0\" width=\"11.2\" height=\"4.0\" fill=\"#234e78\"/><polygon points=\"73.3,1274.8 81.3,1279.6 81.3,1274.8 73.3,1279.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/><polygon points=\"73.3,1278.8 81.3,1283.6 81.3,1278.8 73.3,1283.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/></g>\n<text x=\"88.3\" y=\"1283.0\" font-family=\"sans-serif\" font-size=\"9\">XT 1</text>\n<g class=\"sym\"><title>Subsea tree (wet XT)</title><line x1=\"60.0\" y1=\"1318.0\" x2=\"60.0\" y2=\"1302.0\" stroke=\"#234e78\" stroke-width=\"2\"/><rect x=\"54.4\" y=\"1314.0\" width=\"11.2\" height=\"4.0\" fill=\"#234e78\"/><polygon points=\"56.0,1304.8 64.0,1309.6 64.0,1304.8 56.0,1309.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/><polygon points=\"56.0,1308.8 64.0,1313.6 64.0,1308.8 56.0,1313.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/></g>\n<text x=\"71.0\" y=\"1313.0\" font-family=\"sans-serif\" font-size=\"9\">XT 3</text>\n<g class=\"sym\"><title>Subsea tree (wet XT)</title><line x1=\"94.6\" y1=\"1318.0\" x2=\"94.6\" y2=\"1302.0\" stroke=\"#234e78\" stroke-width=\"2\"/><rect x=\"89.0\" y=\"1314.0\" width=\"11.2\" height=\"4.0\" fill=\"#234e78\"/><polygon points=\"90.6,1304.8 98.6,1309.6 98.6,1304.8 90.6,1309.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/><polygon points=\"90.6,1308.8 98.6,1313.6 98.6,1308.8 90.6,1313.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/></g>\n<text x=\"105.6\" y=\"1313.0\" font-family=\"sans-serif\" font-size=\"9\">XT 5</text>\n<g class=\"sym\"><title>Subsea tree (wet XT)</title><line x1=\"125.3\" y1=\"1288.0\" x2=\"125.3\" y2=\"1272.0\" stroke=\"#234e78\" stroke-width=\"2\"/><rect x=\"119.7\" y=\"1284.0\" width=\"11.2\" height=\"4.0\" fill=\"#234e78\"/><polygon points=\"121.3,1274.8 129.3,1279.6 129.3,1274.8 121.3,1279.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/><polygon points=\"121.3,1278.8 129.3,1283.6 129.3,1278.8 121.3,1283.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/></g>\n<text x=\"136.3\" y=\"1283.0\" font-family=\"sans-serif\" font-size=\"9\">XT 2</text>\n<g class=\"sym\"><title>Subsea tree (wet XT)</title><line x1=\"125.3\" y1=\"1328.0\" x2=\"125.3\" y2=\"1312.0\" stroke=\"#234e78\" stroke-width=\"2\"/><rect x=\"119.7\" y=\"1324.0\" width=\"11.2\" height=\"4.0\" fill=\"#234e78\"/><polygon points=\"121.3,1314.8 129.3,1319.6 129.3,1314.8 121.3,1319.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/><polygon points=\"121.3,1318.8 129.3,1323.6 129.3,1318.8 121.3,1323.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/></g>\n<text x=\"136.3\" y=\"1323.0\" font-family=\"sans-serif\" font-size=\"9\">XT 4</text>\n<g class=\"sym\"><title>Existing host (tieback)</title><rect x=\"85.3\" y=\"88.8\" width=\"32.0\" height=\"22.4\" fill=\"#cde2f7\" stroke=\"#234e78\" stroke-width=\"1.5\" stroke-dasharray=\"5 3\"/><line x1=\"93.3\" y1=\"88.8\" x2=\"93.3\" y2=\"82.4\" stroke=\"#234e78\" stroke-width=\"2\"/><line x1=\"109.3\" y1=\"88.8\" x2=\"109.3\" y2=\"82.4\" stroke=\"#234e78\" stroke-width=\"2\"/></g>\n<text x=\"120.3\" y=\"103.0\" font-family=\"sans-serif\" font-size=\"9\">Existing Host (tieback)</text>\n<g class=\"sym\"><title>Export</title><polygon points=\"91.3,55.0 104.3,55.0 104.3,50.0 111.3,60.0 104.3,70.0 104.3,65.0 91.3,65.0\" fill=\"#dddddd\" stroke=\"#555\" stroke-width=\"1.2\"/></g>\n<text x=\"114.3\" y=\"63.0\" font-family=\"sans-serif\" font-size=\"9\">Export</text>\n<g stroke=\"#222\" fill=\"#222\"><line x1=\"452\" y1=\"46\" x2=\"452\" y2=\"20\" stroke-width=\"2\"/><polygon points=\"452,14 447,24 457,24\"/><text x=\"448\" y=\"60\" font-family=\"sans-serif\" font-size=\"11\" stroke=\"none\">N</text></g>\n<g stroke=\"#222\" fill=\"#222\"><line x1=\"20\" y1=\"1356\" x2=\"60\" y2=\"1356\" stroke-width=\"2\"/><line x1=\"20\" y1=\"1352\" x2=\"20\" y2=\"1360\" stroke-width=\"2\"/><line x1=\"60\" y1=\"1352\" x2=\"60\" y2=\"1360\" stroke-width=\"2\"/><text x=\"20\" y=\"1348\" font-family=\"sans-serif\" font-size=\"10\" stroke=\"none\">1 km</text></g>\n<text x=\"10\" y=\"1374\" font-family=\"sans-serif\" font-size=\"9\">Plan-view field layout (host offset to scale; schematic well positions)</text>\n</svg>",
+        "source": "render_layout",
+        "caption": "Julia subsea tieback"
+      },
+      "provenance": "Primary facts (capex $4.7B, plateau 34 mbopd, GOR 1000, opex $18/boe, first oil, WI 50/50) from in-repo julia.yml; first oil = BSEE OGOR-A first production (2016-03) per YAML — note ExxonMobil press release states production start April 2016. Operator corrected to ExxonMobil (YAML flagged its \"Equinor\" operator field as disputed; public record = ExxonMobil-operated, Equinor/Statoil 50% partner). Discovery 2007, FID May 2013, water depth 7000+ ft, Walker Ridge blocks, and Jack/St. Malo tieback from Offshore Technology and operator/trade press. lease year and projected end-of-production not confidently sourced.",
+      "norms": [
+        {
+          "delta_play_pct": 108.7,
+          "href": "norms/drill.html#julia",
+          "n": 9,
+          "play_n": 175,
+          "stage": "drill",
+          "state": "ok",
+          "unit": "days",
+          "value": 96.0
+        },
+        {
+          "delta_play_pct": 220.0,
+          "href": "norms/complete.html#julia",
+          "n": 9,
+          "play_n": 177,
+          "stage": "complete",
+          "state": "ok",
+          "unit": "days",
+          "value": 96.0
+        },
+        {
+          "delta_play_pct": 2.0,
+          "href": "norms/produce.html#julia",
+          "n": 4,
+          "play_n": 52,
+          "stage": "produce",
+          "state": "low_n",
+          "unit": "%",
+          "value": 96.15
+        },
+        {
+          "delta_play_pct": -100.0,
+          "href": "norms/workover.html#julia",
+          "n": 4,
+          "play_n": 52,
+          "stage": "workover",
+          "state": "low_n",
+          "unit": "per well",
+          "value": 0.0
+        },
+        {
+          "href": "norms/abandon.html#julia",
+          "stage": "abandon",
+          "state": "unavailable"
+        }
+      ],
+      "performance": {
+        "avg_decline_pct_yr": 12.2,
+        "avg_uptime_pct": 96.3,
+        "breakeven_wti": 95.0,
+        "cum_oil_mmbbl": 77.5,
+        "display": "Julia",
+        "economics_basis": "life_to_date_pretax_npv_at_10pct",
+        "economics_status": "surfaced",
+        "eur_confidence": "none",
+        "eur_mmbbl": null,
+        "eur_source": "no published recoverable EUR (only ~6 Bbbl resource IN-PLACE, != EUR)",
+        "interventions": 0,
+        "npv_mm": -482.8,
+        "sens_mm_per_dollar": 17.2,
+        "wells": 4
+      }
+    },
+    "kaskida": {
+      "id": "kaskida",
+      "wellsHref": null,
+      "wellsCount": 0,
+      "assetsHref": null,
+      "economics_href": null,
+      "benchmark_href": "../benchmark.html",
+      "name": "Kaskida",
+      "operator": "BP",
+      "region": "Keathley Canyon 292 · US Gulf of Mexico",
+      "host": "Semisubmersible FPU (20,000 psi)",
+      "statusLabel": "Under construction",
+      "statusHue": "var(--done)",
+      "treeType": "wet",
+      "treeLabel": "Wet tree · Semisub FPU",
+      "currentPhase": "execute",
+      "metrics": [
+        {
+          "k": "Water depth",
+          "v": "6,000",
+          "u": "ft"
+        },
+        {
+          "k": "Gross CAPEX",
+          "v": "$5",
+          "u": "B"
+        },
+        {
+          "k": "Plateau rate",
+          "v": "80",
+          "u": "mbopd"
+        },
+        {
+          "k": "GOR",
+          "v": "1,000",
+          "u": "scf/bbl"
+        },
+        {
+          "k": "Operator WI",
+          "v": "100",
+          "u": "%"
+        }
+      ],
+      "axis": {
+        "start": 2000,
+        "end": 2040,
+        "ticks": [
+          2000,
+          2005,
+          2010,
+          2015,
+          2020,
+          2025,
+          2030,
+          2035,
+          2040
+        ]
+      },
+      "gates": [
+        {
+          "year": 2006.0,
+          "phase": "explore",
+          "lab": "Discovery",
+          "dt": "2006",
+          "kind": "primary"
+        },
+        {
+          "year": 2024.0,
+          "phase": "define",
+          "lab": "FID / Sanction",
+          "dt": "2024",
+          "kind": "primary"
+        },
+        {
+          "year": 2025.0,
+          "phase": "execute",
+          "lab": "BOEM rejected Kaskida De…",
+          "dt": "2025",
+          "kind": "sec"
+        }
+      ],
+      "spans": [
+        {
+          "from": 2006.0,
+          "to": 2024.0,
+          "txt": "Discovery→FID ~18 yr"
+        }
+      ],
+      "workingInterest": [
+        {
+          "name": "BP",
+          "wi": 100,
+          "lead": true
+        }
+      ],
+      "hostFacts": [
+        [
+          "Host type",
+          "Semisubmersible FPU (20,000 psi)"
+        ],
+        [
+          "Water depth",
+          "6,000 ft (1,829 m)"
+        ],
+        [
+          "Play",
+          "Lower Tertiary (Wilcox)"
+        ],
+        [
+          "Sanctioned",
+          "2024"
+        ],
+        [
+          "Data through",
+          "Dec 2024"
+        ]
+      ],
+      "reservoir": {
+        "formation": "Wilcox / Paleogene",
+        "hpht_class": "ultra-HPHT",
+        "pressure_psi": 20000,
+        "pressure_qual": "≥",
+        "equip_rating_psi": 20000,
+        "temp_f": null,
+        "tvd_ft": null,
+        "fluid": "black oil",
+        "api": null,
+        "source_note": "AAPG: deep Wilcox is a '20,000 psi or higher' reservoir environment (matches the 20K equipment rating); JPT/BOEM: BP 20,000-psi FPU. Exact pore pressure not published — shown as ≥20,000."
+      },
+      "risk": {
+        "hpht": {
+          "class": "ultra-HPHT",
+          "pressure_psi": 20000,
+          "equip_rating_psi": 20000,
+          "exceedance_pct": 0,
+          "severity": "at-rating",
+          "basis": "reservoir",
+          "label": "ultra-HPHT · 20k vs 20k psi (0%)"
+        },
+        "decommissioning_status": "withheld_pending_redistribution_review",
+        "decommissioning": null
+      },
+      "landman": {
+        "leases": [
+          {
+            "lease_num": "G19555",
+            "lease_name": "Kaskida",
+            "water_depth_ft": 5860,
+            "dev_system": "subsea20"
+          },
+          {
+            "lease_num": "G25792",
+            "lease_name": "Kaskida",
+            "water_depth_ft": 5860,
+            "dev_system": "subsea20"
+          }
+        ],
+        "n_leases": 2,
+        "blocks": [
+          "KC291",
+          "KC292"
+        ],
+        "block_note": "Keathley Canyon 292",
+        "operator": "BP",
+        "working_interest": [
+          {
+            "name": "BP",
+            "wi": 100,
+            "operator": true
+          }
+        ],
+        "pending": [
+          "status",
+          "effective_date",
+          "expiration_date",
+          "lease_type",
+          "per_lease_block",
+          "per_lease_working_interest",
+          "operator_of_record_history"
+        ],
+        "ingest_issue": 959
+      },
+      "concept": {
+        "type": "Semisub FPU",
+        "host": "Semisubmersible FPU (20,000 psi)",
+        "play": "Lower Tertiary (Wilcox)",
+        "milestone": {
+          "label": "Sanctioned",
+          "value": "2024"
+        },
+        "fdp_href": "../field-development/portfolio/kaskida.html",
+        "fdp_issue": 962
+      },
+      "architecture": {
+        "svg": null,
+        "pending_issue": 962
+      },
+      "provenance": "Discovery 2006 (Keathley Canyon 292, Lower Tertiary Wilcox), FID/sanction July 30 2024 (BP 100%, Devon's original 30% exited), first oil targeted 2029 but left blank as no oil has flowed and the Aug-2025 BOEM DPP rejection likely pushes it out. Public sanctioned figures used over YAML where they diverge: plateau/nameplate 80 mbopd (YAML said 120) and capex ~$5bn for Phase 1 (<$5B per BP; YAML total CAPEX 10000 = $10bn is a full-field/multi-phase estimate). GOR 1000 scf/bbl and data through 2024-12-31 from YAML. Water depth ~6,000 ft, 20,000-psi semisubmersible FPU. Low-confidence: capex (phase-1 vs full-field ambiguity), water depth (rounded), lease year unknown, opex unknown.",
+      "norms": [
+        {
+          "delta_play_pct": -21.3,
+          "href": "norms/drill.html#kaskida",
+          "n": 7,
+          "play_n": 177,
+          "stage": "drill",
+          "state": "low_n",
+          "unit": "days",
+          "value": 37.0
+        },
+        {
+          "delta_play_pct": 39.4,
+          "href": "norms/complete.html#kaskida",
+          "n": 7,
+          "play_n": 179,
+          "stage": "complete",
+          "state": "low_n",
+          "unit": "days",
+          "value": 46.0
+        },
+        {
+          "href": "norms/produce.html#kaskida",
+          "stage": "produce",
+          "state": "no_data"
+        },
+        {
+          "href": "norms/workover.html#kaskida",
+          "stage": "workover",
+          "state": "no_data"
+        },
+        {
+          "href": "norms/abandon.html#kaskida",
+          "stage": "abandon",
+          "state": "unavailable"
+        }
+      ],
+      "performance": null
+    },
+    "north_platte": {
+      "id": "north_platte",
+      "wellsHref": null,
+      "wellsCount": 0,
+      "assetsHref": null,
+      "economics_href": null,
+      "benchmark_href": "../benchmark.html",
+      "name": "North Platte (renamed Sparta)",
+      "operator": "Shell",
+      "region": "Garden Banks 959 (straddles GB 915/916/958/959) · US Gulf of Mexico",
+      "host": "Newbuild Semisubmersible FPU",
+      "statusLabel": "Under construction",
+      "statusHue": "var(--done)",
+      "treeType": "wet",
+      "treeLabel": "Wet tree · Semisub FPU",
+      "currentPhase": "execute",
+      "metrics": [
+        {
+          "k": "Water depth",
+          "v": "4,265",
+          "u": "ft"
+        },
+        {
+          "k": "Plateau rate",
+          "v": "75",
+          "u": "mbopd"
+        },
+        {
+          "k": "GOR",
+          "v": "1,100",
+          "u": "scf/bbl"
+        },
+        {
+          "k": "Operator WI",
+          "v": "51",
+          "u": "%"
+        }
+      ],
+      "axis": {
+        "start": 2010,
+        "end": 2035,
+        "ticks": [
+          2010,
+          2015,
+          2020,
+          2025,
+          2030,
+          2035
+        ]
+      },
+      "gates": [
+        {
+          "year": 2012.0,
+          "phase": "explore",
+          "lab": "Discovery",
+          "dt": "2012",
+          "kind": "primary"
+        },
+        {
+          "year": 2023.0,
+          "phase": "define",
+          "lab": "FID / Sanction",
+          "dt": "2023",
+          "kind": "primary"
+        },
+        {
+          "year": 2022.0,
+          "phase": "execute",
+          "lab": "TotalEnergies withdrew f…",
+          "dt": "2022",
+          "kind": "sec"
+        }
+      ],
+      "spans": [
+        {
+          "from": 2012.0,
+          "to": 2023.0,
+          "txt": "Discovery→FID ~11 yr"
+        }
+      ],
+      "workingInterest": [
+        {
+          "name": "Shell",
+          "wi": 51,
+          "lead": true
+        },
+        {
+          "name": "Equinor",
+          "wi": 49
+        }
+      ],
+      "hostFacts": [
+        [
+          "Host type",
+          "Newbuild Semisubmersible FPU"
+        ],
+        [
+          "Water depth",
+          "4,265 ft (1,300 m)"
+        ],
+        [
+          "Play",
+          "Wilcox (Lower Tertiary / Paleogene)"
+        ],
+        [
+          "Sanctioned",
+          "2023"
+        ],
+        [
+          "Data through",
+          "Dec 2024"
+        ]
+      ],
+      "reservoir": {
+        "formation": "Wilcox (subsalt Paleogene)",
+        "hpht_class": "ultra-HPHT",
+        "pressure_psi": null,
+        "pressure_qual": "",
+        "equip_rating_psi": 20000,
+        "temp_f": null,
+        "tvd_ft": null,
+        "fluid": "black oil",
+        "api": null,
+        "source_note": "World Oil/JPT: Sparta (ex-North Platte) is a 20,000-psi-rated development. All public '20,000 psi' figures are the equipment rating; true reservoir pore pressure not publicly disclosed — shown as —."
+      },
+      "risk": {
+        "hpht": {
+          "class": "ultra-HPHT",
+          "pressure_psi": null,
+          "equip_rating_psi": 20000,
+          "exceedance_pct": null,
+          "severity": "class-only",
+          "basis": "reservoir",
+          "label": "ultra-HPHT · 20k-psi equipment"
+        },
+        "decommissioning_status": "withheld_pending_redistribution_review",
+        "decommissioning": null
+      },
+      "landman": {
+        "leases": [
+          {
+            "lease_num": "G30876",
+            "lease_name": "North Platte",
+            "water_depth_ft": 5840,
+            "dev_system": "subsea20"
+          },
+          {
+            "lease_num": "G32460",
+            "lease_name": "North Platte",
+            "water_depth_ft": 4230,
+            "dev_system": "subsea20"
+          }
+        ],
+        "n_leases": 2,
+        "blocks": [
+          "GB915",
+          "GB916",
+          "GB958",
+          "GB959"
+        ],
+        "block_note": "Garden Banks 959 (straddles GB 915/916/958/959)",
+        "operator": "Shell",
+        "working_interest": [
+          {
+            "name": "Shell",
+            "wi": 51,
+            "operator": true
+          },
+          {
+            "name": "Equinor",
+            "wi": 49,
+            "operator": false
+          }
+        ],
+        "pending": [
+          "status",
+          "effective_date",
+          "expiration_date",
+          "lease_type",
+          "per_lease_block",
+          "per_lease_working_interest",
+          "operator_of_record_history"
+        ],
+        "ingest_issue": 959
+      },
+      "concept": {
+        "type": "Semisub FPU",
+        "host": "Newbuild Semisubmersible FPU",
+        "play": "Wilcox (Lower Tertiary / Paleogene)",
+        "milestone": {
+          "label": "Sanctioned",
+          "value": "2023"
+        },
+        "fdp_href": "../field-development/portfolio/north-platte.html",
+        "fdp_issue": 962
+      },
+      "architecture": {
+        "svg": null,
+        "pending_issue": 962
+      },
+      "provenance": "Basis: in-repo YAML (superseded TotalEnergies pre-FID case) reconciled against current public record. North Platte was discovered 2012 (Cobalt/Total, Garden Banks). TotalEnergies (then 60% op, Equinor 40%) withdrew Feb 2022; Shell bought 51% and took operatorship from Equinor (49%), redesigned and renamed the project \"Sparta.\" Shell took FID Dec 2023; first oil projected 2028 (left blank — not yet producing). Water depth ~4,265 ft, subsalt Wilcox, newbuild semisubmersible FPU (8 subsea wells) with ~90,000 boe/d peak (~75 mbopd oil plateau; GOR 1100 scf/bbl from YAML). LOW-CONFIDENCE: capex — YAML's $6B reflects the abandoned TotalEnergies ~$5-7B concept, not Shell's simplified Sparta scope (not publicly disclosed), so not available; opex and projected COP year not publicly defensible.",
+      "norms": [
+        {
+          "delta_play_pct": 0.0,
+          "href": "norms/drill.html#north_platte",
+          "n": 12,
+          "play_n": 172,
+          "stage": "drill",
+          "state": "ok",
+          "unit": "days",
+          "value": 46.5
+        },
+        {
+          "delta_play_pct": -27.4,
+          "href": "norms/complete.html#north_platte",
+          "n": 12,
+          "play_n": 174,
+          "stage": "complete",
+          "state": "ok",
+          "unit": "days",
+          "value": 26.5
+        },
+        {
+          "href": "norms/produce.html#north_platte",
+          "stage": "produce",
+          "state": "no_data"
+        },
+        {
+          "href": "norms/workover.html#north_platte",
+          "stage": "workover",
+          "state": "no_data"
+        },
+        {
+          "href": "norms/abandon.html#north_platte",
+          "stage": "abandon",
+          "state": "unavailable"
+        }
+      ],
+      "performance": null
+    },
+    "shenandoah": {
+      "id": "shenandoah",
+      "wellsHref": "wells/",
+      "wellsCount": 4,
+      "assetsHref": null,
+      "economics_href": "../economics-shenandoah.html",
+      "benchmark_href": "../benchmark.html",
+      "name": "Shenandoah",
+      "operator": "Beacon Offshore Energy",
+      "region": "Walker Ridge 52 (blocks 51, 52, N/2 53) · US Gulf of Mexico",
+      "host": "Semisubmersible FPU (FPS, 20,000-psi)",
+      "statusLabel": "Producing",
+      "statusHue": "var(--good)",
+      "treeType": "wet",
+      "treeLabel": "Wet tree · Semisub FPU",
+      "currentPhase": "operate",
+      "metrics": [
+        {
+          "k": "Water depth",
+          "v": "5,800",
+          "u": "ft"
+        },
+        {
+          "k": "Gross CAPEX",
+          "v": "$1.8",
+          "u": "B"
+        },
+        {
+          "k": "Plateau rate",
+          "v": "100",
+          "u": "mbopd"
+        },
+        {
+          "k": "GOR",
+          "v": "1,300",
+          "u": "scf/bbl"
+        },
+        {
+          "k": "Operator WI",
+          "v": "31",
+          "u": "%"
+        }
+      ],
+      "axis": {
+        "start": 2005,
+        "end": 2045,
+        "ticks": [
+          2005,
+          2010,
+          2015,
+          2020,
+          2025,
+          2030,
+          2035,
+          2040,
+          2045
+        ]
+      },
+      "gates": [
+        {
+          "year": 2009.0,
+          "phase": "explore",
+          "lab": "Discovery",
+          "dt": "2009",
+          "kind": "primary"
+        },
+        {
+          "year": 2021.0,
+          "phase": "define",
+          "lab": "FID / Sanction",
+          "dt": "2021",
+          "kind": "primary"
+        },
+        {
+          "year": 2025.5416666666667,
+          "phase": "operate",
+          "lab": "First oil",
+          "dt": "Jul 2025",
+          "kind": "now"
+        },
+        {
+          "year": 2026.5,
+          "phase": "operate",
+          "lab": "Today",
+          "dt": "2026",
+          "kind": "nowmark"
+        }
+      ],
+      "spans": [
+        {
+          "from": 2009.0,
+          "to": 2021.0,
+          "txt": "Discovery→FID ~12 yr"
+        },
+        {
+          "from": 2021.0,
+          "to": 2025.5416666666667,
+          "txt": "FID→first oil ~5 yr"
+        }
+      ],
+      "workingInterest": [
+        {
+          "name": "Beacon Offshore Energy",
+          "wi": 31,
+          "lead": true
+        },
+        {
+          "name": "Navitas Petroleum",
+          "wi": 49
+        },
+        {
+          "name": "HEQ Deepwater (Quantum Energy Partners)",
+          "wi": 20
+        }
+      ],
+      "hostFacts": [
+        [
+          "Host type",
+          "Semisubmersible FPU (FPS, 20,000-psi)"
+        ],
+        [
+          "Water depth",
+          "5,800 ft (1,768 m)"
+        ],
+        [
+          "Play",
+          "Wilcox (Lower Tertiary)"
+        ],
+        [
+          "First oil",
+          "Jul 2025"
+        ],
+        [
+          "Data through",
+          "Dec 2024"
+        ]
+      ],
+      "reservoir": {
+        "formation": "Inboard Wilcox (Lower Wilcox)",
+        "hpht_class": "ultra-HPHT",
+        "pressure_psi": 22000,
+        "pressure_qual": "≥",
+        "equip_rating_psi": 20000,
+        "temp_f": 200,
+        "tvd_ft": 30000,
+        "fluid": "black oil",
+        "api": null,
+        "source_note": "Clariant/World Oil: reservoir/formation pressures above 22,000 psi at ~200F (ultra-high-PRESSURE, moderate temp), ~30,000 ft TVD; 20,000-psi equipment rating separate."
+      },
+      "risk": {
+        "hpht": {
+          "class": "ultra-HPHT",
+          "pressure_psi": 22000,
+          "equip_rating_psi": 20000,
+          "exceedance_pct": 10,
+          "severity": "over-rating",
+          "basis": "reservoir",
+          "label": "ultra-HPHT · 22k vs 20k psi (+10%)"
+        },
+        "decommissioning_status": "withheld_pending_redistribution_review",
+        "decommissioning": null
+      },
+      "landman": {
+        "leases": [
+          {
+            "lease_num": "G25232",
+            "lease_name": "Shenandoah",
+            "water_depth_ft": 5840,
+            "dev_system": "subsea20"
+          },
+          {
+            "lease_num": "G31938",
+            "lease_name": "Shenandoah",
+            "water_depth_ft": 5800,
+            "dev_system": "subsea20"
+          }
+        ],
+        "n_leases": 2,
+        "blocks": [
+          "WR051"
+        ],
+        "block_note": "Walker Ridge 52 (blocks 51, 52, N/2 53)",
+        "operator": "Beacon Offshore Energy",
+        "working_interest": [
+          {
+            "name": "Beacon Offshore Energy",
+            "wi": 31,
+            "operator": true
+          },
+          {
+            "name": "Navitas Petroleum",
+            "wi": 49,
+            "operator": false
+          },
+          {
+            "name": "HEQ Deepwater (Quantum Energy Partners)",
+            "wi": 20,
+            "operator": false
+          }
+        ],
+        "pending": [
+          "status",
+          "effective_date",
+          "expiration_date",
+          "lease_type",
+          "per_lease_block",
+          "per_lease_working_interest",
+          "operator_of_record_history"
+        ],
+        "ingest_issue": 959
+      },
+      "concept": {
+        "type": "Semisub FPU",
+        "host": "Semisubmersible FPU (FPS, 20,000-psi)",
+        "play": "Wilcox (Lower Tertiary)",
+        "milestone": {
+          "label": "First oil",
+          "value": "Jul 2025"
+        },
+        "fdp_href": "../field-development/portfolio/shenandoah.html",
+        "fdp_issue": 962
+      },
+      "architecture": {
+        "svg": null,
+        "pending_issue": 962
+      },
+      "provenance": "Base facts (operator, capex, plateau, GOR, data through) from in-repo YAML; discovery 2009 (Anadarko Shenandoah-1, WR52), FID/sanction Aug 2021 (Beacon+Navitas), and actual first oil (first of 4 wells online 25 Jul 2025; ramped to 100 kbopd plateau Oct 2025) from public sources — first oil corrected to 2025-07 vs YAML's placeholder 2025-10. Current WI (Beacon 31% op / Navitas 49% / HEQ 20%) post-2021 restructuring. CAPEX 1.8 is YAML-stated and largely reflects pre-development E&A spend (LOW CONFIDENCE for full development cost); OPEX and projected end-of-production, not available (not defensibly sourced); water depth ~5,800 ft.",
+      "norms": [
+        {
+          "delta_play_pct": 50.0,
+          "href": "norms/drill.html#shenandoah",
+          "n": 17,
+          "play_n": 167,
+          "stage": "drill",
+          "state": "ok",
+          "unit": "days",
+          "value": 69.0
+        },
+        {
+          "delta_play_pct": -44.1,
+          "href": "norms/complete.html#shenandoah",
+          "n": 17,
+          "play_n": 169,
+          "stage": "complete",
+          "state": "ok",
+          "unit": "days",
+          "value": 19.0
+        },
+        {
+          "delta_play_pct": -10.7,
+          "href": "norms/produce.html#shenandoah",
+          "n": 4,
+          "play_n": 52,
+          "stage": "produce",
+          "state": "low_n",
+          "unit": "%",
+          "value": 84.55
+        },
+        {
+          "delta_play_pct": -13.8,
+          "href": "norms/workover.html#shenandoah",
+          "n": 4,
+          "play_n": 52,
+          "stage": "workover",
+          "state": "low_n",
+          "unit": "per well",
+          "value": 0.25
+        },
+        {
+          "href": "norms/abandon.html#shenandoah",
+          "stage": "abandon",
+          "state": "unavailable"
+        }
+      ],
+      "performance": {
+        "avg_decline_pct_yr": 5.4,
+        "avg_uptime_pct": 80.2,
+        "breakeven_wti": null,
+        "cum_oil_mmbbl": 21.2,
+        "display": "Shenandoah",
+        "economics_basis": "life_to_date_pretax_npv_at_10pct",
+        "economics_status": "early_life",
+        "eur_confidence": "high",
+        "eur_mmbbl": 332,
+        "eur_source": "332 MMbbl oil 2P (Netherland Sewell independent report, YE2023)",
+        "interventions": 1,
+        "npv_mm": null,
+        "sens_mm_per_dollar": null,
+        "wells": 4
+      }
+    },
+    "stones": {
+      "id": "stones",
+      "wellsHref": "wells/",
+      "wellsCount": 10,
+      "assetsHref": "assets/stones_assets.html",
+      "economics_href": "../economics-stones.html",
+      "benchmark_href": "../benchmark.html",
+      "name": "Stones",
+      "operator": "Shell",
+      "region": "Walker Ridge 508 · US Gulf of Mexico",
+      "host": "FPSO (Turritella / Stones FPSO, disconnectable)",
+      "statusLabel": "Producing",
+      "statusHue": "var(--good)",
+      "treeType": "wet",
+      "treeLabel": "Wet tree · FPSO",
+      "currentPhase": "operate",
+      "metrics": [
+        {
+          "k": "Water depth",
+          "v": "9,500",
+          "u": "ft"
+        },
+        {
+          "k": "Gross CAPEX",
+          "v": "$3.8",
+          "u": "B"
+        },
+        {
+          "k": "Plateau rate",
+          "v": "50",
+          "u": "mbopd"
+        },
+        {
+          "k": "GOR",
+          "v": "850",
+          "u": "scf/bbl"
+        },
+        {
+          "k": "OPEX",
+          "v": "$15",
+          "u": "/boe"
+        },
+        {
+          "k": "Operator WI",
+          "v": "100",
+          "u": "%"
+        }
+      ],
+      "axis": {
+        "start": 2000,
+        "end": 2040,
+        "ticks": [
+          2000,
+          2005,
+          2010,
+          2015,
+          2020,
+          2025,
+          2030,
+          2035,
+          2040
+        ]
+      },
+      "gates": [
+        {
+          "year": 2005.0,
+          "phase": "explore",
+          "lab": "Discovery",
+          "dt": "2005",
+          "kind": "primary"
+        },
+        {
+          "year": 2013.0,
+          "phase": "define",
+          "lab": "FID / Sanction",
+          "dt": "2013",
+          "kind": "primary"
+        },
+        {
+          "year": 2016.7083333333333,
+          "phase": "operate",
+          "lab": "First oil",
+          "dt": "Sep 2016",
+          "kind": "now"
+        },
+        {
+          "year": 2026.5,
+          "phase": "operate",
+          "lab": "Today",
+          "dt": "2026",
+          "kind": "nowmark"
+        }
+      ],
+      "spans": [
+        {
+          "from": 2005.0,
+          "to": 2013.0,
+          "txt": "Discovery→FID ~8 yr"
+        },
+        {
+          "from": 2013.0,
+          "to": 2016.7083333333333,
+          "txt": "FID→first oil ~4 yr"
+        }
+      ],
+      "workingInterest": [
+        {
+          "name": "Shell",
+          "wi": 100,
+          "lead": true
+        }
+      ],
+      "hostFacts": [
+        [
+          "Host type",
+          "FPSO (Turritella / Stones FPSO, disconnectable)"
+        ],
+        [
+          "Water depth",
+          "9,500 ft (2,896 m)"
+        ],
+        [
+          "Play",
+          "Lower Tertiary Wilcox"
+        ],
+        [
+          "First oil",
+          "Sep 2016"
+        ],
+        [
+          "Data through",
+          "Dec 2024"
+        ]
+      ],
+      "reservoir": {
+        "formation": "Paleogene Wilcox (turbidite)",
+        "hpht_class": "HPHT",
+        "pressure_psi": null,
+        "pressure_qual": "",
+        "equip_rating_psi": null,
+        "temp_f": null,
+        "tvd_ft": 26500,
+        "fluid": "black oil",
+        "api": null,
+        "source_note": "Offshore Mag/S&D: Paleogene Wilcox, reservoir ~26,500 ft TVD (17,000 ft below mudline). Reservoir pressure/temperature not cleanly sourced — shown as —."
+      },
+      "risk": {
+        "hpht": {
+          "class": "HPHT",
+          "pressure_psi": null,
+          "equip_rating_psi": null,
+          "exceedance_pct": null,
+          "severity": "class-only",
+          "basis": "reservoir",
+          "label": "HPHT"
+        },
+        "decommissioning_status": "withheld_pending_redistribution_review",
+        "decommissioning": null
+      },
+      "landman": {
+        "leases": [
+          {
+            "lease_num": "G17001",
+            "lease_name": "Stones",
+            "water_depth_ft": 9525,
+            "dev_system": "subsea15"
+          }
+        ],
+        "n_leases": 1,
+        "blocks": [
+          "WR508"
+        ],
+        "block_note": "Walker Ridge 508",
+        "operator": "Shell",
+        "working_interest": [
+          {
+            "name": "Shell",
+            "wi": 100,
+            "operator": true
+          }
+        ],
+        "pending": [
+          "status",
+          "effective_date",
+          "expiration_date",
+          "lease_type",
+          "per_lease_block",
+          "per_lease_working_interest",
+          "operator_of_record_history"
+        ],
+        "ingest_issue": 959
+      },
+      "concept": {
+        "type": "FPSO",
+        "host": "FPSO (Turritella / Stones FPSO, disconnectable)",
+        "play": "Lower Tertiary Wilcox",
+        "milestone": {
+          "label": "First oil",
+          "value": "Sep 2016"
+        },
+        "fdp_href": "../field-development/portfolio/stones.html",
+        "fdp_issue": 962
+      },
+      "architecture": {
+        "svg": null,
+        "pending_issue": 962
+      },
+      "provenance": "Capex ($3.8bn), plateau (50 mbopd), GOR (850 scf/bbl), opex ($15/boe), first oil (2016-09) and status from in-repo stones.yml (Shell FPSO development config). Discovery (2005), FID/sanction (May 2013, Shell 100% owner-operator), Walker Ridge Block 508, ~9,500 ft water depth, and Turritella/Stones FPSO host (world's deepest FPSO) confirmed via Offshore Technology, Offshore Magazine, and NS Energy public sources. lease year and projected end-of-production unknown; no notable schedule-driving incident identified.",
+      "norms": [
+        {
+          "delta_play_pct": 54.3,
+          "href": "norms/drill.html#stones",
+          "n": 21,
+          "play_n": 163,
+          "stage": "drill",
+          "state": "ok",
+          "unit": "days",
+          "value": 71.0
+        },
+        {
+          "delta_play_pct": 54.0,
+          "href": "norms/complete.html#stones",
+          "n": 22,
+          "play_n": 164,
+          "stage": "complete",
+          "state": "ok",
+          "unit": "days",
+          "value": 48.5
+        },
+        {
+          "delta_play_pct": -8.1,
+          "href": "norms/produce.html#stones",
+          "n": 10,
+          "play_n": 46,
+          "stage": "produce",
+          "state": "ok",
+          "unit": "%",
+          "value": 86.8
+        },
+        {
+          "delta_play_pct": 7.1,
+          "href": "norms/workover.html#stones",
+          "n": 10,
+          "play_n": 46,
+          "stage": "workover",
+          "state": "ok",
+          "unit": "per well",
+          "value": 0.3
+        },
+        {
+          "href": "norms/abandon.html#stones",
+          "stage": "abandon",
+          "state": "unavailable"
+        }
+      ],
+      "performance": {
+        "avg_decline_pct_yr": 21.4,
+        "avg_uptime_pct": 76.9,
+        "breakeven_wti": null,
+        "cum_oil_mmbbl": 89.0,
+        "display": "Stones",
+        "economics_basis": "life_to_date_pretax_npv_at_10pct",
+        "economics_status": "early_life",
+        "eur_confidence": "med_high",
+        "eur_mmbbl": 250,
+        "eur_source": "250+ MMboe recoverable, Phase 1 (NOT the >2 Bboe in-place)",
+        "interventions": 3,
+        "npv_mm": null,
+        "sens_mm_per_dollar": null,
+        "wells": 10
+      }
+    },
+    "tiber": {
+      "id": "tiber",
+      "wellsHref": null,
+      "wellsCount": 0,
+      "assetsHref": null,
+      "economics_href": null,
+      "benchmark_href": "../benchmark.html",
+      "name": "Tiber",
+      "operator": "BP",
+      "region": "Keathley Canyon 102 · US Gulf of Mexico",
+      "host": "Semisubmersible FPU (single-lift topsides, Kaskida-derived design)",
+      "statusLabel": "Under construction",
+      "statusHue": "var(--done)",
+      "treeType": "wet",
+      "treeLabel": "Wet tree · Semisub FPU",
+      "currentPhase": "execute",
+      "metrics": [
+        {
+          "k": "Water depth",
+          "v": "4,132",
+          "u": "ft"
+        },
+        {
+          "k": "Gross CAPEX",
+          "v": "$5",
+          "u": "B"
+        },
+        {
+          "k": "Plateau rate",
+          "v": "80",
+          "u": "mbopd"
+        },
+        {
+          "k": "GOR",
+          "v": "900",
+          "u": "scf/bbl"
+        },
+        {
+          "k": "Operator WI",
+          "v": "100",
+          "u": "%"
+        }
+      ],
+      "axis": {
+        "start": 2005,
+        "end": 2040,
+        "ticks": [
+          2005,
+          2010,
+          2015,
+          2020,
+          2025,
+          2030,
+          2035,
+          2040
+        ]
+      },
+      "gates": [
+        {
+          "year": 2009.0,
+          "phase": "explore",
+          "lab": "Discovery",
+          "dt": "2009",
+          "kind": "primary"
+        },
+        {
+          "year": 2025.0,
+          "phase": "define",
+          "lab": "FID / Sanction",
+          "dt": "2025",
+          "kind": "primary"
+        }
+      ],
+      "spans": [
+        {
+          "from": 2009.0,
+          "to": 2025.0,
+          "txt": "Discovery→FID ~16 yr"
+        }
+      ],
+      "workingInterest": [
+        {
+          "name": "BP",
+          "wi": 100,
+          "lead": true
+        }
+      ],
+      "hostFacts": [
+        [
+          "Host type",
+          "Semisubmersible FPU (single-lift topsides, Kaskida-derived design)"
+        ],
+        [
+          "Water depth",
+          "4,132 ft (1,259 m)"
+        ],
+        [
+          "Play",
+          "Wilcox (Lower Tertiary / Paleogene)"
+        ],
+        [
+          "Sanctioned",
+          "2025"
+        ],
+        [
+          "Data through",
+          "Dec 2024"
+        ]
+      ],
+      "reservoir": {
+        "formation": "Paleogene Wilcox",
+        "hpht_class": "ultra-HPHT",
+        "pressure_psi": 20000,
+        "pressure_qual": "up to",
+        "equip_rating_psi": 20000,
+        "temp_f": null,
+        "tvd_ft": 28000,
+        "fluid": "black oil (light)",
+        "api": null,
+        "source_note": "BP FID 2025 (Tiber-Guadalupe): reservoirs 'under pressures of up to 20,000 psi', Paleogene Wilcox; ~28,000 ft TVD. Temperature not field-specific."
+      },
+      "risk": {
+        "hpht": {
+          "class": "ultra-HPHT",
+          "pressure_psi": 20000,
+          "equip_rating_psi": 20000,
+          "exceedance_pct": 0,
+          "severity": "at-rating",
+          "basis": "reservoir",
+          "label": "ultra-HPHT · 20k vs 20k psi (0%)"
+        },
+        "decommissioning_status": "withheld_pending_redistribution_review",
+        "decommissioning": null
+      },
+      "landman": {
+        "leases": [
+          {
+            "lease_num": "G25782",
+            "lease_name": "Tiber",
+            "water_depth_ft": 4130,
+            "dev_system": "subsea20"
+          }
+        ],
+        "n_leases": 1,
+        "blocks": [
+          "KC102"
+        ],
+        "block_note": "Keathley Canyon 102",
+        "operator": "BP",
+        "working_interest": [
+          {
+            "name": "BP",
+            "wi": 100,
+            "operator": true
+          }
+        ],
+        "pending": [
+          "status",
+          "effective_date",
+          "expiration_date",
+          "lease_type",
+          "per_lease_block",
+          "per_lease_working_interest",
+          "operator_of_record_history"
+        ],
+        "ingest_issue": 959
+      },
+      "concept": {
+        "type": "Semisub FPU",
+        "host": "Semisubmersible FPU (single-lift topsides, Kaskida-derived design)",
+        "play": "Wilcox (Lower Tertiary / Paleogene)",
+        "milestone": {
+          "label": "Sanctioned",
+          "value": "2025"
+        },
+        "fdp_href": "../field-development/portfolio/tiber.html",
+        "fdp_issue": 962
+      },
+      "architecture": {
+        "svg": null,
+        "pending_issue": 962
+      },
+      "provenance": "Basis: in-repo tiber.yml (operator BP, plateau 80 mbopd, GOR 900 scf/bbl, data through 2024-12-31) plus public sources. BP discovered Tiber Sept 2009 in Keathley Canyon 102, 4,132 ft water. BP reached FID on the combined Tiber-Guadalupe hub 29 Sep 2025 (FID year=2025); Seatrium awarded FPU EPCC. Ownership is now 100% BP (original discovery split BP 62% / Petrobras 20% / ConocoPhillips 18% no longer reflects current WI). Status: execution (post-FID, construction underway). capex set to the sanctioned public figure of $5.0bn for the Tiber-Guadalupe project (YAML's $8bn was a pre-FID Tiber-only planning assumption); note $5bn covers both fields. first oil left blank — oil has not flowed; projected first production is 2030. OPEX, not available (not publicly disclosed; the \"$3/bbl below Kaskida\" figure is development cost, not opex). projected end-of-production and lease year (not confidently sourced).",
+      "norms": [
+        {
+          "href": "norms/drill.html#tiber",
+          "stage": "drill",
+          "state": "insufficient"
+        },
+        {
+          "href": "norms/complete.html#tiber",
+          "stage": "complete",
+          "state": "insufficient"
+        },
+        {
+          "href": "norms/produce.html#tiber",
+          "stage": "produce",
+          "state": "no_data"
+        },
+        {
+          "href": "norms/workover.html#tiber",
+          "stage": "workover",
+          "state": "no_data"
+        },
+        {
+          "href": "norms/abandon.html#tiber",
+          "stage": "abandon",
+          "state": "unavailable"
+        }
+      ],
+      "performance": null
+    }
+  },
+  "wells": {
+    "fields": {
+      "anchor": {
+        "display_name": "Anchor",
+        "operator": "Chevron",
+        "host": "Semisubmersible FPU",
+        "lease": "G31752",
+        "block": "Green Canyon 807",
+        "play": "Lower Tertiary Wilcox"
+      },
+      "big_foot": {
+        "display_name": "Big Foot",
+        "operator": "Chevron",
+        "host": "Extended Tension-Leg Platform (eTLP)",
+        "lease": "G16942",
+        "block": "Walker Ridge 29",
+        "play": "Wilcox / Lower Tertiary"
+      },
+      "cascade_chinook": {
+        "display_name": "Cascade/Chinook",
+        "operator": "MP Gulf of Mexico LLC (Murphy EXPRO)",
+        "host": "FPSO (BW Pioneer) with subsea tieback",
+        "lease": "G16965",
+        "block": "Walker Ridge 206/250 (Cascade), 425/469 (Chinook)",
+        "play": "Lower Tertiary (Wilcox)"
+      },
+      "jack_st_malo": {
+        "display_name": "Jack/St. Malo",
+        "operator": "Chevron",
+        "host": "Semisubmersible FPU",
+        "lease": "G17015",
+        "block": "Walker Ridge 678 (St. Malo) / 758-759 (Jack)",
+        "play": "Lower Tertiary (Wilcox)"
+      },
+      "julia": {
+        "display_name": "Julia",
+        "operator": "ExxonMobil",
+        "host": "Subsea tieback to Jack/St. Malo semisubmersible FPU (Chevron)",
+        "lease": "G20351",
+        "block": "Walker Ridge 627",
+        "play": "Lower Tertiary Wilcox"
+      },
+      "shenandoah": {
+        "display_name": "Shenandoah",
+        "operator": "Beacon Offshore Energy",
+        "host": "Semisubmersible FPU (FPS, 20,000-psi)",
+        "lease": "G31938",
+        "block": "Walker Ridge 52",
+        "play": "Wilcox (Lower Tertiary)"
+      },
+      "stones": {
+        "display_name": "Stones",
+        "operator": "Shell",
+        "host": "FPSO (Turritella / Stones FPSO, disconnectable)",
+        "lease": "G17001",
+        "block": "Walker Ridge 508",
+        "play": "Lower Tertiary Wilcox"
+      }
+    },
+    "wells": [
+      {
+        "api": "608114075000",
+        "slot": "AP001",
+        "field_id": "anchor",
+        "spud_date": "2021-12-08",
+        "td_date": "2022-03-14",
+        "drilling_rig_days": 96,
+        "completion_rig_days": 260,
+        "max_tvd_ft": 33399,
+        "mud_weight_ppg": null,
+        "first_oil": "2024-08-01",
+        "workovers": [],
+        "cum_oil_mmbbl": 8.4,
+        "uptime_pct": 93.3,
+        "status": "producing"
+      },
+      {
+        "api": "608114075100",
+        "slot": "AP002",
+        "field_id": "anchor",
+        "spud_date": "2022-11-16",
+        "td_date": "2023-02-06",
+        "drilling_rig_days": 82,
+        "completion_rig_days": 139,
+        "max_tvd_ft": 33367,
+        "mud_weight_ppg": null,
+        "first_oil": "2024-11-01",
+        "workovers": [],
+        "cum_oil_mmbbl": 9.9,
+        "uptime_pct": 94.3,
+        "status": "producing"
+      },
+      {
+        "api": "608114076101",
+        "slot": "w6101",
+        "field_id": "anchor",
+        "spud_date": null,
+        "td_date": null,
+        "drilling_rig_days": null,
+        "completion_rig_days": null,
+        "max_tvd_ft": null,
+        "mud_weight_ppg": null,
+        "first_oil": "2026-04-01",
+        "workovers": [],
+        "cum_oil_mmbbl": 0.3,
+        "uptime_pct": 76.7,
+        "status": "producing"
+      },
+      {
+        "api": "608124006200",
+        "slot": "A001",
+        "field_id": "big_foot",
+        "spud_date": "2012-04-03",
+        "td_date": "2012-08-07",
+        "drilling_rig_days": 126,
+        "completion_rig_days": 265,
+        "max_tvd_ft": 23187,
+        "mud_weight_ppg": 16.4,
+        "first_oil": "2018-11-01",
+        "workovers": [
+          {
+            "date": "2021-07-15",
+            "type": "Workover"
+          }
+        ],
+        "cum_oil_mmbbl": 14.9,
+        "uptime_pct": 94.6,
+        "status": "producing"
+      },
+      {
+        "api": "608124006800",
+        "slot": "A008",
+        "field_id": "big_foot",
+        "spud_date": "2013-01-22",
+        "td_date": "2021-12-02",
+        "drilling_rig_days": 118,
+        "completion_rig_days": 164,
+        "max_tvd_ft": 21801,
+        "mud_weight_ppg": 17,
+        "first_oil": "2022-07-01",
+        "workovers": [
+          {
+            "date": "2025-10-03",
+            "type": "Workover"
+          }
+        ],
+        "cum_oil_mmbbl": 4.7,
+        "uptime_pct": 92.4,
+        "status": "producing"
+      },
+      {
+        "api": "608124006001",
+        "slot": "A004",
+        "field_id": "big_foot",
+        "spud_date": "2019-03-10",
+        "td_date": "2019-03-25",
+        "drilling_rig_days": 15,
+        "completion_rig_days": 156,
+        "max_tvd_ft": 22253,
+        "mud_weight_ppg": 16.4,
+        "first_oil": "2019-06-01",
+        "workovers": [
+          {
+            "date": "2020-08-30",
+            "type": "Workover"
+          }
+        ],
+        "cum_oil_mmbbl": 32.2,
+        "uptime_pct": 93.7,
+        "status": "producing"
+      },
+      {
+        "api": "608124006603",
+        "slot": "A006",
+        "field_id": "big_foot",
+        "spud_date": "2020-02-12",
+        "td_date": "2020-03-01",
+        "drilling_rig_days": 18,
+        "completion_rig_days": 224,
+        "max_tvd_ft": 21395,
+        "mud_weight_ppg": 16.4,
+        "first_oil": "2020-09-01",
+        "workovers": [
+          {
+            "date": "2022-03-16",
+            "type": "Workover"
+          }
+        ],
+        "cum_oil_mmbbl": 21.3,
+        "uptime_pct": 92.2,
+        "status": "producing"
+      },
+      {
+        "api": "608124007102",
+        "slot": "A011-7102",
+        "field_id": "big_foot",
+        "spud_date": "2021-02-21",
+        "td_date": "2021-05-22",
+        "drilling_rig_days": 90,
+        "completion_rig_days": 129,
+        "max_tvd_ft": 22424,
+        "mud_weight_ppg": null,
+        "first_oil": "2021-07-01",
+        "workovers": [
+          {
+            "date": "2023-07-11",
+            "type": "Workover"
+          },
+          {
+            "date": "2023-09-17",
+            "type": "Sidetrack"
+          }
+        ],
+        "cum_oil_mmbbl": 0.9,
+        "uptime_pct": 55.1,
+        "status": "producing"
+      },
+      {
+        "api": "608124007103",
+        "slot": "A011-7103",
+        "field_id": "big_foot",
+        "spud_date": "2023-09-18",
+        "td_date": "2023-10-02",
+        "drilling_rig_days": 14,
+        "completion_rig_days": 69,
+        "max_tvd_ft": 22969,
+        "mud_weight_ppg": null,
+        "first_oil": "2023-12-01",
+        "workovers": [],
+        "cum_oil_mmbbl": 1.1,
+        "uptime_pct": 87.4,
+        "status": "producing"
+      },
+      {
+        "api": "608124006302",
+        "slot": "A002",
+        "field_id": "big_foot",
+        "spud_date": "2024-07-11",
+        "td_date": "2024-07-24",
+        "drilling_rig_days": 13,
+        "completion_rig_days": 168,
+        "max_tvd_ft": 21830,
+        "mud_weight_ppg": 14,
+        "first_oil": "2025-01-01",
+        "workovers": [],
+        "cum_oil_mmbbl": 1.5,
+        "uptime_pct": 96.3,
+        "status": "producing"
+      },
+      {
+        "api": "608124006404",
+        "slot": "A003",
+        "field_id": "big_foot",
+        "spud_date": null,
+        "td_date": null,
+        "drilling_rig_days": 0,
+        "completion_rig_days": 0,
+        "max_tvd_ft": null,
+        "mud_weight_ppg": null,
+        "first_oil": "2025-10-01",
+        "workovers": [],
+        "cum_oil_mmbbl": 2.0,
+        "uptime_pct": 93.9,
+        "status": "producing"
+      },
+      {
+        "api": "608124004602",
+        "slot": "CH002",
+        "field_id": "cascade_chinook",
+        "spud_date": "2010-02-11",
+        "td_date": "2010-02-24",
+        "drilling_rig_days": 13,
+        "completion_rig_days": 90,
+        "max_tvd_ft": 26222,
+        "mud_weight_ppg": null,
+        "first_oil": "2012-09-01",
+        "workovers": [],
+        "cum_oil_mmbbl": 5.0,
+        "uptime_pct": 94.8,
+        "status": "producing"
+      },
+      {
+        "api": "608124008300",
+        "slot": "CA006",
+        "field_id": "cascade_chinook",
+        "spud_date": "2013-01-01",
+        "td_date": "2013-08-11",
+        "drilling_rig_days": 222,
+        "completion_rig_days": 128,
+        "max_tvd_ft": 26969,
+        "mud_weight_ppg": null,
+        "first_oil": "2014-01-01",
+        "workovers": [],
+        "cum_oil_mmbbl": 10.4,
+        "uptime_pct": 94.3,
+        "status": "producing"
+      },
+      {
+        "api": "608124009700",
+        "slot": "CH004",
+        "field_id": "cascade_chinook",
+        "spud_date": "2014-12-07",
+        "td_date": "2015-03-11",
+        "drilling_rig_days": 94,
+        "completion_rig_days": 311,
+        "max_tvd_ft": 26263,
+        "mud_weight_ppg": null,
+        "first_oil": "2018-07-01",
+        "workovers": [],
+        "cum_oil_mmbbl": 24.3,
+        "uptime_pct": 94.7,
+        "status": "producing"
+      },
+      {
+        "api": "608124005000",
+        "slot": "PS005-5000",
+        "field_id": "jack_st_malo",
+        "spud_date": "2011-11-13",
+        "td_date": "2012-02-16",
+        "drilling_rig_days": 95,
+        "completion_rig_days": 245,
+        "max_tvd_ft": 28264,
+        "mud_weight_ppg": null,
+        "first_oil": "2014-12-01",
+        "workovers": [
+          {
+            "date": "2015-02-22",
+            "type": "Workover"
+          }
+        ],
+        "cum_oil_mmbbl": 24.7,
+        "uptime_pct": 94.4,
+        "status": "producing"
+      },
+      {
+        "api": "608124005300",
+        "slot": "PN001",
+        "field_id": "jack_st_malo",
+        "spud_date": "2011-11-21",
+        "td_date": "2012-10-16",
+        "drilling_rig_days": 72,
+        "completion_rig_days": 116,
+        "max_tvd_ft": 28093,
+        "mud_weight_ppg": null,
+        "first_oil": "2014-12-01",
+        "workovers": [
+          {
+            "date": "2024-07-09",
+            "type": "Workover"
+          }
+        ],
+        "cum_oil_mmbbl": 19.3,
+        "uptime_pct": 96.3,
+        "status": "producing"
+      },
+      {
+        "api": "608124005400",
+        "slot": "PN002",
+        "field_id": "jack_st_malo",
+        "spud_date": "2011-11-22",
+        "td_date": "2015-07-07",
+        "drilling_rig_days": 61,
+        "completion_rig_days": 80,
+        "max_tvd_ft": 28076,
+        "mud_weight_ppg": null,
+        "first_oil": "2016-06-01",
+        "workovers": [],
+        "cum_oil_mmbbl": 31.8,
+        "uptime_pct": 97.2,
+        "status": "producing"
+      },
+      {
+        "api": "608124005600",
+        "slot": "PS003-5600",
+        "field_id": "jack_st_malo",
+        "spud_date": "2011-11-26",
+        "td_date": "2012-03-16",
+        "drilling_rig_days": 111,
+        "completion_rig_days": 248,
+        "max_tvd_ft": 28049,
+        "mud_weight_ppg": null,
+        "first_oil": "2012-08-01",
+        "workovers": [
+          {
+            "date": "2021-02-07",
+            "type": "Workover"
+          }
+        ],
+        "cum_oil_mmbbl": 23.4,
+        "uptime_pct": 75.8,
+        "status": "producing"
+      },
+      {
+        "api": "608124005700",
+        "slot": "PS001-5700",
+        "field_id": "jack_st_malo",
+        "spud_date": "2011-12-03",
+        "td_date": "2013-05-04",
+        "drilling_rig_days": 82,
+        "completion_rig_days": 122,
+        "max_tvd_ft": 28367,
+        "mud_weight_ppg": null,
+        "first_oil": "2015-02-01",
+        "workovers": [],
+        "cum_oil_mmbbl": 34.0,
+        "uptime_pct": 96.8,
+        "status": "producing"
+      },
+      {
+        "api": "608124005800",
+        "slot": "PS004-5800",
+        "field_id": "jack_st_malo",
+        "spud_date": "2011-12-05",
+        "td_date": "2015-09-21",
+        "drilling_rig_days": 44,
+        "completion_rig_days": 105,
+        "max_tvd_ft": 28195,
+        "mud_weight_ppg": null,
+        "first_oil": "2016-04-01",
+        "workovers": [],
+        "cum_oil_mmbbl": 39.7,
+        "uptime_pct": 96.9,
+        "status": "producing"
+      },
+      {
+        "api": "608124005103",
+        "slot": "PS004-5103",
+        "field_id": "jack_st_malo",
+        "spud_date": "2012-06-02",
+        "td_date": "2012-07-04",
+        "drilling_rig_days": 32,
+        "completion_rig_days": 102,
+        "max_tvd_ft": 28201,
+        "mud_weight_ppg": null,
+        "first_oil": "2015-07-01",
+        "workovers": [],
+        "cum_oil_mmbbl": 39.5,
+        "uptime_pct": 95.1,
+        "status": "producing"
+      },
+      {
+        "api": "608124001701",
+        "slot": "PS002-1701",
+        "field_id": "jack_st_malo",
+        "spud_date": "2012-10-05",
+        "td_date": "2012-10-27",
+        "drilling_rig_days": 22,
+        "completion_rig_days": 89,
+        "max_tvd_ft": 27940,
+        "mud_weight_ppg": null,
+        "first_oil": "2013-01-01",
+        "workovers": [],
+        "cum_oil_mmbbl": 25.4,
+        "uptime_pct": 78.7,
+        "status": "producing"
+      },
+      {
+        "api": "608124010701",
+        "slot": "PN007",
+        "field_id": "jack_st_malo",
+        "spud_date": "2015-11-27",
+        "td_date": "2015-12-26",
+        "drilling_rig_days": 29,
+        "completion_rig_days": 94,
+        "max_tvd_ft": 28318,
+        "mud_weight_ppg": null,
+        "first_oil": "2016-08-01",
+        "workovers": [],
+        "cum_oil_mmbbl": 30.9,
+        "uptime_pct": 96.7,
+        "status": "producing"
+      },
+      {
+        "api": "608124005203",
+        "slot": "PS001-5203",
+        "field_id": "jack_st_malo",
+        "spud_date": "2016-10-30",
+        "td_date": "2016-11-29",
+        "drilling_rig_days": 30,
+        "completion_rig_days": 66,
+        "max_tvd_ft": 28344,
+        "mud_weight_ppg": null,
+        "first_oil": "2017-01-01",
+        "workovers": [],
+        "cum_oil_mmbbl": 1.1,
+        "uptime_pct": 15.6,
+        "status": "producing"
+      },
+      {
+        "api": "608124011400",
+        "slot": "PS002-1400",
+        "field_id": "jack_st_malo",
+        "spud_date": "2016-12-17",
+        "td_date": "2017-02-12",
+        "drilling_rig_days": 57,
+        "completion_rig_days": 87,
+        "max_tvd_ft": 28265,
+        "mud_weight_ppg": null,
+        "first_oil": "2017-05-01",
+        "workovers": [],
+        "cum_oil_mmbbl": 37.3,
+        "uptime_pct": 96.9,
+        "status": "producing"
+      },
+      {
+        "api": "608124011504",
+        "slot": "PS007-1504",
+        "field_id": "jack_st_malo",
+        "spud_date": "2017-04-23",
+        "td_date": "2017-05-31",
+        "drilling_rig_days": 38,
+        "completion_rig_days": 140,
+        "max_tvd_ft": 28371,
+        "mud_weight_ppg": null,
+        "first_oil": "2017-11-01",
+        "workovers": [
+          {
+            "date": "2018-03-04",
+            "type": "Workover"
+          }
+        ],
+        "cum_oil_mmbbl": 25.9,
+        "uptime_pct": 92.1,
+        "status": "producing"
+      },
+      {
+        "api": "608124011801",
+        "slot": "PS005-1801",
+        "field_id": "jack_st_malo",
+        "spud_date": "2017-06-15",
+        "td_date": "2017-09-04",
+        "drilling_rig_days": 81,
+        "completion_rig_days": 113,
+        "max_tvd_ft": 28536,
+        "mud_weight_ppg": null,
+        "first_oil": "2018-01-01",
+        "workovers": [],
+        "cum_oil_mmbbl": 17.2,
+        "uptime_pct": 96.8,
+        "status": "producing"
+      },
+      {
+        "api": "608124012200",
+        "slot": "PS007-2200",
+        "field_id": "jack_st_malo",
+        "spud_date": "2018-01-05",
+        "td_date": "2018-02-21",
+        "drilling_rig_days": 47,
+        "completion_rig_days": 105,
+        "max_tvd_ft": 28533,
+        "mud_weight_ppg": null,
+        "first_oil": "2018-06-01",
+        "workovers": [],
+        "cum_oil_mmbbl": 19.2,
+        "uptime_pct": 95.8,
+        "status": "producing"
+      },
+      {
+        "api": "608124011606",
+        "slot": "PS008-1606",
+        "field_id": "jack_st_malo",
+        "spud_date": "2018-08-31",
+        "td_date": "2018-09-07",
+        "drilling_rig_days": 7,
+        "completion_rig_days": 103,
+        "max_tvd_ft": 27998,
+        "mud_weight_ppg": null,
+        "first_oil": "2018-12-01",
+        "workovers": [
+          {
+            "date": "2024-10-10",
+            "type": "Workover"
+          }
+        ],
+        "cum_oil_mmbbl": 14.2,
+        "uptime_pct": 96.0,
+        "status": "producing"
+      },
+      {
+        "api": "608124012500",
+        "slot": "PS006-2500",
+        "field_id": "jack_st_malo",
+        "spud_date": "2018-12-23",
+        "td_date": "2019-02-10",
+        "drilling_rig_days": 49,
+        "completion_rig_days": 171,
+        "max_tvd_ft": 28547,
+        "mud_weight_ppg": null,
+        "first_oil": "2020-05-01",
+        "workovers": [],
+        "cum_oil_mmbbl": 10.3,
+        "uptime_pct": 96.4,
+        "status": "producing"
+      },
+      {
+        "api": "608124012601",
+        "slot": "PS003-2601",
+        "field_id": "jack_st_malo",
+        "spud_date": "2019-04-19",
+        "td_date": "2019-05-25",
+        "drilling_rig_days": 36,
+        "completion_rig_days": 174,
+        "max_tvd_ft": 28525,
+        "mud_weight_ppg": null,
+        "first_oil": "2019-08-01",
+        "workovers": [
+          {
+            "date": "2022-03-07",
+            "type": "Workover"
+          }
+        ],
+        "cum_oil_mmbbl": 2.0,
+        "uptime_pct": 91.6,
+        "status": "producing"
+      },
+      {
+        "api": "608124012804",
+        "slot": "PS009",
+        "field_id": "jack_st_malo",
+        "spud_date": "2019-11-28",
+        "td_date": "2019-12-02",
+        "drilling_rig_days": 4,
+        "completion_rig_days": 132,
+        "max_tvd_ft": 28973,
+        "mud_weight_ppg": null,
+        "first_oil": "2022-03-01",
+        "workovers": [],
+        "cum_oil_mmbbl": 10.8,
+        "uptime_pct": 96.7,
+        "status": "producing"
+      },
+      {
+        "api": "608124013202",
+        "slot": "PN005",
+        "field_id": "jack_st_malo",
+        "spud_date": "2020-07-11",
+        "td_date": "2020-09-30",
+        "drilling_rig_days": 81,
+        "completion_rig_days": 125,
+        "max_tvd_ft": 28656,
+        "mud_weight_ppg": null,
+        "first_oil": "2021-02-01",
+        "workovers": [],
+        "cum_oil_mmbbl": 8.9,
+        "uptime_pct": 96.0,
+        "status": "producing"
+      },
+      {
+        "api": "608124013600",
+        "slot": "PS006-3600",
+        "field_id": "jack_st_malo",
+        "spud_date": "2021-04-11",
+        "td_date": "2021-05-27",
+        "drilling_rig_days": 46,
+        "completion_rig_days": 71,
+        "max_tvd_ft": 28590,
+        "mud_weight_ppg": null,
+        "first_oil": "2021-08-01",
+        "workovers": [],
+        "cum_oil_mmbbl": 9.9,
+        "uptime_pct": 94.3,
+        "status": "producing"
+      },
+      {
+        "api": "608124014600",
+        "slot": "PS011",
+        "field_id": "jack_st_malo",
+        "spud_date": "2023-04-21",
+        "td_date": "2023-06-15",
+        "drilling_rig_days": 55,
+        "completion_rig_days": 70,
+        "max_tvd_ft": 28589,
+        "mud_weight_ppg": null,
+        "first_oil": "2023-09-01",
+        "workovers": [],
+        "cum_oil_mmbbl": 4.5,
+        "uptime_pct": 95.5,
+        "status": "producing"
+      },
+      {
+        "api": "608124015100",
+        "slot": "PS008-5100",
+        "field_id": "jack_st_malo",
+        "spud_date": "2023-10-14",
+        "td_date": "2023-11-21",
+        "drilling_rig_days": 38,
+        "completion_rig_days": 56,
+        "max_tvd_ft": 28015,
+        "mud_weight_ppg": null,
+        "first_oil": "2024-02-01",
+        "workovers": [],
+        "cum_oil_mmbbl": 6.5,
+        "uptime_pct": 96.1,
+        "status": "producing"
+      },
+      {
+        "api": "608124015504",
+        "slot": "PS012",
+        "field_id": "jack_st_malo",
+        "spud_date": null,
+        "td_date": null,
+        "drilling_rig_days": 0,
+        "completion_rig_days": 0,
+        "max_tvd_ft": null,
+        "mud_weight_ppg": null,
+        "first_oil": "2025-06-01",
+        "workovers": [],
+        "cum_oil_mmbbl": 1.6,
+        "uptime_pct": 92.2,
+        "status": "producing"
+      },
+      {
+        "api": "608124015400",
+        "slot": "PS014",
+        "field_id": "jack_st_malo",
+        "spud_date": null,
+        "td_date": null,
+        "drilling_rig_days": 0,
+        "completion_rig_days": 0,
+        "max_tvd_ft": null,
+        "mud_weight_ppg": null,
+        "first_oil": "2025-12-01",
+        "workovers": [],
+        "cum_oil_mmbbl": 0.6,
+        "uptime_pct": 72.2,
+        "status": "producing"
+      },
+      {
+        "api": "608124009400",
+        "slot": "DC101",
+        "field_id": "julia",
+        "spud_date": "2014-07-10",
+        "td_date": "2014-11-03",
+        "drilling_rig_days": 116,
+        "completion_rig_days": 143,
+        "max_tvd_ft": 30685,
+        "mud_weight_ppg": null,
+        "first_oil": "2016-05-01",
+        "workovers": [],
+        "cum_oil_mmbbl": 14.7,
+        "uptime_pct": 96.1,
+        "status": "producing"
+      },
+      {
+        "api": "608124003301",
+        "slot": "JU102",
+        "field_id": "julia",
+        "spud_date": "2015-01-20",
+        "td_date": "2015-02-26",
+        "drilling_rig_days": 37,
+        "completion_rig_days": 173,
+        "max_tvd_ft": 30453,
+        "mud_weight_ppg": null,
+        "first_oil": "2016-03-01",
+        "workovers": [],
+        "cum_oil_mmbbl": 12.6,
+        "uptime_pct": 96.2,
+        "status": "producing"
+      },
+      {
+        "api": "608124010800",
+        "slot": "JU104",
+        "field_id": "julia",
+        "spud_date": "2016-02-13",
+        "td_date": "2016-06-30",
+        "drilling_rig_days": 138,
+        "completion_rig_days": 130,
+        "max_tvd_ft": 30310,
+        "mud_weight_ppg": null,
+        "first_oil": "2017-11-01",
+        "workovers": [],
+        "cum_oil_mmbbl": 30.9,
+        "uptime_pct": 95.7,
+        "status": "producing"
+      },
+      {
+        "api": "608124012701",
+        "slot": "JU106",
+        "field_id": "julia",
+        "spud_date": "2019-10-29",
+        "td_date": "2019-11-17",
+        "drilling_rig_days": 19,
+        "completion_rig_days": 96,
+        "max_tvd_ft": 29185,
+        "mud_weight_ppg": null,
+        "first_oil": "2020-02-01",
+        "workovers": [],
+        "cum_oil_mmbbl": 19.4,
+        "uptime_pct": 97.3,
+        "status": "producing"
+      },
+      {
+        "api": "608124014100",
+        "slot": "SA008",
+        "field_id": "shenandoah",
+        "spud_date": "2022-11-22",
+        "td_date": "2023-03-19",
+        "drilling_rig_days": 117,
+        "completion_rig_days": 175,
+        "max_tvd_ft": 30780,
+        "mud_weight_ppg": null,
+        "first_oil": "2025-07-01",
+        "workovers": [],
+        "cum_oil_mmbbl": 5.5,
+        "uptime_pct": 88.5,
+        "status": "producing"
+      },
+      {
+        "api": "608124014400",
+        "slot": "SA009",
+        "field_id": "shenandoah",
+        "spud_date": "2022-11-28",
+        "td_date": "2023-05-12",
+        "drilling_rig_days": 165,
+        "completion_rig_days": 186,
+        "max_tvd_ft": 31085,
+        "mud_weight_ppg": null,
+        "first_oil": "2025-02-01",
+        "workovers": [],
+        "cum_oil_mmbbl": 6.4,
+        "uptime_pct": 58.6,
+        "status": "producing"
+      },
+      {
+        "api": "608124014003",
+        "slot": "SA007",
+        "field_id": "shenandoah",
+        "spud_date": null,
+        "td_date": null,
+        "drilling_rig_days": 0,
+        "completion_rig_days": 0,
+        "max_tvd_ft": null,
+        "mud_weight_ppg": null,
+        "first_oil": "2025-08-01",
+        "workovers": [],
+        "cum_oil_mmbbl": 5.7,
+        "uptime_pct": 93.0,
+        "status": "producing"
+      },
+      {
+        "api": "608124013900",
+        "slot": "SA010",
+        "field_id": "shenandoah",
+        "spud_date": null,
+        "td_date": null,
+        "drilling_rig_days": 0,
+        "completion_rig_days": 0,
+        "max_tvd_ft": null,
+        "mud_weight_ppg": null,
+        "first_oil": "2025-08-01",
+        "workovers": [
+          {
+            "date": "2025-09-24",
+            "type": "Workover"
+          }
+        ],
+        "cum_oil_mmbbl": 3.5,
+        "uptime_pct": 80.6,
+        "status": "producing"
+      },
+      {
+        "api": "608124009500",
+        "slot": "SN105",
+        "field_id": "stones",
+        "spud_date": "2014-07-24",
+        "td_date": "2014-12-26",
+        "drilling_rig_days": 155,
+        "completion_rig_days": 152,
+        "max_tvd_ft": 28307,
+        "mud_weight_ppg": null,
+        "first_oil": "2016-09-01",
+        "workovers": [],
+        "cum_oil_mmbbl": 18.7,
+        "uptime_pct": 88.1,
+        "status": "producing"
+      },
+      {
+        "api": "608124009900",
+        "slot": "SN109",
+        "field_id": "stones",
+        "spud_date": "2015-03-18",
+        "td_date": "2015-06-05",
+        "drilling_rig_days": 79,
+        "completion_rig_days": 101,
+        "max_tvd_ft": 28333,
+        "mud_weight_ppg": null,
+        "first_oil": "2016-09-01",
+        "workovers": [],
+        "cum_oil_mmbbl": 16.6,
+        "uptime_pct": 85.5,
+        "status": "producing"
+      },
+      {
+        "api": "608124010400",
+        "slot": "SN208",
+        "field_id": "stones",
+        "spud_date": "2015-08-07",
+        "td_date": "2017-02-20",
+        "drilling_rig_days": 88,
+        "completion_rig_days": 117,
+        "max_tvd_ft": 27326,
+        "mud_weight_ppg": null,
+        "first_oil": "2017-05-01",
+        "workovers": [],
+        "cum_oil_mmbbl": 2.9,
+        "uptime_pct": 65.9,
+        "status": "producing"
+      },
+      {
+        "api": "608124011001",
+        "slot": "SN110",
+        "field_id": "stones",
+        "spud_date": "2016-08-16",
+        "td_date": "2016-09-08",
+        "drilling_rig_days": 23,
+        "completion_rig_days": 112,
+        "max_tvd_ft": 27228,
+        "mud_weight_ppg": null,
+        "first_oil": "2016-12-01",
+        "workovers": [],
+        "cum_oil_mmbbl": 0.2,
+        "uptime_pct": 5.9,
+        "status": "producing"
+      },
+      {
+        "api": "608124011700",
+        "slot": "SN207",
+        "field_id": "stones",
+        "spud_date": "2017-04-02",
+        "td_date": "2017-06-03",
+        "drilling_rig_days": 62,
+        "completion_rig_days": 40,
+        "max_tvd_ft": 28179,
+        "mud_weight_ppg": null,
+        "first_oil": "2017-08-01",
+        "workovers": [],
+        "cum_oil_mmbbl": 2.3,
+        "uptime_pct": 68.3,
+        "status": "producing"
+      },
+      {
+        "api": "608124012300",
+        "slot": "SN213",
+        "field_id": "stones",
+        "spud_date": "2018-04-06",
+        "td_date": "2018-05-15",
+        "drilling_rig_days": 39,
+        "completion_rig_days": 92,
+        "max_tvd_ft": 28272,
+        "mud_weight_ppg": null,
+        "first_oil": "2018-09-01",
+        "workovers": [
+          {
+            "date": "2024-01-28",
+            "type": "Workover"
+          }
+        ],
+        "cum_oil_mmbbl": 16.4,
+        "uptime_pct": 70.7,
+        "status": "producing"
+      },
+      {
+        "api": "608124012900",
+        "slot": "SN115",
+        "field_id": "stones",
+        "spud_date": "2019-10-22",
+        "td_date": "2020-04-23",
+        "drilling_rig_days": 184,
+        "completion_rig_days": 51,
+        "max_tvd_ft": 27488,
+        "mud_weight_ppg": null,
+        "first_oil": "2020-06-01",
+        "workovers": [
+          {
+            "date": "2025-12-13",
+            "type": "Workover"
+          }
+        ],
+        "cum_oil_mmbbl": 12.9,
+        "uptime_pct": 96.5,
+        "status": "producing"
+      },
+      {
+        "api": "608124013400",
+        "slot": "SN216",
+        "field_id": "stones",
+        "spud_date": "2020-12-09",
+        "td_date": "2021-02-27",
+        "drilling_rig_days": 80,
+        "completion_rig_days": 48,
+        "max_tvd_ft": 27595,
+        "mud_weight_ppg": null,
+        "first_oil": "2021-05-01",
+        "workovers": [],
+        "cum_oil_mmbbl": 13.8,
+        "uptime_pct": 96.5,
+        "status": "producing"
+      },
+      {
+        "api": "608124013701",
+        "slot": "SN114",
+        "field_id": "stones",
+        "spud_date": "2022-02-04",
+        "td_date": "2022-02-08",
+        "drilling_rig_days": 4,
+        "completion_rig_days": 78,
+        "max_tvd_ft": 27023,
+        "mud_weight_ppg": null,
+        "first_oil": "2022-05-01",
+        "workovers": [
+          {
+            "date": "2025-12-16",
+            "type": "Workover"
+          }
+        ],
+        "cum_oil_mmbbl": 2.7,
+        "uptime_pct": 95.5,
+        "status": "producing"
+      },
+      {
+        "api": "608124014301",
+        "slot": "SN219",
+        "field_id": "stones",
+        "spud_date": "2023-02-14",
+        "td_date": "2023-02-16",
+        "drilling_rig_days": 2,
+        "completion_rig_days": 50,
+        "max_tvd_ft": 27522,
+        "mud_weight_ppg": null,
+        "first_oil": "2023-04-01",
+        "workovers": [],
+        "cum_oil_mmbbl": 2.6,
+        "uptime_pct": 96.0,
+        "status": "producing"
+      }
+    ]
+  }
+}

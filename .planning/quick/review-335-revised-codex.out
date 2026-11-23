@@ -1,0 +1,326 @@
+OpenAI Codex v0.122.0 (research preview)
+--------
+workdir: /mnt/local-analysis/workspace-hub/worldenergydata
+model: gpt-5.4
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR, /home/vamsee/.codex/memories]
+reasoning effort: medium
+reasoning summaries: none
+session id: 019db62d-07c3-71e2-8087-89d9af7cdb20
+--------
+user
+# Adversarial Re-Review Request: Issue #335 (revised compact)
+
+You are an independent adversarial reviewer. Findings only. Do not praise or restate.
+
+Target
+- Repo: vamseeachanta/worldenergydata
+- Issue #335: disclosure-to-CostDataPoint linkage model
+- Stage: revised draft plan review before any plan-review move
+
+What was revised to address prior MAJOR findings:
+- made dependency on #334 explicit
+- carried parent invariant explicitly: only project-scope disclosure rows participate in linkage; operator-scope rows are never linkable
+- fixed pseudocode fallback bug by distinguishing `sanctioned_records is None` from an intentionally injected empty list
+- moved proposed linkage contract/helper into dedicated module `src/worldenergydata/cost/data_collection/linkage.py`
+- strengthened tests for empty-list behavior, operator-row non-linkability, negative exactness, and unchanged sanctioned loader behavior
+
+Review questions
+1. Is the revised plan now sufficiently grounded and bounded for a child issue?
+2. Are module placement, files-to-change, and tests now internally consistent?
+3. Any remaining blockers that should prevent moving this plan to plan-review later?
+
+Required output
+- Verdict: APPROVE | MINOR | MAJOR
+- Retrieval adequacy: adequate | insufficient
+- Strengths
+- Findings by severity: critical, high, medium, low
+- Missing tests
+- Scope creep concerns
+- Weakest assumption
+- Most likely implementation failure mode
+- Most likely test gap
+- Future issues suggested
+- Review confidence
+
+## Exact revised plan sections under review
+
+## Deliverable
+
+A derived-only linkage contract in `worldenergydata.cost.data_collection.linkage` that formalizes exact `(operator, project_name)` resolution of project-scope disclosure rows against existing `CostDataPoint` sanction records and returns explicit `linked`, `unlinked`, or `ambiguous` outcomes without changing sanction data content, adding stored reference fields, or widening into alias/fuzzy matching.
+
+---
+
+## Scope Boundaries
+
+### In scope now
+- Define linkage status/result shape
+- Preserve exact `(operator, project_name)` as the only deterministic rule
+- Carry the parent invariant explicitly: only project-scope disclosure rows participate in linkage; operator-scope rows are never linkable
+- Define explicit semantics for exact single match, no match, and multiple exact matches
+- Add focused tests around exact, unmatched, ambiguous, and operator-row-non-linkable outcomes
+- Export linkage contract/helper from `worldenergydata.cost.data_collection`
+
+### Explicitly out of scope for this issue
+- Fuzzy matching, alias tables, trimming/case-normalization heuristics, or canonical-name normalization
+- Currency normalization or comparability policy
+- Any changes to FDAS / lower_tertiary / analytics consumers
+- Any stored foreign-key-style `CostDataPoint` reference field
+- Restatement/versioning behavior
+- Redefining disclosure schema fields from #334
+
+### Dependency boundary
+- This issue depends on #334 landing the disclosure-side schema/loader surface first.
+- #335 defines the sanction-side linkage helper/result contract and the disclosure-side linkage invariants that future consumers must respect.
+- #335 must not attempt to implement the disclosure schema itself.
+
+---
+
+## Pseudocode
+
+```text
+class LinkageStatus(Enum):
+    LINKED = "linked"
+    UNLINKED = "unlinked"
+    AMBIGUOUS = "ambiguous"
+
+class CostDataPointLinkResult(BaseModel):
+    status
+    match_key_operator
+    match_key_project_name
+    matched_record
+    matched_count
+    candidates
+
+function resolve_cost_datapoint_link(operator, project_name, sanctioned_records=None):
+    if sanctioned_records is None:
+        records = load_public_dataset()
+    else:
+        records = sanctioned_records
+
+    exact_candidates = [
+        rec for rec in records
+        if rec.operator == operator and rec.project_name == project_name
+    ]
+
+    if len(exact_candidates) == 0:
+        return UNLINKED result with matched_record=None, matched_count=0, candidates=[]
+    if len(exact_candidates) == 1:
+        return LINKED result with matched_record=exact_candidates[0], matched_count=1, candidates=[exact_candidates[0]]
+    return AMBIGUOUS result with matched_record=None, matched_count=len(exact_candidates), candidates=exact_candidates
+
+function disclosure_row_is_linkable(scope_type):
+    return scope_type == "project"
+```
+
+---
+
+## Files to Change
+
+| Action | Path | Reason |
+|---|---|---|
+| Create | `src/worldenergydata/cost/data_collection/linkage.py` | dedicated linkage helper/result module keeps disclosure-linkage concerns out of `calibration_schema.py` |
+| Modify | `src/worldenergydata/cost/data_collection/__init__.py` | export linkage primitives/helpers |
+| Create | `tests/unit/cost/test_linkage.py` | direct TDD coverage for exact/no-match/ambiguous/operator-row behaviors |
+| Verify only | `src/worldenergydata/cost/data_collection/public_dataset.py` | sanctioned dataset remains the source for exact-match lookup but is not otherwise redesigned |
+| Verify only | `tests/unit/cost/test_calibration_schema.py` | existing sanction-schema behavior remains unchanged |
+| Verify only | `tests/unit/cost/test_proxy_comparison.py` | regression boundary for current dataset loader behavior |
+
+---
+
+## TDD Test List
+
+| Test name | What it verifies | Expected input | Expected output |
+|---|---|---|---|
+| `test_linkage_status_enum_exposes_linked_unlinked_ambiguous` | contract has three canonical states | enum import | expected values |
+| `test_resolve_link_returns_linked_for_exact_single_match` | exact match resolves deterministically | matching operator/project | linked result |
+| `test_resolve_link_returns_unlinked_for_no_exact_match` | unmatched rows remain unresolved | non-matching operator/project | unlinked result |
+| `test_resolve_link_returns_ambiguous_for_multiple_exact_matches` | helper never silently guesses | duplicated exact key set | ambiguous result |
+| `test_ambiguous_result_has_no_single_matched_record` | ambiguous outcomes stay unresolved | ambiguous case | no matched record |
+| `test_link_result_preserves_match_key_and_match_count` | result is debuggable/consumable | any result | keys + counts present |
+| `test_helper_uses_load_public_dataset_by_default` | default sanctioned source works | no explicit records arg | valid result |
+| `test_helper_respects_injected_empty_record_list` | injected empty list does not fall back to loader | `sanctioned_records=[]` | unlinked result |
+| `test_helper_accepts_injected_records_for_testing` | deterministic injectable behavior | custom sanctioned list | valid result |
+| `test_negative_exactness_case_changes_stay_unlinked` | no hidden case/whitespace normalization sneaks in | case/spacing variant names | unlinked result |
+| `test_operator_scope_rows_are_never_linkable` | parent invariant is carried explicitly | operator-scope row metadata | false / rejected from linkage path |
+| `test_data_collection_exports_linkage_contract` | public API exists | import check | names resolve |
+| `test_load_public_dataset_shape_is_unchanged` | sanction dataset loader remains unchanged | current loader | same shape/type semantics |
+
+---
+
+## Acceptance Criteria
+
+- [ ] Explicit `linked`, `unlinked`, and `ambiguous` outcomes exist
+- [ ] Exact `(operator, project_name)` remains the only deterministic rule
+- [ ] Operator-scope disclosure rows are explicitly treated as never linkable
+- [ ] Ambiguous exact-key collisions are surfaced, never auto-resolved
+- [ ] Unmatched rows are represented explicitly rather than via exceptions or silent null behavior
+- [ ] Linkage remains derived-only; no stored `CostDataPoint` reference field is added
+- [ ] Injected empty record lists do not fall back to `load_public_dataset()`
+- [ ] `worldenergydata.cost.data_collection` exports the linkage contract/helper
+- [ ] Existing sanction dataset loading behavior remains unchanged
+- [ ] Existing calibration/proxy regression tests still pass unchanged
+- [ ] Plan and comments explicitly state this issue depends on #334 landing first
+
+---
+
+## Risks and Open Questions
+
+- `CostDataPoint` has no stronger stable identifier than domain fields, so ambiguous exact-key collisions cannot be disambiguated here.
+- Exact `(operator, project_name)` may still be fragile for selected seed rows if naming variants exist; alias handling remains future work.
+- Need to decide whether `disclosure_row_is_linkable()` lives in the linkage module or only in disclosure-side adapter code after #334 lands.
+- If future consumers need stronger keys than `(operator, project_name)`, a later identifier/uniqueness issue will be required.
+
+---
+
+## Complexity: T2
+
+**T2** — small code surface, but semantically important because it defines the safe future join boundary for disclosure-to-sanction matching while carefully respecting the parent/sibling boundaries.
+warning: Codex's Linux sandbox uses bubblewrap and needs access to create user namespaces.
+codex
+I’m reviewing the existing `cost.data_collection` surface and nearby tests first so I can judge whether the revised plan is actually aligned with the current code layout and boundaries.
+codex
+The shell wrapper is hitting a sandbox setup error, so I’m retrying with a non-login shell to inspect the repository directly.
+codex
+I can still read the workspace through the Node REPL, so I’m switching to that path and pulling the relevant `cost` modules and unit tests.
+exec
+js_repl in /mnt/local-analysis/workspace-hub/worldenergydata
+2026-04-22T17:12:02.029795Z ERROR codex_core::tools::router: error=js_repl kernel exited unexpectedly
+
+js_repl diagnostics: {"reason":"stdout_eof","stream_error":null,"kernel_pid":889332,"kernel_status":"exited(code=1)","kernel_stderr_tail":"bwrap: loopback: Failed RTM_NEWADDR: Operation not permitted"}
+ exited 1 in 82ms:
+js_repl kernel exited unexpectedly
+
+js_repl diagnostics: {"reason":"stdout_eof","stream_error":null,"kernel_pid":889332,"kernel_status":"exited(code=1)","kernel_stderr_tail":"bwrap: loopback: Failed RTM_NEWADDR: Operation not permitted"}
+codex
+The local sandbox is blocked from launching subprocesses, so I’m pulling the current repository structure through GitHub instead.
+mcp: codex_apps/github_search started
+mcp: codex_apps/github_search (completed)
+mcp: codex_apps/github_search_repositories started
+mcp: codex_apps/github_search_repositories (completed)
+mcp: codex_apps/github_fetch started
+mcp: codex_apps/github_fetch (failed)
+mcp: codex_apps/github_fetch started
+mcp: codex_apps/github_fetch (completed)
+mcp: codex_apps/github_fetch started
+mcp: codex_apps/github_fetch (completed)
+mcp: codex_apps/github_fetch started
+mcp: codex_apps/github_fetch (completed)
+mcp: codex_apps/github_fetch started
+mcp: codex_apps/github_fetch (completed)
+mcp: codex_apps/github_fetch started
+mcp: codex_apps/github_fetch (completed)
+codex
+I have the current `data_collection` package and its two adjacent test modules. I’m checking where that package is imported so I can spot any hidden consistency problems with the proposed new exports.
+mcp: codex_apps/github_search started
+mcp: codex_apps/github_search (completed)
+mcp: codex_apps/github_fetch started
+mcp: codex_apps/github_fetch (completed)
+mcp: codex_apps/github_fetch started
+mcp: codex_apps/github_fetch (completed)
+codex
+Verdict: MINOR
+
+Retrieval adequacy: adequate
+
+Strengths
+- The child issue is now bounded to a derived-only helper/result contract in `src/worldenergydata/cost/data_collection/linkage.py`, with parent dependency on #334 stated explicitly.
+- Module placement is consistent with the current package shape: `src/worldenergydata/cost/data_collection/__init__.py` is already the public export surface for schema/loader primitives, and `public_dataset.py` remains the existing sanctioned-record source.
+- The empty-list fallback bug and operator-scope invariant are both now called out directly instead of being implicit.
+
+Findings by severity
+
+critical
+- None.
+
+high
+- None.
+
+medium
+- The plan still splits the safety invariant across two independent entry points: `resolve_cost_datapoint_link(operator, project_name, ...)` and `disclosure_row_is_linkable(scope_type)`. That leaves the main resolver callable without the project-scope guard. For a child issue whose purpose is to define the safe join boundary, the plan should state one of these explicitly:
+  1. `resolve_cost_datapoint_link` is a sanction-side primitive only and callers must gate through #334 disclosure logic first, or
+  2. the primary public API accepts a disclosure record / scope-aware inputs and enforces non-linkability internally.
+  Without that, the parent invariant is documented but not actually protected by the contract.
+
+low
+- `test_operator_scope_rows_are_never_linkable` is only fully grounded if it uses the actual #334 disclosure-side type/enum rather than raw `"operator"` / `"project"` strings. The plan should say that explicitly to avoid drift between sibling contracts.
+- `Verify only` on `tests/unit/cost/test_calibration_schema.py` is weakly justified. The unchanged-loader regression is really anchored by `public_dataset.py` behavior, while `test_calibration_schema.py` mostly validates `CostDataPoint` field constraints. Not a blocker, but the verification map is slightly loose.
+
+Missing tests
+- A test that the public API boundary cannot accidentally link an operator-scope disclosure record if a caller bypasses helper ordering.
+- A test that ambiguous results preserve the full candidate set, not just `matched_count`.
+- A test that the linkage helper uses the actual #334 `ScopeType`/record shape once that parent lands, rather than ad hoc string conventions.
+
+Scope creep concerns
+- Small risk of this issue reabsorbing disclosure-side adapter logic from #334 if the final API starts taking full disclosure records instead of staying narrowly at the linkage boundary.
+- Small risk of sliding into name canonicalization once real disclosure seed rows expose mismatches. The current out-of-scope statement is clear enough if kept rigid.
+
+Weakest assumption
+- That exact `(operator, project_name)` is sufficient as a stable derived join boundary even for the tiny #334 seed set; the plan assumes curation will eliminate naming variance rather than the contract having to absorb it.
+
+Most likely implementation failure mode
+- The resolver is implemented as the de facto public API, and downstream code calls it directly on operator-scope disclosure rows because the scope gate lives in a separate helper.
+
+Most likely test gap
+- Tests pass against injected synthetic records, but no test proves the #334 disclosure objects and #335 linkage contract interoperate without convention drift.
+
+Future issues suggested
+- A narrow follow-up for a stricter scope-aware public linkage API once #334 lands.
+- A later identifier/alias issue if real disclosure rows show exact-name instability.
+
+Review confidence
+- Medium-high.
+tokens used
+72,785
+Verdict: MINOR
+
+Retrieval adequacy: adequate
+
+Strengths
+- The child issue is now bounded to a derived-only helper/result contract in `src/worldenergydata/cost/data_collection/linkage.py`, with parent dependency on #334 stated explicitly.
+- Module placement is consistent with the current package shape: `src/worldenergydata/cost/data_collection/__init__.py` is already the public export surface for schema/loader primitives, and `public_dataset.py` remains the existing sanctioned-record source.
+- The empty-list fallback bug and operator-scope invariant are both now called out directly instead of being implicit.
+
+Findings by severity
+
+critical
+- None.
+
+high
+- None.
+
+medium
+- The plan still splits the safety invariant across two independent entry points: `resolve_cost_datapoint_link(operator, project_name, ...)` and `disclosure_row_is_linkable(scope_type)`. That leaves the main resolver callable without the project-scope guard. For a child issue whose purpose is to define the safe join boundary, the plan should state one of these explicitly:
+  1. `resolve_cost_datapoint_link` is a sanction-side primitive only and callers must gate through #334 disclosure logic first, or
+  2. the primary public API accepts a disclosure record / scope-aware inputs and enforces non-linkability internally.
+  Without that, the parent invariant is documented but not actually protected by the contract.
+
+low
+- `test_operator_scope_rows_are_never_linkable` is only fully grounded if it uses the actual #334 disclosure-side type/enum rather than raw `"operator"` / `"project"` strings. The plan should say that explicitly to avoid drift between sibling contracts.
+- `Verify only` on `tests/unit/cost/test_calibration_schema.py` is weakly justified. The unchanged-loader regression is really anchored by `public_dataset.py` behavior, while `test_calibration_schema.py` mostly validates `CostDataPoint` field constraints. Not a blocker, but the verification map is slightly loose.
+
+Missing tests
+- A test that the public API boundary cannot accidentally link an operator-scope disclosure record if a caller bypasses helper ordering.
+- A test that ambiguous results preserve the full candidate set, not just `matched_count`.
+- A test that the linkage helper uses the actual #334 `ScopeType`/record shape once that parent lands, rather than ad hoc string conventions.
+
+Scope creep concerns
+- Small risk of this issue reabsorbing disclosure-side adapter logic from #334 if the final API starts taking full disclosure records instead of staying narrowly at the linkage boundary.
+- Small risk of sliding into name canonicalization once real disclosure seed rows expose mismatches. The current out-of-scope statement is clear enough if kept rigid.
+
+Weakest assumption
+- That exact `(operator, project_name)` is sufficient as a stable derived join boundary even for the tiny #334 seed set; the plan assumes curation will eliminate naming variance rather than the contract having to absorb it.
+
+Most likely implementation failure mode
+- The resolver is implemented as the de facto public API, and downstream code calls it directly on operator-scope disclosure rows because the scope gate lives in a separate helper.
+
+Most likely test gap
+- Tests pass against injected synthetic records, but no test proves the #334 disclosure objects and #335 linkage contract interoperate without convention drift.
+
+Future issues suggested
+- A narrow follow-up for a stricter scope-aware public linkage API once #334 lands.
+- A later identifier/alias issue if real disclosure rows show exact-name instability.
+
+Review confidence
+- Medium-high.

@@ -1,0 +1,16 @@
+# generic-api-key  scripts/_deprecated/task3_execution.py:38  not-a-secret
+scripts/_deprecated/task3_execution.py:generic-api-key:38
+# generic-api-key  scripts/task3_execution.py:38  not-a-secret
+scripts/task3_execution.py:generic-api-key:38
+# generic-api-key  tests/unit/common/test_config.py:180  synthetic-fixture
+tests/unit/common/test_config.py:generic-api-key:180
+# generic-api-key  tests/unit/scheduler/test_eia_adapter.py:41  synthetic-fixture
+tests/unit/scheduler/test_eia_adapter.py:generic-api-key:41
+# generic-api-key  tests/unit/scheduler/test_eia_adapter.py:60  synthetic-fixture
+tests/unit/scheduler/test_eia_adapter.py:generic-api-key:60
+# generic-api-key  tests/unit/scheduler/test_eia_adapter.py:81  synthetic-fixture
+tests/unit/scheduler/test_eia_adapter.py:generic-api-key:81
+# generic-api-key  tests/unit/scheduler/test_eia_adapter.py:116  synthetic-fixture
+tests/unit/scheduler/test_eia_adapter.py:generic-api-key:116
+# generic-api-key  tests/unit/scheduler/test_eia_adapter.py:140  synthetic-fixture
+tests/unit/scheduler/test_eia_adapter.py:generic-api-key:140

@@ -1,0 +1,24 @@
+meta:
+  library: worldenergydata
+  basename: bsee
+basename: bsee
+
+data:
+  production_data: False
+  groups:
+    # Groups typically are list of dictionaries to run through multiple API numbers or multiple API sets
+    - 
+      bottom_block: NULL
+      api12: [608124009400]
+    # - api12: [177024120700]
+
+analysis:
+  flag: True
+  api12: True
+
+default:
+  log_level: INFO
+  config:
+    overwrite:
+      output: True
+    cfg_sensitivities: False

@@ -1,0 +1,1209 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Pipeline screening database QA</title><style>body{font:16px system-ui;margin:2rem;max-width:90rem;color:#17212b}table{border-collapse:collapse}td,th{border:1px solid #bbb;padding:.4rem;text-align:left}h2{margin-top:2rem}</style><body data-revision="3"><h1>Pipeline screening database QA</h1><h2>Summary</h2><p>8576 case rows represent 4288 screening-selected segments. This is a screening input inventory. It does not establish installed properties or stability acceptance.</p><h2>Revision history</h2><table><thead><tr><th>Revision</th><th>Date</th><th>What changed</th><th>Why</th></tr></thead><tbody><tr><td>1</td><td>2026-10-15</td><td>Initial screening database and source QA</td><td>Expose derived geometry, assumptions and missing evidence before stability calculations</td></tr><tr><td>2</td><td>2026-10-17</td><td>Apply I-0248 and resolve screening review findings</td><td>Separate unknown installed properties from assumptions and qualify environmental estimates and provenance</td></tr><tr><td>3</td><td>2026-10-18</td><td>Replay retained inputs with corrected missing-station counts and source terms link</td><td>Align the committed sample, QA and payload with the current generator and portable criteria digests</td></tr></tbody></table><p>Table 1. Revision history.</p><h2>Source counts</h2><table><thead><tr><th>Source class</th><th>Cells (count)</th></tr></thead><tbody><tr><td>PUBLIC</td><td>43910</td></tr><tr><td>DERIVED</td><td>96572</td></tr><tr><td>DEFAULT</td><td>62600</td></tr><tr><td>UNKNOWN</td><td>199990</td></tr></tbody></table><p>Table 2. Data cells by source class; source columns are excluded.</p><table><thead><tr><th>Field</th><th>Public (cells)</th><th>Derived (cells)</th><th>Default (cells)</th><th>Unknown (cells)</th></tr></thead><tbody><tr><td>complete_annual_maxima</td><td>0</td><td>2136</td><td>0</td><td>6440</td></tr><tr><td>concrete_density_kg_m3</td><td>0</td><td>0</td><td>0</td><td>8576</td></tr><tr><td>contents_density_kg_m3</td><td>0</td><td>0</td><td>4288</td><td>4288</td></tr><tr><td>corrosion_coating</td><td>0</td><td>0</td><td>0</td><td>8576</td></tr><tr><td>corrosion_coating_thickness_m</td><td>0</td><td>0</td><td>0</td><td>8576</td></tr><tr><td>friction_coefficient</td><td>0</td><td>0</td><td>8576</td><td>0</td></tr><tr><td>governing_case</td><td>0</td><td>0</td><td>8576</td><td>0</td></tr><tr><td>grade</td><td>0</td><td>0</td><td>8576</td><td>0</td></tr><tr><td>hoop_yield_wall_at_assumed_smys_m</td><td>0</td><td>6290</td><td>0</td><td>2286</td></tr><tr><td>hs_100yr_distribution</td><td>0</td><td>0</td><td>0</td><td>8576</td></tr><tr><td>hs_100yr_lower_ci_m</td><td>0</td><td>0</td><td>0</td><td>8576</td></tr><tr><td>hs_100yr_m</td><td>0</td><td>0</td><td>0</td><td>8576</td></tr><tr><td>hs_100yr_upper_ci_m</td><td>0</td><td>0</td><td>0</td><td>8576</td></tr><tr><td>hs_10yr_distribution</td><td>0</td><td>0</td><td>0</td><td>8576</td></tr><tr><td>hs_10yr_lower_ci_m</td><td>0</td><td>0</td><td>0</td><td>8576</td></tr><tr><td>hs_10yr_m</td><td>0</td><td>0</td><td>0</td><td>8576</td></tr><tr><td>hs_10yr_upper_ci_m</td><td>0</td><td>0</td><td>0</td><td>8576</td></tr><tr><td>hs_max_observed_m</td><td>0</td><td>2058</td><td>0</td><td>6518</td></tr><tr><td>length_m</td><td>0</td><td>8208</td><td>0</td><td>368</td></tr><tr><td>load_case</td><td>0</td><td>8576</td><td>0</td><td>0</td></tr><tr><td>maop_pa</td><td>0</td><td>7566</td><td>0</td><td>1010</td></tr><tr><td>mean_bearing_deg</td><td>0</td><td>8208</td><td>0</td><td>368</td></tr><tr><td>midpoint_latitude_deg</td><td>0</td><td>8212</td><td>0</td><td>364</td></tr><tr><td>midpoint_longitude_deg</td><td>0</td><td>8212</td><td>0</td><td>364</td></tr><tr><td>nominal_size_m</td><td>0</td><td>7224</td><td>0</td><td>1352</td></tr><tr><td>observed_maximum_years</td><td>0</td><td>2058</td><td>0</td><td>6518</td></tr><tr><td>od_m</td><td>0</td><td>0</td><td>7224</td><td>1352</td></tr><tr><td>permit_length_m</td><td>0</td><td>8530</td><td>0</td><td>46</td></tr><tr><td>permit_length_unit</td><td>0</td><td>0</td><td>8576</td><td>0</td></tr><tr><td>product_code</td><td>8576</td><td>0</td><td>0</td><td>0</td></tr><tr><td>record_length_years</td><td>0</td><td>2136</td><td>0</td><td>6440</td></tr><tr><td>retained_observations</td><td>0</td><td>2136</td><td>0</td><td>6440</td></tr><tr><td>route_rejection_reason</td><td>0</td><td>2</td><td>0</td><td>8574</td></tr><tr><td>seabed_current_m_s</td><td>0</td><td>0</td><td>0</td><td>8576</td></tr><tr><td>segment_id</td><td>8576</td><td>0</td><td>0</td><td>0</td></tr><tr><td>service_state</td><td>8576</td><td>0</td><td>0</td><td>0</td></tr><tr><td>size_code</td><td>7470</td><td>0</td><td>0</td><td>1106</td></tr><tr><td>smys_pa</td><td>0</td><td>0</td><td>8576</td><td>0</td></tr><tr><td>soil_sample_distance_m</td><td>0</td><td>5708</td><td>0</td><td>2868</td></tr><tr><td>soil_type</td><td>0</td><td>5708</td><td>0</td><td>2868</td></tr><tr><td>station_distance_m</td><td>0</td><td>2136</td><td>0</td><td>6440</td></tr><tr><td>station_id</td><td>2136</td><td>0</td><td>0</td><td>6440</td></tr><tr><td>station_water_depth_m</td><td>0</td><td>0</td><td>0</td><td>8576</td></tr><tr><td>status</td><td>8576</td><td>0</td><td>0</td><td>0</td></tr><tr><td>tp_at_hs_max_s</td><td>0</td><td>1468</td><td>0</td><td>7108</td></tr><tr><td>wall_thickness_m</td><td>0</td><td>0</td><td>0</td><td>8576</td></tr><tr><td>wave_direction_deg</td><td>0</td><td>0</td><td>8208</td><td>368</td></tr></tbody></table><p>Table 3. Provenance and unknown values by field. Unknown is a null, distinct from zero.</p><h2>Diagnostics</h2><pre>{
+  &quot;selection&quot;: {
+    &quot;raw_records_by_code&quot;: {
+      &quot;ACT&quot;: 3090,
+      &quot;APMO&quot;: 16,
+      &quot;CNCL&quot;: 1809,
+      &quot;COMB&quot;: 1131,
+      &quot;DECP&quot;: 8950,
+      &quot;DECR&quot;: 1260,
+      &quot;OPMO&quot;: 19,
+      &quot;OUT&quot;: 754,
+      &quot;PABN&quot;: 400,
+      &quot;PREM&quot;: 126,
+      &quot;PROP&quot;: 349,
+      &quot;REM&quot;: 1
+    },
+    &quot;excluded_raw_records_by_code&quot;: {
+      &quot;APMO&quot;: 16,
+      &quot;CNCL&quot;: 1809,
+      &quot;COMB&quot;: 1131,
+      &quot;DECP&quot;: 8950,
+      &quot;DECR&quot;: 1260,
+      &quot;OPMO&quot;: 19,
+      &quot;PROP&quot;: 349,
+      &quot;REM&quot;: 1
+    },
+    &quot;selected_unique_segments_by_code&quot;: {
+      &quot;ACT&quot;: 3022,
+      &quot;OUT&quot;: 745,
+      &quot;PABN&quot;: 395,
+      &quot;PREM&quot;: 126
+    }
+  },
+  &quot;rejected_routes&quot;: {
+    &quot;count&quot;: 1,
+    &quot;segments&quot;: [
+      {
+        &quot;segment_id&quot;: &quot;19376&quot;,
+        &quot;reason&quot;: &quot;ValueError: Conflicting route sequence&quot;
+      }
+    ]
+  },
+  &quot;length_outliers&quot;: {
+    &quot;count&quot;: 192,
+    &quot;segments&quot;: [
+      {
+        &quot;segment_id&quot;: &quot;10094&quot;,
+        &quot;route_length_m&quot;: 8481.859147164814,
+        &quot;permit_length_m&quot;: 1497.7872,
+        &quot;ratio&quot;: 5.662926714265427
+      },
+      {
+        &quot;segment_id&quot;: &quot;10098&quot;,
+        &quot;route_length_m&quot;: 8506.003081640918,
+        &quot;permit_length_m&quot;: 1524.6096,
+        &quot;ratio&quot;: 5.579135197391462
+      },
+      {
+        &quot;segment_id&quot;: &quot;10151&quot;,
+        &quot;route_length_m&quot;: 4419.716882584666,
+        &quot;permit_length_m&quot;: 1403.2992000000002,
+        &quot;ratio&quot;: 3.1495185649536928
+      },
+      {
+        &quot;segment_id&quot;: &quot;10237&quot;,
+        &quot;route_length_m&quot;: 3110.0735401744514,
+        &quot;permit_length_m&quot;: 437.38800000000003,
+        &quot;ratio&quot;: 7.110559823713616
+      },
+      {
+        &quot;segment_id&quot;: &quot;10311&quot;,
+        &quot;route_length_m&quot;: 1464.9283773154366,
+        &quot;permit_length_m&quot;: 735.1776,
+        &quot;ratio&quot;: 1.9926183514234337
+      },
+      {
+        &quot;segment_id&quot;: &quot;10312&quot;,
+        &quot;route_length_m&quot;: 1458.3525767445171,
+        &quot;permit_length_m&quot;: 690.6768000000001,
+        &quot;ratio&quot;: 2.1114833692756396
+      },
+      {
+        &quot;segment_id&quot;: &quot;10314&quot;,
+        &quot;route_length_m&quot;: 1380.6161603571293,
+        &quot;permit_length_m&quot;: 534.6192,
+        &quot;ratio&quot;: 2.5824290641958414
+      },
+      {
+        &quot;segment_id&quot;: &quot;10316&quot;,
+        &quot;route_length_m&quot;: 1079.2431234846224,
+        &quot;permit_length_m&quot;: 524.5608,
+        &quot;ratio&quot;: 2.0574223683596307
+      },
+      {
+        &quot;segment_id&quot;: &quot;10452&quot;,
+        &quot;route_length_m&quot;: 2083.630339238106,
+        &quot;permit_length_m&quot;: 1103.6808,
+        &quot;ratio&quot;: 1.887892168857251
+      },
+      {
+        &quot;segment_id&quot;: &quot;10727&quot;,
+        &quot;route_length_m&quot;: 20513.325442418212,
+        &quot;permit_length_m&quot;: 11825.6304,
+        &quot;ratio&quot;: 1.734649633766519
+      },
+      {
+        &quot;segment_id&quot;: &quot;10754&quot;,
+        &quot;route_length_m&quot;: 971.3183834162711,
+        &quot;permit_length_m&quot;: 1595.9328,
+        &quot;ratio&quot;: 0.6086211044827646
+      },
+      {
+        &quot;segment_id&quot;: &quot;10793&quot;,
+        &quot;route_length_m&quot;: 33130.72961014229,
+        &quot;permit_length_m&quot;: 18248.376,
+        &quot;ratio&quot;: 1.815544002937154
+      },
+      {
+        &quot;segment_id&quot;: &quot;11161&quot;,
+        &quot;route_length_m&quot;: 172475.99154987547,
+        &quot;permit_length_m&quot;: 105380.3328,
+        &quot;ratio&quot;: 1.6367000081240535
+      },
+      {
+        &quot;segment_id&quot;: &quot;11403&quot;,
+        &quot;route_length_m&quot;: 1023.9487883309619,
+        &quot;permit_length_m&quot;: 1652.016,
+        &quot;ratio&quot;: 0.6198177186727984
+      },
+      {
+        &quot;segment_id&quot;: &quot;11448&quot;,
+        &quot;route_length_m&quot;: 27.099050961209397,
+        &quot;permit_length_m&quot;: 13.716000000000001,
+        &quot;ratio&quot;: 1.975725500233989
+      },
+      {
+        &quot;segment_id&quot;: &quot;11468&quot;,
+        &quot;route_length_m&quot;: 8523.910957614502,
+        &quot;permit_length_m&quot;: 3267.7608,
+        &quot;ratio&quot;: 2.608486813849564
+      },
+      {
+        &quot;segment_id&quot;: &quot;11901&quot;,
+        &quot;route_length_m&quot;: 8719.034681922452,
+        &quot;permit_length_m&quot;: 2292.7056000000002,
+        &quot;ratio&quot;: 3.80294560362327
+      },
+      {
+        &quot;segment_id&quot;: &quot;12035&quot;,
+        &quot;route_length_m&quot;: 1063.238661197878,
+        &quot;permit_length_m&quot;: 483.7176,
+        &quot;ratio&quot;: 2.1980565958275613
+      },
+      {
+        &quot;segment_id&quot;: &quot;12155&quot;,
+        &quot;route_length_m&quot;: 912.8158111149801,
+        &quot;permit_length_m&quot;: 461.46720000000005,
+        &quot;ratio&quot;: 1.9780730052211295
+      },
+      {
+        &quot;segment_id&quot;: &quot;12158&quot;,
+        &quot;route_length_m&quot;: 898.3905544878085,
+        &quot;permit_length_m&quot;: 2519.172,
+        &quot;ratio&quot;: 0.356621363879802
+      },
+      {
+        &quot;segment_id&quot;: &quot;12165&quot;,
+        &quot;route_length_m&quot;: 910.7640687471536,
+        &quot;permit_length_m&quot;: 476.0976,
+        &quot;ratio&quot;: 1.912977651530177
+      },
+      {
+        &quot;segment_id&quot;: &quot;12254&quot;,
+        &quot;route_length_m&quot;: 2834.9541773694486,
+        &quot;permit_length_m&quot;: 6269.4312,
+        &quot;ratio&quot;: 0.45218682316339137
+      },
+      {
+        &quot;segment_id&quot;: &quot;12333&quot;,
+        &quot;route_length_m&quot;: 1580.096659562367,
+        &quot;permit_length_m&quot;: 3108.96,
+        &quot;ratio&quot;: 0.5082396233989395
+      },
+      {
+        &quot;segment_id&quot;: &quot;12804&quot;,
+        &quot;route_length_m&quot;: 1133.4814187781176,
+        &quot;permit_length_m&quot;: 238.0488,
+        &quot;ratio&quot;: 4.761550651707203
+      },
+      {
+        &quot;segment_id&quot;: &quot;12832&quot;,
+        &quot;route_length_m&quot;: 2296.9302055776357,
+        &quot;permit_length_m&quot;: 15.24,
+        &quot;ratio&quot;: 150.71720509039605
+      },
+      {
+        &quot;segment_id&quot;: &quot;12843&quot;,
+        &quot;route_length_m&quot;: 1788.008412080777,
+        &quot;permit_length_m&quot;: 43.281600000000005,
+        &quot;ratio&quot;: 41.31105162657519
+      },
+      {
+        &quot;segment_id&quot;: &quot;12852&quot;,
+        &quot;route_length_m&quot;: 259.26401301767055,
+        &quot;permit_length_m&quot;: 64.61760000000001,
+        &quot;ratio&quot;: 4.012281685139506
+      },
+      {
+        &quot;segment_id&quot;: &quot;12872&quot;,
+        &quot;route_length_m&quot;: 2299.424890901004,
+        &quot;permit_length_m&quot;: 1402.0800000000002,
+        &quot;ratio&quot;: 1.6400097647074372
+      },
+      {
+        &quot;segment_id&quot;: &quot;12958&quot;,
+        &quot;route_length_m&quot;: 163.28230571411194,
+        &quot;permit_length_m&quot;: 274.32,
+        &quot;ratio&quot;: 0.5952256697073197
+      },
+      {
+        &quot;segment_id&quot;: &quot;13049&quot;,
+        &quot;route_length_m&quot;: 1723.4429253928442,
+        &quot;permit_length_m&quot;: 1097.28,
+        &quot;ratio&quot;: 1.5706500851130472
+      },
+      {
+        &quot;segment_id&quot;: &quot;13062&quot;,
+        &quot;route_length_m&quot;: 2136.881748960502,
+        &quot;permit_length_m&quot;: 152.4,
+        &quot;ratio&quot;: 14.021533785830066
+      },
+      {
+        &quot;segment_id&quot;: &quot;13101&quot;,
+        &quot;route_length_m&quot;: 55490.00875740857,
+        &quot;permit_length_m&quot;: 31206.643200000002,
+        &quot;ratio&quot;: 1.778147313114682
+      },
+      {
+        &quot;segment_id&quot;: &quot;13104&quot;,
+        &quot;route_length_m&quot;: 5416.002439197936,
+        &quot;permit_length_m&quot;: 963.4728,
+        &quot;ratio&quot;: 5.621334031638398
+      },
+      {
+        &quot;segment_id&quot;: &quot;13242&quot;,
+        &quot;route_length_m&quot;: 1501.4206001922662,
+        &quot;permit_length_m&quot;: 690.6768000000001,
+        &quot;ratio&quot;: 2.1738396312027075
+      },
+      {
+        &quot;segment_id&quot;: &quot;13286&quot;,
+        &quot;route_length_m&quot;: 127.2075439682474,
+        &quot;permit_length_m&quot;: 32.308800000000005,
+        &quot;ratio&quot;: 3.9372413697892643
+      },
+      {
+        &quot;segment_id&quot;: &quot;13287&quot;,
+        &quot;route_length_m&quot;: 124.07473867807822,
+        &quot;permit_length_m&quot;: 77.724,
+        &quot;ratio&quot;: 1.596350402424968
+      },
+      {
+        &quot;segment_id&quot;: &quot;13421&quot;,
+        &quot;route_length_m&quot;: 15805.440870739409,
+        &quot;permit_length_m&quot;: 7089.9528,
+        &quot;ratio&quot;: 2.229273073685259
+      },
+      {
+        &quot;segment_id&quot;: &quot;13782&quot;,
+        &quot;route_length_m&quot;: 80714.52156583063,
+        &quot;permit_length_m&quot;: 51862.0248,
+        &quot;ratio&quot;: 1.5563318608769519
+      },
+      {
+        &quot;segment_id&quot;: &quot;1394&quot;,
+        &quot;route_length_m&quot;: 36224.08470583319,
+        &quot;permit_length_m&quot;: 20921.472,
+        &quot;ratio&quot;: 1.731430977028442
+      },
+      {
+        &quot;segment_id&quot;: &quot;13972&quot;,
+        &quot;route_length_m&quot;: 77907.36467850827,
+        &quot;permit_length_m&quot;: 50637.948000000004,
+        &quot;ratio&quot;: 1.5385174114580682
+      },
+      {
+        &quot;segment_id&quot;: &quot;14470&quot;,
+        &quot;route_length_m&quot;: 9351.200687335497,
+        &quot;permit_length_m&quot;: 2888.5896000000002,
+        &quot;ratio&quot;: 3.2372894672664803
+      },
+      {
+        &quot;segment_id&quot;: &quot;14507&quot;,
+        &quot;route_length_m&quot;: 1.5284654085111,
+        &quot;permit_length_m&quot;: 15.24,
+        &quot;ratio&quot;: 0.10029300580781496
+      },
+      {
+        &quot;segment_id&quot;: &quot;15266&quot;,
+        &quot;route_length_m&quot;: 3537.7546497813614,
+        &quot;permit_length_m&quot;: 2341.4736000000003,
+        &quot;ratio&quot;: 1.510909475887903
+      },
+      {
+        &quot;segment_id&quot;: &quot;15267&quot;,
+        &quot;route_length_m&quot;: 3537.7546497813614,
+        &quot;permit_length_m&quot;: 2341.4736000000003,
+        &quot;ratio&quot;: 1.510909475887903
+      },
+      {
+        &quot;segment_id&quot;: &quot;15279&quot;,
+        &quot;route_length_m&quot;: 3400.777830042794,
+        &quot;permit_length_m&quot;: 2145.1824,
+        &quot;ratio&quot;: 1.5853094030804997
+      },
+      {
+        &quot;segment_id&quot;: &quot;1548&quot;,
+        &quot;route_length_m&quot;: 43888.7261376118,
+        &quot;permit_length_m&quot;: 26920.2408,
+        &quot;ratio&quot;: 1.6303244262812018
+      },
+      {
+        &quot;segment_id&quot;: &quot;15723&quot;,
+        &quot;route_length_m&quot;: 62.34557797797904,
+        &quot;permit_length_m&quot;: 33.528,
+        &quot;ratio&quot;: 1.8595078137073204
+      },
+      {
+        &quot;segment_id&quot;: &quot;15776&quot;,
+        &quot;route_length_m&quot;: 39026.63147530671,
+        &quot;permit_length_m&quot;: 16691.7624,
+        &quot;ratio&quot;: 2.3380773425882646
+      },
+      {
+        &quot;segment_id&quot;: &quot;1586&quot;,
+        &quot;route_length_m&quot;: 16.30590554926552,
+        &quot;permit_length_m&quot;: 30.48,
+        &quot;ratio&quot;: 0.5349706545034619
+      },
+      {
+        &quot;segment_id&quot;: &quot;1589&quot;,
+        &quot;route_length_m&quot;: 36184.76099412191,
+        &quot;permit_length_m&quot;: 20330.16,
+        &quot;ratio&quot;: 1.7798561838235367
+      },
+      {
+        &quot;segment_id&quot;: &quot;16019&quot;,
+        &quot;route_length_m&quot;: 15242.946096870843,
+        &quot;permit_length_m&quot;: 4060.2408,
+        &quot;ratio&quot;: 3.7541975581524234
+      },
+      {
+        &quot;segment_id&quot;: &quot;16099&quot;,
+        &quot;route_length_m&quot;: 2251.90197360506,
+        &quot;permit_length_m&quot;: 1400.8608000000002,
+        &quot;ratio&quot;: 1.6075130188560203
+      },
+      {
+        &quot;segment_id&quot;: &quot;16199&quot;,
+        &quot;route_length_m&quot;: 4560.0358441495955,
+        &quot;permit_length_m&quot;: 1745.2848000000001,
+        &quot;ratio&quot;: 2.6127746280432826
+      },
+      {
+        &quot;segment_id&quot;: &quot;16287&quot;,
+        &quot;route_length_m&quot;: 3203.0668430241362,
+        &quot;permit_length_m&quot;: 2041.5504,
+        &quot;ratio&quot;: 1.5689384122107082
+      },
+      {
+        &quot;segment_id&quot;: &quot;17081&quot;,
+        &quot;route_length_m&quot;: 934.0998422516353,
+        &quot;permit_length_m&quot;: 612.3432,
+        &quot;ratio&quot;: 1.5254514825209706
+      },
+      {
+        &quot;segment_id&quot;: &quot;17084&quot;,
+        &quot;route_length_m&quot;: 20.536466418768086,
+        &quot;permit_length_m&quot;: 3509.7720000000004,
+        &quot;ratio&quot;: 0.005851225213138655
+      },
+      {
+        &quot;segment_id&quot;: &quot;17138&quot;,
+        &quot;route_length_m&quot;: 5422.231137927517,
+        &quot;permit_length_m&quot;: 2739.2376,
+        &quot;ratio&quot;: 1.9794672568482257
+      },
+      {
+        &quot;segment_id&quot;: &quot;17475&quot;,
+        &quot;route_length_m&quot;: 8756.94823720121,
+        &quot;permit_length_m&quot;: 1557.528,
+        &quot;ratio&quot;: 5.622337599838469
+      },
+      {
+        &quot;segment_id&quot;: &quot;17695&quot;,
+        &quot;route_length_m&quot;: 59.8599596845752,
+        &quot;permit_length_m&quot;: 31.0896,
+        &quot;ratio&quot;: 1.9254014102650148
+      },
+      {
+        &quot;segment_id&quot;: &quot;17849&quot;,
+        &quot;route_length_m&quot;: 3778.1390942772705,
+        &quot;permit_length_m&quot;: 5765.292,
+        &quot;ratio&quot;: 0.6553248463871857
+      },
+      {
+        &quot;segment_id&quot;: &quot;18060&quot;,
+        &quot;route_length_m&quot;: 6830.571723563052,
+        &quot;permit_length_m&quot;: 740.9688,
+        &quot;ratio&quot;: 9.218433655456279
+      },
+      {
+        &quot;segment_id&quot;: &quot;18153&quot;,
+        &quot;route_length_m&quot;: 1712.1243196413534,
+        &quot;permit_length_m&quot;: 3048.0,
+        &quot;ratio&quot;: 0.5617205773101553
+      },
+      {
+        &quot;segment_id&quot;: &quot;18361&quot;,
+        &quot;route_length_m&quot;: 5188.872757446774,
+        &quot;permit_length_m&quot;: 282.8544,
+        &quot;ratio&quot;: 18.34467753532126
+      },
+      {
+        &quot;segment_id&quot;: &quot;18404&quot;,
+        &quot;route_length_m&quot;: 305.554922619207,
+        &quot;permit_length_m&quot;: 23.1648,
+        &quot;ratio&quot;: 13.190483950615027
+      },
+      {
+        &quot;segment_id&quot;: &quot;18406&quot;,
+        &quot;route_length_m&quot;: 617.4295637015828,
+        &quot;permit_length_m&quot;: 23.4696,
+        &quot;ratio&quot;: 26.30763045393116
+      },
+      {
+        &quot;segment_id&quot;: &quot;1841&quot;,
+        &quot;route_length_m&quot;: 1142.121268508239,
+        &quot;permit_length_m&quot;: 366.0648,
+        &quot;ratio&quot;: 3.1199975209532274
+      },
+      {
+        &quot;segment_id&quot;: &quot;18488&quot;,
+        &quot;route_length_m&quot;: 4300.58459192591,
+        &quot;permit_length_m&quot;: 2750.2104,
+        &quot;ratio&quot;: 1.5637293030111115
+      },
+      {
+        &quot;segment_id&quot;: &quot;18489&quot;,
+        &quot;route_length_m&quot;: 3220.96143992619,
+        &quot;permit_length_m&quot;: 1347.2160000000001,
+        &quot;ratio&quot;: 2.3908277810879546
+      },
+      {
+        &quot;segment_id&quot;: &quot;18490&quot;,
+        &quot;route_length_m&quot;: 2883.039419640879,
+        &quot;permit_length_m&quot;: 1079.9064,
+        &quot;ratio&quot;: 2.669712319179587
+      },
+      {
+        &quot;segment_id&quot;: &quot;18540&quot;,
+        &quot;route_length_m&quot;: 34300.31959503388,
+        &quot;permit_length_m&quot;: 3413.4552000000003,
+        &quot;ratio&quot;: 10.048562991257032
+      },
+      {
+        &quot;segment_id&quot;: &quot;18724&quot;,
+        &quot;route_length_m&quot;: 55.287504572913534,
+        &quot;permit_length_m&quot;: 32.9184,
+        &quot;ratio&quot;: 1.6795319509123632
+      },
+      {
+        &quot;segment_id&quot;: &quot;18930&quot;,
+        &quot;route_length_m&quot;: 1628.7480563576044,
+        &quot;permit_length_m&quot;: 504.444,
+        &quot;ratio&quot;: 3.228798551192212
+      },
+      {
+        &quot;segment_id&quot;: &quot;18933&quot;,
+        &quot;route_length_m&quot;: 1711.5472422356688,
+        &quot;permit_length_m&quot;: 543.7632,
+        &quot;ratio&quot;: 3.147596678546229
+      },
+      {
+        &quot;segment_id&quot;: &quot;19166&quot;,
+        &quot;route_length_m&quot;: 1306.064028392346,
+        &quot;permit_length_m&quot;: 814.7304,
+        &quot;ratio&quot;: 1.603062839428044
+      },
+      {
+        &quot;segment_id&quot;: &quot;19184&quot;,
+        &quot;route_length_m&quot;: 102820.76259235054,
+        &quot;permit_length_m&quot;: 6427.9272,
+        &quot;ratio&quot;: 15.99594385455245
+      },
+      {
+        &quot;segment_id&quot;: &quot;19294&quot;,
+        &quot;route_length_m&quot;: 5124.372092741856,
+        &quot;permit_length_m&quot;: 30.48,
+        &quot;ratio&quot;: 168.1224439875937
+      },
+      {
+        &quot;segment_id&quot;: &quot;19384&quot;,
+        &quot;route_length_m&quot;: 16.34463182222957,
+        &quot;permit_length_m&quot;: 28.041600000000003,
+        &quot;ratio&quot;: 0.5828708712138241
+      },
+      {
+        &quot;segment_id&quot;: &quot;19514&quot;,
+        &quot;route_length_m&quot;: 55.09557567348371,
+        &quot;permit_length_m&quot;: 27.432000000000002,
+        &quot;ratio&quot;: 2.0084418078697763
+      },
+      {
+        &quot;segment_id&quot;: &quot;19613&quot;,
+        &quot;route_length_m&quot;: 7491.251358279314,
+        &quot;permit_length_m&quot;: 1219.2,
+        &quot;ratio&quot;: 6.144399079953506
+      },
+      {
+        &quot;segment_id&quot;: &quot;19628&quot;,
+        &quot;route_length_m&quot;: 1361.440123587266,
+        &quot;permit_length_m&quot;: 2255.52,
+        &quot;ratio&quot;: 0.6036036583968513
+      },
+      {
+        &quot;segment_id&quot;: &quot;19629&quot;,
+        &quot;route_length_m&quot;: 2137.4067345752183,
+        &quot;permit_length_m&quot;: 6339.84,
+        &quot;ratio&quot;: 0.3371389080126972
+      },
+      {
+        &quot;segment_id&quot;: &quot;19631&quot;,
+        &quot;route_length_m&quot;: 2814.4908871431585,
+        &quot;permit_length_m&quot;: 1584.96,
+        &quot;ratio&quot;: 1.77574884359426
+      },
+      {
+        &quot;segment_id&quot;: &quot;19632&quot;,
+        &quot;route_length_m&quot;: 1494.4637026176188,
+        &quot;permit_length_m&quot;: 762.0,
+        &quot;ratio&quot;: 1.9612384548787647
+      },
+      {
+        &quot;segment_id&quot;: &quot;19633&quot;,
+        &quot;route_length_m&quot;: 1545.6774589624242,
+        &quot;permit_length_m&quot;: 274.32,
+        &quot;ratio&quot;: 5.634578080207146
+      },
+      {
+        &quot;segment_id&quot;: &quot;19708&quot;,
+        &quot;route_length_m&quot;: 157.7242536683572,
+        &quot;permit_length_m&quot;: 288.3408,
+        &quot;ratio&quot;: 0.5470063677022371
+      },
+      {
+        &quot;segment_id&quot;: &quot;19796&quot;,
+        &quot;route_length_m&quot;: 5892.3778507133275,
+        &quot;permit_length_m&quot;: 3851.148,
+        &quot;ratio&quot;: 1.5300315258497796
+      },
+      {
+        &quot;segment_id&quot;: &quot;19849&quot;,
+        &quot;route_length_m&quot;: 1758.6714131528865,
+        &quot;permit_length_m&quot;: 482.8032,
+        &quot;ratio&quot;: 3.6426258424817535
+      },
+      {
+        &quot;segment_id&quot;: &quot;19868&quot;,
+        &quot;route_length_m&quot;: 54800.256591890255,
+        &quot;permit_length_m&quot;: 34652.1024,
+        &quot;ratio&quot;: 1.5814410323308479
+      },
+      {
+        &quot;segment_id&quot;: &quot;19900&quot;,
+        &quot;route_length_m&quot;: 25.014785330389657,
+        &quot;permit_length_m&quot;: 46.3296,
+        &quot;ratio&quot;: 0.5399309584021804
+      },
+      {
+        &quot;segment_id&quot;: &quot;20002&quot;,
+        &quot;route_length_m&quot;: 37855.27598916445,
+        &quot;permit_length_m&quot;: 19043.294400000002,
+        &quot;ratio&quot;: 1.9878533196002288
+      },
+      {
+        &quot;segment_id&quot;: &quot;20050&quot;,
+        &quot;route_length_m&quot;: 15.37726516777894,
+        &quot;permit_length_m&quot;: 24.9936,
+        &quot;ratio&quot;: 0.6152481102273758
+      },
+      {
+        &quot;segment_id&quot;: &quot;20215&quot;,
+        &quot;route_length_m&quot;: 6592.659344360587,
+        &quot;permit_length_m&quot;: 3333.9024,
+        &quot;ratio&quot;: 1.9774602113009028
+      },
+      {
+        &quot;segment_id&quot;: &quot;20227&quot;,
+        &quot;route_length_m&quot;: 31.794669315190117,
+        &quot;permit_length_m&quot;: 16.764,
+        &quot;ratio&quot;: 1.8966039916004604
+      },
+      {
+        &quot;segment_id&quot;: &quot;20413&quot;,
+        &quot;route_length_m&quot;: 1401.6582864547377,
+        &quot;permit_length_m&quot;: 824.1792,
+        &quot;ratio&quot;: 1.7006717549469066
+      },
+      {
+        &quot;segment_id&quot;: &quot;20453&quot;,
+        &quot;route_length_m&quot;: 1485.6370806451425,
+        &quot;permit_length_m&quot;: 967.4352,
+        &quot;ratio&quot;: 1.5356450547231923
+      },
+      {
+        &quot;segment_id&quot;: &quot;20454&quot;,
+        &quot;route_length_m&quot;: 1485.6370806451425,
+        &quot;permit_length_m&quot;: 967.4352,
+        &quot;ratio&quot;: 1.5356450547231923
+      },
+      {
+        &quot;segment_id&quot;: &quot;20486&quot;,
+        &quot;route_length_m&quot;: 478.29287613401533,
+        &quot;permit_length_m&quot;: 2087.5752,
+        &quot;ratio&quot;: 0.2291140822778577
+      },
+      {
+        &quot;segment_id&quot;: &quot;20508&quot;,
+        &quot;route_length_m&quot;: 1389.737012007251,
+        &quot;permit_length_m&quot;: 14949.5256,
+        &quot;ratio&quot;: 0.09296194736823293
+      },
+      {
+        &quot;segment_id&quot;: &quot;20576&quot;,
+        &quot;route_length_m&quot;: 18260.44212471758,
+        &quot;permit_length_m&quot;: 9763.9632,
+        &quot;ratio&quot;: 1.8701875202394844
+      },
+      {
+        &quot;segment_id&quot;: &quot;20578&quot;,
+        &quot;route_length_m&quot;: 26408.16590301256,
+        &quot;permit_length_m&quot;: 9438.741600000001,
+        &quot;ratio&quot;: 2.7978481689775845
+      },
+      {
+        &quot;segment_id&quot;: &quot;20668&quot;,
+        &quot;route_length_m&quot;: 6.977718505874359,
+        &quot;permit_length_m&quot;: 817.1688,
+        &quot;ratio&quot;: 0.008538894908707182
+      },
+      {
+        &quot;segment_id&quot;: &quot;20732&quot;,
+        &quot;route_length_m&quot;: 10535.13528210295,
+        &quot;permit_length_m&quot;: 1223.7720000000002,
+        &quot;ratio&quot;: 8.608740257256212
+      },
+      {
+        &quot;segment_id&quot;: &quot;20861&quot;,
+        &quot;route_length_m&quot;: 216.00100922658422,
+        &quot;permit_length_m&quot;: 2355.4944,
+        &quot;ratio&quot;: 0.09170092241636585
+      },
+      {
+        &quot;segment_id&quot;: &quot;20862&quot;,
+        &quot;route_length_m&quot;: 196.00356064295406,
+        &quot;permit_length_m&quot;: 2336.5968000000003,
+        &quot;ratio&quot;: 0.08388420314662505
+      },
+      {
+        &quot;segment_id&quot;: &quot;20942&quot;,
+        &quot;route_length_m&quot;: 3234.505782385895,
+        &quot;permit_length_m&quot;: 1588.6176,
+        &quot;ratio&quot;: 2.0360505778016655
+      },
+      {
+        &quot;segment_id&quot;: &quot;20992&quot;,
+        &quot;route_length_m&quot;: 122.25204832147065,
+        &quot;permit_length_m&quot;: 32.9184,
+        &quot;ratio&quot;: 3.7137907164828987
+      },
+      {
+        &quot;segment_id&quot;: &quot;21159&quot;,
+        &quot;route_length_m&quot;: 10.400508357212697,
+        &quot;permit_length_m&quot;: 22.86,
+        &quot;ratio&quot;: 0.4549653699568109
+      },
+      {
+        &quot;segment_id&quot;: &quot;21185&quot;,
+        &quot;route_length_m&quot;: 3087.141102988299,
+        &quot;permit_length_m&quot;: 441.65520000000004,
+        &quot;ratio&quot;: 6.989934915264891
+      },
+      {
+        &quot;segment_id&quot;: &quot;21266&quot;,
+        &quot;route_length_m&quot;: 3.574583224198998,
+        &quot;permit_length_m&quot;: 30.1752,
+        &quot;ratio&quot;: 0.11846096212117892
+      },
+      {
+        &quot;segment_id&quot;: &quot;21562&quot;,
+        &quot;route_length_m&quot;: 5765122.980557722,
+        &quot;permit_length_m&quot;: 25.908,
+        &quot;ratio&quot;: 222522.88793259696
+      },
+      {
+        &quot;segment_id&quot;: &quot;21597&quot;,
+        &quot;route_length_m&quot;: 6677.7557219070595,
+        &quot;permit_length_m&quot;: 3602.7360000000003,
+        &quot;ratio&quot;: 1.8535234671391572
+      },
+      {
+        &quot;segment_id&quot;: &quot;21665&quot;,
+        &quot;route_length_m&quot;: 1652.542495839416,
+        &quot;permit_length_m&quot;: 434.64480000000003,
+        &quot;ratio&quot;: 3.802052839098537
+      },
+      {
+        &quot;segment_id&quot;: &quot;21675&quot;,
+        &quot;route_length_m&quot;: 13584.76562380059,
+        &quot;permit_length_m&quot;: 0.3048,
+        &quot;ratio&quot;: 44569.44102296781
+      },
+      {
+        &quot;segment_id&quot;: &quot;2817&quot;,
+        &quot;route_length_m&quot;: 1893.4070223221481,
+        &quot;permit_length_m&quot;: 3200.4,
+        &quot;ratio&quot;: 0.5916157425078578
+      },
+      {
+        &quot;segment_id&quot;: &quot;2967&quot;,
+        &quot;route_length_m&quot;: 279.7488090580715,
+        &quot;permit_length_m&quot;: 472.44,
+        &quot;ratio&quot;: 0.5921361634452449
+      },
+      {
+        &quot;segment_id&quot;: &quot;3208&quot;,
+        &quot;route_length_m&quot;: 1060.9905310138606,
+        &quot;permit_length_m&quot;: 609.6,
+        &quot;ratio&quot;: 1.7404700311907162
+      },
+      {
+        &quot;segment_id&quot;: &quot;3282&quot;,
+        &quot;route_length_m&quot;: 255.61576151724523,
+        &quot;permit_length_m&quot;: 152.4,
+        &quot;ratio&quot;: 1.6772687763598768
+      },
+      {
+        &quot;segment_id&quot;: &quot;3351&quot;,
+        &quot;route_length_m&quot;: 9683.327438720815,
+        &quot;permit_length_m&quot;: 5486.400000000001,
+        &quot;ratio&quot;: 1.7649692765239162
+      },
+      {
+        &quot;segment_id&quot;: &quot;3413&quot;,
+        &quot;route_length_m&quot;: 34958.855185973865,
+        &quot;permit_length_m&quot;: 14653.8696,
+        &quot;ratio&quot;: 2.385639843961343
+      },
+      {
+        &quot;segment_id&quot;: &quot;3421&quot;,
+        &quot;route_length_m&quot;: 13030.546182853644,
+        &quot;permit_length_m&quot;: 8046.72,
+        &quot;ratio&quot;: 1.619361203428682
+      },
+      {
+        &quot;segment_id&quot;: &quot;3425&quot;,
+        &quot;route_length_m&quot;: 14713.044578676952,
+        &quot;permit_length_m&quot;: 8255.8128,
+        &quot;ratio&quot;: 1.782143676837846
+      },
+      {
+        &quot;segment_id&quot;: &quot;3441&quot;,
+        &quot;route_length_m&quot;: 12284.163170735534,
+        &quot;permit_length_m&quot;: 6537.96,
+        &quot;ratio&quot;: 1.87889848985548
+      },
+      {
+        &quot;segment_id&quot;: &quot;3443&quot;,
+        &quot;route_length_m&quot;: 11783.879299436698,
+        &quot;permit_length_m&quot;: 6059.424,
+        &quot;ratio&quot;: 1.9447193824754132
+      },
+      {
+        &quot;segment_id&quot;: &quot;3474&quot;,
+        &quot;route_length_m&quot;: 127632.53810203004,
+        &quot;permit_length_m&quot;: 48425.100000000006,
+        &quot;ratio&quot;: 2.6356690662906224
+      },
+      {
+        &quot;segment_id&quot;: &quot;3476&quot;,
+        &quot;route_length_m&quot;: 121279.73731172134,
+        &quot;permit_length_m&quot;: 43867.120800000004,
+        &quot;ratio&quot;: 2.7647070311421333
+      },
+      {
+        &quot;segment_id&quot;: &quot;3501&quot;,
+        &quot;route_length_m&quot;: 7491.251358279314,
+        &quot;permit_length_m&quot;: 1219.2,
+        &quot;ratio&quot;: 6.144399079953506
+      },
+      {
+        &quot;segment_id&quot;: &quot;3519&quot;,
+        &quot;route_length_m&quot;: 13697.35066675565,
+        &quot;permit_length_m&quot;: 5730.240000000001,
+        &quot;ratio&quot;: 2.390362474653007
+      },
+      {
+        &quot;segment_id&quot;: &quot;3542&quot;,
+        &quot;route_length_m&quot;: 37872.109908186976,
+        &quot;permit_length_m&quot;: 7406.64,
+        &quot;ratio&quot;: 5.113264571814882
+      },
+      {
+        &quot;segment_id&quot;: &quot;3548&quot;,
+        &quot;route_length_m&quot;: 20812.799102532925,
+        &quot;permit_length_m&quot;: 4007.2056000000002,
+        &quot;ratio&quot;: 5.193843585797775
+      },
+      {
+        &quot;segment_id&quot;: &quot;3556&quot;,
+        &quot;route_length_m&quot;: 11014.62128040843,
+        &quot;permit_length_m&quot;: 5470.2456,
+        &quot;ratio&quot;: 2.0135515086211906
+      },
+      {
+        &quot;segment_id&quot;: &quot;3600&quot;,
+        &quot;route_length_m&quot;: 31119.298147528658,
+        &quot;permit_length_m&quot;: 18427.9032,
+        &quot;ratio&quot;: 1.6887053187651135
+      },
+      {
+        &quot;segment_id&quot;: &quot;3716&quot;,
+        &quot;route_length_m&quot;: 2155.6407002038222,
+        &quot;permit_length_m&quot;: 762.0,
+        &quot;ratio&quot;: 2.8289248034170895
+      },
+      {
+        &quot;segment_id&quot;: &quot;3795&quot;,
+        &quot;route_length_m&quot;: 16762.007398892245,
+        &quot;permit_length_m&quot;: 8246.668800000001,
+        &quot;ratio&quot;: 2.032579191114386
+      },
+      {
+        &quot;segment_id&quot;: &quot;393&quot;,
+        &quot;route_length_m&quot;: 730.1074775943698,
+        &quot;permit_length_m&quot;: 1147.8768,
+        &quot;ratio&quot;: 0.6360503824054723
+      },
+      {
+        &quot;segment_id&quot;: &quot;4074&quot;,
+        &quot;route_length_m&quot;: 36202.22560212154,
+        &quot;permit_length_m&quot;: 6667.5,
+        &quot;ratio&quot;: 5.429655133426553
+      },
+      {
+        &quot;segment_id&quot;: &quot;4135&quot;,
+        &quot;route_length_m&quot;: 1032.5207785614375,
+        &quot;permit_length_m&quot;: 60.96,
+        &quot;ratio&quot;: 16.937676813671874
+      },
+      {
+        &quot;segment_id&quot;: &quot;4139&quot;,
+        &quot;route_length_m&quot;: 4982.152505875243,
+        &quot;permit_length_m&quot;: 1219.2,
+        &quot;ratio&quot;: 4.086411176078776
+      },
+      {
+        &quot;segment_id&quot;: &quot;4140&quot;,
+        &quot;route_length_m&quot;: 4982.152505875243,
+        &quot;permit_length_m&quot;: 1219.2,
+        &quot;ratio&quot;: 4.086411176078776
+      },
+      {
+        &quot;segment_id&quot;: &quot;4141&quot;,
+        &quot;route_length_m&quot;: 738.0809623026021,
+        &quot;permit_length_m&quot;: 91.44,
+        &quot;ratio&quot;: 8.07175155624018
+      },
+      {
+        &quot;segment_id&quot;: &quot;4246&quot;,
+        &quot;route_length_m&quot;: 41077.66270439475,
+        &quot;permit_length_m&quot;: 17373.600000000002,
+        &quot;ratio&quot;: 2.3643725367451043
+      },
+      {
+        &quot;segment_id&quot;: &quot;4423&quot;,
+        &quot;route_length_m&quot;: 417.756578228396,
+        &quot;permit_length_m&quot;: 670.5600000000001,
+        &quot;ratio&quot;: 0.622996567389042
+      },
+      {
+        &quot;segment_id&quot;: &quot;4553&quot;,
+        &quot;route_length_m&quot;: 224.60476218087513,
+        &quot;permit_length_m&quot;: 335.28000000000003,
+        &quot;ratio&quot;: 0.6699020585208635
+      },
+      {
+        &quot;segment_id&quot;: &quot;4787&quot;,
+        &quot;route_length_m&quot;: 1351.1771383494295,
+        &quot;permit_length_m&quot;: 822.96,
+        &quot;ratio&quot;: 1.641850318787583
+      },
+      {
+        &quot;segment_id&quot;: &quot;4840&quot;,
+        &quot;route_length_m&quot;: 16324.002068485295,
+        &quot;permit_length_m&quot;: 4191.0,
+        &quot;ratio&quot;: 3.895013616913695
+      },
+      {
+        &quot;segment_id&quot;: &quot;4892&quot;,
+        &quot;route_length_m&quot;: 9227.353055960437,
+        &quot;permit_length_m&quot;: 632.46,
+        &quot;ratio&quot;: 14.58962314764639
+      },
+      {
+        &quot;segment_id&quot;: &quot;5103&quot;,
+        &quot;route_length_m&quot;: 18754.250382010367,
+        &quot;permit_length_m&quot;: 2327.148,
+        &quot;ratio&quot;: 8.058898867631266
+      },
+      {
+        &quot;segment_id&quot;: &quot;5272&quot;,
+        &quot;route_length_m&quot;: 738.8825761304763,
+        &quot;permit_length_m&quot;: 466.03920000000005,
+        &quot;ratio&quot;: 1.5854515588613065
+      },
+      {
+        &quot;segment_id&quot;: &quot;5520&quot;,
+        &quot;route_length_m&quot;: 107.94903700056561,
+        &quot;permit_length_m&quot;: 184.7088,
+        &quot;ratio&quot;: 0.5844282297354843
+      },
+      {
+        &quot;segment_id&quot;: &quot;5526&quot;,
+        &quot;route_length_m&quot;: 159.49752988194527,
+        &quot;permit_length_m&quot;: 254.8128,
+        &quot;ratio&quot;: 0.6259400229578156
+      },
+      {
+        &quot;segment_id&quot;: &quot;5538&quot;,
+        &quot;route_length_m&quot;: 223.99912530595168,
+        &quot;permit_length_m&quot;: 726.0336000000001,
+        &quot;ratio&quot;: 0.30852446127280014
+      },
+      {
+        &quot;segment_id&quot;: &quot;5539&quot;,
+        &quot;route_length_m&quot;: 127.30754124546317,
+        &quot;permit_length_m&quot;: 361.79760000000005,
+        &quot;ratio&quot;: 0.35187502970020573
+      },
+      {
+        &quot;segment_id&quot;: &quot;5771&quot;,
+        &quot;route_length_m&quot;: 16619.118555710575,
+        &quot;permit_length_m&quot;: 9707.270400000001,
+        &quot;ratio&quot;: 1.712027982213267
+      },
+      {
+        &quot;segment_id&quot;: &quot;5780&quot;,
+        &quot;route_length_m&quot;: 13924.329068877898,
+        &quot;permit_length_m&quot;: 8061.6552,
+        &quot;ratio&quot;: 1.7272295482046787
+      },
+      {
+        &quot;segment_id&quot;: &quot;6119&quot;,
+        &quot;route_length_m&quot;: 32523.634506178165,
+        &quot;permit_length_m&quot;: 20598.6888,
+        &quot;ratio&quot;: 1.5789177079163488
+      },
+      {
+        &quot;segment_id&quot;: &quot;6190&quot;,
+        &quot;route_length_m&quot;: 285.7462502815834,
+        &quot;permit_length_m&quot;: 30.7848,
+        &quot;ratio&quot;: 9.282056413606176
+      },
+      {
+        &quot;segment_id&quot;: &quot;621&quot;,
+        &quot;route_length_m&quot;: 2652.108911145199,
+        &quot;permit_length_m&quot;: 1737.3600000000001,
+        &quot;ratio&quot;: 1.5265166178254355
+      },
+      {
+        &quot;segment_id&quot;: &quot;6292&quot;,
+        &quot;route_length_m&quot;: 1965.5863618724536,
+        &quot;permit_length_m&quot;: 609.6,
+        &quot;ratio&quot;: 3.2243870765624236
+      },
+      {
+        &quot;segment_id&quot;: &quot;638&quot;,
+        &quot;route_length_m&quot;: 16771.895660167,
+        &quot;permit_length_m&quot;: 4903.9272,
+        &quot;ratio&quot;: 3.4200947477701136
+      },
+      {
+        &quot;segment_id&quot;: &quot;6480&quot;,
+        &quot;route_length_m&quot;: 7763.462841407954,
+        &quot;permit_length_m&quot;: 3945.9408000000003,
+        &quot;ratio&quot;: 1.9674554776412139
+      },
+      {
+        &quot;segment_id&quot;: &quot;657&quot;,
+        &quot;route_length_m&quot;: 8401.028800807744,
+        &quot;permit_length_m&quot;: 3352.8,
+        &quot;ratio&quot;: 2.505675495349482
+      },
+      {
+        &quot;segment_id&quot;: &quot;6690&quot;,
+        &quot;route_length_m&quot;: 519.6950360691651,
+        &quot;permit_length_m&quot;: 785.1648,
+        &quot;ratio&quot;: 0.6618929377236028
+      },
+      {
+        &quot;segment_id&quot;: &quot;6910&quot;,
+        &quot;route_length_m&quot;: 1066.8685283595116,
+        &quot;permit_length_m&quot;: 1767.8400000000001,
+        &quot;ratio&quot;: 0.6034870397544526
+      },
+      {
+        &quot;segment_id&quot;: &quot;6911&quot;,
+        &quot;route_length_m&quot;: 841.9886260492818,
+        &quot;permit_length_m&quot;: 1767.8400000000001,
+        &quot;ratio&quot;: 0.47628101301547754
+      },
+      {
+        &quot;segment_id&quot;: &quot;6947&quot;,
+        &quot;route_length_m&quot;: 0.668789431196779,
+        &quot;permit_length_m&quot;: 182.88,
+        &quot;ratio&quot;: 0.003656985078722545
+      },
+      {
+        &quot;segment_id&quot;: &quot;6992&quot;,
+        &quot;route_length_m&quot;: 1094.9148259558344,
+        &quot;permit_length_m&quot;: 583.0824,
+        &quot;ratio&quot;: 1.877804622392709
+      },
+      {
+        &quot;segment_id&quot;: &quot;6993&quot;,
+        &quot;route_length_m&quot;: 1085.4517500469528,
+        &quot;permit_length_m&quot;: 565.0992,
+        &quot;ratio&quot;: 1.9208162921606557
+      },
+      {
+        &quot;segment_id&quot;: &quot;7170&quot;,
+        &quot;route_length_m&quot;: 65.73623207811622,
+        &quot;permit_length_m&quot;: 198.12,
+        &quot;ratio&quot;: 0.33180008115342324
+      },
+      {
+        &quot;segment_id&quot;: &quot;7224&quot;,
+        &quot;route_length_m&quot;: 576.4356866590167,
+        &quot;permit_length_m&quot;: 1243.8888000000002,
+        &quot;ratio&quot;: 0.46341416263175345
+      },
+      {
+        &quot;segment_id&quot;: &quot;7244&quot;,
+        &quot;route_length_m&quot;: 1104.3562440394735,
+        &quot;permit_length_m&quot;: 640.08,
+        &quot;ratio&quot;: 1.7253409636912158
+      },
+      {
+        &quot;segment_id&quot;: &quot;7262&quot;,
+        &quot;route_length_m&quot;: 52117.475745715084,
+        &quot;permit_length_m&quot;: 26710.5384,
+        &quot;ratio&quot;: 1.9511952535451356
+      },
+      {
+        &quot;segment_id&quot;: &quot;7305&quot;,
+        &quot;route_length_m&quot;: 416.2860344646468,
+        &quot;permit_length_m&quot;: 967.4352,
+        &quot;ratio&quot;: 0.430298623065035
+      },
+      {
+        &quot;segment_id&quot;: &quot;7491&quot;,
+        &quot;route_length_m&quot;: 436.7238699516568,
+        &quot;permit_length_m&quot;: 701.0400000000001,
+        &quot;ratio&quot;: 0.6229656937573559
+      },
+      {
+        &quot;segment_id&quot;: &quot;7535&quot;,
+        &quot;route_length_m&quot;: 1229.8895219683236,
+        &quot;permit_length_m&quot;: 712.9272000000001,
+        &quot;ratio&quot;: 1.7251263831262482
+      },
+      {
+        &quot;segment_id&quot;: &quot;7536&quot;,
+        &quot;route_length_m&quot;: 1229.8895219683236,
+        &quot;permit_length_m&quot;: 712.9272000000001,
+        &quot;ratio&quot;: 1.7251263831262482
+      },
+      {
+        &quot;segment_id&quot;: &quot;770&quot;,
+        &quot;route_length_m&quot;: 530.1920621929443,
+        &quot;permit_length_m&quot;: 1126.5408,
+        &quot;ratio&quot;: 0.4706372482851436
+      },
+      {
+        &quot;segment_id&quot;: &quot;776&quot;,
+        &quot;route_length_m&quot;: 1265.1528385605043,
+        &quot;permit_length_m&quot;: 609.6,
+        &quot;ratio&quot;: 2.0753819530191997
+      },
+      {
+        &quot;segment_id&quot;: &quot;7908&quot;,
+        &quot;route_length_m&quot;: 19766.55830642539,
+        &quot;permit_length_m&quot;: 10956.3408,
+        &quot;ratio&quot;: 1.8041204328387987
+      },
+      {
+        &quot;segment_id&quot;: &quot;7940&quot;,
+        &quot;route_length_m&quot;: 420.8496122127859,
+        &quot;permit_length_m&quot;: 967.4352,
+        &quot;ratio&quot;: 0.43501581523267496
+      },
+      {
+        &quot;segment_id&quot;: &quot;8030&quot;,
+        &quot;route_length_m&quot;: 1798.3587469385388,
+        &quot;permit_length_m&quot;: 859.5360000000001,
+        &quot;ratio&quot;: 2.0922436604616195
+      },
+      {
+        &quot;segment_id&quot;: &quot;8031&quot;,
+        &quot;route_length_m&quot;: 1924.4830089397437,
+        &quot;permit_length_m&quot;: 457.20000000000005,
+        &quot;ratio&quot;: 4.209280422002939
+      },
+      {
+        &quot;segment_id&quot;: &quot;8193&quot;,
+        &quot;route_length_m&quot;: 713.0820962762674,
+        &quot;permit_length_m&quot;: 87.47760000000001,
+        &quot;ratio&quot;: 8.15159648042776
+      },
+      {
+        &quot;segment_id&quot;: &quot;8335&quot;,
+        &quot;route_length_m&quot;: 6602.632643914961,
+        &quot;permit_length_m&quot;: 3049.5240000000003,
+        &quot;ratio&quot;: 2.165135491281577
+      },
+      {
+        &quot;segment_id&quot;: &quot;8609&quot;,
+        &quot;route_length_m&quot;: 146.46357313060045,
+        &quot;permit_length_m&quot;: 222.50400000000002,
+        &quot;ratio&quot;: 0.6582514162918439
+      },
+      {
+        &quot;segment_id&quot;: &quot;8684&quot;,
+        &quot;route_length_m&quot;: 2623.6221239149495,
+        &quot;permit_length_m&quot;: 491.9472,
+        &quot;ratio&quot;: 5.333137629231246
+      },
+      {
+        &quot;segment_id&quot;: &quot;9084&quot;,
+        &quot;route_length_m&quot;: 32279.909162777098,
+        &quot;permit_length_m&quot;: 18246.852000000003,
+        &quot;ratio&quot;: 1.769067297897582
+      },
+      {
+        &quot;segment_id&quot;: &quot;9379&quot;,
+        &quot;route_length_m&quot;: 12319.531178850677,
+        &quot;permit_length_m&quot;: 22414.0776,
+        &quot;ratio&quot;: 0.5496336453680645
+      },
+      {
+        &quot;segment_id&quot;: &quot;9519&quot;,
+        &quot;route_length_m&quot;: 627.698813501659,
+        &quot;permit_length_m&quot;: 3987.3936000000003,
+        &quot;ratio&quot;: 0.15742083086597192
+      },
+      {
+        &quot;segment_id&quot;: &quot;9576&quot;,
+        &quot;route_length_m&quot;: 279.07522232484786,
+        &quot;permit_length_m&quot;: 164.592,
+        &quot;ratio&quot;: 1.6955576353944775
+      },
+      {
+        &quot;segment_id&quot;: &quot;9629&quot;,
+        &quot;route_length_m&quot;: 1817.129764730115,
+        &quot;permit_length_m&quot;: 365.4552,
+        &quot;ratio&quot;: 4.972236719384798
+      },
+      {
+        &quot;segment_id&quot;: &quot;9630&quot;,
+        &quot;route_length_m&quot;: 1817.129764730115,
+        &quot;permit_length_m&quot;: 365.4552,
+        &quot;ratio&quot;: 4.972236719384798
+      },
+      {
+        &quot;segment_id&quot;: &quot;9631&quot;,
+        &quot;route_length_m&quot;: 1817.129764730115,
+        &quot;permit_length_m&quot;: 365.4552,
+        &quot;ratio&quot;: 4.972236719384798
+      },
+      {
+        &quot;segment_id&quot;: &quot;9954&quot;,
+        &quot;route_length_m&quot;: 52860.46507089049,
+        &quot;permit_length_m&quot;: 24406.86,
+        &quot;ratio&quot;: 2.1658035925510486
+      }
+    ],
+    &quot;criterion&quot;: &quot;route/permit &lt; 0.67 or &gt; 1.5&quot;
+  },
+  &quot;hoop_yield_wall_at_assumed_smys&quot;: {
+    &quot;count&quot;: 3145,
+    &quot;minimum_m&quot;: 2.4422897358658963e-07,
+    &quot;median_m&quot;: 0.004220276663576269,
+    &quot;count_below_1_mm&quot;: 242,
+    &quot;scope&quot;: &quot;unique segments; not installed wall thickness&quot;
+  }
+}</pre><h2>Limits</h2><ul><li>Only ACT, OUT, PABN and PREM are selected by explicit policy I-0248. Every other status is excluded and counted. Selection does not establish present operation. Identical permit joins collapse; conflicting engineering values reject.</li><li>Geometry uses published coordinates and spherical distances; no datum transformation is performed.</li><li>The cited bulk files have no minimum-depth or burial-design column; those fields are removed.</li><li>Nominal size can be an OD proxy. The separate hoop-yield value is not installed wall; it bounds installed wall only where installed SMYS does not exceed assumed SMYS. It includes no design factor, allowance, tolerance or collapse check.</li><li>The STD lookup preference is unused in this public build. A supplied dimension requires rights, edition and source qualification.</li><li>Hs estimates require at least 10 complete maxima, T at most 4n and a 95% interval. Complete years require 80% annual hours and, in the Atlantic, 80% June-November hours. No marginal period extremes are exported. Four retained years cannot qualify return levels.</li><li>Nearest sediment texture does not establish route geotechnical properties. Matches require a retained wave-reporting station or sediment sample within 50 km; friction is a labelled assumption. Station depth remains unknown without explicit depth evidence.</li><li>Unknown coating, concrete and contents properties require an evidenced basis before use in stability calculations.</li><li>Current is unknown. Wave direction is coming-from, clockwise from north, bearing +90 degrees: the right-hand side when following increasing route sequence. It is an assumption.</li></ul></body></html>

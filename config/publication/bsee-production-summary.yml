@@ -1,0 +1,181 @@
+# ABOUTME: Externalized publication config for the wed#927 BSEE run-ledger pilot.
+# ABOUTME: HF target, MAJOR-1 federal-claim gate, pinned source snapshots, variants, metrics.
+#
+# Everything reviewable here (members/repos/locations/constants/thresholds live in
+# YAML, never hardcoded). The pilot driver (src/worldenergydata/workflow_api/bsee_pilot.py)
+# reads ONLY this file for its knobs.
+
+# ---------------------------------------------------------------------------
+# Algorithm Version identity inputs (path-independent; see MAJOR-2).
+# clean_git_commit is a PINNED, proven-clean upstream commit (origin/main at pin
+# time) — identity binds this, never the working-tree state or an absolute path.
+# ---------------------------------------------------------------------------
+algorithm:
+  algorithm_id: "worldenergydata/bsee-production-summary"
+  semantic_version: "1.0.0"
+  clean_git_commit: "7b08d116ddc1b3d01b61a9b5b04e6a896e4dca9d"
+  input_schema_version: "bsee-ogor-a-1"
+  output_schema_version: "bsee-prod-summary-1"
+  # A declared, stable environment descriptor (hashed into environment_digest).
+  environment:
+    python: "3.11"
+    assetutilities: "workflow_api-main"
+    worldenergydata: "bsee-production-summary-pilot"
+  # run-control knobs (execution_parameters) — constant across variants so the
+  # per-variant run_id difference comes ONLY from the pinned input snapshot.
+  execution_parameters:
+    analysis_type: "production"
+    runtime: "offline"
+  seed: 0
+
+# ---------------------------------------------------------------------------
+# Publication target + the MAJOR-1 hard gate.
+#
+# is_real_extract=false  -> the committed fixtures are SYNTHETIC (README:
+#   "bundled synthetic Gulf of Mexico CSV data"). The dataset is therefore
+#   labeled SYNTHETIC-DERIVED and published PRIVATE with a synthetic license and
+#   NO source_authority:BSEE, NO federal-public-domain claim, NO federal cc-by-4.0.
+#
+# To publish PUBLIC cc-by-4.0 with a BSEE federal claim: commit a genuinely
+# public-domain REAL BSEE OGOR-A extract as the pinned snapshot (sha256 over the
+# REAL bytes) for EVERY published block, then flip is_real_extract=true. The gate
+# (bsee_pilot.assert_federal_claim_allowed) refuses a federal claim otherwise.
+# ---------------------------------------------------------------------------
+publication:
+  hf_repo: "aceengineer/worldenergydata-runs"
+  is_real_extract: false
+  # visibility/license routing is DERIVED from is_real_extract (never hardcoded true):
+  synthetic_license: "synthetic-fixture-nonfederal"
+  federal_license: "cc-by-4.0"
+  federal_source_authority: "BSEE"
+  synthetic_source_authority: "worldenergydata-synthetic-fixture"
+
+report_path: "docs/reports/bsee-production-summary/index.html"
+
+# ---------------------------------------------------------------------------
+# Pinned source snapshots — one per fixture/block (m2: every published block is
+# covered). The committed `fixture` ref is REPO-RELATIVE (never absolute); the
+# snapshot_identity is the sha256 taken over the fixture BYTES at run time.
+#
+# REAL-EXTRACT PLUG POINT: when a genuine public-domain BSEE OGOR-A slice is
+# committed, replace `fixture` with the real extract path and set
+# `public_locator`/`source_authority`/`vintage` to the real BSEE values below,
+# then set publication.is_real_extract=true.
+# ---------------------------------------------------------------------------
+snapshots:
+  wr718:
+    fixture: "examples/workflows/bsee-production-summary/sample_production.csv"
+    vintage: "2024-01"                       # SOURCE vintage, NOT run time
+    retrieved_at: "2026-07-11T00:00:00Z"     # pinned once, at pin time
+    query:                                   # selection / transformation rules
+      area: "WR"
+      block: 718
+    schema:
+      - LEASE_NUMBER
+      - API_WELL_NUMBER
+      - COMPLETION_NAME
+      - PROD_DATE
+      - DAYS_ON_PROD
+      - OIL_PRODUCTION
+      - GAS_PRODUCTION
+      - WATER_PRODUCTION
+    # non-federal (synthetic) provenance — used while is_real_extract=false:
+    synthetic_public_locator:
+      uri: "synthetic://worldenergydata/bsee-pilot/wr-718"
+      version: "synthetic-2024-01"
+    # federal provenance — used ONLY under the real-extract gate:
+    federal_public_locator:
+      uri: "https://www.data.bsee.gov/Production/ProductionData/Default.aspx#OGORA"
+      version: "2024-01"
+  mc778:
+    fixture: "examples/workflows/bsee-well-comparison/sample_production.csv"
+    vintage: "2024-03"
+    retrieved_at: "2026-07-11T00:00:00Z"
+    query:
+      area: "MC"
+      block: 778
+    schema:
+      - LEASE_NUMBER
+      - API_WELL_NUMBER
+      - COMPLETION_NAME
+      - PROD_DATE
+      - DAYS_ON_PROD
+      - OIL_PRODUCTION
+      - GAS_PRODUCTION
+      - WATER_PRODUCTION
+    synthetic_public_locator:
+      uri: "synthetic://worldenergydata/bsee-pilot/mc-778"
+      version: "synthetic-2024-03"
+    federal_public_locator:
+      uri: "https://www.data.bsee.gov/Production/ProductionData/Default.aspx#OGORA"
+      version: "2024-03"
+
+# ---------------------------------------------------------------------------
+# >=3 meaningful variations + exactly 1 exact replay (of replay_variant).
+# Each varies the data.groups api12 selection (and V3 the block/fixture), so the
+# canonical input snapshot — and thus run_id and outputs — differ, never
+# accidentally equal.
+# ---------------------------------------------------------------------------
+variants:
+  - id: V1
+    workflow: "bsee-production-summary"
+    snapshot: wr718
+    group_label: "wr718_anchor_both"
+    api12: ["177154051100", "177154051200"]
+  - id: V2
+    workflow: "bsee-production-summary"
+    snapshot: wr718
+    group_label: "wr718_anchor_single"
+    api12: ["177154051100"]
+  - id: V3
+    workflow: "bsee-well-comparison"
+    snapshot: mc778
+    group_label: "mc778_maddog"
+    api12: ["608124010100", "608124010200", "608124010300"]
+replay_variant: V1
+
+# ---------------------------------------------------------------------------
+# Algorithm-scoped metric definitions. metric_id is WHOLE-PREFIX owned by
+# algorithm_id. Each carries meaning/units/derivation/quality (+ directionality).
+# ---------------------------------------------------------------------------
+metrics:
+  - metric_id: "worldenergydata/bsee-production-summary/total_oil_bbl"
+    definition_version: "1.0.0"
+    label: "Total oil produced"
+    meaning: "Sum of OIL_PRODUCTION over the selected API12 wells and months."
+    unit_or_dimension: "bbl"
+    data_type: "number"
+    derivation: "sum(OIL_PRODUCTION) over the pinned snapshot rows matching the selection"
+    applicability: "BSEE OGOR-A monthly per-well oil production"
+    directionality: "higher_is_more_production"
+    quality_rule: "valid when every selected row has a non-null numeric OIL_PRODUCTION"
+  - metric_id: "worldenergydata/bsee-production-summary/producing_well_count"
+    definition_version: "1.0.0"
+    label: "Producing well count"
+    meaning: "Count of distinct API12 wells with production in the selection."
+    unit_or_dimension: "count"
+    data_type: "integer"
+    derivation: "cardinality of distinct API12 values in the selected snapshot rows"
+    applicability: "BSEE OGOR-A monthly per-well production"
+    directionality: "none"
+    quality_rule: "valid when at least one selected well has production rows"
+  - metric_id: "worldenergydata/bsee-production-summary/cumulative_oil_mmbbl"
+    definition_version: "1.0.0"
+    label: "Cumulative oil"
+    meaning: "Total oil produced expressed in millions of barrels."
+    unit_or_dimension: "MMbbl"
+    data_type: "number"
+    derivation: "sum(OIL_PRODUCTION)/1e6 over the selected snapshot rows"
+    applicability: "BSEE OGOR-A monthly per-well oil production"
+    directionality: "higher_is_more_production"
+    quality_rule: "valid when total_oil_bbl is valid"
+  - metric_id: "worldenergydata/bsee-production-summary/peak_oil_rate_bopd"
+    definition_version: "1.0.0"
+    label: "Peak oil rate"
+    meaning: "Maximum monthly oil rate (OIL_PRODUCTION/DAYS_ON_PROD) across the selection."
+    unit_or_dimension: "bopd"
+    data_type: "number"
+    derivation: "max(OIL_PRODUCTION/DAYS_ON_PROD) over the selected snapshot rows"
+    applicability: "BSEE OGOR-A monthly per-well oil production"
+    directionality: "higher_is_higher_rate"
+    quality_rule: "valid when every selected row has DAYS_ON_PROD > 0"

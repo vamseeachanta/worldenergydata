@@ -1,0 +1,22 @@
+basename: fdas
+
+meta:
+  label: fdas_field_npv
+
+file_management:
+  flag: false
+  output_directory: outputs
+
+field:
+  name: Synthetic Anchor
+  development_system: subsea_tieback
+
+cashflow:
+  source: csv
+  file: cashflows.csv
+  period: annual
+  discount_rate: 0.10
+
+analysis:
+  flag: true
+  type: field_npv

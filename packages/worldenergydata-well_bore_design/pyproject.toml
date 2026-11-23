@@ -1,0 +1,53 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "worldenergydata-well_bore_design"
+version = "0.1.0"
+description = "Well bore design utilities for the worldenergydata namespace."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "Development Team", email = "dev@example.com" },
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+# Per-domain dependency set (ADR 0001 Phase 2 — domain split, batch 2, #529).
+# A deliberate SUBSET of the root package's flat dependency list, measured from
+# this domain's import footprint. Always depends on worldenergydata-core, which
+# ships worldenergydata.common (config/logging/exceptions/types/units).
+dependencies = [
+    "worldenergydata-core",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/vamseeachanta/worldenergydata"
+"Bug Tracker" = "https://github.com/vamseeachanta/worldenergydata/issues"
+
+# ---------------------------------------------------------------------------
+# PEP 420 namespace packaging (ADR 0001 — domain-package split)
+# ---------------------------------------------------------------------------
+# This member ships ONLY ``worldenergydata/well_bore_design/`` (+ its data files). It does
+# NOT ship ``worldenergydata/__init__.py`` — the root ``worldenergydata``
+# distribution remains the SOLE owner of the namespace root ``__init__.py``
+# (which carries ``__version__``, the ``_compat`` legacy redirect, the lazy
+# ``__getattr__``, and the ``pkgutil.extend_path`` spanning all install
+# locations). ``find_namespace`` + an explicit include keeps setuptools from
+# discovering a bare ``worldenergydata`` regular package here.
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["worldenergydata.well_bore_design*"]
+namespaces = true
+
+[tool.setuptools.package-data]
+"worldenergydata.well_bore_design" = ["*.md", "*.sql", "*.json", "**/*.yml", "**/*.yaml", "**/*.sql", "**/*.md", "**/*.json", "**/*.csv", "**/*.html"]

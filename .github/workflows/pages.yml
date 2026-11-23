@@ -1,0 +1,129 @@
+name: Deploy Data Outputs to Pages
+
+# Publishes deterministic, unit-tested analysis outputs as a static site.
+# The site is REBUILT from frozen report artifacts on every run — no committed
+# HTML build output — so what ships always matches the source reports.
+#
+# Per-domain BUILD isolation (P2, issue #528)
+# -------------------------------------------
+# GitHub Pages publishes exactly ONE artifact for the whole site:
+# actions/deploy-pages replaces the entire published tree from the single
+# upload-pages-artifact tarball. There is NO per-domain *publish* — you cannot
+# deploy a partial artifact without clobbering the rest of the site. So P2 is
+# per-domain *build* isolation merged into one published tree, NOT separate
+# per-domain Pages sites.
+#
+# How the merge works without committing build output: we restore the
+# predecessor revision's public/ from the Actions cache, rebuild ONLY the domain(s)
+# whose reports/<domain>/** changed (always regenerating the landing index over
+# the restored tree), then upload the full merged tree through the same single
+# Pages artifact and deploy step as before. Any change to shared chrome
+# (build_pages.py, the CSS/template, or site_assets/**) affects every page and so
+# forces a --clean full rebuild. A cache miss also degrades safely to a full
+# rebuild. Report deletion or renaming also forces a clean build to retire stale
+# pages. workflow_dispatch always full-rebuilds (safety hatch).
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'reports/**'
+      - 'site_assets/**'
+      - 'scripts/build_pages.py'
+      - 'scripts/pages_scope.py'
+      - 'scripts/site_nav.py'
+      - 'scripts/lower_tertiary/war_methodology.py'
+      - 'config/nav_spine.json'
+      - 'config/analysis/lower_tertiary/v50_assumptions_change_log.html'
+      - 'docs/intervention-db/intervention-stats-brief.html'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: >-
+      ${{ (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository) &&
+          fromJSON('["self-hosted","x64","linux"]') || 'ubuntu-latest' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # Need the previous commit so we can diff which domains changed.
+          fetch-depth: 2
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.11'
+
+      - name: Decide build scope (per-domain vs. full rebuild)
+        id: scope
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          python scripts/pages_scope.py --event "$EVENT_NAME" \
+            --base "$BEFORE" --head "$AFTER" >> "$GITHUB_OUTPUT"
+
+      - name: Restore predecessor tree
+        id: tree
+        # Scope is computed from BEFORE to the current revision, so only a tree
+        # built at BEFORE is a valid seed. Never restore a prefix-matched cache.
+        if: steps.scope.outputs.full != 'true'
+        uses: actions/cache/restore@v6
+        with:
+          path: public
+          key: pages-public-v2-${{ github.event.before }}
+
+      - name: Build static site (stdlib only)
+        shell: bash
+        env:
+          FULL_REBUILD: ${{ steps.scope.outputs.full }}
+          CACHE_HIT: ${{ steps.tree.outputs.cache-hit }}
+          DOMAINS: ${{ steps.scope.outputs.domains }}
+        run: |
+          set -euo pipefail
+          # cache-hit is true only for an exact key match, per actions/cache's
+          # restore README. Missing/evicted/skipped predecessor builds require
+          # all domains, including changes from any intervening commits.
+          if [ "$FULL_REBUILD" = "true" ] || [ "$CACHE_HIT" != "true" ]; then
+            python scripts/build_pages.py --clean
+          else
+            # An empty selection still refreshes the index and shared assets.
+            python scripts/build_pages.py --domains "$DOMAINS"
+          fi
+
+      - name: Save built tree to cache
+        # Versioned keys exclude trees produced by the previous unsafe policy.
+        uses: actions/cache/save@v6
+        with:
+          path: public
+          key: pages-public-v2-${{ github.sha }}
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: public
+
+  deploy:
+    needs: build
+    runs-on: >-
+      ${{ (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository) &&
+          fromJSON('["self-hosted","x64","linux"]') || 'ubuntu-latest' }}
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/deploy-pages@v5
+        id: deployment

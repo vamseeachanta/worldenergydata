@@ -1,0 +1,42 @@
+{
+  "files": [
+    {
+      "file": "5010delimit.zip",
+      "retrieved_at_utc": "2026-10-11T19:11:56.141905+00:00",
+      "sha256": "a5324d1508916bd2a19925522f8afa9b332063ff8e18b614d5d3430ef57ff929",
+      "size_bytes": 3994264,
+      "source_url": "https://www.data.bsee.gov/Well/Files/5010delimit.zip",
+      "terms": "Working database; errors may exist; not a legal document; not for navigational use. No explicit licence stated on download page.",
+      "terms_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=Disclaimer"
+    },
+    {
+      "file": "borehole_layout.html",
+      "retrieved_at_utc": "2026-10-11T19:11:56.564576+00:00",
+      "sha256": "7a9f02107798aa366425a32c92f1a4a6a78402619bcdb8962365a484d603681a",
+      "size_bytes": 37177,
+      "source_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=borehole",
+      "terms": "Working database; errors may exist; not a legal document; not for navigational use. No explicit licence stated on download page.",
+      "terms_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=Disclaimer"
+    },
+    {
+      "file": "borehole_codes.html",
+      "retrieved_at_utc": "2026-10-11T19:11:56.967666+00:00",
+      "sha256": "7d3eb1bf9a1d1b91328f55031720ab5911134ebcfb41aa03d224d2bd6cf013d3",
+      "size_bytes": 35001,
+      "source_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=boreholeFields",
+      "terms": "Working database; errors may exist; not a legal document; not for navigational use. No explicit licence stated on download page.",
+      "terms_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=Disclaimer"
+    },
+    {
+      "file": "disclaimer.html",
+      "retrieved_at_utc": "2026-10-11T19:11:57.363988+00:00",
+      "sha256": "64153767ca5b252488c65e4ddf6a882319cdf5350b012e3db2b86eb222bba803",
+      "size_bytes": 28180,
+      "source_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=Disclaimer",
+      "terms": "Working database; errors may exist; not a legal document; not for navigational use. No explicit licence stated on download page.",
+      "terms_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=Disclaimer"
+    }
+  ],
+  "owner": "worldenergydata",
+  "source_id": "bsee-data-center"
+}

@@ -1,0 +1,67 @@
+# Financial Analysis Agent Configuration
+name: financial-analysis
+version: 1.0.0
+enabled: true
+
+# Agent settings
+settings:
+  auto_update: true
+  cache_enabled: true
+  cache_ttl: 7200  # 2 hours
+  max_context_size: 32000
+  parallel_workers: 4
+  
+# Model configuration
+models:
+  forecasting:
+    default: prophet
+    alternatives:
+      - arima
+      - lstm
+      - xgboost
+  risk:
+    monte_carlo_iterations: 10000
+    confidence_levels: [0.95, 0.99]
+    
+# Data sources
+data_sources:
+  primary:
+    - source: internal_database
+      priority: 1
+    - source: eia_api
+      priority: 2
+    - source: market_feeds
+      priority: 3
+      
+# Workflow settings
+workflows:
+  investment_analysis:
+    enabled: true
+    auto_trigger: false
+    output_format: pdf
+  market_forecast:
+    enabled: true
+    schedule: "0 6 * * 1"  # Weekly Monday 6 AM
+    output_format: dashboard
+    
+# Notification settings
+notifications:
+  email:
+    enabled: false
+    recipients: []
+  webhook:
+    enabled: false
+    url: ""
+    
+# Security settings
+security:
+  api_key_required: true
+  rate_limiting: true
+  max_requests_per_hour: 1000
+  
+# Logging
+logging:
+  level: INFO
+  file: logs/financial_analysis.log
+  rotation: daily
+  retention_days: 30

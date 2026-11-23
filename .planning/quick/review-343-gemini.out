@@ -1,0 +1,5 @@
+Agent loading error: Failed to load agent from /mnt/local-analysis/workspace-hub/.gemini/agents/gsd-debugger.md: Validation failed: Agent Definition:
+Unrecognized key(s) in object: 'permissionMode'Agent loading error: Failed to load agent from /mnt/local-analysis/workspace-hub/.gemini/agents/gsd-executor.md: Validation failed: Agent Definition:
+Unrecognized key(s) in object: 'permissionMode'Error executing tool read_file: File path '/mnt/local-analysis/workspace-hub/src/worldenergydata/cost/data_collection/public_dataset.py' is ignored by configured ignore patterns.
+Error executing tool read_file: File path '/mnt/local-analysis/workspace-hub/src/worldenergydata/cost/data_collection/disclosure_ingest_contract.py' is ignored by configured ignore patterns.
+Error executing tool read_file: File path '/mnt/local-analysis/workspace-hub/src/worldenergydata/cost/disclosure_analytics.py' is ignored by configured ignore patterns.

@@ -1,0 +1,39 @@
+{
+  "doi": "10.5281/zenodo.19239166",
+  "record_url": "https://zenodo.org/records/19239166",
+  "metadata_url": "https://zenodo.org/api/records/19239166",
+  "version": "1.0.0",
+  "license": "cc-by-4.0",
+  "license_checked": "2026-10-18",
+  "attribution": "Oikonomou C.L.G., Rizaev I.G., Korres G., Denaxa D., Sheng W., Aggidis G. (2026). Applied Ocean Research 176, 105259. https://doi.org/10.1016/j.apor.2026.105259",
+  "file": {
+    "name": "Applied_Ocean_Res_dataset.zip",
+    "url": "https://zenodo.org/api/records/19239166/files/Applied_Ocean_Res_dataset.zip/content",
+    "bytes": 9283272,
+    "md5": "56d049993d7606ecfb6182c167903e0d",
+    "sha256": "3c09cd017de829d02bfb4955e1bce32ae56444419566f5fc0cbbb47b1f3eb611"
+  },
+  "member": {
+    "name": "Applied_Ocean_Res_dataset.mat",
+    "bytes": 9714406,
+    "sha256": "020dea44b95bf517addf50ab6d0cc4de888ed0ce33a995b9fa2bb0427f5d070e"
+  },
+  "calibration": ["2007-01-01", "2018-01-01"],
+  "validation": ["2018-01-01", "2022-01-01"],
+  "validation_pairs": 76783,
+  "n_quantiles": 200,
+  "q_range": [0.01, 0.999],
+  "targets": {
+    "raw_tm02_rmsd": 0.589,
+    "eqm_tm02_rmsd": 0.460,
+    "qdm_tm02_rmsd": 0.460,
+    "raw_hs_p95": 2.506,
+    "eqm_hs_p95": 2.639,
+    "qdm_hs_p95": 2.639,
+    "raw_joint_l1": 0.568,
+    "eqm_joint_l1": 0.272,
+    "qdm_joint_l1": 0.272,
+    "conditional_qdm_joint_l1": 0.217
+  },
+  "absolute_tolerance": 0.01
+}

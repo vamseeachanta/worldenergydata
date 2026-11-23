@@ -1,0 +1,272 @@
+{
+  "cases": [
+    {
+      "b": 0,
+      "backtest_cutoff": "2024-06-30T00:00:00",
+      "backtest_points": 24,
+      "backtest_rmse_bpd": 294.63506960994783,
+      "economic_limit_bpd": 1000.0,
+      "eur_bbl": 19625030.353178322,
+      "fit_points": 36,
+      "fit_rmse_bpd": 284.5771755508834,
+      "fit_start": "2023-07-31",
+      "forecast_end": "2038-05-06T11:46:26.886975424",
+      "history_start": "2015-05-31",
+      "label": "Well 608124003301",
+      "limit_reached": true,
+      "missing_months": 0,
+      "model": "exponential",
+      "nominal_decline_per_year": 0.07364794278552883,
+      "observed_bbl": 12713773.0,
+      "partial_months": 0,
+      "qi_bpd": 2966.9298073999307,
+      "remaining_bbl": 6911257.35317832,
+      "shut_in_months": 11,
+      "slug": "well-608124003301",
+      "terminal_nominal_decline_per_year": 0.06,
+      "today": "2026-06-30"
+    },
+    {
+      "b": 0,
+      "backtest_cutoff": "2024-06-30T00:00:00",
+      "backtest_points": 24,
+      "backtest_rmse_bpd": 765.4462535497182,
+      "economic_limit_bpd": 1000.0,
+      "eur_bbl": null,
+      "fit_points": 36,
+      "fit_rmse_bpd": 342.1223629179141,
+      "fit_start": "2023-07-31",
+      "forecast_end": "2029-03-18T01:31:42.428781136",
+      "history_start": "2015-01-31",
+      "label": "Well 608124009400",
+      "limit_reached": true,
+      "missing_months": 2,
+      "model": "exponential",
+      "nominal_decline_per_year": 0.19898017190907677,
+      "observed_bbl": 14783095.0,
+      "partial_months": 0,
+      "qi_bpd": 3066.8257903449885,
+      "remaining_bbl": 1315741.314314137,
+      "shut_in_months": 15,
+      "slug": "well-608124009400",
+      "terminal_nominal_decline_per_year": 0.06,
+      "today": "2026-06-30"
+    },
+    {
+      "b": 1,
+      "backtest_cutoff": "2024-06-30T00:00:00",
+      "backtest_points": 24,
+      "backtest_rmse_bpd": 1992.9041073922774,
+      "economic_limit_bpd": 5000.0,
+      "eur_bbl": null,
+      "fit_points": 36,
+      "fit_rmse_bpd": 1278.968496866205,
+      "fit_start": "2023-07-31",
+      "forecast_end": "2049-11-23T18:21:07.801571456",
+      "history_start": "2015-01-31",
+      "label": "Field WR627",
+      "limit_reached": true,
+      "missing_months": 0,
+      "model": "harmonic",
+      "nominal_decline_per_year": 0.11092997670042337,
+      "observed_bbl": 93756334.0,
+      "partial_months": 10,
+      "qi_bpd": 28331.469471261156,
+      "remaining_bbl": 94033389.13783614,
+      "shut_in_months": 14,
+      "slug": "field-WR627",
+      "terminal_nominal_decline_per_year": 0.06,
+      "today": "2026-06-30"
+    }
+  ],
+  "criteria_version": "bsee-dca-sample-v1",
+  "dataset_id": "julia_life_to_date",
+  "inputs": [
+    {
+      "path": "raw/ogora2015.csv",
+      "retrieved_at": "2026-10-14T20:15:17Z",
+      "sha256": "49a519d04947557814af75aeaab01d1887d7ae21a3f54d52c993c6694fad9d24",
+      "source_url": "https://www.data.bsee.gov/Production/Files/ogora2015delimit.zip"
+    },
+    {
+      "path": "raw/ogora2016.csv",
+      "retrieved_at": "2026-10-14T20:15:18Z",
+      "sha256": "9c2921717afc0d945ea7dce6da696f413cb56139f91816b87c5d176c1b116425",
+      "source_url": "https://www.data.bsee.gov/Production/Files/ogora2016delimit.zip"
+    },
+    {
+      "path": "raw/ogora2017.csv",
+      "retrieved_at": "2026-10-14T20:15:19Z",
+      "sha256": "0a0caa1d605d9467bc60d8814bdc17416dad83aea7f3a1fc2d367c7ac5c889f2",
+      "source_url": "https://www.data.bsee.gov/Production/Files/ogora2017delimit.zip"
+    },
+    {
+      "path": "raw/ogora2018.csv",
+      "retrieved_at": "2026-10-14T20:15:21Z",
+      "sha256": "bb055c7a9243ba9943360a331dd9915afc547fd90c766082f950aa8b8da85c11",
+      "source_url": "https://www.data.bsee.gov/Production/Files/ogora2018delimit.zip"
+    },
+    {
+      "path": "raw/ogora2019.csv",
+      "retrieved_at": "2026-10-14T20:15:22Z",
+      "sha256": "72324723d1a27023938ad737c74d97dfab7efe67ae25aa58419e7c688978a273",
+      "source_url": "https://www.data.bsee.gov/Production/Files/ogora2019delimit.zip"
+    },
+    {
+      "path": "raw/ogora2020.csv",
+      "retrieved_at": "2026-10-14T20:15:23Z",
+      "sha256": "751fbc9a4faca664e07d7b86cf410a7639b7d5873b3c94a2cf4969e736fa8f5f",
+      "source_url": "https://www.data.bsee.gov/Production/Files/ogora2020delimit.zip"
+    },
+    {
+      "path": "raw/ogora2021.csv",
+      "retrieved_at": "2026-10-14T20:15:24Z",
+      "sha256": "970238f98ae90d9d11f06d1497869eebc1ffb4cd427ac458082c3202a12cfda1",
+      "source_url": "https://www.data.bsee.gov/Production/Files/ogora2021delimit.zip"
+    },
+    {
+      "path": "raw/ogora2022.csv",
+      "retrieved_at": "2026-10-14T20:15:25Z",
+      "sha256": "d28164bac0369791fa14c42f81f9e4c2f9afbbed3eabc119ddb14824da0ea1ff",
+      "source_url": "https://www.data.bsee.gov/Production/Files/ogora2022delimit.zip"
+    },
+    {
+      "path": "raw/ogora2023.csv",
+      "retrieved_at": "2026-10-14T20:15:26Z",
+      "sha256": "c026906f14d1ac6cd241f391f47ca91abc74ead54fbb4efddecf2ce1a2347d01",
+      "source_url": "https://www.data.bsee.gov/Production/Files/ogora2023delimit.zip"
+    },
+    {
+      "path": "raw/ogora2024.csv",
+      "retrieved_at": "2026-10-14T20:15:27Z",
+      "sha256": "6dd627995e7a89bafbc0b17a2b1e511265d77aacf3fde483cc3e2a424edccf66",
+      "source_url": "https://www.data.bsee.gov/Production/Files/ogora2024delimit.zip"
+    },
+    {
+      "path": "raw/ogora2025.csv",
+      "retrieved_at": "2026-10-14T20:15:28Z",
+      "sha256": "123817fe517a83addffca60e767b6dab385dc3248c982f654a0f3f3bbe82d38f",
+      "source_url": "https://www.data.bsee.gov/Production/Files/ogora2025delimit.zip"
+    },
+    {
+      "path": "raw/ogora2026.csv",
+      "retrieved_at": "2026-10-14T20:15:29Z",
+      "sha256": "7cc11a357eb94510bf7e8622ea98a6130a5450b656780b70bd0dfbb58f48052b",
+      "source_url": "https://www.data.bsee.gov/Production/Files/ogoradelimit.zip"
+    },
+    {
+      "path": "raw/wells.csv",
+      "retrieved_at": "2026-10-14T20:15:30Z",
+      "sha256": "17f7ca599b5bab30efc289898126d677272a5e11a5ed099378dbd05665abc622",
+      "source_url": "https://www.data.bsee.gov/Well/Files/APIRawData.zip"
+    },
+    {
+      "path": "raw/completions.csv",
+      "retrieved_at": "2026-10-14T20:15:30Z",
+      "sha256": "177c708a780626cabac3e0d775f8baea0c12756a9634ca03a0c11c2d654caffb",
+      "source_url": "https://www.data.bsee.gov/Well/Files/APIRawData.zip"
+    },
+    {
+      "path": "raw/field.csv",
+      "retrieved_at": "2026-10-14T20:15:31Z",
+      "sha256": "a062981d3329749de0e10510d7ef5930587e0250e5f96ec42c3059912b7a5ce0",
+      "source_url": "https://www.data.bsee.gov/Other/Files/DeepQualRawData.zip"
+    }
+  ],
+  "outputs": [
+    {
+      "bytes": 100975,
+      "path": "well-608124003301.svg",
+      "sha256": "bb31bfd7e6fa2252fed4c8b310e9a4590817751b226aad4544b268eccc545359"
+    },
+    {
+      "bytes": 252502,
+      "path": "well-608124003301.png",
+      "sha256": "d58a89a8eda0161ccda6ffad6c2b6c1966a3cd65e173082c3aaf72ecfdc6634c"
+    },
+    {
+      "bytes": 10106,
+      "path": "well-608124003301-history.csv",
+      "sha256": "86df2894822dc943a06d0502c385648c50a3cb160d259bcf7cdd445bf3681629"
+    },
+    {
+      "bytes": 8424,
+      "path": "well-608124003301-forecast.csv",
+      "sha256": "97c653732be72e33e5f41f41f95b452dc39847f77ac79cbe843ba4205dbd92cd"
+    },
+    {
+      "bytes": 1167,
+      "path": "well-608124003301-backtest.csv",
+      "sha256": "2c9d89737329c32eac039f32e2fb0044bb4a7bfb58dfd20a59751e2e8c8de812"
+    },
+    {
+      "bytes": 93457,
+      "path": "well-608124009400.svg",
+      "sha256": "0435d185f99439237a2cc28e52c37c917e2b3eb452d6fbb4d41e7bed56ada38c"
+    },
+    {
+      "bytes": 246221,
+      "path": "well-608124009400.png",
+      "sha256": "9b945ee3c815a161b515cfa04be5ad8996597b9550a3d204d7dcc783c2928f93"
+    },
+    {
+      "bytes": 10261,
+      "path": "well-608124009400-history.csv",
+      "sha256": "586f07ee3293042a6014851644b8340046f099befae6cd5f41b903633cd01ea2"
+    },
+    {
+      "bytes": 2012,
+      "path": "well-608124009400-forecast.csv",
+      "sha256": "128126d4affe91ab22cd12075093f3e3edd0849a8c6a4b8dc6cb8b3b25df3e10"
+    },
+    {
+      "bytes": 1183,
+      "path": "well-608124009400-backtest.csv",
+      "sha256": "606daaf7ab30bc084bbd8ba5fbba07de3d7c4b16855f66d29cc5332d4b8a6d03"
+    },
+    {
+      "bytes": 110298,
+      "path": "field-WR627.svg",
+      "sha256": "66efc0175d56dec27b2228c8c270036ed939d28769c8f1aed583ac87a5f86dc1"
+    },
+    {
+      "bytes": 268148,
+      "path": "field-WR627.png",
+      "sha256": "ae24523cfbae8cd6630c4bec9fef1a1d8b08a78e26914f54b0465ae1ab6e74de"
+    },
+    {
+      "bytes": 10462,
+      "path": "field-WR627-history.csv",
+      "sha256": "1cfb75f0412e6b822af49ef91ad5f4a395034183b0bd11379da2276fb921a6d6"
+    },
+    {
+      "bytes": 16381,
+      "path": "field-WR627-forecast.csv",
+      "sha256": "2bc982b512b98bc261e1bbdc35faba450e57f52c2a6fb9e48f2cb550daec875e"
+    },
+    {
+      "bytes": 1170,
+      "path": "field-WR627-backtest.csv",
+      "sha256": "77adc3b9a5d525e0d915acb03e9df567bdd6cafbcb3972807c6ce15d05634066"
+    },
+    {
+      "bytes": 2713,
+      "path": "metrics.json",
+      "sha256": "db6b2b906e71c6d9839121557dee1d19fe465293bfef3aeeee5065deb0450ae0"
+    },
+    {
+      "bytes": 258243,
+      "path": "index.html",
+      "sha256": "8ebd54ecff0cd3b588ccf4d5d59dbf73dffa877c19ef6ff81a10076c1dfb57fc"
+    }
+  ],
+  "qa_status": "awaiting-owner-sample-review",
+  "source_id": "bsee-data-center",
+  "source_manifest_sha256": "7676f87c176e0f92396cde2310aa83a756d06f97f35b2aa3dc77180862580e35",
+  "source_owner": "data/economics/julia_life_to_date",
+  "units": {
+    "nominal_decline": "year^-1",
+    "oil": "bbl",
+    "rate": "bbl/calendar-day"
+  }
+}

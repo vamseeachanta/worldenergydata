@@ -1,0 +1,75 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "worldenergydata-safety_analysis"
+version = "0.1.0"
+description = "Generalized HSE safety-analysis toolkit (NLP classification, correlation, risk index) for the worldenergydata namespace."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "Development Team", email = "dev@example.com" },
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+# Per-domain dependency set (ADR 0001 Phase 2 — domain split, batch 4, #529).
+# A deliberate SUBSET of the root package's flat dependency list, measured from
+# this domain's live import footprint. Always depends on worldenergydata-core
+# (worldenergydata.common). The ML/BERT stacks (scikit-learn/xgboost/torch/
+# transformers) are OPTIONAL — guarded behind try/except in nlp/* and surfaced
+# as OptionalDependencyError — so they live in the safety-ml / safety-bert
+# EXTRAS (mirroring the root distribution), not the base deps.
+dependencies = [
+    "worldenergydata-core",
+    "numpy>=2.2.6,<3.0",
+    "pandas>=2.3.3,<3.0",
+    "scipy>=1.11.0,<2.0",
+    "plotly>=5.18.0,<6.0",
+    "pydantic>=2.13.4,<3.0",
+    "pydantic-settings>=2.1.0,<3.0",
+    "typer>=0.9.0,<1.0",
+    "rich>=15.0.0,<16.0",
+    "pyyaml>=6.0,<7.0",
+]
+
+[project.optional-dependencies]
+safety-ml = [
+    "scikit-learn>=1.7.2",
+    "xgboost>=2.0.0",
+    "hyperopt>=0.2.5",
+    "joblib>=1.3.0",
+]
+safety-bert = [
+    "torch>=2.0.0",
+    "transformers>=4.35.0",
+    "sentencepiece>=0.1.99",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/vamseeachanta/worldenergydata"
+"Bug Tracker" = "https://github.com/vamseeachanta/worldenergydata/issues"
+
+# ---------------------------------------------------------------------------
+# PEP 420 namespace packaging (ADR 0001 — domain-package split)
+# ---------------------------------------------------------------------------
+# This member ships ONLY ``worldenergydata/safety_analysis/`` (+ its package
+# data, incl. the in-package data/config/*.yaml). It does NOT ship
+# ``worldenergydata/__init__.py`` — the root ``worldenergydata`` distribution
+# remains the SOLE owner of the namespace root ``__init__.py``.
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["worldenergydata.safety_analysis*"]
+namespaces = true
+
+[tool.setuptools.package-data]
+"worldenergydata.safety_analysis" = ["*.md", "*.json", "**/*.yml", "**/*.yaml", "**/*.json", "**/*.csv", "**/*.md", "**/*.sql", "**/*.html"]

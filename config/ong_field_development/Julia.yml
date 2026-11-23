@@ -1,0 +1,47 @@
+# Auto-generated field input — scripts/gen_field_inputs.py
+# BOEM blocks mirror aceengineercode config/ong_field_development; enriched with BSEE leases + validated economics.
+field:
+  nickname: Julia
+  id: julia
+  status: producing
+  dev_system: tieback15
+  water_depth_ft: 7335
+  first_oil: '2016-03-01'
+location:
+  boem_fields:
+  - WR627
+  leases:
+  - G20351
+  well_type:
+  - E
+  - D
+analysis:
+  economics: true
+  discount_rate_annual: 0.1
+  by:
+  - field
+  - block
+  - well
+  vintages:
+  - v30
+  - latest
+validated_economics:
+  total_oil_bbl: 70936158
+  revenue_usd: 4715155663.31
+  capex_usd: 2724600000
+  npv10_usd: -530637776.31
+  mirr_annual: 0.06313
+  producers: 4
+  wellbores: 9
+public_metadata:
+  operator: ExxonMobil
+  partners: ExxonMobil 50% (op), Equinor 50%
+  facility: subsea tieback to Chevron Jack/St. Malo semi host (~15 mi)
+  play: Lower Tertiary (Wilcox neighborhood)
+  reported_first_oil: 2016-04
+  reported_capex_usd: 4000000000.0
+  plateau_bopd: 34000
+provenance:
+  boem_source: aceengineercode/config/ong_field_development/XOM_Julia.yml
+  lease_source: config/analysis/lower_tertiary/lease_mapping_fdas.yml
+  economics_source: config/analysis/lower_tertiary/golden_baseline_v30.yml

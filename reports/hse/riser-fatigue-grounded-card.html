@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Riser Fatigue — SCR touchdown zone, 10.75″ API 5L X65 — Grounded Analysis</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<style>
+  :root { --ink:#0f172a; --muted:#475569; --line:#e2e8f0; --accent:#0b5394; }
+  * { box-sizing:border-box; }
+  body { font:15px/1.5 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+         color:var(--ink); margin:0; background:#f8fafc; }
+  .card { max-width:880px; margin:24px auto; background:#fff; border:1px solid var(--line);
+          border-radius:12px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,.06); }
+  header { padding:20px 24px; background:var(--accent); color:#fff; }
+  header h1 { margin:0; font-size:20px; }
+  header p { margin:4px 0 0; opacity:.9; font-size:13px; }
+  section { padding:18px 24px; border-top:1px solid var(--line); }
+  section h2 { font-size:13px; text-transform:uppercase; letter-spacing:.04em;
+               color:var(--muted); margin:0 0 12px; }
+  .headline { font-size:17px; font-weight:600; margin:0 0 12px; }
+  .metrics { display:flex; gap:18px; flex-wrap:wrap; }
+  .metric { background:#f1f5f9; border-radius:8px; padding:10px 14px; min-width:120px; }
+  .m-val { font-size:18px; font-weight:700; color:var(--accent); }
+  .m-lab { font-size:12px; color:var(--muted); }
+  .basis { font-size:12px; color:var(--muted); margin-top:10px; }
+  ul.incidents { list-style:none; margin:0; padding:0; }
+  li.incident { display:grid; grid-template-columns:92px 110px 1fr; gap:6px 12px;
+                align-items:baseline; padding:10px 0; border-bottom:1px dashed var(--line); }
+  li.incident:last-child { border-bottom:none; }
+  .date { font-variant-numeric:tabular-nums; font-weight:600; }
+  .badge { color:#fff; font-size:11px; padding:2px 8px; border-radius:10px; text-align:center;
+           justify-self:start; }
+  .loc { grid-column:3; font-weight:600; }
+  .desc { grid-column:3; color:var(--ink); }
+  .src { grid-column:3; font-size:12px; color:var(--muted); }
+  #timeline { width:100%; height:300px; }
+  footer { padding:14px 24px; background:#f1f5f9; font-size:12px; color:var(--muted); }
+  footer .vintage { font-weight:600; color:var(--ink); }
+</style></head>
+<body><div class="card">
+  <header>
+    <h1>Riser Fatigue — SCR touchdown zone, 10.75″ API 5L X65</h1>
+    <p>Engineering analysis, grounded in real-world precedent</p>
+  </header>
+
+  <section>
+    <h2>Engineering result</h2>
+    <p class="headline">Minimum fatigue life 825 yr at the SCR touchdown zone — above the 25-yr design basis (DFF 10).</p>
+    <div class="metrics"><div class="metric"><div class="m-val">Min fatigue life</div><div class="m-lab">825 yr</div></div><div class="metric"><div class="m-val">Wave damage</div><div class="m-lab">0.030</div></div><div class="metric"><div class="m-val">VIV damage</div><div class="m-lab">0.000</div></div><div class="metric"><div class="m-val">Design basis</div><div class="m-lab">25 yr</div></div></div>
+    <p class="basis">Live digitalmodel riser_fatigue — DNV-RP-C203 S-N (curve F1, seawater w/ CP), wave-histogram + VIV Miner damage, DNV-OS-F201 DFF 10 · LIVE digitalmodel riser_fatigue run (subprocess, dm&#x27;s own venv). Representative SCR section (273 mm × 22 mm, API 5L X65) + illustrative wave/VIV stress scatter; field registers carry riser counts, not per-riser stress histograms. Solver, S-N curve, Miner damage and life are live digitalmodel. #771.</p>
+  </section>
+
+  <section>
+    <h2>Real-world precedent — Riser / flowline structural failure</h2>
+    <div id="timeline"></div>
+    <p style="font-size:13px;color:var(--muted);margin:.5em 0 0">
+      Latest on record (circles) and highest-consequence on record (diamonds). Hover for detail.</p>
+  </section>
+
+  <section>
+    <h2>Latest on record</h2>
+    <ul class="incidents"><li class="incident"><span class="date">2017-10-16</span><span class="badge" style="background:#1d4ed8">property_&gt;$25k</span><span class="loc">MC 778 G09868</span><span class="desc">Other Lifting Device - Incident &gt;$25K - Dropped Object - Riser Jt.</span><span class="src">BSEE (offshore)</span></li><li class="incident"><span class="date">2016-01-30</span><span class="badge" style="background:#1d4ed8">property_&gt;$25k</span><span class="loc">MC 471 G33735</span><span class="desc">Incident &gt;$25K - Pressurized Riser String</span><span class="src">BSEE (offshore)</span></li></ul>
+  </section>
+
+  <section>
+    <h2>Highest-consequence on record</h2>
+    <ul class="incidents"><li class="incident"><span class="date">2000-02-28</span><span class="badge" style="background:#b91c1c">catastrophic</span><span class="loc">MC 538 G16614</span><span class="desc">Blowout - Pollution - Accidental riser disconnect</span><span class="src">BSEE (offshore)</span></li><li class="incident"><span class="date">2007-12-02</span><span class="badge" style="background:#a16207">environmental</span><span class="loc">GC 652 G21810</span><span class="desc">Pollution - Riser Emergency Disconnect</span><span class="src">BSEE (offshore)</span></li></ul>
+  </section>
+
+  <footer>
+    <div class="vintage">Data vintage: BSEE incident investigations; corpus current to 2026-01-08.</div>
+    Source: BSEE incident investigations (data.bsee.gov), public record. Incidents are cited by area block + lease and date only —
+    no operator names (aggregation policy). Generated 2026-07-04.
+  </footer>
+</div>
+<script>
+  Plotly.newPlot("timeline", [{"x": ["2017-10-16", "2016-01-30"], "y": [30, 30], "text": ["2017-10-16 \u00b7 MC 778 G09868<br>Other Lifting Device - Incident >$25K - Dropped Object - Riser Jt.<br><b>property_>$25k</b> (BSEE (offshore))", "2016-01-30 \u00b7 MC 471 G33735<br>Incident >$25K - Pressurized Riser String<br><b>property_>$25k</b> (BSEE (offshore))"], "mode": "markers", "name": "Latest on record", "type": "scatter", "marker": {"size": 16, "symbol": "circle", "color": ["#1d4ed8", "#1d4ed8"], "line": {"width": 1.5, "color": "#1e293b"}}, "hovertemplate": "%{text}<extra></extra>"}, {"x": ["2000-02-28", "2007-12-02"], "y": [90, 50], "text": ["2000-02-28 \u00b7 MC 538 G16614<br>Blowout - Pollution - Accidental riser disconnect<br><b>catastrophic</b> (BSEE (offshore))", "2007-12-02 \u00b7 GC 652 G21810<br>Pollution - Riser Emergency Disconnect<br><b>environmental</b> (BSEE (offshore))"], "mode": "markers", "name": "Highest-consequence", "type": "scatter", "marker": {"size": 16, "symbol": "diamond", "color": ["#b91c1c", "#a16207"], "line": {"width": 1.5, "color": "#1e293b"}}, "hovertemplate": "%{text}<extra></extra>"}], {
+    margin:{t:10,r:10,b:36,l:44},
+    xaxis:{title:"Incident date", type:"date"},
+    yaxis:{title:"Severity rank", range:[0,105]},
+    legend:{orientation:"h", y:1.15},
+    hoverlabel:{align:"left"},
+    plot_bgcolor:"#fff", paper_bgcolor:"#fff"
+  }, {displaylogo:false, responsive:true});
+</script>
+</body></html>

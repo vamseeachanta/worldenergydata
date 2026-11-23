@@ -1,0 +1,144 @@
+{
+  "counties": [
+    {
+      "regulator_readiness": "downloaded",
+      "cost_constraints": "NOT_EVALUATED: no fee amount assumed; filing fees are not search or image prices.",
+      "coverage_limits": "NOT_EVALUATED: no complete title-chain or historical image coverage established.",
+      "legal_caveats": "Public visibility does not establish automated reuse rights or title completeness. Mineral reservations, releases, aliases and unrecorded interests require qualified human review.",
+      "next_action": "Review terms and historical coverage with the recorder; obtain explicit approval before accounts, paid access or acquisition.",
+      "state": "TX",
+      "county": "MIDLAND",
+      "recorder_url": "https://www.co.midland.tx.us/184/Official-Public-Records",
+      "priority_basis": "Existing county reference plus Texas RRC source implementation provides a candidate well-to-county context; not a production-volume ranking.",
+      "readiness_evidence": [
+        "Issue #911: Texas RRC reported downloaded; not independently materialized here.",
+        "docs/data-sources/onshore/texas-rrc/source-catalog.md",
+        "packages/worldenergydata-landman/src/worldenergydata/landman/providers/county_reference.py: TX/MIDLAND"
+      ],
+      "search_capabilities": "NOT_EVALUATED: official page describes recorded instruments and filing requirements; it does not establish land-search fields or anonymous image access.",
+      "document_types": [
+        "deed",
+        "deed of trust",
+        "oil and gas lease",
+        "mineral deed",
+        "release",
+        "lien"
+      ],
+      "sources": [
+        {
+          "url": "https://www.co.midland.tx.us/184/Official-Public-Records",
+          "title": "Official Public Records, Midland County",
+          "observed_on": "2026-10-20",
+          "status": "opened",
+          "finding": "Recorded instruments section lists deeds, oil and gas leases, mineral deeds and releases. Recording and copy fees do not establish online access costs."
+        }
+      ]
+    },
+    {
+      "regulator_readiness": "downloaded",
+      "cost_constraints": "Login required for images; payment and bulk costs NOT_EVALUATED. Gated does not assert that the login has a fee.",
+      "coverage_limits": "Official Land Record Searches page: name index begins 1987; name plus legal description begins 1989; most images begin 1890; book/page search covers 1890 through 1986. These source-stated windows do not establish chain completeness.",
+      "legal_caveats": "Public visibility does not establish automated reuse rights or title completeness. Mineral reservations, releases, aliases and unrecorded interests require qualified human review.",
+      "next_action": "Review terms and historical coverage with the recorder; obtain explicit approval before accounts, paid access or acquisition.",
+      "state": "OK",
+      "county": "CANADIAN",
+      "recorder_url": "https://www.canadiancounty.org/165/Land-Records",
+      "search_url": "http://search.cogov.net/Okcana/default.asp",
+      "online_search": true,
+      "account_required": true,
+      "priority_basis": "Existing county reference and implemented OCC completion-pressure source permit a candidate county context; state data is not title evidence.",
+      "readiness_evidence": [
+        "Issue #911: Oklahoma OCC reported downloaded; not independently materialized here.",
+        "docs/data-sources/onshore/state-well-databases/source-catalog.md: Oklahoma implementation",
+        "packages/worldenergydata-landman/src/worldenergydata/landman/providers/county_reference.py: OK/CANADIAN"
+      ],
+      "search_capabilities": "Name, legal description, and book/page lookup; fields depend on record era (see source). Image access requires a login obtained through the indexing office.",
+      "document_types": [
+        "land records",
+        "plats"
+      ],
+      "sources": [
+        {
+          "url": "https://www.canadiancounty.org/885/Land-Record-Searches",
+          "title": "Land Record Searches, Canadian County",
+          "observed_on": "2026-10-20",
+          "status": "opened",
+          "finding": "Search instructions specify indexing eras and require an office-issued login for images. Complete indexes can be inspected at the office; no account was requested."
+        }
+      ]
+    },
+    {
+      "regulator_readiness": "downloaded",
+      "cost_constraints": "Official page states copies can be purchased; no amount assumed and no purchase made.",
+      "coverage_limits": "Recording Department page describes records from 1865 to present and says most are electronic. Portal warns that the index is a guide, not a basis for deciding the underlying document.",
+      "legal_caveats": "Portal disclaimer explicitly forbids automated searching and copying, including robots and screen scraping. Exclude this portal from automated ingest; human review only.",
+      "next_action": "Review terms and historical coverage with the recorder; obtain explicit approval before accounts, paid access or acquisition.",
+      "state": "CO",
+      "county": "WELD",
+      "recorder_url": "https://www.weld.gov/Government/Departments/Clerk-and-Recorder/Recording-Department",
+      "search_url": "https://recording.weld.gov/web/user/disclaimer",
+      "online_search": true,
+      "payment_required": true,
+      "automation_terms": "prohibited",
+      "priority_basis": "Existing county reference plus implemented ECMC wells/production spine provides a candidate county context, independent of recorder access.",
+      "readiness_evidence": [
+        "Issue #911: Colorado ECMC reported downloaded; not independently materialized here.",
+        "docs/data-sources/onshore/state-well-databases/source-catalog.md: Colorado bulk spine",
+        "packages/worldenergydata-landman/src/worldenergydata/landman/providers/county_reference.py: CO/WELD"
+      ],
+      "search_capabilities": "Official page links document search and copy purchases. Portal disclaimer describes an index as a finding aid and advises spelling variants.",
+      "document_types": [
+        "real estate records",
+        "subdivision maps"
+      ],
+      "sources": [
+        {
+          "url": "https://www.weld.gov/Government/Departments/Clerk-and-Recorder/Recording-Department",
+          "title": "Recording Department, Weld County",
+          "observed_on": "2026-10-20",
+          "status": "opened",
+          "finding": "Describes real estate records and a self-service search and copy-purchase service; source-stated record range begins 1865."
+        },
+        {
+          "url": "https://recording.weld.gov/web/user/disclaimer",
+          "title": "Recorder portal disclaimer, Weld County",
+          "observed_on": "2026-10-20",
+          "status": "opened",
+          "finding": "Automated searches to acquire or copy information are prohibited. No disclaimer acceptance, search or document retrieval was performed."
+        }
+      ]
+    },
+    {
+      "regulator_readiness": "downloaded",
+      "cost_constraints": "NOT_EVALUATED: no fee amount assumed; filing fees are not search or image prices.",
+      "coverage_limits": "NOT_EVALUATED: no complete title-chain or historical image coverage established.",
+      "legal_caveats": "Public visibility does not establish automated reuse rights or title completeness. Mineral reservations, releases, aliases and unrecorded interests require qualified human review.",
+      "next_action": "Review terms and historical coverage with the recorder; obtain explicit approval before accounts, paid access or acquisition.",
+      "state": "KS",
+      "county": "STEVENS",
+      "recorder_url": "https://stevenscoks.org/departments/register_of_deeds.php",
+      "priority_basis": "Kansas KGS is an implemented pressure source; Stevens is a bounded discovery candidate for that state. No county production or title volume is assumed.",
+      "readiness_evidence": [
+        "Issue #911: Kansas KGS reported downloaded; not independently materialized here.",
+        "docs/data-sources/onshore/kansas-kgs/pressure-observations.md"
+      ],
+      "search_capabilities": "NOT_EVALUATED: official page describes the office remit and written requests; it does not establish an online document-search service.",
+      "document_types": [
+        "deed",
+        "mortgage",
+        "oil and gas lease",
+        "plat",
+        "lien"
+      ],
+      "sources": [
+        {
+          "url": "https://stevenscoks.org/departments/register_of_deeds.php",
+          "title": "Register of Deeds, Stevens County",
+          "observed_on": "2026-10-20",
+          "status": "opened",
+          "finding": "Department function includes real estate transactions and oil and gas leases. Online search, bulk export and automation rights were not established. Absence of a portal link does not prove in-person-only access."
+        }
+      ]
+    }
+  ]
+}

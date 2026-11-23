@@ -1,0 +1,13 @@
+# Derived from, and deliberately stricter than, the shared workspace-hub scanner configuration.
+# Default rules are loaded and path entries narrowed for standalone checkouts and git worktrees.
+# The shared file should gain the default-rule extension; this file should retain it.
+title = "World Energy Data gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Known false positives"
+paths = [
+  '''^\.gitleaks\.toml$''',
+]

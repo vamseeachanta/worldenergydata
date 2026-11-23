@@ -1,0 +1,873 @@
+module: bsee
+description: Bureau of Safety and Environmental Enforcement - GOM data [2.6 GB]
+datasets:
+- name: completion_perforations.csv
+  path: data/modules/bsee/current/completions/completion_perforations.csv
+  format: csv
+  columns:
+  - name: API_WELL_NUMBER
+    type: integer
+    description: ''
+    unit: ''
+  - name: WELL_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: PERF_TOP_MD
+    type: integer
+    description: ''
+    unit: feet
+  - name: PERF_BOTM_TVD
+    type: integer
+    description: ''
+    unit: feet
+  - name: PERF_TOP_TVD
+    type: integer
+    description: ''
+    unit: feet
+  - name: PERF_BASE_MD
+    type: integer
+    description: ''
+    unit: feet
+  row_count: 100
+  size_bytes: 3997
+  last_modified: '2025-07-31T11:24:19.677972+00:00'
+- name: completion_properties.csv
+  path: data/modules/bsee/current/completions/completion_properties.csv
+  format: csv
+  columns:
+  - name: API_WELL_NUMBER
+    type: integer
+    description: ''
+    unit: ''
+  - name: COMP_LATITUDE
+    type: float
+    description: ''
+    unit: degrees
+  - name: COMP_LONGITUDE
+    type: float
+    description: ''
+    unit: degrees
+  - name: COMP_RSVR_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: COMP_INTERVAL_NAME
+    type: string
+    description: ''
+    unit: ''
+  row_count: 100
+  size_bytes: 5825
+  last_modified: '2025-07-31T11:24:19.678297+00:00'
+- name: completion_summary.csv
+  path: data/modules/bsee/current/completions/completion_summary.csv
+  format: csv
+  columns:
+  - name: API_WELL_NUMBER
+    type: integer
+    description: ''
+    unit: ''
+  - name: WELL_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: INTERVAL
+    type: string
+    description: ''
+    unit: ''
+  - name: COMP_AREA_CODE
+    type: string
+    description: ''
+    unit: ''
+  - name: COMP_BLOCK_NUMBER
+    type: integer
+    description: ''
+    unit: ''
+  - name: COMP_STATUS_CD
+    type: string
+    description: ''
+    unit: ''
+  - name: VALUE
+    type: string
+    description: ''
+    unit: ''
+  - name: VALUE_DESC
+    type: string
+    description: ''
+    unit: ''
+  row_count: 100
+  size_bytes: 4048
+  last_modified: '2025-07-31T11:24:19.689104+00:00'
+- name: geology_markers.csv
+  path: data/modules/bsee/current/geology/geology_markers.csv
+  format: csv
+  columns:
+  - name: API_WELL_NUMBER
+    type: integer
+    description: ''
+    unit: ''
+  - name: WELL_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: GEO_MARKER_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: TOP_MD
+    type: integer
+    description: ''
+    unit: feet
+  row_count: 100
+  size_bytes: 3335
+  last_modified: '2025-07-31T11:24:19.689923+00:00'
+- name: hydrocarbon_bearing_interval.csv
+  path: data/modules/bsee/current/geology/hydrocarbon_bearing_interval.csv
+  format: csv
+  columns:
+  - name: API_WELL_NUMBER
+    type: integer
+    description: ''
+    unit: ''
+  - name: WELL_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: SN_HC_BEARING_INTVL
+    type: integer
+    description: ''
+    unit: ''
+  - name: SN_EOR_FK
+    type: integer
+    description: ''
+    unit: ''
+  - name: INTERVAL_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: TOP_MD
+    type: integer
+    description: ''
+    unit: feet
+  - name: BOTTOM_MD
+    type: integer
+    description: ''
+    unit: feet
+  - name: HYDROCARBON_TYPE_CD
+    type: string
+    description: ''
+    unit: ''
+  row_count: 100
+  size_bytes: 5477
+  last_modified: '2025-07-31T11:24:19.690355+00:00'
+- name: all_bsee_blocks.csv
+  path: data/modules/bsee/current/infrastructure/all_bsee_blocks.csv
+  format: csv
+  columns:
+  - name: BOTM_FLD_NAME_CD
+    type: string
+    description: ''
+    unit: ''
+  row_count: 100
+  size_bytes: 607
+  last_modified: '2025-07-31T11:24:19.677738+00:00'
+- name: ST_BP_and_tree_height.csv
+  path: data/modules/bsee/current/operations/ST_BP_and_tree_height.csv
+  format: csv
+  columns:
+  - name: SN_EOR
+    type: integer
+    description: ''
+    unit: ''
+  - name: API_WELL_NUMBER
+    type: integer
+    description: ''
+    unit: ''
+  - name: WELL_NM_ST_SFIX
+    type: integer
+    description: ''
+    unit: ''
+  - name: WELL_NM_BP_SFIX
+    type: boolean
+    description: ''
+    unit: ''
+  - name: SUBSEA_TREE_HEIGHT_AML
+    type: float
+    description: ''
+    unit: ''
+  row_count: 100
+  size_bytes: 2706
+  last_modified: '2025-07-31T11:24:19.677546+00:00'
+- name: cut_casings.csv
+  path: data/modules/bsee/current/operations/cut_casings.csv
+  format: csv
+  columns:
+  - name: API_WELL_NUMBER
+    type: integer
+    description: ''
+    unit: ''
+  - name: WELL_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: CASING_SIZE
+    type: float
+    description: ''
+    unit: ''
+  - name: CASING_CUT_DATE
+    type: datetime
+    description: ''
+    unit: ''
+  - name: CASING_CUT_METHOD_CD
+    type: string
+    description: ''
+    unit: ''
+  - name: CASING_CUT_DEPTH
+    type: integer
+    description: ''
+    unit: feet
+  - name: CASING_CUT_MDL_IND
+    type: string
+    description: ''
+    unit: feet
+  row_count: 100
+  size_bytes: 4497
+  last_modified: '2025-07-31T11:24:19.689548+00:00'
+- name: well_activity_bop_tests.csv
+  path: data/modules/bsee/current/operations/well_activity_bop_tests.csv
+  format: csv
+  columns:
+  - name: BOP_TEST_DATE
+    type: datetime
+    description: ''
+    unit: ''
+  - name: RAM_TST_PRSS
+    type: float
+    description: ''
+    unit: ''
+  - name: ANNULAR_TST_PRSS
+    type: float
+    description: ''
+    unit: ''
+  - name: BUS_ASC_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: API_WELL_NUMBER
+    type: integer
+    description: ''
+    unit: ''
+  row_count: 100
+  size_bytes: 5180
+  last_modified: '2025-07-31T11:24:19.690884+00:00'
+- name: well_activity_open_hole.csv
+  path: data/modules/bsee/current/operations/well_activity_open_hole.csv
+  format: csv
+  columns:
+  - name: API_WELL_NUMBER
+    type: integer
+    description: ''
+    unit: ''
+  - name: WELL_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: BUS_ASC_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: OPERATIONS_COMPLETED_DATE
+    type: datetime
+    description: ''
+    unit: ''
+  - name: TOOL_LOGGING_METHOD_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: LOG_INTV_TOP_MD
+    type: integer
+    description: ''
+    unit: feet
+  - name: LOG_INTV_BOTM_MD
+    type: integer
+    description: ''
+    unit: feet
+  - name: LOG_TOOL_TYPE_CODE
+    type: string
+    description: ''
+    unit: ''
+  row_count: 100
+  size_bytes: 6583
+  last_modified: '2025-07-31T11:24:19.691184+00:00'
+- name: well_activity_remarks.csv
+  path: data/modules/bsee/current/operations/well_activity_remarks.csv
+  format: csv
+  columns:
+  - name: API_WELL_NUMBER
+    type: integer
+    description: ''
+    unit: ''
+  - name: WELL_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: WAR_START_DT
+    type: string
+    description: ''
+    unit: ''
+  - name: SN_WAR
+    type: integer
+    description: ''
+    unit: ''
+  - name: TEXT_REMARK
+    type: string
+    description: ''
+    unit: ''
+  row_count: 100
+  size_bytes: 68237
+  last_modified: '2026-03-15T13:06:39.553589+00:00'
+- name: well_activity_summary.csv
+  path: data/modules/bsee/current/operations/well_activity_summary.csv
+  format: csv
+  columns:
+  - name: WAR_START_DT
+    type: string
+    description: ''
+    unit: ''
+  - name: WAR_END_DT
+    type: string
+    description: ''
+    unit: ''
+  - name: RIG_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: API_WELL_NUMBER
+    type: integer
+    description: ''
+    unit: ''
+  - name: WELL_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: WELL_ACTIVITY_CD
+    type: string
+    description: ''
+    unit: ''
+  - name: DRILLING_MD
+    type: float
+    description: ''
+    unit: feet
+  - name: DRILL_FLUID_WGT
+    type: float
+    description: ''
+    unit: ''
+  row_count: 100
+  size_bytes: 9431
+  last_modified: '2025-07-31T11:24:19.692925+00:00'
+- name: production.csv
+  path: data/modules/bsee/current/production/production.csv
+  format: csv
+  columns:
+  - name: API_WELL_NUMBER
+    type: integer
+    description: ''
+    unit: ''
+  - name: PRODUCTION_DATE
+    type: datetime
+    description: ''
+    unit: ''
+  row_count: 100
+  size_bytes: 2361
+  last_modified: '2025-07-31T11:24:19.690582+00:00'
+- name: well_data.csv
+  path: data/modules/bsee/current/wells/well_data.csv
+  format: csv
+  columns:
+  - name: API_WELL_NUMBER
+    type: float
+    description: ''
+    unit: ''
+  - name: WELL_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: WATER_DEPTH
+    type: float
+    description: ''
+    unit: feet
+  - name: SURF_LATITUDE
+    type: float
+    description: ''
+    unit: degrees
+  - name: WELL_NAME_SUFFIX
+    type: string
+    description: ''
+    unit: ''
+  - name: COMPANY_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: BOTM_FLD_NAME_CD
+    type: string
+    description: ''
+    unit: ''
+  - name: WELL_SPUD_DATE
+    type: datetime
+    description: ''
+    unit: ''
+  - name: TOTAL_DEPTH_DATE
+    type: datetime
+    description: ''
+    unit: feet
+  - name: BH_TOTAL_MD
+    type: float
+    description: ''
+    unit: feet
+  - name: WELL_BORE_TVD
+    type: integer
+    description: ''
+    unit: feet
+  - name: WELL_BP_ST_KICKOFF_MD
+    type: integer
+    description: ''
+    unit: feet
+  - name: BOREHOLE_STAT_DT
+    type: datetime
+    description: ''
+    unit: ''
+  - name: BOREHOLE_STAT_CD
+    type: string
+    description: ''
+    unit: ''
+  - name: CASING_CUT_CODE
+    type: string
+    description: ''
+    unit: ''
+  - name: UNDWTR_COMP_STUB
+    type: string
+    description: ''
+    unit: ''
+  - name: SURF_LONGITUDE
+    type: float
+    description: ''
+    unit: degrees
+  - name: BOTM_LATITUDE
+    type: float
+    description: ''
+    unit: degrees
+  - name: BOTM_LONGITUDE
+    type: float
+    description: ''
+    unit: degrees
+  row_count: 57281
+  size_bytes: 4135645
+  last_modified: '2025-07-31T11:24:19.782853+00:00'
+- name: well_directional_surveys.csv
+  path: data/modules/bsee/current/wells/well_directional_surveys.csv
+  format: csv
+  columns:
+  - name: version https://git-lfs.github.com/spec/v1
+    type: string
+    description: ''
+    unit: ''
+  row_count: 2
+  size_bytes: 129
+  last_modified: '2025-07-31T11:24:19.783256+00:00'
+- name: well_tubulars.csv
+  path: data/modules/bsee/current/wells/well_tubulars.csv
+  format: csv
+  columns:
+  - name: API_WELL_NUMBER
+    type: integer
+    description: ''
+    unit: ''
+  - name: WELL_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: WAR_START_DT
+    type: string
+    description: ''
+    unit: ''
+  - name: WAR_END_DT
+    type: string
+    description: ''
+    unit: ''
+  - name: CSNG_INTV_TYPE_CD
+    type: string
+    description: ''
+    unit: ''
+  - name: CSNG_HOLE_SIZE
+    type: float
+    description: ''
+    unit: ''
+  - name: CASING_SIZE
+    type: float
+    description: ''
+    unit: ''
+  - name: CASING_WEIGHT
+    type: float
+    description: ''
+    unit: kg
+  - name: CASING_GRADE
+    type: string
+    description: ''
+    unit: ''
+  - name: CSNG_LINER_TEST_PRSS
+    type: float
+    description: ''
+    unit: ''
+  - name: CSNG_SHOE_TEST_PRSS
+    type: float
+    description: ''
+    unit: ''
+  - name: CSNG_CEMENT_VOL
+    type: float
+    description: ''
+    unit: ''
+  - name: SN_WAR_CSNG_INTV
+    type: integer
+    description: ''
+    unit: ''
+  - name: CSNG_SETTING_BOTM_MD
+    type: integer
+    description: ''
+    unit: feet
+  - name: CSNG_SETTING_TOP_MD
+    type: integer
+    description: ''
+    unit: feet
+  row_count: 100
+  size_bytes: 12155
+  last_modified: '2025-07-31T11:24:19.783855+00:00'
+- name: Paleowells.csv
+  path: data/modules/bsee/paleowells/Paleowells.csv
+  format: csv
+  columns:
+  - name: ''
+    type: integer
+    description: ''
+    unit: ''
+  - name: Record Type
+    type: string
+    description: ''
+    unit: ''
+  - name: API Well Number
+    type: integer
+    description: ''
+    unit: ''
+  - name: Paleo Report ID Number
+    type: integer
+    description: ''
+    unit: ''
+  - name: Total Number of Reports for API
+    type: integer
+    description: ''
+    unit: ''
+  - name: Measured Depth
+    type: integer
+    description: ''
+    unit: feet
+  - name: True Vertical Depth
+    type: integer
+    description: ''
+    unit: feet
+  - name: Definite/Possible
+    type: string
+    description: ''
+    unit: ''
+  - name: At/In
+    type: string
+    description: ''
+    unit: ''
+  - name: Paleo Age
+    type: string
+    description: ''
+    unit: ''
+  - name: Definite/Possible
+    type: string
+    description: ''
+    unit: ''
+  - name: At/In
+    type: string
+    description: ''
+    unit: ''
+  - name: Ecozone
+    type: float
+    description: ''
+    unit: ''
+  row_count: 6362
+  size_bytes: 646179
+  last_modified: '2026-03-15T13:06:39.668970+00:00'
+binary_stores:
+- name: Well_APD_Default
+  path: data/modules/bsee/bin/Well_APD_Default
+  format: binary_directory
+  file_count: 3
+  size_bytes: 20126126
+  description: 'Binary data directory: 3 files, 19.2 MB. .bin: 2 files (19.2 MB);
+    (no ext): 1 files (0 B)'
+  last_modified: '2026-02-11T17:02:56.437772+00:00'
+- name: apd
+  path: data/modules/bsee/bin/apd
+  format: binary_directory
+  file_count: 2
+  size_bytes: 8621672
+  description: 'Binary data directory: 2 files, 8.2 MB. .bin: 2 files (8.2 MB)'
+  last_modified: '2026-02-20T04:25:10.130406+00:00'
+- name: apichanges
+  path: data/modules/bsee/bin/apichanges
+  format: binary_directory
+  file_count: 2
+  size_bytes: 117734
+  description: 'Binary data directory: 2 files, 115.0 KB. (no ext): 1 files (0 B);
+    .bin: 1 files (115.0 KB)'
+  last_modified: '2026-02-11T17:02:56.378424+00:00'
+- name: apiraw
+  path: data/modules/bsee/bin/apiraw
+  format: binary_directory
+  file_count: 3
+  size_bytes: 21837932
+  description: 'Binary data directory: 3 files, 20.8 MB. .bin: 2 files (20.8 MB);
+    (no ext): 1 files (0 B)'
+  last_modified: '2026-02-11T17:02:56.380835+00:00'
+- name: approvals
+  path: data/modules/bsee/bin/approvals
+  format: binary_directory
+  file_count: 2
+  size_bytes: 13083807
+  description: 'Binary data directory: 2 files, 12.5 MB. .bin: 1 files (12.5 MB);
+    (no ext): 1 files (0 B)'
+  last_modified: '2026-02-11T17:02:56.383030+00:00'
+- name: assignments
+  path: data/modules/bsee/bin/assignments
+  format: binary_directory
+  file_count: 2
+  size_bytes: 12441982
+  description: 'Binary data directory: 2 files, 11.9 MB. (no ext): 1 files (0 B);
+    .bin: 1 files (11.9 MB)'
+  last_modified: '2026-02-11T17:02:56.384841+00:00'
+- name: companydetails
+  path: data/modules/bsee/bin/companydetails
+  format: binary_directory
+  file_count: 3
+  size_bytes: 2114710
+  description: 'Binary data directory: 3 files, 2.0 MB. .bin: 2 files (2.0 MB); (no
+    ext): 1 files (0 B)'
+  last_modified: '2026-02-11T17:02:56.386743+00:00'
+- name: decomcost
+  path: data/modules/bsee/bin/decomcost
+  format: binary_directory
+  file_count: 9
+  size_bytes: 8570266
+  description: 'Binary data directory: 9 files, 8.2 MB. .bin: 8 files (8.2 MB); (no
+    ext): 1 files (0 B)'
+  last_modified: '2026-02-11T17:02:56.388678+00:00'
+- name: deepqual
+  path: data/modules/bsee/bin/deepqual
+  format: binary_directory
+  file_count: 2
+  size_bytes: 125294
+  description: 'Binary data directory: 2 files, 122.4 KB. (no ext): 1 files (0 B);
+    .bin: 1 files (122.4 KB)'
+  last_modified: '2026-02-11T17:02:56.390577+00:00'
+- name: dsptsdelimit
+  path: data/modules/bsee/bin/dsptsdelimit
+  format: binary_directory
+  file_count: 2
+  size_bytes: 522172468
+  description: 'Binary data directory: 2 files, 498.0 MB. (no ext): 1 files (0 B);
+    .bin: 1 files (498.0 MB)'
+  last_modified: '2026-02-11T17:02:56.392608+00:00'
+- name: fmp
+  path: data/modules/bsee/bin/fmp
+  format: binary_directory
+  file_count: 3
+  size_bytes: 244385
+  description: 'Binary data directory: 3 files, 238.7 KB. .bin: 2 files (238.7 KB);
+    (no ext): 1 files (0 B)'
+  last_modified: '2026-02-11T17:02:56.394696+00:00'
+- name: historical_production_yearly
+  path: data/modules/bsee/bin/historical_production_yearly
+  format: binary_directory
+  file_count: 31
+  size_bytes: 915584417
+  description: 'Binary data directory: 31 files, 873.2 MB. .bin: 30 files (873.2 MB);
+    (no ext): 1 files (0 B)'
+  last_modified: '2026-02-11T17:02:56.396541+00:00'
+- name: incinv
+  path: data/modules/bsee/bin/incinv
+  format: binary_directory
+  file_count: 2
+  size_bytes: 244776
+  description: 'Binary data directory: 2 files, 239.0 KB. .bin: 1 files (239.0 KB);
+    (no ext): 1 files (0 B)'
+  last_modified: '2026-02-11T17:02:56.398606+00:00'
+- name: incs
+  path: data/modules/bsee/bin/incs
+  format: binary_directory
+  file_count: 15
+  size_bytes: 38992443
+  description: 'Binary data directory: 15 files, 37.2 MB. .bin: 14 files (37.2 MB);
+    (no ext): 1 files (0 B)'
+  last_modified: '2026-02-11T17:02:56.400440+00:00'
+- name: lab
+  path: data/modules/bsee/bin/lab
+  format: binary_directory
+  file_count: 2
+  size_bytes: 2827226
+  description: 'Binary data directory: 2 files, 2.7 MB. .bin: 1 files (2.7 MB); (no
+    ext): 1 files (0 B)'
+  last_modified: '2026-02-11T17:02:56.402516+00:00'
+- name: leaseowner
+  path: data/modules/bsee/bin/leaseowner
+  format: binary_directory
+  file_count: 2
+  size_bytes: 635678
+  description: 'Binary data directory: 2 files, 620.8 KB. (no ext): 1 files (0 B);
+    .bin: 1 files (620.8 KB)'
+  last_modified: '2026-02-11T17:02:56.404488+00:00'
+- name: mcpflow
+  path: data/modules/bsee/bin/mcpflow
+  format: binary_directory
+  file_count: 8
+  size_bytes: 7309698
+  description: 'Binary data directory: 8 files, 7.0 MB. .bin: 7 files (7.0 MB); (no
+    ext): 1 files (0 B)'
+  last_modified: '2026-02-11T17:02:56.406395+00:00'
+- name: nonrequired
+  path: data/modules/bsee/bin/nonrequired
+  format: binary_directory
+  file_count: 2
+  size_bytes: 17890206
+  description: 'Binary data directory: 2 files, 17.1 MB. .bin: 1 files (17.1 MB);
+    (no ext): 1 files (0 B)'
+  last_modified: '2026-02-11T17:02:56.408501+00:00'
+- name: ocsprod
+  path: data/modules/bsee/bin/ocsprod
+  format: binary_directory
+  file_count: 5
+  size_bytes: 6532
+  description: 'Binary data directory: 5 files, 6.4 KB. .bin: 4 files (6.4 KB); (no
+    ext): 1 files (0 B)'
+  last_modified: '2026-02-11T17:02:56.410455+00:00'
+- name: offshorestats
+  path: data/modules/bsee/bin/offshorestats
+  format: binary_directory
+  file_count: 6
+  size_bytes: 109378987
+  description: 'Binary data directory: 6 files, 104.3 MB. .bin: 5 files (104.3 MB);
+    (no ext): 1 files (0 B)'
+  last_modified: '2026-02-11T17:02:56.412567+00:00'
+- name: osfr
+  path: data/modules/bsee/bin/osfr
+  format: binary_directory
+  file_count: 4
+  size_bytes: 1454014
+  description: 'Binary data directory: 4 files, 1.4 MB. .bin: 3 files (1.4 MB); (no
+    ext): 1 files (0 B)'
+  last_modified: '2026-02-11T17:02:56.414771+00:00'
+- name: permstruc
+  path: data/modules/bsee/bin/permstruc
+  format: binary_directory
+  file_count: 3
+  size_bytes: 53014
+  description: 'Binary data directory: 3 files, 51.8 KB. .bin: 2 files (51.8 KB);
+    (no ext): 1 files (0 B)'
+  last_modified: '2026-02-11T17:02:56.416751+00:00'
+- name: pipeloc
+  path: data/modules/bsee/bin/pipeloc
+  format: binary_directory
+  file_count: 2
+  size_bytes: 248243935
+  description: 'Binary data directory: 2 files, 236.7 MB. .bin: 1 files (236.7 MB);
+    (no ext): 1 files (0 B)'
+  last_modified: '2026-02-11T17:02:56.418605+00:00'
+- name: platstruc
+  path: data/modules/bsee/bin/platstruc
+  format: binary_directory
+  file_count: 10
+  size_bytes: 17156791
+  description: 'Binary data directory: 10 files, 16.4 MB. .bin: 9 files (16.4 MB);
+    (no ext): 1 files (0 B)'
+  last_modified: '2026-02-11T17:02:56.420607+00:00'
+- name: production_plan_area
+  path: data/modules/bsee/bin/production_plan_area
+  format: binary_directory
+  file_count: 2
+  size_bytes: 164618
+  description: 'Binary data directory: 2 files, 160.8 KB. .bin: 1 files (160.8 KB);
+    (no ext): 1 files (0 B)'
+  last_modified: '2026-02-11T17:02:56.422461+00:00'
+- name: production_raw
+  path: data/modules/bsee/bin/production_raw
+  format: binary_directory
+  file_count: 5
+  size_bytes: 30951963
+  description: 'Binary data directory: 5 files, 29.5 MB. .bin: 4 files (29.5 MB);
+    (no ext): 1 files (0 B)'
+  last_modified: '2026-02-11T17:02:56.424644+00:00'
+- name: rig_fleet
+  path: data/modules/bsee/bin/rig_fleet
+  format: binary_directory
+  file_count: 3
+  size_bytes: 78977
+  description: 'Binary data directory: 3 files, 77.1 KB. (no ext): 1 files (0 B);
+    .csv: 1 files (75.2 KB); .bin: 1 files (1.9 KB)'
+  last_modified: '2026-02-11T17:02:56.427203+00:00'
+- name: rowdesc
+  path: data/modules/bsee/bin/rowdesc
+  format: binary_directory
+  file_count: 2
+  size_bytes: 1564573
+  description: 'Binary data directory: 2 files, 1.5 MB. .bin: 1 files (1.5 MB); (no
+    ext): 1 files (0 B)'
+  last_modified: '2026-02-11T17:02:56.429833+00:00'
+- name: royaltyref
+  path: data/modules/bsee/bin/royaltyref
+  format: binary_directory
+  file_count: 2
+  size_bytes: 2722
+  description: 'Binary data directory: 2 files, 2.7 KB. (no ext): 1 files (0 B); .bin:
+    1 files (2.7 KB)'
+  last_modified: '2026-02-11T17:02:56.431865+00:00'
+- name: scanneddocs
+  path: data/modules/bsee/bin/scanneddocs
+  format: binary_directory
+  file_count: 16
+  size_bytes: 90625074
+  description: 'Binary data directory: 16 files, 86.4 MB. .bin: 15 files (86.4 MB);
+    (no ext): 1 files (0 B)'
+  last_modified: '2026-02-11T17:02:56.433891+00:00'
+- name: serialreg
+  path: data/modules/bsee/bin/serialreg
+  format: binary_directory
+  file_count: 13
+  size_bytes: 115031551
+  description: 'Binary data directory: 13 files, 109.7 MB. .bin: 12 files (109.7 MB);
+    (no ext): 1 files (0 B)'
+  last_modified: '2026-02-11T17:02:56.435854+00:00'
+- name: war
+  path: data/modules/bsee/bin/war
+  format: binary_directory
+  file_count: 8
+  size_bytes: 379203748
+  description: 'Binary data directory: 8 files, 361.6 MB. .bin: 8 files (361.6 MB)'
+  last_modified: '2026-02-20T04:26:26.549038+00:00'
+- name: directdelimit.zip
+  path: data/modules/bsee/zip/directional_survey/directdelimit.zip
+  format: zip
+  size_bytes: 101166278
+  contents:
+  - directdelimit.txt
+  contents_count: 1
+  last_modified: '2026-01-18T14:05:14+00:00'
+- name: dsptsdelimit.zip
+  path: data/modules/bsee/zip/directional_survey/dsptsdelimit.zip
+  format: zip
+  size_bytes: 139631861
+  contents:
+  - dsptsdelimit.txt
+  contents_count: 1
+  last_modified: '2026-01-18T13:52:22+00:00'

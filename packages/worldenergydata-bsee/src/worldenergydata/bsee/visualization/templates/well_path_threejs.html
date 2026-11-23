@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>__WELL_PATH_TITLE__</title>
+<style>
+  :root { --bg: #0b0f14; --fg: #e6edf3; --muted: #9aa7b4; --panel: rgba(18,24,32,0.92); }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg);
+    color: var(--fg); font-family: system-ui, -apple-system, Segoe UI, sans-serif; }
+  #scene { position: fixed; inset: 0; }
+  .panel { position: fixed; background: var(--panel); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px; padding: 10px 12px; font-size: 12px; backdrop-filter: blur(4px); }
+  #title { top: 12px; left: 12px; font-weight: 600; font-size: 14px; max-width: 40vw; }
+  #title .sub { font-weight: 400; color: var(--muted); font-size: 11px; margin-top: 3px; }
+  #legend { top: 12px; right: 12px; max-height: 70vh; overflow: auto; min-width: 180px; }
+  #legend h3 { margin: 0 0 6px; font-size: 12px; color: var(--muted); font-weight: 600; }
+  .legend-row { display: flex; align-items: center; gap: 8px; padding: 3px 4px; cursor: pointer;
+    border-radius: 4px; user-select: none; }
+  .legend-row:hover { background: rgba(255,255,255,0.06); }
+  .legend-row.off { opacity: 0.4; text-decoration: line-through; }
+  .swatch { width: 12px; height: 12px; border-radius: 3px; flex: 0 0 auto; }
+  #help { bottom: 12px; left: 12px; color: var(--muted); }
+  #tooltip { position: fixed; pointer-events: none; background: var(--panel);
+    border: 1px solid rgba(255,255,255,0.12); border-radius: 6px; padding: 8px 10px;
+    font-size: 11px; line-height: 1.45; display: none; z-index: 10; max-width: 240px; }
+  #tooltip .ttlabel { font-weight: 600; margin-bottom: 4px; }
+  #tooltip .row { color: var(--muted); }
+  #tooltip .row b { color: var(--fg); font-weight: 600; }
+  code { color: var(--fg); }
+</style>
+</head>
+<body>
+<div id="scene"></div>
+<div id="title" class="panel">__WELL_PATH_TITLE__<div class="sub" id="subtitle"></div></div>
+<div id="legend" class="panel"><h3>Wells</h3><div id="legend-rows"></div></div>
+<div id="help" class="panel">Drag: orbit &nbsp;|&nbsp; Scroll: zoom &nbsp;|&nbsp; Right-drag: pan &nbsp;|&nbsp; Hover a path for details &nbsp;|&nbsp; Click a legend entry to toggle</div>
+<div id="tooltip"></div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+// The payload is injected by the Python renderer at the token below.
+const PAYLOAD = /*__WELL_PATH_PAYLOAD__*/ null;
+
+if (!PAYLOAD || !PAYLOAD.wells || PAYLOAD.wells.length === 0) {
+  document.getElementById('subtitle').textContent = 'No wells in payload.';
+} else {
+  main(PAYLOAD);
+}
+
+function main(payload) {
+  // ----- Coordinate mapping -------------------------------------------------
+  // Payload is field-relative East-North-Down, z positive DOWNWARD (TVD).
+  // We map to a Three.js Y-up world so depth points downward on screen:
+  //   sceneX = payload.x  (East)
+  //   sceneY = -payload.z (TVD negated -> deeper wells sit lower on screen)
+  //   sceneZ = payload.y  (North)
+  // We also recentre on the bounds centroid and scale to a fixed view box so
+  // large absolute feet do not cause float jitter near the origin.
+  const b = payload.bounds;
+  const cx = (b.x[0] + b.x[1]) / 2;
+  const cy = (b.y[0] + b.y[1]) / 2;
+  const cz = (b.z[0] + b.z[1]) / 2;
+  const span = Math.max(
+    b.x[1] - b.x[0], b.y[1] - b.y[0], b.z[1] - b.z[0], 1
+  );
+  const VIEW = 100;            // model fits roughly in a 100-unit box
+  const scale = VIEW / span;
+
+  function toScene(p) {
+    return new THREE.Vector3(
+      (p.x - cx) * scale,
+      -(p.z - cz) * scale,
+      (p.y - cy) * scale
+    );
+  }
+
+  // ----- Renderer / scene / camera -----------------------------------------
+  const container = document.getElementById('scene');
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  container.appendChild(renderer.domElement);
+
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x0b0f14);
+
+  const camera = new THREE.PerspectiveCamera(
+    55, window.innerWidth / window.innerHeight, 0.1, 5000
+  );
+  camera.position.set(VIEW * 0.9, VIEW * 0.7, VIEW * 1.1);
+
+  const controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.08;
+  controls.target.set(0, 0, 0);   // centroid maps to scene origin
+
+  // ----- Lights -------------------------------------------------------------
+  scene.add(new THREE.AmbientLight(0xffffff, 0.65));
+  const dir = new THREE.DirectionalLight(0xffffff, 0.85);
+  dir.position.set(1, 2, 1.5);
+  scene.add(dir);
+
+  // ----- Reference helpers: axes + depth grid ------------------------------
+  // AxesHelper: X=East(red), Y=up(green, screen-up = shallower), Z=North(blue).
+  scene.add(new THREE.AxesHelper(VIEW * 0.6));
+  // Grid placed at the surface (z=0 in payload) to anchor the depth direction.
+  const surfaceY = -(0 - cz) * scale;
+  const grid = new THREE.GridHelper(VIEW * 2, 20, 0x33414f, 0x1c2630);
+  grid.position.y = surfaceY;
+  scene.add(grid);
+
+  // ----- Wells: line per well + surface sphere -----------------------------
+  const wellObjects = [];   // { well, group, line }
+  const raycaster = new THREE.Raycaster();
+  raycaster.params.Line.threshold = VIEW * 0.012;
+  const pointer = new THREE.Vector2();
+
+  payload.wells.forEach((well) => {
+    const color = new THREE.Color(well.color);
+    const group = new THREE.Group();
+
+    const verts = well.points.map(toScene);
+    const geom = new THREE.BufferGeometry().setFromPoints(verts);
+    const line = new THREE.Line(geom, new THREE.LineBasicMaterial({ color }));
+    line.userData.well = well;
+    group.add(line);
+
+    // Surface marker sphere.
+    const s = well.surface;
+    const sphereGeom = new THREE.SphereGeometry(VIEW * 0.012, 16, 12);
+    const sphere = new THREE.Mesh(
+      sphereGeom,
+      new THREE.MeshStandardMaterial({ color, emissive: color, emissiveIntensity: 0.4 })
+    );
+    sphere.position.copy(toScene({ x: s.x, y: s.y, z: s.z }));
+    group.add(sphere);
+
+    scene.add(group);
+    wellObjects.push({ well, group, line });
+  });
+
+  // ----- Subtitle -----------------------------------------------------------
+  const fieldName = (payload.field && payload.field.name) || '';
+  document.getElementById('subtitle').textContent =
+    `${payload.well_count} well(s)` + (fieldName ? ` · ${fieldName}` : '') +
+    ` · units: ${payload.units || 'ft'} · depth points downward`;
+
+  // ----- Legend (toggle visibility) ----------------------------------------
+  const legendRows = document.getElementById('legend-rows');
+  wellObjects.forEach((wo) => {
+    const row = document.createElement('div');
+    row.className = 'legend-row';
+    const sw = document.createElement('span');
+    sw.className = 'swatch';
+    sw.style.background = wo.well.color;
+    const txt = document.createElement('span');
+    txt.textContent = wo.well.label;
+    row.appendChild(sw);
+    row.appendChild(txt);
+    row.addEventListener('click', () => {
+      wo.group.visible = !wo.group.visible;
+      row.classList.toggle('off', !wo.group.visible);
+    });
+    legendRows.appendChild(row);
+  });
+
+  // ----- Hover tooltip via raycaster ---------------------------------------
+  const tooltip = document.getElementById('tooltip');
+
+  function onPointerMove(event) {
+    pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
+    pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    raycaster.setFromCamera(pointer, camera);
+
+    const visibleLines = wellObjects
+      .filter((wo) => wo.group.visible)
+      .map((wo) => wo.line);
+    const hits = raycaster.intersectObjects(visibleLines, false);
+
+    if (hits.length === 0) {
+      tooltip.style.display = 'none';
+      return;
+    }
+    const hit = hits[0];
+    const well = hit.object.userData.well;
+    // Find nearest survey vertex to the intersection point.
+    let nearest = well.points[0];
+    let best = Infinity;
+    for (const p of well.points) {
+      const v = toScene(p);
+      const d = v.distanceToSquared(hit.point);
+      if (d < best) { best = d; nearest = p; }
+    }
+    tooltip.innerHTML =
+      `<div class="ttlabel" style="color:${well.color}">${esc(well.label)}</div>` +
+      `<div class="row">MD: <b>${fmt(nearest.md)}</b> ${payload.units || 'ft'}</div>` +
+      `<div class="row">TVD: <b>${fmt(nearest.z)}</b> ${payload.units || 'ft'}</div>` +
+      `<div class="row">Inc: <b>${fmt(nearest.inc)}</b>&deg; · Az: <b>${fmt(nearest.az)}</b>&deg;</div>` +
+      `<div class="row">DLS: <b>${fmt(nearest.dls)}</b>&deg;/100ft</div>`;
+    tooltip.style.display = 'block';
+    tooltip.style.left = (event.clientX + 14) + 'px';
+    tooltip.style.top = (event.clientY + 14) + 'px';
+  }
+  renderer.domElement.addEventListener('pointermove', onPointerMove);
+  renderer.domElement.addEventListener('pointerleave', () => {
+    tooltip.style.display = 'none';
+  });
+
+  // ----- Responsive resize --------------------------------------------------
+  function onResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  }
+  window.addEventListener('resize', onResize);
+
+  // ----- Render loop --------------------------------------------------------
+  function animate() {
+    requestAnimationFrame(animate);
+    controls.update();
+    renderer.render(scene, camera);
+  }
+  animate();
+  console.log('[well_path_threejs] rendered', payload.well_count, 'wells');
+
+  function fmt(v) {
+    if (v === null || v === undefined || isNaN(v)) return '-';
+    return Number(v).toLocaleString(undefined, { maximumFractionDigits: 1 });
+  }
+  function esc(s) {
+    return String(s).replace(/[&<>]/g, (c) =>
+      ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+  }
+}
+</script>
+</body>
+</html>

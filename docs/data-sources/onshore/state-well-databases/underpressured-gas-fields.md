@@ -1,0 +1,200 @@
+# Under-Pressured Gas Fields - Multi-State Screen Results
+
+Issue: [#710](https://github.com/vamseeachanta/worldenergydata/issues/710)
+(parent epic [#708](https://github.com/vamseeachanta/worldenergydata/issues/708);
+Texas integration [#732](https://github.com/vamseeachanta/worldenergydata/issues/732);
+Oklahoma integration [#740](https://github.com/vamseeachanta/worldenergydata/issues/740);
+Colorado source ingest [#745](https://github.com/vamseeachanta/worldenergydata/issues/745)).
+
+The screen answers the epic's motivating question — *which wells and fields
+actually produced from very low bottom-hole pressure?* — from state-regulator
+data. The current run combines Kansas KGS proration pressure observations
+([#725](https://github.com/vamseeachanta/worldenergydata/issues/725)) with
+Texas RRC completion-packet pressure observations
+([#709](https://github.com/vamseeachanta/worldenergydata/issues/709)) and
+Oklahoma OCC Form 1002A completion pressure observations
+([#740](https://github.com/vamseeachanta/worldenergydata/issues/740)). Colorado
+ECMC production/wells data is loaded as a direct-source input from [#745](https://github.com/vamseeachanta/worldenergydata/issues/745),
+but contributes no screened wells because the current bulk pressure columns
+are empty.
+
+## Revision history
+
+| Revision | Date | Change and reason |
+| --- | --- | --- |
+| 1 | 2026-11-16 | Define the configured-gate summary verdict to distinguish screening from engineering qualification. |
+
+Table 1. Changes to the report definition.
+
+## Method
+
+```bash
+PYTHONPATH=src:packages/worldenergydata-core/src python3.12 \
+  -m worldenergydata.analysis.underpressured_screen.screen \
+    --config config/underpressured_screen.yml
+```
+
+1. **BHP estimate**: wellhead readings get the static gas-column
+   correction `BHP = WHP_psia · exp(0.01875·γg·D / (z̄·T̄))` (γg 0.65,
+   z̄ 0.95, T̄ 520 °R from config — a ~7% uplift at Hugoton depths);
+   measured BHP values pass through unchanged.
+2. **Tiers** on the estimated-BHP gradient: normal ≥ 0.433 psi/ft; mildly
+   under-pressured 0.35–0.433; severely under-pressured < 0.35. A separate
+   **near-vacuum flag** marks shut-in wellhead pressure < 50 psia — the West
+   Panhandle vacuum-operations regime.
+3. **Source normalization** adapts state-specific physical schemas into the
+   screen contract. Kansas already emits `well_key` and `field`; Texas maps
+   `api14` to `well_key`, `field_name` to `field`, injects `state=TX`, and
+   filters to rows marked `usable_for_virgin_pressure_proxy`; Oklahoma maps
+   OCC completion observations into `well_key`, `field`, `pressure_kind`,
+   `pressure_psia`, and `reference_depth_ft`.
+4. **Earliest observation per well** is the screening proxy; the source `era`
+   label rides along so depleted-era Kansas proration pressures and Texas
+   or Oklahoma completion-test screening pressures are not presented as
+   measured virgin BHP. Source-provided earliest-observation flags break
+   same-year duplicate ties, such as Texas G-1/G-10 rows for the same API14 or
+   Oklahoma multi-formation completion rows for the same API. Colorado ECMC
+   has a schema adapter and quality sidecar, but empty pressure values keep it
+   out of earliest-observation selection.
+5. **Field ranking** (>=5 wells) plus a **validation gate**: the run fails
+   unless Hugoton and Panoma appear in the top 10 classified severely
+   under-pressured.
+6. **Participation gate**: Texas and Oklahoma must be loaded and screened.
+   Colorado is loaded and warning-tracked, but is not gate-required until a
+   real pressure-bearing source is available.
+
+Outputs: `/mnt/ace/worldenergydata/data/modules/pressure_screen/curated/`
+(`well_screen_earliest.parquet`, `underpressured_field_ranking.parquet`,
+`screen_summary.json`).
+
+### Summary verdict definition
+
+`screen_summary.json` includes `screening_status: pass` only when both
+`validation_gate.passed` and `participation_gate.passed` are boolean `true`;
+otherwise valid boolean verdicts produce `screening_status: fail`. Missing or
+non-boolean gate verdicts raise `ValueError` before a summary is returned.
+For a valid failed gate, the summary is written before the existing
+`RuntimeError` is raised, so the saved result records the failure.
+
+The fixed `screening_scope` statement limits the verdict to the configured
+validation and participation gates. A pass does not establish measured virgin
+bottom-hole pressure, gas/condensate qualification, commercial viability or
+coverage beyond the configured requirements. An omitted participation gate
+still passes with no state requirements; an empty required-field list also
+passes the existing validation gate. Thus even an empty screen can pass if
+neither gate requires evidence. Interpret the verdict alongside `era_note`,
+`source_warnings`, state/source counts and input/loaded row counts.
+
+These fields do not change the calculations, thresholds or historical results
+below. Synthetic verdict tests establish gate behavior, not real analog recovery.
+
+### Non-finite pressure or depth
+
+Before BHP estimation, both `pressure_psia` and `reference_depth_ft` are checked
+with [`numpy.isfinite` (NumPy 2.2 manual, definition and Notes)](https://numpy.org/doc/2.2/reference/generated/numpy.isfinite.html).
+Positive infinity, negative infinity and NaN produce null BHP and gradient
+estimates, `bhp_method=NOT_EVALUATED`, `pressure_tier=NOT_EVALUATED`, and no
+near-vacuum flag. Such observations are excluded from earliest-observation
+selection and field ranking. This applies to measured BHP, shut-in wellhead
+pressure and other reported pressure kinds.
+
+For a synthetic measured-BHP example, 1,200 psia at 5,000 ft gives
+`1200 / 5000 = 0.24 psi/ft`. Replacing either input with positive infinity,
+negative infinity or NaN gives `NOT_EVALUATED`; an infinite depth does not
+represent a measured zero pressure gradient. This input check does not validate
+the configured tier limits or gas-column approximation.
+
+## Results (run 2026-07-03)
+
+30,100 wells screened: **10,103 Kansas**, **25 Texas**, and **19,972
+Oklahoma** wells after earliest-observation selection. The screen loaded
+39,134 Kansas pressure rows, 43 usable Texas rows from 48 curated Texas
+observations, and 108,518 Oklahoma pressure rows from the OCC completion
+extract. Colorado [#745](https://github.com/vamseeachanta/worldenergydata/issues/745)
+normalized 1,060,209 ECMC production rows and 124,332 wells, but loaded **0**
+curated pressure rows because the configured bulk pressure columns contain no
+positive values. Median estimated-BHP gradient is **0.0411 psi/ft**, with
+**697 near-vacuum** shut-in wellhead-pressure wells. Validation gate:
+**PASSED**. Texas and Oklahoma participation gates: **PASSED**.
+
+Tier counts:
+
+| Tier | Wells |
+| --- | ---: |
+| Severely under-pressured | 28,248 |
+| Mildly under-pressured | 855 |
+| Normal | 997 |
+
+Source counts after earliest-observation selection:
+
+| Source | State | Wells | Era |
+| --- | --- | ---: | --- |
+| `kansas_kgs_proration` | KS | 10,103 | depleted |
+| `texas_rrc_completion_packets` | TX | 25 | completion_packet_screening |
+| `oklahoma_occ_completions` | OK | 19,972 | completion_test_2010_present |
+| `colorado_ecmc_production` | CO | 0 | production_report_late_life |
+
+| Field | Wells | Median gradient (psi/ft) | P10–P90 | Near-vacuum wells |
+| --- | --- | --- | --- | --- |
+| HUGOTON GAS AREA | 7,146 | 0.0316 | 0.022–0.056 | 159 |
+| MISSISSIPPIAN | 3,920 | 0.0667 | 0.015–0.332 | 24 |
+| WOODFORD | 3,705 | 0.1366 | 0.027–0.373 | 5 |
+| PANOMA GAS AREA | 2,342 | 0.0289 | 0.021–0.039 | 20 |
+| (unmatched) | 1,306 | 0.0204 | 0.013–0.111 | 15 |
+| MISSISSIPPI LIME | 924 | 0.0279 | 0.013–0.244 | 7 |
+| CLEVELAND | 745 | 0.0990 | 0.018–0.302 | 7 |
+| HUNTON | 647 | 0.0736 | 0.009–0.250 | 25 |
+| TONKAWA | 466 | 0.0980 | 0.016–0.223 | 2 |
+| OSWEGO | 431 | 0.0416 | 0.013–0.163 | 4 |
+
+Notable beyond the analogs:
+
+- **Greenwood Gas Area** (Morton County, KS) remains the most extreme entry:
+  median gradient under 2% of hydrostatic with 22% of tested wells at
+  near-vacuum.
+- **Mississippian** and **Woodford** are the largest Oklahoma completion-test
+  entries. They are screening-only formation-name buckets, not yet a
+  field-development architecture model.
+- **Briscoe Ranch (Eagleford)** enters as the first Texas ranked field: 16
+  earliest wells, all screening-only WHP-derived observations, median estimated
+  gradient 0.1361 psi/ft.
+- Two Texas wells classify normal after the gas-column correction:
+  `CARTHAGE (HAYNESVILLE SHALE)` and `HAWKVILLE (AUSTIN CHALK)`.
+
+## Caveats
+
+- These are **depleted-era** pressures (tests begin 1996; Hugoton discovered
+  1922). They prove sustained economic production at extremely low BHP — the
+  epic's question — but virgin-pressure claims need DST-era evidence (KGS DST
+  records are a per-well scrape, catalogued in `source-catalog.md`).
+- Gradients use source-provided TVD/depth fields and an average-z̄T̄ gas
+  column; both are approximations flagged in the data (`bhp_method`,
+  `gradient_method`).
+- Texas RRC [#709](https://github.com/vamseeachanta/worldenergydata/issues/709)
+  rows and Oklahoma OCC
+  [#740](https://github.com/vamseeachanta/worldenergydata/issues/740) rows are
+  **wellhead pressure**
+  rows, not measured bottom-hole pressure. Oklahoma uses `WHP_shut_in` first
+  and `WHP_flowing_tubing` as a fallback when shut-in pressure is missing.
+  Both remain screening-only until a source provides measured BHP or a better
+  calibrated gas-column correction.
+- The Texas input is a narrow daily completion packet, not a full historical
+  pressure archive. It is useful for proving the multi-state screen path and
+  finding current low-gradient examples, but it is not yet a West Panhandle
+  analog recovery dataset.
+- The Oklahoma input covers structured Form 1002A completion records from
+  2010-present. Pre-2010 legacy completions and Form 1016 back-pressure tests
+  remain imaged/legacy lanes and are not in this run.
+- The Colorado ECMC [#745](https://github.com/vamseeachanta/worldenergydata/issues/745)
+  input covers official bulk production and wells data. The production CSV
+  headers include `GasPressureTubing`, `GasPressureCasing`,
+  `WaterPressureTubing`, and `WaterPressureCasing`, but the live 2025 plus
+  rolling monthly files contain zero positive values in those fields. MIT
+  pressure is available in bulk but is an engineering-integrity test, not a
+  reservoir-pressure screen source. Colorado pressure screening needs a Form
+  5A / FacilityDetail extraction lane or an ECMC data request.
+- The Texas quality sidecar currently carries
+  `raw_manifest_warning:completion_data:error:2026-07-01T00:36:55Z`; the
+  screen also propagates the Colorado
+  `no_positive_pressure_values:GasPressureTubing,GasPressureCasing,WaterPressureTubing,WaterPressureCasing`
+  warning into `screen_summary.json`.

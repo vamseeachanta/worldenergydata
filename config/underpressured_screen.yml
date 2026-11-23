@@ -1,0 +1,71 @@
+# Under-pressured gas/condensate screen configuration (issue #710, epic #708).
+# Consumes per-well pressure-observation tables through the screen contract.
+# Kansas validates the Hugoton/Panoma analog gate; Texas RRC adds #709 packet
+# coverage as screening-only WHP observations.
+module: underpressured_screen
+
+inputs:
+  # One entry per state observation table. `era` records whether the source's
+  # observations are virgin-era or depleted-era pressures — carried through to
+  # outputs so the screen never silently conflates the two.
+  - name: kansas_kgs_proration
+    path: /mnt/ace/worldenergydata/data/modules/kansas_kgs/curated/pressure/well_pressure_observations.parquet
+    schema: screen_v1
+    state: KS
+    era: depleted  # program starts 1996; Hugoton discovered 1922
+  - name: texas_rrc_completion_packets
+    path: /mnt/ace/worldenergydata/data/modules/texas_rrc/curated/pressure/well_pressure_observations/texas_rrc_well_pressure_observations.parquet
+    quality_path: /mnt/ace/worldenergydata/data/modules/texas_rrc/curated/pressure/well_pressure_observations/texas_rrc_pressure_observation_quality.json
+    schema: texas_rrc_pressure_v1
+    state: TX
+    era: completion_packet_screening
+    require_usable_proxy: true
+  - name: oklahoma_occ_completions
+    path: /mnt/ace/worldenergydata/data/modules/oklahoma_occ/curated/pressure/well_pressure_observations.parquet
+    quality_path: /mnt/ace/worldenergydata/data/modules/oklahoma_occ/curated/pressure/oklahoma_occ_pressure_observation_quality.json
+    schema: oklahoma_occ_completion_v1
+    state: OK
+    era: completion_test_2010_present
+  - name: colorado_ecmc_production
+    path: /mnt/ace/worldenergydata/data/modules/colorado_ecmc/curated/pressure/well_pressure_observations.parquet
+    quality_path: /mnt/ace/worldenergydata/data/modules/colorado_ecmc/curated/pressure/colorado_ecmc_pressure_observation_quality.json
+    schema: colorado_ecmc_production_v1
+    state: CO
+    era: production_report_late_life
+
+output:
+  base_dir: /mnt/ace/worldenergydata/data/modules/pressure_screen/curated
+
+bhp_estimate:
+  # Static gas-column correction for wellhead shut-in observations:
+  # BHP = WHP_psia * exp(0.01875 * gas_sg * depth_ft / (z_avg * t_avg_rankine)).
+  # Applied only where pressure_kind == WHP_shut_in; measured BHP passes through.
+  gas_sg: 0.65
+  z_avg: 0.95
+  t_avg_rankine: 520.0
+
+tiers:
+  # Gradient thresholds in psi/ft on the estimated-BHP gradient.
+  hydrostatic_normal_min: 0.433
+  mild_underpressure_min: 0.35
+  # Below mild_underpressure_min -> severely under-pressured.
+  near_vacuum_whp_psia: 50.0
+
+field_ranking:
+  min_wells_per_field: 5
+
+validation_gate:
+  # The screen must recover the known analogs or the run fails loudly.
+  required_fields_in_top10:
+    - HUGOTON GAS AREA
+    - PANOMA GAS AREA
+  required_tier: severely_underpressured
+
+participation_gate:
+  # Texas #709 is a narrow daily completion packet today, so require
+  # participation without forcing a false West Panhandle analog recovery gate.
+  required_states:
+    TX:
+      min_wells: 1
+    OK:
+      min_wells: 1

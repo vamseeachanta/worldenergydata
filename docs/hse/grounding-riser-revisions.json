@@ -1,0 +1,26 @@
+{
+  "revision": 2,
+  "history": [
+    {
+      "revision": 1,
+      "date": "2026-10-14",
+      "change": "Riser disconnect and pressure-containment candidate identifiers were added to support incident grounding with explicit limits on confirming causes."
+    },
+    {
+      "revision": 2,
+      "date": "2026-10-14",
+      "change": "Dataset identity, source file and missing acquisition dates were recorded, and candidate subset and overlap relations were stated to clarify the evidence limits."
+    }
+  ],
+  "source": {
+    "dataset_name": "BSEE Incident Investigations",
+    "download_url": "https://www.data.bsee.gov/Other/Files/IncInvRawData.zip",
+    "file_name": "mv_acc_investigations.txt",
+    "download_date": null,
+    "data_added_commit_date": null,
+    "name_record": "docs/knowledge-base/bsee/data-sources/raw-data-downloads.md",
+    "url_record": "data/catalog/source-registry.yml",
+    "file_record": "data/modules/hse/_metadata.json",
+    "date_evidence": "The retained acquisition record reports reuse without a new download. The corpus metadata records a modification date, not a download date. No addition commit was found for the external raw-file path."
+  }
+}

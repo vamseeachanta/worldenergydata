@@ -1,0 +1,19 @@
+meta:
+  library: worldenergydata
+  basename: bsee_custom
+  label: NULL
+
+basename: bsee_custom
+
+drilling_n_completion_days: 
+  flag: True
+
+filepath:
+  leases: "tests/modules/bsee/analysis/leases.csv"
+
+default:
+  log_level: INFO
+  config:
+    overwrite:
+      output: True
+    cfg_sensitivities: False

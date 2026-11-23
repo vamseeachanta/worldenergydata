@@ -1,0 +1,174 @@
+# Compliance Audit Configuration
+# Generate comprehensive compliance reports for regulatory audit
+
+report:
+  template: compliance  # Use compliance template
+  
+  # Generate for all organizational levels
+  levels:
+    - block:
+        units:
+          - Walker Ridge
+          - Green Canyon
+          - Atwater Valley
+    - field:
+        units:
+          - Jack
+          - Julia
+          - St Malo
+          - Stones
+          - Big Foot
+          - Tahiti
+    - lease:
+        units: ALL  # All leases under the fields
+        
+  # Full year for audit
+  date_range:
+    start: 2023-01-01
+    end: 2023-12-31
+    
+# Compliance-specific settings
+compliance:
+  # Regulatory framework
+  framework: BSEE 2023
+  include_citations: true
+  
+  # Production quotas
+  quotas:
+    oil_bbls_monthly: 50000
+    gas_mcf_monthly: 100000
+    variance_allowed: 0.05  # 5% variance
+    
+  # Environmental thresholds
+  environmental:
+    max_spills_per_year: 0
+    max_emissions_tons_co2: 1000
+    max_water_discharge_bbls: 10000
+    include_corrective_actions: true
+    
+  # Safety metrics
+  safety:
+    target_trir: 1.0  # Total Recordable Incident Rate
+    target_ltir: 0.5  # Lost Time Incident Rate
+    include_near_misses: true
+    include_root_cause: true
+    
+  # Audit trail
+  audit:
+    include_data_sources: true
+    include_calculation_methods: true
+    include_assumptions: true
+    include_data_quality_scores: true
+    
+# Output configuration for audit package
+output:
+  # Generate multiple formats for different audiences
+  formats:
+    - pdf  # Official submission
+    - excel  # Detailed data
+    - html  # Interactive review
+    
+  directory: audit_2023/
+  
+  # Organize by organizational level
+  structure:
+    by_level: true
+    by_unit: true
+    create_index: true  # Create index.html
+    
+  # Include supporting documents
+  attachments:
+    include_raw_data: true
+    include_calculations: true
+    include_visualizations: true
+    include_methodology: true
+    
+# Sections to include in compliance report
+sections:
+  - executive_summary
+  - production_compliance
+  - environmental_compliance
+  - safety_compliance
+  - regulatory_citations
+  - corrective_actions
+  - trend_analysis
+  - peer_comparison
+  - recommendations
+  - appendices
+  
+# Visualizations for compliance
+visualizations:
+  compliance_dashboard:
+    enabled: true
+    type: traffic_light
+    metrics:
+      - production_quota_compliance
+      - environmental_score
+      - safety_score
+      
+  trend_charts:
+    enabled: true
+    periods: 12  # Monthly for past year
+    show_limits: true
+    show_violations: true
+    
+  heat_maps:
+    enabled: true
+    by_field: true
+    by_metric: true
+    
+# Data validation
+validation:
+  enabled: true
+  rules:
+    - production_positive: "production >= 0"
+    - dates_sequential: "start_date < end_date"
+    - quotas_reasonable: "quota > 0 and quota < 1000000"
+    
+  on_failure:
+    action: flag  # flag, skip, or abort
+    include_in_report: true
+    
+# Quality assurance
+quality:
+  cross_check_sources: true
+  variance_analysis: true
+  outlier_detection: true
+  completeness_check: true
+  accuracy_threshold: 0.95  # 95% accuracy required
+  
+# Performance settings for audit
+performance:
+  cache:
+    enabled: true
+    ttl: 86400  # 24 hours for audit consistency
+    
+  parallel:
+    enabled: true
+    max_workers: 4
+    
+  priority: accuracy  # accuracy over speed
+  
+# Notification settings
+notifications:
+  on_complete: true
+  on_validation_failure: true
+  recipients:
+    - compliance-team@example.com
+    - audit-team@example.com
+    
+# Security and compliance
+security:
+  encrypt_output: true
+  encryption_key: /path/to/key.pem
+  sign_reports: true
+  signature_key: /path/to/signature.key
+  watermark: "CONFIDENTIAL - REGULATORY AUDIT"
+  
+# Logging for audit trail
+logging:
+  level: DEBUG  # Detailed logging for audit
+  file: audit_2023/audit_log.txt
+  include_timestamps: true
+  include_user: true
+  include_system_info: true

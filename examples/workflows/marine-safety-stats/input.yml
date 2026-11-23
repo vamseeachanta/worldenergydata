@@ -1,0 +1,16 @@
+basename: marine_safety
+
+meta:
+  label: marine_safety_stats
+
+file_management:
+  flag: false
+  output_directory: outputs
+
+data:
+  source: csv
+  file: incidents.csv
+
+analysis:
+  flag: true
+  type: incident_stats

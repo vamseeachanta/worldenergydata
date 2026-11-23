@@ -1,0 +1,65 @@
+workflow_demo_log:
+  timestamp: '2025-08-21T06:28:22.132439'
+  mode: simulation
+  base_path: /mnt/github/github/worldenergydata
+  steps:
+  - timestamp: '2025-08-21T06:28:22.132146'
+    step: baseline_metrics
+    description: Generate baseline metrics before migration
+    status: RUNNING
+  - timestamp: '2025-08-21T06:28:22.132189'
+    step: baseline_metrics
+    description: Generate baseline metrics before migration
+    status: SKIPPED
+  - timestamp: '2025-08-21T06:28:22.132217'
+    step: scan_imports
+    description: Scan codebase for transformable imports
+    status: RUNNING
+  - timestamp: '2025-08-21T06:28:22.132230'
+    step: scan_imports
+    description: Scan codebase for transformable imports
+    status: SKIPPED
+  - timestamp: '2025-08-21T06:28:22.132247'
+    step: simulate_import_updates
+    description: Simulate import transformations with backup
+    status: RUNNING
+  - timestamp: '2025-08-21T06:28:22.132263'
+    step: simulate_import_updates
+    description: Simulate import transformations with backup
+    status: SKIPPED
+  - timestamp: '2025-08-21T06:28:22.132272'
+    step: execute_import_updates
+    description: Execute import transformations
+    status: SKIPPED
+  - timestamp: '2025-08-21T06:28:22.132295'
+    step: comprehensive_testing
+    description: Run comprehensive migration test suite
+    status: RUNNING
+  - timestamp: '2025-08-21T06:28:22.132308'
+    step: comprehensive_testing
+    description: Run comprehensive migration test suite
+    status: SKIPPED
+  - timestamp: '2025-08-21T06:28:22.132327'
+    step: health_check
+    description: Run initial health check
+    status: RUNNING
+  - timestamp: '2025-08-21T06:28:22.132337'
+    step: health_check
+    description: Run initial health check
+    status: SKIPPED
+  - timestamp: '2025-08-21T06:28:22.132359'
+    step: post_migration_metrics
+    description: Generate detailed post-migration metrics report
+    status: RUNNING
+  - timestamp: '2025-08-21T06:28:22.132370'
+    step: post_migration_metrics
+    description: Generate detailed post-migration metrics report
+    status: SKIPPED
+  - timestamp: '2025-08-21T06:28:22.132388'
+    step: cleanup_simulation
+    description: Simulate cleanup of compatibility links (after 30 days)
+    status: RUNNING
+  - timestamp: '2025-08-21T06:28:22.132398'
+    step: cleanup_simulation
+    description: Simulate cleanup of compatibility links (after 30 days)
+    status: SKIPPED

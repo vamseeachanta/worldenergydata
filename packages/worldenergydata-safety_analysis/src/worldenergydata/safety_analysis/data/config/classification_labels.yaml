@@ -1,0 +1,31 @@
+# Classification label definitions for safety analysis
+observation_types:
+  safe:
+    description: "Safe behavior observed"
+    aliases: ["SAFE", "safe_behavior", "positive_observation"]
+  at_risk:
+    description: "At-risk behavior observed"
+    aliases: ["AT_RISK", "at-risk", "unsafe", "UNSAFE"]
+  near_miss:
+    description: "Near miss event"
+    aliases: ["NEAR_MISS", "near-miss", "close_call"]
+
+severity_levels:
+  no_hurt:
+    numeric: 0
+    labels: ["0 - No Hurt", "no_hurt", "none", "0"]
+  minor:
+    numeric: 1
+    labels: ["1 - Minor Hurt", "minor", "1"]
+  moderate:
+    numeric: 2
+    labels: ["2 - Moderate Hurt", "moderate", "2"]
+  severe:
+    numeric: 3
+    labels: ["3 - Severe Hurt", "severe", "3"]
+  fatality:
+    numeric: 4
+    labels: ["4 - Fatality", "fatality", "4"]
+  multiple_fatalities:
+    numeric: 5
+    labels: ["5 - Multiple Fatalities", "multiple_fatalities", "5"]

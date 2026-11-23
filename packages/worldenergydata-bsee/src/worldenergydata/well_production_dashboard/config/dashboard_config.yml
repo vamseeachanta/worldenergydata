@@ -1,0 +1,253 @@
+# Well Production Dashboard Configuration
+# Extends existing BSEE patterns and integrates with verification system
+
+dashboard:
+  title: "Well Production Dashboard"
+  theme: "plotly_white"
+  auto_refresh: true
+  refresh_interval: 60000  # milliseconds
+  enable_export: true
+  enable_filters: true
+  responsive: true
+  
+  # Extended configuration for well dashboard
+  enable_verification: true
+  enable_real_time: false
+  cache_ttl: 300  # seconds
+  quality_threshold: 0.8
+  websocket_port: 8765
+  api_port: 5000
+  auth_enabled: true
+  export_formats:
+    - pdf
+    - excel
+
+# Data sources configuration
+data_sources:
+  primary:
+    type: "bsee"
+    connection:
+      database: "worldenergydata"
+      schema: "production"
+      tables:
+        - wells
+        - production_monthly
+        - economics
+  
+  verification:
+    type: "verification_engine"
+    module: "analysis.verification"
+    config:
+      quality_checks: true
+      cross_reference: true
+      audit_logging: true
+
+# Wells to monitor
+wells:
+  - id: "W1"
+    field: "Julia"
+    operator: "ExxonMobil"
+  - id: "W2"
+    field: "Jack"
+    operator: "Chevron"
+  - id: "W3"
+    field: "St. Malo"
+    operator: "Chevron"
+  - id: "W4"
+    field: "Anchor"
+    operator: "Chevron"
+
+# Filter configurations
+filters:
+  date_range:
+    type: "date_range"
+    default:
+      start: "2023-01-01"
+      end: "2023-12-31"
+    format: "YYYY-MM-DD"
+  
+  quality_score:
+    type: "numeric"
+    min: 0.0
+    max: 1.0
+    default: 0.8
+    step: 0.1
+  
+  field:
+    type: "multi_select"
+    options:
+      - Julia
+      - Jack
+      - St. Malo
+      - Anchor
+    default: ["all"]
+  
+  product_type:
+    type: "multi_select"
+    options:
+      - oil
+      - gas
+      - water
+    default: ["oil", "gas"]
+  
+  verification_status:
+    type: "select"
+    options:
+      - verified
+      - pending
+      - failed
+      - all
+    default: "all"
+
+# Chart configurations
+charts:
+  production_timeline:
+    type: "line"
+    title: "Production Over Time"
+    x_axis: "date"
+    y_axis: "production"
+    grouping: "product_type"
+    aggregation: "sum"
+    show_verification: true
+  
+  economic_metrics:
+    type: "indicators"
+    title: "Economic KPIs"
+    metrics:
+      - npv
+      - total_revenue
+      - total_opex
+      - profit_margin
+      - roi
+    format: "currency"
+  
+  decline_curve:
+    type: "scatter"
+    title: "Production Decline Analysis"
+    show_forecast: true
+    confidence_interval: true
+    periods_ahead: 12
+  
+  field_comparison:
+    type: "bar"
+    title: "Field Performance Comparison"
+    grouping: "field"
+    metric: "total_production"
+    period: "monthly"
+  
+  quality_dashboard:
+    type: "gauge"
+    title: "Data Quality Score"
+    min: 0
+    max: 1
+    thresholds:
+      - value: 0.5
+        color: "red"
+      - value: 0.8
+        color: "yellow"
+      - value: 0.9
+        color: "green"
+
+# Performance settings
+performance:
+  cache:
+    enabled: true
+    ttl: 300  # seconds
+    max_size: 1000  # entries
+  
+  parallel_processing:
+    enabled: true
+    max_workers: 4
+  
+  batch_size: 1000
+  
+  query_optimization:
+    enabled: true
+    use_indexes: true
+    materialized_views: false
+
+# Export configurations
+export:
+  pdf:
+    enabled: true
+    template: "comprehensive_report"
+    include_charts: true
+    include_tables: true
+    include_verification: true
+  
+  excel:
+    enabled: true
+    sheets:
+      - name: "Summary"
+        content: "metrics"
+      - name: "Production Data"
+        content: "raw_data"
+      - name: "Verification"
+        content: "verification_results"
+      - name: "Charts"
+        content: "chart_data"
+
+# API settings
+api:
+  enabled: true
+  port: 5000
+  cors:
+    enabled: true
+    origins:
+      - "http://localhost:3000"
+      - "http://localhost:8080"
+  
+  rate_limiting:
+    enabled: true
+    requests_per_minute: 100
+  
+  authentication:
+    type: "jwt"
+    secret_key: "${API_SECRET_KEY}"
+    expiry: 3600  # seconds
+
+# WebSocket settings for real-time updates
+websocket:
+  enabled: false
+  port: 8765
+  heartbeat_interval: 30  # seconds
+  max_connections: 100
+
+# Logging configuration
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "logs/dashboard.log"
+  rotation:
+    enabled: true
+    max_bytes: 10485760  # 10MB
+    backup_count: 5
+
+# Authentication settings
+authentication:
+  enabled: true
+  provider: "bsee"
+  config:
+    login_url: "/auth/login"
+    logout_url: "/auth/logout"
+    session_timeout: 3600  # seconds
+    require_2fa: false
+
+# Monitoring and alerts
+monitoring:
+  enabled: true
+  metrics:
+    - name: "response_time"
+      threshold: 3000  # milliseconds
+    - name: "error_rate"
+      threshold: 0.05  # 5%
+    - name: "cache_hit_rate"
+      threshold: 0.7  # 70%
+  
+  alerts:
+    email:
+      enabled: false
+      recipients: []
+    slack:
+      enabled: false
+      webhook_url: "${SLACK_WEBHOOK}"

@@ -1,0 +1,274 @@
+#!/usr/bin/env python3
+"""ABOUTME: Refresh the aceengineer/worldenergydata-explorer HF dataset from the
+ABOUTME: committed Explorer bundle: corrected curated EUR (#979), surfaced
+ABOUTME: life-to-date economics (#976/#981), and the parametric economics grid.
+
+What it does
+------------
+1. Downloads the live ``fields.parquet`` from the HF dataset.
+2. Patches ``eur_mmbbl`` from the committed bundle's curated reserves (#979 —
+   the live values are the retired ~2-6.6x-inflated decline-fit numbers) and
+   appends the economics columns (``npv_mm``, ``breakeven_wti``,
+   ``sens_mm_per_dollar``, ``economics_status``, ``economics_basis``,
+   ``eur_confidence``, ``eur_source``). All other columns are left untouched.
+3. Publishes the parametric economics grid
+   (``reports/lower_tertiary/parametric/lt_economics_parametric.csv``) as a new
+   ``parametric_economics`` config — SURFACED fields only, per #971/#976.
+4. Rewrites the dataset card (README) with the new configs, provenance shas,
+   and a revision note.
+
+Deps: pandas, pyarrow, huggingface_hub (token from ~/.cache/huggingface/token).
+
+    <python-with-deps> scripts/hf_export/publish_explorer_refresh_to_hf.py [--dry-run]
+"""
+
+from __future__ import annotations
+
+import hashlib
+import json
+import math
+import sys
+import tempfile
+from pathlib import Path
+
+import pandas as pd
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+DATASET = "aceengineer/worldenergydata-explorer"
+BUNDLE = REPO_ROOT / "reports" / "field-atlas" / "results" / "explorer_results_bundle.json"
+PERFORMANCE = REPO_ROOT / "reports" / "lower_tertiary" / "lifecycle" / "_performance.json"
+PARAMETRIC_JSON = (
+    REPO_ROOT / "reports" / "lower_tertiary" / "parametric" / "lt_economics_parametric.json"
+)
+
+ECON_COLS = [
+    "npv_mm",
+    "breakeven_wti",
+    "sens_mm_per_dollar",
+    "economics_status",
+    "economics_basis",
+    "eur_confidence",
+    "eur_source",
+]
+# Basis and release status defined by the reviewed contract in #976 (2026).
+# This exporter introduces no new price or reserve-fraction acceptance limits.
+ECON_LEVELS = ("npv_mm", "breakeven_wti", "sens_mm_per_dollar")
+ECONOMICS_BASIS = "life_to_date_pretax_npv_at_10pct"
+PARAMETRIC_COLS = [
+    "field",
+    "wti_price_multiplier",
+    "discount_rate",
+    "npv_musd",
+    "breakeven_multiplier",
+    "economics_basis",
+]
+
+
+def _sha(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _released_economics(slug: str, performance: dict) -> dict:
+    """Enforce the #976 contract again at the publication boundary.
+
+    Only an explicit surfaced status permits numbers. Stale populated values
+    on withheld, early-life, unknown or absent records are always nulled.
+    A surfaced record with an unknown basis or invalid numbers stops release;
+    negative life-to-date NPV remains valid (see #971 diagnosis, 2026).
+    """
+    if performance.get("economics_status") != "surfaced":
+        return dict.fromkeys(ECON_LEVELS)
+    if performance.get("economics_basis") != ECONOMICS_BASIS:
+        raise ValueError(f"{slug}: unsupported economics_basis")
+    values = {key: performance.get(key) for key in ECON_LEVELS}
+    for key, value in values.items():
+        if (
+            isinstance(value, bool)
+            or not isinstance(value, (int, float))
+            or not math.isfinite(value)
+        ):
+            raise ValueError(f"{slug}: {key} must be a finite number")
+    return values
+
+
+def build_fields(live_parquet: Path) -> pd.DataFrame:
+    fields = pd.read_parquet(live_parquet)
+    perf_by_slug = json.loads(PERFORMANCE.read_text(encoding="utf-8"))["fields"]
+    # Validate and mask before assigning any economics column to the live table.
+    released = {
+        slug: _released_economics(slug, perf_by_slug.get(slug, {}))
+        for slug in fields["id"]
+    }
+
+    def col(slug: str, key: str):
+        if key in ECON_LEVELS:
+            return released[slug][key]
+        return perf_by_slug.get(slug, {}).get(key)
+
+    fields["eur_mmbbl"] = fields["id"].map(lambda s: col(s, "eur_mmbbl")).astype("Float64")
+    for c in ECON_COLS:
+        if c == "economics_basis":
+            fields[c] = fields["id"].map(
+                lambda s: col(s, "economics_basis")
+                if perf_by_slug.get(s)
+                else None
+            )
+        else:
+            fields[c] = fields["id"].map(lambda s, k=c: col(s, k))
+    for c in ECON_LEVELS:
+        fields[c] = fields[c].astype("Float64")
+    return fields
+
+
+def build_parametric() -> pd.DataFrame:
+    grid = json.loads(PARAMETRIC_JSON.read_text(encoding="utf-8"))
+    performance = json.loads(PERFORMANCE.read_text(encoding="utf-8"))["fields"]
+    rows = []
+    for slug, f in grid["fields"].items():
+        current = performance.get(slug, {})
+        if (
+            f.get("economics_status") != "surfaced"
+            or current.get("economics_status") != "surfaced"
+        ):
+            continue  # withheld per #971/#976 life-to-date gating
+        _released_economics(slug, current)
+        for g in f["grid"]:
+            if g.get("economics_status") != "surfaced":
+                continue
+            rows.append(
+                {
+                    "field": slug,
+                    "wti_price_multiplier": g["wti_price_multiplier"],
+                    "discount_rate": g["discount_rate"],
+                    "npv_musd": g["npv_musd"],
+                    "breakeven_multiplier": f["breakeven_multiplier_by_rate"][
+                        f"{g['discount_rate']:g}"
+                    ],
+                    "economics_basis": "life_to_date_pretax_npv",
+                }
+            )
+    return pd.DataFrame(rows, columns=PARAMETRIC_COLS)
+
+
+def build_readme(n_param_rows: int, param_fields: list[str]) -> str:
+    grid = json.loads(PARAMETRIC_JSON.read_text(encoding="utf-8"))
+    prov = grid["provenance"]
+    return f"""---
+license: cc-by-4.0
+pretty_name: World Energy Field Explorer — analysis projection
+tags:
+- energy
+- oil-and-gas
+- offshore
+- bsee
+- gulf-of-mexico
+configs:
+- config_name: fields
+  data_files: fields.parquet
+- config_name: wells
+  data_files: wells.parquet
+- config_name: countries
+  data_files: countries.parquet
+- config_name: parametric_economics
+  data_files: parametric_economics.parquet
+---
+
+# World Energy Field Explorer — analysis projection
+
+Tabular projection of the **World Energy Field Explorer** analysis results, published so the
+Hugging Face dataset viewer and the **datasets-server API** can render visualizations directly.
+
+Live Explorer: https://vamseeachanta.github.io/worldenergydata/field-atlas/
+
+## Tables (viewer configs)
+
+| Config | Rows | What |
+|---|---|---|
+| `fields` | 10 | Lower-Tertiary fields — economics, reservoir, HPHT/decommission risk, concept, landman |
+| `wells` | 56 | Producing wells — spud/TD/first-oil, rig-days, cumulative oil, uptime |
+| `countries` | 84 | Global offshore funnel — per-country field counts + data-density badge |
+| `parametric_economics` | {n_param_rows} | WTI price-multiplier x discount-rate NPV grid ({", ".join(param_fields)}) |
+
+## Economics basis
+
+- `fields.economics_basis = life_to_date_pretax_npv_at_10pct` fixes the discount
+  rate at 10%; `parametric_economics.economics_basis = life_to_date_pretax_npv`
+  uses each row's `discount_rate`, so the labels intentionally differ.
+- `npv_mm` / `breakeven_wti` are **life-to-date**, pre-tax, 10%-discounted: full sunk capex
+  charged against oil produced to date, not full-cycle EUR. Fields early in life are withheld
+  (`economics_status = early_life`, values null) rather than surfaced as absurd numbers.
+- `eur_mmbbl` is **curated published/booked recoverable reserves** with `eur_source` +
+  `eur_confidence` — NOT a decline-fit extrapolation. Null where no credible public figure
+  exists.
+- `parametric_economics` sweeps a uniform multiplier on the historical monthly WTI deck and
+  the annual discount rate over the same sanctioned cashflow model. NPV is exact (affine) in
+  the price multiplier. Fields with withheld economics are excluded from the grid.
+- Release requires an explicit `economics_status = surfaced` and the known life-to-date
+  basis in the current performance contract. Every other status suppresses all economics
+  levels, even if a stale input contains numbers. Missing or non-finite surfaced values
+  stop the refresh. Negative life-to-date NPV alone does not imply an error.
+- The sensitivity grid must also be surfaced in its own snapshot; a stale grid cannot
+  override withholding in the current performance contract. Full-cycle economics remain
+  unevaluated. See `docs/data-sources/economics-release.md` for the release decision.
+
+## Provenance
+
+Schema version `1.0.0`. Derived from the committed Explorer results bundle
+(`reports/field-atlas/results/explorer_results_bundle.json`), itself a projection of
+`_explorer.json` + `_atlas_feed.json`. Source snapshots (sha256):
+
+- `reports/field-atlas/results/explorer_results_bundle.json` — sha256 `{_sha(BUNDLE)[:16]}…`
+- `reports/lower_tertiary/lifecycle/_performance.json` — sha256 `{_sha(PERFORMANCE)[:16]}…`
+- parametric grid: code revision `{prov["code_revision"][:12]}`, config
+  `{prov["config_path"]}` (sha256 `{prov["config_sha256"][:16]}…`), data window through
+  `{prov["end_date"]}`, model `{prov["model"]}`
+
+## Revision notes
+
+- **Economics refresh**: `eur_mmbbl` corrected to curated published reserves (the previous
+  revision carried inflated decline-fit values, since retired); life-to-date NPV / break-even
+  columns added for fields whose economics are surfaced; `parametric_economics` grid added.
+"""
+
+
+def main() -> int:
+    from huggingface_hub import HfApi, hf_hub_download
+
+    dry = "--dry-run" in sys.argv
+    api = HfApi()
+
+    with tempfile.TemporaryDirectory() as td:
+        live = hf_hub_download(
+            DATASET, "fields.parquet", repo_type="dataset", local_dir=td
+        )
+        fields = build_fields(Path(live))
+        param = build_parametric()
+        readme = build_readme(len(param), sorted(param["field"].unique()))
+
+        out = Path(td) / "upload"
+        out.mkdir()
+        fields.to_parquet(out / "fields.parquet", index=False)
+        param.to_parquet(out / "parametric_economics.parquet", index=False)
+        (out / "README.md").write_text(readme, encoding="utf-8", newline="\n")
+
+        print(f"fields: {fields.shape}, parametric: {param.shape}")
+        print(fields[["id", "eur_mmbbl", "npv_mm", "breakeven_wti", "economics_status"]])
+        if dry:
+            print("DRY RUN — nothing uploaded")
+            return 0
+
+        api.upload_folder(
+            repo_id=DATASET,
+            repo_type="dataset",
+            folder_path=str(out),
+            commit_message=(
+                "economics refresh: curated EUR (#979), life-to-date NPV/breakeven "
+                "(#976/#981), parametric_economics grid"
+            ),
+        )
+        print(f"uploaded -> https://huggingface.co/datasets/{DATASET}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

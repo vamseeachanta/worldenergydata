@@ -1,0 +1,305 @@
+{
+  "schema_version": "federal-acreage-result-v1",
+  "screening_status": "evidence_partial",
+  "screening_reasons": [
+    "exceptions_present",
+    "tract_area_without_records"
+  ],
+  "tract": {
+    "tract_id": "PILOT-TRACT-A",
+    "label": "Synthetic pilot tract A",
+    "state": "NM",
+    "principal_meridian": "New Mexico Principal Meridian",
+    "township": "T05S",
+    "range": "R08E",
+    "section": 12,
+    "aliquots": [
+      "NE-NE",
+      "NW-NE",
+      "SW-NE",
+      "SE-NE",
+      "NE-NW",
+      "NW-NW",
+      "SW-NW",
+      "SE-NW"
+    ],
+    "gross_area_acres": 320.0
+  },
+  "acreage": {
+    "gross_area_acres": {
+      "value": 320.0,
+      "status": "available",
+      "source_id": "tract-input",
+      "note": null
+    },
+    "federal_record_coverage_acres": {
+      "value": 280.0,
+      "status": "available",
+      "source_id": "fixture-mlrs-synthetic",
+      "note": null
+    },
+    "leased_acres": {
+      "value": 200.0,
+      "status": "available",
+      "source_id": "fixture-mlrs-synthetic",
+      "note": null
+    },
+    "expired_or_nonleased_acres": {
+      "value": 80.0,
+      "status": "available",
+      "source_id": "fixture-mlrs-synthetic",
+      "note": null
+    },
+    "no_record_acres": {
+      "value": 40.0,
+      "status": "available",
+      "source_id": "derived-no-record",
+      "note": "derived: tract gross area minus federal-record coverage; not a federal-record value"
+    }
+  },
+  "records": [
+    {
+      "record_serial": "SYNFL0001",
+      "record_type": "lease",
+      "record_status": "active",
+      "effective_date": "2019-06-01",
+      "expiration_date": "2029-05-31",
+      "area": {
+        "value": 160.0,
+        "unit": "acres"
+      },
+      "public_lessee": "Synthetic Example Energy LLC",
+      "public_operator": null,
+      "aliquots": [
+        "NE-NE",
+        "NW-NE",
+        "SW-NE",
+        "SE-NE"
+      ],
+      "source_id": "fixture-mlrs-synthetic",
+      "intersect_acres": {
+        "value": 160.0,
+        "status": "available",
+        "source_id": "fixture-mlrs-synthetic",
+        "note": null
+      },
+      "area_acres": {
+        "value": 160.0,
+        "status": "available",
+        "source_id": "fixture-mlrs-synthetic",
+        "note": null
+      },
+      "retrieved_at": "2026-07-10T00:00:00Z"
+    },
+    {
+      "record_serial": "SYNFL0002",
+      "record_type": "lease",
+      "record_status": "expired",
+      "effective_date": "2019-06-01",
+      "expiration_date": "2024-01-31",
+      "area": {
+        "value": 80.0,
+        "unit": "acres"
+      },
+      "public_lessee": "Synthetic Example Energy LLC",
+      "public_operator": null,
+      "aliquots": [
+        "NW-NW",
+        "SW-NW"
+      ],
+      "source_id": "fixture-mlrs-synthetic",
+      "intersect_acres": {
+        "value": 80.0,
+        "status": "available",
+        "source_id": "fixture-mlrs-synthetic",
+        "note": null
+      },
+      "area_acres": {
+        "value": 80.0,
+        "status": "available",
+        "source_id": "fixture-mlrs-synthetic",
+        "note": null
+      },
+      "retrieved_at": "2026-07-10T00:00:00Z"
+    },
+    {
+      "record_serial": "SYNFL0003",
+      "record_type": "lease",
+      "record_status": "active",
+      "effective_date": "2019-06-01",
+      "expiration_date": "2029-05-31",
+      "area": {
+        "value": 160.0,
+        "unit": "acres"
+      },
+      "public_lessee": "Synthetic Example Energy LLC",
+      "public_operator": null,
+      "aliquots": [
+        "NE-SE",
+        "NW-SE",
+        "SW-SE",
+        "SE-SE"
+      ],
+      "source_id": "fixture-mlrs-synthetic",
+      "intersect_acres": {
+        "value": 0.0,
+        "status": "available",
+        "source_id": "fixture-mlrs-synthetic",
+        "note": null
+      },
+      "area_acres": {
+        "value": 160.0,
+        "status": "available",
+        "source_id": "fixture-mlrs-synthetic",
+        "note": null
+      },
+      "retrieved_at": "2026-07-10T00:00:00Z"
+    },
+    {
+      "record_serial": "SYNFL0004",
+      "record_type": "parcel",
+      "record_status": "active",
+      "effective_date": null,
+      "expiration_date": null,
+      "area": {
+        "value": 40.0,
+        "unit": "acres"
+      },
+      "public_lessee": null,
+      "public_operator": null,
+      "aliquots": null,
+      "source_id": "fixture-mlrs-synthetic",
+      "intersect_acres": {
+        "value": null,
+        "status": "unavailable",
+        "source_id": null,
+        "note": "Geometry is unavailable; excluded from rollup."
+      },
+      "area_acres": {
+        "value": 40.0,
+        "status": "available",
+        "source_id": "fixture-mlrs-synthetic",
+        "note": null
+      },
+      "retrieved_at": "2026-07-10T00:00:00Z"
+    },
+    {
+      "record_serial": "SYNFL0005",
+      "record_type": "lease",
+      "record_status": "active",
+      "effective_date": "2019-06-01",
+      "expiration_date": "2029-05-31",
+      "area": {
+        "value": 16.1874,
+        "unit": "hectares"
+      },
+      "public_lessee": "Synthetic Example Energy LLC",
+      "public_operator": null,
+      "aliquots": [
+        "NE-NW"
+      ],
+      "source_id": "fixture-mlrs-synthetic",
+      "intersect_acres": {
+        "value": 40.0,
+        "status": "available",
+        "source_id": "fixture-mlrs-synthetic",
+        "note": null
+      },
+      "area_acres": {
+        "value": 39.999936520074776,
+        "status": "available",
+        "source_id": "fixture-mlrs-synthetic",
+        "note": null
+      },
+      "retrieved_at": "2026-07-10T00:00:00Z"
+    },
+    {
+      "record_serial": "SYNFL0006",
+      "record_type": "lease",
+      "record_status": "active",
+      "effective_date": "2019-06-01",
+      "expiration_date": "2029-05-31",
+      "area": {
+        "value": 40.0,
+        "unit": "acres"
+      },
+      "public_lessee": "Synthetic Example Energy LLC",
+      "public_operator": null,
+      "aliquots": [
+        "SE-NE"
+      ],
+      "source_id": "fixture-mlrs-synthetic",
+      "intersect_acres": {
+        "value": 40.0,
+        "status": "available",
+        "source_id": "fixture-mlrs-synthetic",
+        "note": null
+      },
+      "area_acres": {
+        "value": 40.0,
+        "status": "available",
+        "source_id": "fixture-mlrs-synthetic",
+        "note": null
+      },
+      "retrieved_at": "2026-07-10T00:00:00Z"
+    }
+  ],
+  "exceptions": [
+    {
+      "kind": "non_intersecting",
+      "record_serials": [
+        "SYNFL0003"
+      ],
+      "acres": null,
+      "detail": "Record does not intersect the tract."
+    },
+    {
+      "kind": "missing_geometry",
+      "record_serials": [
+        "SYNFL0004"
+      ],
+      "acres": null,
+      "detail": "Geometry is unavailable; excluded from rollup."
+    },
+    {
+      "kind": "overlap",
+      "record_serials": [
+        "SYNFL0001",
+        "SYNFL0006"
+      ],
+      "acres": 40.0,
+      "detail": "Double-claimed geometry; coverage union counts it once."
+    }
+  ],
+  "title_chain_gap": {
+    "status": "not_evaluated",
+    "statement": "Federal land records are not evidence of title. County recorder / title-chain records were NOT evaluated."
+  },
+  "sources": [
+    {
+      "source_id": "fixture-mlrs-synthetic",
+      "dataset": "BLM MLRS (synthetic fixture)",
+      "kind": "fixture",
+      "url": null,
+      "retrieved_at": "2026-07-10T00:00:00Z",
+      "license_note": "Synthetic authored fixture distributed under the repository licence (MIT); no live MLRS records or title evidence."
+    },
+    {
+      "source_id": "tract-input",
+      "dataset": "Tract input: PILOT-TRACT-A",
+      "kind": "fixture",
+      "url": null,
+      "retrieved_at": "2026-07-10T00:00:00Z",
+      "license_note": "Caller-supplied screening geometry."
+    },
+    {
+      "source_id": "derived-no-record",
+      "dataset": "Derived from tract-input and fixture-mlrs-synthetic",
+      "kind": "fixture",
+      "url": null,
+      "retrieved_at": "2026-07-10T00:00:00Z",
+      "license_note": "Derived from listed source references."
+    }
+  ],
+  "data_as_of": "2026-07-10T00:00:00Z"
+}

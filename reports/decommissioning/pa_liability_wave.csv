@@ -1,0 +1,13 @@
+# GoM P&A liability wave (BSEE Abandon stage, issue #777)
+# source: data/modules/bsee/current/wells/well_data.csv | 57281 boreholes
+# forward P&A population = TA (temporarily abandoned) + COM (completed/open) = 8161 boreholes
+# per-well GoM P&A cost (model well_p_and_a, region gom): base $8.0M (depth term=0); shelf ~60m $8.9M; deepwater ~1209m $26.1417M
+# WATER_DEPTH populated for only 100/57281 boreholes -> $ priced at GoM base
+vintage_decade,ta_wells,com_wells,forward_wells,forward_liability_musd_base,pa_retired_wells,pa_retired_musd_base
+pre-1980,67,590,657,5256.0,6366,50928.0
+1980s,114,772,886,7088.0,4771,38168.0
+1990s,271,884,1155,9240.0,5171,41368.0
+2000s,605,1297,1902,15216.0,5888,47104.0
+2010s,1484,988,2472,19776.0,6289,50312.0
+2020s,747,342,1089,8712.0,1914,15312.0
+Undated,0,0,0,0.0,1,8.0

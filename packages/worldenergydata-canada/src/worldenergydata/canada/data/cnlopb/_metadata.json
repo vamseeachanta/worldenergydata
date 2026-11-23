@@ -1,0 +1,17 @@
+{
+  "source_name": "C-NLOER Statistical Information / Production Data",
+  "authority": "Canada-Newfoundland and Labrador Offshore Energy Regulator (formerly C-NLOPB)",
+  "statistics_page": "https://www.cnloer.ca/information/statistics/",
+  "example_field_pdfs": {
+    "Hibernia": "https://www.cnloer.ca/wp-content/uploads/2026hpro.pdf",
+    "Hebron": "https://www.cnloer.ca/wp-content/uploads/2026hepro.pdf",
+    "North Amethyst": "https://www.cnloer.ca/wp-content/uploads/2026npro.pdf",
+    "Terra Nova": "https://www.cnloer.ca/wp-content/uploads/2026tpro.pdf",
+    "White Rose": "https://www.cnloer.ca/wp-content/uploads/2026wpro.pdf"
+  },
+  "source_unit": "oil m3 + bbls; gas 10^3 m3 + MMscf; water m3 + bbls",
+  "normalized_unit": "oil_bbl / gas_mcf / water_bbl",
+  "fixture_nature": "SYNTHETIC (labeled cnloer_fixture_synthetic) — NOT derived real C-NLOER volumes",
+  "sample_extracted_date": "2026-07-04",
+  "LICENCE_NOTE": "C-NLOER production PDFs are public regulator disclosures but NOT open-licensed (no OGL); C-NLOER/CNSOER terms restrict reproduction and commercial/public redistribution. Raw PDFs are NOT committed and derived per-field volumes are NOT published to any public surface (capabilities page / reports) pending an explicit owner legal read. The committed fixture is synthetic so nothing licence-restricted enters git. Cite the source URL + authority + retrieval date on any use."
+}

@@ -1,0 +1,3725 @@
+version: 2.1.0
+generated_at: '2026-11-14T04:45:13.034870+00:00'
+total_modules: 12
+total_datasets: 62
+total_binary_stores: 37
+total_size_bytes: 2846309606
+modules:
+  bsee:
+    module: bsee
+    description: Bureau of Safety and Environmental Enforcement - GOM data [2.6 GB]
+    datasets:
+    - name: completion_perforations.csv
+      path: data/modules/bsee/current/completions/completion_perforations.csv
+      format: csv
+      columns:
+      - name: API_WELL_NUMBER
+        type: integer
+        description: ''
+        unit: ''
+      - name: WELL_NAME
+        type: string
+        description: ''
+        unit: ''
+      - name: PERF_TOP_MD
+        type: integer
+        description: ''
+        unit: feet
+      - name: PERF_BOTM_TVD
+        type: integer
+        description: ''
+        unit: feet
+      - name: PERF_TOP_TVD
+        type: integer
+        description: ''
+        unit: feet
+      - name: PERF_BASE_MD
+        type: integer
+        description: ''
+        unit: feet
+      row_count: 100
+      size_bytes: 3997
+      last_modified: '2025-07-31T11:24:19.677972+00:00'
+    - name: completion_properties.csv
+      path: data/modules/bsee/current/completions/completion_properties.csv
+      format: csv
+      columns:
+      - name: API_WELL_NUMBER
+        type: integer
+        description: ''
+        unit: ''
+      - name: COMP_LATITUDE
+        type: float
+        description: ''
+        unit: degrees
+      - name: COMP_LONGITUDE
+        type: float
+        description: ''
+        unit: degrees
+      - name: COMP_RSVR_NAME
+        type: string
+        description: ''
+        unit: ''
+      - name: COMP_INTERVAL_NAME
+        type: string
+        description: ''
+        unit: ''
+      row_count: 100
+      size_bytes: 5825
+      last_modified: '2025-07-31T11:24:19.678297+00:00'
+    - name: completion_summary.csv
+      path: data/modules/bsee/current/completions/completion_summary.csv
+      format: csv
+      columns:
+      - name: API_WELL_NUMBER
+        type: integer
+        description: ''
+        unit: ''
+      - name: WELL_NAME
+        type: string
+        description: ''
+        unit: ''
+      - name: INTERVAL
+        type: string
+        description: ''
+        unit: ''
+      - name: COMP_AREA_CODE
+        type: string
+        description: ''
+        unit: ''
+      - name: COMP_BLOCK_NUMBER
+        type: integer
+        description: ''
+        unit: ''
+      - name: COMP_STATUS_CD
+        type: string
+        description: ''
+        unit: ''
+      - name: VALUE
+        type: string
+        description: ''
+        unit: ''
+      - name: VALUE_DESC
+        type: string
+        description: ''
+        unit: ''
+      row_count: 100
+      size_bytes: 4048
+      last_modified: '2025-07-31T11:24:19.689104+00:00'
+    - name: geology_markers.csv
+      path: data/modules/bsee/current/geology/geology_markers.csv
+      format: csv
+      columns:
+      - name: API_WELL_NUMBER
+        type: integer
+        description: ''
+        unit: ''
+      - name: WELL_NAME
+        type: string
+        description: ''
+        unit: ''
+      - name: GEO_MARKER_NAME
+        type: string
+        description: ''
+        unit: ''
+      - name: TOP_MD
+        type: integer
+        description: ''
+        unit: feet
+      row_count: 100
+      size_bytes: 3335
+      last_modified: '2025-07-31T11:24:19.689923+00:00'
+    - name: hydrocarbon_bearing_interval.csv
+      path: data/modules/bsee/current/geology/hydrocarbon_bearing_interval.csv
+      format: csv
+      columns:
+      - name: API_WELL_NUMBER
+        type: integer
+        description: ''
+        unit: ''
+      - name: WELL_NAME
+        type: string
+        description: ''
+        unit: ''
+      - name: SN_HC_BEARING_INTVL
+        type: integer
+        description: ''
+        unit: ''
+      - name: SN_EOR_FK
+        type: integer
+        description: ''
+        unit: ''
+      - name: INTERVAL_NAME
+        type: string
+        description: ''
+        unit: ''
+      - name: TOP_MD
+        type: integer
+        description: ''
+        unit: feet
+      - name: BOTTOM_MD
+        type: integer
+        description: ''
+        unit: feet
+      - name: HYDROCARBON_TYPE_CD
+        type: string
+        description: ''
+        unit: ''
+      row_count: 100
+      size_bytes: 5477
+      last_modified: '2025-07-31T11:24:19.690355+00:00'
+    - name: all_bsee_blocks.csv
+      path: data/modules/bsee/current/infrastructure/all_bsee_blocks.csv
+      format: csv
+      columns:
+      - name: BOTM_FLD_NAME_CD
+        type: string
+        description: ''
+        unit: ''
+      row_count: 100
+      size_bytes: 607
+      last_modified: '2025-07-31T11:24:19.677738+00:00'
+    - name: ST_BP_and_tree_height.csv
+      path: data/modules/bsee/current/operations/ST_BP_and_tree_height.csv
+      format: csv
+      columns:
+      - name: SN_EOR
+        type: integer
+        description: ''
+        unit: ''
+      - name: API_WELL_NUMBER
+        type: integer
+        description: ''
+        unit: ''
+      - name: WELL_NM_ST_SFIX
+        type: integer
+        description: ''
+        unit: ''
+      - name: WELL_NM_BP_SFIX
+        type: boolean
+        description: ''
+        unit: ''
+      - name: SUBSEA_TREE_HEIGHT_AML
+        type: float
+        description: ''
+        unit: ''
+      row_count: 100
+      size_bytes: 2706
+      last_modified: '2025-07-31T11:24:19.677546+00:00'
+    - name: cut_casings.csv
+      path: data/modules/bsee/current/operations/cut_casings.csv
+      format: csv
+      columns:
+      - name: API_WELL_NUMBER
+        type: integer
+        description: ''
+        unit: ''
+      - name: WELL_NAME
+        type: string
+        description: ''
+        unit: ''
+      - name: CASING_SIZE
+        type: float
+        description: ''
+        unit: ''
+      - name: CASING_CUT_DATE
+        type: datetime
+        description: ''
+        unit: ''
+      - name: CASING_CUT_METHOD_CD
+        type: string
+        description: ''
+        unit: ''
+      - name: CASING_CUT_DEPTH
+        type: integer
+        description: ''
+        unit: feet
+      - name: CASING_CUT_MDL_IND
+        type: string
+        description: ''
+        unit: feet
+      row_count: 100
+      size_bytes: 4497
+      last_modified: '2025-07-31T11:24:19.689548+00:00'
+    - name: well_activity_bop_tests.csv
+      path: data/modules/bsee/current/operations/well_activity_bop_tests.csv
+      format: csv
+      columns:
+      - name: BOP_TEST_DATE
+        type: datetime
+        description: ''
+        unit: ''
+      - name: RAM_TST_PRSS
+        type: float
+        description: ''
+        unit: ''
+      - name: ANNULAR_TST_PRSS
+        type: float
+        description: ''
+        unit: ''
+      - name: BUS_ASC_NAME
+        type: string
+        description: ''
+        unit: ''
+      - name: API_WELL_NUMBER
+        type: integer
+        description: ''
+        unit: ''
+      row_count: 100
+      size_bytes: 5180
+      last_modified: '2025-07-31T11:24:19.690884+00:00'
+    - name: well_activity_open_hole.csv
+      path: data/modules/bsee/current/operations/well_activity_open_hole.csv
+      format: csv
+      columns:
+      - name: API_WELL_NUMBER
+        type: integer
+        description: ''
+        unit: ''
+      - name: WELL_NAME
+        type: string
+        description: ''
+        unit: ''
+      - name: BUS_ASC_NAME
+        type: string
+        description: ''
+        unit: ''
+      - name: OPERATIONS_COMPLETED_DATE
+        type: datetime
+        description: ''
+        unit: ''
+      - name: TOOL_LOGGING_METHOD_NAME
+        type: string
+        description: ''
+        unit: ''
+      - name: LOG_INTV_TOP_MD
+        type: integer
+        description: ''
+        unit: feet
+      - name: LOG_INTV_BOTM_MD
+        type: integer
+        description: ''
+        unit: feet
+      - name: LOG_TOOL_TYPE_CODE
+        type: string
+        description: ''
+        unit: ''
+      row_count: 100
+      size_bytes: 6583
+      last_modified: '2025-07-31T11:24:19.691184+00:00'
+    - name: well_activity_remarks.csv
+      path: data/modules/bsee/current/operations/well_activity_remarks.csv
+      format: csv
+      columns:
+      - name: API_WELL_NUMBER
+        type: integer
+        description: ''
+        unit: ''
+      - name: WELL_NAME
+        type: string
+        description: ''
+        unit: ''
+      - name: WAR_START_DT
+        type: string
+        description: ''
+        unit: ''
+      - name: SN_WAR
+        type: integer
+        description: ''
+        unit: ''
+      - name: TEXT_REMARK
+        type: string
+        description: ''
+        unit: ''
+      row_count: 100
+      size_bytes: 68237
+      last_modified: '2026-03-15T13:06:39.553589+00:00'
+    - name: well_activity_summary.csv
+      path: data/modules/bsee/current/operations/well_activity_summary.csv
+      format: csv
+      columns:
+      - name: WAR_START_DT
+        type: string
+        description: ''
+        unit: ''
+      - name: WAR_END_DT
+        type: string
+        description: ''
+        unit: ''
+      - name: RIG_NAME
+        type: string
+        description: ''
+        unit: ''
+      - name: API_WELL_NUMBER
+        type: integer
+        description: ''
+        unit: ''
+      - name: WELL_NAME
+        type: string
+        description: ''
+        unit: ''
+      - name: WELL_ACTIVITY_CD
+        type: string
+        description: ''
+        unit: ''
+      - name: DRILLING_MD
+        type: float
+        description: ''
+        unit: feet
+      - name: DRILL_FLUID_WGT
+        type: float
+        description: ''
+        unit: ''
+      row_count: 100
+      size_bytes: 9431
+      last_modified: '2025-07-31T11:24:19.692925+00:00'
+    - name: production.csv
+      path: data/modules/bsee/current/production/production.csv
+      format: csv
+      columns:
+      - name: API_WELL_NUMBER
+        type: integer
+        description: ''
+        unit: ''
+      - name: PRODUCTION_DATE
+        type: datetime
+        description: ''
+        unit: ''
+      row_count: 100
+      size_bytes: 2361
+      last_modified: '2025-07-31T11:24:19.690582+00:00'
+    - name: well_data.csv
+      path: data/modules/bsee/current/wells/well_data.csv
+      format: csv
+      columns:
+      - name: API_WELL_NUMBER
+        type: float
+        description: ''
+        unit: ''
+      - name: WELL_NAME
+        type: string
+        description: ''
+        unit: ''
+      - name: WATER_DEPTH
+        type: float
+        description: ''
+        unit: feet
+      - name: SURF_LATITUDE
+        type: float
+        description: ''
+        unit: degrees
+      - name: WELL_NAME_SUFFIX
+        type: string
+        description: ''
+        unit: ''
+      - name: COMPANY_NAME
+        type: string
+        description: ''
+        unit: ''
+      - name: BOTM_FLD_NAME_CD
+        type: string
+        description: ''
+        unit: ''
+      - name: WELL_SPUD_DATE
+        type: datetime
+        description: ''
+        unit: ''
+      - name: TOTAL_DEPTH_DATE
+        type: datetime
+        description: ''
+        unit: feet
+      - name: BH_TOTAL_MD
+        type: float
+        description: ''
+        unit: feet
+      - name: WELL_BORE_TVD
+        type: integer
+        description: ''
+        unit: feet
+      - name: WELL_BP_ST_KICKOFF_MD
+        type: integer
+        description: ''
+        unit: feet
+      - name: BOREHOLE_STAT_DT
+        type: datetime
+        description: ''
+        unit: ''
+      - name: BOREHOLE_STAT_CD
+        type: string
+        description: ''
+        unit: ''
+      - name: CASING_CUT_CODE
+        type: string
+        description: ''
+        unit: ''
+      - name: UNDWTR_COMP_STUB
+        type: string
+        description: ''
+        unit: ''
+      - name: SURF_LONGITUDE
+        type: float
+        description: ''
+        unit: degrees
+      - name: BOTM_LATITUDE
+        type: float
+        description: ''
+        unit: degrees
+      - name: BOTM_LONGITUDE
+        type: float
+        description: ''
+        unit: degrees
+      row_count: 57281
+      size_bytes: 4135645
+      last_modified: '2025-07-31T11:24:19.782853+00:00'
+    - name: well_directional_surveys.csv
+      path: data/modules/bsee/current/wells/well_directional_surveys.csv
+      format: csv
+      columns:
+      - name: version https://git-lfs.github.com/spec/v1
+        type: string
+        description: ''
+        unit: ''
+      row_count: 2
+      size_bytes: 129
+      last_modified: '2025-07-31T11:24:19.783256+00:00'
+    - name: well_tubulars.csv
+      path: data/modules/bsee/current/wells/well_tubulars.csv
+      format: csv
+      columns:
+      - name: API_WELL_NUMBER
+        type: integer
+        description: ''
+        unit: ''
+      - name: WELL_NAME
+        type: string
+        description: ''
+        unit: ''
+      - name: WAR_START_DT
+        type: string
+        description: ''
+        unit: ''
+      - name: WAR_END_DT
+        type: string
+        description: ''
+        unit: ''
+      - name: CSNG_INTV_TYPE_CD
+        type: string
+        description: ''
+        unit: ''
+      - name: CSNG_HOLE_SIZE
+        type: float
+        description: ''
+        unit: ''
+      - name: CASING_SIZE
+        type: float
+        description: ''
+        unit: ''
+      - name: CASING_WEIGHT
+        type: float
+        description: ''
+        unit: kg
+      - name: CASING_GRADE
+        type: string
+        description: ''
+        unit: ''
+      - name: CSNG_LINER_TEST_PRSS
+        type: float
+        description: ''
+        unit: ''
+      - name: CSNG_SHOE_TEST_PRSS
+        type: float
+        description: ''
+        unit: ''
+      - name: CSNG_CEMENT_VOL
+        type: float
+        description: ''
+        unit: ''
+      - name: SN_WAR_CSNG_INTV
+        type: integer
+        description: ''
+        unit: ''
+      - name: CSNG_SETTING_BOTM_MD
+        type: integer
+        description: ''
+        unit: feet
+      - name: CSNG_SETTING_TOP_MD
+        type: integer
+        description: ''
+        unit: feet
+      row_count: 100
+      size_bytes: 12155
+      last_modified: '2025-07-31T11:24:19.783855+00:00'
+    - name: Paleowells.csv
+      path: data/modules/bsee/paleowells/Paleowells.csv
+      format: csv
+      columns:
+      - name: ''
+        type: integer
+        description: ''
+        unit: ''
+      - name: Record Type
+        type: string
+        description: ''
+        unit: ''
+      - name: API Well Number
+        type: integer
+        description: ''
+        unit: ''
+      - name: Paleo Report ID Number
+        type: integer
+        description: ''
+        unit: ''
+      - name: Total Number of Reports for API
+        type: integer
+        description: ''
+        unit: ''
+      - name: Measured Depth
+        type: integer
+        description: ''
+        unit: feet
+      - name: True Vertical Depth
+        type: integer
+        description: ''
+        unit: feet
+      - name: Definite/Possible
+        type: string
+        description: ''
+        unit: ''
+      - name: At/In
+        type: string
+        description: ''
+        unit: ''
+      - name: Paleo Age
+        type: string
+        description: ''
+        unit: ''
+      - name: Definite/Possible
+        type: string
+        description: ''
+        unit: ''
+      - name: At/In
+        type: string
+        description: ''
+        unit: ''
+      - name: Ecozone
+        type: float
+        description: ''
+        unit: ''
+      row_count: 6362
+      size_bytes: 646179
+      last_modified: '2026-03-15T13:06:39.668970+00:00'
+    - name: mv_war_boreholes_view
+      path: data/modules/bsee/war/20261113_mv_war_boreholes_view.csv
+      format: csv
+      columns:
+      - name: API_WELL_NUMBER
+        type: string
+        description: ''
+        unit: ''
+      - name: BOTM_LEASE_NUM
+        type: string
+        description: ''
+        unit: ''
+      - name: WELL_SPUD_DATE
+        type: string
+        description: ''
+        unit: ''
+      - name: TOTAL_DEPTH_DATE
+        type: string
+        description: ''
+        unit: ''
+      - name: BOREHOLE_STAT_DT
+        type: string
+        description: ''
+        unit: ''
+      - name: BH_TOTAL_MD
+        type: string
+        description: ''
+        unit: ''
+      - name: WELL_BORE_TVD
+        type: string
+        description: ''
+        unit: ''
+      row_count: 54714
+      source_row_count: 54714
+      duplicate_rows: 0
+      size_bytes: 0
+      sha256: 4a8c11b96f9ed1773dbdc72d7aa58accb89381c62c8439a89847965de0c99e07
+      last_modified: '2026-11-14T04:39:45.390532+00:00'
+      ingested_at: '2026-11-14T04:39:45.390532+00:00'
+      source_id: bsee-ewell-war
+      source: bin/war/mv_war_boreholes_view.bin
+      source_member: null
+      source_format: pickle
+      source_sha256: d8549d45d231b93d80bf9a433d2427d735d712093e69a208a2a5d8b3ff7f4313
+      source_modified_at: '2026-02-20T04:26:24.176511+00:00'
+      schema_status: source_columns
+      encoding: null
+      data_status: real
+      readiness_status: partial
+      source_vintage:
+        state: unknown
+        reason: File modification time does not establish source vintage
+      deduplication:
+        method: exact_full_row_same_schema
+        status: no_comparable_schema
+        compared_files: []
+        compared_sources: []
+      measured_size_bytes: 3521694
+      local_only: true
+      availability: missing
+    - name: mv_war_main
+      path: data/modules/bsee/war/20261113_mv_war_main.csv
+      format: csv
+      columns:
+      - name: SN_WAR
+        type: string
+        description: ''
+        unit: ''
+      - name: WAR_START_DT
+        type: string
+        description: ''
+        unit: ''
+      - name: WAR_END_DT
+        type: string
+        description: ''
+        unit: ''
+      - name: CONTACT_NAME
+        type: string
+        description: ''
+        unit: ''
+      - name: PHONE_NUMBER
+        type: string
+        description: ''
+        unit: ''
+      - name: RIG_NAME
+        type: string
+        description: ''
+        unit: ''
+      - name: WATER_DEPTH
+        type: string
+        description: ''
+        unit: ''
+      - name: RKB_ELEVATION
+        type: string
+        description: ''
+        unit: ''
+      - name: BOP_TEST_DATE
+        type: string
+        description: ''
+        unit: ''
+      - name: RAM_TST_PRSS
+        type: string
+        description: ''
+        unit: ''
+      - name: ANNULAR_TST_PRSS
+        type: string
+        description: ''
+        unit: ''
+      - name: BUS_ASC_NAME
+        type: string
+        description: ''
+        unit: ''
+      - name: MMS_COMPANY_NUM
+        type: string
+        description: ''
+        unit: ''
+      - name: API_WELL_NUMBER
+        type: string
+        description: ''
+        unit: ''
+      - name: WELL_NAME
+        type: string
+        description: ''
+        unit: ''
+      - name: WELL_NM_BP_SFIX
+        type: string
+        description: ''
+        unit: ''
+      - name: WELL_NM_ST_SFIX
+        type: string
+        description: ''
+        unit: ''
+      - name: SURF_LEASE_NUM
+        type: string
+        description: ''
+        unit: ''
+      - name: SURF_AREA_CODE
+        type: string
+        description: ''
+        unit: ''
+      - name: SURF_BLOCK_NUM
+        type: string
+        description: ''
+        unit: ''
+      - name: BOTM_LEASE_NUM
+        type: string
+        description: ''
+        unit: ''
+      - name: BOTM_AREA_CODE
+        type: string
+        description: ''
+        unit: ''
+      - name: BOTM_BLOCK_NUM
+        type: string
+        description: ''
+        unit: ''
+      row_count: 363786
+      source_row_count: 363786
+      duplicate_rows: 0
+      size_bytes: 0
+      sha256: 2b93ac509cdc2f4c9894a5a677ce6e1c0c347e648a1d53e9b810403de28a2fda
+      last_modified: '2026-11-14T04:39:45.390532+00:00'
+      ingested_at: '2026-11-14T04:39:45.390532+00:00'
+      source_id: bsee-ewell-war
+      source: bin/war/mv_war_main.bin
+      source_member: null
+      source_format: pickle
+      source_sha256: fbb5e0be31deb59ef86138109ac20fdd5401db3a58512245e5a987bedfb30f68
+      source_modified_at: '2026-02-20T04:26:26.131844+00:00'
+      schema_status: source_columns
+      encoding: null
+      data_status: real
+      readiness_status: partial
+      source_vintage:
+        state: unknown
+        reason: File modification time does not establish source vintage
+      deduplication:
+        method: exact_full_row_same_schema
+        status: no_comparable_schema
+        compared_files: []
+        compared_sources: []
+      measured_size_bytes: 64464944
+      local_only: true
+      availability: missing
+    - name: mv_war_main_prop
+      path: data/modules/bsee/war/20261113_mv_war_main_prop.csv
+      format: csv
+      columns:
+      - name: SN_WAR
+        type: string
+        description: ''
+        unit: ''
+      - name: WELL_NAME_SUFFIX
+        type: string
+        description: ''
+        unit: ''
+      - name: WELL_ACTV_START_DT
+        type: string
+        description: ''
+        unit: ''
+      - name: TOTAL_DEPTH_DATE
+        type: string
+        description: ''
+        unit: ''
+      - name: WELL_ACTIVITY_CD
+        type: string
+        description: ''
+        unit: ''
+      - name: WELL_ACTV_END_DT
+        type: string
+        description: ''
+        unit: ''
+      - name: DRILLING_MD
+        type: string
+        description: ''
+        unit: ''
+      - name: DRILLING_TVD
+        type: string
+        description: ''
+        unit: ''
+      - name: DRILL_FLUID_WGT
+        type: string
+        description: ''
+        unit: ''
+      - name: GEOCHEM_SMPL_COLLECTED_CD
+        type: string
+        description: ''
+        unit: ''
+      - name: LITHO_SAMPLE_COLLECTED_CD
+        type: string
+        description: ''
+        unit: ''
+      - name: PALEO_SAMPLE_COLLECTED_CD
+        type: string
+        description: ''
+        unit: ''
+      - name: SIDEWALL_SMPL_COLLECTED_CD
+        type: string
+        description: ''
+        unit: ''
+      - name: CONV_CORE_COLLECTED_CD
+        type: string
+        description: ''
+        unit: ''
+      - name: VELOCITY_SURV_COLLECTED_CD
+        type: string
+        description: ''
+        unit: ''
+      row_count: 361756
+      source_row_count: 361756
+      duplicate_rows: 0
+      size_bytes: 0
+      sha256: 9a081ce53a5d889b63aa47332abb9e217c8bb752292ebd6501443578b660dd74
+      last_modified: '2026-11-14T04:39:45.390532+00:00'
+      ingested_at: '2026-11-14T04:39:45.390532+00:00'
+      source_id: bsee-ewell-war
+      source: bin/war/mv_war_main_prop.bin
+      source_member: null
+      source_format: pickle
+      source_sha256: c3c7de95a350ee05194470583051689bb345d649c65556cd17754490a9e43970
+      source_modified_at: '2026-02-20T04:26:25.028181+00:00'
+      schema_status: source_columns
+      encoding: null
+      data_status: real
+      readiness_status: partial
+      source_vintage:
+        state: unknown
+        reason: File modification time does not establish source vintage
+      deduplication:
+        method: exact_full_row_same_schema
+        status: no_comparable_schema
+        compared_files: []
+        compared_sources: []
+      measured_size_bytes: 28178796
+      local_only: true
+      availability: missing
+    - name: mv_war_main_prop_remark
+      path: data/modules/bsee/war/20261113_mv_war_main_prop_remark.csv
+      format: csv
+      columns:
+      - name: SN_WAR
+        type: string
+        description: ''
+        unit: ''
+      - name: TEXT_REMARK
+        type: string
+        description: ''
+        unit: ''
+      row_count: 361756
+      source_row_count: 361756
+      duplicate_rows: 0
+      size_bytes: 0
+      sha256: 058580a376f65d776d224f366f2b36e95c1bf19988226efc231dfbce697ad6f4
+      last_modified: '2026-11-14T04:39:45.390532+00:00'
+      ingested_at: '2026-11-14T04:39:45.390532+00:00'
+      source_id: bsee-ewell-war
+      source: bin/war/mv_war_main_prop_remark.bin
+      source_member: null
+      source_format: pickle
+      source_sha256: ce5aeb7b4c2ccdae950fa49644492ee78ef41282bc935cf61621f61098d6eb60
+      source_modified_at: '2026-02-20T04:26:29.929801+00:00'
+      schema_status: source_columns
+      encoding: null
+      data_status: real
+      readiness_status: partial
+      source_vintage:
+        state: unknown
+        reason: File modification time does not establish source vintage
+      deduplication:
+        method: exact_full_row_same_schema
+        status: no_comparable_schema
+        compared_files: []
+        compared_sources: []
+      measured_size_bytes: 295879865
+      local_only: true
+      availability: missing
+    - name: mv_war_open_hole_runs
+      path: data/modules/bsee/war/20261113_mv_war_open_hole_runs.csv
+      format: csv
+      columns:
+      - name: SN_WAR_FK
+        type: string
+        description: ''
+        unit: ''
+      - name: BUS_ASC_NAME
+        type: string
+        description: ''
+        unit: ''
+      - name: OPERATIONS_COMPLETED_DATE
+        type: string
+        description: ''
+        unit: ''
+      - name: TOOL_LOGGING_METHOD_NAME
+        type: string
+        description: ''
+        unit: ''
+      - name: LOG_INTV_TOP_MD
+        type: string
+        description: ''
+        unit: ''
+      - name: LOG_INTV_BOTM_MD
+        type: string
+        description: ''
+        unit: ''
+      - name: SN_OPEN_HOLE
+        type: string
+        description: ''
+        unit: ''
+      row_count: 32694
+      source_row_count: 32694
+      duplicate_rows: 0
+      size_bytes: 0
+      sha256: bf0cf028d6e93a1131e2ba4e730c47e170154d040a6be816540b716712c3d24e
+      last_modified: '2026-11-14T04:39:45.390532+00:00'
+      ingested_at: '2026-11-14T04:39:45.390532+00:00'
+      source_id: bsee-ewell-war
+      source: bin/war/mv_war_open_hole_runs.bin
+      source_member: null
+      source_format: pickle
+      source_sha256: fac4c9929cff6dac1634962351daa8896635ad6539da1b48892956d6868e649e
+      source_modified_at: '2026-02-20T04:26:26.182345+00:00'
+      schema_status: source_columns
+      encoding: null
+      data_status: real
+      readiness_status: partial
+      source_vintage:
+        state: unknown
+        reason: File modification time does not establish source vintage
+      deduplication:
+        method: exact_full_row_same_schema
+        status: no_comparable_schema
+        compared_files: []
+        compared_sources: []
+      measured_size_bytes: 2056073
+      local_only: true
+      availability: missing
+    - name: mv_war_open_hole_tools
+      path: data/modules/bsee/war/20261113_mv_war_open_hole_tools.csv
+      format: csv
+      columns:
+      - name: SN_OPEN_HOLE_FK
+        type: string
+        description: ''
+        unit: ''
+      - name: LOG_TOOL_TYPE_CODE
+        type: string
+        description: ''
+        unit: ''
+      row_count: 83927
+      source_row_count: 83927
+      duplicate_rows: 0
+      size_bytes: 0
+      sha256: 6fa461f52aaac380b35d7183ff0f1c4cbef78b4ab48bf679fb77f038692b0d91
+      last_modified: '2026-11-14T04:39:45.390532+00:00'
+      ingested_at: '2026-11-14T04:39:45.390532+00:00'
+      source_id: bsee-ewell-war
+      source: bin/war/mv_war_open_hole_tools.bin
+      source_member: null
+      source_format: pickle
+      source_sha256: 8875ea2f89b930ded6e1754f9639d2bf113b14f0d47447c9b4d8b686b48a5075
+      source_modified_at: '2026-02-20T04:26:26.195429+00:00'
+      schema_status: source_columns
+      encoding: null
+      data_status: real
+      readiness_status: partial
+      source_vintage:
+        state: unknown
+        reason: File modification time does not establish source vintage
+      deduplication:
+        method: exact_full_row_same_schema
+        status: no_comparable_schema
+        compared_files: []
+        compared_sources: []
+      measured_size_bytes: 865884
+      local_only: true
+      availability: missing
+    - name: mv_war_tubular_summaries
+      path: data/modules/bsee/war/20261113_mv_war_tubular_summaries.csv
+      format: csv
+      columns:
+      - name: SN_WAR_FK
+        type: string
+        description: ''
+        unit: ''
+      - name: CSNG_INTV_TYPE_CD
+        type: string
+        description: ''
+        unit: ''
+      - name: CSNG_HOLE_SIZE
+        type: string
+        description: ''
+        unit: ''
+      - name: CASING_SIZE
+        type: string
+        description: ''
+        unit: ''
+      - name: CASING_WEIGHT
+        type: string
+        description: ''
+        unit: ''
+      - name: CASING_GRADE
+        type: string
+        description: ''
+        unit: ''
+      - name: CSNG_LINER_TEST_PRSS
+        type: string
+        description: ''
+        unit: ''
+      - name: CSNG_SHOE_TEST_PRSS
+        type: string
+        description: ''
+        unit: ''
+      - name: CSNG_CEMENT_VOL
+        type: string
+        description: ''
+        unit: ''
+      - name: SN_WAR_CSNG_INTV
+        type: string
+        description: ''
+        unit: ''
+      row_count: 389840
+      source_row_count: 389840
+      duplicate_rows: 0
+      size_bytes: 0
+      sha256: a80e16b9888b1faecf0bcaac80e226c2588119a84f0aef948e805d1bc4643839
+      last_modified: '2026-11-14T04:39:45.390532+00:00'
+      ingested_at: '2026-11-14T04:39:45.390532+00:00'
+      source_id: bsee-ewell-war
+      source: bin/war/mv_war_tubular_summaries.bin
+      source_member: null
+      source_format: pickle
+      source_sha256: b1f12434e6d3150d8bab5c344220027eafb6c5affd6db08687494e15d4aacb6b
+      source_modified_at: '2026-02-20T04:26:26.478571+00:00'
+      schema_status: source_columns
+      encoding: null
+      data_status: real
+      readiness_status: partial
+      source_vintage:
+        state: unknown
+        reason: File modification time does not establish source vintage
+      deduplication:
+        method: exact_full_row_same_schema
+        status: no_comparable_schema
+        compared_files: []
+        compared_sources: []
+      measured_size_bytes: 22104755
+      local_only: true
+      availability: missing
+    - name: mv_war_tubular_summaries_prop
+      path: data/modules/bsee/war/20261113_mv_war_tubular_summaries_prop.csv
+      format: csv
+      columns:
+      - name: SN_WAR_CSNG_INTV_FK
+        type: string
+        description: ''
+        unit: ''
+      - name: SN_WAR_FK
+        type: string
+        description: ''
+        unit: ''
+      - name: CSNG_SETTING_BOTM_MD
+        type: string
+        description: ''
+        unit: ''
+      - name: CSNG_SETTING_TOP_MD
+        type: string
+        description: ''
+        unit: ''
+      row_count: 389840
+      source_row_count: 389840
+      duplicate_rows: 0
+      size_bytes: 0
+      sha256: cef83b8832574b4524b7e0e02e962d528d5398ea3ed307bc3098686266c04e79
+      last_modified: '2026-11-14T04:39:45.390532+00:00'
+      ingested_at: '2026-11-14T04:39:45.390532+00:00'
+      source_id: bsee-ewell-war
+      source: bin/war/mv_war_tubular_summaries_prop.bin
+      source_member: null
+      source_format: pickle
+      source_sha256: c31bf89d10535fe515aff3802750ea8d7a57e0e9d43f5980edbf37ade64fce28
+      source_modified_at: '2026-02-20T04:26:26.547009+00:00'
+      schema_status: source_columns
+      encoding: null
+      data_status: real
+      readiness_status: partial
+      source_vintage:
+        state: unknown
+        reason: File modification time does not establish source vintage
+      deduplication:
+        method: exact_full_row_same_schema
+        status: no_comparable_schema
+        compared_files: []
+        compared_sources: []
+      measured_size_bytes: 9367320
+      local_only: true
+      availability: missing
+    - name: rig_fleet
+      path: data/modules/bsee/rig_fleet/20261113_rig_fleet.csv
+      format: csv
+      columns:
+      - name: RIG_NAME
+        type: string
+        description: ''
+        unit: ''
+      - name: WELLS_DRILLED_COUNT
+        type: string
+        description: ''
+        unit: ''
+      - name: LAST_WAR_DATE
+        type: string
+        description: ''
+        unit: ''
+      - name: RIG_TYPE
+        type: string
+        description: ''
+        unit: ''
+      row_count: 16
+      source_row_count: 16
+      duplicate_rows: 0
+      size_bytes: 0
+      sha256: 0cf9f02dc8cfe5bb3aa2e3c0b94d4da37a9822d07949dd77d2d1a9490946f7ab
+      last_modified: '2026-11-14T04:39:45.390532+00:00'
+      ingested_at: '2026-11-14T04:39:45.390532+00:00'
+      source_id: bsee-data-center
+      source: bin/rig_fleet/rig_fleet.bin
+      source_member: null
+      source_format: pickle
+      source_sha256: f0c5327c15e02fa9519b1cda0f36151b27dd1798c210c2cd901d71cd8e4b60f6
+      source_modified_at: '2026-02-08T14:01:59.551614+00:00'
+      schema_status: source_columns
+      encoding: null
+      data_status: real
+      readiness_status: partial
+      source_vintage:
+        state: unknown
+        reason: File modification time does not establish source vintage
+      deduplication:
+        method: exact_full_row_same_schema
+        status: no_comparable_schema
+        compared_files: []
+        compared_sources: []
+      measured_size_bytes: 891
+      local_only: true
+      availability: missing
+    - name: rig_fleet_full
+      path: data/modules/bsee/rig_fleet/20261113_rig_fleet_full.csv
+      format: csv
+      columns:
+      - name: RIG_NAME
+        type: string
+        description: ''
+        unit: ''
+      - name: RIG_TYPE
+        type: string
+        description: ''
+        unit: ''
+      - name: RIG_STATUS
+        type: string
+        description: ''
+        unit: ''
+      - name: OWNER
+        type: string
+        description: ''
+        unit: ''
+      - name: OPERATOR
+        type: string
+        description: ''
+        unit: ''
+      - name: IMO_NUMBER
+        type: string
+        description: ''
+        unit: ''
+      - name: FLAG_STATE
+        type: string
+        description: ''
+        unit: ''
+      - name: WATER_DEPTH_RATING_FT
+        type: string
+        description: ''
+        unit: ''
+      - name: DRILLING_DEPTH_RATING_FT
+        type: string
+        description: ''
+        unit: ''
+      - name: MAX_WATER_DEPTH_FT
+        type: string
+        description: ''
+        unit: ''
+      - name: LOA_M
+        type: string
+        description: ''
+        unit: ''
+      - name: BEAM_M
+        type: string
+        description: ''
+        unit: ''
+      - name: DISPLACEMENT_TONNES
+        type: string
+        description: ''
+        unit: ''
+      - name: MOONPOOL_DIAMETER_M
+        type: string
+        description: ''
+        unit: ''
+      - name: DP_CLASS
+        type: string
+        description: ''
+        unit: ''
+      - name: YEAR_BUILT
+        type: string
+        description: ''
+        unit: ''
+      - name: WELLS_DRILLED_COUNT
+        type: string
+        description: ''
+        unit: ''
+      - name: LAST_WAR_DATE
+        type: string
+        description: ''
+        unit: ''
+      - name: FIRST_WAR_DATE
+        type: string
+        description: ''
+        unit: ''
+      - name: LAST_AREA_CODE
+        type: string
+        description: ''
+        unit: ''
+      - name: LAST_BLOCK_NUMBER
+        type: string
+        description: ''
+        unit: ''
+      - name: DATA_SOURCE
+        type: string
+        description: ''
+        unit: ''
+      - name: IS_OFFSHORE
+        type: string
+        description: ''
+        unit: ''
+      row_count: 2268
+      source_row_count: 2268
+      duplicate_rows: 0
+      size_bytes: 0
+      sha256: ad7e4c26be844845bbcfcdf61ddad8a37f2bc6f67b976576866b5cc9e2202830
+      last_modified: '2026-11-14T04:39:45.390532+00:00'
+      ingested_at: '2026-11-14T04:39:45.390532+00:00'
+      source_id: bsee-data-center
+      source: bin/rig_fleet/rig_fleet_full.bin
+      source_member: null
+      source_format: pickle
+      source_sha256: e240d6133307ea65fc17e4ad732437cbac74fcb347cc97995d62c9d39718de2c
+      source_modified_at: '2026-02-13T13:36:19.172655+00:00'
+      schema_status: source_columns
+      encoding: null
+      data_status: real
+      readiness_status: partial
+      source_vintage:
+        state: unknown
+        reason: File modification time does not establish source vintage
+      deduplication:
+        method: exact_full_row_same_schema
+        status: no_comparable_schema
+        compared_files: []
+        compared_sources: []
+      measured_size_bytes: 206566
+      local_only: true
+      availability: missing
+    - name: directdelimit
+      path: data/modules/bsee/directional_survey/20261113_directdelimit.csv
+      format: csv
+      columns:
+      - name: API_WELL_NUMBER
+        type: string
+        description: ''
+        unit: ''
+      - name: SOURCE_COLUMN_02
+        type: string
+        description: ''
+        unit: ''
+      - name: SOURCE_COLUMN_03
+        type: string
+        description: ''
+        unit: ''
+      - name: SOURCE_COLUMN_04
+        type: string
+        description: ''
+        unit: ''
+      - name: SOURCE_COLUMN_05
+        type: string
+        description: ''
+        unit: ''
+      - name: SOURCE_COLUMN_06
+        type: string
+        description: ''
+        unit: ''
+      - name: SOURCE_COLUMN_07
+        type: string
+        description: ''
+        unit: ''
+      - name: SOURCE_COLUMN_08
+        type: string
+        description: ''
+        unit: ''
+      - name: SOURCE_COLUMN_09
+        type: string
+        description: ''
+        unit: ''
+      - name: SOURCE_COLUMN_10
+        type: string
+        description: ''
+        unit: ''
+      - name: SOURCE_COLUMN_11
+        type: string
+        description: ''
+        unit: ''
+      row_count: 4924967
+      source_row_count: 4924967
+      duplicate_rows: 0
+      size_bytes: 0
+      sha256: 36db21833e91594a7bb11e9581214fd5a36e8ead415dfde9bdaf382420cbbe9a
+      last_modified: '2026-11-14T04:39:45.390532+00:00'
+      ingested_at: '2026-11-14T04:39:45.390532+00:00'
+      source_id: bsee-data-center
+      source: zip/directional_survey/directdelimit.zip
+      source_member: directdelimit.txt
+      source_format: zip
+      source_sha256: 286f8e4e0e2a91034ca046062d5a8435b2d74a43163f94b795527711f580669b
+      source_modified_at: '2026-01-18T14:05:14+00:00'
+      schema_status: positional_unverified
+      encoding: latin-1
+      data_status: real
+      readiness_status: partial
+      source_vintage:
+        state: unknown
+        reason: File modification time does not establish source vintage
+      deduplication:
+        method: exact_full_row_same_schema
+        status: no_comparable_schema
+        compared_files: []
+        compared_sources: []
+      measured_size_bytes: 546039007
+      local_only: true
+      availability: missing
+    - name: dsptsdelimit
+      path: data/modules/bsee/directional_survey/20261113_dsptsdelimit.csv
+      format: csv
+      columns:
+      - name: API_WELL_NUMBER
+        type: string
+        description: ''
+        unit: ''
+      - name: INCL_ANG_DEG_VAL
+        type: string
+        description: ''
+        unit: ''
+      - name: INCL_ANG_MIN_VAL
+        type: string
+        description: ''
+        unit: ''
+      - name: SURVEY_POINT_MD
+        type: string
+        description: ''
+        unit: ''
+      - name: WELL_N_S_CODE
+        type: string
+        description: ''
+        unit: ''
+      - name: DIR_DEG_VAL
+        type: string
+        description: ''
+        unit: ''
+      - name: DIR_MINS_VAL
+        type: string
+        description: ''
+        unit: ''
+      - name: WELL_E_W_CODE
+        type: string
+        description: ''
+        unit: ''
+      - name: SURVEY_POINT_TVD
+        type: string
+        description: ''
+        unit: ''
+      - name: DELTA_X
+        type: string
+        description: ''
+        unit: ''
+      - name: DELTA_Y
+        type: string
+        description: ''
+        unit: ''
+      - name: SURF_LONGITUDE
+        type: string
+        description: ''
+        unit: ''
+      - name: SURF_LATITUDE
+        type: string
+        description: ''
+        unit: ''
+      row_count: 4925141
+      source_row_count: 4925141
+      duplicate_rows: 0
+      size_bytes: 0
+      sha256: 455b708465ae2b49aefc0d3b4dd6feda8be56ad0ba0b80a7514fb41cf0247238
+      last_modified: '2026-11-14T04:39:45.390532+00:00'
+      ingested_at: '2026-11-14T04:39:45.390532+00:00'
+      source_id: bsee-data-center
+      source: zip/directional_survey/dsptsdelimit.zip
+      source_member: dsptsdelimit.txt
+      source_format: zip
+      source_sha256: a4d377e71a64701a7efa9db4e8c4a6f765d718a51eb18de23e9449cacd37e091
+      source_modified_at: '2026-01-18T13:52:22+00:00'
+      schema_status: source_columns
+      encoding: latin-1
+      data_status: real
+      readiness_status: partial
+      source_vintage:
+        state: unknown
+        reason: File modification time does not establish source vintage
+      deduplication:
+        method: exact_full_row_same_schema
+        status: exact_text_only
+        compared_files:
+        - wells/well_directional_surveys.csv
+        compared_sources:
+        - path: wells/well_directional_surveys.csv
+          sha256: e61de0480595250ecce5db4c7abb0d1eb86395c6f16f0709ab60bdb2ee616972
+      measured_size_bytes: 1034279791
+      local_only: true
+      availability: missing
+    - name: mv_boreholes_all
+      path: data/modules/bsee/borehole/20261113.csv
+      format: csv
+      columns:
+      - name: API_WELL_NUMBER
+        type: string
+        description: ''
+        unit: ''
+      - name: WELL_NAME
+        type: string
+        description: ''
+        unit: ''
+      - name: WELL_NAME_SUFFIX
+        type: string
+        description: ''
+        unit: ''
+      - name: BOTM_LEASE_NUMBER
+        type: string
+        description: ''
+        unit: ''
+      - name: BOTM_AREA_CODE
+        type: string
+        description: ''
+        unit: ''
+      - name: BOTM_BLOCK_NUMBER
+        type: string
+        description: ''
+        unit: ''
+      - name: COMPANY_NAME
+        type: string
+        description: ''
+        unit: ''
+      - name: WELL_SPUD_DATE
+        type: string
+        description: ''
+        unit: ''
+      - name: BH_TOTAL_MD
+        type: string
+        description: ''
+        unit: ''
+      - name: WELL_BORE_TVD
+        type: string
+        description: ''
+        unit: ''
+      - name: WELL_TD_SS
+        type: string
+        description: ''
+        unit: ''
+      - name: RKB_ELEVATION
+        type: string
+        description: ''
+        unit: ''
+      - name: WELL_BP_ST_KICKOFF_MD
+        type: string
+        description: ''
+        unit: ''
+      - name: TOTAL_DEPTH_DATE
+        type: string
+        description: ''
+        unit: ''
+      - name: BOREHOLE_STAT_DT
+        type: string
+        description: ''
+        unit: ''
+      - name: WELL_TYPE_CODE
+        type: string
+        description: ''
+        unit: ''
+      - name: BOREHOLE_STAT_CD
+        type: string
+        description: ''
+        unit: ''
+      - name: CASING_CUT_CODE
+        type: string
+        description: ''
+        unit: ''
+      - name: WATER_DEPTH
+        type: string
+        description: ''
+        unit: ''
+      - name: UNDWTR_COMP_STUB
+        type: string
+        description: ''
+        unit: ''
+      - name: SURF_LEASE_NUMBER
+        type: string
+        description: ''
+        unit: ''
+      - name: SURF_LATITUDE
+        type: string
+        description: ''
+        unit: ''
+      - name: SURF_LONGITUDE
+        type: string
+        description: ''
+        unit: ''
+      - name: BOTM_LATITUDE
+        type: string
+        description: ''
+        unit: ''
+      - name: BOTM_LONGITUDE
+        type: string
+        description: ''
+        unit: ''
+      - name: REGION_CODE
+        type: string
+        description: ''
+        unit: ''
+      row_count: 57354
+      source_row_count: 57354
+      duplicate_rows: 0
+      size_bytes: 0
+      sha256: bb58691785b8e570292a5d0b7c9aa78a68c7d4c93ed6a4a3eee8422b463f851f
+      last_modified: '2026-11-14T04:45:13.034870+00:00'
+      ingested_at: '2026-11-14T04:45:13.034870+00:00'
+      source_id: bsee-data-center
+      source: bin/borehole/BoreholeRawData.zip
+      source_member: BoreholeRawData/mv_boreholes_all.txt
+      source_format: zip
+      source_sha256: dc9df8eae467fc19e69bacd212eff576b7ad9f9ffb8c74b3939036edf9dfa56d
+      source_modified_at: '2026-02-09T10:31:56+00:00'
+      schema_status: source_columns
+      encoding: latin-1
+      data_status: real
+      readiness_status: partial
+      source_vintage:
+        state: unknown
+        reason: File modification time does not establish source vintage
+      deduplication:
+        method: exact_full_row_same_schema
+        status: no_comparable_schema
+        compared_files: []
+        compared_sources: []
+      measured_size_bytes: 10936434
+      local_only: true
+      availability: missing
+    binary_stores:
+    - name: Well_APD_Default
+      path: data/modules/bsee/bin/Well_APD_Default
+      format: binary_directory
+      file_count: 3
+      size_bytes: 20126126
+      description: 'Binary data directory: 3 files, 19.2 MB. .bin: 2 files (19.2 MB);
+        (no ext): 1 files (0 B)'
+      last_modified: '2026-02-11T17:02:56.437772+00:00'
+    - name: apd
+      path: data/modules/bsee/bin/apd
+      format: binary_directory
+      file_count: 2
+      size_bytes: 8621672
+      description: 'Binary data directory: 2 files, 8.2 MB. .bin: 2 files (8.2 MB)'
+      last_modified: '2026-02-20T04:25:10.130406+00:00'
+    - name: apichanges
+      path: data/modules/bsee/bin/apichanges
+      format: binary_directory
+      file_count: 2
+      size_bytes: 117734
+      description: 'Binary data directory: 2 files, 115.0 KB. (no ext): 1 files (0
+        B); .bin: 1 files (115.0 KB)'
+      last_modified: '2026-02-11T17:02:56.378424+00:00'
+    - name: apiraw
+      path: data/modules/bsee/bin/apiraw
+      format: binary_directory
+      file_count: 3
+      size_bytes: 21837932
+      description: 'Binary data directory: 3 files, 20.8 MB. .bin: 2 files (20.8 MB);
+        (no ext): 1 files (0 B)'
+      last_modified: '2026-02-11T17:02:56.380835+00:00'
+    - name: approvals
+      path: data/modules/bsee/bin/approvals
+      format: binary_directory
+      file_count: 2
+      size_bytes: 13083807
+      description: 'Binary data directory: 2 files, 12.5 MB. .bin: 1 files (12.5 MB);
+        (no ext): 1 files (0 B)'
+      last_modified: '2026-02-11T17:02:56.383030+00:00'
+    - name: assignments
+      path: data/modules/bsee/bin/assignments
+      format: binary_directory
+      file_count: 2
+      size_bytes: 12441982
+      description: 'Binary data directory: 2 files, 11.9 MB. (no ext): 1 files (0
+        B); .bin: 1 files (11.9 MB)'
+      last_modified: '2026-02-11T17:02:56.384841+00:00'
+    - name: companydetails
+      path: data/modules/bsee/bin/companydetails
+      format: binary_directory
+      file_count: 3
+      size_bytes: 2114710
+      description: 'Binary data directory: 3 files, 2.0 MB. .bin: 2 files (2.0 MB);
+        (no ext): 1 files (0 B)'
+      last_modified: '2026-02-11T17:02:56.386743+00:00'
+    - name: decomcost
+      path: data/modules/bsee/bin/decomcost
+      format: binary_directory
+      file_count: 9
+      size_bytes: 8570266
+      description: 'Binary data directory: 9 files, 8.2 MB. .bin: 8 files (8.2 MB);
+        (no ext): 1 files (0 B)'
+      last_modified: '2026-02-11T17:02:56.388678+00:00'
+    - name: deepqual
+      path: data/modules/bsee/bin/deepqual
+      format: binary_directory
+      file_count: 2
+      size_bytes: 125294
+      description: 'Binary data directory: 2 files, 122.4 KB. (no ext): 1 files (0
+        B); .bin: 1 files (122.4 KB)'
+      last_modified: '2026-02-11T17:02:56.390577+00:00'
+    - name: dsptsdelimit
+      path: data/modules/bsee/bin/dsptsdelimit
+      format: binary_directory
+      file_count: 2
+      size_bytes: 522172468
+      description: 'Binary data directory: 2 files, 498.0 MB. (no ext): 1 files (0
+        B); .bin: 1 files (498.0 MB)'
+      last_modified: '2026-02-11T17:02:56.392608+00:00'
+    - name: fmp
+      path: data/modules/bsee/bin/fmp
+      format: binary_directory
+      file_count: 3
+      size_bytes: 244385
+      description: 'Binary data directory: 3 files, 238.7 KB. .bin: 2 files (238.7
+        KB); (no ext): 1 files (0 B)'
+      last_modified: '2026-02-11T17:02:56.394696+00:00'
+    - name: historical_production_yearly
+      path: data/modules/bsee/bin/historical_production_yearly
+      format: binary_directory
+      file_count: 31
+      size_bytes: 915584417
+      description: 'Binary data directory: 31 files, 873.2 MB. .bin: 30 files (873.2
+        MB); (no ext): 1 files (0 B)'
+      last_modified: '2026-02-11T17:02:56.396541+00:00'
+    - name: incinv
+      path: data/modules/bsee/bin/incinv
+      format: binary_directory
+      file_count: 2
+      size_bytes: 244776
+      description: 'Binary data directory: 2 files, 239.0 KB. .bin: 1 files (239.0
+        KB); (no ext): 1 files (0 B)'
+      last_modified: '2026-02-11T17:02:56.398606+00:00'
+    - name: incs
+      path: data/modules/bsee/bin/incs
+      format: binary_directory
+      file_count: 15
+      size_bytes: 38992443
+      description: 'Binary data directory: 15 files, 37.2 MB. .bin: 14 files (37.2
+        MB); (no ext): 1 files (0 B)'
+      last_modified: '2026-02-11T17:02:56.400440+00:00'
+    - name: lab
+      path: data/modules/bsee/bin/lab
+      format: binary_directory
+      file_count: 2
+      size_bytes: 2827226
+      description: 'Binary data directory: 2 files, 2.7 MB. .bin: 1 files (2.7 MB);
+        (no ext): 1 files (0 B)'
+      last_modified: '2026-02-11T17:02:56.402516+00:00'
+    - name: leaseowner
+      path: data/modules/bsee/bin/leaseowner
+      format: binary_directory
+      file_count: 2
+      size_bytes: 635678
+      description: 'Binary data directory: 2 files, 620.8 KB. (no ext): 1 files (0
+        B); .bin: 1 files (620.8 KB)'
+      last_modified: '2026-02-11T17:02:56.404488+00:00'
+    - name: mcpflow
+      path: data/modules/bsee/bin/mcpflow
+      format: binary_directory
+      file_count: 8
+      size_bytes: 7309698
+      description: 'Binary data directory: 8 files, 7.0 MB. .bin: 7 files (7.0 MB);
+        (no ext): 1 files (0 B)'
+      last_modified: '2026-02-11T17:02:56.406395+00:00'
+    - name: nonrequired
+      path: data/modules/bsee/bin/nonrequired
+      format: binary_directory
+      file_count: 2
+      size_bytes: 17890206
+      description: 'Binary data directory: 2 files, 17.1 MB. .bin: 1 files (17.1 MB);
+        (no ext): 1 files (0 B)'
+      last_modified: '2026-02-11T17:02:56.408501+00:00'
+    - name: ocsprod
+      path: data/modules/bsee/bin/ocsprod
+      format: binary_directory
+      file_count: 5
+      size_bytes: 6532
+      description: 'Binary data directory: 5 files, 6.4 KB. .bin: 4 files (6.4 KB);
+        (no ext): 1 files (0 B)'
+      last_modified: '2026-02-11T17:02:56.410455+00:00'
+    - name: offshorestats
+      path: data/modules/bsee/bin/offshorestats
+      format: binary_directory
+      file_count: 6
+      size_bytes: 109378987
+      description: 'Binary data directory: 6 files, 104.3 MB. .bin: 5 files (104.3
+        MB); (no ext): 1 files (0 B)'
+      last_modified: '2026-02-11T17:02:56.412567+00:00'
+    - name: osfr
+      path: data/modules/bsee/bin/osfr
+      format: binary_directory
+      file_count: 4
+      size_bytes: 1454014
+      description: 'Binary data directory: 4 files, 1.4 MB. .bin: 3 files (1.4 MB);
+        (no ext): 1 files (0 B)'
+      last_modified: '2026-02-11T17:02:56.414771+00:00'
+    - name: permstruc
+      path: data/modules/bsee/bin/permstruc
+      format: binary_directory
+      file_count: 3
+      size_bytes: 53014
+      description: 'Binary data directory: 3 files, 51.8 KB. .bin: 2 files (51.8 KB);
+        (no ext): 1 files (0 B)'
+      last_modified: '2026-02-11T17:02:56.416751+00:00'
+    - name: pipeloc
+      path: data/modules/bsee/bin/pipeloc
+      format: binary_directory
+      file_count: 2
+      size_bytes: 248243935
+      description: 'Binary data directory: 2 files, 236.7 MB. .bin: 1 files (236.7
+        MB); (no ext): 1 files (0 B)'
+      last_modified: '2026-02-11T17:02:56.418605+00:00'
+    - name: platstruc
+      path: data/modules/bsee/bin/platstruc
+      format: binary_directory
+      file_count: 10
+      size_bytes: 17156791
+      description: 'Binary data directory: 10 files, 16.4 MB. .bin: 9 files (16.4
+        MB); (no ext): 1 files (0 B)'
+      last_modified: '2026-02-11T17:02:56.420607+00:00'
+    - name: production_plan_area
+      path: data/modules/bsee/bin/production_plan_area
+      format: binary_directory
+      file_count: 2
+      size_bytes: 164618
+      description: 'Binary data directory: 2 files, 160.8 KB. .bin: 1 files (160.8
+        KB); (no ext): 1 files (0 B)'
+      last_modified: '2026-02-11T17:02:56.422461+00:00'
+    - name: production_raw
+      path: data/modules/bsee/bin/production_raw
+      format: binary_directory
+      file_count: 5
+      size_bytes: 30951963
+      description: 'Binary data directory: 5 files, 29.5 MB. .bin: 4 files (29.5 MB);
+        (no ext): 1 files (0 B)'
+      last_modified: '2026-02-11T17:02:56.424644+00:00'
+    - name: rig_fleet
+      path: data/modules/bsee/bin/rig_fleet
+      format: binary_directory
+      file_count: 3
+      size_bytes: 78977
+      description: 'Binary data directory: 3 files, 77.1 KB. (no ext): 1 files (0
+        B); .csv: 1 files (75.2 KB); .bin: 1 files (1.9 KB)'
+      last_modified: '2026-02-11T17:02:56.427203+00:00'
+    - name: rowdesc
+      path: data/modules/bsee/bin/rowdesc
+      format: binary_directory
+      file_count: 2
+      size_bytes: 1564573
+      description: 'Binary data directory: 2 files, 1.5 MB. .bin: 1 files (1.5 MB);
+        (no ext): 1 files (0 B)'
+      last_modified: '2026-02-11T17:02:56.429833+00:00'
+    - name: royaltyref
+      path: data/modules/bsee/bin/royaltyref
+      format: binary_directory
+      file_count: 2
+      size_bytes: 2722
+      description: 'Binary data directory: 2 files, 2.7 KB. (no ext): 1 files (0 B);
+        .bin: 1 files (2.7 KB)'
+      last_modified: '2026-02-11T17:02:56.431865+00:00'
+    - name: scanneddocs
+      path: data/modules/bsee/bin/scanneddocs
+      format: binary_directory
+      file_count: 16
+      size_bytes: 90625074
+      description: 'Binary data directory: 16 files, 86.4 MB. .bin: 15 files (86.4
+        MB); (no ext): 1 files (0 B)'
+      last_modified: '2026-02-11T17:02:56.433891+00:00'
+    - name: serialreg
+      path: data/modules/bsee/bin/serialreg
+      format: binary_directory
+      file_count: 13
+      size_bytes: 115031551
+      description: 'Binary data directory: 13 files, 109.7 MB. .bin: 12 files (109.7
+        MB); (no ext): 1 files (0 B)'
+      last_modified: '2026-02-11T17:02:56.435854+00:00'
+    - name: war
+      path: data/modules/bsee/bin/war
+      format: binary_directory
+      file_count: 8
+      size_bytes: 379203748
+      description: 'Binary data directory: 8 files, 361.6 MB. .bin: 8 files (361.6
+        MB)'
+      last_modified: '2026-02-20T04:26:26.549038+00:00'
+    - name: directdelimit.zip
+      path: data/modules/bsee/zip/directional_survey/directdelimit.zip
+      format: zip
+      size_bytes: 101166278
+      contents:
+      - directdelimit.txt
+      contents_count: 1
+      last_modified: '2026-01-18T14:05:14+00:00'
+    - name: dsptsdelimit.zip
+      path: data/modules/bsee/zip/directional_survey/dsptsdelimit.zip
+      format: zip
+      size_bytes: 139631861
+      contents:
+      - dsptsdelimit.txt
+      contents_count: 1
+      last_modified: '2026-01-18T13:52:22+00:00'
+  fdas:
+    module: fdas
+    description: Field Development Analysis System - enhanced well data [4.4 MB]
+    datasets:
+    - name: well_data_enhanced.csv
+      path: data/modules/fdas/enhanced/wells/well_data_enhanced.csv
+      format: csv
+      columns:
+      - name: API_WELL_NUMBER
+        type: float
+        description: ''
+        unit: ''
+      - name: WELL_NAME
+        type: string
+        description: ''
+        unit: ''
+      - name: WATER_DEPTH
+        type: float
+        description: ''
+        unit: feet
+      - name: SURF_LATITUDE
+        type: float
+        description: ''
+        unit: degrees
+      - name: WELL_NAME_SUFFIX
+        type: string
+        description: ''
+        unit: ''
+      - name: COMPANY_NAME
+        type: string
+        description: ''
+        unit: ''
+      - name: BOTM_FLD_NAME_CD
+        type: string
+        description: ''
+        unit: ''
+      - name: WELL_SPUD_DATE
+        type: datetime
+        description: ''
+        unit: ''
+      - name: TOTAL_DEPTH_DATE
+        type: datetime
+        description: ''
+        unit: feet
+      - name: BH_TOTAL_MD
+        type: float
+        description: ''
+        unit: feet
+      - name: WELL_BORE_TVD
+        type: integer
+        description: ''
+        unit: feet
+      - name: WELL_BP_ST_KICKOFF_MD
+        type: integer
+        description: ''
+        unit: feet
+      - name: BOREHOLE_STAT_DT
+        type: datetime
+        description: ''
+        unit: ''
+      - name: BOREHOLE_STAT_CD
+        type: string
+        description: ''
+        unit: ''
+      - name: CASING_CUT_CODE
+        type: string
+        description: ''
+        unit: ''
+      - name: UNDWTR_COMP_STUB
+        type: string
+        description: ''
+        unit: ''
+      - name: SURF_LONGITUDE
+        type: float
+        description: ''
+        unit: degrees
+      - name: BOTM_LATITUDE
+        type: float
+        description: ''
+        unit: degrees
+      - name: BOTM_LONGITUDE
+        type: float
+        description: ''
+        unit: degrees
+      - name: DEV_SYSTEM
+        type: string
+        description: ''
+        unit: ''
+      row_count: 57281
+      size_bytes: 4593879
+      last_modified: '2025-10-04T04:09:56.944525+00:00'
+    binary_stores: []
+  hse:
+    module: hse
+    description: "Health, Safety and Environment incident data (no data files present\
+      \ \u2014 run 'make data' to populate)"
+    datasets: []
+    binary_stores: []
+  lng_terminals:
+    module: lng_terminals
+    description: Global LNG terminal infrastructure data [31.5 KB]
+    datasets:
+    - name: terminals_seed.csv
+      path: data/modules/lng_terminals/curated/terminals_seed.csv
+      format: csv
+      columns:
+      - name: terminal_name
+        type: string
+        description: ''
+        unit: ''
+      - name: country
+        type: string
+        description: ''
+        unit: ''
+      - name: latitude
+        type: float
+        description: ''
+        unit: degrees
+      - name: longitude
+        type: float
+        description: ''
+        unit: degrees
+      - name: terminal_type
+        type: string
+        description: ''
+        unit: ''
+      - name: function
+        type: string
+        description: ''
+        unit: ''
+      - name: status
+        type: string
+        description: ''
+        unit: ''
+      - name: capacity_mtpa
+        type: float
+        description: ''
+        unit: tonnes
+      - name: year_commissioned
+        type: integer
+        description: ''
+        unit: ''
+      - name: operator
+        type: string
+        description: ''
+        unit: ''
+      - name: owner
+        type: string
+        description: ''
+        unit: ''
+      - name: water_depth_m
+        type: float
+        description: ''
+        unit: feet
+      - name: storage_m3
+        type: integer
+        description: ''
+        unit: m3
+      - name: jetty_count
+        type: integer
+        description: ''
+        unit: ''
+      - name: capex_usd_million
+        type: float
+        description: ''
+        unit: USD
+      - name: source
+        type: string
+        description: ''
+        unit: ''
+      - name: source_url
+        type: string
+        description: ''
+        unit: ''
+      - name: data_confidence
+        type: string
+        description: ''
+        unit: ''
+      row_count: 227
+      size_bytes: 32265
+      last_modified: '2026-02-16T18:47:05.739990+00:00'
+    binary_stores: []
+  marine_safety:
+    module: marine_safety
+    description: Maritime casualty and safety incident data [663.1 KB]
+    datasets:
+    - name: fatality_incidents.csv
+      path: data/modules/marine_safety/input/fatality_incidents.csv
+      format: csv
+      columns:
+      - name: incident_id
+        type: string
+        description: ''
+        unit: ''
+      - name: date
+        type: datetime
+        description: ''
+        unit: ''
+      - name: vessel_name
+        type: string
+        description: ''
+        unit: ''
+      - name: description
+        type: string
+        description: ''
+        unit: ''
+      - name: fatalities
+        type: integer
+        description: ''
+        unit: ''
+      - name: cause_of_death
+        type: string
+        description: ''
+        unit: ''
+      - name: location
+        type: string
+        description: ''
+        unit: ''
+      row_count: 20
+      size_bytes: 3324
+      last_modified: '2025-10-23T01:01:14.205854+00:00'
+    - name: foundering_incidents.csv
+      path: data/modules/marine_safety/input/foundering_incidents.csv
+      format: csv
+      columns:
+      - name: incident_id
+        type: string
+        description: ''
+        unit: ''
+      - name: date
+        type: datetime
+        description: ''
+        unit: ''
+      - name: vessel_name
+        type: string
+        description: ''
+        unit: ''
+      - name: description
+        type: string
+        description: ''
+        unit: ''
+      - name: fatalities
+        type: integer
+        description: ''
+        unit: ''
+      - name: location
+        type: string
+        description: ''
+        unit: ''
+      row_count: 15
+      size_bytes: 2464
+      last_modified: '2025-10-23T01:01:00.862546+00:00'
+    - name: hatch_incidents.csv
+      path: data/modules/marine_safety/input/hatch_incidents.csv
+      format: csv
+      columns:
+      - name: incident_id
+        type: string
+        description: ''
+        unit: ''
+      - name: date
+        type: datetime
+        description: ''
+        unit: ''
+      - name: vessel_name
+        type: string
+        description: ''
+        unit: ''
+      - name: description
+        type: string
+        description: ''
+        unit: ''
+      - name: severity
+        type: string
+        description: ''
+        unit: ''
+      - name: location
+        type: string
+        description: ''
+        unit: ''
+      row_count: 30
+      size_bytes: 4577
+      last_modified: '2025-10-23T01:00:46.574723+00:00'
+    - name: bsee_data_dataset.json
+      path: data/modules/marine_safety/raw/bsee_offshore/bsee_data_dataset.json
+      format: json
+      columns: []
+      size_bytes: 28166
+      last_modified: '2026-03-15T13:06:39.729704+00:00'
+    - name: bsee_data_package_search_q=incidents.json
+      path: data/modules/marine_safety/raw/bsee_offshore/bsee_data_package_search_q=incidents.json
+      format: json
+      columns: []
+      size_bytes: 28191
+      last_modified: '2026-03-15T13:06:39.732129+00:00'
+    - name: data_gov_maritime_search.json
+      path: data/modules/marine_safety/raw/data_gov_maritime_search.json
+      format: json
+      columns:
+      - name: help
+        type: str
+        description: ''
+        unit: ''
+      - name: success
+        type: bool
+        description: ''
+        unit: ''
+      - name: result
+        type: dict
+        description: ''
+        unit: ''
+      size_bytes: 34620
+      last_modified: '2026-03-15T13:06:39.738429+00:00'
+    - name: data_gov_osha_search.json
+      path: data/modules/marine_safety/raw/data_gov_osha_search.json
+      format: json
+      columns:
+      - name: help
+        type: str
+        description: ''
+        unit: ''
+      - name: success
+        type: bool
+        description: ''
+        unit: ''
+      - name: result
+        type: dict
+        description: ''
+        unit: ''
+      size_bytes: 12440
+      last_modified: '2026-03-15T13:06:39.739590+00:00'
+    - name: data_gov_pipeline_search.json
+      path: data/modules/marine_safety/raw/data_gov_pipeline_search.json
+      format: json
+      columns:
+      - name: help
+        type: str
+        description: ''
+        unit: ''
+      - name: success
+        type: bool
+        description: ''
+        unit: ''
+      - name: result
+        type: dict
+        description: ''
+        unit: ''
+      size_bytes: 550753
+      last_modified: '2026-03-15T13:06:39.757553+00:00'
+    - name: download_log.json
+      path: data/modules/marine_safety/raw/download_log.json
+      format: json
+      columns:
+      - name: timestamp
+        type: str
+        description: ''
+        unit: ''
+      - name: source
+        type: str
+        description: ''
+        unit: ''
+      - name: status
+        type: str
+        description: ''
+        unit: ''
+      - name: details
+        type: str
+        description: ''
+        unit: ''
+      size_bytes: 4174
+      last_modified: '2026-03-15T13:06:39.762880+00:00'
+    - name: collation_summary.json
+      path: data/modules/marine_safety/raw/imo_gisis/collation_summary.json
+      format: json
+      columns:
+      - name: collation_date
+        type: str
+        description: ''
+        unit: ''
+      - name: input_files
+        type: int
+        description: ''
+        unit: ''
+      - name: files_processed
+        type: int
+        description: ''
+        unit: ''
+      - name: files_failed
+        type: int
+        description: ''
+        unit: ''
+      - name: total_records
+        type: int
+        description: ''
+        unit: ''
+      - name: duplicate_records
+        type: int
+        description: ''
+        unit: ''
+      - name: unique_references
+        type: int
+        description: ''
+        unit: ''
+      - name: date_range
+        type: dict
+        description: ''
+        unit: ''
+      - name: columns
+        type: list
+        description: ''
+        unit: ''
+      - name: file_statistics
+        type: list
+        description: ''
+        unit: ''
+      - name: severity_breakdown
+        type: dict
+        description: ''
+        unit: ''
+      - name: output_file
+        type: str
+        description: ''
+        unit: ''
+      - name: output_size_mb
+        type: float
+        description: ''
+        unit: ''
+      size_bytes: 1815
+      last_modified: '2026-03-15T13:06:39.770009+00:00'
+    - name: download_summary.json
+      path: data/modules/marine_safety/raw/imo_gisis/download_summary.json
+      format: json
+      columns:
+      - name: download_date
+        type: str
+        description: ''
+        unit: ''
+      - name: total_records
+        type: int
+        description: ''
+        unit: ''
+      - name: successful
+        type: int
+        description: ''
+        unit: ''
+      - name: results
+        type: list
+        description: ''
+        unit: ''
+      size_bytes: 999
+      last_modified: '2026-03-15T13:06:39.771015+00:00'
+    - name: OSHA_Maritime_Inspections.json
+      path: data/modules/marine_safety/raw/osha_maritime/OSHA_Maritime_Inspections.json
+      format: json
+      columns: []
+      size_bytes: 4288
+      last_modified: '2026-03-15T13:06:39.817875+00:00'
+    - name: test_scrape_2024.json
+      path: data/modules/marine_safety/raw/uscg/test_scrape_2024.json
+      format: json
+      columns: []
+      size_bytes: 2
+      last_modified: '2026-03-15T13:06:39.825147+00:00'
+    - name: acquisition_manifest.json
+      path: data/modules/marine_safety/raw/uscg_misle/acquisition_manifest.json
+      format: json
+      columns:
+      - name: status
+        type: str
+        description: ''
+        unit: ''
+      - name: timestamp
+        type: str
+        description: ''
+        unit: ''
+      - name: output_dir
+        type: str
+        description: ''
+        unit: ''
+      - name: urls_attempted
+        type: list
+        description: ''
+        unit: ''
+      - name: download_url
+        type: NoneType
+        description: ''
+        unit: ''
+      - name: zip_path
+        type: NoneType
+        description: ''
+        unit: ''
+      - name: extracted_files
+        type: list
+        description: ''
+        unit: ''
+      - name: file_count
+        type: int
+        description: ''
+        unit: ''
+      - name: total_size_bytes
+        type: int
+        description: ''
+        unit: ''
+      - name: errors
+        type: list
+        description: ''
+        unit: ''
+      - name: manual_instructions
+        type: dict
+        description: ''
+        unit: ''
+      size_bytes: 3227
+      last_modified: '2026-02-08T17:12:15.619128+00:00'
+    binary_stores: []
+  oil_price:
+    module: oil_price
+    description: "Historical oil price data (no data files present \u2014 run 'make\
+      \ data' to populate)"
+    datasets: []
+    binary_stores: []
+  pipeline:
+    module: pipeline
+    description: Pipeline caller-input template and thickness-loss data
+    datasets:
+    - name: api_5l_pipe_schedule.csv
+      path: data/modules/pipeline/api_5l_pipe_schedule.csv
+      format: csv
+      columns:
+      - name: nps_in
+        type: float
+        description: ''
+        unit: ''
+      - name: od_mm
+        type: float
+        description: ''
+        unit: ''
+      - name: od_in
+        type: float
+        description: ''
+        unit: ''
+      - name: schedule
+        type: string
+        description: ''
+        unit: ''
+      - name: wt_mm
+        type: float
+        description: ''
+        unit: ''
+      - name: wt_in
+        type: float
+        description: ''
+        unit: ''
+      - name: weight_kgm
+        type: float
+        description: ''
+        unit: kg
+      - name: grade_range
+        type: string
+        description: ''
+        unit: ''
+      - name: standard
+        type: string
+        description: ''
+        unit: ''
+      - name: domain_hint
+        type: string
+        description: ''
+        unit: ''
+      row_count: 0
+      size_bytes: 84
+      last_modified: '2026-10-26T10:07:50.819841+00:00'
+    - name: market_pipe_thickness_loss_dataset.csv
+      path: data/modules/pipeline/raw/kaggle_pipe_thickness_loss/market_pipe_thickness_loss_dataset.csv
+      format: csv
+      columns:
+      - name: Pipe_Size_mm
+        type: integer
+        description: ''
+        unit: mm
+      - name: Thickness_mm
+        type: float
+        description: ''
+        unit: ''
+      - name: Material
+        type: string
+        description: ''
+        unit: ''
+      - name: Grade
+        type: string
+        description: ''
+        unit: ''
+      - name: Max_Pressure_psi
+        type: integer
+        description: ''
+        unit: ''
+      - name: Temperature_C
+        type: float
+        description: ''
+        unit: ''
+      - name: Corrosion_Impact_Percent
+        type: float
+        description: ''
+        unit: ''
+      - name: Thickness_Loss_mm
+        type: float
+        description: ''
+        unit: ''
+      - name: Material_Loss_Percent
+        type: float
+        description: ''
+        unit: ''
+      - name: Time_Years
+        type: integer
+        description: ''
+        unit: ''
+      - name: Condition
+        type: string
+        description: ''
+        unit: ''
+      row_count: 1000
+      size_bytes: 70728
+      last_modified: '2026-05-06T09:46:22.871670+00:00'
+    binary_stores: []
+  pipeline_safety:
+    module: pipeline_safety
+    description: PHMSA pipeline safety incident data [886.8 KB]
+    datasets:
+    - name: database.csv
+      path: data/modules/pipeline_safety/raw/kaggle_usdot_pipeline/database.csv
+      format: csv
+      columns:
+      - name: Report Number
+        type: integer
+        description: ''
+        unit: ''
+      - name: Supplemental Number
+        type: integer
+        description: ''
+        unit: ''
+      - name: Accident Year
+        type: integer
+        description: ''
+        unit: ''
+      - name: Accident Date/Time
+        type: string
+        description: ''
+        unit: ''
+      - name: Operator ID
+        type: integer
+        description: ''
+        unit: ''
+      - name: Operator Name
+        type: string
+        description: ''
+        unit: ''
+      - name: Pipeline/Facility Name
+        type: string
+        description: ''
+        unit: ''
+      - name: Pipeline Location
+        type: string
+        description: ''
+        unit: ''
+      - name: Pipeline Type
+        type: string
+        description: ''
+        unit: ''
+      - name: Liquid Type
+        type: string
+        description: ''
+        unit: ''
+      - name: Liquid Subtype
+        type: string
+        description: ''
+        unit: ''
+      - name: Liquid Name
+        type: string
+        description: ''
+        unit: ''
+      - name: Accident City
+        type: string
+        description: ''
+        unit: ''
+      - name: Accident County
+        type: string
+        description: ''
+        unit: ''
+      - name: Accident State
+        type: string
+        description: ''
+        unit: ''
+      - name: Accident Latitude
+        type: float
+        description: ''
+        unit: degrees
+      - name: Accident Longitude
+        type: float
+        description: ''
+        unit: degrees
+      - name: Cause Category
+        type: string
+        description: ''
+        unit: ''
+      - name: Cause Subcategory
+        type: string
+        description: ''
+        unit: ''
+      - name: Unintentional Release (Barrels)
+        type: float
+        description: ''
+        unit: ''
+      - name: Intentional Release (Barrels)
+        type: float
+        description: ''
+        unit: ''
+      - name: Liquid Recovery (Barrels)
+        type: float
+        description: ''
+        unit: ''
+      - name: Net Loss (Barrels)
+        type: float
+        description: ''
+        unit: ''
+      - name: Liquid Ignition
+        type: boolean
+        description: ''
+        unit: ''
+      - name: Liquid Explosion
+        type: boolean
+        description: ''
+        unit: ''
+      - name: Pipeline Shutdown
+        type: boolean
+        description: ''
+        unit: ''
+      - name: Shutdown Date/Time
+        type: string
+        description: ''
+        unit: ''
+      - name: Restart Date/Time
+        type: string
+        description: ''
+        unit: ''
+      - name: Public Evacuations
+        type: integer
+        description: ''
+        unit: ''
+      - name: Operator Employee Injuries
+        type: string
+        description: ''
+        unit: ''
+      - name: Operator Contractor Injuries
+        type: string
+        description: ''
+        unit: ''
+      - name: Emergency Responder Injuries
+        type: string
+        description: ''
+        unit: ''
+      - name: Other Injuries
+        type: string
+        description: ''
+        unit: ''
+      - name: Public Injuries
+        type: string
+        description: ''
+        unit: ''
+      - name: All Injuries
+        type: string
+        description: ''
+        unit: ''
+      - name: Operator Employee Fatalities
+        type: string
+        description: ''
+        unit: ''
+      - name: Operator Contractor Fatalities
+        type: string
+        description: ''
+        unit: ''
+      - name: Emergency Responder Fatalities
+        type: string
+        description: ''
+        unit: ''
+      - name: Other Fatalities
+        type: string
+        description: ''
+        unit: ''
+      - name: Public Fatalities
+        type: string
+        description: ''
+        unit: ''
+      - name: All Fatalities
+        type: string
+        description: ''
+        unit: ''
+      - name: Property Damage Costs
+        type: integer
+        description: ''
+        unit: ''
+      - name: Lost Commodity Costs
+        type: integer
+        description: ''
+        unit: ''
+      - name: Public/Private Property Damage Costs
+        type: integer
+        description: ''
+        unit: ''
+      - name: Emergency Response Costs
+        type: integer
+        description: ''
+        unit: ''
+      - name: Environmental Remediation Costs
+        type: integer
+        description: ''
+        unit: ''
+      - name: Other Costs
+        type: integer
+        description: ''
+        unit: ''
+      - name: All Costs
+        type: integer
+        description: ''
+        unit: ''
+      row_count: 2795
+      size_bytes: 908056
+      last_modified: '2026-05-06T09:46:22.894119+00:00'
+    binary_stores: []
+  subsea:
+    module: subsea
+    description: Subsea equipment and mooring component data [3.0 KB]
+    datasets:
+    - name: mooring_components.csv
+      path: data/modules/subsea/curated/mooring_components.csv
+      format: csv
+      columns:
+      - name: COMPONENT_ID
+        type: string
+        description: ''
+        unit: ''
+      - name: COMPONENT_TYPE
+        type: string
+        description: ''
+        unit: ''
+      - name: MANUFACTURER
+        type: string
+        description: ''
+        unit: ''
+      - name: SIZE_MM
+        type: integer
+        description: ''
+        unit: mm
+      - name: MBL_KN
+        type: integer
+        description: ''
+        unit: kN
+      - name: WEIGHT_KG_PER_M
+        type: float
+        description: ''
+        unit: kg
+      - name: MATERIAL
+        type: string
+        description: ''
+        unit: ''
+      - name: GRADE
+        type: string
+        description: ''
+        unit: ''
+      - name: DATA_SOURCE
+        type: string
+        description: ''
+        unit: ''
+      - name: NOTES
+        type: string
+        description: ''
+        unit: ''
+      row_count: 14
+      size_bytes: 1504
+      last_modified: '2026-03-26T04:20:02.844689+00:00'
+    - name: rigid_jumper_specs.csv
+      path: data/modules/subsea/curated/rigid_jumper_specs.csv
+      format: csv
+      columns:
+      - name: COMPONENT_ID
+        type: string
+        description: ''
+        unit: ''
+      - name: MANUFACTURER
+        type: string
+        description: ''
+        unit: ''
+      - name: OD_IN
+        type: float
+        description: ''
+        unit: ''
+      - name: WALL_THICKNESS_IN
+        type: float
+        description: ''
+        unit: ''
+      - name: LENGTH_FT
+        type: float
+        description: ''
+        unit: ''
+      - name: MATERIAL_GRADE
+        type: string
+        description: ''
+        unit: ''
+      - name: PRESSURE_RATING_PSI
+        type: integer
+        description: ''
+        unit: ''
+      - name: WEIGHT_AIR_KIPS
+        type: float
+        description: ''
+        unit: kg
+      - name: CONNECTION_TYPE
+        type: string
+        description: ''
+        unit: ''
+      - name: DATA_SOURCE
+        type: string
+        description: ''
+        unit: ''
+      - name: NOTES
+        type: string
+        description: ''
+        unit: ''
+      row_count: 14
+      size_bytes: 1612
+      last_modified: '2026-03-26T04:19:51.247253+00:00'
+    binary_stores: []
+  vessel_fleet:
+    module: vessel_fleet
+    description: Offshore vessel fleet specifications [106.1 KB]
+    datasets:
+    - name: construction_vessels.csv
+      path: data/modules/vessel_fleet/curated/construction_vessels.csv
+      format: csv
+      columns:
+      - name: VESSEL_NAME
+        type: string
+        description: ''
+        unit: ''
+      - name: VESSEL_CATEGORY
+        type: string
+        description: ''
+        unit: ''
+      - name: VESSEL_TYPE
+        type: string
+        description: ''
+        unit: ''
+      - name: VESSEL_SUBTYPE
+        type: string
+        description: ''
+        unit: ''
+      - name: OWNER
+        type: string
+        description: ''
+        unit: ''
+      - name: OPERATOR
+        type: string
+        description: ''
+        unit: ''
+      - name: IMO_NUMBER
+        type: integer
+        description: ''
+        unit: ''
+      - name: FLAG_STATE
+        type: string
+        description: ''
+        unit: ''
+      - name: STATUS
+        type: string
+        description: ''
+        unit: ''
+      - name: DATA_SOURCE
+        type: string
+        description: ''
+        unit: ''
+      - name: DATA_SOURCE_URL
+        type: string
+        description: ''
+        unit: ''
+      - name: LOA_M
+        type: float
+        description: ''
+        unit: m
+      - name: BEAM_M
+        type: float
+        description: ''
+        unit: m
+      - name: DRAFT_M
+        type: float
+        description: ''
+        unit: m
+      - name: DISPLACEMENT_TONNES
+        type: float
+        description: ''
+        unit: tonnes
+      - name: GROSS_TONNAGE
+        type: float
+        description: ''
+        unit: tonnes
+      - name: DP_CLASS
+        type: integer
+        description: ''
+        unit: ''
+      - name: YEAR_BUILT
+        type: integer
+        description: ''
+        unit: ''
+      - name: QUARTERS_CAPACITY
+        type: integer
+        description: ''
+        unit: tonnes
+      - name: HELIDECK
+        type: boolean
+        description: ''
+        unit: ''
+      - name: MAIN_CRANE_CAPACITY_T
+        type: float
+        description: ''
+        unit: tonnes
+      - name: MAIN_CRANE_REACH_M
+        type: float
+        description: ''
+        unit: m
+      - name: AUX_CRANE_CAPACITY_T
+        type: float
+        description: ''
+        unit: tonnes
+      - name: AUX_CRANE_REACH_M
+        type: float
+        description: ''
+        unit: m
+      - name: PIPELAY_TENSION_T
+        type: float
+        description: ''
+        unit: tonnes
+      - name: PIPELAY_METHOD
+        type: string
+        description: ''
+        unit: ''
+      - name: DECK_AREA_M2
+        type: float
+        description: ''
+        unit: m2
+      - name: DECK_LOAD_CAPACITY_T
+        type: float
+        description: ''
+        unit: tonnes
+      - name: WATER_DEPTH_RATING_M
+        type: float
+        description: ''
+        unit: feet
+      - name: HEAVY_LIFT_CAPACITY_T
+        type: float
+        description: ''
+        unit: tonnes
+      - name: ROV_SYSTEMS
+        type: integer
+        description: ''
+        unit: ''
+      - name: MOONPOOL
+        type: boolean
+        description: ''
+        unit: ''
+      - name: TURBINE_CAPACITY_MW
+        type: float
+        description: ''
+        unit: tonnes
+      - name: FOUNDATION_TYPE
+        type: string
+        description: ''
+        unit: ''
+      - name: TRANSIT_SPEED_KNOTS
+        type: float
+        description: ''
+        unit: knots
+      row_count: 17
+      size_bytes: 4860
+      last_modified: '2026-03-03T22:30:40.763545+00:00'
+    - name: construction_vessels.parquet
+      path: data/modules/vessel_fleet/curated/construction_vessels.parquet
+      format: parquet
+      columns:
+      - name: VESSEL_NAME
+        type: string
+        description: ''
+        unit: ''
+      - name: VESSEL_CATEGORY
+        type: string
+        description: ''
+        unit: ''
+      - name: VESSEL_TYPE
+        type: string
+        description: ''
+        unit: ''
+      - name: VESSEL_SUBTYPE
+        type: string
+        description: ''
+        unit: ''
+      - name: OWNER
+        type: string
+        description: ''
+        unit: ''
+      - name: OPERATOR
+        type: string
+        description: ''
+        unit: ''
+      - name: IMO_NUMBER
+        type: integer
+        description: ''
+        unit: ''
+      - name: FLAG_STATE
+        type: string
+        description: ''
+        unit: ''
+      - name: STATUS
+        type: string
+        description: ''
+        unit: ''
+      - name: DATA_SOURCE
+        type: string
+        description: ''
+        unit: ''
+      - name: DATA_SOURCE_URL
+        type: string
+        description: ''
+        unit: ''
+      - name: LOA_M
+        type: float
+        description: ''
+        unit: m
+      - name: BEAM_M
+        type: float
+        description: ''
+        unit: m
+      - name: DRAFT_M
+        type: float
+        description: ''
+        unit: m
+      - name: DISPLACEMENT_TONNES
+        type: float
+        description: ''
+        unit: tonnes
+      - name: GROSS_TONNAGE
+        type: float
+        description: ''
+        unit: tonnes
+      - name: DP_CLASS
+        type: integer
+        description: ''
+        unit: ''
+      - name: YEAR_BUILT
+        type: integer
+        description: ''
+        unit: ''
+      - name: QUARTERS_CAPACITY
+        type: integer
+        description: ''
+        unit: tonnes
+      - name: HELIDECK
+        type: boolean
+        description: ''
+        unit: ''
+      - name: MAIN_CRANE_CAPACITY_T
+        type: float
+        description: ''
+        unit: tonnes
+      - name: MAIN_CRANE_REACH_M
+        type: float
+        description: ''
+        unit: m
+      - name: AUX_CRANE_CAPACITY_T
+        type: float
+        description: ''
+        unit: tonnes
+      - name: AUX_CRANE_REACH_M
+        type: float
+        description: ''
+        unit: m
+      - name: PIPELAY_TENSION_T
+        type: float
+        description: ''
+        unit: tonnes
+      - name: PIPELAY_METHOD
+        type: string
+        description: ''
+        unit: ''
+      - name: DECK_AREA_M2
+        type: float
+        description: ''
+        unit: m2
+      - name: DECK_LOAD_CAPACITY_T
+        type: float
+        description: ''
+        unit: tonnes
+      - name: WATER_DEPTH_RATING_M
+        type: float
+        description: ''
+        unit: feet
+      - name: HEAVY_LIFT_CAPACITY_T
+        type: float
+        description: ''
+        unit: tonnes
+      - name: ROV_SYSTEMS
+        type: integer
+        description: ''
+        unit: ''
+      - name: MOONPOOL
+        type: boolean
+        description: ''
+        unit: ''
+      - name: TURBINE_CAPACITY_MW
+        type: float
+        description: ''
+        unit: tonnes
+      - name: FOUNDATION_TYPE
+        type: string
+        description: ''
+        unit: ''
+      - name: TRANSIT_SPEED_KNOTS
+        type: float
+        description: ''
+        unit: knots
+      row_count: 17
+      size_bytes: 23402
+      last_modified: '2026-03-03T22:30:40.765052+00:00'
+    - name: drilling_rigs.csv
+      path: data/modules/vessel_fleet/curated/drilling_rigs.csv
+      format: csv
+      columns:
+      - name: VESSEL_NAME
+        type: string
+        description: ''
+        unit: ''
+      - name: VESSEL_CATEGORY
+        type: string
+        description: ''
+        unit: ''
+      - name: OWNER
+        type: string
+        description: ''
+        unit: ''
+      - name: DATA_SOURCE
+        type: string
+        description: ''
+        unit: ''
+      - name: RIG_DESIGN
+        type: string
+        description: ''
+        unit: ''
+      - name: WATER_DEPTH_RATING_FT
+        type: float
+        description: ''
+        unit: feet
+      - name: RIG_TYPE
+        type: string
+        description: ''
+        unit: ''
+      - name: DATA_SOURCE_URL
+        type: string
+        description: ''
+        unit: ''
+      - name: HULL_FORM_TYPE
+        type: string
+        description: ''
+        unit: ''
+      - name: HULL_LIBRARY_REF
+        type: string
+        description: ''
+        unit: ''
+      - name: LOA_M
+        type: float
+        description: ''
+        unit: m
+      - name: BEAM_M
+        type: float
+        description: ''
+        unit: m
+      - name: DRAFT_M
+        type: float
+        description: ''
+        unit: m
+      - name: DIMENSION_CONFIDENCE
+        type: string
+        description: ''
+        unit: ''
+      row_count: 48
+      size_bytes: 11227
+      last_modified: '2026-05-15T02:51:58.859721+00:00'
+    - name: drilling_rigs.parquet
+      path: data/modules/vessel_fleet/curated/drilling_rigs.parquet
+      format: parquet
+      columns:
+      - name: VESSEL_NAME
+        type: string
+        description: ''
+        unit: ''
+      - name: VESSEL_CATEGORY
+        type: string
+        description: ''
+        unit: ''
+      - name: OWNER
+        type: string
+        description: ''
+        unit: ''
+      - name: DATA_SOURCE
+        type: string
+        description: ''
+        unit: ''
+      - name: RIG_DESIGN
+        type: string
+        description: ''
+        unit: ''
+      - name: WATER_DEPTH_RATING_FT
+        type: float
+        description: ''
+        unit: feet
+      - name: RIG_TYPE
+        type: string
+        description: ''
+        unit: ''
+      - name: DATA_SOURCE_URL
+        type: string
+        description: ''
+        unit: ''
+      - name: HULL_FORM_TYPE
+        type: string
+        description: ''
+        unit: ''
+      - name: HULL_LIBRARY_REF
+        type: string
+        description: ''
+        unit: ''
+      - name: LOA_M
+        type: float
+        description: ''
+        unit: m
+      - name: BEAM_M
+        type: float
+        description: ''
+        unit: m
+      - name: DRAFT_M
+        type: float
+        description: ''
+        unit: m
+      - name: DIMENSION_CONFIDENCE
+        type: string
+        description: ''
+        unit: ''
+      row_count: 48
+      size_bytes: 11308
+      last_modified: '2026-05-15T02:51:58.860572+00:00'
+    - name: drilling_riser_components.csv
+      path: data/modules/vessel_fleet/curated/drilling_riser_components.csv
+      format: csv
+      columns:
+      - name: COMPONENT_ID
+        type: string
+        description: ''
+        unit: ''
+      - name: COMPONENT_TYPE
+        type: string
+        description: ''
+        unit: ''
+      - name: MANUFACTURER
+        type: string
+        description: ''
+        unit: ''
+      - name: MODEL
+        type: string
+        description: ''
+        unit: ''
+      - name: OD_IN
+        type: float
+        description: ''
+        unit: ''
+      - name: ID_IN
+        type: float
+        description: ''
+        unit: ''
+      - name: WALL_THICKNESS_IN
+        type: float
+        description: ''
+        unit: ''
+      - name: LENGTH_FT
+        type: float
+        description: ''
+        unit: ''
+      - name: WEIGHT_AIR_KIPS
+        type: float
+        description: ''
+        unit: kg
+      - name: WEIGHT_WATER_KIPS
+        type: float
+        description: ''
+        unit: kg
+      - name: GRADE
+        type: string
+        description: ''
+        unit: ''
+      - name: CONNECTION_TYPE
+        type: string
+        description: ''
+        unit: ''
+      - name: BUOYANCY_COVERAGE_PCT
+        type: integer
+        description: ''
+        unit: ''
+      - name: BUOYANCY_OD_IN
+        type: float
+        description: ''
+        unit: ''
+      - name: PRESSURE_RATING_PSI
+        type: float
+        description: ''
+        unit: ''
+      - name: BOP_TYPE
+        type: string
+        description: ''
+        unit: ''
+      - name: BORE_SIZE_IN
+        type: float
+        description: ''
+        unit: ''
+      - name: HEIGHT_FT
+        type: float
+        description: ''
+        unit: ''
+      - name: ANNULAR_COUNT
+        type: boolean
+        description: ''
+        unit: ''
+      - name: SHEAR_RAM_COUNT
+        type: integer
+        description: ''
+        unit: ''
+      - name: PIPE_RAM_COUNT
+        type: integer
+        description: ''
+        unit: ''
+      - name: CASING_SHEAR_RAM
+        type: string
+        description: ''
+        unit: ''
+      - name: MAX_ANGLE_DEG
+        type: float
+        description: ''
+        unit: ''
+      - name: STIFFNESS_FT_KIP_PER_DEG
+        type: string
+        description: ''
+        unit: ''
+      - name: POSITION
+        type: string
+        description: ''
+        unit: ''
+      - name: STROKE_FT
+        type: string
+        description: ''
+        unit: ''
+      - name: OUTER_BARREL_LENGTH_FT
+        type: string
+        description: ''
+        unit: ''
+      - name: INNER_BARREL_LENGTH_FT
+        type: string
+        description: ''
+        unit: ''
+      - name: CONNECTOR_TYPE
+        type: string
+        description: ''
+        unit: ''
+      - name: DATA_SOURCE
+        type: string
+        description: ''
+        unit: ''
+      - name: NOTES
+        type: string
+        description: ''
+        unit: ''
+      row_count: 36
+      size_bytes: 6598
+      last_modified: '2026-03-03T22:30:40.771189+00:00'
+    - name: noble.json
+      path: data/modules/vessel_fleet/raw/contractor_scrape/noble.json
+      format: json
+      columns:
+      - name: name
+        type: str
+        description: ''
+        unit: ''
+      - name: owner
+        type: str
+        description: ''
+        unit: ''
+      - name: url
+        type: str
+        description: ''
+        unit: ''
+      - name: timestamp
+        type: str
+        description: ''
+        unit: ''
+      - name: status
+        type: str
+        description: ''
+        unit: ''
+      - name: vessels
+        type: list
+        description: ''
+        unit: ''
+      - name: tables
+        type: list
+        description: ''
+        unit: ''
+      - name: links
+        type: list
+        description: ''
+        unit: ''
+      - name: rawHtml
+        type: str
+        description: ''
+        unit: ''
+      - name: pageTitle
+        type: str
+        description: ''
+        unit: ''
+      - name: errors
+        type: list
+        description: ''
+        unit: ''
+      - name: httpStatus
+        type: int
+        description: ''
+        unit: ''
+      size_bytes: 19507
+      last_modified: '2026-02-13T03:55:36.769997+00:00'
+    - name: scrape_summary.json
+      path: data/modules/vessel_fleet/raw/contractor_scrape/scrape_summary.json
+      format: json
+      columns:
+      - name: name
+        type: str
+        description: ''
+        unit: ''
+      - name: owner
+        type: str
+        description: ''
+        unit: ''
+      - name: url
+        type: str
+        description: ''
+        unit: ''
+      - name: httpStatus
+        type: int
+        description: ''
+        unit: ''
+      - name: status
+        type: str
+        description: ''
+        unit: ''
+      - name: tableCount
+        type: int
+        description: ''
+        unit: ''
+      - name: totalRows
+        type: int
+        description: ''
+        unit: ''
+      - name: linkCount
+        type: int
+        description: ''
+        unit: ''
+      - name: cardCount
+        type: int
+        description: ''
+        unit: ''
+      - name: errors
+        type: list
+        description: ''
+        unit: ''
+      size_bytes: 1322
+      last_modified: '2026-02-13T03:56:16.740619+00:00'
+    - name: seadrill.json
+      path: data/modules/vessel_fleet/raw/contractor_scrape/seadrill.json
+      format: json
+      columns:
+      - name: name
+        type: str
+        description: ''
+        unit: ''
+      - name: owner
+        type: str
+        description: ''
+        unit: ''
+      - name: url
+        type: str
+        description: ''
+        unit: ''
+      - name: timestamp
+        type: str
+        description: ''
+        unit: ''
+      - name: status
+        type: str
+        description: ''
+        unit: ''
+      - name: vessels
+        type: list
+        description: ''
+        unit: ''
+      - name: tables
+        type: list
+        description: ''
+        unit: ''
+      - name: links
+        type: list
+        description: ''
+        unit: ''
+      - name: rawHtml
+        type: str
+        description: ''
+        unit: ''
+      - name: pageTitle
+        type: str
+        description: ''
+        unit: ''
+      - name: errors
+        type: list
+        description: ''
+        unit: ''
+      - name: httpStatus
+        type: int
+        description: ''
+        unit: ''
+      size_bytes: 18509
+      last_modified: '2026-02-13T03:55:47.349638+00:00'
+    - name: noble.parquet
+      path: data/modules/vessel_fleet/raw/spec_details/noble.parquet
+      format: parquet
+      columns:
+      - name: VESSEL_NAME
+        type: string
+        description: ''
+        unit: ''
+      - name: VESSEL_CATEGORY
+        type: string
+        description: ''
+        unit: ''
+      - name: OWNER
+        type: string
+        description: ''
+        unit: ''
+      - name: DATA_SOURCE
+        type: string
+        description: ''
+        unit: ''
+      - name: RIG_DESIGN
+        type: string
+        description: ''
+        unit: ''
+      - name: WATER_DEPTH_RATING_FT
+        type: float
+        description: ''
+        unit: feet
+      - name: RIG_TYPE
+        type: string
+        description: ''
+        unit: ''
+      - name: DATA_SOURCE_URL
+        type: string
+        description: ''
+        unit: ''
+      row_count: 31
+      size_bytes: 7010
+      last_modified: '2026-05-15T02:51:58.861881+00:00'
+    - name: seadrill.parquet
+      path: data/modules/vessel_fleet/raw/spec_details/seadrill.parquet
+      format: parquet
+      columns:
+      - name: VESSEL_NAME
+        type: string
+        description: ''
+        unit: ''
+      - name: VESSEL_CATEGORY
+        type: string
+        description: ''
+        unit: ''
+      - name: OWNER
+        type: string
+        description: ''
+        unit: ''
+      - name: DATA_SOURCE
+        type: string
+        description: ''
+        unit: ''
+      - name: RIG_TYPE
+        type: string
+        description: ''
+        unit: ''
+      - name: DATA_SOURCE_URL
+        type: string
+        description: ''
+        unit: ''
+      row_count: 17
+      size_bytes: 4944
+      last_modified: '2026-05-15T02:51:58.862804+00:00'
+    binary_stores: []
+  vessel_hull_models:
+    module: vessel_hull_models
+    description: 3D vessel hull geometry models [1.0 KB]
+    datasets:
+    - name: sample_rigs.csv
+      path: data/modules/vessel_hull_models/csv/rig_hulls/sample_rigs.csv
+      format: csv
+      columns:
+      - name: VESSEL_NAME
+        type: string
+        description: ''
+        unit: ''
+      - name: RIG_TYPE
+        type: string
+        description: ''
+        unit: ''
+      - name: HULL_FORM_TYPE
+        type: string
+        description: ''
+        unit: ''
+      - name: LOA_M
+        type: float
+        description: ''
+        unit: m
+      - name: BEAM_M
+        type: float
+        description: ''
+        unit: m
+      - name: DRAFT_M
+        type: float
+        description: ''
+        unit: m
+      - name: DISPLACEMENT_TONNES
+        type: float
+        description: ''
+        unit: tonnes
+      - name: WATER_DEPTH_RATING_FT
+        type: integer
+        description: ''
+        unit: feet
+      - name: RIG_DESIGN
+        type: string
+        description: ''
+        unit: ''
+      - name: YEAR_BUILT
+        type: integer
+        description: ''
+        unit: ''
+      - name: DP_CLASS
+        type: integer
+        description: ''
+        unit: ''
+      - name: PONTOON_LENGTH_M
+        type: string
+        description: ''
+        unit: ''
+      - name: PONTOON_WIDTH_M
+        type: string
+        description: ''
+        unit: ''
+      - name: PONTOON_HEIGHT_M
+        type: string
+        description: ''
+        unit: ''
+      - name: COLUMN_DIAMETER_M
+        type: string
+        description: ''
+        unit: ''
+      - name: COLUMN_SPACING_M
+        type: float
+        description: ''
+        unit: ''
+      - name: COLUMN_COUNT
+        type: integer
+        description: ''
+        unit: ''
+      - name: DIMENSION_CONFIDENCE
+        type: string
+        description: ''
+        unit: ''
+      - name: SOURCE_CITATION
+        type: string
+        description: ''
+        unit: ''
+      row_count: 5
+      size_bytes: 1024
+      last_modified: '2026-02-13T14:10:59.743552+00:00'
+    binary_stores: []
+  wind:
+    module: wind
+    description: Wind energy resource and turbine data [7.0 MB]
+    datasets: []
+    binary_stores:
+    - name: uswtdbCSV.zip
+      path: data/modules/wind/uswtdbCSV.zip
+      format: zip
+      size_bytes: 1458710
+      contents:
+      - CHANGELOG.txt
+      - uswtdb_v3_2_20201014.csv
+      contents_count: 2
+      last_modified: '2025-07-31T11:24:57.639597+00:00'
+    - name: uswtdbGeoJSON.zip
+      path: data/modules/wind/uswtdbGeoJSON.zip
+      format: zip
+      size_bytes: 1430239
+      contents:
+      - CHANGELOG.txt
+      - uswtdb_v3_2_20201014.geojson
+      contents_count: 2
+      last_modified: '2025-07-31T11:24:57.674809+00:00'
+    - name: uswtdbSHP.zip
+      path: data/modules/wind/uswtdbSHP.zip
+      format: zip
+      size_bytes: 4451928
+      contents:
+      - CHANGELOG.txt
+      - uswtdb_v3_2_20201014.dbf
+      - uswtdb_v3_2_20201014.prj
+      - uswtdb_v3_2_20201014.sbn
+      - uswtdb_v3_2_20201014.sbx
+      - uswtdb_v3_2_20201014.shp
+      - uswtdb_v3_2_20201014.shx
+      - uswtdb_v3_2_20201014.xml
+      contents_count: 8
+      last_modified: '2025-07-31T11:24:57.775445+00:00'

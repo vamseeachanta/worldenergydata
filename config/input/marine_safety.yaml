@@ -1,0 +1,198 @@
+# YAML Configuration: Marine Safety Incident Analysis
+# Generated from: user_prompt.md
+# Purpose: Comprehensive marine safety incident analysis across multiple scenarios
+
+metadata:
+  feature_name: "marine-safety-incident-analysis"
+  created: "2025-10-22"
+  updated: "2025-10-22"
+  status: "production"
+  version: "1.0.0"
+  author: "worldenergydata"
+  description: "Multi-source marine safety incident analysis with scenario-specific reports"
+
+# Requirements
+requirements:
+  functional:
+    - requirement: "Analyze marine safety incidents across all databases"
+      priority: "high"
+      implemented: true
+
+    - requirement: "Generate scenario-specific analyses (foundering, collision, fire, etc.)"
+      priority: "high"
+      implemented: true
+
+    - requirement: "Integrate data from multiple safety databases (USCG, NOAA, MAIB, TSB)"
+      priority: "high"
+      implemented: true
+
+    - requirement: "AI-powered incident classification (optional)"
+      priority: "medium"
+      implemented: true
+
+  non_functional:
+    performance:
+      max_response_time_sec: 1200  # 20 minutes
+      max_memory_mb: 4096
+
+# Input specifications
+input:
+  format: "multiple"
+  sources:
+    - name: "uscg_misle"
+      type: "file"
+      path: "data/modules/marine_safety/input/uscg/"
+      pattern: "*.csv"
+
+    - name: "noaa"
+      type: "file"
+      path: "data/modules/marine_safety/input/noaa/"
+      pattern: "*.csv"
+
+    - name: "maib"
+      type: "file"
+      path: "data/modules/marine_safety/input/maib/"
+      pattern: "*.csv"
+
+    - name: "tsb"
+      type: "file"
+      path: "data/modules/marine_safety/input/tsb/"
+      pattern: "*.csv"
+
+  validation:
+    required_columns:
+      - "INCIDENT_DATE"
+      - "INCIDENT_TYPE"
+      - "VESSEL_TYPE"
+      - "CASUALTIES"
+    null_handling: "skip"
+    encoding: "utf-8"
+
+# Processing specifications
+processing:
+  steps:
+    - name: "load_all_databases"
+      module: "marine_safety.data_loader"
+      function: "load_multi_source"
+      params:
+        validate: true
+        standardize_columns: true
+
+    - name: "classify_incidents"
+      module: "marine_safety.classification"
+      function: "classify_by_scenario"
+      params:
+        scenarios:
+          - "foundering"
+          - "collision"
+          - "fire"
+          - "machinery"
+          - "grounding"
+          - "flooding"
+
+    - name: "calculate_statistics"
+      module: "analysis.statistics"
+      function: "incident_statistics"
+      params:
+        statistics: ["count", "casualty_rate", "frequency"]
+        groupby: ["INCIDENT_TYPE", "VESSEL_TYPE", "YEAR"]
+
+    - name: "llm_classification"
+      module: "marine_safety.llm"
+      function: "classify_with_llm"
+      params:
+        enabled: true
+        model: "claude-sonnet"
+        batch_size: 100
+
+    - name: "generate_visualizations"
+      module: "visualization.plotly"
+      function: "create_incident_plots"
+      params:
+        plot_types: ["timeseries", "heatmap", "sankey", "treemap"]
+        interactive: true
+
+# Scenario specifications
+scenarios:
+  foundering:
+    keywords: ["foundering", "sinking", "capsizing", "submerged"]
+    severity_weight: 10
+
+  collision:
+    keywords: ["collision", "allision", "contact", "struck"]
+    severity_weight: 8
+
+  fire:
+    keywords: ["fire", "explosion", "combustion", "ignition"]
+    severity_weight: 9
+
+  machinery:
+    keywords: ["machinery", "engine", "mechanical", "breakdown"]
+    severity_weight: 5
+
+  grounding:
+    keywords: ["grounding", "aground", "stranded", "shoal"]
+    severity_weight: 7
+
+  flooding:
+    keywords: ["flooding", "water ingress", "breach", "leak"]
+    severity_weight: 8
+
+# Output specifications
+output:
+  format: "html"
+  destination:
+    type: "file"
+    path: "reports/marine_safety/"
+
+  content:
+    include_database_overview: true
+    include_scenario_analysis: true
+    include_llm_insights: true
+    include_multi_source_comparison: true
+
+  visualization:
+    library: "plotly"
+    interactive: true
+    theme: "plotly_white"
+    charts:
+      - "incident_timeline"
+      - "cause_analysis"
+      - "vessel_type_distribution"
+      - "severity_heatmap"
+      - "geographic_map"
+
+  export_formats:
+    - format: "csv"
+      path: "reports/marine_safety/data/"
+      filename_pattern: "{scenario}_incidents_{timestamp}.csv"
+
+    - format: "json"
+      path: "reports/marine_safety/data/"
+      filename_pattern: "statistics_{timestamp}.json"
+
+# Error handling
+error_handling:
+  strategy: "continue"
+
+  logging:
+    level: "INFO"
+    destination: "both"
+    file_path: "logs/marine_safety_analysis.log"
+
+# Execution configuration
+execution:
+  entry_point: "scripts/analyze_marine_safety_database.py"
+
+  bash_command: |
+    python scripts/analyze_marine_safety_database.py \
+      --output reports/marine_safety/database_analysis \
+      --format html \
+      --interactive
+
+  environment:
+    required_packages:
+      - pandas>=2.0.0
+      - numpy>=1.24.0
+      - plotly>=5.14.0
+      - anthropic>=0.25.0  # For LLM classification

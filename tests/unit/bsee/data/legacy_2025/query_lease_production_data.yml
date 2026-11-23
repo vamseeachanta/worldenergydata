@@ -1,0 +1,24 @@
+meta:
+  library: worldenergydata
+  basename: bsee
+basename: bsee
+
+data:
+  obtain: True
+  by: #lease
+  groups:
+      - label: production_data_G05868 
+        lease_number: G05868 
+        Duration:
+          from : 01/1999
+          to : 12/2024
+
+production_from_website:
+  flag: True
+
+default:
+  log_level: DEBUG
+  config:
+    overwrite:
+      output: True
+    cfg_sensitivities: False

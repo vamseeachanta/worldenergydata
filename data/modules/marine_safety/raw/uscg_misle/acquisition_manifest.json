@@ -1,0 +1,57 @@
+{
+  "status": "download_failed",
+  "timestamp": "2026-02-02T02:38:21.623724+00:00",
+  "output_dir": "data/modules/marine_safety/raw/uscg_misle",
+  "urls_attempted": [
+    "https://www.dco.uscg.mil/Portals/9/DCO%20Documents/5p/CG-INV/datasets/MISLE_DATA.zip",
+    "https://homeport.uscg.mil/Lists/Content/Attachments/67/MISLE_DATA.zip",
+    "https://www.dco.uscg.mil/Our-Organization/Assistant-Commandant-for-Prevention-Policy-CG-5P/Inspections-Compliance-CG-5PC-/Office-of-Investigations-Casualty-Analysis/Marine-Casualty-and-Pollution-Data-for-Researchers/"
+  ],
+  "download_url": null,
+  "zip_path": null,
+  "extracted_files": [],
+  "file_count": 0,
+  "total_size_bytes": 0,
+  "errors": [
+    "Failed to download from https://www.dco.uscg.mil/Portals/9/DCO%20Documents/5p/CG-INV/datasets/MISLE_DATA.zip: 403 Client Error: Forbidden for url: https://www.dco.uscg.mil/Portals/9/DCO%20Documents/5p/CG-INV/datasets/MISLE_DATA.zip",
+    "Failed to download from https://homeport.uscg.mil/Lists/Content/Attachments/67/MISLE_DATA.zip: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
+    "Failed to download from https://www.dco.uscg.mil/Our-Organization/Assistant-Commandant-for-Prevention-Policy-CG-5P/Inspections-Compliance-CG-5PC-/Office-of-Investigations-Casualty-Analysis/Marine-Casualty-and-Pollution-Data-for-Researchers/: 403 Client Error: Forbidden for url: https://www.dco.uscg.mil/Our-Organization/Assistant-Commandant-for-Prevention-Policy-CG-5P/Inspections-Compliance-CG-5PC-/Office-of-Investigations-Casualty-Analysis/Marine-Casualty-and-Pollution-Data-for-Researchers/"
+  ],
+  "manual_instructions": {
+    "reason": "USCG blocks automated downloads (HTTP 403 Forbidden). Manual browser-based download is required.",
+    "option_1_browser": {
+      "description": "Download via browser from USCG researcher page",
+      "url": "https://www.dco.uscg.mil/Our-Organization/Assistant-Commandant-for-Prevention-Policy-CG-5P/Inspections-Compliance-CG-5PC-/Office-of-Investigations-Casualty-Analysis/Marine-Casualty-and-Pollution-Data-for-Researchers/",
+      "steps": [
+        "Visit the URL above in a web browser",
+        "Look for a download link for MISLE data",
+        "Complete any required researcher forms",
+        "Download the ZIP file",
+        "Extract to the output directory"
+      ]
+    },
+    "option_2_foia": {
+      "description": "Submit a FOIA request",
+      "email": "cgfoia@uscg.mil",
+      "request_text": "MISLE database records for marine casualties (all available years)",
+      "estimated_response": "20-60 days"
+    },
+    "option_3_data_gov": {
+      "description": "Check federal open data portals",
+      "urls": [
+        "https://catalog.data.gov/dataset?q=coast+guard+marine+casualty",
+        "https://catalog.data.gov/dataset?q=MISLE"
+      ]
+    },
+    "alternative_data": {
+      "description": "Data Liberation Project historical extracts (1995-2012) are available in the dlp_historical directory",
+      "path": "data/modules/marine_safety/raw/dlp_historical/",
+      "files": [
+        "Accidents_1995-2012.csv",
+        "Vessels_1995-2012.csv",
+        "Injuries_1995-2012.csv",
+        "Deaths_1995-2012.csv"
+      ]
+    }
+  }
+}

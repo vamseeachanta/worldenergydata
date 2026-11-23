@@ -1,0 +1,129 @@
+"""Centralized data path resolution for worldenergydata.
+
+Resolution order:
+1. WED_DATA_ROOT environment variable (explicit override)
+2. Symlink at <project_root>/data → external mount (convention)
+3. Fallback to <project_root>/data/ directory (development)
+
+Usage:
+    from worldenergydata.common.data_resolver import get_data_root, get_module_data
+
+    data_root = get_data_root()
+    bsee_data = get_module_data("bsee")
+"""
+
+from __future__ import annotations
+
+import os
+from functools import lru_cache
+from pathlib import Path
+
+
+class DataNotFoundError(FileNotFoundError):
+    """Raised when data directory cannot be resolved."""
+
+
+def _get_project_root() -> Path:
+    """Find the project root by looking for pyproject.toml.
+
+    This module ships in the ``worldenergydata-core`` uv workspace member
+    (ADR 0001 Phase 2), so the *nearest* ``pyproject.toml`` walking up from
+    ``__file__`` is the MEMBER's pyproject (``packages/worldenergydata-core/``),
+    not the repo root — yet ``data/`` lives at the repo/workspace root. To stay
+    correct both in the in-repo workspace and in a normal site-packages install,
+    prefer the outermost ``pyproject.toml`` that declares the uv workspace
+    (``[tool.uv.workspace]``); fall back to the nearest ``pyproject.toml`` (the
+    single-distribution / installed case) and finally to CWD.
+    """
+    current = Path(__file__).resolve()
+    nearest: Path | None = None
+    for parent in current.parents:
+        candidate = parent / "pyproject.toml"
+        if candidate.exists():
+            if nearest is None:
+                nearest = parent
+            try:
+                if "[tool.uv.workspace]" in candidate.read_text(encoding="utf-8"):
+                    return parent
+            except OSError:
+                pass
+    if nearest is not None:
+        return nearest
+    return Path.cwd()
+
+
+@lru_cache(maxsize=1)
+def get_data_root() -> Path:
+    """Resolve the data root directory."""
+    env_root = os.environ.get("WED_DATA_ROOT")
+    if env_root:
+        path = Path(env_root)
+        if path.is_dir():
+            return path
+        raise DataNotFoundError(
+            f"WED_DATA_ROOT={env_root} is set but directory does not exist"
+        )
+
+    project_root = _get_project_root()
+    data_dir = project_root / "data"
+
+    if data_dir.is_symlink():
+        target = data_dir.resolve()
+        if target.is_dir():
+            return target
+        raise DataNotFoundError(
+            f"data/ symlink points to {target} which does not exist"
+        )
+
+    if data_dir.is_dir():
+        return data_dir
+
+    raise DataNotFoundError(
+        f"No data directory found. Options:\n"
+        f"  1. Set WED_DATA_ROOT=/path/to/data\n"
+        f"  2. Create symlink: ln -s /path/to/data {data_dir}\n"
+        f"  3. Create directory: mkdir -p {data_dir}"
+    )
+
+
+def get_module_data(module: str) -> Path:
+    """Get the data directory for a specific module."""
+    root = get_data_root()
+    module_path = root / "modules" / module
+    if module_path.is_dir():
+        return module_path
+    raise DataNotFoundError(
+        f"Module data not found: {module} (looked in {module_path})"
+    )
+
+
+def get_data_root_safe() -> Path:
+    """Resolve the data root, falling back to ``<project_root>/data`` on error.
+
+    Unlike :func:`get_data_root`, this helper **never** raises
+    :class:`DataNotFoundError`.  It is designed for use as a
+    ``default_factory`` in pydantic ``Field`` declarations where
+    raising at import time would be undesirable.
+    """
+    try:
+        return get_data_root()
+    except DataNotFoundError:
+        return _get_project_root() / "data"
+
+
+def get_module_data_safe(module: str) -> Path:
+    """Get the module data directory without raising.
+
+    Falls back to ``<data_root>/modules/<module>`` when the directory
+    does not yet exist on disk.  Useful for module-level constants and
+    ``default_factory`` callables.
+    """
+    try:
+        return get_module_data(module)
+    except DataNotFoundError:
+        return get_data_root_safe() / "modules" / module
+
+
+def _clear_cache() -> None:
+    """Clear the cached data root. Used in tests."""
+    get_data_root.cache_clear()

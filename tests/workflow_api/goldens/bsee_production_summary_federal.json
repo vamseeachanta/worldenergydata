@@ -1,0 +1,38 @@
+{
+  "V1": {
+    "outputs": {
+      "prod_all_block_GC_478.csv": "e3ad79df50aff3b1a5182dc02fdf4f06c1994bd40a6adc0794ffaf430d1b0c78",
+      "prod_cumulative_mmbbl_bsee_production_summary.csv": "c0545393404b82473eb57343a9c09e3eb4caac075f10db6de646f03dd6f00266",
+      "prod_rate_bopd_bsee_production_summary.csv": "e3ad79df50aff3b1a5182dc02fdf4f06c1994bd40a6adc0794ffaf430d1b0c78",
+      "prod_raw_bsee_production_summary.xlsx": "6f7b472a56a3f56d23e22cabae84f0bdd51faf284083948d840bd847bd4dba50",
+      "prod_summ_bsee_production_summary.csv": "39f91d9fdf77de6fda980970b932dee091ec30238a807f45bd0ab6cc2d6d4900",
+      "prod_summ_bsee_production_summary.json": "0331e5839bc379a72f227fd348eb0740576bcf8478f5ed0c6b9b4f083edbb855"
+    },
+    "result_hash": "f1149e9a98322d5701f12a2df9c38b11725cb7209c5270c5103b305dd03b8079",
+    "workflow": "bsee-production-summary"
+  },
+  "V2": {
+    "outputs": {
+      "prod_all_block_GC_478.csv": "0af01b0735026990e96511ea8bf6b5317e12d5ffd659c173b2c37010f41fc296",
+      "prod_cumulative_mmbbl_bsee_production_summary.csv": "a3caf1a72c1f38473779d702c9c0e74208560aa70a0b063a579abdb818b474cf",
+      "prod_rate_bopd_bsee_production_summary.csv": "0af01b0735026990e96511ea8bf6b5317e12d5ffd659c173b2c37010f41fc296",
+      "prod_raw_bsee_production_summary.xlsx": "f17a892235344cd89f57e33f16ee37aa7b53eeb04085f80454cb68c7953e247c",
+      "prod_summ_bsee_production_summary.csv": "8f7f292d0b86def544d6efdba7b7628fd3b46530982d8b3342414fa0ed74691f",
+      "prod_summ_bsee_production_summary.json": "3f724b0c4686e7a5390950db066fc8930f4e816b61f1240ed17b387a224c12a8"
+    },
+    "result_hash": "7f46538fa02246d2308764c6cf7775ada7f11983df7a14ca66b56cb38fbb73e4",
+    "workflow": "bsee-production-summary"
+  },
+  "V3": {
+    "outputs": {
+      "prod_all_block_GC_478.csv": "b0e018c88164d1d72c3bdddea0212d5c0508f416b0c7d4349bc808597511fd06",
+      "prod_cumulative_mmbbl_bsee_production_summary.csv": "86f7a665274b5c7916a29bcb39c933c160b9b64f878447367752afdbdb089df2",
+      "prod_rate_bopd_bsee_production_summary.csv": "b0e018c88164d1d72c3bdddea0212d5c0508f416b0c7d4349bc808597511fd06",
+      "prod_raw_bsee_production_summary.xlsx": "466dd5e16c78b006543ebe80d913353bfc56fa38bdede21c6a2170888f8c2a02",
+      "prod_summ_bsee_production_summary.csv": "e9b63c80117c4ac2a2d867058a2f523f26d1e2afc65505573ee85fc77432ad80",
+      "prod_summ_bsee_production_summary.json": "d5c5c51650b5d4c1c59c91443de0453cf9b039d08440aac1f7f2044b89f67d5e"
+    },
+    "result_hash": "d8103a8c37ca4edfa9a467a9116680aaecb05103fd057281e80373f24185577a",
+    "workflow": "bsee-production-summary"
+  }
+}

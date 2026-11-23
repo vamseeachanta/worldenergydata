@@ -1,0 +1,159 @@
+# Onshore (land) drilling-rig CLASS specs — wed issue #997 (epic #991).
+# Land fleets are hundreds of near-identical units, so records are per rig
+# CLASS (owner direction 2026-07-13), not per unit. VESSEL_NAME = class name.
+#
+# extraction: manual_transcription -> values transcribed from the vendor
+#   fact sheet / brochure PDF or fleet web page cited per entry (2026-07-13).
+# Mast rating (lbs) -> HOOKLOAD_RATING_KIPS; setback (lbs) -> SETBACK_CAPACITY_KIPS.
+# Where the vendor states a range, the LOWER bound is recorded (a shortlist
+# must be defensible; range noted in comments).
+retrieved: '2026-07-13'
+source_family: contractor_rig_summary_pdf
+issue: 997
+vessels:
+  H&P FlexRig3 Skid:
+    pdf: hp-flexrig-fleet.pdf
+    rig_type: land_rig
+    rig_design: H&P FlexRig3, skid system
+    owner: Helmerich & Payne, Inc.
+    is_offshore: false
+    extraction: manual_transcription
+    specs:
+      DRAWWORKS_HP: 1500
+      HOOKLOAD_RATING_KIPS: 750  # mast rating 750,000 lbs
+      SETBACK_CAPACITY_KIPS: 635  # 635,000-720,000 lb simultaneous setback
+      MUD_PUMP_COUNT: 3  # up to 3 GD PZ-11, 7,500 psi
+      MUD_PUMP_HP: 1600
+      WALKING_SYSTEM: false  # 100'/200' straight-line skidding
+      SUPER_SPEC: true
+  H&P FlexRig3 Walking:
+    pdf: hp-flexrig-fleet.pdf
+    rig_type: land_rig
+    rig_design: H&P FlexRig3, hydraulic walking system
+    owner: Helmerich & Payne, Inc.
+    is_offshore: false
+    extraction: manual_transcription
+    specs:
+      DRAWWORKS_HP: 1500
+      HOOKLOAD_RATING_KIPS: 750
+      SETBACK_CAPACITY_KIPS: 720
+      MUD_PUMP_COUNT: 3
+      MUD_PUMP_HP: 1600
+      WALKING_SYSTEM: true  # 2,640,000 lb capacity, 200 ft x 50 ft envelope
+      SUPER_SPEC: true
+  H&P FlexRig3W Arabia:
+    pdf: hp-flexrig-fleet.pdf
+    rig_type: land_rig
+    rig_design: H&P FlexRig3W, Middle East configuration
+    owner: Helmerich & Payne, Inc.
+    is_offshore: false
+    extraction: manual_transcription
+    specs:
+      DRAWWORKS_HP: 2000
+      HOOKLOAD_RATING_KIPS: 1000  # mast rating 1,000,000 lbs
+      SETBACK_CAPACITY_KIPS: 720  # sheet prints "720,000,000 lbs" — obvious typo for 720,000 lb
+      MUD_PUMP_COUNT: 3
+      MUD_PUMP_HP: 1600
+      WALKING_SYSTEM: true  # single-row walking, 500 ft distance
+      SUPER_SPEC: true
+  H&P FlexRig5:
+    pdf: hp-flexrig-fleet.pdf
+    rig_type: land_rig
+    rig_design: H&P FlexRig5, two-row skidding
+    owner: Helmerich & Payne, Inc.
+    is_offshore: false
+    extraction: manual_transcription
+    specs:
+      DRAWWORKS_HP: 1500
+      HOOKLOAD_RATING_KIPS: 750
+      SETBACK_CAPACITY_KIPS: 1000  # up to 1,000,000 lb simultaneous setback
+      MUD_PUMP_COUNT: 3
+      MUD_PUMP_HP: 1600
+      WALKING_SYSTEM: false  # two-row skidding system
+      SUPER_SPEC: true
+  Nabors PACE-X800:
+    pdf: nabors-pace-x800.pdf
+    rig_type: land_rig
+    rig_design: Nabors PACE-X800 SmartRig, multi-well pad
+    owner: Nabors Industries Ltd.
+    is_offshore: false
+    extraction: manual_transcription
+    specs:
+      DRAWWORKS_HP: 3000  # AC Commander drawworks, two 1,500 hp motors
+      HOOKLOAD_RATING_KIPS: 600  # hookload variants 600 / 800 / 1,000 kip; lower bound
+      MUD_PUMP_COUNT: 3  # three 1,600 hp (option 7,500 psi; up to three 2,200 hp)
+      MUD_PUMP_HP: 1600
+      WALKING_SYSTEM: true  # omni-directional, integrated in substructure
+      SUPER_SPEC: true
+  Patterson-UTI APEX XC+:
+    url: https://patenergy.com/services/apex-fleet
+    rig_type: land_rig
+    rig_design: Patterson-UTI APEX XC+, box-on-box
+    owner: Patterson-UTI Energy, Inc.
+    is_offshore: false
+    extraction: manual_transcription
+    specs:
+      DRAWWORKS_HP: 2000
+      HOOKLOAD_RATING_KIPS: 1000  # mast 1,000,000 lb
+      SETBACK_CAPACITY_KIPS: 1000
+      MUD_PUMP_COUNT: 3  # 7,500-10,000 psi circulating system
+      WALKING_SYSTEM: true  # 150' x 30'
+      SUPER_SPEC: true
+  Patterson-UTI APEX XC:
+    url: https://patenergy.com/services/apex-fleet
+    rig_type: land_rig
+    rig_design: Patterson-UTI APEX XC, box-on-box
+    owner: Patterson-UTI Energy, Inc.
+    is_offshore: false
+    extraction: manual_transcription
+    specs:
+      DRAWWORKS_HP: 1500
+      HOOKLOAD_RATING_KIPS: 825  # mast 825,000-1,000,000 lb; lower bound
+      SETBACK_CAPACITY_KIPS: 825
+      MUD_PUMP_COUNT: 3
+      WALKING_SYSTEM: true  # 150' x 30'
+      SUPER_SPEC: true
+  Patterson-UTI APEX XK 1500:
+    url: https://patenergy.com/services/apex-fleet
+    rig_type: land_rig
+    rig_design: Patterson-UTI APEX XK 1500, swing-up substructure
+    owner: Patterson-UTI Energy, Inc.
+    is_offshore: false
+    extraction: manual_transcription
+    specs:
+      DRAWWORKS_HP: 1500
+      HOOKLOAD_RATING_KIPS: 600  # mast 600,000-1,000,000 lb; lower bound
+      SETBACK_CAPACITY_KIPS: 600
+      MUD_PUMP_COUNT: 3
+      WALKING_SYSTEM: true  # 150' x 30'
+      SUPER_SPEC: true
+  Patterson-UTI APEX PK:
+    url: https://patenergy.com/services/apex-fleet
+    rig_type: land_rig
+    rig_design: Patterson-UTI APEX PK, box-on-box
+    owner: Patterson-UTI Energy, Inc.
+    is_offshore: false
+    extraction: manual_transcription
+    specs:
+      DRAWWORKS_HP: 1500
+      HOOKLOAD_RATING_KIPS: 750  # mast 750,000-1,000,000 lb; lower bound
+      SETBACK_CAPACITY_KIPS: 750
+      MUD_PUMP_COUNT: 3
+      WALKING_SYSTEM: true  # 90' x 30'
+      SUPER_SPEC: true
+  Precision Super Triple 1500:
+    pdf: precision-st-1500-iadc.pdf
+    rig_type: land_rig
+    rig_design: Precision ST-1500, swing-up substructure
+    owner: Precision Drilling Corporation
+    is_offshore: false
+    extraction: manual_transcription
+    specs:
+      DRAWWORKS_HP: 1500  # Alta Rig ARS-1514-2S
+      HOOKLOAD_RATING_KIPS: 750  # 750,000-825,000 lbs hook load; lower bound
+      SETBACK_CAPACITY_KIPS: 550  # 550,000-775,000 lbs; lower bound
+      MAST_HEIGHT_FT: 142  # cantilever mast
+      MUD_PUMP_COUNT: 2  # 2 x 1,600 hp, option for third + 7,500 psi system
+      MUD_PUMP_HP: 1600
+      WALKING_SYSTEM: true  # X-Y omnidirectional
+      SUPER_SPEC: true

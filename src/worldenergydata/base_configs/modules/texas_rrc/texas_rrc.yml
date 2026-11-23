@@ -1,0 +1,7 @@
+basename: texas_rrc
+
+default:
+  log_level: INFO
+  config:
+    overwrite:
+      output: True

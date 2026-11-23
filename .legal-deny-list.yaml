@@ -1,0 +1,46 @@
+# =============================================================================
+# Project Legal Deny List — worldenergydata
+# =============================================================================
+# Extends the global .legal-deny-list.yaml at workspace root.
+# Patterns here are specific to code ported from the ENIGMA client project.
+# =============================================================================
+
+version: "1.0"
+updated: "2026-02-02"
+
+client_references:
+  - pattern: "ENIGMA"
+    case_sensitive: true
+    description: "Client project codename"
+  - pattern: "enigma"
+    case_sensitive: true
+    description: "Client project codename (lowercase)"
+
+proprietary_tools:
+  - pattern: "Databricks"
+    case_sensitive: false
+    description: "Client cloud platform"
+  - pattern: "dbutils"
+    case_sensitive: false
+    description: "Databricks utility"
+  - pattern: "dbfs:"
+    case_sensitive: false
+    description: "Databricks file system path"
+  - pattern: "spark.databricks"
+    case_sensitive: false
+    description: "Databricks Spark config"
+
+client_infrastructure: []
+
+# Files/paths excluded from scanning (glob patterns)
+# Note: data/ excluded because CSV/JSON datasets contain vessel names
+# and other legitimate references that would trigger false positives
+exclusions:
+  - ".legal-deny-list.yaml"
+  - ".git/"
+  - "*.md"
+  - "*.csv"
+  - "*.json"
+  - "data/"
+
+default_severity: "block"

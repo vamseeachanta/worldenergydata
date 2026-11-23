@@ -1,0 +1,67 @@
+{
+ "mud_weight_ppg": {
+  "608124006001": 16.4,
+  "608124006603": 16.4,
+  "608124006200": 16.4,
+  "608124006800": 17,
+  "608124006302": 14
+ },
+ "fields": {
+  "big_foot": {
+   "display_name": "Big Foot",
+   "operator": "Chevron",
+   "host": "Extended Tension-Leg Platform (eTLP)",
+   "lease": "G16942",
+   "block": "Walker Ridge 29",
+   "play": "Wilcox / Lower Tertiary"
+  },
+  "jack_st_malo": {
+   "display_name": "Jack/St. Malo",
+   "operator": "Chevron",
+   "host": "Semisubmersible FPU",
+   "lease": "G17015",
+   "block": "Walker Ridge 678 (St. Malo) / 758-759 (Jack)",
+   "play": "Lower Tertiary (Wilcox)"
+  },
+  "stones": {
+   "display_name": "Stones",
+   "operator": "Shell",
+   "host": "FPSO (Turritella / Stones FPSO, disconnectable)",
+   "lease": "G17001",
+   "block": "Walker Ridge 508",
+   "play": "Lower Tertiary Wilcox"
+  },
+  "julia": {
+   "display_name": "Julia",
+   "operator": "ExxonMobil",
+   "host": "Subsea tieback to Jack/St. Malo semisubmersible FPU (Chevron)",
+   "lease": "G20351",
+   "block": "Walker Ridge 627",
+   "play": "Lower Tertiary Wilcox"
+  },
+  "shenandoah": {
+   "display_name": "Shenandoah",
+   "operator": "Beacon Offshore Energy",
+   "host": "Semisubmersible FPU (FPS, 20,000-psi)",
+   "lease": "G31938",
+   "block": "Walker Ridge 52",
+   "play": "Wilcox (Lower Tertiary)"
+  },
+  "cascade_chinook": {
+   "display_name": "Cascade/Chinook",
+   "operator": "MP Gulf of Mexico LLC (Murphy EXPRO)",
+   "host": "FPSO (BW Pioneer) with subsea tieback",
+   "lease": "G16965",
+   "block": "Walker Ridge 206/250 (Cascade), 425/469 (Chinook)",
+   "play": "Lower Tertiary (Wilcox)"
+  },
+  "anchor": {
+   "display_name": "Anchor",
+   "operator": "Chevron",
+   "host": "Semisubmersible FPU",
+   "lease": "G31752",
+   "block": "Green Canyon 807",
+   "play": "Lower Tertiary Wilcox"
+  }
+ }
+}

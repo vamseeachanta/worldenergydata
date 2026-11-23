@@ -1,0 +1,33 @@
+[
+  {
+    "file": "lsetapefixed.zip",
+    "source_archive": "lsetapefixed.zip",
+    "selection": "G16942 lease row; first four owner/operator rows; referenced company rows",
+    "sha256": "b27b1d96dcce03f4ed9abb6b2dbcdfdb160865f43156c4ba4c96c4a2bf4d9af2",
+    "size_bytes": 266,
+    "normalization": "Recorded source row preserved byte-for-byte in a small fixture ZIP; newline normalized to LF",
+    "member_sha256": "f0703e3d4cac3f4359aa8993122aa67c5f5770bedd81fdfacac841787c33e842",
+    "member_text": "G16942         L157        2006083160812 16942    1996090110        RS C 12.5000000      5760.000000   5760.000000    7.50    265824.00        46.15  5098 6613ACGM   2   PROD  2018112020180930P      L20060509OIL       1                8                 NG15-06        20180101201811201234WR     29  \n"
+  },
+  {
+    "file": "lseowndelimit.txt",
+    "source_archive": "lseowndelimit.zip",
+    "selection": "G16942 lease row; first four owner/operator rows; referenced company rows",
+    "sha256": "f64ed3a1e223fc026c4cf3732fdad0a5a001ca437d224e33a0632cc1478d7803",
+    "size_bytes": 412
+  },
+  {
+    "file": "lseownddelimit.txt",
+    "source_archive": "lseownddelimit.zip",
+    "selection": "G16942 lease row; first four owner/operator rows; referenced company rows",
+    "sha256": "fcf99df0046754b0e664a4e044ecc2e59a424e630888081188ba6e0ff9d86242",
+    "size_bytes": 316
+  },
+  {
+    "file": "compalldelimit.txt",
+    "source_archive": "compalldelimit.zip",
+    "selection": "G16942 lease row; first four owner/operator rows; referenced company rows",
+    "sha256": "456269afafbce1711a0408b71e21f0aeb294874c3718fa6ea0bbfb8799807be5",
+    "size_bytes": 1557
+  }
+]

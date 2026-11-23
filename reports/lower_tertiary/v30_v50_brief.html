@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lower Tertiary Gold Standard — V30 → V50 Refresh</title>
+<style>
+  :root{
+    --ink:#16242f; --muted:#5b6b76; --line:#e2e8ed; --bg:#f6f8fa;
+    --accent:#0b6b5e; --warn:#b4690e; --good:#1a7f4b; --bad:#b22222; --chip:#eef3f2;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+  .wrap{max-width:980px;margin:0 auto;padding:28px 20px 60px;}
+  header.brief{border-bottom:3px solid var(--accent);padding-bottom:14px;margin-bottom:6px;}
+  .kicker{letter-spacing:.12em;text-transform:uppercase;font-size:12px;color:var(--accent);font-weight:700;}
+  h1{font-size:27px;margin:6px 0 4px;line-height:1.2;}
+  h2{font-size:20px;margin:34px 0 10px;padding-top:8px;border-top:1px solid var(--line);}
+  h3{font-size:16px;margin:20px 0 6px;}
+  .meta{color:var(--muted);font-size:13.5px;margin:2px 0 0;}
+  p{margin:9px 0;}
+  .lede{font-size:17px;background:#fff;border:1px solid var(--line);border-left:4px solid var(--accent);
+    padding:14px 16px;border-radius:8px;margin:14px 0 4px;}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0;}
+  .card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px;}
+  .card .n{font-size:22px;font-weight:700;}
+  .card .l{font-size:12.5px;color:var(--muted);margin-top:2px;}
+  .pos{color:var(--good)} .neg{color:var(--bad)}
+  table{border-collapse:collapse;width:100%;background:#fff;border:1px solid var(--line);
+    border-radius:10px;overflow:hidden;font-size:14px;margin:12px 0;}
+  th,td{padding:9px 11px;text-align:right;border-bottom:1px solid var(--line);}
+  th:first-child,td:first-child{text-align:left;}
+  thead th{background:#eef3f2;color:#33444e;font-size:12.5px;letter-spacing:.02em;}
+  tbody tr:last-child td{border-bottom:none;}
+  tfoot td{font-weight:700;background:#f3f7f6;border-top:2px solid var(--accent);}
+  .callout{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:12px 0;}
+  .callout.decide{border-left:4px solid var(--accent);}
+  .callout.warn{border-left:4px solid var(--warn);}
+  .tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;
+    background:var(--chip);color:var(--accent);margin-left:6px;vertical-align:middle;}
+  ul{margin:8px 0 8px 2px;padding-left:20px;} li{margin:4px 0;}
+  code{background:#eef1f3;padding:1px 5px;border-radius:5px;font-size:13px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+  .foot{margin-top:34px;border-top:1px solid var(--line);padding-top:12px;color:var(--muted);font-size:12.5px;}
+  .legend{font-size:12.5px;color:var(--muted);margin:4px 0 0;}
+  @media(max-width:680px){.grid{grid-template-columns:repeat(2,1fr)}table{font-size:12.5px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="brief">
+  <div class="kicker">Frontier Deepwater · FDAS — BSEE Lower Tertiary</div>
+  <h1>Gold-Standard Refresh: V30 → V50</h1>
+  <p class="meta">Prepared for Roy Shilling · 2026-06-27 · Source: BSEE OGOR-A (public) re-run with latest <code>ogora</code> + <code>mv_war</code> · Reproduced before update</p>
+</header>
+
+<p class="lede">
+  You asked us to rerun all the leases on the latest BSEE data and QA/QC it against
+  before. We first <strong>reproduced the frozen V30 baseline</strong> from raw data to prove the pipeline is
+  deterministic, then extended the window to the latest month (<strong>2026-04</strong>) to set a new
+  sanctioned baseline, <strong>V50</strong>. V30 is left untouched; V50 lives alongside it.
+</p>
+
+<div class="grid">
+  <div class="card"><div class="n pos">+14.1%</div><div class="l">Portfolio oil (669→763 MMbbl)</div></div>
+  <div class="card"><div class="n pos">+15.2%</div><div class="l">Portfolio revenue (+$6.6 B)</div></div>
+  <div class="card"><div class="n pos">+$432 M</div><div class="l">NPV improvement (still negative)</div></div>
+  <div class="card"><div class="n">197 / 5</div><div class="l">Tests passed / skipped</div></div>
+</div>
+
+<h2>1 · Reproduction gate — done before anything changed</h2>
+<p>
+  Re-running the V30 methodology on raw BSEE OGOR reproduces the frozen
+  <code>golden_baseline_v30.yml</code> within <strong>±0.1% on production</strong> and
+  <strong>±1% on NPV</strong> for every matched field. Jack St Malo's NPV sits in its
+  <em>documented</em> ~7.3% band (a monthly D&amp;C-allocation timing difference between raw OGOR and
+  Roy's pre-processed workbook — known, not new). Because the engine is proven deterministic, every
+  V30→V50 move below is attributable to <strong>new data</strong>, not code drift.
+</p>
+
+<h2>2 · V30 → V50 comparison <span class="tag">the QA/QC, "compared to before"</span></h2>
+<p class="legend">Window: V30 = 2000-09 → 2025-05 (frozen) · V50 = 2000-09 → 2026-04 (+11 months). $MM unless noted.</p>
+<table>
+  <thead><tr>
+    <th>Field</th><th>Oil V30</th><th>Oil V50</th><th>Δ Oil</th>
+    <th>Rev V30</th><th>Rev V50</th><th>Δ Rev</th>
+    <th>NPV V30</th><th>NPV V50</th><th>Δ NPV</th>
+  </tr></thead>
+  <tbody>
+    <tr><td>Jack St Malo&nbsp;⚠️</td><td>406.6</td><td>438.7</td><td class="pos">+7.9%</td><td>25,648</td><td>27,891</td><td class="pos">+8.7%</td><td>−881</td><td>−805</td><td class="pos">+77</td></tr>
+    <tr><td>Stones</td><td>83.7</td><td>89.0</td><td class="pos">+6.4%</td><td>5,582</td><td>5,947</td><td class="pos">+6.5%</td><td>−1,479</td><td>−1,461</td><td class="pos">+19</td></tr>
+    <tr><td>Julia</td><td>70.9</td><td>77.5</td><td class="pos">+9.2%</td><td>4,715</td><td>5,168</td><td class="pos">+9.6%</td><td>−531</td><td>−483</td><td class="pos">+48</td></tr>
+    <tr><td>Big Foot</td><td>66.9</td><td>78.7</td><td class="pos">+17.8%</td><td>4,738</td><td>5,571</td><td class="pos">+17.6%</td><td>−1,063</td><td>−989</td><td class="pos">+74</td></tr>
+    <tr><td>Cascade Chinook&nbsp;†</td><td>34.3</td><td>39.7</td><td class="pos">+15.5%</td><td>2,327</td><td>2,778</td><td class="pos">+19.4%</td><td>−1,474</td><td>−1,580</td><td class="neg">−6</td></tr>
+    <tr><td>Anchor</td><td>6.9</td><td>18.6</td><td class="pos">+168.5%</td><td>476</td><td>1,279</td><td class="pos">+168.6%</td><td>−1,733</td><td>−1,587</td><td class="pos">+146</td></tr>
+    <tr><td>Shenandoah</td><td>0.0</td><td>21.2</td><td class="pos">ramp</td><td>0.3</td><td>1,460</td><td class="pos">ramp</td><td>−1,166</td><td>−991</td><td class="pos">+175</td></tr>
+  </tbody>
+  <tfoot><tr><td>Total (producing)</td><td>669.3</td><td>763.3</td><td>+14.1%</td><td>43,487</td><td>50,094</td><td>+15.2%</td><td>−8,328</td><td>−7,895</td><td>+432</td></tr></tfoot>
+</table>
+<p class="legend">
+  ⚠️ Jack St Malo NPV carries the known ~7.3% reproducer-vs-frozen offset; its oil/revenue deltas are data-clean.<br>
+  † Cascade Chinook V50 adopts the verified first-oil correction (2014-01 → 2012-09); see §3. Exploration-only fields
+  (North Platte −$784M, Kaskida −$625M, Tiber −$228M) are D&amp;C-only and unchanged.
+</p>
+<p>
+  Every producer gains 11 months of production, so oil and revenue rise across the board — most
+  dramatically for the late starters <strong>Shenandoah</strong> and <strong>Anchor</strong>, which had
+  almost no production captured in V30. NPV improves by <strong>$432M portfolio-wide but stays deeply
+  negative</strong>: the refreshed data does not change the Lower Tertiary subsea-tieback economics story —
+  it sharpens it.
+</p>
+
+<h2>3 · Code reconciliation — which code is right</h2>
+<p>
+  The refresh surfaced two analysis lanes that disagreed. We picked the canonical one and unified them.
+</p>
+<div class="callout decide">
+  <strong>Decision — one engine, two vintages.</strong>
+  <ul>
+    <li><strong>Single engine.</strong> V30 and V50 are the <em>same</em> function with different arguments
+        (<code>end_date</code>, <code>first_oil_overrides</code>); no forked methodology. Default arguments
+        reproduce V30 byte-for-byte.</li>
+    <li><strong>Cascade Chinook first-oil correction adopted for V50.</strong> Raw OGOR shows first
+        production in <strong>2012-09</strong>; the golden V30 carried <strong>2014-01</strong> — a verified
+        error. V50 uses the corrected date (its oil now matches the independent latest-data run); V30 stays
+        frozen so it keeps matching Roy's sanctioned workbook.</li>
+    <li><strong>Jack St Malo D&amp;C timing documented, not silently "fixed."</strong> The raw-OGOR monthly
+        allocation is fully reproducible from public source; the ~7.3% offset vs the workbook is recorded as
+        expected.</li>
+  </ul>
+</div>
+
+<h2>4 · Assumptions audit <span class="tag">the basis under every number</span></h2>
+<p>
+  V50 reuses the V30 assumptions <strong>verbatim</strong> (same workbook) — that is what makes the comparison
+  a clean data-only diff. But the basis itself has open items worth a decision, separate from the data refresh:
+</p>
+<div class="callout warn">
+  <strong>What the engine actually uses.</strong> Of the <strong>39</strong> assumptions in
+  <code>lease_assumptions.xlsx</code>, the engine reads only <strong>~11</strong> — all cost/price/rate inputs
+  (discount 10%, royalty 18.75%, opex $4–6/bbl, host capex, rig dayrates, …). The NPV is
+  <strong>pre-tax</strong>: corporate tax (21%), depreciation, 70% IDC, NOL carry-forward, severance, and the
+  royalty-relief threshold (50 MMbbl) are <em>defined in the workbook but never applied</em> — even though an
+  after-tax reference document sits beside it.
+</div>
+<h3>Three assumption decks exist — and they are not consistent</h3>
+<table>
+  <thead><tr><th>Deck</th><th>Role</th><th>Key divergence</th></tr></thead>
+  <tbody>
+    <tr><td>FDAS V30 <code>lease_assumptions.xlsx</code></td><td>Canonical — V30 &amp; V50 gold standard</td><td>WTI fallback $60 · per-dev-system · pre-tax</td></tr>
+    <tr><td><code>economic_assumptions.yml</code></td><td>Older (2024) deck — a different script lineage</td><td>Base WTI <strong>$75</strong>, scenarios $50/75/100</td></tr>
+    <tr><td>test fixture <code>leases_assumptions.xlsx</code></td><td>Test data only</td><td>Stale — different shape (41×3 vs 39×7)</td></tr>
+  </tbody>
+</table>
+<p class="legend">
+  For your question: <strong>across V30 and V50, the assumptions are identical</strong> (same file). Across the
+  wider module they are not — two materially different economic bases feed two NPV code paths.
+</p>
+
+<h2>5 · Recommendation</h2>
+<div class="callout">
+  <ul>
+    <li><strong>Tier 1 — data refresh (done, sanctioned):</strong> V50. Same basis → deltas reflect data only.</li>
+    <li><strong>Tier 2 — basis refresh (needs your sign-off):</strong> the price decks are current to 2026-05,
+        but the <em>cost</em> decks (rig dayrates, opex, capex) and the 10% / 18.75% rates are original
+        2014-era figures. Rig dayrates are the most likely stale.</li>
+    <li><strong>Tier 3 — model extension:</strong> wire in the after-tax block + royalty relief the workbook
+        already specifies, and consolidate to one assumptions deck (retire/relabel the $75 YAML).</li>
+  </ul>
+  <p style="margin:6px 0 0">Keep V50 on the V30 basis for this deliverable; treat Tier 2/3 as separate,
+  explicitly-sanctioned revisions because they change the answer for non-data reasons.</p>
+</div>
+
+<div class="foot">
+  Frozen <code>golden_baseline_v30.yml</code> unchanged. New artifacts: <code>golden_baseline_v50.yml</code>,
+  the V30↔V50 comparison, seven per-field V50 reports, and the reconciliation note — all in the
+  <code>worldenergydata</code> BSEE module. Full suite: 197 passed / 5 skipped. Figures in $MM and MMbbl;
+  pre-tax NPV at 10% annual discount; derived from BSEE OGOR-A public data.
+</div>
+
+</div>
+</body>
+</html>

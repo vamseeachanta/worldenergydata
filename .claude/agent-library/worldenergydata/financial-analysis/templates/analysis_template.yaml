@@ -1,0 +1,43 @@
+# Financial Analysis Template
+name: financial_analysis_template
+version: 1.0.0
+description: Template for financial analysis reports
+
+sections:
+  executive_summary:
+    required: true
+    fields:
+      - recommendation
+      - key_metrics
+      - risks
+      - opportunities
+  
+  financial_metrics:
+    required: true
+    calculations:
+      - npv
+      - irr
+      - payback_period
+      - lcoe
+      - roce
+  
+  sensitivity_analysis:
+    required: true
+    variables:
+      - capex
+      - opex
+      - revenue
+      - discount_rate
+  
+  risk_assessment:
+    required: false
+    methods:
+      - monte_carlo
+      - scenario_analysis
+      - var
+
+output_formats:
+  - pdf
+  - excel
+  - dashboard
+  - markdown

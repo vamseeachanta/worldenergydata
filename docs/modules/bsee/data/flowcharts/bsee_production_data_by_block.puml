@@ -1,0 +1,40 @@
+@startuml bsee_production_data_by_block
+skinparam titleBorderRoundCorner 15
+skinparam titleBorderThickness 2
+skinparam titleBorderColor red
+skinparam titleBackgroundColor Tomato
+
+title BSEE Data By Block
+
+start
+
+    partition {
+
+        :Get API or Block for lease;
+            note right
+                get block number or get API12 from completions in excel file (Manual)
+                file path : docs\modules\bsee\legacy\results\bseedata\data
+                #TODO - automate this process
+            end note
+
+        :Get lease_number;
+            note right
+                get lease_number from acquired data
+            end note
+
+        :Get production data;
+            note right
+                get Production data 
+                tests location: tests/modules/bsee/data
+                
+            end note
+    }
+
+stop
+
+footer
+%date("yyyy.MM.dd' at 'HH:mm")
+%filename()
+end footer
+
+@enduml++

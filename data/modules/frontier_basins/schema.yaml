@@ -1,0 +1,67 @@
+module: frontier_basins
+description: frontier_basins data module [17.1 KB]
+datasets:
+- name: frontier_discoveries.csv
+  path: data/modules/frontier_basins/curated/frontier_discoveries.csv
+  format: csv
+  columns:
+  - name: DISCOVERY_NAME
+    type: string
+    description: ''
+    unit: ''
+  - name: BLOCK
+    type: string
+    description: ''
+    unit: ''
+  - name: COUNTRY
+    type: string
+    description: ''
+    unit: ''
+  - name: BASIN
+    type: string
+    description: ''
+    unit: ''
+  - name: OPERATOR
+    type: string
+    description: ''
+    unit: ''
+  - name: PARTNERS
+    type: string
+    description: ''
+    unit: ''
+  - name: DISCOVERY_YEAR
+    type: integer
+    description: ''
+    unit: ''
+  - name: WATER_DEPTH_M
+    type: integer
+    description: ''
+    unit: feet
+  - name: RESOURCE_ESTIMATE
+    type: string
+    description: ''
+    unit: ''
+  - name: RESOURCE_BASIS
+    type: string
+    description: ''
+    unit: ''
+  - name: STATUS
+    type: string
+    description: ''
+    unit: ''
+  - name: CONFIDENCE_TIER
+    type: string
+    description: ''
+    unit: ''
+  - name: DATA_SOURCE_URL
+    type: string
+    description: ''
+    unit: ''
+  - name: NOTES
+    type: string
+    description: ''
+    unit: ''
+  row_count: 51
+  size_bytes: 17472
+  last_modified: '2026-06-26T11:29:30.378164+00:00'
+binary_stores: []

@@ -1,0 +1,37 @@
+- **Verdict:** APPROVE
+- **Retrieval adequacy:** adequate
+
+**Strengths**
+- Clear and hard boundaries establishing what is explicitly out of scope (no linkage, no analytics, no dynamic FX ingestion).
+- Strict adherence to immutability of as-reported data (purely additive normalization layer).
+- Explicit fallback behaviors defined for missing or unsupported data (fails safely to `not_comparable` rather than utilizing silent coercion).
+- Accurately grounded in existing repository test surfaces (`test_cost_predictor.py`, `test_proxy_comparison.py`, `test_calibration_schema.py`).
+
+**Findings by severity**
+- **Critical:** None. 
+- **High:** None. The scope is well-bounded.
+- **Medium:** The pseudocode and tests do not specify whether the 3% annual escalation/de-escalation is applied as a compounded or linear rate. This could lead to deterministic but mathematically inconsistent implementations over multi-year spans.
+- **Low:** The structure/schema of the `fx_table` in `fx_policy_v1.py` (e.g., dictionary, JSON, dataclass) is undefined in the plan, which could cause minor implementation friction.
+
+**Missing tests**
+- `test_escalation_rate_is_compounded_correctly_over_multiple_years`: To verify the exact mathematical application of the 3% rate (e.g., 2018 to 2020).
+- `test_unrecognized_magnitude_scale_marks_record_not_comparable`: To verify behavior when a scale is present but unsupported (e.g., "thousands" if only "millions" and "billions" are expected).
+- `test_fiscal_year_type_coercion`: To ensure both integer `2020` and string `"2020"` behave identically against the FX table lookups.
+
+**Scope creep concerns**
+- Minimal. The plan explicitly walls off linkage (#335) and consumer-facing analytics (#338).
+
+**Weakest assumption**
+- Assuming a static, in-repo FX table will be sustainable. When new annual disclosures are ingested, they will automatically be marked `not_comparable` until a developer manually updates `fx_policy_v1.py` with the new year's rates.
+
+**Most likely implementation failure mode**
+- Inverting the math for the base year adjustment (escalation vs. de-escalation). For example, adjusting a 2018 cost to 2020 by incorrectly applying a discount instead of an escalation, or failing to compound the rate correctly.
+
+**Most likely test gap**
+- Missing assertions on the precision and rounding of the resulting float values after applying the FX rate and the 3% adjustment, which could lead to flaky equality tests.
+
+**Future issues suggested**
+- Issue: Implement an automated mechanism or pipeline to update the static in-repo FX table for new fiscal years.
+- Issue: Evaluate replacing the flat 3% global escalation rate with region-specific or sector-specific inflation indices.
+
+**Review confidence:** High.

@@ -1,0 +1,36 @@
+**Verdict:** MINOR
+
+**Retrieval adequacy:** adequate
+
+**Strengths:**
+- Excellent isolation of the new comparability layer from the existing `public_dataset.py` and `cost_predictor.py` calibration paths.
+- Strong commitment to non-destructive transformations by preserving as-reported values alongside normalized fields.
+- Correctly grounded in current codebase surfaces, accurately identifying the 2020 base year / 3% escalation precedent set in `cost_predictor.py`.
+- TDD list maps cleanly to the defined Acceptance Criteria.
+
+**Findings by severity:**
+- **High:** Unresolved design for the FX source. The plan relies on a "deterministic FX policy for fiscal year" while explicitly excluding "automated FX ingestion." Without defining the structure (e.g., a static hardcoded dictionary or local CSV) and bounds of this data source, implementation will likely stall. 
+- **Medium:** The open question regarding whether to reuse `cost_predictor.py`'s 2020 base year / 3% escalation rule or define a new versioned rule must be resolved *before* implementation begins to avoid diverging logic or blocking the PR.
+- **Low:** The plan rightly notes a dependency on `#334` for the disclosure schema. If `#334` is not yet merged, attempting to build this now will lead to schema mismatches or require mocking the loader.
+
+**Missing tests:**
+- `test_unsupported_fiscal_year_marks_record_not_comparable`: Must verify the boundary condition where a row has a valid fiscal year, but that year falls outside the coverage of the static FX/escalation table.
+- `test_unsupported_currency_marks_record_not_comparable`: Must verify behavior when a currency is present but missing from the deterministic FX policy.
+- `test_successful_comparability_status_is_explicitly_set`: Explicitly assert that a fully valid row receives a positive comparability status, complementing the negative non-comparable tests.
+
+**Scope creep concerns:**
+- The "deterministic FX policy" could easily expand into a complex currency conversion module. It must be strictly constrained to a lightweight static lookup (e.g., a simple dictionary mapping) for v1 to respect the scope boundaries.
+
+**Weakest assumption:**
+- Assuming that a deterministic FX rate mapping can be seamlessly applied without prior agreement on the exact currencies and temporal bounds required by the `#334` dataset. 
+
+**Most likely implementation failure mode:**
+- Encountering a fiscal year or currency during the `normalize_disclosure_money` loop that lacks a mapping in the static FX table, resulting in a `KeyError` or unhandled exception rather than gracefully returning a `not_comparable` status.
+
+**Most likely test gap:**
+- Failing to test the boundary edges of the deterministic tables (e.g., the earliest and latest available years in the escalation/FX mappings) to ensure out-of-bounds inputs fail safely.
+
+**Future issues suggested:**
+- Extract the hardcoded 3% escalation rule from `cost_predictor.py` and the proposed static FX table into a centralized, versioned economic-adjustment module backed by real index data (e.g., IHS CERA UCCI equivalents).
+
+**Review confidence:** High. Read access confirmed the architectural state of `public_dataset.py`, the existing inflation logic in `cost_predictor.py`, and the non-interference requirement for downstream tests in `test_dataset_size.py` and `test_field_integration.py`.

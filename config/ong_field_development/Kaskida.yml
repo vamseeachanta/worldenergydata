@@ -1,0 +1,42 @@
+# Auto-generated field input — scripts/gen_field_inputs.py
+# BOEM blocks mirror aceengineercode config/ong_field_development; enriched with BSEE leases + validated economics.
+field:
+  nickname: Kaskida
+  id: kaskida
+  status: pre-FID
+  dev_system: subsea20
+  water_depth_ft: 5860
+  first_oil: null
+location:
+  boem_fields:
+  - KC292
+  - KC291
+  leases:
+  - g25792
+  - g19555
+  well_type:
+  - E
+  - D
+analysis:
+  economics: true
+  discount_rate_annual: 0.1
+  by:
+  - field
+  - block
+  - well
+  vintages:
+  - v30
+  - latest
+validated_economics:
+  total_oil_bbl: 0
+  revenue_usd: null
+  capex_usd: 925100000
+  npv10_usd: -625020726.74
+  mirr_annual: null
+  producers: null
+  wellbores: 7
+public_metadata: {}
+provenance:
+  boem_source: aceengineercode/config/ong_field_development/Kaskida.yml
+  lease_source: config/analysis/lower_tertiary/lease_mapping_fdas.yml
+  economics_source: config/analysis/lower_tertiary/golden_baseline_v30.yml

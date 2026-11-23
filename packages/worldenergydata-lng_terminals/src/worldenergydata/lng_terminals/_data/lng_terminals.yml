@@ -1,0 +1,53 @@
+# LNG Terminals Module Configuration
+module: lng_terminals
+version: 1.0.0
+description: Global LNG terminal dataset with engineering design data
+
+scraper:
+  user_agent: "WorldEnergyData-LNGTerminals/1.0"
+  request_timeout: 30.0
+  rate_limit_delay: 1.0
+  max_retries: 3
+  retry_delay: 2.0
+
+sources:
+  ferc:
+    name: "FERC LNG Reports"
+    enabled: true
+    base_url: "https://www.ferc.gov"
+    rate_limit: 2.0
+    cache_ttl: 604800
+  gie:
+    name: "GIE ALSI"
+    enabled: true
+    base_url: "https://alsi.gie.eu"
+    api_url: "https://alsi.gie.eu/api"
+    rate_limit: 1.0
+    cache_ttl: 86400
+  giignl:
+    name: "GIIGNL Annual Report"
+    enabled: true
+    base_url: "https://giignl.org"
+    rate_limit: 2.0
+    cache_ttl: 2592000
+  seed:
+    name: "Curated Seed Data"
+    enabled: true
+    base_url: ""
+    rate_limit: 0.0
+    cache_ttl: 0
+
+processing:
+  fuzzy_match_threshold: 0.85
+  coordinate_proximity_km: 50.0
+  max_pipelines_per_terminal: 8
+
+cache:
+  enabled: true
+  cache_dir: ""  # Empty = use default data/modules/lng_terminals/cache/
+  default_refresh_mode: "cache_first"
+  max_age_seconds: 86400  # 24 hours fallback if source has no cache_ttl
+
+output_formats:
+  - csv
+  - parquet

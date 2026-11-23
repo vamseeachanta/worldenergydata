@@ -1,0 +1,3 @@
+"""
+HTML report templates.
+"""

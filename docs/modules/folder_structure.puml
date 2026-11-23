@@ -1,0 +1,49 @@
+@startuml folder_structure
+skinparam titleBorderRoundCorner 15
+skinparam titleBorderThickness 2
+skinparam titleBorderColor red
+skinparam titleBackgroundColor Tomato
+
+title Repository Folder Structure
+
+start
+
+    partition {
+
+        :Data;
+            note right
+                All heavy data
+            end note
+
+        :docs;
+            note right
+              TBA
+            end note
+
+        :src;
+            note right
+              COde
+            end note
+
+
+        :tests;
+            note right
+              - run files
+              - results
+              - long-term data from tests 
+                 go to AssetData/data/module/{folder_name} 
+                 folder
+                 eg: zip files, csv files?
+            end note
+
+
+    }
+
+stop
+
+footer
+%date("yyyy.MM.dd' at 'HH:mm")
+%filename()
+end footer
+
+@enduml

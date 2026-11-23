@@ -1,0 +1,216 @@
+OpenAI Codex v0.122.0 (research preview)
+--------
+workdir: /mnt/local-analysis/workspace-hub/worldenergydata
+model: gpt-5.4
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR, /home/vamsee/.codex/memories]
+reasoning effort: medium
+reasoning summaries: none
+session id: 019db317-dcd1-75f2-9d1d-00bc15ddd5c8
+--------
+user
+# Adversarial Re-Review Request: Issue #334 (revised compact)
+
+You are an independent adversarial reviewer. Findings only.
+
+Target
+- Issue #334 in vamseeachanta/worldenergydata
+- Stage: revised plan review before approval
+
+Revised v1 now claims:
+- foundation-only disclosure layer
+- explicit operator vs project scope typing
+- typed monetary fields instead of generic metric_value
+- tiny curated seed dataset (<=12 records)
+- strong row-level provenance
+- exact (operator, project_name) linkage strategy to existing CostDataPoint for project-scope rows
+- no package-root API expansion
+- explicit deferral to child issues:
+  - #335 linkage hardening
+  - #336 normalization/comparability
+  - #337 citation+ingestion
+  - #338 analytics/integration
+
+Existing code surface actually inspected:
+- src/worldenergydata/cost/data_collection/public_dataset.py
+- src/worldenergydata/cost/data_collection/calibration_schema.py
+- src/worldenergydata/cost/calibration/cost_predictor.py
+- src/worldenergydata/cost/data_collection/__init__.py
+- tests/unit/cost/test_cost_predictor.py
+- tests/unit/cost/test_proxy_comparison.py
+- src/worldenergydata/fdas/__init__.py
+- src/worldenergydata/lower_tertiary/npv.py
+
+Files in revised plan:
+- create src/worldenergydata/cost/data_collection/operator_disclosures_schema.py
+- create src/worldenergydata/cost/data_collection/operator_disclosures_dataset.py
+- modify src/worldenergydata/cost/data_collection/__init__.py
+- create tests/unit/cost/test_operator_disclosures.py
+
+Key revised acceptance claims:
+- typed annual as-reported monetary disclosure schema with explicit operator/project scope
+- as_reported_metric_name preserved
+- tiny curated seed dataset with >=1 multi-year project series and >=1 operator annual capex series
+- every seed record has source_title, source_url, page_reference, quoted_text, confidence
+- exact linkage to existing CostDataPoint for project rows only
+- downstream integration, normalization, automated ingestion deferred
+
+Open risks in revised plan:
+- seed dataset curation could still sprawl
+- operator wording variability may require future mapping rules
+- restatements need consistent treatment
+
+Questions to answer:
+1. Is this revised plan now approval-ready for a bounded T2 foundation issue?
+2. Any remaining blockers in scope, tests, provenance, or linkage strategy?
+3. Any remaining inconsistencies between deliverable, files, and acceptance criteria?
+
+Required output:
+- Verdict: APPROVE | MINOR | MAJOR
+- Retrieval adequacy: adequate | insufficient
+- Strengths
+- Findings by severity: critical, high, medium, low
+- Missing tests
+- Scope creep concerns
+- Weakest assumption
+- Most likely implementation failure mode
+- Most likely test gap
+- Future issues suggested
+- Review confidence
+warning: Codex's Linux sandbox uses bubblewrap and needs access to create user namespaces.
+codex
+Reviewing the revised #334 plan against the current cost-data code surface first, then I’ll compare the claimed acceptance criteria to the actual repository interfaces and issue text so the verdict is grounded in the code, not the summary.
+mcp: codex_apps/github_fetch_issue started
+mcp: codex_apps/github_fetch_issue (completed)
+mcp: codex_apps/github_fetch_issue_comments started
+mcp: codex_apps/github_fetch_issue_comments (completed)
+codex
+The local shell is blocked by the sandbox wrapper here, so I’m switching to repository reads through GitHub for the cited files. That still lets me verify the plan against the actual exported types, datasets, and current test surface.
+mcp: codex_apps/github_fetch_file started
+mcp: codex_apps/github_fetch_file (completed)
+mcp: codex_apps/github_fetch_file started
+mcp: codex_apps/github_fetch_file (completed)
+mcp: codex_apps/github_fetch_file started
+mcp: codex_apps/github_fetch_file (completed)
+mcp: codex_apps/github_fetch_file started
+mcp: codex_apps/github_fetch_file (completed)
+mcp: codex_apps/github_fetch_file started
+mcp: codex_apps/github_fetch_file (completed)
+mcp: codex_apps/github_fetch_file started
+mcp: codex_apps/github_fetch_file (completed)
+mcp: codex_apps/github_fetch_file started
+mcp: codex_apps/github_fetch_file (completed)
+mcp: codex_apps/github_fetch_file started
+mcp: codex_apps/github_fetch_file (completed)
+mcp: codex_apps/github_fetch_file started
+mcp: codex_apps/github_fetch_file (completed)
+codex
+Verdict: MAJOR  
+Retrieval adequacy: adequate
+
+**Strengths**
+- The revised issue body is materially tighter than the earlier draft: it now narrows to a foundation-only disclosure layer, separates `operator` vs `project` scope, requires row-level provenance, and explicitly defers normalization, ingestion, and downstream consumers.
+- The current code surface supports that decomposition cleanly. Existing cost code is sanction-point oriented in [src/worldenergydata/cost/data_collection/calibration_schema.py](https://github.com/vamseeachanta/worldenergydata/blob/main/src/worldenergydata/cost/data_collection/calibration_schema.py), [public_dataset.py](https://github.com/vamseeachanta/worldenergydata/blob/main/src/worldenergydata/cost/data_collection/public_dataset.py), and [cost_predictor.py](https://github.com/vamseeachanta/worldenergydata/blob/main/src/worldenergydata/cost/calibration/cost_predictor.py), so a separate disclosure layer is the right boundary.
+
+**Findings by severity**
+
+Critical
+- None.
+
+High
+- The canonical plan artifact is still internally inconsistent with the revised issue and is not approval-ready as written. [docs/plans/2026-04-21-issue-334-annual-operator-disclosures-dataset.md](https://github.com/vamseeachanta/worldenergydata/blob/main/docs/plans/2026-04-21-issue-334-annual-operator-disclosures-dataset.md) still proposes package-root API expansion via `src/worldenergydata/cost/__init__.py`, while the revised issue explicitly says no package-root API expansion.
+- The same plan artifact still describes an over-broad schema and helper surface that violates the new bounded scope. Its pseudocode includes generic `metric_value`, helper query APIs, and non-monetary enum members like counts/dates, which conflicts with the revised “typed annual as-reported monetary disclosure schema” and “foundation-only” claims.
+- Linkage is still underspecified at the testable-contract level. The revised issue says exact `(operator, project_name)` linkage to existing `CostDataPoint` for project-scope rows only, but the plan/test surface does not yet require a linkage field or a test that operator-scope rows are never linked. That leaves the main acceptance claim partially rhetorical instead of executable.
+
+Medium
+- Provenance acceptance and planned tests are misaligned. The revised issue says every seed record must have `source_title`, `source_url`, `page_reference`, `quoted_text`, and `confidence`, but the current plan test language still allows weaker “page reference or quote support” style validation.
+- The revised issue says the seed should be tiny and curated (`<=12` in your request summary), but the plan artifact does not encode an explicit dataset-size cap. Without that, “minimal” can drift during implementation.
+- Restatement handling is named as an open risk but not constrained in the data contract. For annual disclosures, a record model usually needs at least one explicit convention for restated vs originally reported values, even if broader reconciliation is deferred. Otherwise duplicate year/project/operator rows can become ambiguous immediately.
+
+Low
+- The revised issue says no downstream integration, but the current plan still frames exports more broadly than necessary. Exporting from `cost.data_collection` is consistent; touching package root is not.
+- The existing issue body and current plan both use slightly inconsistent field naming around `metric_name_reported` vs `as_reported_metric_name`. That is minor, but it will create avoidable churn in tests and docs.
+
+**Missing tests**
+- A schema test proving only monetary disclosure fields are accepted in v1 and that generic `metric_value` is absent.
+- A test proving `scope="operator"` rows cannot carry or use `CostDataPoint` linkage fields.
+- A test proving `scope="project"` rows use only exact `(operator, project_name)` linkage and do not attempt fuzzy matching.
+- A test asserting every seed row has all required provenance fields populated, not just some citation support.
+- A test enforcing the curated seed cap.
+- A test for duplicate/restated same-year rows so the dataset cannot silently admit ambiguous records.
+
+**Scope creep concerns**
+- The main scope-creep vector is the stale plan artifact, not the revised issue body.
+- Specifically: package-root exports, helper query APIs, and non-monetary metric vocabulary would all expand this from a T2 foundation issue into a broader modeling/API issue.
+
+**Weakest assumption**
+- That exact `(operator, project_name)` matching is sufficient even for a tiny seed without first defining how project naming variants and phase naming are represented in the dataset itself.
+
+**Most likely implementation failure mode**
+- The implementer follows the stale plan doc instead of the tightened issue body and ships a broader schema/API surface than the revised approval target allows.
+
+**Most likely test gap**
+- Tests pass on loader/schema happy paths but never assert the negative boundaries: no package-root export, no operator-row linkage, no generic metric field, no missing provenance fields.
+
+**Future issues suggested**
+- Add one small follow-up or acceptance addendum specifically for restatement identity rules if that is not folded into #337.
+- Keep #335 separate, but require #334 to define the exact linkage field shape now, even if broader linkage hardening stays deferred.
+
+**Review confidence**
+- High. The revised issue body is close to approval shape, but the canonical plan artifact still reflects the older, broader design and leaves a real approval blocker until those mismatches are removed.
+tokens used
+67,711
+Verdict: MAJOR  
+Retrieval adequacy: adequate
+
+**Strengths**
+- The revised issue body is materially tighter than the earlier draft: it now narrows to a foundation-only disclosure layer, separates `operator` vs `project` scope, requires row-level provenance, and explicitly defers normalization, ingestion, and downstream consumers.
+- The current code surface supports that decomposition cleanly. Existing cost code is sanction-point oriented in [src/worldenergydata/cost/data_collection/calibration_schema.py](https://github.com/vamseeachanta/worldenergydata/blob/main/src/worldenergydata/cost/data_collection/calibration_schema.py), [public_dataset.py](https://github.com/vamseeachanta/worldenergydata/blob/main/src/worldenergydata/cost/data_collection/public_dataset.py), and [cost_predictor.py](https://github.com/vamseeachanta/worldenergydata/blob/main/src/worldenergydata/cost/calibration/cost_predictor.py), so a separate disclosure layer is the right boundary.
+
+**Findings by severity**
+
+Critical
+- None.
+
+High
+- The canonical plan artifact is still internally inconsistent with the revised issue and is not approval-ready as written. [docs/plans/2026-04-21-issue-334-annual-operator-disclosures-dataset.md](https://github.com/vamseeachanta/worldenergydata/blob/main/docs/plans/2026-04-21-issue-334-annual-operator-disclosures-dataset.md) still proposes package-root API expansion via `src/worldenergydata/cost/__init__.py`, while the revised issue explicitly says no package-root API expansion.
+- The same plan artifact still describes an over-broad schema and helper surface that violates the new bounded scope. Its pseudocode includes generic `metric_value`, helper query APIs, and non-monetary enum members like counts/dates, which conflicts with the revised “typed annual as-reported monetary disclosure schema” and “foundation-only” claims.
+- Linkage is still underspecified at the testable-contract level. The revised issue says exact `(operator, project_name)` linkage to existing `CostDataPoint` for project-scope rows only, but the plan/test surface does not yet require a linkage field or a test that operator-scope rows are never linked. That leaves the main acceptance claim partially rhetorical instead of executable.
+
+Medium
+- Provenance acceptance and planned tests are misaligned. The revised issue says every seed record must have `source_title`, `source_url`, `page_reference`, `quoted_text`, and `confidence`, but the current plan test language still allows weaker “page reference or quote support” style validation.
+- The revised issue says the seed should be tiny and curated (`<=12` in your request summary), but the plan artifact does not encode an explicit dataset-size cap. Without that, “minimal” can drift during implementation.
+- Restatement handling is named as an open risk but not constrained in the data contract. For annual disclosures, a record model usually needs at least one explicit convention for restated vs originally reported values, even if broader reconciliation is deferred. Otherwise duplicate year/project/operator rows can become ambiguous immediately.
+
+Low
+- The revised issue says no downstream integration, but the current plan still frames exports more broadly than necessary. Exporting from `cost.data_collection` is consistent; touching package root is not.
+- The existing issue body and current plan both use slightly inconsistent field naming around `metric_name_reported` vs `as_reported_metric_name`. That is minor, but it will create avoidable churn in tests and docs.
+
+**Missing tests**
+- A schema test proving only monetary disclosure fields are accepted in v1 and that generic `metric_value` is absent.
+- A test proving `scope="operator"` rows cannot carry or use `CostDataPoint` linkage fields.
+- A test proving `scope="project"` rows use only exact `(operator, project_name)` linkage and do not attempt fuzzy matching.
+- A test asserting every seed row has all required provenance fields populated, not just some citation support.
+- A test enforcing the curated seed cap.
+- A test for duplicate/restated same-year rows so the dataset cannot silently admit ambiguous records.
+
+**Scope creep concerns**
+- The main scope-creep vector is the stale plan artifact, not the revised issue body.
+- Specifically: package-root exports, helper query APIs, and non-monetary metric vocabulary would all expand this from a T2 foundation issue into a broader modeling/API issue.
+
+**Weakest assumption**
+- That exact `(operator, project_name)` matching is sufficient even for a tiny seed without first defining how project naming variants and phase naming are represented in the dataset itself.
+
+**Most likely implementation failure mode**
+- The implementer follows the stale plan doc instead of the tightened issue body and ships a broader schema/API surface than the revised approval target allows.
+
+**Most likely test gap**
+- Tests pass on loader/schema happy paths but never assert the negative boundaries: no package-root export, no operator-row linkage, no generic metric field, no missing provenance fields.
+
+**Future issues suggested**
+- Add one small follow-up or acceptance addendum specifically for restatement identity rules if that is not folded into #337.
+- Keep #335 separate, but require #334 to define the exact linkage field shape now, even if broader linkage hardening stays deferred.
+
+**Review confidence**
+- High. The revised issue body is close to approval shape, but the canonical plan artifact still reflects the older, broader design and leaves a real approval blocker until those mismatches are removed.

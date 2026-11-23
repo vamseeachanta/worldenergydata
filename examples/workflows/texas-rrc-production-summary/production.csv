@@ -1,0 +1,4 @@
+district,lease_number,lease_name,operator_name,year,month,oil_production,gas_production,water_production
+03,1001,Synthetic Gulf A,Operator One,2024,1,100,300,20
+03,1001,Synthetic Gulf A,Operator One,2024,2,150,400,25
+08,2001,Synthetic Permian B,Operator Two,2024,1,350,1000,75

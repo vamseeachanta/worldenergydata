@@ -1,0 +1,609 @@
+{
+  "migration_metadata": {
+    "timestamp": "2025-07-24T11:55:14.226807",
+    "dry_run": true,
+    "project_root": "."
+  },
+  "migration_log": [
+    {
+      "timestamp": "2025-07-24T11:55:13.635188",
+      "type": "INFO",
+      "message": "Starting migration for category: data-sources/bsee"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:13.635803",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate .agent-os\\product\\mission.md -> docs/data-sources/bsee/mission.md"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:13.636415",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate .agent-os\\product\\roadmap.md -> docs/data-sources/bsee/roadmap.md"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:13.637075",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate .agent-os\\specs\\2025-07-23-sodir-integration\\spec.md -> docs/data-sources/bsee/spec.md"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:13.637690",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate docs\\development_history.md -> docs/data-sources/bsee/development_history.md"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:13.638299",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate docs\\data-sources\\index.md -> docs/data-sources/bsee/index.md"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:13.638830",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate docs\\modules\\bsee\\analysis\\julia_api12_resolution.md -> docs/data-sources/bsee/julia_api12_resolution.md"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:13.638830",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate docs\\modules\\bsee\\analysis\\economics\\intro.md -> docs/data-sources/bsee/intro.md"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:13.639860",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate docs\\modules\\bsee\\analysis\\economics\\power_markets.md -> docs/data-sources/bsee/power_markets.md"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:13.639941",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate docs\\modules\\bsee\\analysis\\field\\field_layout.md -> docs/data-sources/bsee/field_layout.md"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:13.640505",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate docs\\modules\\bsee\\analysis\\rig_days\\rig_days_by_milestone.md -> docs/data-sources/bsee/rig_days_by_milestone.md"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:13.641076",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate docs\\modules\\bsee\\analysis\\rig_days\\rig_days_by_WAR.md -> docs/data-sources/bsee/rig_days_by_WAR.md"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:13.641736",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate docs\\modules\\bsee\\analysis\\rig_days\\rig_days_summary.md -> docs/data-sources/bsee/rig_days_summary.md"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:13.642296",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate docs\\modules\\bsee\\analysis\\survey\\survey.md -> docs/data-sources/bsee/survey.md"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:13.642858",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate docs\\modules\\bsee\\data\\analysis_data.md -> docs/data-sources/bsee/analysis_data.md"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:13.643427",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate docs\\modules\\bsee\\data\\apm_data_rev1.md -> docs/data-sources/bsee/apm_data_rev1.md"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:13.643987",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate docs\\modules\\bsee\\data\\data_rev1.md -> docs/data-sources/bsee/data_rev1.md"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:13.644744",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate docs\\modules\\bsee\\data\\drilling_data_rev1.md -> docs/data-sources/bsee/drilling_data_rev1.md"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:13.645317",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate docs\\modules\\bsee\\data\\well_api_number.md -> docs/data-sources/bsee/well_api_number.md"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:13.645874",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate docs\\modules\\bsee\\data\\clean_up\\data_explaination.md -> docs/data-sources/bsee/data_explaination.md"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:13.646388",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate docs\\modules\\bsee\\data\\clean_up\\data_for_analysis.md -> docs/data-sources/bsee/data_for_analysis.md"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:13.646947",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate docs\\modules\\bsee\\data\\field_anchor\\ANCHOR_Field_Data_Filtering.md -> docs/data-sources/bsee/ANCHOR_Field_Data_Filtering.md"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:13.647491",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate docs\\modules\\bsee\\data\\field_jsm\\no_of_wells.md -> docs/data-sources/bsee/no_of_wells.md"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:13.647759",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate docs\\modules\\bsee\\data\\production\\notes.md -> docs/data-sources/bsee/notes.md"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:13.648318",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate docs\\modules\\bsee\\data\\survey\\horizontal_reach.md -> docs/data-sources/bsee/horizontal_reach.md"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:13.649222",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate docs\\modules\\bsee\\data\\well\\well_count.md -> docs/data-sources/bsee/well_count.md"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:13.649758",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate docs\\modules\\bsee\\data\\WELL_ACTIVITY_CD\\well_activity_cd_description.md -> docs/data-sources/bsee/well_activity_cd_description.md"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:13.650432",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate docs\\modules\\bsee\\_legacy\\data_for_analysis_legacy.md -> docs/data-sources/bsee/data_for_analysis_legacy.md"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:13.650459",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate docs\\raw_data\\bsee\\data_exploration.md -> docs/data-sources/bsee/data_exploration.md"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:13.651332",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate docs\\raw_data\\wa\\intro.md -> docs/data-sources/bsee/intro.md"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:13.652197",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate tests\\modules\\bsee\\analysis\\README_GitHub_Issue_39.md -> docs/data-sources/bsee/README_GitHub_Issue_39.md"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:13.652770",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate docs\\modules\\bsee\\data\\SME_Roy_attachments\\2025-09-07\\mv_war_boreholes_view.lease.txt -> docs/data-sources/bsee/mv_war_boreholes_view.lease.txt"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:13.653889",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate docs\\modules\\bsee\\data\\SME_Roy_attachments\\2025-09-07\\mv_war_main.txt -> docs/data-sources/bsee/mv_war_main.txt"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:13.655291",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate docs\\modules\\bsee\\_legacy\\code\\mitra\\calculations\\Datatypes file.txt -> docs/data-sources/bsee/Datatypes file.txt"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:13.661792",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate docs\\modules\\bsee\\_legacy\\code\\mitra\\calculations\\PaleogeneEpochs.txt -> docs/data-sources/bsee/PaleogeneEpochs.txt"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:13.726706",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate docs\\modules\\bsee\\_legacy\\code\\mitra\\data\\BoreholeRawData\\mv_boreholes.txt -> docs/data-sources/bsee/mv_boreholes.txt"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:13.745044",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate docs\\modules\\bsee\\_legacy\\code\\mitra\\data\\gepaldmp_all\\gepaldmp_Header.txt -> docs/data-sources/bsee/gepaldmp_Header.txt"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:13.851611",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate docs\\modules\\bsee\\_legacy\\code\\mitra\\data\\gepaldmp_all\\gepaldmp_Paleo.txt -> docs/data-sources/bsee/gepaldmp_Paleo.txt"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:13.851611",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate docs\\modules\\bsee\\_legacy\\ref\\O&G\\Roy_References.txt -> docs/data-sources/bsee/Roy_References.txt"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:13.852615",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate docs\\modules\\bsee\\_legacy\\superseded\\calculations\\Datatypes file.txt -> docs/data-sources/bsee/Datatypes file.txt"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:13.857606",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate docs\\modules\\bsee\\_legacy\\superseded\\calculations\\PaleogeneEpochs.txt -> docs/data-sources/bsee/PaleogeneEpochs.txt"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:13.922392",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate docs\\modules\\bsee\\_legacy\\superseded\\data\\BoreholeRawData\\mv_boreholes.txt -> docs/data-sources/bsee/mv_boreholes.txt"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:13.941937",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate docs\\modules\\bsee\\_legacy\\superseded\\data\\gepaldmp_all\\gepaldmp_Header.txt -> docs/data-sources/bsee/gepaldmp_Header.txt"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:14.059598",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate docs\\modules\\bsee\\_legacy\\superseded\\data\\gepaldmp_all\\gepaldmp_Paleo.txt -> docs/data-sources/bsee/gepaldmp_Paleo.txt"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:14.063603",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate docs\\raw_data\\bsee\\other\\mastdatadelimit.txt -> docs/data-sources/bsee/mastdatadelimit.txt"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:14.067598",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate docs\\raw_data\\bsee\\other\\mastproddelimit.txt -> docs/data-sources/bsee/mastproddelimit.txt"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:14.089248",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate docs\\raw_data\\bsee\\paleo\\gepaldmp_Header.txt -> docs/data-sources/bsee/gepaldmp_Header.txt"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:14.224949",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate docs\\raw_data\\bsee\\paleo\\gepaldmp_Paleo.txt -> docs/data-sources/bsee/gepaldmp_Paleo.txt"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:14.225691",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate src\\worldenergydata.egg-info\\SOURCES.txt -> docs/data-sources/bsee/SOURCES.txt"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:14.226217",
+      "type": "DRY_RUN",
+      "message": "DRY RUN: Would migrate tests\\modules\\all_yml\\yml_summary_pytest.txt -> docs/data-sources/bsee/yml_summary_pytest.txt"
+    },
+    {
+      "timestamp": "2025-07-24T11:55:14.226217",
+      "type": "INFO",
+      "message": "Category data-sources/bsee migration complete: 49/49 successful"
+    }
+  ],
+  "backup_info": {
+    ".agent-os\\product\\mission.md": {
+      "original_path": ".agent-os\\product\\mission.md",
+      "size": 5724,
+      "hash": "cbecb53cb3bc9e3b25ab8754f1ae7e013132c5750d0e56b7b989d79bfa1e8f9f",
+      "mtime": 1753290120.8019645,
+      "backup_created": "2025-07-24T11:55:13.635803"
+    },
+    ".agent-os\\product\\roadmap.md": {
+      "original_path": ".agent-os\\product\\roadmap.md",
+      "size": 6844,
+      "hash": "f469fd17e9bb8b44a5ddf7d711c5dbfefc4a105e43c6f3fe63c1ceed66cd66a8",
+      "mtime": 1753290120.8026152,
+      "backup_created": "2025-07-24T11:55:13.636415"
+    },
+    ".agent-os\\specs\\2025-07-23-sodir-integration\\spec.md": {
+      "original_path": ".agent-os\\specs\\2025-07-23-sodir-integration\\spec.md",
+      "size": 4833,
+      "hash": "01cb371c9a468660acba3fbd70a33c6833003300829e0f3f25bf55cfdb053a22",
+      "mtime": 1753290120.80452,
+      "backup_created": "2025-07-24T11:55:13.637075"
+    },
+    "docs\\development_history.md": {
+      "original_path": "docs\\development_history.md",
+      "size": 34492,
+      "hash": "636ce5db7b91692fdc1e78bdb564279fc0715109ceaa29b2296fc974a4255a7b",
+      "mtime": 1753285396.5968578,
+      "backup_created": "2025-07-24T11:55:13.637690"
+    },
+    "docs\\data-sources\\index.md": {
+      "original_path": "docs\\data-sources\\index.md",
+      "size": 5465,
+      "hash": "89c531612676f0e666523dcee07503aad67035978179c2ed2327dc07f7fb8e57",
+      "mtime": 1753374542.851494,
+      "backup_created": "2025-07-24T11:55:13.638299"
+    },
+    "docs\\modules\\bsee\\analysis\\julia_api12_resolution.md": {
+      "original_path": "docs\\modules\\bsee\\analysis\\julia_api12_resolution.md",
+      "size": 2403,
+      "hash": "41b2c5922775376f8c8b00e05d1ac1774e906486421c904e9e8a2cfb1c741d3f",
+      "mtime": 1751925384.6124527,
+      "backup_created": "2025-07-24T11:55:13.638830"
+    },
+    "docs\\modules\\bsee\\analysis\\economics\\intro.md": {
+      "original_path": "docs\\modules\\bsee\\analysis\\economics\\intro.md",
+      "size": 853,
+      "hash": "986603c67ab182b615d36a198e25a533201b23f8fd68c263be7ed277be6335b4",
+      "mtime": 1751925384.599948,
+      "backup_created": "2025-07-24T11:55:13.638830"
+    },
+    "docs\\modules\\bsee\\analysis\\economics\\power_markets.md": {
+      "original_path": "docs\\modules\\bsee\\analysis\\economics\\power_markets.md",
+      "size": 87,
+      "hash": "26ab27a6c766946215131a3675864e020f2ff77e87d60a99f9772470e0c5c41a",
+      "mtime": 1751925384.6011276,
+      "backup_created": "2025-07-24T11:55:13.639860"
+    },
+    "docs\\modules\\bsee\\analysis\\field\\field_layout.md": {
+      "original_path": "docs\\modules\\bsee\\analysis\\field\\field_layout.md",
+      "size": 1226,
+      "hash": "b3c80ccccb39612b36b3c19512bcccd9659a111afd8057b612ea31ec8a66c91b",
+      "mtime": 1751925384.6028852,
+      "backup_created": "2025-07-24T11:55:13.639941"
+    },
+    "docs\\modules\\bsee\\analysis\\rig_days\\rig_days_by_milestone.md": {
+      "original_path": "docs\\modules\\bsee\\analysis\\rig_days\\rig_days_by_milestone.md",
+      "size": 9030,
+      "hash": "ec82e4641cfbcb2cdcc97f73654bd3e46438ba4b354a3cde96dfe8bc4129bcce",
+      "mtime": 1751925384.6178894,
+      "backup_created": "2025-07-24T11:55:13.640505"
+    },
+    "docs\\modules\\bsee\\analysis\\rig_days\\rig_days_by_WAR.md": {
+      "original_path": "docs\\modules\\bsee\\analysis\\rig_days\\rig_days_by_WAR.md",
+      "size": 466,
+      "hash": "1b07cb9a426f7f0ad09b1fa3e6d9f16ecda61f356624a10691bd5c0d22511d9e",
+      "mtime": 1751925384.6173644,
+      "backup_created": "2025-07-24T11:55:13.641076"
+    },
+    "docs\\modules\\bsee\\analysis\\rig_days\\rig_days_summary.md": {
+      "original_path": "docs\\modules\\bsee\\analysis\\rig_days\\rig_days_summary.md",
+      "size": 2193,
+      "hash": "b3f307c4f13d752e26aee42777e031dd20a25ba2b1297ff366f22aecf36d7af0",
+      "mtime": 1751925384.6186044,
+      "backup_created": "2025-07-24T11:55:13.641736"
+    },
+    "docs\\modules\\bsee\\analysis\\survey\\survey.md": {
+      "original_path": "docs\\modules\\bsee\\analysis\\survey\\survey.md",
+      "size": 598,
+      "hash": "d6e88b86b46f0754aac581b9df6e16c4ae2f405f207b95f3f72e00265981730a",
+      "mtime": 1752957387.352752,
+      "backup_created": "2025-07-24T11:55:13.642296"
+    },
+    "docs\\modules\\bsee\\data\\analysis_data.md": {
+      "original_path": "docs\\modules\\bsee\\data\\analysis_data.md",
+      "size": 13774,
+      "hash": "e80e4c8d879b835842e8a644e99e490d81e7d8ae8031aade67b7d8656688bd64",
+      "mtime": 1751925384.7079515,
+      "backup_created": "2025-07-24T11:55:13.642858"
+    },
+    "docs\\modules\\bsee\\data\\apm_data_rev1.md": {
+      "original_path": "docs\\modules\\bsee\\data\\apm_data_rev1.md",
+      "size": 2527,
+      "hash": "444ed1357be35c488893dfbf7590478fe5f29cb8703287fac91cc7470843d0c6",
+      "mtime": 1751925384.7080812,
+      "backup_created": "2025-07-24T11:55:13.643427"
+    },
+    "docs\\modules\\bsee\\data\\data_rev1.md": {
+      "original_path": "docs\\modules\\bsee\\data\\data_rev1.md",
+      "size": 2014,
+      "hash": "498b354150dff19f11e43c6cb16bbe184ebef41176800498969c252941735a42",
+      "mtime": 1751925384.7106552,
+      "backup_created": "2025-07-24T11:55:13.643987"
+    },
+    "docs\\modules\\bsee\\data\\drilling_data_rev1.md": {
+      "original_path": "docs\\modules\\bsee\\data\\drilling_data_rev1.md",
+      "size": 14308,
+      "hash": "5d9c11c49088cb58354bd46942f608edae3f2cb5657f49929b9e3f7d58a99a32",
+      "mtime": 1751925384.711317,
+      "backup_created": "2025-07-24T11:55:13.644744"
+    },
+    "docs\\modules\\bsee\\data\\well_api_number.md": {
+      "original_path": "docs\\modules\\bsee\\data\\well_api_number.md",
+      "size": 95,
+      "hash": "878f691babe4bc0e046b0e668c5886f514343df40a47f3bb481033b073284355",
+      "mtime": 1751925384.7365015,
+      "backup_created": "2025-07-24T11:55:13.645317"
+    },
+    "docs\\modules\\bsee\\data\\clean_up\\data_explaination.md": {
+      "original_path": "docs\\modules\\bsee\\data\\clean_up\\data_explaination.md",
+      "size": 1985,
+      "hash": "18a444e7317a19cd4ccbb8b49b3f693de431fcfc71aaeecc035ba1151a1ef04e",
+      "mtime": 1751925384.709417,
+      "backup_created": "2025-07-24T11:55:13.645874"
+    },
+    "docs\\modules\\bsee\\data\\clean_up\\data_for_analysis.md": {
+      "original_path": "docs\\modules\\bsee\\data\\clean_up\\data_for_analysis.md",
+      "size": 3768,
+      "hash": "f4d246e5145a36311d81be3d535a1699d1a3ed8c2cc062c7ebd1bc30c0196a42",
+      "mtime": 1751925384.7100873,
+      "backup_created": "2025-07-24T11:55:13.646388"
+    },
+    "docs\\modules\\bsee\\data\\field_anchor\\ANCHOR_Field_Data_Filtering.md": {
+      "original_path": "docs\\modules\\bsee\\data\\field_anchor\\ANCHOR_Field_Data_Filtering.md",
+      "size": 5562,
+      "hash": "12bb84146e04e5abc11ae9e8025257915db73f8ba09272d6be8fcbc56ef40446",
+      "mtime": 1752957387.381098,
+      "backup_created": "2025-07-24T11:55:13.646947"
+    },
+    "docs\\modules\\bsee\\data\\field_jsm\\no_of_wells.md": {
+      "original_path": "docs\\modules\\bsee\\data\\field_jsm\\no_of_wells.md",
+      "size": 10001,
+      "hash": "322e242e8a03cb29187c44f27f83e0b928e8c6b15a5da8a243e207ceecf35ca4",
+      "mtime": 1751925384.720584,
+      "backup_created": "2025-07-24T11:55:13.647491"
+    },
+    "docs\\modules\\bsee\\data\\production\\notes.md": {
+      "original_path": "docs\\modules\\bsee\\data\\production\\notes.md",
+      "size": 607,
+      "hash": "d3525447e5b1040c30a3e67a738308bf7c661320795060f699b7b6e688bd979e",
+      "mtime": 1751925384.7331672,
+      "backup_created": "2025-07-24T11:55:13.647759"
+    },
+    "docs\\modules\\bsee\\data\\survey\\horizontal_reach.md": {
+      "original_path": "docs\\modules\\bsee\\data\\survey\\horizontal_reach.md",
+      "size": 225,
+      "hash": "4b1488adbdb5392e0bba748b9001c99549b5b5413adf27370278deabb3cb6daa",
+      "mtime": 1751925384.7351968,
+      "backup_created": "2025-07-24T11:55:13.648318"
+    },
+    "docs\\modules\\bsee\\data\\well\\well_count.md": {
+      "original_path": "docs\\modules\\bsee\\data\\well\\well_count.md",
+      "size": 4371,
+      "hash": "49d307a92347ff932712a4b403bddb3137000cd165382154a2932c8a91b7767c",
+      "mtime": 1751925384.7363923,
+      "backup_created": "2025-07-24T11:55:13.649222"
+    },
+    "docs\\modules\\bsee\\data\\WELL_ACTIVITY_CD\\well_activity_cd_description.md": {
+      "original_path": "docs\\modules\\bsee\\data\\WELL_ACTIVITY_CD\\well_activity_cd_description.md",
+      "size": 823,
+      "hash": "585ade6c6e5e79ece0ac02f78630818ec3458b3ad042694b752073df1a9ec28f",
+      "mtime": 1751925384.7068188,
+      "backup_created": "2025-07-24T11:55:13.649758"
+    },
+    "docs\\modules\\bsee\\_legacy\\data_for_analysis_legacy.md": {
+      "original_path": "docs\\modules\\bsee\\_legacy\\data_for_analysis_legacy.md",
+      "size": 6281,
+      "hash": "b24c9217b042ef30debb67f6554c74d5d406d5abd6dc5046b50d8bc172c4f94d",
+      "mtime": 1751925377.627448,
+      "backup_created": "2025-07-24T11:55:13.650416"
+    },
+    "docs\\raw_data\\bsee\\data_exploration.md": {
+      "original_path": "docs\\raw_data\\bsee\\data_exploration.md",
+      "size": 1151,
+      "hash": "de7ae611f6738a4623e499c5786ad704b1de4f37ea456a3437dd29fcc17a7cf8",
+      "mtime": 1751925385.4746263,
+      "backup_created": "2025-07-24T11:55:13.650459"
+    },
+    "docs\\raw_data\\wa\\intro.md": {
+      "original_path": "docs\\raw_data\\wa\\intro.md",
+      "size": 1712,
+      "hash": "88293bc2bebc762f894df6db5b8723127378c0d802fc98d059fa2194335fc123",
+      "mtime": 1751925387.2809794,
+      "backup_created": "2025-07-24T11:55:13.651332"
+    },
+    "tests\\modules\\bsee\\analysis\\README_GitHub_Issue_39.md": {
+      "original_path": "tests\\modules\\bsee\\analysis\\README_GitHub_Issue_39.md",
+      "size": 3888,
+      "hash": "96cd86d19f07cc9257a92a10c438f6224d217ad6d3f33c0567cdf32ca47e1069",
+      "mtime": 1751926685.693703,
+      "backup_created": "2025-07-24T11:55:13.652197"
+    },
+    "docs\\modules\\bsee\\data\\SME_Roy_attachments\\2025-09-07\\mv_war_boreholes_view.lease.txt": {
+      "original_path": "docs\\modules\\bsee\\data\\SME_Roy_attachments\\2025-09-07\\mv_war_boreholes_view.lease.txt",
+      "size": 3564,
+      "hash": "53afe6b915f849998593107cc87983e73f6c4dd4bf1ed2f982993dc69409228b",
+      "mtime": 1752957387.3557684,
+      "backup_created": "2025-07-24T11:55:13.652770"
+    },
+    "docs\\modules\\bsee\\data\\SME_Roy_attachments\\2025-09-07\\mv_war_main.txt": {
+      "original_path": "docs\\modules\\bsee\\data\\SME_Roy_attachments\\2025-09-07\\mv_war_main.txt",
+      "size": 246739,
+      "hash": "a0cacccc06d598f0009c890288949eeda0cb1a68b6492464dd6ebadc52b2cbdc",
+      "mtime": 1752957387.358557,
+      "backup_created": "2025-07-24T11:55:13.653889"
+    },
+    "docs\\modules\\bsee\\_legacy\\code\\mitra\\calculations\\Datatypes file.txt": {
+      "original_path": "docs\\modules\\bsee\\_legacy\\code\\mitra\\calculations\\Datatypes file.txt",
+      "size": 1027,
+      "hash": "fa682399fcfd63b06c63c3e10976b454180515386aea01366b9f94596afa25c0",
+      "mtime": 1751925375.3389454,
+      "backup_created": "2025-07-24T11:55:13.655274"
+    },
+    "docs\\modules\\bsee\\_legacy\\code\\mitra\\calculations\\PaleogeneEpochs.txt": {
+      "original_path": "docs\\modules\\bsee\\_legacy\\code\\mitra\\calculations\\PaleogeneEpochs.txt",
+      "size": 895020,
+      "hash": "9815b3c37429566a6f47bca2dce38974f5e51ccd7709c8d270c8550d388c070b",
+      "mtime": 1751925375.3446515,
+      "backup_created": "2025-07-24T11:55:13.661792"
+    },
+    "docs\\modules\\bsee\\_legacy\\code\\mitra\\data\\BoreholeRawData\\mv_boreholes.txt": {
+      "original_path": "docs\\modules\\bsee\\_legacy\\code\\mitra\\data\\BoreholeRawData\\mv_boreholes.txt",
+      "size": 12642901,
+      "hash": "f21f7b17e3bbe772337dfbc5befef83566f4d6c4bedbb71623d1a99f7c88d855",
+      "mtime": 1751925375.538273,
+      "backup_created": "2025-07-24T11:55:13.726706"
+    },
+    "docs\\modules\\bsee\\_legacy\\code\\mitra\\data\\gepaldmp_all\\gepaldmp_Header.txt": {
+      "original_path": "docs\\modules\\bsee\\_legacy\\code\\mitra\\data\\gepaldmp_all\\gepaldmp_Header.txt",
+      "size": 4186171,
+      "hash": "d783edd54c9cc3cd5739adc173c76ba509bf4902404178e454821472eda61033",
+      "mtime": 1751925375.682026,
+      "backup_created": "2025-07-24T11:55:13.745044"
+    },
+    "docs\\modules\\bsee\\_legacy\\code\\mitra\\data\\gepaldmp_all\\gepaldmp_Paleo.txt": {
+      "original_path": "docs\\modules\\bsee\\_legacy\\code\\mitra\\data\\gepaldmp_all\\gepaldmp_Paleo.txt",
+      "size": 22472940,
+      "hash": "f40d828677f8b752826e3365d789eb23214ea53abcee01a7897bb226e695ef95",
+      "mtime": 1751925375.8804111,
+      "backup_created": "2025-07-24T11:55:13.851611"
+    },
+    "docs\\modules\\bsee\\_legacy\\ref\\O&G\\Roy_References.txt": {
+      "original_path": "docs\\modules\\bsee\\_legacy\\ref\\O&G\\Roy_References.txt",
+      "size": 1481,
+      "hash": "9af93e2a65b302a3b0a88c4cf69de965fc77bab3fd6989b750d06bd5b3a3e9d2",
+      "mtime": 1751925379.505384,
+      "backup_created": "2025-07-24T11:55:13.851611"
+    },
+    "docs\\modules\\bsee\\_legacy\\superseded\\calculations\\Datatypes file.txt": {
+      "original_path": "docs\\modules\\bsee\\_legacy\\superseded\\calculations\\Datatypes file.txt",
+      "size": 1027,
+      "hash": "fa682399fcfd63b06c63c3e10976b454180515386aea01366b9f94596afa25c0",
+      "mtime": 1751925384.291566,
+      "backup_created": "2025-07-24T11:55:13.852615"
+    },
+    "docs\\modules\\bsee\\_legacy\\superseded\\calculations\\PaleogeneEpochs.txt": {
+      "original_path": "docs\\modules\\bsee\\_legacy\\superseded\\calculations\\PaleogeneEpochs.txt",
+      "size": 895020,
+      "hash": "9815b3c37429566a6f47bca2dce38974f5e51ccd7709c8d270c8550d388c070b",
+      "mtime": 1751925384.2978277,
+      "backup_created": "2025-07-24T11:55:13.857606"
+    },
+    "docs\\modules\\bsee\\_legacy\\superseded\\data\\BoreholeRawData\\mv_boreholes.txt": {
+      "original_path": "docs\\modules\\bsee\\_legacy\\superseded\\data\\BoreholeRawData\\mv_boreholes.txt",
+      "size": 12642901,
+      "hash": "f21f7b17e3bbe772337dfbc5befef83566f4d6c4bedbb71623d1a99f7c88d855",
+      "mtime": 1751925384.4370728,
+      "backup_created": "2025-07-24T11:55:13.922392"
+    },
+    "docs\\modules\\bsee\\_legacy\\superseded\\data\\gepaldmp_all\\gepaldmp_Header.txt": {
+      "original_path": "docs\\modules\\bsee\\_legacy\\superseded\\data\\gepaldmp_all\\gepaldmp_Header.txt",
+      "size": 4186171,
+      "hash": "d783edd54c9cc3cd5739adc173c76ba509bf4902404178e454821472eda61033",
+      "mtime": 1751925384.4761822,
+      "backup_created": "2025-07-24T11:55:13.941937"
+    },
+    "docs\\modules\\bsee\\_legacy\\superseded\\data\\gepaldmp_all\\gepaldmp_Paleo.txt": {
+      "original_path": "docs\\modules\\bsee\\_legacy\\superseded\\data\\gepaldmp_all\\gepaldmp_Paleo.txt",
+      "size": 22472940,
+      "hash": "f40d828677f8b752826e3365d789eb23214ea53abcee01a7897bb226e695ef95",
+      "mtime": 1751925384.5933669,
+      "backup_created": "2025-07-24T11:55:14.059598"
+    },
+    "docs\\raw_data\\bsee\\other\\mastdatadelimit.txt": {
+      "original_path": "docs\\raw_data\\bsee\\other\\mastdatadelimit.txt",
+      "size": 564377,
+      "hash": "5c4d141ceb578f38b599a0448608014e8ede6cdb9e698fddc9a58671b6163822",
+      "mtime": 1751925386.949363,
+      "backup_created": "2025-07-24T11:55:14.062601"
+    },
+    "docs\\raw_data\\bsee\\other\\mastproddelimit.txt": {
+      "original_path": "docs\\raw_data\\bsee\\other\\mastproddelimit.txt",
+      "size": 640413,
+      "hash": "94c0dc4c73ac84fd5e76647f6141c069c04c25de26b13c1e5644dfd230c19fe4",
+      "mtime": 1751925386.9626694,
+      "backup_created": "2025-07-24T11:55:14.067598"
+    },
+    "docs\\raw_data\\bsee\\paleo\\gepaldmp_Header.txt": {
+      "original_path": "docs\\raw_data\\bsee\\paleo\\gepaldmp_Header.txt",
+      "size": 4396450,
+      "hash": "032e23209bc892cf17a001c0fe8ed0c32fd6ffba94561b6e4103037e52152ad7",
+      "mtime": 1751925386.9923642,
+      "backup_created": "2025-07-24T11:55:14.089248"
+    },
+    "docs\\raw_data\\bsee\\paleo\\gepaldmp_Paleo.txt": {
+      "original_path": "docs\\raw_data\\bsee\\paleo\\gepaldmp_Paleo.txt",
+      "size": 26612180,
+      "hash": "650cbca2655d152e1d878b671104cafcfee996e60f1b4c94780c68518b403c3b",
+      "mtime": 1751925387.120921,
+      "backup_created": "2025-07-24T11:55:14.216866"
+    },
+    "src\\worldenergydata.egg-info\\SOURCES.txt": {
+      "original_path": "src\\worldenergydata.egg-info\\SOURCES.txt",
+      "size": 3844,
+      "hash": "e7a63dae86f91a915e06bf5446a5a6a4353da95c8387f87a3aa743a63c9b2910",
+      "mtime": 1753121163.5026796,
+      "backup_created": "2025-07-24T11:55:14.225691"
+    },
+    "tests\\modules\\all_yml\\yml_summary_pytest.txt": {
+      "original_path": "tests\\modules\\all_yml\\yml_summary_pytest.txt",
+      "size": 658,
+      "hash": "b157477c29c102b8275fb59883c896f0cde9b9f0e8e937a8b32b6a921da905ef",
+      "mtime": 1751925387.5462701,
+      "backup_created": "2025-07-24T11:55:14.226217"
+    }
+  }
+}

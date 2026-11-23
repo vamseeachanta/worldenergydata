@@ -1,0 +1,26 @@
+{
+  "synthetic": true,
+  "layer": {
+    "id": 0,
+    "objectIdField": "OBJECTID",
+    "maxRecordCount": 1,
+    "spatialReference": {"wkid": 4283},
+    "advancedQueryCapabilities": {"supportsPagination": true, "supportsOrderBy": true},
+    "fields": [
+      {"name": "OBJECTID", "type": "esriFieldTypeOID"},
+      {"name": "Uwi", "type": "esriFieldTypeString"},
+      {"name": "WellName", "type": "esriFieldTypeString"},
+      {"name": "Latitude", "type": "esriFieldTypeDouble"},
+      {"name": "Longitude", "type": "esriFieldTypeDouble"},
+      {"name": "TitleNumber", "type": "esriFieldTypeString"}
+    ]
+  },
+  "pages": [
+    {"spatialReference": {"wkid": 4283}, "exceededTransferLimit": true, "features": [
+      {"attributes": {"OBJECTID": 1, "Uwi": "synthetic-1", "WellName": "Synthetic Well A", "Latitude": -20.0, "Longitude": 130.0, "TitleNumber": "synthetic-title"}}
+    ]},
+    {"spatialReference": {"wkid": 4283}, "exceededTransferLimit": false, "features": [
+      {"attributes": {"OBJECTID": 2, "Uwi": "synthetic-2", "WellName": "Synthetic Well B", "Latitude": null, "Longitude": null, "TitleNumber": null}}
+    ]}
+  ]
+}

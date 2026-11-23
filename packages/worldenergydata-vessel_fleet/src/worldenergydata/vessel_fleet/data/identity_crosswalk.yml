@@ -1,0 +1,107 @@
+crosswalk: vessel_identity_resolution
+issue: 599
+epic: 591
+key_basis: normalized canonical name + operator/owner compatibility, with an aka (alternate-name)
+  list; IMO/MMSI used only as a confirmer when present (IMO coverage in the bulk corpus
+  is ~0%).
+summary:
+  records_in: 2471
+  distinct_vessels_out: 2352
+  duplicates_collapsed: 119
+  clusters_with_multiple_members: 52
+  by_source:
+    construction_vessels.csv: 165
+    drilling_rigs.csv: 2268
+    intervention_osv_roster.yml: 29
+    intervention_vessels_seed.yml: 9
+  per_class_delta:
+    construction_vessel:
+      before: 162
+      after: 155
+      collapsed: 7
+    heavy_intervention_semi:
+      before: 16
+      after: 5
+      collapsed: 11
+    lift_boat:
+      before: 158
+      after: 143
+      collapsed: 15
+    modu_drillship:
+      before: 163
+      after: 161
+      collapsed: 2
+    modu_jackup:
+      before: 1027
+      after: 1018
+      collapsed: 9
+    modu_semisub:
+      before: 308
+      after: 305
+      collapsed: 3
+    mpsv_osv:
+      before: 14
+      after: 10
+      collapsed: 4
+    other:
+      before: 609
+      after: 548
+      collapsed: 61
+    rlwi_monohull:
+      before: 14
+      after: 7
+      collapsed: 7
+  cluster_confidence_counts:
+    low: 1
+    medium: 51
+    singleton: 2300
+heavy_intervention_semi_fix:
+  problem: 'The #598 catalog counted the Helix Q-series semis once per name-spelling
+    variant (e.g. ''Q4000'', ''HELIX Q4000'', ''MSV Q4000'', ''CALDIVE Q4000'', ''HELIX
+    Q-4000'', the seed ''Helix Q4000'' and the #593 roster ''Q4000''), inflating heavy_intervention_semi.'
+  resolution: canonicalize_name + the Helix-Q aka list collapse every variant of each
+    hull (Q4000/Q5000/Q7000) into one distinct vessel.
+  clusters:
+  - canonical_name: Q4000
+    variants_collapsed: 13
+    member_names:
+    - CALDIVE Q-4000
+    - CALDIVE Q-4000 (SS)
+    - CALDIVE Q4000
+    - CALDIVE'S Q4000 DP
+    - HELIX Q-4000
+    - HELIX Q4000
+    - HELIZ Q4000
+    - Helix Q4000
+    - MSV Q4000
+    - Q-4000
+    - Q4000
+    match_basis:
+    - aka
+    - canonical_name+operator
+  - canonical_name: Q5000
+    variants_collapsed: 3
+    member_names:
+    - HELIX Q5000
+    - Helix Q5000
+    - Q5000
+    match_basis:
+    - aka
+    - canonical_name+operator
+  - canonical_name: Q7000
+    variants_collapsed: 2
+    member_names:
+    - Helix Q7000
+    - Q7000
+    match_basis:
+    - aka
+  duplicate_rows_removed: 15
+sources_reconciled:
+- construction_vessels.csv
+- drilling_rigs.csv
+- intervention_osv_roster.yml
+- intervention_vessels_seed.yml
+provenance:
+  curated_dir: vessel_fleet/_data/curated (gitignored, mounted)
+  note: Aggregate cluster summary only -- the full per-vessel row dump stays in the
+    gitignored curated CSVs.

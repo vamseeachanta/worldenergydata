@@ -1,0 +1,30 @@
+# Domain-specific stop words for safety text classification
+# These supplement sklearn's English stop words
+stop_words:
+  - noticed
+  - observed
+  - employee
+  - hand
+  - ee
+  - while
+  - ip
+  - ie
+  - rig
+  - right
+  - left
+  - continued
+  - location
+  - causing
+  - work
+  - reported
+  - area
+  - crew
+  - using
+  - time
+  - performing
+  - working
+  - job
+  - site
+  - floor
+  - drilling
+  - operations

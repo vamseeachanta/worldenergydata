@@ -1,0 +1,28 @@
+{
+  "citations": [
+    "Synthetic test data; not IRENA observations"
+  ],
+  "dataset_id": "irena-offshore-wind-normalized",
+  "live_access": "refused: HTTP 403 WAF challenge at robots statement, 2026-10-11 UTC",
+  "readiness": "synthetic testing only",
+  "retrieval_state": "not applicable: authored synthetic fixture",
+  "retrieved_at_utc": null,
+  "robots_url": "https://www.irena.org/robots.txt",
+  "rows": 3,
+  "schema_version": 1,
+  "sha256": "6794fac25439ef9517e7ab17d2ab58d3695e7e2e9483023d225963662aceb2f3",
+  "size_bytes": 438,
+  "source_page": "https://www.irena.org/Data/Downloads/IRENASTAT",
+  "source_urls": [
+    "https://example.invalid/synthetic"
+  ],
+  "synthetic": true,
+  "terms": {
+    "quote": "Synthetic test fixture; no source data reproduced.",
+    "url": null
+  },
+  "units": {
+    "capacity_mw": "MW",
+    "generation_gwh": "GWh"
+  }
+}

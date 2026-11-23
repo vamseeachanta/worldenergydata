@@ -1,0 +1,79 @@
+===============================================
+IMO GISIS QUICK MANUAL DOWNLOAD INSTRUCTIONS
+===============================================
+
+LOGIN CREDENTIALS:
+Username: vamseeachanta
+Password: rose109@Gudda
+URL: https://gisis.imo.org/Public/MCIR/Search.aspx
+
+===============================================
+RECOMMENDED: BULK 5-YEAR DOWNLOADS (7 files)
+===============================================
+
+1. 1990-1994:
+   From: 1990-01-01 | Until: 1994-12-31
+   ☑ Very serious ☑ Marine casualty ☑ Marine incident
+   → Search → Export → Save as: imo_1990_1994.csv
+
+2. 1995-1999:
+   From: 1995-01-01 | Until: 1999-12-31
+   → Save as: imo_1995_1999.csv
+
+3. 2000-2004:
+   From: 2000-01-01 | Until: 2004-12-31
+   → Save as: imo_2000_2004.csv
+
+4. 2005-2009:
+   From: 2005-01-01 | Until: 2009-12-31
+   → Save as: imo_2005_2009.csv
+
+5. 2010-2014:
+   From: 2010-01-01 | Until: 2014-12-31
+   → Save as: imo_2010_2014.csv
+
+6. 2015-2019:
+   From: 2015-01-01 | Until: 2019-12-31
+   → Save as: imo_2015_2019.csv
+
+7. 2020-2025:
+   From: 2020-01-01 | Until: 2025-12-31
+   → Save as: imo_2020_2025.csv
+
+TIME ESTIMATE: 10-15 minutes
+
+===============================================
+ALTERNATIVE: SINGLE DOWNLOAD (try first!)
+===============================================
+
+From: 1990-01-01
+Until: 2025-12-31
+☑ All casualty types
+→ Search → Export
+Save as: imo_casualties_1990_2025_full.csv
+
+If this works: DONE! Only 1 download needed.
+If query times out: Use bulk 5-year method above.
+
+===============================================
+AFTER DOWNLOAD
+===============================================
+
+Move files to project:
+cd ~/Downloads
+mv imo_*.csv /mnt/github/workspace-hub/worldenergydata/data/modules/marine_safety/raw/imo_gisis/
+
+Verify:
+cd /mnt/github/workspace-hub/worldenergydata/data/modules/marine_safety/raw/imo_gisis
+ls -lh imo_*.csv
+wc -l imo_*.csv
+
+===============================================
+EXPECTED RESULTS
+===============================================
+
+Total Records: ~7,000-10,000 casualties (1990-2025)
+File Size: ~5-15MB total
+Status: Ready for import to database
+
+===============================================

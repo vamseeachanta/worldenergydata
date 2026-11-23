@@ -1,0 +1,32 @@
+basename: bsee
+
+meta:
+  label: bsee_production_summary
+
+file_management:
+  flag: false
+  output_directory: outputs
+
+data:
+  refresh: false
+  source: csv
+  well_data: false
+  block_data: false
+  lease_data: false
+  production_data: true
+  groups:
+    - label: wr718_anchor
+      api12:
+        - "177154051100"
+        - "177154051200"
+      bottom_block:
+        area: WR
+        number: 718
+      bottom_lease: null
+      production:
+        files:
+          - sample_production.csv
+
+analysis:
+  flag: true
+  type: production

@@ -1,0 +1,40 @@
+```markdown
+## Adversarial Review
+
+**Verdict:** APPROVE
+
+**Retrieval adequacy:** adequate
+
+**Strengths**
+- Highly decoupled design utilizing a derived linkage contract, entirely avoiding mutation of the existing `CostDataPoint` schema.
+- Excellent scoping boundaries that explicitly defer normalization, alias tables, and downstream changes to future issues.
+- The `AMBIGUOUS` state acts as a safe, deterministic fail-safe against accidental incorrect linkages during exact-key collisions.
+
+**Findings by severity**
+- **Low:** The test plan proposes adding functional logic tests for `resolve_cost_datapoint_link` to `tests/unit/cost/test_calibration_schema.py`. Since the helper is proposed to live in `public_dataset.py`, creating a dedicated `test_public_dataset.py` (or `test_linkage.py`) would better align with the module structure.
+- **Low:** Relying purely on case-sensitive exact matching may result in an initially high `UNLINKED` rate if disclosure data contains trivial string formatting differences. However, this is acceptable given the explicit exclusion of fuzzy matching in the scope.
+
+**Missing tests**
+- A test explicitly verifying that the `candidates` list contains the actual `CostDataPoint` records when an `AMBIGUOUS` result is returned.
+- A test asserting the behavior when `operator` or `project_name` is passed as `None` or an empty string (should safely return `UNLINKED` rather than throwing an exception).
+- A test verifying that the `matched_record` or `candidates` returned are the exact object instances provided in `sanctioned_records` (no unexpected mutation or deep-copying).
+
+**Scope creep concerns**
+- None detected. The "out of scope" definitions provide rigorous and enforceable boundaries.
+
+**Weakest assumption**
+- The assumption that exact matching on `(operator, project_name)` will not yield a high volume of `AMBIGUOUS` collisions. While safe for the current public dataset size, this may degrade as multiple phases or variants of the same project are added over time.
+
+**Most likely implementation failure mode**
+- Improperly typing the `sanctioned_records` argument as mutable default (e.g., `sanctioned_records=[]` instead of `None`), leading to state retention across calls.
+- Circular dependency risks if `calibration_schema.py` attempts to import the helper from `public_dataset.py` (though the current plan correctly isolates models in the schema file).
+
+**Most likely test gap**
+- Failing to ensure that the injected `sanctioned_records` list in `test_helper_accepts_injected_records_for_testing` uses structurally valid `CostDataPoint` mocks, leading to false positives if the helper accidentally bypasses Pydantic validation.
+
+**Future issues suggested**
+- **Disclosure Alias & Normalization Governance:** A dedicated issue to build a resolution layer for casing, aliases, and minor naming variants that feeds into this exact-match linkage layer.
+- **Linkage Coverage Reporting:** An issue to aggregate and report the percentage of `LINKED` vs `UNLINKED` records, surfacing the highest-value missing aliases for manual review.
+
+**Review confidence:** High
+```

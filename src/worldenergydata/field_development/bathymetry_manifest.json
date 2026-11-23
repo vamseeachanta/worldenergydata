@@ -1,0 +1,204 @@
+{
+  "schema_version": 1,
+  "files": [
+    {
+      "source_id": "boem_gom_bathymetry",
+      "endpoint": "west_meters_geotiff_zip",
+      "filename": "BOEM_Bathymetry_West_meters_tiff.zip",
+      "source_url": "https://www.boem.gov/sites/default/files/Bathymetry/BOEM_Bathymetry_West_meters_tiff.zip",
+      "size_bytes": 513392333,
+      "head": {
+        "status": 200,
+        "size_bytes": 513392333,
+        "content_type": "application/zip",
+        "checked_at_utc": "2026-10-11T19:25:06+00:00",
+        "matches_issue_size": true
+      },
+      "license": "US Government public domain (BOEM)",
+      "retrieval_date_utc": "2026-10-11T19:27:20.716090+00:00",
+      "sha256": "002b07455edc9b8da2a174310822a373dd6213a8f8c62c5d5a3ea54849f21581",
+      "units": "m",
+      "vertical_convention": "elevation_positive_up",
+      "source_version": "published-2024-09-25",
+      "readiness_status": "partial",
+      "rights_evidence": "existing terrain catalog and linked source issue; no new licence qualification",
+      "canonical_url": "https://www.boem.gov/oil-gas-energy/mapping-and-data/map-gallery/northern-gom-deepwater-bathymetry-grid-3d-seismic",
+      "issue_reported_size_bytes": 513392333,
+      "requested_url": "https://www.boem.gov/sites/default/files/Bathymetry/BOEM_Bathymetry_West_meters_tiff.zip",
+      "final_url": "https://www.boem.gov/sites/default/files/Bathymetry/BOEM_Bathymetry_West_meters_tiff.zip",
+      "final_host": "www.boem.gov",
+      "allowed_hosts": [
+        "www.boem.gov"
+      ],
+      "format": "GeoTIFF in ZIP archive",
+      "convention_evidence": {
+        "status": "inspected",
+        "date_utc": "2026-10-11T19:28:45.915117+00:00",
+        "point_lon_lat": [
+          -92.0,
+          26.0
+        ],
+        "archive_members": [
+          "BOEMbathyW_m.tfw",
+          "BOEMbathyW_m.tif",
+          "BOEMbathyW_m.tif.aux.xml",
+          "BOEMbathyW_m.tif.ovr"
+        ],
+        "crs": "PROJCS[\"NAD_1927_Transverse_Mercator\",GEOGCS[\"NAD27\",DATUM[\"North_American_Datum_1927\",SPHEROID[\"Clarke 1866\",6378206.4,294.978698199999,AUTHORITY[\"EPSG\",\"7008\"]],AUTHORITY[\"EPSG\",\"6267\"]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4267\"]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",-87],PARAMETER[\"scale_factor\",0.9996],PARAMETER[\"false_easting\",1640416.66666667],PARAMETER[\"false_northing\",0],UNIT[\"US survey foot\",0.304800609601219,AUTHORITY[\"EPSG\",\"9003\"]],AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH]]",
+        "cell_size": [
+          40.0,
+          40.0
+        ],
+        "nodata": 0.0,
+        "band_units": [
+          null
+        ],
+        "band_descriptions": [
+          null
+        ],
+        "dtype": "float32",
+        "window_min": -2405.1767578125,
+        "window_max": -2402.73828125,
+        "point_value": -2403.95751953125,
+        "metadata_tags": {
+          "AREA_OR_POINT": "Area"
+        },
+        "units_basis": "metres distribution filename and source catalog; band units recorded above",
+        "sign_basis": "negative seabed sample",
+        "plausibility": {
+          "depth_m": 2403.95751953125,
+          "criterion_m": [
+            1000,
+            6000
+          ],
+          "read_seconds_including_full_sha256": 8.066507551819086
+        },
+        "cell_size_units": "US survey foot"
+      },
+      "limitation": "Source bytes and local reader checks established; engineering suitability and independent review remain required."
+    },
+    {
+      "source_id": "boem_gom_bathymetry",
+      "endpoint": "east_meters_geotiff_zip",
+      "filename": "BOEM_Bathymetry_East_meters_tiff.zip",
+      "source_url": "https://www.boem.gov/sites/default/files/Bathymetry/BOEM_Bathymetry_East_meters_tiff.zip",
+      "size_bytes": 509191783,
+      "head": {
+        "status": 200,
+        "size_bytes": 509191783,
+        "content_type": "application/zip",
+        "checked_at_utc": "2026-10-11T19:25:06+00:00",
+        "matches_issue_size": true
+      },
+      "license": "US Government public domain (BOEM)",
+      "retrieval_date_utc": "2026-10-11T19:26:54.625764+00:00",
+      "sha256": "5c3c3d2f5cfd5a5b49b782f4d66e72dd652bec779cef028c3b474f5b99d13fb5",
+      "units": "m",
+      "vertical_convention": "elevation_positive_up",
+      "source_version": "published-2024-09-25",
+      "readiness_status": "partial",
+      "rights_evidence": "existing terrain catalog and linked source issue; no new licence qualification",
+      "canonical_url": "https://www.boem.gov/oil-gas-energy/mapping-and-data/map-gallery/northern-gom-deepwater-bathymetry-grid-3d-seismic",
+      "issue_reported_size_bytes": 509191783,
+      "requested_url": "https://www.boem.gov/sites/default/files/Bathymetry/BOEM_Bathymetry_East_meters_tiff.zip",
+      "final_url": "https://www.boem.gov/sites/default/files/Bathymetry/BOEM_Bathymetry_East_meters_tiff.zip",
+      "final_host": "www.boem.gov",
+      "allowed_hosts": [
+        "www.boem.gov"
+      ],
+      "format": "GeoTIFF in ZIP archive",
+      "convention_evidence": {
+        "status": "inspected",
+        "date_utc": "2026-10-11T19:30:19.340857+00:00",
+        "point_lon_lat": [
+          -87.0,
+          28.0
+        ],
+        "archive_members": [
+          "BOEMbathyE_m.tfw",
+          "BOEMbathyE_m.tif",
+          "BOEMbathyE_m.tif.aux.xml",
+          "BOEMbathyE_m.tif.ovr"
+        ],
+        "crs": "PROJCS[\"NAD_1927_Transverse_Mercator\",GEOGCS[\"NAD27\",DATUM[\"North_American_Datum_1927\",SPHEROID[\"Clarke 1866\",6378206.4,294.978698199999,AUTHORITY[\"EPSG\",\"7008\"]],AUTHORITY[\"EPSG\",\"6267\"]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4267\"]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",-87],PARAMETER[\"scale_factor\",0.9996],PARAMETER[\"false_easting\",1640416.66666667],PARAMETER[\"false_northing\",0],UNIT[\"US survey foot\",0.304800609601219,AUTHORITY[\"EPSG\",\"9003\"]],AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH]]",
+        "cell_size": [
+          40.0,
+          40.0
+        ],
+        "bounds": [
+          35120.10003869726,
+          9379864.32539745,
+          2319680.1000386975,
+          10673744.32539745
+        ],
+        "cell_size_units": "US survey foot",
+        "nodata": 0.0,
+        "band_units": [
+          null
+        ],
+        "band_descriptions": [
+          null
+        ],
+        "dtype": "float32",
+        "window_min": -2854.451904296875,
+        "window_max": -2853.53759765625,
+        "point_value": -2854.147216796875,
+        "depth_reconciliation_reason": "The two depth values differ by 0.305 m; their cells of origin are not recorded; reconciliation is pending the next curation run.",
+        "metadata_tags": {
+          "AREA_OR_POINT": "Area"
+        },
+        "units_basis": "metres distribution filename and source catalog; band units recorded above",
+        "sign_basis": "negative seabed sample",
+        "plausibility": {
+          "depth_m": 2853.84228515625,
+          "criterion_m": [
+            1000,
+            6000
+          ],
+          "read_seconds_including_full_sha256": 13.336337292101234
+        }
+      },
+      "limitation": "Source bytes and local reader checks established; engineering suitability and independent review remain required."
+    },
+    {
+      "source_id": "gebco_global_bathymetry",
+      "endpoint": "global_grid_netcdf",
+      "filename": "GEBCO_2024_CF.nc",
+      "source_url": "https://www.bodc.ac.uk/data/open_download/gebco/gebco_2024/zip/",
+      "size_bytes": 7466018396,
+      "head": {
+        "status": 200,
+        "size_bytes": 7466018396,
+        "content_type": "application/octet-stream",
+        "checked_at_utc": "2026-10-11T19:22:45+00:00",
+        "matches_issue_size": false
+      },
+      "license": "Public domain (GEBCO grid is placed in the public domain; attribution requested)",
+      "retrieval_date_utc": null,
+      "sha256": null,
+      "sha256_reason": "not yet fetched; curation pending",
+      "units": "m",
+      "vertical_convention": "elevation_positive_up",
+      "source_version": "2024",
+      "readiness_status": "partial",
+      "rights_evidence": "existing terrain catalog and linked source issue; no new licence qualification",
+      "canonical_url": "https://www.gebco.net/data_and_products/gridded_bathymetry_data/",
+      "issue_reported_size_bytes": 4267373073,
+      "requested_url": "https://www.bodc.ac.uk/data/open_download/gebco/gebco_2024/zip/",
+      "final_url": "https://dap.ceda.ac.uk/bodc/gebco/global/gebco_2024/ice_surface_elevation/netcdf/GEBCO_2024_CF.nc",
+      "final_host": "dap.ceda.ac.uk",
+      "allowed_hosts": [
+        "www.bodc.ac.uk",
+        "dap.ceda.ac.uk"
+      ],
+      "format": "netCDF, uncompressed, not an archive",
+      "convention_evidence": {
+        "status": "assumed",
+        "reason": "File remains incomplete; units and vertical convention have not been inspected."
+      },
+      "variant": "ice-surface elevation",
+      "distribution_note": "The issue's 4,267,373,073 bytes describes the earlier ZIP distribution.",
+      "limitation": "Incomplete local transfer has no verified digest or reader inspection; reuse is refused."
+    }
+  ]
+}

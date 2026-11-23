@@ -1,0 +1,243 @@
+{
+  "registry_version": "2026-07-07-cited-partial-13",
+  "registry_date": "2026-07-07",
+  "coverage_status": "missing",
+  "coverage_note": "Amposta, Casablanca, Dorada, Montanazo-Lubina, and Tarraco have accepted BOE regulator-record API values. Ayoluengo has an accepted archived-operator 37\u00b0 API value. Gaviota has an accepted derived bbl/t factor from Murphy 1993 Form 10-K net condensate rates grossed up by working interest and direct CORES tonnes. Viura (1) has an accepted official MITECO crude-equivalent bbl/t factor from ministry-reported tonnes and barrels. Boquer\u00f3n, Rodaballo, and Salmonete have accepted technical-literature API values from reservoir-geochemistry articles. Albatros has evidence-only OGJ Worldwide Production API plus official/operator/CORES source leads checked for negative provenance, but no accepted representative density/API or same-period barrels-per-tonne basis. Strict refreshes still fail closed until accepted cited factors cover every current CORES oil field.",
+  "source_gap_fields": [
+    "Albatros"
+  ],
+  "factors": [
+    {
+      "field_name": "Albatros",
+      "aliases": [
+        "albatros"
+      ],
+      "api_gravity_deg": 52.7,
+      "api_gravity_min_deg": null,
+      "api_gravity_max_deg": null,
+      "bbl_per_tonne": null,
+      "measurement_basis": "Oil & Gas Journal Worldwide Production tables list Albatros under Spain/Repsol with a 52.7\u00b0 API column value; these trade-press tables are retained as source leads only and are not treated as conversion-eligible representative produced-stream evidence. BOE, MITECO, CORES, and Murphy source leads identify Albatros, ownership, status, gas development context, or tonnes only, but do not provide density/API or same-period barrels for conversion.",
+      "source_title": "Worldwide Production, Oil & Gas Journal, Dec. 29, 1997",
+      "source_url": "https://img.ogj.com/files/base/ebm/ogj/document/2009/06/content_dam_ogj_en_downloadables_survey_downloads_worldwide_production_1997_worldwide_production_leftcolumn_downloadable_worldwide_production_1997.pdf",
+      "source_class": "industry_technical_article",
+      "evidence_note": "The 1997 and 1999 OGJ Spain/Repsol rows list offshore Albatros with 52.7\u00b0 API gravity; this remains an industry lead, not an accepted conversion source. BOE-B-2022-22886 and BOE-A-2024-9989 identify Vizcaya B-4/Albatros, operating status through 1997, and Repsol/Murphy 82/18 ownership. BOE-A-2024-4769 models a hypothetical blowout scenario with 2,884 bbl of condensate over 30 days, but this is accident-model volume rather than production or mass evidence. MITECO 2008 records cumulative Albatros tonnes, but there is no Albatros-specific Bbl+Tm row for deriving a factor. MITECO 2009 records Albatros/Vizcaya B-4 concession and well identity. The CORES February 1998 bulletin lists Albatros monthly/interim crude production in kt only. Murphy's 1993 Form 10-K describes Albatros as a gas development tied back to Gaviota and does not give Albatros oil/condensate density or production tonnes. The registry keeps Albatros in source_gap_fields because no accepted conversion-grade source has been found.",
+      "confidence": "medium",
+      "accepted_for_conversion": false,
+      "supporting_source_urls": [
+        "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-4769",
+        "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-9989",
+        "https://www.boe.es/boe/dias/2022/07/14/pdfs/BOE-B-2022-22886.pdf",
+        "https://www.cores.es/sites/default/files/archivos/estadisticas/crude-oil-production.xlsx",
+        "https://www.cores.es/en/estadisticas",
+        "https://www.cores.es/sites/default/files/archivos/publicaciones/boletin-est-hidrocarburos-003-febrero-1998.pdf",
+        "https://www.miteco.gob.es/content/dam/miteco/es/energia/files-1/petroleo/Exploracion/EstadisticasPetroleo/DatosBibliotecaConsumer/2008/Produccion_Hidrocarburos2008.pdf",
+        "https://www.miteco.gob.es/content/dam/miteco/es/energia/files-1/petroleo/Exploracion/EstadisticasPetroleo/DatosBibliotecaConsumer/2009/EstadisticaHidrocarburos_2009.pdf",
+        "https://ir.murphyoilcorp.com/static-files/791c4744-6f71-41e5-a4dc-c95c654414d3",
+        "https://img.ogj.com/files/base/ebm/ogj/document/2009/06/content_dam_ogj_en_downloadables_survey_downloads_worldwide_production_1999_worldwide_production_leftcolumn_downloadable_worldwide_production_1999.pdf"
+      ]
+    },
+    {
+      "field_name": "Amposta",
+      "aliases": [
+        "amposta",
+        "san carlos i",
+        "san carlos ii"
+      ],
+      "api_gravity_deg": 17.0,
+      "api_gravity_min_deg": null,
+      "api_gravity_max_deg": null,
+      "bbl_per_tonne": 6.600967486990584,
+      "measurement_basis": "BOE national crude price order for crude from the San Carlos I and II (Amposta) exploitation concessions, delivered at the destination port",
+      "source_title": "BOE N\u00fam. 122, Orden de 12 de mayo de 1976: San Carlos I and II (Amposta) crude sales price",
+      "source_url": "https://www.boe.es/boe/dias/1976/05/21/pdfs/A09838-09839.pdf",
+      "source_class": "regulator_record",
+      "evidence_note": "The BOE order fixes the sales price for crude from the San Carlos I and II (Amposta) exploitation concessions and states 17\u00b0 API with 5.5% sulfur.",
+      "confidence": "high",
+      "accepted_for_conversion": true
+    },
+    {
+      "field_name": "Ayoluengo",
+      "aliases": [
+        "ayoluengo"
+      ],
+      "api_gravity_deg": 37.0,
+      "api_gravity_min_deg": null,
+      "api_gravity_max_deg": null,
+      "bbl_per_tonne": 7.489986677157665,
+      "measurement_basis": "Archived LGO Energy operator page identifies the Ayoluengo oilfield as producing low-sulphur crude at 37\u00b0 API",
+      "source_title": "LGO Energy Spain operation overview: Ayoluengo Oilfield",
+      "source_url": "https://web.archive.org/web/20170202034751id_/http://www.lgo-energy.com/operations-detail/2755723-spain",
+      "source_class": "operator_record",
+      "evidence_note": "The archived operator page lists Ayoluengo as LGO's largest Spanish onshore oilfield, states low-sulphur crude at 37\u00b0 API, and notes produced crude sales to industrial users. No structured min/max API range is recorded for this operator source.",
+      "confidence": "medium",
+      "accepted_for_conversion": true
+    },
+    {
+      "field_name": "Boquer\u00f3n",
+      "aliases": [
+        "boqueron",
+        "boquer\u00f3n"
+      ],
+      "api_gravity_deg": 38.7,
+      "api_gravity_min_deg": null,
+      "api_gravity_max_deg": null,
+      "bbl_per_tonne": 7.565553308321867,
+      "measurement_basis": "Fuel technical-literature study of Western Mediterranean production oils; Boquer\u00f3n is a single-well field producing at its respective well",
+      "source_title": "FTIR and SUVF spectroscopy as an alternative method in reservoir studies. Application to Western Mediterranean oils",
+      "source_url": "https://doi.org/10.1016/j.fuel.2004.06.027",
+      "source_class": "technical_literature",
+      "evidence_note": "The Fuel article states that Boquer\u00f3n and Rodaballo fields produce at their respective wells; Table 1 lists Boquer\u00f3n oil at 38.7\u00b0 API.",
+      "confidence": "high",
+      "accepted_for_conversion": true
+    },
+    {
+      "field_name": "Casablanca",
+      "aliases": [
+        "casablanca"
+      ],
+      "api_gravity_deg": 33.0,
+      "api_gravity_min_deg": null,
+      "api_gravity_max_deg": null,
+      "bbl_per_tonne": 7.312182839124249,
+      "measurement_basis": "BOE national crude price order for crude from the Casablanca exploitation, stated at wellhead",
+      "source_title": "BOE N\u00fam. 167, Orden de 25 de mayo de 1977: Casablanca and Tarraco crude sales prices",
+      "source_url": "https://www.boe.es/boe/dias/1977/07/14/pdfs/A15865-15866.pdf",
+      "source_class": "regulator_record",
+      "evidence_note": "The BOE order fixes the sales price for crude from the Casablanca exploitation and states 33\u00b0 API with 0.2% sulfur at the wellhead.",
+      "confidence": "high",
+      "accepted_for_conversion": true
+    },
+    {
+      "field_name": "Dorada",
+      "aliases": [
+        "dorada"
+      ],
+      "api_gravity_deg": 21.3,
+      "api_gravity_min_deg": null,
+      "api_gravity_max_deg": null,
+      "bbl_per_tonne": 6.792106612876507,
+      "measurement_basis": "BOE national crude price order for crude from the Dorada exploitation concession, stated at field shipment position",
+      "source_title": "BOE N\u00fam. 151, Orden de 16 de junio de 1978: Dorada crude sales price",
+      "source_url": "https://www.boe.es/boe/dias/1978/06/26/pdfs/A15132-15132.pdf",
+      "source_class": "regulator_record",
+      "evidence_note": "The BOE order fixes the sales price for crude from the Dorada exploitation concession and states 21.3\u00b0 API with 0.59% sulfur.",
+      "confidence": "high",
+      "accepted_for_conversion": true
+    },
+    {
+      "field_name": "Gaviota",
+      "aliases": [
+        "gaviota"
+      ],
+      "api_gravity_deg": null,
+      "api_gravity_min_deg": null,
+      "api_gravity_max_deg": null,
+      "bbl_per_tonne": 8.289443405190332,
+      "measurement_basis": "Derived Gaviota condensate bbl/t factor: Murphy 1993 Form 10-K states net Gaviota condensate rates of 239 b/d in 1992 and 103 b/d in 1993 for its 18% interest; the registry grosses those rates to field barrels and divides by direct CORES gross tonnes of 58,602.8 t in 1992 and 25,218.0 t in 1993",
+      "source_title": "Murphy Oil 1993 Form 10-K and CORES Indigenous Crude Oil Production workbook: Gaviota condensate basis",
+      "source_url": "https://ir.murphyoilcorp.com/static-files/791c4744-6f71-41e5-a4dc-c95c654414d3",
+      "source_class": "securities_filing",
+      "evidence_note": "Murphy's filing identifies the Gaviota field at an 18% interest and reports average daily condensate rates of 239 b/d in 1992 and 103 b/d in 1993. CORES records gross Gaviota oil/condensate production of 58,602.8 t in 1992 and 25,218.0 t in 1993. The accepted factor is a weighted two-year net-to-gross derivation, not a stated API or density.",
+      "confidence": "medium",
+      "accepted_for_conversion": true,
+      "supporting_source_urls": [
+        "https://www.cores.es/sites/default/files/archivos/estadisticas/crude-oil-production.xlsx",
+        "https://www.cores.es/en/estadisticas"
+      ]
+    },
+    {
+      "field_name": "Montanazo-Lubina",
+      "aliases": [
+        "montanazo-lubina",
+        "montanazo lubina",
+        "montanazolubina"
+      ],
+      "api_gravity_deg": 32.584375993836886,
+      "api_gravity_min_deg": 30.81,
+      "api_gravity_max_deg": 33.33,
+      "bbl_per_tonne": 7.293707953255592,
+      "measurement_basis": "BOE environmental declaration gives separate Montanazo and Lubina API values; combined CORES field factor is a derived recoverable-reserves-weighted proxy from stated reserves of 1.2 MMbbl Montanazo and 2.9 MMbbl Lubina",
+      "source_title": "BOE-A-2012-6772, Resoluci\u00f3n de 7 de mayo de 2012: Desarrollo de los campos de Montanazo y Lubina, Tarragona",
+      "source_url": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2012-6772",
+      "source_class": "regulator_record",
+      "evidence_note": "The BOE declaration states recoverable reserves of 1.2 MMbbl for Montanazo and 2.9 MMbbl for Lubina, average production of 3,000 bbl/d per well, and crude properties of 30.81\u00b0 API for Montanazo and 33.33\u00b0 API for Lubina; this registry derives a combined proxy only for the combined CORES field name.",
+      "confidence": "high",
+      "accepted_for_conversion": true
+    },
+    {
+      "field_name": "Rodaballo",
+      "aliases": [
+        "rodaballo"
+      ],
+      "api_gravity_deg": 41.3,
+      "api_gravity_min_deg": null,
+      "api_gravity_max_deg": null,
+      "bbl_per_tonne": 7.681125803043588,
+      "measurement_basis": "Fuel technical-literature study of Western Mediterranean production oils; Rodaballo is a single-well field producing at its respective well",
+      "source_title": "FTIR and SUVF spectroscopy as an alternative method in reservoir studies. Application to Western Mediterranean oils",
+      "source_url": "https://doi.org/10.1016/j.fuel.2004.06.027",
+      "source_class": "technical_literature",
+      "evidence_note": "The Fuel article states that Boquer\u00f3n and Rodaballo fields produce at their respective wells; Table 1 lists Rodaballo oil at 41.3\u00b0 API.",
+      "confidence": "high",
+      "accepted_for_conversion": true
+    },
+    {
+      "field_name": "Salmonete",
+      "aliases": [
+        "salmonete"
+      ],
+      "api_gravity_deg": 44.9,
+      "api_gravity_min_deg": null,
+      "api_gravity_max_deg": null,
+      "bbl_per_tonne": 7.841149257273662,
+      "measurement_basis": "Organic Geochemistry technical-literature study of Tarragona Basin oils; crude oils were obtained from producing wells and Table 1 maps column A to Salmonete",
+      "source_title": "Petroleum geochemistry of the Tarragona basin (Spanish Mediterranean off-shore)",
+      "source_url": "https://doi.org/10.1016/0146-6380(86)90044-6",
+      "source_class": "technical_literature",
+      "evidence_note": "The article states that crude oils were obtained from producing wells; Table 1 lists column A at 3700 m depth with 44.9\u00b0 API, 0.10% sulfur, and 82% saturates, and maps column A to Salmonete.",
+      "confidence": "high",
+      "accepted_for_conversion": true
+    },
+    {
+      "field_name": "Tarraco",
+      "aliases": [
+        "tarraco"
+      ],
+      "api_gravity_deg": 35.0,
+      "api_gravity_min_deg": null,
+      "api_gravity_max_deg": null,
+      "bbl_per_tonne": 7.401084758140957,
+      "measurement_basis": "BOE national crude price order for crude from the Tarraco concession, stated at wellhead",
+      "source_title": "BOE N\u00fam. 167, Orden de 25 de mayo de 1977: Casablanca and Tarraco crude sales prices",
+      "source_url": "https://www.boe.es/boe/dias/1977/07/14/pdfs/A15865-15866.pdf",
+      "source_class": "regulator_record",
+      "evidence_note": "The BOE order fixes the sales price for crude from the Tarraco concession and states 35\u00b0 API with 0.2% sulfur at the wellhead.",
+      "confidence": "high",
+      "accepted_for_conversion": true
+    },
+    {
+      "field_name": "Viura (1)",
+      "aliases": [
+        "viura 1",
+        "viura-1",
+        "viura1"
+      ],
+      "api_gravity_deg": null,
+      "api_gravity_min_deg": null,
+      "api_gravity_max_deg": null,
+      "bbl_per_tonne": 7.330108730412536,
+      "measurement_basis": "Official MITECO energy books report Viura condensate tonnes and barrels as condensate production transformed to crude equivalent; the accepted factor is the 2016-2020 weighted bbl/t ratio from those ministry tables, not a measured API gravity or physical density",
+      "source_title": "MITECO Libro de la Energía España 2020: Viura condensate transformed to crude equivalent",
+      "source_url": "https://www.miteco.gob.es/content/dam/miteco/es/energia/files-1/balances/Balances/LibrosEnergia/Libro_Energia_Espana_2020.pdf",
+      "source_class": "regulator_record",
+      "evidence_note": "MITECO 2020 Table 8.4 reports Viura at 1,443 Tm and 10,577 bbl in 2020, and 5,037 Tm and 36,922 bbl in 2019, with the footnote 'Producción de condensado transformada a crudo equivalente'. MITECO 2018 Table 6.3 reports 3,214 Tm and 23,559 bbl in 2018, and 826 Tm and 6,055 bbl in 2017. MITECO 2017 Table 6.3 reports 1,988 Tm and 14,572 bbl in 2016. The combined 2016-2020 ratio is 91,685 bbl / 12,508 Tm = 7.330108730412536 bbl/t. The Prospex/H&P note remains a supporting field-identification lead for condensate cut only.",
+      "confidence": "medium",
+      "accepted_for_conversion": true,
+      "supporting_source_urls": [
+        "https://www.miteco.gob.es/content/dam/miteco/es/energia/files-1/balances/Balances/LibrosEnergia/Libro-Energia-2017.pdf",
+        "https://www.miteco.gob.es/content/dam/miteco/es/energia/files-1/balances/Balances/LibrosEnergia/Libro-Energia-2018.pdf",
+        "https://prospex.energy/wp-content/uploads/2025/10/Prospex-Viura-Restart-and-Poland-22nd-Oct-2025.pdf"
+      ]
+    }
+  ]
+}

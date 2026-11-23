@@ -1,0 +1,6 @@
+source,incident_id,date,incident_type,vessel_type,region,fatalities,injuries,severity,description
+maib,M-001,2024-01-12,collision,tanker,north_sea,0,1,serious,Tanker collision during pilotage
+maib,M-002,2024-03-05,fire,offshore,north_sea,1,0,fatal,Engine room fire on offshore support vessel
+tsb,T-001,2024-02-18,grounding,tug,atlantic,0,0,moderate,Tug grounding during harbor approach
+tsb,T-002,2024-04-22,fire,passenger,atlantic,0,4,very_serious,Passenger vessel galley fire
+tsb,T-003,2024-05-14,machinery_failure,offshore,atlantic,0,0,moderate,Loss of propulsion on supply vessel

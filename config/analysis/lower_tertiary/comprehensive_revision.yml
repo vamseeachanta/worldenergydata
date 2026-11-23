@@ -1,0 +1,19 @@
+revision: C
+history:
+  - revision: A
+    date: "2026-10-14"
+    change: >-
+      First issue combines ten-field scenario economics, source references and
+      explicit data gaps to support comparisons on a stated assumption basis.
+  - revision: B
+    date: "2026-10-14"
+    change: >-
+      Public sources and retrieval dates are attached to their input keys;
+      unsourced field inputs are labelled as assumptions. Contradicted or
+      unverified working interests are excluded from concentration comparisons.
+  - revision: C
+    date: "2026-10-15"
+    change: >-
+      Operator citation corrected to exclude evidence predating the configured role;
+      share lines qualified by configuration working interests and scenario capex;
+      reporting tests collected by CI so publication contracts run on pull requests.

@@ -1,0 +1,24 @@
+basename: production_forecast
+
+meta:
+  label: production_forecast_arps
+
+file_management:
+  flag: false
+  output_directory: outputs
+
+cases:
+  - id: exponential
+    model: exponential
+    file: exponential_production.csv
+    economic_limit: 100
+    forecast_months: 24
+  - id: hyperbolic
+    model: hyperbolic
+    file: hyperbolic_production.csv
+    economic_limit: 100
+    forecast_months: 24
+
+analysis:
+  flag: true
+  type: arps

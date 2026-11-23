@@ -1,0 +1,110 @@
+# Financial Analysis Agent Capabilities
+version: 1.0.0
+last_updated: 2025-08-25
+
+capabilities:
+  investment_analysis:
+    description: Comprehensive investment evaluation for energy projects
+    methods:
+      - npv_calculation
+      - irr_computation
+      - payback_analysis
+      - lcoe_assessment
+      - sensitivity_analysis
+    inputs:
+      - project_specifications
+      - cost_estimates
+      - revenue_projections
+    outputs:
+      - financial_metrics
+      - risk_assessment
+      - investment_recommendation
+  
+  market_forecasting:
+    description: Energy commodity price forecasting and market analysis
+    methods:
+      - time_series_analysis
+      - machine_learning_models
+      - econometric_modeling
+    commodities:
+      - crude_oil
+      - natural_gas
+      - electricity
+      - carbon_credits
+    horizons:
+      - short_term: 1-30 days
+      - medium_term: 1-6 months
+      - long_term: 6-24 months
+  
+  risk_assessment:
+    description: Comprehensive risk analysis for energy investments
+    methods:
+      - monte_carlo_simulation
+      - scenario_analysis
+      - sensitivity_analysis
+      - value_at_risk
+    risk_types:
+      - market_risk
+      - credit_risk
+      - operational_risk
+      - regulatory_risk
+      - climate_risk
+  
+  portfolio_optimization:
+    description: Energy portfolio optimization and management
+    strategies:
+      - mean_variance_optimization
+      - risk_parity
+      - factor_based_allocation
+    constraints:
+      - esg_requirements
+      - regulatory_limits
+      - liquidity_needs
+  
+  reporting:
+    description: Automated financial reporting and visualization
+    report_types:
+      - investment_memorandum
+      - risk_report
+      - market_analysis
+      - portfolio_performance
+    formats:
+      - pdf
+      - excel
+      - interactive_dashboard
+      - markdown
+
+integrations:
+  data_sources:
+    - eia_api
+    - iea_database
+    - bloomberg_terminal
+    - reuters_eikon
+  
+  internal_systems:
+    - worldenergydata_core
+    - project_database
+    - risk_management_system
+  
+  output_systems:
+    - reporting_dashboard
+    - email_distribution
+    - api_endpoints
+
+performance_metrics:
+  analysis_speed: < 2 seconds
+  forecast_accuracy: > 85%
+  report_generation: < 10 seconds
+  parallel_processing: enabled
+  caching: enabled
+
+compliance:
+  standards:
+    - IFRS
+    - GAAP
+    - TCFD
+    - GRI
+  regulations:
+    - SOX
+    - GDPR
+    - MiFID_II

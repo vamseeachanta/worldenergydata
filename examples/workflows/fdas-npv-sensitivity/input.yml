@@ -1,0 +1,33 @@
+basename: fdas
+
+meta:
+  label: fdas_npv_sensitivity
+
+file_management:
+  flag: false
+  output_directory: outputs
+
+field:
+  name: Synthetic Anchor Sensitivity
+  development_system: subsea_tieback
+
+cashflow:
+  period: annual
+  discount_rate: 0.10
+
+sensitivity:
+  base_capex: 1000
+  oil_price: 50
+  production_bbl_per_period: 10
+  opex_per_period: 100
+  periods: 3
+  price_multipliers:
+    - 0.8
+    - 1.2
+  rate_multipliers:
+    - 0.8
+    - 1.2
+
+analysis:
+  flag: true
+  type: npv_sensitivity

@@ -1,0 +1,561 @@
+#!/usr/bin/env python3
+"""Read-only verifier for claimed-vs-shipped drift in recently-closed issues.
+
+Motivation (issue #368): issues get closed and the work is assumed shipped, but
+months-later audits expose that the claimed deliverable was never wired up (e.g.
+#298 -> #359). This verifier re-examines recently-closed issues and surfaces
+those whose machine-checkable claims are not observable in the live repo tree.
+
+Cheap checks performed against each recently-closed issue body:
+  1. Acceptance-criteria checkboxes: a closed issue that still has unchecked
+     ``- [ ]`` boxes is flagged ("closed but acceptance criteria incomplete").
+  2. Referenced file / test paths: backticked ``path/to/file.py`` or
+     ``tests/...`` references that do not exist in the local repo tree are
+     flagged ("claimed deliverable missing").
+  * Opt-in ``--catalog data/catalog.yaml`` checks explicit checkboxes such as
+    "Catalog entry resolves:" followed by a backticked relative dataset path
+    in the selected catalog. Availability is local to the repository root;
+    unsupported claims and outside targets remain unverified.
+  * Explicit symlink-presence checkboxes use issue #368's ``test -L`` semantics:
+    a dangling link is present; a regular file is not a symlink.
+
+STRICTLY READ-ONLY. This script never edits, closes, comments on, reopens, or
+labels any issue. It only reads issues via ``gh`` and reads the local tree.
+It writes a markdown report and exits non-zero when drift is found, so it can
+gate a CI/cron cadence.
+
+The parsing + checking logic is implemented as pure functions
+(``find_unchecked_acceptance_boxes``, ``extract_referenced_paths``,
+``analyze_issue``) that take issue-body text plus an injected
+path-existence and symlink checkers, so they are deterministically unit-testable
+without any live ``gh`` calls or filesystem access.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import re
+import subprocess
+import sys
+from dataclasses import dataclass
+from datetime import date, datetime, timedelta, timezone
+from pathlib import Path
+from typing import Callable, Sequence
+
+from closure_catalog import (
+    CatalogError,
+    literal_path,
+    make_catalog_checker,
+    parse_catalog_claim,
+)
+
+# --------------------------------------------------------------------------- #
+# Constants
+# --------------------------------------------------------------------------- #
+
+DEFAULT_OWNER_REPO = "vamseeachanta/worldenergydata"
+DEFAULT_SINCE_DAYS = 30
+DEFAULT_MAX_ISSUES = 40
+REPORT_DIR = Path("reports/hygiene")
+
+# Unchecked / checked acceptance-criteria checkbox lines.
+#   - [ ] foo   (unchecked)   - [x] foo   (checked)
+_UNCHECKED_RE = re.compile(r"^\s*[-*]\s+\[\s\]\s+(.*\S.*)$", re.MULTILINE)
+_CHECKED_RE = re.compile(r"^\s*[-*]\s+\[[xX]\]\s+(.*\S.*)$", re.MULTILINE)
+
+# Inline-code spans: `...`. We extract candidate paths from these.
+_BACKTICK_RE = re.compile(r"`([^`\n]+)`")
+
+# Only explicit presence statements are interpreted; other symlink checkbox
+# wording remains unverified. Inline commands are never executed.
+_SYMLINK_CHECKBOX_RE = re.compile(
+    r"^\s*[-*]\s+\[[ xX]\]\s+(?P<claim>.*\b(?:symlinks?|symbolic links?)\b.*)$",
+    re.IGNORECASE,
+)
+_SYMLINK_PRESENCE_RE = re.compile(
+    r"(?:symlink|symbolic link)\s+(?:"
+    r"`(?P<path_before>[^`]+)`\s+(?:is present|exists)|"
+    r"present:\s*`(?P<path_after>[^`]+)`"
+    r")\.?",
+    re.IGNORECASE,
+)
+
+# A path looks like a file path if it contains a "/" and ends in a known source
+# extension, OR it starts with a known repo top-level dir. Heuristic only.
+_PATH_EXT_RE = re.compile(
+    r"\.(py|sh|ps1|yml|yaml|json|md|cfg|ini|toml|txt|csv|sql)$",
+    re.IGNORECASE,
+)
+_REPO_TOPDIRS = (
+    "scripts/",
+    "src/",
+    "tests/",
+    "test/",
+    "data/",
+    "reports/",
+    "docs/",
+    "config/",
+    ".github/",
+)
+
+
+# --------------------------------------------------------------------------- #
+# Data structures
+# --------------------------------------------------------------------------- #
+
+
+@dataclass(frozen=True)
+class IssueRef:
+    """A recently-closed issue fetched from gh (only fields we use)."""
+
+    number: int
+    title: str
+    body: str
+    closed_at: str = ""
+    url: str = ""
+
+
+@dataclass(frozen=True)
+class IssueFinding:
+    """The verifier's verdict for one issue."""
+
+    number: int
+    title: str
+    url: str
+    unchecked_boxes: tuple[str, ...] = ()
+    missing_paths: tuple[str, ...] = ()
+    missing_symlinks: tuple[str, ...] = ()
+    unverified_symlink_claims: tuple[str, ...] = ()
+    catalog_results: tuple[tuple[str, str], ...] = ()
+
+    @property
+    def has_drift(self) -> bool:
+        return bool(
+            self.unchecked_boxes
+            or self.missing_paths
+            or self.missing_symlinks
+            or self.unverified_symlink_claims
+            or any(status != "present" for _, status in self.catalog_results)
+        )
+
+
+# --------------------------------------------------------------------------- #
+# Pure parsing / checking logic (unit-tested, no gh / no real fs required)
+# --------------------------------------------------------------------------- #
+
+
+def find_unchecked_acceptance_boxes(body: str) -> list[str]:
+    """Return the text of every unchecked ``- [ ]`` checkbox in the body.
+
+    Pure: depends only on the input string. Order-preserving.
+    """
+    if not body:
+        return []
+    return [m.strip() for m in _UNCHECKED_RE.findall(body)]
+
+
+def find_checked_acceptance_boxes(body: str) -> list[str]:
+    """Return the text of every checked ``- [x]`` checkbox in the body."""
+    if not body:
+        return []
+    return [m.strip() for m in _CHECKED_RE.findall(body)]
+
+
+def _looks_like_path(token: str) -> bool:
+    """Heuristic: does a backticked token look like a repo file/test path?"""
+    token = token.strip()
+    if not token or " " in token or "\t" in token:
+        return False
+    # Disqualify obvious non-paths (commands, urls, globs we can't test).
+    if token.startswith(("http://", "https://", "-", "$", "#")):
+        return False
+    if any(c in token for c in "*?<>|"):
+        return False
+    if token.startswith(_REPO_TOPDIRS):
+        return True
+    # path-with-slash ending in a known source extension
+    if "/" in token and _PATH_EXT_RE.search(token):
+        return True
+    return False
+
+
+def extract_referenced_paths(body: str) -> list[str]:
+    """Extract candidate repo file/test paths from backticked spans in a body.
+
+    Pure: deterministic, de-duplicated, order-preserving. Leading ``./`` is
+    normalized away so existence checks are relative to the repo root.
+    """
+    if not body:
+        return []
+    seen: set[str] = set()
+    out: list[str] = []
+    for raw in _BACKTICK_RE.findall(body):
+        token = raw.strip()
+        # strip a trailing ) or , or . that markdown sometimes glues on
+        token = token.rstrip(").,;:")
+        if token.startswith("./"):
+            token = token[2:]
+        if _looks_like_path(token) and token not in seen:
+            seen.add(token)
+            out.append(token)
+    return out
+
+
+def _is_relative_link_path(token: str) -> bool:
+    """Accept a literal repository-relative link path, without traversal."""
+    path = Path(token)
+    return bool(
+        token
+        and not path.is_absolute()
+        and path.name
+        and ".." not in path.parts
+        and not token.endswith(("/", "/."))
+        and not any(c.isspace() or c in "`*?<>|$;:\\" for c in token)
+    )
+
+
+def analyze_issue(
+    issue: IssueRef,
+    path_exists: Callable[[str], bool],
+    link_exists: Callable[[str], bool] | None = None,
+    catalog_checker: Callable[[str], str] | None = None,
+) -> IssueFinding:
+    """Apply the cheap checks to one closed issue.
+
+    Pure given injected ``path_exists`` and optional ``link_exists`` checkers:
+      * unchecked acceptance boxes -> flagged
+      * referenced paths that fail ``path_exists`` -> flagged
+      * explicit symlink presence claims that fail ``link_exists`` -> flagged
+      * unsupported symlink wording or an absent checker -> unverified
+      * explicit catalog checkboxes -> literal lookup or an unverified result
+      * unsupported catalog wording -> unverified, with ordinary path checks
+
+    No gh calls, no real filesystem access (the checker is injected).
+    """
+    unchecked = tuple(find_unchecked_acceptance_boxes(issue.body))
+    ordinary_lines: list[str] = []
+    links: list[str] = []
+    unverified: list[str] = []
+    catalog_results: list[tuple[str, str]] = []
+    seen_catalog_claims: set[str] = set()
+    for line in (issue.body or "").splitlines():
+        catalog_claim = parse_catalog_claim(line)
+        if catalog_claim is not None:
+            claim, token = catalog_claim
+            if token is None:
+                ordinary_lines.append(line)
+            relative = literal_path(token) if token is not None else None
+            key = relative or claim
+            if key in seen_catalog_claims:
+                continue
+            seen_catalog_claims.add(key)
+            if token is None:
+                status = "unsupported_claim"
+            elif relative is None:
+                status = "invalid_claim"
+            elif catalog_checker is None:
+                status = "unverified"
+            else:
+                status = catalog_checker(relative)
+            catalog_results.append((key, status))
+            continue
+        checkbox = _SYMLINK_CHECKBOX_RE.fullmatch(line)
+        # Code spans contain literal paths or commands, not claim terminology.
+        prose = _BACKTICK_RE.sub(" ", line)
+        if checkbox is None or _SYMLINK_CHECKBOX_RE.fullmatch(prose) is None:
+            ordinary_lines.append(line)
+            continue
+        claim = checkbox.group("claim").strip()
+        presence = _SYMLINK_PRESENCE_RE.fullmatch(claim)
+        if presence is None:
+            unverified.append(claim)
+            continue
+        token = presence.group("path_before") or presence.group("path_after")
+        if not _is_relative_link_path(token) or link_exists is None:
+            unverified.append(claim)
+            continue
+        token = token.removeprefix("./")
+        if token not in links:
+            links.append(token)
+    referenced = extract_referenced_paths("\n".join(ordinary_lines))
+    missing = tuple(p for p in referenced if not path_exists(p))
+    missing_links = tuple(
+        p for p in links if link_exists is not None and not link_exists(p)
+    )
+    return IssueFinding(
+        number=issue.number,
+        title=issue.title,
+        url=issue.url,
+        unchecked_boxes=unchecked,
+        missing_paths=missing,
+        missing_symlinks=missing_links,
+        unverified_symlink_claims=tuple(unverified),
+        catalog_results=tuple(catalog_results),
+    )
+
+
+def make_repo_path_checker(repo_root: Path) -> Callable[[str], bool]:
+    """Build a path-existence checker rooted at ``repo_root`` (path traversal-safe)."""
+    root = repo_root.resolve()
+
+    def _exists(rel: str) -> bool:
+        candidate = (root / rel).resolve()
+        # Stay inside the repo; a "../" escape is treated as not-found.
+        try:
+            candidate.relative_to(root)
+        except ValueError:
+            return False
+        return candidate.exists()
+
+    return _exists
+
+
+def make_repo_link_checker(repo_root: Path) -> Callable[[str], bool]:
+    """Inspect final links without following targets, after containing parents.
+
+    Resolving only the parent permits dangling and external final targets,
+    matching issue #368's ``test -L`` requirement.
+    """
+    root = repo_root.resolve()
+
+    def _is_link(rel: str) -> bool:
+        if not _is_relative_link_path(rel):
+            return False
+        candidate = root / rel
+        try:
+            parent = candidate.parent.resolve(strict=True)
+            parent.relative_to(root)
+            link = parent / candidate.name
+            is_junction = getattr(link, "is_junction", None)
+            return link.is_symlink() or bool(is_junction and is_junction())
+        except (ValueError, OSError, RuntimeError):
+            # Escapes, missing parents, inaccessible paths and symlink loops.
+            return False
+
+    return _is_link
+
+
+# --------------------------------------------------------------------------- #
+# gh integration (read-only) + report rendering
+# --------------------------------------------------------------------------- #
+
+
+def fetch_recent_closed_issues(
+    owner_repo: str,
+    since_days: int,
+    max_issues: int,
+    runner: Callable[[Sequence[str]], str] | None = None,
+) -> list[IssueRef]:
+    """Fetch recently-closed issues via ``gh`` (READ-ONLY).
+
+    ``runner`` is injectable for testing; by default it shells out to ``gh``.
+    """
+    run = runner or _default_gh_runner
+    since = (datetime.now(timezone.utc) - timedelta(days=since_days)).strftime(
+        "%Y-%m-%dT%H:%M:%SZ"
+    )
+    cmd = [
+        "gh",
+        "issue",
+        "list",
+        "-R",
+        owner_repo,
+        "--state",
+        "closed",
+        "--limit",
+        str(max_issues),
+        "--search",
+        f"closed:>={since[:10]}",
+        "--json",
+        "number,title,body,closedAt,url",
+    ]
+    raw = run(cmd)
+    data = json.loads(raw) if raw.strip() else []
+    issues: list[IssueRef] = []
+    for item in data:
+        issues.append(
+            IssueRef(
+                number=int(item.get("number", 0)),
+                title=str(item.get("title", "")),
+                body=str(item.get("body") or ""),
+                closed_at=str(item.get("closedAt") or ""),
+                url=str(item.get("url") or ""),
+            )
+        )
+    return issues
+
+
+def _default_gh_runner(cmd: Sequence[str]) -> str:
+    proc = subprocess.run(
+        list(cmd),
+        capture_output=True,
+        text=True,
+        timeout=120,
+        check=False,
+    )
+    if proc.returncode != 0:
+        raise RuntimeError(
+            f"gh failed ({proc.returncode}): {proc.stderr.strip()[:300]}"
+        )
+    return proc.stdout
+
+
+def render_report(
+    findings: Sequence[IssueFinding],
+    *,
+    owner_repo: str,
+    since_days: int,
+    scanned: int,
+    today: str | None = None,
+    catalog: str | None = None,
+) -> str:
+    """Render the markdown drift report (pure)."""
+    today = today or date.today().isoformat()
+    drifted = [f for f in findings if f.has_drift]
+    lines: list[str] = []
+    lines.append(f"# Recently-closed issue drift report — {today}")
+    lines.append("")
+    lines.append(f"- Repo: `{owner_repo}`")
+    lines.append(f"- Window: issues closed in the last {since_days} days")
+    lines.append(f"- Issues scanned: {scanned}")
+    lines.append(f"- Issues with drift: {len(drifted)}")
+    if catalog is not None:
+        lines.append(f"- Catalog: `{catalog}`")
+    if catalog is not None or any(f.catalog_results for f in findings):
+        lines.append(
+            "Availability is local to the allowed root (the repository root). "
+            "Outside or unreadable targets, unsupported claims and disabled checks "
+            "are unverified; "
+            "no external existence claim is made."
+        )
+    lines.append("")
+    lines.append(
+        "_Read-only verifier (#368). Drift = a closed issue with unchecked "
+        "acceptance boxes, a claimed file/test path missing from the tree, "
+        "or a failed or unverified symlink presence or catalog resolution claim. "
+        "Human decides whether to reopen._"
+    )
+    lines.append("")
+    if not drifted:
+        lines.append("No claimed-vs-shipped drift detected. ✅")
+        lines.append("")
+        return "\n".join(lines)
+
+    for f in drifted:
+        heading = f"## #{f.number} — {f.title}"
+        lines.append(heading)
+        if f.url:
+            lines.append(f"{f.url}")
+        lines.append("")
+        if f.catalog_results:
+            lines.append("**Catalog resolution claims (status):**")
+            for claim, status in f.catalog_results:
+                lines.append(f"- `{claim}`: {status}")
+            lines.append("")
+        if f.missing_paths:
+            lines.append(
+                "**Claimed deliverable missing (referenced but not in tree):**"
+            )
+            for p in f.missing_paths:
+                lines.append(f"- `{p}`")
+            lines.append("")
+        if f.unchecked_boxes:
+            lines.append("**Closed but acceptance criteria still unchecked:**")
+            for b in f.unchecked_boxes:
+                lines.append(f"- [ ] {b}")
+            lines.append("")
+        if f.missing_symlinks:
+            lines.append("**Claimed symlink missing or not a symlink:**")
+            for p in f.missing_symlinks:
+                lines.append(f"- `{p}`")
+            lines.append("")
+        if f.unverified_symlink_claims:
+            lines.append("**Symlink claims unverified:**")
+            for claim in f.unverified_symlink_claims:
+                lines.append(f"- {claim}")
+            lines.append("")
+    return "\n".join(lines)
+
+
+# --------------------------------------------------------------------------- #
+# CLI
+# --------------------------------------------------------------------------- #
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--repo", default=DEFAULT_OWNER_REPO)
+    parser.add_argument("--since-days", type=int, default=DEFAULT_SINCE_DAYS)
+    parser.add_argument("--max-issues", type=int, default=DEFAULT_MAX_ISSUES)
+    parser.add_argument(
+        "--repo-root",
+        default=".",
+        help="Local repo root used for path-existence checks.",
+    )
+    parser.add_argument(
+        "--report-dir",
+        default=REPORT_DIR.as_posix(),
+        help="Directory to write the markdown report into.",
+    )
+    parser.add_argument(
+        "--no-report",
+        action="store_true",
+        help="Print to stdout only; do not write a report file.",
+    )
+    parser.add_argument(
+        "--catalog",
+        help="Opt-in catalog resolution using one repository-relative YAML catalog.",
+    )
+    args = parser.parse_args(argv)
+
+    repo_root = Path(args.repo_root).resolve()
+    path_exists = make_repo_path_checker(repo_root)
+    link_exists = make_repo_link_checker(repo_root)
+    catalog_checker = None
+    if args.catalog is not None:
+        try:
+            selection = literal_path(args.catalog)
+            if selection is None:
+                raise CatalogError(
+                    "catalog must use a literal repository-relative path"
+                )
+            catalog_checker = make_catalog_checker(repo_root / selection, repo_root)
+            args.catalog = selection
+        except CatalogError as exc:
+            print(f"ERROR: {exc}", file=sys.stderr)
+            return 2
+
+    try:
+        issues = fetch_recent_closed_issues(args.repo, args.since_days, args.max_issues)
+    except Exception as exc:  # pragma: no cover - network/gh failure path
+        print(f"ERROR: could not fetch closed issues: {exc}", file=sys.stderr)
+        return 2
+
+    findings = [
+        analyze_issue(i, path_exists, link_exists, catalog_checker) for i in issues
+    ]
+    report = render_report(
+        findings,
+        owner_repo=args.repo,
+        since_days=args.since_days,
+        scanned=len(issues),
+        catalog=args.catalog,
+    )
+
+    if not args.no_report:
+        report_dir = Path(args.report_dir)
+        report_dir.mkdir(parents=True, exist_ok=True)
+        out = report_dir / f"verify_recent_closures_{date.today().isoformat()}.md"
+        out.write_text(report, encoding="utf-8", newline="\n")
+        print(f"Report written to {out.as_posix()}", file=sys.stderr)
+
+    print(report)
+
+    drifted = [f for f in findings if f.has_drift]
+    # Exit non-zero when drift found, so CI/cron can gate on it.
+    return 1 if drifted else 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

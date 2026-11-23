@@ -1,0 +1,47 @@
+{
+  "download_date": "2025-10-08T15:44:42.149745",
+  "total_records": 0,
+  "successful": 0,
+  "results": [
+    {
+      "from_date": "2018-01-01",
+      "to_date": "2018-12-31",
+      "status": "field_not_found"
+    },
+    {
+      "from_date": "2019-01-01",
+      "to_date": "2019-12-31",
+      "status": "field_not_found"
+    },
+    {
+      "from_date": "2020-01-01",
+      "to_date": "2020-12-31",
+      "status": "field_not_found"
+    },
+    {
+      "from_date": "2021-01-01",
+      "to_date": "2021-12-31",
+      "status": "field_not_found"
+    },
+    {
+      "from_date": "2022-01-01",
+      "to_date": "2022-12-31",
+      "status": "field_not_found"
+    },
+    {
+      "from_date": "2023-01-01",
+      "to_date": "2023-12-31",
+      "status": "field_not_found"
+    },
+    {
+      "from_date": "2024-01-01",
+      "to_date": "2024-12-31",
+      "status": "field_not_found"
+    },
+    {
+      "from_date": "2025-01-01",
+      "to_date": "2025-10-08",
+      "status": "field_not_found"
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+# Worldenergydata Scheduler Configuration
+# -----------------------------------------
+# Controls which data refresh jobs run, on what schedule, and how failures
+# are monitored and reported.
+# Relative data paths follow WORLDENERGYDATA_DATA_DIR (or WED_DATA_ROOT)
+# when set. Explicit absolute output_dir paths take precedence.
+# Successful refreshes retain timestamped copies under output_dir/runs/.
+
+jobs:
+  - name: bsee_refresh
+    interval: weekly
+    time: "02:00"
+    enabled: true
+    output_dir: data/modules/bsee
+    # data_path: /path/to/local/bsee/data  # optional: override default BSEE data location
+
+  - name: hse_refresh
+    interval: weekly
+    time: "02:30"
+    enabled: true
+    output_dir: data/modules/hse
+    # Downloads BSEE incident/INC raw archives to data/modules/hse/raw/bsee;
+    # keeps the grounded-analysis incident corpus (#486/#489) fresh.
+
+  - name: hse_sources_refresh
+    interval: monthly
+    time: "03:30"
+    enabled: true
+    output_dir: data/modules/hse/sources
+    # Monthly pull of every public HSE source in config/hse/monthly_sources.yml
+    # (raw files and manifests live on external storage, not in git).
+
+  - name: sodir_refresh
+    interval: daily
+    time: "03:00"
+    enabled: true
+    output_dir: data/modules/sodir
+
+  - name: eia_us_refresh
+    interval: monthly
+    day: 5
+    time: "04:00"
+    enabled: true
+    output_dir: data/modules/eia
+    # api_key: null  # Set to your EIA API key for authenticated endpoints
+
+  - name: metocean_refresh
+    interval: daily
+    time: "01:00"
+    enabled: true
+    output_dir: data/modules/metocean
+    locations:
+      - {lat: 28.5, lon: -88.5, name: "GOM"}
+      - {lat: 60.0, lon: 2.0, name: "NCS"}
+
+  - name: brazil_anp_refresh
+    interval: monthly
+    day: 10
+    time: "05:00"
+    enabled: true
+    output_dir: data/modules/brazil_anp
+
+  - name: ukcs_refresh
+    interval: monthly
+    day: 7
+    time: "06:00"
+    enabled: true
+    output_dir: data/modules/ukcs
+
+  - name: lng_terminals_refresh
+    interval: weekly
+    time: "07:00"
+    # Issue #458: keep the stub out of retries and freshness health until a
+    # real upstream refresh writes data and a successful scheduler manifest.
+    enabled: false
+    output_dir: data/modules/lng_terminals
+
+  - name: spain_cores_refresh
+    interval: monthly
+    day: 12
+    time: "08:00"
+    enabled: true
+    output_dir: data/spain/cores
+    force_refresh: false
+    refresh_fixture: true
+    fixture_output_dir: packages/worldenergydata-spain/src/worldenergydata/spain/data/cores
+    density_registry_path: packages/worldenergydata-spain/src/worldenergydata/spain/data/cores/crude_density_factors.json
+    allow_default_density: false
+
+monitoring:
+  log_dir: logs/scheduler/
+  log_retention_days: 30
+  retry_max: 3
+  retry_backoff_seconds: 60
+  webhook_url: null   # Set to a URL to receive POST with status.json on each cycle
+  status_file: logs/scheduler/status.json
+  smtp_host: null    # Set in .env as SMTP_HOST
+  smtp_user: null    # Set in .env as SMTP_USER
+  smtp_pass: null    # Set in .env as SMTP_PASS
+  smtp_port: 587
+  alert_recipients: []  # Defaults to smtp_user if empty

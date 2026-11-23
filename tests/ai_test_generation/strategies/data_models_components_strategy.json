@@ -1,0 +1,116 @@
+{
+  "module": "data_models_components",
+  "test_file": "test_data_models_components.py",
+  "test_classes": [
+    {
+      "name": "TestDataModelsComponents",
+      "target_class": "DataModelsComponents",
+      "test_methods": [
+        {
+          "name": "test___init___basic",
+          "type": "basic",
+          "description": "Test basic functionality of __init__"
+        },
+        {
+          "name": "test_drop_dependent_tables_basic",
+          "type": "basic",
+          "description": "Test basic functionality of drop_dependent_tables"
+        },
+        {
+          "name": "test_create_db_tables_basic",
+          "type": "basic",
+          "description": "Test basic functionality of create_db_tables"
+        },
+        {
+          "name": "test_create_db_tables_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for create_db_tables"
+        },
+        {
+          "name": "test_get_data_and_save_to_target_basic",
+          "type": "basic",
+          "description": "Test basic functionality of get_data_and_save_to_target"
+        },
+        {
+          "name": "test_get_data_and_save_to_target_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for get_data_and_save_to_target"
+        },
+        {
+          "name": "test_process_csv_files_basic",
+          "type": "basic",
+          "description": "Test basic functionality of process_csv_files"
+        },
+        {
+          "name": "test_process_csv_files_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for process_csv_files"
+        },
+        {
+          "name": "test_process_db_source_basic",
+          "type": "basic",
+          "description": "Test basic functionality of process_db_source"
+        },
+        {
+          "name": "test_process_db_source_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for process_db_source"
+        },
+        {
+          "name": "test_process_zip_files_basic",
+          "type": "basic",
+          "description": "Test basic functionality of process_zip_files"
+        },
+        {
+          "name": "test_process_zip_files_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for process_zip_files"
+        },
+        {
+          "name": "test_process_url_files_basic",
+          "type": "basic",
+          "description": "Test basic functionality of process_url_files"
+        },
+        {
+          "name": "test_process_url_files_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for process_url_files"
+        },
+        {
+          "name": "test_save_data_basic",
+          "type": "basic",
+          "description": "Test basic functionality of save_data"
+        },
+        {
+          "name": "test_save_data_edge_cases",
+          "type": "edge_case",
+          "description": "Test edge cases for save_data"
+        },
+        {
+          "name": "test_save_data_parameterized",
+          "type": "parameterized",
+          "description": "Parameterized tests for save_data"
+        },
+        {
+          "name": "test_run_example_basic",
+          "type": "basic",
+          "description": "Test basic functionality of run_example"
+        },
+        {
+          "name": "test_read_from_xlsx_basic",
+          "type": "basic",
+          "description": "Test basic functionality of read_from_xlsx"
+        },
+        {
+          "name": "test_read_from_xlsx_return_value",
+          "type": "return_value",
+          "description": "Test return value of read_from_xlsx"
+        }
+      ]
+    }
+  ],
+  "test_functions": [],
+  "test_count": 20,
+  "coverage_approach": "balanced",
+  "priority": "medium"
+}

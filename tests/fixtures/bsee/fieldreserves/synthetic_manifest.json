@@ -1,0 +1,22 @@
+{
+  "licence": "not stated by the source",
+  "records": [
+    {
+      "data_kind": "synthetic",
+      "retrieved_utc": "2026-10-11T00:00:00Z",
+      "sha256": "97616195db6081ceb00442164dc02bf246fa6ac3a7674fbf81ead3df148cb9ae",
+      "size_bytes": 291,
+      "source_url": "synthetic://synthetic_history.csv"
+    },
+    {
+      "data_kind": "synthetic",
+      "retrieved_utc": "2026-10-11T00:00:00Z",
+      "sha256": "de41a879d27c718cbdce30d82c14a212c1f0750a1d1aa4e464000788eeb59ffc",
+      "size_bytes": 135,
+      "source_url": "synthetic://synthetic_master.csv"
+    }
+  ],
+  "schema_version": 1,
+  "terms_quote": "not stated by the source",
+  "terms_url": "https://www.data.boem.gov/Main/HtmlPage.aspx?page=Disclaimer"
+}

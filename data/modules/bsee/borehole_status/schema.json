@@ -1,0 +1,205 @@
+{
+  "columns": [
+    {
+      "alias": "API Well Number",
+      "nullable": false,
+      "position": 1,
+      "type": "string"
+    },
+    {
+      "alias": "Well Name",
+      "nullable": true,
+      "position": 2,
+      "type": "string"
+    },
+    {
+      "alias": "Well Name Suffix",
+      "nullable": true,
+      "position": 3,
+      "type": "string"
+    },
+    {
+      "alias": "Operator Number",
+      "nullable": true,
+      "position": 4,
+      "type": "string"
+    },
+    {
+      "alias": "Bottom Field Name Code",
+      "nullable": true,
+      "position": 5,
+      "type": "string"
+    },
+    {
+      "alias": "Spud Date",
+      "nullable": true,
+      "position": 6,
+      "type": "date_YYYYMMDD"
+    },
+    {
+      "alias": "Bottom Lease Number",
+      "nullable": true,
+      "position": 7,
+      "type": "string"
+    },
+    {
+      "alias": "RKB Elevation",
+      "nullable": true,
+      "position": 8,
+      "type": "integer_feet"
+    },
+    {
+      "alias": "BH Total MD",
+      "nullable": true,
+      "position": 9,
+      "type": "integer_feet"
+    },
+    {
+      "alias": "True Vertical Depth",
+      "nullable": true,
+      "position": 10,
+      "type": "integer_feet"
+    },
+    {
+      "alias": "Surface N/S Distance + Code + E/W Distance + Code",
+      "nullable": true,
+      "position": 11,
+      "type": "string"
+    },
+    {
+      "alias": "Surface Area + Block",
+      "nullable": true,
+      "position": 12,
+      "type": "string"
+    },
+    {
+      "alias": "Bottom N/S Distance + Code + E/W Distance + Code",
+      "nullable": true,
+      "position": 13,
+      "type": "string"
+    },
+    {
+      "alias": "Bottom Area + Block",
+      "nullable": true,
+      "position": 14,
+      "type": "string"
+    },
+    {
+      "alias": "Total Depth Date",
+      "nullable": true,
+      "position": 15,
+      "type": "date_YYYYMMDD"
+    },
+    {
+      "alias": "Status Date",
+      "nullable": true,
+      "position": 16,
+      "type": "date_YYYYMMDD"
+    },
+    {
+      "alias": "Type Code",
+      "nullable": true,
+      "position": 17,
+      "type": "string"
+    },
+    {
+      "alias": "District Code",
+      "nullable": true,
+      "position": 18,
+      "type": "string"
+    },
+    {
+      "alias": "Status Code",
+      "nullable": true,
+      "position": 19,
+      "type": "string"
+    },
+    {
+      "alias": "Water Depth",
+      "nullable": true,
+      "position": 20,
+      "type": "integer_feet"
+    },
+    {
+      "alias": "Surface Longitude",
+      "nullable": true,
+      "position": 21,
+      "type": "number_degrees"
+    },
+    {
+      "alias": "Surface Latitude",
+      "nullable": true,
+      "position": 22,
+      "type": "number_degrees"
+    },
+    {
+      "alias": "Bottom Longitude",
+      "nullable": true,
+      "position": 23,
+      "type": "number_degrees"
+    },
+    {
+      "alias": "Bottom Latitude",
+      "nullable": true,
+      "position": 24,
+      "type": "number_degrees"
+    },
+    {
+      "alias": "Surface Lease Number",
+      "nullable": true,
+      "position": 25,
+      "type": "string"
+    },
+    {
+      "alias": "Complex ID Num",
+      "nullable": true,
+      "position": 26,
+      "type": "string"
+    },
+    {
+      "alias": "Structure Number",
+      "nullable": true,
+      "position": 27,
+      "type": "string"
+    },
+    {
+      "alias": "Update Date",
+      "nullable": true,
+      "position": 28,
+      "type": "date_YYYYMMDD"
+    },
+    {
+      "alias": "Well Class Code",
+      "nullable": true,
+      "position": 29,
+      "type": "string"
+    }
+  ],
+  "encoding": "utf-8-sig",
+  "format": "headerless quoted comma-delimited 5010.txt; 29 cells",
+  "layout_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=borehole",
+  "mask_meaning": "Source hash mask; cause not established; retained, never numerical",
+  "null_encoding": "whitespace or empty cell",
+  "source_numeric_masks": {
+    "BH Total MD": "#####",
+    "Bottom Latitude": "################",
+    "Bottom Longitude": "################",
+    "True Vertical Depth": "#####"
+  },
+  "status_meanings": {
+    "APD": "Application for permit to drill",
+    "AST": "Approved sidetrack",
+    "BP": "Bypass",
+    "CNL": "Borehole cancelled after approval",
+    "COM": "Borehole completed",
+    "CT": "Core test well",
+    "DRL": "Drilling active",
+    "DSI": "Drilling suspended",
+    "PA": "Permanently abandoned",
+    "ST": "Borehole side tracked",
+    "TA": "Temporarily abandoned",
+    "VCW": "Volume chamber well"
+  },
+  "status_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=boreholeFields",
+  "version": 1
+}

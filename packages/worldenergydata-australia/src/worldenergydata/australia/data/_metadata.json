@@ -1,0 +1,11 @@
+{
+  "source_name": "DataVic Open Data (Resources Victoria) + NOPTA offshore titles",
+  "datavic_url": "https://discover.data.vic.gov.au/dataset/petroleum-wells-and-fields",
+  "nopta_url": "https://www.nopta.gov.au/maps-and-public-data/spatial-data.html",
+  "license": "CC-BY-4.0",
+  "attribution": "Contains data © State of Victoria (Department of Energy, Environment and Climate Action) and NOPTA, licensed under CC BY 4.0.",
+  "granularity": "per-field metadata (water depth, spud date) — NO production volumes",
+  "sample_fields": "Kingfish, Barracouta, Halibut, Marlin (Gippsland Basin, Bass Strait)",
+  "sample_extracted_date": "2026-07-04",
+  "note": "Screening-only slice (#721): Australia has no open per-field offshore production DB; production economics are deferred (production_available=False)."
+}

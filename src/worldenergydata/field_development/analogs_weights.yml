@@ -1,0 +1,36 @@
+# ABOUTME: Scoring weights + near-miss credits for the analogs query layer.
+# ABOUTME: Issue #932 (epic #929, A3) — ALL scoring numbers live here, none in code.
+#
+# SCORING CONTRACT (see analogs.py):
+#   * `criteria_weights` must list EXACTLY the criteria the query layer knows
+#     (region, water_depth, development_system, status), every weight > 0,
+#     and the weights must sum to 1.0. The loader fails loudly otherwise.
+#   * A fully matched criterion earns credit 1.0 (definitional, not tunable).
+#   * `near_miss_credits` are the partial credits (0 <= credit < 1) awarded
+#     for a near-miss; a near-miss must never earn as much as a real match.
+#   * An attribute that is null in the past-projects registry earns credit
+#     0.0 and surfaces as "unknown" in the match rationale — nulls NEVER
+#     silently count as matches.
+#
+# Rationale for the defaults:
+#   water_depth (0.35) and region (0.30) dominate because they drive the
+#   development concept (host type, riser/mooring class, export route);
+#   development_system (0.25) is the asset-type axis itself; status (0.10)
+#   only nudges ranking toward proven producers.
+#
+# Consumers: digitalmodel#1507 (field-development layout epic) via the
+# `analogs` API endpoint (digitalmodel#1512).
+
+criteria_weights:
+  region: 0.30
+  water_depth: 0.35
+  development_system: 0.25
+  status: 0.10
+
+near_miss_credits:
+  # Project depth class is adjacent to the queried class (shallow<->deepwater
+  # or deepwater<->ultra_deepwater; shallow vs ultra_deepwater is a miss).
+  water_depth_adjacent_class: 0.5
+  # Same development-system family, different variant — e.g. subsea15 vs
+  # subsea20 (family = the taxonomy token with trailing digits stripped).
+  development_system_same_family: 0.5

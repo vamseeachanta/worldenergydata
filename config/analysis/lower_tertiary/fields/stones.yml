@@ -1,0 +1,20 @@
+# ABOUTME: Field-level configuration for Stones FPSO development inputs
+# ABOUTME: Captures schedule and capex details for Stones field analysis
+
+field:
+  field_id: stones
+  display_name: "Stones"
+  status: producing
+  leases_key: stones
+  first_oil: "2016-09-01"
+  data_through: "2024-12-31"
+  operator: "Shell"
+  capex:
+    total_mm_usd: 3800
+    fpso_mm_usd: 1500
+    subsea_mm_usd: 1800
+    wells_mm_usd: 500
+  production_profile:
+    plateau_rate_mbopd: 50
+    gor_scf_per_bbl: 850
+  opex_per_boe: 15.0

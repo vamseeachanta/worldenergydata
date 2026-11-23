@@ -1,0 +1,48 @@
+# Auto-generated field input — scripts/gen_field_inputs.py
+# BOEM blocks mirror aceengineercode config/ong_field_development; enriched with BSEE leases + validated economics.
+field:
+  nickname: Anchor
+  id: anchor
+  status: producing
+  dev_system: subsea20
+  water_depth_ft: 5080
+  first_oil: '2024-08-01'
+location:
+  boem_fields:
+  - GC807
+  leases:
+  - G31752
+  - G31751
+  well_type:
+  - E
+  - D
+analysis:
+  economics: true
+  discount_rate_annual: 0.1
+  by:
+  - field
+  - block
+  - well
+  vintages:
+  - v30
+  - latest
+validated_economics:
+  total_oil_bbl: 6912846
+  revenue_usd: 476309533.77
+  capex_usd: 4161200000
+  npv10_usd: -1732808337.14
+  mirr_annual: -0.17684
+  producers: 2
+  wellbores: 15
+public_metadata:
+  operator: Chevron
+  partners: Chevron 62.86/TotalEnergies 37.14
+  facility: "semisubmersible FPU, 7-well subsea \u2014 industry-first 20,000 psi (20K)"
+  play: Lower Tertiary Wilcox
+  reported_first_oil: 2024-08
+  reported_capex_usd: 5700000000.0
+  plateau_bopd: 75000
+provenance:
+  boem_source: aceengineercode/config/ong_field_development/CVX_Anchor.yml
+  lease_source: config/analysis/lower_tertiary/lease_mapping_fdas.yml
+  economics_source: config/analysis/lower_tertiary/golden_baseline_v30.yml

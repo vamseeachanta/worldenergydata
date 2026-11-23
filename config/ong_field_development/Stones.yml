@@ -1,0 +1,47 @@
+# Auto-generated field input — scripts/gen_field_inputs.py
+# BOEM blocks mirror aceengineercode config/ong_field_development; enriched with BSEE leases + validated economics.
+field:
+  nickname: Stones
+  id: stones
+  status: producing
+  dev_system: subsea15
+  water_depth_ft: 9525
+  first_oil: '2016-09-01'
+location:
+  boem_fields:
+  - WR508
+  leases:
+  - G17001
+  well_type:
+  - E
+  - D
+analysis:
+  economics: true
+  discount_rate_annual: 0.1
+  by:
+  - field
+  - block
+  - well
+  vintages:
+  - v30
+  - latest
+validated_economics:
+  total_oil_bbl: 83657789
+  revenue_usd: 5582443248.58
+  capex_usd: 6231600000
+  npv10_usd: -1479469165.42
+  mirr_annual: 0.027
+  producers: 10
+  wellbores: 22
+public_metadata:
+  operator: Shell
+  partners: Shell 100% field WI (Turritella FPSO is a separate vessel JV)
+  facility: FPSO Turritella (disconnectable turret-moored)
+  play: Lower Tertiary Wilcox
+  reported_first_oil: 2016-09
+  reported_capex_usd: null
+  plateau_bopd: 50000
+provenance:
+  boem_source: aceengineercode/config/ong_field_development/RDS_Stones.yml
+  lease_source: config/analysis/lower_tertiary/lease_mapping_fdas.yml
+  economics_source: config/analysis/lower_tertiary/golden_baseline_v30.yml

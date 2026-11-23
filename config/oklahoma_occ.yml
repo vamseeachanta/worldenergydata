@@ -1,0 +1,32 @@
+# Oklahoma Corporation Commission direct-source ingest (#740).
+# Heavy raw/normalized/curated data stays under /mnt/ace.
+module: oklahoma_occ
+
+storage:
+  base_dir: /mnt/ace/worldenergydata/data/modules/oklahoma_occ
+  raw_dir: raw
+  normalized_dir: normalized
+  curated_dir: curated
+
+sources:
+  completion_workbook:
+    url: https://oklahoma.gov/content/dam/ok/en/occ/documents/og/ogdatafiles/completions-wells-formations-base.xlsx
+    raw_path: completions-wells-formations-base.xlsx
+    refresh: daily
+  completion_dictionary:
+    url: https://oklahoma.gov/content/dam/ok/en/occ/documents/og/ogdatafiles/completions-wells-formations-data-dictionary.xlsx
+    raw_path: completions-wells-formations-data-dictionary.xlsx
+    refresh: occasional
+
+pressure_observations:
+  atmospheric_psi: 14.7
+  pressure_kind: WHP_shut_in
+  test_type: OCC Form 1002A initial completion test
+  gradient_method: completion_pressure_over_reference_depth_screening_only
+  min_test_year: 2010
+  max_future_years: 0
+  depth_priority:
+    - True_Vertical_Depth
+    - Formation_Depth
+    - Measured_Total_Depth
+    - Total_Depth

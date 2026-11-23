@@ -1,0 +1,76 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "worldenergydata-vessel_hull_models"
+version = "0.1.0"
+description = "3D vessel hull geometry acquisition and visualization (OBJ/GDF) for the worldenergydata namespace."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "Development Team", email = "dev@example.com" },
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+# Per-domain dependency set (ADR 0001 Phase 2 — domain split, batch 4, #529).
+# A deliberate SUBSET of the root package's flat dependency list, measured from
+# this domain's live import footprint, plus:
+#   * worldenergydata-vessel_fleet  -> rig_hulls/hull_loader.py reads the
+#     curated drilling-rigs dataset (drilling_rigs.parquet) owned by the
+#     vessel_fleet member (which now ships it as package data, #529 batch 4).
+# pyarrow backs the Parquet read; plotly drives the 3D visualization.
+dependencies = [
+    "worldenergydata-core",
+    "worldenergydata-vessel_fleet",
+    "numpy>=2.2.6,<3.0",
+    "pandas>=2.3.3,<3.0",
+    "pyarrow>=14.0.0,<20.0",
+    "plotly>=5.18.0,<6.0",
+    "pydantic>=2.13.4,<3.0",
+    "pydantic-settings>=2.1.0,<3.0",
+    "typer>=0.9.0,<1.0",
+    "rich>=15.0.0,<16.0",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/vamseeachanta/worldenergydata"
+"Bug Tracker" = "https://github.com/vamseeachanta/worldenergydata/issues"
+
+# ---------------------------------------------------------------------------
+# PEP 420 namespace packaging (ADR 0001 — domain-package split)
+# ---------------------------------------------------------------------------
+# This member ships ONLY ``worldenergydata/vessel_hull_models/`` (code +
+# small in-package assets like the HTML viz templates). It does NOT ship
+# ``worldenergydata/__init__.py`` — the root ``worldenergydata`` distribution
+# remains the SOLE owner of the namespace root.
+#
+# DATA RELOCATION CHOICE — option (ii) (data stays at a shared root):
+# The vessel_hull_models curated dataset (hull .obj meshes, marine components)
+# is ~38 MB of binary geometry. Shipping that in a wheel is unreasonable
+# (bloated downloads, slow installs, source-dist churn), so unlike the
+# vessel_fleet / lng_terminals members it is NOT moved into the package.
+# Instead the data stays at the workspace-root ``data/modules/vessel_hull_models/``
+# and is resolved at runtime via ``worldenergydata.common.data_resolver``
+# (``get_module_data_safe("vessel_hull_models")`` — honours WED_DATA_ROOT or
+# the workspace-root ``data/`` directory). config.py already used the resolver;
+# the rig-hull loader's cross-domain read of the vessel_fleet curated rigs is
+# resolved from the installed vessel_fleet package (see hull_loader.py). No unit
+# test depends on the 38 MB data (they inject tmp fixtures), so tests pass
+# without it present.
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["worldenergydata.vessel_hull_models*"]
+namespaces = true
+
+[tool.setuptools.package-data]
+"worldenergydata.vessel_hull_models" = ["*.md", "*.json", "**/*.yml", "**/*.yaml", "**/*.json", "**/*.csv", "**/*.md", "**/*.html"]

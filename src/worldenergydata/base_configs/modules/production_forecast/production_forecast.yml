@@ -1,0 +1,7 @@
+basename: production_forecast
+
+default:
+  log_level: INFO
+  config:
+    overwrite:
+      output: True
