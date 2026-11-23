@@ -425,6 +425,54 @@ def test_basis_digest_mismatch_stops(tmp_path):
         cc.verify_basis(tmp_path, missing)
 
 
+def test_suboperations_are_counted_by_kind(approvals):
+    # Hand count on the sample: nine approvals, six initial (-1, -2, -5, -8,
+    # -11, -14) and three other (-4 PERF, -9 OTHRCOMP, -12 no sub-operation).
+    subcodes = cc.grouped(subop_rows(), "SN_APM_FK", "APM_SUBOP_CD")
+    rows = cc.suboperation_table(approvals, subcodes, {"PERF": "Modify Perforations"})
+    got = {
+        r["suboperation"]: (
+            r["approvals"],
+            r["on_initial_completion"],
+            r["on_other_completion_work"],
+        )
+        for r in rows
+    }
+    assert got == {
+        "INITCOMP": (6, 6, 0),
+        "FRAC": (1, 1, 0),
+        "PERF": (1, 0, 1),
+        "OTHRCOMP": (1, 0, 1),
+        "(none)": (1, 0, 1),
+    }
+    assert rows[0]["suboperation"] == "INITCOMP"
+    perf = next(r for r in rows if r["suboperation"] == "PERF")
+    assert perf["description"] == "Modify Perforations"
+    assert perf["share_of_other_percent"] == 33.3
+
+
+def test_chart_share_is_rounded_from_the_counts(tmp_path):
+    # 353 of 686 is 51.46 %. The table holds it to one decimal (51.5); a label
+    # rounded again from that would read 52 %, which the counts do not give.
+    import plot_charts as pc
+
+    assert pc.whole_percent(353, 686) == 51
+    assert pc.whole_percent(1, 2) == 1  # a true half goes up
+    assert pc.whole_percent(0, 5) == 0
+    groups = pc.BANDS + ["all water depths"]
+    with open(tmp_path / "drilled_to_completed.csv", "w", encoding="utf-8") as f:
+        f.write(
+            "well_type,band,wells_first_drilled,"
+            "with_initial_completion_approval,share_percent\n"
+        )
+        for kind in ("development", "exploration"):
+            for band in groups:
+                f.write(f"{kind},{band},686,353,51.5\n")
+    drawn = pc.chart_drilled(tmp_path)
+    assert "51 %  (353 of 686)" in drawn
+    assert "52 %" not in drawn
+
+
 # --------------------------------------------------------------------------
 # Level B: the delivered output tables (comparator class: conservation, and
 # the hand counts above; the C6 comparison is read from verification.json)
@@ -542,6 +590,34 @@ def test_delivered_run_record():
     assert {f["name"]: f["sha256"] for f in v["basis"]["files"]} == {
         f["name"]: f["sha256"] for f in basis["files"]
     }
+
+
+def test_delivered_suboperations_split_by_kind():
+    rows = {r["suboperation"]: r for r in table("completion_approval_suboperations")}
+    s = js("summary")
+    for r in rows.values():
+        initial = int(r["on_initial_completion"])
+        other = int(r["on_other_completion_work"])
+        assert initial + other == int(r["approvals"])
+        assert other <= s["other_completion_work_approvals"]
+    assert int(rows["INITCOMP"]["approvals"]) == s["initial_completion_approvals"]
+    assert int(rows["INITCOMP"]["on_other_completion_work"]) == 0
+
+
+def test_delivered_chart_labels_follow_the_counts():
+    drawn = (OUT / "04_drilled_to_completed.svg").read_text(encoding="utf-8")
+    seen = 0
+    for r in table("drilled_to_completed"):
+        if r["well_type"] not in ("development", "exploration"):
+            continue
+        if r["band"] == "no depth":
+            continue
+        wells = int(r["wells_first_drilled"])
+        done = int(r["with_initial_completion_approval"])
+        whole = (200 * done + wells) // (2 * wells)
+        assert f"{whole} %  ({done:,} of {wells:,})" in drawn
+        seen += 1
+    assert seen == 10
 
 
 # --------------------------------------------------------------------------
