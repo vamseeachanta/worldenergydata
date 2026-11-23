@@ -13,6 +13,9 @@ import logging
 from pathlib import Path
 from typing import Any, Dict
 
+from .district_inputs import wellbore_district_parameter
+from .validators import TexasDataValidator
+
 logger = logging.getLogger(__name__)
 
 
@@ -35,21 +38,8 @@ class TexasRRC:
         "fields",
     ]
 
-    # Valid Texas RRC districts
-    VALID_DISTRICTS = [
-        "01",
-        "02",
-        "03",
-        "04",
-        "05",
-        "06",
-        "7B",
-        "7C",
-        "08",
-        "8A",
-        "09",
-        "10",
-    ]
+    # Keep configuration validation aligned with production normalization.
+    VALID_DISTRICTS = TexasDataValidator.VALID_DISTRICTS.copy()
 
     def __init__(self):
         """Initialize Texas RRC module."""
@@ -176,6 +166,12 @@ class TexasRRC:
                     f"Invalid districts: {invalid_districts}. "
                     f"Valid districts: {self.VALID_DISTRICTS}"
                 )
+            if (
+                "wells" in cfg.get("data_types", [])
+                and cfg.get("data", {}).get("source") != "csv"
+            ):
+                for district in cfg["districts"]:
+                    wellbore_district_parameter(district)
 
         # Validate API configuration if specified
         if "api" in cfg:
