@@ -16,6 +16,18 @@ from PIL import Image
 ROOT = Path(__file__).resolve().parent
 
 
+def contrast_on_white(color):
+    """WCAG 2.2 sRGB relative luminance and contrast ratio against white.
+
+    https://www.w3.org/TR/WCAG22/#dfn-relative-luminance
+    https://www.w3.org/TR/WCAG22/#dfn-contrast-ratio
+    """
+    srgb = [int(color[i : i + 2], 16) / 255 for i in (1, 3, 5)]
+    rgb = [v / 12.92 if v <= 0.04045 else ((v + 0.055) / 1.055) ** 2.4 for v in srgb]
+    luminance = sum(v * w for v, w in zip(rgb, [0.2126, 0.7152, 0.0722]))
+    return 1.05 / (luminance + 0.05)
+
+
 def verify(out=ROOT / "output"):
     out = Path(out)
     counts = pd.read_csv(out / "counts_by_year_band_group.csv")
@@ -158,12 +170,10 @@ def verify(out=ROOT / "output"):
     from plot_charts import COLORS
 
     for color in COLORS:
-        srgb = [int(color[i : i + 2], 16) / 255 for i in (1, 3, 5)]
-        rgb = [
-            v / 12.92 if v <= 0.04045 else ((v + 0.055) / 1.055) ** 2.4 for v in srgb
-        ]
-        luminance = sum(v * w for v, w in zip(rgb, [0.2126, 0.7152, 0.0722]))
-        assert 1.05 / (luminance + 0.05) >= 3
+        # WCAG 2.2 SC 1.4.11 sets 3:1 for graphical objects against adjacent
+        # colors. The adjacent background checked here is white.
+        # https://www.w3.org/TR/WCAG22/#non-text-contrast
+        assert contrast_on_white(color) >= 3
     for stem in [
         "01_approved_interventions",
         "02_rates_per_standing_well",

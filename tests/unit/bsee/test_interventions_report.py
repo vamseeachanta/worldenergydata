@@ -4,7 +4,9 @@ The tests copy the delivered output tables to a temporary directory; they
 never read raw archives or the network.
 """
 
+import hashlib
 import json
+import re
 import shutil
 import sys
 from pathlib import Path
@@ -46,6 +48,80 @@ def test_verifier_requires_every_chart_before_writing_a_receipt(output_copy, nam
     with pytest.raises(AssertionError, match="missing chart"):
         verify_outputs.verify(output_copy)
     assert not (output_copy / "verification.json").exists()
+
+
+def test_receipt_matches_published_file_bytes():
+    output = EXAMPLE / "output"
+    receipt = json.loads((output / "verification.json").read_bytes())
+    for root, entries in (
+        (EXAMPLE.parents[2], receipt["code_and_basis_sha256"]),
+        (output, receipt["files"]),
+    ):
+        for name, expected in entries.items():
+            assert (
+                hashlib.sha256((root / name).read_bytes()).hexdigest() == expected
+            ), name
+
+
+@pytest.mark.parametrize("failed_download", [False, True])
+def test_note_without_weekly_reports(output_copy, tmp_path, failed_download):
+    import verify_outputs
+    import write_results_note
+
+    (output_copy / "war_duration_crosscheck.csv").unlink()
+    summary = summary_of(output_copy)
+    for key in (
+        "war_rows",
+        "selected_valid_rows",
+        "proxy_episodes",
+        "invalid_selected_spans",
+    ):
+        del summary[key]
+    (output_copy / "summary.json").write_text(json.dumps(summary), encoding="utf-8")
+    manifest_path = output_copy / "manifest.json"
+    manifest = json.loads(manifest_path.read_bytes())
+    manifest["files"] = [
+        f for f in manifest["files"] if f["name"] != "eWellWARRawData.zip"
+    ]
+    if failed_download:
+        manifest["files"].append({"name": "eWellWARRawData.zip", "status": "failed"})
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+    verify_outputs.verify(output_copy)
+    readme, pr = tmp_path / "README.md", tmp_path / "pr.md"
+    write_results_note.main(out=output_copy, readme=readme, pr_body=pr)
+    for path in (readme, pr):
+        text = path.read_text(encoding="utf-8")
+        assert "weekly-report cross-check was unavailable" in text
+        assert "war_duration_crosscheck.csv" not in text
+        assert "3 BSEE" in text
+    assert "EST_OPERATION_DAYS" in readme.read_text(encoding="utf-8")
+
+
+def test_note_reports_the_sample_for_life_quantiles(output_copy):
+    import write_results_note
+
+    path = output_copy / "life_cycle_life_years.csv"
+    years = pd.read_csv(path)
+    row = years.group.eq("development wells") & years.status.eq("permanently abandoned")
+    years.loc[row, "life_not_established"] = 5
+    years.to_csv(path, index=False)
+    section = write_results_note.well_life_section(output_copy, summary_of(output_copy))
+    line = next(
+        line
+        for line in section.splitlines()
+        if "development wells " in line and "permanently abandoned" in line
+    )
+    assert "Wells with established life" in section
+    assert "16,860" in line and "16,855" in line
+
+
+def test_white_contrast_for_pure_red():
+    from verify_outputs import contrast_on_white
+
+    # Pure red has linear components (1, 0, 0). Its luminance is 0.2126,
+    # giving a white contrast ratio of 1.05 / 0.2626.
+    assert contrast_on_white("#ff0000") == pytest.approx(3.99848, abs=0.00001)
 
 
 def test_note_headline_follows_consistent_aggregates(output_copy, tmp_path):
@@ -367,12 +443,11 @@ def test_takeaway_compares_heavy_and_light_ages_and_separates_populations(r4_pag
     assert "deeper than 1,500 m" not in takeaway
 
 
-def test_sign_off_names_prepared_checked_and_approved(r4_page):
+def test_article_routes_changes_to_maintainers(r4_page):
     assert (
-        '<p class="signoff">Prepared: Petroleum Engineer Deckhand, Data Analyst '
-        "Deckhand. Checked: Editor Deckhand. Approved: Vamsee Achanta (pending, "
-        "C6 review copy r4).</p>"
-    ) in r4_page
+        '<p class="signoff">Send article corrections to the maintainers.</p>' in r4_page
+    )
+    assert not re.search(r"[\w.+-]+@[\w.-]+\.[a-z]{2,}", plain(r4_page), re.I)
 
 
 def test_references_follow_the_sign_off(r4_page):
@@ -652,7 +727,72 @@ def published_pins(page):
     }
 
 
+def assert_page_reproduction(tree, tmp_path, pins, committed):
+    import subprocess
+
+    rebuilt = tmp_path / "rebuilt.html"
+    run = subprocess.run(
+        [
+            sys.executable,
+            "build_article.py",
+            "--build-commit",
+            pins["data"],
+            "--chart-commit",
+            pins["chart"],
+            "--code-commit",
+            pins["code"],
+            "--build-date",
+            pins["date"],
+            "--page",
+            str(rebuilt),
+        ],
+        cwd=tree,
+        creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
+        env=git_env(),
+        capture_output=True,
+        text=True,
+    )
+    assert run.returncode == 0, run.stderr
+    page = rebuilt.read_bytes()
+    assert b"age at permanent-abandonment approval" in page
+    assert b"wells abandoned under approvals" not in page
+    assert page == committed, "the builder does not reproduce the page"
+
+
+def test_shallow_reproduction_checks_the_page_bytes(tmp_path, monkeypatch):
+    import build_article
+
+    # This snapshot has the delivered files but none of the three Git objects.
+    study = tmp_path / "study"
+    shutil.copytree(EXAMPLE, study)
+    page = study / "article" / build_article.PAGE.name
+    build_article.build(
+        out=study / "output",
+        page=page,
+        build_commit="1" * 40,
+        chart_commit="2" * 40,
+        code_commit="3" * 40,
+        build_date="2026-11-14",
+    )
+    monkeypatch.setattr(sys.modules[__name__], "EXAMPLE", study)
+
+    def shallow(cwd, *args):
+        assert args == ("rev-parse", "--is-shallow-repository")
+        return "true"
+
+    monkeypatch.setattr(sys.modules[__name__], "git", shallow)
+    monkeypatch.setattr(pytest, "skip", lambda reason: pytest.fail(reason))
+    check_published_page(tmp_path)
+    page.write_bytes(page.read_bytes().replace(b"<title>", b"<title>Changed ", 1))
+    with pytest.raises(AssertionError, match="does not reproduce"):
+        check_published_page(tmp_path)
+
+
 def test_published_prompt_pins_the_builder_that_made_the_page(tmp_path):
+    check_published_page(tmp_path)
+
+
+def check_published_page(tmp_path):
     """The prompt's code pin holds today's scripts and rebuilds the page as committed.
 
     Fails when build_article.py, any other study script, changes.md or the
@@ -662,7 +802,6 @@ def test_published_prompt_pins_the_builder_that_made_the_page(tmp_path):
     """
     import io
     import subprocess
-    import sys
     import tarfile
 
     folder = "examples/bsee/interventions_by_depth"
@@ -670,8 +809,8 @@ def test_published_prompt_pins_the_builder_that_made_the_page(tmp_path):
     pins = published_pins(committed.decode("utf-8"))
     code = pins["code"]
     assert pins["chart"] != pins["data"]
-    # A shallow checkout (CI checks out depth 1) does not hold the pinned
-    # history; only there may a missing pin skip. A full clone must hold both.
+    # A depth-one checkout can verify the delivered bytes with its local
+    # builder. Checking the historical source objects requires both pins.
     missing = [
         pin
         for pin in (code, pins["data"])
@@ -682,7 +821,8 @@ def test_published_prompt_pins_the_builder_that_made_the_page(tmp_path):
         ).returncode
     ]
     if missing and git(EXAMPLE, "rev-parse", "--is-shallow-repository") == "true":
-        pytest.skip(f"shallow clone lacks pinned commits {[m[:8] for m in missing]}")
+        assert_page_reproduction(EXAMPLE, tmp_path, pins, committed)
+        return
     git(EXAMPLE, "cat-file", "-e", f"{code}^{{commit}}")
     git(EXAMPLE, "cat-file", "-e", f"{pins['data']}^{{commit}}")
 
@@ -713,32 +853,7 @@ def test_published_prompt_pins_the_builder_that_made_the_page(tmp_path):
         names = tar.getnames()
         assert "build_article.py" in names, "the code pin holds no builder"
         tar.extractall(tree, filter="data")
-    rebuilt = tmp_path / "rebuilt.html"
-    run = subprocess.run(
-        [
-            sys.executable,
-            "build_article.py",
-            "--build-commit",
-            pins["data"],
-            "--chart-commit",
-            pins["chart"],
-            "--code-commit",
-            code,
-            "--build-date",
-            pins["date"],
-            "--page",
-            str(rebuilt),
-        ],
-        cwd=tree,
-        env=git_env(),
-        capture_output=True,
-        text=True,
-    )
-    assert run.returncode == 0, run.stderr
-    page = rebuilt.read_bytes()
-    assert b"age at permanent-abandonment approval" in page
-    assert b"wells abandoned under approvals" not in page
-    assert page == committed, "the pinned builder does not reproduce the page"
+    assert_page_reproduction(tree, tmp_path, pins, committed)
 
 
 def test_last_code_commit_is_the_newest_change_to_the_scripts(tmp_path):
