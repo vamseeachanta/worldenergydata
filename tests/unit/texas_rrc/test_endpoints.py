@@ -32,7 +32,7 @@ class TestConstants:
         assert "drilling_permits" in PDQ_ENDPOINTS
 
     def test_districts_count(self):
-        assert len(TEXAS_DISTRICTS) == 12
+        assert len(TEXAS_DISTRICTS) == 13
 
     def test_district_7b(self):
         assert TEXAS_DISTRICTS["7B"]["headquarters"] == "San Angelo"
