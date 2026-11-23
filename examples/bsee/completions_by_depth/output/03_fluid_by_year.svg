@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" width="960" height="540" role="img" aria-label="Bores first reported completed by year, by the fluid their completion status codes name" font-family="'Segoe UI',Helvetica,Arial,sans-serif">
-<title>Bores first reported completed by year, by the fluid their completion status codes name</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" width="960" height="540" role="img" aria-label="Bores with a first completion report by year, by the fluid their completion status codes name" font-family="'Segoe UI',Helvetica,Arial,sans-serif">
+<title>Bores with a first completion report by year, by the fluid their completion status codes name</title>
 <rect x="0.0" y="0.0" width="960.0" height="540.0" fill="#ffffff" fill-opacity="1.0" stroke="none"/>
 <rect x="76.0" y="21.0" width="16.0" height="16.0" fill="#0b3d5c" fill-opacity="1.0" stroke="none"/>
 <text x="99.0" y="35.0" font-size="16" font-weight="400" fill="#26323a" text-anchor="start">Oil</text>
@@ -151,14 +151,15 @@
 <rect x="863.3" y="411.1" width="28.1" height="1.9" fill="#9aa7b0" fill-opacity="1.0" stroke="none"/>
 <rect x="863.3" y="409.2" width="28.1" height="1.9" fill="#d5dde5" fill-opacity="1.0" stroke="none"/>
 <text x="877.4" y="402.2" font-size="13" font-weight="400" fill="#26323a" text-anchor="middle">72</text>
-<rect x="902.4" y="440.8" width="28.1" height="37.2" fill="#0b3d5c" fill-opacity="0.45" stroke="none"/>
-<rect x="902.4" y="440.8" width="28.1" height="0.0" fill="#2BB2A6" fill-opacity="0.45" stroke="none"/>
-<rect x="902.4" y="440.8" width="28.1" height="0.0" fill="#7fa3b5" fill-opacity="0.45" stroke="none"/>
-<rect x="902.4" y="436.9" width="28.1" height="3.8" fill="#9aa7b0" fill-opacity="0.45" stroke="none"/>
-<rect x="902.4" y="436.9" width="28.1" height="0.0" fill="#d5dde5" fill-opacity="0.45" stroke="none"/>
+<rect x="902.4" y="440.8" width="28.1" height="37.2" fill="#0b3d5c" fill-opacity="1.0" stroke="none"/>
+<rect x="902.4" y="440.8" width="28.1" height="0.0" fill="#2BB2A6" fill-opacity="1.0" stroke="none"/>
+<rect x="902.4" y="440.8" width="28.1" height="0.0" fill="#7fa3b5" fill-opacity="1.0" stroke="none"/>
+<rect x="902.4" y="436.9" width="28.1" height="3.8" fill="#9aa7b0" fill-opacity="1.0" stroke="none"/>
+<rect x="902.4" y="436.9" width="28.1" height="0.0" fill="#d5dde5" fill-opacity="1.0" stroke="none"/>
+<rect x="899.4" y="433.9" width="34.1" height="44.1" fill="none" stroke="#26323a" stroke-width="1.5" stroke-dasharray="5 4"/>
 <text x="916.5" y="429.9" font-size="13" font-weight="400" fill="#26323a" text-anchor="middle">43</text>
 <text x="916.5" y="502.0" font-size="16" font-weight="400" fill="#5a6b76" text-anchor="middle">2026*</text>
 <line x1="76.0" y1="478.0" x2="936.0" y2="478.0" stroke="#26323a" stroke-width="1.2"/>
-<text x="20" y="287.0" font-size="16" fill="#5a6b76" text-anchor="middle" transform="rotate(-90 20 287.0)">Bores first reported completed</text>
-<text x="936.0" y="528.0" font-size="14" font-weight="400" fill="#5a6b76" text-anchor="end">* 2026 is a part year, to 23 Nov; bars are lighter</text>
+<text x="20" y="287.0" font-size="16" fill="#5a6b76" text-anchor="middle" transform="rotate(-90 20 287.0)">Bores with a first completion report</text>
+<text x="936.0" y="528.0" font-size="14" font-weight="400" fill="#5a6b76" text-anchor="end">* 2026 is a part year, to 23 Nov; dashed outline</text>
 </svg>

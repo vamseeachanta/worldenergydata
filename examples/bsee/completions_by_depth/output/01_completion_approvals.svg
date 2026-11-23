@@ -134,13 +134,14 @@
 <rect x="863.3" y="391.8" width="28.1" height="49.1" fill="#0e7e88" fill-opacity="1.0" stroke="none"/>
 <rect x="863.3" y="297.4" width="28.1" height="94.4" fill="#0b3d5c" fill-opacity="1.0" stroke="none"/>
 <text x="877.4" y="290.4" font-size="13" font-weight="400" fill="#26323a" text-anchor="middle">331</text>
-<rect x="902.4" y="452.4" width="28.1" height="25.6" fill="#a8ddd6" fill-opacity="0.45" stroke="none"/>
-<rect x="902.4" y="450.2" width="28.1" height="2.2" fill="#2BB2A6" fill-opacity="0.45" stroke="none"/>
-<rect x="902.4" y="419.1" width="28.1" height="31.1" fill="#0e7e88" fill-opacity="0.45" stroke="none"/>
-<rect x="902.4" y="353.0" width="28.1" height="66.0" fill="#0b3d5c" fill-opacity="0.45" stroke="none"/>
+<rect x="902.4" y="452.4" width="28.1" height="25.6" fill="#a8ddd6" fill-opacity="1.0" stroke="none"/>
+<rect x="902.4" y="450.2" width="28.1" height="2.2" fill="#2BB2A6" fill-opacity="1.0" stroke="none"/>
+<rect x="902.4" y="419.1" width="28.1" height="31.1" fill="#0e7e88" fill-opacity="1.0" stroke="none"/>
+<rect x="902.4" y="353.0" width="28.1" height="66.0" fill="#0b3d5c" fill-opacity="1.0" stroke="none"/>
+<rect x="899.4" y="350.0" width="34.1" height="128.0" fill="none" stroke="#26323a" stroke-width="1.5" stroke-dasharray="5 4"/>
 <text x="916.5" y="346.0" font-size="13" font-weight="400" fill="#26323a" text-anchor="middle">229</text>
 <text x="916.5" y="502.0" font-size="16" font-weight="400" fill="#5a6b76" text-anchor="middle">2026*</text>
 <line x1="76.0" y1="478.0" x2="936.0" y2="478.0" stroke="#26323a" stroke-width="1.2"/>
 <text x="20" y="287.0" font-size="16" fill="#5a6b76" text-anchor="middle" transform="rotate(-90 20 287.0)">Approved completion permits</text>
-<text x="936.0" y="528.0" font-size="14" font-weight="400" fill="#5a6b76" text-anchor="end">* 2026 is a part year, to 23 Nov; bars are lighter</text>
+<text x="936.0" y="528.0" font-size="14" font-weight="400" fill="#5a6b76" text-anchor="end">* 2026 is a part year, to 23 Nov; dashed outline</text>
 </svg>

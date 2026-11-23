@@ -30,8 +30,8 @@ count_completions.py with --data-dir set to that folder, then plot_charts.py.
 Check output/verification.json: every conservation check true, and the
 comparison with the interventions study showing the same count on both sides
 with no cell different. On the files of 23 Nov 2026 the totals are 8,472
-completion approvals, 6,841 of them initial completions, 3,216 bores first
-completed by approval and 3,238 by report.
+completion approvals, 6,841 of them initial completions, 3,216 bores with a
+first initial completion approval and 3,238 with a first completion report.
 ```
 
 ## Adapt it to a field, lease or depth range
@@ -39,11 +39,13 @@ completed by approval and 3,238 by report.
 ```text
 Filter the borehole table to the wells of interest (by API number, lease, area
 or water depth) before counting, and keep the same definitions: a completion
-approval is an approved permit of type COMP without a change of zone; an
+approval is an approved permit of type COMP without a change of zone, a
+plug-back or new-hole work; an
 initial completion carries the sub-operation INITCOMP; a completion report is
 an End of Operations Report with operation code C, dated by its borehole
 status date. Report, by year and water-depth band: completion approvals, bores
-first completed by each record, and how many bores appear in both. Keep
+with a first completion record of each kind, and how many bores appear in
+both. A record is a permit or a report, not proof of finished work. Keep
 approvals apart from reports, state every field used with the regulator's
 definition, give the share populated for any sparse field, and make no claim
 about cause. Before reporting, check that band counts and year counts each sum

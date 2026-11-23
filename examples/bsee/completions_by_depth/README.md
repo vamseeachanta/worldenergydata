@@ -95,13 +95,14 @@ A completion leaves two public records. Both are counted, and kept apart.
    read as the date of the bore's completion status, not the date of each
    report (`summary.json`). What each later report covers is not classified
    here. The file holds no filing date.
-3. **Bore first completed.** A bore is one twelve-digit API number; a well is
+3. **First completion record of a bore.** A bore is one twelve-digit API number; a well is
    its first ten digits. By the approval record: the bore's earliest initial
    completion approval. By the report record: the earliest status date among its
    completion reports. The earliest record is taken over the whole file and then
    the years 2005 to 2026 are kept, so a bore first approved in 2004 is not
-   counted in 2005. "First completed" is shorthand for the first completion
-   record in the electronic files, not a statement that the work was done. A
+   counted in 2005. A first completion record is the first record in the
+   electronic files, not a statement that the work was done; the table and key
+   names (`bores_first_completed_...`) keep the shorter wording. A
    bore completed on paper before April 2004 and approved or reported again
    later would be counted at its first electronic record, on either basis; the
    files cannot show how many there are. The reports are every report of code
@@ -129,14 +130,14 @@ Years 2005 to 2026 (2026 to 23 Nov). Every number is in a table in
 | Completion approvals (the group the interventions study excludes) | 8,472 | `completion_approvals_by_year_band.csv` |
 | of which initial completion (`INITCOMP`) | 6,841 (80.7 %) | same |
 | of which other completion work, no change of zone | 1,631 | same |
-| Bores first completed, by approval | 3,216 (2,921 wells) | `bores_first_completed_by_year_band.csv` |
-| Bores first completed, by report | 3,238 (3,005 wells) | same |
+| Bores with a first initial completion approval | 3,216 (2,921 wells) | `bores_first_completed_by_year_band.csv` |
+| Bores with a first completion report | 3,238 (3,005 wells) | same |
 | Completion reports, status date 2005 to 2026 | 5,276 | `completion_reports_by_year_band.csv` |
 | Completion reports, all status years | 8,446 | `summary.json` |
 
 By water depth, 2005 to 2026:
 
-| Water depth | Completion approvals | Bores first completed, by approval | by report |
+| Water depth | Completion approvals | Bores with a first initial completion approval | Bores with a first completion report |
 | --- | ---: | ---: | ---: |
 | Under 100 m | 4,460 | 1,959 | 2,013 |
 | 100 to 500 m | 641 | 239 | 243 |
@@ -146,14 +147,14 @@ By water depth, 2005 to 2026:
 
 - Approvals: 657 in 2006, the highest year, and 331 in 2025. Under 100 m: 531
   and 51. At 1,500 m and deeper: 30 and 173.
-- Bores first completed, by approval: 395 in 2006 and 73 in 2025; by report:
+- Bores with a first initial completion approval: 395 in 2006 and 73 in 2025; with a first completion report:
   394 and 72.
 - The two records name largely the same bores: 3,043 of the 3,216 bores first
   approved have a completion report (94.6 %), and 3,048 of the 3,238 bores first
   reported have an initial completion approval (94.1 %). The status date falls
   a median 23 days after the first approval (middle half 12 to 43 days); for
   157 matched bores it falls before it (`approval_report_match.csv`).
-- A bore first approved carries a mean 2.13 initial completion approvals
+- A bore first approved for initial completion carries a mean 2.13 initial completion approvals
   (median 1; 1,677 bores carry one).
 - Other completion work (`completion_approval_suboperations.csv`, which counts
   each sub-operation over all approvals and over each kind): of the 1,631
@@ -173,7 +174,8 @@ By water depth, 2005 to 2026:
   intervals read, 82.7 % record one perforated interval and 0.9 % none.
 - Hydraulic fracturing sub-operation (`fracturing_by_year.csv`,
   `fracturing_by_band.csv`): the code `FRAC` first appears on a permit in 2015.
-  Of the 805 bores first approved from 2016, 538 (66.8 %) carry it. Before 2015
+  Of the 805 bores first approved for initial completion from 2016 to 23 Nov
+  2026, 538 (66.8 %) carry it. Before 2015
   the code is absent, which is a change in coding; whether practice changed is
   not established, and no trend is drawn across 2015.
 - Drilling to completion (`drilled_to_completed.csv`): of the wells first

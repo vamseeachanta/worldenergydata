@@ -133,13 +133,19 @@ def stacked_years(
     for i, year in enumerate(years):
         x = left + i * slot + (slot - bar) / 2
         base = 0
-        faded = 0.45 if year == part_year else 1.0
         for key, colour in zip(series, colours):
             v = series[key][i]
-            parts.append(
-                rect(x, y_of(base + v), bar, plot_h * v / y_max, colour, faded)
-            )
+            parts.append(rect(x, y_of(base + v), bar, plot_h * v / y_max, colour))
             base += v
+        if year == part_year:
+            # A dashed outline marks the part year; the colours stay as in
+            # the legend, so a faded band is not read as another band.
+            parts.append(
+                f'<rect x="{x - 3:.1f}" y="{y_of(base) - 3:.1f}" '
+                f'width="{bar + 6:.1f}" height="{plot_h * base / y_max + 3:.1f}" '
+                f'fill="none" stroke="{INK}" stroke-width="1.5" '
+                f'stroke-dasharray="5 4"/>'
+            )
         if not dots:  # circles would sit on the totals
             parts.append(
                 text(x + bar / 2, y_of(base) - 7, f"{base:,}", 13, "middle", fill=INK)
@@ -166,7 +172,7 @@ def stacked_years(
             text(
                 W - right,
                 H - 12,
-                f"* {part_year} is a part year, to 23 Nov; bars are lighter",
+                f"* {part_year} is a part year, to 23 Nov; dashed outline",
                 14,
                 "end",
                 fill=MUTED,
@@ -210,8 +216,8 @@ def chart_bores(out):
     report = by_year_band(rows, "bores", years, lambda r: r["basis"] == "report")
     dots = [sum(report[b][i] for b in BANDS) for i in range(len(years))]
     title = (
-        "Bores first completed by year and water depth, "
-        "from approvals (bars) and from reports (circles)"
+        "Bores with a first completion record by year and water depth: first "
+        "initial completion approval (bars) and first completion report (circles)"
     )
     return svg(
         stacked_years(
@@ -219,10 +225,10 @@ def chart_bores(out):
             years,
             BAND_LABELS,
             BAND_COLOURS,
-            "Bores first completed",
+            "Bores with a first completion record",
             part,
             dots,
-            "All water depths, by the End of Operations Report (status date)",
+            "All water depths, by first completion report (earliest status date)",
         ),
         title,
     )
@@ -237,7 +243,7 @@ def chart_fluid(out):
         key = r["fluid"] if r["fluid"] in series else "not reported"
         series[key][years.index(int(r["year"]))] += int(r["bores"])
     title = (
-        "Bores first reported completed by year, "
+        "Bores with a first completion report by year, "
         "by the fluid their completion status codes name"
     )
     return svg(
@@ -246,7 +252,7 @@ def chart_fluid(out):
             years,
             FLUID_LABELS,
             FLUID_COLOURS,
-            "Bores first reported completed",
+            "Bores with a first completion report",
             part,
         ),
         title,
