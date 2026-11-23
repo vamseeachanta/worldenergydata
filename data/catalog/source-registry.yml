@@ -28,6 +28,24 @@ modules:
         source_url: https://www.data.bsee.gov/Production/Files/ProductionRawData.zip
       eWellWARRawData:
         source_url: https://www.data.bsee.gov/Well/Files/eWellWARRawData.zip
+        update_frequency: daily
+        pinned_snapshot: data/modules/bsee/series_basis/2026-11-23/manifest.json
+        notes: "Pinned 23 Nov 2026 snapshot (one sitting, BSEE file date 23 Nov 2026) is the single source of truth for well counts in the article series; BSEE rebuilds this file daily, so the pinned bytes are kept outside Git with a verified second copy and listed in the pinned manifest."
+      BoreholeRawData:
+        source_url: https://www.data.bsee.gov/Well/Files/BoreholeRawData.zip
+        update_frequency: daily
+        pinned_snapshot: data/modules/bsee/series_basis/2026-11-23/manifest.json
+        notes: "Pinned 23 Nov 2026 snapshot (one sitting, BSEE file date 23 Nov 2026) is the single source of truth for well counts in the article series; BSEE rebuilds this file daily, so the pinned bytes are kept outside Git with a verified second copy and listed in the pinned manifest."
+      eWellEORRawData:
+        source_url: https://www.data.bsee.gov/Well/Files/eWellEORRawData.zip
+        update_frequency: daily
+        pinned_snapshot: data/modules/bsee/series_basis/2026-11-23/manifest.json
+        notes: "Pinned 23 Nov 2026 snapshot (one sitting, BSEE file date 23 Nov 2026) is the single source of truth for well counts in the article series; BSEE rebuilds this file daily, so the pinned bytes are kept outside Git with a verified second copy and listed in the pinned manifest."
+      eWellAPMRawData:
+        source_url: https://www.data.bsee.gov/Well/Files/eWellAPMRawData.zip
+        update_frequency: daily
+        pinned_snapshot: data/modules/bsee/series_basis/2026-11-23/manifest.json
+        notes: "Pinned 23 Nov 2026 snapshot (one sitting, BSEE file date 23 Nov 2026) is the single source of truth for well counts in the article series; BSEE rebuilds this file daily, so the pinned bytes are kept outside Git with a verified second copy and listed in the pinned manifest."
       PlatStrucRawData:
         source_url: https://www.data.bsee.gov/Platform/Files/PlatStrucRawData.zip
       PipePermRawData:
