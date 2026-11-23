@@ -73,8 +73,20 @@ def well_life_section(out, summary):
             ["development wells", "exploration wells"] + list(reach.group.unique())
         )
     ]
+    life_rows = life_rows.copy()
+    life_rows["Wells with established life"] = (
+        life_rows.wells - life_rows.life_not_established
+    )
     life_rows = life_rows[
-        ["group", "status", "wells", "q25_years", "median_years", "q75_years"]
+        [
+            "group",
+            "status",
+            "wells",
+            "Wells with established life",
+            "q25_years",
+            "median_years",
+            "q75_years",
+        ]
     ]
     for c in ["q25_years", "median_years", "q75_years"]:
         life_rows[c] = life_rows[c].map(lambda v: f"{v:.1f}")
@@ -98,7 +110,7 @@ def well_life_section(out, summary):
 
 Each well (API10) is followed from its first non-cancelled spud to permanent abandonment (the stock rule in Method: every non-superseded bore PA, at the latest PA date) or to the file date while it stands. Drilling counts bores with a spud date (original hole, sidetracks and bypasses). Interventions, temporary and permanent abandonments are the approved permits of this example, from {first} to the file date. Interventions are **light** when the permit names a wireline unit (WL), coiled tubing (CT), intervention vessel (WI), liftboat (LB) or recorded non-rig operation (NR), and **heavy** for a hydraulic workover or snubbing unit (HW, SB), platform rig (PF), jack-up (JU), drillship or semisubmersible (DS, SS, SD); otherwise light or heavy is not established. These keep the unit categories below, except that "liftboat / jack-up" is divided by its two source codes ([mapping](output/intervention_weight_mapping.csv)). Development and exploration follow `WELL_TYPE_CODE` (D, E) of the canonical original hole.
 
-Of {life["dated_wells"]:,} dated wells, {life["permanently_abandoned"]:,} are permanently abandoned and {life["standing"]:,} stand; {life["wells_without_first_spud"]:,} lack a first spud and {life["life_not_established"]:,} have an abandonment date before spud (life not established). Life in years:
+Of {life["dated_wells"]:,} dated wells, {life["permanently_abandoned"]:,} are permanently abandoned and {life["standing"]:,} stand; {life["wells_without_first_spud"]:,} lack a first spud and {life["life_not_established"]:,} have an abandonment date before spud (life not established). The life quantiles use wells with established life and are reported in years:
 
 {table(life_rows)}
 
@@ -112,6 +124,31 @@ Reconciliation with the permit counts over {life["window"]} ([CSV](output/life_c
 
 [Event ages](output/life_cycle_event_ages.csv) give the age of the well at every sidetrack spud and approval in the window, for all wells; older wells contribute only their later events. [Light and heavy by year](output/intervention_weight_by_year.csv) partition the well-work approvals of each year.
 """.rstrip("\n")
+
+
+def weekly_report_section(out, summary, first, last):
+    path = out / "war_duration_crosscheck.csv"
+    if path.is_file() != ("war_rows" in summary):
+        raise ValueError("WAR cross-check table does not match this run's WAR read")
+    if "war_rows" not in summary:
+        return "The weekly-report cross-check was unavailable for this snapshot."
+    war = pd.read_csv(path)
+    deepest_wo = war.loc[
+        war.band.eq(BANDS[3]) & war.raw_war_code.eq("WO"), "median_days"
+    ]
+    deepest_wo_text = (
+        f"including the deepest WO-token median of {deepest_wo.iloc[0]:.0f} days"
+        if len(deepest_wo)
+        else "including each depth band's WO-token median"
+    )
+    for col in ["q25_days", "median_days", "q75_days"]:
+        war[col] = war[col].map(lambda v: f"{v:,.0f}")
+    war = war[war.raw_war_code.eq("selected tokens combined")].drop(
+        columns="raw_war_code"
+    )
+    return f"""Beside those estimates, the weekly-report check unions overlapping or adjacent inclusive intervals of 1–90 days for the same API12, named unit and raw code in {first}–{last}. A gap or changed code/unit starts a new proxy episode. Missing/placeholder units are excluded. WO, REC, TA and PA are an interpreted non-drilling token subset; several meanings lack a published BSEE definition. Full-year filtering precedes union and can censor endpoints. The {summary["proxy_episodes"]:,} episodes are neither permits nor proven complete heavy-rig jobs. [The weekly-report CSV](output/war_duration_crosscheck.csv) preserves each raw-code stratum, {deepest_wo_text}.
+
+{table(war)}"""
 
 
 def main(pr_body=None, test_result="not run", out=OUT, readme=ROOT / "README.md"):
@@ -197,6 +234,8 @@ def main(pr_body=None, test_result="not run", out=OUT, readme=ROOT / "README.md"
     cost_table = table(pd.DataFrame(cost_rows))
     files = []
     for r in manifest["files"]:
+        if r["status"] != "downloaded":
+            continue
         files.append(
             {
                 "File": f'[{r["name"]}]({r["url"]})',
@@ -244,20 +283,7 @@ def main(pr_body=None, test_result="not run", out=OUT, readme=ROOT / "README.md"
         )
         for event in ["well work", "permanent abandonment"]
     }
-    war = pd.read_csv(out / "war_duration_crosscheck.csv")
-    deepest_wo = war.loc[
-        war.band.eq(BANDS[3]) & war.raw_war_code.eq("WO"), "median_days"
-    ]
-    deepest_wo_text = (
-        f"including the deepest WO-token median of {deepest_wo.iloc[0]:.0f} days"
-        if len(deepest_wo)
-        else "including each depth band's WO-token median"
-    )
-    for col in ["q25_days", "median_days", "q75_days"]:
-        war[col] = war[col].map(lambda v: f"{v:,.0f}")
-    war = war[war.raw_war_code.eq("selected tokens combined")].drop(
-        columns="raw_war_code"
-    )
+    weekly_report = weekly_report_section(out, s, first, last)
     shares = shares[shares.period.astype(str).eq(str(last))]
     categories = [
         "wireline unit",
@@ -361,7 +387,7 @@ Approved permits to modify existing wells are counted separately from new-well d
 
 ## Data
 
-The collection owner is worldenergydata; the catalog source ID is `bsee-data-center`. The four BSEE raw archives were downloaded on {snapshot_date} (snapshot folder `{s["snapshot"]}`). Their size and SHA-256 are verified against the manifest before use. Raw archives are ignored and are not backed up by this PR. Only small derived aggregates and charts are committed.
+The collection owner is worldenergydata; the catalog source ID is `bsee-data-center`. The {len(files)} BSEE raw archives in the manifest were downloaded on {snapshot_date} (snapshot folder `{s["snapshot"]}`). Their size and SHA-256 are verified against the manifest before use. Raw archives are ignored and are not backed up by this PR. Only small derived aggregates and charts are committed.
 
 {table(pd.DataFrame(files))}
 
@@ -417,9 +443,7 @@ The permit's own `EST_OPERATION_DAYS` medians are the **operator's estimate on t
 
 {table(pd.DataFrame(duration_rows))}
 
-Beside those estimates, the weekly-report check unions overlapping or adjacent inclusive intervals of 1–90 days for the same API12, named unit and raw code in {first}–{last}. A gap or changed code/unit starts a new proxy episode. Missing/placeholder units are excluded. WO, REC, TA and PA are an interpreted non-drilling token subset; several meanings lack a published BSEE definition. Full-year filtering precedes union and can censor endpoints. The {s["proxy_episodes"]:,} episodes are neither permits nor proven complete heavy-rig jobs. [The weekly-report CSV](output/war_duration_crosscheck.csv) preserves each raw-code stratum, {deepest_wo_text}.
-
-{table(war)}
+{weekly_report}
 
 ## Cost basis
 
@@ -433,7 +457,7 @@ Beside those estimates, the weekly-report check unions overlapping or adjacent i
 - **Deepwater dry-tree platform permanent abandonment** uses the **published** Table 8-4, p. 8-15 (PDF p. 146), final-column totals: USD 734,356 / 987,262 / 1,374,570 per well at 1,700 / 3,000 / 5,000 ft, respectively (USD **0.73 / 0.99 / 1.4 million** at two significant figures). These are 60-well campaign totals normalised per well and include work provision, engineering, weather and shared mobilisation. They are depth anchors, not statistical low/base/high outcomes. A cited deepwater dry-tree well-work basis is not established, so that row is **not priced**. Dry-tree conductor removal is separate.
 - TAP-738 section 8.3.2.3, p. 8-18 (PDF p. 149), gives the drillship/semisubmersible total spread as USD 674,600/day. **Rig mobilisation is excluded**, rather than assumed free. Subsea permanent-abandonment durations follow approximate graphic readings of Figure 8-9, p. 8-19. The 3,000-ft row uses 17 days (MODU leaving the wellhead) and 19 days (MODU) at 3,000 ft for low and base, and 23 days, the MODU reading at **6,000 ft**, for high. The deeper row uses 21 and 23 days at 6,000 ft and 27 days at 9,000 ft. These cases do not classify every approval at those depths. Beyond the 9,000-ft anchor, cost applicability is not established.
 - The well-work duration labels are **median 7 days / midpoint 10.5 days / two weeks 14 days**. The [BOEM Gulf EIS 2016-018](https://www.boem.gov/sites/default/files/environmental-stewardship/Environmental-Assessment/NEPA/BOEM-EIS-2016-018-v1.pdf), section 3.1.3.5, p. 3-37 (PDF p. 163), reports a Gulf median of 7 days with a range from 1 day to several months. [BOEM MAG-PLAN Alaska update](https://espis.boem.gov/final%20reports/5179.pdf), 2012, section 3.5.5.4, p. 108 (PDF p. 117), provides one to two weeks; 10.5 days is its arithmetic midpoint. These are transferred duration scenarios, **not a spread of observed outcomes**. The midpoint retains its half day to avoid changing the arithmetic; other reported duration summaries use integer days.
-- [BSEE Pacific cost update, vol. 2](https://www.bsee.gov/sites/bsee.gov/files/technology-assessment-program-tap/735ab.pdf), 2015, Appendix 2, p. A-2 (PDF p. 5), provides 3, 4, 5 and 8 trouble-free rigless days per well. The 3 / 4 / 8-day selections are scenario inputs; transfer to casing jacks is an assumption. Operator permit estimates and the weekly-report proxy above do not validate these duration scenarios.
+- [BSEE Pacific cost update, vol. 2](https://www.bsee.gov/sites/bsee.gov/files/technology-assessment-program-tap/735ab.pdf), 2015, Appendix 2, p. A-2 (PDF p. 5), provides 3, 4, 5 and 8 trouble-free rigless days per well. The 3 / 4 / 8-day selections are scenario inputs; transfer to casing jacks is an assumption. The duration scenarios come from the cited studies.
 
 Every numeric input and its citation are retained in [cost_basis.yml](cost_basis.yml), generated by [build_cost_basis.py](build_cost_basis.py). [Full-precision costs](output/cost_table.csv) and [published comparisons](output/published_pa_comparators.csv) retain the arithmetic. The subsea comparator for 500–1,500 m is Figure 8-10's **3,000-ft (914-m) point**, about **USD 13 million** at two significant figures; the 1,000-ft point is outside that band and is not used. The 6,000/9,000-ft comparator is about USD 16 / 19 million. The rigless published total is USD 0.34–0.42 million per well. Published totals include their stated allowances and campaign assumptions and are not equal to the simpler spread scenarios. [Citation receipts](output/cost_source_manifest.json) retain source URLs and PDF digests; a 2015 study rehosted later remains a 2015 dollar basis.
 
@@ -478,13 +502,18 @@ PNG width is 2,160 pixels; SVG versions are retained. Footers identify the raw f
 """
     readme.write_text(note, encoding="utf-8", newline="\n")
     if pr_body:
+        weekly_status = (
+            "The README includes the weekly-report duration cross-check."
+            if "war_rows" in s
+            else weekly_report
+        )
         body = f"""## What this adds
 
 A reproducible Gulf of Mexico existing-well activity example: approval counts, distinct wells, rates against opening standing stock, cost cases by well/access method, a per-well life cycle with light and heavy interventions, six PNG/SVG charts and an article page. Related: [activity characterisation issue](https://github.com/vamseeachanta/worldenergydata/issues/1220); this PR does not close it. [README](https://github.com/vamseeachanta/worldenergydata/blob/analysis/gom-interventions-article/examples/bsee/interventions_by_depth/README.md).
 
 ## Data
 
-The four BSEE Borehole, approved-permit, end-of-operations and weekly-report archives were downloaded on {snapshot_date}; their SHA-256 manifest is verified before use. Raw files are not committed. Only derived aggregates are published. **ASSUMED - to be confirmed:** every APM main row represents an approved permit; the feed has no separate approval-status field.
+The {len(files)} BSEE archives listed in the manifest were downloaded on {snapshot_date}; their SHA-256 manifest is verified before use. Raw files are not committed. Only derived aggregates are published. **ASSUMED - to be confirmed:** every APM main row represents an approved permit; the feed has no separate approval-status field.
 
 ## Method
 
@@ -506,7 +535,7 @@ Costs follow **well and access method**, with depth only as source applicability
 
 Sources: [BSEE TAP-738, 2015](https://www.bsee.gov/sites/bsee.gov/files/tap-technical-assessment-program/738aa1.pdf), Tables 8-2/8-3/8-4, pp. 8-12/8-14/8-15, and subsea section 8.3.2.3; [BOEM EIS 2016-018](https://www.boem.gov/sites/default/files/environmental-stewardship/Environmental-Assessment/NEPA/BOEM-EIS-2016-018-v1.pdf), p. 3-37; [BOEM MAG-PLAN Alaska update, 2012](https://espis.boem.gov/final%20reports/5179.pdf), p. 108; [BSEE Pacific update vol. 2, 2015](https://www.bsee.gov/sites/bsee.gov/files/technology-assessment-program-tap/735ab.pdf), p. A-2. Rigless spread: USD 64,530/day derived from Table 8-2; casing jacks: USD 68,424/day; subsea total spread: USD 674,600/day. Deepwater dry-tree P&A uses the published 60-well Table 8-4 totals at 1,700/3,000/5,000 ft, not a subsea rate; its work row is not priced. The 500–1,500-m subsea comparison uses 3,000 ft, not 1,000 ft.
 
-Well-work duration cases are **median 7 days / midpoint 10.5 days / two weeks 14 days**, not an outcome range: the Gulf source spans 1 day to several months. The permit's own operator-estimated medians by band are **{medians["well work"]} days** for well work and **{medians["permanent abandonment"]} days** for permanent abandonment, not observed job lengths. The README places these beside the weekly-report check and includes all approval/well ratios, unit categories and EOR flag shares. In 500–1,500 m, only {floater:,}/{mid_pa:,} permanent approvals name a drillship or semi and {no_yes:,}/{mid_pa:,} lack a YES subsea flag, illustrating why depth alone does not price access.
+Well-work duration cases are **median 7 days / midpoint 10.5 days / two weeks 14 days**, not an outcome range: the Gulf source spans 1 day to several months. The permit's own operator-estimated medians by band are **{medians["well work"]} days** for well work and **{medians["permanent abandonment"]} days** for permanent abandonment, not observed job lengths. The README includes all approval/well ratios, unit categories and EOR flag shares. {weekly_status} In 500–1,500 m, only {floater:,}/{mid_pa:,} permanent approvals name a drillship or semi and {no_yes:,}/{mid_pa:,} lack a YES subsea flag, illustrating why depth alone does not price access.
 
 ## Limits
 
