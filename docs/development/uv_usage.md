@@ -243,14 +243,42 @@ addopts = [
 
 ```bash
 
-# Build package
+# Build the root distribution and all workspace members
 
-uv build
+bash scripts/uv_deploy.sh build
 
-# Test build locally
+# Equivalent build command after dependency setup
 
-./scripts/uv_deploy.sh test-build
+uv build --all-packages
 ```
+
+Both `scripts/uv_deploy.sh build` and the compatibility entry point
+`scripts/tools/uv_deploy.sh build` resolve the repository root from their script
+location. The compatibility entry point forwards arguments and exit status to
+the canonical helper. The build action runs `uv sync --locked --inexact` before
+`uv build --all-packages`. Synchronization fails rather than re-locking when the
+lockfile is stale. The `--inexact` flag keeps packages outside the lock, while
+locked packages are still synchronized to their locked versions. It uses the root
+manifest's default dependencies; no optional build extra is defined or requested.
+A failed synchronization stops the action before building; a failed build exits
+without the build-success marker. Invoking either helper performs real work.
+
+The dispatch tests in `tests/unit/tooling/test_uv_deploy_build.py` copy the helpers
+into disposable layouts and substitute recording tools. They check the working
+directory, command arguments, failure status and fixture preservation. They do
+not synchronize dependencies, generate artifacts, install packages or upload
+anything. Passing these tests does not establish a releasable package set.
+
+An actual build generates artifacts under `dist/`. Before publication, validate
+exactly the wheels intended for a shared installation using the
+[package artifact ownership checks](package_artifact_checks.md). Ownership checks
+do not establish dependency closure, installed-domain behavior or release
+completeness. The existing `test-build` action cleans build artifacts, synchronizes
+the project environment and builds all distributions. Its installation is
+unvalidated: `uv venv` creates an environment without `pip`, so bare `pip install`
+may resolve outside the temporary environment. The import check may then run
+without the wheels installed. This action does not establish an isolated
+installation.
 
 ### Publishing
 
@@ -259,13 +287,24 @@ uv build
 # Publish to TestPyPI (for testing)
 
 export TESTPYPI_TOKEN="your-token"
-./scripts/uv_deploy.sh publish-test
+bash scripts/uv_deploy.sh publish-test
 
 # Publish to PyPI (production)
 
 export PYPI_TOKEN="your-token"
-./scripts/uv_deploy.sh publish
+bash scripts/uv_deploy.sh publish
 ```
+
+TestPyPI and production publication are separate actions requiring the relevant
+credentials and release authorization. A successful local build or dispatch test
+does not authorize either upload.
+
+Both `publish-test` and `publish` clean build artifacts first and, after a
+successful build, upload `dist/*`: the root distribution and every workspace
+member distribution. Only `publish` asks for confirmation before cleanup;
+`publish-test` does not prompt. If synchronization or building fails, `dist/` has
+already been cleaned and nothing is uploaded. Uploading requires `twine` to be
+available through `uv run`; the root manifest does not declare it.
 
 ### Build Configuration
 
