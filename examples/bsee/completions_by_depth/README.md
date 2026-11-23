@@ -90,18 +90,22 @@ A completion leaves two public records. Both are counted, and kept apart.
      sub-operation label.
 2. **Completion report** (End of Operations Report file). One report of a Gulf
    well whose operation code is `C`. Its year is the borehole status date. A
-   change of zone is also filed under code `C`, and for 1,741 of the 1,878 bores
-   with more than one such report every report carries the same status date, so
-   the status date is read as the date of the bore's completion status, not the
-   date of each report (`summary.json`). The file holds no filing date.
+   bore can have more than one such report, and for 1,741 of the 1,878 bores
+   that do, every report carries the same status date, so the status date is
+   read as the date of the bore's completion status, not the date of each
+   report (`summary.json`). What each later report covers is not classified
+   here. The file holds no filing date.
 3. **Bore first completed.** A bore is one twelve-digit API number; a well is
    its first ten digits. By the approval record: the bore's earliest initial
    completion approval. By the report record: the earliest status date among its
    completion reports. The earliest record is taken over the whole file and then
    the years 2005 to 2026 are kept, so a bore first approved in 2004 is not
-   counted in 2005. A bore completed on paper before April 2004 and re-approved
-   later would be counted at its first electronic approval; the files cannot
-   show this.
+   counted in 2005. "First completed" is shorthand for the first completion
+   record in the electronic files, not a statement that the work was done. A
+   bore completed on paper before April 2004 and approved or reported again
+   later would be counted at its first electronic record, on either basis; the
+   files cannot show how many there are. The reports are every report of code
+   `C`, not only reports of an initial completion.
 4. **Water depth bands**, as in the interventions study: under 100 m, 100 to
    500 m, 500 to 1,500 m, 1,500 m and deeper (feet times 0.3048), from the
    bore's water depth, or the single depth shared by every bore of the well.
@@ -151,6 +155,13 @@ By water depth, 2005 to 2026:
   157 matched bores it falls before it (`approval_report_match.csv`).
 - A bore first approved carries a mean 2.13 initial completion approvals
   (median 1; 1,677 bores carry one).
+- Other completion work (`completion_approval_suboperations.csv`, which counts
+  each sub-operation over all approvals and over each kind): of the 1,631
+  approvals, 1,020 carry Modify Perforations (62.5 %) and 381 Reperforation
+  (23.4 %). One approval can carry several sub-operations. The interventions
+  study names the whole group of 8,472 "initial completion excluded"; here
+  only the 6,841 with the sub-operation `INITCOMP` are called initial
+  completions.
 - What the reports of the 3,238 bores record (`bore_attributes_by_band.csv`,
   `bore_attributes_all_depths.csv`, `fluid_by_year.csv`): oil 1,746, gas 1,125,
   oil and gas 231, injection or source 86, no interval reported 50. Under 100 m
@@ -168,10 +179,13 @@ By water depth, 2005 to 2026:
 - Drilling to completion (`drilled_to_completed.csv`): of the wells first
   drilled 2005 to 2025, 1,023 of 1,235 development wells (82.8 %) and 792 of
   1,655 exploration wells (47.9 %) have an initial completion approval.
-- Timing (`timing_by_band.csv`): the first initial completion approval falls a
-  median 9 days after the total depth date (middle half 4 to 34), and the
-  completion status date a median 35 days after it: 24 days under 100 m and 85
-  days at 1,500 m and deeper.
+- Timing (`timing_by_band.csv`), for the bores first approved for initial
+  completion from 2005 to 23 Nov 2026, not the drilled-well group above: the
+  first initial completion approval falls a median 9 days after the total
+  depth date (middle half 4 to 34; 3,213 bores with a total depth date), and
+  the completion status date a median 35 days after it: 24 days under 100 m
+  and 85 days at 1,500 m and deeper (3,043 bores that also have a completion
+  report).
 
 Charts: [`01_completion_approvals`](output/01_completion_approvals.svg),
 [`02_bores_first_completed`](output/02_bores_first_completed.svg),
