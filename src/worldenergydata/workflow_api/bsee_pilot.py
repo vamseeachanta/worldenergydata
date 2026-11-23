@@ -37,7 +37,7 @@ import io
 import os
 import shutil
 import tempfile
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 import yaml
 from assetutilities.workflow_api import artifact, identity, inputs, metrics
@@ -260,7 +260,9 @@ def derive_identity(config: dict, input_record: dict) -> dict:
 def execute_variant(
     workflow_id: str, api12: list, group_label: str, snapshot_key: str, config: dict
 ):
-    """Run the UNCHANGED wed workflow and return ``(payload, {basename: bytes})``.
+    """Run the UNCHANGED wed workflow and return ``(payload, {relative_path: bytes})``.
+
+    Top-level outputs keep their basename as key (``relative_path == basename``).
 
     Reuses the shared runner's cfg builders + container-hash normalization; the
     only divergence is that this adapter runs the engine under a root IT controls
@@ -302,11 +304,13 @@ def execute_variant(
         R._normalize_container_hashes(payload, cfg_base, root)  # canonical xlsx digest
         analysis = cfg_base.get("Analysis", {}) or {}
         results_dir = analysis.get("result_folder") or os.path.join(root, "results")
+        # Key by relative_path (basename only for older extractor output) so a
+        # nested file never takes the bytes of a same-named top-level file.
         out_bytes = {}
         for o in payload["outputs"]:
-            p = os.path.join(results_dir, o["basename"])
-            out_bytes[o["basename"]] = (
-                open(p, "rb").read() if os.path.isfile(p) else None
+            p = R._output_path(results_dir, o)
+            out_bytes[R._output_key(o)] = (
+                Path(p).read_bytes() if os.path.isfile(p) else None
             )
         return payload, out_bytes
     finally:
@@ -393,6 +397,7 @@ def build_metric_observations(
 
 
 def _curated_label(basename: str) -> str:
+    """Label by the FILE NAME prefix; pass a filename, never a relative path."""
     if any(basename.startswith(p) for p in _PRIMARY_BASENAMES):
         return "primary_result"
     return "validation_evidence"
@@ -409,21 +414,27 @@ def build_outputs(out_bytes: dict, config: dict):
 
     Projects the deterministic text outputs (CSV/JSON) as content-addressed
     objects; the xlsx raw dump is recorded (canonical digest) but not projected.
+
+    ``out_bytes`` is keyed by the output's relative path (``R._output_key``), which
+    stays the record identity (``role``, schema id). Only the curated label is
+    derived from the final filename, so ``sub/prod_summ_x.csv`` is a primary result
+    and ``prod_summ_archive/other.csv`` is not.
     """
     artifacts, records, object_bytes = [], [], {}
     xlsx_digest = None
     schema_version = config["algorithm"]["output_schema_version"]
-    for basename in sorted(out_bytes):
-        blob = out_bytes[basename]
+    for key in sorted(out_bytes):
+        blob = out_bytes[key]
         if blob is None:
             continue
-        if basename.endswith(".xlsx"):
+        name = PurePosixPath(key).name
+        if name.endswith(".xlsx"):
             # canonical (timestamp-independent) digest for provenance only.
             xlsx_digest = hashlib.sha256(blob).hexdigest()
             continue
-        if not basename.endswith(_TEXT_SUFFIXES):
+        if not name.endswith(_TEXT_SUFFIXES):
             continue
-        media_type, native_format = _media_type(basename)
+        media_type, native_format = _media_type(name)
         art = artifact.physical_artifact(
             blob, media_type=media_type, native_format=native_format
         )
@@ -431,10 +442,10 @@ def build_outputs(out_bytes: dict, config: dict):
         object_bytes[art["content_digest"]] = blob
         records.append(
             oc.make_output_record(
-                role=basename,
-                native_schema={"id": f"bsee/{basename}", "version": schema_version},
+                role=key,
+                native_schema={"id": f"bsee/{key}", "version": schema_version},
                 media_type=media_type,
-                curated_label=_curated_label(basename),
+                curated_label=_curated_label(name),
                 artifact_refs=[art["content_digest"]],
             )
         )
@@ -658,14 +669,8 @@ def run_pilot(config: dict | None = None, *, hf_port=None, write_report: bool = 
 
     # >=3 variations
     entries = [build_projection_for_variant(config, v) for v in config["variants"]]
-    accepted = []
-    for entry in entries:
-        revision = promote(
-            entry["projection"], hf_port=hf_port, ledger=ledger, egress=egress
-        )
-        accepted.append((entry, revision))
 
-    # exactly 1 exact replay (of replay_variant) — same run_id + output equality
+    # Check the independent replay before any promotion can publish a variant.
     replay_id = config["replay_variant"]
     base = next(e for e in entries if e["variant"]["id"] == replay_id)
     replay = build_projection_for_variant(config, base["variant"])
@@ -676,6 +681,13 @@ def run_pilot(config: dict | None = None, *, hf_port=None, write_report: bool = 
     identity.assert_output_equality(
         base["output_equality"]["digest"], replay["output_equality"]["digest"]
     )
+
+    accepted = []
+    for entry in entries:
+        revision = promote(
+            entry["projection"], hf_port=hf_port, ledger=ledger, egress=egress
+        )
+        accepted.append((entry, revision))
 
     report_html = render_rolling_report(config, accepted, ledger)
     report_path = repo_root() / config["report_path"]

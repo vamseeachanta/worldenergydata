@@ -13,8 +13,15 @@ permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  # Metadata edits must also have a separate pending slot while code checks run.
+  group: >-
+    ${{ github.workflow }}-${{ github.event.action == 'edited' &&
+    github.event.changes.base == null && (github.event.changes.title != null || github.event.changes.body != null) &&
+    format('metadata-edit-{0}', github.run_id) || github.event.pull_request.number || github.ref }}
+  cancel-in-progress: >-
+    ${{ github.event_name == 'pull_request' &&
+    !(github.event.action == 'edited' && github.event.changes.base == null &&
+    (github.event.changes.title != null || github.event.changes.body != null)) }}
 
 jobs:
   pr-title:
@@ -23,8 +30,9 @@ jobs:
     name: Validate PR Title
     runs-on: >-
       ${{ (github.event_name != 'pull_request' ||
-          github.event.pull_request.head.repo.full_name == github.repository) &&
-          fromJSON('["self-hosted","x64","linux"]') || 'ubuntu-latest' }}
+          (github.event.pull_request.head.repo.full_name == github.repository &&
+          vars.WED_PR_RUNNER == 'self-hosted')) &&
+          fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
 
     steps:
       - name: Check PR title format
@@ -51,11 +59,17 @@ jobs:
             doesn't match the required pattern. The subject must be 80 characters or less.
 
   file-size:
-    name: Check File Sizes
+    name: >-
+      ${{ github.event.action == 'edited' && github.run_attempt == '1' && github.event.changes.base == null &&
+      (github.event.changes.title != null || github.event.changes.body != null) && 'Not run for a metadata edit - ' || '' }}Check File Sizes
+    if: &code-event >-
+      ${{ !(github.event.action == 'edited' && github.run_attempt == '1' && github.event.changes.base == null &&
+      (github.event.changes.title != null || github.event.changes.body != null)) }}
     runs-on: >-
       ${{ (github.event_name != 'pull_request' ||
-          github.event.pull_request.head.repo.full_name == github.repository) &&
-          fromJSON('["self-hosted","x64","linux"]') || 'ubuntu-latest' }}
+          (github.event.pull_request.head.repo.full_name == github.repository &&
+          vars.WED_PR_RUNNER == 'self-hosted')) &&
+          fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
 
     steps:
       - name: Checkout repository
@@ -82,11 +96,15 @@ jobs:
           fi
 
   sensitive-files:
-    name: Check Sensitive Files
+    name: >-
+      ${{ github.event.action == 'edited' && github.run_attempt == '1' && github.event.changes.base == null &&
+      (github.event.changes.title != null || github.event.changes.body != null) && 'Not run for a metadata edit - ' || '' }}Check Sensitive Files
+    if: *code-event
     runs-on: >-
       ${{ (github.event_name != 'pull_request' ||
-          github.event.pull_request.head.repo.full_name == github.repository) &&
-          fromJSON('["self-hosted","x64","linux"]') || 'ubuntu-latest' }}
+          (github.event.pull_request.head.repo.full_name == github.repository &&
+          vars.WED_PR_RUNNER == 'self-hosted')) &&
+          fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
 
     steps:
       - name: Checkout repository
@@ -145,11 +163,15 @@ jobs:
           echo "No potentially sensitive filenames in PR changes."
 
   pack-lint:
-    name: Lint Changed Knowledge Packs
+    name: >-
+      ${{ github.event.action == 'edited' && github.run_attempt == '1' && github.event.changes.base == null &&
+      (github.event.changes.title != null || github.event.changes.body != null) && 'Not run for a metadata edit - ' || '' }}Lint Changed Knowledge Packs
+    if: *code-event
     runs-on: >-
       ${{ (github.event_name != 'pull_request' ||
-          github.event.pull_request.head.repo.full_name == github.repository) &&
-          fromJSON('["self-hosted","x64","linux"]') || 'ubuntu-latest' }}
+          (github.event.pull_request.head.repo.full_name == github.repository &&
+          vars.WED_PR_RUNNER == 'self-hosted')) &&
+          fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
     permissions:
       contents: read
 

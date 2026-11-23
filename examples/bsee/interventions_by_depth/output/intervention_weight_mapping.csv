@@ -1,0 +1,18 @@
+raw_value,unit_category,weight
+WL,wireline unit,light
+CT,coiled tubing,light
+HW,hydraulic workover / snubbing,heavy
+SB,hydraulic workover / snubbing,heavy
+PF,platform rig,heavy
+LB,liftboat / jack-up,light
+JU,liftboat / jack-up,heavy
+WI,intervention vessel,light
+DS,drillship / semisubmersible,heavy
+SS,drillship / semisubmersible,heavy
+SD,drillship / semisubmersible,heavy
+NR,non-rig operation (recorded),light
+BG,other,not established
+BR,other,not established
+PL,other,not established
+SU,other,not established
+blank or unmatched,none named / other,not established

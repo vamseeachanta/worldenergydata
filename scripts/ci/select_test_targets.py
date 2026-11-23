@@ -85,6 +85,14 @@ CATALOG_CONTRACTS = (
 
 # Exact paths may select one contract suite or several related test files.
 CONTRACT_ROUTES = {
+    "scripts/career/build_semiconductor_packet.py": "tests/career/test_semiconductor_packet.py",
+    "docs/career/semiconductor-packet.json": "tests/career/test_semiconductor_packet.py",
+    "docs/reports/semiconductor-career-packet.html": "tests/career/test_semiconductor_packet.py",
+    "tests/career/test_semiconductor_packet.py": "tests/career/test_semiconductor_packet.py",
+    "tests/ci/test_career_routes.py": (
+        "tests/career/test_semiconductor_packet.py",
+        "tests/ci/test_career_routes.py",
+    ),
     "config/fields.yml": "tests/unit/cost/test_project_field_crosswalk.py",
     "src/worldenergydata/field_development/past_projects.yml": (
         "tests/unit/cost/test_project_field_crosswalk.py",
@@ -105,11 +113,16 @@ CONTRACT_ROUTES = {
     "scripts/field_development/example_catalog_evidence.py": CATALOG_CONTRACTS,
     # Keep export and display withholding under CI when only an input changes.
     "scripts/hf_export/publish_explorer_refresh_to_hf.py": "tests/unit/site",
+    "scripts/hf_export/browser_shards.py": "tests/unit/site",
     "reports/field-atlas/atlas_template.html": "tests/unit/site",
     "reports/field-atlas/index.html": "tests/unit/site",
     "reports/lower_tertiary/lifecycle/_performance.json": "tests/unit/site",
     "reports/lower_tertiary/parametric/lt_economics_parametric.json": "tests/unit/site",
     "reports/field-atlas/results/explorer_results_bundle.json": "tests/unit/site",
+    "scripts/eda/report.py": "tests/unit/eda",
+    "docs/examples/eda/README.md": "tests/unit/eda",
+    "docs/examples/eda/manifest.json": "tests/unit/eda",
+    "docs/examples/eda/report.md": "tests/unit/eda",
     "config/repo_structure.yml": "tests/repo_structure",
     ".gitattributes": "tests/repo_structure",
     "scripts/maintenance/classify_report_inventory.py": "tests/repo_structure",
@@ -149,6 +162,20 @@ CONTRACT_ROUTES = {
 # checked by tests/report_evals.
 CONTRACT_PREFIX_ROUTES = (
     ("data/modules/cost/", "tests/unit/cost"),
+    (
+        "data/modules/facility_specs/",
+        "tests/modules/field_development/test_withheld_data.py",
+    ),
+    ("data/modules/frontier_basins/", "tests/unit/canada"),
+    ("data/modules/offshore_assets/", "tests/unit/field_development"),
+    (
+        "data/modules/offshore_assets/",
+        "tests/modules/field_development/test_withheld_data.py",
+    ),
+    ("data/modules/subsea/", "tests/unit/subsea"),
+    ("data/modules/subsea/", "tests/unit/curated"),
+    ("data/modules/bsee/boem_lease_history_layout.json", "tests/unit/bsee"),
+    ("tests/fixtures/bsee/boem_raw/", "tests/unit/bsee"),
     ("examples/report-evals/", "tests/report_evals"),
     ("tests/report_evals/", "tests/report_evals"),
 )

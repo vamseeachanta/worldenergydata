@@ -44,6 +44,7 @@ EXPECTED_DIRS = {
     "royaltyref",
     "scanneddocs",
     "serialreg",
+    "war",
     "Well_APD_Default",
 }
 
@@ -53,9 +54,17 @@ def test_all_specs_cover_all_stub_directories():
     assert actual_dirs == EXPECTED_DIRS
 
 
-def test_total_expected_bins_is_136():
+def test_total_expected_bins_is_138():
     total = sum(len(spec.expected_bins) for spec in get_all_specs())
-    assert total == 136
+    assert total == 138
+
+
+def test_war_spec_requires_both_consumer_tables():
+    specs = get_specs_for_dir("war")
+    assert len(specs) == 1
+    assert specs[0].zip_url == f"{BSEE_BASE_URL}/Well/Files/eWellWARRawData.zip"
+    assert specs[0].expected_bins == ["mv_war_main.bin", "mv_war_main_prop.bin"]
+    assert specs[0] in get_regular_specs()
 
 
 def test_fieldreserves_family_supported_specs():

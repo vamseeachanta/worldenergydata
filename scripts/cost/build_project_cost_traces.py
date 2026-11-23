@@ -10,6 +10,9 @@ from worldenergydata.cost.timeseries.portfolio_trace import (
     build_portfolio_trace,
     write_trace_outputs,
 )
+from worldenergydata.cost.timeseries.publication_evidence import (
+    apply_publication_evidence,
+)
 
 
 def main() -> None:
@@ -20,12 +23,21 @@ def main() -> None:
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--revision", required=True)
     parser.add_argument("--revision-date", required=True)
+    parser.add_argument(
+        "--publication-evidence",
+        type=Path,
+        help="Optional JSON publication assertions bound to the input snapshot",
+    )
     args = parser.parse_args()
     source = args.data_root.resolve()
     destination = args.output_dir.resolve()
     if destination == source or source in destination.parents:
         parser.error("output directory must be outside the curated input directory")
     trace = build_portfolio_trace(source)
+    if args.publication_evidence is not None:
+        trace = apply_publication_evidence(
+            trace, args.publication_evidence.read_bytes()
+        )
     write_trace_outputs(
         trace, destination, revision=args.revision, revision_date=args.revision_date
     )

@@ -13,6 +13,9 @@ from pathlib import Path
 import pytest
 import yaml
 
+from tests.workflows.test_ci_triggers import _render
+from tests.workflows.test_metadata_edits import code_job_runs
+
 ROOT = next(
     parent for parent in Path(__file__).parents if (parent / ".github").is_dir()
 )
@@ -47,9 +50,9 @@ def test_requires_production_job_display_name(ruleset, workflow):
     (rule,) = ruleset["rules"]
     assert rule["type"] == "required_status_checks"
     assert rule["parameters"]["required_status_checks"] == [{"context": CONTEXT}]
-    assert workflow["jobs"]["pack-lint"]["name"] == CONTEXT
+    assert _render(workflow["jobs"]["pack-lint"]["name"], {}) == CONTEXT
     matching_jobs = [
-        job for job in workflow["jobs"].values() if job.get("name") == CONTEXT
+        job for job in workflow["jobs"].values() if _render(job["name"], {}) == CONTEXT
     ]
     assert matching_jobs == [workflow["jobs"]["pack-lint"]]
 
@@ -87,6 +90,7 @@ def test_required_job_cannot_skip_or_ignore_a_lint_failure(workflow):
     through the production shell, including clean and no-pack controls.
     """
     job = workflow["jobs"]["pack-lint"]
-    for execution in [job, *job["steps"]]:
-        assert "if" not in execution
-        assert not execution.get("continue-on-error", False)
+    assert code_job_runs(job) and not job.get("continue-on-error", False)
+    for step in job["steps"]:
+        assert "if" not in step
+        assert not step.get("continue-on-error", False)

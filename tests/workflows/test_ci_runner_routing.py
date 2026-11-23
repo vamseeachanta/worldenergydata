@@ -33,6 +33,8 @@ from pathlib import Path
 import pytest
 import yaml
 
+from tests.workflows.test_ci_triggers import _evaluate_expression, _render
+
 WORKFLOWS = Path(__file__).resolve().parents[2] / ".github/workflows"
 # Trusted jobs request either Linux architecture, or Linux x64 where needed.
 SELF_HOSTED_LINUX = "self-hosted Linux"
@@ -57,7 +59,9 @@ def runner_labels(expression: str, context: dict) -> object:
         r"fromJSON\('([^']*)'\)", lambda match: repr(json.loads(match[1])), expression
     )
     expression = re.sub(
-        r"github\.[\w.]+", lambda match: repr(context.get(match[0])), expression
+        r"(?:github|vars)\.[\w.]+",
+        lambda match: repr(context.get(match[0])),
+        expression,
     )
     expression = expression.replace("&&", " and ").replace("||", " or ")
 
@@ -84,28 +88,45 @@ def runner_labels(expression: str, context: dict) -> object:
 
 
 @pytest.mark.parametrize(
-    "event,fork,head,expected",
+    "event,fork,head,pr_runner,expected",
     [
-        ("pull_request", True, "different", "ubuntu-latest"),
-        ("pull_request", None, None, "ubuntu-latest"),
-        ("pull_request", False, None, "ubuntu-latest"),
-        ("pull_request", False, "different", "ubuntu-latest"),
-        ("pull_request", False, "same", SELF_HOSTED_LINUX),
-        ("push", None, None, SELF_HOSTED_LINUX),
-        ("schedule", None, None, SELF_HOSTED_LINUX),
-        ("workflow_dispatch", None, None, SELF_HOSTED_LINUX),
+        ("pull_request", True, "different", None, "ubuntu-latest"),
+        ("pull_request", True, "different", "self-hosted", "ubuntu-latest"),
+        ("pull_request", None, None, None, "ubuntu-latest"),
+        ("pull_request", None, None, "self-hosted", "ubuntu-latest"),
+        ("pull_request", False, None, "self-hosted", "ubuntu-latest"),
+        ("pull_request", False, "different", "self-hosted", "ubuntu-latest"),
+        # WED_PR_RUNNER: same-repo PRs are hosted unless set to "self-hosted".
+        ("pull_request", False, "same", None, "ubuntu-latest"),
+        ("pull_request", False, "same", "", "ubuntu-latest"),
+        ("pull_request", False, "same", "ubuntu-latest", "ubuntu-latest"),
+        ("pull_request", False, "same", "self-hosted", SELF_HOSTED_LINUX),
+        ("push", None, None, None, SELF_HOSTED_LINUX),
+        ("schedule", None, None, None, SELF_HOSTED_LINUX),
+        ("workflow_dispatch", None, None, None, SELF_HOSTED_LINUX),
     ],
 )
 def test_every_job_routes_trusted_events_and_isolates_forks(
-    event: str, fork: bool | None, head: str | None, expected: object
+    event: str,
+    fork: bool | None,
+    head: str | None,
+    pr_runner: str | None,
+    expected: object,
 ) -> None:
-    """Cover every declared job, including discovery, domain tests and aggregation."""
+    """Cover every declared job, including discovery, domain tests and aggregation.
+
+    Same-repository pull requests are only checked against workflows that can
+    receive them (``pull_request`` or ``workflow_call``); the selectors of
+    trusted-only workflows are never evaluated for a same-repo PR.
+    """
     context = {
         "github.event_name": event,
         "github.event.pull_request.head.repo.fork": fork,
         "github.event.pull_request.head.repo.full_name": head,
         "github.repository": "same",
+        "vars.WED_PR_RUNNER": pr_runner,
     }
+    same_repo_pr = event == "pull_request" and head == "same"
     for path in sorted(WORKFLOWS.glob("*.yml")):
         workflow = load_workflow(path.name)
         events = workflow.get("on", workflow.get(True))
@@ -138,11 +159,38 @@ def test_every_job_routes_trusted_events_and_isolates_forks(
                     job["runs-on"]
                 ), "Trusted runners require self-hosted Linux"
                 continue
+            if same_repo_pr and not set(events) & {"pull_request", "workflow_call"}:
+                continue
             labels = runner_labels(job["runs-on"], context)
             if expected == SELF_HOSTED_LINUX:
                 assert is_trusted_linux(labels), (path.name, job_id, event, labels)
             else:
                 assert labels == expected, (path.name, job_id, event)
+
+
+def test_wed_pr_runner_switch_is_limited_to_pr_path_workflows() -> None:
+    """Only PR-triggered workflows read WED_PR_RUNNER; trusted runs keep self-hosted."""
+    switched = set()
+    for path in sorted(WORKFLOWS.glob("*.yml")):
+        workflow = load_workflow(path.name)
+        events = set(workflow.get("on", workflow.get(True)))
+        pr_path = bool(events & {"pull_request", "workflow_call"})
+        for job_id, job in workflow["jobs"].items():
+            selector = job.get("runs-on")
+            if "vars.WED_PR_RUNNER" in str(selector):
+                switched.add(path.name)
+                assert pr_path, (path.name, job_id)
+            elif pr_path and selector is not None:
+                raise AssertionError(
+                    f"{path.name}:{job_id} lacks the WED_PR_RUNNER switch"
+                )
+    assert switched == {
+        "brand-guard.yml",
+        "ci.yml",
+        "domain-matrix.yml",
+        "pr-validation.yml",
+        "wheel-ownership.yml",
+    }
 
 
 @pytest.mark.parametrize("event", ["push", "schedule", "workflow_dispatch"])
@@ -157,7 +205,7 @@ def test_routing_accepts_literal_labels_for_trusted_workflows(
     (tmp_path / "trusted.yml").write_text(yaml.safe_dump(workflow), encoding="utf-8")
     monkeypatch.setattr(sys.modules[__name__], "WORKFLOWS", tmp_path)
     test_every_job_routes_trusted_events_and_isolates_forks(
-        event, None, None, SELF_HOSTED_LINUX
+        event, None, None, None, SELF_HOSTED_LINUX
     )
 
 
@@ -183,7 +231,7 @@ def test_literal_labels_cannot_bypass_untrusted_event_routing(
         ),
     ):
         test_every_job_routes_trusted_events_and_isolates_forks(
-            "pull_request", None, None, "ubuntu-latest"
+            "pull_request", None, None, None, "ubuntu-latest"
         )
 
 
@@ -200,7 +248,7 @@ def test_expression_routing_rejects_unsupported_triggers(tmp_path, monkeypatch, 
     monkeypatch.setattr(sys.modules[__name__], "WORKFLOWS", tmp_path)
     with pytest.raises(AssertionError, match="Unsupported workflow trigger"):
         test_every_job_routes_trusted_events_and_isolates_forks(
-            event, None, None, "ubuntu-latest"
+            event, None, None, None, "ubuntu-latest"
         )
 
 
@@ -215,7 +263,7 @@ def test_literal_runners_require_linux(tmp_path, monkeypatch):
         AssertionError, match="Trusted runners require self-hosted Linux"
     ):
         test_every_job_routes_trusted_events_and_isolates_forks(
-            "workflow_dispatch", None, None, SELF_HOSTED_LINUX
+            "workflow_dispatch", None, None, None, SELF_HOSTED_LINUX
         )
 
 
@@ -251,14 +299,21 @@ def test_pr_title_has_only_read_access_to_pull_requests():
 @pytest.mark.parametrize("name", ["pr-validation.yml", "brand-guard.yml", "docs.yml"])
 def test_superseded_pr_runs_cancel_within_the_same_workflow_and_ref(name):
     concurrency = load_workflow(name)["concurrency"]
-    assert concurrency["group"] == (
-        "${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}"
-    )
-    cancel = concurrency["cancel-in-progress"]
     for event in ("pull_request", "push", "workflow_dispatch"):
-        assert runner_labels(cancel, {"github.event_name": event}) is (
-            event == "pull_request"
+        context = {
+            "github.workflow": "Check",
+            "github.event_name": event,
+            "github.ref": "refs/heads/main",
+            "github.event.pull_request.number": 17 if event == "pull_request" else None,
+            "github.event.action": "synchronize" if event == "pull_request" else None,
+            "github.run_attempt": "1",
+        }
+        key = 17 if event == "pull_request" else "refs/heads/main"
+        assert _render(concurrency["group"], context) == f"Check-{key}"
+        cancel = (
+            concurrency["cancel-in-progress"].removeprefix("${{").removesuffix("}}")
         )
+        assert _evaluate_expression(cancel, context) is (event == "pull_request")
 
 
 def test_release_preserves_independent_runs():
@@ -371,9 +426,16 @@ def test_domain_gate_keeps_all_three_jobs_and_read_only_permissions() -> None:
         "./.github/workflows/domain-matrix.yml"
     )
     caller = load_workflow("ci.yml")["jobs"]["domain-tests"]
-    assert caller["with"]["test-runner"] == (
-        "env WED_FAST_GATE=1 uv run --with pytest-xdist pytest"
+    # pytest-xdist goes into the job's own .venv, so tests that re-launch
+    # sys.executable never point at a `uv run --with` overlay environment in
+    # the runner's shared uv cache, which other jobs can remove mid-run.
+    assert caller["with"]["install-cmd"] == (
+        "uv sync --frozen --all-extras && uv pip install pytest-xdist==3.8.0"
     )
+    assert caller["with"]["test-runner"] == (
+        "env WED_FAST_GATE=1 uv run --no-sync pytest"
+    )
+    assert "--with" not in caller["with"]["test-runner"]
     workflow = load_workflow("domain-matrix.yml")
     assert "test-runner" in workflow[True]["workflow_call"]["inputs"]
     assert any(
