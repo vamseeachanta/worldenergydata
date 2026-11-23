@@ -1,0 +1,199 @@
+{
+  "country": "Nigeria",
+  "sources": {
+    "nuprc-production": {
+      "publisher": "Nigerian Upstream Petroleum Regulatory Commission (NUPRC)",
+      "url": "https://www.nuprc.gov.ng/reports",
+      "data_type": "Crude oil and condensate production by blend",
+      "format": "HTML archive observed. PDF tables are a client expectation.",
+      "native_grain": "blend-period",
+      "units": "Client requires an explicit thousand barrels per day column. Published units unknown.",
+      "observation_period": "One named calendar month and year required by the parser.",
+      "access": "Archive reachable. Report bytes, coverage and a stable download link remain unverified.",
+      "evidence": [
+        "nuprc",
+        "index",
+        "regulator",
+        "reports",
+        "development"
+      ],
+      "supported_uses": [
+        "report-index-discovery"
+      ],
+      "unavailable_uses": [
+        "field-production",
+        "field-reserves",
+        "field-economics"
+      ],
+      "implementation": "nigeria/nuprc_client.py",
+      "grain_basis": "local-client-expectation",
+      "publication_date": "unknown",
+      "cadence": "unknown",
+      "rights": "unknown",
+      "checked_date": "2026-11-23",
+      "scheduler_eligible": false
+    },
+    "eiti-production": {
+      "publisher": "Extractive Industries Transparency Initiative (EITI)",
+      "url": "https://data.eiti.org/api/v1/production",
+      "data_type": "Reported production volume",
+      "format": "Candidate JSON collection. Live response schema unknown.",
+      "native_grain": "country-company-commodity-year",
+      "units": "The loader expects barrels for an annual volume. Source units unknown.",
+      "observation_period": "Reporting year, with company and commodity retained when supplied. Live dimensions unknown.",
+      "access": "Configured route only. The catalogue and data landing page refused access. The API route was not requested.",
+      "evidence": [
+        "catalogue",
+        "explorer",
+        "nigeria",
+        "neiti"
+      ],
+      "supported_uses": [
+        "annual-production-discovery"
+      ],
+      "unavailable_uses": [
+        "field-production",
+        "monthly-volume",
+        "field-economics"
+      ],
+      "implementation": "eiti/eiti_api.py and eiti/country_production.py",
+      "grain_basis": "local-client-expectation",
+      "publication_date": "unknown",
+      "cadence": "unknown",
+      "rights": "unknown",
+      "checked_date": "2026-11-23",
+      "scheduler_eligible": false
+    },
+    "eiti-payments": {
+      "publisher": "Extractive Industries Transparency Initiative (EITI)",
+      "url": "https://data.eiti.org/api/v1/payments",
+      "data_type": "Extractive industry payments and revenue",
+      "format": "Candidate JSON collection. Live response schema unknown.",
+      "native_grain": "country-company-payment-type-year",
+      "units": "The loader expects USD. Source currency, scale and valuation basis unknown.",
+      "observation_period": "Reporting year by company and payment type where disclosed. Live dimensions unknown.",
+      "access": "Configured route only. The catalogue and data landing page refused access. The API route was not requested.",
+      "evidence": [
+        "catalogue",
+        "explorer",
+        "nigeria",
+        "neiti"
+      ],
+      "supported_uses": [
+        "annual-payment-discovery"
+      ],
+      "unavailable_uses": [
+        "field-production",
+        "contract-terms",
+        "field-economics"
+      ],
+      "implementation": "eiti/eiti_api.py and eiti/payment_data.py",
+      "grain_basis": "local-client-expectation",
+      "publication_date": "unknown",
+      "cadence": "unknown",
+      "rights": "unknown",
+      "checked_date": "2026-11-23",
+      "scheduler_eligible": false
+    }
+  },
+  "discovery_gaps": {
+    "wells": {
+      "status": "unqualified",
+      "lead": "https://www.nuprc.gov.ng/development-production",
+      "evidence": [
+        "development"
+      ],
+      "finding": "Well proposals and drilling approvals are described.",
+      "required_evidence": "A well-level release with stable identifiers, field links, dates, definitions and terms of use."
+    },
+    "reserves": {
+      "status": "unqualified",
+      "lead": "https://www.nuprc.gov.ng/development-production",
+      "evidence": [
+        "development"
+      ],
+      "finding": "Resource estimation and reporting are named functions.",
+      "required_evidence": "A reserves release identifying entity, classification, reference date, volumes, units and terms of use."
+    },
+    "licensing": {
+      "status": "unqualified",
+      "lead": "https://www.nuprc.gov.ng/exploration",
+      "evidence": [
+        "acreage"
+      ],
+      "finding": "The department maintains concession records. Public download access is unknown.",
+      "required_evidence": "A dated block and licence register with identifiers, geometry or boundaries, validity dates and reuse terms."
+    },
+    "fiscal": {
+      "status": "unqualified",
+      "lead": "https://eiti.org/countries/nigeria",
+      "evidence": [
+        "nigeria"
+      ],
+      "finding": "No contract-specific fiscal source was verified. Annual payment disclosures alone cannot establish a PSC.",
+      "required_evidence": "Applicable signed terms or an authoritative public equivalent, effective dates, asset scope and permitted use."
+    }
+  },
+  "publisher_checks": {
+    "nuprc": {
+      "url": "https://www.nuprc.gov.ng/oil-production-status-report/",
+      "retrieved_utc": "2026-11-23T01:19:13Z",
+      "http_status": 308,
+      "finding": "Configured report index redirected to the same path without its trailing slash."
+    },
+    "index": {
+      "url": "https://www.nuprc.gov.ng/oil-production-status-report",
+      "retrieved_utc": "2026-11-23T01:19:20Z",
+      "http_status": 404,
+      "finding": "Redirect target returned a missing-page response."
+    },
+    "regulator": {
+      "url": "https://www.nuprc.gov.ng/",
+      "retrieved_utc": "2026-11-23T01:19:28Z",
+      "http_status": 200,
+      "finding": "The regulator homepage links to the reports archive and the exploration and development departments."
+    },
+    "reports": {
+      "url": "https://www.nuprc.gov.ng/reports",
+      "retrieved_utc": "2026-11-23T01:19:43Z",
+      "http_status": 200,
+      "finding": "The reports archive HTML displayed a loading message. No production report link was established."
+    },
+    "development": {
+      "url": "https://www.nuprc.gov.ng/development-production",
+      "retrieved_utc": "2026-11-23T01:19:44Z",
+      "http_status": 200,
+      "finding": "The development department describes well proposals, resource estimation and production allocation functions."
+    },
+    "acreage": {
+      "url": "https://www.nuprc.gov.ng/exploration",
+      "retrieved_utc": "2026-11-23T01:19:43Z",
+      "http_status": 200,
+      "finding": "The exploration department describes a concession database and licensing rounds."
+    },
+    "catalogue": {
+      "url": "https://eiti.org/open-data",
+      "retrieved_utc": "2026-11-23T01:19:14Z",
+      "http_status": 403,
+      "finding": "Access to the EITI open-data page was refused."
+    },
+    "explorer": {
+      "url": "https://data.eiti.org/",
+      "retrieved_utc": "2026-11-23T01:19:22Z",
+      "http_status": 403,
+      "finding": "Access to the configured EITI data host landing page was refused."
+    },
+    "nigeria": {
+      "url": "https://eiti.org/countries/nigeria",
+      "retrieved_utc": "2026-11-23T01:19:14Z",
+      "http_status": 403,
+      "finding": "Access to the EITI Nigeria country page was refused."
+    },
+    "neiti": {
+      "url": "https://neiti.gov.ng/",
+      "retrieved_utc": "2026-11-23T01:19:21Z",
+      "http_status": null,
+      "finding": "TLS certificate verification failed before an HTTP response was received."
+    }
+  }
+}

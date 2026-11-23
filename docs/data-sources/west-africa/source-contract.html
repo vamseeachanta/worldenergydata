@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nigeria upstream data acquisition contract</title>
+  <style>
+    body { max-width: 76ch; margin: 2rem auto; padding: 0 1rem; font: 1rem/1.6 system-ui, sans-serif; }
+    h1, h2 { line-height: 1.2; }
+    table { border-collapse: collapse; }
+    td, th { padding: .4rem .7rem; border: 1px solid #aaa; text-align: left; vertical-align: top; }
+    caption { caption-side: bottom; text-align: left; }
+    dt { font-weight: bold; }
+    dd { margin: 0 0 .7rem; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Nigeria upstream data acquisition contract</h1>
+  <p>The NUPRC reports archive is the first candidate for a separately reviewed
+    metadata capture. Its HTML confirms the archive exists but provides no usable production
+    report link. No source currently qualifies for automated acquisition or field economics.
+    The <a href="source-contract.json">source register</a> records the dated publisher
+    checks, local client expectations and evidence needed to qualify each use.</p>
+
+  <h2>Revision history</h2>
+  <table>
+    <caption>Table 1. Contract revisions.</caption>
+    <thead><tr><th>Revision</th><th>Date (UTC)</th><th>Change and reason</th></tr></thead>
+    <tbody><tr><td>1</td><td>2026-11-23</td><td>Recorded source access and native grain to guide the first capture.</td></tr></tbody>
+  </table>
+
+  <h2>What the sources establish</h2>
+  <p><strong>NUPRC.</strong> The client’s report index redirected to a missing page. The
+    <a href="https://www.nuprc.gov.ng/reports">current archive</a> displayed a loading message.
+    A later capture requires a publisher-linked report, its version, rights covering the intended
+    use and a table that identifies period and units. A blend can receive production from
+    multiple fields. Preserve the reported stream, product and period. A rate in thousand
+    barrels per day cannot be ingested as a monthly volume in barrels.</p>
+  <p><strong>EITI.</strong> Both the <a href="https://eiti.org/open-data">open-data catalogue</a>
+    and the <a href="https://eiti.org/countries/nigeria">Nigeria page</a> returned HTTP 403.
+    The client’s countries, production and payments paths under <code>https://data.eiti.org/api/v1/</code>
+    are candidates. Documentation is needed to confirm filters, schema, coverage, units and rights.
+    Preserve annual production by country, commodity and disclosed company separately from
+    payments by country, company, payment type and currency. A reporting year gives neither a
+    publication date nor a refresh interval. Publication lag remains unknown until both the
+    period end and the release date are available.</p>
+  <p><strong>Other Nigerian leads.</strong> The regulator describes well approvals, resource
+    estimation and concession records. Downloadable well, reserves and block datasets remain
+    unqualified. The national transparency website could not be verified over TLS.
+    For these discovery gaps the release format, public record granularity, units, cadence
+    and rights remain unknown. The register gives a publisher lead and release condition for each.</p>
+
+  <h2>Storage and provenance</h2>
+  <p>Resolve <code>west_africa/nigeria/</code> below the configured canonical data root.
+    Key each capture by stable source ID, reporting period and source version. Preserve
+    revisions for the same period. Reuse a retained capture only after its digest matches.</p>
+  <dl>
+    <dt><code>raw/</code></dt><dd>Retain original bytes only after the source-specific terms
+      permit acquisition and retention. Record redistribution rights separately before publication.</dd>
+    <dt><code>extracted/</code></dt><dd>Extract PDF text and tables first. Keep page, table,
+      heading and unit locators. Inspect only the relevant pages when layout is ambiguous.</dd>
+    <dt><code>normalized/</code></dt><dd>Keep source keys, grain, observation period and
+      original units. Link each row to the corresponding raw digest and table or API record.</dd>
+    <dt><code>manifests/</code></dt><dd>Record stable source ID, source URL, reporting period,
+      release date, source version, UTC retrieval time, byte count, SHA-256 of the original bytes,
+      rights evidence and allowed uses. Record the declared update cadence separately.
+      Use an explicit unknown and reason for missing metadata.</dd>
+    <dt><code>quality/</code></dt><dd>Record missing periods, revisions, schema or unit conflicts,
+      publication lag and rejected records. An access failure leaves coverage unknown.
+      A reported zero requires an identified observation.</dd>
+  </dl>
+
+  <h2>Conditions for field analysis</h2>
+  <p>The <a href="../../modules/fdas/country-adapter-checklist.md">country adapter checklist</a>
+    governs the field chain under issue #713. A verified field identifier, monthly production by
+    fluid in declared units, and dated field metadata must be available for the same field.
+    Assigning a blend total to a dominant field or spreading annual data over months
+    would manufacture field history.</p>
+  <p>Once those inputs qualify, map production through <code>AbstractProductionAdapter</code>
+    and <code>to_fdas_production</code>, and map field metadata through <code>FieldMetaMapping</code>
+    to <code>FieldConcept</code>. Validate the regional fixture against the existing conformance
+    suite. Future scheduler registration must satisfy the
+    <a href="../../data/source-refresh-acceptance-criteria.md">source-refresh acceptance criteria</a>,
+    including independently verified source vintage and last successful refresh.</p>
+  <p>Production sharing contract (PSC) applicability, effective dates and contractual terms
+    remain <strong>NOT_EVALUATED</strong>. Fiscal arithmetic and reported payments establish
+    no entitlement to a particular field’s revenue. Field cash flow requires qualified
+    production, field mapping and applicable fiscal terms. No economics result is issued.</p>
+</main>
+</body>
+</html>
