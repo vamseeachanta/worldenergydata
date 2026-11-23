@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 516" width="960" height="516" role="img" aria-label="Share of wells first drilled 2005 to 2025 with an initial completion approval, by well type and water depth" font-family="'Segoe UI',Helvetica,Arial,sans-serif">
+<title>Share of wells first drilled 2005 to 2025 with an initial completion approval, by well type and water depth</title>
+<rect x="0.0" y="0.0" width="960.0" height="516.0" fill="#ffffff" fill-opacity="1.0" stroke="none"/>
+<rect x="208.0" y="21.0" width="16.0" height="16.0" fill="#0b3d5c" fill-opacity="1.0" stroke="none"/>
+<text x="231.0" y="35.0" font-size="16" font-weight="400" fill="#26323a" text-anchor="start">Development wells</text>
+<rect x="409.3" y="21.0" width="16.0" height="16.0" fill="#2BB2A6" fill-opacity="1.0" stroke="none"/>
+<text x="432.3" y="35.0" font-size="16" font-weight="400" fill="#26323a" text-anchor="start">Exploration wells</text>
+<line x1="208.0" y1="70.0" x2="208.0" y2="460.0" stroke="#d0d7de" stroke-width="1.0"/>
+<text x="208.0" y="484.0" font-size="16" font-weight="400" fill="#5a6b76" text-anchor="middle">0</text>
+<line x1="328.4" y1="70.0" x2="328.4" y2="460.0" stroke="#d0d7de" stroke-width="1.0"/>
+<text x="328.4" y="484.0" font-size="16" font-weight="400" fill="#5a6b76" text-anchor="middle">20</text>
+<line x1="448.8" y1="70.0" x2="448.8" y2="460.0" stroke="#d0d7de" stroke-width="1.0"/>
+<text x="448.8" y="484.0" font-size="16" font-weight="400" fill="#5a6b76" text-anchor="middle">40</text>
+<line x1="569.2" y1="70.0" x2="569.2" y2="460.0" stroke="#d0d7de" stroke-width="1.0"/>
+<text x="569.2" y="484.0" font-size="16" font-weight="400" fill="#5a6b76" text-anchor="middle">60</text>
+<line x1="689.6" y1="70.0" x2="689.6" y2="460.0" stroke="#d0d7de" stroke-width="1.0"/>
+<text x="689.6" y="484.0" font-size="16" font-weight="400" fill="#5a6b76" text-anchor="middle">80</text>
+<line x1="810.0" y1="70.0" x2="810.0" y2="460.0" stroke="#d0d7de" stroke-width="1.0"/>
+<text x="810.0" y="484.0" font-size="16" font-weight="400" fill="#5a6b76" text-anchor="middle">100</text>
+<text x="509.0" y="508.0" font-size="16" font-weight="400" fill="#5a6b76" text-anchor="middle">Wells with an initial completion approval (%)</text>
+<text x="196.0" y="115.0" font-size="16" font-weight="400" fill="#26323a" text-anchor="end">Under 100 m</text>
+<rect x="208.0" y="82.0" width="491.2" height="24.0" fill="#0b3d5c" fill-opacity="1.0" stroke="none"/>
+<rect x="703.2" y="82.0" width="159.2" height="24.0" fill="#ffffff" fill-opacity="1.0" stroke="none"/>
+<text x="707.2" y="100.0" font-size="15" font-weight="400" fill="#26323a" text-anchor="start">82 %  (674 of 826)</text>
+<rect x="208.0" y="110.0" width="310.0" height="24.0" fill="#2BB2A6" fill-opacity="1.0" stroke="none"/>
+<rect x="522.0" y="110.0" width="159.2" height="24.0" fill="#ffffff" fill-opacity="1.0" stroke="none"/>
+<text x="526.0" y="128.0" font-size="15" font-weight="400" fill="#26323a" text-anchor="start">52 %  (353 of 686)</text>
+<text x="196.0" y="193.0" font-size="16" font-weight="400" fill="#26323a" text-anchor="end">100 to 500 m</text>
+<rect x="208.0" y="160.0" width="529.2" height="24.0" fill="#0b3d5c" fill-opacity="1.0" stroke="none"/>
+<rect x="741.2" y="160.0" width="150.8" height="24.0" fill="#ffffff" fill-opacity="1.0" stroke="none"/>
+<text x="745.2" y="178.0" font-size="15" font-weight="400" fill="#26323a" text-anchor="start">88 %  (94 of 107)</text>
+<rect x="208.0" y="188.0" width="260.1" height="24.0" fill="#2BB2A6" fill-opacity="1.0" stroke="none"/>
+<rect x="472.1" y="188.0" width="142.4" height="24.0" fill="#ffffff" fill-opacity="1.0" stroke="none"/>
+<text x="476.1" y="206.0" font-size="15" font-weight="400" fill="#26323a" text-anchor="start">43 %  (32 of 74)</text>
+<text x="196.0" y="271.0" font-size="16" font-weight="400" fill="#26323a" text-anchor="end">500 to 1,500 m</text>
+<rect x="208.0" y="238.0" width="511.1" height="24.0" fill="#0b3d5c" fill-opacity="1.0" stroke="none"/>
+<rect x="723.1" y="238.0" width="159.2" height="24.0" fill="#ffffff" fill-opacity="1.0" stroke="none"/>
+<text x="727.1" y="256.0" font-size="15" font-weight="400" fill="#26323a" text-anchor="start">85 %  (124 of 146)</text>
+<rect x="208.0" y="266.0" width="263.7" height="24.0" fill="#2BB2A6" fill-opacity="1.0" stroke="none"/>
+<rect x="475.7" y="266.0" width="159.2" height="24.0" fill="#ffffff" fill-opacity="1.0" stroke="none"/>
+<text x="479.7" y="284.0" font-size="15" font-weight="400" fill="#26323a" text-anchor="start">44 %  (191 of 436)</text>
+<text x="196.0" y="349.0" font-size="16" font-weight="400" fill="#26323a" text-anchor="end">1,500 m and deeper</text>
+<rect x="208.0" y="316.0" width="505.7" height="24.0" fill="#0b3d5c" fill-opacity="1.0" stroke="none"/>
+<rect x="717.7" y="316.0" width="159.2" height="24.0" fill="#ffffff" fill-opacity="1.0" stroke="none"/>
+<text x="721.7" y="334.0" font-size="15" font-weight="400" fill="#26323a" text-anchor="start">84 %  (131 of 156)</text>
+<rect x="208.0" y="344.0" width="283.5" height="24.0" fill="#2BB2A6" fill-opacity="1.0" stroke="none"/>
+<rect x="495.5" y="344.0" width="159.2" height="24.0" fill="#ffffff" fill-opacity="1.0" stroke="none"/>
+<text x="499.5" y="362.0" font-size="15" font-weight="400" fill="#26323a" text-anchor="start">47 %  (216 of 459)</text>
+<text x="196.0" y="427.0" font-size="16" font-weight="600" fill="#26323a" text-anchor="end">All water depths</text>
+<rect x="208.0" y="394.0" width="498.5" height="24.0" fill="#0b3d5c" fill-opacity="1.0" stroke="none"/>
+<rect x="710.5" y="394.0" width="192.8" height="24.0" fill="#ffffff" fill-opacity="1.0" stroke="none"/>
+<text x="714.5" y="412.0" font-size="15" font-weight="400" fill="#26323a" text-anchor="start">83 %  (1,023 of 1,235)</text>
+<rect x="208.0" y="422.0" width="288.4" height="24.0" fill="#2BB2A6" fill-opacity="1.0" stroke="none"/>
+<rect x="500.4" y="422.0" width="176.0" height="24.0" fill="#ffffff" fill-opacity="1.0" stroke="none"/>
+<text x="504.4" y="440.0" font-size="15" font-weight="400" fill="#26323a" text-anchor="start">48 %  (792 of 1,655)</text>
+<line x1="208.0" y1="70.0" x2="208.0" y2="460.0" stroke="#26323a" stroke-width="1.2"/>
+</svg>

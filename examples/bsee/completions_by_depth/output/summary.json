@@ -45,6 +45,8 @@
   "bores_first_completed_by_report": 3238,
   "wells_first_completed_by_report": 3005,
   "completion_reports_all_years": 8446,
+  "bores_with_more_than_one_completion_report": 1878,
+  "of_which_every_report_has_the_same_status_date": 1741,
   "completion_reports_in_window": 5276,
   "completion_reports_in_window_by_status": {
     "BP": 14,
