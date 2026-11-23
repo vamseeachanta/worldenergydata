@@ -1,0 +1,171 @@
+{
+  "as_of": "2026-11-22",
+  "base_revision": "2b98c7a6263ae2c04daa8265bdc16eb7906fc027",
+  "scope": "Provisional repository evidence for international coverage. External holdings, completeness, freshness and publication clearance require separate evidence.",
+  "reconciliation_note": "The proposed reconciliation closed without merging. The pinned contract still lists the closed Brazil endpoint issue.",
+  "issue_base": "https://api.github.com/repositories/574746314/issues/",
+  "reconciliation": "https://api.github.com/repositories/574746314/pulls/1566",
+  "legend": {
+    "code_present": "An implementation or documented interface exists for the stated scope.",
+    "configured": "The scheduler configuration enables a named job.",
+    "historical_report": "A cited record describes an earlier observation or limitation.",
+    "verified_snapshot": "A dated inventory identifies the inspected holdings, scope and SHA-256 digest.",
+    "NOT_EVALUATED": "Evidence for this dimension is unavailable within the stated scope."
+  },
+  "countries": {
+    "Norway": {
+      "issues": [716, 713, 831],
+      "source": {"status": "historical_report", "basis": "The SODIR source note identifies FactPages downloads.", "evidence": "sodir/sodir.md"},
+      "raw": {"status": "NOT_EVALUATED", "basis": "No dated inventory of current holdings was supplied.", "evidence": null},
+      "production": {"status": "code_present", "basis": "The adapter accepts a monthly loader and otherwise uses a synthetic profile.", "evidence": "../../packages/worldenergydata-production/src/worldenergydata/production/unified/adapters/sodir_adapter.py"},
+      "wells": {"status": "code_present", "basis": "The processor maps supplied wellbore records.", "evidence": "../../packages/worldenergydata-sodir/src/worldenergydata/sodir/processors/wellbore_processor.py"},
+      "scheduler": {"status": "configured", "basis": "sodir_refresh is enabled in the schedule.", "evidence": "../../config/scheduler/scheduler_config.yml"},
+      "chain": {"status": "code_present", "basis": "A supplied adapter feeds FieldConcept screening and pre-tax cashflow.", "evidence": "../../packages/worldenergydata-sodir/src/worldenergydata/sodir/reference_chain.py"},
+      "report": {"status": "historical_report", "basis": "The benchmark shows fixture production for this region.", "evidence": "../../reports/field_benchmark/index.html"},
+      "blocker": {"status": "historical_report", "basis": "The connector audit leaves changes to access terms unassessed.", "evidence": "country-enrichment-audit.md"}
+    },
+    "UK": {
+      "issues": [717],
+      "source": {"status": "code_present", "basis": "The NSTA client reads field production.", "evidence": "../../packages/worldenergydata-ukcs/src/worldenergydata/ukcs/production/nsta_client.py"},
+      "raw": {"status": "NOT_EVALUATED", "basis": "No dated inventory of current holdings was supplied.", "evidence": null},
+      "production": {"status": "code_present", "basis": "The adapter maps monthly NSTA production.", "evidence": "../../packages/worldenergydata-production/src/worldenergydata/production/unified/adapters/ukcs_adapter.py"},
+      "wells": {"status": "code_present", "basis": "The loader normalizes supplied well completions and tests.", "evidence": "../../packages/worldenergydata-ukcs/src/worldenergydata/ukcs/wells/well_loader.py"},
+      "scheduler": {"status": "configured", "basis": "ukcs_refresh is enabled in the schedule.", "evidence": "../../config/scheduler/scheduler_config.yml"},
+      "chain": {"status": "code_present", "basis": "Production and field metadata feed FDAS and concept screening.", "evidence": "../../packages/worldenergydata-ukcs/src/worldenergydata/ukcs/reference_chain.py"},
+      "report": {"status": "historical_report", "basis": "The UK reference report records an NSTA live observation. Its input bytes are outside the report.", "evidence": "../../reports/ukcs_reference/index.html"},
+      "blocker": {"status": "historical_report", "basis": "The synthetic NDR catalogue example leaves holdings and redistribution rights unverified.", "evidence": "ukcs/ndr-inventory-example.md"}
+    },
+    "Brazil": {
+      "issues": [718, 459, 917],
+      "source": {"status": "historical_report", "basis": "ANP well and national bulk-file samples were inspected on 2026-10-19.", "evidence": "../reports/anp-production-access.md"},
+      "raw": {"status": "NOT_EVALUATED", "basis": "No dated inventory of current holdings was supplied.", "evidence": null},
+      "production": {"status": "code_present", "basis": "The loader converts daily well production to monthly volumes.", "evidence": "../../packages/worldenergydata-brazil_anp/src/worldenergydata/brazil_anp/production/well_production.py"},
+      "wells": {"status": "NOT_EVALUATED", "basis": "Well-level production is documented. A separate normalized well inventory is unverified.", "evidence": null},
+      "scheduler": {"status": "configured", "basis": "brazil_anp_refresh is enabled in the schedule.", "evidence": "../../config/scheduler/scheduler_config.yml"},
+      "chain": {"status": "code_present", "basis": "An adapter and field metadata feed concept screening and pre-tax FDAS.", "evidence": "../../packages/worldenergydata-brazil_anp/src/worldenergydata/brazil_anp/reference_chain.py"},
+      "report": {"status": "historical_report", "basis": "The benchmark shows fixture production for this region.", "evidence": "../../reports/field_benchmark/index.html"},
+      "blocker": {"status": "historical_report", "basis": "The pinned contract still cites closed #459 as an endpoint blocker. Dataset reuse rights remain unresolved.", "evidence": "../../data/source-refresh-acceptance-contract.json"}
+    },
+    "Canada": {
+      "issues": [719],
+      "source": {"status": "historical_report", "basis": "The package identifies regulator production reports for two offshore developments.", "evidence": "../../packages/worldenergydata-canada/README.md"},
+      "raw": {"status": "NOT_EVALUATED", "basis": "No dated inventory of current holdings was supplied.", "evidence": null},
+      "production": {"status": "code_present", "basis": "The C-NLOER parser maps supplied monthly oil, gas and water. The packaged example uses synthetic records.", "evidence": "../../packages/worldenergydata-canada/src/worldenergydata/canada/production/cnloer_loader.py"},
+      "wells": {"status": "code_present", "basis": "Offline parsing requires supplied ArcGIS records and explicit field links.", "evidence": "canada-development-wells.md"},
+      "scheduler": {"status": "NOT_EVALUATED", "basis": "No country job is listed in the inspected schedule.", "evidence": null},
+      "chain": {"status": "code_present", "basis": "The adapter supports pre-tax screening. Legacy gas-equivalent totals lack a sales-volume basis.", "evidence": "../../packages/worldenergydata-canada/src/worldenergydata/canada/reference_chain.py"},
+      "report": {"status": "historical_report", "basis": "The benchmark shows fixture production for this region.", "evidence": "../../reports/field_benchmark/index.html"},
+      "blocker": {"status": "historical_report", "basis": "The cited CNSOER terms restrict commercial use and require reproduction permission.", "evidence": "../../packages/worldenergydata-canada/README.md"}
+    },
+    "Mexico": {
+      "issues": [720],
+      "source": {"status": "historical_report", "basis": "The SENER listing and January 2025 workbook were read on 2026-10-20.", "evidence": "../data/mexico-production-chain.html"},
+      "raw": {"status": "NOT_EVALUATED", "basis": "No dated inventory of current holdings was supplied.", "evidence": null},
+      "production": {"status": "historical_report", "basis": "The historical workbook yielded field-month petroleum, condensate and gas. Water is unavailable.", "evidence": "../data/mexico-production-chain.html"},
+      "wells": {"status": "NOT_EVALUATED", "basis": "Normalized well coverage has no cited observation.", "evidence": null},
+      "scheduler": {"status": "NOT_EVALUATED", "basis": "No country job is listed in the inspected schedule.", "evidence": null},
+      "chain": {"status": "code_present", "basis": "FDAS conversion needs supplied water. FieldConcept screening requires additional development metadata.", "evidence": "../../packages/worldenergydata-mexico_cnh/src/worldenergydata/mexico_cnh/chain.py"},
+      "report": {"status": "code_present", "basis": "The production chain renders a readiness report for a supplied workbook.", "evidence": "../data/mexico-production-chain.html"},
+      "blocker": {"status": "historical_report", "basis": "The production workbook supplies neither a contract-specific fiscal deck nor development metadata.", "evidence": "../data/mexico-production-chain.html"}
+    },
+    "Australia": {
+      "issues": [721, 831],
+      "source": {"status": "historical_report", "basis": "The October 2026 Gas Bulletin Board sample records facility flows.", "evidence": "australia/gbb-production-readiness.html"},
+      "raw": {"status": "NOT_EVALUATED", "basis": "No dated inventory of current holdings was supplied.", "evidence": null},
+      "production": {"status": "NOT_EVALUATED", "basis": "Facility flows do not establish offshore field-month production.", "evidence": null},
+      "wells": {"status": "code_present", "basis": "The DataVic adapter reads complete supplied well exports with explicit field links.", "evidence": "../modules/fdas/country-wells.html"},
+      "scheduler": {"status": "NOT_EVALUATED", "basis": "No country job is listed in the inspected schedule.", "evidence": null},
+      "chain": {"status": "code_present", "basis": "Metadata supports screening only. The reference chain has no field production volumes.", "evidence": "../../packages/worldenergydata-australia/src/worldenergydata/australia/reference_chain.py"},
+      "report": {"status": "historical_report", "basis": "The benchmark labels Australia screening-only.", "evidence": "../../reports/field_benchmark/index.html"},
+      "blocker": {"status": "historical_report", "basis": "Facility flows lack field allocations. Reuse terms were unverified at sample retrieval.", "evidence": "australia/gbb-production-readiness.html"}
+    },
+    "Spain": {
+      "issues": [753, 763, 806, 807, 809, 810, 909],
+      "source": {"status": "code_present", "basis": "The CORES loader targets monthly crude and gas workbooks.", "evidence": "../../packages/worldenergydata-spain/README.md"},
+      "raw": {"status": "NOT_EVALUATED", "basis": "No dated inventory of current holdings was supplied.", "evidence": null, "location": "data/spain/cores", "history": {"status": "historical_report", "basis": "The issue records historical materialization at this location.", "evidence": "https://api.github.com/repositories/574746314/issues/918"}},
+      "production": {"status": "code_present", "basis": "The loader normalizes supplied field-month workbooks. Density evidence limits oil conversion.", "evidence": "../../packages/worldenergydata-spain/README.md"},
+      "wells": {"status": "NOT_EVALUATED", "basis": "Normalized well coverage has no cited observation.", "evidence": null},
+      "scheduler": {"status": "configured", "basis": "spain_cores_refresh is enabled in the schedule.", "evidence": "../../config/scheduler/scheduler_config.yml"},
+      "chain": {"status": "code_present", "basis": "A supplied production adapter feeds FDAS and concept screening.", "evidence": "../../packages/worldenergydata-spain/src/worldenergydata/spain/reference_chain.py"},
+      "report": {"status": "historical_report", "basis": "The retained CORES field-development report summarizes a prior run.", "evidence": "../../reports/field_development/spain_cores.html"},
+      "blocker": {"status": "historical_report", "basis": "Strict oil conversion lacks full accepted density coverage. Publication rights are unverified.", "evidence": "../../packages/worldenergydata-spain/src/worldenergydata/spain/data/cores/crude_density_factors.json"}
+    },
+    "West Africa/Nigeria": {
+      "issues": [919],
+      "source": {"status": "code_present", "basis": "The Nigeria client targets NUPRC monthly blend reports.", "evidence": "../../packages/worldenergydata-west_africa/src/worldenergydata/west_africa/nigeria/nuprc_client.py"},
+      "raw": {"status": "NOT_EVALUATED", "basis": "No dated inventory of current holdings was supplied.", "evidence": null},
+      "production": {"status": "code_present", "basis": "The loader processes monthly blend volumes. Field allocation remains unqualified.", "evidence": "../../packages/worldenergydata-west_africa/src/worldenergydata/west_africa/nigeria/blend_production.py"},
+      "wells": {"status": "NOT_EVALUATED", "basis": "Normalized well coverage has no cited observation.", "evidence": null},
+      "scheduler": {"status": "NOT_EVALUATED", "basis": "No country job is listed in the inspected schedule.", "evidence": null},
+      "chain": {"status": "NOT_EVALUATED", "basis": "The Nigeria field-level FDAS and PSC integration remains tracked in #919.", "evidence": null},
+      "report": {"status": "NOT_EVALUATED", "basis": "A field-development report has no cited output.", "evidence": null},
+      "blocker": {"status": "historical_report", "basis": "Blend-to-field attribution and production-sharing terms require qualification for field analysis.", "evidence": "https://api.github.com/repositories/574746314/issues/919"}
+    },
+    "Netherlands": {
+      "issues": [722],
+      "source": {"status": "historical_report", "basis": "NLOG returned an HTML map viewer at the previous data locator.", "evidence": "international-source-observations.json"},
+      "raw": {"status": "NOT_EVALUATED", "basis": "No dated inventory of current holdings was supplied.", "evidence": null},
+      "production": {"status": "NOT_EVALUATED", "basis": "Normalized field production has no cited observation.", "evidence": null},
+      "wells": {"status": "NOT_EVALUATED", "basis": "Normalized well coverage has no cited observation.", "evidence": null},
+      "scheduler": {"status": "NOT_EVALUATED", "basis": "No country job is listed in the inspected schedule.", "evidence": null},
+      "chain": {"status": "NOT_EVALUATED", "basis": "A field-development chain has no cited demonstration.", "evidence": null},
+      "report": {"status": "NOT_EVALUATED", "basis": "A field-development report has no cited output.", "evidence": null},
+      "blocker": {"status": "historical_report", "basis": "Dataset terms, refresh frequency and production schema remain unverified.", "evidence": "international-source-readiness.html"}
+    },
+    "Denmark": {
+      "issues": [722],
+      "source": {"status": "historical_report", "basis": "A DEA workbook request returned headers only.", "evidence": "international-source-observations.json"},
+      "raw": {"status": "NOT_EVALUATED", "basis": "No dated inventory of current holdings was supplied.", "evidence": null},
+      "production": {"status": "NOT_EVALUATED", "basis": "Normalized field production has no cited observation.", "evidence": null},
+      "wells": {"status": "NOT_EVALUATED", "basis": "Normalized well coverage has no cited observation.", "evidence": null},
+      "scheduler": {"status": "NOT_EVALUATED", "basis": "No country job is listed in the inspected schedule.", "evidence": null},
+      "chain": {"status": "NOT_EVALUATED", "basis": "A field-development chain has no cited demonstration.", "evidence": null},
+      "report": {"status": "NOT_EVALUATED", "basis": "A field-development report has no cited output.", "evidence": null},
+      "blocker": {"status": "historical_report", "basis": "Workbook contents, refresh frequency and reuse terms remain unverified.", "evidence": "international-source-readiness.html"}
+    },
+    "India": {
+      "issues": [722],
+      "source": {"status": "historical_report", "basis": "The NDR landing page returned headers after redirects.", "evidence": "international-source-observations.json"},
+      "raw": {"status": "NOT_EVALUATED", "basis": "No dated inventory of current holdings was supplied.", "evidence": null},
+      "production": {"status": "NOT_EVALUATED", "basis": "Normalized field production has no cited observation.", "evidence": null},
+      "wells": {"status": "NOT_EVALUATED", "basis": "Normalized well coverage has no cited observation.", "evidence": null},
+      "scheduler": {"status": "NOT_EVALUATED", "basis": "No country job is listed in the inspected schedule.", "evidence": null},
+      "chain": {"status": "NOT_EVALUATED", "basis": "A field-development chain has no cited demonstration.", "evidence": null},
+      "report": {"status": "NOT_EVALUATED", "basis": "A field-development report has no cited output.", "evidence": null},
+      "blocker": {"status": "historical_report", "basis": "Registration and paid access were reported historically. Dataset access remains untested.", "evidence": "international-source-readiness.html"}
+    },
+    "Argentina": {
+      "issues": [722],
+      "source": {"status": "historical_report", "basis": "CKAN catalogue requests timed out. Offline package discovery is implemented.", "evidence": "international-source-readiness.html"},
+      "raw": {"status": "NOT_EVALUATED", "basis": "No dated inventory of current holdings was supplied.", "evidence": null},
+      "production": {"status": "NOT_EVALUATED", "basis": "Normalized field production has no cited observation.", "evidence": null},
+      "wells": {"status": "NOT_EVALUATED", "basis": "Normalized well coverage has no cited observation.", "evidence": null},
+      "scheduler": {"status": "NOT_EVALUATED", "basis": "No country job is listed in the inspected schedule.", "evidence": null},
+      "chain": {"status": "NOT_EVALUATED", "basis": "A field-development chain has no cited demonstration.", "evidence": null},
+      "report": {"status": "NOT_EVALUATED", "basis": "A field-development report has no cited output.", "evidence": null},
+      "blocker": {"status": "historical_report", "basis": "Historical licence and refresh claims await confirmation from the catalogue.", "evidence": "international-source-readiness.html"}
+    },
+    "Colombia": {
+      "issues": [722],
+      "source": {"status": "historical_report", "basis": "ANH oil and gas each yielded a 100-row sample on 2026-10-20.", "evidence": "international-source-observations.json"},
+      "raw": {"status": "NOT_EVALUATED", "basis": "No dated inventory of current holdings was supplied.", "evidence": null},
+      "production": {"status": "code_present", "basis": "The parser retains native monthly observations. Unified field production and water coverage remain unverified.", "evidence": "../../src/worldenergydata/international_sources/colombia.py"},
+      "wells": {"status": "NOT_EVALUATED", "basis": "Normalized well coverage has no cited observation.", "evidence": null},
+      "scheduler": {"status": "NOT_EVALUATED", "basis": "No country job is listed in the inspected schedule.", "evidence": null},
+      "chain": {"status": "NOT_EVALUATED", "basis": "A field-development chain has no cited demonstration.", "evidence": null},
+      "report": {"status": "NOT_EVALUATED", "basis": "A field-development report has no cited output.", "evidence": null},
+      "blocker": {"status": "historical_report", "basis": "Metadata records attribution and share-alike terms. Field identity and full history remain unqualified.", "evidence": "international-source-readiness.html"}
+    },
+    "New Zealand": {
+      "issues": [722],
+      "source": {"status": "historical_report", "basis": "The NZPAM landing page returned headers only.", "evidence": "international-source-observations.json"},
+      "raw": {"status": "NOT_EVALUATED", "basis": "No dated inventory of current holdings was supplied.", "evidence": null},
+      "production": {"status": "NOT_EVALUATED", "basis": "Normalized field production has no cited observation.", "evidence": null},
+      "wells": {"status": "NOT_EVALUATED", "basis": "Normalized well coverage has no cited observation.", "evidence": null},
+      "scheduler": {"status": "NOT_EVALUATED", "basis": "No country job is listed in the inspected schedule.", "evidence": null},
+      "chain": {"status": "NOT_EVALUATED", "basis": "A field-development chain has no cited demonstration.", "evidence": null},
+      "report": {"status": "NOT_EVALUATED", "basis": "A field-development report has no cited output.", "evidence": null},
+      "blocker": {"status": "historical_report", "basis": "Catalogue account and aggregate-only production limits are historical leads. Per-field access remains unverified.", "evidence": "international-source-readiness.html"}
+    }
+  }
+}
