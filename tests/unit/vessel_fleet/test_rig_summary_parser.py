@@ -5,6 +5,8 @@ contractor spec PDFs (WORLDENERGYDATA_SPEC_PDF_ROOT/noble/), including their rea
 extraction quirks — do not "fix" the fixture strings.
 """
 
+import pytest
+
 from worldenergydata.vessel_fleet.parsers.rig_summary import (
     _clean_number,
     parse_rig_summary_text,
@@ -108,6 +110,8 @@ class TestValiant:
     def test_raw_provenance(self):
         assert self.spec["RAW_MOONPOOL_FT"] == "84 x 41"
         assert self.spec["RAW_DRAFT_TRANSIT_FT"] == 27.9
+        assert self.spec["RAW_DRAFT_OPERATING_FT"] == 39.4
+        assert "RAW_DRAFT_LOAD_LINE_FT" not in self.spec
 
 
 class TestLafosse:
@@ -366,6 +370,8 @@ class TestSeadrillLayout:
 
     def test_loadline_draft_and_st_displacement(self):
         assert self.spec["DRAFT_M"] == 7.3  # 24 ft (loadline)
+        assert self.spec["RAW_DRAFT_LOAD_LINE_FT"] == 24.0
+        assert self.spec["RAW_DRAFT_OPERATING_FT"] == 24.0  # Legacy alias.
         assert self.spec["DISPLACEMENT_TONNES"] == 39009  # 43,000 st
 
     def test_vdl_drilling_value(self):
@@ -435,6 +441,8 @@ class TestBorrLayout:
 
     def test_load_line_draft(self):
         assert self.spec["DRAFT_M"] == 5.8  # 19 ft load line
+        assert self.spec["RAW_DRAFT_LOAD_LINE_FT"] == 19.0
+        assert self.spec["RAW_DRAFT_OPERATING_FT"] == 19.0  # Legacy alias.
 
 
 class TestBorrNewbuildVariant:
@@ -452,6 +460,8 @@ class TestBorrNewbuildVariant:
     def test_transit_only_draft(self):
         assert "DRAFT_M" not in self.spec
         assert self.spec["RAW_DRAFT_TRANSIT_FT"] == 19.0
+        assert "RAW_DRAFT_LOAD_LINE_FT" not in self.spec
+        assert "RAW_DRAFT_OPERATING_FT" not in self.spec
 
 
 # Equipment-capability extraction (#1006) — verbatim excerpts from committed
@@ -631,3 +641,39 @@ class TestExternalSpecPdfs:
             text=True,
             check=True,
         ).stdout
+
+
+@pytest.mark.parametrize("label", ["load line", "loadline", "load-line"])
+def test_borr_load_line_draft_labels(label):
+    spec = parse_rig_summary_text(f"Drafts  21.9 ft at {label}\n")
+    assert spec["RAW_DRAFT_LOAD_LINE_FT"] == 21.9
+    assert spec["RAW_DRAFT_OPERATING_FT"] == 21.9
+    assert spec["DRAFT_M"] == 6.7
+
+
+@pytest.mark.parametrize("label", ["load line", "loadline", "load-line"])
+def test_seadrill_load_line_draft_labels(label):
+    spec = parse_rig_summary_text(f"Draft  24 ft ({label}) / 20 ft (transit)\n")
+    assert spec["RAW_DRAFT_LOAD_LINE_FT"] == 24.0
+    assert spec["RAW_DRAFT_OPERATING_FT"] == 24.0
+    assert spec["RAW_DRAFT_TRANSIT_FT"] == 20.0
+    assert spec["DRAFT_M"] == 7.3
+
+
+def test_seadrill_operating_draft_is_not_load_line():
+    spec = parse_rig_summary_text("Draft  39.4 ft (operating) / 27.9 ft (transit)\n")
+    assert spec["RAW_DRAFT_OPERATING_FT"] == 39.4
+    assert spec["RAW_DRAFT_TRANSIT_FT"] == 27.9
+    assert spec["DRAFT_M"] == 12.0
+    assert "RAW_DRAFT_LOAD_LINE_FT" not in spec
+
+
+def test_unqualified_jackup_draft_is_not_inferred_as_load_line():
+    assert "RAW_DRAFT_LOAD_LINE_FT" not in parse_rig_summary_text("Drafts  22 ft\n")
+
+
+def test_seadrill_operating_and_load_line_drafts_remain_distinct():
+    spec = parse_rig_summary_text("Draft  24 ft (loadline) / 20 ft (operating)\n")
+    assert spec["RAW_DRAFT_LOAD_LINE_FT"] == 24.0
+    assert spec["RAW_DRAFT_OPERATING_FT"] == 20.0
+    assert spec["DRAFT_M"] == 6.1
