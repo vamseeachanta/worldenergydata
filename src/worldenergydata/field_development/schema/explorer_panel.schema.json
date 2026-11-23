@@ -1,0 +1,53 @@
+{
+  "$defs": {
+    "ExplorerField": {
+      "additionalProperties": true,
+      "description": "Identity supplied by the poster producer, plus additive panel content.",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ],
+      "title": "ExplorerField",
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": true,
+  "description": "Composite envelope for the field Explorer.\n\nNested panel bodies are not validated. Map-key/id equality is a procedural\ncheck in the typed validator, not a guarantee of JSON Schema alone.",
+  "properties": {
+    "meta": {
+      "additionalProperties": true,
+      "title": "Meta",
+      "type": "object"
+    },
+    "fields": {
+      "additionalProperties": {
+        "$ref": "#/$defs/ExplorerField"
+      },
+      "title": "Fields",
+      "type": "object"
+    },
+    "wells": {
+      "additionalProperties": true,
+      "title": "Wells",
+      "type": "object"
+    }
+  },
+  "required": [
+    "meta",
+    "fields",
+    "wells"
+  ],
+  "title": "ExplorerPanels",
+  "type": "object"
+}
