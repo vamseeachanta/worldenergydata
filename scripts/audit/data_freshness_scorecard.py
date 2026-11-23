@@ -15,13 +15,13 @@ import yaml
 def _load_yaml(path: Path) -> dict[str, Any]:
     if not path.exists():
         return {}
-    return yaml.safe_load(path.read_text()) or {}
+    return yaml.safe_load(path.read_text(encoding="utf-8")) or {}
 
 
 def _load_json(path: Path) -> dict[str, Any]:
     if not path.exists():
         return {}
-    return json.loads(path.read_text())
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def _parse_datetime(value: str | None) -> datetime | None:
