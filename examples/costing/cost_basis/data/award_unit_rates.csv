@@ -1,0 +1,11 @@
+PROJECT,AWARD_YEAR,ASSET_CLASS,CONTRACTOR_STARTS,KIND,COUNT,COUNT_TEXT
+Jack/St. Malo (initial phase),2010,sps,Cameron,sps_per_tree,12,12 subsea trees
+Payara,2020,sps,TechnipFMC,sps_per_tree,41,41 EVDT trees
+Yellowtail,2021,sps,TechnipFMC,sps_per_tree,51,51 EVDT trees
+Uaru,2023,sps,TechnipFMC,sps_per_tree,44,44 subsea trees
+Whiptail,2024,sps,TechnipFMC,sps_per_tree,48,48 subsea trees
+Kaombo,2014,surf,Technip,surf_per_km,300,~300 km flowlines
+Barossa,2020,surf,Subsea 7,surf_per_km,36,36 km infield flowlines
+Zinia Phase 2,2018,surf,Subsea 7,surf_per_km,36,~36 km flowlines
+Culzean,2015,surf,Subsea 7,surf_per_km,52,52 km gas export
+GranMorgu (Block 58),2024,surf,Saipem,surf_per_km,190,~100 km production + 90 km injection lines
