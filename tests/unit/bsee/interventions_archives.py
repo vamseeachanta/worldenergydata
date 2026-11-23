@@ -1,6 +1,6 @@
 """Synthetic BSEE raw archives and manifest for the interventions example.
 
-Two Gulf wells, four approved permits and one end-of-operations report, in
+Two Gulf wells, five approved permits and one end-of-operations report, in
 the archive and member layout the example reads. The manifest carries the
 real size and SHA-256 of each archive, so a test can omit a receipt, mark it
 failed or change an archive after the manifest was written.
@@ -70,6 +70,9 @@ def _members_apm():
             ("2", "608174000200", "03/01/2025", "ABANDON", "G00002", "R2", "10"),
             ("3", "608174000100", "06/01/2025", "WORKOVER", "G00001", "R2", "3"),
             ("4", "608174000100", "11/01/2026", "ENHANCE", "G00001", "R1", "2"),
+            # Older shelf workover: the charts need full years either side of the
+            # 2021 coding change, so the feed starts in January 2020.
+            ("5", "608174000200", "01/10/2020", "WORKOVER", "G00002", "R1", "4"),
         ],
         columns=[
             "SN_APM",
@@ -88,12 +91,13 @@ def _members_apm():
         ),
         "mv_apm_main_prop": pd.DataFrame(
             {
-                "SN_APM": ["1", "2", "3", "4"],
+                "SN_APM": ["1", "2", "3", "4", "5"],
                 "APM_OP_DESC": [
                     "Replace tubing.",
                     "Permanently abandon the well.",
                     "Recomplete.",
                     "Acidize.",
+                    "Replace tubing.",
                 ],
             }
         ),
