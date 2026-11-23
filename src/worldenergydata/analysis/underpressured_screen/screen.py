@@ -183,8 +183,25 @@ def build_screen_summary(
     participation_gate: dict,
     load_summary: dict,
 ) -> dict:
+    """Report configured gate results without upgrading source qualification."""
+    for name, gate in (
+        ("validation_gate", validation_gate),
+        ("participation_gate", participation_gate),
+    ):
+        if not isinstance(gate.get("passed"), bool):
+            raise ValueError(f"{name}.passed must be a boolean")
     tier_counts = wells["pressure_tier"].value_counts().to_dict()
     return {
+        "screening_status": (
+            "pass"
+            if validation_gate["passed"] and participation_gate["passed"]
+            else "fail"
+        ),
+        "screening_scope": (
+            "Configured validation and participation gates only; does not establish "
+            "measured virgin bottom-hole pressure, coverage beyond configured "
+            "requirements, or commercial viability."
+        ),
         "wells_screened": int(len(wells)),
         "tier_counts": {k: int(v) for k, v in tier_counts.items()},
         "near_vacuum_wells": int(wells["near_vacuum"].sum()),

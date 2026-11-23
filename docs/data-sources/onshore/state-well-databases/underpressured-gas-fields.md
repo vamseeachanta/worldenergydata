@@ -18,6 +18,14 @@ ECMC production/wells data is loaded as a direct-source input from [#745](https:
 but contributes no screened wells because the current bulk pressure columns
 are empty.
 
+## Revision history
+
+| Revision | Date | Change and reason |
+| --- | --- | --- |
+| 1 | 2026-11-16 | Define the configured-gate summary verdict to distinguish screening from engineering qualification. |
+
+Table 1. Changes to the report definition.
+
 ## Method
 
 ```bash
@@ -58,6 +66,27 @@ PYTHONPATH=src:packages/worldenergydata-core/src python3.12 \
 Outputs: `/mnt/ace/worldenergydata/data/modules/pressure_screen/curated/`
 (`well_screen_earliest.parquet`, `underpressured_field_ranking.parquet`,
 `screen_summary.json`).
+
+### Summary verdict definition
+
+`screen_summary.json` includes `screening_status: pass` only when both
+`validation_gate.passed` and `participation_gate.passed` are boolean `true`;
+otherwise valid boolean verdicts produce `screening_status: fail`. Missing or
+non-boolean gate verdicts raise `ValueError` before a summary is returned.
+For a valid failed gate, the summary is written before the existing
+`RuntimeError` is raised, so the saved result records the failure.
+
+The fixed `screening_scope` statement limits the verdict to the configured
+validation and participation gates. A pass does not establish measured virgin
+bottom-hole pressure, gas/condensate qualification, commercial viability or
+coverage beyond the configured requirements. An omitted participation gate
+still passes with no state requirements; an empty required-field list also
+passes the existing validation gate. Thus even an empty screen can pass if
+neither gate requires evidence. Interpret the verdict alongside `era_note`,
+`source_warnings`, state/source counts and input/loaded row counts.
+
+These fields do not change the calculations, thresholds or historical results
+below. Synthetic verdict tests establish gate behavior, not real analog recovery.
 
 ### Non-finite pressure or depth
 
