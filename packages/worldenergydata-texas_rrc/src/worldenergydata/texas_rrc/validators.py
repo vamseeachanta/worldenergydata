@@ -6,7 +6,7 @@ Data validation utilities for Texas RRC data processing.
 
 Provides validation for:
 - Texas API numbers (42-XXX-XXXXX format)
-- RRC district codes (01-10, 7B, 7C, 8A)
+- RRC production district names (01-06, 6E, 7B, 7C, 08, 8A, 09, 10)
 - Geographic coordinates within Texas bounds
 - Required fields and data types
 - Date ranges and numeric values
@@ -29,7 +29,8 @@ class TexasDataValidator:
     TEXAS_LON_MIN = -106.65
     TEXAS_LON_MAX = -93.51
 
-    # Valid Texas RRC districts
+    # RRC PDQ manual, printed p. 26, DISTRICT_NAME; qualified in package README.
+    # District names, not the PDQ system's numeric DISTRICT_NO identifiers.
     VALID_DISTRICTS = [
         "01",
         "02",
@@ -37,6 +38,7 @@ class TexasDataValidator:
         "04",
         "05",
         "06",
+        "6E",
         "7B",
         "7C",
         "08",
@@ -103,7 +105,7 @@ class TexasDataValidator:
         """
         Validate Texas RRC district code.
 
-        Valid districts: 01, 02, 03, 04, 05, 06, 7B, 7C, 08, 8A, 09, 10
+        Valid names: 01, 02, 03, 04, 05, 06, 6E, 7B, 7C, 08, 8A, 09, 10
 
         Args:
             district: District code to validate

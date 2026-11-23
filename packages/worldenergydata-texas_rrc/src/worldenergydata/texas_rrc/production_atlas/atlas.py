@@ -10,6 +10,7 @@ from typing import Iterable
 import pandas as pd
 
 from worldenergydata.texas_rrc.data.loaders.pdq_loader import PDQLoader
+from worldenergydata.texas_rrc.district_inputs import require_district_names
 from worldenergydata.texas_rrc.processors.production_processor import (
     ProductionProcessor,
 )
@@ -103,33 +104,37 @@ def normalize_production_frame(
     frame: pd.DataFrame,
     sort_rows: bool = True,
 ) -> pd.DataFrame:
-    """Normalize official PDQ production columns into atlas-ready rows."""
+    """Normalize production columns; numeric district IDs require qualification."""
+    require_district_names(frame.columns)
     if frame.empty:
         return _empty_normalized_frame()
     renamed = frame.rename(columns=_rename_map(frame))
     processor = ProductionProcessor()
     normalized = pd.DataFrame(index=renamed.index)
+    if "district_no" in renamed:
+        normalized["district_no"] = renamed["district_no"].map(_text_value)
     for column in IDENTIFIER_COLUMNS:
         normalized[column] = (
             renamed[column].map(_text_value) if column in renamed else ""
         )
     normalized["district"] = _normalize_districts(normalized["district"])
     normalized["production_month"] = _production_months(renamed, processor)
+    normalized["oil_bbl"] = _numeric_values(renamed, "oil_production")
+    normalized["gas_mcf"] = _numeric_values(renamed, "gas_production") + _numeric_values(
+        renamed, "casinghead_gas"
+    )
+    normalized["condensate_bbl"] = _condensate_values(renamed)
     for source, target in (
-        ("oil_production", "oil_bbl"),
-        ("gas_production", "gas_mcf"),
-        ("condensate", "condensate_bbl"),
         ("water_production", "water_bbl"),
         ("well_count", "well_count"),
     ):
         values, available = _numeric_values_with_availability(renamed, source)
         normalized[target] = values
-        availability_column = OPTIONAL_METRIC_AVAILABILITY.get(target)
-        if availability_column:
-            normalized[availability_column] = available
-    normalized["gas_mcf"] = normalized["gas_mcf"] + _numeric_values(
-        renamed, "casinghead_gas"
-    )
+        availability_column = OPTIONAL_METRIC_AVAILABILITY[target]
+        if availability_column in renamed:
+            # A normalized zero can be a placeholder for an unreported value.
+            available = available & ~renamed[availability_column].isin([False])
+        normalized[availability_column] = available.astype(object)
     normalized["boe"] = (
         normalized["oil_bbl"]
         + normalized["condensate_bbl"]
@@ -153,6 +158,7 @@ def normalize_production_frame(
 
 def is_usable_production_frame(frame: pd.DataFrame) -> bool:
     """Return True when a raw frame has the minimum recognizable PDQ columns."""
+    require_district_names(frame.columns)
     if frame.empty:
         return False
     columns = set(frame.rename(columns=_rename_map(frame)).columns)
@@ -168,6 +174,7 @@ def is_usable_production_frame(frame: pd.DataFrame) -> bool:
             "gas_production",
             "casinghead_gas",
             "condensate",
+            "condensate_bbl",
             "water_production",
         )
     )
@@ -176,13 +183,10 @@ def is_usable_production_frame(frame: pd.DataFrame) -> bool:
 
 def build_production_atlas(frame: pd.DataFrame) -> pd.DataFrame:
     """Build field, lease, district, operator, and statewide production summaries."""
+    require_district_names(frame.columns)
     if frame.empty:
         return pd.DataFrame(columns=ATLAS_COLUMNS)
-    production = (
-        frame
-        if "production_month" in frame.columns
-        else normalize_production_frame(frame)
-    )
+    production = normalize_production_frame(frame)
     max_month = _max_month(production)
     rows: list[dict[str, object]] = []
     for level in AGGREGATION_LEVELS:
@@ -219,13 +223,10 @@ def build_production_atlas_from_chunks(
     """Build the production atlas from bounded raw or normalized chunks."""
     accumulator = _ProductionAtlasAccumulator()
     for chunk in chunks:
+        require_district_names(chunk.columns)
         if chunk.empty:
             continue
-        production = (
-            chunk
-            if "production_month" in chunk.columns
-            else normalize_production_frame(chunk, sort_rows=False)
-        )
+        production = normalize_production_frame(chunk, sort_rows=False)
         accumulator.add(production)
     return accumulator.to_frame()
 
@@ -853,6 +854,16 @@ def _numeric_values(frame: pd.DataFrame, column: str) -> pd.Series:
     return pd.to_numeric(values, errors="coerce").fillna(0.0)
 
 
+def _condensate_values(frame: pd.DataFrame) -> pd.Series:
+    """Use the first reported PDQ alias per row, then the canonical barrels."""
+    columns = [name for name in ("condensate", "condensate_bbl") if name in frame]
+    values = pd.Series(index=frame.index, dtype=object)
+    for _, alias in frame[columns].items():
+        reported = alias.where(alias.map(_text_value).ne(""))
+        values = values.where(values.notna(), reported)
+    return pd.to_numeric(values, errors="coerce").fillna(0.0)
+
+
 def _numeric_values_with_availability(
     frame: pd.DataFrame,
     column: str,
@@ -873,8 +884,12 @@ def _numeric_values_with_availability(
 def _report_filed_values(frame: pd.DataFrame) -> pd.Series:
     if "report_filed" not in frame:
         return pd.Series([True] * len(frame.index), index=frame.index, dtype=object)
-    values = frame["report_filed"].map(_text_value).str.upper()
-    return values.eq("Y").astype(object)
+    filed = frame["report_filed"].map(
+        lambda value: value
+        if pd.api.types.is_bool(value)
+        else _text_value(value).upper() == "Y"
+    )
+    return filed.astype(object)
 
 
 def _availability_from_row(data: dict[str, object]) -> dict[str, bool]:
@@ -917,6 +932,8 @@ def _production_date_values(
     processor: ProductionProcessor,
 ) -> pd.Series:
     text = values.map(_text_value)
+    if text.str.fullmatch(r"[0-9]{4}-(?:0[1-9]|1[0-2])").all():
+        return text
     result = pd.Series(None, index=values.index, dtype=object)
     yyyymm = text.str.fullmatch(r"\d{6}", na=False)
     month = pd.to_numeric(text.str.slice(4, 6), errors="coerce")
