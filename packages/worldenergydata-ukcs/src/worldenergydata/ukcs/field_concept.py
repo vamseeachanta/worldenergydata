@@ -2,7 +2,7 @@
 
 The current UK NSTA production slice has sparse metadata. The mapping therefore
 populates only fields that are defensible from the approved fixture/source path:
-name, UK basin-region key, optional water depth, and source label. The concept
+name, UK basin-region key, optional water depth, operator, and source label. The concept
 screening output is a wiring proof, not a published UK field recommendation.
 """
 
@@ -28,6 +28,7 @@ _UK_MAPPING = FieldMetaMapping(
         "region": FieldMapEntry("region"),
         "water_depth_m": FieldMapEntry("water_depth_m", number_from),
         "data_source": FieldMapEntry("source"),
+        "operator": FieldMapEntry("operator"),
     }
 )
 
