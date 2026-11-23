@@ -4,11 +4,23 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
-from typing import Any, Union
+from typing import Any
 
 import pandas as pd
 
 logger = logging.getLogger(__name__)
+
+
+def _preserve_dp_class(df: pd.DataFrame) -> None:
+    """Keep nullable classes integral, including in older float-backed files."""
+    if "DP_CLASS" in df:
+        classes = df["DP_CLASS"]
+        # Raw feeds can also carry text. Preserve it without inferring a rating.
+        df["DP_CLASS"] = (
+            classes.astype("Int64")
+            if classes.isna().all()
+            else classes.convert_dtypes()
+        )
 
 
 class ParquetStore:
@@ -18,7 +30,7 @@ class ParquetStore:
     and exports CSV for human-readable inspection.
     """
 
-    def __init__(self, base_dir: Union[str, Path]) -> None:
+    def __init__(self, base_dir: str | Path) -> None:
         self.base_dir = Path(base_dir)
         self.base_dir.mkdir(parents=True, exist_ok=True)
 
@@ -34,11 +46,8 @@ class ParquetStore:
         filepath = self.base_dir / filename
         filepath.parent.mkdir(parents=True, exist_ok=True)
 
-        if not records:
-            df = pd.DataFrame()
-        else:
-            df = pd.DataFrame(records)
-
+        df = pd.DataFrame(records)
+        _preserve_dp_class(df)
         df.to_parquet(filepath, index=False, engine="pyarrow")
         logger.info("Saved %d records to %s", len(records), filepath)
         return filepath
@@ -57,6 +66,7 @@ class ParquetStore:
         if df.empty:
             return []
 
+        _preserve_dp_class(df)
         records = df.where(df.notna(), None).to_dict(orient="records")
         return records
 
@@ -71,6 +81,7 @@ class ParquetStore:
         csv_path.parent.mkdir(parents=True, exist_ok=True)
 
         df = pd.read_parquet(filepath, engine="pyarrow")
+        _preserve_dp_class(df)
         df.to_csv(csv_path, index=False)
         logger.info("Exported %d records to %s", len(df), csv_path)
         return csv_path

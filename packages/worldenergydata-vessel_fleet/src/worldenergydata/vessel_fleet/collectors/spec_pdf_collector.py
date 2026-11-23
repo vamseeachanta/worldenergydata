@@ -116,6 +116,9 @@ class SpecPdfCollector(BaseCollector):
         )
 
         for pdf_key, schema_field in self.field_mapping.items():
+            # A rig DP class requires explicit evidence accepted by the parser.
+            if self.vessel_category == "drilling_rig" and schema_field == "DP_CLASS":
+                continue
             value = pairs.get(" ".join(pdf_key.split()))
             if value and value.strip() and schema_field not in record:
                 specs.setdefault(schema_field, value.strip())
