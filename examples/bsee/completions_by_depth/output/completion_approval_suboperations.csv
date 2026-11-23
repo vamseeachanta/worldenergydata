@@ -1,0 +1,21 @@
+suboperation,description,approvals,share_percent
+INITCOMP,Initial Completion,6841,80.7
+FRAC,Hydraulic Fracking,2089,24.7
+PERF,Modify Perforations,1028,12.1
+OTHER,Describe Operation(S),397,4.7
+WELLNAME,Change Well Name,395,4.7
+REPERF,Reperforation,387,4.6
+OTHRCOMP,Other Completion,135,1.6
+LIFT,Artifical Lift,98,1.2
+DESAND,Wash/Desand Well,69,0.8
+INJECT,Initial Injection Well,64,0.8
+ACIDIZE,Acidize,59,0.7
+JET,Jet Well,45,0.5
+TUBING,Change Tubing,45,0.5
+TEMPABAN,Temporary Abandonment,24,0.3
+SURFPLAT,Surface Location Plat,20,0.2
+CASING,Casing Pressure Repair,9,0.1
+OTHRINFO,Other Information,9,0.1
+OTHRWKVR,Other Workover,8,0.1
+ZONEISO,Zone Isolation,6,0.1
+OTHRENPR,Other Enhance Production,2,0.0

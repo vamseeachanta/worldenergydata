@@ -1,0 +1,221 @@
+year,band,basis,bores,partial_year
+2005,under 100 m,approval,214,False
+2005,100 to 500 m,approval,20,False
+2005,500 to 1500 m,approval,21,False
+2005,1500 m and deeper,approval,10,False
+2005,no depth,approval,0,False
+2006,under 100 m,approval,310,False
+2006,100 to 500 m,approval,27,False
+2006,500 to 1500 m,approval,35,False
+2006,1500 m and deeper,approval,23,False
+2006,no depth,approval,0,False
+2007,under 100 m,approval,243,False
+2007,100 to 500 m,approval,31,False
+2007,500 to 1500 m,approval,39,False
+2007,1500 m and deeper,approval,25,False
+2007,no depth,approval,0,False
+2008,under 100 m,approval,213,False
+2008,100 to 500 m,approval,21,False
+2008,500 to 1500 m,approval,50,False
+2008,1500 m and deeper,approval,12,False
+2008,no depth,approval,0,False
+2009,under 100 m,approval,99,False
+2009,100 to 500 m,approval,26,False
+2009,500 to 1500 m,approval,36,False
+2009,1500 m and deeper,approval,20,False
+2009,no depth,approval,0,False
+2010,under 100 m,approval,115,False
+2010,100 to 500 m,approval,8,False
+2010,500 to 1500 m,approval,20,False
+2010,1500 m and deeper,approval,8,False
+2010,no depth,approval,0,False
+2011,under 100 m,approval,116,False
+2011,100 to 500 m,approval,10,False
+2011,500 to 1500 m,approval,22,False
+2011,1500 m and deeper,approval,10,False
+2011,no depth,approval,0,False
+2012,under 100 m,approval,112,False
+2012,100 to 500 m,approval,4,False
+2012,500 to 1500 m,approval,21,False
+2012,1500 m and deeper,approval,10,False
+2012,no depth,approval,0,False
+2013,under 100 m,approval,118,False
+2013,100 to 500 m,approval,6,False
+2013,500 to 1500 m,approval,35,False
+2013,1500 m and deeper,approval,15,False
+2013,no depth,approval,0,False
+2014,under 100 m,approval,122,False
+2014,100 to 500 m,approval,8,False
+2014,500 to 1500 m,approval,25,False
+2014,1500 m and deeper,approval,22,False
+2014,no depth,approval,0,False
+2015,under 100 m,approval,59,False
+2015,100 to 500 m,approval,10,False
+2015,500 to 1500 m,approval,26,False
+2015,1500 m and deeper,approval,34,False
+2015,no depth,approval,0,False
+2016,under 100 m,approval,15,False
+2016,100 to 500 m,approval,6,False
+2016,500 to 1500 m,approval,22,False
+2016,1500 m and deeper,approval,22,False
+2016,no depth,approval,0,False
+2017,under 100 m,approval,25,False
+2017,100 to 500 m,approval,12,False
+2017,500 to 1500 m,approval,14,False
+2017,1500 m and deeper,approval,24,False
+2017,no depth,approval,0,False
+2018,under 100 m,approval,35,False
+2018,100 to 500 m,approval,13,False
+2018,500 to 1500 m,approval,30,False
+2018,1500 m and deeper,approval,25,False
+2018,no depth,approval,0,False
+2019,under 100 m,approval,27,False
+2019,100 to 500 m,approval,8,False
+2019,500 to 1500 m,approval,35,False
+2019,1500 m and deeper,approval,16,False
+2019,no depth,approval,0,False
+2020,under 100 m,approval,10,False
+2020,100 to 500 m,approval,9,False
+2020,500 to 1500 m,approval,20,False
+2020,1500 m and deeper,approval,35,False
+2020,no depth,approval,0,False
+2021,under 100 m,approval,19,False
+2021,100 to 500 m,approval,7,False
+2021,500 to 1500 m,approval,20,False
+2021,1500 m and deeper,approval,16,False
+2021,no depth,approval,0,False
+2022,under 100 m,approval,28,False
+2022,100 to 500 m,approval,6,False
+2022,500 to 1500 m,approval,22,False
+2022,1500 m and deeper,approval,25,False
+2022,no depth,approval,0,False
+2023,under 100 m,approval,24,False
+2023,100 to 500 m,approval,3,False
+2023,500 to 1500 m,approval,17,False
+2023,1500 m and deeper,approval,26,False
+2023,no depth,approval,0,False
+2024,under 100 m,approval,23,False
+2024,100 to 500 m,approval,3,False
+2024,500 to 1500 m,approval,19,False
+2024,1500 m and deeper,approval,21,False
+2024,no depth,approval,0,False
+2025,under 100 m,approval,17,False
+2025,100 to 500 m,approval,1,False
+2025,500 to 1500 m,approval,20,False
+2025,1500 m and deeper,approval,35,False
+2025,no depth,approval,0,False
+2026,under 100 m,approval,15,True
+2026,100 to 500 m,approval,0,True
+2026,500 to 1500 m,approval,12,True
+2026,1500 m and deeper,approval,23,True
+2026,no depth,approval,0,True
+2005,under 100 m,report,273,False
+2005,100 to 500 m,report,25,False
+2005,500 to 1500 m,report,23,False
+2005,1500 m and deeper,report,9,False
+2005,no depth,report,0,False
+2006,under 100 m,report,318,False
+2006,100 to 500 m,report,25,False
+2006,500 to 1500 m,report,30,False
+2006,1500 m and deeper,report,21,False
+2006,no depth,report,0,False
+2007,under 100 m,report,248,False
+2007,100 to 500 m,report,33,False
+2007,500 to 1500 m,report,43,False
+2007,1500 m and deeper,report,23,False
+2007,no depth,report,0,False
+2008,under 100 m,report,208,False
+2008,100 to 500 m,report,22,False
+2008,500 to 1500 m,report,49,False
+2008,1500 m and deeper,report,13,False
+2008,no depth,report,0,False
+2009,under 100 m,report,112,False
+2009,100 to 500 m,report,25,False
+2009,500 to 1500 m,report,36,False
+2009,1500 m and deeper,report,19,False
+2009,no depth,report,0,False
+2010,under 100 m,report,119,False
+2010,100 to 500 m,report,7,False
+2010,500 to 1500 m,report,21,False
+2010,1500 m and deeper,report,8,False
+2010,no depth,report,0,False
+2011,under 100 m,report,99,False
+2011,100 to 500 m,report,11,False
+2011,500 to 1500 m,report,23,False
+2011,1500 m and deeper,report,8,False
+2011,no depth,report,0,False
+2012,under 100 m,report,120,False
+2012,100 to 500 m,report,2,False
+2012,500 to 1500 m,report,19,False
+2012,1500 m and deeper,report,9,False
+2012,no depth,report,0,False
+2013,under 100 m,report,106,False
+2013,100 to 500 m,report,8,False
+2013,500 to 1500 m,report,27,False
+2013,1500 m and deeper,report,13,False
+2013,no depth,report,0,False
+2014,under 100 m,report,123,False
+2014,100 to 500 m,report,8,False
+2014,500 to 1500 m,report,24,False
+2014,1500 m and deeper,report,19,False
+2014,no depth,report,0,False
+2015,under 100 m,report,63,False
+2015,100 to 500 m,report,9,False
+2015,500 to 1500 m,report,28,False
+2015,1500 m and deeper,report,32,False
+2015,no depth,report,0,False
+2016,under 100 m,report,16,False
+2016,100 to 500 m,report,6,False
+2016,500 to 1500 m,report,20,False
+2016,1500 m and deeper,report,22,False
+2016,no depth,report,0,False
+2017,under 100 m,report,23,False
+2017,100 to 500 m,report,12,False
+2017,500 to 1500 m,report,18,False
+2017,1500 m and deeper,report,27,False
+2017,no depth,report,0,False
+2018,under 100 m,report,35,False
+2018,100 to 500 m,report,11,False
+2018,500 to 1500 m,report,31,False
+2018,1500 m and deeper,report,21,False
+2018,no depth,report,0,False
+2019,under 100 m,report,29,False
+2019,100 to 500 m,report,11,False
+2019,500 to 1500 m,report,35,False
+2019,1500 m and deeper,report,19,False
+2019,no depth,report,0,False
+2020,under 100 m,report,10,False
+2020,100 to 500 m,report,7,False
+2020,500 to 1500 m,report,20,False
+2020,1500 m and deeper,report,29,False
+2020,no depth,report,0,False
+2021,under 100 m,report,16,False
+2021,100 to 500 m,report,4,False
+2021,500 to 1500 m,report,15,False
+2021,1500 m and deeper,report,20,False
+2021,no depth,report,0,False
+2022,under 100 m,report,29,False
+2022,100 to 500 m,report,9,False
+2022,500 to 1500 m,report,28,False
+2022,1500 m and deeper,report,18,False
+2022,no depth,report,0,False
+2023,under 100 m,report,20,False
+2023,100 to 500 m,report,2,False
+2023,500 to 1500 m,report,17,False
+2023,1500 m and deeper,report,21,False
+2023,no depth,report,0,False
+2024,under 100 m,report,21,False
+2024,100 to 500 m,report,3,False
+2024,500 to 1500 m,report,15,False
+2024,1500 m and deeper,report,22,False
+2024,no depth,report,0,False
+2025,under 100 m,report,14,False
+2025,100 to 500 m,report,2,False
+2025,500 to 1500 m,report,21,False
+2025,1500 m and deeper,report,35,False
+2025,no depth,report,0,False
+2026,under 100 m,report,11,True
+2026,100 to 500 m,report,1,True
+2026,500 to 1500 m,report,10,True
+2026,1500 m and deeper,report,21,True
+2026,no depth,report,0,True
