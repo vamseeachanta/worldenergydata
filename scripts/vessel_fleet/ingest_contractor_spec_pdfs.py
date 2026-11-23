@@ -170,6 +170,8 @@ def write_raw_source(
         for field in _CURATED_FIELDS:
             if field in entry["specs"]:
                 record[field] = entry["specs"][field]
+        if "DRAFT_M" in entry["specs"]:
+            record["RAW_DRAFT_LOAD_LINE_FT"] = entry["specs"].get("RAW_DRAFT_LOAD_LINE_FT")
         generation = _derive_generation(record)
         if generation:
             record["GENERATION"] = generation
@@ -203,6 +205,8 @@ def apply_to_curated(extraction: dict, data_dir: Path, urls: dict[str, str]) -> 
         for field in _CURATED_FIELDS:
             if field in entry["specs"]:
                 record[field] = entry["specs"][field]
+        if "DRAFT_M" in entry["specs"]:
+            record["RAW_DRAFT_LOAD_LINE_FT"] = entry["specs"].get("RAW_DRAFT_LOAD_LINE_FT")
         record["DIMENSION_CONFIDENCE"] = "measured"
         if not record.get("DATA_SOURCE_URL"):
             record["DATA_SOURCE_URL"] = urls.get(entry.get("pdf")) or entry.get("url")

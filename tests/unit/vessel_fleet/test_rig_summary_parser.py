@@ -669,7 +669,7 @@ def test_seadrill_operating_draft_is_not_load_line():
 
 
 def test_unqualified_jackup_draft_is_not_inferred_as_load_line():
-    assert "RAW_DRAFT_LOAD_LINE_FT" not in parse_rig_summary_text("Drafts  22 ft\n")
+    assert parse_rig_summary_text("Drafts  22 ft\n") == {}
 
 
 def test_seadrill_operating_and_load_line_drafts_remain_distinct():
@@ -677,3 +677,11 @@ def test_seadrill_operating_and_load_line_drafts_remain_distinct():
     assert spec["RAW_DRAFT_LOAD_LINE_FT"] == 24.0
     assert spec["RAW_DRAFT_OPERATING_FT"] == 20.0
     assert spec["DRAFT_M"] == 6.1
+
+
+def test_unqualified_matching_layout_does_not_establish_load_line():
+    spec = parse_rig_summary_text("Drafts  22 ft. (6.7 m) / Transit 20 ft. (6.1 m)\n")
+    assert spec["DRAFT_M"] == 6.7
+    assert spec["RAW_DRAFT_OPERATING_FT"] == 22.0
+    assert spec["RAW_DRAFT_TRANSIT_FT"] == 20.0
+    assert "RAW_DRAFT_LOAD_LINE_FT" not in spec
