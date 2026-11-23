@@ -1,0 +1,35 @@
+level,VALUE,DESCRIP,rule
+primary,ABANDON,Abandonment Of Well Bore,PERMABAN before TEMPABAN; unspecified excluded
+primary,COMP,Completion,ZONE -> intervention; otherwise completion
+primary,ENHANCE,Enhance Production,Intervention
+primary,INFORM,Information,Excluded: administrative scope
+primary,OTHER,Other Operation,Excluded: ambiguous scope
+primary,UTIL,Utility,Excluded: utility scope
+primary,WORKOVER,Workover,Intervention
+subtype,ACIDIZE,Acidize,Retain primary classification
+subtype,CASING,Casing Pressure Repair,Retain primary classification
+subtype,CLEARNCE,Site Clearance,Retain primary classification
+subtype,DESAND,Wash/Desand Well,Retain primary classification
+subtype,FLUIDS,Additional Fluids For Injection,Retain primary classification
+subtype,FRAC,Hydraulic Fracking,Retain primary classification
+subtype,INITCOMP,Initial Completion,Retain primary classification
+subtype,INJECT,Initial Injection Well,Retain primary classification
+subtype,JET,Jet Well,Retain primary classification
+subtype,LIFT,Artifical Lift,Retain primary classification
+subtype,OTHER,Describe Operation(S),Retain primary classification
+subtype,OTHRABAN,Other Abandonment,Retain primary classification
+subtype,OTHRCOMP,Other Completion,Retain primary classification
+subtype,OTHRENPR,Other Enhance Production,Retain primary classification
+subtype,OTHRINFO,Other Information,Retain primary classification
+subtype,OTHRUTIL,Other Utility,Retain primary classification
+subtype,OTHRWKVR,Other Workover,Retain primary classification
+subtype,PERF,Modify Perforations,Retain primary classification
+subtype,PERMABAN,Permanent Abandonment,ABANDON -> permanent; precedence over TEMPABAN
+subtype,PLUGBACK,Plugback To Sidetrack/Bypass,Exclude new-hole work before any other rule
+subtype,REPERF,Reperforation,Retain primary classification
+subtype,SURFPLAT,Surface Location Plat,Retain primary classification
+subtype,TEMPABAN,Temporary Abandonment,ABANDON -> temporary unless PERMABAN
+subtype,TUBING,Change Tubing,Retain primary classification
+subtype,WELLNAME,Change Well Name,Retain primary classification
+subtype,ZONE,Change Zone,COMP -> intervention
+subtype,ZONEISO,Zone Isolation,Retain primary classification

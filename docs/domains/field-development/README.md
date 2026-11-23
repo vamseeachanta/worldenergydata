@@ -54,7 +54,8 @@ diagram-as-code pipeline. ~70 sourced references + an uncertainty-flags section.
 - BSEE asset data (`data/modules/bsee/`), vessel fleet (`vessel_fleet/`), subsea
   hardware catalogs (`subsea/`), public FDP costs (`cost/`).
 - **SubseaIQ-derived field catalog** (`data/modules/offshore_assets/curated/fields.csv`,
-  ~2014 vintage) — stale and freely usable; loaded via `subseaiq.py` (#569) and
+  ~2014 vintage) — held privately pending redistribution-terms review.
+  Default reads raise `DatasetUnavailableError`; explicit independent inputs can be
   crosswalked to BSEE on the **BOEM block key** (area+block, e.g. `GC254`), since
   BSEE codes deepwater fields by lease block, not name.
 
@@ -68,7 +69,5 @@ interop, #579 layout optimization, #580 equipment-3D.
 
 The join key is the **BOEM block**, not the field name. SubseaIQ `BLOCK`
 ("Green Canyon 254") parses to `(GC, 254)` → BSEE OGOR-A field code `GC254`.
-Name-matching scores 0% (BSEE doesn't name deepwater fields); block-matching
-links ~22% of SubseaIQ GoM fields against ~6 OGOR years (rises with more years /
-a fuller area-abbreviation map; undeveloped discoveries never appear in OGOR
-production data). See `subseaiq.build_bsee_crosswalk`.
+The historical crosswalk and its measured match rates are withheld with the
+source catalog. See `subseaiq.build_bsee_crosswalk`.

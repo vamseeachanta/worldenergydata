@@ -30,7 +30,7 @@ env:
 jobs:
   full-suite:
     name: Full suite (Python ${{ matrix.python-version }})
-    runs-on: [self-hosted, x64]
+    runs-on: [self-hosted, x64, Linux]
     timeout-minutes: 240
     strategy:
       fail-fast: false
@@ -56,13 +56,69 @@ jobs:
         # instead of being silently re-resolved here.
         run: uv sync --frozen --all-extras --python ${{ matrix.python-version }}
 
+      - name: Select parallel test targets
+        id: test-targets
+        run: |
+          targets=$(find tests -maxdepth 1 -mindepth 1 \
+            \( -type d ! -name performance ! -name integration ! -name __pycache__ \) \
+            -o -maxdepth 1 -name 'test_*.py' | sort | tr '\n' ' ')
+          echo "targets=$targets" >> "$GITHUB_OUTPUT"
+
+      - name: Collect full suite
+        id: collection
+        env:
+          TEST_TARGETS: ${{ steps.test-targets.outputs.targets }}
+        run: |
+          evidence_dir="$RUNNER_TEMP/collection-evidence"
+          mkdir -p "$evidence_dir"
+          interpreter=$(uv run --frozen python --version)
+          set +e
+          uv run --frozen pytest $TEST_TARGETS tests/integration tests/performance \
+            --collect-only -q --color=no -p no:cacheprovider > "$evidence_dir/collection.log" 2>&1
+          pytest_status=$?
+          set -e
+          cat "$evidence_dir/collection.log"
+          selected=$(sed -nE -e 's/^([0-9]+)(\/[0-9]+)? tests? collected.*/\1/p' \
+            -e 's/^no tests collected.*/0/p' \
+            "$evidence_dir/collection.log" | tail -n 1)
+          status=$pytest_status
+          if [[ ! "$selected" =~ ^[0-9]+$ ]]; then
+            selected=unknown
+            if [[ "$status" == 0 ]]; then status=5; fi
+          elif [[ "$selected" == 0 && "$status" == 0 ]]; then
+            status=5
+          fi
+          {
+            echo "revision=$GITHUB_SHA"
+            echo "interpreter=$interpreter"
+            echo "selected_tests=$selected"
+            echo "pytest_status=$pytest_status"
+            echo "status=$status"
+          } > "$evidence_dir/summary.txt"
+          cat "$evidence_dir/summary.txt" >> "$GITHUB_STEP_SUMMARY"
+          exit "$status"
+
+      - name: Check collection contract
+        if: ${{ !cancelled() && steps.collection.outcome != 'skipped' }}
+        run: uv run --frozen pytest tests/ci/test_collection_contract.py -p no:cacheprovider
+
+      - name: Upload collection evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: collection-evidence-${{ matrix.python-version }}
+          path: ${{ runner.temp }}/collection-evidence/
+          if-no-files-found: warn
+
       - name: Run tests with coverage
+        if: ${{ !cancelled() && steps.test-targets.outcome == 'success' }}
+        env:
+          TEST_TARGETS: ${{ steps.test-targets.outputs.targets }}
         run: |
           # tests/integration kills xdist workers (a CLI edge-case test
           # hard-exits the process); tests/performance asserts wall-clock
           # budgets; both run sequentially in the next step.
-          targets=$(find tests -maxdepth 1 -mindepth 1 \( -type d ! -name performance ! -name integration ! -name __pycache__ \) -o -maxdepth 1 -name 'test_*.py' | sort | tr '\n' ' ')
-          uv run --frozen --with pytest-xdist pytest $targets \
+          uv run --frozen --with pytest-xdist pytest $TEST_TARGETS \
             -n auto \
             --tb=short \
             --cov=src \
@@ -103,7 +159,7 @@ jobs:
 
   lockfile:
     name: Lockfile currency
-    runs-on: [self-hosted, x64]
+    runs-on: [self-hosted, Linux]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -140,7 +196,7 @@ jobs:
     name: F821 inventory
     # Repeated undefined-name inventories (docs/ci/f821-scans.md). Five runs
     # with a 300 s budget each are too slow for the PR lint gate.
-    runs-on: [self-hosted, x64]
+    runs-on: [self-hosted, x64, Linux]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -165,7 +221,7 @@ jobs:
 
       - name: Upload F821 scan evidence
         if: ${{ always() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: f821-scan-evidence
           path: ${{ runner.temp }}/f821-scan
@@ -173,7 +229,7 @@ jobs:
 
   type-check:
     name: Type Check
-    runs-on: [self-hosted, x64]
+    runs-on: [self-hosted, x64, Linux]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -200,7 +256,7 @@ jobs:
 
   docs:
     name: Documentation
-    runs-on: [self-hosted, x64]
+    runs-on: [self-hosted, Linux]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -228,7 +284,7 @@ jobs:
 
   build:
     name: Build Package
-    runs-on: [self-hosted, x64]
+    runs-on: [self-hosted, Linux]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -255,7 +311,7 @@ jobs:
 
   security-deep:
     name: Security Scan (deep)
-    runs-on: [self-hosted, x64]
+    runs-on: [self-hosted, Linux]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -276,7 +332,7 @@ jobs:
 
   dependency-audit:
     name: Dependency Audit
-    runs-on: [self-hosted, x64]
+    runs-on: [self-hosted, x64, Linux]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -303,7 +359,7 @@ jobs:
 
   performance-benchmark:
     name: Performance Benchmark
-    runs-on: [self-hosted, x64]
+    runs-on: [self-hosted, x64, Linux]
     needs: [full-suite]
     if: ${{ !cancelled() }}
     steps:
@@ -340,7 +396,7 @@ jobs:
 
   notify-failure:
     name: Notify on Failure
-    runs-on: [self-hosted, x64]
+    runs-on: [self-hosted, Linux]
     needs: [full-suite, lockfile, f821-inventory, docs, build, dependency-audit]
     if: failure() && github.ref == 'refs/heads/main'
     permissions:

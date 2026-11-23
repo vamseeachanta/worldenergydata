@@ -13,12 +13,17 @@ normalizes before matching:
 
 Dimensions are returned in metres (schema ``*_M`` fields, 1 decimal) with the
 source imperial values preserved under ``RAW_*`` keys for provenance review.
+Explicit load-line drafts also use ``RAW_DRAFT_LOAD_LINE_FT``. For these values,
+``RAW_DRAFT_OPERATING_FT`` remains a deprecated compatibility alias, rather than
+evidence of operating draft. ``DRAFT_M`` retains the source draft condition.
 """
 
 from __future__ import annotations
 
 import re
 from typing import Any, Optional
+
+from worldenergydata.vessel_fleet.parsers.spec_dp import parse_spec_dp
 
 FT_TO_M = 0.3048
 KIPS_PER_SHORT_TON = 2.0  # 1 short ton = 2,000 lb; 1 kip = 1,000 lb
@@ -79,6 +84,7 @@ def parse_rig_summary_text(text: str) -> dict[str, Any]:
     Only fields present in the text are returned; absent fields are omitted
     (never None-filled) so callers can distinguish "not stated" from parsed.
     """
+    dp_specs = parse_spec_dp(text)
     text = _normalize(text)
     out: dict[str, Any] = {}
 
@@ -201,6 +207,9 @@ def parse_rig_summary_text(text: str) -> dict[str, Any]:
 
     # Cross-layout equipment capabilities (#1006) — same fill-the-gaps merge.
     for field, value in _parse_equipment(text).items():
+        out.setdefault(field, value)
+
+    for field, value in dp_specs.items():
         out.setdefault(field, value)
 
     return out
@@ -490,7 +499,7 @@ def _parse_borr_layout(text: str) -> dict[str, Any]:
         out["RAW_DIMENSIONS_FT"] = f"{loa_ft:g} x {beam_ft:g} x {depth_ft:g}"
 
     draft = re.search(
-        rf"^\s*Drafts?\s{{2,}}({_NUM_TIGHT})\s*ft\.?\s*(?:at\s+)?(load\s*line|transit)",
+        rf"^\s*Drafts?\s{{2,}}({_NUM_TIGHT})\s*ft\.?\s*(?:at\s+)?(load[\s-]*line|transit)",
         text,
         re.IGNORECASE | re.MULTILINE,
     )
@@ -500,6 +509,8 @@ def _parse_borr_layout(text: str) -> dict[str, Any]:
             out["RAW_DRAFT_TRANSIT_FT"] = draft_ft
         else:
             out["DRAFT_M"] = _ft_to_m(draft_ft)
+            out["RAW_DRAFT_LOAD_LINE_FT"] = draft_ft
+            # Deprecated alias for existing extraction consumers.
             out["RAW_DRAFT_OPERATING_FT"] = draft_ft
 
     displacement = re.search(
@@ -607,13 +618,23 @@ def _parse_seadrill_layout(text: str) -> dict[str, Any]:
     if draft_line:
         line = draft_line.group(1)
         operating = re.search(
-            rf"({_NUM_TIGHT})\s*ft\s*\((?:operating|loadline)\)", line, re.IGNORECASE
+            rf"({_NUM_TIGHT})\s*ft\s*\(operating\)", line, re.IGNORECASE
+        )
+        load_line = re.search(
+            rf"({_NUM_TIGHT})\s*ft\s*\(load[\s-]*line\)", line, re.IGNORECASE
         )
         transit = re.search(rf"({_NUM_TIGHT})\s*ft\s*\(transit\)", line, re.IGNORECASE)
         if operating:
             op_ft = _clean_number(operating.group(1))
             out["DRAFT_M"] = _ft_to_m(op_ft)
             out["RAW_DRAFT_OPERATING_FT"] = op_ft
+        if load_line:
+            load_line_ft = _clean_number(load_line.group(1))
+            out["RAW_DRAFT_LOAD_LINE_FT"] = load_line_ft
+            out.setdefault("DRAFT_M", _ft_to_m(load_line_ft))
+            # Preserve a separately stated operating draft; otherwise retain
+            # the deprecated alias used by existing extraction consumers.
+            out.setdefault("RAW_DRAFT_OPERATING_FT", load_line_ft)
         if transit:
             out["RAW_DRAFT_TRANSIT_FT"] = _clean_number(transit.group(1))
 

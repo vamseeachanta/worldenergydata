@@ -9,6 +9,26 @@
 schema_version: 2
 invocation: "uv run python -m worldenergydata {input}"
 workflows:
+  - id: cost-disclosure-benchmark
+    basename: cost
+    title: Operator cost benchmarking report from annual-disclosure seed data
+    input: examples/workflows/cost-disclosure-benchmark/input.yml
+    result:
+      kind: files
+    outputs:
+      - examples/workflows/cost-disclosure-benchmark/outputs/operator_cost_benchmarking.html
+      - examples/workflows/cost-disclosure-benchmark/outputs/operator_cost_benchmarking_facts.json
+    assertions:
+      json:
+        - path: examples/workflows/cost-disclosure-benchmark/outputs/operator_cost_benchmarking_facts.json
+          equals:
+            operators_covered: 3
+    test: tests/workflows/test_durable_workflows.py::test_registry_workflow_outputs[cost-disclosure-benchmark]
+    runtime: offline
+    data_source:
+      type: bundled-fixture
+      network_required: false
+      fixtures: []  # Inputs are bundled in the cost package.
   - id: bsee-production-summary
     basename: bsee
     title: BSEE production summary from bundled CSV data
@@ -270,3 +290,25 @@ workflows:
       network_required: false
       fixtures:
         - examples/workflows/federal-acreage-evidence/fixture_records.json
+  - id: ukcs-reference-report
+    basename: ukcs
+    title: UKCS NSTA reference-chain report (fixture, pre-tax plumbing)
+    input: examples/workflows/ukcs-reference-report/input.yml
+    result:
+      kind: files
+    outputs:
+      - examples/workflows/ukcs-reference-report/outputs/ukcs_reference_report_report.html
+      - examples/workflows/ukcs-reference-report/outputs/ukcs_reference_report_facts.json
+    assertions:
+      json:
+        - path: examples/workflows/ukcs-reference-report/outputs/ukcs_reference_report_facts.json
+          equals:
+            economics_label: chain_plumbing_pre_tax
+            provenance: fixture
+    test: tests/workflows/test_durable_workflows.py::test_registry_workflow_outputs[ukcs-reference-report]
+    runtime: offline
+    data_source:
+      type: bundled-fixture
+      network_required: false
+      fixtures:
+        - examples/workflows/ukcs-reference-report/sample_nsta_production.csv

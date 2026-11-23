@@ -156,12 +156,13 @@ class TestEIAApiClientFetch:
 
     def test_fetch_series_returns_cached_on_hit(self, mock_client):
         mock_client.cache_enabled = True
+        seeded = [{"period": "2024-01", "value": 9000.0}]
         mock_client.cache.set(
-            mock_client.generate_cache_key("PET.MCRFPUS2.M", {}),
-            [{"period": "2024-01", "value": 9000.0}],
+            mock_client.generate_cache_key("PET.MCRFPUS2.M", {}, use_mock=True),
+            seeded,
         )
         result = mock_client.fetch_series("PET.MCRFPUS2.M", use_mock=True)
-        assert isinstance(result, list)
+        assert result == seeded
 
 
 # ── Error classes ──────────────────────────────────────────────────────────────

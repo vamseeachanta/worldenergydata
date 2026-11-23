@@ -1,0 +1,306 @@
+# Exact orphan snapshot; new and reachable exceptions are reported without failing CI.
+# Discovery includes archived files excluded by pytest; see pyproject.toml.
+# Archive basis: pytest configuration at 841cb7d4; earlier exclusions name 254c0c1d.
+# Routing basis: main revision cd5bdf73.
+tests/_archive/integration/test_bsee_pipeline.py # reason: archived
+tests/_archive/modules/bsee/analysis/2025-08-05-multiple-wells-comparison-test/final_system_validation_test.py # reason: archived
+tests/_archive/modules/bsee/analysis/2025-08-05-multiple-wells-comparison-test/multiple_wells_comparison_test.py # reason: archived
+tests/_archive/modules/bsee/analysis/2025-08-05-multiple-wells-comparison-test/optimized_multiple_wells_comparison_test.py # reason: archived
+tests/_archive/modules/bsee/analysis/2025-08-05-multiple-wells-comparison-test/test_integration_quality_assurance.py # reason: archived
+tests/_archive/modules/bsee/analysis/2025-08-06-data-refresh-architecture/test_ajax_endpoint_analysis.py # reason: archived
+tests/_archive/modules/bsee/analysis/2025-08-06-data-refresh-architecture/test_api_discovery.py # reason: archived
+tests/_archive/modules/bsee/analysis/2025-08-06-data-refresh-architecture/test_bsee_url_access.py # reason: archived
+tests/_archive/modules/bsee/analysis/2025-08-06-data-refresh-architecture/test_data_gov_integration.py # reason: archived
+tests/_archive/modules/bsee/analysis/2025-08-06-data-refresh-architecture/test_government_api_patterns.py # reason: archived
+tests/_archive/modules/bsee/analysis/2025-08-06-data-refresh-architecture/test_memory_management_safeguards.py # reason: archived
+tests/_archive/modules/bsee/analysis/2025-08-06-data-refresh-architecture/test_website_documentation.py # reason: archived
+tests/_archive/modules/bsee/analysis/legacy/direct_npv_test.py # reason: archived
+tests/_archive/modules/bsee/analysis/legacy/run_npv_test.py # reason: archived
+tests/_archive/modules/bsee/analysis/test_cash_flow_validation.py # reason: archived
+tests/_archive/modules/bsee/analysis/test_excel_aligned_npv.py # reason: archived
+tests/_archive/modules/bsee/analysis/test_field_comparison_table.py # reason: archived
+tests/_archive/modules/bsee/analysis/test_monthly_field_economics.py # reason: archived
+tests/_archive/modules/bsee/analysis/test_npv_accuracy_validation.py # reason: archived
+tests/_archive/performance/test_execution_benchmarks.py # reason: archived
+tests/_archive/performance/test_memory_usage.py # reason: archived
+tests/_archive/performance/test_regression_detection.py # reason: archived
+tests/_archive/test_read_zip.py # reason: archived
+tests/agent_os/test_agent_framework.py # reason: test path has no self route
+tests/ai_test_generation/fixers/test_fixer.py # reason: test path has no self route
+tests/ai_test_generation/templates/test_templates.py # reason: test path has no self route
+tests/analysis/test_legacy_symbol_inventory.py # reason: test path has no self route
+tests/benchmarks/test_eia_benchmarks.py # reason: test path has no self route
+tests/ci/test_audit_selector_reach.py # reason: CI test-only diff has no self route
+tests/ci/test_check_f821.py # reason: CI test-only diff has no self route
+tests/ci/test_collection_contract.py # reason: CI test-only diff has no self route
+tests/ci/test_explain_selection.py # reason: CI test-only diff has no self route
+tests/ci/test_package_closure.py # reason: CI test-only diff has no self route
+tests/ci/test_replay_checkout.py # reason: CI test-only diff has no self route
+tests/ci/test_replay_gate.py # reason: CI test-only diff has no self route
+tests/ci/test_runner_routing.py # reason: CI test-only diff has no self route
+tests/ci/test_select_fast_gate.py # reason: CI test-only diff has no self route
+tests/ci/test_select_test_targets.py # reason: CI test-only diff has no self route
+tests/ci/test_selector_reach_example.py # reason: CI test-only diff has no self route
+tests/ci/test_tree_preservation.py # reason: CI test-only diff has no self route
+tests/common/test_query_api_base.py # reason: test path has no self route
+tests/cron/test_scheduler_health.py # reason: test path has no self route
+tests/drilling/test_batch_economics.py # reason: test path has no self route
+tests/hse/test_hse_api.py # reason: test path has no self route
+tests/hse/test_query_completion.py # reason: test path has no self route
+tests/integration/cli/test_bsee_cli.py # reason: test path has no self route
+tests/integration/cli/test_fdas_cli.py # reason: test path has no self route
+tests/integration/cli/test_main_cli.py # reason: test path has no self route
+tests/integration/cli/test_marine_safety_cli.py # reason: test path has no self route
+tests/integration/core/test_engine_integration.py # reason: test path has no self route
+tests/integration/site/test_architecture_panel.py # reason: test path has no self route
+tests/integration/site/test_presentation_layer.py # reason: test path has no self route
+tests/integration/site/test_public_link_graph.py # reason: test path has no self route
+tests/integration/test_bsee_real_execution.py # reason: test path has no self route
+tests/integration/test_config_helper.py # reason: test path has no self route
+tests/integration/test_data_symlink.py # reason: test path has no self route
+tests/integration/test_data_validator_html.py # reason: test path has no self route
+tests/integration/test_kc_ingest_fidelity.py # reason: test path has no self route
+tests/integration/test_production_api12_full.py # reason: test path has no self route
+tests/integration/test_production_with_correct_format.py # reason: test path has no self route
+tests/integration/workflows/test_end_to_end.py # reason: test path has no self route
+tests/marine/test_vessel_gis.py # reason: test path has no self route
+tests/marine_safety/test_api_on_base.py # reason: test path has no self route
+tests/metocean/test_scope_sources.py # reason: test path has no self route
+tests/modules/bsee/analysis/2025-08-01-drilling-script-validation/test_drilling_script_validation.py # reason: archived
+tests/modules/bsee/analysis/2025-08-02-drilling-completion-output-validation/test_data_comparison.py # reason: archived
+tests/modules/bsee/analysis/2025-08-02-drilling-completion-output-validation/test_direct_execution.py # reason: archived
+tests/modules/bsee/analysis/2025-08-02-drilling-completion-output-validation/test_filename_modification.py # reason: archived
+tests/modules/bsee/analysis/2025-08-02-drilling-completion-output-validation/test_report_generation.py # reason: archived
+tests/modules/bsee/analysis/2025-08-04-drilling-completion-days-comparison/drilling_days_comparison_test.py # reason: archived
+tests/modules/bsee/analysis/2025-08-04-drilling-completion-days-comparison/test_comparison_logic.py # reason: archived
+tests/modules/bsee/analysis/2025-08-04-drilling-completion-days-comparison/test_csv_exporter.py # reason: archived
+tests/modules/bsee/analysis/2025-08-04-drilling-completion-days-comparison/test_markdown_generator.py # reason: archived
+tests/modules/bsee/analysis/2025-08-05-multiple-wells-comparison-test/query_api_multiple_wells_rig_days_test.py # reason: archived
+tests/modules/bsee/analysis/2025-08-05-multiple-wells-comparison-test/test_advanced_comparison_engine.py # reason: archived
+tests/modules/bsee/analysis/2025-08-05-multiple-wells-comparison-test/test_large_scale_data_collector.py # reason: archived
+tests/modules/bsee/analysis/2025-08-05-multiple-wells-comparison-test/test_multiple_wells_framework.py # reason: archived
+tests/modules/bsee/analysis/2025-08-05-multiple-wells-comparison-test/test_optimized_multiple_wells_comparison.py # reason: archived
+tests/modules/bsee/analysis/2025-08-05-multiple-wells-comparison-test/test_performance_optimizer.py # reason: archived
+tests/modules/bsee/analysis/2025-08-05-multiple-wells-comparison-test/test_strategic_report_generator.py # reason: archived
+tests/modules/bsee/analysis/2025-08-06-data-refresh-architecture/test_all_data_sources.py # reason: archived
+tests/modules/bsee/analysis/2025-08-06-data-refresh-architecture/test_binary_compatibility.py # reason: archived
+tests/modules/bsee/analysis/2025-08-06-data-refresh-architecture/test_chunked_refresh.py # reason: archived
+tests/modules/bsee/analysis/2025-08-06-data-refresh-architecture/test_corrupted_data_handling.py # reason: archived
+tests/modules/bsee/analysis/2025-08-06-data-refresh-architecture/test_data_validation_error_recovery.py # reason: archived
+tests/modules/bsee/analysis/2025-08-06-data-refresh-architecture/test_enhanced_error_handling.py # reason: archived
+tests/modules/bsee/analysis/2025-08-06-data-refresh-architecture/test_enhanced_execution_path.py # reason: archived
+tests/modules/bsee/analysis/2025-08-06-data-refresh-architecture/test_enhanced_refresh_flag.py # reason: archived
+tests/modules/bsee/analysis/2025-08-06-data-refresh-architecture/test_enhanced_routing.py # reason: archived
+tests/modules/bsee/analysis/2025-08-06-data-refresh-architecture/test_error_handling_integration.py # reason: archived
+tests/modules/bsee/analysis/2025-08-06-data-refresh-architecture/test_git_bash_compatibility.py # reason: archived
+tests/modules/bsee/analysis/2025-08-06-data-refresh-architecture/test_integration_enhanced.py # reason: archived
+tests/modules/bsee/analysis/2025-08-06-data-refresh-architecture/test_memory_efficiency.py # reason: archived
+tests/modules/bsee/analysis/2025-08-06-data-refresh-architecture/test_network_failure_scenarios.py # reason: archived
+tests/modules/bsee/analysis/2025-08-06-data-refresh-architecture/test_parallel_system_execution.py # reason: archived
+tests/modules/bsee/analysis/2025-08-06-data-refresh-architecture/test_task_8_completion.py # reason: archived
+tests/modules/bsee/analysis/2025-08-06-data-refresh-architecture/test_timeout_handling.py # reason: archived
+tests/modules/bsee/analysis/api12_drilling_completion_analysis/test_actual_data_loading.py # reason: test path has no self route
+tests/modules/bsee/analysis/api12_drilling_completion_analysis/test_code_analysis.py # reason: test path has no self route
+tests/modules/bsee/analysis/api12_drilling_completion_analysis/test_data_loading.py # reason: test path has no self route
+tests/modules/bsee/analysis/api12_drilling_completion_analysis/test_excel_monthly_economics_extraction.py # reason: test path has no self route
+tests/modules/bsee/analysis/api12_drilling_completion_analysis/test_excel_vs_task8_comparison.py # reason: test path has no self route
+tests/modules/bsee/analysis/api12_drilling_completion_analysis/test_field_analysis.py # reason: test path has no self route
+tests/modules/bsee/analysis/api12_drilling_completion_analysis/test_production_data_alignment.py # reason: test path has no self route
+tests/modules/bsee/analysis/api12_drilling_completion_analysis/test_report_generation.py # reason: test path has no self route
+tests/modules/bsee/analysis/api12_drilling_completion_analysis/test_representative_wells.py # reason: test path has no self route
+tests/modules/bsee/analysis/api12_drilling_completion_analysis/test_well_selection.py # reason: test path has no self route
+tests/modules/bsee/analysis/comprehensive-report-system/integration/test_end_to_end_basic.py # reason: archived
+tests/modules/bsee/analysis/comprehensive-report-system/integration/test_end_to_end_integration.py # reason: archived
+tests/modules/bsee/analysis/comprehensive-report-system/integration/test_hierarchy_validation.py # reason: archived
+tests/modules/bsee/analysis/comprehensive-report-system/integration/test_performance_integration.py # reason: archived
+tests/modules/bsee/analysis/comprehensive-report-system/performance/test_caching_system.py # reason: archived
+tests/modules/bsee/analysis/comprehensive-report-system/performance/test_parallel_processing.py # reason: archived
+tests/modules/bsee/analysis/comprehensive-report-system/test_aggregation_accuracy.py # reason: archived
+tests/modules/bsee/analysis/comprehensive-report-system/test_aggregation_simple.py # reason: archived
+tests/modules/bsee/analysis/comprehensive-report-system/test_base_report_template.py # reason: archived
+tests/modules/bsee/analysis/comprehensive-report-system/test_cli.py # reason: archived
+tests/modules/bsee/analysis/comprehensive-report-system/test_compliance_calculations.py # reason: archived
+tests/modules/bsee/analysis/comprehensive-report-system/test_compliance_template.py # reason: archived
+tests/modules/bsee/analysis/comprehensive-report-system/test_compliance_visualization.py # reason: archived
+tests/modules/bsee/analysis/comprehensive-report-system/test_data_aggregator.py # reason: archived
+tests/modules/bsee/analysis/comprehensive-report-system/test_economic_template.py # reason: archived
+tests/modules/bsee/analysis/comprehensive-report-system/test_economic_visualization.py # reason: archived
+tests/modules/bsee/analysis/comprehensive-report-system/test_enhanced_aggregation_verification.py # reason: archived
+tests/modules/bsee/analysis/comprehensive-report-system/test_environmental_compliance.py # reason: archived
+tests/modules/bsee/analysis/comprehensive-report-system/test_executive_template.py # reason: archived
+tests/modules/bsee/analysis/comprehensive-report-system/test_executive_visualization.py # reason: archived
+tests/modules/bsee/analysis/comprehensive-report-system/test_hierarchical_aggregation.py # reason: archived
+tests/modules/bsee/analysis/comprehensive-report-system/test_operational_kpis.py # reason: archived
+tests/modules/bsee/analysis/comprehensive-report-system/test_operational_production_efficiency.py # reason: archived
+tests/modules/bsee/analysis/comprehensive-report-system/test_operational_template_core.py # reason: archived
+tests/modules/bsee/analysis/comprehensive-report-system/test_operational_visualization.py # reason: archived
+tests/modules/bsee/analysis/comprehensive-report-system/test_organizational_models.py # reason: archived
+tests/modules/bsee/analysis/comprehensive-report-system/test_production_models.py # reason: archived
+tests/modules/bsee/analysis/comprehensive-report-system/test_report_controller.py # reason: archived
+tests/modules/bsee/analysis/comprehensive-report-system/test_report_exporter.py # reason: archived
+tests/modules/bsee/analysis/comprehensive-report-system/test_template_basic.py # reason: archived
+tests/modules/bsee/analysis/comprehensive-report-system/test_template_variable_substitution.py # reason: archived
+tests/modules/bsee/analysis/comprehensive-report-system/test_visualization_system.py # reason: archived
+tests/modules/bsee/analysis/directional_surveys/test_3d_plotting.py # reason: test path has no self route
+tests/modules/bsee/analysis/directional_surveys/test_complete_workflow.py # reason: test path has no self route
+tests/modules/bsee/analysis/directional_surveys/test_well_api12_directional_surveys.py # reason: test path has no self route
+tests/modules/bsee/analysis/financial-analysis-sme-code/test_cash_flow_calculator.py # reason: archived
+tests/modules/bsee/analysis/financial-analysis-sme-code/test_data_loader.py # reason: archived
+tests/modules/bsee/analysis/financial-analysis-sme-code/test_drilling_completion.py # reason: archived
+tests/modules/bsee/analysis/financial-analysis-sme-code/test_financial.py # reason: archived
+tests/modules/bsee/analysis/financial-analysis-sme-code/test_integration.py # reason: archived
+tests/modules/bsee/analysis/financial-analysis-sme-code/test_lease_grouper.py # reason: archived
+tests/modules/bsee/analysis/financial-analysis-sme-code/test_report_generator.py # reason: archived
+tests/modules/bsee/analysis/financial-analysis-sme-code/test_validators.py # reason: archived
+tests/modules/bsee/analysis/legacy/custom_analysis_test.py # reason: archived
+tests/modules/bsee/analysis/legacy/drilling_completion_days_test.py # reason: archived
+tests/modules/bsee/analysis/legacy/drilling_n_completion_days_test.py # reason: archived
+tests/modules/bsee/analysis/legacy/extract_remarks_test.py # reason: archived
+tests/modules/bsee/analysis/legacy/query_api_01_wells_api12_rig_days_test.py # reason: archived
+tests/modules/bsee/analysis/legacy/query_field_julia_bin_test.py # reason: archived
+tests/modules/bsee/analysis/legacy/query_field_julia_scrapy_test.py # reason: archived
+tests/modules/bsee/analysis/legacy/query_field_julia_test.py # reason: archived
+tests/modules/bsee/analysis/legacy/query_field_stones_test.py # reason: archived
+tests/modules/bsee/analysis/legacy/test_apd_jack_apis.py # reason: archived
+tests/modules/bsee/analysis/legacy/test_apd_jack_by_block.py # reason: archived
+tests/modules/bsee/analysis/legacy/test_apd_julia_by_block.py # reason: archived
+tests/modules/bsee/analysis/legacy/test_apd_stmalo_apis.py # reason: archived
+tests/modules/bsee/analysis/legacy/test_apd_stmalo_by_block.py # reason: archived
+tests/modules/bsee/analysis/legacy/test_get_api12_by_block.py # reason: archived
+tests/modules/bsee/analysis/legacy/test_npv_analysis_debug.py # reason: archived
+tests/modules/bsee/analysis/legacy/test_production_timeline.py # reason: archived
+tests/modules/bsee/analysis/legacy/test_query_api_01_wells_production.py # reason: archived
+tests/modules/bsee/analysis/legacy/test_quickfire.py # reason: archived
+tests/modules/bsee/analysis/legacy/test_refactored_simple.py # reason: archived
+tests/modules/bsee/analysis/legacy/test_timeline_direct.py # reason: archived
+tests/modules/bsee/analysis/npv-data-source-comparison/test_cash_flow_components.py # reason: test path has no self route
+tests/modules/bsee/analysis/npv-data-source-comparison/test_current_npv_implementation.py # reason: test path has no self route
+tests/modules/bsee/analysis/npv-data-source-comparison/test_npv_integration_workflow.py # reason: test path has no self route
+tests/modules/bsee/analysis/npv-data-source-comparison/test_oil_price_extraction.py # reason: test path has no self route
+tests/modules/bsee/analysis/test_type_curves.py # reason: test path has no self route
+tests/modules/bsee/analysis/well-data-verification/test_audit_system.py # reason: archived
+tests/modules/bsee/analysis/well-data-verification/test_cross_reference.py # reason: archived
+tests/modules/bsee/analysis/well-data-verification/test_data_quality.py # reason: archived
+tests/modules/bsee/analysis/well-data-verification/test_report_generation.py # reason: archived
+tests/modules/bsee/analysis/well-data-verification/test_verification_core.py # reason: archived
+tests/modules/bsee/analysis/well-data-verification/test_workflow_engine.py # reason: archived
+tests/modules/bsee/data/legacy_2025/test_dwnld_from_zipurl.py # reason: archived
+tests/modules/bsee/data/legacy_2025/test_prepare_data_for_analysis.py # reason: archived
+tests/modules/bsee/data/legacy_2025/test_query_api_nn_wells_data.py # reason: archived
+tests/modules/bsee/data/legacy_2025/test_query_blk_julia_API.py # reason: archived
+tests/modules/bsee/data/legacy_2025/test_query_blk_julia_LEASE.py # reason: archived
+tests/modules/bsee/data/legacy_2025/test_query_blk_julia_data.py # reason: archived
+tests/modules/bsee/data/legacy_2025/test_query_lease_production_data.py # reason: archived
+tests/modules/bsee/data/legacy_2025/test_quickfire.py # reason: archived
+tests/modules/bsee/data/refresh/data_refresh_enhanced_test.py # reason: archived
+tests/modules/bsee/data/refresh/data_refresh_test.py # reason: archived
+tests/modules/fdas/integration/test_end_to_end.py # reason: excluded by pytest at 254c0c1d; not ignored at 841cb7d4
+tests/modules/field_development/test_analogs.py # reason: test path has no self route
+tests/modules/field_development/test_assembly_3d.py # reason: test path has no self route
+tests/modules/field_development/test_audit_economics.py # reason: test path has no self route
+tests/modules/field_development/test_audit_outputs.py # reason: test path has no self route
+tests/modules/field_development/test_audit_screening.py # reason: test path has no self route
+tests/modules/field_development/test_basin.py # reason: test path has no self route
+tests/modules/field_development/test_block.py # reason: test path has no self route
+tests/modules/field_development/test_calibration.py # reason: test path has no self route
+tests/modules/field_development/test_calibration_evidence.py # reason: test path has no self route
+tests/modules/field_development/test_cost_estimator.py # reason: test path has no self route
+tests/modules/field_development/test_development_comparison.py # reason: test path has no self route
+tests/modules/field_development/test_dexpi.py # reason: test path has no self route
+tests/modules/field_development/test_discount_rate.py # reason: test path has no self route
+tests/modules/field_development/test_equipment_3d.py # reason: test path has no self route
+tests/modules/field_development/test_fdp_portfolio.py # reason: test path has no self route
+tests/modules/field_development/test_fdp_report.py # reason: test path has no self route
+tests/modules/field_development/test_field_assembly_3d.py # reason: test path has no self route
+tests/modules/field_development/test_field_concept.py # reason: test path has no self route
+tests/modules/field_development/test_flow_assurance.py # reason: test path has no self route
+tests/modules/field_development/test_graph.py # reason: test path has no self route
+tests/modules/field_development/test_host_enrichment.py # reason: test path has no self route
+tests/modules/field_development/test_independent_topology.py # reason: test path has no self route
+tests/modules/field_development/test_installation_completeness.py # reason: test path has no self route
+tests/modules/field_development/test_integrations.py # reason: test path has no self route
+tests/modules/field_development/test_interactive_grid.py # reason: test path has no self route
+tests/modules/field_development/test_jackup_provenance.py # reason: test path has no self route
+tests/modules/field_development/test_layout.py # reason: test path has no self route
+tests/modules/field_development/test_layout_optimization.py # reason: test path has no self route
+tests/modules/field_development/test_llm_completion.py # reason: test path has no self route
+tests/modules/field_development/test_module_report.py # reason: test path has no self route
+tests/modules/field_development/test_past_projects.py # reason: test path has no self route
+tests/modules/field_development/test_portfolio_matched.py # reason: test path has no self route
+tests/modules/field_development/test_recommendation.py # reason: test path has no self route
+tests/modules/field_development/test_showcase.py # reason: test path has no self route
+tests/modules/field_development/test_standards_provenance.py # reason: test path has no self route
+tests/modules/field_development/test_subseaiq.py # reason: test path has no self route
+tests/modules/field_development/test_symbols.py # reason: test path has no self route
+tests/modules/field_development/test_terrain.py # reason: test path has no self route
+tests/modules/field_development/test_terrain_3dep.py # reason: test path has no self route
+tests/modules/field_development/test_terrain_download.py # reason: test path has no self route
+tests/modules/hse/importers/test_bsee_incidents_importer_url.py # reason: test path has no self route
+tests/modules/hse/importers/test_bsee_penalties_importer_url.py # reason: test path has no self route
+tests/modules/hse/importers/test_bsee_statistics_importer_url.py # reason: test path has no self route
+tests/modules/marine_safety/analysis/test_cause_analyzer.py # reason: test path has no self route
+tests/modules/marine_safety/analysis/test_cause_report.py # reason: test path has no self route
+tests/modules/marine_safety/test_models.py # reason: test path has no self route
+tests/modules/marketing/test_hurricane_mooring_risk_infographic.py # reason: test path has no self route
+tests/modules/sodir-integration/test_analysis.py # reason: excluded by pytest at 254c0c1d; not ignored at 841cb7d4
+tests/modules/sodir-integration/test_api_client.py # reason: excluded by pytest at 254c0c1d; not ignored at 841cb7d4
+tests/modules/sodir-integration/test_cross_regional_validation.py # reason: excluded by pytest at 254c0c1d; not ignored at 841cb7d4
+tests/modules/sodir-integration/test_data_collection.py # reason: excluded by pytest at 254c0c1d; not ignored at 841cb7d4
+tests/modules/sodir-integration/test_integration.py # reason: excluded by pytest at 254c0c1d; not ignored at 841cb7d4
+tests/modules/sodir-integration/test_performance.py # reason: excluded by pytest at 254c0c1d; not ignored at 841cb7d4
+tests/modules/sodir-integration/test_processors.py # reason: excluded by pytest at 254c0c1d; not ignored at 841cb7d4
+tests/modules/sodir-integration/test_sodir_module.py # reason: excluded by pytest at 254c0c1d; not ignored at 841cb7d4
+tests/modules/well_production_dashboard/test_monitoring.py # reason: excluded by pytest at 254c0c1d; not ignored at 841cb7d4
+tests/modules/well_production_dashboard/test_well_production_dashboard.py # reason: excluded by pytest at 254c0c1d; not ignored at 841cb7d4
+tests/performance/test_critical_operations.py # reason: archived
+tests/performance/test_regression_detector.py # reason: archived
+tests/reservoir/test_resource_estimation.py # reason: test path has no self route
+tests/reservoir/test_resource_estimation_example.py # reason: test path has no self route
+tests/reservoir/test_resource_estimation_validation.py # reason: test path has no self route
+tests/scheduler/test_envelope_adapter.py # reason: test path has no self route
+tests/test_agent_doc_clean.py # reason: test path has no self route
+tests/test_baker_hughes_loader.py # reason: test path has no self route
+tests/test_build_pages.py # reason: test path has no self route
+tests/test_catalog.py # reason: test path has no self route
+tests/test_company_loader.py # reason: test path has no self route
+tests/test_completion_reconciliation.py # reason: test path has no self route
+tests/test_compliance_direct.py # reason: test path has no self route
+tests/test_compliance_final.py # reason: test path has no self route
+tests/test_compliance_standalone.py # reason: test path has no self route
+tests/test_field_onepagers.py # reason: test path has no self route
+tests/test_generate_catalog_atomic.py # reason: test path has no self route
+tests/test_infrastructure_smoke.py # reason: test path has no self route
+tests/test_markers.py # reason: test path has no self route
+tests/test_metadata.py # reason: test path has no self route
+tests/test_metrics_tracker.py # reason: test path has no self route
+tests/test_ndbc.py # reason: test path has no self route
+tests/test_performance_tracking.py # reason: test path has no self route
+tests/test_production_loader.py # reason: test path has no self route
+tests/test_query_api.py # reason: test path has no self route
+tests/test_validation_framework.py # reason: test path has no self route
+tests/unit/simple_modules_test.py # reason: root-level unit test has no module route
+tests/unit/test_achievable_coverage.py # reason: root-level unit test has no module route
+tests/unit/test_atlas_catalog_extension.py # reason: root-level unit test has no module route
+tests/unit/test_atlas_shared_fingerprint.py # reason: root-level unit test has no module route
+tests/unit/test_compliance_direct.py # reason: root-level unit test has no module route
+tests/unit/test_compliance_final.py # reason: root-level unit test has no module route
+tests/unit/test_compliance_standalone.py # reason: root-level unit test has no module route
+tests/unit/test_engine_comprehensive.py # reason: root-level unit test has no module route
+tests/unit/test_engine_simple.py # reason: root-level unit test has no module route
+tests/unit/test_field_atlas_build.py # reason: root-level unit test has no module route
+tests/unit/test_infrastructure_smoke.py # reason: root-level unit test has no module route
+tests/unit/test_marine_safety_collection.py # reason: root-level unit test has no module route
+tests/unit/test_marine_safety_pack_audit.py # reason: root-level unit test has no module route
+tests/unit/test_markers.py # reason: root-level unit test has no module route
+tests/unit/test_metrics_tracker.py # reason: root-level unit test has no module route
+tests/unit/test_modules_compat.py # reason: root-level unit test has no module route
+tests/unit/test_performance_timestamp_parsing.py # reason: root-level unit test has no module route
+tests/unit/test_performance_tracking.py # reason: root-level unit test has no module route
+tests/unit/test_property_based.py # reason: root-level unit test has no module route
+tests/unit/test_tabular_validation_example.py # reason: root-level unit test has no module route
+tests/unit/test_validation_framework.py # reason: root-level unit test has no module route
+tests/unit/test_validators_data_validator.py # reason: root-level unit test has no module route
+tests/workflow_api/test_bsee_pilot_federal.py # reason: test path has no self route
+tests/workflow_api/test_bsee_pilot_publication.py # reason: test path has no self route
+tests/workflow_api/test_bsee_pilot_runner.py # reason: test path has no self route
+tests/workflow_api/test_runner.py # reason: test path has no self route

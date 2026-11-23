@@ -35,7 +35,7 @@ def _state_records(n: int) -> list:
         {
             "period": f"{2010 + (i // 12)}-{(i % 12) + 1:02d}",
             "value": str(round(random.uniform(100, 50000), 1)),
-            "unit": "MBBLS",
+            "unit": "Thousand Barrels",
         }
         for i in range(n)
     ]

@@ -46,6 +46,9 @@ def run_norway_reference_chain(
     Returns:
         Dictionary with unified/FDAS production, FieldConcept, ranked concepts,
         and finite pre-tax cashflow metrics labeled as chain plumbing.
+
+    Raises:
+        ValueError: production is empty for the requested field and period.
     """
     unified = adapter.fetch(
         ProductionQuery(
@@ -56,10 +59,10 @@ def run_norway_reference_chain(
         )
     )
     fdas_production = to_fdas_production(unified)
+    first_oil = _first_oil_date(fdas_production)
     field_concept = build_norway_field_concept(field_meta)
     ranked_concepts = recommend(field_concept)
 
-    first_oil = _first_oil_date(fdas_production)
     wti_prices = {
         str(year_month): oil_price_usd_bbl
         for year_month in fdas_production.get("YEAR_MONTH", pd.Series(dtype="object"))
@@ -90,7 +93,7 @@ def run_norway_reference_chain(
 
 def _first_oil_date(fdas_production: pd.DataFrame) -> datetime:
     if fdas_production.empty:
-        return datetime(1970, 1, 1)
+        raise ValueError("production is empty; cannot determine first-oil date")
     first_period = str(fdas_production["YEAR_MONTH"].min())
     return datetime.strptime(first_period, "%Y-%m")
 

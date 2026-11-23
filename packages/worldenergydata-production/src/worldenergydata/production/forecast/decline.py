@@ -9,12 +9,15 @@ All visualisations use Plotly.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from fractions import Fraction
+from numbers import Integral, Real
 from typing import Callable, Optional
 
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 from scipy.optimize import curve_fit
+from scipy.special import exprel
 
 from worldenergydata.common.decline import (
     exponential_rate,
@@ -25,27 +28,37 @@ from worldenergydata.common.decline import (
 _VALID_MODELS = frozenset({"exponential", "hyperbolic", "harmonic"})
 
 
+def _exact_rate(rate: Real) -> Real:
+    """Preserve the supplied rate in mixed integer, fraction and float arithmetic."""
+    if isinstance(rate, np.integer):
+        return int(rate)
+    if isinstance(rate, (float, np.floating)):
+        return Fraction(*rate.as_integer_ratio())
+    return rate
+
+
 @dataclass
 class ForecastResult:
-    """Result returned by :meth:`ArpsDeclineCurve.fit`.
+    """Result returned by Arps curve fitting or forward simulation.
 
     Attributes
     ----------
     model:
         Decline model used: ``'exponential'``, ``'hyperbolic'``, or ``'harmonic'``.
     qi:
-        Fitted initial production rate (bbl/month).
+        Initial production rate (bbl/month).
     Di:
-        Fitted nominal decline rate (1/month).
+        Nominal decline rate (1/month).
     b:
         Hyperbolic exponent (0 = exponential, 1 = harmonic).
     r_squared:
-        Coefficient of determination for the fit.
+        Coefficient of determination for the fit; NaN for simulation.
     eur_bbl:
         Estimated ultimate recovery at the economic limit (bbl).
     forecast_df:
         Pre-populated forecast DataFrame with columns
-        ``month``, ``rate_bbl``, ``cumulative_bbl``.
+        ``month``, ``rate_bbl``, ``cumulative_bbl``. Rates are month-end
+        samples; cumulative values sum these samples, not integrated volumes.
     lower_ci:
         Lower confidence interval DataFrame (optional).
     upper_ci:
@@ -66,7 +79,10 @@ class ForecastResult:
 class ArpsDeclineCurve:
     """Arps decline curve analysis for oil/gas production forecasting.
 
-    Supports exponential (b=0), hyperbolic (0<b<2), and harmonic (b=1) models.
+    Supports exponential (b=0), hyperbolic, and harmonic (b=1) models.
+    Hyperbolic fitting bounds the exponent to 0<b<2. Simulation accepts any
+    finite positive hyperbolic exponent that passes its numerical checks;
+    exponents above 1 are evaluated without physical qualification.
 
     Examples
     --------
@@ -152,6 +168,116 @@ class ArpsDeclineCurve:
         """
         return self._build_forecast_df(
             result.qi, result.Di, result.b, result.model, months
+        )
+
+    def simulate(
+        self,
+        qi: float,
+        Di: float,
+        b: float,
+        model: str,
+        economic_limit: float,
+        months: int,
+    ) -> ForecastResult:
+        """Evaluate explicit decline parameters without fitting historical data.
+
+        ``qi`` and ``economic_limit`` are rates in bbl/month, ``Di`` is
+        nominal decline in 1/month, and ``b`` is dimensionless. Rates and
+        decline must be finite and positive. The exponent must be 0 for
+        exponential, 1 for harmonic, or strictly positive for hyperbolic.
+        ``months`` must be a positive integer. Booleans and duration scalars
+        are invalid for all numeric parameters.
+
+        For hyperbolic EUR, the harmonic branch requires the floating-point
+        exponent to equal 1 exactly. Simulation can evaluate exponents
+        above 1, including values outside the fitting bounds. Their
+        physical applicability to a well requires separate justification.
+
+        EUR is in bbl and is zero when the limit is at or above ``qi``.
+        If ``qi`` exceeds ``economic_limit`` but both round to the same
+        float, simulation raises ``ValueError`` for the two rates.
+        Otherwise EUR uses the difference between the supplied rates.
+        The limit must be at least 1 bbl/month, matching the existing EUR
+        helper's minimum. The profile follows :meth:`forecast`: month-end
+        rates at months 1 through ``months``, with their cumulative sum.
+        These samples are not integrated monthly volumes. The horizon is
+        fixed and is not truncated at the economic limit.
+
+        Returns a :class:`ForecastResult` with ``r_squared=NaN`` and no
+        confidence intervals because no fit occurred. Invalid inputs raise
+        ``ValueError``. Nonfinite EUR or profile fields raise ``ValueError``
+        without numerical overflow warnings.
+        Profiles evaluate very small decay factors in log space to preserve
+        representable month-end rates. Hyperbolic profiles preserve the
+        exponential limit when the exponent-decline product underflows.
+        An overflowing EUR intermediate can trigger rejection even when
+        the mathematical recovery is finite.
+        """
+        if not isinstance(model, str) or model not in _VALID_MODELS:
+            raise ValueError(
+                f"Unknown model '{model}'. Valid models: {sorted(_VALID_MODELS)}"
+            )
+        validated = {}
+        for name, value in (
+            ("qi", qi),
+            ("Di", Di),
+            ("economic_limit", economic_limit),
+            ("b", b),
+        ):
+            if isinstance(value, (bool, np.timedelta64)) or not isinstance(value, Real):
+                raise ValueError(f"{name} must be a real number")
+            requirement = (
+                "finite and nonnegative" if name == "b" else "finite and positive"
+            )
+            try:
+                value = float(value)
+            except OverflowError as exc:
+                raise ValueError(f"{name} must be {requirement}") from exc
+            if not np.isfinite(value) or (value < 0 if name == "b" else value <= 0):
+                raise ValueError(f"{name} must be {requirement}")
+            validated[name] = value
+        # Enforce exact boundaries before rounding accepted real inputs to float.
+        if economic_limit < 1.0:
+            raise ValueError("economic_limit must be at least 1 bbl/month")
+        if (
+            (model == "exponential" and b != 0)
+            or (model == "harmonic" and b != 1)
+            or (model == "hyperbolic" and (b <= 0 or validated["b"] <= 0))
+        ):
+            raise ValueError(f"b is inconsistent with model '{model}'")
+        same_float_rate = validated["qi"] == validated["economic_limit"]
+        initial_rate = _exact_rate(qi)
+        limit_rate = _exact_rate(economic_limit)
+        if same_float_rate and initial_rate > limit_rate:
+            raise ValueError("qi and economic_limit coincide at float precision")
+        qi = validated["qi"]
+        Di = validated["Di"]
+        b = validated["b"]
+        if (
+            isinstance(months, (bool, np.timedelta64))
+            or not isinstance(months, Integral)
+            or months <= 0
+        ):
+            raise ValueError("months must be a positive integer")
+
+        with np.errstate(over="ignore", invalid="ignore"):
+            eur = self._compute_eur(initial_rate, Di, b, limit_rate, model)
+        if not np.isfinite(eur):
+            raise ValueError("EUR is not representable in floating point")
+
+        with np.errstate(over="ignore", invalid="ignore"):
+            profile = self._build_forecast_df(qi, Di, b, model, int(months))
+        if not np.isfinite(profile.to_numpy()).all():
+            raise ValueError("Profile is not representable in floating point")
+
+        return ForecastResult(
+            model=model,
+            qi=qi,
+            Di=Di,
+            b=b,
+            r_squared=float("nan"),
+            eur_bbl=eur,
+            forecast_df=profile,
         )
 
     def plot(self, historical: pd.DataFrame, result: ForecastResult) -> go.Figure:
@@ -275,10 +401,10 @@ class ArpsDeclineCurve:
 
     def _compute_eur(
         self,
-        qi: float,
+        qi: Real,
         Di: float,
         b: float,
-        economic_limit: float,
+        economic_limit: Real,
         model: str,
     ) -> float:
         """Compute EUR (bbl) at *economic_limit* rate."""
@@ -286,21 +412,51 @@ class ArpsDeclineCurve:
         if qi <= q_econ:
             return 0.0
 
+        # Subtract the supplied rates before rounding either endpoint.
+        rate_difference = qi - q_econ
+        relative_difference = float(rate_difference / q_econ)
+        if relative_difference < np.finfo(float).tiny:
+            # Whitson manual, Decline Curve Analysis, web ed. 2026-10-19, §2.1.
+            # When r = (qi - q_econ)/q_econ is below the normal float range,
+            # log1p(r)/r and qi/q_econ both round to one. Thus
+            # EUR = (gap/Di) * exprel((b-1)*r) to floating-point precision.
+            x = float(Fraction(b - 1) * rate_difference / q_econ)
+            correction = Fraction(float(exprel(x)))
+            try:
+                return float(rate_difference * correction / Fraction(Di))
+            except OverflowError as exc:
+                raise ValueError("EUR is not representable in floating point") from exc
+
+        log_ratio = np.log1p(relative_difference)
+        qi = float(qi)
         if model == "exponential":
-            t_econ = np.log(qi / q_econ) / Di
-            eur = (qi / Di) * (1.0 - np.exp(-Di * t_econ))
+            eur = float(rate_difference) / Di
 
         elif model == "harmonic":
-            eur = (qi / Di) * np.log(qi / q_econ)
+            eur = (qi / Di) * log_ratio
 
         else:  # hyperbolic
-            if abs(b - 1.0) < 1e-6:
+            if b == 1.0:
                 # Degenerate case — use harmonic formula
-                eur = (qi / Di) * np.log(qi / q_econ)
+                eur = (qi / Di) * log_ratio
             else:
-                eur = (qi**b / ((1.0 - b) * Di)) * (
-                    qi ** (1.0 - b) - q_econ ** (1.0 - b)
-                )
+                # Use the rate ratio to avoid overflowing separate powers.
+                x = (b - 1.0) * log_ratio
+                if x > 50.0:
+                    # Scale in log space before exponentiating: expm1(x) can
+                    # overflow even when the full recovery is representable.
+                    log_eur = (
+                        np.log(qi)
+                        - np.log(Di)
+                        + x
+                        + np.log1p(-np.exp(-x))
+                        - np.log(b - 1.0)
+                    )
+                    eur = np.exp(log_eur)
+                else:
+                    # exprel(0) = 1 keeps the log ratio even when x underflows.
+                    rate_integral = log_ratio * exprel(x)
+                    eur = (qi / Di) * rate_integral
 
         return float(max(eur, 0.0))
 
@@ -322,7 +478,46 @@ class ArpsDeclineCurve:
     ) -> pd.DataFrame:
         """Build forecast DataFrame for *months* periods."""
         t = np.arange(1, months + 1, dtype=float)
-        rates = self._rate_fn(model)(t, qi, Di, b)
+        rate_fn = self._rate_fn(model)
+        exponent = 1.0 if model == "harmonic" else b
+        if model != "exponential" and qi > 0 and Di > 0 and exponent > 0:
+            with np.errstate(over="ignore", under="ignore"):
+                log_decay = None
+                if exponent * Di < np.finfo(float).tiny:
+                    # Form Di*t first: rounding b*Di to a subnormal or zero
+                    # loses its relative precision before division by b.
+                    decline_time = Di * t
+                    product = exponent * decline_time
+                    correction = np.ones_like(product)
+                    np.divide(
+                        np.log1p(product), product, out=correction, where=product != 0
+                    )
+                    log_decay = -decline_time * correction
+                    decay = np.exp(log_decay)
+                else:
+                    decay = rate_fn(t, 1.0, Di, b)
+                rates = qi * decay
+                # An overflowing denominator or a subnormal decay factor can
+                # lose a representable rate before multiplication by qi.
+                small = decay < np.finfo(float).tiny
+                if small.any():
+                    # Whitson manual, Decline Curve Analysis, web ed. 2026-10-19, §2.1.
+                    # log(q) = log(qi) - log(1 + b*Di*t)/b.
+                    if log_decay is None:
+                        log_product = np.log(exponent) + np.log(Di) + np.log(t[small])
+                        small_log_decay = -np.logaddexp(0.0, log_product) / exponent
+                    else:
+                        small_log_decay = log_decay[small]
+                    rates[small] = np.exp(np.log(qi) + small_log_decay)
+        elif model == "exponential" and qi > 0 and Di > 0:
+            with np.errstate(over="ignore", under="ignore"):
+                decay = np.exp(-Di * t)
+                rates = qi * decay
+                small = decay < np.finfo(float).tiny
+                if small.any():
+                    rates[small] = np.exp(np.log(qi) - Di * t[small])
+        else:
+            rates = rate_fn(t, qi, Di, b)
         cumulative = np.cumsum(rates)
         return pd.DataFrame(
             {

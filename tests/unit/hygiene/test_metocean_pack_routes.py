@@ -30,7 +30,7 @@ def test_extreme_selection_is_scoped_per_route(heading):
     assert "`idxmax`" in text
     assert "`scipy.stats`" in text
     assert "extreme.py#L13-L137" in text
-    assert "statistics/eva.py:L100-L174" in text
+    assert "statistics/eva.py:L100-L213" in text
     assert "routes called by this module delegate extreme selection to" not in text
 
 
@@ -58,6 +58,11 @@ def test_annual_maxima_caveats_are_explicit():
     assert "1-year" in text and "1.6 years" in text
     assert "`GEV` and `GUM` only" in text
     assert "extreme.py#L106-L137" in text
+
+
+def test_annual_maxima_inventory_cites_the_complete_method():
+    text = section("## 9. Dependencies")
+    assert "statistics/eva.py:L140-L213" in text
 
 
 def test_lesson_log_identifies_the_superseded_delegation_claim():

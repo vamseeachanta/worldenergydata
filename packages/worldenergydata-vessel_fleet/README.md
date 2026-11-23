@@ -18,6 +18,60 @@ is resolved package-relative by the loaders and `FleetRouter`. This makes the
 domain self-contained — no repo-root or external data mount is required — and
 the data ships in the built wheel.
 
+## Draft conditions
+
+### Plan-lite
+
+- Source labels: populate the load-line field only when the specification
+  explicitly labels that condition. Keep operating and transit drafts distinct;
+  an unqualified draft does not establish a load-line or operating condition.
+- Compatibility: retain the legacy raw key for existing consumers, preserve
+  every original extracted value and metadata item, and keep the existing
+  one-decimal metre rounding. A separately stated operating draft takes
+  precedence over the load-line compatibility alias.
+- Validation: check source-label parsing, schema serialization and ingestion
+  with the focused parser and source-PDF tests. Use manifest digests to verify
+  public PDF fixtures and parsed-YAML comparison to restrict extraction changes
+  to additive load-line fields. Existing curated datasets are not regenerated.
+
+### Field behavior and provenance
+
+`RAW_DRAFT_LOAD_LINE_FT` identifies a draft labelled as load line in
+the source specification, subject to the transcription limitation below.
+The parser, packaged extractions and spec-ingestion
+script preserve this field. For these values, `RAW_DRAFT_OPERATING_FT` remains
+as a deprecated compatibility alias. Other layouts still use the legacy key
+for explicitly stated operating drafts; an older unqualified draft also retains
+that key. Its name alone does not establish the draft condition.
+
+`DRAFT_M` retains the existing source-condition value rounded to one decimal.
+For a load-line record it describes load-line draft, not operating draft. A
+separately stated operating draft takes precedence for `DRAFT_M` and the legacy
+operating key. Transit drafts remain under `RAW_DRAFT_TRANSIT_FT`.
+
+When ingestion receives `DRAFT_M`, it replaces `RAW_DRAFT_LOAD_LINE_FT` with
+the supplied value or `None` if the key is absent, in both raw output and
+curated updates. Alias matching applies only to curated updates. A curated
+update supplying neither draft field preserves the existing pair.
+
+During source-priority fusion, the winning non-`None` `DRAFT_M` and its
+`RAW_DRAFT_LOAD_LINE_FT` come from the same record, including a missing or
+explicitly `None` condition. Later equal-priority drafts win; a record without
+a draft cannot relabel the winning pair.
+
+The two `image_transcription` records carrying the added load-line field are
+classified provisionally by analogy with sister records. Their individual
+source-page labels have not been independently verified; `--reparse` skips
+image transcriptions. Their classification requires source-page confirmation
+before engineering use and is not covered by the text-parser regression.
+
+The committed load-line example contains a draft of 21.9 ft, rounded to
+6.7 m. Its public specification URL and document digest are recorded in the
+[source manifest](src/worldenergydata/vessel_fleet/_data/raw/spec_pdfs/borr/manifest.yaml).
+The regression tests select that extraction by its manifest digest and check
+its preservation through schema serialization and ingestion; the value does
+not establish draft in an operating condition.
+
 ## Liftboats and public incidents
 
 [The liftboat database](LIFTBOATS.md) adds sourced technical observations,

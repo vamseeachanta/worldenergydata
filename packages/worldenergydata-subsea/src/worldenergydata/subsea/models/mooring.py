@@ -30,6 +30,18 @@ class MooringComponentSpec(BaseModel):
             raise ValueError(f"component_type must be one of {valid}")
         return v
 
+    @field_validator("size_mm")
+    @classmethod
+    def size_positive(cls, v: float) -> float:
+        """Size must be positive and finite (input-domain check).
+
+        Finiteness: Python Library Reference, math.isfinite:
+        https://docs.python.org/3/library/math.html#math.isfinite
+        """
+        if not isfinite(v) or v <= 0:
+            raise ValueError("Size must be positive and finite")
+        return v
+
     @field_validator("mbl_kn")
     @classmethod
     def mbl_positive(cls, v: float) -> float:

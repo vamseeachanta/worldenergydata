@@ -92,7 +92,7 @@ def test_deterministic_prediction_matches_hand_calculated_line():
     assert result.validation["overall"]["count"] == 16
     assert result.model_vintage == DAY.isoformat()
     assert result.model_hash
-    assert result.feature_completeness == 1
+    assert result.feature_completeness == pytest.approx(0.2)
     assert set(result.fit_groups) | set(result.calibration_groups) == set(
         result.comparables
     )
@@ -125,6 +125,62 @@ def test_sparse_and_small_cohorts_do_not_fabricate_values():
         assert result.status == "NOT_EVALUATED"
         assert result.estimate is result.lower is result.upper is None
         assert result.reason
+
+
+@pytest.mark.parametrize("available", ["one", "empty", "null"])
+def test_completeness_counts_omitted_and_null_features(available):
+    """One supplied driver is one of five supported inputs, not full evidence."""
+    features = {
+        "one": snapshot().features,
+        "empty": {},
+        "null": {"well_count": None},
+    }[available]
+    result = CapexEstimator(corpus(), policy(), DAY).predict(
+        snapshot(features=features)
+    )
+    missing = (
+        "asset_quantity",
+        "capacity_boe_day",
+        "vintage_year",
+        "water_depth_m",
+    )
+    assert result.missing_features == (
+        missing if available == "one" else (*missing, "well_count")
+    )
+    assert result.feature_completeness == pytest.approx(
+        0.2 if available == "one" else 0.0
+    )
+    if available == "one":
+        explicit = snapshot(features=features | {name: None for name in missing})
+        same = CapexEstimator(corpus(), policy(), DAY).predict(explicit)
+        assert result.status == same.status == "modeled"
+        assert result.comparables == same.comparables
+        assert (result.estimate, result.lower, result.upper) == (
+            same.estimate,
+            same.lower,
+            same.upper,
+        )
+    else:
+        assert result.status == "NOT_EVALUATED"
+        assert result.estimate is result.lower is result.upper is None
+
+
+def test_complete_request_reports_full_supported_feature_completeness():
+    """Invented physical inputs; completeness alone cannot qualify an estimate."""
+    target = snapshot(
+        features={
+            "asset_quantity": Feature(value=3, available_on=DAY),
+            "capacity_boe_day": Feature(value=10000, available_on=DAY),
+            "vintage_year": Feature(value=2020, available_on=DAY),
+            "water_depth_m": Feature(value=1000, available_on=DAY),
+            "well_count": Feature(value=2, available_on=DAY),
+        }
+    )
+    result = CapexEstimator([], policy(), DAY).predict(target)
+    assert result.feature_completeness == 1.0
+    assert result.missing_features == ()
+    assert result.status == "NOT_EVALUATED"
+    assert result.estimate is result.lower is result.upper is None
 
 
 def test_insufficient_calibration_and_failed_validation_are_closed():

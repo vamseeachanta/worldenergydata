@@ -269,7 +269,11 @@ def build_report(
         f"**Discount rate:** {tl['discount_rate_annual'] * 100:.0f}% annual"
     )
     lines.append("")
-    lines.append(f"**Data window:** {window_label}")
+    lines.append(
+        f"**Data window:** {window_label} &middot; "
+        f"**NPV @ {tl['discount_rate_annual'] * 100:.0f}%:** "
+        f"**${_fmt_usd_mm(fin[dev_name]['npv_usd'])} M**"
+    )
     lines.append("")
 
     # -------------------------- EXECUTIVE SUMMARY ---------------------------
@@ -312,6 +316,16 @@ def build_report(
         f"**${recovery / 1e6:+,.1f} M** as production paid back capital."
     )
     lines.extend(summary_bullets)
+    lines.append("")
+
+    lines.append("## Revision history")
+    lines.append("")
+    lines.append("| Revision | Date | Change and reason |")
+    lines.append("|---|---|---|")
+    lines.append(
+        "| 1 | 2026-11-05 | Header NPV added from the financial summary "
+        "to keep the reported development and data window consistent. |"
+    )
     lines.append("")
 
     lines.append(
@@ -645,8 +659,8 @@ def build_report(
         f"- **Get a tailored analysis.** Want this for your own assets — a "
         f"different field, a custom price deck, sensitivities, or a partner-level "
         f"working-interest view? **AceEngineer** builds traceable field economics "
-        f"from public data. Contact **vamsee.achanta@aceengineer.com** to scope an "
-        f"engagement."
+        f"from public data. Visit **[AceEngineer](https://www.aceengineer.com)** "
+        f"to scope an engagement."
     )
     lines.append(
         f"- **Explore the full play.** {dev_name} is one of **10 Lower Tertiary "

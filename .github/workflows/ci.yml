@@ -7,29 +7,48 @@ name: CI
 # "Main full run" (.github/workflows/main-full-run.yml), dispatched once a day
 # by the ace-linux-1 cron with `gh workflow run`; GitHub's schedule trigger is
 # not used. Required checks: Lint, Security Scan, Test (PR gate).
+# Runners: pull request jobs use ubuntu-latest unless the repository variable
+# WED_PR_RUNNER is "self-hosted" (docs/ci/linux-runners.md); push stays self-hosted.
 on:
   push:
     branches: [main, develop]
   pull_request:
-    # Metadata edits reuse validated evidence or run the full gate.
+    # Retargets arrive as edits. Only a first-attempt title/body edit skips CI.
     types: [opened, synchronize, reopened, edited]
   workflow_dispatch:
 
 concurrency:
+  # Even a full rerun of an older metadata edit must leave current code checks running.
   group: >-
     ${{ github.workflow }}-${{ github.event_name == 'pull_request' &&
-    (github.event.action != 'edited' || github.event.changes.base != null) && github.ref || github.run_id }}
+    !(github.event.action == 'edited' && github.event.changes.base == null &&
+    (github.event.changes.title != null || github.event.changes.body != null)) && github.ref || github.run_id }}
   cancel-in-progress: >-
     ${{ github.event_name == 'pull_request' &&
-    (github.event.action != 'edited' || github.event.changes.base != null) }}
+    !(github.event.action == 'edited' && github.event.changes.base == null &&
+    (github.event.changes.title != null || github.event.changes.body != null)) }}
+
+permissions:
+  contents: read
 
 env:
   PYTHON_VERSION_DEFAULT: "3.11"
 
 jobs:
   mode:
-    name: Gate mode
-    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
+    name: >-
+      ${{ (github.event_name == 'pull_request' && github.event.action == 'edited' &&
+      github.run_attempt == '1' && github.event.changes.base == null &&
+      (github.event.changes.title != null || github.event.changes.body != null)) && 'Not run for a metadata edit - ' || '' }}Gate mode
+    if: >-
+      ${{ !(github.event_name == 'pull_request' && github.event.action == 'edited' &&
+      github.run_attempt == '1' && github.event.changes.base == null &&
+      (github.event.changes.title != null || github.event.changes.body != null)) }}
+    runs-on: >-
+      ${{ (github.event_name != 'pull_request' ||
+          (github.event.pull_request.head.repo.full_name == github.repository &&
+          vars.WED_PR_RUNNER == 'self-hosted')) &&
+          fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
     permissions:
       contents: read
       actions: read
@@ -37,11 +56,14 @@ jobs:
       replay: ${{ steps.mode.outputs.replay }}
       evidence: ${{ steps.lookup.outputs.evidence }}
     steps:
+      # The first-attempt guard keeps the legacy replay path dormant.
       - name: Check replay eligibility
         id: candidate
         env:
           REPLAY: >-
-            ${{ github.event_name == 'pull_request' && github.event.action == 'edited' && !github.event.changes.base }}
+            ${{ github.event_name == 'pull_request' && github.event.action == 'edited' &&
+            github.run_attempt == '1' && github.event.changes.base == null &&
+            (github.event.changes.title != null || github.event.changes.body != null) }}
         run: echo "replay=$REPLAY" >> "$GITHUB_OUTPUT"
       - name: Checkout replay lookup
         if: steps.candidate.outputs.replay == 'true'
@@ -108,27 +130,45 @@ jobs:
   # The aggregate `pr-gate` job is the single required test check.
 
   # The discover -> test-domain (matrix) -> aggregate scaffolding now lives in
-  # the shared reusable workflow (workspace-hub#.../domain-matrix.yml, P4
-  # worldenergydata#530). wed's conventions match the reusable defaults exactly
+  # the local reusable workflow. Its conventions match the shared defaults
+  # while preserving the x64 and fork-isolation policy. The defaults are
   # (selector scripts/ci/select_test_targets.py, uv sync --all-extras, quarantine
-  # scripts/ci/quarantine.txt, python-setup uv, max-parallel 10). The only
-  # override sets WED_FAST_GATE=1 so tests/conftest.py skips repo-wide
+  # scripts/ci/quarantine.txt, python-setup uv, max-parallel 10). The test
+  # runner sets WED_FAST_GATE=1 so tests/conftest.py skips repo-wide
   # artifact-currency tests (they run in the daily Main full run).
+  # pytest-xdist is installed, pinned, into the job's own .venv and pytest runs
+  # from it with --no-sync. A `uv run --with` overlay would live in the
+  # runner's shared uv cache (builds-v0/.tmp*), where other jobs can remove it
+  # mid-run; tests that re-launch sys.executable then find no interpreter.
   domain-tests:
+    name: >-
+      ${{ (github.event_name == 'pull_request' && github.event.action == 'edited' &&
+      github.run_attempt == '1' && github.event.changes.base == null &&
+      (github.event.changes.title != null || github.event.changes.body != null)) && 'Not run for a metadata edit - ' || '' }}domain-tests
     needs: [mode]
     if: >-
-      !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && github.event_name
-      == 'pull_request'
-    uses: vamseeachanta/workspace-hub/.github/workflows/domain-matrix.yml@main
+      !cancelled() && needs.mode.result != 'skipped' && github.event_name == 'pull_request' &&
+      (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true')
+    uses: ./.github/workflows/domain-matrix.yml
     with:
-      test-runner: env WED_FAST_GATE=1 uv run --with pytest-xdist pytest
+      install-cmd: uv sync --frozen --all-extras && uv pip install pytest-xdist==3.8.0
+      test-runner: env WED_FAST_GATE=1 uv run --no-sync pytest
 
   lint:
-    name: Lint (full)
-    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
+    name: >-
+      ${{ (github.event_name == 'pull_request' && github.event.action == 'edited' &&
+      github.run_attempt == '1' && github.event.changes.base == null &&
+      (github.event.changes.title != null || github.event.changes.body != null)) && 'Not run for a metadata edit - ' || '' }}Lint (full)
+    runs-on: >-
+      ${{ (github.event_name != 'pull_request' ||
+          (github.event.pull_request.head.repo.full_name == github.repository &&
+          vars.WED_PR_RUNNER == 'self-hosted')) &&
+          fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
+    timeout-minutes: 30
     needs: [mode]
-    if: >-
-      !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true')
+    if: &full-check >-
+      !cancelled() && needs.mode.result != 'skipped' &&
+      (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true')
 
     steps:
       - name: Checkout repository
@@ -194,6 +234,21 @@ jobs:
             "tip=$tip event_base=$EVENT_BASE tree=$tree"
           echo "tip=$tip" >> "$GITHUB_OUTPUT"
 
+      - name: Install uv for scoped typing
+        uses: astral-sh/setup-uv@v7
+
+      - name: Check typed common modules
+        env:
+          MYPYPATH: src:packages/worldenergydata-core/src
+        run: |
+          uv run --no-project --python "${{ env.PYTHON_VERSION_DEFAULT }}" --with mypy \
+            mypy --explicit-package-bases --follow-imports=silent \
+            --ignore-missing-imports \
+            packages/worldenergydata-core/src/worldenergydata/common/exceptions.py \
+            packages/worldenergydata-core/src/worldenergydata/common/logging.py \
+            packages/worldenergydata-core/src/worldenergydata/common/types.py \
+            examples/typed_common.py
+
       - name: Install uv
         uses: astral-sh/setup-uv@v7
         with:
@@ -222,12 +277,19 @@ jobs:
             --exclude=__pycache__,*.egg-info,.git,.venv
 
   security:
-    name: Security Scan (full)
+    name: >-
+      ${{ (github.event_name == 'pull_request' && github.event.action == 'edited' &&
+      github.run_attempt == '1' && github.event.changes.base == null &&
+      (github.event.changes.title != null || github.event.changes.body != null)) && 'Not run for a metadata edit - ' || '' }}Security Scan (full)
     # PR/push: secret scan only. Bandit runs in the daily Main full run.
-    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
+    runs-on: >-
+      ${{ (github.event_name != 'pull_request' ||
+          (github.event.pull_request.head.repo.full_name == github.repository &&
+          vars.WED_PR_RUNNER == 'self-hosted')) &&
+          fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
+    timeout-minutes: 30
     needs: [mode]
-    if: >-
-      !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true')
+    if: *full-check
 
     steps:
       - name: Checkout repository
@@ -299,13 +361,19 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         continue-on-error: true
 
-  # Gate mode validates evidence once using the maintained live-base helper.
-  # Result jobs consume that snapshot, avoiding races between repeated lookups.
+  # Skipping mode also skips every result job, including the required checks.
   lint-gate:
-    name: Lint
+    name: >-
+      ${{ (github.event_name == 'pull_request' && github.event.action == 'edited' &&
+      github.run_attempt == '1' && github.event.changes.base == null &&
+      (github.event.changes.title != null || github.event.changes.body != null)) && 'Not run for a metadata edit - ' || '' }}Lint
     needs: [mode, lint]
-    if: ${{ !cancelled() }}
-    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
+    if: &result-check ${{ !cancelled() && needs.mode.result != 'skipped' }}
+    runs-on: >-
+      ${{ (github.event_name != 'pull_request' ||
+          (github.event.pull_request.head.repo.full_name == github.repository &&
+          vars.WED_PR_RUNNER == 'self-hosted')) &&
+          fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
     permissions:
       contents: read
       actions: read
@@ -328,10 +396,17 @@ jobs:
           fi
 
   security-gate:
-    name: Security Scan
+    name: >-
+      ${{ (github.event_name == 'pull_request' && github.event.action == 'edited' &&
+      github.run_attempt == '1' && github.event.changes.base == null &&
+      (github.event.changes.title != null || github.event.changes.body != null)) && 'Not run for a metadata edit - ' || '' }}Security Scan
     needs: [mode, security]
-    if: ${{ !cancelled() }}
-    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
+    if: *result-check
+    runs-on: >-
+      ${{ (github.event_name != 'pull_request' ||
+          (github.event.pull_request.head.repo.full_name == github.repository &&
+          vars.WED_PR_RUNNER == 'self-hosted')) &&
+          fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
     permissions:
       contents: read
       actions: read
@@ -354,10 +429,17 @@ jobs:
           fi
 
   pr-gate:
-    name: Test (PR gate)
+    name: >-
+      ${{ (github.event_name == 'pull_request' && github.event.action == 'edited' &&
+      github.run_attempt == '1' && github.event.changes.base == null &&
+      (github.event.changes.title != null || github.event.changes.body != null)) && 'Not run for a metadata edit - ' || '' }}Test (PR gate)
     needs: [mode, domain-tests]
-    if: ${{ !cancelled() && github.event_name == 'pull_request' }}
-    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || fromJSON('["self-hosted","x64"]') }}
+    if: ${{ !cancelled() && needs.mode.result != 'skipped' && github.event_name == 'pull_request' }}
+    runs-on: >-
+      ${{ (github.event_name != 'pull_request' ||
+          (github.event.pull_request.head.repo.full_name == github.repository &&
+          vars.WED_PR_RUNNER == 'self-hosted')) &&
+          fromJSON('["self-hosted","Linux"]') || 'ubuntu-latest' }}
     permissions:
       contents: read
       actions: read

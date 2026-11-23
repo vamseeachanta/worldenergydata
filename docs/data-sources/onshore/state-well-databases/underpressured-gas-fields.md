@@ -18,6 +18,14 @@ ECMC production/wells data is loaded as a direct-source input from [#745](https:
 but contributes no screened wells because the current bulk pressure columns
 are empty.
 
+## Revision history
+
+| Revision | Date | Change and reason |
+| --- | --- | --- |
+| 1 | 2026-11-16 | Define the configured-gate summary verdict to distinguish screening from engineering qualification. |
+
+Table 1. Changes to the report definition.
+
 ## Method
 
 ```bash
@@ -58,6 +66,43 @@ PYTHONPATH=src:packages/worldenergydata-core/src python3.12 \
 Outputs: `/mnt/ace/worldenergydata/data/modules/pressure_screen/curated/`
 (`well_screen_earliest.parquet`, `underpressured_field_ranking.parquet`,
 `screen_summary.json`).
+
+### Summary verdict definition
+
+`screen_summary.json` includes `screening_status: pass` only when both
+`validation_gate.passed` and `participation_gate.passed` are boolean `true`;
+otherwise valid boolean verdicts produce `screening_status: fail`. Missing or
+non-boolean gate verdicts raise `ValueError` before a summary is returned.
+For a valid failed gate, the summary is written before the existing
+`RuntimeError` is raised, so the saved result records the failure.
+
+The fixed `screening_scope` statement limits the verdict to the configured
+validation and participation gates. A pass does not establish measured virgin
+bottom-hole pressure, gas/condensate qualification, commercial viability or
+coverage beyond the configured requirements. An omitted participation gate
+still passes with no state requirements; an empty required-field list also
+passes the existing validation gate. Thus even an empty screen can pass if
+neither gate requires evidence. Interpret the verdict alongside `era_note`,
+`source_warnings`, state/source counts and input/loaded row counts.
+
+These fields do not change the calculations, thresholds or historical results
+below. Synthetic verdict tests establish gate behavior, not real analog recovery.
+
+### Non-finite pressure or depth
+
+Before BHP estimation, both `pressure_psia` and `reference_depth_ft` are checked
+with [`numpy.isfinite` (NumPy 2.2 manual, definition and Notes)](https://numpy.org/doc/2.2/reference/generated/numpy.isfinite.html).
+Positive infinity, negative infinity and NaN produce null BHP and gradient
+estimates, `bhp_method=NOT_EVALUATED`, `pressure_tier=NOT_EVALUATED`, and no
+near-vacuum flag. Such observations are excluded from earliest-observation
+selection and field ranking. This applies to measured BHP, shut-in wellhead
+pressure and other reported pressure kinds.
+
+For a synthetic measured-BHP example, 1,200 psia at 5,000 ft gives
+`1200 / 5000 = 0.24 psi/ft`. Replacing either input with positive infinity,
+negative infinity or NaN gives `NOT_EVALUATED`; an infinite depth does not
+represent a measured zero pressure gradient. This input check does not validate
+the configured tier limits or gas-column approximation.
 
 ## Results (run 2026-07-03)
 

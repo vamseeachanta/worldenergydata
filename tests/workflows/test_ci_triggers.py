@@ -2,8 +2,10 @@
 
 import json
 import os
+import re
 import shutil
 import subprocess
+import sys
 from pathlib import Path
 
 import pytest
@@ -40,13 +42,12 @@ def test_push_branch_filter_is_unchanged() -> None:
 
 def test_required_pull_request_check_name_is_unchanged() -> None:
     """The aggregate keeps the name required by branch protection."""
-    assert _load_workflow()["jobs"]["pr-gate"]["name"] == "Test (PR gate)"
+    assert _render(_load_workflow()["jobs"]["pr-gate"]["name"], {}) == "Test (PR gate)"
 
 
 def _evaluate_expression(expression: str, context: dict) -> object:
     """Evaluate the workflow's Boolean and JSON/property expression subset."""
     import ast
-    import re
 
     expression = re.sub(
         r"(?:github|needs)\.[\w.-]+",
@@ -62,6 +63,11 @@ def _evaluate_expression(expression: str, context: dict) -> object:
         if isinstance(node, (ast.Constant, ast.Dict)):
             return ast.literal_eval(node)
         if isinstance(node, ast.Call) and isinstance(node.func, ast.Name):
+            if node.func.id == "format":
+                template, *values = (evaluate(arg) for arg in node.args)
+                return template.format(*values)
+            if node.func.id == "cancelled" and not node.args:
+                return False
             assert node.func.id == "fromJSON" and len(node.args) == 1
             return json.loads(evaluate(node.args[0]))
         if isinstance(node, (ast.Subscript, ast.Attribute)):
@@ -88,6 +94,15 @@ def _evaluate_expression(expression: str, context: dict) -> object:
     return evaluate(ast.parse(expression, mode="eval").body)
 
 
+def _render(template: str, context: dict) -> str:
+    """Interpolate Actions expressions in job names and concurrency groups."""
+    return re.sub(
+        r"\$\{\{(.*?)\}\}",
+        lambda match: str(_evaluate_expression(match[1], context)),
+        template,
+    )
+
+
 def _concurrency(
     event: str,
     ref: str,
@@ -96,8 +111,6 @@ def _concurrency(
     base_change: object = None,
 ) -> tuple[str, bool]:
     """Render the configured group and cancellation expression for a run."""
-    import re
-
     concurrency = _load_workflow()["concurrency"]
     context = {
         "github.workflow": "CI",
@@ -105,13 +118,11 @@ def _concurrency(
         "github.ref": ref,
         "github.run_id": run_id,
         "github.event.action": action,
+        "github.run_attempt": "1",
+        "github.event.changes.title": {"from": "previous"},
         "github.event.changes.base": base_change,
     }
-    group = re.sub(
-        r"\$\{\{(.*?)\}\}",
-        lambda match: str(_evaluate_expression(match[1], context)),
-        concurrency["group"],
-    )
+    group = _render(concurrency["group"], context)
     cancel = concurrency["cancel-in-progress"]
     if isinstance(cancel, str):
         cancel = _evaluate_expression(
@@ -195,35 +206,29 @@ def test_jobs_and_steps_do_not_filter_edit_events() -> None:
 
 
 def test_base_change_runs_full_gate() -> None:
-    """Only metadata edits select replay; retargets run the full gate."""
+    """A known metadata edit skips the selector; all other events take the full gate."""
     mode = _load_workflow()["jobs"]["mode"]
-    assert "if" not in mode
-    expression = mode["steps"][0]["env"]["REPLAY"]
-    assert expression == (
-        "${{ github.event_name == 'pull_request' && "
-        "github.event.action == 'edited' && !github.event.changes.base }}"
-    )
-    for event, action, base, expected in [
-        ("pull_request", "edited", False, True),
-        ("pull_request", "edited", True, False),
-        ("pull_request", "opened", False, False),
-        ("pull_request", "synchronize", False, False),
-        ("pull_request", "reopened", False, False),
-        ("push", "edited", False, False),
-        ("schedule", "", False, False),
-        ("workflow_dispatch", "", False, False),
+    candidate = mode["steps"][0]["env"]["REPLAY"]
+    for event, action, base, title, attempt, skip in [
+        ("pull_request", "edited", None, {"from": ""}, "1", True),
+        ("pull_request", "edited", {"ref": {"from": "main"}}, {"from": ""}, "1", False),
+        ("pull_request", "edited", None, {"from": ""}, "2", False),
+        ("pull_request", "edited", None, None, "1", False),
+        ("pull_request", "opened", None, None, "1", False),
+        ("pull_request", "synchronize", None, None, "1", False),
+        ("pull_request", "reopened", None, None, "1", False),
+        ("push", "edited", None, {"from": ""}, "1", False),
+        ("workflow_dispatch", "", None, None, "1", False),
     ]:
-        assert (
-            _evaluate_expression(
-                expression[3:-2],
-                {
-                    "github.event_name": event,
-                    "github.event.action": action,
-                    "github.event.changes.base": base,
-                },
-            )
-            is expected
-        )
+        context = {
+            "github.event_name": event,
+            "github.event.action": action,
+            "github.event.changes.base": base,
+            "github.event.changes.title": title,
+            "github.run_attempt": attempt,
+        }
+        assert _evaluate_expression(mode["if"][3:-2], context) is (not skip)
+        assert _evaluate_expression(candidate[3:-2], context) is skip
 
 
 def test_required_names_have_single_result_job() -> None:
@@ -235,7 +240,9 @@ def test_required_names_have_single_result_job() -> None:
         "Test (PR gate)": "domain-tests",
     }
     for name, heavy_id in required.items():
-        matches = [job for job in jobs.values() if job.get("name") == name]
+        matches = [
+            job for job in jobs.values() if _render(job.get("name", ""), {}) == name
+        ]
         assert len(matches) == 1
         gate = matches[0]
         assert gate["needs"] == ["mode", heavy_id]
@@ -303,7 +310,11 @@ def test_result_environment_before_step_selection(gate_id, evidence, replay_sele
     if evidence is not None:
         context["needs.mode.outputs.evidence"] = (
             json.dumps(
-                {gate["name"]: {} if evidence == "missing" else {"decision": evidence}}
+                {
+                    _render(gate["name"], {}): (
+                        {} if evidence == "missing" else {"decision": evidence}
+                    )
+                }
             )
             if evidence in ("missing", "PASS", "FAIL")
             else evidence
@@ -652,3 +663,26 @@ def test_main_full_run_is_dispatch_only_and_covers_the_moved_checks() -> None:
     text = FULL_RUN_WORKFLOW.read_text(encoding="utf-8")
     assert "uv lock --check" in text
     assert "WED_FAST_GATE" not in text
+
+
+def test_full_run_inventory_helper_is_available() -> None:
+    """The dispatched inventory must ship its executable dependency."""
+    workflow = yaml.safe_load(FULL_RUN_WORKFLOW.read_text(encoding="utf-8"))
+    steps = workflow["jobs"]["f821-inventory"]["steps"]
+    inventory = next(step for step in steps if "check_f821.py" in step.get("run", ""))
+    helper = "scripts/ci/check_f821.py"
+    assert f"python {helper}" in inventory["run"]
+    root = WORKFLOWS.parents[1]
+    assert (root / helper).is_file(), "Full-run inventory helper is missing"
+    result = subprocess.run(
+        [sys.executable, helper, "--help"],
+        cwd=root,
+        capture_output=True,
+        text=True,
+        timeout=30,
+        check=False,
+    )
+    assert result.returncode == 0, result.stderr
+    assert all(
+        option in result.stdout for option in ("--runs", "--timeout", "--output")
+    )
