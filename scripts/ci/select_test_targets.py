@@ -113,6 +113,7 @@ CONTRACT_ROUTES = {
     "scripts/field_development/example_catalog_evidence.py": CATALOG_CONTRACTS,
     # Keep export and display withholding under CI when only an input changes.
     "scripts/hf_export/publish_explorer_refresh_to_hf.py": "tests/unit/site",
+    "scripts/hf_export/browser_shards.py": "tests/unit/site",
     "reports/field-atlas/atlas_template.html": "tests/unit/site",
     "reports/field-atlas/index.html": "tests/unit/site",
     "reports/lower_tertiary/lifecycle/_performance.json": "tests/unit/site",

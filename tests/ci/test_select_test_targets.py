@@ -434,3 +434,10 @@ def test_boem_layout_paths_select_bsee(path):
         targets = [t for shard in matrix["include"] for t in shard["targets"].split()]
         assert matrix["scope"] == "modules"
         assert targets.count("tests/unit/bsee") == 1
+
+
+@pytest.mark.parametrize("selector", [select, select_fast])
+def test_browser_shard_script_runs_site_contracts(selector):
+    result = selector(["scripts/hf_export/browser_shards.py"], REPO_ROOT)
+    assert result["scope"] == "modules"
+    assert "tests/unit/site" in result["xdist"]
