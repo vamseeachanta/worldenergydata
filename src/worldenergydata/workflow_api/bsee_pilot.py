@@ -669,14 +669,8 @@ def run_pilot(config: dict | None = None, *, hf_port=None, write_report: bool = 
 
     # >=3 variations
     entries = [build_projection_for_variant(config, v) for v in config["variants"]]
-    accepted = []
-    for entry in entries:
-        revision = promote(
-            entry["projection"], hf_port=hf_port, ledger=ledger, egress=egress
-        )
-        accepted.append((entry, revision))
 
-    # exactly 1 exact replay (of replay_variant) — same run_id + output equality
+    # Check the independent replay before any promotion can publish a variant.
     replay_id = config["replay_variant"]
     base = next(e for e in entries if e["variant"]["id"] == replay_id)
     replay = build_projection_for_variant(config, base["variant"])
@@ -687,6 +681,13 @@ def run_pilot(config: dict | None = None, *, hf_port=None, write_report: bool = 
     identity.assert_output_equality(
         base["output_equality"]["digest"], replay["output_equality"]["digest"]
     )
+
+    accepted = []
+    for entry in entries:
+        revision = promote(
+            entry["projection"], hf_port=hf_port, ledger=ledger, egress=egress
+        )
+        accepted.append((entry, revision))
 
     report_html = render_rolling_report(config, accepted, ledger)
     report_path = repo_root() / config["report_path"]
