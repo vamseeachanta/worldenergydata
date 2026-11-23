@@ -1,0 +1,36 @@
+{
+  "dataset": "BSEE well raw-data files, article series basis of 23 Nov 2026",
+  "publisher": "Bureau of Safety and Environmental Enforcement (BSEE), US Department of the Interior",
+  "licence": "US federal government public data",
+  "index_page": "https://www.data.bsee.gov/Main/RawData.aspx",
+  "sitting_utc_start": "2026-11-23T18:54:37Z",
+  "sitting_utc_end": "2026-11-23T18:56:12Z",
+  "file_date": "2026-11-23",
+  "note": "The archives are not stored in this repository. A run stops unless each file in the data folder matches the size and SHA-256 recorded here. eWellWARRawData.zip of the same sitting is not read by this example.",
+  "files": [
+    {
+      "name": "BoreholeRawData.zip",
+      "source_url": "https://www.data.bsee.gov/Well/Files/BoreholeRawData.zip",
+      "bsee_file_date_page": "11/23/2026 4:31:21 AM",
+      "downloaded_utc": "2026-11-23T18:54:40Z",
+      "bytes": 3488947,
+      "sha256": "72fa55e55fd28db26c59e52b3a43c7d053f9d12a6d06b0a0f6a46ef541c66a5c"
+    },
+    {
+      "name": "eWellEORRawData.zip",
+      "source_url": "https://www.data.bsee.gov/Well/Files/eWellEORRawData.zip",
+      "bsee_file_date_page": "11/23/2026 4:36:30 AM",
+      "downloaded_utc": "2026-11-23T18:54:41Z",
+      "bytes": 4501468,
+      "sha256": "b67c61826ea90aa51d7e1f01c2df94bba6e869665a7992cd5438ea538ee603bc"
+    },
+    {
+      "name": "eWellAPMRawData.zip",
+      "source_url": "https://www.data.bsee.gov/Well/Files/eWellAPMRawData.zip",
+      "bsee_file_date_page": "11/23/2026 4:36:24 AM",
+      "downloaded_utc": "2026-11-23T18:54:44Z",
+      "bytes": 35824667,
+      "sha256": "1a38ed6cf9eab1f8079bf65d8e5b389cb41cc343cde4ce679e2b6e057fd7da50"
+    }
+  ]
+}
