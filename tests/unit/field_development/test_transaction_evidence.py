@@ -240,8 +240,7 @@ def test_retained_input_digest_matches_binary_readback():
 
     head_provenance = json.loads(committed(retained / "provenance.json"))
     assert (
-        hashlib.sha256(committed(INPUT)).hexdigest()
-        == head_provenance["input_sha256"]
+        hashlib.sha256(committed(INPUT)).hexdigest() == head_provenance["input_sha256"]
     )
     provenance = json.loads((retained / "provenance.json").read_bytes())
     assert (
