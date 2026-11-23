@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import csv
 import zipfile
 from dataclasses import dataclass
 from io import StringIO, TextIOWrapper
@@ -10,6 +11,7 @@ from typing import Iterable, Sequence
 
 import pandas as pd
 
+from worldenergydata.texas_rrc.district_inputs import require_district_names
 from worldenergydata.texas_rrc.production_atlas.atlas import (
     is_usable_production_frame,
     normalize_production_frame,
@@ -18,35 +20,6 @@ from worldenergydata.texas_rrc.production_atlas.atlas import (
 PRODUCTION_PDQ_RELATIVE_DIR = Path("raw") / "production" / "pdq"
 SUPPORTED_MEMBER_SUFFIXES = (".csv", ".txt", ".dsv")
 PREFERRED_PRODUCTION_MEMBERS = ("OG_LEASE_CYCLE_DATA_TABLE",)
-PRODUCTION_USE_COLUMNS = {
-    "CYCLE_MONTH",
-    "CYCLE_YEAR",
-    "CYCLE_YEAR_MONTH",
-    "DISTRICT_NO",
-    "DIST_OIL_PROD_VOL",
-    "DIST_GAS_PROD_VOL",
-    "DIST_COND_PROD_VOL",
-    "DIST_CSGD_PROD_VOL",
-    "FIELD_NO",
-    "FIELD_NAME",
-    "FIELD_OIL_PROD_VOL",
-    "FIELD_GAS_PROD_VOL",
-    "FIELD_COND_PROD_VOL",
-    "FIELD_CSGD_PROD_VOL",
-    "LEASE_NO",
-    "LEASE_NAME",
-    "LEASE_OIL_PROD_VOL",
-    "LEASE_GAS_PROD_VOL",
-    "LEASE_COND_PROD_VOL",
-    "LEASE_CSGD_PROD_VOL",
-    "OPERATOR_NO",
-    "OPERATOR_NAME",
-    "OPER_OIL_PROD_VOL",
-    "OPER_GAS_PROD_VOL",
-    "OPER_COND_PROD_VOL",
-    "OPER_CSGD_PROD_VOL",
-    "PROD_REPORT_FILED_FLAG",
-}
 
 
 @dataclass(frozen=True)
@@ -232,29 +205,22 @@ def _member_first_line(archive: zipfile.ZipFile, name: str) -> str:
         return text_file.readline()
 
 
-def _csv_reader_kwargs(first_line: str, separator: str | None) -> dict[str, object]:
-    kwargs: dict[str, object] = {
+def _csv_reader_kwargs(first_line: str, separator: str) -> dict[str, object]:
+    header = first_line.lstrip("\ufeff")
+    require_district_names(next(csv.reader([header], delimiter=separator)))
+    # Retain all fields: canonical metrics and dates need not use PDQ aliases.
+    return {
         "dtype": str,
         "keep_default_na": False,
     }
-    if separator is None:
-        kwargs["engine"] = "python"
-    usecols = _preferred_usecols(first_line, separator)
-    if usecols:
-        kwargs["usecols"] = usecols
-    return kwargs
 
 
-def _preferred_usecols(first_line: str, separator: str | None) -> list[str]:
-    if separator is None:
-        return []
-    columns = [column.strip() for column in first_line.rstrip("\r\n").split(separator)]
-    return [column for column in columns if column.upper() in PRODUCTION_USE_COLUMNS]
-
-
-def _separator(first_line: str) -> str | None:
+def _separator(first_line: str) -> str:
     if "}" in first_line:
         return "}"
     if "|" in first_line:
         return "|"
-    return None
+    try:
+        return csv.Sniffer().sniff(first_line, delimiters=",;\t").delimiter
+    except csv.Error:
+        return ","

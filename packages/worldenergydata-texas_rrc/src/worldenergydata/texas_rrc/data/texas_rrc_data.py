@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import Any, Dict, Optional, Tuple
 
 from ..api_client import TexasRRCClient
+from ..district_inputs import wellbore_district_parameter
 from ..errors import TexasRRCDataError
 
 logger = logging.getLogger(__name__)
@@ -223,19 +224,15 @@ class TexasRRCData:
         """
         use_cache = cfg.get("api", {}).get("use_cache", True)
         districts = cfg.get("districts", [])
+        # Validate the entire selection before starting any download.
+        district_parameters = [wellbore_district_parameter(d) for d in districts]
 
         results = []
 
         if districts:
             # Download for specific districts
-            for district in districts:
+            for district, district_num in zip(districts, district_parameters):
                 try:
-                    district_num = int(
-                        district.replace("0", "")
-                        .replace("A", "")
-                        .replace("B", "")
-                        .replace("C", "")
-                    )
                     file_path = self.client.download_wellbore_data(
                         output_dir=output_dir,
                         district=district_num,

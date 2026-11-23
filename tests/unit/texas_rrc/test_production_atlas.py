@@ -24,10 +24,11 @@ def _write_pdq_zip(
 
 
 def _pdq_frame() -> pd.DataFrame:
+    """Synthetic production with explicit names and PDQ metric aliases."""
     return pd.DataFrame(
         [
             {
-                "OG_DIST_NO": "08",
+                "DISTRICT_NAME": "08",
                 "OG_FIELD_NO": "1001",
                 "OG_FIELD_NAME": "SPRABERRY",
                 "OG_LEASE_NO": "2001",
@@ -42,7 +43,7 @@ def _pdq_frame() -> pd.DataFrame:
                 "OG_WELL_CNT": "2",
             },
             {
-                "OG_DIST_NO": "08",
+                "DISTRICT_NAME": "08",
                 "OG_FIELD_NO": "1001",
                 "OG_FIELD_NAME": "SPRABERRY",
                 "OG_LEASE_NO": "2002",
@@ -57,7 +58,7 @@ def _pdq_frame() -> pd.DataFrame:
                 "OG_WELL_CNT": "3",
             },
             {
-                "OG_DIST_NO": "7C",
+                "DISTRICT_NAME": "7C",
                 "OG_FIELD_NO": "1002",
                 "OG_FIELD_NAME": "WOLFCAMP",
                 "OG_LEASE_NO": "2003",
@@ -107,7 +108,7 @@ def test_normalize_production_frame_handles_rrc_lease_cycle_dsv_aliases():
     frame = pd.DataFrame(
         [
             {
-                "DISTRICT_NO": "08",
+                "DISTRICT_NAME": "08",
                 "FIELD_NO": "1001",
                 "FIELD_NAME": "SPRABERRY",
                 "LEASE_NO": "2001",
@@ -140,7 +141,7 @@ def test_normalize_production_frame_marks_missing_official_metrics_unavailable()
     frame = pd.DataFrame(
         [
             {
-                "DISTRICT_NO": "08",
+                "DISTRICT_NAME": "08",
                 "FIELD_NO": "1001",
                 "LEASE_NO": "2001",
                 "OPERATOR_NO": "300001",
@@ -202,7 +203,7 @@ def test_build_production_atlas_marks_unavailable_metrics_as_null():
     frame = pd.DataFrame(
         [
             {
-                "DISTRICT_NO": "08",
+                "DISTRICT_NAME": "08",
                 "FIELD_NO": "1001",
                 "LEASE_NO": "2001",
                 "OPERATOR_NO": "300001",
@@ -229,7 +230,7 @@ def test_build_production_atlas_groups_on_stable_ids_not_display_names():
     frame = pd.DataFrame(
         [
             {
-                "OG_DIST_NO": "08",
+                "DISTRICT_NAME": "08",
                 "OG_FIELD_NO": "1001",
                 "OG_FIELD_NAME": "SPRABERRY",
                 "OG_LEASE_NO": "2001",
@@ -241,7 +242,7 @@ def test_build_production_atlas_groups_on_stable_ids_not_display_names():
                 "OG_GAS_PROD": "1000",
             },
             {
-                "OG_DIST_NO": "08",
+                "DISTRICT_NAME": "08",
                 "OG_FIELD_NO": "1001",
                 "OG_FIELD_NAME": "SPRABERRY TREND AREA",
                 "OG_LEASE_NO": "2001",
@@ -277,7 +278,7 @@ def test_build_production_atlas_rolls_top_operator_up_by_number():
     frame = pd.DataFrame(
         [
             {
-                "OG_DIST_NO": "08",
+                "DISTRICT_NAME": "08",
                 "OG_FIELD_NO": "1001",
                 "OG_FIELD_NAME": "SPRABERRY",
                 "OG_LEASE_NO": "2001",
@@ -287,7 +288,7 @@ def test_build_production_atlas_rolls_top_operator_up_by_number():
                 "OG_OIL_PROD": "100",
             },
             {
-                "OG_DIST_NO": "08",
+                "DISTRICT_NAME": "08",
                 "OG_FIELD_NO": "1001",
                 "OG_FIELD_NAME": "SPRABERRY",
                 "OG_LEASE_NO": "2002",
@@ -316,7 +317,7 @@ def test_normalize_production_frame_handles_split_cycle_year_month():
     frame = pd.DataFrame(
         [
             {
-                "DISTRICT_NO": "08",
+                "DISTRICT_NAME": "08",
                 "FIELD_NO": "1001",
                 "LEASE_NO": "2001",
                 "OPERATOR_NO": "300001",
@@ -341,7 +342,7 @@ def test_build_production_atlas_uses_positive_months_for_active_window():
     frame = pd.DataFrame(
         [
             {
-                "OG_DIST_NO": "08",
+                "DISTRICT_NAME": "08",
                 "OG_FIELD_NO": "1001",
                 "OG_FIELD_NAME": "SPRABERRY",
                 "OG_CYCLE": "202301",
@@ -349,7 +350,7 @@ def test_build_production_atlas_uses_positive_months_for_active_window():
                 "OG_GAS_PROD": "0",
             },
             {
-                "OG_DIST_NO": "08",
+                "DISTRICT_NAME": "08",
                 "OG_FIELD_NO": "1001",
                 "OG_FIELD_NAME": "SPRABERRY",
                 "OG_CYCLE": "202302",
@@ -377,7 +378,7 @@ def test_build_production_atlas_ignores_unfiled_future_cycles_for_currentness():
     frame = pd.DataFrame(
         [
             {
-                "DISTRICT_NO": "08",
+                "DISTRICT_NAME": "08",
                 "FIELD_NO": "1001",
                 "LEASE_NO": "2001",
                 "OPERATOR_NO": "300001",
@@ -386,7 +387,7 @@ def test_build_production_atlas_ignores_unfiled_future_cycles_for_currentness():
                 "LEASE_OIL_PROD_VOL": "100",
             },
             {
-                "DISTRICT_NO": "08",
+                "DISTRICT_NAME": "08",
                 "FIELD_NO": "1002",
                 "LEASE_NO": "2002",
                 "OPERATOR_NO": "300002",
@@ -453,7 +454,7 @@ def test_build_production_atlas_from_chunks_merges_boundary_duplicate_lease_mont
     frame = pd.DataFrame(
         [
             {
-                "DISTRICT_NO": "08",
+                "DISTRICT_NAME": "08",
                 "FIELD_NO": "1001",
                 "LEASE_NO": "2001",
                 "OPERATOR_NO": "300001",
@@ -462,7 +463,7 @@ def test_build_production_atlas_from_chunks_merges_boundary_duplicate_lease_mont
                 "LEASE_OIL_PROD_VOL": "100",
             },
             {
-                "DISTRICT_NO": "08",
+                "DISTRICT_NAME": "08",
                 "FIELD_NO": "1001",
                 "LEASE_NO": "2001",
                 "OPERATOR_NO": "300001",
@@ -501,7 +502,7 @@ def test_load_production_inputs_reads_local_official_pdq_zip(tmp_path):
         tmp_path / "raw/production/pdq/PDQ_DSV.zip",
         "\n".join(
             [
-                "OG_DIST_NO,OG_FIELD_NO,OG_FIELD_NAME,OG_LEASE_NO,OG_OPER_NO,OG_CYCLE,OG_OIL_PROD,OG_GAS_PROD",
+                "DISTRICT_NAME,OG_FIELD_NO,OG_FIELD_NAME,OG_LEASE_NO,OG_OPER_NO,OG_CYCLE,OG_OIL_PROD,OG_GAS_PROD",
                 "08,1001,SPRABERRY,2001,300001,202301,100,1000",
             ]
         ),
@@ -522,7 +523,7 @@ def test_load_production_inputs_streams_preferred_pdq_member(tmp_path, monkeypat
         tmp_path / "raw/production/pdq/PDQ_DSV.zip",
         "\n".join(
             [
-                "DISTRICT_NO}FIELD_NO}FIELD_NAME}LEASE_NO}OPERATOR_NO}CYCLE_YEAR_MONTH}LEASE_OIL_PROD_VOL}LEASE_GAS_PROD_VOL",
+                "DISTRICT_NAME}FIELD_NO}FIELD_NAME}LEASE_NO}OPERATOR_NO}CYCLE_YEAR_MONTH}LEASE_OIL_PROD_VOL}LEASE_GAS_PROD_VOL",
                 "08}1001}SPRABERRY}2001}300001}202301}100}1000",
             ]
         ),
@@ -551,7 +552,7 @@ def test_load_production_inputs_reads_pipe_delimited_pdq_members(tmp_path):
         tmp_path / "raw/production/pdq/PDQ_DSV.zip",
         "\n".join(
             [
-                "OG_DIST_NO|OG_FIELD_NO|OG_FIELD_NAME|OG_LEASE_NO|OG_OPER_NO|OG_CYCLE|OG_OIL_PROD|OG_GAS_PROD",
+                "DISTRICT_NAME|OG_FIELD_NO|OG_FIELD_NAME|OG_LEASE_NO|OG_OPER_NO|OG_CYCLE|OG_OIL_PROD|OG_GAS_PROD",
                 "08|1001|SPRABERRY|2001|300001|202301|100|1000",
             ]
         ),
@@ -573,7 +574,7 @@ def test_iter_production_input_chunks_reads_pdq_in_bounded_chunks(tmp_path):
         tmp_path / "raw/production/pdq/PDQ_DSV.zip",
         "\n".join(
             [
-                "DISTRICT_NO}FIELD_NO}FIELD_NAME}LEASE_NO}OPERATOR_NO}CYCLE_YEAR_MONTH}LEASE_OIL_PROD_VOL}LEASE_GAS_PROD_VOL",
+                "DISTRICT_NAME}FIELD_NO}FIELD_NAME}LEASE_NO}OPERATOR_NO}CYCLE_YEAR_MONTH}LEASE_OIL_PROD_VOL}LEASE_GAS_PROD_VOL",
                 "08}1001}SPRABERRY}2001}300001}202301}100}1000",
                 "08}1001}SPRABERRY}2001}300001}202302}50}500",
             ]
@@ -597,7 +598,7 @@ def test_load_production_inputs_reads_tab_delimited_pdq_members(tmp_path):
         tmp_path / "raw/production/pdq/PDQ_DSV.zip",
         "\n".join(
             [
-                "OG_DIST_NO\tOG_FIELD_NO\tOG_FIELD_NAME\tOG_LEASE_NO\tOG_OPER_NO\tOG_CYCLE\tOG_OIL_PROD",
+                "DISTRICT_NAME\tOG_FIELD_NO\tOG_FIELD_NAME\tOG_LEASE_NO\tOG_OPER_NO\tOG_CYCLE\tOG_OIL_PROD",
                 "08\t1001\tSPRABERRY\t2001\t300001\t202301\t100",
             ]
         ),
@@ -618,7 +619,7 @@ def test_load_production_inputs_accepts_catalog_raw_path(tmp_path):
         raw_path / "PDQ_DSV.zip",
         "\n".join(
             [
-                "OG_DIST_NO,OG_FIELD_NO,OG_FIELD_NAME,OG_LEASE_NO,OG_OPER_NO,OG_CYCLE,OG_OIL_PROD",
+                "DISTRICT_NAME,OG_FIELD_NO,OG_FIELD_NAME,OG_LEASE_NO,OG_OPER_NO,OG_CYCLE,OG_OIL_PROD",
                 "08,1001,SPRABERRY,2001,300001,202301,100",
             ]
         ),
@@ -731,7 +732,7 @@ def test_write_production_atlas_outputs_reports_unavailable_metric_gaps(tmp_path
     frame = pd.DataFrame(
         [
             {
-                "DISTRICT_NO": "08",
+                "DISTRICT_NAME": "08",
                 "FIELD_NO": "1001",
                 "LEASE_NO": "2001",
                 "OPERATOR_NO": "300001",
@@ -833,7 +834,7 @@ def test_build_production_atlas_cli_writes_outputs_with_non_ace_override(tmp_pat
         tmp_path / "raw/production/pdq/PDQ_DSV.zip",
         "\n".join(
             [
-                "OG_DIST_NO,OG_FIELD_NO,OG_FIELD_NAME,OG_LEASE_NO,OG_OPER_NO,OG_CYCLE,OG_OIL_PROD",
+                "DISTRICT_NAME,OG_FIELD_NO,OG_FIELD_NAME,OG_LEASE_NO,OG_OPER_NO,OG_CYCLE,OG_OIL_PROD",
                 "08,1001,SPRABERRY,2001,300001,202301,100",
             ]
         ),
