@@ -5,16 +5,16 @@
 | Module | drilling |
 | Repository | worldenergydata |
 | Path | `packages/worldenergydata-drilling/src/worldenergydata/drilling` |
-| Pack revision | 7 (source traceability and runtime output), 2026-11-06 |
+| Pack revision | 8 (input contracts), 2026-11-22 |
 | Code revision | `a814fe13149465d1daeb8a06ca2f024b60a335a1` |
 | Cost-contract source revision | `88c983611ff1c892a5fb3bd29bca9e73a9c17085` |
 | Analysis family | EC; Python calculations gate set, AQG r0 section 10 |
 | Quality role | Calculations quality manager; data-pipeline coverage |
 | Status | DRAFT; independent clearance pending |
 
-The source pin includes the reviewed detector commit
-`88c8c3efe56ff63216cb81a8f3e642059b158d3b` (#1533). Runtime sources are unchanged
-by this refresh. Reconciliation and parsing are covered by regression evidence;
+The revision 3 source pin includes the reviewed detector commit
+`88c8c3efe56ff63216cb81a8f3e642059b158d3b` (#1533). Runtime sources were unchanged
+by the revision 3 documentation refresh. Reconciliation and parsing are covered by regression evidence;
 physical applicability remains unqualified.
 
 Revision 7 retains the revision-4 cost contract and stronger arithmetic regressions
@@ -22,6 +22,10 @@ for #1345, corrects row 50 to the historical code pin and qualifies C9 as a CPyt
 The code revision and earlier evidence below remain historical pins; this revision does not refresh
 their source digests or qualify the duration model.
 Stale pin/enrollment checks remain tracked by #1804.
+Current model and calculator inputs are defined in [input-contracts.md](input-contracts.md).
+Revision 8 links that contract, which supersedes the historical input, sequence and empty-campaign
+findings below. The source pins, digests and method inventory retained here
+describe the earlier snapshot and do not establish current-source agreement.
 
 ### Revision history
 
@@ -35,6 +39,7 @@ Stale pin/enrollment checks remain tracked by #1804.
 | 5 | 2026-11-04 | Qualify the exact-arithmetic no-savings claim and characterize fractional-duration false savings across Python versions without changing production arithmetic. |
 | 6 | 2026-11-04 | Qualify both active break-even table rows as exact-arithmetic results and reference C9 for runtime-dependent floating-point comparisons. |
 | 7 | 2026-11-06 | Correct row 50 to the declared code pin, qualify the CPython output check and retain direct campaign-cost coverage at LC=0.85. |
+| 8 (input contracts) | 2026-11-22 | Link current finite-value, unit, sequence and empty-campaign requirements and their acceptance coverage; retain the historical source snapshot and qualification limits. Authored 2026-11-04 as revision 4 on a parallel branch and renumbered when merged after revisions 4 to 7. |
 
 ## 1. Purpose and scope
 
