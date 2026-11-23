@@ -1000,6 +1000,12 @@ def run(data_dir, out):
         ["band", "measure", "n", "p25_days", "median_days", "p75_days"],
     )
 
+    report_dates = {}
+    for r in reports:
+        report_dates.setdefault(r["api12"], []).append(r["date"])
+    repeat_bores = {
+        api: set(dates) for api, dates in report_dates.items() if len(dates) > 1
+    }
     by_band = tally(in_window, "band")
     by_year = tally(in_window, "year")
     status = tally([r for r in reports if r["year"] in in_years], "status")
@@ -1021,6 +1027,10 @@ def run(data_dir, out):
         bores_first_completed_by_report=len(first_r),
         wells_first_completed_by_report=len({e["api10"] for e in first_r}),
         completion_reports_all_years=len(reports),
+        bores_with_more_than_one_completion_report=len(repeat_bores),
+        of_which_every_report_has_the_same_status_date=sum(
+            len(dates) == 1 for dates in repeat_bores.values()
+        ),
         completion_reports_in_window=r_checks["in_window"],
         completion_reports_in_window_by_status=dict(sorted(status.items())),
         completion_intervals_read=sum(len(a["perforations"]) for a in attrs.values()),
