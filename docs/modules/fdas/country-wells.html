@@ -9,7 +9,12 @@ drilling activity; that case is NOT_EVALUATED and cannot be exported to cashflow
 <table><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr>
 <tr><td>1</td><td>2026-10-20</td><td>Country well identities, explicit activity
 coverage and a synthetic cost example are introduced to replace missing inputs
-without fabricating drilling durations.</td></tr></table>
+without fabricating drilling durations.</td></tr>
+<tr><td>2</td><td>2026-11-16</td><td>A local evidence envelope retains source
+metadata and explicit interpretation citations before normalization.</td></tr>
+<tr><td>3</td><td>2026-11-17</td><td>Query URLs reject raw whitespace and control
+characters before parsing; empty-selection behaviour is clarified to distinguish
+it from missing activity for selected wells.</td></tr></table>
 <h2>Inputs and contract</h2>
 <p><code>WellRecord</code> in <code>fdas.adapters.wells</code> requires country,
 source, well ID and development. Its key is the tuple (country, source, well ID).
@@ -31,6 +36,47 @@ The adapter requires a caller-selected unit (m or international ft); None retain
 unknown depth as None. The international foot is exactly 0.3048 m according to
 the cited NIST table. Datum-dependent interpretation remains unqualified.
 ISO dates and datetimes preserve the source calendar day without UTC shifting.</p>
+<h2>Local evidence envelope</h2>
+<p><code>read_datavic_evidence(raw, metadata)</code> in
+<code>fdas.adapters.datavic_evidence</code> validates the following version 1
+mapping before calling the existing adapter. All keys are required; unknown
+source vintage and depth unit are explicitly null. The digest is SHA-256 of the
+exact supplied export bytes. This synthetic mapping describes one site:</p>
+<pre>{
+  "schema_version": 1,
+  "raw_sha256": "&lt;64 lowercase hexadecimal characters for the export&gt;",
+  "query_url": "https://example.invalid/wfs?typeNames=pet_wells",
+  "retrieved_at_utc": "2026-11-16T12:00:00Z",
+  "source_vintage": null,
+  "licence_identifier": "synthetic-licence",
+  "licence_source": "citation:synthetic-licence",
+  "development_links": [
+    {"site_id": "7", "development": "Example", "evidence": "citation:link-7"}
+  ],
+  "water_depth_unit": null,
+  "water_depth_unit_evidence": null
+}</pre>
+<p>Development rows must cover exactly the exported site IDs, once each, with
+nonblank evidence references. Unknown keys, malformed rows, duplicate links,
+missing evidence and raw digest mismatches fail. A known unit (m or international
+ft) requires a nonblank unit evidence reference. Unknown units cause no conversion
+and retain null normalized depth. Empty exports require an empty link list.
+Query URLs reject raw whitespace and control characters before URL parsing.</p>
+<p>The immutable <code>DataVicEvidence</code> snapshot retains the original bytes,
+all mapping metadata, immutable development links and <code>normalized</code>
+DataVicWells. References remain opaque citations; the reader performs no network
+or filesystem I/O. Metadata validation does not verify citation contents, current
+licence permission, source-native field membership, depth datum or engineering
+qualification. The raw digest binds export bytes only; it does not authenticate
+interpretation metadata. Coverage remains limited to the supplied query.</p>
+<p>The catalogue licence and schema observations below are historical observations
+from 2026-10-20, not a current endpoint or licence check. Later acquisition requires
+fresh source and licence verification. Measured activity, source qualification,
+acquisition and refresh registration remain deferred under #783. For a development
+with at least one selected well, an envelope without activity yields NOT_EVALUATED
+and refuses cashflow export. An empty export or a development with no selected
+wells instead causes <code>build_drilling_timeline</code> to raise
+<code>ValueError</code> with "No wells for requested development".</p>
 <h2>Method and coverage</h2>
 <p><code>DrillingActivity</code> in <code>fdas.data.country_drilling</code> requires
 the same source-scoped key, a start date, an exclusive end date and an evidence

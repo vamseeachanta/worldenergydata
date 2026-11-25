@@ -1,5 +1,12 @@
 <!doctype html><html lang="en"><meta charset="utf-8"><title>State regulator fetch infrastructure</title>
 <h1>State regulator fetch infrastructure</h1>
+<p>Summary: shared collection retains payloads and request budgets across restarts.
+The configured command adds deployment checks, storage confinement, an offline plan,
+bulk-route preference and a permission check for the complete plan before collection.</p>
+<h2>Revision history</h2>
+<table><thead><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr></thead><tbody>
+<tr><td>1</td><td>2026-10-20</td><td>Add configured execution, current endpoint metadata and a worked example so collection can be planned and checked before network access.</td></tr>
+</tbody></table>
 <p>Evidence: <a href="https://github.com/vamseeachanta/worldenergydata/issues/1130">shared fetch issue</a>
 and <a href="https://github.com/vamseeachanta/worldenergydata/issues/1129">Indiana ingest issue and connectivity comment</a>.
 The observations below were recorded on 2026-07-30 and have not been re-probed for this implementation.
@@ -67,6 +74,68 @@ That cache-hit path makes no network request; purge is an explicit operator acti
 estimate and terms status. Estimates exclude response latency, future header changes and retry delays; unknown vendor
 windows use configuration. Exhausted budgets stop collection for later resume. HTTP 429 retries are bounded and honor
 Retry-After; HTTP refusals stop the run.</p>
-<p>No regulator request, crawl or volume run was performed for this implementation. Indiana wiring, actual recorded terms
+<p>The original fetch implementation made no regulator request, crawl or volume run. Indiana wiring, actual recorded terms
 checks, current reachability observations and an authorized real run remain future work. No bulk data is committed.</p>
+<h2>Endpoint metadata update</h2>
+<p>The later research comment in the Indiana ingest issue identifies an official hosted feature service, superseding
+the unresolved Hosted-folder lead in the historical observations above. A single metadata request to
+<a href="https://gisdata.in.gov/server/rest/services/Hosted/OilAndGasWells/FeatureServer?f=pjson">the official Indiana
+OilAndGasWells feature-service description</a> returned HTTP 200 on 2026-10-20 UTC. It advertises Query capability,
+an OilGasWells point layer and Completion, DOG_Image_FileList and OilGasWellsCompsJoin tables. The description and
+copyright fields are empty. This confirms metadata reachability from the execution environment at that instant;
+it does not establish bulk permission, data currency, row counts or PDMS access. No feature records were requested.
+Use the service as a bulk-route candidate only after terms review; the example configuration remains unpermitted.</p>
+<h2>Configured collection command</h2>
+<p><code>config/state_regulator_fetch.example.json</code> is an offline example, with synthetic operating inputs
+and no terms permission. All pacing, timeout, retry, sleep and payload limits are required in this command's configuration;
+none is inferred from undocumented vendor behavior. Supply an absolute data-disk directory through
+<code>STATE_FETCH_DATA_ROOT</code> and set <code>STATE_FETCH_EXECUTION_ROLE=regulator-fetch</code> in the deployment
+that has been assigned source collection. Replace the example contact URL with a maintained public contact URL.</p>
+<pre>python -m worldenergydata.modules.state_regulators.fetch.job config/state_regulator_fetch.example.json
+# After source terms have been reviewed, recorded and permitted:
+python -m worldenergydata.modules.state_regulators.fetch.job config/state_regulator_fetch.example.json --execute</pre>
+<p>The first command makes no HTTP requests. It reports unique pending requests, cached URLs, the selected route,
+maximum attempts, estimated time and permission status. It may create empty cache directories and reads retained objects
+to verify integrity. The second command refuses the example because its permission list is empty.</p>
+<p>The execution role must match before cache creation. This is a deployment assertion, not hardware attestation:
+the deployment controls the environment variable. Actual source reachability is checked by the first budgeted request;
+a connection or name-resolution failure stops the plan without retrying or starting later URLs. Cached payloads need
+no reachability probe. Current PDMS reachability remains <code>NOT_EVALUATED</code>; the historical observations
+above must not be treated as a current measurement.</p>
+<p>The resolved cache directory must be inside the configured absolute storage root. Symlink escapes and unresolved
+variables are refused. This checks placement, not disk identity, free capacity or concurrent filesystem replacement;
+the deployment must provide a stable data directory. Run only one writer per cache root.</p>
+<p>List reviewed official archive, ArcGIS REST or shapefile URLs under <code>bulk_urls</code> and record crawl page URLs
+under <code>crawl_urls</code>. The first bulk candidate is selected when available. <code>use_crawl=true</code> requires
+crawl URLs and logs the available bulk alternatives. Endpoint discovery remains a human source-review step; this command
+does not scrape to discover routes. Before executing any uncached URL, the complete plan must have matching recorded
+<code>TermsCheck</code> entries. A terms record contains <code>origin</code>, <code>terms_url</code>,
+<code>checked_at</code> (UTC) and an explicit Boolean <code>bulk_allowed</code>. Successful HTTP access never supplies permission.</p>
+<h2>Worked example: inputs, method and answer</h2>
+<p>All numbers in this example are synthetic operator choices, not measured regulator limits.
+Inputs: three unique uncached URLs on one origin; spacing 2.0 s; at most three attempts per 10.0 s;
+one retry per URL; no retained attempts or server cooldown. The example also chooses a 5.0 s timeout,
+30.0 s sleep cap and 1024-byte payload cap; these bound execution and do not enter the no-retry estimate.</p>
+<p>Independent hand calculation: request starts occur at 0.0, 2.0 and 4.0 s, so the pacing-only estimate is
+<code>T = (N - 1) × spacing = (3 - 1) × 2.0 = 4.0 s</code>.
+There is no trailing sleep after the last request. Maximum attempts are
+<code>A = N × (1 + retries) = 3 × (1 + 1) = 6</code>.
+A fourth URL starts at 10.0 s: after starts at 0.0, 2.0 and 4.0 s, the rolling window releases
+the first reservation at 10.0 s. After a completed run, a restart reports zero pending requests and makes zero requests.
+The offline example reports <code>terms_permitted=false</code>; tests grant permission only to a local fake server.</p>
+<p>Method source: these schedule and attempt equations follow directly from counting the configured gaps and attempts;
+the independent arithmetic is also written in <code>tests/unit/state_regulators/test_fetch_job.py</code>.
+The projection excludes response latency, future server limits, retry waits and later invocations needed after budget exhaustion.
+For multiple hosts, the sum of per-host projections is a conservative serial estimate, not a completion-time guarantee.</p>
+<h2>Protocol sources and limits</h2>
+<p><a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-10.2.3">RFC 9110 (2022), section 10.2.3</a>
+defines Retry-After seconds or an HTTP date; section 10.1.5 defines User-Agent.
+<a href="https://www.rfc-editor.org/rfc/rfc6585.html#section-4">RFC 6585 (2012), section 4</a>
+defines HTTP 429 and its optional Retry-After field.
+<a href="https://www.ietf.org/archive/id/draft-ietf-httpapi-ratelimit-headers-03.html#section-5">RateLimit Fields for HTTP,
+draft revision 03 (2022), section 5</a> describes the legacy RateLimit-Limit, Remaining and Reset fields handled here.
+This draft is a historical protocol source, not a claim of conformance to a current standard.
+Vendor numerator meaning, reset units and window duration remain unverified; configured fallback assumptions do not
+establish a safe source-specific rate. No source permission, fresh reachability measurement, legacy-ingest migration,
+streaming archive support or volume collection is claimed by these offline checks.</p>
 </html>

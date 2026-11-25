@@ -166,8 +166,9 @@ def main() -> None:
             page_size=config["page_size"],
             max_query_pages=config["max_query_pages"],
         )
-    args.output.parent.mkdir(parents=True, exist_ok=True)
-    atomic_json(args.output, result)
+    output = args.output.resolve()
+    output.parent.mkdir(parents=True, exist_ok=True)
+    atomic_json(output, result, root=output.parent)
 
 
 if __name__ == "__main__":
