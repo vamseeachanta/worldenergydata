@@ -1,0 +1,4810 @@
+{
+  "coverage_through": "2026-09",
+  "coverage_source": {
+    "table": "monthly_production.csv",
+    "filter": {
+      "band": "All"
+    },
+    "operation": "max(month)"
+  },
+  "units": {
+    "oil_bbl": "barrels",
+    "gas_mcf": "thousand cubic feet",
+    "lag": "calendar months",
+    "median_relative_rate": "fraction of baseline",
+    "share": "fraction of horizon-eligible wells",
+    "sum(producing_wells)": "well-years",
+    "ratio": "fraction"
+  },
+  "headlines": {
+    "under100/year/2005": {
+      "table": "annual_wells.csv",
+      "filter": {
+        "year": 2005,
+        "band": "<100 m"
+      },
+      "fields": [
+        "producing_wells",
+        "oil_bbl",
+        "gas_mcf",
+        "months_reported"
+      ],
+      "operation": "row",
+      "values": {
+        "producing_wells": 5387,
+        "oil_bbl": 112263904,
+        "gas_mcf": 1783702963,
+        "months_reported": 12
+      }
+    },
+    "under100/year/2025": {
+      "table": "annual_wells.csv",
+      "filter": {
+        "year": 2025,
+        "band": "<100 m"
+      },
+      "fields": [
+        "producing_wells",
+        "oil_bbl",
+        "gas_mcf",
+        "months_reported"
+      ],
+      "operation": "row",
+      "values": {
+        "producing_wells": 1097,
+        "oil_bbl": 25721338,
+        "gas_mcf": 91874043,
+        "months_reported": 12
+      }
+    },
+    "under100/year/2026": {
+      "table": "annual_wells.csv",
+      "filter": {
+        "year": 2026,
+        "band": "<100 m"
+      },
+      "fields": [
+        "producing_wells",
+        "oil_bbl",
+        "gas_mcf",
+        "months_reported"
+      ],
+      "operation": "row",
+      "values": {
+        "producing_wells": 1003,
+        "oil_bbl": 17436037,
+        "gas_mcf": 68471608,
+        "months_reported": 9
+      }
+    },
+    "under100/period": {
+      "table": "annual_wells.csv",
+      "filter": {
+        "band": "<100 m"
+      },
+      "fields": [
+        "oil_bbl",
+        "gas_mcf",
+        "producing_wells"
+      ],
+      "operation": "sum",
+      "values": {
+        "oil_bbl": 1449748317,
+        "gas_mcf": 14302052771,
+        "producing_wells": 64791
+      }
+    },
+    "under100/period_wells": {
+      "table": "article_summary.csv",
+      "filter": {
+        "band": "<100 m"
+      },
+      "fields": [
+        "distinct_producing_wells",
+        "producing_well_months",
+        "median_well_month_oil_bbl",
+        "median_well_month_gas_mcf",
+        "cohort_completions",
+        "ever_produced_wells",
+        "produced_in_or_after_c_month_wells",
+        "supported_starts",
+        "share_produced_in_or_after_c_month",
+        "war_by_cutoff_wells",
+        "war_by_cutoff_share",
+        "war_signed_event_age_median_months",
+        "permit_by_cutoff_wells",
+        "permit_by_cutoff_share",
+        "permit_signed_event_age_median_months"
+      ],
+      "operation": "row",
+      "values": {
+        "distinct_producing_wells": 7455,
+        "producing_well_months": 618609,
+        "median_well_month_oil_bbl": 956.0,
+        "median_well_month_gas_mcf": 2952.0,
+        "cohort_completions": 1822,
+        "ever_produced_wells": 1780,
+        "produced_in_or_after_c_month_wells": 1766,
+        "supported_starts": 1554,
+        "share_produced_in_or_after_c_month": 0.969264544456641,
+        "war_by_cutoff_wells": 1308,
+        "war_by_cutoff_share": 0.8416988416988417,
+        "war_signed_event_age_median_months": 16.0,
+        "permit_by_cutoff_wells": 1122,
+        "permit_by_cutoff_share": 0.722007722007722,
+        "permit_signed_event_age_median_months": 7.0
+      }
+    },
+    "under100/month/2005-12": {
+      "table": "monthly_production.csv",
+      "filter": {
+        "month": "2005-12",
+        "band": "<100 m"
+      },
+      "fields": [
+        "oil_bbl",
+        "gas_mcf",
+        "monthly_producing_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "oil_bbl": 7016607,
+        "gas_mcf": 130341080,
+        "monthly_producing_wells": 2691
+      }
+    },
+    "under100/month/2025-12": {
+      "table": "monthly_production.csv",
+      "filter": {
+        "month": "2025-12",
+        "band": "<100 m"
+      },
+      "fields": [
+        "oil_bbl",
+        "gas_mcf",
+        "monthly_producing_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "oil_bbl": 2161134,
+        "gas_mcf": 8812097,
+        "monthly_producing_wells": 907
+      }
+    },
+    "under100/month/2026-08": {
+      "table": "monthly_production.csv",
+      "filter": {
+        "month": "2026-08",
+        "band": "<100 m"
+      },
+      "fields": [
+        "oil_bbl",
+        "gas_mcf",
+        "monthly_producing_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "oil_bbl": 1879992,
+        "gas_mcf": 7333145,
+        "monthly_producing_wells": 887
+      }
+    },
+    "under100/month/2026-09": {
+      "table": "monthly_production.csv",
+      "filter": {
+        "month": "2026-09",
+        "band": "<100 m"
+      },
+      "fields": [
+        "oil_bbl",
+        "gas_mcf",
+        "monthly_producing_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "oil_bbl": 1325740,
+        "gas_mcf": 5174241,
+        "monthly_producing_wells": 592
+      }
+    },
+    "under100/monthly_mean/2005": {
+      "table": "monthly_production.csv",
+      "filter": {
+        "band": "<100 m",
+        "year": 2005
+      },
+      "fields": [
+        "oil_bbl",
+        "gas_mcf",
+        "monthly_producing_wells"
+      ],
+      "operation": "mean",
+      "values": {
+        "oil_bbl": 9355325.333333334,
+        "gas_mcf": 148641913.58333334,
+        "monthly_producing_wells": 3776.0
+      }
+    },
+    "under100/monthly_mean/2025": {
+      "table": "monthly_production.csv",
+      "filter": {
+        "band": "<100 m",
+        "year": 2025
+      },
+      "fields": [
+        "oil_bbl",
+        "gas_mcf",
+        "monthly_producing_wells"
+      ],
+      "operation": "mean",
+      "values": {
+        "oil_bbl": 2143444.8333333335,
+        "gas_mcf": 7656170.25,
+        "monthly_producing_wells": 907.5833333333334
+      }
+    },
+    "under100/monthly_mean/2026": {
+      "table": "monthly_production.csv",
+      "filter": {
+        "band": "<100 m",
+        "year": 2026
+      },
+      "fields": [
+        "oil_bbl",
+        "gas_mcf",
+        "monthly_producing_wells"
+      ],
+      "operation": "mean",
+      "values": {
+        "oil_bbl": 1937337.4444444445,
+        "gas_mcf": 7607956.444444444,
+        "monthly_producing_wells": 863.4444444444445
+      }
+    },
+    "under100/lag/ordered": {
+      "table": "completion_lag.csv",
+      "filter": {
+        "band": "<100 m",
+        "population": "ordered"
+      },
+      "fields": [
+        "wells",
+        "p25_months",
+        "median_months",
+        "p75_months",
+        "pre_completion_wells",
+        "same_month_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "wells": 1295,
+        "p25_months": 0.0,
+        "median_months": 1.0,
+        "p75_months": 4.0,
+        "pre_completion_wells": 0,
+        "same_month_wells": 466
+      }
+    },
+    "under100/lag/signed": {
+      "table": "completion_lag.csv",
+      "filter": {
+        "band": "<100 m",
+        "population": "signed"
+      },
+      "fields": [
+        "wells",
+        "p25_months",
+        "median_months",
+        "p75_months",
+        "pre_completion_wells",
+        "same_month_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "wells": 1315,
+        "p25_months": 0.0,
+        "median_months": 1.0,
+        "p75_months": 4.0,
+        "pre_completion_wells": 20,
+        "same_month_wells": 466
+      }
+    },
+    "under100/decline/All/1": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "<100 m",
+        "completion_type": "All",
+        "age_month": 1
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 1212,
+        "wells": 1207,
+        "median_relative_rate": 0.6696052261871311
+      }
+    },
+    "under100/decline/All/12": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "<100 m",
+        "completion_type": "All",
+        "age_month": 12
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 1212,
+        "wells": 983,
+        "median_relative_rate": 0.4814647377938517
+      }
+    },
+    "under100/decline/All/60": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "<100 m",
+        "completion_type": "All",
+        "age_month": 60
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 1212,
+        "wells": 714,
+        "median_relative_rate": 0.18270508710315012
+      }
+    },
+    "under100/decline/Subsea/1": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "<100 m",
+        "completion_type": "Subsea",
+        "age_month": 1
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 21,
+        "wells": 21,
+        "median_relative_rate": 0.5008130081300813
+      }
+    },
+    "under100/decline/Subsea/12": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "<100 m",
+        "completion_type": "Subsea",
+        "age_month": 12
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 21,
+        "wells": 17,
+        "median_relative_rate": 0.3915117618029281
+      }
+    },
+    "under100/decline/Subsea/60": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "<100 m",
+        "completion_type": "Subsea",
+        "age_month": 60
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 21,
+        "wells": 6,
+        "median_relative_rate": 0.35109698100962655
+      }
+    },
+    "under100/decline/No subsea flag (NO)/1": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "<100 m",
+        "completion_type": "No subsea flag (NO)",
+        "age_month": 1
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 1015,
+        "wells": 1010,
+        "median_relative_rate": 0.66640173529225
+      }
+    },
+    "under100/decline/No subsea flag (NO)/12": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "<100 m",
+        "completion_type": "No subsea flag (NO)",
+        "age_month": 12
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 1015,
+        "wells": 841,
+        "median_relative_rate": 0.4862030343142246
+      }
+    },
+    "under100/decline/No subsea flag (NO)/60": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "<100 m",
+        "completion_type": "No subsea flag (NO)",
+        "age_month": 60
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 1015,
+        "wells": 640,
+        "median_relative_rate": 0.1855737757051021
+      }
+    },
+    "under100/decline/Unknown/1": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "<100 m",
+        "completion_type": "Unknown",
+        "age_month": 1
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 176,
+        "wells": 176,
+        "median_relative_rate": 0.757402748533894
+      }
+    },
+    "under100/decline/Unknown/12": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "<100 m",
+        "completion_type": "Unknown",
+        "age_month": 12
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 176,
+        "wells": 125,
+        "median_relative_rate": 0.4120879120879121
+      }
+    },
+    "under100/decline/Unknown/60": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "<100 m",
+        "completion_type": "Unknown",
+        "age_month": 60
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 176,
+        "wells": 68,
+        "median_relative_rate": 0.15932561175520077
+      }
+    },
+    "under100/Post-completion WAR/0": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "<100 m",
+        "measure": "Post-completion WAR",
+        "age_year": 0
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 1554,
+        "event_wells": 367,
+        "share": 0.23616473616473616,
+        "completion_observed_wells": 1388,
+        "pre_origin_event_wells": 262
+      }
+    },
+    "under100/Post-completion WAR/1": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "<100 m",
+        "measure": "Post-completion WAR",
+        "age_year": 1
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 1552,
+        "event_wells": 592,
+        "share": 0.38144329896907214,
+        "completion_observed_wells": 1393,
+        "pre_origin_event_wells": 262
+      }
+    },
+    "under100/Post-completion WAR/5": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "<100 m",
+        "measure": "Post-completion WAR",
+        "age_year": 5
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 1523,
+        "event_wells": 1013,
+        "share": 0.6651346027577151,
+        "completion_observed_wells": 1377,
+        "pre_origin_event_wells": 257
+      }
+    },
+    "under100/Post-completion WAR/10": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "<100 m",
+        "measure": "Post-completion WAR",
+        "age_year": 10
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 1471,
+        "event_wells": 1160,
+        "share": 0.7885791978246091,
+        "completion_observed_wells": 1326,
+        "pre_origin_event_wells": 250
+      }
+    },
+    "under100/Post-completion WAR/20": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "<100 m",
+        "measure": "Post-completion WAR",
+        "age_year": 20
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 503,
+        "event_wells": 382,
+        "share": 0.7594433399602386,
+        "completion_observed_wells": 392,
+        "pre_origin_event_wells": 71
+      }
+    },
+    "under100/Intervention approval/0": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "<100 m",
+        "measure": "Intervention approval",
+        "age_year": 0
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 1554,
+        "event_wells": 339,
+        "share": 0.21814671814671815,
+        "completion_observed_wells": 1388,
+        "pre_origin_event_wells": 226
+      }
+    },
+    "under100/Intervention approval/1": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "<100 m",
+        "measure": "Intervention approval",
+        "age_year": 1
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 1552,
+        "event_wells": 649,
+        "share": 0.4181701030927835,
+        "completion_observed_wells": 1393,
+        "pre_origin_event_wells": 226
+      }
+    },
+    "under100/Intervention approval/5": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "<100 m",
+        "measure": "Intervention approval",
+        "age_year": 5
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 1523,
+        "event_wells": 977,
+        "share": 0.6414970453053185,
+        "completion_observed_wells": 1377,
+        "pre_origin_event_wells": 223
+      }
+    },
+    "under100/Intervention approval/10": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "<100 m",
+        "measure": "Intervention approval",
+        "age_year": 10
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 1471,
+        "event_wells": 1044,
+        "share": 0.7097212780421482,
+        "completion_observed_wells": 1326,
+        "pre_origin_event_wells": 219
+      }
+    },
+    "under100/Intervention approval/20": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "<100 m",
+        "measure": "Intervention approval",
+        "age_year": 20
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 503,
+        "event_wells": 332,
+        "share": 0.6600397614314115,
+        "completion_observed_wells": 392,
+        "pre_origin_event_wells": 63
+      }
+    },
+    "100_500/year/2005": {
+      "table": "annual_wells.csv",
+      "filter": {
+        "year": 2005,
+        "band": "100–<500 m"
+      },
+      "fields": [
+        "producing_wells",
+        "oil_bbl",
+        "gas_mcf",
+        "months_reported"
+      ],
+      "operation": "row",
+      "values": {
+        "producing_wells": 707,
+        "oil_bbl": 46385340,
+        "gas_mcf": 291036656,
+        "months_reported": 12
+      }
+    },
+    "100_500/year/2025": {
+      "table": "annual_wells.csv",
+      "filter": {
+        "year": 2025,
+        "band": "100–<500 m"
+      },
+      "fields": [
+        "producing_wells",
+        "oil_bbl",
+        "gas_mcf",
+        "months_reported"
+      ],
+      "operation": "row",
+      "values": {
+        "producing_wells": 213,
+        "oil_bbl": 20863941,
+        "gas_mcf": 34878651,
+        "months_reported": 12
+      }
+    },
+    "100_500/year/2026": {
+      "table": "annual_wells.csv",
+      "filter": {
+        "year": 2026,
+        "band": "100–<500 m"
+      },
+      "fields": [
+        "producing_wells",
+        "oil_bbl",
+        "gas_mcf",
+        "months_reported"
+      ],
+      "operation": "row",
+      "values": {
+        "producing_wells": 209,
+        "oil_bbl": 12825721,
+        "gas_mcf": 22748327,
+        "months_reported": 9
+      }
+    },
+    "100_500/period": {
+      "table": "annual_wells.csv",
+      "filter": {
+        "band": "100–<500 m"
+      },
+      "fields": [
+        "oil_bbl",
+        "gas_mcf",
+        "producing_wells"
+      ],
+      "operation": "sum",
+      "values": {
+        "oil_bbl": 736921453,
+        "gas_mcf": 2734747108,
+        "producing_wells": 9551
+      }
+    },
+    "100_500/period_wells": {
+      "table": "article_summary.csv",
+      "filter": {
+        "band": "100–<500 m"
+      },
+      "fields": [
+        "distinct_producing_wells",
+        "producing_well_months",
+        "median_well_month_oil_bbl",
+        "median_well_month_gas_mcf",
+        "cohort_completions",
+        "ever_produced_wells",
+        "produced_in_or_after_c_month_wells",
+        "supported_starts",
+        "share_produced_in_or_after_c_month",
+        "war_by_cutoff_wells",
+        "war_by_cutoff_share",
+        "war_signed_event_age_median_months",
+        "permit_by_cutoff_wells",
+        "permit_by_cutoff_share",
+        "permit_signed_event_age_median_months"
+      ],
+      "operation": "row",
+      "values": {
+        "distinct_producing_wells": 972,
+        "producing_well_months": 94725,
+        "median_well_month_oil_bbl": 1684.0,
+        "median_well_month_gas_mcf": 4137.0,
+        "cohort_completions": 221,
+        "ever_produced_wells": 214,
+        "produced_in_or_after_c_month_wells": 213,
+        "supported_starts": 195,
+        "share_produced_in_or_after_c_month": 0.9638009049773756,
+        "war_by_cutoff_wells": 157,
+        "war_by_cutoff_share": 0.8051282051282052,
+        "war_signed_event_age_median_months": 8.0,
+        "permit_by_cutoff_wells": 144,
+        "permit_by_cutoff_share": 0.7384615384615385,
+        "permit_signed_event_age_median_months": 12.5
+      }
+    },
+    "100_500/month/2005-12": {
+      "table": "monthly_production.csv",
+      "filter": {
+        "month": "2005-12",
+        "band": "100–<500 m"
+      },
+      "fields": [
+        "oil_bbl",
+        "gas_mcf",
+        "monthly_producing_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "oil_bbl": 3043722,
+        "gas_mcf": 17730164,
+        "monthly_producing_wells": 361
+      }
+    },
+    "100_500/month/2025-12": {
+      "table": "monthly_production.csv",
+      "filter": {
+        "month": "2025-12",
+        "band": "100–<500 m"
+      },
+      "fields": [
+        "oil_bbl",
+        "gas_mcf",
+        "monthly_producing_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "oil_bbl": 1740233,
+        "gas_mcf": 3212329,
+        "monthly_producing_wells": 192
+      }
+    },
+    "100_500/month/2026-08": {
+      "table": "monthly_production.csv",
+      "filter": {
+        "month": "2026-08",
+        "band": "100–<500 m"
+      },
+      "fields": [
+        "oil_bbl",
+        "gas_mcf",
+        "monthly_producing_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "oil_bbl": 1362825,
+        "gas_mcf": 2401822,
+        "monthly_producing_wells": 169
+      }
+    },
+    "100_500/month/2026-09": {
+      "table": "monthly_production.csv",
+      "filter": {
+        "month": "2026-09",
+        "band": "100–<500 m"
+      },
+      "fields": [
+        "oil_bbl",
+        "gas_mcf",
+        "monthly_producing_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "oil_bbl": 603676,
+        "gas_mcf": 697184,
+        "monthly_producing_wells": 121
+      }
+    },
+    "100_500/monthly_mean/2005": {
+      "table": "monthly_production.csv",
+      "filter": {
+        "band": "100–<500 m",
+        "year": 2005
+      },
+      "fields": [
+        "oil_bbl",
+        "gas_mcf",
+        "monthly_producing_wells"
+      ],
+      "operation": "mean",
+      "values": {
+        "oil_bbl": 3865445.0,
+        "gas_mcf": 24253054.666666668,
+        "monthly_producing_wells": 523.4166666666666
+      }
+    },
+    "100_500/monthly_mean/2025": {
+      "table": "monthly_production.csv",
+      "filter": {
+        "band": "100–<500 m",
+        "year": 2025
+      },
+      "fields": [
+        "oil_bbl",
+        "gas_mcf",
+        "monthly_producing_wells"
+      ],
+      "operation": "mean",
+      "values": {
+        "oil_bbl": 1738661.75,
+        "gas_mcf": 2906554.25,
+        "monthly_producing_wells": 195.08333333333334
+      }
+    },
+    "100_500/monthly_mean/2026": {
+      "table": "monthly_production.csv",
+      "filter": {
+        "band": "100–<500 m",
+        "year": 2026
+      },
+      "fields": [
+        "oil_bbl",
+        "gas_mcf",
+        "monthly_producing_wells"
+      ],
+      "operation": "mean",
+      "values": {
+        "oil_bbl": 1425080.111111111,
+        "gas_mcf": 2527591.888888889,
+        "monthly_producing_wells": 179.22222222222223
+      }
+    },
+    "100_500/lag/ordered": {
+      "table": "completion_lag.csv",
+      "filter": {
+        "band": "100–<500 m",
+        "population": "ordered"
+      },
+      "fields": [
+        "wells",
+        "p25_months",
+        "median_months",
+        "p75_months",
+        "pre_completion_wells",
+        "same_month_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "wells": 158,
+        "p25_months": 0.0,
+        "median_months": 0.0,
+        "p75_months": 1.0,
+        "pre_completion_wells": 0,
+        "same_month_wells": 95
+      }
+    },
+    "100_500/lag/signed": {
+      "table": "completion_lag.csv",
+      "filter": {
+        "band": "100–<500 m",
+        "population": "signed"
+      },
+      "fields": [
+        "wells",
+        "p25_months",
+        "median_months",
+        "p75_months",
+        "pre_completion_wells",
+        "same_month_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "wells": 160,
+        "p25_months": 0.0,
+        "median_months": 0.0,
+        "p75_months": 1.0,
+        "pre_completion_wells": 2,
+        "same_month_wells": 95
+      }
+    },
+    "100_500/decline/All/1": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "100–<500 m",
+        "completion_type": "All",
+        "age_month": 1
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 168,
+        "wells": 168,
+        "median_relative_rate": 0.691540005966238
+      }
+    },
+    "100_500/decline/All/12": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "100–<500 m",
+        "completion_type": "All",
+        "age_month": 12
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 168,
+        "wells": 139,
+        "median_relative_rate": 0.6036285417593829
+      }
+    },
+    "100_500/decline/All/60": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "100–<500 m",
+        "completion_type": "All",
+        "age_month": 60
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 168,
+        "wells": 120,
+        "median_relative_rate": 0.21188489516610493
+      }
+    },
+    "100_500/decline/Subsea/1": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "100–<500 m",
+        "completion_type": "Subsea",
+        "age_month": 1
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 22,
+        "wells": 22,
+        "median_relative_rate": 0.6968270194140537
+      }
+    },
+    "100_500/decline/Subsea/12": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "100–<500 m",
+        "completion_type": "Subsea",
+        "age_month": 12
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 22,
+        "wells": 16,
+        "median_relative_rate": 1.0860186883168819
+      }
+    },
+    "100_500/decline/Subsea/60": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "100–<500 m",
+        "completion_type": "Subsea",
+        "age_month": 60
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 22,
+        "wells": 13,
+        "median_relative_rate": 0.7591306828989919
+      }
+    },
+    "100_500/decline/No subsea flag (NO)/1": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "100–<500 m",
+        "completion_type": "No subsea flag (NO)",
+        "age_month": 1
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 122,
+        "wells": 122,
+        "median_relative_rate": 0.691540005966238
+      }
+    },
+    "100_500/decline/No subsea flag (NO)/12": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "100–<500 m",
+        "completion_type": "No subsea flag (NO)",
+        "age_month": 12
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 122,
+        "wells": 107,
+        "median_relative_rate": 0.5589780858676208
+      }
+    },
+    "100_500/decline/No subsea flag (NO)/60": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "100–<500 m",
+        "completion_type": "No subsea flag (NO)",
+        "age_month": 60
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 122,
+        "wells": 92,
+        "median_relative_rate": 0.20528191400495113
+      }
+    },
+    "100_500/decline/Unknown/1": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "100–<500 m",
+        "completion_type": "Unknown",
+        "age_month": 1
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 24,
+        "wells": 24,
+        "median_relative_rate": 0.7338736787666427
+      }
+    },
+    "100_500/decline/Unknown/12": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "100–<500 m",
+        "completion_type": "Unknown",
+        "age_month": 12
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 24,
+        "wells": 16,
+        "median_relative_rate": 0.6209733696905453
+      }
+    },
+    "100_500/decline/Unknown/60": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "100–<500 m",
+        "completion_type": "Unknown",
+        "age_month": 60
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 24,
+        "wells": 15,
+        "median_relative_rate": 0.1582561481954647
+      }
+    },
+    "100_500/Post-completion WAR/0": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "100–<500 m",
+        "measure": "Post-completion WAR",
+        "age_year": 0
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 195,
+        "event_wells": 59,
+        "share": 0.30256410256410254,
+        "completion_observed_wells": 170,
+        "pre_origin_event_wells": 34
+      }
+    },
+    "100_500/Post-completion WAR/1": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "100–<500 m",
+        "measure": "Post-completion WAR",
+        "age_year": 1
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 194,
+        "event_wells": 90,
+        "share": 0.4639175257731959,
+        "completion_observed_wells": 169,
+        "pre_origin_event_wells": 34
+      }
+    },
+    "100_500/Post-completion WAR/5": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "100–<500 m",
+        "measure": "Post-completion WAR",
+        "age_year": 5
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 187,
+        "event_wells": 119,
+        "share": 0.6363636363636364,
+        "completion_observed_wells": 163,
+        "pre_origin_event_wells": 33
+      }
+    },
+    "100_500/Post-completion WAR/10": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "100–<500 m",
+        "measure": "Post-completion WAR",
+        "age_year": 10
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 162,
+        "event_wells": 122,
+        "share": 0.7530864197530864,
+        "completion_observed_wells": 138,
+        "pre_origin_event_wells": 30
+      }
+    },
+    "100_500/Post-completion WAR/20": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "100–<500 m",
+        "measure": "Post-completion WAR",
+        "age_year": 20
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 56,
+        "event_wells": 37,
+        "share": 0.6607142857142857,
+        "completion_observed_wells": 37,
+        "pre_origin_event_wells": 4
+      }
+    },
+    "100_500/Intervention approval/0": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "100–<500 m",
+        "measure": "Intervention approval",
+        "age_year": 0
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 195,
+        "event_wells": 32,
+        "share": 0.1641025641025641,
+        "completion_observed_wells": 170,
+        "pre_origin_event_wells": 19
+      }
+    },
+    "100_500/Intervention approval/1": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "100–<500 m",
+        "measure": "Intervention approval",
+        "age_year": 1
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 194,
+        "event_wells": 71,
+        "share": 0.36597938144329895,
+        "completion_observed_wells": 169,
+        "pre_origin_event_wells": 19
+      }
+    },
+    "100_500/Intervention approval/5": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "100–<500 m",
+        "measure": "Intervention approval",
+        "age_year": 5
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 187,
+        "event_wells": 105,
+        "share": 0.5614973262032086,
+        "completion_observed_wells": 163,
+        "pre_origin_event_wells": 18
+      }
+    },
+    "100_500/Intervention approval/10": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "100–<500 m",
+        "measure": "Intervention approval",
+        "age_year": 10
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 162,
+        "event_wells": 110,
+        "share": 0.6790123456790124,
+        "completion_observed_wells": 138,
+        "pre_origin_event_wells": 13
+      }
+    },
+    "100_500/Intervention approval/20": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "100–<500 m",
+        "measure": "Intervention approval",
+        "age_year": 20
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 56,
+        "event_wells": 34,
+        "share": 0.6071428571428571,
+        "completion_observed_wells": 37,
+        "pre_origin_event_wells": 0
+      }
+    },
+    "500_1500/year/2005": {
+      "table": "annual_wells.csv",
+      "filter": {
+        "year": 2005,
+        "band": "500–<1,500 m"
+      },
+      "fields": [
+        "producing_wells",
+        "oil_bbl",
+        "gas_mcf",
+        "months_reported"
+      ],
+      "operation": "row",
+      "values": {
+        "producing_wells": 314,
+        "oil_bbl": 243186191,
+        "gas_mcf": 766287948,
+        "months_reported": 12
+      }
+    },
+    "500_1500/year/2025": {
+      "table": "annual_wells.csv",
+      "filter": {
+        "year": 2025,
+        "band": "500–<1,500 m"
+      },
+      "fields": [
+        "producing_wells",
+        "oil_bbl",
+        "gas_mcf",
+        "months_reported"
+      ],
+      "operation": "row",
+      "values": {
+        "producing_wells": 358,
+        "oil_bbl": 278587508,
+        "gas_mcf": 341106917,
+        "months_reported": 12
+      }
+    },
+    "500_1500/year/2026": {
+      "table": "annual_wells.csv",
+      "filter": {
+        "year": 2026,
+        "band": "500–<1,500 m"
+      },
+      "fields": [
+        "producing_wells",
+        "oil_bbl",
+        "gas_mcf",
+        "months_reported"
+      ],
+      "operation": "row",
+      "values": {
+        "producing_wells": 350,
+        "oil_bbl": 204565462,
+        "gas_mcf": 242335474,
+        "months_reported": 9
+      }
+    },
+    "500_1500/period": {
+      "table": "annual_wells.csv",
+      "filter": {
+        "band": "500–<1,500 m"
+      },
+      "fields": [
+        "oil_bbl",
+        "gas_mcf",
+        "producing_wells"
+      ],
+      "operation": "sum",
+      "values": {
+        "oil_bbl": 5476891029,
+        "gas_mcf": 8965414392,
+        "producing_wells": 7842
+      }
+    },
+    "500_1500/period_wells": {
+      "table": "article_summary.csv",
+      "filter": {
+        "band": "500–<1,500 m"
+      },
+      "fields": [
+        "distinct_producing_wells",
+        "producing_well_months",
+        "median_well_month_oil_bbl",
+        "median_well_month_gas_mcf",
+        "cohort_completions",
+        "ever_produced_wells",
+        "produced_in_or_after_c_month_wells",
+        "supported_starts",
+        "share_produced_in_or_after_c_month",
+        "war_by_cutoff_wells",
+        "war_by_cutoff_share",
+        "war_signed_event_age_median_months",
+        "permit_by_cutoff_wells",
+        "permit_by_cutoff_share",
+        "permit_signed_event_age_median_months"
+      ],
+      "operation": "row",
+      "values": {
+        "distinct_producing_wells": 683,
+        "producing_well_months": 78003,
+        "median_well_month_oil_bbl": 29340.0,
+        "median_well_month_gas_mcf": 44417.0,
+        "cohort_completions": 446,
+        "ever_produced_wells": 419,
+        "produced_in_or_after_c_month_wells": 415,
+        "supported_starts": 396,
+        "share_produced_in_or_after_c_month": 0.9304932735426009,
+        "war_by_cutoff_wells": 306,
+        "war_by_cutoff_share": 0.7727272727272727,
+        "war_signed_event_age_median_months": 9.0,
+        "permit_by_cutoff_wells": 276,
+        "permit_by_cutoff_share": 0.696969696969697,
+        "permit_signed_event_age_median_months": 18.0
+      }
+    },
+    "500_1500/month/2005-12": {
+      "table": "monthly_production.csv",
+      "filter": {
+        "month": "2005-12",
+        "band": "500–<1,500 m"
+      },
+      "fields": [
+        "oil_bbl",
+        "gas_mcf",
+        "monthly_producing_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "oil_bbl": 18303096,
+        "gas_mcf": 60578717,
+        "monthly_producing_wells": 220
+      }
+    },
+    "500_1500/month/2025-12": {
+      "table": "monthly_production.csv",
+      "filter": {
+        "month": "2025-12",
+        "band": "500–<1,500 m"
+      },
+      "fields": [
+        "oil_bbl",
+        "gas_mcf",
+        "monthly_producing_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "oil_bbl": 24559519,
+        "gas_mcf": 29055465,
+        "monthly_producing_wells": 310
+      }
+    },
+    "500_1500/month/2026-08": {
+      "table": "monthly_production.csv",
+      "filter": {
+        "month": "2026-08",
+        "band": "500–<1,500 m"
+      },
+      "fields": [
+        "oil_bbl",
+        "gas_mcf",
+        "monthly_producing_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "oil_bbl": 23389268,
+        "gas_mcf": 28191642,
+        "monthly_producing_wells": 306
+      }
+    },
+    "500_1500/month/2026-09": {
+      "table": "monthly_production.csv",
+      "filter": {
+        "month": "2026-09",
+        "band": "500–<1,500 m"
+      },
+      "fields": [
+        "oil_bbl",
+        "gas_mcf",
+        "monthly_producing_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "oil_bbl": 15805218,
+        "gas_mcf": 18751798,
+        "monthly_producing_wells": 202
+      }
+    },
+    "500_1500/monthly_mean/2005": {
+      "table": "monthly_production.csv",
+      "filter": {
+        "band": "500–<1,500 m",
+        "year": 2005
+      },
+      "fields": [
+        "oil_bbl",
+        "gas_mcf",
+        "monthly_producing_wells"
+      ],
+      "operation": "mean",
+      "values": {
+        "oil_bbl": 20265515.916666668,
+        "gas_mcf": 63857329.0,
+        "monthly_producing_wells": 235.25
+      }
+    },
+    "500_1500/monthly_mean/2025": {
+      "table": "monthly_production.csv",
+      "filter": {
+        "band": "500–<1,500 m",
+        "year": 2025
+      },
+      "fields": [
+        "oil_bbl",
+        "gas_mcf",
+        "monthly_producing_wells"
+      ],
+      "operation": "mean",
+      "values": {
+        "oil_bbl": 23215625.666666668,
+        "gas_mcf": 28425576.416666668,
+        "monthly_producing_wells": 298.1666666666667
+      }
+    },
+    "500_1500/monthly_mean/2026": {
+      "table": "monthly_production.csv",
+      "filter": {
+        "band": "500–<1,500 m",
+        "year": 2026
+      },
+      "fields": [
+        "oil_bbl",
+        "gas_mcf",
+        "monthly_producing_wells"
+      ],
+      "operation": "mean",
+      "values": {
+        "oil_bbl": 22729495.777777776,
+        "gas_mcf": 26926163.777777776,
+        "monthly_producing_wells": 297.44444444444446
+      }
+    },
+    "500_1500/lag/ordered": {
+      "table": "completion_lag.csv",
+      "filter": {
+        "band": "500–<1,500 m",
+        "population": "ordered"
+      },
+      "fields": [
+        "wells",
+        "p25_months",
+        "median_months",
+        "p75_months",
+        "pre_completion_wells",
+        "same_month_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "wells": 337,
+        "p25_months": 0.0,
+        "median_months": 1.0,
+        "p75_months": 5.0,
+        "pre_completion_wells": 0,
+        "same_month_wells": 128
+      }
+    },
+    "500_1500/lag/signed": {
+      "table": "completion_lag.csv",
+      "filter": {
+        "band": "500–<1,500 m",
+        "population": "signed"
+      },
+      "fields": [
+        "wells",
+        "p25_months",
+        "median_months",
+        "p75_months",
+        "pre_completion_wells",
+        "same_month_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "wells": 357,
+        "p25_months": 0.0,
+        "median_months": 1.0,
+        "p75_months": 5.0,
+        "pre_completion_wells": 20,
+        "same_month_wells": 128
+      }
+    },
+    "500_1500/decline/All/1": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "500–<1,500 m",
+        "completion_type": "All",
+        "age_month": 1
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 304,
+        "wells": 304,
+        "median_relative_rate": 0.653682513196129
+      }
+    },
+    "500_1500/decline/All/12": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "500–<1,500 m",
+        "completion_type": "All",
+        "age_month": 12
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 304,
+        "wells": 264,
+        "median_relative_rate": 0.8471659012752638
+      }
+    },
+    "500_1500/decline/All/60": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "500–<1,500 m",
+        "completion_type": "All",
+        "age_month": 60
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 304,
+        "wells": 217,
+        "median_relative_rate": 0.39052124779410957
+      }
+    },
+    "500_1500/decline/Subsea/1": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "500–<1,500 m",
+        "completion_type": "Subsea",
+        "age_month": 1
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 207,
+        "wells": 207,
+        "median_relative_rate": 0.6965960199386758
+      }
+    },
+    "500_1500/decline/Subsea/12": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "500–<1,500 m",
+        "completion_type": "Subsea",
+        "age_month": 12
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 207,
+        "wells": 178,
+        "median_relative_rate": 0.8813719862565155
+      }
+    },
+    "500_1500/decline/Subsea/60": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "500–<1,500 m",
+        "completion_type": "Subsea",
+        "age_month": 60
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 207,
+        "wells": 146,
+        "median_relative_rate": 0.3905595367323405
+      }
+    },
+    "500_1500/decline/No subsea flag (NO)/1": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "500–<1,500 m",
+        "completion_type": "No subsea flag (NO)",
+        "age_month": 1
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 50,
+        "wells": 50,
+        "median_relative_rate": 0.5925452677493782
+      }
+    },
+    "500_1500/decline/No subsea flag (NO)/12": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "500–<1,500 m",
+        "completion_type": "No subsea flag (NO)",
+        "age_month": 12
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 50,
+        "wells": 44,
+        "median_relative_rate": 0.7592571454847497
+      }
+    },
+    "500_1500/decline/No subsea flag (NO)/60": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "500–<1,500 m",
+        "completion_type": "No subsea flag (NO)",
+        "age_month": 60
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 50,
+        "wells": 41,
+        "median_relative_rate": 0.29714094399765645
+      }
+    },
+    "500_1500/decline/Unknown/1": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "500–<1,500 m",
+        "completion_type": "Unknown",
+        "age_month": 1
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 47,
+        "wells": 47,
+        "median_relative_rate": 0.7562708965960013
+      }
+    },
+    "500_1500/decline/Unknown/12": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "500–<1,500 m",
+        "completion_type": "Unknown",
+        "age_month": 12
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 47,
+        "wells": 42,
+        "median_relative_rate": 0.8382065083412151
+      }
+    },
+    "500_1500/decline/Unknown/60": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "500–<1,500 m",
+        "completion_type": "Unknown",
+        "age_month": 60
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 47,
+        "wells": 30,
+        "median_relative_rate": 0.44527868459706144
+      }
+    },
+    "500_1500/Post-completion WAR/0": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "500–<1,500 m",
+        "measure": "Post-completion WAR",
+        "age_year": 0
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 396,
+        "event_wells": 111,
+        "share": 0.2803030303030303,
+        "completion_observed_wells": 349,
+        "pre_origin_event_wells": 71
+      }
+    },
+    "500_1500/Post-completion WAR/1": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "500–<1,500 m",
+        "measure": "Post-completion WAR",
+        "age_year": 1
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 385,
+        "event_wells": 162,
+        "share": 0.42077922077922075,
+        "completion_observed_wells": 346,
+        "pre_origin_event_wells": 70
+      }
+    },
+    "500_1500/Post-completion WAR/5": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "500–<1,500 m",
+        "measure": "Post-completion WAR",
+        "age_year": 5
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 324,
+        "event_wells": 206,
+        "share": 0.6358024691358025,
+        "completion_observed_wells": 292,
+        "pre_origin_event_wells": 54
+      }
+    },
+    "500_1500/Post-completion WAR/10": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "500–<1,500 m",
+        "measure": "Post-completion WAR",
+        "age_year": 10
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 262,
+        "event_wells": 195,
+        "share": 0.7442748091603053,
+        "completion_observed_wells": 232,
+        "pre_origin_event_wells": 47
+      }
+    },
+    "500_1500/Post-completion WAR/20": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "500–<1,500 m",
+        "measure": "Post-completion WAR",
+        "age_year": 20
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 67,
+        "event_wells": 45,
+        "share": 0.6716417910447762,
+        "completion_observed_wells": 46,
+        "pre_origin_event_wells": 5
+      }
+    },
+    "500_1500/Intervention approval/0": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "500–<1,500 m",
+        "measure": "Intervention approval",
+        "age_year": 0
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 396,
+        "event_wells": 63,
+        "share": 0.1590909090909091,
+        "completion_observed_wells": 349,
+        "pre_origin_event_wells": 42
+      }
+    },
+    "500_1500/Intervention approval/1": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "500–<1,500 m",
+        "measure": "Intervention approval",
+        "age_year": 1
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 385,
+        "event_wells": 119,
+        "share": 0.3090909090909091,
+        "completion_observed_wells": 346,
+        "pre_origin_event_wells": 42
+      }
+    },
+    "500_1500/Intervention approval/5": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "500–<1,500 m",
+        "measure": "Intervention approval",
+        "age_year": 5
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 324,
+        "event_wells": 180,
+        "share": 0.5555555555555556,
+        "completion_observed_wells": 292,
+        "pre_origin_event_wells": 30
+      }
+    },
+    "500_1500/Intervention approval/10": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "500–<1,500 m",
+        "measure": "Intervention approval",
+        "age_year": 10
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 262,
+        "event_wells": 173,
+        "share": 0.6603053435114504,
+        "completion_observed_wells": 232,
+        "pre_origin_event_wells": 20
+      }
+    },
+    "500_1500/Intervention approval/20": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "500–<1,500 m",
+        "measure": "Intervention approval",
+        "age_year": 20
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 67,
+        "event_wells": 43,
+        "share": 0.6417910447761194,
+        "completion_observed_wells": 46,
+        "pre_origin_event_wells": 1
+      }
+    },
+    "1500plus/year/2005": {
+      "table": "annual_wells.csv",
+      "filter": {
+        "year": 2005,
+        "band": "≥1,500 m"
+      },
+      "fields": [
+        "producing_wells",
+        "oil_bbl",
+        "gas_mcf",
+        "months_reported"
+      ],
+      "operation": "row",
+      "values": {
+        "producing_wells": 47,
+        "oil_bbl": 65120572,
+        "gas_mcf": 328116645,
+        "months_reported": 12
+      }
+    },
+    "1500plus/year/2025": {
+      "table": "annual_wells.csv",
+      "filter": {
+        "year": 2025,
+        "band": "≥1,500 m"
+      },
+      "fields": [
+        "producing_wells",
+        "oil_bbl",
+        "gas_mcf",
+        "months_reported"
+      ],
+      "operation": "row",
+      "values": {
+        "producing_wells": 287,
+        "oil_bbl": 385619239,
+        "gas_mcf": 290814422,
+        "months_reported": 12
+      }
+    },
+    "1500plus/year/2026": {
+      "table": "annual_wells.csv",
+      "filter": {
+        "year": 2026,
+        "band": "≥1,500 m"
+      },
+      "fields": [
+        "producing_wells",
+        "oil_bbl",
+        "gas_mcf",
+        "months_reported"
+      ],
+      "operation": "row",
+      "values": {
+        "producing_wells": 287,
+        "oil_bbl": 297717080,
+        "gas_mcf": 228512039,
+        "months_reported": 9
+      }
+    },
+    "1500plus/period": {
+      "table": "annual_wells.csv",
+      "filter": {
+        "band": "≥1,500 m"
+      },
+      "fields": [
+        "oil_bbl",
+        "gas_mcf",
+        "producing_wells"
+      ],
+      "operation": "sum",
+      "values": {
+        "oil_bbl": 4754797277,
+        "gas_mcf": 6775810541,
+        "producing_wells": 3601
+      }
+    },
+    "1500plus/period_wells": {
+      "table": "article_summary.csv",
+      "filter": {
+        "band": "≥1,500 m"
+      },
+      "fields": [
+        "distinct_producing_wells",
+        "producing_well_months",
+        "median_well_month_oil_bbl",
+        "median_well_month_gas_mcf",
+        "cohort_completions",
+        "ever_produced_wells",
+        "produced_in_or_after_c_month_wells",
+        "supported_starts",
+        "share_produced_in_or_after_c_month",
+        "war_by_cutoff_wells",
+        "war_by_cutoff_share",
+        "war_signed_event_age_median_months",
+        "permit_by_cutoff_wells",
+        "permit_by_cutoff_share",
+        "permit_signed_event_age_median_months"
+      ],
+      "operation": "row",
+      "values": {
+        "distinct_producing_wells": 415,
+        "producing_well_months": 35695,
+        "median_well_month_oil_bbl": 81302.0,
+        "median_well_month_gas_mcf": 62838.0,
+        "cohort_completions": 384,
+        "ever_produced_wells": 353,
+        "produced_in_or_after_c_month_wells": 353,
+        "supported_starts": 369,
+        "share_produced_in_or_after_c_month": 0.9192708333333334,
+        "war_by_cutoff_wells": 256,
+        "war_by_cutoff_share": 0.6937669376693767,
+        "war_signed_event_age_median_months": 8.0,
+        "permit_by_cutoff_wells": 251,
+        "permit_by_cutoff_share": 0.6802168021680217,
+        "permit_signed_event_age_median_months": 7.0
+      }
+    },
+    "1500plus/month/2005-12": {
+      "table": "monthly_production.csv",
+      "filter": {
+        "month": "2005-12",
+        "band": "≥1,500 m"
+      },
+      "fields": [
+        "oil_bbl",
+        "gas_mcf",
+        "monthly_producing_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "oil_bbl": 6755553,
+        "gas_mcf": 26062435,
+        "monthly_producing_wells": 39
+      }
+    },
+    "1500plus/month/2025-12": {
+      "table": "monthly_production.csv",
+      "filter": {
+        "month": "2025-12",
+        "band": "≥1,500 m"
+      },
+      "fields": [
+        "oil_bbl",
+        "gas_mcf",
+        "monthly_producing_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "oil_bbl": 36596490,
+        "gas_mcf": 28879852,
+        "monthly_producing_wells": 256
+      }
+    },
+    "1500plus/month/2026-08": {
+      "table": "monthly_production.csv",
+      "filter": {
+        "month": "2026-08",
+        "band": "≥1,500 m"
+      },
+      "fields": [
+        "oil_bbl",
+        "gas_mcf",
+        "monthly_producing_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "oil_bbl": 36955458,
+        "gas_mcf": 29050637,
+        "monthly_producing_wells": 273
+      }
+    },
+    "1500plus/month/2026-09": {
+      "table": "monthly_production.csv",
+      "filter": {
+        "month": "2026-09",
+        "band": "≥1,500 m"
+      },
+      "fields": [
+        "oil_bbl",
+        "gas_mcf",
+        "monthly_producing_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "oil_bbl": 19035989,
+        "gas_mcf": 16453415,
+        "monthly_producing_wells": 135
+      }
+    },
+    "1500plus/monthly_mean/2005": {
+      "table": "monthly_production.csv",
+      "filter": {
+        "band": "≥1,500 m",
+        "year": 2005
+      },
+      "fields": [
+        "oil_bbl",
+        "gas_mcf",
+        "monthly_producing_wells"
+      ],
+      "operation": "mean",
+      "values": {
+        "oil_bbl": 5426714.333333333,
+        "gas_mcf": 27343053.75,
+        "monthly_producing_wells": 37.25
+      }
+    },
+    "1500plus/monthly_mean/2025": {
+      "table": "monthly_production.csv",
+      "filter": {
+        "band": "≥1,500 m",
+        "year": 2025
+      },
+      "fields": [
+        "oil_bbl",
+        "gas_mcf",
+        "monthly_producing_wells"
+      ],
+      "operation": "mean",
+      "values": {
+        "oil_bbl": 32134936.583333332,
+        "gas_mcf": 24234535.166666668,
+        "monthly_producing_wells": 245.75
+      }
+    },
+    "1500plus/monthly_mean/2026": {
+      "table": "monthly_production.csv",
+      "filter": {
+        "band": "≥1,500 m",
+        "year": 2026
+      },
+      "fields": [
+        "oil_bbl",
+        "gas_mcf",
+        "monthly_producing_wells"
+      ],
+      "operation": "mean",
+      "values": {
+        "oil_bbl": 33079675.555555556,
+        "gas_mcf": 25390226.555555556,
+        "monthly_producing_wells": 251.44444444444446
+      }
+    },
+    "1500plus/lag/ordered": {
+      "table": "completion_lag.csv",
+      "filter": {
+        "band": "≥1,500 m",
+        "population": "ordered"
+      },
+      "fields": [
+        "wells",
+        "p25_months",
+        "median_months",
+        "p75_months",
+        "pre_completion_wells",
+        "same_month_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "wells": 342,
+        "p25_months": 0.0,
+        "median_months": 1.0,
+        "p75_months": 6.0,
+        "pre_completion_wells": 0,
+        "same_month_wells": 123
+      }
+    },
+    "1500plus/lag/signed": {
+      "table": "completion_lag.csv",
+      "filter": {
+        "band": "≥1,500 m",
+        "population": "signed"
+      },
+      "fields": [
+        "wells",
+        "p25_months",
+        "median_months",
+        "p75_months",
+        "pre_completion_wells",
+        "same_month_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "wells": 351,
+        "p25_months": 0.0,
+        "median_months": 1.0,
+        "p75_months": 5.5,
+        "pre_completion_wells": 9,
+        "same_month_wells": 123
+      }
+    },
+    "1500plus/decline/All/1": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "≥1,500 m",
+        "completion_type": "All",
+        "age_month": 1
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 242,
+        "wells": 242,
+        "median_relative_rate": 0.6303964139563368
+      }
+    },
+    "1500plus/decline/All/12": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "≥1,500 m",
+        "completion_type": "All",
+        "age_month": 12
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 242,
+        "wells": 211,
+        "median_relative_rate": 0.8057434096194265
+      }
+    },
+    "1500plus/decline/All/60": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "≥1,500 m",
+        "completion_type": "All",
+        "age_month": 60
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 242,
+        "wells": 174,
+        "median_relative_rate": 0.4356043524696771
+      }
+    },
+    "1500plus/decline/Subsea/1": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "≥1,500 m",
+        "completion_type": "Subsea",
+        "age_month": 1
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 202,
+        "wells": 202,
+        "median_relative_rate": 0.6461828321925531
+      }
+    },
+    "1500plus/decline/Subsea/12": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "≥1,500 m",
+        "completion_type": "Subsea",
+        "age_month": 12
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 202,
+        "wells": 177,
+        "median_relative_rate": 0.794866613290811
+      }
+    },
+    "1500plus/decline/Subsea/60": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "≥1,500 m",
+        "completion_type": "Subsea",
+        "age_month": 60
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 202,
+        "wells": 143,
+        "median_relative_rate": 0.4467679504037092
+      }
+    },
+    "1500plus/decline/No subsea flag (NO)/1": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "≥1,500 m",
+        "completion_type": "No subsea flag (NO)",
+        "age_month": 1
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 22,
+        "wells": 22,
+        "median_relative_rate": 0.5091803999055536
+      }
+    },
+    "1500plus/decline/No subsea flag (NO)/12": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "≥1,500 m",
+        "completion_type": "No subsea flag (NO)",
+        "age_month": 12
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 22,
+        "wells": 21,
+        "median_relative_rate": 0.9806081959002988
+      }
+    },
+    "1500plus/decline/No subsea flag (NO)/60": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "≥1,500 m",
+        "completion_type": "No subsea flag (NO)",
+        "age_month": 60
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 22,
+        "wells": 21,
+        "median_relative_rate": 0.3437754405566681
+      }
+    },
+    "1500plus/decline/Unknown/1": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "≥1,500 m",
+        "completion_type": "Unknown",
+        "age_month": 1
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 18,
+        "wells": 18,
+        "median_relative_rate": 0.6595648615899816
+      }
+    },
+    "1500plus/decline/Unknown/12": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "≥1,500 m",
+        "completion_type": "Unknown",
+        "age_month": 12
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 18,
+        "wells": 13,
+        "median_relative_rate": 0.9326286484275813
+      }
+    },
+    "1500plus/decline/Unknown/60": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "≥1,500 m",
+        "completion_type": "Unknown",
+        "age_month": 60
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 18,
+        "wells": 10,
+        "median_relative_rate": 0.1983185030725605
+      }
+    },
+    "1500plus/Post-completion WAR/0": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "≥1,500 m",
+        "measure": "Post-completion WAR",
+        "age_year": 0
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 369,
+        "event_wells": 97,
+        "share": 0.26287262872628725,
+        "completion_observed_wells": 355,
+        "pre_origin_event_wells": 77
+      }
+    },
+    "1500plus/Post-completion WAR/1": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "≥1,500 m",
+        "measure": "Post-completion WAR",
+        "age_year": 1
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 348,
+        "event_wells": 139,
+        "share": 0.3994252873563218,
+        "completion_observed_wells": 342,
+        "pre_origin_event_wells": 73
+      }
+    },
+    "1500plus/Post-completion WAR/5": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "≥1,500 m",
+        "measure": "Post-completion WAR",
+        "age_year": 5
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 272,
+        "event_wells": 165,
+        "share": 0.6066176470588235,
+        "completion_observed_wells": 266,
+        "pre_origin_event_wells": 48
+      }
+    },
+    "1500plus/Post-completion WAR/10": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "≥1,500 m",
+        "measure": "Post-completion WAR",
+        "age_year": 10
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 172,
+        "event_wells": 137,
+        "share": 0.7965116279069767,
+        "completion_observed_wells": 167,
+        "pre_origin_event_wells": 35
+      }
+    },
+    "1500plus/Post-completion WAR/20": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "≥1,500 m",
+        "measure": "Post-completion WAR",
+        "age_year": 20
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 17,
+        "event_wells": 17,
+        "share": 1.0,
+        "completion_observed_wells": 17,
+        "pre_origin_event_wells": 0
+      }
+    },
+    "1500plus/Intervention approval/0": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "≥1,500 m",
+        "measure": "Intervention approval",
+        "age_year": 0
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 369,
+        "event_wells": 71,
+        "share": 0.19241192411924118,
+        "completion_observed_wells": 355,
+        "pre_origin_event_wells": 49
+      }
+    },
+    "1500plus/Intervention approval/1": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "≥1,500 m",
+        "measure": "Intervention approval",
+        "age_year": 1
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 348,
+        "event_wells": 143,
+        "share": 0.4109195402298851,
+        "completion_observed_wells": 342,
+        "pre_origin_event_wells": 47
+      }
+    },
+    "1500plus/Intervention approval/5": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "≥1,500 m",
+        "measure": "Intervention approval",
+        "age_year": 5
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 272,
+        "event_wells": 161,
+        "share": 0.5919117647058824,
+        "completion_observed_wells": 266,
+        "pre_origin_event_wells": 28
+      }
+    },
+    "1500plus/Intervention approval/10": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "≥1,500 m",
+        "measure": "Intervention approval",
+        "age_year": 10
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 172,
+        "event_wells": 127,
+        "share": 0.7383720930232558,
+        "completion_observed_wells": 167,
+        "pre_origin_event_wells": 17
+      }
+    },
+    "1500plus/Intervention approval/20": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "≥1,500 m",
+        "measure": "Intervention approval",
+        "age_year": 20
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 17,
+        "event_wells": 17,
+        "share": 1.0,
+        "completion_observed_wells": 17,
+        "pre_origin_event_wells": 0
+      }
+    },
+    "all/year/2005": {
+      "table": "annual_wells.csv",
+      "filter": {
+        "year": 2005,
+        "band": "All"
+      },
+      "fields": [
+        "producing_wells",
+        "oil_bbl",
+        "gas_mcf",
+        "months_reported"
+      ],
+      "operation": "row",
+      "values": {
+        "producing_wells": 6455,
+        "oil_bbl": 466956007,
+        "gas_mcf": 3169144212,
+        "months_reported": 12
+      }
+    },
+    "all/year/2025": {
+      "table": "annual_wells.csv",
+      "filter": {
+        "year": 2025,
+        "band": "All"
+      },
+      "fields": [
+        "producing_wells",
+        "oil_bbl",
+        "gas_mcf",
+        "months_reported"
+      ],
+      "operation": "row",
+      "values": {
+        "producing_wells": 1955,
+        "oil_bbl": 710792026,
+        "gas_mcf": 758674033,
+        "months_reported": 12
+      }
+    },
+    "all/year/2026": {
+      "table": "annual_wells.csv",
+      "filter": {
+        "year": 2026,
+        "band": "All"
+      },
+      "fields": [
+        "producing_wells",
+        "oil_bbl",
+        "gas_mcf",
+        "months_reported"
+      ],
+      "operation": "row",
+      "values": {
+        "producing_wells": 1849,
+        "oil_bbl": 532544300,
+        "gas_mcf": 562067448,
+        "months_reported": 9
+      }
+    },
+    "all/period": {
+      "table": "annual_wells.csv",
+      "filter": {
+        "band": "All"
+      },
+      "fields": [
+        "oil_bbl",
+        "gas_mcf",
+        "producing_wells"
+      ],
+      "operation": "sum",
+      "values": {
+        "oil_bbl": 12418358076,
+        "gas_mcf": 32778024812,
+        "producing_wells": 85785
+      }
+    },
+    "all/period_wells": {
+      "table": "article_summary.csv",
+      "filter": {
+        "band": "All"
+      },
+      "fields": [
+        "distinct_producing_wells",
+        "producing_well_months",
+        "median_well_month_oil_bbl",
+        "median_well_month_gas_mcf",
+        "cohort_completions",
+        "ever_produced_wells",
+        "produced_in_or_after_c_month_wells",
+        "supported_starts",
+        "share_produced_in_or_after_c_month",
+        "war_by_cutoff_wells",
+        "war_by_cutoff_share",
+        "war_signed_event_age_median_months",
+        "permit_by_cutoff_wells",
+        "permit_by_cutoff_share",
+        "permit_signed_event_age_median_months"
+      ],
+      "operation": "row",
+      "values": {
+        "distinct_producing_wells": 9525,
+        "producing_well_months": 827032,
+        "median_well_month_oil_bbl": 1368.0,
+        "median_well_month_gas_mcf": 4243.0,
+        "cohort_completions": 2873,
+        "ever_produced_wells": 2766,
+        "produced_in_or_after_c_month_wells": 2747,
+        "supported_starts": 2514,
+        "share_produced_in_or_after_c_month": 0.956143404107205,
+        "war_by_cutoff_wells": 2027,
+        "war_by_cutoff_share": 0.8062848050914877,
+        "war_signed_event_age_median_months": 13.0,
+        "permit_by_cutoff_wells": 1793,
+        "permit_by_cutoff_share": 0.713206046141607,
+        "permit_signed_event_age_median_months": 9.0
+      }
+    },
+    "all/month/2005-12": {
+      "table": "monthly_production.csv",
+      "filter": {
+        "month": "2005-12",
+        "band": "All"
+      },
+      "fields": [
+        "oil_bbl",
+        "gas_mcf",
+        "monthly_producing_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "oil_bbl": 35118978,
+        "gas_mcf": 234712396,
+        "monthly_producing_wells": 3311
+      }
+    },
+    "all/month/2025-12": {
+      "table": "monthly_production.csv",
+      "filter": {
+        "month": "2025-12",
+        "band": "All"
+      },
+      "fields": [
+        "oil_bbl",
+        "gas_mcf",
+        "monthly_producing_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "oil_bbl": 65057376,
+        "gas_mcf": 69959743,
+        "monthly_producing_wells": 1665
+      }
+    },
+    "all/month/2026-08": {
+      "table": "monthly_production.csv",
+      "filter": {
+        "month": "2026-08",
+        "band": "All"
+      },
+      "fields": [
+        "oil_bbl",
+        "gas_mcf",
+        "monthly_producing_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "oil_bbl": 63587543,
+        "gas_mcf": 66977246,
+        "monthly_producing_wells": 1635
+      }
+    },
+    "all/month/2026-09": {
+      "table": "monthly_production.csv",
+      "filter": {
+        "month": "2026-09",
+        "band": "All"
+      },
+      "fields": [
+        "oil_bbl",
+        "gas_mcf",
+        "monthly_producing_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "oil_bbl": 36770623,
+        "gas_mcf": 41076638,
+        "monthly_producing_wells": 1050
+      }
+    },
+    "all/monthly_mean/2005": {
+      "table": "monthly_production.csv",
+      "filter": {
+        "band": "All",
+        "year": 2005
+      },
+      "fields": [
+        "oil_bbl",
+        "gas_mcf",
+        "monthly_producing_wells"
+      ],
+      "operation": "mean",
+      "values": {
+        "oil_bbl": 38913000.583333336,
+        "gas_mcf": 264095351.0,
+        "monthly_producing_wells": 4571.916666666667
+      }
+    },
+    "all/monthly_mean/2025": {
+      "table": "monthly_production.csv",
+      "filter": {
+        "band": "All",
+        "year": 2025
+      },
+      "fields": [
+        "oil_bbl",
+        "gas_mcf",
+        "monthly_producing_wells"
+      ],
+      "operation": "mean",
+      "values": {
+        "oil_bbl": 59232668.833333336,
+        "gas_mcf": 63222836.083333336,
+        "monthly_producing_wells": 1646.5833333333333
+      }
+    },
+    "all/monthly_mean/2026": {
+      "table": "monthly_production.csv",
+      "filter": {
+        "band": "All",
+        "year": 2026
+      },
+      "fields": [
+        "oil_bbl",
+        "gas_mcf",
+        "monthly_producing_wells"
+      ],
+      "operation": "mean",
+      "values": {
+        "oil_bbl": 59171588.88888889,
+        "gas_mcf": 62451938.666666664,
+        "monthly_producing_wells": 1591.5555555555557
+      }
+    },
+    "all/lag/ordered": {
+      "table": "completion_lag.csv",
+      "filter": {
+        "band": "All",
+        "population": "ordered"
+      },
+      "fields": [
+        "wells",
+        "p25_months",
+        "median_months",
+        "p75_months",
+        "pre_completion_wells",
+        "same_month_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "wells": 2132,
+        "p25_months": 0.0,
+        "median_months": 1.0,
+        "p75_months": 4.0,
+        "pre_completion_wells": 0,
+        "same_month_wells": 812
+      }
+    },
+    "all/lag/signed": {
+      "table": "completion_lag.csv",
+      "filter": {
+        "band": "All",
+        "population": "signed"
+      },
+      "fields": [
+        "wells",
+        "p25_months",
+        "median_months",
+        "p75_months",
+        "pre_completion_wells",
+        "same_month_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "wells": 2183,
+        "p25_months": 0.0,
+        "median_months": 1.0,
+        "p75_months": 4.0,
+        "pre_completion_wells": 51,
+        "same_month_wells": 812
+      }
+    },
+    "all/decline/All/1": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "All",
+        "completion_type": "All",
+        "age_month": 1
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 1926,
+        "wells": 1921,
+        "median_relative_rate": 0.6663887565507385
+      }
+    },
+    "all/decline/All/12": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "All",
+        "completion_type": "All",
+        "age_month": 12
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 1926,
+        "wells": 1597,
+        "median_relative_rate": 0.603035538005923
+      }
+    },
+    "all/decline/All/60": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "All",
+        "completion_type": "All",
+        "age_month": 60
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 1926,
+        "wells": 1225,
+        "median_relative_rate": 0.24791473586654306
+      }
+    },
+    "all/decline/Subsea/1": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "All",
+        "completion_type": "Subsea",
+        "age_month": 1
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 452,
+        "wells": 452,
+        "median_relative_rate": 0.6529731537148531
+      }
+    },
+    "all/decline/Subsea/12": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "All",
+        "completion_type": "Subsea",
+        "age_month": 12
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 452,
+        "wells": 388,
+        "median_relative_rate": 0.8273364049722798
+      }
+    },
+    "all/decline/Subsea/60": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "All",
+        "completion_type": "Subsea",
+        "age_month": 60
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 452,
+        "wells": 308,
+        "median_relative_rate": 0.43850461975060434
+      }
+    },
+    "all/decline/No subsea flag (NO)/1": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "All",
+        "completion_type": "No subsea flag (NO)",
+        "age_month": 1
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 1209,
+        "wells": 1204,
+        "median_relative_rate": 0.6561007602396441
+      }
+    },
+    "all/decline/No subsea flag (NO)/12": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "All",
+        "completion_type": "No subsea flag (NO)",
+        "age_month": 12
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 1209,
+        "wells": 1013,
+        "median_relative_rate": 0.5130003924646782
+      }
+    },
+    "all/decline/No subsea flag (NO)/60": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "All",
+        "completion_type": "No subsea flag (NO)",
+        "age_month": 60
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 1209,
+        "wells": 794,
+        "median_relative_rate": 0.19205330564430853
+      }
+    },
+    "all/decline/Unknown/1": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "All",
+        "completion_type": "Unknown",
+        "age_month": 1
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 265,
+        "wells": 265,
+        "median_relative_rate": 0.7562708965960013
+      }
+    },
+    "all/decline/Unknown/12": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "All",
+        "completion_type": "Unknown",
+        "age_month": 12
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 265,
+        "wells": 196,
+        "median_relative_rate": 0.5369277909740318
+      }
+    },
+    "all/decline/Unknown/60": {
+      "table": "decline.csv",
+      "filter": {
+        "band": "All",
+        "completion_type": "Unknown",
+        "age_month": 60
+      },
+      "fields": [
+        "baseline_wells",
+        "wells",
+        "median_relative_rate"
+      ],
+      "operation": "row",
+      "values": {
+        "baseline_wells": 265,
+        "wells": 123,
+        "median_relative_rate": 0.20922481112310332
+      }
+    },
+    "all/Post-completion WAR/0": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "All",
+        "measure": "Post-completion WAR",
+        "age_year": 0
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 2514,
+        "event_wells": 634,
+        "share": 0.25218774860779636,
+        "completion_observed_wells": 2262,
+        "pre_origin_event_wells": 444
+      }
+    },
+    "all/Post-completion WAR/1": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "All",
+        "measure": "Post-completion WAR",
+        "age_year": 1
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 2479,
+        "event_wells": 983,
+        "share": 0.39653085921742637,
+        "completion_observed_wells": 2250,
+        "pre_origin_event_wells": 439
+      }
+    },
+    "all/Post-completion WAR/5": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "All",
+        "measure": "Post-completion WAR",
+        "age_year": 5
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 2306,
+        "event_wells": 1503,
+        "share": 0.6517779705117086,
+        "completion_observed_wells": 2098,
+        "pre_origin_event_wells": 392
+      }
+    },
+    "all/Post-completion WAR/10": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "All",
+        "measure": "Post-completion WAR",
+        "age_year": 10
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 2067,
+        "event_wells": 1614,
+        "share": 0.7808417997097242,
+        "completion_observed_wells": 1863,
+        "pre_origin_event_wells": 362
+      }
+    },
+    "all/Post-completion WAR/20": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "All",
+        "measure": "Post-completion WAR",
+        "age_year": 20
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 643,
+        "event_wells": 481,
+        "share": 0.7480559875583204,
+        "completion_observed_wells": 492,
+        "pre_origin_event_wells": 80
+      }
+    },
+    "all/Intervention approval/0": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "All",
+        "measure": "Intervention approval",
+        "age_year": 0
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 2514,
+        "event_wells": 505,
+        "share": 0.20087509944311854,
+        "completion_observed_wells": 2262,
+        "pre_origin_event_wells": 336
+      }
+    },
+    "all/Intervention approval/1": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "All",
+        "measure": "Intervention approval",
+        "age_year": 1
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 2479,
+        "event_wells": 982,
+        "share": 0.3961274707543364,
+        "completion_observed_wells": 2250,
+        "pre_origin_event_wells": 334
+      }
+    },
+    "all/Intervention approval/5": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "All",
+        "measure": "Intervention approval",
+        "age_year": 5
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 2306,
+        "event_wells": 1423,
+        "share": 0.6170858629661752,
+        "completion_observed_wells": 2098,
+        "pre_origin_event_wells": 299
+      }
+    },
+    "all/Intervention approval/10": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "All",
+        "measure": "Intervention approval",
+        "age_year": 10
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 2067,
+        "event_wells": 1454,
+        "share": 0.7034349298500242,
+        "completion_observed_wells": 1863,
+        "pre_origin_event_wells": 269
+      }
+    },
+    "all/Intervention approval/20": {
+      "table": "interventions.csv",
+      "filter": {
+        "band": "All",
+        "measure": "Intervention approval",
+        "age_year": 20
+      },
+      "fields": [
+        "eligible_wells",
+        "event_wells",
+        "share",
+        "completion_observed_wells",
+        "pre_origin_event_wells"
+      ],
+      "operation": "row",
+      "values": {
+        "eligible_wells": 643,
+        "event_wells": 426,
+        "share": 0.6625194401244168,
+        "completion_observed_wells": 492,
+        "pre_origin_event_wells": 64
+      }
+    },
+    "deepest_share/2005/oil_bbl": {
+      "table": "annual_wells.csv",
+      "filter": {
+        "year": 2005,
+        "band": "≥1,500 m"
+      },
+      "fields": [
+        "oil_bbl"
+      ],
+      "operation": "ratio",
+      "denominator_filter": {
+        "year": 2005,
+        "band": "All"
+      },
+      "values": {
+        "oil_bbl": 0.13945761704271212
+      }
+    },
+    "deepest_share/2005/gas_mcf": {
+      "table": "annual_wells.csv",
+      "filter": {
+        "year": 2005,
+        "band": "≥1,500 m"
+      },
+      "fields": [
+        "gas_mcf"
+      ],
+      "operation": "ratio",
+      "denominator_filter": {
+        "year": 2005,
+        "band": "All"
+      },
+      "values": {
+        "gas_mcf": 0.10353477880797682
+      }
+    },
+    "deepest_share/2025/oil_bbl": {
+      "table": "annual_wells.csv",
+      "filter": {
+        "year": 2025,
+        "band": "≥1,500 m"
+      },
+      "fields": [
+        "oil_bbl"
+      ],
+      "operation": "ratio",
+      "denominator_filter": {
+        "year": 2025,
+        "band": "All"
+      },
+      "values": {
+        "oil_bbl": 0.5425204910782159
+      }
+    },
+    "deepest_share/2025/gas_mcf": {
+      "table": "annual_wells.csv",
+      "filter": {
+        "year": 2025,
+        "band": "≥1,500 m"
+      },
+      "fields": [
+        "gas_mcf"
+      ],
+      "operation": "ratio",
+      "denominator_filter": {
+        "year": 2025,
+        "band": "All"
+      },
+      "values": {
+        "gas_mcf": 0.3833193299763299
+      }
+    },
+    "deepest_share/2026/oil_bbl": {
+      "table": "annual_wells.csv",
+      "filter": {
+        "year": 2026,
+        "band": "≥1,500 m"
+      },
+      "fields": [
+        "oil_bbl"
+      ],
+      "operation": "ratio",
+      "denominator_filter": {
+        "year": 2026,
+        "band": "All"
+      },
+      "values": {
+        "oil_bbl": 0.5590465995035531
+      }
+    },
+    "deepest_share/2026/gas_mcf": {
+      "table": "annual_wells.csv",
+      "filter": {
+        "year": 2026,
+        "band": "≥1,500 m"
+      },
+      "fields": [
+        "gas_mcf"
+      ],
+      "operation": "ratio",
+      "denominator_filter": {
+        "year": 2026,
+        "band": "All"
+      },
+      "values": {
+        "gas_mcf": 0.4065562590630582
+      }
+    },
+    "audit/borehole API rows for inventory/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "borehole API rows for inventory",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 57520
+      }
+    },
+    "audit/borehole API rows for inventory/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "borehole API rows for inventory",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 57520
+      }
+    },
+    "audit/borehole rows for Gulf depth and spud/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "borehole rows for Gulf depth and spud",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 57520
+      }
+    },
+    "audit/borehole rows for Gulf depth and spud/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "borehole rows for Gulf depth and spud",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 54592
+      }
+    },
+    "audit/borehole rows for Gulf depth and spud/dropped/region outside or unresolved": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "borehole rows for Gulf depth and spud",
+        "disposition": "dropped",
+        "reason": "region outside or unresolved"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1934
+      }
+    },
+    "audit/borehole rows for Gulf depth and spud/dropped/cancelled bore": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "borehole rows for Gulf depth and spud",
+        "disposition": "dropped",
+        "reason": "cancelled bore"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 994
+      }
+    },
+    "audit/eWell EOR operation code dictionary/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "eWell EOR operation code dictionary",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 4
+      }
+    },
+    "audit/eWell EOR operation code dictionary/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "eWell EOR operation code dictionary",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 4
+      }
+    },
+    "audit/eWell EOR rows for first completion/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "eWell EOR rows for first completion",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 45667
+      }
+    },
+    "audit/eWell EOR rows for first completion/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "eWell EOR rows for first completion",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 8446
+      }
+    },
+    "audit/eWell EOR rows for first completion/dropped/other EOR operation": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "eWell EOR rows for first completion",
+        "disposition": "dropped",
+        "reason": "other EOR operation"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 37221
+      }
+    },
+    "audit/eWell WAR rows for observed work/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "eWell WAR rows for observed work",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 370779
+      }
+    },
+    "audit/eWell WAR rows for observed work/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "eWell WAR rows for observed work",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 77963
+      }
+    },
+    "audit/eWell WAR rows for observed work/dropped/outside eligible Gulf inventory": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "eWell WAR rows for observed work",
+        "disposition": "dropped",
+        "reason": "outside eligible Gulf inventory"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 18
+      }
+    },
+    "audit/eWell WAR rows for observed work/dropped/no dated C completion": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "eWell WAR rows for observed work",
+        "disposition": "dropped",
+        "reason": "no dated C completion"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 230900
+      }
+    },
+    "audit/eWell WAR rows for observed work/dropped/event on or before completion": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "eWell WAR rows for observed work",
+        "disposition": "dropped",
+        "reason": "event on or before completion"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 61898
+      }
+    },
+    "audit/eWell APM permit identities/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "eWell APM permit identities",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 102177
+      }
+    },
+    "audit/eWell APM permit identities/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "eWell APM permit identities",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 101970
+      }
+    },
+    "audit/eWell APM permit identities/dropped/repeated permit": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "eWell APM permit identities",
+        "disposition": "dropped",
+        "reason": "repeated permit"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 207
+      }
+    },
+    "audit/eWell APM permits for series classification/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "eWell APM permits for series classification",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 101970
+      }
+    },
+    "audit/eWell APM permits for series classification/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "eWell APM permits for series classification",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 101950
+      }
+    },
+    "audit/eWell APM permits for series classification/dropped/outside eligible Gulf inventory": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "eWell APM permits for series classification",
+        "disposition": "dropped",
+        "reason": "outside eligible Gulf inventory"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 20
+      }
+    },
+    "audit/eWell APM suboperation rows/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "eWell APM suboperation rows",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 113278
+      }
+    },
+    "audit/eWell APM suboperation rows/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "eWell APM suboperation rows",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 111522
+      }
+    },
+    "audit/eWell APM suboperation rows/dropped/no selected permit": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "eWell APM suboperation rows",
+        "disposition": "dropped",
+        "reason": "no selected permit"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1756
+      }
+    },
+    "audit/eWell APM descriptions/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "eWell APM descriptions",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 101008
+      }
+    },
+    "audit/eWell APM descriptions/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "eWell APM descriptions",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 100892
+      }
+    },
+    "audit/eWell APM descriptions/dropped/no selected permit": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "eWell APM descriptions",
+        "disposition": "dropped",
+        "reason": "no selected permit"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 116
+      }
+    },
+    "audit/eWell APM approvals for classified well work/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "eWell APM approvals for classified well work",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 101950
+      }
+    },
+    "audit/eWell APM approvals for classified well work/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "eWell APM approvals for classified well work",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 19997
+      }
+    },
+    "audit/eWell APM approvals for classified well work/dropped/outside series well-work groups": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "eWell APM approvals for classified well work",
+        "disposition": "dropped",
+        "reason": "outside series well-work groups"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 69636
+      }
+    },
+    "audit/eWell APM approvals for classified well work/dropped/no dated C completion": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "eWell APM approvals for classified well work",
+        "disposition": "dropped",
+        "reason": "no dated C completion"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 9331
+      }
+    },
+    "audit/eWell APM approvals for classified well work/dropped/event on or before completion": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "eWell APM approvals for classified well work",
+        "disposition": "dropped",
+        "reason": "event on or before completion"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 2986
+      }
+    },
+    "audit/OGOR archives combined | source depth join/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "OGOR archives combined | source depth join",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows",
+        "oil_bbl",
+        "gas_mcf"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 2721246,
+        "oil_bbl": 12419071786.0,
+        "gas_mcf": 32778928312.0
+      }
+    },
+    "audit/OGOR archives combined | source depth join/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "OGOR archives combined | source depth join",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows",
+        "oil_bbl",
+        "gas_mcf"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 2719886,
+        "oil_bbl": 12418358076.0,
+        "gas_mcf": 32778024812.0
+      }
+    },
+    "audit/OGOR archives combined | source depth join/dropped/gulf_without_resolved_depth": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "OGOR archives combined | source depth join",
+        "disposition": "dropped",
+        "reason": "gulf_without_resolved_depth"
+      },
+      "fields": [
+        "rows",
+        "oil_bbl",
+        "gas_mcf"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1326,
+        "oil_bbl": 713710.0,
+        "gas_mcf": 903500.0
+      }
+    },
+    "audit/OGOR archives combined | source depth join/dropped/cancelled_only": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "OGOR archives combined | source depth join",
+        "disposition": "dropped",
+        "reason": "cancelled_only"
+      },
+      "fields": [
+        "rows",
+        "oil_bbl",
+        "gas_mcf"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 34,
+        "oil_bbl": 0.0,
+        "gas_mcf": 0.0
+      }
+    },
+    "audit/OGOR well-months / exact oil rate/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "OGOR well-months / exact oil rate",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 2469232
+      }
+    },
+    "audit/OGOR well-months / exact oil rate/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "OGOR well-months / exact oil rate",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 814354
+      }
+    },
+    "audit/OGOR well-months / exact oil rate/dropped/no_hydrocarbon_production": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "OGOR well-months / exact oil rate",
+        "disposition": "dropped",
+        "reason": "no_hydrocarbon_production"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1642200
+      }
+    },
+    "audit/OGOR well-months / exact oil rate/dropped/unresolved_overlap": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "OGOR well-months / exact oil rate",
+        "disposition": "dropped",
+        "reason": "unresolved_overlap"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 12645
+      }
+    },
+    "audit/OGOR well-months / exact oil rate/dropped/invalid_days": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "OGOR well-months / exact oil rate",
+        "disposition": "dropped",
+        "reason": "invalid_days"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 33
+      }
+    },
+    "audit/First positive month | API10 start evidence/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "First positive month | API10 start evidence",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 9525
+      }
+    },
+    "audit/First positive month | API10 start evidence/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "First positive month | API10 start evidence",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 2514
+      }
+    },
+    "audit/First positive month | API10 start evidence/dropped/reported first production predates January 2005": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "First positive month | API10 start evidence",
+        "disposition": "dropped",
+        "reason": "reported first production predates January 2005"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 7002
+      }
+    },
+    "audit/First positive month | API10 start evidence/dropped/no timely in-window spud or reported start": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "First positive month | API10 start evidence",
+        "disposition": "dropped",
+        "reason": "no timely in-window spud or reported start"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 9
+      }
+    },
+    "audit/Completion lag | first C dated 2005–2025, API10/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Completion lag | first C dated 2005–2025, API10",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 2873
+      }
+    },
+    "audit/Completion lag | first C dated 2005–2025, API10/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Completion lag | first C dated 2005–2025, API10",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 2183
+      }
+    },
+    "audit/Completion lag | first C dated 2005–2025, API10/dropped/no positive joined OGOR month": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Completion lag | first C dated 2005–2025, API10",
+        "disposition": "dropped",
+        "reason": "no positive joined OGOR month"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 107
+      }
+    },
+    "audit/Completion lag | first C dated 2005–2025, API10/dropped/documented pre-window production": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Completion lag | first C dated 2005–2025, API10",
+        "disposition": "dropped",
+        "reason": "documented pre-window production"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 578
+      }
+    },
+    "audit/Completion lag | first C dated 2005–2025, API10/dropped/start coverage unestablished": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Completion lag | first C dated 2005–2025, API10",
+        "disposition": "dropped",
+        "reason": "start coverage unestablished"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 5
+      }
+    },
+    "audit/Completion lag | chronological pair, API10/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Completion lag | chronological pair, API10",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 2183
+      }
+    },
+    "audit/Completion lag | chronological pair, API10/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Completion lag | chronological pair, API10",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 2132
+      }
+    },
+    "audit/Completion lag | chronological pair, API10/dropped/first production month before first C month": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Completion lag | chronological pair, API10",
+        "disposition": "dropped",
+        "reason": "first production month before first C month"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 51
+      }
+    },
+    "audit/Decline | supported first production 2005–2020, API10/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Decline | supported first production 2005–2020, API10",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 2274
+      }
+    },
+    "audit/Decline | supported first production 2005–2020, API10/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Decline | supported first production 2005–2020, API10",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1926
+      }
+    },
+    "audit/Decline | supported first production 2005–2020, API10/dropped/positive oil but producing-day rate unresolved in first three months": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Decline | supported first production 2005–2020, API10",
+        "disposition": "dropped",
+        "reason": "positive oil but producing-day rate unresolved in first three months"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 109
+      }
+    },
+    "audit/Decline | supported first production 2005–2020, API10/dropped/no positive measurable oil rate in first three calendar months": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Decline | supported first production 2005–2020, API10",
+        "disposition": "dropped",
+        "reason": "no positive measurable oil rate in first three calendar months"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 239
+      }
+    },
+    "audit/Decline | observed baseline-eligible well-month records, ages 1–60/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Decline | observed baseline-eligible well-month records, ages 1–60",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 111030
+      }
+    },
+    "audit/Decline | observed baseline-eligible well-month records, ages 1–60/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Decline | observed baseline-eligible well-month records, ages 1–60",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 86920
+      }
+    },
+    "audit/Decline | observed baseline-eligible well-month records, ages 1–60/dropped/no usable producing-day rate": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Decline | observed baseline-eligible well-month records, ages 1–60",
+        "disposition": "dropped",
+        "reason": "no usable producing-day rate"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 24110
+      }
+    }
+  }
+}

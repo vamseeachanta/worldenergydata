@@ -1,0 +1,11 @@
+band,population,wells,p25_months,median_months,p75_months,pre_completion_wells,same_month_wells
+<100 m,signed,1315,0.0,1.0,4.0,20,466
+100–<500 m,signed,160,0.0,0.0,1.0,2,95
+"500–<1,500 m",signed,357,0.0,1.0,5.0,20,128
+"≥1,500 m",signed,351,0.0,1.0,5.5,9,123
+All,signed,2183,0.0,1.0,4.0,51,812
+<100 m,ordered,1295,0.0,1.0,4.0,0,466
+100–<500 m,ordered,158,0.0,0.0,1.0,0,95
+"500–<1,500 m",ordered,337,0.0,1.0,5.0,0,128
+"≥1,500 m",ordered,342,0.0,1.0,6.0,0,123
+All,ordered,2132,0.0,1.0,4.0,0,812
