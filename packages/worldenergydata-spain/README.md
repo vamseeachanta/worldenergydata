@@ -64,3 +64,11 @@ uv run python scripts/spain/build_cores_field_development_report.py \
 The HTML report embeds its data payload inline for static publication. The JSON
 sidecar is retained in the repository as durable provenance for downstream
 field-development analysis, but the Pages builder publishes only the HTML page.
+
+## Data integrity
+
+See [CORES data integrity](docs/cores-data-integrity.md) for Spanish numeric text
+handling, acquisition timestamps, missing observations and a worked example.
+Scheduled refreshes fetch workbooks by default; explicit `force_refresh=false`
+reuses cached bytes while retaining their acquisition evidence. Missing report
+quantities remain unknown, and incomplete oil totals do not enter economics.
