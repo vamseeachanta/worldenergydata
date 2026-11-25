@@ -29,7 +29,7 @@
 #      scripts/review/results/**, scripts/review/prompts/**} is exempted
 #     entirely (Gemini r2 #1). Bounds Claude r1 #3 blanket-backdoor concern.
 # - Both sentinel and marker reads come from the SAME staged blob via
-#   `git show ":$file"` — eliminates the working-tree-vs-staged-blob TOCTOU
+#   `git show <index-object-id>` — eliminates working-tree-vs-staged-blob TOCTOU
 #   bypass surfaced by Codex r2 #2 + Claude r1 #4.
 # - Binary policy: scan raw staged bytes as text, including NUL-containing
 #   blobs; do not decompress archives. Keep bytes in a temporary file, never
@@ -60,8 +60,14 @@ is_path_restricted() {
   return 1
 }
 
-staged_blob=""
-trap 'if [[ -n "$staged_blob" ]]; then rm -f -- "$staged_blob"; fi' EXIT
+staged_blob="" staged_paths="" staged_entry=""
+cleanup() {
+  local snapshot
+  for snapshot in "$staged_blob" "$staged_paths" "$staged_entry"; do
+    if [[ -n "$snapshot" ]]; then rm -f -- "$snapshot"; fi
+  done
+}
+trap cleanup EXIT
 trap 'exit 129' HUP
 trap 'exit 130' INT
 trap 'exit 143' TERM
@@ -69,6 +75,24 @@ if ! staged_blob="$(mktemp)"; then
   printf 'ERROR: Cannot create staged-content snapshot.\n' >&2
   exit 1
 fi
+
+if ! staged_paths="$(mktemp)"; then
+  printf 'ERROR: Cannot create staged-path list.\n' >&2
+  exit 1
+fi
+if ! staged_entry="$(mktemp)"; then
+  printf 'ERROR: Cannot create staged-entry snapshot.\n' >&2
+  exit 1
+fi
+if ! git diff --cached --name-only --diff-filter=ACMR -z > "$staged_paths" 2>/dev/null; then
+  printf 'ERROR: Cannot enumerate staged paths.\n' >&2
+  exit 1
+fi
+
+invalid_entry() {
+  printf 'ERROR: Invalid staged index entry: %s\n' "$display_file" >&2
+  exit 1
+}
 
 snapshot_read_error() {
   printf 'ERROR: Cannot read staged content: %s\n' "$display_file" >&2
@@ -87,23 +111,46 @@ snapshot_contains() {
 }
 
 violations=()
+processed_paths=0
 
-# Stage-aware iteration. NUL-delimited form handles filenames with spaces.
+# Consume only a complete, successfully acquired path list; ACMR excludes deletions.
 while IFS= read -r -d '' file; do
-  # Skip deletions (no staged blob to read).
-  if ! git cat-file -e ":$file" 2>/dev/null; then
-    continue
-  fi
-
+  processed_paths=$((processed_paths + 1))
   # Keep each diagnostic on one line, including paths ending in a newline.
   if ! display_file="$(printf '%s' "${file//$'\n'/^J}" | cat -vT)"; then
     printf 'ERROR: Cannot render staged path.\n' >&2
     exit 1
   fi
 
+  if ! git --literal-pathspecs ls-files -s -z --full-name -- "$file" > "$staged_entry" 2>/dev/null; then
+    printf 'ERROR: Cannot read staged index entry: %s\n' "$display_file" >&2
+    exit 1
+  fi
+  # Require exactly one complete stage-zero record, preserving tabs in its path.
+  {
+    entry="" extra=""
+    if ! IFS= read -r -d '' entry || IFS= read -r -d '' extra || [[ -n "$extra" ]]; then
+      invalid_entry
+    fi
+  } < "$staged_entry"
+  [[ "$entry" == *$'\t'* ]] || invalid_entry
+  header="${entry%%$'\t'*}"
+  entry_path="${entry#*$'\t'}"
+  if [[ "$entry_path" != "$file" ||
+        ! "$header" =~ ^(100644|100755|120000|160000)\ ([[:xdigit:]]+)\ 0$ ]]; then
+    invalid_entry
+  fi
+  mode="${BASH_REMATCH[1]}" oid="${BASH_REMATCH[2]}"
+  # A gitlink's object belongs to its submodule, not necessarily this object store.
+  if [[ "$mode" == 160000 ]]; then continue; fi
+  if ! object_type="$(git cat-file -t "$oid" 2>/dev/null)" || [[ "$object_type" != blob ]]; then
+    printf 'ERROR: Cannot inspect staged object: %s\n' "$display_file" >&2
+    exit 1
+  fi
+
   # Read the staged blob ONCE. This is the single source of truth used by
   # both the per-file sentinel check AND the per-line marker scan.
-  if ! git show ":$file" > "$staged_blob" 2>/dev/null; then
+  if ! git show "$oid" > "$staged_blob" 2>/dev/null; then
     printf 'ERROR: Cannot snapshot staged content: %s\n' "$display_file" >&2
     exit 1
   fi
@@ -144,7 +191,17 @@ while IFS= read -r -d '' file; do
     done <<< "$matches"
   fi
 
-done < <(git diff --cached --name-only --diff-filter=ACMR -z 2>/dev/null)
+done < "$staged_paths" || {
+  printf 'ERROR: Cannot enumerate staged paths.\n' >&2
+  exit 1
+}
+
+# A failed read must not look like EOF, including after a skipped entry.
+if ! expected_paths="$(tr -cd '\0' < "$staged_paths" | wc -c)" ||
+   [[ "$processed_paths" -ne "$expected_paths" ]]; then
+  printf 'ERROR: Cannot enumerate staged paths.\n' >&2
+  exit 1
+fi
 
 if [[ ${#violations[@]} -eq 0 ]]; then
   exit 0

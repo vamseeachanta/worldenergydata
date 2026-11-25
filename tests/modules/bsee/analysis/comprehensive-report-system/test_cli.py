@@ -7,6 +7,7 @@ import argparse
 import os
 import sys
 import unittest
+from io import StringIO
 from pathlib import Path
 from unittest.mock import MagicMock, Mock, patch
 
@@ -245,15 +246,14 @@ class TestCLI(unittest.TestCase):
         """Test running CLI for single report generation"""
         mock_generate.return_value = Path("./reports/block_759.xlsx")
 
-        with patch("sys.stdout", new_callable=unittest.mock.StringIO) as mock_stdout:
+        with self.assertLogs(ReportCLI.__module__, level="INFO") as logs:
             exit_code = self.cli.run(
                 ["--type", "block", "--id", "759", "--format", "excel"]
             )
 
         self.assertEqual(exit_code, 0)
         mock_generate.assert_called_once()
-        output = mock_stdout.getvalue()
-        self.assertIn("Report generated successfully", output)
+        self.assertIn("Report generated successfully", "\n".join(logs.output))
 
     @patch(
         "worldenergydata.modules.bsee.reports.comprehensive.cli.ReportCLI.generate_batch_reports"
@@ -265,21 +265,23 @@ class TestCLI(unittest.TestCase):
             Path("./reports/lease_2.xlsx"),
         ]
 
-        with patch("sys.stdout", new_callable=unittest.mock.StringIO) as mock_stdout:
+        with self.assertLogs(ReportCLI.__module__, level="INFO") as logs:
             exit_code = self.cli.run(
                 ["--type", "lease", "--ids", "OCS-G-12345,OCS-G-12346", "--batch"]
             )
 
         self.assertEqual(exit_code, 0)
         mock_generate_batch.assert_called_once()
-        output = mock_stdout.getvalue()
-        self.assertIn("Generated 2 reports", output)
+        self.assertIn("Generated 2 reports", "\n".join(logs.output))
 
     def test_run_missing_entity(self):
         """Test CLI error handling for missing entity"""
-        with patch("sys.stderr", new_callable=unittest.mock.StringIO):
-            with self.assertRaises(SystemExit):
+        with patch("sys.stderr", new_callable=StringIO) as stderr:
+            with self.assertRaises(SystemExit) as error:
                 self.cli.run(["--type", "block"])
+
+        self.assertEqual(error.exception.code, 2)
+        self.assertIn("Either --id or --ids must be specified", stderr.getvalue())
 
     def test_all_output_formats(self):
         """Test all supported output formats"""

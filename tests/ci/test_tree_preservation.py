@@ -62,6 +62,10 @@ def _child_environment():
         "GIT_COMMON_DIR",
         "GIT_INDEX_FILE",
         "PYTEST_ADDOPTS",
+        # Each child pytest session establishes its own worker identity.
+        "PYTEST_XDIST_TESTRUNUID",
+        "PYTEST_XDIST_WORKER",
+        "PYTEST_XDIST_WORKER_COUNT",
     ):
         env.pop(key, None)
     env["PYTHONDONTWRITEBYTECODE"] = "1"
