@@ -1,5 +1,8 @@
 """Tests for reporting.templates.plotly_report_template PlotlyReportGenerator."""
 
+import ast
+import inspect
+
 import pandas as pd
 import plotly.graph_objects as go
 import pytest
@@ -93,6 +96,38 @@ class TestAddPlots:
 
 
 class TestGenerateHtml:
+    @pytest.mark.parametrize("contents", ["empty", "stats", "plots"])
+    def test_generated_html_has_no_lint_markers(self, tmp_path, contents):
+        """Issue #1302: all template branches emit zero source lint markers.
+
+        The two-row frame supplies plot coordinates only; no engineering
+        value or acceptance threshold is inferred from these synthetic inputs.
+        """
+        gen = PlotlyReportGenerator("Synthetic report", "example", "example")
+        if contents == "stats":
+            gen.add_summary_stat("Rows", "2", "records")
+        if contents == "plots":
+            frame = pd.DataFrame({"x": [1, 2], "y": [3, 4]})
+            gen.add_line_plot(frame, "x", "y", "Synthetic plot")
+        output = tmp_path / "report.html"
+        gen.generate_html(str(output))
+        html = output.read_text(encoding="utf-8")
+        for marker in ("noqa", "pylint:", "type: ignore"):
+            assert marker not in html
+
+    def test_every_template_string_has_no_lint_markers(self):
+        """Inspect every string segment, including unexecuted f-string branches."""
+        tree = ast.parse(inspect.getsource(inspect.getmodule(PlotlyReportGenerator)))
+        method = next(
+            node
+            for node in ast.walk(tree)
+            if isinstance(node, ast.FunctionDef) and node.name == "generate_html"
+        )
+        for node in ast.walk(method):
+            if isinstance(node, ast.Constant) and isinstance(node.value, str):
+                for marker in ("noqa", "pylint:", "type: ignore"):
+                    assert marker not in node.value, (node.lineno, marker)
+
     def test_generate_html_writes_file(self, tmp_path):
         gen = PlotlyReportGenerator("Test Report", "test_mod", "test_repo")
         gen.add_summary_stat("Total", "42")
