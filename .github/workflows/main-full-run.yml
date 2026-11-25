@@ -322,7 +322,7 @@ jobs:
         uses: astral-sh/setup-uv@v7
 
       - name: Run bandit security scan
-        run: uvx bandit -r src/ -ll -ii -x tests/ || true
+        run: uvx bandit==1.9.4 -r src/ -ll -ii -x tests/
 
       - name: Check for secrets with gitleaks
         uses: gitleaks/gitleaks-action@v3

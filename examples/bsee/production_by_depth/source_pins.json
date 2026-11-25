@@ -1,0 +1,211 @@
+{
+  "manifest_sha256": {
+    "2026-11-23-series-basis": "9f1de6e28bd96b945b9939b09a458459a1716e59cbed467214fd631084007c1d",
+    "2026-11-25-production-lease": "56d6ea4036d136c7a6cdd75051dc024e9767fcb266410d7ff5b7aecd831893d3"
+  },
+  "sources": [
+    {
+      "snapshot": "2026-11-23-series-basis",
+      "name": "BoreholeRawData.zip",
+      "url": "https://www.data.bsee.gov/Well/Files/BoreholeRawData.zip",
+      "last_modified": "Mon, 23 Nov 2026 10:31:21 GMT",
+      "sha256": "72fa55e55fd28db26c59e52b3a43c7d053f9d12a6d06b0a0f6a46ef541c66a5c"
+    },
+    {
+      "snapshot": "2026-11-23-series-basis",
+      "name": "eWellEORRawData.zip",
+      "url": "https://www.data.bsee.gov/Well/Files/eWellEORRawData.zip",
+      "last_modified": "Mon, 23 Nov 2026 10:36:30 GMT",
+      "sha256": "b67c61826ea90aa51d7e1f01c2df94bba6e869665a7992cd5438ea538ee603bc"
+    },
+    {
+      "snapshot": "2026-11-23-series-basis",
+      "name": "eWellAPMRawData.zip",
+      "url": "https://www.data.bsee.gov/Well/Files/eWellAPMRawData.zip",
+      "last_modified": "Mon, 23 Nov 2026 10:36:24 GMT",
+      "sha256": "1a38ed6cf9eab1f8079bf65d8e5b389cb41cc343cde4ce679e2b6e057fd7da50"
+    },
+    {
+      "snapshot": "2026-11-23-series-basis",
+      "name": "eWellWARRawData.zip",
+      "url": "https://www.data.bsee.gov/Well/Files/eWellWARRawData.zip",
+      "last_modified": "Mon, 23 Nov 2026 10:42:43 GMT",
+      "sha256": "84a5860c019d1ae2021c933fbe39127b08f8ab58a8443c6cb285e693aac84e8c"
+    },
+    {
+      "snapshot": "2026-11-25-production-lease",
+      "name": "LeaseOwnerRawData.zip",
+      "url": "https://www.data.bsee.gov/Leasing/Files/LeaseOwnerRawData.zip",
+      "last_modified": "Tue, 24 Nov 2026 10:45:57 GMT",
+      "sha256": "1066f324181c52dead37a6c7fe7bb3e61eb74331487b2269e24af8fa6dcc6d22"
+    },
+    {
+      "snapshot": "2026-11-25-production-lease",
+      "name": "ProductionRawData.zip",
+      "url": "https://www.data.bsee.gov/Production/Files/ProductionRawData.zip",
+      "last_modified": "Wed, 18 Nov 2026 22:03:55 GMT",
+      "sha256": "7583e1dbdc44b1e72f48608b5427cd0a02af3e2664d658dc508bdc83942cb089"
+    },
+    {
+      "snapshot": "2026-11-25-production-lease",
+      "name": "lsetapefixed.zip",
+      "url": "https://www.data.bsee.gov/Leasing/Files/lsetapefixed.zip",
+      "last_modified": "Mon, 02 Nov 2026 16:44:04 GMT",
+      "sha256": "46e11a22d1314fe838f31093358f2dbf435d3c5460635d224b4718db77a91c08"
+    },
+    {
+      "snapshot": "2026-11-25-production-lease",
+      "name": "ogora2005delimit.zip",
+      "url": "https://www.data.bsee.gov/Production/Files/ogora2005delimit.zip",
+      "last_modified": "Sun, 01 Nov 2026 12:40:41 GMT",
+      "sha256": "dde7408adfaa0a050851a86306db33516a8e484d9540d80e92ed678e242a74e4"
+    },
+    {
+      "snapshot": "2026-11-25-production-lease",
+      "name": "ogora2006delimit.zip",
+      "url": "https://www.data.bsee.gov/Production/Files/ogora2006delimit.zip",
+      "last_modified": "Sun, 01 Nov 2026 12:41:31 GMT",
+      "sha256": "c37ba12045f3c83a09bc8fe24be7f6b19e4b15f9d65b6226ac379527f0457795"
+    },
+    {
+      "snapshot": "2026-11-25-production-lease",
+      "name": "ogora2007delimit.zip",
+      "url": "https://www.data.bsee.gov/Production/Files/ogora2007delimit.zip",
+      "last_modified": "Sun, 15 Nov 2026 12:26:03 GMT",
+      "sha256": "0b695d97359be53b8529014c449eb389a35a8ee1d480d9f0de3be431fdf5669f"
+    },
+    {
+      "snapshot": "2026-11-25-production-lease",
+      "name": "ogora2008delimit.zip",
+      "url": "https://www.data.bsee.gov/Production/Files/ogora2008delimit.zip",
+      "last_modified": "Sun, 15 Nov 2026 12:26:36 GMT",
+      "sha256": "bace68c4d7580219e1d6cadd95846a3e05eace0c11f9b1d8a46c77f4092701de"
+    },
+    {
+      "snapshot": "2026-11-25-production-lease",
+      "name": "ogora2009delimit.zip",
+      "url": "https://www.data.bsee.gov/Production/Files/ogora2009delimit.zip",
+      "last_modified": "Sun, 15 Nov 2026 12:27:08 GMT",
+      "sha256": "7b4577e8e361569e3e7bc2cb9ff50e596bcc9d395c80dabf667dbd6798ed3b00"
+    },
+    {
+      "snapshot": "2026-11-25-production-lease",
+      "name": "ogora2010delimit.zip",
+      "url": "https://www.data.bsee.gov/Production/Files/ogora2010delimit.zip",
+      "last_modified": "Sun, 15 Nov 2026 12:27:39 GMT",
+      "sha256": "02725b8066898d448d6cd05bd70b78c1dd93007b88e83f935b1f4392de6b36d7"
+    },
+    {
+      "snapshot": "2026-11-25-production-lease",
+      "name": "ogora2011delimit.zip",
+      "url": "https://www.data.bsee.gov/Production/Files/ogora2011delimit.zip",
+      "last_modified": "Sun, 15 Nov 2026 12:28:10 GMT",
+      "sha256": "b856d33cf82842f33fd0a1d203fc01009fed98b1e38d294811e391d854756148"
+    },
+    {
+      "snapshot": "2026-11-25-production-lease",
+      "name": "ogora2012delimit.zip",
+      "url": "https://www.data.bsee.gov/Production/Files/ogora2012delimit.zip",
+      "last_modified": "Sun, 15 Nov 2026 12:28:40 GMT",
+      "sha256": "c7ce2e9214b93ca60aea9c53a675e89622e1249a34164cbdab2ff2c2e3da90a3"
+    },
+    {
+      "snapshot": "2026-11-25-production-lease",
+      "name": "ogora2013delimit.zip",
+      "url": "https://www.data.bsee.gov/Production/Files/ogora2013delimit.zip",
+      "last_modified": "Sun, 15 Nov 2026 12:29:07 GMT",
+      "sha256": "c8e7aa351c793b8bbff315ef7a83d8ba3a8680a399a11da5b5defedf75b902f1"
+    },
+    {
+      "snapshot": "2026-11-25-production-lease",
+      "name": "ogora2014delimit.zip",
+      "url": "https://www.data.bsee.gov/Production/Files/ogora2014delimit.zip",
+      "last_modified": "Sun, 15 Nov 2026 12:29:33 GMT",
+      "sha256": "1792ae0518390563d99e499212024c458ad5031747164d66e47934c4f17940c6"
+    },
+    {
+      "snapshot": "2026-11-25-production-lease",
+      "name": "ogora2015delimit.zip",
+      "url": "https://www.data.bsee.gov/Production/Files/ogora2015delimit.zip",
+      "last_modified": "Sun, 15 Nov 2026 12:30:00 GMT",
+      "sha256": "ac5cff42c494029e6b534ceb86ec6d7a5f7e2378eec1fc286eec127bc1a11651"
+    },
+    {
+      "snapshot": "2026-11-25-production-lease",
+      "name": "ogora2016delimit.zip",
+      "url": "https://www.data.bsee.gov/Production/Files/ogora2016delimit.zip",
+      "last_modified": "Sun, 01 Nov 2026 11:42:48 GMT",
+      "sha256": "a55205533bbc77590ef61ad046ae02f6dd5805db30f0d9a3a5827b043fff7d76"
+    },
+    {
+      "snapshot": "2026-11-25-production-lease",
+      "name": "ogora2017delimit.zip",
+      "url": "https://www.data.bsee.gov/Production/Files/ogora2017delimit.zip",
+      "last_modified": "Sun, 01 Nov 2026 11:42:23 GMT",
+      "sha256": "747cdc105fc38a2a45bcd5b6531b57df4df047126d8e95ad4de49e467b1e675e"
+    },
+    {
+      "snapshot": "2026-11-25-production-lease",
+      "name": "ogora2018delimit.zip",
+      "url": "https://www.data.bsee.gov/Production/Files/ogora2018delimit.zip",
+      "last_modified": "Sun, 01 Nov 2026 11:41:46 GMT",
+      "sha256": "003d6b276ba997148daa54d92117d9de67af72fd4ceb6b28f7f842131794ccc0"
+    },
+    {
+      "snapshot": "2026-11-25-production-lease",
+      "name": "ogora2019delimit.zip",
+      "url": "https://www.data.bsee.gov/Production/Files/ogora2019delimit.zip",
+      "last_modified": "Sun, 01 Nov 2026 11:41:10 GMT",
+      "sha256": "074d113ef23a066f4f4c80001584082c1e3936d350c4b57389460c19c8c82b43"
+    },
+    {
+      "snapshot": "2026-11-25-production-lease",
+      "name": "ogora2020delimit.zip",
+      "url": "https://www.data.bsee.gov/Production/Files/ogora2020delimit.zip",
+      "last_modified": "Sun, 01 Nov 2026 11:40:57 GMT",
+      "sha256": "0275ccb21a7833a92391711830617be98aa8ac254e99198afc5f50e925b45fad"
+    },
+    {
+      "snapshot": "2026-11-25-production-lease",
+      "name": "ogora2021delimit.zip",
+      "url": "https://www.data.bsee.gov/Production/Files/ogora2021delimit.zip",
+      "last_modified": "Sun, 01 Nov 2026 11:40:45 GMT",
+      "sha256": "076a38e433eac74830ffb524da7b6da1c4ff7823f54630075f0879c088f15f41"
+    },
+    {
+      "snapshot": "2026-11-25-production-lease",
+      "name": "ogora2022delimit.zip",
+      "url": "https://www.data.bsee.gov/Production/Files/ogora2022delimit.zip",
+      "last_modified": "Sun, 01 Nov 2026 11:40:18 GMT",
+      "sha256": "cfced4c6fdea540240a4699dfa8a0c23d0952e008b23c34119364329844eda25"
+    },
+    {
+      "snapshot": "2026-11-25-production-lease",
+      "name": "ogora2023delimit.zip",
+      "url": "https://www.data.bsee.gov/Production/Files/ogora2023delimit.zip",
+      "last_modified": "Sun, 01 Nov 2026 11:39:54 GMT",
+      "sha256": "2fe009536793135af0d4f3122be4485ccc24ecf25c87562d97906557673edf51"
+    },
+    {
+      "snapshot": "2026-11-25-production-lease",
+      "name": "ogora2024delimit.zip",
+      "url": "https://www.data.bsee.gov/Production/Files/ogora2024delimit.zip",
+      "last_modified": "Sun, 01 Nov 2026 11:46:35 GMT",
+      "sha256": "7aa113ca35279aa24c10972d1f682fe0f08b875b37e243dd78eefd5121ce6ef7"
+    },
+    {
+      "snapshot": "2026-11-25-production-lease",
+      "name": "ogora2025delimit.zip",
+      "url": "https://www.data.bsee.gov/Production/Files/ogora2025delimit.zip",
+      "last_modified": "Sun, 01 Nov 2026 11:47:04 GMT",
+      "sha256": "95b376d8f15982ad646e71c1a03e04ced90722858714dee193ce595b5d4a5663"
+    },
+    {
+      "snapshot": "2026-11-25-production-lease",
+      "name": "ogoradelimit.zip",
+      "url": "https://www.data.bsee.gov/Production/Files/ogoradelimit.zip",
+      "last_modified": "Mon, 16 Nov 2026 19:33:29 GMT",
+      "sha256": "4000c89cc5d07055d2a28b2b1b9578682e51a7169f2af59fd205ee6dec3cdba1"
+    }
+  ]
+}

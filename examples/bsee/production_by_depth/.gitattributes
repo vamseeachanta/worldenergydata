@@ -1,0 +1,7 @@
+# The build verifies the pin file and compares generated artifacts byte for byte.
+source_pins.json text eol=lf
+output/*.csv text eol=lf
+output/*.json text eol=lf
+output/*.txt text eol=lf
+output/*.svg text eol=lf
+output/*.png binary
