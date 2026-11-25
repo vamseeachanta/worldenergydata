@@ -6,6 +6,7 @@ import math
 import textwrap
 import unicodedata
 from collections import defaultdict
+from collections.abc import Sequence
 from decimal import Decimal
 from xml.etree import ElementTree as ET
 
@@ -13,6 +14,49 @@ from .half_decade import _COLORS, _FONT, BANDS
 
 _COLOUR = dict(zip(BANDS, _COLORS))
 _BAND_LABEL = {b.lower().replace(",", ""): b for b in BANDS}
+
+# Named series use blue, vermilion, green and purple in caller order.
+# Each moving average mixes its yearly colour with 42 percent white.
+_SERIES_COLOURS = ("#0072b2", "#d55e00", "#009e73", "#663399")
+
+
+def _series_palette(names):
+    if names is None:
+        return None
+    if isinstance(names, str) or not isinstance(names, Sequence):
+        raise ValueError("supply an ordered list of series names")
+    if len(names) > len(_SERIES_COLOURS):
+        raise ValueError(
+            "chart-standard.md item 6 allows at most 4 named series per panel"
+        )
+    if not names or any(
+        not isinstance(name, str) or not name.strip() for name in names
+    ):
+        raise ValueError("supply nonempty series names")
+    if len(set(names)) != len(names):
+        raise ValueError("supply distinct series names")
+    return dict(zip(names, _SERIES_COLOURS))
+
+
+def _grouped_rows(rows, palette, *, normalize_depth=False):
+    """Identify series and keep a named panel within a single input population."""
+    bands = set()
+    for row in rows:
+        group = row.get("group", "")
+        if palette is None:
+            band = row["band"]
+            if normalize_depth:
+                band = _BAND_LABEL.get(band.lower().replace(",", ""))
+                if band is None:
+                    raise ValueError(f"unknown water depth band: {row['band']}")
+        else:
+            if group not in palette:
+                raise ValueError(f"unknown named series: {group}")
+            band = row.get("band", "")
+            bands.add(band)
+            if len(bands) > 1:
+                raise ValueError("named series must share one band")
+        yield group, band, row
 
 
 def trailing_average(values, *, is_count=False, partial_year=None):
@@ -38,15 +82,17 @@ def trailing_average(values, *, is_count=False, partial_year=None):
     return result
 
 
-def with_trend(rows, *, is_count=False, partial_year=None):
-    """Complete the calendar for each group and band, retaining source counts."""
+def with_trend(rows, *, is_count=False, partial_year=None, series_names=None):
+    """Complete the calendar for each group and band, retaining source counts.
+
+    With ordered series_names, group holds the series name and band may be
+    omitted or carry one common population label. Supply preaggregated totals
+    when a series spans several depth bands.
+    """
+    palette = _series_palette(series_names)
     series = defaultdict(dict)
     years = set()
-    for row in rows:
-        band = _BAND_LABEL.get(row["band"].lower().replace(",", ""))
-        if band is None:
-            raise ValueError(f"unknown water depth band: {row['band']}")
-        group = row.get("group", "")
+    for group, band, row in _grouped_rows(rows, palette, normalize_depth=True):
         year = int(row["year"])
         if str(year) != str(row["year"]):
             raise ValueError("expected an integral calendar year")
@@ -62,7 +108,11 @@ def with_trend(rows, *, is_count=False, partial_year=None):
         return []
     calendar = range(min(years), max(years) + 1)
     result = []
-    for (group, band), cells in series.items():
+    keys = list(series)
+    if palette is not None:
+        keys.sort(key=lambda key: series_names.index(key[0]))
+    for group, band in keys:
+        cells = series[group, band]
         values = {}
         for y in calendar:
             v = cells[y]["value"] if y in cells else (0 if is_count else None)
@@ -157,18 +207,29 @@ def _path(panel, points, kind, colour, dashed):
         )
 
 
-def _panel(root, left, top, band, groups, cells, years, partial_year, tick_years):
+def _panel(
+    root,
+    left,
+    top,
+    label,
+    label_colour,
+    data,
+    years,
+    partial_year,
+    tick_years,
+    *,
+    width=352,
+    height=122,
+):
     panel = _element(root, "g", **{"class": "panel"})
-    colour = _COLOUR[band]
-    _text(panel, left, top, band, 17, font_weight="bold", fill=colour)
+    if label:
+        _text(panel, left, top, label, 17, font_weight="bold", fill=label_colour)
     top += 17
-    width, height = 352, 122
     first, last = years[0], years[-1]
-    data = [cells.get((group, band), {}) for group in groups]
     ticks = _ticks(
         [
             v
-            for series in data
+            for series, _, _ in data
             for value, mean in series.values()
             for v in (value, mean)
             if v is not None
@@ -200,17 +261,17 @@ def _panel(root, left, top, band, groups, cells, years, partial_year, tick_years
             15,
             text_anchor="middle",
         )
-    for col, kind, stroke in [(1, "average", _tint(colour)), (0, "yearly", colour)]:
-        for idx, series in enumerate(data):
+    for col, kind in [(1, "average"), (0, "yearly")]:
+        for series, colour, dashed in data:
+            stroke = _tint(colour) if kind == "average" else colour
             points = []
             for year, pair in sorted(series.items()):
                 value = pair[col]
                 points.append(
                     (year, None if value is None else (x_of(year), y_of(value)))
                 )
-            dashed = {"stroke_dasharray": "8 6"} if idx else {}
             _path(panel, points, kind, stroke, dashed)
-    for series in data:
+    for series, colour, _ in data:
         for year, (value, _) in sorted(series.items()):
             if value is not None:
                 _element(
@@ -225,21 +286,108 @@ def _panel(root, left, top, band, groups, cells, years, partial_year, tick_years
                 )
 
 
-def render_svg(rows, *, title, ylabel, xlabel, note=""):
+def _band_panels(root, ylabel, measures, cells, years, partial_year, ticks):
+    _line(root, 34, 60, 68, 60, _COLORS[2], 2)
+    _element(root, "circle", cx=51, cy=60, r=4.5, fill=_COLORS[2])
+    _text(root, 80, 66, "Yearly value")
+    _line(root, 220, 60, 258, 60, _tint(_COLORS[2]), 4.5)
+    _text(root, 270, 66, "5 year trailing moving average")
+    _text(root, 32, 99, ylabel, 17, font_weight="bold")
+    # A third measure begins a separate comparison, keeping the last pair together.
+    sections = [measures[:1]] if len(measures) % 2 else []
+    offset = len(measures) % 2
+    sections += [measures[i : i + 2] for i in range(offset, len(measures), 2)]
+    y = 126
+    for section in sections:
+        x = 40
+        for idx, group in enumerate(section):
+            if group:
+                style = {"stroke_dasharray": "8 6"} if idx else {}
+                _line(root, x, y - 5, x + 42, y - 5, "#334b5c", 2, **style)
+                _text(root, x + 52, y, group, 16)
+                x += 90 + len(group) * 10
+        if any(section):
+            y += 31
+        bands = [b for b in BANDS if any((g, b) in cells for g in section)]
+        for i, band in enumerate(bands):
+            _panel(
+                root,
+                82 + (i % 2) * 463,
+                y + (i // 2) * 218,
+                band,
+                _COLOUR[band],
+                [
+                    (
+                        cells.get((g, band), {}),
+                        _COLOUR[band],
+                        {"stroke_dasharray": "8 6"} if idx else {},
+                    )
+                    for idx, g in enumerate(section)
+                ],
+                years,
+                partial_year,
+                ticks,
+            )
+        y += math.ceil(len(bands) / 2) * 218
+    return y
+
+
+def _named_panel(root, ylabel, panel_title, palette, cells, years, partial_year, ticks):
+    _text(root, 32, 66, "Series")
+    _text(root, 510, 66, "Yearly value")
+    _text(root, 650, 66, "5 year trailing moving average")
+    y = 92
+    by_name = {name: series for (name, _), series in cells.items()}
+    data = []
+    for name, colour in palette.items():
+        entry = _element(root, "g")
+        _line(entry, 512, y - 5, 552, y - 5, colour, 2)
+        _element(entry, "circle", cx=532, cy=y - 5, r=4.5, fill=colour)
+        _line(entry, 652, y - 5, 692, y - 5, _tint(colour), 4.5)
+        for line in textwrap.wrap(name, 38):
+            _text(entry, 32, y, line)
+            y += 24
+        data.append((by_name.get(name, {}), colour, {}))
+    _text(root, 32, y + 6, ylabel, 17, font_weight="bold")
+    top = y + 33
+    _panel(
+        root,
+        82,
+        top,
+        panel_title,
+        "#183143",
+        data,
+        years,
+        partial_year,
+        ticks,
+        width=830,
+        height=240,
+    )
+    return top + 336
+
+
+def render_svg(
+    rows, *, title, ylabel, xlabel, note="", series_names=None, panel_title=None
+):
     """Render with_trend rows or their CSV readback, preserving measure order.
 
-    Each panel covers one water depth and up to two measures. All panels share
+    By default each panel covers one water depth and up to two measures. All panels share
     calendar coordinates. Their labelled vertical scales fit the local values.
+    Set series_names to draw the named groups in order on one panel, with an
+    optional panel_title. The note appears below the horizontal axis label.
     """
     if not all(t.strip() for t in (title, xlabel, ylabel)):
         raise ValueError("supply a title and axis labels with units")
+    palette = _series_palette(series_names)
+    if panel_title is not None and palette is None:
+        raise ValueError("panel_title requires named series")
     cells = defaultdict(dict)
     partial = set()
     groups = {}
     years = set()
-    for row in rows:
-        group, band, year = row.get("group", ""), row["band"], int(row["year"])
-        if band not in BANDS or year in cells[group, band]:
+    for group, band, row in _grouped_rows(rows, palette):
+        year = int(row["year"])
+        if (palette is None and band not in BANDS) or year in cells[group, band]:
             raise ValueError("unknown depth band or duplicate yearly cell")
         groups[group] = None
         years.add(year)
@@ -276,42 +424,12 @@ def render_svg(rows, *, title, ylabel, xlabel, note=""):
     ET.SubElement(root, "title").text = title
     _element(root, "rect", width="100%", height="100%", fill="white")
     _text(root, 32, 32, title, 22, font_weight="bold")
-    _line(root, 34, 60, 68, 60, _COLORS[2], 2)
-    _element(root, "circle", cx=51, cy=60, r=4.5, fill=_COLORS[2])
-    _text(root, 80, 66, "Yearly value")
-    _line(root, 220, 60, 258, 60, _tint(_COLORS[2]), 4.5)
-    _text(root, 270, 66, "5 year trailing moving average")
-    _text(root, 32, 99, ylabel, 17, font_weight="bold")
-    measures = list(groups)
-    # A third measure begins a separate comparison, keeping the last pair together.
-    sections = [measures[:1]] if len(measures) % 2 else []
-    offset = len(measures) % 2
-    sections += [measures[i : i + 2] for i in range(offset, len(measures), 2)]
-    y = 126
-    for section in sections:
-        x = 40
-        for idx, group in enumerate(section):
-            if group:
-                style = {"stroke_dasharray": "8 6"} if idx else {}
-                _line(root, x, y - 5, x + 42, y - 5, "#334b5c", 2, **style)
-                _text(root, x + 52, y, group, 16)
-                x += 90 + len(group) * 10
-        if any(section):
-            y += 31
-        bands = [b for b in BANDS if any((g, b) in cells for g in section)]
-        for i, band in enumerate(bands):
-            _panel(
-                root,
-                82 + (i % 2) * 463,
-                y + (i // 2) * 218,
-                band,
-                section,
-                cells,
-                years,
-                partial_year,
-                ticks,
-            )
-        y += math.ceil(len(bands) / 2) * 218
+    if palette is None:
+        y = _band_panels(root, ylabel, list(groups), cells, years, partial_year, ticks)
+    else:
+        y = _named_panel(
+            root, ylabel, panel_title, palette, cells, years, partial_year, ticks
+        )
     _text(root, 480, y - 7, xlabel, 17, text_anchor="middle", font_weight="bold")
     for line in textwrap.wrap(note, 103, break_long_words=False):
         y += 23
