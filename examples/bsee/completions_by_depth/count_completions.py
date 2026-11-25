@@ -33,11 +33,14 @@ import platform
 import subprocess
 import sys
 import zipfile
+from collections import Counter
 from pathlib import Path
 
-from worldenergydata.bsee.half_decade import PERIODS, summarize
-
 ROOT = Path(__file__).resolve().parent
+sys.path.insert(0, str(ROOT.parents[2] / "packages/worldenergydata-bsee/src"))
+from worldenergydata.bsee.half_decade import PERIODS, summarize  # noqa: E402
+from worldenergydata.bsee.yearly_trend import with_trend  # noqa: E402
+
 sys.path.insert(0, str(ROOT.parent / "interventions_by_depth"))
 import count_interventions as ci  # noqa: E402  shared rule and bands (C6)
 
@@ -452,8 +455,17 @@ def write_json(data, out, name):
     )
 
 
-def write_trend_tables(out, years, approvals, subcodes, classified, stock):
-    """Bin qualified permit counts and pool the January inventories for rates."""
+def write_yearly_table(out, stem, rows, partial_year, *, is_count=False):
+    result = with_trend(rows, is_count=is_count, partial_year=partial_year)
+    columns = ["year", "band", "group", "value", "moving_average", "partial_year"]
+    columns.extend(k for k in result[0] if k not in columns)
+    write_csv(result, out, stem, columns)
+
+
+def write_trend_tables(
+    out, years, approvals, subcodes, classified, stock, partial_year=None
+):
+    """Write yearly permit counts and rates, plus the historical pooled tables."""
     # The C6 workover group also contains ordinary workovers. Only its COMP
     # permits have a Change Zone flag and pass the new hole and plugback screen.
     zone = classified[
@@ -494,8 +506,37 @@ def write_trend_tables(out, years, approvals, subcodes, classified, stock):
         for (y, b), count in annual.items()
     ]
     activity = count_grid(work, ["Recompletion", *flags.values()])
+    for stem, counts in [
+        ("01_approvals_by_period", permits),
+        ("02_recompletion_by_period", activity),
+    ]:
+        write_yearly_table(
+            out,
+            stem,
+            [dict(r, value=r["count"]) for r in counts],
+            partial_year,
+            is_count=True,
+        )
+    write_yearly_table(
+        out,
+        "03_approvals_per_well",
+        [
+            dict(
+                year=r["year"],
+                band=r["band"],
+                completion_approvals=r["count"],
+                january_well_years=r["exposure"],
+                value=r["count"] / r["exposure"] if r["exposure"] else None,
+            )
+            for r in rates
+        ],
+        partial_year,
+    )
+
     permit_rows = summarize(permits, mode="per_year")
-    write_csv(permit_rows, out, "01_approvals_by_period", permit_rows[0].keys())
+    write_csv(
+        permit_rows, out, "appendix_01_approvals_by_period", permit_rows[0].keys()
+    )
 
     work_rows = summarize(activity, mode="per_year")
     group_totals, band_totals = {}, {}
@@ -510,14 +551,14 @@ def write_trend_tables(out, years, approvals, subcodes, classified, stock):
         row["band_share_of_group_percent"] = percent(
             band_totals[row["group"], row["band"]], total
         )
-    write_csv(work_rows, out, "02_recompletion_by_period", work_rows[0].keys())
+    write_csv(work_rows, out, "appendix_02_recompletion_by_period", work_rows[0].keys())
 
     rate_rows = summarize(rates, mode="per_well")
     for row in rate_rows:
         row["completion_approvals"] = row.pop("count")
         row["january_well_years"] = row.pop("exposure")
         row["approvals_per_january_well_year"] = row.pop("value")
-    write_csv(rate_rows, out, "03_approvals_per_well", rate_rows[0].keys())
+    write_csv(rate_rows, out, "appendix_03_approvals_per_well", rate_rows[0].keys())
 
 
 def tally(events, key):
@@ -542,7 +583,7 @@ def percent(part, whole):
     return round(100 * part / whole, 1) if whole else ""
 
 
-def drilled_period_table(inventory, types, initial, file_date):
+def drilled_observations(inventory, types, initial, file_date):
     """Group distinct drilled wells by first spud and any initial permit by cutoff."""
     approved = {a["api10"] for a in initial if a["date"] and a["date"] <= file_date}
     groups = {"exploration": "Exploratory wells", "development": "Development wells"}
@@ -561,6 +602,42 @@ def drilled_period_table(inventory, types, initial, file_date):
                 )
             )
 
+    return observations
+
+
+def drilled_year_rows(observations, years):
+    result = []
+    for group, wells in observations.items():
+        drilled, approved = Counter(), Counter()
+        for well in wells:
+            key = well["year"], well["band"]
+            drilled[key] += well["exposure"]
+            approved[key] += well["count"]
+        for year in years:
+            for band in BANDS[:-1]:
+                key = year, band
+                n, done = drilled[key], approved[key]
+                result.append(
+                    dict(
+                        group=group,
+                        year=year,
+                        band=band,
+                        wells_first_drilled=n,
+                        with_initial_completion_approval=done,
+                        value=100 * done / n if n else None,
+                    )
+                )
+    return result
+
+
+def drilled_period_table(inventory, types, initial, file_date):
+    """Return the historical period table for the supplied drilling cohort."""
+    return _drilled_period_rows(
+        drilled_observations(inventory, types, initial, file_date), file_date
+    )
+
+
+def _drilled_period_rows(observations, file_date):
     observed = f"Initial completion approvals observed through {file_date:%d %B %Y}."
     recent = observed + " These recently drilled wells had little time for approval."
     result = []
@@ -1057,14 +1134,21 @@ def run(data_dir, out):
         mine_r[(r["year"], r["band"])] = r["count"]
     cross, bore_frame, classified = c6_cross_check(data_dir, years, mine_a, mine_r)
     stock = ci.standing_wells(bore_frame, years, at="start")
-    write_trend_tables(out, years, in_window, subcodes, classified, stock)
+    write_trend_tables(out, years, in_window, subcodes, classified, stock, part_year)
 
     import well_life_cycle as wl  # C6's well and well-type rules
 
     inventory = ci.well_inventory(bore_frame)
     types = wl.well_types(bore_frame)
-    by_period = drilled_period_table(inventory, types, initial, file_date)
-    write_csv(by_period, out, "04_drilled_to_completed", by_period[0].keys())
+    observations = drilled_observations(inventory, types, initial, file_date)
+    write_yearly_table(
+        out,
+        "04_drilled_to_completed",
+        drilled_year_rows(observations, years),
+        part_year,
+    )
+    by_period = _drilled_period_rows(observations, file_date)
+    write_csv(by_period, out, "appendix_04_drilled_to_completed", by_period[0].keys())
 
     approved_wells = {a["api10"] for a in initial}
     drilled = []

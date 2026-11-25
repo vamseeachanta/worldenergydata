@@ -87,7 +87,9 @@ A completion leaves two public records. Both are counted, and kept apart.
    - *Other completion work*: it does not (perforation changes, other
      completion). These approvals are in the group the interventions study
      excludes, and they are not initial completions by the regulator's own
-     sub-operation label.
+     sub-operation label. Across all approvals, 1,028 carry Modify Perforations
+     and 387 carry Reperforation. Figure 2 excludes the 8 and 6 initial
+     completions, respectively, that carry these flags.
 2. **Completion report** (End of Operations Report file). One report of a Gulf
    well whose operation code is `C`. Its year is the borehole status date. A
    bore can have more than one such report, and for 1,741 of the 1,878 bores
@@ -118,7 +120,9 @@ A completion leaves two public records. Both are counted, and kept apart.
    time of the report (producing or shut in), not a production record.
 6. **Wells drilled** and well type follow the interventions study: one well is
    one ten-digit API number with a non-cancelled bore and a spud date;
-   development or exploration is the type of the original hole.
+   development or exploration is the type of the original hole. The standing
+   well inventory, first drilling cohorts and moving averages follow the
+   [yearly figure rules](#yearly-figures-and-denominators).
 
 ## Results
 
@@ -191,53 +195,79 @@ By water depth, 2005 to 2026:
   and 85 days at 1,500 m and deeper (3,043 bores that also have a completion
   report).
 
-The annual companion charts are [`01_completion_approvals`](output/01_completion_approvals.svg),
-[`02_bores_first_completed`](output/02_bores_first_completed.svg),
-and [`03_fluid_by_year`](output/03_fluid_by_year.svg). These and the
-[Figure 4 drilling cohorts](output/04_drilled_to_completed.svg) have PNG copies.
+### Completion in numbers
 
-### Half decade figures
+| Measure | Under 100 m | 100 to 500 m | 500 to 1,500 m | 1,500 m and deeper | All depths |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Bores with a first completion report (count) | 2,013 | 243 | 553 | 429 | 3,238 |
+| Oil only (%) | 40 | 57 | 78 | 86 | 54 |
+| Gas only (%) | 46 | 38 | 13 | 6 | 35 |
+| Subsea completion flag YES (%) | 2 | 15 | 68 | 90 | 26 |
+| More than one completion interval label (%) | 42 | 30 | 14 | 11 | 32 |
+| Fracturing flag on bores first approved from 2016 (%) | 69 | 68 | 71 | 62 | 67 |
+| Total depth to completion status date, median (years) | 0.07 | 0.12 | 0.18 | 0.23 | 0.10 |
 
-The [figure index](output/figures.json) gives the four body figures, their CSVs,
-and the row, column and display precision behind each numeric reading.
-Figures 1 and 2 divide permit counts by the number of calendar years in the
-approval period. Figure 1 separates initial approvals from other completion
-approvals. Figure 2 shows recompletion approvals and, among other completion
-approvals only, permits flagged Modify Perforations or Reperforation. One
-permit can carry both flags. Each share in the Figure 2 CSV uses the total
-for that permit category across all depths and periods, including partial 2026.
+Table D1. Gulf completion records by water depth through 23 November 2026.
 
-The third figure divides completion approvals by the sum of the annual
-1 January standing well inventories in each depth band. It measures approval
-intensity across the Gulf and includes approvals on wells drilled later in the
-year. Permit depth follows the bore or its unique well depth (definition 4).
-Inventory depth follows the original hole or its unique well depth. A well
-enters on its first dated Gulf spud among noncancelled bores. It leaves when
-all nonsuperseded bores are permanently abandoned with known status dates,
-at the latest of those dates. January observations of unknown depth are
-excluded from the four curves. The [interventions inventory method](../interventions_by_depth/README.md#method)
+The first five rows cover bores with a first completion report from 2005.
+Oil and gas each exclude mixed fluid, source and injection bores, and bores
+without an interval report. The fracturing row covers 805 bores first approved
+from 2016. The timing row covers 3,043 first approved bores with a report and
+a total depth date, with 365.25 days per year. The underlying tables give
+[attributes by depth](output/bore_attributes_by_band.csv),
+[attributes at all depths](output/bore_attributes_all_depths.csv),
+[fracturing](output/fracturing_by_band.csv) and [timing](output/timing_by_band.csv).
+
+Table D2 gives [drilled wells and wells with an initial approval by year](output/04_drilled_to_completed.csv).
+The [half decade table](output/appendix_04_drilled_to_completed.csv) retains the
+original 40 cohort cells. Both include wells first drilled in partial 2026.
+A blank share means no wells were drilled. The historical 2005 to 2025
+[pooled counts](output/drilled_to_completed.csv) end one drilling year earlier.
+
+### Yearly figures and denominators
+
+The [figure index](output/figures.json) links each chart to its yearly CSV
+and gives the row, column and display precision behind each reading.
+Figures 1 and 2 count permits in the approval year. Figure 1 separates initial
+and other completion approvals. Figure 2 counts recompletion approvals and,
+among other completion approvals only, permits flagged Modify Perforations
+or Reperforation. A permit can carry both flags.
+
+Figure 3 divides the calendar year's total initial and other completion
+approvals by the 1 January standing well inventory in each band. Approvals
+include wells drilled later in the year. Permit depth follows the bore or
+its unique well depth. Inventory depth follows the original hole or its unique
+well depth among noncancelled bores. A well enters on its first dated Gulf spud
+among noncancelled bores. It leaves when all nonsuperseded bores are permanently
+abandoned with known status dates, at the latest of those dates. Missing terminal
+dates can leave a well in the reconstructed stock. January observations without
+a resolved depth are excluded. The [inventory method](../interventions_by_depth/README.md#method)
 gives the bore status and region rules.
 
-The [shared chart module](../../../packages/worldenergydata-bsee/src/worldenergydata/bsee/half_decade.py)
-sums tidy year, band and count rows, optionally by group. It supports counts,
-counts per calendar year and rates from pooled exposure. An empty rate cell
-means zero exposure. The four complete periods contain five years each. The
-2025 to 2026 point uses two calendar years and includes the records available
-in the 23 November 2026 snapshot, with 38 calendar days left in 2026.
-The plot leaves this point detached and makes no projection for those days.
-
-Figure 4 groups exploratory wells, then development wells, by water depth
-and the period of their first dated, noncancelled Gulf spud. Its
-[cohort table](output/04_drilled_to_completed.csv) gives the number drilled
-and the number with at least one initial completion approval on any bore of
-the well by 23 November 2026. The share is the number with an approval
-divided by all drilled wells in the same type, depth band and period.
-Type and depth follow the original hole and inventory rules above. Wells with
+Figure 4 groups exploratory wells, then development wells, by depth and calendar
+year of first dated, noncancelled Gulf spud. The numerator counts wells with
+at least one initial completion approval on any bore by 23 November 2026.
+The denominator counts all drilled wells in the same type, band and year.
+Type and depth follow the original hole and inventory rules. Wells with
 another or unstated type, unknown depth or no dated spud fall outside the
-plotted groups. An empty share means no wells were drilled in that group.
-A zero share means wells were drilled and none had a recorded initial approval.
-All cohorts are observed at the same snapshot. Later cohorts have had less
-time for an approval, especially the partial 2025 to 2026 drilling cohort.
+plotted groups. Later cohorts have had less time to receive an approval.
+
+The [shared yearly chart module](../../../packages/worldenergydata-bsee/src/worldenergydata/bsee/yearly_trend.py)
+plots the arithmetic mean of five consecutive complete yearly values at the last
+year of the window. Each annual rate or share has equal weight in the mean.
+Inside the observation window an absent permit count is zero. A year with no
+wells in the denominator has a blank value and breaks the trend. The hollow
+2026 marker covers records through 23 November and is excluded from every mean.
+Vertical scales are labelled in each panel.
+
+The appendix tables retain the r5.2 period counts for
+[initial and other approvals](output/appendix_01_approvals_by_period.csv),
+[recompletion and perforation approvals](output/appendix_02_recompletion_by_period.csv),
+[January well exposure](output/appendix_03_approvals_per_well.csv) and
+[drilled cohorts](output/appendix_04_drilled_to_completed.csv).
+The first four periods each span five years. The last spans 2025 and partial
+2026. Appendix count rates divide by five or two calendar years. Appendix well
+rates and shares divide the pooled numerator by the pooled denominator.
 
 ## Checks
 
@@ -280,7 +310,7 @@ the tests compare them with the hand values.
 The published `output/verification.json` records the archive digests, code
 commit, command, Python and pandas versions and UTC time of the historical
 annual checks. A fresh count writes its own receipt in the chosen output
-directory. The half decade figures link their readings to the period CSVs
+directory. The yearly figures link their readings to the yearly CSVs
 in [figures.json](output/figures.json).
 
 ## Limits

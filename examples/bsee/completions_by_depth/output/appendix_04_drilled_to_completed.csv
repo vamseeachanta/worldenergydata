@@ -1,0 +1,41 @@
+group,period,band,wells_first_drilled,with_initial_completion_approval,share_percent,follow_up
+Exploratory wells,2005 to 2009,Under 100 m,575,309,53.7,Initial completion approvals observed through 23 November 2026.
+Exploratory wells,2005 to 2009,100 to 500 m,52,18,34.6,Initial completion approvals observed through 23 November 2026.
+Exploratory wells,2005 to 2009,"500 to 1,500 m",163,66,40.5,Initial completion approvals observed through 23 November 2026.
+Exploratory wells,2005 to 2009,"1,500 m and deeper",111,36,32.4,Initial completion approvals observed through 23 November 2026.
+Exploratory wells,2010 to 2014,Under 100 m,95,41,43.2,Initial completion approvals observed through 23 November 2026.
+Exploratory wells,2010 to 2014,100 to 500 m,10,6,60.0,Initial completion approvals observed through 23 November 2026.
+Exploratory wells,2010 to 2014,"500 to 1,500 m",89,54,60.7,Initial completion approvals observed through 23 November 2026.
+Exploratory wells,2010 to 2014,"1,500 m and deeper",120,43,35.8,Initial completion approvals observed through 23 November 2026.
+Exploratory wells,2015 to 2019,Under 100 m,13,3,23.1,Initial completion approvals observed through 23 November 2026.
+Exploratory wells,2015 to 2019,100 to 500 m,6,5,83.3,Initial completion approvals observed through 23 November 2026.
+Exploratory wells,2015 to 2019,"500 to 1,500 m",99,44,44.4,Initial completion approvals observed through 23 November 2026.
+Exploratory wells,2015 to 2019,"1,500 m and deeper",123,71,57.7,Initial completion approvals observed through 23 November 2026.
+Exploratory wells,2020 to 2024,Under 100 m,3,0,0.0,Initial completion approvals observed through 23 November 2026.
+Exploratory wells,2020 to 2024,100 to 500 m,5,3,60.0,Initial completion approvals observed through 23 November 2026.
+Exploratory wells,2020 to 2024,"500 to 1,500 m",67,21,31.3,Initial completion approvals observed through 23 November 2026.
+Exploratory wells,2020 to 2024,"1,500 m and deeper",90,57,63.3,Initial completion approvals observed through 23 November 2026.
+Exploratory wells,2025 to 2026 (partial),Under 100 m,0,0,,Initial completion approvals observed through 23 November 2026. These recently drilled wells had little time for approval.
+Exploratory wells,2025 to 2026 (partial),100 to 500 m,1,0,0.0,Initial completion approvals observed through 23 November 2026. These recently drilled wells had little time for approval.
+Exploratory wells,2025 to 2026 (partial),"500 to 1,500 m",28,9,32.1,Initial completion approvals observed through 23 November 2026. These recently drilled wells had little time for approval.
+Exploratory wells,2025 to 2026 (partial),"1,500 m and deeper",26,14,53.8,Initial completion approvals observed through 23 November 2026. These recently drilled wells had little time for approval.
+Development wells,2005 to 2009,Under 100 m,512,397,77.5,Initial completion approvals observed through 23 November 2026.
+Development wells,2005 to 2009,100 to 500 m,68,61,89.7,Initial completion approvals observed through 23 November 2026.
+Development wells,2005 to 2009,"500 to 1,500 m",43,28,65.1,Initial completion approvals observed through 23 November 2026.
+Development wells,2005 to 2009,"1,500 m and deeper",47,38,80.9,Initial completion approvals observed through 23 November 2026.
+Development wells,2010 to 2014,Under 100 m,221,191,86.4,Initial completion approvals observed through 23 November 2026.
+Development wells,2010 to 2014,100 to 500 m,15,12,80.0,Initial completion approvals observed through 23 November 2026.
+Development wells,2010 to 2014,"500 to 1,500 m",51,46,90.2,Initial completion approvals observed through 23 November 2026.
+Development wells,2010 to 2014,"1,500 m and deeper",28,26,92.9,Initial completion approvals observed through 23 November 2026.
+Development wells,2015 to 2019,Under 100 m,56,50,89.3,Initial completion approvals observed through 23 November 2026.
+Development wells,2015 to 2019,100 to 500 m,17,16,94.1,Initial completion approvals observed through 23 November 2026.
+Development wells,2015 to 2019,"500 to 1,500 m",28,27,96.4,Initial completion approvals observed through 23 November 2026.
+Development wells,2015 to 2019,"1,500 m and deeper",44,36,81.8,Initial completion approvals observed through 23 November 2026.
+Development wells,2020 to 2024,Under 100 m,36,35,97.2,Initial completion approvals observed through 23 November 2026.
+Development wells,2020 to 2024,100 to 500 m,6,4,66.7,Initial completion approvals observed through 23 November 2026.
+Development wells,2020 to 2024,"500 to 1,500 m",22,21,95.5,Initial completion approvals observed through 23 November 2026.
+Development wells,2020 to 2024,"1,500 m and deeper",32,26,81.2,Initial completion approvals observed through 23 November 2026.
+Development wells,2025 to 2026 (partial),Under 100 m,2,2,100.0,Initial completion approvals observed through 23 November 2026. These recently drilled wells had little time for approval.
+Development wells,2025 to 2026 (partial),100 to 500 m,1,1,100.0,Initial completion approvals observed through 23 November 2026. These recently drilled wells had little time for approval.
+Development wells,2025 to 2026 (partial),"500 to 1,500 m",2,2,100.0,Initial completion approvals observed through 23 November 2026. These recently drilled wells had little time for approval.
+Development wells,2025 to 2026 (partial),"1,500 m and deeper",23,11,47.8,Initial completion approvals observed through 23 November 2026. These recently drilled wells had little time for approval.
