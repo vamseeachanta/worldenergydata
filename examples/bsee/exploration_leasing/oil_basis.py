@@ -81,6 +81,19 @@ def read_production(zip_path: Path, leases: pd.DataFrame):
                 "drops": {"no_positive_reported_volume": int((~positive).sum())},
             }
         )
+        observed_ids = matched.loc[positive, "lease_id"]
+        audits.append(
+            {
+                "stage": f"Distinct observed {event} leases",
+                "read": len(observed_ids),
+                "kept": int(linked[field].count()),
+                "drops": {
+                    "additional_positive_lease_month": int(
+                        observed_ids.duplicated().sum()
+                    )
+                },
+            }
+        )
     meta = {
         "first_source_month": coverage.index.min().strftime("%Y-%m"),
         "last_source_month": coverage.index.max().strftime("%Y-%m"),

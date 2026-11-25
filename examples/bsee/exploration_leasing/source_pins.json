@@ -13,21 +13,24 @@
       "url": "https://www.data.bsee.gov/Leasing/Files/lsetapefixed.zip",
       "last_modified": "Mon, 02 Nov 2026 16:44:04 GMT",
       "sha256": "46e11a22d1314fe838f31093358f2dbf435d3c5460635d224b4718db77a91c08",
-      "bytes": 1108623
+      "bytes": 1108623,
+      "collection_end_utc": "2026-11-25T03:52:36Z"
     },
     {
       "name": "ProductionRawData.zip",
       "url": "https://www.data.bsee.gov/Production/Files/ProductionRawData.zip",
       "last_modified": "Wed, 18 Nov 2026 22:03:55 GMT",
       "sha256": "7583e1dbdc44b1e72f48608b5427cd0a02af3e2664d658dc508bdc83942cb089",
-      "bytes": 15494246
+      "bytes": 15494246,
+      "collection_end_utc": "2026-11-25T03:52:34Z"
     },
     {
       "name": "LeaseOwnerRawData.zip",
       "url": "https://www.data.bsee.gov/Leasing/Files/LeaseOwnerRawData.zip",
       "last_modified": "Tue, 24 Nov 2026 10:45:57 GMT",
       "sha256": "1066f324181c52dead37a6c7fe7bb3e61eb74331487b2269e24af8fa6dcc6d22",
-      "bytes": 59250
+      "bytes": 59250,
+      "collection_end_utc": "2026-11-25T03:52:35Z"
     }
   ]
 }

@@ -95,7 +95,19 @@ def quartiles(series, name):
     return dict(zip([f"{name}_p25", f"{name}_median", f"{name}_p75"], values))
 
 
+OPEN_STATUSES = {"PRIMRY", "SOP", "OPERNS", "PROD", "UNIT"}
+ENDED_STATUSES = {"EXPIR", "RELINQ", "TERMIN", "CANCEL"}
+
+
+def open_at_file_date(status):
+    unclassified = status[~status.isin(OPEN_STATUSES | ENDED_STATUSES)].unique()
+    if len(unclassified):
+        raise ValueError(f"Unclassified lease status at file date: {unclassified}")
+    return status.isin(OPEN_STATUSES)
+
+
 def exploration_table(frame):
+    frame = frame.assign(open_lease=open_at_file_date(frame.status_code))
     rows = []
     for year, band, g in groups(frame, YEARS[:16]):
         wells = int(g.exploration_wells.sum())
@@ -112,6 +124,9 @@ def exploration_table(frame):
                 depth_band=band,
                 leases=len(g),
                 explored_leases=explored,
+                open_without_observed_event=int(
+                    (g.exploration_spud.isna() & g.open_lease).sum()
+                ),
                 exploration_wells=wells,
                 share_pct=pct(explored, len(g)),
                 leases_with_any_e_bore=any_bore,
@@ -129,7 +144,8 @@ def exploration_table(frame):
 EVENTS = {"Crude oil": "first_oil_month", "Any hydrocarbon": "first_production_month"}
 
 
-def production_table(frame):
+def production_table(frame, audits=None):
+    frame = frame.assign(open_lease=open_at_file_date(frame.status_code))
     rows = []
     for band in [*BANDS, ALL]:
         g = frame if band == ALL else frame.loc[frame.depth_band.eq(band)]
@@ -139,6 +155,28 @@ def production_table(frame):
             eligible = elapsed.where(elapsed.ge(0))
             term = g.primary_term_years.where(g.primary_term_years.gt(0))
             ratios = 100 * eligible / (12 * term)
+            if audits is not None and band == ALL:
+                stage = f"Timed {event.lower()} leases"
+                audits.extend(
+                    [
+                        {
+                            "stage": stage,
+                            "read": int(observed.sum()),
+                            "kept": int(eligible.count()),
+                            "drops": {"pre_effective_event": int(elapsed.lt(0).sum())},
+                        },
+                        {
+                            "stage": f"{stage} with positive primary term",
+                            "read": int(eligible.count()),
+                            "kept": int(ratios.count()),
+                            "drops": {
+                                "missing_or_nonpositive_primary_term": int(
+                                    (eligible.notna() & term.isna()).sum()
+                                )
+                            },
+                        },
+                    ]
+                )
             rows.append(
                 dict(
                     depth_band=band,
@@ -146,10 +184,11 @@ def production_table(frame):
                     leases=len(g),
                     observed_leases=int(observed.sum()),
                     without_observed_event=int((~observed).sum()),
+                    open_without_observed_event=int((~observed & g.open_lease).sum()),
                     timed_leases=int(eligible.count()),
                     pre_effective_leases=int(elapsed.lt(0).sum()),
                     term_leases=int(ratios.count()),
-                    over_term_leases=int(ratios.gt(100).sum()),
+                    over_term_leases=int(eligible.ge(12 * term).sum()),
                     **quartiles(eligible, "months"),
                     **quartiles(ratios, "primary_term_pct"),
                 )
@@ -198,20 +237,74 @@ def select_one(table, filters):
     return selected.iloc[0]
 
 
+def audit_upstreams():
+    """Expected data flow, including independent source roots and reused subsets."""
+    dated = "BoreholeRawData, dated Gulf bore records"
+    assigned = "Original-spud API10s attributable to effective cohort leases"
+    matched = "ProductionRawData monthly detail matched to issuance cohort"
+    chains = [
+        (
+            "LSETAPE effective Gulf lease cohort",
+            "Exploration cohort effective through 2020",
+        ),
+        (
+            "ProductionRawData depth lookup matched to cohort for unit comparison",
+            "Matched lease depths comparable across sources",
+        ),
+        (
+            "BoreholeRawData site depth cleaning",
+            dated,
+            "Dated Gulf bore records at earliest API10 spud",
+            "Earliest-spud bore records grouped into distinct Gulf API10s",
+            assigned,
+            "Cohort API10s originally spudded as exploratory",
+        ),
+        (dated, "All dated Gulf bores for E-bore lease sensitivity"),
+        (
+            assigned,
+            "Original-spud API10s for well-site exploration timing",
+            "First exploration spud on each lease at measured well site",
+            "First-spud exploratory API10s grouped into distinct timed leases",
+            "Timed leases classified by measured site band",
+        ),
+        ("LeaseOwnerRawData current assignments on cohort leases",),
+    ]
+    for event in EVENTS:
+        name = event.lower()
+        chains.append(
+            (
+                matched,
+                f"Matched lease-month rows with positive {name}",
+                f"Distinct observed {name} leases",
+                f"Timed {name} leases",
+                f"Timed {name} leases with positive primary term",
+            )
+        )
+    parents = {}
+    for chain in chains:
+        parents.setdefault(chain[0], "")
+        parents.update({child: parent for parent, child in zip(chain, chain[1:])})
+    return parents
+
+
 def audit_table(audits):
+    parents = audit_upstreams()
     rows = pd.DataFrame(
         [
             {
                 "stage": a["stage"],
+                "upstream_stage": parents[a["stage"]],
                 "rows_read": a["read"],
                 "rows_kept": a["kept"],
                 "rows_dropped": sum(a["drops"].values()),
                 **{f"drop__{k}": v for k, v in a["drops"].items()},
+                **{f"flag__{k}": v for k, v in a.get("flags", {}).items()},
             }
             for a in audits
         ]
     ).fillna(0)
-    return rows.astype({col: "int64" for col in rows if col != "stage"})
+    counts = rows.columns.drop(["stage", "upstream_stage"])
+    return rows.astype({col: "int64" for col in counts})
 
 
 def compare_native_depths(leases, production_zip):
@@ -221,11 +314,20 @@ def compare_native_depths(leases, production_zip):
         archive.open("ProductionRawData/mv_production_waterdepth.txt") as member,
     ):
         rows = pd.read_csv(
-            member, dtype={"LEASE_NUMBER": str, "MAX_WTR_DPTH": "Float64"}
+            member,
+            usecols=["LEASE_NUMBER", "MAX_WTR_DPTH"],
+            dtype=str,
+            keep_default_na=False,
         )
+    rows["LEASE_NUMBER"] = rows.LEASE_NUMBER.str.strip()
+    rows["MAX_WTR_DPTH"] = pd.to_numeric(
+        rows.MAX_WTR_DPTH.str.strip().replace("", pd.NA)
+    )
     selected = rows[rows.LEASE_NUMBER.isin(leases.lease_id)]
     joined = leases.set_index("lease_id")[["lease_depth_m", "block_max_depth_ft"]].join(
-        selected.set_index("LEASE_NUMBER").MAX_WTR_DPTH, validate="one_to_one"
+        selected.set_index("LEASE_NUMBER").MAX_WTR_DPTH,
+        how="inner",
+        validate="one_to_one",
     )
     comparable = joined.dropna()
     if comparable.empty:
@@ -253,7 +355,15 @@ def compare_native_depths(leases, production_zip):
     return {
         "compared_block_depths": len(comparable),
         "depths_within_one_metre": int(converted.le(1).sum()),
-    }, audit
+    }, [
+        audit,
+        {
+            "stage": "Matched lease depths comparable across sources",
+            "read": len(joined),
+            "kept": len(comparable),
+            "drops": {"missing_comparison_depth": int(joined.isna().any(axis=1).sum())},
+        },
+    ]
 
 
 def read_table(output, stem):
@@ -292,6 +402,7 @@ def validate_exploration(table, frame, assignments):
     cols = [
         "leases",
         "explored_leases",
+        "open_without_observed_event",
         "exploration_wells",
         "leases_with_any_e_bore",
         "timed_leases",
@@ -312,15 +423,23 @@ def validate_exploration(table, frame, assignments):
         (table.explored_leases <= table.leases_with_any_e_bore).all()
         and (table.leases_with_any_e_bore <= table.leases).all()
         and (table.timed_leases == table.explored_leases).all()
+        and (
+            table.explored_leases + table.open_without_observed_event <= table.leases
+        ).all()
         and (table.explored_within_five_years <= table.explored_leases).all(),
         "Exploration counts not nested",
     )
-    require(
-        np.allclose(
-            table.share_pct, table.explored_leases / table.leases * 100, equal_nan=True
-        ),
-        "Exploration percentages disagree with numerator and denominator",
-    )
+    for numerator, percentage in [
+        ("explored_leases", "share_pct"),
+        ("leases_with_any_e_bore", "any_e_bore_share_pct"),
+        ("explored_within_five_years", "five_year_share_pct"),
+    ]:
+        require(
+            np.allclose(
+                table[percentage], table[numerator] / table.leases * 100, equal_nan=True
+            ),
+            f"Exploration {percentage} disagrees with numerator and denominator",
+        )
 
 
 def validate_production(table, frame):
@@ -328,6 +447,7 @@ def validate_production(table, frame):
         "leases",
         "observed_leases",
         "without_observed_event",
+        "open_without_observed_event",
         "timed_leases",
         "pre_effective_leases",
         "term_leases",
@@ -340,6 +460,7 @@ def validate_production(table, frame):
     )
     require(
         (table.observed_leases + table.without_observed_event == table.leases).all()
+        and (table.open_without_observed_event <= table.without_observed_event).all()
         and (
             table.timed_leases + table.pre_effective_leases == table.observed_leases
         ).all()
@@ -390,7 +511,25 @@ def validate_audit(table):
         and (reasons.sum(axis=1) == table.rows_dropped).all(),
         "Read, kept and drop reasons disagree",
     )
-    values = table.drop(columns="stage").to_numpy(dtype=float)
+    parents = audit_upstreams()
+    require(set(table.stage) == set(parents), "Audit stages missing or unexpected")
+    ledger = table.set_index("stage")
+    require(
+        ledger.upstream_stage.fillna("").to_dict() == parents,
+        "Incorrect upstream stage in audit",
+    )
+    for stage, upstream in parents.items():
+        if upstream:
+            require(
+                ledger.at[stage, "rows_read"] == ledger.at[upstream, "rows_kept"],
+                f"Audit continuity failure: {upstream} -> {stage}",
+            )
+    flags = table.filter(like="flag__")
+    require(
+        flags.le(table.rows_kept, axis="index").all().all(),
+        "Flag count exceeds retained rows",
+    )
+    values = table.drop(columns=["stage", "upstream_stage"]).to_numpy(dtype=float)
     require(
         np.isfinite(values).all() and (values >= 0).all() and (values % 1 == 0).all(),
         "Invalid count in audit",
@@ -408,15 +547,17 @@ def display_band(band):
     }[band]
 
 
+BOUND_VARIANTS = {
+    "original": "original rule",
+    "a": "a any type bottom",
+    "b": "b any type surface",
+    "c": "c bottom or surface",
+    "d": "d type E bottom or surface",
+    "e": "e any spud date",
+}
+
+
 def write_lease_match_bounds(output, check, counts_by_group):
-    variants = {
-        "original": "original rule",
-        "a": "a any type bottom",
-        "b": "b any type surface",
-        "c": "c bottom or surface",
-        "d": "d type E bottom or surface",
-        "e": "e any spud date",
-    }
     rows = []
     for year, cohort in [(ALL_YEARS, "2005 to 2020"), ("2005", "2005")]:
         require(
@@ -425,7 +566,7 @@ def write_lease_match_bounds(output, check, counts_by_group):
         )
         for band in [*BANDS[:4], ALL]:
             counts = counts_by_group[year, band]
-            for key, variant in variants.items():
+            for key, variant in BOUND_VARIANTS.items():
                 rows.append(
                     {
                         "variant": variant,
@@ -437,7 +578,9 @@ def write_lease_match_bounds(output, check, counts_by_group):
                     }
                 )
     path = output / "lease_match_bounds.csv"
-    pd.DataFrame(rows).to_csv(path, index=False, float_format="%.2f", lineterminator="\n")
+    pd.DataFrame(rows).to_csv(
+        path, index=False, float_format="%.2f", lineterminator="\n"
+    )
     saved = pd.read_csv(path, dtype={"cohort": str})
 
     def check_anchor(variant, expected):
@@ -450,14 +593,15 @@ def write_lease_match_bounds(output, check, counts_by_group):
         )
 
     for key, expected in [("original", 432), ("d", 477)]:
-        variant = variants[key]
+        variant = BOUND_VARIANTS[key]
         check(
             f"Lease match bounds, 2005 to 2020, All, {variant}: {expected} of 7,126",
             lambda: check_anchor(variant, expected),
         )
+    return saved
 
 
-def draw_charts(output, lease_last, pm):
+def draw_charts(output, lease_last, pm, bore_cutoff):
     import matplotlib
 
     matplotlib.use("Agg")
@@ -541,7 +685,7 @@ def draw_charts(output, lease_last, pm):
     fig.text(
         0.085,
         0.07,
-        f"Effective year, 2005 to 2026. Latest effective month: {lease_last[:7]}.  Source: BSEE/BOEM LSETAPE.",
+        f"2026 is partial, to the latest effective month ({lease_last[:7]}). Source: BSEE/BOEM LSETAPE.",
         fontsize=9,
     )
     save(fig, "issuance")
@@ -575,7 +719,12 @@ def draw_charts(output, lease_last, pm):
         fontsize=11,
     )
     cats = [
-        "No leases", "0%", ">0% to <10%", "10% to <30%", "30% to <60%", "60% to 100%"
+        "No leases",
+        "0%",
+        ">0% to <10%",
+        "10% to <30%",
+        "30% to <60%",
+        "60% to 100%",
     ]
     from matplotlib.colors import to_rgb
 
@@ -652,7 +801,7 @@ def draw_charts(output, lease_last, pm):
     heading(
         fig,
         "From lease to first exploratory spud",
-        "Gulf leases effective in 2005 to 2020, observed through the November 2026 borehole file.",
+        f"Gulf leases effective in 2005 to 2020, observed through the {bore_cutoff:%B %Y} borehole file.",
     )
     a.set_title(
         "Share with an exploratory well", loc="left", fontsize=12, weight="bold"
@@ -664,7 +813,15 @@ def draw_charts(output, lease_last, pm):
         row = exp.loc[band]
         c = TEAL if band == ALL else BAND_COLORS[BANDS.index(band)]
         a.barh(i, row.share_pct, height=0.46, color=c)
-        a.plot(row.five_year_share_pct, i, "|", color="white", ms=12, markeredgewidth=2)
+        tick = INK if row.explored_within_five_years == row.explored_leases else "white"
+        a.plot(
+            row.five_year_share_pct,
+            i,
+            "|",
+            color=tick,
+            ms=12,
+            markeredgewidth=2,
+        )
         a.text(
             row.share_pct + 0.15, i, f"{row.share_pct:.1f}%", va="center", fontsize=9
         )
@@ -687,11 +844,14 @@ def draw_charts(output, lease_last, pm):
     fig.text(
         0.045,
         0.085,
-        "Bars show the observed share. White ticks mark the share within five years. Dots and lines show the median and middle 50% of spud times.",
+        "Bars show the observed share. Ticks mark the five-year share. Dots and lines show the median and middle 50%.",
         fontsize=9,
     )
     fig.text(
-        0.045, 0.045, "Sources: BSEE borehole file and BOEM/BSEE LSETAPE.", fontsize=9
+        0.045,
+        0.045,
+        "Medians use observed spuds and are biased low by leases still open without a spud. Sources: BSEE boreholes and LSETAPE.",
+        fontsize=9,
     )
     save(fig, "exploration")
 
@@ -715,11 +875,14 @@ def draw_charts(output, lease_last, pm):
     fig.text(
         0.045,
         0.08,
-        "Dots show medians. Lines span the middle 50%. Block maximum depth is used separately for the lease-cohort figures.",
+        "Dots and lines show the median and middle 50% among observed spuds.",
         fontsize=9,
     )
     fig.text(
-        0.045, 0.04, "Sources: BSEE borehole file and BOEM/BSEE LSETAPE.", fontsize=9
+        0.045,
+        0.04,
+        "Medians are biased low by leases still open without a spud. Sources: BSEE boreholes and LSETAPE.",
+        fontsize=9,
     )
     save(fig, "exploration_site_depth")
 
@@ -729,7 +892,7 @@ def draw_charts(output, lease_last, pm):
     heading(
         fig,
         "From lease to first oil and first production",
-        f"Observed events on 2005 to 2026 leases. The final month ({pm['last_source_month']}) is partial, with {pm['last_source_month_rows']} lease-month reports across the source.",
+        f"Observed events on 2005 to 2026 leases. Recent production is provisional ({pm['last_source_month_rows']} lease-month reports in {pm['last_source_month']}).",
     )
     a.set_title("Elapsed time", loc="left", fontsize=12, weight="bold")
     b.set_title("Original primary term elapsed", loc="left", fontsize=12, weight="bold")
@@ -768,19 +931,19 @@ def draw_charts(output, lease_last, pm):
     fig.text(
         0.045,
         0.072,
-        "Markers show medians. Lines span the middle 50%. Each lease's elapsed months are divided by its own original term.",
+        "Markers and lines show the median and middle 50% among observed events. Elapsed time includes suspension.",
         fontsize=9,
     )
     fig.text(
         0.045,
         0.035,
-        "Sources: BSEE monthly lease production and BOEM/BSEE LSETAPE. Suspension time is included in elapsed time.",
+        "Medians are biased low by leases still open without the event. Sources: BSEE monthly lease production and LSETAPE.",
         fontsize=9,
     )
     save(fig, "first_production")
 
 
-def coverage_table(frame, lm, bm, pm, om):
+def coverage_table(frame, lm, bm, pm, om, pooled_bounds):
     rows = []
 
     def fact(metric, value, source, meaning):
@@ -908,6 +1071,30 @@ def coverage_table(frame, lm, bm, pm, om):
         ),
     ]:
         fact(key, om[key], "mv_lease_owners_main.txt", meaning)
+    for key, metric, meaning in [
+        ("overlap", "both_endpoints", "Dated bottom and surface matches"),
+        (
+            "extra",
+            "additional_any_date",
+            "Additional leases when the date rule is removed",
+        ),
+        (
+            "earlier_only",
+            "earlier_only",
+            "Additional leases with only pre-effective spuds",
+        ),
+        (
+            "missing_only",
+            "undated_only",
+            "Additional leases with only undated listings",
+        ),
+    ]:
+        fact(
+            "bounds_" + metric,
+            pooled_bounds[key],
+            "LSETAPE.DAT + mv_boreholes_all.txt",
+            f"{meaning}, any bore type, leases effective in 2005 to 2020",
+        )
     return pd.DataFrame(rows)
 
 
@@ -969,6 +1156,7 @@ def build_numbers(tables):
             {
                 "leases": "leases",
                 "explored_leases": "leases",
+                "open_without_observed_event": "leases",
                 "exploration_wells": "API10 wells",
                 "share_pct": "%",
                 "leases_with_any_e_bore": "leases",
@@ -1003,6 +1191,7 @@ def build_numbers(tables):
                     "observed_leases": "leases",
                     "timed_leases": "leases",
                     "without_observed_event": "leases",
+                    "open_without_observed_event": "leases",
                     "term_leases": "leases",
                     "over_term_leases": "leases",
                     "months_p25": "months",
@@ -1013,6 +1202,16 @@ def build_numbers(tables):
                     "primary_term_pct_p75": "%",
                 },
             )
+    for key in ("a", "b", "c", "d", "e"):
+        fields = {"matched_leases": "leases"}
+        if key in ("c", "d", "e"):
+            fields["share_pct"] = "%"
+        add_fields(
+            f"bounds.{key}",
+            "lease_match_bounds",
+            {"cohort": "2005 to 2020", "band": "All", "variant": BOUND_VARIANTS[key]},
+            fields,
+        )
     for row in tables["coverage"].itertuples(index=False):
         col = "text" if pd.isna(row.number) else "number"
         add(
@@ -1024,7 +1223,9 @@ def build_numbers(tables):
         )
     for _, row in tables["record_counts"].iterrows():
         for col, n in row.items():
-            if col == "stage" or (col.startswith("drop__") and n == 0):
+            if not (
+                col.startswith("rows_") or (col.startswith(("drop__", "flag__")) and n)
+            ):
                 continue
             add(
                 f"audit.{row.stage}.{col}",
@@ -1065,22 +1266,37 @@ def validate_figures(charts):
             image.load()
 
 
-def validate_quantiles(tables, frame, older):
-    """Recompute order statistics from individual leases after CSV round-trip."""
+def compare_quartiles(values, row, prefix):
+    actual = np.array(
+        [row[prefix + "_p25"], row[prefix + "_median"], row[prefix + "_p75"]],
+        dtype=float,
+    )
+    sample = values.dropna()
+    expected = (
+        np.percentile(sample, [25, 50, 75]) if len(sample) else np.full(3, np.nan)
+    )
+    require(
+        np.allclose(expected, actual, equal_nan=True, rtol=0, atol=1e-10),
+        f"Quartiles disagree for {prefix}, {row['depth_band']}",
+    )
 
-    def compare(values, row, prefix):
-        actual = np.array(
-            [row[prefix + "_p25"], row[prefix + "_median"], row[prefix + "_p75"]],
-            dtype=float,
-        )
-        sample = values.dropna()
-        expected = (
-            np.percentile(sample, [25, 50, 75]) if len(sample) else np.full(3, np.nan)
+
+def validate_site_quantiles(table, durations):
+    for band in [*BANDS, ALL]:
+        row = select_one(table, {"depth_band": band})
+        days = (
+            durations.days
+            if band == ALL
+            else durations.loc[durations.depth_band.eq(band), "days"]
         )
         require(
-            np.allclose(expected, actual, equal_nan=True),
-            f"Quartiles disagree for {prefix}",
+            row.timed_leases == len(days), f"Well-site timing count differs for {band}"
         )
+        compare_quartiles(days, row, "days_to_spud")
+
+
+def validate_quantiles(tables, frame, older):
+    """Recompute order statistics from individual leases after CSV round-trip."""
 
     for row in tables["exploration"].to_dict("records"):
         g = older
@@ -1088,8 +1304,10 @@ def validate_quantiles(tables, frame, older):
             g = g[g.issue_year.eq(int(row["issue_year"]))]
         if row["depth_band"] != ALL:
             g = g[g.depth_band.eq(row["depth_band"])]
-        compare((g.exploration_spud - g.effective_date).dt.days, row, "days_to_spud")
-        compare(
+        compare_quartiles(
+            (g.exploration_spud - g.effective_date).dt.days, row, "days_to_spud"
+        )
+        compare_quartiles(
             (g.any_e_bore_spud - g.effective_date).dt.days, row, "days_to_any_e_bore"
         )
     for row in tables["first_production"].to_dict("records"):
@@ -1100,8 +1318,8 @@ def validate_quantiles(tables, frame, older):
         )
         months = month_lag(g.effective_date, g[EVENTS[row["event"]]])
         months = months[months.ge(0)]
-        compare(months, row, "months")
-        compare(
+        compare_quartiles(months, row, "months")
+        compare_quartiles(
             100
             * months
             / (12 * g.primary_term_years.where(g.primary_term_years.gt(0))),
@@ -1128,6 +1346,13 @@ def build(output, data_dir, pins, check):
     from oil_basis import read_production
 
     leases, la, lm = read_leases(data_dir / TAPE, REPOSITORY)
+    check(
+        "Every lease in this cohort took effect on the first of a month",
+        lambda: require(
+            leases.effective_date.dt.is_month_start.all(),
+            "Monthly production cannot resolve the term boundary of a mid-month lease",
+        ),
+    )
     comparison, da = check(
         "Converted LSETAPE depth scale agrees with BSEE's whole-metre lease lookup within one metre",
         lambda: compare_native_depths(leases, data_dir / PRODUCTION),
@@ -1157,6 +1382,12 @@ def build(output, data_dir, pins, check):
         ),
     )
     older = f[f.issue_year.le(2020)]
+    older_audit = {
+        "stage": "Exploration cohort effective through 2020",
+        "read": len(f),
+        "kept": len(older),
+        "drops": {"issued_after_2020": int(f.issue_year.gt(2020).sum())},
+    }
     check(
         "All 2005–20 leases reach their fifth anniversary by the last observed Gulf spud",
         lambda: require(
@@ -1178,19 +1409,24 @@ def build(output, data_dir, pins, check):
             months == pm["source_months_from_2005"], "Gap in production month coverage"
         ),
     )
-    site, sa = site_spud_table(older, wells, depth_band, BANDS)
+    site, sa, site_durations = site_spud_table(older, wells, depth_band, BANDS)
+    production = production_table(f, audits=pa)
     source_tables = {
         "issuance": issue_table(f),
         "current_status": status_table(f),
         "exploration": exploration_table(older),
         "exploration_site_depth": site,
-        "first_production": production_table(f),
-        "record_counts": audit_table([*la, da, *ba, *sa, *pa, *oa]),
-        "coverage": coverage_table(f, lm, bm, pm, om),
+        "first_production": production,
+        "record_counts": audit_table([*la, older_audit, *da, *ba, *sa, *pa, *oa]),
     }
     for stem, df in source_tables.items():
         df.to_csv(output / f"{stem}.csv", index=False, lineterminator="\n")
     tables = {stem: read_table(output, stem) for stem in source_tables}
+    counts = calculate_bounds(data_dir, pins, output / "exploration.csv")
+    tables["lease_match_bounds"] = write_lease_match_bounds(output, check, counts)
+    coverage = coverage_table(f, lm, bm, pm, om, counts[ALL_YEARS, ALL])
+    coverage.to_csv(output / "coverage.csv", index=False, lineterminator="\n")
+    tables["coverage"] = read_table(output, "coverage")
     check(
         "Issuance counts reconcile for every band and year to distinct source leases",
         lambda: validate_issues(tables["issuance"], f),
@@ -1210,6 +1446,7 @@ def build(output, data_dir, pins, check):
 
     def check_site():
         table = tables["exploration_site_depth"]
+        validate_site_quantiles(table, site_durations)
         grand = select_one(table, {"depth_band": ALL})
         block = select_one(
             tables["exploration"], {"depth_band": ALL, "issue_year": ALL_YEARS}
@@ -1233,7 +1470,7 @@ def build(output, data_dir, pins, check):
             )
 
     check(
-        "Borehole-site bands sum to the same leases and pooled timing as the lease-block bands",
+        "Site counts and quartiles match individual durations in each assigned band, and pooled timing matches block timing",
         check_site,
     )
     check(
@@ -1245,7 +1482,7 @@ def build(output, data_dir, pins, check):
         lambda: validate_quantiles(tables, f, older),
     )
     check(
-        "Every stage reconciles rows read = rows kept + sum of mutually exclusive drop reasons",
+        "Every stage reconciles read, kept and dropped rows; downstream reads equal upstream retained rows",
         lambda: validate_audit(tables["record_counts"]),
     )
     numbers = build_numbers(tables)
@@ -1259,10 +1496,8 @@ def build(output, data_dir, pins, check):
         "Every headline value resolves to exactly one saved CSV row and column",
         lambda: validate_numbers(json.loads(number_path.read_bytes()), tables),
     )
-    draw_charts(output, lm["last_effective_date"], pm)
+    draw_charts(output, lm["last_effective_date"], pm, as_of)
     check(
         "All five SVG/PNG pairs decode; SVGs use DejaVu Sans and contain no prohibited constructs",
         lambda: validate_figures(output),
     )
-    counts = calculate_bounds(data_dir, pins, output / "exploration.csv")
-    write_lease_match_bounds(output, check, counts)

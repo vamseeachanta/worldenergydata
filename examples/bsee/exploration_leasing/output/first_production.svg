@@ -528,13 +528,13 @@ L 724.353488 316.757929
    <text style="font-weight: 700; font-size: 21px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #333333" x="38.88" y="31.328719" transform="rotate(-0 38.88 31.328719)">From lease to first oil and first production</text>
   </g>
   <g id="text_28">
-   <text style="font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #333333" x="38.88" y="52.278281" transform="rotate(-0 38.88 52.278281)">Observed events on 2005 to 2026 leases. The final month (2026-10) is partial, with 21 lease-month reports across the source.</text>
+   <text style="font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #333333" x="38.88" y="52.278281" transform="rotate(-0 38.88 52.278281)">Observed events on 2005 to 2026 leases. Recent production is provisional (21 lease-month reports in 2026-10).</text>
   </g>
   <g id="text_29">
-   <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #333333" x="38.88" y="407.5776" transform="rotate(-0 38.88 407.5776)">Markers show medians. Lines span the middle 50%. Each lease's elapsed months are divided by its own original term.</text>
+   <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #333333" x="38.88" y="407.5776" transform="rotate(-0 38.88 407.5776)">Markers and lines show the median and middle 50% among observed events. Elapsed time includes suspension.</text>
   </g>
   <g id="text_30">
-   <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #333333" x="38.88" y="423.828" transform="rotate(-0 38.88 423.828)">Sources: BSEE monthly lease production and BOEM/BSEE LSETAPE. Suspension time is included in elapsed time.</text>
+   <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #333333" x="38.88" y="423.828" transform="rotate(-0 38.88 423.828)">Medians are biased low by leases still open without the event. Sources: BSEE monthly lease production and LSETAPE.</text>
   </g>
  </g>
 </svg>

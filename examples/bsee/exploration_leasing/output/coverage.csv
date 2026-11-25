@@ -33,3 +33,7 @@ termination_dates_present,0.0,,mv_lease_owners_main.txt,All ownership rows with 
 missing_assignment_effective_dates,12.0,,mv_lease_owners_main.txt,All ownership rows lacking an assignment effective date
 cohort_current_companies,173.0,,mv_lease_owners_main.txt,Distinct listed current company IDs matched to cohort at snapshot
 cohort_current_leases,1224.0,,mv_lease_owners_main.txt,Distinct cohort leases with at least one current assignment
+bounds_both_endpoints,416.0,,LSETAPE.DAT + mv_boreholes_all.txt,"Dated bottom and surface matches, any bore type, leases effective in 2005 to 2020"
+bounds_additional_any_date,41.0,,LSETAPE.DAT + mv_boreholes_all.txt,"Additional leases when the date rule is removed, any bore type, leases effective in 2005 to 2020"
+bounds_earlier_only,18.0,,LSETAPE.DAT + mv_boreholes_all.txt,"Additional leases with only pre-effective spuds, any bore type, leases effective in 2005 to 2020"
+bounds_undated_only,23.0,,LSETAPE.DAT + mv_boreholes_all.txt,"Additional leases with only undated listings, any bore type, leases effective in 2005 to 2020"

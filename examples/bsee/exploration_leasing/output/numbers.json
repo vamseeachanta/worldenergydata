@@ -277,6 +277,16 @@
     },
     "column": "explored_leases"
   },
+  "exploration.under_100.open_without_observed_event": {
+    "value": 18,
+    "unit": "leases",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "<100 m"
+    },
+    "column": "open_without_observed_event"
+  },
   "exploration.under_100.exploration_wells": {
     "value": 221,
     "unit": "API10 wells",
@@ -463,6 +473,16 @@
     },
     "column": "without_observed_event"
   },
+  "oil.under_100.open_without_observed_event": {
+    "value": 45,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "<100 m",
+      "event": "Crude oil"
+    },
+    "column": "open_without_observed_event"
+  },
   "oil.under_100.term_leases": {
     "value": 41,
     "unit": "leases",
@@ -474,7 +494,7 @@
     "column": "term_leases"
   },
   "oil.under_100.over_term_leases": {
-    "value": 14,
+    "value": 16,
     "unit": "leases",
     "table": "first_production.csv",
     "filter": {
@@ -573,6 +593,16 @@
     },
     "column": "without_observed_event"
   },
+  "hydrocarbon.under_100.open_without_observed_event": {
+    "value": 36,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "<100 m",
+      "event": "Any hydrocarbon"
+    },
+    "column": "open_without_observed_event"
+  },
   "hydrocarbon.under_100.term_leases": {
     "value": 117,
     "unit": "leases",
@@ -584,7 +614,7 @@
     "column": "term_leases"
   },
   "hydrocarbon.under_100.over_term_leases": {
-    "value": 17,
+    "value": 21,
     "unit": "leases",
     "table": "first_production.csv",
     "filter": {
@@ -682,6 +712,16 @@
       "depth_band": "100–<500 m"
     },
     "column": "explored_leases"
+  },
+  "exploration.100_to_500.open_without_observed_event": {
+    "value": 6,
+    "unit": "leases",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "100–<500 m"
+    },
+    "column": "open_without_observed_event"
   },
   "exploration.100_to_500.exploration_wells": {
     "value": 23,
@@ -869,6 +909,16 @@
     },
     "column": "without_observed_event"
   },
+  "oil.100_to_500.open_without_observed_event": {
+    "value": 27,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "100–<500 m",
+      "event": "Crude oil"
+    },
+    "column": "open_without_observed_event"
+  },
   "oil.100_to_500.term_leases": {
     "value": 12,
     "unit": "leases",
@@ -979,6 +1029,16 @@
     },
     "column": "without_observed_event"
   },
+  "hydrocarbon.100_to_500.open_without_observed_event": {
+    "value": 26,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "100–<500 m",
+      "event": "Any hydrocarbon"
+    },
+    "column": "open_without_observed_event"
+  },
   "hydrocarbon.100_to_500.term_leases": {
     "value": 16,
     "unit": "leases",
@@ -1088,6 +1148,16 @@
       "depth_band": "500–<1,500 m"
     },
     "column": "explored_leases"
+  },
+  "exploration.500_to_1500.open_without_observed_event": {
+    "value": 40,
+    "unit": "leases",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "500–<1,500 m"
+    },
+    "column": "open_without_observed_event"
   },
   "exploration.500_to_1500.exploration_wells": {
     "value": 153,
@@ -1275,6 +1345,16 @@
     },
     "column": "without_observed_event"
   },
+  "oil.500_to_1500.open_without_observed_event": {
+    "value": 428,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "500–<1,500 m",
+      "event": "Crude oil"
+    },
+    "column": "open_without_observed_event"
+  },
   "oil.500_to_1500.term_leases": {
     "value": 36,
     "unit": "leases",
@@ -1286,7 +1366,7 @@
     "column": "term_leases"
   },
   "oil.500_to_1500.over_term_leases": {
-    "value": 15,
+    "value": 16,
     "unit": "leases",
     "table": "first_production.csv",
     "filter": {
@@ -1385,6 +1465,16 @@
     },
     "column": "without_observed_event"
   },
+  "hydrocarbon.500_to_1500.open_without_observed_event": {
+    "value": 428,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "500–<1,500 m",
+      "event": "Any hydrocarbon"
+    },
+    "column": "open_without_observed_event"
+  },
   "hydrocarbon.500_to_1500.term_leases": {
     "value": 39,
     "unit": "leases",
@@ -1396,7 +1486,7 @@
     "column": "term_leases"
   },
   "hydrocarbon.500_to_1500.over_term_leases": {
-    "value": 15,
+    "value": 16,
     "unit": "leases",
     "table": "first_production.csv",
     "filter": {
@@ -1494,6 +1584,16 @@
       "depth_band": "≥1,500 m"
     },
     "column": "explored_leases"
+  },
+  "exploration.1500_plus.open_without_observed_event": {
+    "value": 223,
+    "unit": "leases",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "≥1,500 m"
+    },
+    "column": "open_without_observed_event"
   },
   "exploration.1500_plus.exploration_wells": {
     "value": 192,
@@ -1681,6 +1781,16 @@
     },
     "column": "without_observed_event"
   },
+  "oil.1500_plus.open_without_observed_event": {
+    "value": 637,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "≥1,500 m",
+      "event": "Crude oil"
+    },
+    "column": "open_without_observed_event"
+  },
   "oil.1500_plus.term_leases": {
     "value": 33,
     "unit": "leases",
@@ -1692,7 +1802,7 @@
     "column": "term_leases"
   },
   "oil.1500_plus.over_term_leases": {
-    "value": 18,
+    "value": 19,
     "unit": "leases",
     "table": "first_production.csv",
     "filter": {
@@ -1791,6 +1901,16 @@
     },
     "column": "without_observed_event"
   },
+  "hydrocarbon.1500_plus.open_without_observed_event": {
+    "value": 636,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "≥1,500 m",
+      "event": "Any hydrocarbon"
+    },
+    "column": "open_without_observed_event"
+  },
   "hydrocarbon.1500_plus.term_leases": {
     "value": 34,
     "unit": "leases",
@@ -1802,7 +1922,7 @@
     "column": "term_leases"
   },
   "hydrocarbon.1500_plus.over_term_leases": {
-    "value": 18,
+    "value": 19,
     "unit": "leases",
     "table": "first_production.csv",
     "filter": {
@@ -1900,6 +2020,16 @@
       "depth_band": "Unknown"
     },
     "column": "explored_leases"
+  },
+  "exploration.unknown.open_without_observed_event": {
+    "value": 0,
+    "unit": "leases",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "Unknown"
+    },
+    "column": "open_without_observed_event"
   },
   "exploration.unknown.exploration_wells": {
     "value": 0,
@@ -2087,6 +2217,16 @@
     },
     "column": "without_observed_event"
   },
+  "oil.unknown.open_without_observed_event": {
+    "value": 0,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "Unknown",
+      "event": "Crude oil"
+    },
+    "column": "open_without_observed_event"
+  },
   "oil.unknown.term_leases": {
     "value": 0,
     "unit": "leases",
@@ -2197,6 +2337,16 @@
     },
     "column": "without_observed_event"
   },
+  "hydrocarbon.unknown.open_without_observed_event": {
+    "value": 0,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "Unknown",
+      "event": "Any hydrocarbon"
+    },
+    "column": "open_without_observed_event"
+  },
   "hydrocarbon.unknown.term_leases": {
     "value": 0,
     "unit": "leases",
@@ -2306,6 +2456,16 @@
       "depth_band": "All bands"
     },
     "column": "explored_leases"
+  },
+  "exploration.all.open_without_observed_event": {
+    "value": 287,
+    "unit": "leases",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "All bands"
+    },
+    "column": "open_without_observed_event"
   },
   "exploration.all.exploration_wells": {
     "value": 589,
@@ -2493,6 +2653,16 @@
     },
     "column": "without_observed_event"
   },
+  "oil.all.open_without_observed_event": {
+    "value": 1137,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "All bands",
+      "event": "Crude oil"
+    },
+    "column": "open_without_observed_event"
+  },
   "oil.all.term_leases": {
     "value": 122,
     "unit": "leases",
@@ -2504,7 +2674,7 @@
     "column": "term_leases"
   },
   "oil.all.over_term_leases": {
-    "value": 54,
+    "value": 58,
     "unit": "leases",
     "table": "first_production.csv",
     "filter": {
@@ -2603,6 +2773,16 @@
     },
     "column": "without_observed_event"
   },
+  "hydrocarbon.all.open_without_observed_event": {
+    "value": 1126,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "All bands",
+      "event": "Any hydrocarbon"
+    },
+    "column": "open_without_observed_event"
+  },
   "hydrocarbon.all.term_leases": {
     "value": 206,
     "unit": "leases",
@@ -2614,7 +2794,7 @@
     "column": "term_leases"
   },
   "hydrocarbon.all.over_term_leases": {
-    "value": 57,
+    "value": 63,
     "unit": "leases",
     "table": "first_production.csv",
     "filter": {
@@ -2682,6 +2862,94 @@
       "event": "Any hydrocarbon"
     },
     "column": "primary_term_pct_p75"
+  },
+  "bounds.a.matched_leases": {
+    "value": 520,
+    "unit": "leases",
+    "table": "lease_match_bounds.csv",
+    "filter": {
+      "cohort": "2005 to 2020",
+      "band": "All",
+      "variant": "a any type bottom"
+    },
+    "column": "matched_leases"
+  },
+  "bounds.b.matched_leases": {
+    "value": 442,
+    "unit": "leases",
+    "table": "lease_match_bounds.csv",
+    "filter": {
+      "cohort": "2005 to 2020",
+      "band": "All",
+      "variant": "b any type surface"
+    },
+    "column": "matched_leases"
+  },
+  "bounds.c.matched_leases": {
+    "value": 546,
+    "unit": "leases",
+    "table": "lease_match_bounds.csv",
+    "filter": {
+      "cohort": "2005 to 2020",
+      "band": "All",
+      "variant": "c bottom or surface"
+    },
+    "column": "matched_leases"
+  },
+  "bounds.c.share_pct": {
+    "value": 7.66,
+    "unit": "%",
+    "table": "lease_match_bounds.csv",
+    "filter": {
+      "cohort": "2005 to 2020",
+      "band": "All",
+      "variant": "c bottom or surface"
+    },
+    "column": "share_pct"
+  },
+  "bounds.d.matched_leases": {
+    "value": 477,
+    "unit": "leases",
+    "table": "lease_match_bounds.csv",
+    "filter": {
+      "cohort": "2005 to 2020",
+      "band": "All",
+      "variant": "d type E bottom or surface"
+    },
+    "column": "matched_leases"
+  },
+  "bounds.d.share_pct": {
+    "value": 6.69,
+    "unit": "%",
+    "table": "lease_match_bounds.csv",
+    "filter": {
+      "cohort": "2005 to 2020",
+      "band": "All",
+      "variant": "d type E bottom or surface"
+    },
+    "column": "share_pct"
+  },
+  "bounds.e.matched_leases": {
+    "value": 587,
+    "unit": "leases",
+    "table": "lease_match_bounds.csv",
+    "filter": {
+      "cohort": "2005 to 2020",
+      "band": "All",
+      "variant": "e any spud date"
+    },
+    "column": "matched_leases"
+  },
+  "bounds.e.share_pct": {
+    "value": 8.24,
+    "unit": "%",
+    "table": "lease_match_bounds.csv",
+    "filter": {
+      "cohort": "2005 to 2020",
+      "band": "All",
+      "variant": "e any spud date"
+    },
+    "column": "share_pct"
   },
   "coverage.tape_file_date": {
     "value": "2026-11-02",
@@ -2989,6 +3257,42 @@
     },
     "column": "number"
   },
+  "coverage.bounds_both_endpoints": {
+    "value": 416,
+    "unit": "count",
+    "table": "coverage.csv",
+    "filter": {
+      "metric": "bounds_both_endpoints"
+    },
+    "column": "number"
+  },
+  "coverage.bounds_additional_any_date": {
+    "value": 41,
+    "unit": "count",
+    "table": "coverage.csv",
+    "filter": {
+      "metric": "bounds_additional_any_date"
+    },
+    "column": "number"
+  },
+  "coverage.bounds_earlier_only": {
+    "value": 18,
+    "unit": "count",
+    "table": "coverage.csv",
+    "filter": {
+      "metric": "bounds_earlier_only"
+    },
+    "column": "number"
+  },
+  "coverage.bounds_undated_only": {
+    "value": 23,
+    "unit": "count",
+    "table": "coverage.csv",
+    "filter": {
+      "metric": "bounds_undated_only"
+    },
+    "column": "number"
+  },
   "audit.LSETAPE effective Gulf lease cohort.rows_read": {
     "value": 31721,
     "unit": "records at this stage",
@@ -3034,6 +3338,42 @@
     },
     "column": "drop__effective_year_outside_2005_2026"
   },
+  "audit.Exploration cohort effective through 2020.rows_read": {
+    "value": 8327,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Exploration cohort effective through 2020"
+    },
+    "column": "rows_read"
+  },
+  "audit.Exploration cohort effective through 2020.rows_kept": {
+    "value": 7126,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Exploration cohort effective through 2020"
+    },
+    "column": "rows_kept"
+  },
+  "audit.Exploration cohort effective through 2020.rows_dropped": {
+    "value": 1201,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Exploration cohort effective through 2020"
+    },
+    "column": "rows_dropped"
+  },
+  "audit.Exploration cohort effective through 2020.drop__issued_after_2020": {
+    "value": 1201,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Exploration cohort effective through 2020"
+    },
+    "column": "drop__issued_after_2020"
+  },
   "audit.ProductionRawData depth lookup matched to cohort for unit comparison.rows_read": {
     "value": 31721,
     "unit": "records at this stage",
@@ -3069,6 +3409,69 @@
       "stage": "ProductionRawData depth lookup matched to cohort for unit comparison"
     },
     "column": "drop__lease_outside_cohort"
+  },
+  "audit.Matched lease depths comparable across sources.rows_read": {
+    "value": 8327,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Matched lease depths comparable across sources"
+    },
+    "column": "rows_read"
+  },
+  "audit.Matched lease depths comparable across sources.rows_kept": {
+    "value": 8327,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Matched lease depths comparable across sources"
+    },
+    "column": "rows_kept"
+  },
+  "audit.Matched lease depths comparable across sources.rows_dropped": {
+    "value": 0,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Matched lease depths comparable across sources"
+    },
+    "column": "rows_dropped"
+  },
+  "audit.BoreholeRawData site depth cleaning.rows_read": {
+    "value": 57520,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "BoreholeRawData site depth cleaning"
+    },
+    "column": "rows_read"
+  },
+  "audit.BoreholeRawData site depth cleaning.rows_kept": {
+    "value": 57520,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "BoreholeRawData site depth cleaning"
+    },
+    "column": "rows_kept"
+  },
+  "audit.BoreholeRawData site depth cleaning.rows_dropped": {
+    "value": 0,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "BoreholeRawData site depth cleaning"
+    },
+    "column": "rows_dropped"
+  },
+  "audit.BoreholeRawData site depth cleaning.flag__nonpositive_depth_nulled": {
+    "value": 84,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "BoreholeRawData site depth cleaning"
+    },
+    "column": "flag__nonpositive_depth_nulled"
   },
   "audit.BoreholeRawData, dated Gulf bore records.rows_read": {
     "value": 57520,
@@ -3457,30 +3860,30 @@
     },
     "column": "rows_dropped"
   },
-  "audit.Timed leases with a resolved measured site band.rows_read": {
+  "audit.Timed leases classified by measured site band.rows_read": {
     "value": 432,
     "unit": "records at this stage",
     "table": "record_counts.csv",
     "filter": {
-      "stage": "Timed leases with a resolved measured site band"
+      "stage": "Timed leases classified by measured site band"
     },
     "column": "rows_read"
   },
-  "audit.Timed leases with a resolved measured site band.rows_kept": {
+  "audit.Timed leases classified by measured site band.rows_kept": {
     "value": 432,
     "unit": "records at this stage",
     "table": "record_counts.csv",
     "filter": {
-      "stage": "Timed leases with a resolved measured site band"
+      "stage": "Timed leases classified by measured site band"
     },
     "column": "rows_kept"
   },
-  "audit.Timed leases with a resolved measured site band.rows_dropped": {
+  "audit.Timed leases classified by measured site band.rows_dropped": {
     "value": 0,
     "unit": "records at this stage",
     "table": "record_counts.csv",
     "filter": {
-      "stage": "Timed leases with a resolved measured site band"
+      "stage": "Timed leases classified by measured site band"
     },
     "column": "rows_dropped"
   },
@@ -3565,6 +3968,42 @@
     },
     "column": "drop__no_positive_reported_volume"
   },
+  "audit.Distinct observed crude oil leases.rows_read": {
+    "value": 8444,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Distinct observed crude oil leases"
+    },
+    "column": "rows_read"
+  },
+  "audit.Distinct observed crude oil leases.rows_kept": {
+    "value": 126,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Distinct observed crude oil leases"
+    },
+    "column": "rows_kept"
+  },
+  "audit.Distinct observed crude oil leases.rows_dropped": {
+    "value": 8318,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Distinct observed crude oil leases"
+    },
+    "column": "rows_dropped"
+  },
+  "audit.Distinct observed crude oil leases.drop__additional_positive_lease_month": {
+    "value": 8318,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Distinct observed crude oil leases"
+    },
+    "column": "drop__additional_positive_lease_month"
+  },
   "audit.Matched lease-month rows with positive any hydrocarbon.rows_read": {
     "value": 19098,
     "unit": "records at this stage",
@@ -3600,6 +4039,168 @@
       "stage": "Matched lease-month rows with positive any hydrocarbon"
     },
     "column": "drop__no_positive_reported_volume"
+  },
+  "audit.Distinct observed any hydrocarbon leases.rows_read": {
+    "value": 15051,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Distinct observed any hydrocarbon leases"
+    },
+    "column": "rows_read"
+  },
+  "audit.Distinct observed any hydrocarbon leases.rows_kept": {
+    "value": 211,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Distinct observed any hydrocarbon leases"
+    },
+    "column": "rows_kept"
+  },
+  "audit.Distinct observed any hydrocarbon leases.rows_dropped": {
+    "value": 14840,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Distinct observed any hydrocarbon leases"
+    },
+    "column": "rows_dropped"
+  },
+  "audit.Distinct observed any hydrocarbon leases.drop__additional_positive_lease_month": {
+    "value": 14840,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Distinct observed any hydrocarbon leases"
+    },
+    "column": "drop__additional_positive_lease_month"
+  },
+  "audit.Timed crude oil leases.rows_read": {
+    "value": 126,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Timed crude oil leases"
+    },
+    "column": "rows_read"
+  },
+  "audit.Timed crude oil leases.rows_kept": {
+    "value": 122,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Timed crude oil leases"
+    },
+    "column": "rows_kept"
+  },
+  "audit.Timed crude oil leases.rows_dropped": {
+    "value": 4,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Timed crude oil leases"
+    },
+    "column": "rows_dropped"
+  },
+  "audit.Timed crude oil leases.drop__pre_effective_event": {
+    "value": 4,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Timed crude oil leases"
+    },
+    "column": "drop__pre_effective_event"
+  },
+  "audit.Timed crude oil leases with positive primary term.rows_read": {
+    "value": 122,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Timed crude oil leases with positive primary term"
+    },
+    "column": "rows_read"
+  },
+  "audit.Timed crude oil leases with positive primary term.rows_kept": {
+    "value": 122,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Timed crude oil leases with positive primary term"
+    },
+    "column": "rows_kept"
+  },
+  "audit.Timed crude oil leases with positive primary term.rows_dropped": {
+    "value": 0,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Timed crude oil leases with positive primary term"
+    },
+    "column": "rows_dropped"
+  },
+  "audit.Timed any hydrocarbon leases.rows_read": {
+    "value": 211,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Timed any hydrocarbon leases"
+    },
+    "column": "rows_read"
+  },
+  "audit.Timed any hydrocarbon leases.rows_kept": {
+    "value": 206,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Timed any hydrocarbon leases"
+    },
+    "column": "rows_kept"
+  },
+  "audit.Timed any hydrocarbon leases.rows_dropped": {
+    "value": 5,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Timed any hydrocarbon leases"
+    },
+    "column": "rows_dropped"
+  },
+  "audit.Timed any hydrocarbon leases.drop__pre_effective_event": {
+    "value": 5,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Timed any hydrocarbon leases"
+    },
+    "column": "drop__pre_effective_event"
+  },
+  "audit.Timed any hydrocarbon leases with positive primary term.rows_read": {
+    "value": 206,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Timed any hydrocarbon leases with positive primary term"
+    },
+    "column": "rows_read"
+  },
+  "audit.Timed any hydrocarbon leases with positive primary term.rows_kept": {
+    "value": 206,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Timed any hydrocarbon leases with positive primary term"
+    },
+    "column": "rows_kept"
+  },
+  "audit.Timed any hydrocarbon leases with positive primary term.rows_dropped": {
+    "value": 0,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Timed any hydrocarbon leases with positive primary term"
+    },
+    "column": "rows_dropped"
   },
   "audit.LeaseOwnerRawData current assignments on cohort leases.rows_read": {
     "value": 3555,

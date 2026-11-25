@@ -61,12 +61,21 @@ def read_bores(zip_path, leases, as_of):
         raw["spud_text"].replace("", pd.NA), format="%m/%d/%Y", errors="raise"
     )
     raw["depth_ft"] = pd.to_numeric(raw["depth_ft"].replace("", pd.NA), errors="raise")
-    raw["depth_ft"] = raw["depth_ft"].where(raw["depth_ft"].gt(0))
+    nonpositive = raw["depth_ft"].le(0)
+    raw["depth_ft"] = raw["depth_ft"].mask(nonpositive)
     valid_api = raw["api12"].str.fullmatch(r"[0-9]{12}")
     if raw.loc[valid_api, "api12"].duplicated().any():
         raise ValueError("Duplicate API12 in borehole source")
 
-    audits = []
+    audits = [
+        {
+            "stage": "BoreholeRawData site depth cleaning",
+            "read": len(raw),
+            "kept": len(raw),
+            "drops": {},
+            "flags": {"nonpositive_depth_nulled": int(nonpositive.sum())},
+        }
+    ]
     gulf = raw["region"].eq("G")
     undated = raw["spud"].isna()
     dated = _select(
@@ -100,7 +109,6 @@ def read_bores(zip_path, leases, as_of):
         spud=("spud", "first"),
         lease_id=("lease_id", "first"),
         well_type=("well_type", "first"),
-        depth_ft=("depth_ft", "median"),
         depth_min_ft=("depth_ft", "min"),
         depth_max_ft=("depth_ft", "max"),
         measured_bores=("depth_ft", "count"),
@@ -144,7 +152,6 @@ def read_bores(zip_path, leases, as_of):
             "lease_id",
             "well_type",
             "spud",
-            "depth_ft",
             "depth_min_ft",
             "depth_max_ft",
             "incomplete_site_depth",
@@ -299,14 +306,17 @@ def site_spud_table(leases, assignments, band_fn, bands):
     )
     ambiguous = ~sites["all_known"] | sites["distinct_bands"].gt(1)
     sites.loc[ambiguous, "depth_band"] = "Unknown"
-    _select(
-        sites,
-        "Timed leases with a resolved measured site band",
+    audits.append(
         {
-            "missing_site_depth": ~sites["any_depth"],
-            "ambiguous_site_band": ambiguous,
-        },
-        audits,
+            "stage": "Timed leases classified by measured site band",
+            "read": len(sites),
+            "kept": len(sites),
+            "drops": {},
+            "flags": {
+                "missing_site_depth": int((~sites["any_depth"]).sum()),
+                "ambiguous_site_band": int((sites["any_depth"] & ambiguous).sum()),
+            },
+        }
     )
     sites["days"] = (sites["spud"] - effective.reindex(sites.index)).dt.days
     if sites["days"].isna().any() or sites["days"].lt(0).any():
@@ -337,4 +347,4 @@ def site_spud_table(leases, assignments, band_fn, bands):
                 "days_to_spud_p75": p75,
             }
         )
-    return pd.DataFrame(rows), audits
+    return pd.DataFrame(rows), audits, sites[["depth_band", "days"]]

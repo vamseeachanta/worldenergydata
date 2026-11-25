@@ -13,9 +13,6 @@ import pandas as pd
 LEASE_SCHEMA = "data/modules/bsee/leases/source_schema.json"
 OWNER_SCHEMA = "data/modules/bsee/boem_lease_history_layout.json"
 STATUS_DICTIONARY = "docs/knowledge-base/bsee/data-dictionaries/leasing/lease-fields.md"
-DEPTH_DICTIONARY = (
-    "docs/knowledge-base/bsee/data-dictionaries/common/unit-conversions.md"
-)
 GULF_PLANNING_AREAS = ("CGM", "EGM", "WGM")
 
 
@@ -207,6 +204,7 @@ def read_owners(zip_path, leases, reference):
         )
         if frame.columns.tolist() != expected_header:
             raise ValueError("Lease owner header differs from BOEM's saved layout")
+    frame = frame.apply(lambda column: column.str.strip())
     owners = frame.loc[
         :, [roles["lease_number"], roles["owner"], "ASGN_STATUS_CODE"]
     ].copy()
@@ -216,7 +214,7 @@ def read_owners(zip_path, leases, reference):
         [
             ("assignment_status_other_than_current", owners.assignment_status.ne("C")),
             ("lease_outside_effective_cohort", ~owners.lease_id.isin(leases.lease_id)),
-            ("blank_company_id", owners.company_id.str.strip().eq("")),
+            ("blank_company_id", owners.company_id.eq("")),
         ],
     )
     audit = [

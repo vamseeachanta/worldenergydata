@@ -473,10 +473,10 @@ z
    <text style="font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #333333" x="38.88" y="50.118281" transform="rotate(-0 38.88 50.118281)">Gulf leases effective in 2005 to 2020, observed through the November 2026 borehole file.</text>
   </g>
   <g id="text_31">
-   <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #333333" x="38.88" y="382.104" transform="rotate(-0 38.88 382.104)">Bars show the observed share. White ticks mark the share within five years. Dots and lines show the median and middle 50% of spud times.</text>
+   <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #333333" x="38.88" y="382.104" transform="rotate(-0 38.88 382.104)">Bars show the observed share. Ticks mark the five-year share. Dots and lines show the median and middle 50%.</text>
   </g>
   <g id="text_32">
-   <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #333333" x="38.88" y="398.808" transform="rotate(-0 38.88 398.808)">Sources: BSEE borehole file and BOEM/BSEE LSETAPE.</text>
+   <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #333333" x="38.88" y="398.808" transform="rotate(-0 38.88 398.808)">Medians use observed spuds and are biased low by leases still open without a spud. Sources: BSEE boreholes and LSETAPE.</text>
   </g>
  </g>
 </svg>

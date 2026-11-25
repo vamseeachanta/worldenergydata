@@ -262,10 +262,10 @@ z
    <text style="font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #333333" x="30.78" y="47.238281" transform="rotate(-0 30.78 47.238281)">One first exploratory spud per lease effective in 2005 to 2020. Depth is measured at the borehole.</text>
   </g>
   <g id="text_15">
-   <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #333333" x="30.78" y="357.696" transform="rotate(-0 30.78 357.696)">Dots show medians. Lines span the middle 50%. Block maximum depth is used separately for the lease-cohort figures.</text>
+   <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #333333" x="30.78" y="357.696" transform="rotate(-0 30.78 357.696)">Dots and lines show the median and middle 50% among observed spuds.</text>
   </g>
   <g id="text_16">
-   <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #333333" x="30.78" y="373.248" transform="rotate(-0 30.78 373.248)">Sources: BSEE borehole file and BOEM/BSEE LSETAPE.</text>
+   <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #333333" x="30.78" y="373.248" transform="rotate(-0 30.78 373.248)">Medians are biased low by leases still open without a spud. Sources: BSEE boreholes and LSETAPE.</text>
   </g>
  </g>
 </svg>
