@@ -21,7 +21,6 @@ plain listing, before any counting code existed (README, "Hand counts").
 
 import csv
 import datetime as dt
-import importlib.util
 import json
 import os
 import sys
@@ -452,32 +451,66 @@ def test_suboperations_are_counted_by_kind(approvals):
     assert perf["share_of_other_percent"] == 33.3
 
 
-def test_chart_share_is_rounded_from_the_counts(tmp_path):
-    # 353 of 686 is 51.46 %. The table holds it to one decimal (51.5); a label
-    # rounded again from that would read 52 %, which the counts do not give.
-    # Loaded by path: the interventions folder holds a file of the same name.
-    spec = importlib.util.spec_from_file_location(
-        "completions_plot_charts", EXAMPLE / "plot_charts.py"
+def test_first_drilling_period_and_approval_observed_by_snapshot():
+    cutoff = dt.date(2026, 11, 23)
+    wells = [
+        ("a", "2005-01-01", B[0], "exploration"),
+        ("b", "2009-12-31", B[0], "exploration"),
+        ("c", "2010-01-01", B[1], "exploration"),
+        ("d", "2025-01-01", B[3], "development"),
+        ("e", "2026-11-23", B[3], "development"),
+        ("f", "2026-11-24", B[3], "development"),
+        ("g", "2004-12-31", B[0], "exploration"),
+        ("h", None, B[0], "exploration"),
+        ("i", "2009-01-01", B[0], "other or not stated"),
+        ("j", "2020-01-01", "no depth", "development"),
+        ("k", "2015-01-01", B[2], "development"),
+    ]
+    inventory = ci.pd.DataFrame(
+        [(api, ci.pd.Timestamp(spud), band) for api, spud, band, _ in wells],
+        columns=["api10", "spud", "band"],
     )
-    pc = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(pc)
-
-    assert pc.whole_percent(353, 686) == 51
-    assert pc.whole_percent(1, 200) == 1  # a true half goes up
-    assert pc.whole_percent(1, 2) == 50
-    assert pc.whole_percent(0, 5) == 0
-    groups = pc.BANDS + ["all water depths"]
-    with open(tmp_path / "drilled_to_completed.csv", "w", encoding="utf-8") as f:
-        f.write(
-            "well_type,band,wells_first_drilled,"
-            "with_initial_completion_approval,share_percent\n"
+    types = {api: kind for api, _, _, kind in wells}
+    initial = [
+        dict(api10="a", date=dt.date(2016, 1, 1)),
+        dict(api10="a", date=dt.date(2018, 1, 1)),
+        dict(api10="b", date=None),
+        dict(api10="c", date=dt.date(2026, 11, 24)),
+        dict(api10="e", date=cutoff),
+        dict(api10="k", date=dt.date(2004, 12, 31)),
+    ]
+    rows = cc.drilled_period_table(inventory, types, initial, cutoff)
+    assert list(dict.fromkeys(r["group"] for r in rows)) == [
+        "Exploratory wells",
+        "Development wells",
+    ]
+    cells = {(r["group"], r["period"], r["band"]): r for r in rows}
+    assert len(cells) == len(rows) == 40
+    actual = {
+        key: (
+            r["wells_first_drilled"],
+            r["with_initial_completion_approval"],
+            r["share_percent"],
         )
-        for kind in ("development", "exploration"):
-            for band in groups:
-                f.write(f"{kind},{band},686,353,51.5\n")
-    drawn = pc.chart_drilled(tmp_path)
-    assert "51 %  (353 of 686)" in drawn
-    assert "52 %" not in drawn
+        for key, r in cells.items()
+        if r["wells_first_drilled"]
+    }
+    assert actual == {
+        ("Exploratory wells", "2005 to 2009", "Under 100 m"): (2, 1, 50.0),
+        ("Exploratory wells", "2010 to 2014", "100 to 500 m"): (1, 0, 0.0),
+        ("Development wells", "2015 to 2019", "500 to 1,500 m"): (1, 1, 100.0),
+        ("Development wells", "2025 to 2026 (partial)", "1,500 m and deeper"): (
+            2,
+            1,
+            50.0,
+        ),
+    }
+    assert all(r["share_percent"] == "" for r in rows if not r["wells_first_drilled"])
+    assert all(
+        "little time" in r["follow_up"].lower()
+        for r in rows
+        if r["period"] == "2025 to 2026 (partial)"
+    )
 
 
 # --------------------------------------------------------------------------
@@ -611,20 +644,40 @@ def test_delivered_suboperations_split_by_kind():
     assert int(rows["INITCOMP"]["on_other_completion_work"]) == 0
 
 
-def test_delivered_chart_labels_follow_the_counts():
-    drawn = (OUT / "04_drilled_to_completed.svg").read_text(encoding="utf-8")
-    seen = 0
-    for r in table("drilled_to_completed"):
-        if r["well_type"] not in ("development", "exploration"):
-            continue
-        if r["band"] == "no depth":
-            continue
-        wells = int(r["wells_first_drilled"])
-        done = int(r["with_initial_completion_approval"])
-        whole = (200 * done + wells) // (2 * wells)
-        assert f"{whole} %  ({done:,} of {wells:,})" in drawn
-        seen += 1
-    assert seen == 10
+def test_period_shares_are_ratios_of_wells():
+    rows = table("04_drilled_to_completed")
+    assert len(rows) == 40
+    totals = {}
+    for row in rows:
+        wells = int(row["wells_first_drilled"])
+        approved = int(row["with_initial_completion_approval"])
+        assert 0 <= approved <= wells
+        if wells:
+            assert float(row["share_percent"]) == round(100 * approved / wells, 1)
+        else:
+            assert row["share_percent"] == ""
+        key = row["group"], row["band"].lower().replace(",", "")
+        prior_wells, prior_approved = totals.get(key, (0, 0))
+        totals[key] = (prior_wells + wells, prior_approved + approved)
+
+    # Independent counts of 2026 first spuds and initial approvals on those
+    # wells from the pinned borehole and permit files. Adding these to the
+    # historical pooled 2005 to 2025 cells recovers the period table totals.
+    additions = {
+        ("Exploratory wells", B[2]): (10, 3),
+        ("Exploratory wells", B[3]): (11, 5),
+        ("Development wells", B[0]): (1, 1),
+        ("Development wells", B[3]): (18, 6),
+    }
+    group = {"exploration": "Exploratory wells", "development": "Development wells"}
+    for row in table("drilled_to_completed"):
+        if row["well_type"] in group and row["band"] in B[:4]:
+            key = group[row["well_type"]], row["band"]
+            wells, approved = additions.get(key, (0, 0))
+            assert totals[key] == (
+                int(row["wells_first_drilled"]) + wells,
+                int(row["with_initial_completion_approval"]) + approved,
+            )
 
 
 # --------------------------------------------------------------------------

@@ -1,7 +1,9 @@
 """Check the plotted permit populations and standing well exposure."""
 
 import csv
+import json
 import sys
+import xml.etree.ElementTree as ET
 from pathlib import Path
 
 import pandas as pd
@@ -75,11 +77,16 @@ def test_permit_populations_and_pooled_exposure(tmp_path):
         ("Reperforation", "Under 100 m", 2, 1.0),
     ]
     rates = read_plot(tmp_path, "03_approvals_per_well")
-    populated = next(r for r in rates if int(r["count"]))
+    populated = next(r for r in rates if int(r["completion_approvals"]))
     assert populated["period"] == "2025 to 2026 (partial)"
-    assert (int(populated["count"]), int(populated["exposure"])) == (3, 10)
-    assert float(populated["value"]) == pytest.approx(0.3)
-    assert all(r["value"] == "" for r in rates if int(r["exposure"]) == 0)
+    assert int(populated["completion_approvals"]) == 3
+    assert int(populated["january_well_years"]) == 10
+    assert float(populated["approvals_per_january_well_year"]) == pytest.approx(0.3)
+    assert all(
+        r["approvals_per_january_well_year"] == ""
+        for r in rates
+        if int(r["january_well_years"]) == 0
+    )
 
 
 def test_missing_depth_approval_cannot_disappear_from_the_four_bands(tmp_path):
@@ -113,10 +120,58 @@ def test_delivered_groups_and_denominators_match_the_archive_controls():
         "Modify Perforations": 1020,
         "Reperforation": 381,
     }
-    assert totals(rates, "band", "exposure") == {
+    assert totals(rates, "band", "january_well_years") == {
         "Under 100 m": 205556,
         "100 to 500 m": 26408,
         "500 to 1,500 m": 13732,
         "1,500 m and deeper": 6977,
     }
-    assert totals(approvals, "band") == totals(rates, "band")
+    assert totals(approvals, "band") == totals(rates, "band", "completion_approvals")
+
+
+def test_work_shares_use_all_periods_and_only_the_same_approval_group():
+    rows = read_plot(EXAMPLE / "output", "02_recompletion_by_period")
+    for row in rows:
+        group = [r for r in rows if r["group"] == row["group"]]
+        total = sum(int(r["count"]) for r in group)
+        band_count = sum(int(r["count"]) for r in group if r["band"] == row["band"])
+        assert float(row["cell_share_of_group_percent"]) == round(
+            100 * int(row["count"]) / total, 1
+        )
+        assert float(row["band_share_of_group_percent"]) == round(
+            100 * band_count / total, 1
+        )
+
+
+def test_figure_readings_cover_the_work_shares_reversal_and_january_rate():
+    out = EXAMPLE / "output"
+    figures = json.loads((out / "figures.json").read_text(encoding="utf-8"))
+    assert any(
+        all(n in bullet["text"] for n in ("other", "1.8", "9.8"))
+        for bullet in figures[0]["bullets"]
+    )
+    work_text = " ".join(bullet["text"] for bullet in figures[1]["bullets"])
+    for reading in ("30.1%", "31.5%", "44.9%", "81.3%", "90.4%", "91.3%"):
+        assert reading in work_text
+    assert any(
+        "recompletion" in bullet["text"].lower()
+        and all(
+            p in bullet["text"]
+            for p in ("20.2", "14.2", "2015 to 2019", "2020 to 2024")
+        )
+        for bullet in figures[1]["bullets"]
+    )
+    assert any(
+        "Modify Perforations" in bullet["text"]
+        and all(
+            n in bullet["text"] for n in ("1.4", "0.0", "2005 to 2009", "2020 to 2024")
+        )
+        for bullet in figures[1]["bullets"]
+    )
+    title = ET.parse(out / figures[2]["svg"]).findtext("{*}title").lower()
+    assert "per january well year" in title
+    assert "per january well year" in figures[2]["question"].lower()
+    assert any(
+        all(rate in bullet["text"] for rate in ("0.12", "0.03", "0.33", "0.01"))
+        for bullet in figures[2]["bullets"]
+    )

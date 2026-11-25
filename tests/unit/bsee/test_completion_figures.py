@@ -23,10 +23,11 @@ def test_figure_manifest_links_bullets_to_plotted_cells():
     for figure in figures:
         svg = ET.parse(OUTPUT / figure["svg"])
         assert figure["question"].endswith("?")
-        assert 2 <= len(figure["bullets"]) <= 4
+        assert 3 <= len(figure["bullets"]) <= 4
         with (OUTPUT / figure["csv"]).open(encoding="utf-8", newline="") as stream:
             rows = list(csv.DictReader(stream))
         for bullet in figure["bullets"]:
+            assert "approval" in bullet["text"].lower()
             assert bullet["cells"]
             for cell in bullet["cells"]:
                 matching = [
@@ -36,19 +37,42 @@ def test_figure_manifest_links_bullets_to_plotted_cells():
                 ]
                 assert len(matching) == 1
                 value = float(matching[0][cell["column"]])
-                assert f'{value:,.{cell["decimals"]}f}' in bullet["text"]
+                reading = re.escape(f'{value:,.{cell["decimals"]}f}')
+                assert re.search(rf"(?<![\d.,]){reading}(?!\d|[.,]\d)", bullet["text"])
         assert not re.search(
             r"[-\u2010-\u2015\u2212]", "".join(svg.getroot().itertext())
         )
 
 
-def test_drilled_figure_shows_exploratory_first():
+def test_drilled_figure_shows_first_drilling_periods_and_follow_up():
+    with (OUTPUT / "figures.json").open(encoding="utf-8") as stream:
+        drilled = json.load(stream)[3]
+    assert drilled["csv"] == "04_drilled_to_completed.csv"
+    assert "first drill" in drilled["question"].lower()
+    assert "2025 to 2026" in drilled["note"]
+    assert "less time" in drilled["note"]
     root = ET.parse(OUTPUT / "04_drilled_to_completed.svg").getroot()
-    text = list(root.itertext())
+    text = [element.text for element in root.findall("{*}text")]
     assert text.index("Exploratory wells") < text.index("Development wells")
-    assert text.index("51 %  (353 of 686)") < text.index("82 %  (674 of 826)")
-    legend = root.findall("{*}rect")[1:3]
-    assert [item.get("fill") for item in legend] == ["#6588a6", "#245476"]
+    assert text.count("Share of drilled wells (%)") == 2
+    assert "Period of first drilling" in text
+    for label in (
+        "2005 to 2009",
+        "2010 to 2014",
+        "2015 to 2019",
+        "2020 to 2024",
+        "2025 to 2026 (partial)",
+        "Under 100 m",
+        "100 to 500 m",
+        "500 to 1,500 m",
+        "1,500 m and deeper",
+    ):
+        assert label in text
+    assert "less time" in " ".join(text)
+    tags = {el.tag.rsplit("}", 1)[-1] for el in root.iter()}
+    assert tags.isdisjoint(
+        {"clipPath", "pattern", "filter", "mask", "foreignObject", "image"}
+    )
 
 
 def test_body_figures_have_distinct_accessible_names():
