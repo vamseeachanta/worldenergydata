@@ -192,6 +192,85 @@ def test_record_counts_conserve_rows_and_reported_volumes():
             assert accounted == json.loads(source[field]), (stage, field)
 
 
+def test_published_conservation_checks_reject_misaligned_masks(
+    derivation, source_tables, monkeypatch
+):
+    import pandas as pd
+
+    derive, _ = derivation
+    stages = {
+        line.removeprefix("PASS  Record conservation | ").split(" — ")[0]
+        for line in (OUTPUT / "checks.txt").read_text().splitlines()
+        if line.startswith("PASS  Record conservation | ")
+    }
+    # Reproduce the longest published horizon. Then lose a single eligible
+    # well at each horizon by misaligning the producing-stage selection mask.
+    ages = sorted({int(r["age_year"]) for r in read_rows(OUTPUT / "interventions.csv")})
+    cutoff = pd.Timestamp("2026-09-01")
+    starts = pd.DataFrame(
+        {
+            "first_month": [cutoff - pd.DateOffset(years=ages[-1]), cutoff],
+            "start_supported": True,
+            "completion_date": pd.to_datetime([None, None]),
+        }
+    )
+    checked = set()
+    ge = pd.Series.ge
+    for age in ages[1:]:
+        stage = f"Interventions | year {age} anniversary, API10"
+
+        def misaligned_horizon(series, threshold):
+            mask = ge(series, threshold)
+            if series.name == "first_month" and threshold == 12 * age:
+                return mask.reindex(mask.index + 1, fill_value=False)
+            return mask
+
+        ev = derive.Evidence()
+        with monkeypatch.context() as patch:
+            patch.setattr(pd.Series, "ge", misaligned_horizon)
+            with pytest.raises(
+                ValueError, match=re.escape("FAIL  Record conservation | " + stage)
+            ):
+                derive.intervention_curve(starts, cutoff, ev.audit, ev.check)
+        checked.add(stage)
+
+    # Lose a selected permit, leaving the independently counted source
+    # duplicates intact. The permit conservation line must fail as well.
+    tables, source, ev = source_tables
+    ref, _ = source.reference_module()
+    dedupe = ref.dedupe_permits
+    tables["mv_apm_main"].append(tables["mv_apm_main"][0].copy())
+
+    def misaligned_permits(frame):
+        unique = dedupe(frame)
+        mask = pd.Series(True, index=unique.index + 1)
+        return unique.loc[mask.reindex(unique.index, fill_value=False)]
+
+    monkeypatch.setattr(ref, "dedupe_permits", misaligned_permits)
+    stage = "eWell APM permit identities"
+    with pytest.raises(
+        ValueError, match=re.escape("FAIL  Record conservation | " + stage)
+    ):
+        source.load_wells(None, ev.audit, ev.check)
+    checked.add(stage)
+    assert stages == checked
+
+
+@pytest.mark.parametrize("backend", ["source", "analysis"])
+def test_filters_reject_misaligned_reason_masks(derivation, backend):
+    import pandas as pd
+    import well_sources
+
+    derive, ev = derivation
+    frame = pd.DataFrame(index=["a", "b"])
+    reasons = {"invalid": pd.Series([False, True], index=["a", "c"])}
+    with pytest.raises(ValueError, match="misaligned.*invalid"):
+        if backend == "source":
+            well_sources.select(frame, "probe", reasons.items(), ev.audit)
+        else:
+            derive.count_filter("probe", frame, reasons, ev.audit)
+
+
 def load_pins():
     return json.loads((EXAMPLE / "source_pins.json").read_text(encoding="utf-8"))[
         "sources"
@@ -274,6 +353,40 @@ def test_regeneration_is_byte_identical(tmp_path, monkeypatch):
     assert {file.name for file in output.iterdir()} == expected
     for name in sorted(expected):
         assert (output / name).read_bytes() == (OUTPUT / name).read_bytes(), name
+
+
+def test_figures_render_committed_csvs(tmp_path, monkeypatch):
+    from xml.etree import ElementTree
+
+    from PIL import Image
+
+    monkeypatch.delenv("BSEE_PROD_DATA_DIR", raising=False)
+    monkeypatch.syspath_prepend(str(EXAMPLE))
+    import figures
+
+    rendered = figures.render_charts(OUTPUT, tmp_path)
+    names = {
+        "monthly_production",
+        "annual_wells",
+        "completion_lag",
+        "decline",
+        "interventions",
+    }
+    assert set(rendered) == {
+        tmp_path / f"{name}.{ext}" for name in names for ext in ("svg", "png")
+    }
+    for name in names:
+        svg = ElementTree.parse(tmp_path / f"{name}.svg")
+        labels = [
+            node.text
+            for node in svg.iter("{http://www.w3.org/2000/svg}text")
+            if node.text
+        ]
+        assert labels
+        assert all("–" not in label and "—" not in label for label in labels)
+        with Image.open(tmp_path / f"{name}.png") as png:
+            assert png.format == "PNG" and min(png.size) >= 600
+            png.verify()
 
 
 def test_signed_well_months_and_activity(monkeypatch):
@@ -370,6 +483,7 @@ def test_recent_source_counts_signed_valid_wells(
     )
     raw_rows = [
         (previous, api + "00", 30, 5),
+        (previous, "999999999900", 500, 100),
         (last, api + "00", 10, 0),
         (last, api + "01", -10, 0),
     ]
@@ -401,8 +515,23 @@ def test_recent_source_counts_signed_valid_wells(
     def check(name, condition, detail):
         assert condition, (name, detail)
 
-    notes = production.check_recent_source(tmp_path, lookup, months, last, check)
-    assert f"{1 + int(malformed_api)} raw rows" in notes[0]
+    import derive
+
+    ev = derive.Evidence()
+    notes = production.check_recent_source(
+        tmp_path, lookup, months, last, check, ev.audit
+    )
+    reasons = {
+        (r["stage"], r["reason"]): r["rows"]
+        for r in ev.records
+        if r["disposition"] == "dropped"
+    }
+    stage = f"OGOR raw recount / {previous:%Y-%m}"
+    expected = {(stage, "outside classified Gulf inventory"): 1}
+    if malformed_api:
+        expected[stage, "invalid API12"] = 1
+    assert reasons == expected
+    assert f"{2 + int(malformed_api)} raw rows" in notes[0]
     assert "2 raw rows" in notes[1]
 
 
@@ -474,8 +603,11 @@ def test_inventory_depth_edges_and_bore_history(source_tables):
             ["600000000301", "G", "ST01BP00", "", "bad-depth", "COM"],
         ]
     )
+    # No original is present for the last well, and one non-original date is malformed.
+    bores[5][2] = "ST01BP00"
+    bores.append(["600000000601", "G", "ST02BP00", "not-a-date", bores[5][4], "COM"])
     tables["mv_boreholes_all"] = bores
-    wells, _ = source.load_wells(None, ev.audit, ev.check)
+    wells, _, _ = source.load_wells(None, ev.audit, ev.check)
     assert list(wells.band) == [
         "<100 m",
         "100–<500 m",
@@ -484,8 +616,8 @@ def test_inventory_depth_edges_and_bore_history(source_tables):
         "500–<1,500 m",
         "≥1,500 m",
     ]
-    assert wells.first_spud.iloc[0] == pd.Timestamp("2004-12-31")
-    assert list(wells.undated_original) == [False, True, False, False, False, False]
+    assert wells.first_spud.eq(pd.Timestamp("2005-02-01")).all()
+    assert list(wells.spud_incomplete) == [False, False, True, False, False, True]
 
 
 def test_inventory_api10_dispositions(source_tables):
@@ -502,7 +634,7 @@ def test_inventory_api10_dispositions(source_tables):
         ["600000000700", "G", "ST00BP00", "1/1/2005", "50", "COM"],
         ["600000000701", "G", "ST01BP00", "", "", "COM"],
     ]
-    wells, _ = source.load_wells(None, ev.audit, ev.check)
+    wells, _, _ = source.load_wells(None, ev.audit, ev.check)
     assert wells.band.notna().sum() == 2
     inventory = {
         r["reason"]: r["rows"]
@@ -540,7 +672,7 @@ def test_first_events_exclude_completion_day_and_post_cutoff(source_tables):
     tables["mv_eor_mainquery"].append(["3", late, "C", "9/1/2026", "COM", "NO"])
     tables["mv_war_main"].append(["4", late, "10/2/2026"])
     tables["mv_apm_main"].append(["6", late, "10/2/2026", "WORKOVER"])
-    wells, _ = source.load_wells(None, ev.audit, ev.check)
+    wells, _, _ = source.load_wells(None, ev.audit, ev.check)
     well = wells.iloc[0]
     assert well.completion_date == pd.Timestamp("2026-09-28")
     assert well.completion_type == "Subsea"
@@ -585,67 +717,110 @@ def test_hand_worked_cohort_examples(derivation):
     derive.self_test()
 
 
-def test_first_months_pre_window_vetoes(derivation):
+def test_spud_exclusions_match_original_measurement():
+    # Column A in the original measurement counts pre-window spuds by depth.
+    measure = (EXAMPLE / "measure-finding3.md").read_text(encoding="utf-8")
+    earlier = {}
+    for line in measure.splitlines():
+        cells = [cell.strip() for cell in line.strip("|").split("|")]
+        if len(cells) == 6 and cells[0] in TABLE_BANDS:
+            earlier[TABLE_BANDS[cells[0]]] = int(cells[2].replace(",", ""))
+    bands = ["<100 m", "100–<500 m", "500–<1,500 m", "≥1,500 m", "All"]
+    labels = dict(zip(bands, TABLE_BANDS.values(), strict=True))
+    counts = {
+        labels[r["band"]]: int(r["earlier_supported_pre2005_spud"])
+        for r in read_rows(OUTPUT / "spud_exclusions.csv")
+    }
+    assert counts.keys() == earlier.keys() == set(TABLE_BANDS.values())
+    assert counts == earlier
+    assert counts["all"] == sum(
+        value for band, value in counts.items() if band != "all"
+    )
+
+
+def test_first_months_spud_reasons_and_precedence(derivation):
     import pandas as pd
 
     derive, ev = derivation
-    api = [
-        "old spud",
-        "old C",
-        "undated original",
-        "no spud",
-        "old reported",
-        "boundary",
-        "blank report",
-        "no timely evidence",
-        "timely report",
-    ]
-    first = pd.Timestamp("2005-01-01")
-    old = pd.Timestamp("2004-12-31")
-    late = pd.Timestamp("2008-01-01")
-    months = pd.DataFrame(
-        {
-            "api10": api,
-            "positive": True,
-            "month": first,
-            "reported_first": [
-                first,
-                first,
-                first,
-                first,
-                old,
-                first,
-                None,
-                late,
-                first,
-            ],
-        }
-    )
+    old, boundary, later = pd.to_datetime(["2004-12-31", "2005-01-01", "2010-01-01"])
+    api = ["old", "incomplete", "both", "boundary", "later", "inactive"]
     inventory = pd.DataFrame(
         {
             "api10": api,
             "band": derive.BANDS[0],
             "completion_type": "Subsea",
-            "first_spud": [old, first, first, None, first, first, first, late, late],
-            "undated_original": [s == "undated original" for s in api],
-            "completion_date": [old if s == "old C" else first for s in api],
+            "first_spud": [old, None, old, boundary, later, boundary],
+            "spud_incomplete": [False, True, True, False, False, False],
+            "completion_date": [boundary] * len(api),
         }
     )
-    starts = derive.first_months(months, inventory, ev.audit, ev.check)
-    assert set(starts.loc[starts.start_supported, "api10"]) == {
-        "boundary",
-        "blank report",
-        "timely report",
+    months = pd.DataFrame(
+        {
+            "api10": api,
+            "positive": [True] * 5 + [False],
+            "month": boundary,
+            "reported_first": [boundary, None, boundary, None, later, boundary],
+        }
+    )
+    starts = derive.first_months(months, inventory, ev.audit, ev.check).set_index(
+        "api10"
+    )
+    assert starts.start_reason.to_dict() == {
+        "old": "earliest non-cancelled spud before 2005",
+        "incomplete": "spud date incomplete",
+        "both": "spud date incomplete",
+        "boundary": "in spud cohort",
+        "later": "in spud cohort",
     }
-    rejected = starts.loc[~starts.start_supported, "start_reason"]
-    assert len(set(rejected)) == 6
-    assert {
-        r["reason"]: r["rows"]
-        for r in ev.records
-        if r["stage"] == "First positive month | API10 start evidence"
-        and r["disposition"] == "dropped"
-        and r["rows"]
-    } == rejected.value_counts().to_dict()
+    assert set(starts.index[starts.start_supported]) == {"boundary", "later"}
+    counts = {
+        r["reason"]: r["rows"] for r in ev.records if r["disposition"] == "dropped"
+    }
+    assert counts == {
+        "spud date incomplete": 2,
+        "earliest non-cancelled spud before 2005": 1,
+    }
+    exclusions = derive.spud_exclusions(starts.reset_index()).set_index("band")
+    assert exclusions.earlier_supported_pre2005_spud.tolist() == [2, 0, 0, 0, 2]
+
+
+@pytest.mark.parametrize("source_name", ["eWell C", "FIRST_PROD_DATE"])
+def test_pre_window_source_checks_reject_kept_api10(
+    source_tables, derivation, source_name
+):
+    import pandas as pd
+
+    tables, source, _ = source_tables
+    derive, ev = derivation
+    api = "6000000001"
+    if source_name == "eWell C":
+        tables["mv_eor_mainquery"].append(
+            ["old", api + "02", "C", "12/31/2004", "COM", "NO"]
+        )
+    inventory, _, early_c = source.load_wells(None, ev.audit, ev.check)
+    # A zero-volume row on a different completion can carry the earlier reported date.
+    raw = pd.DataFrame(
+        {
+            "api10": [api, api, "excluded"],
+            "oil_bbl": [10, 0, 0],
+            "reported_first": pd.to_datetime(
+                [
+                    "2005-01-01",
+                    "2004-12-31" if source_name == "FIRST_PROD_DATE" else None,
+                    "1990-01-01",
+                ]
+            ),
+        }
+    )
+    months = raw.assign(positive=raw.oil_bbl.gt(0), month=pd.Timestamp("2005-01-01"))
+    starts = derive.first_months(months, inventory, ev.audit, ev.check)
+    assert starts.loc[starts.start_supported, "api10"].tolist() == [api]
+    from production import early_reported_producers
+
+    with pytest.raises(ValueError, match=rf"FAIL.*{source_name}.*1 API10"):
+        derive.check_start_history(
+            starts, early_c, early_reported_producers(raw), ev.check
+        )
 
 
 def test_anniversary_horizon_censoring_and_ledger(derivation):
@@ -692,6 +867,28 @@ def test_anniversary_horizon_censoring_and_ledger(derivation):
         "retained": 1,
         "anniversary after production cutoff": 2,
     }
+
+
+def test_anniversary_partition_rejects_missing_elapsed_age(derivation):
+    import pandas as pd
+
+    derive, ev = derivation
+    starts = pd.DataFrame(
+        {
+            "first_month": pd.to_datetime(["2020-01-01", None]),
+            "start_supported": True,
+            "band": derive.BANDS[0],
+            "completion_date": pd.to_datetime([None, None]),
+            "war_date": pd.to_datetime([None, None]),
+            "permit_date": pd.to_datetime([None, None]),
+        }
+    )
+    with pytest.raises(
+        ValueError, match=r"FAIL  Record conservation \| Interventions \| year 0"
+    ):
+        derive.intervention_curve(
+            starts, pd.Timestamp("2022-01-01"), ev.audit, ev.check
+        )
 
 
 @pytest.mark.parametrize(
@@ -754,7 +951,6 @@ def test_decline_and_lag_filter_ledgers(derivation):
                 ]
             ),
             "start_supported": [True, True, True, False, True, False],
-            "start_reason": "observed window covers start",
             "type_at_start": "Subsea",
             "band": derive.BANDS[0],
         }
@@ -779,7 +975,10 @@ def test_decline_and_lag_filter_ledgers(derivation):
         }
     )
     lag = derive.completion_lags(
-        starts[["api10", "band", "completion_date"]], starts, ev.audit, ev.check
+        starts[["api10", "band", "completion_date"]].assign(inventory_status="gulf"),
+        starts,
+        ev.audit,
+        ev.check,
     )
     pooled = lag[lag.band.eq("All")].set_index("population")
     assert pooled.wells.to_dict() == {"signed": 3, "ordered": 2}
@@ -940,6 +1139,339 @@ def test_readme_table_one_matches_headlines():
         ], label
 
 
+def quantity_tokens(text):
+    """Extract quantities in reading order, including spelled-out counts and percentages."""
+    words = dict(
+        zip(
+            "zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen".split(),
+            range(20),
+        )
+    )
+    words.update(
+        zip(
+            "twenty thirty forty fifty sixty seventy eighty ninety".split(),
+            range(20, 100, 10),
+        )
+    )
+    words.update(
+        hundred=100,
+        thousand=1000,
+        thousands=1000,
+        million=10**6,
+        billion=10**9,
+        trillion=10**12,
+    )
+    token = re.compile(
+        r"(?<!\w)-?\d+(?:,\d{3})*(?:\.\d+)?%?|\b(?:" + "|".join(words) + r")\b",
+        re.IGNORECASE,
+    )
+    return [
+        str(words[t.lower()]) if t.lower() in words else t.replace(",", "")
+        for t in token.findall(text)
+    ]
+
+
+def readme_prose_numbers(article):
+    article = re.sub(r"^```[^\n]*\n.*?^```[^\n]*$", "", article, flags=re.M | re.S)
+    article = re.sub(
+        r"\]\([^)]+\)", "]", article
+    )  # Link targets are not visible prose.
+    # Data cells in the summary table and the pins table have separate tests.
+    # Keep the summary headers, all captions, and any unrecognized tables.
+    article = re.sub(
+        r"^(\| Water depth \(m\) \|[^\n]*\n)(?:\|[^\n]*\n)+", r"\1", article, flags=re.M
+    )
+    article = re.sub(
+        r"^\| Archive and BSEE URL \|[^\n]*\n(?:\|[^\n]*\n)+", "", article, flags=re.M
+    )
+    sections = re.split(r"^## (.+)$", article, flags=re.M)
+    quantities = {}
+    for heading, body in zip(["Introduction", *sections[1::2]], sections[::2]):
+        assert heading not in quantities, f"Repeated README heading: {heading}"
+        quantities[heading] = quantity_tokens(body)
+    return quantities
+
+
+def check_readme_prose_numbers(article):
+    """Associate each quantity with its source cell or diagnostic, in section order."""
+    from calendar import monthrange
+    from datetime import date
+
+    checks = (OUTPUT / "checks.txt").read_text()
+    tables = {p.stem: read_rows(p) for p in OUTPUT.glob("*.csv")}
+
+    def row(table, **filters):
+        (match,) = select(tables[table], filters)
+        return match
+
+    def count(stage, reason):
+        return row("record_counts", stage=stage, reason=reason)["rows"]
+
+    def diagnostic(pattern):
+        (value,) = re.findall(pattern, checks)
+        return value.replace(",", "")
+
+    months = select(tables["monthly_production"], {"band": "All"})
+    first, last = (
+        date.fromisoformat(r["month"] + "-01") for r in (months[0], months[-1])
+    )
+    latest, start_year = last.year, first.year
+    stages = {r["stage"] for r in tables["record_counts"]}
+    (lag,) = [s for s in stages if s.startswith("Completion lag | first C dated ")]
+    (baseline,) = [
+        s for s in stages if s.startswith("Decline | supported first production ")
+    ]
+    lag_start, lag_end = map(int, quantity_tokens(lag))
+    decline_start, final_decline_year = map(int, quantity_tokens(baseline))
+    summary = row("article_summary", band="All")
+    signed = row("completion_lag", band="All", population="signed")
+    ordered = row("completion_lag", band="All", population="ordered")
+    decline = row("decline", band="All", completion_type="All", age_month=60)
+    war = row("interventions", band="All", measure="Post-completion WAR", age_year=5)
+    approval = row(
+        "interventions", band="All", measure="Intervention approval", age_year=5
+    )
+    oil_rate = "OGOR well-months / exact oil rate"
+    units = json.loads((OUTPUT / "numbers.json").read_text())["units"]
+    (gas_unit,) = quantity_tokens(units["gas_mcf"])
+    unresolved = row(
+        "record_counts",
+        stage="OGOR archives combined | source depth join",
+        reason="gulf_without_resolved_depth",
+    )
+    cancelled = row("record_counts", stage=unresolved["stage"], reason="cancelled_only")
+    assert cancelled["oil_bbl"] == cancelled["gas_mcf"]
+    recount_stages = {s for s in stages if s.startswith("OGOR raw recount / ")}
+    recent = []
+    for month in months[-len(recount_stages) :]:
+        recent.extend(
+            [
+                count("OGOR raw recount / " + month["month"], "input"),
+                month["monthly_producing_wells"],
+                month["oil_bbl"],
+                month["gas_mcf"],
+            ]
+        )
+    manifests = re.findall(
+        r"^PASS  Manifest SHA-256 \| (\d{4}-\d\d-\d\d)", checks, re.M
+    )
+    well_pin, prod_pin = map(date.fromisoformat, manifests)
+    digest_bits = re.search(r"^PASS  Manifest SHA-(\d+) ", checks, re.M)[1]
+    measurement = (EXAMPLE / "measure-finding3.md").read_text()
+    api_width = len(re.search(r"^\| A \| (\d+),", measurement, re.M)[1])
+    original_suffix = re.search(r"ST00BP(\d+)` original bore", measurement)[1]
+    earlier_starts = re.search(
+        r"^\| All assigned depths \| ([\d,]+) \|", measurement, re.M
+    )[1].replace(",", "")
+    start_stage = "First positive month | API10 start evidence"
+    earlier_spuds = []
+    for excluded in tables["spud_exclusions"]:
+        if excluded["band"] != "All":
+            earlier_spuds.extend(
+                [
+                    excluded["earlier_supported_pre2005_spud"],
+                    *quantity_tokens(excluded["band"]),
+                ]
+            )
+    months_per_year = int(
+        row("annual_wells", year=start_year, band="All")["months_reported"]
+    )
+    last_complete_years = latest - start_year - 1
+    lag_followup_min = (
+        (latest - lag_end) * months_per_year + last.month - months_per_year
+    )
+    lag_followup_max = (latest - lag_end) * months_per_year + last.month - 1
+    ages = sorted({int(r["age_month"]) for r in tables["decline"]})
+    first_age, second_age = ages[:2]
+    first_horizon = min(int(r["age_year"]) for r in tables["interventions"])
+    # The ledger names the early baseline window explicitly.
+    baseline_stage = next(
+        r["stage"]
+        for r in tables["record_counts"]
+        if "months for baseline" in r["stage"]
+    )
+    (baseline_months,) = quantity_tokens(baseline_stage)
+    age, year = decline["age_month"], war["age_year"]
+    # Resolve table captions and cross-references against their positions in the document.
+    headers = re.findall(r"^\| ([^|]+?) \|[^\n]*\n\| ---", article, re.M)
+    headline_table = headers.index("Water depth (m)") + 1
+    pins_table = headers.index("Archive and BSEE URL") + 1
+    expected = {
+        "Introduction": [
+            len(months),
+            start_year,
+            latest,
+            last.month,
+            latest,
+            start_year,
+            lag_end,
+            age,
+            year,
+            year,
+            headline_table,
+            age,
+            year,
+        ],
+        "Rerun the analysis": [
+            checks.count("PASS  Executable reference matches series basis"),
+            len(tables),
+            checks.count("PASS  PNG decoded"),
+            digest_bits,
+        ],
+        "Production and depth": [
+            api_width,
+            original_suffix,
+            diagnostic(r"([\d,]+) non-cancelled Gulf API10s"),
+            diagnostic(r"([\d,]+) with differing bore depths"),
+            count("Borehole inventory | assigned depth, API10", "unresolved depth"),
+            diagnostic(r"([\d,]+) assigned zero feet"),
+            *quantity_tokens(diagnostic(r"assigned (zero) feet")),
+            unresolved["rows"],
+            int(float(unresolved["oil_bbl"])),
+            int(float(unresolved["gas_mcf"])),
+            cancelled["rows"],
+            int(float(cancelled["oil_bbl"])),
+            gas_unit,
+            sum(
+                int(r["producing_wells"])
+                for r in tables["annual_wells"]
+                if r["band"] == "All"
+            ),
+            summary["distinct_producing_wells"],
+            latest,
+            *recent,
+        ],
+        "Completion and first production": [
+            diagnostic(r"([\d,]+) API10s with non-COM status"),
+            first.day,
+            start_year,
+            count(start_stage, "spud date incomplete"),
+            count(start_stage, "earliest non-cancelled spud before 2005"),
+            summary["supported_starts"],
+            diagnostic(r"Age cohort \| no eWell C before [\d-]+ . ([\d,]+) API10s"),
+            diagnostic(
+                r"Age cohort \| no FIRST_PROD_DATE before [\d-]+ . ([\d,]+) API10s"
+            ),
+            diagnostic(r"([\d,]+) first-date month mismatches"),
+            start_year,
+            start_year,
+            earlier_starts,
+            row("spud_exclusions", band="All")["earlier_supported_pre2005_spud"],
+            *earlier_spuds,
+            summary["cohort_completions"],
+            lag_start,
+            lag_end,
+            summary["ever_produced_wells"],
+            summary["produced_in_or_after_c_month_wells"],
+            summary["cohort_completions"],
+            count(lag, "no positive joined OGOR month"),
+            count(lag, "outside spud cohort"),
+            signed["wells"],
+            signed["pre_completion_wells"],
+            ordered["wells"],
+            latest,
+            lag_end,
+            lag_followup_min,
+            lag_followup_max,
+            lag_end,
+        ],
+        "Oil rate after first production": [
+            decline_start,
+            final_decline_year,
+            first_age,
+            second_age,
+            age,
+            count(oil_rate, "unresolved_overlap"),
+            count(oil_rate, "invalid_days"),
+            baseline_months,
+            count(
+                baseline,
+                "positive oil but producing-day rate unresolved in first three months",
+            ),
+            count(
+                baseline,
+                "no positive measurable oil rate in first three calendar months",
+            ),
+            decline["baseline_wells"],
+            decline["wells"],
+            age,
+            first_age,
+            age,
+            count(
+                "Decline | observed baseline-eligible well-month records, ages 1–60",
+                "no usable producing-day rate",
+            ),
+            baseline_months,
+            diagnostic(r"([\d,]+) with differing flags on that date"),
+            diagnostic(r"([\d,]+) without a dated C"),
+            diagnostic(r"([\d,]+) first C in a later month"),
+        ],
+        "Activity and intervention approvals": [
+            len({r["measure"] for r in tables["interventions"]}),
+            months_per_year,
+            first_horizon,
+            monthrange(latest, last.month)[1],
+            latest,
+            year,
+            war["completion_observed_wells"],
+            war["eligible_wells"],
+            war["completion_observed_wells"],
+            f'{float(war["share_among_completion_observed"]):.1%}',
+            f'{float(approval["share_among_completion_observed"]):.1%}',
+            year,
+        ],
+        "Checking the results": [
+            start_year,
+            last_complete_years,
+            latest,
+            last.month - 1,
+            headline_table,
+            len(recount_stages),
+        ],
+        "BSEE input pins": [
+            well_pin.day,
+            well_pin.year,
+            prod_pin.day,
+            prod_pin.year,
+            len(manifests),
+            diagnostic(r"([\d,]+) unique archives"),
+            diagnostic(r"series-basis . ([\d,]+) ZIPs"),
+            len({r["year"] for r in months}),
+            pins_table,
+            digest_bits,
+        ],
+    }
+    actual = readme_prose_numbers(article)
+    assert set(actual) == set(expected), "README section headings differ"
+    for section, values in expected.items():
+        assert actual[section] == list(map(str, values)), section
+
+
+def test_readme_prose_numbers_match_evidence():
+    check_readme_prose_numbers((EXAMPLE / "README.md").read_text(encoding="utf-8"))
+
+
+def test_changed_readme_prose_number_breaks_citation():
+    article = (EXAMPLE / "README.md").read_text(encoding="utf-8")
+    # Both percentages exist in the correct source row. Switching their labels
+    # must still fail, as must a number in a previously unnumbered paragraph.
+    approval = re.search(r"(\d+\.\d+%) have a qualifying approval", article)[1]
+    changed = re.sub(r"\d+\.\d+% have a WAR", approval + " have a WAR", article)
+    assert changed != article
+    with pytest.raises(AssertionError, match="Activity and intervention approvals"):
+        check_readme_prose_numbers(changed)
+    with pytest.raises(AssertionError, match="README section headings"):
+        check_readme_prose_numbers(
+            article.replace("## BSEE input pins", "## BSEE input pins for 57 wells")
+        )
+    with pytest.raises(AssertionError, match="Checking the results"):
+        check_readme_prose_numbers(
+            article.replace(
+                "## BSEE input pins", "There were 57 wells.\n\n## BSEE input pins"
+            )
+        )
+
+
 def test_article_summary_audits_band_and_event_cohorts(derivation):
     import pandas as pd
 
@@ -958,6 +1490,12 @@ def test_article_summary_audits_band_and_event_cohorts(derivation):
             "permit_date": pd.to_datetime(["2006-01-10", None, None, None]),
         }
     )
+    inventory["inventory_status"] = "gulf"
+    outside = inventory.iloc[[0, 2]].assign(
+        api10=["pacific", "cancelled"],
+        inventory_status=["outside_gulf", "cancelled_only"],
+    )
+    inventory = pd.concat([inventory, outside], ignore_index=True)
     starts = inventory.iloc[[0, 3]].assign(
         first_month=pd.Timestamp("2005-01-01"), start_supported=[True, False]
     )
@@ -982,3 +1520,30 @@ def test_article_summary_audits_band_and_event_cohorts(derivation):
         if r["stage"] == "Article summary | assigned band, completion cohort API10"
     }
     assert counts == {"input": 2, "retained": 1, "no assigned Gulf depth band": 1}
+    derive.completion_lags(inventory, starts, ev.audit, ev.check)
+    for label in ["Article summary", "Completion lag"]:
+        scope = {
+            r["reason"]: r["rows"]
+            for r in ev.records
+            if r["stage"] == f"{label} | Gulf inventory, API10"
+        }
+        assert scope == {
+            "input": 6,
+            "retained": 4,
+            "outside eligible Gulf inventory": 2,
+        }
+        window = {
+            r["reason"]: r["rows"]
+            for r in ev.records
+            if r["stage"] == f"{label} | completion window, API10"
+        }
+        assert window["input"] == 4
+        assert window["no dated C completion"] == 1
+    for field, missing in [("war_date", 1), ("permit_date", 3)]:
+        events = {
+            r["reason"]: r["rows"]
+            for r in ev.records
+            if r["stage"] == f"Article summary | {field} by cutoff, inventory API10"
+        }
+        assert events["input"] == 4
+        assert events["no dated qualifying event"] == missing

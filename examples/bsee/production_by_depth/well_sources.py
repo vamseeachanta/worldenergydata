@@ -8,6 +8,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from production import WINDOW
+
 BANDS = ["<100 m", "100–<500 m", "500–<1,500 m", "≥1,500 m"]
 SNAPSHOT = pd.Timestamp("2026-11-23")
 PRODUCTION_CUTOFF = pd.Timestamp("2026-09-30")
@@ -44,6 +46,8 @@ def select(frame, stage, excludes, audit):
     keep = pd.Series(True, index=frame.index)
     reasons = {}
     for reason, mask in excludes:
+        if not mask.index.equals(frame.index):
+            raise ValueError(f"{stage}: misaligned mask for {reason}")
         if mask.isna().any():
             raise ValueError(f"{stage}: unresolved mask for {reason}")
         reasons[reason] = int((keep & mask).sum())
@@ -55,12 +59,12 @@ def select(frame, stage, excludes, audit):
 def audit_bore_quality(bores, raw_field, parsed_field, stage, invalid_reason, audit):
     """Flag incomplete observations without removing a well from the inventory."""
     unusable = bores[parsed_field].isna()
-    affected = bores.loc[unusable, "api10"].nunique()
-    malformed = bores.loc[unusable & bores[raw_field].ne(""), "api10"].nunique()
+    malformed = bores.loc[unusable & bores[raw_field].ne(""), "api10"].unique()
+    blank_only = unusable & bores[raw_field].eq("") & ~bores.api10.isin(malformed)
     total = bores.api10.nunique()
     audit(
         stage, total, total, {},
-        flags={invalid_reason: malformed, "blank on a bore, no malformed values": affected - malformed},
+        flags={invalid_reason: len(malformed), "blank on a bore, no malformed values": bores.loc[blank_only, "api10"].nunique()},
     )
 
 
@@ -81,8 +85,6 @@ def inventory(bore, ref, audit, check, notes):
         bore.api.is_unique,
         f"{len(bore):,} boreholes",
     )
-    # Historical evidence spans every bore, including cancelled records.
-    # Depth assignment still uses only non-cancelled Gulf bores.
     bore["spud"] = calendar_dates(bore.WELL_SPUD_DATE)
     groups = bore.groupby("api10")
     statuses = groups.REGION_CODE.agg(set)
@@ -94,14 +96,6 @@ def inventory(bore, ref, audit, check, notes):
     gulf_all = current.inventory_status.eq("gulf")
     cancelled = groups.BOREHOLE_STAT_CD.agg(lambda v: v.eq("CNL").all())
     current.loc[gulf_all & cancelled, "inventory_status"] = "cancelled_only"
-    current["first_spud"] = groups.spud.min()
-    undated_original = bore.WELL_NAME_SUFFIX.eq("ST00BP00") & bore.spud.isna()
-    current["undated_original"] = current.index.isin(bore.loc[undated_original, "api10"])
-    audit_bore_quality(
-        bore.loc[bore.api10.isin(current.index[current.inventory_status.eq("gulf")])],
-        "WELL_SPUD_DATE", "spud", "Borehole quality | all bores on Gulf inventory wells, spud, API10",
-        "nonblank unparseable spud on a bore", audit,
-    )
     gulf = select(
         bore,
         "borehole rows for Gulf depth",
@@ -110,6 +104,12 @@ def inventory(bore, ref, audit, check, notes):
             ("cancelled bore", bore.BOREHOLE_STAT_CD.eq("CNL")),
         ],
         audit,
+    )
+    current["first_spud"] = current.index.map(gulf.groupby("api10").spud.min())
+    current["spud_incomplete"] = current.index.isin(gulf.loc[gulf.spud.isna(), "api10"])
+    audit_bore_quality(
+        gulf, "WELL_SPUD_DATE", "spud", "Borehole quality | non-cancelled Gulf bores, spud, API10",
+        "nonblank unparseable spud on a bore", audit,
     )
     gulf["depth_ft"] = pd.to_numeric(gulf.WATER_DEPTH, errors="coerce")
     gulf["depth_ft"] = gulf.depth_ft.where(np.isfinite(gulf.depth_ft) & gulf.depth_ft.ge(0))
@@ -150,7 +150,7 @@ def inventory(bore, ref, audit, check, notes):
         f"Borehole REGION_CODE G identifies the Gulf. Of {len(eligible):,} distinct Gulf wells with a non-cancelled bore, {eligible.band.isna().sum():,} lack an assignable depth. "
         f"{nd.gt(1).sum():,} have differing reported depths across bores. The series inventory uses the ST00BP00 original hole, preferring an API ending in 00, then earliest spud and lowest API. "
         f"If its depth is absent, a single agreed nonnegative depth from the remaining bores is used. {eligible.depth_ft.eq(0).sum():,} selected depths are recorded as zero feet and fall in the shallowest band. "
-        "The borehole dictionary defines WATER_DEPTH in feet. Metres = feet × 0.3048. Band lower limits are inclusive. The spud date is the earliest dated bore across the API10, including cancelled records."
+        "The borehole dictionary defines WATER_DEPTH in feet. Metres = feet × 0.3048. Band lower limits are inclusive. The spud date is the earliest dated non-cancelled bore across the API10."
     )
     return current
 
@@ -158,6 +158,7 @@ def inventory(bore, ref, audit, check, notes):
 def call_first_reports(raw, wells, ref, audit, check, notes):
     raw["api10"] = ref.normalize_api(raw.API_WELL_NUMBER).str[:10]
     raw["date"] = calendar_dates(raw.BOREHOLE_STAT_DT)
+    early_c = set(raw.loc[raw.EOR_OPERATION_CD.eq("C") & raw.date.lt(WINDOW), "api10"])
     raw = select(
         raw,
         "eWell EOR rows for first completion",
@@ -204,6 +205,8 @@ def call_first_reports(raw, wells, ref, audit, check, notes):
         "At the earliest dated C report only, SUBSEA_COMPLETION_FLAG records whether a subsea completion exists. YES identifies a subsea completion. Explicit NO is a reported negative for that flag and does not identify the design of a dry tree. "
         f"Blank, conflicting or absent evidence is unknown ({len(conflicting):,} earliest-date sets contain differing flag values). The undated borehole stub indicator is not used to infer historical completion type."
     )
+
+    return early_c
 
 
 def first_event(data, wells, ref, stage, date_col, audit, check, extra=()):
@@ -280,7 +283,7 @@ def load_wells(well_dir, audit, check):
             "SUBSEA_COMPLETION_FLAG",
         ],
     )
-    call_first_reports(eor, wells, ref, audit, check, notes)
+    early_c = call_first_reports(eor, wells, ref, audit, check, notes)
     war = read("eWellWARRawData", "mv_war_main", ["SN_WAR", "API_WELL_NUMBER", "WAR_START_DT"])
     check(
         "WAR identifiers are nonblank and identify one API and start date",
@@ -304,7 +307,8 @@ def load_wells(well_dir, audit, check):
     )
     permits = ref.dedupe_permits(apm)
     audit(
-        "eWell APM permit identities", len(apm), len(permits), {"repeated permit": len(apm) - len(permits)}
+        "eWell APM permit identities", len(apm), len(permits),
+        {"repeated permit": int(apm.SN_APM.duplicated().sum())}, independent=True,
     )
     eligible = wells.index[wells.inventory_status.eq("gulf")]
     permit_api10 = ref.normalize_api(permits.API_WELL_NUMBER).str[:10]
@@ -358,4 +362,4 @@ def load_wells(well_dir, audit, check):
         "The interventions article counts approved APM permits. Its comparator here uses the first post-completion ACC_STATUS_DATE classified as workover/recompletion, production enhancement or other well work by the article's code. "
         "This removes abandonments, new-hole preparations and initial completions. An approval records permission for work; it cannot establish the day the work took place."
     )
-    return wells.reset_index(), notes
+    return wells.reset_index(), notes, early_c

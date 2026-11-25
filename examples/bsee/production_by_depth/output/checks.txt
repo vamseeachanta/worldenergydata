@@ -7,146 +7,92 @@ PASS  Every pinned ZIP was hashed — 29 unique archives
 PASS  Executable reference matches series basis | count_interventions.py
 PASS  Executable reference matches series basis | api_well_normalizer.py
 PASS  Headerless OGOR columns match worldenergydata's declared positional layout
-PASS  Record conservation | borehole API rows for inventory — 57,520 read = 57,520 kept + 0 dropped
 PASS  Borehole identifiers identify one inventory source row each — 57,520 boreholes
-PASS  Record conservation | Borehole quality | all bores on Gulf inventory wells, spud, API10 — 37,529 read = 37,529 kept + 0 dropped
-PASS  Record conservation | borehole rows for Gulf depth — 57,520 read = 54,592 kept + 2,928 dropped
-PASS  Record conservation | Borehole quality | non-cancelled Gulf bores, depth, API10 — 37,529 read = 37,529 kept + 0 dropped
-PASS  Record conservation | Borehole inventory | assigned depth, API10 — 39,570 read = 37,522 kept + 2,048 dropped
 PASS  Gulf inventory assigns each API10 at most one depth band — 37,529 non-cancelled Gulf API10s; 37,522 assigned, 7 unresolved, 2,133 with differing bore depths, 64 assigned zero feet
-PASS  Record conservation | eWell EOR operation code dictionary — 4 read = 4 kept + 0 dropped
 PASS  BSEE operation code C means COMPLETION
-PASS  Record conservation | eWell EOR rows for first completion — 45,667 read = 8,446 kept + 37,221 dropped
 PASS  Eligible completion reports have distinct nonblank SN_EOR — 8,446 reports
 PASS  Each dated Gulf completion uses the earliest C status date; conflicting first flags stay unknown — 58 API10s with non-COM status on an earliest C report; 61 with differing flags on that date
 PASS  WAR identifiers are nonblank and identify one API and start date
-PASS  Record conservation | eWell WAR rows for observed work — 370,779 read = 77,669 kept + 293,110 dropped
 PASS  eWell WAR rows for observed work: first events occur strictly after completion — 4,577 Gulf API10s
 PASS  Record conservation | eWell APM permit identities — 102,177 read = 101,970 kept + 207 dropped
-PASS  Record conservation | eWell APM permits for series classification — 101,970 read = 101,950 kept + 20 dropped
-PASS  Record conservation | eWell APM suboperation rows — 113,278 read = 111,522 kept + 1,756 dropped
-PASS  Record conservation | eWell APM descriptions — 101,008 read = 100,892 kept + 116 dropped
-PASS  Record conservation | eWell APM approvals for classified well work — 101,950 read = 19,915 kept + 82,035 dropped
 PASS  eWell APM approvals for classified well work: first events occur strictly after completion — 4,126 Gulf API10s
 PASS  ogora2005delimit.zip year identity
-PASS  Record conservation | OGOR depth join / ogora2005delimit.zip — 200,556 read = 200,472 kept + 84 dropped
 PASS  ogora2006delimit.zip year identity
-PASS  Record conservation | OGOR depth join / ogora2006delimit.zip — 196,933 read = 196,849 kept + 84 dropped
 PASS  ogora2007delimit.zip year identity
-PASS  Record conservation | OGOR depth join / ogora2007delimit.zip — 191,753 read = 191,663 kept + 90 dropped
 PASS  ogora2008delimit.zip year identity
-PASS  Record conservation | OGOR depth join / ogora2008delimit.zip — 186,894 read = 186,805 kept + 89 dropped
 PASS  ogora2009delimit.zip year identity
-PASS  Record conservation | OGOR depth join / ogora2009delimit.zip — 175,190 read = 175,102 kept + 88 dropped
 PASS  ogora2010delimit.zip year identity
-PASS  Record conservation | OGOR depth join / ogora2010delimit.zip — 163,361 read = 163,278 kept + 83 dropped
 PASS  ogora2011delimit.zip year identity
-PASS  Record conservation | OGOR depth join / ogora2011delimit.zip — 152,064 read = 151,992 kept + 72 dropped
 PASS  ogora2012delimit.zip year identity
-PASS  Record conservation | OGOR depth join / ogora2012delimit.zip — 141,899 read = 141,826 kept + 73 dropped
 PASS  ogora2013delimit.zip year identity
-PASS  Record conservation | OGOR depth join / ogora2013delimit.zip — 133,597 read = 133,525 kept + 72 dropped
 PASS  ogora2014delimit.zip year identity
-PASS  Record conservation | OGOR depth join / ogora2014delimit.zip — 125,525 read = 125,452 kept + 73 dropped
 PASS  ogora2015delimit.zip year identity
-PASS  Record conservation | OGOR depth join / ogora2015delimit.zip — 119,594 read = 119,523 kept + 71 dropped
 PASS  ogora2016delimit.zip year identity
-PASS  Record conservation | OGOR depth join / ogora2016delimit.zip — 113,824 read = 113,764 kept + 60 dropped
 PASS  ogora2017delimit.zip year identity
-PASS  Record conservation | OGOR depth join / ogora2017delimit.zip — 109,646 read = 109,586 kept + 60 dropped
 PASS  ogora2018delimit.zip year identity
-PASS  Record conservation | OGOR depth join / ogora2018delimit.zip — 106,639 read = 106,579 kept + 60 dropped
 PASS  ogora2019delimit.zip year identity
-PASS  Record conservation | OGOR depth join / ogora2019delimit.zip — 104,173 read = 104,113 kept + 60 dropped
 PASS  ogora2020delimit.zip year identity
-PASS  Record conservation | OGOR depth join / ogora2020delimit.zip — 99,131 read = 99,071 kept + 60 dropped
 PASS  ogora2021delimit.zip year identity
-PASS  Record conservation | OGOR depth join / ogora2021delimit.zip — 87,722 read = 87,672 kept + 50 dropped
 PASS  ogora2022delimit.zip year identity
-PASS  Record conservation | OGOR depth join / ogora2022delimit.zip — 77,602 read = 77,566 kept + 36 dropped
 PASS  ogora2023delimit.zip year identity
-PASS  Record conservation | OGOR depth join / ogora2023delimit.zip — 74,986 read = 74,950 kept + 36 dropped
 PASS  ogora2024delimit.zip year identity
-PASS  Record conservation | OGOR depth join / ogora2024delimit.zip — 62,836 read = 62,800 kept + 36 dropped
 PASS  ogora2025delimit.zip year identity
-PASS  Record conservation | OGOR depth join / ogora2025delimit.zip — 58,207 read = 58,192 kept + 15 dropped
 PASS  ogoradelimit.zip year identity
-PASS  Record conservation | OGOR depth join / ogoradelimit.zip — 39,114 read = 39,106 kept + 8 dropped
 PASS  OGOR source coverage across consecutive calendar months — 2005-01 through 2026-09; 261 months
 PASS  OGOR well-month identity and one depth band per producing well
-PASS  Record conservation | OGOR archives combined | source depth join — 2,721,246 read = 2,719,886 kept + 1,360 dropped
 PASS  Monthly four-band oil_bbl sums to pooled OGOR source volume every month — 261 months; 12,418,358,076 retained
 PASS  OGOR full archive oil_bbl reconciles to classified and excluded volumes — 12,419,071,786 = 12,418,358,076 classified + 713,710 excluded
 PASS  Yearly oil_bbl volumes and period sum agree with source — 12,418,358,076
 PASS  Monthly four-band gas_mcf sums to pooled OGOR source volume every month — 261 months; 32,778,024,812 retained
 PASS  OGOR full archive gas_mcf reconciles to classified and excluded volumes — 32,778,928,312 = 32,778,024,812 classified + 903,500 excluded
 PASS  Yearly gas_mcf volumes and period sum agree with source — 32,778,024,812
-PASS  Record conservation | OGOR well-months / producing activity — 2,469,232 read = 827,032 kept + 1,642,200 dropped
 PASS  Annual four-band producing wells sum to distinct API10 counts in raw rows every year — 22 years
 PASS  Yearly distinct producing-well counts sum to period well-years — 85,785 well-years; 9,525 distinct producing wells
-PASS  Record conservation | OGOR well-months / exact oil rate — 2,469,232 read = 814,354 kept + 1,654,878 dropped
-PASS  Record conservation | OGOR raw recount / 2026-08 — 4,458 read = 4,457 kept + 1 dropped
 PASS  Raw CSV recount | 2026-08 All unique producers, oil and gas — 1,635 producing wells, 63,587,543 bbl, 66,977,246 Mcf
 PASS  Raw CSV recount | 2026-08 ≥1,500 m unique producers, oil and gas — 273 producing wells, 36,955,458 bbl, 29,050,637 Mcf
-PASS  Record conservation | OGOR raw recount / 2026-09 — 2,688 read = 2,688 kept + 0 dropped
 PASS  Raw CSV recount | 2026-09 All unique producers, oil and gas — 1,050 producing wells, 36,770,623 bbl, 41,076,638 Mcf
 PASS  Raw CSV recount | 2026-09 ≥1,500 m unique producers, oil and gas — 135 producing wells, 19,035,989 bbl, 16,453,415 Mcf
 PASS  Period activity | band counts sum to pooled distinct wells and well-months
 PASS  Monthly activity | depth counts sum to pooled distinct API10s in each month
 PASS  Monthly activity | monthly headcounts sum to distinct active well-months in each band
 PASS  Each producing API10 has exactly one inventory record and one assigned band
-PASS  Record conservation | First positive month | API10 start evidence — 9,525 read = 1,813 kept + 7,712 dropped
 PASS  Completion type at start has one disjoint value per producing well
+PASS  Age cohort | no eWell C before 2005-01-01 — 0 API10s
+PASS  Age cohort | no FIRST_PROD_DATE before 2005-01-01 — 0 API10s
 PASS  Event cutoff equals final OGOR production month end
-PASS  Record conservation | Completion lag | completion window, API10 — 39,570 read = 2,873 kept + 36,697 dropped
-PASS  Record conservation | Completion lag | first C dated 2005–2025, API10 — 2,873 read = 1,735 kept + 1,138 dropped
-PASS  Record conservation | Completion lag | chronological pair, API10 — 1,735 read = 1,704 kept + 31 dropped
 PASS  Completion lag | depth counts for both populations — 2 pooled groups; wells, pre_completion_wells, same_month_wells
 PASS  Completion lag | ordered plus negative pairs equals signed pairs
-PASS  Record conservation | Decline | start window, supported API10 — 1,813 read = 1,577 kept + 236 dropped
-PASS  Record conservation | Decline | join to start cohort, well-months — 2,469,232 read = 219,750 kept + 2,249,482 dropped
-PASS  Record conservation | Decline | calendar ages 1–60, well-months — 219,750 read = 90,369 kept + 129,381 dropped
-PASS  Record conservation | Decline | first three months for baseline, well-months — 90,369 read = 4,729 kept + 85,640 dropped
-PASS  Record conservation | Decline | supported first production 2005–2020, API10 — 1,577 read = 1,333 kept + 244 dropped
-PASS  Record conservation | Decline | baseline eligibility, well-months — 90,369 read = 76,884 kept + 13,485 dropped
-PASS  Record conservation | Decline | observed baseline-eligible well-month records, ages 1–60 — 76,884 read = 61,584 kept + 15,300 dropped
 PASS  Decline | one value per API10 and calendar age; finite nonnegative rates
-PASS  Decline | each retained well reaches 1 in its first three calendar months — 1,333 wells
+PASS  Decline | each retained well reaches 1 in its first three calendar months — 1,330 wells
 PASS  Decline | depth counts at every age and completion type — 240 pooled groups; baseline_wells, wells
 PASS  Decline | completion-type counts at every age and depth — 300 pooled groups; baseline_wells, wells
 PASS  Decline | monthly contributors within each baseline cohort; empty groups have no median
-PASS  Record conservation | Interventions | supported starts, API10 — 9,525 read = 1,813 kept + 7,712 dropped
-PASS  Record conservation | Interventions | year 0 anniversary, API10 — 1,813 read = 1,813 kept + 0 dropped
-PASS  Record conservation | Interventions | year 1 anniversary, API10 — 1,813 read = 1,778 kept + 35 dropped
-PASS  Record conservation | Interventions | year 2 anniversary, API10 — 1,813 read = 1,737 kept + 76 dropped
-PASS  Record conservation | Interventions | year 3 anniversary, API10 — 1,813 read = 1,695 kept + 118 dropped
-PASS  Record conservation | Interventions | year 4 anniversary, API10 — 1,813 read = 1,645 kept + 168 dropped
-PASS  Record conservation | Interventions | year 5 anniversary, API10 — 1,813 read = 1,607 kept + 206 dropped
-PASS  Record conservation | Interventions | year 6 anniversary, API10 — 1,813 read = 1,574 kept + 239 dropped
-PASS  Record conservation | Interventions | year 7 anniversary, API10 — 1,813 read = 1,533 kept + 280 dropped
-PASS  Record conservation | Interventions | year 8 anniversary, API10 — 1,813 read = 1,485 kept + 328 dropped
-PASS  Record conservation | Interventions | year 9 anniversary, API10 — 1,813 read = 1,429 kept + 384 dropped
-PASS  Record conservation | Interventions | year 10 anniversary, API10 — 1,813 read = 1,387 kept + 426 dropped
-PASS  Record conservation | Interventions | year 11 anniversary, API10 — 1,813 read = 1,326 kept + 487 dropped
-PASS  Record conservation | Interventions | year 12 anniversary, API10 — 1,813 read = 1,237 kept + 576 dropped
-PASS  Record conservation | Interventions | year 13 anniversary, API10 — 1,813 read = 1,152 kept + 661 dropped
-PASS  Record conservation | Interventions | year 14 anniversary, API10 — 1,813 read = 1,095 kept + 718 dropped
-PASS  Record conservation | Interventions | year 15 anniversary, API10 — 1,813 read = 1,020 kept + 793 dropped
-PASS  Record conservation | Interventions | year 16 anniversary, API10 — 1,813 read = 952 kept + 861 dropped
-PASS  Record conservation | Interventions | year 17 anniversary, API10 — 1,813 read = 863 kept + 950 dropped
-PASS  Record conservation | Interventions | year 18 anniversary, API10 — 1,813 read = 710 kept + 1,103 dropped
-PASS  Record conservation | Interventions | year 19 anniversary, API10 — 1,813 read = 536 kept + 1,277 dropped
-PASS  Record conservation | Interventions | year 20 anniversary, API10 — 1,813 read = 298 kept + 1,515 dropped
-PASS  Record conservation | Interventions | year 21 anniversary, API10 — 1,813 read = 82 kept + 1,731 dropped
+PASS  Record conservation | Interventions | year 1 anniversary, API10 — 1,809 read = 1,774 kept + 35 dropped
+PASS  Record conservation | Interventions | year 2 anniversary, API10 — 1,809 read = 1,733 kept + 76 dropped
+PASS  Record conservation | Interventions | year 3 anniversary, API10 — 1,809 read = 1,691 kept + 118 dropped
+PASS  Record conservation | Interventions | year 4 anniversary, API10 — 1,809 read = 1,642 kept + 167 dropped
+PASS  Record conservation | Interventions | year 5 anniversary, API10 — 1,809 read = 1,604 kept + 205 dropped
+PASS  Record conservation | Interventions | year 6 anniversary, API10 — 1,809 read = 1,571 kept + 238 dropped
+PASS  Record conservation | Interventions | year 7 anniversary, API10 — 1,809 read = 1,530 kept + 279 dropped
+PASS  Record conservation | Interventions | year 8 anniversary, API10 — 1,809 read = 1,483 kept + 326 dropped
+PASS  Record conservation | Interventions | year 9 anniversary, API10 — 1,809 read = 1,427 kept + 382 dropped
+PASS  Record conservation | Interventions | year 10 anniversary, API10 — 1,809 read = 1,385 kept + 424 dropped
+PASS  Record conservation | Interventions | year 11 anniversary, API10 — 1,809 read = 1,324 kept + 485 dropped
+PASS  Record conservation | Interventions | year 12 anniversary, API10 — 1,809 read = 1,237 kept + 572 dropped
+PASS  Record conservation | Interventions | year 13 anniversary, API10 — 1,809 read = 1,152 kept + 657 dropped
+PASS  Record conservation | Interventions | year 14 anniversary, API10 — 1,809 read = 1,095 kept + 714 dropped
+PASS  Record conservation | Interventions | year 15 anniversary, API10 — 1,809 read = 1,020 kept + 789 dropped
+PASS  Record conservation | Interventions | year 16 anniversary, API10 — 1,809 read = 952 kept + 857 dropped
+PASS  Record conservation | Interventions | year 17 anniversary, API10 — 1,809 read = 863 kept + 946 dropped
+PASS  Record conservation | Interventions | year 18 anniversary, API10 — 1,809 read = 710 kept + 1,099 dropped
+PASS  Record conservation | Interventions | year 19 anniversary, API10 — 1,809 read = 536 kept + 1,273 dropped
+PASS  Record conservation | Interventions | year 20 anniversary, API10 — 1,809 read = 298 kept + 1,511 dropped
+PASS  Record conservation | Interventions | year 21 anniversary, API10 — 1,809 read = 82 kept + 1,727 dropped
 PASS  Post-completion WAR | every qualifying date is strictly after earliest completion
 PASS  Intervention approval | every qualifying date is strictly after earliest completion
 PASS  Interventions | eligible, completion-observed and event counts at every age — 44 pooled groups; eligible_wells, completion_observed_wells, event_wells, pre_origin_event_wells
 PASS  Interventions | events within observed completions within eligible cohort; empty denominators blank
 PASS  Interventions | horizon-eligible denominators never grow with age
-PASS  Record conservation | Article summary | completion window, API10 — 39,570 read = 2,873 kept + 36,697 dropped
-PASS  Record conservation | Article summary | assigned band, completion cohort API10 — 2,873 read = 2,873 kept + 0 dropped
-PASS  Record conservation | Article summary | war_date by cutoff, inventory API10 — 39,570 read = 1,513 kept + 38,057 dropped
-PASS  Record conservation | Article summary | permit_date by cutoff, inventory API10 — 39,570 read = 1,322 kept + 38,248 dropped
 PASS  Companion article table | band counts sum to pooled source cohorts
 PASS  Published annual table | yearly well counts, oil and gas conserve across bands — 22 pooled groups; producing_wells, oil_bbl, gas_mcf
 PASS  Published years sum to whole-period source totals | <100 m — 1,449,748,317 bbl, 14,302,052,771 Mcf, 64,791 well-years
@@ -154,13 +100,13 @@ PASS  Published years sum to whole-period source totals | 100–<500 m — 736,9
 PASS  Published years sum to whole-period source totals | 500–<1,500 m — 5,476,891,029 bbl, 8,965,414,392 Mcf, 7,842 well-years
 PASS  Published years sum to whole-period source totals | ≥1,500 m — 4,754,797,277 bbl, 6,775,810,541 Mcf, 3,601 well-years
 PASS  Published years sum to whole-period source totals | All — 12,418,358,076 bbl, 32,778,024,812 Mcf, 85,785 well-years
-PASS  Startup diagnostics | supported producers with mismatched reported month or incomplete C history — 120 first-date month mismatches; 57 without a dated C; 31 first C in a later month
-PASS  Published CSV readback | all rows and cells match calculations — monthly_production 1,305, annual_wells 110, completion_lag 10, article_summary 5, decline 1,200, interventions 220, record_counts 286
-PASS  Published record ledger | read equals kept plus reason-coded drops for every stage — 78 stages
+PASS  Startup diagnostics | one record per producing API10 — 119 first-date month mismatches; 57 without a dated C; 31 first C in a later month
+PASS  Published CSV readback | all rows and cells match calculations — monthly_production 1,305, annual_wells 110, completion_lag 10, article_summary 5, spud_exclusions 5, decline 1,200, interventions 220, record_counts 287
+PASS  Published record ledger | CSV stage identities and disposition totals reconcile — 80 stages
 PASS  Published OGOR row ledger | archive sum matches combined dispositions and reasons
 PASS  Published OGOR volume ledger | source equals retained plus rejected oil_bbl
 PASS  Published OGOR volume ledger | source equals retained plus rejected gas_mcf
-PASS  Published JSON readback | citation definitions and values match serialized payload — 372 citations
+PASS  Published JSON readback | citation definitions and values match serialized payload — 377 citations
 PASS  PNG decoded | monthly_production — 1768 × 1156 px
 PASS  PNG decoded | annual_wells — 1768 × 1156 px
 PASS  PNG decoded | completion_lag — 1768 × 850 px

@@ -37,6 +37,12 @@ OGOR_COLUMNS = [
 DEPTH_BANDS = ["<100 m", "100–<500 m", "500–<1,500 m", "≥1,500 m"]
 VOLUMES = ["oil_bbl", "gas_mcf"]
 API12 = r"[0-9]{12}"
+WINDOW = pd.Timestamp("2005-01-01")
+
+
+def early_reported_producers(raw):
+    """Collect dated evidence from every OGOR row, including zero-volume records."""
+    return set(raw.loc[raw.reported_first.lt(WINDOW), "api10"].dropna())
 
 
 def ogor_filename(year, current_year):
@@ -242,9 +248,11 @@ def load_production(prod_dir, wells, audit, check):
     input_volume = Counter()
     source_rows = 0
     retained_rows = 0
+    pre_window_reported = set()
     for year in range(2005, 2027):
         filename = ogor_filename(year, 2026)
         data = read_ogor(Path(prod_dir) / filename)
+        pre_window_reported.update(early_reported_producers(data))
         source_rows += len(data)
         check(f"{filename} year identity", bool(data["month"].dt.year.eq(year).all()) and len(data) > 0)
         in_archive_months.extend(data["month"].unique())
@@ -399,4 +407,4 @@ def load_production(prod_dir, wells, audit, check):
             f"{dropped_volumes[reason, 'gas_mcf']:,} Mcf)."
         )
     notes.extend(check_recent_source(prod_dir, lookup, well_months, last, check, audit))
-    return well_months, monthly, annual, notes
+    return well_months, monthly, annual, notes, pre_window_reported

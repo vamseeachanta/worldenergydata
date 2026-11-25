@@ -20,6 +20,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from production import WINDOW
+
 ROOT = Path(__file__).resolve().parent
 PUBLIC_PINS_SHA256 = "6d8124715cc4304425701f34e5cfb0c6921e45bb0008f3277411be1f326b5a46"
 ORIGINAL_MANIFESTS = {
@@ -28,7 +30,6 @@ ORIGINAL_MANIFESTS = {
 }
 BANDS = ["<100 m", "100–<500 m", "500–<1,500 m", "≥1,500 m"]
 TYPES = ["Subsea", "No subsea flag (NO)", "Unknown"]
-WINDOW = pd.Timestamp("2005-01-01")
 
 
 def self_test():
@@ -62,8 +63,9 @@ def self_test():
         {
             "api10": list("abcd"),
             "band": BANDS[0],
-            "first_spud": dt(["2005-01-01"] * 4),
-            "undated_original": False,
+            "first_spud": dt(["2005-01-01", "2005-01-01", "2004-12-31", "2005-01-01"]),
+            "spud_incomplete": False,
+            "inventory_status": "gulf",
             "completion_date": dt(["2005-01-31", "2005-02-01", "2005-01-01", None]),
             "completion_type": "Subsea",
             "war_date": dt(["2005-04-05", None, None, None]),
@@ -103,17 +105,16 @@ def month_number(dates):
 
 def count_filter(stage, frame, reasons, audit):
     """Assign each removed item its first applicable reason, in the listed order."""
-    keep = pd.Series(True, index=frame.index)
-    drops = {}
-    for reason, mask in reasons.items():
-        remove = keep & mask.fillna(False)
-        drops[reason] = int(remove.sum())
-        keep &= ~remove
-    audit(stage, len(frame), int(keep.sum()), drops)
-    return frame.loc[keep].copy()
+    from well_sources import select
+
+    return select(frame, stage, ((reason, mask.fillna(False)) for reason, mask in reasons.items()), audit)
 
 
 def first_months(months, inventory, audit, check):
+    """A producing API10 enters the age cohort if it has a first positive OGOR-A
+    month and every non-cancelled bore (any suffix) has a parseable WELL_SPUD_DATE,
+    the earliest on or after 1 January 2005.
+    """
     positive = months.loc[months.positive]
     first = positive.groupby("api10", as_index=False).agg(
         first_month=("month", "min"), reported_first=("reported_first", "min")
@@ -123,27 +124,17 @@ def first_months(months, inventory, audit, check):
         "Each producing API10 has exactly one inventory record and one assigned band",
         len(starts) == len(first) and starts.band.isin(BANDS).all(),
     )
-    observed = month_number(starts.first_month)
-    spud_in_time = month_number(starts.first_spud).le(observed)
-    report_in_time = month_number(starts.reported_first).le(observed)
-    evidenced = (starts.first_spud.ge(WINDOW) & spud_in_time) | (
-        starts.reported_first.ge(WINDOW) & report_in_time
+    incomplete = starts.spud_incomplete | starts.first_spud.isna()
+    early = starts.first_spud.lt(WINDOW)
+    starts["start_reason"] = np.select(
+        [incomplete, early], ["spud date incomplete", "earliest non-cancelled spud before 2005"],
+        default="in spud cohort",
     )
-    vetoes = {
-        "reported first production predates January 2005": starts.reported_first.lt(WINDOW),
-        "earliest bore spud predates January 2005": starts.first_spud.lt(WINDOW),
-        "undated original bore": starts.undated_original,
-        "no dated bore spud": starts.first_spud.isna(),
-        "first C completion predates January 2005": starts.completion_date.lt(WINDOW),
-        "no timely in-window spud or reported start": ~evidenced,
-    }
-    kept = "observed window covers start"
-    starts["start_reason"] = np.select(list(vetoes.values()), list(vetoes), default=kept)
-    starts["start_supported"] = starts.start_reason.eq(kept)
-    counts = starts.start_reason.value_counts()
+    starts["start_supported"] = ~incomplete & starts.first_spud.ge(WINDOW)
     audit(
         "First positive month | API10 start evidence", len(starts), int(starts.start_supported.sum()),
-        {reason: int(counts.get(reason, 0)) for reason in vetoes},
+        {"spud date incomplete": int(incomplete.sum()),
+         "earliest non-cancelled spud before 2005": int((~incomplete & early).sum())},
     )
     starts["type_at_start"] = starts.completion_type.where(
         starts.completion_date.notna()
@@ -157,6 +148,34 @@ def first_months(months, inventory, audit, check):
     return starts
 
 
+def check_start_history(starts, early_c, early_reported, check):
+    kept = set(starts.loc[starts.start_supported, "api10"])
+    for source, ids in [("eWell C", early_c), ("FIRST_PROD_DATE", early_reported)]:
+        count = len(kept.intersection(ids))
+        check(f"Age cohort | no {source} before 2005-01-01", count == 0, f"{count:,} API10s")
+
+
+def spud_exclusions(starts):
+    # For an early spud, the original support rule at 396d3d4 required a
+    # reported in-window start no later than the first positive OGOR month.
+    earlier_supported = (
+        starts.first_spud.lt(WINDOW)
+        & starts.reported_first.ge(WINDOW)
+        & month_number(starts.reported_first).le(month_number(starts.first_month))
+    )
+    excluded = starts.loc[earlier_supported]
+    counts = excluded.groupby("band").size().reindex(BANDS, fill_value=0)
+    counts.loc["All"] = len(excluded)
+    return counts.rename("earlier_supported_pre2005_spud").reset_index()
+
+
+def gulf_inventory(inventory, stage, audit):
+    return count_filter(
+        f"{stage} | Gulf inventory, API10", inventory,
+        {"outside eligible Gulf inventory": inventory.inventory_status.ne("gulf")}, audit,
+    )
+
+
 def completion_window(inventory, stage, audit):
     year = inventory.completion_date.dt.year
     return count_filter(
@@ -167,9 +186,10 @@ def completion_window(inventory, stage, audit):
 
 
 def completion_lags(inventory, starts, audit, check):
-    cohort = completion_window(inventory, "Completion lag", audit)
+    gulf = gulf_inventory(inventory, "Completion lag", audit)
+    cohort = completion_window(gulf, "Completion lag", audit)
     cohort = cohort.merge(
-        starts[["api10", "first_month", "start_supported", "start_reason"]],
+        starts[["api10", "first_month", "start_supported"]],
         on="api10",
         how="left",
         validate="one_to_one",
@@ -180,10 +200,7 @@ def completion_lags(inventory, starts, audit, check):
         {
             "no assigned Gulf depth band": ~cohort.band.isin(BANDS),
             "no positive joined OGOR month": cohort.first_month.isna(),
-            "documented pre-window production": cohort.start_reason.eq(
-                "reported first production predates January 2005"
-            ),
-            "start coverage unestablished": ~cohort.start_supported.eq(True),
+            "outside spud cohort": ~cohort.start_supported.eq(True),
         },
         audit,
     )
@@ -349,7 +366,7 @@ def intervention_curve(starts, cutoff, audit, check):
     for age, risk in horizons.items():
         reached = int(risk.sum())
         audit(f"Interventions | year {age} anniversary, API10", len(cohort), reached,
-              {"anniversary after production cutoff": len(cohort) - reached})
+              {"anniversary after production cutoff": int(age_cap.lt(age * 12).sum())}, independent=True)
     for col, measure in [("war_date", "Post-completion WAR"), ("permit_date", "Intervention approval")]:
         check(
             f"{measure} | every qualifying date is strictly after earliest completion",
@@ -411,18 +428,21 @@ class Evidence:
         if not condition:
             raise ValueError(self.results[-1])
 
-    def audit(self, stage, read, kept, drops, volumes=None, flags=None):
+    def audit(self, stage, read, kept, drops, volumes=None, flags=None, *, independent=False):
         if stage in self.stages:
             raise ValueError(f"Duplicate audit stage: {stage}")
         self.stages.add(stage)
         flags = flags or {}
         if any(n < 0 for n in flags.values()) or sum(flags.values()) > kept:
             raise ValueError(f"Quality flags exceed retained records: {stage}")
-        self.check(
-            f"Record conservation | {stage}",
-            min([read, kept, *drops.values()]) >= 0 and read == kept + sum(drops.values()),
-            f"{read:,} read = {kept:,} kept + {sum(drops.values()):,} dropped",
-        )
+        balanced = min([read, kept, *drops.values()]) >= 0 and read == kept + sum(drops.values())
+        # A partition made by a single filter belongs in the ledger. Only
+        # separately measured counts can supply evidence of source conservation.
+        if not balanced or (independent and read != kept):
+            self.check(
+                f"Record conservation | {stage}", balanced,
+                f"{read:,} read = {kept:,} kept + {sum(drops.values()):,} dropped",
+            )
         for disposition, reason, rows in [
             ("read", "input", read),
             ("kept", "retained", kept),
@@ -486,11 +506,12 @@ def build_tables(data_dir, ev):
     from production import build_activity_summary, load_production
     from well_sources import PRODUCTION_CUTOFF, load_wells
 
-    inventory, well_notes = load_wells(data_dir, ev.audit, ev.check)
-    months, monthly, annual, ogor_notes = load_production(data_dir, inventory, ev.audit, ev.check)
+    inventory, well_notes, early_c = load_wells(data_dir, ev.audit, ev.check)
+    months, monthly, annual, ogor_notes, early_reported = load_production(data_dir, inventory, ev.audit, ev.check)
     activity, period = build_activity_summary(months, ev.check)
     monthly = monthly.merge(activity, on=["month", "band"], validate="one_to_one")
     starts = first_months(months, inventory, ev.audit, ev.check)
+    check_start_history(starts, early_c, early_reported, ev.check)
     last = monthly.month.max()
     ev.check("Event cutoff equals final OGOR production month end", last + pd.offsets.MonthEnd(0) == PRODUCTION_CUTOFF)
     lag = completion_lags(inventory, starts, ev.audit, ev.check)
@@ -525,23 +546,20 @@ def build_tables(data_dir, ev):
             and a.producing_wells.sum() == len(well_years),
             f"{a.oil_bbl.sum():,} bbl, {a.gas_mcf.sum():,} Mcf, {len(well_years):,} well-years",
         )
-    reported = starts.reported_first
     obs = starts.loc[starts.start_supported]
     mismatch = (
         month_number(obs.reported_first).ne(month_number(obs.first_month)) & obs.reported_first.notna()
     )
     late_c = month_number(obs.completion_date).gt(month_number(obs.first_month))
     ev.check(
-        "Startup diagnostics | supported producers with mismatched reported month or incomplete C history",
-        starts.api10.is_unique and not (obs.completion_date.isna() & late_c).any(),
+        "Startup diagnostics | one record per producing API10",
+        starts.api10.is_unique,
         f"{mismatch.sum():,} first-date month mismatches; {obs.completion_date.isna().sum():,} without "
         f"a dated C; {late_c.sum():,} first C in a later month",
     )
     notes = [
         (
-            f"Of {len(starts):,} producing Gulf API10s with assigned depth, {len(obs):,} have evidence that the production window covers their start. "
-            f"{reported.lt(WINDOW).sum():,} have a reported FIRST_PROD_DATE before 2005. "
-            f"{(~starts.start_supported & ~reported.lt(WINDOW)).sum():,} fail other history or timing criteria. "
+            f"Of {len(starts):,} producing Gulf API10s with assigned depth, {len(obs):,} meet the spud cohort definition. "
             f"Among retained starts, {mismatch.sum():,} have a reported first-production month different from the first positive OGOR month. "
             "The measured first positive month controls the age calculation."
         ),
@@ -560,6 +578,7 @@ def build_tables(data_dir, ev):
         "annual_wells": annual,
         "completion_lag": lag,
         "article_summary": period,
+        "spud_exclusions": spud_exclusions(starts),
         "decline": decline,
         "interventions": intervention,
         "record_counts": pd.DataFrame(ev.records),
@@ -569,7 +588,8 @@ def build_tables(data_dir, ev):
 
 def article_summary(period, inventory, starts, months, last, check, audit):
     """Companion table for article text. Reach and elapsed time have different denominators."""
-    window = completion_window(inventory, "Article summary", audit)
+    gulf = gulf_inventory(inventory, "Article summary", audit)
+    window = completion_window(gulf, "Article summary", audit)
     cohort = count_filter(
         "Article summary | assigned band, completion cohort API10", window,
         {"no assigned Gulf depth band": ~window.band.isin(BANDS)}, audit,
@@ -583,10 +603,10 @@ def article_summary(period, inventory, starts, months, last, check, audit):
     end = last + pd.offsets.MonthEnd(0)
     for col in ["war_date", "permit_date"]:
         events = count_filter(
-            f"Article summary | {col} by cutoff, inventory API10", inventory,
-            {"no dated qualifying event": inventory[col].isna(), "event after production cutoff": inventory[col].gt(end),
-             "no positive joined OGOR month": ~inventory.api10.isin(starts.api10),
-             "unsupported production start": ~inventory.api10.isin(supported.api10)}, audit,
+            f"Article summary | {col} by cutoff, inventory API10", gulf,
+            {"no dated qualifying event": gulf[col].isna(), "event after production cutoff": gulf[col].gt(end),
+             "no positive joined OGOR month": ~gulf.api10.isin(starts.api10),
+             "unsupported production start": ~gulf.api10.isin(supported.api10)}, audit,
         )
         supported[col] = supported.api10.map(events.set_index("api10")[col])
     summary = []
@@ -812,8 +832,8 @@ def validate_records(frame, ev):
         if sums["read"] != sums["kept"] + sums.get("dropped", 0):
             ev.check(f"Published record count mismatch | {stage}", False)
     ev.check(
-        "Published record ledger | read equals kept plus reason-coded drops for every stage",
-        len(frame.stage.unique()) == len(ev.stages),
+        "Published record ledger | CSV stage identities and disposition totals reconcile",
+        set(frame.stage) == ev.stages,
         f"{len(ev.stages)} stages",
     )
     total = frame.loc[frame.stage.eq("OGOR archives combined | source depth join")]

@@ -221,7 +221,8 @@ def lag_figure(table):
     caption(
         fig,
         title,
-        "First completion in 2005 to 2025. The interval spans the middle half of wells whose first producing month was at or after completion.",
+        "Spuds from 2005 onward and first completions in 2005 to 2025.\n"
+        "The interval spans the middle half of wells whose first producing month was at or after completion.",
     )
     return fig, title
 
@@ -285,7 +286,7 @@ def decline_figure(table):
     caption(
         fig,
         title,
-        "First observed production in 2005 to 2020. Oil per producing day is divided by the best rate in calendar months 1 to 3.\n"
+        "Spuds from 2005 onward and first production in 2005 to 2020. Each well uses its best oil rate in months 1 to 3 as baseline.\n"
         "Open markers indicate fewer than 10 contributing wells at that age and depth.",
     )
     return fig, title
@@ -318,7 +319,7 @@ def intervention_figure(table):
         fig,
         title,
         "WARs record work after completion. Approvals cover classified well work. Age zero includes earlier qualifying events.\n"
-        "Each age uses wells with sufficient follow-up. Open markers indicate fewer than 10 eligible wells.",
+        "Each age uses wells spudded from 2005 onward with sufficient follow-up. Open markers indicate fewer than 10 eligible wells.",
     )
     return fig, title
 

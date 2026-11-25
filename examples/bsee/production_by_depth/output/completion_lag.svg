@@ -305,13 +305,13 @@ L 507.939439 273.6
     <text style="font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #333333" x="542.483138" y="192.014323" transform="rotate(-0 542.483138 192.014323)">1 (0 to 6)</text>
    </g>
    <g id="text_18">
-    <text style="font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #333333" x="722.576126" y="192.014323" transform="rotate(-0 722.576126 192.014323)">281</text>
+    <text style="font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #333333" x="722.576126" y="192.014323" transform="rotate(-0 722.576126 192.014323)">278</text>
    </g>
    <g id="text_19">
     <text style="font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #333333" x="542.483138" y="246.493741" transform="rotate(-0 542.483138 246.493741)">1 (0 to 4)</text>
    </g>
    <g id="text_20">
-    <text style="font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #333333" x="722.576126" y="246.493741" transform="rotate(-0 722.576126 246.493741)">285</text>
+    <text style="font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #333333" x="722.576126" y="246.493741" transform="rotate(-0 722.576126 246.493741)">284</text>
    </g>
    <g id="text_21">
     <text style="font-weight: 700; font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #333333" x="542.483138" y="37.35" transform="rotate(-0 542.483138 37.35)">Median (Q1 to Q3)</text>
@@ -321,10 +321,11 @@ L 507.939439 273.6
    </g>
   </g>
   <g id="text_23">
-   <text style="font-weight: 700; font-size: 13px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #333333" x="56.16" y="330.956953" transform="rotate(-0 56.16 330.956953)">Time from completion to the first producing month</text>
+   <text style="font-weight: 700; font-size: 13px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #333333" x="56.16" y="318.716953" transform="rotate(-0 56.16 318.716953)">Time from completion to the first producing month</text>
   </g>
   <g id="text_24">
-   <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #333333" x="56.16" y="348.848437" transform="rotate(-0 56.16 348.848437)">First completion in 2005 to 2025. The interval spans the middle half of wells whose first producing month was at or after completion.</text>
+   <text style="font-size: 9px; font-family: 'DejaVu Sans'; fill: #333333" transform="translate(56.16 336.698438)">Spuds from 2005 onward and first completions in 2005 to 2025.</text>
+   <text style="font-size: 9px; font-family: 'DejaVu Sans'; fill: #333333" transform="translate(56.16 348.848437)">The interval spans the middle half of wells whose first producing month was at or after completion.</text>
   </g>
  </g>
 </svg>
