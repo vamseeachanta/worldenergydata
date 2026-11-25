@@ -3,7 +3,7 @@
 This is a source inspection of the committed repository, not a live-data or deployment audit.
 Scope: [issue 1083](https://github.com/vamseeachanta/worldenergydata/issues/1083).
 Initial source inspection: `7f645ac5844b25a79374f62fb0230ef1dbb4b143` on 2026-10-12.
-Report inventory reconciliation: `648d6de46081ad98a06504a25ec8a222acbd41b1` on 2026-10-19.
+The report inventory reflects revision `0e2ab70659680fcd9db9d2500350ca4aa63edd12` on 2026-11-25.
 Capability provenance reconciliation: `dbce39011b8fc2eb45d92238f4820cd56c47d9d7` on 2026-10-21.
 It extends the module-level drawings in [BSEE architecture](bsee/bsee_architecture.puml)
 and [BSEE refresh flow](bsee/data-refresh-architecture/data-flow-diagram.md).
@@ -12,7 +12,7 @@ Double-colon suffixes identify symbols, with work IDs selecting entries in `SPEC
 Source line ranges outside Tables 3 and 4 belong to the initial inspection; use the named
 files and symbols when reading newer revisions.
 
-The tree contains **307 report HTML files and zero API capability HTML pages**,
+The tree contains **308 report HTML files and zero API capability HTML pages**,
 enumerated in [report-inventory.csv](report-inventory.csv).
 The former API capability directory was intentionally removed by
 [PR 1141](https://github.com/vamseeachanta/worldenergydata/pull/1141).
@@ -265,7 +265,7 @@ are not counted. Re-evaluate the builder and its gates when the tree changes.
 | superseded | 0 |
 | unverified | 5 |
 | one-off | 3 |
-| undetermined | 33 |
+| undetermined | 34 |
 
 Table 5. Reproduced counts; per-file evidence is in [report-inventory.csv](report-inventory.csv).
 
