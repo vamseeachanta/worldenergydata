@@ -2,8 +2,9 @@ PASS  Four source archives match manifest byte counts and SHA-256
 PASS  Every lease in this cohort took effect on the first of a month
 PASS  Converted LSETAPE depth scale agrees with BSEE's whole-metre lease lookup within one metre
 PASS  Joins preserve every cohort lease and all exploration denominators
-PASS  All 2005–20 leases reach their fifth anniversary by the last observed Gulf spud
+PASS  All 2005 to 2020 leases reach their fifth anniversary by the last observed Gulf spud
 PASS  Production detail has every calendar month from 2005-01 through the reported cutoff
+PASS  All leases effective in 2005 to 2020 have 60 reporting months from month 0 through month 59
 PASS  Lease match bounds, 2005 to 2020, All, original rule: 432 of 7,126
 PASS  Lease match bounds, 2005 to 2020, All, d type E bottom or surface: 477 of 7,126
 PASS  Issuance counts reconcile for every band and year to distinct source leases
@@ -15,4 +16,5 @@ PASS  Production, timing and primary-term sample counts reconcile for each event
 PASS  Median and middle half in every timing row match individual lease durations and ratios
 PASS  Every stage reconciles read, kept and dropped rows; downstream reads equal upstream retained rows
 PASS  Every headline value resolves to exactly one saved CSV row and column
+PASS  Five trend figures and writer citations resolve to saved table cells
 PASS  All five SVG/PNG pairs decode; SVGs use DejaVu Sans and contain no prohibited constructs

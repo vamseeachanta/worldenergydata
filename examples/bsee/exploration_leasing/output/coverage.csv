@@ -16,9 +16,9 @@ last_gulf_spud,,2026-11-06,mv_boreholes_all.txt,"Latest dated, valid Gulf bore i
 pre_effective_e_bores_2005_2026,25.0,,mv_boreholes_all.txt,E bore records on a cohort lease dated before effective date
 tied_first_spud_conflicting_cohort_lease_api10s,1.0,,mv_boreholes_all.txt,API10s touching a cohort lease with conflicting bottom leases at first spud
 tied_first_spud_conflicting_cohort_type_api10s,0.0,,mv_boreholes_all.txt,API10s touching a cohort lease with conflicting types at first spud
-undated_e_CNL,41.0,,mv_boreholes_all.txt,"2005–20 cohort E listings without dated spud, status CNL"
-undated_e_APD,3.0,,mv_boreholes_all.txt,"2005–20 cohort E listings without dated spud, status APD"
-undated_e_AST,2.0,,mv_boreholes_all.txt,"2005–20 cohort E listings without dated spud, status AST"
+undated_e_CNL,41.0,,mv_boreholes_all.txt,"2005 to 2020 cohort E listings without dated spud, status CNL"
+undated_e_APD,3.0,,mv_boreholes_all.txt,"2005 to 2020 cohort E listings without dated spud, status APD"
+undated_e_AST,2.0,,mv_boreholes_all.txt,"2005 to 2020 cohort E listings without dated spud, status AST"
 first_source_month,,1947-11,mv_productiondata.txt,Earliest year-month in production detail
 last_source_month,,2026-10,mv_productiondata.txt,Latest year-month in production detail
 last_source_month_rows,21.0,,mv_productiondata.txt,All detail rows in the terminal production month

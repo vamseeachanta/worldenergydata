@@ -5,6 +5,7 @@
 output/*
 !output/*.csv
 !output/numbers.json
+!output/figures.json
 !output/*.png
 !output/*.svg
 !output/checks.txt

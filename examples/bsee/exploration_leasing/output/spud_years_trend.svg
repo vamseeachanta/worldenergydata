@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 864 523" width="960" height="581" role="img" aria-label="Median time to spud (years) by water depth and period (Observed by file date, Within five years)" font-family="'DejaVu Sans','Segoe UI',Arial,sans-serif">
+  <title>Median time to spud (years) by water depth and period (Observed by file date, Within five years)</title>
+  <rect width="864" height="523" fill="white" />
+  <line x1="220.00000000000003" y1="17" x2="240.00000000000003" y2="17" stroke="#6588a6" stroke-width="1.5" stroke-dasharray="none" />
+  <circle cx="230.00000000000003" cy="17" r="2" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
+  <text x="244.00000000000003" y="20" font-size="9" text-anchor="start">Under 100 m</text>
+  <line x1="312.8" y1="17" x2="332.8" y2="17" stroke="#427298" stroke-width="1.5" stroke-dasharray="5.5 2.4" />
+  <rect x="320.8" y="15" width="4" height="4" stroke="#333333" stroke-width="0.5" fill="#427298" />
+  <text x="336.8" y="20" font-size="9" text-anchor="start">100 to 500 m</text>
+  <line x1="410.4" y1="17" x2="430.4" y2="17" stroke="#245476" stroke-width="1.5" stroke-dasharray="9.6 2.4 1.5 2.4" />
+  <polygon points="420.40,15.00 422.40,19.00 418.40,19.00" stroke="#333333" stroke-width="0.5" fill="#245476" />
+  <text x="434.4" y="20" font-size="9" text-anchor="start">500 to 1,500 m</text>
+  <line x1="517.6" y1="17" x2="537.6" y2="17" stroke="#102e46" stroke-width="1.5" stroke-dasharray="1.5 2.4" />
+  <polygon points="527.60,14.40 530.20,17.00 527.60,19.60 525.00,17.00" stroke="#333333" stroke-width="0.5" fill="#102e46" />
+  <text x="541.6" y="20" font-size="9" text-anchor="start">1,500 m and deeper</text>
+  <text x="78" y="46" font-size="13" text-anchor="start">Observed by file date</text>
+  <line x1="78" y1="218.0" x2="838" y2="218.0" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.5" y1="218.0" x2="78" y2="218.0" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71" y="221.5" font-size="11" text-anchor="end">0</text>
+  <line x1="78" y1="163.33" x2="838" y2="163.33" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.5" y1="163.33" x2="78" y2="163.33" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71" y="166.83" font-size="11" text-anchor="end">2</text>
+  <line x1="78" y1="108.67" x2="838" y2="108.67" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.5" y1="108.67" x2="78" y2="108.67" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71" y="112.17" font-size="11" text-anchor="end">4</text>
+  <line x1="78" y1="54.0" x2="838" y2="54.0" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.5" y1="54.0" x2="78" y2="54.0" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71" y="57.5" font-size="11" text-anchor="end">6</text>
+  <line x1="78" y1="54" x2="78" y2="218" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <line x1="78" y1="218" x2="838" y2="218" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="20" y="136.0" font-size="11" text-anchor="middle" transform="rotate(-90 20 136.0)">Median time to spud (years)</text>
+  <circle cx="204.66666666666669" cy="181.74" r="2" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
+  <line x1="204.66666666666669" y1="181.74" x2="458.0" y2="165.09" stroke="#6588a6" stroke-width="1.5" stroke-dasharray="none" />
+  <circle cx="458.0" cy="165.09" r="2" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
+  <line x1="458.0" y1="165.09" x2="711.3333333333334" y2="185.97" stroke="#6588a6" stroke-width="1.5" stroke-dasharray="none" />
+  <circle cx="711.3333333333334" cy="185.97" r="2" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
+  <rect x="202.66666666666669" y="148.01" width="4" height="4" stroke="#333333" stroke-width="0.5" fill="#427298" />
+  <line x1="204.66666666666669" y1="150.01" x2="458.0" y2="94.52" stroke="#427298" stroke-width="1.5" stroke-dasharray="5.5 2.4" />
+  <rect x="456.0" y="92.52" width="4" height="4" stroke="#333333" stroke-width="0.5" fill="#427298" />
+  <line x1="458.0" y1="94.52" x2="711.3333333333334" y2="139.01" stroke="#427298" stroke-width="1.5" stroke-dasharray="5.5 2.4" />
+  <rect x="709.3333333333334" y="137.01" width="4" height="4" stroke="#333333" stroke-width="0.5" fill="#427298" />
+  <polygon points="204.67,126.46 206.67,130.46 202.67,130.46" stroke="#333333" stroke-width="0.5" fill="#245476" />
+  <line x1="204.66666666666669" y1="128.46" x2="458.0" y2="130.07" stroke="#245476" stroke-width="1.5" stroke-dasharray="9.6 2.4 1.5 2.4" />
+  <polygon points="458.00,128.07 460.00,132.07 456.00,132.07" stroke="#333333" stroke-width="0.5" fill="#245476" />
+  <line x1="458.0" y1="130.07" x2="711.3333333333334" y2="118.02" stroke="#245476" stroke-width="1.5" stroke-dasharray="9.6 2.4 1.5 2.4" />
+  <polygon points="711.33,116.02 713.33,120.02 709.33,120.02" stroke="#333333" stroke-width="0.5" fill="#245476" />
+  <polygon points="204.67,56.45 207.27,59.05 204.67,61.65 202.07,59.05" stroke="#333333" stroke-width="0.5" fill="#102e46" />
+  <line x1="204.66666666666669" y1="59.05" x2="458.0" y2="79.07" stroke="#102e46" stroke-width="1.5" stroke-dasharray="1.5 2.4" />
+  <polygon points="458.00,76.47 460.60,79.07 458.00,81.67 455.40,79.07" stroke="#333333" stroke-width="0.5" fill="#102e46" />
+  <line x1="458.0" y1="79.07" x2="711.3333333333334" y2="136.17" stroke="#102e46" stroke-width="1.5" stroke-dasharray="1.5 2.4" />
+  <polygon points="711.33,133.57 713.93,136.17 711.33,138.77 708.73,136.17" stroke="#333333" stroke-width="0.5" fill="#102e46" />
+  <line x1="204.66666666666669" y1="218" x2="204.66666666666669" y2="221.5" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <line x1="458.0" y1="218" x2="458.0" y2="221.5" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <line x1="711.3333333333334" y1="218" x2="711.3333333333334" y2="221.5" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="78" y="252" font-size="13" text-anchor="start">Within five years</text>
+  <line x1="78" y1="424.0" x2="838" y2="424.0" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.5" y1="424.0" x2="78" y2="424.0" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71" y="427.5" font-size="11" text-anchor="end">0</text>
+  <line x1="78" y1="391.2" x2="838" y2="391.2" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.5" y1="391.2" x2="78" y2="391.2" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71" y="394.7" font-size="11" text-anchor="end">1</text>
+  <line x1="78" y1="358.4" x2="838" y2="358.4" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.5" y1="358.4" x2="78" y2="358.4" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71" y="361.9" font-size="11" text-anchor="end">2</text>
+  <line x1="78" y1="325.6" x2="838" y2="325.6" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.5" y1="325.6" x2="78" y2="325.6" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71" y="329.1" font-size="11" text-anchor="end">3</text>
+  <line x1="78" y1="292.8" x2="838" y2="292.8" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.5" y1="292.8" x2="78" y2="292.8" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71" y="296.3" font-size="11" text-anchor="end">4</text>
+  <line x1="78" y1="260.0" x2="838" y2="260.0" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.5" y1="260.0" x2="78" y2="260.0" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71" y="263.5" font-size="11" text-anchor="end">5</text>
+  <line x1="78" y1="260" x2="78" y2="424" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <line x1="78" y1="424" x2="838" y2="424" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="20" y="342.0" font-size="11" text-anchor="middle" transform="rotate(-90 20 342.0)">Median time to spud (years)</text>
+  <circle cx="204.66666666666669" cy="382.69" r="2" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
+  <line x1="204.66666666666669" y1="382.69" x2="458.0" y2="360.51" stroke="#6588a6" stroke-width="1.5" stroke-dasharray="none" />
+  <circle cx="458.0" cy="360.51" r="2" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
+  <line x1="458.0" y1="360.51" x2="711.3333333333334" y2="385.56" stroke="#6588a6" stroke-width="1.5" stroke-dasharray="none" />
+  <circle cx="711.3333333333334" cy="385.56" r="2" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
+  <rect x="202.66666666666669" y="368.75" width="4" height="4" stroke="#333333" stroke-width="0.5" fill="#427298" />
+  <line x1="204.66666666666669" y1="370.75" x2="458.0" y2="275.83" stroke="#427298" stroke-width="1.5" stroke-dasharray="5.5 2.4" />
+  <rect x="456.0" y="273.83" width="4" height="4" stroke="#333333" stroke-width="0.5" fill="#427298" />
+  <line x1="458.0" y1="275.83" x2="711.3333333333334" y2="329.21" stroke="#427298" stroke-width="1.5" stroke-dasharray="5.5 2.4" />
+  <rect x="709.3333333333334" y="327.21" width="4" height="4" stroke="#333333" stroke-width="0.5" fill="#427298" />
+  <polygon points="204.67,368.12 206.67,372.12 202.67,372.12" stroke="#333333" stroke-width="0.5" fill="#245476" />
+  <line x1="204.66666666666669" y1="370.12" x2="458.0" y2="346.32" stroke="#245476" stroke-width="1.5" stroke-dasharray="9.6 2.4 1.5 2.4" />
+  <polygon points="458.00,344.32 460.00,348.32 456.00,348.32" stroke="#333333" stroke-width="0.5" fill="#245476" />
+  <line x1="458.0" y1="346.32" x2="711.3333333333334" y2="312.74" stroke="#245476" stroke-width="1.5" stroke-dasharray="9.6 2.4 1.5 2.4" />
+  <polygon points="711.33,310.74 713.33,314.74 709.33,314.74" stroke="#333333" stroke-width="0.5" fill="#245476" />
+  <polygon points="204.67,304.57 207.27,307.17 204.67,309.77 202.07,307.17" stroke="#333333" stroke-width="0.5" fill="#102e46" />
+  <line x1="204.66666666666669" y1="307.17" x2="458.0" y2="339.27" stroke="#102e46" stroke-width="1.5" stroke-dasharray="1.5 2.4" />
+  <polygon points="458.00,336.67 460.60,339.27 458.00,341.87 455.40,339.27" stroke="#333333" stroke-width="0.5" fill="#102e46" />
+  <line x1="458.0" y1="339.27" x2="711.3333333333334" y2="354.99" stroke="#102e46" stroke-width="1.5" stroke-dasharray="1.5 2.4" />
+  <polygon points="711.33,352.39 713.93,354.99 711.33,357.59 708.73,354.99" stroke="#333333" stroke-width="0.5" fill="#102e46" />
+  <line x1="204.66666666666669" y1="424" x2="204.66666666666669" y2="427.5" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="204.66666666666669" y="440" font-size="11" text-anchor="middle">2005 to 2009</text>
+  <line x1="458.0" y1="424" x2="458.0" y2="427.5" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="458.0" y="440" font-size="11" text-anchor="middle">2010 to 2014</text>
+  <line x1="711.3333333333334" y1="424" x2="711.3333333333334" y2="427.5" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="711.3333333333334" y="440" font-size="11" text-anchor="middle">2015 to 2019</text>
+  <text x="458.0" y="460" font-size="11" text-anchor="middle">Lease effective period</text>
+  <text x="60" y="479" font-size="9" text-anchor="start">Only complete half decades with five years of follow up are plotted. The cohort tables also include leases effective in 2020.</text>
+  <text x="60" y="492" font-size="9" text-anchor="start">The first panel follows leases through November 2026, so older leases have longer observation. The second stops at the fifth</text>
+  <text x="60" y="505" font-size="9" text-anchor="start">anniversary. Timing uses leases with a qualifying spud and 365.25 days per year.</text>
+</svg>
