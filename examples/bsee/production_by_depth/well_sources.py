@@ -10,6 +10,7 @@ import pandas as pd
 
 BANDS = ["<100 m", "100–<500 m", "500–<1,500 m", "≥1,500 m"]
 SNAPSHOT = pd.Timestamp("2026-11-23")
+PRODUCTION_CUTOFF = pd.Timestamp("2026-09-30")
 REPO_ROOT = Path(__file__).resolve().parents[3]
 ARTICLE_CODE = Path("examples/bsee/interventions_by_depth/count_interventions.py")
 
@@ -51,6 +52,18 @@ def select(frame, stage, excludes, audit):
     return frame.loc[keep].copy()
 
 
+def audit_bore_quality(bores, raw_field, parsed_field, stage, invalid_reason, audit):
+    """Flag incomplete observations without removing a well from the inventory."""
+    unusable = bores[parsed_field].isna()
+    affected = bores.loc[unusable, "api10"].nunique()
+    malformed = bores.loc[unusable & bores[raw_field].ne(""), "api10"].nunique()
+    total = bores.api10.nunique()
+    audit(
+        stage, total, total, {},
+        flags={invalid_reason: malformed, "blank on a bore, no malformed values": affected - malformed},
+    )
+
+
 def inventory(bore, ref, audit, check, notes):
     bore["api"] = ref.normalize_api(bore.API_WELL_NUMBER)
     bore["api10"] = bore.api.str[:10]
@@ -68,6 +81,9 @@ def inventory(bore, ref, audit, check, notes):
         bore.api.is_unique,
         f"{len(bore):,} boreholes",
     )
+    # Historical evidence spans every bore, including cancelled records.
+    # Depth assignment still uses only non-cancelled Gulf bores.
+    bore["spud"] = calendar_dates(bore.WELL_SPUD_DATE)
     groups = bore.groupby("api10")
     statuses = groups.REGION_CODE.agg(set)
     current = pd.DataFrame(index=statuses.index)
@@ -78,18 +94,29 @@ def inventory(bore, ref, audit, check, notes):
     gulf_all = current.inventory_status.eq("gulf")
     cancelled = groups.BOREHOLE_STAT_CD.agg(lambda v: v.eq("CNL").all())
     current.loc[gulf_all & cancelled, "inventory_status"] = "cancelled_only"
+    current["first_spud"] = groups.spud.min()
+    undated_original = bore.WELL_NAME_SUFFIX.eq("ST00BP00") & bore.spud.isna()
+    current["undated_original"] = current.index.isin(bore.loc[undated_original, "api10"])
+    audit_bore_quality(
+        bore.loc[bore.api10.isin(current.index[current.inventory_status.eq("gulf")])],
+        "WELL_SPUD_DATE", "spud", "Borehole quality | all bores on Gulf inventory wells, spud, API10",
+        "nonblank unparseable spud on a bore", audit,
+    )
     gulf = select(
         bore,
-        "borehole rows for Gulf depth and spud",
+        "borehole rows for Gulf depth",
         [
             ("region outside or unresolved", ~bore.api10.isin(current.index[gulf_all])),
             ("cancelled bore", bore.BOREHOLE_STAT_CD.eq("CNL")),
         ],
         audit,
     )
-    gulf["spud"] = calendar_dates(gulf.WELL_SPUD_DATE)
     gulf["depth_ft"] = pd.to_numeric(gulf.WATER_DEPTH, errors="coerce")
     gulf["depth_ft"] = gulf.depth_ft.where(np.isfinite(gulf.depth_ft) & gulf.depth_ft.ge(0))
+    audit_bore_quality(
+        gulf, "WATER_DEPTH", "depth_ft", "Borehole quality | non-cancelled Gulf bores, depth, API10",
+        "nonblank invalid depth on a bore", audit,
+    )
     # Match the inventory depth rule of the intervention series. Origin is the
     # bore's ST00BP00 designation, not an assumption about the last two API digits.
     original = gulf[gulf.WELL_NAME_SUFFIX.eq("ST00BP00")].copy()
@@ -102,19 +129,28 @@ def inventory(bore, ref, audit, check, notes):
     current["band"] = pd.cut(
         current.depth_ft * 0.3048, [0, 100, 500, 1500, np.inf], right=False, labels=BANDS
     ).astype("string")
-    current["first_spud"] = current.index.map(gulf.groupby("api10").spud.min())
-    check(
-        "Gulf inventory assigns each API10 at most one depth band",
-        current.index.is_unique and current.loc[~current.inventory_status.eq("gulf"), "band"].isna().all(),
-        f"{current.band.notna().sum():,} API10s with depth",
+    excluded_statuses = ("outside_gulf", "unknown_region", "ambiguous_region", "cancelled_only")
+    assigned = select(
+        current,
+        "Borehole inventory | assigned depth, API10",
+        [(status, current.inventory_status.eq(status)) for status in excluded_statuses]
+        + [("unresolved depth", current.band.isna())],
+        audit,
     )
     nd = gulf.groupby("api10").depth_ft.nunique()
     eligible = current[current.inventory_status.eq("gulf")]
+    check(
+        "Gulf inventory assigns each API10 at most one depth band",
+        current.index.is_unique and assigned.index.equals(current.index[current.band.notna()]),
+        f"{len(eligible):,} non-cancelled Gulf API10s; {len(assigned):,} assigned, "
+        f"{eligible.band.isna().sum():,} unresolved, {nd.gt(1).sum():,} with differing bore depths, "
+        f"{eligible.depth_ft.eq(0).sum():,} assigned zero feet",
+    )
     notes.append(
         f"Borehole REGION_CODE G identifies the Gulf. Of {len(eligible):,} distinct Gulf wells with a non-cancelled bore, {eligible.band.isna().sum():,} lack an assignable depth. "
         f"{nd.gt(1).sum():,} have differing reported depths across bores. The series inventory uses the ST00BP00 original hole, preferring an API ending in 00, then earliest spud and lowest API. "
         f"If its depth is absent, a single agreed nonnegative depth from the remaining bores is used. {eligible.depth_ft.eq(0).sum():,} selected depths are recorded as zero feet and fall in the shallowest band. "
-        "The borehole dictionary defines WATER_DEPTH in feet. Metres = feet × 0.3048. Band lower limits are inclusive. The spud date is the earliest dated non-cancelled bore."
+        "The borehole dictionary defines WATER_DEPTH in feet. Metres = feet × 0.3048. Band lower limits are inclusive. The spud date is the earliest dated bore across the API10, including cancelled records."
     )
     return current
 
@@ -153,11 +189,20 @@ def call_first_reports(raw, wells, ref, audit, check, notes):
     )
     wells["completion_type"] = wells.index.map(labels).fillna("Unknown")
     non_com = first_rows.loc[first_rows.BOREHOLE_STAT_CD.ne("COM"), "api10"].nunique()
+    conflicting = flags.index[flags.map(len).gt(1)]
+    check(
+        "Each dated Gulf completion uses the earliest C status date; conflicting first flags stay unknown",
+        wells.completion_date.dropna().equals(first)
+        and raw.date.ge(raw.api10.map(wells.completion_date)).all()
+        and wells.loc[conflicting, "completion_type"].eq("Unknown").all(),
+        f"{non_com:,} API10s with non-COM status on an earliest C report; "
+        f"{len(conflicting):,} with differing flags on that date",
+    )
     notes.append(
         f"The eWell code table mv_eor_operationcodes defines C as COMPLETION. The earliest C report's BOREHOLE_STAT_DT (effective status date) is selected across all bores and all years before applying the cohort dates. "
         f"{non_com:,} Gulf wells have a status other than COM on at least one earliest C report. eWell electronic EOR submissions start in April 2004 and may report earlier status dates. The earliest electronic report can describe later work on an older well. "
         "At the earliest dated C report only, SUBSEA_COMPLETION_FLAG records whether a subsea completion exists. YES identifies a subsea completion. Explicit NO is a reported negative for that flag and does not identify the design of a dry tree. "
-        f"Blank, conflicting or absent evidence is unknown ({flags.map(lambda s: len(s) > 1).sum():,} earliest-date sets contain differing flag values). The undated borehole stub indicator is not used to infer historical completion type."
+        f"Blank, conflicting or absent evidence is unknown ({len(conflicting):,} earliest-date sets contain differing flag values). The undated borehole stub indicator is not used to infer historical completion type."
     )
 
 
@@ -176,7 +221,7 @@ def first_event(data, wells, ref, stage, date_col, audit, check, extra=()):
                 ~data.api10.isin(wells.index[wells.inventory_status.eq("gulf")]),
             ),
             ("absent or unparseable event date", data.date.isna()),
-            ("event after snapshot", data.date.gt(SNAPSHOT)),
+            ("event after production cutoff", data.date.gt(PRODUCTION_CUTOFF)),
             ("no dated C completion", data.completion.isna()),
             ("event on or before completion", data.date.le(data.completion)),
         ],
@@ -185,7 +230,7 @@ def first_event(data, wells, ref, stage, date_col, audit, check, extra=()):
     result = data.groupby("api10").date.min()
     check(
         f"{stage}: first events occur strictly after completion",
-        result.gt(wells.completion_date.reindex(result.index)).all(),
+        result.gt(wells.completion_date.reindex(result.index)).all() and result.le(PRODUCTION_CUTOFF).all(),
         f"{len(result):,} Gulf API10s",
     )
     return result
@@ -262,14 +307,13 @@ def load_wells(well_dir, audit, check):
         "eWell APM permit identities", len(apm), len(permits), {"repeated permit": len(apm) - len(permits)}
     )
     eligible = wells.index[wells.inventory_status.eq("gulf")]
+    permit_api10 = ref.normalize_api(permits.API_WELL_NUMBER).str[:10]
     permits = select(
         permits,
         "eWell APM permits for series classification",
         [
-            (
-                "outside eligible Gulf inventory",
-                ~ref.normalize_api(permits.API_WELL_NUMBER).str[:10].isin(eligible),
-            ),
+            ("invalid API", permit_api10.eq("")),
+            ("outside eligible Gulf inventory", ~permit_api10.isin(eligible)),
         ],
         audit,
     )

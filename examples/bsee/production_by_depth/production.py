@@ -1,7 +1,8 @@
 """OGOR-A monthly volumes and well production histories from the public ZIP files."""
 
 import csv
-from collections import Counter
+import re
+from collections import Counter, defaultdict
 from io import TextIOWrapper
 from pathlib import Path
 from zipfile import ZipFile
@@ -35,6 +36,11 @@ OGOR_COLUMNS = [
 ]
 DEPTH_BANDS = ["<100 m", "100–<500 m", "500–<1,500 m", "≥1,500 m"]
 VOLUMES = ["oil_bbl", "gas_mcf"]
+API12 = r"[0-9]{12}"
+
+
+def ogor_filename(year, current_year):
+    return "ogoradelimit.zip" if year == current_year else f"ogora{year}delimit.zip"
 
 
 def read_ogor(path):
@@ -64,7 +70,7 @@ def read_ogor(path):
     }
     data = raw[list(fields)].rename(columns=fields)
     api12 = data.pop("api12").str.strip()
-    data["api10"] = api12.str[:10].where(api12.str.fullmatch(r"[0-9]{12}"))
+    data["api10"] = api12.str[:10].where(api12.str.fullmatch(API12))
     data["month"] = pd.to_datetime(data.pop("ym"), format="%Y%m", errors="raise")
     for col in VOLUMES:
         # Signed corrections remain in volumetric sums. A blank/invalid volume
@@ -78,19 +84,19 @@ def read_ogor(path):
 
 def collapse_well_months(raw):
     """Sum volumes; identify exact producing-day denominators from day-count bounds."""
-    positive = (raw["oil_bbl"] > 0) | (raw["gas_mcf"] > 0)
+    producing_record = (raw["oil_bbl"] > 0) | (raw["gas_mcf"] > 0)
     days = raw["days"]
     calendar_days = raw["month"].dt.days_in_month
-    bad_days = positive & (~days.between(1, calendar_days) | days.mod(1).ne(0))
-    prepared = raw.assign(positive=positive, active_days=days.where(positive, 0), bad_days=bad_days)
+    bad_days = producing_record & (~days.between(1, calendar_days) | days.mod(1).ne(0))
+    prepared = raw.assign(active_days=days.where(producing_record, 0), bad_days=bad_days)
     frame = prepared.groupby(["api10", "month"], as_index=False, sort=False).agg(
         oil_bbl=("oil_bbl", "sum"),
         gas_mcf=("gas_mcf", "sum"),
-        positive=("positive", "any"),
         max_days=("active_days", "max"),
         sum_days=("active_days", "sum"),
         bad_days=("bad_days", "any"),
     )
+    frame["positive"] = frame.oil_bbl.gt(0) | frame.gas_mcf.gt(0)
     upper = np.minimum(frame.pop("sum_days"), frame["month"].dt.days_in_month)
     lower = frame.pop("max_days")
     frame["rate_status"] = np.select(
@@ -154,56 +160,66 @@ def build_activity_summary(months, check):
     return activity, summary
 
 
-def check_recent_source(prod_dir, lookup, months, last, check):
-    """Re-count the last two raw months without pandas' parser or well-month aggregation."""
+def check_recent_source(prod_dir, lookup, months, last, check, audit=None):
+    """Re-count both months directly with the CSV reader and signed API10 totals."""
     previous = last - pd.DateOffset(months=1)
     targets = {m.strftime("%Y%m"): m for m in (previous, last)}
     covered = lookup["band"].dropna().to_dict()
     bands = ["All", DEPTH_BANDS[-1]]
-    ledgers = {(ym, band): [set(), 0, 0] for ym in targets for band in bands}
-    rows = Counter()
-    with (
-        ZipFile(Path(prod_dir) / "ogoradelimit.zip") as archive,
-        archive.open("ogoradelimit.txt") as stream,
-    ):
-        for row in csv.reader(TextIOWrapper(stream, encoding="latin-1")):
-            ym = row[2]
-            if ym not in targets:
-                continue
-            rows[ym] += 1
-            api = row[8].strip()[:10]
-            if api not in covered:
-                continue
-            oil, gas = int(row[5]), int(row[6])
-            for band in bands:
-                if band != "All" and band != covered[api]:
+    monthly = {ym: defaultdict(lambda: [0, 0]) for ym in targets}
+    rows, kept = Counter(), Counter()
+    drops = {ym: Counter() for ym in targets}
+    for year in sorted({previous.year, last.year}):
+        path = Path(prod_dir) / ogor_filename(year, last.year)
+        wanted = {ym for ym, date in targets.items() if date.year == year}
+        with ZipFile(path) as archive, archive.open(path.with_suffix(".txt").name) as stream:
+            for row in csv.reader(TextIOWrapper(stream, encoding="latin-1", newline="")):
+                ym = row[2]
+                if ym not in wanted:
                     continue
-                tally = ledgers[ym, band]
-                if oil > 0 or gas > 0:
-                    tally[0].add(api)
-                tally[1] += oil
-                tally[2] += gas
+                rows[ym] += 1
+                api12 = row[8].strip()
+                if not re.fullmatch(API12, api12):
+                    drops[ym]["invalid API12"] += 1
+                    continue
+                api = api12[:10]
+                if api not in covered:
+                    drops[ym]["outside classified Gulf inventory"] += 1
+                    continue
+                kept[ym] += 1
+                tally = monthly[ym][api]
+                tally[0] += int(row[5])
+                tally[1] += int(row[6])
     notes = []
+    producing_counts = {}
     for ym, date in targets.items():
+        if audit is not None:
+            audit(f"OGOR raw recount / {date:%Y-%m}", rows[ym], kept[ym], dict(drops[ym]))
         sample = months.loc[months.month.eq(date)]
         for band in bands:
-            direct = ledgers[ym, band]
+            direct = {
+                api: volumes
+                for api, volumes in monthly[ym].items()
+                if band == "All" or covered[api] == band
+            }
+            producers = {api for api, (oil, gas) in direct.items() if oil > 0 or gas > 0}
+            oil = sum(v[0] for v in direct.values())
+            gas = sum(v[1] for v in direct.values())
             sub = sample if band == "All" else sample.loc[sample.band.eq(band)]
-            n = len(direct[0])
-            detail = f"{n:,} producing wells, {direct[1]:,} bbl, {direct[2]:,} Mcf"
+            detail = f"{len(producers):,} producing wells, {oil:,} bbl, {gas:,} Mcf"
             check(
                 f"Raw CSV recount | {date:%Y-%m} {band} unique producers, oil and gas",
-                set(sub.loc[sub.positive, "api10"]) == direct[0]
-                and int(sub.oil_bbl.sum()) == direct[1]
-                and int(sub.gas_mcf.sum()) == direct[2],
+                rows[ym] > 0
+                and set(sub.loc[sub.positive, "api10"]) == producers
+                and int(sub.oil_bbl.sum()) == oil
+                and int(sub.gas_mcf.sum()) == gas,
                 detail,
             )
             if band == "All":
+                producing_counts[ym] = len(producers)
                 notes.append(f"{date:%B %Y}: {rows[ym]:,} raw rows; classified Gulf total {detail}.")
     last_ym, prior_ym = last.strftime("%Y%m"), previous.strftime("%Y%m")
-    if rows[last_ym] < rows[prior_ym] and len(ledgers[last_ym, "All"][0]) < len(
-        ledgers[prior_ym, "All"][0]
-    ):
+    if rows[last_ym] < rows[prior_ym] and producing_counts[last_ym] < producing_counts[prior_ym]:
         notes.append(
             "The final month has fewer source rows and producing wells than the previous month. "
             "This snapshot cannot separate reporting coverage changes from operating changes. "
@@ -227,7 +243,7 @@ def load_production(prod_dir, wells, audit, check):
     source_rows = 0
     retained_rows = 0
     for year in range(2005, 2027):
-        filename = "ogoradelimit.zip" if year == 2026 else f"ogora{year}delimit.zip"
+        filename = ogor_filename(year, 2026)
         data = read_ogor(Path(prod_dir) / filename)
         source_rows += len(data)
         check(f"{filename} year identity", bool(data["month"].dt.year.eq(year).all()) and len(data) > 0)
@@ -254,8 +270,9 @@ def load_production(prod_dir, wells, audit, check):
         # Source totals and distinct API10s are computed directly from raw rows
         # before the well-month transform used by the four band series.
         source_months.append(kept.groupby("month")[VOLUMES].sum())
-        producing = kept["oil_bbl"].gt(0) | kept["gas_mcf"].gt(0)
-        raw_year_counts.append((year, kept.loc[producing, "api10"].nunique()))
+        signed = kept.groupby(["api10", "month"])[VOLUMES].sum()
+        producing = signed.gt(0).any(axis=1)
+        raw_year_counts.append((year, signed.index.get_level_values("api10")[producing].nunique()))
         reported.append(kept.groupby("api10")["reported_first"].min())
         frames.append(collapse_well_months(kept))
 
@@ -312,6 +329,12 @@ def load_production(prod_dir, wells, audit, check):
         )
 
     active = well_months.loc[well_months["positive"], ["month", "api10", "band"]]
+    audit(
+        "OGOR well-months / producing activity",
+        len(well_months),
+        len(active),
+        {"no positive net oil or gas": int((~well_months.positive).sum())},
+    )
     active = active.assign(year=active["month"].dt.year)
     annual_by_band = active.groupby(["year", "band"])["api10"].nunique().to_frame("producing_wells")
     raw_counts = pd.DataFrame(raw_year_counts, columns=["year", "producing_wells"]).set_index("year")
@@ -348,7 +371,7 @@ def load_production(prod_dir, wells, audit, check):
             "Units and field meanings follow docs/modules/bsee/PRODUCTION_DATA_RETRIEVAL_GUIDE.md."
         ),
         (
-            "A producing well has at least one completion record with positive oil or gas in the year. "
+            "A producing well has at least one API10-month with positive net oil or gas in the year. "
             f"The period contains {well_years:,} producing well-years and {active['api10'].nunique():,} distinct "
             "producing wells. Annual counts are additive in well-years."
         ),
@@ -375,5 +398,5 @@ def load_production(prod_dir, wells, audit, check):
             f"({dropped_volumes[reason, 'oil_bbl']:,} bbl and "
             f"{dropped_volumes[reason, 'gas_mcf']:,} Mcf)."
         )
-    notes.extend(check_recent_source(prod_dir, lookup, well_months, last, check))
+    notes.extend(check_recent_source(prod_dir, lookup, well_months, last, check, audit))
     return well_months, monthly, annual, notes

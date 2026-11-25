@@ -62,31 +62,32 @@ def self_test():
         {
             "api10": list("abcd"),
             "band": BANDS[0],
-            "first_spud": dt(["2004-12-01"] * 4),
+            "first_spud": dt(["2005-01-01"] * 4),
+            "undated_original": False,
             "completion_date": dt(["2005-01-31", "2005-02-01", "2005-01-01", None]),
             "completion_type": "Subsea",
             "war_date": dt(["2005-04-05", None, None, None]),
             "permit_date": dt([None] * 4),
         }
     )
-    discard = lambda *args: None
+    audit = Evidence().audit
 
     def verify(name, condition, detail=""):
         if not condition:
             raise AssertionError(name + " " + detail)
 
-    starts = first_months(sm, src, discard, verify)
+    starts = first_months(sm, src, audit, verify)
     verify("supported starts", set(starts.loc[starts.start_supported, "api10"]) == {"a", "b", "d"})
-    lag = completion_lags(src, starts, discard, verify)
+    lag = completion_lags(src, starts, audit, verify)
     pooled_lags = lag.loc[lag.band.eq("All")].set_index("population")
     verify("signed lag median", pooled_lags.loc["signed", "median_months"] == -0.5)
     verify("ordered lag count", pooled_lags.loc["ordered", "wells"] == 1)
-    decline = decline_curve(sm, starts, discard, verify)
+    decline = decline_curve(sm, starts, audit, verify)
     curve = decline.query("band == 'All' and completion_type == 'All'").set_index("age_month")
     rates = curve.median_relative_rate
     verify("relative rates at ages one and four", rates.loc[1] == 0.5 and rates.loc[4] == 2)
     verify("missing and zero rates", curve.loc[3, "wells"] == 0 and rates.loc[5] == 0)
-    events = intervention_curve(starts, pd.Timestamp("2006-01-01"), discard, verify)
+    events = intervention_curve(starts, pd.Timestamp("2006-01-01"), audit, verify)
     ev = events.query("band == 'All' and measure == 'Post-completion WAR'").set_index("age_year")
     verify("events at years zero and one", ev.event_wells.loc[0] == 0 and ev.event_wells.loc[1] == 1)
     first_year = ev.loc[1]
@@ -122,29 +123,27 @@ def first_months(months, inventory, audit, check):
         "Each producing API10 has exactly one inventory record and one assigned band",
         len(starts) == len(first) and starts.band.isin(BANDS).all(),
     )
-    # An earlier recorded first-production date is affirmative evidence of left censoring.
-    # In its absence, a post-window spud or recorded start can establish window coverage.
-    prewindow = starts.reported_first.lt(WINDOW)
     observed = month_number(starts.first_month)
     spud_in_time = month_number(starts.first_spud).le(observed)
     report_in_time = month_number(starts.reported_first).le(observed)
     evidenced = (starts.first_spud.ge(WINDOW) & spud_in_time) | (
         starts.reported_first.ge(WINDOW) & report_in_time
     )
-    starts["start_supported"] = ~prewindow & evidenced
-    starts["start_reason"] = np.select(
-        [prewindow, ~evidenced],
-        ["reported first production predates January 2005", "no timely in-window spud or reported start"],
-        default="observed window covers start",
-    )
-    count_filter(
-        "First positive month | API10 start evidence",
-        starts,
-        {
-            "reported first production predates January 2005": prewindow,
-            "no timely in-window spud or reported start": ~evidenced,
-        },
-        audit,
+    vetoes = {
+        "reported first production predates January 2005": starts.reported_first.lt(WINDOW),
+        "earliest bore spud predates January 2005": starts.first_spud.lt(WINDOW),
+        "undated original bore": starts.undated_original,
+        "no dated bore spud": starts.first_spud.isna(),
+        "first C completion predates January 2005": starts.completion_date.lt(WINDOW),
+        "no timely in-window spud or reported start": ~evidenced,
+    }
+    kept = "observed window covers start"
+    starts["start_reason"] = np.select(list(vetoes.values()), list(vetoes), default=kept)
+    starts["start_supported"] = starts.start_reason.eq(kept)
+    counts = starts.start_reason.value_counts()
+    audit(
+        "First positive month | API10 start evidence", len(starts), int(starts.start_supported.sum()),
+        {reason: int(counts.get(reason, 0)) for reason in vetoes},
     )
     starts["type_at_start"] = starts.completion_type.where(
         starts.completion_date.notna()
@@ -158,8 +157,17 @@ def first_months(months, inventory, audit, check):
     return starts
 
 
+def completion_window(inventory, stage, audit):
+    year = inventory.completion_date.dt.year
+    return count_filter(
+        f"{stage} | completion window, API10", inventory,
+        {"no dated C completion": year.isna(), "first C before 2005": year.lt(2005),
+         "first C after 2025": year.gt(2025)}, audit,
+    )
+
+
 def completion_lags(inventory, starts, audit, check):
-    cohort = inventory.loc[inventory.completion_date.dt.year.between(2005, 2025)].copy()
+    cohort = completion_window(inventory, "Completion lag", audit)
     cohort = cohort.merge(
         starts[["api10", "first_month", "start_supported", "start_reason"]],
         on="api10",
@@ -225,13 +233,28 @@ def check_parts(name, frame, keys, columns, check, field="band"):
 
 
 def decline_curve(months, starts, audit, check):
-    cohort = starts.loc[starts.start_supported & starts.first_month.dt.year.between(2005, 2020)]
-    series = months.merge(
-        cohort[["api10", "first_month", "type_at_start"]], on="api10", validate="many_to_one", how="inner"
+    supported = starts[starts.start_supported]
+    cohort = count_filter(
+        "Decline | start window, supported API10", supported,
+        {"first positive month outside 2005–2020": ~supported.first_month.dt.year.between(2005, 2020)},
+        audit,
+    )
+    series = count_filter(
+        "Decline | join to start cohort, well-months", months,
+        {"outside supported 2005–2020 start cohort": ~months.api10.isin(cohort.api10)}, audit,
+    ).merge(
+        cohort[["api10", "first_month", "type_at_start"]], on="api10", validate="many_to_one"
     )
     series["age_month"] = 1 + month_number(series.month) - month_number(series.first_month)
-    series = series.loc[series.age_month.between(1, 60)].copy()
-    early = series.loc[series.age_month.le(3)]
+    series = count_filter(
+        "Decline | calendar ages 1–60, well-months", series,
+        {"before first positive month": series.age_month.lt(1), "after month 60": series.age_month.gt(60)},
+        audit,
+    )
+    early = count_filter(
+        "Decline | first three months for baseline, well-months", series,
+        {"after baseline window": series.age_month.gt(3)}, audit,
+    )
     # An unresolved positive-oil rate could exceed the available maximum.
     indeterminate = early.loc[early.oil_bbl.gt(0) & early.oil_rate.isna(), "api10"].unique()
     candidates = cohort.set_index("api10").join(early.groupby("api10").oil_rate.max().rename("baseline"))
@@ -246,7 +269,10 @@ def decline_curve(months, starts, audit, check):
         },
         audit,
     )
-    panel = series.loc[series.api10.isin(valid.index)].copy()
+    panel = count_filter(
+        "Decline | baseline eligibility, well-months", series,
+        {"well excluded from baseline": ~series.api10.isin(valid.index)}, audit,
+    )
     panel = count_filter(
         "Decline | observed baseline-eligible well-month records, ages 1–60",
         panel,
@@ -312,20 +338,26 @@ def decline_curve(months, starts, audit, check):
 
 
 def intervention_curve(starts, cutoff, audit, check):
-    cohort = starts.loc[starts.start_supported].copy()
+    cohort = count_filter(
+        "Interventions | supported starts, API10", starts, {"unsupported start": ~starts.start_supported}, audit
+    )
     age_cap = cutoff.year * 12 + cutoff.month - 1 - month_number(cohort.first_month)
     opportunity = int(age_cap.max() // 12) if len(cohort) else 0
     completed = month_number(cohort.completion_date) - month_number(cohort.first_month)
     rows = []
+    horizons = {age: age_cap.ge(age * 12) for age in range(opportunity + 1)}
+    for age, risk in horizons.items():
+        reached = int(risk.sum())
+        audit(f"Interventions | year {age} anniversary, API10", len(cohort), reached,
+              {"anniversary after production cutoff": len(cohort) - reached})
     for col, measure in [("war_date", "Post-completion WAR"), ("permit_date", "Intervention approval")]:
         check(
             f"{measure} | every qualifying date is strictly after earliest completion",
             (cohort[col].isna() | cohort[col].gt(cohort.completion_date)).all(),
         )
         event = month_number(cohort[col]) - month_number(cohort.first_month)
-        for age in range(opportunity + 1):
+        for age, risk in horizons.items():
             elapsed = age * 12
-            risk = age_cap.ge(elapsed)
             for band in [*BANDS, "All"]:
                 group = risk if band == "All" else risk & cohort.band.eq(band)
                 eligible = int(group.sum())
@@ -379,10 +411,13 @@ class Evidence:
         if not condition:
             raise ValueError(self.results[-1])
 
-    def audit(self, stage, read, kept, drops, volumes=None):
+    def audit(self, stage, read, kept, drops, volumes=None, flags=None):
         if stage in self.stages:
             raise ValueError(f"Duplicate audit stage: {stage}")
         self.stages.add(stage)
+        flags = flags or {}
+        if any(n < 0 for n in flags.values()) or sum(flags.values()) > kept:
+            raise ValueError(f"Quality flags exceed retained records: {stage}")
         self.check(
             f"Record conservation | {stage}",
             min([read, kept, *drops.values()]) >= 0 and read == kept + sum(drops.values()),
@@ -392,6 +427,7 @@ class Evidence:
             ("read", "input", read),
             ("kept", "retained", kept),
             *(("dropped", k, v) for k, v in drops.items()),
+            *(("flagged", k, v) for k, v in flags.items()),
         ]:
             rec = {"stage": stage, "disposition": disposition, "reason": reason, "rows": int(rows)}
             if volumes is not None:
@@ -417,20 +453,38 @@ def verify_inputs(data_dir, check):
     raw = path.read_bytes()
     require_digest(path.name, PUBLIC_PINS_SHA256, hashlib.sha256(raw).hexdigest())
     pins = json.loads(raw)
+    sources = pins["sources"]
+    snapshots = set(ORIGINAL_MANIFESTS)
+    if (
+        not sources
+        or {p["snapshot"] for p in sources} != snapshots
+        or set(pins["manifest_sha256"]) != snapshots
+    ):
+        raise ValueError("Pin coverage: source and manifest snapshot sets must match the registered snapshots")
+    expected = {p["name"] for p in sources}
+    if len(expected) != len(sources):
+        raise ValueError("Duplicate archive name in source pins")
     # The public projection binds each original manifest's verified digest to
     # its complete archive inventory. The audit uses the original snapshot IDs.
+    verified = set()
     for snapshot, digest in ORIGINAL_MANIFESTS.items():
-        archives = [entry for entry in pins["sources"] if entry["snapshot"] == snapshot]
+        archives = [entry for entry in sources if entry["snapshot"] == snapshot]
         check(f"Manifest SHA-256 | {snapshot}", pins["manifest_sha256"][snapshot] == digest, digest)
         for entry in archives:
             archive = data_dir / entry["name"]
             require_digest(archive.name, entry["sha256"], hash_file(archive))
-        check(f"Archive digests match every manifest entry | {snapshot}", True, f"{len(archives)} ZIPs")
+            verified.add(entry["name"])
+        check(
+            f"Archive digests match every manifest entry | {snapshot}",
+            bool(archives) and all(entry["name"] in verified for entry in archives),
+            f"{len(archives)} ZIPs",
+        )
+    check("Every pinned ZIP was hashed", verified == expected, f"{len(verified)} unique archives")
 
 
 def build_tables(data_dir, ev):
     from production import build_activity_summary, load_production
-    from well_sources import load_wells
+    from well_sources import PRODUCTION_CUTOFF, load_wells
 
     inventory, well_notes = load_wells(data_dir, ev.audit, ev.check)
     months, monthly, annual, ogor_notes = load_production(data_dir, inventory, ev.audit, ev.check)
@@ -438,10 +492,11 @@ def build_tables(data_dir, ev):
     monthly = monthly.merge(activity, on=["month", "band"], validate="one_to_one")
     starts = first_months(months, inventory, ev.audit, ev.check)
     last = monthly.month.max()
+    ev.check("Event cutoff equals final OGOR production month end", last + pd.offsets.MonthEnd(0) == PRODUCTION_CUTOFF)
     lag = completion_lags(inventory, starts, ev.audit, ev.check)
     decline = decline_curve(months, starts, ev.audit, ev.check)
     intervention = intervention_curve(starts, last, ev.audit, ev.check)
-    period = article_summary(period, inventory, starts, months, last, ev.check)
+    period = article_summary(period, inventory, starts, months, last, ev.check, ev.audit)
     # Annual volumes are included beside annual headcounts for direct citation.
     sums = (
         monthly.assign(year=monthly.month.dt.year)
@@ -475,11 +530,18 @@ def build_tables(data_dir, ev):
     mismatch = (
         month_number(obs.reported_first).ne(month_number(obs.first_month)) & obs.reported_first.notna()
     )
+    late_c = month_number(obs.completion_date).gt(month_number(obs.first_month))
+    ev.check(
+        "Startup diagnostics | supported producers with mismatched reported month or incomplete C history",
+        starts.api10.is_unique and not (obs.completion_date.isna() & late_c).any(),
+        f"{mismatch.sum():,} first-date month mismatches; {obs.completion_date.isna().sum():,} without "
+        f"a dated C; {late_c.sum():,} first C in a later month",
+    )
     notes = [
         (
             f"Of {len(starts):,} producing Gulf API10s with assigned depth, {len(obs):,} have evidence that the production window covers their start. "
             f"{reported.lt(WINDOW).sum():,} have a reported FIRST_PROD_DATE before 2005. "
-            f"{(~starts.start_supported & ~reported.lt(WINDOW)).sum():,} have no in-window start evidence. "
+            f"{(~starts.start_supported & ~reported.lt(WINDOW)).sum():,} fail other history or timing criteria. "
             f"Among retained starts, {mismatch.sum():,} have a reported first-production month different from the first positive OGOR month. "
             "The measured first positive month controls the age calculation."
         ),
@@ -505,17 +567,28 @@ def build_tables(data_dir, ev):
     return tables, [*ogor_notes, *notes, *well_notes]
 
 
-def article_summary(period, inventory, starts, months, last, check):
+def article_summary(period, inventory, starts, months, last, check, audit):
     """Companion table for article text. Reach and elapsed time have different denominators."""
-    cohort = inventory.loc[
-        inventory.band.isin(BANDS) & inventory.completion_date.dt.year.between(2005, 2025)
-    ].copy()
+    window = completion_window(inventory, "Article summary", audit)
+    cohort = count_filter(
+        "Article summary | assigned band, completion cohort API10", window,
+        {"no assigned Gulf depth band": ~window.band.isin(BANDS)}, audit,
+    )
     latest = months.loc[months.positive].groupby("api10").month.max()
     cohort["ever_positive"] = cohort.api10.isin(latest.index)
     cohort["produced_since_c_month"] = month_number(cohort.api10.map(latest)).ge(
         month_number(cohort.completion_date)
     )
     supported = starts.loc[starts.start_supported].copy()
+    end = last + pd.offsets.MonthEnd(0)
+    for col in ["war_date", "permit_date"]:
+        events = count_filter(
+            f"Article summary | {col} by cutoff, inventory API10", inventory,
+            {"no dated qualifying event": inventory[col].isna(), "event after production cutoff": inventory[col].gt(end),
+             "no positive joined OGOR month": ~inventory.api10.isin(starts.api10),
+             "unsupported production start": ~inventory.api10.isin(supported.api10)}, audit,
+        )
+        supported[col] = supported.api10.map(events.set_index("api10")[col])
     summary = []
     additions = [
         "cohort_completions",
@@ -535,7 +608,7 @@ def article_summary(period, inventory, starts, months, last, check):
             "share_produced_in_or_after_c_month": c.produced_since_c_month.mean(),
         }
         for source, col in [("war", "war_date"), ("permit", "permit_date")]:
-            event = s.loc[s[col].le(last + pd.offsets.MonthEnd(0))]
+            event = s.loc[s[col].notna()]
             rec[f"{source}_by_cutoff_wells"] = len(event)
             rec[f"{source}_by_cutoff_share"] = len(event) / len(s) if len(s) else np.nan
             rec[f"{source}_signed_event_age_median_months"] = (
@@ -636,6 +709,7 @@ def headline_spec(tables):
                         "eligible_wells",
                         "event_wells",
                         "share",
+                        "share_among_completion_observed",
                         "completion_observed_wells",
                         "pre_origin_event_wells",
                     ],
@@ -651,7 +725,8 @@ def headline_spec(tables):
                 "denominator_filter": {"year": year, "band": "All"},
             }
     stage = tables["record_counts"]
-    for r in stage[~stage.stage.str.startswith("OGOR depth join") & stage.rows.gt(0)].itertuples():
+    counts = stage.loc[stage.disposition.ne("flagged") & stage.rows.gt(0)]
+    for r in counts.loc[~counts.stage.str.startswith("OGOR depth join")].itertuples():
         add(
             f"audit/{r.stage}/{r.disposition}/{r.reason}",
             "record_counts",
@@ -725,8 +800,8 @@ def publish_numbers(tables, folder, check):
     )
     reread = json.loads(path.read_text(encoding="utf-8"))
     check(
-        "Headline values reproduce from their published CSV filters and operations",
-        all(x["values"] == values_for(x, tables) for x in reread["headlines"].values()),
+        "Published JSON readback | citation definitions and values match serialized payload",
+        reread == payload,
         f"{len(specs)} citations",
     )
 

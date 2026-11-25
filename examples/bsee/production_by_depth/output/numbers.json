@@ -125,13 +125,13 @@
         "cohort_completions": 1822,
         "ever_produced_wells": 1780,
         "produced_in_or_after_c_month_wells": 1766,
-        "supported_starts": 1554,
+        "supported_starts": 1075,
         "share_produced_in_or_after_c_month": 0.969264544456641,
-        "war_by_cutoff_wells": 1308,
-        "war_by_cutoff_share": 0.8416988416988417,
-        "war_signed_event_age_median_months": 16.0,
-        "permit_by_cutoff_wells": 1122,
-        "permit_by_cutoff_share": 0.722007722007722,
+        "war_by_cutoff_wells": 961,
+        "war_by_cutoff_share": 0.893953488372093,
+        "war_signed_event_age_median_months": 18.0,
+        "permit_by_cutoff_wells": 812,
+        "permit_by_cutoff_share": 0.7553488372093023,
         "permit_signed_event_age_median_months": 7.0
       }
     },
@@ -277,12 +277,12 @@
       ],
       "operation": "row",
       "values": {
-        "wells": 1295,
+        "wells": 1014,
         "p25_months": 0.0,
         "median_months": 1.0,
         "p75_months": 4.0,
         "pre_completion_wells": 0,
-        "same_month_wells": 466
+        "same_month_wells": 334
       }
     },
     "under100/lag/signed": {
@@ -301,12 +301,12 @@
       ],
       "operation": "row",
       "values": {
-        "wells": 1315,
+        "wells": 1027,
         "p25_months": 0.0,
         "median_months": 1.0,
         "p75_months": 4.0,
-        "pre_completion_wells": 20,
-        "same_month_wells": 466
+        "pre_completion_wells": 13,
+        "same_month_wells": 334
       }
     },
     "under100/decline/All/1": {
@@ -323,9 +323,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 1212,
-        "wells": 1207,
-        "median_relative_rate": 0.6696052261871311
+        "baseline_wells": 824,
+        "wells": 819,
+        "median_relative_rate": 0.6634146341463415
       }
     },
     "under100/decline/All/12": {
@@ -342,9 +342,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 1212,
-        "wells": 983,
-        "median_relative_rate": 0.4814647377938517
+        "baseline_wells": 824,
+        "wells": 688,
+        "median_relative_rate": 0.505315344882074
       }
     },
     "under100/decline/All/60": {
@@ -361,9 +361,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 1212,
-        "wells": 714,
-        "median_relative_rate": 0.18270508710315012
+        "baseline_wells": 824,
+        "wells": 499,
+        "median_relative_rate": 0.1867335829734289
       }
     },
     "under100/decline/Subsea/1": {
@@ -380,9 +380,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 21,
-        "wells": 21,
-        "median_relative_rate": 0.5008130081300813
+        "baseline_wells": 20,
+        "wells": 20,
+        "median_relative_rate": 0.4803427153096631
       }
     },
     "under100/decline/Subsea/12": {
@@ -399,9 +399,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 21,
-        "wells": 17,
-        "median_relative_rate": 0.3915117618029281
+        "baseline_wells": 20,
+        "wells": 16,
+        "median_relative_rate": 0.3829256488775725
       }
     },
     "under100/decline/Subsea/60": {
@@ -418,9 +418,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 21,
-        "wells": 6,
-        "median_relative_rate": 0.35109698100962655
+        "baseline_wells": 20,
+        "wells": 5,
+        "median_relative_rate": 0.5853322304935208
       }
     },
     "under100/decline/No subsea flag (NO)/1": {
@@ -437,9 +437,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 1015,
-        "wells": 1010,
-        "median_relative_rate": 0.66640173529225
+        "baseline_wells": 742,
+        "wells": 737,
+        "median_relative_rate": 0.6715274625510667
       }
     },
     "under100/decline/No subsea flag (NO)/12": {
@@ -456,9 +456,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 1015,
-        "wells": 841,
-        "median_relative_rate": 0.4862030343142246
+        "baseline_wells": 742,
+        "wells": 625,
+        "median_relative_rate": 0.5102178004840011
       }
     },
     "under100/decline/No subsea flag (NO)/60": {
@@ -475,9 +475,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 1015,
-        "wells": 640,
-        "median_relative_rate": 0.1855737757051021
+        "baseline_wells": 742,
+        "wells": 466,
+        "median_relative_rate": 0.1894001576636396
       }
     },
     "under100/decline/Unknown/1": {
@@ -494,9 +494,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 176,
-        "wells": 176,
-        "median_relative_rate": 0.757402748533894
+        "baseline_wells": 62,
+        "wells": 62,
+        "median_relative_rate": 0.5678296353422287
       }
     },
     "under100/decline/Unknown/12": {
@@ -513,9 +513,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 176,
-        "wells": 125,
-        "median_relative_rate": 0.4120879120879121
+        "baseline_wells": 62,
+        "wells": 47,
+        "median_relative_rate": 0.3899207125013577
       }
     },
     "under100/decline/Unknown/60": {
@@ -532,9 +532,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 176,
-        "wells": 68,
-        "median_relative_rate": 0.15932561175520077
+        "baseline_wells": 62,
+        "wells": 28,
+        "median_relative_rate": 0.09253675974639147
       }
     },
     "under100/Post-completion WAR/0": {
@@ -548,16 +548,18 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 1554,
-        "event_wells": 367,
-        "share": 0.23616473616473616,
-        "completion_observed_wells": 1388,
-        "pre_origin_event_wells": 262
+        "eligible_wells": 1075,
+        "event_wells": 233,
+        "share": 0.21674418604651163,
+        "share_among_completion_observed": 0.22933070866141733,
+        "completion_observed_wells": 1016,
+        "pre_origin_event_wells": 158
       }
     },
     "under100/Post-completion WAR/1": {
@@ -571,16 +573,18 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 1552,
-        "event_wells": 592,
-        "share": 0.38144329896907214,
-        "completion_observed_wells": 1393,
-        "pre_origin_event_wells": 262
+        "eligible_wells": 1073,
+        "event_wells": 412,
+        "share": 0.38397017707362535,
+        "share_among_completion_observed": 0.40471512770137524,
+        "completion_observed_wells": 1018,
+        "pre_origin_event_wells": 158
       }
     },
     "under100/Post-completion WAR/5": {
@@ -594,16 +598,18 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 1523,
-        "event_wells": 1013,
-        "share": 0.6651346027577151,
-        "completion_observed_wells": 1377,
-        "pre_origin_event_wells": 257
+        "eligible_wells": 1044,
+        "event_wells": 729,
+        "share": 0.6982758620689655,
+        "share_among_completion_observed": 0.7297297297297297,
+        "completion_observed_wells": 999,
+        "pre_origin_event_wells": 153
       }
     },
     "under100/Post-completion WAR/10": {
@@ -617,16 +623,18 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 1471,
-        "event_wells": 1160,
-        "share": 0.7885791978246091,
-        "completion_observed_wells": 1326,
-        "pre_origin_event_wells": 250
+        "eligible_wells": 1002,
+        "event_wells": 843,
+        "share": 0.8413173652694611,
+        "share_among_completion_observed": 0.8808777429467085,
+        "completion_observed_wells": 957,
+        "pre_origin_event_wells": 147
       }
     },
     "under100/Post-completion WAR/20": {
@@ -640,16 +648,18 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 503,
-        "event_wells": 382,
-        "share": 0.7594433399602386,
-        "completion_observed_wells": 392,
-        "pre_origin_event_wells": 71
+        "eligible_wells": 265,
+        "event_wells": 224,
+        "share": 0.8452830188679246,
+        "share_among_completion_observed": 0.986784140969163,
+        "completion_observed_wells": 227,
+        "pre_origin_event_wells": 27
       }
     },
     "under100/Intervention approval/0": {
@@ -663,16 +673,18 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 1554,
-        "event_wells": 339,
-        "share": 0.21814671814671815,
-        "completion_observed_wells": 1388,
-        "pre_origin_event_wells": 226
+        "eligible_wells": 1075,
+        "event_wells": 242,
+        "share": 0.22511627906976744,
+        "share_among_completion_observed": 0.23818897637795275,
+        "completion_observed_wells": 1016,
+        "pre_origin_event_wells": 151
       }
     },
     "under100/Intervention approval/1": {
@@ -686,16 +698,18 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 1552,
-        "event_wells": 649,
-        "share": 0.4181701030927835,
-        "completion_observed_wells": 1393,
-        "pre_origin_event_wells": 226
+        "eligible_wells": 1073,
+        "event_wells": 475,
+        "share": 0.4426840633737186,
+        "share_among_completion_observed": 0.46660117878192536,
+        "completion_observed_wells": 1018,
+        "pre_origin_event_wells": 151
       }
     },
     "under100/Intervention approval/5": {
@@ -709,16 +723,18 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 1523,
-        "event_wells": 977,
-        "share": 0.6414970453053185,
-        "completion_observed_wells": 1377,
-        "pre_origin_event_wells": 223
+        "eligible_wells": 1044,
+        "event_wells": 703,
+        "share": 0.6733716475095786,
+        "share_among_completion_observed": 0.7037037037037037,
+        "completion_observed_wells": 999,
+        "pre_origin_event_wells": 148
       }
     },
     "under100/Intervention approval/10": {
@@ -732,16 +748,18 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 1471,
-        "event_wells": 1044,
-        "share": 0.7097212780421482,
-        "completion_observed_wells": 1326,
-        "pre_origin_event_wells": 219
+        "eligible_wells": 1002,
+        "event_wells": 746,
+        "share": 0.7445109780439122,
+        "share_among_completion_observed": 0.7795193312434692,
+        "completion_observed_wells": 957,
+        "pre_origin_event_wells": 144
       }
     },
     "under100/Intervention approval/20": {
@@ -755,16 +773,18 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 503,
-        "event_wells": 332,
-        "share": 0.6600397614314115,
-        "completion_observed_wells": 392,
-        "pre_origin_event_wells": 63
+        "eligible_wells": 265,
+        "event_wells": 185,
+        "share": 0.6981132075471698,
+        "share_among_completion_observed": 0.8149779735682819,
+        "completion_observed_wells": 227,
+        "pre_origin_event_wells": 29
       }
     },
     "100_500/year/2005": {
@@ -875,14 +895,14 @@
         "cohort_completions": 221,
         "ever_produced_wells": 214,
         "produced_in_or_after_c_month_wells": 213,
-        "supported_starts": 195,
+        "supported_starts": 128,
         "share_produced_in_or_after_c_month": 0.9638009049773756,
-        "war_by_cutoff_wells": 157,
-        "war_by_cutoff_share": 0.8051282051282052,
-        "war_signed_event_age_median_months": 8.0,
-        "permit_by_cutoff_wells": 144,
-        "permit_by_cutoff_share": 0.7384615384615385,
-        "permit_signed_event_age_median_months": 12.5
+        "war_by_cutoff_wells": 115,
+        "war_by_cutoff_share": 0.8984375,
+        "war_signed_event_age_median_months": 10.0,
+        "permit_by_cutoff_wells": 104,
+        "permit_by_cutoff_share": 0.8125,
+        "permit_signed_event_age_median_months": 15.0
       }
     },
     "100_500/month/2005-12": {
@@ -1027,12 +1047,12 @@
       ],
       "operation": "row",
       "values": {
-        "wells": 158,
+        "wells": 124,
         "p25_months": 0.0,
         "median_months": 0.0,
         "p75_months": 1.0,
         "pre_completion_wells": 0,
-        "same_month_wells": 95
+        "same_month_wells": 71
       }
     },
     "100_500/lag/signed": {
@@ -1051,12 +1071,12 @@
       ],
       "operation": "row",
       "values": {
-        "wells": 160,
+        "wells": 125,
         "p25_months": 0.0,
         "median_months": 0.0,
         "p75_months": 1.0,
-        "pre_completion_wells": 2,
-        "same_month_wells": 95
+        "pre_completion_wells": 1,
+        "same_month_wells": 71
       }
     },
     "100_500/decline/All/1": {
@@ -1073,9 +1093,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 168,
-        "wells": 168,
-        "median_relative_rate": 0.691540005966238
+        "baseline_wells": 112,
+        "wells": 112,
+        "median_relative_rate": 0.717002748654034
       }
     },
     "100_500/decline/All/12": {
@@ -1092,9 +1112,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 168,
-        "wells": 139,
-        "median_relative_rate": 0.6036285417593829
+        "baseline_wells": 112,
+        "wells": 95,
+        "median_relative_rate": 0.5951129795060431
       }
     },
     "100_500/decline/All/60": {
@@ -1111,9 +1131,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 168,
-        "wells": 120,
-        "median_relative_rate": 0.21188489516610493
+        "baseline_wells": 112,
+        "wells": 84,
+        "median_relative_rate": 0.1992168749770316
       }
     },
     "100_500/decline/Subsea/1": {
@@ -1130,8 +1150,8 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 22,
-        "wells": 22,
+        "baseline_wells": 20,
+        "wells": 20,
         "median_relative_rate": 0.6968270194140537
       }
     },
@@ -1149,9 +1169,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 22,
-        "wells": 16,
-        "median_relative_rate": 1.0860186883168819
+        "baseline_wells": 20,
+        "wells": 14,
+        "median_relative_rate": 1.0381475035095578
       }
     },
     "100_500/decline/Subsea/60": {
@@ -1168,9 +1188,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 22,
-        "wells": 13,
-        "median_relative_rate": 0.7591306828989919
+        "baseline_wells": 20,
+        "wells": 12,
+        "median_relative_rate": 0.7696773069155691
       }
     },
     "100_500/decline/No subsea flag (NO)/1": {
@@ -1187,9 +1207,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 122,
-        "wells": 122,
-        "median_relative_rate": 0.691540005966238
+        "baseline_wells": 87,
+        "wells": 87,
+        "median_relative_rate": 0.7460886055944793
       }
     },
     "100_500/decline/No subsea flag (NO)/12": {
@@ -1206,9 +1226,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 122,
-        "wells": 107,
-        "median_relative_rate": 0.5589780858676208
+        "baseline_wells": 87,
+        "wells": 77,
+        "median_relative_rate": 0.50318990007837
       }
     },
     "100_500/decline/No subsea flag (NO)/60": {
@@ -1225,9 +1245,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 122,
-        "wells": 92,
-        "median_relative_rate": 0.20528191400495113
+        "baseline_wells": 87,
+        "wells": 68,
+        "median_relative_rate": 0.18282983210058584
       }
     },
     "100_500/decline/Unknown/1": {
@@ -1244,9 +1264,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 24,
-        "wells": 24,
-        "median_relative_rate": 0.7338736787666427
+        "baseline_wells": 5,
+        "wells": 5,
+        "median_relative_rate": 0.6146721748400853
       }
     },
     "100_500/decline/Unknown/12": {
@@ -1263,9 +1283,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 24,
-        "wells": 16,
-        "median_relative_rate": 0.6209733696905453
+        "baseline_wells": 5,
+        "wells": 4,
+        "median_relative_rate": 0.8558021394137626
       }
     },
     "100_500/decline/Unknown/60": {
@@ -1282,9 +1302,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 24,
-        "wells": 15,
-        "median_relative_rate": 0.1582561481954647
+        "baseline_wells": 5,
+        "wells": 4,
+        "median_relative_rate": 0.029257487227473702
       }
     },
     "100_500/Post-completion WAR/0": {
@@ -1298,16 +1318,18 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 195,
-        "event_wells": 59,
-        "share": 0.30256410256410254,
-        "completion_observed_wells": 170,
-        "pre_origin_event_wells": 34
+        "eligible_wells": 128,
+        "event_wells": 40,
+        "share": 0.3125,
+        "share_among_completion_observed": 0.32,
+        "completion_observed_wells": 125,
+        "pre_origin_event_wells": 21
       }
     },
     "100_500/Post-completion WAR/1": {
@@ -1321,16 +1343,18 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 194,
-        "event_wells": 90,
-        "share": 0.4639175257731959,
-        "completion_observed_wells": 169,
-        "pre_origin_event_wells": 34
+        "eligible_wells": 127,
+        "event_wells": 63,
+        "share": 0.49606299212598426,
+        "share_among_completion_observed": 0.5080645161290323,
+        "completion_observed_wells": 124,
+        "pre_origin_event_wells": 21
       }
     },
     "100_500/Post-completion WAR/5": {
@@ -1344,16 +1368,18 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 187,
-        "event_wells": 119,
-        "share": 0.6363636363636364,
-        "completion_observed_wells": 163,
-        "pre_origin_event_wells": 33
+        "eligible_wells": 121,
+        "event_wells": 86,
+        "share": 0.7107438016528925,
+        "share_among_completion_observed": 0.7226890756302521,
+        "completion_observed_wells": 119,
+        "pre_origin_event_wells": 20
       }
     },
     "100_500/Post-completion WAR/10": {
@@ -1367,16 +1393,18 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 162,
-        "event_wells": 122,
-        "share": 0.7530864197530864,
-        "completion_observed_wells": 138,
-        "pre_origin_event_wells": 30
+        "eligible_wells": 100,
+        "event_wells": 86,
+        "share": 0.86,
+        "share_among_completion_observed": 0.8775510204081632,
+        "completion_observed_wells": 98,
+        "pre_origin_event_wells": 18
       }
     },
     "100_500/Post-completion WAR/20": {
@@ -1390,16 +1418,18 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 56,
-        "event_wells": 37,
-        "share": 0.6607142857142857,
-        "completion_observed_wells": 37,
-        "pre_origin_event_wells": 4
+        "eligible_wells": 23,
+        "event_wells": 21,
+        "share": 0.9130434782608695,
+        "share_among_completion_observed": 1.0,
+        "completion_observed_wells": 21,
+        "pre_origin_event_wells": 2
       }
     },
     "100_500/Intervention approval/0": {
@@ -1413,16 +1443,18 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 195,
-        "event_wells": 32,
-        "share": 0.1641025641025641,
-        "completion_observed_wells": 170,
-        "pre_origin_event_wells": 19
+        "eligible_wells": 128,
+        "event_wells": 19,
+        "share": 0.1484375,
+        "share_among_completion_observed": 0.152,
+        "completion_observed_wells": 125,
+        "pre_origin_event_wells": 10
       }
     },
     "100_500/Intervention approval/1": {
@@ -1436,16 +1468,18 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 194,
-        "event_wells": 71,
-        "share": 0.36597938144329895,
-        "completion_observed_wells": 169,
-        "pre_origin_event_wells": 19
+        "eligible_wells": 127,
+        "event_wells": 48,
+        "share": 0.3779527559055118,
+        "share_among_completion_observed": 0.3870967741935484,
+        "completion_observed_wells": 124,
+        "pre_origin_event_wells": 10
       }
     },
     "100_500/Intervention approval/5": {
@@ -1459,16 +1493,18 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 187,
-        "event_wells": 105,
-        "share": 0.5614973262032086,
-        "completion_observed_wells": 163,
-        "pre_origin_event_wells": 18
+        "eligible_wells": 121,
+        "event_wells": 75,
+        "share": 0.6198347107438017,
+        "share_among_completion_observed": 0.6302521008403361,
+        "completion_observed_wells": 119,
+        "pre_origin_event_wells": 9
       }
     },
     "100_500/Intervention approval/10": {
@@ -1482,16 +1518,18 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 162,
-        "event_wells": 110,
-        "share": 0.6790123456790124,
-        "completion_observed_wells": 138,
-        "pre_origin_event_wells": 13
+        "eligible_wells": 100,
+        "event_wells": 77,
+        "share": 0.77,
+        "share_among_completion_observed": 0.7857142857142857,
+        "completion_observed_wells": 98,
+        "pre_origin_event_wells": 5
       }
     },
     "100_500/Intervention approval/20": {
@@ -1505,15 +1543,17 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 56,
-        "event_wells": 34,
-        "share": 0.6071428571428571,
-        "completion_observed_wells": 37,
+        "eligible_wells": 23,
+        "event_wells": 19,
+        "share": 0.8260869565217391,
+        "share_among_completion_observed": 0.9047619047619048,
+        "completion_observed_wells": 21,
         "pre_origin_event_wells": 0
       }
     },
@@ -1625,14 +1665,14 @@
         "cohort_completions": 446,
         "ever_produced_wells": 419,
         "produced_in_or_after_c_month_wells": 415,
-        "supported_starts": 396,
+        "supported_starts": 300,
         "share_produced_in_or_after_c_month": 0.9304932735426009,
-        "war_by_cutoff_wells": 306,
-        "war_by_cutoff_share": 0.7727272727272727,
-        "war_signed_event_age_median_months": 9.0,
-        "permit_by_cutoff_wells": 276,
-        "permit_by_cutoff_share": 0.696969696969697,
-        "permit_signed_event_age_median_months": 18.0
+        "war_by_cutoff_wells": 232,
+        "war_by_cutoff_share": 0.7733333333333333,
+        "war_signed_event_age_median_months": 5.0,
+        "permit_by_cutoff_wells": 206,
+        "permit_by_cutoff_share": 0.6866666666666666,
+        "permit_signed_event_age_median_months": 14.5
       }
     },
     "500_1500/month/2005-12": {
@@ -1777,12 +1817,12 @@
       ],
       "operation": "row",
       "values": {
-        "wells": 337,
+        "wells": 281,
         "p25_months": 0.0,
         "median_months": 1.0,
-        "p75_months": 5.0,
+        "p75_months": 6.0,
         "pre_completion_wells": 0,
-        "same_month_wells": 128
+        "same_month_wells": 101
       }
     },
     "500_1500/lag/signed": {
@@ -1801,12 +1841,12 @@
       ],
       "operation": "row",
       "values": {
-        "wells": 357,
+        "wells": 289,
         "p25_months": 0.0,
         "median_months": 1.0,
         "p75_months": 5.0,
-        "pre_completion_wells": 20,
-        "same_month_wells": 128
+        "pre_completion_wells": 8,
+        "same_month_wells": 101
       }
     },
     "500_1500/decline/All/1": {
@@ -1823,9 +1863,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 304,
-        "wells": 304,
-        "median_relative_rate": 0.653682513196129
+        "baseline_wells": 211,
+        "wells": 211,
+        "median_relative_rate": 0.6204749398117749
       }
     },
     "500_1500/decline/All/12": {
@@ -1842,9 +1882,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 304,
-        "wells": 264,
-        "median_relative_rate": 0.8471659012752638
+        "baseline_wells": 211,
+        "wells": 185,
+        "median_relative_rate": 0.877679892500969
       }
     },
     "500_1500/decline/All/60": {
@@ -1861,9 +1901,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 304,
-        "wells": 217,
-        "median_relative_rate": 0.39052124779410957
+        "baseline_wells": 211,
+        "wells": 150,
+        "median_relative_rate": 0.4119341896226457
       }
     },
     "500_1500/decline/Subsea/1": {
@@ -1880,9 +1920,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 207,
-        "wells": 207,
-        "median_relative_rate": 0.6965960199386758
+        "baseline_wells": 179,
+        "wells": 179,
+        "median_relative_rate": 0.6703069350892275
       }
     },
     "500_1500/decline/Subsea/12": {
@@ -1899,9 +1939,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 207,
-        "wells": 178,
-        "median_relative_rate": 0.8813719862565155
+        "baseline_wells": 179,
+        "wells": 154,
+        "median_relative_rate": 0.8733349664489651
       }
     },
     "500_1500/decline/Subsea/60": {
@@ -1918,9 +1958,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 207,
-        "wells": 146,
-        "median_relative_rate": 0.3905595367323405
+        "baseline_wells": 179,
+        "wells": 124,
+        "median_relative_rate": 0.3881728208619144
       }
     },
     "500_1500/decline/No subsea flag (NO)/1": {
@@ -1937,9 +1977,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 50,
-        "wells": 50,
-        "median_relative_rate": 0.5925452677493782
+        "baseline_wells": 20,
+        "wells": 20,
+        "median_relative_rate": 0.4186655148141524
       }
     },
     "500_1500/decline/No subsea flag (NO)/12": {
@@ -1956,9 +1996,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 50,
-        "wells": 44,
-        "median_relative_rate": 0.7592571454847497
+        "baseline_wells": 20,
+        "wells": 20,
+        "median_relative_rate": 0.832897544461513
       }
     },
     "500_1500/decline/No subsea flag (NO)/60": {
@@ -1975,9 +2015,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 50,
-        "wells": 41,
-        "median_relative_rate": 0.29714094399765645
+        "baseline_wells": 20,
+        "wells": 18,
+        "median_relative_rate": 0.5310857250689838
       }
     },
     "500_1500/decline/Unknown/1": {
@@ -1994,9 +2034,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 47,
-        "wells": 47,
-        "median_relative_rate": 0.7562708965960013
+        "baseline_wells": 12,
+        "wells": 12,
+        "median_relative_rate": 0.5291848450970237
       }
     },
     "500_1500/decline/Unknown/12": {
@@ -2013,9 +2053,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 47,
-        "wells": 42,
-        "median_relative_rate": 0.8382065083412151
+        "baseline_wells": 12,
+        "wells": 11,
+        "median_relative_rate": 1.4499711671227087
       }
     },
     "500_1500/decline/Unknown/60": {
@@ -2032,9 +2072,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 47,
-        "wells": 30,
-        "median_relative_rate": 0.44527868459706144
+        "baseline_wells": 12,
+        "wells": 8,
+        "median_relative_rate": 1.5636989352468218
       }
     },
     "500_1500/Post-completion WAR/0": {
@@ -2048,16 +2088,18 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 396,
-        "event_wells": 111,
-        "share": 0.2803030303030303,
-        "completion_observed_wells": 349,
-        "pre_origin_event_wells": 71
+        "eligible_wells": 300,
+        "event_wells": 90,
+        "share": 0.3,
+        "share_among_completion_observed": 0.3146853146853147,
+        "completion_observed_wells": 286,
+        "pre_origin_event_wells": 53
       }
     },
     "500_1500/Post-completion WAR/1": {
@@ -2071,16 +2113,18 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 385,
-        "event_wells": 162,
-        "share": 0.42077922077922075,
-        "completion_observed_wells": 346,
-        "pre_origin_event_wells": 70
+        "eligible_wells": 289,
+        "event_wells": 131,
+        "share": 0.4532871972318339,
+        "share_among_completion_observed": 0.4645390070921986,
+        "completion_observed_wells": 282,
+        "pre_origin_event_wells": 52
       }
     },
     "500_1500/Post-completion WAR/5": {
@@ -2094,16 +2138,18 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 324,
-        "event_wells": 206,
-        "share": 0.6358024691358025,
-        "completion_observed_wells": 292,
-        "pre_origin_event_wells": 54
+        "eligible_wells": 228,
+        "event_wells": 151,
+        "share": 0.6622807017543859,
+        "share_among_completion_observed": 0.6741071428571429,
+        "completion_observed_wells": 224,
+        "pre_origin_event_wells": 36
       }
     },
     "500_1500/Post-completion WAR/10": {
@@ -2117,16 +2163,18 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 262,
-        "event_wells": 195,
-        "share": 0.7442748091603053,
-        "completion_observed_wells": 232,
-        "pre_origin_event_wells": 47
+        "eligible_wells": 167,
+        "event_wells": 136,
+        "share": 0.8143712574850299,
+        "share_among_completion_observed": 0.8242424242424242,
+        "completion_observed_wells": 165,
+        "pre_origin_event_wells": 30
       }
     },
     "500_1500/Post-completion WAR/20": {
@@ -2140,16 +2188,18 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 67,
-        "event_wells": 45,
-        "share": 0.6716417910447762,
-        "completion_observed_wells": 46,
-        "pre_origin_event_wells": 5
+        "eligible_wells": 8,
+        "event_wells": 7,
+        "share": 0.875,
+        "share_among_completion_observed": 1.0,
+        "completion_observed_wells": 7,
+        "pre_origin_event_wells": 0
       }
     },
     "500_1500/Intervention approval/0": {
@@ -2163,16 +2213,18 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 396,
-        "event_wells": 63,
-        "share": 0.1590909090909091,
-        "completion_observed_wells": 349,
-        "pre_origin_event_wells": 42
+        "eligible_wells": 300,
+        "event_wells": 53,
+        "share": 0.17666666666666667,
+        "share_among_completion_observed": 0.1853146853146853,
+        "completion_observed_wells": 286,
+        "pre_origin_event_wells": 34
       }
     },
     "500_1500/Intervention approval/1": {
@@ -2186,16 +2238,18 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 385,
-        "event_wells": 119,
-        "share": 0.3090909090909091,
-        "completion_observed_wells": 346,
-        "pre_origin_event_wells": 42
+        "eligible_wells": 289,
+        "event_wells": 97,
+        "share": 0.3356401384083045,
+        "share_among_completion_observed": 0.34397163120567376,
+        "completion_observed_wells": 282,
+        "pre_origin_event_wells": 34
       }
     },
     "500_1500/Intervention approval/5": {
@@ -2209,16 +2263,18 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 324,
-        "event_wells": 180,
-        "share": 0.5555555555555556,
-        "completion_observed_wells": 292,
-        "pre_origin_event_wells": 30
+        "eligible_wells": 228,
+        "event_wells": 131,
+        "share": 0.5745614035087719,
+        "share_among_completion_observed": 0.5848214285714286,
+        "completion_observed_wells": 224,
+        "pre_origin_event_wells": 22
       }
     },
     "500_1500/Intervention approval/10": {
@@ -2232,16 +2288,18 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 262,
-        "event_wells": 173,
-        "share": 0.6603053435114504,
-        "completion_observed_wells": 232,
-        "pre_origin_event_wells": 20
+        "eligible_wells": 167,
+        "event_wells": 118,
+        "share": 0.7065868263473054,
+        "share_among_completion_observed": 0.7151515151515152,
+        "completion_observed_wells": 165,
+        "pre_origin_event_wells": 13
       }
     },
     "500_1500/Intervention approval/20": {
@@ -2255,16 +2313,18 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 67,
-        "event_wells": 43,
-        "share": 0.6417910447761194,
-        "completion_observed_wells": 46,
-        "pre_origin_event_wells": 1
+        "eligible_wells": 8,
+        "event_wells": 6,
+        "share": 0.75,
+        "share_among_completion_observed": 0.8571428571428571,
+        "completion_observed_wells": 7,
+        "pre_origin_event_wells": 0
       }
     },
     "1500plus/year/2005": {
@@ -2375,14 +2435,14 @@
         "cohort_completions": 384,
         "ever_produced_wells": 353,
         "produced_in_or_after_c_month_wells": 353,
-        "supported_starts": 369,
+        "supported_starts": 310,
         "share_produced_in_or_after_c_month": 0.9192708333333334,
-        "war_by_cutoff_wells": 256,
-        "war_by_cutoff_share": 0.6937669376693767,
-        "war_signed_event_age_median_months": 8.0,
-        "permit_by_cutoff_wells": 251,
-        "permit_by_cutoff_share": 0.6802168021680217,
-        "permit_signed_event_age_median_months": 7.0
+        "war_by_cutoff_wells": 205,
+        "war_by_cutoff_share": 0.6612903225806451,
+        "war_signed_event_age_median_months": 5.0,
+        "permit_by_cutoff_wells": 200,
+        "permit_by_cutoff_share": 0.6451612903225806,
+        "permit_signed_event_age_median_months": 4.5
       }
     },
     "1500plus/month/2005-12": {
@@ -2527,12 +2587,12 @@
       ],
       "operation": "row",
       "values": {
-        "wells": 342,
+        "wells": 285,
         "p25_months": 0.0,
         "median_months": 1.0,
-        "p75_months": 6.0,
+        "p75_months": 4.0,
         "pre_completion_wells": 0,
-        "same_month_wells": 123
+        "same_month_wells": 106
       }
     },
     "1500plus/lag/signed": {
@@ -2551,12 +2611,12 @@
       ],
       "operation": "row",
       "values": {
-        "wells": 351,
+        "wells": 294,
         "p25_months": 0.0,
         "median_months": 1.0,
-        "p75_months": 5.5,
+        "p75_months": 4.0,
         "pre_completion_wells": 9,
-        "same_month_wells": 123
+        "same_month_wells": 106
       }
     },
     "1500plus/decline/All/1": {
@@ -2573,9 +2633,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 242,
-        "wells": 242,
-        "median_relative_rate": 0.6303964139563368
+        "baseline_wells": 186,
+        "wells": 186,
+        "median_relative_rate": 0.6353176632965293
       }
     },
     "1500plus/decline/All/12": {
@@ -2592,9 +2652,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 242,
-        "wells": 211,
-        "median_relative_rate": 0.8057434096194265
+        "baseline_wells": 186,
+        "wells": 162,
+        "median_relative_rate": 0.8738570580097177
       }
     },
     "1500plus/decline/All/60": {
@@ -2611,9 +2671,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 242,
-        "wells": 174,
-        "median_relative_rate": 0.4356043524696771
+        "baseline_wells": 186,
+        "wells": 138,
+        "median_relative_rate": 0.47725476275618356
       }
     },
     "1500plus/decline/Subsea/1": {
@@ -2630,9 +2690,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 202,
-        "wells": 202,
-        "median_relative_rate": 0.6461828321925531
+        "baseline_wells": 160,
+        "wells": 160,
+        "median_relative_rate": 0.6502727748548779
       }
     },
     "1500plus/decline/Subsea/12": {
@@ -2649,9 +2709,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 202,
-        "wells": 177,
-        "median_relative_rate": 0.794866613290811
+        "baseline_wells": 160,
+        "wells": 141,
+        "median_relative_rate": 0.8276547305428171
       }
     },
     "1500plus/decline/Subsea/60": {
@@ -2668,9 +2728,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 202,
-        "wells": 143,
-        "median_relative_rate": 0.4467679504037092
+        "baseline_wells": 160,
+        "wells": 116,
+        "median_relative_rate": 0.5149930115006993
       }
     },
     "1500plus/decline/No subsea flag (NO)/1": {
@@ -2687,9 +2747,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 22,
-        "wells": 22,
-        "median_relative_rate": 0.5091803999055536
+        "baseline_wells": 12,
+        "wells": 12,
+        "median_relative_rate": 0.48596036708568924
       }
     },
     "1500plus/decline/No subsea flag (NO)/12": {
@@ -2706,9 +2766,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 22,
-        "wells": 21,
-        "median_relative_rate": 0.9806081959002988
+        "baseline_wells": 12,
+        "wells": 12,
+        "median_relative_rate": 1.083104687328392
       }
     },
     "1500plus/decline/No subsea flag (NO)/60": {
@@ -2725,9 +2785,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 22,
-        "wells": 21,
-        "median_relative_rate": 0.3437754405566681
+        "baseline_wells": 12,
+        "wells": 12,
+        "median_relative_rate": 0.477127399069896
       }
     },
     "1500plus/decline/Unknown/1": {
@@ -2744,9 +2804,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 18,
-        "wells": 18,
-        "median_relative_rate": 0.6595648615899816
+        "baseline_wells": 14,
+        "wells": 14,
+        "median_relative_rate": 0.7248497476018025
       }
     },
     "1500plus/decline/Unknown/12": {
@@ -2763,9 +2823,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 18,
-        "wells": 13,
-        "median_relative_rate": 0.9326286484275813
+        "baseline_wells": 14,
+        "wells": 9,
+        "median_relative_rate": 1.355463815673406
       }
     },
     "1500plus/decline/Unknown/60": {
@@ -2782,7 +2842,7 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 18,
+        "baseline_wells": 14,
         "wells": 10,
         "median_relative_rate": 0.1983185030725605
       }
@@ -2798,16 +2858,18 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 369,
-        "event_wells": 97,
-        "share": 0.26287262872628725,
-        "completion_observed_wells": 355,
-        "pre_origin_event_wells": 77
+        "eligible_wells": 310,
+        "event_wells": 84,
+        "share": 0.2709677419354839,
+        "share_among_completion_observed": 0.28187919463087246,
+        "completion_observed_wells": 298,
+        "pre_origin_event_wells": 65
       }
     },
     "1500plus/Post-completion WAR/1": {
@@ -2821,16 +2883,18 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 348,
-        "event_wells": 139,
-        "share": 0.3994252873563218,
-        "completion_observed_wells": 342,
-        "pre_origin_event_wells": 73
+        "eligible_wells": 289,
+        "event_wells": 113,
+        "share": 0.39100346020761245,
+        "share_among_completion_observed": 0.39649122807017545,
+        "completion_observed_wells": 285,
+        "pre_origin_event_wells": 61
       }
     },
     "1500plus/Post-completion WAR/5": {
@@ -2844,16 +2908,18 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 272,
-        "event_wells": 165,
-        "share": 0.6066176470588235,
-        "completion_observed_wells": 266,
-        "pre_origin_event_wells": 48
+        "eligible_wells": 214,
+        "event_wells": 127,
+        "share": 0.5934579439252337,
+        "share_among_completion_observed": 0.6047619047619047,
+        "completion_observed_wells": 210,
+        "pre_origin_event_wells": 36
       }
     },
     "1500plus/Post-completion WAR/10": {
@@ -2867,16 +2933,18 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 172,
-        "event_wells": 137,
-        "share": 0.7965116279069767,
-        "completion_observed_wells": 167,
-        "pre_origin_event_wells": 35
+        "eligible_wells": 118,
+        "event_wells": 90,
+        "share": 0.7627118644067796,
+        "share_among_completion_observed": 0.782608695652174,
+        "completion_observed_wells": 115,
+        "pre_origin_event_wells": 23
       }
     },
     "1500plus/Post-completion WAR/20": {
@@ -2890,15 +2958,17 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 17,
-        "event_wells": 17,
+        "eligible_wells": 2,
+        "event_wells": 2,
         "share": 1.0,
-        "completion_observed_wells": 17,
+        "share_among_completion_observed": 1.0,
+        "completion_observed_wells": 2,
         "pre_origin_event_wells": 0
       }
     },
@@ -2913,16 +2983,18 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 369,
-        "event_wells": 71,
-        "share": 0.19241192411924118,
-        "completion_observed_wells": 355,
-        "pre_origin_event_wells": 49
+        "eligible_wells": 310,
+        "event_wells": 66,
+        "share": 0.2129032258064516,
+        "share_among_completion_observed": 0.2214765100671141,
+        "completion_observed_wells": 298,
+        "pre_origin_event_wells": 45
       }
     },
     "1500plus/Intervention approval/1": {
@@ -2936,16 +3008,18 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 348,
-        "event_wells": 143,
-        "share": 0.4109195402298851,
-        "completion_observed_wells": 342,
-        "pre_origin_event_wells": 47
+        "eligible_wells": 289,
+        "event_wells": 121,
+        "share": 0.4186851211072664,
+        "share_among_completion_observed": 0.4245614035087719,
+        "completion_observed_wells": 285,
+        "pre_origin_event_wells": 43
       }
     },
     "1500plus/Intervention approval/5": {
@@ -2959,16 +3033,18 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 272,
-        "event_wells": 161,
-        "share": 0.5919117647058824,
-        "completion_observed_wells": 266,
-        "pre_origin_event_wells": 28
+        "eligible_wells": 214,
+        "event_wells": 127,
+        "share": 0.5934579439252337,
+        "share_among_completion_observed": 0.6047619047619047,
+        "completion_observed_wells": 210,
+        "pre_origin_event_wells": 24
       }
     },
     "1500plus/Intervention approval/10": {
@@ -2982,16 +3058,18 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 172,
-        "event_wells": 127,
-        "share": 0.7383720930232558,
-        "completion_observed_wells": 167,
-        "pre_origin_event_wells": 17
+        "eligible_wells": 118,
+        "event_wells": 83,
+        "share": 0.7033898305084746,
+        "share_among_completion_observed": 0.7217391304347827,
+        "completion_observed_wells": 115,
+        "pre_origin_event_wells": 13
       }
     },
     "1500plus/Intervention approval/20": {
@@ -3005,15 +3083,17 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 17,
-        "event_wells": 17,
+        "eligible_wells": 2,
+        "event_wells": 2,
         "share": 1.0,
-        "completion_observed_wells": 17,
+        "share_among_completion_observed": 1.0,
+        "completion_observed_wells": 2,
         "pre_origin_event_wells": 0
       }
     },
@@ -3125,14 +3205,14 @@
         "cohort_completions": 2873,
         "ever_produced_wells": 2766,
         "produced_in_or_after_c_month_wells": 2747,
-        "supported_starts": 2514,
+        "supported_starts": 1813,
         "share_produced_in_or_after_c_month": 0.956143404107205,
-        "war_by_cutoff_wells": 2027,
-        "war_by_cutoff_share": 0.8062848050914877,
-        "war_signed_event_age_median_months": 13.0,
-        "permit_by_cutoff_wells": 1793,
-        "permit_by_cutoff_share": 0.713206046141607,
-        "permit_signed_event_age_median_months": 9.0
+        "war_by_cutoff_wells": 1513,
+        "war_by_cutoff_share": 0.8345284059569774,
+        "war_signed_event_age_median_months": 14.0,
+        "permit_by_cutoff_wells": 1322,
+        "permit_by_cutoff_share": 0.7291781577495863,
+        "permit_signed_event_age_median_months": 8.0
       }
     },
     "all/month/2005-12": {
@@ -3277,12 +3357,12 @@
       ],
       "operation": "row",
       "values": {
-        "wells": 2132,
+        "wells": 1704,
         "p25_months": 0.0,
         "median_months": 1.0,
         "p75_months": 4.0,
         "pre_completion_wells": 0,
-        "same_month_wells": 812
+        "same_month_wells": 612
       }
     },
     "all/lag/signed": {
@@ -3301,12 +3381,12 @@
       ],
       "operation": "row",
       "values": {
-        "wells": 2183,
+        "wells": 1735,
         "p25_months": 0.0,
         "median_months": 1.0,
         "p75_months": 4.0,
-        "pre_completion_wells": 51,
-        "same_month_wells": 812
+        "pre_completion_wells": 31,
+        "same_month_wells": 612
       }
     },
     "all/decline/All/1": {
@@ -3323,9 +3403,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 1926,
-        "wells": 1921,
-        "median_relative_rate": 0.6663887565507385
+        "baseline_wells": 1333,
+        "wells": 1328,
+        "median_relative_rate": 0.6554214251128525
       }
     },
     "all/decline/All/12": {
@@ -3342,9 +3422,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 1926,
-        "wells": 1597,
-        "median_relative_rate": 0.603035538005923
+        "baseline_wells": 1333,
+        "wells": 1130,
+        "median_relative_rate": 0.6336042243560371
       }
     },
     "all/decline/All/60": {
@@ -3361,9 +3441,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 1926,
-        "wells": 1225,
-        "median_relative_rate": 0.24791473586654306
+        "baseline_wells": 1333,
+        "wells": 871,
+        "median_relative_rate": 0.2678890174070742
       }
     },
     "all/decline/Subsea/1": {
@@ -3380,9 +3460,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 452,
-        "wells": 452,
-        "median_relative_rate": 0.6529731537148531
+        "baseline_wells": 379,
+        "wells": 379,
+        "median_relative_rate": 0.6533732616634171
       }
     },
     "all/decline/Subsea/12": {
@@ -3399,9 +3479,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 452,
-        "wells": 388,
-        "median_relative_rate": 0.8273364049722798
+        "baseline_wells": 379,
+        "wells": 325,
+        "median_relative_rate": 0.8377411194022683
       }
     },
     "all/decline/Subsea/60": {
@@ -3418,9 +3498,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 452,
-        "wells": 308,
-        "median_relative_rate": 0.43850461975060434
+        "baseline_wells": 379,
+        "wells": 257,
+        "median_relative_rate": 0.44541084957622357
       }
     },
     "all/decline/No subsea flag (NO)/1": {
@@ -3437,9 +3517,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 1209,
-        "wells": 1204,
-        "median_relative_rate": 0.6561007602396441
+        "baseline_wells": 861,
+        "wells": 856,
+        "median_relative_rate": 0.6653240359073913
       }
     },
     "all/decline/No subsea flag (NO)/12": {
@@ -3456,9 +3536,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 1209,
-        "wells": 1013,
-        "median_relative_rate": 0.5130003924646782
+        "baseline_wells": 861,
+        "wells": 734,
+        "median_relative_rate": 0.5282209460190219
       }
     },
     "all/decline/No subsea flag (NO)/60": {
@@ -3475,9 +3555,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 1209,
-        "wells": 794,
-        "median_relative_rate": 0.19205330564430853
+        "baseline_wells": 861,
+        "wells": 564,
+        "median_relative_rate": 0.19713709711843594
       }
     },
     "all/decline/Unknown/1": {
@@ -3494,9 +3574,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 265,
-        "wells": 265,
-        "median_relative_rate": 0.7562708965960013
+        "baseline_wells": 93,
+        "wells": 93,
+        "median_relative_rate": 0.5693914440650732
       }
     },
     "all/decline/Unknown/12": {
@@ -3513,9 +3593,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 265,
-        "wells": 196,
-        "median_relative_rate": 0.5369277909740318
+        "baseline_wells": 93,
+        "wells": 71,
+        "median_relative_rate": 0.6879615202222072
       }
     },
     "all/decline/Unknown/60": {
@@ -3532,9 +3612,9 @@
       ],
       "operation": "row",
       "values": {
-        "baseline_wells": 265,
-        "wells": 123,
-        "median_relative_rate": 0.20922481112310332
+        "baseline_wells": 93,
+        "wells": 50,
+        "median_relative_rate": 0.1983185030725605
       }
     },
     "all/Post-completion WAR/0": {
@@ -3548,16 +3628,18 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 2514,
-        "event_wells": 634,
-        "share": 0.25218774860779636,
-        "completion_observed_wells": 2262,
-        "pre_origin_event_wells": 444
+        "eligible_wells": 1813,
+        "event_wells": 447,
+        "share": 0.2465526751241037,
+        "share_among_completion_observed": 0.2591304347826087,
+        "completion_observed_wells": 1725,
+        "pre_origin_event_wells": 297
       }
     },
     "all/Post-completion WAR/1": {
@@ -3571,16 +3653,18 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 2479,
-        "event_wells": 983,
-        "share": 0.39653085921742637,
-        "completion_observed_wells": 2250,
-        "pre_origin_event_wells": 439
+        "eligible_wells": 1778,
+        "event_wells": 719,
+        "share": 0.4043869516310461,
+        "share_among_completion_observed": 0.42071386775892333,
+        "completion_observed_wells": 1709,
+        "pre_origin_event_wells": 292
       }
     },
     "all/Post-completion WAR/5": {
@@ -3594,16 +3678,18 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 2306,
-        "event_wells": 1503,
-        "share": 0.6517779705117086,
-        "completion_observed_wells": 2098,
-        "pre_origin_event_wells": 392
+        "eligible_wells": 1607,
+        "event_wells": 1093,
+        "share": 0.6801493466085874,
+        "share_among_completion_observed": 0.7042525773195877,
+        "completion_observed_wells": 1552,
+        "pre_origin_event_wells": 245
       }
     },
     "all/Post-completion WAR/10": {
@@ -3617,16 +3703,18 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 2067,
-        "event_wells": 1614,
-        "share": 0.7808417997097242,
-        "completion_observed_wells": 1863,
-        "pre_origin_event_wells": 362
+        "eligible_wells": 1387,
+        "event_wells": 1155,
+        "share": 0.832732516222062,
+        "share_among_completion_observed": 0.8651685393258427,
+        "completion_observed_wells": 1335,
+        "pre_origin_event_wells": 218
       }
     },
     "all/Post-completion WAR/20": {
@@ -3640,16 +3728,18 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 643,
-        "event_wells": 481,
-        "share": 0.7480559875583204,
-        "completion_observed_wells": 492,
-        "pre_origin_event_wells": 80
+        "eligible_wells": 298,
+        "event_wells": 254,
+        "share": 0.8523489932885906,
+        "share_among_completion_observed": 0.9883268482490273,
+        "completion_observed_wells": 257,
+        "pre_origin_event_wells": 29
       }
     },
     "all/Intervention approval/0": {
@@ -3663,16 +3753,18 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 2514,
-        "event_wells": 505,
-        "share": 0.20087509944311854,
-        "completion_observed_wells": 2262,
-        "pre_origin_event_wells": 336
+        "eligible_wells": 1813,
+        "event_wells": 380,
+        "share": 0.20959735245449532,
+        "share_among_completion_observed": 0.22028985507246376,
+        "completion_observed_wells": 1725,
+        "pre_origin_event_wells": 240
       }
     },
     "all/Intervention approval/1": {
@@ -3686,16 +3778,18 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 2479,
-        "event_wells": 982,
-        "share": 0.3961274707543364,
-        "completion_observed_wells": 2250,
-        "pre_origin_event_wells": 334
+        "eligible_wells": 1778,
+        "event_wells": 741,
+        "share": 0.4167604049493813,
+        "share_among_completion_observed": 0.43358689291983615,
+        "completion_observed_wells": 1709,
+        "pre_origin_event_wells": 238
       }
     },
     "all/Intervention approval/5": {
@@ -3709,16 +3803,18 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 2306,
-        "event_wells": 1423,
-        "share": 0.6170858629661752,
-        "completion_observed_wells": 2098,
-        "pre_origin_event_wells": 299
+        "eligible_wells": 1607,
+        "event_wells": 1036,
+        "share": 0.6446795270690728,
+        "share_among_completion_observed": 0.6675257731958762,
+        "completion_observed_wells": 1552,
+        "pre_origin_event_wells": 203
       }
     },
     "all/Intervention approval/10": {
@@ -3732,16 +3828,18 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 2067,
-        "event_wells": 1454,
-        "share": 0.7034349298500242,
-        "completion_observed_wells": 1863,
-        "pre_origin_event_wells": 269
+        "eligible_wells": 1387,
+        "event_wells": 1024,
+        "share": 0.738284066330209,
+        "share_among_completion_observed": 0.7670411985018727,
+        "completion_observed_wells": 1335,
+        "pre_origin_event_wells": 175
       }
     },
     "all/Intervention approval/20": {
@@ -3755,16 +3853,18 @@
         "eligible_wells",
         "event_wells",
         "share",
+        "share_among_completion_observed",
         "completion_observed_wells",
         "pre_origin_event_wells"
       ],
       "operation": "row",
       "values": {
-        "eligible_wells": 643,
-        "event_wells": 426,
-        "share": 0.6625194401244168,
-        "completion_observed_wells": 492,
-        "pre_origin_event_wells": 64
+        "eligible_wells": 298,
+        "event_wells": 212,
+        "share": 0.7114093959731543,
+        "share_among_completion_observed": 0.8249027237354085,
+        "completion_observed_wells": 257,
+        "pre_origin_event_wells": 29
       }
     },
     "deepest_share/2005/oil_bbl": {
@@ -3905,10 +4005,40 @@
         "rows": 57520
       }
     },
-    "audit/borehole rows for Gulf depth and spud/read/input": {
+    "audit/Borehole quality | all bores on Gulf inventory wells, spud, API10/read/input": {
       "table": "record_counts.csv",
       "filter": {
-        "stage": "borehole rows for Gulf depth and spud",
+        "stage": "Borehole quality | all bores on Gulf inventory wells, spud, API10",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 37529
+      }
+    },
+    "audit/Borehole quality | all bores on Gulf inventory wells, spud, API10/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Borehole quality | all bores on Gulf inventory wells, spud, API10",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 37529
+      }
+    },
+    "audit/borehole rows for Gulf depth/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "borehole rows for Gulf depth",
         "disposition": "read",
         "reason": "input"
       },
@@ -3920,10 +4050,10 @@
         "rows": 57520
       }
     },
-    "audit/borehole rows for Gulf depth and spud/kept/retained": {
+    "audit/borehole rows for Gulf depth/kept/retained": {
       "table": "record_counts.csv",
       "filter": {
-        "stage": "borehole rows for Gulf depth and spud",
+        "stage": "borehole rows for Gulf depth",
         "disposition": "kept",
         "reason": "retained"
       },
@@ -3935,10 +4065,10 @@
         "rows": 54592
       }
     },
-    "audit/borehole rows for Gulf depth and spud/dropped/region outside or unresolved": {
+    "audit/borehole rows for Gulf depth/dropped/region outside or unresolved": {
       "table": "record_counts.csv",
       "filter": {
-        "stage": "borehole rows for Gulf depth and spud",
+        "stage": "borehole rows for Gulf depth",
         "disposition": "dropped",
         "reason": "region outside or unresolved"
       },
@@ -3950,10 +4080,10 @@
         "rows": 1934
       }
     },
-    "audit/borehole rows for Gulf depth and spud/dropped/cancelled bore": {
+    "audit/borehole rows for Gulf depth/dropped/cancelled bore": {
       "table": "record_counts.csv",
       "filter": {
-        "stage": "borehole rows for Gulf depth and spud",
+        "stage": "borehole rows for Gulf depth",
         "disposition": "dropped",
         "reason": "cancelled bore"
       },
@@ -3963,6 +4093,111 @@
       "operation": "row",
       "values": {
         "rows": 994
+      }
+    },
+    "audit/Borehole quality | non-cancelled Gulf bores, depth, API10/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Borehole quality | non-cancelled Gulf bores, depth, API10",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 37529
+      }
+    },
+    "audit/Borehole quality | non-cancelled Gulf bores, depth, API10/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Borehole quality | non-cancelled Gulf bores, depth, API10",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 37529
+      }
+    },
+    "audit/Borehole inventory | assigned depth, API10/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Borehole inventory | assigned depth, API10",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 39570
+      }
+    },
+    "audit/Borehole inventory | assigned depth, API10/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Borehole inventory | assigned depth, API10",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 37522
+      }
+    },
+    "audit/Borehole inventory | assigned depth, API10/dropped/outside_gulf": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Borehole inventory | assigned depth, API10",
+        "disposition": "dropped",
+        "reason": "outside_gulf"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1279
+      }
+    },
+    "audit/Borehole inventory | assigned depth, API10/dropped/cancelled_only": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Borehole inventory | assigned depth, API10",
+        "disposition": "dropped",
+        "reason": "cancelled_only"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 762
+      }
+    },
+    "audit/Borehole inventory | assigned depth, API10/dropped/unresolved depth": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Borehole inventory | assigned depth, API10",
+        "disposition": "dropped",
+        "reason": "unresolved depth"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 7
       }
     },
     "audit/eWell EOR operation code dictionary/read/input": {
@@ -4067,7 +4302,7 @@
       ],
       "operation": "row",
       "values": {
-        "rows": 77963
+        "rows": 77669
       }
     },
     "audit/eWell WAR rows for observed work/dropped/outside eligible Gulf inventory": {
@@ -4085,6 +4320,21 @@
         "rows": 18
       }
     },
+    "audit/eWell WAR rows for observed work/dropped/event after production cutoff": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "eWell WAR rows for observed work",
+        "disposition": "dropped",
+        "reason": "event after production cutoff"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 858
+      }
+    },
     "audit/eWell WAR rows for observed work/dropped/no dated C completion": {
       "table": "record_counts.csv",
       "filter": {
@@ -4097,7 +4347,7 @@
       ],
       "operation": "row",
       "values": {
-        "rows": 230900
+        "rows": 230336
       }
     },
     "audit/eWell WAR rows for observed work/dropped/event on or before completion": {
@@ -4322,7 +4572,7 @@
       ],
       "operation": "row",
       "values": {
-        "rows": 19997
+        "rows": 19915
       }
     },
     "audit/eWell APM approvals for classified well work/dropped/outside series well-work groups": {
@@ -4340,6 +4590,21 @@
         "rows": 69636
       }
     },
+    "audit/eWell APM approvals for classified well work/dropped/event after production cutoff": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "eWell APM approvals for classified well work",
+        "disposition": "dropped",
+        "reason": "event after production cutoff"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 130
+      }
+    },
     "audit/eWell APM approvals for classified well work/dropped/no dated C completion": {
       "table": "record_counts.csv",
       "filter": {
@@ -4352,7 +4617,7 @@
       ],
       "operation": "row",
       "values": {
-        "rows": 9331
+        "rows": 9283
       }
     },
     "audit/eWell APM approvals for classified well work/dropped/event on or before completion": {
@@ -4446,6 +4711,51 @@
         "gas_mcf": 0.0
       }
     },
+    "audit/OGOR well-months / producing activity/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "OGOR well-months / producing activity",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 2469232
+      }
+    },
+    "audit/OGOR well-months / producing activity/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "OGOR well-months / producing activity",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 827032
+      }
+    },
+    "audit/OGOR well-months / producing activity/dropped/no positive net oil or gas": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "OGOR well-months / producing activity",
+        "disposition": "dropped",
+        "reason": "no positive net oil or gas"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1642200
+      }
+    },
     "audit/OGOR well-months / exact oil rate/read/input": {
       "table": "record_counts.csv",
       "filter": {
@@ -4521,6 +4831,81 @@
         "rows": 33
       }
     },
+    "audit/OGOR raw recount / 2026-08/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "OGOR raw recount / 2026-08",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 4458
+      }
+    },
+    "audit/OGOR raw recount / 2026-08/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "OGOR raw recount / 2026-08",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 4457
+      }
+    },
+    "audit/OGOR raw recount / 2026-08/dropped/outside classified Gulf inventory": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "OGOR raw recount / 2026-08",
+        "disposition": "dropped",
+        "reason": "outside classified Gulf inventory"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1
+      }
+    },
+    "audit/OGOR raw recount / 2026-09/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "OGOR raw recount / 2026-09",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 2688
+      }
+    },
+    "audit/OGOR raw recount / 2026-09/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "OGOR raw recount / 2026-09",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 2688
+      }
+    },
     "audit/First positive month | API10 start evidence/read/input": {
       "table": "record_counts.csv",
       "filter": {
@@ -4548,7 +4933,7 @@
       ],
       "operation": "row",
       "values": {
-        "rows": 2514
+        "rows": 1813
       }
     },
     "audit/First positive month | API10 start evidence/dropped/reported first production predates January 2005": {
@@ -4566,19 +4951,94 @@
         "rows": 7002
       }
     },
-    "audit/First positive month | API10 start evidence/dropped/no timely in-window spud or reported start": {
+    "audit/First positive month | API10 start evidence/dropped/earliest bore spud predates January 2005": {
       "table": "record_counts.csv",
       "filter": {
         "stage": "First positive month | API10 start evidence",
         "disposition": "dropped",
-        "reason": "no timely in-window spud or reported start"
+        "reason": "earliest bore spud predates January 2005"
       },
       "fields": [
         "rows"
       ],
       "operation": "row",
       "values": {
-        "rows": 9
+        "rows": 710
+      }
+    },
+    "audit/Completion lag | completion window, API10/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Completion lag | completion window, API10",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 39570
+      }
+    },
+    "audit/Completion lag | completion window, API10/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Completion lag | completion window, API10",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 2873
+      }
+    },
+    "audit/Completion lag | completion window, API10/dropped/no dated C completion": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Completion lag | completion window, API10",
+        "disposition": "dropped",
+        "reason": "no dated C completion"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 34580
+      }
+    },
+    "audit/Completion lag | completion window, API10/dropped/first C before 2005": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Completion lag | completion window, API10",
+        "disposition": "dropped",
+        "reason": "first C before 2005"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 2084
+      }
+    },
+    "audit/Completion lag | completion window, API10/dropped/first C after 2025": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Completion lag | completion window, API10",
+        "disposition": "dropped",
+        "reason": "first C after 2025"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 33
       }
     },
     "audit/Completion lag | first C dated 2005–2025, API10/read/input": {
@@ -4608,7 +5068,7 @@
       ],
       "operation": "row",
       "values": {
-        "rows": 2183
+        "rows": 1735
       }
     },
     "audit/Completion lag | first C dated 2005–2025, API10/dropped/no positive joined OGOR month": {
@@ -4653,7 +5113,7 @@
       ],
       "operation": "row",
       "values": {
-        "rows": 5
+        "rows": 453
       }
     },
     "audit/Completion lag | chronological pair, API10/read/input": {
@@ -4668,7 +5128,7 @@
       ],
       "operation": "row",
       "values": {
-        "rows": 2183
+        "rows": 1735
       }
     },
     "audit/Completion lag | chronological pair, API10/kept/retained": {
@@ -4683,7 +5143,7 @@
       ],
       "operation": "row",
       "values": {
-        "rows": 2132
+        "rows": 1704
       }
     },
     "audit/Completion lag | chronological pair, API10/dropped/first production month before first C month": {
@@ -4698,7 +5158,202 @@
       ],
       "operation": "row",
       "values": {
-        "rows": 51
+        "rows": 31
+      }
+    },
+    "audit/Decline | start window, supported API10/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Decline | start window, supported API10",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1813
+      }
+    },
+    "audit/Decline | start window, supported API10/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Decline | start window, supported API10",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1577
+      }
+    },
+    "audit/Decline | start window, supported API10/dropped/first positive month outside 2005–2020": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Decline | start window, supported API10",
+        "disposition": "dropped",
+        "reason": "first positive month outside 2005–2020"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 236
+      }
+    },
+    "audit/Decline | join to start cohort, well-months/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Decline | join to start cohort, well-months",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 2469232
+      }
+    },
+    "audit/Decline | join to start cohort, well-months/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Decline | join to start cohort, well-months",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 219750
+      }
+    },
+    "audit/Decline | join to start cohort, well-months/dropped/outside supported 2005–2020 start cohort": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Decline | join to start cohort, well-months",
+        "disposition": "dropped",
+        "reason": "outside supported 2005–2020 start cohort"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 2249482
+      }
+    },
+    "audit/Decline | calendar ages 1–60, well-months/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Decline | calendar ages 1–60, well-months",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 219750
+      }
+    },
+    "audit/Decline | calendar ages 1–60, well-months/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Decline | calendar ages 1–60, well-months",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 90369
+      }
+    },
+    "audit/Decline | calendar ages 1–60, well-months/dropped/before first positive month": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Decline | calendar ages 1–60, well-months",
+        "disposition": "dropped",
+        "reason": "before first positive month"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 14496
+      }
+    },
+    "audit/Decline | calendar ages 1–60, well-months/dropped/after month 60": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Decline | calendar ages 1–60, well-months",
+        "disposition": "dropped",
+        "reason": "after month 60"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 114885
+      }
+    },
+    "audit/Decline | first three months for baseline, well-months/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Decline | first three months for baseline, well-months",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 90369
+      }
+    },
+    "audit/Decline | first three months for baseline, well-months/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Decline | first three months for baseline, well-months",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 4729
+      }
+    },
+    "audit/Decline | first three months for baseline, well-months/dropped/after baseline window": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Decline | first three months for baseline, well-months",
+        "disposition": "dropped",
+        "reason": "after baseline window"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 85640
       }
     },
     "audit/Decline | supported first production 2005–2020, API10/read/input": {
@@ -4713,7 +5368,7 @@
       ],
       "operation": "row",
       "values": {
-        "rows": 2274
+        "rows": 1577
       }
     },
     "audit/Decline | supported first production 2005–2020, API10/kept/retained": {
@@ -4728,7 +5383,7 @@
       ],
       "operation": "row",
       "values": {
-        "rows": 1926
+        "rows": 1333
       }
     },
     "audit/Decline | supported first production 2005–2020, API10/dropped/positive oil but producing-day rate unresolved in first three months": {
@@ -4743,7 +5398,7 @@
       ],
       "operation": "row",
       "values": {
-        "rows": 109
+        "rows": 86
       }
     },
     "audit/Decline | supported first production 2005–2020, API10/dropped/no positive measurable oil rate in first three calendar months": {
@@ -4758,7 +5413,52 @@
       ],
       "operation": "row",
       "values": {
-        "rows": 239
+        "rows": 158
+      }
+    },
+    "audit/Decline | baseline eligibility, well-months/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Decline | baseline eligibility, well-months",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 90369
+      }
+    },
+    "audit/Decline | baseline eligibility, well-months/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Decline | baseline eligibility, well-months",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 76884
+      }
+    },
+    "audit/Decline | baseline eligibility, well-months/dropped/well excluded from baseline": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Decline | baseline eligibility, well-months",
+        "disposition": "dropped",
+        "reason": "well excluded from baseline"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 13485
       }
     },
     "audit/Decline | observed baseline-eligible well-month records, ages 1–60/read/input": {
@@ -4773,7 +5473,7 @@
       ],
       "operation": "row",
       "values": {
-        "rows": 111030
+        "rows": 76884
       }
     },
     "audit/Decline | observed baseline-eligible well-month records, ages 1–60/kept/retained": {
@@ -4788,7 +5488,7 @@
       ],
       "operation": "row",
       "values": {
-        "rows": 86920
+        "rows": 61584
       }
     },
     "audit/Decline | observed baseline-eligible well-month records, ages 1–60/dropped/no usable producing-day rate": {
@@ -4803,7 +5503,1282 @@
       ],
       "operation": "row",
       "values": {
-        "rows": 24110
+        "rows": 15300
+      }
+    },
+    "audit/Interventions | supported starts, API10/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | supported starts, API10",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 9525
+      }
+    },
+    "audit/Interventions | supported starts, API10/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | supported starts, API10",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1813
+      }
+    },
+    "audit/Interventions | supported starts, API10/dropped/unsupported start": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | supported starts, API10",
+        "disposition": "dropped",
+        "reason": "unsupported start"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 7712
+      }
+    },
+    "audit/Interventions | year 0 anniversary, API10/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 0 anniversary, API10",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1813
+      }
+    },
+    "audit/Interventions | year 0 anniversary, API10/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 0 anniversary, API10",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1813
+      }
+    },
+    "audit/Interventions | year 1 anniversary, API10/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 1 anniversary, API10",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1813
+      }
+    },
+    "audit/Interventions | year 1 anniversary, API10/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 1 anniversary, API10",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1778
+      }
+    },
+    "audit/Interventions | year 1 anniversary, API10/dropped/anniversary after production cutoff": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 1 anniversary, API10",
+        "disposition": "dropped",
+        "reason": "anniversary after production cutoff"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 35
+      }
+    },
+    "audit/Interventions | year 2 anniversary, API10/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 2 anniversary, API10",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1813
+      }
+    },
+    "audit/Interventions | year 2 anniversary, API10/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 2 anniversary, API10",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1737
+      }
+    },
+    "audit/Interventions | year 2 anniversary, API10/dropped/anniversary after production cutoff": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 2 anniversary, API10",
+        "disposition": "dropped",
+        "reason": "anniversary after production cutoff"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 76
+      }
+    },
+    "audit/Interventions | year 3 anniversary, API10/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 3 anniversary, API10",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1813
+      }
+    },
+    "audit/Interventions | year 3 anniversary, API10/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 3 anniversary, API10",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1695
+      }
+    },
+    "audit/Interventions | year 3 anniversary, API10/dropped/anniversary after production cutoff": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 3 anniversary, API10",
+        "disposition": "dropped",
+        "reason": "anniversary after production cutoff"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 118
+      }
+    },
+    "audit/Interventions | year 4 anniversary, API10/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 4 anniversary, API10",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1813
+      }
+    },
+    "audit/Interventions | year 4 anniversary, API10/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 4 anniversary, API10",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1645
+      }
+    },
+    "audit/Interventions | year 4 anniversary, API10/dropped/anniversary after production cutoff": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 4 anniversary, API10",
+        "disposition": "dropped",
+        "reason": "anniversary after production cutoff"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 168
+      }
+    },
+    "audit/Interventions | year 5 anniversary, API10/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 5 anniversary, API10",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1813
+      }
+    },
+    "audit/Interventions | year 5 anniversary, API10/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 5 anniversary, API10",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1607
+      }
+    },
+    "audit/Interventions | year 5 anniversary, API10/dropped/anniversary after production cutoff": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 5 anniversary, API10",
+        "disposition": "dropped",
+        "reason": "anniversary after production cutoff"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 206
+      }
+    },
+    "audit/Interventions | year 6 anniversary, API10/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 6 anniversary, API10",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1813
+      }
+    },
+    "audit/Interventions | year 6 anniversary, API10/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 6 anniversary, API10",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1574
+      }
+    },
+    "audit/Interventions | year 6 anniversary, API10/dropped/anniversary after production cutoff": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 6 anniversary, API10",
+        "disposition": "dropped",
+        "reason": "anniversary after production cutoff"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 239
+      }
+    },
+    "audit/Interventions | year 7 anniversary, API10/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 7 anniversary, API10",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1813
+      }
+    },
+    "audit/Interventions | year 7 anniversary, API10/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 7 anniversary, API10",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1533
+      }
+    },
+    "audit/Interventions | year 7 anniversary, API10/dropped/anniversary after production cutoff": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 7 anniversary, API10",
+        "disposition": "dropped",
+        "reason": "anniversary after production cutoff"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 280
+      }
+    },
+    "audit/Interventions | year 8 anniversary, API10/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 8 anniversary, API10",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1813
+      }
+    },
+    "audit/Interventions | year 8 anniversary, API10/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 8 anniversary, API10",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1485
+      }
+    },
+    "audit/Interventions | year 8 anniversary, API10/dropped/anniversary after production cutoff": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 8 anniversary, API10",
+        "disposition": "dropped",
+        "reason": "anniversary after production cutoff"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 328
+      }
+    },
+    "audit/Interventions | year 9 anniversary, API10/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 9 anniversary, API10",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1813
+      }
+    },
+    "audit/Interventions | year 9 anniversary, API10/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 9 anniversary, API10",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1429
+      }
+    },
+    "audit/Interventions | year 9 anniversary, API10/dropped/anniversary after production cutoff": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 9 anniversary, API10",
+        "disposition": "dropped",
+        "reason": "anniversary after production cutoff"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 384
+      }
+    },
+    "audit/Interventions | year 10 anniversary, API10/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 10 anniversary, API10",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1813
+      }
+    },
+    "audit/Interventions | year 10 anniversary, API10/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 10 anniversary, API10",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1387
+      }
+    },
+    "audit/Interventions | year 10 anniversary, API10/dropped/anniversary after production cutoff": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 10 anniversary, API10",
+        "disposition": "dropped",
+        "reason": "anniversary after production cutoff"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 426
+      }
+    },
+    "audit/Interventions | year 11 anniversary, API10/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 11 anniversary, API10",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1813
+      }
+    },
+    "audit/Interventions | year 11 anniversary, API10/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 11 anniversary, API10",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1326
+      }
+    },
+    "audit/Interventions | year 11 anniversary, API10/dropped/anniversary after production cutoff": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 11 anniversary, API10",
+        "disposition": "dropped",
+        "reason": "anniversary after production cutoff"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 487
+      }
+    },
+    "audit/Interventions | year 12 anniversary, API10/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 12 anniversary, API10",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1813
+      }
+    },
+    "audit/Interventions | year 12 anniversary, API10/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 12 anniversary, API10",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1237
+      }
+    },
+    "audit/Interventions | year 12 anniversary, API10/dropped/anniversary after production cutoff": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 12 anniversary, API10",
+        "disposition": "dropped",
+        "reason": "anniversary after production cutoff"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 576
+      }
+    },
+    "audit/Interventions | year 13 anniversary, API10/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 13 anniversary, API10",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1813
+      }
+    },
+    "audit/Interventions | year 13 anniversary, API10/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 13 anniversary, API10",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1152
+      }
+    },
+    "audit/Interventions | year 13 anniversary, API10/dropped/anniversary after production cutoff": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 13 anniversary, API10",
+        "disposition": "dropped",
+        "reason": "anniversary after production cutoff"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 661
+      }
+    },
+    "audit/Interventions | year 14 anniversary, API10/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 14 anniversary, API10",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1813
+      }
+    },
+    "audit/Interventions | year 14 anniversary, API10/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 14 anniversary, API10",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1095
+      }
+    },
+    "audit/Interventions | year 14 anniversary, API10/dropped/anniversary after production cutoff": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 14 anniversary, API10",
+        "disposition": "dropped",
+        "reason": "anniversary after production cutoff"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 718
+      }
+    },
+    "audit/Interventions | year 15 anniversary, API10/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 15 anniversary, API10",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1813
+      }
+    },
+    "audit/Interventions | year 15 anniversary, API10/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 15 anniversary, API10",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1020
+      }
+    },
+    "audit/Interventions | year 15 anniversary, API10/dropped/anniversary after production cutoff": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 15 anniversary, API10",
+        "disposition": "dropped",
+        "reason": "anniversary after production cutoff"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 793
+      }
+    },
+    "audit/Interventions | year 16 anniversary, API10/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 16 anniversary, API10",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1813
+      }
+    },
+    "audit/Interventions | year 16 anniversary, API10/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 16 anniversary, API10",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 952
+      }
+    },
+    "audit/Interventions | year 16 anniversary, API10/dropped/anniversary after production cutoff": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 16 anniversary, API10",
+        "disposition": "dropped",
+        "reason": "anniversary after production cutoff"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 861
+      }
+    },
+    "audit/Interventions | year 17 anniversary, API10/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 17 anniversary, API10",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1813
+      }
+    },
+    "audit/Interventions | year 17 anniversary, API10/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 17 anniversary, API10",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 863
+      }
+    },
+    "audit/Interventions | year 17 anniversary, API10/dropped/anniversary after production cutoff": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 17 anniversary, API10",
+        "disposition": "dropped",
+        "reason": "anniversary after production cutoff"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 950
+      }
+    },
+    "audit/Interventions | year 18 anniversary, API10/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 18 anniversary, API10",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1813
+      }
+    },
+    "audit/Interventions | year 18 anniversary, API10/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 18 anniversary, API10",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 710
+      }
+    },
+    "audit/Interventions | year 18 anniversary, API10/dropped/anniversary after production cutoff": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 18 anniversary, API10",
+        "disposition": "dropped",
+        "reason": "anniversary after production cutoff"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1103
+      }
+    },
+    "audit/Interventions | year 19 anniversary, API10/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 19 anniversary, API10",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1813
+      }
+    },
+    "audit/Interventions | year 19 anniversary, API10/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 19 anniversary, API10",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 536
+      }
+    },
+    "audit/Interventions | year 19 anniversary, API10/dropped/anniversary after production cutoff": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 19 anniversary, API10",
+        "disposition": "dropped",
+        "reason": "anniversary after production cutoff"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1277
+      }
+    },
+    "audit/Interventions | year 20 anniversary, API10/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 20 anniversary, API10",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1813
+      }
+    },
+    "audit/Interventions | year 20 anniversary, API10/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 20 anniversary, API10",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 298
+      }
+    },
+    "audit/Interventions | year 20 anniversary, API10/dropped/anniversary after production cutoff": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 20 anniversary, API10",
+        "disposition": "dropped",
+        "reason": "anniversary after production cutoff"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1515
+      }
+    },
+    "audit/Interventions | year 21 anniversary, API10/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 21 anniversary, API10",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1813
+      }
+    },
+    "audit/Interventions | year 21 anniversary, API10/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 21 anniversary, API10",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 82
+      }
+    },
+    "audit/Interventions | year 21 anniversary, API10/dropped/anniversary after production cutoff": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Interventions | year 21 anniversary, API10",
+        "disposition": "dropped",
+        "reason": "anniversary after production cutoff"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1731
+      }
+    },
+    "audit/Article summary | completion window, API10/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Article summary | completion window, API10",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 39570
+      }
+    },
+    "audit/Article summary | completion window, API10/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Article summary | completion window, API10",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 2873
+      }
+    },
+    "audit/Article summary | completion window, API10/dropped/no dated C completion": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Article summary | completion window, API10",
+        "disposition": "dropped",
+        "reason": "no dated C completion"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 34580
+      }
+    },
+    "audit/Article summary | completion window, API10/dropped/first C before 2005": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Article summary | completion window, API10",
+        "disposition": "dropped",
+        "reason": "first C before 2005"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 2084
+      }
+    },
+    "audit/Article summary | completion window, API10/dropped/first C after 2025": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Article summary | completion window, API10",
+        "disposition": "dropped",
+        "reason": "first C after 2025"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 33
+      }
+    },
+    "audit/Article summary | assigned band, completion cohort API10/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Article summary | assigned band, completion cohort API10",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 2873
+      }
+    },
+    "audit/Article summary | assigned band, completion cohort API10/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Article summary | assigned band, completion cohort API10",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 2873
+      }
+    },
+    "audit/Article summary | war_date by cutoff, inventory API10/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Article summary | war_date by cutoff, inventory API10",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 39570
+      }
+    },
+    "audit/Article summary | war_date by cutoff, inventory API10/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Article summary | war_date by cutoff, inventory API10",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1513
+      }
+    },
+    "audit/Article summary | war_date by cutoff, inventory API10/dropped/no dated qualifying event": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Article summary | war_date by cutoff, inventory API10",
+        "disposition": "dropped",
+        "reason": "no dated qualifying event"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 34993
+      }
+    },
+    "audit/Article summary | war_date by cutoff, inventory API10/dropped/no positive joined OGOR month": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Article summary | war_date by cutoff, inventory API10",
+        "disposition": "dropped",
+        "reason": "no positive joined OGOR month"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 216
+      }
+    },
+    "audit/Article summary | war_date by cutoff, inventory API10/dropped/unsupported production start": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Article summary | war_date by cutoff, inventory API10",
+        "disposition": "dropped",
+        "reason": "unsupported production start"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 2848
+      }
+    },
+    "audit/Article summary | permit_date by cutoff, inventory API10/read/input": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Article summary | permit_date by cutoff, inventory API10",
+        "disposition": "read",
+        "reason": "input"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 39570
+      }
+    },
+    "audit/Article summary | permit_date by cutoff, inventory API10/kept/retained": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Article summary | permit_date by cutoff, inventory API10",
+        "disposition": "kept",
+        "reason": "retained"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 1322
+      }
+    },
+    "audit/Article summary | permit_date by cutoff, inventory API10/dropped/no dated qualifying event": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Article summary | permit_date by cutoff, inventory API10",
+        "disposition": "dropped",
+        "reason": "no dated qualifying event"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 35444
+      }
+    },
+    "audit/Article summary | permit_date by cutoff, inventory API10/dropped/no positive joined OGOR month": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Article summary | permit_date by cutoff, inventory API10",
+        "disposition": "dropped",
+        "reason": "no positive joined OGOR month"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 155
+      }
+    },
+    "audit/Article summary | permit_date by cutoff, inventory API10/dropped/unsupported production start": {
+      "table": "record_counts.csv",
+      "filter": {
+        "stage": "Article summary | permit_date by cutoff, inventory API10",
+        "disposition": "dropped",
+        "reason": "unsupported production start"
+      },
+      "fields": [
+        "rows"
+      ],
+      "operation": "row",
+      "values": {
+        "rows": 2649
       }
     }
   }
