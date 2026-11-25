@@ -2,7 +2,7 @@
 
 import json
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 import pytest
@@ -66,16 +66,16 @@ class DisabledJob(AbstractJob):
 
 
 def _write_config(tmp_path) -> str:
-    log_dir = str(tmp_path / "logs")
-    status_file = str(tmp_path / "status.json")
+    log_dir = (tmp_path / "logs").as_posix()
+    status_file = (tmp_path / "status.json").as_posix()
     content = MINIMAL_CONFIG.format(
         log_dir=log_dir,
         status_file=status_file,
-        mock_output_dir=str(tmp_path / "data" / "mock_job"),
-        disabled_output_dir=str(tmp_path / "data" / "disabled_job"),
+        mock_output_dir=(tmp_path / "data" / "mock_job").as_posix(),
+        disabled_output_dir=(tmp_path / "data" / "disabled_job").as_posix(),
     )
     config_file = tmp_path / "scheduler_config.yml"
-    config_file.write_text(content)
+    config_file.write_text(content, encoding="utf-8", newline="\n")
     return str(config_file)
 
 
@@ -164,7 +164,7 @@ class TestDataSchedulerRunOnce:
 
         manifest_path = tmp_path / "data" / "mock_job" / "manifest.json"
         assert manifest_path.exists()
-        manifest = json.loads(manifest_path.read_text())
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
         assert manifest["job_name"] == "mock_job"
         assert manifest["status"] == "success"
         assert manifest["records_updated"] == result.records_updated
@@ -187,11 +187,13 @@ class TestDataSchedulerRunOnce:
         config_path = config_dir / "scheduler_config.yml"
         config_path.write_text(
             MINIMAL_CONFIG.format(
-                log_dir=str(tmp_path / "logs"),
-                status_file=str(tmp_path / "status.json"),
+                log_dir=(tmp_path / "logs").as_posix(),
+                status_file=(tmp_path / "status.json").as_posix(),
                 mock_output_dir="data/modules/mock_job",
                 disabled_output_dir="data/modules/disabled_job",
-            )
+            ),
+            encoding="utf-8",
+            newline="\n",
         )
         scheduler = DataScheduler(config_path=str(config_path))
         scheduler.register_job(MockJob())
@@ -212,11 +214,13 @@ class TestDataSchedulerRunOnce:
         config_path = config_dir / "scheduler_config.yml"
         config_path.write_text(
             MINIMAL_CONFIG.format(
-                log_dir=str(tmp_path / "logs"),
-                status_file=str(tmp_path / "status.json"),
+                log_dir=(tmp_path / "logs").as_posix(),
+                status_file=(tmp_path / "status.json").as_posix(),
                 mock_output_dir="data/modules/mock_job",
                 disabled_output_dir="data/modules/disabled_job",
-            )
+            ),
+            encoding="utf-8",
+            newline="\n",
         )
         scheduler = DataScheduler(config_path=str(config_path))
         scheduler.register_job(MockJob())
@@ -258,9 +262,11 @@ monitoring:
   webhook_url: null
   status_file: {status_file}
 """.format(
-                log_dir=str(tmp_path / "logs"),
-                status_file=str(tmp_path / "status.json"),
-            )
+                log_dir=(tmp_path / "logs").as_posix(),
+                status_file=(tmp_path / "status.json").as_posix(),
+            ),
+            encoding="utf-8",
+            newline="\n",
         )
         scheduler = DataScheduler(config_path=str(config_path))
 
@@ -273,16 +279,20 @@ monitoring:
 
             def refresh(self, *, force_refresh=False):
                 self.cache_root.mkdir(parents=True, exist_ok=True)
-                (self.cache_root / "metadata").mkdir()
+                (self.cache_root / "metadata").mkdir(exist_ok=True)
                 (
                     self.cache_root / "metadata" / "cores_refresh_metadata.json"
                 ).write_text(
-                    json.dumps(
-                        {"statistics_page": ("https://www.cores.es/en/estadisticas")}
-                    )
-                    + "\n",
+                    json.dumps(self.metadata()) + "\n",
                     encoding="utf-8",
+                    newline="\n",
                 )
+
+            def metadata(self):
+                return {
+                    "refreshed_at_utc": "2026-01-01T00:00:00+00:00",
+                    "checked_at_utc": "2026-02-01T00:00:00+00:00",
+                }
 
             def load_all_production(self):
                 normalized_dir = self.cache_root / "normalized"
@@ -290,14 +300,15 @@ monitoring:
                 (normalized_dir / "cores_all_production.csv").write_text(
                     (
                         "field_name,year,month,oil_bbl,gas_mcf\n"
-                        "Ayoluengo,2026,1,1.0,2.0\n"
+                        "Sample Field,2026,1,1.0,2.0\n"
                     ),
                     encoding="utf-8",
+                    newline="\n",
                 )
                 return pd.DataFrame(
                     [
                         {
-                            "field_name": "Ayoluengo",
+                            "field_name": "Sample Field",
                             "year": 2026,
                             "month": 1,
                             "oil_bbl": 1.0,
@@ -310,7 +321,9 @@ monitoring:
         job._loader_class = lambda: _SchedulerFakeLoader
         scheduler.register_job(job)
 
+        before = datetime.now(timezone.utc)
         result = scheduler.run_once("spain_cores_refresh")
+        after = datetime.now(timezone.utc)
 
         output_dir = tmp_path / "data" / "spain" / "cores"
         assert result.status == "success"
@@ -319,6 +332,25 @@ monitoring:
         assert (output_dir / "metadata" / "cores_refresh_metadata.json").exists()
         assert (output_dir / "normalized" / "cores_all_production.csv").exists()
         assert (output_dir / "manifest.json").exists()
+
+        source_metadata = json.loads(
+            (output_dir / "metadata" / "cores_refresh_metadata.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        assert source_metadata["refreshed_at_utc"] == "2026-01-01T00:00:00+00:00"
+        assert source_metadata["checked_at_utc"] == "2026-02-01T00:00:00+00:00"
+        metadata = json.loads(
+            (output_dir / "_metadata.json").read_text(encoding="utf-8")
+        )
+        assert metadata["last_refresh"] == source_metadata["refreshed_at_utc"]
+        assert before <= datetime.fromisoformat(metadata["last_checked"]) <= after
+        assert metadata["record_count"] == result.records_updated == 1
+        manifest = json.loads(
+            (output_dir / "manifest.json").read_text(encoding="utf-8")
+        )
+        assert manifest["records_updated"] == result.records_updated
+        assert before <= datetime.fromisoformat(manifest["last_success_ts"]) <= after
 
 
 class TestDataSchedulerStatus:
