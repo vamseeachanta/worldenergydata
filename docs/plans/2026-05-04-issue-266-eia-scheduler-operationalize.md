@@ -16,7 +16,7 @@
 Change `output_dir: data/eia` to `output_dir: data/modules/eia_us` in `scheduler_config.yml`.
 
 ### Task 2 — Document EIA_API_KEY credential requirement
-In `docs/ops/credentials.md` (create if absent), add:
+In `docs/ops/eia-authentication.md` (create if absent), add:
 ```markdown
 ### EIA US Module
 - Env var: `EIA_API_KEY`
