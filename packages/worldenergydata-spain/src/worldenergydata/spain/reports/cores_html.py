@@ -73,7 +73,8 @@ def _source_provenance_html(summary: dict[str, Any]) -> str:
     return f"""<section class="panel provenance">
     <h2>Source Provenance</h2>
     <p><strong>Source URL:</strong> {html.escape(source["source_url"])}</p>
-    <p><strong>Refresh timestamp:</strong> {html.escape(source["last_refresh"])}</p>
+    <p><strong>Workbook acquisition timestamp (oldest):</strong> {html.escape(str(source["last_refresh"] or "Unknown"))}</p>
+    <p><strong>Last checked:</strong> {html.escape(str(source.get("last_checked") or "Unknown"))}</p>
     <p><strong>Scheduler status:</strong> {html.escape(str(manifest["status"]))}</p>
     <p><strong>Scheduler job:</strong> {html.escape(str(manifest["job_name"]))}</p>
     <p><strong>Scheduler records:</strong> {html.escape(str(manifest["records_updated"]))}</p>
@@ -258,7 +259,8 @@ const chart = document.getElementById('chart');
 const economics = document.getElementById('economics');
 
 function fmt(value) {
-  return Number(value || 0).toLocaleString(undefined, {maximumFractionDigits: 0});
+  if (value === null || value === undefined) return 'Unknown';
+  return Number(value).toLocaleString(undefined, {maximumFractionDigits: 0});
 }
 
 function init() {
@@ -295,8 +297,8 @@ function drawChart(selected) {
   const slot = Math.max(8, Math.floor(650 / Math.max(monthly.length, 1)));
   const bars = monthly.map((item, i) => {
     const x = 58 + i * slot;
-    const oilH = Math.max(1, item.oil_bbl / max * 230);
-    const gasH = Math.max(1, item.gas_mcf / max * 230);
+    const oilH = item.oil_bbl === null ? 0 : Math.max(1, item.oil_bbl / max * 230);
+    const gasH = item.gas_mcf === null ? 0 : Math.max(1, item.gas_mcf / max * 230);
     const width = Math.max(2, Math.floor(slot / 3));
     return `<g><rect x="${x}" y="${280 - oilH}" width="${width}" height="${oilH}" fill="#1168b3"><title>${escapeHtml(selected.field_name)} ${escapeHtml(item.period)} oil ${fmt(item.oil_bbl)}</title></rect><rect x="${x + width + 1}" y="${280 - gasH}" width="${width}" height="${gasH}" fill="#b35b11"><title>${escapeHtml(selected.field_name)} ${escapeHtml(item.period)} gas ${fmt(item.gas_mcf)}</title></rect></g>`;
   });
