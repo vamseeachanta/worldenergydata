@@ -1,10 +1,17 @@
 [
   {
+    "figure_number": "1",
     "svg": "01_approvals_by_period.svg",
     "csv": "01_approvals_by_period.csv",
     "role": "main",
     "panel_by": "depth_band",
     "layout": "4x1_shared_x",
+    "measure": "approvals_per_year",
+    "y_scale": {
+      "max": 1000.0,
+      "step": 200.0,
+      "shared": "measure:approvals_per_year"
+    },
     "question": "How did initial and other completion approvals vary by depth and year?",
     "note": "Hollow markers show partial 2026 through 23 November. Averages end in 2025.",
     "x_unit": "year",
@@ -80,14 +87,22 @@
           }
         ]
       }
-    ]
+    ],
+    "scale_note": "Note the scale: y maximum 1,000 in Figures 1 and 2, against 100 in Figure 3."
   },
   {
+    "figure_number": "2",
     "svg": "02_recompletion_by_period.svg",
     "csv": "02_recompletion_by_period.csv",
     "role": "main",
     "panel_by": "depth_band",
     "layout": "4x1_shared_x",
+    "measure": "approvals_per_year",
+    "y_scale": {
+      "max": 1000.0,
+      "step": 200.0,
+      "shared": "measure:approvals_per_year"
+    },
     "groups": [
       "Recompletion"
     ],
@@ -157,14 +172,22 @@
           }
         ]
       }
-    ]
+    ],
+    "scale_note": "Note the scale: y maximum 1,000 in Figures 1 and 2, against 100 in Figure 3."
   },
   {
+    "figure_number": "3",
     "svg": "03_perforation_flags.svg",
     "csv": "02_recompletion_by_period.csv",
     "role": "main",
     "panel_by": "depth_band",
     "layout": "4x1_shared_x",
+    "measure": "approvals_per_year",
+    "y_scale": {
+      "max": 100.0,
+      "step": 20.0,
+      "shared": "panels"
+    },
     "groups": [
       "Modify Perforations",
       "Reperforation"
@@ -221,14 +244,21 @@
           }
         ]
       }
-    ]
+    ],
+    "scale_note": "Note the scale: y maximum 100, against 1,000 in Figures 1 and 2."
   },
   {
+    "figure_number": "4",
     "svg": "04_drilled_to_completed.svg",
     "csv": "04_drilled_to_completed.csv",
     "role": "main",
     "panel_by": "depth_band",
     "layout": "4x1_shared_x",
+    "y_scale": {
+      "max": 100.0,
+      "step": 20.0,
+      "shared": "panels"
+    },
     "question": "What share of drilled wells had an initial completion approval by water depth, well type and year of first drilling?",
     "note": "Approvals are observed through 23 November 2026. Later cohorts have had less time for approval. Hollow markers show partial 2026. Blank shares mean no wells were drilled. Equal shares overlap.",
     "x_unit": "year",
@@ -307,11 +337,17 @@
     ]
   },
   {
+    "figure_number": "E3",
     "svg": "03_approvals_per_well.svg",
     "csv": "03_approvals_per_well.csv",
     "role": "appendix",
     "panel_by": "depth_band",
     "layout": "4x1_shared_x",
+    "y_scale": {
+      "max": 0.5,
+      "step": 0.1,
+      "shared": "panels"
+    },
     "question": "How did completion approvals per January well year vary by depth and year?",
     "note": "Hollow markers show partial 2026 through 23 November. Averages end in 2025. Approvals include wells drilled after 1 January.",
     "x_unit": "year",

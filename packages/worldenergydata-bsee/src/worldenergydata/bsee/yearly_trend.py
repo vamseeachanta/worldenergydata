@@ -207,6 +207,77 @@ def _ticks(values):
     ]
 
 
+def _nice(value):
+    """A nonzero decimal tick or bound with one significant digit: 1, 2 or 5."""
+    return value > 0 and value.scaleb(-value.adjusted()) in (1, 2, 5)
+
+
+def _depth_ticks(low, high):
+    if low == high == 0:
+        high = Decimal(1)
+    unit = Decimal(1).scaleb((high - low).adjusted())
+    candidates = []
+    # Consider zero-aligned axes with three to five intervals. Prefer the
+    # lowest covering top, then the shortest span, then the finer tick step.
+    for factor in ("0.1", "0.2", "0.5", "1", "2", "5", "10"):
+        step = Decimal(factor) * unit
+        first = math.floor(low / step)
+        for last in range(math.ceil(high / step), first + 6):
+            start = min(first, last - 3) if low < 0 else first
+            top = last * step
+            if 3 <= last - start <= 5 and (top == 0 or _nice(top)):
+                candidates.append((top, (last - start) * step, step, start, last))
+    _, _, step, start, last = min(candidates)
+    return tuple(float(i * step) for i in range(start, last + 1))
+
+
+def _depth_range(rows):
+    low, peak = Decimal(0), None
+    for row in rows:
+        for key in ("value", "moving_average"):
+            if row[key] in (None, ""):
+                continue
+            value = Decimal(str(row[key]))
+            if not value.is_finite():
+                raise ValueError("expected finite depth-panel values")
+            low = min(low, value)
+            peak = value if peak is None else max(peak, value)
+    return low, peak
+
+
+def depth_y_scale(rows):
+    """Return shared tick values covering every yearly value and moving average."""
+    low, peak = _depth_range(rows)
+    return _depth_ticks(low, max(Decimal(0), peak or 0))
+
+
+def shared_depth_y_scales(figures):
+    """Map qualifying figure keys to pooled ticks when at least two can share."""
+    ranges = {key: _depth_range(rows) for key, rows in figures.items()}
+    peaks = {key: peak for key, (_, peak) in ranges.items() if peak is not None}
+    if len(peaks) < 2:
+        return {}
+    low = min(low for low, _ in ranges.values())
+    ticks = _depth_ticks(low, max(Decimal(0), max(peaks.values())))
+    threshold = Decimal("0.3") * Decimal(str(ticks[-1]))
+    shared = {key: ticks for key, peak in peaks.items() if peak >= threshold}
+    return shared if len(shared) >= 2 else {}
+
+
+def _check_depth_scale(ticks):
+    if not 4 <= len(ticks) <= 6 or not all(math.isfinite(v) for v in ticks):
+        raise ValueError("expected four to six finite y ticks")
+    values = [Decimal(str(tick)) for tick in ticks]
+    step = values[1] - values[0]
+    if (
+        0 not in values
+        or not _nice(step)
+        or (values[-1] != 0 and not _nice(values[-1]))
+        or any(right - left != step for left, right in zip(values, values[1:]))
+    ):
+        raise ValueError("expected evenly spaced nice y ticks including zero")
+
+
 def _path(panel, points, kind, colour, dashed):
     commands = []
     previous = None
@@ -245,6 +316,7 @@ def _panel(
     partial_year,
     tick_years,
     *,
+    y_ticks=None,
     show_year_labels=True,
     width=830,
     height=122,
@@ -254,14 +326,18 @@ def _panel(
         _text(panel, left, top, label, 17, font_weight="bold", fill=label_colour)
     top += 17
     first, last = years[0], years[-1]
-    ticks = _ticks(
-        [
-            v
-            for series, _, _ in data
-            for value, mean in series.values()
-            for v in (value, mean)
-            if v is not None
-        ]
+    ticks = (
+        y_ticks
+        if y_ticks is not None
+        else _ticks(
+            [
+                v
+                for series, _, _ in data
+                for value, mean in series.values()
+                for v in (value, mean)
+                if v is not None
+            ]
+        )
     )
 
     def y_of(value):
@@ -319,7 +395,7 @@ def _panel(
                 )
 
 
-def _band_panels(root, ylabel, measures, cells, years, partial_year, ticks):
+def _band_panels(root, ylabel, measures, cells, years, partial_year, ticks, y_ticks):
     _line(root, 34, 60, 68, 60, _COLORS[2], _YEARLY_WIDTH)
     _marker(root, 51, 60, _COLORS[2])
     _text(root, 80, 66, "Yearly value")
@@ -358,6 +434,7 @@ def _band_panels(root, ylabel, measures, cells, years, partial_year, ticks):
             years,
             partial_year,
             ticks,
+            y_ticks=y_ticks,
             show_year_labels=i == len(BANDS) - 1,
         )
         y += 181
@@ -400,13 +477,21 @@ def _named_panel(root, ylabel, panel_title, palette, cells, years, partial_year,
 
 
 def render_svg(
-    rows, *, title, ylabel, xlabel, note="", series_names=None, panel_title=None
+    rows,
+    *,
+    title,
+    ylabel,
+    xlabel,
+    note="",
+    series_names=None,
+    panel_title=None,
+    y_scale=None,
 ):
     """Render with_trend rows or their CSV readback, preserving measure order.
 
     The four depth bands form one column with up to two measures per band.
-    They share a calendar axis labelled below the last panel. Each vertical
-    scale fits the local values.
+    They share a year axis and one vertical scale. Pass the ticks returned by
+    shared_depth_y_scales for qualifying figures of the same measure.
     Set series_names to draw the named groups in order on one panel, with an
     optional panel_title. The note appears below the horizontal axis label.
     """
@@ -415,6 +500,14 @@ def render_svg(
     palette = _series_palette(series_names)
     if panel_title is not None and palette is None:
         raise ValueError("panel_title requires named series")
+    if palette is None:
+        if y_scale is None:
+            rows = list(rows)
+            y_scale = depth_y_scale(rows)
+        else:
+            _check_depth_scale(y_scale)
+    elif y_scale is not None:
+        raise ValueError("y_scale is for depth-band panels")
     cells = defaultdict(dict)
     partial = set()
     groups = {}
@@ -427,10 +520,15 @@ def render_svg(
         years.add(year)
         if row["partial_year"] in (True, "True"):
             partial.add(year)
-        cells[group, band][year] = tuple(
+        pair = tuple(
             None if row[k] in ("", None) else float(row[k])
             for k in ("value", "moving_average")
         )
+        if y_scale is not None and any(
+            v is not None and not y_scale[0] <= v <= y_scale[-1] for v in pair
+        ):
+            raise ValueError("y scale must cover every yearly value and moving average")
+        cells[group, band][year] = pair
     if not years or (partial and partial != {max(years)}):
         raise ValueError("expected calendar data with at most one partial final year")
     years = sorted(years)
@@ -459,7 +557,9 @@ def render_svg(
     _element(root, "rect", width="100%", height="100%", fill="white")
     _text(root, 32, 32, title, 22, font_weight="bold")
     if palette is None:
-        y = _band_panels(root, ylabel, list(groups), cells, years, partial_year, ticks)
+        y = _band_panels(
+            root, ylabel, list(groups), cells, years, partial_year, ticks, y_scale
+        )
     else:
         y = _named_panel(
             root, ylabel, panel_title, palette, cells, years, partial_year, ticks

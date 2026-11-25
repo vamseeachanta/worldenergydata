@@ -19,7 +19,11 @@ ROOT = Path(__file__).resolve().parent
 # Keep the standalone chart command usable from a source checkout.
 sys.path.insert(0, str(ROOT.parents[2] / "packages/worldenergydata-bsee/src"))
 from worldenergydata.bsee.yearly_trend import BANDS as DEPTH_LABELS  # noqa: E402
-from worldenergydata.bsee.yearly_trend import render_svg  # noqa: E402
+from worldenergydata.bsee.yearly_trend import (  # noqa: E402
+    depth_y_scale,
+    render_svg,
+    shared_depth_y_scales,
+)
 
 BANDS = ["under 100 m", "100 to 500 m", "500 to 1500 m", "1500 m and deeper"]
 BAND_LABELS = ["Under 100 m", "100 to 500 m", "500 to 1,500 m", "1,500 m and deeper"]
@@ -243,6 +247,7 @@ CHARTS = {
 CUTOFF = "Hollow markers show partial 2026 through 23 November. Averages end in 2025."
 FIGURES = (
     (
+        "1",
         "01_approvals_by_period",
         "Initial and other completion approvals",
         "How did initial and other completion approvals vary by depth and year?",
@@ -251,6 +256,7 @@ FIGURES = (
         CUTOFF,
     ),
     (
+        "2",
         "02_recompletion_by_period",
         "Recompletion approvals",
         "Where and when did recompletions receive approval?",
@@ -259,6 +265,7 @@ FIGURES = (
         CUTOFF,
     ),
     (
+        "3",
         "03_perforation_flags",
         "Other completion approvals with perforation flags",
         "Where and when did other completion approvals carry perforation flags?",
@@ -268,6 +275,7 @@ FIGURES = (
         + " The perforation flags apply to other completion approvals. One permit can carry both.",
     ),
     (
+        "4",
         "04_drilled_to_completed",
         "Drilled wells with an initial completion approval",
         "What share of drilled wells had an initial completion approval by water "
@@ -280,6 +288,7 @@ FIGURES = (
         "Equal shares overlap.",
     ),
     (
+        "E3",
         "03_approvals_per_well",
         "Completion approvals per January well year",
         "How did completion approvals per January well year vary by depth and year?",
@@ -437,27 +446,78 @@ def figure_findings(stem, rows):
     ]
 
 
+def join_labels(labels):
+    if len(labels) == 1:
+        return labels[0]
+    return f"{', '.join(labels[:-1])} and {labels[-1]}"
+
+
+def add_scale_notes(figures):
+    by_measure = {}
+    for figure in figures:
+        if "measure" in figure:
+            by_measure.setdefault(figure["measure"], []).append(figure)
+    for group in by_measure.values():
+        by_scale = {}
+        for figure in group:
+            scale = figure["y_scale"]
+            by_scale.setdefault((scale["max"], scale["step"]), []).append(figure)
+        if len(by_scale) == 1:
+            continue
+        labels = {}
+        for axis, members in by_scale.items():
+            numbers = [member["figure_number"] for member in members]
+            noun = "Figure" if len(numbers) == 1 else "Figures"
+            labels[axis] = f"{axis[0]:,g} in {noun} {join_labels(numbers)}"
+        for axis, members in by_scale.items():
+            own = labels[axis] if len(members) > 1 else f"{axis[0]:,g}"
+            others = join_labels(
+                [label for key, label in labels.items() if key != axis]
+            )
+            for member in members:
+                member["scale_note"] = (
+                    f"Note the scale: y maximum {own}, against {others}."
+                )
+
+
 def yearly_figures(out):
     figures = []
     split_groups = {
         "02_recompletion_by_period": ["Recompletion"],
         "03_perforation_flags": ["Modify Perforations", "Reperforation"],
     }
-    for stem, title, question, ylabel, xlabel, note in FIGURES:
+    # Figures 2 and 3 read the same CSV but contribute separate plotted peaks.
+    recompletions = table(out, "02_recompletion_by_period")
+    permit_rows = {
+        "01_approvals_by_period": table(out, "01_approvals_by_period"),
+        **{
+            stem: [row for row in recompletions if row["group"] in groups]
+            for stem, groups in split_groups.items()
+        },
+    }
+    permit_scales = shared_depth_y_scales(permit_rows)
+    for number, stem, title, question, ylabel, xlabel, note in FIGURES:
         groups = split_groups.get(stem)
         source = "02_recompletion_by_period" if groups else stem
-        rows = table(out, source)
-        if groups:
-            rows = [row for row in rows if row["group"] in groups]
-        chart = render_svg(rows, title=title, ylabel=ylabel, xlabel=xlabel, note=note)
+        rows = permit_rows[stem] if stem in permit_rows else table(out, source)
+        if stem in permit_scales:
+            scale, shared = permit_scales[stem], "measure:approvals_per_year"
+        else:
+            scale, shared = depth_y_scale(rows), "panels"
+        chart = render_svg(
+            rows, title=title, ylabel=ylabel, xlabel=xlabel, note=note, y_scale=scale
+        )
         (out / f"{stem}.svg").write_text(chart, encoding="utf-8", newline="\n")
         figures.append(
             dict(
+                figure_number=number,
                 svg=f"{stem}.svg",
                 csv=f"{source}.csv",
                 role="appendix" if stem == "03_approvals_per_well" else "main",
                 panel_by="depth_band",
                 layout="4x1_shared_x",
+                **({"measure": "approvals_per_year"} if stem in permit_rows else {}),
+                y_scale=dict(max=scale[-1], step=scale[1] - scale[0], shared=shared),
                 **({"groups": groups} if groups else {}),
                 question=question,
                 note=note,
@@ -467,6 +527,7 @@ def yearly_figures(out):
                 bullets=figure_findings(stem, rows),
             )
         )
+    add_scale_notes(figures)
     (out / "figures.json").write_text(
         json.dumps(figures, indent=2) + "\n", encoding="utf-8", newline="\n"
     )
