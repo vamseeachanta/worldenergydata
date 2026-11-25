@@ -263,9 +263,13 @@ def test_spain_metadata_excludes_run_copies(root):
     earlier = root / "runs" / "earlier"
     earlier.mkdir(parents=True)
     (earlier / "old.csv").write_text("value\nold\n", encoding="utf-8", newline="\n")
-    SpainCoresRefreshJob._write_refresh_metadata(root, 1)
+    SpainCoresRefreshJob._write_refresh_metadata(
+        root, 1, {"refreshed_at_utc": "2026-01-02T03:04:05+00:00"}
+    )
     metadata = json.loads((root / "_metadata.json").read_text(encoding="utf-8"))
     assert metadata["files"] == ["live.csv"]
+    assert metadata["file_count"] == 1
+    assert metadata["last_refresh"] == "2026-01-02T03:04:05+00:00"
 
 
 def test_metocean_archive_obeys_output_dir(root, monkeypatch):
