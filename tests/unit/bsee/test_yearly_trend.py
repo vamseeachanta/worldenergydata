@@ -1,6 +1,7 @@
 """Calendar windows and portable SVG requirements for yearly well series charts."""
 
 import unicodedata
+from decimal import Decimal
 from xml.etree import ElementTree as ET
 
 import pytest
@@ -311,3 +312,71 @@ def test_named_series_allow_rows_without_a_band_or_panel_title():
             [dict(rows[0], band=b, year=2020 + i) for i, b in enumerate(BANDS)],
             series_names=["Other"],
         )
+
+
+def vertical_ticks(panel):
+    return [
+        Decimal(label.text.replace(",", "").replace("(", "-").replace(")", ""))
+        for label in panel.findall("{*}text[@text-anchor='end']")
+    ]
+
+
+@pytest.mark.parametrize(
+    "values,peak_mean,expected",
+    [
+        ([1, 34, 0, None], 82, [0, 20, 40, 60, 80, 100]),
+        ([0.03, None, 0.16, 0.01], None, [0, 0.05, 0.10, 0.15, 0.20]),
+        ([0, None, 0, None], None, [0, 0.2, 0.4, 0.6, 0.8, 1]),
+    ],
+)
+def test_depth_axis_covers_yearly_values_and_means_in_all_bands(
+    values, peak_mean, expected
+):
+    rows = with_trend([dict(year=2020, band=b, value=v) for b, v in zip(BANDS, values)])
+    rows[-1]["moving_average"] = peak_mean
+    panels = ET.fromstring(render_svg(iter(rows), **CHART_LABELS)).findall(
+        "{*}g[@class='panel']"
+    )
+    assert len(panels) == 4
+    for panel in panels:
+        assert vertical_ticks(panel) == [Decimal(str(t)) for t in expected]
+
+
+def test_shared_depth_axis_preserves_signed_values():
+    rows = with_trend(
+        [dict(year=2020, band=b, value=v) for b, v in zip(BANDS, (-9, 4, 0, 1))]
+    )
+    panels = ET.fromstring(render_svg(rows, **CHART_LABELS)).findall(
+        "{*}g[@class='panel']"
+    )
+    ticks = vertical_ticks(panels[0])
+    assert 4 <= len(ticks) <= 6
+    assert ticks[0] <= -9 and ticks[-1] >= 4 and 0 in ticks
+    assert all(vertical_ticks(panel) == ticks for panel in panels)
+
+
+def test_explicit_depth_scale_rejects_a_clipped_mean():
+    from worldenergydata.bsee.yearly_trend import depth_y_scale
+
+    rows = with_trend([dict(year=2020, band=BANDS[0], value=10)])
+    scale = depth_y_scale(rows)
+    rows[0]["moving_average"] = 11
+    with pytest.raises(ValueError, match="cover"):
+        render_svg(rows, **CHART_LABELS, y_scale=scale)
+
+
+def test_same_measure_sharing_selects_members_at_30_percent_of_the_nice_maximum():
+    from worldenergydata.bsee.yearly_trend import shared_depth_y_scales
+
+    figures = {
+        "below": [dict(value=29, moving_average=None)],
+        "boundary": [dict(value=1, moving_average=30)],
+        "above": [dict(value=31, moving_average=None)],
+        "largest": [dict(value=67, moving_average=60)],
+        "empty": [dict(value=None, moving_average=None)],
+    }
+    ticks = (0, 20, 40, 60, 80, 100)
+    assert shared_depth_y_scales(figures) == dict.fromkeys(
+        ("boundary", "above", "largest"), ticks
+    )
+    assert shared_depth_y_scales({k: figures[k] for k in ("below", "largest")}) == {}

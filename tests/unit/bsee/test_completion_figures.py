@@ -3,8 +3,13 @@
 import csv
 import json
 import re
+import subprocess
+import sys
 import xml.etree.ElementTree as ET
+from decimal import Decimal
 from pathlib import Path
+
+import pytest
 
 OUTPUT = (
     Path(__file__).resolve().parents[3] / "examples/bsee/completions_by_depth/output"
@@ -156,3 +161,111 @@ def test_all_completion_charts_meet_article_width_minimums():
         for line in root.findall(".//{*}path"):
             minimum = 4 if line.get("class") == "average" else 2
             assert scale * float(line.get("stroke-width")) >= minimum, name
+
+
+@pytest.mark.parametrize("index", range(5))
+def test_delivered_axes_match_manifest_and_cover_every_plotted_cell(index):
+    figure = json.loads((OUTPUT / "figures.json").read_text())[index]
+    scale = figure["y_scale"]
+    top, step = (Decimal(str(scale[key])) for key in ("max", "step"))
+    for x in (top, step):
+        assert x > 0 and x.scaleb(-x.adjusted()) in (1, 2, 5)
+    expected = [i * step for i in range(int(top / step) + 1)]
+    assert expected[-1] == top and 4 <= len(expected) <= 6
+    panels = ET.parse(OUTPUT / figure["svg"]).findall(".//{*}g[@class='panel']")
+    assert len(panels) == 4
+    for panel in panels:
+        assert [
+            Decimal(t.text.replace(",", ""))
+            for t in panel.findall("{*}text[@text-anchor='end']")
+        ] == expected
+    with (OUTPUT / figure["csv"]).open(newline="") as stream:
+        for row in csv.DictReader(stream):
+            if "groups" in figure and row["group"] not in figure["groups"]:
+                continue
+            for key in ("value", "moving_average"):
+                if row[key]:
+                    assert 0 <= Decimal(row[key]) <= top
+
+
+def test_only_initial_approvals_and_recompletions_share_the_permit_scale():
+    figures = json.loads((OUTPUT / "figures.json").read_text())
+    scales = [f["y_scale"] for f in figures]
+    assert scales[:3] == [
+        dict(max=1000, step=200, shared="measure:approvals_per_year"),
+        dict(max=1000, step=200, shared="measure:approvals_per_year"),
+        dict(max=100, step=20, shared="panels"),
+    ]
+    assert [f["measure"] for f in figures[:3]] == ["approvals_per_year"] * 3
+    assert scales[3:] == [
+        dict(max=100, step=20, shared="panels"),
+        dict(max=0.5, step=0.1, shared="panels"),
+    ]
+
+
+def test_delivered_manifest_names_each_approval_figures_scale():
+    figures = json.loads((OUTPUT / "figures.json").read_text())
+    assert [f.get("scale_note") for f in figures] == [
+        "Note the scale: y maximum 1,000 in Figures 1 and 2, against 100 in Figure 3.",
+        "Note the scale: y maximum 1,000 in Figures 1 and 2, against 100 in Figure 3.",
+        "Note the scale: y maximum 100, against 1,000 in Figures 1 and 2.",
+        None,
+        None,
+    ]
+
+
+def test_plot_command_preserves_delivered_csv_bytes(tmp_path):
+    before = {p.name: p.read_bytes() for p in OUTPUT.glob("*.csv")}
+    for name, data in before.items():
+        (tmp_path / name).write_bytes(data)
+    subprocess.run(
+        [sys.executable, OUTPUT.parent / "plot_charts.py", "--out", tmp_path],
+        check=True,
+    )
+    assert {p.name: p.read_bytes() for p in tmp_path.glob("*.csv")} == before
+
+
+@pytest.mark.parametrize(
+    "flag_peak,should_share", [("290", False), ("300", True), ("310", True)]
+)
+def test_plot_command_selects_members_at_30_percent_of_the_nice_maximum(
+    tmp_path, flag_peak, should_share
+):
+    for source in OUTPUT.glob("*.csv"):
+        (tmp_path / source.name).write_bytes(source.read_bytes())
+    # A partial-year value changes only the flag chart, which shares its CSV with Figure 2.
+    path = tmp_path / "02_recompletion_by_period.csv"
+    with path.open(newline="") as stream:
+        rows = list(csv.DictReader(stream))
+    row = next(
+        r for r in rows if r["group"] == "Modify Perforations" and r["year"] == "2026"
+    )
+    row["value"] = flag_peak
+    with path.open("w", newline="") as stream:
+        writer = csv.DictWriter(stream, fieldnames=list(row))
+        writer.writeheader()
+        writer.writerows(rows)
+
+    subprocess.run(
+        [sys.executable, OUTPUT.parent / "plot_charts.py", "--out", tmp_path],
+        check=True,
+    )
+    figures = json.loads((tmp_path / "figures.json").read_text())
+    scales = [figure["y_scale"] for figure in figures[:3]]
+    if should_share:
+        assert all("scale_note" not in figure for figure in figures)
+        assert (
+            scales
+            == [dict(max=1000, step=200, shared="measure:approvals_per_year")] * 3
+        )
+    else:
+        assert scales == [
+            dict(max=1000, step=200, shared="measure:approvals_per_year"),
+            dict(max=1000, step=200, shared="measure:approvals_per_year"),
+            dict(max=500, step=100, shared="panels"),
+        ]
+        assert [figure["scale_note"] for figure in figures[:3]] == [
+            "Note the scale: y maximum 1,000 in Figures 1 and 2, against 500 in Figure 3.",
+            "Note the scale: y maximum 1,000 in Figures 1 and 2, against 500 in Figure 3.",
+            "Note the scale: y maximum 500, against 1,000 in Figures 1 and 2.",
+        ]
