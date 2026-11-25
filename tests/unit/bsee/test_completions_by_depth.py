@@ -645,7 +645,7 @@ def test_delivered_suboperations_split_by_kind():
 
 
 def test_period_shares_are_ratios_of_wells():
-    rows = table("04_drilled_to_completed")
+    rows = table("appendix_04_drilled_to_completed")
     assert len(rows) == 40
     totals = {}
     for row in rows:

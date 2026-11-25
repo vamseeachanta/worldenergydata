@@ -61,11 +61,11 @@ def test_permit_populations_and_pooled_exposure(tmp_path):
     )
     cc.write_trend_tables(tmp_path, years, approvals, subcodes, classified, stock)
     by_kind = {}
-    for row in read_plot(tmp_path, "01_approvals_by_period"):
+    for row in read_plot(tmp_path, "appendix_01_approvals_by_period"):
         by_kind[row["group"]] = by_kind.get(row["group"], 0) + int(row["count"])
     assert by_kind == {"Initial completion": 1, "Other completion work": 2}
 
-    work = read_plot(tmp_path, "02_recompletion_by_period")
+    work = read_plot(tmp_path, "appendix_02_recompletion_by_period")
     assert len(work) == 60
     assert [
         (r["group"], r["band"], int(r["count"]), float(r["value"]))
@@ -76,7 +76,7 @@ def test_permit_populations_and_pooled_exposure(tmp_path):
         ("Recompletion", "100 to 500 m", 1, 0.5),
         ("Reperforation", "Under 100 m", 2, 1.0),
     ]
-    rates = read_plot(tmp_path, "03_approvals_per_well")
+    rates = read_plot(tmp_path, "appendix_03_approvals_per_well")
     populated = next(r for r in rates if int(r["completion_approvals"]))
     assert populated["period"] == "2025 to 2026 (partial)"
     assert int(populated["completion_approvals"]) == 3
@@ -101,9 +101,9 @@ def test_missing_depth_approval_cannot_disappear_from_the_four_bands(tmp_path):
 
 def test_delivered_groups_and_denominators_match_the_archive_controls():
     out = EXAMPLE / "output"
-    approvals = read_plot(out, "01_approvals_by_period")
-    work = read_plot(out, "02_recompletion_by_period")
-    rates = read_plot(out, "03_approvals_per_well")
+    approvals = read_plot(out, "appendix_01_approvals_by_period")
+    work = read_plot(out, "appendix_02_recompletion_by_period")
+    rates = read_plot(out, "appendix_03_approvals_per_well")
 
     def totals(rows, key, field="count"):
         result = {}
@@ -130,7 +130,7 @@ def test_delivered_groups_and_denominators_match_the_archive_controls():
 
 
 def test_work_shares_use_all_periods_and_only_the_same_approval_group():
-    rows = read_plot(EXAMPLE / "output", "02_recompletion_by_period")
+    rows = read_plot(EXAMPLE / "output", "appendix_02_recompletion_by_period")
     for row in rows:
         group = [r for r in rows if r["group"] == row["group"]]
         total = sum(int(r["count"]) for r in group)
@@ -143,35 +143,50 @@ def test_work_shares_use_all_periods_and_only_the_same_approval_group():
         )
 
 
-def test_figure_readings_cover_the_work_shares_reversal_and_january_rate():
+def test_yearly_readings_quote_counts_and_moving_averages():
     out = EXAMPLE / "output"
-    figures = json.loads((out / "figures.json").read_text(encoding="utf-8"))
-    assert any(
-        all(n in bullet["text"] for n in ("other", "1.8", "9.8"))
-        for bullet in figures[0]["bullets"]
-    )
-    work_text = " ".join(bullet["text"] for bullet in figures[1]["bullets"])
-    for reading in ("30.1%", "31.5%", "44.9%", "81.3%", "90.4%", "91.3%"):
-        assert reading in work_text
-    assert any(
-        "recompletion" in bullet["text"].lower()
-        and all(
-            p in bullet["text"]
-            for p in ("20.2", "14.2", "2015 to 2019", "2020 to 2024")
-        )
-        for bullet in figures[1]["bullets"]
-    )
-    assert any(
-        "Modify Perforations" in bullet["text"]
-        and all(
-            n in bullet["text"] for n in ("1.4", "0.0", "2005 to 2009", "2020 to 2024")
-        )
-        for bullet in figures[1]["bullets"]
-    )
+    figures = json.loads((out / "figures.json").read_text())
+    for f in figures:
+        columns = {c["column"] for b in f["bullets"] for c in b["cells"]}
+        assert {"value", "moving_average"} <= columns
     title = ET.parse(out / figures[2]["svg"]).findtext("{*}title").lower()
     assert "per january well year" in title
-    assert "per january well year" in figures[2]["question"].lower()
-    assert any(
-        all(rate in bullet["text"] for rate in ("0.12", "0.03", "0.33", "0.01"))
-        for bullet in figures[2]["bullets"]
-    )
+
+
+def test_annual_cells_recover_every_period_numerator_and_denominator():
+    out = EXAMPLE / "output"
+    for stem, columns in [
+        ("01_approvals_by_period", ["count"]),
+        ("02_recompletion_by_period", ["count"]),
+        ("03_approvals_per_well", ["completion_approvals", "january_well_years"]),
+        (
+            "04_drilled_to_completed",
+            ["wells_first_drilled", "with_initial_completion_approval"],
+        ),
+    ]:
+        annual = read_plot(out, stem)
+        for old in read_plot(out, "appendix_" + stem):
+            first = int(old["period"][:4])
+            rows = [
+                r
+                for r in annual
+                if r["group"] == old["group"]
+                and r["band"] == old["band"]
+                and first <= int(r["year"]) < first + 5
+            ]
+            assert len(rows) == int(old.get("years", min(5, 2027 - first)))
+            for col in columns:
+                assert sum(int(r[col]) for r in rows) == int(old[col])
+            for row in rows:
+                if "wells_first_drilled" in columns:
+                    numerator = 100 * int(row["with_initial_completion_approval"])
+                    denominator = int(row["wells_first_drilled"])
+                elif "january_well_years" in columns:
+                    numerator = int(row["completion_approvals"])
+                    denominator = int(row["january_well_years"])
+                else:
+                    numerator, denominator = int(row["count"]), 1
+                if denominator:
+                    assert float(row["value"]) == numerator / denominator
+                else:
+                    assert row["value"] == ""

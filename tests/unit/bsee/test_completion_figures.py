@@ -23,7 +23,12 @@ def test_figure_manifest_links_bullets_to_plotted_cells():
     for figure in figures:
         svg = ET.parse(OUTPUT / figure["svg"])
         assert figure["question"].endswith("?")
-        assert 3 <= len(figure["bullets"]) <= 4
+        assert (figure["view"], figure["x_unit"], figure["trend"]) == (
+            "yearly",
+            "year",
+            "moving_average_5y_trailing",
+        )
+        assert 2 <= len(figure["bullets"]) <= 4
         with (OUTPUT / figure["csv"]).open(encoding="utf-8", newline="") as stream:
             rows = list(csv.DictReader(stream))
         for bullet in figure["bullets"]:
@@ -49,19 +54,16 @@ def test_drilled_figure_shows_first_drilling_periods_and_follow_up():
         drilled = json.load(stream)[3]
     assert drilled["csv"] == "04_drilled_to_completed.csv"
     assert "first drill" in drilled["question"].lower()
-    assert "2025 to 2026" in drilled["note"]
+    assert "2026" in drilled["note"]
     assert "less time" in drilled["note"]
     root = ET.parse(OUTPUT / "04_drilled_to_completed.svg").getroot()
-    text = [element.text for element in root.findall("{*}text")]
+    text = [element.text for element in root.findall(".//{*}text")]
     assert text.index("Exploratory wells") < text.index("Development wells")
-    assert text.count("Share of drilled wells (%)") == 2
-    assert "Period of first drilling" in text
+    assert "Share of drilled wells (%)" in text
+    assert "Year of first drilling" in text
     for label in (
-        "2005 to 2009",
-        "2010 to 2014",
-        "2015 to 2019",
-        "2020 to 2024",
-        "2025 to 2026 (partial)",
+        "2005",
+        "2026",
         "Under 100 m",
         "100 to 500 m",
         "500 to 1,500 m",
@@ -81,3 +83,25 @@ def test_body_figures_have_distinct_accessible_names():
         ET.parse(OUTPUT / f["svg"]).getroot().attrib["aria-label"] for f in figures
     ]
     assert len(set(names)) == len(figures)
+
+
+def test_every_delivered_average_uses_five_complete_annual_values():
+    figures = json.loads((OUTPUT / "figures.json").read_text())
+    for figure in figures:
+        with (OUTPUT / figure["csv"]).open(newline="") as stream:
+            rows = list(csv.DictReader(stream))
+        cells = {(r["group"], r["band"], int(r["year"])): r for r in rows}
+        assert len(cells) == len(rows)
+        for (group, band, year), row in cells.items():
+            assert (row["partial_year"] == "True") == (year == 2026)
+            window = [
+                cells.get((group, band, y), {}).get("value")
+                for y in range(year - 4, year + 1)
+            ]
+            if year == 2026 or any(v in ("", None) for v in window):
+                assert row["moving_average"] == ""
+            else:
+                assert (
+                    abs(float(row["moving_average"]) - sum(map(float, window)) / 5)
+                    < 1e-12
+                )
