@@ -2,6 +2,9 @@
   {
     "svg": "01_approvals_by_period.svg",
     "csv": "01_approvals_by_period.csv",
+    "role": "main",
+    "panel_by": "depth_band",
+    "layout": "4x1_shared_x",
     "question": "How did initial and other completion approvals vary by depth and year?",
     "note": "Hollow markers show partial 2026 through 23 November. Averages end in 2025.",
     "x_unit": "year",
@@ -82,29 +85,26 @@
   {
     "svg": "02_recompletion_by_period.svg",
     "csv": "02_recompletion_by_period.csv",
-    "question": "Where and when did recompletions and perforation work receive approval?",
-    "note": "Hollow markers show partial 2026 through 23 November. Averages end in 2025. The perforation flags apply to other completion approvals. One permit can carry both.",
+    "role": "main",
+    "panel_by": "depth_band",
+    "layout": "4x1_shared_x",
+    "groups": [
+      "Recompletion"
+    ],
+    "question": "Where and when did recompletions receive approval?",
+    "note": "Hollow markers show partial 2026 through 23 November. Averages end in 2025.",
     "x_unit": "year",
     "trend": "moving_average_5y_trailing",
     "view": "yearly",
     "bullets": [
       {
-        "text": "Under 100 m in 2025, 11 other approvals carried Modify Perforations and 1 carried Reperforation.",
+        "text": "At 1,500 m and deeper, there were 20 recompletion approvals in 2025.",
         "cells": [
           {
             "row": {
-              "group": "Modify Perforations",
+              "group": "Recompletion",
               "year": "2025",
-              "band": "Under 100 m"
-            },
-            "column": "value",
-            "decimals": 0
-          },
-          {
-            "row": {
-              "group": "Reperforation",
-              "year": "2025",
-              "band": "Under 100 m"
+              "band": "1,500 m and deeper"
             },
             "column": "value",
             "decimals": 0
@@ -160,80 +160,64 @@
     ]
   },
   {
-    "svg": "03_approvals_per_well.svg",
-    "csv": "03_approvals_per_well.csv",
-    "question": "How did completion approvals per January well year vary by depth and year?",
-    "note": "Hollow markers show partial 2026 through 23 November. Averages end in 2025. Approvals include wells drilled after 1 January.",
+    "svg": "03_perforation_flags.svg",
+    "csv": "02_recompletion_by_period.csv",
+    "role": "main",
+    "panel_by": "depth_band",
+    "layout": "4x1_shared_x",
+    "groups": [
+      "Modify Perforations",
+      "Reperforation"
+    ],
+    "question": "Where and when did other completion approvals carry perforation flags?",
+    "note": "Hollow markers show partial 2026 through 23 November. Averages end in 2025. The perforation flags apply to other completion approvals. One permit can carry both.",
     "x_unit": "year",
     "trend": "moving_average_5y_trailing",
     "view": "yearly",
     "bullets": [
       {
-        "text": "In 2025, approvals per January well were 0.009 under 100 m and 0.406 at 1,500 m and deeper.",
+        "text": "Under 100 m in 2025, 11 other approvals carried Modify Perforations and 1 carried Reperforation.",
         "cells": [
           {
             "row": {
-              "group": "",
+              "group": "Modify Perforations",
               "year": "2025",
               "band": "Under 100 m"
             },
             "column": "value",
-            "decimals": 3
+            "decimals": 0
           },
           {
             "row": {
-              "group": "",
+              "group": "Reperforation",
               "year": "2025",
-              "band": "1,500 m and deeper"
+              "band": "Under 100 m"
             },
             "column": "value",
-            "decimals": 3
+            "decimals": 0
           }
         ]
       },
       {
-        "text": "Under 100 m, the five year average fell from 0.029 approvals per January well in 2009 to 0.011 in 2025.",
+        "text": "Under 100 m in 2025, the five year average was 12 approvals per year for Modify Perforations and 5 for Reperforation.",
         "cells": [
           {
             "row": {
-              "group": "",
-              "year": "2009",
-              "band": "Under 100 m"
-            },
-            "column": "moving_average",
-            "decimals": 3
-          },
-          {
-            "row": {
-              "group": "",
+              "group": "Modify Perforations",
               "year": "2025",
               "band": "Under 100 m"
             },
             "column": "moving_average",
-            "decimals": 3
-          }
-        ]
-      },
-      {
-        "text": "At 1,500 m and deeper, the five year average rose from 0.125 approvals per January well in 2009 to 0.334 in 2025.",
-        "cells": [
-          {
-            "row": {
-              "group": "",
-              "year": "2009",
-              "band": "1,500 m and deeper"
-            },
-            "column": "moving_average",
-            "decimals": 3
+            "decimals": 0
           },
           {
             "row": {
-              "group": "",
+              "group": "Reperforation",
               "year": "2025",
-              "band": "1,500 m and deeper"
+              "band": "Under 100 m"
             },
             "column": "moving_average",
-            "decimals": 3
+            "decimals": 0
           }
         ]
       }
@@ -242,6 +226,9 @@
   {
     "svg": "04_drilled_to_completed.svg",
     "csv": "04_drilled_to_completed.csv",
+    "role": "main",
+    "panel_by": "depth_band",
+    "layout": "4x1_shared_x",
     "question": "What share of drilled wells had an initial completion approval by water depth, well type and year of first drilling?",
     "note": "Approvals are observed through 23 November 2026. Later cohorts have had less time for approval. Hollow markers show partial 2026. Blank shares mean no wells were drilled. Equal shares overlap.",
     "x_unit": "year",
@@ -314,6 +301,89 @@
             },
             "column": "value",
             "decimals": 0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "svg": "03_approvals_per_well.svg",
+    "csv": "03_approvals_per_well.csv",
+    "role": "appendix",
+    "panel_by": "depth_band",
+    "layout": "4x1_shared_x",
+    "question": "How did completion approvals per January well year vary by depth and year?",
+    "note": "Hollow markers show partial 2026 through 23 November. Averages end in 2025. Approvals include wells drilled after 1 January.",
+    "x_unit": "year",
+    "trend": "moving_average_5y_trailing",
+    "view": "yearly",
+    "bullets": [
+      {
+        "text": "In 2025, approvals per January well were 0.009 under 100 m and 0.406 at 1,500 m and deeper.",
+        "cells": [
+          {
+            "row": {
+              "group": "",
+              "year": "2025",
+              "band": "Under 100 m"
+            },
+            "column": "value",
+            "decimals": 3
+          },
+          {
+            "row": {
+              "group": "",
+              "year": "2025",
+              "band": "1,500 m and deeper"
+            },
+            "column": "value",
+            "decimals": 3
+          }
+        ]
+      },
+      {
+        "text": "Under 100 m, the five year average fell from 0.029 approvals per January well in 2009 to 0.011 in 2025.",
+        "cells": [
+          {
+            "row": {
+              "group": "",
+              "year": "2009",
+              "band": "Under 100 m"
+            },
+            "column": "moving_average",
+            "decimals": 3
+          },
+          {
+            "row": {
+              "group": "",
+              "year": "2025",
+              "band": "Under 100 m"
+            },
+            "column": "moving_average",
+            "decimals": 3
+          }
+        ]
+      },
+      {
+        "text": "At 1,500 m and deeper, the five year average rose from 0.125 approvals per January well in 2009 to 0.334 in 2025.",
+        "cells": [
+          {
+            "row": {
+              "group": "",
+              "year": "2009",
+              "band": "1,500 m and deeper"
+            },
+            "column": "moving_average",
+            "decimals": 3
+          },
+          {
+            "row": {
+              "group": "",
+              "year": "2025",
+              "band": "1,500 m and deeper"
+            },
+            "column": "moving_average",
+            "decimals": 3
           }
         ]
       }

@@ -245,7 +245,8 @@ def _panel(
     partial_year,
     tick_years,
     *,
-    width=352,
+    show_year_labels=True,
+    width=830,
     height=122,
 ):
     panel = _element(root, "g", **{"class": "panel"})
@@ -277,17 +278,25 @@ def _panel(
         number = Decimal(f"{abs(tick):.8g}").normalize()
         word = f"{number:,f}" if tick >= 0 else f"({number:,f})"
         _text(panel, left - 11, y + 5, word, 15, text_anchor="end")
-    for year in tick_years:
-        _text(panel, x_of(year), top + height + 24, str(year), 15, text_anchor="middle")
-    if partial_year is not None:
-        _text(
-            panel,
-            x_of(partial_year),
-            top + height + 43,
-            "partial",
-            15,
-            text_anchor="middle",
-        )
+    if show_year_labels:
+        for year in tick_years:
+            _text(
+                panel,
+                x_of(year),
+                top + height + 24,
+                str(year),
+                15,
+                text_anchor="middle",
+            )
+        if partial_year is not None:
+            _text(
+                panel,
+                x_of(partial_year),
+                top + height + 43,
+                "partial",
+                15,
+                text_anchor="middle",
+            )
     for col, kind in [(1, "average"), (0, "yearly")]:
         for series, colour, dashed in data:
             stroke = _tint(colour) if kind == "average" else colour
@@ -317,43 +326,43 @@ def _band_panels(root, ylabel, measures, cells, years, partial_year, ticks):
     _line(root, 220, 60, 258, 60, _tint(_COLORS[2]), _AVERAGE_WIDTH)
     _text(root, 270, 66, "5 year trailing moving average")
     _text(root, 32, 99, ylabel, 17, font_weight="bold")
-    # A third measure begins a separate comparison, keeping the last pair together.
-    sections = [measures[:1]] if len(measures) % 2 else []
-    offset = len(measures) % 2
-    sections += [measures[i : i + 2] for i in range(offset, len(measures), 2)]
-    y = 126
-    for section in sections:
-        x = 40
-        for idx, group in enumerate(section):
-            if group:
-                style = {"stroke_dasharray": "8 6"} if idx else {}
-                _line(root, x, y - 5, x + 42, y - 5, "#334b5c", _YEARLY_WIDTH, **style)
-                _text(root, x + 52, y, group, 16)
-                x += 90 + len(group) * 10
-        if any(section):
-            y += 31
-        bands = [b for b in BANDS if any((g, b) in cells for g in section)]
-        for i, band in enumerate(bands):
-            _panel(
-                root,
-                82 + (i % 2) * 463,
-                y + (i // 2) * 218,
-                band,
+    if len(measures) > 2:
+        raise ValueError(
+            "split depth figures with more than two measures (four lines per panel)"
+        )
+    x, y = 40, 126
+    for idx, group in enumerate(measures):
+        if group:
+            style = {"stroke_dasharray": "8 6"} if idx else {}
+            _line(root, x, y - 5, x + 42, y - 5, "#334b5c", _YEARLY_WIDTH, **style)
+            _text(root, x + 52, y, group, 16)
+            x += 90 + len(group) * 10
+    if any(measures):
+        y += 31
+    for i, band in enumerate(BANDS):
+        data = [
+            (
+                cells.get((g, band), {}),
                 _COLOUR[band],
-                [
-                    (
-                        cells.get((g, band), {}),
-                        _COLOUR[band],
-                        {"stroke_dasharray": "8 6"} if idx else {},
-                    )
-                    for idx, g in enumerate(section)
-                ],
-                years,
-                partial_year,
-                ticks,
+                {"stroke_dasharray": "8 6"} if idx else {},
             )
-        y += math.ceil(len(bands) / 2) * 218
-    return y
+            for idx, g in enumerate(measures)
+        ]
+        _panel(
+            root,
+            82,
+            y,
+            band,
+            _COLOUR[band],
+            data,
+            years,
+            partial_year,
+            ticks,
+            show_year_labels=i == len(BANDS) - 1,
+        )
+        y += 181
+    # The shared year ticks and partial-year annotation sit below the bottom row.
+    return y + 43
 
 
 def _named_panel(root, ylabel, panel_title, palette, cells, years, partial_year, ticks):
@@ -395,8 +404,9 @@ def render_svg(
 ):
     """Render with_trend rows or their CSV readback, preserving measure order.
 
-    By default each panel covers one water depth and up to two measures. All panels share
-    calendar coordinates. Their labelled vertical scales fit the local values.
+    The four depth bands form one column with up to two measures per band.
+    They share a calendar axis labelled below the last panel. Each vertical
+    scale fits the local values.
     Set series_names to draw the named groups in order on one panel, with an
     optional panel_title. The note appears below the horizontal axis label.
     """

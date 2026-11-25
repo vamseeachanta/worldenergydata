@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Initial and other completion approvals" font-family="'DejaVu Sans','Segoe UI',Arial,sans-serif" fill="#183143" width="960" height="636" viewBox="0 0 960 636">
+<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Initial and other completion approvals" font-family="'DejaVu Sans','Segoe UI',Arial,sans-serif" fill="#183143" width="960" height="967" viewBox="0 0 960 967">
   <title>Initial and other completion approvals</title>
   <rect width="100%" height="100%" fill="white" />
   <text x="32" y="32" font-size="25" font-weight="bold">Initial and other completion approvals</text>
@@ -14,262 +14,244 @@
   <text x="362" y="126" font-size="18">Other completion work</text>
   <g class="panel">
     <text x="82" y="157" font-size="19" font-weight="bold" fill="#6588a6">Under 100 m</text>
-    <line x1="82" y1="296.0" x2="434" y2="296.0" stroke="#d9e0e6" stroke-width="2" />
+    <line x1="82" y1="296.0" x2="912" y2="296.0" stroke="#d9e0e6" stroke-width="2" />
     <text x="71" y="301.0" font-size="17" text-anchor="end">0</text>
-    <line x1="82" y1="255.33333333333331" x2="434" y2="255.33333333333331" stroke="#d9e0e6" stroke-width="2" />
+    <line x1="82" y1="255.33333333333331" x2="912" y2="255.33333333333331" stroke="#d9e0e6" stroke-width="2" />
     <text x="71" y="260.3333333333333" font-size="17" text-anchor="end">200</text>
-    <line x1="82" y1="214.66666666666666" x2="434" y2="214.66666666666666" stroke="#d9e0e6" stroke-width="2" />
+    <line x1="82" y1="214.66666666666666" x2="912" y2="214.66666666666666" stroke="#d9e0e6" stroke-width="2" />
     <text x="71" y="219.66666666666666" font-size="17" text-anchor="end">400</text>
-    <line x1="82" y1="174.0" x2="434" y2="174.0" stroke="#d9e0e6" stroke-width="2" />
+    <line x1="82" y1="174.0" x2="912" y2="174.0" stroke="#d9e0e6" stroke-width="2" />
     <text x="71" y="179.0" font-size="17" text-anchor="end">600</text>
-    <text x="82.0" y="320" font-size="17" text-anchor="middle">2005</text>
-    <text x="165.8095238095238" y="320" font-size="17" text-anchor="middle">2010</text>
-    <text x="249.61904761904762" y="320" font-size="17" text-anchor="middle">2015</text>
-    <text x="333.42857142857144" y="320" font-size="17" text-anchor="middle">2020</text>
-    <text x="434.0" y="320" font-size="17" text-anchor="middle">2026</text>
-    <text x="434.0" y="339" font-size="17" text-anchor="middle">partial</text>
-    <path d="M149.05,234.67 l0,0 L165.81,239.15 L182.57,249.60 L199.33,255.21 L216.10,259.40 L232.86,255.09 L249.62,257.29 L266.38,263.02 L283.14,269.69 L299.90,274.73 L316.67,282.86 L333.43,287.18 L350.19,286.73 L366.95,285.55 L383.71,286.85 L400.48,286.93 L417.24,286.16" fill="none" stroke="#a6bacb" stroke-width="5" stroke-linecap="round" class="average" />
-    <path d="M149.05,276.28 l0,0 L165.81,274.73 L182.57,275.02 L199.33,276.76 L216.10,277.98 L232.86,278.88 L249.62,281.56 L266.38,282.95 L283.14,283.47 L299.90,283.84 L316.67,284.94 L333.43,285.67 L350.19,287.13 L366.95,288.48 L383.71,290.59 L400.48,290.96 L417.24,291.28" fill="none" stroke="#a6bacb" stroke-width="5" stroke-linecap="round" class="average" stroke-dasharray="8 6" />
-    <path d="M82.00,237.44 l0,0 L98.76,208.77 L115.52,226.46 L132.29,234.19 L149.05,266.52 L165.81,259.81 L182.57,261.03 L199.33,254.52 L216.10,255.13 L232.86,244.96 L249.62,270.79 L266.38,289.70 L283.14,287.87 L299.90,280.34 L316.67,285.63 L333.43,292.34 L350.19,287.46 L366.95,281.97 L383.71,286.85 L400.48,286.04 L417.24,288.48 L434.00,289.09" fill="none" stroke="#6588a6" stroke-width="3" stroke-linecap="round" class="yearly" />
-    <path d="M82.00,282.17 l0,0 L98.76,275.26 L115.52,270.58 L132.29,274.85 L149.05,278.51 L165.81,274.45 L182.57,276.68 L199.33,279.33 L216.10,280.95 L232.86,282.99 L249.62,287.87 L266.38,283.60 L283.14,281.97 L299.90,282.78 L316.67,288.48 L333.43,291.53 L350.19,290.92 L366.95,288.68 L383.71,293.36 L400.48,290.31 L417.24,293.15 L434.00,293.36" fill="none" stroke="#6588a6" stroke-width="3" stroke-linecap="round" class="yearly" stroke-dasharray="8 6" />
+    <path d="M240.10,234.67 l0,0 L279.62,239.15 L319.14,249.60 L358.67,255.21 L398.19,259.40 L437.71,255.09 L477.24,257.29 L516.76,263.02 L556.29,269.69 L595.81,274.73 L635.33,282.86 L674.86,287.18 L714.38,286.73 L753.90,285.55 L793.43,286.85 L832.95,286.93 L872.48,286.16" fill="none" stroke="#a6bacb" stroke-width="5" stroke-linecap="round" class="average" />
+    <path d="M240.10,276.28 l0,0 L279.62,274.73 L319.14,275.02 L358.67,276.76 L398.19,277.98 L437.71,278.88 L477.24,281.56 L516.76,282.95 L556.29,283.47 L595.81,283.84 L635.33,284.94 L674.86,285.67 L714.38,287.13 L753.90,288.48 L793.43,290.59 L832.95,290.96 L872.48,291.28" fill="none" stroke="#a6bacb" stroke-width="5" stroke-linecap="round" class="average" stroke-dasharray="8 6" />
+    <path d="M82.00,237.44 l0,0 L121.52,208.77 L161.05,226.46 L200.57,234.19 L240.10,266.52 L279.62,259.81 L319.14,261.03 L358.67,254.52 L398.19,255.13 L437.71,244.96 L477.24,270.79 L516.76,289.70 L556.29,287.87 L595.81,280.34 L635.33,285.63 L674.86,292.34 L714.38,287.46 L753.90,281.97 L793.43,286.85 L832.95,286.04 L872.48,288.48 L912.00,289.09" fill="none" stroke="#6588a6" stroke-width="3" stroke-linecap="round" class="yearly" />
+    <path d="M82.00,282.17 l0,0 L121.52,275.26 L161.05,270.58 L200.57,274.85 L240.10,278.51 L279.62,274.45 L319.14,276.68 L358.67,279.33 L398.19,280.95 L437.71,282.99 L477.24,287.87 L516.76,283.60 L556.29,281.97 L595.81,282.78 L635.33,288.48 L674.86,291.53 L714.38,290.92 L753.90,288.68 L793.43,293.36 L832.95,290.31 L872.48,293.15 L912.00,293.36" fill="none" stroke="#6588a6" stroke-width="3" stroke-linecap="round" class="yearly" stroke-dasharray="8 6" />
     <circle cx="82.00" cy="237.44" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
-    <circle cx="98.76" cy="208.77" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
-    <circle cx="115.52" cy="226.46" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
-    <circle cx="132.29" cy="234.19" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
-    <circle cx="149.05" cy="266.52" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
-    <circle cx="165.81" cy="259.81" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
-    <circle cx="182.57" cy="261.03" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
-    <circle cx="199.33" cy="254.52" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
-    <circle cx="216.10" cy="255.13" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
-    <circle cx="232.86" cy="244.96" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
-    <circle cx="249.62" cy="270.79" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
-    <circle cx="266.38" cy="289.70" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
-    <circle cx="283.14" cy="287.87" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
-    <circle cx="299.90" cy="280.34" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
-    <circle cx="316.67" cy="285.63" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
-    <circle cx="333.43" cy="292.34" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
-    <circle cx="350.19" cy="287.46" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
-    <circle cx="366.95" cy="281.97" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
-    <circle cx="383.71" cy="286.85" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
-    <circle cx="400.48" cy="286.04" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
-    <circle cx="417.24" cy="288.48" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
-    <circle cx="434.00" cy="289.09" r="5.5" stroke="#6588a6" stroke-width="3" fill="white" />
+    <circle cx="121.52" cy="208.77" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
+    <circle cx="161.05" cy="226.46" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
+    <circle cx="200.57" cy="234.19" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
+    <circle cx="240.10" cy="266.52" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
+    <circle cx="279.62" cy="259.81" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
+    <circle cx="319.14" cy="261.03" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
+    <circle cx="358.67" cy="254.52" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
+    <circle cx="398.19" cy="255.13" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
+    <circle cx="437.71" cy="244.96" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
+    <circle cx="477.24" cy="270.79" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
+    <circle cx="516.76" cy="289.70" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
+    <circle cx="556.29" cy="287.87" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
+    <circle cx="595.81" cy="280.34" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
+    <circle cx="635.33" cy="285.63" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
+    <circle cx="674.86" cy="292.34" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
+    <circle cx="714.38" cy="287.46" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
+    <circle cx="753.90" cy="281.97" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
+    <circle cx="793.43" cy="286.85" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
+    <circle cx="832.95" cy="286.04" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
+    <circle cx="872.48" cy="288.48" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
+    <circle cx="912.00" cy="289.09" r="5.5" stroke="#6588a6" stroke-width="3" fill="white" />
     <circle cx="82.00" cy="282.17" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
-    <circle cx="98.76" cy="275.26" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
-    <circle cx="115.52" cy="270.58" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
-    <circle cx="132.29" cy="274.85" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
-    <circle cx="149.05" cy="278.51" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
-    <circle cx="165.81" cy="274.45" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
-    <circle cx="182.57" cy="276.68" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
-    <circle cx="199.33" cy="279.33" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
-    <circle cx="216.10" cy="280.95" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
-    <circle cx="232.86" cy="282.99" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
-    <circle cx="249.62" cy="287.87" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
-    <circle cx="266.38" cy="283.60" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
-    <circle cx="283.14" cy="281.97" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
-    <circle cx="299.90" cy="282.78" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
-    <circle cx="316.67" cy="288.48" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
-    <circle cx="333.43" cy="291.53" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
-    <circle cx="350.19" cy="290.92" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
-    <circle cx="366.95" cy="288.68" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
-    <circle cx="383.71" cy="293.36" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
-    <circle cx="400.48" cy="290.31" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
-    <circle cx="417.24" cy="293.15" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
-    <circle cx="434.00" cy="293.36" r="5.5" stroke="#6588a6" stroke-width="3" fill="white" />
+    <circle cx="121.52" cy="275.26" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
+    <circle cx="161.05" cy="270.58" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
+    <circle cx="200.57" cy="274.85" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
+    <circle cx="240.10" cy="278.51" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
+    <circle cx="279.62" cy="274.45" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
+    <circle cx="319.14" cy="276.68" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
+    <circle cx="358.67" cy="279.33" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
+    <circle cx="398.19" cy="280.95" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
+    <circle cx="437.71" cy="282.99" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
+    <circle cx="477.24" cy="287.87" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
+    <circle cx="516.76" cy="283.60" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
+    <circle cx="556.29" cy="281.97" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
+    <circle cx="595.81" cy="282.78" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
+    <circle cx="635.33" cy="288.48" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
+    <circle cx="674.86" cy="291.53" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
+    <circle cx="714.38" cy="290.92" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
+    <circle cx="753.90" cy="288.68" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
+    <circle cx="793.43" cy="293.36" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
+    <circle cx="832.95" cy="290.31" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
+    <circle cx="872.48" cy="293.15" r="5.5" stroke="#6588a6" stroke-width="3" fill="#6588a6" />
+    <circle cx="912.00" cy="293.36" r="5.5" stroke="#6588a6" stroke-width="3" fill="white" />
   </g>
   <g class="panel">
-    <text x="545" y="157" font-size="19" font-weight="bold" fill="#427298">100 to 500 m</text>
-    <line x1="545" y1="296.0" x2="897" y2="296.0" stroke="#d9e0e6" stroke-width="2" />
-    <text x="534" y="301.0" font-size="17" text-anchor="end">0</text>
-    <line x1="545" y1="255.33333333333331" x2="897" y2="255.33333333333331" stroke="#d9e0e6" stroke-width="2" />
-    <text x="534" y="260.3333333333333" font-size="17" text-anchor="end">20</text>
-    <line x1="545" y1="214.66666666666666" x2="897" y2="214.66666666666666" stroke="#d9e0e6" stroke-width="2" />
-    <text x="534" y="219.66666666666666" font-size="17" text-anchor="end">40</text>
-    <line x1="545" y1="174.0" x2="897" y2="174.0" stroke="#d9e0e6" stroke-width="2" />
-    <text x="534" y="179.0" font-size="17" text-anchor="end">60</text>
-    <text x="545.0" y="320" font-size="17" text-anchor="middle">2005</text>
-    <text x="628.8095238095239" y="320" font-size="17" text-anchor="middle">2010</text>
-    <text x="712.6190476190476" y="320" font-size="17" text-anchor="middle">2015</text>
-    <text x="796.4285714285714" y="320" font-size="17" text-anchor="middle">2020</text>
-    <text x="897.0" y="320" font-size="17" text-anchor="middle">2026</text>
-    <text x="897.0" y="339" font-size="17" text-anchor="middle">partial</text>
-    <path d="M612.05,226.46 l0,0 L628.81,235.41 L645.57,247.20 L662.33,261.03 L679.10,268.75 L695.86,274.85 L712.62,265.50 L729.38,260.62 L746.14,248.01 L762.90,239.07 L779.67,230.12 L796.43,223.21 L813.19,222.39 L829.95,227.68 L846.71,235.41 L863.48,239.47 L880.24,252.08" fill="none" stroke="#91adc3" stroke-width="5" stroke-linecap="round" class="average" />
-    <path d="M612.05,290.31 l0,0 L628.81,287.05 L645.57,287.46 L662.33,286.24 L679.10,280.55 L695.86,277.70 L712.62,279.73 L729.38,279.73 L746.14,281.77 L762.90,288.68 L779.67,290.71 L796.43,290.71 L813.19,288.68 L829.95,288.27 L846.71,284.61 L863.48,286.24 L880.24,288.27" fill="none" stroke="#91adc3" stroke-width="5" stroke-linecap="round" class="average" stroke-dasharray="8 6" />
-    <path d="M545.00,235.00 l0,0 L561.76,214.67 L578.52,218.73 L595.29,235.00 L612.05,228.90 L628.81,279.73 L645.57,273.63 L662.33,287.87 L679.10,273.63 L695.86,259.40 L712.62,232.97 L729.38,249.23 L746.14,224.83 L762.90,228.90 L779.67,214.67 L796.43,198.40 L813.19,245.17 L829.95,251.27 L846.71,267.53 L863.48,235.00 L880.24,261.43 L897.00,296.00" fill="none" stroke="#427298" stroke-width="3" stroke-linecap="round" class="yearly" />
-    <path d="M545.00,291.93 l0,0 L561.76,289.90 L578.52,289.90 L595.29,289.90 L612.05,289.90 L628.81,275.67 L645.57,291.93 L662.33,283.80 L679.10,261.43 L695.86,275.67 L712.62,285.83 L729.38,291.93 L746.14,293.97 L762.90,296.00 L779.67,285.83 L796.43,285.83 L813.19,281.77 L829.95,291.93 L846.71,277.70 L863.48,293.97 L880.24,296.00 L897.00,287.87" fill="none" stroke="#427298" stroke-width="3" stroke-linecap="round" class="yearly" stroke-dasharray="8 6" />
-    <circle cx="545.00" cy="235.00" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
-    <circle cx="561.76" cy="214.67" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
-    <circle cx="578.52" cy="218.73" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
-    <circle cx="595.29" cy="235.00" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
-    <circle cx="612.05" cy="228.90" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
-    <circle cx="628.81" cy="279.73" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
-    <circle cx="645.57" cy="273.63" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
-    <circle cx="662.33" cy="287.87" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
-    <circle cx="679.10" cy="273.63" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
-    <circle cx="695.86" cy="259.40" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
-    <circle cx="712.62" cy="232.97" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
-    <circle cx="729.38" cy="249.23" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
-    <circle cx="746.14" cy="224.83" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
-    <circle cx="762.90" cy="228.90" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
-    <circle cx="779.67" cy="214.67" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
-    <circle cx="796.43" cy="198.40" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
-    <circle cx="813.19" cy="245.17" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
-    <circle cx="829.95" cy="251.27" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
-    <circle cx="846.71" cy="267.53" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
-    <circle cx="863.48" cy="235.00" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
-    <circle cx="880.24" cy="261.43" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
-    <circle cx="897.00" cy="296.00" r="5.5" stroke="#427298" stroke-width="3" fill="white" />
-    <circle cx="545.00" cy="291.93" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
-    <circle cx="561.76" cy="289.90" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
-    <circle cx="578.52" cy="289.90" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
-    <circle cx="595.29" cy="289.90" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
-    <circle cx="612.05" cy="289.90" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
-    <circle cx="628.81" cy="275.67" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
-    <circle cx="645.57" cy="291.93" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
-    <circle cx="662.33" cy="283.80" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
-    <circle cx="679.10" cy="261.43" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
-    <circle cx="695.86" cy="275.67" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
-    <circle cx="712.62" cy="285.83" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
-    <circle cx="729.38" cy="291.93" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
-    <circle cx="746.14" cy="293.97" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
-    <circle cx="762.90" cy="296.00" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
-    <circle cx="779.67" cy="285.83" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
-    <circle cx="796.43" cy="285.83" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
-    <circle cx="813.19" cy="281.77" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
-    <circle cx="829.95" cy="291.93" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
-    <circle cx="846.71" cy="277.70" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
-    <circle cx="863.48" cy="293.97" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
-    <circle cx="880.24" cy="296.00" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
-    <circle cx="897.00" cy="287.87" r="5.5" stroke="#427298" stroke-width="3" fill="white" />
+    <text x="82" y="338" font-size="19" font-weight="bold" fill="#427298">100 to 500 m</text>
+    <line x1="82" y1="477.0" x2="912" y2="477.0" stroke="#d9e0e6" stroke-width="2" />
+    <text x="71" y="482.0" font-size="17" text-anchor="end">0</text>
+    <line x1="82" y1="436.3333333333333" x2="912" y2="436.3333333333333" stroke="#d9e0e6" stroke-width="2" />
+    <text x="71" y="441.3333333333333" font-size="17" text-anchor="end">20</text>
+    <line x1="82" y1="395.6666666666667" x2="912" y2="395.6666666666667" stroke="#d9e0e6" stroke-width="2" />
+    <text x="71" y="400.6666666666667" font-size="17" text-anchor="end">40</text>
+    <line x1="82" y1="355.0" x2="912" y2="355.0" stroke="#d9e0e6" stroke-width="2" />
+    <text x="71" y="360.0" font-size="17" text-anchor="end">60</text>
+    <path d="M240.10,407.46 l0,0 L279.62,416.41 L319.14,428.20 L358.67,442.03 L398.19,449.75 L437.71,455.85 L477.24,446.50 L516.76,441.62 L556.29,429.01 L595.81,420.07 L635.33,411.12 L674.86,404.21 L714.38,403.39 L753.90,408.68 L793.43,416.41 L832.95,420.47 L872.48,433.08" fill="none" stroke="#91adc3" stroke-width="5" stroke-linecap="round" class="average" />
+    <path d="M240.10,471.31 l0,0 L279.62,468.05 L319.14,468.46 L358.67,467.24 L398.19,461.55 L437.71,458.70 L477.24,460.73 L516.76,460.73 L556.29,462.77 L595.81,469.68 L635.33,471.71 L674.86,471.71 L714.38,469.68 L753.90,469.27 L793.43,465.61 L832.95,467.24 L872.48,469.27" fill="none" stroke="#91adc3" stroke-width="5" stroke-linecap="round" class="average" stroke-dasharray="8 6" />
+    <path d="M82.00,416.00 l0,0 L121.52,395.67 L161.05,399.73 L200.57,416.00 L240.10,409.90 L279.62,460.73 L319.14,454.63 L358.67,468.87 L398.19,454.63 L437.71,440.40 L477.24,413.97 L516.76,430.23 L556.29,405.83 L595.81,409.90 L635.33,395.67 L674.86,379.40 L714.38,426.17 L753.90,432.27 L793.43,448.53 L832.95,416.00 L872.48,442.43 L912.00,477.00" fill="none" stroke="#427298" stroke-width="3" stroke-linecap="round" class="yearly" />
+    <path d="M82.00,472.93 l0,0 L121.52,470.90 L161.05,470.90 L200.57,470.90 L240.10,470.90 L279.62,456.67 L319.14,472.93 L358.67,464.80 L398.19,442.43 L437.71,456.67 L477.24,466.83 L516.76,472.93 L556.29,474.97 L595.81,477.00 L635.33,466.83 L674.86,466.83 L714.38,462.77 L753.90,472.93 L793.43,458.70 L832.95,474.97 L872.48,477.00 L912.00,468.87" fill="none" stroke="#427298" stroke-width="3" stroke-linecap="round" class="yearly" stroke-dasharray="8 6" />
+    <circle cx="82.00" cy="416.00" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
+    <circle cx="121.52" cy="395.67" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
+    <circle cx="161.05" cy="399.73" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
+    <circle cx="200.57" cy="416.00" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
+    <circle cx="240.10" cy="409.90" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
+    <circle cx="279.62" cy="460.73" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
+    <circle cx="319.14" cy="454.63" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
+    <circle cx="358.67" cy="468.87" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
+    <circle cx="398.19" cy="454.63" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
+    <circle cx="437.71" cy="440.40" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
+    <circle cx="477.24" cy="413.97" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
+    <circle cx="516.76" cy="430.23" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
+    <circle cx="556.29" cy="405.83" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
+    <circle cx="595.81" cy="409.90" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
+    <circle cx="635.33" cy="395.67" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
+    <circle cx="674.86" cy="379.40" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
+    <circle cx="714.38" cy="426.17" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
+    <circle cx="753.90" cy="432.27" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
+    <circle cx="793.43" cy="448.53" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
+    <circle cx="832.95" cy="416.00" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
+    <circle cx="872.48" cy="442.43" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
+    <circle cx="912.00" cy="477.00" r="5.5" stroke="#427298" stroke-width="3" fill="white" />
+    <circle cx="82.00" cy="472.93" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
+    <circle cx="121.52" cy="470.90" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
+    <circle cx="161.05" cy="470.90" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
+    <circle cx="200.57" cy="470.90" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
+    <circle cx="240.10" cy="470.90" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
+    <circle cx="279.62" cy="456.67" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
+    <circle cx="319.14" cy="472.93" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
+    <circle cx="358.67" cy="464.80" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
+    <circle cx="398.19" cy="442.43" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
+    <circle cx="437.71" cy="456.67" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
+    <circle cx="477.24" cy="466.83" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
+    <circle cx="516.76" cy="472.93" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
+    <circle cx="556.29" cy="474.97" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
+    <circle cx="595.81" cy="477.00" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
+    <circle cx="635.33" cy="466.83" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
+    <circle cx="674.86" cy="466.83" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
+    <circle cx="714.38" cy="462.77" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
+    <circle cx="753.90" cy="472.93" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
+    <circle cx="793.43" cy="458.70" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
+    <circle cx="832.95" cy="474.97" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
+    <circle cx="872.48" cy="477.00" r="5.5" stroke="#427298" stroke-width="3" fill="#427298" />
+    <circle cx="912.00" cy="468.87" r="5.5" stroke="#427298" stroke-width="3" fill="white" />
   </g>
   <g class="panel">
-    <text x="82" y="375" font-size="19" font-weight="bold" fill="#245476">500 to 1,500 m</text>
-    <line x1="82" y1="514.0" x2="434" y2="514.0" stroke="#d9e0e6" stroke-width="2" />
-    <text x="71" y="519.0" font-size="17" text-anchor="end">0</text>
-    <line x1="82" y1="473.3333333333333" x2="434" y2="473.3333333333333" stroke="#d9e0e6" stroke-width="2" />
-    <text x="71" y="478.3333333333333" font-size="17" text-anchor="end">50</text>
-    <line x1="82" y1="432.6666666666667" x2="434" y2="432.6666666666667" stroke="#d9e0e6" stroke-width="2" />
-    <text x="71" y="437.6666666666667" font-size="17" text-anchor="end">100</text>
-    <line x1="82" y1="392.0" x2="434" y2="392.0" stroke="#d9e0e6" stroke-width="2" />
-    <text x="71" y="397.0" font-size="17" text-anchor="end">150</text>
-    <text x="82.0" y="538" font-size="17" text-anchor="middle">2005</text>
-    <text x="165.8095238095238" y="538" font-size="17" text-anchor="middle">2010</text>
-    <text x="249.61904761904762" y="538" font-size="17" text-anchor="middle">2015</text>
-    <text x="333.42857142857144" y="538" font-size="17" text-anchor="middle">2020</text>
-    <text x="434.0" y="538" font-size="17" text-anchor="middle">2026</text>
-    <text x="434.0" y="557" font-size="17" text-anchor="middle">partial</text>
-    <path d="M149.05,473.50 l0,0 L165.81,470.24 L182.57,471.38 L199.33,472.36 L216.10,470.89 L232.86,466.99 L249.62,459.18 L266.38,453.65 L283.14,451.21 L299.90,448.61 L316.67,442.10 L333.43,443.40 L350.19,436.08 L366.95,430.55 L383.71,436.57 L400.48,443.57 L417.24,443.57" fill="none" stroke="#809cb0" stroke-width="5" stroke-linecap="round" class="average" />
-    <path d="M149.05,510.26 l0,0 L165.81,509.77 L182.57,509.61 L199.33,510.26 L216.10,510.42 L232.86,511.07 L249.62,511.72 L266.38,511.89 L283.14,511.72 L299.90,512.21 L316.67,510.26 L333.43,510.10 L350.19,510.10 L366.95,507.98 L383.71,507.49 L400.48,505.54 L417.24,505.54" fill="none" stroke="#809cb0" stroke-width="5" stroke-linecap="round" class="average" stroke-dasharray="8 6" />
-    <path d="M82.00,492.85 l0,0 L98.76,473.33 L115.52,473.33 L132.29,454.63 L149.05,473.33 L165.81,476.59 L182.57,479.03 L199.33,478.21 L216.10,447.31 L232.86,453.81 L249.62,437.55 L266.38,451.37 L283.14,466.01 L299.90,434.29 L316.67,421.28 L333.43,444.05 L350.19,414.77 L366.95,438.36 L383.71,464.39 L400.48,456.25 L417.24,444.05 L434.00,468.45" fill="none" stroke="#245476" stroke-width="3" stroke-linecap="round" class="yearly" />
-    <path d="M82.00,510.75 l0,0 L98.76,511.56 L115.52,509.93 L132.29,509.12 L149.05,509.93 L165.81,508.31 L182.57,510.75 L199.33,513.19 L216.10,509.93 L232.86,513.19 L249.62,511.56 L266.38,511.56 L283.14,512.37 L299.90,512.37 L316.67,503.43 L333.43,510.75 L350.19,511.56 L366.95,501.80 L383.71,509.93 L400.48,493.67 L417.24,510.75 L434.00,513.19" fill="none" stroke="#245476" stroke-width="3" stroke-linecap="round" class="yearly" stroke-dasharray="8 6" />
-    <circle cx="82.00" cy="492.85" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
-    <circle cx="98.76" cy="473.33" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
-    <circle cx="115.52" cy="473.33" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
-    <circle cx="132.29" cy="454.63" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
-    <circle cx="149.05" cy="473.33" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
-    <circle cx="165.81" cy="476.59" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
-    <circle cx="182.57" cy="479.03" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
-    <circle cx="199.33" cy="478.21" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
-    <circle cx="216.10" cy="447.31" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
-    <circle cx="232.86" cy="453.81" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
-    <circle cx="249.62" cy="437.55" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
-    <circle cx="266.38" cy="451.37" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
-    <circle cx="283.14" cy="466.01" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
-    <circle cx="299.90" cy="434.29" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
-    <circle cx="316.67" cy="421.28" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
-    <circle cx="333.43" cy="444.05" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
-    <circle cx="350.19" cy="414.77" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
-    <circle cx="366.95" cy="438.36" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
-    <circle cx="383.71" cy="464.39" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
-    <circle cx="400.48" cy="456.25" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
-    <circle cx="417.24" cy="444.05" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
-    <circle cx="434.00" cy="468.45" r="5.5" stroke="#245476" stroke-width="3" fill="white" />
-    <circle cx="82.00" cy="510.75" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
-    <circle cx="98.76" cy="511.56" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
-    <circle cx="115.52" cy="509.93" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
-    <circle cx="132.29" cy="509.12" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
-    <circle cx="149.05" cy="509.93" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
-    <circle cx="165.81" cy="508.31" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
-    <circle cx="182.57" cy="510.75" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
-    <circle cx="199.33" cy="513.19" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
-    <circle cx="216.10" cy="509.93" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
-    <circle cx="232.86" cy="513.19" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
-    <circle cx="249.62" cy="511.56" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
-    <circle cx="266.38" cy="511.56" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
-    <circle cx="283.14" cy="512.37" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
-    <circle cx="299.90" cy="512.37" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
-    <circle cx="316.67" cy="503.43" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
-    <circle cx="333.43" cy="510.75" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
-    <circle cx="350.19" cy="511.56" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
-    <circle cx="366.95" cy="501.80" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
-    <circle cx="383.71" cy="509.93" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
-    <circle cx="400.48" cy="493.67" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
-    <circle cx="417.24" cy="510.75" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
-    <circle cx="434.00" cy="513.19" r="5.5" stroke="#245476" stroke-width="3" fill="white" />
+    <text x="82" y="519" font-size="19" font-weight="bold" fill="#245476">500 to 1,500 m</text>
+    <line x1="82" y1="658.0" x2="912" y2="658.0" stroke="#d9e0e6" stroke-width="2" />
+    <text x="71" y="663.0" font-size="17" text-anchor="end">0</text>
+    <line x1="82" y1="617.3333333333334" x2="912" y2="617.3333333333334" stroke="#d9e0e6" stroke-width="2" />
+    <text x="71" y="622.3333333333334" font-size="17" text-anchor="end">50</text>
+    <line x1="82" y1="576.6666666666666" x2="912" y2="576.6666666666666" stroke="#d9e0e6" stroke-width="2" />
+    <text x="71" y="581.6666666666666" font-size="17" text-anchor="end">100</text>
+    <line x1="82" y1="536.0" x2="912" y2="536.0" stroke="#d9e0e6" stroke-width="2" />
+    <text x="71" y="541.0" font-size="17" text-anchor="end">150</text>
+    <path d="M240.10,617.50 l0,0 L279.62,614.24 L319.14,615.38 L358.67,616.36 L398.19,614.89 L437.71,610.99 L477.24,603.18 L516.76,597.65 L556.29,595.21 L595.81,592.61 L635.33,586.10 L674.86,587.40 L714.38,580.08 L753.90,574.55 L793.43,580.57 L832.95,587.57 L872.48,587.57" fill="none" stroke="#809cb0" stroke-width="5" stroke-linecap="round" class="average" />
+    <path d="M240.10,654.26 l0,0 L279.62,653.77 L319.14,653.61 L358.67,654.26 L398.19,654.42 L437.71,655.07 L477.24,655.72 L516.76,655.89 L556.29,655.72 L595.81,656.21 L635.33,654.26 L674.86,654.10 L714.38,654.10 L753.90,651.98 L793.43,651.49 L832.95,649.54 L872.48,649.54" fill="none" stroke="#809cb0" stroke-width="5" stroke-linecap="round" class="average" stroke-dasharray="8 6" />
+    <path d="M82.00,636.85 l0,0 L121.52,617.33 L161.05,617.33 L200.57,598.63 L240.10,617.33 L279.62,620.59 L319.14,623.03 L358.67,622.21 L398.19,591.31 L437.71,597.81 L477.24,581.55 L516.76,595.37 L556.29,610.01 L595.81,578.29 L635.33,565.28 L674.86,588.05 L714.38,558.77 L753.90,582.36 L793.43,608.39 L832.95,600.25 L872.48,588.05 L912.00,612.45" fill="none" stroke="#245476" stroke-width="3" stroke-linecap="round" class="yearly" />
+    <path d="M82.00,654.75 l0,0 L121.52,655.56 L161.05,653.93 L200.57,653.12 L240.10,653.93 L279.62,652.31 L319.14,654.75 L358.67,657.19 L398.19,653.93 L437.71,657.19 L477.24,655.56 L516.76,655.56 L556.29,656.37 L595.81,656.37 L635.33,647.43 L674.86,654.75 L714.38,655.56 L753.90,645.80 L793.43,653.93 L832.95,637.67 L872.48,654.75 L912.00,657.19" fill="none" stroke="#245476" stroke-width="3" stroke-linecap="round" class="yearly" stroke-dasharray="8 6" />
+    <circle cx="82.00" cy="636.85" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
+    <circle cx="121.52" cy="617.33" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
+    <circle cx="161.05" cy="617.33" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
+    <circle cx="200.57" cy="598.63" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
+    <circle cx="240.10" cy="617.33" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
+    <circle cx="279.62" cy="620.59" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
+    <circle cx="319.14" cy="623.03" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
+    <circle cx="358.67" cy="622.21" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
+    <circle cx="398.19" cy="591.31" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
+    <circle cx="437.71" cy="597.81" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
+    <circle cx="477.24" cy="581.55" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
+    <circle cx="516.76" cy="595.37" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
+    <circle cx="556.29" cy="610.01" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
+    <circle cx="595.81" cy="578.29" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
+    <circle cx="635.33" cy="565.28" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
+    <circle cx="674.86" cy="588.05" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
+    <circle cx="714.38" cy="558.77" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
+    <circle cx="753.90" cy="582.36" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
+    <circle cx="793.43" cy="608.39" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
+    <circle cx="832.95" cy="600.25" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
+    <circle cx="872.48" cy="588.05" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
+    <circle cx="912.00" cy="612.45" r="5.5" stroke="#245476" stroke-width="3" fill="white" />
+    <circle cx="82.00" cy="654.75" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
+    <circle cx="121.52" cy="655.56" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
+    <circle cx="161.05" cy="653.93" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
+    <circle cx="200.57" cy="653.12" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
+    <circle cx="240.10" cy="653.93" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
+    <circle cx="279.62" cy="652.31" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
+    <circle cx="319.14" cy="654.75" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
+    <circle cx="358.67" cy="657.19" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
+    <circle cx="398.19" cy="653.93" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
+    <circle cx="437.71" cy="657.19" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
+    <circle cx="477.24" cy="655.56" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
+    <circle cx="516.76" cy="655.56" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
+    <circle cx="556.29" cy="656.37" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
+    <circle cx="595.81" cy="656.37" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
+    <circle cx="635.33" cy="647.43" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
+    <circle cx="674.86" cy="654.75" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
+    <circle cx="714.38" cy="655.56" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
+    <circle cx="753.90" cy="645.80" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
+    <circle cx="793.43" cy="653.93" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
+    <circle cx="832.95" cy="637.67" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
+    <circle cx="872.48" cy="654.75" r="5.5" stroke="#245476" stroke-width="3" fill="#245476" />
+    <circle cx="912.00" cy="657.19" r="5.5" stroke="#245476" stroke-width="3" fill="white" />
   </g>
   <g class="panel">
-    <text x="545" y="375" font-size="19" font-weight="bold" fill="#102e46">1,500 m and deeper</text>
-    <line x1="545" y1="514.0" x2="897" y2="514.0" stroke="#d9e0e6" stroke-width="2" />
-    <text x="534" y="519.0" font-size="17" text-anchor="end">0</text>
-    <line x1="545" y1="453.0" x2="897" y2="453.0" stroke="#d9e0e6" stroke-width="2" />
-    <text x="534" y="458.0" font-size="17" text-anchor="end">100</text>
-    <line x1="545" y1="392.0" x2="897" y2="392.0" stroke="#d9e0e6" stroke-width="2" />
-    <text x="534" y="397.0" font-size="17" text-anchor="end">200</text>
-    <text x="545.0" y="538" font-size="17" text-anchor="middle">2005</text>
-    <text x="628.8095238095239" y="538" font-size="17" text-anchor="middle">2010</text>
-    <text x="712.6190476190476" y="538" font-size="17" text-anchor="middle">2015</text>
-    <text x="796.4285714285714" y="538" font-size="17" text-anchor="middle">2020</text>
-    <text x="897.0" y="538" font-size="17" text-anchor="middle">2026</text>
-    <text x="897.0" y="557" font-size="17" text-anchor="middle">partial</text>
-    <path d="M612.05,499.60 l0,0 L628.81,499.73 L645.57,499.85 L662.33,499.36 L679.10,496.31 L695.86,490.33 L712.62,477.77 L729.38,471.06 L746.14,463.37 L762.90,459.10 L779.67,463.25 L796.43,459.95 L813.19,458.73 L829.95,456.66 L846.71,451.41 L863.48,441.04 L880.24,437.63" fill="none" stroke="#748694" stroke-width="5" stroke-linecap="round" class="average" />
-    <path d="M612.05,512.90 l0,0 L628.81,512.66 L645.57,512.66 L662.33,513.15 L679.10,513.27 L695.86,513.02 L712.62,513.27 L729.38,513.51 L746.14,513.39 L762.90,512.66 L779.67,512.90 L796.43,512.66 L813.19,512.66 L829.95,510.83 L846.71,509.73 L863.48,508.02 L880.24,507.90" fill="none" stroke="#748694" stroke-width="5" stroke-linecap="round" class="average" stroke-dasharray="8 6" />
-    <path d="M545.00,506.68 l0,0 L561.76,496.92 L578.52,496.92 L595.29,504.85 L612.05,492.65 L628.81,507.29 L645.57,497.53 L662.33,494.48 L679.10,489.60 L695.86,462.76 L712.62,444.46 L729.38,463.98 L746.14,456.05 L762.90,468.25 L779.67,483.50 L796.43,427.99 L813.19,457.88 L829.95,445.68 L846.71,442.02 L863.48,431.65 L880.24,410.91 L897.00,441.41" fill="none" stroke="#102e46" stroke-width="3" stroke-linecap="round" class="yearly" />
-    <path d="M545.00,513.39 l0,0 L561.76,512.78 L578.52,511.56 L595.29,513.39 L612.05,513.39 L628.81,512.17 L645.57,512.78 L662.33,514.00 L679.10,514.00 L695.86,512.17 L712.62,513.39 L729.38,514.00 L746.14,513.39 L762.90,510.34 L779.67,513.39 L796.43,512.17 L813.19,514.00 L829.95,504.24 L846.71,504.85 L863.48,504.85 L880.24,511.56 L897.00,512.78" fill="none" stroke="#102e46" stroke-width="3" stroke-linecap="round" class="yearly" stroke-dasharray="8 6" />
-    <circle cx="545.00" cy="506.68" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
-    <circle cx="561.76" cy="496.92" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
-    <circle cx="578.52" cy="496.92" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
-    <circle cx="595.29" cy="504.85" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
-    <circle cx="612.05" cy="492.65" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
-    <circle cx="628.81" cy="507.29" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
-    <circle cx="645.57" cy="497.53" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
-    <circle cx="662.33" cy="494.48" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
-    <circle cx="679.10" cy="489.60" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
-    <circle cx="695.86" cy="462.76" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
-    <circle cx="712.62" cy="444.46" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
-    <circle cx="729.38" cy="463.98" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
-    <circle cx="746.14" cy="456.05" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
-    <circle cx="762.90" cy="468.25" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
-    <circle cx="779.67" cy="483.50" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
-    <circle cx="796.43" cy="427.99" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
-    <circle cx="813.19" cy="457.88" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
-    <circle cx="829.95" cy="445.68" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
-    <circle cx="846.71" cy="442.02" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
-    <circle cx="863.48" cy="431.65" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
-    <circle cx="880.24" cy="410.91" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
-    <circle cx="897.00" cy="441.41" r="5.5" stroke="#102e46" stroke-width="3" fill="white" />
-    <circle cx="545.00" cy="513.39" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
-    <circle cx="561.76" cy="512.78" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
-    <circle cx="578.52" cy="511.56" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
-    <circle cx="595.29" cy="513.39" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
-    <circle cx="612.05" cy="513.39" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
-    <circle cx="628.81" cy="512.17" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
-    <circle cx="645.57" cy="512.78" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
-    <circle cx="662.33" cy="514.00" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
-    <circle cx="679.10" cy="514.00" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
-    <circle cx="695.86" cy="512.17" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
-    <circle cx="712.62" cy="513.39" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
-    <circle cx="729.38" cy="514.00" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
-    <circle cx="746.14" cy="513.39" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
-    <circle cx="762.90" cy="510.34" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
-    <circle cx="779.67" cy="513.39" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
-    <circle cx="796.43" cy="512.17" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
-    <circle cx="813.19" cy="514.00" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
-    <circle cx="829.95" cy="504.24" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
-    <circle cx="846.71" cy="504.85" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
-    <circle cx="863.48" cy="504.85" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
-    <circle cx="880.24" cy="511.56" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
-    <circle cx="897.00" cy="512.78" r="5.5" stroke="#102e46" stroke-width="3" fill="white" />
+    <text x="82" y="700" font-size="19" font-weight="bold" fill="#102e46">1,500 m and deeper</text>
+    <line x1="82" y1="839.0" x2="912" y2="839.0" stroke="#d9e0e6" stroke-width="2" />
+    <text x="71" y="844.0" font-size="17" text-anchor="end">0</text>
+    <line x1="82" y1="778.0" x2="912" y2="778.0" stroke="#d9e0e6" stroke-width="2" />
+    <text x="71" y="783.0" font-size="17" text-anchor="end">100</text>
+    <line x1="82" y1="717.0" x2="912" y2="717.0" stroke="#d9e0e6" stroke-width="2" />
+    <text x="71" y="722.0" font-size="17" text-anchor="end">200</text>
+    <text x="82.0" y="863" font-size="17" text-anchor="middle">2005</text>
+    <text x="279.6190476190476" y="863" font-size="17" text-anchor="middle">2010</text>
+    <text x="477.23809523809524" y="863" font-size="17" text-anchor="middle">2015</text>
+    <text x="674.8571428571429" y="863" font-size="17" text-anchor="middle">2020</text>
+    <text x="912.0" y="863" font-size="17" text-anchor="middle">2026</text>
+    <text x="912.0" y="882" font-size="17" text-anchor="middle">partial</text>
+    <path d="M240.10,824.60 l0,0 L279.62,824.73 L319.14,824.85 L358.67,824.36 L398.19,821.31 L437.71,815.33 L477.24,802.77 L516.76,796.06 L556.29,788.37 L595.81,784.10 L635.33,788.25 L674.86,784.95 L714.38,783.73 L753.90,781.66 L793.43,776.41 L832.95,766.04 L872.48,762.63" fill="none" stroke="#748694" stroke-width="5" stroke-linecap="round" class="average" />
+    <path d="M240.10,837.90 l0,0 L279.62,837.66 L319.14,837.66 L358.67,838.15 L398.19,838.27 L437.71,838.02 L477.24,838.27 L516.76,838.51 L556.29,838.39 L595.81,837.66 L635.33,837.90 L674.86,837.66 L714.38,837.66 L753.90,835.83 L793.43,834.73 L832.95,833.02 L872.48,832.90" fill="none" stroke="#748694" stroke-width="5" stroke-linecap="round" class="average" stroke-dasharray="8 6" />
+    <path d="M82.00,831.68 l0,0 L121.52,821.92 L161.05,821.92 L200.57,829.85 L240.10,817.65 L279.62,832.29 L319.14,822.53 L358.67,819.48 L398.19,814.60 L437.71,787.76 L477.24,769.46 L516.76,788.98 L556.29,781.05 L595.81,793.25 L635.33,808.50 L674.86,752.99 L714.38,782.88 L753.90,770.68 L793.43,767.02 L832.95,756.65 L872.48,735.91 L912.00,766.41" fill="none" stroke="#102e46" stroke-width="3" stroke-linecap="round" class="yearly" />
+    <path d="M82.00,838.39 l0,0 L121.52,837.78 L161.05,836.56 L200.57,838.39 L240.10,838.39 L279.62,837.17 L319.14,837.78 L358.67,839.00 L398.19,839.00 L437.71,837.17 L477.24,838.39 L516.76,839.00 L556.29,838.39 L595.81,835.34 L635.33,838.39 L674.86,837.17 L714.38,839.00 L753.90,829.24 L793.43,829.85 L832.95,829.85 L872.48,836.56 L912.00,837.78" fill="none" stroke="#102e46" stroke-width="3" stroke-linecap="round" class="yearly" stroke-dasharray="8 6" />
+    <circle cx="82.00" cy="831.68" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
+    <circle cx="121.52" cy="821.92" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
+    <circle cx="161.05" cy="821.92" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
+    <circle cx="200.57" cy="829.85" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
+    <circle cx="240.10" cy="817.65" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
+    <circle cx="279.62" cy="832.29" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
+    <circle cx="319.14" cy="822.53" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
+    <circle cx="358.67" cy="819.48" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
+    <circle cx="398.19" cy="814.60" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
+    <circle cx="437.71" cy="787.76" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
+    <circle cx="477.24" cy="769.46" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
+    <circle cx="516.76" cy="788.98" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
+    <circle cx="556.29" cy="781.05" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
+    <circle cx="595.81" cy="793.25" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
+    <circle cx="635.33" cy="808.50" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
+    <circle cx="674.86" cy="752.99" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
+    <circle cx="714.38" cy="782.88" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
+    <circle cx="753.90" cy="770.68" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
+    <circle cx="793.43" cy="767.02" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
+    <circle cx="832.95" cy="756.65" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
+    <circle cx="872.48" cy="735.91" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
+    <circle cx="912.00" cy="766.41" r="5.5" stroke="#102e46" stroke-width="3" fill="white" />
+    <circle cx="82.00" cy="838.39" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
+    <circle cx="121.52" cy="837.78" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
+    <circle cx="161.05" cy="836.56" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
+    <circle cx="200.57" cy="838.39" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
+    <circle cx="240.10" cy="838.39" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
+    <circle cx="279.62" cy="837.17" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
+    <circle cx="319.14" cy="837.78" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
+    <circle cx="358.67" cy="839.00" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
+    <circle cx="398.19" cy="839.00" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
+    <circle cx="437.71" cy="837.17" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
+    <circle cx="477.24" cy="838.39" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
+    <circle cx="516.76" cy="839.00" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
+    <circle cx="556.29" cy="838.39" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
+    <circle cx="595.81" cy="835.34" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
+    <circle cx="635.33" cy="838.39" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
+    <circle cx="674.86" cy="837.17" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
+    <circle cx="714.38" cy="839.00" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
+    <circle cx="753.90" cy="829.24" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
+    <circle cx="793.43" cy="829.85" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
+    <circle cx="832.95" cy="829.85" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
+    <circle cx="872.48" cy="836.56" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
+    <circle cx="912.00" cy="837.78" r="5.5" stroke="#102e46" stroke-width="3" fill="white" />
   </g>
-  <text x="480.0" y="586" font-size="19" text-anchor="middle" font-weight="bold">Calendar year of approval</text>
-  <text x="32" y="616" font-size="17">Hollow markers show partial 2026 through 23 November. Averages end in 2025.</text>
+  <text x="480.0" y="917" font-size="19" text-anchor="middle" font-weight="bold">Calendar year of approval</text>
+  <text x="32" y="947" font-size="17">Hollow markers show partial 2026 through 23 November. Averages end in 2025.</text>
 </svg>

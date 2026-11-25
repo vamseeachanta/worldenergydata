@@ -81,14 +81,14 @@ A completion leaves two public records. Both are counted, and kept apart.
    classifier first excludes plug-backs and work that prepares a new hole.
    Of the remaining `COMP` permits, those with `ZONE` (Change Zone) are
    recompletion approvals counted in Figure 2. Those without `ZONE` are the
-   completion approvals counted in Figures 1 and 3. Year is the approval
+   completion approvals counted in Figures 1 and E3. Year is the approval
    year. The feed's first full year is 2005 and 2026 runs to 23 Nov.
    - *Initial completion*: the approval carries the sub-operation `INITCOMP`.
    - *Other completion work*: it does not (perforation changes, other
      completion). These approvals are in the group the interventions study
      excludes, and they are not initial completions by the regulator's own
      sub-operation label. Across all approvals, 1,028 carry Modify Perforations
-     and 387 carry Reperforation. Figure 2 excludes the 8 and 6 initial
+     and 387 carry Reperforation. Figure 3 excludes the 8 and 6 initial
      completions, respectively, that carry these flags.
 2. **Completion report** (End of Operations Report file). One report of a Gulf
    well whose operation code is `C`. Its year is the borehole status date. A
@@ -228,12 +228,11 @@ A blank share means no wells were drilled. The historical 2005 to 2025
 
 The [figure index](output/figures.json) links each chart to its yearly CSV
 and gives the row, column and display precision behind each reading.
-Figures 1 and 2 count permits in the approval year. Figure 1 separates initial
-and other completion approvals. Figure 2 counts recompletion approvals and,
-among other completion approvals only, permits flagged Modify Perforations
-or Reperforation. A permit can carry both flags.
+Figures 1 to 3 count permits in the approval year. Figure 1 separates initial
+and other completion approvals. Figure 2 counts recompletion approvals. Figure 3 counts other
+completion approvals flagged Modify Perforations or Reperforation. A permit can carry both flags.
 
-Figure 3 divides the calendar year's total initial and other completion
+Appendix Figure E3 divides the calendar year's total initial and other completion
 approvals by the 1 January standing well inventory in each band. Approvals
 include wells drilled later in the year. Permit depth follows the bore or
 its unique well depth. Inventory depth follows the original hole or its unique
@@ -258,6 +257,7 @@ year of the window. Each annual rate or share has equal weight in the mean.
 Inside the observation window an absent permit count is zero. A year with no
 wells in the denominator has a blank value and breaks the trend. The hollow
 2026 marker covers records through 23 November and is excluded from every mean.
+The four depth bands share one calendar axis, labelled below the bottom panel.
 Vertical scales are labelled in each panel.
 
 The appendix tables retain the r5.2 period counts for

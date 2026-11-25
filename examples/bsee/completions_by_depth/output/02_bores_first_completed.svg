@@ -2,31 +2,31 @@
 <title>Bores with a first completion record by year and water depth: first initial completion approval (bars) and first completion report (circles)</title>
 <rect x="0.0" y="0.0" width="960.0" height="540.0" fill="#ffffff" fill-opacity="1.0" stroke="none"/>
 <rect x="76.0" y="21.0" width="16.0" height="16.0" fill="#a8ddd6" fill-opacity="1.0" stroke="none"/>
-<text x="99.0" y="35.0" font-size="16" font-weight="400" fill="#26323a" text-anchor="start">Under 100 m</text>
-<rect x="223.6" y="21.0" width="16.0" height="16.0" fill="#2BB2A6" fill-opacity="1.0" stroke="none"/>
-<text x="246.6" y="35.0" font-size="16" font-weight="400" fill="#26323a" text-anchor="start">100 to 500 m</text>
-<rect x="380.1" y="21.0" width="16.0" height="16.0" fill="#0e7e88" fill-opacity="1.0" stroke="none"/>
-<text x="403.1" y="35.0" font-size="16" font-weight="400" fill="#26323a" text-anchor="start">500 to 1,500 m</text>
-<rect x="554.5" y="21.0" width="16.0" height="16.0" fill="#0b3d5c" fill-opacity="1.0" stroke="none"/>
-<text x="577.5" y="35.0" font-size="16" font-weight="400" fill="#26323a" text-anchor="start">1,500 m and deeper</text>
+<text x="99.0" y="35.0" font-size="17" font-weight="400" fill="#26323a" text-anchor="start">Under 100 m</text>
+<rect x="229.7" y="21.0" width="16.0" height="16.0" fill="#2BB2A6" fill-opacity="1.0" stroke="none"/>
+<text x="252.7" y="35.0" font-size="17" font-weight="400" fill="#26323a" text-anchor="start">100 to 500 m</text>
+<rect x="393.0" y="21.0" width="16.0" height="16.0" fill="#0e7e88" fill-opacity="1.0" stroke="none"/>
+<text x="416.0" y="35.0" font-size="17" font-weight="400" fill="#26323a" text-anchor="start">500 to 1,500 m</text>
+<rect x="575.2" y="21.0" width="16.0" height="16.0" fill="#0b3d5c" fill-opacity="1.0" stroke="none"/>
+<text x="598.2" y="35.0" font-size="17" font-weight="400" fill="#26323a" text-anchor="start">1,500 m and deeper</text>
 <circle cx="84" cy="58" r="5.5" fill="#ffffff" stroke="#26323a" stroke-width="2"/>
-<text x="99.0" y="64.0" font-size="16" font-weight="400" fill="#26323a" text-anchor="start">All water depths, by first completion report (earliest status date)</text>
+<text x="99.0" y="64.0" font-size="17" font-weight="400" fill="#26323a" text-anchor="start">All water depths, by first completion report (earliest status date)</text>
 <line x1="76.0" y1="478.0" x2="936.0" y2="478.0" stroke="#d0d7de" stroke-width="1.0"/>
-<text x="66.0" y="484.0" font-size="16" font-weight="400" fill="#5a6b76" text-anchor="end">0</text>
+<text x="66.0" y="484.0" font-size="17" font-weight="400" fill="#5a6b76" text-anchor="end">0</text>
 <line x1="76.0" y1="382.5" x2="936.0" y2="382.5" stroke="#d0d7de" stroke-width="1.0"/>
-<text x="66.0" y="388.5" font-size="16" font-weight="400" fill="#5a6b76" text-anchor="end">100</text>
+<text x="66.0" y="388.5" font-size="17" font-weight="400" fill="#5a6b76" text-anchor="end">100</text>
 <line x1="76.0" y1="287.0" x2="936.0" y2="287.0" stroke="#d0d7de" stroke-width="1.0"/>
-<text x="66.0" y="293.0" font-size="16" font-weight="400" fill="#5a6b76" text-anchor="end">200</text>
+<text x="66.0" y="293.0" font-size="17" font-weight="400" fill="#5a6b76" text-anchor="end">200</text>
 <line x1="76.0" y1="191.5" x2="936.0" y2="191.5" stroke="#d0d7de" stroke-width="1.0"/>
-<text x="66.0" y="197.5" font-size="16" font-weight="400" fill="#5a6b76" text-anchor="end">300</text>
+<text x="66.0" y="197.5" font-size="17" font-weight="400" fill="#5a6b76" text-anchor="end">300</text>
 <line x1="76.0" y1="96.0" x2="936.0" y2="96.0" stroke="#d0d7de" stroke-width="1.0"/>
-<text x="66.0" y="102.0" font-size="16" font-weight="400" fill="#5a6b76" text-anchor="end">400</text>
+<text x="66.0" y="102.0" font-size="17" font-weight="400" fill="#5a6b76" text-anchor="end">400</text>
 <rect x="81.5" y="273.6" width="28.1" height="204.4" fill="#a8ddd6" fill-opacity="1.0" stroke="none"/>
 <rect x="81.5" y="254.5" width="28.1" height="19.1" fill="#2BB2A6" fill-opacity="1.0" stroke="none"/>
 <rect x="81.5" y="234.5" width="28.1" height="20.1" fill="#0e7e88" fill-opacity="1.0" stroke="none"/>
 <rect x="81.5" y="224.9" width="28.1" height="9.6" fill="#0b3d5c" fill-opacity="1.0" stroke="none"/>
 <circle cx="95.5" cy="162.9" r="5.5" fill="#ffffff" stroke="#26323a" stroke-width="2"/>
-<text x="95.5" y="502.0" font-size="16" font-weight="400" fill="#5a6b76" text-anchor="middle">2005</text>
+<text x="95.5" y="502.0" font-size="17" font-weight="400" fill="#5a6b76" text-anchor="middle">2005</text>
 <rect x="120.6" y="181.9" width="28.1" height="296.1" fill="#a8ddd6" fill-opacity="1.0" stroke="none"/>
 <rect x="120.6" y="156.2" width="28.1" height="25.8" fill="#2BB2A6" fill-opacity="1.0" stroke="none"/>
 <rect x="120.6" y="122.7" width="28.1" height="33.4" fill="#0e7e88" fill-opacity="1.0" stroke="none"/>
@@ -52,7 +52,7 @@
 <rect x="276.9" y="341.4" width="28.1" height="19.1" fill="#0e7e88" fill-opacity="1.0" stroke="none"/>
 <rect x="276.9" y="333.8" width="28.1" height="7.6" fill="#0b3d5c" fill-opacity="1.0" stroke="none"/>
 <circle cx="291.0" cy="330.0" r="5.5" fill="#ffffff" stroke="#26323a" stroke-width="2"/>
-<text x="291.0" y="502.0" font-size="16" font-weight="400" fill="#5a6b76" text-anchor="middle">2010</text>
+<text x="291.0" y="502.0" font-size="17" font-weight="400" fill="#5a6b76" text-anchor="middle">2010</text>
 <rect x="316.0" y="367.2" width="28.1" height="110.8" fill="#a8ddd6" fill-opacity="1.0" stroke="none"/>
 <rect x="316.0" y="357.7" width="28.1" height="9.6" fill="#2BB2A6" fill-opacity="1.0" stroke="none"/>
 <rect x="316.0" y="336.7" width="28.1" height="21.0" fill="#0e7e88" fill-opacity="1.0" stroke="none"/>
@@ -78,7 +78,7 @@
 <rect x="472.4" y="387.3" width="28.1" height="24.8" fill="#0e7e88" fill-opacity="1.0" stroke="none"/>
 <rect x="472.4" y="354.8" width="28.1" height="32.5" fill="#0b3d5c" fill-opacity="1.0" stroke="none"/>
 <circle cx="486.5" cy="351.9" r="5.5" fill="#ffffff" stroke="#26323a" stroke-width="2"/>
-<text x="486.5" y="502.0" font-size="16" font-weight="400" fill="#5a6b76" text-anchor="middle">2015</text>
+<text x="486.5" y="502.0" font-size="17" font-weight="400" fill="#5a6b76" text-anchor="middle">2015</text>
 <rect x="511.5" y="463.7" width="28.1" height="14.3" fill="#a8ddd6" fill-opacity="1.0" stroke="none"/>
 <rect x="511.5" y="457.9" width="28.1" height="5.7" fill="#2BB2A6" fill-opacity="1.0" stroke="none"/>
 <rect x="511.5" y="436.9" width="28.1" height="21.0" fill="#0e7e88" fill-opacity="1.0" stroke="none"/>
@@ -104,7 +104,7 @@
 <rect x="667.8" y="440.8" width="28.1" height="19.1" fill="#0e7e88" fill-opacity="1.0" stroke="none"/>
 <rect x="667.8" y="407.3" width="28.1" height="33.4" fill="#0b3d5c" fill-opacity="1.0" stroke="none"/>
 <circle cx="681.9" cy="415.0" r="5.5" fill="#ffffff" stroke="#26323a" stroke-width="2"/>
-<text x="681.9" y="502.0" font-size="16" font-weight="400" fill="#5a6b76" text-anchor="middle">2020</text>
+<text x="681.9" y="502.0" font-size="17" font-weight="400" fill="#5a6b76" text-anchor="middle">2020</text>
 <rect x="706.9" y="459.9" width="28.1" height="18.1" fill="#a8ddd6" fill-opacity="1.0" stroke="none"/>
 <rect x="706.9" y="453.2" width="28.1" height="6.7" fill="#2BB2A6" fill-opacity="1.0" stroke="none"/>
 <rect x="706.9" y="434.1" width="28.1" height="19.1" fill="#0e7e88" fill-opacity="1.0" stroke="none"/>
@@ -136,8 +136,8 @@
 <rect x="902.4" y="430.2" width="28.1" height="22.0" fill="#0b3d5c" fill-opacity="1.0" stroke="none"/>
 <rect x="899.4" y="427.2" width="34.1" height="50.8" fill="none" stroke="#26323a" stroke-width="1.5" stroke-dasharray="5 4"/>
 <circle cx="916.5" cy="436.9" r="5.5" fill="#ffffff" stroke="#26323a" stroke-width="2"/>
-<text x="916.5" y="502.0" font-size="16" font-weight="400" fill="#5a6b76" text-anchor="middle">2026*</text>
+<text x="916.5" y="502.0" font-size="17" font-weight="400" fill="#5a6b76" text-anchor="middle">2026*</text>
 <line x1="76.0" y1="478.0" x2="936.0" y2="478.0" stroke="#26323a" stroke-width="1.2"/>
-<text x="20" y="287.0" font-size="16" fill="#5a6b76" text-anchor="middle" transform="rotate(-90 20 287.0)">Bores with a first completion record</text>
-<text x="936.0" y="528.0" font-size="14" font-weight="400" fill="#5a6b76" text-anchor="end">* 2026 is a part year, to 23 Nov; dashed outline</text>
+<text x="20" y="287.0" font-size="17" fill="#5a6b76" text-anchor="middle" transform="rotate(-90 20 287.0)">Bores with a first completion record</text>
+<text x="936.0" y="528.0" font-size="17" font-weight="400" fill="#5a6b76" text-anchor="end">* 2026 is a part year, to 23 Nov; dashed outline</text>
 </svg>

@@ -81,7 +81,7 @@ def svg(parts, title, height=H, font=FONT):
     )
 
 
-def legend(labels, colours, x, y, size=16, gap=26):
+def legend(labels, colours, x, y, size=17, gap=26):
     parts = []
     for label, colour in zip(labels, colours):
         parts.append(rect(x, y - 13, 16, 16, colour))
@@ -119,11 +119,11 @@ def stacked_years(
         parts.append(
             f'<circle cx="{cx}" cy="58" r="5.5" fill="#ffffff" stroke="{INK}" stroke-width="2"/>'
         )
-        parts.append(text(cx + 15, 64, dot_label, 16))
+        parts.append(text(cx + 15, 64, dot_label, 17))
     for tick in range(0, y_max + 1, step):
         parts.append(line(left, y_of(tick), W - right, y_of(tick)))
         parts.append(
-            text(left - 10, y_of(tick) + 6, f"{tick:,}", 16, "end", fill=MUTED)
+            text(left - 10, y_of(tick) + 6, f"{tick:,}", 17, "end", fill=MUTED)
         )
     for i, year in enumerate(years):
         x = left + i * slot + (slot - bar) / 2
@@ -143,7 +143,7 @@ def stacked_years(
             )
         if not dots:  # circles would sit on the totals
             parts.append(
-                text(x + bar / 2, y_of(base) - 7, f"{base:,}", 13, "middle", fill=INK)
+                text(x + bar / 2, y_of(base) - 7, f"{base:,}", 17, "middle", fill=INK)
             )
         if dots:
             parts.append(
@@ -154,11 +154,11 @@ def stacked_years(
         if (year % 5 == 0 and year + 1 != part_year) or year == part_year:
             label = f"{year}*" if year == part_year else str(year)
             parts.append(
-                text(x + bar / 2, top + plot_h + 24, label, 16, "middle", fill=MUTED)
+                text(x + bar / 2, top + plot_h + 24, label, 17, "middle", fill=MUTED)
             )
     parts.append(line(left, top + plot_h, W - right, top + plot_h, INK, 1.2))
     parts.append(
-        f'<text x="20" y="{top + plot_h / 2:.1f}" font-size="16" fill="{MUTED}" '
+        f'<text x="20" y="{top + plot_h / 2:.1f}" font-size="17" fill="{MUTED}" '
         f'text-anchor="middle" transform="rotate(-90 20 {top + plot_h / 2:.1f})">'
         f"{escape(axis_title)}</text>"
     )
@@ -168,7 +168,7 @@ def stacked_years(
                 W - right,
                 H - 12,
                 f"* {part_year} is a part year, to 23 Nov; dashed outline",
-                14,
+                17,
                 "end",
                 fill=MUTED,
             )
@@ -252,20 +252,20 @@ FIGURES = (
     ),
     (
         "02_recompletion_by_period",
-        "Recompletion and perforation approvals",
-        "Where and when did recompletions and perforation work receive approval?",
+        "Recompletion approvals",
+        "Where and when did recompletions receive approval?",
+        "Approved permits per year",
+        "Calendar year of approval",
+        CUTOFF,
+    ),
+    (
+        "03_perforation_flags",
+        "Other completion approvals with perforation flags",
+        "Where and when did other completion approvals carry perforation flags?",
         "Approved permits per year",
         "Calendar year of approval",
         CUTOFF
         + " The perforation flags apply to other completion approvals. One permit can carry both.",
-    ),
-    (
-        "03_approvals_per_well",
-        "Completion approvals per January well year",
-        "How did completion approvals per January well year vary by depth and year?",
-        "Completion approvals per well standing on 1 January",
-        "Calendar year of approval",
-        CUTOFF + " Approvals include wells drilled after 1 January.",
     ),
     (
         "04_drilled_to_completed",
@@ -278,6 +278,14 @@ FIGURES = (
         "time for approval. "
         "Hollow markers show partial 2026. Blank shares mean no wells were drilled. "
         "Equal shares overlap.",
+    ),
+    (
+        "03_approvals_per_well",
+        "Completion approvals per January well year",
+        "How did completion approvals per January well year vary by depth and year?",
+        "Completion approvals per well standing on 1 January",
+        "Calendar year of approval",
+        CUTOFF + " Approvals include wells drilled after 1 January.",
     ),
 )
 
@@ -328,8 +336,7 @@ def figure_findings(stem, rows):
                 (other, 2025, deep),
             ),
         ]
-    if stem == "02_recompletion_by_period":
-        zone = "Recompletion"
+    if stem == "03_perforation_flags":
         return [
             reading(
                 "Under 100 m in 2025, {0} other approvals carried Modify Perforations "
@@ -338,6 +345,24 @@ def figure_findings(stem, rows):
                 0,
                 ("Modify Perforations", 2025, shallow),
                 ("Reperforation", 2025, shallow),
+            ),
+            reading(
+                "Under 100 m in 2025, the five year average was {0} approvals per year "
+                "for Modify Perforations and {1} for Reperforation.",
+                "moving_average",
+                0,
+                ("Modify Perforations", 2025, shallow),
+                ("Reperforation", 2025, shallow),
+            ),
+        ]
+    if stem == "02_recompletion_by_period":
+        zone = "Recompletion"
+        return [
+            reading(
+                "At 1,500 m and deeper, there were {0} recompletion approvals in 2025.",
+                "value",
+                0,
+                (zone, 2025, deep),
             ),
             reading(
                 "Under 100 m, the five year average for recompletion approvals fell "
@@ -414,14 +439,26 @@ def figure_findings(stem, rows):
 
 def yearly_figures(out):
     figures = []
+    split_groups = {
+        "02_recompletion_by_period": ["Recompletion"],
+        "03_perforation_flags": ["Modify Perforations", "Reperforation"],
+    }
     for stem, title, question, ylabel, xlabel, note in FIGURES:
-        rows = table(out, stem)
+        groups = split_groups.get(stem)
+        source = "02_recompletion_by_period" if groups else stem
+        rows = table(out, source)
+        if groups:
+            rows = [row for row in rows if row["group"] in groups]
         chart = render_svg(rows, title=title, ylabel=ylabel, xlabel=xlabel, note=note)
         (out / f"{stem}.svg").write_text(chart, encoding="utf-8", newline="\n")
         figures.append(
             dict(
                 svg=f"{stem}.svg",
-                csv=f"{stem}.csv",
+                csv=f"{source}.csv",
+                role="appendix" if stem == "03_approvals_per_well" else "main",
+                panel_by="depth_band",
+                layout="4x1_shared_x",
+                **({"groups": groups} if groups else {}),
                 question=question,
                 note=note,
                 x_unit="year",
