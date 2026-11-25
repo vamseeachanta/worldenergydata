@@ -592,7 +592,7 @@ const FIELD = {
     "svg": null,
     "pending_issue": 962
   },
-  "provenance": "Discovery 2006 (Keathley Canyon 292, Lower Tertiary Wilcox), FID/sanction July 30 2024 (BP 100%, Devon's original 30% exited), first oil targeted 2029 but left blank as no oil has flowed and the Aug-2025 BOEM DPP rejection likely pushes it out. Public sanctioned figures used over YAML where they diverge: plateau/nameplate 80 mbopd (YAML said 120) and capex ~$5bn for Phase 1 (<$5B per BP; YAML total CAPEX 10000 = $10bn is a full-field/multi-phase estimate). GOR 1000 scf/bbl and data through 2024-12-31 from YAML. Water depth ~6,000 ft, 20,000-psi semisubmersible FPU. Low-confidence: capex (phase-1 vs full-field ambiguity), water depth (rounded), lease year unknown, opex unknown.",
+  "provenance": "Discovery 2006 (Keathley Canyon 292, Lower Tertiary Wilcox), FID/sanction July 30 2024 (BP 100%, Devon's original 30% exited), first oil targeted 2029 but left blank as no oil has flowed and the Aug-2025 BOEM DPP rejection likely pushes it out. Public sanctioned figures used over YAML where they diverge: plateau/nameplate 80 mbopd (YAML said 120) and capex ~$5bn for Phase 1 (\u003c$5B per BP; YAML total CAPEX 10000 = $10bn is a full-field/multi-phase estimate). GOR 1000 scf/bbl and data through 2024-12-31 from YAML. Water depth ~6,000 ft, 20,000-psi semisubmersible FPU. Low-confidence: capex (phase-1 vs full-field ambiguity), water depth (rounded), lease year unknown, opex unknown.",
   "norms": [
     {
       "delta_play_pct": -21.3,
@@ -700,7 +700,10 @@ if (FIELD.architecture) {
   const A = FIELD.architecture;
   let body;
   if (A.svg) {
-    body = `<h3 style="margin:0 0 6px;font-size:15px">Architecture &mdash; ${A.caption || ""}</h3>`
+    const caption = (A.caption || "").replace(/[&<>]/g, c => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;"
+    }[c]));
+    body = `<h3 style="margin:0 0 6px;font-size:15px">Architecture &mdash; ${caption}</h3>`
       + `<div style="overflow:auto;max-width:100%">${A.svg}</div>`;
   } else {
     const iss = `https://github.com/vamseeachanta/worldenergydata/issues/${A.pending_issue}`;

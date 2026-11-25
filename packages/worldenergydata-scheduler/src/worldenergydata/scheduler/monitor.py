@@ -198,6 +198,13 @@ class StatusReporter:
         """
         self.write_status(results)
 
+        for result in results:
+            if result.status == "skipped" and result.error_msg == "credential_absent":
+                logger.warning(
+                    "Job '%s' skipped: credential_absent; configure credentials before retrying",
+                    result.job_name,
+                )
+
         # Alert on failures (D-16 trigger 1)
         failures = [r for r in results if r.status == "failure"]
         for f in failures:

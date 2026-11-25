@@ -1,0 +1,39 @@
+metric,number,text,source,meaning
+tape_file_date,,2026-11-02,LSETAPE.DAT,LSETAPE.DAT member date in the supplied ZIP
+first_effective_date,,2005-04-01,LSETAPE.DAT,Earliest cohort effective date
+last_effective_date,,2026-10-01,LSETAPE.DAT,Latest cohort effective date
+straddling_ranges,944.0,,LSETAPE.DAT,Block minimum and maximum lie in different series bands
+missing_ranges,0.0,,LSETAPE.DAT,At least one block-depth endpoint missing
+invalid_ranges,0.0,,LSETAPE.DAT,Inconsistent block-depth range
+no_sale_number,7.0,,LSETAPE.DAT,Cohort leases without sale number
+suspensions_with_ordered_dates,556.0,,LSETAPE.DAT,Cohort leases with a recorded start and end in order
+primary_term_missing_or_nonpositive,0.0,,LSETAPE.DAT,Cohort leases without a positive original primary term
+tape_first_production_date_present,205.0,,LSETAPE.DAT,Cohort leases with LSETAPE first continuous production date
+compared_block_depths,8327.0,,LSETAPE.DAT + mv_production_waterdepth.txt,Lease maxima comparable in both sources
+depths_within_one_metre,8327.0,,LSETAPE.DAT + mv_production_waterdepth.txt,Converted tape maxima within one metre of the published whole-metre field
+unmapped_status_codes,,"CANCEL, EXPIR, OPERNS, PRIMRY, RELINQ, TERMIN",LSETAPE.DAT + lease-fields.md,Tape codes lacking exact local glossary entries
+last_gulf_spud,,2026-11-06,mv_boreholes_all.txt,"Latest dated, valid Gulf bore in file"
+pre_effective_e_bores_2005_2026,25.0,,mv_boreholes_all.txt,E bore records on a cohort lease dated before effective date
+tied_first_spud_conflicting_cohort_lease_api10s,1.0,,mv_boreholes_all.txt,API10s touching a cohort lease with conflicting bottom leases at first spud
+tied_first_spud_conflicting_cohort_type_api10s,0.0,,mv_boreholes_all.txt,API10s touching a cohort lease with conflicting types at first spud
+undated_e_CNL,41.0,,mv_boreholes_all.txt,"2005–20 cohort E listings without dated spud, status CNL"
+undated_e_APD,3.0,,mv_boreholes_all.txt,"2005–20 cohort E listings without dated spud, status APD"
+undated_e_AST,2.0,,mv_boreholes_all.txt,"2005–20 cohort E listings without dated spud, status AST"
+first_source_month,,1947-11,mv_productiondata.txt,Earliest year-month in production detail
+last_source_month,,2026-10,mv_productiondata.txt,Latest year-month in production detail
+last_source_month_rows,21.0,,mv_productiondata.txt,All detail rows in the terminal production month
+source_rows,873081.0,,mv_productiondata.txt,"All detail rows, including zero-volume reports"
+production_before_effective_month,5.0,,mv_productiondata.txt,Cohort first hydrocarbon month precedes effective month
+oil_before_effective_month,4.0,,mv_productiondata.txt,Cohort first crude month precedes effective month
+continuous_date_without_positive_month,2.0,,LSETAPE.DAT + mv_productiondata.txt,Difference between continuous commercial production and positive reported monthly volume
+positive_month_without_continuous_date,8.0,,LSETAPE.DAT + mv_productiondata.txt,Difference between continuous commercial production and positive reported monthly volume
+owner_status_C,3551.0,,mv_lease_owners_main.txt,All assignment rows with status C
+owner_status_T,4.0,,mv_lease_owners_main.txt,All assignment rows with status T
+termination_dates_present,0.0,,mv_lease_owners_main.txt,All ownership rows with a termination date
+missing_assignment_effective_dates,12.0,,mv_lease_owners_main.txt,All ownership rows lacking an assignment effective date
+cohort_current_companies,173.0,,mv_lease_owners_main.txt,Distinct listed current company IDs matched to cohort at snapshot
+cohort_current_leases,1224.0,,mv_lease_owners_main.txt,Distinct cohort leases with at least one current assignment
+bounds_both_endpoints,416.0,,LSETAPE.DAT + mv_boreholes_all.txt,"Dated bottom and surface matches, any bore type, leases effective in 2005 to 2020"
+bounds_additional_any_date,41.0,,LSETAPE.DAT + mv_boreholes_all.txt,"Additional leases when the date rule is removed, any bore type, leases effective in 2005 to 2020"
+bounds_earlier_only,18.0,,LSETAPE.DAT + mv_boreholes_all.txt,"Additional leases with only pre-effective spuds, any bore type, leases effective in 2005 to 2020"
+bounds_undated_only,23.0,,LSETAPE.DAT + mv_boreholes_all.txt,"Additional leases with only undated listings, any bore type, leases effective in 2005 to 2020"
