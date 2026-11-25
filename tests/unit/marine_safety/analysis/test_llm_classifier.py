@@ -623,6 +623,11 @@ def setup_test_environment():
     """Setup test environment before running tests."""
     import warnings
 
+    try:
+        import torch  # noqa: F401
+    except (ImportError, OSError) as exc:
+        pytest.skip(f"Classifier tests require an importable PyTorch runtime: {exc}")
+
     # Suppress tokenizer warnings
     warnings.filterwarnings("ignore", category=UserWarning, module="transformers")
 
