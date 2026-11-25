@@ -7,7 +7,6 @@ import hashlib
 import json
 from datetime import datetime, timezone
 from pathlib import Path
-from urllib.request import urlopen
 
 import pandas as pd
 import yaml
@@ -18,6 +17,7 @@ from worldenergydata.modules.state_regulators.colorado_ecmc.parsers import (
     read_production_csv,
     read_wells_shapefile,
 )
+from worldenergydata.modules.state_regulators.fetch.http import urlopen
 
 
 def load_config(config_path: str | Path) -> dict:

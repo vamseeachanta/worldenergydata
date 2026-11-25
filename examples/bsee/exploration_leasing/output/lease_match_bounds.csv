@@ -1,0 +1,61 @@
+variant,cohort,band,leases,matched_leases,share_pct
+original rule,2005 to 2020,Under 100 m,1782,196,11.00
+a any type bottom,2005 to 2020,Under 100 m,1782,251,14.09
+b any type surface,2005 to 2020,Under 100 m,1782,214,12.01
+c bottom or surface,2005 to 2020,Under 100 m,1782,258,14.48
+d type E bottom or surface,2005 to 2020,Under 100 m,1782,208,11.67
+e any spud date,2005 to 2020,Under 100 m,1782,283,15.88
+original rule,2005 to 2020,100 to 500 m,587,22,3.75
+a any type bottom,2005 to 2020,100 to 500 m,587,31,5.28
+b any type surface,2005 to 2020,100 to 500 m,587,23,3.92
+c bottom or surface,2005 to 2020,100 to 500 m,587,32,5.45
+d type E bottom or surface,2005 to 2020,100 to 500 m,587,23,3.92
+e any spud date,2005 to 2020,100 to 500 m,587,36,6.13
+original rule,2005 to 2020,"500 to 1,500 m",2188,106,4.84
+a any type bottom,2005 to 2020,"500 to 1,500 m",2188,119,5.44
+b any type surface,2005 to 2020,"500 to 1,500 m",2188,94,4.30
+c bottom or surface,2005 to 2020,"500 to 1,500 m",2188,127,5.80
+d type E bottom or surface,2005 to 2020,"500 to 1,500 m",2188,123,5.62
+e any spud date,2005 to 2020,"500 to 1,500 m",2188,133,6.08
+original rule,2005 to 2020,"1,500 m and deeper",2569,108,4.20
+a any type bottom,2005 to 2020,"1,500 m and deeper",2569,119,4.63
+b any type surface,2005 to 2020,"1,500 m and deeper",2569,111,4.32
+c bottom or surface,2005 to 2020,"1,500 m and deeper",2569,129,5.02
+d type E bottom or surface,2005 to 2020,"1,500 m and deeper",2569,123,4.79
+e any spud date,2005 to 2020,"1,500 m and deeper",2569,135,5.25
+original rule,2005 to 2020,All,7126,432,6.06
+a any type bottom,2005 to 2020,All,7126,520,7.30
+b any type surface,2005 to 2020,All,7126,442,6.20
+c bottom or surface,2005 to 2020,All,7126,546,7.66
+d type E bottom or surface,2005 to 2020,All,7126,477,6.69
+e any spud date,2005 to 2020,All,7126,587,8.24
+original rule,2005,Under 100 m,249,54,21.69
+a any type bottom,2005,Under 100 m,249,64,25.70
+b any type surface,2005,Under 100 m,249,57,22.89
+c bottom or surface,2005,Under 100 m,249,67,26.91
+d type E bottom or surface,2005,Under 100 m,249,58,23.29
+e any spud date,2005,Under 100 m,249,68,27.31
+original rule,2005,100 to 500 m,71,3,4.23
+a any type bottom,2005,100 to 500 m,71,4,5.63
+b any type surface,2005,100 to 500 m,71,3,4.23
+c bottom or surface,2005,100 to 500 m,71,4,5.63
+d type E bottom or surface,2005,100 to 500 m,71,3,4.23
+e any spud date,2005,100 to 500 m,71,4,5.63
+original rule,2005,"500 to 1,500 m",153,6,3.92
+a any type bottom,2005,"500 to 1,500 m",153,6,3.92
+b any type surface,2005,"500 to 1,500 m",153,4,2.61
+c bottom or surface,2005,"500 to 1,500 m",153,6,3.92
+d type E bottom or surface,2005,"500 to 1,500 m",153,6,3.92
+e any spud date,2005,"500 to 1,500 m",153,6,3.92
+original rule,2005,"1,500 m and deeper",130,2,1.54
+a any type bottom,2005,"1,500 m and deeper",130,2,1.54
+b any type surface,2005,"1,500 m and deeper",130,3,2.31
+c bottom or surface,2005,"1,500 m and deeper",130,3,2.31
+d type E bottom or surface,2005,"1,500 m and deeper",130,3,2.31
+e any spud date,2005,"1,500 m and deeper",130,3,2.31
+original rule,2005,All,603,65,10.78
+a any type bottom,2005,All,603,76,12.60
+b any type surface,2005,All,603,67,11.11
+c bottom or surface,2005,All,603,80,13.27
+d type E bottom or surface,2005,All,603,70,11.61
+e any spud date,2005,All,603,81,13.43
