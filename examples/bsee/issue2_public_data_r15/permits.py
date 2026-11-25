@@ -56,8 +56,8 @@ def permit_tables(rows):
             continue
         ft = row['WATER_DEPTH']
         band = band_from_feet(ft)
-        if band == 'Missing depth':
-            raise ValueError(f"Missing or invalid depth for selected API {row['API_WELL_NUMBER']}")
+        if band not in BANDS:
+            raise ValueError(f"Selected permit {row['API_WELL_NUMBER']} has unlisted depth band {band!r}")
         depth = (float(ft), band)
         by_year[date[0]].append(depth)
         by_rig[apd.rig_label(row['RIG_TYPE_CODE'])].append(depth)

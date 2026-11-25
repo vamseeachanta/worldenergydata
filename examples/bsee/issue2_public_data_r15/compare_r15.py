@@ -1,5 +1,7 @@
 """Compare r12 aggregate tables and the readings displayed in the Part 2 article."""
 
+import re
+
 import pandas as pd
 
 # The remaining r12 files describe input schemas, source files, or individual wells.
@@ -21,8 +23,17 @@ GROUP_COLUMNS = {
     "subtype-activity": ["activity", "primary", "subtype"],
 }
 
-# Most cells are counts. These columns carry a different unit for the difference.
+DEPTH_BANDS = ("Under 100 m", "100 to 500 m", "500 to 1,500 m", "1,500 m and deeper")
+COUNT_COLUMNS = {
+    "New-well permits, 2005 to 2026 (-)", *DEPTH_BANDS, *(f"{band} (-)" for band in DEPTH_BANDS),
+    "under_100_m", "100_to_500_m", "500_to_1500_m", "1500_m_and_deeper",
+    "Jack-up", "Drillship", "Semisubmersible", "DP semisubmersible", "Platform rig", "Submersible", "Other",
+    "permits", "total", "selected", "mapped", "missing_or_outside_coordinates",
+    "records", "n", "missing_invalid_days", "nonpositive_days", "excluded_days", "latest_key_n", "submissions",
+}
 DIFFERENCE_UNITS = {
+    **dict.fromkeys(COUNT_COLUMNS, "count"),
+    **{f"{name} (3-year mean)": "wells/year" for name in (*DEPTH_BANDS, "total")},
     "share_percent": "percentage points",
     "Median water depth (m)": "m",
     "median_m": "m",
@@ -92,7 +103,9 @@ def aggregate_cells(directory, no_date):
         # Explicit row labels keep differences stable across sorting or a new subgroup.
         groups = frame[keys].astype(str).agg(" | ".join, axis=1)
         for column in frame.drop(columns=keys):
-            unit = "wells/year" if column.endswith("(3-year mean)") else DIFFERENCE_UNITS.get(column, "count")
+            if column not in DIFFERENCE_UNITS:
+                raise ValueError(f"{name}: unknown difference unit for {column!r}")
+            unit = DIFFERENCE_UNITS[column]
             for group, value in zip(groups, pd.to_numeric(frame[column], errors="raise")):
                 rows.append((name, group, column, unit, value))
     rows.extend(("article", *row) for row in article_cells(tables, no_date))
@@ -100,16 +113,29 @@ def aggregate_cells(directory, no_date):
     return pd.DataFrame(rows, columns=[*index, "value"]).set_index(index, verify_integrity=True)["value"]
 
 
-def compare_tables(old_dir, new_dir):
-    """Compare every numeric aggregate. Missing cells stay blank on either side."""
-    # r12 counting-rules.md, §1: 10 first permits without a requested spud date.
-    # Its published exclusions.csv only covers APM and Borehole.
-    old = aggregate_cells(old_dir, 10).rename("r12")
-    records = pd.read_csv(new_dir / "record-counts.csv").set_index(
+def no_spud_count(directory, *, historical=False):
+    path = directory / "record-counts.csv"
+    if historical and not path.exists():
+        # The original r12 release recorded this APD count only in section 1.
+        rules = directory.parent / "counting-rules.md"
+        text = " ".join(rules.read_text(encoding="utf-8").split())
+        counts = re.findall(
+            r"(?<!\S)(\d+|\d{1,3}(?:,\d{3})+) wells whose first New Well permit gives no requested spud date\b",
+            text,
+        )
+        if len(counts) != 1:
+            raise ValueError(f"{rules}: expected one count of first permits without a requested spud date")
+        return int(counts[0].replace(",", ""))
+    records = pd.read_csv(path).set_index(
         ["source", "disposition", "reason"], verify_integrity=True
     )
-    no_date = records.loc[("APD", "excluded", "no_spud_date"), "records"]
-    new = aggregate_cells(new_dir, no_date).rename("r15")
+    return records.loc[("APD", "excluded", "no_spud_date"), "records"]
+
+
+def compare_tables(old_dir, new_dir):
+    """Compare every numeric aggregate. Missing cells stay blank on either side."""
+    old = aggregate_cells(old_dir, no_spud_count(old_dir, historical=True)).rename("r12")
+    new = aggregate_cells(new_dir, no_spud_count(new_dir)).rename("r15")
     comparison = pd.concat([old, new], axis=1)
     comparison["difference"] = (comparison.r15 - comparison.r12).round(12)
     return comparison.reset_index()

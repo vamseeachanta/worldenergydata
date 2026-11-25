@@ -1,7 +1,6 @@
 """Offline checks on the producer and its checked-in article tables."""
 
-import hashlib
-import subprocess
+import re
 import sys
 from pathlib import Path
 
@@ -19,33 +18,50 @@ def read(stem, **kwargs):
     return pd.read_csv(DATA / (stem + ".csv"), **kwargs)
 
 
-@pytest.mark.parametrize("name", ["APDRawData.zip", "BoreholeRawData.zip", "eWellAPMRawData.zip"])
-def test_wrong_digest_names_the_archive_and_both_digests(tmp_path, name):
-    expected = read("sources").set_index("file").at[name, "sha256"]
-    path = tmp_path / name
-    path.write_bytes(b"wrong revision")
-    actual = hashlib.sha256(path.read_bytes()).hexdigest()
-    with pytest.raises(ValueError) as failure:
-        derive.verify_digest(path, expected)
-    assert all(s in str(failure.value) for s in [name, expected, actual])
-
-
-def test_cli_rejects_wrong_archive_before_producing_tables(tmp_path):
-    for name in ["APDRawData.zip", "BoreholeRawData.zip", "eWellAPMRawData.zip"]:
-        (tmp_path / name).write_bytes(b"wrong revision")
-    before = {p: p.read_bytes() for p in DATA.glob("*.csv")}
-    result = subprocess.run([sys.executable, "-B", str(ROOT / "derive_r15.py"),
-                             "--data-dir", str(tmp_path)], capture_output=True, text=True)
-    assert result.returncode != 0
-    assert hashlib.sha256(b"wrong revision").hexdigest() in result.stderr
-    assert {p: p.read_bytes() for p in DATA.glob("*.csv")} == before
+def test_readme_source_dates_link_to_committed_receipts():
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    source_dates = readme.split("## Source dates\n", 1)[1].split("\n## ", 1)[0]
+    links = re.findall(r"\[[^\]]+\]\(([^)]+)\)", source_dates)
+    assert set(links) == {"source-pins.json", "data/sources.csv"}
+    assert all((ROOT / path).is_file() for path in links)
 
 
 def test_all_published_table_names_and_columns_are_present():
-    for path in R12.glob("*.csv"):
-        old = pd.read_csv(path, nrows=0)
-        new = pd.read_csv(DATA / path.name, nrows=0)
-        assert set(old.columns) <= set(new.columns), path.name
+    baseline = {path.name for path in R12.glob("*.csv")}
+    assert baseline, "Expected the published r12 CSVs"
+    added = {
+        "record-counts.csv": {"source", "disposition", "reason", "records"},
+        "r12-vs-r15.csv": {"table", "group", "metric", "difference_unit", "r12", "r15", "difference"},
+    }
+    assert {path.name for path in DATA.glob("*.csv")} == baseline | added.keys()
+    for name in baseline | added.keys():
+        if name in added:
+            expected = added[name]
+        else:
+            expected = set(pd.read_csv(R12 / name, nrows=0).columns)
+            if name == "sources.csv":
+                expected.add("http_last_modified")
+        assert set(pd.read_csv(DATA / name, nrows=0).columns) == expected, name
+
+
+@pytest.mark.parametrize("name", ["map-wells.csv", "map-wells-by-year.csv"])
+def test_mapped_wells_match_r12_by_api(name):
+    def by_api(directory):
+        # Compare the published coordinate precision and preserve leading zeros in IDs.
+        frame = pd.read_csv(directory / name, dtype=str)
+        assert frame.api_well_number.notna().all()
+        return frame.set_index("api_well_number", verify_integrity=True).sort_index(axis="columns")
+
+    old, new = by_api(R12), by_api(DATA)
+    added = new.index.difference(old.index)
+    removed = old.index.difference(new.index)
+    common = old.index.intersection(new.index)
+    # Show both values for every changed field, even when annual counts agree.
+    changed = old.loc[common].compare(new.loc[common], result_names=("r12", "r15"))
+    assert added.empty and removed.empty and changed.empty, (
+        f"{name}: added {added.tolist()}, removed {removed.tolist()}\n"
+        f"Changed wells:\n{changed.to_string()}"
+    )
 
 
 def test_annual_counts_conserve_wells_and_permits():
@@ -54,6 +70,8 @@ def test_annual_counts_conserve_wells_and_permits():
     counts = read("new-wells-by-year").set_index("year")
     assert counts.index.tolist() == list(range(2005, 2026))
     by_band = pd.crosstab(wells.spud_year, wells.band)
+    assert set(by_band.columns) == set(counts.columns) - {"total"}
+    assert counts.total.sum() == len(wells)
     for band in counts.drop(columns="total"):
         assert counts[band].to_dict() == by_band[band].to_dict()
     assert counts.total.equals(counts.drop(columns="total").sum(axis=1))
@@ -97,7 +115,7 @@ def test_exclusive_reasons_reconcile_raw_rows_to_outputs():
         "Borehole": len(read("map-wells-by-year")),
         "APM": days.loc[~drilling, "n"].sum(),
     }
-    assert days.loc[drilling, "records"].sum() == kept["Borehole"]
+    assert days.loc[drilling, "records"].sum() == kept["Borehole"] == read("new-wells-by-year").total.sum()
     assert days.records.equals(days.n + days.missing_invalid_days + days.nonpositive_days)
     for source, rows in audit.groupby("source"):
         totals = rows.groupby("disposition").records.sum().to_dict()

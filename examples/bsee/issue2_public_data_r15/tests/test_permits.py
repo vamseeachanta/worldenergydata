@@ -7,6 +7,7 @@ import pytest
 BSEE = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(BSEE))
 from issue2_public_data_r15.permits import permit_tables
+from issue2_public_data_r15 import permits
 
 
 def permit(api, sn, year, depth_ft, rig='JACKUP', region='G', kind='New Well'):
@@ -74,3 +75,24 @@ def test_band_edges_rounding_and_share_denominators():
         assert pies.groupby('year').share_percent.sum().tolist() == pytest.approx([100] * 3)
     shares = tables['pies-rig'].set_index(['year', 'category'])
     assert shares.loc[(2005, 'Jack-up'), 'share_percent'] == pytest.approx(200 / 3)
+
+
+def test_permit_with_missing_depth_is_rejected():
+    with pytest.raises(ValueError, match="001"):
+        permit_tables([permit("001", 1, 2005, "")])
+
+
+def test_permit_with_unlisted_band_is_rejected(monkeypatch):
+    monkeypatch.setattr(permits, "band_from_feet", lambda depth: "New depth band")
+    with pytest.raises(ValueError, match="001"):
+        permit_tables([permit("001", 1, 2005, 50)])
+
+
+@pytest.mark.parametrize("table", ["pies-rig", "pies-depth"])
+def test_year_with_zero_permits_has_unavailable_pie_shares(table):
+    tables, _ = permit_tables([permit("001", 1, 2005, 50)])
+    pie = tables[table]
+    empty_year = pie[pie.year.eq(2015)]
+    assert len(empty_year) == (7 if table == "pies-rig" else 4)
+    assert empty_year.permits.eq(0).all() and empty_year.total.eq(0).all()
+    assert empty_year.share_percent.isna().all()

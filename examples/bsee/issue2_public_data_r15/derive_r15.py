@@ -48,8 +48,10 @@ def permit_data(data_dir, headers):
     # Both APD members were checked for duration fields in the r12 appendix.
     def read_member(member):
         rows = count_rawdata.read_member(data_dir / APD, member + ".txt")
+        if not rows:
+            raise ValueError(f"{APD}/{member}: no data rows")
         for column in rows[0]:
-            if "DAY" in column or "DUR" in column:
+            if "DAY" in column.upper() or "DUR" in column.upper():
                 raise ValueError(f"APD duration schema changed: {member}/{column}")
             headers.append(dict(file=APD, member=member, column=column))
         return rows
@@ -67,6 +69,10 @@ def map_data(bore, wti_path):
     wells, annual_audit = derive_r12.wells_by_year(derive_r12.load_r9(), bore)
     if annual_audit.missing_or_outside_coordinates.any():
         raise ValueError("Selected borehole outside the map or missing coordinates")
+    outside_bands = wells.loc[~wells.band.isin(r9.BANDS)]
+    if not outside_bands.empty:
+        well = outside_bands.iloc[0]
+        raise ValueError(f"Selected borehole {well.api_well_number} has unlisted depth band {well.band!r}")
     counts = derive_r12.yearly_counts(wells, r9.BANDS)
     wti = derive_r12.wti_annual(wti_path)
     return {
@@ -78,7 +84,7 @@ def map_data(bore, wti_path):
 
 
 def partition(source, raw, kept_reason, kept, excluded):
-    if kept + sum(excluded.values()) != raw or any(n < 0 for n in excluded.values()):
+    if kept < 0 or kept + sum(excluded.values()) != raw or any(n < 0 for n in excluded.values()):
         raise ValueError(f"{source}: {raw} input rows, {kept} kept, exclusions {excluded}")
     return [
         dict(source=source, disposition=disposition, reason=reason, records=n)
@@ -120,7 +126,7 @@ def duration_data(data_dir, bore, headers):
     excluded.update(missing_invalid_days=int(estimated.missing_invalid_days.sum()),
                     nonpositive_days=int(estimated.nonpositive_days.sum()))
     records += partition("APM", len(apm), "usable_duration_estimates", int(estimated.n.sum()), excluded)
-    return tables, records
+    return tables, records, len(drilling)
 
 
 def build_tables(data_dir, sources):
@@ -128,7 +134,12 @@ def build_tables(data_dir, sources):
     tables, records = permit_data(data_dir, headers)
     bore = r9.read_table(data_dir, BORE, "mv_boreholes_all", headers)
     tables.update(map_data(bore, data_dir / derive_r12.WTI.name))
-    duration, duration_records = duration_data(data_dir, bore, headers)
+    duration, duration_records, drilling_rows = duration_data(data_dir, bore, headers)
+    annual_starts = tables["new-wells-by-year"].total.sum()
+    mapped_wells = len(tables["map-wells-by-year"])
+    if not (annual_starts == mapped_wells == drilling_rows):
+        raise ValueError(f"Borehole: {annual_starts} annual starts, {mapped_wells} mapped wells, "
+                         f"{drilling_rows} drilling rows")
     tables.update(duration)
     tables.update({
         "source-members": r9.archive_members(data_dir), "source_columns": pd.DataFrame(headers),

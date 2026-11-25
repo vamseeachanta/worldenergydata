@@ -1,6 +1,6 @@
 # Part 2 · Permitting and drilling · r15
 
-The November BSEE refresh gives **2,895 Gulf new-well permits** for 2005 through partial-year 2026, including **47 for 2026**, and **2,913 qualifying well starts** in the complete spud years 2005 to 2025. The permit counts, rig and depth shares, mapped wells, and duration statistics match r12. Seven input and exclusion counts changed. The comparison gives the r12 value, r15 value and signed difference for each aggregate and article reading. Share differences are in percentage points. Blank values denote unavailable statistics. [Comparison CSV](data/r12-vs-r15.csv)
+The November BSEE refresh gives **2,895 Gulf new-well permits** for 2005 through partial-year 2026, including **47 for 2026**, and **2,913 qualifying well starts** in the complete spud years 2005 to 2025. The permit counts, rig and depth shares, and duration statistics match r12. Comparison by API well number found zero wells added, removed or changed in either map file, including coordinates and depth bands. Seven input and exclusion counts changed. The comparison gives the r12 value, r15 value and signed difference for each aggregate and article reading. Share differences are in percentage points. Blank values denote unavailable statistics. [Comparison CSV](data/r12-vs-r15.csv)
 
 ## Source dates
 
@@ -10,7 +10,7 @@ The November BSEE refresh gives **2,895 Gulf new-well permits** for 2005 through
 | BoreholeRawData.zip | 12 Nov 2026 | 23 Nov 2026 10:31:21 | 23 Nov 2026, 18:54:40 | Map, annual starts, recorded drilling intervals and region lookup |
 | eWellAPMRawData.zip | 12 Nov 2026 | 23 Nov 2026 10:36:24 | 23 Nov 2026, 18:54:44 | Operation classifications and operator-estimated durations |
 
-The BSEE archive receipts were taken from the retained manifests for `2026-11-23-series-basis` and `2026-11-25-apd`. For APD, `retrieved_utc` records the end of the manifest's two-second retrieval window. The EIA WTI annual means use the same repository monthly snapshot as r12. Its pin covers the LF-normalized repository bytes. The WTI receipt identifies the mirror commit and its verification time. Its HTTP modification time and source file date were unrecorded. [Source receipts](data/sources.csv) · [WTI provenance](../../../data/wti-monthly.PROVENANCE.md)
+The source pins and receipts give the archive URLs, retrieval times, HTTP modification times and SHA-256 digests. For APD, `retrieved_utc` records the end of the retrieval window. The EIA WTI annual means use the same monthly snapshot as r12. Its receipt identifies the mirror commit and verification time, and its digest covers the LF-normalized repository bytes. The WTI HTTP modification time and source file date were unrecorded. [Source pins](source-pins.json) · [Source receipts](data/sources.csv)
 
 ## Counting basis
 
@@ -34,7 +34,7 @@ for f in BoreholeRawData eWellAPMRawData APDRawData; do
 done
 ```
 
-The pinned repository input `data/wti-monthly.csv` requires an LF checkout, including on Windows. Run the CSV producer and its tests from the same shell. With `BSEE_R15_DATA_DIR` set, the tests regenerate every CSV in a temporary directory and compare the bytes with the delivered tables.
+The pinned repository input `data/wti-monthly.csv` requires an LF checkout, including on Windows. The offline tests run the producer with small synthetic ZIPs, recompute the published comparison from both revisions, and compare both maps by well number. Setting `BSEE_R15_DATA_DIR` also tests regeneration of every delivered CSV byte for byte from the pinned BSEE files.
 
 ```sh
 article=examples/bsee/issue2_public_data_r15
