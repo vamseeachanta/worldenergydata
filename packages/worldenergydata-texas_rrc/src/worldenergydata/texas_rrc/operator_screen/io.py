@@ -96,14 +96,19 @@ def normalize_pdq_rows(rows) -> list[dict]:
     descriptions LEASE_GAS_PROD_VOL / LEASE_CSGD_PROD_VOL. Gas total combines
     gas-well and casinghead Mcf. Oil excludes condensate. No water is in this
     table. O/G IDs remain regulator reporting units, never API allocations.
+    District names take precedence when supplied. The numeric ID stays a string.
     Unfiled reports are omitted, so their months remain unknown.
     """
     from .core import _month, _text, _volume
 
     output = []
     for raw in rows:
+        district_no = _text(raw, "DISTRICT_NO")
         row = {
-            "district": _text(raw, "DISTRICT_NO"),
+            "district": (
+                _text(raw, "DISTRICT_NAME") if "DISTRICT_NAME" in raw else district_no
+            ),
+            "district_no": district_no,
             "oil_gas_code": _text(raw, "OIL_GAS_CODE"),
             "lease_no": _text(raw, "LEASE_NO"),
             "operator_no": _text(raw, "OPERATOR_NO"),
