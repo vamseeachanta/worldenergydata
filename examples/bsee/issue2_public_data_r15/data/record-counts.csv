@@ -1,0 +1,29 @@
+source,disposition,reason,records
+APD,read,main_member_rows,20273
+APD,kept,first_permit_in_period,2895
+APD,excluded,non_gulf,152
+APD,excluded,not_new_well,17111
+APD,excluded,missing_api_well_number,0
+APD,excluded,later_or_duplicate_permit,14
+APD,excluded,no_spud_date,10
+APD,excluded,outside_years,91
+Borehole,read,main_member_rows,57520
+Borehole,kept,selected_spuds,2913
+Borehole,excluded,duplicate_rows,0
+Borehole,excluded,non_gulf,1934
+Borehole,excluded,non_original,17537
+Borehole,excluded,cancelled,762
+Borehole,excluded,missing_spud_date,16
+Borehole,excluded,outside_years,34358
+APM,read,main_member_rows,102177
+APM,kept,usable_duration_estimates,80542
+APM,excluded,duplicate_rows,207
+APM,excluded,unmatched_or_ambiguous_region,0
+APM,excluded,non_gulf,0
+APM,excluded,missing_status_date,0
+APM,excluded,outside_years,4038
+APM,excluded,Excluded: other or administrative scope,10575
+APM,excluded,Excluded: new hole,4804
+APM,excluded,Excluded: unspecified abandonment,1606
+APM,excluded,missing_invalid_days,405
+APM,excluded,nonpositive_days,0

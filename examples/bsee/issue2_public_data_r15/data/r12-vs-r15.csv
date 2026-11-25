@@ -1,0 +1,1424 @@
+table,group,metric,difference_unit,r12,r15,difference
+table1,Jack-up,"New-well permits, 2005 to 2026 (-)",count,1333,1333,0
+table1,Drillship,"New-well permits, 2005 to 2026 (-)",count,758,758,0
+table1,Semisubmersible,"New-well permits, 2005 to 2026 (-)",count,282,282,0
+table1,DP semisubmersible,"New-well permits, 2005 to 2026 (-)",count,260,260,0
+table1,Platform rig,"New-well permits, 2005 to 2026 (-)",count,162,162,0
+table1,Submersible,"New-well permits, 2005 to 2026 (-)",count,81,81,0
+table1,Other,"New-well permits, 2005 to 2026 (-)",count,19,19,0
+table1,All,"New-well permits, 2005 to 2026 (-)",count,2895,2895,0
+table1,Jack-up,Under 100 m (-),count,1316,1316,0
+table1,Drillship,Under 100 m (-),count,0,0,0
+table1,Semisubmersible,Under 100 m (-),count,0,0,0
+table1,DP semisubmersible,Under 100 m (-),count,0,0,0
+table1,Platform rig,Under 100 m (-),count,62,62,0
+table1,Submersible,Under 100 m (-),count,81,81,0
+table1,Other,Under 100 m (-),count,17,17,0
+table1,All,Under 100 m (-),count,1476,1476,0
+table1,Jack-up,100 to 500 m (-),count,17,17,0
+table1,Drillship,100 to 500 m (-),count,5,5,0
+table1,Semisubmersible,100 to 500 m (-),count,51,51,0
+table1,DP semisubmersible,100 to 500 m (-),count,9,9,0
+table1,Platform rig,100 to 500 m (-),count,93,93,0
+table1,Submersible,100 to 500 m (-),count,0,0,0
+table1,Other,100 to 500 m (-),count,0,0,0
+table1,All,100 to 500 m (-),count,175,175,0
+table1,Jack-up,"500 to 1,500 m (-)",count,0,0,0
+table1,Drillship,"500 to 1,500 m (-)",count,323,323,0
+table1,Semisubmersible,"500 to 1,500 m (-)",count,151,151,0
+table1,DP semisubmersible,"500 to 1,500 m (-)",count,108,108,0
+table1,Platform rig,"500 to 1,500 m (-)",count,7,7,0
+table1,Submersible,"500 to 1,500 m (-)",count,0,0,0
+table1,Other,"500 to 1,500 m (-)",count,0,0,0
+table1,All,"500 to 1,500 m (-)",count,589,589,0
+table1,Jack-up,"1,500 m and deeper (-)",count,0,0,0
+table1,Drillship,"1,500 m and deeper (-)",count,430,430,0
+table1,Semisubmersible,"1,500 m and deeper (-)",count,80,80,0
+table1,DP semisubmersible,"1,500 m and deeper (-)",count,143,143,0
+table1,Platform rig,"1,500 m and deeper (-)",count,0,0,0
+table1,Submersible,"1,500 m and deeper (-)",count,0,0,0
+table1,Other,"1,500 m and deeper (-)",count,2,2,0
+table1,All,"1,500 m and deeper (-)",count,655,655,0
+table1,Jack-up,Median water depth (m),m,31,31,0
+table1,Drillship,Median water depth (m),m,1581,1581,0
+table1,Semisubmersible,Median water depth (m),m,985,985,0
+table1,DP semisubmersible,Median water depth (m),m,1604,1604,0
+table1,Platform rig,Median water depth (m),m,119,119,0
+table1,Submersible,Median water depth (m),m,12,12,0
+table1,Other,Median water depth (m),m,4,4,0
+table1,All,Median water depth (m),m,,,
+fig-p1-new-well-permits-by-rig-type,2005,total,count,322,322,0
+fig-p1-new-well-permits-by-rig-type,2006,total,count,377,377,0
+fig-p1-new-well-permits-by-rig-type,2007,total,count,340,340,0
+fig-p1-new-well-permits-by-rig-type,2008,total,count,274,274,0
+fig-p1-new-well-permits-by-rig-type,2009,total,count,163,163,0
+fig-p1-new-well-permits-by-rig-type,2010,total,count,106,106,0
+fig-p1-new-well-permits-by-rig-type,2011,total,count,122,122,0
+fig-p1-new-well-permits-by-rig-type,2012,total,count,171,171,0
+fig-p1-new-well-permits-by-rig-type,2013,total,count,133,133,0
+fig-p1-new-well-permits-by-rig-type,2014,total,count,127,127,0
+fig-p1-new-well-permits-by-rig-type,2015,total,count,83,83,0
+fig-p1-new-well-permits-by-rig-type,2016,total,count,74,74,0
+fig-p1-new-well-permits-by-rig-type,2017,total,count,63,63,0
+fig-p1-new-well-permits-by-rig-type,2018,total,count,84,84,0
+fig-p1-new-well-permits-by-rig-type,2019,total,count,85,85,0
+fig-p1-new-well-permits-by-rig-type,2020,total,count,66,66,0
+fig-p1-new-well-permits-by-rig-type,2021,total,count,51,51,0
+fig-p1-new-well-permits-by-rig-type,2022,total,count,52,52,0
+fig-p1-new-well-permits-by-rig-type,2023,total,count,59,59,0
+fig-p1-new-well-permits-by-rig-type,2024,total,count,49,49,0
+fig-p1-new-well-permits-by-rig-type,2025,total,count,47,47,0
+fig-p1-new-well-permits-by-rig-type,2026,total,count,47,47,0
+fig-p1-new-well-permits-by-rig-type,2005,Jack-up,count,234,234,0
+fig-p1-new-well-permits-by-rig-type,2006,Jack-up,count,245,245,0
+fig-p1-new-well-permits-by-rig-type,2007,Jack-up,count,192,192,0
+fig-p1-new-well-permits-by-rig-type,2008,Jack-up,count,167,167,0
+fig-p1-new-well-permits-by-rig-type,2009,Jack-up,count,74,74,0
+fig-p1-new-well-permits-by-rig-type,2010,Jack-up,count,66,66,0
+fig-p1-new-well-permits-by-rig-type,2011,Jack-up,count,69,69,0
+fig-p1-new-well-permits-by-rig-type,2012,Jack-up,count,58,58,0
+fig-p1-new-well-permits-by-rig-type,2013,Jack-up,count,58,58,0
+fig-p1-new-well-permits-by-rig-type,2014,Jack-up,count,44,44,0
+fig-p1-new-well-permits-by-rig-type,2015,Jack-up,count,7,7,0
+fig-p1-new-well-permits-by-rig-type,2016,Jack-up,count,10,10,0
+fig-p1-new-well-permits-by-rig-type,2017,Jack-up,count,12,12,0
+fig-p1-new-well-permits-by-rig-type,2018,Jack-up,count,16,16,0
+fig-p1-new-well-permits-by-rig-type,2019,Jack-up,count,22,22,0
+fig-p1-new-well-permits-by-rig-type,2020,Jack-up,count,12,12,0
+fig-p1-new-well-permits-by-rig-type,2021,Jack-up,count,16,16,0
+fig-p1-new-well-permits-by-rig-type,2022,Jack-up,count,6,6,0
+fig-p1-new-well-permits-by-rig-type,2023,Jack-up,count,12,12,0
+fig-p1-new-well-permits-by-rig-type,2024,Jack-up,count,6,6,0
+fig-p1-new-well-permits-by-rig-type,2025,Jack-up,count,1,1,0
+fig-p1-new-well-permits-by-rig-type,2026,Jack-up,count,6,6,0
+fig-p1-new-well-permits-by-rig-type,2005,Drillship,count,15,15,0
+fig-p1-new-well-permits-by-rig-type,2006,Drillship,count,27,27,0
+fig-p1-new-well-permits-by-rig-type,2007,Drillship,count,11,11,0
+fig-p1-new-well-permits-by-rig-type,2008,Drillship,count,8,8,0
+fig-p1-new-well-permits-by-rig-type,2009,Drillship,count,10,10,0
+fig-p1-new-well-permits-by-rig-type,2010,Drillship,count,13,13,0
+fig-p1-new-well-permits-by-rig-type,2011,Drillship,count,21,21,0
+fig-p1-new-well-permits-by-rig-type,2012,Drillship,count,62,62,0
+fig-p1-new-well-permits-by-rig-type,2013,Drillship,count,20,20,0
+fig-p1-new-well-permits-by-rig-type,2014,Drillship,count,39,39,0
+fig-p1-new-well-permits-by-rig-type,2015,Drillship,count,44,44,0
+fig-p1-new-well-permits-by-rig-type,2016,Drillship,count,53,53,0
+fig-p1-new-well-permits-by-rig-type,2017,Drillship,count,40,40,0
+fig-p1-new-well-permits-by-rig-type,2018,Drillship,count,53,53,0
+fig-p1-new-well-permits-by-rig-type,2019,Drillship,count,53,53,0
+fig-p1-new-well-permits-by-rig-type,2020,Drillship,count,49,49,0
+fig-p1-new-well-permits-by-rig-type,2021,Drillship,count,35,35,0
+fig-p1-new-well-permits-by-rig-type,2022,Drillship,count,40,40,0
+fig-p1-new-well-permits-by-rig-type,2023,Drillship,count,43,43,0
+fig-p1-new-well-permits-by-rig-type,2024,Drillship,count,37,37,0
+fig-p1-new-well-permits-by-rig-type,2025,Drillship,count,44,44,0
+fig-p1-new-well-permits-by-rig-type,2026,Drillship,count,41,41,0
+fig-p1-new-well-permits-by-rig-type,2005,Semisubmersible,count,29,29,0
+fig-p1-new-well-permits-by-rig-type,2006,Semisubmersible,count,45,45,0
+fig-p1-new-well-permits-by-rig-type,2007,Semisubmersible,count,77,77,0
+fig-p1-new-well-permits-by-rig-type,2008,Semisubmersible,count,39,39,0
+fig-p1-new-well-permits-by-rig-type,2009,Semisubmersible,count,43,43,0
+fig-p1-new-well-permits-by-rig-type,2010,Semisubmersible,count,15,15,0
+fig-p1-new-well-permits-by-rig-type,2011,Semisubmersible,count,8,8,0
+fig-p1-new-well-permits-by-rig-type,2012,Semisubmersible,count,12,12,0
+fig-p1-new-well-permits-by-rig-type,2013,Semisubmersible,count,7,7,0
+fig-p1-new-well-permits-by-rig-type,2014,Semisubmersible,count,2,2,0
+fig-p1-new-well-permits-by-rig-type,2015,Semisubmersible,count,4,4,0
+fig-p1-new-well-permits-by-rig-type,2016,Semisubmersible,count,0,0,0
+fig-p1-new-well-permits-by-rig-type,2017,Semisubmersible,count,1,1,0
+fig-p1-new-well-permits-by-rig-type,2018,Semisubmersible,count,0,0,0
+fig-p1-new-well-permits-by-rig-type,2019,Semisubmersible,count,0,0,0
+fig-p1-new-well-permits-by-rig-type,2020,Semisubmersible,count,0,0,0
+fig-p1-new-well-permits-by-rig-type,2021,Semisubmersible,count,0,0,0
+fig-p1-new-well-permits-by-rig-type,2022,Semisubmersible,count,0,0,0
+fig-p1-new-well-permits-by-rig-type,2023,Semisubmersible,count,0,0,0
+fig-p1-new-well-permits-by-rig-type,2024,Semisubmersible,count,0,0,0
+fig-p1-new-well-permits-by-rig-type,2025,Semisubmersible,count,0,0,0
+fig-p1-new-well-permits-by-rig-type,2026,Semisubmersible,count,0,0,0
+fig-p1-new-well-permits-by-rig-type,2005,DP semisubmersible,count,9,9,0
+fig-p1-new-well-permits-by-rig-type,2006,DP semisubmersible,count,17,17,0
+fig-p1-new-well-permits-by-rig-type,2007,DP semisubmersible,count,14,14,0
+fig-p1-new-well-permits-by-rig-type,2008,DP semisubmersible,count,22,22,0
+fig-p1-new-well-permits-by-rig-type,2009,DP semisubmersible,count,25,25,0
+fig-p1-new-well-permits-by-rig-type,2010,DP semisubmersible,count,9,9,0
+fig-p1-new-well-permits-by-rig-type,2011,DP semisubmersible,count,16,16,0
+fig-p1-new-well-permits-by-rig-type,2012,DP semisubmersible,count,28,28,0
+fig-p1-new-well-permits-by-rig-type,2013,DP semisubmersible,count,30,30,0
+fig-p1-new-well-permits-by-rig-type,2014,DP semisubmersible,count,22,22,0
+fig-p1-new-well-permits-by-rig-type,2015,DP semisubmersible,count,22,22,0
+fig-p1-new-well-permits-by-rig-type,2016,DP semisubmersible,count,9,9,0
+fig-p1-new-well-permits-by-rig-type,2017,DP semisubmersible,count,8,8,0
+fig-p1-new-well-permits-by-rig-type,2018,DP semisubmersible,count,7,7,0
+fig-p1-new-well-permits-by-rig-type,2019,DP semisubmersible,count,6,6,0
+fig-p1-new-well-permits-by-rig-type,2020,DP semisubmersible,count,5,5,0
+fig-p1-new-well-permits-by-rig-type,2021,DP semisubmersible,count,0,0,0
+fig-p1-new-well-permits-by-rig-type,2022,DP semisubmersible,count,3,3,0
+fig-p1-new-well-permits-by-rig-type,2023,DP semisubmersible,count,3,3,0
+fig-p1-new-well-permits-by-rig-type,2024,DP semisubmersible,count,4,4,0
+fig-p1-new-well-permits-by-rig-type,2025,DP semisubmersible,count,1,1,0
+fig-p1-new-well-permits-by-rig-type,2026,DP semisubmersible,count,0,0,0
+fig-p1-new-well-permits-by-rig-type,2005,Platform rig,count,10,10,0
+fig-p1-new-well-permits-by-rig-type,2006,Platform rig,count,20,20,0
+fig-p1-new-well-permits-by-rig-type,2007,Platform rig,count,24,24,0
+fig-p1-new-well-permits-by-rig-type,2008,Platform rig,count,21,21,0
+fig-p1-new-well-permits-by-rig-type,2009,Platform rig,count,6,6,0
+fig-p1-new-well-permits-by-rig-type,2010,Platform rig,count,1,1,0
+fig-p1-new-well-permits-by-rig-type,2011,Platform rig,count,7,7,0
+fig-p1-new-well-permits-by-rig-type,2012,Platform rig,count,11,11,0
+fig-p1-new-well-permits-by-rig-type,2013,Platform rig,count,18,18,0
+fig-p1-new-well-permits-by-rig-type,2014,Platform rig,count,18,18,0
+fig-p1-new-well-permits-by-rig-type,2015,Platform rig,count,6,6,0
+fig-p1-new-well-permits-by-rig-type,2016,Platform rig,count,2,2,0
+fig-p1-new-well-permits-by-rig-type,2017,Platform rig,count,2,2,0
+fig-p1-new-well-permits-by-rig-type,2018,Platform rig,count,8,8,0
+fig-p1-new-well-permits-by-rig-type,2019,Platform rig,count,3,3,0
+fig-p1-new-well-permits-by-rig-type,2020,Platform rig,count,0,0,0
+fig-p1-new-well-permits-by-rig-type,2021,Platform rig,count,0,0,0
+fig-p1-new-well-permits-by-rig-type,2022,Platform rig,count,3,3,0
+fig-p1-new-well-permits-by-rig-type,2023,Platform rig,count,1,1,0
+fig-p1-new-well-permits-by-rig-type,2024,Platform rig,count,0,0,0
+fig-p1-new-well-permits-by-rig-type,2025,Platform rig,count,1,1,0
+fig-p1-new-well-permits-by-rig-type,2026,Platform rig,count,0,0,0
+fig-p1-new-well-permits-by-rig-type,2005,Submersible,count,22,22,0
+fig-p1-new-well-permits-by-rig-type,2006,Submersible,count,20,20,0
+fig-p1-new-well-permits-by-rig-type,2007,Submersible,count,18,18,0
+fig-p1-new-well-permits-by-rig-type,2008,Submersible,count,14,14,0
+fig-p1-new-well-permits-by-rig-type,2009,Submersible,count,5,5,0
+fig-p1-new-well-permits-by-rig-type,2010,Submersible,count,2,2,0
+fig-p1-new-well-permits-by-rig-type,2011,Submersible,count,0,0,0
+fig-p1-new-well-permits-by-rig-type,2012,Submersible,count,0,0,0
+fig-p1-new-well-permits-by-rig-type,2013,Submersible,count,0,0,0
+fig-p1-new-well-permits-by-rig-type,2014,Submersible,count,0,0,0
+fig-p1-new-well-permits-by-rig-type,2015,Submersible,count,0,0,0
+fig-p1-new-well-permits-by-rig-type,2016,Submersible,count,0,0,0
+fig-p1-new-well-permits-by-rig-type,2017,Submersible,count,0,0,0
+fig-p1-new-well-permits-by-rig-type,2018,Submersible,count,0,0,0
+fig-p1-new-well-permits-by-rig-type,2019,Submersible,count,0,0,0
+fig-p1-new-well-permits-by-rig-type,2020,Submersible,count,0,0,0
+fig-p1-new-well-permits-by-rig-type,2021,Submersible,count,0,0,0
+fig-p1-new-well-permits-by-rig-type,2022,Submersible,count,0,0,0
+fig-p1-new-well-permits-by-rig-type,2023,Submersible,count,0,0,0
+fig-p1-new-well-permits-by-rig-type,2024,Submersible,count,0,0,0
+fig-p1-new-well-permits-by-rig-type,2025,Submersible,count,0,0,0
+fig-p1-new-well-permits-by-rig-type,2026,Submersible,count,0,0,0
+fig-p1-new-well-permits-by-rig-type,2005,Other,count,3,3,0
+fig-p1-new-well-permits-by-rig-type,2006,Other,count,3,3,0
+fig-p1-new-well-permits-by-rig-type,2007,Other,count,4,4,0
+fig-p1-new-well-permits-by-rig-type,2008,Other,count,3,3,0
+fig-p1-new-well-permits-by-rig-type,2009,Other,count,0,0,0
+fig-p1-new-well-permits-by-rig-type,2010,Other,count,0,0,0
+fig-p1-new-well-permits-by-rig-type,2011,Other,count,1,1,0
+fig-p1-new-well-permits-by-rig-type,2012,Other,count,0,0,0
+fig-p1-new-well-permits-by-rig-type,2013,Other,count,0,0,0
+fig-p1-new-well-permits-by-rig-type,2014,Other,count,2,2,0
+fig-p1-new-well-permits-by-rig-type,2015,Other,count,0,0,0
+fig-p1-new-well-permits-by-rig-type,2016,Other,count,0,0,0
+fig-p1-new-well-permits-by-rig-type,2017,Other,count,0,0,0
+fig-p1-new-well-permits-by-rig-type,2018,Other,count,0,0,0
+fig-p1-new-well-permits-by-rig-type,2019,Other,count,1,1,0
+fig-p1-new-well-permits-by-rig-type,2020,Other,count,0,0,0
+fig-p1-new-well-permits-by-rig-type,2021,Other,count,0,0,0
+fig-p1-new-well-permits-by-rig-type,2022,Other,count,0,0,0
+fig-p1-new-well-permits-by-rig-type,2023,Other,count,0,0,0
+fig-p1-new-well-permits-by-rig-type,2024,Other,count,2,2,0
+fig-p1-new-well-permits-by-rig-type,2025,Other,count,0,0,0
+fig-p1-new-well-permits-by-rig-type,2026,Other,count,0,0,0
+new-well-permits-by-water-depth,2005,permits,count,322,322,0
+new-well-permits-by-water-depth,2006,permits,count,377,377,0
+new-well-permits-by-water-depth,2007,permits,count,340,340,0
+new-well-permits-by-water-depth,2008,permits,count,274,274,0
+new-well-permits-by-water-depth,2009,permits,count,163,163,0
+new-well-permits-by-water-depth,2010,permits,count,106,106,0
+new-well-permits-by-water-depth,2011,permits,count,122,122,0
+new-well-permits-by-water-depth,2012,permits,count,171,171,0
+new-well-permits-by-water-depth,2013,permits,count,133,133,0
+new-well-permits-by-water-depth,2014,permits,count,127,127,0
+new-well-permits-by-water-depth,2015,permits,count,83,83,0
+new-well-permits-by-water-depth,2016,permits,count,74,74,0
+new-well-permits-by-water-depth,2017,permits,count,63,63,0
+new-well-permits-by-water-depth,2018,permits,count,84,84,0
+new-well-permits-by-water-depth,2019,permits,count,85,85,0
+new-well-permits-by-water-depth,2020,permits,count,66,66,0
+new-well-permits-by-water-depth,2021,permits,count,51,51,0
+new-well-permits-by-water-depth,2022,permits,count,52,52,0
+new-well-permits-by-water-depth,2023,permits,count,59,59,0
+new-well-permits-by-water-depth,2024,permits,count,49,49,0
+new-well-permits-by-water-depth,2025,permits,count,47,47,0
+new-well-permits-by-water-depth,2026,permits,count,47,47,0
+new-well-permits-by-water-depth,2005,under_100_m,count,259,259,0
+new-well-permits-by-water-depth,2006,under_100_m,count,268,268,0
+new-well-permits-by-water-depth,2007,under_100_m,count,221,221,0
+new-well-permits-by-water-depth,2008,under_100_m,count,185,185,0
+new-well-permits-by-water-depth,2009,under_100_m,count,79,79,0
+new-well-permits-by-water-depth,2010,under_100_m,count,65,65,0
+new-well-permits-by-water-depth,2011,under_100_m,count,76,76,0
+new-well-permits-by-water-depth,2012,under_100_m,count,64,64,0
+new-well-permits-by-water-depth,2013,under_100_m,count,67,67,0
+new-well-permits-by-water-depth,2014,under_100_m,count,60,60,0
+new-well-permits-by-water-depth,2015,under_100_m,count,12,12,0
+new-well-permits-by-water-depth,2016,under_100_m,count,10,10,0
+new-well-permits-by-water-depth,2017,under_100_m,count,12,12,0
+new-well-permits-by-water-depth,2018,under_100_m,count,16,16,0
+new-well-permits-by-water-depth,2019,under_100_m,count,23,23,0
+new-well-permits-by-water-depth,2020,under_100_m,count,12,12,0
+new-well-permits-by-water-depth,2021,under_100_m,count,16,16,0
+new-well-permits-by-water-depth,2022,under_100_m,count,6,6,0
+new-well-permits-by-water-depth,2023,under_100_m,count,12,12,0
+new-well-permits-by-water-depth,2024,under_100_m,count,6,6,0
+new-well-permits-by-water-depth,2025,under_100_m,count,1,1,0
+new-well-permits-by-water-depth,2026,under_100_m,count,6,6,0
+new-well-permits-by-water-depth,2005,100_to_500_m,count,13,13,0
+new-well-permits-by-water-depth,2006,100_to_500_m,count,33,33,0
+new-well-permits-by-water-depth,2007,100_to_500_m,count,26,26,0
+new-well-permits-by-water-depth,2008,100_to_500_m,count,26,26,0
+new-well-permits-by-water-depth,2009,100_to_500_m,count,15,15,0
+new-well-permits-by-water-depth,2010,100_to_500_m,count,7,7,0
+new-well-permits-by-water-depth,2011,100_to_500_m,count,2,2,0
+new-well-permits-by-water-depth,2012,100_to_500_m,count,5,5,0
+new-well-permits-by-water-depth,2013,100_to_500_m,count,6,6,0
+new-well-permits-by-water-depth,2014,100_to_500_m,count,5,5,0
+new-well-permits-by-water-depth,2015,100_to_500_m,count,3,3,0
+new-well-permits-by-water-depth,2016,100_to_500_m,count,3,3,0
+new-well-permits-by-water-depth,2017,100_to_500_m,count,3,3,0
+new-well-permits-by-water-depth,2018,100_to_500_m,count,8,8,0
+new-well-permits-by-water-depth,2019,100_to_500_m,count,6,6,0
+new-well-permits-by-water-depth,2020,100_to_500_m,count,4,4,0
+new-well-permits-by-water-depth,2021,100_to_500_m,count,0,0,0
+new-well-permits-by-water-depth,2022,100_to_500_m,count,5,5,0
+new-well-permits-by-water-depth,2023,100_to_500_m,count,1,1,0
+new-well-permits-by-water-depth,2024,100_to_500_m,count,2,2,0
+new-well-permits-by-water-depth,2025,100_to_500_m,count,2,2,0
+new-well-permits-by-water-depth,2026,100_to_500_m,count,0,0,0
+new-well-permits-by-water-depth,2005,500_to_1500_m,count,30,30,0
+new-well-permits-by-water-depth,2006,500_to_1500_m,count,47,47,0
+new-well-permits-by-water-depth,2007,500_to_1500_m,count,47,47,0
+new-well-permits-by-water-depth,2008,500_to_1500_m,count,37,37,0
+new-well-permits-by-water-depth,2009,500_to_1500_m,count,33,33,0
+new-well-permits-by-water-depth,2010,500_to_1500_m,count,14,14,0
+new-well-permits-by-water-depth,2011,500_to_1500_m,count,18,18,0
+new-well-permits-by-water-depth,2012,500_to_1500_m,count,55,55,0
+new-well-permits-by-water-depth,2013,500_to_1500_m,count,31,31,0
+new-well-permits-by-water-depth,2014,500_to_1500_m,count,26,26,0
+new-well-permits-by-water-depth,2015,500_to_1500_m,count,32,32,0
+new-well-permits-by-water-depth,2016,500_to_1500_m,count,28,28,0
+new-well-permits-by-water-depth,2017,500_to_1500_m,count,28,28,0
+new-well-permits-by-water-depth,2018,500_to_1500_m,count,23,23,0
+new-well-permits-by-water-depth,2019,500_to_1500_m,count,14,14,0
+new-well-permits-by-water-depth,2020,500_to_1500_m,count,16,16,0
+new-well-permits-by-water-depth,2021,500_to_1500_m,count,19,19,0
+new-well-permits-by-water-depth,2022,500_to_1500_m,count,18,18,0
+new-well-permits-by-water-depth,2023,500_to_1500_m,count,21,21,0
+new-well-permits-by-water-depth,2024,500_to_1500_m,count,19,19,0
+new-well-permits-by-water-depth,2025,500_to_1500_m,count,21,21,0
+new-well-permits-by-water-depth,2026,500_to_1500_m,count,12,12,0
+new-well-permits-by-water-depth,2005,1500_m_and_deeper,count,20,20,0
+new-well-permits-by-water-depth,2006,1500_m_and_deeper,count,29,29,0
+new-well-permits-by-water-depth,2007,1500_m_and_deeper,count,46,46,0
+new-well-permits-by-water-depth,2008,1500_m_and_deeper,count,26,26,0
+new-well-permits-by-water-depth,2009,1500_m_and_deeper,count,36,36,0
+new-well-permits-by-water-depth,2010,1500_m_and_deeper,count,20,20,0
+new-well-permits-by-water-depth,2011,1500_m_and_deeper,count,26,26,0
+new-well-permits-by-water-depth,2012,1500_m_and_deeper,count,47,47,0
+new-well-permits-by-water-depth,2013,1500_m_and_deeper,count,29,29,0
+new-well-permits-by-water-depth,2014,1500_m_and_deeper,count,36,36,0
+new-well-permits-by-water-depth,2015,1500_m_and_deeper,count,36,36,0
+new-well-permits-by-water-depth,2016,1500_m_and_deeper,count,33,33,0
+new-well-permits-by-water-depth,2017,1500_m_and_deeper,count,20,20,0
+new-well-permits-by-water-depth,2018,1500_m_and_deeper,count,37,37,0
+new-well-permits-by-water-depth,2019,1500_m_and_deeper,count,42,42,0
+new-well-permits-by-water-depth,2020,1500_m_and_deeper,count,34,34,0
+new-well-permits-by-water-depth,2021,1500_m_and_deeper,count,16,16,0
+new-well-permits-by-water-depth,2022,1500_m_and_deeper,count,23,23,0
+new-well-permits-by-water-depth,2023,1500_m_and_deeper,count,25,25,0
+new-well-permits-by-water-depth,2024,1500_m_and_deeper,count,22,22,0
+new-well-permits-by-water-depth,2025,1500_m_and_deeper,count,23,23,0
+new-well-permits-by-water-depth,2026,1500_m_and_deeper,count,29,29,0
+new-well-permits-by-water-depth,2005,median_m,m,35,35,0
+new-well-permits-by-water-depth,2006,median_m,m,44,44,0
+new-well-permits-by-water-depth,2007,median_m,m,53,53,0
+new-well-permits-by-water-depth,2008,median_m,m,44,44,0
+new-well-permits-by-water-depth,2009,median_m,m,134,134,0
+new-well-permits-by-water-depth,2010,median_m,m,54,54,0
+new-well-permits-by-water-depth,2011,median_m,m,74,74,0
+new-well-permits-by-water-depth,2012,median_m,m,924,924,0
+new-well-permits-by-water-depth,2013,median_m,m,94,94,0
+new-well-permits-by-water-depth,2014,median_m,m,412,412,0
+new-well-permits-by-water-depth,2015,median_m,m,1445,1445,0
+new-well-permits-by-water-depth,2016,median_m,m,1338,1338,0
+new-well-permits-by-water-depth,2017,median_m,m,1237,1237,0
+new-well-permits-by-water-depth,2018,median_m,m,1218,1218,0
+new-well-permits-by-water-depth,2019,median_m,m,1487,1487,0
+new-well-permits-by-water-depth,2020,median_m,m,1575,1575,0
+new-well-permits-by-water-depth,2021,median_m,m,1098,1098,0
+new-well-permits-by-water-depth,2022,median_m,m,1283,1283,0
+new-well-permits-by-water-depth,2023,median_m,m,1290,1290,0
+new-well-permits-by-water-depth,2024,median_m,m,1424,1424,0
+new-well-permits-by-water-depth,2025,median_m,m,1433,1433,0
+new-well-permits-by-water-depth,2026,median_m,m,1724,1724,0
+pies-rig,2005 | Jack-up,permits,count,234,234,0
+pies-rig,2005 | Drillship,permits,count,15,15,0
+pies-rig,2005 | Semisubmersible,permits,count,29,29,0
+pies-rig,2005 | DP semisubmersible,permits,count,9,9,0
+pies-rig,2005 | Platform rig,permits,count,10,10,0
+pies-rig,2005 | Submersible,permits,count,22,22,0
+pies-rig,2005 | Other,permits,count,3,3,0
+pies-rig,2015 | Jack-up,permits,count,7,7,0
+pies-rig,2015 | Drillship,permits,count,44,44,0
+pies-rig,2015 | Semisubmersible,permits,count,4,4,0
+pies-rig,2015 | DP semisubmersible,permits,count,22,22,0
+pies-rig,2015 | Platform rig,permits,count,6,6,0
+pies-rig,2015 | Submersible,permits,count,0,0,0
+pies-rig,2015 | Other,permits,count,0,0,0
+pies-rig,2025 | Jack-up,permits,count,1,1,0
+pies-rig,2025 | Drillship,permits,count,44,44,0
+pies-rig,2025 | Semisubmersible,permits,count,0,0,0
+pies-rig,2025 | DP semisubmersible,permits,count,1,1,0
+pies-rig,2025 | Platform rig,permits,count,1,1,0
+pies-rig,2025 | Submersible,permits,count,0,0,0
+pies-rig,2025 | Other,permits,count,0,0,0
+pies-rig,2005 | Jack-up,total,count,322,322,0
+pies-rig,2005 | Drillship,total,count,322,322,0
+pies-rig,2005 | Semisubmersible,total,count,322,322,0
+pies-rig,2005 | DP semisubmersible,total,count,322,322,0
+pies-rig,2005 | Platform rig,total,count,322,322,0
+pies-rig,2005 | Submersible,total,count,322,322,0
+pies-rig,2005 | Other,total,count,322,322,0
+pies-rig,2015 | Jack-up,total,count,83,83,0
+pies-rig,2015 | Drillship,total,count,83,83,0
+pies-rig,2015 | Semisubmersible,total,count,83,83,0
+pies-rig,2015 | DP semisubmersible,total,count,83,83,0
+pies-rig,2015 | Platform rig,total,count,83,83,0
+pies-rig,2015 | Submersible,total,count,83,83,0
+pies-rig,2015 | Other,total,count,83,83,0
+pies-rig,2025 | Jack-up,total,count,47,47,0
+pies-rig,2025 | Drillship,total,count,47,47,0
+pies-rig,2025 | Semisubmersible,total,count,47,47,0
+pies-rig,2025 | DP semisubmersible,total,count,47,47,0
+pies-rig,2025 | Platform rig,total,count,47,47,0
+pies-rig,2025 | Submersible,total,count,47,47,0
+pies-rig,2025 | Other,total,count,47,47,0
+pies-rig,2005 | Jack-up,share_percent,percentage points,72.6708074534,72.6708074534,0
+pies-rig,2005 | Drillship,share_percent,percentage points,4.65838509317,4.65838509317,0
+pies-rig,2005 | Semisubmersible,share_percent,percentage points,9.00621118012,9.00621118012,0
+pies-rig,2005 | DP semisubmersible,share_percent,percentage points,2.7950310559,2.7950310559,0
+pies-rig,2005 | Platform rig,share_percent,percentage points,3.10559006211,3.10559006211,0
+pies-rig,2005 | Submersible,share_percent,percentage points,6.83229813665,6.83229813665,0
+pies-rig,2005 | Other,share_percent,percentage points,0.931677018634,0.931677018634,0
+pies-rig,2015 | Jack-up,share_percent,percentage points,8.43373493976,8.43373493976,0
+pies-rig,2015 | Drillship,share_percent,percentage points,53.0120481928,53.0120481928,0
+pies-rig,2015 | Semisubmersible,share_percent,percentage points,4.81927710843,4.81927710843,0
+pies-rig,2015 | DP semisubmersible,share_percent,percentage points,26.5060240964,26.5060240964,0
+pies-rig,2015 | Platform rig,share_percent,percentage points,7.22891566265,7.22891566265,0
+pies-rig,2015 | Submersible,share_percent,percentage points,0,0,0
+pies-rig,2015 | Other,share_percent,percentage points,0,0,0
+pies-rig,2025 | Jack-up,share_percent,percentage points,2.12765957447,2.12765957447,0
+pies-rig,2025 | Drillship,share_percent,percentage points,93.6170212766,93.6170212766,0
+pies-rig,2025 | Semisubmersible,share_percent,percentage points,0,0,0
+pies-rig,2025 | DP semisubmersible,share_percent,percentage points,2.12765957447,2.12765957447,0
+pies-rig,2025 | Platform rig,share_percent,percentage points,2.12765957447,2.12765957447,0
+pies-rig,2025 | Submersible,share_percent,percentage points,0,0,0
+pies-rig,2025 | Other,share_percent,percentage points,0,0,0
+pies-depth,2005 | Under 100 m,permits,count,259,259,0
+pies-depth,2005 | 100 to 500 m,permits,count,13,13,0
+pies-depth,"2005 | 500 to 1,500 m",permits,count,30,30,0
+pies-depth,"2005 | 1,500 m and deeper",permits,count,20,20,0
+pies-depth,2015 | Under 100 m,permits,count,12,12,0
+pies-depth,2015 | 100 to 500 m,permits,count,3,3,0
+pies-depth,"2015 | 500 to 1,500 m",permits,count,32,32,0
+pies-depth,"2015 | 1,500 m and deeper",permits,count,36,36,0
+pies-depth,2025 | Under 100 m,permits,count,1,1,0
+pies-depth,2025 | 100 to 500 m,permits,count,2,2,0
+pies-depth,"2025 | 500 to 1,500 m",permits,count,21,21,0
+pies-depth,"2025 | 1,500 m and deeper",permits,count,23,23,0
+pies-depth,2005 | Under 100 m,total,count,322,322,0
+pies-depth,2005 | 100 to 500 m,total,count,322,322,0
+pies-depth,"2005 | 500 to 1,500 m",total,count,322,322,0
+pies-depth,"2005 | 1,500 m and deeper",total,count,322,322,0
+pies-depth,2015 | Under 100 m,total,count,83,83,0
+pies-depth,2015 | 100 to 500 m,total,count,83,83,0
+pies-depth,"2015 | 500 to 1,500 m",total,count,83,83,0
+pies-depth,"2015 | 1,500 m and deeper",total,count,83,83,0
+pies-depth,2025 | Under 100 m,total,count,47,47,0
+pies-depth,2025 | 100 to 500 m,total,count,47,47,0
+pies-depth,"2025 | 500 to 1,500 m",total,count,47,47,0
+pies-depth,"2025 | 1,500 m and deeper",total,count,47,47,0
+pies-depth,2005 | Under 100 m,share_percent,percentage points,80.4347826087,80.4347826087,0
+pies-depth,2005 | 100 to 500 m,share_percent,percentage points,4.03726708075,4.03726708075,0
+pies-depth,"2005 | 500 to 1,500 m",share_percent,percentage points,9.31677018634,9.31677018634,0
+pies-depth,"2005 | 1,500 m and deeper",share_percent,percentage points,6.21118012422,6.21118012422,0
+pies-depth,2015 | Under 100 m,share_percent,percentage points,14.4578313253,14.4578313253,0
+pies-depth,2015 | 100 to 500 m,share_percent,percentage points,3.61445783133,3.61445783133,0
+pies-depth,"2015 | 500 to 1,500 m",share_percent,percentage points,38.5542168675,38.5542168675,0
+pies-depth,"2015 | 1,500 m and deeper",share_percent,percentage points,43.3734939759,43.3734939759,0
+pies-depth,2025 | Under 100 m,share_percent,percentage points,2.12765957447,2.12765957447,0
+pies-depth,2025 | 100 to 500 m,share_percent,percentage points,4.25531914894,4.25531914894,0
+pies-depth,"2025 | 500 to 1,500 m",share_percent,percentage points,44.6808510638,44.6808510638,0
+pies-depth,"2025 | 1,500 m and deeper",share_percent,percentage points,48.9361702128,48.9361702128,0
+map-summary,2005 to 2009,Under 100 m,count,1089,1089,0
+map-summary,2021 to 2025,Under 100 m,count,33,33,0
+map-summary,2005 to 2009,100 to 500 m,count,126,126,0
+map-summary,2021 to 2025,100 to 500 m,count,10,10,0
+map-summary,2005 to 2009,"500 to 1,500 m",count,209,209,0
+map-summary,2021 to 2025,"500 to 1,500 m",count,95,95,0
+map-summary,2005 to 2009,"1,500 m and deeper",count,160,160,0
+map-summary,2021 to 2025,"1,500 m and deeper",count,108,108,0
+map-summary,2005 to 2009,total,count,1584,1584,0
+map-summary,2021 to 2025,total,count,246,246,0
+map-selection,2005 to 2009,selected,count,1584,1584,0
+map-selection,2021 to 2025,selected,count,246,246,0
+map-selection,2005 to 2009,mapped,count,1584,1584,0
+map-selection,2021 to 2025,mapped,count,246,246,0
+map-selection,2005 to 2009,missing_or_outside_coordinates,count,0,0,0
+map-selection,2021 to 2025,missing_or_outside_coordinates,count,0,0,0
+map-windows,2005 | 2009,Under 100 m,count,1089,1089,0
+map-windows,2006 | 2010,Under 100 m,count,836,836,0
+map-windows,2007 | 2011,Under 100 m,count,603,603,0
+map-windows,2008 | 2012,Under 100 m,count,448,448,0
+map-windows,2009 | 2013,Under 100 m,count,334,334,0
+map-windows,2010 | 2014,Under 100 m,count,317,317,0
+map-windows,2011 | 2015,Under 100 m,count,266,266,0
+map-windows,2012 | 2016,Under 100 m,count,211,211,0
+map-windows,2013 | 2017,Under 100 m,count,161,161,0
+map-windows,2014 | 2018,Under 100 m,count,115,115,0
+map-windows,2015 | 2019,Under 100 m,count,69,69,0
+map-windows,2016 | 2020,Under 100 m,count,60,60,0
+map-windows,2017 | 2021,Under 100 m,count,58,58,0
+map-windows,2018 | 2022,Under 100 m,count,55,55,0
+map-windows,2019 | 2023,Under 100 m,count,52,52,0
+map-windows,2020 | 2024,Under 100 m,count,39,39,0
+map-windows,2021 | 2025,Under 100 m,count,33,33,0
+map-windows,2005 | 2009,100 to 500 m,count,126,126,0
+map-windows,2006 | 2010,100 to 500 m,count,100,100,0
+map-windows,2007 | 2011,100 to 500 m,count,68,68,0
+map-windows,2008 | 2012,100 to 500 m,count,47,47,0
+map-windows,2009 | 2013,100 to 500 m,count,31,31,0
+map-windows,2010 | 2014,100 to 500 m,count,27,27,0
+map-windows,2011 | 2015,100 to 500 m,count,26,26,0
+map-windows,2012 | 2016,100 to 500 m,count,24,24,0
+map-windows,2013 | 2017,100 to 500 m,count,24,24,0
+map-windows,2014 | 2018,100 to 500 m,count,26,26,0
+map-windows,2015 | 2019,100 to 500 m,count,23,23,0
+map-windows,2016 | 2020,100 to 500 m,count,24,24,0
+map-windows,2017 | 2021,100 to 500 m,count,21,21,0
+map-windows,2018 | 2022,100 to 500 m,count,23,23,0
+map-windows,2019 | 2023,100 to 500 m,count,16,16,0
+map-windows,2020 | 2024,100 to 500 m,count,11,11,0
+map-windows,2021 | 2025,100 to 500 m,count,10,10,0
+map-windows,2005 | 2009,"500 to 1,500 m",count,209,209,0
+map-windows,2006 | 2010,"500 to 1,500 m",count,179,179,0
+map-windows,2007 | 2011,"500 to 1,500 m",count,143,143,0
+map-windows,2008 | 2012,"500 to 1,500 m",count,148,148,0
+map-windows,2009 | 2013,"500 to 1,500 m",count,145,145,0
+map-windows,2010 | 2014,"500 to 1,500 m",count,140,140,0
+map-windows,2011 | 2015,"500 to 1,500 m",count,160,160,0
+map-windows,2012 | 2016,"500 to 1,500 m",count,172,172,0
+map-windows,2013 | 2017,"500 to 1,500 m",count,150,150,0
+map-windows,2014 | 2018,"500 to 1,500 m",count,142,142,0
+map-windows,2015 | 2019,"500 to 1,500 m",count,127,127,0
+map-windows,2016 | 2020,"500 to 1,500 m",count,108,108,0
+map-windows,2017 | 2021,"500 to 1,500 m",count,100,100,0
+map-windows,2018 | 2022,"500 to 1,500 m",count,89,89,0
+map-windows,2019 | 2023,"500 to 1,500 m",count,84,84,0
+map-windows,2020 | 2024,"500 to 1,500 m",count,89,89,0
+map-windows,2021 | 2025,"500 to 1,500 m",count,95,95,0
+map-windows,2005 | 2009,"1,500 m and deeper",count,160,160,0
+map-windows,2006 | 2010,"1,500 m and deeper",count,156,156,0
+map-windows,2007 | 2011,"1,500 m and deeper",count,149,149,0
+map-windows,2008 | 2012,"1,500 m and deeper",count,143,143,0
+map-windows,2009 | 2013,"1,500 m and deeper",count,154,154,0
+map-windows,2010 | 2014,"1,500 m and deeper",count,152,152,0
+map-windows,2011 | 2015,"1,500 m and deeper",count,174,174,0
+map-windows,2012 | 2016,"1,500 m and deeper",count,182,182,0
+map-windows,2013 | 2017,"1,500 m and deeper",count,165,165,0
+map-windows,2014 | 2018,"1,500 m and deeper",count,163,163,0
+map-windows,2015 | 2019,"1,500 m and deeper",count,168,168,0
+map-windows,2016 | 2020,"1,500 m and deeper",count,168,168,0
+map-windows,2017 | 2021,"1,500 m and deeper",count,151,151,0
+map-windows,2018 | 2022,"1,500 m and deeper",count,150,150,0
+map-windows,2019 | 2023,"1,500 m and deeper",count,143,143,0
+map-windows,2020 | 2024,"1,500 m and deeper",count,124,124,0
+map-windows,2021 | 2025,"1,500 m and deeper",count,108,108,0
+map-windows,2005 | 2009,total,count,1584,1584,0
+map-windows,2006 | 2010,total,count,1271,1271,0
+map-windows,2007 | 2011,total,count,963,963,0
+map-windows,2008 | 2012,total,count,786,786,0
+map-windows,2009 | 2013,total,count,664,664,0
+map-windows,2010 | 2014,total,count,636,636,0
+map-windows,2011 | 2015,total,count,626,626,0
+map-windows,2012 | 2016,total,count,589,589,0
+map-windows,2013 | 2017,total,count,500,500,0
+map-windows,2014 | 2018,total,count,446,446,0
+map-windows,2015 | 2019,total,count,387,387,0
+map-windows,2016 | 2020,total,count,360,360,0
+map-windows,2017 | 2021,total,count,330,330,0
+map-windows,2018 | 2022,total,count,317,317,0
+map-windows,2019 | 2023,total,count,295,295,0
+map-windows,2020 | 2024,total,count,263,263,0
+map-windows,2021 | 2025,total,count,246,246,0
+new-wells-by-year,2005,Under 100 m,count,320,320,0
+new-wells-by-year,2006,Under 100 m,count,297,297,0
+new-wells-by-year,2007,Under 100 m,count,217,217,0
+new-wells-by-year,2008,Under 100 m,count,174,174,0
+new-wells-by-year,2009,Under 100 m,count,81,81,0
+new-wells-by-year,2010,Under 100 m,count,67,67,0
+new-wells-by-year,2011,Under 100 m,count,64,64,0
+new-wells-by-year,2012,Under 100 m,count,62,62,0
+new-wells-by-year,2013,Under 100 m,count,60,60,0
+new-wells-by-year,2014,Under 100 m,count,64,64,0
+new-wells-by-year,2015,Under 100 m,count,16,16,0
+new-wells-by-year,2016,Under 100 m,count,9,9,0
+new-wells-by-year,2017,Under 100 m,count,12,12,0
+new-wells-by-year,2018,Under 100 m,count,14,14,0
+new-wells-by-year,2019,Under 100 m,count,18,18,0
+new-wells-by-year,2020,Under 100 m,count,7,7,0
+new-wells-by-year,2021,Under 100 m,count,7,7,0
+new-wells-by-year,2022,Under 100 m,count,9,9,0
+new-wells-by-year,2023,Under 100 m,count,11,11,0
+new-wells-by-year,2024,Under 100 m,count,5,5,0
+new-wells-by-year,2025,Under 100 m,count,1,1,0
+new-wells-by-year,2005,100 to 500 m,count,29,29,0
+new-wells-by-year,2006,100 to 500 m,count,38,38,0
+new-wells-by-year,2007,100 to 500 m,count,24,24,0
+new-wells-by-year,2008,100 to 500 m,count,22,22,0
+new-wells-by-year,2009,100 to 500 m,count,13,13,0
+new-wells-by-year,2010,100 to 500 m,count,3,3,0
+new-wells-by-year,2011,100 to 500 m,count,6,6,0
+new-wells-by-year,2012,100 to 500 m,count,3,3,0
+new-wells-by-year,2013,100 to 500 m,count,6,6,0
+new-wells-by-year,2014,100 to 500 m,count,9,9,0
+new-wells-by-year,2015,100 to 500 m,count,2,2,0
+new-wells-by-year,2016,100 to 500 m,count,4,4,0
+new-wells-by-year,2017,100 to 500 m,count,3,3,0
+new-wells-by-year,2018,100 to 500 m,count,8,8,0
+new-wells-by-year,2019,100 to 500 m,count,6,6,0
+new-wells-by-year,2020,100 to 500 m,count,3,3,0
+new-wells-by-year,2021,100 to 500 m,count,1,1,0
+new-wells-by-year,2022,100 to 500 m,count,5,5,0
+new-wells-by-year,2023,100 to 500 m,count,1,1,0
+new-wells-by-year,2024,100 to 500 m,count,1,1,0
+new-wells-by-year,2025,100 to 500 m,count,2,2,0
+new-wells-by-year,2005,"500 to 1,500 m",count,43,43,0
+new-wells-by-year,2006,"500 to 1,500 m",count,51,51,0
+new-wells-by-year,2007,"500 to 1,500 m",count,45,45,0
+new-wells-by-year,2008,"500 to 1,500 m",count,36,36,0
+new-wells-by-year,2009,"500 to 1,500 m",count,34,34,0
+new-wells-by-year,2010,"500 to 1,500 m",count,13,13,0
+new-wells-by-year,2011,"500 to 1,500 m",count,15,15,0
+new-wells-by-year,2012,"500 to 1,500 m",count,50,50,0
+new-wells-by-year,2013,"500 to 1,500 m",count,33,33,0
+new-wells-by-year,2014,"500 to 1,500 m",count,29,29,0
+new-wells-by-year,2015,"500 to 1,500 m",count,33,33,0
+new-wells-by-year,2016,"500 to 1,500 m",count,27,27,0
+new-wells-by-year,2017,"500 to 1,500 m",count,28,28,0
+new-wells-by-year,2018,"500 to 1,500 m",count,25,25,0
+new-wells-by-year,2019,"500 to 1,500 m",count,14,14,0
+new-wells-by-year,2020,"500 to 1,500 m",count,14,14,0
+new-wells-by-year,2021,"500 to 1,500 m",count,19,19,0
+new-wells-by-year,2022,"500 to 1,500 m",count,17,17,0
+new-wells-by-year,2023,"500 to 1,500 m",count,20,20,0
+new-wells-by-year,2024,"500 to 1,500 m",count,19,19,0
+new-wells-by-year,2025,"500 to 1,500 m",count,20,20,0
+new-wells-by-year,2005,"1,500 m and deeper",count,18,18,0
+new-wells-by-year,2006,"1,500 m and deeper",count,30,30,0
+new-wells-by-year,2007,"1,500 m and deeper",count,46,46,0
+new-wells-by-year,2008,"1,500 m and deeper",count,26,26,0
+new-wells-by-year,2009,"1,500 m and deeper",count,40,40,0
+new-wells-by-year,2010,"1,500 m and deeper",count,14,14,0
+new-wells-by-year,2011,"1,500 m and deeper",count,23,23,0
+new-wells-by-year,2012,"1,500 m and deeper",count,40,40,0
+new-wells-by-year,2013,"1,500 m and deeper",count,37,37,0
+new-wells-by-year,2014,"1,500 m and deeper",count,38,38,0
+new-wells-by-year,2015,"1,500 m and deeper",count,36,36,0
+new-wells-by-year,2016,"1,500 m and deeper",count,31,31,0
+new-wells-by-year,2017,"1,500 m and deeper",count,23,23,0
+new-wells-by-year,2018,"1,500 m and deeper",count,35,35,0
+new-wells-by-year,2019,"1,500 m and deeper",count,43,43,0
+new-wells-by-year,2020,"1,500 m and deeper",count,36,36,0
+new-wells-by-year,2021,"1,500 m and deeper",count,14,14,0
+new-wells-by-year,2022,"1,500 m and deeper",count,22,22,0
+new-wells-by-year,2023,"1,500 m and deeper",count,28,28,0
+new-wells-by-year,2024,"1,500 m and deeper",count,24,24,0
+new-wells-by-year,2025,"1,500 m and deeper",count,20,20,0
+new-wells-by-year,2005,total,count,410,410,0
+new-wells-by-year,2006,total,count,416,416,0
+new-wells-by-year,2007,total,count,332,332,0
+new-wells-by-year,2008,total,count,258,258,0
+new-wells-by-year,2009,total,count,168,168,0
+new-wells-by-year,2010,total,count,97,97,0
+new-wells-by-year,2011,total,count,108,108,0
+new-wells-by-year,2012,total,count,155,155,0
+new-wells-by-year,2013,total,count,136,136,0
+new-wells-by-year,2014,total,count,140,140,0
+new-wells-by-year,2015,total,count,87,87,0
+new-wells-by-year,2016,total,count,71,71,0
+new-wells-by-year,2017,total,count,66,66,0
+new-wells-by-year,2018,total,count,82,82,0
+new-wells-by-year,2019,total,count,81,81,0
+new-wells-by-year,2020,total,count,60,60,0
+new-wells-by-year,2021,total,count,41,41,0
+new-wells-by-year,2022,total,count,53,53,0
+new-wells-by-year,2023,total,count,60,60,0
+new-wells-by-year,2024,total,count,49,49,0
+new-wells-by-year,2025,total,count,43,43,0
+new-wells-trend,2005,Under 100 m,count,320,320,0
+new-wells-trend,2006,Under 100 m,count,297,297,0
+new-wells-trend,2007,Under 100 m,count,217,217,0
+new-wells-trend,2008,Under 100 m,count,174,174,0
+new-wells-trend,2009,Under 100 m,count,81,81,0
+new-wells-trend,2010,Under 100 m,count,67,67,0
+new-wells-trend,2011,Under 100 m,count,64,64,0
+new-wells-trend,2012,Under 100 m,count,62,62,0
+new-wells-trend,2013,Under 100 m,count,60,60,0
+new-wells-trend,2014,Under 100 m,count,64,64,0
+new-wells-trend,2015,Under 100 m,count,16,16,0
+new-wells-trend,2016,Under 100 m,count,9,9,0
+new-wells-trend,2017,Under 100 m,count,12,12,0
+new-wells-trend,2018,Under 100 m,count,14,14,0
+new-wells-trend,2019,Under 100 m,count,18,18,0
+new-wells-trend,2020,Under 100 m,count,7,7,0
+new-wells-trend,2021,Under 100 m,count,7,7,0
+new-wells-trend,2022,Under 100 m,count,9,9,0
+new-wells-trend,2023,Under 100 m,count,11,11,0
+new-wells-trend,2024,Under 100 m,count,5,5,0
+new-wells-trend,2025,Under 100 m,count,1,1,0
+new-wells-trend,2005,100 to 500 m,count,29,29,0
+new-wells-trend,2006,100 to 500 m,count,38,38,0
+new-wells-trend,2007,100 to 500 m,count,24,24,0
+new-wells-trend,2008,100 to 500 m,count,22,22,0
+new-wells-trend,2009,100 to 500 m,count,13,13,0
+new-wells-trend,2010,100 to 500 m,count,3,3,0
+new-wells-trend,2011,100 to 500 m,count,6,6,0
+new-wells-trend,2012,100 to 500 m,count,3,3,0
+new-wells-trend,2013,100 to 500 m,count,6,6,0
+new-wells-trend,2014,100 to 500 m,count,9,9,0
+new-wells-trend,2015,100 to 500 m,count,2,2,0
+new-wells-trend,2016,100 to 500 m,count,4,4,0
+new-wells-trend,2017,100 to 500 m,count,3,3,0
+new-wells-trend,2018,100 to 500 m,count,8,8,0
+new-wells-trend,2019,100 to 500 m,count,6,6,0
+new-wells-trend,2020,100 to 500 m,count,3,3,0
+new-wells-trend,2021,100 to 500 m,count,1,1,0
+new-wells-trend,2022,100 to 500 m,count,5,5,0
+new-wells-trend,2023,100 to 500 m,count,1,1,0
+new-wells-trend,2024,100 to 500 m,count,1,1,0
+new-wells-trend,2025,100 to 500 m,count,2,2,0
+new-wells-trend,2005,"500 to 1,500 m",count,43,43,0
+new-wells-trend,2006,"500 to 1,500 m",count,51,51,0
+new-wells-trend,2007,"500 to 1,500 m",count,45,45,0
+new-wells-trend,2008,"500 to 1,500 m",count,36,36,0
+new-wells-trend,2009,"500 to 1,500 m",count,34,34,0
+new-wells-trend,2010,"500 to 1,500 m",count,13,13,0
+new-wells-trend,2011,"500 to 1,500 m",count,15,15,0
+new-wells-trend,2012,"500 to 1,500 m",count,50,50,0
+new-wells-trend,2013,"500 to 1,500 m",count,33,33,0
+new-wells-trend,2014,"500 to 1,500 m",count,29,29,0
+new-wells-trend,2015,"500 to 1,500 m",count,33,33,0
+new-wells-trend,2016,"500 to 1,500 m",count,27,27,0
+new-wells-trend,2017,"500 to 1,500 m",count,28,28,0
+new-wells-trend,2018,"500 to 1,500 m",count,25,25,0
+new-wells-trend,2019,"500 to 1,500 m",count,14,14,0
+new-wells-trend,2020,"500 to 1,500 m",count,14,14,0
+new-wells-trend,2021,"500 to 1,500 m",count,19,19,0
+new-wells-trend,2022,"500 to 1,500 m",count,17,17,0
+new-wells-trend,2023,"500 to 1,500 m",count,20,20,0
+new-wells-trend,2024,"500 to 1,500 m",count,19,19,0
+new-wells-trend,2025,"500 to 1,500 m",count,20,20,0
+new-wells-trend,2005,"1,500 m and deeper",count,18,18,0
+new-wells-trend,2006,"1,500 m and deeper",count,30,30,0
+new-wells-trend,2007,"1,500 m and deeper",count,46,46,0
+new-wells-trend,2008,"1,500 m and deeper",count,26,26,0
+new-wells-trend,2009,"1,500 m and deeper",count,40,40,0
+new-wells-trend,2010,"1,500 m and deeper",count,14,14,0
+new-wells-trend,2011,"1,500 m and deeper",count,23,23,0
+new-wells-trend,2012,"1,500 m and deeper",count,40,40,0
+new-wells-trend,2013,"1,500 m and deeper",count,37,37,0
+new-wells-trend,2014,"1,500 m and deeper",count,38,38,0
+new-wells-trend,2015,"1,500 m and deeper",count,36,36,0
+new-wells-trend,2016,"1,500 m and deeper",count,31,31,0
+new-wells-trend,2017,"1,500 m and deeper",count,23,23,0
+new-wells-trend,2018,"1,500 m and deeper",count,35,35,0
+new-wells-trend,2019,"1,500 m and deeper",count,43,43,0
+new-wells-trend,2020,"1,500 m and deeper",count,36,36,0
+new-wells-trend,2021,"1,500 m and deeper",count,14,14,0
+new-wells-trend,2022,"1,500 m and deeper",count,22,22,0
+new-wells-trend,2023,"1,500 m and deeper",count,28,28,0
+new-wells-trend,2024,"1,500 m and deeper",count,24,24,0
+new-wells-trend,2025,"1,500 m and deeper",count,20,20,0
+new-wells-trend,2005,total,count,410,410,0
+new-wells-trend,2006,total,count,416,416,0
+new-wells-trend,2007,total,count,332,332,0
+new-wells-trend,2008,total,count,258,258,0
+new-wells-trend,2009,total,count,168,168,0
+new-wells-trend,2010,total,count,97,97,0
+new-wells-trend,2011,total,count,108,108,0
+new-wells-trend,2012,total,count,155,155,0
+new-wells-trend,2013,total,count,136,136,0
+new-wells-trend,2014,total,count,140,140,0
+new-wells-trend,2015,total,count,87,87,0
+new-wells-trend,2016,total,count,71,71,0
+new-wells-trend,2017,total,count,66,66,0
+new-wells-trend,2018,total,count,82,82,0
+new-wells-trend,2019,total,count,81,81,0
+new-wells-trend,2020,total,count,60,60,0
+new-wells-trend,2021,total,count,41,41,0
+new-wells-trend,2022,total,count,53,53,0
+new-wells-trend,2023,total,count,60,60,0
+new-wells-trend,2024,total,count,49,49,0
+new-wells-trend,2025,total,count,43,43,0
+new-wells-trend,2005,Under 100 m (3-year mean),wells/year,,,
+new-wells-trend,2006,Under 100 m (3-year mean),wells/year,,,
+new-wells-trend,2007,Under 100 m (3-year mean),wells/year,278,278,0
+new-wells-trend,2008,Under 100 m (3-year mean),wells/year,229.33,229.33,0
+new-wells-trend,2009,Under 100 m (3-year mean),wells/year,157.33,157.33,0
+new-wells-trend,2010,Under 100 m (3-year mean),wells/year,107.33,107.33,0
+new-wells-trend,2011,Under 100 m (3-year mean),wells/year,70.67,70.67,0
+new-wells-trend,2012,Under 100 m (3-year mean),wells/year,64.33,64.33,0
+new-wells-trend,2013,Under 100 m (3-year mean),wells/year,62,62,0
+new-wells-trend,2014,Under 100 m (3-year mean),wells/year,62,62,0
+new-wells-trend,2015,Under 100 m (3-year mean),wells/year,46.67,46.67,0
+new-wells-trend,2016,Under 100 m (3-year mean),wells/year,29.67,29.67,0
+new-wells-trend,2017,Under 100 m (3-year mean),wells/year,12.33,12.33,0
+new-wells-trend,2018,Under 100 m (3-year mean),wells/year,11.67,11.67,0
+new-wells-trend,2019,Under 100 m (3-year mean),wells/year,14.67,14.67,0
+new-wells-trend,2020,Under 100 m (3-year mean),wells/year,13,13,0
+new-wells-trend,2021,Under 100 m (3-year mean),wells/year,10.67,10.67,0
+new-wells-trend,2022,Under 100 m (3-year mean),wells/year,7.67,7.67,0
+new-wells-trend,2023,Under 100 m (3-year mean),wells/year,9,9,0
+new-wells-trend,2024,Under 100 m (3-year mean),wells/year,8.33,8.33,0
+new-wells-trend,2025,Under 100 m (3-year mean),wells/year,5.67,5.67,0
+new-wells-trend,2005,100 to 500 m (3-year mean),wells/year,,,
+new-wells-trend,2006,100 to 500 m (3-year mean),wells/year,,,
+new-wells-trend,2007,100 to 500 m (3-year mean),wells/year,30.33,30.33,0
+new-wells-trend,2008,100 to 500 m (3-year mean),wells/year,28,28,0
+new-wells-trend,2009,100 to 500 m (3-year mean),wells/year,19.67,19.67,0
+new-wells-trend,2010,100 to 500 m (3-year mean),wells/year,12.67,12.67,0
+new-wells-trend,2011,100 to 500 m (3-year mean),wells/year,7.33,7.33,0
+new-wells-trend,2012,100 to 500 m (3-year mean),wells/year,4,4,0
+new-wells-trend,2013,100 to 500 m (3-year mean),wells/year,5,5,0
+new-wells-trend,2014,100 to 500 m (3-year mean),wells/year,6,6,0
+new-wells-trend,2015,100 to 500 m (3-year mean),wells/year,5.67,5.67,0
+new-wells-trend,2016,100 to 500 m (3-year mean),wells/year,5,5,0
+new-wells-trend,2017,100 to 500 m (3-year mean),wells/year,3,3,0
+new-wells-trend,2018,100 to 500 m (3-year mean),wells/year,5,5,0
+new-wells-trend,2019,100 to 500 m (3-year mean),wells/year,5.67,5.67,0
+new-wells-trend,2020,100 to 500 m (3-year mean),wells/year,5.67,5.67,0
+new-wells-trend,2021,100 to 500 m (3-year mean),wells/year,3.33,3.33,0
+new-wells-trend,2022,100 to 500 m (3-year mean),wells/year,3,3,0
+new-wells-trend,2023,100 to 500 m (3-year mean),wells/year,2.33,2.33,0
+new-wells-trend,2024,100 to 500 m (3-year mean),wells/year,2.33,2.33,0
+new-wells-trend,2025,100 to 500 m (3-year mean),wells/year,1.33,1.33,0
+new-wells-trend,2005,"500 to 1,500 m (3-year mean)",wells/year,,,
+new-wells-trend,2006,"500 to 1,500 m (3-year mean)",wells/year,,,
+new-wells-trend,2007,"500 to 1,500 m (3-year mean)",wells/year,46.33,46.33,0
+new-wells-trend,2008,"500 to 1,500 m (3-year mean)",wells/year,44,44,0
+new-wells-trend,2009,"500 to 1,500 m (3-year mean)",wells/year,38.33,38.33,0
+new-wells-trend,2010,"500 to 1,500 m (3-year mean)",wells/year,27.67,27.67,0
+new-wells-trend,2011,"500 to 1,500 m (3-year mean)",wells/year,20.67,20.67,0
+new-wells-trend,2012,"500 to 1,500 m (3-year mean)",wells/year,26,26,0
+new-wells-trend,2013,"500 to 1,500 m (3-year mean)",wells/year,32.67,32.67,0
+new-wells-trend,2014,"500 to 1,500 m (3-year mean)",wells/year,37.33,37.33,0
+new-wells-trend,2015,"500 to 1,500 m (3-year mean)",wells/year,31.67,31.67,0
+new-wells-trend,2016,"500 to 1,500 m (3-year mean)",wells/year,29.67,29.67,0
+new-wells-trend,2017,"500 to 1,500 m (3-year mean)",wells/year,29.33,29.33,0
+new-wells-trend,2018,"500 to 1,500 m (3-year mean)",wells/year,26.67,26.67,0
+new-wells-trend,2019,"500 to 1,500 m (3-year mean)",wells/year,22.33,22.33,0
+new-wells-trend,2020,"500 to 1,500 m (3-year mean)",wells/year,17.67,17.67,0
+new-wells-trend,2021,"500 to 1,500 m (3-year mean)",wells/year,15.67,15.67,0
+new-wells-trend,2022,"500 to 1,500 m (3-year mean)",wells/year,16.67,16.67,0
+new-wells-trend,2023,"500 to 1,500 m (3-year mean)",wells/year,18.67,18.67,0
+new-wells-trend,2024,"500 to 1,500 m (3-year mean)",wells/year,18.67,18.67,0
+new-wells-trend,2025,"500 to 1,500 m (3-year mean)",wells/year,19.67,19.67,0
+new-wells-trend,2005,"1,500 m and deeper (3-year mean)",wells/year,,,
+new-wells-trend,2006,"1,500 m and deeper (3-year mean)",wells/year,,,
+new-wells-trend,2007,"1,500 m and deeper (3-year mean)",wells/year,31.33,31.33,0
+new-wells-trend,2008,"1,500 m and deeper (3-year mean)",wells/year,34,34,0
+new-wells-trend,2009,"1,500 m and deeper (3-year mean)",wells/year,37.33,37.33,0
+new-wells-trend,2010,"1,500 m and deeper (3-year mean)",wells/year,26.67,26.67,0
+new-wells-trend,2011,"1,500 m and deeper (3-year mean)",wells/year,25.67,25.67,0
+new-wells-trend,2012,"1,500 m and deeper (3-year mean)",wells/year,25.67,25.67,0
+new-wells-trend,2013,"1,500 m and deeper (3-year mean)",wells/year,33.33,33.33,0
+new-wells-trend,2014,"1,500 m and deeper (3-year mean)",wells/year,38.33,38.33,0
+new-wells-trend,2015,"1,500 m and deeper (3-year mean)",wells/year,37,37,0
+new-wells-trend,2016,"1,500 m and deeper (3-year mean)",wells/year,35,35,0
+new-wells-trend,2017,"1,500 m and deeper (3-year mean)",wells/year,30,30,0
+new-wells-trend,2018,"1,500 m and deeper (3-year mean)",wells/year,29.67,29.67,0
+new-wells-trend,2019,"1,500 m and deeper (3-year mean)",wells/year,33.67,33.67,0
+new-wells-trend,2020,"1,500 m and deeper (3-year mean)",wells/year,38,38,0
+new-wells-trend,2021,"1,500 m and deeper (3-year mean)",wells/year,31,31,0
+new-wells-trend,2022,"1,500 m and deeper (3-year mean)",wells/year,24,24,0
+new-wells-trend,2023,"1,500 m and deeper (3-year mean)",wells/year,21.33,21.33,0
+new-wells-trend,2024,"1,500 m and deeper (3-year mean)",wells/year,24.67,24.67,0
+new-wells-trend,2025,"1,500 m and deeper (3-year mean)",wells/year,24,24,0
+new-wells-trend,2005,total (3-year mean),wells/year,,,
+new-wells-trend,2006,total (3-year mean),wells/year,,,
+new-wells-trend,2007,total (3-year mean),wells/year,386,386,0
+new-wells-trend,2008,total (3-year mean),wells/year,335.33,335.33,0
+new-wells-trend,2009,total (3-year mean),wells/year,252.67,252.67,0
+new-wells-trend,2010,total (3-year mean),wells/year,174.33,174.33,0
+new-wells-trend,2011,total (3-year mean),wells/year,124.33,124.33,0
+new-wells-trend,2012,total (3-year mean),wells/year,120,120,0
+new-wells-trend,2013,total (3-year mean),wells/year,133,133,0
+new-wells-trend,2014,total (3-year mean),wells/year,143.67,143.67,0
+new-wells-trend,2015,total (3-year mean),wells/year,121,121,0
+new-wells-trend,2016,total (3-year mean),wells/year,99.33,99.33,0
+new-wells-trend,2017,total (3-year mean),wells/year,74.67,74.67,0
+new-wells-trend,2018,total (3-year mean),wells/year,73,73,0
+new-wells-trend,2019,total (3-year mean),wells/year,76.33,76.33,0
+new-wells-trend,2020,total (3-year mean),wells/year,74.33,74.33,0
+new-wells-trend,2021,total (3-year mean),wells/year,60.67,60.67,0
+new-wells-trend,2022,total (3-year mean),wells/year,51.33,51.33,0
+new-wells-trend,2023,total (3-year mean),wells/year,51.33,51.33,0
+new-wells-trend,2024,total (3-year mean),wells/year,54,54,0
+new-wells-trend,2025,total (3-year mean),wells/year,50.67,50.67,0
+new-wells-trend,2005,WTI (USD/bbl),USD/bbl,56.49,56.49,0
+new-wells-trend,2006,WTI (USD/bbl),USD/bbl,66.02,66.02,0
+new-wells-trend,2007,WTI (USD/bbl),USD/bbl,72.32,72.32,0
+new-wells-trend,2008,WTI (USD/bbl),USD/bbl,99.57,99.57,0
+new-wells-trend,2009,WTI (USD/bbl),USD/bbl,61.65,61.65,0
+new-wells-trend,2010,WTI (USD/bbl),USD/bbl,79.4,79.4,0
+new-wells-trend,2011,WTI (USD/bbl),USD/bbl,94.87,94.87,0
+new-wells-trend,2012,WTI (USD/bbl),USD/bbl,94.11,94.11,0
+new-wells-trend,2013,WTI (USD/bbl),USD/bbl,97.91,97.91,0
+new-wells-trend,2014,WTI (USD/bbl),USD/bbl,93.26,93.26,0
+new-wells-trend,2015,WTI (USD/bbl),USD/bbl,48.69,48.69,0
+new-wells-trend,2016,WTI (USD/bbl),USD/bbl,43.14,43.14,0
+new-wells-trend,2017,WTI (USD/bbl),USD/bbl,50.88,50.88,0
+new-wells-trend,2018,WTI (USD/bbl),USD/bbl,64.94,64.94,0
+new-wells-trend,2019,WTI (USD/bbl),USD/bbl,56.98,56.98,0
+new-wells-trend,2020,WTI (USD/bbl),USD/bbl,39.23,39.23,0
+new-wells-trend,2021,WTI (USD/bbl),USD/bbl,67.99,67.99,0
+new-wells-trend,2022,WTI (USD/bbl),USD/bbl,94.79,94.79,0
+new-wells-trend,2023,WTI (USD/bbl),USD/bbl,77.64,77.64,0
+new-wells-trend,2024,WTI (USD/bbl),USD/bbl,76.55,76.55,0
+new-wells-trend,2025,WTI (USD/bbl),USD/bbl,65.46,65.46,0
+wti-annual,2005,wti_usd_per_bbl,USD/bbl,56.49,56.49,0
+wti-annual,2006,wti_usd_per_bbl,USD/bbl,66.02,66.02,0
+wti-annual,2007,wti_usd_per_bbl,USD/bbl,72.32,72.32,0
+wti-annual,2008,wti_usd_per_bbl,USD/bbl,99.57,99.57,0
+wti-annual,2009,wti_usd_per_bbl,USD/bbl,61.65,61.65,0
+wti-annual,2010,wti_usd_per_bbl,USD/bbl,79.4,79.4,0
+wti-annual,2011,wti_usd_per_bbl,USD/bbl,94.87,94.87,0
+wti-annual,2012,wti_usd_per_bbl,USD/bbl,94.11,94.11,0
+wti-annual,2013,wti_usd_per_bbl,USD/bbl,97.91,97.91,0
+wti-annual,2014,wti_usd_per_bbl,USD/bbl,93.26,93.26,0
+wti-annual,2015,wti_usd_per_bbl,USD/bbl,48.69,48.69,0
+wti-annual,2016,wti_usd_per_bbl,USD/bbl,43.14,43.14,0
+wti-annual,2017,wti_usd_per_bbl,USD/bbl,50.88,50.88,0
+wti-annual,2018,wti_usd_per_bbl,USD/bbl,64.94,64.94,0
+wti-annual,2019,wti_usd_per_bbl,USD/bbl,56.98,56.98,0
+wti-annual,2020,wti_usd_per_bbl,USD/bbl,39.23,39.23,0
+wti-annual,2021,wti_usd_per_bbl,USD/bbl,67.99,67.99,0
+wti-annual,2022,wti_usd_per_bbl,USD/bbl,94.79,94.79,0
+wti-annual,2023,wti_usd_per_bbl,USD/bbl,77.64,77.64,0
+wti-annual,2024,wti_usd_per_bbl,USD/bbl,76.55,76.55,0
+wti-annual,2025,wti_usd_per_bbl,USD/bbl,65.46,65.46,0
+days-summary,Spud to total depth | Under 100 m,records,count,1515,1515,0
+days-summary,Spud to total depth | 100 to 500 m,records,count,189,189,0
+days-summary,"Spud to total depth | 500 to 1,500 m",records,count,585,585,0
+days-summary,"Spud to total depth | 1,500 m and deeper",records,count,624,624,0
+days-summary,Spud to total depth | Missing depth,records,count,0,0,0
+days-summary,Completion | Under 100 m,records,count,4413,4413,0
+days-summary,Completion | 100 to 500 m,records,count,637,637,0
+days-summary,"Completion | 500 to 1,500 m",records,count,1619,1619,0
+days-summary,"Completion | 1,500 m and deeper",records,count,1574,1574,0
+days-summary,Completion | Missing depth,records,count,0,0,0
+days-summary,Intervention | Under 100 m,records,count,14401,14401,0
+days-summary,Intervention | 100 to 500 m,records,count,2198,2198,0
+days-summary,"Intervention | 500 to 1,500 m",records,count,2572,2572,0
+days-summary,"Intervention | 1,500 m and deeper",records,count,1552,1552,0
+days-summary,Intervention | Missing depth,records,count,0,0,0
+days-summary,Temporary abandonment | Under 100 m,records,count,23296,23296,0
+days-summary,Temporary abandonment | 100 to 500 m,records,count,3326,3326,0
+days-summary,"Temporary abandonment | 500 to 1,500 m",records,count,1270,1270,0
+days-summary,"Temporary abandonment | 1,500 m and deeper",records,count,624,624,0
+days-summary,Temporary abandonment | Missing depth,records,count,0,0,0
+days-summary,Permanent abandonment | Under 100 m,records,count,19001,19001,0
+days-summary,Permanent abandonment | 100 to 500 m,records,count,1964,1964,0
+days-summary,"Permanent abandonment | 500 to 1,500 m",records,count,1607,1607,0
+days-summary,"Permanent abandonment | 1,500 m and deeper",records,count,893,893,0
+days-summary,Permanent abandonment | Missing depth,records,count,0,0,0
+days-summary,Spud to total depth | Under 100 m,n,count,1507,1507,0
+days-summary,Spud to total depth | 100 to 500 m,n,count,187,187,0
+days-summary,"Spud to total depth | 500 to 1,500 m",n,count,560,560,0
+days-summary,"Spud to total depth | 1,500 m and deeper",n,count,601,601,0
+days-summary,Spud to total depth | Missing depth,n,count,0,0,0
+days-summary,Completion | Under 100 m,n,count,4410,4410,0
+days-summary,Completion | 100 to 500 m,n,count,636,636,0
+days-summary,"Completion | 500 to 1,500 m",n,count,1614,1614,0
+days-summary,"Completion | 1,500 m and deeper",n,count,1566,1566,0
+days-summary,Completion | Missing depth,n,count,0,0,0
+days-summary,Intervention | Under 100 m,n,count,14364,14364,0
+days-summary,Intervention | 100 to 500 m,n,count,2190,2190,0
+days-summary,"Intervention | 500 to 1,500 m",n,count,2547,2547,0
+days-summary,"Intervention | 1,500 m and deeper",n,count,1525,1525,0
+days-summary,Intervention | Missing depth,n,count,0,0,0
+days-summary,Temporary abandonment | Under 100 m,n,count,23216,23216,0
+days-summary,Temporary abandonment | 100 to 500 m,n,count,3321,3321,0
+days-summary,"Temporary abandonment | 500 to 1,500 m",n,count,1258,1258,0
+days-summary,"Temporary abandonment | 1,500 m and deeper",n,count,619,619,0
+days-summary,Temporary abandonment | Missing depth,n,count,0,0,0
+days-summary,Permanent abandonment | Under 100 m,n,count,18912,18912,0
+days-summary,Permanent abandonment | 100 to 500 m,n,count,1957,1957,0
+days-summary,"Permanent abandonment | 500 to 1,500 m",n,count,1544,1544,0
+days-summary,"Permanent abandonment | 1,500 m and deeper",n,count,863,863,0
+days-summary,Permanent abandonment | Missing depth,n,count,0,0,0
+days-summary,Spud to total depth | Under 100 m,missing_invalid_days,count,1,1,0
+days-summary,Spud to total depth | 100 to 500 m,missing_invalid_days,count,0,0,0
+days-summary,"Spud to total depth | 500 to 1,500 m",missing_invalid_days,count,16,16,0
+days-summary,"Spud to total depth | 1,500 m and deeper",missing_invalid_days,count,17,17,0
+days-summary,Spud to total depth | Missing depth,missing_invalid_days,count,0,0,0
+days-summary,Completion | Under 100 m,missing_invalid_days,count,3,3,0
+days-summary,Completion | 100 to 500 m,missing_invalid_days,count,1,1,0
+days-summary,"Completion | 500 to 1,500 m",missing_invalid_days,count,5,5,0
+days-summary,"Completion | 1,500 m and deeper",missing_invalid_days,count,8,8,0
+days-summary,Completion | Missing depth,missing_invalid_days,count,0,0,0
+days-summary,Intervention | Under 100 m,missing_invalid_days,count,37,37,0
+days-summary,Intervention | 100 to 500 m,missing_invalid_days,count,8,8,0
+days-summary,"Intervention | 500 to 1,500 m",missing_invalid_days,count,25,25,0
+days-summary,"Intervention | 1,500 m and deeper",missing_invalid_days,count,27,27,0
+days-summary,Intervention | Missing depth,missing_invalid_days,count,0,0,0
+days-summary,Temporary abandonment | Under 100 m,missing_invalid_days,count,80,80,0
+days-summary,Temporary abandonment | 100 to 500 m,missing_invalid_days,count,5,5,0
+days-summary,"Temporary abandonment | 500 to 1,500 m",missing_invalid_days,count,12,12,0
+days-summary,"Temporary abandonment | 1,500 m and deeper",missing_invalid_days,count,5,5,0
+days-summary,Temporary abandonment | Missing depth,missing_invalid_days,count,0,0,0
+days-summary,Permanent abandonment | Under 100 m,missing_invalid_days,count,89,89,0
+days-summary,Permanent abandonment | 100 to 500 m,missing_invalid_days,count,7,7,0
+days-summary,"Permanent abandonment | 500 to 1,500 m",missing_invalid_days,count,63,63,0
+days-summary,"Permanent abandonment | 1,500 m and deeper",missing_invalid_days,count,30,30,0
+days-summary,Permanent abandonment | Missing depth,missing_invalid_days,count,0,0,0
+days-summary,Spud to total depth | Under 100 m,nonpositive_days,count,7,7,0
+days-summary,Spud to total depth | 100 to 500 m,nonpositive_days,count,2,2,0
+days-summary,"Spud to total depth | 500 to 1,500 m",nonpositive_days,count,9,9,0
+days-summary,"Spud to total depth | 1,500 m and deeper",nonpositive_days,count,6,6,0
+days-summary,Spud to total depth | Missing depth,nonpositive_days,count,0,0,0
+days-summary,Completion | Under 100 m,nonpositive_days,count,0,0,0
+days-summary,Completion | 100 to 500 m,nonpositive_days,count,0,0,0
+days-summary,"Completion | 500 to 1,500 m",nonpositive_days,count,0,0,0
+days-summary,"Completion | 1,500 m and deeper",nonpositive_days,count,0,0,0
+days-summary,Completion | Missing depth,nonpositive_days,count,0,0,0
+days-summary,Intervention | Under 100 m,nonpositive_days,count,0,0,0
+days-summary,Intervention | 100 to 500 m,nonpositive_days,count,0,0,0
+days-summary,"Intervention | 500 to 1,500 m",nonpositive_days,count,0,0,0
+days-summary,"Intervention | 1,500 m and deeper",nonpositive_days,count,0,0,0
+days-summary,Intervention | Missing depth,nonpositive_days,count,0,0,0
+days-summary,Temporary abandonment | Under 100 m,nonpositive_days,count,0,0,0
+days-summary,Temporary abandonment | 100 to 500 m,nonpositive_days,count,0,0,0
+days-summary,"Temporary abandonment | 500 to 1,500 m",nonpositive_days,count,0,0,0
+days-summary,"Temporary abandonment | 1,500 m and deeper",nonpositive_days,count,0,0,0
+days-summary,Temporary abandonment | Missing depth,nonpositive_days,count,0,0,0
+days-summary,Permanent abandonment | Under 100 m,nonpositive_days,count,0,0,0
+days-summary,Permanent abandonment | 100 to 500 m,nonpositive_days,count,0,0,0
+days-summary,"Permanent abandonment | 500 to 1,500 m",nonpositive_days,count,0,0,0
+days-summary,"Permanent abandonment | 1,500 m and deeper",nonpositive_days,count,0,0,0
+days-summary,Permanent abandonment | Missing depth,nonpositive_days,count,0,0,0
+days-summary,Spud to total depth | Under 100 m,excluded_days,count,8,8,0
+days-summary,Spud to total depth | 100 to 500 m,excluded_days,count,2,2,0
+days-summary,"Spud to total depth | 500 to 1,500 m",excluded_days,count,25,25,0
+days-summary,"Spud to total depth | 1,500 m and deeper",excluded_days,count,23,23,0
+days-summary,Spud to total depth | Missing depth,excluded_days,count,0,0,0
+days-summary,Completion | Under 100 m,excluded_days,count,3,3,0
+days-summary,Completion | 100 to 500 m,excluded_days,count,1,1,0
+days-summary,"Completion | 500 to 1,500 m",excluded_days,count,5,5,0
+days-summary,"Completion | 1,500 m and deeper",excluded_days,count,8,8,0
+days-summary,Completion | Missing depth,excluded_days,count,0,0,0
+days-summary,Intervention | Under 100 m,excluded_days,count,37,37,0
+days-summary,Intervention | 100 to 500 m,excluded_days,count,8,8,0
+days-summary,"Intervention | 500 to 1,500 m",excluded_days,count,25,25,0
+days-summary,"Intervention | 1,500 m and deeper",excluded_days,count,27,27,0
+days-summary,Intervention | Missing depth,excluded_days,count,0,0,0
+days-summary,Temporary abandonment | Under 100 m,excluded_days,count,80,80,0
+days-summary,Temporary abandonment | 100 to 500 m,excluded_days,count,5,5,0
+days-summary,"Temporary abandonment | 500 to 1,500 m",excluded_days,count,12,12,0
+days-summary,"Temporary abandonment | 1,500 m and deeper",excluded_days,count,5,5,0
+days-summary,Temporary abandonment | Missing depth,excluded_days,count,0,0,0
+days-summary,Permanent abandonment | Under 100 m,excluded_days,count,89,89,0
+days-summary,Permanent abandonment | 100 to 500 m,excluded_days,count,7,7,0
+days-summary,"Permanent abandonment | 500 to 1,500 m",excluded_days,count,63,63,0
+days-summary,"Permanent abandonment | 1,500 m and deeper",excluded_days,count,30,30,0
+days-summary,Permanent abandonment | Missing depth,excluded_days,count,0,0,0
+days-summary,Spud to total depth | Under 100 m,q1_days,days,13,13,0
+days-summary,Spud to total depth | 100 to 500 m,q1_days,days,21.5,21.5,0
+days-summary,"Spud to total depth | 500 to 1,500 m",q1_days,days,30,30,0
+days-summary,"Spud to total depth | 1,500 m and deeper",q1_days,days,36,36,0
+days-summary,Spud to total depth | Missing depth,q1_days,days,,,
+days-summary,Completion | Under 100 m,q1_days,days,7,7,0
+days-summary,Completion | 100 to 500 m,q1_days,days,10,10,0
+days-summary,"Completion | 500 to 1,500 m",q1_days,days,20,20,0
+days-summary,"Completion | 1,500 m and deeper",q1_days,days,30,30,0
+days-summary,Completion | Missing depth,q1_days,days,,,
+days-summary,Intervention | Under 100 m,q1_days,days,5,5,0
+days-summary,Intervention | 100 to 500 m,q1_days,days,5,5,0
+days-summary,"Intervention | 500 to 1,500 m",q1_days,days,5,5,0
+days-summary,"Intervention | 1,500 m and deeper",q1_days,days,6,6,0
+days-summary,Intervention | Missing depth,q1_days,days,,,
+days-summary,Temporary abandonment | Under 100 m,q1_days,days,7,7,0
+days-summary,Temporary abandonment | 100 to 500 m,q1_days,days,7,7,0
+days-summary,"Temporary abandonment | 500 to 1,500 m",q1_days,days,5,5,0
+days-summary,"Temporary abandonment | 1,500 m and deeper",q1_days,days,3,3,0
+days-summary,Temporary abandonment | Missing depth,q1_days,days,,,
+days-summary,Permanent abandonment | Under 100 m,q1_days,days,5,5,0
+days-summary,Permanent abandonment | 100 to 500 m,q1_days,days,5,5,0
+days-summary,"Permanent abandonment | 500 to 1,500 m",q1_days,days,10,10,0
+days-summary,"Permanent abandonment | 1,500 m and deeper",q1_days,days,7,7,0
+days-summary,Permanent abandonment | Missing depth,q1_days,days,,,
+days-summary,Spud to total depth | Under 100 m,median_days,days,21,21,0
+days-summary,Spud to total depth | 100 to 500 m,median_days,days,35,35,0
+days-summary,"Spud to total depth | 500 to 1,500 m",median_days,days,55.5,55.5,0
+days-summary,"Spud to total depth | 1,500 m and deeper",median_days,days,67,67,0
+days-summary,Spud to total depth | Missing depth,median_days,days,,,
+days-summary,Completion | Under 100 m,median_days,days,10,10,0
+days-summary,Completion | 100 to 500 m,median_days,days,20,20,0
+days-summary,"Completion | 500 to 1,500 m",median_days,days,30,30,0
+days-summary,"Completion | 1,500 m and deeper",median_days,days,40,40,0
+days-summary,Completion | Missing depth,median_days,days,,,
+days-summary,Intervention | Under 100 m,median_days,days,7,7,0
+days-summary,Intervention | 100 to 500 m,median_days,days,10,10,0
+days-summary,"Intervention | 500 to 1,500 m",median_days,days,10,10,0
+days-summary,"Intervention | 1,500 m and deeper",median_days,days,22,22,0
+days-summary,Intervention | Missing depth,median_days,days,,,
+days-summary,Temporary abandonment | Under 100 m,median_days,days,10,10,0
+days-summary,Temporary abandonment | 100 to 500 m,median_days,days,14,14,0
+days-summary,"Temporary abandonment | 500 to 1,500 m",median_days,days,10,10,0
+days-summary,"Temporary abandonment | 1,500 m and deeper",median_days,days,5,5,0
+days-summary,Temporary abandonment | Missing depth,median_days,days,,,
+days-summary,Permanent abandonment | Under 100 m,median_days,days,7,7,0
+days-summary,Permanent abandonment | 100 to 500 m,median_days,days,12,12,0
+days-summary,"Permanent abandonment | 500 to 1,500 m",median_days,days,20,20,0
+days-summary,"Permanent abandonment | 1,500 m and deeper",median_days,days,14,14,0
+days-summary,Permanent abandonment | Missing depth,median_days,days,,,
+days-summary,Spud to total depth | Under 100 m,q3_days,days,39,39,0
+days-summary,Spud to total depth | 100 to 500 m,q3_days,days,68,68,0
+days-summary,"Spud to total depth | 500 to 1,500 m",q3_days,days,115.25,115.25,0
+days-summary,"Spud to total depth | 1,500 m and deeper",q3_days,days,160,160,0
+days-summary,Spud to total depth | Missing depth,q3_days,days,,,
+days-summary,Completion | Under 100 m,q3_days,days,15,15,0
+days-summary,Completion | 100 to 500 m,q3_days,days,30,30,0
+days-summary,"Completion | 500 to 1,500 m",q3_days,days,43,43,0
+days-summary,"Completion | 1,500 m and deeper",q3_days,days,60,60,0
+days-summary,Completion | Missing depth,q3_days,days,,,
+days-summary,Intervention | Under 100 m,q3_days,days,14,14,0
+days-summary,Intervention | 100 to 500 m,q3_days,days,15,15,0
+days-summary,"Intervention | 500 to 1,500 m",q3_days,days,25,25,0
+days-summary,"Intervention | 1,500 m and deeper",q3_days,days,40,40,0
+days-summary,Intervention | Missing depth,q3_days,days,,,
+days-summary,Temporary abandonment | Under 100 m,q3_days,days,15,15,0
+days-summary,Temporary abandonment | 100 to 500 m,q3_days,days,20,20,0
+days-summary,"Temporary abandonment | 500 to 1,500 m",q3_days,days,23,23,0
+days-summary,"Temporary abandonment | 1,500 m and deeper",q3_days,days,10,10,0
+days-summary,Temporary abandonment | Missing depth,q3_days,days,,,
+days-summary,Permanent abandonment | Under 100 m,q3_days,days,15,15,0
+days-summary,Permanent abandonment | 100 to 500 m,q3_days,days,15,15,0
+days-summary,"Permanent abandonment | 500 to 1,500 m",q3_days,days,30,30,0
+days-summary,"Permanent abandonment | 1,500 m and deeper",q3_days,days,26,26,0
+days-summary,Permanent abandonment | Missing depth,q3_days,days,,,
+exclusions,APM | raw_records,records,count,102040,102177,137
+exclusions,APM | duplicate_rows,records,count,207,207,0
+exclusions,APM | unmatched_or_ambiguous_region,records,count,0,0,0
+exclusions,APM | non_gulf,records,count,0,0,0
+exclusions,APM | missing_status_date,records,count,0,0,0
+exclusions,APM | invalid_nonblank_status_date,records,count,0,0,0
+exclusions,APM | outside_years,records,count,3901,4038,137
+exclusions,APM | repeat_api_operation_year_extra_submissions,records,count,42699,42699,0
+exclusions,APM | Temporary abandonment,records,count,28516,28516,0
+exclusions,APM | Permanent abandonment,records,count,23465,23465,0
+exclusions,APM | Intervention,records,count,20723,20723,0
+exclusions,APM | Excluded: other or administrative scope,records,count,10575,10575,0
+exclusions,APM | Completion,records,count,8243,8243,0
+exclusions,APM | Excluded: new hole,records,count,4804,4804,0
+exclusions,APM | Excluded: unspecified abandonment,records,count,1606,1606,0
+exclusions,APM | zero_depth_included,records,count,0,0,0
+exclusions,Borehole | raw_records,records,count,57515,57520,5
+exclusions,Borehole | duplicate_rows,records,count,0,0,0
+exclusions,Borehole | non_gulf,records,count,1933,1934,1
+exclusions,Borehole | non_original,records,count,17533,17537,4
+exclusions,Borehole | cancelled,records,count,762,762,0
+exclusions,Borehole | missing_spud_date,records,count,17,16,-1
+exclusions,Borehole | invalid_nonblank_spud_date,records,count,0,0,0
+exclusions,Borehole | outside_years,records,count,34357,34358,1
+exclusions,Borehole | zero_depth_selected,records,count,0,0,0
+exclusions,Borehole | blank_td_selected,records,count,34,34,0
+exclusions,Borehole | invalid_nonblank_td_selected,records,count,0,0,0
+exclusions,Borehole | zero_interval_selected,records,count,24,24,0
+exclusions,Borehole | negative_interval_selected,records,count,0,0,0
+repeat-key-sensitivity,Completion | Under 100 m,n,count,4410,4410,0
+repeat-key-sensitivity,Completion | 100 to 500 m,n,count,636,636,0
+repeat-key-sensitivity,"Completion | 500 to 1,500 m",n,count,1614,1614,0
+repeat-key-sensitivity,"Completion | 1,500 m and deeper",n,count,1566,1566,0
+repeat-key-sensitivity,Intervention | Under 100 m,n,count,14364,14364,0
+repeat-key-sensitivity,Intervention | 100 to 500 m,n,count,2190,2190,0
+repeat-key-sensitivity,"Intervention | 500 to 1,500 m",n,count,2547,2547,0
+repeat-key-sensitivity,"Intervention | 1,500 m and deeper",n,count,1525,1525,0
+repeat-key-sensitivity,Temporary abandonment | Under 100 m,n,count,23216,23216,0
+repeat-key-sensitivity,Temporary abandonment | 100 to 500 m,n,count,3321,3321,0
+repeat-key-sensitivity,"Temporary abandonment | 500 to 1,500 m",n,count,1258,1258,0
+repeat-key-sensitivity,"Temporary abandonment | 1,500 m and deeper",n,count,619,619,0
+repeat-key-sensitivity,Permanent abandonment | Under 100 m,n,count,18912,18912,0
+repeat-key-sensitivity,Permanent abandonment | 100 to 500 m,n,count,1957,1957,0
+repeat-key-sensitivity,"Permanent abandonment | 500 to 1,500 m",n,count,1544,1544,0
+repeat-key-sensitivity,"Permanent abandonment | 1,500 m and deeper",n,count,863,863,0
+repeat-key-sensitivity,Completion | Under 100 m,median_days,days,10,10,0
+repeat-key-sensitivity,Completion | 100 to 500 m,median_days,days,20,20,0
+repeat-key-sensitivity,"Completion | 500 to 1,500 m",median_days,days,30,30,0
+repeat-key-sensitivity,"Completion | 1,500 m and deeper",median_days,days,40,40,0
+repeat-key-sensitivity,Intervention | Under 100 m,median_days,days,7,7,0
+repeat-key-sensitivity,Intervention | 100 to 500 m,median_days,days,10,10,0
+repeat-key-sensitivity,"Intervention | 500 to 1,500 m",median_days,days,10,10,0
+repeat-key-sensitivity,"Intervention | 1,500 m and deeper",median_days,days,22,22,0
+repeat-key-sensitivity,Temporary abandonment | Under 100 m,median_days,days,10,10,0
+repeat-key-sensitivity,Temporary abandonment | 100 to 500 m,median_days,days,14,14,0
+repeat-key-sensitivity,"Temporary abandonment | 500 to 1,500 m",median_days,days,10,10,0
+repeat-key-sensitivity,"Temporary abandonment | 1,500 m and deeper",median_days,days,5,5,0
+repeat-key-sensitivity,Permanent abandonment | Under 100 m,median_days,days,7,7,0
+repeat-key-sensitivity,Permanent abandonment | 100 to 500 m,median_days,days,12,12,0
+repeat-key-sensitivity,"Permanent abandonment | 500 to 1,500 m",median_days,days,20,20,0
+repeat-key-sensitivity,"Permanent abandonment | 1,500 m and deeper",median_days,days,14,14,0
+repeat-key-sensitivity,Completion | Under 100 m,latest_key_n,count,2699,2699,0
+repeat-key-sensitivity,Completion | 100 to 500 m,latest_key_n,count,280,280,0
+repeat-key-sensitivity,"Completion | 500 to 1,500 m",latest_key_n,count,623,623,0
+repeat-key-sensitivity,"Completion | 1,500 m and deeper",latest_key_n,count,518,518,0
+repeat-key-sensitivity,Intervention | Under 100 m,latest_key_n,count,8810,8810,0
+repeat-key-sensitivity,Intervention | 100 to 500 m,latest_key_n,count,1218,1218,0
+repeat-key-sensitivity,"Intervention | 500 to 1,500 m",latest_key_n,count,1127,1127,0
+repeat-key-sensitivity,"Intervention | 1,500 m and deeper",latest_key_n,count,500,500,0
+repeat-key-sensitivity,Temporary abandonment | Under 100 m,latest_key_n,count,9836,9836,0
+repeat-key-sensitivity,Temporary abandonment | 100 to 500 m,latest_key_n,count,1268,1268,0
+repeat-key-sensitivity,"Temporary abandonment | 500 to 1,500 m",latest_key_n,count,578,578,0
+repeat-key-sensitivity,"Temporary abandonment | 1,500 m and deeper",latest_key_n,count,372,372,0
+repeat-key-sensitivity,Permanent abandonment | Under 100 m,latest_key_n,count,12756,12756,0
+repeat-key-sensitivity,Permanent abandonment | 100 to 500 m,latest_key_n,count,1184,1184,0
+repeat-key-sensitivity,"Permanent abandonment | 500 to 1,500 m",latest_key_n,count,448,448,0
+repeat-key-sensitivity,"Permanent abandonment | 1,500 m and deeper",latest_key_n,count,266,266,0
+repeat-key-sensitivity,Completion | Under 100 m,latest_key_median_days,days,10,10,0
+repeat-key-sensitivity,Completion | 100 to 500 m,latest_key_median_days,days,14,14,0
+repeat-key-sensitivity,"Completion | 500 to 1,500 m",latest_key_median_days,days,27,27,0
+repeat-key-sensitivity,"Completion | 1,500 m and deeper",latest_key_median_days,days,35,35,0
+repeat-key-sensitivity,Intervention | Under 100 m,latest_key_median_days,days,7,7,0
+repeat-key-sensitivity,Intervention | 100 to 500 m,latest_key_median_days,days,7,7,0
+repeat-key-sensitivity,"Intervention | 500 to 1,500 m",latest_key_median_days,days,7,7,0
+repeat-key-sensitivity,"Intervention | 1,500 m and deeper",latest_key_median_days,days,11,11,0
+repeat-key-sensitivity,Temporary abandonment | Under 100 m,latest_key_median_days,days,8,8,0
+repeat-key-sensitivity,Temporary abandonment | 100 to 500 m,latest_key_median_days,days,14,14,0
+repeat-key-sensitivity,"Temporary abandonment | 500 to 1,500 m",latest_key_median_days,days,6,6,0
+repeat-key-sensitivity,"Temporary abandonment | 1,500 m and deeper",latest_key_median_days,days,5,5,0
+repeat-key-sensitivity,Permanent abandonment | Under 100 m,latest_key_median_days,days,5,5,0
+repeat-key-sensitivity,Permanent abandonment | 100 to 500 m,latest_key_median_days,days,10,10,0
+repeat-key-sensitivity,"Permanent abandonment | 500 to 1,500 m",latest_key_median_days,days,10,10,0
+repeat-key-sensitivity,"Permanent abandonment | 1,500 m and deeper",latest_key_median_days,days,10,10,0
+subtype-activity,Completion | COMP | ACIDIZE,submissions,count,58,58,0
+subtype-activity,Completion | COMP | CASING,submissions,count,9,9,0
+subtype-activity,Completion | COMP | DESAND,submissions,count,65,65,0
+subtype-activity,Completion | COMP | FRAC,submissions,count,1899,1899,0
+subtype-activity,Completion | COMP | INITCOMP,submissions,count,6632,6632,0
+subtype-activity,Completion | COMP | INJECT,submissions,count,50,50,0
+subtype-activity,Completion | COMP | JET,submissions,count,45,45,0
+subtype-activity,Completion | COMP | LIFT,submissions,count,98,98,0
+subtype-activity,Completion | COMP | OTHER,submissions,count,397,397,0
+subtype-activity,Completion | COMP | OTHRCOMP,submissions,count,124,124,0
+subtype-activity,Completion | COMP | OTHRENPR,submissions,count,2,2,0
+subtype-activity,Completion | COMP | OTHRINFO,submissions,count,7,7,0
+subtype-activity,Completion | COMP | OTHRWKVR,submissions,count,8,8,0
+subtype-activity,Completion | COMP | PERF,submissions,count,1020,1020,0
+subtype-activity,Completion | COMP | REPERF,submissions,count,387,387,0
+subtype-activity,Completion | COMP | SURFPLAT,submissions,count,20,20,0
+subtype-activity,Completion | COMP | TEMPABAN,submissions,count,23,23,0
+subtype-activity,Completion | COMP | TUBING,submissions,count,45,45,0
+subtype-activity,Completion | COMP | WELLNAME,submissions,count,386,386,0
+subtype-activity,Completion | COMP | ZONEISO,submissions,count,6,6,0
+subtype-activity,Excluded: new hole | ABANDON | ACIDIZE,submissions,count,2,2,0
+subtype-activity,Excluded: new hole | ABANDON | CASING,submissions,count,4,4,0
+subtype-activity,Excluded: new hole | ABANDON | DESAND,submissions,count,2,2,0
+subtype-activity,Excluded: new hole | ABANDON | INITCOMP,submissions,count,6,6,0
+subtype-activity,Excluded: new hole | ABANDON | OTHER,submissions,count,67,67,0
+subtype-activity,Excluded: new hole | ABANDON | OTHRABAN,submissions,count,9,9,0
+subtype-activity,Excluded: new hole | ABANDON | PERF,submissions,count,1,1,0
+subtype-activity,Excluded: new hole | ABANDON | PERMABAN,submissions,count,18,18,0
+subtype-activity,Excluded: new hole | ABANDON | PLUGBACK,submissions,count,4748,4748,0
+subtype-activity,Excluded: new hole | ABANDON | SURFPLAT,submissions,count,7,7,0
+subtype-activity,Excluded: new hole | ABANDON | TEMPABAN,submissions,count,31,31,0
+subtype-activity,Excluded: new hole | ABANDON | TUBING,submissions,count,6,6,0
+subtype-activity,Excluded: new hole | ABANDON | WELLNAME,submissions,count,5,5,0
+subtype-activity,Excluded: new hole | ABANDON | ZONE,submissions,count,1,1,0
+subtype-activity,Excluded: new hole | ABANDON | ZONEISO,submissions,count,1,1,0
+subtype-activity,Excluded: new hole | COMP | INITCOMP,submissions,count,2,2,0
+subtype-activity,Excluded: new hole | COMP | PLUGBACK,submissions,count,4,4,0
+subtype-activity,Excluded: new hole | COMP | ZONE,submissions,count,1,1,0
+subtype-activity,Excluded: new hole | ENHANCE | PERMABAN,submissions,count,1,1,0
+subtype-activity,Excluded: new hole | ENHANCE | PLUGBACK,submissions,count,13,13,0
+subtype-activity,Excluded: new hole | INFORM | PLUGBACK,submissions,count,4,4,0
+subtype-activity,Excluded: new hole | INFORM | SURFPLAT,submissions,count,1,1,0
+subtype-activity,Excluded: new hole | OTHER | OTHER,submissions,count,15,15,0
+subtype-activity,Excluded: new hole | OTHER | PLUGBACK,submissions,count,28,28,0
+subtype-activity,Excluded: new hole | OTHER | WELLNAME,submissions,count,1,1,0
+subtype-activity,Excluded: new hole | UTIL | PLUGBACK,submissions,count,2,2,0
+subtype-activity,Excluded: new hole | WORKOVER | CASING,submissions,count,1,1,0
+subtype-activity,Excluded: new hole | WORKOVER | DESAND,submissions,count,1,1,0
+subtype-activity,Excluded: new hole | WORKOVER | PLUGBACK,submissions,count,5,5,0
+subtype-activity,Excluded: new hole | WORKOVER | TUBING,submissions,count,1,1,0
+subtype-activity,Excluded: other or administrative scope | INFORM | CASING,submissions,count,2,2,0
+subtype-activity,Excluded: other or administrative scope | INFORM | CLEARNCE,submissions,count,53,53,0
+subtype-activity,Excluded: other or administrative scope | INFORM | INITCOMP,submissions,count,9,9,0
+subtype-activity,Excluded: other or administrative scope | INFORM | OTHER,submissions,count,228,228,0
+subtype-activity,Excluded: other or administrative scope | INFORM | OTHRINFO,submissions,count,63,63,0
+subtype-activity,Excluded: other or administrative scope | INFORM | PERMABAN,submissions,count,17,17,0
+subtype-activity,Excluded: other or administrative scope | INFORM | SURFPLAT,submissions,count,2905,2905,0
+subtype-activity,Excluded: other or administrative scope | INFORM | TEMPABAN,submissions,count,14,14,0
+subtype-activity,Excluded: other or administrative scope | INFORM | WELLNAME,submissions,count,400,400,0
+subtype-activity,Excluded: other or administrative scope | INFORM | ZONE,submissions,count,2,2,0
+subtype-activity,Excluded: other or administrative scope | OTHER | ACIDIZE,submissions,count,15,15,0
+subtype-activity,Excluded: other or administrative scope | OTHER | CASING,submissions,count,51,51,0
+subtype-activity,Excluded: other or administrative scope | OTHER | CLEARNCE,submissions,count,10,10,0
+subtype-activity,Excluded: other or administrative scope | OTHER | DESAND,submissions,count,29,29,0
+subtype-activity,Excluded: other or administrative scope | OTHER | INITCOMP,submissions,count,18,18,0
+subtype-activity,Excluded: other or administrative scope | OTHER | INJECT,submissions,count,7,7,0
+subtype-activity,Excluded: other or administrative scope | OTHER | JET,submissions,count,5,5,0
+subtype-activity,Excluded: other or administrative scope | OTHER | LIFT,submissions,count,27,27,0
+subtype-activity,Excluded: other or administrative scope | OTHER | OTHER,submissions,count,6701,6701,0
+subtype-activity,Excluded: other or administrative scope | OTHER | PERF,submissions,count,25,25,0
+subtype-activity,Excluded: other or administrative scope | OTHER | PERMABAN,submissions,count,36,36,0
+subtype-activity,Excluded: other or administrative scope | OTHER | REPERF,submissions,count,14,14,0
+subtype-activity,Excluded: other or administrative scope | OTHER | SURFPLAT,submissions,count,51,51,0
+subtype-activity,Excluded: other or administrative scope | OTHER | TEMPABAN,submissions,count,111,111,0
+subtype-activity,Excluded: other or administrative scope | OTHER | TUBING,submissions,count,18,18,0
+subtype-activity,Excluded: other or administrative scope | OTHER | WELLNAME,submissions,count,40,40,0
+subtype-activity,Excluded: other or administrative scope | OTHER | ZONE,submissions,count,86,86,0
+subtype-activity,Excluded: other or administrative scope | UTIL | CASING,submissions,count,1,1,0
+subtype-activity,Excluded: other or administrative scope | UTIL | FLUIDS,submissions,count,53,53,0
+subtype-activity,Excluded: other or administrative scope | UTIL | INITCOMP,submissions,count,1,1,0
+subtype-activity,Excluded: other or administrative scope | UTIL | INJECT,submissions,count,67,67,0
+subtype-activity,Excluded: other or administrative scope | UTIL | LIFT,submissions,count,1,1,0
+subtype-activity,Excluded: other or administrative scope | UTIL | OTHER,submissions,count,21,21,0
+subtype-activity,Excluded: other or administrative scope | UTIL | OTHRUTIL,submissions,count,35,35,0
+subtype-activity,Excluded: other or administrative scope | UTIL | PERMABAN,submissions,count,1,1,0
+subtype-activity,Excluded: other or administrative scope | UTIL | SURFPLAT,submissions,count,1,1,0
+subtype-activity,Excluded: other or administrative scope | UTIL | TEMPABAN,submissions,count,2,2,0
+subtype-activity,Excluded: other or administrative scope | UTIL | ZONE,submissions,count,1,1,0
+subtype-activity,Excluded: unspecified abandonment | ABANDON | CASING,submissions,count,110,110,0
+subtype-activity,Excluded: unspecified abandonment | ABANDON | CLEARNCE,submissions,count,811,811,0
+subtype-activity,Excluded: unspecified abandonment | ABANDON | DESAND,submissions,count,2,2,0
+subtype-activity,Excluded: unspecified abandonment | ABANDON | INITCOMP,submissions,count,1,1,0
+subtype-activity,Excluded: unspecified abandonment | ABANDON | OTHER,submissions,count,278,278,0
+subtype-activity,Excluded: unspecified abandonment | ABANDON | OTHRABAN,submissions,count,106,106,0
+subtype-activity,Excluded: unspecified abandonment | ABANDON | OTHRINFO,submissions,count,8,8,0
+subtype-activity,Excluded: unspecified abandonment | ABANDON | OTHRWKVR,submissions,count,1,1,0
+subtype-activity,Excluded: unspecified abandonment | ABANDON | REPERF,submissions,count,2,2,0
+subtype-activity,Excluded: unspecified abandonment | ABANDON | TUBING,submissions,count,4,4,0
+subtype-activity,Excluded: unspecified abandonment | ABANDON | ZONE,submissions,count,5,5,0
+subtype-activity,Excluded: unspecified abandonment | ABANDON | ZONEISO,submissions,count,427,427,0
+subtype-activity,Intervention | COMP | ACIDIZE,submissions,count,28,28,0
+subtype-activity,Intervention | COMP | CASING,submissions,count,21,21,0
+subtype-activity,Intervention | COMP | DESAND,submissions,count,90,90,0
+subtype-activity,Intervention | COMP | FRAC,submissions,count,391,391,0
+subtype-activity,Intervention | COMP | INITCOMP,submissions,count,3,3,0
+subtype-activity,Intervention | COMP | INJECT,submissions,count,3,3,0
+subtype-activity,Intervention | COMP | JET,submissions,count,12,12,0
+subtype-activity,Intervention | COMP | LIFT,submissions,count,77,77,0
+subtype-activity,Intervention | COMP | OTHER,submissions,count,167,167,0
+subtype-activity,Intervention | COMP | OTHRABAN,submissions,count,8,8,0
+subtype-activity,Intervention | COMP | OTHRCOMP,submissions,count,2,2,0
+subtype-activity,Intervention | COMP | OTHRENPR,submissions,count,9,9,0
+subtype-activity,Intervention | COMP | OTHRWKVR,submissions,count,1,1,0
+subtype-activity,Intervention | COMP | PERF,submissions,count,47,47,0
+subtype-activity,Intervention | COMP | PERMABAN,submissions,count,1,1,0
+subtype-activity,Intervention | COMP | REPERF,submissions,count,13,13,0
+subtype-activity,Intervention | COMP | TEMPABAN,submissions,count,29,29,0
+subtype-activity,Intervention | COMP | TUBING,submissions,count,246,246,0
+subtype-activity,Intervention | COMP | WELLNAME,submissions,count,5,5,0
+subtype-activity,Intervention | COMP | ZONE,submissions,count,9165,9165,0
+subtype-activity,Intervention | COMP | ZONEISO,submissions,count,46,46,0
+subtype-activity,Intervention | ENHANCE | ACIDIZE,submissions,count,1254,1254,0
+subtype-activity,Intervention | ENHANCE | CASING,submissions,count,45,45,0
+subtype-activity,Intervention | ENHANCE | CLEARNCE,submissions,count,10,10,0
+subtype-activity,Intervention | ENHANCE | DESAND,submissions,count,1378,1378,0
+subtype-activity,Intervention | ENHANCE | FLUIDS,submissions,count,3,3,0
+subtype-activity,Intervention | ENHANCE | FRAC,submissions,count,38,38,0
+subtype-activity,Intervention | ENHANCE | INITCOMP,submissions,count,35,35,0
+subtype-activity,Intervention | ENHANCE | INJECT,submissions,count,12,12,0
+subtype-activity,Intervention | ENHANCE | JET,submissions,count,266,266,0
+subtype-activity,Intervention | ENHANCE | LIFT,submissions,count,1511,1511,0
+subtype-activity,Intervention | ENHANCE | OTHER,submissions,count,1054,1054,0
+subtype-activity,Intervention | ENHANCE | OTHRABAN,submissions,count,1,1,0
+subtype-activity,Intervention | ENHANCE | OTHRCOMP,submissions,count,8,8,0
+subtype-activity,Intervention | ENHANCE | OTHRENPR,submissions,count,233,233,0
+subtype-activity,Intervention | ENHANCE | OTHRINFO,submissions,count,2,2,0
+subtype-activity,Intervention | ENHANCE | OTHRUTIL,submissions,count,4,4,0
+subtype-activity,Intervention | ENHANCE | OTHRWKVR,submissions,count,64,64,0
+subtype-activity,Intervention | ENHANCE | PERF,submissions,count,112,112,0
+subtype-activity,Intervention | ENHANCE | PERMABAN,submissions,count,41,41,0
+subtype-activity,Intervention | ENHANCE | REPERF,submissions,count,94,94,0
+subtype-activity,Intervention | ENHANCE | SURFPLAT,submissions,count,24,24,0
+subtype-activity,Intervention | ENHANCE | TEMPABAN,submissions,count,46,46,0
+subtype-activity,Intervention | ENHANCE | TUBING,submissions,count,43,43,0
+subtype-activity,Intervention | ENHANCE | WELLNAME,submissions,count,4,4,0
+subtype-activity,Intervention | ENHANCE | ZONE,submissions,count,269,269,0
+subtype-activity,Intervention | ENHANCE | ZONEISO,submissions,count,11,11,0
+subtype-activity,Intervention | WORKOVER | ACIDIZE,submissions,count,66,66,0
+subtype-activity,Intervention | WORKOVER | CASING,submissions,count,2339,2339,0
+subtype-activity,Intervention | WORKOVER | DESAND,submissions,count,106,106,0
+subtype-activity,Intervention | WORKOVER | FLUIDS,submissions,count,2,2,0
+subtype-activity,Intervention | WORKOVER | FRAC,submissions,count,59,59,0
+subtype-activity,Intervention | WORKOVER | INITCOMP,submissions,count,2,2,0
+subtype-activity,Intervention | WORKOVER | INJECT,submissions,count,6,6,0
+subtype-activity,Intervention | WORKOVER | JET,submissions,count,12,12,0
+subtype-activity,Intervention | WORKOVER | LIFT,submissions,count,75,75,0
+subtype-activity,Intervention | WORKOVER | OTHER,submissions,count,1402,1402,0
+subtype-activity,Intervention | WORKOVER | OTHRABAN,submissions,count,4,4,0
+subtype-activity,Intervention | WORKOVER | OTHRCOMP,submissions,count,6,6,0
+subtype-activity,Intervention | WORKOVER | OTHRENPR,submissions,count,13,13,0
+subtype-activity,Intervention | WORKOVER | OTHRINFO,submissions,count,8,8,0
+subtype-activity,Intervention | WORKOVER | OTHRWKVR,submissions,count,945,945,0
+subtype-activity,Intervention | WORKOVER | PERF,submissions,count,64,64,0
+subtype-activity,Intervention | WORKOVER | PERMABAN,submissions,count,18,18,0
+subtype-activity,Intervention | WORKOVER | REPERF,submissions,count,100,100,0
+subtype-activity,Intervention | WORKOVER | TEMPABAN,submissions,count,103,103,0
+subtype-activity,Intervention | WORKOVER | TUBING,submissions,count,1366,1366,0
+subtype-activity,Intervention | WORKOVER | WELLNAME,submissions,count,3,3,0
+subtype-activity,Intervention | WORKOVER | ZONE,submissions,count,315,315,0
+subtype-activity,Intervention | WORKOVER | ZONEISO,submissions,count,82,82,0
+subtype-activity,Permanent abandonment | ABANDON | CASING,submissions,count,134,134,0
+subtype-activity,Permanent abandonment | ABANDON | CLEARNCE,submissions,count,126,126,0
+subtype-activity,Permanent abandonment | ABANDON | DESAND,submissions,count,7,7,0
+subtype-activity,Permanent abandonment | ABANDON | FLUIDS,submissions,count,6,6,0
+subtype-activity,Permanent abandonment | ABANDON | INITCOMP,submissions,count,1,1,0
+subtype-activity,Permanent abandonment | ABANDON | OTHER,submissions,count,275,275,0
+subtype-activity,Permanent abandonment | ABANDON | OTHRABAN,submissions,count,4,4,0
+subtype-activity,Permanent abandonment | ABANDON | OTHRWKVR,submissions,count,2,2,0
+subtype-activity,Permanent abandonment | ABANDON | PERMABAN,submissions,count,23465,23465,0
+subtype-activity,Permanent abandonment | ABANDON | SURFPLAT,submissions,count,3,3,0
+subtype-activity,Permanent abandonment | ABANDON | TEMPABAN,submissions,count,16,16,0
+subtype-activity,Permanent abandonment | ABANDON | WELLNAME,submissions,count,2,2,0
+subtype-activity,Permanent abandonment | ABANDON | ZONE,submissions,count,4,4,0
+subtype-activity,Temporary abandonment | ABANDON | CASING,submissions,count,483,483,0
+subtype-activity,Temporary abandonment | ABANDON | CLEARNCE,submissions,count,1,1,0
+subtype-activity,Temporary abandonment | ABANDON | DESAND,submissions,count,41,41,0
+subtype-activity,Temporary abandonment | ABANDON | INITCOMP,submissions,count,7,7,0
+subtype-activity,Temporary abandonment | ABANDON | INJECT,submissions,count,1,1,0
+subtype-activity,Temporary abandonment | ABANDON | OTHER,submissions,count,558,558,0
+subtype-activity,Temporary abandonment | ABANDON | OTHRABAN,submissions,count,14,14,0
+subtype-activity,Temporary abandonment | ABANDON | OTHRINFO,submissions,count,8,8,0
+subtype-activity,Temporary abandonment | ABANDON | PERF,submissions,count,3,3,0
+subtype-activity,Temporary abandonment | ABANDON | SURFPLAT,submissions,count,8,8,0
+subtype-activity,Temporary abandonment | ABANDON | TEMPABAN,submissions,count,28516,28516,0
+subtype-activity,Temporary abandonment | ABANDON | TUBING,submissions,count,7,7,0
+subtype-activity,Temporary abandonment | ABANDON | WELLNAME,submissions,count,5,5,0
+subtype-activity,Temporary abandonment | ABANDON | ZONE,submissions,count,16,16,0
+subtype-activity,Temporary abandonment | ABANDON | ZONEISO,submissions,count,46,46,0
+article,All years,First permits without readable requested spud date,count,10,10,0
+article,2005 to 2025,New wells started,count,2913,2913,0
+article,2005 to 2009,New wells under 100 m (%),percentage points,68.8,68.8,0
+article,2005 to 2009,New wells in 500 m or more (%),percentage points,23.3,23.3,0
+article,2021 to 2025,New wells under 100 m (%),percentage points,13.4,13.4,0
+article,2021 to 2025,New wells in 500 m or more (%),percentage points,82.5,82.5,0
+article,2012 to 2014,New wells/year under 100 m (figure note),wells/year,62,62,0
+article,2012 to 2014,New wells/year under 100 m (rounded in text),wells/year,62,62,0
+article,2012 to 2014,New wells/year in 500 m or more (figure note),wells/year,75.7,75.7,0
+article,2012 to 2014,New wells/year in 500 m or more (rounded in text),wells/year,76,76,0
+article,2015 to 2017,New wells/year under 100 m (figure note),wells/year,12.3,12.3,0
+article,2015 to 2017,New wells/year under 100 m (rounded in text),wells/year,12,12,0
+article,2015 to 2017,New wells/year in 500 m or more (figure note),wells/year,59.3,59.3,0
+article,2015 to 2017,New wells/year in 500 m or more (rounded in text),wells/year,59,59,0
+article,2005 to 2025,First full year of sustained drillship majority,years,2015,2015,0
+article,2005 to 2025,First full year of sustained 500 m or deeper majority,years,2015,2015,0
+article,2005 to 2025,Comparable repeat-key cell medians,count,16,16,0
+article,2005 to 2025,Changed repeat-key cell medians,count,12,12,0
+article,2005 to 2025,Largest absolute repeat-key median change (d),days,11,11,0
