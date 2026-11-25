@@ -129,3 +129,106 @@ def test_renderer_breaks_paths_at_missing_years_and_rejects_dash_text():
         assert root.find(f".//{{*}}path[@class='{kind}']").get("d").count("M") == 2
     with pytest.raises(ValueError, match="dash"):
         render_svg(series, title="Five-year rates", xlabel="Year", ylabel="Rate (%)")
+
+
+STATUS_NAMES = ["Relinquished", "Expired", "Primary term", "Other"]
+CHART_LABELS = dict(
+    title="Lease status", xlabel="Effective year", ylabel="Leases (count)"
+)
+
+
+def test_named_series_share_one_panel_in_declared_order():
+    rows = [
+        dict(group=name, band="All water depths", year=year, value=10 * i + year - 2018)
+        for i, name in reversed(list(enumerate(STATUS_NAMES)))
+        for year in range(2019, 2025)
+    ]
+    trends = with_trend(
+        rows, series_names=STATUS_NAMES, is_count=True, partial_year=2024
+    )
+    assert list(dict.fromkeys(row["group"] for row in trends)) == STATUS_NAMES
+    # The five complete values for Expired are 11, 12, 13, 14 and 15.
+    assert [r["moving_average"] for r in trends if r["group"] == "Expired"] == [
+        None,
+        None,
+        None,
+        None,
+        13,
+        None,
+    ]
+
+    args = dict(
+        **CHART_LABELS,
+        series_names=STATUS_NAMES,
+        panel_title="All water depths",
+        note="Counts include all leases.",
+    )
+    svg = render_svg(trends, **args)
+    csv_rows = [
+        {key: "" if value is None else str(value) for key, value in row.items()}
+        for row in reversed(trends)
+    ]
+    assert svg.encode() == render_svg(csv_rows, **args).encode()
+    root = ET.fromstring(svg)
+    (panel,) = root.findall("{*}g[@class='panel']")
+    assert panel.findtext("{*}text") == args["panel_title"]
+    words = [el.text for el in root.findall(".//{*}text")]
+    assert [word for word in words if word in STATUS_NAMES] == STATUS_NAMES
+    assert {"Yearly value", "5 year trailing moving average", "partial"} <= set(words)
+    assert words[-2:] == [args["xlabel"], args["note"]]
+    assert {el.tag.split("}")[-1] for el in root.iter()}.isdisjoint(
+        {"clipPath", "pattern", "filter", "mask", "foreignObject", "image"}
+    )
+    assert not any(
+        unicodedata.category(c) == "Pd" or c == "\u2212"
+        for c in "".join(root.itertext())
+    )
+    assert all(float(el.get("font-size")) >= 15 for el in root.findall(".//{*}text"))
+    title = next(el for el in root.findall("{*}text") if el.text == args["title"])
+    assert float(title.get("font-size")) >= 18
+
+    colours = ["#0072b2", "#d55e00", "#009e73", "#663399"]
+    tints = ["#6badd2", "#e7a26b", "#6bc7ae", "#a689c4"]
+    for kind, strokes, min_width in [("yearly", colours, 2), ("average", tints, 4)]:
+        paths = panel.findall(f"{{*}}path[@class='{kind}']")
+        assert [el.get("stroke") for el in paths] == strokes
+        assert all(float(el.get("stroke-width")) >= min_width for el in paths)
+
+    first_year_y = []
+    for name, colour, tint in zip(STATUS_NAMES, colours, tints):
+        entry = next(g for g in root.findall("{*}g") if g.findtext("{*}text") == name)
+        assert [el.get("stroke") for el in entry.findall("{*}line")] == [colour, tint]
+        markers = panel.findall(f"{{*}}circle[@stroke='{colour}']")
+        assert [m.get("fill") for m in markers] == [colour] * 5 + ["white"]
+        assert all(float(m.get("r")) >= 4.5 for m in markers)
+        first_year_y.append(float(markers[0].get("cy")))
+    # Counts of 1, 11, 21 and 31 occupy progressively higher points in the SVG.
+    assert all(lower > higher for lower, higher in zip(first_year_y, first_year_y[1:]))
+
+
+@pytest.mark.parametrize("render", [False, True])
+def test_named_series_limit_applies_to_both_entry_points(render):
+    names = [*STATUS_NAMES, "Active"]
+    with pytest.raises(ValueError, match=r"chart-standard\.md item 6.*4"):
+        if render:
+            render_svg([], series_names=names, **CHART_LABELS)
+        else:
+            with_trend([], series_names=names)
+
+
+def test_named_series_allow_rows_without_a_band_or_panel_title():
+    rows = [dict(group="Other", year=2020, value=5)]
+    trends = with_trend(rows, series_names=["Other"])
+    svg = render_svg(trends, series_names=["Other"], **CHART_LABELS)
+    assert len(ET.fromstring(svg).findall(".//{*}path[@class='yearly']")) == 1
+    with pytest.raises(ValueError, match="dash"):
+        render_svg(
+            trends, series_names=["Other"], panel_title="All-depth", **CHART_LABELS
+        )
+    with pytest.raises(ValueError, match="unknown.*series"):
+        with_trend(rows, series_names=["Expired"])
+    with pytest.raises(ValueError, match="band"):
+        with_trend(
+            [dict(rows[0], band=b, year=2020 + i) for i, b in enumerate(BANDS)],
+            series_names=["Other"],
+        )
