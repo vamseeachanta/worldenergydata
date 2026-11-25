@@ -9,8 +9,8 @@ After multiple automation attempts (Playwright MCP, Selenium, WebDriver Manager)
 ## Your Credentials
 
 - **URL:** https://gisis.imo.org/Public/MCIR/Search.aspx
-- **Username:** vamseeachanta
-- **Password:** rose109@Gudda
+- **Username:** (set IMO_USERNAME in your environment)
+- **Password:** (set IMO_PASSWORD in your environment; never commit it)
 
 ## FASTEST METHOD: Single Bulk Download
 

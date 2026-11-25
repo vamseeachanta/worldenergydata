@@ -21,8 +21,8 @@
 3. **WebDriver Manager:** Needs Chrome/Chromium binary to function
 
 ### 🔐 Credentials Configured:
-- **Username:** vamseeachanta
-- **Password:** rose109@Gudda
+- **Username:** (set IMO_USERNAME in your environment)
+- **Password:** (set IMO_PASSWORD in your environment; never commit it)
 - **Status:** ✅ Valid IMO Web Accounts credentials
 
 ---
@@ -35,8 +35,8 @@ Since automated download isn't possible without browser installation, please fol
 
 1. **Login to IMO GISIS:**
    - URL: https://gisis.imo.org/
-   - Username: vamseeachanta
-   - Password: rose109@Gudda
+   - Username: (set IMO_USERNAME in your environment)
+   - Password: (set IMO_PASSWORD in your environment; never commit it)
 
 2. **Navigate to Marine Casualties:**
    - Click: Public Access → Marine Casualties and Incidents (MCIR)
@@ -187,7 +187,7 @@ Or:
 
 ```bash
 # Run Python script directly
-IMO_USERNAME="vamseeachanta" IMO_PASSWORD="rose109@Gudda" \
+IMO_USERNAME="$IMO_USERNAME" IMO_PASSWORD="$IMO_PASSWORD" \
     python3 scripts/download_imo_gisis_authenticated.py \
     --start-year 1990 \
     --end-year 2025
