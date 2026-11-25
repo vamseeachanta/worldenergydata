@@ -7,10 +7,10 @@ import hashlib
 import json
 from datetime import datetime, timezone
 from pathlib import Path
-from urllib.request import urlopen
 
 import yaml
 
+from worldenergydata.modules.state_regulators.fetch.http import urlopen
 from worldenergydata.modules.state_regulators.oklahoma_occ.parsers import (
     build_pressure_observations,
     build_quality_stats,
