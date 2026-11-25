@@ -10,16 +10,23 @@ Covers:
     TestCalibratedMatrix    (4 tests)
     TestIntegrationWithSkill (3 tests)
 
-Total: 47 tests
+Total: 293 cases, including 244 source-expression guard cases.
 """
 
 from __future__ import annotations
 
+import ast
+import csv
+import json
+import re
 from io import StringIO
+from pathlib import Path
 
 import pandas as pd
 import pytest
+import yaml
 
+from worldenergydata.safety_analysis import calibrator as calibrator_module
 from worldenergydata.safety_analysis.calibrator import (
     CalibrationRecord,
     CalibrationReport,
@@ -425,3 +432,450 @@ class TestIntegrationWithSkill:
         assert isinstance(calibrated.risk_score, float)
         assert 0.0 <= calibrated.risk_score <= 1.0
         assert isinstance(uncalibrated.risk_score, float)
+
+
+# Issue #1240 (2026): whitelist the generic convention, never a real-name list.
+_OPERATOR_PATTERN = re.compile(r"^OPERATOR-[A-Z]+$")
+_OPERATOR_FIELDS = {"operator", "operators", "operator_name", "company_name"}
+
+
+def _assert_operator_values(value):
+    """Inspect structured fixtures without recording operator values on failure."""
+    if isinstance(value, dict):
+        for key, item in value.items():
+            if key in _OPERATOR_FIELDS:
+                labels = item if isinstance(item, list) else [item]
+                assert all(
+                    isinstance(label, str) and _OPERATOR_PATTERN.fullmatch(label)
+                    for label in labels
+                ), "Operator field does not follow the codename contract"
+            else:
+                _assert_operator_values(item)
+    elif isinstance(value, list):
+        for item in value:
+            _assert_operator_values(item)
+
+
+def _is_operator_target(target):
+    if isinstance(target, ast.Name):
+        return target.id in _OPERATOR_FIELDS
+    if isinstance(target, ast.Attribute):
+        return target.attr in _OPERATOR_FIELDS
+    return (
+        isinstance(target, ast.Subscript)
+        and isinstance(target.slice, ast.Constant)
+        and target.slice.value in _OPERATOR_FIELDS
+    )
+
+
+class _InvalidOperatorLiteral(ValueError):
+    """Carry a formatting error's source line without recording literal values."""
+
+
+def _is_literal_operator_expression(expression, *, format_operand=False):
+    """Recognize complete string expressions before attempting any evaluation."""
+    if isinstance(expression, ast.Constant):
+        return isinstance(expression.value, str) or (
+            format_operand and type(expression.value) in {int, float}
+        )
+    if isinstance(expression, ast.JoinedStr):
+        return all(
+            _is_literal_operator_expression(value) for value in expression.values
+        )
+    if isinstance(expression, ast.FormattedValue):
+        return _is_literal_operator_expression(
+            expression.value, format_operand=True
+        ) and (
+            expression.format_spec is None
+            or _is_literal_operator_expression(expression.format_spec)
+        )
+    if format_operand and isinstance(expression, ast.Tuple):
+        return all(
+            _is_literal_operator_expression(value, format_operand=True)
+            for value in expression.elts
+        )
+    if format_operand and isinstance(expression, ast.Dict):
+        return all(
+            isinstance(key, ast.Constant)
+            and isinstance(key.value, str)
+            and _is_literal_operator_expression(value, format_operand=True)
+            for key, value in zip(expression.keys, expression.values)
+        )
+    if isinstance(expression, ast.BinOp) and isinstance(
+        expression.op, (ast.Add, ast.Mod)
+    ):
+        return _is_literal_operator_expression(
+            expression.left
+        ) and _is_literal_operator_expression(
+            expression.right, format_operand=isinstance(expression.op, ast.Mod)
+        )
+    return False
+
+
+def _fold_operator_literal(expression):
+    """Evaluate only previously recognized literal string expressions."""
+    if isinstance(expression, ast.Constant):
+        return expression.value
+    if isinstance(expression, ast.JoinedStr):
+        return "".join(_fold_operator_literal(value) for value in expression.values)
+    if isinstance(expression, ast.Tuple):
+        return tuple(_fold_operator_literal(value) for value in expression.elts)
+    if isinstance(expression, ast.Dict):
+        return {
+            key.value: _fold_operator_literal(value)
+            for key, value in zip(expression.keys, expression.values)
+        }
+    if isinstance(expression, ast.FormattedValue):
+        value = _fold_operator_literal(expression.value)
+        spec = (
+            _fold_operator_literal(expression.format_spec)
+            if expression.format_spec is not None
+            else ""
+        )
+        try:
+            if expression.conversion == ord("s"):
+                value = str(value)
+            elif expression.conversion == ord("r"):
+                value = repr(value)
+            elif expression.conversion == ord("a"):
+                value = ascii(value)
+            return format(value, spec)
+        except (OverflowError, TypeError, ValueError):
+            raise _InvalidOperatorLiteral(expression.lineno) from None
+    left = _fold_operator_literal(expression.left)
+    right = _fold_operator_literal(expression.right)
+    try:
+        if isinstance(expression.op, ast.Add):
+            return left + right
+        return left % right
+    except (KeyError, OverflowError, TypeError, ValueError):
+        raise _InvalidOperatorLiteral(expression.lineno) from None
+
+
+def _operator_literal_values(expression):
+    """Yield label literals from value branches, excluding lookup metadata."""
+    if isinstance(expression, ast.Constant) and isinstance(expression.value, str):
+        yield expression
+    elif isinstance(expression, (ast.List, ast.Tuple, ast.Set)):
+        for element in expression.elts:
+            yield from _operator_literal_values(element)
+    elif isinstance(expression, ast.IfExp):
+        yield from _operator_literal_values(expression.body)
+        yield from _operator_literal_values(expression.orelse)
+    elif isinstance(expression, ast.BoolOp):
+        for value in expression.values:
+            yield from _operator_literal_values(value)
+    elif isinstance(expression, (ast.BinOp, ast.JoinedStr)):
+        if _is_literal_operator_expression(expression):
+            value = _fold_operator_literal(expression)
+            yield ast.copy_location(ast.Constant(value=value), expression)
+    elif isinstance(expression, ast.Dict):
+        for value in expression.values:
+            yield from _operator_literal_values(value)
+    elif isinstance(expression, ast.Call):
+        is_lookup = (
+            isinstance(expression.func, ast.Attribute) and expression.func.attr == "get"
+        )
+        arguments = expression.args[1:] if is_lookup else expression.args
+        for argument in arguments:
+            if (
+                is_lookup
+                and isinstance(argument, ast.Constant)
+                and argument.value == ""
+            ):
+                continue
+            yield from _operator_literal_values(argument)
+        for keyword in expression.keywords:
+            if not _is_named_aggregation(expression, keyword):
+                yield from _operator_literal_values(keyword.value)
+
+
+def _is_named_aggregation(call, keyword):
+    """A pandas named aggregation tuple specifies a column and reduction."""
+    return (
+        isinstance(call.func, ast.Attribute)
+        and call.func.attr in {"agg", "aggregate"}
+        and isinstance(keyword.value, ast.Tuple)
+        and len(keyword.value.elts) == 2
+    )
+
+
+def _assert_source_operator_codenames(tree, relative_path):
+    """Check literal operator fields without including their values in errors."""
+    expressions = []
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Dict):
+            expressions.extend(
+                value
+                for key, value in zip(node.keys, node.values)
+                if isinstance(key, ast.Constant) and key.value in _OPERATOR_FIELDS
+            )
+        elif isinstance(node, ast.Call):
+            expressions.extend(
+                keyword.value
+                for keyword in node.keywords
+                if keyword.arg in _OPERATOR_FIELDS
+                and not _is_named_aggregation(node, keyword)
+            )
+        elif isinstance(node, ast.Assign):
+            if any(_is_operator_target(target) for target in node.targets):
+                expressions.append(node.value)
+        elif isinstance(node, ast.AnnAssign) and _is_operator_target(node.target):
+            if node.value is not None:
+                expressions.append(node.value)
+    source_fields = []
+    for expression in expressions:
+        try:
+            for node in _operator_literal_values(expression):
+                if not _OPERATOR_PATTERN.fullmatch(node.value):
+                    raise AssertionError(
+                        (
+                            relative_path.as_posix(),
+                            node.lineno,
+                            "Operator literal does not follow the codename contract",
+                        )
+                    )
+                source_fields.append(node)
+        except _InvalidOperatorLiteral as error:
+            raise AssertionError(
+                (
+                    relative_path.as_posix(),
+                    error.args[0],
+                    "Invalid literal operator formatting",
+                )
+            ) from None
+    return source_fields
+
+
+def test_package_source_and_fixtures_use_operator_codenames():
+    """Issue #1240: scan all package source and safety-specific fixture trees.
+
+    Literal labels and structured fixture fields must match ^OPERATOR-[A-Z]+$,
+    without storing real names or a denylist. Lookup keys, empty lookup defaults
+    and named aggregation tuples are metadata. Conditional and boolean branches,
+    dictionary value literals and nonempty lookup defaults are checked. Binary
+    concatenation and percent formatting are folded recursively for complete
+    literal expressions, including tuple and mapping formatting operands,
+    numeric formatting operands and f-strings with literal placeholders,
+    conversions and format specifications. Malformed literal formatting reports
+    its source location without including values. The folding whitelist excludes
+    bool, None and bytes operands, conditionals nested inside binary or formatted
+    expressions, and list formatting operands. Dynamically computed labels are
+    not evaluated. Resource exhaustion from unbounded literal formatting widths
+    or precisions is outside this check: folding may allocate large strings or
+    raise an uncaught MemoryError. No allocation limit is enforced.
+    This is a structural regression check, not free-text entity recognition.
+    """
+    package = Path(calibrator_module.__file__).parent
+    repo = Path(__file__).resolve().parents[3]
+    roots = [package]
+    roots.extend(path for path in (repo / "tests/fixtures").glob("*safety*"))
+    fixture_sources = list((repo / "tests/unit/safety_analysis").rglob("conftest.py"))
+    paths = fixture_sources + [path for root in roots for path in root.rglob("*")]
+    source_fields = []
+    for path in sorted(paths):
+        if path.suffix == ".py":
+            tree = ast.parse(path.read_text(encoding="utf-8"))
+            source_fields.extend(
+                _assert_source_operator_codenames(tree, path.relative_to(repo))
+            )
+        elif path.suffix == ".csv":
+            with path.open(encoding="utf-8", newline="") as stream:
+                _assert_operator_values(list(csv.DictReader(stream)))
+        elif path.suffix == ".json":
+            _assert_operator_values(json.loads(path.read_text(encoding="utf-8")))
+        elif path.suffix in {".yaml", ".yml"}:
+            _assert_operator_values(yaml.safe_load(path.read_text(encoding="utf-8")))
+    assert source_fields, "The scan must reach the synthetic operator literals"
+
+
+def test_operator_fixture_guard_rejects_generic_non_codename():
+    """A generic invalid label proves the fixture guard is not vacuous."""
+    with pytest.raises(AssertionError, match="codename contract"):
+        _assert_operator_values({"operator": "UNLABELLED"})
+    _assert_operator_values({"operator": "OPERATOR-AA"})
+
+
+@pytest.mark.parametrize("field", sorted(_OPERATOR_FIELDS))
+@pytest.mark.parametrize(
+    "source",
+    [
+        '{{"{field}": "{label}"}}',
+        '{field} = "{label}"',
+        'CalibrationRecord({field}="{label}")',
+        'dict({field}="{label}")',
+        'df["{field}"] = "{label}"',
+        'self.{field} = "{label}"',
+        '{field}: str = "{label}"',
+        'df["{field}"]: str = "{label}"',
+        'self.{field}: str = "{label}"',
+    ],
+)
+def test_operator_source_guard_rejects_generic_non_codename(field, source):
+    """Every supported source form rejects an invalid label and accepts a codename."""
+    relative_path = Path("fixtures") / "example.py"
+    invalid = ast.parse(source.format(field=field, label="UNLABELLED"))
+    with pytest.raises(AssertionError, match="codename contract") as error:
+        _assert_source_operator_codenames(invalid, relative_path)
+    assert error.value.args[0] == (
+        "fixtures/example.py",
+        1,
+        "Operator literal does not follow the codename contract",
+    )
+    valid = ast.parse(source.format(field=field, label="OPERATOR-AA"))
+    assert len(_assert_source_operator_codenames(valid, relative_path)) == 1
+
+
+@pytest.mark.parametrize("field", sorted(_OPERATOR_FIELDS))
+@pytest.mark.parametrize(
+    "source",
+    [
+        'self.{field} = row["{field}"]',
+        '{field} = record.get("{field}", "")',
+        'df.groupby(k).agg({field}=("{field}", "first"))',
+        'df.groupby(k).aggregate({field}=("{field}", "first"))',
+    ],
+)
+def test_operator_source_guard_allows_lookup_metadata(field, source):
+    """Column keys, empty defaults and aggregation methods are not labels."""
+    tree = ast.parse(source.format(field=field))
+    assert _assert_source_operator_codenames(tree, Path("example.py")) == []
+
+
+@pytest.mark.parametrize("field", sorted(_OPERATOR_FIELDS))
+@pytest.mark.parametrize(
+    "value",
+    [
+        '["{label}"]',
+        '("{label}",)',
+        '{{"{label}"}}',
+        'rng.choice(["{label}"])',
+    ],
+)
+def test_operator_source_guard_checks_literal_containers_and_call_values(field, value):
+    """Literal labels remain checked, including synthetic random choices."""
+    relative_path = Path("example.py")
+    invalid = ast.parse(f"{field} = " + value.format(label="UNLABELLED"))
+    with pytest.raises(AssertionError, match="codename contract"):
+        _assert_source_operator_codenames(invalid, relative_path)
+    valid = ast.parse(f"{field} = " + value.format(label="OPERATOR-AA"))
+    assert len(_assert_source_operator_codenames(valid, relative_path)) == 1
+
+
+@pytest.mark.parametrize("field", sorted(_OPERATOR_FIELDS))
+@pytest.mark.parametrize(
+    "value",
+    [
+        '"{label}" if selector == "UNLABELLED" else existing',
+        'existing if selector == "UNLABELLED" else "{label}"',
+        'existing or "{label}"',
+        '"{label}" and existing',
+        '{{"UNLABELLED": "{label}"}}',
+        'row.get("operator", "{label}")',
+    ],
+)
+def test_operator_source_guard_checks_expression_values(field, value):
+    """Value-bearing branches reject invalid labels and accept codenames."""
+    relative_path = Path("example.py")
+    invalid = ast.parse(f"{field} = " + value.format(label="UNLABELLED"))
+    with pytest.raises(AssertionError, match="codename contract"):
+        _assert_source_operator_codenames(invalid, relative_path)
+    valid = ast.parse(f"{field} = " + value.format(label="OPERATOR-AA"))
+    assert len(_assert_source_operator_codenames(valid, relative_path)) == 1
+
+
+@pytest.mark.parametrize("field", sorted(_OPERATOR_FIELDS))
+@pytest.mark.parametrize(
+    "value",
+    [
+        '"UNLABELLED" + suffix',
+        'prefix + "UNLABELLED"',
+        '"OPERATOR-AA" + suffix',
+        'prefix + "OPERATOR-AA"',
+        '"OPERATOR-" + letter',
+        '"OPERATOR-%s" % letter',
+        '"OPERATOR-" + ("A" + letter)',
+        '"OPERATOR-%s%s" % ("A", letter)',
+        'f"OPERATOR-{letter}"',
+        '"%(x)s" % {"x": letter}',
+        "f\"OPERATOR-{'AA':{width}}\"",
+        '"OPERATOR-%c" % number',
+    ],
+)
+def test_operator_source_guard_skips_dynamic_binary_expressions(field, value):
+    """A fragment cannot establish the value of a dynamically computed label."""
+    tree = ast.parse(f"{field} = {value}")
+    assert _assert_source_operator_codenames(tree, Path("example.py")) == []
+
+
+@pytest.mark.parametrize("field", sorted(_OPERATOR_FIELDS))
+@pytest.mark.parametrize(
+    ("valid_value", "invalid_value"),
+    [
+        ('"OPERATOR-" + "AA"', '"UN" + "LABELLED"'),
+        ('"OPERATOR-" + "AA"', '"OPERATOR-A" + "OPERATOR-B"'),
+        ('"OPERATOR-%s" % "AA"', '"UN%s" % "LABELLED"'),
+        ('"OP" + "ERATOR-" + "AA"', '"UN" + "LAB" + "ELLED"'),
+        ('"OP" + ("ERATOR-" + "AA")', '"UN" + ("LAB" + "ELLED")'),
+        ('"OPERATOR-%s" % ("AA",)', '"UN%s" % ("LABELLED",)'),
+        ('"OPERATOR-%s%s" % ("A", "A")', '"UN%s%s" % ("LAB", "ELLED")'),
+        ('f"OPERATOR-AA"', 'f"UNLABELLED"'),
+        ("f\"OPERATOR-{'AA'}\"", "f\"UN{'LABELLED'}\""),
+        (
+            '"%(x)s" % {"x": "OPERATOR-AA"}',
+            '"%(x)s" % {"x": "UNLABELLED"}',
+        ),
+        ('"OPERATOR-%c" % 65', '"UNLABELLED-%d" % 7'),
+        ('"OPERATOR-%.0sAA" % 7.5', '"UNLABELLED-%.1f" % 7.5'),
+        ("f\"OPERATOR-{'AA'!s}\"", "f\"UN{'LABELLED'!s}\""),
+        ("f\"{'OPERATOR-AA':{'s'}}\"", "f\"{'UNLABELLED':{'s'}}\""),
+        ("f\"OPERATOR-{''!r:.0s}AA\"", "f\"UN{''!r:.0s}LABELLED\""),
+        ("f\"OPERATOR-{''!a:.0s}AA\"", "f\"UN{''!a:.0s}LABELLED\""),
+        (
+            '("OPERATOR-" + "%s") % ("A" + "A",)',
+            '("UN" + "%s") % ("LAB" + "ELLED",)',
+        ),
+    ],
+)
+def test_operator_source_guard_checks_complete_literal_binary_values(
+    field, valid_value, invalid_value
+):
+    """Check the complete literal result, rather than accepting its fragments."""
+    relative_path = Path("example.py")
+    valid = ast.parse(f"{field} = {valid_value}")
+    assert len(_assert_source_operator_codenames(valid, relative_path)) == 1
+    invalid = ast.parse(f"{field} = {invalid_value}")
+    with pytest.raises(AssertionError, match="codename contract") as error:
+        _assert_source_operator_codenames(invalid, relative_path)
+    assert error.value.args[0] == (
+        "example.py",
+        1,
+        "Operator literal does not follow the codename contract",
+    )
+
+
+@pytest.mark.parametrize("field", sorted(_OPERATOR_FIELDS))
+@pytest.mark.parametrize(
+    "value",
+    [
+        '"OPERATOR-%s %s" % "AA"',
+        '"OPERATOR-%q" % "AA"',
+        '"OPERATOR-%" % ("AA",)',
+        '"OPERATOR-" + ("%s %s" % "AA")',
+        '"OPERATOR-%(missing)s" % {"x": "AA"}',
+        '"OPERATOR-%(x)d" % {"x": "AA"}',
+        "f\"OPERATOR-{'AA':q}\"",
+        '"OPERATOR-%c" % 1114112',
+        'f"{1114112:c}"',
+    ],
+)
+def test_operator_source_guard_reports_malformed_literal_formatting(field, value):
+    """Malformed formatting reports only its file, line and rule."""
+    tree = ast.parse(f"{field} = (\n    {value}\n)")
+    with pytest.raises(AssertionError) as error:
+        _assert_source_operator_codenames(tree, Path("example.py"))
+    assert error.value.args[0] == (
+        "example.py",
+        2,
+        "Invalid literal operator formatting",
+    )
