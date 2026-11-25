@@ -1,5 +1,6 @@
 """Tests for scheduler config loader and validation."""
 
+import json
 import os
 import tempfile
 from pathlib import Path
@@ -11,6 +12,23 @@ from worldenergydata.scheduler.config import (
     load_config,
     validate_config,
 )
+
+
+def test_shipped_eia_output_directory():
+    config_path = (
+        Path(__file__).resolve().parents[3] / "config/scheduler/scheduler_config.yml"
+    )
+    config = load_config(str(config_path))
+    contract_path = (
+        config_path.parents[2] / "data/source-refresh-acceptance-contract.json"
+    )
+    contract = json.loads(contract_path.read_text(encoding="utf-8"))
+    eia = next(row for row in contract["sources"] if row["module_id"] == "eia_us")
+    assert config.get_job_config("eia_us_refresh")["output_dir"] == (
+        eia["scheduler_output_dir"]
+    )
+    assert eia["scheduler_output_dir"] == "data/modules/eia"
+
 
 VALID_YAML = """
 jobs:
