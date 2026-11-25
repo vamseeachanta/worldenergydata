@@ -105,9 +105,19 @@ def graph_to_dexpi(graph: GraphSpec) -> str:
     return ET.tostring(root, encoding="unicode", xml_declaration=True)
 
 
+class _NoDoctypeTreeBuilder(ET.TreeBuilder):
+    def doctype(self, name, pubid, system):
+        raise ValueError("DOCTYPE declarations are not supported")
+
+
 def dexpi_to_graph(xml: str) -> GraphSpec:
     """Parse a DEXPI-aligned Proteus-XML string back into a :class:`GraphSpec`."""
-    root = ET.fromstring(xml)
+    parser = ET.XMLParser(  # nosec B314 -- The target rejects every DTD.
+        target=_NoDoctypeTreeBuilder()
+    )
+    root = ET.fromstring(
+        xml, parser=parser
+    )  # nosec B314 -- DTDs are rejected before entity expansion.
     info = root.find("PlantInformation")
     field_name = info.get("Project", "") if info is not None else ""
     graph = GraphSpec(field_name=field_name)
