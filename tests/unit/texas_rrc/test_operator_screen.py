@@ -374,12 +374,19 @@ def test_calendar_window_crosses_year_and_leap_day(bundle):
     assert build_screen(bundle, policy, as_of="2024-02")["window"][0] == "2023-12"
 
 
-def test_pdq_adapter_preserves_regulator_grain(bundle):
+@pytest.mark.parametrize(
+    "district_fields, expected_district",
+    [
+        ({"DISTRICT_NO": "08"}, "08"),
+        ({"DISTRICT_NO": "08", "DISTRICT_NAME": "7B"}, "7B"),
+    ],
+)
+def test_pdq_adapter_preserves_regulator_grain(district_fields, expected_district):
     """PDQ gas=10 gas-well Mcf + 5 casinghead Mcf=15; identifiers stay strings."""
     from worldenergydata.texas_rrc.operator_screen import normalize_pdq_rows
 
     raw = {
-        "DISTRICT_NO": "01",
+        **district_fields,
         "OIL_GAS_CODE": "O",
         "LEASE_NO": "000001",
         "OPERATOR_NO": "000001",
@@ -390,6 +397,8 @@ def test_pdq_adapter_preserves_regulator_grain(bundle):
         "PROD_REPORT_FILED_FLAG": "Y",
     }
     rows = normalize_pdq_rows([raw])
+    assert rows[0]["district"] == expected_district
+    assert rows[0]["district_no"] == "08"
     assert rows[0]["gas_mcf"] == 15
     assert rows[0]["oil_bbl"] == 28
     assert rows[0]["granularity"] == "lease"
