@@ -19,6 +19,19 @@ _BAND_LABEL = {b.lower().replace(",", ""): b for b in BANDS}
 # Each moving average mixes its yearly colour with 42 percent white.
 _SERIES_COLOURS = ("#0072b2", "#d55e00", "#009e73", "#663399")
 
+ARTICLE_WIDTH_PX = 860
+_VIEWBOX_WIDTH = 960
+
+
+def _article_units(css_px):
+    """Round a size in rendered CSS pixels up to SVG units at article width."""
+    return math.ceil(css_px * _VIEWBOX_WIDTH / ARTICLE_WIDTH_PX)
+
+
+_YEARLY_WIDTH = _article_units(2)
+_AVERAGE_WIDTH = _article_units(4)
+_MARKER_RADIUS = _article_units(9) / 2
+
 
 def _series_palette(names):
     if names is None:
@@ -147,6 +160,7 @@ def _element(parent, tag, **attrs):
 def _text(parent, x, y, words, size=16, **attrs):
     if any(unicodedata.category(c) == "Pd" or c == "\u2212" for c in words):
         raise ValueError("use chart text without dashes")
+    size = _article_units(size)
     _element(parent, "text", x=x, y=y, font_size=size, **attrs).text = words
 
 
@@ -161,6 +175,19 @@ def _line(parent, x1, y1, x2, y2, colour, width, **attrs):
         stroke=colour,
         stroke_width=width,
         **attrs,
+    )
+
+
+def _marker(parent, x, y, colour, *, partial=False):
+    _element(
+        parent,
+        "circle",
+        cx=x,
+        cy=y,
+        r=_MARKER_RADIUS,
+        stroke=colour,
+        stroke_width=_YEARLY_WIDTH,
+        fill="white" if partial else colour,
     )
 
 
@@ -200,7 +227,7 @@ def _path(panel, points, kind, colour, dashed):
             d=" ".join(commands),
             fill="none",
             stroke=colour,
-            stroke_width=4.5 if kind == "average" else 2,
+            stroke_width=_AVERAGE_WIDTH if kind == "average" else _YEARLY_WIDTH,
             stroke_linecap="round",
             **{"class": kind},
             **dashed,
@@ -274,23 +301,20 @@ def _panel(
     for series, colour, _ in data:
         for year, (value, _) in sorted(series.items()):
             if value is not None:
-                _element(
+                _marker(
                     panel,
-                    "circle",
-                    cx=f"{x_of(year):.2f}",
-                    cy=f"{y_of(value):.2f}",
-                    r=4.5,
-                    stroke=colour,
-                    stroke_width=2,
-                    fill="white" if year == partial_year else colour,
+                    f"{x_of(year):.2f}",
+                    f"{y_of(value):.2f}",
+                    colour,
+                    partial=year == partial_year,
                 )
 
 
 def _band_panels(root, ylabel, measures, cells, years, partial_year, ticks):
-    _line(root, 34, 60, 68, 60, _COLORS[2], 2)
-    _element(root, "circle", cx=51, cy=60, r=4.5, fill=_COLORS[2])
+    _line(root, 34, 60, 68, 60, _COLORS[2], _YEARLY_WIDTH)
+    _marker(root, 51, 60, _COLORS[2])
     _text(root, 80, 66, "Yearly value")
-    _line(root, 220, 60, 258, 60, _tint(_COLORS[2]), 4.5)
+    _line(root, 220, 60, 258, 60, _tint(_COLORS[2]), _AVERAGE_WIDTH)
     _text(root, 270, 66, "5 year trailing moving average")
     _text(root, 32, 99, ylabel, 17, font_weight="bold")
     # A third measure begins a separate comparison, keeping the last pair together.
@@ -303,7 +327,7 @@ def _band_panels(root, ylabel, measures, cells, years, partial_year, ticks):
         for idx, group in enumerate(section):
             if group:
                 style = {"stroke_dasharray": "8 6"} if idx else {}
-                _line(root, x, y - 5, x + 42, y - 5, "#334b5c", 2, **style)
+                _line(root, x, y - 5, x + 42, y - 5, "#334b5c", _YEARLY_WIDTH, **style)
                 _text(root, x + 52, y, group, 16)
                 x += 90 + len(group) * 10
         if any(section):
@@ -341,9 +365,9 @@ def _named_panel(root, ylabel, panel_title, palette, cells, years, partial_year,
     data = []
     for name, colour in palette.items():
         entry = _element(root, "g")
-        _line(entry, 512, y - 5, 552, y - 5, colour, 2)
-        _element(entry, "circle", cx=532, cy=y - 5, r=4.5, fill=colour)
-        _line(entry, 652, y - 5, 692, y - 5, _tint(colour), 4.5)
+        _line(entry, 512, y - 5, 552, y - 5, colour, _YEARLY_WIDTH)
+        _marker(entry, 532, y - 5, colour)
+        _line(entry, 652, y - 5, 692, y - 5, _tint(colour), _AVERAGE_WIDTH)
         for line in textwrap.wrap(name, 38):
             _text(entry, 32, y, line)
             y += 24
@@ -430,13 +454,21 @@ def render_svg(
         y = _named_panel(
             root, ylabel, panel_title, palette, cells, years, partial_year, ticks
         )
-    _text(root, 480, y - 7, xlabel, 17, text_anchor="middle", font_weight="bold")
+    _text(
+        root,
+        _VIEWBOX_WIDTH / 2,
+        y - 7,
+        xlabel,
+        17,
+        text_anchor="middle",
+        font_weight="bold",
+    )
     for line in textwrap.wrap(note, 103, break_long_words=False):
         y += 23
         _text(root, 32, y, line, 15)
     height = y + 20
-    root.set("width", "960")
+    root.set("width", str(_VIEWBOX_WIDTH))
     root.set("height", str(height))
-    root.set("viewBox", f"0 0 960 {height}")
+    root.set("viewBox", f"0 0 {_VIEWBOX_WIDTH} {height}")
     ET.indent(root)
     return ET.tostring(root, encoding="unicode") + "\n"

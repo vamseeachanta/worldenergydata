@@ -782,6 +782,53 @@ def hand_counts(permits, subcodes, bores, approvals, reports):
     )
 
 
+def write_hand_count_csv(out, samples):
+    gulf_rule = (
+        " Select region G by bore, then by well if unique. If neither resolves "
+        "the region, use a surface lease beginning with G."
+    )
+    region_fields = "mv_boreholes_all.txt (API_WELL_NUMBER, REGION_CODE)"
+    rows = [
+        dict(
+            sample="completion_approvals",
+            period="2025-03",
+            selection=(
+                "Distinct Gulf permits approved in the month with APM_OP_CD = COMP. "
+                "Exclude ZONE, PLUGBACK and explicit new hole work." + gulf_rule
+            ),
+            source_files=f"{APM}, {BOREHOLE}",
+            source_fields=(
+                "mv_apm_main.txt (SN_APM, API_WELL_NUMBER, SURF_LEASE_NUM, "
+                "ACC_STATUS_DATE, APM_OP_CD), mv_apm_suboperations.txt "
+                "(SN_APM_FK, APM_SUBOP_CD), mv_apm_main_prop.txt (SN_APM, APM_OP_DESC), "
+                + region_fields
+            ),
+            count=samples["approvals_2025_03"]["completion_approvals"],
+        ),
+        dict(
+            sample="completion_reports",
+            period="2025-Q1",
+            selection=(
+                "Distinct Gulf End of Operations Reports with EOR_OPERATION_CD = C "
+                "and borehole status date in the quarter. Include every status code."
+                + gulf_rule
+            ),
+            source_files=f"{EOR}, {BOREHOLE}",
+            source_fields=(
+                "mv_eor_mainquery.txt (SN_EOR, API_WELL_NUMBER, SURF_LEASE_NUMBER, "
+                "BOREHOLE_STAT_DT, EOR_OPERATION_CD), " + region_fields
+            ),
+            count=samples["reports_2025_q1"]["completion_reports"],
+        ),
+    ]
+    write_csv(
+        rows,
+        out,
+        "hand_counts",
+        ["sample", "period", "selection", "source_files", "source_fields", "count"],
+    )
+
+
 def run_record():
     def git(*args):
         try:
@@ -1232,6 +1279,27 @@ def run(data_dir, out):
     by_band = tally(in_window, "band")
     by_year = tally(in_window, "year")
     status = tally([r for r in reports if r["year"] in in_years], "status")
+    write_csv(
+        [
+            dict(
+                report_status_code=code,
+                reports=count,
+                all_reports_in_window=r_checks["in_window"],
+                first_year=first_year,
+                snapshot_date=str(file_date),
+            )
+            for code, count in sorted(status.items())
+        ],
+        out,
+        "report_status_counts",
+        [
+            "report_status_code",
+            "reports",
+            "all_reports_in_window",
+            "first_year",
+            "snapshot_date",
+        ],
+    )
     summary = dict(
         file_date=str(file_date),
         first_full_year=first_year,
@@ -1263,11 +1331,13 @@ def run(data_dir, out):
     checks = {f"approvals_{k}": v for k, v in a_checks["checks"].items()}
     checks.update({f"reports_{k}": v for k, v in r_checks["checks"].items()})
     checks.update(b_checks)
+    samples = hand_counts(permits, subcodes, bores, approvals, reports)
+    write_hand_count_csv(out, samples)
     verification = dict(
         basis=dict(files=basis["files"]),
         conservation=dict(ok=all(checks.values()), checks=checks),
         c6_cross_check=cross,
-        hand_counts=hand_counts(permits, subcodes, bores, approvals, reports),
+        hand_counts=samples,
         run=run_record(),
     )
     write_json(verification, out, "verification")
