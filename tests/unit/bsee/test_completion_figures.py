@@ -1,4 +1,4 @@
-"""Check the four figure files that feed the completion article."""
+"""Check the figure files that feed the completion article."""
 
 import csv
 import json
@@ -16,12 +16,14 @@ def test_figure_manifest_links_bullets_to_plotted_cells():
     assert [f["svg"] for f in figures] == [
         "01_approvals_by_period.svg",
         "02_recompletion_by_period.svg",
-        "03_approvals_per_well.svg",
+        "03_perforation_flags.svg",
         "04_drilled_to_completed.svg",
+        "03_approvals_per_well.svg",
     ]
-    assert len({f["question"] for f in figures}) == 4
+    assert len({f["question"] for f in figures}) == 5
     for figure in figures:
         svg = ET.parse(OUTPUT / figure["svg"])
+        assert figure["layout"] == "4x1_shared_x"
         assert figure["question"].endswith("?")
         assert (figure["view"], figure["x_unit"], figure["trend"]) == (
             "yearly",
@@ -105,3 +107,52 @@ def test_every_delivered_average_uses_five_complete_annual_values():
                     abs(float(row["moving_average"]) - sum(map(float, window)) / 5)
                     < 1e-12
                 )
+
+
+def test_approvals_per_standing_well_is_the_appendix_figure():
+    figures = json.loads((OUTPUT / "figures.json").read_text())
+    assert [f["csv"] for f in figures if f.get("role") == "appendix"] == [
+        "03_approvals_per_well.csv"
+    ]
+
+
+def test_split_charts_use_exact_original_series():
+    from worldenergydata.bsee.yearly_trend import render_svg
+
+    figures = json.loads((OUTPUT / "figures.json").read_text())
+    csv_name = "02_recompletion_by_period.csv"
+    with (OUTPUT / csv_name).open(newline="") as stream:
+        rows = list(csv.DictReader(stream))
+    split = [f for f in figures if f["csv"] == csv_name]
+    groups = [["Recompletion"], ["Modify Perforations", "Reperforation"]]
+    assert [f["groups"] for f in split] == groups
+    assert set(row["group"] for row in rows) == set(groups[0] + groups[1])
+    for figure, selected in zip(split, groups):
+        actual = (OUTPUT / figure["svg"]).read_text()
+        expected = render_svg(
+            [row for row in rows if row["group"] in selected],
+            title=ET.fromstring(actual).findtext("{*}title"),
+            ylabel="Approved permits per year",
+            xlabel="Calendar year of approval",
+            note=figure["note"],
+        )
+        assert actual == expected
+        for bullet in figure["bullets"]:
+            assert all(cell["row"]["group"] in selected for cell in bullet["cells"])
+
+
+def test_all_completion_charts_meet_article_width_minimums():
+    figures = json.loads((OUTPUT / "figures.json").read_text())
+    files = [f["svg"] for f in figures]
+    files.extend(["02_bores_first_completed.svg", "03_fluid_by_year.svg"])
+    for name in files:
+        root = ET.parse(OUTPUT / name).getroot()
+        scale = 860 / float(root.get("viewBox").split()[2])
+        for label in root.findall(".//{*}text"):
+            minimum = 18 if label.text == root.findtext("{*}title") else 15
+            assert scale * float(label.get("font-size")) >= minimum, name
+        for marker in root.findall(".//{*}circle"):
+            assert 2 * scale * float(marker.get("r")) >= 9, name
+        for line in root.findall(".//{*}path"):
+            minimum = 4 if line.get("class") == "average" else 2
+            assert scale * float(line.get("stroke-width")) >= minimum, name

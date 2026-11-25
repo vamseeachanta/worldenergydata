@@ -150,6 +150,56 @@ def test_svg_encodes_yearly_trend_measures_and_partial():
         assert len(panel.findall("{*}circle[@fill='white']")) == 2
 
 
+def test_depth_panels_share_one_calendar_axis_in_series_order():
+    rows = [
+        dict(year=year, band=band, value=1)
+        for band in reversed(BANDS)
+        for year in range(2005, 2013)
+    ]
+    root = ET.fromstring(
+        render_svg(with_trend(rows, partial_year=2012), **CHART_LABELS)
+    )
+    panels = root.findall("{*}g[@class='panel']")
+    labels = [p.find("{*}text") for p in panels]
+    assert [label.text for label in labels] == list(BANDS)
+    assert len({label.get("x") for label in labels}) == 1
+    tops = [float(label.get("y")) for label in labels]
+    assert all(a < b for a, b in zip(tops, tops[1:]))
+    coordinates = [
+        [float(marker.get("cx")) for marker in p.findall("{*}circle")] for p in panels
+    ]
+    assert len(coordinates[0]) == 8
+    assert all(xs == coordinates[0] for xs in coordinates)
+    for i, panel in enumerate(panels):
+        words = [t.text for t in panel.findall("{*}text")]
+        ticks = [int(word) for word in words if word.isdigit() and len(word) == 4]
+        if i == 3:
+            assert (ticks[0], ticks[-1]) == (2005, 2012)
+            assert words.count("partial") == 1
+        else:
+            assert not ticks and "partial" not in words
+        assert len(panel.findall("{*}circle[@fill='white']")) == 1
+
+
+def test_depth_panels_require_a_separate_figure_above_four_lines():
+    rows = [dict(group=g, year=2025, band=BANDS[0], value=2) for g in ("A", "B", "C")]
+    with pytest.raises(ValueError, match="four lines per panel"):
+        render_svg(with_trend(rows), **CHART_LABELS)
+
+
+def test_absent_depth_band_keeps_its_row_without_fabricating_values():
+    root = ET.fromstring(
+        render_svg(
+            with_trend([dict(year=2025, band=BANDS[0], value=2)]), **CHART_LABELS
+        )
+    )
+    panels = root.findall("{*}g[@class='panel']")
+    assert [p.findtext("{*}text") for p in panels] == list(BANDS)
+    for panel in panels[1:]:
+        assert not panel.findall("{*}circle")
+        assert not panel.findall("{*}path")
+
+
 def test_renderer_breaks_paths_at_missing_years_and_rejects_dash_text():
     rows = [
         dict(year=y, band=BANDS[0], value=1) for y in range(2000, 2013) if y != 2006

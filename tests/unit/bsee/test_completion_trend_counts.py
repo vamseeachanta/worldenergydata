@@ -149,7 +149,11 @@ def test_yearly_readings_quote_counts_and_moving_averages():
     for f in figures:
         columns = {c["column"] for b in f["bullets"] for c in b["cells"]}
         assert {"value", "moving_average"} <= columns
-    title = ET.parse(out / figures[2]["svg"]).findtext("{*}title").lower()
+    title = (
+        ET.parse(out / next(f["svg"] for f in figures if f.get("role") == "appendix"))
+        .findtext("{*}title")
+        .lower()
+    )
     assert "per january well year" in title
 
 
