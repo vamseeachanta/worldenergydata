@@ -1,3 +1,5 @@
+**Superseded.** See the [five-year first-production method and results](README.md#five-year-first-production-for-leases-effective-from-2005-to-2020).
+
 # Pre-fix measurement
 
 Baseline `aef6d6c`. All four archives matched the byte counts and SHA-256 digests in [source_pins.json](source_pins.json). Dates, event matches and depth bands use the original derivation.

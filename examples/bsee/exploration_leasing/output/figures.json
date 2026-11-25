@@ -87,7 +87,7 @@
     ],
     "csv": "spud_share_trend.csv",
     "svg": "spud_share_trend.svg",
-    "note": "Only complete half decades with five years of follow up are plotted. The cohort tables also include leases effective in 2020.\nThe first panel follows leases through November 2026, so older leases have longer observation. The second stops at the fifth anniversary. Timing uses leases with a qualifying spud and 365.25 days per year.",
+    "note": "Only complete half decades with five years of follow up are plotted. The cohort tables also include leases effective in 2020.\nThe first panel follows leases through November 2026, so older leases have longer observation.\nThe second stops at the fifth anniversary.",
     "bullets": [
       {
         "text": "The spud share by the file date in the under 100 m band was 14.7% in 2005 to 2009 and 3.7% in 2015 to 2019.",
@@ -168,7 +168,7 @@
     ],
     "csv": "spud_years_trend.csv",
     "svg": "spud_years_trend.svg",
-    "note": "Only complete half decades with five years of follow up are plotted. The cohort tables also include leases effective in 2020.\nThe first panel follows leases through November 2026, so older leases have longer observation. The second stops at the fifth anniversary. Timing uses leases with a qualifying spud and 365.25 days per year.",
+    "note": "Only complete half decades with five years of follow up are plotted. The cohort tables also include leases effective in 2020.\nThe first panel follows leases through November 2026, so older leases have longer observation.\nThe second stops at the fifth anniversary. Medians include only leases with a qualifying spud.",
     "bullets": [
       {
         "text": "The median wait to spud by the file date in the under 100 m band was 1.3 years in 2005 to 2009 and 1.2 years in 2015 to 2019.",
@@ -249,7 +249,7 @@
     ],
     "csv": "crude_trend.csv",
     "svg": "crude_trend.svg",
-    "note": "Only complete half decades with five years of follow up are plotted. The cohort tables also include leases effective in 2020.\nFirst positive crude report in months 0 through 59. Timing uses only leases with an event in the window. A gap means no median.",
+    "note": "The table covers leases effective from 2005 to 2020. The plot shows the three complete five year periods through 2019.\nEach lease has 60 reporting months from its effective month. The median uses first crude in months 0 to 59. A gap means no median.",
     "bullets": [
       {
         "text": "The share reaching first crude in the under 100 m band was 0.8% in 2005 to 2009 and 2.5% in 2015 to 2019.",
@@ -317,6 +317,57 @@
             },
             "column": "value",
             "format": ".1f"
+          }
+        ]
+      },
+      {
+        "csv": "first_production.csv",
+        "text": "Across all depths, 116 of 7,126 eligible leases (1.6%) reported first hydrocarbon within five years. Among those leases, the median wait was 2.4 years (29 months).",
+        "cells": [
+          {
+            "filter": {
+              "period": "2005 to 2020",
+              "depth_band": "All bands",
+              "event": "Any hydrocarbon"
+            },
+            "column": "timed_leases",
+            "format": ",.0f"
+          },
+          {
+            "filter": {
+              "period": "2005 to 2020",
+              "depth_band": "All bands",
+              "event": "Any hydrocarbon"
+            },
+            "column": "leases",
+            "format": ",.0f"
+          },
+          {
+            "filter": {
+              "period": "2005 to 2020",
+              "depth_band": "All bands",
+              "event": "Any hydrocarbon"
+            },
+            "column": "share_pct",
+            "format": ".1f"
+          },
+          {
+            "filter": {
+              "period": "2005 to 2020",
+              "depth_band": "All bands",
+              "event": "Any hydrocarbon"
+            },
+            "column": "median_years",
+            "format": ".1f"
+          },
+          {
+            "filter": {
+              "period": "2005 to 2020",
+              "depth_band": "All bands",
+              "event": "Any hydrocarbon"
+            },
+            "column": "months_median",
+            "format": "g"
           }
         ]
       }

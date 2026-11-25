@@ -4,7 +4,15 @@ import csv
 import json
 
 import pandas as pd
-from lease_analysis import ALL_YEARS, DAYS_PER_YEAR, FOLLOWUP_YEARS, period_groups
+from lease_analysis import (
+    ALL,
+    ALL_YEARS,
+    DAYS_PER_YEAR,
+    FOLLOWUP_YEARS,
+    MATURE_TOTAL,
+    period_groups,
+    select_one,
+)
 
 from worldenergydata.bsee.half_decade import BANDS, PERIODS, render_svg, summarize
 
@@ -66,7 +74,33 @@ def crude_rows(production):
                 leases=r["leases"],
                 first_crude_leases=r["timed_leases"],
                 value=None if pd.isna(r[column]) else r[column],
+                eligible_effective_years=r["eligible_effective_years"],
             )
+
+
+def hydrocarbon_bullet(production):
+    filters = dict(period=MATURE_TOTAL, depth_band=ALL, event="Any hydrocarbon")
+    row = select_one(production, filters)
+    formats = {
+        "timed_leases": ",.0f",
+        "leases": ",.0f",
+        "share_pct": ".1f",
+        "median_years": ".1f",
+        "months_median": "g",
+    }
+    values = {column: format(row[column], fmt) for column, fmt in formats.items()}
+    return dict(
+        csv="first_production.csv",
+        text=(
+            "Across all depths, {timed_leases} of {leases} eligible leases ({share_pct}%) "
+            "reported first hydrocarbon within five years. Among those leases, the median "
+            "wait was {median_years} years ({months_median} months)."
+        ).format_map(values),
+        cells=[
+            dict(filter=filters, column=column, format=fmt)
+            for column, fmt in formats.items()
+        ],
+    )
 
 
 def save_figure(
@@ -188,6 +222,12 @@ def write_trends(output, frame, older, tables):
             " years",
         ),
     ]:
+        note = (
+            f"{COVERAGE}\nThe first panel follows leases through November 2026, so older leases "
+            "have longer observation.\nThe second stops at the fifth anniversary."
+        )
+        if metric == "median_years":
+            note += " Medians include only leases with a qualifying spud."
         fig, saved = save(
             stem,
             [dict(r, value=r[metric]) for r in spuds],
@@ -195,7 +235,7 @@ def write_trends(output, frame, older, tables):
             sources=[LEASES, BORES],
             ylabel=ylabel,
             periods=MATURE,
-            note=f"{COVERAGE}\nThe first panel follows leases through November 2026, so older leases have longer observation. The second stops at the fifth anniversary. Timing uses leases with a qualifying spud and 365.25 days per year.",
+            note=note,
         )
         for band, group in [
             (BANDS[0], AS_OF),
@@ -232,7 +272,12 @@ def write_trends(output, frame, older, tables):
             incidence: "Leases with first crude (%)",
             timing: "Median time (years)",
         },
-        note=f"{COVERAGE}\nFirst positive crude report in months 0 through 59. Timing uses only leases with an event in the window. A gap means no median.",
+        note=(
+            f"The table covers leases effective from {MATURE_TOTAL}. "
+            "The plot shows the three complete five year periods through 2019.\n"
+            "Each lease has 60 reporting months from its effective month. "
+            "The median uses first crude in months 0 to 59. A gap means no median."
+        ),
     )
     for band, group in [
         (BANDS[0], incidence),
@@ -253,6 +298,8 @@ def write_trends(output, frame, older, tables):
             ),
             unit="%" if group == incidence else " years",
         )
+
+    fig["bullets"].append(hydrocarbon_bullet(tables["first_production"]))
 
     statuses = annual_rows(tables["current_status"])
     code_order = (

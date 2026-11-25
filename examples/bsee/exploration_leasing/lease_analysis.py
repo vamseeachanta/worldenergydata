@@ -110,7 +110,7 @@ MATURE_PERIODS = {
     "2015 to 2019": (2015, 2019),
     "2020 only": (2020, 2020),
 }
-MATURE_TOTAL = "2005 to 2020"
+MATURE_TOTAL = f"{COHORT_START} to {COHORT_END}"
 
 
 def period_groups(frame):
@@ -264,6 +264,7 @@ def production_table(frame, audits=None, *, last_source_month):
                         over_term_leases=int(g.timed.ge(12 * term).sum()),
                         **quartiles(g.timed, "months"),
                         **quartiles(ratios, "primary_term_pct"),
+                        eligible_effective_years=MATURE_TOTAL,
                     )
                 )
     return pd.DataFrame(rows)
