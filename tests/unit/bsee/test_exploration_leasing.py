@@ -498,8 +498,9 @@ def check_readme_results(readme, numbers):
         f"{coverage['production_before_effective_month']} first hydrocarbon months and "
         f"{coverage['oil_before_effective_month']} first crude months predate the effective month",
         f"Only {coverage['last_source_month_rows']:,} records appear in the final month",
-        f"Among {values['hydrocarbon.all.timed_leases']:,} leases reaching any hydrocarbon in the window, "
-        f"the median is {values['hydrocarbon.all.months_median']:,} months",
+        f"First hydrocarbon was reported within five years for {values['hydrocarbon.all.timed_leases']:,} of {cohort:,} leases "
+        f"({values['hydrocarbon.all.share_pct']:.2f}%). Their median wait was {values['hydrocarbon.all.months_median']:,} months "
+        f"({values['hydrocarbon.all.median_years']:.1f} years)",
         f"First crude was reported within five years for {values['oil.all.timed_leases']:,} of {cohort:,} leases "
         f"({values['oil.all.share_pct']:.2f}%). Their median wait was {values['oil.all.months_median']:,} months",
         f"ordered suspension dates on {coverage['suspensions_with_ordered_dates']:,} cohort leases",
@@ -1242,6 +1243,7 @@ def test_production_table_limits_cohort_and_has_equal_followup(modules):
         )
     )
     table = modules.analysis.production_table(frame, last_source_month="2026-10")
+    assert set(table["eligible_effective_years"]) == {"2005 to 2020"}
     oil = table[
         table.event.eq("Crude oil") & table.depth_band.eq("All bands")
     ].set_index("period")
@@ -1305,9 +1307,12 @@ def test_writer_manifest_and_trend_cells():
         assert 3 <= len(fig["bullets"]) <= 4
         for bullet in fig["bullets"]:
             assert bullet["text"] and bullet["cells"]
+            source_rows = read_rows(OUTPUT / bullet["csv"]) if "csv" in bullet else rows
             for cell in bullet["cells"]:
                 matches = [
-                    r for r in rows if all(r[k] == v for k, v in cell["filter"].items())
+                    r
+                    for r in source_rows
+                    if all(r[k] == v for k, v in cell["filter"].items())
                 ]
                 assert len(matches) == 1
                 assert (
@@ -1327,6 +1332,46 @@ def test_writer_manifest_and_trend_cells():
             assert "2020 to 2024" not in labels
         else:
             assert "2025 to 2026 (partial)" in labels
+
+
+def test_first_production_eligibility_and_hydrocarbon_citations():
+    for name in ("first_production.csv", "crude_trend.csv"):
+        assert {r["eligible_effective_years"] for r in read_rows(OUTPUT / name)} == {
+            "2005 to 2020"
+        }
+    figures = json.loads((OUTPUT / "figures.json").read_bytes())
+    (crude,) = [fig for fig in figures if fig["csv"] == "crude_trend.csv"]
+    assert "leases effective from 2005 to 2020" in crude["note"].lower()
+    (hydrocarbon,) = [
+        b for b in crude["bullets"] if b.get("csv") == "first_production.csv"
+    ]
+    assert "within five years" in hydrocarbon["text"].lower()
+    assert {cell["column"] for cell in hydrocarbon["cells"]} == {
+        "timed_leases",
+        "leases",
+        "share_pct",
+        "median_years",
+        "months_median",
+    }
+    assert all(
+        cell["filter"]
+        == {
+            "period": "2005 to 2020",
+            "depth_band": "All bands",
+            "event": "Any hydrocarbon",
+        }
+        for cell in hydrocarbon["cells"]
+    )
+
+
+@pytest.mark.parametrize("stem", ["spud_share_trend", "spud_years_trend"])
+def test_spud_svg_notes_keep_observation_windows(stem):
+    root = ET.fromstring((OUTPUT / f"{stem}.svg").read_bytes())
+    labels = " ".join(t.strip() for t in root.itertext() if t.strip())
+    assert "November 2026" in labels and "fifth anniversary" in labels
+    assert "365.25" not in labels
+    if stem == "spud_share_trend":
+        assert "Timing uses" not in labels
 
 
 def test_saved_quartiles_and_mature_issuance():
