@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="792pt" height="338.4pt" viewBox="0 0 792 338.4" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 338.4 
+L 792 338.4 
+L 792 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="line2d_1">
+   <path d="M 190.872 266.9976 
+L 190.872 117.0864 
+" style="fill: none; stroke: #efefef; stroke-linecap: round"/>
+  </g>
+  <g id="line2d_2">
+   <path d="M 261.162 266.9976 
+L 261.162 117.0864 
+" style="fill: none; stroke: #efefef; stroke-linecap: round"/>
+  </g>
+  <g id="line2d_3">
+   <path d="M 331.452 266.9976 
+L 331.452 117.0864 
+" style="fill: none; stroke: #efefef; stroke-linecap: round"/>
+  </g>
+  <g id="line2d_4">
+   <path d="M 401.742 266.9976 
+L 401.742 117.0864 
+" style="fill: none; stroke: #efefef; stroke-linecap: round"/>
+  </g>
+  <g id="line2d_5">
+   <path d="M 472.032 266.9976 
+L 472.032 117.0864 
+" style="fill: none; stroke: #efefef; stroke-linecap: round"/>
+  </g>
+  <g id="patch_2">
+   <path d="M 509.256 106.2576 
+L 517.176 106.2576 
+L 517.176 96.1056 
+L 509.256 96.1056 
+z
+" style="fill: #245476"/>
+  </g>
+  <g id="patch_3">
+   <path d="M 578.952 106.2576 
+L 586.872 106.2576 
+L 586.872 96.1056 
+L 578.952 96.1056 
+z
+" style="fill: #007c78"/>
+  </g>
+  <g id="patch_4">
+   <path d="M 648.648 106.2576 
+L 656.568 106.2576 
+L 656.568 96.1056 
+L 648.648 96.1056 
+z
+" style="fill: #6588a6"/>
+  </g>
+  <g id="patch_5">
+   <path d="M 718.344 106.2576 
+L 726.264 106.2576 
+L 726.264 96.1056 
+L 718.344 96.1056 
+z
+" style="fill: #c9c3b8"/>
+  </g>
+  <g id="patch_6">
+   <path d="M 190.872 144.4968 
+L 428.410079 144.4968 
+L 428.410079 126.2232 
+L 190.872 126.2232 
+z
+" style="fill: #245476"/>
+  </g>
+  <g id="patch_7">
+   <path d="M 428.410079 144.4968 
+L 449.119742 144.4968 
+L 449.119742 126.2232 
+L 428.410079 126.2232 
+z
+" style="fill: #007c78"/>
+  </g>
+  <g id="patch_8">
+   <path d="M 449.119742 144.4968 
+L 469.820629 144.4968 
+L 469.820629 126.2232 
+L 449.119742 126.2232 
+z
+" style="fill: #6588a6"/>
+  </g>
+  <g id="patch_9">
+   <path d="M 469.820629 144.4968 
+L 472.032 144.4968 
+L 472.032 126.2232 
+L 469.820629 126.2232 
+z
+" style="fill: #c9c3b8"/>
+  </g>
+  <g id="patch_10">
+   <path d="M 190.872 181.7208 
+L 393.7758 181.7208 
+L 393.7758 163.4472 
+L 190.872 163.4472 
+z
+" style="fill: #245476"/>
+  </g>
+  <g id="patch_11">
+   <path d="M 393.7758 181.7208 
+L 432.6696 181.7208 
+L 432.6696 163.4472 
+L 393.7758 163.4472 
+z
+" style="fill: #007c78"/>
+  </g>
+  <g id="patch_12">
+   <path d="M 432.6696 181.7208 
+L 470.90736 181.7208 
+L 470.90736 163.4472 
+L 432.6696 163.4472 
+z
+" style="fill: #6588a6"/>
+  </g>
+  <g id="patch_13">
+   <path d="M 470.90736 181.7208 
+L 472.032 181.7208 
+L 472.032 163.4472 
+L 470.90736 163.4472 
+z
+" style="fill: #c9c3b8"/>
+  </g>
+  <g id="patch_14">
+   <path d="M 190.872 218.9448 
+L 367.271523 218.9448 
+L 367.271523 200.6712 
+L 190.872 200.6712 
+z
+" style="fill: #245476"/>
+  </g>
+  <g id="patch_15">
+   <path d="M 367.271523 218.9448 
+L 381.971484 218.9448 
+L 381.971484 200.6712 
+L 367.271523 200.6712 
+z
+" style="fill: #007c78"/>
+  </g>
+  <g id="patch_16">
+   <path d="M 381.971484 218.9448 
+L 464.402907 218.9448 
+L 464.402907 200.6712 
+L 381.971484 200.6712 
+z
+" style="fill: #6588a6"/>
+  </g>
+  <g id="patch_17">
+   <path d="M 464.402907 218.9448 
+L 472.032 218.9448 
+L 472.032 200.6712 
+L 464.402907 200.6712 
+z
+" style="fill: #c9c3b8"/>
+  </g>
+  <g id="patch_18">
+   <path d="M 190.872 256.1688 
+L 328.793646 256.1688 
+L 328.793646 237.8952 
+L 190.872 237.8952 
+z
+" style="fill: #245476"/>
+  </g>
+  <g id="patch_19">
+   <path d="M 328.793646 256.1688 
+L 341.929041 256.1688 
+L 341.929041 237.8952 
+L 328.793646 237.8952 
+z
+" style="fill: #007c78"/>
+  </g>
+  <g id="patch_20">
+   <path d="M 341.929041 256.1688 
+L 456.707373 256.1688 
+L 456.707373 237.8952 
+L 341.929041 237.8952 
+z
+" style="fill: #6588a6"/>
+  </g>
+  <g id="patch_21">
+   <path d="M 456.707373 256.1688 
+L 472.032 256.1688 
+L 472.032 237.8952 
+L 456.707373 237.8952 
+z
+" style="fill: #c9c3b8"/>
+  </g>
+  <g id="text_1">
+   <text style="font-weight: 700; font-size: 24px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #333333" x="27.72" y="38.383312" transform="rotate(-0 27.72 38.383312)">Current status of Gulf of America wells</text>
+  </g>
+  <g id="text_2">
+   <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #333333" x="28.512" y="68.090456" transform="rotate(-0 28.512 68.090456)">Each bar represents all wells in its water depth band on 23 Nov 2026.</text>
+  </g>
+  <g id="text_3">
+   <text style="font-weight: 700; font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #333333" x="28.512" y="104.039452" transform="rotate(-0 28.512 104.039452)">Water depth (m)</text>
+  </g>
+  <g id="text_4">
+   <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #333333" x="28.512" y="138.477656" transform="rotate(-0 28.512 138.477656)">Under 100 m</text>
+  </g>
+  <g id="text_5">
+   <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #333333" x="28.512" y="175.701188" transform="rotate(-0 28.512 175.701188)">100 to 500 m</text>
+  </g>
+  <g id="text_6">
+   <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #333333" x="28.512" y="212.925188" transform="rotate(-0 28.512 212.925188)">500 to 1,500 m</text>
+  </g>
+  <g id="text_7">
+   <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #333333" x="28.512" y="250.149656" transform="rotate(-0 28.512 250.149656)">1,500 m and deeper</text>
+  </g>
+  <g id="text_8">
+   <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #333333" x="190.872" y="284.146456" transform="rotate(-0 190.872 284.146456)">0%</text>
+  </g>
+  <g id="text_9">
+   <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #333333" x="261.162" y="284.146456" transform="rotate(-0 261.162 284.146456)">25%</text>
+  </g>
+  <g id="text_10">
+   <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #333333" x="331.452" y="284.146456" transform="rotate(-0 331.452 284.146456)">50%</text>
+  </g>
+  <g id="text_11">
+   <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #333333" x="401.742" y="284.146456" transform="rotate(-0 401.742 284.146456)">75%</text>
+  </g>
+  <g id="text_12">
+   <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #333333" x="472.032" y="284.146456" transform="rotate(-0 472.032 284.146456)">100%</text>
+  </g>
+  <g id="text_13">
+   <text style="font-weight: 700; font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #333333" x="521.928" y="104.039022" transform="rotate(-0 521.928 104.039022)">PA</text>
+  </g>
+  <g id="text_14">
+   <text style="font-weight: 700; font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #333333" x="591.624" y="104.039022" transform="rotate(-0 591.624 104.039022)">TA</text>
+  </g>
+  <g id="text_15">
+   <text style="font-weight: 700; font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #333333" x="661.32" y="104.039022" transform="rotate(-0 661.32 104.039022)">COM</text>
+  </g>
+  <g id="text_16">
+   <text style="font-weight: 700; font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #333333" x="731.016" y="104.039452" transform="rotate(-0 731.016 104.039452)">Other</text>
+  </g>
+  <g id="text_17">
+   <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #333333" x="539.352" y="138.477188" transform="rotate(-0 539.352 138.477188)">84.5%</text>
+  </g>
+  <g id="text_18">
+   <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #333333" x="609.048" y="138.477188" transform="rotate(-0 609.048 138.477188)">7.4%</text>
+  </g>
+  <g id="text_19">
+   <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #333333" x="678.744" y="138.477188" transform="rotate(-0 678.744 138.477188)">7.4%</text>
+  </g>
+  <g id="text_20">
+   <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #333333" x="748.44" y="138.477188" transform="rotate(-0 748.44 138.477188)">0.8%</text>
+  </g>
+  <g id="text_21">
+   <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #333333" x="539.352" y="175.701188" transform="rotate(-0 539.352 175.701188)">72.2%</text>
+  </g>
+  <g id="text_22">
+   <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #333333" x="609.048" y="175.701188" transform="rotate(-0 609.048 175.701188)">13.8%</text>
+  </g>
+  <g id="text_23">
+   <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #333333" x="678.744" y="175.701188" transform="rotate(-0 678.744 175.701188)">13.6%</text>
+  </g>
+  <g id="text_24">
+   <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #333333" x="748.44" y="175.701188" transform="rotate(-0 748.44 175.701188)">0.4%</text>
+  </g>
+  <g id="text_25">
+   <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #333333" x="539.352" y="212.925188" transform="rotate(-0 539.352 212.925188)">62.7%</text>
+  </g>
+  <g id="text_26">
+   <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #333333" x="609.048" y="212.925188" transform="rotate(-0 609.048 212.925188)">5.2%</text>
+  </g>
+  <g id="text_27">
+   <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #333333" x="678.744" y="212.925188" transform="rotate(-0 678.744 212.925188)">29.3%</text>
+  </g>
+  <g id="text_28">
+   <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #333333" x="748.44" y="212.925188" transform="rotate(-0 748.44 212.925188)">2.7%</text>
+  </g>
+  <g id="text_29">
+   <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #333333" x="539.352" y="250.149188" transform="rotate(-0 539.352 250.149188)">49.1%</text>
+  </g>
+  <g id="text_30">
+   <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #333333" x="609.048" y="250.149188" transform="rotate(-0 609.048 250.149188)">4.7%</text>
+  </g>
+  <g id="text_31">
+   <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #333333" x="678.744" y="250.149188" transform="rotate(-0 678.744 250.149188)">40.8%</text>
+  </g>
+  <g id="text_32">
+   <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #333333" x="748.44" y="250.149188" transform="rotate(-0 748.44 250.149188)">5.5%</text>
+  </g>
+  <g id="text_33">
+   <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #333333" x="28.512" y="309.188447" transform="rotate(-0 28.512 309.188447)">PA  Permanently abandoned     TA  Temporarily abandoned     COM  Completed</text>
+  </g>
+  <g id="text_34">
+   <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #333333" x="28.512" y="326.785247" transform="rotate(-0 28.512 326.785247)">BSEE borehole file, 23 Nov 2026.  63 wells have no reported water depth.</text>
+  </g>
+ </g>
+</svg>

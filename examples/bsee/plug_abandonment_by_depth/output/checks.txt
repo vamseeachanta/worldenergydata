@@ -1,0 +1,380 @@
+PASS | all source SHA-256 values verified before record reads | 2 BSEE ZIPs, 2 data members
+PASS | Gulf boreholes (REGION_CODE = G) | read 57520 = kept 55586 + dropped 1934
+PASS | wells with a non-CNL bore | read 38291 = kept 37529 + dropped 762
+PASS | remaining wells with any dated spud | read 37529 = kept 37513 + dropped 16
+PASS | bores of eligible Gulf wells | read 55586 = kept 54808 + dropped 778
+PASS | bores on latest dated status per eligible well | read 54808 = kept 37566 + dropped 17242
+PASS | stable last source row per tied latest date | read 37566 = kept 37513 + dropped 53
+PASS | one winning bore per eligible API10 | 37513 wells
+PASS | EOR abandonment operation | read 45667 = kept 28975 + dropped 16692
+PASS | EOR on eligible Gulf well | read 28975 = kept 28975 + dropped 0
+PASS | EOR reached PA or TA | read 28975 = kept 26109 + dropped 2866
+PASS | EOR with dated outcome | read 26109 = kept 26109 + dropped 0
+PASS | EOR unique well-year-status | read 26109 = kept 23919 + dropped 2190
+PASS | EOR other-status cross-check abandonment operation | read 45667 = kept 28975 + dropped 16692
+PASS | EOR other-status cross-check on eligible Gulf well | read 28975 = kept 28975 + dropped 0
+PASS | EOR reached another status | read 28975 = kept 2866 + dropped 26109
+PASS | EOR other-status reports in 2007–2025 | read 2866 = kept 2246 + dropped 620
+PASS | EOR unique well-year reaching PA | read 23919 = kept 12571 + dropped 11348
+PASS | EOR coverage population with current PA | read 37513 = kept 30684 + dropped 6829
+PASS | EOR coverage current PA 2005 | read 30684 = kept 436 + dropped 30248
+PASS | EOR same-year PA match 2005 | read 436 = kept 197 + dropped 239
+PASS | EOR coverage current PA 2006 | read 30684 = kept 480 + dropped 30204
+PASS | EOR same-year PA match 2006 | read 480 = kept 405 + dropped 75
+PASS | EOR coverage current PA 2007 | read 30684 = kept 771 + dropped 29913
+PASS | EOR same-year PA match 2007 | read 771 = kept 744 + dropped 27
+PASS | EOR coverage current PA 2010_2025 | read 30684 = kept 8687 + dropped 21997
+PASS | EOR same-year PA match 2010_2025 | read 8687 = kept 8527 + dropped 160
+PASS | r4 / 0 to 200 m stock | read 37513 = kept 34015 + dropped 3498
+PASS | r4 / 0 to 200 m statuses sum to wells | statuses 34015, wells 34015
+PASS | r4 / 0 to 200 m current TA | read 34015 = kept 2592 + dropped 31423
+PASS | r4 / 0 to 200 m current PA | read 34015 = kept 28574 + dropped 5441
+PASS | r4 / 0 to 200 m current PA effective in 2005–2025 | read 28574 = kept 10769 + dropped 17805
+PASS | r4 / 0 to 200 m current PA effective in 2021–2025 | read 10769 = kept 1959 + dropped 8810
+PASS | r4 / 0 to 200 m current PA effective in 2016–2025 | read 10769 = kept 3589 + dropped 7180
+PASS | r4 / 0 to 200 m current TA age >=10 years | read 2592 = kept 1703 + dropped 889
+PASS | r4 / 0 to 200 m current TA entered since 2023 | read 2592 = kept 577 + dropped 2015
+PASS | r4 / 0 to 200 m EOR events | read 23919 = kept 21561 + dropped 2358
+PASS | r4 / 0 to 200 m EOR well/year/status events in 2005–2025 | read 21561 = kept 19620 + dropped 1941
+PASS | r4 / 0 to 200 m year bins conserve PA wells and EOR events | 10769 current PA wells and 19620 EOR events across 21 years
+PASS | r4 / 0 to 200 m annual PA counts reconcile to both pace windows | 2021–2025 1959, 2016–2025 3589
+PASS | r4 / 0 to 200 m PA in 1990s through file date | read 28574 = kept 4830 + dropped 23744
+PASS | r4 / 0 to 200 m PA in 2000s through file date | read 28574 = kept 5416 + dropped 23158
+PASS | r4 / 0 to 200 m PA in 2010s through file date | read 28574 = kept 5677 + dropped 22897
+PASS | r4 / 0 to 200 m PA in 2020s through file date | read 28574 = kept 2416 + dropped 26158
+PASS | r4 / 201 to 400 m stock | read 37513 = kept 834 + dropped 36679
+PASS | r4 / 201 to 400 m statuses sum to wells | statuses 834, wells 834
+PASS | r4 / 201 to 400 m current TA | read 834 = kept 157 + dropped 677
+PASS | r4 / 201 to 400 m current PA | read 834 = kept 525 + dropped 309
+PASS | r4 / 201 to 400 m current PA effective in 2005–2025 | read 525 = kept 212 + dropped 313
+PASS | r4 / 201 to 400 m current PA effective in 2021–2025 | read 212 = kept 11 + dropped 201
+PASS | r4 / 201 to 400 m current PA effective in 2016–2025 | read 212 = kept 129 + dropped 83
+PASS | r4 / 201 to 400 m current TA age >=10 years | read 157 = kept 90 + dropped 67
+PASS | r4 / 201 to 400 m current TA entered since 2023 | read 157 = kept 38 + dropped 119
+PASS | r4 / 201 to 400 m EOR events | read 23919 = kept 530 + dropped 23389
+PASS | r4 / 201 to 400 m EOR well/year/status events in 2005–2025 | read 530 = kept 487 + dropped 43
+PASS | r4 / 201 to 400 m year bins conserve PA wells and EOR events | 212 current PA wells and 487 EOR events across 21 years
+PASS | r4 / 201 to 400 m annual PA counts reconcile to both pace windows | 2021–2025 11, 2016–2025 129
+PASS | r4 / 201 to 400 m PA in 1990s through file date | read 525 = kept 64 + dropped 461
+PASS | r4 / 201 to 400 m PA in 2000s through file date | read 525 = kept 87 + dropped 438
+PASS | r4 / 201 to 400 m PA in 2010s through file date | read 525 = kept 102 + dropped 423
+PASS | r4 / 201 to 400 m PA in 2020s through file date | read 525 = kept 66 + dropped 459
+PASS | r4 / 401 to 800 m stock | read 37513 = kept 622 + dropped 36891
+PASS | r4 / 401 to 800 m statuses sum to wells | statuses 622, wells 622
+PASS | r4 / 401 to 800 m current TA | read 622 = kept 46 + dropped 576
+PASS | r4 / 401 to 800 m current PA | read 622 = kept 463 + dropped 159
+PASS | r4 / 401 to 800 m current PA effective in 2005–2025 | read 463 = kept 193 + dropped 270
+PASS | r4 / 401 to 800 m current PA effective in 2021–2025 | read 193 = kept 84 + dropped 109
+PASS | r4 / 401 to 800 m current PA effective in 2016–2025 | read 193 = kept 123 + dropped 70
+PASS | r4 / 401 to 800 m current TA age >=10 years | read 46 = kept 24 + dropped 22
+PASS | r4 / 401 to 800 m current TA entered since 2023 | read 46 = kept 12 + dropped 34
+PASS | r4 / 401 to 800 m EOR events | read 23919 = kept 359 + dropped 23560
+PASS | r4 / 401 to 800 m EOR well/year/status events in 2005–2025 | read 359 = kept 347 + dropped 12
+PASS | r4 / 401 to 800 m year bins conserve PA wells and EOR events | 193 current PA wells and 347 EOR events across 21 years
+PASS | r4 / 401 to 800 m annual PA counts reconcile to both pace windows | 2021–2025 84, 2016–2025 123
+PASS | r4 / 401 to 800 m PA in 1990s through file date | read 463 = kept 90 + dropped 373
+PASS | r4 / 401 to 800 m PA in 2000s through file date | read 463 = kept 79 + dropped 384
+PASS | r4 / 401 to 800 m PA in 2010s through file date | read 463 = kept 69 + dropped 394
+PASS | r4 / 401 to 800 m PA in 2020s through file date | read 463 = kept 92 + dropped 371
+PASS | r4 / 801 to 1,000 m stock | read 37513 = kept 346 + dropped 37167
+PASS | r4 / 801 to 1,000 m statuses sum to wells | statuses 346, wells 346
+PASS | r4 / 801 to 1,000 m current TA | read 346 = kept 25 + dropped 321
+PASS | r4 / 801 to 1,000 m current PA | read 346 = kept 187 + dropped 159
+PASS | r4 / 801 to 1,000 m current PA effective in 2005–2025 | read 187 = kept 108 + dropped 79
+PASS | r4 / 801 to 1,000 m current PA effective in 2021–2025 | read 108 = kept 24 + dropped 84
+PASS | r4 / 801 to 1,000 m current PA effective in 2016–2025 | read 108 = kept 62 + dropped 46
+PASS | r4 / 801 to 1,000 m current TA age >=10 years | read 25 = kept 14 + dropped 11
+PASS | r4 / 801 to 1,000 m current TA entered since 2023 | read 25 = kept 7 + dropped 18
+PASS | r4 / 801 to 1,000 m EOR events | read 23919 = kept 241 + dropped 23678
+PASS | r4 / 801 to 1,000 m EOR well/year/status events in 2005–2025 | read 241 = kept 234 + dropped 7
+PASS | r4 / 801 to 1,000 m year bins conserve PA wells and EOR events | 108 current PA wells and 234 EOR events across 21 years
+PASS | r4 / 801 to 1,000 m annual PA counts reconcile to both pace windows | 2021–2025 24, 2016–2025 62
+PASS | r4 / 801 to 1,000 m PA in 1990s through file date | read 187 = kept 32 + dropped 155
+PASS | r4 / 801 to 1,000 m PA in 2000s through file date | read 187 = kept 43 + dropped 144
+PASS | r4 / 801 to 1,000 m PA in 2010s through file date | read 187 = kept 56 + dropped 131
+PASS | r4 / 801 to 1,000 m PA in 2020s through file date | read 187 = kept 32 + dropped 155
+PASS | r4 / Deeper than 1,000 m stock | read 37513 = kept 1633 + dropped 35880
+PASS | r4 / Deeper than 1,000 m statuses sum to wells | statuses 1633, wells 1633
+PASS | r4 / Deeper than 1,000 m current TA | read 1633 = kept 76 + dropped 1557
+PASS | r4 / Deeper than 1,000 m current PA | read 1633 = kept 874 + dropped 759
+PASS | r4 / Deeper than 1,000 m current PA effective in 2005–2025 | read 874 = kept 629 + dropped 245
+PASS | r4 / Deeper than 1,000 m current PA effective in 2021–2025 | read 629 = kept 133 + dropped 496
+PASS | r4 / Deeper than 1,000 m current PA effective in 2016–2025 | read 629 = kept 321 + dropped 308
+PASS | r4 / Deeper than 1,000 m current TA age >=10 years | read 76 = kept 17 + dropped 59
+PASS | r4 / Deeper than 1,000 m current TA entered since 2023 | read 76 = kept 48 + dropped 28
+PASS | r4 / Deeper than 1,000 m EOR events | read 23919 = kept 1228 + dropped 22691
+PASS | r4 / Deeper than 1,000 m EOR well/year/status events in 2005–2025 | read 1228 = kept 1171 + dropped 57
+PASS | r4 / Deeper than 1,000 m year bins conserve PA wells and EOR events | 629 current PA wells and 1171 EOR events across 21 years
+PASS | r4 / Deeper than 1,000 m annual PA counts reconcile to both pace windows | 2021–2025 133, 2016–2025 321
+PASS | r4 / Deeper than 1,000 m PA in 1990s through file date | read 874 = kept 97 + dropped 777
+PASS | r4 / Deeper than 1,000 m PA in 2000s through file date | read 874 = kept 214 + dropped 660
+PASS | r4 / Deeper than 1,000 m PA in 2010s through file date | read 874 = kept 357 + dropped 517
+PASS | r4 / Deeper than 1,000 m PA in 2020s through file date | read 874 = kept 193 + dropped 681
+PASS | r4 / No depth stock | read 37513 = kept 63 + dropped 37450
+PASS | r4 / No depth statuses sum to wells | statuses 63, wells 63
+PASS | r4 / No depth current TA | read 63 = kept 0 + dropped 63
+PASS | r4 / No depth current PA | read 63 = kept 61 + dropped 2
+PASS | r4 / No depth current PA effective in 2005–2025 | read 61 = kept 6 + dropped 55
+PASS | r4 / No depth current PA effective in 2021–2025 | read 6 = kept 0 + dropped 6
+PASS | r4 / No depth current PA effective in 2016–2025 | read 6 = kept 0 + dropped 6
+PASS | r4 / No depth current TA age >=10 years | read 0 = kept 0 + dropped 0
+PASS | r4 / No depth current TA entered since 2023 | read 0 = kept 0 + dropped 0
+PASS | r4 / No depth EOR events | read 23919 = kept 0 + dropped 23919
+PASS | r4 / No depth EOR well/year/status events in 2005–2025 | read 0 = kept 0 + dropped 0
+PASS | r4 / No depth year bins conserve PA wells and EOR events | 6 current PA wells and 0 EOR events across 21 years
+PASS | r4 / No depth annual PA counts reconcile to both pace windows | 2021–2025 0, 2016–2025 0
+PASS | r4 / No depth PA in 1990s through file date | read 61 = kept 1 + dropped 60
+PASS | r4 / No depth PA in 2000s through file date | read 61 = kept 6 + dropped 55
+PASS | r4 / No depth PA in 2010s through file date | read 61 = kept 2 + dropped 59
+PASS | r4 / No depth PA in 2020s through file date | read 61 = kept 0 + dropped 61
+PASS | r4 / All depths statuses sum to wells | statuses 37513, wells 37513
+PASS | r4 / All depths current TA | read 37513 = kept 2896 + dropped 34617
+PASS | r4 / All depths current PA | read 37513 = kept 30684 + dropped 6829
+PASS | r4 / All depths current PA effective in 2005–2025 | read 30684 = kept 11917 + dropped 18767
+PASS | r4 / All depths current PA effective in 2021–2025 | read 11917 = kept 2211 + dropped 9706
+PASS | r4 / All depths current PA effective in 2016–2025 | read 11917 = kept 4224 + dropped 7693
+PASS | r4 / All depths current TA age >=10 years | read 2896 = kept 1848 + dropped 1048
+PASS | r4 / All depths current TA entered since 2023 | read 2896 = kept 682 + dropped 2214
+PASS | r4 / All depths EOR well/year/status events in 2005–2025 | read 23919 = kept 21859 + dropped 2060
+PASS | r4 / All depths year bins conserve PA wells and EOR events | 11917 current PA wells and 21859 EOR events across 21 years
+PASS | r4 / All depths annual PA counts reconcile to both pace windows | 2021–2025 2211, 2016–2025 4224
+PASS | r4 / All depths PA in 1990s through file date | read 30684 = kept 5114 + dropped 25570
+PASS | r4 / All depths PA in 2000s through file date | read 30684 = kept 5845 + dropped 24839
+PASS | r4 / All depths PA in 2010s through file date | read 30684 = kept 6263 + dropped 24421
+PASS | r4 / All depths PA in 2020s through file date | read 30684 = kept 2799 + dropped 27885
+PASS | r4 minus 5% depth perturbation conserves wells | reclassified 37513 of 37513
+PASS | r4 plus 5% depth perturbation conserves wells | reclassified 37513 of 37513
+PASS | r4 bands plus no depth sum to all-depth wells | total 37513
+PASS | r4 bands plus no depth sum to all-depth PA | total 30684
+PASS | r4 bands plus no depth sum to all-depth TA | total 2896
+PASS | r4 bands plus no depth sum to all-depth COM | total 3579
+PASS | r4 bands plus no depth sum to all-depth Other | total 354
+PASS | r4 separate no-depth row | 63 wells, 61 PA
+PASS | r4 TA age table reconciles to status counts | 2896 TA all depths
+PASS | r4 annual PA stock and EOR event totals 2005 | PA 436, EOR PA 215, EOR TA 329
+PASS | r4 annual PA stock and EOR event totals 2006 | PA 480, EOR PA 418, EOR TA 573
+PASS | r4 annual PA stock and EOR event totals 2007 | PA 771, EOR PA 766, EOR TA 691
+PASS | r4 annual PA stock and EOR event totals 2008 | PA 661, EOR PA 673, EOR TA 676
+PASS | r4 annual PA stock and EOR event totals 2009 | PA 882, EOR PA 846, EOR TA 1005
+PASS | r4 annual PA stock and EOR event totals 2010 | PA 976, EOR PA 917, EOR TA 812
+PASS | r4 annual PA stock and EOR event totals 2011 | PA 1000, EOR PA 968, EOR TA 716
+PASS | r4 annual PA stock and EOR event totals 2012 | PA 801, EOR PA 798, EOR TA 776
+PASS | r4 annual PA stock and EOR event totals 2013 | PA 585, EOR PA 583, EOR TA 880
+PASS | r4 annual PA stock and EOR event totals 2014 | PA 627, EOR PA 633, EOR TA 681
+PASS | r4 annual PA stock and EOR event totals 2015 | PA 474, EOR PA 475, EOR TA 440
+PASS | r4 annual PA stock and EOR event totals 2016 | PA 682, EOR PA 687, EOR TA 315
+PASS | r4 annual PA stock and EOR event totals 2017 | PA 418, EOR PA 417, EOR TA 324
+PASS | r4 annual PA stock and EOR event totals 2018 | PA 396, EOR PA 391, EOR TA 251
+PASS | r4 annual PA stock and EOR event totals 2019 | PA 304, EOR PA 302, EOR TA 265
+PASS | r4 annual PA stock and EOR event totals 2020 | PA 213, EOR PA 219, EOR TA 135
+PASS | r4 annual PA stock and EOR event totals 2021 | PA 300, EOR PA 302, EOR TA 159
+PASS | r4 annual PA stock and EOR event totals 2022 | PA 399, EOR PA 400, EOR TA 352
+PASS | r4 annual PA stock and EOR event totals 2023 | PA 626, EOR PA 624, EOR TA 503
+PASS | r4 annual PA stock and EOR event totals 2024 | PA 311, EOR PA 310, EOR TA 209
+PASS | r4 annual PA stock and EOR event totals 2025 | PA 575, EOR PA 573, EOR TA 250
+PASS | EOR dated 2007–2025 for Figure 4 caption | read 23919 = kept 20324 + dropped 3595
+PASS | r4 TA stock on 23 Nov 2026 | computed 2896, published 2896
+PASS | series / Under 100 m stock | read 37513 = kept 32040 + dropped 5473
+PASS | series / Under 100 m statuses sum to wells | statuses 32040, wells 32040
+PASS | series / Under 100 m current TA | read 32040 = kept 2360 + dropped 29680
+PASS | series / Under 100 m current PA | read 32040 = kept 27069 + dropped 4971
+PASS | series / Under 100 m current PA effective in 2005–2025 | read 27069 = kept 10157 + dropped 16912
+PASS | series / Under 100 m current PA effective in 2021–2025 | read 10157 = kept 1855 + dropped 8302
+PASS | series / Under 100 m current PA effective in 2016–2025 | read 10157 = kept 3383 + dropped 6774
+PASS | series / Under 100 m current TA age >=10 years | read 2360 = kept 1567 + dropped 793
+PASS | series / Under 100 m current TA entered since 2023 | read 2360 = kept 506 + dropped 1854
+PASS | series / Under 100 m EOR events | read 23919 = kept 20295 + dropped 3624
+PASS | series / Under 100 m EOR well/year/status events in 2005–2025 | read 20295 = kept 18450 + dropped 1845
+PASS | series / Under 100 m year bins conserve PA wells and EOR events | 10157 current PA wells and 18450 EOR events across 21 years
+PASS | series / Under 100 m annual PA counts reconcile to both pace windows | 2021–2025 1855, 2016–2025 3383
+PASS | series / Under 100 m PA in 1990s through file date | read 27069 = kept 4593 + dropped 22476
+PASS | series / Under 100 m PA in 2000s through file date | read 27069 = kept 5215 + dropped 21854
+PASS | series / Under 100 m PA in 2010s through file date | read 27069 = kept 5300 + dropped 21769
+PASS | series / Under 100 m PA in 2020s through file date | read 27069 = kept 2280 + dropped 24789
+PASS | series / 100 to under 500 m stock | read 37513 = kept 3000 + dropped 34513
+PASS | series / 100 to under 500 m statuses sum to wells | statuses 3000, wells 3000
+PASS | series / 100 to under 500 m current TA | read 3000 = kept 415 + dropped 2585
+PASS | series / 100 to under 500 m current PA | read 3000 = kept 2165 + dropped 835
+PASS | series / 100 to under 500 m current PA effective in 2005–2025 | read 2165 = kept 864 + dropped 1301
+PASS | series / 100 to under 500 m current PA effective in 2021–2025 | read 864 = kept 121 + dropped 743
+PASS | series / 100 to under 500 m current PA effective in 2016–2025 | read 864 = kept 354 + dropped 510
+PASS | series / 100 to under 500 m current TA age >=10 years | read 415 = kept 244 + dropped 171
+PASS | series / 100 to under 500 m current TA entered since 2023 | read 415 = kept 113 + dropped 302
+PASS | series / 100 to under 500 m EOR events | read 23919 = kept 1878 + dropped 22041
+PASS | series / 100 to under 500 m EOR well/year/status events in 2005–2025 | read 1878 = kept 1733 + dropped 145
+PASS | series / 100 to under 500 m year bins conserve PA wells and EOR events | 864 current PA wells and 1733 EOR events across 21 years
+PASS | series / 100 to under 500 m annual PA counts reconcile to both pace windows | 2021–2025 121, 2016–2025 354
+PASS | series / 100 to under 500 m PA in 1990s through file date | read 2165 = kept 325 + dropped 1840
+PASS | series / 100 to under 500 m PA in 2000s through file date | read 2165 = kept 315 + dropped 1850
+PASS | series / 100 to under 500 m PA in 2010s through file date | read 2165 = kept 498 + dropped 1667
+PASS | series / 100 to under 500 m PA in 2020s through file date | read 2165 = kept 210 + dropped 1955
+PASS | series / 500 to under 1,500 m stock | read 37513 = kept 1511 + dropped 36002
+PASS | series / 500 to under 1,500 m statuses sum to wells | statuses 1511, wells 1511
+PASS | series / 500 to under 1,500 m current TA | read 1511 = kept 79 + dropped 1432
+PASS | series / 500 to under 1,500 m current PA | read 1511 = kept 948 + dropped 563
+PASS | series / 500 to under 1,500 m current PA effective in 2005–2025 | read 948 = kept 541 + dropped 407
+PASS | series / 500 to under 1,500 m current PA effective in 2021–2025 | read 541 = kept 173 + dropped 368
+PASS | series / 500 to under 1,500 m current PA effective in 2016–2025 | read 541 = kept 322 + dropped 219
+PASS | series / 500 to under 1,500 m current TA age >=10 years | read 79 = kept 30 + dropped 49
+PASS | series / 500 to under 1,500 m current TA entered since 2023 | read 79 = kept 34 + dropped 45
+PASS | series / 500 to under 1,500 m EOR events | read 23919 = kept 1069 + dropped 22850
+PASS | series / 500 to under 1,500 m EOR well/year/status events in 2005–2025 | read 1069 = kept 1034 + dropped 35
+PASS | series / 500 to under 1,500 m year bins conserve PA wells and EOR events | 541 current PA wells and 1034 EOR events across 21 years
+PASS | series / 500 to under 1,500 m annual PA counts reconcile to both pace windows | 2021–2025 173, 2016–2025 322
+PASS | series / 500 to under 1,500 m PA in 1990s through file date | read 948 = kept 170 + dropped 778
+PASS | series / 500 to under 1,500 m PA in 2000s through file date | read 948 = kept 204 + dropped 744
+PASS | series / 500 to under 1,500 m PA in 2010s through file date | read 948 = kept 257 + dropped 691
+PASS | series / 500 to under 1,500 m PA in 2020s through file date | read 948 = kept 211 + dropped 737
+PASS | series / 1,500 m and deeper stock | read 37513 = kept 899 + dropped 36614
+PASS | series / 1,500 m and deeper statuses sum to wells | statuses 899, wells 899
+PASS | series / 1,500 m and deeper current TA | read 899 = kept 42 + dropped 857
+PASS | series / 1,500 m and deeper current PA | read 899 = kept 441 + dropped 458
+PASS | series / 1,500 m and deeper current PA effective in 2005–2025 | read 441 = kept 349 + dropped 92
+PASS | series / 1,500 m and deeper current PA effective in 2021–2025 | read 349 = kept 62 + dropped 287
+PASS | series / 1,500 m and deeper current PA effective in 2016–2025 | read 349 = kept 165 + dropped 184
+PASS | series / 1,500 m and deeper current TA age >=10 years | read 42 = kept 7 + dropped 35
+PASS | series / 1,500 m and deeper current TA entered since 2023 | read 42 = kept 29 + dropped 13
+PASS | series / 1,500 m and deeper EOR events | read 23919 = kept 677 + dropped 23242
+PASS | series / 1,500 m and deeper EOR well/year/status events in 2005–2025 | read 677 = kept 642 + dropped 35
+PASS | series / 1,500 m and deeper year bins conserve PA wells and EOR events | 349 current PA wells and 642 EOR events across 21 years
+PASS | series / 1,500 m and deeper annual PA counts reconcile to both pace windows | 2021–2025 62, 2016–2025 165
+PASS | series / 1,500 m and deeper PA in 1990s through file date | read 441 = kept 25 + dropped 416
+PASS | series / 1,500 m and deeper PA in 2000s through file date | read 441 = kept 105 + dropped 336
+PASS | series / 1,500 m and deeper PA in 2010s through file date | read 441 = kept 206 + dropped 235
+PASS | series / 1,500 m and deeper PA in 2020s through file date | read 441 = kept 98 + dropped 343
+PASS | series / No depth stock | read 37513 = kept 63 + dropped 37450
+PASS | series / No depth statuses sum to wells | statuses 63, wells 63
+PASS | series / No depth current TA | read 63 = kept 0 + dropped 63
+PASS | series / No depth current PA | read 63 = kept 61 + dropped 2
+PASS | series / No depth current PA effective in 2005–2025 | read 61 = kept 6 + dropped 55
+PASS | series / No depth current PA effective in 2021–2025 | read 6 = kept 0 + dropped 6
+PASS | series / No depth current PA effective in 2016–2025 | read 6 = kept 0 + dropped 6
+PASS | series / No depth current TA age >=10 years | read 0 = kept 0 + dropped 0
+PASS | series / No depth current TA entered since 2023 | read 0 = kept 0 + dropped 0
+PASS | series / No depth EOR events | read 23919 = kept 0 + dropped 23919
+PASS | series / No depth EOR well/year/status events in 2005–2025 | read 0 = kept 0 + dropped 0
+PASS | series / No depth year bins conserve PA wells and EOR events | 6 current PA wells and 0 EOR events across 21 years
+PASS | series / No depth annual PA counts reconcile to both pace windows | 2021–2025 0, 2016–2025 0
+PASS | series / No depth PA in 1990s through file date | read 61 = kept 1 + dropped 60
+PASS | series / No depth PA in 2000s through file date | read 61 = kept 6 + dropped 55
+PASS | series / No depth PA in 2010s through file date | read 61 = kept 2 + dropped 59
+PASS | series / No depth PA in 2020s through file date | read 61 = kept 0 + dropped 61
+PASS | series / All depths statuses sum to wells | statuses 37513, wells 37513
+PASS | series / All depths current TA | read 37513 = kept 2896 + dropped 34617
+PASS | series / All depths current PA | read 37513 = kept 30684 + dropped 6829
+PASS | series / All depths current PA effective in 2005–2025 | read 30684 = kept 11917 + dropped 18767
+PASS | series / All depths current PA effective in 2021–2025 | read 11917 = kept 2211 + dropped 9706
+PASS | series / All depths current PA effective in 2016–2025 | read 11917 = kept 4224 + dropped 7693
+PASS | series / All depths current TA age >=10 years | read 2896 = kept 1848 + dropped 1048
+PASS | series / All depths current TA entered since 2023 | read 2896 = kept 682 + dropped 2214
+PASS | series / All depths EOR well/year/status events in 2005–2025 | read 23919 = kept 21859 + dropped 2060
+PASS | series / All depths year bins conserve PA wells and EOR events | 11917 current PA wells and 21859 EOR events across 21 years
+PASS | series / All depths annual PA counts reconcile to both pace windows | 2021–2025 2211, 2016–2025 4224
+PASS | series / All depths PA in 1990s through file date | read 30684 = kept 5114 + dropped 25570
+PASS | series / All depths PA in 2000s through file date | read 30684 = kept 5845 + dropped 24839
+PASS | series / All depths PA in 2010s through file date | read 30684 = kept 6263 + dropped 24421
+PASS | series / All depths PA in 2020s through file date | read 30684 = kept 2799 + dropped 27885
+PASS | series minus 5% depth perturbation conserves wells | reclassified 37513 of 37513
+PASS | series plus 5% depth perturbation conserves wells | reclassified 37513 of 37513
+PASS | series bands plus no depth sum to all-depth wells | total 37513
+PASS | series bands plus no depth sum to all-depth PA | total 30684
+PASS | series bands plus no depth sum to all-depth TA | total 2896
+PASS | series bands plus no depth sum to all-depth COM | total 3579
+PASS | series bands plus no depth sum to all-depth Other | total 354
+PASS | series separate no-depth row | 63 wells, 61 PA
+PASS | series TA age table reconciles to status counts | 2896 TA all depths
+PASS | series annual PA stock and EOR event totals 2005 | PA 436, EOR PA 215, EOR TA 329
+PASS | series annual PA stock and EOR event totals 2006 | PA 480, EOR PA 418, EOR TA 573
+PASS | series annual PA stock and EOR event totals 2007 | PA 771, EOR PA 766, EOR TA 691
+PASS | series annual PA stock and EOR event totals 2008 | PA 661, EOR PA 673, EOR TA 676
+PASS | series annual PA stock and EOR event totals 2009 | PA 882, EOR PA 846, EOR TA 1005
+PASS | series annual PA stock and EOR event totals 2010 | PA 976, EOR PA 917, EOR TA 812
+PASS | series annual PA stock and EOR event totals 2011 | PA 1000, EOR PA 968, EOR TA 716
+PASS | series annual PA stock and EOR event totals 2012 | PA 801, EOR PA 798, EOR TA 776
+PASS | series annual PA stock and EOR event totals 2013 | PA 585, EOR PA 583, EOR TA 880
+PASS | series annual PA stock and EOR event totals 2014 | PA 627, EOR PA 633, EOR TA 681
+PASS | series annual PA stock and EOR event totals 2015 | PA 474, EOR PA 475, EOR TA 440
+PASS | series annual PA stock and EOR event totals 2016 | PA 682, EOR PA 687, EOR TA 315
+PASS | series annual PA stock and EOR event totals 2017 | PA 418, EOR PA 417, EOR TA 324
+PASS | series annual PA stock and EOR event totals 2018 | PA 396, EOR PA 391, EOR TA 251
+PASS | series annual PA stock and EOR event totals 2019 | PA 304, EOR PA 302, EOR TA 265
+PASS | series annual PA stock and EOR event totals 2020 | PA 213, EOR PA 219, EOR TA 135
+PASS | series annual PA stock and EOR event totals 2021 | PA 300, EOR PA 302, EOR TA 159
+PASS | series annual PA stock and EOR event totals 2022 | PA 399, EOR PA 400, EOR TA 352
+PASS | series annual PA stock and EOR event totals 2023 | PA 626, EOR PA 624, EOR TA 503
+PASS | series annual PA stock and EOR event totals 2024 | PA 311, EOR PA 310, EOR TA 209
+PASS | series annual PA stock and EOR event totals 2025 | PA 575, EOR PA 573, EOR TA 250
+PASS | Figure 3 annual PA conservation 1960 | band sum 97, all-depth latest-status PA 97; r4 Figure 4 outside coverage (2007 to 2025)
+PASS | Figure 3 annual PA conservation 1961 | band sum 91, all-depth latest-status PA 91; r4 Figure 4 outside coverage (2007 to 2025)
+PASS | Figure 3 annual PA conservation 1962 | band sum 158, all-depth latest-status PA 158; r4 Figure 4 outside coverage (2007 to 2025)
+PASS | Figure 3 annual PA conservation 1963 | band sum 171, all-depth latest-status PA 171; r4 Figure 4 outside coverage (2007 to 2025)
+PASS | Figure 3 annual PA conservation 1964 | band sum 187, all-depth latest-status PA 187; r4 Figure 4 outside coverage (2007 to 2025)
+PASS | Figure 3 annual PA conservation 1965 | band sum 199, all-depth latest-status PA 199; r4 Figure 4 outside coverage (2007 to 2025)
+PASS | Figure 3 annual PA conservation 1966 | band sum 327, all-depth latest-status PA 327; r4 Figure 4 outside coverage (2007 to 2025)
+PASS | Figure 3 annual PA conservation 1967 | band sum 322, all-depth latest-status PA 322; r4 Figure 4 outside coverage (2007 to 2025)
+PASS | Figure 3 annual PA conservation 1968 | band sum 281, all-depth latest-status PA 281; r4 Figure 4 outside coverage (2007 to 2025)
+PASS | Figure 3 annual PA conservation 1969 | band sum 275, all-depth latest-status PA 275; r4 Figure 4 outside coverage (2007 to 2025)
+PASS | Figure 3 annual PA conservation 1970 | band sum 311, all-depth latest-status PA 311; r4 Figure 4 outside coverage (2007 to 2025)
+PASS | Figure 3 annual PA conservation 1971 | band sum 385, all-depth latest-status PA 385; r4 Figure 4 outside coverage (2007 to 2025)
+PASS | Figure 3 annual PA conservation 1972 | band sum 337, all-depth latest-status PA 337; r4 Figure 4 outside coverage (2007 to 2025)
+PASS | Figure 3 annual PA conservation 1973 | band sum 351, all-depth latest-status PA 351; r4 Figure 4 outside coverage (2007 to 2025)
+PASS | Figure 3 annual PA conservation 1974 | band sum 413, all-depth latest-status PA 413; r4 Figure 4 outside coverage (2007 to 2025)
+PASS | Figure 3 annual PA conservation 1975 | band sum 386, all-depth latest-status PA 386; r4 Figure 4 outside coverage (2007 to 2025)
+PASS | Figure 3 annual PA conservation 1976 | band sum 382, all-depth latest-status PA 382; r4 Figure 4 outside coverage (2007 to 2025)
+PASS | Figure 3 annual PA conservation 1977 | band sum 353, all-depth latest-status PA 353; r4 Figure 4 outside coverage (2007 to 2025)
+PASS | Figure 3 annual PA conservation 1978 | band sum 373, all-depth latest-status PA 373; r4 Figure 4 outside coverage (2007 to 2025)
+PASS | Figure 3 annual PA conservation 1979 | band sum 327, all-depth latest-status PA 327; r4 Figure 4 outside coverage (2007 to 2025)
+PASS | Figure 3 annual PA conservation 1980 | band sum 340, all-depth latest-status PA 340; r4 Figure 4 outside coverage (2007 to 2025)
+PASS | Figure 3 annual PA conservation 1981 | band sum 357, all-depth latest-status PA 357; r4 Figure 4 outside coverage (2007 to 2025)
+PASS | Figure 3 annual PA conservation 1982 | band sum 331, all-depth latest-status PA 331; r4 Figure 4 outside coverage (2007 to 2025)
+PASS | Figure 3 annual PA conservation 1983 | band sum 530, all-depth latest-status PA 530; r4 Figure 4 outside coverage (2007 to 2025)
+PASS | Figure 3 annual PA conservation 1984 | band sum 528, all-depth latest-status PA 528; r4 Figure 4 outside coverage (2007 to 2025)
+PASS | Figure 3 annual PA conservation 1985 | band sum 522, all-depth latest-status PA 522; r4 Figure 4 outside coverage (2007 to 2025)
+PASS | Figure 3 annual PA conservation 1986 | band sum 428, all-depth latest-status PA 428; r4 Figure 4 outside coverage (2007 to 2025)
+PASS | Figure 3 annual PA conservation 1987 | band sum 331, all-depth latest-status PA 331; r4 Figure 4 outside coverage (2007 to 2025)
+PASS | Figure 3 annual PA conservation 1988 | band sum 627, all-depth latest-status PA 627; r4 Figure 4 outside coverage (2007 to 2025)
+PASS | Figure 3 annual PA conservation 1989 | band sum 551, all-depth latest-status PA 551; r4 Figure 4 outside coverage (2007 to 2025)
+PASS | Figure 3 annual PA conservation 1990 | band sum 596, all-depth latest-status PA 596; r4 Figure 4 outside coverage (2007 to 2025)
+PASS | Figure 3 annual PA conservation 1991 | band sum 623, all-depth latest-status PA 623; r4 Figure 4 outside coverage (2007 to 2025)
+PASS | Figure 3 annual PA conservation 1992 | band sum 438, all-depth latest-status PA 438; r4 Figure 4 outside coverage (2007 to 2025)
+PASS | Figure 3 annual PA conservation 1993 | band sum 530, all-depth latest-status PA 530; r4 Figure 4 outside coverage (2007 to 2025)
+PASS | Figure 3 annual PA conservation 1994 | band sum 466, all-depth latest-status PA 466; r4 Figure 4 outside coverage (2007 to 2025)
+PASS | Figure 3 annual PA conservation 1995 | band sum 379, all-depth latest-status PA 379; r4 Figure 4 outside coverage (2007 to 2025)
+PASS | Figure 3 annual PA conservation 1996 | band sum 548, all-depth latest-status PA 548; r4 Figure 4 outside coverage (2007 to 2025)
+PASS | Figure 3 annual PA conservation 1997 | band sum 669, all-depth latest-status PA 669; r4 Figure 4 outside coverage (2007 to 2025)
+PASS | Figure 3 annual PA conservation 1998 | band sum 403, all-depth latest-status PA 403; r4 Figure 4 outside coverage (2007 to 2025)
+PASS | Figure 3 annual PA conservation 1999 | band sum 462, all-depth latest-status PA 462; r4 Figure 4 outside coverage (2007 to 2025)
+PASS | Figure 3 annual PA conservation 2000 | band sum 547, all-depth latest-status PA 547; r4 Figure 4 outside coverage (2007 to 2025)
+PASS | Figure 3 annual PA conservation 2001 | band sum 498, all-depth latest-status PA 498; r4 Figure 4 outside coverage (2007 to 2025)
+PASS | Figure 3 annual PA conservation 2002 | band sum 446, all-depth latest-status PA 446; r4 Figure 4 outside coverage (2007 to 2025)
+PASS | Figure 3 annual PA conservation 2003 | band sum 574, all-depth latest-status PA 574; r4 Figure 4 outside coverage (2007 to 2025)
+PASS | Figure 3 annual PA conservation 2004 | band sum 550, all-depth latest-status PA 550; r4 Figure 4 outside coverage (2007 to 2025)
+PASS | Figure 3 annual PA conservation 2005 | band sum 436, all-depth latest-status PA 436; r4 Figure 4 outside coverage (2007 to 2025)
+PASS | Figure 3 annual PA conservation 2006 | band sum 480, all-depth latest-status PA 480; r4 Figure 4 outside coverage (2007 to 2025)
+PASS | Figure 3 annual PA conservation 2007 | band sum 771, all-depth latest-status PA 771; r4 Figure 4 EOR PA 766, Figure 3 minus Figure 4 +5; latest-status PA only 27, EOR reached PA only 22 for this well/year
+PASS | Figure 3 annual PA conservation 2008 | band sum 661, all-depth latest-status PA 661; r4 Figure 4 EOR PA 673, Figure 3 minus Figure 4 -12; latest-status PA only 17, EOR reached PA only 29 for this well/year
+PASS | Figure 3 annual PA conservation 2009 | band sum 882, all-depth latest-status PA 882; r4 Figure 4 EOR PA 846, Figure 3 minus Figure 4 +36; latest-status PA only 53, EOR reached PA only 17 for this well/year
+PASS | Figure 3 annual PA conservation 2010 | band sum 976, all-depth latest-status PA 976; r4 Figure 4 EOR PA 917, Figure 3 minus Figure 4 +59; latest-status PA only 66, EOR reached PA only 7 for this well/year
+PASS | Figure 3 annual PA conservation 2011 | band sum 1000, all-depth latest-status PA 1000; r4 Figure 4 EOR PA 968, Figure 3 minus Figure 4 +32; latest-status PA only 36, EOR reached PA only 4 for this well/year
+PASS | Figure 3 annual PA conservation 2012 | band sum 801, all-depth latest-status PA 801; r4 Figure 4 EOR PA 798, Figure 3 minus Figure 4 +3; latest-status PA only 6, EOR reached PA only 3 for this well/year
+PASS | Figure 3 annual PA conservation 2013 | band sum 585, all-depth latest-status PA 585; r4 Figure 4 EOR PA 583, Figure 3 minus Figure 4 +2; latest-status PA only 8, EOR reached PA only 6 for this well/year
+PASS | Figure 3 annual PA conservation 2014 | band sum 627, all-depth latest-status PA 627; r4 Figure 4 EOR PA 633, Figure 3 minus Figure 4 -6; latest-status PA only 4, EOR reached PA only 10 for this well/year
+PASS | Figure 3 annual PA conservation 2015 | band sum 474, all-depth latest-status PA 474; r4 Figure 4 EOR PA 475, Figure 3 minus Figure 4 -1; latest-status PA only 3, EOR reached PA only 4 for this well/year
+PASS | Figure 3 annual PA conservation 2016 | band sum 682, all-depth latest-status PA 682; r4 Figure 4 EOR PA 687, Figure 3 minus Figure 4 -5; latest-status PA only 2, EOR reached PA only 7 for this well/year
+PASS | Figure 3 annual PA conservation 2017 | band sum 418, all-depth latest-status PA 418; r4 Figure 4 EOR PA 417, Figure 3 minus Figure 4 +1; latest-status PA only 9, EOR reached PA only 8 for this well/year
+PASS | Figure 3 annual PA conservation 2018 | band sum 396, all-depth latest-status PA 396; r4 Figure 4 EOR PA 391, Figure 3 minus Figure 4 +5; latest-status PA only 5, EOR reached PA only 0 for this well/year
+PASS | Figure 3 annual PA conservation 2019 | band sum 304, all-depth latest-status PA 304; r4 Figure 4 EOR PA 302, Figure 3 minus Figure 4 +2; latest-status PA only 5, EOR reached PA only 3 for this well/year
+PASS | Figure 3 annual PA conservation 2020 | band sum 213, all-depth latest-status PA 213; r4 Figure 4 EOR PA 219, Figure 3 minus Figure 4 -6; latest-status PA only 0, EOR reached PA only 6 for this well/year
+PASS | Figure 3 annual PA conservation 2021 | band sum 300, all-depth latest-status PA 300; r4 Figure 4 EOR PA 302, Figure 3 minus Figure 4 -2; latest-status PA only 2, EOR reached PA only 4 for this well/year
+PASS | Figure 3 annual PA conservation 2022 | band sum 399, all-depth latest-status PA 399; r4 Figure 4 EOR PA 400, Figure 3 minus Figure 4 -1; latest-status PA only 3, EOR reached PA only 4 for this well/year
+PASS | Figure 3 annual PA conservation 2023 | band sum 626, all-depth latest-status PA 626; r4 Figure 4 EOR PA 624, Figure 3 minus Figure 4 +2; latest-status PA only 7, EOR reached PA only 5 for this well/year
+PASS | Figure 3 annual PA conservation 2024 | band sum 311, all-depth latest-status PA 311; r4 Figure 4 EOR PA 310, Figure 3 minus Figure 4 +1; latest-status PA only 2, EOR reached PA only 1 for this well/year
+PASS | Figure 3 annual PA conservation 2025 | band sum 575, all-depth latest-status PA 575; r4 Figure 4 EOR PA 573, Figure 3 minus Figure 4 +2; latest-status PA only 2, EOR reached PA only 0 for this well/year
+PASS | status_share_by_band SVG | editable text, label and SVG element checks
+PASS | status_share_by_band PNG | 1760 × 752 pixels
+PASS | ta_age_by_band SVG | editable text, label and SVG element checks
+PASS | ta_age_by_band PNG | 1760 × 752 pixels
+PASS | pa_per_year_by_band SVG | editable text, label and SVG element checks
+PASS | pa_per_year_by_band PNG | 1920 × 896 pixels
+PASS | headline table/row/field/value readback | 270 numeric or null entries
+PASS | r4 comparisons have a disposition at publication precision | 114 comparisons, 0 differences

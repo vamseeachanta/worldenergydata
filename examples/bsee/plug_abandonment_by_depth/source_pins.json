@@ -1,0 +1,26 @@
+{
+  "sources": [
+    {
+      "name": "BoreholeRawData.zip",
+      "url": "https://www.data.bsee.gov/Well/Files/BoreholeRawData.zip",
+      "last_modified": "Mon, 23 Nov 2026 10:31:21 GMT",
+      "sha256": "72fa55e55fd28db26c59e52b3a43c7d053f9d12a6d06b0a0f6a46ef541c66a5c",
+      "bytes": 3488947,
+      "member": {
+        "name": "BoreholeRawData/mv_boreholes_all.txt",
+        "sha256": "24ae892cfca23127f6398a4b8c32c96a6e560ca095afcf480829a92247117f68"
+      }
+    },
+    {
+      "name": "eWellEORRawData.zip",
+      "url": "https://www.data.bsee.gov/Well/Files/eWellEORRawData.zip",
+      "last_modified": "Mon, 23 Nov 2026 10:36:30 GMT",
+      "sha256": "b67c61826ea90aa51d7e1f01c2df94bba6e869665a7992cd5438ea538ee603bc",
+      "bytes": 4501468,
+      "member": {
+        "name": "eWellEORRawData/mv_eor_mainquery.txt",
+        "sha256": "f6ac748318b2d48d690ad9e0e4d2fcbb1842f2917b9b4448680b6e6c8f6724c6"
+      }
+    }
+  ]
+}
