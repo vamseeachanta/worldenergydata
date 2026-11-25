@@ -15,24 +15,36 @@ from pathlib import Path
 from source_inputs import EXAMPLE, input_parser, verified_inputs
 
 
-def install_output(staged, destination):
-    """Publish the whole generation. After an exchange, scratch owns the old tree."""
-    if destination.is_symlink() or staged.resolve().is_relative_to(
-        destination.resolve()
-    ):
+def validate_destination(path):
+    if path.is_symlink():
         raise ValueError("The output must be a dedicated directory")
-    if not destination.exists() or (
-        destination.is_dir() and not any(destination.iterdir())
-    ):
-        staged.replace(destination)
-        return
-    if not all(
-        (destination / name).is_file()
-        for name in ("checks.txt", "numbers.json", "lease_match_bounds.csv")
+    destination = path.resolve()
+    if Path.cwd().resolve().is_relative_to(destination):
+        raise ValueError("The output must be a dedicated directory")
+    if destination.exists() and (
+        not destination.is_dir()
+        or (
+            any(destination.iterdir())
+            and not all(
+                (destination / name).is_file()
+                for name in ("checks.txt", "numbers.json", "lease_match_bounds.csv")
+            )
+        )
     ):
         raise ValueError(
             "Choose an empty directory or an existing exploration leasing output"
         )
+    return destination
+
+
+def install_output(staged, destination):
+    """Publish the whole generation. After an exchange, scratch owns the old tree."""
+    destination = validate_destination(destination)
+    if staged.resolve().is_relative_to(destination):
+        raise ValueError("The output must be a dedicated directory")
+    if not destination.exists() or not any(destination.iterdir()):
+        staged.replace(destination)
+        return
 
     # A plain rename cannot replace a populated directory. Ask the filesystem
     # to exchange the names in one operation, keeping both generations intact.
@@ -65,8 +77,9 @@ def main():
         help="Destination for the tables, checks and figures (default: output/)",
     )
     args = parser.parse_args()
-    destination = args.output_dir
-    if args.data_dir.resolve().is_relative_to(destination.resolve()):
+    destination = validate_destination(args.output_dir)
+    archives = args.data_dir.resolve()
+    if archives.is_relative_to(destination):
         parser.error("Choose an output directory separate from the source archives")
     destination.parent.mkdir(parents=True, exist_ok=True)
     checks = []
