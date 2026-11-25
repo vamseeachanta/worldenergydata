@@ -1,0 +1,17 @@
+PASS  Four source archives match manifest byte counts and SHA-256
+PASS  Converted LSETAPE depth scale agrees with BSEE's whole-metre lease lookup within one metre
+PASS  Joins preserve every cohort lease and all exploration denominators
+PASS  All 2005–20 leases reach their fifth anniversary by the last observed Gulf spud
+PASS  Production detail has every calendar month from 2005-01 through the reported cutoff
+PASS  Issuance counts reconcile for every band and year to distinct source leases
+PASS  Every current-status code reconciles by band and year; shares use the full cohort
+PASS  Every assigned API10 is unique and counted in exactly one lease depth band
+PASS  Exploration counts reconcile across bands, years, unique wells and all cohort leases
+PASS  Borehole-site bands sum to the same leases and pooled timing as the lease-block bands
+PASS  Production, timing and primary-term sample counts reconcile for each event across bands
+PASS  Median and middle half in every timing row match individual lease durations and ratios
+PASS  Every stage reconciles rows read = rows kept + sum of mutually exclusive drop reasons
+PASS  Every headline value resolves to exactly one saved CSV row and column
+PASS  All five SVG/PNG pairs decode; SVGs use DejaVu Sans and contain no prohibited constructs
+PASS  Lease match bounds, 2005 to 2020, All, original rule: 432 of 7,126
+PASS  Lease match bounds, 2005 to 2020, All, d type E bottom or surface: 477 of 7,126

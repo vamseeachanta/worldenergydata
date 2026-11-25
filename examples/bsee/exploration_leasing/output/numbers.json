@@ -1,0 +1,3649 @@
+{
+  "issued_total": {
+    "value": 8327,
+    "unit": "leases",
+    "table": "issuance.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "All bands"
+    },
+    "column": "leases"
+  },
+  "issued_2008": {
+    "value": 1512,
+    "unit": "leases",
+    "table": "issuance.csv",
+    "filter": {
+      "issue_year": "2008",
+      "depth_band": "All bands"
+    },
+    "column": "leases"
+  },
+  "issued_2025": {
+    "value": 0,
+    "unit": "leases",
+    "table": "issuance.csv",
+    "filter": {
+      "issue_year": "2025",
+      "depth_band": "All bands"
+    },
+    "column": "leases"
+  },
+  "issued_2026": {
+    "value": 215,
+    "unit": "leases",
+    "table": "issuance.csv",
+    "filter": {
+      "issue_year": "2026",
+      "depth_band": "All bands"
+    },
+    "column": "leases"
+  },
+  "peak_effective_year": {
+    "value": "2008",
+    "unit": "calendar year",
+    "table": "issuance.csv",
+    "filter": {
+      "issue_year": "2008",
+      "depth_band": "All bands"
+    },
+    "column": "issue_year"
+  },
+  "status.CANCEL.leases": {
+    "value": 4,
+    "unit": "leases",
+    "table": "current_status.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "All bands",
+      "status_code": "CANCEL"
+    },
+    "column": "leases"
+  },
+  "status.CANCEL.share_pct": {
+    "value": 0.04803650774588687,
+    "unit": "%",
+    "table": "current_status.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "All bands",
+      "status_code": "CANCEL"
+    },
+    "column": "share_pct"
+  },
+  "status.EXPIR.leases": {
+    "value": 1851,
+    "unit": "leases",
+    "table": "current_status.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "All bands",
+      "status_code": "EXPIR"
+    },
+    "column": "leases"
+  },
+  "status.EXPIR.share_pct": {
+    "value": 22.228893959409152,
+    "unit": "%",
+    "table": "current_status.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "All bands",
+      "status_code": "EXPIR"
+    },
+    "column": "share_pct"
+  },
+  "status.OPERNS.leases": {
+    "value": 3,
+    "unit": "leases",
+    "table": "current_status.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "All bands",
+      "status_code": "OPERNS"
+    },
+    "column": "leases"
+  },
+  "status.OPERNS.share_pct": {
+    "value": 0.03602738080941516,
+    "unit": "%",
+    "table": "current_status.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "All bands",
+      "status_code": "OPERNS"
+    },
+    "column": "share_pct"
+  },
+  "status.PRIMRY.leases": {
+    "value": 1071,
+    "unit": "leases",
+    "table": "current_status.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "All bands",
+      "status_code": "PRIMRY"
+    },
+    "column": "leases"
+  },
+  "status.PRIMRY.share_pct": {
+    "value": 12.86177494896121,
+    "unit": "%",
+    "table": "current_status.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "All bands",
+      "status_code": "PRIMRY"
+    },
+    "column": "share_pct"
+  },
+  "status.PROD.leases": {
+    "value": 61,
+    "unit": "leases",
+    "table": "current_status.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "All bands",
+      "status_code": "PROD"
+    },
+    "column": "leases"
+  },
+  "status.PROD.share_pct": {
+    "value": 0.7325567431247748,
+    "unit": "%",
+    "table": "current_status.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "All bands",
+      "status_code": "PROD"
+    },
+    "column": "share_pct"
+  },
+  "status.RELINQ.leases": {
+    "value": 5090,
+    "unit": "leases",
+    "table": "current_status.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "All bands",
+      "status_code": "RELINQ"
+    },
+    "column": "leases"
+  },
+  "status.RELINQ.share_pct": {
+    "value": 61.126456106641044,
+    "unit": "%",
+    "table": "current_status.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "All bands",
+      "status_code": "RELINQ"
+    },
+    "column": "share_pct"
+  },
+  "status.SOP.leases": {
+    "value": 1,
+    "unit": "leases",
+    "table": "current_status.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "All bands",
+      "status_code": "SOP"
+    },
+    "column": "leases"
+  },
+  "status.SOP.share_pct": {
+    "value": 0.012009126936471718,
+    "unit": "%",
+    "table": "current_status.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "All bands",
+      "status_code": "SOP"
+    },
+    "column": "share_pct"
+  },
+  "status.TERMIN.leases": {
+    "value": 150,
+    "unit": "leases",
+    "table": "current_status.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "All bands",
+      "status_code": "TERMIN"
+    },
+    "column": "leases"
+  },
+  "status.TERMIN.share_pct": {
+    "value": 1.8013690404707579,
+    "unit": "%",
+    "table": "current_status.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "All bands",
+      "status_code": "TERMIN"
+    },
+    "column": "share_pct"
+  },
+  "status.UNIT.leases": {
+    "value": 96,
+    "unit": "leases",
+    "table": "current_status.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "All bands",
+      "status_code": "UNIT"
+    },
+    "column": "leases"
+  },
+  "status.UNIT.share_pct": {
+    "value": 1.152876185901285,
+    "unit": "%",
+    "table": "current_status.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "All bands",
+      "status_code": "UNIT"
+    },
+    "column": "share_pct"
+  },
+  "issued.under_100": {
+    "value": 2083,
+    "unit": "leases",
+    "table": "issuance.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "<100 m"
+    },
+    "column": "leases"
+  },
+  "exploration.under_100.leases": {
+    "value": 1782,
+    "unit": "leases",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "<100 m"
+    },
+    "column": "leases"
+  },
+  "exploration.under_100.explored_leases": {
+    "value": 196,
+    "unit": "leases",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "<100 m"
+    },
+    "column": "explored_leases"
+  },
+  "exploration.under_100.exploration_wells": {
+    "value": 221,
+    "unit": "API10 wells",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "<100 m"
+    },
+    "column": "exploration_wells"
+  },
+  "exploration.under_100.share_pct": {
+    "value": 10.998877665544333,
+    "unit": "%",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "<100 m"
+    },
+    "column": "share_pct"
+  },
+  "exploration.under_100.leases_with_any_e_bore": {
+    "value": 201,
+    "unit": "leases",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "<100 m"
+    },
+    "column": "leases_with_any_e_bore"
+  },
+  "exploration.under_100.any_e_bore_share_pct": {
+    "value": 11.27946127946128,
+    "unit": "%",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "<100 m"
+    },
+    "column": "any_e_bore_share_pct"
+  },
+  "exploration.under_100.explored_within_five_years": {
+    "value": 188,
+    "unit": "leases",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "<100 m"
+    },
+    "column": "explored_within_five_years"
+  },
+  "exploration.under_100.five_year_share_pct": {
+    "value": 10.549943883277217,
+    "unit": "%",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "<100 m"
+    },
+    "column": "five_year_share_pct"
+  },
+  "exploration.under_100.days_to_spud_p25": {
+    "value": 319,
+    "unit": "days",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "<100 m"
+    },
+    "column": "days_to_spud_p25"
+  },
+  "exploration.under_100.days_to_spud_median": {
+    "value": 504.5,
+    "unit": "days",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "<100 m"
+    },
+    "column": "days_to_spud_median"
+  },
+  "exploration.under_100.days_to_spud_p75": {
+    "value": 1007.75,
+    "unit": "days",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "<100 m"
+    },
+    "column": "days_to_spud_p75"
+  },
+  "exploration.under_100.days_to_any_e_bore_p25": {
+    "value": 321,
+    "unit": "days",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "<100 m"
+    },
+    "column": "days_to_any_e_bore_p25"
+  },
+  "exploration.under_100.days_to_any_e_bore_median": {
+    "value": 517,
+    "unit": "days",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "<100 m"
+    },
+    "column": "days_to_any_e_bore_median"
+  },
+  "exploration.under_100.days_to_any_e_bore_p75": {
+    "value": 1118,
+    "unit": "days",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "<100 m"
+    },
+    "column": "days_to_any_e_bore_p75"
+  },
+  "well_site.under_100.timed_leases": {
+    "value": 202,
+    "unit": "leases",
+    "table": "exploration_site_depth.csv",
+    "filter": {
+      "depth_band": "<100 m"
+    },
+    "column": "timed_leases"
+  },
+  "well_site.under_100.days_to_spud_p25": {
+    "value": 324,
+    "unit": "days",
+    "table": "exploration_site_depth.csv",
+    "filter": {
+      "depth_band": "<100 m"
+    },
+    "column": "days_to_spud_p25"
+  },
+  "well_site.under_100.days_to_spud_median": {
+    "value": 511,
+    "unit": "days",
+    "table": "exploration_site_depth.csv",
+    "filter": {
+      "depth_band": "<100 m"
+    },
+    "column": "days_to_spud_median"
+  },
+  "well_site.under_100.days_to_spud_p75": {
+    "value": 1075.25,
+    "unit": "days",
+    "table": "exploration_site_depth.csv",
+    "filter": {
+      "depth_band": "<100 m"
+    },
+    "column": "days_to_spud_p75"
+  },
+  "oil.under_100.observed_leases": {
+    "value": 44,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "<100 m",
+      "event": "Crude oil"
+    },
+    "column": "observed_leases"
+  },
+  "oil.under_100.timed_leases": {
+    "value": 41,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "<100 m",
+      "event": "Crude oil"
+    },
+    "column": "timed_leases"
+  },
+  "oil.under_100.without_observed_event": {
+    "value": 2039,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "<100 m",
+      "event": "Crude oil"
+    },
+    "column": "without_observed_event"
+  },
+  "oil.under_100.term_leases": {
+    "value": 41,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "<100 m",
+      "event": "Crude oil"
+    },
+    "column": "term_leases"
+  },
+  "oil.under_100.over_term_leases": {
+    "value": 14,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "<100 m",
+      "event": "Crude oil"
+    },
+    "column": "over_term_leases"
+  },
+  "oil.under_100.months_p25": {
+    "value": 26,
+    "unit": "months",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "<100 m",
+      "event": "Crude oil"
+    },
+    "column": "months_p25"
+  },
+  "oil.under_100.months_median": {
+    "value": 48,
+    "unit": "months",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "<100 m",
+      "event": "Crude oil"
+    },
+    "column": "months_median"
+  },
+  "oil.under_100.months_p75": {
+    "value": 69,
+    "unit": "months",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "<100 m",
+      "event": "Crude oil"
+    },
+    "column": "months_p75"
+  },
+  "oil.under_100.primary_term_pct_p25": {
+    "value": 43.333333333333336,
+    "unit": "%",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "<100 m",
+      "event": "Crude oil"
+    },
+    "column": "primary_term_pct_p25"
+  },
+  "oil.under_100.primary_term_pct_median": {
+    "value": 80,
+    "unit": "%",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "<100 m",
+      "event": "Crude oil"
+    },
+    "column": "primary_term_pct_median"
+  },
+  "oil.under_100.primary_term_pct_p75": {
+    "value": 115,
+    "unit": "%",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "<100 m",
+      "event": "Crude oil"
+    },
+    "column": "primary_term_pct_p75"
+  },
+  "hydrocarbon.under_100.observed_leases": {
+    "value": 121,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "<100 m",
+      "event": "Any hydrocarbon"
+    },
+    "column": "observed_leases"
+  },
+  "hydrocarbon.under_100.timed_leases": {
+    "value": 117,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "<100 m",
+      "event": "Any hydrocarbon"
+    },
+    "column": "timed_leases"
+  },
+  "hydrocarbon.under_100.without_observed_event": {
+    "value": 1962,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "<100 m",
+      "event": "Any hydrocarbon"
+    },
+    "column": "without_observed_event"
+  },
+  "hydrocarbon.under_100.term_leases": {
+    "value": 117,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "<100 m",
+      "event": "Any hydrocarbon"
+    },
+    "column": "term_leases"
+  },
+  "hydrocarbon.under_100.over_term_leases": {
+    "value": 17,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "<100 m",
+      "event": "Any hydrocarbon"
+    },
+    "column": "over_term_leases"
+  },
+  "hydrocarbon.under_100.months_p25": {
+    "value": 20,
+    "unit": "months",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "<100 m",
+      "event": "Any hydrocarbon"
+    },
+    "column": "months_p25"
+  },
+  "hydrocarbon.under_100.months_median": {
+    "value": 29,
+    "unit": "months",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "<100 m",
+      "event": "Any hydrocarbon"
+    },
+    "column": "months_median"
+  },
+  "hydrocarbon.under_100.months_p75": {
+    "value": 56,
+    "unit": "months",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "<100 m",
+      "event": "Any hydrocarbon"
+    },
+    "column": "months_p75"
+  },
+  "hydrocarbon.under_100.primary_term_pct_p25": {
+    "value": 33.333333333333336,
+    "unit": "%",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "<100 m",
+      "event": "Any hydrocarbon"
+    },
+    "column": "primary_term_pct_p25"
+  },
+  "hydrocarbon.under_100.primary_term_pct_median": {
+    "value": 48.333333333333336,
+    "unit": "%",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "<100 m",
+      "event": "Any hydrocarbon"
+    },
+    "column": "primary_term_pct_median"
+  },
+  "hydrocarbon.under_100.primary_term_pct_p75": {
+    "value": 93.33333333333333,
+    "unit": "%",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "<100 m",
+      "event": "Any hydrocarbon"
+    },
+    "column": "primary_term_pct_p75"
+  },
+  "issued.100_to_500": {
+    "value": 635,
+    "unit": "leases",
+    "table": "issuance.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "100–<500 m"
+    },
+    "column": "leases"
+  },
+  "exploration.100_to_500.leases": {
+    "value": 587,
+    "unit": "leases",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "100–<500 m"
+    },
+    "column": "leases"
+  },
+  "exploration.100_to_500.explored_leases": {
+    "value": 22,
+    "unit": "leases",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "100–<500 m"
+    },
+    "column": "explored_leases"
+  },
+  "exploration.100_to_500.exploration_wells": {
+    "value": 23,
+    "unit": "API10 wells",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "100–<500 m"
+    },
+    "column": "exploration_wells"
+  },
+  "exploration.100_to_500.share_pct": {
+    "value": 3.7478705281090288,
+    "unit": "%",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "100–<500 m"
+    },
+    "column": "share_pct"
+  },
+  "exploration.100_to_500.leases_with_any_e_bore": {
+    "value": 22,
+    "unit": "leases",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "100–<500 m"
+    },
+    "column": "leases_with_any_e_bore"
+  },
+  "exploration.100_to_500.any_e_bore_share_pct": {
+    "value": 3.7478705281090288,
+    "unit": "%",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "100–<500 m"
+    },
+    "column": "any_e_bore_share_pct"
+  },
+  "exploration.100_to_500.explored_within_five_years": {
+    "value": 19,
+    "unit": "leases",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "100–<500 m"
+    },
+    "column": "explored_within_five_years"
+  },
+  "exploration.100_to_500.five_year_share_pct": {
+    "value": 3.2367972742759794,
+    "unit": "%",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "100–<500 m"
+    },
+    "column": "five_year_share_pct"
+  },
+  "exploration.100_to_500.days_to_spud_p25": {
+    "value": 627.25,
+    "unit": "days",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "100–<500 m"
+    },
+    "column": "days_to_spud_p25"
+  },
+  "exploration.100_to_500.days_to_spud_median": {
+    "value": 974.5,
+    "unit": "days",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "100–<500 m"
+    },
+    "column": "days_to_spud_median"
+  },
+  "exploration.100_to_500.days_to_spud_p75": {
+    "value": 1648.5,
+    "unit": "days",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "100–<500 m"
+    },
+    "column": "days_to_spud_p75"
+  },
+  "exploration.100_to_500.days_to_any_e_bore_p25": {
+    "value": 627.25,
+    "unit": "days",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "100–<500 m"
+    },
+    "column": "days_to_any_e_bore_p25"
+  },
+  "exploration.100_to_500.days_to_any_e_bore_median": {
+    "value": 974.5,
+    "unit": "days",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "100–<500 m"
+    },
+    "column": "days_to_any_e_bore_median"
+  },
+  "exploration.100_to_500.days_to_any_e_bore_p75": {
+    "value": 1648.5,
+    "unit": "days",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "100–<500 m"
+    },
+    "column": "days_to_any_e_bore_p75"
+  },
+  "well_site.100_to_500.timed_leases": {
+    "value": 18,
+    "unit": "leases",
+    "table": "exploration_site_depth.csv",
+    "filter": {
+      "depth_band": "100–<500 m"
+    },
+    "column": "timed_leases"
+  },
+  "well_site.100_to_500.days_to_spud_p25": {
+    "value": 848.5,
+    "unit": "days",
+    "table": "exploration_site_depth.csv",
+    "filter": {
+      "depth_band": "100–<500 m"
+    },
+    "column": "days_to_spud_p25"
+  },
+  "well_site.100_to_500.days_to_spud_median": {
+    "value": 1169.5,
+    "unit": "days",
+    "table": "exploration_site_depth.csv",
+    "filter": {
+      "depth_band": "100–<500 m"
+    },
+    "column": "days_to_spud_median"
+  },
+  "well_site.100_to_500.days_to_spud_p75": {
+    "value": 1770.75,
+    "unit": "days",
+    "table": "exploration_site_depth.csv",
+    "filter": {
+      "depth_band": "100–<500 m"
+    },
+    "column": "days_to_spud_p75"
+  },
+  "oil.100_to_500.observed_leases": {
+    "value": 13,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "100–<500 m",
+      "event": "Crude oil"
+    },
+    "column": "observed_leases"
+  },
+  "oil.100_to_500.timed_leases": {
+    "value": 12,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "100–<500 m",
+      "event": "Crude oil"
+    },
+    "column": "timed_leases"
+  },
+  "oil.100_to_500.without_observed_event": {
+    "value": 622,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "100–<500 m",
+      "event": "Crude oil"
+    },
+    "column": "without_observed_event"
+  },
+  "oil.100_to_500.term_leases": {
+    "value": 12,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "100–<500 m",
+      "event": "Crude oil"
+    },
+    "column": "term_leases"
+  },
+  "oil.100_to_500.over_term_leases": {
+    "value": 7,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "100–<500 m",
+      "event": "Crude oil"
+    },
+    "column": "over_term_leases"
+  },
+  "oil.100_to_500.months_p25": {
+    "value": 36.25,
+    "unit": "months",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "100–<500 m",
+      "event": "Crude oil"
+    },
+    "column": "months_p25"
+  },
+  "oil.100_to_500.months_median": {
+    "value": 70.5,
+    "unit": "months",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "100–<500 m",
+      "event": "Crude oil"
+    },
+    "column": "months_median"
+  },
+  "oil.100_to_500.months_p75": {
+    "value": 89,
+    "unit": "months",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "100–<500 m",
+      "event": "Crude oil"
+    },
+    "column": "months_p75"
+  },
+  "oil.100_to_500.primary_term_pct_p25": {
+    "value": 60.416666666666664,
+    "unit": "%",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "100–<500 m",
+      "event": "Crude oil"
+    },
+    "column": "primary_term_pct_p25"
+  },
+  "oil.100_to_500.primary_term_pct_median": {
+    "value": 113.33333333333333,
+    "unit": "%",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "100–<500 m",
+      "event": "Crude oil"
+    },
+    "column": "primary_term_pct_median"
+  },
+  "oil.100_to_500.primary_term_pct_p75": {
+    "value": 130.41666666666666,
+    "unit": "%",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "100–<500 m",
+      "event": "Crude oil"
+    },
+    "column": "primary_term_pct_p75"
+  },
+  "hydrocarbon.100_to_500.observed_leases": {
+    "value": 17,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "100–<500 m",
+      "event": "Any hydrocarbon"
+    },
+    "column": "observed_leases"
+  },
+  "hydrocarbon.100_to_500.timed_leases": {
+    "value": 16,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "100–<500 m",
+      "event": "Any hydrocarbon"
+    },
+    "column": "timed_leases"
+  },
+  "hydrocarbon.100_to_500.without_observed_event": {
+    "value": 618,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "100–<500 m",
+      "event": "Any hydrocarbon"
+    },
+    "column": "without_observed_event"
+  },
+  "hydrocarbon.100_to_500.term_leases": {
+    "value": 16,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "100–<500 m",
+      "event": "Any hydrocarbon"
+    },
+    "column": "term_leases"
+  },
+  "hydrocarbon.100_to_500.over_term_leases": {
+    "value": 7,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "100–<500 m",
+      "event": "Any hydrocarbon"
+    },
+    "column": "over_term_leases"
+  },
+  "hydrocarbon.100_to_500.months_p25": {
+    "value": 33.5,
+    "unit": "months",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "100–<500 m",
+      "event": "Any hydrocarbon"
+    },
+    "column": "months_p25"
+  },
+  "hydrocarbon.100_to_500.months_median": {
+    "value": 59,
+    "unit": "months",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "100–<500 m",
+      "event": "Any hydrocarbon"
+    },
+    "column": "months_median"
+  },
+  "hydrocarbon.100_to_500.months_p75": {
+    "value": 88,
+    "unit": "months",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "100–<500 m",
+      "event": "Any hydrocarbon"
+    },
+    "column": "months_p75"
+  },
+  "hydrocarbon.100_to_500.primary_term_pct_p25": {
+    "value": 45.41666666666667,
+    "unit": "%",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "100–<500 m",
+      "event": "Any hydrocarbon"
+    },
+    "column": "primary_term_pct_p25"
+  },
+  "hydrocarbon.100_to_500.primary_term_pct_median": {
+    "value": 83.125,
+    "unit": "%",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "100–<500 m",
+      "event": "Any hydrocarbon"
+    },
+    "column": "primary_term_pct_median"
+  },
+  "hydrocarbon.100_to_500.primary_term_pct_p75": {
+    "value": 125,
+    "unit": "%",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "100–<500 m",
+      "event": "Any hydrocarbon"
+    },
+    "column": "primary_term_pct_p75"
+  },
+  "issued.500_to_1500": {
+    "value": 2605,
+    "unit": "leases",
+    "table": "issuance.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "500–<1,500 m"
+    },
+    "column": "leases"
+  },
+  "exploration.500_to_1500.leases": {
+    "value": 2188,
+    "unit": "leases",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "500–<1,500 m"
+    },
+    "column": "leases"
+  },
+  "exploration.500_to_1500.explored_leases": {
+    "value": 106,
+    "unit": "leases",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "500–<1,500 m"
+    },
+    "column": "explored_leases"
+  },
+  "exploration.500_to_1500.exploration_wells": {
+    "value": 153,
+    "unit": "API10 wells",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "500–<1,500 m"
+    },
+    "column": "exploration_wells"
+  },
+  "exploration.500_to_1500.share_pct": {
+    "value": 4.844606946983546,
+    "unit": "%",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "500–<1,500 m"
+    },
+    "column": "share_pct"
+  },
+  "exploration.500_to_1500.leases_with_any_e_bore": {
+    "value": 115,
+    "unit": "leases",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "500–<1,500 m"
+    },
+    "column": "leases_with_any_e_bore"
+  },
+  "exploration.500_to_1500.any_e_bore_share_pct": {
+    "value": 5.255941499085923,
+    "unit": "%",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "500–<1,500 m"
+    },
+    "column": "any_e_bore_share_pct"
+  },
+  "exploration.500_to_1500.explored_within_five_years": {
+    "value": 75,
+    "unit": "leases",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "500–<1,500 m"
+    },
+    "column": "explored_within_five_years"
+  },
+  "exploration.500_to_1500.five_year_share_pct": {
+    "value": 3.4277879341864717,
+    "unit": "%",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "500–<1,500 m"
+    },
+    "column": "five_year_share_pct"
+  },
+  "exploration.500_to_1500.days_to_spud_p25": {
+    "value": 628.25,
+    "unit": "days",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "500–<1,500 m"
+    },
+    "column": "days_to_spud_p25"
+  },
+  "exploration.500_to_1500.days_to_spud_median": {
+    "value": 1270,
+    "unit": "days",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "500–<1,500 m"
+    },
+    "column": "days_to_spud_median"
+  },
+  "exploration.500_to_1500.days_to_spud_p75": {
+    "value": 2226.75,
+    "unit": "days",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "500–<1,500 m"
+    },
+    "column": "days_to_spud_p75"
+  },
+  "exploration.500_to_1500.days_to_any_e_bore_p25": {
+    "value": 615.5,
+    "unit": "days",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "500–<1,500 m"
+    },
+    "column": "days_to_any_e_bore_p25"
+  },
+  "exploration.500_to_1500.days_to_any_e_bore_median": {
+    "value": 1251,
+    "unit": "days",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "500–<1,500 m"
+    },
+    "column": "days_to_any_e_bore_median"
+  },
+  "exploration.500_to_1500.days_to_any_e_bore_p75": {
+    "value": 2244.5,
+    "unit": "days",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "500–<1,500 m"
+    },
+    "column": "days_to_any_e_bore_p75"
+  },
+  "well_site.500_to_1500.timed_leases": {
+    "value": 116,
+    "unit": "leases",
+    "table": "exploration_site_depth.csv",
+    "filter": {
+      "depth_band": "500–<1,500 m"
+    },
+    "column": "timed_leases"
+  },
+  "well_site.500_to_1500.days_to_spud_p25": {
+    "value": 638.75,
+    "unit": "days",
+    "table": "exploration_site_depth.csv",
+    "filter": {
+      "depth_band": "500–<1,500 m"
+    },
+    "column": "days_to_spud_p25"
+  },
+  "well_site.500_to_1500.days_to_spud_median": {
+    "value": 1297.5,
+    "unit": "days",
+    "table": "exploration_site_depth.csv",
+    "filter": {
+      "depth_band": "500–<1,500 m"
+    },
+    "column": "days_to_spud_median"
+  },
+  "well_site.500_to_1500.days_to_spud_p75": {
+    "value": 2282.75,
+    "unit": "days",
+    "table": "exploration_site_depth.csv",
+    "filter": {
+      "depth_band": "500–<1,500 m"
+    },
+    "column": "days_to_spud_p75"
+  },
+  "oil.500_to_1500.observed_leases": {
+    "value": 36,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "500–<1,500 m",
+      "event": "Crude oil"
+    },
+    "column": "observed_leases"
+  },
+  "oil.500_to_1500.timed_leases": {
+    "value": 36,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "500–<1,500 m",
+      "event": "Crude oil"
+    },
+    "column": "timed_leases"
+  },
+  "oil.500_to_1500.without_observed_event": {
+    "value": 2569,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "500–<1,500 m",
+      "event": "Crude oil"
+    },
+    "column": "without_observed_event"
+  },
+  "oil.500_to_1500.term_leases": {
+    "value": 36,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "500–<1,500 m",
+      "event": "Crude oil"
+    },
+    "column": "term_leases"
+  },
+  "oil.500_to_1500.over_term_leases": {
+    "value": 15,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "500–<1,500 m",
+      "event": "Crude oil"
+    },
+    "column": "over_term_leases"
+  },
+  "oil.500_to_1500.months_p25": {
+    "value": 62,
+    "unit": "months",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "500–<1,500 m",
+      "event": "Crude oil"
+    },
+    "column": "months_p25"
+  },
+  "oil.500_to_1500.months_median": {
+    "value": 82,
+    "unit": "months",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "500–<1,500 m",
+      "event": "Crude oil"
+    },
+    "column": "months_median"
+  },
+  "oil.500_to_1500.months_p75": {
+    "value": 112.25,
+    "unit": "months",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "500–<1,500 m",
+      "event": "Crude oil"
+    },
+    "column": "months_p75"
+  },
+  "oil.500_to_1500.primary_term_pct_p25": {
+    "value": 68.45238095238096,
+    "unit": "%",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "500–<1,500 m",
+      "event": "Crude oil"
+    },
+    "column": "primary_term_pct_p25"
+  },
+  "oil.500_to_1500.primary_term_pct_median": {
+    "value": 90.41666666666667,
+    "unit": "%",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "500–<1,500 m",
+      "event": "Crude oil"
+    },
+    "column": "primary_term_pct_median"
+  },
+  "oil.500_to_1500.primary_term_pct_p75": {
+    "value": 130.20833333333331,
+    "unit": "%",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "500–<1,500 m",
+      "event": "Crude oil"
+    },
+    "column": "primary_term_pct_p75"
+  },
+  "hydrocarbon.500_to_1500.observed_leases": {
+    "value": 39,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "500–<1,500 m",
+      "event": "Any hydrocarbon"
+    },
+    "column": "observed_leases"
+  },
+  "hydrocarbon.500_to_1500.timed_leases": {
+    "value": 39,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "500–<1,500 m",
+      "event": "Any hydrocarbon"
+    },
+    "column": "timed_leases"
+  },
+  "hydrocarbon.500_to_1500.without_observed_event": {
+    "value": 2566,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "500–<1,500 m",
+      "event": "Any hydrocarbon"
+    },
+    "column": "without_observed_event"
+  },
+  "hydrocarbon.500_to_1500.term_leases": {
+    "value": 39,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "500–<1,500 m",
+      "event": "Any hydrocarbon"
+    },
+    "column": "term_leases"
+  },
+  "hydrocarbon.500_to_1500.over_term_leases": {
+    "value": 15,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "500–<1,500 m",
+      "event": "Any hydrocarbon"
+    },
+    "column": "over_term_leases"
+  },
+  "hydrocarbon.500_to_1500.months_p25": {
+    "value": 54,
+    "unit": "months",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "500–<1,500 m",
+      "event": "Any hydrocarbon"
+    },
+    "column": "months_p25"
+  },
+  "hydrocarbon.500_to_1500.months_median": {
+    "value": 69,
+    "unit": "months",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "500–<1,500 m",
+      "event": "Any hydrocarbon"
+    },
+    "column": "months_median"
+  },
+  "hydrocarbon.500_to_1500.months_p75": {
+    "value": 112,
+    "unit": "months",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "500–<1,500 m",
+      "event": "Any hydrocarbon"
+    },
+    "column": "months_p75"
+  },
+  "hydrocarbon.500_to_1500.primary_term_pct_p25": {
+    "value": 46.979166666666664,
+    "unit": "%",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "500–<1,500 m",
+      "event": "Any hydrocarbon"
+    },
+    "column": "primary_term_pct_p25"
+  },
+  "hydrocarbon.500_to_1500.primary_term_pct_median": {
+    "value": 80.95238095238095,
+    "unit": "%",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "500–<1,500 m",
+      "event": "Any hydrocarbon"
+    },
+    "column": "primary_term_pct_median"
+  },
+  "hydrocarbon.500_to_1500.primary_term_pct_p75": {
+    "value": 121.13095238095238,
+    "unit": "%",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "500–<1,500 m",
+      "event": "Any hydrocarbon"
+    },
+    "column": "primary_term_pct_p75"
+  },
+  "issued.1500_plus": {
+    "value": 3004,
+    "unit": "leases",
+    "table": "issuance.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "≥1,500 m"
+    },
+    "column": "leases"
+  },
+  "exploration.1500_plus.leases": {
+    "value": 2569,
+    "unit": "leases",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "≥1,500 m"
+    },
+    "column": "leases"
+  },
+  "exploration.1500_plus.explored_leases": {
+    "value": 108,
+    "unit": "leases",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "≥1,500 m"
+    },
+    "column": "explored_leases"
+  },
+  "exploration.1500_plus.exploration_wells": {
+    "value": 192,
+    "unit": "API10 wells",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "≥1,500 m"
+    },
+    "column": "exploration_wells"
+  },
+  "exploration.1500_plus.share_pct": {
+    "value": 4.203970416504476,
+    "unit": "%",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "≥1,500 m"
+    },
+    "column": "share_pct"
+  },
+  "exploration.1500_plus.leases_with_any_e_bore": {
+    "value": 112,
+    "unit": "leases",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "≥1,500 m"
+    },
+    "column": "leases_with_any_e_bore"
+  },
+  "exploration.1500_plus.any_e_bore_share_pct": {
+    "value": 4.359673024523161,
+    "unit": "%",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "≥1,500 m"
+    },
+    "column": "any_e_bore_share_pct"
+  },
+  "exploration.1500_plus.explored_within_five_years": {
+    "value": 57,
+    "unit": "leases",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "≥1,500 m"
+    },
+    "column": "explored_within_five_years"
+  },
+  "exploration.1500_plus.five_year_share_pct": {
+    "value": 2.2187621642662516,
+    "unit": "%",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "≥1,500 m"
+    },
+    "column": "five_year_share_pct"
+  },
+  "exploration.1500_plus.days_to_spud_p25": {
+    "value": 953.25,
+    "unit": "days",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "≥1,500 m"
+    },
+    "column": "days_to_spud_p25"
+  },
+  "exploration.1500_plus.days_to_spud_median": {
+    "value": 1730.5,
+    "unit": "days",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "≥1,500 m"
+    },
+    "column": "days_to_spud_median"
+  },
+  "exploration.1500_plus.days_to_spud_p75": {
+    "value": 2474.75,
+    "unit": "days",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "≥1,500 m"
+    },
+    "column": "days_to_spud_p75"
+  },
+  "exploration.1500_plus.days_to_any_e_bore_p25": {
+    "value": 953.25,
+    "unit": "days",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "≥1,500 m"
+    },
+    "column": "days_to_any_e_bore_p25"
+  },
+  "exploration.1500_plus.days_to_any_e_bore_median": {
+    "value": 1764,
+    "unit": "days",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "≥1,500 m"
+    },
+    "column": "days_to_any_e_bore_median"
+  },
+  "exploration.1500_plus.days_to_any_e_bore_p75": {
+    "value": 2514,
+    "unit": "days",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "≥1,500 m"
+    },
+    "column": "days_to_any_e_bore_p75"
+  },
+  "well_site.1500_plus.timed_leases": {
+    "value": 96,
+    "unit": "leases",
+    "table": "exploration_site_depth.csv",
+    "filter": {
+      "depth_band": "≥1,500 m"
+    },
+    "column": "timed_leases"
+  },
+  "well_site.1500_plus.days_to_spud_p25": {
+    "value": 967.25,
+    "unit": "days",
+    "table": "exploration_site_depth.csv",
+    "filter": {
+      "depth_band": "≥1,500 m"
+    },
+    "column": "days_to_spud_p25"
+  },
+  "well_site.1500_plus.days_to_spud_median": {
+    "value": 1730.5,
+    "unit": "days",
+    "table": "exploration_site_depth.csv",
+    "filter": {
+      "depth_band": "≥1,500 m"
+    },
+    "column": "days_to_spud_median"
+  },
+  "well_site.1500_plus.days_to_spud_p75": {
+    "value": 2510,
+    "unit": "days",
+    "table": "exploration_site_depth.csv",
+    "filter": {
+      "depth_band": "≥1,500 m"
+    },
+    "column": "days_to_spud_p75"
+  },
+  "oil.1500_plus.observed_leases": {
+    "value": 33,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "≥1,500 m",
+      "event": "Crude oil"
+    },
+    "column": "observed_leases"
+  },
+  "oil.1500_plus.timed_leases": {
+    "value": 33,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "≥1,500 m",
+      "event": "Crude oil"
+    },
+    "column": "timed_leases"
+  },
+  "oil.1500_plus.without_observed_event": {
+    "value": 2971,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "≥1,500 m",
+      "event": "Crude oil"
+    },
+    "column": "without_observed_event"
+  },
+  "oil.1500_plus.term_leases": {
+    "value": 33,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "≥1,500 m",
+      "event": "Crude oil"
+    },
+    "column": "term_leases"
+  },
+  "oil.1500_plus.over_term_leases": {
+    "value": 18,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "≥1,500 m",
+      "event": "Crude oil"
+    },
+    "column": "over_term_leases"
+  },
+  "oil.1500_plus.months_p25": {
+    "value": 88,
+    "unit": "months",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "≥1,500 m",
+      "event": "Crude oil"
+    },
+    "column": "months_p25"
+  },
+  "oil.1500_plus.months_median": {
+    "value": 129,
+    "unit": "months",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "≥1,500 m",
+      "event": "Crude oil"
+    },
+    "column": "months_median"
+  },
+  "oil.1500_plus.months_p75": {
+    "value": 190,
+    "unit": "months",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "≥1,500 m",
+      "event": "Crude oil"
+    },
+    "column": "months_p75"
+  },
+  "oil.1500_plus.primary_term_pct_p25": {
+    "value": 73.33333333333333,
+    "unit": "%",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "≥1,500 m",
+      "event": "Crude oil"
+    },
+    "column": "primary_term_pct_p25"
+  },
+  "oil.1500_plus.primary_term_pct_median": {
+    "value": 107.5,
+    "unit": "%",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "≥1,500 m",
+      "event": "Crude oil"
+    },
+    "column": "primary_term_pct_median"
+  },
+  "oil.1500_plus.primary_term_pct_p75": {
+    "value": 158.33333333333334,
+    "unit": "%",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "≥1,500 m",
+      "event": "Crude oil"
+    },
+    "column": "primary_term_pct_p75"
+  },
+  "hydrocarbon.1500_plus.observed_leases": {
+    "value": 34,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "≥1,500 m",
+      "event": "Any hydrocarbon"
+    },
+    "column": "observed_leases"
+  },
+  "hydrocarbon.1500_plus.timed_leases": {
+    "value": 34,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "≥1,500 m",
+      "event": "Any hydrocarbon"
+    },
+    "column": "timed_leases"
+  },
+  "hydrocarbon.1500_plus.without_observed_event": {
+    "value": 2970,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "≥1,500 m",
+      "event": "Any hydrocarbon"
+    },
+    "column": "without_observed_event"
+  },
+  "hydrocarbon.1500_plus.term_leases": {
+    "value": 34,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "≥1,500 m",
+      "event": "Any hydrocarbon"
+    },
+    "column": "term_leases"
+  },
+  "hydrocarbon.1500_plus.over_term_leases": {
+    "value": 18,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "≥1,500 m",
+      "event": "Any hydrocarbon"
+    },
+    "column": "over_term_leases"
+  },
+  "hydrocarbon.1500_plus.months_p25": {
+    "value": 89.25,
+    "unit": "months",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "≥1,500 m",
+      "event": "Any hydrocarbon"
+    },
+    "column": "months_p25"
+  },
+  "hydrocarbon.1500_plus.months_median": {
+    "value": 125.5,
+    "unit": "months",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "≥1,500 m",
+      "event": "Any hydrocarbon"
+    },
+    "column": "months_median"
+  },
+  "hydrocarbon.1500_plus.months_p75": {
+    "value": 189.5,
+    "unit": "months",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "≥1,500 m",
+      "event": "Any hydrocarbon"
+    },
+    "column": "months_p75"
+  },
+  "hydrocarbon.1500_plus.primary_term_pct_p25": {
+    "value": 74.375,
+    "unit": "%",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "≥1,500 m",
+      "event": "Any hydrocarbon"
+    },
+    "column": "primary_term_pct_p25"
+  },
+  "hydrocarbon.1500_plus.primary_term_pct_median": {
+    "value": 104.58333333333334,
+    "unit": "%",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "≥1,500 m",
+      "event": "Any hydrocarbon"
+    },
+    "column": "primary_term_pct_median"
+  },
+  "hydrocarbon.1500_plus.primary_term_pct_p75": {
+    "value": 157.91666666666669,
+    "unit": "%",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "≥1,500 m",
+      "event": "Any hydrocarbon"
+    },
+    "column": "primary_term_pct_p75"
+  },
+  "issued.unknown": {
+    "value": 0,
+    "unit": "leases",
+    "table": "issuance.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "Unknown"
+    },
+    "column": "leases"
+  },
+  "exploration.unknown.leases": {
+    "value": 0,
+    "unit": "leases",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "Unknown"
+    },
+    "column": "leases"
+  },
+  "exploration.unknown.explored_leases": {
+    "value": 0,
+    "unit": "leases",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "Unknown"
+    },
+    "column": "explored_leases"
+  },
+  "exploration.unknown.exploration_wells": {
+    "value": 0,
+    "unit": "API10 wells",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "Unknown"
+    },
+    "column": "exploration_wells"
+  },
+  "exploration.unknown.share_pct": {
+    "value": null,
+    "unit": "%",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "Unknown"
+    },
+    "column": "share_pct"
+  },
+  "exploration.unknown.leases_with_any_e_bore": {
+    "value": 0,
+    "unit": "leases",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "Unknown"
+    },
+    "column": "leases_with_any_e_bore"
+  },
+  "exploration.unknown.any_e_bore_share_pct": {
+    "value": null,
+    "unit": "%",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "Unknown"
+    },
+    "column": "any_e_bore_share_pct"
+  },
+  "exploration.unknown.explored_within_five_years": {
+    "value": 0,
+    "unit": "leases",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "Unknown"
+    },
+    "column": "explored_within_five_years"
+  },
+  "exploration.unknown.five_year_share_pct": {
+    "value": null,
+    "unit": "%",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "Unknown"
+    },
+    "column": "five_year_share_pct"
+  },
+  "exploration.unknown.days_to_spud_p25": {
+    "value": null,
+    "unit": "days",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "Unknown"
+    },
+    "column": "days_to_spud_p25"
+  },
+  "exploration.unknown.days_to_spud_median": {
+    "value": null,
+    "unit": "days",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "Unknown"
+    },
+    "column": "days_to_spud_median"
+  },
+  "exploration.unknown.days_to_spud_p75": {
+    "value": null,
+    "unit": "days",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "Unknown"
+    },
+    "column": "days_to_spud_p75"
+  },
+  "exploration.unknown.days_to_any_e_bore_p25": {
+    "value": null,
+    "unit": "days",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "Unknown"
+    },
+    "column": "days_to_any_e_bore_p25"
+  },
+  "exploration.unknown.days_to_any_e_bore_median": {
+    "value": null,
+    "unit": "days",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "Unknown"
+    },
+    "column": "days_to_any_e_bore_median"
+  },
+  "exploration.unknown.days_to_any_e_bore_p75": {
+    "value": null,
+    "unit": "days",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "Unknown"
+    },
+    "column": "days_to_any_e_bore_p75"
+  },
+  "well_site.unknown.timed_leases": {
+    "value": 0,
+    "unit": "leases",
+    "table": "exploration_site_depth.csv",
+    "filter": {
+      "depth_band": "Unknown"
+    },
+    "column": "timed_leases"
+  },
+  "well_site.unknown.days_to_spud_p25": {
+    "value": null,
+    "unit": "days",
+    "table": "exploration_site_depth.csv",
+    "filter": {
+      "depth_band": "Unknown"
+    },
+    "column": "days_to_spud_p25"
+  },
+  "well_site.unknown.days_to_spud_median": {
+    "value": null,
+    "unit": "days",
+    "table": "exploration_site_depth.csv",
+    "filter": {
+      "depth_band": "Unknown"
+    },
+    "column": "days_to_spud_median"
+  },
+  "well_site.unknown.days_to_spud_p75": {
+    "value": null,
+    "unit": "days",
+    "table": "exploration_site_depth.csv",
+    "filter": {
+      "depth_band": "Unknown"
+    },
+    "column": "days_to_spud_p75"
+  },
+  "oil.unknown.observed_leases": {
+    "value": 0,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "Unknown",
+      "event": "Crude oil"
+    },
+    "column": "observed_leases"
+  },
+  "oil.unknown.timed_leases": {
+    "value": 0,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "Unknown",
+      "event": "Crude oil"
+    },
+    "column": "timed_leases"
+  },
+  "oil.unknown.without_observed_event": {
+    "value": 0,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "Unknown",
+      "event": "Crude oil"
+    },
+    "column": "without_observed_event"
+  },
+  "oil.unknown.term_leases": {
+    "value": 0,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "Unknown",
+      "event": "Crude oil"
+    },
+    "column": "term_leases"
+  },
+  "oil.unknown.over_term_leases": {
+    "value": 0,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "Unknown",
+      "event": "Crude oil"
+    },
+    "column": "over_term_leases"
+  },
+  "oil.unknown.months_p25": {
+    "value": null,
+    "unit": "months",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "Unknown",
+      "event": "Crude oil"
+    },
+    "column": "months_p25"
+  },
+  "oil.unknown.months_median": {
+    "value": null,
+    "unit": "months",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "Unknown",
+      "event": "Crude oil"
+    },
+    "column": "months_median"
+  },
+  "oil.unknown.months_p75": {
+    "value": null,
+    "unit": "months",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "Unknown",
+      "event": "Crude oil"
+    },
+    "column": "months_p75"
+  },
+  "oil.unknown.primary_term_pct_p25": {
+    "value": null,
+    "unit": "%",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "Unknown",
+      "event": "Crude oil"
+    },
+    "column": "primary_term_pct_p25"
+  },
+  "oil.unknown.primary_term_pct_median": {
+    "value": null,
+    "unit": "%",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "Unknown",
+      "event": "Crude oil"
+    },
+    "column": "primary_term_pct_median"
+  },
+  "oil.unknown.primary_term_pct_p75": {
+    "value": null,
+    "unit": "%",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "Unknown",
+      "event": "Crude oil"
+    },
+    "column": "primary_term_pct_p75"
+  },
+  "hydrocarbon.unknown.observed_leases": {
+    "value": 0,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "Unknown",
+      "event": "Any hydrocarbon"
+    },
+    "column": "observed_leases"
+  },
+  "hydrocarbon.unknown.timed_leases": {
+    "value": 0,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "Unknown",
+      "event": "Any hydrocarbon"
+    },
+    "column": "timed_leases"
+  },
+  "hydrocarbon.unknown.without_observed_event": {
+    "value": 0,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "Unknown",
+      "event": "Any hydrocarbon"
+    },
+    "column": "without_observed_event"
+  },
+  "hydrocarbon.unknown.term_leases": {
+    "value": 0,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "Unknown",
+      "event": "Any hydrocarbon"
+    },
+    "column": "term_leases"
+  },
+  "hydrocarbon.unknown.over_term_leases": {
+    "value": 0,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "Unknown",
+      "event": "Any hydrocarbon"
+    },
+    "column": "over_term_leases"
+  },
+  "hydrocarbon.unknown.months_p25": {
+    "value": null,
+    "unit": "months",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "Unknown",
+      "event": "Any hydrocarbon"
+    },
+    "column": "months_p25"
+  },
+  "hydrocarbon.unknown.months_median": {
+    "value": null,
+    "unit": "months",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "Unknown",
+      "event": "Any hydrocarbon"
+    },
+    "column": "months_median"
+  },
+  "hydrocarbon.unknown.months_p75": {
+    "value": null,
+    "unit": "months",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "Unknown",
+      "event": "Any hydrocarbon"
+    },
+    "column": "months_p75"
+  },
+  "hydrocarbon.unknown.primary_term_pct_p25": {
+    "value": null,
+    "unit": "%",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "Unknown",
+      "event": "Any hydrocarbon"
+    },
+    "column": "primary_term_pct_p25"
+  },
+  "hydrocarbon.unknown.primary_term_pct_median": {
+    "value": null,
+    "unit": "%",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "Unknown",
+      "event": "Any hydrocarbon"
+    },
+    "column": "primary_term_pct_median"
+  },
+  "hydrocarbon.unknown.primary_term_pct_p75": {
+    "value": null,
+    "unit": "%",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "Unknown",
+      "event": "Any hydrocarbon"
+    },
+    "column": "primary_term_pct_p75"
+  },
+  "issued.all": {
+    "value": 8327,
+    "unit": "leases",
+    "table": "issuance.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "All bands"
+    },
+    "column": "leases"
+  },
+  "exploration.all.leases": {
+    "value": 7126,
+    "unit": "leases",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "All bands"
+    },
+    "column": "leases"
+  },
+  "exploration.all.explored_leases": {
+    "value": 432,
+    "unit": "leases",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "All bands"
+    },
+    "column": "explored_leases"
+  },
+  "exploration.all.exploration_wells": {
+    "value": 589,
+    "unit": "API10 wells",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "All bands"
+    },
+    "column": "exploration_wells"
+  },
+  "exploration.all.share_pct": {
+    "value": 6.0623070446253156,
+    "unit": "%",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "All bands"
+    },
+    "column": "share_pct"
+  },
+  "exploration.all.leases_with_any_e_bore": {
+    "value": 450,
+    "unit": "leases",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "All bands"
+    },
+    "column": "leases_with_any_e_bore"
+  },
+  "exploration.all.any_e_bore_share_pct": {
+    "value": 6.314903171484704,
+    "unit": "%",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "All bands"
+    },
+    "column": "any_e_bore_share_pct"
+  },
+  "exploration.all.explored_within_five_years": {
+    "value": 339,
+    "unit": "leases",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "All bands"
+    },
+    "column": "explored_within_five_years"
+  },
+  "exploration.all.five_year_share_pct": {
+    "value": 4.757227055851811,
+    "unit": "%",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "All bands"
+    },
+    "column": "five_year_share_pct"
+  },
+  "exploration.all.days_to_spud_p25": {
+    "value": 440.5,
+    "unit": "days",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "All bands"
+    },
+    "column": "days_to_spud_p25"
+  },
+  "exploration.all.days_to_spud_median": {
+    "value": 893.5,
+    "unit": "days",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "All bands"
+    },
+    "column": "days_to_spud_median"
+  },
+  "exploration.all.days_to_spud_p75": {
+    "value": 1756.5,
+    "unit": "days",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "All bands"
+    },
+    "column": "days_to_spud_p75"
+  },
+  "exploration.all.days_to_any_e_bore_p25": {
+    "value": 439.5,
+    "unit": "days",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "All bands"
+    },
+    "column": "days_to_any_e_bore_p25"
+  },
+  "exploration.all.days_to_any_e_bore_median": {
+    "value": 907,
+    "unit": "days",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "All bands"
+    },
+    "column": "days_to_any_e_bore_median"
+  },
+  "exploration.all.days_to_any_e_bore_p75": {
+    "value": 1776.75,
+    "unit": "days",
+    "table": "exploration.csv",
+    "filter": {
+      "issue_year": "All years",
+      "depth_band": "All bands"
+    },
+    "column": "days_to_any_e_bore_p75"
+  },
+  "well_site.all.timed_leases": {
+    "value": 432,
+    "unit": "leases",
+    "table": "exploration_site_depth.csv",
+    "filter": {
+      "depth_band": "All bands"
+    },
+    "column": "timed_leases"
+  },
+  "well_site.all.days_to_spud_p25": {
+    "value": 440.5,
+    "unit": "days",
+    "table": "exploration_site_depth.csv",
+    "filter": {
+      "depth_band": "All bands"
+    },
+    "column": "days_to_spud_p25"
+  },
+  "well_site.all.days_to_spud_median": {
+    "value": 893.5,
+    "unit": "days",
+    "table": "exploration_site_depth.csv",
+    "filter": {
+      "depth_band": "All bands"
+    },
+    "column": "days_to_spud_median"
+  },
+  "well_site.all.days_to_spud_p75": {
+    "value": 1756.5,
+    "unit": "days",
+    "table": "exploration_site_depth.csv",
+    "filter": {
+      "depth_band": "All bands"
+    },
+    "column": "days_to_spud_p75"
+  },
+  "oil.all.observed_leases": {
+    "value": 126,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "All bands",
+      "event": "Crude oil"
+    },
+    "column": "observed_leases"
+  },
+  "oil.all.timed_leases": {
+    "value": 122,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "All bands",
+      "event": "Crude oil"
+    },
+    "column": "timed_leases"
+  },
+  "oil.all.without_observed_event": {
+    "value": 8201,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "All bands",
+      "event": "Crude oil"
+    },
+    "column": "without_observed_event"
+  },
+  "oil.all.term_leases": {
+    "value": 122,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "All bands",
+      "event": "Crude oil"
+    },
+    "column": "term_leases"
+  },
+  "oil.all.over_term_leases": {
+    "value": 54,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "All bands",
+      "event": "Crude oil"
+    },
+    "column": "over_term_leases"
+  },
+  "oil.all.months_p25": {
+    "value": 45,
+    "unit": "months",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "All bands",
+      "event": "Crude oil"
+    },
+    "column": "months_p25"
+  },
+  "oil.all.months_median": {
+    "value": 75,
+    "unit": "months",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "All bands",
+      "event": "Crude oil"
+    },
+    "column": "months_median"
+  },
+  "oil.all.months_p75": {
+    "value": 119.5,
+    "unit": "months",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "All bands",
+      "event": "Crude oil"
+    },
+    "column": "months_p75"
+  },
+  "oil.all.primary_term_pct_p25": {
+    "value": 63.54166666666667,
+    "unit": "%",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "All bands",
+      "event": "Crude oil"
+    },
+    "column": "primary_term_pct_p25"
+  },
+  "oil.all.primary_term_pct_median": {
+    "value": 95,
+    "unit": "%",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "All bands",
+      "event": "Crude oil"
+    },
+    "column": "primary_term_pct_median"
+  },
+  "oil.all.primary_term_pct_p75": {
+    "value": 128.95833333333331,
+    "unit": "%",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "All bands",
+      "event": "Crude oil"
+    },
+    "column": "primary_term_pct_p75"
+  },
+  "hydrocarbon.all.observed_leases": {
+    "value": 211,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "All bands",
+      "event": "Any hydrocarbon"
+    },
+    "column": "observed_leases"
+  },
+  "hydrocarbon.all.timed_leases": {
+    "value": 206,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "All bands",
+      "event": "Any hydrocarbon"
+    },
+    "column": "timed_leases"
+  },
+  "hydrocarbon.all.without_observed_event": {
+    "value": 8116,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "All bands",
+      "event": "Any hydrocarbon"
+    },
+    "column": "without_observed_event"
+  },
+  "hydrocarbon.all.term_leases": {
+    "value": 206,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "All bands",
+      "event": "Any hydrocarbon"
+    },
+    "column": "term_leases"
+  },
+  "hydrocarbon.all.over_term_leases": {
+    "value": 57,
+    "unit": "leases",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "All bands",
+      "event": "Any hydrocarbon"
+    },
+    "column": "over_term_leases"
+  },
+  "hydrocarbon.all.months_p25": {
+    "value": 26,
+    "unit": "months",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "All bands",
+      "event": "Any hydrocarbon"
+    },
+    "column": "months_p25"
+  },
+  "hydrocarbon.all.months_median": {
+    "value": 51.5,
+    "unit": "months",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "All bands",
+      "event": "Any hydrocarbon"
+    },
+    "column": "months_median"
+  },
+  "hydrocarbon.all.months_p75": {
+    "value": 80.75,
+    "unit": "months",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "All bands",
+      "event": "Any hydrocarbon"
+    },
+    "column": "months_p75"
+  },
+  "hydrocarbon.all.primary_term_pct_p25": {
+    "value": 38.333333333333336,
+    "unit": "%",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "All bands",
+      "event": "Any hydrocarbon"
+    },
+    "column": "primary_term_pct_p25"
+  },
+  "hydrocarbon.all.primary_term_pct_median": {
+    "value": 67.5,
+    "unit": "%",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "All bands",
+      "event": "Any hydrocarbon"
+    },
+    "column": "primary_term_pct_median"
+  },
+  "hydrocarbon.all.primary_term_pct_p75": {
+    "value": 104.58333333333333,
+    "unit": "%",
+    "table": "first_production.csv",
+    "filter": {
+      "depth_band": "All bands",
+      "event": "Any hydrocarbon"
+    },
+    "column": "primary_term_pct_p75"
+  },
+  "coverage.tape_file_date": {
+    "value": "2026-11-02",
+    "unit": "source text",
+    "table": "coverage.csv",
+    "filter": {
+      "metric": "tape_file_date"
+    },
+    "column": "text"
+  },
+  "coverage.first_effective_date": {
+    "value": "2005-04-01",
+    "unit": "source text",
+    "table": "coverage.csv",
+    "filter": {
+      "metric": "first_effective_date"
+    },
+    "column": "text"
+  },
+  "coverage.last_effective_date": {
+    "value": "2026-10-01",
+    "unit": "source text",
+    "table": "coverage.csv",
+    "filter": {
+      "metric": "last_effective_date"
+    },
+    "column": "text"
+  },
+  "coverage.straddling_ranges": {
+    "value": 944,
+    "unit": "count",
+    "table": "coverage.csv",
+    "filter": {
+      "metric": "straddling_ranges"
+    },
+    "column": "number"
+  },
+  "coverage.missing_ranges": {
+    "value": 0,
+    "unit": "count",
+    "table": "coverage.csv",
+    "filter": {
+      "metric": "missing_ranges"
+    },
+    "column": "number"
+  },
+  "coverage.invalid_ranges": {
+    "value": 0,
+    "unit": "count",
+    "table": "coverage.csv",
+    "filter": {
+      "metric": "invalid_ranges"
+    },
+    "column": "number"
+  },
+  "coverage.no_sale_number": {
+    "value": 7,
+    "unit": "count",
+    "table": "coverage.csv",
+    "filter": {
+      "metric": "no_sale_number"
+    },
+    "column": "number"
+  },
+  "coverage.suspensions_with_ordered_dates": {
+    "value": 556,
+    "unit": "count",
+    "table": "coverage.csv",
+    "filter": {
+      "metric": "suspensions_with_ordered_dates"
+    },
+    "column": "number"
+  },
+  "coverage.primary_term_missing_or_nonpositive": {
+    "value": 0,
+    "unit": "count",
+    "table": "coverage.csv",
+    "filter": {
+      "metric": "primary_term_missing_or_nonpositive"
+    },
+    "column": "number"
+  },
+  "coverage.tape_first_production_date_present": {
+    "value": 205,
+    "unit": "count",
+    "table": "coverage.csv",
+    "filter": {
+      "metric": "tape_first_production_date_present"
+    },
+    "column": "number"
+  },
+  "coverage.compared_block_depths": {
+    "value": 8327,
+    "unit": "count",
+    "table": "coverage.csv",
+    "filter": {
+      "metric": "compared_block_depths"
+    },
+    "column": "number"
+  },
+  "coverage.depths_within_one_metre": {
+    "value": 8327,
+    "unit": "count",
+    "table": "coverage.csv",
+    "filter": {
+      "metric": "depths_within_one_metre"
+    },
+    "column": "number"
+  },
+  "coverage.unmapped_status_codes": {
+    "value": "CANCEL, EXPIR, OPERNS, PRIMRY, RELINQ, TERMIN",
+    "unit": "source text",
+    "table": "coverage.csv",
+    "filter": {
+      "metric": "unmapped_status_codes"
+    },
+    "column": "text"
+  },
+  "coverage.last_gulf_spud": {
+    "value": "2026-11-06",
+    "unit": "source text",
+    "table": "coverage.csv",
+    "filter": {
+      "metric": "last_gulf_spud"
+    },
+    "column": "text"
+  },
+  "coverage.pre_effective_e_bores_2005_2026": {
+    "value": 25,
+    "unit": "count",
+    "table": "coverage.csv",
+    "filter": {
+      "metric": "pre_effective_e_bores_2005_2026"
+    },
+    "column": "number"
+  },
+  "coverage.tied_first_spud_conflicting_cohort_lease_api10s": {
+    "value": 1,
+    "unit": "count",
+    "table": "coverage.csv",
+    "filter": {
+      "metric": "tied_first_spud_conflicting_cohort_lease_api10s"
+    },
+    "column": "number"
+  },
+  "coverage.tied_first_spud_conflicting_cohort_type_api10s": {
+    "value": 0,
+    "unit": "count",
+    "table": "coverage.csv",
+    "filter": {
+      "metric": "tied_first_spud_conflicting_cohort_type_api10s"
+    },
+    "column": "number"
+  },
+  "coverage.undated_e_CNL": {
+    "value": 41,
+    "unit": "count",
+    "table": "coverage.csv",
+    "filter": {
+      "metric": "undated_e_CNL"
+    },
+    "column": "number"
+  },
+  "coverage.undated_e_APD": {
+    "value": 3,
+    "unit": "count",
+    "table": "coverage.csv",
+    "filter": {
+      "metric": "undated_e_APD"
+    },
+    "column": "number"
+  },
+  "coverage.undated_e_AST": {
+    "value": 2,
+    "unit": "count",
+    "table": "coverage.csv",
+    "filter": {
+      "metric": "undated_e_AST"
+    },
+    "column": "number"
+  },
+  "coverage.first_source_month": {
+    "value": "1947-11",
+    "unit": "source text",
+    "table": "coverage.csv",
+    "filter": {
+      "metric": "first_source_month"
+    },
+    "column": "text"
+  },
+  "coverage.last_source_month": {
+    "value": "2026-10",
+    "unit": "source text",
+    "table": "coverage.csv",
+    "filter": {
+      "metric": "last_source_month"
+    },
+    "column": "text"
+  },
+  "coverage.last_source_month_rows": {
+    "value": 21,
+    "unit": "count",
+    "table": "coverage.csv",
+    "filter": {
+      "metric": "last_source_month_rows"
+    },
+    "column": "number"
+  },
+  "coverage.source_rows": {
+    "value": 873081,
+    "unit": "count",
+    "table": "coverage.csv",
+    "filter": {
+      "metric": "source_rows"
+    },
+    "column": "number"
+  },
+  "coverage.production_before_effective_month": {
+    "value": 5,
+    "unit": "count",
+    "table": "coverage.csv",
+    "filter": {
+      "metric": "production_before_effective_month"
+    },
+    "column": "number"
+  },
+  "coverage.oil_before_effective_month": {
+    "value": 4,
+    "unit": "count",
+    "table": "coverage.csv",
+    "filter": {
+      "metric": "oil_before_effective_month"
+    },
+    "column": "number"
+  },
+  "coverage.continuous_date_without_positive_month": {
+    "value": 2,
+    "unit": "count",
+    "table": "coverage.csv",
+    "filter": {
+      "metric": "continuous_date_without_positive_month"
+    },
+    "column": "number"
+  },
+  "coverage.positive_month_without_continuous_date": {
+    "value": 8,
+    "unit": "count",
+    "table": "coverage.csv",
+    "filter": {
+      "metric": "positive_month_without_continuous_date"
+    },
+    "column": "number"
+  },
+  "coverage.owner_status_C": {
+    "value": 3551,
+    "unit": "count",
+    "table": "coverage.csv",
+    "filter": {
+      "metric": "owner_status_C"
+    },
+    "column": "number"
+  },
+  "coverage.owner_status_T": {
+    "value": 4,
+    "unit": "count",
+    "table": "coverage.csv",
+    "filter": {
+      "metric": "owner_status_T"
+    },
+    "column": "number"
+  },
+  "coverage.termination_dates_present": {
+    "value": 0,
+    "unit": "count",
+    "table": "coverage.csv",
+    "filter": {
+      "metric": "termination_dates_present"
+    },
+    "column": "number"
+  },
+  "coverage.missing_assignment_effective_dates": {
+    "value": 12,
+    "unit": "count",
+    "table": "coverage.csv",
+    "filter": {
+      "metric": "missing_assignment_effective_dates"
+    },
+    "column": "number"
+  },
+  "coverage.cohort_current_companies": {
+    "value": 173,
+    "unit": "count",
+    "table": "coverage.csv",
+    "filter": {
+      "metric": "cohort_current_companies"
+    },
+    "column": "number"
+  },
+  "coverage.cohort_current_leases": {
+    "value": 1224,
+    "unit": "count",
+    "table": "coverage.csv",
+    "filter": {
+      "metric": "cohort_current_leases"
+    },
+    "column": "number"
+  },
+  "audit.LSETAPE effective Gulf lease cohort.rows_read": {
+    "value": 31721,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "LSETAPE effective Gulf lease cohort"
+    },
+    "column": "rows_read"
+  },
+  "audit.LSETAPE effective Gulf lease cohort.rows_kept": {
+    "value": 8327,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "LSETAPE effective Gulf lease cohort"
+    },
+    "column": "rows_kept"
+  },
+  "audit.LSETAPE effective Gulf lease cohort.rows_dropped": {
+    "value": 23394,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "LSETAPE effective Gulf lease cohort"
+    },
+    "column": "rows_dropped"
+  },
+  "audit.LSETAPE effective Gulf lease cohort.drop__missing_effective_date": {
+    "value": 1646,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "LSETAPE effective Gulf lease cohort"
+    },
+    "column": "drop__missing_effective_date"
+  },
+  "audit.LSETAPE effective Gulf lease cohort.drop__effective_year_outside_2005_2026": {
+    "value": 21748,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "LSETAPE effective Gulf lease cohort"
+    },
+    "column": "drop__effective_year_outside_2005_2026"
+  },
+  "audit.ProductionRawData depth lookup matched to cohort for unit comparison.rows_read": {
+    "value": 31721,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "ProductionRawData depth lookup matched to cohort for unit comparison"
+    },
+    "column": "rows_read"
+  },
+  "audit.ProductionRawData depth lookup matched to cohort for unit comparison.rows_kept": {
+    "value": 8327,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "ProductionRawData depth lookup matched to cohort for unit comparison"
+    },
+    "column": "rows_kept"
+  },
+  "audit.ProductionRawData depth lookup matched to cohort for unit comparison.rows_dropped": {
+    "value": 23394,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "ProductionRawData depth lookup matched to cohort for unit comparison"
+    },
+    "column": "rows_dropped"
+  },
+  "audit.ProductionRawData depth lookup matched to cohort for unit comparison.drop__lease_outside_cohort": {
+    "value": 23394,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "ProductionRawData depth lookup matched to cohort for unit comparison"
+    },
+    "column": "drop__lease_outside_cohort"
+  },
+  "audit.BoreholeRawData, dated Gulf bore records.rows_read": {
+    "value": 57520,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "BoreholeRawData, dated Gulf bore records"
+    },
+    "column": "rows_read"
+  },
+  "audit.BoreholeRawData, dated Gulf bore records.rows_kept": {
+    "value": 54561,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "BoreholeRawData, dated Gulf bore records"
+    },
+    "column": "rows_kept"
+  },
+  "audit.BoreholeRawData, dated Gulf bore records.rows_dropped": {
+    "value": 2959,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "BoreholeRawData, dated Gulf bore records"
+    },
+    "column": "rows_dropped"
+  },
+  "audit.BoreholeRawData, dated Gulf bore records.drop__other_region": {
+    "value": 1934,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "BoreholeRawData, dated Gulf bore records"
+    },
+    "column": "drop__other_region"
+  },
+  "audit.BoreholeRawData, dated Gulf bore records.drop__undated_cancelled": {
+    "value": 994,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "BoreholeRawData, dated Gulf bore records"
+    },
+    "column": "drop__undated_cancelled"
+  },
+  "audit.BoreholeRawData, dated Gulf bore records.drop__undated_permit_or_approved_sidetrack": {
+    "value": 31,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "BoreholeRawData, dated Gulf bore records"
+    },
+    "column": "drop__undated_permit_or_approved_sidetrack"
+  },
+  "audit.Dated Gulf bore records at earliest API10 spud.rows_read": {
+    "value": 54561,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Dated Gulf bore records at earliest API10 spud"
+    },
+    "column": "rows_read"
+  },
+  "audit.Dated Gulf bore records at earliest API10 spud.rows_kept": {
+    "value": 37565,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Dated Gulf bore records at earliest API10 spud"
+    },
+    "column": "rows_kept"
+  },
+  "audit.Dated Gulf bore records at earliest API10 spud.rows_dropped": {
+    "value": 16996,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Dated Gulf bore records at earliest API10 spud"
+    },
+    "column": "rows_dropped"
+  },
+  "audit.Dated Gulf bore records at earliest API10 spud.drop__later_bore_of_same_api10": {
+    "value": 16996,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Dated Gulf bore records at earliest API10 spud"
+    },
+    "column": "drop__later_bore_of_same_api10"
+  },
+  "audit.Earliest-spud bore records grouped into distinct Gulf API10s.rows_read": {
+    "value": 37565,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Earliest-spud bore records grouped into distinct Gulf API10s"
+    },
+    "column": "rows_read"
+  },
+  "audit.Earliest-spud bore records grouped into distinct Gulf API10s.rows_kept": {
+    "value": 37513,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Earliest-spud bore records grouped into distinct Gulf API10s"
+    },
+    "column": "rows_kept"
+  },
+  "audit.Earliest-spud bore records grouped into distinct Gulf API10s.rows_dropped": {
+    "value": 52,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Earliest-spud bore records grouped into distinct Gulf API10s"
+    },
+    "column": "rows_dropped"
+  },
+  "audit.Earliest-spud bore records grouped into distinct Gulf API10s.drop__additional_bore_on_same_well_spud_date": {
+    "value": 52,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Earliest-spud bore records grouped into distinct Gulf API10s"
+    },
+    "column": "drop__additional_bore_on_same_well_spud_date"
+  },
+  "audit.Original-spud API10s attributable to effective cohort leases.rows_read": {
+    "value": 37513,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Original-spud API10s attributable to effective cohort leases"
+    },
+    "column": "rows_read"
+  },
+  "audit.Original-spud API10s attributable to effective cohort leases.rows_kept": {
+    "value": 734,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Original-spud API10s attributable to effective cohort leases"
+    },
+    "column": "rows_kept"
+  },
+  "audit.Original-spud API10s attributable to effective cohort leases.rows_dropped": {
+    "value": 36779,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Original-spud API10s attributable to effective cohort leases"
+    },
+    "column": "rows_dropped"
+  },
+  "audit.Original-spud API10s attributable to effective cohort leases.drop__conflicting_bottom_leases_at_first_spud": {
+    "value": 2,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Original-spud API10s attributable to effective cohort leases"
+    },
+    "column": "drop__conflicting_bottom_leases_at_first_spud"
+  },
+  "audit.Original-spud API10s attributable to effective cohort leases.drop__conflicting_types_at_first_spud": {
+    "value": 6,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Original-spud API10s attributable to effective cohort leases"
+    },
+    "column": "drop__conflicting_types_at_first_spud"
+  },
+  "audit.Original-spud API10s attributable to effective cohort leases.drop__bottom_lease_outside_cohort": {
+    "value": 36677,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Original-spud API10s attributable to effective cohort leases"
+    },
+    "column": "drop__bottom_lease_outside_cohort"
+  },
+  "audit.Original-spud API10s attributable to effective cohort leases.drop__well_spud_before_lease_effective": {
+    "value": 94,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Original-spud API10s attributable to effective cohort leases"
+    },
+    "column": "drop__well_spud_before_lease_effective"
+  },
+  "audit.Cohort API10s originally spudded as exploratory.rows_read": {
+    "value": 734,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Cohort API10s originally spudded as exploratory"
+    },
+    "column": "rows_read"
+  },
+  "audit.Cohort API10s originally spudded as exploratory.rows_kept": {
+    "value": 595,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Cohort API10s originally spudded as exploratory"
+    },
+    "column": "rows_kept"
+  },
+  "audit.Cohort API10s originally spudded as exploratory.rows_dropped": {
+    "value": 139,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Cohort API10s originally spudded as exploratory"
+    },
+    "column": "rows_dropped"
+  },
+  "audit.Cohort API10s originally spudded as exploratory.drop__first_spud_not_type_E": {
+    "value": 139,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Cohort API10s originally spudded as exploratory"
+    },
+    "column": "drop__first_spud_not_type_E"
+  },
+  "audit.All dated Gulf bores for E-bore lease sensitivity.rows_read": {
+    "value": 54561,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "All dated Gulf bores for E-bore lease sensitivity"
+    },
+    "column": "rows_read"
+  },
+  "audit.All dated Gulf bores for E-bore lease sensitivity.rows_kept": {
+    "value": 862,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "All dated Gulf bores for E-bore lease sensitivity"
+    },
+    "column": "rows_kept"
+  },
+  "audit.All dated Gulf bores for E-bore lease sensitivity.rows_dropped": {
+    "value": 53699,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "All dated Gulf bores for E-bore lease sensitivity"
+    },
+    "column": "rows_dropped"
+  },
+  "audit.All dated Gulf bores for E-bore lease sensitivity.drop__bottom_lease_outside_cohort": {
+    "value": 18420,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "All dated Gulf bores for E-bore lease sensitivity"
+    },
+    "column": "drop__bottom_lease_outside_cohort"
+  },
+  "audit.All dated Gulf bores for E-bore lease sensitivity.drop__not_exploratory": {
+    "value": 35254,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "All dated Gulf bores for E-bore lease sensitivity"
+    },
+    "column": "drop__not_exploratory"
+  },
+  "audit.All dated Gulf bores for E-bore lease sensitivity.drop__bore_spud_before_lease_effective": {
+    "value": 25,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "All dated Gulf bores for E-bore lease sensitivity"
+    },
+    "column": "drop__bore_spud_before_lease_effective"
+  },
+  "audit.Original-spud API10s for well-site exploration timing.rows_read": {
+    "value": 734,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Original-spud API10s for well-site exploration timing"
+    },
+    "column": "rows_read"
+  },
+  "audit.Original-spud API10s for well-site exploration timing.rows_kept": {
+    "value": 589,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Original-spud API10s for well-site exploration timing"
+    },
+    "column": "rows_kept"
+  },
+  "audit.Original-spud API10s for well-site exploration timing.rows_dropped": {
+    "value": 145,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Original-spud API10s for well-site exploration timing"
+    },
+    "column": "rows_dropped"
+  },
+  "audit.Original-spud API10s for well-site exploration timing.drop__not_exploratory": {
+    "value": 139,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Original-spud API10s for well-site exploration timing"
+    },
+    "column": "drop__not_exploratory"
+  },
+  "audit.Original-spud API10s for well-site exploration timing.drop__outside_2005_2020_lease_cohort": {
+    "value": 6,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Original-spud API10s for well-site exploration timing"
+    },
+    "column": "drop__outside_2005_2020_lease_cohort"
+  },
+  "audit.First exploration spud on each lease at measured well site.rows_read": {
+    "value": 589,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "First exploration spud on each lease at measured well site"
+    },
+    "column": "rows_read"
+  },
+  "audit.First exploration spud on each lease at measured well site.rows_kept": {
+    "value": 432,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "First exploration spud on each lease at measured well site"
+    },
+    "column": "rows_kept"
+  },
+  "audit.First exploration spud on each lease at measured well site.rows_dropped": {
+    "value": 157,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "First exploration spud on each lease at measured well site"
+    },
+    "column": "rows_dropped"
+  },
+  "audit.First exploration spud on each lease at measured well site.drop__later_exploration_well_on_same_lease": {
+    "value": 157,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "First exploration spud on each lease at measured well site"
+    },
+    "column": "drop__later_exploration_well_on_same_lease"
+  },
+  "audit.First-spud exploratory API10s grouped into distinct timed leases.rows_read": {
+    "value": 432,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "First-spud exploratory API10s grouped into distinct timed leases"
+    },
+    "column": "rows_read"
+  },
+  "audit.First-spud exploratory API10s grouped into distinct timed leases.rows_kept": {
+    "value": 432,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "First-spud exploratory API10s grouped into distinct timed leases"
+    },
+    "column": "rows_kept"
+  },
+  "audit.First-spud exploratory API10s grouped into distinct timed leases.rows_dropped": {
+    "value": 0,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "First-spud exploratory API10s grouped into distinct timed leases"
+    },
+    "column": "rows_dropped"
+  },
+  "audit.Timed leases with a resolved measured site band.rows_read": {
+    "value": 432,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Timed leases with a resolved measured site band"
+    },
+    "column": "rows_read"
+  },
+  "audit.Timed leases with a resolved measured site band.rows_kept": {
+    "value": 432,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Timed leases with a resolved measured site band"
+    },
+    "column": "rows_kept"
+  },
+  "audit.Timed leases with a resolved measured site band.rows_dropped": {
+    "value": 0,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Timed leases with a resolved measured site band"
+    },
+    "column": "rows_dropped"
+  },
+  "audit.ProductionRawData monthly detail matched to issuance cohort.rows_read": {
+    "value": 873081,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "ProductionRawData monthly detail matched to issuance cohort"
+    },
+    "column": "rows_read"
+  },
+  "audit.ProductionRawData monthly detail matched to issuance cohort.rows_kept": {
+    "value": 19098,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "ProductionRawData monthly detail matched to issuance cohort"
+    },
+    "column": "rows_kept"
+  },
+  "audit.ProductionRawData monthly detail matched to issuance cohort.rows_dropped": {
+    "value": 853983,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "ProductionRawData monthly detail matched to issuance cohort"
+    },
+    "column": "rows_dropped"
+  },
+  "audit.ProductionRawData monthly detail matched to issuance cohort.drop__lease_outside_cohort": {
+    "value": 853964,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "ProductionRawData monthly detail matched to issuance cohort"
+    },
+    "column": "drop__lease_outside_cohort"
+  },
+  "audit.ProductionRawData monthly detail matched to issuance cohort.drop__missing_lease_id": {
+    "value": 19,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "ProductionRawData monthly detail matched to issuance cohort"
+    },
+    "column": "drop__missing_lease_id"
+  },
+  "audit.Matched lease-month rows with positive crude oil.rows_read": {
+    "value": 19098,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Matched lease-month rows with positive crude oil"
+    },
+    "column": "rows_read"
+  },
+  "audit.Matched lease-month rows with positive crude oil.rows_kept": {
+    "value": 8444,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Matched lease-month rows with positive crude oil"
+    },
+    "column": "rows_kept"
+  },
+  "audit.Matched lease-month rows with positive crude oil.rows_dropped": {
+    "value": 10654,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Matched lease-month rows with positive crude oil"
+    },
+    "column": "rows_dropped"
+  },
+  "audit.Matched lease-month rows with positive crude oil.drop__no_positive_reported_volume": {
+    "value": 10654,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Matched lease-month rows with positive crude oil"
+    },
+    "column": "drop__no_positive_reported_volume"
+  },
+  "audit.Matched lease-month rows with positive any hydrocarbon.rows_read": {
+    "value": 19098,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Matched lease-month rows with positive any hydrocarbon"
+    },
+    "column": "rows_read"
+  },
+  "audit.Matched lease-month rows with positive any hydrocarbon.rows_kept": {
+    "value": 15051,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Matched lease-month rows with positive any hydrocarbon"
+    },
+    "column": "rows_kept"
+  },
+  "audit.Matched lease-month rows with positive any hydrocarbon.rows_dropped": {
+    "value": 4047,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Matched lease-month rows with positive any hydrocarbon"
+    },
+    "column": "rows_dropped"
+  },
+  "audit.Matched lease-month rows with positive any hydrocarbon.drop__no_positive_reported_volume": {
+    "value": 4047,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "Matched lease-month rows with positive any hydrocarbon"
+    },
+    "column": "drop__no_positive_reported_volume"
+  },
+  "audit.LeaseOwnerRawData current assignments on cohort leases.rows_read": {
+    "value": 3555,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "LeaseOwnerRawData current assignments on cohort leases"
+    },
+    "column": "rows_read"
+  },
+  "audit.LeaseOwnerRawData current assignments on cohort leases.rows_kept": {
+    "value": 2195,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "LeaseOwnerRawData current assignments on cohort leases"
+    },
+    "column": "rows_kept"
+  },
+  "audit.LeaseOwnerRawData current assignments on cohort leases.rows_dropped": {
+    "value": 1360,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "LeaseOwnerRawData current assignments on cohort leases"
+    },
+    "column": "rows_dropped"
+  },
+  "audit.LeaseOwnerRawData current assignments on cohort leases.drop__assignment_status_other_than_current": {
+    "value": 4,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "LeaseOwnerRawData current assignments on cohort leases"
+    },
+    "column": "drop__assignment_status_other_than_current"
+  },
+  "audit.LeaseOwnerRawData current assignments on cohort leases.drop__lease_outside_effective_cohort": {
+    "value": 1356,
+    "unit": "records at this stage",
+    "table": "record_counts.csv",
+    "filter": {
+      "stage": "LeaseOwnerRawData current assignments on cohort leases"
+    },
+    "column": "drop__lease_outside_effective_cohort"
+  }
+}
