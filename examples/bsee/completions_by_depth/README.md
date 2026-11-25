@@ -1,11 +1,10 @@
 # Gulf of America well completions, by year and water depth
 
-Part 2 of the series "Life of a Gulf of America well": drilling, **completion**,
-interventions, abandonment. This folder counts completions from the public raw
+Part 3 of 7 in the series "Life of a Gulf of America well". This folder counts completions from the public raw
 data of the Bureau of Safety and Environmental Enforcement (BSEE) and holds the
 code, the small result tables, the charts and the checks. It uses the
 definitions of the interventions study in
-[`../interventions_by_depth`](../interventions_by_depth) (part 3 of the series),
+[`../interventions_by_depth`](../interventions_by_depth) (part 5 of the series),
 so that the completion counted here is the event that study sets aside.
 
 Counts are records in public files: approved permits and filed reports. They
@@ -195,6 +194,38 @@ Charts: [`01_completion_approvals`](output/01_completion_approvals.svg),
 [`04_drilled_to_completed`](output/04_drilled_to_completed.svg), each as SVG
 and PNG.
 
+### Half decade figures
+
+The [figure index](output/figures.json) gives the four body figures, their CSVs,
+and the row, column and display precision behind each bullet. The first two
+figures show approvals per calendar year for initial versus other completion
+work, then for recompletions and perforation work. Recompletion requires a
+`COMP` permit with `ZONE` that passes the interventions screen. The two
+perforation flags apply to other completion work. A permit can carry both
+flags, so the panels cannot be added. Only permits with an approval date in
+the plotted window contribute to the figures.
+
+The third figure divides completion approvals by the sum of the annual
+1 January standing well inventories in each depth band. It measures approval
+intensity across the Gulf and includes approvals on wells drilled later in the
+year. Permit depth follows the bore or its unique well depth (definition 4).
+Inventory depth follows the original hole or its unique well depth. A well
+enters on its first dated Gulf spud among noncancelled bores. It leaves when
+all nonsuperseded bores are permanently abandoned with known status dates,
+at the latest of those dates. January observations of unknown depth are
+excluded from the four curves. The [interventions inventory method](../interventions_by_depth/README.md#method)
+gives the bore status and region rules.
+
+The [shared chart module](../../../packages/worldenergydata-bsee/src/worldenergydata/bsee/half_decade.py)
+sums tidy year, band and count rows, optionally by group. It supports counts,
+counts per calendar year and rates from pooled exposure. An empty rate cell
+means zero exposure. The four complete periods contain five years each. The
+2025 to 2026 point uses two calendar years and includes the records available
+in the 23 November 2026 snapshot, with 38 calendar days left in 2026.
+The plot leaves this point detached and makes no projection for those days.
+Figure 4 retains the 2005 to 2025 spud cohort and displays exploratory wells
+first. Later spuds had less time to receive an initial approval by the snapshot.
+
 ## Checks
 
 Tests: [`tests/unit/bsee/test_completions_by_depth.py`](../../../tests/unit/bsee/test_completions_by_depth.py),
@@ -261,7 +292,7 @@ uv run python -I examples/bsee/completions_by_depth/count_completions.py \
   --data-dir <folder holding the three archives> \
   --out examples/bsee/completions_by_depth/output
 python3 examples/bsee/completions_by_depth/plot_charts.py
-examples/bsee/completions_by_depth/render_png.sh      # needs google-chrome
+bash examples/bsee/completions_by_depth/render_png.sh      # needs google-chrome
 BSEE_SERIES_BASIS_DIR=<that folder> uv run pytest \
   tests/unit/bsee/test_completions_by_depth.py
 ```

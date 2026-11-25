@@ -1,6 +1,6 @@
 """Count Gulf of America well completions from BSEE public raw data.
 
-Part 2 of the series "Life of a Gulf of America well". A completion leaves two
+Part 3 of the series "Life of a Gulf of America well". A completion leaves two
 public records, and both are counted here:
 
 - the approval: an approved permit to modify whose type is COMP (Completion)
@@ -34,6 +34,8 @@ import subprocess
 import sys
 import zipfile
 from pathlib import Path
+
+from worldenergydata.bsee.half_decade import summarize
 
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT.parent / "interventions_by_depth"))
@@ -450,6 +452,57 @@ def write_json(data, out, name):
     )
 
 
+def write_trend_tables(out, years, approvals, subcodes, classified, stock):
+    """Bin qualified permit counts and pool the January inventories for rates."""
+    # The C6 workover group also contains ordinary workovers. Only its COMP
+    # permits have a Change Zone flag and pass the new hole and plugback screen.
+    zone = classified[
+        classified.APM_OP_CD.eq("COMP") & classified.group.eq(ci.GROUPS[0])
+    ]
+    work = [
+        dict(year=row.year, band=row.band, kind="Recompletion")
+        for row in zone.itertuples()
+        if row.year in years
+    ]
+    flags = {"PERF": "Modify Perforations", "REPERF": "Reperforation"}
+    for row in approvals:
+        if row["year"] in years and row["kind"] == KINDS[1]:
+            for code, label in flags.items():
+                if code in subcodes.get(row["sn"], ()):
+                    work.append(dict(year=row["year"], band=row["band"], kind=label))
+
+    # Zero rows preserve the panels if a kind of permit has no observations.
+    def count_grid(events, kinds):
+        if any(e["year"] in years and e["band"] not in BANDS[:-1] for e in events):
+            raise ValueError("a counted approval lacks a recognized depth band")
+        rows = year_band_table(events, years, kinds)
+        return [
+            dict(year=r["year"], band=r["band"], group=r["kind"], count=r["count"])
+            for r in rows
+            if r["band"] != "no depth"
+        ]
+
+    permits = count_grid(approvals, KINDS)
+    annual = {}
+    for row in permits:
+        row["group"] = row["group"].capitalize()
+        key = (row["year"], row["band"])
+        annual[key] = annual.get(key, 0) + row["count"]
+    inventory = stock.set_index(["year", "band"], verify_integrity=True).standing_wells
+    rates = [
+        dict(year=y, band=b, count=count, exposure=int(inventory.loc[y, b]))
+        for (y, b), count in annual.items()
+    ]
+    activity = count_grid(work, ["Recompletion", *flags.values()])
+    for stem, rows, mode in [
+        ("01_approvals_by_period", permits, "per_year"),
+        ("02_recompletion_by_period", activity, "per_year"),
+        ("03_approvals_per_well", rates, "per_well"),
+    ]:
+        result = summarize(rows, mode=mode)
+        write_csv(result, out, stem, result[0].keys())
+
+
 def tally(events, key):
     out = {}
     for e in events:
@@ -552,6 +605,7 @@ def c6_cross_check(data_dir, years, mine_approvals, mine_reports):
             reports=side(mine_reports, theirs_r),
         ),
         bore,
+        apm[["APM_OP_CD", "year", "band", "group"]],
     )
 
 
@@ -945,7 +999,9 @@ def run(data_dir, out):
         )
     for r in r_table:
         mine_r[(r["year"], r["band"])] = r["count"]
-    cross, bore_frame = c6_cross_check(data_dir, years, mine_a, mine_r)
+    cross, bore_frame, classified = c6_cross_check(data_dir, years, mine_a, mine_r)
+    stock = ci.standing_wells(bore_frame, years, at="start")
+    write_trend_tables(out, years, in_window, subcodes, classified, stock)
 
     import well_life_cycle as wl  # C6's well and well-type rules
 

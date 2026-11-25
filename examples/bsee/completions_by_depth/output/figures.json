@@ -1,0 +1,236 @@
+[
+  {
+    "svg": "01_approvals_by_period.svg",
+    "csv": "01_approvals_by_period.csv",
+    "question": "How did initial and other completion approvals vary by depth and period?",
+    "bullets": [
+      {
+        "text": "In water under 100 m, initial approvals per year went from 301.6 in 2005 to 2009 to 44.6 in 2020 to 2024.",
+        "cells": [
+          {
+            "row": {
+              "group": "Initial completion",
+              "period": "2005 to 2009",
+              "band": "Under 100 m"
+            },
+            "column": "value",
+            "decimals": 1
+          },
+          {
+            "row": {
+              "group": "Initial completion",
+              "period": "2020 to 2024",
+              "band": "Under 100 m"
+            },
+            "column": "value",
+            "decimals": 1
+          }
+        ]
+      },
+      {
+        "text": "In water 1,500 m and deeper, initial approvals per year went from 23.6 in 2005 to 2009 to 119.6 in 2020 to 2024.",
+        "cells": [
+          {
+            "row": {
+              "group": "Initial completion",
+              "period": "2005 to 2009",
+              "band": "1,500 m and deeper"
+            },
+            "column": "value",
+            "decimals": 1
+          },
+          {
+            "row": {
+              "group": "Initial completion",
+              "period": "2020 to 2024",
+              "band": "1,500 m and deeper"
+            },
+            "column": "value",
+            "decimals": 1
+          }
+        ]
+      },
+      {
+        "text": "In water under 100 m, other approvals per year went from 97.0 in 2005 to 2009 to 24.8 in 2020 to 2024.",
+        "cells": [
+          {
+            "row": {
+              "group": "Other completion work",
+              "period": "2005 to 2009",
+              "band": "Under 100 m"
+            },
+            "column": "value",
+            "decimals": 1
+          },
+          {
+            "row": {
+              "group": "Other completion work",
+              "period": "2020 to 2024",
+              "band": "Under 100 m"
+            },
+            "column": "value",
+            "decimals": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "svg": "02_recompletion_by_period.svg",
+    "csv": "02_recompletion_by_period.csv",
+    "question": "Where and when did recompletions and perforation work receive approval?",
+    "bullets": [
+      {
+        "text": "The highest full period average for Recompletion was 560.8 approvals per year in water under 100 m in 2005 to 2009.",
+        "cells": [
+          {
+            "row": {
+              "group": "Recompletion",
+              "period": "2005 to 2009",
+              "band": "Under 100 m"
+            },
+            "column": "value",
+            "decimals": 1
+          }
+        ]
+      },
+      {
+        "text": "The highest full period average for Modify Perforations was 64.2 approvals per year in water under 100 m in 2005 to 2009.",
+        "cells": [
+          {
+            "row": {
+              "group": "Modify Perforations",
+              "period": "2005 to 2009",
+              "band": "Under 100 m"
+            },
+            "column": "value",
+            "decimals": 1
+          }
+        ]
+      },
+      {
+        "text": "The highest full period average for Reperforation was 34.2 approvals per year in water under 100 m in 2005 to 2009.",
+        "cells": [
+          {
+            "row": {
+              "group": "Reperforation",
+              "period": "2005 to 2009",
+              "band": "Under 100 m"
+            },
+            "column": "value",
+            "decimals": 1
+          }
+        ]
+      },
+      {
+        "text": "In water 1,500 m and deeper, recompletion approvals per year went from 5.4 in 2005 to 2009 to 14.2 in 2020 to 2024.",
+        "cells": [
+          {
+            "row": {
+              "group": "Recompletion",
+              "period": "2005 to 2009",
+              "band": "1,500 m and deeper"
+            },
+            "column": "value",
+            "decimals": 1
+          },
+          {
+            "row": {
+              "group": "Recompletion",
+              "period": "2020 to 2024",
+              "band": "1,500 m and deeper"
+            },
+            "column": "value",
+            "decimals": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "svg": "03_approvals_per_well.svg",
+    "csv": "03_approvals_per_well.csv",
+    "question": "How did completion approvals per standing well vary by depth and period?",
+    "bullets": [
+      {
+        "text": "In water under 100 m, annual approvals per January standing well went from 0.03 in 2005 to 2009 to 0.01 in 2020 to 2024.",
+        "cells": [
+          {
+            "row": {
+              "group": "",
+              "period": "2005 to 2009",
+              "band": "Under 100 m"
+            },
+            "column": "value",
+            "decimals": 2
+          },
+          {
+            "row": {
+              "group": "",
+              "period": "2020 to 2024",
+              "band": "Under 100 m"
+            },
+            "column": "value",
+            "decimals": 2
+          }
+        ]
+      },
+      {
+        "text": "In water 1,500 m and deeper, annual approvals per January standing well went from 0.12 in 2005 to 2009 to 0.33 in 2020 to 2024.",
+        "cells": [
+          {
+            "row": {
+              "group": "",
+              "period": "2005 to 2009",
+              "band": "1,500 m and deeper"
+            },
+            "column": "value",
+            "decimals": 2
+          },
+          {
+            "row": {
+              "group": "",
+              "period": "2020 to 2024",
+              "band": "1,500 m and deeper"
+            },
+            "column": "value",
+            "decimals": 2
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "svg": "04_drilled_to_completed.svg",
+    "csv": "drilled_to_completed.csv",
+    "question": "What share of exploratory and development wells had an initial completion approval?",
+    "bullets": [
+      {
+        "text": "47.9% of exploratory wells first drilled in 2005 to 2025 had an initial approval.",
+        "cells": [
+          {
+            "row": {
+              "well_type": "exploration",
+              "band": "all water depths"
+            },
+            "column": "share_percent",
+            "decimals": 1
+          }
+        ]
+      },
+      {
+        "text": "82.8% of development wells first drilled in 2005 to 2025 had an initial approval.",
+        "cells": [
+          {
+            "row": {
+              "well_type": "development",
+              "band": "all water depths"
+            },
+            "column": "share_percent",
+            "decimals": 1
+          }
+        ]
+      }
+    ]
+  }
+]

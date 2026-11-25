@@ -1,0 +1,140 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 864 497" width="960" height="552" role="img" aria-label="Approvals per calendar year by water depth and period (Initial completion, Other completion work)" font-family="'DejaVu Sans','Segoe UI',Arial,sans-serif">
+  <title>Approvals per calendar year by water depth and period (Initial completion, Other completion work)</title>
+  <rect width="864" height="497" fill="white" />
+  <line x1="220.0" y1="17" x2="240.0" y2="17" stroke="#6588a6" stroke-width="1.5" stroke-dasharray="none" />
+  <circle cx="230.0" cy="17" r="2" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
+  <text x="244.0" y="20" font-size="9" text-anchor="start">Under 100 m</text>
+  <line x1="312.8" y1="17" x2="332.8" y2="17" stroke="#427298" stroke-width="1.5" stroke-dasharray="5.5 2.4" />
+  <rect x="320.8" y="15" width="4" height="4" stroke="#333333" stroke-width="0.5" fill="#427298" />
+  <text x="336.8" y="20" font-size="9" text-anchor="start">100 to 500 m</text>
+  <line x1="410.4" y1="17" x2="430.4" y2="17" stroke="#245476" stroke-width="1.5" stroke-dasharray="9.6 2.4 1.5 2.4" />
+  <polygon points="420.40,15.00 422.40,19.00 418.40,19.00" stroke="#333333" stroke-width="0.5" fill="#245476" />
+  <text x="434.4" y="20" font-size="9" text-anchor="start">500 to 1,500 m</text>
+  <line x1="517.6" y1="17" x2="537.6" y2="17" stroke="#102e46" stroke-width="1.5" stroke-dasharray="1.5 2.4" />
+  <polygon points="527.60,14.40 530.20,17.00 527.60,19.60 525.00,17.00" stroke="#333333" stroke-width="0.5" fill="#102e46" />
+  <text x="541.6" y="20" font-size="9" text-anchor="start">1,500 m and deeper</text>
+  <text x="78" y="46" font-size="13" text-anchor="start">Initial completion</text>
+  <rect x="686" y="54" width="152" height="164" fill="#f0f0f0" />
+  <line x1="78" y1="218.0" x2="838" y2="218.0" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.5" y1="218.0" x2="78" y2="218.0" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71" y="221.5" font-size="11" text-anchor="end">0</text>
+  <line x1="78" y1="177.0" x2="838" y2="177.0" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.5" y1="177.0" x2="78" y2="177.0" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71" y="180.5" font-size="11" text-anchor="end">100</text>
+  <line x1="78" y1="136.0" x2="838" y2="136.0" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.5" y1="136.0" x2="78" y2="136.0" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71" y="139.5" font-size="11" text-anchor="end">200</text>
+  <line x1="78" y1="95.0" x2="838" y2="95.0" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.5" y1="95.0" x2="78" y2="95.0" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71" y="98.5" font-size="11" text-anchor="end">300</text>
+  <line x1="78" y1="54.0" x2="838" y2="54.0" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.5" y1="54.0" x2="78" y2="54.0" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71" y="57.5" font-size="11" text-anchor="end">400</text>
+  <line x1="78" y1="54" x2="78" y2="218" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <line x1="78" y1="218" x2="838" y2="218" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="20" y="136.0" font-size="11" text-anchor="middle" transform="rotate(-90 20 136.0)">Approvals per calendar year</text>
+  <circle cx="154.0" cy="94.34" r="2" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
+  <line x1="154.0" y1="94.34" x2="306.0" y2="135.51" stroke="#6588a6" stroke-width="1.5" stroke-dasharray="none" />
+  <circle cx="306.0" cy="135.51" r="2" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
+  <line x1="306.0" y1="135.51" x2="458.0" y2="191.51" stroke="#6588a6" stroke-width="1.5" stroke-dasharray="none" />
+  <circle cx="458.0" cy="191.51" r="2" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
+  <line x1="458.0" y1="191.51" x2="610.0" y2="199.71" stroke="#6588a6" stroke-width="1.5" stroke-dasharray="none" />
+  <circle cx="610.0" cy="199.71" r="2" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
+  <circle cx="762.0" cy="203.44" r="3.3" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
+  <rect x="152.0" y="201.98" width="4" height="4" stroke="#333333" stroke-width="0.5" fill="#427298" />
+  <line x1="154.0" y1="203.98" x2="306.0" y2="213.74" stroke="#427298" stroke-width="1.5" stroke-dasharray="5.5 2.4" />
+  <rect x="304.0" y="211.74" width="4" height="4" stroke="#333333" stroke-width="0.5" fill="#427298" />
+  <line x1="306.0" y1="213.74" x2="458.0" y2="204.72" stroke="#427298" stroke-width="1.5" stroke-dasharray="5.5 2.4" />
+  <rect x="456.0" y="202.72" width="4" height="4" stroke="#333333" stroke-width="0.5" fill="#427298" />
+  <line x1="458.0" y1="204.72" x2="610.0" y2="206.6" stroke="#427298" stroke-width="1.5" stroke-dasharray="5.5 2.4" />
+  <rect x="608.0" y="204.6" width="4" height="4" stroke="#333333" stroke-width="0.5" fill="#427298" />
+  <rect x="758.7" y="211.20999999999998" width="6.6" height="6.6" stroke="#333333" stroke-width="0.5" fill="#427298" />
+  <polygon points="154.00,195.58 156.00,199.58 152.00,199.58" stroke="#333333" stroke-width="0.5" fill="#245476" />
+  <line x1="154.0" y1="197.58" x2="306.0" y2="194.3" stroke="#245476" stroke-width="1.5" stroke-dasharray="9.6 2.4 1.5 2.4" />
+  <polygon points="306.00,192.30 308.00,196.30 304.00,196.30" stroke="#333333" stroke-width="0.5" fill="#245476" />
+  <line x1="306.0" y1="194.3" x2="458.0" y2="181.76" stroke="#245476" stroke-width="1.5" stroke-dasharray="9.6 2.4 1.5 2.4" />
+  <polygon points="458.00,179.76 460.00,183.76 456.00,183.76" stroke="#333333" stroke-width="0.5" fill="#245476" />
+  <line x1="458.0" y1="181.76" x2="610.0" y2="182.49" stroke="#245476" stroke-width="1.5" stroke-dasharray="9.6 2.4 1.5 2.4" />
+  <polygon points="610.00,180.49 612.00,184.49 608.00,184.49" stroke="#333333" stroke-width="0.5" fill="#245476" />
+  <polygon points="762.00,185.59 765.30,192.19 758.70,192.19" stroke="#333333" stroke-width="0.5" fill="#245476" />
+  <polygon points="154.00,205.72 156.60,208.32 154.00,210.92 151.40,208.32" stroke="#333333" stroke-width="0.5" fill="#102e46" />
+  <line x1="154.0" y1="208.32" x2="306.0" y2="202.09" stroke="#102e46" stroke-width="1.5" stroke-dasharray="1.5 2.4" />
+  <polygon points="306.00,199.49 308.60,202.09 306.00,204.69 303.40,202.09" stroke="#333333" stroke-width="0.5" fill="#102e46" />
+  <line x1="306.0" y1="202.09" x2="458.0" y2="183.89" stroke="#102e46" stroke-width="1.5" stroke-dasharray="1.5 2.4" />
+  <polygon points="458.00,181.29 460.60,183.89 458.00,186.49 455.40,183.89" stroke="#333333" stroke-width="0.5" fill="#102e46" />
+  <line x1="458.0" y1="183.89" x2="610.0" y2="168.96" stroke="#102e46" stroke-width="1.5" stroke-dasharray="1.5 2.4" />
+  <polygon points="610.00,166.36 612.60,168.96 610.00,171.56 607.40,168.96" stroke="#333333" stroke-width="0.5" fill="#102e46" />
+  <polygon points="762.00,154.67 766.29,158.96 762.00,163.25 757.71,158.96" stroke="#333333" stroke-width="0.5" fill="#102e46" />
+  <line x1="154.0" y1="218" x2="154.0" y2="221.5" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <line x1="306.0" y1="218" x2="306.0" y2="221.5" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <line x1="458.0" y1="218" x2="458.0" y2="221.5" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <line x1="610.0" y1="218" x2="610.0" y2="221.5" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <line x1="762.0" y1="218" x2="762.0" y2="221.5" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="78" y="252" font-size="13" text-anchor="start">Other completion work</text>
+  <rect x="686" y="260" width="152" height="164" fill="#f0f0f0" />
+  <line x1="78" y1="424.0" x2="838" y2="424.0" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.5" y1="424.0" x2="78" y2="424.0" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71" y="427.5" font-size="11" text-anchor="end">0</text>
+  <line x1="78" y1="391.2" x2="838" y2="391.2" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.5" y1="391.2" x2="78" y2="391.2" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71" y="394.7" font-size="11" text-anchor="end">20</text>
+  <line x1="78" y1="358.4" x2="838" y2="358.4" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.5" y1="358.4" x2="78" y2="358.4" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71" y="361.9" font-size="11" text-anchor="end">40</text>
+  <line x1="78" y1="325.6" x2="838" y2="325.6" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.5" y1="325.6" x2="78" y2="325.6" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71" y="329.1" font-size="11" text-anchor="end">60</text>
+  <line x1="78" y1="292.8" x2="838" y2="292.8" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.5" y1="292.8" x2="78" y2="292.8" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71" y="296.3" font-size="11" text-anchor="end">80</text>
+  <line x1="78" y1="260.0" x2="838" y2="260.0" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.5" y1="260.0" x2="78" y2="260.0" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71" y="263.5" font-size="11" text-anchor="end">100</text>
+  <line x1="78" y1="260" x2="78" y2="424" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <line x1="78" y1="424" x2="838" y2="424" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="20" y="342.0" font-size="11" text-anchor="middle" transform="rotate(-90 20 342.0)">Approvals per calendar year</text>
+  <circle cx="154.0" cy="264.92" r="2" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
+  <line x1="154.0" y1="264.92" x2="306.0" y2="285.91" stroke="#6588a6" stroke-width="1.5" stroke-dasharray="none" />
+  <circle cx="306.0" cy="285.91" r="2" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
+  <line x1="306.0" y1="285.91" x2="458.0" y2="334.78" stroke="#6588a6" stroke-width="1.5" stroke-dasharray="none" />
+  <circle cx="458.0" cy="334.78" r="2" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
+  <line x1="458.0" y1="334.78" x2="610.0" y2="383.33" stroke="#6588a6" stroke-width="1.5" stroke-dasharray="none" />
+  <circle cx="610.0" cy="383.33" r="2" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
+  <circle cx="762.0" cy="401.86" r="3.3" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
+  <rect x="152.0" y="417.41" width="4" height="4" stroke="#333333" stroke-width="0.5" fill="#427298" />
+  <line x1="154.0" y1="419.41" x2="306.0" y2="409.24" stroke="#427298" stroke-width="1.5" stroke-dasharray="5.5 2.4" />
+  <rect x="304.0" y="407.24" width="4" height="4" stroke="#333333" stroke-width="0.5" fill="#427298" />
+  <line x1="306.0" y1="409.24" x2="458.0" y2="419.74" stroke="#427298" stroke-width="1.5" stroke-dasharray="5.5 2.4" />
+  <rect x="456.0" y="417.74" width="4" height="4" stroke="#333333" stroke-width="0.5" fill="#427298" />
+  <line x1="458.0" y1="419.74" x2="610.0" y2="416.13" stroke="#427298" stroke-width="1.5" stroke-dasharray="5.5 2.4" />
+  <rect x="608.0" y="414.13" width="4" height="4" stroke="#333333" stroke-width="0.5" fill="#427298" />
+  <rect x="758.7" y="417.42" width="6.6" height="6.6" stroke="#333333" stroke-width="0.5" fill="#427298" />
+  <polygon points="154.00,414.46 156.00,418.46 152.00,418.46" stroke="#333333" stroke-width="0.5" fill="#245476" />
+  <line x1="154.0" y1="416.46" x2="306.0" y2="418.1" stroke="#245476" stroke-width="1.5" stroke-dasharray="9.6 2.4 1.5 2.4" />
+  <polygon points="306.00,416.10 308.00,420.10 304.00,420.10" stroke="#333333" stroke-width="0.5" fill="#245476" />
+  <line x1="306.0" y1="418.1" x2="458.0" y2="416.46" stroke="#245476" stroke-width="1.5" stroke-dasharray="9.6 2.4 1.5 2.4" />
+  <polygon points="458.00,414.46 460.00,418.46 456.00,418.46" stroke="#333333" stroke-width="0.5" fill="#245476" />
+  <line x1="458.0" y1="416.46" x2="610.0" y2="406.94" stroke="#245476" stroke-width="1.5" stroke-dasharray="9.6 2.4 1.5 2.4" />
+  <polygon points="610.00,404.94 612.00,408.94 608.00,408.94" stroke="#333333" stroke-width="0.5" fill="#245476" />
+  <polygon points="762.00,416.60 765.30,423.20 758.70,423.20" stroke="#333333" stroke-width="0.5" fill="#245476" />
+  <polygon points="154.00,418.45 156.60,421.05 154.00,423.65 151.40,421.05" stroke="#333333" stroke-width="0.5" fill="#102e46" />
+  <line x1="154.0" y1="421.05" x2="306.0" y2="421.38" stroke="#102e46" stroke-width="1.5" stroke-dasharray="1.5 2.4" />
+  <polygon points="306.00,418.78 308.60,421.38 306.00,423.98 303.40,421.38" stroke="#333333" stroke-width="0.5" fill="#102e46" />
+  <line x1="306.0" y1="421.38" x2="458.0" y2="421.05" stroke="#102e46" stroke-width="1.5" stroke-dasharray="1.5 2.4" />
+  <polygon points="458.00,418.45 460.60,421.05 458.00,423.65 455.40,421.05" stroke="#333333" stroke-width="0.5" fill="#102e46" />
+  <line x1="458.0" y1="421.05" x2="610.0" y2="407.93" stroke="#102e46" stroke-width="1.5" stroke-dasharray="1.5 2.4" />
+  <polygon points="610.00,405.33 612.60,407.93 610.00,410.53 607.40,407.93" stroke="#333333" stroke-width="0.5" fill="#102e46" />
+  <polygon points="762.00,414.79 766.29,419.08 762.00,423.37 757.71,419.08" stroke="#333333" stroke-width="0.5" fill="#102e46" />
+  <line x1="154.0" y1="424" x2="154.0" y2="427.5" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="154.0" y="440" font-size="11" text-anchor="middle">2005 to 2009</text>
+  <line x1="306.0" y1="424" x2="306.0" y2="427.5" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="306.0" y="440" font-size="11" text-anchor="middle">2010 to 2014</text>
+  <line x1="458.0" y1="424" x2="458.0" y2="427.5" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="458.0" y="440" font-size="11" text-anchor="middle">2015 to 2019</text>
+  <line x1="610.0" y1="424" x2="610.0" y2="427.5" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="610.0" y="440" font-size="11" text-anchor="middle">2020 to 2024</text>
+  <line x1="762.0" y1="424" x2="762.0" y2="427.5" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="762.0" y="440" font-size="11" text-anchor="middle">2025 to 2026 (partial)</text>
+  <text x="458.0" y="460" font-size="11" text-anchor="middle">Approval period</text>
+  <text x="60" y="479" font-size="9" text-anchor="start">Final bin uses two calendar years. The BSEE file covers 2026 to 23 November.</text>
+</svg>

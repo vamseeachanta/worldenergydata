@@ -1,0 +1,61 @@
+period,years,band,group,count,exposure,value
+2005 to 2009,5,Under 100 m,Recompletion,2804,,560.8
+2005 to 2009,5,100 to 500 m,Recompletion,235,,47.0
+2005 to 2009,5,"500 to 1,500 m",Recompletion,83,,16.6
+2005 to 2009,5,"1,500 m and deeper",Recompletion,27,,5.4
+2010 to 2014,5,Under 100 m,Recompletion,2487,,497.4
+2010 to 2014,5,100 to 500 m,Recompletion,236,,47.2
+2010 to 2014,5,"500 to 1,500 m",Recompletion,167,,33.4
+2010 to 2014,5,"1,500 m and deeper",Recompletion,31,,6.2
+2015 to 2019,5,Under 100 m,Recompletion,1584,,316.8
+2015 to 2019,5,100 to 500 m,Recompletion,209,,41.8
+2015 to 2019,5,"500 to 1,500 m",Recompletion,186,,37.2
+2015 to 2019,5,"1,500 m and deeper",Recompletion,101,,20.2
+2020 to 2024,5,Under 100 m,Recompletion,558,,111.6
+2020 to 2024,5,100 to 500 m,Recompletion,137,,27.4
+2020 to 2024,5,"500 to 1,500 m",Recompletion,104,,20.8
+2020 to 2024,5,"1,500 m and deeper",Recompletion,71,,14.2
+2025 to 2026 (partial),2,Under 100 m,Recompletion,139,,69.5
+2025 to 2026 (partial),2,100 to 500 m,Recompletion,53,,26.5
+2025 to 2026 (partial),2,"500 to 1,500 m",Recompletion,67,,33.5
+2025 to 2026 (partial),2,"1,500 m and deeper",Recompletion,31,,15.5
+2005 to 2009,5,Under 100 m,Modify Perforations,321,,64.2
+2005 to 2009,5,100 to 500 m,Modify Perforations,8,,1.6
+2005 to 2009,5,"500 to 1,500 m",Modify Perforations,8,,1.6
+2005 to 2009,5,"1,500 m and deeper",Modify Perforations,7,,1.4
+2010 to 2014,5,Under 100 m,Modify Perforations,299,,59.8
+2010 to 2014,5,100 to 500 m,Modify Perforations,30,,6.0
+2010 to 2014,5,"500 to 1,500 m",Modify Perforations,10,,2.0
+2010 to 2014,5,"1,500 m and deeper",Modify Perforations,7,,1.4
+2015 to 2019,5,Under 100 m,Modify Perforations,214,,42.8
+2015 to 2019,5,100 to 500 m,Modify Perforations,8,,1.6
+2015 to 2019,5,"500 to 1,500 m",Modify Perforations,13,,2.6
+2015 to 2019,5,"1,500 m and deeper",Modify Perforations,0,,0.0
+2020 to 2024,5,Under 100 m,Modify Perforations,70,,14.0
+2020 to 2024,5,100 to 500 m,Modify Perforations,6,,1.2
+2020 to 2024,5,"500 to 1,500 m",Modify Perforations,0,,0.0
+2020 to 2024,5,"1,500 m and deeper",Modify Perforations,0,,0.0
+2025 to 2026 (partial),2,Under 100 m,Modify Perforations,18,,9.0
+2025 to 2026 (partial),2,100 to 500 m,Modify Perforations,0,,0.0
+2025 to 2026 (partial),2,"500 to 1,500 m",Modify Perforations,0,,0.0
+2025 to 2026 (partial),2,"1,500 m and deeper",Modify Perforations,1,,0.5
+2005 to 2009,5,Under 100 m,Reperforation,171,,34.2
+2005 to 2009,5,100 to 500 m,Reperforation,4,,0.8
+2005 to 2009,5,"500 to 1,500 m",Reperforation,5,,1.0
+2005 to 2009,5,"1,500 m and deeper",Reperforation,0,,0.0
+2010 to 2014,5,Under 100 m,Reperforation,112,,22.4
+2010 to 2014,5,100 to 500 m,Reperforation,15,,3.0
+2010 to 2014,5,"500 to 1,500 m",Reperforation,1,,0.2
+2010 to 2014,5,"1,500 m and deeper",Reperforation,0,,0.0
+2015 to 2019,5,Under 100 m,Reperforation,37,,7.4
+2015 to 2019,5,100 to 500 m,Reperforation,3,,0.6
+2015 to 2019,5,"500 to 1,500 m",Reperforation,0,,0.0
+2015 to 2019,5,"1,500 m and deeper",Reperforation,0,,0.0
+2020 to 2024,5,Under 100 m,Reperforation,27,,5.4
+2020 to 2024,5,100 to 500 m,Reperforation,0,,0.0
+2020 to 2024,5,"500 to 1,500 m",Reperforation,0,,0.0
+2020 to 2024,5,"1,500 m and deeper",Reperforation,5,,1.0
+2025 to 2026 (partial),2,Under 100 m,Reperforation,1,,0.5
+2025 to 2026 (partial),2,100 to 500 m,Reperforation,0,,0.0
+2025 to 2026 (partial),2,"500 to 1,500 m",Reperforation,0,,0.0
+2025 to 2026 (partial),2,"1,500 m and deeper",Reperforation,0,,0.0

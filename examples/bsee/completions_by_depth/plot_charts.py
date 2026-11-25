@@ -12,10 +12,16 @@ from __future__ import annotations
 
 import argparse
 import csv
+import json
+import sys
 from pathlib import Path
 from xml.sax.saxutils import escape
 
 ROOT = Path(__file__).resolve().parent
+# Keep the standalone chart command usable from a source checkout.
+sys.path.insert(0, str(ROOT.parents[2] / "packages/worldenergydata-bsee/src"))
+from worldenergydata.bsee.half_decade import render_svg  # noqa: E402
+
 BANDS = ["under 100 m", "100 to 500 m", "500 to 1500 m", "1500 m and deeper"]
 BAND_LABELS = ["Under 100 m", "100 to 500 m", "500 to 1,500 m", "1,500 m and deeper"]
 BAND_COLOURS = ["#a8ddd6", "#2BB2A6", "#0e7e88", "#0b3d5c"]  # shallow to deep
@@ -60,11 +66,11 @@ def line(x1, y1, x2, y2, stroke=GRID, width=1.0):
     )
 
 
-def svg(parts, title, height=H):
+def svg(parts, title, height=H, font=FONT):
     head = (
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {height}" '
         f'width="{W}" height="{height}" role="img" aria-label="{escape(title)}" '
-        f'font-family="{FONT}">'
+        f'font-family="{font}">'
     )
     return (
         "\n".join(
@@ -262,8 +268,8 @@ def chart_fluid(out):
 def chart_drilled(out):
     rows = table(out, "drilled_to_completed")
     kinds = [
-        ("development", "Development wells", "#0b3d5c"),
-        ("exploration", "Exploration wells", "#2BB2A6"),
+        ("exploration", "Exploratory wells", "#6588a6"),
+        ("development", "Development wells", "#245476"),
     ]
     groups = BANDS + ["all water depths"]
     labels = BAND_LABELS + ["All water depths"]
@@ -271,6 +277,7 @@ def chart_drilled(out):
     height = top + row_h * len(groups) + 56
     plot_w = W - left - right
     parts = legend([k[1] for k in kinds], [k[2] for k in kinds], left, 34)
+    parts.append(text(left - 12, 35, "Water depth (m)", 16, "end", weight="600"))
     for tick in range(0, 101, 20):
         x = left + plot_w * tick / 100
         parts.append(line(x, top, x, top + row_h * len(groups)))
@@ -307,7 +314,7 @@ def chart_drilled(out):
         "Share of wells first drilled 2005 to 2025 with an initial completion "
         "approval, by well type and water depth"
     )
-    return svg(parts, title, height)
+    return svg(parts, title, height, font="'DejaVu Sans','Segoe UI',Arial,sans-serif")
 
 
 CHARTS = {
@@ -318,6 +325,153 @@ CHARTS = {
 }
 
 
+def finding(sentence, rows, column, decimals):
+    """Keep the CSV coordinates and display precision of each quoted value."""
+    cells = []
+    values = []
+    for row in rows:
+        keys = ("group", "period", "band") if "period" in row else ("well_type", "band")
+        cells.append(
+            dict(row={k: row[k] for k in keys}, column=column, decimals=decimals)
+        )
+        values.append(f"{float(row[column]):,.{decimals}f}")
+    return dict(text=sentence.format(*values), cells=cells)
+
+
+def complete_period_comparison(rows, band, group, metric, decimals):
+    periods = ["2005 to 2009", "2020 to 2024"]
+    by_period = {
+        r["period"]: r for r in rows if r["band"] == band and r["group"] == group
+    }
+    return finding(
+        f"In water {band.lower()}, {metric} went from {{0}} in {periods[0]} "
+        f"to {{1}} in {periods[1]}.",
+        [by_period[p] for p in periods],
+        "value",
+        decimals,
+    )
+
+
+def pilot_figures(out):
+    figures = []
+    annual_note = (
+        "Final bin uses two calendar years. The BSEE file covers 2026 to 23 November."
+    )
+    for stem, question, ylabel, note in [
+        (
+            "01_approvals_by_period",
+            "How did initial and other completion approvals vary by depth and period?",
+            "Approvals per calendar year",
+            annual_note,
+        ),
+        (
+            "02_recompletion_by_period",
+            "Where and when did recompletions and perforation work receive approval?",
+            "Approvals per calendar year",
+            annual_note + " Perforation flags can overlap.",
+        ),
+        (
+            "03_approvals_per_well",
+            "How did completion approvals per standing well vary by depth and period?",
+            "Approvals per January standing well per year",
+            "Approvals include wells drilled after 1 January. Each year uses its January inventory. "
+            "2026 through 23 November.",
+        ),
+    ]:
+        rows = table(out, stem)
+        chart = render_svg(rows, ylabel=ylabel, note=note)
+        (out / f"{stem}.svg").write_text(chart, encoding="utf-8", newline="\n")
+        if stem == "01_approvals_by_period":
+            bullets = [
+                complete_period_comparison(rows, band, group, metric, 1)
+                for band, group, metric in [
+                    (
+                        BAND_LABELS[0],
+                        "Initial completion",
+                        "initial approvals per year",
+                    ),
+                    (
+                        BAND_LABELS[3],
+                        "Initial completion",
+                        "initial approvals per year",
+                    ),
+                    (
+                        BAND_LABELS[0],
+                        "Other completion work",
+                        "other approvals per year",
+                    ),
+                ]
+            ]
+        elif stem == "02_recompletion_by_period":
+            bullets = []
+            for group in ("Recompletion", "Modify Perforations", "Reperforation"):
+                peak = max(
+                    (r for r in rows if r["group"] == group and int(r["years"]) == 5),
+                    key=lambda r: float(r["value"]),
+                )
+                bullets.append(
+                    finding(
+                        f"The highest full period average for {group} was {{0}} approvals "
+                        f'per year in water {peak["band"].lower()} in {peak["period"]}.',
+                        [peak],
+                        "value",
+                        1,
+                    )
+                )
+            bullets.append(
+                complete_period_comparison(
+                    rows,
+                    BAND_LABELS[3],
+                    "Recompletion",
+                    "recompletion approvals per year",
+                    1,
+                )
+            )
+        else:
+            bullets = [
+                complete_period_comparison(
+                    rows, band, "", "annual approvals per January standing well", 2
+                )
+                for band in (BAND_LABELS[0], BAND_LABELS[3])
+            ]
+        figures.append(
+            dict(
+                svg=f"{stem}.svg", csv=f"{stem}.csv", question=question, bullets=bullets
+            )
+        )
+
+    drilled = table(out, "drilled_to_completed")
+    bullets = [
+        finding(
+            f"{{0}}% of {label} wells first drilled in 2005 to 2025 had an initial approval.",
+            [
+                next(
+                    r
+                    for r in drilled
+                    if r["well_type"] == kind and r["band"] == "all water depths"
+                )
+            ],
+            "share_percent",
+            1,
+        )
+        for kind, label in (
+            ("exploration", "exploratory"),
+            ("development", "development"),
+        )
+    ]
+    figures.append(
+        dict(
+            svg="04_drilled_to_completed.svg",
+            csv="drilled_to_completed.csv",
+            question="What share of exploratory and development wells had an initial completion approval?",
+            bullets=bullets,
+        )
+    )
+    (out / "figures.json").write_text(
+        json.dumps(figures, indent=2) + "\n", encoding="utf-8", newline="\n"
+    )
+
+
 def main(out):
     for name, draw in CHARTS.items():
         content = draw(out)
@@ -326,6 +480,7 @@ def main(out):
                 raise ValueError(f"{name}: {banned} is not portable")
         (Path(out) / f"{name}.svg").write_text(content, encoding="utf-8")
         print(name)
+    pilot_figures(Path(out))
 
 
 if __name__ == "__main__":
