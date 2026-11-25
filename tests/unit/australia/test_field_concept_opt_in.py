@@ -24,7 +24,11 @@ def test_omitted_wells_match_recorded_main(case: Dict[str, Any]) -> None:
     inputs = copy.deepcopy(case["input"])
     for build in (australia_field_to_concept, build_australia_field_concept):
         concept = build(inputs)
-        assert concept.model_dump(mode="json") == case["output"]
+        assert concept.model_dump(mode="json") == {
+            **case["output"],
+            "geological_era": None,
+            "play_group": None,
+        }
         assert sorted(concept.model_fields_set) == case["fields_set"]
         assert concept.__pydantic_private__ == case["private_attributes"]
         assert inputs == case["input"]

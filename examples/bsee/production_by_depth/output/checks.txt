@@ -1,0 +1,115 @@
+PASS  Hand-worked startup, decline and intervention boundary fixtures
+PASS  Manifest SHA-256 | 2026-11-23-series-basis — 9f1de6e28bd96b945b9939b09a458459a1716e59cbed467214fd631084007c1d
+PASS  Archive digests match every manifest entry | 2026-11-23-series-basis — 4 ZIPs
+PASS  Manifest SHA-256 | 2026-11-25-production-lease — 56d6ea4036d136c7a6cdd75051dc024e9767fcb266410d7ff5b7aecd831893d3
+PASS  Archive digests match every manifest entry | 2026-11-25-production-lease — 25 ZIPs
+PASS  Every pinned ZIP was hashed — 29 unique archives
+PASS  Executable reference matches series basis | count_interventions.py
+PASS  Executable reference matches series basis | api_well_normalizer.py
+PASS  Headerless OGOR columns match worldenergydata's declared positional layout
+PASS  Borehole identifiers identify one inventory source row each — 57,520 boreholes
+PASS  Gulf inventory assigns each API10 at most one depth band — 37,529 non-cancelled Gulf API10s; 37,522 assigned, 7 unresolved, 2,133 with differing bore depths, 64 assigned zero feet
+PASS  BSEE operation code C means COMPLETION
+PASS  Eligible completion reports have distinct nonblank SN_EOR — 8,446 reports
+PASS  Each dated Gulf completion uses the earliest C status date; conflicting first flags stay unknown — 58 API10s with non-COM status on an earliest C report; 61 with differing flags on that date
+PASS  WAR identifiers are nonblank and identify one API and start date
+PASS  eWell WAR rows for observed work: first events occur strictly after completion — 4,577 Gulf API10s
+PASS  Record conservation | eWell APM permit identities — 102,177 read = 101,970 kept + 207 dropped
+PASS  eWell APM approvals for classified well work: first events occur strictly after completion — 4,126 Gulf API10s
+PASS  ogora2005delimit.zip year identity
+PASS  ogora2006delimit.zip year identity
+PASS  ogora2007delimit.zip year identity
+PASS  ogora2008delimit.zip year identity
+PASS  ogora2009delimit.zip year identity
+PASS  ogora2010delimit.zip year identity
+PASS  ogora2011delimit.zip year identity
+PASS  ogora2012delimit.zip year identity
+PASS  ogora2013delimit.zip year identity
+PASS  ogora2014delimit.zip year identity
+PASS  ogora2015delimit.zip year identity
+PASS  ogora2016delimit.zip year identity
+PASS  ogora2017delimit.zip year identity
+PASS  ogora2018delimit.zip year identity
+PASS  ogora2019delimit.zip year identity
+PASS  ogora2020delimit.zip year identity
+PASS  ogora2021delimit.zip year identity
+PASS  ogora2022delimit.zip year identity
+PASS  ogora2023delimit.zip year identity
+PASS  ogora2024delimit.zip year identity
+PASS  ogora2025delimit.zip year identity
+PASS  ogoradelimit.zip year identity
+PASS  OGOR source coverage across consecutive calendar months — 2005-01 through 2026-09; 261 months
+PASS  OGOR well-month identity and one depth band per producing well
+PASS  Monthly four-band oil_bbl sums to pooled OGOR source volume every month — 261 months; 12,418,358,076 retained
+PASS  OGOR full archive oil_bbl reconciles to classified and excluded volumes — 12,419,071,786 = 12,418,358,076 classified + 713,710 excluded
+PASS  Yearly oil_bbl volumes and period sum agree with source — 12,418,358,076
+PASS  Monthly four-band gas_mcf sums to pooled OGOR source volume every month — 261 months; 32,778,024,812 retained
+PASS  OGOR full archive gas_mcf reconciles to classified and excluded volumes — 32,778,928,312 = 32,778,024,812 classified + 903,500 excluded
+PASS  Yearly gas_mcf volumes and period sum agree with source — 32,778,024,812
+PASS  Annual four-band producing wells sum to distinct API10 counts in raw rows every year — 22 years
+PASS  Yearly distinct producing-well counts sum to period well-years — 85,785 well-years; 9,525 distinct producing wells
+PASS  Raw CSV recount | 2026-08 All unique producers, oil and gas — 1,635 producing wells, 63,587,543 bbl, 66,977,246 Mcf
+PASS  Raw CSV recount | 2026-08 ≥1,500 m unique producers, oil and gas — 273 producing wells, 36,955,458 bbl, 29,050,637 Mcf
+PASS  Raw CSV recount | 2026-09 All unique producers, oil and gas — 1,050 producing wells, 36,770,623 bbl, 41,076,638 Mcf
+PASS  Raw CSV recount | 2026-09 ≥1,500 m unique producers, oil and gas — 135 producing wells, 19,035,989 bbl, 16,453,415 Mcf
+PASS  Period activity | band counts sum to pooled distinct wells and well-months
+PASS  Monthly activity | depth counts sum to pooled distinct API10s in each month
+PASS  Monthly activity | monthly headcounts sum to distinct active well-months in each band
+PASS  Each producing API10 has exactly one inventory record and one assigned band
+PASS  Completion type at start has one disjoint value per producing well
+PASS  Age cohort | no eWell C before 2005-01-01 — 0 API10s
+PASS  Age cohort | no FIRST_PROD_DATE before 2005-01-01 — 0 API10s
+PASS  Event cutoff equals final OGOR production month end
+PASS  Completion lag | depth counts for both populations — 2 pooled groups; wells, pre_completion_wells, same_month_wells
+PASS  Completion lag | ordered plus negative pairs equals signed pairs
+PASS  Decline | one value per API10 and calendar age; finite nonnegative rates
+PASS  Decline | each retained well reaches 1 in its first three calendar months — 1,330 wells
+PASS  Decline | depth counts at every age and completion type — 240 pooled groups; baseline_wells, wells
+PASS  Decline | completion-type counts at every age and depth — 300 pooled groups; baseline_wells, wells
+PASS  Decline | monthly contributors within each baseline cohort; empty groups have no median
+PASS  Record conservation | Interventions | year 1 anniversary, API10 — 1,809 read = 1,774 kept + 35 dropped
+PASS  Record conservation | Interventions | year 2 anniversary, API10 — 1,809 read = 1,733 kept + 76 dropped
+PASS  Record conservation | Interventions | year 3 anniversary, API10 — 1,809 read = 1,691 kept + 118 dropped
+PASS  Record conservation | Interventions | year 4 anniversary, API10 — 1,809 read = 1,642 kept + 167 dropped
+PASS  Record conservation | Interventions | year 5 anniversary, API10 — 1,809 read = 1,604 kept + 205 dropped
+PASS  Record conservation | Interventions | year 6 anniversary, API10 — 1,809 read = 1,571 kept + 238 dropped
+PASS  Record conservation | Interventions | year 7 anniversary, API10 — 1,809 read = 1,530 kept + 279 dropped
+PASS  Record conservation | Interventions | year 8 anniversary, API10 — 1,809 read = 1,483 kept + 326 dropped
+PASS  Record conservation | Interventions | year 9 anniversary, API10 — 1,809 read = 1,427 kept + 382 dropped
+PASS  Record conservation | Interventions | year 10 anniversary, API10 — 1,809 read = 1,385 kept + 424 dropped
+PASS  Record conservation | Interventions | year 11 anniversary, API10 — 1,809 read = 1,324 kept + 485 dropped
+PASS  Record conservation | Interventions | year 12 anniversary, API10 — 1,809 read = 1,237 kept + 572 dropped
+PASS  Record conservation | Interventions | year 13 anniversary, API10 — 1,809 read = 1,152 kept + 657 dropped
+PASS  Record conservation | Interventions | year 14 anniversary, API10 — 1,809 read = 1,095 kept + 714 dropped
+PASS  Record conservation | Interventions | year 15 anniversary, API10 — 1,809 read = 1,020 kept + 789 dropped
+PASS  Record conservation | Interventions | year 16 anniversary, API10 — 1,809 read = 952 kept + 857 dropped
+PASS  Record conservation | Interventions | year 17 anniversary, API10 — 1,809 read = 863 kept + 946 dropped
+PASS  Record conservation | Interventions | year 18 anniversary, API10 — 1,809 read = 710 kept + 1,099 dropped
+PASS  Record conservation | Interventions | year 19 anniversary, API10 — 1,809 read = 536 kept + 1,273 dropped
+PASS  Record conservation | Interventions | year 20 anniversary, API10 — 1,809 read = 298 kept + 1,511 dropped
+PASS  Record conservation | Interventions | year 21 anniversary, API10 — 1,809 read = 82 kept + 1,727 dropped
+PASS  Post-completion WAR | every qualifying date is strictly after earliest completion
+PASS  Intervention approval | every qualifying date is strictly after earliest completion
+PASS  Interventions | eligible, completion-observed and event counts at every age — 44 pooled groups; eligible_wells, completion_observed_wells, event_wells, pre_origin_event_wells
+PASS  Interventions | events within observed completions within eligible cohort; empty denominators blank
+PASS  Interventions | horizon-eligible denominators never grow with age
+PASS  Companion article table | band counts sum to pooled source cohorts
+PASS  Published annual table | yearly well counts, oil and gas conserve across bands — 22 pooled groups; producing_wells, oil_bbl, gas_mcf
+PASS  Published years sum to whole-period source totals | <100 m — 1,449,748,317 bbl, 14,302,052,771 Mcf, 64,791 well-years
+PASS  Published years sum to whole-period source totals | 100–<500 m — 736,921,453 bbl, 2,734,747,108 Mcf, 9,551 well-years
+PASS  Published years sum to whole-period source totals | 500–<1,500 m — 5,476,891,029 bbl, 8,965,414,392 Mcf, 7,842 well-years
+PASS  Published years sum to whole-period source totals | ≥1,500 m — 4,754,797,277 bbl, 6,775,810,541 Mcf, 3,601 well-years
+PASS  Published years sum to whole-period source totals | All — 12,418,358,076 bbl, 32,778,024,812 Mcf, 85,785 well-years
+PASS  Startup diagnostics | one record per producing API10 — 119 first-date month mismatches; 57 without a dated C; 31 first C in a later month
+PASS  Published CSV readback | all rows and cells match calculations — monthly_production 1,305, annual_wells 110, completion_lag 10, article_summary 5, spud_exclusions 5, decline 1,200, interventions 220, record_counts 287
+PASS  Published record ledger | CSV stage identities and disposition totals reconcile — 80 stages
+PASS  Published OGOR row ledger | archive sum matches combined dispositions and reasons
+PASS  Published OGOR volume ledger | source equals retained plus rejected oil_bbl
+PASS  Published OGOR volume ledger | source equals retained plus rejected gas_mcf
+PASS  Published JSON readback | citation definitions and values match serialized payload — 377 citations
+PASS  PNG decoded | monthly_production — 1768 × 1156 px
+PASS  PNG decoded | annual_wells — 1768 × 1156 px
+PASS  PNG decoded | completion_lag — 1768 × 850 px
+PASS  PNG decoded | decline — 1768 × 1504 px
+PASS  PNG decoded | interventions — 1768 × 952 px
+PASS  Five matched figure pairs | validated SVG, no pattern, clip-path, filter or mask
