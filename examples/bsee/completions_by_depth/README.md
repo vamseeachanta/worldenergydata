@@ -77,11 +77,12 @@ A completion leaves two public records. Both are counted, and kept apart.
 
 1. **Completion approval** (permit file). One approved permit to modify of a
    Gulf well, counted once by its permit key, whose type is `COMP` and which the
-   interventions study classifies as "initial completion excluded": no `ZONE`
-   sub-operation (a change of zone is a recompletion, which that study counts
-   as an intervention), no plug-back and no new hole. The rule is imported from
-   that study's code, not copied. Year is the approval year; 2005 is the first
-   full year of the feed and 2026 runs to 23 Nov.
+   interventions study classifies as "initial completion excluded". Its shared
+   classifier first excludes plug-backs and work that prepares a new hole.
+   Of the remaining `COMP` permits, those with `ZONE` (Change Zone) are
+   recompletion approvals counted in Figure 2. Those without `ZONE` are the
+   completion approvals counted in Figures 1 and 3. Year is the approval
+   year. The feed's first full year is 2005 and 2026 runs to 23 Nov.
    - *Initial completion*: the approval carries the sub-operation `INITCOMP`.
    - *Other completion work*: it does not (perforation changes, other
      completion). These approvals are in the group the interventions study
@@ -177,9 +178,10 @@ By water depth, 2005 to 2026:
   2026, 538 (66.8 %) carry it. Before 2015
   the code is absent, which is a change in coding; whether practice changed is
   not established, and no trend is drawn across 2015.
-- Drilling to completion (`drilled_to_completed.csv`): of the wells first
-  drilled 2005 to 2025, 1,023 of 1,235 development wells (82.8 %) and 792 of
-  1,655 exploration wells (47.9 %) have an initial completion approval.
+- Historical pooled cohort ([drilled_to_completed.csv](output/drilled_to_completed.csv)):
+  of the wells first drilled in 2005 to 2025, 792 of 1,655 exploratory wells
+  (47.9 %) and 1,023 of 1,235 development wells (82.8 %) have an initial
+  completion approval in the snapshot.
 - Timing (`timing_by_band.csv`), for the bores first approved for initial
   completion from 2005 to 23 Nov 2026, not the drilled-well group above: the
   first initial completion approval falls a median 9 days after the total
@@ -188,22 +190,21 @@ By water depth, 2005 to 2026:
   and 85 days at 1,500 m and deeper (3,043 bores that also have a completion
   report).
 
-Charts: [`01_completion_approvals`](output/01_completion_approvals.svg),
+The annual companion charts are [`01_completion_approvals`](output/01_completion_approvals.svg),
 [`02_bores_first_completed`](output/02_bores_first_completed.svg),
-[`03_fluid_by_year`](output/03_fluid_by_year.svg),
-[`04_drilled_to_completed`](output/04_drilled_to_completed.svg), each as SVG
-and PNG.
+and [`03_fluid_by_year`](output/03_fluid_by_year.svg). These and the
+[Figure 4 drilling cohorts](output/04_drilled_to_completed.svg) have PNG copies.
 
 ### Half decade figures
 
 The [figure index](output/figures.json) gives the four body figures, their CSVs,
-and the row, column and display precision behind each bullet. The first two
-figures show approvals per calendar year for initial versus other completion
-work, then for recompletions and perforation work. Recompletion requires a
-`COMP` permit with `ZONE` that passes the interventions screen. The two
-perforation flags apply to other completion work. A permit can carry both
-flags, so the panels cannot be added. Only permits with an approval date in
-the plotted window contribute to the figures.
+and the row, column and display precision behind each numeric reading.
+Figures 1 and 2 divide permit counts by the number of calendar years in the
+approval period. Figure 1 separates initial approvals from other completion
+approvals. Figure 2 shows recompletion approvals and, among other completion
+approvals only, permits flagged Modify Perforations or Reperforation. One
+permit can carry both flags. Each share in the Figure 2 CSV uses the total
+for that permit category across all depths and periods, including partial 2026.
 
 The third figure divides completion approvals by the sum of the annual
 1 January standing well inventories in each depth band. It measures approval
@@ -223,8 +224,19 @@ means zero exposure. The four complete periods contain five years each. The
 2025 to 2026 point uses two calendar years and includes the records available
 in the 23 November 2026 snapshot, with 38 calendar days left in 2026.
 The plot leaves this point detached and makes no projection for those days.
-Figure 4 retains the 2005 to 2025 spud cohort and displays exploratory wells
-first. Later spuds had less time to receive an initial approval by the snapshot.
+
+Figure 4 groups exploratory wells, then development wells, by water depth
+and the period of their first dated, noncancelled Gulf spud. Its
+[cohort table](output/04_drilled_to_completed.csv) gives the number drilled
+and the number with at least one initial completion approval on any bore of
+the well by 23 November 2026. The share is the number with an approval
+divided by all drilled wells in the same type, depth band and period.
+Type and depth follow the original hole and inventory rules above. Wells with
+another or unstated type, unknown depth or no dated spud fall outside the
+plotted groups. An empty share means no wells were drilled in that group.
+A zero share means wells were drilled and none had a recorded initial approval.
+All cohorts are observed at the same snapshot. Later cohorts have had less
+time for an approval, especially the partial 2025 to 2026 drilling cohort.
 
 ## Checks
 
@@ -264,9 +276,11 @@ the tests compare them with the hand values.
 
 ### Run record
 
-`output/verification.json` records the code commit, the command, the Python
-and pandas versions and the UTC time of the run that wrote the tables, with the
-archive digests.
+The published `output/verification.json` records the archive digests, code
+commit, command, Python and pandas versions and UTC time of the historical
+annual checks. A fresh count writes its own receipt in the chosen output
+directory. The half decade figures link their readings to the period CSVs
+in [figures.json](output/figures.json).
 
 ## Limits
 

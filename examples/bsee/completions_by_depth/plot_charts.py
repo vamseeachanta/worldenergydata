@@ -20,7 +20,7 @@ from xml.sax.saxutils import escape
 ROOT = Path(__file__).resolve().parent
 # Keep the standalone chart command usable from a source checkout.
 sys.path.insert(0, str(ROOT.parents[2] / "packages/worldenergydata-bsee/src"))
-from worldenergydata.bsee.half_decade import render_svg  # noqa: E402
+from worldenergydata.bsee.half_decade import PERIODS, render_svg  # noqa: E402
 
 BANDS = ["under 100 m", "100 to 500 m", "500 to 1500 m", "1500 m and deeper"]
 BAND_LABELS = ["Under 100 m", "100 to 500 m", "500 to 1,500 m", "1,500 m and deeper"]
@@ -89,16 +89,6 @@ def legend(labels, colours, x, y, size=16, gap=26):
         parts.append(text(x + 23, y + 1, label, size))
         x += 23 + len(label) * size * 0.56 + gap
     return parts
-
-
-def whole_percent(part, whole):
-    """Whole percent from the two counts, a true half going up.
-
-    The tables hold shares to one decimal. Rounding that figure again can
-    differ from the counts (353 of 686 is 51.46 %, held as 51.5), so labels
-    are worked from the counts.
-    """
-    return (200 * part + whole) // (2 * whole)
 
 
 def nice_step(top):
@@ -265,56 +255,23 @@ def chart_fluid(out):
     )
 
 
+DRILLED_NOTE = (
+    "Shares count wells with an initial completion approval recorded by 23 November 2026. "
+    "Later cohorts have had less time for approval, especially wells first drilled in "
+    "2025 to 2026 (partial). Equal shares have overlapping markers. "
+    "Some groups contain only one or two wells. The table gives the counts. "
+    "An empty share means no wells were drilled in that group."
+)
+
+
 def chart_drilled(out):
-    rows = table(out, "drilled_to_completed")
-    kinds = [
-        ("exploration", "Exploratory wells", "#6588a6"),
-        ("development", "Development wells", "#245476"),
-    ]
-    groups = BANDS + ["all water depths"]
-    labels = BAND_LABELS + ["All water depths"]
-    left, right, top, row_h = 208, 150, 70, 78
-    height = top + row_h * len(groups) + 56
-    plot_w = W - left - right
-    parts = legend([k[1] for k in kinds], [k[2] for k in kinds], left, 34)
-    parts.append(text(left - 12, 35, "Water depth (m)", 16, "end", weight="600"))
-    for tick in range(0, 101, 20):
-        x = left + plot_w * tick / 100
-        parts.append(line(x, top, x, top + row_h * len(groups)))
-        parts.append(
-            text(x, top + row_h * len(groups) + 24, f"{tick}", 16, "middle", fill=MUTED)
-        )
-    parts.append(
-        text(
-            left + plot_w / 2,
-            height - 8,
-            "Wells with an initial completion approval (%)",
-            16,
-            "middle",
-            fill=MUTED,
-        )
+    rows = table(out, "04_drilled_to_completed")
+    return render_svg(
+        [dict(row, value=row["share_percent"]) for row in rows],
+        ylabel="Share of drilled wells (%)",
+        xlabel="Period of first drilling",
+        note=DRILLED_NOTE,
     )
-    for g, (band, label) in enumerate(zip(groups, labels)):
-        y0 = top + g * row_h
-        weight = "600" if band == "all water depths" else "400"
-        parts.append(text(left - 12, y0 + row_h / 2 + 6, label, 16, "end", weight))
-        for k, (kind, _, colour) in enumerate(kinds):
-            r = next(x for x in rows if x["well_type"] == kind and x["band"] == band)
-            done = int(r["with_initial_completion_approval"])
-            wells = int(r["wells_first_drilled"])
-            share = 100 * done / wells
-            y = y0 + 12 + k * 28
-            parts.append(rect(left, y, plot_w * share / 100, 24, colour))
-            note = f"{whole_percent(done, wells)} %  ({done:,} of {wells:,})"
-            x = left + plot_w * share / 100 + 8
-            parts.append(rect(x - 4, y, len(note) * 8.4 + 8, 24, "#ffffff"))
-            parts.append(text(x, y + 18, note, 15))
-    parts.append(line(left, top, left, top + row_h * len(groups), INK, 1.2))
-    title = (
-        "Share of wells first drilled 2005 to 2025 with an initial completion "
-        "approval, by well type and water depth"
-    )
-    return svg(parts, title, height, font="'DejaVu Sans','Segoe UI',Arial,sans-serif")
 
 
 CHARTS = {
@@ -326,30 +283,82 @@ CHARTS = {
 
 
 def finding(sentence, rows, column, decimals):
+    return finding_from_cells(sentence, [(row, column, decimals) for row in rows])
+
+
+def finding_from_cells(sentence, readings):
     """Keep the CSV coordinates and display precision of each quoted value."""
     cells = []
     values = []
-    for row in rows:
-        keys = ("group", "period", "band") if "period" in row else ("well_type", "band")
+    for row, column, decimals in readings:
         cells.append(
-            dict(row={k: row[k] for k in keys}, column=column, decimals=decimals)
+            dict(
+                row={k: row[k] for k in ("group", "period", "band")},
+                column=column,
+                decimals=decimals,
+            )
         )
         values.append(f"{float(row[column]):,.{decimals}f}")
     return dict(text=sentence.format(*values), cells=cells)
 
 
-def complete_period_comparison(rows, band, group, metric, decimals):
-    periods = ["2005 to 2009", "2020 to 2024"]
-    by_period = {
-        r["period"]: r for r in rows if r["band"] == band and r["group"] == group
-    }
+def complete_period_comparison(cells, band, group, metric, column, decimals):
+    first = cells[group, "2005 to 2009", band]
+    last = cells[group, "2020 to 2024", band]
+    start, end = float(first[column]), float(last[column])
+    direction = "went"
+    if end != start:
+        direction = "rose" if end > start else "fell"
     return finding(
-        f"In water {band.lower()}, {metric} went from {{0}} in {periods[0]} "
-        f"to {{1}} in {periods[1]}.",
-        [by_period[p] for p in periods],
-        "value",
+        f"In the {band.lower()} band, {metric} {direction} from {{0}} in {first['period']} "
+        f"to {{1}} in {last['period']}.",
+        [first, last],
+        column,
         decimals,
     )
+
+
+def recompletion_findings(cells):
+    shallow, deep = BAND_LABELS[0], BAND_LABELS[3]
+    first, peak, last = "2005 to 2009", "2015 to 2019", "2020 to 2024"
+    groups = ("Recompletion", "Modify Perforations", "Reperforation")
+    early = [cells[group, first, shallow] for group in groups]
+    return [
+        finding(
+            "Under 100 m in 2005 to 2009, annual approvals reached full period highs of "
+            "{0} for recompletion, {1} for other approvals flagged Modify Perforations "
+            "and {2} for other approvals flagged Reperforation.",
+            early,
+            "value",
+            1,
+        ),
+        finding(
+            "The under 100 m band in 2005 to 2009 accounted for {0}% of all recompletion approvals, "
+            "{1}% of other completion approvals flagged Modify Perforations and {2}% of "
+            "those flagged Reperforation.",
+            early,
+            "cell_share_of_group_percent",
+            1,
+        ),
+        finding(
+            "Across all periods, the under 100 m band accounted for {0}% of recompletion "
+            "approvals, {1}% of other completion approvals flagged Modify Perforations "
+            "and {2}% of those flagged Reperforation.",
+            early,
+            "band_share_of_group_percent",
+            1,
+        ),
+        finding(
+            "At 1,500 m and deeper, annual recompletion approvals rose from {0} in 2005 to "
+            "2009 to {1} in 2015 to 2019, then fell to {2} in 2020 to 2024. Other "
+            "completion approvals flagged Modify Perforations fell from {3} to {4} per "
+            "year between the first and last of those periods.",
+            [cells["Recompletion", p, deep] for p in (first, peak, last)]
+            + [cells["Modify Perforations", p, deep] for p in (first, last)],
+            "value",
+            1,
+        ),
+    ]
 
 
 def pilot_figures(out):
@@ -368,102 +377,129 @@ def pilot_figures(out):
             "02_recompletion_by_period",
             "Where and when did recompletions and perforation work receive approval?",
             "Approvals per calendar year",
-            annual_note + " Perforation flags can overlap.",
+            annual_note
+            + " Perforation flags are counted among other completion approvals. "
+            "One approval can carry both flags.",
         ),
         (
             "03_approvals_per_well",
-            "How did completion approvals per standing well vary by depth and period?",
-            "Approvals per January standing well per year",
-            "Approvals include wells drilled after 1 January. Each year uses its January inventory. "
-            "2026 through 23 November.",
+            "How did completion approvals per January well year vary by depth and period?",
+            "Approvals per January well year",
+            "Total initial and other completion approvals are divided by the sum of the "
+            "1 January standing well inventories. Approvals include wells drilled after "
+            "1 January. The snapshot ends on 23 November 2026.",
         ),
     ]:
         rows = table(out, stem)
-        chart = render_svg(rows, ylabel=ylabel, note=note)
-        (out / f"{stem}.svg").write_text(chart, encoding="utf-8", newline="\n")
+        cells = {(r["group"], r["period"], r["band"]): r for r in rows}
+        chart_rows = rows
         if stem == "01_approvals_by_period":
             bullets = [
-                complete_period_comparison(rows, band, group, metric, 1)
-                for band, group, metric in [
-                    (
-                        BAND_LABELS[0],
-                        "Initial completion",
-                        "initial approvals per year",
-                    ),
-                    (
-                        BAND_LABELS[3],
-                        "Initial completion",
-                        "initial approvals per year",
-                    ),
-                    (
-                        BAND_LABELS[0],
-                        "Other completion work",
-                        "other approvals per year",
-                    ),
-                ]
-            ]
-        elif stem == "02_recompletion_by_period":
-            bullets = []
-            for group in ("Recompletion", "Modify Perforations", "Reperforation"):
-                peak = max(
-                    (r for r in rows if r["group"] == group and int(r["years"]) == 5),
-                    key=lambda r: float(r["value"]),
-                )
-                bullets.append(
-                    finding(
-                        f"The highest full period average for {group} was {{0}} approvals "
-                        f'per year in water {peak["band"].lower()} in {peak["period"]}.',
-                        [peak],
-                        "value",
-                        1,
-                    )
-                )
-            bullets.append(
-                complete_period_comparison(
-                    rows,
-                    BAND_LABELS[3],
-                    "Recompletion",
-                    "recompletion approvals per year",
-                    1,
-                )
-            )
-        else:
-            bullets = [
-                complete_period_comparison(
-                    rows, band, "", "annual approvals per January standing well", 2
+                complete_period_comparison(cells, band, group, metric, "value", 1)
+                for group, metric in (
+                    ("Initial completion", "initial completion approvals per year"),
+                    ("Other completion work", "other completion approvals per year"),
                 )
                 for band in (BAND_LABELS[0], BAND_LABELS[3])
             ]
+        elif stem == "02_recompletion_by_period":
+            bullets = recompletion_findings(cells)
+        else:
+            rate = "approvals_per_january_well_year"
+            chart_rows = [dict(r, value=r[rate]) for r in rows]
+            bullets = [
+                complete_period_comparison(
+                    cells,
+                    band,
+                    "",
+                    "completion approvals per January well year",
+                    rate,
+                    2,
+                )
+                for band in (BAND_LABELS[0], BAND_LABELS[3])
+            ]
+            bullets.append(
+                finding(
+                    "Completion approvals per January well year were higher at 1,500 m "
+                    "and deeper than under 100 m in both 2005 to 2009 ({0} versus {1}) "
+                    "and 2020 to 2024 ({2} versus {3}).",
+                    [
+                        cells["", period, band]
+                        for period in ("2005 to 2009", "2020 to 2024")
+                        for band in (BAND_LABELS[3], BAND_LABELS[0])
+                    ],
+                    rate,
+                    2,
+                )
+            )
+        chart = render_svg(chart_rows, ylabel=ylabel, note=note)
+        (out / f"{stem}.svg").write_text(chart, encoding="utf-8", newline="\n")
         figures.append(
             dict(
-                svg=f"{stem}.svg", csv=f"{stem}.csv", question=question, bullets=bullets
+                svg=f"{stem}.svg",
+                csv=f"{stem}.csv",
+                question=question,
+                note=note,
+                bullets=bullets,
             )
         )
 
-    drilled = table(out, "drilled_to_completed")
+    drilled = {
+        (r["group"], r["band"], r["period"]): r
+        for r in table(out, "04_drilled_to_completed")
+    }
+    exploratory, development = "Exploratory wells", "Development wells"
+    shallow, deep = BAND_LABELS[0], BAND_LABELS[-1]
+    first, last_full, partial = PERIODS[0], PERIODS[-2], PERIODS[-1]
+    early_shallow = drilled[exploratory, shallow, first]
+    late_shallow = drilled[exploratory, shallow, last_full]
     bullets = [
-        finding(
-            f"{{0}}% of {label} wells first drilled in 2005 to 2025 had an initial approval.",
+        finding_from_cells(
+            f"Under 100 m, {{0}} of {{1}} exploratory wells first drilled in {first} "
+            f"had an initial approval, compared with {{2}} of {{3}} in {last_full}.",
             [
-                next(
-                    r
-                    for r in drilled
-                    if r["well_type"] == kind and r["band"] == "all water depths"
+                (row, column, 0)
+                for row in (early_shallow, late_shallow)
+                for column in (
+                    "with_initial_completion_approval",
+                    "wells_first_drilled",
                 )
+            ],
+        ),
+        finding(
+            f"At 1,500 m and deeper, {{0}}% of exploratory wells first drilled in "
+            f"{first} had an initial approval, compared with {{1}}% in {last_full}.",
+            [drilled[exploratory, deep, period] for period in (first, last_full)],
+            "share_percent",
+            1,
+        ),
+        finding(
+            f"Comparing {first} with {last_full}, the share of development wells with an "
+            "initial approval rose from {0}% to {1}% under 100 m. At 1,500 m and deeper "
+            "the shares were {2}% and {3}%.",
+            [
+                drilled[development, band, period]
+                for band in (shallow, deep)
+                for period in (first, last_full)
             ],
             "share_percent",
             1,
-        )
-        for kind, label in (
-            ("exploration", "exploratory"),
-            ("development", "development"),
-        )
+        ),
+        finding(
+            f"At 1,500 m and deeper in {partial}, {{0}}% of exploratory wells "
+            "and {1}% of development wells had an initial approval by the snapshot.",
+            [drilled[group, deep, partial] for group in (exploratory, development)],
+            "share_percent",
+            1,
+        ),
     ]
     figures.append(
         dict(
             svg="04_drilled_to_completed.svg",
-            csv="drilled_to_completed.csv",
-            question="What share of exploratory and development wells had an initial completion approval?",
+            csv="04_drilled_to_completed.csv",
+            question="What share of drilled wells had an initial completion approval "
+            "by water depth, well type and period of first drilling?",
+            note=DRILLED_NOTE,
             bullets=bullets,
         )
     )

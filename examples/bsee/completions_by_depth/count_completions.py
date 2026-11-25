@@ -1,11 +1,11 @@
 """Count Gulf of America well completions from BSEE public raw data.
 
-Part 3 of the series "Life of a Gulf of America well". A completion leaves two
+Part 3 of 7 in the series "Life of a Gulf of America well". A completion leaves two
 public records, and both are counted here:
 
-- the approval: an approved permit to modify whose type is COMP (Completion)
-  and which does not change zone. This is the group the interventions example
-  (``../interventions_by_depth``, article C6) sets aside as "initial
+- the approval: an approved permit to modify whose type is COMP (Completion),
+  excluding plug-backs, new-hole work and Change Zone. The interventions
+  example (``../interventions_by_depth``, part 5) sets this group aside as "initial
   completion excluded". The rule is imported from that example, so one
   definition serves both articles;
 - the report: an End of Operations Report whose operation code is C
@@ -35,7 +35,7 @@ import sys
 import zipfile
 from pathlib import Path
 
-from worldenergydata.bsee.half_decade import summarize
+from worldenergydata.bsee.half_decade import PERIODS, summarize
 
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT.parent / "interventions_by_depth"))
@@ -494,13 +494,30 @@ def write_trend_tables(out, years, approvals, subcodes, classified, stock):
         for (y, b), count in annual.items()
     ]
     activity = count_grid(work, ["Recompletion", *flags.values()])
-    for stem, rows, mode in [
-        ("01_approvals_by_period", permits, "per_year"),
-        ("02_recompletion_by_period", activity, "per_year"),
-        ("03_approvals_per_well", rates, "per_well"),
-    ]:
-        result = summarize(rows, mode=mode)
-        write_csv(result, out, stem, result[0].keys())
+    permit_rows = summarize(permits, mode="per_year")
+    write_csv(permit_rows, out, "01_approvals_by_period", permit_rows[0].keys())
+
+    work_rows = summarize(activity, mode="per_year")
+    group_totals, band_totals = {}, {}
+    for row in work_rows:
+        group = row["group"]
+        group_totals[group] = group_totals.get(group, 0) + row["count"]
+        key = group, row["band"]
+        band_totals[key] = band_totals.get(key, 0) + row["count"]
+    for row in work_rows:
+        total = group_totals[row["group"]]
+        row["cell_share_of_group_percent"] = percent(row["count"], total)
+        row["band_share_of_group_percent"] = percent(
+            band_totals[row["group"], row["band"]], total
+        )
+    write_csv(work_rows, out, "02_recompletion_by_period", work_rows[0].keys())
+
+    rate_rows = summarize(rates, mode="per_well")
+    for row in rate_rows:
+        row["completion_approvals"] = row.pop("count")
+        row["january_well_years"] = row.pop("exposure")
+        row["approvals_per_january_well_year"] = row.pop("value")
+    write_csv(rate_rows, out, "03_approvals_per_well", rate_rows[0].keys())
 
 
 def tally(events, key):
@@ -523,6 +540,45 @@ def spread(values):
 
 def percent(part, whole):
     return round(100 * part / whole, 1) if whole else ""
+
+
+def drilled_period_table(inventory, types, initial, file_date):
+    """Group distinct drilled wells by first spud and any initial permit by cutoff."""
+    approved = {a["api10"] for a in initial if a["date"] and a["date"] <= file_date}
+    groups = {"exploration": "Exploratory wells", "development": "Development wells"}
+    observations = {group: [] for group in groups.values()}
+    for well in inventory.itertuples():
+        group = groups.get(types.get(well.api10))
+        if group is None or well.band == "no depth" or ci.pd.isna(well.spud):
+            continue
+        if well.spud.date() <= file_date:
+            observations[group].append(
+                dict(
+                    year=well.spud.year,
+                    band=well.band,
+                    count=int(well.api10 in approved),
+                    exposure=1,
+                )
+            )
+
+    observed = f"Initial completion approvals observed through {file_date:%d %B %Y}."
+    recent = observed + " These recently drilled wells had little time for approval."
+    result = []
+    for group, rows in observations.items():
+        for cell in summarize(rows, mode="per_well"):
+            drilled, with_approval = cell["exposure"], cell["count"]
+            result.append(
+                dict(
+                    group=group,
+                    period=cell["period"],
+                    band=cell["band"],
+                    wells_first_drilled=drilled,
+                    with_initial_completion_approval=with_approval,
+                    share_percent=percent(with_approval, drilled),
+                    follow_up=recent if cell["period"] == PERIODS[-1] else observed,
+                )
+            )
+    return result
 
 
 def suboperation_table(approvals, subcodes, names):
@@ -1007,6 +1063,9 @@ def run(data_dir, out):
 
     inventory = ci.well_inventory(bore_frame)
     types = wl.well_types(bore_frame)
+    by_period = drilled_period_table(inventory, types, initial, file_date)
+    write_csv(by_period, out, "04_drilled_to_completed", by_period[0].keys())
+
     approved_wells = {a["api10"] for a in initial}
     drilled = []
     cohort_wells = {}

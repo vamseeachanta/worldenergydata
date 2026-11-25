@@ -1,7 +1,8 @@
 # Reusable prompt: Gulf of America well completions
 
 Article: "Public Data for Gulf of America: well completions", The Deckhand
-Chronicles, part 2 of the series "Life of a Gulf of America well". This page
+Chronicles, part 3 of 7 in the series "Life of a Gulf of America well".
+Interventions is part 5. This page
 holds in full what the article's reusable-prompt appendix summarises. Method,
 definitions and checks: [README](README.md).
 

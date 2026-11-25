@@ -1,4 +1,4 @@
-period,years,band,group,count,exposure,value
+period,years,band,group,completion_approvals,january_well_years,approvals_per_january_well_year
 2005 to 2009,5,Under 100 m,,1993,67505,0.02952373898229761
 2005 to 2009,5,100 to 500 m,,185,7578,0.02441277381894959
 2005 to 2009,5,"500 to 1,500 m",,272,2886,0.09424809424809424

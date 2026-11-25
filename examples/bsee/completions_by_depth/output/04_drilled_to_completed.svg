@@ -1,58 +1,144 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 516" width="960" height="516" role="img" aria-label="Share of wells first drilled 2005 to 2025 with an initial completion approval, by well type and water depth" font-family="'DejaVu Sans','Segoe UI',Arial,sans-serif">
-<title>Share of wells first drilled 2005 to 2025 with an initial completion approval, by well type and water depth</title>
-<rect x="0.0" y="0.0" width="960.0" height="516.0" fill="#ffffff" fill-opacity="1.0" stroke="none"/>
-<rect x="208.0" y="21.0" width="16.0" height="16.0" fill="#6588a6" fill-opacity="1.0" stroke="none"/>
-<text x="231.0" y="35.0" font-size="16" font-weight="400" fill="#26323a" text-anchor="start">Exploratory wells</text>
-<rect x="409.3" y="21.0" width="16.0" height="16.0" fill="#245476" fill-opacity="1.0" stroke="none"/>
-<text x="432.3" y="35.0" font-size="16" font-weight="400" fill="#26323a" text-anchor="start">Development wells</text>
-<text x="196.0" y="35.0" font-size="16" font-weight="600" fill="#26323a" text-anchor="end">Water depth (m)</text>
-<line x1="208.0" y1="70.0" x2="208.0" y2="460.0" stroke="#d0d7de" stroke-width="1.0"/>
-<text x="208.0" y="484.0" font-size="16" font-weight="400" fill="#5a6b76" text-anchor="middle">0</text>
-<line x1="328.4" y1="70.0" x2="328.4" y2="460.0" stroke="#d0d7de" stroke-width="1.0"/>
-<text x="328.4" y="484.0" font-size="16" font-weight="400" fill="#5a6b76" text-anchor="middle">20</text>
-<line x1="448.8" y1="70.0" x2="448.8" y2="460.0" stroke="#d0d7de" stroke-width="1.0"/>
-<text x="448.8" y="484.0" font-size="16" font-weight="400" fill="#5a6b76" text-anchor="middle">40</text>
-<line x1="569.2" y1="70.0" x2="569.2" y2="460.0" stroke="#d0d7de" stroke-width="1.0"/>
-<text x="569.2" y="484.0" font-size="16" font-weight="400" fill="#5a6b76" text-anchor="middle">60</text>
-<line x1="689.6" y1="70.0" x2="689.6" y2="460.0" stroke="#d0d7de" stroke-width="1.0"/>
-<text x="689.6" y="484.0" font-size="16" font-weight="400" fill="#5a6b76" text-anchor="middle">80</text>
-<line x1="810.0" y1="70.0" x2="810.0" y2="460.0" stroke="#d0d7de" stroke-width="1.0"/>
-<text x="810.0" y="484.0" font-size="16" font-weight="400" fill="#5a6b76" text-anchor="middle">100</text>
-<text x="509.0" y="508.0" font-size="16" font-weight="400" fill="#5a6b76" text-anchor="middle">Wells with an initial completion approval (%)</text>
-<text x="196.0" y="115.0" font-size="16" font-weight="400" fill="#26323a" text-anchor="end">Under 100 m</text>
-<rect x="208.0" y="82.0" width="309.8" height="24.0" fill="#6588a6" fill-opacity="1.0" stroke="none"/>
-<rect x="521.8" y="82.0" width="159.2" height="24.0" fill="#ffffff" fill-opacity="1.0" stroke="none"/>
-<text x="525.8" y="100.0" font-size="15" font-weight="400" fill="#26323a" text-anchor="start">51 %  (353 of 686)</text>
-<rect x="208.0" y="110.0" width="491.2" height="24.0" fill="#245476" fill-opacity="1.0" stroke="none"/>
-<rect x="703.2" y="110.0" width="159.2" height="24.0" fill="#ffffff" fill-opacity="1.0" stroke="none"/>
-<text x="707.2" y="128.0" font-size="15" font-weight="400" fill="#26323a" text-anchor="start">82 %  (674 of 826)</text>
-<text x="196.0" y="193.0" font-size="16" font-weight="400" fill="#26323a" text-anchor="end">100 to 500 m</text>
-<rect x="208.0" y="160.0" width="260.3" height="24.0" fill="#6588a6" fill-opacity="1.0" stroke="none"/>
-<rect x="472.3" y="160.0" width="142.4" height="24.0" fill="#ffffff" fill-opacity="1.0" stroke="none"/>
-<text x="476.3" y="178.0" font-size="15" font-weight="400" fill="#26323a" text-anchor="start">43 %  (32 of 74)</text>
-<rect x="208.0" y="188.0" width="528.9" height="24.0" fill="#245476" fill-opacity="1.0" stroke="none"/>
-<rect x="740.9" y="188.0" width="150.8" height="24.0" fill="#ffffff" fill-opacity="1.0" stroke="none"/>
-<text x="744.9" y="206.0" font-size="15" font-weight="400" fill="#26323a" text-anchor="start">88 %  (94 of 107)</text>
-<text x="196.0" y="271.0" font-size="16" font-weight="400" fill="#26323a" text-anchor="end">500 to 1,500 m</text>
-<rect x="208.0" y="238.0" width="263.7" height="24.0" fill="#6588a6" fill-opacity="1.0" stroke="none"/>
-<rect x="475.7" y="238.0" width="159.2" height="24.0" fill="#ffffff" fill-opacity="1.0" stroke="none"/>
-<text x="479.7" y="256.0" font-size="15" font-weight="400" fill="#26323a" text-anchor="start">44 %  (191 of 436)</text>
-<rect x="208.0" y="266.0" width="511.3" height="24.0" fill="#245476" fill-opacity="1.0" stroke="none"/>
-<rect x="723.3" y="266.0" width="159.2" height="24.0" fill="#ffffff" fill-opacity="1.0" stroke="none"/>
-<text x="727.3" y="284.0" font-size="15" font-weight="400" fill="#26323a" text-anchor="start">85 %  (124 of 146)</text>
-<text x="196.0" y="349.0" font-size="16" font-weight="400" fill="#26323a" text-anchor="end">1,500 m and deeper</text>
-<rect x="208.0" y="316.0" width="283.3" height="24.0" fill="#6588a6" fill-opacity="1.0" stroke="none"/>
-<rect x="495.3" y="316.0" width="159.2" height="24.0" fill="#ffffff" fill-opacity="1.0" stroke="none"/>
-<text x="499.3" y="334.0" font-size="15" font-weight="400" fill="#26323a" text-anchor="start">47 %  (216 of 459)</text>
-<rect x="208.0" y="344.0" width="505.5" height="24.0" fill="#245476" fill-opacity="1.0" stroke="none"/>
-<rect x="717.5" y="344.0" width="159.2" height="24.0" fill="#ffffff" fill-opacity="1.0" stroke="none"/>
-<text x="721.5" y="362.0" font-size="15" font-weight="400" fill="#26323a" text-anchor="start">84 %  (131 of 156)</text>
-<text x="196.0" y="427.0" font-size="16" font-weight="600" fill="#26323a" text-anchor="end">All water depths</text>
-<rect x="208.0" y="394.0" width="288.1" height="24.0" fill="#6588a6" fill-opacity="1.0" stroke="none"/>
-<rect x="500.1" y="394.0" width="176.0" height="24.0" fill="#ffffff" fill-opacity="1.0" stroke="none"/>
-<text x="504.1" y="412.0" font-size="15" font-weight="400" fill="#26323a" text-anchor="start">48 %  (792 of 1,655)</text>
-<rect x="208.0" y="422.0" width="498.7" height="24.0" fill="#245476" fill-opacity="1.0" stroke="none"/>
-<rect x="710.7" y="422.0" width="192.8" height="24.0" fill="#ffffff" fill-opacity="1.0" stroke="none"/>
-<text x="714.7" y="440.0" font-size="15" font-weight="400" fill="#26323a" text-anchor="start">83 %  (1,023 of 1,235)</text>
-<line x1="208.0" y1="70.0" x2="208.0" y2="460.0" stroke="#26323a" stroke-width="1.2"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 864 523" width="960" height="581" role="img" aria-label="Share of drilled wells (%) by water depth and period (Exploratory wells, Development wells)" font-family="'DejaVu Sans','Segoe UI',Arial,sans-serif">
+  <title>Share of drilled wells (%) by water depth and period (Exploratory wells, Development wells)</title>
+  <rect width="864" height="523" fill="white" />
+  <line x1="220.0" y1="17" x2="240.0" y2="17" stroke="#6588a6" stroke-width="1.5" stroke-dasharray="none" />
+  <circle cx="230.0" cy="17" r="2" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
+  <text x="244.0" y="20" font-size="9" text-anchor="start">Under 100 m</text>
+  <line x1="312.8" y1="17" x2="332.8" y2="17" stroke="#427298" stroke-width="1.5" stroke-dasharray="5.5 2.4" />
+  <rect x="320.8" y="15" width="4" height="4" stroke="#333333" stroke-width="0.5" fill="#427298" />
+  <text x="336.8" y="20" font-size="9" text-anchor="start">100 to 500 m</text>
+  <line x1="410.4" y1="17" x2="430.4" y2="17" stroke="#245476" stroke-width="1.5" stroke-dasharray="9.6 2.4 1.5 2.4" />
+  <polygon points="420.40,15.00 422.40,19.00 418.40,19.00" stroke="#333333" stroke-width="0.5" fill="#245476" />
+  <text x="434.4" y="20" font-size="9" text-anchor="start">500 to 1,500 m</text>
+  <line x1="517.6" y1="17" x2="537.6" y2="17" stroke="#102e46" stroke-width="1.5" stroke-dasharray="1.5 2.4" />
+  <polygon points="527.60,14.40 530.20,17.00 527.60,19.60 525.00,17.00" stroke="#333333" stroke-width="0.5" fill="#102e46" />
+  <text x="541.6" y="20" font-size="9" text-anchor="start">1,500 m and deeper</text>
+  <text x="78" y="46" font-size="13" text-anchor="start">Exploratory wells</text>
+  <rect x="686" y="54" width="152" height="164" fill="#f0f0f0" />
+  <line x1="78" y1="218.0" x2="838" y2="218.0" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.5" y1="218.0" x2="78" y2="218.0" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71" y="221.5" font-size="11" text-anchor="end">0</text>
+  <line x1="78" y1="185.2" x2="838" y2="185.2" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.5" y1="185.2" x2="78" y2="185.2" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71" y="188.7" font-size="11" text-anchor="end">20</text>
+  <line x1="78" y1="152.4" x2="838" y2="152.4" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.5" y1="152.4" x2="78" y2="152.4" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71" y="155.9" font-size="11" text-anchor="end">40</text>
+  <line x1="78" y1="119.6" x2="838" y2="119.6" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.5" y1="119.6" x2="78" y2="119.6" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71" y="123.1" font-size="11" text-anchor="end">60</text>
+  <line x1="78" y1="86.8" x2="838" y2="86.8" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.5" y1="86.8" x2="78" y2="86.8" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71" y="90.3" font-size="11" text-anchor="end">80</text>
+  <line x1="78" y1="54.0" x2="838" y2="54.0" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.5" y1="54.0" x2="78" y2="54.0" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71" y="57.5" font-size="11" text-anchor="end">100</text>
+  <line x1="78" y1="54" x2="78" y2="218" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <line x1="78" y1="218" x2="838" y2="218" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="20" y="136.0" font-size="11" text-anchor="middle" transform="rotate(-90 20 136.0)">Share of drilled wells (%)</text>
+  <circle cx="154.0" cy="129.93" r="2" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
+  <line x1="154.0" y1="129.93" x2="306.0" y2="147.15" stroke="#6588a6" stroke-width="1.5" stroke-dasharray="none" />
+  <circle cx="306.0" cy="147.15" r="2" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
+  <line x1="306.0" y1="147.15" x2="458.0" y2="180.12" stroke="#6588a6" stroke-width="1.5" stroke-dasharray="none" />
+  <circle cx="458.0" cy="180.12" r="2" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
+  <line x1="458.0" y1="180.12" x2="610.0" y2="218.0" stroke="#6588a6" stroke-width="1.5" stroke-dasharray="none" />
+  <circle cx="610.0" cy="218.0" r="2" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
+  <rect x="152.0" y="159.26" width="4" height="4" stroke="#333333" stroke-width="0.5" fill="#427298" />
+  <line x1="154.0" y1="161.26" x2="306.0" y2="119.6" stroke="#427298" stroke-width="1.5" stroke-dasharray="5.5 2.4" />
+  <rect x="304.0" y="117.6" width="4" height="4" stroke="#333333" stroke-width="0.5" fill="#427298" />
+  <line x1="306.0" y1="119.6" x2="458.0" y2="81.39" stroke="#427298" stroke-width="1.5" stroke-dasharray="5.5 2.4" />
+  <rect x="456.0" y="79.39" width="4" height="4" stroke="#333333" stroke-width="0.5" fill="#427298" />
+  <line x1="458.0" y1="81.39" x2="610.0" y2="119.6" stroke="#427298" stroke-width="1.5" stroke-dasharray="5.5 2.4" />
+  <rect x="608.0" y="117.6" width="4" height="4" stroke="#333333" stroke-width="0.5" fill="#427298" />
+  <rect x="758.7" y="214.7" width="6.6" height="6.6" stroke="#333333" stroke-width="0.5" fill="#427298" />
+  <polygon points="154.00,149.58 156.00,153.58 152.00,153.58" stroke="#333333" stroke-width="0.5" fill="#245476" />
+  <line x1="154.0" y1="151.58" x2="306.0" y2="118.45" stroke="#245476" stroke-width="1.5" stroke-dasharray="9.6 2.4 1.5 2.4" />
+  <polygon points="306.00,116.45 308.00,120.45 304.00,120.45" stroke="#333333" stroke-width="0.5" fill="#245476" />
+  <line x1="306.0" y1="118.45" x2="458.0" y2="145.18" stroke="#245476" stroke-width="1.5" stroke-dasharray="9.6 2.4 1.5 2.4" />
+  <polygon points="458.00,143.18 460.00,147.18 456.00,147.18" stroke="#333333" stroke-width="0.5" fill="#245476" />
+  <line x1="458.0" y1="145.18" x2="610.0" y2="166.67" stroke="#245476" stroke-width="1.5" stroke-dasharray="9.6 2.4 1.5 2.4" />
+  <polygon points="610.00,164.67 612.00,168.67 608.00,168.67" stroke="#333333" stroke-width="0.5" fill="#245476" />
+  <polygon points="762.00,162.06 765.30,168.66 758.70,168.66" stroke="#333333" stroke-width="0.5" fill="#245476" />
+  <polygon points="154.00,162.26 156.60,164.86 154.00,167.46 151.40,164.86" stroke="#333333" stroke-width="0.5" fill="#102e46" />
+  <line x1="154.0" y1="164.86" x2="306.0" y2="159.29" stroke="#102e46" stroke-width="1.5" stroke-dasharray="1.5 2.4" />
+  <polygon points="306.00,156.69 308.60,159.29 306.00,161.89 303.40,159.29" stroke="#333333" stroke-width="0.5" fill="#102e46" />
+  <line x1="306.0" y1="159.29" x2="458.0" y2="123.37" stroke="#102e46" stroke-width="1.5" stroke-dasharray="1.5 2.4" />
+  <polygon points="458.00,120.77 460.60,123.37 458.00,125.97 455.40,123.37" stroke="#333333" stroke-width="0.5" fill="#102e46" />
+  <line x1="458.0" y1="123.37" x2="610.0" y2="114.19" stroke="#102e46" stroke-width="1.5" stroke-dasharray="1.5 2.4" />
+  <polygon points="610.00,111.59 612.60,114.19 610.00,116.79 607.40,114.19" stroke="#333333" stroke-width="0.5" fill="#102e46" />
+  <polygon points="762.00,125.48 766.29,129.77 762.00,134.06 757.71,129.77" stroke="#333333" stroke-width="0.5" fill="#102e46" />
+  <line x1="154.0" y1="218" x2="154.0" y2="221.5" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <line x1="306.0" y1="218" x2="306.0" y2="221.5" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <line x1="458.0" y1="218" x2="458.0" y2="221.5" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <line x1="610.0" y1="218" x2="610.0" y2="221.5" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <line x1="762.0" y1="218" x2="762.0" y2="221.5" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="78" y="252" font-size="13" text-anchor="start">Development wells</text>
+  <rect x="686" y="260" width="152" height="164" fill="#f0f0f0" />
+  <line x1="78" y1="424.0" x2="838" y2="424.0" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.5" y1="424.0" x2="78" y2="424.0" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71" y="427.5" font-size="11" text-anchor="end">0</text>
+  <line x1="78" y1="391.2" x2="838" y2="391.2" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.5" y1="391.2" x2="78" y2="391.2" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71" y="394.7" font-size="11" text-anchor="end">20</text>
+  <line x1="78" y1="358.4" x2="838" y2="358.4" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.5" y1="358.4" x2="78" y2="358.4" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71" y="361.9" font-size="11" text-anchor="end">40</text>
+  <line x1="78" y1="325.6" x2="838" y2="325.6" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.5" y1="325.6" x2="78" y2="325.6" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71" y="329.1" font-size="11" text-anchor="end">60</text>
+  <line x1="78" y1="292.8" x2="838" y2="292.8" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.5" y1="292.8" x2="78" y2="292.8" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71" y="296.3" font-size="11" text-anchor="end">80</text>
+  <line x1="78" y1="260.0" x2="838" y2="260.0" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.5" y1="260.0" x2="78" y2="260.0" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71" y="263.5" font-size="11" text-anchor="end">100</text>
+  <line x1="78" y1="260" x2="78" y2="424" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <line x1="78" y1="424" x2="838" y2="424" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="20" y="342.0" font-size="11" text-anchor="middle" transform="rotate(-90 20 342.0)">Share of drilled wells (%)</text>
+  <circle cx="154.0" cy="296.9" r="2" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
+  <line x1="154.0" y1="296.9" x2="306.0" y2="282.3" stroke="#6588a6" stroke-width="1.5" stroke-dasharray="none" />
+  <circle cx="306.0" cy="282.3" r="2" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
+  <line x1="306.0" y1="282.3" x2="458.0" y2="277.55" stroke="#6588a6" stroke-width="1.5" stroke-dasharray="none" />
+  <circle cx="458.0" cy="277.55" r="2" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
+  <line x1="458.0" y1="277.55" x2="610.0" y2="264.59" stroke="#6588a6" stroke-width="1.5" stroke-dasharray="none" />
+  <circle cx="610.0" cy="264.59" r="2" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
+  <circle cx="762.0" cy="260.0" r="3.3" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
+  <rect x="152.0" y="274.89" width="4" height="4" stroke="#333333" stroke-width="0.5" fill="#427298" />
+  <line x1="154.0" y1="276.89" x2="306.0" y2="292.8" stroke="#427298" stroke-width="1.5" stroke-dasharray="5.5 2.4" />
+  <rect x="304.0" y="290.8" width="4" height="4" stroke="#333333" stroke-width="0.5" fill="#427298" />
+  <line x1="306.0" y1="292.8" x2="458.0" y2="269.68" stroke="#427298" stroke-width="1.5" stroke-dasharray="5.5 2.4" />
+  <rect x="456.0" y="267.68" width="4" height="4" stroke="#333333" stroke-width="0.5" fill="#427298" />
+  <line x1="458.0" y1="269.68" x2="610.0" y2="314.61" stroke="#427298" stroke-width="1.5" stroke-dasharray="5.5 2.4" />
+  <rect x="608.0" y="312.61" width="4" height="4" stroke="#333333" stroke-width="0.5" fill="#427298" />
+  <rect x="758.7" y="256.7" width="6.6" height="6.6" stroke="#333333" stroke-width="0.5" fill="#427298" />
+  <polygon points="154.00,315.24 156.00,319.24 152.00,319.24" stroke="#333333" stroke-width="0.5" fill="#245476" />
+  <line x1="154.0" y1="317.24" x2="306.0" y2="276.07" stroke="#245476" stroke-width="1.5" stroke-dasharray="9.6 2.4 1.5 2.4" />
+  <polygon points="306.00,274.07 308.00,278.07 304.00,278.07" stroke="#333333" stroke-width="0.5" fill="#245476" />
+  <line x1="306.0" y1="276.07" x2="458.0" y2="265.9" stroke="#245476" stroke-width="1.5" stroke-dasharray="9.6 2.4 1.5 2.4" />
+  <polygon points="458.00,263.90 460.00,267.90 456.00,267.90" stroke="#333333" stroke-width="0.5" fill="#245476" />
+  <line x1="458.0" y1="265.9" x2="610.0" y2="267.38" stroke="#245476" stroke-width="1.5" stroke-dasharray="9.6 2.4 1.5 2.4" />
+  <polygon points="610.00,265.38 612.00,269.38 608.00,269.38" stroke="#333333" stroke-width="0.5" fill="#245476" />
+  <polygon points="762.00,256.70 765.30,263.30 758.70,263.30" stroke="#333333" stroke-width="0.5" fill="#245476" />
+  <polygon points="154.00,288.72 156.60,291.32 154.00,293.92 151.40,291.32" stroke="#333333" stroke-width="0.5" fill="#102e46" />
+  <line x1="154.0" y1="291.32" x2="306.0" y2="271.64" stroke="#102e46" stroke-width="1.5" stroke-dasharray="1.5 2.4" />
+  <polygon points="306.00,269.04 308.60,271.64 306.00,274.24 303.40,271.64" stroke="#333333" stroke-width="0.5" fill="#102e46" />
+  <line x1="306.0" y1="271.64" x2="458.0" y2="289.85" stroke="#102e46" stroke-width="1.5" stroke-dasharray="1.5 2.4" />
+  <polygon points="458.00,287.25 460.60,289.85 458.00,292.45 455.40,289.85" stroke="#333333" stroke-width="0.5" fill="#102e46" />
+  <line x1="458.0" y1="289.85" x2="610.0" y2="290.83" stroke="#102e46" stroke-width="1.5" stroke-dasharray="1.5 2.4" />
+  <polygon points="610.00,288.23 612.60,290.83 610.00,293.43 607.40,290.83" stroke="#333333" stroke-width="0.5" fill="#102e46" />
+  <polygon points="762.00,341.32 766.29,345.61 762.00,349.90 757.71,345.61" stroke="#333333" stroke-width="0.5" fill="#102e46" />
+  <line x1="154.0" y1="424" x2="154.0" y2="427.5" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="154.0" y="440" font-size="11" text-anchor="middle">2005 to 2009</text>
+  <line x1="306.0" y1="424" x2="306.0" y2="427.5" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="306.0" y="440" font-size="11" text-anchor="middle">2010 to 2014</text>
+  <line x1="458.0" y1="424" x2="458.0" y2="427.5" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="458.0" y="440" font-size="11" text-anchor="middle">2015 to 2019</text>
+  <line x1="610.0" y1="424" x2="610.0" y2="427.5" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="610.0" y="440" font-size="11" text-anchor="middle">2020 to 2024</text>
+  <line x1="762.0" y1="424" x2="762.0" y2="427.5" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="762.0" y="440" font-size="11" text-anchor="middle">2025 to 2026 (partial)</text>
+  <text x="458.0" y="460" font-size="11" text-anchor="middle">Period of first drilling</text>
+  <text x="60" y="479" font-size="9" text-anchor="start">Shares count wells with an initial completion approval recorded by 23 November 2026. Later cohorts have had less time for</text>
+  <text x="60" y="492" font-size="9" text-anchor="start">approval, especially wells first drilled in 2025 to 2026 (partial). Equal shares have overlapping markers. Some groups contain</text>
+  <text x="60" y="505" font-size="9" text-anchor="start">only one or two wells. The table gives the counts. An empty share means no wells were drilled in that group.</text>
 </svg>
