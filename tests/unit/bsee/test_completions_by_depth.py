@@ -517,8 +517,8 @@ def test_first_drilling_period_and_approval_observed_by_snapshot():
 # Level B: the delivered output tables (comparator class: conservation, and
 # the hand counts above; the C6 comparison is read from verification.json)
 # --------------------------------------------------------------------------
-def table(name):
-    with open(OUT / f"{name}.csv", encoding="utf-8", newline="") as f:
+def table(name, out=OUT):
+    with open(out / f"{name}.csv", encoding="utf-8", newline="") as f:
         return list(csv.DictReader(f))
 
 
@@ -605,6 +605,41 @@ def test_delivered_hand_counts():
     hand = js("verification")["hand_counts"]
     assert hand["approvals_2025_03"] == HAND_APPROVALS_2025_03
     assert hand["reports_2025_q1"] == HAND_REPORTS_2025_Q1
+
+
+def test_delivered_hand_count_csv_identifies_the_source_and_period():
+    approvals, reports = table("hand_counts")
+    assert (approvals["sample"], approvals["period"], int(approvals["count"])) == (
+        "completion_approvals",
+        "2025-03",
+        27,
+    )
+    assert (reports["sample"], reports["period"], int(reports["count"])) == (
+        "completion_reports",
+        "2025-Q1",
+        18,
+    )
+    for row, archive, fields in [
+        (
+            approvals,
+            cc.APM,
+            ["SN_APM", "ACC_STATUS_DATE", "APM_OP_CD", "APM_SUBOP_CD", "APM_OP_DESC"],
+        ),
+        (reports, cc.EOR, ["SN_EOR", "BOREHOLE_STAT_DT", "EOR_OPERATION_CD"]),
+    ]:
+        assert archive in row["source_files"] and cc.BOREHOLE in row["source_files"]
+        assert all(field in row["source_fields"] for field in [*fields, "REGION_CODE"])
+        assert row["selection"]
+
+
+def test_delivered_status_counts_reconcile_with_all_reports():
+    rows = table("report_status_counts")
+    counts = {r["report_status_code"]: int(r["reports"]) for r in rows}
+    assert len(counts) == len(rows)
+    assert counts == js("summary")["completion_reports_in_window_by_status"]
+    assert counts["COM"] == 5173
+    assert sum(counts.values()) == 5276
+    assert {int(r["all_reports_in_window"]) for r in rows} == {sum(counts.values())}
 
 
 def test_delivered_shares_follow_their_counts():
@@ -726,6 +761,29 @@ def test_raw_count_equals_c6_code_on_the_same_files(recount):
         (int(y), b): int(n) for (y, b), n in theirs.items()
     }
     assert sum(mine.values()) == len(c6)
+
+    march = ci.dates(c6.ACC_STATUS_DATE).dt.to_period("M").eq("2025-03")
+    approvals, _ = table("hand_counts", recount)
+    assert c6.loc[march, "SN_APM"].nunique() == int(approvals["count"]) == 27
+
+
+@needs_data
+def test_raw_report_status_and_quarter_counts(recount):
+    bore = ci.read_table(DATA, cc.BOREHOLE, "mv_boreholes_all")
+    reports = ci.read_table(DATA, cc.EOR, "mv_eor_mainquery")
+    reports = ci.gulf_only(reports[reports.EOR_OPERATION_CD.eq("C")], bore)
+    reports = reports[reports.region.eq("G")].drop_duplicates("SN_EOR")
+    dates = ci.dates(reports.BOREHOLE_STAT_DT)
+    _, sample = table("hand_counts", recount)
+    assert dates.dt.to_period("Q").eq("2025Q1").sum() == int(sample["count"]) == 18
+
+    window = reports[dates.dt.year.between(2005, 2026)]
+    counts = {
+        r["report_status_code"]: int(r["reports"])
+        for r in table("report_status_counts", recount)
+    }
+    assert counts == window.BOREHOLE_STAT_CD.value_counts().to_dict()
+    assert counts["COM"] == 5173
 
 
 @needs_data

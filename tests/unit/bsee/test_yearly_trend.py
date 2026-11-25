@@ -60,6 +60,50 @@ def test_windows_do_not_mix_bands_or_measures():
         with_trend(rows + rows[:1])
 
 
+def assert_article_sizes(root):
+    scale = 860 / float(root.attrib["viewBox"].split()[2])
+
+    def rendered(element, attribute):
+        return float(element.attrib[attribute]) * scale
+
+    title = root.findtext("{*}title")
+    labels = root.findall(".//{*}text")
+    assert title in {label.text for label in labels}
+    for label in labels:
+        assert rendered(label, "font-size") >= (18 if label.text == title else 15)
+    for marker in root.findall(".//{*}circle"):
+        assert 2 * rendered(marker, "r") >= 9
+
+    panels = root.findall("{*}g[@class='panel']")
+    plot_strokes = set()
+    average_colours = set()
+    for panel in panels:
+        for path in panel.findall("{*}path"):
+            average = path.attrib["class"] == "average"
+            assert rendered(path, "stroke-width") >= (4 if average else 2)
+            if average:
+                average_colours.add(path.attrib["stroke"])
+        for marker in panel.findall("{*}circle"):
+            plot_strokes.add((marker.attrib["stroke"], marker.attrib["stroke-width"]))
+
+    # Band keys are direct children of the root. Named keys are nested by series.
+    legend = [el for child in root if child not in panels for el in child.iter()]
+    markers = [el for el in legend if el.tag.endswith("}circle")]
+    assert markers
+    for marker in markers:
+        assert marker.attrib["fill"] == marker.attrib["stroke"]
+        assert (marker.attrib["stroke"], marker.attrib["stroke-width"]) in plot_strokes
+    lines = [el for el in legend if el.tag.endswith("}line")]
+    assert any(line.attrib["stroke"] in average_colours for line in lines)
+    assert any(
+        line.attrib["stroke"] in {colour for colour, _ in plot_strokes}
+        for line in lines
+    )
+    for line in lines:
+        minimum = 4 if line.attrib["stroke"] in average_colours else 2
+        assert rendered(line, "stroke-width") >= minimum
+
+
 def test_svg_encodes_yearly_trend_measures_and_partial():
     rows = [
         dict(year=y, band=b, group=g, value=y - 2000 + i)
@@ -89,12 +133,7 @@ def test_svg_encodes_yearly_trend_measures_and_partial():
     ):
         assert label in words
     assert not any(unicodedata.category(c) == "Pd" or c == "\u2212" for c in words)
-    labels = root.findall(".//{*}text")
-    assert all(float(el.get("font-size")) >= 15 for el in labels)
-    assert any(
-        el.text == args["title"] and float(el.get("font-size")) >= 18 for el in labels
-    )
-    assert all(float(el.get("r")) >= 4.5 for el in root.findall(".//{*}circle"))
+    assert_article_sizes(root)
     panels = root.findall(".//{*}g[@class='panel']")
     assert len(panels) == 4
     for panel, colour in zip(panels, ("#6588a6", "#427298", "#245476", "#102e46")):
@@ -103,14 +142,8 @@ def test_svg_encodes_yearly_trend_measures_and_partial():
         yearly = [el for el in lines if el.get("class") == "yearly"]
         trend = [el for el in lines if el.get("class") == "average"]
         assert len(yearly) == len(trend) == 2
-        assert all(
-            float(el.get("stroke-width")) >= 2 and el.get("stroke") == colour
-            for el in yearly
-        )
-        assert all(
-            float(el.get("stroke-width")) >= 4 and el.get("stroke") != colour
-            for el in trend
-        )
+        assert all(el.get("stroke") == colour for el in yearly)
+        assert all(el.get("stroke") != colour for el in trend)
         for pair in (yearly, trend):
             assert pair[0].get("stroke-dasharray") is None
             assert pair[1].get("stroke-dasharray")
@@ -183,16 +216,13 @@ def test_named_series_share_one_panel_in_declared_order():
         unicodedata.category(c) == "Pd" or c == "\u2212"
         for c in "".join(root.itertext())
     )
-    assert all(float(el.get("font-size")) >= 15 for el in root.findall(".//{*}text"))
-    title = next(el for el in root.findall("{*}text") if el.text == args["title"])
-    assert float(title.get("font-size")) >= 18
+    assert_article_sizes(root)
 
     colours = ["#0072b2", "#d55e00", "#009e73", "#663399"]
     tints = ["#6badd2", "#e7a26b", "#6bc7ae", "#a689c4"]
-    for kind, strokes, min_width in [("yearly", colours, 2), ("average", tints, 4)]:
+    for kind, strokes in [("yearly", colours), ("average", tints)]:
         paths = panel.findall(f"{{*}}path[@class='{kind}']")
         assert [el.get("stroke") for el in paths] == strokes
-        assert all(float(el.get("stroke-width")) >= min_width for el in paths)
 
     first_year_y = []
     for name, colour, tint in zip(STATUS_NAMES, colours, tints):
@@ -200,7 +230,6 @@ def test_named_series_share_one_panel_in_declared_order():
         assert [el.get("stroke") for el in entry.findall("{*}line")] == [colour, tint]
         markers = panel.findall(f"{{*}}circle[@stroke='{colour}']")
         assert [m.get("fill") for m in markers] == [colour] * 5 + ["white"]
-        assert all(float(m.get("r")) >= 4.5 for m in markers)
         first_year_y.append(float(markers[0].get("cy")))
     # Counts of 1, 11, 21 and 31 occupy progressively higher points in the SVG.
     assert all(lower > higher for lower, higher in zip(first_year_y, first_year_y[1:]))
