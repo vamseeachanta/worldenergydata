@@ -173,11 +173,12 @@ By water depth, 2005 to 2026:
 - Perforated intervals (`perforated_intervals_by_band.csv`): of 5,143 completion
   intervals read, 82.7 % record one perforated interval and 0.9 % none.
 - Hydraulic fracturing sub-operation (`fracturing_by_year.csv`,
-  `fracturing_by_band.csv`): the code `FRAC` first appears on a permit in 2015.
+  `fracturing_by_band.csv`): the code `FRAC` is first observed on a permit in
+  2015, so 2016 is the first full calendar year after that first observed use.
   Of the 805 bores first approved for initial completion from 2016 to 23 Nov
-  2026, 538 (66.8 %) carry it. Before 2015
-  the code is absent, which is a change in coding; whether practice changed is
-  not established, and no trend is drawn across 2015.
+  2026, 538 (66.8 %) carry it. No permit before 2015 carries the code. The data
+  do not show when the code was introduced, or whether its absence before 2015
+  reflects coding or practice, so no trend is drawn across 2015.
 - Historical pooled cohort ([drilled_to_completed.csv](output/drilled_to_completed.csv)):
   of the wells first drilled in 2005 to 2025, 792 of 1,655 exploratory wells
   (47.9 %) and 1,023 of 1,235 development wells (82.8 %) have an initial
