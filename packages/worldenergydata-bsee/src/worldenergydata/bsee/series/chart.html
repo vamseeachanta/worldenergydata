@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{TITLE}}</title>
+<style>
+  * { box-sizing: border-box }
+  body { margin: auto; max-width: 800px; padding: .5rem; color: #203340; font: 16px 'DejaVu Sans','Segoe UI',Arial,sans-serif }
+  .plot { overflow-x: auto }
+  svg { display: block; width: 100%; min-width: 750px; height: auto }
+  [data-legend], [data-year] { cursor: pointer }
+  [data-legend][aria-pressed=false] { opacity: .45 }
+  [data-legend]:focus rect { stroke: #245476; stroke-width: 2 }
+  select { margin-left: .4rem; font: inherit }
+  table { width: 100%; border-collapse: collapse; margin-block: .7rem }
+  th, td { text-align: right; padding: .35rem; border-bottom: 1px solid #cfd9de }
+  th:first-child { text-align: left }
+  caption { caption-side: bottom; text-align: left; margin: .5rem 0 }
+</style>
+<main>
+  <div class="plot">{{SVG}}</div>
+  <p>Select a legend entry to hide or show its series. Hover over or tap a point to inspect a year.</p>
+  <label>{{XLABEL}}<select id="year">{{OPTIONS}}</select></label>
+  <table>
+    <caption id="caption"></caption>
+    <thead><tr><th scope="col">Series</th><th scope="col">Annual value</th><th scope="col">5 year mean</th></tr></thead>
+    <tbody id="readout"></tbody>
+  </table>
+</main>
+<script>
+const series = {{DATA}};
+const select = document.querySelector('#year');
+const chart = document.querySelector('svg');
+chart.setAttribute('role', 'group');
+const groups = [...chart.querySelectorAll('[data-series]')];
+const legends = [...chart.querySelectorAll('[data-legend]')];
+const format = new Intl.NumberFormat('en-US', {maximumFractionDigits: 3});
+function update() {
+  const tbody = document.querySelector('#readout');
+  tbody.replaceChildren();
+  for (const [index, group] of groups.entries()) {
+    if (group.style.display === 'none') continue;
+    const [, value, average, , availability] = series[index][select.selectedIndex];
+    const row = tbody.insertRow();
+    const label = document.createElement('th');
+    label.scope = 'row';
+    label.textContent = group.dataset.label;
+    row.append(label);
+    const blank = availability === 'unavailable' ? 'Source records unavailable' : 'No eligible value';
+    row.insertCell().textContent = value === null ? blank : format.format(value);
+    row.insertCell().textContent = average === null ? 'No complete five year window' : format.format(average);
+  }
+  document.querySelector('#caption').textContent = select.selectedOptions[0].textContent + ' · {{UNIT}}';
+}
+for (const [index, legend] of legends.entries()) {
+  legend.setAttribute('role', 'button');
+  legend.setAttribute('tabindex', '0');
+  legend.setAttribute('aria-pressed', 'true');
+  legend.setAttribute('aria-label', groups[index].dataset.label);
+  function toggle() {
+    const visible = legend.getAttribute('aria-pressed') === 'true';
+    groups[index].style.display = visible ? 'none' : '';
+    legend.setAttribute('aria-pressed', String(!visible));
+    update();
+  }
+  legend.addEventListener('click', toggle);
+  legend.addEventListener('keydown', event => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      toggle();
+    }
+  });
+}
+function inspect(event) {
+  const point = event.target.closest('[data-year]');
+  if (point) {
+    select.value = point.dataset.year;
+    update();
+  }
+}
+chart.addEventListener('pointerover', inspect);
+chart.addEventListener('click', inspect);
+select.addEventListener('change', update);
+update();
+</script>
+</html>
