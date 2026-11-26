@@ -247,3 +247,15 @@ modules:
       boem_gom_bathymetry:
         source_url: https://www.boem.gov/oil-gas-energy/mapping-and-data/map-gallery/northern-gom-deepwater-bathymetry-grid-3d-seismic
         update_frequency: static
+
+  west_africa:
+    datasets:
+      angola_field_development_evidence:
+        update_frequency: on_demand
+        license: >-
+          Public facts and links only. No license to reproduce source documents is asserted.
+        notes: >-
+          Metadata only for angola-field-development-evidence. The manifest is unpublished.
+          The ANPG homepage (https://anpg.co.ao) is a discovery link for source research.
+          Verification of the partial historical observations requires a public, revision-pinned
+          manifest. Current as-built conditions and suitability for engineering use are unverified.

@@ -2,6 +2,8 @@
 
 This directory contains issue-plan artifacts created during the issue-planning-mode workflow. Each plan is named `YYYY-MM-DD-issue-{N}-{slug}.md` and references its GitHub issue in the header.
 
+The Angola entry for [issue 722](../../../../issues/722) is deferred until a tracked plan supplies its status and date.
+
 ## Active plans
 
 > Sorted by GitHub issue number ascending. Status reflects the `Status:` line in each plan header at the time of indexing.
