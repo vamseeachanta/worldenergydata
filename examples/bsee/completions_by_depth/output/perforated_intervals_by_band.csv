@@ -1,0 +1,25 @@
+band,perforated_intervals,completion_intervals,share_percent
+under 100 m,0,17,0.5
+under 100 m,1,3132,87.4
+under 100 m,2,309,8.6
+under 100 m,3 or more,126,3.5
+100 to 500 m,0,0,0.0
+100 to 500 m,1,291,84.1
+100 to 500 m,2,43,12.4
+100 to 500 m,3 or more,12,3.5
+500 to 1500 m,0,10,1.5
+500 to 1500 m,1,508,74.5
+500 to 1500 m,2,135,19.8
+500 to 1500 m,3 or more,29,4.3
+1500 m and deeper,0,20,3.8
+1500 m and deeper,1,322,60.6
+1500 m and deeper,2,91,17.1
+1500 m and deeper,3 or more,98,18.5
+no depth,0,0,
+no depth,1,0,
+no depth,2,0,
+no depth,3 or more,0,
+all water depths,0,47,0.9
+all water depths,1,4253,82.7
+all water depths,2,578,11.2
+all water depths,3 or more,265,5.2

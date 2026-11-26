@@ -1,0 +1,177 @@
+year,band,group,value,moving_average,partial_year,count
+2005,Under 100 m,Initial completion,288,,False,288
+2006,Under 100 m,Initial completion,429,,False,429
+2007,Under 100 m,Initial completion,342,,False,342
+2008,Under 100 m,Initial completion,304,,False,304
+2009,Under 100 m,Initial completion,145,301.6,False,145
+2010,Under 100 m,Initial completion,178,279.6,False,178
+2011,Under 100 m,Initial completion,172,228.2,False,172
+2012,Under 100 m,Initial completion,204,200.6,False,204
+2013,Under 100 m,Initial completion,201,180.0,False,201
+2014,Under 100 m,Initial completion,251,201.2,False,251
+2015,Under 100 m,Initial completion,124,190.4,False,124
+2016,Under 100 m,Initial completion,31,162.2,False,31
+2017,Under 100 m,Initial completion,40,129.4,False,40
+2018,Under 100 m,Initial completion,77,104.6,False,77
+2019,Under 100 m,Initial completion,51,64.6,False,51
+2020,Under 100 m,Initial completion,18,43.4,False,18
+2021,Under 100 m,Initial completion,42,45.6,False,42
+2022,Under 100 m,Initial completion,69,51.4,False,69
+2023,Under 100 m,Initial completion,45,45.0,False,45
+2024,Under 100 m,Initial completion,49,44.6,False,49
+2025,Under 100 m,Initial completion,37,48.4,False,37
+2026,Under 100 m,Initial completion,34,,True,34
+2005,Under 100 m,Other completion work,68,,False,68
+2006,Under 100 m,Other completion work,102,,False,102
+2007,Under 100 m,Other completion work,125,,False,125
+2008,Under 100 m,Other completion work,104,,False,104
+2009,Under 100 m,Other completion work,86,97.0,False,86
+2010,Under 100 m,Other completion work,106,104.6,False,106
+2011,Under 100 m,Other completion work,95,103.2,False,95
+2012,Under 100 m,Other completion work,82,94.6,False,82
+2013,Under 100 m,Other completion work,74,88.6,False,74
+2014,Under 100 m,Other completion work,64,84.2,False,64
+2015,Under 100 m,Other completion work,40,71.0,False,40
+2016,Under 100 m,Other completion work,61,64.2,False,61
+2017,Under 100 m,Other completion work,69,61.6,False,69
+2018,Under 100 m,Other completion work,65,59.8,False,65
+2019,Under 100 m,Other completion work,37,54.4,False,37
+2020,Under 100 m,Other completion work,22,50.8,False,22
+2021,Under 100 m,Other completion work,25,43.6,False,25
+2022,Under 100 m,Other completion work,36,37.0,False,36
+2023,Under 100 m,Other completion work,13,26.6,False,13
+2024,Under 100 m,Other completion work,28,24.8,False,28
+2025,Under 100 m,Other completion work,14,23.2,False,14
+2026,Under 100 m,Other completion work,13,,True,13
+2005,100 to 500 m,Initial completion,30,,False,30
+2006,100 to 500 m,Initial completion,40,,False,40
+2007,100 to 500 m,Initial completion,38,,False,38
+2008,100 to 500 m,Initial completion,30,,False,30
+2009,100 to 500 m,Initial completion,33,34.2,False,33
+2010,100 to 500 m,Initial completion,8,29.8,False,8
+2011,100 to 500 m,Initial completion,11,24.0,False,11
+2012,100 to 500 m,Initial completion,4,17.2,False,4
+2013,100 to 500 m,Initial completion,11,13.4,False,11
+2014,100 to 500 m,Initial completion,18,10.4,False,18
+2015,100 to 500 m,Initial completion,31,15.0,False,31
+2016,100 to 500 m,Initial completion,23,17.4,False,23
+2017,100 to 500 m,Initial completion,35,23.6,False,35
+2018,100 to 500 m,Initial completion,33,28.0,False,33
+2019,100 to 500 m,Initial completion,40,32.4,False,40
+2020,100 to 500 m,Initial completion,48,35.8,False,48
+2021,100 to 500 m,Initial completion,25,36.2,False,25
+2022,100 to 500 m,Initial completion,22,33.6,False,22
+2023,100 to 500 m,Initial completion,14,29.8,False,14
+2024,100 to 500 m,Initial completion,30,27.8,False,30
+2025,100 to 500 m,Initial completion,17,21.6,False,17
+2026,100 to 500 m,Initial completion,0,,True,0
+2005,100 to 500 m,Other completion work,2,,False,2
+2006,100 to 500 m,Other completion work,3,,False,3
+2007,100 to 500 m,Other completion work,3,,False,3
+2008,100 to 500 m,Other completion work,3,,False,3
+2009,100 to 500 m,Other completion work,3,2.8,False,3
+2010,100 to 500 m,Other completion work,10,4.4,False,10
+2011,100 to 500 m,Other completion work,2,4.2,False,2
+2012,100 to 500 m,Other completion work,6,4.8,False,6
+2013,100 to 500 m,Other completion work,17,7.6,False,17
+2014,100 to 500 m,Other completion work,10,9.0,False,10
+2015,100 to 500 m,Other completion work,5,8.0,False,5
+2016,100 to 500 m,Other completion work,2,8.0,False,2
+2017,100 to 500 m,Other completion work,1,7.0,False,1
+2018,100 to 500 m,Other completion work,0,3.6,False,0
+2019,100 to 500 m,Other completion work,5,2.6,False,5
+2020,100 to 500 m,Other completion work,5,2.6,False,5
+2021,100 to 500 m,Other completion work,7,3.6,False,7
+2022,100 to 500 m,Other completion work,2,3.8,False,2
+2023,100 to 500 m,Other completion work,9,5.6,False,9
+2024,100 to 500 m,Other completion work,1,4.8,False,1
+2025,100 to 500 m,Other completion work,0,3.8,False,0
+2026,100 to 500 m,Other completion work,4,,True,4
+2005,"500 to 1,500 m",Initial completion,26,,False,26
+2006,"500 to 1,500 m",Initial completion,50,,False,50
+2007,"500 to 1,500 m",Initial completion,50,,False,50
+2008,"500 to 1,500 m",Initial completion,73,,False,73
+2009,"500 to 1,500 m",Initial completion,50,49.8,False,50
+2010,"500 to 1,500 m",Initial completion,46,53.8,False,46
+2011,"500 to 1,500 m",Initial completion,43,52.4,False,43
+2012,"500 to 1,500 m",Initial completion,44,51.2,False,44
+2013,"500 to 1,500 m",Initial completion,82,53.0,False,82
+2014,"500 to 1,500 m",Initial completion,74,57.8,False,74
+2015,"500 to 1,500 m",Initial completion,94,67.4,False,94
+2016,"500 to 1,500 m",Initial completion,77,74.2,False,77
+2017,"500 to 1,500 m",Initial completion,59,77.2,False,59
+2018,"500 to 1,500 m",Initial completion,98,80.4,False,98
+2019,"500 to 1,500 m",Initial completion,114,88.4,False,114
+2020,"500 to 1,500 m",Initial completion,86,86.8,False,86
+2021,"500 to 1,500 m",Initial completion,122,95.8,False,122
+2022,"500 to 1,500 m",Initial completion,93,102.6,False,93
+2023,"500 to 1,500 m",Initial completion,61,95.2,False,61
+2024,"500 to 1,500 m",Initial completion,71,86.6,False,71
+2025,"500 to 1,500 m",Initial completion,86,86.6,False,86
+2026,"500 to 1,500 m",Initial completion,56,,True,56
+2005,"500 to 1,500 m",Other completion work,4,,False,4
+2006,"500 to 1,500 m",Other completion work,3,,False,3
+2007,"500 to 1,500 m",Other completion work,5,,False,5
+2008,"500 to 1,500 m",Other completion work,6,,False,6
+2009,"500 to 1,500 m",Other completion work,5,4.6,False,5
+2010,"500 to 1,500 m",Other completion work,7,5.2,False,7
+2011,"500 to 1,500 m",Other completion work,4,5.4,False,4
+2012,"500 to 1,500 m",Other completion work,1,4.6,False,1
+2013,"500 to 1,500 m",Other completion work,5,4.4,False,5
+2014,"500 to 1,500 m",Other completion work,1,3.6,False,1
+2015,"500 to 1,500 m",Other completion work,3,2.8,False,3
+2016,"500 to 1,500 m",Other completion work,3,2.6,False,3
+2017,"500 to 1,500 m",Other completion work,2,2.8,False,2
+2018,"500 to 1,500 m",Other completion work,2,2.2,False,2
+2019,"500 to 1,500 m",Other completion work,13,4.6,False,13
+2020,"500 to 1,500 m",Other completion work,4,4.8,False,4
+2021,"500 to 1,500 m",Other completion work,3,4.8,False,3
+2022,"500 to 1,500 m",Other completion work,15,7.4,False,15
+2023,"500 to 1,500 m",Other completion work,5,8.0,False,5
+2024,"500 to 1,500 m",Other completion work,25,10.4,False,25
+2025,"500 to 1,500 m",Other completion work,4,10.4,False,4
+2026,"500 to 1,500 m",Other completion work,1,,True,1
+2005,"1,500 m and deeper",Initial completion,12,,False,12
+2006,"1,500 m and deeper",Initial completion,28,,False,28
+2007,"1,500 m and deeper",Initial completion,28,,False,28
+2008,"1,500 m and deeper",Initial completion,15,,False,15
+2009,"1,500 m and deeper",Initial completion,35,23.6,False,35
+2010,"1,500 m and deeper",Initial completion,11,23.4,False,11
+2011,"1,500 m and deeper",Initial completion,27,23.2,False,27
+2012,"1,500 m and deeper",Initial completion,32,24.0,False,32
+2013,"1,500 m and deeper",Initial completion,40,29.0,False,40
+2014,"1,500 m and deeper",Initial completion,84,38.8,False,84
+2015,"1,500 m and deeper",Initial completion,114,59.4,False,114
+2016,"1,500 m and deeper",Initial completion,82,70.4,False,82
+2017,"1,500 m and deeper",Initial completion,95,83.0,False,95
+2018,"1,500 m and deeper",Initial completion,75,90.0,False,75
+2019,"1,500 m and deeper",Initial completion,50,83.2,False,50
+2020,"1,500 m and deeper",Initial completion,141,88.6,False,141
+2021,"1,500 m and deeper",Initial completion,92,90.6,False,92
+2022,"1,500 m and deeper",Initial completion,112,94.0,False,112
+2023,"1,500 m and deeper",Initial completion,118,102.6,False,118
+2024,"1,500 m and deeper",Initial completion,135,119.6,False,135
+2025,"1,500 m and deeper",Initial completion,169,125.2,False,169
+2026,"1,500 m and deeper",Initial completion,119,,True,119
+2005,"1,500 m and deeper",Other completion work,1,,False,1
+2006,"1,500 m and deeper",Other completion work,2,,False,2
+2007,"1,500 m and deeper",Other completion work,4,,False,4
+2008,"1,500 m and deeper",Other completion work,1,,False,1
+2009,"1,500 m and deeper",Other completion work,1,1.8,False,1
+2010,"1,500 m and deeper",Other completion work,3,2.2,False,3
+2011,"1,500 m and deeper",Other completion work,2,2.2,False,2
+2012,"1,500 m and deeper",Other completion work,0,1.4,False,0
+2013,"1,500 m and deeper",Other completion work,0,1.2,False,0
+2014,"1,500 m and deeper",Other completion work,3,1.6,False,3
+2015,"1,500 m and deeper",Other completion work,1,1.2,False,1
+2016,"1,500 m and deeper",Other completion work,0,0.8,False,0
+2017,"1,500 m and deeper",Other completion work,1,1.0,False,1
+2018,"1,500 m and deeper",Other completion work,6,2.2,False,6
+2019,"1,500 m and deeper",Other completion work,1,1.8,False,1
+2020,"1,500 m and deeper",Other completion work,3,2.2,False,3
+2021,"1,500 m and deeper",Other completion work,0,2.2,False,0
+2022,"1,500 m and deeper",Other completion work,16,5.2,False,16
+2023,"1,500 m and deeper",Other completion work,15,7.0,False,15
+2024,"1,500 m and deeper",Other completion work,15,9.8,False,15
+2025,"1,500 m and deeper",Other completion work,4,10.0,False,4
+2026,"1,500 m and deeper",Other completion work,2,,True,2

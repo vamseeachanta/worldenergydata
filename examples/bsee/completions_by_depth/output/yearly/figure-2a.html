@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recompletion approvals across all water depths</title>
+<style>
+  * { box-sizing: border-box }
+  body { margin: auto; max-width: 800px; padding: .5rem; color: #203340; font: 16px 'DejaVu Sans','Segoe UI',Arial,sans-serif }
+  .plot { overflow-x: auto }
+  svg { display: block; width: 100%; min-width: 750px; height: auto }
+  [data-legend], [data-year] { cursor: pointer }
+  [data-legend][aria-pressed=false] { opacity: .45 }
+  [data-legend]:focus rect { stroke: #245476; stroke-width: 2 }
+  select { margin-left: .4rem; font: inherit }
+  table { width: 100%; border-collapse: collapse; margin-block: .7rem }
+  th, td { text-align: right; padding: .35rem; border-bottom: 1px solid #cfd9de }
+  th:first-child { text-align: left }
+  caption { caption-side: bottom; text-align: left; margin: .5rem 0 }
+</style>
+<main>
+  <div class="plot"><svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Recompletion approvals across all water depths" font-family="'DejaVu Sans','Segoe UI',Arial,sans-serif" font-size="16" fill="#203340" width="800" height="586" viewBox="0 0 800 586"><title>Recompletion approvals across all water depths</title><rect width="800" height="586" fill="white" /><text x="22" y="32" font-size="22" font-weight="bold">Recompletion approvals across all water depths</text><text x="22" y="58">Markers and thin lines show annual values. Thick, lighter lines show the 5 year trailing mean.</text><g data-legend="0"><rect x="62" y="70" height="27" width="163" fill="white" /><line x1="68" y1="83" x2="100" y2="83" stroke="#245476" stroke-width="3" /><text x="106" y="88">Recompletion</text></g><text x="68" y="133" font-weight="bold">Approved permits per year</text><line x1="68" x2="764" y1="420.00" y2="420.00" stroke="#cfd9de" /><text x="59" y="425.00" text-anchor="end">0</text><line x1="68" x2="764" y1="351.25" y2="351.25" stroke="#cfd9de" /><text x="59" y="356.25" text-anchor="end">200</text><line x1="68" x2="764" y1="282.50" y2="282.50" stroke="#cfd9de" /><text x="59" y="287.50" text-anchor="end">400</text><line x1="68" x2="764" y1="213.75" y2="213.75" stroke="#cfd9de" /><text x="59" y="218.75" text-anchor="end">600</text><line x1="68" x2="764" y1="145.00" y2="145.00" stroke="#cfd9de" /><text x="59" y="150.00" text-anchor="end">800</text><text x="68.00" y="447" text-anchor="middle">2005</text><text x="233.71" y="447" text-anchor="middle">2010</text><text x="399.43" y="447" text-anchor="middle">2015</text><text x="565.14" y="447" text-anchor="middle">2020</text><text x="764.00" y="447" text-anchor="middle">2026</text><text x="764" y="468" text-anchor="middle">partial</text><text x="416.00" y="474" text-anchor="middle" font-weight="bold">Calendar year of approval</text><g data-series="0" data-label="Recompletion"><path d="M200.57,203.51l0,0 L233.71,187.76 L266.86,181.30 L300.00,193.74 L333.14,209.83 L366.29,219.18 L399.43,239.94 L432.57,258.78 L465.71,262.70 L498.86,268.82 L532.00,277.00 L565.14,293.64 L598.29,307.18 L631.43,328.77 L664.57,345.06 L697.71,360.19 L730.86,362.39" fill="none" stroke="#809cb0" stroke-width="4.5" stroke-linecap="round" class="trend" /><path d="M68.00,250.88l0,0 L101.14,222.00 L134.29,169.06 L167.43,161.84 L200.57,213.75 L233.71,172.16 L266.86,189.69 L300.00,231.28 L333.14,242.28 L366.29,260.50 L399.43,275.97 L432.57,283.88 L465.71,250.88 L498.86,272.88 L532.00,301.41 L565.14,359.16 L598.29,351.59 L631.43,358.81 L664.57,354.34 L697.71,377.03 L730.86,370.16 L764.00,370.16" fill="none" stroke="#245476" stroke-width="2" stroke-linecap="round" class="annual" /><circle cx="68.00" cy="250.88" r="5" stroke="#245476" stroke-width="2" fill="#245476" data-year="2005"><title>Recompletion, 2005. Annual value 492. Five year mean unavailable.</title></circle><circle cx="101.14" cy="222.00" r="5" stroke="#245476" stroke-width="2" fill="#245476" data-year="2006"><title>Recompletion, 2006. Annual value 576. Five year mean unavailable.</title></circle><circle cx="134.29" cy="169.06" r="5" stroke="#245476" stroke-width="2" fill="#245476" data-year="2007"><title>Recompletion, 2007. Annual value 730. Five year mean unavailable.</title></circle><circle cx="167.43" cy="161.84" r="5" stroke="#245476" stroke-width="2" fill="#245476" data-year="2008"><title>Recompletion, 2008. Annual value 751. Five year mean unavailable.</title></circle><circle cx="200.57" cy="213.75" r="5" stroke="#245476" stroke-width="2" fill="#245476" data-year="2009"><title>Recompletion, 2009. Annual value 600. Five year mean 629.8.</title></circle><circle cx="233.71" cy="172.16" r="5" stroke="#245476" stroke-width="2" fill="#245476" data-year="2010"><title>Recompletion, 2010. Annual value 721. Five year mean 675.6.</title></circle><circle cx="266.86" cy="189.69" r="5" stroke="#245476" stroke-width="2" fill="#245476" data-year="2011"><title>Recompletion, 2011. Annual value 670. Five year mean 694.4.</title></circle><circle cx="300.00" cy="231.28" r="5" stroke="#245476" stroke-width="2" fill="#245476" data-year="2012"><title>Recompletion, 2012. Annual value 549. Five year mean 658.2.</title></circle><circle cx="333.14" cy="242.28" r="5" stroke="#245476" stroke-width="2" fill="#245476" data-year="2013"><title>Recompletion, 2013. Annual value 517. Five year mean 611.4.</title></circle><circle cx="366.29" cy="260.50" r="5" stroke="#245476" stroke-width="2" fill="#245476" data-year="2014"><title>Recompletion, 2014. Annual value 464. Five year mean 584.2.</title></circle><circle cx="399.43" cy="275.97" r="5" stroke="#245476" stroke-width="2" fill="#245476" data-year="2015"><title>Recompletion, 2015. Annual value 419. Five year mean 523.8.</title></circle><circle cx="432.57" cy="283.88" r="5" stroke="#245476" stroke-width="2" fill="#245476" data-year="2016"><title>Recompletion, 2016. Annual value 396. Five year mean 469.</title></circle><circle cx="465.71" cy="250.88" r="5" stroke="#245476" stroke-width="2" fill="#245476" data-year="2017"><title>Recompletion, 2017. Annual value 492. Five year mean 457.6.</title></circle><circle cx="498.86" cy="272.88" r="5" stroke="#245476" stroke-width="2" fill="#245476" data-year="2018"><title>Recompletion, 2018. Annual value 428. Five year mean 439.8.</title></circle><circle cx="532.00" cy="301.41" r="5" stroke="#245476" stroke-width="2" fill="#245476" data-year="2019"><title>Recompletion, 2019. Annual value 345. Five year mean 416.</title></circle><circle cx="565.14" cy="359.16" r="5" stroke="#245476" stroke-width="2" fill="#245476" data-year="2020"><title>Recompletion, 2020. Annual value 177. Five year mean 367.6.</title></circle><circle cx="598.29" cy="351.59" r="5" stroke="#245476" stroke-width="2" fill="#245476" data-year="2021"><title>Recompletion, 2021. Annual value 199. Five year mean 328.2.</title></circle><circle cx="631.43" cy="358.81" r="5" stroke="#245476" stroke-width="2" fill="#245476" data-year="2022"><title>Recompletion, 2022. Annual value 178. Five year mean 265.4.</title></circle><circle cx="664.57" cy="354.34" r="5" stroke="#245476" stroke-width="2" fill="#245476" data-year="2023"><title>Recompletion, 2023. Annual value 191. Five year mean 218.</title></circle><circle cx="697.71" cy="377.03" r="5" stroke="#245476" stroke-width="2" fill="#245476" data-year="2024"><title>Recompletion, 2024. Annual value 125. Five year mean 174.</title></circle><circle cx="730.86" cy="370.16" r="5" stroke="#245476" stroke-width="2" fill="#245476" data-year="2025"><title>Recompletion, 2025. Annual value 145. Five year mean 167.6.</title></circle><circle cx="764.00" cy="370.16" r="5" stroke="#245476" stroke-width="2" fill="white" data-year="2026"><title>Recompletion, 2026 (partial). Annual value 145. Five year mean unavailable.</title></circle></g><text x="22" y="506">Each approved permit classed as a change of zone counts once. Hollow markers show partial</text><text x="22" y="528">2026 through 23 November 2026. Means end in 2025. Y maximum 800, against 800 in Figure 1A,</text><text x="22" y="550">800 in Figure 1B, 150 in Figure 1C, 800 in Figure 2B, 80 in Figure E4.</text></svg></div>
+  <p>Select a legend entry to hide or show its series. Hover over or tap a point to inspect a year.</p>
+  <label>Calendar year of approval<select id="year"><option value="2005">2005</option><option value="2006">2006</option><option value="2007">2007</option><option value="2008">2008</option><option value="2009">2009</option><option value="2010">2010</option><option value="2011">2011</option><option value="2012">2012</option><option value="2013">2013</option><option value="2014">2014</option><option value="2015">2015</option><option value="2016">2016</option><option value="2017">2017</option><option value="2018">2018</option><option value="2019">2019</option><option value="2020">2020</option><option value="2021">2021</option><option value="2022">2022</option><option value="2023">2023</option><option value="2024">2024</option><option value="2025">2025</option><option value="2026">2026 (partial)</option></select></label>
+  <table>
+    <caption id="caption"></caption>
+    <thead><tr><th scope="col">Series</th><th scope="col">Annual value</th><th scope="col">5 year mean</th></tr></thead>
+    <tbody id="readout"></tbody>
+  </table>
+</main>
+<script>
+const series = [[[2005,492.0,null,false,"verified","492",null],[2006,576.0,null,false,"verified","576",null],[2007,730.0,null,false,"verified","730",null],[2008,751.0,null,false,"verified","751",null],[2009,600.0,629.8,false,"verified","600","629.8"],[2010,721.0,675.6,false,"verified","721","675.6"],[2011,670.0,694.4,false,"verified","670","694.4"],[2012,549.0,658.2,false,"verified","549","658.2"],[2013,517.0,611.4,false,"verified","517","611.4"],[2014,464.0,584.2,false,"verified","464","584.2"],[2015,419.0,523.8,false,"verified","419","523.8"],[2016,396.0,469.0,false,"verified","396","469"],[2017,492.0,457.6,false,"verified","492","457.6"],[2018,428.0,439.8,false,"verified","428","439.8"],[2019,345.0,416.0,false,"verified","345","416"],[2020,177.0,367.6,false,"verified","177","367.6"],[2021,199.0,328.2,false,"verified","199","328.2"],[2022,178.0,265.4,false,"verified","178","265.4"],[2023,191.0,218.0,false,"verified","191","218"],[2024,125.0,174.0,false,"verified","125","174"],[2025,145.0,167.6,false,"verified","145","167.6"],[2026,145.0,null,true,"verified","145",null]]];
+const select = document.querySelector('#year');
+const chart = document.querySelector('svg');
+chart.setAttribute('role', 'group');
+const groups = [...chart.querySelectorAll('[data-series]')];
+const legends = [...chart.querySelectorAll('[data-legend]')];
+function update() {
+  const tbody = document.querySelector('#readout');
+  tbody.replaceChildren();
+  for (const [index, group] of groups.entries()) {
+    if (group.style.display === 'none') continue;
+    const [, , , , availability, annualText, meanText] = series[index][select.selectedIndex];
+    const row = tbody.insertRow();
+    const label = document.createElement('th');
+    label.scope = 'row';
+    label.textContent = group.dataset.label;
+    row.append(label);
+    const blank = availability === 'unavailable' ? 'Source records unavailable' : 'No eligible value';
+    row.insertCell().textContent = annualText ?? blank;
+    row.insertCell().textContent = meanText ?? 'No complete five year window';
+  }
+  document.querySelector('#caption').textContent = select.selectedOptions[0].textContent + ' · Approved permits per year';
+}
+for (const [index, legend] of legends.entries()) {
+  legend.setAttribute('role', 'button');
+  legend.setAttribute('tabindex', '0');
+  legend.setAttribute('aria-pressed', 'true');
+  legend.setAttribute('aria-label', groups[index].dataset.label);
+  function toggle() {
+    const visible = legend.getAttribute('aria-pressed') === 'true';
+    groups[index].style.display = visible ? 'none' : '';
+    legend.setAttribute('aria-pressed', String(!visible));
+    update();
+  }
+  legend.addEventListener('click', toggle);
+  legend.addEventListener('keydown', event => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      toggle();
+    }
+  });
+}
+function inspect(event) {
+  const point = event.target.closest('[data-year]');
+  if (point) {
+    select.value = point.dataset.year;
+    update();
+  }
+}
+chart.addEventListener('pointerover', inspect);
+chart.addEventListener('click', inspect);
+select.addEventListener('change', update);
+update();
+</script>
+</html>

@@ -1,0 +1,19 @@
+band,measure,n,p25_days,median_days,p75_days
+under 100 m,total depth date to first initial completion approval,1957,3.0,6.0,19.0
+under 100 m,total depth date to completion status date,1859,15.0,24.0,47.0
+under 100 m,first initial completion approval to completion status date,1859,10.0,16.0,27.0
+100 to 500 m,total depth date to first initial completion approval,239,4.0,9.0,29.0
+100 to 500 m,total depth date to completion status date,229,24.0,43.0,69.0
+100 to 500 m,first initial completion approval to completion status date,229,15.0,23.0,39.0
+500 to 1500 m,total depth date to first initial completion approval,560,7.0,18.0,79.2
+500 to 1500 m,total depth date to completion status date,530,40.0,66.0,160.0
+500 to 1500 m,first initial completion approval to completion status date,530,27.0,41.0,66.0
+1500 m and deeper,total depth date to first initial completion approval,457,7.0,30.0,204.0
+1500 m and deeper,total depth date to completion status date,425,42.0,85.0,326.0
+1500 m and deeper,first initial completion approval to completion status date,425,30.0,46.0,70.0
+no depth,total depth date to first initial completion approval,0,,,
+no depth,total depth date to completion status date,0,,,
+no depth,first initial completion approval to completion status date,0,,,
+all water depths,total depth date to first initial completion approval,3213,4.0,9.0,34.0
+all water depths,total depth date to completion status date,3043,18.0,35.0,81.0
+all water depths,first initial completion approval to completion status date,3043,12.0,23.0,43.0

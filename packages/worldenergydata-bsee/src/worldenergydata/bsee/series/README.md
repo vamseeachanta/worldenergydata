@@ -31,6 +31,16 @@ The writer produces the annual CSV, an SVG and self-contained HTML page per figu
 
 For a two-window figure, pass `window_definitions` to `make_figure` with one time boundary per plotted group key. For example, a series list of `[("observed", "Observed by file date"), ("five", "Within five years")]` takes `window_definitions={"observed": "through October 2025", "five": "through the fifth anniversary"}`. The first series uses a solid line and the second a dashed line. The writer builds the manifest entries and visible caption from these definitions. It lists missing annual cells by year and legend label, including gaps in a selected calendar. A missing trailing mean alone adds no entry.
 
+A figure may supply its own `xlabel` when a set mixes event dates. For a
+rate, set `empty_denominator_label` to the year-table text for an empty
+population and include the numeric `denominator` in each observation.
+The writer distinguishes a known zero denominator from missing source data.
+
+For a static four-panel appendix, set `role="appendix"`, `layout="4x1_shared_x"`
+and `panel_by="depth_band"`, and omit `interactive`. Each selected group
+supplies one `band`; its legend label names the measure in that panel.
+The appendix participates in scale pooling with the main figures.
+
 The scale covers annual values and trailing means, including a partial year's annual value. It uses the smallest covering top with three to five intervals at a step of 1, 2 or 5 times a power of ten. Two or more figures of the same measure share the group scale when each reaches at least 30% of its rounded top. Other figures use their own scale.
 
 `write_figures` and `render` accept `coordinate_decimals` for SVG coordinates (default 2). The CSV retains the supplied observation precision. The offline page embeds numeric observations. Axis labels, point tooltips and year-table values use fixed-point notation with thousands separators and up to 15 significant digits. Calendar years appear without separators. Check the output with `python -I check_chart_standard.py --require-overlay path/to/figures.json`.
