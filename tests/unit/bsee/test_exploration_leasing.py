@@ -51,6 +51,31 @@ EXPECTED_FILES = {
     "checks.txt",
     "numbers.json",
 }
+YEARLY_FILES = {
+    "annual_trends.csv",
+    "lease_counts.csv",
+    "figures.json",
+    *(
+        f"figure-{number}.{ext}"
+        for number in (
+            "1a",
+            "1b",
+            "2",
+            "a2a",
+            "a2b",
+            "a2c",
+            "a3a",
+            "a3b",
+            "a3c",
+            "a4a",
+            "a4b",
+            "a4c",
+            "a4d",
+            "a5",
+        )
+        for ext in ("svg", "html")
+    ),
+}
 BOUND_BANDS = {
     "Under 100 m": "Under 100 m",
     "100 to 500 m": "100 to 500 m",
@@ -130,10 +155,17 @@ def test_headlines_match_unique_csv_rows():
 
 
 def test_published_output_inventory_and_checks():
-    assert {path.name for path in OUTPUT.iterdir()} == EXPECTED_FILES
+    assert {path.name for path in OUTPUT.iterdir()} == EXPECTED_FILES | {"yearly"}
+    assert {p.name for p in (OUTPUT / "yearly").iterdir()} == YEARLY_FILES
     assert all((OUTPUT / name).is_file() for name in EXPECTED_FILES)
     lines = (OUTPUT / "checks.txt").read_text(encoding="utf-8").splitlines()
-    assert len(lines) == len(set(lines)) == 20
+    yearly_checks = {
+        f"PASS  Yearly {name} meets chart standard items 5 and 7"
+        for name in YEARLY_FILES
+        if name.endswith(".svg")
+    }
+    assert yearly_checks <= set(lines)
+    assert len(lines) == len(set(lines)) == 20 + len(yearly_checks)
     assert all(line.startswith("PASS  ") for line in lines)
 
 
@@ -597,6 +629,8 @@ def test_wrong_archive_reports_both_digests(tmp_path):
         cwd=tmp_path,
         capture_output=True,
         text=True,
+        check=False,
+        creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
     )
     assert run.returncode != 0
     message = run.stdout + run.stderr
@@ -716,20 +750,29 @@ def test_regeneration_is_byte_identical(tmp_path, monkeypatch):
     monkeypatch.setenv("PYTHONCOERCECLOCALE", "0")
     for variable in ("GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR"):
         monkeypatch.delenv(variable, raising=False)
-    output = tmp_path / "output"
-    subprocess.run(
-        [
-            "uv",
-            "run",
-            "--no-project",
-            str(EXAMPLE / "derive.py"),
-            "--output-dir",
-            str(output),
-        ],
-        cwd=tmp_path,
-        check=True,
-    )
-    assert {path.name for path in output.iterdir()} == EXPECTED_FILES
+    output, repeat = tmp_path / "output", tmp_path / "repeat"
+    for directory in (output, repeat):
+        subprocess.run(
+            [
+                "uv",
+                "run",
+                "--no-project",
+                str(EXAMPLE / "derive.py"),
+                "--output-dir",
+                str(directory),
+            ],
+            cwd=tmp_path,
+            check=True,
+            creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
+        )
+        assert {path.name for path in directory.iterdir()} == EXPECTED_FILES | {
+            "yearly"
+        }
+        assert {p.name for p in (directory / "yearly").iterdir()} == YEARLY_FILES
+    for name in sorted(YEARLY_FILES):
+        fresh = (output / "yearly" / name).read_bytes()
+        assert fresh == (OUTPUT / "yearly" / name).read_bytes(), name
+        assert fresh == (repeat / "yearly" / name).read_bytes(), name
     for name in sorted(EXPECTED_FILES):
         assert (output / name).read_bytes() == (OUTPUT / name).read_bytes(), name
 
@@ -1288,9 +1331,9 @@ def test_destination_rejected_before_build(modules, tmp_path, monkeypatch, kind)
         sys, "argv", ["derive", "--data-dir", str(data), "--output-dir", str(dest)]
     )
     monkeypatch.setattr(
-        modules.derive.tempfile,
-        "TemporaryDirectory",
-        lambda **kw: pytest.fail("started build"),
+        modules.derive,
+        "staged_build",
+        lambda parent: pytest.fail("started build"),
     )
     with pytest.raises((ValueError, SystemExit)):
         modules.derive.main()
