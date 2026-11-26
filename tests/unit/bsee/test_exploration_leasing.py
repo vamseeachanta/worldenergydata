@@ -4,6 +4,7 @@ import csv
 import hashlib
 import importlib
 import json
+import math
 import os
 import re
 import shutil
@@ -50,6 +51,29 @@ EXPECTED_FILES = {
     "record_counts.csv",
     "checks.txt",
     "numbers.json",
+}
+YEARLY_FILES = {
+    "annual_trends.csv",
+    "figures.json",
+    *(
+        f"figure-{number}.{ext}"
+        for number in (
+            "1a",
+            "1b",
+            "2a",
+            "2b",
+            "2c",
+            "3a",
+            "3b",
+            "3c",
+            "4a",
+            "4b",
+            "4c",
+            "4d",
+            "5",
+        )
+        for ext in ("svg", "html")
+    ),
 }
 BOUND_BANDS = {
     "Under 100 m": "Under 100 m",
@@ -130,7 +154,8 @@ def test_headlines_match_unique_csv_rows():
 
 
 def test_published_output_inventory_and_checks():
-    assert {path.name for path in OUTPUT.iterdir()} == EXPECTED_FILES
+    assert {path.name for path in OUTPUT.iterdir()} == EXPECTED_FILES | {"yearly"}
+    assert {p.name for p in (OUTPUT / "yearly").iterdir()} == YEARLY_FILES
     assert all((OUTPUT / name).is_file() for name in EXPECTED_FILES)
     lines = (OUTPUT / "checks.txt").read_text(encoding="utf-8").splitlines()
     assert len(lines) == len(set(lines)) == 20
@@ -597,6 +622,8 @@ def test_wrong_archive_reports_both_digests(tmp_path):
         cwd=tmp_path,
         capture_output=True,
         text=True,
+        check=False,
+        creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
     )
     assert run.returncode != 0
     message = run.stdout + run.stderr
@@ -716,22 +743,62 @@ def test_regeneration_is_byte_identical(tmp_path, monkeypatch):
     monkeypatch.setenv("PYTHONCOERCECLOCALE", "0")
     for variable in ("GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR"):
         monkeypatch.delenv(variable, raising=False)
-    output = tmp_path / "output"
-    subprocess.run(
-        [
-            "uv",
-            "run",
-            "--no-project",
-            str(EXAMPLE / "derive.py"),
-            "--output-dir",
-            str(output),
-        ],
-        cwd=tmp_path,
-        check=True,
-    )
-    assert {path.name for path in output.iterdir()} == EXPECTED_FILES
+    output, repeat = tmp_path / "output", tmp_path / "repeat"
+    for directory in (output, repeat):
+        subprocess.run(
+            [
+                "uv",
+                "run",
+                "--no-project",
+                str(EXAMPLE / "derive.py"),
+                "--output-dir",
+                str(directory),
+            ],
+            cwd=tmp_path,
+            check=True,
+            creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
+        )
+        assert {path.name for path in directory.iterdir()} == EXPECTED_FILES | {
+            "yearly"
+        }
+        assert {p.name for p in (directory / "yearly").iterdir()} == YEARLY_FILES
     for name in sorted(EXPECTED_FILES):
         assert (output / name).read_bytes() == (OUTPUT / name).read_bytes(), name
+    for name in sorted(YEARLY_FILES):
+        expected_bytes = (output / "yearly" / name).read_bytes()
+        assert (repeat / "yearly" / name).read_bytes() == expected_bytes, name
+
+    # The shipped annual data may be a partial reconstruction from the
+    # retained tables. A raw rebuild must fill it and agree wherever the
+    # retained tables support an observation or a five-year mean.
+    def indexed(directory):
+        rows = read_rows(directory / "yearly/annual_trends.csv")
+        result = {(r["group"], r["year"]): r for r in rows}
+        assert len(result) == len(rows)
+        return result
+
+    raw, retained = indexed(output), indexed(OUTPUT)
+    assert raw.keys() == retained.keys()
+    for key, actual in raw.items():
+        expected = retained[key]
+        assert actual["availability"] == "verified"
+        for field in ("metric", "band", "partial", "leases"):
+            assert actual[field] == expected[field], (key, field)
+        if expected["events"] != "":
+            assert actual["events"] == expected["events"], key
+        if expected["availability"] == "verified":
+            if expected["value"] == "":
+                assert actual["value"] == "", key
+            else:
+                assert math.isclose(
+                    float(actual["value"]), float(expected["value"]), abs_tol=1e-10
+                ), key
+        if expected["moving_average"] != "":
+            assert math.isclose(
+                float(actual["moving_average"]),
+                float(expected["moving_average"]),
+                abs_tol=1e-10,
+            ), key
 
 
 def test_calendar_month_lag_and_primary_term_boundary(modules):
@@ -1288,9 +1355,9 @@ def test_destination_rejected_before_build(modules, tmp_path, monkeypatch, kind)
         sys, "argv", ["derive", "--data-dir", str(data), "--output-dir", str(dest)]
     )
     monkeypatch.setattr(
-        modules.derive.tempfile,
-        "TemporaryDirectory",
-        lambda **kw: pytest.fail("started build"),
+        modules.derive,
+        "staged_build",
+        lambda parent: pytest.fail("started build"),
     )
     with pytest.raises((ValueError, SystemExit)):
         modules.derive.main()

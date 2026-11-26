@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Median time to first crude by block water depth</title>
+<style>
+  * { box-sizing: border-box }
+  body { margin: auto; max-width: 800px; padding: .5rem; color: #203340; font: 16px 'DejaVu Sans','Segoe UI',Arial,sans-serif }
+  .plot { overflow-x: auto }
+  svg { display: block; width: 100%; min-width: 750px; height: auto }
+  [data-legend], [data-year] { cursor: pointer }
+  [data-legend][aria-pressed=false] { opacity: .45 }
+  [data-legend]:focus rect { stroke: #245476; stroke-width: 2 }
+  select { margin-left: .4rem; font: inherit }
+  table { width: 100%; border-collapse: collapse; margin-block: .7rem }
+  th, td { text-align: right; padding: .35rem; border-bottom: 1px solid #cfd9de }
+  th:first-child { text-align: left }
+  caption { caption-side: bottom; text-align: left; margin: .5rem 0 }
+</style>
+<main>
+  <div class="plot"><svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Median time to first crude by block water depth" font-family="'DejaVu Sans','Segoe UI',Arial,sans-serif" font-size="16" fill="#203340" width="800" height="660" viewBox="0 0 800 660"><title>Median time to first crude by block water depth</title><rect width="800" height="660" fill="white" /><text x="22" y="32" font-size="22" font-weight="bold">Median time to first crude by block water depth</text><text x="22" y="58">Markers and thin lines show annual values. Thick, lighter lines show the 5 year trailing mean.</text><g data-legend="0"><rect x="62" y="70" height="27" width="154" fill="white" /><line x1="68" y1="83" x2="100" y2="83" stroke="#6588a6" stroke-width="3" /><text x="106" y="88">Under 100 m</text></g><g data-legend="1"><rect x="227" y="70" height="27" width="163" fill="white" /><line x1="233" y1="83" x2="265" y2="83" stroke="#427298" stroke-width="3" /><text x="271" y="88">100 to 500 m</text></g><g data-legend="2"><rect x="401" y="70" height="27" width="181" fill="white" /><line x1="407" y1="83" x2="439" y2="83" stroke="#245476" stroke-width="3" /><text x="445" y="88">500 to 1,500 m</text></g><g data-legend="3"><rect x="62" y="100" height="27" width="217" fill="white" /><line x1="68" y1="113" x2="100" y2="113" stroke="#102e46" stroke-width="3" /><text x="106" y="118">1,500 m and deeper</text></g><text x="68" y="163" font-weight="bold">Median time from effectiveness (years)</text><line x1="68" x2="764" y1="450.0" y2="450.0" stroke="#cfd9de" /><text x="59" y="455.0" text-anchor="end">0</text><line x1="68" x2="764" y1="395.0" y2="395.0" stroke="#cfd9de" /><text x="59" y="400.0" text-anchor="end">1</text><line x1="68" x2="764" y1="340.0" y2="340.0" stroke="#cfd9de" /><text x="59" y="345.0" text-anchor="end">2</text><line x1="68" x2="764" y1="285.0" y2="285.0" stroke="#cfd9de" /><text x="59" y="290.0" text-anchor="end">3</text><line x1="68" x2="764" y1="230.0" y2="230.0" stroke="#cfd9de" /><text x="59" y="235.0" text-anchor="end">4</text><line x1="68" x2="764" y1="175.0" y2="175.0" stroke="#cfd9de" /><text x="59" y="180.0" text-anchor="end">5</text><text x="68.0" y="477" text-anchor="middle">2005</text><text x="300.0" y="477" text-anchor="middle">2010</text><text x="532.0" y="477" text-anchor="middle">2015</text><text x="764.0" y="477" text-anchor="middle">2020</text><text x="416.0" y="504" text-anchor="middle" font-weight="bold">Lease effective year</text><g data-series="0" data-label="Under 100 m" /><g data-series="1" data-label="100 to 500 m" /><g data-series="2" data-label="500 to 1,500 m"><path d="M764.00,184.17l0,0" fill="none" stroke="#245476" stroke-width="2" stroke-linecap="round" class="annual" /><circle cx="764.00" cy="184.17" r="5" stroke="#245476" stroke-width="2" fill="#245476" data-year="2020"><title>500 to 1,500 m, 2020. Annual value 4.833. Five year mean unavailable.</title></circle></g><g data-series="3" data-label="1,500 m and deeper" /><text x="22" y="536">Leases effective from 2005 through 2020 have 60 complete reporting months. First crude is</text><text x="22" y="558">the first positive crude oil month in months 0 through 59.</text><text x="22" y="580">Source records are unavailable for 44 annual series observations. The chart omits those</text><text x="22" y="602">points and any mean requiring them. The interactive year table identifies the affected</text><text x="22" y="624">series.</text></svg></div>
+  <p>Select a legend entry to hide or show its series. Hover over or tap a point to inspect a year.</p>
+  <label>Lease effective year<select id="year"><option value="2005">2005</option><option value="2006">2006</option><option value="2007">2007</option><option value="2008">2008</option><option value="2009">2009</option><option value="2010">2010</option><option value="2011">2011</option><option value="2012">2012</option><option value="2013">2013</option><option value="2014">2014</option><option value="2015">2015</option><option value="2016">2016</option><option value="2017">2017</option><option value="2018">2018</option><option value="2019">2019</option><option value="2020">2020</option></select></label>
+  <table>
+    <caption id="caption"></caption>
+    <thead><tr><th scope="col">Series</th><th scope="col">Annual value</th><th scope="col">5 year mean</th></tr></thead>
+    <tbody id="readout"></tbody>
+  </table>
+</main>
+<script>
+const series = [[[2005,null,null,false,"unavailable"],[2006,null,null,false,"unavailable"],[2007,null,null,false,"unavailable"],[2008,null,null,false,"unavailable"],[2009,null,null,false,"unavailable"],[2010,null,null,false,"unavailable"],[2011,null,null,false,"verified"],[2012,null,null,false,"unavailable"],[2013,null,null,false,"unavailable"],[2014,null,null,false,"unavailable"],[2015,null,null,false,"unavailable"],[2016,null,null,false,"unavailable"],[2017,null,null,false,"unavailable"],[2018,null,null,false,"unavailable"],[2019,null,null,false,"unavailable"],[2020,null,null,false,"verified"]],[[2005,null,null,false,"unavailable"],[2006,null,null,false,"unavailable"],[2007,null,null,false,"unavailable"],[2008,null,null,false,"unavailable"],[2009,null,null,false,"unavailable"],[2010,null,null,false,"verified"],[2011,null,null,false,"verified"],[2012,null,null,false,"verified"],[2013,null,null,false,"verified"],[2014,null,null,false,"verified"],[2015,null,null,false,"unavailable"],[2016,null,null,false,"unavailable"],[2017,null,null,false,"unavailable"],[2018,null,null,false,"unavailable"],[2019,null,null,false,"unavailable"],[2020,null,null,false,"verified"]],[[2005,null,null,false,"unavailable"],[2006,null,null,false,"unavailable"],[2007,null,null,false,"unavailable"],[2008,null,null,false,"unavailable"],[2009,null,null,false,"unavailable"],[2010,null,null,false,"unavailable"],[2011,null,null,false,"unavailable"],[2012,null,null,false,"unavailable"],[2013,null,null,false,"unavailable"],[2014,null,null,false,"unavailable"],[2015,null,null,false,"verified"],[2016,null,null,false,"verified"],[2017,null,null,false,"verified"],[2018,null,null,false,"verified"],[2019,null,null,false,"verified"],[2020,4.833333333333333,null,false,"verified"]],[[2005,null,null,false,"verified"],[2006,null,null,false,"verified"],[2007,null,null,false,"verified"],[2008,null,null,false,"verified"],[2009,null,null,false,"verified"],[2010,null,null,false,"unavailable"],[2011,null,null,false,"unavailable"],[2012,null,null,false,"unavailable"],[2013,null,null,false,"unavailable"],[2014,null,null,false,"unavailable"],[2015,null,null,false,"unavailable"],[2016,null,null,false,"unavailable"],[2017,null,null,false,"unavailable"],[2018,null,null,false,"unavailable"],[2019,null,null,false,"unavailable"],[2020,null,null,false,"verified"]]];
+const select = document.querySelector('#year');
+const chart = document.querySelector('svg');
+chart.setAttribute('role', 'group');
+const groups = [...chart.querySelectorAll('[data-series]')];
+const legends = [...chart.querySelectorAll('[data-legend]')];
+const format = new Intl.NumberFormat('en-US', {maximumFractionDigits: 3});
+function update() {
+  const tbody = document.querySelector('#readout');
+  tbody.replaceChildren();
+  for (const [index, group] of groups.entries()) {
+    if (group.style.display === 'none') continue;
+    const [, value, average, , availability] = series[index][select.selectedIndex];
+    const row = tbody.insertRow();
+    const label = document.createElement('th');
+    label.scope = 'row';
+    label.textContent = group.dataset.label;
+    row.append(label);
+    const blank = availability === 'unavailable' ? 'Source records unavailable' : 'No eligible value';
+    row.insertCell().textContent = value === null ? blank : format.format(value);
+    row.insertCell().textContent = average === null ? 'No complete five year window' : format.format(average);
+  }
+  document.querySelector('#caption').textContent = select.selectedOptions[0].textContent + ' · Median time from effectiveness (years)';
+}
+for (const [index, legend] of legends.entries()) {
+  legend.setAttribute('role', 'button');
+  legend.setAttribute('tabindex', '0');
+  legend.setAttribute('aria-pressed', 'true');
+  legend.setAttribute('aria-label', groups[index].dataset.label);
+  function toggle() {
+    const visible = legend.getAttribute('aria-pressed') === 'true';
+    groups[index].style.display = visible ? 'none' : '';
+    legend.setAttribute('aria-pressed', String(!visible));
+    update();
+  }
+  legend.addEventListener('click', toggle);
+  legend.addEventListener('keydown', event => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      toggle();
+    }
+  });
+}
+function inspect(event) {
+  const point = event.target.closest('[data-year]');
+  if (point) {
+    select.value = point.dataset.year;
+    update();
+  }
+}
+chart.addEventListener('pointerover', inspect);
+chart.addEventListener('click', inspect);
+select.addEventListener('change', update);
+update();
+</script>
+</html>

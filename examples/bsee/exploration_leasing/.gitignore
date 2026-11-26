@@ -9,3 +9,8 @@ output/*
 !output/*.png
 !output/*.svg
 !output/checks.txt
+!output/yearly/
+!output/yearly/annual_trends.csv
+!output/yearly/figures.json
+!output/yearly/figure-*.svg
+!output/yearly/figure-*.html

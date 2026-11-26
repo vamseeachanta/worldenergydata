@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Median time to first exploratory spud across all water depths</title>
+<style>
+  * { box-sizing: border-box }
+  body { margin: auto; max-width: 800px; padding: .5rem; color: #203340; font: 16px 'DejaVu Sans','Segoe UI',Arial,sans-serif }
+  .plot { overflow-x: auto }
+  svg { display: block; width: 100%; min-width: 750px; height: auto }
+  [data-legend], [data-year] { cursor: pointer }
+  [data-legend][aria-pressed=false] { opacity: .45 }
+  [data-legend]:focus rect { stroke: #245476; stroke-width: 2 }
+  select { margin-left: .4rem; font: inherit }
+  table { width: 100%; border-collapse: collapse; margin-block: .7rem }
+  th, td { text-align: right; padding: .35rem; border-bottom: 1px solid #cfd9de }
+  th:first-child { text-align: left }
+  caption { caption-side: bottom; text-align: left; margin: .5rem 0 }
+</style>
+<main>
+  <div class="plot"><svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Median time to first exploratory spud across all water depths" font-family="'DejaVu Sans','Segoe UI',Arial,sans-serif" font-size="16" fill="#203340" width="800" height="652" viewBox="0 0 800 652"><title>Median time to first exploratory spud across all water depths</title><rect width="800" height="652" fill="white" /><text x="22" y="32" font-size="22" font-weight="bold">Median time to first exploratory spud across all water depths</text><text x="22" y="58">Markers and thin lines show annual values. Thick, lighter lines show the 5 year trailing mean.</text><g data-legend="0"><rect x="62" y="70" height="27" width="244" fill="white" /><line x1="68" y1="83" x2="100" y2="83" stroke="#245476" stroke-width="3" /><text x="106" y="88">Observed by file date</text></g><g data-legend="1"><rect x="317" y="70" height="27" width="208" fill="white" /><line x1="323" y1="83" x2="355" y2="83" stroke="#ac501e" stroke-width="3" stroke-dasharray="9 6" /><text x="361" y="88">Within five years</text></g><text x="68" y="133" font-weight="bold">Median time from effectiveness (years)</text><line x1="68" x2="764" y1="420.0" y2="420.0" stroke="#cfd9de" /><text x="59" y="425.0" text-anchor="end">0</text><line x1="68" x2="764" y1="365.0" y2="365.0" stroke="#cfd9de" /><text x="59" y="370.0" text-anchor="end">2</text><line x1="68" x2="764" y1="310.0" y2="310.0" stroke="#cfd9de" /><text x="59" y="315.0" text-anchor="end">4</text><line x1="68" x2="764" y1="255.0" y2="255.0" stroke="#cfd9de" /><text x="59" y="260.0" text-anchor="end">6</text><line x1="68" x2="764" y1="200.0" y2="200.0" stroke="#cfd9de" /><text x="59" y="205.0" text-anchor="end">8</text><line x1="68" x2="764" y1="145.0" y2="145.0" stroke="#cfd9de" /><text x="59" y="150.0" text-anchor="end">10</text><text x="68.0" y="447" text-anchor="middle">2005</text><text x="300.0" y="447" text-anchor="middle">2010</text><text x="532.0" y="447" text-anchor="middle">2015</text><text x="764.0" y="447" text-anchor="middle">2020</text><text x="416.0" y="474" text-anchor="middle" font-weight="bold">Lease effective year</text><g data-series="0" data-label="Observed by file date"><path d="M253.60,346.89l0,0 L300.00,336.94 M578.40,324.67l0,0 L624.80,318.57 L671.20,313.70 L717.60,321.47 L764.00,322.17" fill="none" stroke="#809cb0" stroke-width="4.5" stroke-linecap="round" class="trend" /><path d="M68.00,380.92l0,0 L114.40,374.37 L160.80,364.81 L207.20,303.22 L253.60,311.13 L300.00,331.16 M392.80,356.42l0,0 L439.20,324.04 L485.60,284.63 L532.00,344.41 L578.40,313.84 L624.80,325.92 L671.20,299.69 L717.60,323.48 L764.00,347.95" fill="none" stroke="#245476" stroke-width="2" stroke-linecap="round" class="annual" /><circle cx="68.00" cy="380.92" r="5" stroke="#245476" stroke-width="2" fill="#245476" data-year="2005"><title>Observed by file date, 2005. Annual value 1.421. Five year mean unavailable.</title></circle><circle cx="114.40" cy="374.37" r="5" stroke="#245476" stroke-width="2" fill="#245476" data-year="2006"><title>Observed by file date, 2006. Annual value 1.659. Five year mean unavailable.</title></circle><circle cx="160.80" cy="364.81" r="5" stroke="#245476" stroke-width="2" fill="#245476" data-year="2007"><title>Observed by file date, 2007. Annual value 2.007. Five year mean unavailable.</title></circle><circle cx="207.20" cy="303.22" r="5" stroke="#245476" stroke-width="2" fill="#245476" data-year="2008"><title>Observed by file date, 2008. Annual value 4.246. Five year mean unavailable.</title></circle><circle cx="253.60" cy="311.13" r="5" stroke="#245476" stroke-width="2" fill="#245476" data-year="2009"><title>Observed by file date, 2009. Annual value 3.959. Five year mean 2.658.</title></circle><circle cx="300.00" cy="331.16" r="5" stroke="#245476" stroke-width="2" fill="#245476" data-year="2010"><title>Observed by file date, 2010. Annual value 3.231. Five year mean 3.02.</title></circle><circle cx="392.80" cy="356.42" r="5" stroke="#245476" stroke-width="2" fill="#245476" data-year="2012"><title>Observed by file date, 2012. Annual value 2.312. Five year mean unavailable.</title></circle><circle cx="439.20" cy="324.04" r="5" stroke="#245476" stroke-width="2" fill="#245476" data-year="2013"><title>Observed by file date, 2013. Annual value 3.489. Five year mean unavailable.</title></circle><circle cx="485.60" cy="284.63" r="5" stroke="#245476" stroke-width="2" fill="#245476" data-year="2014"><title>Observed by file date, 2014. Annual value 4.923. Five year mean unavailable.</title></circle><circle cx="532.00" cy="344.41" r="5" stroke="#245476" stroke-width="2" fill="#245476" data-year="2015"><title>Observed by file date, 2015. Annual value 2.749. Five year mean unavailable.</title></circle><circle cx="578.40" cy="313.84" r="5" stroke="#245476" stroke-width="2" fill="#245476" data-year="2016"><title>Observed by file date, 2016. Annual value 3.86. Five year mean 3.467.</title></circle><circle cx="624.80" cy="325.92" r="5" stroke="#245476" stroke-width="2" fill="#245476" data-year="2017"><title>Observed by file date, 2017. Annual value 3.421. Five year mean 3.688.</title></circle><circle cx="671.20" cy="299.69" r="5" stroke="#245476" stroke-width="2" fill="#245476" data-year="2018"><title>Observed by file date, 2018. Annual value 4.375. Five year mean 3.866.</title></circle><circle cx="717.60" cy="323.48" r="5" stroke="#245476" stroke-width="2" fill="#245476" data-year="2019"><title>Observed by file date, 2019. Annual value 3.51. Five year mean 3.583.</title></circle><circle cx="764.00" cy="347.95" r="5" stroke="#245476" stroke-width="2" fill="#245476" data-year="2020"><title>Observed by file date, 2020. Annual value 2.62. Five year mean 3.557.</title></circle></g><g data-series="1" data-label="Within five years"><path d="M717.60,323.48l0,0 L764.00,347.95" fill="none" stroke="#ac501e" stroke-width="2" stroke-linecap="round" class="annual" stroke-dasharray="9 6" /><circle cx="717.60" cy="323.48" r="5" stroke="#ac501e" stroke-width="2" fill="#ac501e" data-year="2019"><title>Within five years, 2019. Annual value 3.51. Five year mean unavailable.</title></circle><circle cx="764.00" cy="347.95" r="5" stroke="#ac501e" stroke-width="2" fill="#ac501e" data-year="2020"><title>Within five years, 2020. Annual value 2.62. Five year mean unavailable.</title></circle></g><text x="22" y="506">Observed by file date includes first qualifying spuds through the November 2026 borehole</text><text x="22" y="528">file. Within five years stops at the fifth anniversary. Both use leases effective from</text><text x="22" y="550">2005 through 2020. Medians include only leases with a qualifying spud.</text><text x="22" y="572">Source records are unavailable for 13 annual series observations. The chart omits those</text><text x="22" y="594">points and any mean requiring them. The interactive year table identifies the affected</text><text x="22" y="616">series.</text></svg></div>
+  <p>Select a legend entry to hide or show its series. Hover over or tap a point to inspect a year.</p>
+  <label>Lease effective year<select id="year"><option value="2005">2005</option><option value="2006">2006</option><option value="2007">2007</option><option value="2008">2008</option><option value="2009">2009</option><option value="2010">2010</option><option value="2011">2011</option><option value="2012">2012</option><option value="2013">2013</option><option value="2014">2014</option><option value="2015">2015</option><option value="2016">2016</option><option value="2017">2017</option><option value="2018">2018</option><option value="2019">2019</option><option value="2020">2020</option></select></label>
+  <table>
+    <caption id="caption"></caption>
+    <thead><tr><th scope="col">Series</th><th scope="col">Annual value</th><th scope="col">5 year mean</th></tr></thead>
+    <tbody id="readout"></tbody>
+  </table>
+</main>
+<script>
+const series = [[[2005,1.4209445585215605,null,false,"verified"],[2006,1.6591375770020533,null,false,"verified"],[2007,2.00684462696783,null,false,"verified"],[2008,4.246406570841889,null,false,"verified"],[2009,3.9589322381930185,2.6584531143052703,false,"verified"],[2010,3.2306639288158796,3.0203969883641344,false,"verified"],[2011,null,null,false,"verified"],[2012,2.3121149897330597,null,false,"verified"],[2013,3.489390828199863,null,false,"verified"],[2014,4.922655715263518,null,false,"verified"],[2015,2.74880219028063,null,false,"verified"],[2016,3.8603696098562628,3.4666666666666672,false,"verified"],[2017,3.4209445585215605,3.6884325804243674,false,"verified"],[2018,4.375085557837098,3.865571526351814,false,"verified"],[2019,3.509924709103354,3.583025325119781,false,"verified"],[2020,2.620123203285421,3.5572895277207395,false,"verified"]],[[2005,null,null,false,"unavailable"],[2006,null,null,false,"unavailable"],[2007,null,null,false,"unavailable"],[2008,null,null,false,"unavailable"],[2009,null,null,false,"unavailable"],[2010,null,null,false,"unavailable"],[2011,null,null,false,"verified"],[2012,null,null,false,"unavailable"],[2013,null,null,false,"unavailable"],[2014,null,null,false,"unavailable"],[2015,null,null,false,"unavailable"],[2016,null,null,false,"unavailable"],[2017,null,null,false,"unavailable"],[2018,null,null,false,"unavailable"],[2019,3.509924709103354,null,false,"verified"],[2020,2.620123203285421,null,false,"verified"]]];
+const select = document.querySelector('#year');
+const chart = document.querySelector('svg');
+chart.setAttribute('role', 'group');
+const groups = [...chart.querySelectorAll('[data-series]')];
+const legends = [...chart.querySelectorAll('[data-legend]')];
+const format = new Intl.NumberFormat('en-US', {maximumFractionDigits: 3});
+function update() {
+  const tbody = document.querySelector('#readout');
+  tbody.replaceChildren();
+  for (const [index, group] of groups.entries()) {
+    if (group.style.display === 'none') continue;
+    const [, value, average, , availability] = series[index][select.selectedIndex];
+    const row = tbody.insertRow();
+    const label = document.createElement('th');
+    label.scope = 'row';
+    label.textContent = group.dataset.label;
+    row.append(label);
+    const blank = availability === 'unavailable' ? 'Source records unavailable' : 'No eligible value';
+    row.insertCell().textContent = value === null ? blank : format.format(value);
+    row.insertCell().textContent = average === null ? 'No complete five year window' : format.format(average);
+  }
+  document.querySelector('#caption').textContent = select.selectedOptions[0].textContent + ' · Median time from effectiveness (years)';
+}
+for (const [index, legend] of legends.entries()) {
+  legend.setAttribute('role', 'button');
+  legend.setAttribute('tabindex', '0');
+  legend.setAttribute('aria-pressed', 'true');
+  legend.setAttribute('aria-label', groups[index].dataset.label);
+  function toggle() {
+    const visible = legend.getAttribute('aria-pressed') === 'true';
+    groups[index].style.display = visible ? 'none' : '';
+    legend.setAttribute('aria-pressed', String(!visible));
+    update();
+  }
+  legend.addEventListener('click', toggle);
+  legend.addEventListener('keydown', event => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      toggle();
+    }
+  });
+}
+function inspect(event) {
+  const point = event.target.closest('[data-year]');
+  if (point) {
+    select.value = point.dataset.year;
+    update();
+  }
+}
+chart.addEventListener('pointerover', inspect);
+chart.addEventListener('click', inspect);
+select.addEventListener('change', update);
+update();
+</script>
+</html>
