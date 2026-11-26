@@ -775,29 +775,6 @@ def test_regeneration_is_byte_identical(tmp_path, monkeypatch):
         assert (output / name).read_bytes() == (OUTPUT / name).read_bytes(), name
 
 
-def test_legacy_exp_svg_rounds_coordinates_at_write_time(modules, tmp_path):
-    from lease_trends import MATURE, save_figure
-
-    save_figure(
-        tmp_path,
-        "crude_trend",
-        read_rows(OUTPUT / "crude_trend.csv"),
-        periods=MATURE,
-        ylabel="Crude oil",
-        question="When?",
-        sources=[],
-        note="",
-    )
-    root = ET.parse(tmp_path / "crude_trend.svg").getroot()
-    coords = {"x", "y", "x1", "y1", "x2", "y2", "cx", "cy"}
-    for element in root.iter():
-        for attr in coords.intersection(element.attrib):
-            value = element.attrib[attr]
-            assert float(value) == round(float(value), 6), (attr, value)
-    first_line = root.find("{http://www.w3.org/2000/svg}line")
-    assert float(first_line.attrib["x1"]) == 220
-
-
 def test_calendar_month_lag_and_primary_term_boundary(modules):
     effective = pd.Timestamp("2010-05-01")
     event_dates = pd.to_datetime(

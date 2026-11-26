@@ -129,7 +129,6 @@ def save_figure(
         periods=periods,
         xlabel=EFFECTIVE,
         panel_ylabels=panel_ylabels,
-        coordinate_decimals=6,
         note=note,
     )
     svg_path.write_text(svg, encoding="utf-8", newline="\n")

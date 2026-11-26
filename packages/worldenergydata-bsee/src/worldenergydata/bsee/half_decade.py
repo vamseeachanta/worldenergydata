@@ -162,7 +162,6 @@ def render_svg(
     note="",
     periods=PERIODS,
     panel_ylabels=None,
-    coordinate_decimals=None,
 ):
     """Draw a summarized table (or its CSV readback) using C6 line styles.
 
@@ -170,7 +169,6 @@ def render_svg(
     to plot a shorter observation window. The optional note states the cutoff and rate
     basis. Each panel has a zero based scale. The geometry has no generated IDs or
     timestamps, so output does not depend on a backend hash salt or clock.
-    Set coordinate_decimals to round scalar SVG positions during serialization.
     """
     if not ylabel.strip():
         raise ValueError("the y axis requires a quantity and units")
@@ -282,12 +280,5 @@ def render_svg(
     _label(root, (left + right) / 2, bottom + 36, xlabel)
     for i, line in enumerate(notes):
         _label(root, 60, bottom + 55 + i * 13, line, 9, "start")
-    if coordinate_decimals is not None:
-        positions = {"x", "y", "x1", "y1", "x2", "y2", "cx", "cy"}
-        for element in root.iter():
-            for attr in positions.intersection(element.attrib):
-                value = element.attrib[attr]
-                if "." in value:
-                    element.set(attr, str(round(float(value), coordinate_decimals)))
     ET.indent(root)
     return ET.tostring(root, encoding="unicode") + "\n"

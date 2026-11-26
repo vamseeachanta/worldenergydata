@@ -248,19 +248,24 @@ def test_yearly_svg_build_gate(tmp_path, monkeypatch):
         with pytest.raises(ValueError, match=tag):
             validate_yearly_svg(path)
 
-    for selector, attribute, value in [
-        (".", "font-family", "Arial"),
-        (".//{*}g[@data-legend]", "font-size", "14"),
-        ("{*}text", "font-size", "17"),
-        (".//{*}circle", "r", "4"),
-        (".//{*}path[@class='annual']", "stroke-width", "1"),
-        (".//{*}path[@class='trend']", "stroke-width", "3"),
-        (".//{*}g[@data-series]", "clip-path", "url(#crop)"),
+    for selector, attribute, value, message in [
+        (".", "font-family", "Arial", "incorrect font-family"),
+        (".//{*}g[@data-legend]", "font-size", "14", "font-size below"),
+        ("{*}text", "font-size", "17", "font-size below"),
+        (".//{*}circle", "r", "4", "marker radius below"),
+        (
+            ".//{*}path[@class='annual']",
+            "stroke-width",
+            "1",
+            "annual stroke-width below",
+        ),
+        (".//{*}path[@class='trend']", "stroke-width", "3", "trend stroke-width below"),
+        (".//{*}g[@data-series]", "clip-path", "url(#crop)", "prohibited clip-path"),
     ]:
         root = ET.fromstring(source)
         root.find(selector).set(attribute, value)
         ET.ElementTree(root).write(path, encoding="utf-8")
-        with pytest.raises(ValueError, match=attribute):
+        with pytest.raises(ValueError, match=message):
             validate_yearly_svg(path)
 
     for selector, dash in [
