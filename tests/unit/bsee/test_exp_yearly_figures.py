@@ -148,6 +148,50 @@ class TestAnnualCharts(unittest.TestCase):
         self.charts.write_figures(self.output)
         self.assertEqual(first, {p.name: p.read_bytes() for p in self.output.iterdir()})
 
+    def test_caption_tracks_selected_annual_blanks_and_window_styles(self):
+        def figures():
+            self.charts.write_figures(self.output)
+            return {
+                f["figure_number"]: f
+                for f in json.loads((self.output / "figures.json").read_bytes())
+            }
+
+        chart = figures()
+        expected = [f"2022 {band}" for band in BANDS]
+        self.assertEqual(chart["2B"]["blank_cells"], expected)
+        for cell in expected:
+            self.assertIn(cell, chart["2B"]["caption"])
+        for number in ("2A", "3A"):
+            windows = chart[number]["windows"]
+            self.assertEqual(set(windows), {"solid", "dashed"})
+            self.assertEqual(windows["solid"]["label"], "Observed by file date")
+            self.assertIn("23 November 2026", windows["solid"]["definition"])
+            self.assertEqual(windows["dashed"]["label"], "Within five years")
+            self.assertIn("fifth anniversary", windows["dashed"]["definition"])
+            for style, window in windows.items():
+                self.assertTrue(
+                    any(
+                        all(term in clause for term in (style, *window.values()))
+                        for clause in chart[number]["caption"].split(". ")
+                    )
+                )
+        self.assertNotIn("windows", chart["2B"])
+
+        # A measured zero restores one selected cell. A newly blank annual
+        # value moves its identifier, even though both moving averages are empty.
+        series = self.output / "annual_trends.csv"
+        source = series.read_bytes()
+        group = b"spud_share_observed|Under 100 m,spud_share_observed,Under 100 m,"
+        source = source.replace(group + b"2022,0,,,", group + b"2022,0,0,,")
+        series.write_bytes(source.replace(group + b"2023,0,2,,", group + b"2023,0,,,"))
+        revised = figures()
+        self.assertEqual(
+            revised["2B"]["blank_cells"], ["2023 Under 100 m", *expected[1:]]
+        )
+        self.assertNotIn(expected[0], revised["2B"]["caption"])
+        self.assertIn("2023 Under 100 m", revised["2B"]["caption"])
+        self.assertEqual(chart["2C"], revised["2C"])
+
     def test_partial_year_cutoff_and_fixed_point_tooltip(self):
         series = self.output / "annual_trends.csv"
         series.write_bytes(

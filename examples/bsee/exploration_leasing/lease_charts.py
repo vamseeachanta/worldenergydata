@@ -6,6 +6,7 @@ import math
 import textwrap
 from collections import defaultdict
 from decimal import ROUND_HALF_UP, Decimal
+from email.utils import parsedate_to_datetime
 from html import escape
 from pathlib import Path
 from xml.etree import ElementTree as ET
@@ -37,18 +38,26 @@ MEASURE_COLORS = (
     "#407834",
     "#575b63",
 )
-WINDOW = (
-    "Observed by file date includes first qualifying spuds through the November 2026 borehole file. "
-    "Within five years stops at the fifth anniversary. Both use leases effective from 2005 through 2020."
-)
 CRUDE = (
     "Leases effective from 2005 through 2020 have 60 complete reporting months. "
     "First crude is the first positive crude oil month in months 0 through 59."
 )
 
 
+def line_style(group):
+    metric = group.partition("|")[0]
+    return "dashed" if metric in {"spud_years_5y", "spud_share_5y"} else "solid"
+
+
 def specifications():
     figures = []
+    pins = json.loads(Path(__file__).with_name("source_pins.json").read_bytes())
+    bore = next(pin for pin in pins["sources"] if pin["name"] == "BoreholeRawData.zip")
+    file_date = parsedate_to_datetime(bore["last_modified"])
+    boundaries = {
+        "solid": f"through the {file_date.day} {file_date:%B %Y} borehole file",
+        "dashed": "through each lease’s fifth anniversary, inclusive",
+    }
 
     def add(number, title, ylabel, measure, metrics, note, *, by_depth=False):
         series = (
@@ -78,6 +87,7 @@ def specifications():
                 "interactive": stem + ".html",
             }
         )
+        return figures[-1]
 
     issued = [("effective_leases", "Effective leases")]
     lease_note = (
@@ -116,11 +126,24 @@ def specifications():
         ),
     ):
         metrics = [(stem + "_observed", OBSERVED), (stem + "_5y", FIVE)]
-        note = WINDOW
+        note = (
+            f"{OBSERVED} includes first qualifying spuds through the {file_date:%B %Y} borehole file. "
+            f"{FIVE} stops at the fifth anniversary. Both use leases effective from 2005 through 2020."
+        )
         if figure == "3":
             note += " Medians include only leases with a qualifying spud."
-        add(
+        combined = add(
             figure + "A", name + " across all water depths", ylabel, stem, metrics, note
+        )
+        windows = {}
+        for group, label in zip(combined["groups"], combined["labels"]):
+            style = line_style(group)
+            windows[style] = {"label": label, "definition": boundaries[style]}
+        combined["windows"] = windows
+        combined["caption"] = " ".join(
+            f"The {style} line ({window['label']}) includes first qualifying spuds "
+            f"{window['definition']}."
+            for style, window in windows.items()
         )
         for suffix, (metric, label) in zip(("B", "C"), metrics):
             add(
@@ -316,11 +339,7 @@ def render(figure, groups):
         zip(labels, figure["groups"], legend)
     ):
         color = colors[index]
-        dash = (
-            {"stroke_dasharray": "9 6"}
-            if group.startswith(("spud_years_5y|", "spud_share_5y|"))
-            else {}
-        )
+        dash = {"stroke_dasharray": "9 6"} if line_style(group) == "dashed" else {}
         styles.append((color, dash))
         key = element(root, "g", data_legend=index)
         element(
@@ -502,6 +521,20 @@ def write_figures(output):
         )
     assign_scales(figures, peaks)
     for fig in figures:
+        blanks = [
+            f"{year} {label}" if len(fig["groups"]) > 1 else str(year)
+            for key, label in zip(fig["groups"], fig["labels"])
+            for year, row in sorted(groups[key].items())
+            if row["value"] is None
+        ]
+        if blanks:
+            fig["blank_cells"] = blanks
+            caption = fig.get("caption", fig["note"])
+            fig["caption"] = (
+                f"{caption} Annual values are blank for {', '.join(blanks)}."
+            )
+        if "caption" in fig and "scale_note" in fig:
+            fig["caption"] += " " + fig["scale_note"]
         missing = [
             row
             for key in fig["groups"]

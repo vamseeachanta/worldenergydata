@@ -87,6 +87,17 @@
     "csv": "annual_trends.csv",
     "svg": "figure-2a.svg",
     "interactive": "figure-2a.html",
+    "windows": {
+      "solid": {
+        "label": "Observed by file date",
+        "definition": "through the 23 November 2026 borehole file"
+      },
+      "dashed": {
+        "label": "Within five years",
+        "definition": "through each lease\u2019s fifth anniversary, inclusive"
+      }
+    },
+    "caption": "The solid line (Observed by file date) includes first qualifying spuds through the 23 November 2026 borehole file. The dashed line (Within five years) includes first qualifying spuds through each lease\u2019s fifth anniversary, inclusive.",
     "y_scale": {
       "max": 25.0,
       "step": 5.0,
@@ -125,7 +136,12 @@
       "max": 25.0,
       "step": 5.0,
       "shared": "measure:spud_share"
-    }
+    },
+    "blank_cells": [
+      "2011 Under 100 m",
+      "2011 100 to 500 m"
+    ],
+    "caption": "Observed by file date. Observed by file date includes first qualifying spuds through the November 2026 borehole file. Within five years stops at the fifth anniversary. Both use leases effective from 2005 through 2020. Annual values are blank for 2011 Under 100 m, 2011 100 to 500 m."
   },
   {
     "figure_number": "2C",
@@ -159,7 +175,12 @@
       "max": 25.0,
       "step": 5.0,
       "shared": "measure:spud_share"
-    }
+    },
+    "blank_cells": [
+      "2011 Under 100 m",
+      "2011 100 to 500 m"
+    ],
+    "caption": "Within five years. Observed by file date includes first qualifying spuds through the November 2026 borehole file. Within five years stops at the fifth anniversary. Both use leases effective from 2005 through 2020. Annual values are blank for 2011 Under 100 m, 2011 100 to 500 m."
   },
   {
     "figure_number": "3A",
@@ -185,11 +206,26 @@
     "csv": "annual_trends.csv",
     "svg": "figure-3a.svg",
     "interactive": "figure-3a.html",
+    "windows": {
+      "solid": {
+        "label": "Observed by file date",
+        "definition": "through the 23 November 2026 borehole file"
+      },
+      "dashed": {
+        "label": "Within five years",
+        "definition": "through each lease\u2019s fifth anniversary, inclusive"
+      }
+    },
+    "caption": "The solid line (Observed by file date) includes first qualifying spuds through the 23 November 2026 borehole file. The dashed line (Within five years) includes first qualifying spuds through each lease\u2019s fifth anniversary, inclusive. Annual values are blank for 2011 Observed by file date, 2011 Within five years.",
     "y_scale": {
       "max": 8.0,
       "step": 2.0,
       "shared": "measure:spud_years"
-    }
+    },
+    "blank_cells": [
+      "2011 Observed by file date",
+      "2011 Within five years"
+    ]
   },
   {
     "figure_number": "3B",
@@ -223,7 +259,22 @@
       "max": 8.0,
       "step": 2.0,
       "shared": "measure:spud_years"
-    }
+    },
+    "blank_cells": [
+      "2011 Under 100 m",
+      "2014 Under 100 m",
+      "2016 Under 100 m",
+      "2007 100 to 500 m",
+      "2010 100 to 500 m",
+      "2011 100 to 500 m",
+      "2013 100 to 500 m",
+      "2016 100 to 500 m",
+      "2020 100 to 500 m",
+      "2007 500 to 1,500 m",
+      "2011 500 to 1,500 m",
+      "2011 1,500 m and deeper"
+    ],
+    "caption": "Observed by file date. Observed by file date includes first qualifying spuds through the November 2026 borehole file. Within five years stops at the fifth anniversary. Both use leases effective from 2005 through 2020. Medians include only leases with a qualifying spud. Annual values are blank for 2011 Under 100 m, 2014 Under 100 m, 2016 Under 100 m, 2007 100 to 500 m, 2010 100 to 500 m, 2011 100 to 500 m, 2013 100 to 500 m, 2016 100 to 500 m, 2020 100 to 500 m, 2007 500 to 1,500 m, 2011 500 to 1,500 m, 2011 1,500 m and deeper."
   },
   {
     "figure_number": "3C",
@@ -257,7 +308,22 @@
       "max": 8.0,
       "step": 2.0,
       "shared": "measure:spud_years"
-    }
+    },
+    "blank_cells": [
+      "2011 Under 100 m",
+      "2014 Under 100 m",
+      "2016 Under 100 m",
+      "2007 100 to 500 m",
+      "2010 100 to 500 m",
+      "2011 100 to 500 m",
+      "2013 100 to 500 m",
+      "2016 100 to 500 m",
+      "2020 100 to 500 m",
+      "2007 500 to 1,500 m",
+      "2011 500 to 1,500 m",
+      "2011 1,500 m and deeper"
+    ],
+    "caption": "Within five years. Observed by file date includes first qualifying spuds through the November 2026 borehole file. Within five years stops at the fifth anniversary. Both use leases effective from 2005 through 2020. Medians include only leases with a qualifying spud. Annual values are blank for 2011 Under 100 m, 2014 Under 100 m, 2016 Under 100 m, 2007 100 to 500 m, 2010 100 to 500 m, 2011 100 to 500 m, 2013 100 to 500 m, 2016 100 to 500 m, 2020 100 to 500 m, 2007 500 to 1,500 m, 2011 500 to 1,500 m, 2011 1,500 m and deeper."
   },
   {
     "figure_number": "4A",
@@ -314,7 +380,14 @@
       "max": 5.0,
       "step": 1.0,
       "shared": "measure:crude_years_5y"
-    }
+    },
+    "blank_cells": [
+      "2009",
+      "2011",
+      "2015",
+      "2017"
+    ],
+    "caption": "Leases effective from 2005 through 2020 have 60 complete reporting months. First crude is the first positive crude oil month in months 0 through 59. Annual values are blank for 2009, 2011, 2015, 2017."
   },
   {
     "figure_number": "4C",
@@ -349,7 +422,12 @@
       "step": 2.0,
       "shared": "panels"
     },
-    "scale_note": "Y maximum 8, against 1.5 in Figure 4A."
+    "scale_note": "Y maximum 8, against 1.5 in Figure 4A.",
+    "blank_cells": [
+      "2011 Under 100 m",
+      "2011 100 to 500 m"
+    ],
+    "caption": "Leases effective from 2005 through 2020 have 60 complete reporting months. First crude is the first positive crude oil month in months 0 through 59. Annual values are blank for 2011 Under 100 m, 2011 100 to 500 m. Y maximum 8, against 1.5 in Figure 4A."
   },
   {
     "figure_number": "4D",
@@ -383,7 +461,55 @@
       "max": 5.0,
       "step": 1.0,
       "shared": "measure:crude_years_5y"
-    }
+    },
+    "blank_cells": [
+      "2007 Under 100 m",
+      "2009 Under 100 m",
+      "2011 Under 100 m",
+      "2014 Under 100 m",
+      "2015 Under 100 m",
+      "2016 Under 100 m",
+      "2017 Under 100 m",
+      "2019 Under 100 m",
+      "2020 Under 100 m",
+      "2005 100 to 500 m",
+      "2009 100 to 500 m",
+      "2010 100 to 500 m",
+      "2011 100 to 500 m",
+      "2012 100 to 500 m",
+      "2013 100 to 500 m",
+      "2014 100 to 500 m",
+      "2015 100 to 500 m",
+      "2017 100 to 500 m",
+      "2018 100 to 500 m",
+      "2019 100 to 500 m",
+      "2020 100 to 500 m",
+      "2005 500 to 1,500 m",
+      "2007 500 to 1,500 m",
+      "2009 500 to 1,500 m",
+      "2010 500 to 1,500 m",
+      "2011 500 to 1,500 m",
+      "2012 500 to 1,500 m",
+      "2014 500 to 1,500 m",
+      "2015 500 to 1,500 m",
+      "2016 500 to 1,500 m",
+      "2017 500 to 1,500 m",
+      "2018 500 to 1,500 m",
+      "2019 500 to 1,500 m",
+      "2005 1,500 m and deeper",
+      "2006 1,500 m and deeper",
+      "2007 1,500 m and deeper",
+      "2008 1,500 m and deeper",
+      "2009 1,500 m and deeper",
+      "2010 1,500 m and deeper",
+      "2011 1,500 m and deeper",
+      "2013 1,500 m and deeper",
+      "2015 1,500 m and deeper",
+      "2017 1,500 m and deeper",
+      "2018 1,500 m and deeper",
+      "2020 1,500 m and deeper"
+    ],
+    "caption": "Leases effective from 2005 through 2020 have 60 complete reporting months. First crude is the first positive crude oil month in months 0 through 59. Annual values are blank for 2007 Under 100 m, 2009 Under 100 m, 2011 Under 100 m, 2014 Under 100 m, 2015 Under 100 m, 2016 Under 100 m, 2017 Under 100 m, 2019 Under 100 m, 2020 Under 100 m, 2005 100 to 500 m, 2009 100 to 500 m, 2010 100 to 500 m, 2011 100 to 500 m, 2012 100 to 500 m, 2013 100 to 500 m, 2014 100 to 500 m, 2015 100 to 500 m, 2017 100 to 500 m, 2018 100 to 500 m, 2019 100 to 500 m, 2020 100 to 500 m, 2005 500 to 1,500 m, 2007 500 to 1,500 m, 2009 500 to 1,500 m, 2010 500 to 1,500 m, 2011 500 to 1,500 m, 2012 500 to 1,500 m, 2014 500 to 1,500 m, 2015 500 to 1,500 m, 2016 500 to 1,500 m, 2017 500 to 1,500 m, 2018 500 to 1,500 m, 2019 500 to 1,500 m, 2005 1,500 m and deeper, 2006 1,500 m and deeper, 2007 1,500 m and deeper, 2008 1,500 m and deeper, 2009 1,500 m and deeper, 2010 1,500 m and deeper, 2011 1,500 m and deeper, 2013 1,500 m and deeper, 2015 1,500 m and deeper, 2017 1,500 m and deeper, 2018 1,500 m and deeper, 2020 1,500 m and deeper."
   },
   {
     "figure_number": "5",
@@ -427,6 +553,18 @@
       "max": 100.0,
       "step": 20.0,
       "shared": "panels"
-    }
+    },
+    "blank_cells": [
+      "2025 RELINQ",
+      "2025 EXPIR",
+      "2025 PRIMRY",
+      "2025 TERMIN",
+      "2025 UNIT",
+      "2025 PROD",
+      "2025 CANCEL",
+      "2025 OPERNS",
+      "2025 SOP"
+    ],
+    "caption": "Each code is the status on the November 2, 2026 lease tape. The final effective month is October 2026. A blank share means no leases took effect that year. Annual values are blank for 2025 RELINQ, 2025 EXPIR, 2025 PRIMRY, 2025 TERMIN, 2025 UNIT, 2025 PROD, 2025 CANCEL, 2025 OPERNS, 2025 SOP."
   }
 ]
