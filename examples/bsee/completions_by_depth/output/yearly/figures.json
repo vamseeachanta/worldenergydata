@@ -1,0 +1,354 @@
+[
+  {
+    "figure_number": "1A",
+    "title": "Completion approvals across all water depths",
+    "ylabel": "Approved permits per year",
+    "xlabel": "Calendar year of approval",
+    "measure": "approvals_per_year",
+    "note": "Each approved permit counts once. Solid lines show initial completion (INITCOMP). Dashed lines show other completion work without a change of zone. Hollow markers show partial 2026 through 23 November 2026. Means end in 2025.",
+    "role": "main",
+    "x_unit": "year",
+    "trend": "moving_average_5y_trailing",
+    "view": "annual",
+    "layout": "overlay",
+    "panel_by": "none",
+    "series_by": "measure",
+    "groups": [
+      "initial|All water depths",
+      "other|All water depths"
+    ],
+    "labels": [
+      "Initial completion",
+      "Other completion work"
+    ],
+    "csv": "annual_trends.csv",
+    "svg": "figure-1a.svg",
+    "interactive": "figure-1a.html",
+    "y_scale": {
+      "max": 1000,
+      "step": 200.0,
+      "shared": "measure:approvals_per_year"
+    },
+    "scale_note": "Y maximum 1,000, against 1,000 in Figure 1B, 200 in Figure 1C, 1,000 in Figure 2A, 1,000 in Figure 2B, 100 in Figure E4."
+  },
+  {
+    "figure_number": "1B",
+    "title": "Initial completion approvals by water depth",
+    "ylabel": "Approved permits per year",
+    "xlabel": "Calendar year of approval",
+    "measure": "approvals_per_year",
+    "note": "Each approved completion permit carrying INITCOMP counts once. Hollow markers show partial 2026 through 23 November 2026. Means end in 2025.",
+    "role": "main",
+    "x_unit": "year",
+    "trend": "moving_average_5y_trailing",
+    "view": "annual",
+    "layout": "overlay",
+    "panel_by": "none",
+    "series_by": "depth_band",
+    "groups": [
+      "initial|Under 100 m",
+      "initial|100 to 500 m",
+      "initial|500 to 1,500 m",
+      "initial|1,500 m and deeper"
+    ],
+    "labels": [
+      "Under 100 m",
+      "100 to 500 m",
+      "500 to 1,500 m",
+      "1,500 m and deeper"
+    ],
+    "csv": "annual_trends.csv",
+    "svg": "figure-1b.svg",
+    "interactive": "figure-1b.html",
+    "y_scale": {
+      "max": 1000,
+      "step": 200.0,
+      "shared": "measure:approvals_per_year"
+    },
+    "scale_note": "Y maximum 1,000, against 1,000 in Figure 1A, 200 in Figure 1C, 1,000 in Figure 2A, 1,000 in Figure 2B, 100 in Figure E4."
+  },
+  {
+    "figure_number": "1C",
+    "title": "Other completion approvals by water depth",
+    "ylabel": "Approved permits per year",
+    "xlabel": "Calendar year of approval",
+    "measure": "approvals_per_year",
+    "note": "Each approved permit for other completion work without a change of zone counts once. Hollow markers show partial 2026 through 23 November 2026. Means end in 2025.",
+    "role": "main",
+    "x_unit": "year",
+    "trend": "moving_average_5y_trailing",
+    "view": "annual",
+    "layout": "overlay",
+    "panel_by": "none",
+    "series_by": "depth_band",
+    "groups": [
+      "other|Under 100 m",
+      "other|100 to 500 m",
+      "other|500 to 1,500 m",
+      "other|1,500 m and deeper"
+    ],
+    "labels": [
+      "Under 100 m",
+      "100 to 500 m",
+      "500 to 1,500 m",
+      "1,500 m and deeper"
+    ],
+    "csv": "annual_trends.csv",
+    "svg": "figure-1c.svg",
+    "interactive": "figure-1c.html",
+    "y_scale": {
+      "max": 200,
+      "step": 50.0,
+      "shared": "panels"
+    },
+    "scale_note": "Y maximum 200, against 1,000 in Figure 1A, 1,000 in Figure 1B, 1,000 in Figure 2A, 1,000 in Figure 2B, 100 in Figure E4."
+  },
+  {
+    "figure_number": "2A",
+    "title": "Recompletion approvals across all water depths",
+    "ylabel": "Approved permits per year",
+    "xlabel": "Calendar year of approval",
+    "measure": "approvals_per_year",
+    "note": "Each approved permit classed as a change of zone counts once. Hollow markers show partial 2026 through 23 November 2026. Means end in 2025.",
+    "role": "main",
+    "x_unit": "year",
+    "trend": "moving_average_5y_trailing",
+    "view": "annual",
+    "layout": "overlay",
+    "panel_by": "none",
+    "series_by": "measure",
+    "groups": [
+      "recompletion|All water depths"
+    ],
+    "labels": [
+      "Recompletion"
+    ],
+    "csv": "annual_trends.csv",
+    "svg": "figure-2a.svg",
+    "interactive": "figure-2a.html",
+    "y_scale": {
+      "max": 1000,
+      "step": 200.0,
+      "shared": "measure:approvals_per_year"
+    },
+    "scale_note": "Y maximum 1,000, against 1,000 in Figure 1A, 1,000 in Figure 1B, 200 in Figure 1C, 1,000 in Figure 2B, 100 in Figure E4."
+  },
+  {
+    "figure_number": "2B",
+    "title": "Recompletion approvals by water depth",
+    "ylabel": "Approved permits per year",
+    "xlabel": "Calendar year of approval",
+    "measure": "approvals_per_year",
+    "note": "Each approved permit classed as a change of zone counts once. Hollow markers show partial 2026 through 23 November 2026. Means end in 2025.",
+    "role": "main",
+    "x_unit": "year",
+    "trend": "moving_average_5y_trailing",
+    "view": "annual",
+    "layout": "overlay",
+    "panel_by": "none",
+    "series_by": "depth_band",
+    "groups": [
+      "recompletion|Under 100 m",
+      "recompletion|100 to 500 m",
+      "recompletion|500 to 1,500 m",
+      "recompletion|1,500 m and deeper"
+    ],
+    "labels": [
+      "Under 100 m",
+      "100 to 500 m",
+      "500 to 1,500 m",
+      "1,500 m and deeper"
+    ],
+    "csv": "annual_trends.csv",
+    "svg": "figure-2b.svg",
+    "interactive": "figure-2b.html",
+    "y_scale": {
+      "max": 1000,
+      "step": 200.0,
+      "shared": "measure:approvals_per_year"
+    },
+    "scale_note": "Y maximum 1,000, against 1,000 in Figure 1A, 1,000 in Figure 1B, 200 in Figure 1C, 1,000 in Figure 2A, 100 in Figure E4."
+  },
+  {
+    "figure_number": "3A",
+    "title": "Drilled wells with an initial approval across all water depths",
+    "ylabel": "Share of drilled wells (%)",
+    "xlabel": "Calendar year of first drilling (spud year)",
+    "measure": "share_of_drilled_wells",
+    "note": "Solid lines show exploratory wells. Dashed lines show development wells. Each well counts in its first spud year. The numerator counts wells with an initial completion approval by the file date. Recent cohorts have shorter follow up. A blank means no wells of this type were first drilled in that band and year. Hollow markers show partial 2026 through 23 November 2026. Means end in 2025.",
+    "role": "main",
+    "x_unit": "year",
+    "trend": "moving_average_5y_trailing",
+    "view": "annual",
+    "layout": "overlay",
+    "panel_by": "none",
+    "series_by": "measure",
+    "groups": [
+      "exploratory_share|All water depths",
+      "development_share|All water depths"
+    ],
+    "labels": [
+      "Exploratory wells",
+      "Development wells"
+    ],
+    "csv": "annual_trends.csv",
+    "svg": "figure-3a.svg",
+    "interactive": "figure-3a.html",
+    "y_scale": {
+      "max": 100,
+      "step": 20.0,
+      "shared": "measure:share_of_drilled_wells"
+    }
+  },
+  {
+    "figure_number": "3B",
+    "title": "Exploratory wells with an initial approval by water depth",
+    "ylabel": "Share of drilled wells (%)",
+    "xlabel": "Calendar year of first drilling (spud year)",
+    "measure": "share_of_drilled_wells",
+    "note": "Each well counts in its first spud year. The numerator counts wells with an initial completion approval by the file date. Recent cohorts have shorter follow up. A blank means no wells of this type were first drilled in that band and year. Hollow markers show partial 2026 through 23 November 2026. Means end in 2025.",
+    "role": "main",
+    "x_unit": "year",
+    "trend": "moving_average_5y_trailing",
+    "view": "annual",
+    "layout": "overlay",
+    "panel_by": "none",
+    "series_by": "depth_band",
+    "groups": [
+      "exploratory_share|Under 100 m",
+      "exploratory_share|100 to 500 m",
+      "exploratory_share|500 to 1,500 m",
+      "exploratory_share|1,500 m and deeper"
+    ],
+    "labels": [
+      "Under 100 m",
+      "100 to 500 m",
+      "500 to 1,500 m",
+      "1,500 m and deeper"
+    ],
+    "csv": "annual_trends.csv",
+    "svg": "figure-3b.svg",
+    "interactive": "figure-3b.html",
+    "y_scale": {
+      "max": 100,
+      "step": 20.0,
+      "shared": "measure:share_of_drilled_wells"
+    },
+    "unavailable_cells": 7,
+    "coverage_note": "A zero denominator leaves 7 annual shares blank. The chart omits those points and any mean requiring them. The interactive year table identifies the affected series."
+  },
+  {
+    "figure_number": "3C",
+    "title": "Development wells with an initial approval by water depth",
+    "ylabel": "Share of drilled wells (%)",
+    "xlabel": "Calendar year of first drilling (spud year)",
+    "measure": "share_of_drilled_wells",
+    "note": "Each well counts in its first spud year. The numerator counts wells with an initial completion approval by the file date. Recent cohorts have shorter follow up. A blank means no wells of this type were first drilled in that band and year. Hollow markers show partial 2026 through 23 November 2026. Means end in 2025.",
+    "role": "main",
+    "x_unit": "year",
+    "trend": "moving_average_5y_trailing",
+    "view": "annual",
+    "layout": "overlay",
+    "panel_by": "none",
+    "series_by": "depth_band",
+    "groups": [
+      "development_share|Under 100 m",
+      "development_share|100 to 500 m",
+      "development_share|500 to 1,500 m",
+      "development_share|1,500 m and deeper"
+    ],
+    "labels": [
+      "Under 100 m",
+      "100 to 500 m",
+      "500 to 1,500 m",
+      "1,500 m and deeper"
+    ],
+    "csv": "annual_trends.csv",
+    "svg": "figure-3c.svg",
+    "interactive": "figure-3c.html",
+    "y_scale": {
+      "max": 100,
+      "step": 20.0,
+      "shared": "measure:share_of_drilled_wells"
+    },
+    "unavailable_cells": 5,
+    "coverage_note": "A zero denominator leaves 5 annual shares blank. The chart omits those points and any mean requiring them. The interactive year table identifies the affected series."
+  },
+  {
+    "figure_number": "E3",
+    "title": "Completion approvals per January standing well",
+    "ylabel": "Approved permits per January well",
+    "xlabel": "Calendar year of approval",
+    "measure": "approvals_per_well",
+    "note": "The denominator is the number of wells standing on 1 January. The numerator includes approvals for wells first drilled later in the year. An empty denominator gives a blank. Hollow markers show partial 2026 through 23 November 2026. Means end in 2025.",
+    "role": "appendix",
+    "x_unit": "year",
+    "trend": "moving_average_5y_trailing",
+    "view": "annual",
+    "layout": "4x1_shared_x",
+    "panel_by": "depth_band",
+    "series_by": "measure",
+    "groups": [
+      "approvals_per_well|Under 100 m",
+      "approvals_per_well|100 to 500 m",
+      "approvals_per_well|500 to 1,500 m",
+      "approvals_per_well|1,500 m and deeper"
+    ],
+    "labels": [
+      "Completion approvals",
+      "Completion approvals",
+      "Completion approvals",
+      "Completion approvals"
+    ],
+    "csv": "annual_trends.csv",
+    "svg": "figure-e3.svg",
+    "y_scale": {
+      "max": 0.5,
+      "step": 0.1,
+      "shared": "panels"
+    }
+  },
+  {
+    "figure_number": "E4",
+    "title": "Other completion approvals with perforation flags",
+    "ylabel": "Approved permits per year",
+    "xlabel": "Calendar year of approval",
+    "measure": "approvals_per_year",
+    "note": "Flags are counted on permits for other completion work without a change of zone. A permit may carry both flags. Hollow markers show partial 2026 through 23 November 2026. Means end in 2025.",
+    "role": "appendix",
+    "x_unit": "year",
+    "trend": "moving_average_5y_trailing",
+    "view": "annual",
+    "layout": "4x1_shared_x",
+    "panel_by": "depth_band",
+    "series_by": "measure",
+    "groups": [
+      "modify_perforations|Under 100 m",
+      "modify_perforations|100 to 500 m",
+      "modify_perforations|500 to 1,500 m",
+      "modify_perforations|1,500 m and deeper",
+      "reperforation|Under 100 m",
+      "reperforation|100 to 500 m",
+      "reperforation|500 to 1,500 m",
+      "reperforation|1,500 m and deeper"
+    ],
+    "labels": [
+      "Modify Perforations",
+      "Modify Perforations",
+      "Modify Perforations",
+      "Modify Perforations",
+      "Reperforation",
+      "Reperforation",
+      "Reperforation",
+      "Reperforation"
+    ],
+    "csv": "annual_trends.csv",
+    "svg": "figure-e4.svg",
+    "y_scale": {
+      "max": 100,
+      "step": 20.0,
+      "shared": "panels"
+    },
+    "scale_note": "Y maximum 100, against 1,000 in Figure 1A, 1,000 in Figure 1B, 200 in Figure 1C, 1,000 in Figure 2A, 1,000 in Figure 2B."
+  }
+]

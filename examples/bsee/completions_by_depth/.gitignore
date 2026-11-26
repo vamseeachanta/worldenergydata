@@ -4,3 +4,8 @@
 !output/*.json
 !output/*.png
 !output/*.svg
+!output/yearly/
+!output/yearly/*.csv
+!output/yearly/*.json
+!output/yearly/*.svg
+!output/yearly/*.html

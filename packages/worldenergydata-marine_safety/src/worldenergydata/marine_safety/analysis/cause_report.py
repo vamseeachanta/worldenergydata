@@ -146,7 +146,7 @@ class CauseAnalysisReport:
     def _get_css_styles(self) -> str:
         """Get embedded CSS styles including Bootstrap."""
         return """
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">  # noqa: E501
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
 <style>
     body {
@@ -252,7 +252,7 @@ class CauseAnalysisReport:
 <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
     <div class="container-fluid">
         <a class="navbar-brand" href="#top">Cause Analysis Report</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">  # noqa: E501
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
@@ -338,19 +338,19 @@ class CauseAnalysisReport:
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="metric-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">  # noqa: E501
+                    <div class="metric-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
                         <div class="metric-label">Fatalities</div>
                         <div class="metric-value">{total_fatalities}</div>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="metric-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">  # noqa: E501
+                    <div class="metric-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
                         <div class="metric-label">Injuries</div>
                         <div class="metric-value">{total_injuries}</div>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="metric-card" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">  # noqa: E501
+                    <div class="metric-card" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
                         <div class="metric-label">Serious+</div>
                         <div class="metric-value">{serious_or_higher}</div>
                     </div>
@@ -360,9 +360,9 @@ class CauseAnalysisReport:
             <div class="alert alert-info mt-4">
                 <h5>Key Findings:</h5>
                 <ul>
-                    <li><strong>Most Common Cause:</strong> {most_common_cause[0].replace('_', ' ').title()} ({most_common_cause[1]} incidents)</li>  # noqa: E501
-                    <li><strong>Severity Distribution:</strong> {serious_or_higher} incidents classified as Serious or higher ({(serious_or_higher/total_incidents*100):.1f}%)</li>  # noqa: E501
-                    <li><strong>Safety Impact:</strong> {total_fatalities} fatalities and {total_injuries} injuries reported across all incidents</li>  # noqa: E501
+                    <li><strong>Most Common Cause:</strong> {most_common_cause[0].replace('_', ' ').title()} ({most_common_cause[1]} incidents)</li>
+                    <li><strong>Severity Distribution:</strong> {serious_or_higher} incidents classified as Serious or higher ({(serious_or_higher/total_incidents*100):.1f}%)</li>
+                    <li><strong>Safety Impact:</strong> {total_fatalities} fatalities and {total_injuries} injuries reported across all incidents</li>
                 </ul>
             </div>
         </div>
@@ -406,7 +406,7 @@ class CauseAnalysisReport:
                 <div class="col-md-6">
                     <h4>Incidents by Cause Category</h4>
                     <div class="text-end mb-2">
-                        <button class="btn btn-sm btn-primary btn-export" onclick="exportTableToCSV('cause-table', 'cause_categories.csv')">  # noqa: E501
+                        <button class="btn btn-sm btn-primary btn-export" onclick="exportTableToCSV('cause-table', 'cause_categories.csv')">
                             Export CSV
                         </button>
                     </div>
@@ -429,7 +429,7 @@ class CauseAnalysisReport:
                 <div class="col-md-6">
                     <h4>Incidents by Severity Level</h4>
                     <div class="text-end mb-2">
-                        <button class="btn btn-sm btn-primary btn-export" onclick="exportTableToCSV('severity-table', 'severity_levels.csv')">  # noqa: E501
+                        <button class="btn btn-sm btn-primary btn-export" onclick="exportTableToCSV('severity-table', 'severity_levels.csv')">
                             Export CSV
                         </button>
                     </div>
@@ -602,7 +602,7 @@ class CauseAnalysisReport:
             <div class="alert alert-warning">
                 <h5>Hatch-Related Incidents Overview:</h5>
                 <ul>
-                    <li><strong>Total Hatch/Opening Incidents:</strong> {hatch_count} ({hatch_percentage:.1f}% of all incidents)</li>  # noqa: E501
+                    <li><strong>Total Hatch/Opening Incidents:</strong> {hatch_count} ({hatch_percentage:.1f}% of all incidents)</li>
                     <li><strong>Associated Fatalities:</strong> {hatch_fatalities}</li>
                     <li><strong>Associated Injuries:</strong> {hatch_injuries}</li>
                 </ul>
@@ -610,7 +610,7 @@ class CauseAnalysisReport:
 
             <h4 class="mt-4">Hatch-Related Incident Details</h4>
             <div class="text-end mb-2">
-                <button class="btn btn-sm btn-primary btn-export" onclick="exportTableToCSV('hatch-table', 'hatch_incidents.csv')">  # noqa: E501
+                <button class="btn btn-sm btn-primary btn-export" onclick="exportTableToCSV('hatch-table', 'hatch_incidents.csv')">
                     Export CSV
                 </button>
             </div>

@@ -1,0 +1,7 @@
+depth_band,timed_leases,days_to_spud_p25,days_to_spud_median,days_to_spud_p75
+Under 100 m,202,324.0,511.0,1075.25
+100 to 500 m,18,848.5,1169.5,1770.75
+"500 to 1,500 m",116,638.75,1297.5,2282.75
+"1,500 m and deeper",96,967.25,1730.5,2510.0
+Unknown,0,,,
+All bands,432,440.5,893.5,1756.5

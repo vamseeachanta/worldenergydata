@@ -662,11 +662,19 @@
             "classification": "test_consumer"
           },
           {
+            "path": "tests/unit/spain/test_cores_integrity.py",
+            "classification": "test_consumer"
+          },
+          {
             "path": "tests/unit/spain/test_cores_live_density.py",
             "classification": "test_consumer"
           },
           {
             "path": "tests/unit/spain/test_cores_loader.py",
+            "classification": "test_consumer"
+          },
+          {
+            "path": "tests/unit/spain/test_cores_review_regressions.py",
             "classification": "test_consumer"
           },
           {

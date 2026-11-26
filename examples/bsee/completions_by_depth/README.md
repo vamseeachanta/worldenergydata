@@ -226,11 +226,13 @@ A blank share means no wells were drilled. The historical 2005 to 2025
 
 ### Yearly figures and denominators
 
-The [figure index](output/figures.json) links each chart to its yearly CSV
-and gives the row, column and display precision behind each reading.
-Figures 1 to 3 count permits in the approval year. Figure 1 separates initial
-and other completion approvals. Figure 2 counts recompletion approvals. Figure 3 counts other
-completion approvals flagged Modify Perforations or Reperforation. A permit can carry both flags.
+The [annual figure index](output/yearly/figures.json) pairs each main SVG with an
+offline interactive page. Both use the same [annual values and five-year means](output/yearly/annual_trends.csv).
+Figure 1A counts initial completion approvals (solid) and other completion work
+approvals (dashed) across all water depths. Figures 1B and 1C compare the four
+depth bands for each permit class. Figures 2A and 2B count recompletion approvals
+in the year of approval. Appendix Figure E4 counts other completion approvals
+carrying the Modify Perforations or Reperforation flag. A permit can carry both.
 
 Appendix Figure E3 divides the calendar year's total initial and other completion
 approvals by the 1 January standing well inventory in each band. Approvals
@@ -243,13 +245,14 @@ dates can leave a well in the reconstructed stock. January observations without
 a resolved depth are excluded. The [inventory method](../interventions_by_depth/README.md#method)
 gives the bore status and region rules.
 
-Figure 4 groups exploratory wells, then development wells, by depth and calendar
+Figures 3A to 3C group exploratory and development wells by calendar
 year of first dated, noncancelled Gulf spud. The numerator counts wells with
 at least one initial completion approval on any bore by 23 November 2026.
 The denominator counts all drilled wells in the same type, band and year.
-Type and depth follow the original hole and inventory rules. Wells with
-another or unstated type, unknown depth or no dated spud fall outside the
-plotted groups. Later cohorts have had less time to receive an approval.
+Figure 3A pools the counts across depths, including wells with unresolved depth.
+Figures 3B and 3C use the four reported depth bands. Type and depth follow the
+original hole and inventory rules. Wells with another or unstated type or no
+dated spud fall outside these cohorts. Later cohorts have had less time to receive an approval.
 
 The [shared yearly chart module](../../../packages/worldenergydata-bsee/src/worldenergydata/bsee/yearly_trend.py)
 plots the arithmetic mean of five consecutive complete yearly values at the last
@@ -257,8 +260,9 @@ year of the window. Each annual rate or share has equal weight in the mean.
 Inside the observation window an absent permit count is zero. A year with no
 wells in the denominator has a blank value and breaks the trend. The hollow
 2026 marker covers records through 23 November and is excluded from every mean.
-The four depth bands share one calendar axis, labelled below the bottom panel.
-Vertical scales are labelled in each panel.
+The four bands share a single pair of axes on each main depth chart. Caption
+notes give the maxima when figures with the same units use different scales.
+The appendix retains four stacked panels for standing-well rates and perforation flags.
 
 The appendix tables retain the r5.2 period counts for
 [initial and other approvals](output/appendix_01_approvals_by_period.csv),
@@ -310,8 +314,8 @@ the tests compare them with the hand values.
 The published `output/verification.json` records the archive digests, code
 commit, command, Python and pandas versions and UTC time of the historical
 annual checks. A fresh count writes its own receipt in the chosen output
-directory. The yearly figures link their readings to the yearly CSVs
-in [figures.json](output/figures.json).
+directory. The [annual figure index](output/yearly/figures.json) names the plotted series.
+The [r5.5 figure index](output/figures.json) retains the earlier panel layout.
 
 ## Limits
 
@@ -336,14 +340,14 @@ in [figures.json](output/figures.json).
 uv run python -I examples/bsee/completions_by_depth/count_completions.py \
   --data-dir <folder holding the three archives> \
   --out examples/bsee/completions_by_depth/output
-python3 examples/bsee/completions_by_depth/plot_charts.py
-bash examples/bsee/completions_by_depth/render_png.sh      # needs google-chrome
-BSEE_SERIES_BASIS_DIR=<that folder> uv run pytest \
-  tests/unit/bsee/test_completions_by_depth.py
+uv run --python 3.12 python examples/bsee/completions_by_depth/comp_charts.py
+BSEE_SERIES_BASIS_DIR=<that folder> uv run --python 3.12 python -m pytest \
+  tests/unit/bsee/test_completions_by_depth.py tests/unit/bsee/test_comp_annual_series.py \
+  tests/unit/bsee/test_comp_yearly_figures.py
 ```
 
-Without `BSEE_SERIES_BASIS_DIR` the three tests that read the raw archives are
-skipped; the synthetic and delivered-table tests always run.
+Set `BSEE_SERIES_BASIS_DIR` to include the raw archive recount and the independent
+2006, 2025 and partial 2026 permit checks.
 
 To adapt the counts to a field, lease or depth range, see the
 [reusable prompt](reusable-prompt.md).

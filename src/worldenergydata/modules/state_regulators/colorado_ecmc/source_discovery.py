@@ -9,7 +9,6 @@ from datetime import datetime, timezone
 from pathlib import Path
 from time import sleep
 from urllib.parse import urlencode
-from urllib.request import urlopen
 
 import pandas as pd
 import yaml
@@ -18,6 +17,7 @@ from worldenergydata.modules.state_regulators.colorado_ecmc.facility_detail impo
     classify_facility_detail_pressures,
     parse_facility_detail_html,
 )
+from worldenergydata.modules.state_regulators.fetch.http import urlopen
 
 BASE_URL = "https://ecmc.state.co.us/cogisdb/Facility/FacilityDetail.aspx"
 

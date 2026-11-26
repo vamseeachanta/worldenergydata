@@ -150,3 +150,23 @@ def test_each_group_has_a_zero_based_scale_for_its_own_values():
     small_ticks = [int(t) for t in labels[split:] if t.isdigit()]
     assert min(large_ticks) == min(small_ticks) == 0
     assert max(small_ticks) == 40 and max(large_ticks) == 600
+
+
+def test_mature_periods_and_distinct_panel_units():
+    table = summarize(
+        [
+            {"year": 2005, "band": BANDS[0], "group": g, "count": 3}
+            for g in ("Incidence", "Timing")
+        ]
+    )
+    mature = [row for row in table if row["period"] in PERIODS[:3]]
+    options = dict(
+        ylabel="First crude oil",
+        periods=PERIODS[:3],
+        panel_ylabels={"Incidence": "Share (%)", "Timing": "Median (years)"},
+    )
+    labels = set(ET.fromstring(render_svg(mature, **options)).itertext())
+    assert {"Share (%)", "Median (years)", *PERIODS[:3]} <= labels
+    assert labels.isdisjoint(PERIODS[3:])
+    with pytest.raises(ValueError):
+        render_svg(mature[1:], **options)

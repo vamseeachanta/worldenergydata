@@ -154,33 +154,51 @@ def _ticks(maximum):
     return [n * step for n in range(math.ceil(ceiling / step) + 1)]
 
 
-def render_svg(rows, *, ylabel, xlabel="Approval period", note=""):
+def render_svg(
+    rows,
+    *,
+    ylabel,
+    xlabel="Approval period",
+    note="",
+    periods=PERIODS,
+    panel_ylabels=None,
+):
     """Draw a summarized table (or its CSV readback) using C6 line styles.
 
-    Units belong in ylabel. The optional note states the data cutoff and rate
+    Units belong in ylabel, or in panel_ylabels for mixed units. Select periods
+    to plot a shorter observation window. The optional note states the cutoff and rate
     basis. Each panel has a zero based scale. The geometry has no generated IDs or
     timestamps, so output does not depend on a backend hash salt or clock.
     """
     if not ylabel.strip():
         raise ValueError("the y axis requires a quantity and units")
+    periods = tuple(periods)
+    if not periods or periods != tuple(p for p in PERIODS if p in periods):
+        raise ValueError("expected distinct series periods in chronological order")
     panels = {}
     for row in rows:
         values = panels.setdefault(row["group"], {})
         key = row["band"], row["period"]
-        if key in values or key[0] not in BANDS or key[1] not in PERIODS:
+        if key in values or key[0] not in BANDS or key[1] not in periods:
             raise ValueError(f"invalid or duplicate chart cell: {key}")
         raw = row["value"]
         values[key] = None if raw in (None, "") else _number(raw, "plotted value")
     if not panels or any(
-        len(panel) != len(BANDS) * len(PERIODS) for panel in panels.values()
+        len(panel) != len(BANDS) * len(periods) for panel in panels.values()
     ):
         raise ValueError("expected a complete period and depth grid for each panel")
 
+    if panel_ylabels is not None and (
+        set(panel_ylabels) != set(panels)
+        or not all(v.strip() for v in panel_ylabels.values())
+    ):
+        raise ValueError("each panel requires a y axis label with units")
     notes = [
         line for para in note.splitlines() for line in textwrap.wrap(para, width=130)
     ]
     panel_step, plot_height = 206, 164
-    left, right, slot = 78, 838, 152
+    left, right = 78, 838
+    slot = 152 if periods == PERIODS else (right - left) / len(periods)
     height = 72 + panel_step * len(panels) + len(notes) * 13
     title = f"{ylabel} by water depth and period"
     group_names = ", ".join(group for group in panels if group)
@@ -215,15 +233,16 @@ def render_svg(rows, *, ylabel, xlabel="Approval period", note=""):
         bottom, middle = top + plot_height, top + plot_height / 2
         if group:
             _label(root, left, top - 8, group, 13, "start")
-        _add(
-            root,
-            "rect",
-            x=right - slot,
-            y=top,
-            width=slot,
-            height=plot_height,
-            fill="#f0f0f0",
-        )
+        if PERIODS[-1] in periods:
+            _add(
+                root,
+                "rect",
+                x=right - slot,
+                y=top,
+                width=slot,
+                height=plot_height,
+                fill="#f0f0f0",
+            )
         for tick in ticks:
             y = round(bottom - plot_height * tick / ticks[-1], 2)
             _line(root, left, y, right, y, "#dddddd", 0.6)
@@ -237,22 +256,23 @@ def render_svg(rows, *, ylabel, xlabel="Approval period", note=""):
             )
         _line(root, left, top, left, bottom, "black")
         _line(root, left, bottom, right, bottom, "black")
-        _label(root, 20, middle, ylabel, transform=f"rotate(-90 20 {middle})")
+        axis_label = panel_ylabels[group] if panel_ylabels else ylabel
+        _label(root, 20, middle, axis_label, transform=f"rotate(-90 20 {middle})")
         for b, band in enumerate(BANDS):
             previous = None
-            for i, period in enumerate(PERIODS):
+            for i, period in enumerate(periods):
                 v = values[band, period]
                 if v is None:
                     previous = None
                     continue
                 x = left + (i + 0.5) * slot
                 y = round(bottom - plot_height * v / ticks[-1], 2)
-                full = i < len(PERIODS) - 1
+                full = period != PERIODS[-1]
                 if full and previous is not None:
                     _line(root, *previous, x, y, _COLORS[b], 1.5, _DASHES[b])
                 _marker(root, b, x, y, 2 if full else 3.3)
                 previous = x, y
-        for i, period in enumerate(PERIODS):
+        for i, period in enumerate(periods):
             x = left + (i + 0.5) * slot
             _line(root, x, bottom, x, bottom + 3.5, "black")
             if idx == len(panels) - 1:

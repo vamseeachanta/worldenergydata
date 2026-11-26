@@ -1,0 +1,456 @@
+[
+  {
+    "question": "Where did leases take effect, from shallow to deep water?",
+    "record_types": [
+      "lease records"
+    ],
+    "csv": "issuance_trend.csv",
+    "svg": "issuance_trend.svg",
+    "note": "Lease counts divided by five calendar years, or by two for the partial 2025 to 2026 period. The last effective month is October 2026.",
+    "bullets": [
+      {
+        "text": "Effective leasing in the under 100 m band was 222.8 leases per year in 2005 to 2009 and 57.2 leases per year in 2020 to 2024.",
+        "cells": [
+          {
+            "filter": {
+              "period": "2005 to 2009",
+              "band": "Under 100 m",
+              "group": ""
+            },
+            "column": "value",
+            "format": ".1f"
+          },
+          {
+            "filter": {
+              "period": "2020 to 2024",
+              "band": "Under 100 m",
+              "group": ""
+            },
+            "column": "value",
+            "format": ".1f"
+          }
+        ]
+      },
+      {
+        "text": "Effective leasing in the 1,500 m and deeper band was 256.4 leases per year in 2005 to 2009 and 74.2 leases per year in 2020 to 2024.",
+        "cells": [
+          {
+            "filter": {
+              "period": "2005 to 2009",
+              "band": "1,500 m and deeper",
+              "group": ""
+            },
+            "column": "value",
+            "format": ".1f"
+          },
+          {
+            "filter": {
+              "period": "2020 to 2024",
+              "band": "1,500 m and deeper",
+              "group": ""
+            },
+            "column": "value",
+            "format": ".1f"
+          }
+        ]
+      },
+      {
+        "text": "Effective leasing in the 1,500 m and deeper band was 74.2 leases per year in 2020 to 2024 and 45.0 leases per year in 2025 to 2026 (partial).",
+        "cells": [
+          {
+            "filter": {
+              "period": "2020 to 2024",
+              "band": "1,500 m and deeper",
+              "group": ""
+            },
+            "column": "value",
+            "format": ".1f"
+          },
+          {
+            "filter": {
+              "period": "2025 to 2026 (partial)",
+              "band": "1,500 m and deeper",
+              "group": ""
+            },
+            "column": "value",
+            "format": ".1f"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "question": "What share of leases recorded a first exploratory spud?",
+    "record_types": [
+      "lease records",
+      "borehole spud dates"
+    ],
+    "csv": "spud_share_trend.csv",
+    "svg": "spud_share_trend.svg",
+    "note": "Only complete half decades with five years of follow up are plotted. The cohort tables also include leases effective in 2020.\nThe first panel follows leases through November 2026, so older leases have longer observation.\nThe second stops at the fifth anniversary.",
+    "bullets": [
+      {
+        "text": "The spud share by the file date in the under 100 m band was 14.7% in 2005 to 2009 and 3.7% in 2015 to 2019.",
+        "cells": [
+          {
+            "filter": {
+              "period": "2005 to 2009",
+              "band": "Under 100 m",
+              "group": "Observed by file date"
+            },
+            "column": "value",
+            "format": ".1f"
+          },
+          {
+            "filter": {
+              "period": "2015 to 2019",
+              "band": "Under 100 m",
+              "group": "Observed by file date"
+            },
+            "column": "value",
+            "format": ".1f"
+          }
+        ]
+      },
+      {
+        "text": "The spud share by the file date in the 1,500 m and deeper band was 4.3% in 2005 to 2009 and 4.1% in 2015 to 2019.",
+        "cells": [
+          {
+            "filter": {
+              "period": "2005 to 2009",
+              "band": "1,500 m and deeper",
+              "group": "Observed by file date"
+            },
+            "column": "value",
+            "format": ".1f"
+          },
+          {
+            "filter": {
+              "period": "2015 to 2019",
+              "band": "1,500 m and deeper",
+              "group": "Observed by file date"
+            },
+            "column": "value",
+            "format": ".1f"
+          }
+        ]
+      },
+      {
+        "text": "The spud share within five years in the 1,500 m and deeper band was 1.9% in 2005 to 2009 and 3.3% in 2015 to 2019.",
+        "cells": [
+          {
+            "filter": {
+              "period": "2005 to 2009",
+              "band": "1,500 m and deeper",
+              "group": "Within five years"
+            },
+            "column": "value",
+            "format": ".1f"
+          },
+          {
+            "filter": {
+              "period": "2015 to 2019",
+              "band": "1,500 m and deeper",
+              "group": "Within five years"
+            },
+            "column": "value",
+            "format": ".1f"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "question": "How long did leases with a recorded first exploratory spud take to reach it?",
+    "record_types": [
+      "lease records",
+      "borehole spud dates"
+    ],
+    "csv": "spud_years_trend.csv",
+    "svg": "spud_years_trend.svg",
+    "note": "Only complete half decades with five years of follow up are plotted. The cohort tables also include leases effective in 2020.\nThe first panel follows leases through November 2026, so older leases have longer observation.\nThe second stops at the fifth anniversary. Medians include only leases with a qualifying spud.",
+    "bullets": [
+      {
+        "text": "The median wait to spud by the file date in the under 100 m band was 1.3 years in 2005 to 2009 and 1.2 years in 2015 to 2019.",
+        "cells": [
+          {
+            "filter": {
+              "period": "2005 to 2009",
+              "band": "Under 100 m",
+              "group": "Observed by file date"
+            },
+            "column": "value",
+            "format": ".1f"
+          },
+          {
+            "filter": {
+              "period": "2015 to 2019",
+              "band": "Under 100 m",
+              "group": "Observed by file date"
+            },
+            "column": "value",
+            "format": ".1f"
+          }
+        ]
+      },
+      {
+        "text": "The median wait to spud by the file date in the 1,500 m and deeper band was 5.8 years in 2005 to 2009 and 3.0 years in 2015 to 2019.",
+        "cells": [
+          {
+            "filter": {
+              "period": "2005 to 2009",
+              "band": "1,500 m and deeper",
+              "group": "Observed by file date"
+            },
+            "column": "value",
+            "format": ".1f"
+          },
+          {
+            "filter": {
+              "period": "2015 to 2019",
+              "band": "1,500 m and deeper",
+              "group": "Observed by file date"
+            },
+            "column": "value",
+            "format": ".1f"
+          }
+        ]
+      },
+      {
+        "text": "The median wait to spud within five years in the 1,500 m and deeper band was 3.6 years in 2005 to 2009 and 2.1 years in 2015 to 2019.",
+        "cells": [
+          {
+            "filter": {
+              "period": "2005 to 2009",
+              "band": "1,500 m and deeper",
+              "group": "Within five years"
+            },
+            "column": "value",
+            "format": ".1f"
+          },
+          {
+            "filter": {
+              "period": "2015 to 2019",
+              "band": "1,500 m and deeper",
+              "group": "Within five years"
+            },
+            "column": "value",
+            "format": ".1f"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "question": "How often and how soon did leases reach first crude oil in their first five years?",
+    "record_types": [
+      "lease records",
+      "monthly production"
+    ],
+    "csv": "crude_trend.csv",
+    "svg": "crude_trend.svg",
+    "note": "The table covers leases effective from 2005 to 2020. The plot shows the three complete five year periods through 2019.\nEach lease has 60 reporting months from its effective month. The median uses first crude in months 0 to 59. A gap means no median.",
+    "bullets": [
+      {
+        "text": "The share reaching first crude in the under 100 m band was 0.8% in 2005 to 2009 and 2.5% in 2015 to 2019.",
+        "cells": [
+          {
+            "filter": {
+              "period": "2005 to 2009",
+              "band": "Under 100 m",
+              "group": "Share reaching first crude"
+            },
+            "column": "value",
+            "format": ".1f"
+          },
+          {
+            "filter": {
+              "period": "2015 to 2019",
+              "band": "Under 100 m",
+              "group": "Share reaching first crude"
+            },
+            "column": "value",
+            "format": ".1f"
+          }
+        ]
+      },
+      {
+        "text": "The share reaching first crude in the 1,500 m and deeper band was 0.0% in 2005 to 2009 and 0.4% in 2015 to 2019.",
+        "cells": [
+          {
+            "filter": {
+              "period": "2005 to 2009",
+              "band": "1,500 m and deeper",
+              "group": "Share reaching first crude"
+            },
+            "column": "value",
+            "format": ".1f"
+          },
+          {
+            "filter": {
+              "period": "2015 to 2019",
+              "band": "1,500 m and deeper",
+              "group": "Share reaching first crude"
+            },
+            "column": "value",
+            "format": ".1f"
+          }
+        ]
+      },
+      {
+        "text": "The median wait to first crude in the under 100 m band was 2.2 years in 2005 to 2009 and 4.0 years in 2015 to 2019.",
+        "cells": [
+          {
+            "filter": {
+              "period": "2005 to 2009",
+              "band": "Under 100 m",
+              "group": "Time among those reaching first crude"
+            },
+            "column": "value",
+            "format": ".1f"
+          },
+          {
+            "filter": {
+              "period": "2015 to 2019",
+              "band": "Under 100 m",
+              "group": "Time among those reaching first crude"
+            },
+            "column": "value",
+            "format": ".1f"
+          }
+        ]
+      },
+      {
+        "csv": "first_production.csv",
+        "text": "Across all depths, 116 of 7,126 eligible leases (1.6%) reported first hydrocarbon within five years. Among those leases, the median wait was 2.4 years (29 months).",
+        "cells": [
+          {
+            "filter": {
+              "period": "2005 to 2020",
+              "depth_band": "All bands",
+              "event": "Any hydrocarbon"
+            },
+            "column": "timed_leases",
+            "format": ",.0f"
+          },
+          {
+            "filter": {
+              "period": "2005 to 2020",
+              "depth_band": "All bands",
+              "event": "Any hydrocarbon"
+            },
+            "column": "leases",
+            "format": ",.0f"
+          },
+          {
+            "filter": {
+              "period": "2005 to 2020",
+              "depth_band": "All bands",
+              "event": "Any hydrocarbon"
+            },
+            "column": "share_pct",
+            "format": ".1f"
+          },
+          {
+            "filter": {
+              "period": "2005 to 2020",
+              "depth_band": "All bands",
+              "event": "Any hydrocarbon"
+            },
+            "column": "median_years",
+            "format": ".1f"
+          },
+          {
+            "filter": {
+              "period": "2005 to 2020",
+              "depth_band": "All bands",
+              "event": "Any hydrocarbon"
+            },
+            "column": "months_median",
+            "format": "g"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "question": "Which status did each lease cohort carry on the November 2026 tape?",
+    "record_types": [
+      "lease records"
+    ],
+    "csv": "status_trend.csv",
+    "svg": "status_trend.svg",
+    "note": "Each panel shows one lease status on the November 2, 2026 tape. Shares across codes sum to 100 percent within each band and period. Each panel has its own scale. The final period is partial.",
+    "bullets": [
+      {
+        "text": "The share coded RELINQ in the under 100 m band was 49.0% in 2005 to 2009 and 91.6% in 2020 to 2024.",
+        "cells": [
+          {
+            "filter": {
+              "period": "2005 to 2009",
+              "band": "Under 100 m",
+              "group": "RELINQ"
+            },
+            "column": "value",
+            "format": ".1f"
+          },
+          {
+            "filter": {
+              "period": "2020 to 2024",
+              "band": "Under 100 m",
+              "group": "RELINQ"
+            },
+            "column": "value",
+            "format": ".1f"
+          }
+        ]
+      },
+      {
+        "text": "The share coded RELINQ in the 1,500 m and deeper band was 70.4% in 2005 to 2009 and 10.2% in 2020 to 2024.",
+        "cells": [
+          {
+            "filter": {
+              "period": "2005 to 2009",
+              "band": "1,500 m and deeper",
+              "group": "RELINQ"
+            },
+            "column": "value",
+            "format": ".1f"
+          },
+          {
+            "filter": {
+              "period": "2020 to 2024",
+              "band": "1,500 m and deeper",
+              "group": "RELINQ"
+            },
+            "column": "value",
+            "format": ".1f"
+          }
+        ]
+      },
+      {
+        "text": "The share coded PRIMRY in the 1,500 m and deeper band was 0.0% in 2005 to 2009 and 89.8% in 2020 to 2024.",
+        "cells": [
+          {
+            "filter": {
+              "period": "2005 to 2009",
+              "band": "1,500 m and deeper",
+              "group": "PRIMRY"
+            },
+            "column": "value",
+            "format": ".1f"
+          },
+          {
+            "filter": {
+              "period": "2020 to 2024",
+              "band": "1,500 m and deeper",
+              "group": "PRIMRY"
+            },
+            "column": "value",
+            "format": ".1f"
+          }
+        ]
+      }
+    ]
+  }
+]

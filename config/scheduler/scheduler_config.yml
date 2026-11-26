@@ -42,7 +42,8 @@ jobs:
     time: "04:00"
     enabled: true
     output_dir: data/modules/eia
-    # api_key: null  # Set to your EIA API key for authenticated endpoints
+    # EIA_API_KEY is required; see docs/ops/eia-authentication.md.
+    # A non-blank api_key setting overrides the environment variable.
 
   - name: metocean_refresh
     interval: daily
@@ -81,7 +82,7 @@ jobs:
     time: "08:00"
     enabled: true
     output_dir: data/spain/cores
-    force_refresh: false
+    force_refresh: true
     refresh_fixture: true
     fixture_output_dir: packages/worldenergydata-spain/src/worldenergydata/spain/data/cores
     density_registry_path: packages/worldenergydata-spain/src/worldenergydata/spain/data/cores/crude_density_factors.json

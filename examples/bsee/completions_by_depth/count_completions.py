@@ -37,7 +37,10 @@ from collections import Counter
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
+sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT.parents[2] / "packages/worldenergydata-bsee/src"))
+from comp_yearly import write_annual_trends  # noqa: E402
+
 from worldenergydata.bsee.half_decade import PERIODS, summarize  # noqa: E402
 from worldenergydata.bsee.yearly_trend import with_trend  # noqa: E402
 
@@ -583,14 +586,18 @@ def percent(part, whole):
     return round(100 * part / whole, 1) if whole else ""
 
 
-def drilled_observations(inventory, types, initial, file_date):
+def drilled_observations(
+    inventory, types, initial, file_date, *, include_unknown_depth=False
+):
     """Group distinct drilled wells by first spud and any initial permit by cutoff."""
     approved = {a["api10"] for a in initial if a["date"] and a["date"] <= file_date}
     groups = {"exploration": "Exploratory wells", "development": "Development wells"}
     observations = {group: [] for group in groups.values()}
     for well in inventory.itertuples():
         group = groups.get(types.get(well.api10))
-        if group is None or well.band == "no depth" or ci.pd.isna(well.spud):
+        if group is None or ci.pd.isna(well.spud):
+            continue
+        if well.band == "no depth" and not include_unknown_depth:
             continue
         if well.spud.date() <= file_date:
             observations[group].append(
@@ -1349,6 +1356,10 @@ def run(data_dir, out):
             or cross[side]["this_article"] != cross[side]["c6_code"]
         ):
             raise RuntimeError(f"{side} differ from C6's code; see verification.json")
+    all_drilled = drilled_observations(
+        inventory, types, initial, file_date, include_unknown_depth=True
+    )
+    write_annual_trends(out, all_drilled)
     return summary
 
 
