@@ -148,16 +148,86 @@ class TestAnnualCharts(unittest.TestCase):
         self.charts.write_figures(self.output)
         self.assertEqual(first, {p.name: p.read_bytes() for p in self.output.iterdir()})
 
+    def test_partial_year_cutoff_and_fixed_point_tooltip(self):
+        series = self.output / "annual_trends.csv"
+        series.write_bytes(
+            series.read_bytes().replace(
+                b"2026,1,1,,verified", b"2026,1,12345,,verified", 1
+            )
+        )
+        self.charts.write_figures(self.output)
+        html = (self.output / "figure-1a.html").read_text(encoding="utf-8")
+        self.assertIn("2026 (partial through October 2026)</option>", html)
+        self.assertIn("Annual value 12,345.", html)
+        self.assertEqual(self.charts.format_readout(1.0625), "1.063")
+
+    def test_smallest_covering_scale(self):
+        for peak, top, step in (
+            (21.69, 25, 5),
+            (579, 600, 200),
+            (6.92, 8, 2),
+            (1.42, 1.5, 0.5),
+            (7.69, 8, 2),
+            (29, 30, 10),
+            (0.3, 0.3, 0.1),
+        ):
+            with self.subTest(peak=peak):
+                self.assertEqual(self.charts.scale(peak), (top, step))
+
     def test_scale_uses_selected_groups_and_treats_cutoff_as_inclusive(self):
         figures = [
             {"figure_number": str(i), "measure": "count", "groups": [str(i)]}
             for i in range(1, 4)
         ]
         self.charts.assign_scales(figures, {"1": 81, "2": 30, "3": 29})
-        self.assertEqual([fig["y_scale"]["max"] for fig in figures], [100, 100, 50])
+        self.assertEqual([fig["y_scale"]["max"] for fig in figures], [100, 100, 30])
         self.assertEqual(
             [fig["y_scale"]["shared"] for fig in figures],
             ["measure:count", "measure:count", "panels"],
         )
         for figure in figures:
             self.assertTrue(figure["scale_note"])
+
+
+def test_yearly_svg_build_gate(tmp_path, monkeypatch):
+    monkeypatch.syspath_prepend(str(EXAMPLE))
+    from lease_analysis import validate_yearly_svg
+
+    yearly = EXAMPLE / "output/yearly"
+    for entry in json.loads((yearly / "figures.json").read_bytes()):
+        validate_yearly_svg(yearly / entry["svg"])
+
+    path = tmp_path / "figure-1a.svg"
+    source = (yearly / path.name).read_text(encoding="utf-8")
+    for tag in ("clipPath", "pattern", "filter", "mask", "foreignObject", "image"):
+        path.write_text(source.replace("</svg>", f"<{tag}/></svg>"), encoding="utf-8")
+        with pytest.raises(ValueError, match=tag):
+            validate_yearly_svg(path)
+
+    for selector, attribute, value in [
+        (".", "font-family", "Arial"),
+        (".//{*}g[@data-legend]", "font-size", "14"),
+        ("{*}text", "font-size", "17"),
+        (".//{*}circle", "r", "4"),
+        (".//{*}path[@class='annual']", "stroke-width", "1"),
+        (".//{*}path[@class='trend']", "stroke-width", "3"),
+        (".//{*}g[@data-series]", "clip-path", "url(#crop)"),
+    ]:
+        root = ET.fromstring(source)
+        root.find(selector).set(attribute, value)
+        ET.ElementTree(root).write(path, encoding="utf-8")
+        with pytest.raises(ValueError, match=attribute):
+            validate_yearly_svg(path)
+
+    for selector, dash in [
+        ("{*}text", "-"),
+        (".//{*}circle/{*}title", "–"),
+        ("{*}title", "—"),
+        (".//{*}circle/{*}title", "‑"),
+        (".//{*}circle/{*}title", "−"),
+    ]:
+        root = ET.fromstring(source)
+        root.find(selector).text += dash
+        ET.ElementTree(root).write(path, encoding="utf-8")
+        with pytest.raises(ValueError, match="dash"):
+            validate_yearly_svg(path)

@@ -18,7 +18,7 @@ A surface match identifies where a bore started. Its bottom may lie on another l
 
 ## Trends by lease effective year
 
-The r2.4 charts group leases by the calendar year in which they became effective. The all-depth charts pool individual leases before calculating percentages and medians. A depth comparison follows each all-depth measure except for status, which combines all depths in one chart. Each trend line averages five consecutive, complete annual observations. The 2025 lease count is zero. The 2026 count through October is partial and is excluded from the average. [Annual values](output/yearly/annual_trends.csv) · [Static and interactive figure manifest](output/yearly/figures.json)
+The r3 charts group leases by the calendar year in which they became effective. The all-depth charts pool individual leases before calculating percentages and medians. A depth comparison follows each all-depth measure except for status, which combines all depths in one chart. Each trend line averages five consecutive, complete annual observations. The 2025 lease count is zero. The 2026 count through October is partial and is excluded from the average. [Annual values](output/yearly/annual_trends.csv) · [Static and interactive figure manifest](output/yearly/figures.json)
 
 | Question | All water depths | Four depth bands |
 | --- | --- | --- |

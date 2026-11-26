@@ -5,7 +5,7 @@ import json
 import math
 import textwrap
 from collections import defaultdict
-from decimal import Decimal
+from decimal import ROUND_HALF_UP, Decimal
 from html import escape
 from pathlib import Path
 from xml.etree import ElementTree as ET
@@ -178,7 +178,7 @@ def specifications():
         "Share of effective leases (%)",
         "status_share",
         [("status_" + code, code) for code in STATUS_ORDER],
-        "Each code is the status on the November 2, 2026 lease tape. A blank share means no leases took effect that year.",
+        "Each code is the status on the November 2, 2026 lease tape. The final effective month is October 2026. A blank share means no leases took effect that year.",
     )
     return figures
 
@@ -187,12 +187,21 @@ def scale(peak):
     """Smallest covering nice top with four to six ticks on a zero based axis."""
     if peak <= 0:
         return 1, 0.2
-    unit = 10 ** math.floor(math.log10(peak))
-    for factor, steps in ((1, 5), (2, 4), (5, 5), (10, 5)):
-        top = factor * unit
-        if top >= peak:
-            return top, top / steps
-    raise ValueError(f"Invalid peak {peak}")
+    peak = Decimal(str(peak))
+    exponent = peak.adjusted()
+    # Smaller decades cannot cover the peak even with five intervals at step 5.
+    steps = [
+        Decimal(factor).scaleb(k)
+        for k in (exponent - 1, exponent)
+        for factor in (1, 2, 5)
+    ]
+    top, step = min(
+        (count * step, step)
+        for step in steps
+        for count in (3, 4, 5)
+        if count * step >= peak
+    )
+    return float(top), float(step)
 
 
 def format_tick(value):
@@ -206,7 +215,8 @@ def assign_scales(figures, peaks):
     for measure, members in measures.items():
         maxima = [max(peaks[group] for group in f["groups"]) for f in members]
         pooled = scale(max(maxima))
-        eligible = [peak >= 0.3 * pooled[0] for peak in maxima]
+        cutoff = Decimal("0.3") * Decimal(str(pooled[0]))
+        eligible = [Decimal(str(peak)) >= cutoff for peak in maxima]
         for fig, peak, qualifies in zip(members, maxima, eligible):
             shared = qualifies and sum(eligible) >= 2
             top, step = pooled if shared else scale(peak)
@@ -235,6 +245,11 @@ def element(parent, tag, **attrs):
 
 def label(parent, x, y, words, **attrs):
     element(parent, "text", x=x, y=y, **attrs).text = words
+
+
+def format_readout(value):
+    rounded = Decimal(str(value)).quantize(Decimal("0.001"), rounding=ROUND_HALF_UP)
+    return f"{rounded:,.3f}".rstrip("0").rstrip(".")
 
 
 def tint(color):
@@ -266,11 +281,11 @@ def render(figure, groups):
         legend.append((x, y))
         x += width
     top, bottom = y + 57, y + 332
-    notes = textwrap.wrap(figure["note"], width=90)
+    notes = textwrap.wrap(figure["note"], width=76)
     if "coverage_note" in figure:
-        notes += textwrap.wrap(figure["coverage_note"], width=90)
+        notes += textwrap.wrap(figure["coverage_note"], width=76)
     if "scale_note" in figure:
-        notes += textwrap.wrap(figure["scale_note"], width=90)
+        notes += textwrap.wrap(figure["scale_note"], width=76)
     height = bottom + 100 + 22 * len(notes)
     root = ET.Element(
         "svg",
@@ -293,7 +308,7 @@ def render(figure, groups):
         root,
         22,
         58,
-        "Markers and thin lines show annual values. Thick, lighter lines show the 5 year trailing mean.",
+        "Markers show annual values. Thick lines show the 5 year trailing mean.",
     )
     colors = _COLORS if figure["series_by"] == "depth_band" else MEASURE_COLORS
     styles = []
@@ -342,7 +357,7 @@ def render(figure, groups):
         tick = Decimal(str(step)) * i
         y = round(ypos(float(tick)), 2)
         element(root, "line", x1=left, x2=right, y1=y, y2=y, stroke="#cfd9de")
-        label(root, left - 9, y + 5, format_tick(tick), text_anchor="end")
+        label(root, left - 9, round(y + 5, 2), format_tick(tick), text_anchor="end")
     xticks = [
         years[0],
         *(yr for yr in years[1:-1] if yr % 5 == 0 and years[-1] - yr >= 2),
@@ -406,12 +421,12 @@ def render(figure, groups):
                 fill="white" if yr in partial else color,
                 data_year=yr,
             )
-            result = "unavailable" if mean is None else f"{mean:,.4g}"
-            when = str(yr) + (" (partial)" if yr in partial else "")
+            result = "unavailable" if mean is None else format_readout(mean)
+            when = str(yr) + (" (partial through October 2026)" if yr in partial else "")
             element(
                 point, "title"
             ).text = (
-                f"{name}, {when}. Annual value {value:,.4g}. Five year mean {result}."
+                f"{name}, {when}. Annual value {format_readout(value)}. Five year mean {result}."
             )
     for i, line in enumerate(notes):
         label(root, 22, bottom + 86 + i * 22, line)
@@ -433,7 +448,7 @@ def interactive(figure, svg, groups):
         for key in figure["groups"]
     ]
     options = "".join(
-        f'<option value="{year}">{year}{" (partial)" if partial else ""}</option>'
+        f'<option value="{year}">{year}{" (partial through October 2026)" if partial else ""}</option>'
         for year, _, _, partial, _ in data[0]
     )
     return (

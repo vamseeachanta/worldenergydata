@@ -4,7 +4,7 @@ import csv
 import hashlib
 import os
 import re
-from collections import defaultdict
+from collections import Counter
 from pathlib import Path
 from zipfile import ZipFile
 
@@ -25,9 +25,8 @@ def saved_rows():
 @pytest.mark.parametrize(
     "year,expected", [(2005, 603), (2010, 449), (2025, 0), (2026, 215)]
 )
-def test_published_annual_counts_against_disjoint_lsetape_status_counts(year, expected):
-    # Closed-form count: sum mutually exclusive statuses for the named effective
-    # year, independently of the issuance table and yearly-series calculation.
+def test_cross_table_reconciliation_of_annual_issuance_and_statuses(year, expected):
+    # Both published tables derive from the same lease frame.
     with (EXAMPLE / "output/current_status.csv").open(
         encoding="utf-8", newline=""
     ) as stream:
@@ -55,21 +54,48 @@ def test_source_tape_count_by_fixed_width_fields():
     assert hashlib.sha256(tape.read_bytes()).hexdigest() == (
         "46e11a22d1314fe838f31093358f2dbf435d3c5460635d224b4718db77a91c08"
     )
-    ids = defaultdict(set)
-    # BSEE LSETAPE positions 1..7, 51..58, 161..163. Direct byte slices
-    # avoid reusing the pandas study parser, joins, or annual aggregator.
+    months, seen_leases = set(), set()
+    leases, shallow, producing = Counter(), Counter(), Counter()
+    # LSETAPE positions 51..58 are YYYYMMDD. Block depths (150..159) are
+    # feet, planning area is 161..163, and the status code is 171..176.
     with ZipFile(tape) as archive, archive.open("LSETAPE.DAT") as stream:
         for row in stream:
-            lease, year, area = row[:7].strip(), row[50:54], row[160:163]
-            if area in {b"CGM", b"EGM", b"WGM"} and re.fullmatch(rb"G?\d{5,6}", lease):
-                ids[year].add(lease)
-    plotted = {
-        r["year"]: float(r["value"])
-        for r in saved_rows()
-        if r["metric"] == "effective_leases" and r["band"] == TOTAL
-    }
-    for year in ("2005", "2010", "2025", "2026"):
-        assert plotted[year] == len(ids[year.encode()])
+            lease, month, area = row[:7].strip(), row[50:56], row[160:163]
+            if area not in {b"CGM", b"EGM", b"WGM"} or not re.fullmatch(
+                rb"G?\d{5,6}", lease
+            ):
+                continue
+            year = month[:4]
+            if not b"2005" <= year <= b"2026":
+                continue
+            assert lease not in seen_leases
+            seen_leases.add(lease)
+            months.add(month)
+            leases[year] += 1
+            low, high = int(row[149:154]), int(row[154:159])
+            assert 0 <= low <= high and high > 0
+            if high * 3048 < 100 * 10000:  # Maximum block depth below 100 m.
+                shallow[year] += 1
+            if row[170:176].strip() == b"PROD":
+                producing[year] += 1
+    assert (min(months), max(months)) == (b"200504", b"202610")
+    plotted = {(r["metric"], r["band"], r["year"]): r for r in saved_rows()}
+    for year in range(2005, 2027):
+        key = str(year)
+        stamp = key.encode("ascii")
+        assert float(plotted["effective_leases", TOTAL, key]["value"]) == leases[stamp]
+        assert (
+            float(plotted["effective_leases", "Under 100 m", key]["value"])
+            == shallow[stamp]
+        )
+        status = plotted["status_PROD", TOTAL, key]
+        assert int(status["events"]) == producing[stamp]
+        if leases[stamp]:
+            assert float(status["value"]) == pytest.approx(
+                100 * producing[stamp] / leases[stamp]
+            )
+        else:
+            assert status["value"] == ""
 
 
 def test_five_complete_calendar_values_and_partial_year():
@@ -85,6 +111,20 @@ def test_five_complete_calendar_values_and_partial_year():
         )
     assert float(rows[2025]["value"]) == 0
     assert rows[2026]["partial"] == "1" and rows[2026]["moving_average"] == ""
+
+
+@pytest.mark.parametrize(
+    "metric,band", [("spud_share_5y", "Under 100 m"), ("spud_years_5y", TOTAL)]
+)
+def test_2011_gap_suppresses_five_trailing_means_in_csv(metric, band):
+    rows = {
+        int(r["year"]): r
+        for r in saved_rows()
+        if r["metric"] == metric and r["band"] == band
+    }
+    assert rows[2011]["value"] == ""
+    assert all(rows[y]["moving_average"] == "" for y in range(2011, 2016))
+    assert rows[2010]["moving_average"] and rows[2016]["moving_average"]
 
 
 def test_qualifying_windows_and_pooled_medians(monkeypatch):
@@ -120,7 +160,39 @@ def test_qualifying_windows_and_pooled_medians(monkeypatch):
     assert pd.isna(rows["crude_years_5y", "100 to 500 m", 2005]["value"])
     assert pd.isna(rows["spud_share_observed", TOTAL, 2006]["value"])
     assert pd.isna(rows["spud_share_observed", TOTAL, 2009]["moving_average"])
+    partial = rows["effective_leases", TOTAL, 2026]
+    assert partial["value"] == partial["partial"] == 1
+    assert pd.isna(partial["moving_average"])
     assert ("crude_share_5y", TOTAL, 2026) not in rows
+
+
+def test_retained_tables_agree_with_full_yearly_series(monkeypatch):
+    monkeypatch.syspath_prepend(str(EXAMPLE))
+    from retained_yearly import retained_series
+
+    output = EXAMPLE / "output"
+    index = ["metric", "band", "year"]
+    raw = pd.read_csv(output / "yearly/annual_trends.csv").set_index(index).sort_index()
+    retained = retained_series(output).set_index(index).sort_index()
+    assert raw.index.is_unique and raw.index.equals(retained.index)
+    assert raw.availability.eq("verified").all()
+    for field in ("group", "leases", "partial"):
+        pd.testing.assert_series_equal(raw[field], retained[field], check_dtype=False)
+    for field in ("events", "value", "moving_average"):
+        # Verified values include undefined medians and zero-denominator shares.
+        known = (
+            retained.availability.eq("verified")
+            if field == "value"
+            else retained[field].notna()
+        )
+        pd.testing.assert_series_equal(
+            raw.loc[known, field],
+            retained.loc[known, field],
+            check_dtype=False,
+            check_exact=False,
+            rtol=1e-9,
+            atol=1e-10,
+        )
 
 
 def test_retained_tables_leave_unresolved_values_unavailable(monkeypatch):

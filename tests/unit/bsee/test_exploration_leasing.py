@@ -4,7 +4,6 @@ import csv
 import hashlib
 import importlib
 import json
-import math
 import os
 import re
 import shutil
@@ -158,7 +157,13 @@ def test_published_output_inventory_and_checks():
     assert {p.name for p in (OUTPUT / "yearly").iterdir()} == YEARLY_FILES
     assert all((OUTPUT / name).is_file() for name in EXPECTED_FILES)
     lines = (OUTPUT / "checks.txt").read_text(encoding="utf-8").splitlines()
-    assert len(lines) == len(set(lines)) == 20
+    yearly_checks = {
+        f"PASS  Yearly {name} meets chart standard items 5 and 7"
+        for name in YEARLY_FILES
+        if name.endswith(".svg")
+    }
+    assert yearly_checks <= set(lines)
+    assert len(lines) == len(set(lines)) == 20 + len(yearly_checks)
     assert all(line.startswith("PASS  ") for line in lines)
 
 
@@ -762,43 +767,35 @@ def test_regeneration_is_byte_identical(tmp_path, monkeypatch):
             "yearly"
         }
         assert {p.name for p in (directory / "yearly").iterdir()} == YEARLY_FILES
+    for name in sorted(YEARLY_FILES):
+        fresh = (output / "yearly" / name).read_bytes()
+        assert fresh == (OUTPUT / "yearly" / name).read_bytes(), name
+        assert fresh == (repeat / "yearly" / name).read_bytes(), name
     for name in sorted(EXPECTED_FILES):
         assert (output / name).read_bytes() == (OUTPUT / name).read_bytes(), name
-    for name in sorted(YEARLY_FILES):
-        expected_bytes = (output / "yearly" / name).read_bytes()
-        assert (repeat / "yearly" / name).read_bytes() == expected_bytes, name
 
-    # The shipped annual data may be a partial reconstruction from the
-    # retained tables. A raw rebuild must fill it and agree wherever the
-    # retained tables support an observation or a five-year mean.
-    def indexed(directory):
-        rows = read_rows(directory / "yearly/annual_trends.csv")
-        result = {(r["group"], r["year"]): r for r in rows}
-        assert len(result) == len(rows)
-        return result
 
-    raw, retained = indexed(output), indexed(OUTPUT)
-    assert raw.keys() == retained.keys()
-    for key, actual in raw.items():
-        expected = retained[key]
-        assert actual["availability"] == "verified"
-        for field in ("metric", "band", "partial", "leases"):
-            assert actual[field] == expected[field], (key, field)
-        if expected["events"] != "":
-            assert actual["events"] == expected["events"], key
-        if expected["availability"] == "verified":
-            if expected["value"] == "":
-                assert actual["value"] == "", key
-            else:
-                assert math.isclose(
-                    float(actual["value"]), float(expected["value"]), abs_tol=1e-10
-                ), key
-        if expected["moving_average"] != "":
-            assert math.isclose(
-                float(actual["moving_average"]),
-                float(expected["moving_average"]),
-                abs_tol=1e-10,
-            ), key
+def test_legacy_exp_svg_rounds_coordinates_at_write_time(modules, tmp_path):
+    from lease_trends import MATURE, save_figure
+
+    save_figure(
+        tmp_path,
+        "crude_trend",
+        read_rows(OUTPUT / "crude_trend.csv"),
+        periods=MATURE,
+        ylabel="Crude oil",
+        question="When?",
+        sources=[],
+        note="",
+    )
+    root = ET.parse(tmp_path / "crude_trend.svg").getroot()
+    coords = {"x", "y", "x1", "y1", "x2", "y2", "cx", "cy"}
+    for element in root.iter():
+        for attr in coords.intersection(element.attrib):
+            value = element.attrib[attr]
+            assert float(value) == round(float(value), 6), (attr, value)
+    first_line = root.find("{http://www.w3.org/2000/svg}line")
+    assert float(first_line.attrib["x1"]) == 220
 
 
 def test_calendar_month_lag_and_primary_term_boundary(modules):

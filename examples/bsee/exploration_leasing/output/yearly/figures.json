@@ -22,11 +22,11 @@
     "svg": "figure-1a.svg",
     "interactive": "figure-1a.html",
     "y_scale": {
-      "max": 2000,
+      "max": 2000.0,
       "step": 500.0,
       "shared": "panels"
     },
-    "scale_note": "Y maximum 2,000, against 1,000 in Figure 1B."
+    "scale_note": "Y maximum 2,000, against 600 in Figure 1B."
   },
   {
     "figure_number": "1B",
@@ -57,11 +57,11 @@
     "svg": "figure-1b.svg",
     "interactive": "figure-1b.html",
     "y_scale": {
-      "max": 1000,
+      "max": 600.0,
       "step": 200.0,
       "shared": "panels"
     },
-    "scale_note": "Y maximum 1,000, against 2,000 in Figure 1A."
+    "scale_note": "Y maximum 600, against 2,000 in Figure 1A."
   },
   {
     "figure_number": "2A",
@@ -88,11 +88,10 @@
     "svg": "figure-2a.svg",
     "interactive": "figure-2a.html",
     "y_scale": {
-      "max": 20,
+      "max": 25.0,
       "step": 5.0,
-      "shared": "panels"
-    },
-    "scale_note": "Y maximum 20, against 50 in Figure 2B, 50 in Figure 2C."
+      "shared": "measure:spud_share"
+    }
   },
   {
     "figure_number": "2B",
@@ -123,11 +122,10 @@
     "svg": "figure-2b.svg",
     "interactive": "figure-2b.html",
     "y_scale": {
-      "max": 50,
-      "step": 10.0,
+      "max": 25.0,
+      "step": 5.0,
       "shared": "measure:spud_share"
-    },
-    "scale_note": "Y maximum 50, against 20 in Figure 2A, 50 in Figure 2C."
+    }
   },
   {
     "figure_number": "2C",
@@ -158,11 +156,10 @@
     "svg": "figure-2c.svg",
     "interactive": "figure-2c.html",
     "y_scale": {
-      "max": 50,
-      "step": 10.0,
+      "max": 25.0,
+      "step": 5.0,
       "shared": "measure:spud_share"
-    },
-    "scale_note": "Y maximum 50, against 20 in Figure 2A, 50 in Figure 2B."
+    }
   },
   {
     "figure_number": "3A",
@@ -189,7 +186,7 @@
     "svg": "figure-3a.svg",
     "interactive": "figure-3a.html",
     "y_scale": {
-      "max": 10,
+      "max": 8.0,
       "step": 2.0,
       "shared": "measure:spud_years"
     }
@@ -223,7 +220,7 @@
     "svg": "figure-3b.svg",
     "interactive": "figure-3b.html",
     "y_scale": {
-      "max": 10,
+      "max": 8.0,
       "step": 2.0,
       "shared": "measure:spud_years"
     }
@@ -257,7 +254,7 @@
     "svg": "figure-3c.svg",
     "interactive": "figure-3c.html",
     "y_scale": {
-      "max": 10,
+      "max": 8.0,
       "step": 2.0,
       "shared": "measure:spud_years"
     }
@@ -285,11 +282,11 @@
     "svg": "figure-4a.svg",
     "interactive": "figure-4a.html",
     "y_scale": {
-      "max": 2,
+      "max": 1.5,
       "step": 0.5,
       "shared": "panels"
     },
-    "scale_note": "Y maximum 2, against 10 in Figure 4C."
+    "scale_note": "Y maximum 1.5, against 8 in Figure 4C."
   },
   {
     "figure_number": "4B",
@@ -314,7 +311,7 @@
     "svg": "figure-4b.svg",
     "interactive": "figure-4b.html",
     "y_scale": {
-      "max": 5,
+      "max": 5.0,
       "step": 1.0,
       "shared": "measure:crude_years_5y"
     }
@@ -348,11 +345,11 @@
     "svg": "figure-4c.svg",
     "interactive": "figure-4c.html",
     "y_scale": {
-      "max": 10,
+      "max": 8.0,
       "step": 2.0,
       "shared": "panels"
     },
-    "scale_note": "Y maximum 10, against 2 in Figure 4A."
+    "scale_note": "Y maximum 8, against 1.5 in Figure 4A."
   },
   {
     "figure_number": "4D",
@@ -383,7 +380,7 @@
     "svg": "figure-4d.svg",
     "interactive": "figure-4d.html",
     "y_scale": {
-      "max": 5,
+      "max": 5.0,
       "step": 1.0,
       "shared": "measure:crude_years_5y"
     }
@@ -393,7 +390,7 @@
     "title": "Lease status across all water depths",
     "ylabel": "Share of effective leases (%)",
     "measure": "status_share",
-    "note": "Each code is the status on the November 2, 2026 lease tape. A blank share means no leases took effect that year.",
+    "note": "Each code is the status on the November 2, 2026 lease tape. The final effective month is October 2026. A blank share means no leases took effect that year.",
     "role": "main",
     "x_unit": "year",
     "trend": "moving_average_5y_trailing",
@@ -427,7 +424,7 @@
     "svg": "figure-5.svg",
     "interactive": "figure-5.html",
     "y_scale": {
-      "max": 100,
+      "max": 100.0,
       "step": 20.0,
       "shared": "panels"
     }
