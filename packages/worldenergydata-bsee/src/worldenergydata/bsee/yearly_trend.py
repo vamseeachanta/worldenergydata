@@ -1,4 +1,4 @@
-"""Yearly values and five year trailing means for the BSEE well series."""
+"""Yearly trends in four depth-band panels or one panel of named series."""
 
 from __future__ import annotations
 
@@ -39,9 +39,7 @@ def _series_palette(names):
     if isinstance(names, str) or not isinstance(names, Sequence):
         raise ValueError("supply an ordered list of series names")
     if len(names) > len(_SERIES_COLOURS):
-        raise ValueError(
-            "chart-standard.md item 6 allows at most 4 named series per panel"
-        )
+        raise ValueError("A panel supports at most 4 named series")
     if not names or any(
         not isinstance(name, str) or not name.strip() for name in names
     ):
@@ -149,6 +147,20 @@ def with_trend(rows, *, is_count=False, partial_year=None, series_names=None):
                 )
             )
     return result
+
+
+def validate_coordinate_decimals(coordinate_decimals):
+    if type(coordinate_decimals) is not int or coordinate_decimals < 0:
+        raise ValueError("coordinate_decimals must be a nonnegative integer")
+
+
+def round_svg_positions(root, coordinate_decimals):
+    positions = {"x", "y", "x1", "y1", "x2", "y2", "cx", "cy"}
+    for node in root.iter():
+        for attr in positions.intersection(node.attrib):
+            value = node.get(attr)
+            if "." in value:
+                node.set(attr, f"{float(value):.{coordinate_decimals}f}")
 
 
 def _element(parent, tag, **attrs):
@@ -279,7 +291,7 @@ def _check_depth_scale(ticks):
         raise ValueError("expected evenly spaced nice y ticks including zero")
 
 
-def _path(panel, points, kind, colour, dashed):
+def _path(panel, points, kind, colour, dashed, decimals):
     commands = []
     previous = None
     for year, point in points:
@@ -288,9 +300,9 @@ def _path(panel, points, kind, colour, dashed):
         x, y = point
         # The zero length segment shows an isolated valid mean with a round cap.
         if previous != year - 1:
-            commands.append(f"M{x:.2f},{y:.2f} l0,0")
+            commands.append(f"M{x:.{decimals}f},{y:.{decimals}f} l0,0")
         else:
-            commands.append(f"L{x:.2f},{y:.2f}")
+            commands.append(f"L{x:.{decimals}f},{y:.{decimals}f}")
         previous = year
     if commands:
         _element(
@@ -321,6 +333,8 @@ def _panel(
     show_year_labels=True,
     width=830,
     height=122,
+    partial_label,
+    decimals,
 ):
     panel = _element(root, "g", **{"class": "panel"})
     if label:
@@ -370,9 +384,9 @@ def _panel(
                 panel,
                 x_of(partial_year),
                 top + height + 43,
-                "partial",
+                partial_label,
                 15,
-                text_anchor="middle",
+                text_anchor="middle" if partial_label == "partial" else "end",
             )
     for col, kind in [(1, "average"), (0, "yearly")]:
         for series, colour, dashed in data:
@@ -383,20 +397,22 @@ def _panel(
                 points.append(
                     (year, None if value is None else (x_of(year), y_of(value)))
                 )
-            _path(panel, points, kind, stroke, dashed)
+            _path(panel, points, kind, stroke, dashed, decimals)
     for series, colour, _ in data:
         for year, (value, _) in sorted(series.items()):
             if value is not None:
                 _marker(
                     panel,
-                    f"{x_of(year):.2f}",
-                    f"{y_of(value):.2f}",
+                    f"{x_of(year):.{decimals}f}",
+                    f"{y_of(value):.{decimals}f}",
                     colour,
                     partial=year == partial_year,
                 )
 
 
-def _band_panels(root, ylabel, measures, cells, years, partial_year, ticks, y_ticks):
+def _band_panels(
+    root, ylabel, measures, cells, years, partial_year, ticks, y_ticks, **panel_options
+):
     _line(root, 34, 60, 68, 60, _COLORS[2], _YEARLY_WIDTH)
     _marker(root, 51, 60, _COLORS[2])
     _text(root, 80, 66, "Yearly value")
@@ -437,13 +453,24 @@ def _band_panels(root, ylabel, measures, cells, years, partial_year, ticks, y_ti
             ticks,
             y_ticks=y_ticks,
             show_year_labels=i == len(BANDS) - 1,
+            **panel_options,
         )
         y += 181
     # The shared year ticks and partial-year annotation sit below the bottom row.
     return y + 43
 
 
-def _named_panel(root, ylabel, panel_title, palette, cells, years, partial_year, ticks):
+def _named_panel(
+    root,
+    ylabel,
+    panel_title,
+    palette,
+    cells,
+    years,
+    partial_year,
+    ticks,
+    **panel_options,
+):
     _text(root, 32, 66, "Series")
     _text(root, 510, 66, "Yearly value")
     _text(root, 650, 66, "5 year trailing moving average")
@@ -473,6 +500,7 @@ def _named_panel(root, ylabel, panel_title, palette, cells, years, partial_year,
         ticks,
         width=830,
         height=240,
+        **panel_options,
     )
     return top + 336
 
@@ -487,6 +515,8 @@ def render_svg(
     series_names=None,
     panel_title=None,
     y_scale=None,
+    partial_label="partial",
+    coordinate_decimals=None,
 ):
     """Render with_trend rows or their CSV readback, preserving measure order.
 
@@ -496,6 +526,12 @@ def render_svg(
     Set series_names to draw the named groups in order on one panel, with an
     optional panel_title. The note appears below the horizontal axis label.
     """
+    if coordinate_decimals is not None:
+        validate_coordinate_decimals(coordinate_decimals)
+    panel_options = dict(
+        partial_label=partial_label,
+        decimals=2 if coordinate_decimals is None else coordinate_decimals,
+    )
     if not all(t.strip() for t in (title, xlabel, ylabel)):
         raise ValueError("supply a title and axis labels with units")
     palette = _series_palette(series_names)
@@ -559,11 +595,27 @@ def render_svg(
     _text(root, 32, 32, title, 22, font_weight="bold")
     if palette is None:
         y = _band_panels(
-            root, ylabel, list(groups), cells, years, partial_year, ticks, y_scale
+            root,
+            ylabel,
+            list(groups),
+            cells,
+            years,
+            partial_year,
+            ticks,
+            y_scale,
+            **panel_options,
         )
     else:
         y = _named_panel(
-            root, ylabel, panel_title, palette, cells, years, partial_year, ticks
+            root,
+            ylabel,
+            panel_title,
+            palette,
+            cells,
+            years,
+            partial_year,
+            ticks,
+            **panel_options,
         )
     _text(
         root,
@@ -581,5 +633,7 @@ def render_svg(
     root.set("width", str(_VIEWBOX_WIDTH))
     root.set("height", str(height))
     root.set("viewBox", f"0 0 {_VIEWBOX_WIDTH} {height}")
+    if coordinate_decimals is not None:
+        round_svg_positions(root, coordinate_decimals)
     ET.indent(root)
     return ET.tostring(root, encoding="unicode") + "\n"

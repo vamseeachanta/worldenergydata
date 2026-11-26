@@ -257,7 +257,7 @@
       "2023 100 to 500 m",
       "2026 100 to 500 m"
     ],
-    "unavailable_cells": 7,
+    "empty_denominator_cells": 7,
     "coverage_note": "A zero denominator leaves 7 annual values blank. The chart omits those points and any mean requiring them. The interactive year table identifies the affected series.",
     "caption": "Each well counts in its first spud year. The numerator counts wells with an initial completion approval by the file date. Recent cohorts have shorter follow up. A blank means no wells of this type were first drilled in that band and year. Hollow markers show partial 2026 through 23 November 2026. Means end in 2025. Blank annual values: 2021 Under 100 m, 2023 Under 100 m, 2025 Under 100 m, 2026 Under 100 m, 2018 100 to 500 m, 2023 100 to 500 m, 2026 100 to 500 m. A zero denominator leaves 7 annual values blank. The chart omits those points and any mean requiring them. The interactive year table identifies the affected series."
   },
@@ -303,7 +303,7 @@
       "2026 500 to 1,500 m",
       "2005 1,500 m and deeper"
     ],
-    "unavailable_cells": 5,
+    "empty_denominator_cells": 5,
     "coverage_note": "A zero denominator leaves 5 annual values blank. The chart omits those points and any mean requiring them. The interactive year table identifies the affected series.",
     "caption": "Each well counts in its first spud year. The numerator counts wells with an initial completion approval by the file date. Recent cohorts have shorter follow up. A blank means no wells of this type were first drilled in that band and year. Hollow markers show partial 2026 through 23 November 2026. Means end in 2025. Blank annual values: 2021 100 to 500 m, 2024 100 to 500 m, 2026 100 to 500 m, 2026 500 to 1,500 m, 2005 1,500 m and deeper. A zero denominator leaves 5 annual values blank. The chart omits those points and any mean requiring them. The interactive year table identifies the affected series."
   },

@@ -177,12 +177,15 @@ By water depth, 2005 to 2026:
 - Perforated intervals (`perforated_intervals_by_band.csv`): of 5,143 completion
   intervals read, 82.7 % record one perforated interval and 0.9 % none.
 - Hydraulic fracturing sub-operation (`fracturing_by_year.csv`,
-  `fracturing_by_band.csv`): the code `FRAC` is first observed on a permit in
-  2015, so 2016 is the first full calendar year after that first observed use.
-  Of the 805 bores first approved for initial completion from 2016 to 23 Nov
-  2026, 538 (66.8 %) carry it. No permit before 2015 carries the code. The data
-  do not show when the code was introduced, or whether its absence before 2015
-  reflects coding or practice, so no trend is drawn across 2015.
+  `fracturing_by_band.csv`): the earliest dated permit carrying `FRAC` was
+  approved on 29 September 2015. The annual table groups bores by their
+  **first initial completion approval year**. A bore counts as flagged if any
+  initial completion approval through the file date carries `FRAC`. The one
+  flagged bore in the 2005 cohort received its flagged approval in 2025. The
+  one in the 2013 cohort received flagged approvals in 2022. Of 805 bores
+  first approved from 2016 through 23 November 2026, 538 (66.8 %) had a
+  flagged approval by the file date. The archive does not establish when the
+  code was introduced or when hydraulic fracturing began.
 - Historical pooled cohort ([drilled_to_completed.csv](output/drilled_to_completed.csv)):
   of the wells first drilled in 2005 to 2025, 792 of 1,655 exploratory wells
   (47.9 %) and 1,023 of 1,235 development wells (82.8 %) have an initial
@@ -252,7 +255,10 @@ The denominator counts all drilled wells in the same type, band and year.
 Figure 3A pools the counts across depths, including wells with unresolved depth.
 Figures 3B and 3C use the four reported depth bands. Type and depth follow the
 original hole and inventory rules. Wells with another or unstated type or no
-dated spud fall outside these cohorts. Later cohorts have had less time to receive an approval.
+dated spud fall outside these cohorts. Among otherwise eligible wells with
+known depth, 34,198 were first drilled before 2005 and zero after the file date
+(`drilled_wells_excluded_by_spud_date` in [summary.json](output/summary.json)).
+Later cohorts have had less time to receive an approval.
 
 The [shared annual series kit](../../../packages/worldenergydata-bsee/src/worldenergydata/bsee/series/README.md)
 plots the arithmetic mean of five consecutive complete yearly values at the last
@@ -260,11 +266,21 @@ year of the window. Each annual rate or share has equal weight in the mean.
 Inside the observation window an absent permit count is zero. A year with no
 wells in the denominator has a blank value and breaks the trend. The hollow
 2026 marker covers records through 23 November and is excluded from every mean.
-The four bands share a single pair of axes on each main depth chart. Caption
-notes give the maxima when figures with the same units use different scales.
-The appendix retains four stacked panels for standing-well rates and perforation flags.
+The four bands share one set of axes on each main depth chart. Vertical scales
+start at zero and cover all annual values and available means, including the
+partial year's annual value. The smallest covering maximum uses three to five
+intervals at a tick step of 1, 2 or 5 times a power of ten. Within one measure,
+figures whose peaks reach at least 30% of the group's rounded maximum share a
+scale when at least two qualify. Each other figure uses its own scale. The
+figure captions identify differing maxima. The appendix retains four stacked
+panels for standing-well rates and perforation flags.
 
-The appendix tables retain the r5.2 period counts for
+The shared `yearly_trend.render_svg` renderer also offers a single-panel
+named-series mode through `series_names`. It takes up to four ordered group
+names from one population. COMP's retained depth-panel charts use its
+four-band mode. The main overlays use the annual series kit.
+
+The appendix tables retain the half-decade counts for
 [initial and other approvals](output/appendix_01_approvals_by_period.csv),
 [recompletion and perforation approvals](output/appendix_02_recompletion_by_period.csv),
 [January well exposure](output/appendix_03_approvals_per_well.csv) and
@@ -275,10 +291,15 @@ rates and shares divide the pooled numerator by the pooled denominator.
 
 ## Checks
 
-Tests: [`tests/unit/bsee/test_completions_by_depth.py`](../../../tests/unit/bsee/test_completions_by_depth.py),
-written and committed before the counting code. Tolerances were fixed before
-the first run: every count comparison is exact; a percentage stored to one
-decimal equals its counts within 0.05 point.
+The counting checks use exact comparisons for counts and a tolerance of
+0.05 percentage points for percentages stored to one decimal. Five COMP test
+modules cover complementary comparisons.
+
+- [test_completions_by_depth.py](../../../tests/unit/bsee/test_completions_by_depth.py) checks source counts, cohort definitions and the archive recount.
+- [test_completion_trend_counts.py](../../../tests/unit/bsee/test_completion_trend_counts.py) reconciles annual numerators and denominators with the period tables.
+- [test_completion_figures.py](../../../tests/unit/bsee/test_completion_figures.py) checks the retained panel charts, scales and cell references.
+- [test_comp_annual_series.py](../../../tests/unit/bsee/test_comp_annual_series.py) checks the annual series against the pinned source bytes.
+- [test_comp_yearly_figures.py](../../../tests/unit/bsee/test_comp_yearly_figures.py) checks the overlay figures and offline pages.
 
 | Check | Comparator class | Result |
 | --- | --- | --- |
@@ -315,7 +336,7 @@ The published `output/verification.json` records the archive digests, code
 commit, command, Python and pandas versions and UTC time of the historical
 annual checks. A fresh count writes its own receipt in the chosen output
 directory. The [annual figure index](output/yearly/figures.json) names the plotted series.
-The [r5.5 figure index](output/figures.json) retains the earlier panel layout.
+The [stacked-panel figure index](output/figures.json) links the earlier charts to their CSVs.
 
 ## Limits
 
@@ -342,8 +363,7 @@ uv run python -I examples/bsee/completions_by_depth/count_completions.py \
   --out examples/bsee/completions_by_depth/output
 uv run --python 3.12 python examples/bsee/completions_by_depth/comp_charts.py
 BSEE_SERIES_BASIS_DIR=<that folder> uv run --python 3.12 python -m pytest \
-  tests/unit/bsee/test_completions_by_depth.py tests/unit/bsee/test_comp_annual_series.py \
-  tests/unit/bsee/test_comp_yearly_figures.py
+  tests/unit/bsee/ -q -k "comp or series_kit or yearly_trend or completions"
 ```
 
 Set `BSEE_SERIES_BASIS_DIR` to include the raw archive recount and the independent

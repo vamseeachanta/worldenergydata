@@ -303,9 +303,9 @@ def figure_findings(stem, rows):
     cells = {(r["group"], int(r["year"]), r["band"]): r for r in rows}
     shallow, deep = DEPTH_LABELS[0], DEPTH_LABELS[-1]
 
-    def reading(sentence, column, decimals, *keys):
+    def cell_reading(sentence, fields):
         references, values = [], []
-        for key in keys:
+        for key, column, decimals in fields:
             row = cells[key]
             references.append(
                 dict(
@@ -316,6 +316,9 @@ def figure_findings(stem, rows):
             )
             values.append(f"{float(row[column]):,.{decimals}f}")
         return dict(text=sentence.format(*values), cells=references)
+
+    def reading(sentence, column, decimals, *keys):
+        return cell_reading(sentence, ((key, column, decimals) for key in keys))
 
     if stem == "01_approvals_by_period":
         initial, other = "Initial completion", "Other completion work"
@@ -418,15 +421,26 @@ def figure_findings(stem, rows):
             ),
         ]
     exploratory, development = "Exploratory wells", "Development wells"
+
+    def cohort_reading(year, cohort):
+        fields = [
+            ((group, year, deep), column, 0)
+            for group in (exploratory, development)
+            for column in (
+                "with_initial_completion_approval",
+                "wells_first_drilled",
+                "value",
+            )
+        ]
+        return cell_reading(
+            f"In the {cohort} drilling cohort at 1,500 m and deeper, "
+            "{0} of {1} exploratory wells ({2}%) and {3} of {4} development wells "
+            "({5}%) had an initial approval.",
+            fields,
+        )
+
     return [
-        reading(
-            "At 1,500 m and deeper, {0}% of exploratory and {1}% of development wells "
-            "first drilled in 2025 had an initial approval.",
-            "value",
-            0,
-            (exploratory, 2025, deep),
-            (development, 2025, deep),
-        ),
+        cohort_reading(2025, "2025"),
         reading(
             "At 1,500 m and deeper, the five year average exploratory approval share "
             "rose from {0}% in 2009 to {1}% in 2025.",
@@ -435,14 +449,7 @@ def figure_findings(stem, rows):
             (exploratory, 2009, deep),
             (exploratory, 2025, deep),
         ),
-        reading(
-            "In the partial 2026 drilling cohort at 1,500 m and deeper, {0}% of "
-            "exploratory and {1}% of development wells had an initial approval.",
-            "value",
-            0,
-            (exploratory, 2026, deep),
-            (development, 2026, deep),
-        ),
+        cohort_reading(2026, "partial 2026"),
     ]
 
 

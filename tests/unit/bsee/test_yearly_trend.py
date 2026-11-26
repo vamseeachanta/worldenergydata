@@ -289,7 +289,7 @@ def test_named_series_share_one_panel_in_declared_order():
 @pytest.mark.parametrize("render", [False, True])
 def test_named_series_limit_applies_to_both_entry_points(render):
     names = [*STATUS_NAMES, "Active"]
-    with pytest.raises(ValueError, match=r"chart-standard\.md item 6.*4"):
+    with pytest.raises(ValueError, match=r"^A panel supports at most 4 named series$"):
         if render:
             render_svg([], series_names=names, **CHART_LABELS)
         else:

@@ -2,7 +2,7 @@
 !output/
 !output/*.csv
 !output/*.json
-!output/*.png
+output/*.png
 !output/*.svg
 !output/yearly/
 !output/yearly/*.csv

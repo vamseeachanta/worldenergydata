@@ -84,6 +84,36 @@ def test_drilled_figure_shows_first_drilling_periods_and_follow_up():
     )
 
 
+def test_drilled_year_bullets_quote_the_counts_behind_each_share():
+    figure = json.loads((OUTPUT / "figures.json").read_text())[3]
+    with (OUTPUT / figure["csv"]).open(newline="") as stream:
+        rows = list(csv.DictReader(stream))
+    expected = {
+        (year, group)
+        for year in ("2025", "2026")
+        for group in ("Exploratory wells", "Development wells")
+    }
+    observed = []
+    for bullet in figure["bullets"]:
+        for cell in bullet["cells"]:
+            if cell["column"] != "value":
+                continue
+            observed.append((cell["row"]["year"], cell["row"]["group"]))
+            row = next(
+                r for r in rows if all(r[k] == v for k, v in cell["row"].items())
+            )
+            for field in ("with_initial_completion_approval", "wells_first_drilled"):
+                assert any(
+                    ref["column"] == field and ref["row"] == cell["row"]
+                    for ref in bullet["cells"]
+                )
+            assert (
+                f"{row['with_initial_completion_approval']} of {row['wells_first_drilled']}"
+                in bullet["text"]
+            )
+    assert len(observed) == len(expected) and set(observed) == expected
+
+
 def test_body_figures_have_distinct_accessible_names():
     figures = json.loads((OUTPUT / "figures.json").read_text(encoding="utf-8"))
     names = [

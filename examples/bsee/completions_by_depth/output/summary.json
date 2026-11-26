@@ -58,5 +58,9 @@
     "VCW": 1
   },
   "completion_intervals_read": 5143,
-  "fracturing_code_first_year": 2015
+  "fracturing_code_first_year": 2015,
+  "drilled_wells_excluded_by_spud_date": {
+    "before_first_year": 34198,
+    "after_file_date": 0
+  }
 }

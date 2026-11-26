@@ -612,6 +612,18 @@ def drilled_observations(
     return observations
 
 
+def drilled_spud_exclusions(inventory, types, first_year, file_date):
+    """Count dated wells otherwise eligible for the depth-band drilling cohorts."""
+    eligible = inventory.api10.map(types).isin(["exploration", "development"])
+    spuds = inventory.loc[eligible & inventory.band.ne("no depth"), "spud"]
+    return {
+        "before_first_year": int((spuds.dt.year < first_year).sum()),
+        "after_file_date": int(
+            (spuds.dt.normalize() > ci.pd.Timestamp(file_date)).sum()
+        ),
+    }
+
+
 def drilled_year_rows(observations, years):
     result = []
     for group, wells in observations.items():
@@ -1333,6 +1345,9 @@ def run(data_dir, out):
         completion_reports_in_window_by_status=dict(sorted(status.items())),
         completion_intervals_read=sum(len(a["perforations"]) for a in attrs.values()),
         fracturing_code_first_year=frac_first_year,
+        drilled_wells_excluded_by_spud_date=drilled_spud_exclusions(
+            inventory, types, first_year, file_date
+        ),
     )
     write_json(summary, out, "summary")
     checks = {f"approvals_{k}": v for k, v in a_checks["checks"].items()}

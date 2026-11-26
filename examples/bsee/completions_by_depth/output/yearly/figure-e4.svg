@@ -14,16 +14,16 @@
   <text x="372" y="126" font-size="18">Reperforation</text>
   <g class="panel">
     <text x="82" y="157" font-size="19" font-weight="bold" fill="#6588a6">Under 100 m</text>
-    <line x1="82" y1="296.0" x2="912" y2="296.0" stroke="#d9e0e6" stroke-width="2" />
-    <text x="71" y="301.0" font-size="17" text-anchor="end">0</text>
-    <line x1="82" y1="265.5" x2="912" y2="265.5" stroke="#d9e0e6" stroke-width="2" />
-    <text x="71" y="270.5" font-size="17" text-anchor="end">20</text>
-    <line x1="82" y1="235.0" x2="912" y2="235.0" stroke="#d9e0e6" stroke-width="2" />
-    <text x="71" y="240.0" font-size="17" text-anchor="end">40</text>
-    <line x1="82" y1="204.5" x2="912" y2="204.5" stroke="#d9e0e6" stroke-width="2" />
-    <text x="71" y="209.5" font-size="17" text-anchor="end">60</text>
-    <line x1="82" y1="174.0" x2="912" y2="174.0" stroke="#d9e0e6" stroke-width="2" />
-    <text x="71" y="179.0" font-size="17" text-anchor="end">80</text>
+    <line x1="82" y1="296.00" x2="912" y2="296.00" stroke="#d9e0e6" stroke-width="2" />
+    <text x="71" y="301.00" font-size="17" text-anchor="end">0</text>
+    <line x1="82" y1="265.50" x2="912" y2="265.50" stroke="#d9e0e6" stroke-width="2" />
+    <text x="71" y="270.50" font-size="17" text-anchor="end">20</text>
+    <line x1="82" y1="235.00" x2="912" y2="235.00" stroke="#d9e0e6" stroke-width="2" />
+    <text x="71" y="240.00" font-size="17" text-anchor="end">40</text>
+    <line x1="82" y1="204.50" x2="912" y2="204.50" stroke="#d9e0e6" stroke-width="2" />
+    <text x="71" y="209.50" font-size="17" text-anchor="end">60</text>
+    <line x1="82" y1="174.00" x2="912" y2="174.00" stroke="#d9e0e6" stroke-width="2" />
+    <text x="71" y="179.00" font-size="17" text-anchor="end">80</text>
     <path d="M240.10,198.09 l0,0 L279.62,190.78 L319.14,186.81 L358.67,191.39 L398.19,195.96 L437.71,204.81 L477.24,217.00 L516.76,222.80 L556.29,224.02 L595.81,224.63 L635.33,230.73 L674.86,234.39 L714.38,245.37 L753.90,259.71 L793.43,272.82 L832.95,274.65 L872.48,277.39" fill="none" stroke="#a6bacb" stroke-width="5" stroke-linecap="round" class="average" />
     <path d="M240.10,243.84 l0,0 L279.62,240.19 L319.14,249.64 L358.67,259.10 L398.19,263.67 L437.71,261.84 L477.24,269.77 L516.76,273.43 L556.29,277.70 L595.81,280.75 L635.33,284.71 L674.86,286.24 L714.38,287.76 L753.90,285.02 L793.43,287.15 L832.95,287.76 L872.48,287.76" fill="none" stroke="#a6bacb" stroke-width="5" stroke-linecap="round" class="average" stroke-dasharray="8 6" />
     <path d="M82.00,222.80 l0,0 L121.52,206.03 L161.05,175.53 L200.57,199.93 L240.10,186.20 L279.62,186.20 L319.14,186.20 L358.67,198.40 L398.19,222.80 L437.71,230.43 L477.24,247.20 L516.76,215.18 L556.29,204.50 L595.81,225.85 L635.33,260.93 L674.86,265.50 L714.38,270.07 L753.90,276.18 L793.43,291.43 L832.95,270.07 L872.48,279.23 L912.00,285.32" fill="none" stroke="#6588a6" stroke-width="3" stroke-linecap="round" class="yearly" />
@@ -75,16 +75,16 @@
   </g>
   <g class="panel">
     <text x="82" y="338" font-size="19" font-weight="bold" fill="#427298">100 to 500 m</text>
-    <line x1="82" y1="477.0" x2="912" y2="477.0" stroke="#d9e0e6" stroke-width="2" />
-    <text x="71" y="482.0" font-size="17" text-anchor="end">0</text>
-    <line x1="82" y1="446.5" x2="912" y2="446.5" stroke="#d9e0e6" stroke-width="2" />
-    <text x="71" y="451.5" font-size="17" text-anchor="end">20</text>
-    <line x1="82" y1="416.0" x2="912" y2="416.0" stroke="#d9e0e6" stroke-width="2" />
-    <text x="71" y="421.0" font-size="17" text-anchor="end">40</text>
-    <line x1="82" y1="385.5" x2="912" y2="385.5" stroke="#d9e0e6" stroke-width="2" />
-    <text x="71" y="390.5" font-size="17" text-anchor="end">60</text>
-    <line x1="82" y1="355.0" x2="912" y2="355.0" stroke="#d9e0e6" stroke-width="2" />
-    <text x="71" y="360.0" font-size="17" text-anchor="end">80</text>
+    <line x1="82" y1="477.00" x2="912" y2="477.00" stroke="#d9e0e6" stroke-width="2" />
+    <text x="71" y="482.00" font-size="17" text-anchor="end">0</text>
+    <line x1="82" y1="446.50" x2="912" y2="446.50" stroke="#d9e0e6" stroke-width="2" />
+    <text x="71" y="451.50" font-size="17" text-anchor="end">20</text>
+    <line x1="82" y1="416.00" x2="912" y2="416.00" stroke="#d9e0e6" stroke-width="2" />
+    <text x="71" y="421.00" font-size="17" text-anchor="end">40</text>
+    <line x1="82" y1="385.50" x2="912" y2="385.50" stroke="#d9e0e6" stroke-width="2" />
+    <text x="71" y="390.50" font-size="17" text-anchor="end">60</text>
+    <line x1="82" y1="355.00" x2="912" y2="355.00" stroke="#d9e0e6" stroke-width="2" />
+    <text x="71" y="360.00" font-size="17" text-anchor="end">80</text>
     <path d="M240.10,474.56 l0,0 L279.62,473.64 L319.14,473.34 L358.67,471.51 L398.19,469.99 L437.71,467.85 L477.24,467.85 L516.76,468.15 L556.29,469.99 L595.81,472.43 L635.33,474.56 L674.86,475.17 L714.38,475.48 L753.90,474.87 L793.43,474.56 L832.95,475.17 L872.48,476.09" fill="none" stroke="#91adc3" stroke-width="5" stroke-linecap="round" class="average" />
     <path d="M240.10,475.78 l0,0 L279.62,474.25 L319.14,474.56 L358.67,475.17 L398.19,472.43 L437.71,472.43 L477.24,473.95 L516.76,473.64 L556.29,473.64 L595.81,476.39 L635.33,476.09 L674.86,476.09 L714.38,476.39 L753.90,476.39 L793.43,476.39 L832.95,477.00 L872.48,477.00" fill="none" stroke="#91adc3" stroke-width="5" stroke-linecap="round" class="average" stroke-dasharray="8 6" />
     <path d="M82.00,473.95 l0,0 L121.52,475.48 L161.05,477.00 L200.57,472.43 L240.10,473.95 L279.62,469.38 L319.14,473.95 L358.67,467.85 L398.19,464.80 L437.71,463.27 L477.24,469.38 L516.76,475.48 L556.29,477.00 L595.81,477.00 L635.33,473.95 L674.86,472.43 L714.38,477.00 L753.90,473.95 L793.43,475.48 L832.95,477.00 L872.48,477.00 L912.00,477.00" fill="none" stroke="#427298" stroke-width="3" stroke-linecap="round" class="yearly" />
@@ -136,16 +136,16 @@
   </g>
   <g class="panel">
     <text x="82" y="519" font-size="19" font-weight="bold" fill="#245476">500 to 1,500 m</text>
-    <line x1="82" y1="658.0" x2="912" y2="658.0" stroke="#d9e0e6" stroke-width="2" />
-    <text x="71" y="663.0" font-size="17" text-anchor="end">0</text>
-    <line x1="82" y1="627.5" x2="912" y2="627.5" stroke="#d9e0e6" stroke-width="2" />
-    <text x="71" y="632.5" font-size="17" text-anchor="end">20</text>
-    <line x1="82" y1="597.0" x2="912" y2="597.0" stroke="#d9e0e6" stroke-width="2" />
-    <text x="71" y="602.0" font-size="17" text-anchor="end">40</text>
-    <line x1="82" y1="566.5" x2="912" y2="566.5" stroke="#d9e0e6" stroke-width="2" />
-    <text x="71" y="571.5" font-size="17" text-anchor="end">60</text>
-    <line x1="82" y1="536.0" x2="912" y2="536.0" stroke="#d9e0e6" stroke-width="2" />
-    <text x="71" y="541.0" font-size="17" text-anchor="end">80</text>
+    <line x1="82" y1="658.00" x2="912" y2="658.00" stroke="#d9e0e6" stroke-width="2" />
+    <text x="71" y="663.00" font-size="17" text-anchor="end">0</text>
+    <line x1="82" y1="627.50" x2="912" y2="627.50" stroke="#d9e0e6" stroke-width="2" />
+    <text x="71" y="632.50" font-size="17" text-anchor="end">20</text>
+    <line x1="82" y1="597.00" x2="912" y2="597.00" stroke="#d9e0e6" stroke-width="2" />
+    <text x="71" y="602.00" font-size="17" text-anchor="end">40</text>
+    <line x1="82" y1="566.50" x2="912" y2="566.50" stroke="#d9e0e6" stroke-width="2" />
+    <text x="71" y="571.50" font-size="17" text-anchor="end">60</text>
+    <line x1="82" y1="536.00" x2="912" y2="536.00" stroke="#d9e0e6" stroke-width="2" />
+    <text x="71" y="541.00" font-size="17" text-anchor="end">80</text>
     <path d="M240.10,655.56 l0,0 L279.62,654.95 L319.14,654.34 L358.67,655.25 L398.19,654.95 L437.71,654.95 L477.24,654.64 L516.76,655.87 L556.29,655.56 L595.81,655.56 L635.33,654.03 L674.86,654.95 L714.38,654.95 L753.90,655.56 L793.43,656.17 L832.95,658.00 L872.48,658.00" fill="none" stroke="#809cb0" stroke-width="5" stroke-linecap="round" class="average" />
     <path d="M240.10,656.48 l0,0 L279.62,657.09 L319.14,657.39 L358.67,657.39 L398.19,657.39 L437.71,657.70 L477.24,657.70 L516.76,657.70 L556.29,657.70 L595.81,658.00 L635.33,658.00 L674.86,658.00 L714.38,658.00 L753.90,658.00 L793.43,658.00 L832.95,658.00 L872.48,658.00" fill="none" stroke="#809cb0" stroke-width="5" stroke-linecap="round" class="average" stroke-dasharray="8 6" />
     <path d="M82.00,658.00 l0,0 L121.52,654.95 L161.05,651.90 L200.57,656.48 L240.10,656.48 L279.62,654.95 L319.14,651.90 L358.67,656.48 L398.19,654.95 L437.71,656.48 L477.24,653.42 L516.76,658.00 L556.29,654.95 L595.81,654.95 L635.33,648.85 L674.86,658.00 L714.38,658.00 L753.90,658.00 L793.43,658.00 L832.95,658.00 L872.48,658.00 L912.00,658.00" fill="none" stroke="#245476" stroke-width="3" stroke-linecap="round" class="yearly" />
@@ -197,22 +197,22 @@
   </g>
   <g class="panel">
     <text x="82" y="700" font-size="19" font-weight="bold" fill="#102e46">1,500 m and deeper</text>
-    <line x1="82" y1="839.0" x2="912" y2="839.0" stroke="#d9e0e6" stroke-width="2" />
-    <text x="71" y="844.0" font-size="17" text-anchor="end">0</text>
-    <line x1="82" y1="808.5" x2="912" y2="808.5" stroke="#d9e0e6" stroke-width="2" />
-    <text x="71" y="813.5" font-size="17" text-anchor="end">20</text>
-    <line x1="82" y1="778.0" x2="912" y2="778.0" stroke="#d9e0e6" stroke-width="2" />
-    <text x="71" y="783.0" font-size="17" text-anchor="end">40</text>
-    <line x1="82" y1="747.5" x2="912" y2="747.5" stroke="#d9e0e6" stroke-width="2" />
-    <text x="71" y="752.5" font-size="17" text-anchor="end">60</text>
-    <line x1="82" y1="717.0" x2="912" y2="717.0" stroke="#d9e0e6" stroke-width="2" />
-    <text x="71" y="722.0" font-size="17" text-anchor="end">80</text>
-    <text x="82.0" y="863" font-size="17" text-anchor="middle">2005</text>
-    <text x="279.6190476190476" y="863" font-size="17" text-anchor="middle">2010</text>
-    <text x="477.23809523809524" y="863" font-size="17" text-anchor="middle">2015</text>
-    <text x="674.8571428571429" y="863" font-size="17" text-anchor="middle">2020</text>
-    <text x="912.0" y="863" font-size="17" text-anchor="middle">2026</text>
-    <text x="912.0" y="882" font-size="17" text-anchor="middle">partial</text>
+    <line x1="82" y1="839.00" x2="912" y2="839.00" stroke="#d9e0e6" stroke-width="2" />
+    <text x="71" y="844.00" font-size="17" text-anchor="end">0</text>
+    <line x1="82" y1="808.50" x2="912" y2="808.50" stroke="#d9e0e6" stroke-width="2" />
+    <text x="71" y="813.50" font-size="17" text-anchor="end">20</text>
+    <line x1="82" y1="778.00" x2="912" y2="778.00" stroke="#d9e0e6" stroke-width="2" />
+    <text x="71" y="783.00" font-size="17" text-anchor="end">40</text>
+    <line x1="82" y1="747.50" x2="912" y2="747.50" stroke="#d9e0e6" stroke-width="2" />
+    <text x="71" y="752.50" font-size="17" text-anchor="end">60</text>
+    <line x1="82" y1="717.00" x2="912" y2="717.00" stroke="#d9e0e6" stroke-width="2" />
+    <text x="71" y="722.00" font-size="17" text-anchor="end">80</text>
+    <text x="82.00" y="863" font-size="17" text-anchor="middle">2005</text>
+    <text x="279.62" y="863" font-size="17" text-anchor="middle">2010</text>
+    <text x="477.24" y="863" font-size="17" text-anchor="middle">2015</text>
+    <text x="674.86" y="863" font-size="17" text-anchor="middle">2020</text>
+    <text x="912.00" y="863" font-size="17" text-anchor="middle">2026</text>
+    <text x="912.00" y="882" font-size="17" text-anchor="middle">partial</text>
     <path d="M240.10,836.87 l0,0 L279.62,836.25 L319.14,836.25 L358.67,837.17 L398.19,837.48 L437.71,836.87 L477.24,837.78 L516.76,838.39 L556.29,838.39 L595.81,838.39 L635.33,839.00 L674.86,839.00 L714.38,839.00 L753.90,839.00 L793.43,839.00 L832.95,839.00 L872.48,839.00" fill="none" stroke="#748694" stroke-width="5" stroke-linecap="round" class="average" />
     <path d="M240.10,839.00 l0,0 L279.62,839.00 L319.14,839.00 L358.67,839.00 L398.19,839.00 L437.71,839.00 L477.24,839.00 L516.76,839.00 L556.29,839.00 L595.81,839.00 L635.33,839.00 L674.86,839.00 L714.38,839.00 L753.90,839.00 L793.43,838.39 L832.95,837.48 L872.48,837.48" fill="none" stroke="#748694" stroke-width="5" stroke-linecap="round" class="average" stroke-dasharray="8 6" />
     <path d="M82.00,837.48 l0,0 L121.52,835.95 L161.05,834.42 L200.57,837.48 L240.10,839.00 L279.62,834.42 L319.14,835.95 L358.67,839.00 L398.19,839.00 L437.71,835.95 L477.24,839.00 L516.76,839.00 L556.29,839.00 L595.81,839.00 L635.33,839.00 L674.86,839.00 L714.38,839.00 L753.90,839.00 L793.43,839.00 L832.95,839.00 L872.48,839.00 L912.00,837.48" fill="none" stroke="#102e46" stroke-width="3" stroke-linecap="round" class="yearly" />
@@ -262,7 +262,7 @@
     <circle cx="872.48" cy="839.00" r="5.5" stroke="#102e46" stroke-width="3" fill="#102e46" />
     <circle cx="912.00" cy="839.00" r="5.5" stroke="#102e46" stroke-width="3" fill="white" />
   </g>
-  <text x="480.0" y="917" font-size="19" text-anchor="middle" font-weight="bold">Calendar year of approval</text>
+  <text x="480.00" y="917" font-size="19" text-anchor="middle" font-weight="bold">Calendar year of approval</text>
   <text x="32" y="947" font-size="17">Flags are counted on permits for other completion work without a change of zone. A permit may carry</text>
   <text x="32" y="970" font-size="17">both flags. Hollow markers show partial 2026 through 23 November 2026. Means end in 2025. Y maximum 80,</text>
   <text x="32" y="993" font-size="17">against 800 in Figure 1A, 800 in Figure 1B, 150 in Figure 1C, 800 in Figure 2A, 800 in Figure 2B.</text>

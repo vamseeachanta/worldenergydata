@@ -266,7 +266,7 @@
     "view": "yearly",
     "bullets": [
       {
-        "text": "At 1,500 m and deeper, 60% of exploratory and 100% of development wells first drilled in 2025 had an initial approval.",
+        "text": "In the 2025 drilling cohort at 1,500 m and deeper, 9 of 15 exploratory wells (60%) and 5 of 5 development wells (100%) had an initial approval.",
         "cells": [
           {
             "row": {
@@ -274,7 +274,43 @@
               "year": "2025",
               "band": "1,500 m and deeper"
             },
+            "column": "with_initial_completion_approval",
+            "decimals": 0
+          },
+          {
+            "row": {
+              "group": "Exploratory wells",
+              "year": "2025",
+              "band": "1,500 m and deeper"
+            },
+            "column": "wells_first_drilled",
+            "decimals": 0
+          },
+          {
+            "row": {
+              "group": "Exploratory wells",
+              "year": "2025",
+              "band": "1,500 m and deeper"
+            },
             "column": "value",
+            "decimals": 0
+          },
+          {
+            "row": {
+              "group": "Development wells",
+              "year": "2025",
+              "band": "1,500 m and deeper"
+            },
+            "column": "with_initial_completion_approval",
+            "decimals": 0
+          },
+          {
+            "row": {
+              "group": "Development wells",
+              "year": "2025",
+              "band": "1,500 m and deeper"
+            },
+            "column": "wells_first_drilled",
             "decimals": 0
           },
           {
@@ -312,7 +348,7 @@
         ]
       },
       {
-        "text": "In the partial 2026 drilling cohort at 1,500 m and deeper, 45% of exploratory and 33% of development wells had an initial approval.",
+        "text": "In the partial 2026 drilling cohort at 1,500 m and deeper, 5 of 11 exploratory wells (45%) and 6 of 18 development wells (33%) had an initial approval.",
         "cells": [
           {
             "row": {
@@ -320,7 +356,43 @@
               "year": "2026",
               "band": "1,500 m and deeper"
             },
+            "column": "with_initial_completion_approval",
+            "decimals": 0
+          },
+          {
+            "row": {
+              "group": "Exploratory wells",
+              "year": "2026",
+              "band": "1,500 m and deeper"
+            },
+            "column": "wells_first_drilled",
+            "decimals": 0
+          },
+          {
+            "row": {
+              "group": "Exploratory wells",
+              "year": "2026",
+              "band": "1,500 m and deeper"
+            },
             "column": "value",
+            "decimals": 0
+          },
+          {
+            "row": {
+              "group": "Development wells",
+              "year": "2026",
+              "band": "1,500 m and deeper"
+            },
+            "column": "with_initial_completion_approval",
+            "decimals": 0
+          },
+          {
+            "row": {
+              "group": "Development wells",
+              "year": "2026",
+              "band": "1,500 m and deeper"
+            },
+            "column": "wells_first_drilled",
             "decimals": 0
           },
           {

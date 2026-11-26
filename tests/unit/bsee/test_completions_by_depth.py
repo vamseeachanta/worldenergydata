@@ -458,13 +458,15 @@ def test_first_drilling_period_and_approval_observed_by_snapshot():
         ("b", "2009-12-31", B[0], "exploration"),
         ("c", "2010-01-01", B[1], "exploration"),
         ("d", "2025-01-01", B[3], "development"),
-        ("e", "2026-11-23", B[3], "development"),
+        ("e", "2026-11-23 16:30", B[3], "development"),
         ("f", "2026-11-24", B[3], "development"),
         ("g", "2004-12-31", B[0], "exploration"),
         ("h", None, B[0], "exploration"),
         ("i", "2009-01-01", B[0], "other or not stated"),
         ("j", "2020-01-01", "no depth", "development"),
         ("k", "2015-01-01", B[2], "development"),
+        ("l", "2004-12-31", "no depth", "exploration"),
+        ("m", "2004-12-31", B[1], "other or not stated"),
     ]
     inventory = ci.pd.DataFrame(
         [(api, ci.pd.Timestamp(spud), band) for api, spud, band, _ in wells],
@@ -479,6 +481,10 @@ def test_first_drilling_period_and_approval_observed_by_snapshot():
         dict(api10="e", date=cutoff),
         dict(api10="k", date=dt.date(2004, 12, 31)),
     ]
+    assert cc.drilled_spud_exclusions(inventory, types, 2005, cutoff) == {
+        "before_first_year": 1,
+        "after_file_date": 1,
+    }
     rows = cc.drilled_period_table(inventory, types, initial, cutoff)
     assert list(dict.fromkeys(r["group"] for r in rows)) == [
         "Exploratory wells",
@@ -695,20 +701,20 @@ def test_period_shares_are_ratios_of_wells():
         prior_wells, prior_approved = totals.get(key, (0, 0))
         totals[key] = (prior_wells + wells, prior_approved + approved)
 
-    # Independent counts of 2026 first spuds and initial approvals on those
-    # wells from the pinned borehole and permit files. Adding these to the
-    # historical pooled 2005 to 2025 cells recovers the period table totals.
+    # Add the annual partial-year cells to the earlier pooled cohort.
     additions = {
-        ("Exploratory wells", B[2]): (10, 3),
-        ("Exploratory wells", B[3]): (11, 5),
-        ("Development wells", B[0]): (1, 1),
-        ("Development wells", B[3]): (18, 6),
+        (row["group"], row["band"].lower().replace(",", "")): (
+            int(row["wells_first_drilled"]),
+            int(row["with_initial_completion_approval"]),
+        )
+        for row in table("04_drilled_to_completed")
+        if row["year"] == "2026"
     }
     group = {"exploration": "Exploratory wells", "development": "Development wells"}
     for row in table("drilled_to_completed"):
         if row["well_type"] in group and row["band"] in B[:4]:
             key = group[row["well_type"]], row["band"]
-            wells, approved = additions.get(key, (0, 0))
+            wells, approved = additions[key]
             assert totals[key] == (
                 int(row["wells_first_drilled"]) + wells,
                 int(row["with_initial_completion_approval"]) + approved,
