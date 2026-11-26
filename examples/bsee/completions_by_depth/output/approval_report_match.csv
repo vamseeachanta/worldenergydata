@@ -1,0 +1,12 @@
+metric,value
+bores first approved in the window,3216
+of which with a completion report in the file,3043
+bores first reported in the window,3238
+of which with an initial completion approval in the file,3048
+"days from first approval to status date, p25",12.0
+"days from first approval to status date, median",23.0
+"days from first approval to status date, p75",43.0
+matched bores with a status date before the approval,157
+"initial completion approvals per bore, mean",2.13
+"initial completion approvals per bore, median",1.0
+bores with one initial completion approval,1677

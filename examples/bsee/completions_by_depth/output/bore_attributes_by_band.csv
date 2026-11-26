@@ -1,0 +1,76 @@
+band,attribute,value,bores,share_percent
+under 100 m,fluid,oil,809,40.2
+under 100 m,fluid,gas,935,46.4
+under 100 m,fluid,oil and gas,218,10.8
+under 100 m,fluid,injection or source,16,0.8
+under 100 m,fluid,other,0,0.0
+under 100 m,fluid,not reported,35,1.7
+under 100 m,subsea completion flag,YES,33,1.6
+under 100 m,subsea completion flag,NO,1923,95.5
+under 100 m,subsea completion flag,not stated,57,2.8
+under 100 m,completion intervals reported,0,35,1.7
+under 100 m,completion intervals reported,1,1136,56.4
+under 100 m,completion intervals reported,2,524,26.0
+under 100 m,completion intervals reported,3 or more,318,15.8
+under 100 m,interval label beginning with D,yes,157,7.8
+under 100 m,interval label beginning with D,no,1856,92.2
+100 to 500 m,fluid,oil,139,57.2
+100 to 500 m,fluid,gas,92,37.9
+100 to 500 m,fluid,oil and gas,5,2.1
+100 to 500 m,fluid,injection or source,2,0.8
+100 to 500 m,fluid,other,0,0.0
+100 to 500 m,fluid,not reported,5,2.1
+100 to 500 m,subsea completion flag,YES,36,14.8
+100 to 500 m,subsea completion flag,NO,203,83.5
+100 to 500 m,subsea completion flag,not stated,4,1.6
+100 to 500 m,completion intervals reported,0,5,2.1
+100 to 500 m,completion intervals reported,1,165,67.9
+100 to 500 m,completion intervals reported,2,57,23.5
+100 to 500 m,completion intervals reported,3 or more,16,6.6
+100 to 500 m,interval label beginning with D,yes,6,2.5
+100 to 500 m,interval label beginning with D,no,237,97.5
+500 to 1500 m,fluid,oil,431,77.9
+500 to 1500 m,fluid,gas,71,12.8
+500 to 1500 m,fluid,oil and gas,6,1.1
+500 to 1500 m,fluid,injection or source,38,6.9
+500 to 1500 m,fluid,other,0,0.0
+500 to 1500 m,fluid,not reported,7,1.3
+500 to 1500 m,subsea completion flag,YES,378,68.4
+500 to 1500 m,subsea completion flag,NO,170,30.7
+500 to 1500 m,subsea completion flag,not stated,5,0.9
+500 to 1500 m,completion intervals reported,0,7,1.3
+500 to 1500 m,completion intervals reported,1,471,85.2
+500 to 1500 m,completion intervals reported,2,57,10.3
+500 to 1500 m,completion intervals reported,3 or more,18,3.3
+500 to 1500 m,interval label beginning with D,yes,2,0.4
+500 to 1500 m,interval label beginning with D,no,551,99.6
+1500 m and deeper,fluid,oil,367,85.5
+1500 m and deeper,fluid,gas,27,6.3
+1500 m and deeper,fluid,oil and gas,2,0.5
+1500 m and deeper,fluid,injection or source,30,7.0
+1500 m and deeper,fluid,other,0,0.0
+1500 m and deeper,fluid,not reported,3,0.7
+1500 m and deeper,subsea completion flag,YES,385,89.7
+1500 m and deeper,subsea completion flag,NO,43,10.0
+1500 m and deeper,subsea completion flag,not stated,1,0.2
+1500 m and deeper,completion intervals reported,0,3,0.7
+1500 m and deeper,completion intervals reported,1,378,88.1
+1500 m and deeper,completion intervals reported,2,39,9.1
+1500 m and deeper,completion intervals reported,3 or more,9,2.1
+1500 m and deeper,interval label beginning with D,yes,5,1.2
+1500 m and deeper,interval label beginning with D,no,424,98.8
+no depth,fluid,oil,0,
+no depth,fluid,gas,0,
+no depth,fluid,oil and gas,0,
+no depth,fluid,injection or source,0,
+no depth,fluid,other,0,
+no depth,fluid,not reported,0,
+no depth,subsea completion flag,YES,0,
+no depth,subsea completion flag,NO,0,
+no depth,subsea completion flag,not stated,0,
+no depth,completion intervals reported,0,0,
+no depth,completion intervals reported,1,0,
+no depth,completion intervals reported,2,0,
+no depth,completion intervals reported,3 or more,0,
+no depth,interval label beginning with D,yes,0,
+no depth,interval label beginning with D,no,0,

@@ -1,0 +1,19 @@
+well_type,band,wells_first_drilled,with_initial_completion_approval,share_percent
+development,under 100 m,826,674,81.6
+development,100 to 500 m,107,94,87.9
+development,500 to 1500 m,146,124,84.9
+development,1500 m and deeper,156,131,84.0
+development,no depth,0,0,
+development,all water depths,1235,1023,82.8
+exploration,under 100 m,686,353,51.5
+exploration,100 to 500 m,74,32,43.2
+exploration,500 to 1500 m,436,191,43.8
+exploration,1500 m and deeper,459,216,47.1
+exploration,no depth,0,0,
+exploration,all water depths,1655,792,47.9
+other or not stated,under 100 m,4,2,50.0
+other or not stated,100 to 500 m,8,0,0.0
+other or not stated,500 to 1500 m,3,0,0.0
+other or not stated,1500 m and deeper,9,0,0.0
+other or not stated,no depth,0,0,
+other or not stated,all water depths,24,2,8.3

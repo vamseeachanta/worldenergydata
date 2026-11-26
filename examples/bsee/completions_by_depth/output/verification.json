@@ -1,0 +1,109 @@
+{
+  "basis": {
+    "files": [
+      {
+        "name": "BoreholeRawData.zip",
+        "source_url": "https://www.data.bsee.gov/Well/Files/BoreholeRawData.zip",
+        "bsee_file_date_page": "11/23/2026 4:31:21 AM",
+        "downloaded_utc": "2026-11-23T18:54:40Z",
+        "bytes": 3488947,
+        "sha256": "72fa55e55fd28db26c59e52b3a43c7d053f9d12a6d06b0a0f6a46ef541c66a5c"
+      },
+      {
+        "name": "eWellEORRawData.zip",
+        "source_url": "https://www.data.bsee.gov/Well/Files/eWellEORRawData.zip",
+        "bsee_file_date_page": "11/23/2026 4:36:30 AM",
+        "downloaded_utc": "2026-11-23T18:54:41Z",
+        "bytes": 4501468,
+        "sha256": "b67c61826ea90aa51d7e1f01c2df94bba6e869665a7992cd5438ea538ee603bc"
+      },
+      {
+        "name": "eWellAPMRawData.zip",
+        "source_url": "https://www.data.bsee.gov/Well/Files/eWellAPMRawData.zip",
+        "bsee_file_date_page": "11/23/2026 4:36:24 AM",
+        "downloaded_utc": "2026-11-23T18:54:44Z",
+        "bytes": 35824667,
+        "sha256": "1a38ed6cf9eab1f8079bf65d8e5b389cb41cc343cde4ce679e2b6e057fd7da50"
+      }
+    ]
+  },
+  "conservation": {
+    "ok": true,
+    "checks": {
+      "approvals_each_counted_once": true,
+      "approvals_table_total_equals_events_in_window": true,
+      "approvals_band_counts_sum_to_total": true,
+      "approvals_year_counts_sum_to_total": true,
+      "approvals_grid_complete_without_repeats": true,
+      "approvals_no_negative_count": true,
+      "reports_each_counted_once": true,
+      "reports_table_total_equals_events_in_window": true,
+      "reports_band_counts_sum_to_total": true,
+      "reports_year_counts_sum_to_total": true,
+      "reports_grid_complete_without_repeats": true,
+      "reports_no_negative_count": true,
+      "bores_by_approval_counted_once": true,
+      "bores_by_report_counted_once": true,
+      "attributes_sum_to_cohort": true,
+      "fluid_by_year_sums_to_cohort": true
+    }
+  },
+  "c6_cross_check": {
+    "comparator": "count_interventions.classified_permits and the End of Operations Report steps of count_interventions.run, unmodified",
+    "tolerance": 0,
+    "approvals": {
+      "this_article": 8472,
+      "c6_code": 8472,
+      "cells_compared": 110,
+      "cells_different": 0
+    },
+    "reports": {
+      "this_article": 5276,
+      "c6_code": 5276,
+      "cells_compared": 110,
+      "cells_different": 0
+    }
+  },
+  "hand_counts": {
+    "approvals_2025_03": {
+      "comp_permits_listed": 30,
+      "with_change_zone": 3,
+      "completion_approvals": 27,
+      "by_band": {
+        "under 100 m": 8,
+        "100 to 500 m": 0,
+        "500 to 1500 m": 5,
+        "1500 m and deeper": 14,
+        "no depth": 0
+      },
+      "initial_completion": 25,
+      "initial_by_band": {
+        "under 100 m": 7,
+        "100 to 500 m": 0,
+        "500 to 1500 m": 5,
+        "1500 m and deeper": 13,
+        "no depth": 0
+      },
+      "bores_with_initial_completion": 14
+    },
+    "reports_2025_q1": {
+      "completion_reports": 18,
+      "by_band": {
+        "under 100 m": 4,
+        "100 to 500 m": 2,
+        "500 to 1500 m": 5,
+        "1500 m and deeper": 7,
+        "no depth": 0
+      },
+      "bores": 17
+    }
+  },
+  "run": {
+    "code_commit": "73922031a315040bfa45b6ac7ec7e719e678686c",
+    "code_uncommitted_changes": false,
+    "command": "uv run python -I count_completions.py --data-dir data --out output",
+    "python": "3.11.15",
+    "pandas": "2.3.3",
+    "timestamp_utc": "2026-11-23T22:56:28Z"
+  }
+}

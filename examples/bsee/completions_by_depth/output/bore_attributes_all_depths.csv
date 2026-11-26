@@ -1,0 +1,16 @@
+attribute,value,bores,share_percent
+fluid,oil,1746,53.9
+fluid,gas,1125,34.7
+fluid,oil and gas,231,7.1
+fluid,injection or source,86,2.7
+fluid,other,0,0.0
+fluid,not reported,50,1.5
+subsea completion flag,YES,832,25.7
+subsea completion flag,NO,2339,72.2
+subsea completion flag,not stated,67,2.1
+completion intervals reported,0,50,1.5
+completion intervals reported,1,2150,66.4
+completion intervals reported,2,677,20.9
+completion intervals reported,3 or more,361,11.1
+interval label beginning with D,yes,170,5.3
+interval label beginning with D,no,3068,94.7

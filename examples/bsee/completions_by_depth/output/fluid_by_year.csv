@@ -1,0 +1,133 @@
+year,fluid,bores,partial_year
+2005,oil,87,False
+2005,gas,202,False
+2005,oil and gas,30,False
+2005,injection or source,1,False
+2005,other,0,False
+2005,not reported,10,False
+2006,oil,110,False
+2006,gas,249,False
+2006,oil and gas,28,False
+2006,injection or source,3,False
+2006,other,0,False
+2006,not reported,4,False
+2007,oil,105,False
+2007,gas,185,False
+2007,oil and gas,47,False
+2007,injection or source,2,False
+2007,other,0,False
+2007,not reported,8,False
+2008,oil,92,False
+2008,gas,165,False
+2008,oil and gas,26,False
+2008,injection or source,4,False
+2008,other,0,False
+2008,not reported,5,False
+2009,oil,86,False
+2009,gas,80,False
+2009,oil and gas,15,False
+2009,injection or source,5,False
+2009,other,0,False
+2009,not reported,6,False
+2010,oil,70,False
+2010,gas,65,False
+2010,oil and gas,16,False
+2010,injection or source,0,False
+2010,other,0,False
+2010,not reported,4,False
+2011,oil,75,False
+2011,gas,41,False
+2011,oil and gas,16,False
+2011,injection or source,6,False
+2011,other,0,False
+2011,not reported,3,False
+2012,oil,98,False
+2012,gas,32,False
+2012,oil and gas,15,False
+2012,injection or source,3,False
+2012,other,0,False
+2012,not reported,2,False
+2013,oil,126,False
+2013,gas,16,False
+2013,oil and gas,5,False
+2013,injection or source,6,False
+2013,other,0,False
+2013,not reported,1,False
+2014,oil,127,False
+2014,gas,30,False
+2014,oil and gas,11,False
+2014,injection or source,5,False
+2014,other,0,False
+2014,not reported,1,False
+2015,oil,113,False
+2015,gas,8,False
+2015,oil and gas,6,False
+2015,injection or source,5,False
+2015,other,0,False
+2015,not reported,0,False
+2016,oil,54,False
+2016,gas,2,False
+2016,oil and gas,1,False
+2016,injection or source,7,False
+2016,other,0,False
+2016,not reported,0,False
+2017,oil,69,False
+2017,gas,7,False
+2017,oil and gas,2,False
+2017,injection or source,2,False
+2017,other,0,False
+2017,not reported,0,False
+2018,oil,80,False
+2018,gas,11,False
+2018,oil and gas,2,False
+2018,injection or source,2,False
+2018,other,0,False
+2018,not reported,3,False
+2019,oil,72,False
+2019,gas,11,False
+2019,oil and gas,3,False
+2019,injection or source,7,False
+2019,other,0,False
+2019,not reported,1,False
+2020,oil,57,False
+2020,gas,4,False
+2020,oil and gas,1,False
+2020,injection or source,4,False
+2020,other,0,False
+2020,not reported,0,False
+2021,oil,46,False
+2021,gas,3,False
+2021,oil and gas,2,False
+2021,injection or source,4,False
+2021,other,0,False
+2021,not reported,0,False
+2022,oil,72,False
+2022,gas,7,False
+2022,oil and gas,3,False
+2022,injection or source,2,False
+2022,other,0,False
+2022,not reported,0,False
+2023,oil,47,False
+2023,gas,3,False
+2023,oil and gas,2,False
+2023,injection or source,8,False
+2023,other,0,False
+2023,not reported,0,False
+2024,oil,56,False
+2024,gas,1,False
+2024,oil and gas,0,False
+2024,injection or source,4,False
+2024,other,0,False
+2024,not reported,0,False
+2025,oil,65,False
+2025,gas,3,False
+2025,oil and gas,0,False
+2025,injection or source,2,False
+2025,other,0,False
+2025,not reported,2,False
+2026,oil,39,True
+2026,gas,0,True
+2026,oil and gas,0,True
+2026,injection or source,4,True
+2026,other,0,True
+2026,not reported,0,True
