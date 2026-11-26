@@ -45,6 +45,10 @@ modules:
       DeepQualRawData:
         source_url: https://www.data.bsee.gov/Other/Files/DeepQualRawData.zip
         update_frequency: weekly
+      bsee_pub61121024711_well_samples:
+        source_url: https://www.data.bsee.gov/Main/RawData.aspx
+        update_frequency: static
+        notes: "BSEE File Request System delivery PUB61121024711 (custom set fielddev-7f-wd-20261121: Well Data Only, 4 Gulf fields, 46 wells; 331 zip members including Geochem, Core, and PVT samples plus Index.txt/Index.html; 24,038,248,664 bytes; SHA-256 4d4abed9c356532c460c120f41bde4565df0e3937ab5198496320e3d59fb07aa; retrieved 2026-11-23). Stored externally in managed data storage; never committed. See data/modules/bsee/pub61121024711-manifest.yml."
 
   boem:
     source_base_url: https://www.data.boem.gov

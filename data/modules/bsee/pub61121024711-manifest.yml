@@ -1,0 +1,34 @@
+# External dataset manifest for BSEE File Request System delivery PUB61121024711.
+# Binary archive is stored in managed external storage (never committed to git).
+
+dataset_id: bsee_pub61121024711_well_samples
+request_id: PUB61121024711
+custom_set_name: fielddev-7f-wd-20261121
+provider: Bureau of Safety and Environmental Enforcement (BSEE)
+source_portal: https://www.data.bsee.gov/Main/RawData.aspx
+license: US Government Public Domain
+retrieved_date: '2026-11-23'
+request_submitted_date: '2026-11-21'
+scope:
+  region: Gulf of Mexico
+  selection: Well Data Only, 4 fields, 46 wells
+  sample_types:
+    - Geochem Samples
+    - Core Samples
+    - Pressure Volume Test (PVT)
+    - Well-log samples
+archive:
+  filename: PUB61121024711.zip
+  size_bytes: 24038248664
+  sha256: 4d4abed9c356532c460c120f41bde4565df0e3937ab5198496320e3d59fb07aa
+  member_count: 331
+  unpacked_size_bytes: 24073514265
+  integrity_check: unzip -t rc=0 (no CRC errors)
+  top_level_prefix: '34458/'
+  index_files:
+    - 34458/Index/Index.txt
+    - 34458/Index/Index.html
+storage:
+  committed_to_git: false
+  managed_copies: 2
+  notes: Replicated across two managed external storage hosts with verified SHA-256 checksums.
