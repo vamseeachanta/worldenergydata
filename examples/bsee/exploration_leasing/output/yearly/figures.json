@@ -192,9 +192,7 @@
       "max": 10,
       "step": 2.0,
       "shared": "measure:spud_years"
-    },
-    "unavailable_cells": 13,
-    "coverage_note": "Source records are unavailable for 13 annual series observations. The chart omits those points and any mean requiring them. The interactive year table identifies the affected series."
+    }
   },
   {
     "figure_number": "3B",
@@ -262,9 +260,7 @@
       "max": 10,
       "step": 2.0,
       "shared": "measure:spud_years"
-    },
-    "unavailable_cells": 20,
-    "coverage_note": "Source records are unavailable for 20 annual series observations. The chart omits those points and any mean requiring them. The interactive year table identifies the affected series."
+    }
   },
   {
     "figure_number": "4A",
@@ -293,9 +289,7 @@
       "step": 0.5,
       "shared": "panels"
     },
-    "scale_note": "Y maximum 2, against 5 in Figure 4C.",
-    "unavailable_cells": 15,
-    "coverage_note": "Source records are unavailable for 15 annual series observations. The chart omits those points and any mean requiring them. The interactive year table identifies the affected series."
+    "scale_note": "Y maximum 2, against 10 in Figure 4C."
   },
   {
     "figure_number": "4B",
@@ -323,9 +317,7 @@
       "max": 5,
       "step": 1.0,
       "shared": "measure:crude_years_5y"
-    },
-    "unavailable_cells": 15,
-    "coverage_note": "Source records are unavailable for 15 annual series observations. The chart omits those points and any mean requiring them. The interactive year table identifies the affected series."
+    }
   },
   {
     "figure_number": "4C",
@@ -356,13 +348,11 @@
     "svg": "figure-4c.svg",
     "interactive": "figure-4c.html",
     "y_scale": {
-      "max": 5,
-      "step": 1.0,
+      "max": 10,
+      "step": 2.0,
       "shared": "panels"
     },
-    "scale_note": "Y maximum 5, against 2 in Figure 4A.",
-    "unavailable_cells": 44,
-    "coverage_note": "Source records are unavailable for 44 annual series observations. The chart omits those points and any mean requiring them. The interactive year table identifies the affected series."
+    "scale_note": "Y maximum 10, against 2 in Figure 4A."
   },
   {
     "figure_number": "4D",
@@ -396,9 +386,7 @@
       "max": 5,
       "step": 1.0,
       "shared": "measure:crude_years_5y"
-    },
-    "unavailable_cells": 44,
-    "coverage_note": "Source records are unavailable for 44 annual series observations. The chart omits those points and any mean requiring them. The interactive year table identifies the affected series."
+    }
   },
   {
     "figure_number": "5",
