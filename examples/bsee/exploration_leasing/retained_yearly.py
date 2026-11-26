@@ -158,7 +158,7 @@ def build_retained(destination):
     destination.parent.mkdir(parents=True, exist_ok=True)
     with staged_build(destination.parent) as scratch:
         data.to_csv(scratch / "annual_trends.csv", index=False, lineterminator="\n")
-        write_figures(scratch)
+        write_figures(scratch, EXAMPLE / "output/exploration.csv")
         scratch.rename(destination)
     return data
 

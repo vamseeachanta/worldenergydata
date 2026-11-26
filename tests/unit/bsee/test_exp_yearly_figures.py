@@ -35,7 +35,8 @@ METRICS = (
 
 class TestAnnualCharts(unittest.TestCase):
     @pytest.fixture(autouse=True)
-    def chart_fixture(self, tmp_path):
+    def chart_fixture(self, tmp_path, monkeypatch):
+        monkeypatch.syspath_prepend(str(EXAMPLE))
         spec = importlib.util.spec_from_file_location(
             "lease_charts", EXAMPLE / "lease_charts.py"
         )
@@ -50,7 +51,7 @@ class TestAnnualCharts(unittest.TestCase):
                 else ("All water depths", *BANDS)
             )
             for index, band in enumerate(bands):
-                for year in range(2020, 2027):
+                for year in range(2005 if metric == "effective_leases" else 2020, 2027):
                     # Blanks break both annual paths and five-year windows.
                     value = "" if year == 2022 else 1 + index
                     mean = 2 if year == 2024 else ""
@@ -89,24 +90,25 @@ class TestAnnualCharts(unittest.TestCase):
             writer.writerows(rows)
 
     def test_round_trip(self):
-        self.charts.write_figures(self.output)
+        self.charts.write_figures(self.output, EXAMPLE / "output/exploration.csv")
         manifest = json.loads((self.output / "figures.json").read_bytes())
         self.assertEqual(
             [f["figure_number"] for f in manifest],
             [
                 "1A",
                 "1B",
-                "2A",
-                "2B",
-                "2C",
-                "3A",
-                "3B",
-                "3C",
-                "4A",
-                "4B",
-                "4C",
-                "4D",
-                "5",
+                "2",
+                "A2A",
+                "A2B",
+                "A2C",
+                "A3A",
+                "A3B",
+                "A3C",
+                "A4A",
+                "A4B",
+                "A4C",
+                "A4D",
+                "A5",
             ],
         )
         for figure in manifest:
@@ -122,35 +124,49 @@ class TestAnnualCharts(unittest.TestCase):
             self.assertEqual(len(series), len(figure["groups"]))
             if figure["series_by"] == "depth_band":
                 self.assertEqual([g.get("data-label") for g in series], list(BANDS))
-            for g in series:
+            for key, g in zip(figure["groups"], series):
                 dots = g.findall("{*}circle")
-                self.assertEqual(len(dots), 6)
+                spud_count = key.startswith("explored_within_five_years|")
+                expected_years = (
+                    range(2020, 2027)
+                    if figure["role"] == "appendix"
+                    else range(2005, 2027)
+                )
+                if spud_count:
+                    expected_years = range(2005, 2021)
+                self.assertEqual(
+                    [int(dot.get("data-year")) for dot in dots],
+                    [year for year in expected_years if year != 2022],
+                )
                 self.assertTrue(all(float(dot.get("r")) >= 4.5 for dot in dots))
-                self.assertEqual(dots[-1].get("fill"), "white")
-                self.assertIn("2026", dots[-1].findtext("{*}title"))
+                self.assertEqual(dots[-1].get("fill") == "white", not spud_count)
+                self.assertIn(str(expected_years[-1]), dots[-1].findtext("{*}title"))
                 annual = g.find("{*}path[@class='annual']")
-                self.assertEqual(annual.get("d").count("M"), 2)
+                self.assertEqual(annual.get("d").count("M"), 1 if spud_count else 2)
                 trend = g.find("{*}path[@class='trend']")
                 self.assertGreaterEqual(float(trend.get("stroke-width")), 4)
-            self.assertEqual(figure["layout"], "overlay")
-        pair = ET.parse(self.output / "figure-2a.svg").findall(
+            panels = (
+                figure["role"] == "appendix" and figure["series_by"] == "depth_band"
+            )
+            self.assertEqual(figure["layout"], "4x1_shared_x" if panels else "overlay")
+        pair = ET.parse(self.output / "figure-a2a.svg").findall(
             ".//{*}path[@class='annual']"
         )
         self.assertIsNone(pair[0].get("stroke-dasharray"))
         self.assertTrue(pair[1].get("stroke-dasharray"))
         self.assertEqual(len(manifest[-1]["groups"]), 9)
-        self.assertEqual(manifest[9]["unavailable_cells"], 1)
+        self.assertEqual(manifest[10]["unavailable_cells"], 1)
         self.assertIn(
             "Source records are unavailable",
-            (self.output / "figure-4b.svg").read_text(),
+            (self.output / "figure-a4b.svg").read_text(),
         )
         first = {p.name: p.read_bytes() for p in self.output.iterdir()}
-        self.charts.write_figures(self.output)
+        self.charts.write_figures(self.output, EXAMPLE / "output/exploration.csv")
         self.assertEqual(first, {p.name: p.read_bytes() for p in self.output.iterdir()})
 
     def test_caption_tracks_selected_annual_blanks_and_window_styles(self):
         def figures():
-            self.charts.write_figures(self.output)
+            self.charts.write_figures(self.output, EXAMPLE / "output/exploration.csv")
             return {
                 f["figure_number"]: f
                 for f in json.loads((self.output / "figures.json").read_bytes())
@@ -158,10 +174,10 @@ class TestAnnualCharts(unittest.TestCase):
 
         chart = figures()
         expected = [f"2022 {band}" for band in BANDS]
-        self.assertEqual(chart["2B"]["blank_cells"], expected)
+        self.assertEqual(chart["A2B"]["blank_cells"], expected)
         for cell in expected:
-            self.assertIn(cell, chart["2B"]["caption"])
-        for number in ("2A", "3A"):
+            self.assertIn(cell, chart["A2B"]["caption"])
+        for number in ("A2A", "A3A"):
             windows = chart[number]["windows"]
             self.assertEqual(set(windows), {"solid", "dashed"})
             self.assertEqual(windows["solid"]["label"], "Observed by file date")
@@ -175,7 +191,7 @@ class TestAnnualCharts(unittest.TestCase):
                         for clause in chart[number]["caption"].split(". ")
                     )
                 )
-        self.assertNotIn("windows", chart["2B"])
+        self.assertNotIn("windows", chart["A2B"])
 
         # A measured zero restores one selected cell. A newly blank annual
         # value moves its identifier, even though both moving averages are empty.
@@ -186,11 +202,11 @@ class TestAnnualCharts(unittest.TestCase):
         series.write_bytes(source.replace(group + b"2023,0,2,,", group + b"2023,0,,,"))
         revised = figures()
         self.assertEqual(
-            revised["2B"]["blank_cells"], ["2023 Under 100 m", *expected[1:]]
+            revised["A2B"]["blank_cells"], ["2023 Under 100 m", *expected[1:]]
         )
-        self.assertNotIn(expected[0], revised["2B"]["caption"])
-        self.assertIn("2023 Under 100 m", revised["2B"]["caption"])
-        self.assertEqual(chart["2C"], revised["2C"])
+        self.assertNotIn(expected[0], revised["A2B"]["caption"])
+        self.assertIn("2023 Under 100 m", revised["A2B"]["caption"])
+        self.assertEqual(chart["A2C"], revised["A2C"])
 
     def test_partial_year_cutoff_and_fixed_point_tooltip(self):
         series = self.output / "annual_trends.csv"
@@ -199,9 +215,9 @@ class TestAnnualCharts(unittest.TestCase):
                 b"2026,1,1,,verified", b"2026,1,12345,,verified", 1
             )
         )
-        self.charts.write_figures(self.output)
+        self.charts.write_figures(self.output, EXAMPLE / "output/exploration.csv")
         html = (self.output / "figure-1a.html").read_text(encoding="utf-8")
-        self.assertIn("2026 (partial through October 2026)</option>", html)
+        self.assertIn("partial through October 2026", html)
         self.assertIn("Annual value 12,345.", html)
         self.assertEqual(self.charts.format_readout(1.0625), "1.063")
 
