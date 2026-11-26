@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import csv
 import json
+import shutil
 import sys
 from pathlib import Path
 
@@ -420,6 +421,25 @@ class TestLfsStubDetection:
 
 class TestSourceRegistryMerge:
     """Tests for _merge_source_registry."""
+
+    def test_angola_metadata_is_dataset_specific(self, tmp_path: Path):
+        root = _make_project(tmp_path)
+        registry = Path("data/catalog/source-registry.yml")
+        (root / registry.parent).mkdir()
+        shutil.copyfile(Path(__file__).resolve().parents[3] / registry, root / registry)
+        region = root / "data" / "modules" / "west_africa"
+        for dataset in ("angola_field_development_evidence", "nigeria_production"):
+            _write_csv(region / f"{dataset}.csv", header=["year"], rows=[["2020"]])
+
+        _, catalog = DataCatalogGenerator(root).generate(module_name="west_africa")
+        entries = {ds.name: ds for ds in catalog.modules["west_africa"].datasets}
+        angola = entries["angola_field_development_evidence"]
+        nigeria = entries["nigeria_production"]
+        assert (angola.source_url, angola.update_frequency) == (
+            "https://anpg.co.ao",
+            "on_demand",
+        )
+        assert (nigeria.source_url, nigeria.update_frequency) == (None, None)
 
     def test_merge_applies_source_url(self, tmp_path: Path):
         """Registry URLs are applied to matching datasets."""

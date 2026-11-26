@@ -249,10 +249,13 @@ modules:
         update_frequency: static
 
   west_africa:
-    source_base_url: https://anpg.co.ao
-    license: "Public factual research observations and URL references only; no source-document reproduction license asserted."
-    default_update_frequency: on_demand
     datasets:
       angola_field_development_evidence:
         source_url: https://anpg.co.ao
-        notes: "Dataset angola-field-development-evidence; owner manifest data/modules/west_africa/curated/angola/manifest.json. Source IDs and domain relationship registered first in llm-wiki/data/data-source-catalog.yml and domain-database-index.yml. Historical, partial research only; not current as-built or engineering-qualified."
+        update_frequency: on_demand
+        license: >-
+          Public facts and links only. No license to reproduce source documents is asserted.
+        notes: >-
+          Metadata only for angola-field-development-evidence. The manifest is unpublished.
+          Verification of the partial historical observations requires a public, revision-pinned
+          manifest. Current as-built conditions and suitability for engineering use are unverified.
