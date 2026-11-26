@@ -2,6 +2,12 @@
 
 This directory contains issue-plan artifacts created during the issue-planning-mode workflow. Each plan is named `YYYY-MM-DD-issue-{N}-{slug}.md` and references its GitHub issue in the header.
 
+## Angola reporting slice
+
+| Issue | Plan File | Status | Date |
+|---|---|---|---|
+| [#722](https://github.com/vamseeachanta/worldenergydata/issues/722) | [Angola comparison standard and peer report](2026-10-01-issue-722-angola-comparison-standard.md) | draft for peer comment | 2026-10-01 |
+
 ## Active plans
 
 > Sorted by GitHub issue number ascending. Status reflects the `Status:` line in each plan header at the time of indexing.
