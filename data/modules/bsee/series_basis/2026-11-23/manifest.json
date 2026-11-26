@@ -1,0 +1,340 @@
+{
+  "schema": "bsee-pinned-snapshot/v2",
+  "dataset": "BSEE well raw-data files: single source of truth for the Deckhand Chronicles article series",
+  "publisher": "Bureau of Safety and Environmental Enforcement (BSEE), US Department of the Interior",
+  "licence": "US Government Public Domain",
+  "visibility": "public-federal-data",
+  "terms_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=Disclaimer",
+  "decision": "Owner ruling, 23 Nov 2026: one fresh download in one sitting is the single source of truth for every BSEE well count in the article series; no mixed download dates.",
+  "snapshot_date": "2026-11-23",
+  "bsee_local_timezone": "US Central, UTC-06:00 on this date; inferred: each HTTP Last-Modified is exactly 6 h after the file date shown on the BSEE page. Data members inside each zip carry local times from the same morning build, up to a few minutes before that file date; directory entries keep their older creation dates.",
+  "sitting_utc_start": "2026-11-23T18:54:37Z",
+  "sitting_utc_end": "2026-11-23T18:56:12Z",
+  "index_page": {
+    "url": "https://www.data.bsee.gov/Main/RawData.aspx",
+    "saved_utc": "2026-11-23T18:54:37Z",
+    "bytes": 82972,
+    "sha256": "6305f0f2c5899b625d9f796997b09d917fa359ab197cb083c9c7cf367e4321da",
+    "blob": "blobs/sha256/63/6305f0f2c5899b625d9f796997b09d917fa359ab197cb083c9c7cf367e4321da.html",
+    "retained": true
+  },
+  "re_downloadable": false,
+  "re_downloadable_reason": "BSEE rebuilds these files daily at the same URL; the bytes of this date cannot be fetched again.",
+  "storage": {
+    "layout": "content-addressed: blobs/sha256/<first two hex digits>/<sha256>.<ext>",
+    "primary": "owner data disk",
+    "second_copy": {
+      "status": "verified",
+      "verified_utc": "2026-11-23T19:57:53Z",
+      "method": "sha256 recomputed on the second machine after copy",
+      "covers": [
+        "BoreholeRawData.zip",
+        "eWellEORRawData.zip",
+        "eWellAPMRawData.zip",
+        "eWellWARRawData.zip",
+        "index_page"
+      ]
+    }
+  },
+  "supersedes": "An earlier download made 2026-11-20 00:02Z (BSEE file date 19 Nov 2026), whose files were not retained: BoreholeRawData.zip 9aa0f429e1c2c7e488035a10aef992faded432f31e225a74a4431c21acc7208e, eWellEORRawData.zip dd31851e2e8b3ccefbf380f3061d4ee7d0dd6077ea071f9153bfea850bbf1b42, eWellAPMRawData.zip 0fced4a7c539d139a82c83de3aedfaff749cdf8ad03d91ce63dff87ad3718295. The WAR file was not part of that download.",
+  "files": [
+    {
+      "name": "BoreholeRawData.zip",
+      "source_url": "https://www.data.bsee.gov/Well/Files/BoreholeRawData.zip",
+      "bsee_page_label": "Borehole Delimit",
+      "bsee_file_date_page_local": "11/23/2026 4:31:21 AM",
+      "http_last_modified": "Mon, 23 Nov 2026 10:31:21 GMT",
+      "downloaded_utc": "2026-11-23T18:54:40Z",
+      "bytes": 3488947,
+      "sha256": "72fa55e55fd28db26c59e52b3a43c7d053f9d12a6d06b0a0f6a46ef541c66a5c",
+      "blob": "blobs/sha256/72/72fa55e55fd28db26c59e52b3a43c7d053f9d12a6d06b0a0f6a46ef541c66a5c.zip",
+      "members": [
+        {
+          "name": "BoreholeRawData/",
+          "bytes": 0,
+          "zip_date_local": "2024-10-16 08:29",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "BoreholeRawData/mv_boreholes_all.txt",
+          "bytes": 13637175,
+          "zip_date_local": "2026-11-23 04:31",
+          "sha256": "24ae892cfca23127f6398a4b8c32c96a6e560ca095afcf480829a92247117f68"
+        }
+      ]
+    },
+    {
+      "name": "eWellEORRawData.zip",
+      "source_url": "https://www.data.bsee.gov/Well/Files/eWellEORRawData.zip",
+      "bsee_page_label": "eWell Submissions EOR Delimit",
+      "bsee_file_date_page_local": "11/23/2026 4:36:30 AM",
+      "http_last_modified": "Mon, 23 Nov 2026 10:36:30 GMT",
+      "downloaded_utc": "2026-11-23T18:54:41Z",
+      "bytes": 4501468,
+      "sha256": "b67c61826ea90aa51d7e1f01c2df94bba6e869665a7992cd5438ea538ee603bc",
+      "blob": "blobs/sha256/b6/b67c61826ea90aa51d7e1f01c2df94bba6e869665a7992cd5438ea538ee603bc.zip",
+      "members": [
+        {
+          "name": "eWellEORRawData/",
+          "bytes": 0,
+          "zip_date_local": "2021-05-13 09:39",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "eWellEORRawData/mv_eor_casingcutcodes.txt",
+          "bytes": 126,
+          "zip_date_local": "2026-11-23 04:36",
+          "sha256": "e05276fac382b0f728e577ade6151685cf46d08a3d3ea55fca5a95b88d3ac08a"
+        },
+        {
+          "name": "eWellEORRawData/mv_eor_completions.txt",
+          "bytes": 482396,
+          "zip_date_local": "2026-11-23 04:36",
+          "sha256": "dda3ea014c173b3dfe1355e8e0a5a3094411bbf14a9bb8d632498eb159671cc8"
+        },
+        {
+          "name": "eWellEORRawData/mv_eor_completionsprop.txt",
+          "bytes": 656614,
+          "zip_date_local": "2026-11-23 04:36",
+          "sha256": "58d44112b0e534eb57e2e86af952e463fdd6689dbd212e4390186cbeba025efc"
+        },
+        {
+          "name": "eWellEORRawData/mv_eor_compstatcodes.txt",
+          "bytes": 525,
+          "zip_date_local": "2026-11-23 04:36",
+          "sha256": "31ccc2a7ea58b05e528b0f9346b41f464c171e04f3549542aa70dd6c13c9ce29"
+        },
+        {
+          "name": "eWellEORRawData/mv_eor_cut_casings.txt",
+          "bytes": 1569012,
+          "zip_date_local": "2026-11-23 04:36",
+          "sha256": "62af8a44ec056abf07ab47af89ce63aa5fdeb86ff266c98339a63be10ef339db"
+        },
+        {
+          "name": "eWellEORRawData/mv_eor_geomarkers.txt",
+          "bytes": 958571,
+          "zip_date_local": "2026-11-23 04:36",
+          "sha256": "322e36bd06614b6a34c1dcc310168279a5549b04ffa77ed4721a0d413a027d3f"
+        },
+        {
+          "name": "eWellEORRawData/mv_eor_hcbearing_intvl_comps.txt",
+          "bytes": 139146,
+          "zip_date_local": "2026-11-23 04:36",
+          "sha256": "040f8d315cc24d8e9216b909c013dfc4775b03c15adf0f5a0eb506677963d3ee"
+        },
+        {
+          "name": "eWellEORRawData/mv_eor_hydrobarbtypecodes.txt",
+          "bytes": 68,
+          "zip_date_local": "2026-11-23 04:36",
+          "sha256": "8fbb72852d9ed605807ebe7d639e67b9124a46a2b0007ff35096eb57cd1504ee"
+        },
+        {
+          "name": "eWellEORRawData/mv_eor_mainquery.txt",
+          "bytes": 9822825,
+          "zip_date_local": "2026-11-23 04:36",
+          "sha256": "f6ac748318b2d48d690ad9e0e4d2fcbb1842f2917b9b4448680b6e6c8f6724c6"
+        },
+        {
+          "name": "eWellEORRawData/mv_eor_mainquery_prop.txt",
+          "bytes": 2676923,
+          "zip_date_local": "2026-11-23 04:36",
+          "sha256": "794b61fb99268b7c14ed3f58c04a43c7692aab19f9577463d476fe44bbe8c001"
+        },
+        {
+          "name": "eWellEORRawData/mv_eor_operationcodes.txt",
+          "bytes": 90,
+          "zip_date_local": "2026-11-23 04:36",
+          "sha256": "e5f1382ec46347c52c95ffc5d9424b72559f044764b00491addab3eadc4dd7b6"
+        },
+        {
+          "name": "eWellEORRawData/mv_eor_perf_intervals.txt",
+          "bytes": 443716,
+          "zip_date_local": "2026-11-23 04:36",
+          "sha256": "3c48a11ecaf0e0480ab6271809db18b9a538f4028806646299442dded38cbda0"
+        },
+        {
+          "name": "eWellEORRawData/mv_hcbearing_intervals.txt",
+          "bytes": 1195549,
+          "zip_date_local": "2026-11-23 04:36",
+          "sha256": "3320f68db89367f4a9679ea2e452f1b832714df3a1b9e64690df70f491746c4e"
+        }
+      ]
+    },
+    {
+      "name": "eWellAPMRawData.zip",
+      "source_url": "https://www.data.bsee.gov/Well/Files/eWellAPMRawData.zip",
+      "bsee_page_label": "eWell Submissions APM Delimit",
+      "bsee_file_date_page_local": "11/23/2026 4:36:24 AM",
+      "http_last_modified": "Mon, 23 Nov 2026 10:36:24 GMT",
+      "downloaded_utc": "2026-11-23T18:54:44Z",
+      "bytes": 35824667,
+      "sha256": "1a38ed6cf9eab1f8079bf65d8e5b389cb41cc343cde4ce679e2b6e057fd7da50",
+      "blob": "blobs/sha256/1a/1a38ed6cf9eab1f8079bf65d8e5b389cb41cc343cde4ce679e2b6e057fd7da50.zip",
+      "members": [
+        {
+          "name": "eWellAPMRawData/",
+          "bytes": 0,
+          "zip_date_local": "2021-05-13 09:39",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "eWellAPMRawData/mv_apm_attachments.txt",
+          "bytes": 42751799,
+          "zip_date_local": "2026-11-23 04:36",
+          "sha256": "6c439035d18b2cf303b6f70165a464afa4c9959b592389c2435e053ac71f7d5e"
+        },
+        {
+          "name": "eWellAPMRawData/mv_apm_borehole_stat_codes.txt",
+          "bytes": 219,
+          "zip_date_local": "2026-11-23 04:36",
+          "sha256": "8567d7d1b7d36d9c3b1f9c9e21a4d8898ae928abbf2d0ac0d948e2796a87785b"
+        },
+        {
+          "name": "eWellAPMRawData/mv_apm_main.txt",
+          "bytes": 22708392,
+          "zip_date_local": "2026-11-23 04:36",
+          "sha256": "8676fa72c221106c067f5d20786aa238e961bcab3e150b791a89d54e34f56679"
+        },
+        {
+          "name": "eWellAPMRawData/mv_apm_main_prop.txt",
+          "bytes": 3461110,
+          "zip_date_local": "2026-11-23 04:35",
+          "sha256": "09f27d4fa0610f9fa1b60b27d5423055df6e6ba704756217447aabc7da235d8f"
+        },
+        {
+          "name": "eWellAPMRawData/mv_apm_main_prop_narrative.txt",
+          "bytes": 31072371,
+          "zip_date_local": "2026-11-23 04:35",
+          "sha256": "7ff890f21affd3dbc53749b537f477ce28ca5bedc718aac45b1fc3272c33e4a3"
+        },
+        {
+          "name": "eWellAPMRawData/mv_apm_preventers.txt",
+          "bytes": 19500412,
+          "zip_date_local": "2026-11-23 04:34",
+          "sha256": "154b514349adc3612496c765863f54f258dab36537a6d8c139eb9e46c84d8233"
+        },
+        {
+          "name": "eWellAPMRawData/mv_apm_primary_op_codes.txt",
+          "bytes": 202,
+          "zip_date_local": "2026-11-23 04:34",
+          "sha256": "21ba732f8de644a177361226d7373f5cf740d5d0a395525b44d13cc0de68d157"
+        },
+        {
+          "name": "eWellAPMRawData/mv_apm_questions.txt",
+          "bytes": 126283883,
+          "zip_date_local": "2026-11-23 04:34",
+          "sha256": "14d9466b755be092431316f3260ec6fc0d2bb87057ff7d92654d42b11b70b3f7"
+        },
+        {
+          "name": "eWellAPMRawData/mv_apm_question_responses.txt",
+          "bytes": 20783053,
+          "zip_date_local": "2026-11-23 04:34",
+          "sha256": "bcaa58c6d67f98a6d9c8a4ceb1e7751fc1d6d7182197f780c7c91554d3322ace"
+        },
+        {
+          "name": "eWellAPMRawData/mv_apm_resubmittals.txt",
+          "bytes": 1134509,
+          "zip_date_local": "2026-11-23 04:34",
+          "sha256": "cc534cc97b7864735e6ab810df27fdccf9778178b75e51e2f037faa6d93191cc"
+        },
+        {
+          "name": "eWellAPMRawData/mv_apm_rig_view.txt",
+          "bytes": 23524,
+          "zip_date_local": "2026-11-23 04:34",
+          "sha256": "bae6215ccd5622e22de9d708b25cd0ffb30c97c7da6aa323fa5c0832fcdab1c3"
+        },
+        {
+          "name": "eWellAPMRawData/mv_apm_suboperations.txt",
+          "bytes": 3453900,
+          "zip_date_local": "2026-11-23 04:34",
+          "sha256": "d700fa15c816b6e5795d722e4e9eb634d7e311c2f5a314671aef9a653a5c82cc"
+        },
+        {
+          "name": "eWellAPMRawData/mv_apm_suboperation_codes.txt",
+          "bytes": 855,
+          "zip_date_local": "2026-11-23 04:34",
+          "sha256": "1545022556ddfeaec4610b827b3af59a1344001b3f6ce6f5e06cb410452f99f1"
+        },
+        {
+          "name": "eWellAPMRawData/mv_apm_verbals.txt",
+          "bytes": 861012,
+          "zip_date_local": "2026-11-23 04:34",
+          "sha256": "49968fa49a0faceb8073566f098267743e24fe4291c05fae82e74ac7626d35f6"
+        },
+        {
+          "name": "eWellAPMRawData/mv_apm_well_type_codes.txt",
+          "bytes": 140,
+          "zip_date_local": "2026-11-23 04:34",
+          "sha256": "db16436d7953c6d414fb127b4d2c4a6467fc581843426ed85958d30ed8c52df7"
+        }
+      ]
+    },
+    {
+      "name": "eWellWARRawData.zip",
+      "source_url": "https://www.data.bsee.gov/Well/Files/eWellWARRawData.zip",
+      "bsee_page_label": "eWell Submissions WAR Delimit",
+      "bsee_file_date_page_local": "11/23/2026 4:42:43 AM",
+      "http_last_modified": "Mon, 23 Nov 2026 10:42:43 GMT",
+      "downloaded_utc": "2026-11-23T18:56:12Z",
+      "bytes": 131539276,
+      "sha256": "84a5860c019d1ae2021c933fbe39127b08f8ab58a8443c6cb285e693aac84e8c",
+      "blob": "blobs/sha256/84/84a5860c019d1ae2021c933fbe39127b08f8ab58a8443c6cb285e693aac84e8c.zip",
+      "members": [
+        {
+          "name": "eWellWARRawData/",
+          "bytes": 0,
+          "zip_date_local": "2021-05-13 09:46",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "eWellWARRawData/mv_war_boreholes_view.txt",
+          "bytes": 3808267,
+          "zip_date_local": "2026-11-23 04:42",
+          "sha256": "bc9eb75409ad419449cd4062c3e9f29fd51f3b6d163f89f1b6ffd942db629bea"
+        },
+        {
+          "name": "eWellWARRawData/mv_war_main.txt",
+          "bytes": 80474130,
+          "zip_date_local": "2026-11-23 04:42",
+          "sha256": "f8303a75795d027634e1db4391a6f297cb635a81e16af197ac8a4f4af448393b"
+        },
+        {
+          "name": "eWellWARRawData/mv_war_main_prop.txt",
+          "bytes": 36256177,
+          "zip_date_local": "2026-11-23 04:41",
+          "sha256": "fc4f7678f82727709d17b45e02bbd159d9fb78ba8830b5a217ca8af213670b1a"
+        },
+        {
+          "name": "eWellWARRawData/mv_war_main_prop_remark.txt",
+          "bytes": 303318557,
+          "zip_date_local": "2026-11-23 04:41",
+          "sha256": "5947e9315bbee52e0bdb256489f2e57c2f31d9d6b738190a4eb68dea278cd625"
+        },
+        {
+          "name": "eWellWARRawData/mv_war_open_hole_runs.txt",
+          "bytes": 2382674,
+          "zip_date_local": "2026-11-23 04:36",
+          "sha256": "035a2b5a0b244899a96c9100c9f42813488b8d0db7844da53976f78f00539829"
+        },
+        {
+          "name": "eWellWARRawData/mv_war_open_hole_tools.txt",
+          "bytes": 1310730,
+          "zip_date_local": "2026-11-23 04:36",
+          "sha256": "450dc9409910a97ece75660fd5b0bcd6de701951353b3140214a543fd178f8f1"
+        },
+        {
+          "name": "eWellWARRawData/mv_war_tubular_summaries.txt",
+          "bytes": 28459355,
+          "zip_date_local": "2026-11-23 04:36",
+          "sha256": "103669aa86affc7fad31885fb08fe28441edbcb62b0703fff4a8f7855fc4c219"
+        },
+        {
+          "name": "eWellWARRawData/mv_war_tubular_summaries_prop.txt",
+          "bytes": 13299199,
+          "zip_date_local": "2026-11-23 04:36",
+          "sha256": "04aff75f7c76daf8a2b090b87419b5d1881f9dd214808ffb57b37823df924d98"
+        }
+      ]
+    }
+  ]
+}
