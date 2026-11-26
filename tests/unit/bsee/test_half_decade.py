@@ -2,6 +2,7 @@
 
 import csv
 import io
+import re
 import unicodedata
 from xml.etree import ElementTree as ET
 
@@ -107,6 +108,23 @@ def test_svg_is_deterministic_portable_and_labels_every_band():
         assert label in visible
     for color in ["#6588a6", "#427298", "#245476", "#102e46"]:
         assert color in svg
+
+
+def test_svg_coordinates_have_two_decimal_places():
+    rows = [row for row in summarize([]) if row["period"] in PERIODS[:3]]
+    root = ET.fromstring(render_svg(rows, ylabel="Leases", periods=PERIODS[:3]))
+    positions = {"x", "y", "x1", "y1", "x2", "y2", "cx", "cy", "r", "width", "height"}
+    for node in root.iter():
+        for key in positions.intersection(node.attrib):
+            assert re.fullmatch(r"-?\d+\.\d{2}", node.get(key)), (key, node.get(key))
+        for key in ("points", "viewBox"):
+            if key in node.attrib:
+                for value in re.split(r"[, ]", node.get(key)):
+                    assert re.fullmatch(r"-?\d+\.\d{2}", value), (key, value)
+        if "transform" in node.attrib:
+            assert re.fullmatch(
+                r"rotate\(-90 -?\d+\.\d{2} -?\d+\.\d{2}\)", node.get("transform")
+            )
 
 
 def test_svg_rejects_dash_in_user_label():
