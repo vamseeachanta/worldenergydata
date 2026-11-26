@@ -4,7 +4,10 @@ import argparse
 import hashlib
 import json
 import os
+import shutil
+from contextlib import contextmanager
 from pathlib import Path
+from uuid import uuid4
 
 EXAMPLE = Path(__file__).resolve().parent
 REPOSITORY = EXAMPLE.parents[2]
@@ -13,6 +16,21 @@ TAPE = "lsetapefixed.zip"
 PRODUCTION = "ProductionRawData.zip"
 OWNERS = "LeaseOwnerRawData.zip"
 ARCHIVES = (BORE, TAPE, PRODUCTION, OWNERS)
+
+
+@contextmanager
+def staged_build(parent):
+    """Stage this public dataset beside its destination for same-volume publication."""
+    parent = parent.resolve(strict=True)
+    scratch = parent / f".derive-{uuid4().hex}"
+    # Windows builds inherit the destination parent's ACL, as the published
+    # directory will. POSIX staging remains private to the build account.
+    scratch.mkdir(mode=0o777 if os.name == "nt" else 0o700)
+    try:
+        yield scratch
+    finally:
+        if scratch.exists() and scratch.resolve() == scratch:
+            shutil.rmtree(scratch)
 
 
 def input_parser(description):

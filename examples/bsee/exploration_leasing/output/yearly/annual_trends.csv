@@ -1,0 +1,789 @@
+group,metric,band,year,partial,leases,events,availability,value,moving_average
+"crude_share_5y|1,500 m and deeper",crude_share_5y,"1,500 m and deeper",2005,0,130,0,verified,0.0,
+"crude_share_5y|1,500 m and deeper",crude_share_5y,"1,500 m and deeper",2006,0,230,0,verified,0.0,
+"crude_share_5y|1,500 m and deeper",crude_share_5y,"1,500 m and deeper",2007,0,135,0,verified,0.0,
+"crude_share_5y|1,500 m and deeper",crude_share_5y,"1,500 m and deeper",2008,0,579,0,verified,0.0,
+"crude_share_5y|1,500 m and deeper",crude_share_5y,"1,500 m and deeper",2009,0,208,0,verified,0.0,0.0
+"crude_share_5y|1,500 m and deeper",crude_share_5y,"1,500 m and deeper",2010,0,165,0,verified,0.0,0.0
+"crude_share_5y|1,500 m and deeper",crude_share_5y,"1,500 m and deeper",2011,0,8,0,verified,0.0,0.0
+"crude_share_5y|1,500 m and deeper",crude_share_5y,"1,500 m and deeper",2012,0,235,1,verified,0.425531914893617,0.0851063829787234
+"crude_share_5y|1,500 m and deeper",crude_share_5y,"1,500 m and deeper",2013,0,207,0,verified,0.0,0.0851063829787234
+"crude_share_5y|1,500 m and deeper",crude_share_5y,"1,500 m and deeper",2014,0,154,1,verified,0.6493506493506493,0.21497651284885327
+"crude_share_5y|1,500 m and deeper",crude_share_5y,"1,500 m and deeper",2015,0,102,0,verified,0.0,0.21497651284885327
+"crude_share_5y|1,500 m and deeper",crude_share_5y,"1,500 m and deeper",2016,0,40,1,verified,2.5,0.7149765128488532
+"crude_share_5y|1,500 m and deeper",crude_share_5y,"1,500 m and deeper",2017,0,93,0,verified,0.0,0.6298701298701298
+"crude_share_5y|1,500 m and deeper",crude_share_5y,"1,500 m and deeper",2018,0,119,0,verified,0.0,0.6298701298701298
+"crude_share_5y|1,500 m and deeper",crude_share_5y,"1,500 m and deeper",2019,0,138,1,verified,0.7246376811594203,0.644927536231884
+"crude_share_5y|1,500 m and deeper",crude_share_5y,"1,500 m and deeper",2020,0,26,0,verified,0.0,0.644927536231884
+crude_share_5y|100 to 500 m,crude_share_5y,100 to 500 m,2005,0,71,0,verified,0.0,
+crude_share_5y|100 to 500 m,crude_share_5y,100 to 500 m,2006,0,118,1,verified,0.847457627118644,
+crude_share_5y|100 to 500 m,crude_share_5y,100 to 500 m,2007,0,13,1,verified,7.6923076923076925,
+crude_share_5y|100 to 500 m,crude_share_5y,100 to 500 m,2008,0,85,1,verified,1.1764705882352942,
+crude_share_5y|100 to 500 m,crude_share_5y,100 to 500 m,2009,0,18,0,verified,0.0,1.943247181532326
+crude_share_5y|100 to 500 m,crude_share_5y,100 to 500 m,2010,0,36,0,verified,0.0,1.943247181532326
+crude_share_5y|100 to 500 m,crude_share_5y,100 to 500 m,2011,0,0,0,verified,,
+crude_share_5y|100 to 500 m,crude_share_5y,100 to 500 m,2012,0,49,0,verified,0.0,
+crude_share_5y|100 to 500 m,crude_share_5y,100 to 500 m,2013,0,11,0,verified,0.0,
+crude_share_5y|100 to 500 m,crude_share_5y,100 to 500 m,2014,0,72,0,verified,0.0,
+crude_share_5y|100 to 500 m,crude_share_5y,100 to 500 m,2015,0,15,0,verified,0.0,
+crude_share_5y|100 to 500 m,crude_share_5y,100 to 500 m,2016,0,14,1,verified,7.142857142857143,1.4285714285714284
+crude_share_5y|100 to 500 m,crude_share_5y,100 to 500 m,2017,0,19,0,verified,0.0,1.4285714285714284
+crude_share_5y|100 to 500 m,crude_share_5y,100 to 500 m,2018,0,26,0,verified,0.0,1.4285714285714284
+crude_share_5y|100 to 500 m,crude_share_5y,100 to 500 m,2019,0,38,0,verified,0.0,1.4285714285714284
+crude_share_5y|100 to 500 m,crude_share_5y,100 to 500 m,2020,0,2,0,verified,0.0,1.4285714285714284
+"crude_share_5y|500 to 1,500 m",crude_share_5y,"500 to 1,500 m",2005,0,153,0,verified,0.0,
+"crude_share_5y|500 to 1,500 m",crude_share_5y,"500 to 1,500 m",2006,0,283,2,verified,0.7067137809187279,
+"crude_share_5y|500 to 1,500 m",crude_share_5y,"500 to 1,500 m",2007,0,90,0,verified,0.0,
+"crude_share_5y|500 to 1,500 m",crude_share_5y,"500 to 1,500 m",2008,0,510,2,verified,0.39215686274509803,
+"crude_share_5y|500 to 1,500 m",crude_share_5y,"500 to 1,500 m",2009,0,160,0,verified,0.0,0.2197741287327652
+"crude_share_5y|500 to 1,500 m",crude_share_5y,"500 to 1,500 m",2010,0,101,0,verified,0.0,0.2197741287327652
+"crude_share_5y|500 to 1,500 m",crude_share_5y,"500 to 1,500 m",2011,0,4,0,verified,0.0,0.0784313725490196
+"crude_share_5y|500 to 1,500 m",crude_share_5y,"500 to 1,500 m",2012,0,170,0,verified,0.0,0.0784313725490196
+"crude_share_5y|500 to 1,500 m",crude_share_5y,"500 to 1,500 m",2013,0,161,3,verified,1.8633540372670807,0.37267080745341613
+"crude_share_5y|500 to 1,500 m",crude_share_5y,"500 to 1,500 m",2014,0,73,0,verified,0.0,0.37267080745341613
+"crude_share_5y|500 to 1,500 m",crude_share_5y,"500 to 1,500 m",2015,0,56,0,verified,0.0,0.37267080745341613
+"crude_share_5y|500 to 1,500 m",crude_share_5y,"500 to 1,500 m",2016,0,68,0,verified,0.0,0.37267080745341613
+"crude_share_5y|500 to 1,500 m",crude_share_5y,"500 to 1,500 m",2017,0,97,0,verified,0.0,0.37267080745341613
+"crude_share_5y|500 to 1,500 m",crude_share_5y,"500 to 1,500 m",2018,0,76,0,verified,0.0,0.0
+"crude_share_5y|500 to 1,500 m",crude_share_5y,"500 to 1,500 m",2019,0,141,0,verified,0.0,0.0
+"crude_share_5y|500 to 1,500 m",crude_share_5y,"500 to 1,500 m",2020,0,45,1,verified,2.2222222222222223,0.4444444444444445
+crude_share_5y|All water depths,crude_share_5y,All water depths,2005,0,603,6,verified,0.9950248756218906,
+crude_share_5y|All water depths,crude_share_5y,All water depths,2006,0,916,4,verified,0.4366812227074236,
+crude_share_5y|All water depths,crude_share_5y,All water depths,2007,0,367,1,verified,0.2724795640326976,
+crude_share_5y|All water depths,crude_share_5y,All water depths,2008,0,1512,5,verified,0.3306878306878307,
+crude_share_5y|All water depths,crude_share_5y,All water depths,2009,0,499,0,verified,0.0,0.4069746986099685
+crude_share_5y|All water depths,crude_share_5y,All water depths,2010,0,449,4,verified,0.89086859688196,0.38614344286198243
+crude_share_5y|All water depths,crude_share_5y,All water depths,2011,0,12,0,verified,0.0,0.2988071983204977
+crude_share_5y|All water depths,crude_share_5y,All water depths,2012,0,624,4,verified,0.6410256410256411,0.37251641371908634
+crude_share_5y|All water depths,crude_share_5y,All water depths,2013,0,470,4,verified,0.851063829787234,0.476591613538967
+crude_share_5y|All water depths,crude_share_5y,All water depths,2014,0,391,1,verified,0.2557544757033248,0.5277425086796319
+crude_share_5y|All water depths,crude_share_5y,All water depths,2015,0,211,0,verified,0.0,0.34956878930324
+crude_share_5y|All water depths,crude_share_5y,All water depths,2016,0,142,2,verified,1.408450704225352,0.6312589301483105
+crude_share_5y|All water depths,crude_share_5y,All water depths,2017,0,228,0,verified,0.0,0.5030538019431822
+crude_share_5y|All water depths,crude_share_5y,All water depths,2018,0,281,4,verified,1.4234875444839858,0.6175385448825326
+crude_share_5y|All water depths,crude_share_5y,All water depths,2019,0,342,1,verified,0.29239766081871343,0.6248671819056103
+crude_share_5y|All water depths,crude_share_5y,All water depths,2020,0,79,1,verified,1.2658227848101267,0.8780317388676355
+crude_share_5y|Under 100 m,crude_share_5y,Under 100 m,2005,0,249,6,verified,2.4096385542168677,
+crude_share_5y|Under 100 m,crude_share_5y,Under 100 m,2006,0,285,1,verified,0.3508771929824561,
+crude_share_5y|Under 100 m,crude_share_5y,Under 100 m,2007,0,129,0,verified,0.0,
+crude_share_5y|Under 100 m,crude_share_5y,Under 100 m,2008,0,338,2,verified,0.591715976331361,
+crude_share_5y|Under 100 m,crude_share_5y,Under 100 m,2009,0,113,0,verified,0.0,0.670446344706137
+crude_share_5y|Under 100 m,crude_share_5y,Under 100 m,2010,0,147,4,verified,2.7210884353741496,0.7327363209375933
+crude_share_5y|Under 100 m,crude_share_5y,Under 100 m,2011,0,0,0,verified,,
+crude_share_5y|Under 100 m,crude_share_5y,Under 100 m,2012,0,170,3,verified,1.7647058823529411,
+crude_share_5y|Under 100 m,crude_share_5y,Under 100 m,2013,0,91,1,verified,1.098901098901099,
+crude_share_5y|Under 100 m,crude_share_5y,Under 100 m,2014,0,92,0,verified,0.0,
+crude_share_5y|Under 100 m,crude_share_5y,Under 100 m,2015,0,38,0,verified,0.0,
+crude_share_5y|Under 100 m,crude_share_5y,Under 100 m,2016,0,20,0,verified,0.0,0.572721396250808
+crude_share_5y|Under 100 m,crude_share_5y,Under 100 m,2017,0,19,0,verified,0.0,0.2197802197802198
+crude_share_5y|Under 100 m,crude_share_5y,Under 100 m,2018,0,60,4,verified,6.666666666666667,1.3333333333333335
+crude_share_5y|Under 100 m,crude_share_5y,Under 100 m,2019,0,25,0,verified,0.0,1.3333333333333335
+crude_share_5y|Under 100 m,crude_share_5y,Under 100 m,2020,0,6,0,verified,0.0,1.3333333333333335
+"crude_years_5y|1,500 m and deeper",crude_years_5y,"1,500 m and deeper",2005,0,130,0,verified,,
+"crude_years_5y|1,500 m and deeper",crude_years_5y,"1,500 m and deeper",2006,0,230,0,verified,,
+"crude_years_5y|1,500 m and deeper",crude_years_5y,"1,500 m and deeper",2007,0,135,0,verified,,
+"crude_years_5y|1,500 m and deeper",crude_years_5y,"1,500 m and deeper",2008,0,579,0,verified,,
+"crude_years_5y|1,500 m and deeper",crude_years_5y,"1,500 m and deeper",2009,0,208,0,verified,,
+"crude_years_5y|1,500 m and deeper",crude_years_5y,"1,500 m and deeper",2010,0,165,0,verified,,
+"crude_years_5y|1,500 m and deeper",crude_years_5y,"1,500 m and deeper",2011,0,8,0,verified,,
+"crude_years_5y|1,500 m and deeper",crude_years_5y,"1,500 m and deeper",2012,0,235,1,verified,4.583333333333333,
+"crude_years_5y|1,500 m and deeper",crude_years_5y,"1,500 m and deeper",2013,0,207,0,verified,,
+"crude_years_5y|1,500 m and deeper",crude_years_5y,"1,500 m and deeper",2014,0,154,1,verified,4.416666666666667,
+"crude_years_5y|1,500 m and deeper",crude_years_5y,"1,500 m and deeper",2015,0,102,0,verified,,
+"crude_years_5y|1,500 m and deeper",crude_years_5y,"1,500 m and deeper",2016,0,40,1,verified,3.25,
+"crude_years_5y|1,500 m and deeper",crude_years_5y,"1,500 m and deeper",2017,0,93,0,verified,,
+"crude_years_5y|1,500 m and deeper",crude_years_5y,"1,500 m and deeper",2018,0,119,0,verified,,
+"crude_years_5y|1,500 m and deeper",crude_years_5y,"1,500 m and deeper",2019,0,138,1,verified,4.583333333333333,
+"crude_years_5y|1,500 m and deeper",crude_years_5y,"1,500 m and deeper",2020,0,26,0,verified,,
+crude_years_5y|100 to 500 m,crude_years_5y,100 to 500 m,2005,0,71,0,verified,,
+crude_years_5y|100 to 500 m,crude_years_5y,100 to 500 m,2006,0,118,1,verified,1.8333333333333333,
+crude_years_5y|100 to 500 m,crude_years_5y,100 to 500 m,2007,0,13,1,verified,0.9166666666666666,
+crude_years_5y|100 to 500 m,crude_years_5y,100 to 500 m,2008,0,85,1,verified,3.4166666666666665,
+crude_years_5y|100 to 500 m,crude_years_5y,100 to 500 m,2009,0,18,0,verified,,
+crude_years_5y|100 to 500 m,crude_years_5y,100 to 500 m,2010,0,36,0,verified,,
+crude_years_5y|100 to 500 m,crude_years_5y,100 to 500 m,2011,0,0,0,verified,,
+crude_years_5y|100 to 500 m,crude_years_5y,100 to 500 m,2012,0,49,0,verified,,
+crude_years_5y|100 to 500 m,crude_years_5y,100 to 500 m,2013,0,11,0,verified,,
+crude_years_5y|100 to 500 m,crude_years_5y,100 to 500 m,2014,0,72,0,verified,,
+crude_years_5y|100 to 500 m,crude_years_5y,100 to 500 m,2015,0,15,0,verified,,
+crude_years_5y|100 to 500 m,crude_years_5y,100 to 500 m,2016,0,14,1,verified,1.6666666666666667,
+crude_years_5y|100 to 500 m,crude_years_5y,100 to 500 m,2017,0,19,0,verified,,
+crude_years_5y|100 to 500 m,crude_years_5y,100 to 500 m,2018,0,26,0,verified,,
+crude_years_5y|100 to 500 m,crude_years_5y,100 to 500 m,2019,0,38,0,verified,,
+crude_years_5y|100 to 500 m,crude_years_5y,100 to 500 m,2020,0,2,0,verified,,
+"crude_years_5y|500 to 1,500 m",crude_years_5y,"500 to 1,500 m",2005,0,153,0,verified,,
+"crude_years_5y|500 to 1,500 m",crude_years_5y,"500 to 1,500 m",2006,0,283,2,verified,3.6666666666666665,
+"crude_years_5y|500 to 1,500 m",crude_years_5y,"500 to 1,500 m",2007,0,90,0,verified,,
+"crude_years_5y|500 to 1,500 m",crude_years_5y,"500 to 1,500 m",2008,0,510,2,verified,3.0416666666666665,
+"crude_years_5y|500 to 1,500 m",crude_years_5y,"500 to 1,500 m",2009,0,160,0,verified,,
+"crude_years_5y|500 to 1,500 m",crude_years_5y,"500 to 1,500 m",2010,0,101,0,verified,,
+"crude_years_5y|500 to 1,500 m",crude_years_5y,"500 to 1,500 m",2011,0,4,0,verified,,
+"crude_years_5y|500 to 1,500 m",crude_years_5y,"500 to 1,500 m",2012,0,170,0,verified,,
+"crude_years_5y|500 to 1,500 m",crude_years_5y,"500 to 1,500 m",2013,0,161,3,verified,2.5833333333333335,
+"crude_years_5y|500 to 1,500 m",crude_years_5y,"500 to 1,500 m",2014,0,73,0,verified,,
+"crude_years_5y|500 to 1,500 m",crude_years_5y,"500 to 1,500 m",2015,0,56,0,verified,,
+"crude_years_5y|500 to 1,500 m",crude_years_5y,"500 to 1,500 m",2016,0,68,0,verified,,
+"crude_years_5y|500 to 1,500 m",crude_years_5y,"500 to 1,500 m",2017,0,97,0,verified,,
+"crude_years_5y|500 to 1,500 m",crude_years_5y,"500 to 1,500 m",2018,0,76,0,verified,,
+"crude_years_5y|500 to 1,500 m",crude_years_5y,"500 to 1,500 m",2019,0,141,0,verified,,
+"crude_years_5y|500 to 1,500 m",crude_years_5y,"500 to 1,500 m",2020,0,45,1,verified,4.833333333333333,
+crude_years_5y|All water depths,crude_years_5y,All water depths,2005,0,603,6,verified,1.7083333333333333,
+crude_years_5y|All water depths,crude_years_5y,All water depths,2006,0,916,4,verified,2.3333333333333335,
+crude_years_5y|All water depths,crude_years_5y,All water depths,2007,0,367,1,verified,0.9166666666666666,
+crude_years_5y|All water depths,crude_years_5y,All water depths,2008,0,1512,5,verified,3.4166666666666665,
+crude_years_5y|All water depths,crude_years_5y,All water depths,2009,0,499,0,verified,,
+crude_years_5y|All water depths,crude_years_5y,All water depths,2010,0,449,4,verified,3.2083333333333335,
+crude_years_5y|All water depths,crude_years_5y,All water depths,2011,0,12,0,verified,,
+crude_years_5y|All water depths,crude_years_5y,All water depths,2012,0,624,4,verified,2.75,
+crude_years_5y|All water depths,crude_years_5y,All water depths,2013,0,470,4,verified,3.625,
+crude_years_5y|All water depths,crude_years_5y,All water depths,2014,0,391,1,verified,4.416666666666667,
+crude_years_5y|All water depths,crude_years_5y,All water depths,2015,0,211,0,verified,,
+crude_years_5y|All water depths,crude_years_5y,All water depths,2016,0,142,2,verified,2.4583333333333335,
+crude_years_5y|All water depths,crude_years_5y,All water depths,2017,0,228,0,verified,,
+crude_years_5y|All water depths,crude_years_5y,All water depths,2018,0,281,4,verified,3.9583333333333335,
+crude_years_5y|All water depths,crude_years_5y,All water depths,2019,0,342,1,verified,4.583333333333333,
+crude_years_5y|All water depths,crude_years_5y,All water depths,2020,0,79,1,verified,4.833333333333333,
+crude_years_5y|Under 100 m,crude_years_5y,Under 100 m,2005,0,249,6,verified,1.7083333333333333,
+crude_years_5y|Under 100 m,crude_years_5y,Under 100 m,2006,0,285,1,verified,2.25,
+crude_years_5y|Under 100 m,crude_years_5y,Under 100 m,2007,0,129,0,verified,,
+crude_years_5y|Under 100 m,crude_years_5y,Under 100 m,2008,0,338,2,verified,3.2083333333333335,
+crude_years_5y|Under 100 m,crude_years_5y,Under 100 m,2009,0,113,0,verified,,
+crude_years_5y|Under 100 m,crude_years_5y,Under 100 m,2010,0,147,4,verified,3.2083333333333335,
+crude_years_5y|Under 100 m,crude_years_5y,Under 100 m,2011,0,0,0,verified,,
+crude_years_5y|Under 100 m,crude_years_5y,Under 100 m,2012,0,170,3,verified,2.1666666666666665,
+crude_years_5y|Under 100 m,crude_years_5y,Under 100 m,2013,0,91,1,verified,4.666666666666667,
+crude_years_5y|Under 100 m,crude_years_5y,Under 100 m,2014,0,92,0,verified,,
+crude_years_5y|Under 100 m,crude_years_5y,Under 100 m,2015,0,38,0,verified,,
+crude_years_5y|Under 100 m,crude_years_5y,Under 100 m,2016,0,20,0,verified,,
+crude_years_5y|Under 100 m,crude_years_5y,Under 100 m,2017,0,19,0,verified,,
+crude_years_5y|Under 100 m,crude_years_5y,Under 100 m,2018,0,60,4,verified,3.9583333333333335,
+crude_years_5y|Under 100 m,crude_years_5y,Under 100 m,2019,0,25,0,verified,,
+crude_years_5y|Under 100 m,crude_years_5y,Under 100 m,2020,0,6,0,verified,,
+"effective_leases|1,500 m and deeper",effective_leases,"1,500 m and deeper",2005,0,130,130,verified,130.0,
+"effective_leases|1,500 m and deeper",effective_leases,"1,500 m and deeper",2006,0,230,230,verified,230.0,
+"effective_leases|1,500 m and deeper",effective_leases,"1,500 m and deeper",2007,0,135,135,verified,135.0,
+"effective_leases|1,500 m and deeper",effective_leases,"1,500 m and deeper",2008,0,579,579,verified,579.0,
+"effective_leases|1,500 m and deeper",effective_leases,"1,500 m and deeper",2009,0,208,208,verified,208.0,256.4
+"effective_leases|1,500 m and deeper",effective_leases,"1,500 m and deeper",2010,0,165,165,verified,165.0,263.4
+"effective_leases|1,500 m and deeper",effective_leases,"1,500 m and deeper",2011,0,8,8,verified,8.0,219.0
+"effective_leases|1,500 m and deeper",effective_leases,"1,500 m and deeper",2012,0,235,235,verified,235.0,239.0
+"effective_leases|1,500 m and deeper",effective_leases,"1,500 m and deeper",2013,0,207,207,verified,207.0,164.6
+"effective_leases|1,500 m and deeper",effective_leases,"1,500 m and deeper",2014,0,154,154,verified,154.0,153.8
+"effective_leases|1,500 m and deeper",effective_leases,"1,500 m and deeper",2015,0,102,102,verified,102.0,141.2
+"effective_leases|1,500 m and deeper",effective_leases,"1,500 m and deeper",2016,0,40,40,verified,40.0,147.6
+"effective_leases|1,500 m and deeper",effective_leases,"1,500 m and deeper",2017,0,93,93,verified,93.0,119.2
+"effective_leases|1,500 m and deeper",effective_leases,"1,500 m and deeper",2018,0,119,119,verified,119.0,101.6
+"effective_leases|1,500 m and deeper",effective_leases,"1,500 m and deeper",2019,0,138,138,verified,138.0,98.4
+"effective_leases|1,500 m and deeper",effective_leases,"1,500 m and deeper",2020,0,26,26,verified,26.0,83.2
+"effective_leases|1,500 m and deeper",effective_leases,"1,500 m and deeper",2021,0,34,34,verified,34.0,82.0
+"effective_leases|1,500 m and deeper",effective_leases,"1,500 m and deeper",2022,0,61,61,verified,61.0,75.6
+"effective_leases|1,500 m and deeper",effective_leases,"1,500 m and deeper",2023,0,133,133,verified,133.0,78.4
+"effective_leases|1,500 m and deeper",effective_leases,"1,500 m and deeper",2024,0,117,117,verified,117.0,74.2
+"effective_leases|1,500 m and deeper",effective_leases,"1,500 m and deeper",2025,0,0,0,verified,0.0,69.0
+"effective_leases|1,500 m and deeper",effective_leases,"1,500 m and deeper",2026,1,90,90,verified,90.0,
+effective_leases|100 to 500 m,effective_leases,100 to 500 m,2005,0,71,71,verified,71.0,
+effective_leases|100 to 500 m,effective_leases,100 to 500 m,2006,0,118,118,verified,118.0,
+effective_leases|100 to 500 m,effective_leases,100 to 500 m,2007,0,13,13,verified,13.0,
+effective_leases|100 to 500 m,effective_leases,100 to 500 m,2008,0,85,85,verified,85.0,
+effective_leases|100 to 500 m,effective_leases,100 to 500 m,2009,0,18,18,verified,18.0,61.0
+effective_leases|100 to 500 m,effective_leases,100 to 500 m,2010,0,36,36,verified,36.0,54.0
+effective_leases|100 to 500 m,effective_leases,100 to 500 m,2011,0,0,0,verified,0.0,30.4
+effective_leases|100 to 500 m,effective_leases,100 to 500 m,2012,0,49,49,verified,49.0,37.6
+effective_leases|100 to 500 m,effective_leases,100 to 500 m,2013,0,11,11,verified,11.0,22.8
+effective_leases|100 to 500 m,effective_leases,100 to 500 m,2014,0,72,72,verified,72.0,33.6
+effective_leases|100 to 500 m,effective_leases,100 to 500 m,2015,0,15,15,verified,15.0,29.4
+effective_leases|100 to 500 m,effective_leases,100 to 500 m,2016,0,14,14,verified,14.0,32.2
+effective_leases|100 to 500 m,effective_leases,100 to 500 m,2017,0,19,19,verified,19.0,26.2
+effective_leases|100 to 500 m,effective_leases,100 to 500 m,2018,0,26,26,verified,26.0,29.2
+effective_leases|100 to 500 m,effective_leases,100 to 500 m,2019,0,38,38,verified,38.0,22.4
+effective_leases|100 to 500 m,effective_leases,100 to 500 m,2020,0,2,2,verified,2.0,19.8
+effective_leases|100 to 500 m,effective_leases,100 to 500 m,2021,0,3,3,verified,3.0,17.6
+effective_leases|100 to 500 m,effective_leases,100 to 500 m,2022,0,17,17,verified,17.0,17.2
+effective_leases|100 to 500 m,effective_leases,100 to 500 m,2023,0,15,15,verified,15.0,15.0
+effective_leases|100 to 500 m,effective_leases,100 to 500 m,2024,0,9,9,verified,9.0,9.2
+effective_leases|100 to 500 m,effective_leases,100 to 500 m,2025,0,0,0,verified,0.0,8.8
+effective_leases|100 to 500 m,effective_leases,100 to 500 m,2026,1,4,4,verified,4.0,
+"effective_leases|500 to 1,500 m",effective_leases,"500 to 1,500 m",2005,0,153,153,verified,153.0,
+"effective_leases|500 to 1,500 m",effective_leases,"500 to 1,500 m",2006,0,283,283,verified,283.0,
+"effective_leases|500 to 1,500 m",effective_leases,"500 to 1,500 m",2007,0,90,90,verified,90.0,
+"effective_leases|500 to 1,500 m",effective_leases,"500 to 1,500 m",2008,0,510,510,verified,510.0,
+"effective_leases|500 to 1,500 m",effective_leases,"500 to 1,500 m",2009,0,160,160,verified,160.0,239.2
+"effective_leases|500 to 1,500 m",effective_leases,"500 to 1,500 m",2010,0,101,101,verified,101.0,228.8
+"effective_leases|500 to 1,500 m",effective_leases,"500 to 1,500 m",2011,0,4,4,verified,4.0,173.0
+"effective_leases|500 to 1,500 m",effective_leases,"500 to 1,500 m",2012,0,170,170,verified,170.0,189.0
+"effective_leases|500 to 1,500 m",effective_leases,"500 to 1,500 m",2013,0,161,161,verified,161.0,119.2
+"effective_leases|500 to 1,500 m",effective_leases,"500 to 1,500 m",2014,0,73,73,verified,73.0,101.8
+"effective_leases|500 to 1,500 m",effective_leases,"500 to 1,500 m",2015,0,56,56,verified,56.0,92.8
+"effective_leases|500 to 1,500 m",effective_leases,"500 to 1,500 m",2016,0,68,68,verified,68.0,105.6
+"effective_leases|500 to 1,500 m",effective_leases,"500 to 1,500 m",2017,0,97,97,verified,97.0,91.0
+"effective_leases|500 to 1,500 m",effective_leases,"500 to 1,500 m",2018,0,76,76,verified,76.0,74.0
+"effective_leases|500 to 1,500 m",effective_leases,"500 to 1,500 m",2019,0,141,141,verified,141.0,87.6
+"effective_leases|500 to 1,500 m",effective_leases,"500 to 1,500 m",2020,0,45,45,verified,45.0,85.4
+"effective_leases|500 to 1,500 m",effective_leases,"500 to 1,500 m",2021,0,40,40,verified,40.0,79.8
+"effective_leases|500 to 1,500 m",effective_leases,"500 to 1,500 m",2022,0,97,97,verified,97.0,79.8
+"effective_leases|500 to 1,500 m",effective_leases,"500 to 1,500 m",2023,0,55,55,verified,55.0,75.6
+"effective_leases|500 to 1,500 m",effective_leases,"500 to 1,500 m",2024,0,125,125,verified,125.0,72.4
+"effective_leases|500 to 1,500 m",effective_leases,"500 to 1,500 m",2025,0,0,0,verified,0.0,63.4
+"effective_leases|500 to 1,500 m",effective_leases,"500 to 1,500 m",2026,1,100,100,verified,100.0,
+effective_leases|All water depths,effective_leases,All water depths,2005,0,603,603,verified,603.0,
+effective_leases|All water depths,effective_leases,All water depths,2006,0,916,916,verified,916.0,
+effective_leases|All water depths,effective_leases,All water depths,2007,0,367,367,verified,367.0,
+effective_leases|All water depths,effective_leases,All water depths,2008,0,1512,1512,verified,1512.0,
+effective_leases|All water depths,effective_leases,All water depths,2009,0,499,499,verified,499.0,779.4
+effective_leases|All water depths,effective_leases,All water depths,2010,0,449,449,verified,449.0,748.6
+effective_leases|All water depths,effective_leases,All water depths,2011,0,12,12,verified,12.0,567.8
+effective_leases|All water depths,effective_leases,All water depths,2012,0,624,624,verified,624.0,619.2
+effective_leases|All water depths,effective_leases,All water depths,2013,0,470,470,verified,470.0,410.8
+effective_leases|All water depths,effective_leases,All water depths,2014,0,391,391,verified,391.0,389.2
+effective_leases|All water depths,effective_leases,All water depths,2015,0,211,211,verified,211.0,341.6
+effective_leases|All water depths,effective_leases,All water depths,2016,0,142,142,verified,142.0,367.6
+effective_leases|All water depths,effective_leases,All water depths,2017,0,228,228,verified,228.0,288.4
+effective_leases|All water depths,effective_leases,All water depths,2018,0,281,281,verified,281.0,250.6
+effective_leases|All water depths,effective_leases,All water depths,2019,0,342,342,verified,342.0,240.8
+effective_leases|All water depths,effective_leases,All water depths,2020,0,79,79,verified,79.0,214.4
+effective_leases|All water depths,effective_leases,All water depths,2021,0,86,86,verified,86.0,203.2
+effective_leases|All water depths,effective_leases,All water depths,2022,0,306,306,verified,306.0,218.8
+effective_leases|All water depths,effective_leases,All water depths,2023,0,295,295,verified,295.0,221.6
+effective_leases|All water depths,effective_leases,All water depths,2024,0,299,299,verified,299.0,213.0
+effective_leases|All water depths,effective_leases,All water depths,2025,0,0,0,verified,0.0,197.2
+effective_leases|All water depths,effective_leases,All water depths,2026,1,215,215,verified,215.0,
+effective_leases|Under 100 m,effective_leases,Under 100 m,2005,0,249,249,verified,249.0,
+effective_leases|Under 100 m,effective_leases,Under 100 m,2006,0,285,285,verified,285.0,
+effective_leases|Under 100 m,effective_leases,Under 100 m,2007,0,129,129,verified,129.0,
+effective_leases|Under 100 m,effective_leases,Under 100 m,2008,0,338,338,verified,338.0,
+effective_leases|Under 100 m,effective_leases,Under 100 m,2009,0,113,113,verified,113.0,222.8
+effective_leases|Under 100 m,effective_leases,Under 100 m,2010,0,147,147,verified,147.0,202.4
+effective_leases|Under 100 m,effective_leases,Under 100 m,2011,0,0,0,verified,0.0,145.4
+effective_leases|Under 100 m,effective_leases,Under 100 m,2012,0,170,170,verified,170.0,153.6
+effective_leases|Under 100 m,effective_leases,Under 100 m,2013,0,91,91,verified,91.0,104.2
+effective_leases|Under 100 m,effective_leases,Under 100 m,2014,0,92,92,verified,92.0,100.0
+effective_leases|Under 100 m,effective_leases,Under 100 m,2015,0,38,38,verified,38.0,78.2
+effective_leases|Under 100 m,effective_leases,Under 100 m,2016,0,20,20,verified,20.0,82.2
+effective_leases|Under 100 m,effective_leases,Under 100 m,2017,0,19,19,verified,19.0,52.0
+effective_leases|Under 100 m,effective_leases,Under 100 m,2018,0,60,60,verified,60.0,45.8
+effective_leases|Under 100 m,effective_leases,Under 100 m,2019,0,25,25,verified,25.0,32.4
+effective_leases|Under 100 m,effective_leases,Under 100 m,2020,0,6,6,verified,6.0,26.0
+effective_leases|Under 100 m,effective_leases,Under 100 m,2021,0,9,9,verified,9.0,23.8
+effective_leases|Under 100 m,effective_leases,Under 100 m,2022,0,131,131,verified,131.0,46.2
+effective_leases|Under 100 m,effective_leases,Under 100 m,2023,0,92,92,verified,92.0,52.6
+effective_leases|Under 100 m,effective_leases,Under 100 m,2024,0,48,48,verified,48.0,57.2
+effective_leases|Under 100 m,effective_leases,Under 100 m,2025,0,0,0,verified,0.0,56.0
+effective_leases|Under 100 m,effective_leases,Under 100 m,2026,1,21,21,verified,21.0,
+"spud_share_5y|1,500 m and deeper",spud_share_5y,"1,500 m and deeper",2005,0,130,2,verified,1.5384615384615385,
+"spud_share_5y|1,500 m and deeper",spud_share_5y,"1,500 m and deeper",2006,0,230,2,verified,0.8695652173913043,
+"spud_share_5y|1,500 m and deeper",spud_share_5y,"1,500 m and deeper",2007,0,135,4,verified,2.962962962962963,
+"spud_share_5y|1,500 m and deeper",spud_share_5y,"1,500 m and deeper",2008,0,579,11,verified,1.8998272884283247,
+"spud_share_5y|1,500 m and deeper",spud_share_5y,"1,500 m and deeper",2009,0,208,5,verified,2.4038461538461537,1.9349326322180567
+"spud_share_5y|1,500 m and deeper",spud_share_5y,"1,500 m and deeper",2010,0,165,3,verified,1.8181818181818181,1.9908766881621127
+"spud_share_5y|1,500 m and deeper",spud_share_5y,"1,500 m and deeper",2011,0,8,0,verified,0.0,1.8169636446838517
+"spud_share_5y|1,500 m and deeper",spud_share_5y,"1,500 m and deeper",2012,0,235,6,verified,2.5531914893617023,1.7350093499635997
+"spud_share_5y|1,500 m and deeper",spud_share_5y,"1,500 m and deeper",2013,0,207,3,verified,1.4492753623188406,1.644898964741703
+"spud_share_5y|1,500 m and deeper",spud_share_5y,"1,500 m and deeper",2014,0,154,4,verified,2.5974025974025974,1.6836102534529918
+"spud_share_5y|1,500 m and deeper",spud_share_5y,"1,500 m and deeper",2015,0,102,1,verified,0.9803921568627451,1.5160523211891772
+"spud_share_5y|1,500 m and deeper",spud_share_5y,"1,500 m and deeper",2016,0,40,4,verified,10.0,3.516052321189177
+"spud_share_5y|1,500 m and deeper",spud_share_5y,"1,500 m and deeper",2017,0,93,6,verified,6.451612903225806,4.295736603961998
+"spud_share_5y|1,500 m and deeper",spud_share_5y,"1,500 m and deeper",2018,0,119,2,verified,1.680672268907563,4.342015985279742
+"spud_share_5y|1,500 m and deeper",spud_share_5y,"1,500 m and deeper",2019,0,138,3,verified,2.1739130434782608,4.257318074494875
+"spud_share_5y|1,500 m and deeper",spud_share_5y,"1,500 m and deeper",2020,0,26,1,verified,3.8461538461538463,4.830470412353096
+spud_share_5y|100 to 500 m,spud_share_5y,100 to 500 m,2005,0,71,3,verified,4.225352112676056,
+spud_share_5y|100 to 500 m,spud_share_5y,100 to 500 m,2006,0,118,5,verified,4.237288135593221,
+spud_share_5y|100 to 500 m,spud_share_5y,100 to 500 m,2007,0,13,0,verified,0.0,
+spud_share_5y|100 to 500 m,spud_share_5y,100 to 500 m,2008,0,85,2,verified,2.3529411764705883,
+spud_share_5y|100 to 500 m,spud_share_5y,100 to 500 m,2009,0,18,1,verified,5.555555555555555,3.2742273960590835
+spud_share_5y|100 to 500 m,spud_share_5y,100 to 500 m,2010,0,36,0,verified,0.0,2.429156973523873
+spud_share_5y|100 to 500 m,spud_share_5y,100 to 500 m,2011,0,0,0,verified,,
+spud_share_5y|100 to 500 m,spud_share_5y,100 to 500 m,2012,0,49,1,verified,2.0408163265306123,
+spud_share_5y|100 to 500 m,spud_share_5y,100 to 500 m,2013,0,11,0,verified,0.0,
+spud_share_5y|100 to 500 m,spud_share_5y,100 to 500 m,2014,0,72,3,verified,4.166666666666667,
+spud_share_5y|100 to 500 m,spud_share_5y,100 to 500 m,2015,0,15,1,verified,6.666666666666667,
+spud_share_5y|100 to 500 m,spud_share_5y,100 to 500 m,2016,0,14,0,verified,0.0,2.574829931972789
+spud_share_5y|100 to 500 m,spud_share_5y,100 to 500 m,2017,0,19,1,verified,5.2631578947368425,3.219298245614035
+spud_share_5y|100 to 500 m,spud_share_5y,100 to 500 m,2018,0,26,1,verified,3.8461538461538463,3.9885290148448043
+spud_share_5y|100 to 500 m,spud_share_5y,100 to 500 m,2019,0,38,1,verified,2.6315789473684212,3.681511470985155
+spud_share_5y|100 to 500 m,spud_share_5y,100 to 500 m,2020,0,2,0,verified,0.0,2.3481781376518214
+"spud_share_5y|500 to 1,500 m",spud_share_5y,"500 to 1,500 m",2005,0,153,4,verified,2.6143790849673203,
+"spud_share_5y|500 to 1,500 m",spud_share_5y,"500 to 1,500 m",2006,0,283,6,verified,2.1201413427561837,
+"spud_share_5y|500 to 1,500 m",spud_share_5y,"500 to 1,500 m",2007,0,90,0,verified,0.0,
+"spud_share_5y|500 to 1,500 m",spud_share_5y,"500 to 1,500 m",2008,0,510,9,verified,1.7647058823529411,
+"spud_share_5y|500 to 1,500 m",spud_share_5y,"500 to 1,500 m",2009,0,160,4,verified,2.5,1.799845262015289
+"spud_share_5y|500 to 1,500 m",spud_share_5y,"500 to 1,500 m",2010,0,101,3,verified,2.9702970297029703,1.871028850962419
+"spud_share_5y|500 to 1,500 m",spud_share_5y,"500 to 1,500 m",2011,0,4,0,verified,0.0,1.4470005824111822
+"spud_share_5y|500 to 1,500 m",spud_share_5y,"500 to 1,500 m",2012,0,170,9,verified,5.294117647058823,2.505824111822947
+"spud_share_5y|500 to 1,500 m",spud_share_5y,"500 to 1,500 m",2013,0,161,11,verified,6.832298136645963,3.519342562681551
+"spud_share_5y|500 to 1,500 m",spud_share_5y,"500 to 1,500 m",2014,0,73,1,verified,1.36986301369863,3.2933151654212773
+"spud_share_5y|500 to 1,500 m",spud_share_5y,"500 to 1,500 m",2015,0,56,5,verified,8.928571428571429,4.484970045194968
+"spud_share_5y|500 to 1,500 m",spud_share_5y,"500 to 1,500 m",2016,0,68,5,verified,7.352941176470588,5.955558280489086
+"spud_share_5y|500 to 1,500 m",spud_share_5y,"500 to 1,500 m",2017,0,97,6,verified,6.185567010309279,6.133848153139178
+"spud_share_5y|500 to 1,500 m",spud_share_5y,"500 to 1,500 m",2018,0,76,3,verified,3.9473684210526314,5.556862210020511
+"spud_share_5y|500 to 1,500 m",spud_share_5y,"500 to 1,500 m",2019,0,141,6,verified,4.25531914893617,6.133953437068019
+"spud_share_5y|500 to 1,500 m",spud_share_5y,"500 to 1,500 m",2020,0,45,3,verified,6.666666666666667,5.681572484687067
+spud_share_5y|All water depths,spud_share_5y,All water depths,2005,0,603,61,verified,10.11608623548922,
+spud_share_5y|All water depths,spud_share_5y,All water depths,2006,0,916,64,verified,6.986899563318778,
+spud_share_5y|All water depths,spud_share_5y,All water depths,2007,0,367,14,verified,3.8147138964577656,
+spud_share_5y|All water depths,spud_share_5y,All water depths,2008,0,1512,49,verified,3.240740740740741,
+spud_share_5y|All water depths,spud_share_5y,All water depths,2009,0,499,26,verified,5.210420841683367,5.873772255537974
+spud_share_5y|All water depths,spud_share_5y,All water depths,2010,0,449,19,verified,4.23162583518931,4.696880175477991
+spud_share_5y|All water depths,spud_share_5y,All water depths,2011,0,12,0,verified,0.0,3.299500262814236
+spud_share_5y|All water depths,spud_share_5y,All water depths,2012,0,624,25,verified,4.006410256410256,3.337839534804735
+spud_share_5y|All water depths,spud_share_5y,All water depths,2013,0,470,17,verified,3.617021276595745,3.4130956419757355
+spud_share_5y|All water depths,spud_share_5y,All water depths,2014,0,391,8,verified,2.0460358056265986,2.780218634764382
+spud_share_5y|All water depths,spud_share_5y,All water depths,2015,0,211,8,verified,3.7914691943127963,2.692187306589079
+spud_share_5y|All water depths,spud_share_5y,All water depths,2016,0,142,9,verified,6.338028169014085,3.959792940391896
+spud_share_5y|All water depths,spud_share_5y,All water depths,2017,0,228,14,verified,6.140350877192983,4.386581064548442
+spud_share_5y|All water depths,spud_share_5y,All water depths,2018,0,281,7,verified,2.491103202846975,4.161397449798687
+spud_share_5y|All water depths,spud_share_5y,All water depths,2019,0,342,13,verified,3.801169590643275,4.512424206802022
+spud_share_5y|All water depths,spud_share_5y,All water depths,2020,0,79,5,verified,6.329113924050633,5.01995315274959
+spud_share_5y|Under 100 m,spud_share_5y,Under 100 m,2005,0,249,52,verified,20.883534136546185,
+spud_share_5y|Under 100 m,spud_share_5y,Under 100 m,2006,0,285,51,verified,17.894736842105264,
+spud_share_5y|Under 100 m,spud_share_5y,Under 100 m,2007,0,129,10,verified,7.751937984496124,
+spud_share_5y|Under 100 m,spud_share_5y,Under 100 m,2008,0,338,27,verified,7.988165680473373,
+spud_share_5y|Under 100 m,spud_share_5y,Under 100 m,2009,0,113,16,verified,14.15929203539823,13.735533335803837
+spud_share_5y|Under 100 m,spud_share_5y,Under 100 m,2010,0,147,13,verified,8.843537414965986,11.327533991487794
+spud_share_5y|Under 100 m,spud_share_5y,Under 100 m,2011,0,0,0,verified,,
+spud_share_5y|Under 100 m,spud_share_5y,Under 100 m,2012,0,170,9,verified,5.294117647058823,
+spud_share_5y|Under 100 m,spud_share_5y,Under 100 m,2013,0,91,3,verified,3.2967032967032965,
+spud_share_5y|Under 100 m,spud_share_5y,Under 100 m,2014,0,92,0,verified,0.0,
+spud_share_5y|Under 100 m,spud_share_5y,Under 100 m,2015,0,38,1,verified,2.6315789473684212,
+spud_share_5y|Under 100 m,spud_share_5y,Under 100 m,2016,0,20,0,verified,0.0,2.2444799782261082
+spud_share_5y|Under 100 m,spud_share_5y,Under 100 m,2017,0,19,1,verified,5.2631578947368425,2.238288027761712
+spud_share_5y|Under 100 m,spud_share_5y,Under 100 m,2018,0,60,1,verified,1.6666666666666667,1.912280701754386
+spud_share_5y|Under 100 m,spud_share_5y,Under 100 m,2019,0,25,3,verified,12.0,4.3122807017543865
+spud_share_5y|Under 100 m,spud_share_5y,Under 100 m,2020,0,6,1,verified,16.666666666666668,7.1192982456140355
+"spud_share_observed|1,500 m and deeper",spud_share_observed,"1,500 m and deeper",2005,0,130,2,verified,1.5384615384615385,
+"spud_share_observed|1,500 m and deeper",spud_share_observed,"1,500 m and deeper",2006,0,230,9,verified,3.9130434782608696,
+"spud_share_observed|1,500 m and deeper",spud_share_observed,"1,500 m and deeper",2007,0,135,7,verified,5.185185185185185,
+"spud_share_observed|1,500 m and deeper",spud_share_observed,"1,500 m and deeper",2008,0,579,24,verified,4.1450777202072535,
+"spud_share_observed|1,500 m and deeper",spud_share_observed,"1,500 m and deeper",2009,0,208,13,verified,6.25,4.206353584422969
+"spud_share_observed|1,500 m and deeper",spud_share_observed,"1,500 m and deeper",2010,0,165,6,verified,3.6363636363636362,4.625934004003389
+"spud_share_observed|1,500 m and deeper",spud_share_observed,"1,500 m and deeper",2011,0,8,0,verified,0.0,3.843325308351215
+"spud_share_observed|1,500 m and deeper",spud_share_observed,"1,500 m and deeper",2012,0,235,11,verified,4.680851063829787,3.742458484080135
+"spud_share_observed|1,500 m and deeper",spud_share_observed,"1,500 m and deeper",2013,0,207,9,verified,4.3478260869565215,3.7830081574299887
+"spud_share_observed|1,500 m and deeper",spud_share_observed,"1,500 m and deeper",2014,0,154,6,verified,3.896103896103896,3.312228936650768
+"spud_share_observed|1,500 m and deeper",spud_share_observed,"1,500 m and deeper",2015,0,102,3,verified,2.9411764705882355,3.173191503495688
+"spud_share_observed|1,500 m and deeper",spud_share_observed,"1,500 m and deeper",2016,0,40,5,verified,12.5,5.673191503495688
+"spud_share_observed|1,500 m and deeper",spud_share_observed,"1,500 m and deeper",2017,0,93,6,verified,6.451612903225806,6.0273438713748915
+"spud_share_observed|1,500 m and deeper",spud_share_observed,"1,500 m and deeper",2018,0,119,3,verified,2.5210084033613445,5.661980334655857
+"spud_share_observed|1,500 m and deeper",spud_share_observed,"1,500 m and deeper",2019,0,138,3,verified,2.1739130434782608,5.31754216413073
+"spud_share_observed|1,500 m and deeper",spud_share_observed,"1,500 m and deeper",2020,0,26,1,verified,3.8461538461538463,5.498537639243851
+spud_share_observed|100 to 500 m,spud_share_observed,100 to 500 m,2005,0,71,3,verified,4.225352112676056,
+spud_share_observed|100 to 500 m,spud_share_observed,100 to 500 m,2006,0,118,5,verified,4.237288135593221,
+spud_share_observed|100 to 500 m,spud_share_observed,100 to 500 m,2007,0,13,0,verified,0.0,
+spud_share_observed|100 to 500 m,spud_share_observed,100 to 500 m,2008,0,85,5,verified,5.882352941176471,
+spud_share_observed|100 to 500 m,spud_share_observed,100 to 500 m,2009,0,18,1,verified,5.555555555555555,3.9801097490002606
+spud_share_observed|100 to 500 m,spud_share_observed,100 to 500 m,2010,0,36,0,verified,0.0,3.135039326465049
+spud_share_observed|100 to 500 m,spud_share_observed,100 to 500 m,2011,0,0,0,verified,,
+spud_share_observed|100 to 500 m,spud_share_observed,100 to 500 m,2012,0,49,1,verified,2.0408163265306123,
+spud_share_observed|100 to 500 m,spud_share_observed,100 to 500 m,2013,0,11,0,verified,0.0,
+spud_share_observed|100 to 500 m,spud_share_observed,100 to 500 m,2014,0,72,3,verified,4.166666666666667,
+spud_share_observed|100 to 500 m,spud_share_observed,100 to 500 m,2015,0,15,1,verified,6.666666666666667,
+spud_share_observed|100 to 500 m,spud_share_observed,100 to 500 m,2016,0,14,0,verified,0.0,2.574829931972789
+spud_share_observed|100 to 500 m,spud_share_observed,100 to 500 m,2017,0,19,1,verified,5.2631578947368425,3.2192982456140355
+spud_share_observed|100 to 500 m,spud_share_observed,100 to 500 m,2018,0,26,1,verified,3.8461538461538463,3.988529014844805
+spud_share_observed|100 to 500 m,spud_share_observed,100 to 500 m,2019,0,38,1,verified,2.6315789473684212,3.6815114709851557
+spud_share_observed|100 to 500 m,spud_share_observed,100 to 500 m,2020,0,2,0,verified,0.0,2.348178137651822
+"spud_share_observed|500 to 1,500 m",spud_share_observed,"500 to 1,500 m",2005,0,153,6,verified,3.9215686274509802,
+"spud_share_observed|500 to 1,500 m",spud_share_observed,"500 to 1,500 m",2006,0,283,10,verified,3.5335689045936394,
+"spud_share_observed|500 to 1,500 m",spud_share_observed,"500 to 1,500 m",2007,0,90,0,verified,0.0,
+"spud_share_observed|500 to 1,500 m",spud_share_observed,"500 to 1,500 m",2008,0,510,15,verified,2.9411764705882355,
+"spud_share_observed|500 to 1,500 m",spud_share_observed,"500 to 1,500 m",2009,0,160,5,verified,3.125,2.704262800526571
+"spud_share_observed|500 to 1,500 m",spud_share_observed,"500 to 1,500 m",2010,0,101,4,verified,3.9603960396039604,2.712028282957167
+"spud_share_observed|500 to 1,500 m",spud_share_observed,"500 to 1,500 m",2011,0,4,0,verified,0.0,2.005314502038439
+"spud_share_observed|500 to 1,500 m",spud_share_observed,"500 to 1,500 m",2012,0,170,11,verified,6.470588235294118,3.2994321490972625
+"spud_share_observed|500 to 1,500 m",spud_share_observed,"500 to 1,500 m",2013,0,161,12,verified,7.453416149068323,4.20188008479328
+"spud_share_observed|500 to 1,500 m",spud_share_observed,"500 to 1,500 m",2014,0,73,5,verified,6.8493150684931505,4.94674309849191
+"spud_share_observed|500 to 1,500 m",spud_share_observed,"500 to 1,500 m",2015,0,56,5,verified,8.928571428571429,5.940378176285404
+"spud_share_observed|500 to 1,500 m",spud_share_observed,"500 to 1,500 m",2016,0,68,8,verified,11.764705882352942,8.293319352755992
+"spud_share_observed|500 to 1,500 m",spud_share_observed,"500 to 1,500 m",2017,0,97,10,verified,10.309278350515465,9.061057375800262
+"spud_share_observed|500 to 1,500 m",spud_share_observed,"500 to 1,500 m",2018,0,76,6,verified,7.894736842105263,9.14932151440765
+"spud_share_observed|500 to 1,500 m",spud_share_observed,"500 to 1,500 m",2019,0,141,6,verified,4.25531914893617,8.630522330496254
+"spud_share_observed|500 to 1,500 m",spud_share_observed,"500 to 1,500 m",2020,0,45,3,verified,6.666666666666667,8.178141378115303
+spud_share_observed|All water depths,spud_share_observed,All water depths,2005,0,603,65,verified,10.779436152570481,
+spud_share_observed|All water depths,spud_share_observed,All water depths,2006,0,916,75,verified,8.187772925764191,
+spud_share_observed|All water depths,spud_share_observed,All water depths,2007,0,367,17,verified,4.632152588555858,
+spud_share_observed|All water depths,spud_share_observed,All water depths,2008,0,1512,76,verified,5.026455026455026,
+spud_share_observed|All water depths,spud_share_observed,All water depths,2009,0,499,36,verified,7.214428857715431,7.1680491102121975
+spud_share_observed|All water depths,spud_share_observed,All water depths,2010,0,449,23,verified,5.122494432071269,6.036660766112354
+spud_share_observed|All water depths,spud_share_observed,All water depths,2011,0,12,0,verified,0.0,4.399106180959516
+spud_share_observed|All water depths,spud_share_observed,All water depths,2012,0,624,32,verified,5.128205128205129,4.49831668888937
+spud_share_observed|All water depths,spud_share_observed,All water depths,2013,0,470,24,verified,5.1063829787234045,4.514302279343047
+spud_share_observed|All water depths,spud_share_observed,All water depths,2014,0,391,14,verified,3.580562659846547,3.7875290397692694
+spud_share_observed|All water depths,spud_share_observed,All water depths,2015,0,211,10,verified,4.739336492890995,3.710897451933215
+spud_share_observed|All water depths,spud_share_observed,All water depths,2016,0,142,13,verified,9.154929577464788,5.541883367426173
+spud_share_observed|All water depths,spud_share_observed,All water depths,2017,0,228,18,verified,7.894736842105263,6.095189710206199
+spud_share_observed|All water depths,spud_share_observed,All water depths,2018,0,281,11,verified,3.9145907473309607,5.856831263927711
+spud_share_observed|All water depths,spud_share_observed,All water depths,2019,0,342,13,verified,3.801169590643275,5.900952650087056
+spud_share_observed|All water depths,spud_share_observed,All water depths,2020,0,79,5,verified,6.329113924050633,6.2189081363189835
+spud_share_observed|Under 100 m,spud_share_observed,Under 100 m,2005,0,249,54,verified,21.686746987951807,
+spud_share_observed|Under 100 m,spud_share_observed,Under 100 m,2006,0,285,51,verified,17.894736842105264,
+spud_share_observed|Under 100 m,spud_share_observed,Under 100 m,2007,0,129,10,verified,7.751937984496124,
+spud_share_observed|Under 100 m,spud_share_observed,Under 100 m,2008,0,338,32,verified,9.467455621301776,
+spud_share_observed|Under 100 m,spud_share_observed,Under 100 m,2009,0,113,17,verified,15.044247787610619,14.369025044693117
+spud_share_observed|Under 100 m,spud_share_observed,Under 100 m,2010,0,147,13,verified,8.843537414965986,11.800383130095954
+spud_share_observed|Under 100 m,spud_share_observed,Under 100 m,2011,0,0,0,verified,,
+spud_share_observed|Under 100 m,spud_share_observed,Under 100 m,2012,0,170,9,verified,5.294117647058823,
+spud_share_observed|Under 100 m,spud_share_observed,Under 100 m,2013,0,91,3,verified,3.2967032967032965,
+spud_share_observed|Under 100 m,spud_share_observed,Under 100 m,2014,0,92,0,verified,0.0,
+spud_share_observed|Under 100 m,spud_share_observed,Under 100 m,2015,0,38,1,verified,2.6315789473684212,
+spud_share_observed|Under 100 m,spud_share_observed,Under 100 m,2016,0,20,0,verified,0.0,2.2444799782261082
+spud_share_observed|Under 100 m,spud_share_observed,Under 100 m,2017,0,19,1,verified,5.2631578947368425,2.238288027761712
+spud_share_observed|Under 100 m,spud_share_observed,Under 100 m,2018,0,60,1,verified,1.6666666666666667,1.912280701754386
+spud_share_observed|Under 100 m,spud_share_observed,Under 100 m,2019,0,25,3,verified,12.0,4.3122807017543865
+spud_share_observed|Under 100 m,spud_share_observed,Under 100 m,2020,0,6,1,verified,16.666666666666668,7.1192982456140355
+"spud_years_5y|1,500 m and deeper",spud_years_5y,"1,500 m and deeper",2005,0,130,2,verified,2.1560574948665296,
+"spud_years_5y|1,500 m and deeper",spud_years_5y,"1,500 m and deeper",2006,0,230,2,verified,2.733744010951403,
+"spud_years_5y|1,500 m and deeper",spud_years_5y,"1,500 m and deeper",2007,0,135,4,verified,4.154688569472964,
+"spud_years_5y|1,500 m and deeper",spud_years_5y,"1,500 m and deeper",2008,0,579,11,verified,1.3853524982888432,
+"spud_years_5y|1,500 m and deeper",spud_years_5y,"1,500 m and deeper",2009,0,208,5,verified,4.090349075975359,2.9040383299110197
+"spud_years_5y|1,500 m and deeper",spud_years_5y,"1,500 m and deeper",2010,0,165,3,verified,1.8836413415468858,2.849555099247091
+"spud_years_5y|1,500 m and deeper",spud_years_5y,"1,500 m and deeper",2011,0,8,0,verified,,
+"spud_years_5y|1,500 m and deeper",spud_years_5y,"1,500 m and deeper",2012,0,235,6,verified,2.5927446954141,
+"spud_years_5y|1,500 m and deeper",spud_years_5y,"1,500 m and deeper",2013,0,207,3,verified,2.6338124572210813,
+"spud_years_5y|1,500 m and deeper",spud_years_5y,"1,500 m and deeper",2014,0,154,4,verified,2.4914442162902124,
+"spud_years_5y|1,500 m and deeper",spud_years_5y,"1,500 m and deeper",2015,0,102,1,verified,1.7686516084873374,
+"spud_years_5y|1,500 m and deeper",spud_years_5y,"1,500 m and deeper",2016,0,40,4,verified,3.1991786447638604,2.537166324435318
+"spud_years_5y|1,500 m and deeper",spud_years_5y,"1,500 m and deeper",2017,0,93,6,verified,1.8083504449007528,2.380287474332649
+"spud_years_5y|1,500 m and deeper",spud_years_5y,"1,500 m and deeper",2018,0,119,2,verified,1.1252566735112937,2.0785763175906915
+"spud_years_5y|1,500 m and deeper",spud_years_5y,"1,500 m and deeper",2019,0,138,3,verified,3.5811088295687883,2.2965092402464067
+"spud_years_5y|1,500 m and deeper",spud_years_5y,"1,500 m and deeper",2020,0,26,1,verified,3.561943874058864,2.655167693360712
+spud_years_5y|100 to 500 m,spud_years_5y,100 to 500 m,2005,0,71,3,verified,1.623545516769336,
+spud_years_5y|100 to 500 m,spud_years_5y,100 to 500 m,2006,0,118,5,verified,1.5222450376454484,
+spud_years_5y|100 to 500 m,spud_years_5y,100 to 500 m,2007,0,13,0,verified,,
+spud_years_5y|100 to 500 m,spud_years_5y,100 to 500 m,2008,0,85,2,verified,2.728268309377139,
+spud_years_5y|100 to 500 m,spud_years_5y,100 to 500 m,2009,0,18,1,verified,2.425735797399042,
+spud_years_5y|100 to 500 m,spud_years_5y,100 to 500 m,2010,0,36,0,verified,,
+spud_years_5y|100 to 500 m,spud_years_5y,100 to 500 m,2011,0,0,0,verified,,
+spud_years_5y|100 to 500 m,spud_years_5y,100 to 500 m,2012,0,49,1,verified,1.998631074606434,
+spud_years_5y|100 to 500 m,spud_years_5y,100 to 500 m,2013,0,11,0,verified,,
+spud_years_5y|100 to 500 m,spud_years_5y,100 to 500 m,2014,0,72,3,verified,4.829568788501026,
+spud_years_5y|100 to 500 m,spud_years_5y,100 to 500 m,2015,0,15,1,verified,3.1101984941820673,
+spud_years_5y|100 to 500 m,spud_years_5y,100 to 500 m,2016,0,14,0,verified,,
+spud_years_5y|100 to 500 m,spud_years_5y,100 to 500 m,2017,0,19,1,verified,2.2888432580424367,
+spud_years_5y|100 to 500 m,spud_years_5y,100 to 500 m,2018,0,26,1,verified,2.6694045174537986,
+spud_years_5y|100 to 500 m,spud_years_5y,100 to 500 m,2019,0,38,1,verified,4.616016427104722,
+spud_years_5y|100 to 500 m,spud_years_5y,100 to 500 m,2020,0,2,0,verified,,
+"spud_years_5y|500 to 1,500 m",spud_years_5y,"500 to 1,500 m",2005,0,153,4,verified,1.7618069815195072,
+"spud_years_5y|500 to 1,500 m",spud_years_5y,"500 to 1,500 m",2006,0,283,6,verified,1.4469541409993156,
+"spud_years_5y|500 to 1,500 m",spud_years_5y,"500 to 1,500 m",2007,0,90,0,verified,,
+"spud_years_5y|500 to 1,500 m",spud_years_5y,"500 to 1,500 m",2008,0,510,9,verified,1.5195071868583163,
+"spud_years_5y|500 to 1,500 m",spud_years_5y,"500 to 1,500 m",2009,0,160,4,verified,3.8494182067077345,
+"spud_years_5y|500 to 1,500 m",spud_years_5y,"500 to 1,500 m",2010,0,101,3,verified,4.884325804243669,
+"spud_years_5y|500 to 1,500 m",spud_years_5y,"500 to 1,500 m",2011,0,4,0,verified,,
+"spud_years_5y|500 to 1,500 m",spud_years_5y,"500 to 1,500 m",2012,0,170,9,verified,1.8261464750171115,
+"spud_years_5y|500 to 1,500 m",spud_years_5y,"500 to 1,500 m",2013,0,161,11,verified,2.8035592060232717,
+"spud_years_5y|500 to 1,500 m",spud_years_5y,"500 to 1,500 m",2014,0,73,1,verified,2.4449007529089664,
+"spud_years_5y|500 to 1,500 m",spud_years_5y,"500 to 1,500 m",2015,0,56,5,verified,1.7494866529774127,
+"spud_years_5y|500 to 1,500 m",spud_years_5y,"500 to 1,500 m",2016,0,68,5,verified,1.6372347707049966,2.092265571526352
+"spud_years_5y|500 to 1,500 m",spud_years_5y,"500 to 1,500 m",2017,0,97,6,verified,3.5249828884325805,2.4320328542094454
+"spud_years_5y|500 to 1,500 m",spud_years_5y,"500 to 1,500 m",2018,0,76,3,verified,4.375085557837098,2.746338124572211
+"spud_years_5y|500 to 1,500 m",spud_years_5y,"500 to 1,500 m",2019,0,141,6,verified,3.467488021902806,2.950855578370979
+"spud_years_5y|500 to 1,500 m",spud_years_5y,"500 to 1,500 m",2020,0,45,3,verified,2.620123203285421,3.12498288843258
+spud_years_5y|All water depths,spud_years_5y,All water depths,2005,0,603,61,verified,1.3333333333333333,
+spud_years_5y|All water depths,spud_years_5y,All water depths,2006,0,916,64,verified,1.4469541409993156,
+spud_years_5y|All water depths,spud_years_5y,All water depths,2007,0,367,14,verified,1.486652977412731,
+spud_years_5y|All water depths,spud_years_5y,All water depths,2008,0,1512,49,verified,1.3826146475017111,
+spud_years_5y|All water depths,spud_years_5y,All water depths,2009,0,499,26,verified,3.356605065023956,1.8012320328542095
+spud_years_5y|All water depths,spud_years_5y,All water depths,2010,0,449,19,verified,2.568104038329911,2.048186173853525
+spud_years_5y|All water depths,spud_years_5y,All water depths,2011,0,12,0,verified,,
+spud_years_5y|All water depths,spud_years_5y,All water depths,2012,0,624,25,verified,1.8261464750171115,
+spud_years_5y|All water depths,spud_years_5y,All water depths,2013,0,470,17,verified,2.6338124572210813,
+spud_years_5y|All water depths,spud_years_5y,All water depths,2014,0,391,8,verified,3.653661875427789,
+spud_years_5y|All water depths,spud_years_5y,All water depths,2015,0,211,8,verified,2.078028747433265,
+spud_years_5y|All water depths,spud_years_5y,All water depths,2016,0,142,9,verified,2.537987679671458,2.545927446954141
+spud_years_5y|All water depths,spud_years_5y,All water depths,2017,0,228,14,verified,2.595482546201232,2.699794661190965
+spud_years_5y|All water depths,spud_years_5y,All water depths,2018,0,281,7,verified,2.6694045174537986,2.706913073237508
+spud_years_5y|All water depths,spud_years_5y,All water depths,2019,0,342,13,verified,3.509924709103354,2.6781656399726215
+spud_years_5y|All water depths,spud_years_5y,All water depths,2020,0,79,5,verified,2.620123203285421,2.7865845311430526
+spud_years_5y|Under 100 m,spud_years_5y,Under 100 m,2005,0,249,52,verified,1.3004791238877482,
+spud_years_5y|Under 100 m,spud_years_5y,Under 100 m,2006,0,285,51,verified,1.3278576317590691,
+spud_years_5y|Under 100 m,spud_years_5y,Under 100 m,2007,0,129,10,verified,1.0882956878850103,
+spud_years_5y|Under 100 m,spud_years_5y,Under 100 m,2008,0,338,27,verified,1.2019164955509924,
+spud_years_5y|Under 100 m,spud_years_5y,Under 100 m,2009,0,113,16,verified,2.132785763175907,1.4102669404517454
+spud_years_5y|Under 100 m,spud_years_5y,Under 100 m,2010,0,147,13,verified,2.4476386036960984,1.6396988364134155
+spud_years_5y|Under 100 m,spud_years_5y,Under 100 m,2011,0,0,0,verified,,
+spud_years_5y|Under 100 m,spud_years_5y,Under 100 m,2012,0,170,9,verified,1.2457221081451062,
+spud_years_5y|Under 100 m,spud_years_5y,Under 100 m,2013,0,91,3,verified,1.3278576317590691,
+spud_years_5y|Under 100 m,spud_years_5y,Under 100 m,2014,0,92,0,verified,,
+spud_years_5y|Under 100 m,spud_years_5y,Under 100 m,2015,0,38,1,verified,3.266255989048597,
+spud_years_5y|Under 100 m,spud_years_5y,Under 100 m,2016,0,20,0,verified,,
+spud_years_5y|Under 100 m,spud_years_5y,Under 100 m,2017,0,19,1,verified,1.8699520876112252,
+spud_years_5y|Under 100 m,spud_years_5y,Under 100 m,2018,0,60,1,verified,0.3860369609856263,
+spud_years_5y|Under 100 m,spud_years_5y,Under 100 m,2019,0,25,3,verified,0.4736481861738535,
+spud_years_5y|Under 100 m,spud_years_5y,Under 100 m,2020,0,6,1,verified,1.8863791923340179,
+"spud_years_observed|1,500 m and deeper",spud_years_observed,"1,500 m and deeper",2005,0,130,2,verified,2.1560574948665296,
+"spud_years_observed|1,500 m and deeper",spud_years_observed,"1,500 m and deeper",2006,0,230,9,verified,6.915811088295688,
+"spud_years_observed|1,500 m and deeper",spud_years_observed,"1,500 m and deeper",2007,0,135,7,verified,4.63791923340178,
+"spud_years_observed|1,500 m and deeper",spud_years_observed,"1,500 m and deeper",2008,0,579,24,verified,5.639972621492129,
+"spud_years_observed|1,500 m and deeper",spud_years_observed,"1,500 m and deeper",2009,0,208,13,verified,5.930184804928132,5.055989048596851
+"spud_years_observed|1,500 m and deeper",spud_years_observed,"1,500 m and deeper",2010,0,165,6,verified,4.365503080082136,5.497878165639973
+"spud_years_observed|1,500 m and deeper",spud_years_observed,"1,500 m and deeper",2011,0,8,0,verified,,
+"spud_years_observed|1,500 m and deeper",spud_years_observed,"1,500 m and deeper",2012,0,235,11,verified,4.7091033538672145,
+"spud_years_observed|1,500 m and deeper",spud_years_observed,"1,500 m and deeper",2013,0,207,9,verified,6.376454483230664,
+"spud_years_observed|1,500 m and deeper",spud_years_observed,"1,500 m and deeper",2014,0,154,6,verified,3.997262149212868,
+"spud_years_observed|1,500 m and deeper",spud_years_observed,"1,500 m and deeper",2015,0,102,3,verified,5.5249828884325805,
+"spud_years_observed|1,500 m and deeper",spud_years_observed,"1,500 m and deeper",2016,0,40,5,verified,3.8603696098562628,4.893634496919918
+"spud_years_observed|1,500 m and deeper",spud_years_observed,"1,500 m and deeper",2017,0,93,6,verified,1.8083504449007528,4.313483915126627
+"spud_years_observed|1,500 m and deeper",spud_years_observed,"1,500 m and deeper",2018,0,119,3,verified,1.4209445585215605,3.3223819301848048
+"spud_years_observed|1,500 m and deeper",spud_years_observed,"1,500 m and deeper",2019,0,138,3,verified,3.5811088295687883,3.239151266255989
+"spud_years_observed|1,500 m and deeper",spud_years_observed,"1,500 m and deeper",2020,0,26,1,verified,3.561943874058864,2.846543463381246
+spud_years_observed|100 to 500 m,spud_years_observed,100 to 500 m,2005,0,71,3,verified,1.623545516769336,
+spud_years_observed|100 to 500 m,spud_years_observed,100 to 500 m,2006,0,118,5,verified,1.5222450376454484,
+spud_years_observed|100 to 500 m,spud_years_observed,100 to 500 m,2007,0,13,0,verified,,
+spud_years_observed|100 to 500 m,spud_years_observed,100 to 500 m,2008,0,85,5,verified,5.530458590006845,
+spud_years_observed|100 to 500 m,spud_years_observed,100 to 500 m,2009,0,18,1,verified,2.425735797399042,
+spud_years_observed|100 to 500 m,spud_years_observed,100 to 500 m,2010,0,36,0,verified,,
+spud_years_observed|100 to 500 m,spud_years_observed,100 to 500 m,2011,0,0,0,verified,,
+spud_years_observed|100 to 500 m,spud_years_observed,100 to 500 m,2012,0,49,1,verified,1.998631074606434,
+spud_years_observed|100 to 500 m,spud_years_observed,100 to 500 m,2013,0,11,0,verified,,
+spud_years_observed|100 to 500 m,spud_years_observed,100 to 500 m,2014,0,72,3,verified,4.829568788501026,
+spud_years_observed|100 to 500 m,spud_years_observed,100 to 500 m,2015,0,15,1,verified,3.1101984941820673,
+spud_years_observed|100 to 500 m,spud_years_observed,100 to 500 m,2016,0,14,0,verified,,
+spud_years_observed|100 to 500 m,spud_years_observed,100 to 500 m,2017,0,19,1,verified,2.2888432580424367,
+spud_years_observed|100 to 500 m,spud_years_observed,100 to 500 m,2018,0,26,1,verified,2.6694045174537986,
+spud_years_observed|100 to 500 m,spud_years_observed,100 to 500 m,2019,0,38,1,verified,4.616016427104722,
+spud_years_observed|100 to 500 m,spud_years_observed,100 to 500 m,2020,0,2,0,verified,,
+"spud_years_observed|500 to 1,500 m",spud_years_observed,"500 to 1,500 m",2005,0,153,6,verified,2.1587953456536617,
+"spud_years_observed|500 to 1,500 m",spud_years_observed,"500 to 1,500 m",2006,0,283,10,verified,2.246406570841889,
+"spud_years_observed|500 to 1,500 m",spud_years_observed,"500 to 1,500 m",2007,0,90,0,verified,,
+"spud_years_observed|500 to 1,500 m",spud_years_observed,"500 to 1,500 m",2008,0,510,15,verified,3.887748117727584,
+"spud_years_observed|500 to 1,500 m",spud_years_observed,"500 to 1,500 m",2009,0,160,5,verified,3.980835044490075,
+"spud_years_observed|500 to 1,500 m",spud_years_observed,"500 to 1,500 m",2010,0,101,4,verified,4.899383983572895,
+"spud_years_observed|500 to 1,500 m",spud_years_observed,"500 to 1,500 m",2011,0,4,0,verified,,
+"spud_years_observed|500 to 1,500 m",spud_years_observed,"500 to 1,500 m",2012,0,170,11,verified,2.2861054072553046,
+"spud_years_observed|500 to 1,500 m",spud_years_observed,"500 to 1,500 m",2013,0,161,12,verified,2.940451745379877,
+"spud_years_observed|500 to 1,500 m",spud_years_observed,"500 to 1,500 m",2014,0,73,5,verified,6.715947980835044,
+"spud_years_observed|500 to 1,500 m",spud_years_observed,"500 to 1,500 m",2015,0,56,5,verified,1.7494866529774127,
+"spud_years_observed|500 to 1,500 m",spud_years_observed,"500 to 1,500 m",2016,0,68,8,verified,3.3908281998631074,3.4165639972621493
+"spud_years_observed|500 to 1,500 m",spud_years_observed,"500 to 1,500 m",2017,0,97,10,verified,4.869267624914442,3.9331964407939766
+"spud_years_observed|500 to 1,500 m",spud_years_observed,"500 to 1,500 m",2018,0,76,6,verified,5.167693360711842,4.378644763860369
+"spud_years_observed|500 to 1,500 m",spud_years_observed,"500 to 1,500 m",2019,0,141,6,verified,3.467488021902806,3.7289527720739217
+"spud_years_observed|500 to 1,500 m",spud_years_observed,"500 to 1,500 m",2020,0,45,3,verified,2.620123203285421,3.9030800821355234
+spud_years_observed|All water depths,spud_years_observed,All water depths,2005,0,603,65,verified,1.4209445585215605,
+spud_years_observed|All water depths,spud_years_observed,All water depths,2006,0,916,75,verified,1.6591375770020533,
+spud_years_observed|All water depths,spud_years_observed,All water depths,2007,0,367,17,verified,2.00684462696783,
+spud_years_observed|All water depths,spud_years_observed,All water depths,2008,0,1512,76,verified,4.246406570841889,
+spud_years_observed|All water depths,spud_years_observed,All water depths,2009,0,499,36,verified,3.9589322381930185,2.6584531143052703
+spud_years_observed|All water depths,spud_years_observed,All water depths,2010,0,449,23,verified,3.2306639288158796,3.0203969883641344
+spud_years_observed|All water depths,spud_years_observed,All water depths,2011,0,12,0,verified,,
+spud_years_observed|All water depths,spud_years_observed,All water depths,2012,0,624,32,verified,2.3121149897330597,
+spud_years_observed|All water depths,spud_years_observed,All water depths,2013,0,470,24,verified,3.489390828199863,
+spud_years_observed|All water depths,spud_years_observed,All water depths,2014,0,391,14,verified,4.922655715263518,
+spud_years_observed|All water depths,spud_years_observed,All water depths,2015,0,211,10,verified,2.74880219028063,
+spud_years_observed|All water depths,spud_years_observed,All water depths,2016,0,142,13,verified,3.8603696098562628,3.4666666666666672
+spud_years_observed|All water depths,spud_years_observed,All water depths,2017,0,228,18,verified,3.4209445585215605,3.6884325804243674
+spud_years_observed|All water depths,spud_years_observed,All water depths,2018,0,281,11,verified,4.375085557837098,3.865571526351814
+spud_years_observed|All water depths,spud_years_observed,All water depths,2019,0,342,13,verified,3.509924709103354,3.583025325119781
+spud_years_observed|All water depths,spud_years_observed,All water depths,2020,0,79,5,verified,2.620123203285421,3.5572895277207395
+spud_years_observed|Under 100 m,spud_years_observed,Under 100 m,2005,0,249,54,verified,1.3292265571526352,
+spud_years_observed|Under 100 m,spud_years_observed,Under 100 m,2006,0,285,51,verified,1.3278576317590691,
+spud_years_observed|Under 100 m,spud_years_observed,Under 100 m,2007,0,129,10,verified,1.0882956878850103,
+spud_years_observed|Under 100 m,spud_years_observed,Under 100 m,2008,0,338,32,verified,1.4140999315537304,
+spud_years_observed|Under 100 m,spud_years_observed,Under 100 m,2009,0,113,17,verified,3.2005475701574264,1.672005475701574
+spud_years_observed|Under 100 m,spud_years_observed,Under 100 m,2010,0,147,13,verified,2.4476386036960984,1.895687885010267
+spud_years_observed|Under 100 m,spud_years_observed,Under 100 m,2011,0,0,0,verified,,
+spud_years_observed|Under 100 m,spud_years_observed,Under 100 m,2012,0,170,9,verified,1.2457221081451062,
+spud_years_observed|Under 100 m,spud_years_observed,Under 100 m,2013,0,91,3,verified,1.3278576317590691,
+spud_years_observed|Under 100 m,spud_years_observed,Under 100 m,2014,0,92,0,verified,,
+spud_years_observed|Under 100 m,spud_years_observed,Under 100 m,2015,0,38,1,verified,3.266255989048597,
+spud_years_observed|Under 100 m,spud_years_observed,Under 100 m,2016,0,20,0,verified,,
+spud_years_observed|Under 100 m,spud_years_observed,Under 100 m,2017,0,19,1,verified,1.8699520876112252,
+spud_years_observed|Under 100 m,spud_years_observed,Under 100 m,2018,0,60,1,verified,0.3860369609856263,
+spud_years_observed|Under 100 m,spud_years_observed,Under 100 m,2019,0,25,3,verified,0.4736481861738535,
+spud_years_observed|Under 100 m,spud_years_observed,Under 100 m,2020,0,6,1,verified,1.8863791923340179,
+status_CANCEL|All water depths,status_CANCEL,All water depths,2005,0,603,0,verified,0.0,
+status_CANCEL|All water depths,status_CANCEL,All water depths,2006,0,916,0,verified,0.0,
+status_CANCEL|All water depths,status_CANCEL,All water depths,2007,0,367,2,verified,0.5449591280653951,
+status_CANCEL|All water depths,status_CANCEL,All water depths,2008,0,1512,1,verified,0.06613756613756613,
+status_CANCEL|All water depths,status_CANCEL,All water depths,2009,0,499,1,verified,0.20040080160320642,0.16229949916123354
+status_CANCEL|All water depths,status_CANCEL,All water depths,2010,0,449,0,verified,0.0,0.16229949916123354
+status_CANCEL|All water depths,status_CANCEL,All water depths,2011,0,12,0,verified,0.0,0.16229949916123354
+status_CANCEL|All water depths,status_CANCEL,All water depths,2012,0,624,0,verified,0.0,0.05330767354815451
+status_CANCEL|All water depths,status_CANCEL,All water depths,2013,0,470,0,verified,0.0,0.04008016032064128
+status_CANCEL|All water depths,status_CANCEL,All water depths,2014,0,391,0,verified,0.0,0.0
+status_CANCEL|All water depths,status_CANCEL,All water depths,2015,0,211,0,verified,0.0,0.0
+status_CANCEL|All water depths,status_CANCEL,All water depths,2016,0,142,0,verified,0.0,0.0
+status_CANCEL|All water depths,status_CANCEL,All water depths,2017,0,228,0,verified,0.0,0.0
+status_CANCEL|All water depths,status_CANCEL,All water depths,2018,0,281,0,verified,0.0,0.0
+status_CANCEL|All water depths,status_CANCEL,All water depths,2019,0,342,0,verified,0.0,0.0
+status_CANCEL|All water depths,status_CANCEL,All water depths,2020,0,79,0,verified,0.0,0.0
+status_CANCEL|All water depths,status_CANCEL,All water depths,2021,0,86,0,verified,0.0,0.0
+status_CANCEL|All water depths,status_CANCEL,All water depths,2022,0,306,0,verified,0.0,0.0
+status_CANCEL|All water depths,status_CANCEL,All water depths,2023,0,295,0,verified,0.0,0.0
+status_CANCEL|All water depths,status_CANCEL,All water depths,2024,0,299,0,verified,0.0,0.0
+status_CANCEL|All water depths,status_CANCEL,All water depths,2025,0,0,0,verified,,
+status_CANCEL|All water depths,status_CANCEL,All water depths,2026,1,215,0,verified,0.0,
+status_EXPIR|All water depths,status_EXPIR,All water depths,2005,0,603,219,verified,36.318407960199,
+status_EXPIR|All water depths,status_EXPIR,All water depths,2006,0,916,316,verified,34.49781659388646,
+status_EXPIR|All water depths,status_EXPIR,All water depths,2007,0,367,75,verified,20.435967302452315,
+status_EXPIR|All water depths,status_EXPIR,All water depths,2008,0,1512,464,verified,30.687830687830687,
+status_EXPIR|All water depths,status_EXPIR,All water depths,2009,0,499,101,verified,20.240480961923847,28.436100701258464
+status_EXPIR|All water depths,status_EXPIR,All water depths,2010,0,449,129,verified,28.73051224944321,26.9185215591073
+status_EXPIR|All water depths,status_EXPIR,All water depths,2011,0,12,4,verified,33.333333333333336,26.68562490699668
+status_EXPIR|All water depths,status_EXPIR,All water depths,2012,0,624,116,verified,18.58974358974359,26.316380164454937
+status_EXPIR|All water depths,status_EXPIR,All water depths,2013,0,470,84,verified,17.872340425531913,23.753282111995183
+status_EXPIR|All water depths,status_EXPIR,All water depths,2014,0,391,70,verified,17.902813299232736,23.285748579456957
+status_EXPIR|All water depths,status_EXPIR,All water depths,2015,0,211,55,verified,26.066350710900473,22.75291627174841
+status_EXPIR|All water depths,status_EXPIR,All water depths,2016,0,142,51,verified,35.91549295774648,23.26934819663104
+status_EXPIR|All water depths,status_EXPIR,All water depths,2017,0,228,46,verified,20.17543859649123,23.586487197980567
+status_EXPIR|All water depths,status_EXPIR,All water depths,2018,0,281,65,verified,23.131672597864767,24.63835363244714
+status_EXPIR|All water depths,status_EXPIR,All water depths,2019,0,342,43,verified,12.573099415204679,23.572410855641525
+status_EXPIR|All water depths,status_EXPIR,All water depths,2020,0,79,7,verified,8.860759493670885,20.131292612195608
+status_EXPIR|All water depths,status_EXPIR,All water depths,2021,0,86,6,verified,6.976744186046512,14.343542857855613
+status_EXPIR|All water depths,status_EXPIR,All water depths,2022,0,306,0,verified,0.0,10.308455138557369
+status_EXPIR|All water depths,status_EXPIR,All water depths,2023,0,295,0,verified,0.0,5.682120618984415
+status_EXPIR|All water depths,status_EXPIR,All water depths,2024,0,299,0,verified,0.0,3.1675007359434795
+status_EXPIR|All water depths,status_EXPIR,All water depths,2025,0,0,0,verified,,
+status_EXPIR|All water depths,status_EXPIR,All water depths,2026,1,215,0,verified,0.0,
+status_OPERNS|All water depths,status_OPERNS,All water depths,2005,0,603,0,verified,0.0,
+status_OPERNS|All water depths,status_OPERNS,All water depths,2006,0,916,0,verified,0.0,
+status_OPERNS|All water depths,status_OPERNS,All water depths,2007,0,367,0,verified,0.0,
+status_OPERNS|All water depths,status_OPERNS,All water depths,2008,0,1512,0,verified,0.0,
+status_OPERNS|All water depths,status_OPERNS,All water depths,2009,0,499,0,verified,0.0,0.0
+status_OPERNS|All water depths,status_OPERNS,All water depths,2010,0,449,0,verified,0.0,0.0
+status_OPERNS|All water depths,status_OPERNS,All water depths,2011,0,12,0,verified,0.0,0.0
+status_OPERNS|All water depths,status_OPERNS,All water depths,2012,0,624,0,verified,0.0,0.0
+status_OPERNS|All water depths,status_OPERNS,All water depths,2013,0,470,0,verified,0.0,0.0
+status_OPERNS|All water depths,status_OPERNS,All water depths,2014,0,391,0,verified,0.0,0.0
+status_OPERNS|All water depths,status_OPERNS,All water depths,2015,0,211,1,verified,0.47393364928909953,0.09478672985781991
+status_OPERNS|All water depths,status_OPERNS,All water depths,2016,0,142,1,verified,0.704225352112676,0.2356318002803551
+status_OPERNS|All water depths,status_OPERNS,All water depths,2017,0,228,0,verified,0.0,0.2356318002803551
+status_OPERNS|All water depths,status_OPERNS,All water depths,2018,0,281,0,verified,0.0,0.2356318002803551
+status_OPERNS|All water depths,status_OPERNS,All water depths,2019,0,342,1,verified,0.29239766081871343,0.29411133244409776
+status_OPERNS|All water depths,status_OPERNS,All water depths,2020,0,79,0,verified,0.0,0.19932460258627788
+status_OPERNS|All water depths,status_OPERNS,All water depths,2021,0,86,0,verified,0.0,0.05847953216374269
+status_OPERNS|All water depths,status_OPERNS,All water depths,2022,0,306,0,verified,0.0,0.05847953216374269
+status_OPERNS|All water depths,status_OPERNS,All water depths,2023,0,295,0,verified,0.0,0.05847953216374269
+status_OPERNS|All water depths,status_OPERNS,All water depths,2024,0,299,0,verified,0.0,0.0
+status_OPERNS|All water depths,status_OPERNS,All water depths,2025,0,0,0,verified,,
+status_OPERNS|All water depths,status_OPERNS,All water depths,2026,1,215,0,verified,0.0,
+status_PRIMRY|All water depths,status_PRIMRY,All water depths,2005,0,603,0,verified,0.0,
+status_PRIMRY|All water depths,status_PRIMRY,All water depths,2006,0,916,0,verified,0.0,
+status_PRIMRY|All water depths,status_PRIMRY,All water depths,2007,0,367,0,verified,0.0,
+status_PRIMRY|All water depths,status_PRIMRY,All water depths,2008,0,1512,0,verified,0.0,
+status_PRIMRY|All water depths,status_PRIMRY,All water depths,2009,0,499,0,verified,0.0,0.0
+status_PRIMRY|All water depths,status_PRIMRY,All water depths,2010,0,449,0,verified,0.0,0.0
+status_PRIMRY|All water depths,status_PRIMRY,All water depths,2011,0,12,0,verified,0.0,0.0
+status_PRIMRY|All water depths,status_PRIMRY,All water depths,2012,0,624,0,verified,0.0,0.0
+status_PRIMRY|All water depths,status_PRIMRY,All water depths,2013,0,470,0,verified,0.0,0.0
+status_PRIMRY|All water depths,status_PRIMRY,All water depths,2014,0,391,0,verified,0.0,0.0
+status_PRIMRY|All water depths,status_PRIMRY,All water depths,2015,0,211,0,verified,0.0,0.0
+status_PRIMRY|All water depths,status_PRIMRY,All water depths,2016,0,142,2,verified,1.408450704225352,0.2816901408450704
+status_PRIMRY|All water depths,status_PRIMRY,All water depths,2017,0,228,56,verified,24.56140350877193,5.193970842599457
+status_PRIMRY|All water depths,status_PRIMRY,All water depths,2018,0,281,37,verified,13.167259786476869,7.827422799894831
+status_PRIMRY|All water depths,status_PRIMRY,All water depths,2019,0,342,112,verified,32.748538011695906,14.377130402234013
+status_PRIMRY|All water depths,status_PRIMRY,All water depths,2020,0,79,27,verified,34.177215189873415,21.212573440208693
+status_PRIMRY|All water depths,status_PRIMRY,All water depths,2021,0,86,50,verified,58.13953488372093,32.558790276107814
+status_PRIMRY|All water depths,status_PRIMRY,All water depths,2022,0,306,135,verified,44.11764705882353,36.470038986118126
+status_PRIMRY|All water depths,status_PRIMRY,All water depths,2023,0,295,193,verified,65.42372881355932,46.921332791534624
+status_PRIMRY|All water depths,status_PRIMRY,All water depths,2024,0,299,244,verified,81.60535117056857,56.69269542330915
+status_PRIMRY|All water depths,status_PRIMRY,All water depths,2025,0,0,0,verified,,
+status_PRIMRY|All water depths,status_PRIMRY,All water depths,2026,1,215,215,verified,100.0,
+status_PROD|All water depths,status_PROD,All water depths,2005,0,603,3,verified,0.4975124378109453,
+status_PROD|All water depths,status_PROD,All water depths,2006,0,916,3,verified,0.32751091703056767,
+status_PROD|All water depths,status_PROD,All water depths,2007,0,367,1,verified,0.2724795640326976,
+status_PROD|All water depths,status_PROD,All water depths,2008,0,1512,11,verified,0.7275132275132276,
+status_PROD|All water depths,status_PROD,All water depths,2009,0,499,4,verified,0.8016032064128257,0.5253238705600528
+status_PROD|All water depths,status_PROD,All water depths,2010,0,449,6,verified,1.3363028953229399,0.6930819620624517
+status_PROD|All water depths,status_PROD,All water depths,2011,0,12,0,verified,0.0,0.6275797786563382
+status_PROD|All water depths,status_PROD,All water depths,2012,0,624,3,verified,0.4807692307692308,0.6692377120036448
+status_PROD|All water depths,status_PROD,All water depths,2013,0,470,8,verified,1.702127659574468,0.8641605984158929
+status_PROD|All water depths,status_PROD,All water depths,2014,0,391,1,verified,0.2557544757033248,0.7549908522739928
+status_PROD|All water depths,status_PROD,All water depths,2015,0,211,1,verified,0.47393364928909953,0.5825170030672246
+status_PROD|All water depths,status_PROD,All water depths,2016,0,142,5,verified,3.5211267605633805,1.2867423551799007
+status_PROD|All water depths,status_PROD,All water depths,2017,0,228,3,verified,1.3157894736842106,1.4537464037628969
+status_PROD|All water depths,status_PROD,All water depths,2018,0,281,4,verified,1.4234875444839858,1.3980183807448003
+status_PROD|All water depths,status_PROD,All water depths,2019,0,342,1,verified,0.29239766081871343,1.405347017767878
+status_PROD|All water depths,status_PROD,All water depths,2020,0,79,2,verified,2.5316455696202533,1.8168894018341089
+status_PROD|All water depths,status_PROD,All water depths,2021,0,86,3,verified,3.488372093023256,1.810338468326084
+status_PROD|All water depths,status_PROD,All water depths,2022,0,306,1,verified,0.32679738562091504,1.6125400507134249
+status_PROD|All water depths,status_PROD,All water depths,2023,0,295,1,verified,0.3389830508474576,1.395639151986119
+status_PROD|All water depths,status_PROD,All water depths,2024,0,299,0,verified,0.0,1.3371596198223765
+status_PROD|All water depths,status_PROD,All water depths,2025,0,0,0,verified,,
+status_PROD|All water depths,status_PROD,All water depths,2026,1,215,0,verified,0.0,
+status_RELINQ|All water depths,status_RELINQ,All water depths,2005,0,603,349,verified,57.87728026533997,
+status_RELINQ|All water depths,status_RELINQ,All water depths,2006,0,916,559,verified,61.02620087336245,
+status_RELINQ|All water depths,status_RELINQ,All water depths,2007,0,367,282,verified,76.83923705722071,
+status_RELINQ|All water depths,status_RELINQ,All water depths,2008,0,1512,995,verified,65.8068783068783,
+status_RELINQ|All water depths,status_RELINQ,All water depths,2009,0,499,370,verified,74.14829659318637,67.13957861919756
+status_RELINQ|All water depths,status_RELINQ,All water depths,2010,0,449,297,verified,66.14699331848553,68.79352122982668
+status_RELINQ|All water depths,status_RELINQ,All water depths,2011,0,12,6,verified,50.0,66.58828105515417
+status_RELINQ|All water depths,status_RELINQ,All water depths,2012,0,624,487,verified,78.0448717948718,66.8294080026844
+status_RELINQ|All water depths,status_RELINQ,All water depths,2013,0,470,360,verified,76.59574468085107,68.98718127747895
+status_RELINQ|All water depths,status_RELINQ,All water depths,2014,0,391,309,verified,79.02813299232737,69.96314855730716
+status_RELINQ|All water depths,status_RELINQ,All water depths,2015,0,211,153,verified,72.51184834123222,71.23611956185648
+status_RELINQ|All water depths,status_RELINQ,All water depths,2016,0,142,78,verified,54.929577464788736,72.22203505481423
+status_RELINQ|All water depths,status_RELINQ,All water depths,2017,0,228,106,verified,46.49122807017544,65.91130630987496
+status_RELINQ|All water depths,status_RELINQ,All water depths,2018,0,281,170,verified,60.49822064056939,62.69180150181863
+status_RELINQ|All water depths,status_RELINQ,All water depths,2019,0,342,177,verified,51.75438596491228,57.23705209633562
+status_RELINQ|All water depths,status_RELINQ,All water depths,2020,0,79,43,verified,54.43037974683544,53.62075837745626
+status_RELINQ|All water depths,status_RELINQ,All water depths,2021,0,86,24,verified,27.906976744186046,48.216238233335716
+status_RELINQ|All water depths,status_RELINQ,All water depths,2022,0,306,170,verified,55.55555555555556,50.02910373041174
+status_RELINQ|All water depths,status_RELINQ,All water depths,2023,0,295,100,verified,33.898305084745765,44.70912061924702
+status_RELINQ|All water depths,status_RELINQ,All water depths,2024,0,299,55,verified,18.39464882943144,38.03717319215085
+status_RELINQ|All water depths,status_RELINQ,All water depths,2025,0,0,0,verified,,
+status_RELINQ|All water depths,status_RELINQ,All water depths,2026,1,215,0,verified,0.0,
+status_SOP|All water depths,status_SOP,All water depths,2005,0,603,0,verified,0.0,
+status_SOP|All water depths,status_SOP,All water depths,2006,0,916,0,verified,0.0,
+status_SOP|All water depths,status_SOP,All water depths,2007,0,367,0,verified,0.0,
+status_SOP|All water depths,status_SOP,All water depths,2008,0,1512,0,verified,0.0,
+status_SOP|All water depths,status_SOP,All water depths,2009,0,499,0,verified,0.0,0.0
+status_SOP|All water depths,status_SOP,All water depths,2010,0,449,0,verified,0.0,0.0
+status_SOP|All water depths,status_SOP,All water depths,2011,0,12,0,verified,0.0,0.0
+status_SOP|All water depths,status_SOP,All water depths,2012,0,624,0,verified,0.0,0.0
+status_SOP|All water depths,status_SOP,All water depths,2013,0,470,0,verified,0.0,0.0
+status_SOP|All water depths,status_SOP,All water depths,2014,0,391,1,verified,0.2557544757033248,0.05115089514066497
+status_SOP|All water depths,status_SOP,All water depths,2015,0,211,0,verified,0.0,0.05115089514066497
+status_SOP|All water depths,status_SOP,All water depths,2016,0,142,0,verified,0.0,0.05115089514066497
+status_SOP|All water depths,status_SOP,All water depths,2017,0,228,0,verified,0.0,0.05115089514066497
+status_SOP|All water depths,status_SOP,All water depths,2018,0,281,0,verified,0.0,0.05115089514066497
+status_SOP|All water depths,status_SOP,All water depths,2019,0,342,0,verified,0.0,0.0
+status_SOP|All water depths,status_SOP,All water depths,2020,0,79,0,verified,0.0,0.0
+status_SOP|All water depths,status_SOP,All water depths,2021,0,86,0,verified,0.0,0.0
+status_SOP|All water depths,status_SOP,All water depths,2022,0,306,0,verified,0.0,0.0
+status_SOP|All water depths,status_SOP,All water depths,2023,0,295,0,verified,0.0,0.0
+status_SOP|All water depths,status_SOP,All water depths,2024,0,299,0,verified,0.0,0.0
+status_SOP|All water depths,status_SOP,All water depths,2025,0,0,0,verified,,
+status_SOP|All water depths,status_SOP,All water depths,2026,1,215,0,verified,0.0,
+status_TERMIN|All water depths,status_TERMIN,All water depths,2005,0,603,32,verified,5.306799336650083,
+status_TERMIN|All water depths,status_TERMIN,All water depths,2006,0,916,22,verified,2.4017467248908297,
+status_TERMIN|All water depths,status_TERMIN,All water depths,2007,0,367,5,verified,1.3623978201634876,
+status_TERMIN|All water depths,status_TERMIN,All water depths,2008,0,1512,24,verified,1.5873015873015872,
+status_TERMIN|All water depths,status_TERMIN,All water depths,2009,0,499,14,verified,2.80561122244489,2.6927713382901755
+status_TERMIN|All water depths,status_TERMIN,All water depths,2010,0,449,12,verified,2.6726057906458798,2.165932629089335
+status_TERMIN|All water depths,status_TERMIN,All water depths,2011,0,12,0,verified,0.0,1.6855832841111689
+status_TERMIN|All water depths,status_TERMIN,All water depths,2012,0,624,9,verified,1.4423076923076923,1.7015652585400098
+status_TERMIN|All water depths,status_TERMIN,All water depths,2013,0,470,15,verified,3.1914893617021276,2.022402813420118
+status_TERMIN|All water depths,status_TERMIN,All water depths,2014,0,391,4,verified,1.0230179028132993,1.6658841494938
+status_TERMIN|All water depths,status_TERMIN,All water depths,2015,0,211,0,verified,0.0,1.131362991364624
+status_TERMIN|All water depths,status_TERMIN,All water depths,2016,0,142,3,verified,2.112676056338028,1.5538982026322294
+status_TERMIN|All water depths,status_TERMIN,All water depths,2017,0,228,7,verified,3.0701754385964914,1.8794717518899895
+status_TERMIN|All water depths,status_TERMIN,All water depths,2018,0,281,1,verified,0.35587188612099646,1.312348256773763
+status_TERMIN|All water depths,status_TERMIN,All water depths,2019,0,342,1,verified,0.29239766081871343,1.1662242083748457
+status_TERMIN|All water depths,status_TERMIN,All water depths,2020,0,79,0,verified,0.0,1.1662242083748457
+status_TERMIN|All water depths,status_TERMIN,All water depths,2021,0,86,1,verified,1.1627906976744187,0.9762471366421239
+status_TERMIN|All water depths,status_TERMIN,All water depths,2022,0,306,0,verified,0.0,0.3622120489228257
+status_TERMIN|All water depths,status_TERMIN,All water depths,2023,0,295,0,verified,0.0,0.29103767169862643
+status_TERMIN|All water depths,status_TERMIN,All water depths,2024,0,299,0,verified,0.0,0.23255813953488375
+status_TERMIN|All water depths,status_TERMIN,All water depths,2025,0,0,0,verified,,
+status_TERMIN|All water depths,status_TERMIN,All water depths,2026,1,215,0,verified,0.0,
+status_UNIT|All water depths,status_UNIT,All water depths,2005,0,603,0,verified,0.0,
+status_UNIT|All water depths,status_UNIT,All water depths,2006,0,916,16,verified,1.7467248908296944,
+status_UNIT|All water depths,status_UNIT,All water depths,2007,0,367,2,verified,0.5449591280653951,
+status_UNIT|All water depths,status_UNIT,All water depths,2008,0,1512,17,verified,1.1243386243386244,
+status_UNIT|All water depths,status_UNIT,All water depths,2009,0,499,9,verified,1.8036072144288577,1.0439259715325142
+status_UNIT|All water depths,status_UNIT,All water depths,2010,0,449,5,verified,1.1135857461024499,1.2666431207530042
+status_UNIT|All water depths,status_UNIT,All water depths,2011,0,12,2,verified,16.666666666666668,4.2506314759203985
+status_UNIT|All water depths,status_UNIT,All water depths,2012,0,624,9,verified,1.4423076923076923,4.430101188768859
+status_UNIT|All water depths,status_UNIT,All water depths,2013,0,470,3,verified,0.6382978723404256,4.332893038369218
+status_UNIT|All water depths,status_UNIT,All water depths,2014,0,391,6,verified,1.5345268542199488,4.279076966327437
+status_UNIT|All water depths,status_UNIT,All water depths,2015,0,211,1,verified,0.47393364928909953,4.151146546964767
+status_UNIT|All water depths,status_UNIT,All water depths,2016,0,142,2,verified,1.408450704225352,1.0995033544765036
+status_UNIT|All water depths,status_UNIT,All water depths,2017,0,228,10,verified,4.385964912280702,1.6882347984711052
+status_UNIT|All water depths,status_UNIT,All water depths,2018,0,281,4,verified,1.4234875444839858,1.8452727328998175
+status_UNIT|All water depths,status_UNIT,All water depths,2019,0,342,7,verified,2.046783625730994,1.9477240872020267
+status_UNIT|All water depths,status_UNIT,All water depths,2020,0,79,0,verified,0.0,1.852937357344207
+status_UNIT|All water depths,status_UNIT,All water depths,2021,0,86,2,verified,2.3255813953488373,2.036363495568904
+status_UNIT|All water depths,status_UNIT,All water depths,2022,0,306,0,verified,0.0,1.1591705131127636
+status_UNIT|All water depths,status_UNIT,All water depths,2023,0,295,1,verified,0.3389830508474576,0.942269614385458
+status_UNIT|All water depths,status_UNIT,All water depths,2024,0,299,0,verified,0.0,0.532912889239259
+status_UNIT|All water depths,status_UNIT,All water depths,2025,0,0,0,verified,,
+status_UNIT|All water depths,status_UNIT,All water depths,2026,1,215,0,verified,0.0,

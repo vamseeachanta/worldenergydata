@@ -1,6 +1,7 @@
 """Lease cohort tables, chart rendering and reconciliation against BSEE records."""
 
 import json
+import unicodedata
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from zipfile import ZipFile
@@ -1372,6 +1373,54 @@ def validate_figures(charts):
             image.load()
 
 
+def validate_yearly_svg(path):
+    """Read back the yearly renderer's SVG presentation attributes (items 5 and 7)."""
+    root = ET.parse(path).getroot()
+    font_stack = "'DejaVu Sans','Segoe UI',Arial,sans-serif"
+    prohibited = {"clipPath", "pattern", "filter", "mask", "foreignObject", "image"}
+    title = root.findtext("{*}title")
+
+    def visit(node, family, size):
+        tag = node.tag.rsplit("}", 1)[-1]
+        require(tag not in prohibited, f"{path.name}: prohibited {tag}")
+        require("clip-path" not in node.attrib, f"{path.name}: prohibited clip-path")
+        family = node.get("font-family", family)
+        size = node.get("font-size", size)
+        if tag in {"text", "title", "tspan"}:
+            label = "".join(node.itertext())
+            require(
+                not any(unicodedata.category(c) == "Pd" or c == "−" for c in label),
+                f"{path.name}: dash in {tag}",
+            )
+            if tag != "title":
+                minimum = 18 if label == title else 15
+                require(
+                    family == font_stack, f"{path.name}: incorrect font-family on {label}"
+                )
+                require(
+                    float(size) >= minimum,
+                    f"{path.name}: font-size below {minimum} on {label}",
+                )
+        elif tag == "circle":
+            require(float(node.get("r", 0)) >= 4.5, f"{path.name}: marker radius below 4.5")
+        elif tag == "path":
+            kind = node.get("class")
+            require(kind in {"annual", "trend"}, f"{path.name}: unidentified data path")
+            minimum = 4 if kind == "trend" else 2
+            require(
+                float(node.get("stroke-width", 1)) >= minimum,
+                f"{path.name}: {kind} stroke-width below {minimum}",
+            )
+        for child in node:
+            visit(child, family, size)
+
+    visit(root, "", 0)
+    require(
+        title and any("".join(node.itertext()) == title for node in root.iterfind(".//{*}text")),
+        f"{path.name}: missing visible chart title",
+    )
+
+
 def compare_quartiles(values, row, prefix):
     actual = np.array(
         [row[prefix + "_p25"], row[prefix + "_median"], row[prefix + "_p75"]],
@@ -1623,3 +1672,16 @@ def build(output, data_dir, pins, check):
         "All five SVG/PNG pairs decode; SVGs use DejaVu Sans and contain no prohibited constructs",
         lambda: validate_figures(output),
     )
+    from lease_charts import specifications, write_figures
+    from lease_yearly import write_annual_trends
+
+    yearly = output / "yearly"
+    yearly.mkdir()
+    write_annual_trends(yearly, f, older)
+    write_figures(yearly)
+    for figure in specifications():
+        svg = yearly / figure["svg"]
+        check(
+            f"Yearly {svg.name} meets chart standard items 5 and 7",
+            lambda svg=svg: validate_yearly_svg(svg),
+        )

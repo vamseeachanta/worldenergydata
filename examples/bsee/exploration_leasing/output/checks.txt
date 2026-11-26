@@ -18,3 +18,16 @@ PASS  Every stage reconciles read, kept and dropped rows; downstream reads equal
 PASS  Every headline value resolves to exactly one saved CSV row and column
 PASS  Five trend figures and writer citations resolve to saved table cells
 PASS  All five SVG/PNG pairs decode; SVGs use DejaVu Sans and contain no prohibited constructs
+PASS  Yearly figure-1a.svg meets chart standard items 5 and 7
+PASS  Yearly figure-1b.svg meets chart standard items 5 and 7
+PASS  Yearly figure-2a.svg meets chart standard items 5 and 7
+PASS  Yearly figure-2b.svg meets chart standard items 5 and 7
+PASS  Yearly figure-2c.svg meets chart standard items 5 and 7
+PASS  Yearly figure-3a.svg meets chart standard items 5 and 7
+PASS  Yearly figure-3b.svg meets chart standard items 5 and 7
+PASS  Yearly figure-3c.svg meets chart standard items 5 and 7
+PASS  Yearly figure-4a.svg meets chart standard items 5 and 7
+PASS  Yearly figure-4b.svg meets chart standard items 5 and 7
+PASS  Yearly figure-4c.svg meets chart standard items 5 and 7
+PASS  Yearly figure-4d.svg meets chart standard items 5 and 7
+PASS  Yearly figure-5.svg meets chart standard items 5 and 7

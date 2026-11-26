@@ -5,3 +5,4 @@ output/*.json text eol=lf
 output/*.txt text eol=lf
 output/*.svg text eol=lf
 output/*.png binary
+output/yearly/* text eol=lf

@@ -9,10 +9,9 @@
 import ctypes
 import os
 import sys
-import tempfile
 from pathlib import Path
 
-from source_inputs import EXAMPLE, input_parser, verified_inputs
+from source_inputs import EXAMPLE, input_parser, staged_build, verified_inputs
 
 
 def validate_destination(path):
@@ -89,10 +88,7 @@ def main():
         checks.append(f"PASS  {label}")
         return result
 
-    with tempfile.TemporaryDirectory(
-        prefix=".derive-", dir=destination.parent
-    ) as scratch:
-        work = Path(scratch)
+    with staged_build(destination.parent) as work:
         data_dir = work / "inputs"
         pins = check(
             "Four source archives match manifest byte counts and SHA-256",
