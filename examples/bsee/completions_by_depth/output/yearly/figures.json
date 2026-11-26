@@ -3,7 +3,6 @@
     "figure_number": "1A",
     "title": "Completion approvals across all water depths",
     "ylabel": "Approved permits per year",
-    "xlabel": "Calendar year of approval",
     "measure": "approvals_per_year",
     "note": "Each approved permit counts once. Solid lines show initial completion (INITCOMP). Dashed lines show other completion work without a change of zone. Hollow markers show partial 2026 through 23 November 2026. Means end in 2025.",
     "role": "main",
@@ -24,18 +23,20 @@
     "csv": "annual_trends.csv",
     "svg": "figure-1a.svg",
     "interactive": "figure-1a.html",
+    "xlabel": "Calendar year of approval",
     "y_scale": {
-      "max": 1000,
+      "max": 800.0,
       "step": 200.0,
       "shared": "measure:approvals_per_year"
     },
-    "scale_note": "Y maximum 1,000, against 1,000 in Figure 1B, 200 in Figure 1C, 1,000 in Figure 2A, 1,000 in Figure 2B, 100 in Figure E4."
+    "scale_note": "Y maximum 800, against 800 in Figure 1B, 150 in Figure 1C, 800 in Figure 2A, 800 in Figure 2B, 80 in Figure E4.",
+    "blank_cells": [],
+    "caption": "Each approved permit counts once. Solid lines show initial completion (INITCOMP). Dashed lines show other completion work without a change of zone. Hollow markers show partial 2026 through 23 November 2026. Means end in 2025. Y maximum 800, against 800 in Figure 1B, 150 in Figure 1C, 800 in Figure 2A, 800 in Figure 2B, 80 in Figure E4."
   },
   {
     "figure_number": "1B",
     "title": "Initial completion approvals by water depth",
     "ylabel": "Approved permits per year",
-    "xlabel": "Calendar year of approval",
     "measure": "approvals_per_year",
     "note": "Each approved completion permit carrying INITCOMP counts once. Hollow markers show partial 2026 through 23 November 2026. Means end in 2025.",
     "role": "main",
@@ -60,18 +61,20 @@
     "csv": "annual_trends.csv",
     "svg": "figure-1b.svg",
     "interactive": "figure-1b.html",
+    "xlabel": "Calendar year of approval",
     "y_scale": {
-      "max": 1000,
+      "max": 800.0,
       "step": 200.0,
       "shared": "measure:approvals_per_year"
     },
-    "scale_note": "Y maximum 1,000, against 1,000 in Figure 1A, 200 in Figure 1C, 1,000 in Figure 2A, 1,000 in Figure 2B, 100 in Figure E4."
+    "scale_note": "Y maximum 800, against 800 in Figure 1A, 150 in Figure 1C, 800 in Figure 2A, 800 in Figure 2B, 80 in Figure E4.",
+    "blank_cells": [],
+    "caption": "Each approved completion permit carrying INITCOMP counts once. Hollow markers show partial 2026 through 23 November 2026. Means end in 2025. Y maximum 800, against 800 in Figure 1A, 150 in Figure 1C, 800 in Figure 2A, 800 in Figure 2B, 80 in Figure E4."
   },
   {
     "figure_number": "1C",
     "title": "Other completion approvals by water depth",
     "ylabel": "Approved permits per year",
-    "xlabel": "Calendar year of approval",
     "measure": "approvals_per_year",
     "note": "Each approved permit for other completion work without a change of zone counts once. Hollow markers show partial 2026 through 23 November 2026. Means end in 2025.",
     "role": "main",
@@ -96,18 +99,20 @@
     "csv": "annual_trends.csv",
     "svg": "figure-1c.svg",
     "interactive": "figure-1c.html",
+    "xlabel": "Calendar year of approval",
     "y_scale": {
-      "max": 200,
+      "max": 150.0,
       "step": 50.0,
       "shared": "panels"
     },
-    "scale_note": "Y maximum 200, against 1,000 in Figure 1A, 1,000 in Figure 1B, 1,000 in Figure 2A, 1,000 in Figure 2B, 100 in Figure E4."
+    "scale_note": "Y maximum 150, against 800 in Figure 1A, 800 in Figure 1B, 800 in Figure 2A, 800 in Figure 2B, 80 in Figure E4.",
+    "blank_cells": [],
+    "caption": "Each approved permit for other completion work without a change of zone counts once. Hollow markers show partial 2026 through 23 November 2026. Means end in 2025. Y maximum 150, against 800 in Figure 1A, 800 in Figure 1B, 800 in Figure 2A, 800 in Figure 2B, 80 in Figure E4."
   },
   {
     "figure_number": "2A",
     "title": "Recompletion approvals across all water depths",
     "ylabel": "Approved permits per year",
-    "xlabel": "Calendar year of approval",
     "measure": "approvals_per_year",
     "note": "Each approved permit classed as a change of zone counts once. Hollow markers show partial 2026 through 23 November 2026. Means end in 2025.",
     "role": "main",
@@ -126,18 +131,20 @@
     "csv": "annual_trends.csv",
     "svg": "figure-2a.svg",
     "interactive": "figure-2a.html",
+    "xlabel": "Calendar year of approval",
     "y_scale": {
-      "max": 1000,
+      "max": 800.0,
       "step": 200.0,
       "shared": "measure:approvals_per_year"
     },
-    "scale_note": "Y maximum 1,000, against 1,000 in Figure 1A, 1,000 in Figure 1B, 200 in Figure 1C, 1,000 in Figure 2B, 100 in Figure E4."
+    "scale_note": "Y maximum 800, against 800 in Figure 1A, 800 in Figure 1B, 150 in Figure 1C, 800 in Figure 2B, 80 in Figure E4.",
+    "blank_cells": [],
+    "caption": "Each approved permit classed as a change of zone counts once. Hollow markers show partial 2026 through 23 November 2026. Means end in 2025. Y maximum 800, against 800 in Figure 1A, 800 in Figure 1B, 150 in Figure 1C, 800 in Figure 2B, 80 in Figure E4."
   },
   {
     "figure_number": "2B",
     "title": "Recompletion approvals by water depth",
     "ylabel": "Approved permits per year",
-    "xlabel": "Calendar year of approval",
     "measure": "approvals_per_year",
     "note": "Each approved permit classed as a change of zone counts once. Hollow markers show partial 2026 through 23 November 2026. Means end in 2025.",
     "role": "main",
@@ -162,18 +169,20 @@
     "csv": "annual_trends.csv",
     "svg": "figure-2b.svg",
     "interactive": "figure-2b.html",
+    "xlabel": "Calendar year of approval",
     "y_scale": {
-      "max": 1000,
+      "max": 800.0,
       "step": 200.0,
       "shared": "measure:approvals_per_year"
     },
-    "scale_note": "Y maximum 1,000, against 1,000 in Figure 1A, 1,000 in Figure 1B, 200 in Figure 1C, 1,000 in Figure 2A, 100 in Figure E4."
+    "scale_note": "Y maximum 800, against 800 in Figure 1A, 800 in Figure 1B, 150 in Figure 1C, 800 in Figure 2A, 80 in Figure E4.",
+    "blank_cells": [],
+    "caption": "Each approved permit classed as a change of zone counts once. Hollow markers show partial 2026 through 23 November 2026. Means end in 2025. Y maximum 800, against 800 in Figure 1A, 800 in Figure 1B, 150 in Figure 1C, 800 in Figure 2A, 80 in Figure E4."
   },
   {
     "figure_number": "3A",
     "title": "Drilled wells with an initial approval across all water depths",
     "ylabel": "Share of drilled wells (%)",
-    "xlabel": "Calendar year of first drilling (spud year)",
     "measure": "share_of_drilled_wells",
     "note": "Solid lines show exploratory wells. Dashed lines show development wells. Each well counts in its first spud year. The numerator counts wells with an initial completion approval by the file date. Recent cohorts have shorter follow up. A blank means no wells of this type were first drilled in that band and year. Hollow markers show partial 2026 through 23 November 2026. Means end in 2025.",
     "role": "main",
@@ -194,17 +203,20 @@
     "csv": "annual_trends.csv",
     "svg": "figure-3a.svg",
     "interactive": "figure-3a.html",
+    "xlabel": "Calendar year of first drilling (spud year)",
+    "empty_denominator_label": "No wells first drilled",
     "y_scale": {
-      "max": 100,
+      "max": 100.0,
       "step": 20.0,
       "shared": "measure:share_of_drilled_wells"
-    }
+    },
+    "blank_cells": [],
+    "caption": "Solid lines show exploratory wells. Dashed lines show development wells. Each well counts in its first spud year. The numerator counts wells with an initial completion approval by the file date. Recent cohorts have shorter follow up. A blank means no wells of this type were first drilled in that band and year. Hollow markers show partial 2026 through 23 November 2026. Means end in 2025."
   },
   {
     "figure_number": "3B",
     "title": "Exploratory wells with an initial approval by water depth",
     "ylabel": "Share of drilled wells (%)",
-    "xlabel": "Calendar year of first drilling (spud year)",
     "measure": "share_of_drilled_wells",
     "note": "Each well counts in its first spud year. The numerator counts wells with an initial completion approval by the file date. Recent cohorts have shorter follow up. A blank means no wells of this type were first drilled in that band and year. Hollow markers show partial 2026 through 23 November 2026. Means end in 2025.",
     "role": "main",
@@ -229,19 +241,30 @@
     "csv": "annual_trends.csv",
     "svg": "figure-3b.svg",
     "interactive": "figure-3b.html",
+    "xlabel": "Calendar year of first drilling (spud year)",
+    "empty_denominator_label": "No wells first drilled",
     "y_scale": {
-      "max": 100,
+      "max": 100.0,
       "step": 20.0,
       "shared": "measure:share_of_drilled_wells"
     },
+    "blank_cells": [
+      "2021 Under 100 m",
+      "2023 Under 100 m",
+      "2025 Under 100 m",
+      "2026 Under 100 m",
+      "2018 100 to 500 m",
+      "2023 100 to 500 m",
+      "2026 100 to 500 m"
+    ],
     "unavailable_cells": 7,
-    "coverage_note": "A zero denominator leaves 7 annual shares blank. The chart omits those points and any mean requiring them. The interactive year table identifies the affected series."
+    "coverage_note": "A zero denominator leaves 7 annual values blank. The chart omits those points and any mean requiring them. The interactive year table identifies the affected series.",
+    "caption": "Each well counts in its first spud year. The numerator counts wells with an initial completion approval by the file date. Recent cohorts have shorter follow up. A blank means no wells of this type were first drilled in that band and year. Hollow markers show partial 2026 through 23 November 2026. Means end in 2025. Blank annual values: 2021 Under 100 m, 2023 Under 100 m, 2025 Under 100 m, 2026 Under 100 m, 2018 100 to 500 m, 2023 100 to 500 m, 2026 100 to 500 m. A zero denominator leaves 7 annual values blank. The chart omits those points and any mean requiring them. The interactive year table identifies the affected series."
   },
   {
     "figure_number": "3C",
     "title": "Development wells with an initial approval by water depth",
     "ylabel": "Share of drilled wells (%)",
-    "xlabel": "Calendar year of first drilling (spud year)",
     "measure": "share_of_drilled_wells",
     "note": "Each well counts in its first spud year. The numerator counts wells with an initial completion approval by the file date. Recent cohorts have shorter follow up. A blank means no wells of this type were first drilled in that band and year. Hollow markers show partial 2026 through 23 November 2026. Means end in 2025.",
     "role": "main",
@@ -266,19 +289,28 @@
     "csv": "annual_trends.csv",
     "svg": "figure-3c.svg",
     "interactive": "figure-3c.html",
+    "xlabel": "Calendar year of first drilling (spud year)",
+    "empty_denominator_label": "No wells first drilled",
     "y_scale": {
-      "max": 100,
+      "max": 100.0,
       "step": 20.0,
       "shared": "measure:share_of_drilled_wells"
     },
+    "blank_cells": [
+      "2021 100 to 500 m",
+      "2024 100 to 500 m",
+      "2026 100 to 500 m",
+      "2026 500 to 1,500 m",
+      "2005 1,500 m and deeper"
+    ],
     "unavailable_cells": 5,
-    "coverage_note": "A zero denominator leaves 5 annual shares blank. The chart omits those points and any mean requiring them. The interactive year table identifies the affected series."
+    "coverage_note": "A zero denominator leaves 5 annual values blank. The chart omits those points and any mean requiring them. The interactive year table identifies the affected series.",
+    "caption": "Each well counts in its first spud year. The numerator counts wells with an initial completion approval by the file date. Recent cohorts have shorter follow up. A blank means no wells of this type were first drilled in that band and year. Hollow markers show partial 2026 through 23 November 2026. Means end in 2025. Blank annual values: 2021 100 to 500 m, 2024 100 to 500 m, 2026 100 to 500 m, 2026 500 to 1,500 m, 2005 1,500 m and deeper. A zero denominator leaves 5 annual values blank. The chart omits those points and any mean requiring them. The interactive year table identifies the affected series."
   },
   {
     "figure_number": "E3",
     "title": "Completion approvals per January standing well",
     "ylabel": "Approved permits per January well",
-    "xlabel": "Calendar year of approval",
     "measure": "approvals_per_well",
     "note": "The denominator is the number of wells standing on 1 January. The numerator includes approvals for wells first drilled later in the year. An empty denominator gives a blank. Hollow markers show partial 2026 through 23 November 2026. Means end in 2025.",
     "role": "appendix",
@@ -302,17 +334,20 @@
     ],
     "csv": "annual_trends.csv",
     "svg": "figure-e3.svg",
+    "xlabel": "Calendar year of approval",
+    "empty_denominator_label": "No January standing wells",
     "y_scale": {
       "max": 0.5,
       "step": 0.1,
       "shared": "panels"
-    }
+    },
+    "blank_cells": [],
+    "caption": "The denominator is the number of wells standing on 1 January. The numerator includes approvals for wells first drilled later in the year. An empty denominator gives a blank. Hollow markers show partial 2026 through 23 November 2026. Means end in 2025."
   },
   {
     "figure_number": "E4",
     "title": "Other completion approvals with perforation flags",
     "ylabel": "Approved permits per year",
-    "xlabel": "Calendar year of approval",
     "measure": "approvals_per_year",
     "note": "Flags are counted on permits for other completion work without a change of zone. A permit may carry both flags. Hollow markers show partial 2026 through 23 November 2026. Means end in 2025.",
     "role": "appendix",
@@ -344,11 +379,14 @@
     ],
     "csv": "annual_trends.csv",
     "svg": "figure-e4.svg",
+    "xlabel": "Calendar year of approval",
     "y_scale": {
-      "max": 100,
+      "max": 80.0,
       "step": 20.0,
       "shared": "panels"
     },
-    "scale_note": "Y maximum 100, against 1,000 in Figure 1A, 1,000 in Figure 1B, 200 in Figure 1C, 1,000 in Figure 2A, 1,000 in Figure 2B."
+    "scale_note": "Y maximum 80, against 800 in Figure 1A, 800 in Figure 1B, 150 in Figure 1C, 800 in Figure 2A, 800 in Figure 2B.",
+    "blank_cells": [],
+    "caption": "Flags are counted on permits for other completion work without a change of zone. A permit may carry both flags. Hollow markers show partial 2026 through 23 November 2026. Means end in 2025. Y maximum 80, against 800 in Figure 1A, 800 in Figure 1B, 150 in Figure 1C, 800 in Figure 2A, 800 in Figure 2B."
   }
 ]

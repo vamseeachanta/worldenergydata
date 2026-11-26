@@ -89,6 +89,7 @@ def test_round_trip_from_one_csv(charts, tmp_path):
         svg = (tmp_path / fig["svg"]).read_text(encoding="utf-8")
         root = ET.fromstring(svg)
         assert {group.split("|")[0] for group in fig["groups"]} == set(metrics)
+        assert "windows" not in fig  # COMP pairs classes observed over the same window.
         if number.startswith("E"):
             assert fig["role"] == "appendix"
             assert len(root.findall(".//{*}g[@class='panel']")) == 4
@@ -111,7 +112,7 @@ def test_round_trip_from_one_csv(charts, tmp_path):
             assert data[index][-1][2:4] == [None, True]
             assert data[index][5][1:3] == [None, None]
             if number.startswith("3"):
-                assert data[index][5][4] == "No wells first drilled"
+                assert data[index][5][5] == "No wells first drilled"
                 assert "zero denominator" in fig["coverage_note"]
                 assert "Source records are unavailable" not in fig["coverage_note"]
             path = g.find("{*}path[@class='annual']")
@@ -124,14 +125,34 @@ def test_round_trip_from_one_csv(charts, tmp_path):
     assert first == {p.name: p.read_bytes() for p in tmp_path.iterdir()}
 
 
-def test_scale_note_names_each_selected_figure(charts):
-    figures = [
-        {"figure_number": str(i), "measure": "count", "groups": [str(i)]}
-        for i in range(1, 4)
-    ]
-    charts.assign_scales(figures, {"1": 81, "2": 30, "3": 29})
-    assert [f["y_scale"]["max"] for f in figures] == [100, 100, 50]
-    assert (
-        figures[2]["scale_note"]
-        == "Y maximum 50, against 100 in Figure 1, 100 in Figure 2."
-    )
+def test_scale_notes_match_the_other_permit_figures():
+    figures = json.loads((EXAMPLE / "output/yearly/figures.json").read_bytes())
+    permits = [fig for fig in figures if fig["measure"] == "approvals_per_year"]
+    assert len(permits) == 6
+    for fig in permits:
+        peers = ", ".join(
+            f"{peer['y_scale']['max']:g} in Figure {peer['figure_number']}"
+            for peer in permits
+            if peer is not fig
+        )
+        assert (
+            fig["scale_note"]
+            == f"Y maximum {fig['y_scale']['max']:g}, against {peers}."
+        )
+
+
+def test_retained_manifest_uses_chart_standard_maxima():
+    figures = json.loads((EXAMPLE / "output/yearly/figures.json").read_bytes())
+    # Independent desk-gate tops for the pinned COMP observations, in article order.
+    assert {f["figure_number"]: f["y_scale"]["max"] for f in figures} == {
+        "1A": 800,
+        "1B": 800,
+        "1C": 150,
+        "2A": 800,
+        "2B": 800,
+        "3A": 100,
+        "3B": 100,
+        "3C": 100,
+        "E3": 0.5,
+        "E4": 80,
+    }

@@ -272,7 +272,8 @@ def _check_depth_scale(ticks):
     if (
         0 not in values
         or not _nice(step)
-        or (values[-1] != 0 and not _nice(values[-1]))
+        # A zero-based axis may end at three, four or five nice intervals.
+        or (values[0] < 0 and values[-1] != 0 and not _nice(values[-1]))
         or any(right - left != step for left, right in zip(values, values[1:]))
     ):
         raise ValueError("expected evenly spaced nice y ticks including zero")

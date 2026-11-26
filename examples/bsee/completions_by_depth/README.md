@@ -254,7 +254,7 @@ Figures 3B and 3C use the four reported depth bands. Type and depth follow the
 original hole and inventory rules. Wells with another or unstated type or no
 dated spud fall outside these cohorts. Later cohorts have had less time to receive an approval.
 
-The [shared yearly chart module](../../../packages/worldenergydata-bsee/src/worldenergydata/bsee/yearly_trend.py)
+The [shared annual series kit](../../../packages/worldenergydata-bsee/src/worldenergydata/bsee/series/README.md)
 plots the arithmetic mean of five consecutive complete yearly values at the last
 year of the window. Each annual rate or share has equal weight in the mean.
 Inside the observation window an absent permit count is zero. A year with no

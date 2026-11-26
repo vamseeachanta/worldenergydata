@@ -4,6 +4,7 @@ import csv
 import hashlib
 import io
 import json
+import math
 import os
 import re
 from collections import Counter, defaultdict
@@ -187,7 +188,12 @@ def test_all_band_observations_match_previous_annual_tables():
                 for field in ("value", "moving_average"):
                     prior = old_row[field]
                     current = rows[key][field]
-                    assert (float(current) if current else None) == (
-                        float(prior) if prior else None
-                    )
+                    if field == "moving_average" and prior:
+                        # The kit uses a rolling sum; r5.6 summed each window using fsum.
+                        expected = float(prior)
+                        assert abs(float(current) - expected) <= 2 * math.ulp(expected)
+                    else:
+                        assert (float(current) if current else None) == (
+                            float(prior) if prior else None
+                        )
     assert seen == {key for key in rows if key[1] != TOTAL}

@@ -13,6 +13,7 @@ from urllib.parse import urlsplit
 from xml.etree import ElementTree as ET
 
 from ..half_decade import _FONT
+from ..yearly_trend import render_svg as render_depth_panels
 from .annual import BAND_COLORS, BANDS, with_trends
 
 MEASURE_COLORS = (
@@ -431,6 +432,15 @@ def render(
     return ET.tostring(root, encoding="unicode") + "\n"
 
 
+def _empty_denominator_label(figure, row):
+    label = figure.get("empty_denominator_label")
+    denominator = row.get("denominator")
+    if label and row["value"] is None and denominator not in (None, ""):
+        if Decimal(str(denominator)).is_zero():
+            return label
+    return None
+
+
 def interactive(figure, svg, groups, *, xlabel):
     """Embed the same points and static chart in an offline year selector."""
     data = [
@@ -441,7 +451,11 @@ def interactive(figure, svg, groups, *, xlabel):
                 row["moving_average"],
                 row["partial"],
                 row["availability"],
-                format_number(row["value"]) if row["value"] is not None else None,
+                (
+                    format_number(row["value"])
+                    if row["value"] is not None
+                    else _empty_denominator_label(figure, row)
+                ),
                 (
                     format_number(row["moving_average"])
                     if row["moving_average"] is not None
@@ -572,6 +586,67 @@ def _calendar(figure, groups):
     return result
 
 
+def _describe_coverage(fig, cells, labels):
+    """Name selected blank observations and distinguish known empty populations."""
+    blank_cells = []
+    missing = empty = 0
+    for key, label in zip(fig["groups"], labels):
+        for year, row in cells[key].items():
+            if row["value"] is None:
+                blank_cells.append(f"{format_number(year, grouped=False)} {label}")
+                if _empty_denominator_label(fig, row):
+                    empty += 1
+                elif row["availability"] == "unavailable":
+                    missing += 1
+    fig["blank_cells"] = blank_cells
+    fig.pop("coverage_note", None)
+    fig.pop("unavailable_cells", None)
+    if missing or empty:
+        clauses = []
+        if empty:
+            clauses.append(
+                f"A zero denominator leaves {format_number(empty)} annual values blank."
+            )
+        if missing:
+            clauses.append(
+                f"Source records are unavailable for {format_number(missing)} "
+                "annual series observations."
+            )
+        clauses.append("The chart omits those points and any mean requiring them.")
+        if "interactive" in fig:
+            clauses.append("The interactive year table identifies the affected series.")
+        fig["unavailable_cells"] = missing + empty
+        fig["coverage_note"] = " ".join(clauses)
+    fig["caption"] = _caption(fig)
+
+
+def _appendix_svg(fig, cells, groups, xlabel):
+    rows = []
+    labels = []
+    for key, label in zip(fig["groups"], fig["labels"]):
+        bands = {row["band"] for row in groups[key].values()}
+        if len(bands) != 1:
+            raise ValueError(f"Appendix series {key} must identify one depth band")
+        (band,) = bands
+        labels.append(f"{label} ({band})")
+        rows.extend(
+            dict(row, year=year, group=label, band=band, partial_year=row["partial"])
+            for year, row in cells[key].items()
+        )
+    _describe_coverage(fig, cells, labels)
+    axis = fig["y_scale"]
+    step = Decimal(str(axis["step"]))
+    ticks = [float(i * step) for i in range(round(axis["max"] / axis["step"]) + 1)]
+    return render_depth_panels(
+        rows,
+        title=fig["title"],
+        ylabel=fig["ylabel"],
+        xlabel=xlabel,
+        note=fig["caption"],
+        y_scale=ticks,
+    )
+
+
 def write_figures(
     output,
     figures,
@@ -595,9 +670,20 @@ def write_figures(
     if len(csv_names) != 1:
         raise ValueError("A figure set requires one annual CSV")
     csv_path = _artifact(output, csv_names.pop())
-    paths = [
-        _artifact(output, fig[key]) for fig in figures for key in ("svg", "interactive")
-    ]
+    paths = []
+    for fig in figures:
+        paths.append(_artifact(output, fig["svg"]))
+        if fig.get("layout") == "4x1_shared_x":
+            if (
+                fig.get("role") != "appendix"
+                or fig.get("panel_by") != "depth_band"
+                or "interactive" in fig
+            ):
+                raise ValueError(
+                    "Depth panels require a static depth-band appendix figure"
+                )
+        else:
+            paths.append(_artifact(output, fig["interactive"]))
     if (
         len(set([*paths, csv_path, _artifact(output, "figures.json")]))
         != len(paths) + 2
@@ -618,32 +704,15 @@ def write_figures(
     artifacts = {}
     for fig in figures:
         cells = _calendar(fig, groups)
-        missing = sum(
-            row["availability"] == "unavailable"
-            for s in cells.values()
-            for row in s.values()
-        )
-        fig.pop("coverage_note", None)
-        fig.pop("unavailable_cells", None)
-        if missing:
-            fig["unavailable_cells"] = missing
-            fig["coverage_note"] = (
-                f"Source records are unavailable for {format_number(missing)} "
-                "annual series observations. "
-                "The chart omits those points and any mean requiring them. "
-                "The interactive year table identifies the affected series."
-            )
-        fig["blank_cells"] = [
-            f"{format_number(year, grouped=False)} {label}"
-            for key, label in zip(fig["groups"], fig["labels"])
-            for year, row in cells[key].items()
-            if row["value"] is None
-        ]
-        fig["caption"] = _caption(fig)
+        axis_label = fig.get("xlabel", xlabel)
+        if fig.get("layout") == "4x1_shared_x":
+            artifacts[fig["svg"]] = _appendix_svg(fig, cells, groups, axis_label)
+            continue
+        _describe_coverage(fig, cells, fig["labels"])
         svg = render(
             fig,
             cells,
-            xlabel=xlabel,
+            xlabel=axis_label,
             dashed_groups=dashed_groups,
             partial_label=partial_label,
             previous=previous,
@@ -651,7 +720,7 @@ def write_figures(
             coordinate_decimals=coordinate_decimals,
         )
         artifacts[fig["svg"]] = svg
-        artifacts[fig["interactive"]] = interactive(fig, svg, cells, xlabel=xlabel)
+        artifacts[fig["interactive"]] = interactive(fig, svg, cells, xlabel=axis_label)
     output.mkdir(parents=True, exist_ok=True)
     if rows is not None:
         fields = dict.fromkeys(key for row in rows for key in row)

@@ -543,3 +543,56 @@ def test_assign_scales_rejects_missing_measure(measure):
     # Lower-level callers may supply their own figure dictionaries.
     with pytest.raises(ValueError, match="measure"):
         assign_scales([{"measure": measure, "groups": ["g"]}], {"g": 1})
+
+
+def test_mixed_axes_and_empty_cohorts_with_static_depth_panels(tmp_path):
+    # The appendix peak of 79 requires four intervals of 20, shared with the
+    # main peak of 30. Omitted source cells and zero wells have distinct causes.
+    main = make_figure("1", "Cohort", "Share (%)", "share", [("all", "All")], "")
+    main.update(
+        xlabel="First spud year", empty_denominator_label="No wells first drilled"
+    )
+    panels = make_figure(
+        "E", "Rates by band", "Share (%)", "share", [(b, "Rate") for b in BANDS], ""
+    )
+    panels.update(role="appendix", panel_by="depth_band", layout="4x1_shared_x")
+    del panels["interactive"]
+    rows = [
+        dict(group="all", year=2020, value=30),
+        dict(
+            group="all",
+            year=2021,
+            value=None,
+            availability="unavailable",
+            denominator=0,
+        ),
+        dict(group="all", year=2022, value=None, availability="unavailable"),
+    ]
+    for band in BANDS:
+        for year in range(2020, 2023):
+            if not (band == BANDS[0] and year == 2021):
+                rows.append(dict(group=band, band=band, year=year, value=79))
+    write_figures(
+        tmp_path,
+        [main, panels],
+        with_trends(rows).to_dict("records"),
+        xlabel="Approval year",
+    )
+    main, panels = json.loads((tmp_path / "figures.json").read_bytes())
+    assert (
+        main["y_scale"]
+        == panels["y_scale"]
+        == {"max": 80, "step": 20, "shared": "measure:share"}
+    )
+    page = (tmp_path / main["interactive"]).read_text(encoding="utf-8")
+    series = json.loads(re.search(r"^const series = (.+);$", page, re.M)[1])[0]
+    assert "First spud year" in page
+    assert series[1][1] is None and series[1][5] == "No wells first drilled"
+    assert series[2][5] is None
+    assert "zero denominator" in main["coverage_note"]
+    assert "Source records are unavailable for 1" in main["coverage_note"]
+    assert panels["blank_cells"] == [f"2021 Rate ({BANDS[0]})"]
+    svg = ET.parse(tmp_path / panels["svg"])
+    assert len(svg.findall(".//{*}g[@class='panel']")) == 4
+    assert "Approval year" in " ".join(svg.getroot().itertext())
+    assert not (tmp_path / "figure-e.html").exists()

@@ -6,15 +6,15 @@ permit-kind count also retains unmatched water depths for the all-depth view.
 
 import csv
 import json
+import math
 import sys
 from collections import Counter, defaultdict
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT.parents[2] / "packages/worldenergydata-bsee/src"))
-from worldenergydata.bsee.yearly_trend import trailing_average  # noqa: E402
+from worldenergydata.bsee.series import BANDS, with_trends  # noqa: E402
 
-BANDS = ("Under 100 m", "100 to 500 m", "500 to 1,500 m", "1,500 m and deeper")
 TOTAL = "All water depths"
 BAND_LABEL = {name.lower().replace(",", ""): name for name in BANDS}
 KINDS = {"initial completion": "initial", "other completion work": "other"}
@@ -139,10 +139,14 @@ def annual_series(directory, drilled):
     for key, cells in sorted(series.items()):
         if set(cells) != set(years):
             raise ValueError(f"incomplete calendar for {key}")
-        means = trailing_average(
-            {y: r["value"] for y, r in cells.items()}, partial_year=partial
+        result.extend(cells[y] for y in years)
+    # Keep integer counts, denominators and raw annual values in their native types.
+    # Only the rolling mean comes from the kit's numeric table.
+    by_key = {(row["group"], row["year"]): row for row in result}
+    for trend in with_trends(result, partial_year=partial).itertuples(index=False):
+        by_key[trend.group, trend.year]["moving_average"] = (
+            None if math.isnan(trend.moving_average) else trend.moving_average
         )
-        result.extend(dict(cells[y], moving_average=means[y]) for y in years)
     return result
 
 
