@@ -1,0 +1,38 @@
+[
+  {
+    "file": "APDRawData.zip",
+    "url": "https://www.data.bsee.gov/Well/Files/APDRawData.zip",
+    "retrieved_utc": "2026-11-25T03:58:28Z",
+    "http_last_modified": "Tue, 24 Nov 2026 10:30:59 GMT",
+    "sha256": "4fc45e606c4098b9de9becbea4db9071fd77ade9f8562b1864e643ead41bb96c",
+    "role": "New-well permits by rig type and water depth, and APD column check",
+    "file_date": "2026-11-24"
+  },
+  {
+    "file": "BoreholeRawData.zip",
+    "url": "https://www.data.bsee.gov/Well/Files/BoreholeRawData.zip",
+    "retrieved_utc": "2026-11-23T18:54:40Z",
+    "http_last_modified": "Mon, 23 Nov 2026 10:31:21 GMT",
+    "sha256": "72fa55e55fd28db26c59e52b3a43c7d053f9d12a6d06b0a0f6a46ef541c66a5c",
+    "role": "Mapped wells, annual spuds, recorded spud-to-total-depth intervals and APM region lookup",
+    "file_date": "2026-11-23"
+  },
+  {
+    "file": "eWellAPMRawData.zip",
+    "url": "https://www.data.bsee.gov/Well/Files/eWellAPMRawData.zip",
+    "retrieved_utc": "2026-11-23T18:54:44Z",
+    "http_last_modified": "Mon, 23 Nov 2026 10:36:24 GMT",
+    "sha256": "1a38ed6cf9eab1f8079bf65d8e5b389cb41cc343cde4ce679e2b6e057fd7da50",
+    "role": "Operator-estimated durations, operation and subtype codes",
+    "file_date": "2026-11-23"
+  },
+  {
+    "file": "wti-monthly.csv",
+    "url": "https://raw.githubusercontent.com/datasets/oil-prices/908994d7f61a7a3e3449f2c7e3a2dca6db4a89b3/data/wti-monthly.csv",
+    "retrieved_utc": "2026-10-11T20:07:15.120100+00:00",
+    "http_last_modified": "",
+    "sha256": "65a086d437474d707f7215d4c60b39c3b447ff488ec12be900cb1a0213d573ec",
+    "role": "WTI annual means from the repository LF-normalized monthly snapshot",
+    "file_date": ""
+  }
+]

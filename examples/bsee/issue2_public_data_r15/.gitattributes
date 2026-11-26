@@ -1,0 +1,2 @@
+# The full-derivation test compares CSV bytes on every platform.
+data/*.csv text eol=lf
