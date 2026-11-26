@@ -1,101 +1,101 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 864 523" width="960" height="581" role="img" aria-label="Leases with a spud (%) by water depth and period (Observed by file date, Within five years)" font-family="'DejaVu Sans','Segoe UI',Arial,sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0.00 0.00 864.00 523.00" width="960.00" height="581.00" role="img" aria-label="Leases with a spud (%) by water depth and period (Observed by file date, Within five years)" font-family="'DejaVu Sans','Segoe UI',Arial,sans-serif">
   <title>Leases with a spud (%) by water depth and period (Observed by file date, Within five years)</title>
-  <rect width="864" height="523" fill="white" />
-  <line x1="220.00000000000003" y1="17" x2="240.00000000000003" y2="17" stroke="#6588a6" stroke-width="1.5" stroke-dasharray="none" />
-  <circle cx="230.00000000000003" cy="17" r="2" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
-  <text x="244.00000000000003" y="20" font-size="9" text-anchor="start">Under 100 m</text>
-  <line x1="312.8" y1="17" x2="332.8" y2="17" stroke="#427298" stroke-width="1.5" stroke-dasharray="5.5 2.4" />
-  <rect x="320.8" y="15" width="4" height="4" stroke="#333333" stroke-width="0.5" fill="#427298" />
-  <text x="336.8" y="20" font-size="9" text-anchor="start">100 to 500 m</text>
-  <line x1="410.4" y1="17" x2="430.4" y2="17" stroke="#245476" stroke-width="1.5" stroke-dasharray="9.6 2.4 1.5 2.4" />
+  <rect width="864.00" height="523.00" fill="white" />
+  <line x1="220.00" y1="17.00" x2="240.00" y2="17.00" stroke="#6588a6" stroke-width="1.5" stroke-dasharray="none" />
+  <circle cx="230.00" cy="17.00" r="2.00" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
+  <text x="244.00" y="20.00" font-size="9" text-anchor="start">Under 100 m</text>
+  <line x1="312.80" y1="17.00" x2="332.80" y2="17.00" stroke="#427298" stroke-width="1.5" stroke-dasharray="5.5 2.4" />
+  <rect x="320.80" y="15.00" width="4.00" height="4.00" stroke="#333333" stroke-width="0.5" fill="#427298" />
+  <text x="336.80" y="20.00" font-size="9" text-anchor="start">100 to 500 m</text>
+  <line x1="410.40" y1="17.00" x2="430.40" y2="17.00" stroke="#245476" stroke-width="1.5" stroke-dasharray="9.6 2.4 1.5 2.4" />
   <polygon points="420.40,15.00 422.40,19.00 418.40,19.00" stroke="#333333" stroke-width="0.5" fill="#245476" />
-  <text x="434.4" y="20" font-size="9" text-anchor="start">500 to 1,500 m</text>
-  <line x1="517.6" y1="17" x2="537.6" y2="17" stroke="#102e46" stroke-width="1.5" stroke-dasharray="1.5 2.4" />
+  <text x="434.40" y="20.00" font-size="9" text-anchor="start">500 to 1,500 m</text>
+  <line x1="517.60" y1="17.00" x2="537.60" y2="17.00" stroke="#102e46" stroke-width="1.5" stroke-dasharray="1.5 2.4" />
   <polygon points="527.60,14.40 530.20,17.00 527.60,19.60 525.00,17.00" stroke="#333333" stroke-width="0.5" fill="#102e46" />
-  <text x="541.6" y="20" font-size="9" text-anchor="start">1,500 m and deeper</text>
-  <text x="78" y="46" font-size="13" text-anchor="start">Observed by file date</text>
-  <line x1="78" y1="218.0" x2="838" y2="218.0" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
-  <line x1="74.5" y1="218.0" x2="78" y2="218.0" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
-  <text x="71" y="221.5" font-size="11" text-anchor="end">0</text>
-  <line x1="78" y1="163.33" x2="838" y2="163.33" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
-  <line x1="74.5" y1="163.33" x2="78" y2="163.33" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
-  <text x="71" y="166.83" font-size="11" text-anchor="end">5</text>
-  <line x1="78" y1="108.67" x2="838" y2="108.67" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
-  <line x1="74.5" y1="108.67" x2="78" y2="108.67" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
-  <text x="71" y="112.17" font-size="11" text-anchor="end">10</text>
-  <line x1="78" y1="54.0" x2="838" y2="54.0" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
-  <line x1="74.5" y1="54.0" x2="78" y2="54.0" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
-  <text x="71" y="57.5" font-size="11" text-anchor="end">15</text>
-  <line x1="78" y1="54" x2="78" y2="218" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
-  <line x1="78" y1="218" x2="838" y2="218" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
-  <text x="20" y="136.0" font-size="11" text-anchor="middle" transform="rotate(-90 20 136.0)">Leases with a spud (%)</text>
-  <circle cx="204.66666666666669" cy="57.04" r="2" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
-  <line x1="204.66666666666669" y1="57.04" x2="458.0" y2="163.33" stroke="#6588a6" stroke-width="1.5" stroke-dasharray="none" />
-  <circle cx="458.0" cy="163.33" r="2" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
-  <line x1="458.0" y1="163.33" x2="711.3333333333334" y2="177.51" stroke="#6588a6" stroke-width="1.5" stroke-dasharray="none" />
-  <circle cx="711.3333333333334" cy="177.51" r="2" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
-  <rect x="202.66666666666669" y="165.81" width="4" height="4" stroke="#333333" stroke-width="0.5" fill="#427298" />
-  <line x1="204.66666666666669" y1="167.81" x2="458.0" y2="191.97" stroke="#427298" stroke-width="1.5" stroke-dasharray="5.5 2.4" />
-  <rect x="456.0" y="189.97" width="4" height="4" stroke="#333333" stroke-width="0.5" fill="#427298" />
-  <line x1="458.0" y1="191.97" x2="711.3333333333334" y2="178.95" stroke="#427298" stroke-width="1.5" stroke-dasharray="5.5 2.4" />
-  <rect x="709.3333333333334" y="176.95" width="4" height="4" stroke="#333333" stroke-width="0.5" fill="#427298" />
+  <text x="541.60" y="20.00" font-size="9" text-anchor="start">1,500 m and deeper</text>
+  <text x="78.00" y="46.00" font-size="13" text-anchor="start">Observed by file date</text>
+  <line x1="78.00" y1="218.00" x2="838.00" y2="218.00" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.50" y1="218.00" x2="78.00" y2="218.00" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71.00" y="221.50" font-size="11" text-anchor="end">0</text>
+  <line x1="78.00" y1="163.33" x2="838.00" y2="163.33" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.50" y1="163.33" x2="78.00" y2="163.33" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71.00" y="166.83" font-size="11" text-anchor="end">5</text>
+  <line x1="78.00" y1="108.67" x2="838.00" y2="108.67" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.50" y1="108.67" x2="78.00" y2="108.67" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71.00" y="112.17" font-size="11" text-anchor="end">10</text>
+  <line x1="78.00" y1="54.00" x2="838.00" y2="54.00" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.50" y1="54.00" x2="78.00" y2="54.00" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71.00" y="57.50" font-size="11" text-anchor="end">15</text>
+  <line x1="78.00" y1="54.00" x2="78.00" y2="218.00" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <line x1="78.00" y1="218.00" x2="838.00" y2="218.00" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="20.00" y="136.00" font-size="11" text-anchor="middle" transform="rotate(-90 20.00 136.00)">Leases with a spud (%)</text>
+  <circle cx="204.67" cy="57.04" r="2.00" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
+  <line x1="204.67" y1="57.04" x2="458.00" y2="163.33" stroke="#6588a6" stroke-width="1.5" stroke-dasharray="none" />
+  <circle cx="458.00" cy="163.33" r="2.00" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
+  <line x1="458.00" y1="163.33" x2="711.33" y2="177.51" stroke="#6588a6" stroke-width="1.5" stroke-dasharray="none" />
+  <circle cx="711.33" cy="177.51" r="2.00" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
+  <rect x="202.67" y="165.81" width="4.00" height="4.00" stroke="#333333" stroke-width="0.5" fill="#427298" />
+  <line x1="204.67" y1="167.81" x2="458.00" y2="191.97" stroke="#427298" stroke-width="1.5" stroke-dasharray="5.5 2.4" />
+  <rect x="456.00" y="189.97" width="4.00" height="4.00" stroke="#333333" stroke-width="0.5" fill="#427298" />
+  <line x1="458.00" y1="191.97" x2="711.33" y2="178.95" stroke="#427298" stroke-width="1.5" stroke-dasharray="5.5 2.4" />
+  <rect x="709.33" y="176.95" width="4.00" height="4.00" stroke="#333333" stroke-width="0.5" fill="#427298" />
   <polygon points="204.67,183.09 206.67,187.09 202.67,187.09" stroke="#333333" stroke-width="0.5" fill="#245476" />
-  <line x1="204.66666666666669" y1="185.09" x2="458.0" y2="149.26" stroke="#245476" stroke-width="1.5" stroke-dasharray="9.6 2.4 1.5 2.4" />
+  <line x1="204.67" y1="185.09" x2="458.00" y2="149.26" stroke="#245476" stroke-width="1.5" stroke-dasharray="9.6 2.4 1.5 2.4" />
   <polygon points="458.00,147.26 460.00,151.26 456.00,151.26" stroke="#333333" stroke-width="0.5" fill="#245476" />
-  <line x1="458.0" y1="149.26" x2="711.3333333333334" y2="130.63" stroke="#245476" stroke-width="1.5" stroke-dasharray="9.6 2.4 1.5 2.4" />
+  <line x1="458.00" y1="149.26" x2="711.33" y2="130.63" stroke="#245476" stroke-width="1.5" stroke-dasharray="9.6 2.4 1.5 2.4" />
   <polygon points="711.33,128.63 713.33,132.63 709.33,132.63" stroke="#333333" stroke-width="0.5" fill="#245476" />
   <polygon points="204.67,168.49 207.27,171.09 204.67,173.69 202.07,171.09" stroke="#333333" stroke-width="0.5" fill="#102e46" />
-  <line x1="204.66666666666669" y1="171.09" x2="458.0" y2="172.5" stroke="#102e46" stroke-width="1.5" stroke-dasharray="1.5 2.4" />
+  <line x1="204.67" y1="171.09" x2="458.00" y2="172.50" stroke="#102e46" stroke-width="1.5" stroke-dasharray="1.5 2.4" />
   <polygon points="458.00,169.90 460.60,172.50 458.00,175.10 455.40,172.50" stroke="#333333" stroke-width="0.5" fill="#102e46" />
-  <line x1="458.0" y1="172.5" x2="711.3333333333334" y2="173.56" stroke="#102e46" stroke-width="1.5" stroke-dasharray="1.5 2.4" />
+  <line x1="458.00" y1="172.50" x2="711.33" y2="173.56" stroke="#102e46" stroke-width="1.5" stroke-dasharray="1.5 2.4" />
   <polygon points="711.33,170.96 713.93,173.56 711.33,176.16 708.73,173.56" stroke="#333333" stroke-width="0.5" fill="#102e46" />
-  <line x1="204.66666666666669" y1="218" x2="204.66666666666669" y2="221.5" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
-  <line x1="458.0" y1="218" x2="458.0" y2="221.5" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
-  <line x1="711.3333333333334" y1="218" x2="711.3333333333334" y2="221.5" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
-  <text x="78" y="252" font-size="13" text-anchor="start">Within five years</text>
-  <line x1="78" y1="424.0" x2="838" y2="424.0" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
-  <line x1="74.5" y1="424.0" x2="78" y2="424.0" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
-  <text x="71" y="427.5" font-size="11" text-anchor="end">0</text>
-  <line x1="78" y1="369.33" x2="838" y2="369.33" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
-  <line x1="74.5" y1="369.33" x2="78" y2="369.33" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
-  <text x="71" y="372.83" font-size="11" text-anchor="end">5</text>
-  <line x1="78" y1="314.67" x2="838" y2="314.67" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
-  <line x1="74.5" y1="314.67" x2="78" y2="314.67" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
-  <text x="71" y="318.17" font-size="11" text-anchor="end">10</text>
-  <line x1="78" y1="260.0" x2="838" y2="260.0" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
-  <line x1="74.5" y1="260.0" x2="78" y2="260.0" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
-  <text x="71" y="263.5" font-size="11" text-anchor="end">15</text>
-  <line x1="78" y1="260" x2="78" y2="424" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
-  <line x1="78" y1="424" x2="838" y2="424" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
-  <text x="20" y="342.0" font-size="11" text-anchor="middle" transform="rotate(-90 20 342.0)">Leases with a spud (%)</text>
-  <circle cx="204.66666666666669" cy="270.89" r="2" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
-  <line x1="204.66666666666669" y1="270.89" x2="458.0" y2="369.33" stroke="#6588a6" stroke-width="1.5" stroke-dasharray="none" />
-  <circle cx="458.0" cy="369.33" r="2" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
-  <line x1="458.0" y1="369.33" x2="711.3333333333334" y2="383.51" stroke="#6588a6" stroke-width="1.5" stroke-dasharray="none" />
-  <circle cx="711.3333333333334" cy="383.51" r="2" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
-  <rect x="202.66666666666669" y="382.57" width="4" height="4" stroke="#333333" stroke-width="0.5" fill="#427298" />
-  <line x1="204.66666666666669" y1="384.57" x2="458.0" y2="397.97" stroke="#427298" stroke-width="1.5" stroke-dasharray="5.5 2.4" />
-  <rect x="456.0" y="395.97" width="4" height="4" stroke="#333333" stroke-width="0.5" fill="#427298" />
-  <line x1="458.0" y1="397.97" x2="711.3333333333334" y2="384.95" stroke="#427298" stroke-width="1.5" stroke-dasharray="5.5 2.4" />
-  <rect x="709.3333333333334" y="382.95" width="4" height="4" stroke="#333333" stroke-width="0.5" fill="#427298" />
+  <line x1="204.67" y1="218.00" x2="204.67" y2="221.50" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <line x1="458.00" y1="218.00" x2="458.00" y2="221.50" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <line x1="711.33" y1="218.00" x2="711.33" y2="221.50" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="78.00" y="252.00" font-size="13" text-anchor="start">Within five years</text>
+  <line x1="78.00" y1="424.00" x2="838.00" y2="424.00" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.50" y1="424.00" x2="78.00" y2="424.00" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71.00" y="427.50" font-size="11" text-anchor="end">0</text>
+  <line x1="78.00" y1="369.33" x2="838.00" y2="369.33" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.50" y1="369.33" x2="78.00" y2="369.33" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71.00" y="372.83" font-size="11" text-anchor="end">5</text>
+  <line x1="78.00" y1="314.67" x2="838.00" y2="314.67" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.50" y1="314.67" x2="78.00" y2="314.67" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71.00" y="318.17" font-size="11" text-anchor="end">10</text>
+  <line x1="78.00" y1="260.00" x2="838.00" y2="260.00" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.50" y1="260.00" x2="78.00" y2="260.00" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71.00" y="263.50" font-size="11" text-anchor="end">15</text>
+  <line x1="78.00" y1="260.00" x2="78.00" y2="424.00" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <line x1="78.00" y1="424.00" x2="838.00" y2="424.00" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="20.00" y="342.00" font-size="11" text-anchor="middle" transform="rotate(-90 20.00 342.00)">Leases with a spud (%)</text>
+  <circle cx="204.67" cy="270.89" r="2.00" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
+  <line x1="204.67" y1="270.89" x2="458.00" y2="369.33" stroke="#6588a6" stroke-width="1.5" stroke-dasharray="none" />
+  <circle cx="458.00" cy="369.33" r="2.00" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
+  <line x1="458.00" y1="369.33" x2="711.33" y2="383.51" stroke="#6588a6" stroke-width="1.5" stroke-dasharray="none" />
+  <circle cx="711.33" cy="383.51" r="2.00" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
+  <rect x="202.67" y="382.57" width="4.00" height="4.00" stroke="#333333" stroke-width="0.5" fill="#427298" />
+  <line x1="204.67" y1="384.57" x2="458.00" y2="397.97" stroke="#427298" stroke-width="1.5" stroke-dasharray="5.5 2.4" />
+  <rect x="456.00" y="395.97" width="4.00" height="4.00" stroke="#333333" stroke-width="0.5" fill="#427298" />
+  <line x1="458.00" y1="397.97" x2="711.33" y2="384.95" stroke="#427298" stroke-width="1.5" stroke-dasharray="5.5 2.4" />
+  <rect x="709.33" y="382.95" width="4.00" height="4.00" stroke="#333333" stroke-width="0.5" fill="#427298" />
   <polygon points="204.67,400.97 206.67,404.97 202.67,404.97" stroke="#333333" stroke-width="0.5" fill="#245476" />
-  <line x1="204.66666666666669" y1="402.97" x2="458.0" y2="372.45" stroke="#245476" stroke-width="1.5" stroke-dasharray="9.6 2.4 1.5 2.4" />
+  <line x1="204.67" y1="402.97" x2="458.00" y2="372.45" stroke="#245476" stroke-width="1.5" stroke-dasharray="9.6 2.4 1.5 2.4" />
   <polygon points="458.00,370.45 460.00,374.45 456.00,374.45" stroke="#333333" stroke-width="0.5" fill="#245476" />
-  <line x1="458.0" y1="372.45" x2="711.3333333333334" y2="361.6" stroke="#245476" stroke-width="1.5" stroke-dasharray="9.6 2.4 1.5 2.4" />
+  <line x1="458.00" y1="372.45" x2="711.33" y2="361.60" stroke="#245476" stroke-width="1.5" stroke-dasharray="9.6 2.4 1.5 2.4" />
   <polygon points="711.33,359.60 713.33,363.60 709.33,363.60" stroke="#333333" stroke-width="0.5" fill="#245476" />
   <polygon points="204.67,400.93 207.27,403.53 204.67,406.13 202.07,403.53" stroke="#333333" stroke-width="0.5" fill="#102e46" />
-  <line x1="204.66666666666669" y1="403.53" x2="458.0" y2="401.25" stroke="#102e46" stroke-width="1.5" stroke-dasharray="1.5 2.4" />
+  <line x1="204.67" y1="403.53" x2="458.00" y2="401.25" stroke="#102e46" stroke-width="1.5" stroke-dasharray="1.5 2.4" />
   <polygon points="458.00,398.65 460.60,401.25 458.00,403.85 455.40,401.25" stroke="#333333" stroke-width="0.5" fill="#102e46" />
-  <line x1="458.0" y1="401.25" x2="711.3333333333334" y2="388.44" stroke="#102e46" stroke-width="1.5" stroke-dasharray="1.5 2.4" />
+  <line x1="458.00" y1="401.25" x2="711.33" y2="388.44" stroke="#102e46" stroke-width="1.5" stroke-dasharray="1.5 2.4" />
   <polygon points="711.33,385.84 713.93,388.44 711.33,391.04 708.73,388.44" stroke="#333333" stroke-width="0.5" fill="#102e46" />
-  <line x1="204.66666666666669" y1="424" x2="204.66666666666669" y2="427.5" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
-  <text x="204.66666666666669" y="440" font-size="11" text-anchor="middle">2005 to 2009</text>
-  <line x1="458.0" y1="424" x2="458.0" y2="427.5" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
-  <text x="458.0" y="440" font-size="11" text-anchor="middle">2010 to 2014</text>
-  <line x1="711.3333333333334" y1="424" x2="711.3333333333334" y2="427.5" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
-  <text x="711.3333333333334" y="440" font-size="11" text-anchor="middle">2015 to 2019</text>
-  <text x="458.0" y="460" font-size="11" text-anchor="middle">Lease effective period</text>
-  <text x="60" y="479" font-size="9" text-anchor="start">Only complete half decades with five years of follow up are plotted. The cohort tables also include leases effective in 2020.</text>
-  <text x="60" y="492" font-size="9" text-anchor="start">The first panel follows leases through November 2026, so older leases have longer observation.</text>
-  <text x="60" y="505" font-size="9" text-anchor="start">The second stops at the fifth anniversary.</text>
+  <line x1="204.67" y1="424.00" x2="204.67" y2="427.50" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="204.67" y="440.00" font-size="11" text-anchor="middle">2005 to 2009</text>
+  <line x1="458.00" y1="424.00" x2="458.00" y2="427.50" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="458.00" y="440.00" font-size="11" text-anchor="middle">2010 to 2014</text>
+  <line x1="711.33" y1="424.00" x2="711.33" y2="427.50" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="711.33" y="440.00" font-size="11" text-anchor="middle">2015 to 2019</text>
+  <text x="458.00" y="460.00" font-size="11" text-anchor="middle">Lease effective period</text>
+  <text x="60.00" y="479.00" font-size="9" text-anchor="start">Only complete half decades with five years of follow up are plotted. The cohort tables also include leases effective in 2020.</text>
+  <text x="60.00" y="492.00" font-size="9" text-anchor="start">The first panel follows leases through November 2026, so older leases have longer observation.</text>
+  <text x="60.00" y="505.00" font-size="9" text-anchor="start">The second stops at the fifth anniversary.</text>
 </svg>

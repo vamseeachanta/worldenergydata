@@ -97,7 +97,15 @@ def summarize(rows, mode="count"):
 
 
 def _add(parent, tag, **attrs):
-    return ET.SubElement(parent, tag, {k: str(v) for k, v in attrs.items()})
+    positions = {"x", "y", "x1", "y1", "x2", "y2", "cx", "cy", "r", "width", "height"}
+    return ET.SubElement(
+        parent,
+        tag,
+        {
+            key: f"{value:.2f}" if key in positions else str(value)
+            for key, value in attrs.items()
+        },
+    )
 
 
 def _label(parent, x, y, words, size=11, anchor="middle", **attrs):
@@ -208,9 +216,9 @@ def render_svg(
         "svg",
         {
             "xmlns": "http://www.w3.org/2000/svg",
-            "viewBox": f"0 0 864 {height}",
-            "width": "960",
-            "height": str(round(height * 960 / 864)),
+            "viewBox": f"0.00 0.00 864.00 {height:.2f}",
+            "width": "960.00",
+            "height": f"{round(height * 960 / 864):.2f}",
             "role": "img",
             "aria-label": title,
             "font-family": _FONT,
@@ -257,7 +265,9 @@ def render_svg(
         _line(root, left, top, left, bottom, "black")
         _line(root, left, bottom, right, bottom, "black")
         axis_label = panel_ylabels[group] if panel_ylabels else ylabel
-        _label(root, 20, middle, axis_label, transform=f"rotate(-90 20 {middle})")
+        _label(
+            root, 20, middle, axis_label, transform=f"rotate(-90 20.00 {middle:.2f})"
+        )
         for b, band in enumerate(BANDS):
             previous = None
             for i, period in enumerate(periods):

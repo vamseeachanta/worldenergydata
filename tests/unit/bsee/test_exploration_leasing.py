@@ -20,6 +20,7 @@ from zipfile import ZipFile
 
 import pandas as pd
 import pytest
+from PIL import Image
 
 EXAMPLE = Path(__file__).resolve().parents[3] / "examples/bsee/exploration_leasing"
 OUTPUT = EXAMPLE / "output"
@@ -738,10 +739,39 @@ def test_chart_notes_and_public_punctuation():
         assert "observed" in notes[name] and "biased low" in notes[name]
 
 
+def matplotlib_svg_structure(path):
+    root = ET.parse(path).getroot()
+    labels = Counter("".join(node.itertext()) for node in root.findall(".//{*}text"))
+
+    def plotted_elements(node):
+        # Omit templates, ticks, labels and legend samples from the plotted marks.
+        if node.tag.endswith("}defs") or node.get("id", "").startswith(
+            ("matplotlib.axis_", "text_", "legend_")
+        ):
+            return
+        if node.tag.endswith("}g"):
+            for child in node:
+                yield from plotted_elements(child)
+        else:
+            yield node.tag
+
+    panels = [
+        Counter(plotted_elements(group))
+        for group in root.findall(".//{*}g")
+        if group.get("id", "").startswith("axes_")
+    ]
+    assert labels and panels and any(panels), path.name
+    return labels, panels
+
+
 @pytest.mark.skipif(
     not os.environ.get("BSEE_EXP_DATA_DIR"), reason="pinned archives were not supplied"
 )
 def test_regeneration_is_byte_identical(tmp_path, monkeypatch):
+    """Compare matplotlib charts by data and structure because fonts and platforms affect render bytes.
+
+    Each chart CSV must match byte for byte. Two local builds must also match in every byte.
+    """
     archives = Path(os.environ["BSEE_EXP_DATA_DIR"]).resolve()
     monkeypatch.setenv("BSEE_EXP_DATA_DIR", str(archives))
     # Retain the UTF-8 table labels even when the process locale is ASCII.
@@ -774,7 +804,17 @@ def test_regeneration_is_byte_identical(tmp_path, monkeypatch):
         assert fresh == (OUTPUT / "yearly" / name).read_bytes(), name
         assert fresh == (repeat / "yearly" / name).read_bytes(), name
     for name in sorted(EXPECTED_FILES):
-        assert (output / name).read_bytes() == (OUTPUT / name).read_bytes(), name
+        fresh, committed = output / name, OUTPUT / name
+        assert fresh.read_bytes() == (repeat / name).read_bytes(), name
+        if fresh.stem in FIGURE_TABLES and fresh.suffix == ".svg":
+            assert matplotlib_svg_structure(fresh) == matplotlib_svg_structure(
+                committed
+            ), name
+        elif fresh.stem in FIGURE_TABLES and fresh.suffix == ".png":
+            with Image.open(fresh) as actual, Image.open(committed) as expected:
+                assert actual.size == expected.size, name
+        else:
+            assert fresh.read_bytes() == committed.read_bytes(), name
 
 
 def test_calendar_month_lag_and_primary_term_boundary(modules):

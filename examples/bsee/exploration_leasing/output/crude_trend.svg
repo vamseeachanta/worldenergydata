@@ -1,105 +1,105 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 864 510" width="960" height="567" role="img" aria-label="First crude oil by water depth and period (Share reaching first crude, Time among those reaching first crude)" font-family="'DejaVu Sans','Segoe UI',Arial,sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0.00 0.00 864.00 510.00" width="960.00" height="567.00" role="img" aria-label="First crude oil by water depth and period (Share reaching first crude, Time among those reaching first crude)" font-family="'DejaVu Sans','Segoe UI',Arial,sans-serif">
   <title>First crude oil by water depth and period (Share reaching first crude, Time among those reaching first crude)</title>
-  <rect width="864" height="510" fill="white" />
-  <line x1="220.00000000000003" y1="17" x2="240.00000000000003" y2="17" stroke="#6588a6" stroke-width="1.5" stroke-dasharray="none" />
-  <circle cx="230.00000000000003" cy="17" r="2" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
-  <text x="244.00000000000003" y="20" font-size="9" text-anchor="start">Under 100 m</text>
-  <line x1="312.8" y1="17" x2="332.8" y2="17" stroke="#427298" stroke-width="1.5" stroke-dasharray="5.5 2.4" />
-  <rect x="320.8" y="15" width="4" height="4" stroke="#333333" stroke-width="0.5" fill="#427298" />
-  <text x="336.8" y="20" font-size="9" text-anchor="start">100 to 500 m</text>
-  <line x1="410.4" y1="17" x2="430.4" y2="17" stroke="#245476" stroke-width="1.5" stroke-dasharray="9.6 2.4 1.5 2.4" />
+  <rect width="864.00" height="510.00" fill="white" />
+  <line x1="220.00" y1="17.00" x2="240.00" y2="17.00" stroke="#6588a6" stroke-width="1.5" stroke-dasharray="none" />
+  <circle cx="230.00" cy="17.00" r="2.00" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
+  <text x="244.00" y="20.00" font-size="9" text-anchor="start">Under 100 m</text>
+  <line x1="312.80" y1="17.00" x2="332.80" y2="17.00" stroke="#427298" stroke-width="1.5" stroke-dasharray="5.5 2.4" />
+  <rect x="320.80" y="15.00" width="4.00" height="4.00" stroke="#333333" stroke-width="0.5" fill="#427298" />
+  <text x="336.80" y="20.00" font-size="9" text-anchor="start">100 to 500 m</text>
+  <line x1="410.40" y1="17.00" x2="430.40" y2="17.00" stroke="#245476" stroke-width="1.5" stroke-dasharray="9.6 2.4 1.5 2.4" />
   <polygon points="420.40,15.00 422.40,19.00 418.40,19.00" stroke="#333333" stroke-width="0.5" fill="#245476" />
-  <text x="434.4" y="20" font-size="9" text-anchor="start">500 to 1,500 m</text>
-  <line x1="517.6" y1="17" x2="537.6" y2="17" stroke="#102e46" stroke-width="1.5" stroke-dasharray="1.5 2.4" />
+  <text x="434.40" y="20.00" font-size="9" text-anchor="start">500 to 1,500 m</text>
+  <line x1="517.60" y1="17.00" x2="537.60" y2="17.00" stroke="#102e46" stroke-width="1.5" stroke-dasharray="1.5 2.4" />
   <polygon points="527.60,14.40 530.20,17.00 527.60,19.60 525.00,17.00" stroke="#333333" stroke-width="0.5" fill="#102e46" />
-  <text x="541.6" y="20" font-size="9" text-anchor="start">1,500 m and deeper</text>
-  <text x="78" y="46" font-size="13" text-anchor="start">Share reaching first crude</text>
-  <line x1="78" y1="218.0" x2="838" y2="218.0" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
-  <line x1="74.5" y1="218.0" x2="78" y2="218.0" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
-  <text x="71" y="221.5" font-size="11" text-anchor="end">0</text>
-  <line x1="78" y1="185.2" x2="838" y2="185.2" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
-  <line x1="74.5" y1="185.2" x2="78" y2="185.2" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
-  <text x="71" y="188.7" font-size="11" text-anchor="end">0.5</text>
-  <line x1="78" y1="152.4" x2="838" y2="152.4" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
-  <line x1="74.5" y1="152.4" x2="78" y2="152.4" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
-  <text x="71" y="155.9" font-size="11" text-anchor="end">1</text>
-  <line x1="78" y1="119.6" x2="838" y2="119.6" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
-  <line x1="74.5" y1="119.6" x2="78" y2="119.6" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
-  <text x="71" y="123.1" font-size="11" text-anchor="end">1.5</text>
-  <line x1="78" y1="86.8" x2="838" y2="86.8" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
-  <line x1="74.5" y1="86.8" x2="78" y2="86.8" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
-  <text x="71" y="90.3" font-size="11" text-anchor="end">2</text>
-  <line x1="78" y1="54.0" x2="838" y2="54.0" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
-  <line x1="74.5" y1="54.0" x2="78" y2="54.0" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
-  <text x="71" y="57.5" font-size="11" text-anchor="end">2.5</text>
-  <line x1="78" y1="54" x2="78" y2="218" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
-  <line x1="78" y1="218" x2="838" y2="218" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
-  <text x="20" y="136.0" font-size="11" text-anchor="middle" transform="rotate(-90 20 136.0)">Leases with first crude (%)</text>
-  <circle cx="204.66666666666669" cy="165.0" r="2" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
-  <line x1="204.66666666666669" y1="165.0" x2="458.0" y2="113.04" stroke="#6588a6" stroke-width="1.5" stroke-dasharray="none" />
-  <circle cx="458.0" cy="113.04" r="2" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
-  <line x1="458.0" y1="113.04" x2="711.3333333333334" y2="56.02" stroke="#6588a6" stroke-width="1.5" stroke-dasharray="none" />
-  <circle cx="711.3333333333334" cy="56.02" r="2" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
-  <rect x="202.66666666666669" y="151.48" width="4" height="4" stroke="#333333" stroke-width="0.5" fill="#427298" />
-  <line x1="204.66666666666669" y1="153.48" x2="458.0" y2="218.0" stroke="#427298" stroke-width="1.5" stroke-dasharray="5.5 2.4" />
-  <rect x="456.0" y="216.0" width="4" height="4" stroke="#333333" stroke-width="0.5" fill="#427298" />
-  <line x1="458.0" y1="218.0" x2="711.3333333333334" y2="159.43" stroke="#427298" stroke-width="1.5" stroke-dasharray="5.5 2.4" />
-  <rect x="709.3333333333334" y="157.43" width="4" height="4" stroke="#333333" stroke-width="0.5" fill="#427298" />
+  <text x="541.60" y="20.00" font-size="9" text-anchor="start">1,500 m and deeper</text>
+  <text x="78.00" y="46.00" font-size="13" text-anchor="start">Share reaching first crude</text>
+  <line x1="78.00" y1="218.00" x2="838.00" y2="218.00" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.50" y1="218.00" x2="78.00" y2="218.00" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71.00" y="221.50" font-size="11" text-anchor="end">0</text>
+  <line x1="78.00" y1="185.20" x2="838.00" y2="185.20" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.50" y1="185.20" x2="78.00" y2="185.20" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71.00" y="188.70" font-size="11" text-anchor="end">0.5</text>
+  <line x1="78.00" y1="152.40" x2="838.00" y2="152.40" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.50" y1="152.40" x2="78.00" y2="152.40" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71.00" y="155.90" font-size="11" text-anchor="end">1</text>
+  <line x1="78.00" y1="119.60" x2="838.00" y2="119.60" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.50" y1="119.60" x2="78.00" y2="119.60" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71.00" y="123.10" font-size="11" text-anchor="end">1.5</text>
+  <line x1="78.00" y1="86.80" x2="838.00" y2="86.80" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.50" y1="86.80" x2="78.00" y2="86.80" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71.00" y="90.30" font-size="11" text-anchor="end">2</text>
+  <line x1="78.00" y1="54.00" x2="838.00" y2="54.00" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.50" y1="54.00" x2="78.00" y2="54.00" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71.00" y="57.50" font-size="11" text-anchor="end">2.5</text>
+  <line x1="78.00" y1="54.00" x2="78.00" y2="218.00" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <line x1="78.00" y1="218.00" x2="838.00" y2="218.00" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="20.00" y="136.00" font-size="11" text-anchor="middle" transform="rotate(-90 20.00 136.00)">Leases with first crude (%)</text>
+  <circle cx="204.67" cy="165.00" r="2.00" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
+  <line x1="204.67" y1="165.00" x2="458.00" y2="113.04" stroke="#6588a6" stroke-width="1.5" stroke-dasharray="none" />
+  <circle cx="458.00" cy="113.04" r="2.00" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
+  <line x1="458.00" y1="113.04" x2="711.33" y2="56.02" stroke="#6588a6" stroke-width="1.5" stroke-dasharray="none" />
+  <circle cx="711.33" cy="56.02" r="2.00" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
+  <rect x="202.67" y="151.48" width="4.00" height="4.00" stroke="#333333" stroke-width="0.5" fill="#427298" />
+  <line x1="204.67" y1="153.48" x2="458.00" y2="218.00" stroke="#427298" stroke-width="1.5" stroke-dasharray="5.5 2.4" />
+  <rect x="456.00" y="216.00" width="4.00" height="4.00" stroke="#333333" stroke-width="0.5" fill="#427298" />
+  <line x1="458.00" y1="218.00" x2="711.33" y2="159.43" stroke="#427298" stroke-width="1.5" stroke-dasharray="5.5 2.4" />
+  <rect x="709.33" y="157.43" width="4.00" height="4.00" stroke="#333333" stroke-width="0.5" fill="#427298" />
   <polygon points="204.67,194.06 206.67,198.06 202.67,198.06" stroke="#333333" stroke-width="0.5" fill="#245476" />
-  <line x1="204.66666666666669" y1="196.06" x2="458.0" y2="179.34" stroke="#245476" stroke-width="1.5" stroke-dasharray="9.6 2.4 1.5 2.4" />
+  <line x1="204.67" y1="196.06" x2="458.00" y2="179.34" stroke="#245476" stroke-width="1.5" stroke-dasharray="9.6 2.4 1.5 2.4" />
   <polygon points="458.00,177.34 460.00,181.34 456.00,181.34" stroke="#333333" stroke-width="0.5" fill="#245476" />
-  <line x1="458.0" y1="179.34" x2="711.3333333333334" y2="218.0" stroke="#245476" stroke-width="1.5" stroke-dasharray="9.6 2.4 1.5 2.4" />
+  <line x1="458.00" y1="179.34" x2="711.33" y2="218.00" stroke="#245476" stroke-width="1.5" stroke-dasharray="9.6 2.4 1.5 2.4" />
   <polygon points="711.33,216.00 713.33,220.00 709.33,220.00" stroke="#333333" stroke-width="0.5" fill="#245476" />
   <polygon points="204.67,215.40 207.27,218.00 204.67,220.60 202.07,218.00" stroke="#333333" stroke-width="0.5" fill="#102e46" />
-  <line x1="204.66666666666669" y1="218.0" x2="458.0" y2="200.94" stroke="#102e46" stroke-width="1.5" stroke-dasharray="1.5 2.4" />
+  <line x1="204.67" y1="218.00" x2="458.00" y2="200.94" stroke="#102e46" stroke-width="1.5" stroke-dasharray="1.5 2.4" />
   <polygon points="458.00,198.34 460.60,200.94 458.00,203.54 455.40,200.94" stroke="#333333" stroke-width="0.5" fill="#102e46" />
-  <line x1="458.0" y1="200.94" x2="711.3333333333334" y2="191.33" stroke="#102e46" stroke-width="1.5" stroke-dasharray="1.5 2.4" />
+  <line x1="458.00" y1="200.94" x2="711.33" y2="191.33" stroke="#102e46" stroke-width="1.5" stroke-dasharray="1.5 2.4" />
   <polygon points="711.33,188.73 713.93,191.33 711.33,193.93 708.73,191.33" stroke="#333333" stroke-width="0.5" fill="#102e46" />
-  <line x1="204.66666666666669" y1="218" x2="204.66666666666669" y2="221.5" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
-  <line x1="458.0" y1="218" x2="458.0" y2="221.5" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
-  <line x1="711.3333333333334" y1="218" x2="711.3333333333334" y2="221.5" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
-  <text x="78" y="252" font-size="13" text-anchor="start">Time among those reaching first crude</text>
-  <line x1="78" y1="424.0" x2="838" y2="424.0" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
-  <line x1="74.5" y1="424.0" x2="78" y2="424.0" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
-  <text x="71" y="427.5" font-size="11" text-anchor="end">0</text>
-  <line x1="78" y1="391.2" x2="838" y2="391.2" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
-  <line x1="74.5" y1="391.2" x2="78" y2="391.2" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
-  <text x="71" y="394.7" font-size="11" text-anchor="end">1</text>
-  <line x1="78" y1="358.4" x2="838" y2="358.4" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
-  <line x1="74.5" y1="358.4" x2="78" y2="358.4" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
-  <text x="71" y="361.9" font-size="11" text-anchor="end">2</text>
-  <line x1="78" y1="325.6" x2="838" y2="325.6" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
-  <line x1="74.5" y1="325.6" x2="78" y2="325.6" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
-  <text x="71" y="329.1" font-size="11" text-anchor="end">3</text>
-  <line x1="78" y1="292.8" x2="838" y2="292.8" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
-  <line x1="74.5" y1="292.8" x2="78" y2="292.8" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
-  <text x="71" y="296.3" font-size="11" text-anchor="end">4</text>
-  <line x1="78" y1="260.0" x2="838" y2="260.0" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
-  <line x1="74.5" y1="260.0" x2="78" y2="260.0" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
-  <text x="71" y="263.5" font-size="11" text-anchor="end">5</text>
-  <line x1="78" y1="260" x2="78" y2="424" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
-  <line x1="78" y1="424" x2="838" y2="424" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
-  <text x="20" y="342.0" font-size="11" text-anchor="middle" transform="rotate(-90 20 342.0)">Median time (years)</text>
-  <circle cx="204.66666666666669" cy="352.93" r="2" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
-  <line x1="204.66666666666669" y1="352.93" x2="458.0" y2="324.23" stroke="#6588a6" stroke-width="1.5" stroke-dasharray="none" />
-  <circle cx="458.0" cy="324.23" r="2" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
-  <line x1="458.0" y1="324.23" x2="711.3333333333334" y2="294.17" stroke="#6588a6" stroke-width="1.5" stroke-dasharray="none" />
-  <circle cx="711.3333333333334" cy="294.17" r="2" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
-  <rect x="202.66666666666669" y="361.87" width="4" height="4" stroke="#333333" stroke-width="0.5" fill="#427298" />
-  <rect x="709.3333333333334" y="367.33" width="4" height="4" stroke="#333333" stroke-width="0.5" fill="#427298" />
+  <line x1="204.67" y1="218.00" x2="204.67" y2="221.50" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <line x1="458.00" y1="218.00" x2="458.00" y2="221.50" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <line x1="711.33" y1="218.00" x2="711.33" y2="221.50" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="78.00" y="252.00" font-size="13" text-anchor="start">Time among those reaching first crude</text>
+  <line x1="78.00" y1="424.00" x2="838.00" y2="424.00" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.50" y1="424.00" x2="78.00" y2="424.00" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71.00" y="427.50" font-size="11" text-anchor="end">0</text>
+  <line x1="78.00" y1="391.20" x2="838.00" y2="391.20" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.50" y1="391.20" x2="78.00" y2="391.20" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71.00" y="394.70" font-size="11" text-anchor="end">1</text>
+  <line x1="78.00" y1="358.40" x2="838.00" y2="358.40" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.50" y1="358.40" x2="78.00" y2="358.40" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71.00" y="361.90" font-size="11" text-anchor="end">2</text>
+  <line x1="78.00" y1="325.60" x2="838.00" y2="325.60" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.50" y1="325.60" x2="78.00" y2="325.60" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71.00" y="329.10" font-size="11" text-anchor="end">3</text>
+  <line x1="78.00" y1="292.80" x2="838.00" y2="292.80" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.50" y1="292.80" x2="78.00" y2="292.80" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71.00" y="296.30" font-size="11" text-anchor="end">4</text>
+  <line x1="78.00" y1="260.00" x2="838.00" y2="260.00" stroke="#dddddd" stroke-width="0.6" stroke-dasharray="none" />
+  <line x1="74.50" y1="260.00" x2="78.00" y2="260.00" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="71.00" y="263.50" font-size="11" text-anchor="end">5</text>
+  <line x1="78.00" y1="260.00" x2="78.00" y2="424.00" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <line x1="78.00" y1="424.00" x2="838.00" y2="424.00" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="20.00" y="342.00" font-size="11" text-anchor="middle" transform="rotate(-90 20.00 342.00)">Median time (years)</text>
+  <circle cx="204.67" cy="352.93" r="2.00" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
+  <line x1="204.67" y1="352.93" x2="458.00" y2="324.23" stroke="#6588a6" stroke-width="1.5" stroke-dasharray="none" />
+  <circle cx="458.00" cy="324.23" r="2.00" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
+  <line x1="458.00" y1="324.23" x2="711.33" y2="294.17" stroke="#6588a6" stroke-width="1.5" stroke-dasharray="none" />
+  <circle cx="711.33" cy="294.17" r="2.00" stroke="#333333" stroke-width="0.5" fill="#6588a6" />
+  <rect x="202.67" y="361.87" width="4.00" height="4.00" stroke="#333333" stroke-width="0.5" fill="#427298" />
+  <rect x="709.33" y="367.33" width="4.00" height="4.00" stroke="#333333" stroke-width="0.5" fill="#427298" />
   <polygon points="204.67,322.23 206.67,326.23 202.67,326.23" stroke="#333333" stroke-width="0.5" fill="#245476" />
-  <line x1="204.66666666666669" y1="324.23" x2="458.0" y2="339.27" stroke="#245476" stroke-width="1.5" stroke-dasharray="9.6 2.4 1.5 2.4" />
+  <line x1="204.67" y1="324.23" x2="458.00" y2="339.27" stroke="#245476" stroke-width="1.5" stroke-dasharray="9.6 2.4 1.5 2.4" />
   <polygon points="458.00,337.27 460.00,341.27 456.00,341.27" stroke="#333333" stroke-width="0.5" fill="#245476" />
   <polygon points="458.00,273.80 460.60,276.40 458.00,279.00 455.40,276.40" stroke="#333333" stroke-width="0.5" fill="#102e46" />
-  <line x1="458.0" y1="276.4" x2="711.3333333333334" y2="295.53" stroke="#102e46" stroke-width="1.5" stroke-dasharray="1.5 2.4" />
+  <line x1="458.00" y1="276.40" x2="711.33" y2="295.53" stroke="#102e46" stroke-width="1.5" stroke-dasharray="1.5 2.4" />
   <polygon points="711.33,292.93 713.93,295.53 711.33,298.13 708.73,295.53" stroke="#333333" stroke-width="0.5" fill="#102e46" />
-  <line x1="204.66666666666669" y1="424" x2="204.66666666666669" y2="427.5" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
-  <text x="204.66666666666669" y="440" font-size="11" text-anchor="middle">2005 to 2009</text>
-  <line x1="458.0" y1="424" x2="458.0" y2="427.5" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
-  <text x="458.0" y="440" font-size="11" text-anchor="middle">2010 to 2014</text>
-  <line x1="711.3333333333334" y1="424" x2="711.3333333333334" y2="427.5" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
-  <text x="711.3333333333334" y="440" font-size="11" text-anchor="middle">2015 to 2019</text>
-  <text x="458.0" y="460" font-size="11" text-anchor="middle">Lease effective period</text>
-  <text x="60" y="479" font-size="9" text-anchor="start">The table covers leases effective from 2005 to 2020. The plot shows the three complete five year periods through 2019.</text>
-  <text x="60" y="492" font-size="9" text-anchor="start">Each lease has 60 reporting months from its effective month. The median uses first crude in months 0 to 59. A gap means no median.</text>
+  <line x1="204.67" y1="424.00" x2="204.67" y2="427.50" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="204.67" y="440.00" font-size="11" text-anchor="middle">2005 to 2009</text>
+  <line x1="458.00" y1="424.00" x2="458.00" y2="427.50" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="458.00" y="440.00" font-size="11" text-anchor="middle">2010 to 2014</text>
+  <line x1="711.33" y1="424.00" x2="711.33" y2="427.50" stroke="black" stroke-width="0.8" stroke-dasharray="none" />
+  <text x="711.33" y="440.00" font-size="11" text-anchor="middle">2015 to 2019</text>
+  <text x="458.00" y="460.00" font-size="11" text-anchor="middle">Lease effective period</text>
+  <text x="60.00" y="479.00" font-size="9" text-anchor="start">The table covers leases effective from 2005 to 2020. The plot shows the three complete five year periods through 2019.</text>
+  <text x="60.00" y="492.00" font-size="9" text-anchor="start">Each lease has 60 reporting months from its effective month. The median uses first crude in months 0 to 59. A gap means no median.</text>
 </svg>
