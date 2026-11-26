@@ -20,14 +20,15 @@ PASS  Five trend figures and writer citations resolve to saved table cells
 PASS  All five SVG/PNG pairs decode; SVGs use DejaVu Sans and contain no prohibited constructs
 PASS  Yearly figure-1a.svg meets chart standard items 5 and 7
 PASS  Yearly figure-1b.svg meets chart standard items 5 and 7
-PASS  Yearly figure-2a.svg meets chart standard items 5 and 7
-PASS  Yearly figure-2b.svg meets chart standard items 5 and 7
-PASS  Yearly figure-2c.svg meets chart standard items 5 and 7
-PASS  Yearly figure-3a.svg meets chart standard items 5 and 7
-PASS  Yearly figure-3b.svg meets chart standard items 5 and 7
-PASS  Yearly figure-3c.svg meets chart standard items 5 and 7
-PASS  Yearly figure-4a.svg meets chart standard items 5 and 7
-PASS  Yearly figure-4b.svg meets chart standard items 5 and 7
-PASS  Yearly figure-4c.svg meets chart standard items 5 and 7
-PASS  Yearly figure-4d.svg meets chart standard items 5 and 7
-PASS  Yearly figure-5.svg meets chart standard items 5 and 7
+PASS  Yearly figure-2.svg meets chart standard items 5 and 7
+PASS  Yearly figure-a2a.svg meets chart standard items 5 and 7
+PASS  Yearly figure-a2b.svg meets chart standard items 5 and 7
+PASS  Yearly figure-a2c.svg meets chart standard items 5 and 7
+PASS  Yearly figure-a3a.svg meets chart standard items 5 and 7
+PASS  Yearly figure-a3b.svg meets chart standard items 5 and 7
+PASS  Yearly figure-a3c.svg meets chart standard items 5 and 7
+PASS  Yearly figure-a4a.svg meets chart standard items 5 and 7
+PASS  Yearly figure-a4b.svg meets chart standard items 5 and 7
+PASS  Yearly figure-a4c.svg meets chart standard items 5 and 7
+PASS  Yearly figure-a4d.svg meets chart standard items 5 and 7
+PASS  Yearly figure-a5.svg meets chart standard items 5 and 7

@@ -18,17 +18,26 @@ A surface match identifies where a bore started. Its bottom may lie on another l
 
 ## Trends by lease effective year
 
-The r3 charts group leases by the calendar year in which they became effective. The all-depth charts pool individual leases before calculating percentages and medians. A depth comparison follows each all-depth measure except for status, which combines all depths in one chart. Each trend line averages five consecutive, complete annual observations. The 2025 lease count is zero. The 2026 count through October is partial and is excluded from the average. [Annual values](output/yearly/annual_trends.csv) · [Static and interactive figure manifest](output/yearly/figures.json)
+The r3 charts group leases by the year they became effective. Figure 1A opens with two all-depth counts on the same axis. The solid line counts effective leases through October 2026. The dashed line counts leases with a first exploratory spud through their fifth anniversary, inclusive, for the common 2005 through 2020 cohorts. Figure 1B divides effective leases into four depth bands. Figure 2 divides the five-year spud counts into the same bands. In 2005 the four counts were 52, 3, 4 and 2 from the shallowest to deepest band, or 61 of 603 effective leases across all depths. [Main figure counts](output/yearly/lease_counts.csv) · [Annual appendix values](output/yearly/annual_trends.csv) · [Exploration counts](output/exploration.csv) · [Static and interactive figure manifest](output/yearly/figures.json)
 
-| Question | All water depths | Four depth bands |
+| Figure | Measure | Cohort coverage |
 | --- | --- | --- |
-| How many leases took effect? | [Lease count](output/yearly/figure-1a.html) | [Counts by depth](output/yearly/figure-1b.html) |
-| What share recorded a first exploratory spud? | [Both observation windows](output/yearly/figure-2a.html) | [By file date](output/yearly/figure-2b.html) · [Within five years](output/yearly/figure-2c.html) |
-| How long did qualifying leases take to reach first spud? | [Median wait in years](output/yearly/figure-3a.html) | [By file date](output/yearly/figure-3b.html) · [Within five years](output/yearly/figure-3c.html) |
-| How often and how soon did leases report first crude within five years? | [Share](output/yearly/figure-4a.html) · [Median wait in years](output/yearly/figure-4b.html) | [Share by depth](output/yearly/figure-4c.html) · [Wait by depth](output/yearly/figure-4d.html) |
-| What status did each cohort carry on the November 2026 lease tape? | [Status shares](output/yearly/figure-5.html) | All depths combined |
+| [1A](output/yearly/figure-1a.html) | Effective leases and leases with a first exploratory spud within five years, all depths | Effective leases from 2005 through October 2026. Five-year spud counts from 2005 through 2020. |
+| [1B](output/yearly/figure-1b.html) | Effective leases by maximum block water depth | 2005 through October 2026 |
+| [2](output/yearly/figure-2.html) | Leases with a first exploratory spud within five years, by maximum block water depth | 2005 through 2020 |
 
-For spud incidence and timing, the solid series includes the first qualifying spud observed by the November 2026 file date. The dashed series ends at each lease's fifth anniversary. Both use the same effective-year cohorts through 2020. The earlier r2.3 period plots remain available for comparison. [Historical figure manifest](output/figures.json)
+*Table 2. Main figures. The two depth charts overlay their four bands. Each trend line averages five consecutive annual observations. The zero effective leases in 2025 enter the average. The 215 effective leases through October 2026 form a partial cohort and have no moving average.*
+
+### Appendix figures
+
+| Measure | All water depths | Four depth bands |
+| --- | --- | --- |
+| Share recording a first exploratory spud | [A2A, both windows](output/yearly/figure-a2a.html) | [A2B, by file date](output/yearly/figure-a2b.html) · [A2C, within five years](output/yearly/figure-a2c.html) |
+| Median years to first exploratory spud | [A3A, both windows](output/yearly/figure-a3a.html) | [A3B, by file date](output/yearly/figure-a3b.html) · [A3C, within five years](output/yearly/figure-a3c.html) |
+| First crude within five years | [A4A, share](output/yearly/figure-a4a.html) · [A4B, median years](output/yearly/figure-a4b.html) | [A4C, share](output/yearly/figure-a4c.html) · [A4D, median years](output/yearly/figure-a4d.html) |
+| November 2026 lease status | [A5, status shares](output/yearly/figure-a5.html) | All depths combined |
+
+*Table 3. Appendix figures. Each depth comparison uses four rows, one per band, with shared axes. In A2A and A3A the solid line includes the first qualifying spud through the 23 November 2026 borehole file. The dashed line includes spuds through each lease’s fifth anniversary. Both use effective-year cohorts through 2020.* [Historical period figures](output/figures.json)
 
 ## Lease cohort, depth and status
 
@@ -38,7 +47,7 @@ Lease IDs retain case, the G prefix where present and leading zeros. Only outer 
 
 Each lease, including an undrilled lease, is grouped by its **Block Max Water Depth**. The fixed-width layout supplies low and maximum depths without a field-level unit. The unit dictionary specifies feet. Converted at 0.3048 m/ft, all 8,327 block maxima agree within one metre with the whole-metre maximum in the BSEE production archive's lease lookup. The bands start at 0, 100, 500 and 1,500 m, inclusive of the lower edge. Missing or invalid ranges have an Unknown category. Every cohort lease has a valid range, but 944 ranges cross a band boundary. A borehole on the block can be in a shallower band.
 
-Status is the single **Lease Status Code** on the November 2, 2026 tape, including leases whose rights ended. Figure 5 divides each code's count by all leases effective that year. RELINQ identifies voluntary surrender by the title holders. EXPIR records expiry at the end of the initial term, TERMIN records termination by law after an extension, and CANCEL records cancellation by the authorized officer. PRIMRY identifies a lease in its initial term, OPERNS an extension for activity on the lease, and SOP an extension under an approved or ordered suspension of production. PROD indicates a lease held by mineral production and UNIT indicates that all or part of the lease falls under an approved unit agreement. [BSEE lease status code dictionary](https://www.data.bsee.gov/Main/HtmlPage.aspx?page=fieldNames1Fields) · [BSEE suspension terminology](https://www.bsee.gov/guidance-and-regulations/guidance/regulatory-interpretations)
+Status is the single **Lease Status Code** on the November 2, 2026 tape, including leases whose rights ended. Figure A5 divides each code's count by all leases effective that year. RELINQ identifies voluntary surrender by the title holders. EXPIR records expiry at the end of the initial term, TERMIN records termination by law after an extension, and CANCEL records cancellation by the authorized officer. PRIMRY identifies a lease in its initial term, OPERNS an extension for activity on the lease, and SOP an extension under an approved or ordered suspension of production. PROD indicates a lease held by mineral production and UNIT indicates that all or part of the lease falls under an approved unit agreement. [BSEE lease status code dictionary](https://www.data.bsee.gov/Main/HtmlPage.aspx?page=fieldNames1Fields) · [BSEE suspension terminology](https://www.bsee.gov/guidance-and-regulations/guidance/regulatory-interpretations)
 
 The snapshot supplies no sequence of earlier statuses. For censoring, open means PRIMRY, SOP, OPERNS, PROD or UNIT on this tape. Ended means CANCEL, EXPIR, RELINQ or TERMIN. The open count for each event covers leases without that event in the entire source snapshot. Each table reports PRIMRY/SOP/OPERNS together and gives PROD and UNIT their own counts. The production window closes for every eligible lease regardless of its current status. [Status counts and denominators](output/current_status.csv)
 
@@ -68,9 +77,9 @@ For each timed lease, original term used (%) equals 100 times elapsed months div
 
 The ownership snapshot has 3,551 current and four terminated assignment rows. None has a termination date, and 12 lack an effective assignment date. Distinct current company IDs can be counted, but year-by-year historical ownership cannot be reconstructed. [Coverage and source limits](output/coverage.csv)
 
-Each headline specifies its CSV, row filter, column and unit. Both forms of each annual chart read the same saved series. The annual CSV distinguishes a verified cell with no eligible observations from an unavailable cell that requires the original records. A numerical zero is a measured value. The retained r2.3 tables resolve every annual lease count, status share, spud incidence and unrestricted spud median. They supply only part of the annual five-year spud medians and crude series. The archive build calculates those measures from individual leases. Audit rows reconcile within each stage and across linked stages. [Annual values and availability](output/yearly/annual_trends.csv) · [Headline values](output/numbers.json) · [Record counts and exclusions](output/record_counts.csv) · [Build checks](output/checks.txt)
+Each headline specifies its CSV, row filter, column and unit. Both forms of each annual chart read the same saved series. The annual CSV distinguishes a verified cell with no eligible observations from an unavailable cell that requires the original records. A numerical zero is a measured value. The retained period and annual tables resolve every annual lease count, status share, spud incidence and unrestricted spud median. They supply only part of the annual five-year spud medians and crude series. The archive build calculates those measures from individual leases. Audit rows reconcile within each stage and across linked stages. [Annual values and availability](output/yearly/annual_trends.csv) · [Headline values](output/numbers.json) · [Record counts and exclusions](output/record_counts.csv) · [Build checks](output/checks.txt)
 
-To regenerate the limited-coverage charts from the four retained CSVs, run the following command from this example directory in a Python environment with pandas and NumPy. It checks the r2.3 table digests and writes the annual CSV, figure manifest, SVGs and interactive pages to a fresh directory.
+To regenerate the limited-coverage charts from the four retained CSVs, run the following command from this example directory in a Python environment with pandas and NumPy. It checks the four table digests and writes the annual CSV, figure manifest, SVGs and interactive pages to a fresh directory.
 
 ```sh
 python retained_yearly.py --output-dir yearly-review
@@ -98,6 +107,6 @@ uv run derive.py --data-dir bsee-inputs
 | [ProductionRawData.zip](https://www.data.bsee.gov/Production/Files/ProductionRawData.zip) | Wed, 18 Nov 2026 22:03:55 GMT | `7583e1dbdc44b1e72f48608b5427cd0a02af3e2664d658dc508bdc83942cb089` |
 | [LeaseOwnerRawData.zip](https://www.data.bsee.gov/Leasing/Files/LeaseOwnerRawData.zip) | Tue, 24 Nov 2026 10:45:57 GMT | `1066f324181c52dead37a6c7fe7bb3e61eb74331487b2269e24af8fa6dcc6d22` |
 
-*Table 2. The well snapshot was collected November 23, 2026 UTC and the leasing and production snapshots November 25, 2026 UTC. Last-Modified is the BSEE archive header recorded at collection.* [Machine-readable input pins](source_pins.json)
+*Table 4. The well snapshot was collected November 23, 2026 UTC and the leasing and production snapshots November 25, 2026 UTC. Last-Modified is the BSEE archive header recorded at collection.* [Machine-readable input pins](source_pins.json)
 
 This build reads the fixed-width parser, layouts and field definitions from **this repository**. The lease parser is `packages/worldenergydata-bsee/src/worldenergydata/bsee/lease_ingest.py`. The fixed-width lease offsets and owner field layout are in `data/modules/bsee/leases/source_schema.json` and `data/modules/bsee/boem_lease_history_layout.json`. The relevant dictionaries in `docs/knowledge-base/bsee/data-dictionaries/` are `leasing/lease-fields.md`, `common/unit-conversions.md`, `wells/borehole-fields.md`, `wells/type-codes.md` and `production/production-fields.md`. The production archive supplies publisher-aggregated lease-months. The build needs no annual OGOR-A or eWell archives.

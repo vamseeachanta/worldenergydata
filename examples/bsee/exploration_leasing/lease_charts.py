@@ -11,7 +11,9 @@ from html import escape
 from pathlib import Path
 from xml.etree import ElementTree as ET
 
+from worldenergydata.bsee import series
 from worldenergydata.bsee.half_decade import _COLORS, _FONT, BANDS
+from worldenergydata.bsee.series.charts import assign_scales, scale
 
 ALL = "All water depths"
 OBSERVED = "Observed by file date"
@@ -49,7 +51,7 @@ def line_style(group):
     return "dashed" if metric in {"spud_years_5y", "spud_share_5y"} else "solid"
 
 
-def specifications():
+def appendix_figures():
     figures = []
     pins = json.loads(Path(__file__).with_name("source_pins.json").read_bytes())
     bore = next(pin for pin in pins["sources"] if pin["name"] == "BoreholeRawData.zip")
@@ -65,6 +67,7 @@ def specifications():
             if by_depth
             else [(metric, ALL, label) for metric, label in metrics]
         )
+        number = "A" + number
         stem = f"figure-{number.lower()}"
         figures.append(
             {
@@ -73,12 +76,12 @@ def specifications():
                 "ylabel": ylabel,
                 "measure": measure,
                 "note": note,
-                "role": "main",
+                "role": "appendix",
                 "x_unit": "year",
                 "trend": "moving_average_5y_trailing",
                 "view": "annual",
-                "layout": "overlay",
-                "panel_by": "none",
+                "layout": "4x1_shared_x" if by_depth else "overlay",
+                "panel_by": "depth_band" if by_depth else "none",
                 "series_by": "depth_band" if by_depth else "measure",
                 "groups": [f"{metric}|{band}" for metric, band, _ in series],
                 "labels": [label for _, _, label in series],
@@ -89,28 +92,6 @@ def specifications():
         )
         return figures[-1]
 
-    issued = [("effective_leases", "Effective leases")]
-    lease_note = (
-        "Each distinct lease number counts once in its effective year. "
-        "The lease tape does not distinguish new grants from renewals. The final effective month is October 2026."
-    )
-    add(
-        "1A",
-        "Effective leases across all water depths",
-        "Effective leases (leases per year)",
-        "effective_leases",
-        issued,
-        lease_note,
-    )
-    add(
-        "1B",
-        "Effective leases by block water depth",
-        "Effective leases (leases per year)",
-        "effective_leases",
-        issued,
-        lease_note,
-        by_depth=True,
-    )
     for figure, stem, name, ylabel in (
         (
             "2",
@@ -206,58 +187,8 @@ def specifications():
     return figures
 
 
-def scale(peak):
-    """Smallest covering nice top with four to six ticks on a zero based axis."""
-    if peak <= 0:
-        return 1, 0.2
-    peak = Decimal(str(peak))
-    exponent = peak.adjusted()
-    # Smaller decades cannot cover the peak even with five intervals at step 5.
-    steps = [
-        Decimal(factor).scaleb(k)
-        for k in (exponent - 1, exponent)
-        for factor in (1, 2, 5)
-    ]
-    top, step = min(
-        (count * step, step)
-        for step in steps
-        for count in (3, 4, 5)
-        if count * step >= peak
-    )
-    return float(top), float(step)
-
-
 def format_tick(value):
     return format(Decimal(str(value)).normalize(), ",f")
-
-
-def assign_scales(figures, peaks):
-    measures = defaultdict(list)
-    for fig in figures:
-        measures[fig["measure"]].append(fig)
-    for measure, members in measures.items():
-        maxima = [max(peaks[group] for group in f["groups"]) for f in members]
-        pooled = scale(max(maxima))
-        cutoff = Decimal("0.3") * Decimal(str(pooled[0]))
-        eligible = [Decimal(str(peak)) >= cutoff for peak in maxima]
-        for fig, peak, qualifies in zip(members, maxima, eligible):
-            shared = qualifies and sum(eligible) >= 2
-            top, step = pooled if shared else scale(peak)
-            fig["y_scale"] = {
-                "max": top, "step": step, "shared": f"measure:{measure}" if shared else "panels"
-            }
-        if len({f["y_scale"]["max"] for f in members}) > 1:
-            for fig in members:
-                peers = [
-                    f"{format_tick(f['y_scale']['max'])} in Figure {f['figure_number']}"
-                    for f in members
-                    if f is not fig
-                ]
-                fig["scale_note"] = (
-                    f"Y maximum {format_tick(fig['y_scale']['max'])}, against "
-                    + ", ".join(peers)
-                    + "."
-                )
 
 
 def element(parent, tag, **attrs):
@@ -278,6 +209,58 @@ def format_readout(value):
 def tint(color):
     channels = [int(color[i : i + 2], 16) for i in (1, 3, 5)]
     return "#" + "".join(f"{round(c + (255 - c) * 0.42):02x}" for c in channels)
+
+
+def draw_series(parent, index, cells, name, color, dash, years, partial, xpos, ypos):
+    group = element(parent, "g", data_series=index, data_label=name)
+    for key, kind, stroke, width in (
+        ("moving_average", "trend", tint(color), 4.5),
+        ("value", "annual", color, 2),
+    ):
+        points = []
+        connected = False
+        for yr in years:
+            value = cells[yr][key]
+            if value is None:
+                connected = False
+                continue
+            vertex = f"{xpos(yr):.2f},{ypos(value):.2f}"
+            points.append("L" + vertex if connected else "M" + vertex + "l0,0")
+            connected = True
+        if points:
+            element(
+                group,
+                "path",
+                d=" ".join(points),
+                fill="none",
+                stroke=stroke,
+                stroke_width=width,
+                stroke_linecap="round",
+                **{"class": kind},
+                **dash,
+            )
+    for yr in years:
+        row = cells[yr]
+        if row["value"] is None:
+            continue
+        value = row["value"]
+        mean = row["moving_average"]
+        point = element(
+            group,
+            "circle",
+            cx=f"{xpos(yr):.2f}",
+            cy=f"{ypos(value):.2f}",
+            r=5,
+            stroke=color,
+            stroke_width=2,
+            fill="white" if yr in partial else color,
+            data_year=yr,
+        )
+        result = "unavailable" if mean is None else format_readout(mean)
+        when = str(yr) + (" (partial through October 2026)" if yr in partial else "")
+        element(point, "title").text = (
+            f"{name}, {when}. Annual value {format_readout(value)}. Five year mean {result}."
+        )
 
 
 def render(figure, groups):
@@ -396,57 +379,7 @@ def render(figure, groups):
     )
 
     for index, (cells, name, (color, dash)) in enumerate(zip(series, labels, styles)):
-        group = element(root, "g", data_series=index, data_label=name)
-        for key, kind, stroke, width in (
-            ("moving_average", "trend", tint(color), 4.5),
-            ("value", "annual", color, 2),
-        ):
-            points = []
-            connected = False
-            for yr in years:
-                value = cells[yr][key]
-                if value is None:
-                    connected = False
-                    continue
-                vertex = f"{xpos(yr):.2f},{ypos(value):.2f}"
-                points.append("L" + vertex if connected else "M" + vertex + "l0,0")
-                connected = True
-            if points:
-                element(
-                    group,
-                    "path",
-                    d=" ".join(points),
-                    fill="none",
-                    stroke=stroke,
-                    stroke_width=width,
-                    stroke_linecap="round",
-                    **{"class": kind},
-                    **dash,
-                )
-        for yr in years:
-            row = cells[yr]
-            if row["value"] is None:
-                continue
-            value = row["value"]
-            mean = row["moving_average"]
-            point = element(
-                group,
-                "circle",
-                cx=f"{xpos(yr):.2f}",
-                cy=f"{ypos(value):.2f}",
-                r=5,
-                stroke=color,
-                stroke_width=2,
-                fill="white" if yr in partial else color,
-                data_year=yr,
-            )
-            result = "unavailable" if mean is None else format_readout(mean)
-            when = str(yr) + (" (partial through October 2026)" if yr in partial else "")
-            element(
-                point, "title"
-            ).text = (
-                f"{name}, {when}. Annual value {format_readout(value)}. Five year mean {result}."
-            )
+        draw_series(root, index, cells, name, color, dash, years, partial, xpos, ypos)
     for i, line in enumerate(notes):
         label(root, 22, bottom + 86 + i * 22, line)
     return ET.tostring(root, encoding="unicode") + "\n"
@@ -482,7 +415,125 @@ def interactive(figure, svg, groups):
     )
 
 
-def write_figures(output):
+def read_spud_counts(exploration_path):
+    """Read annual lease counts, excluding pooled years and unknown depth."""
+    from lease_analysis import COHORT_END, COHORT_START
+
+    counts = {}
+    with exploration_path.open(encoding="utf-8", newline="") as stream:
+        for row in csv.DictReader(stream):
+            band, year = row["depth_band"], row["issue_year"]
+            if year == "All years" or band not in (*BANDS, "All bands"):
+                continue
+            band = ALL if band == "All bands" else band
+            key = (int(year), band)
+            count = int(row["explored_within_five_years"])
+            if key in counts or not 0 <= count <= int(row["leases"]):
+                raise ValueError(f"Invalid five year spud count at {key}")
+            counts[key] = count
+
+    cohort = range(COHORT_START, COHORT_END + 1)
+    if set(counts) != {(year, band) for year in cohort for band in (ALL, *BANDS)}:
+        raise ValueError("Missing or unexpected five year spud cohort")
+    for year in cohort:
+        if counts[year, ALL] != sum(counts[year, band] for band in BANDS):
+            raise ValueError(f"Depth counts differ from the all-depth count in {year}")
+
+    return counts
+
+
+def write_main_figures(output, groups, exploration_path):
+    csv_name = "lease_counts.csv"
+    issued = "effective_leases"
+    spuds = "explored_within_five_years"
+    counts = read_spud_counts(exploration_path)
+    count_label = "Within five years"
+    rows = [
+        {"group": f"{spuds}|{band}", "year": year, "value": count, "partial": 0}
+        for (year, band), count in counts.items()
+    ]
+    for band in (ALL, *BANDS):
+        for year, row in groups[f"{issued}|{band}"].items():
+            rows.append(
+                {
+                    "group": f"{issued}|{band}",
+                    "year": year,
+                    "value": row["value"],
+                    "partial": int(row["partial"]),
+                    "availability": row["availability"],
+                }
+            )
+            if band == ALL and (year, ALL) not in counts:
+                # Outside the comparison cohort the dashed series has no eligible value.
+                rows.append(
+                    {
+                        "group": f"{spuds}|{ALL}",
+                        "year": year,
+                        "value": None,
+                        "partial": int(row["partial"]),
+                    }
+                )
+
+    note = (
+        "Each lease counts once in its effective year. "
+        "The lease tape does not distinguish new grants from renewals. "
+        "The final effective month is October 2026."
+    )
+    window = "through each lease’s fifth anniversary, inclusive"
+
+    def by_band(metric):
+        return [(f"{metric}|{band}", band) for band in BANDS]
+
+    figures = [
+        series.make_figure(
+            "1A",
+            "Effective leases and first spuds across all water depths",
+            "Leases per effective year",
+            issued,
+            [(f"{issued}|{ALL}", "Effective leases"), (f"{spuds}|{ALL}", count_label)],
+            note + " The spud series covers leases effective from 2005 through 2020.",
+            csv_name=csv_name,
+            window_definitions={
+                f"{issued}|{ALL}": "all leases effective through October 2026",
+                f"{spuds}|{ALL}": window,
+            },
+        ),
+        series.make_figure(
+            "1B",
+            "Effective leases by block water depth",
+            "Effective leases (leases per year)",
+            issued,
+            by_band(issued),
+            note,
+            by_depth=True,
+            csv_name=csv_name,
+        ),
+        series.make_figure(
+            "2",
+            "Leases with a first exploratory spud within five years",
+            "Leases per effective year",
+            spuds,
+            by_band(spuds),
+            "Each lease counts once if its first qualifying exploratory spud on the bottom lease "
+            "fell on or before its fifth anniversary. Cohorts cover 2005 through 2020.",
+            by_depth=True,
+            csv_name=csv_name,
+        ),
+    ]
+    annual = series.with_trends(rows)
+    series.write_figures(
+        output,
+        figures,
+        annual.to_dict("records"),
+        xlabel="Lease effective year",
+        partial_label="partial through October 2026",
+    )
+    return json.loads((output / "figures.json").read_bytes())
+
+
+def write_figures(output, exploration_path):
+    from lease_panels import render_panels
+
     groups = defaultdict(dict)
     peaks = defaultdict(float)
     with (output / "annual_trends.csv").open(encoding="utf-8", newline="") as stream:
@@ -513,12 +564,14 @@ def write_figures(output):
                 row[column] = value
                 peaks[key] = max(peaks[key], value or 0)
             groups[key][year] = row
-    figures = specifications()
+    figures = appendix_figures()
     expected = {key for fig in figures for key in fig["groups"]}
+    expected.update(f"effective_leases|{band}" for band in (ALL, *BANDS))
     if set(groups) != expected:
         raise ValueError(
             f"Unexpected or missing annual chart series: {sorted(expected ^ set(groups))}"
         )
+    main = write_main_figures(output, groups, exploration_path)
     assign_scales(figures, peaks)
     for fig in figures:
         blanks = [
@@ -548,11 +601,12 @@ def write_figures(output):
                 "The chart omits those points and any mean requiring them. "
                 "The interactive year table identifies the affected series."
             )
-        svg = render(fig, groups)
+        renderer = render_panels if fig["panel_by"] == "depth_band" else render
+        svg = renderer(fig, groups)
         (output / fig["svg"]).write_text(svg, encoding="utf-8", newline="\n")
         (output / fig["interactive"]).write_text(
             interactive(fig, svg, groups), encoding="utf-8", newline="\n"
         )
-    (output / "figures.json").write_text(
-        json.dumps(figures, indent=2) + "\n", encoding="utf-8", newline="\n"
-    )
+    figures = [*main, *figures]
+    series.write_manifest(output, figures)
+    return figures

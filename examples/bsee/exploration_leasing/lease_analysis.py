@@ -1672,14 +1672,13 @@ def build(output, data_dir, pins, check):
         "All five SVG/PNG pairs decode; SVGs use DejaVu Sans and contain no prohibited constructs",
         lambda: validate_figures(output),
     )
-    from lease_charts import specifications, write_figures
+    from lease_charts import write_figures
     from lease_yearly import write_annual_trends
 
     yearly = output / "yearly"
     yearly.mkdir()
     write_annual_trends(yearly, f, older)
-    write_figures(yearly)
-    for figure in specifications():
+    for figure in write_figures(yearly, output / "exploration.csv"):
         svg = yearly / figure["svg"]
         check(
             f"Yearly {svg.name} meets chart standard items 5 and 7",

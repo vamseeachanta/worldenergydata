@@ -53,23 +53,25 @@ EXPECTED_FILES = {
 }
 YEARLY_FILES = {
     "annual_trends.csv",
+    "lease_counts.csv",
     "figures.json",
     *(
         f"figure-{number}.{ext}"
         for number in (
             "1a",
             "1b",
-            "2a",
-            "2b",
-            "2c",
-            "3a",
-            "3b",
-            "3c",
-            "4a",
-            "4b",
-            "4c",
-            "4d",
-            "5",
+            "2",
+            "a2a",
+            "a2b",
+            "a2c",
+            "a3a",
+            "a3b",
+            "a3c",
+            "a4a",
+            "a4b",
+            "a4c",
+            "a4d",
+            "a5",
         )
         for ext in ("svg", "html")
     ),

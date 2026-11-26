@@ -1,10 +1,10 @@
 [
   {
     "figure_number": "1A",
-    "title": "Effective leases across all water depths",
-    "ylabel": "Effective leases (leases per year)",
+    "title": "Effective leases and first spuds across all water depths",
+    "ylabel": "Leases per effective year",
     "measure": "effective_leases",
-    "note": "Each distinct lease number counts once in its effective year. The lease tape does not distinguish new grants from renewals. The final effective month is October 2026.",
+    "note": "Each lease counts once in its effective year. The lease tape does not distinguish new grants from renewals. The final effective month is October 2026. The spud series covers leases effective from 2005 through 2020.",
     "role": "main",
     "x_unit": "year",
     "trend": "moving_average_5y_trailing",
@@ -13,27 +13,48 @@
     "panel_by": "none",
     "series_by": "measure",
     "groups": [
-      "effective_leases|All water depths"
+      "effective_leases|All water depths",
+      "explored_within_five_years|All water depths"
     ],
     "labels": [
-      "Effective leases"
+      "Effective leases",
+      "Within five years"
     ],
-    "csv": "annual_trends.csv",
+    "csv": "lease_counts.csv",
     "svg": "figure-1a.svg",
     "interactive": "figure-1a.html",
+    "windows": {
+      "solid": {
+        "label": "Effective leases",
+        "definition": "all leases effective through October 2026"
+      },
+      "dashed": {
+        "label": "Within five years",
+        "definition": "through each lease\u2019s fifth anniversary, inclusive"
+      }
+    },
     "y_scale": {
       "max": 2000.0,
       "step": 500.0,
       "shared": "panels"
     },
-    "scale_note": "Y maximum 2,000, against 600 in Figure 1B."
+    "scale_note": "Y maximum 2,000, against 600 in Figure 1B.",
+    "blank_cells": [
+      "2021 Within five years",
+      "2022 Within five years",
+      "2023 Within five years",
+      "2024 Within five years",
+      "2025 Within five years",
+      "2026 Within five years"
+    ],
+    "caption": "Each lease counts once in its effective year. The lease tape does not distinguish new grants from renewals. The final effective month is October 2026. The spud series covers leases effective from 2005 through 2020. Effective leases (solid) covers all leases effective through October 2026. Within five years (dashed) covers through each lease\u2019s fifth anniversary, inclusive. Blank annual values: 2021 Within five years, 2022 Within five years, 2023 Within five years, 2024 Within five years, 2025 Within five years, 2026 Within five years. Y maximum 2,000, against 600 in Figure 1B."
   },
   {
     "figure_number": "1B",
     "title": "Effective leases by block water depth",
     "ylabel": "Effective leases (leases per year)",
     "measure": "effective_leases",
-    "note": "Each distinct lease number counts once in its effective year. The lease tape does not distinguish new grants from renewals. The final effective month is October 2026.",
+    "note": "Each lease counts once in its effective year. The lease tape does not distinguish new grants from renewals. The final effective month is October 2026.",
     "role": "main",
     "x_unit": "year",
     "trend": "moving_average_5y_trailing",
@@ -53,7 +74,7 @@
       "500 to 1,500 m",
       "1,500 m and deeper"
     ],
-    "csv": "annual_trends.csv",
+    "csv": "lease_counts.csv",
     "svg": "figure-1b.svg",
     "interactive": "figure-1b.html",
     "y_scale": {
@@ -61,15 +82,53 @@
       "step": 200.0,
       "shared": "panels"
     },
-    "scale_note": "Y maximum 600, against 2,000 in Figure 1A."
+    "scale_note": "Y maximum 600, against 2,000 in Figure 1A.",
+    "blank_cells": [],
+    "caption": "Each lease counts once in its effective year. The lease tape does not distinguish new grants from renewals. The final effective month is October 2026. Y maximum 600, against 2,000 in Figure 1A."
   },
   {
-    "figure_number": "2A",
+    "figure_number": "2",
+    "title": "Leases with a first exploratory spud within five years",
+    "ylabel": "Leases per effective year",
+    "measure": "explored_within_five_years",
+    "note": "Each lease counts once if its first qualifying exploratory spud on the bottom lease fell on or before its fifth anniversary. Cohorts cover 2005 through 2020.",
+    "role": "main",
+    "x_unit": "year",
+    "trend": "moving_average_5y_trailing",
+    "view": "annual",
+    "layout": "overlay",
+    "panel_by": "none",
+    "series_by": "depth_band",
+    "groups": [
+      "explored_within_five_years|Under 100 m",
+      "explored_within_five_years|100 to 500 m",
+      "explored_within_five_years|500 to 1,500 m",
+      "explored_within_five_years|1,500 m and deeper"
+    ],
+    "labels": [
+      "Under 100 m",
+      "100 to 500 m",
+      "500 to 1,500 m",
+      "1,500 m and deeper"
+    ],
+    "csv": "lease_counts.csv",
+    "svg": "figure-2.svg",
+    "interactive": "figure-2.html",
+    "y_scale": {
+      "max": 60.0,
+      "step": 20.0,
+      "shared": "panels"
+    },
+    "blank_cells": [],
+    "caption": "Each lease counts once if its first qualifying exploratory spud on the bottom lease fell on or before its fifth anniversary. Cohorts cover 2005 through 2020."
+  },
+  {
+    "figure_number": "A2A",
     "title": "Leases with a first exploratory spud across all water depths",
     "ylabel": "Share of effective leases (%)",
     "measure": "spud_share",
     "note": "Observed by file date includes first qualifying spuds through the November 2026 borehole file. Within five years stops at the fifth anniversary. Both use leases effective from 2005 through 2020.",
-    "role": "main",
+    "role": "appendix",
     "x_unit": "year",
     "trend": "moving_average_5y_trailing",
     "view": "annual",
@@ -85,8 +144,8 @@
       "Within five years"
     ],
     "csv": "annual_trends.csv",
-    "svg": "figure-2a.svg",
-    "interactive": "figure-2a.html",
+    "svg": "figure-a2a.svg",
+    "interactive": "figure-a2a.html",
     "windows": {
       "solid": {
         "label": "Observed by file date",
@@ -105,17 +164,17 @@
     }
   },
   {
-    "figure_number": "2B",
+    "figure_number": "A2B",
     "title": "Leases with a first exploratory spud by block water depth",
     "ylabel": "Share of effective leases (%)",
     "measure": "spud_share",
     "note": "Observed by file date. Observed by file date includes first qualifying spuds through the November 2026 borehole file. Within five years stops at the fifth anniversary. Both use leases effective from 2005 through 2020.",
-    "role": "main",
+    "role": "appendix",
     "x_unit": "year",
     "trend": "moving_average_5y_trailing",
     "view": "annual",
-    "layout": "overlay",
-    "panel_by": "none",
+    "layout": "4x1_shared_x",
+    "panel_by": "depth_band",
     "series_by": "depth_band",
     "groups": [
       "spud_share_observed|Under 100 m",
@@ -130,8 +189,8 @@
       "1,500 m and deeper"
     ],
     "csv": "annual_trends.csv",
-    "svg": "figure-2b.svg",
-    "interactive": "figure-2b.html",
+    "svg": "figure-a2b.svg",
+    "interactive": "figure-a2b.html",
     "y_scale": {
       "max": 25.0,
       "step": 5.0,
@@ -144,17 +203,17 @@
     "caption": "Observed by file date. Observed by file date includes first qualifying spuds through the November 2026 borehole file. Within five years stops at the fifth anniversary. Both use leases effective from 2005 through 2020. Annual values are blank for 2011 Under 100 m, 2011 100 to 500 m."
   },
   {
-    "figure_number": "2C",
+    "figure_number": "A2C",
     "title": "Leases with a first exploratory spud by block water depth",
     "ylabel": "Share of effective leases (%)",
     "measure": "spud_share",
     "note": "Within five years. Observed by file date includes first qualifying spuds through the November 2026 borehole file. Within five years stops at the fifth anniversary. Both use leases effective from 2005 through 2020.",
-    "role": "main",
+    "role": "appendix",
     "x_unit": "year",
     "trend": "moving_average_5y_trailing",
     "view": "annual",
-    "layout": "overlay",
-    "panel_by": "none",
+    "layout": "4x1_shared_x",
+    "panel_by": "depth_band",
     "series_by": "depth_band",
     "groups": [
       "spud_share_5y|Under 100 m",
@@ -169,8 +228,8 @@
       "1,500 m and deeper"
     ],
     "csv": "annual_trends.csv",
-    "svg": "figure-2c.svg",
-    "interactive": "figure-2c.html",
+    "svg": "figure-a2c.svg",
+    "interactive": "figure-a2c.html",
     "y_scale": {
       "max": 25.0,
       "step": 5.0,
@@ -183,12 +242,12 @@
     "caption": "Within five years. Observed by file date includes first qualifying spuds through the November 2026 borehole file. Within five years stops at the fifth anniversary. Both use leases effective from 2005 through 2020. Annual values are blank for 2011 Under 100 m, 2011 100 to 500 m."
   },
   {
-    "figure_number": "3A",
+    "figure_number": "A3A",
     "title": "Median time to first exploratory spud across all water depths",
     "ylabel": "Median time from effectiveness (years)",
     "measure": "spud_years",
     "note": "Observed by file date includes first qualifying spuds through the November 2026 borehole file. Within five years stops at the fifth anniversary. Both use leases effective from 2005 through 2020. Medians include only leases with a qualifying spud.",
-    "role": "main",
+    "role": "appendix",
     "x_unit": "year",
     "trend": "moving_average_5y_trailing",
     "view": "annual",
@@ -204,8 +263,8 @@
       "Within five years"
     ],
     "csv": "annual_trends.csv",
-    "svg": "figure-3a.svg",
-    "interactive": "figure-3a.html",
+    "svg": "figure-a3a.svg",
+    "interactive": "figure-a3a.html",
     "windows": {
       "solid": {
         "label": "Observed by file date",
@@ -228,17 +287,17 @@
     ]
   },
   {
-    "figure_number": "3B",
+    "figure_number": "A3B",
     "title": "Median time to first exploratory spud by block water depth",
     "ylabel": "Median time from effectiveness (years)",
     "measure": "spud_years",
     "note": "Observed by file date. Observed by file date includes first qualifying spuds through the November 2026 borehole file. Within five years stops at the fifth anniversary. Both use leases effective from 2005 through 2020. Medians include only leases with a qualifying spud.",
-    "role": "main",
+    "role": "appendix",
     "x_unit": "year",
     "trend": "moving_average_5y_trailing",
     "view": "annual",
-    "layout": "overlay",
-    "panel_by": "none",
+    "layout": "4x1_shared_x",
+    "panel_by": "depth_band",
     "series_by": "depth_band",
     "groups": [
       "spud_years_observed|Under 100 m",
@@ -253,8 +312,8 @@
       "1,500 m and deeper"
     ],
     "csv": "annual_trends.csv",
-    "svg": "figure-3b.svg",
-    "interactive": "figure-3b.html",
+    "svg": "figure-a3b.svg",
+    "interactive": "figure-a3b.html",
     "y_scale": {
       "max": 8.0,
       "step": 2.0,
@@ -277,17 +336,17 @@
     "caption": "Observed by file date. Observed by file date includes first qualifying spuds through the November 2026 borehole file. Within five years stops at the fifth anniversary. Both use leases effective from 2005 through 2020. Medians include only leases with a qualifying spud. Annual values are blank for 2011 Under 100 m, 2014 Under 100 m, 2016 Under 100 m, 2007 100 to 500 m, 2010 100 to 500 m, 2011 100 to 500 m, 2013 100 to 500 m, 2016 100 to 500 m, 2020 100 to 500 m, 2007 500 to 1,500 m, 2011 500 to 1,500 m, 2011 1,500 m and deeper."
   },
   {
-    "figure_number": "3C",
+    "figure_number": "A3C",
     "title": "Median time to first exploratory spud by block water depth",
     "ylabel": "Median time from effectiveness (years)",
     "measure": "spud_years",
     "note": "Within five years. Observed by file date includes first qualifying spuds through the November 2026 borehole file. Within five years stops at the fifth anniversary. Both use leases effective from 2005 through 2020. Medians include only leases with a qualifying spud.",
-    "role": "main",
+    "role": "appendix",
     "x_unit": "year",
     "trend": "moving_average_5y_trailing",
     "view": "annual",
-    "layout": "overlay",
-    "panel_by": "none",
+    "layout": "4x1_shared_x",
+    "panel_by": "depth_band",
     "series_by": "depth_band",
     "groups": [
       "spud_years_5y|Under 100 m",
@@ -302,8 +361,8 @@
       "1,500 m and deeper"
     ],
     "csv": "annual_trends.csv",
-    "svg": "figure-3c.svg",
-    "interactive": "figure-3c.html",
+    "svg": "figure-a3c.svg",
+    "interactive": "figure-a3c.html",
     "y_scale": {
       "max": 8.0,
       "step": 2.0,
@@ -326,12 +385,12 @@
     "caption": "Within five years. Observed by file date includes first qualifying spuds through the November 2026 borehole file. Within five years stops at the fifth anniversary. Both use leases effective from 2005 through 2020. Medians include only leases with a qualifying spud. Annual values are blank for 2011 Under 100 m, 2014 Under 100 m, 2016 Under 100 m, 2007 100 to 500 m, 2010 100 to 500 m, 2011 100 to 500 m, 2013 100 to 500 m, 2016 100 to 500 m, 2020 100 to 500 m, 2007 500 to 1,500 m, 2011 500 to 1,500 m, 2011 1,500 m and deeper."
   },
   {
-    "figure_number": "4A",
+    "figure_number": "A4A",
     "title": "Leases reaching first crude across all water depths",
     "ylabel": "Share of effective leases (%)",
     "measure": "crude_share_5y",
     "note": "Leases effective from 2005 through 2020 have 60 complete reporting months. First crude is the first positive crude oil month in months 0 through 59.",
-    "role": "main",
+    "role": "appendix",
     "x_unit": "year",
     "trend": "moving_average_5y_trailing",
     "view": "annual",
@@ -345,22 +404,22 @@
       "First crude within five years"
     ],
     "csv": "annual_trends.csv",
-    "svg": "figure-4a.svg",
-    "interactive": "figure-4a.html",
+    "svg": "figure-a4a.svg",
+    "interactive": "figure-a4a.html",
     "y_scale": {
       "max": 1.5,
       "step": 0.5,
       "shared": "panels"
     },
-    "scale_note": "Y maximum 1.5, against 8 in Figure 4C."
+    "scale_note": "Y maximum 1.5, against 8 in Figure A4C."
   },
   {
-    "figure_number": "4B",
+    "figure_number": "A4B",
     "title": "Median time to first crude across all water depths",
     "ylabel": "Median time from effectiveness (years)",
     "measure": "crude_years_5y",
     "note": "Leases effective from 2005 through 2020 have 60 complete reporting months. First crude is the first positive crude oil month in months 0 through 59.",
-    "role": "main",
+    "role": "appendix",
     "x_unit": "year",
     "trend": "moving_average_5y_trailing",
     "view": "annual",
@@ -374,8 +433,8 @@
       "First crude within five years"
     ],
     "csv": "annual_trends.csv",
-    "svg": "figure-4b.svg",
-    "interactive": "figure-4b.html",
+    "svg": "figure-a4b.svg",
+    "interactive": "figure-a4b.html",
     "y_scale": {
       "max": 5.0,
       "step": 1.0,
@@ -390,17 +449,17 @@
     "caption": "Leases effective from 2005 through 2020 have 60 complete reporting months. First crude is the first positive crude oil month in months 0 through 59. Annual values are blank for 2009, 2011, 2015, 2017."
   },
   {
-    "figure_number": "4C",
+    "figure_number": "A4C",
     "title": "Leases reaching first crude by block water depth",
     "ylabel": "Share of effective leases (%)",
     "measure": "crude_share_5y",
     "note": "Leases effective from 2005 through 2020 have 60 complete reporting months. First crude is the first positive crude oil month in months 0 through 59.",
-    "role": "main",
+    "role": "appendix",
     "x_unit": "year",
     "trend": "moving_average_5y_trailing",
     "view": "annual",
-    "layout": "overlay",
-    "panel_by": "none",
+    "layout": "4x1_shared_x",
+    "panel_by": "depth_band",
     "series_by": "depth_band",
     "groups": [
       "crude_share_5y|Under 100 m",
@@ -415,32 +474,32 @@
       "1,500 m and deeper"
     ],
     "csv": "annual_trends.csv",
-    "svg": "figure-4c.svg",
-    "interactive": "figure-4c.html",
+    "svg": "figure-a4c.svg",
+    "interactive": "figure-a4c.html",
     "y_scale": {
       "max": 8.0,
       "step": 2.0,
       "shared": "panels"
     },
-    "scale_note": "Y maximum 8, against 1.5 in Figure 4A.",
+    "scale_note": "Y maximum 8, against 1.5 in Figure A4A.",
     "blank_cells": [
       "2011 Under 100 m",
       "2011 100 to 500 m"
     ],
-    "caption": "Leases effective from 2005 through 2020 have 60 complete reporting months. First crude is the first positive crude oil month in months 0 through 59. Annual values are blank for 2011 Under 100 m, 2011 100 to 500 m. Y maximum 8, against 1.5 in Figure 4A."
+    "caption": "Leases effective from 2005 through 2020 have 60 complete reporting months. First crude is the first positive crude oil month in months 0 through 59. Annual values are blank for 2011 Under 100 m, 2011 100 to 500 m. Y maximum 8, against 1.5 in Figure A4A."
   },
   {
-    "figure_number": "4D",
+    "figure_number": "A4D",
     "title": "Median time to first crude by block water depth",
     "ylabel": "Median time from effectiveness (years)",
     "measure": "crude_years_5y",
     "note": "Leases effective from 2005 through 2020 have 60 complete reporting months. First crude is the first positive crude oil month in months 0 through 59.",
-    "role": "main",
+    "role": "appendix",
     "x_unit": "year",
     "trend": "moving_average_5y_trailing",
     "view": "annual",
-    "layout": "overlay",
-    "panel_by": "none",
+    "layout": "4x1_shared_x",
+    "panel_by": "depth_band",
     "series_by": "depth_band",
     "groups": [
       "crude_years_5y|Under 100 m",
@@ -455,8 +514,8 @@
       "1,500 m and deeper"
     ],
     "csv": "annual_trends.csv",
-    "svg": "figure-4d.svg",
-    "interactive": "figure-4d.html",
+    "svg": "figure-a4d.svg",
+    "interactive": "figure-a4d.html",
     "y_scale": {
       "max": 5.0,
       "step": 1.0,
@@ -512,12 +571,12 @@
     "caption": "Leases effective from 2005 through 2020 have 60 complete reporting months. First crude is the first positive crude oil month in months 0 through 59. Annual values are blank for 2007 Under 100 m, 2009 Under 100 m, 2011 Under 100 m, 2014 Under 100 m, 2015 Under 100 m, 2016 Under 100 m, 2017 Under 100 m, 2019 Under 100 m, 2020 Under 100 m, 2005 100 to 500 m, 2009 100 to 500 m, 2010 100 to 500 m, 2011 100 to 500 m, 2012 100 to 500 m, 2013 100 to 500 m, 2014 100 to 500 m, 2015 100 to 500 m, 2017 100 to 500 m, 2018 100 to 500 m, 2019 100 to 500 m, 2020 100 to 500 m, 2005 500 to 1,500 m, 2007 500 to 1,500 m, 2009 500 to 1,500 m, 2010 500 to 1,500 m, 2011 500 to 1,500 m, 2012 500 to 1,500 m, 2014 500 to 1,500 m, 2015 500 to 1,500 m, 2016 500 to 1,500 m, 2017 500 to 1,500 m, 2018 500 to 1,500 m, 2019 500 to 1,500 m, 2005 1,500 m and deeper, 2006 1,500 m and deeper, 2007 1,500 m and deeper, 2008 1,500 m and deeper, 2009 1,500 m and deeper, 2010 1,500 m and deeper, 2011 1,500 m and deeper, 2013 1,500 m and deeper, 2015 1,500 m and deeper, 2017 1,500 m and deeper, 2018 1,500 m and deeper, 2020 1,500 m and deeper."
   },
   {
-    "figure_number": "5",
+    "figure_number": "A5",
     "title": "Lease status across all water depths",
     "ylabel": "Share of effective leases (%)",
     "measure": "status_share",
     "note": "Each code is the status on the November 2, 2026 lease tape. The final effective month is October 2026. A blank share means no leases took effect that year.",
-    "role": "main",
+    "role": "appendix",
     "x_unit": "year",
     "trend": "moving_average_5y_trailing",
     "view": "annual",
@@ -547,8 +606,8 @@
       "SOP"
     ],
     "csv": "annual_trends.csv",
-    "svg": "figure-5.svg",
-    "interactive": "figure-5.html",
+    "svg": "figure-a5.svg",
+    "interactive": "figure-a5.html",
     "y_scale": {
       "max": 100.0,
       "step": 20.0,
