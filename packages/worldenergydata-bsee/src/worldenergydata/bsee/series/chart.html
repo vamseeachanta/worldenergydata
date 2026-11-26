@@ -34,21 +34,20 @@ const chart = document.querySelector('svg');
 chart.setAttribute('role', 'group');
 const groups = [...chart.querySelectorAll('[data-series]')];
 const legends = [...chart.querySelectorAll('[data-legend]')];
-const format = new Intl.NumberFormat('en-US', {maximumFractionDigits: 3});
 function update() {
   const tbody = document.querySelector('#readout');
   tbody.replaceChildren();
   for (const [index, group] of groups.entries()) {
     if (group.style.display === 'none') continue;
-    const [, value, average, , availability] = series[index][select.selectedIndex];
+    const [, , , , availability, annualText, meanText] = series[index][select.selectedIndex];
     const row = tbody.insertRow();
     const label = document.createElement('th');
     label.scope = 'row';
     label.textContent = group.dataset.label;
     row.append(label);
     const blank = availability === 'unavailable' ? 'Source records unavailable' : 'No eligible value';
-    row.insertCell().textContent = value === null ? blank : format.format(value);
-    row.insertCell().textContent = average === null ? 'No complete five year window' : format.format(average);
+    row.insertCell().textContent = annualText ?? blank;
+    row.insertCell().textContent = meanText ?? 'No complete five year window';
   }
   document.querySelector('#caption').textContent = select.selectedOptions[0].textContent + ' · {{UNIT}}';
 }

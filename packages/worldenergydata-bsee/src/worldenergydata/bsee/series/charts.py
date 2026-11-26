@@ -6,7 +6,7 @@ import math
 import re
 import textwrap
 from collections import defaultdict
-from decimal import Decimal
+from decimal import Context, Decimal
 from html import escape
 from pathlib import Path
 from urllib.parse import urlsplit
@@ -28,6 +28,11 @@ MEASURE_COLORS = (
 )
 
 
+def _validate_measure(measure):
+    if not isinstance(measure, str) or not measure.strip():
+        raise ValueError("measure must be a nonblank string")
+
+
 def make_figure(
     number,
     title,
@@ -41,6 +46,7 @@ def make_figure(
     window_definitions=None,
 ):
     """Describe one main overlay. Series are ordered (group key, legend label) pairs."""
+    _validate_measure(measure)
     series = list(series)
     if not series or len(series) > len(MEASURE_COLORS):
         raise ValueError("A figure needs one to nine named series")
@@ -114,13 +120,18 @@ def scale(peak):
     return float(top), float(step)
 
 
-def format_tick(value):
-    return format(Decimal(str(value)).normalize(), ",f")
+def format_number(value, *, grouped=True):
+    """Display measured values in fixed point and calendar years without grouping."""
+    decimal = Decimal(str(value))
+    if not decimal:
+        return "0"
+    return format(decimal.normalize(Context(prec=15)), ",f" if grouped else "f")
 
 
 def assign_scales(figures, peaks):
     measures = defaultdict(list)
     for fig in figures:
+        _validate_measure(fig["measure"])
         measures[fig["measure"]].append(fig)
     for measure, members in measures.items():
         maxima = [max(peaks[group] for group in f["groups"]) for f in members]
@@ -140,12 +151,12 @@ def assign_scales(figures, peaks):
         if len({f["y_scale"]["max"] for f in members}) > 1:
             for fig in members:
                 peers = [
-                    f"{format_tick(f['y_scale']['max'])} in Figure {f['figure_number']}"
+                    f"{format_number(f['y_scale']['max'])} in Figure {f['figure_number']}"
                     for f in members
                     if f is not fig
                 ]
                 fig["scale_note"] = (
-                    f"Y maximum {format_tick(fig['y_scale']['max'])}, against "
+                    f"Y maximum {format_number(fig['y_scale']['max'])}, against "
                     + ", ".join(peers)
                     + "."
                 )
@@ -167,7 +178,10 @@ def tint(color):
 
 
 def _caption(fig):
-    clauses = [fig["note"]]
+    note = (fig["note"] or "").strip()
+    if note and not note.endswith((".", "!", "?", ";")):
+        note += "."
+    clauses = [note]
     for style, window in fig.get("windows", {}).items():
         clauses.append(
             f"{window['label']} ({style}) covers {window['definition'].rstrip('.')}."
@@ -307,14 +321,20 @@ def render(
         tick = Decimal(str(step)) * i
         y = ypos(float(tick))
         element(root, "line", x1=left, x2=right, y1=y, y2=y, stroke="#cfd9de")
-        label(root, left - 9, y + 5, format_tick(tick), text_anchor="end")
+        label(root, left - 9, y + 5, format_number(tick), text_anchor="end")
     xticks = [
         years[0],
         *(yr for yr in years[1:-1] if yr % 5 == 0 and years[-1] - yr >= 2),
         years[-1],
     ]
     for yr in dict.fromkeys(xticks):
-        label(root, xpos(yr), bottom + 27, str(yr), text_anchor="middle")
+        label(
+            root,
+            xpos(yr),
+            bottom + 27,
+            format_number(yr, grouped=False),
+            text_anchor="middle",
+        )
     if partial:
         label(
             root,
@@ -377,10 +397,12 @@ def render(
                 fill="white" if yr in partial else color,
                 data_year=yr,
             )
-            result = "unavailable" if mean is None else f"{mean:,.4g}"
-            when = str(yr) + (" (partial)" if yr in partial else "")
+            result = "unavailable" if mean is None else format_number(mean)
+            when = format_number(yr, grouped=False) + (
+                " (partial)" if yr in partial else ""
+            )
             element(point, "title").text = (
-                f"{name}, {when}. Annual value {value:,.4g}. Five year mean {result}."
+                f"{name}, {when}. Annual value {format_number(value)}. Five year mean {result}."
             )
     for i, line in enumerate(notes):
         label(root, 22, bottom + 86 + i * 22, line)
@@ -419,14 +441,21 @@ def interactive(figure, svg, groups, *, xlabel):
                 row["moving_average"],
                 row["partial"],
                 row["availability"],
+                format_number(row["value"]) if row["value"] is not None else None,
+                (
+                    format_number(row["moving_average"])
+                    if row["moving_average"] is not None
+                    else None
+                ),
             )
             for year, row in sorted(groups[key].items())
         ]
         for key in figure["groups"]
     ]
     options = "".join(
-        f'<option value="{year}">{year}{" (partial)" if partial else ""}</option>'
-        for year, _, _, partial, _ in data[0]
+        f'<option value="{year}">{format_number(year, grouped=False)}'
+        f'{" (partial)" if partial else ""}</option>'
+        for year, _, _, partial, *_ in data[0]
     )
     # A substitution pass keeps braces in source text literal. UNIT is inside a
     # single-quoted JavaScript string; the other text substitutions are HTML.
@@ -599,12 +628,13 @@ def write_figures(
         if missing:
             fig["unavailable_cells"] = missing
             fig["coverage_note"] = (
-                f"Source records are unavailable for {missing} annual series observations. "
+                f"Source records are unavailable for {format_number(missing)} "
+                "annual series observations. "
                 "The chart omits those points and any mean requiring them. "
                 "The interactive year table identifies the affected series."
             )
         fig["blank_cells"] = [
-            f"{year} {label}"
+            f"{format_number(year, grouped=False)} {label}"
             for key, label in zip(fig["groups"], fig["labels"])
             for year, row in cells[key].items()
             if row["value"] is None

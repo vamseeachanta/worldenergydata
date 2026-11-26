@@ -6,6 +6,7 @@ import os
 import re
 import subprocess
 import sys
+import unicodedata
 from pathlib import Path
 from xml.etree import ElementTree as ET
 
@@ -122,24 +123,34 @@ def test_interactive_values_and_gaps_match_svg(completion_figure):
     assert 'href="../drilling.html"' in page and "Permitting and drilling" in page
     assert 'href="../production.html"' in page and "Production" in page
     (series,) = json.loads(re.search(r"^const series = (.+);$", page, re.M).group(1))
+    assert [row[0] for row in series] == list(range(2017, 2025))
     assert [row[1] for row in series] == [None, 0, 1, 2, 3, 4, None, 15]
     assert [row[2] for row in series] == [None, None, None, None, None, 2, None, None]
     assert series[0][4] == series[-2][4] == "unavailable"
     assert [row[0] for row in series if row[3]] == [2024]
     root = ET.fromstring(svg)
     dots = {int(dot.get("data-year")): dot for dot in root.findall(".//{*}circle")}
-    assert set(dots) == {row[0] for row in series if row[1] is not None}
-    grid = root.findall("{*}line")
-    baseline, top = (float(grid[i].get("y1")) for i in (0, -1))
+    # The single legend row leaves a 275 px plot from y=420 to y=145.
+    assert set(dots) == {2018, 2019, 2020, 2021, 2022, 2024}
     ticks = root.findall("{*}text[@text-anchor='end']")
-    maximum = max(float(t.text) for t in ticks if (t.text or "").isdecimal())
-    for year, value, mean, partial, _ in series:
-        if value is None:
-            continue
+    assert [t.text for t in ticks] == [
+        "0",
+        "5",
+        "10",
+        "15",
+        "partial through September",
+    ]
+    for year, expected_y in {
+        2018: 420,
+        2019: 401.67,
+        2020: 383.33,
+        2021: 365,
+        2022: 346.67,
+        2024: 145,
+    }.items():
         dot = dots[year]
-        assert float(dot.get("cy")) == pytest.approx(
-            baseline - value / maximum * (baseline - top), abs=0.01
-        )
+        assert float(dot.get("cy")) == pytest.approx(expected_y, abs=0.005)
+        _, value, mean, partial, *_ = series[year - 2017]
         title = dot.findtext("{*}title")
         assert f"Annual value {value:g}." in title
         expected = "unavailable" if mean is None else f"{mean:g}"
@@ -254,7 +265,7 @@ def paired_figures(tmp_path):
             "Share (%)",
             "share",
             [("observed", "Observed by file date"), ("within", "Within five years")],
-            "The 2025 record ends in October.",
+            "The dashed line uses the shorter window",
             window_definitions={
                 "observed": "through October 2025",
                 "within": "through the fifth anniversary",
@@ -307,11 +318,19 @@ def test_paired_windows_match_rendered_styles_and_selected_blanks(paired_figures
         "through the fifth anniversary",
     ):
         assert phrase in first["caption"] and phrase in visible
-    for group in svg.findall(".//{*}g[@data-series]"):
-        dashed = group.get("data-label") == "Within five years"
-        assert all(
-            ("stroke-dasharray" in p.attrib) == dashed for p in group.findall("{*}path")
-        )
+    groups = svg.findall(".//{*}g[@data-series]")
+    assert [g.get("data-label") for g in groups] == [
+        "Observed by file date",
+        "Within five years",
+    ]
+    # Only the full record has five complete consecutive years for a trend.
+    paths = [g.findall("{*}path") for g in groups]
+    assert [len(p) for p in paths] == [2, 1]
+    for group_paths, dashed in zip(paths, (False, True)):
+        assert all(("stroke-dasharray" in p.attrib) == dashed for p in group_paths)
+    assert first["caption"].startswith(
+        "The dashed line uses the shorter window. Observed by file date (solid)"
+    )
 
 
 @pytest.mark.parametrize(("value", "blanks"), [(None, ["2022 Count"]), (0, [])])
@@ -320,7 +339,9 @@ def test_blank_declaration_follows_annual_value(tmp_path, value, blanks):
         dict(group="count", year=2022, value=value),
         dict(group="elsewhere", year=2022, value=None),
     ]
-    figure = make_figure("1", "Count", "Events", "events", [("count", "Count")], "")
+    figure = make_figure(
+        "1", "Annual event count", "Events", "events", [("count", "Count")], ""
+    )
     write_figures(
         tmp_path, [figure], with_trends(rows).to_dict("records"), xlabel="Event year"
     )
@@ -335,7 +356,9 @@ def test_coordinate_precision_applies_only_to_geometry(tmp_path):
         dict(group="g", year=2020, value=1.010001),
         dict(group="g", year=2021, value=2.9),
     ]
-    fig = make_figure("1", "Share", "Share (%)", "share", [("g", "Share")], "")
+    fig = make_figure(
+        "1", "Annual event share", "Share (%)", "share", [("g", "Share")], ""
+    )
     write_figures(
         tmp_path,
         [fig],
@@ -416,3 +439,107 @@ def test_csv_decimal_precision_at_scale_and_pool_boundaries(
     manifest = json.loads((tmp_path / "figures.json").read_text(encoding="utf-8"))
     assert [entry["y_scale"]["max"] for entry in manifest] == maxima
     assert all(entry["y_scale"]["shared"] == "panels" for entry in manifest)
+
+
+@pytest.mark.parametrize(
+    ("value", "display", "axis_top"),
+    [
+        (0.00005, "0.00005", "0.00005"),
+        (0.5, "0.5", "0.5"),
+        (12345.6, "12,345.6", "15,000"),
+        (1234567, "1,234,567", "1,500,000"),
+        (-0.0, "0", "1"),
+    ],
+)
+def test_fixed_point_labels_and_readout(tmp_path, value, display, axis_top):
+    rows = [dict(group="g", year=y, value=value) for y in range(2020, 2025)]
+    fig = make_figure("1", "Annual event rate", "Events", "rate", [("g", "Rate")], "")
+    write_figures(tmp_path, [fig], with_trends(rows).to_dict("records"), xlabel="Year")
+    svg = ET.parse(tmp_path / "figure-1.svg")
+    texts = svg.findall(".//{*}text") + svg.findall(".//{*}title")
+    assert all(
+        unicodedata.category(c) != "Pd" and c != "\N{MINUS SIGN}"
+        for t in texts
+        for chunk in t.itertext()
+        for c in chunk
+    )
+    assert svg.findall(".//{*}text[@text-anchor='end']")[-1].text == axis_top
+    assert svg.findtext(".//{*}circle[@data-year='2024']/{*}title") == (
+        f"Rate, 2024. Annual value {display}. Five year mean {display}."
+    )
+    page = (tmp_path / "figure-1.html").read_text(encoding="utf-8")
+    (series,) = json.loads(re.search(r"^const series = (.+);$", page, re.M)[1])
+    assert series[0][5:] == [display, None]
+    assert series[-1][5:] == [display, display]
+
+
+@pytest.mark.parametrize(
+    ("peaks", "expected"),
+    [
+        (
+            (100, 35, 10),
+            [
+                (
+                    100,
+                    20,
+                    "measure:share",
+                    "Y maximum 100, against 100 in Figure B, 10 in Figure C.",
+                ),
+                (
+                    100,
+                    20,
+                    "measure:share",
+                    "Y maximum 100, against 100 in Figure A, 10 in Figure C.",
+                ),
+                (
+                    10,
+                    2,
+                    "panels",
+                    "Y maximum 10, against 100 in Figure A, 100 in Figure B.",
+                ),
+            ],
+        ),
+        (
+            (100, 25, 20),
+            [
+                (
+                    100,
+                    20,
+                    "panels",
+                    "Y maximum 100, against 25 in Figure B, 20 in Figure C.",
+                ),
+                (
+                    25,
+                    5,
+                    "panels",
+                    "Y maximum 25, against 100 in Figure A, 20 in Figure C.",
+                ),
+                (
+                    20,
+                    5,
+                    "panels",
+                    "Y maximum 20, against 100 in Figure A, 25 in Figure B.",
+                ),
+            ],
+        ),
+    ],
+)
+def test_three_figure_scales_and_notes(peaks, expected):
+    figs = [make_figure(k, k, "Share (%)", "share", [(k, k)], "") for k in "ABC"]
+    assign_scales(figs, dict(zip("ABC", peaks)))
+    for fig, (top, step, scope, note) in zip(figs, expected):
+        assert fig["y_scale"] == {"max": top, "step": step, "shared": scope}
+        assert fig["scale_note"] == note
+
+
+@pytest.mark.parametrize("measure", ["", "  ", None])
+def test_figure_rejects_missing_measure(measure):
+    with pytest.raises(ValueError, match="measure"):
+        make_figure("1", "Count", "Events", measure, [("g", "Count")], "")
+
+
+@pytest.mark.parametrize("measure", ["", "  ", None])
+def test_assign_scales_rejects_missing_measure(measure):
+    # Lower-level callers may supply their own figure dictionaries.
+    with pytest.raises(ValueError, match="measure"):
+        assign_scales([{"measure": measure, "groups": ["g"]}], {"g": 1})

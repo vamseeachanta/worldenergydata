@@ -33,4 +33,4 @@ For a two-window figure, pass `window_definitions` to `make_figure` with one tim
 
 The scale covers annual values and trailing means, including a partial year's annual value. It uses the smallest covering top with three to five intervals at a step of 1, 2 or 5 times a power of ten. Two or more figures of the same measure share the group scale when each reaches at least 30% of its rounded top. Other figures use their own scale.
 
-`write_figures` and `render` accept `coordinate_decimals` for SVG coordinates (default 2). The CSV and interactive year readout retain observation precision. Check the output with `python -I check_chart_standard.py --require-overlay path/to/figures.json`.
+`write_figures` and `render` accept `coordinate_decimals` for SVG coordinates (default 2). The CSV retains the supplied observation precision. The offline page embeds numeric observations. Axis labels, point tooltips and year-table values use fixed-point notation with thousands separators and up to 15 significant digits. Calendar years appear without separators. Check the output with `python -I check_chart_standard.py --require-overlay path/to/figures.json`.
